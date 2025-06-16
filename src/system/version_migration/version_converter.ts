@@ -63,6 +63,10 @@ import * as v1_8_3 from "./versions/v1_8_3";
 // biome-ignore lint/style/noNamespaceImport: Convenience
 import * as v1_9_0 from "./versions/v1_9_0";
 
+// --- v1.10.0 PATCHES --- //
+// biome-ignore lint/style/noNamespaceImport: Convenience
+import * as v1_10_0 from "./versions/v1_10_0";
+
 /** Current game version */
 const LATEST_VERSION = version;
 
@@ -85,6 +89,7 @@ const sessionMigrators: SessionSaveMigrator[] = [];
 sessionMigrators.push(...v1_0_4.sessionMigrators);
 sessionMigrators.push(...v1_7_0.sessionMigrators);
 sessionMigrators.push(...v1_9_0.sessionMigrators);
+sessionMigrators.push(...v1_10_0.sessionMigrators);
 
 /** All settings migrators */
 const settingsMigrators: SettingsSaveMigrator[] = [];

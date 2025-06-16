@@ -46,7 +46,14 @@ export class CustomPokemonData {
  * Resets on switch or new battle.
  */
 export class PokemonSummonData {
+  /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
   public statStages: number[] = [0, 0, 0, 0, 0, 0, 0];
+  /**
+   * A queue of moves yet to be executed, used by charging, recharging and frenzy moves.
+   * So long as this array is nonempty, this Pokemon's corresponding `CommandPhase` will be skipped over entirely
+   * in favor of using the queued move.
+   * TODO: Clean up a lot of the code surrounding the move queue.
+   */
   public moveQueue: TurnMove[] = [];
   public tags: BattlerTag[] = [];
   public abilitySuppressed = false;
@@ -70,7 +77,7 @@ export class PokemonSummonData {
   public illusion: IllusionData | null = null;
   public illusionBroken = false;
 
-  /** Array containing all berries eaten in the last turn; used by {@linkcode Abilities.CUD_CHEW} */
+  /** Array containing all berries eaten in the last turn; used by {@linkcode AbilityId.CUD_CHEW} */
   public berriesEatenLast: BerryType[] = [];
 
   /**
@@ -114,13 +121,13 @@ export class PokemonTempSummonData {
   turnCount = 1;
 
   /**
- * The number of turns this pokemon has spent in the active position since the start of the wave
- * without switching out.
- * Reset on switch and new wave, but not stored in `SummonData` to avoid being written to the save file.
+   * The number of turns this pokemon has spent in the active position since the start of the wave
+   * without switching out.
+   * Reset on switch and new wave, but not stored in `SummonData` to avoid being written to the save file.
 
- * Used to evaluate "first turn only" conditions such as
- * {@linkcode MoveId.FAKE_OUT | Fake Out} and {@linkcode MoveId.FIRST_IMPRESSION | First Impression}).
- */
+   * Used to evaluate "first turn only" conditions such as
+   * {@linkcode MoveId.FAKE_OUT | Fake Out} and {@linkcode MoveId.FIRST_IMPRESSION | First Impression}).
+   */
   waveTurnCount = 1;
 }
 
@@ -133,7 +140,7 @@ export class PokemonBattleData {
   public hitCount = 0;
   /** Whether this Pokemon has eaten a berry this battle; used for {@linkcode MoveId.BELCH} */
   public hasEatenBerry = false;
-  /** Array containing all berries eaten and not yet recovered during this current battle; used by {@linkcode Abilities.HARVEST} */
+  /** Array containing all berries eaten and not yet recovered during this current battle; used by {@linkcode AbilityId.HARVEST} */
   public berriesEaten: BerryType[] = [];
 
   constructor(source?: PokemonBattleData | Partial<PokemonBattleData>) {
@@ -156,7 +163,7 @@ export class PokemonWaveData {
    * A set of all the abilities this {@linkcode Pokemon} has used in this wave.
    * Used to track once per battle conditions, as well as (hopefully) by the updated AI for move effectiveness.
    */
-  public abilitiesApplied: Set<AbilityId> = new Set();
+  public abilitiesApplied: Set<AbilityId> = new Set<AbilityId>();
   /** Whether the pokemon's ability has been revealed or not */
   public abilityRevealed = false;
 }
@@ -166,7 +173,6 @@ export class PokemonWaveData {
  * Resets at the start of a new turn, as well as on switch.
  */
 export class PokemonTurnData {
-  public flinched = false;
   public acted = false;
   /** How many times the current move should hit the target(s) */
   public hitCount = 0;
@@ -188,13 +194,14 @@ export class PokemonTurnData {
   public failedRunAway = false;
   public joinedRound = false;
   /**
+   * The amount of times this Pokemon has acted again and used a move in the current turn.
    * Used to make sure multi-hits occur properly when the user is
-   * forced to act again in the same turn
+   * forced to act again in the same turn, and **must be incremented** by any effects that grant extra actions.
    */
   public extraTurns = 0;
   /**
    * All berries eaten by this pokemon in this turn.
-   * Saved into {@linkcode PokemonSummonData | SummonData} by {@linkcode Abilities.CUD_CHEW} on turn end.
+   * Saved into {@linkcode PokemonSummonData | SummonData} by {@linkcode AbilityId.CUD_CHEW} on turn end.
    * @see {@linkcode PokemonSummonData.berriesEatenLast}
    */
   public berriesEaten: BerryType[] = [];

@@ -13,7 +13,6 @@ import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTem
 import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
 import { ModifierTier } from "#enums/modifier-tier";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/data/data-lists";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -23,7 +22,7 @@ import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-en
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { AbilityId } from "#enums/ability-id";
 import {
   applyAbilityOverrideToPokemon,
@@ -49,7 +48,8 @@ import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { Challenges } from "#enums/challenges";
-import { allAbilities } from "#app/data/data-lists";
+import { MoveUseMode } from "#enums/move-use-mode";
+import { allAbilities, modifierTypes } from "#app/data/data-lists";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/clowningAround";
@@ -210,19 +210,19 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
             sourceBattlerIndex: BattlerIndex.ENEMY,
             targets: [BattlerIndex.ENEMY_2],
             move: new PokemonMove(MoveId.ROLE_PLAY),
-            ignorePp: true,
+            useMode: MoveUseMode.IGNORE_PP,
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY_2,
             targets: [BattlerIndex.PLAYER],
             move: new PokemonMove(MoveId.TAUNT),
-            ignorePp: true,
+            useMode: MoveUseMode.IGNORE_PP,
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY_2,
             targets: [BattlerIndex.PLAYER_2],
             move: new PokemonMove(MoveId.TAUNT),
-            ignorePp: true,
+            useMode: MoveUseMode.IGNORE_PP,
           },
         );
 

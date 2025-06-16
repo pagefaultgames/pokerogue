@@ -5,7 +5,7 @@ import type { PokeballType } from "#enums/pokeball";
 import type { SpeciesId } from "#enums/species-id";
 
 /**
- * Data pertaining to this Pokemon's Illusion.
+ * Data pertaining to a Pokemon's Illusion.
  */
 export interface IllusionData {
   basePokemon: {
