@@ -177,9 +177,9 @@ export default abstract class Move implements Localizable {
   }
 
   /**
-   * Check if a move has an attribute that matches `attrType`
-   * @param attrType any attribute that extends {@linkcode MoveAttr}
-   * @returns true if the move has attribute `attrType`
+   * Check if a move has an attribute that matches `attrType`.
+   * @param attrType - The {@linkcode MoveAttrString} for the attribute to check.
+   * @returns Whether the move has an attribute that is or extends `attrType`.
    */
   hasAttr(attrType: MoveAttrString): boolean {
     const targetAttr = MoveAttrs[attrType];
@@ -631,7 +631,9 @@ export default abstract class Move implements Localizable {
     target?: Pokemon;
     isFollowUp?: boolean;
   }): boolean {
-    // special cases below, eg: if the move flag is MAKES_CONTACT, and the user pokemon has an ability that ignores contact (like "Long Reach"), then overrides and move does not make contact
+    // Handle special cases
+
+    // Abilities that ignores contact (Long Reach) and substitute blockages
     switch (flag) {
       case MoveFlags.MAKES_CONTACT:
         if (user.hasAbilityWithAttr("IgnoreContactAbAttr") || this.hitsSubstitute(user, target)) {
@@ -639,15 +641,17 @@ export default abstract class Move implements Localizable {
         }
         break;
       case MoveFlags.IGNORE_ABILITIES:
+        // Check for ability based blockages
         if (user.hasAbilityWithAttr("MoveAbilityBypassAbAttr")) {
           const abilityEffectsIgnored = new BooleanHolder(false);
           applyAbAttrs("MoveAbilityBypassAbAttr", user, abilityEffectsIgnored, false, this);
           if (abilityEffectsIgnored.value) {
             return true;
           }
-          // Sunsteel strike, Moongeist beam, and photon geyser will not ignore abilities if invoked
-          // by another move, such as via metronome.
         }
+
+        // Sunsteel strike, Moongeist beam, and photon geyser will not ignore abilities if invoked
+        // by another move, such as metronome/dancer.
         return this.hasFlag(MoveFlags.IGNORE_ABILITIES) && !isFollowUp;
       case MoveFlags.IGNORE_PROTECT:
         if (user.hasAbilityWithAttr("IgnoreProtectOnContactAbAttr")
@@ -2449,6 +2453,7 @@ export class MultiHitAttr extends MoveAttr {
         break;
       case MultiHitType.BEAT_UP:
         // Estimate that half of the party can contribute to beat up.
+        // TODO: The AI should be able to check this manually?
         expectedHits = Math.max(1, partySize / 2);
         break;
     }

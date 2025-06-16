@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#enums/battler-index";
 import { globalScene } from "#app/global-scene";
-import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs, applyPreAttackAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import type { DelayedAttackTag } from "#app/data/arena-tag";
 import { CommonAnim } from "#enums/move-anims-common";
 import { CenterOfAttentionTag } from "#app/data/battler-tags";
@@ -430,16 +430,6 @@ export class MovePhase extends BattlePhase {
 
       // Remove the user from its semi-invulnerable state (if applicable)
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
-    }
-
-    // Handle Dancer, which triggers immediately after a move is used (rather than waiting on `this.end()`).
-    // Note the MoveUseMode check here prevents an infinite Dancer loop.
-    const dancerModes: MoveUseMode[] = [MoveUseMode.INDIRECT, MoveUseMode.REFLECTED] as const;
-    if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !dancerModes.includes(this.useMode)) {
-      // TODO: Fix in dancer PR to move to MEP for hit checks
-      globalScene.getField(true).forEach(pokemon => {
-        applyPostMoveUsedAbAttrs("PostMoveUsedAbAttr", pokemon, this.move, this.pokemon, this.targets);
-      });
     }
   }
 

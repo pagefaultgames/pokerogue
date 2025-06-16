@@ -147,3 +147,22 @@ export function isIgnorePP(useMode: MoveUseMode): boolean {
 export function isReflected(useMode: MoveUseMode): boolean {
   return useMode === MoveUseMode.REFLECTED;
 }
+
+/**
+ * Check if a given {@linkcode MoveUseMode} is capable of being copied by {@linkcode PostDancingMoveAbAttr | Dancer}.
+ * @param useMode - The {@linkcode MoveUseMode} to check.
+ * @returns Whether {@linkcode useMode} is dancer copiable.
+ * @remarks
+ * This function is equivalent to the following truth table:
+ *
+ * | Use Type                           | Returns |
+ * |------------------------------------|---------|
+ * | {@linkcode MoveUseMode.NORMAL}     | `true`  |
+ * | {@linkcode MoveUseMode.IGNORE_PP}  | `true`  |
+ * | {@linkcode MoveUseMode.INDIRECT}   | `false` |
+ * | {@linkcode MoveUseMode.FOLLOW_UP}  | `true`  |
+ * | {@linkcode MoveUseMode.REFLECTED}  | `false` |
+ */
+export function isDancerCopiable(useMode: MoveUseMode): boolean {
+  return !([MoveUseMode.INDIRECT, MoveUseMode.REFLECTED] as MoveUseMode[]).includes(useMode)
+}

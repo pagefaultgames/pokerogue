@@ -209,9 +209,11 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player pokemon's {@linkcode StatusEffect | status-effect}
-   * @param statusEffect - The {@linkcode StatusEffect | status-effect} to set
-   * @returns
+   * Override the player pokemon's {@linkcode StatusEffect | status effect}.
+   * Will be applied to each newly spawned pokemon on battle start.
+   * @param statusEffect - The {@linkcode StatusEffect | status effect} to set
+   * @returns `this`
+   * @remarks If this is set to {@linkcode StatusEffect.SLEEP}, it will always have a constant duration of 4 turns.
    */
   public statusEffect(statusEffect: StatusEffect): this {
     vi.spyOn(Overrides, "STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);

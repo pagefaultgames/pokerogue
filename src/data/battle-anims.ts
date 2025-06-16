@@ -1387,11 +1387,11 @@ export class EncounterBattleAnim extends BattleAnim {
   public encounterAnim: EncounterAnim;
   public oppAnim: boolean;
 
-  constructor(encounterAnim: EncounterAnim, user: Pokemon, target?: Pokemon, oppAnim?: boolean) {
-    super(user, target ?? user, true);
+  constructor(encounterAnim: EncounterAnim, user: Pokemon, target: Pokemon = user, oppAnim = false) {
+    super(user, target, true);
 
     this.encounterAnim = encounterAnim;
-    this.oppAnim = oppAnim ?? false;
+    this.oppAnim = oppAnim;
   }
 
   getAnim(): AnimConfig | null {
