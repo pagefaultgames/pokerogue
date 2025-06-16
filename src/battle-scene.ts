@@ -4,7 +4,8 @@ import type Pokemon from "#app/field/pokemon";
 import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
+import { allSpecies } from "#app/data/data-lists";
 import {
   fixedInt,
   getIvsFromId,
@@ -2963,6 +2964,13 @@ export default class BattleScene extends SceneBase {
       if (
         modifier instanceof PokemonHeldItemModifier &&
         !this.getPokemonById((modifier as PokemonHeldItemModifier).pokemonId)
+      ) {
+        modifiers.splice(m--, 1);
+      }
+      if (
+        modifier instanceof PokemonHeldItemModifier &&
+        !isNullOrUndefined(modifier.getSpecies()) &&
+        !this.getPokemonById(modifier.pokemonId)?.hasSpecies(modifier.getSpecies()!)
       ) {
         modifiers.splice(m--, 1);
       }

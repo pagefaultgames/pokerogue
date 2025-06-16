@@ -5,7 +5,7 @@ import { getEnumValues, getEnumKeys, fixedInt, randSeedShuffle } from "#app/util
 import type { IEggOptions } from "../data/egg";
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
 import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
-import { getPokemonSpecies } from "../data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { addWindow } from "./ui-theme";
 import { Tutorial, handleTutorial } from "../tutorial";
 import { Button } from "#enums/buttons";

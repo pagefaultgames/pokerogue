@@ -15,12 +15,8 @@ import { allMoves } from "#app/data/data-lists";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
-import {
-  default as PokemonSpecies,
-  getFusedSpeciesName,
-  getPokemonSpecies,
-  getPokemonSpeciesForm,
-} from "#app/data/pokemon-species";
+import { default as PokemonSpecies, getFusedSpeciesName, getPokemonSpeciesForm } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import {
   NumberHolder,
@@ -79,11 +75,12 @@ import {
 import { PokeballType } from "#enums/pokeball";
 import { Gender } from "#app/data/gender";
 import { Status, getRandomStatus } from "#app/data/status-effect";
-import type { SpeciesFormEvolution, SpeciesEvolutionCondition } from "#app/data/balance/pokemon-evolutions";
+import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import {
   pokemonEvolutions,
   pokemonPrevolutions,
   FusionSpeciesFormEvolution,
+  validateShedinjaEvo,
 } from "#app/data/balance/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "#app/data/balance/tms";
 import {
@@ -370,7 +367,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.metWave = dataSource.metWave ?? (this.metBiome === -1 ? -1 : 0);
       this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
-      this.evoCounter = dataSource.evoCounter ?? 0;
       this.fusionSpecies =
         dataSource.fusionSpecies instanceof PokemonSpecies
           ? dataSource.fusionSpecies
@@ -2518,14 +2514,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (pokemonEvolutions.hasOwnProperty(this.species.speciesId)) {
       const evolutions = pokemonEvolutions[this.species.speciesId];
       for (const e of evolutions) {
-        if (
-          !e.item &&
-          this.level >= e.level &&
-          (isNullOrUndefined(e.preFormKey) || this.getFormKey() === e.preFormKey)
-        ) {
-          if (e.condition === null || (e.condition as SpeciesEvolutionCondition).predicate(this)) {
-            return e;
-          }
+        if (e.validate(this)) {
+          return e;
         }
       }
     }
@@ -2535,14 +2525,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         e => new FusionSpeciesFormEvolution(this.species.speciesId, e),
       );
       for (const fe of fusionEvolutions) {
-        if (
-          !fe.item &&
-          this.level >= fe.level &&
-          (isNullOrUndefined(fe.preFormKey) || this.getFusionFormKey() === fe.preFormKey)
-        ) {
-          if (fe.condition === null || (fe.condition as SpeciesEvolutionCondition).predicate(this)) {
-            return fe;
-          }
+        if (fe.validate(this)) {
+          return fe;
         }
       }
     }
@@ -5487,6 +5471,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     this.turnData.berriesEaten.push(berryType);
   }
+
+  getPersistentTreasureCount(): number {
+    return (
+      this.getHeldItems().filter(m => m.is("DamageMoneyRewardModifier")).length +
+      globalScene.findModifiers(m => m.is("MoneyMultiplierModifier") || m.is("ExtraModifierModifier")).length
+    );
+  }
 }
 
 export class PlayerPokemon extends Pokemon {
@@ -5825,7 +5816,7 @@ export class PlayerPokemon extends Pokemon {
     if (evoSpecies?.speciesId === SpeciesId.NINCADA && evolution.speciesId === SpeciesId.NINJASK) {
       const newEvolution = pokemonEvolutions[evoSpecies.speciesId][1];
 
-      if (newEvolution.condition?.predicate(this)) {
+      if (validateShedinjaEvo()) {
         const newPokemon = globalScene.addPlayerPokemon(
           this.species,
           this.level,
@@ -5855,7 +5846,6 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.fusionLuck = this.fusionLuck;
         newPokemon.fusionTeraType = this.fusionTeraType;
         newPokemon.usedTMs = this.usedTMs;
-        newPokemon.evoCounter = this.evoCounter;
 
         globalScene.getPlayerParty().push(newPokemon);
         newPokemon.evolve(!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution), evoSpecies);
@@ -5944,7 +5934,6 @@ export class PlayerPokemon extends Pokemon {
     this.fusionGender = pokemon.gender;
     this.fusionLuck = pokemon.luck;
     this.fusionCustomPokemonData = pokemon.customPokemonData;
-    this.evoCounter = Math.max(pokemon.evoCounter, this.evoCounter);
     if (pokemon.pauseEvolutions || this.pauseEvolutions) {
       this.pauseEvolutions = true;
     }
@@ -6099,18 +6088,6 @@ export class EnemyPokemon extends Pokemon {
       }
 
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
-
-      let prevolution: SpeciesId;
-      let speciesId = species.speciesId;
-      while ((prevolution = pokemonPrevolutions[speciesId])) {
-        const evolution = pokemonEvolutions[prevolution].find(
-          pe => pe.speciesId === speciesId && (!pe.evoFormKey || pe.evoFormKey === this.getFormKey()),
-        );
-        if (evolution?.condition?.enforceFunc) {
-          evolution.condition.enforceFunc(this);
-        }
-        speciesId = prevolution;
-      }
 
       if (this.hasTrainer() && globalScene.currentBattle) {
         const { waveIndex } = globalScene.currentBattle;

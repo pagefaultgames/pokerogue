@@ -3,7 +3,7 @@ import type { BiomeTierTrainerPools, PokemonPools } from "#app/data/balance/biom
 import { biomePokemonPools, BiomePoolTier, biomeTrainerPools } from "#app/data/balance/biomes";
 import { randSeedInt, NumberHolder, isNullOrUndefined, type Constructor } from "#app/utils/common";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import {
   getTerrainClearMessage,
   getTerrainStartMessage,
