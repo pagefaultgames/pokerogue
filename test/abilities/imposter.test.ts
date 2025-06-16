@@ -75,8 +75,6 @@ describe("Abilities - Imposter", () => {
   });
 
   it("should copy in-battle overridden stats", async () => {
-    game.override.enemyMoveset([MoveId.POWER_SPLIT]);
-
     await game.classicMode.startBattle([SpeciesId.DITTO]);
 
     const player = game.scene.getPlayerPokemon()!;
@@ -85,7 +83,8 @@ describe("Abilities - Imposter", () => {
     const avgAtk = Math.floor((player.getStat(Stat.ATK, false) + enemy.getStat(Stat.ATK, false)) / 2);
     const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
 
-    game.move.select(MoveId.TACKLE);
+    game.move.use(MoveId.TACKLE);
+    await game.move.forceEnemyMove(MoveId.POWER_SPLIT);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);
@@ -101,31 +100,22 @@ describe("Abilities - Imposter", () => {
     await game.classicMode.startBattle([SpeciesId.DITTO]);
     const player = game.scene.getPlayerPokemon()!;
 
-    game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to(TurnEndPhase);
-
     player.getMoveset().forEach(move => {
       // Should set correct maximum PP without touching `ppUp`
-      if (move) {
-        if (move.moveId === MoveId.SKETCH) {
-          expect(move.getMovePp()).toBe(1);
-        } else {
-          expect(move.getMovePp()).toBe(5);
-        }
-        expect(move.ppUp).toBe(0);
+      if (move.moveId === MoveId.SKETCH) {
+        expect(move.getMovePp()).toBe(1);
+      } else {
+        expect(move.getMovePp()).toBe(5);
       }
+      expect(move.ppUp).toBe(0);
     });
   });
 
   it("should activate its ability if it copies one that activates on summon", async () => {
     game.override.enemyAbility(AbilityId.INTIMIDATE);
-
     await game.classicMode.startBattle([SpeciesId.DITTO]);
 
-    game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to("MoveEndPhase");
-
-    expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should persist transformed attributes across reloads", async () => {
