@@ -1,12 +1,13 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { MoveId } from "#enums/move-id";
-import { SpeciesIs } from "#enums/species-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 describe.each<{ name: string; move: MoveId }>([
   { name: "Bolt Beak", move: MoveId.BOLT_BEAK },
@@ -30,10 +31,10 @@ describe.each<{ name: string; move: MoveId }>([
     game = new GameManager(phaserGame);
     game.override
       .moveset(move)
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .battleType(BattleType.TRAINER)
-      .disableCrits()
+      .criticalHits(false)
       .enemyLevel(100)
       .enemySpecies(SpeciesId.DRACOVISH)
       .enemyAbility(AbilityId.BALL_FETCH)
@@ -59,7 +60,7 @@ describe.each<{ name: string; move: MoveId }>([
 
     expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power * 2);
   });
-  
+
   it("should only consider the selected target in Double Battles", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
@@ -89,14 +90,15 @@ describe.each<{ name: string; move: MoveId }>([
     { type: "an Instructed", allyMove: MoveId.INSTRUCT },
   ])("should double power if $type move is used as the target's first action that turn", async ({ allyMove }) => {
     game.override.battleStyle("double").moveset([move, allyMove]).enemyAbility(AbilityId.DANCER);
-    await game.classicMode.startBattle([SpeciesIs.DRACOVISH, SpeciesId.ARCTOZOLT]);
+    await game.classicMode.startBattle([SpeciesId.DRACOVISH, SpeciesId.ARCTOZOLT]);
 
     // Simulate enemy having used splash last turn to allow Instruct to copy it
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     enemy.pushMoveHistory({
       move: MoveId.SPLASH,
       targets: [BattlerIndex.ENEMY],
       turn: game.scene.currentBattle.turn - 1,
+      useMode: MoveUseMode.NORMAL,
     });
 
     game.move.select(move, BattlerIndex.PLAYER, BattlerIndex.ENEMY);

@@ -28,7 +28,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
       .ability(AbilityId.STURDY)
       .startingLevel(200)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.STURDY)
       .enemyMoveset(MoveId.SPLASH);
