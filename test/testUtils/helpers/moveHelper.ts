@@ -64,7 +64,7 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        `MoveHelper.select called with move ${toReadableString(MoveId[move])} not in moveset; Battler Index: ${BattlerIndex[pkmIndex]}`,
+        `MoveHelper.select called with move ${toReadableString(MoveId[move])} not in moveset;\nBattler Index: ${BattlerIndex[pkmIndex]};\nMoveset: ${this.game.scene.getField()[pkmIndex].getMoveset()}`,
       );
     }
 
