@@ -28,10 +28,17 @@ export class PostSummonPhase extends PokemonPhase {
 
     const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
     for (const p of field) {
-      applyAbAttrs("CommanderAbAttr", p, null, false);
+      if (p.isActive(true)) {
+        applyAbAttrs("CommanderAbAttr", p, null, false);
+      }
     }
 
     this.end();
+  }
+
+  override end() {
+    globalScene.phaseManager.startNextDynamicPhase("PostSummonPhase");
+    super.end();
   }
 
   public getPriority() {

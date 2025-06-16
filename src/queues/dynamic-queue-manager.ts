@@ -1,5 +1,5 @@
 import type { PhaseConditionFunc } from "#app/@types/phase-condition";
-import type { PhaseString } from "#app/@types/phase-types";
+import type { DynamicPhaseString, PhaseString } from "#app/@types/phase-types";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { Phase } from "#app/phase";
 import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
@@ -29,8 +29,11 @@ export class DynamicQueueManager {
     this.dynamicPhaseMap.get(phase.phaseName)?.push(phase);
   }
 
-  public popNextPhase(): Phase | undefined {
-    return [...this.dynamicPhaseMap.values()].find(queue => !queue.isEmpty())?.pop();
+  public popNextPhase(type?: DynamicPhaseString): Phase | undefined {
+    const queue = type
+      ? this.dynamicPhaseMap.get(type)
+      : [...this.dynamicPhaseMap.values()].find(queue => !queue.isEmpty());
+    return queue?.pop();
   }
 
   public isDynamicPhase(type: PhaseString): boolean {

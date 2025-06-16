@@ -80,6 +80,7 @@ import { noAbilityTypeOverrideMoves } from "../moves/invalid-moves";
 import type { Localizable } from "#app/@types/locales";
 import { applyAbAttrs } from "./apply-ab-attrs";
 import { MovePriorityModifier } from "#enums/move-priority-modifier";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
 export class Ability implements Localizable {
   public id: AbilityId;
@@ -4016,6 +4017,7 @@ export class CommanderAbAttr extends AbAttr {
     return (
       globalScene.currentBattle?.double &&
       !isNullOrUndefined(ally) &&
+      ally.isActive(true) &&
       ally.species.speciesId === SpeciesId.DONDOZO &&
       !(ally.isFainted() || ally.getTag(BattlerTagType.COMMANDED))
     );
@@ -6093,10 +6095,19 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
       if (move.getMove().is("AttackMove") || move.getMove().is("StatusMove")) {
         const target = this.getTarget(dancer, source, targets);
-        phaseManager.unshiftNew("MovePhase", dancer, target, move, true, true);
+        phaseManager.pushNew("MovePhase", dancer, target, move, true, true, false, MovePhaseTimingModifier.FIRST);
       } else if (move.getMove().is("SelfStatusMove")) {
         // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
-        phaseManager.unshiftNew("MovePhase", dancer, [dancer.getBattlerIndex()], move, true, true);
+        phaseManager.pushNew(
+          "MovePhase",
+          dancer,
+          [dancer.getBattlerIndex()],
+          move,
+          true,
+          true,
+          false,
+          MovePhaseTimingModifier.FIRST,
+        );
       }
     }
   }

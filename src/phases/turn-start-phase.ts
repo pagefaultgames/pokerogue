@@ -132,7 +132,7 @@ export class TurnStartPhase extends FieldPhase {
         case Command.POKEMON:
           {
             const switchType = turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH;
-            phaseManager.unshiftNew(
+            phaseManager.pushNew(
               "SwitchSummonPhase",
               switchType,
               pokemon.getFieldIndex(),

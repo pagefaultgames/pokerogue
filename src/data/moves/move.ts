@@ -6219,7 +6219,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
           if (user.fieldPosition === FieldPosition.CENTER) {
             user.setFieldPosition(FieldPosition.LEFT);
           }
-          globalScene.phaseManager.unshiftNew("SwitchSummonPhase", SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, false);
+          globalScene.phaseManager.pushNew("SwitchSummonPhase", SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, false);
         }
       }
       return true;
@@ -6769,7 +6769,7 @@ class CallMoveAttr extends OverrideMoveEffectAttr {
       : [ this.hasTarget ? target.getBattlerIndex() : moveTargets.targets[user.randBattleSeedInt(moveTargets.targets.length)] ]; // account for Mirror Move having a target already
     user.getMoveQueue().push({ move: move.id, targets: targets, virtual: true, ignorePP: true });
     globalScene.phaseManager.unshiftNew("LoadMoveAnimPhase", move.id);
-    globalScene.phaseManager.unshiftNew("MovePhase", user, targets, new PokemonMove(move.id, 0, 0, true), true, true);
+    globalScene.phaseManager.pushNew("MovePhase", user, targets, new PokemonMove(move.id, 0, 0, true), true, true, false, MovePhaseTimingModifier.FIRST);
     return true;
   }
 }
@@ -6998,7 +6998,7 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
 
     user.getMoveQueue().push({ move: moveId, targets: [ target.getBattlerIndex() ], ignorePP: true });
     globalScene.phaseManager.unshiftNew("LoadMoveAnimPhase", moveId);
-    globalScene.phaseManager.unshiftNew("MovePhase", user, [ target.getBattlerIndex() ], new PokemonMove(moveId, 0, 0, true), true);
+    globalScene.phaseManager.pushNew("MovePhase", user, [ target.getBattlerIndex() ], new PokemonMove(moveId, 0, 0, true), true);
     return true;
   }
 }
@@ -7085,7 +7085,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
     }));
     target.getMoveQueue().unshift({ move: lastMove.move, targets: moveTargets, ignorePP: false });
     target.turnData.extraTurns++;
-    globalScene.phaseManager.appendNewToPhase("MoveEndPhase", "MovePhase", target, moveTargets, movesetMove, false, false, false, MovePhaseTimingModifier.FIRST);
+    globalScene.phaseManager.pushNew("MovePhase", target, moveTargets, movesetMove, false, false, false, MovePhaseTimingModifier.FIRST);
     return true;
   }
 
