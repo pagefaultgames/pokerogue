@@ -33,7 +33,7 @@ describe("Moves - Secret Power", () => {
       .moveset([MoveId.SECRET_POWER])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyLevel(60)
       .enemyAbility(AbilityId.BALL_FETCH);

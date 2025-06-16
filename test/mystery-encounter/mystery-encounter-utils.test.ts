@@ -14,7 +14,7 @@ import {
   getRandomSpeciesByStarterCost,
   koPlayerPokemon,
 } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { PokemonType } from "#enums/pokemon-type";
 import { MessagePhase } from "#app/phases/message-phase";
 import GameManager from "#test/testUtils/gameManager";
