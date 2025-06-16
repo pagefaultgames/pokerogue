@@ -44,8 +44,8 @@ describe("Moves - Gastro Acid", () => {
     expect(enemy1.summonData.abilitySuppressed).toBe(true);
     expect(enemy2.summonData.abilitySuppressed).toBe(false);
 
-    game.move.select(MoveId.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(MoveId.WATER_GUN, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
+    game.move.use(MoveId.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.use(MoveId.WATER_GUN, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
     await game.toEndOfTurn();
 
     expect(enemy1.summonData.abilitySuppressed).toBe(true);
