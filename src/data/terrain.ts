@@ -113,7 +113,9 @@ export function getTerrainStartMessage(terrainType: TerrainType): string {
       return i18next.t("terrain:grassyStartMessage");
     case TerrainType.PSYCHIC:
       return i18next.t("terrain:psychicStartMessage");
+    case TerrainType.NONE:
     default:
+      terrainType satisfies TerrainType.NONE;
       console.warn(`${terrainType} unexpectedly provided as terrain type to getTerrainStartMessage!`);
       return "";
   }
@@ -134,7 +136,9 @@ export function getTerrainClearMessage(terrainType: TerrainType): string {
       return i18next.t("terrain:grassyClearMessage");
     case TerrainType.PSYCHIC:
       return i18next.t("terrain:psychicClearMessage");
+    case TerrainType.NONE:
     default:
+      terrainType satisfies TerrainType.NONE;
       console.warn(`${terrainType} unexpectedly provided as terrain type to getTerrainClearMessage!`);
       return "";
   }
@@ -159,7 +163,9 @@ export function getTerrainBlockMessage(pokemon: Pokemon, terrainType: TerrainTyp
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         terrainName: getTerrainName(terrainType),
       });
+    case TerrainType.NONE:
     default:
+      terrainType satisfies TerrainType.NONE;
       console.warn(`${terrainType} unexpectedly provided as terrain type to getTerrainBlockMessage!`);
       return "";
   }
