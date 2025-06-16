@@ -1363,7 +1363,6 @@ export default class PartyUiHandler extends MessageUiHandler {
         break;
       case PartyUiMode.DISCARD:
         this.updateOptionsWithModifierTransferMode(pokemon);
-        //maybe change the name, this is the item selection menu
         break;
       // TODO: This still needs to be broken up.
       // It could use a rework differentiating different kind of switches
@@ -2071,7 +2070,7 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
   setup() {
     this.transferIcon = globalScene.add.sprite(0, 0, "party_transfer", "normal");
     this.discardIcon = globalScene.add.sprite(0, 0, "party_discard", "normal");
-    this.textBox = addTextObject(-8, -7, "Transfer", TextStyle.PARTY);
+    this.textBox = addTextObject(-8, -7, i18next.t("partyUiHandler:TRANSFER"), TextStyle.PARTY);
 
     this.add(this.transferIcon);
     this.add(this.discardIcon);
@@ -2108,13 +2107,15 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
         this.transferIcon.setVisible(true);
         this.discardIcon.setVisible(false);
         this.textBox.setVisible(true);
-        this.textBox.setText("Transfer");
+        this.textBox.setText(i18next.t("partyUiHandler:TRANSFER"));
+        this.transferIcon.displayWidth = this.textBox.text.length * 9 + 3;
         break;
       case PartyUiMode.MODIFIER_TRANSFER:
         this.transferIcon.setVisible(false);
         this.discardIcon.setVisible(true);
         this.textBox.setVisible(true);
         this.textBox.setText("Discard");
+        this.discardIcon.displayWidth = this.textBox.text.length * 9 + 3;
         break;
       default:
         return;
