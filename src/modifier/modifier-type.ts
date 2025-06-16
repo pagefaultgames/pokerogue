@@ -1587,8 +1587,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
                 p.species.speciesId === SpeciesId.SLOWPOKE ||
                 p.species.speciesId === SpeciesId.EEVEE ||
                 p.species.speciesId === SpeciesId.KIRLIA ||
-                p.species.speciesId === SpeciesId.SNORUNT
-              ),
+                p.species.speciesId === SpeciesId.SNORUNT),
           )
           .flatMap(p => {
             const evolutions = pokemonEvolutions[p.species.speciesId];
@@ -1604,8 +1603,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
                 p.fusionSpecies.speciesId === SpeciesId.SLOWPOKE ||
                 p.fusionSpecies.speciesId === SpeciesId.EEVEE ||
                 p.fusionSpecies.speciesId === SpeciesId.KIRLIA ||
-                p.fusionSpecies.speciesId === SpeciesId.SNORUNT
-              ),
+                p.fusionSpecies.speciesId === SpeciesId.SNORUNT),
           )
           .flatMap(p => {
             const evolutions = pokemonEvolutions[p.fusionSpecies!.speciesId];
