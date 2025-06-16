@@ -1,5 +1,5 @@
 import { allMoves } from "#app/data/data-lists";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { PokemonType } from "#enums/pokemon-type";
 import { AbilityId } from "#enums/ability-id";

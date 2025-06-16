@@ -38,12 +38,12 @@ describe("Moves - Flame Burst", () => {
     game.override
       .battleStyle("double")
       .moveset([MoveId.FLAME_BURST, MoveId.SPLASH])
-      .disableCrits()
+      .criticalHits(false)
       .ability(AbilityId.UNNERVE)
       .startingWave(4)
       .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset([MoveId.SPLASH]);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("inflicts damage to the target's ally equal to 1/16 of its max HP", async () => {
