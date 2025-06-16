@@ -1,11 +1,11 @@
 {
 	"textures": [
 		{
-			"image": "party_discard.png",
+			"image": "party_transfer.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 75,
-				"h": 46
+				"w": 52,
+				"h": 32
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 75,
-						"h": 23
+						"w": 52,
+						"h": 16
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 75,
-						"h": 23
+						"w": 52,
+						"h": 16
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 75,
-						"h": 23
+						"w": 52,
+						"h": 16
 					}
 				},
 				{
@@ -35,20 +35,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 75,
-						"h": 23
+						"w": 52,
+						"h": 16
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 75,
-						"h": 23
+						"w": 52,
+						"h": 16
 					},
 					"frame": {
 						"x": 0,
-						"y": 23,
-						"w": 75,
-						"h": 23
+						"y": 16,
+						"w": 52,
+						"h": 16
 					}
 				}
 			]

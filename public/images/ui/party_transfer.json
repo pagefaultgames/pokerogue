@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "party_discard.png",
+			"image": "party_transfer.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 75,

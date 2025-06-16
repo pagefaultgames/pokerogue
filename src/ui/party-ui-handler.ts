@@ -314,6 +314,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.iconAnimHandler.setup();
 
     const partyDiscardModeButton = new PartyDiscardModeButton(60, -globalScene.game.canvas.height / 15 - 1);
+
     partyContainer.add(partyDiscardModeButton);
 
     this.PartyDiscardModeButton = partyDiscardModeButton;
@@ -1046,9 +1047,17 @@ export default class PartyUiHandler extends MessageUiHandler {
     let success = false;
     switch (button) {
       case Button.UP:
-        if (this.cursor === 7 && this.isItemManageMode()) {
-          success = this.setCursor(0);
-          break;
+        if (this.cursor === 1) {
+          if (this.isItemManageMode()) {
+            success = this.setCursor(7);
+            break;
+          }
+        }
+        if (this.cursor === 7) {
+          if (this.isItemManageMode()) {
+            success = this.setCursor(0);
+            break;
+          }
         }
         success = this.setCursor(this.cursor ? (this.cursor < 6 ? this.cursor - 1 : slotCount - 1) : 6);
         break;
@@ -1056,6 +1065,12 @@ export default class PartyUiHandler extends MessageUiHandler {
         if (this.cursor === 0) {
           if (this.isItemManageMode()) {
             success = this.setCursor(7);
+            break;
+          }
+        }
+        if (this.cursor === 7) {
+          if (this.isItemManageMode()) {
+            success = this.setCursor(1);
             break;
           }
         }
@@ -1750,7 +1765,7 @@ class PartySlot extends Phaser.GameObjects.Container {
         ? -184 +
             (globalScene.currentBattle.double ? -40 : 0) +
             (28 + (globalScene.currentBattle.double ? 8 : 0)) * slotIndex
-        : -124 + (globalScene.currentBattle.double ? -8 : 0) + slotIndex * 64,
+        : -124 + (globalScene.currentBattle.double ? -20 : 0) + slotIndex * 76,
     );
 
     this.slotIndex = slotIndex;
@@ -2006,7 +2021,6 @@ class PartySlot extends Phaser.GameObjects.Container {
 
 class PartyCancelButton extends Phaser.GameObjects.Container {
   private selected: boolean;
-
   private partyCancelBg: Phaser.GameObjects.Sprite;
   private partyCancelPb: Phaser.GameObjects.Sprite;
 
@@ -2015,7 +2029,6 @@ class PartyCancelButton extends Phaser.GameObjects.Container {
 
     this.setup();
   }
-
   setup() {
     const partyCancelBg = globalScene.add.sprite(0, 0, "party_cancel");
     this.add(partyCancelBg);
@@ -2059,6 +2072,7 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
 
   private transferIcon: Phaser.GameObjects.Sprite;
   private discardIcon: Phaser.GameObjects.Sprite;
+  private partyDiscardPb: Phaser.GameObjects.Sprite;
   private textBox: Phaser.GameObjects.Text;
 
   constructor(x: number, y: number) {
@@ -2068,12 +2082,14 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    this.transferIcon = globalScene.add.sprite(0, 0, "party_transfer", "normal");
-    this.discardIcon = globalScene.add.sprite(0, 0, "party_discard", "normal");
+    this.transferIcon = globalScene.add.sprite(0, 0, "party_transfer");
+    this.discardIcon = globalScene.add.sprite(0, 0, "party_discard");
+    this.partyDiscardPb = globalScene.add.sprite(-20, 0, "party_pb");
     this.textBox = addTextObject(-8, -7, i18next.t("partyUiHandler:TRANSFER"), TextStyle.PARTY);
 
     this.add(this.transferIcon);
     this.add(this.discardIcon);
+    this.add(this.partyDiscardPb);
     this.add(this.textBox);
 
     this.clear();
@@ -2088,6 +2104,7 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
 
     this.transferIcon.setFrame("selected");
     this.discardIcon.setFrame("selected");
+    this.partyDiscardPb.setFrame("party_pb_sel");
   }
 
   deselect() {
@@ -2099,6 +2116,7 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
 
     this.transferIcon.setFrame("normal");
     this.discardIcon.setFrame("normal");
+    this.partyDiscardPb.setFrame("party_pb");
   }
 
   toggleIcon(partyMode: number) {
@@ -2108,6 +2126,10 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
         this.discardIcon.setVisible(false);
         this.textBox.setVisible(true);
         this.textBox.setText(i18next.t("partyUiHandler:TRANSFER"));
+        this.setPosition(
+          globalScene.currentBattle.double ? 64 : 60,
+          globalScene.currentBattle.double ? -106 : -globalScene.game.canvas.height / 15 - 1,
+        );
         this.transferIcon.displayWidth = this.textBox.text.length * 9 + 3;
         break;
       case PartyUiMode.MODIFIER_TRANSFER:
@@ -2115,6 +2137,10 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
         this.discardIcon.setVisible(true);
         this.textBox.setVisible(true);
         this.textBox.setText("Discard");
+        this.setPosition(
+          globalScene.currentBattle.double ? 64 : 60,
+          globalScene.currentBattle.double ? -106 : -globalScene.game.canvas.height / 15 - 1,
+        );
         this.discardIcon.displayWidth = this.textBox.text.length * 9 + 3;
         break;
       default:
