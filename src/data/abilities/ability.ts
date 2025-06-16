@@ -2157,7 +2157,9 @@ export class FieldMultiplyStatAbAttr extends AbAttr {
       (!hasApplied.value &&
         this.stat === stat &&
         // targets with the same stat-changing ability as this are unaffected
-        checkedPokemon.getAbilityAttrs("FieldMultiplyStatAbAttr").every(attr => attr.stat !== stat))
+        checkedPokemon
+          .getAbilityAttrs("FieldMultiplyStatAbAttr")
+          .every(attr => attr.stat !== stat))
     );
   }
 
