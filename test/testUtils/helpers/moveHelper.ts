@@ -67,7 +67,7 @@ export class MoveHelper extends GameManagerHelper {
         `MoveHelper.select called with move ${toReadableString(MoveId[move])} not in moveset;\nBattler Index: ${BattlerIndex[pkmIndex]};\nMoveset: ${this.game.scene
           .getField()
           [pkmIndex].getMoveset()
-          .map(pm => pm.moveId)}`,
+          .map(pm => MoveId[pm.moveId])}`,
       );
     }
 
@@ -108,7 +108,7 @@ export class MoveHelper extends GameManagerHelper {
         `MoveHelper.selectWithTera called with move ${toReadableString(MoveId[move])} not in moveset;\nBattler Index: ${BattlerIndex[pkmIndex]};\nMoveset: ${this.game.scene
           .getField()
           [pkmIndex].getMoveset()
-          .map(pm => pm.moveId)}`,
+          .map(pm => MoveId[pm.moveId])}`,
       );
     }
 
