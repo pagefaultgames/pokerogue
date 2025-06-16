@@ -289,7 +289,6 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
   queuePostSummon(): void {
     globalScene.phaseManager.pushNew("PostSummonPhase", this.getPokemon().getBattlerIndex());
-    globalScene.phaseManager.startNextDynamicPhase("PostSummonPhase");
   }
 
   end() {
