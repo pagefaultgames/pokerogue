@@ -22,7 +22,11 @@ describe("Moves - Reflect Type", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.ability(AbilityId.BALL_FETCH).battleStyle("single").disableCrits().enemyAbility(AbilityId.BALL_FETCH);
+    game.override
+      .ability(AbilityId.BALL_FETCH)
+      .battleStyle("single")
+      .criticalHits(false)
+      .enemyAbility(AbilityId.BALL_FETCH);
   });
 
   it("will make the user Normal/Grass if targetting a typeless Pokemon affected by Forest's Curse", async () => {

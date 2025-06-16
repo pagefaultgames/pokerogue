@@ -32,7 +32,7 @@ describe("Abilities - Intimidate", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("should lower ATK stat stage by 1 of enemy Pokemon on entry and player switch", async () => {
+  it("should lower all non-immune opponents ATK stat stage by 1 of enemy Pokemon on entry and player switch", async () => {
     await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
 
     const player = game.field.getPlayerPokemon()

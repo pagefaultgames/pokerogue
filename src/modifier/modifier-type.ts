@@ -1218,12 +1218,8 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
       (pokemon: PlayerPokemon) => {
         if (
           pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) &&
-          pokemonEvolutions[pokemon.species.speciesId].filter(
-            e =>
-              e.item === this.evolutionItem &&
-              (!e.condition || e.condition.predicate(pokemon)) &&
-              (e.preFormKey === null || e.preFormKey === pokemon.getFormKey()),
-          ).length &&
+          pokemonEvolutions[pokemon.species.speciesId].filter(e => e.validate(pokemon, false, this.evolutionItem))
+            .length &&
           pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX
         ) {
           return null;
@@ -1232,12 +1228,8 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
           pokemon.isFusion() &&
           pokemon.fusionSpecies &&
           pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) &&
-          pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(
-            e =>
-              e.item === this.evolutionItem &&
-              (!e.condition || e.condition.predicate(pokemon)) &&
-              (e.preFormKey === null || e.preFormKey === pokemon.getFusionFormKey()),
-          ).length &&
+          pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => e.validate(pokemon, true, this.evolutionItem))
+            .length &&
           pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
         ) {
           return null;
@@ -1597,12 +1589,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
           )
           .flatMap(p => {
             const evolutions = pokemonEvolutions[p.species.speciesId];
-            return evolutions.filter(
-              e =>
-                e.item !== EvolutionItem.NONE &&
-                (e.evoFormKey === null || (e.preFormKey || "") === p.getFormKey()) &&
-                (!e.condition || e.condition.predicate(p)),
-            );
+            return evolutions.filter(e => e.isValidItemEvolution(p));
           }),
         party
           .filter(
@@ -1616,16 +1603,11 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
           )
           .flatMap(p => {
             const evolutions = pokemonEvolutions[p.fusionSpecies!.speciesId];
-            return evolutions.filter(
-              e =>
-                e.item !== EvolutionItem.NONE &&
-                (e.evoFormKey === null || (e.preFormKey || "") === p.getFusionFormKey()) &&
-                (!e.condition || e.condition.predicate(p)),
-            );
+            return evolutions.filter(e => e.validate(p, true));
           }),
       ]
         .flat()
-        .flatMap(e => e.item)
+        .flatMap(e => e.evoItem)
         .filter(i => (!!i && i > 50) === rare);
 
       if (!evolutionItemPool.length) {
@@ -1892,7 +1874,8 @@ const modifierTypeInitObj = Object.freeze({
     new PokemonHeldItemModifierType(
       "modifierType:ModifierType.EVOLUTION_TRACKER_GIMMIGHOUL",
       "relic_gold",
-      (type, args) => new EvoTrackerModifier(type, (args[0] as Pokemon).id, SpeciesId.GIMMIGHOUL, 10),
+      (type, args) =>
+        new EvoTrackerModifier(type, (args[0] as Pokemon).id, SpeciesId.GIMMIGHOUL, 10, (args[1] as number) ?? 1),
     ),
 
   MEGA_BRACELET: () =>
@@ -2393,8 +2376,6 @@ export interface ModifierPool {
   [tier: string]: WeightedModifierType[];
 }
 
-const modifierPool: ModifierPool = {};
-
 let modifierPoolThresholds = {};
 let ignoredPoolIndexes = {};
 
@@ -2859,7 +2840,7 @@ function getNewModifierTypeOption(
     }
 
     tier += upgradeCount;
-    while (tier && (!modifierPool.hasOwnProperty(tier) || !modifierPool[tier].length)) {
+    while (tier && (!pool.hasOwnProperty(tier) || !pool[tier].length)) {
       tier--;
       if (upgradeCount) {
         upgradeCount--;
@@ -2870,7 +2851,7 @@ function getNewModifierTypeOption(
     if (tier < ModifierTier.MASTER && allowLuckUpgrades) {
       const partyLuckValue = getPartyLuckValue(party);
       const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
-      while (modifierPool.hasOwnProperty(tier + upgradeCount + 1) && modifierPool[tier + upgradeCount + 1].length) {
+      while (pool.hasOwnProperty(tier + upgradeCount + 1) && pool[tier + upgradeCount + 1].length) {
         if (randSeedInt(upgradeOdds) < 4) {
           upgradeCount++;
         } else {
@@ -2920,6 +2901,7 @@ function getNewModifierTypeOption(
 }
 
 export function getDefaultModifierTypeForTier(tier: ModifierTier): ModifierType {
+  const modifierPool = getModifierPoolForType(ModifierPoolType.PLAYER);
   let modifierType: ModifierType | WeightedModifierType = modifierPool[tier || ModifierTier.COMMON][0];
   if (modifierType instanceof WeightedModifierType) {
     modifierType = (modifierType as WeightedModifierType).modifierType;
