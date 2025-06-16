@@ -4429,28 +4429,7 @@ export class LastMoveDoublePowerAttr extends VariablePowerAttr {
    */
   apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
     const power = args[0] as NumberHolder;
-    const enemy = user.getOpponent(0);
-    const pokemonActed: Pokemon[] = [];
-
-    if (enemy?.turnData.acted) {
-      pokemonActed.push(enemy);
-    }
-
-    if (globalScene.currentBattle.double) {
-      const userAlly = user.getAlly();
-      const enemyAlly = enemy?.getAlly();
-
-      if (userAlly?.turnData.acted) {
-        pokemonActed.push(userAlly);
-      }
-      if (enemyAlly?.turnData.acted) {
-        pokemonActed.push(enemyAlly);
-      }
-    }
-
-    pokemonActed.sort((a, b) => b.turnData.order - a.turnData.order);
-
-    for (const p of pokemonActed) {
+    for (const p of globalScene.phaseManager.dynamicQueueManager.getLastTurnOrder().slice(0, -1).reverse()) {
       const [ lastMove ] = p.getLastXMoves(1);
       if (lastMove.result !== MoveResult.FAIL) {
         if ((lastMove.result === MoveResult.SUCCESS) && (lastMove.move === this.move)) {

@@ -1,5 +1,6 @@
 import type { PhaseConditionFunc } from "#app/@types/phase-condition";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
+import type Pokemon from "#app/field/pokemon";
 import type { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import { isNullOrUndefined } from "#app/utils/common";
@@ -7,6 +8,8 @@ import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
 export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase> {
+  private lastTurnOrder: Pokemon[] = [];
+
   public override reorder(): void {
     super.reorder();
     this.sortPostSpeed();
@@ -31,8 +34,26 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
     this.setOrder = order;
   }
 
+  public override pop(): MovePhase | undefined {
+    this.reorder();
+    const phase = this.queue.shift();
+    if (phase) {
+      this.lastTurnOrder.push(phase.pokemon);
+    }
+    return phase;
+  }
+
+  public getTurnOrder(): Pokemon[] {
+    return this.lastTurnOrder;
+  }
+
+  public clearTurnOrder(): void {
+    this.lastTurnOrder = [];
+  }
+
   public override clear(): void {
     this.setOrder = undefined;
+    this.lastTurnOrder = [];
     super.clear();
   }
 

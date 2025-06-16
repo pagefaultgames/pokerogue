@@ -1,6 +1,7 @@
 import type { PhaseConditionFunc } from "#app/@types/phase-condition";
 import type { DynamicPhaseString, PhaseString } from "#app/@types/phase-types";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
+import type Pokemon from "#app/field/pokemon";
 import type { Phase } from "#app/phase";
 import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
 import type { PhasePriorityQueue } from "#app/queues/phase-priority-queue";
@@ -67,6 +68,14 @@ export class DynamicQueueManager {
 
   public setMoveOrder(order: BattlerIndex[]) {
     this.getMovePhaseQueue().setMoveOrder(order);
+  }
+
+  public getLastTurnOrder(): Pokemon[] {
+    return this.getMovePhaseQueue().getTurnOrder();
+  }
+
+  public clearLastTurnOrder(): void {
+    this.getMovePhaseQueue().clearTurnOrder();
   }
 
   private getMovePhaseQueue(): MovePhasePriorityQueue {
