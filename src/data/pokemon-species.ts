@@ -7,7 +7,8 @@ import i18next from "i18next";
 import type { AnySound } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import type { GameMode } from "#app/game-mode";
-import { DexAttr, type StarterMoveset } from "#app/system/game-data";
+import type { StarterMoveset } from "#app/system/game-data";
+import { DexAttr } from "#enums/dex-attr";
 import {
   isNullOrUndefined,
   capitalizeString,
@@ -83,13 +84,14 @@ export const normalForm: SpeciesId[] = [
 
 /**
  * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode SpeciesId} enum given
- * @param species The species to fetch
+ * @param species - The {@linkcode SpeciesId} to fetch.
+ * If an array of `SpeciesId`s is passed (such as for named trainer spawn pools),
+ * one will be selected at random.
  * @returns The associated {@linkcode PokemonSpecies} object
  */
 export function getPokemonSpecies(species: SpeciesId | SpeciesId[]): PokemonSpecies {
-  // If a special pool (named trainers) is used here it CAN happen that they have a array as species (which means choose one of those two). So we catch that with this code block
   if (Array.isArray(species)) {
-    // Pick a random species from the list
+    // TODO: this RNG roll should not be handled by this function
     species = species[Math.floor(Math.random() * species.length)];
   }
   if (species >= 2000) {

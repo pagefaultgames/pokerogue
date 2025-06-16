@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import GameManager from "#test/testUtils/gameManager";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -52,7 +52,7 @@ describe("Moves - Gigaton Hammer", () => {
     const enemy2 = game.scene.getEnemyPokemon()!;
 
     expect(enemy2.hp).toBe(enemy2.getMaxHp());
-  }, 20000);
+  });
 
   it("can be used again if recalled and sent back out", async () => {
     game.override.startingWave(4);
@@ -75,5 +75,5 @@ describe("Moves - Gigaton Hammer", () => {
     const enemy2 = game.scene.getEnemyPokemon()!;
 
     expect(enemy2.hp).toBeLessThan(enemy2.getMaxHp());
-  }, 20000);
+  });
 });

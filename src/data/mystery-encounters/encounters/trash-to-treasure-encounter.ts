@@ -8,7 +8,7 @@ import {
   transitionMysteryEncounterIntroVisuals,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -21,13 +21,14 @@ import { HitHealModifier, PokemonHeldItemModifier, TurnHealModifier } from "#app
 import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import i18next from "#app/plugins/i18n";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#enums/modifier-tier";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MoveId } from "#enums/move-id";
-import { BattlerIndex } from "#app/battle";
-import { PokemonMove } from "#app/field/pokemon";
+import { BattlerIndex } from "#enums/battler-index";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { randSeedInt } from "#app/utils/common";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/trashToTreasure";
@@ -207,13 +208,13 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
             sourceBattlerIndex: BattlerIndex.ENEMY,
             targets: [BattlerIndex.PLAYER],
             move: new PokemonMove(MoveId.TOXIC),
-            ignorePp: true,
+            useMode: MoveUseMode.IGNORE_PP,
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
             targets: [BattlerIndex.ENEMY],
             move: new PokemonMove(MoveId.STOCKPILE),
-            ignorePp: true,
+            useMode: MoveUseMode.IGNORE_PP,
           },
         );
         await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);

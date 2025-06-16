@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -89,7 +89,6 @@ describe("Abilities - Flower Veil", () => {
     await game.move.selectEnemyMove(MoveId.THUNDER_WAVE);
     await game.toNextTurn();
     expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
-    vi.spyOn(allMoves[MoveId.THUNDER_WAVE], "accuracy", "get").mockClear();
   });
 
   it("should not prevent status conditions for a non-grass user and its non-grass allies", async () => {

@@ -1,8 +1,8 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -22,14 +22,15 @@ describe("Moves - Gastro Acid", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.startingLevel(1);
-    game.override.enemyLevel(100);
-    game.override.ability(AbilityId.BALL_FETCH);
-    game.override.moveset([MoveId.GASTRO_ACID, MoveId.WATER_GUN, MoveId.SPLASH, MoveId.CORE_ENFORCER]);
-    game.override.enemySpecies(SpeciesId.BIDOOF);
-    game.override.enemyMoveset(MoveId.SPLASH);
-    game.override.enemyAbility(AbilityId.WATER_ABSORB);
+    game.override
+      .battleStyle("double")
+      .startingLevel(1)
+      .enemyLevel(100)
+      .ability(AbilityId.NONE)
+      .moveset([MoveId.GASTRO_ACID, MoveId.WATER_GUN, MoveId.SPLASH, MoveId.CORE_ENFORCER])
+      .enemySpecies(SpeciesId.BIDOOF)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyAbility(AbilityId.WATER_ABSORB);
   });
 
   it("suppresses effect of ability", async () => {

@@ -4,7 +4,7 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { StatusEffect } from "#enums/status-effect";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { allMoves } from "#app/data/data-lists";
 
 describe("Moves - Toxic", () => {
@@ -75,8 +75,7 @@ describe("Moves - Toxic", () => {
   });
 
   it("moves other than Toxic should not hit semi-invulnerable targets even if user is Poison-type", async () => {
-    game.override.moveset(MoveId.SWIFT);
-    game.override.enemyMoveset(MoveId.FLY);
+    game.override.moveset(MoveId.SWIFT).enemyMoveset(MoveId.FLY);
     await game.classicMode.startBattle([SpeciesId.TOXAPEX]);
 
     game.move.select(MoveId.SWIFT);

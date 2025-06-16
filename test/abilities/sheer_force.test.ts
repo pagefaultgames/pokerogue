@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { PokemonType } from "#enums/pokemon-type";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -7,7 +7,6 @@ import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { FlinchAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 
 describe("Abilities - Sheer Force", () => {
@@ -43,7 +42,7 @@ describe("Abilities - Sheer Force", () => {
 
     const airSlashMove = allMoves[MoveId.AIR_SLASH];
     vi.spyOn(airSlashMove, "calculateBattlePower");
-    const airSlashFlinchAttr = airSlashMove.getAttrs(FlinchAttr)[0];
+    const airSlashFlinchAttr = airSlashMove.getAttrs("FlinchAttr")[0];
     vi.spyOn(airSlashFlinchAttr, "getMoveChance");
 
     game.move.select(MoveId.AIR_SLASH);
@@ -70,7 +69,7 @@ describe("Abilities - Sheer Force", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(bindMove.calculateBattlePower).toHaveLastReturnedWith(bindMove.power);
-  }, 20000);
+  });
 
   it("Sheer Force does not boost the base damage of moves with no secondary effect", async () => {
     game.override.moveset([MoveId.TACKLE]);
@@ -98,7 +97,7 @@ describe("Abilities - Sheer Force", () => {
     const enemyPokemon = game.scene.getEnemyPokemon();
     const headbuttMove = allMoves[MoveId.HEADBUTT];
     vi.spyOn(headbuttMove, "calculateBattlePower");
-    const headbuttFlinchAttr = headbuttMove.getAttrs(FlinchAttr)[0];
+    const headbuttFlinchAttr = headbuttMove.getAttrs("FlinchAttr")[0];
     vi.spyOn(headbuttFlinchAttr, "getMoveChance");
 
     game.move.select(MoveId.HEADBUTT);

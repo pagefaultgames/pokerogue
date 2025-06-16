@@ -24,9 +24,7 @@ describe("Abilities - Screen Cleaner", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.ability(AbilityId.SCREEN_CLEANER);
-    game.override.enemySpecies(SpeciesId.SHUCKLE);
+    game.override.battleStyle("single").ability(AbilityId.SCREEN_CLEANER).enemySpecies(SpeciesId.SHUCKLE);
   });
 
   it("removes Aurora Veil", async () => {

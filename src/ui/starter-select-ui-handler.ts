@@ -8,7 +8,7 @@ import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { starterColors } from "#app/global-vars/starter-colors";
 import { globalScene } from "#app/global-scene";
-import type { Ability } from "#app/data/abilities/ability-class";
+import type { Ability } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate, getGrowthRateColor } from "#app/data/exp";
@@ -22,10 +22,13 @@ import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { PokemonType } from "#enums/pokemon-type";
-import { GameModes } from "#app/game-mode";
-import type { DexAttrProps, StarterMoveset, StarterAttributes, StarterPreferences } from "#app/system/game-data";
+import { GameModes } from "#enums/game-modes";
+import type { DexAttrProps, StarterMoveset, StarterAttributes } from "#app/system/game-data";
+import type { StarterPreferences } from "#app/utils/data";
 import type { DexEntry } from "#app/@types/dex-data";
-import { AbilityAttr, DexAttr, loadStarterPreferences, saveStarterPreferences } from "#app/system/game-data";
+import { loadStarterPreferences, saveStarterPreferences } from "#app/utils/data";
+import { AbilityAttr } from "#enums/ability-attr";
+import { DexAttr } from "#enums/dex-attr";
 import { Tutorial, handleTutorial } from "#app/tutorial";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
@@ -38,7 +41,8 @@ import { Egg } from "#app/data/egg";
 import Overrides from "#app/overrides";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { Passive as PassiveAttr } from "#enums/passive";
-import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { applyChallenges } from "#app/data/challenge";
+import { ChallengeType } from "#enums/challenge-type";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { Device } from "#enums/devices";
@@ -1759,7 +1763,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else if (this.randomCursorObj.visible) {
       switch (button) {
-        case Button.ACTION:
+        case Button.ACTION: {
           if (this.starterSpecies.length >= 6) {
             error = true;
             break;
@@ -1811,6 +1815,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             }
           });
           break;
+        }
         case Button.UP:
           this.randomCursorObj.setVisible(false);
           this.filterBarCursor = this.filterBar.numFilters - 1;

@@ -13,8 +13,9 @@ import Overrides from "#app/overrides";
 import PokemonData from "#app/system/pokemon-data";
 import PersistentModifierData from "#app/system/modifier-data";
 import ArenaData from "#app/system/arena-data";
-import { Unlockables } from "#app/system/unlockables";
-import { GameModes, getGameMode } from "#app/game-mode";
+import { Unlockables } from "#enums/unlockables";
+import { getGameMode } from "#app/game-mode";
+import { GameModes } from "#enums/game-modes";
 import { BattleType } from "#enums/battle-type";
 import TrainerData from "#app/system/trainer-data";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
@@ -31,7 +32,7 @@ import { GameStats } from "#app/system/game-stats";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { allMoves } from "#app/data/data-lists";
-import { TrainerVariant } from "#app/field/trainer";
+import { TrainerVariant } from "#enums/trainer-variant";
 import type { Variant } from "#app/sprites/variant";
 import { setSettingGamepad, SettingGamepad, settingGamepadDefaults } from "#app/system/settings/settings-gamepad";
 import type { SettingKeyboard } from "#app/system/settings/settings-keyboard";
@@ -46,7 +47,8 @@ import { GameDataType } from "#enums/game-data-type";
 import type { MoveId } from "#enums/move-id";
 import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
-import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { applyChallenges } from "#app/data/challenge";
+import { ChallengeType } from "#enums/challenge-type";
 import { WeatherType } from "#enums/weather-type";
 import { TerrainType } from "#app/data/terrain";
 import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
@@ -62,40 +64,12 @@ import { ArenaTrapTag } from "#app/data/arena-tag";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { DexData, DexEntry } from "../@types/dex-data";
+import { DexAttr } from "#enums/dex-attr";
+import { AbilityAttr } from "#enums/ability-attr";
+import { defaultStarterSpecies, saveKey } from "#app/constants";
+import { encrypt, decrypt } from "#app/utils/data";
 
-export const defaultStarterSpecies: SpeciesId[] = [
-  SpeciesId.BULBASAUR,
-  SpeciesId.CHARMANDER,
-  SpeciesId.SQUIRTLE,
-  SpeciesId.CHIKORITA,
-  SpeciesId.CYNDAQUIL,
-  SpeciesId.TOTODILE,
-  SpeciesId.TREECKO,
-  SpeciesId.TORCHIC,
-  SpeciesId.MUDKIP,
-  SpeciesId.TURTWIG,
-  SpeciesId.CHIMCHAR,
-  SpeciesId.PIPLUP,
-  SpeciesId.SNIVY,
-  SpeciesId.TEPIG,
-  SpeciesId.OSHAWOTT,
-  SpeciesId.CHESPIN,
-  SpeciesId.FENNEKIN,
-  SpeciesId.FROAKIE,
-  SpeciesId.ROWLET,
-  SpeciesId.LITTEN,
-  SpeciesId.POPPLIO,
-  SpeciesId.GROOKEY,
-  SpeciesId.SCORBUNNY,
-  SpeciesId.SOBBLE,
-  SpeciesId.SPRIGATITO,
-  SpeciesId.FUECOCO,
-  SpeciesId.QUAXLY,
-];
-
-const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
-
-export function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
+function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
   switch (dataType) {
     case GameDataType.SYSTEM:
       return "data";
@@ -115,20 +89,6 @@ export function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
     case GameDataType.RUN_HISTORY:
       return "runHistoryData";
   }
-}
-
-export function encrypt(data: string, bypassLogin: boolean): string {
-  return (bypassLogin
-    ? (data: string) => btoa(encodeURIComponent(data))
-    : (data: string) => AES.encrypt(data, saveKey))(data) as unknown as string; // TODO: is this correct?
-}
-
-export function decrypt(data: string, bypassLogin: boolean): string {
-  return (
-    bypassLogin
-      ? (data: string) => decodeURIComponent(atob(data))
-      : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8)
-  )(data);
 }
 
 // TODO: Move all these exported interfaces to @types
@@ -214,10 +174,6 @@ export interface StarterAttributes {
   tera?: PokemonType;
 }
 
-export interface StarterPreferences {
-  [key: number]: StarterAttributes;
-}
-
 export interface DexAttrProps {
   shiny: boolean;
   female: boolean;
@@ -233,53 +189,6 @@ export interface RunEntry {
   /*Automatically set to false at the moment - implementation TBD*/
   isFavorite: boolean;
 }
-
-export const DexAttr = {
-  NON_SHINY: 1n,
-  SHINY: 2n,
-  MALE: 4n,
-  FEMALE: 8n,
-  DEFAULT_VARIANT: 16n,
-  VARIANT_2: 32n,
-  VARIANT_3: 64n,
-  DEFAULT_FORM: 128n,
-};
-
-export const AbilityAttr = {
-  ABILITY_1: 1,
-  ABILITY_2: 2,
-  ABILITY_HIDDEN: 4,
-};
-
-// the latest data saved/loaded for the Starter Preferences. Required to reduce read/writes. Initialize as "{}", since this is the default value and no data needs to be stored if present.
-// if they ever add private static variables, move this into StarterPrefs
-const StarterPrefers_DEFAULT: string = "{}";
-let StarterPrefers_private_latest: string = StarterPrefers_DEFAULT;
-
-// called on starter selection show once
-export function loadStarterPreferences(): StarterPreferences {
-  return JSON.parse(
-    (StarterPrefers_private_latest =
-      localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) || StarterPrefers_DEFAULT),
-  );
-}
-
-// called on starter selection clear, always
-export function saveStarterPreferences(prefs: StarterPreferences): void {
-  const pStr: string = JSON.stringify(prefs);
-  if (pStr !== StarterPrefers_private_latest) {
-    // something changed, store the update
-    localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
-    // update the latest prefs
-    StarterPrefers_private_latest = pStr;
-  }
-}
-// This is its own class as StarterPreferences...
-// - don't need to be loaded on startup
-// - isn't stored with other data
-// - don't require to be encrypted
-// - shouldn't require calls outside of the starter selection
-export class StarterPrefs {}
 
 export interface StarterDataEntry {
   moveset: StarterMoveset | StarterFormMoveData | null;

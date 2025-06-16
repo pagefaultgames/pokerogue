@@ -1,6 +1,6 @@
 import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { globalScene } from "#app/global-scene";
@@ -21,8 +21,9 @@ import {
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { Nature } from "#enums/nature";
 import { MoveId } from "#enums/move-id";
-import { BattlerIndex } from "#app/battle";
-import { AiType, PokemonMove } from "#app/field/pokemon";
+import { BattlerIndex } from "#enums/battler-index";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
+import { AiType } from "#enums/ai-type";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -30,6 +31,7 @@ import { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { randSeedInt } from "#app/utils/common";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounters/slumberingSnorlax";
@@ -136,7 +138,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
         sourceBattlerIndex: BattlerIndex.ENEMY,
         targets: [BattlerIndex.PLAYER],
         move: new PokemonMove(MoveId.SNORE),
-        ignorePp: true,
+        useMode: MoveUseMode.IGNORE_PP,
       });
       await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);
     },
