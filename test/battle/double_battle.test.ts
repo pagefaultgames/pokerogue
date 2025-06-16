@@ -56,7 +56,7 @@ describe("Double Battles", () => {
 
     await game.phaseInterceptor.to(TurnInitPhase);
     expect(game.scene.getPlayerField().filter(p => !p.isFainted())).toHaveLength(2);
-  }, 20000);
+  });
 
   it("randomly chooses between single and double battles if there is no battle type override", async () => {
     let rngSweepProgress = 0; // Will simulate RNG rolls by slowly increasing from 0 to 1

@@ -33,7 +33,7 @@ describe("Moves - Heal Block", () => {
       .ability(AbilityId.NO_GUARD)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemySpecies(SpeciesId.BLISSEY)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("shouldn't stop damage from HP-drain attacks, just HP restoration", async () => {

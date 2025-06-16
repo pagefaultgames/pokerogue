@@ -24,6 +24,7 @@ import { FunAndGamesEncounter } from "#app/data/mystery-encounters/encounters/fu
 import { MoveId } from "#enums/move-id";
 import { Command } from "#enums/command";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 const namespace = "mysteryEncounters/funAndGames";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
@@ -42,10 +43,11 @@ describe("Fun And Games! - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     const biomeMap = new Map<BiomeId, MysteryEncounterType[]>([
       [BiomeId.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
@@ -58,8 +60,6 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -81,8 +81,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of CIVILIZATIONN biomes", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingBiome(BiomeId.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT).startingBiome(BiomeId.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.FUN_AND_GAMES);
@@ -154,15 +153,15 @@ describe("Fun And Games! - Mystery Encounter", () => {
       });
 
       // Turn 1
-      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, false);
+      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
       await game.phaseInterceptor.to(CommandPhase);
 
       // Turn 2
-      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, false);
+      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
       await game.phaseInterceptor.to(CommandPhase);
 
       // Turn 3
-      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, false);
+      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
 
       // Rewards
@@ -181,7 +180,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
       // Skip minigame
       scene.currentBattle.mysteryEncounter!.misc.turnsRemaining = 0;
-      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, false);
+      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
 
       // Rewards
@@ -210,7 +209,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
       const wobbuffet = scene.getEnemyPokemon()!;
       wobbuffet.hp = Math.floor(0.2 * wobbuffet.getMaxHp());
       scene.currentBattle.mysteryEncounter!.misc.turnsRemaining = 0;
-      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, false);
+      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
 
       // Rewards
@@ -240,7 +239,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
       const wobbuffet = scene.getEnemyPokemon()!;
       wobbuffet.hp = Math.floor(0.1 * wobbuffet.getMaxHp());
       scene.currentBattle.mysteryEncounter!.misc.turnsRemaining = 0;
-      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, false);
+      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
 
       // Rewards
@@ -270,7 +269,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
       const wobbuffet = scene.getEnemyPokemon()!;
       wobbuffet.hp = 1;
       scene.currentBattle.mysteryEncounter!.misc.turnsRemaining = 0;
-      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, false);
+      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
 
       // Rewards

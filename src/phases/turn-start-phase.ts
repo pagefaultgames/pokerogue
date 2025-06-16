@@ -51,6 +51,8 @@ export class TurnStartPhase extends FieldPhase {
     return orderedTargets;
   }
 
+  // TODO: Refactor this alongside `CommandPhase.handleCommand` to use SEPARATE METHODS
+  // Also need a clearer distinction between "turn command" and queued moves
   start() {
     super.start();
 
@@ -86,43 +88,37 @@ export class TurnStartPhase extends FieldPhase {
       }
 
       switch (turnCommand?.command) {
-        case Command.FIGHT:
-          {
-            const queuedMove = turnCommand.move;
-            if (!queuedMove) {
-              continue;
-            }
-            const move =
-              pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp()) ||
-              new PokemonMove(queuedMove.move);
-            if (move.getMove().hasAttr("MoveHeaderAttr")) {
-              phaseManager.pushNew("MoveHeaderPhase", pokemon.getBattlerIndex(), move);
-            }
-            if (pokemon.isPlayer()) {
-              if (turnCommand.cursor === -1) {
-                phaseManager.pushNew("MovePhase", pokemon, turnCommand.targets || turnCommand.move!.targets, move);
-              } else {
-                phaseManager.pushNew(
-                  "MovePhase",
-                  pokemon,
-                  turnCommand.targets || turnCommand.move!.targets, // TODO: is the bang correct here?
-                  move,
-                  false,
-                  queuedMove.ignorePP,
-                );
-              }
-            } else {
-              phaseManager.pushNew(
-                "MovePhase",
-                pokemon,
-                turnCommand.targets || turnCommand.move!.targets,
-                move,
-                false,
-                queuedMove.ignorePP,
-              );
-            }
+        case Command.FIGHT: {
+          const queuedMove = turnCommand.move;
+          if (!queuedMove) {
+            continue;
+          }
+          const move =
+            pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp()) ??
+            new PokemonMove(queuedMove.move);
+          if (move.getMove().hasAttr("MoveHeaderAttr")) {
+            phaseManager.pushNew("MoveHeaderPhase", pokemon.getBattlerIndex(), move);
+          }
+
+          if (pokemon.isPlayer() && turnCommand.cursor === -1) {
+            phaseManager.pushNew(
+              "MovePhase",
+              pokemon,
+              turnCommand.targets || turnCommand.move!.targets,
+              move,
+              turnCommand.move!.useMode,
+            ); //TODO: is the bang correct here?
+          } else {
+            phaseManager.pushNew(
+              "MovePhase",
+              pokemon,
+              turnCommand.targets || turnCommand.move!.targets,
+              move,
+              queuedMove.useMode,
+            ); // TODO: is the bang correct here?
           }
           break;
+        }
         case Command.BALL:
           phaseManager.unshiftNew("AttemptCapturePhase", turnCommand.targets![0] % 2, turnCommand.cursor!); //TODO: is the bang correct here?
           break;
