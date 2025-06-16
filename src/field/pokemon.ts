@@ -2790,11 +2790,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (timedEventManager.isEventActive()) {
           shinyThreshold.value *= timedEventManager.getShinyMultiplier();
         }
-        globalScene.applyModifiers(
-          ShinyRateBoosterModifier,
-          true,
-          shinyThreshold,
-        );
+        globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
       }
 
       this.shiny = randSeedInt(65536) < shinyThreshold.value;
