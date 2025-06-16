@@ -89,7 +89,7 @@ describe("Abilities - Lightningrod", () => {
     enemy2.summonData.ability = AbilityId.LIGHTNING_ROD;
 
     game.move.select(MoveId.SHOCK_WAVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy1.isFullHp()).toBe(false);
