@@ -6742,6 +6742,7 @@ interface IllusionData {
   level?: number;
 }
 
+// TODO: Remove `turn` and make `result` mandatory
 export interface TurnMove {
   move: MoveId;
   targets: BattlerIndex[];
