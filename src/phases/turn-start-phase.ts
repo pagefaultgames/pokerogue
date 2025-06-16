@@ -65,7 +65,7 @@ export class TurnStartPhase extends FieldPhase {
     // This occurs before the main loop because of battles with more than two Pokemon
     const battlerBypassSpeed = {};
 
-    globalScene.getField(true).map(p => {
+    globalScene.getField(true).forEach(p => {
       const bypassSpeed = new BooleanHolder(false);
       const canCheckHeldItems = new BooleanHolder(true);
       applyAbAttrs("BypassSpeedChanceAbAttr", p, null, false, bypassSpeed);
@@ -126,6 +126,8 @@ export class TurnStartPhase extends FieldPhase {
     return moveOrder;
   }
 
+  // TODO: Refactor this alongside `CommandPhase.handleCommand` to use SEPARATE METHODS
+  // Also need a clearer distinction between "turn command" and queued moves
   start() {
     super.start();
 
@@ -156,8 +158,9 @@ export class TurnStartPhase extends FieldPhase {
         return;
       }
 
-      // TODO: This logic is questionable and needs to be redone,
-      // especially given the fact that `order` is used for exactly 1 thing...
+      // TODO: Remove `turnData.order` - 
+      // it is used exclusively for Fusion Flare/Bolt
+      // and uses a really jank implementation 
       if (turnCommand.command === Command.FIGHT) {
         pokemon.turnData.order = index;
       }
@@ -245,7 +248,7 @@ export class TurnStartPhase extends FieldPhase {
         turnCommand.targets ?? turnCommand.move.targets,
         move,
         false,
-        queuedMove.ignorePP,
+        queuedMove.useMode,
       );
     }
   }

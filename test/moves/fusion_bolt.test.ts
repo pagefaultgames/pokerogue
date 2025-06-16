@@ -45,5 +45,5 @@ describe("Moves - Fusion Bolt", () => {
     await game.toNextTurn();
 
     expect(initialHp - partyMember.hp).toBe(0);
-  }, 20000);
+  });
 });
