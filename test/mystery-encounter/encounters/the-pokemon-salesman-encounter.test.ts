@@ -10,7 +10,6 @@ import {
   runSelectMysteryEncounterOption,
 } from "#test/mystery-encounter/encounter-test-utils";
 import type BattleScene from "#app/battle-scene";
-import { PlayerPokemon } from "#app/field/pokemon";
 import { HUMAN_TRANSITABLE_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
 import {
   getSalesmanSpeciesOffer,
@@ -39,10 +38,11 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     const biomeMap = new Map<BiomeId, MysteryEncounterType[]>([
       [BiomeId.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
@@ -55,8 +55,6 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -79,8 +77,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.ULTRA);
-    game.override.startingBiome(BiomeId.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.ULTRA).startingBiome(BiomeId.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_POKEMON_SALESMAN);
@@ -99,7 +96,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
     expect(ThePokemonSalesmanEncounter.dialogueTokens?.purchasePokemon).toBeDefined();
     expect(ThePokemonSalesmanEncounter.dialogueTokens?.price).toBeDefined();
-    expect(ThePokemonSalesmanEncounter.misc.pokemon instanceof PlayerPokemon).toBeTruthy();
+    expect(ThePokemonSalesmanEncounter.misc.pokemon.isPlayer()).toBeTruthy();
     expect(ThePokemonSalesmanEncounter.misc?.price?.toString()).toBe(ThePokemonSalesmanEncounter.dialogueTokens?.price);
     expect(onInitResult).toBe(true);
   });
@@ -176,7 +173,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_POKEMON_SALESMAN, defaultParty);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
@@ -185,7 +182,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 1);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();

@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { Stat } from "#enums/stat";
 import { allMoves } from "#app/data/data-lists";
 import { MoveId } from "#enums/move-id";
@@ -29,7 +29,8 @@ describe("Moves - Spectral Thief", () => {
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH)
       .moveset([MoveId.SPECTRAL_THIEF, MoveId.SPLASH])
-      .ability(AbilityId.BALL_FETCH).disableCrits;
+      .ability(AbilityId.BALL_FETCH)
+      .criticalHits(false);
   });
 
   it("should steal max possible positive stat changes and ignore negative ones.", async () => {

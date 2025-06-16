@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { allMoves } from "#app/data/data-lists";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
@@ -31,7 +31,7 @@ describe("Moves - Scale Shot", () => {
     game.override
       .moveset([MoveId.SCALE_SHOT])
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .ability(AbilityId.NO_GUARD)
       .passiveAbility(AbilityId.SKILL_LINK)
       .enemyMoveset(MoveId.SPLASH)

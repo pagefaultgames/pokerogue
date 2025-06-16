@@ -8,7 +8,7 @@ import {
   transitionMysteryEncounterIntroVisuals,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -17,21 +17,18 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { TrainerType } from "#enums/trainer-type";
 import { SpeciesId } from "#enums/species-id";
 import { AbilityId } from "#enums/ability-id";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { PokemonType } from "#enums/pokemon-type";
 import { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
-import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms";
-import { applyPostBattleInitAbAttrs, PostBattleInitAbAttr } from "#app/data/abilities/ability";
+import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms/form-change-triggers";
+import { applyPostBattleInitAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { PartyHealPhase } from "#app/phases/party-heal-phase";
-import { ShowTrainerPhase } from "#app/phases/show-trainer-phase";
-import { ReturnPhase } from "#app/phases/return-phase";
 import i18next from "i18next";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#enums/modifier-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { BattlerTagType } from "#enums/battler-tag-type";
 
@@ -143,7 +140,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
     },
     async () => {
       // Refuse the challenge, they full heal the party and give the player a Rarer Candy
-      globalScene.unshiftPhase(new PartyHealPhase(true));
+      globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
       setEncounterRewards({
         guaranteedModifierTypeFuncs: [modifierTypes.RARER_CANDY],
         fillRemaining: false,
@@ -209,7 +206,7 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
       for (const pokemon of playerField) {
         pokemon.lapseTag(BattlerTagType.COMMANDED);
       }
-      playerField.forEach((_, p) => globalScene.unshiftPhase(new ReturnPhase(p)));
+      playerField.forEach((_, p) => globalScene.phaseManager.unshiftNew("ReturnPhase", p));
 
       for (const pokemon of globalScene.getPlayerParty()) {
         // Only trigger form change when Eiscue is in Noice form
@@ -224,10 +221,10 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
 
         // Each trainer battle is supposed to be a new fight, so reset all per-battle activation effects
         pokemon.resetBattleAndWaveData();
-        applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
+        applyPostBattleInitAbAttrs("PostBattleInitAbAttr", pokemon);
       }
 
-      globalScene.unshiftPhase(new ShowTrainerPhase());
+      globalScene.phaseManager.unshiftNew("ShowTrainerPhase");
       // Hide the trainer and init next battle
       const trainer = globalScene.currentBattle.trainer;
       // Unassign previous trainer from battle so it isn't destroyed before animation completes

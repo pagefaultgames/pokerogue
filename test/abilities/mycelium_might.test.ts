@@ -26,7 +26,7 @@ describe("Abilities - Mycelium Might", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.CLEAR_BODY)
 
@@ -52,7 +52,7 @@ describe("Abilities - Mycelium Might", () => {
     game.move.select(MoveId.BABY_DOLL_EYES);
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
     // The opponent Pokemon (without Mycelium Might) goes first despite having lower speed than the player Pokemon.
@@ -63,7 +63,7 @@ describe("Abilities - Mycelium Might", () => {
 
     // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
     expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
-  }, 20000);
+  });
 
   it("will still go first if a status move that is in a higher priority bracket than the opponent's move is used", async () => {
     game.override.enemyMoveset(MoveId.TACKLE);
@@ -76,7 +76,7 @@ describe("Abilities - Mycelium Might", () => {
     game.move.select(MoveId.BABY_DOLL_EYES);
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
     // The player Pokemon (with M.M.) goes first because its move is still within a higher priority bracket than its opponent.
@@ -86,7 +86,7 @@ describe("Abilities - Mycelium Might", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
     expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
-  }, 20000);
+  });
 
   it("will not affect non-status moves", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
@@ -97,7 +97,7 @@ describe("Abilities - Mycelium Might", () => {
     game.move.select(MoveId.QUICK_ATTACK);
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
     // The player Pokemon (with M.M.) goes first because it has a higher speed and did not use a status move.
@@ -105,5 +105,5 @@ describe("Abilities - Mycelium Might", () => {
     // This means that the commandOrder should be identical to the speedOrder
     expect(speedOrder).toEqual([playerIndex, enemyIndex]);
     expect(commandOrder).toEqual([playerIndex, enemyIndex]);
-  }, 20000);
+  });
 });

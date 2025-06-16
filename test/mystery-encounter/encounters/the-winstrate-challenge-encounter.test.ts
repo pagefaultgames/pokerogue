@@ -17,7 +17,7 @@ import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "#enums/nature";
 import { MoveId } from "#enums/move-id";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { TheWinstrateChallengeEncounter } from "#app/data/mystery-encounters/encounters/the-winstrate-challenge-encounter";
 import { Status } from "#app/data/status-effect";
 import { MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
@@ -44,10 +44,11 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     const biomeMap = new Map<BiomeId, MysteryEncounterType[]>([
       [BiomeId.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
@@ -60,8 +61,6 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -86,8 +85,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingBiome(BiomeId.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT).startingBiome(BiomeId.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_WINSTRATE_CHALLENGE);
@@ -265,7 +263,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_WINSTRATE_CHALLENGE, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.trainer!.config.trainerType).toBe(TrainerType.VICTOR);
       expect(scene.currentBattle.mysteryEncounter?.enemyPartyConfigs.length).toBe(4);
@@ -298,7 +296,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       // Should have Macho Brace in the rewards
       await skipBattleToNextBattle(game, true);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
@@ -307,7 +305,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toBe("MYSTERY_ENCOUNTER_MACHO_BRACE");
-    }, 15000);
+    });
   });
 
   describe("Option 2 - Refuse the Challenge", () => {
@@ -328,7 +326,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
     });
 
     it("Should fully heal the party", async () => {
-      const phaseSpy = vi.spyOn(scene, "unshiftPhase");
+      const phaseSpy = vi.spyOn(scene.phaseManager, "unshiftPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.THE_WINSTRATE_CHALLENGE, defaultParty);
       await runMysteryEncounterToEnd(game, 2);
@@ -340,7 +338,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
     it("should have a Rarer Candy in the rewards", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_WINSTRATE_CHALLENGE, defaultParty);
       await runMysteryEncounterToEnd(game, 2);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
@@ -359,8 +357,8 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
  * @param isFinalBattle
  */
 async function skipBattleToNextBattle(game: GameManager, isFinalBattle = false) {
-  game.scene.clearPhaseQueue();
-  game.scene.clearPhaseQueueSplice();
+  game.scene.phaseManager.clearPhaseQueue();
+  game.scene.phaseManager.clearPhaseQueueSplice();
   const commandUiHandler = game.scene.ui.handlers[UiMode.COMMAND];
   commandUiHandler.clear();
   game.scene.getEnemyParty().forEach(p => {
@@ -369,7 +367,7 @@ async function skipBattleToNextBattle(game: GameManager, isFinalBattle = false) 
     game.scene.field.remove(p);
   });
   game.phaseInterceptor["onHold"] = [];
-  game.scene.pushPhase(new VictoryPhase(0));
+  game.scene.phaseManager.pushPhase(new VictoryPhase(0));
   game.phaseInterceptor.superEndPhase();
   if (isFinalBattle) {
     await game.phaseInterceptor.to(MysteryEncounterRewardsPhase);

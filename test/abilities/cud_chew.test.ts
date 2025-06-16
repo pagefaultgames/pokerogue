@@ -33,7 +33,7 @@ describe("Abilities - Cud Chew", () => {
       .startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS, count: 1 }])
       .ability(AbilityId.CUD_CHEW)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
@@ -67,7 +67,7 @@ describe("Abilities - Cud Chew", () => {
     });
 
     it("shows ability popup for eating berry, even if berry is useless", async () => {
-      const abDisplaySpy = vi.spyOn(globalScene, "queueAbilityDisplay");
+      const abDisplaySpy = vi.spyOn(globalScene.phaseManager, "queueAbilityDisplay");
       game.override.enemyMoveset([MoveId.SPLASH, MoveId.HEAL_PULSE]);
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
@@ -89,7 +89,7 @@ describe("Abilities - Cud Chew", () => {
       await game.move.selectEnemyMove(MoveId.HEAL_PULSE);
       await game.phaseInterceptor.to("TurnEndPhase");
 
-      // globalScene.queueAbilityDisplay should be called twice:
+      // globalScene.phaseManager.queueAbilityDisplay should be called twice:
       // once to show cud chew text before regurgitating berries,
       // once to hide ability text after finishing.
       expect(abDisplaySpy).toBeCalledTimes(2);

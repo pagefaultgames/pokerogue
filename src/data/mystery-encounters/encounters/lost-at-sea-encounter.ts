@@ -1,4 +1,4 @@
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -11,7 +11,7 @@ import { applyDamageToPokemon } from "#app/data/mystery-encounters/utils/encount
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 
 const OPTION_1_REQUIRED_MOVE = MoveId.SURF;
 const OPTION_2_REQUIRED_MOVE = MoveId.FLY;

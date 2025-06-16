@@ -4,7 +4,7 @@ import GameManager from "#test/testUtils/gameManager";
 import { SpeciesId } from "#enums/species-id";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { StatusEffect } from "#app/enums/status-effect";
 
 describe("Moves - Baneful Bunker", () => {
@@ -24,16 +24,14 @@ describe("Moves - Baneful Bunker", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("single");
-
-    game.override.moveset(MoveId.SLASH);
-
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-    game.override.enemyAbility(AbilityId.INSOMNIA);
-    game.override.enemyMoveset(MoveId.BANEFUL_BUNKER);
-
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("single")
+      .moveset(MoveId.SLASH)
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .enemyMoveset(MoveId.BANEFUL_BUNKER)
+      .startingLevel(100)
+      .enemyLevel(100);
   });
   test("should protect the user and poison attackers that make contact", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);

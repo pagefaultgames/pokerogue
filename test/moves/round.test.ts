@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { allMoves } from "#app/data/data-lists";
 import type { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { AbilityId } from "#enums/ability-id";
@@ -28,7 +28,7 @@ describe("Moves - Round", () => {
       .moveset([MoveId.SPLASH, MoveId.ROUND])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("double")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([MoveId.SPLASH, MoveId.ROUND])
@@ -54,7 +54,9 @@ describe("Moves - Round", () => {
 
     for (let i = 0; i < 4; i++) {
       await game.phaseInterceptor.to("MoveEffectPhase", false);
-      actualTurnOrder.push((game.scene.getCurrentPhase() as MoveEffectPhase).getUserPokemon()!.getBattlerIndex());
+      actualTurnOrder.push(
+        (game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).getUserPokemon()!.getBattlerIndex(),
+      );
       await game.phaseInterceptor.to("MoveEndPhase");
     }
 

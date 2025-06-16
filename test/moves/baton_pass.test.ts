@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -31,7 +31,7 @@ describe("Moves - Baton Pass", () => {
       .moveset([MoveId.BATON_PASS, MoveId.NASTY_PLOT, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("transfers all stat stages when player uses it", async () => {
@@ -55,39 +55,34 @@ describe("Moves - Baton Pass", () => {
     playerPokemon = game.scene.getPlayerPokemon()!;
     expect(playerPokemon.species.speciesId).toEqual(SpeciesId.SHUCKLE);
     expect(playerPokemon.getStatStage(Stat.SPATK)).toEqual(2);
-  }, 20000);
+  });
 
   it("passes stat stage buffs when AI uses it", async () => {
     // arrange
-    game.override.startingWave(5).enemyMoveset(new Array(4).fill([MoveId.NASTY_PLOT]));
+    game.override.startingWave(5).enemyMoveset([MoveId.NASTY_PLOT, MoveId.BATON_PASS]);
     await game.classicMode.startBattle([SpeciesId.RAICHU, SpeciesId.SHUCKLE]);
 
     // round 1 - ai buffs
     game.move.select(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.NASTY_PLOT);
     await game.toNextTurn();
 
     // round 2 - baton pass
-    game.scene.getEnemyPokemon()!.hp = 100;
-    game.override.enemyMoveset([MoveId.BATON_PASS]);
-    // Force moveset to update mid-battle
-    // TODO: replace with enemy ai control function when it's added
-    game.scene.getEnemyParty()[0].getMoveset();
     game.move.select(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.BATON_PASS);
     await game.phaseInterceptor.to("PostSummonPhase", false);
 
-    // assert
     // check buffs are still there
-    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.SPATK)).toEqual(2);
+    expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.SPATK)).toEqual(2);
     // confirm that a switch actually happened. can't use species because I
     // can't find a way to override trainer parties with more than 1 pokemon species
-    expect(game.scene.getEnemyPokemon()!.hp).not.toEqual(100);
     expect(game.phaseInterceptor.log.slice(-4)).toEqual([
       "MoveEffectPhase",
       "SwitchSummonPhase",
       "SummonPhase",
       "PostSummonPhase",
     ]);
-  }, 20000);
+  });
 
   it("doesn't transfer effects that aren't transferrable", async () => {
     game.override.enemyMoveset([MoveId.SALT_CURE]);
@@ -103,7 +98,7 @@ describe("Moves - Baton Pass", () => {
     await game.toNextTurn();
 
     expect(player2.findTag(t => t.tagType === BattlerTagType.SALT_CURED)).toBeUndefined();
-  }, 20000);
+  });
 
   it("doesn't allow binding effects from the user to persist", async () => {
     game.override.moveset([MoveId.FIRE_SPIN, MoveId.BATON_PASS]);

@@ -2,9 +2,6 @@ export interface Localizable {
   localize(): void;
 }
 
-export interface TranslationEntries {
-  [key: string]: string | { [key: string]: string };
-}
 export interface SimpleTranslationEntries {
   [key: string]: string;
 }

@@ -64,8 +64,6 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -82,8 +80,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
   });
 
   it("should run in waves that are X1", async () => {
-    game.override.startingWave(11);
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
+    game.override.startingWave(11).mysteryEncounterTier(MysteryEncounterTier.COMMON);
 
     await game.runToMysteryEncounter();
 
@@ -91,8 +88,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
   });
 
   it("should run in waves that are X2", async () => {
-    game.override.startingWave(32);
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
+    game.override.startingWave(32).mysteryEncounterTier(MysteryEncounterTier.COMMON);
 
     await game.runToMysteryEncounter();
 
@@ -100,8 +96,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
   });
 
   it("should run in waves that are X3", async () => {
-    game.override.startingWave(23);
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
+    game.override.startingWave(23).mysteryEncounterTier(MysteryEncounterTier.COMMON);
 
     await game.runToMysteryEncounter();
 
@@ -153,7 +148,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, defaultParty);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
@@ -162,7 +157,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 1);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -172,7 +167,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
     });
 
     it("should transport to a new area", async () => {
@@ -225,7 +220,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, [SpeciesId.BLASTOISE]);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
@@ -234,7 +229,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 2);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -244,7 +239,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, [SpeciesId.METAGROSS]);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
     });
 
     it("should transport to a new area", async () => {
@@ -305,7 +300,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 3, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);

@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { PostTurnRestoreBerryAbAttr } from "#app/data/abilities/ability";
 import type Pokemon from "#app/field/pokemon";
 import { BerryModifier, PreserveBerryModifier } from "#app/modifier/modifier";
@@ -47,7 +47,7 @@ describe("Abilities - Harvest", () => {
       .ability(AbilityId.HARVEST)
       .startingLevel(100)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .statusActivation(false) // Since we're using nuzzle to proc both enigma and sitrus berries
       .weather(WeatherType.SUNNY) // guaranteed recovery
       .enemyLevel(1)

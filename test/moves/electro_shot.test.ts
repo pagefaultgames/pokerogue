@@ -1,7 +1,7 @@
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -80,7 +80,7 @@ describe("Moves - Electro Shot", () => {
     expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeUndefined();
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
-    expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+    expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
 
     const playerElectroShot = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.ELECTRO_SHOT);
     expect(playerElectroShot?.ppUsed).toBe(1);

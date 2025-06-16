@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { isBetween, toDmgValue } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -27,7 +27,7 @@ describe("Abilities - Analytic", () => {
       .moveset([MoveId.SPLASH, MoveId.TACKLE])
       .ability(AbilityId.ANALYTIC)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .startingLevel(200)
       .enemyLevel(200)
       .enemySpecies(SpeciesId.SNORLAX)

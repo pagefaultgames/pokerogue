@@ -1,6 +1,6 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { Stat } from "#enums/stat";
-import { TeraMoveCategoryAttr } from "#app/data/moves/move";
+import type { TeraMoveCategoryAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import type Move from "#app/data/moves/move";
 import { PokemonType } from "#enums/pokemon-type";
@@ -23,7 +23,7 @@ describe("Moves - Tera Blast", () => {
       type: Phaser.HEADLESS,
     });
     moveToCheck = allMoves[MoveId.TERA_BLAST];
-    teraBlastAttr = moveToCheck.getAttrs(TeraMoveCategoryAttr)[0];
+    teraBlastAttr = moveToCheck.getAttrs("TeraMoveCategoryAttr")[0];
   });
 
   afterEach(() => {
@@ -35,7 +35,7 @@ describe("Moves - Tera Blast", () => {
 
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .starterSpecies(SpeciesId.FEEBAS)
       .moveset([MoveId.TERA_BLAST])
       .ability(AbilityId.BALL_FETCH)
@@ -62,7 +62,7 @@ describe("Moves - Tera Blast", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(spy).toHaveReturnedWith(2);
-  }, 20000);
+  });
 
   it("increases power if user is Stellar tera type", async () => {
     await game.classicMode.startBattle();

@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { allMoves } from "#app/data/data-lists";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type { PokemonInstantReviveModifier } from "#app/modifier/modifier";
@@ -29,7 +29,7 @@ describe("Items - Reviver Seed", () => {
       .moveset([MoveId.SPLASH, MoveId.TACKLE, MoveId.ENDURE])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .startingHeldItems([{ name: "REVIVER_SEED" }])

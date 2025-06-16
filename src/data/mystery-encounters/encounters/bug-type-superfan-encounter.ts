@@ -24,9 +24,8 @@ import { TrainerType } from "#enums/trainer-type";
 import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { getEncounterText, showEncounterDialogue } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { MoveId } from "#enums/move-id";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
@@ -39,7 +38,7 @@ import {
 } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { PokemonType } from "#enums/pokemon-type";
 import type { AttackTypeBoosterModifierType, ModifierTypeOption } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import {
   AttackTypeBoosterModifier,
@@ -51,7 +50,7 @@ import {
 import i18next from "i18next";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { allMoves } from "#app/data/data-lists";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#enums/modifier-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
@@ -766,8 +765,10 @@ function doBugTypeMoveTutor(): Promise<void> {
 
     // Option select complete, handle if they are learning a move
     if (result && result.selectedOptionIndex < moveOptions.length) {
-      globalScene.unshiftPhase(
-        new LearnMovePhase(result.selectedPokemonIndex, moveOptions[result.selectedOptionIndex].moveId),
+      globalScene.phaseManager.unshiftNew(
+        "LearnMovePhase",
+        result.selectedPokemonIndex,
+        moveOptions[result.selectedOptionIndex].moveId,
       );
     }
 

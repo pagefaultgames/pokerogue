@@ -3,8 +3,8 @@ import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { modifierTypes } from "#app/data/data-lists";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
@@ -16,7 +16,6 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { PokemonFormChangeItemModifier } from "#app/modifier/modifier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
@@ -165,7 +164,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
       .withOptionPhase(async () => {
         // Give the player 5 Rogue Balls
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.ROGUE_BALL));
+        globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.ROGUE_BALL);
 
         // Start encounter with random legendary (7-10 starter strength) that has level additive
         // If this is a mono-type challenge, always ensure the required type is filtered for

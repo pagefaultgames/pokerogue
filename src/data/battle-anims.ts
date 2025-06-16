@@ -1,111 +1,22 @@
 import { globalScene } from "#app/global-scene";
-import { AttackMove, BeakBlastHeaderAttr, DelayedAttackAttr, SelfStatusMove } from "./moves/move";
-import { allMoves } from "./data-lists";
+import { allMoves } from "#app/data/data-lists";
 import { MoveFlags } from "#enums/MoveFlags";
-import type Pokemon from "../field/pokemon";
-import { type nil, getFrameMs, getEnumKeys, getEnumValues, animationFileName } from "../utils/common";
-import type { BattlerIndex } from "../battle";
+import type Pokemon from "#app/field/pokemon";
+import {
+  type nil,
+  getFrameMs,
+  getEnumKeys,
+  getEnumValues,
+  animationFileName,
+  coerceArray,
+  isNullOrUndefined,
+} from "#app/utils/common";
+import type { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
-import { SubstituteTag } from "./battler-tags";
-import { isNullOrUndefined } from "../utils/common";
 import Phaser from "phaser";
 import { EncounterAnim } from "#enums/encounter-anims";
-
-export enum AnimFrameTarget {
-  USER,
-  TARGET,
-  GRAPHIC,
-}
-
-enum AnimFocus {
-  TARGET = 1,
-  USER,
-  USER_TARGET,
-  SCREEN,
-}
-
-enum AnimBlendType {
-  NORMAL,
-  ADD,
-  SUBTRACT,
-}
-
-export enum ChargeAnim {
-  FLY_CHARGING = 1000,
-  BOUNCE_CHARGING,
-  DIG_CHARGING,
-  FUTURE_SIGHT_CHARGING,
-  DIVE_CHARGING,
-  SOLAR_BEAM_CHARGING,
-  SHADOW_FORCE_CHARGING,
-  SKULL_BASH_CHARGING,
-  FREEZE_SHOCK_CHARGING,
-  SKY_DROP_CHARGING,
-  SKY_ATTACK_CHARGING,
-  ICE_BURN_CHARGING,
-  DOOM_DESIRE_CHARGING,
-  RAZOR_WIND_CHARGING,
-  PHANTOM_FORCE_CHARGING,
-  GEOMANCY_CHARGING,
-  SHADOW_BLADE_CHARGING,
-  SOLAR_BLADE_CHARGING,
-  BEAK_BLAST_CHARGING,
-  METEOR_BEAM_CHARGING,
-  ELECTRO_SHOT_CHARGING,
-}
-
-export enum CommonAnim {
-  USE_ITEM = 2000,
-  HEALTH_UP,
-  TERASTALLIZE,
-  POISON = 2010,
-  TOXIC,
-  PARALYSIS,
-  SLEEP,
-  FROZEN,
-  BURN,
-  CONFUSION,
-  ATTRACT,
-  BIND,
-  WRAP,
-  CURSE_NO_GHOST,
-  LEECH_SEED,
-  FIRE_SPIN,
-  PROTECT,
-  COVET,
-  WHIRLPOOL,
-  BIDE,
-  SAND_TOMB,
-  QUICK_GUARD,
-  WIDE_GUARD,
-  CURSE,
-  MAGMA_STORM,
-  CLAMP,
-  SNAP_TRAP,
-  THUNDER_CAGE,
-  INFESTATION,
-  ORDER_UP_CURLY,
-  ORDER_UP_DROOPY,
-  ORDER_UP_STRETCHY,
-  RAGING_BULL_FIRE,
-  RAGING_BULL_WATER,
-  SALT_CURE,
-  POWDER,
-  SUNNY = 2100,
-  RAIN,
-  SANDSTORM,
-  HAIL,
-  SNOW,
-  WIND,
-  HEAVY_RAIN,
-  HARSH_SUN,
-  STRONG_WINDS,
-  MISTY_TERRAIN = 2110,
-  ELECTRIC_TERRAIN,
-  GRASSY_TERRAIN,
-  PSYCHIC_TERRAIN,
-  LOCK_ON = 2120,
-}
+import { AnimBlendType, AnimFrameTarget, AnimFocus, ChargeAnim, CommonAnim } from "#enums/move-anims-common";
+import { BattlerTagType } from "#enums/battler-tag-type";
 
 export class AnimConfig {
   public id: number;
@@ -531,7 +442,7 @@ export function initMoveAnim(move: MoveId): Promise<void> {
           if (moveAnims.get(move) !== null) {
             const chargeAnimSource = allMoves[move].isChargingMove()
               ? allMoves[move]
-              : (allMoves[move].getAttrs(DelayedAttackAttr)[0] ?? allMoves[move].getAttrs(BeakBlastHeaderAttr)[0]);
+              : (allMoves[move].getAttrs("DelayedAttackAttr")[0] ?? allMoves[move].getAttrs("BeakBlastHeaderAttr")[0]);
             if (chargeAnimSource && chargeAnims.get(chargeAnimSource.chargeAnim) === null) {
               return;
             }
@@ -542,12 +453,11 @@ export function initMoveAnim(move: MoveId): Promise<void> {
       }
     } else {
       moveAnims.set(move, null);
-      const defaultMoveAnim =
-        allMoves[move] instanceof AttackMove
-          ? MoveId.TACKLE
-          : allMoves[move] instanceof SelfStatusMove
-            ? MoveId.FOCUS_ENERGY
-            : MoveId.TAIL_WHIP;
+      const defaultMoveAnim = allMoves[move].is("AttackMove")
+        ? MoveId.TACKLE
+        : allMoves[move].is("SelfStatusMove")
+          ? MoveId.FOCUS_ENERGY
+          : MoveId.TAIL_WHIP;
 
       const fetchAnimAndResolve = (move: MoveId) => {
         globalScene
@@ -570,7 +480,7 @@ export function initMoveAnim(move: MoveId): Promise<void> {
             }
             const chargeAnimSource = allMoves[move].isChargingMove()
               ? allMoves[move]
-              : (allMoves[move].getAttrs(DelayedAttackAttr)[0] ?? allMoves[move].getAttrs(BeakBlastHeaderAttr)[0]);
+              : (allMoves[move].getAttrs("DelayedAttackAttr")[0] ?? allMoves[move].getAttrs("BeakBlastHeaderAttr")[0]);
             if (chargeAnimSource) {
               initMoveChargeAnim(chargeAnimSource.chargeAnim).then(() => resolve());
             } else {
@@ -616,7 +526,7 @@ function logMissingMoveAnim(move: MoveId, ...optionalParams: any[]) {
  * @param encounterAnim one or more animations to fetch
  */
 export async function initEncounterAnims(encounterAnim: EncounterAnim | EncounterAnim[]): Promise<void> {
-  const anims = Array.isArray(encounterAnim) ? encounterAnim : [encounterAnim];
+  const anims = coerceArray(encounterAnim);
   const encounterAnimNames = getEnumKeys(EncounterAnim);
   const encounterAnimFetches: Promise<Map<EncounterAnim, AnimConfig>>[] = [];
   for (const anim of anims) {
@@ -703,7 +613,7 @@ export function loadMoveAnimAssets(moveIds: MoveId[], startLoad?: boolean): Prom
     for (const moveId of moveIds) {
       const chargeAnimSource = allMoves[moveId].isChargingMove()
         ? allMoves[moveId]
-        : (allMoves[moveId].getAttrs(DelayedAttackAttr)[0] ?? allMoves[moveId].getAttrs(BeakBlastHeaderAttr)[0]);
+        : (allMoves[moveId].getAttrs("DelayedAttackAttr")[0] ?? allMoves[moveId].getAttrs("BeakBlastHeaderAttr")[0]);
       if (chargeAnimSource) {
         const moveChargeAnims = chargeAnims.get(chargeAnimSource.chargeAnim);
         moveAnimations.push(moveChargeAnims instanceof AnimConfig ? moveChargeAnims : moveChargeAnims![0]); // TODO: is the bang correct?
@@ -867,7 +777,7 @@ export abstract class BattleAnim {
     const user = !isOppAnim ? this.user : this.target;
     const target = !isOppAnim ? this.target : this.user;
 
-    const targetSubstitute = onSubstitute && user !== target ? target!.getTag(SubstituteTag) : null;
+    const targetSubstitute = onSubstitute && user !== target ? target!.getTag(BattlerTagType.SUBSTITUTE) : null;
 
     const userInitialX = user!.x; // TODO: is this bang correct?
     const userInitialY = user!.y; // TODO: is this bang correct?
@@ -941,7 +851,7 @@ export abstract class BattleAnim {
       return;
     }
 
-    const targetSubstitute = !!onSubstitute && user !== target ? target.getTag(SubstituteTag) : null;
+    const targetSubstitute = !!onSubstitute && user !== target ? target.getTag(BattlerTagType.SUBSTITUTE) : null;
 
     const userSprite = user.getSprite();
     const targetSprite = targetSubstitute?.sprite ?? target.getSprite();

@@ -1,7 +1,6 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import type { CommandPhase } from "#app/phases/command-phase";
-import { Command } from "#app/ui/command-ui-handler";
-import { PostSummonWeatherChangeAbAttr } from "#app/data/abilities/ability";
+import { Command } from "#enums/command";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
@@ -32,7 +31,7 @@ describe("Abilities - Neutralizing Gas", () => {
       .moveset([MoveId.SPLASH])
       .ability(AbilityId.NEUTRALIZING_GAS)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
@@ -166,7 +165,7 @@ describe("Abilities - Neutralizing Gas", () => {
 
     vi.spyOn(game.scene.getPlayerPokemon()!, "randBattleSeedInt").mockReturnValue(0);
 
-    const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
+    const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -178,7 +177,7 @@ describe("Abilities - Neutralizing Gas", () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const enemy = game.scene.getEnemyPokemon()!;
-    const weatherChangeAttr = enemy.getAbilityAttrs(PostSummonWeatherChangeAbAttr, false)[0];
+    const weatherChangeAttr = enemy.getAbilityAttrs("PostSummonWeatherChangeAbAttr", false)[0];
     vi.spyOn(weatherChangeAttr, "applyPostSummon");
 
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();

@@ -1,7 +1,9 @@
 import { SettingKeys } from "#app/system/settings/settings";
 import type { SystemSaveData, SessionSaveData } from "#app/system/game-data";
-import { AbilityAttr, defaultStarterSpecies, DexAttr } from "#app/system/game-data";
-import { allSpecies } from "#app/data/pokemon-species";
+import { defaultStarterSpecies } from "#app/constants";
+import { AbilityAttr } from "#enums/ability-attr";
+import { DexAttr } from "#enums/dex-attr";
+import { allSpecies } from "#app/data/data-lists";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { isNullOrUndefined } from "#app/utils/common";
 import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";

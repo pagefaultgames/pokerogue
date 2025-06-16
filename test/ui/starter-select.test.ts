@@ -1,7 +1,7 @@
 import { Gender } from "#app/data/gender";
 import { Nature } from "#enums/nature";
-import { allSpecies } from "#app/data/pokemon-species";
-import { GameModes } from "#app/game-mode";
+import { allSpecies } from "#app/data/data-lists";
+import { GameModes } from "#enums/game-modes";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import type { TitlePhase } from "#app/phases/title-phase";
@@ -45,7 +45,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -94,7 +94,7 @@ describe("UI - Starter select", () => {
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
     expect(game.scene.getPlayerParty()[0].variant).toBe(2);
     expect(game.scene.getPlayerParty()[0].gender).toBe(Gender.MALE);
-  }, 20000);
+  });
 
   it("Bulbasaur - shiny - variant 2 female hardy overgrow", async () => {
     await game.importData("./test/testUtils/saves/everything.prsv");
@@ -105,7 +105,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -156,7 +156,7 @@ describe("UI - Starter select", () => {
     expect(game.scene.getPlayerParty()[0].variant).toBe(2);
     expect(game.scene.getPlayerParty()[0].nature).toBe(Nature.HARDY);
     expect(game.scene.getPlayerParty()[0].getAbility().id).toBe(AbilityId.OVERGROW);
-  }, 20000);
+  });
 
   it("Bulbasaur - shiny - variant 2 female lonely chlorophyl", async () => {
     await game.importData("./test/testUtils/saves/everything.prsv");
@@ -167,7 +167,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -221,7 +221,7 @@ describe("UI - Starter select", () => {
     expect(game.scene.getPlayerParty()[0].gender).toBe(Gender.FEMALE);
     expect(game.scene.getPlayerParty()[0].nature).toBe(Nature.LONELY);
     expect(game.scene.getPlayerParty()[0].getAbility().id).toBe(AbilityId.CHLOROPHYLL);
-  }, 20000);
+  });
 
   it("Bulbasaur - shiny - variant 2 female", async () => {
     await game.importData("./test/testUtils/saves/everything.prsv");
@@ -232,7 +232,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -282,7 +282,7 @@ describe("UI - Starter select", () => {
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
     expect(game.scene.getPlayerParty()[0].variant).toBe(2);
     expect(game.scene.getPlayerParty()[0].gender).toBe(Gender.FEMALE);
-  }, 20000);
+  });
 
   it("Bulbasaur - not shiny", async () => {
     await game.importData("./test/testUtils/saves/everything.prsv");
@@ -293,7 +293,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -342,7 +342,7 @@ describe("UI - Starter select", () => {
     expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(false);
     expect(game.scene.getPlayerParty()[0].variant).toBe(0);
-  }, 20000);
+  });
 
   it("Bulbasaur - shiny - variant 1", async () => {
     await game.importData("./test/testUtils/saves/everything.prsv");
@@ -353,7 +353,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -404,7 +404,7 @@ describe("UI - Starter select", () => {
     expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
     expect(game.scene.getPlayerParty()[0].variant).toBe(1);
-  }, 20000);
+  });
 
   it("Bulbasaur - shiny - variant 0", async () => {
     await game.importData("./test/testUtils/saves/everything.prsv");
@@ -415,7 +415,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -465,7 +465,7 @@ describe("UI - Starter select", () => {
     expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
     expect(game.scene.getPlayerParty()[0].variant).toBe(0);
-  }, 20000);
+  });
 
   it("Check if first pokemon in party is caterpie from gen 1 and 1rd row, 3rd column", async () => {
     await game.importData("./test/testUtils/saves/everything.prsv");
@@ -476,7 +476,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -529,7 +529,7 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
     expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.CATERPIE);
-  }, 20000);
+  });
 
   it("Check if first pokemon in party is nidoran_m from gen 1 and 2nd row, 4th column (cursor (9+4)-1)", async () => {
     await game.importData("./test/testUtils/saves/everything.prsv");
@@ -540,7 +540,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -595,5 +595,5 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
     expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.NIDORAN_M);
-  }, 20000);
+  });
 });

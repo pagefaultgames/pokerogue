@@ -140,7 +140,7 @@ describe("Abilities - Imposter", () => {
     await game.doKillOpponents();
     await game.toNextWave();
 
-    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(2);
 
     await game.reload.reloadSession();
@@ -162,8 +162,7 @@ describe("Abilities - Imposter", () => {
   });
 
   it("should stay transformed with the correct form after reload", async () => {
-    game.override.moveset([MoveId.ABSORB]);
-    game.override.enemySpecies(SpeciesId.UNOWN);
+    game.override.moveset([MoveId.ABSORB]).enemySpecies(SpeciesId.UNOWN);
     await game.classicMode.startBattle([SpeciesId.DITTO]);
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -176,7 +175,7 @@ describe("Abilities - Imposter", () => {
     await game.doKillOpponents();
     await game.toNextWave();
 
-    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(2);
 
     await game.reload.reloadSession();

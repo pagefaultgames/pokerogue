@@ -1,7 +1,6 @@
 import type BattleScene from "#app/battle-scene";
-import { ArenaTagSide } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import type Move from "#app/data/moves/move";
-import { CritOnlyAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import type Pokemon from "#app/field/pokemon";
@@ -43,7 +42,7 @@ describe("Moves - Aurora Veil", () => {
       .enemyLevel(100)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.AURORA_VEIL)
-      .disableCrits()
+      .criticalHits(false)
       .weather(WeatherType.HAIL);
   });
 
@@ -166,7 +165,7 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const side = defender.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
   if (globalScene.arena.getTagOnSide(ArenaTagType.AURORA_VEIL, side)) {
-    if (move.getAttrs(CritOnlyAttr).length === 0) {
+    if (move.getAttrs("CritOnlyAttr").length === 0) {
       globalScene.arena.applyTagsForSide(
         ArenaTagType.AURORA_VEIL,
         side,

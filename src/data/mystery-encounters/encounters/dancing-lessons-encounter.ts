@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { globalScene } from "#app/global-scene";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -19,15 +19,14 @@ import {
   getEncounterPokemonLevelForWave,
   STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER,
 } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
+import { EnemyPokemon } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { modifierTypes } from "#app/data/data-lists";
 import PokemonData from "#app/system/pokemon-data";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -41,6 +40,7 @@ import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import i18next from "i18next";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/dancingLessons";
@@ -176,13 +176,12 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.1.boss_enraged`);
-            globalScene.unshiftPhase(
-              new StatStageChangePhase(
-                pokemon.getBattlerIndex(),
-                true,
-                [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF],
-                1,
-              ),
+            globalScene.phaseManager.unshiftNew(
+              "StatStageChangePhase",
+              pokemon.getBattlerIndex(),
+              true,
+              [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF],
+              1,
             );
           },
         },
@@ -216,7 +215,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.PLAYER],
           move: new PokemonMove(MoveId.REVELATION_DANCE),
-          ignorePp: true,
+          useMode: MoveUseMode.IGNORE_PP,
         });
 
         await hideOricorioPokemon();
@@ -245,8 +244,10 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
 
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
-          globalScene.unshiftPhase(
-            new LearnMovePhase(globalScene.getPlayerParty().indexOf(pokemon), MoveId.REVELATION_DANCE),
+          globalScene.phaseManager.unshiftNew(
+            "LearnMovePhase",
+            globalScene.getPlayerParty().indexOf(pokemon),
+            MoveId.REVELATION_DANCE,
           );
 
           // Play animation again to "learn" the dance

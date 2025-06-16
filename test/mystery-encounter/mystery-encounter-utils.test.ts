@@ -14,7 +14,7 @@ import {
   getRandomSpeciesByStarterCost,
   koPlayerPokemon,
 } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { PokemonType } from "#enums/pokemon-type";
 import { MessagePhase } from "#app/phases/message-phase";
 import GameManager from "#test/testUtils/gameManager";
@@ -250,6 +250,7 @@ describe("Mystery Encounter Utils", () => {
 
     it("gets species of specified types", () => {
       // Only 9 tiers are: Kyogre, Groudon, Rayquaza, Arceus, Zacian, Koraidon, Miraidon, Terapagos
+      // TODO: This has to be changed
       const result = getRandomSpeciesByStarterCost(9, undefined, [PokemonType.GROUND]);
       const pokeSpecies = getPokemonSpecies(result);
       expect(pokeSpecies.speciesId).toBe(SpeciesId.GROUDON);
@@ -291,8 +292,8 @@ describe("Mystery Encounter Utils", () => {
     it("queues a message with encounter dialogue tokens", async () => {
       scene.currentBattle.mysteryEncounter = new MysteryEncounter(null);
       scene.currentBattle.mysteryEncounter.setDialogueToken("test", "value");
-      const spy = vi.spyOn(game.scene, "queueMessage");
-      const phaseSpy = vi.spyOn(game.scene, "unshiftPhase");
+      const spy = vi.spyOn(game.scene.phaseManager, "queueMessage");
+      const phaseSpy = vi.spyOn(game.scene.phaseManager, "unshiftPhase");
 
       queueEncounterMessage("mysteryEncounter:unit_test_dialogue");
       expect(spy).toHaveBeenCalledWith("mysteryEncounter:unit_test_dialogue", null, true);

@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { isBetween } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -27,7 +27,7 @@ describe("Abilities - Stakeout", () => {
       .moveset([MoveId.SPLASH, MoveId.SURF])
       .ability(AbilityId.STAKEOUT)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .startingLevel(100)
       .enemyLevel(100)
       .enemySpecies(SpeciesId.SNORLAX)

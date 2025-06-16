@@ -1,5 +1,5 @@
-import { BattlerIndex } from "#app/battle";
-import { ArenaTagSide } from "#app/data/arena-tag";
+import { BattlerIndex } from "#enums/battler-index";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -33,7 +33,7 @@ describe("Moves - Heal Block", () => {
       .ability(AbilityId.NO_GUARD)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemySpecies(SpeciesId.BLISSEY)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("shouldn't stop damage from HP-drain attacks, just HP restoration", async () => {

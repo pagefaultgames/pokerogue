@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#enums/ability-id";
 import { SpeciesId } from "#enums/species-id";
 import { toDmgValue } from "#app/utils/common";
@@ -24,7 +24,7 @@ describe("Multi-target damage reduction", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .disableCrits()
+      .criticalHits(false)
       .battleStyle("double")
       .enemyLevel(100)
       .startingLevel(100)

@@ -3,7 +3,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { TerrainType } from "#app/data/terrain";
 import { PokemonType } from "#enums/pokemon-type";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -28,7 +28,7 @@ describe("Moves - Camouflage", () => {
       .moveset([MoveId.CAMOUFLAGE])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.REGIELEKI)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.PSYCHIC_TERRAIN);

@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { BerryPhase } from "#app/phases/berry-phase";
@@ -36,7 +36,7 @@ describe("Moves - Jaw Lock", () => {
       .moveset([MoveId.JAW_LOCK, MoveId.SPLASH])
       .startingLevel(100)
       .enemyLevel(100)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("should trap the move's user and target", async () => {

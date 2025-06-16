@@ -24,7 +24,7 @@ describe("Abilities - Stall", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.REGIELEKI)
       .enemyAbility(AbilityId.STALL)
       .enemyMoveset(MoveId.QUICK_ATTACK)
@@ -46,14 +46,14 @@ describe("Abilities - Stall", () => {
     game.move.select(MoveId.QUICK_ATTACK);
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
     // The player Pokemon (without Stall) goes first despite having lower speed than the opponent.
     // The opponent Pokemon (with Stall) goes last despite having higher speed than the player Pokemon.
     expect(speedOrder).toEqual([enemyIndex, playerIndex]);
     expect(commandOrder).toEqual([playerIndex, enemyIndex]);
-  }, 20000);
+  });
 
   it("Pokemon with Stall will go first if a move that is in a higher priority bracket than the opponent's move is used", async () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
@@ -64,14 +64,14 @@ describe("Abilities - Stall", () => {
     game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
     // The opponent Pokemon (with Stall) goes first because its move is still within a higher priority bracket than its opponent.
     // The player Pokemon goes second because its move is in a lower priority bracket.
     expect(speedOrder).toEqual([enemyIndex, playerIndex]);
     expect(commandOrder).toEqual([enemyIndex, playerIndex]);
-  }, 20000);
+  });
 
   it("If both Pokemon have stall and use the same move, speed is used to determine who goes first.", async () => {
     game.override.ability(AbilityId.STALL);
@@ -83,7 +83,7 @@ describe("Abilities - Stall", () => {
     game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
 
@@ -91,5 +91,5 @@ describe("Abilities - Stall", () => {
     // The player Pokemon (with Stall) goes second because its speed is lower.
     expect(speedOrder).toEqual([enemyIndex, playerIndex]);
     expect(commandOrder).toEqual([enemyIndex, playerIndex]);
-  }, 20000);
+  });
 });

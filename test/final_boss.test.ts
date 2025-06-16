@@ -1,4 +1,4 @@
-import { GameModes } from "#app/game-mode";
+import { GameModes } from "#enums/game-modes";
 import { TurnHeldItemTransferModifier } from "#app/modifier/modifier";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
@@ -27,7 +27,7 @@ describe("Final Boss", () => {
     game.override
       .startingWave(FinalWave.Classic)
       .startingBiome(BiomeId.END)
-      .disableCrits()
+      .criticalHits(false)
       .enemyMoveset(MoveId.SPLASH)
       .moveset([MoveId.SPLASH, MoveId.WILL_O_WISP, MoveId.DRAGON_PULSE])
       .startingLevel(10000);
