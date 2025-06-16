@@ -26,9 +26,9 @@ import { MoveUseMode } from "#enums/move-use-mode";
 import type { BattlerTag } from "#app/data/battler-tags";
 
 /**
- * An {@linkcode ArenaTag} represents a semi-persistent effect that lasts one or more turns.
- * Unlike not tied to any individual {@linkcode Pokemon}.
- * Unlike {@linkcode BattlerTag}s (which are )
+ * An {@linkcode ArenaTag} represents a semi-persistent effect affecting a given side of the field.
+ * Unlike {@linkcode BattlerTag}s (which are tied to individual {@linkcode Pokemon}), `ArenaTag`s function independently of
+ * the Pokemon currently on-field, only cleared on arena reset or through their respective {@linkcode ArenaTag.lapse | lapse} methods.
  */
 export abstract class ArenaTag {
   constructor(
