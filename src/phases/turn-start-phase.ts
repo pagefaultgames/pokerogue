@@ -158,9 +158,9 @@ export class TurnStartPhase extends FieldPhase {
         return;
       }
 
-      // TODO: Remove `turnData.order` - 
+      // TODO: Remove `turnData.order` -
       // it is used exclusively for Fusion Flare/Bolt
-      // and uses a really jank implementation 
+      // and uses a really jank implementation
       if (turnCommand.command === Command.FIGHT) {
         pokemon.turnData.order = index;
       }
