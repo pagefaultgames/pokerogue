@@ -29,7 +29,7 @@ describe("Field - Pokemon ID Checks", () => {
       .ability(AbilityId.NO_GUARD)
       .battleStyle("single")
       .battleType(BattleType.TRAINER)
-      .disableCrits()
+      .criticalHits(false)
       .enemyLevel(100)
       .enemySpecies(SpeciesId.ARCANINE)
       .enemyAbility(AbilityId.BALL_FETCH)
