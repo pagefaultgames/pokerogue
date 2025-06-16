@@ -23,10 +23,10 @@ This repository is integrated into the main one as a [git submodule](https://git
 In essence, a submodule is a way for one repository (i.e. `pokerogue`) to use another repository (i.e. `pokerogue-locales`) internally. The parent repo (the "superproject") houses a cloned version of the 2nd repository (the "submodule") inside it, making locales effectively a "repository within a repository", so to speak.
 
 >[!TIP]
-> Many popular IDEs have integrated `git` support with special handling around submodules.
-> ![Image showing Visual Studio Code's `git` integration in the File Explorer. A blue "S" in the top right hand corner indicates the `public/locales` folder is a submodule.](image.png "What the `public/locales` submodule looks like in VS Code's File Explorer")
-> Some even allow direct editing and committing of submodule files without even changing directories. ![alt text](image-1.png)
-
+> Many popular IDEs have integrated `git` support with special handling around submodules:
+> ![Image showing Visual Studio Code's `git` integration in the File Explorer. A blue "S" in the top right hand corner indicates the `public/locales` folder is a submodule.](https://github.com/user-attachments/assets/bd42d354-c65b-4cbe-8873-23d760dc1714 "What the `public/locales` submodule looks like in VS Code's File Explorer")
+>
+> ![Image showing Visual Studio Code's Source Control tab. A separate dropdown can be seen for each individual submodule.](https://github.com/user-attachments/assets/8b4d3f64-aec1-4474-91df-03dc1252a2fa "Making commits on submodules without even changing directories!")
 
 From the perspective of the main project, the locales submodule is fairly simple to work with, but there are some important commands to keep in mind.
 ## Fetching Changes from Submodules
