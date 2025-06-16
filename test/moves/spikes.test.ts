@@ -82,10 +82,10 @@ describe("Moves - Spikes", () => {
 
   it("should work when all targets fainted", async () => {
     game.override.enemySpecies(SpeciesId.DIGLETT).battleStyle("double").startingLevel(50);
-    await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.ROWLET]);
+    await game.classicMode.startBattle([SpeciesId.RAYQUAZA]);
 
-    game.move.select(MoveId.EARTHQUAKE);
-    game.move.select(MoveId.SPIKES, 1);
+    game.move.use(MoveId.SPIKES);
+    await game.doKillOpponents();
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.arena.getTagOnSide(ArenaTrapTag, ArenaTagSide.ENEMY)).toBeDefined();
