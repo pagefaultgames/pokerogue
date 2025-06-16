@@ -12,8 +12,8 @@ export function applyInSpeedOrder<T extends Pokemon>(pokemonList: T[], callback:
   sortInSpeedOrder(pokemonList).forEach(pokemon => callback(pokemon));
 }
 
-export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: T[]): T[] {
-  pokemonList = shuffle(pokemonList);
+export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: T[], shuffleFirst = true): T[] {
+  pokemonList = shuffleFirst ? shuffle(pokemonList) : pokemonList;
   sortBySpeed(pokemonList);
   return pokemonList;
 }
