@@ -28,7 +28,7 @@ describe("Items - Multi Lens", () => {
       .ability(AbilityId.BALL_FETCH)
       .startingHeldItems([{ name: "MULTI_LENS" }])
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.SNORLAX)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)

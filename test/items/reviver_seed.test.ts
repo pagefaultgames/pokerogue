@@ -29,7 +29,7 @@ describe("Items - Reviver Seed", () => {
       .moveset([MoveId.SPLASH, MoveId.TACKLE, MoveId.ENDURE])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .startingHeldItems([{ name: "REVIVER_SEED" }])

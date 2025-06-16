@@ -28,7 +28,7 @@ describe("Moves - Magnet Rise", () => {
       .starterSpecies(SpeciesId.MAGNEZONE)
       .enemySpecies(SpeciesId.RATTATA)
       .enemyMoveset(MoveId.DRILL_RUN)
-      .disableCrits()
+      .criticalHits(false)
       .enemyLevel(1)
       .moveset([moveToUse, MoveId.SPLASH, MoveId.GRAVITY, MoveId.BATON_PASS]);
   });

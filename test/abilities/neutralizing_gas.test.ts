@@ -31,7 +31,7 @@ describe("Abilities - Neutralizing Gas", () => {
       .moveset([MoveId.SPLASH])
       .ability(AbilityId.NEUTRALIZING_GAS)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
