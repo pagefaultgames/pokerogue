@@ -223,11 +223,10 @@ export class TurnStartPhase extends FieldPhase {
   }
 
   private handleFightCommand(turnCommand: TurnCommand, pokemon: Pokemon) {
-    if (!turnCommand.move) {
+    const queuedMove = turnCommand.move;
+    if (!queuedMove) {
       return;
     }
-
-    const queuedMove = turnCommand.move;
 
     // TODO: This seems somewhat dubious
     const move =
@@ -238,18 +237,12 @@ export class TurnStartPhase extends FieldPhase {
       globalScene.phaseManager.unshiftNew("MoveHeaderPhase", pokemon, move);
     }
 
-    // TODO: Review what a `-1` cursor means
-    if (pokemon.isPlayer() && turnCommand.cursor === -1) {
-      globalScene.phaseManager.pushNew("MovePhase", pokemon, turnCommand.targets ?? queuedMove.targets, move);
-    } else {
-      globalScene.phaseManager.pushNew(
-        "MovePhase",
-        pokemon,
-        turnCommand.targets ?? turnCommand.move.targets,
-        move,
-        false,
-        queuedMove.useMode,
-      );
-    }
+    globalScene.phaseManager.pushNew(
+      "MovePhase",
+      pokemon,
+      turnCommand.targets ?? queuedMove.targets,
+      move,
+      queuedMove.useMode,
+    );
   }
 }
