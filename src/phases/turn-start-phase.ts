@@ -58,8 +58,6 @@ export class TurnStartPhase extends FieldPhase {
     const activeField = globalScene.getField(true);
     const moveOrder = this.getCommandOrder();
 
-    let orderIndex = 0;
-
     applyInSpeedOrder(activeField, (p: Pokemon) => {
       const preTurnCommand = globalScene.currentBattle.preTurnCommands[p.getBattlerIndex()];
 
@@ -91,7 +89,6 @@ export class TurnStartPhase extends FieldPhase {
         case Command.FIGHT:
           {
             const queuedMove = turnCommand.move;
-            pokemon.turnData.order = orderIndex++;
             if (!queuedMove) {
               continue;
             }
@@ -99,7 +96,7 @@ export class TurnStartPhase extends FieldPhase {
               pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp()) ||
               new PokemonMove(queuedMove.move);
             if (move.getMove().hasAttr("MoveHeaderAttr")) {
-              phaseManager.unshiftNew("MoveHeaderPhase", pokemon, move);
+              phaseManager.pushNew("MoveHeaderPhase", pokemon.getBattlerIndex(), move);
             }
             if (pokemon.isPlayer()) {
               if (turnCommand.cursor === -1) {

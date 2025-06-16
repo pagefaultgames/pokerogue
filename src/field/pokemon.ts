@@ -6883,7 +6883,6 @@ export class PokemonTurnData {
   public singleHitDamageDealt = 0;
   public damageTaken = 0;
   public attacksReceived: AttackMoveResult[] = [];
-  public order: number;
   public statStagesIncreased = false;
   public statStagesDecreased = false;
   public moveEffectiveness: TypeDamageMultiplier | null = null;

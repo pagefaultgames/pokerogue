@@ -24,6 +24,6 @@ export type PhaseClass = PhaseConstructorMap[keyof PhaseConstructorMap];
  */
 export type PhaseString = keyof PhaseMap;
 
-export type DynamicPhaseString = "PostSummonPhase" | "SwitchSummonPhase" | "MovePhase";
+export type DynamicPhaseString = "PostSummonPhase" | "SwitchSummonPhase" | "MovePhase" | "MoveHeaderPhase";
 
 export type StaticPhaseString = Exclude<PhaseString, DynamicPhaseString>;
