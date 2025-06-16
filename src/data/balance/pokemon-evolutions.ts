@@ -15,7 +15,7 @@ import type { SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#ap
 import { speciesStarterCosts } from "./starters";
 import i18next from "i18next";
 import { allMoves } from "#app/data/data-lists";
-import { getPokemonSpecies } from "../pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,

@@ -42,6 +42,8 @@ import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { loadPokemonVariantAssets } from "#app/sprites/pokemon-sprite";
 import { hasExpSprite } from "#app/sprites/sprite-utils";
 import { Gender } from "./gender";
+import { allSpecies } from "#app/data/data-lists";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 
 export enum Region {
   NORMAL,
@@ -81,24 +83,6 @@ export const normalForm: SpeciesId[] = [
   SpeciesId.ZARUDE,
   SpeciesId.CALYREX,
 ];
-
-/**
- * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode SpeciesId} enum given
- * @param species - The {@linkcode SpeciesId} to fetch.
- * If an array of `SpeciesId`s is passed (such as for named trainer spawn pools),
- * one will be selected at random.
- * @returns The associated {@linkcode PokemonSpecies} object
- */
-export function getPokemonSpecies(species: SpeciesId | SpeciesId[]): PokemonSpecies {
-  if (Array.isArray(species)) {
-    // TODO: this RNG roll should not be handled by this function
-    species = species[Math.floor(Math.random() * species.length)];
-  }
-  if (species >= 2000) {
-    return allSpecies.find(s => s.speciesId === species)!; // TODO: is this bang correct?
-  }
-  return allSpecies[species - 1];
-}
 
 export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): PokemonSpeciesForm {
   const retSpecies: PokemonSpecies =
@@ -1448,8 +1432,6 @@ export function getPokerusStarters(): PokemonSpecies[] {
   );
   return pokerusStarters;
 }
-
-export const allSpecies: PokemonSpecies[] = [];
 
 // biome-ignore format: manually formatted
 export function initSpecies() {
