@@ -206,7 +206,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.HELD_ITEM:
           return pokemon.getHeldItems().some(m => m.is("SpeciesStatBoosterModifier") && (m.type as SpeciesStatBoosterModifierType).key === cond.itemKey);
         case EvoCondKey.USE_MOVE_COUNT:
-          return pokemon.getHeldItems().some(m => m.is("MoveTrackerModifier") && m.getStackCount() >= cond.value);
+          return pokemon.getHeldItems().some(m => m.is("MoveTrackerModifier") && m.shouldApply(pokemon, cond.move) && m.getStackCount() >= cond.value);
       }
     });
   }

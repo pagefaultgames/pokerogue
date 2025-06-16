@@ -983,6 +983,10 @@ export class MoveTrackerModifier extends PokemonHeldItemModifier {
     return super.getArgs().concat([this.species, this.move, this.required]);
   }
 
+  override shouldApply(pokemon?: Pokemon, ...args: unknown[]): boolean {
+    return (pokemon?.hasSpecies(this.species) && (args[0] as MoveId) === this.move) || false;
+  }
+
   /**
    * Applies the {@linkcode MoveTrackerModifier}
    * @returns always `true`
