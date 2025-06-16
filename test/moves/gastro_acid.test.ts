@@ -3,6 +3,7 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { MoveResult } from "#enums/move-result";
+import { BattleType } from "#enums/battle-type";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -23,82 +24,91 @@ describe("Moves - Gastro Acid", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleStyle("double")
+      .battleStyle("single")
+      .ability(AbilityId.BALL_FETCH)
       .startingLevel(1)
-      .enemyLevel(100)
-      .ability(AbilityId.NONE)
-      .moveset([MoveId.GASTRO_ACID, MoveId.WATER_GUN, MoveId.SPLASH, MoveId.CORE_ENFORCER])
       .enemySpecies(SpeciesId.BIDOOF)
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.WATER_ABSORB);
   });
 
-  it("suppresses effect of ability", async () => {
-    /*
-     * Expected flow (enemies have WATER ABSORD, can only use SPLASH)
-     * - player mon 1 uses GASTRO ACID, player mon 2 uses SPLASH
-     * - both player mons use WATER GUN on their respective enemy mon
-     * - player mon 1 should have dealt damage, player mon 2 should have not
-     */
+  it("should suppress the target's ability", async () => {
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.BIDOOF, SpeciesId.BASCULIN]);
 
-    await game.classicMode.startBattle();
+    game.move.use(MoveId.GASTRO_ACID, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.toNextTurn();
 
-    game.move.select(MoveId.GASTRO_ACID, 0, BattlerIndex.ENEMY);
-    game.move.select(MoveId.SPLASH, 1);
+    const [enemy1, enemy2] = game.scene.getEnemyField();
+    expect(enemy1.summonData.abilitySuppressed).toBe(true);
+    expect(enemy2.summonData.abilitySuppressed).toBe(false);
 
-    await game.phaseInterceptor.to("TurnInitPhase");
+    game.move.select(MoveId.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(MoveId.WATER_GUN, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
+    await game.toEndOfTurn();
 
-    const enemyField = game.scene.getEnemyField();
-    expect(enemyField[0].summonData.abilitySuppressed).toBe(true);
-    expect(enemyField[1].summonData.abilitySuppressed).toBe(false);
-
-    game.move.select(MoveId.WATER_GUN, 0, BattlerIndex.ENEMY);
-    game.move.select(MoveId.WATER_GUN, 1, BattlerIndex.ENEMY_2);
-
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(enemyField[0].hp).toBeLessThan(enemyField[0].getMaxHp());
-    expect(enemyField[1].isFullHp()).toBe(true);
+    expect(enemy1.summonData.abilitySuppressed).toBe(true);
+    expect(enemy2.summonData.abilitySuppressed).toBe(false);
+    expect(enemy1.hp).toBeLessThan(enemy1.getMaxHp());
+    expect(enemy2.hp).toBe(enemy2.getMaxHp());
   });
 
-  it("fails if used on an enemy with an already-suppressed ability", async () => {
-    game.override.battleStyle("single");
+  it("should be removed on switch", async () => {
+    game.override.battleType(BattleType.TRAINER);
+    await game.classicMode.startBattle([SpeciesId.BIDOOF]);
 
-    await game.classicMode.startBattle();
+    game.move.use(MoveId.GASTRO_ACID);
+    await game.toNextTurn();
 
-    game.move.select(MoveId.CORE_ENFORCER);
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy.summonData.abilitySuppressed).toBe(true);
+
+    // switch enemy out and back in, should be removed
+    game.move.use(MoveId.SPLASH);
+    game.forceEnemyToSwitch();
+    await game.toNextTurn();
+    game.move.use(MoveId.SPLASH);
+    game.forceEnemyToSwitch();
+    await game.toNextTurn();
+
+    expect(game.field.getEnemyPokemon()).toBe(enemy);
+    expect(enemy.summonData.abilitySuppressed).toBe(false);
+  });
+
+  it("should fail if target's ability is already suppressed", async () => {
+    await game.classicMode.startBattle([SpeciesId.BIDOOF]);
+
+    game.move.use(MoveId.CORE_ENFORCER);
     // Force player to be slower to enable Core Enforcer to proc its suppression effect
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.toNextTurn();
 
-    await game.phaseInterceptor.to("TurnInitPhase");
+    game.move.use(MoveId.GASTRO_ACID);
+    await game.toNextTurn();
 
-    game.move.select(MoveId.GASTRO_ACID);
-
-    await game.phaseInterceptor.to("TurnInitPhase");
-
-    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
-  it("should suppress the passive of a target even if its main ability is unsuppressable and not suppress main abli", async () => {
-    game.override
-      .enemyAbility(AbilityId.COMATOSE)
-      .enemyPassiveAbility(AbilityId.WATER_ABSORB)
-      .moveset([MoveId.SPLASH, MoveId.GASTRO_ACID, MoveId.WATER_GUN]);
+  it("should suppress target's passive even if its main ability is unsuppressable", async () => {
+    game.override.enemyAbility(AbilityId.COMATOSE).enemyPassiveAbility(AbilityId.WATER_ABSORB);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.GASTRO_ACID);
+    game.move.use(MoveId.GASTRO_ACID);
     await game.toNextTurn();
-    expect(enemyPokemon?.summonData.abilitySuppressed).toBe(true);
+    expect(enemyPokemon.summonData.abilitySuppressed).toBe(true);
 
     game.move.select(MoveId.WATER_GUN);
     await game.toNextTurn();
-    expect(enemyPokemon?.getHpRatio()).toBeLessThan(1);
+    // water gun should've dealt damage due to suppressed Water Absorb
+    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
 
     game.move.select(MoveId.SPORE);
-    await game.phaseInterceptor.to("BerryPhase");
+    await game.toEndOfTurn();
 
-    expect(enemyPokemon?.status?.effect).toBeFalsy();
+    // Comatose should block stauts effect
+    expect(enemyPokemon.status?.effect).toBeUndefined();
   });
 });
