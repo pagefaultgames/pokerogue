@@ -21,7 +21,6 @@ export class PokemonMove {
   public moveId: MoveId;
   public ppUsed: number;
   public ppUp: number;
-  public virtual: boolean;
 
   /**
    * If defined and nonzero, overrides the maximum PP of the move (e.g., due to move being copied by Transform).
@@ -29,11 +28,10 @@ export class PokemonMove {
    */
   public maxPpOverride?: number;
 
-  constructor(moveId: MoveId, ppUsed = 0, ppUp = 0, virtual = false, maxPpOverride?: number) {
+  constructor(moveId: MoveId, ppUsed = 0, ppUp = 0, maxPpOverride?: number) {
     this.moveId = moveId;
     this.ppUsed = ppUsed;
     this.ppUp = ppUp;
-    this.virtual = virtual;
     this.maxPpOverride = maxPpOverride;
   }
 
@@ -47,6 +45,7 @@ export class PokemonMove {
    * @returns Whether this {@linkcode PokemonMove} can be selected by this Pokemon.
    */
   isUsable(pokemon: Pokemon, ignorePp = false, ignoreRestrictionTags = false): boolean {
+    // TODO: Add Sky Drop's 1 turn stall
     if (this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)) {
       return false;
     }
@@ -88,6 +87,6 @@ export class PokemonMove {
    * @returns A valid {@linkcode PokemonMove} object
    */
   static loadMove(source: PokemonMove | any): PokemonMove {
-    return new PokemonMove(source.moveId, source.ppUsed, source.ppUp, source.virtual, source.maxPpOverride);
+    return new PokemonMove(source.moveId, source.ppUsed, source.ppUp, source.maxPpOverride);
   }
 }

@@ -758,6 +758,10 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return this.getMaxHeldItemCount(pokemon);
   }
 
+  getSpecies(): SpeciesId | null {
+    return null;
+  }
+
   abstract getMaxHeldItemCount(pokemon?: Pokemon): number;
 }
 
@@ -904,27 +908,14 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getIconStackText(virtual?: boolean): Phaser.GameObjects.BitmapText | null {
-    if (this.getMaxStackCount() === 1 || (virtual && !this.virtualStackCount)) {
-      return null;
-    }
+  getIconStackText(_virtual?: boolean): Phaser.GameObjects.BitmapText | null {
+    const pokemon = this.getPokemon();
 
-    const pokemon = globalScene.getPokemonById(this.pokemonId);
+    const count = (pokemon?.getPersistentTreasureCount() || 0) + this.getStackCount();
 
-    this.stackCount = pokemon
-      ? pokemon.evoCounter +
-        pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length +
-        globalScene.findModifiers(
-          m =>
-            m instanceof MoneyMultiplierModifier ||
-            m instanceof ExtraModifierModifier ||
-            m instanceof TempExtraModifierModifier,
-        ).length
-      : this.stackCount;
-
-    const text = globalScene.add.bitmapText(10, 15, "item-count", this.stackCount.toString(), 11);
+    const text = globalScene.add.bitmapText(10, 15, "item-count", count.toString(), 11);
     text.letterSpacing = -0.5;
-    if (this.getStackCount() >= this.required) {
+    if (count >= this.required) {
       text.setTint(0xf89890);
     }
     text.setOrigin(0, 0);
@@ -932,17 +923,12 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
     return text;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): number {
-    this.stackCount =
-      pokemon.evoCounter +
-      pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length +
-      globalScene.findModifiers(
-        m =>
-          m instanceof MoneyMultiplierModifier ||
-          m instanceof ExtraModifierModifier ||
-          m instanceof TempExtraModifierModifier,
-      ).length;
+  getMaxHeldItemCount(_pokemon: Pokemon): number {
     return 999;
+  }
+
+  override getSpecies(): SpeciesId {
+    return this.species;
   }
 }
 
@@ -2388,19 +2374,13 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
   override apply(playerPokemon: PlayerPokemon): boolean {
     let matchingEvolution = pokemonEvolutions.hasOwnProperty(playerPokemon.species.speciesId)
       ? pokemonEvolutions[playerPokemon.species.speciesId].find(
-          e =>
-            e.item === this.type.evolutionItem &&
-            (e.evoFormKey === null || (e.preFormKey || "") === playerPokemon.getFormKey()) &&
-            (!e.condition || e.condition.predicate(playerPokemon)),
+          e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, false, e.item!),
         )
       : null;
 
     if (!matchingEvolution && playerPokemon.isFusion()) {
       matchingEvolution = pokemonEvolutions[playerPokemon.fusionSpecies!.speciesId].find(
-        e =>
-          e.item === this.type.evolutionItem && // TODO: is the bang correct?
-          (e.evoFormKey === null || (e.preFormKey || "") === playerPokemon.getFusionFormKey()) &&
-          (!e.condition || e.condition.predicate(playerPokemon)),
+        e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, true, e.item!),
       );
       if (matchingEvolution) {
         matchingEvolution = new FusionSpeciesFormEvolution(playerPokemon.species.speciesId, matchingEvolution);
@@ -2921,11 +2901,10 @@ export class MoneyRewardModifier extends ConsumableModifier {
 
     globalScene.getPlayerParty().map(p => {
       if (p.species?.speciesId === SpeciesId.GIMMIGHOUL || p.fusionSpecies?.speciesId === SpeciesId.GIMMIGHOUL) {
-        p.evoCounter
-          ? (p.evoCounter += Math.min(Math.floor(this.moneyMultiplier), 3))
-          : (p.evoCounter = Math.min(Math.floor(this.moneyMultiplier), 3));
+        const factor = Math.min(Math.floor(this.moneyMultiplier), 3);
         const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(
           p,
+          factor,
         ) as EvoTrackerModifier;
         globalScene.addModifier(modifier);
       }

@@ -30,7 +30,7 @@ describe("Moves - Order Up", () => {
       .moveset(MoveId.ORDER_UP)
       .ability(AbilityId.COMMANDER)
       .battleStyle("double")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.SNORLAX)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)

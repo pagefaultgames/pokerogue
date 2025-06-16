@@ -36,7 +36,7 @@ describe("Moves - Jaw Lock", () => {
       .moveset([MoveId.JAW_LOCK, MoveId.SPLASH])
       .startingLevel(100)
       .enemyLevel(100)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("should trap the move's user and target", async () => {

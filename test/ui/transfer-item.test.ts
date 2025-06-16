@@ -26,17 +26,18 @@ describe("UI - Transfer Items", () => {
 
   beforeEach(async () => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.startingLevel(100);
-    game.override.startingWave(1);
-    game.override.startingHeldItems([
-      { name: "BERRY", count: 1, type: BerryType.SITRUS },
-      { name: "BERRY", count: 2, type: BerryType.APICOT },
-      { name: "BERRY", count: 2, type: BerryType.LUM },
-    ]);
-    game.override.moveset([MoveId.DRAGON_CLAW]);
-    game.override.enemySpecies(SpeciesId.MAGIKARP);
-    game.override.enemyMoveset([MoveId.SPLASH]);
+    game.override
+      .battleStyle("single")
+      .startingLevel(100)
+      .startingWave(1)
+      .startingHeldItems([
+        { name: "BERRY", count: 1, type: BerryType.SITRUS },
+        { name: "BERRY", count: 2, type: BerryType.APICOT },
+        { name: "BERRY", count: 2, type: BerryType.LUM },
+      ])
+      .moveset([MoveId.DRAGON_CLAW])
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyMoveset([MoveId.SPLASH]);
 
     await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA]);
 
@@ -76,7 +77,7 @@ describe("UI - Transfer Items", () => {
     });
 
     await game.phaseInterceptor.to("SelectModifierPhase");
-  }, 20000);
+  });
 
   it("check transfer option for pokemon to transfer to", async () => {
     game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, () => {
@@ -97,5 +98,5 @@ describe("UI - Transfer Items", () => {
     });
 
     await game.phaseInterceptor.to("SelectModifierPhase");
-  }, 20000);
+  });
 });
