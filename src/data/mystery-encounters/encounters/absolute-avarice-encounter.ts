@@ -10,7 +10,7 @@ import type Pokemon from "#app/field/pokemon";
 import { EnemyPokemon } from "#app/field/pokemon";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { BerryModifierType, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { globalScene } from "#app/global-scene";
@@ -38,6 +38,7 @@ import type HeldModifierConfig from "#app/@types/held-modifier-config";
 import type { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
 import i18next from "i18next";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/absoluteAvarice";
@@ -307,7 +308,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.ENEMY],
           move: new PokemonMove(MoveId.STUFF_CHEEKS),
-          ignorePp: true,
+          useMode: MoveUseMode.IGNORE_PP,
         });
 
         await transitionMysteryEncounterIntroVisuals(true, true, 500);

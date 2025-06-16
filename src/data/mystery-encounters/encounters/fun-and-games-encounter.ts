@@ -26,7 +26,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
 import { addPokeballOpenParticles } from "#app/field/anims";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { Nature } from "#enums/nature";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";

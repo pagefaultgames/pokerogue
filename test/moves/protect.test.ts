@@ -28,16 +28,14 @@ describe("Moves - Protect", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("single");
-
-    game.override.moveset([MoveId.PROTECT]);
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-
-    game.override.enemyAbility(AbilityId.INSOMNIA);
-    game.override.enemyMoveset([MoveId.TACKLE]);
-
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("single")
+      .moveset([MoveId.PROTECT])
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .enemyMoveset([MoveId.TACKLE])
+      .startingLevel(100)
+      .enemyLevel(100);
   });
 
   test("should protect the user from attacks", async () => {

@@ -20,7 +20,7 @@ import { UiMode } from "#enums/ui-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#enums/modifier-tier";
 import { ClowningAroundEncounter } from "#app/data/mystery-encounters/encounters/clowning-around-encounter";
 import { TrainerType } from "#enums/trainer-type";
 import { AbilityId } from "#enums/ability-id";
@@ -29,7 +29,7 @@ import { Button } from "#enums/buttons";
 import type PartyUiHandler from "#app/ui/party-ui-handler";
 import type OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { BerryType } from "#enums/berry-type";
 import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { PokemonType } from "#enums/pokemon-type";
@@ -55,10 +55,11 @@ describe("Clowning Around - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<BiomeId, MysteryEncounterType[]>([[BiomeId.CAVE, [MysteryEncounterType.CLOWNING_AROUND]]]),
@@ -67,8 +68,6 @@ describe("Clowning Around - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {

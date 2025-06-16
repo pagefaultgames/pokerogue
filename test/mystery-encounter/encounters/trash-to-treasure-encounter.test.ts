@@ -14,8 +14,9 @@ import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { HealShopCostModifier, HitHealModifier, TurnHealModifier } from "#app/modifier/modifier";
-import { ModifierTier } from "#app/modifier/modifier-tier";
-import { modifierTypes, type PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import { ModifierTier } from "#enums/modifier-tier";
+import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
@@ -50,10 +51,11 @@ describe("Trash to Treasure - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<BiomeId, MysteryEncounterType[]>([[BiomeId.CAVE, [MysteryEncounterType.TRASH_TO_TREASURE]]]),
@@ -62,8 +64,6 @@ describe("Trash to Treasure - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {

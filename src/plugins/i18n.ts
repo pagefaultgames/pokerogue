@@ -174,7 +174,25 @@ export async function initI18n(): Promise<void> {
       "es-MX": ["es-ES", "en"],
       default: ["en"],
     },
-    supportedLngs: ["en", "es-ES", "es-MX", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca", "da", "tr", "ro", "ru", "he"],
+    supportedLngs: [
+      "en",
+      "es-ES",
+      "es-MX",
+      "fr",
+      "it",
+      "de",
+      "zh-CN",
+      "zh-TW",
+      "pt-BR",
+      "ko",
+      "ja",
+      "ca",
+      "da",
+      "tr",
+      "ro",
+      "ru",
+      "he",
+    ],
     backend: {
       loadPath(lng: string, [ns]: string[]) {
         let fileName: string;

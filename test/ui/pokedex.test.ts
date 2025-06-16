@@ -1,6 +1,6 @@
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import PokedexUiHandler from "#app/ui/pokedex-ui-handler";
 import { FilterTextRow } from "#app/ui/filter-text";
 import { allAbilities } from "#app/data/data-lists";
@@ -46,7 +46,6 @@ function permutations<T>(array: T[], length: number): T[][] {
 describe("UI - Pokedex", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const mocks: MockInstance[] = [];
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -55,9 +54,6 @@ describe("UI - Pokedex", () => {
   });
 
   afterEach(() => {
-    while (mocks.length > 0) {
-      mocks.pop()?.mockRestore();
-    }
     game.phaseInterceptor.restoreOg();
   });
 
@@ -185,10 +181,10 @@ describe("UI - Pokedex", () => {
       checks.push(...pokemon.forms);
     }
     for (const p of checks) {
-      mocks.push(vi.spyOn(p, "ability1", "get").mockReturnValue(ability));
-      mocks.push(vi.spyOn(p, "ability2", "get").mockReturnValue(ability2));
-      mocks.push(vi.spyOn(p, "abilityHidden", "get").mockReturnValue(hidden));
-      mocks.push(vi.spyOn(p, "getPassiveAbility").mockReturnValue(passive));
+      vi.spyOn(p, "ability1", "get").mockReturnValue(ability);
+      vi.spyOn(p, "ability2", "get").mockReturnValue(ability2);
+      vi.spyOn(p, "abilityHidden", "get").mockReturnValue(hidden);
+      vi.spyOn(p, "getPassiveAbility").mockReturnValue(passive);
     }
   }
 
@@ -502,13 +498,13 @@ describe("UI - Pokedex", () => {
       // Nab the pokemon that is selected for comparison later.
 
       // @ts-expect-error - `lastSpecies` is private
-      const selectedPokemon = pokedexHandler.lastSpecies.speciesId;
+      const selectedPokemon = pokedexHandler.lastSpeciesId.speciesId;
       for (let i = 0; i < 11; i++) {
         pokedexHandler.processInput(Button.DOWN);
       }
 
       // @ts-expect-error `lastSpecies` is private
-      expect(selectedPokemon).toEqual(pokedexHandler.lastSpecies.speciesId);
+      expect(selectedPokemon).toEqual(pokedexHandler.lastSpeciesId.speciesId);
     },
   );
 

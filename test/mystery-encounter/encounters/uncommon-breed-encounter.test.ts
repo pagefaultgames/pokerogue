@@ -26,7 +26,7 @@ import { BerryType } from "#enums/berry-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import type { BerryModifier } from "#app/modifier/modifier";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 
 const namespace = "mysteryEncounters/uncommonBreed";
@@ -62,8 +62,6 @@ describe("Uncommon Breed - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {

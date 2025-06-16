@@ -3,7 +3,7 @@ import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";

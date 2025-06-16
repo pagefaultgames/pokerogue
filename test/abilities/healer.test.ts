@@ -4,17 +4,15 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { isNullOrUndefined } from "#app/utils/common";
-import { PostTurnResetStatusAbAttr } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 import type Pokemon from "#app/field/pokemon";
+import { PostTurnResetStatusAbAttr } from "#app/data/abilities/ability";
 
 describe("Abilities - Healer", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  let healerAttrSpy: MockInstance;
-  let healerAttr: PostTurnResetStatusAbAttr;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -24,7 +22,6 @@ describe("Abilities - Healer", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    healerAttrSpy.mockRestore();
   });
 
   beforeEach(() => {
@@ -38,30 +35,28 @@ describe("Abilities - Healer", () => {
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
 
-    healerAttr = allAbilities[AbilityId.HEALER].getAttrs(PostTurnResetStatusAbAttr)[0];
-    healerAttrSpy = vi
-      .spyOn(healerAttr, "getCondition")
-      .mockReturnValue((pokemon: Pokemon) => !isNullOrUndefined(pokemon.getAlly()));
+    // Mock healer to have a 100% chance of healing its ally
+    vi.spyOn(allAbilities[AbilityId.HEALER].getAttrs("PostTurnResetStatusAbAttr")[0], "getCondition").mockReturnValue(
+      (pokemon: Pokemon) => !isNullOrUndefined(pokemon.getAlly()),
+    );
   });
 
   it("should not queue a message phase for healing if the ally has fainted", async () => {
+    const abSpy = vi.spyOn(PostTurnResetStatusAbAttr.prototype, "canApplyPostTurn");
     game.override.moveset([MoveId.SPLASH, MoveId.LUNAR_DANCE]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
+
     const user = game.scene.getPlayerPokemon()!;
-    // Only want one magikarp to have the ability.
+    // Only want one magikarp to have the ability
     vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[AbilityId.HEALER]);
     game.move.select(MoveId.SPLASH);
     // faint the ally
     game.move.select(MoveId.LUNAR_DANCE, 1);
-    const abSpy = vi.spyOn(healerAttr, "canApplyPostTurn");
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // It's not enough to just test that the ally still has its status.
     // We need to ensure that the ability failed to meet its condition
     expect(abSpy).toHaveReturnedWith(false);
-
-    // Explicitly restore the mock to ensure pollution doesn't happen
-    abSpy.mockRestore();
   });
 
   it("should heal the status of an ally if the ally has a status", async () => {

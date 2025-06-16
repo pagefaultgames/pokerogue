@@ -1,10 +1,5 @@
 import { BattlerIndex } from "#enums/battler-index";
-import {
-  applyAbAttrs,
-  applyPreDefendAbAttrs,
-  IgnoreMoveEffectsAbAttr,
-  MoveEffectChanceMultiplierAbAttr,
-} from "#app/data/abilities/ability";
+import { applyAbAttrs, applyPreDefendAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { NumberHolder } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
@@ -31,12 +26,13 @@ describe("Abilities - Shield Dust", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.ONIX);
-    game.override.enemyAbility(AbilityId.SHIELD_DUST);
-    game.override.startingLevel(100);
-    game.override.moveset(MoveId.AIR_SLASH);
-    game.override.enemyMoveset(MoveId.TACKLE);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.ONIX)
+      .enemyAbility(AbilityId.SHIELD_DUST)
+      .startingLevel(100)
+      .moveset(MoveId.AIR_SLASH)
+      .enemyMoveset(MoveId.TACKLE);
   });
 
   it("Shield Dust", async () => {
@@ -57,7 +53,7 @@ describe("Abilities - Shield Dust", () => {
 
     const chance = new NumberHolder(move.chance);
     await applyAbAttrs(
-      MoveEffectChanceMultiplierAbAttr,
+      "MoveEffectChanceMultiplierAbAttr",
       phase.getUserPokemon()!,
       null,
       false,
@@ -67,7 +63,7 @@ describe("Abilities - Shield Dust", () => {
       false,
     );
     await applyPreDefendAbAttrs(
-      IgnoreMoveEffectsAbAttr,
+      "IgnoreMoveEffectsAbAttr",
       phase.getFirstTarget()!,
       phase.getUserPokemon()!,
       null,

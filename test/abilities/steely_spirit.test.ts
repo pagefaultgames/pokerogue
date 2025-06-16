@@ -28,11 +28,12 @@ describe("Abilities - Steely Spirit", () => {
   beforeEach(() => {
     ironHeadPower = allMoves[moveToCheck].power;
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.enemySpecies(SpeciesId.SHUCKLE);
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.moveset([MoveId.IRON_HEAD, MoveId.SPLASH]);
-    game.override.enemyMoveset(MoveId.SPLASH);
+    game.override
+      .battleStyle("double")
+      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .moveset([MoveId.IRON_HEAD, MoveId.SPLASH])
+      .enemyMoveset(MoveId.SPLASH);
     vi.spyOn(allMoves[moveToCheck], "calculateBattlePower");
   });
 

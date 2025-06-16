@@ -10,7 +10,6 @@ import {
   generateModifierType,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import type { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -45,8 +44,9 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Stat } from "#enums/stat";
-import { Ability } from "#app/data/abilities/ability-class";
 import { FIRE_RESISTANT_ABILITIES } from "#app/data/mystery-encounters/requirements/requirement-groups";
+import { MoveUseMode } from "#enums/move-use-mode";
+import { allAbilities, modifierTypes } from "#app/data/data-lists";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/fieryFallout";
@@ -201,13 +201,13 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.PLAYER],
           move: new PokemonMove(MoveId.FIRE_SPIN),
-          ignorePp: true,
+          useMode: MoveUseMode.IGNORE_PP,
         },
         {
           sourceBattlerIndex: BattlerIndex.ENEMY_2,
           targets: [BattlerIndex.PLAYER_2],
           move: new PokemonMove(MoveId.FIRE_SPIN),
-          ignorePp: true,
+          useMode: MoveUseMode.IGNORE_PP,
         },
       );
       await initBattleWithEnemyConfig(globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
@@ -246,7 +246,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
         if (chosenPokemon.trySetStatus(StatusEffect.BURN)) {
           // Burn applied
           encounter.setDialogueToken("burnedPokemon", chosenPokemon.getNameToRender());
-          encounter.setDialogueToken("abilityName", new Ability(AbilityId.HEATPROOF, 3).name);
+          encounter.setDialogueToken("abilityName", allAbilities[AbilityId.HEATPROOF].name);
           queueEncounterMessage(`${namespace}:option.2.target_burned`);
 
           // Also permanently change the burned Pokemon's ability to Heatproof

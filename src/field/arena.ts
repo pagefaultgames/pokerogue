@@ -24,10 +24,7 @@ import {
   applyAbAttrs,
   applyPostTerrainChangeAbAttrs,
   applyPostWeatherChangeAbAttrs,
-  PostTerrainChangeAbAttr,
-  PostWeatherChangeAbAttr,
-  TerrainEventTypeChangeAbAttr,
-} from "#app/data/abilities/ability";
+} from "#app/data/abilities/apply-ab-attrs";
 import type Pokemon from "#app/field/pokemon";
 import Overrides from "#app/overrides";
 import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
@@ -265,7 +262,7 @@ export class Arena {
             return 5;
         }
         break;
-      case SpeciesId.LYCANROC:
+      case SpeciesId.LYCANROC: {
         const timeOfDay = this.getTimeOfDay();
         switch (timeOfDay) {
           case TimeOfDay.DAY:
@@ -277,6 +274,7 @@ export class Arena {
             return 1;
         }
         break;
+      }
     }
 
     return 0;
@@ -374,7 +372,7 @@ export class Arena {
         pokemon.findAndRemoveTags(
           t => "weatherTypes" in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather),
         );
-        applyPostWeatherChangeAbAttrs(PostWeatherChangeAbAttr, pokemon, weather);
+        applyPostWeatherChangeAbAttrs("PostWeatherChangeAbAttr", pokemon, weather);
       });
 
     return true;
@@ -463,8 +461,8 @@ export class Arena {
         pokemon.findAndRemoveTags(
           t => "terrainTypes" in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain),
         );
-        applyPostTerrainChangeAbAttrs(PostTerrainChangeAbAttr, pokemon, terrain);
-        applyAbAttrs(TerrainEventTypeChangeAbAttr, pokemon, null, false);
+        applyPostTerrainChangeAbAttrs("PostTerrainChangeAbAttr", pokemon, terrain);
+        applyAbAttrs("TerrainEventTypeChangeAbAttr", pokemon, null, false);
       });
 
     return true;
@@ -766,6 +764,9 @@ export class Arena {
           t => t instanceof tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side),
         );
   }
+
+  // TODO: Add an overload similar to `Array.prototype.find` if the predicate func is of the form
+  // `(x): x is T`
 
   /**
    * Uses {@linkcode findTagsOnSide} to filter (using the parameter function) for specific tags that apply to both sides
