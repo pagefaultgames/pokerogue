@@ -169,7 +169,14 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { Challenges } from "#enums/challenges";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import { CustomPokemonData, PokemonBattleData, PokemonSummonData, PokemonTempSummonData, PokemonTurnData, PokemonWaveData } from "#app/data/pokemon/pokemon-data";
+import {
+  CustomPokemonData,
+  PokemonBattleData,
+  PokemonSummonData,
+  PokemonTempSummonData,
+  PokemonTurnData,
+  PokemonWaveData,
+} from "#app/data/pokemon/pokemon-data";
 import { SwitchType } from "#enums/switch-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { getStatusEffectOverlapText } from "#app/data/status-effect";
@@ -193,6 +200,7 @@ import { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { AbAttrMap, AbAttrString } from "#app/@types/ability-types";
 import type { IllusionData } from "#app/@types/illusion-data";
 import type { TurnMove } from "#app/@types/turn-move";
+import type { DamageCalculationResult, DamageResult } from "#app/@types/damage-result";
 
 /** Base typeclass for damage parameter methods, used for DRY */
 type damageParams = {
@@ -6689,23 +6697,4 @@ export class EnemyPokemon extends Pokemon {
   toggleFlyout(visible: boolean): void {
     this.battleInfo.toggleFlyout(visible);
   }
-}
-
-export type DamageResult =
-  | HitResult.EFFECTIVE
-  | HitResult.SUPER_EFFECTIVE
-  | HitResult.NOT_VERY_EFFECTIVE
-  | HitResult.ONE_HIT_KO
-  | HitResult.CONFUSION
-  | HitResult.INDIRECT_KO
-  | HitResult.INDIRECT;
-
-/** Interface containing the results of a damage calculation for a given move */
-export interface DamageCalculationResult {
-  /** `true` if the move was cancelled (thus suppressing "No Effect" messages) */
-  cancelled: boolean;
-  /** The effectiveness of the move */
-  result: HitResult;
-  /** The damage dealt by the move */
-  damage: number;
 }
