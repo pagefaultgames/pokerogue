@@ -18,6 +18,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 const pokemonName = "PKM";
 const sourceText = "SOURCE";
 
+// TODO: Make this a giant it.each
 describe("Status Effect Messages", () => {
   describe("NONE", () => {
     const statusEffect = StatusEffect.NONE;
@@ -355,7 +356,7 @@ describe("Status Effects", () => {
         .moveset([MoveId.SPLASH])
         .ability(AbilityId.BALL_FETCH)
         .battleStyle("single")
-        .disableCrits()
+        .criticalHits(false)
         .enemySpecies(SpeciesId.MAGIKARP)
         .enemyAbility(AbilityId.BALL_FETCH)
         .enemyMoveset(MoveId.SPLASH);
@@ -386,7 +387,7 @@ describe("Status Effects", () => {
       game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
 
-      expect(player.status?.effect).toBeUndefined();
+      expect(player.status).toBeFalsy();
       expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
     });
   });
@@ -411,7 +412,7 @@ describe("Status Effects", () => {
         .moveset([MoveId.SPLASH])
         .ability(AbilityId.BALL_FETCH)
         .battleStyle("single")
-        .disableCrits()
+        .criticalHits(false)
         .enemySpecies(SpeciesId.MAGIKARP)
         .enemyAbility(AbilityId.BALL_FETCH)
         .enemyMoveset(MoveId.NUZZLE)

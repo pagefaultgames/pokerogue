@@ -29,14 +29,14 @@ import type { GameModes } from "#enums/game-modes";
 import type { EncounterAnim } from "#enums/encounter-anims";
 import type { Challenges } from "#enums/challenges";
 import { globalScene } from "#app/global-scene";
+import type { MoveUseMode } from "#enums/move-use-mode";
 
 export interface EncounterStartOfBattleEffect {
   sourcePokemon?: Pokemon;
   sourceBattlerIndex?: BattlerIndex;
   targets: BattlerIndex[];
   move: PokemonMove;
-  ignorePp: boolean;
-  followUp?: boolean;
+  useMode: MoveUseMode; // TODO: This should always be ignore PP...
 }
 
 const DEFAULT_MAX_ALLOWED_ENCOUNTERS = 2;
@@ -254,7 +254,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
    */
   selectedOption?: MysteryEncounterOption | undefined;
   /**
-   * Will be set by option select handlers automatically, and can be used to refer to which option was chosen by later phases
+   * Array containing data pertaining to free moves used at the start of a battle mystery envounter.
    */
   startOfBattleEffects: EncounterStartOfBattleEffect[] = [];
   /**

@@ -7,7 +7,6 @@ import {
   isNullOrUndefined,
   randSeedItem,
   randSeedInt,
-  type Constructor,
   randSeedFloat,
   coerceArray,
 } from "#app/utils/common";
@@ -25,22 +24,21 @@ import { allMoves } from "../data-lists";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { TerrainType } from "#app/data/terrain";
+import { pokemonFormChanges } from "../pokemon-forms";
 import {
-  SpeciesFormChangeRevertWeatherFormTrigger,
   SpeciesFormChangeWeatherTrigger,
+  SpeciesFormChangeAbilityTrigger,
 } from "../pokemon-forms/form-change-triggers";
-import { SpeciesFormChangeAbilityTrigger } from "../pokemon-forms/form-change-triggers";
 import i18next from "i18next";
 import { Command } from "#enums/command";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 import { getPokeballName } from "#app/data/pokeball";
 import { BattleType } from "#enums/battle-type";
-import type { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { globalScene } from "#app/global-scene";
 import { allAbilities } from "#app/data/data-lists";
 
 // Enum imports
-import { Stat, type BattleStat, BATTLE_STATS, EFFECTIVE_STATS, getStatKey, type EffectiveStat } from "#enums/stat";
+import { Stat, BATTLE_STATS, EFFECTIVE_STATS, getStatKey } from "#enums/stat";
 import { PokemonType } from "#enums/pokemon-type";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { StatusEffect } from "#enums/status-effect";
@@ -54,12 +52,16 @@ import { SwitchType } from "#enums/switch-type";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
-import type { BerryType } from "#enums/berry-type";
 import { CommonAnim } from "#enums/move-anims-common";
-import { getBerryEffectFunc } from "../berry";
+import { getBerryEffectFunc } from "#app/data/berry";
 import { BerryUsedEvent } from "#app/events/battle-scene";
+import { noAbilityTypeOverrideMoves } from "#app/data/moves/invalid-moves";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 // Type imports
+import type { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import type { BattleStat, EffectiveStat } from "#enums/stat";
+import type { BerryType } from "#enums/berry-type";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import type { PokemonMove } from "../moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
@@ -76,7 +78,7 @@ import type {
 import type { BattlerIndex } from "#enums/battler-index";
 import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
-import { noAbilityTypeOverrideMoves } from "../moves/invalid-moves";
+import type { Constructor } from "#app/utils/common";
 import type { Localizable } from "#app/@types/locales";
 import { applyAbAttrs } from "./apply-ab-attrs";
 
@@ -1912,7 +1914,7 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
     _args: any[],
   ): boolean {
     return (
-      attacker.getTag(BattlerTagType.DISABLED) === null &&
+      isNullOrUndefined(attacker.getTag(BattlerTagType.DISABLED)) &&
       move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon }) &&
       (this.chance === -1 || pokemon.randBattleSeedInt(100) < this.chance)
     );
@@ -2730,7 +2732,6 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
 /**
  * Takes effect whenever a move succesfully executes, such as gorilla tactics' move-locking.
  * (More specifically, whenever a move is pushed to the move history)
- * @extends AbAttr
  */
 export class ExecutedMoveAbAttr extends AbAttr {
   canApplyExecutedMove(_pokemon: Pokemon, _simulated: boolean): boolean {
@@ -2741,16 +2742,16 @@ export class ExecutedMoveAbAttr extends AbAttr {
 }
 
 /**
- * Ability attribute for Gorilla Tactics
- * @extends ExecutedMoveAbAttr
+ * Ability attribute for {@linkcode AbilityId.GORILLA_TACTICS | Gorilla Tactics}
+ * to lock the user into its first selected move.
  */
 export class GorillaTacticsAbAttr extends ExecutedMoveAbAttr {
   constructor(showAbility = false) {
     super(showAbility);
   }
 
-  override canApplyExecutedMove(pokemon: Pokemon, simulated: boolean): boolean {
-    return simulated || !pokemon.getTag(BattlerTagType.GORILLA_TACTICS);
+  override canApplyExecutedMove(pokemon: Pokemon, _simulated: boolean): boolean {
+    return !pokemon.getTag(BattlerTagType.GORILLA_TACTICS);
   }
 
   override applyExecutedMove(pokemon: Pokemon, simulated: boolean): void {
@@ -3956,27 +3957,32 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
     this.ability = ability;
   }
 
+  /**
+   * Determine if the pokemon has a forme change that is triggered by the weather
+   *
+   * @param pokemon - The pokemon with the forme change ability
+   * @param _passive - unused
+   * @param _simulated - unused
+   * @param _args - unused
+   */
   override canApplyPostSummon(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): boolean {
-    const isCastformWithForecast =
-      pokemon.species.speciesId === SpeciesId.CASTFORM && this.ability === AbilityId.FORECAST;
-    const isCherrimWithFlowerGift =
-      pokemon.species.speciesId === SpeciesId.CHERRIM && this.ability === AbilityId.FLOWER_GIFT;
-    return isCastformWithForecast || isCherrimWithFlowerGift;
+    return !!pokemonFormChanges[pokemon.species.speciesId]?.some(
+      fc => fc.findTrigger(SpeciesFormChangeWeatherTrigger) && fc.canChange(pokemon),
+    );
   }
 
   /**
-   * Calls the {@linkcode BattleScene.triggerPokemonFormChange | triggerPokemonFormChange} for both
-   * {@linkcode SpeciesFormChange.SpeciesFormChangeWeatherTrigger | SpeciesFormChangeWeatherTrigger} and
-   * {@linkcode SpeciesFormChange.SpeciesFormChangeWeatherTrigger | SpeciesFormChangeRevertWeatherFormTrigger} if it
-   * is the specific Pokemon and ability
-   * @param {Pokemon} pokemon the Pokemon with this ability
-   * @param _passive n/a
-   * @param _args n/a
+   * Trigger the pokemon's forme change by invoking
+   * {@linkcode BattleScene.triggerPokemonFormChange | triggerPokemonFormChange}
+   *
+   * @param pokemon - The Pokemon with this ability
+   * @param _passive - unused
+   * @param simulated - unused
+   * @param _args - unused
    */
   override applyPostSummon(pokemon: Pokemon, _passive: boolean, simulated: boolean, _args: any[]): void {
     if (!simulated) {
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger);
-      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeRevertWeatherFormTrigger);
     }
   }
 }
@@ -4602,7 +4608,7 @@ export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbA
    * @param stat The stat being affected
    * @param cancelled Holds whether the stat change was already prevented.
    * @param args Args[0] is the target pokemon of the stat change.
-   * @returns
+   * @returns `true` if the ability can be applied
    */
   override canApplyPreStatStageChange(
     _pokemon: Pokemon,
@@ -4763,17 +4769,17 @@ export class BlockCritAbAttr extends AbAttr {
   }
 
   /**
-   * Apply the block crit ability by setting the value in the provided boolean holder to false
-   * @param args - [0] is a boolean holder representing whether the attack can crit
+   * Apply the block crit ability by setting the value in the provided boolean holder to `true`.
+   * @param args - `[0]`: A {@linkcode BooleanHolder} containing whether the attack is prevented from critting.
    */
   override apply(
     _pokemon: Pokemon,
     _passive: boolean,
     _simulated: boolean,
     _cancelled: BooleanHolder,
-    args: [BooleanHolder, ...any],
+    args: [BooleanHolder],
   ): void {
-    args[0].value = false;
+    args[0].value = true;
   }
 }
 
@@ -5286,10 +5292,11 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
   /**
    * Calls {@linkcode Arena.triggerWeatherBasedFormChangesToNormal | triggerWeatherBasedFormChangesToNormal} when the
    * weather changed to form-reverting weather, otherwise calls {@linkcode Arena.triggerWeatherBasedFormChanges | triggerWeatherBasedFormChanges}
-   * @param {Pokemon} _pokemon the Pokemon with this ability
-   * @param _passive n/a
-   * @param _weather n/a
-   * @param _args n/a
+   * @param _pokemon - The Pokemon with this ability
+   * @param _passive - unused
+   * @param simulated - unused
+   * @param _weather - unused
+   * @param _args - unused
    */
   override applyPostWeatherChange(
     _pokemon: Pokemon,
@@ -6049,14 +6056,19 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
   ): void {
     if (!simulated) {
       dancer.turnData.extraTurns++;
-      const phaseManager = globalScene.phaseManager;
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
       if (move.getMove().is("AttackMove") || move.getMove().is("StatusMove")) {
         const target = this.getTarget(dancer, source, targets);
-        phaseManager.unshiftNew("MovePhase", dancer, target, move, true, true);
+        globalScene.phaseManager.unshiftNew("MovePhase", dancer, target, move, MoveUseMode.INDIRECT);
       } else if (move.getMove().is("SelfStatusMove")) {
         // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
-        phaseManager.unshiftNew("MovePhase", dancer, [dancer.getBattlerIndex()], move, true, true);
+        globalScene.phaseManager.unshiftNew(
+          "MovePhase",
+          dancer,
+          [dancer.getBattlerIndex()],
+          move,
+          MoveUseMode.INDIRECT,
+        );
       }
     }
   }
@@ -7361,6 +7373,7 @@ class ForceSwitchOutHelper {
    * @param pokemon The {@linkcode Pokemon} attempting to switch out.
    * @returns `true` if the switch is successful
    */
+  // TODO: Make this cancel pending move phases on the switched out target
   public switchOutLogic(pokemon: Pokemon): boolean {
     const switchOutTarget = pokemon;
     /**
@@ -8361,10 +8374,10 @@ export function initAbilities() {
       .attr(WonderSkinAbAttr)
       .ignorable(),
     new Ability(AbilityId.ANALYTIC, 5)
-      .attr(MovePowerBoostAbAttr, (user, _target, _move) => {
-        const movePhase = globalScene.phaseManager.findPhase((phase) => phase.is("MovePhase") && phase.pokemon.id !== user?.id);
-        return isNullOrUndefined(movePhase);
-      }, 1.3),
+      .attr(MovePowerBoostAbAttr, (user) =>
+        // Boost power if all other Pokemon have already moved (no other moves are slated to execute)
+        !globalScene.phaseManager.findPhase((phase) => phase.is("MovePhase") && phase.pokemon.id !== user?.id),
+        1.3),
     new Ability(AbilityId.ILLUSION, 5)
       // The Pokemon generate an illusion if it's available
       .attr(IllusionPreSummonAbAttr, false)
@@ -8638,7 +8651,13 @@ export function initAbilities() {
       .attr(PostFaintHPDamageAbAttr)
       .bypassFaint(),
     new Ability(AbilityId.DANCER, 7)
-      .attr(PostDancingMoveAbAttr),
+      .attr(PostDancingMoveAbAttr)
+      /* Incorrect interations with:
+      * Petal Dance (should not lock in or count down timer; currently does both)
+      * Flinches (due to tag being removed earlier)
+      * Failed/protected moves (should not trigger if original move is protected against)
+      */
+      .edgeCase(),
     new Ability(AbilityId.BATTERY, 7)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [ MoveCategory.SPECIAL ], 1.3),
     new Ability(AbilityId.FLUFFY, 7)
@@ -8779,9 +8798,11 @@ export function initAbilities() {
     new Ability(AbilityId.WANDERING_SPIRIT, 8)
       .attr(PostDefendAbilitySwapAbAttr)
       .bypassFaint()
-      .edgeCase(), //  interacts incorrectly with rock head. It's meant to switch abilities before recoil would apply so that a pokemon with rock head would lose rock head first and still take the recoil
+      .edgeCase(), // interacts incorrectly with rock head. It's meant to switch abilities before recoil would apply so that a pokemon with rock head would lose rock head first and still take the recoil
     new Ability(AbilityId.GORILLA_TACTICS, 8)
-      .attr(GorillaTacticsAbAttr),
+      .attr(GorillaTacticsAbAttr)
+      // TODO: Verify whether Gorilla Tactics increases struggle's power or not
+      .edgeCase(),
     new Ability(AbilityId.NEUTRALIZING_GAS, 8, 2)
       .attr(PostSummonAddArenaTagAbAttr, true, ArenaTagType.NEUTRALIZING_GAS, 0)
       .attr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr)

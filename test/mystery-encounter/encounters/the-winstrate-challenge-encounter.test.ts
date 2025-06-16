@@ -17,7 +17,7 @@ import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "#enums/nature";
 import { MoveId } from "#enums/move-id";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { TheWinstrateChallengeEncounter } from "#app/data/mystery-encounters/encounters/the-winstrate-challenge-encounter";
 import { Status } from "#app/data/status-effect";
 import { MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";

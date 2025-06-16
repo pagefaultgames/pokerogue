@@ -210,7 +210,7 @@ export default class PhaseInterceptor {
   /**
    * Method to transition to a target phase.
    * @param phaseTo - The phase to transition to.
-   * @param runTarget - Whether or not to run the target phase.
+   * @param runTarget - Whether or not to run the target phase; default `true`.
    * @returns A promise that resolves when the transition is complete.
    */
   async to(phaseTo: PhaseInterceptorPhase, runTarget = true): Promise<void> {
@@ -439,7 +439,7 @@ export default class PhaseInterceptor {
    * @param mode - The mode of the UI.
    * @param callback - The callback function to execute.
    * @param expireFn - The function to determine if the prompt has expired.
-   * @param awaitingActionInput
+   * @param awaitingActionInput - ???; default `false`
    */
   addToNextPrompt(
     phaseTarget: string,
