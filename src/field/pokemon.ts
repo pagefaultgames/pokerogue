@@ -80,8 +80,8 @@ import {
   pokemonEvolutions,
   pokemonPrevolutions,
   FusionSpeciesFormEvolution,
-  validateShedinjaEvo,
 } from "#app/data/balance/pokemon-evolutions";
+import { validateShedinjaEvo } from "#app/utils/evolution-utils";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "#app/data/balance/tms";
 import {
   BattlerTag,

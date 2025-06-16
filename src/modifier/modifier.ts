@@ -946,6 +946,71 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
   }
 }
 
+export class MoveTrackerModifier extends PokemonHeldItemModifier {
+  protected species: SpeciesId;
+  protected required: number;
+  protected move: MoveId;
+  public isTransferable = false;
+
+  constructor(
+    type: ModifierType,
+    pokemonId: number,
+    species: SpeciesId,
+    move: MoveId,
+    required: number,
+    stackCount?: number,
+  ) {
+    super(type, pokemonId, stackCount);
+    this.species = species;
+    this.move = move;
+    this.required = required;
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return (
+      modifier instanceof MoveTrackerModifier &&
+      modifier.species === this.species &&
+      modifier.required === this.required &&
+      modifier.move === this.move
+    );
+  }
+
+  clone(): PersistentModifier {
+    return new MoveTrackerModifier(this.type, this.pokemonId, this.species, this.move, this.required, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat([this.species, this.move, this.required]);
+  }
+
+  /**
+   * Applies the {@linkcode MoveTrackerModifier}
+   * @returns always `true`
+   */
+  override apply(): boolean {
+    return true;
+  }
+
+  getMaxHeldItemCount(_pokemon: Pokemon): number {
+    return 999;
+  }
+
+  override getSpecies(): SpeciesId {
+    return this.species;
+  }
+
+  getIconStackText(_virtual?: boolean): Phaser.GameObjects.BitmapText | null {
+    const text = globalScene.add.bitmapText(10, 15, "item-count", this.stackCount.toString(), 11);
+    text.letterSpacing = -0.5;
+    if (this.stackCount >= this.required) {
+      text.setTint(0xf89890);
+    }
+    text.setOrigin(0, 0);
+
+    return text;
+  }
+}
+
 /**
  * Currently used by Shuckle Juice item
  */
@@ -2913,7 +2978,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
     globalScene.addMoney(moneyAmount.value);
 
     globalScene.getPlayerParty().map(p => {
-      if (p.species?.speciesId === SpeciesId.GIMMIGHOUL || p.fusionSpecies?.speciesId === SpeciesId.GIMMIGHOUL) {
+      if (p.hasSpecies(SpeciesId.GIMMIGHOUL)) {
         const factor = Math.min(Math.floor(this.moneyMultiplier), 3);
         const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(
           p,
@@ -3867,6 +3932,7 @@ const ModifierClassMap = Object.freeze({
   LapsingPokemonHeldItemModifier,
   BaseStatModifier,
   EvoTrackerModifier,
+  MoveTrackerModifier,
   PokemonBaseStatTotalModifier,
   PokemonBaseStatFlatModifier,
   PokemonIncrementingStatModifier,
