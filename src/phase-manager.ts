@@ -99,6 +99,7 @@ import { DynamicQueueManager } from "#app/queues/dynamic-queue-manager";
 import type { PhaseConditionFunc } from "#app/@types/phase-condition";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
+import { StaticSwitchSummonPhase } from "#app/phases/static-switch-summon-phase";
 
 /**
  * Manager for phases used by battle scene.
@@ -189,6 +190,7 @@ const PHASES = Object.freeze({
   ShowAbilityPhase,
   ShowPartyExpBarPhase,
   ShowTrainerPhase,
+  StaticSwitchSummonPhase,
   StatStageChangePhase,
   SummonMissingPhase,
   SummonPhase,

@@ -15,7 +15,12 @@ import { globalScene } from "#app/global-scene";
 
 export class SummonPhase extends PartyMemberPokemonPhase {
   // The union type is needed to keep typescript happy as these phases extend from SummonPhase
-  public readonly phaseName: "SummonPhase" | "SummonMissingPhase" | "SwitchSummonPhase" | "ReturnPhase" = "SummonPhase";
+  public readonly phaseName:
+    | "SummonPhase"
+    | "SummonMissingPhase"
+    | "SwitchSummonPhase"
+    | "ReturnPhase"
+    | "StaticSwitchSummonPhase" = "SummonPhase";
   private loaded: boolean;
 
   constructor(fieldIndex: number, player = true, loaded = false) {

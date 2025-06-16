@@ -6192,13 +6192,15 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
       if (globalScene.currentBattle.double && globalScene.getEnemyParty().length > 1 && !isNullOrUndefined(allyPokemon)) {
         // Handle cases where revived pokemon needs to get switched in on same turn
         if (allyPokemon.isFainted() || allyPokemon === pokemon) {
+          // Enemy switch phase should be removed and replaced with the revived pkmn switching in
+          globalScene.phaseManager.tryRemovePhase((phase: SwitchSummonPhase) => phase.is("StaticSwitchSummonPhase") && phase.getPokemon() === pokemon);
           // If the pokemon being revived was alive earlier in the turn, cancel its move
           // (revived pokemon can't move in the turn they're brought back)
           globalScene.phaseManager.findPhase("MovePhase", (phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
           if (user.fieldPosition === FieldPosition.CENTER) {
             user.setFieldPosition(FieldPosition.LEFT);
           }
-          globalScene.phaseManager.pushNew("SwitchSummonPhase", SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, false);
+          globalScene.phaseManager.unshiftNew("StaticSwitchSummonPhase", SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, false);
         }
       }
       return true;
@@ -6278,7 +6280,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
           globalScene.phaseManager.prependNewToPhase(
             "MoveEndPhase",
-            "SwitchSummonPhase",
+            "StaticSwitchSummonPhase",
             this.switchType,
             switchOutTarget.getFieldIndex(),
             slotIndex,
@@ -6317,7 +6319,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           switchOutTarget.leaveField(true);
           const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
           globalScene.phaseManager.prependNewToPhase("MoveEndPhase",
-            "SwitchSummonPhase",
+            "StaticSwitchSummonPhase",
               this.switchType,
               switchOutTarget.getFieldIndex(),
               slotIndex,
@@ -6327,7 +6329,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         } else {
           switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
           globalScene.phaseManager.prependNewToPhase("MoveEndPhase",
-            "SwitchSummonPhase",
+            "StaticSwitchSummonPhase",
             this.switchType,
             switchOutTarget.getFieldIndex(),
             (globalScene.currentBattle.trainer ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),

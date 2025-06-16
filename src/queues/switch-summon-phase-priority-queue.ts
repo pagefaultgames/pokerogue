@@ -4,7 +4,7 @@ import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-qu
 export class SwitchSummonPhasePriorityQueue extends PokemonPhasePriorityQueue<SwitchSummonPhase> {
   public override push(phase: SwitchSummonPhase): void {
     // The same pokemon or slot cannot be switched into at the same time
-    this.queue.filter(
+    this.queue = this.queue.filter(
       old =>
         old.getPokemon() !== phase.getPokemon() &&
         !(old.isPlayer() === phase.isPlayer() && old.getFieldIndex() === phase.getFieldIndex()),
