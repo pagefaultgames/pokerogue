@@ -32,7 +32,7 @@ describe("Moves - Retaliate", () => {
       .enemyLevel(100)
       .moveset([MoveId.RETALIATE, MoveId.SPLASH])
       .startingLevel(80)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("increases power if ally died previous turn", async () => {

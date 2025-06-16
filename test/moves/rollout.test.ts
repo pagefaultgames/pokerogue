@@ -24,7 +24,7 @@ describe("Moves - Rollout", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .disableCrits()
+      .criticalHits(false)
       .battleStyle("single")
       .starterSpecies(SpeciesId.RATTATA)
       .ability(AbilityId.BALL_FETCH)
