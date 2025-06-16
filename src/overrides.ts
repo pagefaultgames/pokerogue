@@ -289,17 +289,17 @@ export const defaultOverrides = new DefaultOverrides();
 
 export default {
   ...defaultOverrides,
-  ...overrides
+  ...overrides,
 } satisfies InstanceType<typeof DefaultOverrides>;
 
 export type BattleStyle = "double" | "single" | "even-doubles" | "odd-doubles";
 
 export type RandomTrainerOverride = {
   /** The Type of trainer to force */
-  trainerType: Exclude<TrainerType, TrainerType.UNKNOWN>,
+  trainerType: Exclude<TrainerType, TrainerType.UNKNOWN>;
   /* If the selected trainer type has a double version, it will always use its double version. */
-  alwaysDouble?: boolean
-}
+  alwaysDouble?: boolean;
+};
 
 /** The type of the {@linkcode DefaultOverrides} class */
 export type OverridesType = typeof DefaultOverrides;
