@@ -32,7 +32,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
       .enemyMoveset(MoveId.SPLASH)
       .startingLevel(100)
       .enemyLevel(100)
-      .disableCrits()
+      .criticalHits(false)
       .moveset([MoveId.TACKLE, MoveId.DRAGON_RAGE, MoveId.FISSURE, MoveId.JUMP_KICK]);
   });
 

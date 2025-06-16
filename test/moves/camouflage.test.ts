@@ -28,7 +28,7 @@ describe("Moves - Camouflage", () => {
       .moveset([MoveId.CAMOUFLAGE])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.REGIELEKI)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.PSYCHIC_TERRAIN);
