@@ -132,10 +132,10 @@ export default abstract class Move implements Localizable {
 
   /**
    * Check if the move is of the given subclass without requiring `instanceof`.
-   * 
+   *
    * ⚠️ Does _not_ work for {@linkcode ChargingAttackMove} and {@linkcode ChargingSelfStatusMove} subclasses. For those,
    * use {@linkcode isChargingMove} instead.
-   * 
+   *
    * @param moveKind - The string name of the move to check against
    * @returns Whether this move is of the provided type.
    */
@@ -2916,7 +2916,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
  * Used by {@linkcode Moves.SNORE} and {@linkcode Moves.SLEEP_TALK}.
  */
 // TODO: Should this use a battler tag?
-// TODO: Give this `userSleptOrComatoseCondition`
+// TODO: Give this `userSleptOrComatoseCondition` by default
 export class BypassSleepAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (user.status?.effect === StatusEffect.SLEEP) {

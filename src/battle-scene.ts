@@ -895,7 +895,8 @@ export default class BattleScene extends SceneBase {
   }
 
   getPokemonById(pokemonId: number): Pokemon | null {
-    return (this.getPlayerParty() as Pokemon[]).concat(this.getEnemyParty()).find(p => p.id === pokemonId) ?? null;
+    const findInParty = (party: Pokemon[]) => party.find(p => p.id === pokemonId);
+    return (findInParty(this.getPlayerParty()) || findInParty(this.getEnemyParty())) ?? null;
   }
 
   addPlayerPokemon(
@@ -2599,7 +2600,6 @@ export default class BattleScene extends SceneBase {
     return Math.floor(moneyValue / 10) * 10;
   }
 
-  // TODO: refactor this
   addModifier(
     modifier: Modifier | null,
     ignoreUpdate?: boolean,
@@ -3038,22 +3038,20 @@ export default class BattleScene extends SceneBase {
     return (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType);
   }
 
-  // TODO: Add overload signature to `findModifier` and `findModifiers` for functions of the form `(x): X is T`
-
   /**
    * Get all of the modifiers that pass the `modifierFilter` function
-   * @param modifierFilter - The function used to filter a target's modifiers
-   * @param isPlayer - Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @returns an array of {@linkcode PersistentModifier}s that passed the `modifierFilter` function
+   * @param modifierFilter The function used to filter a target's modifiers
+   * @param isPlayer Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @returns the list of all modifiers that passed the `modifierFilter` function
    */
   findModifiers(modifierFilter: ModifierPredicate, isPlayer = true): PersistentModifier[] {
     return (isPlayer ? this.modifiers : this.enemyModifiers).filter(modifierFilter);
   }
 
   /**
-   * Find the first modifier that passes the `modifierFilter` function
-   * @param modifierFilter - The function used to filter a target's modifiers
-   * @param player - Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * Find the first modifier that pass the `modifierFilter` function
+   * @param modifierFilter The function used to filter a target's modifiers
+   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
    * @returns the first modifier that passed the `modifierFilter` function; `undefined` if none passed
    */
   findModifier(modifierFilter: ModifierPredicate, player = true): PersistentModifier | undefined {
