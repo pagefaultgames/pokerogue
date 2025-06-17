@@ -253,7 +253,7 @@ export class TitlePhase extends Phase {
         for (const m of modifiers) {
           globalScene.addModifier(m, true, false, false, true);
         }
-        globalScene.updateModifiers(true, true);
+        globalScene.updateModifiers(true);
 
         Promise.all(loadPokemonAssets).then(() => {
           globalScene.time.delayedCall(500, () => globalScene.playBgm());
