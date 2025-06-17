@@ -1,14 +1,12 @@
 import type Pokemon from "#app/field/pokemon";
 import { enemyBuffModifierPool, modifierPool } from "#app/modifier/modifier-pools";
 import { globalScene } from "#app/global-scene";
-import { DoubleBattleChanceBoosterModifier, SpeciesCritBoosterModifier, TurnStatusEffectModifier } from "./modifier";
+import { DoubleBattleChanceBoosterModifier } from "./modifier";
 import { WeightedModifierType } from "./modifier-type";
 import { ModifierTier } from "../enums/modifier-tier";
 import type { WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
 import { modifierTypes } from "#app/data/data-lists";
 import { PokeballType } from "#enums/pokeball";
-import { BerryModifier } from "./modifier";
-import { BerryType } from "#enums/berry-type";
 import { SpeciesId } from "#enums/species-id";
 import { timedEventManager } from "#app/global-event-manager";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
@@ -20,6 +18,8 @@ import { AbilityId } from "#enums/ability-id";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 // biome-ignore lint/correctness/noUnusedImports: This is used in a tsdoc comment
 import type { initModifierTypes } from "./modifier-type";
+import { HeldItemId } from "#enums/held-item-id";
+import { allHeldItems } from "#app/items/all-held-items";
 
 /**
  * Initialize the common modifier pool
@@ -57,7 +57,7 @@ function initCommonModifierPool() {
           party.filter(
             p =>
               p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY) &&
               p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
@@ -76,7 +76,7 @@ function initCommonModifierPool() {
           party.filter(
             p =>
               p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY) &&
               p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
@@ -113,12 +113,10 @@ function initGreatModifierPool() {
             p =>
               p.hp &&
               !!p.status &&
-              !p.getHeldItems().some(i => {
-                if (i instanceof TurnStatusEffectModifier) {
-                  return (i as TurnStatusEffectModifier).getStatusEffect() === p.status?.effect;
-                }
-                return false;
-              }),
+              !p
+                .getHeldItems()
+                .filter(i => i in [HeldItemId.TOXIC_ORB, HeldItemId.FLAME_ORB])
+                .some(i => allHeldItems[i].effect === p.status?.effect),
           ).length,
           3,
         );
@@ -179,12 +177,10 @@ function initGreatModifierPool() {
             p =>
               p.hp &&
               !!p.status &&
-              !p.getHeldItems().some(i => {
-                if (i instanceof TurnStatusEffectModifier) {
-                  return (i as TurnStatusEffectModifier).getStatusEffect() === p.status?.effect;
-                }
-                return false;
-              }),
+              !p
+                .getHeldItems()
+                .filter(i => i in [HeldItemId.TOXIC_ORB, HeldItemId.FLAME_ORB])
+                .some(i => allHeldItems[i].effect === p.status?.effect),
           ).length,
           3,
         );
@@ -204,7 +200,7 @@ function initGreatModifierPool() {
           party.filter(
             p =>
               p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY) &&
               p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
@@ -223,7 +219,7 @@ function initGreatModifierPool() {
           party.filter(
             p =>
               p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY) &&
               p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
@@ -333,7 +329,7 @@ function initUltraModifierPool() {
               (p.isFusion() && p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))
           ) {
             // Check if Pokemon is already holding an Eviolite
-            return !p.getHeldItems().some(i => i.type.id === "EVIOLITE");
+            return !p.heldItemManager.hasItem(HeldItemId.EVIOLITE);
           }
           return false;
         })
@@ -350,7 +346,7 @@ function initUltraModifierPool() {
         // If a party member doesn't already have a Leek and is one of the relevant species, Leek can appear
         return party.some(
           p =>
-            !p.getHeldItems().some(i => i instanceof SpeciesCritBoosterModifier) &&
+            !p.heldItemManager.hasItem(HeldItemId.LEEK) &&
             (checkedSpecies.includes(p.getSpeciesForm(true).speciesId) ||
               (p.isFusion() && checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId))),
         )
@@ -363,7 +359,7 @@ function initUltraModifierPool() {
       modifierTypes.TOXIC_ORB,
       (party: Pokemon[]) => {
         return party.some(p => {
-          const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
+          const isHoldingOrb = p.getHeldItems().some(i => i in [HeldItemId.FLAME_ORB, HeldItemId.TOXIC_ORB]);
 
           if (!isHoldingOrb) {
             const moveset = p
@@ -409,7 +405,7 @@ function initUltraModifierPool() {
       modifierTypes.FLAME_ORB,
       (party: Pokemon[]) => {
         return party.some(p => {
-          const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
+          const isHoldingOrb = p.getHeldItems().some(i => i in [HeldItemId.FLAME_ORB, HeldItemId.TOXIC_ORB]);
 
           if (!isHoldingOrb) {
             const moveset = p
@@ -455,13 +451,8 @@ function initUltraModifierPool() {
       modifierTypes.MYSTICAL_ROCK,
       (party: Pokemon[]) => {
         return party.some(p => {
-          let isHoldingMax = false;
-          for (const i of p.getHeldItems()) {
-            if (i.type.id === "MYSTICAL_ROCK") {
-              isHoldingMax = i.getStackCount() === i.getMaxStackCount();
-              break;
-            }
-          }
+          const stack = p.heldItemManager.getStack(HeldItemId.MYSTICAL_ROCK);
+          const isHoldingMax = stack === allHeldItems[HeldItemId.MYSTICAL_ROCK].maxStackCount;
 
           if (!isHoldingMax) {
             const moveset = p.getMoveset(true).map(m => m.moveId);
@@ -675,8 +666,6 @@ export function initModifierPools() {
   initMasterModifierPool();
 
   // Modifier pools for specific scenarios
-  initWildModifierPool();
-  initTrainerModifierPool();
   initEnemyBuffModifierPool();
 }
 
