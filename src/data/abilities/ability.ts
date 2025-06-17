@@ -885,6 +885,10 @@ export interface PostMoveInteractionAbAttrParams extends AugmentMoveInteractionA
 
 export class PostDefendAbAttr extends AbAttr {
   private declare readonly _: never;
+  override canApply(_params: PostMoveInteractionAbAttrParams): boolean {
+    return true;
+  }
+  override apply(_params: PostMoveInteractionAbAttrParams): void {}
 }
 
 /**
@@ -1654,7 +1658,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
 /**
  * Parameters for abilities that modify the hit count and damage of a move
  */
-export interface AddSecondStrikeAbAttrParams extends AugmentMoveInteractionAbAttrParams {
+export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteractionAbAttrParams, "opponent"> {
   /** Holder for the number of hits. May be modified by ability application  */
   hitCount?: NumberHolder;
   /** Holder for the damage multiplier _of the current hit_ */

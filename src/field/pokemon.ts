@@ -3767,7 +3767,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!ignoreSourceAbility) {
       applyAbAttrs("AddSecondStrikeAbAttr", {
         pokemon: source,
-        opponent: this,
         move,
         simulated,
         multiplier: multiStrikeEnhancementMultiplier,
