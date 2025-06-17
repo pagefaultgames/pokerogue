@@ -5,7 +5,7 @@ import type { Challenge } from "./data/challenge";
 import { allChallenges, applyChallenges, copyChallenge } from "./data/challenge";
 import { ChallengeType } from "#enums/challenge-type";
 import type PokemonSpecies from "./data/pokemon-species";
-import { allSpecies } from "./data/pokemon-species";
+import { allSpecies } from "#app/data/data-lists";
 import type { Arena } from "./field/arena";
 import Overrides from "#app/overrides";
 import { isNullOrUndefined, randSeedInt, randSeedItem } from "#app/utils/common";
@@ -90,13 +90,14 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
+   * Helper function to get starting level for game mode.
    * @returns either:
-   * - override from overrides.ts
+   * - starting level override from overrides.ts
    * - 20 for Daily Runs
    * - 5 for all other modes
    */
   getStartingLevel(): number {
-    if (Overrides.STARTING_LEVEL_OVERRIDE) {
+    if (Overrides.STARTING_LEVEL_OVERRIDE > 0) {
       return Overrides.STARTING_LEVEL_OVERRIDE;
     }
     switch (this.modeId) {

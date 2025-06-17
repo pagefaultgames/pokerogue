@@ -21,7 +21,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/uncommon-breed-encounter";
 import { MovePhase } from "#app/phases/move-phase";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { BerryType } from "#enums/berry-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";

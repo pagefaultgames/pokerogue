@@ -70,13 +70,9 @@ import {
   getStatKey,
   Stat,
 } from "#app/enums/stat";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { MovePhase } from "#app/phases/move-phase";
-import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { SwitchPhase } from "#app/phases/switch-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "../pokemon-forms/form-change-triggers";
 import type { GameMode } from "#app/game-mode";
@@ -85,18 +81,14 @@ import { ChallengeType } from "#enums/challenge-type";
 import { SwitchType } from "#enums/switch-type";
 import { StatusEffect } from "#enums/status-effect";
 import { globalScene } from "#app/global-scene";
-import { RevivalBlessingPhase } from "#app/phases/revival-blessing-phase";
-import { LoadMoveAnimPhase } from "#app/phases/load-move-anim-phase";
-import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
-import { MoveAnimPhase } from "#app/phases/move-anim-phase";
 import { loggedInUser } from "#app/account";
 import { MoveCategory } from "#enums/MoveCategory";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
-import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
-import { SelectBiomePhase } from "#app/phases/select-biome-phase";
+import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves, invalidSketchMoves } from "./invalid-moves";
+import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveKindString, MoveClassMap } from "#app/@types/move-types";
 import { applyMoveAttrs } from "./apply-attrs";
 import { frenzyMissFunc, getMoveTargets } from "./move-utils";
@@ -3124,7 +3116,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
       overridden.value = true;
       globalScene.phaseManager.unshiftNew("MoveAnimPhase", new MoveChargeAnim(this.chargeAnim, move.id, user));
       globalScene.phaseManager.queueMessage(this.chargeText.replace("{TARGET}", getPokemonNameWithAffix(target)).replace("{USER}", getPokemonNameWithAffix(user)));
-      user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
+      user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER, useMode: MoveUseMode.NORMAL });
       const side = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
       globalScene.arena.addTag(this.tagType, 3, move.id, user.id, side, false, target.getBattlerIndex());
     } else {
@@ -4081,15 +4073,26 @@ export class OpponentHighHpPowerAttr extends VariablePowerAttr {
   }
 }
 
+/**
+ * Attribute to double this move's power if the target hasn't acted yet in the current turn.
+ * Used by {@linkcode Moves.BOLT_BEAK} and {@linkcode Moves.FISHIOUS_REND}
+ */
 export class FirstAttackDoublePowerAttr extends VariablePowerAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    console.log(target.getLastXMoves(1), globalScene.currentBattle.turn);
-    if (!target.getLastXMoves(1).find(m => m.turn === globalScene.currentBattle.turn)) {
-      (args[0] as NumberHolder).value *= 2;
-      return true;
+  /**
+   * Double this move's power if the user is acting before the target.
+   * @param user - Unused
+   * @param target - The {@linkcode Pokemon} being targeted by this move
+   * @param move - Unused
+   * @param args `[0]` - A {@linkcode NumberHolder} containing move base power
+   * @returns Whether the attribute was successfully applied
+   */
+  apply(_user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
+    if (target.turnData.acted) {
+      return false;
     }
 
-    return false;
+    args[0].value *= 2;
+    return true;
   }
 }
 
@@ -5459,13 +5462,20 @@ export class FrenzyAttr extends MoveEffectAttr {
       return false;
     }
 
-    if (!user.getTag(BattlerTagType.FRENZY) && !user.getMoveQueue().length) {
-      const turnCount = user.randBattleSeedIntRange(1, 2);
-      new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true }));
+    // TODO: Disable if used via dancer
+    // TODO: Add support for moves that don't add the frenzy tag (Uproar, Rollout, etc.)
+
+    // If frenzy is not active, add a tag and push 1-2 extra turns of attacks to the user's move queue.
+    // Otherwise, tick down the existing tag.
+    if (!user.getTag(BattlerTagType.FRENZY) && user.getMoveQueue().length === 0) {
+      const turnCount = user.randBattleSeedIntRange(1, 2); // excludes initial use
+      for (let i = 0; i < turnCount; i++) {
+        user.pushMoveQueue({ move: move.id, targets: [ target.getBattlerIndex() ], useMode: MoveUseMode.IGNORE_PP });
+      }
       user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
     } else {
       applyMoveAttrs("AddBattlerTagAttr", user, target, move, args);
-      user.lapseTag(BattlerTagType.FRENZY); // if FRENZY is already in effect (moveQueue.length > 0), lapse the tag
+      user.lapseTag(BattlerTagType.FRENZY);
     }
 
     return true;
@@ -6220,6 +6230,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
           globalScene.phaseManager.tryRemovePhase((phase: SwitchSummonPhase) => phase.is("SwitchSummonPhase") && phase.getPokemon() === pokemon);
           // If the pokemon being revived was alive earlier in the turn, cancel its move
           // (revived pokemon can't move in the turn they're brought back)
+          // TODO: might make sense to move this to `FaintPhase` after checking for Rev Seed (rather than handling it in the move)
           globalScene.phaseManager.findPhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
           if (user.fieldPosition === FieldPosition.CENTER) {
             user.setFieldPosition(FieldPosition.LEFT);
@@ -6761,20 +6772,26 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
 class CallMoveAttr extends OverrideMoveEffectAttr {
   protected invalidMoves: ReadonlySet<MoveId>;
   protected hasTarget: boolean;
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    // Get eligible targets for move, failing if we can't target anything
     const replaceMoveTarget = move.moveTarget === MoveTarget.NEAR_OTHER ? MoveTarget.NEAR_ENEMY : undefined;
     const moveTargets = getMoveTargets(user, move.id, replaceMoveTarget);
     if (moveTargets.targets.length === 0) {
       globalScene.phaseManager.queueMessage(i18next.t("battle:attackFailed"));
-      console.log("CallMoveAttr failed due to no targets.");
       return false;
     }
+
+    // Spread moves and ones with only 1 valid target will use their normal targeting.
+    // If not, target the Mirror Move recipient or else a random enemy in our target list
     const targets = moveTargets.multiple || moveTargets.targets.length === 1
       ? moveTargets.targets
-      : [ this.hasTarget ? target.getBattlerIndex() : moveTargets.targets[user.randBattleSeedInt(moveTargets.targets.length)] ]; // account for Mirror Move having a target already
-    user.getMoveQueue().push({ move: move.id, targets: targets, virtual: true, ignorePP: true });
+      : [this.hasTarget
+        ? target.getBattlerIndex()
+        : moveTargets.targets[user.randBattleSeedInt(moveTargets.targets.length)]];
+
     globalScene.phaseManager.unshiftNew("LoadMoveAnimPhase", move.id);
-    globalScene.phaseManager.unshiftNew("MovePhase", user, targets, new PokemonMove(move.id, 0, 0, true), true, true);
+    globalScene.phaseManager.unshiftNew("MovePhase", user, targets, new PokemonMove(move.id), MoveUseMode.FOLLOW_UP);
     return true;
   }
 }
@@ -6869,9 +6886,10 @@ export class RandomMovesetMoveAttr extends CallMoveAttr {
   }
 }
 
+// TODO: extend CallMoveAttr
 export class NaturePowerAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    let moveId;
+    let moveId = MoveId.NONE;
     switch (globalScene.arena.getTerrainType()) {
     // this allows terrains to 'override' the biome move
       case TerrainType.NONE:
@@ -6996,14 +7014,14 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
         moveId = MoveId.PSYCHIC;
         break;
       default:
-      // Just in case there's no match
+        // Just in case there's no match
         moveId = MoveId.TRI_ATTACK;
         break;
     }
 
-    user.getMoveQueue().push({ move: moveId, targets: [ target.getBattlerIndex() ], ignorePP: true });
+    // Load the move's animation if we didn't already and unshift a new usage phase
     globalScene.phaseManager.unshiftNew("LoadMoveAnimPhase", moveId);
-    globalScene.phaseManager.unshiftNew("MovePhase", user, [ target.getBattlerIndex() ], new PokemonMove(moveId, 0, 0, true), true);
+    globalScene.phaseManager.unshiftNew("MovePhase", user, [ target.getBattlerIndex() ], new PokemonMove(moveId), MoveUseMode.FOLLOW_UP);
     return true;
   }
 }
@@ -7022,64 +7040,63 @@ export class CopyMoveAttr extends CallMoveAttr {
     this.invalidMoves = invalidMoves;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
     this.hasTarget = this.mirrorMove;
-    const lastMove = this.mirrorMove ? target.getLastXMoves()[0].move : globalScene.currentBattle.lastMove;
+    // bang is correct as condition func returns `false` and fails move if no last move exists
+    const lastMove = this.mirrorMove ? target.getLastNonVirtualMove(false, false)!.move : globalScene.currentBattle.lastMove;
     return super.apply(user, target, allMoves[lastMove], args);
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => {
-      if (this.mirrorMove) {
-        const lastMove = target.getLastXMoves()[0]?.move;
-        return !!lastMove && !this.invalidMoves.has(lastMove);
-      } else {
-        const lastMove = globalScene.currentBattle.lastMove;
-        return lastMove !== undefined && !this.invalidMoves.has(lastMove);
-      }
+    return (_user, target, _move) => {
+      const lastMove = this.mirrorMove ? target.getLastNonVirtualMove(false, false)?.move : globalScene.currentBattle.lastMove;
+      return !isNullOrUndefined(lastMove) && !this.invalidMoves.has(lastMove);
     };
   }
 }
 
 /**
- * Attribute used for moves that causes the target to repeat their last used move.
+ * Attribute used for moves that cause the target to repeat their last used move.
  *
  * Used for [Instruct](https://bulbapedia.bulbagarden.net/wiki/Instruct_(move)).
 */
 export class RepeatMoveAttr extends MoveEffectAttr {
+  private movesetMove: PokemonMove;
   constructor() {
     super(false, { trigger: MoveEffectTrigger.POST_APPLY }); // needed to ensure correct protect interaction
   }
 
   /**
-   * Forces the target to re-use their last used move again
-   *
-   * @param user {@linkcode Pokemon} that used the attack
-   * @param target {@linkcode Pokemon} targeted by the attack
-   * @param move N/A
-   * @param args N/A
+   * Forces the target to re-use their last used move again.
+   * @param user - The {@linkcode Pokemon} using the attack
+   * @param target - The {@linkcode Pokemon} being targeted by the attack
    * @returns `true` if the move succeeds
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon): boolean {
     // get the last move used (excluding status based failures) as well as the corresponding moveset slot
-    const lastMove = target.getLastXMoves(-1).find(m => m.move !== MoveId.NONE)!;
-    const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move)!;
-    // If the last move used can hit more than one target or has variable targets,
-    // re-compute the targets for the attack
-    // (mainly for alternating double/single battle shenanigans)
-    // Rampaging moves (e.g. Outrage) are not included due to being incompatible with Instruct
-    // TODO: Fix this once dragon darts gets smart targeting
-    let moveTargets = movesetMove.getMove().isMultiTarget() ? getMoveTargets(target, lastMove.move).targets : lastMove.targets;
+    // bangs are justified as Instruct fails if no prior move or moveset move exists
+    // TODO: How does instruct work when copying a move called via Copycat that the user itself knows?
+    const lastMove = target.getLastNonVirtualMove()!;
+    const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move)!
 
-    /** In the event the instructed move's only target is a fainted opponent, redirect it to an alive ally if possible
-    Normally, all yet-unexecuted move phases would swap over when the enemy in question faints
-    (see `redirectPokemonMoves` in `battle-scene.ts`),
-    but since instruct adds a new move phase pre-emptively, we need to handle this interaction manually.
-    */
+    // If the last move used can hit more than one target or has variable targets,
+    // re-compute the targets for the attack (mainly for alternating double/single battles)
+    // Rampaging moves (e.g. Outrage) are not included due to being incompatible with Instruct,
+    // nor is Dragon Darts (due to its smart targeting bypassing normal target selection)
+    let moveTargets = this.movesetMove.getMove().isMultiTarget() ? getMoveTargets(target, this.movesetMove.moveId).targets : lastMove.targets;
+
+    // In the event the instructed move's only target is a fainted opponent, redirect it to an alive ally if possible.
+    // Normally, all yet-unexecuted move phases would swap targets after any foe faints or flees (see `redirectPokemonMoves` in `battle-scene.ts`),
+    // but since Instruct adds a new move phase _after_ all that occurs, we need to handle this interaction manually.
     const firstTarget = globalScene.getField()[moveTargets[0]];
-    if (globalScene.currentBattle.double && moveTargets.length === 1 && firstTarget.isFainted() && firstTarget !== target.getAlly()) {
+    if (
+      globalScene.currentBattle.double
+      && moveTargets.length === 1
+      && firstTarget.isFainted()
+      && firstTarget !== target.getAlly()
+    ) {
       const ally = firstTarget.getAlly();
-      if (!isNullOrUndefined(ally) && ally.isActive()) { // ally exists, is not dead and can sponge the blast
+      if (!isNullOrUndefined(ally) && ally.isActive()) {
         moveTargets = [ ally.getBattlerIndex() ];
       }
     }
@@ -7088,15 +7105,15 @@ export class RepeatMoveAttr extends MoveEffectAttr {
       userPokemonName: getPokemonNameWithAffix(user),
       targetPokemonName: getPokemonNameWithAffix(target)
     }));
-    target.getMoveQueue().unshift({ move: lastMove.move, targets: moveTargets, ignorePP: false });
     target.turnData.extraTurns++;
-    globalScene.phaseManager.appendNewToPhase("MoveEndPhase", "MovePhase", target, moveTargets, movesetMove);
+    globalScene.phaseManager.appendNewToPhase("MoveEndPhase", "MovePhase", target, moveTargets, movesetMove, MoveUseMode.NORMAL);
     return true;
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => {
-      const lastMove = target.getLastXMoves(-1).find(m => m.move !== MoveId.NONE);
+    return (_user, target, _move) => {
+      // TODO: Check instruct behavior with struggle - ignore, fail or success
+      const lastMove = target.getLastNonVirtualMove();
       const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move);
       const uninstructableMoves = [
         // Locking/Continually Executed moves
@@ -7106,6 +7123,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
         MoveId.PETAL_DANCE,
         MoveId.THRASH,
         MoveId.ICE_BALL,
+        MoveId.UPROAR,
         // Multi-turn Moves
         MoveId.BIDE,
         MoveId.SHELL_TRAP,
@@ -7143,23 +7161,34 @@ export class RepeatMoveAttr extends MoveEffectAttr {
         MoveId.SOLAR_BEAM,
         MoveId.SOLAR_BLADE,
         MoveId.METEOR_BEAM,
-        // Other moves
+        // Copying/Move-Calling moves
+        MoveId.ASSIST,
+        MoveId.COPYCAT,
+        MoveId.ME_FIRST,
+        MoveId.METRONOME,
+        MoveId.MIRROR_MOVE,
+        MoveId.NATURE_POWER,
+        MoveId.SLEEP_TALK,
+        MoveId.SNATCH,
         MoveId.INSTRUCT,
+        // Misc moves
         MoveId.KINGS_SHIELD,
         MoveId.SKETCH,
         MoveId.TRANSFORM,
         MoveId.MIMIC,
         MoveId.STRUGGLE,
-        // TODO: Add Max/G-Move blockage if or when they are implemented
+        // TODO: Add Max/G-Max/Z-Move blockage if or when they are implemented
       ];
 
       if (!lastMove?.move // no move to instruct
         || !movesetMove // called move not in target's moveset (forgetting the move, etc.)
         || movesetMove.ppUsed === movesetMove.getMovePp() // move out of pp
+        // TODO: This next line is likely redundant as all charging moves are in the above list
         || allMoves[lastMove.move].isChargingMove() // called move is a charging/recharging move
         || uninstructableMoves.includes(lastMove.move)) { // called move is in the banlist
         return false;
       }
+      this.movesetMove = movesetMove;
       return true;
     };
   }
@@ -7190,53 +7219,48 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
   /**
    * Reduces the PP of the target's last-used move by an amount based on this attribute instance's {@linkcode reduction}.
    *
-   * @param user {@linkcode Pokemon} that used the attack
-   * @param target {@linkcode Pokemon} targeted by the attack
-   * @param move N/A
-   * @param args N/A
-   * @returns `true`
+   * @param user - N/A
+   * @param target - The {@linkcode Pokemon} targeted by the attack
+   * @param move - N/A
+   * @param args - N/A
+   * @returns always `true`
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    // Null checks can be skipped due to condition function
-    const lastMove = target.getLastXMoves()[0];
-    const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move)!;
+    /** The last move the target themselves used */
+    const lastMove = target.getLastNonVirtualMove();
+    const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move)!; // bang is correct as condition prevents this from being nullish
     const lastPpUsed = movesetMove.ppUsed;
-    movesetMove.ppUsed = Math.min((lastPpUsed) + this.reduction, movesetMove.getMovePp());
+    movesetMove.ppUsed = Math.min(lastPpUsed + this.reduction, movesetMove.getMovePp());
 
-    const message = i18next.t("battle:ppReduced", { targetName: getPokemonNameWithAffix(target), moveName: movesetMove.getName(), reduction: (movesetMove.ppUsed) - lastPpUsed });
     globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(target.id, movesetMove.getMove(), movesetMove.ppUsed));
-    globalScene.phaseManager.queueMessage(message);
+    globalScene.phaseManager.queueMessage(i18next.t("battle:ppReduced", { targetName: getPokemonNameWithAffix(target), moveName: movesetMove.getName(), reduction: (movesetMove.ppUsed) - lastPpUsed }));
 
     return true;
   }
 
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
-      const lastMove = target.getLastXMoves()[0];
-      if (lastMove) {
-        const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
-        return !!movesetMove?.getPpRatio();
-      }
-      return false;
+      const lastMove = target.getLastNonVirtualMove();
+      const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move)
+      return !!movesetMove?.getPpRatio();
     };
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const lastMove = target.getLastXMoves()[0];
-    if (lastMove) {
-      const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
-      if (movesetMove) {
-        const maxPp = movesetMove.getMovePp();
-        const ppLeft = maxPp - movesetMove.ppUsed;
-        const value = -(8 - Math.ceil(Math.min(maxPp, 30) / 5));
-        if (ppLeft < 4) {
-          return (value / 4) * ppLeft;
-        }
-        return value;
-      }
+    const lastMove = target.getLastNonVirtualMove();
+    const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move)
+    if (!movesetMove) {
+      return 0;
     }
 
-    return 0;
+    const maxPp = movesetMove.getMovePp();
+    const ppLeft = maxPp - movesetMove.ppUsed;
+    const value = -(8 - Math.ceil(Math.min(maxPp, 30) / 5));
+    if (ppLeft < 4) {
+      return (value / 4) * ppLeft;
+    }
+    return value;
+
   }
 }
 
@@ -7252,40 +7276,36 @@ export class AttackReducePpMoveAttr extends ReducePpMoveAttr {
   /**
    * Checks if the target has used a move prior to the attack. PP-reduction is applied through the super class if so.
    *
-   * @param user {@linkcode Pokemon} that used the attack
-   * @param target {@linkcode Pokemon} targeted by the attack
-   * @param move {@linkcode Move} being used
-   * @param args N/A
-   * @returns {boolean} true
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target -The {@linkcode Pokemon} targeted by the attack
+   * @param move - The {@linkcode Move} being used
+   * @param args - N/A
+   * @returns - always `true`
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const lastMove = target.getLastXMoves().find(() => true);
-    if (lastMove) {
-      const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move);
-      if (Boolean(movesetMove?.getPpRatio())) {
-        super.apply(user, target, move, args);
-      }
+    const lastMove = target.getLastNonVirtualMove();
+    const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move);
+    if (movesetMove?.getPpRatio()) {
+      super.apply(user, target, move, args);
     }
 
     return true;
   }
 
-  // Override condition function to always perform damage. Instead, perform pp-reduction condition check in apply function above
-  getCondition(): MoveConditionFunc {
-    return (user, target, move) => true;
+  /**
+   * Override condition function to always perform damage.
+   * Instead, perform pp-reduction condition check in {@linkcode apply}.
+   * (A failed condition will prevent damage which is not what we want here)
+   * @returns always `true`
+   */
+  override getCondition(): MoveConditionFunc {
+    return () => true;
   }
 }
 
-// TODO: Review this
 const targetMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
-  const targetMoves = target.getMoveHistory().filter(m => !m.virtual);
-  if (!targetMoves.length) {
-    return false;
-  }
-
-  const copiableMove = targetMoves[0];
-
-  if (!copiableMove.move) {
+  const copiableMove = target.getLastNonVirtualMove();
+  if (!copiableMove?.move) {
     return false;
   }
 
@@ -7298,14 +7318,18 @@ const targetMoveCopiableCondition: MoveConditionFunc = (user, target, move) => {
   return true;
 };
 
+/**
+ * Attribute to temporarily copy the last move in the target's moveset.
+ * Used by {@linkcode Moves.MIMIC}.
+ */
 export class MovesetCopyMoveAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const targetMoves = target.getMoveHistory().filter(m => !m.virtual);
-    if (!targetMoves.length) {
+    const lastMove = target.getLastNonVirtualMove()
+    if (!lastMove?.move) {
       return false;
     }
 
-    const copiedMove = allMoves[targetMoves[0].move];
+    const copiedMove = allMoves[lastMove.move];
 
     const thisMoveIndex = user.getMoveset().findIndex(m => m.moveId === move.id);
 
@@ -7313,8 +7337,9 @@ export class MovesetCopyMoveAttr extends OverrideMoveEffectAttr {
       return false;
     }
 
+    // Populate summon data with a copy of the current moveset, replacing the copying move with the copied move
     user.summonData.moveset = user.getMoveset().slice(0);
-    user.summonData.moveset[thisMoveIndex] = new PokemonMove(copiedMove.id, 0, 0);
+    user.summonData.moveset[thisMoveIndex] = new PokemonMove(copiedMove.id);
 
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:copiedMove", { pokemonName: getPokemonNameWithAffix(user), moveName: copiedMove.name }));
 
@@ -7352,9 +7377,9 @@ export class SketchAttr extends MoveEffectAttr {
       return false;
     }
 
-    const targetMove = target.getLastXMoves(-1)
-      .find(m => m.move !== MoveId.NONE && m.move !== MoveId.STRUGGLE && !m.virtual);
+    const targetMove = target.getLastNonVirtualMove()
     if (!targetMove) {
+      // failsafe for TS compiler
       return false;
     }
 
@@ -7377,28 +7402,10 @@ export class SketchAttr extends MoveEffectAttr {
         return false;
       }
 
-      const targetMove = target.getMoveHistory().filter(m => !m.virtual).at(-1);
-      if (!targetMove) {
-        return false;
-      }
-
-      const unsketchableMoves = [
-        MoveId.CHATTER,
-        MoveId.MIRROR_MOVE,
-        MoveId.SLEEP_TALK,
-        MoveId.STRUGGLE,
-        MoveId.SKETCH,
-        MoveId.REVIVAL_BLESSING,
-        MoveId.TERA_STARSTORM,
-        MoveId.BREAKNECK_BLITZ__PHYSICAL,
-        MoveId.BREAKNECK_BLITZ__SPECIAL
-      ];
-
-      if (unsketchableMoves.includes(targetMove.move)) {
-        return false;
-      }
-
-      return !user.getMoveset().some(m => m.moveId === targetMove.move);
+      const targetMove = target.getLastNonVirtualMove();
+      return !isNullOrUndefined(targetMove)
+        && !invalidSketchMoves.has(targetMove.move)
+        && user.getMoveset().every(m => m.moveId !== targetMove.move)
     };
   }
 }
@@ -7838,19 +7845,19 @@ export class LastResortAttr extends MoveAttr {
   // TODO: Verify behavior as Bulbapedia page is _extremely_ poorly documented
   getCondition(): MoveConditionFunc {
     return (user: Pokemon, _target: Pokemon, move: Move) => {
-      const movesInMoveset = new Set<MoveId>(user.getMoveset().map(m => m.moveId));
-      if (!movesInMoveset.delete(move.id) || !movesInMoveset.size) {
+      const otherMovesInMoveset = new Set<MoveId>(user.getMoveset().map(m => m.moveId));
+      if (!otherMovesInMoveset.delete(move.id) || !otherMovesInMoveset.size) {
         return false; // Last resort fails if used when not in user's moveset or no other moves exist
       }
 
-      const movesInHistory = new Set(
+      const movesInHistory = new Set<MoveId>(
         user.getMoveHistory()
-        .filter(m => !m.virtual) // TODO: Change to (m) => m < MoveUseType.INDIRECT after Dancer PR refactors virtual into enum
+        .filter(m => !isVirtual(m.useMode)) // Last resort ignores virtual moves
         .map(m => m.move)
       );
 
-      // Since `Set.intersection()` is only present in ESNext, we have to coerce it to an array to check inclusion
-      return [...movesInMoveset].every(m => movesInHistory.has(m))
+      // Since `Set.intersection()` is only present in ESNext, we have to do this to check inclusion
+      return [...otherMovesInMoveset].every(m => movesInHistory.has(m))
     };
   }
 }
@@ -7872,27 +7879,26 @@ export class VariableTargetAttr extends MoveAttr {
 }
 
 /**
- * Attribute for {@linkcode MoveId.AFTER_YOU}
+ * Attribute to cause the target to move immediately after the user.
  *
- * [After You - Move | Bulbapedia](https://bulbapedia.bulbagarden.net/wiki/After_You_(move))
+ * Used by {@linkcode Moves.AFTER_YOU}.
  */
 export class AfterYouAttr extends MoveEffectAttr {
   /**
-   * Allows the target of this move to act right after the user.
-   *
-   * @param user {@linkcode Pokemon} that is using the move.
-   * @param target {@linkcode Pokemon} that will move right after this move is used.
-   * @param move {@linkcode Move} {@linkcode MoveId.AFTER_YOU}
-   * @param _args N/A
-   * @returns true
+   * Cause the target of this move to act right after the user.
+   * @param user - Unused
+   * @param target - The {@linkcode Pokemon} targeted by this move
+   * @param _move - Unused
+   * @param _args - Unused
+   * @returns `true`
    */
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:afterYou", { targetName: getPokemonNameWithAffix(target) }));
 
-    //Will find next acting phase of the targeted pokémon, delete it and queue it next on successful delete.
-    const nextAttackPhase = globalScene.phaseManager.findPhase<MovePhase>((phase) => phase.pokemon === target);
-    if (nextAttackPhase && globalScene.phaseManager.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
-      globalScene.phaseManager.prependNewToPhase("MovePhase", "MovePhase", target, [ ...nextAttackPhase.targets ], nextAttackPhase.move);
+    // Will find next acting phase of the targeted pokémon, delete it and queue it right after us.
+    const targetNextPhase = globalScene.phaseManager.findPhase<MovePhase>(phase => phase.pokemon === target);
+    if (targetNextPhase && globalScene.phaseManager.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
+      globalScene.phaseManager.prependToPhase(targetNextPhase, "MovePhase");
     }
 
     return true;
@@ -7917,6 +7923,7 @@ export class ForceLastAttr extends MoveEffectAttr {
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:forceLast", { targetPokemonName: getPokemonNameWithAffix(target) }));
 
+    // TODO: Refactor this to be more readable and less janky
     const targetMovePhase = globalScene.phaseManager.findPhase<MovePhase>((phase) => phase.pokemon === target);
     if (targetMovePhase && !targetMovePhase.isForcedLast() && globalScene.phaseManager.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
       // Finding the phase to insert the move in front of -
@@ -7929,7 +7936,7 @@ export class ForceLastAttr extends MoveEffectAttr {
         globalScene.phaseManager.phaseQueue.splice(
           globalScene.phaseManager.phaseQueue.indexOf(prependPhase),
           0,
-          globalScene.phaseManager.create("MovePhase", target, [ ...targetMovePhase.targets ], targetMovePhase.move, false, false, false, true)
+          globalScene.phaseManager.create("MovePhase", target, [ ...targetMovePhase.targets ], targetMovePhase.move, targetMovePhase.useMode, true)
         );
       }
     }
@@ -7937,7 +7944,13 @@ export class ForceLastAttr extends MoveEffectAttr {
   }
 }
 
-/** Returns whether a {@linkcode MovePhase} has been forced last and the corresponding pokemon is slower than {@linkcode target} */
+/**
+ * Returns whether a {@linkcode MovePhase} has been forced last and the corresponding pokemon is slower than {@linkcode target}.
+
+ * TODO:
+   - Make this a class method
+   - Make this look at speed order from TurnStartPhase
+*/
 const phaseForcedSlower = (phase: MovePhase, target: Pokemon, trickRoom: boolean): boolean => {
   let slower: boolean;
   // quashed pokemon still have speed ties
@@ -8032,8 +8045,7 @@ export class UpperHandCondition extends MoveCondition {
     super((user, target, move) => {
       const targetCommand = globalScene.currentBattle.turnCommands[target.getBattlerIndex()];
 
-      return !!targetCommand
-        && targetCommand.command === Command.FIGHT
+      return targetCommand?.command === Command.FIGHT
         && !target.turnData.acted
         && !!targetCommand.move?.move
         && allMoves[targetCommand.move.move].category !== MoveCategory.STATUS
@@ -8066,6 +8078,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
   constructor() {
     super(true);
   }
+
   /**
    * User changes its type to a random type that resists the target's last used move
    * @param {Pokemon} user Pokemon that used the move and will change types
@@ -8079,7 +8092,8 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const [ targetMove ] = target.getLastXMoves(1); // target's most recent move
+    // TODO: Confirm how this interacts with status-induced failures and called moves
+    const targetMove = target.getLastXMoves(1)[0]; // target's most recent move
     if (!targetMove) {
       return false;
     }
@@ -8121,9 +8135,9 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
+    // TODO: Does this count dancer?
     return (user, target, move) => {
-      const moveHistory = target.getLastXMoves();
-      return moveHistory.length !== 0;
+      return target.getLastXMoves(-1).some(tm => tm.move !== MoveId.NONE);
     };
   }
 }
@@ -8541,9 +8555,9 @@ export function initMoves() {
       .attr(FixedDamageAttr, 20),
     new StatusMove(MoveId.DISABLE, PokemonType.NORMAL, 100, 20, -1, 0, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.DISABLED, false, true)
-      .condition((user, target, move) => {
-        const lastRealMove = target.getLastXMoves(-1).find(m => !m.virtual);
-        return !isNullOrUndefined(lastRealMove) && lastRealMove.move !== MoveId.NONE && lastRealMove.move !== MoveId.STRUGGLE;
+      .condition((_user, target, _move) => {
+        const lastNonVirtualMove = target.getLastNonVirtualMove();
+        return !isNullOrUndefined(lastNonVirtualMove) && lastNonVirtualMove.move !== MoveId.STRUGGLE;
       })
       .ignoresSubstitute()
       .reflectable(),
@@ -9092,7 +9106,10 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, true)
       .ignoresSubstitute()
       .condition((user, target, move) => new EncoreTag(user.id).canAdd(target))
-      .reflectable(),
+      .reflectable()
+      // Can lock infinitely into struggle; has incorrect interactions with Blood Moon/Gigaton Hammer
+      // Also may or may not incorrectly select targets for replacement move (needs verification)
+      .edgeCase(),
     new AttackMove(MoveId.PURSUIT, PokemonType.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, 0, 2)
       .partial(), // No effect implemented
     new AttackMove(MoveId.RAPID_SPIN, PokemonType.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, 100, 0, 2)
@@ -9974,7 +9991,14 @@ export function initMoves() {
       .chargeAttr(SemiInvulnerableAttr, BattlerTagType.FLYING)
       .condition(failOnGravityCondition)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
-      .partial(), // Should immobilize the target, Flying types should take no damage. cf https://bulbapedia.bulbagarden.net/wiki/Sky_Drop_(move) and https://www.smogon.com/dex/sv/moves/sky-drop/
+      /*
+       * Cf https://bulbapedia.bulbagarden.net/wiki/Sky_Drop_(move) and https://www.smogon.com/dex/sv/moves/sky-drop/:
+       * Should immobilize and give target semi-invulnerability
+       * Flying types should take no damage
+       * Should fail on targets above a certain weight threshold
+       * Should remove all redirection effects on successful takeoff (Rage Poweder, etc.)
+       */
+      .partial(),
     new SelfStatusMove(MoveId.SHIFT_GEAR, PokemonType.STEEL, -1, 10, -1, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.ATK ], 1, true)
       .attr(StatStageChangeAttr, [ Stat.SPD ], 2, true),
@@ -10545,9 +10569,12 @@ export function initMoves() {
     new StatusMove(MoveId.INSTRUCT, PokemonType.PSYCHIC, -1, 15, -1, 0, 7)
       .ignoresSubstitute()
       .attr(RepeatMoveAttr)
-      // incorrect interactions with Gigaton Hammer, Blood Moon & Torment
-      // Also has incorrect interactions with Dancer due to the latter
-      // erroneously adding copied moves to move history.
+      /*
+       * Incorrect interactions with Gigaton Hammer, Blood Moon & Torment due to them _failing on use_, not merely being unselectable.
+       * Incorrectly ticks down Encore's fail counter
+       * TODO: Verify whether Instruct can repeat Struggle
+       * TODO: Verify whether Instruct can fail when using a copied move also in one's own moveset
+       */
       .edgeCase(),
     new AttackMove(MoveId.BEAK_BLAST, PokemonType.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
       .attr(BeakBlastHeaderAttr)
@@ -10605,7 +10632,13 @@ export function initMoves() {
       .bitingMove()
       .attr(RemoveScreensAttr),
     new AttackMove(MoveId.STOMPING_TANTRUM, PokemonType.GROUND, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 7)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => user.getLastXMoves(2)[1]?.result === MoveResult.MISS || user.getLastXMoves(2)[1]?.result === MoveResult.FAIL ? 2 : 1),
+      .attr(MovePowerMultiplierAttr, (user) => {
+        // Stomping tantrum triggers on most failures (including sleep/freeze)
+        const lastNonDancerMove = user.getLastXMoves(2)[1] as TurnMove | undefined;
+        return lastNonDancerMove && (lastNonDancerMove.result === MoveResult.MISS || lastNonDancerMove.result === MoveResult.FAIL) ? 2 : 1
+      })
+      // TODO: Review mainline accuracy and draft tests as needed
+      .edgeCase(),
     new AttackMove(MoveId.SHADOW_BONE, PokemonType.GHOST, MoveCategory.PHYSICAL, 85, 100, 10, 20, 0, 7)
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1)
       .makesContact(false),
