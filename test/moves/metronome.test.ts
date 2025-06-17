@@ -4,7 +4,6 @@ import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
 import { MoveResult } from "#enums/move-result";
-import { CommandPhase } from "#app/phases/command-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { MoveId } from "#enums/move-id";
@@ -122,7 +121,7 @@ describe("Moves - Metronome", () => {
 
   it("should charge for charging moves while still maintaining follow-up status", async () => {
     game.override.moveset([]).enemyMoveset(MoveId.SPITE);
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.SOLAR_BEAM);
+    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.SOLAR_BEAM);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
     const player = game.field.getPlayerPokemon();

@@ -144,7 +144,7 @@ describe("Moves - Instruct", () => {
   });
 
   it("should fail on metronomed moves, even if also in moveset", async () => {
-    vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(MoveId.ABSORB);
+    vi.spyOn(RandomMoveAttr.prototype, "getMove").mockReturnValue(MoveId.ABSORB);
     await game.classicMode.startBattle([SpeciesId.AMOONGUSS]);
 
     const enemy = game.field.getEnemyPokemon();
