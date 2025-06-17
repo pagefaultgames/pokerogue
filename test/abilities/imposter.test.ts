@@ -75,23 +75,31 @@ describe("Abilities - Imposter", () => {
   });
 
   it("should copy in-battle overridden stats", async () => {
-    await game.classicMode.startBattle([SpeciesId.DITTO]);
+    game.override.ability(AbilityId.BALL_FETCH);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.DITTO]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const [karp, ditto] = game.scene.getPlayerField();
+    const enemy = game.field.getEnemyPokemon();
+    game.field.mockAbility(ditto, AbilityId.IMPOSTER);
 
-    const avgAtk = Math.floor((player.getStat(Stat.ATK, false) + enemy.getStat(Stat.ATK, false)) / 2);
-    const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
+    // Turn 1: Use power split
+    const avgAtk = Math.floor((karp.getStat(Stat.ATK, false) + enemy.getStat(Stat.ATK, false)) / 2);
+    const avgSpAtk = Math.floor((karp.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
 
-    game.move.use(MoveId.TACKLE);
+    game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.POWER_SPLIT);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.toNextTurn();
 
-    expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);
     expect(enemy.getStat(Stat.ATK, false)).toBe(avgAtk);
-
-    expect(player.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
     expect(enemy.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
+
+    // Turn 2: Switch in ditto, should copy enemy ability
+    game.doSwitchPokemon(1);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.toNextTurn();
+
+    expect(ditto.getStat(Stat.ATK, false)).toBe(avgAtk);
+    expect(ditto.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
   });
 
   it("should set each move's pp to a maximum of 5", async () => {

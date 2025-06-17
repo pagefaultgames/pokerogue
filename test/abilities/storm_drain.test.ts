@@ -104,7 +104,7 @@ describe("Abilities - Storm Drain", () => {
 
     enemy2.summonData.ability = AbilityId.STORM_DRAIN;
 
-    game.move.use(MoveId.HYPER_VOICE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.use(MoveId.HYPER_VOICE, BattlerIndex.PLAYER);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy1.isFullHp()).toBe(true);
