@@ -6981,7 +6981,8 @@ export class NaturePowerAttr extends CallMoveAttr {
         return MoveId.ETERNABEAM;
       default:
         // Fallback for no match
-        console.log(`NaturePowerAttr lacks defined move to use for current biome ${toReadableString(BiomeId[globalScene.arena.biomeType])}; consider adding an appropriate move to the attribute's selection table.`)
+        biome satisfies never;
+        console.warn(`NaturePowerAttr lacks defined move to use for current biome ${toReadableString(BiomeId[biome])}; consider adding an appropriate move to the attribute's selection table.`)
         return MoveId.TRI_ATTACK;
     }
   }
