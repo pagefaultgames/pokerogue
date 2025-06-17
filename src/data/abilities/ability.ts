@@ -3851,8 +3851,8 @@ export class BlockCritAbAttr extends AbAttr {
   /**
    * Apply the block crit ability by setting the value in the provided boolean holder to `true`.
    */
-  override apply({ canCrit: preventCrit }: BlockCritAbAttrParams): void {
-    preventCrit.value = false;
+  override apply({ blockCrit }: BlockCritAbAttrParams): void {
+    blockCrit.value = true;
   }
 }
 
