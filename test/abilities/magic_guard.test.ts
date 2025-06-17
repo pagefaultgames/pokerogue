@@ -135,7 +135,7 @@ describe("AbilityId - Magic Guard", () => {
 
     // NB: Burn applies directly to the physical dmg formula, so we can't just check attack here
     game.move.use(MoveId.TACKLE);
-    await game.move.forceEnemyMove(MoveId.SIZZLY_SLIDE);
+    await game.move.forceEnemyMove(MoveId.WILL_O_WISP);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
