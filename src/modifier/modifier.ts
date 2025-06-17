@@ -1,6 +1,5 @@
 import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { getLevelTotalExp } from "#app/data/exp";
-import { allMoves, modifierTypes } from "#app/data/data-lists";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import type Pokemon from "#app/field/pokemon";
@@ -33,42 +32,26 @@ import {
   type ModifierType,
   type TerastallizeModifierType,
   type TmModifierType,
-  getModifierType,
-  ModifierTypeGenerator,
   modifierTypes,
 } from "./modifier-type";
-import { getModifierType } from "#app/utils/modifier-utils";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
 import { globalScene } from "#app/global-scene";
 import type { ModifierInstanceMap, ModifierString } from "#app/@types/modifier-types";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
-
 const iconOverflowIndex = 24;
 
 export const modifierSortFunc = (a: Modifier, b: Modifier): number => {
   const itemNameMatch = a.type.name.localeCompare(b.type.name);
   const typeNameMatch = a.constructor.name.localeCompare(b.constructor.name);
-  const aId = a instanceof PokemonHeldItemModifier && a.pokemonId ? a.pokemonId : 4294967295;
-  const bId = b instanceof PokemonHeldItemModifier && b.pokemonId ? b.pokemonId : 4294967295;
 
-  //First sort by pokemonID
-  if (aId < bId) {
-    return 1;
+  //Then sort by item type
+  if (typeNameMatch === 0) {
+    return itemNameMatch;
+    //Finally sort by item name
   }
-  if (aId > bId) {
-    return -1;
-  }
-  if (aId === bId) {
-    //Then sort by item type
-    if (typeNameMatch === 0) {
-      return itemNameMatch;
-      //Finally sort by item name
-    }
-    return typeNameMatch;
-  }
-  return 0;
+  return typeNameMatch;
 };
 
 export class ModifierBar extends Phaser.GameObjects.Container {
@@ -153,23 +136,6 @@ export abstract class Modifier {
 
   constructor(type: ModifierType) {
     this.type = type;
-  }
-
-  /**
-   * Return whether this modifier is of the given class
-   *
-   * @remarks
-   * Used to avoid requiring the caller to have imported the specific modifier class, avoiding circular dependencies.
-   *
-   * @param modifier - The modifier to check against
-   * @returns Whether the modiifer is an instance of the given type
-   */
-  public is<T extends ModifierString>(modifier: T): this is ModifierInstanceMap[T] {
-    const targetModifier = ModifierClassMap[modifier];
-    if (!targetModifier) {
-      return false;
-    }
-    return this instanceof targetModifier;
   }
 
   /**
@@ -1286,41 +1252,6 @@ export class ExpBalanceModifier extends PersistentModifier {
 
   getMaxStackCount(): number {
     return 4;
-  }
-}
-
-export class MoneyRewardModifier extends ConsumableModifier {
-  private moneyMultiplier: number;
-
-  constructor(type: ModifierType, moneyMultiplier: number) {
-    super(type);
-
-    this.moneyMultiplier = moneyMultiplier;
-  }
-
-  /**
-   * Applies {@linkcode MoneyRewardModifier}
-   * @returns always `true`
-   */
-  override apply(): boolean {
-    const moneyAmount = new NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
-
-    globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
-
-    globalScene.addMoney(moneyAmount.value);
-
-    globalScene.getPlayerParty().map(p => {
-      if (p.species?.speciesId === SpeciesId.GIMMIGHOUL || p.fusionSpecies?.speciesId === SpeciesId.GIMMIGHOUL) {
-        const factor = Math.min(Math.floor(this.moneyMultiplier), 3);
-        const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(
-          p,
-          factor,
-        ) as EvoTrackerModifier;
-        globalScene.addModifier(modifier);
-      }
-    });
-
-    return true;
   }
 }
 
