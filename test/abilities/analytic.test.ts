@@ -27,7 +27,7 @@ describe("Abilities - Analytic", () => {
       .moveset([MoveId.SPLASH, MoveId.TACKLE])
       .ability(AbilityId.ANALYTIC)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .startingLevel(200)
       .enemyLevel(200)
       .enemySpecies(SpeciesId.SNORLAX)

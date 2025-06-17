@@ -1,8 +1,5 @@
 import { ModifierTier } from "#enums/modifier-tier";
-import {
-  regenerateModifierPoolThresholds,
-  getEnemyBuffModifierForWave,
-} from "#app/modifier/modifier-type";
+import { regenerateModifierPoolThresholds, getEnemyBuffModifierForWave } from "#app/modifier/modifier-type";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { EnemyPersistentModifier } from "#app/modifier/modifier";
 import { Phase } from "#app/phase";

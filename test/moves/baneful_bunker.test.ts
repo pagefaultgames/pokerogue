@@ -24,16 +24,14 @@ describe("Moves - Baneful Bunker", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("single");
-
-    game.override.moveset(MoveId.SLASH);
-
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-    game.override.enemyAbility(AbilityId.INSOMNIA);
-    game.override.enemyMoveset(MoveId.BANEFUL_BUNKER);
-
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("single")
+      .moveset(MoveId.SLASH)
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .enemyMoveset(MoveId.BANEFUL_BUNKER)
+      .startingLevel(100)
+      .enemyLevel(100);
   });
   test("should protect the user and poison attackers that make contact", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);

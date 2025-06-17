@@ -15,8 +15,6 @@ describe("game-mode", () => {
   });
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
   beforeEach(() => {
     game = new GameManager(phaserGame);

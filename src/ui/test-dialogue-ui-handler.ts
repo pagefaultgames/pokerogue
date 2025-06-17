@@ -10,10 +10,6 @@ import { UiMode } from "#enums/ui-mode";
 export default class TestDialogueUiHandler extends FormModalUiHandler {
   keys: string[];
 
-  constructor(mode) {
-    super(mode);
-  }
-
   setup() {
     super.setup();
 

@@ -51,6 +51,6 @@ describe("Phases", () => {
       scene.phaseManager.unshiftPhase(unavailablePhase);
       await game.phaseInterceptor.to(UnavailablePhase);
       expect(scene.ui.getMode()).to.equal(UiMode.UNAVAILABLE);
-    }, 20000);
+    });
   });
 });

@@ -26,11 +26,12 @@ describe("Moves - Parting Shot", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.moveset([MoveId.PARTING_SHOT, MoveId.SPLASH]);
-    game.override.enemyMoveset(MoveId.SPLASH);
-    game.override.startingLevel(5);
-    game.override.enemyLevel(5);
+    game.override
+      .battleStyle("single")
+      .moveset([MoveId.PARTING_SHOT, MoveId.SPLASH])
+      .enemyMoveset(MoveId.SPLASH)
+      .startingLevel(5)
+      .enemyLevel(5);
   });
 
   test("Parting Shot when buffed by prankster should fail against dark types", async () => {

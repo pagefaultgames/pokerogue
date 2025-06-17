@@ -2,7 +2,7 @@ import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encoun
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type { PokemonMove } from "../moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
-import { capitalizeFirstLetter, isNullOrUndefined } from "#app/utils/common";
+import { capitalizeFirstLetter, coerceArray, isNullOrUndefined } from "#app/utils/common";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { MysteryEncounterSpriteConfig } from "#app/field/mystery-encounter-intro";
 import MysteryEncounterIntroVisuals from "#app/field/mystery-encounter-intro";
@@ -29,14 +29,14 @@ import type { GameModes } from "#enums/game-modes";
 import type { EncounterAnim } from "#enums/encounter-anims";
 import type { Challenges } from "#enums/challenges";
 import { globalScene } from "#app/global-scene";
+import type { MoveUseMode } from "#enums/move-use-mode";
 
 export interface EncounterStartOfBattleEffect {
   sourcePokemon?: Pokemon;
   sourceBattlerIndex?: BattlerIndex;
   targets: BattlerIndex[];
   move: PokemonMove;
-  ignorePp: boolean;
-  followUp?: boolean;
+  useMode: MoveUseMode; // TODO: This should always be ignore PP...
 }
 
 const DEFAULT_MAX_ALLOWED_ENCOUNTERS = 2;
@@ -254,7 +254,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
    */
   selectedOption?: MysteryEncounterOption;
   /**
-   * Will be set by option select handlers automatically, and can be used to refer to which option was chosen by later phases
+   * Array containing data pertaining to free moves used at the start of a battle mystery envounter.
    */
   startOfBattleEffects: EncounterStartOfBattleEffect[] = [];
   /**
@@ -717,7 +717,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withAnimations(
     ...encounterAnimations: EncounterAnim[]
   ): this & Required<Pick<IMysteryEncounter, "encounterAnimations">> {
-    const animations = Array.isArray(encounterAnimations) ? encounterAnimations : [encounterAnimations];
+    const animations = coerceArray(encounterAnimations);
     return Object.assign(this, { encounterAnimations: animations });
   }
 
@@ -729,7 +729,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withDisallowedGameModes(
     ...disallowedGameModes: GameModes[]
   ): this & Required<Pick<IMysteryEncounter, "disallowedGameModes">> {
-    const gameModes = Array.isArray(disallowedGameModes) ? disallowedGameModes : [disallowedGameModes];
+    const gameModes = coerceArray(disallowedGameModes);
     return Object.assign(this, { disallowedGameModes: gameModes });
   }
 
@@ -741,7 +741,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withDisallowedChallenges(
     ...disallowedChallenges: Challenges[]
   ): this & Required<Pick<IMysteryEncounter, "disallowedChallenges">> {
-    const challenges = Array.isArray(disallowedChallenges) ? disallowedChallenges : [disallowedChallenges];
+    const challenges = coerceArray(disallowedChallenges);
     return Object.assign(this, { disallowedChallenges: challenges });
   }
 
