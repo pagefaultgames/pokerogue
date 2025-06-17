@@ -6051,7 +6051,7 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
   }
 
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
-    return !pokemon.isTerastallized && globalScene.arena.getTerrainType() !== TerrainType.NONE;
+    return !pokemon.isTerastallized;
   }
 
   override apply({ pokemon }: AbAttrBaseParams): void {
