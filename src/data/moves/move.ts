@@ -2263,25 +2263,9 @@ export class BoostHealAttr extends HealAttr {
  * @see {@linkcode apply}
  */
 export class HealOnAllyAttr extends HealAttr {
-  /**
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args N/A
-   * @returns true if the function succeeds
-   */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.getAlly() === target) {
-      super.apply(user, target, move, args);
-      return true;
-    }
-
-    return false;
-  }
-
   override canApply(user: Pokemon, target: Pokemon, _move: Move, _args?: any[]): boolean {
-    // Don't fail move if not targeting an ally
-    return user.getAlly() !== target || super.canApply(user, target, _move, _args);
+    // Don't trigger if not targeting an ally
+    return target === user.getAlly() && super.canApply(user, target, _move, _args);
   }
 }
 
