@@ -1929,16 +1929,17 @@ export class HealAttr extends MoveEffectAttr {
    * Creates a new {@linkcode PokemonHealPhase}.
    * This heals the target and shows the appropriate message.
    */
-  addHealPhase(target: Pokemon, healRatio: number) {
+  protected addHealPhase(target: Pokemon, healRatio: number) {
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", target.getBattlerIndex(),
       toDmgValue(target.getMaxHp() * healRatio), i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(target) }), true, !this.showAnim);
   }
 
-  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+  override getTargetBenefitScore(user: Pokemon, target: Pokemon, _move: Move): number {
     const score = ((1 - (this.selfTarget ? user : target).getHpRatio()) * 20) - this.healRatio * 10;
     return Math.round(score / (1 - this.healRatio / 2));
   }
 
+  // TODO: Change post move failure rework
   override canApply(user: Pokemon, target: Pokemon, _move: Move, _args?: any[]): boolean {
     if (!super.canApply(user, target, _move, _args)) {
       return false;
