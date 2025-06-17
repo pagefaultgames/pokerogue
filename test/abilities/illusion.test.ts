@@ -116,26 +116,23 @@ describe("Abilities - Illusion", () => {
     expect(psychicEffectiveness).above(flameThrowerEffectiveness);
   });
 
-  it("does not break from indirect damage", async () => {
-    game.override.enemySpecies(SpeciesId.GIGALITH);
-    game.override.enemyAbility(AbilityId.SAND_STREAM);
-    game.override.enemyMoveset(MoveId.WILL_O_WISP);
-    game.override.moveset([MoveId.FLARE_BLITZ]);
+  it("should not break from indirect damage from status, weather or recoil", async () => {
+    game.override.enemySpecies(SpeciesId.GIGALITH).enemyAbility(AbilityId.SAND_STREAM);
 
     await game.classicMode.startBattle([SpeciesId.ZOROARK, SpeciesId.AZUMARILL]);
 
-    game.move.select(MoveId.FLARE_BLITZ);
-
-    await game.phaseInterceptor.to("TurnEndPhase");
+    game.move.use(MoveId.FLARE_BLITZ);
+    await game.move.forceEnemyMove(MoveId.WILL_O_WISP);
+    await game.toEndOfTurn();
 
     const zoroark = game.scene.getPlayerPokemon()!;
-
     expect(!!zoroark.summonData.illusion).equals(true);
   });
 
   it("copies the the name, nickname, gender, shininess, and pokeball from the illusion source", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.ZOROARK, SpeciesId.AXEW]);
+
     const axew = game.scene.getPlayerParty().at(2)!;
     axew.shiny = true;
     axew.nickname = btoa(unescape(encodeURIComponent("axew nickname")));

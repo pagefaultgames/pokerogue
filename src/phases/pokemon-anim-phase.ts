@@ -53,7 +53,8 @@ export class PokemonAnimPhase extends BattlePhase {
   private doSubstituteAddAnim(): void {
     const substitute = this.pokemon.getTag(SubstituteTag);
     if (isNullOrUndefined(substitute)) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const getSprite = () => {
@@ -116,12 +117,14 @@ export class PokemonAnimPhase extends BattlePhase {
 
   private doSubstitutePreMoveAnim(): void {
     if (this.fieldAssets.length !== 1) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const subSprite = this.fieldAssets[0];
     if (subSprite === undefined) {
-      return this.end();
+      this.end();
+      return;
     }
 
     globalScene.tweens.add({
@@ -145,12 +148,14 @@ export class PokemonAnimPhase extends BattlePhase {
 
   private doSubstitutePostMoveAnim(): void {
     if (this.fieldAssets.length !== 1) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const subSprite = this.fieldAssets[0];
     if (subSprite === undefined) {
-      return this.end();
+      this.end();
+      return;
     }
 
     globalScene.tweens.add({
@@ -174,12 +179,14 @@ export class PokemonAnimPhase extends BattlePhase {
 
   private doSubstituteRemoveAnim(): void {
     if (this.fieldAssets.length !== 1) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const subSprite = this.fieldAssets[0];
     if (subSprite === undefined) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const getSprite = () => {
@@ -244,12 +251,14 @@ export class PokemonAnimPhase extends BattlePhase {
 
   private doCommanderApplyAnim(): void {
     if (!globalScene.currentBattle?.double) {
-      return this.end();
+      this.end();
+      return;
     }
     const dondozo = this.pokemon.getAlly();
 
     if (dondozo?.species?.speciesId !== SpeciesId.DONDOZO) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const tatsugiriX = this.pokemon.x + this.pokemon.getSprite().x;
@@ -329,7 +338,8 @@ export class PokemonAnimPhase extends BattlePhase {
     const tatsugiri = this.pokemon.getAlly();
     if (isNullOrUndefined(tatsugiri)) {
       console.warn("Aborting COMMANDER_REMOVE anim: Tatsugiri is undefined");
-      return this.end();
+      this.end();
+      return;
     }
 
     const tatsuSprite = globalScene.addPokemonSprite(

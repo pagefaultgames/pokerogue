@@ -25,16 +25,14 @@ describe("Moves - Wide Guard", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("double");
-
-    game.override.moveset([MoveId.WIDE_GUARD, MoveId.SPLASH, MoveId.SURF]);
-
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-    game.override.enemyMoveset([MoveId.SWIFT]);
-    game.override.enemyAbility(AbilityId.INSOMNIA);
-
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("double")
+      .moveset([MoveId.WIDE_GUARD, MoveId.SPLASH, MoveId.SURF])
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyMoveset(MoveId.SWIFT)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .startingLevel(100)
+      .enemyLevel(100);
   });
 
   test("should protect the user and allies from multi-target attack moves", async () => {

@@ -108,8 +108,7 @@ describe("Abilities - Libero", () => {
   });
 
   test("ability applies correctly even if the type has changed by another ability", async () => {
-    game.override.moveset([MoveId.TACKLE]);
-    game.override.passiveAbility(AbilityId.REFRIGERATE);
+    game.override.moveset([MoveId.TACKLE]).passiveAbility(AbilityId.REFRIGERATE);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
@@ -156,8 +155,7 @@ describe("Abilities - Libero", () => {
   });
 
   test("ability applies correctly even if the pokemon's move misses", async () => {
-    game.override.moveset([MoveId.TACKLE]);
-    game.override.enemyMoveset(MoveId.SPLASH);
+    game.override.moveset([MoveId.TACKLE]).enemyMoveset(MoveId.SPLASH);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
@@ -188,8 +186,7 @@ describe("Abilities - Libero", () => {
   });
 
   test("ability applies correctly even if the pokemon's move fails because of type immunity", async () => {
-    game.override.moveset([MoveId.TACKLE]);
-    game.override.enemySpecies(SpeciesId.GASTLY);
+    game.override.moveset([MoveId.TACKLE]).enemySpecies(SpeciesId.GASTLY);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
@@ -262,8 +259,7 @@ describe("Abilities - Libero", () => {
   });
 
   test("ability applies correctly even if the pokemon's Trick-or-Treat fails", async () => {
-    game.override.moveset([MoveId.TRICK_OR_TREAT]);
-    game.override.enemySpecies(SpeciesId.GASTLY);
+    game.override.moveset([MoveId.TRICK_OR_TREAT]).enemySpecies(SpeciesId.GASTLY);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 

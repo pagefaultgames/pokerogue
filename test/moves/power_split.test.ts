@@ -50,7 +50,7 @@ describe("Moves - Power Split", () => {
 
     expect(player.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
     expect(enemy.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
-  }, 20000);
+  });
 
   it("should be idempotent", async () => {
     game.override.enemyMoveset([MoveId.POWER_SPLIT]);
@@ -73,5 +73,5 @@ describe("Moves - Power Split", () => {
 
     expect(player.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
     expect(enemy.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
-  }, 20000);
+  });
 });

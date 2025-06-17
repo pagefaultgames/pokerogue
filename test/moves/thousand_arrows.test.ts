@@ -29,6 +29,7 @@ describe("Moves - Thousand Arrows", () => {
       .enemySpecies(SpeciesId.EELEKTROSS)
       .startingLevel(100)
       .enemyLevel(50)
+      .criticalHits(false)
       .ability(AbilityId.COMPOUND_EYES)
       .enemyAbility(AbilityId.STURDY)
       .moveset(MoveId.THOUSAND_ARROWS)

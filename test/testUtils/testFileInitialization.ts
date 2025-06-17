@@ -5,6 +5,7 @@ import { initBiomes } from "#app/data/balance/biomes";
 import { initEggMoves } from "#app/data/balance/egg-moves";
 import { initPokemonPrevolutions, initPokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import { initMoves } from "#app/data/moves/move";
+import { initModifierPools } from "#app/modifier/init-modifier-pools";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
 import { initPokemonForms } from "#app/data/pokemon-forms";
 import { initSpecies } from "#app/data/pokemon-species";
@@ -22,6 +23,7 @@ import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { manageListeners } from "./listenersManager";
 import { initI18n } from "#app/plugins/i18n";
+import { initModifierTypes } from "#app/modifier/modifier-type";
 
 let wasInitialized = false;
 /**
@@ -88,6 +90,8 @@ export function initTestFile() {
   if (!wasInitialized) {
     wasInitialized = true;
     initI18n();
+    initModifierTypes();
+    initModifierPools();
     initVouchers();
     initAchievements();
     initStatsKeys();

@@ -39,7 +39,7 @@ describe("Terrain -", () => {
       game = new GameManager(phaserGame);
       game.override
         .battleStyle("single")
-        .disableCrits()
+        .criticalHits(false)
         .enemySpecies(SpeciesId.SNOM)
         .enemyAbility(AbilityId.STURDY)
         .ability(ability)
@@ -92,7 +92,7 @@ describe("Terrain -", () => {
       game = new GameManager(phaserGame);
       game.override
         .battleStyle("single")
-        .disableCrits()
+        .criticalHits(false)
         .enemyLevel(100)
         .enemySpecies(SpeciesId.SHUCKLE)
         .enemyAbility(AbilityId.STURDY)
@@ -183,7 +183,7 @@ describe("Terrain -", () => {
       game = new GameManager(phaserGame);
       game.override
         .battleStyle("single")
-        .disableCrits()
+        .criticalHits(false)
         .enemyLevel(100)
         .enemySpecies(SpeciesId.SHUCKLE)
         .enemyAbility(AbilityId.ELECTRIC_SURGE)
@@ -247,7 +247,7 @@ describe("Terrain -", () => {
       game = new GameManager(phaserGame);
       game.override
         .battleStyle("single")
-        .disableCrits()
+        .criticalHits(false)
         .enemyLevel(100)
         .enemySpecies(SpeciesId.SHUCKLE)
         .enemyAbility(AbilityId.MISTY_SURGE)
@@ -325,7 +325,7 @@ describe("Terrain -", () => {
       game = new GameManager(phaserGame);
       game.override
         .battleStyle("single")
-        .disableCrits()
+        .criticalHits(false)
         .enemyLevel(100)
         .enemySpecies(SpeciesId.SHUCKLE)
         .enemyAbility(AbilityId.PSYCHIC_SURGE)

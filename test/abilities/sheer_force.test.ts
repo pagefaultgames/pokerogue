@@ -29,7 +29,7 @@ describe("Abilities - Sheer Force", () => {
       .enemySpecies(SpeciesId.ONIX)
       .enemyAbility(AbilityId.NO_GUARD)
       .enemyMoveset(MoveId.SPLASH)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   const SHEER_FORCE_MULT = 1.3;

@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
-import type { Unlockables } from "#app/system/unlockables";
+import type { Unlockables } from "#enums/unlockables";
 import { getUnlockableName } from "#app/system/unlockables";
 import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";

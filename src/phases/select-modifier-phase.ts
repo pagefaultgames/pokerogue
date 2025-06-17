@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import type { ModifierTier } from "#app/modifier/modifier-tier";
+import type { ModifierTier } from "#enums/modifier-tier";
 import type { ModifierTypeOption, ModifierType } from "#app/modifier/modifier-type";
 import {
   regenerateModifierPoolThresholds,
@@ -11,9 +11,9 @@ import {
   RememberMoveModifierType,
   PokemonPpRestoreModifierType,
   PokemonPpUpModifierType,
-  ModifierPoolType,
   getPlayerModifierTypeOptions,
 } from "#app/modifier/modifier-type";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { Modifier } from "#app/modifier/modifier";
 import {
   ExtraModifierModifier,

@@ -20,7 +20,7 @@ import { PartyUiMode } from "#app/ui/party-ui-handler";
 import { SpeciesId } from "#enums/species-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import {
   getEncounterText,
@@ -29,7 +29,7 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { Gender } from "#app/data/gender";
 import type { PermanentStat } from "#enums/stat";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";

@@ -1,6 +1,6 @@
 import { allMoves } from "#app/data/data-lists";
 import type { EnemyPersistentModifier } from "#app/modifier/modifier";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
@@ -32,7 +32,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
       .enemyMoveset(MoveId.SPLASH)
       .startingLevel(100)
       .enemyLevel(100)
-      .disableCrits()
+      .criticalHits(false)
       .moveset([MoveId.TACKLE, MoveId.DRAGON_RAGE, MoveId.FISSURE, MoveId.JUMP_KICK]);
   });
 

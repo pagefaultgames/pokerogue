@@ -25,7 +25,7 @@ describe("Abilities - Mummy", () => {
       .moveset([MoveId.SPLASH])
       .ability(AbilityId.MUMMY)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.TACKLE);

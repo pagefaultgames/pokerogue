@@ -24,7 +24,7 @@ describe("Abilities - Serene Grace", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .disableCrits()
+      .criticalHits(false)
       .battleStyle("single")
       .ability(AbilityId.SERENE_GRACE)
       .moveset([MoveId.AIR_SLASH])

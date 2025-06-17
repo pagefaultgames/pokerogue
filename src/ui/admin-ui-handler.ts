@@ -69,7 +69,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
       case AdminMode.SEARCH:
         inputFieldConfigs.push({ label: "Username" });
         break;
-      case AdminMode.ADMIN:
+      case AdminMode.ADMIN: {
         const adminResult = this.adminResult ?? {
           username: "",
           discordId: "",
@@ -90,6 +90,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
         inputFieldConfigs.push({ label: "Last played", isReadOnly: true });
         inputFieldConfigs.push({ label: "Registered", isReadOnly: true });
         break;
+      }
     }
     return inputFieldConfigs;
   }

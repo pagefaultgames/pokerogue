@@ -35,7 +35,7 @@ describe("Abilities - Commander", () => {
       .moveset([MoveId.LIQUIDATION, MoveId.MEMENTO, MoveId.SPLASH, MoveId.FLIP_TURN])
       .ability(AbilityId.COMMANDER)
       .battleStyle("double")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.SNORLAX)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.TACKLE);

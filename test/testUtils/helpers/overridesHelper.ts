@@ -4,7 +4,7 @@ import { AbilityId } from "#enums/ability-id";
 import type { ModifierOverride } from "#app/modifier/modifier-type";
 import type { BattleStyle } from "#app/overrides";
 import Overrides, { defaultOverrides } from "#app/overrides";
-import type { Unlockables } from "#app/system/unlockables";
+import type { Unlockables } from "#enums/unlockables";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -14,7 +14,7 @@ import { StatusEffect } from "#enums/status-effect";
 import type { WeatherType } from "#enums/weather-type";
 import { expect, vi } from "vitest";
 import { GameManagerHelper } from "./gameManagerHelper";
-import { shiftCharCodes } from "#app/utils/common";
+import { coerceArray, shiftCharCodes } from "#app/utils/common";
 import type { RandomTrainerOverride } from "#app/overrides";
 import type { BattleType } from "#enums/battle-type";
 
@@ -202,9 +202,7 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public moveset(moveset: MoveId | MoveId[]): this {
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
-    if (!Array.isArray(moveset)) {
-      moveset = [moveset];
-    }
+    moveset = coerceArray(moveset);
     const movesetStr = moveset.map(moveId => MoveId[moveId]).join(", ");
     this.log(`Player Pokemon moveset set to ${movesetStr} (=[${moveset.join(", ")}])!`);
     return this;
@@ -245,12 +243,15 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override each wave to not have critical hits
+   * Force random critical hit rolls to always or never suceed.
+   * @param crits - `true` to guarantee crits on eligible moves, `false` to force rolls to fail, `null` to disable override
+   * @remarks This does not bypass effects that guarantee or block critical hits; it merely mocks the chance-based rolls.
    * @returns `this`
    */
-  public disableCrits(): this {
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
-    this.log("Critical hits are disabled!");
+  public criticalHits(crits: boolean | null): this {
+    vi.spyOn(Overrides, "CRITICAL_HIT_OVERRIDE", "get").mockReturnValue(crits);
+    const freq = crits === true ? "always" : crits === false ? "never" : "randomly";
+    this.log(`Critical hit rolls set to ${freq} succeed!`);
     return this;
   }
 
@@ -382,9 +383,7 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public enemyMoveset(moveset: MoveId | MoveId[]): this {
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
-    if (!Array.isArray(moveset)) {
-      moveset = [moveset];
-    }
+    moveset = coerceArray(moveset);
     const movesetStr = moveset.map(moveId => MoveId[moveId]).join(", ");
     this.log(`Enemy Pokemon moveset set to ${movesetStr} (=[${moveset.join(", ")}])!`);
     return this;

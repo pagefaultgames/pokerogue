@@ -26,16 +26,14 @@ describe("Moves - Crafty Shield", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("double");
-
-    game.override.moveset([MoveId.CRAFTY_SHIELD, MoveId.SPLASH, MoveId.SWORDS_DANCE]);
-
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-    game.override.enemyMoveset([MoveId.GROWL]);
-    game.override.enemyAbility(AbilityId.INSOMNIA);
-
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("double")
+      .moveset([MoveId.CRAFTY_SHIELD, MoveId.SPLASH, MoveId.SWORDS_DANCE])
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyMoveset([MoveId.GROWL])
+      .enemyAbility(AbilityId.INSOMNIA)
+      .startingLevel(100)
+      .enemyLevel(100);
   });
 
   test("should protect the user and allies from status moves", async () => {
@@ -73,8 +71,7 @@ describe("Moves - Crafty Shield", () => {
   });
 
   test("should protect the user and allies from moves that ignore other protection", async () => {
-    game.override.enemySpecies(SpeciesId.DUSCLOPS);
-    game.override.enemyMoveset([MoveId.CURSE]);
+    game.override.enemySpecies(SpeciesId.DUSCLOPS).enemyMoveset([MoveId.CURSE]);
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 

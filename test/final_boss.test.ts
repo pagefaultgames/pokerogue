@@ -27,7 +27,7 @@ describe("Final Boss", () => {
     game.override
       .startingWave(FinalWave.Classic)
       .startingBiome(BiomeId.END)
-      .disableCrits()
+      .criticalHits(false)
       .enemyMoveset(MoveId.SPLASH)
       .moveset([MoveId.SPLASH, MoveId.WILL_O_WISP, MoveId.DRAGON_PULSE])
       .startingLevel(10000);
