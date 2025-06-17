@@ -162,7 +162,7 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   /**
-   * Queue the phaes that should occur when the target reflects the move back to the user
+   * Queue the phases that should occur when the target reflects the move back to the user
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} that is reflecting the move
    * TODO: Rework this to use `onApply` of Magic Coat
@@ -181,15 +181,13 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.phaseManager.unshiftNew("HideAbilityPhase");
     }
 
-    this.queuedPhases.push(
-      globalScene.phaseManager.create(
-        "MovePhase",
-        target,
-        newTargets,
-        new PokemonMove(this.move.id),
-        MoveUseMode.REFLECTED,
-        MovePhaseTimingModifier.FIRST
-      ),
+    globalScene.phaseManager.pushNew(
+      "MovePhase",
+      target,
+      newTargets,
+      new PokemonMove(this.move.id),
+      MoveUseMode.REFLECTED,
+      MovePhaseTimingModifier.FIRST,
     );
   }
 
