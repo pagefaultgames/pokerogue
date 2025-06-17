@@ -48,7 +48,7 @@ describe("Move - Pollen Puff", () => {
 
     expect(karp1.hp).toBeLessThan(karp1.getMaxHp());
     expect(omantye.hp).toBeCloseTo(0.5 * omantye.getMaxHp() + 1, 1);
-    // expect(game.phaseInterceptor.log).toContain("PokemonHealPhase");
+    expect(game.phaseInterceptor.log).toContain("PokemonHealPhase");
   });
 
   it.todo("should display message & count as failed when hitting a full HP ally", async () => {
@@ -69,7 +69,7 @@ describe("Move - Pollen Puff", () => {
         pokemonName: getPokemonNameWithAffix(omantye),
       }),
     );
-    // expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
+    expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
   });
 
   it("should not heal more than once if the user has a source of multi-hit", async () => {

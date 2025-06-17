@@ -64,6 +64,7 @@ import { PostGameOverPhase } from "#app/phases/post-game-over-phase";
 import { RevivalBlessingPhase } from "#app/phases/revival-blessing-phase";
 
 import type { PhaseClass, PhaseString } from "#app/@types/phase-types";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 
 export interface PromptHandler {
   phaseTarget?: string;
@@ -143,6 +144,7 @@ export default class PhaseInterceptor {
     [AttemptRunPhase, this.startPhase],
     [SelectBiomePhase, this.startPhase],
     [MysteryEncounterPhase, this.startPhase],
+    [PokemonHealPhase, this.startPhase],
     [MysteryEncounterOptionSelectedPhase, this.startPhase],
     [MysteryEncounterBattlePhase, this.startPhase],
     [MysteryEncounterRewardsPhase, this.startPhase],
