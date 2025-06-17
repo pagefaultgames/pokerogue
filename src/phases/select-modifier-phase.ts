@@ -229,7 +229,7 @@ export class SelectModifierPhase extends BattlePhase {
             party[toSlotIndex],
             true,
             itemQuantity,
-            true,
+            undefined,
             false,
           );
         } else {
@@ -287,7 +287,11 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   // Opens the party menu specifically for fusions
-  private openFusionMenu(modifierType, cost, modifierSelectCallback) {
+  private openFusionMenu(
+    modifierType: PokemonModifierType,
+    cost: number,
+    modifierSelectCallback: ModifierSelectCallback,
+  ): void {
     const party = globalScene.getPlayerParty();
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
@@ -313,7 +317,11 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   // Opens the party menu to apply one of various modifiers
-  private openModifierMenu(modifierType, cost, modifierSelectCallback) {
+  private openModifierMenu(
+    modifierType: PokemonModifierType,
+    cost: number,
+    modifierSelectCallback: ModifierSelectCallback,
+  ): void {
     const party = globalScene.getPlayerParty();
     const pokemonModifierType = modifierType as PokemonModifierType;
     const isMoveModifier = modifierType instanceof PokemonMoveModifierType;
@@ -382,17 +390,15 @@ export class SelectModifierPhase extends BattlePhase {
   // Function that determines how many reward slots are available
   private getModifierCount(): number {
     const modifierCountHolder = new NumberHolder(3);
-    if (this.isPlayer()) {
-      globalScene.applyModifiers(ExtraModifierModifier, true, modifierCountHolder);
-      globalScene.applyModifiers(TempExtraModifierModifier, true, modifierCountHolder);
-    }
+    globalScene.applyModifiers(ExtraModifierModifier, true, modifierCountHolder);
+    globalScene.applyModifiers(TempExtraModifierModifier, true, modifierCountHolder);
 
     // If custom modifiers are specified, overrides default item count
     if (this.customModifierSettings) {
       const newItemCount =
-        (this.customModifierSettings.guaranteedModifierTiers?.length || 0) +
-        (this.customModifierSettings.guaranteedModifierTypeOptions?.length || 0) +
-        (this.customModifierSettings.guaranteedModifierTypeFuncs?.length || 0);
+        (this.customModifierSettings.guaranteedModifierTiers?.length ?? 0) +
+        (this.customModifierSettings.guaranteedModifierTypeOptions?.length ?? 0) +
+        (this.customModifierSettings.guaranteedModifierTypeFuncs?.length ?? 0);
       if (this.customModifierSettings.fillRemaining) {
         const originalCount = modifierCountHolder.value;
         modifierCountHolder.value = originalCount > newItemCount ? originalCount : newItemCount;
@@ -465,6 +471,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   getModifierTypeOptions(modifierCount: number): ModifierTypeOption[] {
+    console.log("HERE WE ARE", modifierCount, this.customModifierSettings);
     return getPlayerModifierTypeOptions(
       modifierCount,
       globalScene.getPlayerParty(),
