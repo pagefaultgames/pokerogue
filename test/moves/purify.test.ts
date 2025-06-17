@@ -25,15 +25,14 @@ describe("Moves - Purify", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-
-    game.override.starterSpecies(SpeciesId.PYUKUMUKU);
-    game.override.startingLevel(10);
-    game.override.moveset([MoveId.PURIFY, MoveId.SIZZLY_SLIDE]);
-
-    game.override.enemySpecies(SpeciesId.MAGIKARP);
-    game.override.enemyLevel(10);
-    game.override.enemyMoveset([MoveId.SPLASH, MoveId.NONE, MoveId.NONE, MoveId.NONE]);
+    game.override
+      .battleStyle("single")
+      .starterSpecies(SpeciesId.PYUKUMUKU)
+      .startingLevel(10)
+      .moveset([MoveId.PURIFY, MoveId.SIZZLY_SLIDE])
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyLevel(10)
+      .enemyMoveset([MoveId.SPLASH]);
   });
 
   test("Purify heals opponent status effect and restores user hp", async () => {

@@ -64,8 +64,6 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -82,8 +80,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
   });
 
   it("should run in waves that are X1", async () => {
-    game.override.startingWave(11);
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
+    game.override.startingWave(11).mysteryEncounterTier(MysteryEncounterTier.COMMON);
 
     await game.runToMysteryEncounter();
 
@@ -91,8 +88,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
   });
 
   it("should run in waves that are X2", async () => {
-    game.override.startingWave(32);
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
+    game.override.startingWave(32).mysteryEncounterTier(MysteryEncounterTier.COMMON);
 
     await game.runToMysteryEncounter();
 
@@ -100,8 +96,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
   });
 
   it("should run in waves that are X3", async () => {
-    game.override.startingWave(23);
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
+    game.override.startingWave(23).mysteryEncounterTier(MysteryEncounterTier.COMMON);
 
     await game.runToMysteryEncounter();
 

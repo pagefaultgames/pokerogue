@@ -397,7 +397,7 @@ export class PhaseManager {
    * @returns the found phase or undefined if none found
    */
   findPhase<P extends Phase = Phase>(phaseFilter: (phase: P) => boolean): P | undefined {
-    return this.phaseQueue.find(phaseFilter) as P;
+    return this.phaseQueue.find(phaseFilter) as P | undefined;
   }
 
   tryReplacePhase(phaseFilter: (phase: Phase) => boolean, phase: Phase): boolean {

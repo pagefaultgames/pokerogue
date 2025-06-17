@@ -22,9 +22,7 @@ describe("EXP Modifier Items", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.ability(AbilityId.BALL_FETCH);
-    game.override.battleStyle("single");
+    game.override.enemyAbility(AbilityId.BALL_FETCH).ability(AbilityId.BALL_FETCH).battleStyle("single");
   });
 
   it("EXP booster items stack multiplicatively", async () => {
@@ -36,5 +34,5 @@ describe("EXP Modifier Items", () => {
     const expHolder = new NumberHolder(partyMember.exp);
     game.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, expHolder);
     expect(expHolder.value).toBe(440);
-  }, 20000);
+  });
 });

@@ -26,7 +26,7 @@ describe("Abilities - Mimicry", () => {
       .moveset([MoveId.SPLASH])
       .ability(AbilityId.MIMICRY)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.SPLASH);
   });

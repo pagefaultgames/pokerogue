@@ -101,6 +101,7 @@ const namespaceMap = {
   doubleBattleDialogue: "dialogue-double-battle",
   splashMessages: "splash-texts",
   mysteryEncounterMessages: "mystery-encounter-texts",
+  biome: "biomes",
 };
 
 //#region Functions

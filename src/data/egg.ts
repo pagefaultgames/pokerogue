@@ -1,7 +1,7 @@
 import type BattleScene from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { VariantTier } from "#enums/variant-tier";
 import { randInt, randomString, randSeedInt, getIvsFromId } from "#app/utils/common";

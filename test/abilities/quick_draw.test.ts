@@ -23,16 +23,15 @@ describe("Abilities - Quick Draw", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-
-    game.override.starterSpecies(SpeciesId.MAGIKARP);
-    game.override.ability(AbilityId.QUICK_DRAW);
-    game.override.moveset([MoveId.TACKLE, MoveId.TAIL_WHIP]);
-
-    game.override.enemyLevel(100);
-    game.override.enemySpecies(SpeciesId.MAGIKARP);
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.enemyMoveset([MoveId.TACKLE]);
+    game.override
+      .battleStyle("single")
+      .starterSpecies(SpeciesId.MAGIKARP)
+      .ability(AbilityId.QUICK_DRAW)
+      .moveset([MoveId.TACKLE, MoveId.TAIL_WHIP])
+      .enemyLevel(100)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset([MoveId.TACKLE]);
 
     vi.spyOn(
       allAbilities[AbilityId.QUICK_DRAW].getAttrs("BypassSpeedChanceAbAttr")[0],
@@ -55,8 +54,8 @@ describe("Abilities - Quick Draw", () => {
 
     expect(pokemon.isFainted()).toBe(false);
     expect(enemy.isFainted()).toBe(true);
-    expect(pokemon.waveData.abilitiesApplied).contain(AbilityId.QUICK_DRAW);
-  }, 20000);
+    expect(pokemon.waveData.abilitiesApplied).toContain(AbilityId.QUICK_DRAW);
+  });
 
   test(
     "does not triggered by non damage moves",
@@ -97,6 +96,6 @@ describe("Abilities - Quick Draw", () => {
 
     expect(pokemon.isFainted()).toBe(true);
     expect(enemy.isFainted()).toBe(false);
-    expect(pokemon.waveData.abilitiesApplied).contain(AbilityId.QUICK_DRAW);
-  }, 20000);
+    expect(pokemon.waveData.abilitiesApplied).toContain(AbilityId.QUICK_DRAW);
+  });
 });

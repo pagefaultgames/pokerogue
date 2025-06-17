@@ -30,7 +30,7 @@ describe("Moves - Tar Shot", () => {
       .enemySpecies(SpeciesId.TANGELA)
       .enemyLevel(1000)
       .moveset([MoveId.TAR_SHOT, MoveId.FIRE_PUNCH])
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("lowers the target's Speed stat by one stage and doubles the effectiveness of Fire-type moves used on the target", async () => {
