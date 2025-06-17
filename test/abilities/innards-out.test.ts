@@ -24,7 +24,7 @@ describe("Abilities - Innards Out", () => {
     game.override
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.INNARDS_OUT)
       .enemyMoveset(MoveId.SPLASH)
