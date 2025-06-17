@@ -51,13 +51,12 @@ import { allMoves } from "./data/data-lists";
 import { MusicPreference } from "#app/system/settings/settings";
 import {
   getDefaultModifierTypeForTier,
-  getEnemyHeldItemsForWave,
   getLuckString,
   getLuckTextTint,
   getPartyLuckValue,
 } from "#app/modifier/modifier-type";
 import { getModifierPoolForType } from "./utils/modifier-utils";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
+import { HeldItemPoolType, ModifierPoolType } from "#enums/modifier-pool-type";
 import AbilityBar from "#app/ui/ability-bar";
 import { applyAbAttrs, applyPostBattleInitAbAttrs, applyPostItemLostAbAttrs } from "./data/abilities/apply-ab-attrs";
 import { allAbilities } from "./data/data-lists";
@@ -157,7 +156,8 @@ import { allHeldItems, applyHeldItems } from "./items/all-held-items";
 import { ITEM_EFFECT } from "./items/held-item";
 import { PhaseManager } from "./phase-manager";
 import { HeldItemId } from "#enums/held-item-id";
-import type { HeldItemPropertyMap } from "./field/pokemon-held-item-manager";
+import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "./items/held-item-pool";
+import type { HeldItemConfiguration } from "./items/held-item-data-types";
 
 const DEBUG_RNG = false;
 
@@ -2758,9 +2758,12 @@ export default class BattleScene extends SceneBase {
     }
     const countTaken = Math.min(transferQuantity, itemStack, maxStackCount - matchingItemStack);
 
-    const data = source.heldItemManager[heldItemId].data;
+    const itemSpecs = source.heldItemManager.getItemSpecs(heldItemId);
+    if (!itemSpecs) {
+      return false;
+    }
     source.heldItemManager.remove(heldItemId, countTaken);
-    target.heldItemManager.add(heldItemId, countTaken, data);
+    target.heldItemManager.add(itemSpecs);
 
     if (source.heldItemManager.getStack(heldItemId) === 0 && itemLost) {
       applyPostItemLostAbAttrs("PostItemLostAbAttr", source, false);
@@ -2801,7 +2804,7 @@ export default class BattleScene extends SceneBase {
     return countTaken > 0;
   }
 
-  generateEnemyModifiers(heldItemConfigs?: HeldItemPropertyMap[]): Promise<void> {
+  generateEnemyModifiers(heldItemConfigs?: HeldItemConfiguration[]): Promise<void> {
     return new Promise(resolve => {
       if (this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
         return resolve();
@@ -2824,7 +2827,7 @@ export default class BattleScene extends SceneBase {
 
       party.forEach((enemyPokemon: EnemyPokemon, i: number) => {
         if (heldItemConfigs && i < heldItemConfigs.length && heldItemConfigs[i]) {
-          enemyPokemon.heldItemManager.overrideItems(heldItemConfigs[i]);
+          assignItemsFromConfiguration(heldItemConfigs[i], enemyPokemon);
         } else {
           const isBoss =
             enemyPokemon.isBoss() ||
@@ -2845,13 +2848,13 @@ export default class BattleScene extends SceneBase {
           if (isBoss) {
             count = Math.max(count, Math.floor(chances / 2));
           }
-          getEnemyHeldItemsForWave(
+          assignEnemyHeldItemsForWave(
             difficultyWaveIndex,
             count,
-            [enemyPokemon],
-            this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD,
+            enemyPokemon,
+            this.currentBattle.battleType === BattleType.TRAINER ? HeldItemPoolType.TRAINER : HeldItemPoolType.WILD,
             upgradeChance,
-          ).map(itemId => enemyPokemon.heldItemManager.add(itemId));
+          );
         }
         return true;
       });

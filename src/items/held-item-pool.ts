@@ -1,8 +1,9 @@
-import type { PlayerPokemon } from "#app/field/pokemon";
+import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { coerceArray, getEnumValues, randSeedFloat, randSeedInt } from "#app/utils/common";
 import { BerryType } from "#enums/berry-type";
 import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
+import { HeldItemPoolType } from "#enums/modifier-pool-type";
 import type { PokemonType } from "#enums/pokemon-type";
 import { RewardTier } from "#enums/reward-tier";
 import { PERMANENT_STATS } from "#enums/stat";
@@ -33,7 +34,7 @@ export function assignDailyRunStarterHeldItems(party: PlayerPokemon[]) {
 
       const tier = getDailyRewardTier(tierValue);
 
-      const item = getNewHeldItemFromPool(dailyStarterHeldItemPool[tier] as HeldItemPool, party);
+      const item = getNewHeldItemFromPool(getHeldItemPool(HeldItemPoolType.DAILY_STARTER)[tier] as HeldItemPool, party);
       p.heldItemManager.add(item);
     }
   }
@@ -53,6 +54,90 @@ function getDailyRewardTier(tierValue: number): RewardTier {
     return RewardTier.ROGUE;
   }
   return RewardTier.MASTER;
+}
+
+function getHeldItemPool(poolType: HeldItemPoolType): HeldItemTieredPool {
+  let pool: HeldItemTieredPool;
+  switch (poolType) {
+    case HeldItemPoolType.WILD:
+      pool = wildHeldItemPool;
+      break;
+    case HeldItemPoolType.TRAINER:
+      pool = trainerHeldItemPool;
+      break;
+    case HeldItemPoolType.DAILY_STARTER:
+      pool = dailyStarterHeldItemPool;
+      break;
+  }
+  return pool;
+}
+
+// TODO: Add proper documentation to this function (once it fully works...)
+export function assignEnemyHeldItemsForWave(
+  waveIndex: number,
+  count: number,
+  enemy: EnemyPokemon,
+  poolType: HeldItemPoolType.WILD | HeldItemPoolType.TRAINER,
+  upgradeChance = 0,
+): void {
+  for (let i = 1; i <= count; i++) {
+    const item = getNewHeldItemFromTieredPool(
+      getHeldItemPool(poolType),
+      [enemy],
+      upgradeChance && !randSeedInt(upgradeChance) ? 1 : 0,
+    );
+    enemy.heldItemManager.add(item);
+  }
+  if (!(waveIndex % 1000)) {
+    enemy.heldItemManager.add(HeldItemId.MINI_BLACK_HOLE);
+  }
+}
+
+function getRandomTier(): RewardTier {
+  const tierValue = randSeedInt(1024);
+
+  if (tierValue > 255) {
+    return RewardTier.COMMON;
+  }
+  if (tierValue > 60) {
+    return RewardTier.GREAT;
+  }
+  if (tierValue > 12) {
+    return RewardTier.ULTRA;
+  }
+  if (tierValue) {
+    return RewardTier.ROGUE;
+  }
+  return RewardTier.MASTER;
+}
+
+function determineEnemyPoolTier(pool: HeldItemTieredPool, upgradeCount?: number): RewardTier {
+  let tier = getRandomTier();
+
+  if (!upgradeCount) {
+    upgradeCount = 0;
+  }
+
+  tier += upgradeCount;
+  while (tier && !pool[tier]?.length) {
+    tier--;
+    if (upgradeCount) {
+      upgradeCount--;
+    }
+  }
+
+  return tier;
+}
+
+function getNewHeldItemFromTieredPool(
+  pool: HeldItemTieredPool,
+  pokemon: Pokemon | Pokemon[],
+  upgradeCount: number,
+): HeldItemId | HeldItemSpecs {
+  const tier = determineEnemyPoolTier(pool, upgradeCount);
+  const tierPool = pool[tier];
+
+  return getNewHeldItemFromPool(tierPool!, pokemon);
 }
 
 function pickWeightedIndex(weights: number[]): number {

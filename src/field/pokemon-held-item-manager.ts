@@ -20,6 +20,18 @@ export class PokemonItemManager {
     this.formChangeItems = {};
   }
 
+  getItemSpecs(id: HeldItemId): HeldItemSpecs | undefined {
+    const item = this.heldItems[id];
+    if (item) {
+      const itemSpecs: HeldItemSpecs = {
+        ...item,
+        id,
+      };
+      return itemSpecs;
+    }
+    return undefined;
+  }
+
   getHeldItems(): number[] {
     return Object.keys(this.heldItems).map(k => Number(k));
   }
