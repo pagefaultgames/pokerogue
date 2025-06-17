@@ -25,13 +25,14 @@ describe("Moves - Tail whip", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = MoveId.TAIL_WHIP;
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.RATTATA);
-    game.override.enemyAbility(AbilityId.INSOMNIA);
-    game.override.ability(AbilityId.INSOMNIA);
-    game.override.startingLevel(2000);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset(MoveId.SPLASH);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.RATTATA)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .ability(AbilityId.INSOMNIA)
+      .startingLevel(2000)
+      .moveset([moveToUse])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should lower DEF stat stage by 1", async () => {
@@ -45,5 +46,5 @@ describe("Moves - Tail whip", () => {
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-1);
-  }, 20000);
+  });
 });

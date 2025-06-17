@@ -5,7 +5,7 @@ import { getEnumValues, getEnumKeys, fixedInt, randSeedShuffle } from "#app/util
 import type { IEggOptions } from "../data/egg";
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
 import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
-import { getPokemonSpecies } from "../data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { addWindow } from "./ui-theme";
 import { Tutorial, handleTutorial } from "../tutorial";
 import { Button } from "#enums/buttons";
@@ -131,7 +131,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       gachaInfoContainer.add(gachaUpLabel);
 
       switch (gachaType as GachaType) {
-        case GachaType.LEGENDARY:
+        case GachaType.LEGENDARY: {
           if (["de", "es-ES"].includes(currentLanguage)) {
             gachaUpLabel.setAlign("center");
             gachaUpLabel.setY(0);
@@ -152,6 +152,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
           gachaInfoContainer.add(pokemonIcon);
           break;
+        }
         case GachaType.MOVE:
           if (["de", "es-ES", "fr", "pt-BR", "ru"].includes(currentLanguage)) {
             gachaUpLabel.setAlign("center");
@@ -623,11 +624,12 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   updateGachaInfo(gachaType: GachaType): void {
     const infoContainer = this.gachaInfoContainers[gachaType];
     switch (gachaType as GachaType) {
-      case GachaType.LEGENDARY:
+      case GachaType.LEGENDARY: {
         const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(new Date().getTime()));
         const pokemonIcon = infoContainer.getAt(1) as Phaser.GameObjects.Sprite;
         pokemonIcon.setTexture(species.getIconAtlasKey(), species.getIconId(false));
         break;
+      }
     }
   }
 

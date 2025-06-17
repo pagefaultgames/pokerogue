@@ -28,7 +28,7 @@ describe("Moves - Revival Blessing", () => {
       .moveset([MoveId.SPLASH, MoveId.REVIVAL_BLESSING, MoveId.MEMENTO])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
