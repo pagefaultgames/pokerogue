@@ -26,14 +26,14 @@ export const trainerHeldItemPool: HeldItemTieredPool = {};
 
 export const dailyStarterHeldItemPool: HeldItemTieredPool = {};
 
-export function getDailyRunStarterHeldItems(party: PlayerPokemon[]) {
+export function assignDailyRunStarterHeldItems(party: PlayerPokemon[]) {
   for (const p of party) {
     for (let m = 0; m < 3; m++) {
       const tierValue = randSeedInt(64);
 
       const tier = getDailyRewardTier(tierValue);
 
-      const item = getNewHeldItemFromPool(dailyStarterHeldItemPool[tier] as HeldItemPool, p);
+      const item = getNewHeldItemFromPool(dailyStarterHeldItemPool[tier] as HeldItemPool, party);
       p.heldItemManager.add(item);
     }
   }
@@ -143,8 +143,12 @@ export function getNewHeldItemFromCategory(
   return null;
 }
 
+function getPoolWeights(pool: HeldItemPool, pokemon: Pokemon | Pokemon[]): number[] {
+  return pool.map(p => (typeof p.weight === "function" ? p.weight(coerceArray(pokemon)) : p.weight));
+}
+
 function getNewHeldItemFromPool(pool: HeldItemPool, pokemon: Pokemon | Pokemon[]): HeldItemId | HeldItemSpecs {
-  const weights = pool.map(p => (typeof p.weight === "function" ? p.weight(coerceArray(pokemon)) : p.weight));
+  const weights = getPoolWeights(pool, pokemon);
 
   const entry = pool[pickWeightedIndex(weights)].entry;
 

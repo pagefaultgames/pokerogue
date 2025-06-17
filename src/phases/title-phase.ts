@@ -6,9 +6,7 @@ import { getBiomeKey } from "#app/field/arena";
 import { GameMode, getGameMode } from "#app/game-mode";
 import { GameModes } from "#enums/game-modes";
 import type { Modifier } from "#app/modifier/modifier";
-import { getDailyRunStarterModifiers, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/data/data-lists";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { Phase } from "#app/phase";
 import type { SessionSaveData } from "#app/system/game-data";
 import { Unlockables } from "#enums/unlockables";
@@ -20,6 +18,7 @@ import { isLocal, isLocalServerConnected, isNullOrUndefined } from "#app/utils/c
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
+import { assignDailyRunStarterHeldItems } from "#app/items/held-item-pool";
 
 export class TitlePhase extends Phase {
   public readonly phaseName = "TitlePhase";
@@ -238,8 +237,6 @@ export class TitlePhase extends Phase {
           loadPokemonAssets.push(starterPokemon.loadAssets());
         }
 
-        regenerateModifierPoolThresholds(party, ModifierPoolType.DAILY_STARTER);
-
         const modifiers: Modifier[] = Array(3)
           .fill(null)
           .map(() => modifierTypes.EXP_SHARE().withIdFromFunc(modifierTypes.EXP_SHARE).newModifier())
@@ -249,8 +246,9 @@ export class TitlePhase extends Phase {
               .map(() => modifierTypes.GOLDEN_EXP_CHARM().withIdFromFunc(modifierTypes.GOLDEN_EXP_CHARM).newModifier()),
           )
           .concat([modifierTypes.MAP().withIdFromFunc(modifierTypes.MAP).newModifier()])
-          .concat(getDailyRunStarterModifiers(party))
           .filter(m => m !== null);
+
+        assignDailyRunStarterHeldItems(party);
 
         for (const m of modifiers) {
           globalScene.addModifier(m, true, false, false, true);
