@@ -1,6 +1,6 @@
-import { BattlerIndex } from "#app/battle";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { BattlerIndex } from "#enums/battler-index";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -25,15 +25,15 @@ describe("Weather - Hail", () => {
     game.override
       .weather(WeatherType.HAIL)
       .battleStyle("single")
-      .moveset(Moves.SPLASH)
-      .enemyMoveset(Moves.SPLASH)
-      .enemySpecies(Species.MAGIKARP);
+      .moveset(MoveId.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemySpecies(SpeciesId.MAGIKARP);
   });
 
   it("inflicts damage equal to 1/16 of Pokemon's max HP at turn end", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -44,10 +44,10 @@ describe("Weather - Hail", () => {
   });
 
   it("does not inflict damage to a Pokemon that is underwater (Dive) or underground (Dig)", async () => {
-    game.override.moveset([Moves.DIG]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    game.override.moveset([MoveId.DIG]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    game.move.select(Moves.DIG);
+    game.move.select(MoveId.DIG);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -60,9 +60,9 @@ describe("Weather - Hail", () => {
   });
 
   it("does not inflict damage to Ice type Pokemon", async () => {
-    await game.classicMode.startBattle([Species.CLOYSTER]);
+    await game.classicMode.startBattle([SpeciesId.CLOYSTER]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 

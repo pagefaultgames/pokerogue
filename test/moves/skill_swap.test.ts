@@ -1,7 +1,7 @@
 import { Stat } from "#app/enums/stat";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -23,31 +23,31 @@ describe("Moves - Skill Swap", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH, Moves.SKILL_SWAP])
-      .ability(Abilities.BALL_FETCH)
+      .moveset([MoveId.SPLASH, MoveId.SKILL_SWAP])
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should swap the two abilities", async () => {
-    game.override.ability(Abilities.ADAPTABILITY);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    game.override.ability(AbilityId.ADAPTABILITY);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(Moves.SKILL_SWAP);
+    game.move.select(MoveId.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()?.getAbility().id).toBe(Abilities.BALL_FETCH);
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(Abilities.ADAPTABILITY);
+    expect(game.scene.getPlayerPokemon()?.getAbility().id).toBe(AbilityId.BALL_FETCH);
+    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.ADAPTABILITY);
   });
 
   it("should activate post-summon abilities", async () => {
-    game.override.ability(Abilities.INTIMIDATE);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    game.override.ability(AbilityId.INTIMIDATE);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(Moves.SKILL_SWAP);
+    game.move.select(MoveId.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
     // player atk should be -1 after opponent gains intimidate and it activates

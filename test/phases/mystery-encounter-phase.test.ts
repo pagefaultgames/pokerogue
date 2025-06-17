@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, expect, describe, it, vi } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { UiMode } from "#enums/ui-mode";
 import { Button } from "#enums/buttons";
@@ -27,27 +27,24 @@ describe("Mystery Encounter Phases", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.startingWave(11);
-    game.override.mysteryEncounterChance(100);
-    // Seed guarantees wild encounter to be replaced by ME
-    game.override.seed("test");
+    game.override.startingWave(11).mysteryEncounterChance(100).seed("test"); // Seed guarantees wild encounter to be replaced by ME
   });
 
   describe("MysteryEncounterPhase", () => {
     it("Runs to MysteryEncounterPhase", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [
-        Species.CHARIZARD,
-        Species.VOLCARONA,
+        SpeciesId.CHARIZARD,
+        SpeciesId.VOLCARONA,
       ]);
 
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
-      expect(game.scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
     });
 
     it("Runs MysteryEncounterPhase", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [
-        Species.CHARIZARD,
-        Species.VOLCARONA,
+        SpeciesId.CHARIZARD,
+        SpeciesId.VOLCARONA,
       ]);
 
       game.onNextPrompt("MysteryEncounterPhase", UiMode.MYSTERY_ENCOUNTER, () => {
@@ -69,8 +66,8 @@ describe("Mystery Encounter Phases", () => {
       vi.spyOn(ui, "showDialogue");
       vi.spyOn(ui, "showText");
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [
-        Species.CHARIZARD,
-        Species.VOLCARONA,
+        SpeciesId.CHARIZARD,
+        SpeciesId.VOLCARONA,
       ]);
 
       game.onNextPrompt("MysteryEncounterPhase", UiMode.MESSAGE, () => {
@@ -87,7 +84,9 @@ describe("Mystery Encounter Phases", () => {
 
       // Waitfor required so that option select messages and preOptionPhase logic are handled
       await vi.waitFor(() =>
-        expect(game.scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterOptionSelectedPhase.name),
+        expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(
+          MysteryEncounterOptionSelectedPhase.name,
+        ),
       );
       expect(ui.getMode()).toBe(UiMode.MESSAGE);
       expect(ui.showDialogue).toHaveBeenCalledTimes(1);

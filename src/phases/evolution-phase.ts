@@ -10,15 +10,16 @@ import { UiMode } from "#enums/ui-mode";
 import { cos, sin } from "#app/field/anims";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { LearnMoveSituation } from "#app/field/pokemon";
+import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { getTypeRgb } from "#app/data/type";
 import i18next from "i18next";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
-import { EndEvolutionPhase } from "#app/phases/end-evolution-phase";
 import { EVOLVE_MOVE } from "#app/data/balance/pokemon-level-moves";
 
 export class EvolutionPhase extends Phase {
+  // FormChangePhase inherits from this, but EvolutionPhase is not abstract.
+  // We have to use the union here
+  public readonly phaseName: "EvolutionPhase" | "FormChangePhase" = "EvolutionPhase";
   protected pokemon: PlayerPokemon;
   protected lastLevel: number;
 
@@ -146,7 +147,7 @@ export class EvolutionPhase extends Phase {
         sprite.setPipelineData("shiny", this.pokemon.shiny);
         sprite.setPipelineData("variant", this.pokemon.variant);
         ["spriteColors", "fusionSpriteColors"].map(k => {
-          if (this.pokemon.summonData?.speciesForm) {
+          if (this.pokemon.summonData.speciesForm) {
             k += "Base";
           }
           sprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k];
@@ -178,7 +179,7 @@ export class EvolutionPhase extends Phase {
             sprite.setPipelineData("shiny", evolvedPokemon.shiny);
             sprite.setPipelineData("variant", evolvedPokemon.variant);
             ["spriteColors", "fusionSpriteColors"].map(k => {
-              if (evolvedPokemon.summonData?.speciesForm) {
+              if (evolvedPokemon.summonData.speciesForm) {
                 k += "Base";
               }
               sprite.pipelineData[k] = evolvedPokemon.getSprite().pipelineData[k];
@@ -259,7 +260,7 @@ export class EvolutionPhase extends Phase {
 
     SoundFade.fadeOut(globalScene, this.evolutionBgm, 100);
 
-    globalScene.unshiftPhase(new EndEvolutionPhase());
+    globalScene.phaseManager.unshiftNew("EndEvolutionPhase");
 
     globalScene.ui.showText(
       i18next.t("menu:stoppedEvolving", {
@@ -352,9 +353,13 @@ export class EvolutionPhase extends Phase {
           .getLevelMoves(this.lastLevel + 1, true, false, false, learnSituation)
           .filter(lm => lm[0] === EVOLVE_MOVE);
         for (const lm of levelMoves) {
-          globalScene.unshiftPhase(new LearnMovePhase(globalScene.getPlayerParty().indexOf(this.pokemon), lm[1]));
+          globalScene.phaseManager.unshiftNew(
+            "LearnMovePhase",
+            globalScene.getPlayerParty().indexOf(this.pokemon),
+            lm[1],
+          );
         }
-        globalScene.unshiftPhase(new EndEvolutionPhase());
+        globalScene.phaseManager.unshiftNew("EndEvolutionPhase");
 
         globalScene.playSound("se/shine");
         this.doSpray();

@@ -4,21 +4,14 @@ import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import type Pokemon from "#app/field/pokemon";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { BattlePhase } from "#app/phases/battle-phase";
-import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
-import { EncounterPhase } from "#app/phases/encounter-phase";
-import { EndCardPhase } from "#app/phases/end-card-phase";
-import { GameOverModifierRewardPhase } from "#app/phases/game-over-modifier-reward-phase";
-import { PostGameOverPhase } from "#app/phases/post-game-over-phase";
-import { RibbonModifierRewardPhase } from "#app/phases/ribbon-modifier-reward-phase";
-import { SummonPhase } from "#app/phases/summon-phase";
-import { UnlockPhase } from "#app/phases/unlock-phase";
+import type { EndCardPhase } from "#app/phases/end-card-phase";
 import { achvs, ChallengeAchv } from "#app/system/achv";
-import { Unlockables } from "#app/system/unlockables";
+import { Unlockables } from "#enums/unlockables";
 import { UiMode } from "#enums/ui-mode";
 import { isLocal, isLocalServerConnected } from "#app/utils/common";
 import { PlayerGender } from "#enums/player-gender";
@@ -33,6 +26,7 @@ import ArenaData from "#app/system/arena-data";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 export class GameOverPhase extends BattlePhase {
+  public readonly phaseName = "GameOverPhase";
   private isVictory: boolean;
   private firstRibbons: PokemonSpecies[] = [];
 
@@ -45,7 +39,7 @@ export class GameOverPhase extends BattlePhase {
   start() {
     super.start();
 
-    globalScene.hideAbilityBar();
+    globalScene.phaseManager.hideAbilityBar();
 
     // Failsafe if players somehow skip floor 200 in classic mode
     if (globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex > 200) {
@@ -82,23 +76,23 @@ export class GameOverPhase extends BattlePhase {
           () => {
             globalScene.ui.fadeOut(1250).then(() => {
               globalScene.reset();
-              globalScene.clearPhaseQueue();
+              globalScene.phaseManager.clearPhaseQueue();
               globalScene.gameData.loadSession(globalScene.sessionSlotId).then(() => {
-                globalScene.pushPhase(new EncounterPhase(true));
+                globalScene.phaseManager.pushNew("EncounterPhase", true);
 
                 const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
 
-                globalScene.pushPhase(new SummonPhase(0));
+                globalScene.phaseManager.pushNew("SummonPhase", 0);
                 if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-                  globalScene.pushPhase(new SummonPhase(1));
+                  globalScene.phaseManager.pushNew("SummonPhase", 1);
                 }
                 if (
                   globalScene.currentBattle.waveIndex > 1 &&
                   globalScene.currentBattle.battleType !== BattleType.TRAINER
                 ) {
-                  globalScene.pushPhase(new CheckSwitchPhase(0, globalScene.currentBattle.double));
+                  globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
                   if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-                    globalScene.pushPhase(new CheckSwitchPhase(1, globalScene.currentBattle.double));
+                    globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
                   }
                 }
 
@@ -122,7 +116,7 @@ export class GameOverPhase extends BattlePhase {
       globalScene.disableMenu = true;
       globalScene.time.delayedCall(1000, () => {
         let firstClear = false;
-        if (this.isVictory && newClear) {
+        if (this.isVictory) {
           if (globalScene.gameMode.isClassic) {
             firstClear = globalScene.validateAchv(achvs.CLASSIC_VICTORY);
             globalScene.validateAchv(achvs.UNEVOLVED_CLASSIC_VICTORY);
@@ -146,7 +140,7 @@ export class GameOverPhase extends BattlePhase {
         globalScene.ui.fadeOut(fadeDuration).then(() => {
           activeBattlers.map(a => a.setVisible(false));
           globalScene.setFieldScale(1, true);
-          globalScene.clearPhaseQueue();
+          globalScene.phaseManager.clearPhaseQueue();
           globalScene.ui.clearText();
 
           if (this.isVictory && globalScene.gameMode.isChallenge) {
@@ -158,15 +152,15 @@ export class GameOverPhase extends BattlePhase {
               this.handleUnlocks();
 
               for (const species of this.firstRibbons) {
-                globalScene.unshiftPhase(new RibbonModifierRewardPhase(modifierTypes.VOUCHER_PLUS, species));
+                globalScene.phaseManager.unshiftNew("RibbonModifierRewardPhase", modifierTypes.VOUCHER_PLUS, species);
               }
               if (!firstClear) {
-                globalScene.unshiftPhase(new GameOverModifierRewardPhase(modifierTypes.VOUCHER_PREMIUM));
+                globalScene.phaseManager.unshiftNew("GameOverModifierRewardPhase", modifierTypes.VOUCHER_PREMIUM);
               }
             }
             this.getRunHistoryEntry().then(runHistoryEntry => {
               globalScene.gameData.saveRunHistory(runHistoryEntry, this.isVictory);
-              globalScene.pushPhase(new PostGameOverPhase(endCardPhase));
+              globalScene.phaseManager.pushNew("PostGameOverPhase", endCardPhase);
               this.end();
             });
           };
@@ -195,8 +189,8 @@ export class GameOverPhase extends BattlePhase {
                       () => {
                         globalScene.ui.fadeOut(500).then(() => {
                           globalScene.charSprite.hide().then(() => {
-                            const endCardPhase = new EndCardPhase();
-                            globalScene.unshiftPhase(endCardPhase);
+                            const endCardPhase = globalScene.phaseManager.create("EndCardPhase");
+                            globalScene.phaseManager.unshiftPhase(endCardPhase);
                             clear(endCardPhase);
                           });
                         });
@@ -205,8 +199,8 @@ export class GameOverPhase extends BattlePhase {
                   });
               });
             } else {
-              const endCardPhase = new EndCardPhase();
-              globalScene.unshiftPhase(endCardPhase);
+              const endCardPhase = globalScene.phaseManager.create("EndCardPhase");
+              globalScene.phaseManager.unshiftPhase(endCardPhase);
               clear(endCardPhase);
             }
           } else {
@@ -226,7 +220,17 @@ export class GameOverPhase extends BattlePhase {
           isVictory: this.isVictory,
           clientSessionId: clientSessionId,
         })
-        .then(success => doGameOver(!!success));
+        .then(success => doGameOver(!globalScene.gameMode.isDaily || !!success))
+        .catch(_err => {
+          globalScene.phaseManager.clearPhaseQueue();
+          globalScene.phaseManager.clearPhaseQueueSplice();
+          globalScene.phaseManager.unshiftNew("MessagePhase", i18next.t("menu:serverCommunicationFailed"), 2500);
+          // force the game to reload after 2 seconds.
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+          this.end();
+        });
     } else if (this.isVictory) {
       globalScene.gameData.offlineNewClear().then(result => {
         doGameOver(result);
@@ -239,22 +243,22 @@ export class GameOverPhase extends BattlePhase {
   handleUnlocks(): void {
     if (this.isVictory && globalScene.gameMode.isClassic) {
       if (!globalScene.gameData.unlocks[Unlockables.ENDLESS_MODE]) {
-        globalScene.unshiftPhase(new UnlockPhase(Unlockables.ENDLESS_MODE));
+        globalScene.phaseManager.unshiftNew("UnlockPhase", Unlockables.ENDLESS_MODE);
       }
       if (
         globalScene.getPlayerParty().filter(p => p.fusionSpecies).length &&
         !globalScene.gameData.unlocks[Unlockables.SPLICED_ENDLESS_MODE]
       ) {
-        globalScene.unshiftPhase(new UnlockPhase(Unlockables.SPLICED_ENDLESS_MODE));
+        globalScene.phaseManager.unshiftNew("UnlockPhase", Unlockables.SPLICED_ENDLESS_MODE);
       }
       if (!globalScene.gameData.unlocks[Unlockables.MINI_BLACK_HOLE]) {
-        globalScene.unshiftPhase(new UnlockPhase(Unlockables.MINI_BLACK_HOLE));
+        globalScene.phaseManager.unshiftNew("UnlockPhase", Unlockables.MINI_BLACK_HOLE);
       }
       if (
         !globalScene.gameData.unlocks[Unlockables.EVIOLITE] &&
         globalScene.getPlayerParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)
       ) {
-        globalScene.unshiftPhase(new UnlockPhase(Unlockables.EVIOLITE));
+        globalScene.phaseManager.unshiftNew("UnlockPhase", Unlockables.EVIOLITE);
       }
     }
   }

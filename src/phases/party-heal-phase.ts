@@ -3,6 +3,7 @@ import { fixedInt } from "#app/utils/common";
 import { BattlePhase } from "./battle-phase";
 
 export class PartyHealPhase extends BattlePhase {
+  public readonly phaseName = "PartyHealPhase";
   private resumeBgm: boolean;
 
   constructor(resumeBgm: boolean) {
@@ -21,7 +22,7 @@ export class PartyHealPhase extends BattlePhase {
     globalScene.ui.fadeOut(1000).then(() => {
       for (const pokemon of globalScene.getPlayerParty()) {
         pokemon.hp = pokemon.getMaxHp();
-        pokemon.resetStatus();
+        pokemon.resetStatus(true, false, false, true);
         for (const move of pokemon.moveset) {
           move.ppUsed = 0;
         }

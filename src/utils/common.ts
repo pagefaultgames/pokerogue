@@ -1,7 +1,8 @@
 import { MoneyFormat } from "#enums/money-format";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import i18next from "i18next";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import type { Variant } from "#app/sprites/variant";
 
 export type nil = null | undefined;
 
@@ -57,8 +58,8 @@ export function randSeedGauss(stdev: number, mean = 0): number {
   if (!stdev) {
     return 0;
   }
-  const u = 1 - Phaser.Math.RND.realInRange(0, 1);
-  const v = Phaser.Math.RND.realInRange(0, 1);
+  const u = 1 - randSeedFloat();
+  const v = randSeedFloat();
   const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
   return z * stdev + mean;
 }
@@ -87,9 +88,9 @@ export function randInt(range: number, min = 0): number {
 }
 
 /**
- * Generates a random number using the global seed, or the current battle's seed if called via `Battle.randSeedInt`
- * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
- * @param min The minimum integer to pick, default `0`
+ * Generate a random integer using the global seed, or the current battle's seed if called via `Battle.randSeedInt`
+ * @param range - How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
+ * @param min - The minimum integer to pick, default `0`
  * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
  */
 export function randSeedInt(range: number, min = 0): number {
@@ -100,12 +101,30 @@ export function randSeedInt(range: number, min = 0): number {
 }
 
 /**
+ * Generates a random number using the global seed
+ * @param min The minimum integer to generate
+ * @param max The maximum integer to generate
+ * @returns a random integer between {@linkcode min} and {@linkcode max} inclusive
+ */
+export function randSeedIntRange(min: number, max: number): number {
+  return randSeedInt(max - min + 1, min);
+}
+
+/**
  * Returns a random integer between min and max (non-inclusive)
  * @param min The lowest number
  * @param max The highest number
  */
 export function randIntRange(min: number, max: number): number {
   return randInt(max - min, min);
+}
+
+/**
+ * Generate and return a random real number between `0` and `1` using the global seed.
+ * @returns A random floating-point number between `0` and `1`
+ */
+export function randSeedFloat(): number {
+  return Phaser.Math.RND.frac();
 }
 
 export function randItem<T>(items: T[]): T {
@@ -424,14 +443,18 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
     case "es-ES":
     case "es-MX":
     case "fr":
+    case "da":
     case "de":
     case "it":
     case "zh-CN":
     case "zh-TW":
     case "pt-BR":
+    case "ro":
+    case "tr":
     case "ko":
     case "ja":
-    case "ca-ES":
+    case "ca":
+    case "ru":
       return true;
     default:
       return false;
@@ -468,34 +491,21 @@ export function truncateString(str: string, maxLength = 10) {
 }
 
 /**
- * Perform a deep copy of an object.
- *
- * @param values - The object to be deep copied.
- * @returns A new object that is a deep copy of the input.
- */
-export function deepCopy(values: object): object {
-  // Convert the object to a JSON string and parse it back to an object to perform a deep copy
-  return JSON.parse(JSON.stringify(values));
-}
-
-/**
  * Convert a space-separated string into a capitalized and underscored string.
- *
  * @param input - The string to be converted.
  * @returns The converted string with words capitalized and separated by underscores.
  */
-export function reverseValueToKeySetting(input) {
+export function reverseValueToKeySetting(input: string) {
   // Split the input string into an array of words
   const words = input.split(" ");
   // Capitalize the first letter of each word and convert the rest to lowercase
-  const capitalizedWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+  const capitalizedWords = words.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
   // Join the capitalized words with underscores and return the result
   return capitalizedWords.join("_");
 }
 
 /**
  * Capitalize a string.
- *
  * @param str - The string to be capitalized.
  * @param sep - The separator between the words of the string.
  * @param lowerFirstChar - Whether the first character of the string should be lowercase or not.
@@ -515,12 +525,19 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar = true
   return null;
 }
 
-export function isNullOrUndefined(object: any): object is undefined | null {
-  return null === object || undefined === object;
+/**
+ * Report whether a given value is nullish (`null`/`undefined`).
+ * @param val - The value whose nullishness is being checked
+ * @returns `true` if `val` is either `null` or `undefined`
+ */
+export function isNullOrUndefined(val: any): val is null | undefined {
+  return val === null || val === undefined;
 }
 
 /**
- * Capitalizes the first letter of a string
+ * Capitalize the first letter of a string.
+ * @param str - The string whose first letter is being capitalized
+ * @return The original string with its first letter capitalized
  */
 export function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -550,14 +567,14 @@ export function getLocalizedSpriteKey(baseKey: string) {
 }
 
 /**
- * Check if a number is **inclusive** between two numbers
- * @param num the number to check
- * @param min the minimum value (included)
- * @param max the maximum value (included)
- * @returns `true` if number is **inclusive** between min and max
+ * Check if a number is **inclusively** between two numbers
+ * @param num - the number to check
+ * @param min - the minimum value (inclusive)
+ * @param max - the maximum value (inclusive)
+ * @returns Whether num is no less than min and no greater than max
  */
 export function isBetween(num: number, min: number, max: number): boolean {
-  return num >= min && num <= max;
+  return min <= num && num <= max;
 }
 
 /**
@@ -565,8 +582,8 @@ export function isBetween(num: number, min: number, max: number): boolean {
  *
  * @param move the move for which the animation filename is needed
  */
-export function animationFileName(move: Moves): string {
-  return Moves[move].toLowerCase().replace(/\_/g, "-");
+export function animationFileName(move: MoveId): string {
+  return MoveId[move].toLowerCase().replace(/\_/g, "-");
 }
 
 /**
@@ -580,24 +597,48 @@ export function camelCaseToKebabCase(str: string): string {
   return str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, (s, o) => (o ? "-" : "") + s.toLowerCase());
 }
 
-/**
- * Merges the two objects, such that for each property in `b` that matches a property in `a`,
- * the value in `a` is replaced by the value in `b`. This is done recursively if the property is a non-array object
- *
- * If the property does not exist in `a` or its `typeof` evaluates differently, the property is skipped.
- * If the value of the property is an array, the array is replaced. If it is any other object, the object is merged recursively.
+/** Get the localized shiny descriptor for the provided variant
+ * @param variant - The variant to get the shiny descriptor for
+ * @returns The localized shiny descriptor
  */
-// biome-ignore lint/complexity/noBannedTypes: This function is designed to merge json objects
-export function deepMergeObjects(a: Object, b: Object) {
-  for (const key in b) {
-    // !(key in a) is redundant here, yet makes it clear that we're explicitly interested in properties that exist in `a`
-    if (!(key in a) || typeof a[key] !== typeof b[key]) {
-      continue;
-    }
-    if (typeof b[key] === "object" && !Array.isArray(b[key])) {
-      deepMergeObjects(a[key], b[key]);
-    } else {
-      a[key] = b[key];
+export function getShinyDescriptor(variant: Variant): string {
+  switch (variant) {
+    case 2:
+      return i18next.t("common:epicShiny");
+    case 1:
+      return i18next.t("common:rareShiny");
+    case 0:
+      return i18next.t("common:commonShiny");
+  }
+}
+
+/**
+ * If the input isn't already an array, turns it into one.
+ * @returns An array with the same type as the type of the input
+ */
+export function coerceArray<T>(input: T): T extends any[] ? T : [T];
+export function coerceArray<T>(input: T): T | [T] {
+  return Array.isArray(input) ? input : [input];
+}
+
+/**
+ * Returns the name of the key that matches the enum [object] value.
+ * @param input - The enum [object] to check
+ * @param val - The value to get the key of
+ * @returns The name of the key with the specified value
+ * @example
+ * const thing = {
+ *   one: 1,
+ *   two: 2,
+ * } as const;
+ * console.log(enumValueToKey(thing, thing.two)); // output: "two"
+ * @throws An `Error` if an invalid enum value is passed to the function
+ */
+export function enumValueToKey<T extends Record<string, string | number>>(input: T, val: T[keyof T]): keyof T {
+  for (const [key, value] of Object.entries(input)) {
+    if (val === value) {
+      return key as keyof T;
     }
   }
+  throw new Error(`Invalid value passed to \`enumValueToKey\`! Value: ${val}`);
 }

@@ -1,8 +1,8 @@
 import type { CommandPhase } from "#app/phases/command-phase";
-import { Command } from "#app/ui/command-ui-handler";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { Command } from "#enums/command";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -24,32 +24,32 @@ describe("Abilities - Honey Gather", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH, Moves.ROAR, Moves.THUNDERBOLT])
+      .moveset([MoveId.SPLASH, MoveId.ROAR, MoveId.THUNDERBOLT])
       .startingLevel(100)
-      .ability(Abilities.HONEY_GATHER)
-      .passiveAbility(Abilities.RUN_AWAY)
+      .ability(AbilityId.HONEY_GATHER)
+      .passiveAbility(AbilityId.RUN_AWAY)
       .battleStyle("single")
-      .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should give money when winning a battle", async () => {
-    await game.classicMode.startBattle([Species.MILOTIC]);
+    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
     game.scene.money = 1000;
 
-    game.move.select(Moves.THUNDERBOLT);
+    game.move.select(MoveId.THUNDERBOLT);
     await game.toNextWave();
 
     expect(game.scene.money).toBeGreaterThan(1000);
   });
 
   it("should not give money when the enemy pokemon flees", async () => {
-    await game.classicMode.startBattle([Species.MILOTIC]);
+    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
     game.scene.money = 1000;
 
-    game.move.select(Moves.ROAR);
+    game.move.select(MoveId.ROAR);
     await game.toNextTurn();
 
     expect(game.scene.money).toBe(1000);
@@ -57,14 +57,14 @@ describe("Abilities - Honey Gather", () => {
   });
 
   it("should not give money when the player flees", async () => {
-    await game.classicMode.startBattle([Species.MILOTIC]);
+    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
     game.scene.money = 1000;
 
     // something weird is going on with the test framework, so this is required to prevent a crash
     const enemy = game.scene.getEnemyPokemon()!;
     vi.spyOn(enemy, "scene", "get").mockReturnValue(game.scene);
 
-    const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
+    const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);
     await game.toNextTurn();
 

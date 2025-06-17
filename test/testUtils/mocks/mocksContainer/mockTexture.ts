@@ -12,6 +12,7 @@ export default class MockTexture implements MockGameObject {
   public frames: object;
   public firstFrame: string;
   public name: string;
+  public active: boolean;
 
   constructor(manager, key: string, source) {
     this.manager = manager;
@@ -38,5 +39,15 @@ export default class MockTexture implements MockGameObject {
   /** Mocks the function call that gets an HTMLImageElement, see {@link Pokemon.updateFusionPalette} */
   getSourceImage() {
     return null;
+  }
+
+  setActive(active: boolean): this {
+    this.active = active;
+    return this;
+  }
+
+  setName(name: string): this {
+    this.name = name;
+    return this;
   }
 }

@@ -35,7 +35,7 @@ export class ReloadHelper extends GameManagerHelper {
     const scene = this.game.scene;
     const titlePhase = new TitlePhase();
 
-    scene.clearPhaseQueue();
+    scene.phaseManager.clearPhaseQueue();
 
     // Set the last saved session to the desired session data
     vi.spyOn(scene.gameData, "getSession").mockReturnValue(
@@ -43,9 +43,19 @@ export class ReloadHelper extends GameManagerHelper {
         resolve(this.sessionData);
       }),
     );
-    scene.unshiftPhase(titlePhase);
+    scene.phaseManager.unshiftPhase(titlePhase);
     this.game.endPhase(); // End the currently ongoing battle
 
+    // remove all persistent mods before loading
+    // TODO: Look into why these aren't removed before load
+    if (this.game.scene.modifiers.length) {
+      console.log(
+        "Removing %d modifiers from scene on load...",
+        this.game.scene.modifiers.length,
+        this.game.scene.modifiers,
+      );
+      this.game.scene.modifiers = [];
+    }
     titlePhase.loadSaveSlot(-1); // Load the desired session data
     this.game.phaseInterceptor.shift(); // Loading the save slot also ended TitlePhase, clean it up
 
@@ -73,6 +83,6 @@ export class ReloadHelper extends GameManagerHelper {
     }
 
     await this.game.phaseInterceptor.to(CommandPhase);
-    console.log("==================[New Turn]==================");
+    console.log("==================[New Turn (Reloaded)]==================");
   }
 }

@@ -1,9 +1,9 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import GameManager from "#test/testUtils/gameManager";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -26,20 +26,20 @@ describe("Moves - Baton Pass", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .moveset([Moves.BATON_PASS, Moves.NASTY_PLOT, Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
-      .disableCrits();
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .moveset([MoveId.BATON_PASS, MoveId.NASTY_PLOT, MoveId.SPLASH])
+      .ability(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH)
+      .criticalHits(false);
   });
 
   it("transfers all stat stages when player uses it", async () => {
     // arrange
-    await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.RAICHU, SpeciesId.SHUCKLE]);
 
     // round 1 - buff
-    game.move.select(Moves.NASTY_PLOT);
+    game.move.select(MoveId.NASTY_PLOT);
     await game.toNextTurn();
 
     let playerPokemon = game.scene.getPlayerPokemon()!;
@@ -47,55 +47,50 @@ describe("Moves - Baton Pass", () => {
     expect(playerPokemon.getStatStage(Stat.SPATK)).toEqual(2);
 
     // round 2 - baton pass
-    game.move.select(Moves.BATON_PASS);
+    game.move.select(MoveId.BATON_PASS);
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // assert
     playerPokemon = game.scene.getPlayerPokemon()!;
-    expect(playerPokemon.species.speciesId).toEqual(Species.SHUCKLE);
+    expect(playerPokemon.species.speciesId).toEqual(SpeciesId.SHUCKLE);
     expect(playerPokemon.getStatStage(Stat.SPATK)).toEqual(2);
-  }, 20000);
+  });
 
   it("passes stat stage buffs when AI uses it", async () => {
     // arrange
-    game.override.startingWave(5).enemyMoveset(new Array(4).fill([Moves.NASTY_PLOT]));
-    await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
+    game.override.startingWave(5).enemyMoveset([MoveId.NASTY_PLOT, MoveId.BATON_PASS]);
+    await game.classicMode.startBattle([SpeciesId.RAICHU, SpeciesId.SHUCKLE]);
 
     // round 1 - ai buffs
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.NASTY_PLOT);
     await game.toNextTurn();
 
     // round 2 - baton pass
-    game.scene.getEnemyPokemon()!.hp = 100;
-    game.override.enemyMoveset([Moves.BATON_PASS]);
-    // Force moveset to update mid-battle
-    // TODO: replace with enemy ai control function when it's added
-    game.scene.getEnemyParty()[0].getMoveset();
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.BATON_PASS);
     await game.phaseInterceptor.to("PostSummonPhase", false);
 
-    // assert
     // check buffs are still there
-    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.SPATK)).toEqual(2);
+    expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.SPATK)).toEqual(2);
     // confirm that a switch actually happened. can't use species because I
     // can't find a way to override trainer parties with more than 1 pokemon species
-    expect(game.scene.getEnemyPokemon()!.hp).not.toEqual(100);
     expect(game.phaseInterceptor.log.slice(-4)).toEqual([
       "MoveEffectPhase",
       "SwitchSummonPhase",
       "SummonPhase",
       "PostSummonPhase",
     ]);
-  }, 20000);
+  });
 
   it("doesn't transfer effects that aren't transferrable", async () => {
-    game.override.enemyMoveset([Moves.SALT_CURE]);
-    await game.classicMode.startBattle([Species.PIKACHU, Species.FEEBAS]);
+    game.override.enemyMoveset([MoveId.SALT_CURE]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.FEEBAS]);
 
     const [player1, player2] = game.scene.getPlayerParty();
 
-    game.move.select(Moves.BATON_PASS);
+    game.move.select(MoveId.BATON_PASS);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(player1.findTag(t => t.tagType === BattlerTagType.SALT_CURED)).toBeTruthy();
@@ -103,16 +98,16 @@ describe("Moves - Baton Pass", () => {
     await game.toNextTurn();
 
     expect(player2.findTag(t => t.tagType === BattlerTagType.SALT_CURED)).toBeUndefined();
-  }, 20000);
+  });
 
   it("doesn't allow binding effects from the user to persist", async () => {
-    game.override.moveset([Moves.FIRE_SPIN, Moves.BATON_PASS]);
+    game.override.moveset([MoveId.FIRE_SPIN, MoveId.BATON_PASS]);
 
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.FIRE_SPIN);
+    game.move.select(MoveId.FIRE_SPIN);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
 
@@ -120,7 +115,7 @@ describe("Moves - Baton Pass", () => {
 
     expect(enemy.getTag(BattlerTagType.FIRE_SPIN)).toBeDefined();
 
-    game.move.select(Moves.BATON_PASS);
+    game.move.select(MoveId.BATON_PASS);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     game.doSelectPartyPokemon(1);

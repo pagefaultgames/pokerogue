@@ -29,7 +29,7 @@ window.addEventListener("unhandledrejection", event => {
 const setPositionRelative = function (guideObject: Phaser.GameObjects.GameObject, x: number, y: number) {
   const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
   const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));
-  this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
+  return this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
 };
 
 Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
@@ -93,7 +93,7 @@ const startGame = async (manifest?: any) => {
     dom: {
       createContainer: true,
     },
-    pixelArt: true,
+    antialias: false,
     pipeline: [InvertPostFX] as unknown as Phaser.Types.Core.PipelineConfig,
     scene: [LoadingScene, BattleScene],
     version: version,

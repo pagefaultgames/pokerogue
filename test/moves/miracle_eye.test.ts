@@ -1,6 +1,6 @@
-import { BattlerIndex } from "#app/battle";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { BattlerIndex } from "#enums/battler-index";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -23,12 +23,12 @@ describe("Moves - Miracle Eye", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .disableCrits()
-      .enemySpecies(Species.UMBREON)
-      .enemyMoveset(Moves.SPLASH)
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.UMBREON)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(5)
-      .starterSpecies(Species.MAGIKARP)
-      .moveset([Moves.MIRACLE_EYE, Moves.CONFUSION]);
+      .starterSpecies(SpeciesId.MAGIKARP)
+      .moveset([MoveId.MIRACLE_EYE, MoveId.CONFUSION]);
   });
 
   it("should allow Psychic moves to hit Dark types", async () => {
@@ -36,13 +36,13 @@ describe("Moves - Miracle Eye", () => {
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.CONFUSION);
+    game.move.select(MoveId.CONFUSION);
     await game.toNextTurn();
     expect(enemy.hp).toBe(enemy.getMaxHp());
 
-    game.move.select(Moves.MIRACLE_EYE);
+    game.move.select(MoveId.MIRACLE_EYE);
     await game.toNextTurn();
-    game.move.select(Moves.CONFUSION);
+    game.move.select(MoveId.CONFUSION);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
