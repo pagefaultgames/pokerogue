@@ -3826,10 +3826,8 @@ export class ConditionalUserFieldBattlerTagImmunityAbAttr extends UserFieldBattl
   override canApply(params: UserFieldBattlerTagImmunityAbAttrParams): boolean {
     // the `!!params` here is to ensure the target is not null or undefined. This is defensive programming
     // to guard against the case where
-    return !!params.target && super.canApply(params) && this.condition(params.target ?? params.pokemon);
+    return super.canApply(params) && this.condition(params.target);
   }
-
-  override apply(_params: UserFieldBattlerTagImmunityAbAttrParams) {}
 
   constructor(condition: (target: Pokemon) => boolean, immuneTagTypes: BattlerTagType | BattlerTagType[]) {
     super(immuneTagTypes);
