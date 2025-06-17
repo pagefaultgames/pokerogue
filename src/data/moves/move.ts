@@ -11318,8 +11318,7 @@ export function initMoves() {
     new SelfStatusMove(MoveId.CHILLY_RECEPTION, PokemonType.ICE, -1, 10, -1, 0, 9)
       .attr(PreMoveMessageAttr, (user, _target, _move) =>
         // Don't display text if current move phase is follow up (ie move called indirectly)
-        // TODO: Change in move-use-type PR to use the move phase's current use type (thankfully public)
-        (globalScene.phaseManager.getCurrentPhase() as MovePhase)['followUp']
+        isVirtual((globalScene.phaseManager.getCurrentPhase() as MovePhase).useMode)
           ? ""
           : i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(user) }))
       .attr(ChillyReceptionAttr, true),
