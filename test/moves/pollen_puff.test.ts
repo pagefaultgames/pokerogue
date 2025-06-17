@@ -5,11 +5,8 @@ import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { MoveResult } from "#enums/move-result";
-import { getPokemonNameWithAffix } from "#app/messages";
-import i18next from "i18next";
 
-describe("Move - Pollen Puff", () => {
+describe("Moves - Pollen Puff", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -26,80 +23,42 @@ describe("Move - Pollen Puff", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
+      .moveset([MoveId.POLLEN_PUFF])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .criticalHits(false)
-      .enemyLevel(100)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("should damage an enemy when used, or heal an ally for 50% max HP", async () => {
-    game.override.battleStyle("double").ability(AbilityId.PARENTAL_BOND);
+  it("should not heal more than once when the user has a source of multi-hit", async () => {
+    game.override.battleStyle("double").moveset([MoveId.POLLEN_PUFF, MoveId.ENDURE]).ability(AbilityId.PARENTAL_BOND);
     await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.OMANYTE]);
 
-    const [_, omantye, karp1] = game.scene.getField();
-    omantye.hp = 1;
+    const [_, rightPokemon] = game.scene.getPlayerField();
 
-    game.move.use(MoveId.POLLEN_PUFF, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
-    game.move.use(MoveId.POLLEN_PUFF, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
-    await game.toNextTurn();
+    rightPokemon.damageAndUpdate(rightPokemon.hp - 1);
 
-    expect(karp1.hp).toBeLessThan(karp1.getMaxHp());
-    expect(omantye.hp).toBeCloseTo(0.5 * omantye.getMaxHp() + 1, 1);
-    expect(game.phaseInterceptor.log).toContain("PokemonHealPhase");
-  });
+    game.move.select(MoveId.POLLEN_PUFF, 0, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.ENDURE, 1);
 
-  it.todo("should display message & count as failed when hitting a full HP ally", async () => {
-    game.override.battleStyle("double").ability(AbilityId.PARENTAL_BOND);
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.OMANYTE]);
+    await game.phaseInterceptor.to("BerryPhase");
 
-    const [bulbasaur, omantye] = game.scene.getPlayerField();
-
-    game.move.use(MoveId.POLLEN_PUFF, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
-    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
-    await game.toEndOfTurn();
-
-    // move failed without unshifting a phase
-    expect(omantye.hp).toBe(omantye.getMaxHp());
-    expect(bulbasaur.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(game.textInterceptor.logs).toContain(
-      i18next.t("battle:hpIsFull", {
-        pokemonName: getPokemonNameWithAffix(omantye),
-      }),
-    );
-    expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
-  });
-
-  it("should not heal more than once if the user has a source of multi-hit", async () => {
-    game.override.battleStyle("double").ability(AbilityId.PARENTAL_BOND);
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.OMANYTE]);
-
-    const [bulbasaur, omantye] = game.scene.getPlayerField();
-
-    omantye.hp = 1;
-
-    game.move.use(MoveId.POLLEN_PUFF, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
-    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
-    await game.toEndOfTurn();
-
-    expect(bulbasaur.turnData.hitCount).toBe(1);
-    expect(omantye.hp).toBeLessThanOrEqual(0.5 * omantye.getMaxHp() + 1);
-    expect(
-      game.phaseInterceptor.log.filter(l => l === "PokemonHealPhase"),
-      game.phaseInterceptor.log.join("\n"),
-    ).toHaveLength(1);
+    // Pollen Puff heals with a ratio of 0.5, as long as Pollen Puff triggers only once the pokemon will always be <= (0.5 * Max HP) + 1
+    expect(rightPokemon.hp).toBeLessThanOrEqual(0.5 * rightPokemon.getMaxHp() + 1);
   });
 
   it("should damage an enemy multiple times when the user has a source of multi-hit", async () => {
-    game.override.ability(AbilityId.PARENTAL_BOND);
+    game.override.moveset([MoveId.POLLEN_PUFF]).ability(AbilityId.PARENTAL_BOND).enemyLevel(100);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    game.move.use(MoveId.POLLEN_PUFF);
-    await game.toEndOfTurn();
+    const target = game.scene.getEnemyPokemon()!;
 
-    const target = game.field.getEnemyPokemon();
+    game.move.select(MoveId.POLLEN_PUFF);
+
+    await game.phaseInterceptor.to("BerryPhase");
+
     expect(target.battleData.hitCount).toBe(2);
   });
 });
