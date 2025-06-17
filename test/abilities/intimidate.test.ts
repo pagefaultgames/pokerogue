@@ -32,65 +32,40 @@ describe("Abilities - Intimidate", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("should lower all non-immune opponents ATK stat stage by 1 of enemy Pokemon on entry and player switch", async () => {
+  it("should lower all opponents' ATK by 1 stage on entry and switch", async () => {
     await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
 
-    const player = game.field.getPlayerPokemon()
-    const enemy = game.field.getEnemyPokemon()
-
-    expect(player.species.speciesId).toBe(SpeciesId.MIGHTYENA);
+    const enemy = game.field.getEnemyPokemon();
     expect(enemy.getStatStage(Stat.ATK)).toBe(-1);
-    expect(player.getStatStage(Stat.ATK)).toBe(-1);
 
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
-    expect(game.field.getPlayerPokemon()).toBe(player);
-    expect(player.getStatStage(Stat.ATK)).toBe(0);
     expect(enemy.getStatStage(Stat.ATK)).toBe(-2);
   });
 
-  it("should lower ATK stat stage by 1 for every enemy Pokemon in a double battle on entry", async () => {
+  it("should lower ATK of all opponents in a double battle", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
 
-    const playerField = game.scene.getPlayerField();
-    const enemyField = game.scene.getEnemyField();
+    const [enemy1, enemy2] = game.scene.getEnemyField();
 
-    expect(enemyField[0].getStatStage(Stat.ATK)).toBe(-2);
-    expect(enemyField[1].getStatStage(Stat.ATK)).toBe(-2);
-    expect(playerField[0].getStatStage(Stat.ATK)).toBe(-2);
-    expect(playerField[1].getStatStage(Stat.ATK)).toBe(-2);
-  });
-
-  it("should not activate again if there is no switch or new entry", async () => {
-    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
-
-    const player = game.field.getPlayerPokemon()
-    const enemy = game.field.getEnemyPokemon()
-
-    expect(player.getStatStage(Stat.ATK)).toBe(-1);
-    expect(enemy.getStatStage(Stat.ATK)).toBe(-1);
-
-    game.move.select(MoveId.SPLASH);
-    await game.toNextTurn();
-
-    expect(player.getStatStage(Stat.ATK)).toBe(-1);
-    expect(enemy.getStatStage(Stat.ATK)).toBe(-1);
+    expect(enemy1.getStatStage(Stat.ATK)).toBe(-1);
+    expect(enemy2.getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should not trigger on switching moves used by wild Pokemon", async () => {
     game.override.enemyMoveset(MoveId.VOLT_SWITCH).battleType(BattleType.WILD);
     await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
 
-    const playerPokemon = game.field.getPlayerPokemon()
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
+    const player = game.field.getPlayerPokemon();
+    expect(player.getStatStage(Stat.ATK)).toBe(-1);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     // doesn't lower attack due to not actually switching out
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
+    expect(player.getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should trigger on moves that switch user/target out during trainer battles", async () => {

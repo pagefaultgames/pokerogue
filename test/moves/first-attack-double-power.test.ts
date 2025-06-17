@@ -9,10 +9,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
 import { MoveUseMode } from "#enums/move-use-mode";
 
-describe.each<{ name: string; move: MoveId }>([
-  { name: "Bolt Beak", move: MoveId.BOLT_BEAK },
-  { name: "Fishious Rend", move: MoveId.FISHIOUS_REND },
-])("Moves - $name", ({ move }) => {
+describe("Moves - Fishious Rend & Bolt Beak", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   let powerSpy: MockInstance;
@@ -30,7 +27,6 @@ describe.each<{ name: string; move: MoveId }>([
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(move)
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .battleType(BattleType.TRAINER)
@@ -40,23 +36,27 @@ describe.each<{ name: string; move: MoveId }>([
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
 
-    powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
+    powerSpy = vi.spyOn(allMoves[MoveId.BOLT_BEAK], "calculateBattlePower");
   });
 
-  it("should double power if the user moves before the target", async () => {
+  it.each<{ name: string; move: MoveId }>([
+    { name: "Bolt Beak", move: MoveId.BOLT_BEAK },
+    { name: "Fishious Rend", move: MoveId.FISHIOUS_REND },
+  ])("$name should double power if the user moves before the target", async ({ move }) => {
+    powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     // turn 1: enemy, then player (no boost)
-    game.move.select(move);
+    game.move.use(move);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power);
 
     // turn 2: player, then enemy (boost)
-    game.move.select(move);
+    game.move.use(move);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
     expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power * 2);
   });
@@ -66,30 +66,41 @@ describe.each<{ name: string; move: MoveId }>([
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
     // Use move after everyone but P1 and enemy 1 have already moved
-    game.move.use(move, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.use(MoveId.BOLT_BEAK, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
-    expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power * 2);
+    expect(powerSpy).toHaveLastReturnedWith(allMoves[MoveId.BOLT_BEAK].power * 2);
   });
 
   it("should double power on the turn the target switches in", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(move);
+    game.move.select(MoveId.BOLT_BEAK);
     game.forceEnemyToSwitch();
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
-    expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power * 2);
+    expect(powerSpy).toHaveLastReturnedWith(allMoves[MoveId.BOLT_BEAK].power * 2);
   });
 
-  // TODO: Verify behavior with Instruct/Dancer
-  it.todo.each<{ type: string; allyMove: MoveId }>([
+  it("should double power on forced switch-induced sendouts", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+    game.move.select(MoveId.BOLT_BEAK);
+    await game.move.forceEnemyMove(MoveId.U_TURN);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.toEndOfTurn();
+
+    expect(powerSpy).toHaveLastReturnedWith(allMoves[MoveId.BOLT_BEAK].power * 2);
+  });
+
+  it.each<{ type: string; allyMove: MoveId }>([
     { type: "a Dancer-induced", allyMove: MoveId.FIERY_DANCE },
     { type: "an Instructed", allyMove: MoveId.INSTRUCT },
   ])("should double power if $type move is used as the target's first action that turn", async ({ allyMove }) => {
-    game.override.battleStyle("double").moveset([move, allyMove]).enemyAbility(AbilityId.DANCER);
+    game.override.battleStyle("double").enemyAbility(AbilityId.DANCER);
+    powerSpy = vi.spyOn(allMoves[MoveId.FISHIOUS_REND], "calculateBattlePower");
     await game.classicMode.startBattle([SpeciesId.DRACOVISH, SpeciesId.ARCTOZOLT]);
 
     // Simulate enemy having used splash last turn to allow Instruct to copy it
@@ -101,11 +112,11 @@ describe.each<{ name: string; move: MoveId }>([
       useMode: MoveUseMode.NORMAL,
     });
 
-    game.move.select(move, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(allyMove, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
+    game.move.use(MoveId.FISHIOUS_REND, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.use(allyMove, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
-    expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power);
+    expect(powerSpy).toHaveLastReturnedWith(allMoves[MoveId.FISHIOUS_REND].power);
   });
 });
