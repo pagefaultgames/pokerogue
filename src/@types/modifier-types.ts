@@ -29,4 +29,4 @@ export type ModifierString = keyof ModifierConstructorMap;
 
 export type ModifierPool = {
   [tier: string]: WeightedModifierType[];
-}
+};

@@ -101,6 +101,7 @@ const namespaceMap = {
   doubleBattleDialogue: "dialogue-double-battle",
   splashMessages: "splash-texts",
   mysteryEncounterMessages: "mystery-encounter-texts",
+  biome: "biomes",
 };
 
 //#region Functions
@@ -174,7 +175,24 @@ export async function initI18n(): Promise<void> {
       "es-MX": ["es-ES", "en"],
       default: ["en"],
     },
-    supportedLngs: ["en", "es-ES", "es-MX", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca", "da", "tr", "ro", "ru"],
+    supportedLngs: [
+      "en",
+      "es-ES",
+      "es-MX",
+      "fr",
+      "it",
+      "de",
+      "zh-CN",
+      "zh-TW",
+      "pt-BR",
+      "ko",
+      "ja",
+      "ca",
+      "da",
+      "tr",
+      "ro",
+      "ru",
+    ],
     backend: {
       loadPath(lng: string, [ns]: string[]) {
         let fileName: string;

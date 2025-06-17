@@ -1,9 +1,9 @@
 import { BattlerIndex } from "#enums/battler-index";
-import type { RandomMoveAttr } from "#app/data/moves/move";
-import { allMoves } from "#app/data/data-lists";
+import { RandomMoveAttr } from "#app/data/moves/move";
 import { Stat } from "#app/enums/stat";
 import { MoveResult } from "#enums/move-result";
 import { AbilityId } from "#enums/ability-id";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -13,8 +13,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Moves - Copycat", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-
-  let randomMoveAttr: RandomMoveAttr;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -27,13 +25,12 @@ describe("Moves - Copycat", () => {
   });
 
   beforeEach(() => {
-    randomMoveAttr = allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0];
     game = new GameManager(phaserGame);
     game.override
       .moveset([MoveId.COPYCAT, MoveId.SPIKY_SHIELD, MoveId.SWORDS_DANCE, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
@@ -76,7 +73,7 @@ describe("Moves - Copycat", () => {
   });
 
   it("should copy the called move when the last move successfully calls another", async () => {
-    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.SWORDS_DANCE);
+    vi.spyOn(RandomMoveAttr.prototype, "getMove").mockReturnValue(MoveId.SWORDS_DANCE);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.use(MoveId.METRONOME);
@@ -87,7 +84,7 @@ describe("Moves - Copycat", () => {
     expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(2);
   });
 
-  it("should apply secondary effects of a move", async () => {
+  it("should apply move secondary effects", async () => {
     game.override.enemyMoveset(MoveId.ACID_SPRAY); // Secondary effect lowers SpDef by 2 stages
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 

@@ -31,7 +31,7 @@ describe("Abilities - Sheer Force", () => {
       .enemySpecies(SpeciesId.ONIX)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([MoveId.SPLASH])
-      .disableCrits();
+      .criticalHits(false);
   });
 
   const SHEER_FORCE_MULT = 1.3;
@@ -69,7 +69,7 @@ describe("Abilities - Sheer Force", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(bindMove.calculateBattlePower).toHaveLastReturnedWith(bindMove.power);
-  }, 20000);
+  });
 
   it("Sheer Force does not boost the base damage of moves with no secondary effect", async () => {
     game.override.moveset([MoveId.TACKLE]);

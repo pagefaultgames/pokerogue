@@ -32,7 +32,7 @@ describe("Moves - Last Respects", () => {
     basePower = move.power;
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .moveset([MoveId.LAST_RESPECTS, MoveId.EXPLOSION, MoveId.LUNAR_DANCE])
       .ability(AbilityId.BALL_FETCH)
       .enemyAbility(AbilityId.BALL_FETCH)
@@ -164,15 +164,13 @@ describe("Moves - Last Respects", () => {
     await game.toNextWave();
     expect(game.scene.currentBattle.enemyFaints).toBe(0);
 
+    game.removeEnemyHeldItems();
+
     game.move.select(MoveId.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    const enemy = game.field.getEnemyPokemon();
-    const player = game.field.getPlayerPokemon();
-    const items = `Player items: ${player.getHeldItems()} | Enemy Items: ${enemy.getHeldItems()} |`;
-
-    expect(move.calculateBattlePower, items).toHaveLastReturnedWith(50);
+    expect(move.calculateBattlePower).toHaveLastReturnedWith(50);
   });
 
   it("should reset playerFaints count if we enter new trainer battle", async () => {

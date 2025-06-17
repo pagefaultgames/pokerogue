@@ -29,7 +29,8 @@ export class PokemonTransformPhase extends PokemonPhase {
     const target = globalScene.getField(true).find(p => p.getBattlerIndex() === this.targetIndex);
 
     if (!target) {
-      return this.end();
+      this.end();
+      return;
     }
 
     user.summonData.speciesForm = target.getSpeciesForm();
@@ -52,7 +53,7 @@ export class PokemonTransformPhase extends PokemonPhase {
     user.summonData.moveset = target.getMoveset().map(m => {
       if (m) {
         // If PP value is less than 5, do nothing. If greater, we need to reduce the value to 5.
-        return new PokemonMove(m.moveId, 0, 0, false, Math.min(m.getMove().pp, 5));
+        return new PokemonMove(m.moveId, 0, 0, Math.min(m.getMove().pp, 5));
       }
       console.warn(`Transform: somehow iterating over a ${m} value when copying moveset!`);
       return new PokemonMove(MoveId.NONE);

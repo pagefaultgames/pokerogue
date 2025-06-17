@@ -2,25 +2,28 @@
 <!-- Feel free to look at other PRs for examples -->
 <!--
 Make sure the title includes categorization (choose the one that best fits):
--       [Bug]: If the PR is primarily a bug fix
--      [Move]: If a move has new or changed functionality
--   [Ability]: If an ability has new or changed functionality
--      [Item]: For new or modified items
--   [Mystery]: For new or modified Mystery Encounters
--      [Test]: If the PR is primarily adding or modifying tests
--     [UI/UX]: If the PR is changing UI/UX elements
--     [Audio]: If the PR is adding or changing music/sfx
--    [Sprite]: If the PR is adding or changing sprites
--   [Balance]: If the PR is related to game balance
-- [Challenge]: If the PR is adding or modifying challenges
+-  [Bug]: If the PR is primarily a bug fix
+-  [Move]: If a move has new or changed functionality
+-  [Ability]: If an ability has new or changed functionality
+-  [Item]: For new or modified items
+-  [Mystery]: For new or modified Mystery Encounters
+-  [Test]: If the PR is primarily adding or modifying tests
+-  [UI/UX]: If the PR is changing UI/UX elements
+-  [Audio]: If the PR is adding or changing music/sfx
+-  [Sprite]: If the PR is adding or changing sprites
+-  [Balance]: If the PR is related to game balance
+-  [Challenge]: If the PR is adding or modifying challenges
 -  [Refactor]: If the PR is primarily rewriting existing code
--      [Docs]: If the PR is just adding or modifying documentation (such as tsdocs/code comments)
--    [GitHub]: For changes to GitHub workflows/templates/etc
--      [Misc]: If no other category fits the PR
+-  [Dev]: If the PR is primarily changing something pertaining to development (lefthook hooks, linter rules, etc.)
+-  [i18n]: If the PR is primarily adding/changing locale keys or key usage (may come with an associated locales PR)
+-  [Docs]: If the PR is adding or modifying documentation (such as tsdocs/code comments)
+-  [GitHub]: For changes to GitHub workflows/templates/etc
+-  [Misc]: If no other category fits the PR
 -->
+
 <!--
 Make sure that this PR is not overlapping with someone else's work
-Please try to keep the PR self-contained (and small)
+Please try to keep the PR self-contained (and small!)
 -->
 
 ## What are the changes the user will see?
@@ -66,7 +69,7 @@ Do the reviewers need to do something special in order to test your changes?
 - [ ] Have I provided a clear explanation of the changes?
 - [ ] Have I tested the changes manually?
 - [ ] Are all unit tests still passing? (`npm run test:silent`)
-  - [ ] Have I created new automated tests (`npm run create-test`) or updated existing tests related to the PR's changes?
+  - [ ] Have I created new automated tests (`npm run test:create`) or updated existing tests related to the PR's changes?
 - [ ] Have I provided screenshots/videos of the changes (if applicable)?
   - [ ] Have I made sure that any UI change works for both UI themes (default and legacy)?
 

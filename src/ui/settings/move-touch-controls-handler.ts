@@ -98,7 +98,7 @@ export default class MoveTouchControlsHandler {
         <div id="cancelButton" class="button">${i18next.t("settings:touchCancel")}</div>
       </div>
       <div class="info-row">
-        <div class="orientation-label"> 
+        <div class="orientation-label">
           ${i18next.t("settings:orientation")}
           <span id="orientation">
             ${this.isLandscapeMode ? i18next.t("settings:landscape") : i18next.t("settings:portrait")}

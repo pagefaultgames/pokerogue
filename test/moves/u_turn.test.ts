@@ -29,7 +29,7 @@ describe("Moves - U-turn", () => {
       .startingWave(97)
       .moveset([MoveId.U_TURN])
       .enemyMoveset(MoveId.SPLASH)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("triggers regenerator a single time when a regenerator user switches out with u-turn", async () => {
@@ -50,7 +50,7 @@ describe("Moves - U-turn", () => {
     );
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(SpeciesId.SHUCKLE);
-  }, 20000);
+  });
 
   it("triggers rough skin on the u-turn user before a new pokemon is switched in", async () => {
     // arrange
@@ -68,7 +68,7 @@ describe("Moves - U-turn", () => {
     expect(game.scene.getEnemyPokemon()!.waveData.abilityRevealed).toBe(true); // proxy for asserting ability activated
     expect(playerPkm.species.speciesId).toEqual(SpeciesId.RAICHU);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
-  }, 20000);
+  });
 
   it("triggers contact abilities on the u-turn user (eg poison point) before a new pokemon is switched in", async () => {
     // arrange
@@ -86,7 +86,7 @@ describe("Moves - U-turn", () => {
     expect(playerPkm.species.speciesId).toEqual(SpeciesId.RAICHU);
     expect(game.scene.getEnemyPokemon()!.waveData.abilityRevealed).toBe(true); // proxy for asserting ability activated
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
-  }, 20000);
+  });
 
   it("still forces a switch if u-turn KO's the opponent", async () => {
     game.override.startingLevel(1000); // Ensure that U-Turn KO's the opponent

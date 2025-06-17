@@ -24,11 +24,12 @@ describe("Weather - Strong Winds", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.startingLevel(10);
-    game.override.enemySpecies(SpeciesId.TAILLOW);
-    game.override.enemyAbility(AbilityId.DELTA_STREAM);
-    game.override.moveset([MoveId.THUNDERBOLT, MoveId.ICE_BEAM, MoveId.ROCK_SLIDE]);
+    game.override
+      .battleStyle("single")
+      .startingLevel(10)
+      .enemySpecies(SpeciesId.TAILLOW)
+      .enemyAbility(AbilityId.DELTA_STREAM)
+      .moveset([MoveId.THUNDERBOLT, MoveId.ICE_BEAM, MoveId.ROCK_SLIDE]);
   });
 
   it("electric type move is not very effective on Rayquaza", async () => {

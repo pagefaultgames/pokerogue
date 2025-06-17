@@ -1,6 +1,6 @@
 import { speciesEggTiers } from "#app/data/balance/species-egg-tiers";
 import { Egg, getLegendaryGachaSpeciesForTimestamp, getValidLegendaryGachaSpecies } from "#app/data/egg";
-import { allSpecies } from "#app/data/pokemon-species";
+import { allSpecies } from "#app/data/data-lists";
 import { EggSourceType } from "#app/enums/egg-source-types";
 import { EggTier } from "#app/enums/egg-type";
 import { VariantTier } from "#app/enums/variant-tier";
@@ -25,7 +25,6 @@ describe("Egg Generation Tests", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.restoreAllMocks();
   });
 
   beforeEach(async () => {

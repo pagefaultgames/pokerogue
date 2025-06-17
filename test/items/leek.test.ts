@@ -43,7 +43,7 @@ describe("Items - Leek", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyMember.getCritStage).toHaveReturnedWith(2);
-  }, 20000);
+  });
 
   it("should raise CRIT stage by 2 when held by GALAR_FARFETCHD", async () => {
     await game.classicMode.startBattle([SpeciesId.GALAR_FARFETCHD]);
@@ -57,7 +57,7 @@ describe("Items - Leek", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyMember.getCritStage).toHaveReturnedWith(2);
-  }, 20000);
+  });
 
   it("should raise CRIT stage by 2 when held by SIRFETCHD", async () => {
     await game.classicMode.startBattle([SpeciesId.SIRFETCHD]);
@@ -71,7 +71,7 @@ describe("Items - Leek", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyMember.getCritStage).toHaveReturnedWith(2);
-  }, 20000);
+  });
 
   it("should raise CRIT stage by 2 when held by FARFETCHD line fused with Pokemon", async () => {
     // Randomly choose from the Farfetch'd line
@@ -99,7 +99,7 @@ describe("Items - Leek", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyMember.getCritStage).toHaveReturnedWith(2);
-  }, 20000);
+  });
 
   it("should raise CRIT stage by 2 when held by Pokemon fused with FARFETCHD line", async () => {
     // Randomly choose from the Farfetch'd line
@@ -127,7 +127,7 @@ describe("Items - Leek", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyMember.getCritStage).toHaveReturnedWith(2);
-  }, 20000);
+  });
 
   it("should not raise CRIT stage when held by a Pokemon outside of FARFETCHD line", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
@@ -141,5 +141,5 @@ describe("Items - Leek", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyMember.getCritStage).toHaveReturnedWith(0);
-  }, 20000);
+  });
 });

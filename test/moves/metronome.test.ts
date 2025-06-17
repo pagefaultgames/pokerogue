@@ -4,6 +4,9 @@ import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
 import { MoveResult } from "#enums/move-result";
+import { CommandPhase } from "#app/phases/command-phase";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -31,6 +34,8 @@ describe("Moves - Metronome", () => {
     game.override
       .moveset([MoveId.METRONOME, MoveId.SPLASH])
       .battleStyle("single")
+      .startingLevel(100)
+      .enemyLevel(100)
       .enemySpecies(SpeciesId.SHUCKLE)
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.STURDY);
@@ -54,7 +59,7 @@ describe("Moves - Metronome", () => {
     vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.DIVE);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     expect(player.getTag(SemiInvulnerableTag)).toBeUndefined();
     expect(player.visible).toBe(true);
 
@@ -68,7 +73,7 @@ describe("Moves - Metronome", () => {
     expect(player.getTag(SemiInvulnerableTag)).toBeUndefined();
     expect(player.visible).toBe(true);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   });
 
@@ -79,8 +84,8 @@ describe("Moves - Metronome", () => {
     game.move.select(MoveId.METRONOME);
     await game.toNextTurn();
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     expect(player.hp).toBeLessThan(player.getMaxHp());
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
@@ -95,8 +100,8 @@ describe("Moves - Metronome", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     expect(player.hp).toBeLessThan(player.getMaxHp());
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
@@ -105,7 +110,7 @@ describe("Moves - Metronome", () => {
 
   it("should recharge after using recharge moves", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.HYPER_BEAM);
     vi.spyOn(allMoves[MoveId.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
 
@@ -113,6 +118,41 @@ describe("Moves - Metronome", () => {
     await game.toNextTurn();
 
     expect(player.getTag(RechargingTag)).toBeDefined();
+  });
+
+  it("should charge for charging moves while still maintaining follow-up status", async () => {
+    game.override.moveset([]).enemyMoveset(MoveId.SPITE);
+    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.SOLAR_BEAM);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+
+    const player = game.field.getPlayerPokemon();
+    game.move.changeMoveset(player, [MoveId.METRONOME, MoveId.SOLAR_BEAM]);
+
+    const [metronomeMove, solarBeamMove] = player.getMoveset();
+    expect(metronomeMove).toBeDefined();
+    expect(solarBeamMove).toBeDefined();
+
+    game.move.select(MoveId.METRONOME);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(player.getTag(BattlerTagType.CHARGING)).toBeTruthy();
+    const turn1PpUsed = metronomeMove.ppUsed;
+    expect.soft(turn1PpUsed).toBeGreaterThan(1);
+    expect(solarBeamMove.ppUsed).toBe(0);
+
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toNextTurn();
+
+    expect(player.getTag(BattlerTagType.CHARGING)).toBeFalsy();
+    const turn2PpUsed = metronomeMove.ppUsed - turn1PpUsed;
+    expect(turn2PpUsed).toBeGreaterThan(1);
+    expect(solarBeamMove.ppUsed).toBe(0);
+    expect(player.getLastXMoves()[0]).toMatchObject({
+      move: MoveId.SOLAR_BEAM,
+      result: MoveResult.SUCCESS,
+      useMode: MoveUseMode.FOLLOW_UP,
+    });
   });
 
   it("should only target ally for Aromatic Mist", async () => {
@@ -137,7 +177,7 @@ describe("Moves - Metronome", () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
     vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.ROAR);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.METRONOME);
     await game.phaseInterceptor.to("BerryPhase");
