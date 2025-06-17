@@ -1934,8 +1934,6 @@ export interface AllyStatMultiplierAbAttrParams extends StatMultiplierAbAttrPara
 
 /**
  * Multiplies a Stat from an ally pokemon's ability.
- * @see {@link applyAllyStatMultiplierAbAttrs}
- * @see {@link applyAllyStat}
  */
 export class AllyStatMultiplierAbAttr extends AbAttr {
   private stat: BattleStat;

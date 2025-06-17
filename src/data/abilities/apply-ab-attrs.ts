@@ -1,5 +1,5 @@
 import type { AbAttrParamMap } from "#app/@types/ability-types";
-import type { AbAttr, AbAttrBaseParams, AbAttrString, CallableAbAttrString } from "#app/@types/ability-types";
+import type { AbAttrBaseParams, AbAttrString, CallableAbAttrString } from "#app/@types/ability-types";
 import { globalScene } from "#app/global-scene";
 
 function applySingleAbAttrs<T extends AbAttrString>(
@@ -11,12 +11,6 @@ function applySingleAbAttrs<T extends AbAttrString>(
   const { simulated = false, passive = false, pokemon } = params;
   if (!pokemon?.canApplyAbility(passive) || (passive && pokemon.getPassiveAbility().id === pokemon.getAbility().id)) {
     return;
-  }
-
-  const attr = 1 as unknown as AbAttr;
-
-  if (attr.is("BypassSpeedChanceAbAttr")) {
-    attr;
   }
 
   const ability = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
