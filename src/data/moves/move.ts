@@ -2254,7 +2254,7 @@ export class HitHealAttr extends MoveEffectAttr {
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (target.hasAbilityWithAttr(ReverseDrainAbAttr)) {
+    if (target.hasAbilityWithAttr("ReverseDrainAbAttr")) {
       return false;
     }
 
