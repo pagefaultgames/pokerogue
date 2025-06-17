@@ -220,7 +220,6 @@ export type PhaseConstructorMap = typeof PHASES;
 export class PhaseManager {
   /** PhaseQueue: dequeue/remove the first element to get the next phase */
   private phaseQueue: Phase[] = [];
-  private conditionalQueue: Array<[() => boolean, Phase]> = [];
   /** PhaseQueuePrepend: is a temp storage of what will be added to PhaseQueue */
   private phaseQueuePrepend: Phase[] = [];
 
@@ -240,20 +239,6 @@ export class PhaseManager {
 
   getStandbyPhase(): Phase | null {
     return this.standbyPhase;
-  }
-
-  /**
-   * Adds a phase to the conditional queue and ensures it is executed only when the specified condition is met.
-   *
-   * This method allows deferring the execution of a phase until certain conditions are met, which is useful for handling
-   * situations like abilities and entry hazards that depend on specific game states.
-   *
-   * @param phase - The phase to be added to the conditional queue.
-   * @param condition - A function that returns a boolean indicating whether the phase should be executed.
-   *
-   */
-  pushConditionalPhase(phase: Phase, condition: () => boolean): void {
-    this.conditionalQueue.push([condition, phase]);
   }
 
   /**
@@ -292,7 +277,7 @@ export class PhaseManager {
    * Clears all phase-related stuff, including all phase queues, the current and standby phases, and a splice index
    */
   clearAllPhases(): void {
-    for (const queue of [this.phaseQueue, this.phaseQueuePrepend, this.conditionalQueue, this.nextCommandPhaseQueue]) {
+    for (const queue of [this.phaseQueue, this.phaseQueuePrepend, this.nextCommandPhaseQueue]) {
       queue.splice(0, queue.length);
     }
     this.dynamicQueueManager.clearQueues();
@@ -340,8 +325,6 @@ export class PhaseManager {
     }
     if (!this.phaseQueue.length) {
       this.populatePhaseQueue();
-      // Clear the conditionalQueue if there are no phases left in the phaseQueue
-      this.conditionalQueue = [];
     }
 
     if (this.phaseQueue[0].is("WeatherEffectPhase")) {
@@ -352,24 +335,6 @@ export class PhaseManager {
     }
 
     this.currentPhase = this.phaseQueue.shift() ?? null;
-
-    const unactivatedConditionalPhases: [() => boolean, Phase][] = [];
-    // Check if there are any conditional phases queued
-    while (this.conditionalQueue?.length) {
-      // Retrieve the first conditional phase from the queue
-      const conditionalPhase = this.conditionalQueue.shift();
-      // Evaluate the condition associated with the phase
-      if (conditionalPhase?.[0]()) {
-        // If the condition is met, add the phase to the phase queue
-        this.pushPhase(conditionalPhase[1]);
-      } else if (conditionalPhase) {
-        // If the condition is not met, re-add the phase back to the front of the conditional queue
-        unactivatedConditionalPhases.push(conditionalPhase);
-      } else {
-        console.warn("condition phase is undefined/null!", conditionalPhase);
-      }
-    }
-    this.conditionalQueue.push(...unactivatedConditionalPhases);
 
     if (this.currentPhase) {
       console.log(`%cStart Phase ${this.currentPhase.constructor.name}`, "color:green;");
