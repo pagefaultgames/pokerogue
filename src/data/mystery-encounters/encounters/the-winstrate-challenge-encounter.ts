@@ -24,7 +24,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
 import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { applyPostBattleInitAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import i18next from "i18next";
@@ -221,7 +221,7 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
 
         // Each trainer battle is supposed to be a new fight, so reset all per-battle activation effects
         pokemon.resetBattleAndWaveData();
-        applyPostBattleInitAbAttrs("PostBattleInitAbAttr", pokemon);
+        applyAbAttrs("PostBattleInitAbAttr", { pokemon });
       }
 
       globalScene.phaseManager.unshiftNew("ShowTrainerPhase");
