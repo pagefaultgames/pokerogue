@@ -18,12 +18,15 @@ export class AttemptRunPhase extends PokemonPhase {
 
     const playerField = globalScene.getPlayerField();
     const enemyField = globalScene.getEnemyField();
-
     const escapeChance = new NumberHolder(0);
 
     this.attemptRunAway(playerField, enemyField, escapeChance);
 
     applyAbAttrs("RunSuccessAbAttr", playerField[0], null, false, escapeChance);
+
+    if (globalScene.currentBattle.double) {
+      applyAbAttrs("RunSuccessAbAttr", playerField[1], null, false, escapeChance);
+    }
 
     if (playerField[0].randBattleSeedInt(100) < escapeChance.value && !this.forceFailEscape) {
       enemyField.forEach(enemyPokemon => applyPreLeaveFieldAbAttrs("PreLeaveFieldAbAttr", enemyPokemon));
