@@ -24,6 +24,7 @@ export class AttemptRunPhase extends PokemonPhase {
 
     applyAbAttrs("RunSuccessAbAttr", playerField[0], null, false, escapeChance);
 
+    //TODO: needed?
     if (globalScene.currentBattle.double) {
       applyAbAttrs("RunSuccessAbAttr", playerField[1], null, false, escapeChance);
     }
