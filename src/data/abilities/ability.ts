@@ -4647,21 +4647,16 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
  * Attribute to track and re-trigger last turn's berries at the end of the `BerryPhase`.
  * Must only be used by Cud Chew! Do _not_ reuse this attribute for anything else
  * Used by {@linkcode AbilityId.CUD_CHEW}.
+ * @sealed
  */
-export class CudChewConsumeBerryAbAttr extends PostTurnAbAttr {
+export class CudChewConsumeBerryAbAttr extends AbAttr {
   /**
    * @returns `true` if the pokemon ate anything last turn
    */
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
-    // force ability popup for ability triggers on normal turns.
-    // Still not used if ability doesn't proc
-    this.showAbility = true;
     return !!pokemon.summonData.berriesEatenLast.length;
   }
 
-  /**
-   *
-   */
   override apply({ pokemon }: AbAttrBaseParams): void {
     // TODO: Consider respecting the `simulated` flag
     globalScene.phaseManager.unshiftNew(
