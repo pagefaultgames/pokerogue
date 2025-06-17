@@ -62,18 +62,15 @@ export class ModifierBar extends Phaser.GameObjects.Container {
    * @param {PersistentModifier[]} modifiers - The list of modifiers to be displayed in the {@linkcode ModifierBar}
    * @param {boolean} hideHeldItems - If set to "true", only modifiers not assigned to a Pokémon are displayed
    */
-  updateModifiers(modifiers: PersistentModifier[], pokemonA: Pokemon, pokemonB?: Pokemon, hideHeldItems = false) {
+  updateModifiers(modifiers: PersistentModifier[], pokemonA?: Pokemon, pokemonB?: Pokemon) {
     this.removeAll(true);
 
     const sortedVisibleModifiers = modifiers.filter(m => m.isIconVisible()).sort(modifierSortFunc);
 
-    const heldItemsA = pokemonA.getHeldItems().sort(heldItemSortFunc);
+    const heldItemsA = pokemonA ? pokemonA.getHeldItems().sort(heldItemSortFunc) : [];
     const heldItemsB = pokemonB ? pokemonB.getHeldItems().sort(heldItemSortFunc) : [];
 
-    this.totalVisibleLength = sortedVisibleModifiers.length;
-    if (!hideHeldItems) {
-      this.totalVisibleLength += heldItemsA.length + heldItemsB.length;
-    }
+    this.totalVisibleLength = sortedVisibleModifiers.length + heldItemsA.length + heldItemsB.length;
 
     sortedVisibleModifiers.forEach((modifier: PersistentModifier, i: number) => {
       const icon = modifier.getIcon();

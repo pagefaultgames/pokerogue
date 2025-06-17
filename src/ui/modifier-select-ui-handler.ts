@@ -5,7 +5,7 @@ import { getPokeballAtlasKey } from "#app/data/pokeball";
 import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { LockModifierTiersModifier, PokemonHeldItemModifier, HealShopCostModifier } from "../modifier/modifier";
+import { LockModifierTiersModifier, HealShopCostModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
 import { Button } from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
@@ -183,7 +183,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.player = args[0];
 
     const partyHasHeldItem =
-      this.player && !!globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferable).length;
+      globalScene
+        .getPlayerParty()
+        .map(p => p.heldItemManager.getTransferableHeldItems().length)
+        .reduce((tot, i) => tot + i, 0) > 0;
     const canLockRarities = !!globalScene.findModifier(m => m instanceof LockModifierTiersModifier);
 
     this.transferButtonContainer.setVisible(false);
@@ -265,8 +268,8 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     //    const maxUpgradeCount = typeOptions.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
     const maxUpgradeCount = 0;
 
-    /* Force updateModifiers without pokemonSpecificModifiers */
-    globalScene.getModifierBar().updateModifiers(globalScene.modifiers, true);
+    /* Force updateModifiers without pokemon held items */
+    globalScene.getModifierBar().updateModifiers(globalScene.modifiers);
 
     /* Multiplies the appearance duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
     globalScene.showShopOverlay(750 * globalScene.gameSpeed);

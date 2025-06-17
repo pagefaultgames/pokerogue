@@ -1369,7 +1369,8 @@ export default class PartyUiHandler extends MessageUiHandler {
               optionName = move.getName();
             }
             break;
-          default:
+          }
+          default: {
             const formChangeItems = this.getFormChangeItems(pokemon);
             if (formChangeItems && option >= PartyOption.FORM_CHANGE_ITEM) {
               const item = formChangeItems[option - PartyOption.FORM_CHANGE_ITEM];
