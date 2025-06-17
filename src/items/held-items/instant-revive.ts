@@ -5,7 +5,7 @@ import { ConsumableHeldItem, ITEM_EFFECT } from "../held-item";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { toDmgValue } from "#app/utils/common";
-import { applyAbAttrs, CommanderAbAttr } from "#app/data/abilities/ability";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 
 export interface INSTANT_REVIVE_PARAMS {
   /** The pokemon with the item */
@@ -61,7 +61,7 @@ export class InstantReviveHeldItem extends ConsumableHeldItem {
     // Reapply Commander on the Pokemon's side of the field, if applicable
     const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
     for (const p of field) {
-      applyAbAttrs(CommanderAbAttr, p, null, false);
+      applyAbAttrs("CommanderAbAttr", p, null, false);
     }
     return true;
   }
