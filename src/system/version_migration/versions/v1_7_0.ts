@@ -1,6 +1,7 @@
 import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";
 import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
+import { getPokemonSpeciesForm } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { globalScene } from "#app/global-scene";
 import type { SessionSaveData, SystemSaveData } from "#app/system/game-data";
 import { DexAttr } from "#enums/dex-attr";

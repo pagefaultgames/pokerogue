@@ -32,7 +32,7 @@ describe("Abilities - Flash Fire", () => {
       .enemyAbility(AbilityId.BALL_FETCH)
       .startingLevel(20)
       .enemyLevel(20)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("immune to Fire-type moves", async () => {

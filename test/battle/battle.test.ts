@@ -1,4 +1,4 @@
-import { allSpecies } from "#app/data/pokemon-species";
+import { allSpecies } from "#app/data/data-lists";
 import { Stat } from "#enums/stat";
 import { getGameMode } from "#app/game-mode";
 import { GameModes } from "#enums/game-modes";

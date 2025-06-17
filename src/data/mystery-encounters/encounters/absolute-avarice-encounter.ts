@@ -20,7 +20,7 @@ import { PersistentModifierRequirement } from "#app/data/mystery-encounters/myst
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { MoveId } from "#enums/move-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { randInt } from "#app/utils/common";
@@ -37,6 +37,7 @@ import type { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
 import i18next from "i18next";
 import type { MysteryEncounterSpriteConfig } from "#app/field/mystery-encounter-intro";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/absoluteAvarice";
@@ -230,7 +231,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.ENEMY],
           move: new PokemonMove(MoveId.STUFF_CHEEKS),
-          ignorePp: true,
+          useMode: MoveUseMode.IGNORE_PP,
         });
 
         await transitionMysteryEncounterIntroVisuals(true, true, 500);

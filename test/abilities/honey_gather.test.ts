@@ -29,7 +29,7 @@ describe("Abilities - Honey Gather", () => {
       .ability(AbilityId.HONEY_GATHER)
       .passiveAbility(AbilityId.RUN_AWAY)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);

@@ -11,7 +11,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { SpeciesId } from "#enums/species-id";
 import { Nature } from "#enums/nature";
 import type Pokemon from "#app/field/pokemon";
@@ -26,6 +26,7 @@ import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { HeldItemId } from "#enums/held-item-id";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theStrongStuff";
@@ -201,13 +202,13 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.PLAYER],
           move: new PokemonMove(MoveId.GASTRO_ACID),
-          ignorePp: true,
+          useMode: MoveUseMode.IGNORE_PP,
         },
         {
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.PLAYER],
           move: new PokemonMove(MoveId.STEALTH_ROCK),
-          ignorePp: true,
+          useMode: MoveUseMode.IGNORE_PP,
         },
       );
 

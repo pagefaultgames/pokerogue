@@ -18,7 +18,7 @@ import {
   TypeRequirement,
 } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { SpeciesId } from "#enums/species-id";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { Gender } from "#app/data/gender";
 import { PokemonType } from "#enums/pokemon-type";
 import { BattlerIndex } from "#enums/battler-index";
@@ -45,7 +45,8 @@ import { FIRE_RESISTANT_ABILITIES } from "#app/data/mystery-encounters/requireme
 import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { getNewHeldItemFromCategory } from "#app/items/held-item-pool";
 import { allHeldItems } from "#app/items/all-held-items";
-import { allAbilities } from "#app/data/data-lists";
+import { MoveUseMode } from "#enums/move-use-mode";
+import { allAbilities, modifierTypes } from "#app/data/data-lists";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/fieryFallout";
@@ -200,13 +201,13 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.PLAYER],
           move: new PokemonMove(MoveId.FIRE_SPIN),
-          ignorePp: true,
+          useMode: MoveUseMode.IGNORE_PP,
         },
         {
           sourceBattlerIndex: BattlerIndex.ENEMY_2,
           targets: [BattlerIndex.PLAYER_2],
           move: new PokemonMove(MoveId.FIRE_SPIN),
-          ignorePp: true,
+          useMode: MoveUseMode.IGNORE_PP,
         },
       );
       await initBattleWithEnemyConfig(globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);

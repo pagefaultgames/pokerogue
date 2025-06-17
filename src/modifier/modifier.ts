@@ -1090,19 +1090,13 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
   override apply(playerPokemon: PlayerPokemon): boolean {
     let matchingEvolution = pokemonEvolutions.hasOwnProperty(playerPokemon.species.speciesId)
       ? pokemonEvolutions[playerPokemon.species.speciesId].find(
-          e =>
-            e.item === this.type.evolutionItem &&
-            (e.evoFormKey === null || (e.preFormKey || "") === playerPokemon.getFormKey()) &&
-            (!e.condition || e.condition.predicate(playerPokemon)),
+          e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, false, e.item!),
         )
       : null;
 
     if (!matchingEvolution && playerPokemon.isFusion()) {
       matchingEvolution = pokemonEvolutions[playerPokemon.fusionSpecies!.speciesId].find(
-        e =>
-          e.item === this.type.evolutionItem && // TODO: is the bang correct?
-          (e.evoFormKey === null || (e.preFormKey || "") === playerPokemon.getFusionFormKey()) &&
-          (!e.condition || e.condition.predicate(playerPokemon)),
+        e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, true, e.item!),
       );
       if (matchingEvolution) {
         matchingEvolution = new FusionSpeciesFormEvolution(playerPokemon.species.speciesId, matchingEvolution);
@@ -1317,10 +1311,11 @@ export class MoneyRewardModifier extends ConsumableModifier {
 
     globalScene.getPlayerParty().map(p => {
       if (p.species?.speciesId === SpeciesId.GIMMIGHOUL || p.fusionSpecies?.speciesId === SpeciesId.GIMMIGHOUL) {
-        p.evoCounter
-          ? (p.evoCounter += Math.min(Math.floor(this.moneyMultiplier), 3))
-          : (p.evoCounter = Math.min(Math.floor(this.moneyMultiplier), 3));
-        const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(p); // as EvoTrackerModifier;
+        const factor = Math.min(Math.floor(this.moneyMultiplier), 3);
+        const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(
+          p,
+          factor,
+        ) as EvoTrackerModifier;
         globalScene.addModifier(modifier);
       }
     });
