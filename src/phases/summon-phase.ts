@@ -10,7 +10,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
 import { PartyMemberPokemonPhase } from "./party-member-pokemon-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { applyPreSummonAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 
 export class SummonPhase extends PartyMemberPokemonPhase {
@@ -27,7 +27,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   start() {
     super.start();
 
-    applyPreSummonAbAttrs("PreSummonAbAttr", this.getPokemon());
+    applyAbAttrs("PreSummonAbAttr", { pokemon: this.getPokemon() });
     this.preSummon();
   }
 
