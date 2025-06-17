@@ -33,7 +33,7 @@ describe("Abilities - Good As Gold", () => {
       .moveset([MoveId.SPLASH])
       .ability(AbilityId.GOOD_AS_GOLD)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
@@ -63,9 +63,10 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should not block any status moves that target the field, one side, or all pokemon", async () => {
-    game.override.battleStyle("double");
-    game.override.enemyMoveset([MoveId.STEALTH_ROCK, MoveId.HAZE]);
-    game.override.moveset([MoveId.SWORDS_DANCE, MoveId.SAFEGUARD]);
+    game.override
+      .battleStyle("double")
+      .enemyMoveset([MoveId.STEALTH_ROCK, MoveId.HAZE])
+      .moveset([MoveId.SWORDS_DANCE, MoveId.SAFEGUARD]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
     const [good_as_gold, ball_fetch] = game.scene.getPlayerField();
 
@@ -85,8 +86,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should not block field targeted effects in singles", async () => {
-    game.override.battleStyle("single");
-    game.override.enemyMoveset([MoveId.SPIKES]);
+    game.override.battleStyle("single").enemyMoveset([MoveId.SPIKES]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.SPLASH, 0);
@@ -96,8 +96,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should block the ally's helping hand", async () => {
-    game.override.battleStyle("double");
-    game.override.moveset([MoveId.HELPING_HAND, MoveId.TACKLE]);
+    game.override.battleStyle("double").moveset([MoveId.HELPING_HAND, MoveId.TACKLE]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
     game.move.select(MoveId.HELPING_HAND, 0);
@@ -129,8 +128,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should not block field targeted effects like rain dance", async () => {
-    game.override.battleStyle("single");
-    game.override.enemyMoveset([MoveId.RAIN_DANCE]);
+    game.override.battleStyle("single").enemyMoveset([MoveId.RAIN_DANCE]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.use(MoveId.SPLASH, 0);

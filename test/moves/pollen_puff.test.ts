@@ -28,8 +28,8 @@ describe("Moves - Pollen Puff", () => {
     game.override
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
-      .enemyLevel(100)
+      .criticalHits(false)
+      .startingLevel(100)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);

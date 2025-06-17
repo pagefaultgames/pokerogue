@@ -22,15 +22,14 @@ describe("Abilities - Seed Sower", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.disableCrits();
-
-    game.override.enemySpecies(SpeciesId.MAGIKARP);
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
-
-    game.override.starterSpecies(SpeciesId.ARBOLIVA);
-    game.override.ability(AbilityId.SEED_SOWER);
-    game.override.moveset([MoveId.SPLASH]);
+    game.override
+      .battleStyle("single")
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .starterSpecies(SpeciesId.ARBOLIVA)
+      .ability(AbilityId.SEED_SOWER)
+      .moveset(MoveId.SPLASH);
   });
 
   it("should trigger when hit with damaging move", async () => {

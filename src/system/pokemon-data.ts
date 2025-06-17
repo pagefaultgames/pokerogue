@@ -3,7 +3,8 @@ import { globalScene } from "#app/global-scene";
 import type { Gender } from "../data/gender";
 import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "../data/pokemon-species";
+import { getPokemonSpeciesForm } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonBattleData, PokemonSummonData } from "../field/pokemon";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
@@ -45,7 +46,6 @@ export default class PokemonData {
   public pauseEvolutions: boolean;
   public pokerus: boolean;
   public usedTMs: MoveId[];
-  public evoCounter: number;
   public teraType: PokemonType;
   public isTerastallized: boolean;
   public stellarTypesBoosted: PokemonType[];
@@ -118,7 +118,6 @@ export default class PokemonData {
     this.pauseEvolutions = !!source.pauseEvolutions;
     this.pokerus = !!source.pokerus;
     this.usedTMs = source.usedTMs ?? [];
-    this.evoCounter = source.evoCounter ?? 0;
     this.teraType = source.teraType as PokemonType;
     this.isTerastallized = !!source.isTerastallized;
     this.stellarTypesBoosted = source.stellarTypesBoosted ?? [];

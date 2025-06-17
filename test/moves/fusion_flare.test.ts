@@ -31,7 +31,7 @@ describe("Moves - Fusion Flare", () => {
       .enemyMoveset(MoveId.REST)
       .battleStyle("single")
       .startingWave(97)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("should thaw freeze status condition", async () => {
