@@ -26,22 +26,25 @@ describe("Abilities - Corrosion", () => {
       .battleStyle("single")
       .criticalHits(false)
       .enemySpecies(SpeciesId.GRIMER)
-      .enemyAbility(AbilityId.CORROSION)
-      .enemyMoveset(MoveId.TOXIC);
+      .ability(AbilityId.CORROSION)
+      .enemyAbility(AbilityId.NO_GUARD)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it.each<{ name: string; species: SpeciesId }>([
     { name: "Poison", species: SpeciesId.GRIMER },
     { name: "Steel", species: SpeciesId.KLINK },
   ])("should grant the user the ability to poison $name-type opponents", async ({ species }) => {
-    await game.classicMode.startBattle([species]);
+    game.override.enemySpecies(species);
+    await game.classicMode.startBattle([SpeciesId.SALANDIT]);
 
-    const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon.status).toBeUndefined();
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy.status?.effect).toBeUndefined();
 
     game.move.use(MoveId.POISON_GAS);
-    await game.phaseInterceptor.to("BerryPhase");
-    expect(enemyPokemon.status).toBeDefined();
+    await game.toEndOfTurn();
+
+    expect(enemy.status?.effect).toBe(StatusEffect.POISON);
   });
 
   it("should not affect Toxic Spikes", async () => {
@@ -56,18 +59,18 @@ describe("Abilities - Corrosion", () => {
   });
 
   it("should not affect an opponent's Synchronize ability", async () => {
-    game.override.ability(AbilityId.SYNCHRONIZE);
+    game.override.enemyAbility(AbilityId.SYNCHRONIZE);
     await game.classicMode.startBattle([SpeciesId.ARBOK]);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.status?.effect).toBeUndefined();
 
-    game.move.select(MoveId.TOXIC);
+    game.move.use(MoveId.TOXIC);
     await game.toEndOfTurn();
 
-    expect(playerPokemon.status?.effect).toBe(StatusEffect.TOXIC);
-    expect(enemyPokemon.status?.effect).toBeUndefined();
+    expect(enemyPokemon.status?.effect).toBe(StatusEffect.TOXIC);
+    expect(playerPokemon.status?.effect).toBeUndefined();
   });
 
   it("should affect the user's held Toxic Orb", async () => {
@@ -79,6 +82,7 @@ describe("Abilities - Corrosion", () => {
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
+
     expect(salazzle.status?.effect).toBe(StatusEffect.TOXIC);
   });
 });
