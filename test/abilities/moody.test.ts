@@ -68,7 +68,7 @@ describe("Abilities - Moody", () => {
   });
 
   it("should only decrease one stat stage by 1 stage if all stat stages are at 6", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
