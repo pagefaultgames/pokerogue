@@ -346,7 +346,7 @@ abstract class AnimTimedBgEvent extends AnimTimedEvent {
 }
 
 class AnimTimedUpdateBgEvent extends AnimTimedBgEvent {
-  // biome-ignore lint/correctness/noUnusedVariables: seems intentional
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: seems intentional
   execute(moveAnim: MoveAnim, priority?: number): number {
     const tweenProps = {};
     if (this.bgX !== undefined) {
@@ -423,7 +423,7 @@ export function initCommonAnims(): Promise<void> {
       const commonAnimId = commonAnimIds[ca];
       commonAnimFetches.push(
         globalScene
-          .cachedFetch(`./battle-anims/common-${commonAnimNames[ca].toLowerCase().replace(/\_/g, "-")}.json`)
+          .cachedFetch(`./battle-anims/common-${commonAnimNames[ca].toLowerCase().replace(/_/g, "-")}.json`)
           .then(response => response.json())
           .then(cas => commonAnims.set(commonAnimId, new AnimConfig(cas))),
       );
@@ -535,7 +535,7 @@ export async function initEncounterAnims(encounterAnim: EncounterAnim | Encounte
     }
     encounterAnimFetches.push(
       globalScene
-        .cachedFetch(`./battle-anims/encounter-${encounterAnimNames[anim].toLowerCase().replace(/\_/g, "-")}.json`)
+        .cachedFetch(`./battle-anims/encounter-${encounterAnimNames[anim].toLowerCase().replace(/_/g, "-")}.json`)
         .then(response => response.json())
         .then(cas => encounterAnims.set(anim, new AnimConfig(cas))),
     );
@@ -559,7 +559,7 @@ export function initMoveChargeAnim(chargeAnim: ChargeAnim): Promise<void> {
     } else {
       chargeAnims.set(chargeAnim, null);
       globalScene
-        .cachedFetch(`./battle-anims/${ChargeAnim[chargeAnim].toLowerCase().replace(/\_/g, "-")}.json`)
+        .cachedFetch(`./battle-anims/${ChargeAnim[chargeAnim].toLowerCase().replace(/_/g, "-")}.json`)
         .then(response => response.json())
         .then(ca => {
           if (Array.isArray(ca)) {
@@ -1405,15 +1405,15 @@ export class EncounterBattleAnim extends BattleAnim {
 
 export async function populateAnims() {
   const commonAnimNames = getEnumKeys(CommonAnim).map(k => k.toLowerCase());
-  const commonAnimMatchNames = commonAnimNames.map(k => k.replace(/\_/g, ""));
+  const commonAnimMatchNames = commonAnimNames.map(k => k.replace(/_/g, ""));
   const commonAnimIds = getEnumValues(CommonAnim) as CommonAnim[];
   const chargeAnimNames = getEnumKeys(ChargeAnim).map(k => k.toLowerCase());
-  const chargeAnimMatchNames = chargeAnimNames.map(k => k.replace(/\_/g, " "));
+  const chargeAnimMatchNames = chargeAnimNames.map(k => k.replace(/_/g, " "));
   const chargeAnimIds = getEnumValues(ChargeAnim) as ChargeAnim[];
   const commonNamePattern = /name: (?:Common:)?(Opp )?(.*)/;
   const moveNameToId = {};
   for (const move of getEnumValues(MoveId).slice(1)) {
-    const moveName = MoveId[move].toUpperCase().replace(/\_/g, "");
+    const moveName = MoveId[move].toUpperCase().replace(/_/g, "");
     moveNameToId[moveName] = move;
   }
 
@@ -1469,7 +1469,7 @@ export async function populateAnims() {
             const frameData = framesData[fd];
             const focusFramesData = frameData.split("    - - ");
             for (let tf = 0; tf < focusFramesData.length; tf++) {
-              const values = focusFramesData[tf].replace(/ {6}\- /g, "").split("\n");
+              const values = focusFramesData[tf].replace(/ {6}- /g, "").split("\n");
               const targetFrame = new AnimFrame(
                 Number.parseFloat(values[0]),
                 Number.parseFloat(values[1]),
@@ -1516,7 +1516,7 @@ export async function populateAnims() {
               .replace(/[a-z]+: ! '', /gi, "")
               .replace(/name: (.*?),/, 'name: "$1",')
               .replace(
-                /flashColor: !ruby\/object:Color { alpha: ([\d\.]+), blue: ([\d\.]+), green: ([\d\.]+), red: ([\d\.]+)}/,
+                /flashColor: !ruby\/object:Color { alpha: ([\d.]+), blue: ([\d.]+), green: ([\d.]+), red: ([\d.]+)}/,
                 "flashRed: $4, flashGreen: $3, flashBlue: $2, flashAlpha: $1",
               );
             const frameIndex = Number.parseInt(/frame: (\d+)/.exec(timingData)![1]); // TODO: is the bang correct?

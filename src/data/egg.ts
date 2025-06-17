@@ -175,7 +175,7 @@ export class Egg {
 
       this._sourceType = eggOptions?.sourceType ?? undefined;
       this._hatchWaves = eggOptions?.hatchWaves ?? this.getEggTierDefaultHatchWaves();
-      this._timestamp = eggOptions?.timestamp ?? new Date().getTime();
+      this._timestamp = eggOptions?.timestamp ?? Date.now();
 
       // First roll shiny and variant so we can filter if species with an variant exist
       this._isShiny = eggOptions?.isShiny ?? (Overrides.EGG_SHINY_OVERRIDE || this.rollShiny());
@@ -255,7 +255,7 @@ export class Egg {
 
       // Sets the hidden ability if a hidden ability exists and
       // the override is set or the egg hits the chance
-      let abilityIndex: number | undefined = undefined;
+      let abilityIndex: number | undefined;
       const sameSpeciesEggHACheck =
         this._sourceType === EggSourceType.SAME_SPECIES_EGG && !randSeedInt(SAME_SPECIES_EGG_HA_RATE);
       const gachaEggHACheck = !(this._sourceType === EggSourceType.SAME_SPECIES_EGG) && !randSeedInt(GACHA_EGG_HA_RATE);

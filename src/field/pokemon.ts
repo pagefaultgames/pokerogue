@@ -898,12 +898,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getSpriteAtlasPath(ignoreOverride?: boolean): string {
-    const spriteId = this.getSpriteId(ignoreOverride).replace(/\_{2}/g, "/");
+    const spriteId = this.getSpriteId(ignoreOverride).replace(/_{2}/g, "/");
     return `${/_[1-3]$/.test(spriteId) ? "variant/" : ""}${spriteId}`;
   }
 
   getBattleSpriteAtlasPath(back?: boolean, ignoreOverride?: boolean): string {
-    const spriteId = this.getBattleSpriteId(back, ignoreOverride).replace(/\_{2}/g, "/");
+    const spriteId = this.getBattleSpriteId(back, ignoreOverride).replace(/_{2}/g, "/");
     return `${/_[1-3]$/.test(spriteId) ? "variant/" : ""}${spriteId}`;
   }
 
@@ -977,7 +977,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getFusionBattleSpriteAtlasPath(back?: boolean, ignoreOverride?: boolean): string {
-    return this.getFusionBattleSpriteId(back, ignoreOverride).replace(/\_{2}/g, "/");
+    return this.getFusionBattleSpriteId(back, ignoreOverride).replace(/_{2}/g, "/");
   }
 
   getIconAtlasKey(ignoreOverride = false, useIllusion = true): string {
@@ -2905,7 +2905,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           );
         };
 
-    let fusionOverride: PokemonSpecies | undefined = undefined;
+    let fusionOverride: PokemonSpecies | undefined;
 
     if (forStarter && this.isPlayer() && Overrides.STARTER_FUSION_SPECIES_OVERRIDE) {
       fusionOverride = getPokemonSpecies(Overrides.STARTER_FUSION_SPECIES_OVERRIDE);

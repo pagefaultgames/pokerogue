@@ -335,7 +335,7 @@ export class TrainerConfig {
     if (doubleEncounterBgm) {
       this.doubleEncounterBgm =
         typeof doubleEncounterBgm === "number"
-          ? TrainerType[doubleEncounterBgm].toString().replace(/\_/g, " ").toLowerCase()
+          ? TrainerType[doubleEncounterBgm].toString().replace(/_/g, " ").toLowerCase()
           : doubleEncounterBgm;
     }
     return this;
