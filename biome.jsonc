@@ -48,7 +48,11 @@
         "noUnusedVariables": "error",
         "noSwitchDeclarations": "error",
         "noVoidTypeReturn": "error",
-        "noUnusedImports": "error"
+        "noUnusedImports": {
+          "level": "error",
+          "fix": "safe"
+        },
+        "noUnusedFunctionParameters": "error"
       },
       "style": {
         "useEnumInitializers": "off", // large enums like Moves/Species would make this cumbersome
@@ -104,7 +108,8 @@
         "noBannedTypes": "warn" // TODO: Refactor and make this an error
       },
       "performance": {
-        "noNamespaceImport": "error"
+        "noNamespaceImport": "error",
+        "noDelete": "error"
       }
     }
   },

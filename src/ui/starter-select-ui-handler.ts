@@ -2822,7 +2822,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     iconElement: GameObjects.Sprite,
     controlLabel: GameObjects.Text,
   ): void {
-    // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
     let iconPath: string;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
