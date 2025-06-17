@@ -274,7 +274,7 @@ describe("Abilities - Unburden", () => {
     const initialTreeckoSpeed = treecko.getStat(Stat.SPD);
     const initialPurrloinSpeed = purrloin.getStat(Stat.SPD);
     const unburdenAttr = treecko.getAbilityAttrs("PostItemLostAbAttr")[0];
-    vi.spyOn(unburdenAttr, "applyPostItemLost");
+    vi.spyOn(unburdenAttr, "apply");
 
     // Player uses Baton Pass, which also passes the Baton item
     game.move.select(MoveId.BATON_PASS);
