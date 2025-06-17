@@ -4714,17 +4714,12 @@ export class MoodyAbAttr extends PostTurnAbAttr {
   }
   /**
    * Randomly increases one stat stage by 2 and decreases a different stat stage by 1
-   * @param {Pokemon} pokemon Pokemon that has this ability
-   * @param _passive N/A
-   * @param simulated true if applying in a simulated call.
-   * @param _args N/A
-   *
    * Any stat stages at +6 or -6 are excluded from being increased or decreased, respectively
    * If the pokemon already has all stat stages raised to 6, it will only decrease one stat stage by 1
    * If the pokemon already has all stat stages lowered to -6, it will only increase one stat stage by 2
    */
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    if (!simulated) {
+    if (simulated) {
       return;
     }
     const canRaise = EFFECTIVE_STATS.filter(s => pokemon.getStatStage(s) < 6);
