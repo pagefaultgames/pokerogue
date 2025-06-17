@@ -3,7 +3,7 @@ import type { BiomeTierTrainerPools, PokemonPools } from "#app/data/balance/biom
 import { biomePokemonPools, BiomePoolTier, biomeTrainerPools } from "#app/data/balance/biomes";
 import { randSeedInt, NumberHolder, isNullOrUndefined, type Constructor } from "#app/utils/common";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import {
   getWeatherClearMessage,
   getWeatherStartMessage,
@@ -762,6 +762,9 @@ export class Arena {
           t => t instanceof tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side),
         );
   }
+
+  // TODO: Add an overload similar to `Array.prototype.find` if the predicate func is of the form
+  // `(x): x is T`
 
   /**
    * Uses {@linkcode findTagsOnSide} to filter (using the parameter function) for specific tags that apply to both sides

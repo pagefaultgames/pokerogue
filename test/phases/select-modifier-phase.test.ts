@@ -1,5 +1,5 @@
 import type BattleScene from "#app/battle-scene";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { ModifierTier } from "#enums/modifier-tier";
 import type { CustomModifierSettings } from "#app/modifier/modifier-type";
@@ -42,8 +42,6 @@ describe("SelectModifierPhase", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-
-    vi.clearAllMocks();
   });
 
   it("should start a select modifier phase", async () => {

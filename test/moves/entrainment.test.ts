@@ -26,7 +26,7 @@ describe("Moves - Entrainment", () => {
       .moveset([MoveId.SPLASH, MoveId.ENTRAINMENT])
       .ability(AbilityId.ADAPTABILITY)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
