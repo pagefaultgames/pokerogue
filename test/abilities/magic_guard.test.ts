@@ -135,18 +135,18 @@ describe("AbilityId - Magic Guard", () => {
 
     // NB: Burn applies directly to the physical dmg formula, so we can't just check attack here
     game.move.use(MoveId.TACKLE);
-    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.SIZZLY_SLIDE);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     const magikarp = game.field.getPlayerPokemon();
     expect(magikarp.hp).toBe(magikarp.getMaxHp());
+    expect(magikarp.status?.effect).toBe(StatusEffect.BURN);
 
     const blissey = game.field.getEnemyPokemon();
     const prevDmg = blissey.getInverseHp();
     blissey.hp = blissey.getMaxHp();
 
-    magikarp.trySetStatus(StatusEffect.BURN, false, null, 0, null, true);
-    expect(magikarp.status?.effect).toBe(StatusEffect.BURN);
     expect(getStatusEffectCatchRateMultiplier(magikarp.status!.effect)).toBe(1.5);
 
     game.move.use(MoveId.TACKLE);
