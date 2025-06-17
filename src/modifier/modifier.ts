@@ -1166,6 +1166,41 @@ export class ExpBalanceModifier extends PersistentModifier {
   }
 }
 
+export class MoneyRewardModifier extends ConsumableModifier {
+  private moneyMultiplier: number;
+
+  constructor(type: ModifierType, moneyMultiplier: number) {
+    super(type);
+
+    this.moneyMultiplier = moneyMultiplier;
+  }
+
+  /**
+   * Applies {@linkcode MoneyRewardModifier}
+   * @returns always `true`
+   */
+  override apply(): boolean {
+    const moneyAmount = new NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
+
+    globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
+
+    globalScene.addMoney(moneyAmount.value);
+
+    globalScene.getPlayerParty().map(p => {
+      if (p.species?.speciesId === SpeciesId.GIMMIGHOUL || p.fusionSpecies?.speciesId === SpeciesId.GIMMIGHOUL) {
+        const factor = Math.min(Math.floor(this.moneyMultiplier), 3);
+        const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(
+          p,
+          factor,
+        ) as EvoTrackerModifier;
+        globalScene.addModifier(modifier);
+      }
+    });
+
+    return true;
+  }
+}
+
 export class MoneyMultiplierModifier extends PersistentModifier {
   match(modifier: Modifier): boolean {
     return modifier instanceof MoneyMultiplierModifier;

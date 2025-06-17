@@ -2605,10 +2605,6 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
 
     const stolenItem = heldItems[user.randBattleSeedInt(heldItems.length)];
   
-//    const poolType = target.isPlayer() ? ModifierPoolType.PLAYER : target.hasTrainer() ? ModifierPoolType.TRAINER : ModifierPoolType.WILD;
-//    const highestItemTier = heldItems.map((m) => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier!, highestTier), 0); // TODO: is the bang after tier correct?
-//    const tierHeldItems = heldItems.filter((m) => m.type.getOrInferTier(poolType) === highestItemTier);
-//    const stolenItem = tierHeldItems[user.randBattleSeedInt(tierHeldItems.length)];
     if (!globalScene.tryTransferHeldItem(stolenItem, target, user, false)) {
       return false;
     }

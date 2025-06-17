@@ -10,7 +10,7 @@ import { FormChangeItem } from "#enums/form-change-item";
 import { formChangeItemName } from "#app/data/pokemon-forms";
 import { getStatusEffectDescriptor } from "#app/data/status-effect";
 import { PokemonType } from "#enums/pokemon-type";
-import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -43,7 +43,6 @@ import {
   MegaEvolutionAccessModifier,
   MoneyInterestModifier,
   MoneyMultiplierModifier,
-  MoneyRewardModifier,
   MultipleParticipantExpBonusModifier,
   PokemonAllMovePpRestoreModifier,
   PokemonHpRestoreModifier,
@@ -65,6 +64,7 @@ import {
   type PersistentModifier,
   TempExtraModifierModifier,
   CriticalCatchChanceBoosterModifier,
+  MoneyRewardModifier,
 } from "#app/modifier/modifier";
 import { ModifierTier } from "#enums/modifier-tier";
 import Overrides from "#app/overrides";
@@ -103,9 +103,7 @@ import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { getModifierPoolForType } from "#app/utils/modifier-utils";
 import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
 import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeldItem } from "#app/items/held-item-pool";
-
-const outputModifierData = false;
-const useMaxWeightForOutput = false;
+import { berryTypeToHeldItem } from "#app/items/held-items/berry";
 
 type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier | null;
 
@@ -159,43 +157,6 @@ export class ModifierType {
 
   setTier(tier: ModifierTier): void {
     this.tier = tier;
-  }
-
-  getOrInferTier(poolType: ModifierPoolType = ModifierPoolType.PLAYER): ModifierTier | null {
-    if (this.tier) {
-      return this.tier;
-    }
-    if (!this.id) {
-      return null;
-    }
-    let poolTypes: ModifierPoolType[];
-    switch (poolType) {
-      case ModifierPoolType.PLAYER:
-        poolTypes = [poolType, ModifierPoolType.TRAINER, ModifierPoolType.WILD];
-        break;
-      case ModifierPoolType.WILD:
-        poolTypes = [poolType, ModifierPoolType.PLAYER, ModifierPoolType.TRAINER];
-        break;
-      case ModifierPoolType.TRAINER:
-        poolTypes = [poolType, ModifierPoolType.PLAYER, ModifierPoolType.WILD];
-        break;
-      default:
-        poolTypes = [poolType];
-        break;
-    }
-    // Try multiple pool types in case of stolen items
-    for (const type of poolTypes) {
-      const pool = getModifierPoolForType(type);
-      for (const tier of getEnumValues(ModifierTier)) {
-        if (!pool.hasOwnProperty(tier)) {
-          continue;
-        }
-        if (pool[tier].find(m => (m as WeightedModifierType).modifierType.id === this.id)) {
-          return (this.tier = tier);
-        }
-      }
-    }
-    return null;
   }
 
   /**
@@ -770,7 +731,8 @@ class BerryRewardGenerator extends ModifierTypeGenerator {
   constructor() {
     super((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in BerryType) {
-        return new BerryReward(pregenArgs[0] as BerryType);
+        const item = berryTypeToHeldItem[pregenArgs[0] as BerryType];
+        return new HeldItemReward(item);
       }
       const item = getNewBerryHeldItem();
       return new HeldItemReward(item);
@@ -1908,19 +1870,10 @@ export interface ModifierPool {
 let modifierPoolThresholds = {};
 let ignoredPoolIndexes = {};
 
-let dailyStarterModifierPoolThresholds = {};
-// biome-ignore lint/correctness/noUnusedVariables: TODO explain why this is marked as OK
-let ignoredDailyStarterPoolIndexes = {};
-
-let enemyModifierPoolThresholds = {};
-// biome-ignore lint/correctness/noUnusedVariables: TODO explain why this is marked as OK
-let enemyIgnoredPoolIndexes = {};
-
 let enemyBuffModifierPoolThresholds = {};
 // biome-ignore lint/correctness/noUnusedVariables: TODO explain why this is marked as OK
 let enemyBuffIgnoredPoolIndexes = {};
 
-const tierWeights = [768 / 1024, 195 / 1024, 48 / 1024, 12 / 1024, 1 / 1024];
 /**
  * Allows a unit test to check if an item exists in the Modifier Pool. Checks the pool directly, rather than attempting to reroll for the item.
  */
@@ -1933,14 +1886,12 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
   });
 
   const ignoredIndexes = {};
-  const modifierTableData = {};
   const thresholds = Object.fromEntries(
     new Map(
       Object.keys(pool).map(t => {
         ignoredIndexes[t] = [];
         const thresholds = new Map();
         const tierModifierIds: string[] = [];
-        let tierMaxWeight = 0;
         let i = 0;
         pool[t].reduce((total: number, modifierType: WeightedModifierType) => {
           const weightedModifierType = modifierType as WeightedModifierType;
@@ -1965,14 +1916,6 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
           if (weightedModifierType.maxWeight) {
             const modifierId = weightedModifierType.modifierType.id;
             tierModifierIds.push(modifierId);
-            const outputWeight = useMaxWeightForOutput ? weightedModifierType.maxWeight : weight;
-            modifierTableData[modifierId] = {
-              weight: outputWeight,
-              tier: Number.parseInt(t),
-              tierPercent: 0,
-              totalPercent: 0,
-            };
-            tierMaxWeight += outputWeight;
           }
           if (weight) {
             total += weight;
@@ -1986,38 +1929,18 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
           thresholds.set(total, i++);
           return total;
         }, 0);
-        for (const id of tierModifierIds) {
-          modifierTableData[id].tierPercent = Math.floor((modifierTableData[id].weight / tierMaxWeight) * 10000) / 100;
-        }
         return [t, Object.fromEntries(thresholds)];
       }),
     ),
   );
-  for (const id of Object.keys(modifierTableData)) {
-    modifierTableData[id].totalPercent =
-      Math.floor(modifierTableData[id].tierPercent * tierWeights[modifierTableData[id].tier] * 100) / 100;
-    modifierTableData[id].tier = ModifierTier[modifierTableData[id].tier];
-  }
-  if (outputModifierData) {
-    console.table(modifierTableData);
-  }
   switch (poolType) {
     case ModifierPoolType.PLAYER:
       modifierPoolThresholds = thresholds;
       ignoredPoolIndexes = ignoredIndexes;
       break;
-    case ModifierPoolType.WILD:
-    case ModifierPoolType.TRAINER:
-      enemyModifierPoolThresholds = thresholds;
-      enemyIgnoredPoolIndexes = ignoredIndexes;
-      break;
     case ModifierPoolType.ENEMY_BUFF:
       enemyBuffModifierPoolThresholds = thresholds;
       enemyBuffIgnoredPoolIndexes = ignoredIndexes;
-      break;
-    case ModifierPoolType.DAILY_STARTER:
-      dailyStarterModifierPoolThresholds = thresholds;
-      ignoredDailyStarterPoolIndexes = ignoredIndexes;
       break;
   }
 }
@@ -2253,58 +2176,6 @@ export function getEnemyBuffModifierForWave(
   return modifier;
 }
 
-// TODO: Add proper documentation to this function (once it fully works...)
-export function getEnemyHeldItemsForWave(
-  waveIndex: number,
-  count: number,
-  party: EnemyPokemon[],
-  poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER,
-  upgradeChance = 0,
-): HeldItemId[] {
-  const ret = new Array(count).fill(0).map(() => {
-    const reward = getNewModifierTypeOption(
-      party,
-      poolType,
-      undefined,
-      upgradeChance && !randSeedInt(upgradeChance) ? 1 : 0,
-    )?.type as HeldItemReward;
-    return reward.itemId;
-  });
-  if (!(waveIndex % 1000)) {
-    ret.push(HeldItemId.MINI_BLACK_HOLE);
-  }
-  return ret;
-}
-
-export function getDailyRunStarterModifiers(party: PlayerPokemon[]): PokemonHeldItemModifier[] {
-  const ret: PokemonHeldItemModifier[] = [];
-  for (const p of party) {
-    for (let m = 0; m < 3; m++) {
-      const tierValue = randSeedInt(64);
-
-      let tier: ModifierTier;
-      if (tierValue > 25) {
-        tier = ModifierTier.COMMON;
-      } else if (tierValue > 12) {
-        tier = ModifierTier.GREAT;
-      } else if (tierValue > 4) {
-        tier = ModifierTier.ULTRA;
-      } else if (tierValue) {
-        tier = ModifierTier.ROGUE;
-      } else {
-        tier = ModifierTier.MASTER;
-      }
-
-      const modifier = getNewModifierTypeOption(party, ModifierPoolType.DAILY_STARTER, tier)?.type?.newModifier(
-        p,
-      ) as PokemonHeldItemModifier;
-      ret.push(modifier);
-    }
-  }
-
-  return ret;
-}
-
 /**
  * Generates a ModifierType from the specified pool
  * @param party party of the trainer using the item
@@ -2369,17 +2240,8 @@ function getPoolThresholds(poolType: ModifierPoolType) {
     case ModifierPoolType.PLAYER:
       thresholds = modifierPoolThresholds;
       break;
-    case ModifierPoolType.WILD:
-      thresholds = enemyModifierPoolThresholds;
-      break;
-    case ModifierPoolType.TRAINER:
-      thresholds = enemyModifierPoolThresholds;
-      break;
     case ModifierPoolType.ENEMY_BUFF:
       thresholds = enemyBuffModifierPoolThresholds;
-      break;
-    case ModifierPoolType.DAILY_STARTER:
-      thresholds = dailyStarterModifierPoolThresholds;
       break;
   }
   return thresholds;
@@ -2531,7 +2393,6 @@ export function initModifierTypes() {
 // For now, doing the minimal work until the modifier rework lands.
 const ModifierTypeConstructorMap = Object.freeze({
   ModifierTypeGenerator,
-  PokemonHeldItemModifierType,
 });
 
 /**
