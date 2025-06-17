@@ -1049,13 +1049,21 @@ export default class PartyUiHandler extends MessageUiHandler {
       case Button.UP:
         if (this.cursor === 1) {
           if (this.isItemManageMode()) {
-            success = this.setCursor(7);
+            if (globalScene.currentBattle.double === false) {
+              success = this.setCursor(7);
+            } else {
+              success = this.setCursor(0);
+            }
             break;
           }
         }
         if (this.cursor === 7) {
           if (this.isItemManageMode()) {
-            success = this.setCursor(0);
+            if (globalScene.currentBattle.double === true) {
+              success = this.setCursor(this.cursor ? (this.cursor - 2 < 6 ? 1 : slotCount - 1) : 6);
+            } else {
+              success = this.setCursor(0);
+            }
             break;
           }
         }
@@ -1064,13 +1072,27 @@ export default class PartyUiHandler extends MessageUiHandler {
       case Button.DOWN:
         if (this.cursor === 0) {
           if (this.isItemManageMode()) {
-            success = this.setCursor(7);
-            break;
+            if (globalScene.currentBattle.double === false) {
+              success = this.setCursor(7);
+              break;
+            }
+          }
+        }
+        if (this.cursor === 1) {
+          if (this.isItemManageMode()) {
+            if (globalScene.currentBattle.double === true) {
+              success = this.setCursor(7);
+              break;
+            }
           }
         }
         if (this.cursor === 7) {
           if (this.isItemManageMode()) {
-            success = this.setCursor(1);
+            if (globalScene.currentBattle.double === false) {
+              success = this.setCursor(this.cursor - 2 < 6 ? (this.cursor - 2 < slotCount - 1 ? 1 : 6) : 0);
+            } else {
+              success = this.setCursor(this.cursor - 2 < 6 ? (this.cursor - 2 < slotCount - 1 ? 2 : 6) : 0);
+            }
             break;
           }
         }
@@ -1765,7 +1787,7 @@ class PartySlot extends Phaser.GameObjects.Container {
         ? -184 +
             (globalScene.currentBattle.double ? -40 : 0) +
             (28 + (globalScene.currentBattle.double ? 8 : 0)) * slotIndex
-        : -124 + (globalScene.currentBattle.double ? -20 : 0) + slotIndex * 76,
+        : -124 + (globalScene.currentBattle.double ? -20 : 0) + slotIndex * 55,
     );
 
     this.slotIndex = slotIndex;
@@ -2128,7 +2150,7 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
         this.textBox.setText(i18next.t("partyUiHandler:TRANSFER"));
         this.setPosition(
           globalScene.currentBattle.double ? 64 : 60,
-          globalScene.currentBattle.double ? -106 : -globalScene.game.canvas.height / 15 - 1,
+          globalScene.currentBattle.double ? -48 : -globalScene.game.canvas.height / 15 - 1,
         );
         this.transferIcon.displayWidth = this.textBox.text.length * 9 + 3;
         break;
@@ -2139,7 +2161,7 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
         this.textBox.setText("Discard");
         this.setPosition(
           globalScene.currentBattle.double ? 64 : 60,
-          globalScene.currentBattle.double ? -106 : -globalScene.game.canvas.height / 15 - 1,
+          globalScene.currentBattle.double ? -48 : -globalScene.game.canvas.height / 15 - 1,
         );
         this.discardIcon.displayWidth = this.textBox.text.length * 9 + 3;
         break;
