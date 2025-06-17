@@ -76,12 +76,7 @@ describe("Moves - Baton Pass", () => {
     expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.SPATK)).toEqual(2);
     // confirm that a switch actually happened. can't use species because I
     // can't find a way to override trainer parties with more than 1 pokemon species
-    expect(game.phaseInterceptor.log.slice(-4)).toEqual([
-      "MoveEffectPhase",
-      "SwitchSummonPhase",
-      "SummonPhase",
-      "PostSummonPhase",
-    ]);
+    expect(game.scene.getEnemyPokemon()?.summonData.moveHistory.length).toEqual(0);
   });
 
   it("doesn't transfer effects that aren't transferrable", async () => {
