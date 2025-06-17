@@ -4682,7 +4682,7 @@ export class CudChewConsumeBerryAbAttr extends PostTurnAbAttr {
     }
 
     // uncomment to make cheek pouch work with cud chew
-    // applyAbAttrs("HealFromBerryUseAbAttr", pokemon, new BooleanHolder(false));
+    // applyAbAttrs("HealFromBerryUseAbAttr", {pokemon});
   }
 }
 
