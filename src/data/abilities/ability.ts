@@ -4352,6 +4352,7 @@ export class PostWeatherChangeAddBattlerTagAttr extends PostWeatherChangeAbAttr 
   }
 }
 
+export type PostWeatherLapseAbAttrParams = Omit<PreWeatherEffectAbAttrParams, "cancelled">;
 export class PostWeatherLapseAbAttr extends AbAttr {
   protected weatherTypes: WeatherType[];
 
@@ -4361,11 +4362,11 @@ export class PostWeatherLapseAbAttr extends AbAttr {
     this.weatherTypes = weatherTypes;
   }
 
-  canApply(_params: Closed<PreWeatherEffectAbAttrParams>): boolean {
+  canApply(_params: Closed<PostWeatherLapseAbAttrParams>): boolean {
     return true;
   }
 
-  apply(_params: Closed<PreWeatherEffectAbAttrParams>): void {}
+  apply(_params: Closed<PostWeatherLapseAbAttrParams>): void {}
 
   getCondition(): AbAttrCondition {
     return getWeatherCondition(...this.weatherTypes);
@@ -4381,11 +4382,11 @@ export class PostWeatherLapseHealAbAttr extends PostWeatherLapseAbAttr {
     this.healFactor = healFactor;
   }
 
-  override canApply({ pokemon }: AbAttrBaseParams): boolean {
+  override canApply({ pokemon }: PostWeatherLapseAbAttrParams): boolean {
     return !pokemon.isFullHp();
   }
 
-  override apply({ pokemon, passive, simulated }: PreWeatherEffectAbAttrParams): void {
+  override apply({ pokemon, passive, simulated }: PostWeatherLapseAbAttrParams): void {
     const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
     if (!simulated) {
       globalScene.phaseManager.unshiftNew(
@@ -4411,11 +4412,11 @@ export class PostWeatherLapseDamageAbAttr extends PostWeatherLapseAbAttr {
     this.damageFactor = damageFactor;
   }
 
-  override canApply({ pokemon }: PreWeatherEffectAbAttrParams): boolean {
+  override canApply({ pokemon }: PostWeatherLapseAbAttrParams): boolean {
     return !pokemon.hasAbilityWithAttr("BlockNonDirectDamageAbAttr");
   }
 
-  override apply({ simulated, pokemon, passive }: PreWeatherEffectAbAttrParams): void {
+  override apply({ simulated, pokemon, passive }: PostWeatherLapseAbAttrParams): void {
     if (!simulated) {
       const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
       globalScene.phaseManager.queueMessage(
