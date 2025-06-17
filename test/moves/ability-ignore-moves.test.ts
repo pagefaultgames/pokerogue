@@ -25,7 +25,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([MoveId.MOONGEIST_BEAM, MoveId.SUNSTEEL_STRIKE, MoveId.PHOTON_GEYSER, MoveId.METRONOME])
-      .ability(AbilityId.STURDY)
+      .ability(AbilityId.BALL_FETCH)
       .startingLevel(200)
       .battleStyle("single")
       .criticalHits(false)
@@ -50,7 +50,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
     expect(game.scene.arena.ignoreAbilities).toBe(true);
     expect(game.scene.arena.ignoringEffectSource).toBe(player.getBattlerIndex());
 
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.toEndOfTurn();
     expect(game.scene.arena.ignoreAbilities).toBe(false);
     expect(enemy.isFainted()).toBe(true);
   });
@@ -64,7 +64,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
     await game.toEndOfTurn();
 
     expect(enemy.isFainted()).toBe(false);
-    expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0].move).toBe(MoveId.PHOTON_GEYSER);
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0].move).toBe(MoveId.PHOTON_GEYSER);
   });
 
   it("should not ignore enemy abilities when called by Mirror Move", async () => {
