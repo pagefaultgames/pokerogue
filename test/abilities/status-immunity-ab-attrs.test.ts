@@ -38,7 +38,7 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
     game.override
       .battleStyle("single")
       .criticalHits(false)
-      .startingLevel(100)
+      .enemyLevel(100)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(ability)
       .enemyMoveset(MoveId.SPLASH);
@@ -71,7 +71,8 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
     feebas.doSetStatus(status);
     expect(feebas.status?.effect).toBe(status);
 
-    game.move.use(MoveId.SKILL_SWAP);
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.SKILL_SWAP); // need to force enemy to use it as
     await game.toEndOfTurn();
 
     expect(feebas.status?.effect).toBeUndefined();

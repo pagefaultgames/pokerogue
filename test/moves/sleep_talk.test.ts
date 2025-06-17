@@ -7,6 +7,7 @@ import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 describe("Moves - Sleep Talk", () => {
   let phaserGame: Phaser.Game;
@@ -49,12 +50,12 @@ describe("Moves - Sleep Talk", () => {
       expect.objectContaining({
         move: MoveId.SWORDS_DANCE,
         result: MoveResult.SUCCESS,
-        virtual: true,
+        useMode: MoveUseMode.FOLLOW_UP,
       }),
       expect.objectContaining({
         move: MoveId.SLEEP_TALK,
         result: MoveResult.SUCCESS,
-        virtual: false,
+        useMode: MoveUseMode.NORMAL,
       }),
     ]);
   });
