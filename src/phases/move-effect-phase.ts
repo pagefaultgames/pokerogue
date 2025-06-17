@@ -821,7 +821,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param effectiveness - The effectiveness of the move against the target
    */
   protected applyMoveDamage(user: Pokemon, target: Pokemon, effectiveness: TypeDamageMultiplier): HitResult {
-    const isCritical = target.getCriticalHitResult(user, this.move, false);
+    const isCritical = target.getCriticalHitResult(user, this.move);
 
     /*
      * Apply stat changes from {@linkcode move} and gives it to {@linkcode source}

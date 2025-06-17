@@ -16,8 +16,9 @@ export class DailyModeHelper extends GameManagerHelper {
   /**
    * Runs the daily game to the summon phase.
    * @returns A promise that resolves when the summon phase is reached.
+   * @remarks Please do not use for starting normal battles - use {@linkcode startBattle} instead
    */
-  async runToSummon() {
+  async runToSummon(): Promise<void> {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -45,7 +46,7 @@ export class DailyModeHelper extends GameManagerHelper {
    * Transitions to the start of a battle.
    * @returns A promise that resolves when the battle is started.
    */
-  async startBattle() {
+  async startBattle(): Promise<void> {
     await this.runToSummon();
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {

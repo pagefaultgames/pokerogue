@@ -48,7 +48,7 @@ async function promptTestType() {
     {
       type: "list",
       name: "selectedOption",
-      message: "What type of test would you like to create:",
+      message: "What type of test would you like to create?",
       choices: [...choices.map(choice => ({ name: choice.label, value: choice })), "EXIT"],
     },
   ]);

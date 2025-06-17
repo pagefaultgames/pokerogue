@@ -24,7 +24,7 @@ import { MoveId } from "#enums/move-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { AiType } from "#enums/ai-type";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { BerryType } from "#enums/berry-type";

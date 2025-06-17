@@ -33,7 +33,7 @@ describe("Abilities - Good As Gold", () => {
       .moveset([MoveId.SPLASH])
       .ability(AbilityId.GOOD_AS_GOLD)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);

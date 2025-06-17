@@ -25,7 +25,7 @@ describe("Moves - Lash Out", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.FUR_COAT)
       .enemyMoveset([MoveId.GROWL])
