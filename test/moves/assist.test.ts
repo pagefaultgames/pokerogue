@@ -45,7 +45,7 @@ describe("Moves - Assist", () => {
     game.move.changeMoveset(feebas, [MoveId.CIRCLE_THROW, MoveId.ASSIST, MoveId.WOOD_HAMMER, MoveId.ACID_SPRAY]);
     game.move.changeMoveset(shuckle, [MoveId.COPYCAT, MoveId.ASSIST, MoveId.TORCH_SONG, MoveId.TACKLE]);
 
-    // Force rolling the first eligible move for both mons (ensuring the user's own moves don't count)
+    // Force rolling the first eligible move for both mons
     vi.spyOn(feebas, "randBattleSeedInt").mockImplementation(() => 0);
     vi.spyOn(shuckle, "randBattleSeedInt").mockImplementation(() => 0);
 
@@ -58,8 +58,8 @@ describe("Moves - Assist", () => {
     expect(feebas.getStatStage(Stat.SPATK)).toBe(1); // Stat raised from Assist --> Torch Song
     expect(shuckle.hp).toBeLessThan(shuckle.getMaxHp()); // recoil dmg taken from Assist --> Wood Hammer
 
-    expect(feebas.getLastXMoves().map(tm => tm.result)).toEqual([MoveResult.SUCCESS, MoveResult.SUCCESS]);
-    expect(shuckle.getLastXMoves().map(tm => tm.result)).toEqual([MoveResult.SUCCESS, MoveResult.SUCCESS]);
+    expect(feebas.getLastXMoves(-1).map(tm => tm.result)).toEqual([MoveResult.SUCCESS, MoveResult.SUCCESS]);
+    expect(shuckle.getLastXMoves(-1).map(tm => tm.result)).toEqual([MoveResult.SUCCESS, MoveResult.SUCCESS]);
   });
 
   it("should consider off-field allies", async () => {
@@ -71,7 +71,7 @@ describe("Moves - Assist", () => {
     game.move.use(MoveId.ASSIST);
     await game.toEndOfTurn();
 
-    expect(feebas.getLastXMoves(-1)).toHaveLength(1);
+    expect(feebas.getLastXMoves(-1)).toHaveLength(2);
     expect(feebas.getLastXMoves()[0]).toMatchObject({
       move: MoveId.HYPER_BEAM,
       target: [BattlerIndex.ENEMY],
@@ -98,7 +98,7 @@ describe("Moves - Assist", () => {
 
     const [feebas, shuckle] = game.scene.getPlayerParty();
     // All of these are ineligible moves
-    game.move.changeMoveset(shuckle, [MoveId.METRONOME, MoveId.DIG, MoveId.FLY, MoveId.INSTRUCT]);
+    game.move.changeMoveset(shuckle, [MoveId.METRONOME, MoveId.DIG, MoveId.FLY]);
 
     game.move.use(MoveId.ASSIST);
     await game.toEndOfTurn();

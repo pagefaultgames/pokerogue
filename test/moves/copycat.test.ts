@@ -3,7 +3,6 @@ import { RandomMoveAttr } from "#app/data/moves/move";
 import { Stat } from "#app/enums/stat";
 import { MoveResult } from "#enums/move-result";
 import { AbilityId } from "#enums/ability-id";
-import { MoveUseMode } from "#enums/move-use-mode";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -40,10 +39,13 @@ describe("Moves - Copycat", () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.select(MoveId.SWORDS_DANCE);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     game.move.select(MoveId.COPYCAT); // Last successful move should be Swords Dance
     await game.move.forceEnemyMove(MoveId.SUCKER_PUNCH);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     const player = game.field.getPlayerPokemon();
