@@ -139,10 +139,10 @@
         "noAwaitInLoop": "warn",
         "useJsonImportAttribute": "off", // "Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'. ts(2823)"
         "useIndexOf": "error",
-        "useObjectSpread": "info",
+        "useObjectSpread": "error",
         "useNumericSeparators": "off", // TODO: enable?
-        "useIterableCallbackReturn": "warn",
-        "noShadow": "warn"
+        "useIterableCallbackReturn": "warn", // TODO: refactor and make "error"
+        "noShadow": "warn" // TODO: refactor and make "error"
       }
     }
   },
