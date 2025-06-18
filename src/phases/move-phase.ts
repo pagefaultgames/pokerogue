@@ -243,10 +243,7 @@ export class MovePhase extends BattlePhase {
           !!this.move
             .getMove()
             .findAttr(
-              attr =>
-                attr.is("HealStatusEffectAttr") &&
-                attr.selfTarget &&
-                (attr as unknown as HealStatusEffectAttr).isOfEffect(StatusEffect.FREEZE),
+              attr => attr.is("HealStatusEffectAttr") && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE),
             ) ||
           (!this.pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true) ||
           Overrides.STATUS_ACTIVATION_OVERRIDE === false;
