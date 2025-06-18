@@ -365,9 +365,8 @@ async function skipBattleToNextBattle(game: GameManager, isFinalBattle = false) 
     p.status = new Status(StatusEffect.FAINT);
     game.scene.field.remove(p);
   });
-  game.phaseInterceptor["onHold"] = [];
   game.scene.phaseManager.pushPhase(new VictoryPhase(0));
-  game.phaseInterceptor.superEndPhase();
+  game.phaseInterceptor.shiftPhase();
   if (isFinalBattle) {
     await game.phaseInterceptor.to("MysteryEncounterRewardsPhase");
   } else {

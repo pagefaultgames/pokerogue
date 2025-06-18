@@ -64,7 +64,9 @@ export default class PhaseInterceptor {
 
     // Mock the private startCurrentPhase method to do nothing to let us
     // handle starting phases manually in the `run` method.
-    vi.fn(this.scene.phaseManager["startCurrentPhase"]).mockImplementation(() => {});
+    vi.fn(this.scene.phaseManager["startCurrentPhase"]).mockImplementation(() => {
+      console.log("Did nothing!!!!");
+    });
   }
 
   /**

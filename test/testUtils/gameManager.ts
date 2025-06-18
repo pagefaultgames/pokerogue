@@ -36,7 +36,6 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import ErrorInterceptor from "#test/testUtils/errorInterceptor";
 import { generateStarter, waitUntil } from "#test/testUtils/gameManagerUtils";
 import GameWrapper from "#test/testUtils/gameWrapper";
 import { ChallengeModeHelper } from "#test/testUtils/helpers/challengeModeHelper";
@@ -83,7 +82,6 @@ export default class GameManager {
    */
   constructor(phaserGame: Phaser.Game, bypassLogin = true) {
     localStorage.clear();
-    ErrorInterceptor.getInstance().clear();
     BattleScene.prototype.randBattleSeedInt = (range, min = 0) => min + range - 1; // This simulates a max roll
     this.gameWrapper = new GameWrapper(phaserGame, bypassLogin);
 
@@ -268,7 +266,7 @@ export default class GameManager {
       true,
     );
 
-    await this.phaseInterceptor.run(EncounterPhase);
+    await this.phaseInterceptor.to("EncounterPhase");
     if (!isNullOrUndefined(encounterType)) {
       expect(this.scene.currentBattle?.mysteryEncounter?.encounterType).toBe(encounterType);
     }
@@ -500,7 +498,7 @@ export default class GameManager {
    * @param inPhase - Which phase to expect the selection to occur in. Defaults to `SwitchPhase`
    * (which is where the majority of non-command switch operations occur).
    */
-  doSelectPartyPokemon(slot: number, inPhase = "SwitchPhase") {
+  doSelectPartyPokemon(slot: number, inPhase: PhaseString = "SwitchPhase") {
     this.onNextPrompt(inPhase, UiMode.PARTY, () => {
       const partyHandler = this.scene.ui.getHandler() as PartyUiHandler;
 

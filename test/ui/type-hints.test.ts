@@ -45,7 +45,6 @@ describe("UI - Type Hints", () => {
       const { ui } = game.scene;
       const handler = ui.getHandler<FightUiHandler>();
       handler.processInput(Button.ACTION); // select "Fight"
-      game.phaseInterceptor.unlock();
     });
 
     game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
@@ -70,7 +69,6 @@ describe("UI - Type Hints", () => {
       const { ui } = game.scene;
       const handler = ui.getHandler<FightUiHandler>();
       handler.processInput(Button.ACTION); // select "Fight"
-      game.phaseInterceptor.unlock();
     });
 
     game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
@@ -106,7 +104,6 @@ describe("UI - Type Hints", () => {
       const { ui } = game.scene;
       const handler = ui.getHandler<FightUiHandler>();
       handler.processInput(Button.ACTION); // select "Fight"
-      game.phaseInterceptor.unlock();
     });
 
     game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
