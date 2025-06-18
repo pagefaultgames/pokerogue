@@ -3911,6 +3911,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     const target = this.getTarget(targets);
     const user = pokemon;
 
+    //Prevents Imposter from triggering on a transformed target or if the user is already transformed
     if (user?.getTag(BattlerTagType.TRANSFORM) || target?.getTag(BattlerTagType.TRANSFORM)) {
       return false;
     }
