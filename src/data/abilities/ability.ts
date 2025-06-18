@@ -1176,23 +1176,37 @@ export class ReverseDrainAbAttr extends PostDefendAbAttr {
   override canApplyPostDefend(
     _pokemon: Pokemon,
     _passive: boolean,
-    _simulated: boolean,
-    _attacker: Pokemon,
+    simulated: boolean,
+    attacker: Pokemon,
     move: Move,
     _hitResult: HitResult | null,
     _args: any[],
   ): boolean {
-    return move.hasAttr("HitHealAttr");
+    const cancelled = new BooleanHolder(false);
+    applyAbAttrs("BlockNonDirectDamageAbAttr", attacker, cancelled, simulated);
+    this.attacker = attacker;
+    return !cancelled.value && move.hasAttr("HitHealAttr");
   }
 
-  override applyPostDefend(pokemon: Pokemon, _passive: boolean, _simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult | null, _args: any[]): void {
-    const cancelled = new BooleanHolder(false);
-    applyAbAttrs("BlockNonDirectDamageAbAttr", attacker, cancelled);
-    if (!cancelled.value) {
-      const damageAmount = move.getAttrs<"HitHealAttr">("HitHealAttr")[0].getHealAmount(attacker, pokemon);
-      pokemon.turnData.damageTaken += damageAmount;
-      globalScene.phaseManager.unshiftNew("PokemonHealPhase", attacker.getBattlerIndex(), -damageAmount, null, false, true);
-    }
+  override applyPostDefend(
+    pokemon: Pokemon,
+    _passive: boolean,
+    _simulated: boolean,
+    attacker: Pokemon,
+    move: Move,
+    _hitResult: HitResult | null,
+    _args: any[],
+  ): void {
+    const damageAmount = move.getAttrs<"HitHealAttr">("HitHealAttr")[0].getHealAmount(attacker, pokemon);
+    pokemon.turnData.damageTaken += damageAmount;
+    globalScene.phaseManager.unshiftNew(
+      "PokemonHealPhase",
+      attacker.getBattlerIndex(),
+      -damageAmount,
+      null,
+      false,
+      true,
+    );
   }
 
   public override getTriggerMessage(_pokemon: Pokemon, _abilityName: string, ..._args: any[]): string | null {
