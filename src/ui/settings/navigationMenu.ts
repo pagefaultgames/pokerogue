@@ -105,7 +105,7 @@ export class NavigationManager {
 
 export default class NavigationMenu extends Phaser.GameObjects.Container {
   private navigationIcons: InputsIcons;
-  protected headerTitles: Phaser.GameObjects.Text[] = [] as Phaser.GameObjects.Text[];
+  protected headerTitles: Phaser.GameObjects.Text[] = [];
 
   /**
    * Creates an instance of NavigationMenu.
