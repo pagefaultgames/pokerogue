@@ -359,15 +359,11 @@ class AnimTimedUpdateBgEvent extends AnimTimedBgEvent {
       tweenProps["alpha"] = (this.opacity || 0) / 255;
     }
     if (Object.keys(tweenProps).length) {
-      globalScene.tweens.add(
-        Object.assign(
-          {
-            targets: moveAnim.bgSprite,
-            duration: getFrameMs(this.duration * 3),
-          },
-          tweenProps,
-        ),
-      );
+      globalScene.tweens.add({
+        targets: moveAnim.bgSprite,
+        duration: getFrameMs(this.duration * 3),
+        ...tweenProps,
+      });
     }
     return this.duration * 2;
   }
@@ -1641,12 +1637,12 @@ export async function populateAnims() {
     let props: string[];
     for (let p = 0; p < propSets.length; p++) {
       props = propSets[p];
-      // @ts-ignore TODO
+      // @ts-expect-error TODO
       const ai = props.indexOf(a.key);
       if (ai === -1) {
         continue;
       }
-      // @ts-ignore TODO
+      // @ts-expect-error TODO
       const bi = props.indexOf(b.key);
 
       return ai < bi ? -1 : ai > bi ? 1 : 0;

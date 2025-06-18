@@ -136,7 +136,7 @@
         "useJsonImportAttribute": "error",
         "useIndexOf": "warn",
         "useObjectSpread": "info",
-        "useNumericSeparators": "info",
+        "useNumericSeparators": "off", // TODO: enable?
         "useIterableCallbackReturn": "warn",
         "useSingleJsDocAsterisk": "warn",
         "noShadow": "warn"

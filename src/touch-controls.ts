@@ -42,7 +42,7 @@ export default class TouchControl {
     document.querySelectorAll(".apad-button").forEach(element => this.preventElementZoom(element as HTMLElement));
     // Select all elements with the 'data-key' attribute and bind keys to them
     for (const button of document.querySelectorAll("[data-key]")) {
-      // @ts-ignore - Bind the key to the button using the dataset key
+      // @ts-expect-error - Bind the key to the button using the dataset key
       this.bindKey(button, button.dataset.key);
     }
   }

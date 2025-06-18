@@ -1610,7 +1610,7 @@ export class GameData {
       }
     }
 
-    this.defaultDexData = Object.assign({}, data);
+    this.defaultDexData = { ...data };
     this.dexData = data;
   }
 
