@@ -11,12 +11,14 @@ export class CheckStatusEffectPhase extends Phase {
   }
 
   start() {
+    super.start();
+
     const field = globalScene.getField();
     for (const o of this.order) {
       if (field[o].status?.isPostTurn()) {
         globalScene.phaseManager.unshiftNew("PostTurnStatusEffectPhase", o);
       }
     }
-    this.end();
+    super.end();
   }
 }

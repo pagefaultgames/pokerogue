@@ -14,6 +14,8 @@ import { timedEventManager } from "#app/global-event-manager";
 export class TrainerVictoryPhase extends BattlePhase {
   public readonly phaseName = "TrainerVictoryPhase";
   start() {
+    super.start();
+
     globalScene.disableMenu = true;
 
     globalScene.playBgm(globalScene.currentBattle.trainer?.config.victoryBgm);

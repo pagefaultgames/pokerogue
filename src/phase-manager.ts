@@ -217,13 +217,28 @@ export type PhaseConstructorMap = typeof PHASES;
  * PhaseManager is responsible for managing the phases in the battle scene
  */
 export class PhaseManager {
-  /** PhaseQueue: dequeue/remove the first element to get the next phase */
+  /**
+   * A queue of yet-unexecuted {@linkcode Phase}s to be run. \
+   * Each time the current phase ends, all phases from {@linkcode phaseQueuePrepend} are added
+   * to the front of this queue and the next phase is started.
+   */
   public phaseQueue: Phase[] = [];
-  public conditionalQueue: Array<[() => boolean, Phase]> = [];
-  /** PhaseQueuePrepend: is a temp storage of what will be added to PhaseQueue */
+  /**
+   * A queue of yet-unexecuted {@linkcode Phase}s with conditions for their execution. \
+   * Each entry is evaluated whenever a new phase starts, being added to the {@linkcode phaseQueue} if the condition is satisfied.
+   *
+   */
+  public conditionalQueue: Array<[condition: () => boolean, phase: Phase]> = [];
+  /** A temporary storage of {@linkcode Phase}s */
   private phaseQueuePrepend: Phase[] = [];
 
-  /** overrides default of inserting phases to end of phaseQueuePrepend array. Useful for inserting Phases "out of order" */
+  /**
+   * If set, will cause subsequent calls to {@linkcode unshiftPhase} to insert at this index in **LIFO** order.
+   * Useful for inserting Phases "out of order".
+   *
+   * Is cleared whenever a phase ends, or when {@linkcode clearPhaseQueueSplice} is called.
+   * @defaultValue `-1`
+   */
   private phaseQueuePrependSpliceIndex = -1;
   private nextCommandPhaseQueue: Phase[] = [];
 
@@ -238,9 +253,14 @@ export class PhaseManager {
   constructor() {
     this.dynamicPhaseQueues = [new PostSummonPhasePriorityQueue()];
     this.dynamicPhaseTypes = [PostSummonPhase];
-  }
+  } /* Phase Functions */
 
-  /* Phase Functions */
+  /**
+   * Getter function to return the currently-in-progess {@linkcode Phase}.
+   * @returns The current Phase, or `null` if no phase is currently active.
+   * @remarks
+   * Type narrowing can be done by the caller using {@linkcode Phase.is}.
+   */
   getCurrentPhase(): Phase | null {
     return this.currentPhase;
   }
@@ -255,18 +275,17 @@ export class PhaseManager {
    * This method allows deferring the execution of a phase until certain conditions are met, which is useful for handling
    * situations like abilities and entry hazards that depend on specific game states.
    *
-   * @param phase - The phase to be added to the conditional queue.
+   * @param phase - The {@linkcode Phase} to add to the conditional queue.
    * @param condition - A function that returns a boolean indicating whether the phase should be executed.
-   *
    */
   pushConditionalPhase(phase: Phase, condition: () => boolean): void {
     this.conditionalQueue.push([condition, phase]);
   }
 
   /**
-   * Adds a phase to nextCommandPhaseQueue, as long as boolean passed in is false
-   * @param phase {@linkcode Phase} the phase to add
-   * @param defer boolean on which queue to add to, defaults to false, and adds to phaseQueue
+   * Add a phase to the end of the {@linkcode phaseQueue}.
+   * @param phase - The {@linkcode Phase} to be queued.
+   * @param defer If `true`, will add the phase to {@linkcode nextCommandPhaseQueue} instead of the normal {@linkcode phaseQueue}; default `false`.
    */
   pushPhase(phase: Phase, defer = false): void {
     if (this.getDynamicPhaseType(phase) !== undefined) {
@@ -277,8 +296,13 @@ export class PhaseManager {
   }
 
   /**
-   * Adds Phase(s) to the end of phaseQueuePrepend, or at phaseQueuePrependSpliceIndex
-   * @param phases {@linkcode Phase} the phase(s) to add
+   * Adds one or more phase(s) to the **END** of {@linkcode phaseQueuePrepend}.
+   * If called multiple times, phases will be ran in **FIFO** order.
+   * @param phases - One or more {@linkcode Phase}s to add.
+   * @todo Find a better name for this given that "unshift" implies adding to the front.
+   * @remarks
+   * If {@linkcode phaseQueuePrependSpliceIndex} is set, the phases will be inserted at that index
+   * in **LIFO** order.
    */
   unshiftPhase(...phases: Phase[]): void {
     if (this.phaseQueuePrependSpliceIndex === -1) {
@@ -337,14 +361,8 @@ export class PhaseManager {
     if (this.phaseQueuePrependSpliceIndex > -1) {
       this.clearPhaseQueueSplice();
     }
-    if (this.phaseQueuePrepend.length) {
-      while (this.phaseQueuePrepend.length) {
-        const poppedPhase = this.phaseQueuePrepend.pop();
-        if (poppedPhase) {
-          this.phaseQueue.unshift(poppedPhase);
-        }
-      }
-    }
+    this.phaseQueue.unshift(...this.phaseQueuePrepend);
+
     if (!this.phaseQueue.length) {
       this.populatePhaseQueue();
       // Clear the conditionalQueue if there are no phases left in the phaseQueue
@@ -370,11 +388,15 @@ export class PhaseManager {
       }
     }
     this.conditionalQueue.push(...unactivatedConditionalPhases);
+    this.startCurrentPhase();
+  }
 
-    if (this.currentPhase) {
-      console.log(`%cStart Phase ${this.currentPhase.constructor.name}`, "color:green;");
-      this.currentPhase.start();
+  private startCurrentPhase(): void {
+    if (!this.currentPhase) {
+      return;
     }
+    console.log(`%cStart Phase ${this.currentPhase.phaseName}`, "color:green;");
+    this.currentPhase.start();
   }
 
   overridePhase(phase: Phase): boolean {
@@ -384,8 +406,7 @@ export class PhaseManager {
 
     this.standbyPhase = this.currentPhase;
     this.currentPhase = phase;
-    console.log(`%cStart Phase ${phase.constructor.name}`, "color:green;");
-    phase.start();
+    this.startCurrentPhase();
 
     return true;
   }

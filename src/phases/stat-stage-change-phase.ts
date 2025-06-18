@@ -83,6 +83,7 @@ export class StatStageChangePhase extends PokemonPhase {
       return this.end();
     }
 
+    super.start();
     const pokemon = this.getPokemon();
     let opponentPokemon: Pokemon | undefined;
 
