@@ -128,12 +128,12 @@
         "noDelete": "error"
       },
       "nursery": {
-        "useAdjacentGetterSetter": "warn",
-        "noConstantBinaryExpression": "warn",
-        "noTsIgnore": "warn",
+        "useAdjacentGetterSetter": "error",
+        "noConstantBinaryExpression": "error",
+        "noTsIgnore": "error",
         "noAwaitInLoop": "warn",
         "useJsonImportAttribute": "error",
-        "useIndexOf": "warn",
+        "useIndexOf": "error",
         "useObjectSpread": "info",
         "useNumericSeparators": "off", // TODO: enable?
         "useIterableCallbackReturn": "warn",
