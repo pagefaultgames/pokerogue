@@ -1049,21 +1049,25 @@ export default class PartyUiHandler extends MessageUiHandler {
       case Button.UP:
         if (this.cursor === 1) {
           if (this.isItemManageMode()) {
-            if (globalScene.currentBattle.double === false) {
-              success = this.setCursor(7);
-            } else {
-              success = this.setCursor(0);
-            }
+            success = this.setCursor(globalScene.currentBattle.double ? 0 : 7);
+            break;
+          }
+        }
+        if (this.cursor === 2) {
+          if (this.isItemManageMode()) {
+            success = this.setCursor(globalScene.currentBattle.double ? 7 : 1);
+            break;
+          }
+        }
+        if (this.cursor === 6) {
+          if (this.isItemManageMode()) {
+            success = this.setCursor(slotCount <= globalScene.currentBattle.getBattlerCount() ? 7 : slotCount - 1);
             break;
           }
         }
         if (this.cursor === 7) {
           if (this.isItemManageMode()) {
-            if (globalScene.currentBattle.double === true) {
-              success = this.setCursor(this.cursor ? (this.cursor - 2 < 6 ? 1 : slotCount - 1) : 6);
-            } else {
-              success = this.setCursor(0);
-            }
+            success = this.setCursor(globalScene.currentBattle.double && slotCount > 1 ? 1 : 0);
             break;
           }
         }
@@ -1072,27 +1076,21 @@ export default class PartyUiHandler extends MessageUiHandler {
       case Button.DOWN:
         if (this.cursor === 0) {
           if (this.isItemManageMode()) {
-            if (globalScene.currentBattle.double === false) {
-              success = this.setCursor(7);
-              break;
-            }
+            success = this.setCursor(globalScene.currentBattle.double && slotCount > 1 ? 1 : 7);
+            break;
           }
         }
         if (this.cursor === 1) {
           if (this.isItemManageMode()) {
-            if (globalScene.currentBattle.double === true) {
-              success = this.setCursor(7);
-              break;
-            }
+            success = this.setCursor(globalScene.currentBattle.double ? 7 : slotCount > 2 ? 2 : 6);
+            break;
           }
         }
         if (this.cursor === 7) {
           if (this.isItemManageMode()) {
-            if (globalScene.currentBattle.double === false) {
-              success = this.setCursor(this.cursor - 2 < 6 ? (this.cursor - 2 < slotCount - 1 ? 1 : 6) : 0);
-            } else {
-              success = this.setCursor(this.cursor - 2 < 6 ? (this.cursor - 2 < slotCount - 1 ? 2 : 6) : 0);
-            }
+            success = this.setCursor(
+              slotCount > globalScene.currentBattle.getBattlerCount() ? globalScene.currentBattle.getBattlerCount() : 6,
+            );
             break;
           }
         }
@@ -2146,6 +2144,7 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
       case PartyUiMode.DISCARD:
         this.transferIcon.setVisible(true);
         this.discardIcon.setVisible(false);
+        this.partyDiscardPb.setVisible(true);
         this.textBox.setVisible(true);
         this.textBox.setText(i18next.t("partyUiHandler:TRANSFER"));
         this.setPosition(
@@ -2157,6 +2156,7 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
       case PartyUiMode.MODIFIER_TRANSFER:
         this.transferIcon.setVisible(false);
         this.discardIcon.setVisible(true);
+        this.partyDiscardPb.setVisible(true);
         this.textBox.setVisible(true);
         this.textBox.setText("Discard");
         this.setPosition(
@@ -2174,5 +2174,6 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
     this.transferIcon.setVisible(false);
     this.discardIcon.setVisible(false);
     this.textBox.setVisible(false);
+    this.partyDiscardPb.setVisible(false);
   }
 }
