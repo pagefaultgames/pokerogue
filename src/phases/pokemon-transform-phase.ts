@@ -39,6 +39,8 @@ export class PokemonTransformPhase extends PokemonPhase {
 
     // Power Trick's effect is removed after using Transform
     user.removeTag(BattlerTagType.POWER_TRICK);
+    //Begin tracking Pokemon as transformed
+    user.addTag(BattlerTagType.TRANSFORM);
 
     // Copy all stats (except HP)
     for (const s of EFFECTIVE_STATS) {

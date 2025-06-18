@@ -339,6 +339,16 @@ export class MovePhase extends BattlePhase {
       this.showMoveText();
     }
 
+    if (
+      this.move.getMove().id === MoveId.TRANSFORM &&
+      (targets[0].getTag(BattlerTagType.TRANSFORM) || this.pokemon.getTag(BattlerTagType.TRANSFORM))
+    ) {
+      this.showMoveText();
+      this.showFailedText();
+      this.end();
+      return;
+    }
+
     // Clear out any two turn moves once they've been used.
     // TODO: Refactor move queues and remove this assignment;
     // Move queues should be handled by the calling `CommandPhase` or a manager for it

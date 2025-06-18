@@ -3909,8 +3909,13 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
   override canApplyPostSummon(pokemon: Pokemon, _passive: boolean, simulated: boolean, _args: any[]): boolean {
     const targets = pokemon.getOpponents();
     const target = this.getTarget(targets);
+    const user = pokemon;
 
-    if (target.summonData.illusion) {
+    if (user?.getTag(BattlerTagType.TRANSFORM) || target?.getTag(BattlerTagType.TRANSFORM)) {
+      return false;
+    }
+
+    if (target?.summonData?.illusion) {
       return false;
     }
 

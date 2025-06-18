@@ -7599,7 +7599,6 @@ export class TransformAttr extends MoveEffectAttr {
 
     globalScene.phaseManager.unshiftNew("PokemonTransformPhase", user.getBattlerIndex(), target.getBattlerIndex());
 
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:transformedIntoTarget", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
 
     return true;
   }

@@ -3221,6 +3221,15 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
   }
 }
 
+export class TransformTag extends BattlerTag {
+  constructor(sourceId: number) {
+    super(BattlerTagType.TRANSFORM, BattlerTagLapseType.MOVE, Number.MAX_SAFE_INTEGER, MoveId.TRANSFORM, sourceId);
+  }
+  override onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+  }
+}
+
 /**
  * Battler Tag that applies the effects of Syrup Bomb to the target Pokemon.
  * For three turns, starting from the turn of hit, at the end of each turn, the target Pokemon's speed will decrease by 1.
@@ -3629,6 +3638,8 @@ export function getBattlerTag(
       return new TauntTag();
     case BattlerTagType.IMPRISON:
       return new ImprisonTag(sourceId);
+    case BattlerTagType.TRANSFORM:
+      return new TransformTag(sourceId);
     case BattlerTagType.SYRUP_BOMB:
       return new SyrupBombTag(sourceId);
     case BattlerTagType.TELEKINESIS:
