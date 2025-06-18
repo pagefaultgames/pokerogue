@@ -1,7 +1,12 @@
 import { allHeldItems } from "#app/items/all-held-items";
 import { isItemInRequested, type HeldItemCategoryId, type HeldItemId } from "#app/enums/held-item-id";
 import type { FormChangeItem } from "#enums/form-change-item";
-import { isHeldItemSpecs, type HeldItemDataMap, type HeldItemSpecs } from "#app/items/held-item-data-types";
+import {
+  type HeldItemConfiguration,
+  isHeldItemSpecs,
+  type HeldItemDataMap,
+  type HeldItemSpecs,
+} from "#app/items/held-item-data-types";
 
 interface FormChangeItemProperties {
   active: boolean;
@@ -30,6 +35,18 @@ export class PokemonItemManager {
       return itemSpecs;
     }
     return undefined;
+  }
+
+  generateHeldItemConfiguration(restrictedIds?: HeldItemId[]): HeldItemConfiguration {
+    const config: HeldItemConfiguration = [];
+    for (const [k, item] of Object.entries(this.heldItems)) {
+      const id = Number(k);
+      if (item && (!restrictedIds || id in restrictedIds)) {
+        const specs: HeldItemSpecs = { ...item, id };
+        config.push({ entry: specs, count: 1 });
+      }
+    }
+    return config;
   }
 
   getHeldItems(): number[] {

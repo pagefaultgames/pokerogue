@@ -46,7 +46,7 @@ import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { getNewHeldItemFromCategory } from "#app/items/held-item-pool";
 import { allHeldItems } from "#app/items/all-held-items";
 import { MoveUseMode } from "#enums/move-use-mode";
-import { allAbilities, modifierTypes } from "#app/data/data-lists";
+import { allAbilities } from "#app/data/data-lists";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/fieryFallout";

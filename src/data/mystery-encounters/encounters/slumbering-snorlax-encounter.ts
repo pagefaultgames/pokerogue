@@ -75,13 +75,13 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
       status: [StatusEffect.SLEEP, 6], // Extra turns on timer for Snorlax's start of fight moves
       nature: Nature.DOCILE,
       moveSet: [MoveId.BODY_SLAM, MoveId.CRUNCH, MoveId.SLEEP_TALK, MoveId.REST],
-      heldItemConfig: {
-        [HeldItemId.SITRUS_BERRY]: { stack: 1 },
-        [HeldItemId.ENIGMA_BERRY]: { stack: 1 },
-        [HeldItemId.HP_UP]: { stack: 1 },
-        [HeldItemId.SOOTHE_BELL]: { stack: randSeedInt(2, 0) },
-        [HeldItemId.LUCKY_EGG]: { stack: randSeedInt(2, 0) },
-      },
+      heldItemConfig: [
+        { entry: HeldItemId.SITRUS_BERRY, count: 1 },
+        { entry: HeldItemId.ENIGMA_BERRY, count: 1 },
+        { entry: HeldItemId.HP_UP, count: 1 },
+        { entry: HeldItemId.SOOTHE_BELL, count: randSeedInt(2, 0) },
+        { entry: HeldItemId.LUCKY_EGG, count: randSeedInt(2, 0) },
+      ],
       customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
       aiType: AiType.SMART, // Required to ensure Snorlax uses Sleep Talk while it is asleep
     };

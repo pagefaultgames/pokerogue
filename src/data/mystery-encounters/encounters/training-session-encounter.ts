@@ -24,7 +24,6 @@ import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/myst
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import type HeldModifierConfig from "#app/@types/held-modifier-config";
 import i18next from "i18next";
 import { getStatKey } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
@@ -101,8 +100,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
         // Spawn light training session with chosen pokemon
         // Every 50 waves, add +1 boss segment, capping at 5
         const segments = Math.min(2 + Math.floor(globalScene.currentBattle.waveIndex / 50), 5);
-        const modifiers = new ModifiersHolder();
-        const config = getEnemyConfig(playerPokemon, segments, modifiers);
+        const config = getEnemyConfig(playerPokemon, segments);
         globalScene.removePokemonFromPlayerParty(playerPokemon, false);
 
         const onBeforeRewardsPhase = () => {
@@ -151,12 +149,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
             globalScene.gameData.setPokemonCaught(playerPokemon, false);
           }
 
-          // Add pokemon and mods back
-          globalScene.getPlayerParty().push(playerPokemon);
-          for (const mod of modifiers.value) {
-            mod.pokemonId = playerPokemon.id;
-            globalScene.addModifier(mod, true, false, false, true);
-          }
+          // Make held items show up again
           globalScene.updateModifiers(true);
           queueEncounterMessage(`${namespace}:option.1.finished`);
         };
@@ -217,8 +210,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
         // Spawn medium training session with chosen pokemon
         // Every 40 waves, add +1 boss segment, capping at 6
         const segments = Math.min(2 + Math.floor(globalScene.currentBattle.waveIndex / 40), 6);
-        const modifiers = new ModifiersHolder();
-        const config = getEnemyConfig(playerPokemon, segments, modifiers);
+        const config = getEnemyConfig(playerPokemon, segments);
         globalScene.removePokemonFromPlayerParty(playerPokemon, false);
 
         const onBeforeRewardsPhase = () => {
@@ -227,12 +219,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
           playerPokemon.setCustomNature(encounter.misc.chosenNature);
           globalScene.gameData.unlockSpeciesNature(playerPokemon.species, encounter.misc.chosenNature);
 
-          // Add pokemon and modifiers back
-          globalScene.getPlayerParty().push(playerPokemon);
-          for (const mod of modifiers.value) {
-            mod.pokemonId = playerPokemon.id;
-            globalScene.addModifier(mod, true, false, false, true);
-          }
+          // Make held items show up again
           globalScene.updateModifiers(true);
         };
 
@@ -308,8 +295,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
         // Every 30 waves, add +1 boss segment, capping at 6
         // Also starts with +1 to all stats
         const segments = Math.min(2 + Math.floor(globalScene.currentBattle.waveIndex / 30), 6);
-        const modifiers = new ModifiersHolder();
-        const config = getEnemyConfig(playerPokemon, segments, modifiers);
+        const config = getEnemyConfig(playerPokemon, segments);
         config.pokemonConfigs![0].tags = [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON];
         globalScene.removePokemonFromPlayerParty(playerPokemon, false);
 
@@ -340,12 +326,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
           playerPokemon.calculateStats();
           globalScene.gameData.setPokemonCaught(playerPokemon, false);
 
-          // Add pokemon and mods back
-          globalScene.getPlayerParty().push(playerPokemon);
-          for (const mod of modifiers.value) {
-            mod.pokemonId = playerPokemon.id;
-            globalScene.addModifier(mod, true, false, false, true);
-          }
+          // Make held items show up again
           globalScene.updateModifiers(true);
         };
 
@@ -373,18 +354,12 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
   )
   .build();
 
-function getEnemyConfig(playerPokemon: PlayerPokemon, segments: number, modifiers: ModifiersHolder): EnemyPartyConfig {
+function getEnemyConfig(playerPokemon: PlayerPokemon, segments: number): EnemyPartyConfig {
   playerPokemon.resetSummonData();
 
   // Passes modifiers by reference
-  modifiers.value = playerPokemon.getHeldItems();
-  const modifierConfigs = modifiers.value.map(mod => {
-    return {
-      modifier: mod.clone(),
-      isTransferable: false,
-      stackCount: mod.stackCount,
-    };
-  }) as HeldModifierConfig[];
+  // TODO: fix various things, like make enemy items untransferable, make sure form change items can come back
+  const config = playerPokemon.heldItemManager.generateHeldItemConfiguration();
 
   const data = new PokemonData(playerPokemon);
   return {
@@ -396,12 +371,8 @@ function getEnemyConfig(playerPokemon: PlayerPokemon, segments: number, modifier
         formIndex: playerPokemon.formIndex,
         level: playerPokemon.level,
         dataSource: data,
-        modifierConfigs: modifierConfigs,
+        heldItemConfig: config,
       },
     ],
   };
-}
-
-class ModifiersHolder {
-  public value: PokemonHeldItemModifier[] = [];
 }

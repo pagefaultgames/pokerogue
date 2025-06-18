@@ -93,13 +93,13 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
           customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
           nature: Nature.HARDY,
           moveSet: [MoveId.INFESTATION, MoveId.SALT_CURE, MoveId.GASTRO_ACID, MoveId.HEAL_ORDER],
-          heldItemConfig: {
-            [HeldItemId.SITRUS_BERRY]: { stack: 1 },
-            [HeldItemId.ENIGMA_BERRY]: { stack: 1 },
-            [HeldItemId.APICOT_BERRY]: { stack: 1 },
-            [HeldItemId.GANLON_BERRY]: { stack: 1 },
-            [HeldItemId.LUM_BERRY]: { stack: 2 },
-          },
+          heldItemConfig: [
+            { entry: HeldItemId.SITRUS_BERRY, count: 1 },
+            { entry: HeldItemId.ENIGMA_BERRY, count: 1 },
+            { entry: HeldItemId.APICOT_BERRY, count: 1 },
+            { entry: HeldItemId.GANLON_BERRY, count: 1 },
+            { entry: HeldItemId.LUM_BERRY, count: 2 },
+          ],
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.2.stat_boost`);
