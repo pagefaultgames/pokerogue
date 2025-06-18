@@ -17,6 +17,12 @@ import { MockGameObjectCreator } from "./mocks/mockGameObjectCreator";
 import { MockTimedEventManager } from "./mocks/mockTimedEventManager";
 import { PokedexMonContainer } from "#app/ui/pokedex-mon-container";
 import MockContainer from "./mocks/mocksContainer/mockContainer";
+import InputManager = Phaser.Input.InputManager;
+import KeyboardManager = Phaser.Input.Keyboard.KeyboardManager;
+import KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
+import GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
+import EventEmitter = Phaser.Events.EventEmitter;
+import UpdateList = Phaser.GameObjects.UpdateList;
 // biome-ignore lint/performance/noNamespaceImport: Necessary in order to mock the var
 import * as bypassLoginModule from "#app/global-vars/bypass-login";
 
