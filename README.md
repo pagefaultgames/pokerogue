@@ -17,19 +17,36 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 
 #### Running Locally
 
-1. Clone the repo and in the root directory run `npm install`
-    - *if you run into any errors, reach out in the **#dev-corner** channel in discord*
-2. Run `npm run start:dev` to locally run the project in `localhost:8000`
+1. Clone the repository through Git by running the following command in your desired directory:
+   ``bash
+   git clone --recurse-submodules https://github.com/pagefaultgames/pokerogue
+   ```
+   [^1]
+2. Run `npm install` in the newly cloned folder to download required dependencies.
+3. Run `npm run start:dev` to locally run the project in `localhost:8000`
+
+If you run into any errors, reach out in the **#dev-corner** channel in discord
+
+[^1]: If you forget to use the `--recurse-submodules` flag when cloning initially, consult [localization.md](./docs/localization.md) \
+for instructions on how to clone the `locales` submodule manually.
 
 #### Linting
 
-We're using Biome as our common linter and formatter. It will run automatically during the pre-commit hook but if you would like to manually run it, use the `npm run biome` script. To view the complete rules, check out the [biome.jsonc](./biome.jsonc) file.
+<!-- TODO: Mention linting.md -->
+We're using Biome as our common linter and formatter. \
+It will run automatically during the pre-commit hook, or can be done manually via `npm run biome`. \
+To view the complete rules, check out the [biome.jsonc](./biome.jsonc) file.
 
 ### 📚 Documentation
 
 You can find the auto-generated documentation [here](https://pagefaultgames.github.io/pokerogue/main/index.html).
-For information on enemy AI, check out the [enemy-ai.md](./docs/enemy-ai.md) file.
-For detailed guidelines on documenting your code, refer to the [comments.md](./docs/comments.md) file.
+
+Additionally, the [docs folder](./docs) contains a variety of documents and guides useful for aspiring contributors. \
+Notable topics include:
+- [Commenting your code](./docs/comments.md)
+- [Linting & Formatting](./docs/linting.md)
+- [Localization](./docs/localization.md)
+- [Enemy AI move selection](./docs/enemy-ai.md)
 
 ### ❔ FAQ
 
@@ -39,8 +56,8 @@ For detailed guidelines on documenting your code, refer to the [comments.md](./d
 
 **How do I retrieve the translations?**
 
-- The translations were moved to the [dedicated translation repository](https://github.com/pagefaultgames/pokerogue-locales) and are now applied as a submodule in this project.
-- The command to retrieve the translations is `git submodule update --init --recursive`. If you still struggle to get it working, please reach out to #dev-corner channel in Discord.
+- See [localization.md](./docs/localization.md) for detailed info on everything to do with translations, \
+from cloning the `locales` repository to adding new entries and submitting changes.
 
 ## 🪧 To Do
 
