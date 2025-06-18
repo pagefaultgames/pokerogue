@@ -11,14 +11,7 @@ import { TerastallizeAccessModifier } from "#app/modifier/modifier";
 import { PokemonType } from "#enums/pokemon-type";
 import { getTypeRgb } from "#app/data/type";
 import { SpeciesId } from "#enums/species-id";
-
-export enum Command {
-  FIGHT = 0,
-  BALL,
-  POKEMON,
-  RUN,
-  TERA,
-}
+import { Command } from "#enums/command";
 
 export default class CommandUiHandler extends UiHandler {
   private commandsContainer: Phaser.GameObjects.Container;

@@ -1,6 +1,8 @@
+import { coerceArray } from "#app/utils/common";
 import Phaser from "phaser";
 import type { MockGameObject } from "../mockGameObject";
-import Frame = Phaser.Textures.Frame;
+
+type Frame = Phaser.Textures.Frame;
 
 export default class MockSprite implements MockGameObject {
   private phaserSprite;
@@ -204,11 +206,7 @@ export default class MockSprite implements MockGameObject {
 
   add(obj: MockGameObject | MockGameObject[]): this {
     // Adds a child to this Game Object.
-    if (Array.isArray(obj)) {
-      this.list.push(...obj);
-    } else {
-      this.list.push(obj);
-    }
+    this.list.push(...coerceArray(obj));
     return this;
   }
 

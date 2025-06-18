@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import type Pokemon from "#app/field/pokemon";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -41,7 +41,7 @@ describe("Abilities - Gulp Missile", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .disableCrits()
+      .criticalHits(false)
       .battleStyle("single")
       .moveset([MoveId.SURF, MoveId.DIVE, MoveId.SPLASH, MoveId.SUBSTITUTE])
       .enemySpecies(SpeciesId.SNORLAX)

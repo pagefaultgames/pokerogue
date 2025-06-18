@@ -1,17 +1,19 @@
-import type { BattlerIndex } from "#app/battle";
-import { getMoveTargets } from "#app/data/moves/move";
+import type { BattlerIndex } from "#enums/battler-index";
+import { getMoveTargets } from "#app/data/moves/move-utils";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import Overrides from "#app/overrides";
 import type { CommandPhase } from "#app/phases/command-phase";
 import type { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
 import { UiMode } from "#enums/ui-mode";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { vi } from "vitest";
+import { coerceArray } from "#app/utils/common";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 /**
  * Helper to handle a Pokemon's move
@@ -20,6 +22,7 @@ export class MoveHelper extends GameManagerHelper {
   /**
    * Intercepts {@linkcode MoveEffectPhase} and mocks the phase's move's
    * accuracy to -1, guaranteeing a hit.
+   * @returns A promise that resolves once the next MoveEffectPhase has been reached (not run).
    */
   public async forceHit(): Promise<void> {
     await this.game.phaseInterceptor.to(MoveEffectPhase, false);
@@ -30,7 +33,8 @@ export class MoveHelper extends GameManagerHelper {
   /**
    * Intercepts {@linkcode MoveEffectPhase} and mocks the phase's move's accuracy
    * to 0, guaranteeing a miss.
-   * @param firstTargetOnly - Whether the move should force miss on the first target only, in the case of multi-target moves.
+   * @param firstTargetOnly - Whether to only force a miss on the first target hit; default `false`.
+   * @returns A promise that resolves once the next MoveEffectPhase has been reached (not run).
    */
   public async forceMiss(firstTargetOnly = false): Promise<void> {
     await this.game.phaseInterceptor.to(MoveEffectPhase, false);
@@ -63,7 +67,7 @@ export class MoveHelper extends GameManagerHelper {
       (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(
         Command.FIGHT,
         movePosition,
-        false,
+        MoveUseMode.NORMAL,
       );
     });
 
@@ -91,7 +95,11 @@ export class MoveHelper extends GameManagerHelper {
       );
     });
     this.game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
-      (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.TERA, movePosition, false);
+      (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(
+        Command.TERA,
+        movePosition,
+        MoveUseMode.NORMAL,
+      );
     });
 
     if (targetIndex !== null) {
@@ -157,9 +165,7 @@ export class MoveHelper extends GameManagerHelper {
    * @param moveset - The {@linkcode MoveId} (single or array) to change the Pokemon's moveset to.
    */
   public changeMoveset(pokemon: Pokemon, moveset: MoveId | MoveId[]): void {
-    if (!Array.isArray(moveset)) {
-      moveset = [moveset];
-    }
+    moveset = coerceArray(moveset);
     pokemon.moveset = [];
     moveset.forEach(move => {
       pokemon.moveset.push(new PokemonMove(move));
@@ -193,6 +199,7 @@ export class MoveHelper extends GameManagerHelper {
         target !== undefined && !legalTargets.multiple && legalTargets.targets.includes(target)
           ? [target]
           : enemy.getNextTargets(moveId),
+      useMode: MoveUseMode.NORMAL,
     });
 
     /**
@@ -241,6 +248,7 @@ export class MoveHelper extends GameManagerHelper {
         target !== undefined && !legalTargets.multiple && legalTargets.targets.includes(target)
           ? [target]
           : enemy.getNextTargets(moveId),
+      useMode: MoveUseMode.NORMAL,
     });
 
     /**

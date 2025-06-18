@@ -4,7 +4,8 @@ import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import { ArenaTrapTag } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 
 describe("Moves - Spikes", () => {
   let phaserGame: Phaser.Game;
@@ -48,7 +49,7 @@ describe("Moves - Spikes", () => {
 
     const player = game.scene.getPlayerParty()[0];
     expect(player.hp).toBe(player.getMaxHp());
-  }, 20000);
+  });
 
   it("should damage opposing pokemon that are forced to switch in", async () => {
     game.override.startingWave(5);
@@ -62,7 +63,7 @@ describe("Moves - Spikes", () => {
 
     const enemy = game.scene.getEnemyParty()[0];
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
-  }, 20000);
+  });
 
   it("should damage opposing pokemon that choose to switch in", async () => {
     game.override.startingWave(5);
@@ -77,12 +78,10 @@ describe("Moves - Spikes", () => {
 
     const enemy = game.scene.getEnemyParty()[0];
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
-  }, 20000);
+  });
 
   it("should work when all targets fainted", async () => {
-    game.override.enemySpecies(SpeciesId.DIGLETT);
-    game.override.battleStyle("double");
-    game.override.startingLevel(50);
+    game.override.enemySpecies(SpeciesId.DIGLETT).battleStyle("double").startingLevel(50);
     await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.ROWLET]);
 
     game.move.select(MoveId.EARTHQUAKE);
@@ -90,5 +89,5 @@ describe("Moves - Spikes", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.arena.getTagOnSide(ArenaTrapTag, ArenaTagSide.ENEMY)).toBeDefined();
-  }, 20000);
+  });
 });
