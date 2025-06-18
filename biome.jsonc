@@ -137,7 +137,7 @@
         "noConstantBinaryExpression": "error",
         "noTsIgnore": "error",
         "noAwaitInLoop": "warn",
-        "useJsonImportAttribute": "error",
+        "useJsonImportAttribute": "off", // "Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'. ts(2823)"
         "useIndexOf": "error",
         "useObjectSpread": "info",
         "useNumericSeparators": "off", // TODO: enable?
