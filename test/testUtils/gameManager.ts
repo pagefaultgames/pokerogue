@@ -13,13 +13,11 @@ import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
-import { LoginPhase } from "#app/phases/login-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import type { SelectTargetPhase } from "#app/phases/select-target-phase";
-import { TitlePhase } from "#app/phases/title-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
@@ -129,6 +127,8 @@ export default class GameManager {
     // Disables Mystery Encounters on all tests (can be overridden at test level)
     this.override.mysteryEncounterChance(0);
 
+    this.scene.moveAnimations = false; // Disable move animations
+
     global.fetch = vi.fn(MockFetch) as any;
   }
 
@@ -182,9 +182,10 @@ export default class GameManager {
    * @returns A promise that resolves when the title phase is reached.
    */
   async runToTitle(): Promise<void> {
-    await this.phaseInterceptor.whenAboutToRun(LoginPhase);
-    this.phaseInterceptor.pop();
-    await this.phaseInterceptor.run(TitlePhase);
+    // Go to login phase and skip past it
+    await this.phaseInterceptor.to("LoginPhase", false);
+    this.phaseInterceptor.shiftPhase();
+    await this.phaseInterceptor.to("TitlePhase");
 
     this.scene.gameSpeed = 5;
     this.scene.moveAnimations = false;

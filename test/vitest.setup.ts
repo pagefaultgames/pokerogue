@@ -49,8 +49,6 @@ vi.mock("i18next", async importOriginal => {
   return await importOriginal();
 });
 
-global.testFailed = false;
-
 beforeAll(() => {
   initTestFile();
 });
