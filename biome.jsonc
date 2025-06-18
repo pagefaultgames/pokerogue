@@ -75,7 +75,12 @@
         "noNonNullAssertion": "off", // TODO: Turn this on ASAP and fix all non-null assertions in non-test files
         "noParameterAssign": "off",
         "useExponentiationOperator": "off", // Too typo-prone and easy to mixup with standard multiplication (* vs **)
-        "useDefaultParameterLast": "warn", // TODO: Fix spots in the codebase where this flag would be triggered, and then enable
+        "useDefaultParameterLast": {
+          // TODO: Fix spots in the codebase where this flag would be triggered
+          // and then set to "error" and re-enable the fixer
+          "level": "warn",
+          "fix": "none"
+        },
         "useSingleVarDeclarator": "off",
         "useNodejsImportProtocol": "off",
         "useTemplate": "off", // string concatenation is faster: https://stackoverflow.com/questions/29055518/are-es6-template-literals-faster-than-string-concatenation
