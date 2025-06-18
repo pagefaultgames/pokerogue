@@ -6,8 +6,6 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { Stat } from "#enums/stat";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { CommandPhase } from "#app/phases/command-phase";
 
 describe("Moves - Crafty Shield", () => {
   let phaserGame: Phaser.Game;
@@ -43,11 +41,11 @@ describe("Moves - Crafty Shield", () => {
 
     game.move.select(MoveId.CRAFTY_SHIELD);
 
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
 
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(0));
   });
@@ -61,11 +59,11 @@ describe("Moves - Crafty Shield", () => {
 
     game.move.select(MoveId.CRAFTY_SHIELD);
 
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
 
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(leadPokemon.some(p => p.hp < p.getMaxHp())).toBeTruthy();
   });
@@ -79,11 +77,11 @@ describe("Moves - Crafty Shield", () => {
 
     game.move.select(MoveId.CRAFTY_SHIELD);
 
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
 
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     leadPokemon.forEach(p => expect(p.getTag(BattlerTagType.CURSED)).toBeUndefined());
   });
@@ -95,11 +93,11 @@ describe("Moves - Crafty Shield", () => {
 
     game.move.select(MoveId.CRAFTY_SHIELD);
 
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
 
     game.move.select(MoveId.SWORDS_DANCE, 1);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(leadPokemon[0].getStatStage(Stat.ATK)).toBe(0);
     expect(leadPokemon[1].getStatStage(Stat.ATK)).toBe(2);

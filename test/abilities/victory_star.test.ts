@@ -1,5 +1,4 @@
 import { BattlerIndex } from "#enums/battler-index";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -40,7 +39,7 @@ describe("Abilities - Victory Star", () => {
     vi.spyOn(user, "getAccuracyMultiplier");
     game.move.select(MoveId.TACKLE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(user.getAccuracyMultiplier).toHaveReturnedWith(1.1);
   });
@@ -53,7 +52,7 @@ describe("Abilities - Victory Star", () => {
 
     game.move.select(MoveId.TACKLE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(ally.getAccuracyMultiplier).toHaveReturnedWith(1.1);
   });

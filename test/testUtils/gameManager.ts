@@ -55,6 +55,7 @@ import TextInterceptor from "#test/testUtils/TextInterceptor";
 import { AES, enc } from "crypto-js";
 import fs from "node:fs";
 import { expect, vi } from "vitest";
+import type { PhaseString } from "#app/@types/phase-types";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -168,10 +169,10 @@ export default class GameManager {
    * @param expireFn - Optional function to determine if the prompt has expired.
    */
   onNextPrompt(
-    phaseTarget: string,
+    phaseTarget: PhaseString,
     mode: UiMode,
     callback: () => void,
-    expireFn?: () => void,
+    expireFn?: () => boolean,
     awaitingActionInput = false,
   ) {
     this.phaseInterceptor.addToNextPrompt(phaseTarget, mode, callback, expireFn, awaitingActionInput);
@@ -225,7 +226,7 @@ export default class GameManager {
       this.removeEnemyHeldItems();
     }
 
-    await this.phaseInterceptor.to(EncounterPhase);
+    await this.phaseInterceptor.to("EncounterPhase");
     console.log("===finished run to final boss encounter===");
   }
 
@@ -461,7 +462,7 @@ export default class GameManager {
     return new Promise<void>(async (resolve, reject) => {
       pokemon.hp = 0;
       this.scene.phaseManager.pushPhase(new FaintPhase(pokemon.getBattlerIndex(), true));
-      await this.phaseInterceptor.to(FaintPhase).catch(e => reject(e));
+      await this.phaseInterceptor.to("FaintPhase").catch(e => reject(e));
       resolve();
     });
   }
@@ -538,7 +539,7 @@ export default class GameManager {
    * ```
    */
   async setTurnOrder(order: BattlerIndex[]): Promise<void> {
-    await this.phaseInterceptor.to(TurnStartPhase, false);
+    await this.phaseInterceptor.to("TurnStartPhase", false);
 
     vi.spyOn(this.scene.phaseManager.getCurrentPhase() as TurnStartPhase, "getSpeedOrder").mockReturnValue(order);
   }

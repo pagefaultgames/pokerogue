@@ -5,7 +5,6 @@ import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
 import { MoveResult } from "#enums/move-result";
-import { CommandPhase } from "#app/phases/command-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { MoveId } from "#enums/move-id";
@@ -125,7 +124,7 @@ describe("Moves - Metronome", () => {
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.AROMATIC_MIST);
 
     game.move.select(MoveId.METRONOME, 0);
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
     game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 

@@ -3,7 +3,6 @@ import type Move from "#app/data/moves/move";
 import { AbilityId } from "#enums/ability-id";
 import { SpeciesId } from "#enums/species-id";
 import { BattlerIndex } from "#enums/battler-index";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -58,7 +57,7 @@ describe("Abilities - Supreme Overlord", () => {
 
     game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower * 1.2);
   });
@@ -93,7 +92,7 @@ describe("Abilities - Supreme Overlord", () => {
 
     game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower * 1.3);
   });

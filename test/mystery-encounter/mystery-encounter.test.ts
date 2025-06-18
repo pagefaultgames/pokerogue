@@ -33,7 +33,7 @@ describe("Mystery Encounters", () => {
       SpeciesId.VOLCARONA,
     ]);
 
-    await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+    await game.phaseInterceptor.to("MysteryEncounterPhase", false);
     expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(MysteryEncounterPhase.name);
   });
 

@@ -7,7 +7,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { CommandPhase } from "#app/phases/command-phase";
 import { Command } from "#enums/command";
-import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
+import type { AttemptRunPhase } from "#app/phases/attempt-run-phase";
 
 describe("Abilities - Speed Boost", () => {
   let phaserGame: Phaser.Game;
@@ -102,7 +102,7 @@ describe("Abilities - Speed Boost", () => {
     commandPhase.handleCommand(Command.RUN, 0);
     const runPhase = game.scene.phaseManager.getCurrentPhase() as AttemptRunPhase;
     runPhase.forceFailEscape = true;
-    await game.phaseInterceptor.to(AttemptRunPhase);
+    await game.phaseInterceptor.to("AttemptRunPhase");
     await game.toNextTurn();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;

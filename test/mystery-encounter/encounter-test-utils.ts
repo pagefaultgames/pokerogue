@@ -6,7 +6,6 @@ import { MessagePhase } from "#app/phases/message-phase";
 import {
   MysteryEncounterBattlePhase,
   MysteryEncounterOptionSelectedPhase,
-  MysteryEncounterPhase,
   MysteryEncounterRewardsPhase,
 } from "#app/phases/mystery-encounter-phases";
 import { VictoryPhase } from "#app/phases/victory-phase";
@@ -89,9 +88,9 @@ export async function runMysteryEncounterToEnd(
       uiHandler.processInput(Button.ACTION);
     });
 
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
   } else {
-    await game.phaseInterceptor.to(MysteryEncounterRewardsPhase);
+    await game.phaseInterceptor.to("MysteryEncounterRewardsPhase");
   }
 }
 
@@ -112,7 +111,7 @@ export async function runSelectMysteryEncounterOption(
   );
 
   if (game.isCurrentPhase(MessagePhase)) {
-    await game.phaseInterceptor.run(MessagePhase);
+    await game.phaseInterceptor.to("MessagePhase");
   }
 
   // dispose of intro messages
@@ -126,7 +125,7 @@ export async function runSelectMysteryEncounterOption(
     () => game.isCurrentPhase(MysteryEncounterOptionSelectedPhase),
   );
 
-  await game.phaseInterceptor.to(MysteryEncounterPhase, true);
+  await game.phaseInterceptor.to("MysteryEncounterPhase", true);
 
   // select the desired option
   const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
@@ -207,5 +206,5 @@ export async function skipBattleRunMysteryEncounterRewardsPhase(game: GameManage
   game.scene.phaseManager.pushPhase(new VictoryPhase(0));
   game.phaseInterceptor.superEndPhase();
   game.setMode(UiMode.MESSAGE);
-  await game.phaseInterceptor.to(MysteryEncounterRewardsPhase, runRewardsPhase);
+  await game.phaseInterceptor.to("MysteryEncounterRewardsPhase", runRewardsPhase);
 }

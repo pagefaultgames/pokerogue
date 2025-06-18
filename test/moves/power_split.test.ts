@@ -2,7 +2,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
 import { SpeciesId } from "#enums/species-id";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
@@ -43,7 +42,7 @@ describe("Moves - Power Split", () => {
     const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
 
     game.move.select(MoveId.POWER_SPLIT);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);
     expect(enemy.getStat(Stat.ATK, false)).toBe(avgAtk);
@@ -63,10 +62,10 @@ describe("Moves - Power Split", () => {
     const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
 
     game.move.select(MoveId.POWER_SPLIT);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     game.move.select(MoveId.POWER_SPLIT);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);
     expect(enemy.getStat(Stat.ATK, false)).toBe(avgAtk);

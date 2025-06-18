@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#enums/ability-id";
 import { MoveResult } from "#enums/move-result";
-import { MovePhase } from "#app/phases/move-phase";
+import type { MovePhase } from "#app/phases/move-phase";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -42,7 +42,7 @@ describe("Moves - After You", () => {
     game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("MoveEffectPhase");
-    await game.phaseInterceptor.to(MovePhase, false);
+    await game.phaseInterceptor.to("MovePhase", false);
     const phase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
     expect(phase.pokemon).toBe(game.scene.getPlayerField()[1]);
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -57,7 +57,7 @@ describe("Moves - After You", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase");
-    await game.phaseInterceptor.to(MovePhase);
+    await game.phaseInterceptor.to("MovePhase");
 
     expect(game.scene.getPlayerField()[1].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
   });

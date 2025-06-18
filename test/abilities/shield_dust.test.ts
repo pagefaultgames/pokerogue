@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#enums/battler-index";
 import { applyAbAttrs, applyPreDefendAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import type { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { NumberHolder } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -44,7 +44,7 @@ describe("Abilities - Shield Dust", () => {
     game.move.select(MoveId.AIR_SLASH);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
+    await game.phaseInterceptor.to("MoveEffectPhase", false);
 
     // Shield Dust negates secondary effect
     const phase = game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase;

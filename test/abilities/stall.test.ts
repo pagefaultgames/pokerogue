@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { TurnStartPhase } from "#app/phases/turn-start-phase";
+import type { TurnStartPhase } from "#app/phases/turn-start-phase";
 
 describe("Abilities - Stall", () => {
   let phaserGame: Phaser.Game;
@@ -45,7 +45,7 @@ describe("Abilities - Stall", () => {
 
     game.move.select(MoveId.QUICK_ATTACK);
 
-    await game.phaseInterceptor.to(TurnStartPhase, false);
+    await game.phaseInterceptor.to("TurnStartPhase", false);
     const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
@@ -63,7 +63,7 @@ describe("Abilities - Stall", () => {
 
     game.move.select(MoveId.TACKLE);
 
-    await game.phaseInterceptor.to(TurnStartPhase, false);
+    await game.phaseInterceptor.to("TurnStartPhase", false);
     const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
@@ -82,7 +82,7 @@ describe("Abilities - Stall", () => {
 
     game.move.select(MoveId.TACKLE);
 
-    await game.phaseInterceptor.to(TurnStartPhase, false);
+    await game.phaseInterceptor.to("TurnStartPhase", false);
     const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();

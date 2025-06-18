@@ -3,7 +3,6 @@ import { Nature } from "#enums/nature";
 import { allSpecies } from "#app/data/data-lists";
 import { GameModes } from "#enums/game-modes";
 import { EncounterPhase } from "#app/phases/encounter-phase";
-import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import type { TitlePhase } from "#app/phases/title-phase";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import type SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
@@ -54,9 +53,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.LEFT);
       handler.processInput(Button.ACTION);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -115,9 +113,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.LEFT);
       handler.processInput(Button.CYCLE_GENDER);
       handler.processInput(Button.ACTION);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -149,7 +146,7 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
+    await game.phaseInterceptor.to("EncounterPhase", false);
 
     expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
@@ -179,9 +176,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.CYCLE_NATURE);
       handler.processInput(Button.CYCLE_ABILITY);
       handler.processInput(Button.ACTION);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -242,9 +238,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.LEFT);
       handler.processInput(Button.CYCLE_GENDER);
       handler.processInput(Button.ACTION);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -303,9 +298,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.LEFT);
       handler.processInput(Button.ACTION);
       handler.processInput(Button.CYCLE_SHINY);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -365,9 +359,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.CYCLE_SHINY);
       handler.processInput(Button.CYCLE_SHINY);
       handler.processInput(Button.ACTION);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -426,9 +419,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.CYCLE_SHINY);
       handler.processInput(Button.CYCLE_SHINY);
       handler.processInput(Button.ACTION);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -486,9 +478,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.ACTION);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -551,9 +542,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.DOWN);
       handler.processInput(Button.ACTION);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {

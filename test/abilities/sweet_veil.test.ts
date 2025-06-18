@@ -1,8 +1,6 @@
 import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -39,7 +37,7 @@ describe("Abilities - Sweet Veil", () => {
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.getPlayerField().every(p => p.status?.effect)).toBe(false);
   });
@@ -51,7 +49,7 @@ describe("Abilities - Sweet Veil", () => {
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.REST, 1);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.getPlayerField().every(p => p.status?.effect)).toBe(false);
   });
@@ -63,7 +61,7 @@ describe("Abilities - Sweet Veil", () => {
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.getPlayerField().every(p => !!p.getTag(BattlerTagType.DROWSY))).toBe(false);
   });
@@ -80,7 +78,7 @@ describe("Abilities - Sweet Veil", () => {
 
     expect(game.scene.getPlayerField().some(p => !!p.getTag(BattlerTagType.DROWSY))).toBe(true);
 
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
     game.move.select(MoveId.SPLASH);
     game.doSwitchPokemon(2);
 

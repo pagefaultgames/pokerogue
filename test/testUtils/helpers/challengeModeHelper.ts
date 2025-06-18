@@ -85,7 +85,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
       );
     }
 
-    await this.game.phaseInterceptor.to(CommandPhase);
+    await this.game.phaseInterceptor.to("CommandPhase");
     console.log("==================[New Turn]==================");
   }
 }

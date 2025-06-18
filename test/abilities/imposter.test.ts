@@ -2,7 +2,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
 import { SpeciesId } from "#enums/species-id";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { Stat, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
@@ -39,7 +38,7 @@ describe("Abilities - Imposter", () => {
     await game.classicMode.startBattle([SpeciesId.DITTO]);
 
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -86,7 +85,7 @@ describe("Abilities - Imposter", () => {
     const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
 
     game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);
     expect(enemy.getStat(Stat.ATK, false)).toBe(avgAtk);
@@ -102,7 +101,7 @@ describe("Abilities - Imposter", () => {
     const player = game.scene.getPlayerPokemon()!;
 
     game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     player.getMoveset().forEach(move => {
       // Should set correct maximum PP without touching `ppUp`

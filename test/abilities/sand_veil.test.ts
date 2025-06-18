@@ -1,7 +1,4 @@
 import { allAbilities } from "#app/data/data-lists";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -61,13 +58,13 @@ describe("Abilities - Sand Veil", () => {
 
     game.move.select(MoveId.SPLASH);
 
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
 
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
+    await game.phaseInterceptor.to("MoveEffectPhase", false);
 
-    await game.phaseInterceptor.to(MoveEndPhase, false);
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(leadPokemon[0].isFullHp()).toBe(true);
     expect(leadPokemon[1].hp).toBeLessThan(leadPokemon[1].getMaxHp());

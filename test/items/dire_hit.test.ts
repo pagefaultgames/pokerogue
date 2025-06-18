@@ -1,17 +1,14 @@
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { TempCritBoosterModifier } from "#app/modifier/modifier";
 import { UiMode } from "#enums/ui-mode";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { Button } from "#app/enums/buttons";
 import { CommandPhase } from "#app/phases/command-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 describe("Items - Dire Hit", () => {
@@ -48,7 +45,7 @@ describe("Items - Dire Hit", () => {
 
     game.move.select(MoveId.POUND);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemyPokemon.getCritStage).toHaveReturnedWith(1);
   });
@@ -62,7 +59,7 @@ describe("Items - Dire Hit", () => {
 
     await game.doKillOpponents();
 
-    await game.phaseInterceptor.to(BattleEndPhase);
+    await game.phaseInterceptor.to("BattleEndPhase");
 
     const modifier = game.scene.findModifier(m => m instanceof TempCritBoosterModifier) as TempCritBoosterModifier;
     expect(modifier.getBattleCount()).toBe(4);
@@ -82,7 +79,7 @@ describe("Items - Dire Hit", () => {
       true,
     );
 
-    await game.phaseInterceptor.to(TurnInitPhase);
+    await game.phaseInterceptor.to("TurnInitPhase");
 
     // Making sure only one booster is in the modifier list even after picking up another
     let count = 0;

@@ -1,4 +1,3 @@
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { toDmgValue } from "#app/utils/common";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -46,7 +45,7 @@ describe("Moves - FILLET AWAY", () => {
     const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
 
     game.move.select(MoveId.FILLET_AWAY);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
     expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
@@ -65,7 +64,7 @@ describe("Moves - FILLET AWAY", () => {
     leadPokemon.setStatStage(Stat.SPATK, 3);
 
     game.move.select(MoveId.FILLET_AWAY);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
     expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
@@ -83,7 +82,7 @@ describe("Moves - FILLET AWAY", () => {
     leadPokemon.setStatStage(Stat.SPD, 6);
 
     game.move.select(MoveId.FILLET_AWAY);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
     expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
@@ -99,7 +98,7 @@ describe("Moves - FILLET AWAY", () => {
     leadPokemon.hp = hpLost - PREDAMAGE;
 
     game.move.select(MoveId.FILLET_AWAY);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);
     expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);

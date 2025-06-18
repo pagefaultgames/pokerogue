@@ -1,7 +1,5 @@
 import { Status } from "#app/data/status-effect";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -52,9 +50,9 @@ describe("Abilities - SHIELDS DOWN", () => {
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     game.doSelectModifier();
-    await game.phaseInterceptor.to(QuietFormChangePhase);
+    await game.phaseInterceptor.to("QuietFormChangePhase");
 
     expect(minior.formIndex).toBe(meteorForm);
   });
@@ -64,7 +62,7 @@ describe("Abilities - SHIELDS DOWN", () => {
 
     await game.classicMode.startBattle([SpeciesId.MINIOR]);
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.getPlayerPokemon()!.status).toBe(undefined);
   });
@@ -76,7 +74,7 @@ describe("Abilities - SHIELDS DOWN", () => {
 
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.SPORE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.getPlayerPokemon()!.status).toBe(undefined);
   });
@@ -87,7 +85,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     await game.classicMode.startBattle([SpeciesId.MINIOR]);
 
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.getPlayerPokemon()!.status).toBe(undefined);
   });
@@ -99,7 +97,7 @@ describe("Abilities - SHIELDS DOWN", () => {
 
     game.move.select(MoveId.SPLASH);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.getPlayerPokemon()!.status).toBe(undefined);
   });
@@ -135,7 +133,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.YAWN);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     expect(game.scene.getPlayerPokemon()!.findTag(tag => tag.tagType === BattlerTagType.DROWSY)).toBe(undefined);
   });
 
@@ -147,7 +145,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.CONFUSE_RAY);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.getPlayerPokemon()!.findTag(tag => tag.tagType === BattlerTagType.CONFUSED)).not.toBe(undefined);
   });
@@ -161,7 +159,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     game.move.select(MoveId.SPORE);
     await game.move.selectEnemyMove(MoveId.SPLASH);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.SLEEP);
   });
 

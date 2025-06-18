@@ -1,7 +1,5 @@
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -50,7 +48,7 @@ describe("Moves - Fissure", () => {
     game.override.ability(AbilityId.NO_GUARD).enemyAbility(AbilityId.FUR_COAT);
 
     game.move.select(MoveId.FISSURE);
-    await game.phaseInterceptor.to(DamageAnimPhase, true);
+    await game.phaseInterceptor.to("DamageAnimPhase", true);
 
     expect(enemyPokemon.isFainted()).toBe(true);
   });
@@ -63,7 +61,7 @@ describe("Moves - Fissure", () => {
     game.move.select(MoveId.FISSURE);
 
     // wait for TurnEndPhase instead of DamagePhase as fissure might not actually inflict damage
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(partyPokemon.getAccuracyMultiplier).toHaveReturnedWith(1);
   });
@@ -76,7 +74,7 @@ describe("Moves - Fissure", () => {
     game.move.select(MoveId.FISSURE);
 
     // wait for TurnEndPhase instead of DamagePhase as fissure might not actually inflict damage
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(partyPokemon.getAccuracyMultiplier).toHaveReturnedWith(1);
   });

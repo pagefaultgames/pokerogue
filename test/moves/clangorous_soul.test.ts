@@ -1,7 +1,6 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
@@ -45,7 +44,7 @@ describe("Moves - Clangorous Soul", () => {
     const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
     game.move.select(MoveId.CLANGOROUS_SOUL);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
     expect(leadPokemon.getStatStage(Stat.ATK)).toBe(1);
@@ -68,7 +67,7 @@ describe("Moves - Clangorous Soul", () => {
     leadPokemon.setStatStage(Stat.SPDEF, 4);
 
     game.move.select(MoveId.CLANGOROUS_SOUL);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
     expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
@@ -90,7 +89,7 @@ describe("Moves - Clangorous Soul", () => {
     leadPokemon.setStatStage(Stat.SPD, 6);
 
     game.move.select(MoveId.CLANGOROUS_SOUL);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
     expect(leadPokemon.getStatStage(Stat.ATK)).toBe(6);
@@ -108,7 +107,7 @@ describe("Moves - Clangorous Soul", () => {
     leadPokemon.hp = hpLost - PREDAMAGE;
 
     game.move.select(MoveId.CLANGOROUS_SOUL);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);
     expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);

@@ -1,7 +1,5 @@
 import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#enums/ability-id";
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -44,7 +42,7 @@ describe("Abilities - Pastel Veil", () => {
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.TOXIC_THREAD, 1, BattlerIndex.PLAYER);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(magikarp.status?.effect).toBeUndefined();
   });
@@ -60,13 +58,13 @@ describe("Abilities - Pastel Veil", () => {
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.TOXIC_THREAD, 1, BattlerIndex.PLAYER);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     expect(magikarp.status?.effect).toBe(StatusEffect.POISON);
 
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
     game.move.select(MoveId.SPLASH);
     game.doSwitchPokemon(2);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(magikarp.status?.effect).toBeUndefined();
   });

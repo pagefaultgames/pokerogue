@@ -5,7 +5,6 @@ import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import type Pokemon from "#app/field/pokemon";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { NumberHolder } from "#app/utils/common";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -50,7 +49,7 @@ describe("Moves - Reflect", () => {
 
     game.move.select(moveToUse);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const mockedDmg = getMockedMoveDamage(
       game.scene.getEnemyPokemon()!,
       game.scene.getPlayerPokemon()!,
@@ -69,7 +68,7 @@ describe("Moves - Reflect", () => {
     game.move.select(moveToUse);
     game.move.select(moveToUse, 1);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const mockedDmg = getMockedMoveDamage(
       game.scene.getEnemyPokemon()!,
       game.scene.getPlayerPokemon()!,
@@ -85,7 +84,7 @@ describe("Moves - Reflect", () => {
 
     game.move.select(moveToUse);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const mockedDmg = getMockedMoveDamage(
       game.scene.getEnemyPokemon()!,
@@ -102,7 +101,7 @@ describe("Moves - Reflect", () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const mockedDmg = getMockedMoveDamage(
       game.scene.getEnemyPokemon()!,
@@ -119,7 +118,7 @@ describe("Moves - Reflect", () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const mockedDmg = getMockedMoveDamage(
       game.scene.getEnemyPokemon()!,

@@ -3,7 +3,6 @@ import { allAbilities } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
 import { WeatherType } from "#app/enums/weather-type";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -72,7 +71,7 @@ describe("Abilities - Flower Gift", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH);
     // Ensure sunny day is used last.
     await game.setTurnOrder([attacker_index, target_index, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const damageWithoutGift = initialHp - target.hp;
 
     target.hp = initialHp;
@@ -83,7 +82,7 @@ describe("Abilities - Flower Gift", () => {
     await game.move.selectEnemyMove(enemy_move, BattlerIndex.PLAYER_2);
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, target_index, attacker_index]);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const damageWithGift = initialHp - target.hp;
 
     return [damageWithoutGift, damageWithGift];

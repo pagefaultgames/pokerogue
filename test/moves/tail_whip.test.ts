@@ -5,8 +5,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 describe("Moves - Tail whip", () => {
   let phaserGame: Phaser.Game;
@@ -43,7 +41,7 @@ describe("Moves - Tail whip", () => {
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
 
     game.move.select(moveToUse);
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
+    await game.toEndOfTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-1);
   });

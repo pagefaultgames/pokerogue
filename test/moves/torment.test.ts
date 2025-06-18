@@ -6,7 +6,6 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { MoveResult } from "#enums/move-result";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 
 describe("Moves - Torment", () => {
   let phaserGame: Phaser.Game;
@@ -57,7 +56,7 @@ describe("Moves - Torment", () => {
     // Third turn, Tackle can be used.
     game.move.select(MoveId.TACKLE);
     await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const move3 = playerPokemon.getLastXMoves(1)[0]!;
     expect(move3.move).toBe(MoveId.TACKLE);
   });

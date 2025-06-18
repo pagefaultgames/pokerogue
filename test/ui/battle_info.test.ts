@@ -1,6 +1,5 @@
 import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 import { SpeciesId } from "#enums/species-id";
-import { ExpPhase } from "#app/phases/exp-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -48,7 +47,7 @@ describe("UI - Battle Info", () => {
 
       game.move.select(MoveId.SPLASH);
       await game.doKillOpponents();
-      await game.phaseInterceptor.to(ExpPhase, true);
+      await game.phaseInterceptor.to("ExpPhase", true);
 
       expect(Math.pow).not.toHaveBeenCalledWith(2, expGainsSpeed);
     },
