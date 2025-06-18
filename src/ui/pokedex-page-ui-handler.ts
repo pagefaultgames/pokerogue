@@ -2057,7 +2057,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               }
               let newSpecies: PokemonSpecies;
               if (this.filteredIndices) {
-                const index = this.filteredIndices.findIndex(id => id === this.species.speciesId);
+                const index = this.filteredIndices.indexOf(this.species.speciesId);
                 const newIndex = index <= 0 ? this.filteredIndices.length - 1 : index - 1;
                 newSpecies = getPokemonSpecies(this.filteredIndices[newIndex]);
               } else {
@@ -2096,7 +2096,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               }
               let newSpecies: PokemonSpecies;
               if (this.filteredIndices) {
-                const index = this.filteredIndices.findIndex(id => id === this.species.speciesId);
+                const index = this.filteredIndices.indexOf(this.species.speciesId);
                 const newIndex = index >= this.filteredIndices.length - 1 ? 0 : index + 1;
                 newSpecies = getPokemonSpecies(this.filteredIndices[newIndex]);
               } else {
