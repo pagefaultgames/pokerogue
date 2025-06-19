@@ -75,13 +75,13 @@ You've just made a change - how can you check if it works? You have two areas to
 
 > This will likely be your first stop. After making a change, you'll want to spin the game up and make sure everything is as you expect. To do this, you will need a way to manipulate the game to produce the situation you're looking to test.
 
-In the `src/overrides.ts` file there are overrides for most values you'll need to change for testing, controlled through the `overrides` object. 
+[src/overrides.ts](../src/overrides.ts) contains overrides for most values you'll need to change for testing, controlled through the `overrides` object.
 For example, here is how you could test a scenario where the player Pokemon has the ability Drought and the enemy Pokemon has the move Water Gun:
 
 ```typescript
 const overrides = {
-  ABILITY_OVERRIDE: Abilities.DROUGHT,
-  OPP_MOVESET_OVERRIDE: Moves.WATER_GUN,
+  ABILITY_OVERRIDE: AbilityId.DROUGHT,
+  OPP_MOVESET_OVERRIDE: MoveId.WATER_GUN,
 } satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 ```
 
@@ -160,7 +160,7 @@ It'll be merged into the locales repository after any necessary corrections, at 
 5. The Dev team will approve your main PR, and your changes will be in the beta environment!
 
 ## 😈 Development Save File
-> Some issues may require you to have unlocks on your save file which go beyond overrides. For this case, there is a save file with everything unlocked (some of which are not legitimately obtainable).
+> Some issues may require you to have unlocks on your save file which go beyond normal overrides. For this reason, the repository contains a [save file](../test/testUtils/saves/everything.psrv) with _everything_ unlocked (even ones not legitimately obtainable, like unimplemented variant shinies).
 
 1. Start the game up locally and navigate to `Menu -> Manage Data -> Import Data`
-2. Select [everything.prsv](test/testUtils/saves/everything.prsv) (`test/testUtils/saves/everything.prsv`) and confirm
+2. Select [everything.prsv](test/testUtils/saves/everything.prsv) (`test/testUtils/saves/everything.prsv`) and confirm.
