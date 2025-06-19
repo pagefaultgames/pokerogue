@@ -24,12 +24,14 @@ describe("Weather - Fog", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.weather(WeatherType.FOG).battleStyle("single");
-    game.override.moveset([MoveId.TACKLE]);
-    game.override.ability(AbilityId.BALL_FETCH);
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.enemySpecies(SpeciesId.MAGIKARP);
-    game.override.enemyMoveset([MoveId.SPLASH]);
+    game.override
+      .weather(WeatherType.FOG)
+      .battleStyle("single")
+      .moveset([MoveId.TACKLE])
+      .ability(AbilityId.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyMoveset([MoveId.SPLASH]);
   });
 
   it("move accuracy is multiplied by 90%", async () => {

@@ -1,12 +1,18 @@
 import { globalScene } from "#app/global-scene";
-import { allMoves } from "./data-lists";
+import { allMoves } from "#app/data/data-lists";
 import { MoveFlags } from "#enums/MoveFlags";
-import type Pokemon from "../field/pokemon";
-import { type nil, getFrameMs, getEnumKeys, getEnumValues, animationFileName } from "../utils/common";
+import type Pokemon from "#app/field/pokemon";
+import {
+  type nil,
+  getFrameMs,
+  getEnumKeys,
+  getEnumValues,
+  animationFileName,
+  coerceArray,
+  isNullOrUndefined,
+} from "#app/utils/common";
 import type { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
-import { SubstituteTag } from "./battler-tags";
-import { isNullOrUndefined } from "../utils/common";
 import Phaser from "phaser";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { AnimBlendType, AnimFrameTarget, AnimFocus, ChargeAnim, CommonAnim } from "#enums/move-anims-common";
@@ -520,7 +526,7 @@ function logMissingMoveAnim(move: MoveId, ...optionalParams: any[]) {
  * @param encounterAnim one or more animations to fetch
  */
 export async function initEncounterAnims(encounterAnim: EncounterAnim | EncounterAnim[]): Promise<void> {
-  const anims = Array.isArray(encounterAnim) ? encounterAnim : [encounterAnim];
+  const anims = coerceArray(encounterAnim);
   const encounterAnimNames = getEnumKeys(EncounterAnim);
   const encounterAnimFetches: Promise<Map<EncounterAnim, AnimConfig>>[] = [];
   for (const anim of anims) {
@@ -845,7 +851,7 @@ export abstract class BattleAnim {
       return;
     }
 
-    const targetSubstitute = !!onSubstitute && user !== target ? target.getTag(SubstituteTag) : null;
+    const targetSubstitute = !!onSubstitute && user !== target ? target.getTag(BattlerTagType.SUBSTITUTE) : null;
 
     const userSprite = user.getSprite();
     const targetSprite = targetSubstitute?.sprite ?? target.getSprite();

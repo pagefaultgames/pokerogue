@@ -19,7 +19,8 @@ import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import type { LevelMoves } from "#app/data/balance/pokemon-level-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data/pokemon-species";
+import { getPokemonSpeciesForm, getPokerusStarters } from "#app/data/pokemon-species";
+import { allSpecies } from "#app/data/data-lists";
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { PokemonType } from "#enums/pokemon-type";
 import { GameModes } from "#enums/game-modes";
@@ -1763,7 +1764,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else if (this.randomCursorObj.visible) {
       switch (button) {
-        case Button.ACTION:
+        case Button.ACTION: {
           if (this.starterSpecies.length >= 6) {
             error = true;
             break;
@@ -1815,6 +1816,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             }
           });
           break;
+        }
         case Button.UP:
           this.randomCursorObj.setVisible(false);
           this.filterBarCursor = this.filterBar.numFilters - 1;

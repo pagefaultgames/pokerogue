@@ -9,7 +9,7 @@ import { version } from "../../package.json";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
 import type { SpeciesId } from "#enums/species-id";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { PlayerGender } from "#enums/player-gender";
 import { timedEventManager } from "#app/global-event-manager";
 

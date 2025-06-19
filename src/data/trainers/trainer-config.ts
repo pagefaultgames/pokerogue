@@ -1,9 +1,16 @@
 import { globalScene } from "#app/global-scene";
 import { modifierTypes } from "../data-lists";
 import { PokemonMove } from "../moves/pokemon-move";
-import { toReadableString, isNullOrUndefined, randSeedItem, randSeedInt, randSeedIntRange } from "#app/utils/common";
+import {
+  toReadableString,
+  isNullOrUndefined,
+  randSeedItem,
+  randSeedInt,
+  coerceArray,
+  randSeedIntRange,
+} from "#app/utils/common";
 import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { tmSpecies } from "#app/data/balance/tms";
 import { doubleBattleDialogue } from "../double-battle-dialogue";
 import { TrainerVariant } from "#enums/trainer-variant";
@@ -554,10 +561,7 @@ export class TrainerConfig {
     this.speciesPools = evilAdminTrainerPools[poolName];
 
     signatureSpecies.forEach((speciesPool, s) => {
-      if (!Array.isArray(speciesPool)) {
-        speciesPool = [speciesPool];
-      }
-      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
+      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(coerceArray(speciesPool)));
     });
 
     const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
@@ -620,10 +624,7 @@ export class TrainerConfig {
       this.setPartyTemplates(trainerPartyTemplates.RIVAL_5);
     }
     signatureSpecies.forEach((speciesPool, s) => {
-      if (!Array.isArray(speciesPool)) {
-        speciesPool = [speciesPool];
-      }
-      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
+      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(coerceArray(speciesPool)));
     });
     if (!isNullOrUndefined(specialtyType)) {
       this.setSpeciesFilter(p => p.isOfType(specialtyType));
@@ -668,12 +669,8 @@ export class TrainerConfig {
 
     // Set up party members with their corresponding species.
     signatureSpecies.forEach((speciesPool, s) => {
-      // Ensure speciesPool is an array.
-      if (!Array.isArray(speciesPool)) {
-        speciesPool = [speciesPool];
-      }
       // Set a function to get a random party member from the species pool.
-      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
+      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(coerceArray(speciesPool)));
     });
 
     // If specialty type is provided, set species filter and specialty type.
@@ -729,12 +726,8 @@ export class TrainerConfig {
 
     // Set up party members with their corresponding species.
     signatureSpecies.forEach((speciesPool, s) => {
-      // Ensure speciesPool is an array.
-      if (!Array.isArray(speciesPool)) {
-        speciesPool = [speciesPool];
-      }
       // Set a function to get a random party member from the species pool.
-      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
+      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(coerceArray(speciesPool)));
     });
 
     // Set species filter and specialty type if provided, otherwise filter by base total.

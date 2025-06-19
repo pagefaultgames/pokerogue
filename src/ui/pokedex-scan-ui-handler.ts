@@ -8,7 +8,7 @@ import { UiMode } from "#enums/ui-mode";
 import { FilterTextRow } from "./filter-text";
 import { allAbilities } from "#app/data/data-lists";
 import { allMoves } from "#app/data/data-lists";
-import { allSpecies } from "#app/data/pokemon-species";
+import { allSpecies } from "#app/data/data-lists";
 import i18next from "i18next";
 
 export default class PokedexScanUiHandler extends FormModalUiHandler {
