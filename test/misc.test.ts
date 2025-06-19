@@ -64,16 +64,13 @@ describe("Test misc", () => {
     expect(data).toBeDefined();
   });
 
-  it("testing wait phase queue", async () => {
-    const fakeScene = {
-      phaseQueue: [1, 2, 3], // Initially not empty
-    };
+  it("testing waitUntil", async () => {
+    let a = 1;
     setTimeout(() => {
-      fakeScene.phaseQueue = [];
+      a = 0;
     }, 500);
     const spy = vi.fn();
-    await waitUntil(() => fakeScene.phaseQueue.length === 0).then(result => {
-      expect(result).toBe(true);
+    await waitUntil(() => a === 0).then(() => {
       spy(); // Call the spy function
     });
     expect(spy).toHaveBeenCalled();

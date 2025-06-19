@@ -54,7 +54,7 @@ import TextInterceptor from "#test/testUtils/TextInterceptor";
 import { AES, enc } from "crypto-js";
 import fs from "node:fs";
 import { expect, vi } from "vitest";
-import type { PhaseString } from "#app/@types/phase-types";
+import type { PhaseClass, PhaseString } from "#app/@types/phase-types";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -405,7 +405,15 @@ export default class GameManager {
    * @param phaseTarget - The target phase.
    * @returns Whether the current phase matches the target phase
    */
-  isCurrentPhase(phaseTarget) {
+  isCurrentPhase(phaseTarget: PhaseString | PhaseClass);
+  /**
+   * Checks if the current phase matches the target phase.
+   * @param phaseTarget - The target phase.
+   * @returns Whether the current phase matches the target phase
+   * @deprecated - use PhaseString
+   */
+  isCurrentPhase(phaseTarget: PhaseClass);
+  isCurrentPhase(phaseTarget: PhaseString | PhaseClass) {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
     return this.scene.phaseManager.getCurrentPhase()?.constructor.name === targetName;
   }

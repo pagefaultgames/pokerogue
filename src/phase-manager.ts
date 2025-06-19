@@ -391,6 +391,13 @@ export class PhaseManager {
     this.startCurrentPhase();
   }
 
+  /**
+   * Helper method to start and log the current phase.
+   *
+   * @remarks
+   * This is disabled during tests by `phase-interceptor.ts` to allow for pausing execution at specific phases.
+   * As such, **do not remove or split this method** as it will break integration tests.
+   */
   private startCurrentPhase(): void {
     if (!this.currentPhase) {
       return;
