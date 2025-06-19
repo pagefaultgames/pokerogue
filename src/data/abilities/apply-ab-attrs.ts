@@ -23,15 +23,14 @@ function applySingleAbAttrs<T extends AbAttrString>(
     return;
   }
 
-  // typescript assert
   for (const attr of ability.getAttrs(attrType)) {
     const condition = attr.getCondition();
     let abShown = false;
-    if (
-      (condition && !condition(pokemon)) ||
-      // @ts-ignore: typescript can't unify the type of params with the generic type that was passed
-      !attr.canApply(params)
-    ) {
+    // We require an `as any` cast to suppress an error about the `params` type not being assignable to
+    // the type of the argument expected by `attr.canApply()`. This is OK, because we know that
+    // `attr` is an instance of the `attrType` class provided to the method, and typescript _will_ check
+    // that the `params` object has the correct properties for that class at the callsites.
+    if ((condition && !condition(pokemon)) || !attr.canApply(params as any)) {
       continue;
     }
 
@@ -41,17 +40,16 @@ function applySingleAbAttrs<T extends AbAttrString>(
       globalScene.phaseManager.queueAbilityDisplay(pokemon, passive, true);
       abShown = true;
     }
-    // @ts-expect-error - typescript can't unify the type of params with the generic type that was passed
-    const message = attr.getTriggerMessage(params, ability.name);
+
+    const message = attr.getTriggerMessage(params as any, ability.name);
     if (message) {
       if (!simulated) {
         globalScene.phaseManager.queueMessage(message);
       }
       messages.push(message);
     }
-
-    // @ts-ignore: typescript can't unify the type of params with the generic type that was passed
-    attr.apply(params);
+    // The `as any` cast here uses the same reasoning as above.
+    attr.apply(params as any);
 
     if (abShown) {
       globalScene.phaseManager.queueAbilityDisplay(pokemon, passive, false);
@@ -84,10 +82,10 @@ function applyAbAttrsInternal<T extends CallableAbAttrString>(
     params.passive = passive;
     applySingleAbAttrs(attrType, params, gainedMidTurn, messages);
     globalScene.phaseManager.clearPhaseQueueSplice();
-    // We need to restore passive to its original state in case it was undefined earlier
-    // this is necessary in case this method is called with an object that is reused.
-    params.passive = undefined;
   }
+  // We need to restore passive to its original state in the case that it was undefined on entry
+  // this is necessary in case this method is called with an object that is reused.
+  params.passive = undefined;
 }
 
 /**
