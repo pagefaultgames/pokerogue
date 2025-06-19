@@ -35,13 +35,11 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 
 ### Linting
 
-We're using Biome as our common linter and formatter. 
-It will run automatically during the pre-commit hook but if you would like to manually run it, use the `npm run biome` script. 
-To view the complete rules, check out the [biome.jsonc](./biome.jsonc) file.
+Check out our [in-depth file](./docs/linting.md) on linting and formatting!
 
 ## 🚀 Getting Started
 
-A great way to develop an understanding of how the project works is to look at test cases (located in `/test`). 
+A great way to develop an understanding of how the project works is to look at test cases (located in [the `test` folder](./test/)). 
 Tests show you both how things are supposed to work and the expected "flow" to get from point A to point B in battles.
 
 *This is a big project and you will be confused at times - never be afraid to reach out and ask questions in **#dev-corner***!
@@ -91,7 +89,7 @@ You can get help testing your specific changes, and you might have found a new o
 
 ### 2 - Automatic Testing
 
-> PokéRogue uses [Vitest](https://vitest.dev/) for automatic testing. Checking out the existing tests in the `test/` folder is a great way to understand how this works, and to get familiar with the project as a whole.
+> PokéRogue uses [Vitest](https://vitest.dev/) for automatic testing. Checking out the existing tests in the [test](./test/) folder is a great way to understand how this works, and to get familiar with the project as a whole.
 
 To make sure your changes didn't break any existing test cases, run `npm run test:silent` in your terminal. You can also provide an argument to the command: to run only the Dancer (ability) tests, you could write `npm run test:silent dancer`. 
   - __Note that passing all test cases does *not* guarantee that everything is working properly__. The project does not have complete regression testing.
