@@ -1,7 +1,7 @@
 import { Stat } from "#enums/stat";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -23,22 +23,22 @@ describe("Moves - Mist", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.MIST, Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH)
+      .moveset([MoveId.MIST, MoveId.SPLASH])
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("double")
-      .disableCrits()
-      .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.GROWL);
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.GROWL);
   });
 
   it("should prevent the user's side from having stats lowered", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
     const playerPokemon = game.scene.getPlayerField();
 
-    game.move.select(Moves.MIST, 0);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.MIST, 0);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("BerryPhase");
 

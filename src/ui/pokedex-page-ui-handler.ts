@@ -9,19 +9,23 @@ import { allAbilities } from "#app/data/data-lists";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate, getGrowthRateColor } from "#app/data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { getNatureName } from "#app/data/nature";
 import type { SpeciesFormChange } from "#app/data/pokemon-forms";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import type { LevelMoves } from "#app/data/balance/pokemon-level-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, normalForm } from "#app/data/pokemon-species";
+import { getPokemonSpeciesForm, normalForm } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
+import { allSpecies } from "#app/data/data-lists";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { PokemonType } from "#enums/pokemon-type";
-import type { DexEntry, StarterAttributes } from "#app/system/game-data";
-import { AbilityAttr, DexAttr } from "#app/system/game-data";
+import type { StarterAttributes } from "#app/system/game-data";
+import type { DexEntry } from "#app/@types/dex-data";
+import { AbilityAttr } from "#enums/ability-attr";
+import { DexAttr } from "#enums/dex-attr";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { StatsContainer } from "#app/ui/stats-container";
@@ -36,8 +40,8 @@ import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import PokedexInfoOverlay from "#app/ui/pokedex-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { Device } from "#enums/devices";
-import type { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import type { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Button } from "#enums/buttons";
 import { EggSourceType } from "#enums/egg-source-types";
 import {
@@ -58,9 +62,9 @@ import { getEnumKeys } from "#app/utils/common";
 import { speciesTmMoves } from "#app/data/balance/tms";
 import type { BiomeTierTod } from "#app/data/balance/biomes";
 import { BiomePoolTier, catchableSpecies } from "#app/data/balance/biomes";
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { TimeOfDay } from "#app/enums/time-of-day";
-import type { Abilities } from "#app/enums/abilities";
+import type { AbilityId } from "#enums/ability-id";
 import { BaseStatsOverlay } from "#app/ui/base-stats-overlay";
 import { globalScene } from "#app/global-scene";
 import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
@@ -203,15 +207,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private species: PokemonSpecies;
   private starterId: number;
   private formIndex: number;
-  private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
+  private speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
   private levelMoves: LevelMoves;
-  private eggMoves: Moves[] = [];
+  private eggMoves: MoveId[] = [];
   private hasEggMoves: boolean[] = [];
-  private tmMoves: Moves[] = [];
-  private ability1: Abilities;
-  private ability2: Abilities | undefined;
-  private abilityHidden: Abilities | undefined;
-  private passive: Abilities;
+  private tmMoves: MoveId[] = [];
+  private ability1: AbilityId;
+  private ability2: AbilityId | undefined;
+  private abilityHidden: AbilityId | undefined;
+  private passive: AbilityId;
   private hasPassive: boolean;
   private hasAbilities: number[];
   private biomes: BiomeTierTod[];
@@ -256,7 +260,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   protected scale = 0.1666666667;
   private menuDescriptions: string[];
   private isFormGender: boolean;
-  private filteredIndices: Species[] | null = null;
+  private filteredIndices: SpeciesId[] | null = null;
 
   private availableVariants: number;
   private unlockedVariants: boolean[];
@@ -665,7 +669,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   show(args: any[]): boolean {
     // Allow the use of candies if we are in one of the whitelisted phases
     this.canUseCandies = ["TitlePhase", "SelectStarterPhase", "CommandPhase"].includes(
-      globalScene.getCurrentPhase()?.constructor.name ?? "",
+      globalScene.phaseManager.getCurrentPhase()?.phaseName ?? "",
     );
 
     if (args.length >= 1 && args[0] === "refresh") {
@@ -824,7 +828,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     const allBiomes = catchableSpecies[species.speciesId] ?? [];
     this.preBiomes = this.sanitizeBiomes(
       (catchableSpecies[this.starterId] ?? []).filter(
-        b => !allBiomes.some(bm => b.biome === bm.biome && b.tier === bm.tier) && !(b.biome === Biome.TOWN),
+        b => !allBiomes.some(bm => b.biome === bm.biome && b.tier === bm.tier) && !(b.biome === BiomeId.TOWN),
       ),
       this.starterId,
     );
@@ -863,13 +867,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
   // Function to ensure that forms appear in the appropriate biome and tod
   sanitizeBiomes(biomes: BiomeTierTod[], speciesId: number): BiomeTierTod[] {
-    if (speciesId === Species.BURMY || speciesId === Species.WORMADAM) {
+    if (speciesId === SpeciesId.BURMY || speciesId === SpeciesId.WORMADAM) {
       return biomes.filter(b => {
         const formIndex = (() => {
           switch (b.biome) {
-            case Biome.BEACH:
+            case BiomeId.BEACH:
               return 1;
-            case Biome.SLUM:
+            case BiomeId.SLUM:
               return 2;
             default:
               return 0;
@@ -878,19 +882,19 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         return this.formIndex === formIndex;
       });
     }
-    if (speciesId === Species.ROTOM) {
+    if (speciesId === SpeciesId.ROTOM) {
       return biomes.filter(b => {
         const formIndex = (() => {
           switch (b.biome) {
-            case Biome.VOLCANO:
+            case BiomeId.VOLCANO:
               return 1;
-            case Biome.SEA:
+            case BiomeId.SEA:
               return 2;
-            case Biome.ICE_CAVE:
+            case BiomeId.ICE_CAVE:
               return 3;
-            case Biome.MOUNTAIN:
+            case BiomeId.MOUNTAIN:
               return 4;
-            case Biome.TALL_GRASS:
+            case BiomeId.TALL_GRASS:
               return 5;
             default:
               return 0;
@@ -899,7 +903,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         return this.formIndex === formIndex;
       });
     }
-    if (speciesId === Species.LYCANROC) {
+    if (speciesId === SpeciesId.LYCANROC) {
       return biomes.filter(b => {
         const formIndex = (() => {
           switch (b.tod[0]) {
@@ -1089,11 +1093,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
    * @returns the id of the corresponding starter
    */
   getStarterSpeciesId(speciesId): number {
-    if (speciesId === Species.PIKACHU) {
+    if (speciesId === SpeciesId.PIKACHU) {
       if ([0, 1, 8].includes(this.formIndex)) {
-        return Species.PICHU;
+        return SpeciesId.PICHU;
       }
-      return Species.PIKACHU;
+      return SpeciesId.PIKACHU;
     }
     if (speciesStarterCosts.hasOwnProperty(speciesId)) {
       return speciesId;
@@ -1477,7 +1481,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                   this.biomes.map(b => {
                     options.push({
                       label:
-                        i18next.t(`biome:${Biome[b.biome].toUpperCase()}`) +
+                        i18next.t(`biome:${BiomeId[b.biome].toUpperCase()}`) +
                         " - " +
                         i18next.t(`biome:${BiomePoolTier[b.tier].toUpperCase()}`) +
                         (b.tod.length === 1 && b.tod[0] === -1
@@ -1498,7 +1502,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     this.preBiomes.map(b => {
                       options.push({
                         label:
-                          i18next.t(`biome:${Biome[b.biome].toUpperCase()}`) +
+                          i18next.t(`biome:${BiomeId[b.biome].toUpperCase()}`) +
                           " - " +
                           i18next.t(`biome:${BiomePoolTier[b.tier].toUpperCase()}`) +
                           (b.tod.length === 1 && b.tod[0] === -1
@@ -1888,7 +1892,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
                 const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.starterId]);
                 options.push({
-                  label: `x${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")} (${allAbilities[this.passive].name})`,
+                  label: `x${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")}`,
                   handler: () => {
                     if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
                       starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
@@ -2581,7 +2585,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
         this.pokemonUncaughtText.setVisible(false);
         this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry?.caughtCount}`);
-        if (species.speciesId === Species.MANAPHY || species.speciesId === Species.PHIONE) {
+        if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
           this.pokemonHatchedIcon.setFrame("manaphy");
         } else {
           this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
@@ -2614,7 +2618,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
         this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
         this.pokemonCandyCountText.setText(
-          `x${species.speciesId === Species.PIKACHU ? 0 : globalScene.gameData.starterData[this.starterId].candyCount}`,
+          `x${species.speciesId === SpeciesId.PIKACHU ? 0 : globalScene.gameData.starterData[this.starterId].candyCount}`,
         );
         this.pokemonCandyContainer.setVisible(true);
 

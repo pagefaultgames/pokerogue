@@ -1,12 +1,12 @@
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { PokemonType } from "#enums/pokemon-type";
 import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 
 describe("Form Change Phase", () => {
   let phaserGame: Phaser.Game;
@@ -25,17 +25,17 @@ describe("Form Change Phase", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH)
+      .moveset([MoveId.SPLASH])
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("Zacian should successfully change into Crowned form", async () => {
-    await game.classicMode.startBattle([Species.ZACIAN]);
+    await game.classicMode.startBattle([SpeciesId.ZACIAN]);
 
     // Before the form change: Should be Hero form
     const zacian = game.scene.getPlayerParty()[0];
@@ -48,7 +48,7 @@ describe("Form Change Phase", () => {
     const rustedSword = rustedSwordType.newModifier(zacian);
     await game.scene.addModifier(rustedSword);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     // After the form change: Should be Crowned form

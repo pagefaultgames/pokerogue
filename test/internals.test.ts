@@ -1,5 +1,5 @@
-import { Abilities } from "#app/enums/abilities";
-import { Species } from "#app/enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -23,18 +23,18 @@ describe("Internals", () => {
   });
 
   it("should provide Eevee with 3 defined abilities", async () => {
-    await game.classicMode.runToSummon([Species.EEVEE]);
+    await game.classicMode.runToSummon([SpeciesId.EEVEE]);
     const eevee = game.scene.getPlayerPokemon()!;
 
     expect(eevee.getSpeciesForm().getAbilityCount()).toBe(3);
 
-    expect(eevee.getSpeciesForm().getAbility(0)).toBe(Abilities.RUN_AWAY);
-    expect(eevee.getSpeciesForm().getAbility(1)).toBe(Abilities.ADAPTABILITY);
-    expect(eevee.getSpeciesForm().getAbility(2)).toBe(Abilities.ANTICIPATION);
+    expect(eevee.getSpeciesForm().getAbility(0)).toBe(AbilityId.RUN_AWAY);
+    expect(eevee.getSpeciesForm().getAbility(1)).toBe(AbilityId.ADAPTABILITY);
+    expect(eevee.getSpeciesForm().getAbility(2)).toBe(AbilityId.ANTICIPATION);
   });
 
   it("should set Eeeve abilityIndex between 0-2", async () => {
-    await game.classicMode.runToSummon([Species.EEVEE]);
+    await game.classicMode.runToSummon([SpeciesId.EEVEE]);
     const eevee = game.scene.getPlayerPokemon()!;
 
     expect(eevee.abilityIndex).toBeGreaterThanOrEqual(0);

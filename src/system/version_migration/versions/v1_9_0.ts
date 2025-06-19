@@ -1,8 +1,8 @@
 import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { SessionSaveData } from "#app/system/game-data";
 import type PokemonData from "#app/system/pokemon-data";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 
 /**
  * Migrate all lingering rage fist data inside `CustomPokemonData`,
@@ -15,7 +15,7 @@ const migratePartyData: SessionSaveMigrator = {
     // this stuff is copied straight from the constructor fwiw
     const mapParty = (pkmnData: PokemonData) => {
       // remove empty moves from moveset
-      pkmnData.moveset = (pkmnData.moveset ?? [new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL)])
+      pkmnData.moveset = (pkmnData.moveset ?? [new PokemonMove(MoveId.TACKLE), new PokemonMove(MoveId.GROWL)])
         .filter(m => !!m)
         .map(m => PokemonMove.loadMove(m));
       // only edit summondata moveset if exists

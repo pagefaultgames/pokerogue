@@ -1,26 +1,20 @@
 import { globalScene } from "#app/global-scene";
-import {
-  applyPreSummonAbAttrs,
-  applyPreSwitchOutAbAttrs,
-  PostDamageForceSwitchAbAttr,
-  PreSummonAbAttr,
-  PreSwitchOutAbAttr,
-} from "#app/data/abilities/ability";
-import { allMoves, ForceSwitchOutAttr } from "#app/data/moves/move";
+import { applyPreSummonAbAttrs, applyPreSwitchOutAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { allMoves } from "#app/data/data-lists";
 import { getPokeballTintColor } from "#app/data/pokeball";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { SwitchEffectTransferModifier } from "#app/modifier/modifier";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import i18next from "i18next";
-import { PostSummonPhase } from "./post-summon-phase";
 import { SummonPhase } from "./summon-phase";
 import { SubstituteTag } from "#app/data/battler-tags";
 import { SwitchType } from "#enums/switch-type";
 
 export class SwitchSummonPhase extends SummonPhase {
+  public readonly phaseName: "SwitchSummonPhase" | "ReturnPhase" = "SwitchSummonPhase";
   private readonly switchType: SwitchType;
   private readonly slotIndex: number;
   private readonly doReturn: boolean;
@@ -130,13 +124,12 @@ export class SwitchSummonPhase extends SummonPhase {
     switchedInPokemon.resetSummonData();
     switchedInPokemon.loadAssets(true);
 
-    applyPreSummonAbAttrs(PreSummonAbAttr, switchedInPokemon);
-    applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
+    applyPreSummonAbAttrs("PreSummonAbAttr", switchedInPokemon);
+    applyPreSwitchOutAbAttrs("PreSwitchOutAbAttr", this.lastPokemon);
     if (!switchedInPokemon) {
       this.end();
       return;
     }
-
 
     if (this.switchType === SwitchType.BATON_PASS) {
       // If switching via baton pass, update opposing tags coming from the prior pokemon
@@ -175,19 +168,7 @@ export class SwitchSummonPhase extends SummonPhase {
     party[this.slotIndex] = this.lastPokemon;
     party[this.fieldIndex] = switchedInPokemon;
     const showTextAndSummon = () => {
-      globalScene.ui.showText(
-        this.player
-          ? i18next.t("battle:playerGo", {
-              pokemonName: getPokemonNameWithAffix(switchedInPokemon),
-            })
-          : i18next.t("battle:trainerGo", {
-              trainerName: globalScene.currentBattle.trainer?.getName(
-                !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
-              ),
-              pokemonName: this.getPokemon().getNameToRender(),
-            }),
-      );
-
+      globalScene.ui.showText(this.getSendOutText(switchedInPokemon));
       /**
        * If this switch is passing a Substitute, make the switched Pokemon matches the returned Pokemon's state as it left.
        * Otherwise, clear any persisting tags on the returned Pokemon.
@@ -226,9 +207,9 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const currentCommand = globalScene.currentBattle.turnCommands[this.fieldIndex]?.command;
     const lastPokemonIsForceSwitchedAndNotFainted =
-      lastUsedMove?.hasAttr(ForceSwitchOutAttr) && !this.lastPokemon.isFainted();
+      lastUsedMove?.hasAttr("ForceSwitchOutAttr") && !this.lastPokemon.isFainted();
     const lastPokemonHasForceSwitchAbAttr =
-      this.lastPokemon.hasAbilityWithAttr(PostDamageForceSwitchAbAttr) && !this.lastPokemon.isFainted();
+      this.lastPokemon.hasAbilityWithAttr("PostDamageForceSwitchAbAttr") && !this.lastPokemon.isFainted();
 
     // Compensate for turn spent summoning/forced switch if switched out pokemon is not fainted.
     // Needed as we increment turn counters in `TurnEndPhase`.
@@ -264,6 +245,34 @@ export class SwitchSummonPhase extends SummonPhase {
   }
 
   queuePostSummon(): void {
-    globalScene.unshiftPhase(new PostSummonPhase(this.getPokemon().getBattlerIndex()));
+    globalScene.phaseManager.startNewDynamicPhase("PostSummonPhase", this.getPokemon().getBattlerIndex());
+  }
+
+  /**
+   * Get the text to be displayed when a pokemon is forced to switch and leave the field.
+   * @param switchedInPokemon - The Pokemon having newly been sent in.
+   * @returns The text to display.
+   */
+  private getSendOutText(switchedInPokemon: Pokemon): string {
+    if (this.switchType === SwitchType.FORCE_SWITCH) {
+      // "XYZ was dragged out!"
+      return i18next.t("battle:pokemonDraggedOut", {
+        pokemonName: getPokemonNameWithAffix(switchedInPokemon),
+      });
+    }
+    if (this.player) {
+      // "Go! XYZ!"
+      return i18next.t("battle:playerGo", {
+        pokemonName: getPokemonNameWithAffix(switchedInPokemon),
+      });
+    }
+
+    // "Trainer sent out XYZ!"
+    return i18next.t("battle:trainerGo", {
+      trainerName: globalScene.currentBattle.trainer?.getName(
+        !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
+      ),
+      pokemonName: this.getPokemon().getNameToRender(),
+    });
   }
 }

@@ -1,9 +1,9 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
-import { Species } from "#app/enums/species";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Abilities } from "#app/enums/abilities";
-import { Moves } from "#app/enums/moves";
+import { SpeciesId } from "#enums/species-id";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
 import { EFFECTIVE_STATS } from "#app/enums/stat";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import { toDmgValue } from "#app/utils/common";
@@ -28,13 +28,13 @@ describe("Boss Pokemon / Shields", () => {
     game.override
       .battleStyle("single")
       .disableTrainerWaves()
-      .disableCrits()
-      .enemySpecies(Species.RATTATA)
-      .enemyMoveset(Moves.SPLASH)
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.RATTATA)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyHeldItems([])
       .startingLevel(1000)
-      .moveset([Moves.FALSE_SWIPE, Moves.SUPER_FANG, Moves.SPLASH, Moves.PSYCHIC])
-      .ability(Abilities.NO_GUARD);
+      .moveset([MoveId.FALSE_SWIPE, MoveId.SUPER_FANG, MoveId.SPLASH, MoveId.PSYCHIC])
+      .ability(AbilityId.NO_GUARD);
   });
 
   it("Pokemon should get shields based on their Species and level and the current wave", async () => {
@@ -42,30 +42,30 @@ describe("Boss Pokemon / Shields", () => {
     let wave = 5;
 
     // On normal waves, no shields...
-    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(Species.RATTATA))).toBe(0);
+    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(SpeciesId.RATTATA))).toBe(0);
     // ... expect (sub)-legendary and mythical Pokemon who always get shields
-    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(Species.MEW))).toBe(2);
+    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(SpeciesId.MEW))).toBe(2);
     // Pokemon with 670+ BST get an extra shield
-    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(Species.MEWTWO))).toBe(3);
+    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(SpeciesId.MEWTWO))).toBe(3);
 
     // Every 10 waves will always be a boss Pokemon with shield(s)
     wave = 50;
-    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(Species.RATTATA))).toBe(2);
+    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(SpeciesId.RATTATA))).toBe(2);
     // Every extra 250 waves adds a shield
     wave += 250;
-    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(Species.RATTATA))).toBe(3);
+    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(SpeciesId.RATTATA))).toBe(3);
     wave += 750;
-    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(Species.RATTATA))).toBe(6);
+    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(SpeciesId.RATTATA))).toBe(6);
 
     // Pokemon above level 100 get an extra shield
     level = 100;
-    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(Species.RATTATA))).toBe(7);
+    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(SpeciesId.RATTATA))).toBe(7);
   });
 
   it("should reduce the number of shields if we are in a double battle", async () => {
     game.override.battleStyle("double").startingWave(150); // Floor 150 > 2 shields / 3 health segments
 
-    await game.classicMode.startBattle([Species.MEWTWO]);
+    await game.classicMode.startBattle([SpeciesId.MEWTWO]);
 
     const boss1: EnemyPokemon = game.scene.getEnemyParty()[0]!;
     const boss2: EnemyPokemon = game.scene.getEnemyParty()[1]!;
@@ -78,7 +78,7 @@ describe("Boss Pokemon / Shields", () => {
   it("shields should stop overflow damage and give stat stage boosts when broken", async () => {
     game.override.startingWave(150); // Floor 150 > 2 shields / 3 health segments
 
-    await game.classicMode.startBattle([Species.MEWTWO]);
+    await game.classicMode.startBattle([SpeciesId.MEWTWO]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const segmentHp = enemyPokemon.getMaxHp() / enemyPokemon.bossSegments;
@@ -86,7 +86,7 @@ describe("Boss Pokemon / Shields", () => {
     expect(enemyPokemon.bossSegments).toBe(3);
     expect(getTotalStatStageBoosts(enemyPokemon)).toBe(0);
 
-    game.move.select(Moves.SUPER_FANG); // Enough to break the first shield
+    game.move.select(MoveId.SUPER_FANG); // Enough to break the first shield
     await game.toNextTurn();
 
     // Broke 1st of 2 shields, health at 2/3rd
@@ -95,7 +95,7 @@ describe("Boss Pokemon / Shields", () => {
     // Breaking the shield gives a +1 boost to ATK, DEF, SP ATK, SP DEF or SPD
     expect(getTotalStatStageBoosts(enemyPokemon)).toBe(1);
 
-    game.move.select(Moves.FALSE_SWIPE); // Enough to break last shield but not kill
+    game.move.select(MoveId.FALSE_SWIPE); // Enough to break last shield but not kill
     await game.toNextTurn();
 
     expect(enemyPokemon.bossSegmentIndex).toBe(0);
@@ -107,7 +107,7 @@ describe("Boss Pokemon / Shields", () => {
   it("breaking multiple shields at once requires extra damage", async () => {
     game.override.battleStyle("double").enemyHealthSegments(5);
 
-    await game.classicMode.startBattle([Species.MEWTWO]);
+    await game.classicMode.startBattle([SpeciesId.MEWTWO]);
 
     // In this test we want to break through 3 shields at once
     const brokenShields = 3;
@@ -142,7 +142,7 @@ describe("Boss Pokemon / Shields", () => {
 
     game.override.battleStyle("double").enemyHealthSegments(shieldsToBreak + 1);
 
-    await game.classicMode.startBattle([Species.MEWTWO]);
+    await game.classicMode.startBattle([SpeciesId.MEWTWO]);
 
     const boss1: EnemyPokemon = game.scene.getEnemyParty()[0]!;
     const boss1SegmentHp = boss1.getMaxHp() / boss1.bossSegments;
@@ -160,7 +160,7 @@ describe("Boss Pokemon / Shields", () => {
       expect(boss1.bossSegmentIndex).toBe(shieldsToBreak - i);
       expect(boss1.hp).toBe(boss1.getMaxHp() - toDmgValue(boss1SegmentHp * i));
       // Do nothing and go to next turn so that the StatStageChangePhase gets applied
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
       // All broken shields give +1 stat boost, except the last two that gives +2
       totalStatStages += i >= shieldsToBreak - 1 ? 2 : 1;
@@ -181,22 +181,22 @@ describe("Boss Pokemon / Shields", () => {
     expect(boss2.bossSegmentIndex).toBe(0);
     expect(boss2.hp).toBe(boss2.getMaxHp() - toDmgValue(boss2SegmentHp * shieldsToBreak));
     // Do nothing and go to next turn so that the StatStageChangePhase gets applied
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
     expect(getTotalStatStageBoosts(boss2)).toBe(totalStatStages);
   });
 
   it("the boss enduring does not proc an extra stat boost", async () => {
-    game.override.enemyHealthSegments(2).enemyAbility(Abilities.STURDY);
+    game.override.enemyHealthSegments(2).enemyAbility(AbilityId.STURDY);
 
-    await game.classicMode.startBattle([Species.MEWTWO]);
+    await game.classicMode.startBattle([SpeciesId.MEWTWO]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     expect(enemyPokemon.isBoss()).toBe(true);
     expect(enemyPokemon.bossSegments).toBe(2);
     expect(getTotalStatStageBoosts(enemyPokemon)).toBe(0);
 
-    game.move.select(Moves.PSYCHIC);
+    game.move.select(MoveId.PSYCHIC);
     await game.toNextTurn();
 
     // Enemy survived with Sturdy
