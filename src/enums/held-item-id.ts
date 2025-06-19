@@ -123,7 +123,7 @@ export type HeldItemCategoryId = (typeof HeldItemCategoryId)[keyof typeof HeldIt
 
 const ITEM_CATEGORY_MASK = 0xFF00
 
-function getHeldItemCategory(itemId: HeldItemId): HeldItemCategoryId {
+export function getHeldItemCategory(itemId: HeldItemId): HeldItemCategoryId {
   return itemId & ITEM_CATEGORY_MASK;
 }
 

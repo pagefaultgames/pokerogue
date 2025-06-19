@@ -46,9 +46,10 @@ import type { PokeballType } from "#enums/pokeball";
 import { doShinySparkleAnim } from "#app/field/anims";
 import { TrainerType } from "#enums/trainer-type";
 import { timedEventManager } from "#app/global-event-manager";
-import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
+import { HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { allHeldItems } from "#app/items/all-held-items";
 import { RewardTier } from "#enums/reward-tier";
+import { getHeldItemTier } from "#app/items/held-item-tiers";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/globalTradeSystem";
@@ -419,7 +420,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
         // Check tier of the traded item, the received item will be one tier up
-        let tier = globalTradeItemTiers[heldItemId] ?? RewardTier.GREAT;
+        let tier = getHeldItemTier(heldItemId) ?? RewardTier.GREAT;
 
         // Increment tier by 1
         if (tier < RewardTier.MASTER) {
@@ -975,38 +976,3 @@ function generateRandomTraderName() {
   const trainerNames = trainerNameString.split(" & ");
   return trainerNames[randInt(trainerNames.length)];
 }
-
-const globalTradeItemTiers = {
-  [HeldItemCategoryId.BERRY]: RewardTier.COMMON,
-
-  [HeldItemCategoryId.BASE_STAT_BOOST]: RewardTier.GREAT,
-  [HeldItemId.WHITE_HERB]: RewardTier.GREAT,
-  [HeldItemId.METAL_POWDER]: RewardTier.GREAT,
-  [HeldItemId.QUICK_POWDER]: RewardTier.GREAT,
-  [HeldItemId.DEEP_SEA_SCALE]: RewardTier.GREAT,
-  [HeldItemId.DEEP_SEA_TOOTH]: RewardTier.GREAT,
-
-  [HeldItemCategoryId.TYPE_ATTACK_BOOSTER]: RewardTier.ULTRA,
-  [HeldItemId.REVIVER_SEED]: RewardTier.ULTRA,
-  [HeldItemId.LIGHT_BALL]: RewardTier.ULTRA,
-  [HeldItemId.EVIOLITE]: RewardTier.ULTRA,
-  [HeldItemId.QUICK_CLAW]: RewardTier.ULTRA,
-  [HeldItemId.MYSTICAL_ROCK]: RewardTier.ULTRA,
-  [HeldItemId.WIDE_LENS]: RewardTier.ULTRA,
-  [HeldItemId.GOLDEN_PUNCH]: RewardTier.ULTRA,
-  [HeldItemId.TOXIC_ORB]: RewardTier.ULTRA,
-  [HeldItemId.FLAME_ORB]: RewardTier.ULTRA,
-  [HeldItemId.LUCKY_EGG]: RewardTier.ULTRA,
-
-  [HeldItemId.FOCUS_BAND]: RewardTier.ROGUE,
-  [HeldItemId.KINGS_ROCK]: RewardTier.ROGUE,
-  [HeldItemId.LEFTOVERS]: RewardTier.ROGUE,
-  [HeldItemId.SHELL_BELL]: RewardTier.ROGUE,
-  [HeldItemId.GRIP_CLAW]: RewardTier.ROGUE,
-  [HeldItemId.SOUL_DEW]: RewardTier.ROGUE,
-  [HeldItemId.BATON]: RewardTier.ROGUE,
-  [HeldItemId.GOLDEN_EGG]: RewardTier.ULTRA,
-
-  [HeldItemId.MINI_BLACK_HOLE]: RewardTier.MASTER,
-  [HeldItemId.MULTI_LENS]: RewardTier.MASTER,
-};

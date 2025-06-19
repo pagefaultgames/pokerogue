@@ -50,7 +50,7 @@ export function isHeldItemCategoryEntry(entry: any): entry is HeldItemCategoryEn
 }
 
 type HeldItemPoolEntry = {
-  entry: HeldItemId | HeldItemCategoryEntry | HeldItemSpecs;
+  entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs;
   weight: number | HeldItemWeightFunc;
 };
 
@@ -65,7 +65,7 @@ export type HeldItemTieredPool = {
 };
 
 type HeldItemConfigurationEntry = {
-  entry: HeldItemId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
+  entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
   count?: number | (() => number);
 };
 

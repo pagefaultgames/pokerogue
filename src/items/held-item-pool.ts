@@ -2,7 +2,7 @@ import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { coerceArray, getEnumValues, randSeedFloat, randSeedInt } from "#app/utils/common";
 import { BerryType } from "#enums/berry-type";
-import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
+import { HeldItemCategoryId, HeldItemId, isCategoryId } from "#enums/held-item-id";
 import { HeldItemPoolType } from "#enums/modifier-pool-type";
 import type { PokemonType } from "#enums/pokemon-type";
 import { RewardTier } from "#enums/reward-tier";
@@ -263,6 +263,9 @@ function getNewHeldItemFromPool(pool: HeldItemPool, pokemon: Pokemon, party?: Po
   const entry = pool[pickWeightedIndex(weights)].entry;
 
   if (typeof entry === "number") {
+    if (isCategoryId(entry)) {
+      return getNewHeldItemFromCategory(entry, party ?? pokemon, {}, pokemon) as HeldItemId;
+    }
     return entry as HeldItemId;
   }
 
@@ -273,12 +276,24 @@ function getNewHeldItemFromPool(pool: HeldItemPool, pokemon: Pokemon, party?: Po
   return entry as HeldItemSpecs;
 }
 
+function assignItemsFromCategory(id: HeldItemCategoryId, pokemon: Pokemon, count: number) {
+  for (let i = 1; i <= count; i++) {
+    const newItem = getNewHeldItemFromCategory(id, pokemon, {}, pokemon);
+    if (newItem) {
+      pokemon.heldItemManager.add(newItem);
+    }
+  }
+}
+
 export function assignItemsFromConfiguration(config: HeldItemConfiguration, pokemon: Pokemon) {
   config.forEach(item => {
     const { entry, count } = item;
     const actualCount = typeof count === "function" ? count() : (count ?? 1);
 
     if (typeof entry === "number") {
+      if (isCategoryId(entry)) {
+        assignItemsFromCategory(entry, pokemon, actualCount);
+      }
       pokemon.heldItemManager.add(entry, actualCount);
     }
 
@@ -287,12 +302,7 @@ export function assignItemsFromConfiguration(config: HeldItemConfiguration, poke
     }
 
     if (isHeldItemCategoryEntry(entry)) {
-      for (let i = 1; i <= actualCount; i++) {
-        const newItem = getNewHeldItemFromCategory(entry.id, pokemon, entry?.customWeights, pokemon);
-        if (newItem) {
-          pokemon.heldItemManager.add(newItem);
-        }
-      }
+      assignItemsFromCategory(entry.id, pokemon, actualCount);
     }
 
     if (isHeldItemPool(entry)) {
