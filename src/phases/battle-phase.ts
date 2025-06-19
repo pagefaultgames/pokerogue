@@ -5,12 +5,13 @@ import { Phase } from "#app/phase";
 export abstract class BattlePhase extends Phase {
   start() {
     if (globalScene.currentBattle.failedRunAway) {
-      const activePlayerField = globalScene.getActivePlayerField();
+      const activePlayerField = globalScene.getPlayerField(true);
 
       activePlayerField.forEach(p => {
         p.turnData.failedRunAway = true;
       });
 
+      //Reset flag for future run attempts
       globalScene.currentBattle.failedRunAway = false;
     }
   }

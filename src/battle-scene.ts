@@ -800,21 +800,15 @@ export default class BattleScene extends SceneBase {
   // TODO: Add `undefined` to return type
   /**
    * Returns an array of PlayerPokemon of length 1 or 2 depending on if in a double battle or not.
-   * Does not actually check if the pokemon are on the field or not.
+   * @param active - If true, returns only the PlayerPokemon that are currently active
    * @returns array of {@linkcode PlayerPokemon}
    */
-  public getPlayerField(): PlayerPokemon[] {
+  public getPlayerField(active = false): PlayerPokemon[] {
     const party = this.getPlayerParty();
+    if (active) {
+      return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1)).filter(p => p.isActive());
+    }
     return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
-  }
-
-  /**
-   * Returns an array of PlayerPokemon of length 1 or 2 depending on if in a double battle or not.
-   * Does check if the pokemon are on the field or not.
-   * @returns array of {@linkcode PlayerPokemon}
-   */
-  public getActivePlayerField(): PlayerPokemon[] {
-    return this.getPlayerField().filter(p => p.isActive());
   }
 
   public getEnemyParty(): EnemyPokemon[] {
