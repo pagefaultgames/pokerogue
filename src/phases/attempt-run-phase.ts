@@ -2,10 +2,10 @@ import { applyAbAttrs, applyPreLeaveFieldAbAttrs } from "#app/data/abilities/app
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { NumberHolder, randSeedInt } from "#app/utils/common";
-import { PokemonPhase } from "./pokemon-phase";
 import { globalScene } from "#app/global-scene";
 import { calculateEscapeChance } from "#app/utils/run-utils";
-export class AttemptRunPhase extends PokemonPhase {
+import { FieldPhase } from "./field-phase";
+export class AttemptRunPhase extends FieldPhase {
   public readonly phaseName = "AttemptRunPhase";
   /** For testing purposes: this is to force the pokemon to fail and escape */
   public forceFailEscape = false;
