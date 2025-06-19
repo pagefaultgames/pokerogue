@@ -14,6 +14,7 @@ export abstract class BattlePhase extends Phase {
       globalScene.currentBattle.failedRunAway = false;
     }
   }
+
   showEnemyTrainer(trainerSlot: TrainerSlot = TrainerSlot.NONE): void {
     if (!globalScene.currentBattle.trainer) {
       console.warn("Enemy trainer is missing!");
