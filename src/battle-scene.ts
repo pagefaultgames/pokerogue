@@ -808,6 +808,15 @@ export default class BattleScene extends SceneBase {
     return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
   }
 
+  /**
+   * Returns an array of PlayerPokemon of length 1 or 2 depending on if in a double battle or not.
+   * Does check if the pokemon are on the field or not.
+   * @returns array of {@linkcode PlayerPokemon}
+   */
+  public getActivePlayerField(): PlayerPokemon[] {
+    return this.getPlayerField().filter(p => p.isActive());
+  }
+
   public getEnemyParty(): EnemyPokemon[] {
     return this.currentBattle?.enemyParty ?? [];
   }

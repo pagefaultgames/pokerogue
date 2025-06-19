@@ -4,7 +4,7 @@ import { StatusEffect } from "#enums/status-effect";
 import type { PlayerPokemon, EnemyPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import i18next from "i18next";
-import { NumberHolder } from "#app/utils/common";
+import { NumberHolder, randSeedInt } from "#app/utils/common";
 import { PokemonPhase } from "./pokemon-phase";
 import { globalScene } from "#app/global-scene";
 
@@ -13,21 +13,28 @@ export class AttemptRunPhase extends PokemonPhase {
   /** For testing purposes: this is to force the pokemon to fail and escape */
   public forceFailEscape = false;
 
+  private getTeamRNG(range: number, min = 0) {
+    return globalScene.currentBattle ? globalScene.randBattleSeedInt(range, min) : randSeedInt(range, min);
+  }
+
   start() {
     super.start();
 
-    const playerField = globalScene.getPlayerField();
+    const activePlayerField = globalScene.getActivePlayerField();
     const enemyField = globalScene.getEnemyField();
-
-    const playerPokemon = this.getPokemon();
+    //Attempting to run is a TEAM not PLAYER based action, we should not be referercing individual pokemon,
+    //we should instead be referring to the team as a whole and
 
     const escapeChance = new NumberHolder(0);
+    const escapeRoll = this.getTeamRNG(100);
 
-    this.attemptRunAway(playerField, enemyField, escapeChance);
+    this.attemptRunAway(activePlayerField, enemyField, escapeChance);
 
-    applyAbAttrs("RunSuccessAbAttr", playerPokemon, null, false, escapeChance);
+    activePlayerField.forEach(p => {
+      applyAbAttrs("RunSuccessAbAttr", p, null, false, escapeChance);
+    });
 
-    if (playerPokemon.randBattleSeedInt(100) < escapeChance.value && !this.forceFailEscape) {
+    if (escapeRoll < escapeChance.value && !this.forceFailEscape) {
       enemyField.forEach(enemyPokemon => applyPreLeaveFieldAbAttrs("PreLeaveFieldAbAttr", enemyPokemon));
 
       globalScene.playSound("se/flee");
@@ -60,7 +67,11 @@ export class AttemptRunPhase extends PokemonPhase {
 
       globalScene.phaseManager.pushNew("NewBattlePhase");
     } else {
-      playerPokemon.turnData.failedRunAway = true;
+      //there should be a general failed run away bool for the active team
+      activePlayerField.forEach(p => {
+        p.turnData.failedRunAway = true;
+      });
+
       globalScene.phaseManager.queueMessage(i18next.t("battle:runAwayCannotEscape"), null, true, 500);
     }
 
