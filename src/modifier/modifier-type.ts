@@ -66,7 +66,7 @@ import {
   CriticalCatchChanceBoosterModifier,
   MoneyRewardModifier,
 } from "#app/modifier/modifier";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import Overrides from "#app/overrides";
 import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#app/system/voucher";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#app/ui/party-ui-handler";
@@ -113,7 +113,7 @@ export class ModifierType {
   public iconImage: string;
   public group: string;
   public soundName: string;
-  public tier: ModifierTier;
+  public tier: RewardTier;
   protected newModifierFunc: NewModifierFunc | null;
 
   /**
@@ -155,7 +155,7 @@ export class ModifierType {
     return this.iconImage;
   }
 
-  setTier(tier: ModifierTier): void {
+  setTier(tier: RewardTier): void {
     this.tier = tier;
   }
 
@@ -185,7 +185,7 @@ export class ModifierType {
     party?: PlayerPokemon[],
     rerollCount = 0,
   ): ModifierType {
-    let defaultTier: undefined | ModifierTier;
+    let defaultTier: undefined | RewardTier;
     for (const tier of Object.values(getModifierPoolForType(poolType))) {
       for (const modifier of tier) {
         if (this.id === modifier.modifierType.id) {
@@ -1204,7 +1204,7 @@ class SpeciesStatBoosterRewardGenerator extends ModifierTypeGenerator {
 }
 
 class TmModifierTypeGenerator extends ModifierTypeGenerator {
-  constructor(tier: ModifierTier) {
+  constructor(tier: RewardTier) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in MoveId) {
         return new TmModifierType(pregenArgs[0] as MoveId);
@@ -1409,7 +1409,7 @@ export class WeightedModifierType {
     this.maxWeight = maxWeight || (!(weight instanceof Function) ? weight : 0);
   }
 
-  setTier(tier: ModifierTier) {
+  setTier(tier: RewardTier) {
     this.modifierType.setTier(tier);
   }
 }
@@ -1600,9 +1600,9 @@ const modifierTypeInitObj = Object.freeze({
 
   BERRY: () => new BerryRewardGenerator(),
 
-  TM_COMMON: () => new TmModifierTypeGenerator(ModifierTier.COMMON),
-  TM_GREAT: () => new TmModifierTypeGenerator(ModifierTier.GREAT),
-  TM_ULTRA: () => new TmModifierTypeGenerator(ModifierTier.ULTRA),
+  TM_COMMON: () => new TmModifierTypeGenerator(RewardTier.COMMON),
+  TM_GREAT: () => new TmModifierTypeGenerator(RewardTier.GREAT),
+  TM_ULTRA: () => new TmModifierTypeGenerator(RewardTier.ULTRA),
 
   MEMORY_MUSHROOM: () => new RememberMoveModifierType("modifierType:ModifierType.MEMORY_MUSHROOM", "big_mushroom"),
 
@@ -1946,7 +1946,7 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
 }
 
 export interface CustomModifierSettings {
-  guaranteedModifierTiers?: ModifierTier[];
+  guaranteedModifierTiers?: RewardTier[];
   guaranteedModifierTypeOptions?: ModifierTypeOption[];
   guaranteedModifierTypeFuncs?: ModifierTypeFunc[];
   fillRemaining?: boolean;
@@ -1967,9 +1967,9 @@ export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
  * @param customModifierSettings (Optional) If specified, can customize the item shop rewards further.
  *  - `guaranteedModifierTypeOptions?: ModifierTypeOption[]` If specified, will override the first X items to be specific modifier options (these should be pre-genned).
  *  - `guaranteedModifierTypeFuncs?: ModifierTypeFunc[]` If specified, will override the next X items to be auto-generated from specific modifier functions (these don't have to be pre-genned).
- *  - `guaranteedModifierTiers?: ModifierTier[]` If specified, will override the next X items to be the specified tier. These can upgrade with luck.
+ *  - `guaranteedModifierTiers?: RewardTier[]` If specified, will override the next X items to be the specified tier. These can upgrade with luck.
  *  - `fillRemaining?: boolean` Default 'false'. If set to true, will fill the remainder of shop items that were not overridden by the 3 options above, up to the 'count' param value.
- *    - Example: `count = 4`, `customModifierSettings = { guaranteedModifierTiers: [ModifierTier.GREAT], fillRemaining: true }`,
+ *    - Example: `count = 4`, `customModifierSettings = { guaranteedModifierTiers: [RewardTier.GREAT], fillRemaining: true }`,
  *    - The first item in the shop will be `GREAT` tier, and the remaining 3 items will be generated normally.
  *    - If `fillRemaining = false` in the same scenario, only 1 `GREAT` tier item will appear in the shop (regardless of `count` value).
  *  - `rerollMultiplier?: number` If specified, can adjust the amount of money required for a shop reroll. If set to a negative value, the shop will not allow rerolls at all.
@@ -1978,7 +1978,7 @@ export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
 export function getPlayerModifierTypeOptions(
   count: number,
   party: PlayerPokemon[],
-  modifierTiers?: ModifierTier[],
+  modifierTiers?: RewardTier[],
   customModifierSettings?: CustomModifierSettings,
 ): ModifierTypeOption[] {
   const options: ModifierTypeOption[] = [];
@@ -2059,7 +2059,7 @@ function getModifierTypeOptionWithRetry(
   existingOptions: ModifierTypeOption[],
   retryCount: number,
   party: PlayerPokemon[],
-  tier?: ModifierTier,
+  tier?: RewardTier,
   allowLuckUpgrades?: boolean,
 ): ModifierTypeOption {
   allowLuckUpgrades = allowLuckUpgrades ?? true;
@@ -2142,15 +2142,15 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: number, baseC
 }
 
 export function getEnemyBuffModifierForWave(
-  tier: ModifierTier,
+  tier: RewardTier,
   enemyModifiers: PersistentModifier[],
 ): EnemyPersistentModifier {
   let tierStackCount: number;
   switch (tier) {
-    case ModifierTier.ULTRA:
+    case RewardTier.ULTRA:
       tierStackCount = 5;
       break;
-    case ModifierTier.GREAT:
+    case RewardTier.GREAT:
       tierStackCount = 3;
       break;
     default:
@@ -2188,7 +2188,7 @@ export function getEnemyBuffModifierForWave(
 function getNewModifierTypeOption(
   party: Pokemon[],
   poolType: ModifierPoolType,
-  baseTier?: ModifierTier,
+  baseTier?: RewardTier,
   upgradeCount?: number,
   retryCount = 0,
   allowLuckUpgrades = true,
@@ -2223,7 +2223,7 @@ function getNewModifierTypeOption(
     modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
     if (modifierType === null) {
       if (player) {
-        console.log(ModifierTier[tier], upgradeCount);
+        console.log(RewardTier[tier], upgradeCount);
       }
       return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount);
     }
@@ -2250,11 +2250,11 @@ function getPoolThresholds(poolType: ModifierPoolType) {
 function determineTier(
   party: Pokemon[],
   player: boolean,
-  tier?: ModifierTier,
+  tier?: RewardTier,
   upgradeCount?: number,
   retryCount = 0,
   allowLuckUpgrades = true,
-): ModifierTier {
+): RewardTier {
   if (tier === undefined) {
     const tierValue = randSeedInt(1024);
     if (!upgradeCount) {
@@ -2273,15 +2273,15 @@ function determineTier(
     }
 
     if (tierValue > 255) {
-      tier = ModifierTier.COMMON;
+      tier = RewardTier.COMMON;
     } else if (tierValue > 60) {
-      tier = ModifierTier.GREAT;
+      tier = RewardTier.GREAT;
     } else if (tierValue > 12) {
-      tier = ModifierTier.ULTRA;
+      tier = RewardTier.ULTRA;
     } else if (tierValue) {
-      tier = ModifierTier.ROGUE;
+      tier = RewardTier.ROGUE;
     } else {
-      tier = ModifierTier.MASTER;
+      tier = RewardTier.MASTER;
     }
 
     tier += upgradeCount;
@@ -2293,7 +2293,7 @@ function determineTier(
     }
   } else if (upgradeCount === undefined && player) {
     upgradeCount = 0;
-    if (tier < ModifierTier.MASTER && allowLuckUpgrades) {
+    if (tier < RewardTier.MASTER && allowLuckUpgrades) {
       const partyLuckValue = getPartyLuckValue(party);
       const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
       while (pool.hasOwnProperty(tier + upgradeCount + 1) && pool[tier + upgradeCount + 1].length) {
@@ -2312,9 +2312,9 @@ function determineTier(
   return tier;
 }
 
-export function getDefaultModifierTypeForTier(tier: ModifierTier): ModifierType {
+export function getDefaultModifierTypeForTier(tier: RewardTier): ModifierType {
   const modifierPool = getModifierPoolForType(ModifierPoolType.PLAYER);
-  let modifierType: ModifierType | WeightedModifierType = modifierPool[tier || ModifierTier.COMMON][0];
+  let modifierType: ModifierType | WeightedModifierType = modifierPool[tier || RewardTier.COMMON][0];
   if (modifierType instanceof WeightedModifierType) {
     modifierType = (modifierType as WeightedModifierType).modifierType;
   }
@@ -2366,19 +2366,19 @@ export function getLuckString(luckValue: number): string {
 }
 
 export function getLuckTextTint(luckValue: number): number {
-  let modifierTier: ModifierTier;
+  let modifierTier: RewardTier;
   if (luckValue > 11) {
-    modifierTier = ModifierTier.LUXURY;
+    modifierTier = RewardTier.LUXURY;
   } else if (luckValue > 9) {
-    modifierTier = ModifierTier.MASTER;
+    modifierTier = RewardTier.MASTER;
   } else if (luckValue > 5) {
-    modifierTier = ModifierTier.ROGUE;
+    modifierTier = RewardTier.ROGUE;
   } else if (luckValue > 2) {
-    modifierTier = ModifierTier.ULTRA;
+    modifierTier = RewardTier.ULTRA;
   } else if (luckValue) {
-    modifierTier = ModifierTier.GREAT;
+    modifierTier = RewardTier.GREAT;
   } else {
-    modifierTier = ModifierTier.COMMON;
+    modifierTier = RewardTier.COMMON;
   }
   return getModifierTierTextTint(modifierTier);
 }

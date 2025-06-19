@@ -3,7 +3,7 @@ import { enemyBuffModifierPool, modifierPool } from "#app/modifier/modifier-pool
 import { globalScene } from "#app/global-scene";
 import { DoubleBattleChanceBoosterModifier } from "./modifier";
 import { WeightedModifierType } from "./modifier-type";
-import { ModifierTier } from "../enums/modifier-tier";
+import { RewardTier } from "../enums/modifier-tier";
 import type { WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
 import { modifierTypes } from "#app/data/data-lists";
 import { PokeballType } from "#enums/pokeball";
@@ -25,7 +25,7 @@ import { allHeldItems } from "#app/items/all-held-items";
  * Initialize the common modifier pool
  */
 function initCommonModifierPool() {
-  modifierPool[ModifierTier.COMMON] = [
+  modifierPool[RewardTier.COMMON] = [
     new WeightedModifierType(modifierTypes.POKEBALL, () => (hasMaximumBalls(PokeballType.POKEBALL) ? 0 : 6), 6),
     new WeightedModifierType(modifierTypes.RARE_CANDY, 2),
     new WeightedModifierType(
@@ -93,7 +93,7 @@ function initCommonModifierPool() {
     new WeightedModifierType(modifierTypes.BERRY, 2),
     new WeightedModifierType(modifierTypes.TM_COMMON, 2),
   ].map(m => {
-    m.setTier(ModifierTier.COMMON);
+    m.setTier(RewardTier.COMMON);
     return m;
   });
 }
@@ -102,7 +102,7 @@ function initCommonModifierPool() {
  * Initialize the Great modifier pool
  */
 function initGreatModifierPool() {
-  modifierPool[ModifierTier.GREAT] = [
+  modifierPool[RewardTier.GREAT] = [
     new WeightedModifierType(modifierTypes.GREAT_BALL, () => (hasMaximumBalls(PokeballType.GREAT_BALL) ? 0 : 6), 6),
     new WeightedModifierType(modifierTypes.PP_UP, 2),
     new WeightedModifierType(
@@ -292,7 +292,7 @@ function initGreatModifierPool() {
       1,
     ),
   ].map(m => {
-    m.setTier(ModifierTier.GREAT);
+    m.setTier(RewardTier.GREAT);
     return m;
   });
 }
@@ -301,7 +301,7 @@ function initGreatModifierPool() {
  * Initialize the Ultra modifier pool
  */
 function initUltraModifierPool() {
-  modifierPool[ModifierTier.ULTRA] = [
+  modifierPool[RewardTier.ULTRA] = [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, () => (hasMaximumBalls(PokeballType.ULTRA_BALL) ? 0 : 15), 15),
     new WeightedModifierType(modifierTypes.MAX_LURE, lureWeightFunc(30, 4)),
     new WeightedModifierType(modifierTypes.BIG_NUGGET, skipInLastClassicWaveOrDefault(12)),
@@ -514,13 +514,13 @@ function initUltraModifierPool() {
     new WeightedModifierType(modifierTypes.QUICK_CLAW, 3),
     new WeightedModifierType(modifierTypes.WIDE_LENS, 7),
   ].map(m => {
-    m.setTier(ModifierTier.ULTRA);
+    m.setTier(RewardTier.ULTRA);
     return m;
   });
 }
 
 function initRogueModifierPool() {
-  modifierPool[ModifierTier.ROGUE] = [
+  modifierPool[RewardTier.ROGUE] = [
     new WeightedModifierType(modifierTypes.ROGUE_BALL, () => (hasMaximumBalls(PokeballType.ROGUE_BALL) ? 0 : 16), 16),
     new WeightedModifierType(modifierTypes.RELIC_GOLD, skipInLastClassicWaveOrDefault(2)),
     new WeightedModifierType(modifierTypes.LEFTOVERS, 3),
@@ -558,7 +558,7 @@ function initRogueModifierPool() {
       3,
     ),
   ].map(m => {
-    m.setTier(ModifierTier.ROGUE);
+    m.setTier(RewardTier.ROGUE);
     return m;
   });
 }
@@ -567,7 +567,7 @@ function initRogueModifierPool() {
  * Initialize the Master modifier pool
  */
 function initMasterModifierPool() {
-  modifierPool[ModifierTier.MASTER] = [
+  modifierPool[RewardTier.MASTER] = [
     new WeightedModifierType(modifierTypes.MASTER_BALL, () => (hasMaximumBalls(PokeballType.MASTER_BALL) ? 0 : 24), 24),
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 14),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 18),
@@ -600,7 +600,7 @@ function initMasterModifierPool() {
       1,
     ),
   ].map(m => {
-    m.setTier(ModifierTier.MASTER);
+    m.setTier(RewardTier.MASTER);
     return m;
   });
 }
@@ -609,7 +609,7 @@ function initMasterModifierPool() {
  * Initialize the enemy buff modifier pool
  */
 function initEnemyBuffModifierPool() {
-  enemyBuffModifierPool[ModifierTier.COMMON] = [
+  enemyBuffModifierPool[RewardTier.COMMON] = [
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 9),
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 9),
     new WeightedModifierType(modifierTypes.ENEMY_ATTACK_POISON_CHANCE, 3),
@@ -619,20 +619,20 @@ function initEnemyBuffModifierPool() {
     new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 4),
     new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 1),
   ].map(m => {
-    m.setTier(ModifierTier.COMMON);
+    m.setTier(RewardTier.COMMON);
     return m;
   });
-  enemyBuffModifierPool[ModifierTier.GREAT] = [
+  enemyBuffModifierPool[RewardTier.GREAT] = [
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 5),
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 5),
     new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 5),
     new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 5),
     new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 1),
   ].map(m => {
-    m.setTier(ModifierTier.GREAT);
+    m.setTier(RewardTier.GREAT);
     return m;
   });
-  enemyBuffModifierPool[ModifierTier.ULTRA] = [
+  enemyBuffModifierPool[RewardTier.ULTRA] = [
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 10),
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 10),
     new WeightedModifierType(modifierTypes.ENEMY_HEAL, 10),
@@ -640,15 +640,15 @@ function initEnemyBuffModifierPool() {
     new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 10),
     new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 5),
   ].map(m => {
-    m.setTier(ModifierTier.ULTRA);
+    m.setTier(RewardTier.ULTRA);
     return m;
   });
-  enemyBuffModifierPool[ModifierTier.ROGUE] = [].map((m: WeightedModifierType) => {
-    m.setTier(ModifierTier.ROGUE);
+  enemyBuffModifierPool[RewardTier.ROGUE] = [].map((m: WeightedModifierType) => {
+    m.setTier(RewardTier.ROGUE);
     return m;
   });
-  enemyBuffModifierPool[ModifierTier.MASTER] = [].map((m: WeightedModifierType) => {
-    m.setTier(ModifierTier.MASTER);
+  enemyBuffModifierPool[RewardTier.MASTER] = [].map((m: WeightedModifierType) => {
+    m.setTier(RewardTier.MASTER);
     return m;
   });
 }

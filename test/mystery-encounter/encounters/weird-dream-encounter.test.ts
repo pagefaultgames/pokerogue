@@ -19,7 +19,7 @@ import { WeirdDreamEncounter } from "#app/data/mystery-encounters/encounters/wei
 import * as EncounterTransformationSequence from "#app/data/mystery-encounters/utils/encounter-transformation-sequence";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { CommandPhase } from "#app/phases/command-phase";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 
 const namespace = "mysteryEncounters/weirdDream";
 const defaultParty = [SpeciesId.MAGBY, SpeciesId.HAUNTER, SpeciesId.ABRA];
@@ -207,27 +207,27 @@ describe("Weird Dream - Mystery Encounter", () => {
       expect(
         modifierSelectHandler.options[0].modifierTypeOption.type.tier -
           modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.ROGUE);
+      ).toEqual(RewardTier.ROGUE);
       expect(
         modifierSelectHandler.options[1].modifierTypeOption.type.tier -
           modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.ROGUE);
+      ).toEqual(RewardTier.ROGUE);
       expect(
         modifierSelectHandler.options[2].modifierTypeOption.type.tier -
           modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.ULTRA);
+      ).toEqual(RewardTier.ULTRA);
       expect(
         modifierSelectHandler.options[3].modifierTypeOption.type.tier -
           modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.ULTRA);
+      ).toEqual(RewardTier.ULTRA);
       expect(
         modifierSelectHandler.options[4].modifierTypeOption.type.tier -
           modifierSelectHandler.options[4].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.GREAT);
+      ).toEqual(RewardTier.GREAT);
       expect(
         modifierSelectHandler.options[5].modifierTypeOption.type.tier -
           modifierSelectHandler.options[5].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.GREAT);
+      ).toEqual(RewardTier.GREAT);
     });
   });
 

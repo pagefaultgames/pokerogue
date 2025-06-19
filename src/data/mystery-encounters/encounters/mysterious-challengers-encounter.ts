@@ -7,7 +7,7 @@ import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { trainerPartyTemplates } from "#app/data/trainers/TrainerPartyTemplate";
 import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
 import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import { modifierTypes } from "#app/data/data-lists";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -176,7 +176,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
       const config: EnemyPartyConfig = encounter.enemyPartyConfigs[1];
 
       setEncounterRewards({
-        guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT],
+        guaranteedModifierTiers: [RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.GREAT, RewardTier.GREAT],
         fillRemaining: true,
       });
 
@@ -207,7 +207,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
       encounter.expMultiplier = 0.9;
 
       setEncounterRewards({
-        guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE, ModifierTier.ULTRA, ModifierTier.GREAT],
+        guaranteedModifierTiers: [RewardTier.ROGUE, RewardTier.ROGUE, RewardTier.ULTRA, RewardTier.GREAT],
         fillRemaining: true,
       });
 

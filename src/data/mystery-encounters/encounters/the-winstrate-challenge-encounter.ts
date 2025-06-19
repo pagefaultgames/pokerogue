@@ -25,7 +25,7 @@ import i18next from "i18next";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { modifierTypes } from "#app/data/data-lists";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import { HeldItemId } from "#enums/held-item-id";
 
 //TODO: make all items unstealable
@@ -164,7 +164,7 @@ async function spawnNextTrainerOrEndEncounter() {
     await showEncounterDialogue(`${namespace}:victory_2`, `${namespace}:speaker`);
     globalScene.ui.clearText(); // Clears "Winstrate" title from screen as rewards get animated in
     const machoBrace = generateModifierTypeOption(modifierTypes.MYSTERY_ENCOUNTER_MACHO_BRACE)!;
-    machoBrace.type.tier = ModifierTier.MASTER;
+    machoBrace.type.tier = RewardTier.MASTER;
     setEncounterRewards({
       guaranteedModifierTypeOptions: [machoBrace],
       fillRemaining: false,

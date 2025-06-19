@@ -32,7 +32,7 @@ import {
 import { getLevelTotalExp } from "#app/data/exp";
 import { Stat } from "#enums/stat";
 import { Challenges } from "#enums/challenges";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import PokemonData from "#app/system/pokemon-data";
@@ -318,12 +318,12 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       setEncounterRewards(
         {
           guaranteedModifierTiers: [
-            ModifierTier.ROGUE,
-            ModifierTier.ROGUE,
-            ModifierTier.ULTRA,
-            ModifierTier.ULTRA,
-            ModifierTier.GREAT,
-            ModifierTier.GREAT,
+            RewardTier.ROGUE,
+            RewardTier.ROGUE,
+            RewardTier.ULTRA,
+            RewardTier.ULTRA,
+            RewardTier.GREAT,
+            RewardTier.GREAT,
           ],
           fillRemaining: false,
         },

@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { UiMode } from "#enums/ui-mode";
 import GameManager from "#test/testUtils/gameManager";
@@ -36,7 +36,7 @@ describe("Items - Lock Capsule", () => {
     await game.classicMode.startBattle();
     game.scene.phaseManager.overridePhase(
       new SelectModifierPhase(0, undefined, {
-        guaranteedModifierTiers: [ModifierTier.COMMON, ModifierTier.COMMON, ModifierTier.COMMON],
+        guaranteedModifierTiers: [RewardTier.COMMON, RewardTier.COMMON, RewardTier.COMMON],
         fillRemaining: false,
       }),
     );

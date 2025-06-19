@@ -11,7 +11,7 @@ import {
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
 import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -320,18 +320,18 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
 
         for (const m of items.filter(m => m.isTransferable && !(m instanceof BerryModifier))) {
           const type = m.type.withTierFromPool(ModifierPoolType.PLAYER, party);
-          const tier = type.tier ?? ModifierTier.ULTRA;
-          if (type.id === "GOLDEN_EGG" || tier === ModifierTier.ROGUE) {
+          const tier = type.tier ?? RewardTier.ULTRA;
+          if (type.id === "GOLDEN_EGG" || tier === RewardTier.ROGUE) {
             numRogue += m.stackCount;
             globalScene.removeModifier(m);
-          } else if (type.id === "LUCKY_EGG" || type.id === "SOOTHE_BELL" || tier === ModifierTier.ULTRA) {
+          } else if (type.id === "LUCKY_EGG" || type.id === "SOOTHE_BELL" || tier === RewardTier.ULTRA) {
             numUltra += m.stackCount;
             globalScene.removeModifier(m);
           }
         }
 
-        generateItemsOfTier(mostHeldItemsPokemon, numUltra, ModifierTier.ULTRA);
-        generateItemsOfTier(mostHeldItemsPokemon, numRogue, ModifierTier.ROGUE);
+        generateItemsOfTier(mostHeldItemsPokemon, numUltra, RewardTier.ULTRA);
+        generateItemsOfTier(mostHeldItemsPokemon, numRogue, RewardTier.ROGUE);
       })
       .withOptionPhase(async () => {
         leaveEncounterWithoutBattle(true);
@@ -487,7 +487,7 @@ function onYesAbilitySwap(resolve) {
   selectPokemonForOption(onPokemonSelected, onPokemonNotSelected);
 }
 
-function generateItemsOfTier(pokemon: PlayerPokemon, numItems: number, tier: ModifierTier | "Berries") {
+function generateItemsOfTier(pokemon: PlayerPokemon, numItems: number, tier: RewardTier | "Berries") {
   // These pools have to be defined at runtime so that modifierTypes exist
   // Pools have instances of the modifier type equal to the max stacks that modifier can be applied to any one pokemon
   // This is to prevent "over-generating" a random item of a certain type during item swaps
@@ -528,7 +528,7 @@ function generateItemsOfTier(pokemon: PlayerPokemon, numItems: number, tier: Mod
   if (tier === "Berries") {
     pool = berryPool;
   } else {
-    pool = tier === ModifierTier.ULTRA ? ultraPool : roguePool;
+    pool = tier === RewardTier.ULTRA ? ultraPool : roguePool;
   }
 
   for (let i = 0; i < numItems; i++) {

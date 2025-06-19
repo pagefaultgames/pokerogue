@@ -30,7 +30,7 @@ import i18next from "#app/plugins/i18n";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import type { CustomModifierSettings } from "#app/modifier/modifier-type";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { BattleType } from "#enums/battle-type";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
@@ -593,7 +593,7 @@ export const classicFixedBattles: FixedBattleConfigs = {
         ),
     )
     .setCustomModifierRewards({
-      guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT],
+      guaranteedModifierTiers: [RewardTier.ULTRA, RewardTier.GREAT, RewardTier.GREAT],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.EVIL_GRUNT_1]: new FixedBattleConfig()
@@ -625,7 +625,7 @@ export const classicFixedBattles: FixedBattleConfigs = {
         ),
     )
     .setCustomModifierRewards({
-      guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.GREAT, ModifierTier.GREAT],
+      guaranteedModifierTiers: [RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.GREAT, RewardTier.GREAT],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.EVIL_GRUNT_2]: new FixedBattleConfig()
@@ -698,7 +698,7 @@ export const classicFixedBattles: FixedBattleConfigs = {
         ),
     )
     .setCustomModifierRewards({
-      guaranteedModifierTiers: [ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA, ModifierTier.ULTRA],
+      guaranteedModifierTiers: [RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.ULTRA],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.EVIL_GRUNT_4]: new FixedBattleConfig()
@@ -761,11 +761,11 @@ export const classicFixedBattles: FixedBattleConfigs = {
     )
     .setCustomModifierRewards({
       guaranteedModifierTiers: [
-        ModifierTier.ROGUE,
-        ModifierTier.ROGUE,
-        ModifierTier.ULTRA,
-        ModifierTier.ULTRA,
-        ModifierTier.ULTRA,
+        RewardTier.ROGUE,
+        RewardTier.ROGUE,
+        RewardTier.ULTRA,
+        RewardTier.ULTRA,
+        RewardTier.ULTRA,
       ],
       allowLuckUpgrades: false,
     }),
@@ -780,11 +780,11 @@ export const classicFixedBattles: FixedBattleConfigs = {
     )
     .setCustomModifierRewards({
       guaranteedModifierTiers: [
-        ModifierTier.ROGUE,
-        ModifierTier.ROGUE,
-        ModifierTier.ROGUE,
-        ModifierTier.ULTRA,
-        ModifierTier.ULTRA,
+        RewardTier.ROGUE,
+        RewardTier.ROGUE,
+        RewardTier.ROGUE,
+        RewardTier.ULTRA,
+        RewardTier.ULTRA,
       ],
       allowLuckUpgrades: false,
     }),
@@ -807,12 +807,12 @@ export const classicFixedBattles: FixedBattleConfigs = {
     )
     .setCustomModifierRewards({
       guaranteedModifierTiers: [
-        ModifierTier.ROGUE,
-        ModifierTier.ROGUE,
-        ModifierTier.ULTRA,
-        ModifierTier.ULTRA,
-        ModifierTier.ULTRA,
-        ModifierTier.ULTRA,
+        RewardTier.ROGUE,
+        RewardTier.ROGUE,
+        RewardTier.ULTRA,
+        RewardTier.ULTRA,
+        RewardTier.ULTRA,
+        RewardTier.ULTRA,
       ],
       allowLuckUpgrades: false,
     }),
@@ -911,12 +911,12 @@ export const classicFixedBattles: FixedBattleConfigs = {
     )
     .setCustomModifierRewards({
       guaranteedModifierTiers: [
-        ModifierTier.ROGUE,
-        ModifierTier.ROGUE,
-        ModifierTier.ULTRA,
-        ModifierTier.ULTRA,
-        ModifierTier.GREAT,
-        ModifierTier.GREAT,
+        RewardTier.ROGUE,
+        RewardTier.ROGUE,
+        RewardTier.ULTRA,
+        RewardTier.ULTRA,
+        RewardTier.GREAT,
+        RewardTier.GREAT,
       ],
       allowLuckUpgrades: false,
     }),

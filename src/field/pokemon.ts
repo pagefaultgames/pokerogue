@@ -139,7 +139,7 @@ import type { TrainerSlot } from "#enums/trainer-slot";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import { applyChallenges } from "#app/data/challenge";
 import { ChallengeType } from "#enums/challenge-type";
 import { AbilityId } from "#enums/ability-id";
@@ -2977,11 +2977,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
         }
         if (compatible && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
-          if (tmPoolTiers[moveId] === ModifierTier.COMMON && this.level >= 15) {
+          if (tmPoolTiers[moveId] === RewardTier.COMMON && this.level >= 15) {
             movePool.push([moveId, 4]);
-          } else if (tmPoolTiers[moveId] === ModifierTier.GREAT && this.level >= 30) {
+          } else if (tmPoolTiers[moveId] === RewardTier.GREAT && this.level >= 30) {
             movePool.push([moveId, 8]);
-          } else if (tmPoolTiers[moveId] === ModifierTier.ULTRA && this.level >= 50) {
+          } else if (tmPoolTiers[moveId] === RewardTier.ULTRA && this.level >= 50) {
             movePool.push([moveId, 14]);
           }
         }

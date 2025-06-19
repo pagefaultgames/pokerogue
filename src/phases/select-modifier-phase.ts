@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import type { ModifierTier } from "#enums/modifier-tier";
+import type { RewardTier } from "#enums/reward-tier";
 import type { ModifierTypeOption, ModifierType } from "#app/modifier/modifier-type";
 import {
   regenerateModifierPoolThresholds,
@@ -32,7 +32,7 @@ export type ModifierSelectCallback = (rowCursor: number, cursor: number) => bool
 export class SelectModifierPhase extends BattlePhase {
   public readonly phaseName = "SelectModifierPhase";
   private rerollCount: number;
-  private modifierTiers?: ModifierTier[];
+  private modifierTiers?: RewardTier[];
   private customModifierSettings?: CustomModifierSettings;
   private isCopy: boolean;
 
@@ -40,7 +40,7 @@ export class SelectModifierPhase extends BattlePhase {
 
   constructor(
     rerollCount = 0,
-    modifierTiers?: ModifierTier[],
+    modifierTiers?: RewardTier[],
     customModifierSettings?: CustomModifierSettings,
     isCopy = false,
   ) {
@@ -193,7 +193,7 @@ export class SelectModifierPhase extends BattlePhase {
     globalScene.phaseManager.unshiftNew(
       "SelectModifierPhase",
       this.rerollCount + 1,
-      this.typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as ModifierTier[],
+      this.typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as RewardTier[],
     );
     globalScene.ui.clearText();
     globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());

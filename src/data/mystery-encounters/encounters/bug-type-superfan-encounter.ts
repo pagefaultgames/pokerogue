@@ -41,7 +41,7 @@ import { GigantamaxAccessModifier, MegaEvolutionAccessModifier } from "#app/modi
 import i18next from "i18next";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { allMoves } from "#app/data/data-lists";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { HeldItemId } from "#enums/held-item-id";
@@ -470,7 +470,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
         globalScene.updateModifiers(true);
 
         const bugNet = generateModifierTypeOption(modifierTypes.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET)!;
-        bugNet.type.tier = ModifierTier.ROGUE;
+        bugNet.type.tier = RewardTier.ROGUE;
 
         setEncounterRewards({
           guaranteedModifierTypeOptions: [bugNet],

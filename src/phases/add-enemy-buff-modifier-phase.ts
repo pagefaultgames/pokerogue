@@ -1,4 +1,4 @@
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import { regenerateModifierPoolThresholds, getEnemyBuffModifierForWave } from "#app/modifier/modifier-type";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { EnemyPersistentModifier } from "#app/modifier/modifier";
@@ -11,11 +11,7 @@ export class AddEnemyBuffModifierPhase extends Phase {
     super.start();
 
     const waveIndex = globalScene.currentBattle.waveIndex;
-    const tier = !(waveIndex % 1000)
-      ? ModifierTier.ULTRA
-      : !(waveIndex % 250)
-        ? ModifierTier.GREAT
-        : ModifierTier.COMMON;
+    const tier = !(waveIndex % 1000) ? RewardTier.ULTRA : !(waveIndex % 250) ? RewardTier.GREAT : RewardTier.COMMON;
 
     regenerateModifierPoolThresholds(globalScene.getEnemyParty(), ModifierPoolType.ENEMY_BUFF);
 
