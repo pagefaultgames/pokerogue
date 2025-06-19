@@ -170,8 +170,7 @@ export class SelectModifierPhase extends BattlePhase {
     if (modifierType instanceof PokemonModifierType) {
       if (modifierType instanceof HeldItemReward) {
         this.openGiveHeldItemMenu(modifierType, modifierSelectCallback);
-      }
-      if (modifierType instanceof FusePokemonModifierType) {
+      } else if (modifierType instanceof FusePokemonModifierType) {
         this.openFusionMenu(modifierType, cost, modifierSelectCallback);
       } else {
         this.openModifierMenu(modifierType, cost, modifierSelectCallback);

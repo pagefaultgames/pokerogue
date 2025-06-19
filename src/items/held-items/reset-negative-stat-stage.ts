@@ -29,7 +29,7 @@ export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem {
     return i18next.t("modifierType:ModifierType.WHITE_HERB.description");
   }
 
-  get icon(): string {
+  get iconName(): string {
     return "white_herb";
   }
   /**

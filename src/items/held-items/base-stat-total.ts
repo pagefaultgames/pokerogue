@@ -38,7 +38,7 @@ export class BaseStatTotalHeldItem extends HeldItem {
     });
   }
 
-  get icon(): string {
+  get iconName(): string {
     return "berry_juice";
   }
 

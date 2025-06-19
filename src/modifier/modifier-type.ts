@@ -354,12 +354,12 @@ export class HeldItemReward extends PokemonModifierType {
     return allHeldItems[this.itemId].name;
   }
 
-  get description(): string {
-    return allHeldItems[this.itemId].name;
+  getDescription(): string {
+    return allHeldItems[this.itemId].description;
   }
 
-  get icon(): string {
-    return allHeldItems[this.itemId].name;
+  getIcon(): string {
+    return allHeldItems[this.itemId].iconName;
   }
 
   apply(pokemon: Pokemon) {
@@ -2070,6 +2070,11 @@ function getModifierTypeOptionWithRetry(
     ++r < retryCount &&
     existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group).length
   ) {
+    console.log("Retry count:", r);
+    console.log(candidate?.type.group);
+    console.log(candidate?.type.name);
+    console.log(existingOptions.filter(o => o.type.name === candidate?.type.name).length);
+    console.log(existingOptions.filter(o => o.type.group === candidate?.type.group).length);
     candidate = getNewModifierTypeOption(
       party,
       ModifierPoolType.PLAYER,
@@ -2255,6 +2260,7 @@ function determineTier(
   retryCount = 0,
   allowLuckUpgrades = true,
 ): RewardTier {
+  const pool = getModifierPoolForType(ModifierPoolType.PLAYER);
   if (tier === undefined) {
     const tierValue = randSeedInt(1024);
     if (!upgradeCount) {

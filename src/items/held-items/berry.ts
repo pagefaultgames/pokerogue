@@ -1,4 +1,4 @@
-import { getBerryEffectDescription, getBerryEffectFunc, getBerryName } from "#app/data/berry";
+import { getBerryEffectDescription, getBerryEffectFunc, getBerryName, getBerryPredicate } from "#app/data/berry";
 import { BerryUsedEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
@@ -60,9 +60,9 @@ export class BerryHeldItem extends ConsumableHeldItem {
    * @param pokemon The {@linkcode Pokemon} that holds the berry
    * @returns `true` if {@linkcode BerryModifier} should be applied
    */
-  //  override shouldApply(pokemon: Pokemon): boolean {
-  //    return !this.consumed && super.shouldApply(pokemon) && getBerryPredicate(this.berryType)(pokemon);
-  //  }
+  shouldApply(pokemon: Pokemon): boolean {
+    return getBerryPredicate(this.berryType)(pokemon);
+  }
 
   /**
    * Applies {@linkcode BerryHeldItem}

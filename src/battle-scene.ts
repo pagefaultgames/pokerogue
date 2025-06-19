@@ -2906,7 +2906,10 @@ export default class BattleScene extends SceneBase {
     }
 
     this.updateParty(player ? this.getPlayerParty() : this.getEnemyParty(), true);
-    (player ? this.modifierBar : this.enemyModifierBar).updateModifiers(modifiers);
+
+    const pokemonA = player ? this.getPlayerParty()[0] : this.getEnemyParty()[0];
+
+    (player ? this.modifierBar : this.enemyModifierBar).updateModifiers(modifiers, pokemonA);
     if (!player) {
       this.updateUIPositions();
     }

@@ -24,6 +24,7 @@ import { timedEventManager } from "./global-event-manager";
 import { initHeldItems } from "./items/all-held-items";
 import { initModifierPools } from "./modifier/init-modifier-pools";
 import { initModifierTypes } from "./modifier/modifier-type";
+import { initHeldItemPools } from "./items/init-held-item-pools";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -368,6 +369,7 @@ export class LoadingScene extends SceneBase {
 
     initModifierTypes();
     initModifierPools();
+    initHeldItemPools();
 
     initAchievements();
     initVouchers();

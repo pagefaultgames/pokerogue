@@ -1035,9 +1035,8 @@ export default class SummaryUiHandler extends UiHandler {
         const heldItems = this.pokemon?.getHeldItems().sort(heldItemSortFunc);
 
         heldItems?.forEach((itemKey, i) => {
-          const stack = this.pokemon?.heldItemManager.getStack(itemKey);
           const heldItem = allHeldItems[itemKey];
-          const icon = heldItem.createSummaryIcon(stack);
+          const icon = heldItem.createSummaryIcon(this.pokemon);
 
           console.log(icon);
           icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);

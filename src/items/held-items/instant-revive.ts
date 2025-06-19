@@ -29,7 +29,7 @@ export class InstantReviveHeldItem extends ConsumableHeldItem {
     return i18next.t("modifierType:ModifierType.REVIVER_SEED.description");
   }
 
-  get icon(): string {
+  get iconName(): string {
     return "reviver_seed";
   }
   /**

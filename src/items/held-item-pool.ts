@@ -2,7 +2,7 @@ import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { coerceArray, getEnumValues, randSeedFloat, randSeedInt } from "#app/utils/common";
 import { BerryType } from "#enums/berry-type";
-import { HeldItemCategoryId, HeldItemId, isCategoryId } from "#enums/held-item-id";
+import { HeldItemCategoryId, HeldItemId, HeldItemNames, isCategoryId } from "#enums/held-item-id";
 import { HeldItemPoolType } from "#enums/modifier-pool-type";
 import type { PokemonType } from "#enums/pokemon-type";
 import { RewardTier } from "#enums/reward-tier";
@@ -246,8 +246,11 @@ function getPoolWeights(pool: HeldItemPool, pokemon: Pokemon): number[] {
   return pool.map(p => {
     let weight = typeof p.weight === "function" ? p.weight(coerceArray(pokemon)) : p.weight;
 
-    if (typeof p.entry === "number") {
+    if (typeof p.entry === "number" && !isCategoryId(p.entry)) {
       const itemId = p.entry as HeldItemId;
+      console.log("ITEM ID: ", itemId, HeldItemNames[itemId]);
+      console.log(allHeldItems[itemId]);
+
       if (pokemon.heldItemManager.getStack(itemId) >= allHeldItems[itemId].getMaxStackCount()) {
         weight = 0;
       }
