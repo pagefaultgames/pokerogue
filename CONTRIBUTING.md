@@ -16,7 +16,7 @@ Please make sure you understand everything relevant to your changes from the [Ta
 
 ## 🛠️ Development Basics
 
-PokéRogue is built with Typescript, using the Phaser game framework. 
+PokéRogue is built with [Typescript](https://www.typescriptlang.org/docs/handbook/intro.html), using the [Phaser](https://github.com/phaserjs/phaser) game framework. 
 
 If you have the motivation and experience with Typescript/Javascript (or are willing to learn) you can contribute by forking the repository and making pull requests with contributions. 
 
@@ -50,10 +50,10 @@ Tests show you both how things are supposed to work and the expected "flow" to g
 
 Once you have your feet under you, check out the [Issues](https://github.com/pagefaultgames/pokerogue/issues) page to see how you can help us!
 Most issues are bugs and are labeled with their area, such as `Move`, `Ability`, `UI/UX`, etc. There are also priority labels:
-- P0: Completely gamebreaking (very rare)
-- P1: Major - Game crash
-- P2: Minor - Incorrect (but non-crashing) move/ability/interaction
-- P3: No gameplay impact - typo, minor graphical error, etc.
+- `P0`: Completely gamebreaking (very rare)
+- `P1`: Major - Game crash
+- `P2`: Minor - Incorrect (but non-crashing) move/ability/interaction
+- `P3`: No gameplay impact - typo, minor graphical error, etc.
 
 Also under issues, you can take a look at the [List of Partial / Unimplemented Moves and Abilities](https://github.com/pagefaultgames/pokerogue/issues/3503) and the [Bug Board](https://github.com/orgs/pagefaultgames/projects/3) (the latter is essentially the same as the issues page but easier to work with).
 
@@ -76,13 +76,13 @@ You've just made a change - how can you check if it works? You have two areas to
 > This will likely be your first stop. After making a change, you'll want to spin the game up and make sure everything is as you expect. To do this, you will need a way to manipulate the game to produce the situation you're looking to test.
 
 In the `src/overrides.ts` file there are overrides for most values you'll need to change for testing, controlled through the `overrides` object. 
-For example, here is how you could test a scenario where the player Pokemon has Protean and the enemy Pokemon has Pixilate:
+For example, here is how you could test a scenario where the player Pokemon has the ability Drought and the enemy Pokemon has the move Water Gun:
 
 ```typescript
 const overrides = {
-  ABILITY_OVERRIDE: Abilities.PROTEAN,
-  PASSIVE_ABILITY_OVERRIDE: Abilities.PIXILATE,
-}
+  ABILITY_OVERRIDE: Abilities.DROUGHT,
+  OPP_MOVESET_OVERRIDE: Moves.WATER_GUN,
+} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 ```
 
 Read through `src/overrides.ts` file to find the override that fits your needs - there are a lot of them!
@@ -112,7 +112,7 @@ The project intends for all text to be localized. That is, strings are pulled fr
 
 To fetch translations when you first start development in your fork or to update them on your local branch, run:
 ```bash
-npm run update-locales:remote
+git submodule update --progress --init --recursive
 ```
 
 ### How Localizations Work
@@ -127,7 +127,7 @@ fetching translated text is as follows:
 2. The game looks up the key in the corresponding JSON file in the user's
 language, e.g.
 
-    ```json
+    ```ts
     // from "en/file-name.json"...
     "keyName": "{{arg1}}! This is {{arg2}} of translated text!" 
     ```
@@ -136,7 +136,7 @@ corresponding English key (in the case of LATAM Spanish, it will first default t
 
 3. The game shows the text to the user:
 
-    ```json
+    ```ts
     "Hello! This is an example of translated text!"
     ```
 ### Adding Translated Text
@@ -145,14 +145,14 @@ corresponding English key (in the case of LATAM Spanish, it will first default t
 The workflow is:
 
 1.  Make a pull request to the main repository for your new feature. 
-If this feature requires new text, the text should be integrated intothe code with a new i18next key pointing to where you plan to add it into the pokerogue-locales repository.
+If this feature requires new text, the text should be integrated into the code with a new i18next key pointing to where you plan to add it into the pokerogue-locales repository.
 
 2. Make another pull request -- this time to the [pokerogue-locales](https://github.com/pagefaultgames/pokerogue-locales)
 repository -- adding a new entry to the English locale with text for each key
 you added to your main PR. You *only* need to add the English key and value - the translation team will handle the rest.
 
 3.  If your feature is pulled from the mainline Pokémon games (e.g. a Move or Ability implementation), add a source link for any added text within the locale PR. 
-(Poké Corpus)[https://abcboy101.github.io/poke-corpus/] is a great resource for finding text from the latest mainline games; otherwise, a YouTube video link showing the text in mainline is sufficient.
+[Poké Corpus](https://abcboy101.github.io/poke-corpus) is a great resource for finding text from the latest mainline games; otherwise, a YouTube video link showing the text in mainline is sufficient.
 
 4. Ping @lugiadrien in **#dev-corner** or the current callout thread to make sure your locales PR is seen. 
 It'll be merged into the locales repository after any necessary corrections, at which point you can test it in your main PR (after updating locales from remote)
