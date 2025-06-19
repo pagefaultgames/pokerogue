@@ -12,7 +12,6 @@ abstract class mockPhase extends Phase {
   public override readonly phaseName: any;
 
   override start() {
-    console.log(this.phaseName);
     this.end();
   }
 }

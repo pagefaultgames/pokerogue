@@ -72,13 +72,12 @@ export default class PhaseInterceptor {
    * Method to transition to a target phase.
    * @param targetPhase - The name of the phase to transition to.
    * @param runTarget - Whether or not to run the target phase; default `true`.
-   * @returns A promise that resolves when the transition is complete.
+   * @returns A Promise that resolves when the target phase is reached.
    */
-  // TODO: Does this need to be asynchronous?
   public async to(targetPhase: PhaseString, runTarget = true): Promise<void> {
-    let currentPhase = this.scene.phaseManager.getCurrentPhase();
+    const pm = this.scene.phaseManager;
+    let currentPhase = pm.getCurrentPhase();
     while (!currentPhase?.is(targetPhase)) {
-      currentPhase = this.scene.phaseManager.getCurrentPhase();
       if (!currentPhase) {
         console.log("Reached end of phases without hitting target; resolving.");
         return;
@@ -86,6 +85,7 @@ export default class PhaseInterceptor {
 
       // Current phase is different; run and wait for it to finish
       await this.run(currentPhase);
+      currentPhase = pm.getCurrentPhase();
     }
 
     // We hit the target; run as applicable and wrap up.
@@ -94,7 +94,6 @@ export default class PhaseInterceptor {
       return;
     }
 
-    console.log(`PhaseInterceptor.to: Running target ${targetPhase}`);
     await this.run(currentPhase);
   }
 
