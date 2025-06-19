@@ -35,7 +35,11 @@ export function assignDailyRunStarterHeldItems(party: PlayerPokemon[]) {
 
       const tier = getDailyRewardTier(tierValue);
 
-      const item = getNewHeldItemFromPool(getHeldItemPool(HeldItemPoolType.DAILY_STARTER)[tier] as HeldItemPool, p);
+      const item = getNewHeldItemFromPool(
+        getHeldItemPool(HeldItemPoolType.DAILY_STARTER)[tier] as HeldItemPool,
+        p,
+        party,
+      );
       p.heldItemManager.add(item);
     }
   }
@@ -160,18 +164,18 @@ function pickWeightedIndex(weights: number[]): number {
   return -1; // TODO: Change to something more appropriate
 }
 
-export function getNewVitaminHeldItem(pokemon: Pokemon, customWeights: HeldItemWeights = {}): HeldItemId {
+export function getNewVitaminHeldItem(customWeights: HeldItemWeights = {}, target?: Pokemon): HeldItemId {
   const items = PERMANENT_STATS.map(s => permanentStatToHeldItem[s]);
-  const weights = items.map(t => (pokemon.heldItemManager.isMaxStack(t) ? 0 : (customWeights[t] ?? 1)));
+  const weights = items.map(t => (target?.heldItemManager.isMaxStack(t) ? 0 : (customWeights[t] ?? 1)));
   return items[pickWeightedIndex(weights)];
 }
 
-export function getNewBerryHeldItem(pokemon: Pokemon, customWeights: HeldItemWeights = {}): HeldItemId {
+export function getNewBerryHeldItem(customWeights: HeldItemWeights = {}, target?: Pokemon): HeldItemId {
   const berryTypes = getEnumValues(BerryType);
   const items = berryTypes.map(b => berryTypeToHeldItem[b]);
 
   const weights = items.map(t =>
-    pokemon.heldItemManager.isMaxStack(t)
+    target?.heldItemManager.isMaxStack(t)
       ? 0
       : (customWeights[t] ??
           (t === HeldItemId.SITRUS_BERRY || t === HeldItemId.LUM_BERRY || t === HeldItemId.LEPPA_BERRY))
@@ -183,14 +187,19 @@ export function getNewBerryHeldItem(pokemon: Pokemon, customWeights: HeldItemWei
 }
 
 export function getNewAttackTypeBoosterHeldItem(
-  pokemon: Pokemon,
+  pokemon: Pokemon | Pokemon[],
   customWeights: HeldItemWeights = {},
+  target?: Pokemon,
 ): HeldItemId | null {
+  const party = coerceArray(pokemon);
+
   // TODO: make this consider moves or abilities that change types
-  const attackMoveTypes = pokemon
-    .getMoveset()
-    .filter(m => m.getMove().is("AttackMove"))
-    .map(m => m.getMove().type);
+  const attackMoveTypes = party.flatMap(p =>
+    p
+      .getMoveset()
+      .filter(m => m.getMove().is("AttackMove"))
+      .map(m => m.getMove().type),
+  );
   if (!attackMoveTypes.length) {
     return null;
   }
@@ -206,7 +215,7 @@ export function getNewAttackTypeBoosterHeldItem(
   const types = Array.from(attackMoveTypeWeights.keys());
 
   const weights = types.map(type =>
-    pokemon.heldItemManager.isMaxStack(attackTypeToHeldItem[type])
+    target?.heldItemManager.isMaxStack(attackTypeToHeldItem[type])
       ? 0
       : (customWeights[attackTypeToHeldItem[type]] ?? attackMoveTypeWeights.get(type)!),
   );
@@ -217,17 +226,18 @@ export function getNewAttackTypeBoosterHeldItem(
 
 export function getNewHeldItemFromCategory(
   id: HeldItemCategoryId,
-  pokemon: Pokemon,
+  pokemon: Pokemon | Pokemon[],
   customWeights: HeldItemWeights = {},
+  target?: Pokemon,
 ): HeldItemId | null {
   if (id === HeldItemCategoryId.BERRY) {
-    return getNewBerryHeldItem(pokemon, customWeights);
+    return getNewBerryHeldItem(customWeights, target);
   }
   if (id === HeldItemCategoryId.VITAMIN) {
-    return getNewVitaminHeldItem(pokemon, customWeights);
+    return getNewVitaminHeldItem(customWeights, target);
   }
   if (id === HeldItemCategoryId.TYPE_ATTACK_BOOSTER) {
-    return getNewAttackTypeBoosterHeldItem(pokemon, customWeights);
+    return getNewAttackTypeBoosterHeldItem(pokemon, customWeights, target);
   }
   return null;
 }
@@ -247,7 +257,7 @@ function getPoolWeights(pool: HeldItemPool, pokemon: Pokemon): number[] {
   });
 }
 
-function getNewHeldItemFromPool(pool: HeldItemPool, pokemon: Pokemon): HeldItemId | HeldItemSpecs {
+function getNewHeldItemFromPool(pool: HeldItemPool, pokemon: Pokemon, party?: Pokemon[]): HeldItemId | HeldItemSpecs {
   const weights = getPoolWeights(pool, pokemon);
 
   const entry = pool[pickWeightedIndex(weights)].entry;
@@ -257,7 +267,7 @@ function getNewHeldItemFromPool(pool: HeldItemPool, pokemon: Pokemon): HeldItemI
   }
 
   if (isHeldItemCategoryEntry(entry)) {
-    return getNewHeldItemFromCategory(entry.id, pokemon, entry?.customWeights) as HeldItemId;
+    return getNewHeldItemFromCategory(entry.id, party ?? pokemon, entry?.customWeights, pokemon) as HeldItemId;
   }
 
   return entry as HeldItemSpecs;
@@ -278,7 +288,7 @@ export function assignItemsFromConfiguration(config: HeldItemConfiguration, poke
 
     if (isHeldItemCategoryEntry(entry)) {
       for (let i = 1; i <= actualCount; i++) {
-        const newItem = getNewHeldItemFromCategory(entry.id, pokemon, entry?.customWeights);
+        const newItem = getNewHeldItemFromCategory(entry.id, pokemon, entry?.customWeights, pokemon);
         if (newItem) {
           pokemon.heldItemManager.add(newItem);
         }
