@@ -3,6 +3,17 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { Phase } from "#app/phase";
 
 export abstract class BattlePhase extends Phase {
+  start() {
+    if (globalScene.currentBattle.failedRunAway) {
+      const activePlayerField = globalScene.getActivePlayerField();
+
+      activePlayerField.forEach(p => {
+        p.turnData.failedRunAway = true;
+      });
+
+      globalScene.currentBattle.failedRunAway = false;
+    }
+  }
   showEnemyTrainer(trainerSlot: TrainerSlot = TrainerSlot.NONE): void {
     if (!globalScene.currentBattle.trainer) {
       console.warn("Enemy trainer is missing!");

@@ -20,10 +20,10 @@ export class AttemptRunPhase extends PokemonPhase {
   start() {
     super.start();
 
+    //Attempting to run is a TEAM not PLAYER based action, we should not be referercing individual pokemon,
+    //we should instead be referring to the team as a whole
     const activePlayerField = globalScene.getActivePlayerField();
     const enemyField = globalScene.getEnemyField();
-    //Attempting to run is a TEAM not PLAYER based action, we should not be referercing individual pokemon,
-    //we should instead be referring to the team as a whole and
 
     const escapeChance = new NumberHolder(0);
     const escapeRoll = this.getTeamRNG(100);
@@ -67,11 +67,7 @@ export class AttemptRunPhase extends PokemonPhase {
 
       globalScene.phaseManager.pushNew("NewBattlePhase");
     } else {
-      //there should be a general failed run away bool for the active team
-      activePlayerField.forEach(p => {
-        p.turnData.failedRunAway = true;
-      });
-
+      globalScene.currentBattle.failedRunAway = true;
       globalScene.phaseManager.queueMessage(i18next.t("battle:runAwayCannotEscape"), null, true, 500);
     }
 
