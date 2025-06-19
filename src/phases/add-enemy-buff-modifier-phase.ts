@@ -23,10 +23,9 @@ export class AddEnemyBuffModifierPhase extends Phase {
           globalScene.findModifiers(m => m instanceof EnemyPersistentModifier, false),
         ),
         true,
-        true,
       );
     }
-    globalScene.updateModifiers(false, true);
+    globalScene.updateModifiers(false);
     this.end();
   }
 }

@@ -418,7 +418,7 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.phaseManager.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
     }
 
-    globalScene.applyModifiers(HitHealModifier, this.player, user);
+    applyHeldItems(ITEM_EFFECT.HIT_HEAL, { pokemon: user });
     this.getTargets().forEach(target => {
       target.turnData.moveEffectiveness = null;
     });

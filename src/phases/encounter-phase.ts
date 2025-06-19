@@ -15,8 +15,6 @@ import type Pokemon from "#app/field/pokemon";
 import { FieldPosition } from "#enums/field-position";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BoostBugSpawnModifier, IvScannerModifier } from "#app/modifier/modifier";
-import { regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
 import Overrides from "#app/overrides";
 import { BattlePhase } from "#app/phases/battle-phase";
 import { achvs } from "#app/system/achv";
@@ -271,10 +269,6 @@ export class EncounterPhase extends BattlePhase {
 
       if (!this.loaded && battle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
         // generate modifiers for MEs, overriding prior ones as applicable
-        regenerateModifierPoolThresholds(
-          globalScene.getEnemyField(),
-          battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD,
-        );
         globalScene.generateEnemyModifiers();
         overrideModifiers(false);
 
