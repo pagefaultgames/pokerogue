@@ -65,14 +65,14 @@ const fonts: Array<LoadingFontFaceProperty> = [
       unicodeRange: rangesByLanguage.chinese,
     }),
     extraOptions: { sizeAdjust: "70%", format: "woff2" },
-    only: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "da", "tr", "ro", "ru"],
+    only: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "da", "tr", "ro", "ru", "he"],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.subset.woff2)", {
       unicodeRange: rangesByLanguage.chinese,
     }),
     extraOptions: { format: "woff2" },
-    only: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "da", "tr", "ro", "ru"],
+    only: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "da", "tr", "ro", "ru", "he"],
   },
   // japanese
   {
@@ -192,6 +192,7 @@ export async function initI18n(): Promise<void> {
       "tr",
       "ro",
       "ru",
+      "he",
     ],
     backend: {
       loadPath(lng: string, [ns]: string[]) {
