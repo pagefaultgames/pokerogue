@@ -3,7 +3,7 @@ import { enemyBuffModifierPool, modifierPool } from "#app/modifier/modifier-pool
 import { globalScene } from "#app/global-scene";
 import { DoubleBattleChanceBoosterModifier } from "./modifier";
 import { WeightedModifierType } from "./modifier-type";
-import { RewardTier } from "../enums/modifier-tier";
+import { RewardTier } from "#app/enums/reward-tier";
 import type { WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
 import { modifierTypes } from "#app/data/data-lists";
 import { PokeballType } from "#enums/pokeball";

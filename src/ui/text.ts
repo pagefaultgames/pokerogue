@@ -4,7 +4,7 @@ import type Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import { globalScene } from "#app/global-scene";
-import { RewardTier } from "../enums/modifier-tier";
+import { RewardTier } from "#app/enums/reward-tier";
 import i18next from "#app/plugins/i18n";
 
 export enum TextStyle {
