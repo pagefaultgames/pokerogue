@@ -237,7 +237,15 @@ export interface AbAttrBaseParams {
    */
   readonly simulated?: boolean;
 
-  /** Whether the ability is the passive ability. Default false */
+  /**
+   * (For callers of `{@linkcode applyAbAttrs}`): If provided, **only** apply ability attributes of the passive (true) or active (false).
+   *
+   * This should almost always be left undefined, as otherwise it will *only* apply attributes of *either* the pokemon's passive (true) or
+   * non-passive (false) abilities. In almost all cases, you want to apply attributes that are from either.
+   *
+   * (For implementations of `AbAttr`): This will *never* be undefined, and will be `true` if the ability being applied
+   * is the pokemon's passive, and `false` otherwise.
+   */
   passive?: boolean;
 }
 
@@ -285,8 +293,8 @@ export abstract class AbAttr {
    */
   apply(_params: AbAttrBaseParams): void {}
 
-  // The NoInfer in the next two signatures enforces that the type of the _params operand
-  // is always compatible with the type of apply. This allows fewer fields, but never a parameter with more.
+  // The `Exact` in the next two signatures enforces that the type of the _params operand
+  // is always compatible with the type of apply. This allows fewer fields, but never a type with more.
   getTriggerMessage(_params: Exact<Parameters<this["apply"]>[0]>, _abilityName: string): string | null {
     return null;
   }
