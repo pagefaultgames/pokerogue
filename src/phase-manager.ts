@@ -400,6 +400,7 @@ export class PhaseManager {
    */
   private startCurrentPhase(): void {
     if (!this.currentPhase) {
+      console.warn("trying to start null phase!");
       return;
     }
     console.log(`%cStart Phase ${this.currentPhase.phaseName}`, "color:green;");

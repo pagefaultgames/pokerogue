@@ -3,7 +3,7 @@ import type { Phase } from "#app/phase";
 import { UiMode } from "#enums/ui-mode";
 import UI from "#app/ui/ui";
 import type { PhaseString } from "#app/@types/phase-types";
-import { vi } from "vitest";
+import { vi, type MockInstance } from "vitest";
 import { format } from "util";
 
 interface PromptHandler {
@@ -16,7 +16,7 @@ interface PromptHandler {
 
 /**
  * The PhaseInterceptor is a wrapper around the `BattleScene`'s {@linkcode PhaseManager}.
- * It allows tests to exert finer control over the phase system, providing logging,
+ * It allows tests to exert finer control over the phase system, providing logging, manual advancing, etc etc.
  */
 export default class PhaseInterceptor {
   private scene: BattleScene;
@@ -44,16 +44,18 @@ export default class PhaseInterceptor {
    * Method to initialize various mocks for intercepting phases.
    */
   initMocks() {
-    const originalSetMode = UI.prototype.setMode;
-    vi.spyOn(UI.prototype, "setMode").mockImplementation((mode, ...args) =>
-      this.setMode(originalSetMode, mode, ...args),
-    );
+    const originalSetMode = UI.prototype["setModeInternal"];
+    // `any` assertion needed as we are mocking private property
+    const uiSpy = vi.spyOn(UI.prototype as any, "setModeInternal") as MockInstance<
+      (typeof UI.prototype)["setModeInternal"]
+    >;
+    uiSpy.mockImplementation(async (...args) => {
+      this.setMode(originalSetMode, args);
+    });
 
     // Mock the private startCurrentPhase method to do nothing to let us
     // start them manually ourselves.
-    this.scene.phaseManager["startCurrentPhase"] satisfies () => void; // typecheck in case function is renamed/removed
-    // @ts-expect-error - startCurrentPhase is private
-    vi.spyOn(this.scene.phaseManager, "startCurrentPhase").mockImplementation(() => {});
+    vi.spyOn(this.scene.phaseManager as any, "startCurrentPhase").mockImplementation(() => {});
   }
 
   /**
@@ -72,6 +74,7 @@ export default class PhaseInterceptor {
    * @param runTarget - Whether or not to run the target phase; default `true`.
    * @returns A promise that resolves when the transition is complete.
    */
+  // TODO: Does this need to be asynchronous?
   public async to(targetPhase: PhaseString, runTarget = true): Promise<void> {
     let currentPhase = this.scene.phaseManager.getCurrentPhase();
     while (!currentPhase?.is(targetPhase)) {
@@ -126,12 +129,13 @@ export default class PhaseInterceptor {
    * @param args - Additional arguments to pass to the original method.
    */
   private async setMode(
-    originalSetMode: typeof UI.prototype.setMode,
-    mode: UiMode,
-    ...args: unknown[]
-  ): ReturnType<typeof UI.prototype.setMode> {
+    originalSetMode: (typeof UI.prototype)["setModeInternal"],
+    args: Parameters<(typeof UI.prototype)["setModeInternal"]>,
+  ): ReturnType<(typeof UI.prototype)["setModeInternal"]> {
+    const mode = args[0];
+
     console.log("setMode", `${UiMode[mode]} (=${mode})`, args);
-    const ret = originalSetMode.apply(this.scene.ui, [mode, ...args]);
+    const ret = originalSetMode.apply(this.scene.ui, [args]);
     this.doPromptCheck(mode);
     return ret;
   }
