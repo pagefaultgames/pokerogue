@@ -7,7 +7,6 @@ import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-en
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import type { EnemyPartyConfig, EnemyPokemonConfig } from "../utils/encounter-phase-utils";
 import {
-  generateModifierType,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterRewards,
@@ -21,11 +20,9 @@ import { NumberHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "#
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { allSpecies } from "#app/data/data-lists";
-import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier } from "#app/modifier/modifier";
+import { HiddenAbilityRateBoosterModifier } from "#app/modifier/modifier";
 import { achvs } from "#app/system/achv";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/data/data-lists";
 import i18next from "#app/plugins/i18n";
 import {
@@ -40,10 +37,12 @@ import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import PokemonData from "#app/system/pokemon-data";
 import { Nature } from "#enums/nature";
-import type HeldModifierConfig from "#app/@types/held-modifier-config";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
 import { PartyMemberStrength } from "#enums/party-member-strength";
+import type { HeldItemConfiguration, HeldItemSpecs } from "#app/items/held-item-data-types";
+import { assignItemsFromConfiguration } from "#app/items/held-item-pool";
+import { HeldItemId } from "#enums/held-item-id";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/weirdDream";
@@ -265,24 +264,20 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         dataSource.player = false;
 
         // Copy held items to new pokemon
-        const newPokemonHeldItemConfigs: HeldModifierConfig[] = [];
-        for (const item of transformation.heldItems) {
-          newPokemonHeldItemConfigs.push({
-            modifier: item.clone() as PokemonHeldItemModifier,
-            stackCount: item.getStackCount(),
-            isTransferable: false,
-          });
-        }
+        // TODO: Make items untransferable
+        const newPokemonHeldItemConfig = transformation.heldItems;
+
         // Any pokemon that is below 570 BST gets +20 permanent BST to 3 stats
         if (shouldGetOldGateau(newPokemon)) {
           const stats = getOldGateauBoostedStats(newPokemon);
-          newPokemonHeldItemConfigs.push({
-            modifier: generateModifierType(modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU, [
-              OLD_GATEAU_STATS_UP,
-              stats,
-            ]) as PokemonHeldItemModifierType,
-            stackCount: 1,
-            isTransferable: false,
+          const gateauItem = {
+            id: HeldItemId.OLD_GATEAU,
+            stack: 1,
+            data: { statModifier: OLD_GATEAU_STATS_UP, stats: stats },
+          } as HeldItemSpecs;
+          newPokemonHeldItemConfig.push({
+            entry: gateauItem,
+            count: 1,
           });
         }
 
@@ -291,7 +286,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
           isBoss: newPokemon.getSpeciesForm().getBaseStatTotal() > NON_LEGENDARY_BST_THRESHOLD,
           level: previousPokemon.level,
           dataSource: dataSource,
-          modifierConfigs: newPokemonHeldItemConfigs,
+          heldItemConfig: newPokemonHeldItemConfig,
         };
 
         enemyPokemonConfigs.push(enemyConfig);
@@ -372,7 +367,7 @@ interface PokemonTransformation {
   previousPokemon: PlayerPokemon;
   newSpecies: PokemonSpecies;
   newPokemon: PlayerPokemon;
-  heldItems: PokemonHeldItemModifier[];
+  heldItems: HeldItemConfiguration;
 }
 
 function getTeamTransformations(): PokemonTransformation[] {
@@ -397,9 +392,7 @@ function getTeamTransformations(): PokemonTransformation[] {
   for (let i = 0; i < numPokemon; i++) {
     const removed = removedPokemon[i];
     const index = pokemonTransformations.findIndex(p => p.previousPokemon.id === removed.id);
-    pokemonTransformations[index].heldItems = removed
-      .getHeldItems()
-      .filter(m => !(m instanceof PokemonFormChangeItemModifier));
+    pokemonTransformations[index].heldItems = removed.heldItemManager.generateHeldItemConfiguration();
 
     const bst = removed.getSpeciesForm().getBaseStatTotal();
     let newBstRange: [number, number];
@@ -455,22 +448,22 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
     }
 
     // Copy old items to new pokemon
-    for (const item of transformation.heldItems) {
-      item.pokemonId = newPokemon.id;
-      globalScene.addModifier(item, false, false, false, true);
-    }
+    const heldItemConfiguration = transformation.heldItems;
+
     // Any pokemon that is below 570 BST gets +20 permanent BST to 3 stats
     if (shouldGetOldGateau(newPokemon)) {
       const stats = getOldGateauBoostedStats(newPokemon);
-      const modType = modifierTypes
-        .MYSTERY_ENCOUNTER_OLD_GATEAU()
-        .generateType(globalScene.getPlayerParty(), [OLD_GATEAU_STATS_UP, stats])
-        ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU);
-      const modifier = modType?.newModifier(newPokemon);
-      if (modifier) {
-        globalScene.addModifier(modifier, false, false, false, true);
-      }
+      const gateauItem = {
+        id: HeldItemId.OLD_GATEAU,
+        stack: 1,
+        data: { statModifier: OLD_GATEAU_STATS_UP, stats: stats },
+      } as HeldItemSpecs;
+      heldItemConfiguration.push({
+        entry: gateauItem,
+        count: 1,
+      });
     }
+    assignItemsFromConfiguration(heldItemConfiguration, newPokemon);
 
     newPokemon.calculateStats();
     await newPokemon.updateInfo();

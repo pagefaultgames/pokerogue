@@ -906,6 +906,7 @@ export default class BattleScene extends SceneBase {
     variant?: Variant,
     ivs?: number[],
     nature?: Nature,
+    heldItemConfig?: HeldItemConfiguration,
     dataSource?: Pokemon | PokemonData,
     postProcess?: (playerPokemon: PlayerPokemon) => void,
   ): PlayerPokemon {
@@ -925,6 +926,9 @@ export default class BattleScene extends SceneBase {
       postProcess(pokemon);
     }
     pokemon.init();
+    if (heldItemConfig) {
+      assignItemsFromConfiguration(heldItemConfig, pokemon);
+    }
     return pokemon;
   }
 
@@ -934,6 +938,7 @@ export default class BattleScene extends SceneBase {
     trainerSlot: TrainerSlot,
     boss = false,
     shinyLock = false,
+    heldItemConfig?: HeldItemConfiguration,
     dataSource?: PokemonData,
     postProcess?: (enemyPokemon: EnemyPokemon) => void,
   ): EnemyPokemon {
@@ -975,6 +980,9 @@ export default class BattleScene extends SceneBase {
     }
 
     pokemon.init();
+    if (heldItemConfig) {
+      assignItemsFromConfiguration(heldItemConfig, pokemon);
+    }
     return pokemon;
   }
 

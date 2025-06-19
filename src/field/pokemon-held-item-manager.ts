@@ -1,5 +1,5 @@
 import { allHeldItems } from "#app/items/all-held-items";
-import { isItemInRequested, type HeldItemCategoryId, type HeldItemId } from "#app/enums/held-item-id";
+import { isItemInCategory, isItemInRequested, type HeldItemCategoryId, type HeldItemId } from "#app/enums/held-item-id";
 import type { FormChangeItem } from "#enums/form-change-item";
 import {
   type HeldItemConfiguration,
@@ -73,6 +73,10 @@ export class PokemonItemManager {
 
   hasItem(itemType: HeldItemId): boolean {
     return itemType in this.heldItems;
+  }
+
+  hasItemCategory(categoryId: HeldItemCategoryId): boolean {
+    return Object.keys(this.heldItems).some(id => isItemInCategory(Number(id), categoryId));
   }
 
   getStack(itemType: HeldItemId): number {

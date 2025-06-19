@@ -14,7 +14,7 @@ import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
-import type { HeldItemId } from "#enums/held-item-id";
+import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { allHeldItems } from "#app/items/all-held-items";
 
 export interface EncounterRequirement {
@@ -348,39 +348,6 @@ export class PartySizeRequirement extends EncounterSceneRequirement {
 
   override getDialogueToken(_pokemon?: PlayerPokemon): [string, string] {
     return ["partySize", globalScene.getPlayerParty().length.toString()];
-  }
-}
-
-export class PersistentModifierRequirement extends EncounterSceneRequirement {
-  requiredHeldItemModifiers: string[];
-  minNumberOfItems: number;
-
-  constructor(heldItem: string | string[], minNumberOfItems = 1) {
-    super();
-    this.minNumberOfItems = minNumberOfItems;
-    this.requiredHeldItemModifiers = coerceArray(heldItem);
-  }
-
-  override meetsRequirement(): boolean {
-    const partyPokemon = globalScene.getPlayerParty();
-    if (isNullOrUndefined(partyPokemon) || this.requiredHeldItemModifiers?.length < 0) {
-      return false;
-    }
-    let modifierCount = 0;
-    for (const modifier of this.requiredHeldItemModifiers) {
-      const matchingMods = globalScene.findModifiers(m => m.constructor.name === modifier);
-      if (matchingMods?.length > 0) {
-        for (const matchingMod of matchingMods) {
-          modifierCount += matchingMod.stackCount;
-        }
-      }
-    }
-
-    return modifierCount >= this.minNumberOfItems;
-  }
-
-  override getDialogueToken(_pokemon?: PlayerPokemon): [string, string] {
-    return ["requiredItem", this.requiredHeldItemModifiers[0]];
   }
 }
 
@@ -833,13 +800,13 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
 }
 
 export class HeldItemRequirement extends EncounterPokemonRequirement {
-  requiredHeldItems: HeldItemId[];
+  requiredHeldItems: HeldItemId[] | HeldItemCategoryId[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
   requireTransferable: boolean;
 
   constructor(
-    heldItem: HeldItemId | HeldItemId[],
+    heldItem: HeldItemId | HeldItemId[] | HeldItemCategoryId | HeldItemCategoryId[],
     minNumberOfPokemon = 1,
     invertQuery = false,
     requireTransferable = true,
@@ -863,7 +830,7 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
     if (!this.invertQuery) {
       return partyPokemon.filter(pokemon =>
         this.requiredHeldItems.some(heldItem => {
-          pokemon.heldItemManager.hasItem(heldItem) &&
+          (pokemon.heldItemManager.hasItem(heldItem) || pokemon.heldItemManager.hasItemCategory(heldItem)) &&
             (!this.requireTransferable || allHeldItems[heldItem].isTransferable);
         }),
       );

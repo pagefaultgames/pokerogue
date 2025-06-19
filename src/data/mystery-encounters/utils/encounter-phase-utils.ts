@@ -52,7 +52,9 @@ import { PokemonType } from "#enums/pokemon-type";
 import { getNatureName } from "#app/data/nature";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { timedEventManager } from "#app/global-event-manager";
-import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
+import type { HeldItemConfiguration, PokemonItemMap } from "#app/items/held-item-data-types";
+import { HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/held-item-id";
+import { allHeldItems } from "#app/items/all-held-items";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -1304,4 +1306,30 @@ export function calculateRareSpawnAggregateStats(luckValue: number) {
   const stats = `Avg Commons: ${commonMean}\nAvg Rare: ${rareMean}\nAvg Super Rare: ${superRareMean}\nAvg Ultra Rare: ${ultraRareMean}\n`;
 
   console.log(stats);
+}
+
+// Iterate over the party until an item is successfully given
+export function assignItemToFirstFreePokemon(item: HeldItemId, party: Pokemon[]): void {
+  for (const pokemon of party) {
+    const stack = pokemon.heldItemManager.getStack(item);
+    if (stack < allHeldItems[item].getMaxStackCount()) {
+      pokemon.heldItemManager.add(item);
+      return;
+    }
+  }
+}
+
+// Creates an item map of berries to pokemon, storing each berry separately (splitting up stacks)
+export function getPartyBerries(): PokemonItemMap[] {
+  const pokemonItems: PokemonItemMap[] = [];
+  globalScene.getPlayerParty().forEach(pokemon => {
+    const berries = pokemon.getHeldItems().filter(item => isItemInCategory(item, HeldItemCategoryId.BERRY));
+    berries.forEach(berryId => {
+      const berryStack = pokemon.heldItemManager.getStack(berryId);
+      for (let i = 1; i <= berryStack; i++) {
+        pokemonItems.push({ item: berryId, pokemon: pokemon });
+      }
+    });
+  });
+  return pokemonItems;
 }

@@ -70,3 +70,8 @@ type HeldItemConfigurationEntry = {
 };
 
 export type HeldItemConfiguration = HeldItemConfigurationEntry[];
+
+export type PokemonItemMap = {
+  item: HeldItemId;
+  pokemon: Pokemon;
+};

@@ -1,6 +1,6 @@
 import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import {
-  generateModifierType,
+  getPartyBerries,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterRewards,
@@ -9,14 +9,12 @@ import {
 import type Pokemon from "#app/field/pokemon";
 import { EnemyPokemon } from "#app/field/pokemon";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { modifierTypes } from "#app/data/data-lists";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { PersistentModifierRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -25,19 +23,17 @@ import { MoveId } from "#enums/move-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { randInt } from "#app/utils/common";
 import { BattlerIndex } from "#enums/battler-index";
-import {
-  applyModifierTypeToPlayerPokemon,
-  catchPokemon,
-  getHighestLevelPlayerPokemon,
-} from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { catchPokemon, getHighestLevelPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { PokeballType } from "#enums/pokeball";
-import type HeldModifierConfig from "#app/@types/held-modifier-config";
-import type { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
 import i18next from "i18next";
 import type { MysteryEncounterSpriteConfig } from "#app/field/mystery-encounter-intro";
 import { MoveUseMode } from "#enums/move-use-mode";
+import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
+import { allHeldItems } from "#app/items/all-held-items";
+import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
+import { HeldItemRequirement } from "../mystery-encounter-requirements";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/absoluteAvarice";
@@ -64,7 +60,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
   .withSceneWaveRangeRequirement(20, 180)
-  .withSceneRequirement(new PersistentModifierRequirement("BerryModifier", 6)) // Must have at least 6 berries to spawn
+  .withSceneRequirement(new HeldItemRequirement(HeldItemCategoryId.BERRY, 6)) // Must have at least 6 berries to spawn
   .withFleeAllowed(false)
   .withIntroSpriteConfigs([
     {
@@ -114,34 +110,16 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
     globalScene.loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav");
     globalScene.loadSe("Follow Me", "battle_anims", "Follow Me.mp3");
 
-    // Get all player berry items, remove from party, and store reference
-    const berryItems = globalScene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
+    // Get all berries in party, with references to the pokemon
+    const berryItems = getPartyBerries();
 
-    // Sort berries by party member ID to more easily re-add later if necessary
-    const berryItemsMap = new Map<number, BerryModifier[]>();
-    globalScene.getPlayerParty().forEach(pokemon => {
-      const pokemonBerries = berryItems.filter(b => b.pokemonId === pokemon.id);
-      if (pokemonBerries?.length > 0) {
-        berryItemsMap.set(pokemon.id, pokemonBerries);
-      }
+    encounter.misc.berryItemsMap = berryItems;
+
+    // Adds stolen berries to the Greedent item configuration
+    const bossHeldItemConfig: HeldItemConfiguration = [];
+    berryItems.forEach(map => {
+      bossHeldItemConfig.push({ entry: map.item, count: 1 });
     });
-
-    encounter.misc = { berryItemsMap };
-
-    // Generates copies of the stolen berries to put on the Greedent
-    const bossModifierConfigs: HeldModifierConfig[] = [];
-    berryItems.forEach(berryMod => {
-      // Can't define stack count on a ModifierType, have to just create separate instances for each stack
-      // Overflow berries will be "lost" on the boss, but it's un-catchable anyway
-      for (let i = 0; i < berryMod.stackCount; i++) {
-        const modifierType = generateModifierType(modifierTypes.BERRY, [
-          berryMod.berryType,
-        ]) as PokemonHeldItemModifierType;
-        bossModifierConfigs.push({ modifier: modifierType });
-      }
-    });
-
-    // Do NOT remove the real berries yet or else it will be persisted in the session data
 
     // +1 SpDef below wave 50, SpDef and Speed otherwise
     const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] =
@@ -157,7 +135,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
           bossSegments: 3,
           shiny: false, // Shiny lock because of consistency issues between the different options
           moveSet: [MoveId.THRASH, MoveId.CRUNCH, MoveId.BODY_PRESS, MoveId.SLACK_OFF],
-          modifierConfigs: bossModifierConfigs,
+          heldItemConfig: bossHeldItemConfig,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.1.boss_enraged`);
@@ -184,9 +162,9 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
 
     // Remove the berries from the party
     // Session has been safely saved at this point, so data won't be lost
-    const berryItems = globalScene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
-    berryItems.forEach(berryMod => {
-      globalScene.removeModifier(berryMod);
+    const berryItems = getPartyBerries();
+    berryItems.forEach(map => {
+      map.pokemon.heldItemManager.remove(map.item);
     });
 
     globalScene.updateModifiers(true);
@@ -209,19 +187,14 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
         const encounter = globalScene.currentBattle.mysteryEncounter!;
 
         // Provides 1x Reviver Seed to each party member at end of battle
-        const revSeed = generateModifierType(modifierTypes.REVIVER_SEED);
         encounter.setDialogueToken(
           "foodReward",
-          revSeed?.name ?? i18next.t("modifierType:ModifierType.REVIVER_SEED.name"),
+          allHeldItems[HeldItemId.REVIVER_SEED].name ?? i18next.t("modifierType:ModifierType.REVIVER_SEED.name"),
         );
         const givePartyPokemonReviverSeeds = () => {
           const party = globalScene.getPlayerParty();
           party.forEach(p => {
-            const heldItems = p.getHeldItems();
-            if (revSeed && !heldItems.some(item => item instanceof PokemonInstantReviveModifier)) {
-              const seedModifier = revSeed.newModifier(p);
-              globalScene.addModifier(seedModifier, false, false, false, true);
-            }
+            p.heldItemManager.add(HeldItemId.REVIVER_SEED);
           });
           queueEncounterMessage(`${namespace}:option.1.food_stash`);
         };
@@ -257,19 +230,16 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
         // Returns 2/5 of the berries stolen to each Pokemon
         const party = globalScene.getPlayerParty();
         party.forEach(pokemon => {
-          const stolenBerries: BerryModifier[] = berryMap.get(pokemon.id);
-          const berryTypesAsArray: BerryType[] = [];
-          stolenBerries?.forEach(bMod => berryTypesAsArray.push(...new Array(bMod.stackCount).fill(bMod.berryType)));
-          const returnedBerryCount = Math.floor(((berryTypesAsArray.length ?? 0) * 2) / 5);
+          // TODO: is this check legal?
+          const stolenBerries = berryMap.filter(map => map.pokemon === pokemon);
+          const returnedBerryCount = Math.floor(((stolenBerries.length ?? 0) * 2) / 5);
 
           if (returnedBerryCount > 0) {
             for (let i = 0; i < returnedBerryCount; i++) {
               // Shuffle remaining berry types and pop
-              Phaser.Math.RND.shuffle(berryTypesAsArray);
-              const randBerryType = berryTypesAsArray.pop();
-
-              const berryModType = generateModifierType(modifierTypes.BERRY, [randBerryType]) as BerryModifierType;
-              applyModifierTypeToPlayerPokemon(pokemon, berryModType);
+              Phaser.Math.RND.shuffle(stolenBerries);
+              const randBerryType = stolenBerries.pop();
+              pokemon.heldItemManager.add(randBerryType);
             }
           }
         });

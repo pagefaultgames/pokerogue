@@ -1,5 +1,6 @@
 import type { EnemyPartyConfig, EnemyPokemonConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import {
+  assignItemToFirstFreePokemon,
   generateModifierType,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
@@ -16,7 +17,6 @@ import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/myst
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { SpeciesId } from "#enums/species-id";
-import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import i18next from "#app/plugins/i18n";
 import { ModifierTier } from "#enums/modifier-tier";
@@ -27,6 +27,8 @@ import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { randSeedInt } from "#app/utils/common";
 import { MoveUseMode } from "#enums/move-use-mode";
+import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
+import { allHeldItems } from "#app/items/all-held-items";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/trashToTreasure";
@@ -81,41 +83,13 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
       formIndex: 1, // Gmax
       bossSegmentModifier: 1, // +1 Segment from normal
       moveSet: [MoveId.GUNK_SHOT, MoveId.STOMPING_TANTRUM, MoveId.HAMMER_ARM, MoveId.PAYBACK],
-      modifierConfigs: [
-        {
-          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.TOXIC_ORB) as PokemonHeldItemModifierType,
-          stackCount: randSeedInt(2, 0),
-        },
-        {
-          modifier: generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType,
-          stackCount: randSeedInt(2, 1),
-        },
-        {
-          modifier: generateModifierType(modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType,
-          stackCount: randSeedInt(3, 1),
-        },
-        {
-          modifier: generateModifierType(modifierTypes.GOLDEN_EGG) as PokemonHeldItemModifierType,
-          stackCount: randSeedInt(2, 0),
-        },
+      heldItemConfig: [
+        { entry: HeldItemCategoryId.BERRY, count: 4 },
+        { entry: HeldItemCategoryId.BASE_STAT_BOOST, count: 2 },
+        { entry: HeldItemId.TOXIC_ORB, count: randSeedInt(2, 0) },
+        { entry: HeldItemId.SOOTHE_BELL, count: randSeedInt(2, 1) },
+        { entry: HeldItemId.LUCKY_EGG, count: randSeedInt(3, 1) },
+        { entry: HeldItemId.GOLDEN_EGG, count: randSeedInt(2, 0) },
       ],
     };
     const config: EnemyPartyConfig = {
@@ -222,44 +196,18 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
   .build();
 
 async function tryApplyDigRewardItems() {
-  const shellBell = generateModifierType(modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
-  const leftovers = generateModifierType(modifierTypes.LEFTOVERS) as PokemonHeldItemModifierType;
-
   const party = globalScene.getPlayerParty();
 
-  // Iterate over the party until an item was successfully given
   // First leftovers
-  for (const pokemon of party) {
-    const heldItems = globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id,
-      true,
-    ) as PokemonHeldItemModifier[];
-    const existingLeftovers = heldItems.find(m => m instanceof TurnHealModifier) as TurnHealModifier;
-
-    if (!existingLeftovers || existingLeftovers.getStackCount() < existingLeftovers.getMaxStackCount()) {
-      await applyModifierTypeToPlayerPokemon(pokemon, leftovers);
-      break;
-    }
-  }
+  assignItemToFirstFreePokemon(HeldItemId.LEFTOVERS, party);
 
   // Second leftovers
-  for (const pokemon of party) {
-    const heldItems = globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id,
-      true,
-    ) as PokemonHeldItemModifier[];
-    const existingLeftovers = heldItems.find(m => m instanceof TurnHealModifier) as TurnHealModifier;
-
-    if (!existingLeftovers || existingLeftovers.getStackCount() < existingLeftovers.getMaxStackCount()) {
-      await applyModifierTypeToPlayerPokemon(pokemon, leftovers);
-      break;
-    }
-  }
+  assignItemToFirstFreePokemon(HeldItemId.LEFTOVERS, party);
 
   globalScene.playSound("item_fanfare");
   await showEncounterText(
     i18next.t("battle:rewardGainCount", {
-      modifierName: leftovers.name,
+      modifierName: allHeldItems[HeldItemId.LEFTOVERS].name,
       count: 2,
     }),
     null,
@@ -268,23 +216,12 @@ async function tryApplyDigRewardItems() {
   );
 
   // Only Shell bell
-  for (const pokemon of party) {
-    const heldItems = globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id,
-      true,
-    ) as PokemonHeldItemModifier[];
-    const existingShellBell = heldItems.find(m => m instanceof HitHealModifier) as HitHealModifier;
-
-    if (!existingShellBell || existingShellBell.getStackCount() < existingShellBell.getMaxStackCount()) {
-      await applyModifierTypeToPlayerPokemon(pokemon, shellBell);
-      break;
-    }
-  }
+  assignItemToFirstFreePokemon(HeldItemId.SHELL_BELL, party);
 
   globalScene.playSound("item_fanfare");
   await showEncounterText(
     i18next.t("battle:rewardGainCount", {
-      modifierName: shellBell.name,
+      modifierName: allHeldItems[HeldItemId.SHELL_BELL].name,
       count: 1,
     }),
     null,
