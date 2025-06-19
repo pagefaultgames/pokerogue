@@ -3,18 +3,20 @@ import { globalScene } from "#app/global-scene";
 import { addTextObject, TextStyle } from "./text";
 import { getTypeDamageMultiplierColor } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";
-import { Command } from "./command-ui-handler";
-import { Mode } from "./ui";
+import { Command } from "#enums/command";
+import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
-import * as Utils from "../utils";
+import { getLocalizedSpriteKey, fixedInt, padInt } from "#app/utils/common";
 import { MoveCategory } from "#enums/MoveCategory";
 import i18next from "i18next";
 import { Button } from "#enums/buttons";
-import type { PokemonMove } from "#app/field/pokemon";
+import type { EnemyPokemon } from "#app/field/pokemon";
+import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
 import type { CommandPhase } from "#app/phases/command-phase";
 import MoveInfoOverlay from "./move-info-overlay";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 export default class FightUiHandler extends UiHandler implements InfoToggle {
   public static readonly MOVES_CONTAINER_NAME = "moves";
@@ -37,7 +39,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
   protected cursor2 = 0;
 
   constructor() {
-    super(Mode.FIGHT);
+    super(UiMode.FIGHT);
   }
 
   setup() {
@@ -54,7 +56,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     this.typeIcon = globalScene.add.sprite(
       globalScene.scaledCanvas.width - 57,
       -36,
-      Utils.getLocalizedSpriteKey("types"),
+      getLocalizedSpriteKey("types"),
       "unknown",
     );
     this.typeIcon.setVisible(false);
@@ -126,8 +128,8 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     messageHandler.bg.setVisible(false);
     messageHandler.commandWindow.setVisible(false);
     messageHandler.movesWindowContainer.setVisible(true);
-    const pokemon = (globalScene.getCurrentPhase() as CommandPhase).getPokemon();
-    if (pokemon.battleSummonData.turnCount <= 1) {
+    const pokemon = (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getPokemon();
+    if (pokemon.tempSummonData.turnCount <= 1) {
       this.setCursor(0);
     } else {
       this.setCursor(this.getCursor());
@@ -138,51 +140,63 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     return true;
   }
 
+  /**
+   * Process the player inputting the selected {@linkcode Button}.
+   * @param button - The {@linkcode Button} being pressed
+   * @returns Whether the input was successful (ie did anything).
+   */
   processInput(button: Button): boolean {
     const ui = this.getUi();
-
+    const cursor = this.getCursor();
     let success = false;
 
-    const cursor = this.getCursor();
-
-    if (button === Button.CANCEL || button === Button.ACTION) {
-      if (button === Button.ACTION) {
-        if ((globalScene.getCurrentPhase() as CommandPhase).handleCommand(this.fromCommand, cursor, false)) {
+    switch (button) {
+      case Button.CANCEL:
+        {
+          // Attempts to back out of the move selection pane are blocked in certain MEs
+          // TODO: Should we allow showing the summary menu at least?
+          const { battleType, mysteryEncounter } = globalScene.currentBattle;
+          if (battleType !== BattleType.MYSTERY_ENCOUNTER || !mysteryEncounter?.skipToFightInput) {
+            ui.setMode(UiMode.COMMAND, this.fieldIndex);
+            success = true;
+          }
+        }
+        break;
+      case Button.ACTION:
+        if (
+          (globalScene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(
+            this.fromCommand,
+            cursor,
+            MoveUseMode.NORMAL,
+          )
+        ) {
           success = true;
         } else {
           ui.playError();
         }
-      } else {
-        // Cannot back out of fight menu if skipToFightInput is enabled
-        const { battleType, mysteryEncounter } = globalScene.currentBattle;
-        if (battleType !== BattleType.MYSTERY_ENCOUNTER || !mysteryEncounter?.skipToFightInput) {
-          ui.setMode(Mode.COMMAND, this.fieldIndex);
-          success = true;
+        break;
+      case Button.UP:
+        if (cursor >= 2) {
+          success = this.setCursor(cursor - 2);
         }
-      }
-    } else {
-      switch (button) {
-        case Button.UP:
-          if (cursor >= 2) {
-            success = this.setCursor(cursor - 2);
-          }
-          break;
-        case Button.DOWN:
-          if (cursor < 2) {
-            success = this.setCursor(cursor + 2);
-          }
-          break;
-        case Button.LEFT:
-          if (cursor % 2 === 1) {
-            success = this.setCursor(cursor - 1);
-          }
-          break;
-        case Button.RIGHT:
-          if (cursor % 2 === 0) {
-            success = this.setCursor(cursor + 1);
-          }
-          break;
-      }
+        break;
+      case Button.DOWN:
+        if (cursor < 2) {
+          success = this.setCursor(cursor + 2);
+        }
+        break;
+      case Button.LEFT:
+        if (cursor % 2 === 1) {
+          success = this.setCursor(cursor - 1);
+        }
+        break;
+      case Button.RIGHT:
+        if (cursor % 2 === 0) {
+          success = this.setCursor(cursor + 1);
+        }
+        break;
+      default:
+      // other inputs do nothing while in fight menu
     }
 
     if (success) {
@@ -199,7 +213,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     }
     globalScene.tweens.add({
       targets: [this.movesContainer, this.cursorObj],
-      duration: Utils.fixedInt(125),
+      duration: fixedInt(125),
       ease: "Sine.easeInOut",
       alpha: visible ? 0 : 1,
     });
@@ -237,7 +251,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
       ui.add(this.cursorObj);
     }
 
-    const pokemon = (globalScene.getCurrentPhase() as CommandPhase).getPokemon();
+    const pokemon = (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getPokemon();
     const moveset = pokemon.getMoveset();
 
     const hasMove = cursor < moveset.length;
@@ -245,7 +259,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     if (hasMove) {
       const pokemonMove = moveset[cursor];
       const moveType = pokemon.getMoveType(pokemonMove.getMove());
-      const textureKey = Utils.getLocalizedSpriteKey("types");
+      const textureKey = getLocalizedSpriteKey("types");
       this.typeIcon.setTexture(textureKey, PokemonType[moveType].toLowerCase()).setScale(0.8);
 
       const moveCategory = pokemonMove.getMove().category;
@@ -255,8 +269,8 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
       const maxPP = pokemonMove.getMovePp();
       const pp = maxPP - pokemonMove.ppUsed;
 
-      const ppLeftStr = Utils.padInt(pp, 2, "  ");
-      const ppMaxStr = Utils.padInt(maxPP, 2, "  ");
+      const ppLeftStr = padInt(pp, 2, "  ");
+      const ppMaxStr = padInt(maxPP, 2, "  ");
       this.ppText.setText(`${ppLeftStr}/${ppMaxStr}`);
       this.powerText.setText(`${power >= 0 ? power : "---"}`);
       this.accuracyText.setText(`${accuracy >= 0 ? accuracy : "---"}`);
@@ -279,7 +293,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
       this.moveInfoOverlay.show(pokemonMove.getMove());
 
       pokemon.getOpponents().forEach(opponent => {
-        opponent.updateEffectiveness(this.getEffectivenessText(pokemon, opponent, pokemonMove));
+        (opponent as EnemyPokemon).updateEffectiveness(this.getEffectivenessText(pokemon, opponent, pokemonMove));
       });
     }
 
@@ -292,7 +306,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     this.accuracyText.setVisible(hasMove);
     this.moveCategoryIcon.setVisible(hasMove);
 
-    this.cursorObj.setPosition(13 + (cursor % 2 === 1 ? 100 : 0), -31 + (cursor >= 2 ? 15 : 0));
+    this.cursorObj.setPosition(13 + (cursor % 2 === 1 ? 114 : 0), -31 + (cursor >= 2 ? 15 : 0));
 
     return changed;
   }
@@ -305,7 +319,10 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     const effectiveness = opponent.getMoveEffectiveness(
       pokemon,
       pokemonMove.getMove(),
-      !opponent.battleData?.abilityRevealed,
+      !opponent.waveData.abilityRevealed,
+      undefined,
+      undefined,
+      true,
     );
     if (effectiveness === undefined) {
       return undefined;
@@ -315,11 +332,11 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
   }
 
   displayMoves() {
-    const pokemon = (globalScene.getCurrentPhase() as CommandPhase).getPokemon();
+    const pokemon = (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getPokemon();
     const moveset = pokemon.getMoveset();
 
     for (let moveIndex = 0; moveIndex < 4; moveIndex++) {
-      const moveText = addTextObject(moveIndex % 2 === 0 ? 0 : 100, moveIndex < 2 ? 0 : 16, "-", TextStyle.WINDOW);
+      const moveText = addTextObject(moveIndex % 2 === 0 ? 0 : 114, moveIndex < 2 ? 0 : 16, "-", TextStyle.WINDOW);
       moveText.setName("text-empty-move");
 
       if (moveIndex < moveset.length) {
@@ -350,7 +367,14 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
 
     const moveColors = opponents
       .map(opponent =>
-        opponent.getMoveEffectiveness(pokemon, pokemonMove.getMove(), !opponent.battleData.abilityRevealed),
+        opponent.getMoveEffectiveness(
+          pokemon,
+          pokemonMove.getMove(),
+          !opponent.waveData.abilityRevealed,
+          undefined,
+          undefined,
+          true,
+        ),
       )
       .sort((a, b) => b - a)
       .map(effectiveness => getTypeDamageMultiplierColor(effectiveness ?? 0, "offense"));
@@ -379,9 +403,9 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
   clearMoves() {
     this.movesContainer.removeAll(true);
 
-    const opponents = (globalScene.getCurrentPhase() as CommandPhase).getPokemon().getOpponents();
+    const opponents = (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getPokemon().getOpponents();
     opponents.forEach(opponent => {
-      opponent.updateEffectiveness(undefined);
+      (opponent as EnemyPokemon).updateEffectiveness();
     });
   }
 

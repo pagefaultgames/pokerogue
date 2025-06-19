@@ -1,14 +1,15 @@
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import type { Species } from "#enums/species";
+import type { SpeciesId } from "#enums/species-id";
 import { globalScene } from "#app/global-scene";
 import { PlayerPokemon } from "#app/field/pokemon";
 import type { Starter } from "#app/ui/starter-select-ui-handler";
-import * as Utils from "#app/utils";
+import { randSeedGauss, randSeedInt, randSeedItem, getEnumValues } from "#app/utils/common";
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
-import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
+import PokemonSpecies, { getPokemonSpeciesForm } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 
 export interface DailyRunConfig {
   seed: number;
@@ -34,7 +35,7 @@ export function getDailyRunStarters(seed: string): Starter[] {
         for (let s = 0; s < 3; s++) {
           const offset = 6 + s * 6;
           const starterSpeciesForm = getPokemonSpeciesForm(
-            Number.parseInt(seed.slice(offset, offset + 4)) as Species,
+            Number.parseInt(seed.slice(offset, offset + 4)) as SpeciesId,
             Number.parseInt(seed.slice(offset + 4, offset + 6)),
           );
           starters.push(getDailyRunStarter(starterSpeciesForm, startingLevel));
@@ -43,16 +44,16 @@ export function getDailyRunStarters(seed: string): Starter[] {
       }
 
       const starterCosts: number[] = [];
-      starterCosts.push(Math.min(Math.round(3.5 + Math.abs(Utils.randSeedGauss(1))), 8));
-      starterCosts.push(Utils.randSeedInt(9 - starterCosts[0], 1));
+      starterCosts.push(Math.min(Math.round(3.5 + Math.abs(randSeedGauss(1))), 8));
+      starterCosts.push(randSeedInt(9 - starterCosts[0], 1));
       starterCosts.push(10 - (starterCosts[0] + starterCosts[1]));
 
       for (let c = 0; c < starterCosts.length; c++) {
         const cost = starterCosts[c];
         const costSpecies = Object.keys(speciesStarterCosts)
-          .map(s => Number.parseInt(s) as Species)
+          .map(s => Number.parseInt(s) as SpeciesId)
           .filter(s => speciesStarterCosts[s] === cost);
-        const randPkmSpecies = getPokemonSpecies(Utils.randSeedItem(costSpecies));
+        const randPkmSpecies = getPokemonSpecies(randSeedItem(costSpecies));
         const starterSpecies = getPokemonSpecies(
           randPkmSpecies.getTrainerSpeciesForLevel(startingLevel, true, PartyMemberStrength.STRONGER),
         );
@@ -102,48 +103,48 @@ interface BiomeWeights {
 // Town and End are set to 0 however
 // And some other biomes were balanced +1/-1 based on average size of the total daily.
 const dailyBiomeWeights: BiomeWeights = {
-  [Biome.CAVE]: 3,
-  [Biome.LAKE]: 3,
-  [Biome.PLAINS]: 3,
-  [Biome.SNOWY_FOREST]: 3,
-  [Biome.SWAMP]: 3, // 2 -> 3
-  [Biome.TALL_GRASS]: 3, // 2 -> 3
+  [BiomeId.CAVE]: 3,
+  [BiomeId.LAKE]: 3,
+  [BiomeId.PLAINS]: 3,
+  [BiomeId.SNOWY_FOREST]: 3,
+  [BiomeId.SWAMP]: 3, // 2 -> 3
+  [BiomeId.TALL_GRASS]: 3, // 2 -> 3
 
-  [Biome.ABYSS]: 2, // 3 -> 2
-  [Biome.RUINS]: 2,
-  [Biome.BADLANDS]: 2,
-  [Biome.BEACH]: 2,
-  [Biome.CONSTRUCTION_SITE]: 2,
-  [Biome.DESERT]: 2,
-  [Biome.DOJO]: 2, // 3 -> 2
-  [Biome.FACTORY]: 2,
-  [Biome.FAIRY_CAVE]: 2,
-  [Biome.FOREST]: 2,
-  [Biome.GRASS]: 2, // 1 -> 2
-  [Biome.MEADOW]: 2,
-  [Biome.MOUNTAIN]: 2, // 3 -> 2
-  [Biome.SEA]: 2,
-  [Biome.SEABED]: 2,
-  [Biome.SLUM]: 2,
-  [Biome.TEMPLE]: 2, // 3 -> 2
-  [Biome.VOLCANO]: 2,
+  [BiomeId.ABYSS]: 2, // 3 -> 2
+  [BiomeId.RUINS]: 2,
+  [BiomeId.BADLANDS]: 2,
+  [BiomeId.BEACH]: 2,
+  [BiomeId.CONSTRUCTION_SITE]: 2,
+  [BiomeId.DESERT]: 2,
+  [BiomeId.DOJO]: 2, // 3 -> 2
+  [BiomeId.FACTORY]: 2,
+  [BiomeId.FAIRY_CAVE]: 2,
+  [BiomeId.FOREST]: 2,
+  [BiomeId.GRASS]: 2, // 1 -> 2
+  [BiomeId.MEADOW]: 2,
+  [BiomeId.MOUNTAIN]: 2, // 3 -> 2
+  [BiomeId.SEA]: 2,
+  [BiomeId.SEABED]: 2,
+  [BiomeId.SLUM]: 2,
+  [BiomeId.TEMPLE]: 2, // 3 -> 2
+  [BiomeId.VOLCANO]: 2,
 
-  [Biome.GRAVEYARD]: 1,
-  [Biome.ICE_CAVE]: 1,
-  [Biome.ISLAND]: 1,
-  [Biome.JUNGLE]: 1,
-  [Biome.LABORATORY]: 1,
-  [Biome.METROPOLIS]: 1,
-  [Biome.POWER_PLANT]: 1,
-  [Biome.SPACE]: 1,
-  [Biome.WASTELAND]: 1,
+  [BiomeId.GRAVEYARD]: 1,
+  [BiomeId.ICE_CAVE]: 1,
+  [BiomeId.ISLAND]: 1,
+  [BiomeId.JUNGLE]: 1,
+  [BiomeId.LABORATORY]: 1,
+  [BiomeId.METROPOLIS]: 1,
+  [BiomeId.POWER_PLANT]: 1,
+  [BiomeId.SPACE]: 1,
+  [BiomeId.WASTELAND]: 1,
 
-  [Biome.TOWN]: 0,
-  [Biome.END]: 0,
+  [BiomeId.TOWN]: 0,
+  [BiomeId.END]: 0,
 };
 
-export function getDailyStartingBiome(): Biome {
-  const biomes = Utils.getEnumValues(Biome).filter(b => b !== Biome.TOWN && b !== Biome.END);
+export function getDailyStartingBiome(): BiomeId {
+  const biomes = getEnumValues(BiomeId).filter(b => b !== BiomeId.TOWN && b !== BiomeId.END);
 
   let totalWeight = 0;
   const biomeThresholds: number[] = [];
@@ -155,7 +156,7 @@ export function getDailyStartingBiome(): Biome {
     biomeThresholds.push(totalWeight);
   }
 
-  const randInt = Utils.randSeedInt(totalWeight);
+  const randInt = randSeedInt(totalWeight);
 
   for (let i = 0; i < biomes.length; i++) {
     if (randInt < biomeThresholds[i]) {
@@ -164,5 +165,5 @@ export function getDailyStartingBiome(): Biome {
   }
 
   // Fallback in case something went wrong
-  return biomes[Utils.randSeedInt(biomes.length)];
+  return biomes[randSeedInt(biomes.length)];
 }

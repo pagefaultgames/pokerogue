@@ -6,7 +6,7 @@ import { EncounterPhase } from "#app/phases/encounter-phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import type SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { GameManagerHelper } from "./gameManagerHelper";
 
 /**
@@ -16,20 +16,21 @@ export class DailyModeHelper extends GameManagerHelper {
   /**
    * Runs the daily game to the summon phase.
    * @returns A promise that resolves when the summon phase is reached.
+   * @remarks Please do not use for starting normal battles - use {@linkcode startBattle} instead
    */
-  async runToSummon() {
+  async runToSummon(): Promise<void> {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
       this.game.override.shiny(false).enemyShiny(false);
     }
 
-    this.game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+    this.game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const titlePhase = new TitlePhase();
       titlePhase.initDailyRun();
     });
 
-    this.game.onNextPrompt("TitlePhase", Mode.SAVE_SLOT, () => {
+    this.game.onNextPrompt("TitlePhase", UiMode.SAVE_SLOT, () => {
       const uihandler = this.game.scene.ui.getHandler<SaveSlotSelectUiHandler>();
       uihandler.processInput(Button.ACTION); // select first slot. that's fine
     });
@@ -45,15 +46,15 @@ export class DailyModeHelper extends GameManagerHelper {
    * Transitions to the start of a battle.
    * @returns A promise that resolves when the battle is started.
    */
-  async startBattle() {
+  async startBattle(): Promise<void> {
     await this.runToSummon();
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
       this.game.onNextPrompt(
         "CheckSwitchPhase",
-        Mode.CONFIRM,
+        UiMode.CONFIRM,
         () => {
-          this.game.setMode(Mode.MESSAGE);
+          this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
         () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
@@ -61,9 +62,9 @@ export class DailyModeHelper extends GameManagerHelper {
 
       this.game.onNextPrompt(
         "CheckSwitchPhase",
-        Mode.CONFIRM,
+        UiMode.CONFIRM,
         () => {
-          this.game.setMode(Mode.MESSAGE);
+          this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
         () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),

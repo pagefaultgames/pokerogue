@@ -1,11 +1,11 @@
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import { TextStyle, addTextObject, getEggTierTextTint, getTextStyleOptions } from "./text";
 import MessageUiHandler from "./message-ui-handler";
-import * as Utils from "../utils";
+import { getEnumValues, getEnumKeys, fixedInt, randSeedShuffle } from "#app/utils/common";
 import type { IEggOptions } from "../data/egg";
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
 import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
-import { getPokemonSpecies } from "../data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { addWindow } from "./ui-theme";
 import { Tutorial, handleTutorial } from "../tutorial";
 import { Button } from "#enums/buttons";
@@ -40,8 +40,11 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
   private scale = 0.1666666667;
 
+  private legendaryExpiration = addTextObject(0, 0, "", TextStyle.WINDOW_ALT);
+  private playTimeTimer: Phaser.Time.TimerEvent | null;
+
   constructor() {
-    super(Mode.EGG_GACHA);
+    super(UiMode.EGG_GACHA);
 
     this.gachaContainers = [];
     this.gachaKnobs = [];
@@ -83,7 +86,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       });
     }
 
-    Utils.getEnumValues(GachaType).forEach((gachaType, g) => {
+    getEnumValues(GachaType).forEach((gachaType, g) => {
       const gachaTypeKey = GachaType[gachaType].toString().toLowerCase();
       const gachaContainer = globalScene.add.container(180 * g, 18);
 
@@ -108,7 +111,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       let pokemonIconX = -20;
       let pokemonIconY = 6;
 
-      if (["de", "es-ES", "fr", "ko", "pt-BR"].includes(currentLanguage)) {
+      if (["de", "es-ES", "es-MX", "fr", "ko", "pt-BR", "ru"].includes(currentLanguage)) {
         gachaTextStyle = TextStyle.SMALLER_WINDOW_ALT;
         gachaX = 2;
         gachaY = 2;
@@ -116,7 +119,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       let legendaryLabelX = gachaX;
       let legendaryLabelY = gachaY;
-      if (["de", "es-ES"].includes(currentLanguage)) {
+      if (["de", "es-ES", "es-MX"].includes(currentLanguage)) {
         pokemonIconX = -25;
         pokemonIconY = 10;
         legendaryLabelX = -6;
@@ -128,7 +131,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       gachaInfoContainer.add(gachaUpLabel);
 
       switch (gachaType as GachaType) {
-        case GachaType.LEGENDARY:
+        case GachaType.LEGENDARY: {
           if (["de", "es-ES"].includes(currentLanguage)) {
             gachaUpLabel.setAlign("center");
             gachaUpLabel.setY(0);
@@ -149,8 +152,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
           gachaInfoContainer.add(pokemonIcon);
           break;
+        }
         case GachaType.MOVE:
-          if (["de", "es-ES", "fr", "pt-BR"].includes(currentLanguage)) {
+          if (["de", "es-ES", "fr", "pt-BR", "ru"].includes(currentLanguage)) {
             gachaUpLabel.setAlign("center");
             gachaUpLabel.setY(0);
           }
@@ -160,7 +164,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
           gachaUpLabel.setOrigin(0.5, 0);
           break;
         case GachaType.SHINY:
-          if (["de", "fr", "ko"].includes(currentLanguage)) {
+          if (["de", "fr", "ko", "ru"].includes(currentLanguage)) {
             gachaUpLabel.setAlign("center");
             gachaUpLabel.setY(0);
           }
@@ -198,6 +202,19 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       this.eggGachaContainer.add(gachaContainer);
 
+      // Expiration timer for the legendary gacha
+      if (gachaType === GachaType.LEGENDARY) {
+        this.legendaryExpiration
+          .setText(this.getLegendaryGachaTimeLeft())
+          .setFontSize("64px")
+          .setPositionRelative(
+            gacha,
+            gacha.width / 2 - this.legendaryExpiration.displayWidth / 2 + 0.3,
+            gacha.height / 2 + 12.5,
+          );
+        gachaContainer.add(this.legendaryExpiration);
+      }
+
       this.updateGachaInfo(g);
     });
 
@@ -206,7 +223,17 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaOptionsContainer = globalScene.add.container(globalScene.game.canvas.width / 6, 148);
     this.eggGachaContainer.add(this.eggGachaOptionsContainer);
 
-    this.eggGachaOptionSelectBg = addWindow(0, 0, 96, 16 + 576 * this.scale);
+    // Increase egg box width on certain languages
+    let eggGachaOptionSelectWidth = 0;
+    switch (i18next.resolvedLanguage) {
+      case "ru":
+        eggGachaOptionSelectWidth = 100;
+        break;
+      default:
+        eggGachaOptionSelectWidth = 96;
+    }
+
+    this.eggGachaOptionSelectBg = addWindow(0, 0, eggGachaOptionSelectWidth, 16 + 576 * this.scale);
     this.eggGachaOptionSelectBg.setOrigin(1, 1);
     this.eggGachaOptionsContainer.add(this.eggGachaOptionSelectBg);
 
@@ -272,7 +299,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     this.eggGachaContainer.add(this.eggGachaOptionsContainer);
 
-    new Array(Utils.getEnumKeys(VoucherType).length).fill(null).map((_, i) => {
+    new Array(getEnumKeys(VoucherType).length).fill(null).map((_, i) => {
       const container = globalScene.add.container(globalScene.game.canvas.width / 6 - 56 * i, 0);
 
       const bg = addWindow(0, 0, 56, 22);
@@ -348,6 +375,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     handleTutorial(Tutorial.Egg_Gacha);
 
+    this.legendaryGachaTimer();
+
     return true;
   }
 
@@ -355,7 +384,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     if (this.transitioning && this.transitionCancelled) {
       delay = Math.ceil(delay / 5);
     }
-    return Utils.fixedInt(delay);
+    return fixedInt(delay);
   }
 
   pull(pullCount = 0, count = 0, eggs?: Egg[]): void {
@@ -476,7 +505,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         eggs.push(egg);
       }
       // Shuffle the eggs in case the guaranteed one got added as last egg
-      eggs = Utils.randSeedShuffle<Egg>(eggs);
+      eggs = randSeedShuffle<Egg>(eggs);
 
       (globalScene.currentBattle
         ? globalScene.gameData.saveAll(true, true, true)
@@ -595,11 +624,12 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   updateGachaInfo(gachaType: GachaType): void {
     const infoContainer = this.gachaInfoContainers[gachaType];
     switch (gachaType as GachaType) {
-      case GachaType.LEGENDARY:
+      case GachaType.LEGENDARY: {
         const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(new Date().getTime()));
         const pokemonIcon = infoContainer.getAt(1) as Phaser.GameObjects.Sprite;
         pokemonIcon.setTexture(species.getIconAtlasKey(), species.getIconId(false));
         break;
+      }
     }
   }
 
@@ -643,7 +673,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   }
 
   showError(text: string): void {
-    this.showText(text, undefined, () => this.showText(this.defaultText), Utils.fixedInt(1500));
+    this.showText(text, undefined, () => this.showText(this.defaultText), fixedInt(1500));
   }
 
   setTransitioning(transitioning: boolean): void {
@@ -783,7 +813,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
             }
             break;
           case Button.RIGHT:
-            if (this.gachaCursor < Utils.getEnumKeys(GachaType).length - 1) {
+            if (this.gachaCursor < getEnumKeys(GachaType).length - 1) {
               success = this.setGachaCursor(this.gachaCursor + 1);
             }
             break;
@@ -836,9 +866,37 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     return changed;
   }
 
+  legendaryGachaTimer(): void {
+    if (this.playTimeTimer) {
+      this.playTimeTimer.destroy();
+      this.playTimeTimer = null;
+    }
+    this.playTimeTimer = globalScene.time.addEvent({
+      loop: true,
+      delay: fixedInt(1000),
+      callback: () => {
+        this.legendaryExpiration.setText(this.getLegendaryGachaTimeLeft());
+      },
+    });
+  }
+
+  getLegendaryGachaTimeLeft(): string {
+    // 86400000 is the number of miliseconds in one day
+    const msUntilMidnight = 86400000 - (Date.now() % 86400000);
+    const hours = `${Math.floor(msUntilMidnight / 3600000)}`;
+    const minutes = `${Math.floor((msUntilMidnight % 3600000) / 60000)}`;
+    const seconds = `${Math.floor((msUntilMidnight % 60000) / 1000)}`;
+
+    return `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}:${seconds.padStart(2, "0")}`;
+  }
+
   clear(): void {
     super.clear();
     this.setGachaCursor(-1);
     this.eggGachaContainer.setVisible(false);
+    if (this.playTimeTimer) {
+      this.playTimeTimer.destroy();
+      this.playTimeTimer = null;
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { getVariantTint } from "#app/data/variant";
+import { getVariantTint } from "#app/sprites/variant";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { globalScene } from "#app/global-scene";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
@@ -6,9 +6,10 @@ import { getNatureName } from "../data/nature";
 import { PokemonType } from "#enums/pokemon-type";
 import type Pokemon from "../field/pokemon";
 import i18next from "i18next";
-import type { DexEntry, StarterDataEntry } from "../system/game-data";
-import { DexAttr } from "../system/game-data";
-import * as Utils from "../utils";
+import type { StarterDataEntry } from "../system/game-data";
+import type { DexEntry } from "#app/@types/dex-data";
+import { DexAttr } from "#enums/dex-attr";
+import { fixedInt, getShinyDescriptor } from "#app/utils/common";
 import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
@@ -343,18 +344,19 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.pokemonShinyIcon.setVisible(pokemon.isShiny());
       this.pokemonShinyIcon.setTint(getVariantTint(baseVariant));
       if (this.pokemonShinyIcon.visible) {
-        const shinyDescriptor =
-          doubleShiny || baseVariant
-            ? `${baseVariant === 2 ? i18next.t("common:epicShiny") : baseVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? i18next.t("common:epicShiny") : pokemon.fusionVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}` : ""}`
-            : "";
-        this.pokemonShinyIcon.on("pointerover", () =>
-          globalScene.ui.showTooltip(
-            "",
-            `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`,
-            true,
-          ),
-        );
-        this.pokemonShinyIcon.on("pointerout", () => globalScene.ui.hideTooltip());
+        let shinyDescriptor = "";
+        if (doubleShiny || baseVariant) {
+          shinyDescriptor = " (" + getShinyDescriptor(baseVariant);
+          if (doubleShiny) {
+            shinyDescriptor += "/" + getShinyDescriptor(pokemon.fusionVariant);
+          }
+          shinyDescriptor += ")";
+        }
+        this.pokemonShinyIcon
+          .on("pointerover", () =>
+            globalScene.ui.showTooltip("", i18next.t("common:shinyOnHover") + shinyDescriptor, true),
+          )
+          .on("pointerout", () => globalScene.ui.hideTooltip());
 
         const newShiny = BigInt(1 << (pokemon.shiny ? 1 : 0));
         const newVariant = BigInt(1 << (pokemon.variant + 4));
@@ -393,7 +395,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       if (!eggInfo) {
         globalScene.tweens.add({
           targets: this,
-          duration: Utils.fixedInt(Math.floor(750 / speedMultiplier)),
+          duration: fixedInt(Math.floor(750 / speedMultiplier)),
           ease: "Cubic.easeInOut",
           x: this.initialX - this.infoWindowWidth,
           onComplete: () => {
@@ -403,9 +405,9 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
         if (showMoves) {
           globalScene.tweens.add({
-            delay: Utils.fixedInt(Math.floor(325 / speedMultiplier)),
+            delay: fixedInt(Math.floor(325 / speedMultiplier)),
             targets: this.pokemonMovesContainer,
-            duration: Utils.fixedInt(Math.floor(325 / speedMultiplier)),
+            duration: fixedInt(Math.floor(325 / speedMultiplier)),
             ease: "Cubic.easeInOut",
             x: this.movesContainerInitialX - 57,
             onComplete: () => resolve(),
@@ -463,7 +465,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     return new Promise<void>(resolve => {
       globalScene.tweens.add({
         targets: this,
-        duration: Utils.fixedInt(Math.floor(150 / speedMultiplier)),
+        duration: fixedInt(Math.floor(150 / speedMultiplier)),
         ease: "Cubic.easeInOut",
         x: xPosition,
         onComplete: () => {
@@ -482,14 +484,14 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       globalScene.tweens.add({
         targets: this.pokemonMovesContainer,
-        duration: Utils.fixedInt(Math.floor(750 / speedMultiplier)),
+        duration: fixedInt(Math.floor(750 / speedMultiplier)),
         ease: "Cubic.easeInOut",
         x: this.movesContainerInitialX,
       });
 
       globalScene.tweens.add({
         targets: this,
-        duration: Utils.fixedInt(Math.floor(750 / speedMultiplier)),
+        duration: fixedInt(Math.floor(750 / speedMultiplier)),
         ease: "Cubic.easeInOut",
         x: this.initialX,
         onComplete: () => {

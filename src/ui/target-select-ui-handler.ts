@@ -1,10 +1,10 @@
-import { BattlerIndex } from "../battle";
-import { Mode } from "./ui";
+import { BattlerIndex } from "#enums/battler-index";
+import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
-import * as Utils from "../utils";
-import { getMoveTargets } from "../data/moves/move";
+import { isNullOrUndefined, fixedInt } from "#app/utils/common";
+import { getMoveTargets } from "#app/data/moves/move-utils";
 import { Button } from "#enums/buttons";
-import type { Moves } from "#enums/moves";
+import type { MoveId } from "#enums/move-id";
 import type Pokemon from "#app/field/pokemon";
 import type { ModifierBar } from "#app/modifier/modifier";
 import { SubstituteTag } from "#app/data/battler-tags";
@@ -14,7 +14,7 @@ export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
 export default class TargetSelectUiHandler extends UiHandler {
   private fieldIndex: number;
-  private move: Moves;
+  private move: MoveId;
   private targetSelectCallback: TargetSelectCallback;
   private cursor0: number; // associated with BattlerIndex.PLAYER
   private cursor1: number; // associated with BattlerIndex.PLAYER_2
@@ -27,7 +27,7 @@ export default class TargetSelectUiHandler extends UiHandler {
   private targetBattleInfoMoveTween: Phaser.Tweens.Tween[] = [];
 
   constructor() {
-    super(Mode.TARGET_SELECT);
+    super(UiMode.TARGET_SELECT);
 
     this.cursor = -1;
   }
@@ -42,7 +42,7 @@ export default class TargetSelectUiHandler extends UiHandler {
     super.show(args);
 
     this.fieldIndex = args[0] as number;
-    this.move = args[1] as Moves;
+    this.move = args[1] as MoveId;
     this.targetSelectCallback = args[2] as TargetSelectCallback;
     const user = globalScene.getPlayerField()[this.fieldIndex];
 
@@ -70,8 +70,8 @@ export default class TargetSelectUiHandler extends UiHandler {
    * @param user the Pokemon using the move
    */
   resetCursor(cursorN: number, user: Pokemon): void {
-    if (!Utils.isNullOrUndefined(cursorN)) {
-      if ([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2].includes(cursorN) || user.battleSummonData.waveTurnCount === 1) {
+    if (!isNullOrUndefined(cursorN)) {
+      if ([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2].includes(cursorN) || user.tempSummonData.waveTurnCount === 1) {
         // Reset cursor on the first turn of a fight or if an ally was targeted last turn
         cursorN = -1;
       }
@@ -89,11 +89,11 @@ export default class TargetSelectUiHandler extends UiHandler {
       this.targetSelectCallback(button === Button.ACTION ? targetIndexes : []);
       success = true;
       if (this.fieldIndex === BattlerIndex.PLAYER) {
-        if (Utils.isNullOrUndefined(this.cursor0) || this.cursor0 !== this.cursor) {
+        if (isNullOrUndefined(this.cursor0) || this.cursor0 !== this.cursor) {
           this.cursor0 = this.cursor;
         }
       } else if (this.fieldIndex === BattlerIndex.PLAYER_2) {
-        if (Utils.isNullOrUndefined(this.cursor1) || this.cursor1 !== this.cursor) {
+        if (isNullOrUndefined(this.cursor1) || this.cursor1 !== this.cursor) {
           this.cursor1 = this.cursor;
         }
       }
@@ -152,7 +152,7 @@ export default class TargetSelectUiHandler extends UiHandler {
       key: { start: 1, to: 0.25 },
       loop: -1,
       loopDelay: 150,
-      duration: Utils.fixedInt(450),
+      duration: fixedInt(450),
       ease: "Sine.easeInOut",
       yoyo: true,
       onUpdate: t => {
@@ -178,7 +178,7 @@ export default class TargetSelectUiHandler extends UiHandler {
           targets: [info],
           y: { start: info.getBaseY(), to: info.getBaseY() + 1 },
           loop: -1,
-          duration: Utils.fixedInt(250),
+          duration: fixedInt(250),
           ease: "Linear",
           yoyo: true,
         }),

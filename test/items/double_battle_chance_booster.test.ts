@@ -1,11 +1,11 @@
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { DoubleBattleChanceBoosterModifier } from "#app/modifier/modifier";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { Button } from "#app/enums/buttons";
 
@@ -50,12 +50,12 @@ describe("Items - Double Battle Chance Boosters", () => {
     game.override
       .startingModifier([{ name: "LURE" }])
       .itemRewards([{ name: "LURE" }])
-      .moveset(Moves.SPLASH)
+      .moveset(MoveId.SPLASH)
       .startingLevel(200);
 
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.doKillOpponents();
 
@@ -69,7 +69,7 @@ describe("Items - Double Battle Chance Boosters", () => {
     // Forced LURE to spawn in the first slot with override
     game.onNextPrompt(
       "SelectModifierPhase",
-      Mode.MODIFIER_SELECT,
+      UiMode.MODIFIER_SELECT,
       () => {
         const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
         // Traverse to first modifier slot

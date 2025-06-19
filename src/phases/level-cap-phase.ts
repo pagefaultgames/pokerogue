@@ -1,13 +1,14 @@
 import { globalScene } from "#app/global-scene";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 
 export class LevelCapPhase extends FieldPhase {
+  public readonly phaseName = "LevelCapPhase";
   start(): void {
     super.start();
 
-    globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+    globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
       // Sound loaded into game as is
       globalScene.playSound("level_up_fanfare");
       globalScene.ui.showText(

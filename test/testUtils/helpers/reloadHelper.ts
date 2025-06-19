@@ -1,6 +1,6 @@
 import { GameManagerHelper } from "./gameManagerHelper";
 import { TitlePhase } from "#app/phases/title-phase";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { vi } from "vitest";
 import { BattleStyle } from "#app/enums/battle-style";
 import { CommandPhase } from "#app/phases/command-phase";
@@ -35,7 +35,7 @@ export class ReloadHelper extends GameManagerHelper {
     const scene = this.game.scene;
     const titlePhase = new TitlePhase();
 
-    scene.clearPhaseQueue();
+    scene.phaseManager.clearPhaseQueue();
 
     // Set the last saved session to the desired session data
     vi.spyOn(scene.gameData, "getSession").mockReturnValue(
@@ -43,9 +43,19 @@ export class ReloadHelper extends GameManagerHelper {
         resolve(this.sessionData);
       }),
     );
-    scene.unshiftPhase(titlePhase);
+    scene.phaseManager.unshiftPhase(titlePhase);
     this.game.endPhase(); // End the currently ongoing battle
 
+    // remove all persistent mods before loading
+    // TODO: Look into why these aren't removed before load
+    if (this.game.scene.modifiers.length) {
+      console.log(
+        "Removing %d modifiers from scene on load...",
+        this.game.scene.modifiers.length,
+        this.game.scene.modifiers,
+      );
+      this.game.scene.modifiers = [];
+    }
     titlePhase.loadSaveSlot(-1); // Load the desired session data
     this.game.phaseInterceptor.shift(); // Loading the save slot also ended TitlePhase, clean it up
 
@@ -53,9 +63,9 @@ export class ReloadHelper extends GameManagerHelper {
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
       this.game.onNextPrompt(
         "CheckSwitchPhase",
-        Mode.CONFIRM,
+        UiMode.CONFIRM,
         () => {
-          this.game.setMode(Mode.MESSAGE);
+          this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
         () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
@@ -63,9 +73,9 @@ export class ReloadHelper extends GameManagerHelper {
 
       this.game.onNextPrompt(
         "CheckSwitchPhase",
-        Mode.CONFIRM,
+        UiMode.CONFIRM,
         () => {
-          this.game.setMode(Mode.MESSAGE);
+          this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
         () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
@@ -73,6 +83,6 @@ export class ReloadHelper extends GameManagerHelper {
     }
 
     await this.game.phaseInterceptor.to(CommandPhase);
-    console.log("==================[New Turn]==================");
+    console.log("==================[New Turn (Reloaded)]==================");
   }
 }

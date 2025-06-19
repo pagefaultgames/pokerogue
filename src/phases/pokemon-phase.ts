@@ -1,9 +1,13 @@
 import { globalScene } from "#app/global-scene";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import type Pokemon from "#app/field/pokemon";
 import { FieldPhase } from "./field-phase";
 
 export abstract class PokemonPhase extends FieldPhase {
+  /**
+   * The battler index this phase refers to, or the pokemon ID if greater than 3.
+   * TODO: Make this either use IDs or `BattlerIndex`es, not a weird mix of both
+   */
   protected battlerIndex: BattlerIndex | number;
   public player: boolean;
   public fieldIndex: number;
@@ -11,11 +15,16 @@ export abstract class PokemonPhase extends FieldPhase {
   constructor(battlerIndex?: BattlerIndex | number) {
     super();
 
-    if (battlerIndex === undefined) {
-      battlerIndex = globalScene
+    battlerIndex =
+      battlerIndex ??
+      globalScene
         .getField()
-        .find(p => p?.isActive())!
-        .getBattlerIndex(); // TODO: is the bang correct here?
+        .find(p => p?.isActive())
+        ?.getBattlerIndex();
+    if (battlerIndex === undefined) {
+      // TODO: figure out a suitable fallback behavior
+      console.warn("There are no Pokemon on the field!");
+      battlerIndex = BattlerIndex.PLAYER;
     }
 
     this.battlerIndex = battlerIndex;

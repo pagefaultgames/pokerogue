@@ -1,16 +1,15 @@
-import { applyAbAttrs, applyPreLeaveFieldAbAttrs, PreLeaveFieldAbAttr, RunSuccessAbAttr } from "#app/data/ability";
-import { Stat } from "#app/enums/stat";
-import { StatusEffect } from "#app/enums/status-effect";
+import { applyAbAttrs, applyPreLeaveFieldAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import type { PlayerPokemon, EnemyPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
-import { BattleEndPhase } from "./battle-end-phase";
-import { NewBattlePhase } from "./new-battle-phase";
+import { NumberHolder } from "#app/utils/common";
 import { PokemonPhase } from "./pokemon-phase";
 import { globalScene } from "#app/global-scene";
 
 export class AttemptRunPhase extends PokemonPhase {
+  public readonly phaseName = "AttemptRunPhase";
   /** For testing purposes: this is to force the pokemon to fail and escape */
   public forceFailEscape = false;
 
@@ -22,17 +21,17 @@ export class AttemptRunPhase extends PokemonPhase {
 
     const playerPokemon = this.getPokemon();
 
-    const escapeChance = new Utils.NumberHolder(0);
+    const escapeChance = new NumberHolder(0);
 
     this.attemptRunAway(playerField, enemyField, escapeChance);
 
-    applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, false, escapeChance);
+    applyAbAttrs("RunSuccessAbAttr", playerPokemon, null, false, escapeChance);
 
-    if (playerPokemon.randSeedInt(100) < escapeChance.value && !this.forceFailEscape) {
-      enemyField.forEach(enemyPokemon => applyPreLeaveFieldAbAttrs(PreLeaveFieldAbAttr, enemyPokemon));
+    if (playerPokemon.randBattleSeedInt(100) < escapeChance.value && !this.forceFailEscape) {
+      enemyField.forEach(enemyPokemon => applyPreLeaveFieldAbAttrs("PreLeaveFieldAbAttr", enemyPokemon));
 
       globalScene.playSound("se/flee");
-      globalScene.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
+      globalScene.phaseManager.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
 
       globalScene.tweens.add({
         targets: [globalScene.arenaEnemy, enemyField].flat(),
@@ -53,17 +52,22 @@ export class AttemptRunPhase extends PokemonPhase {
         enemyPokemon.trySetStatus(StatusEffect.FAINT);
       });
 
-      globalScene.pushPhase(new BattleEndPhase(false));
-      globalScene.pushPhase(new NewBattlePhase());
+      globalScene.phaseManager.pushNew("BattleEndPhase", false);
+
+      if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
+        globalScene.phaseManager.pushNew("SelectBiomePhase");
+      }
+
+      globalScene.phaseManager.pushNew("NewBattlePhase");
     } else {
       playerPokemon.turnData.failedRunAway = true;
-      globalScene.queueMessage(i18next.t("battle:runAwayCannotEscape"), null, true, 500);
+      globalScene.phaseManager.queueMessage(i18next.t("battle:runAwayCannotEscape"), null, true, 500);
     }
 
     this.end();
   }
 
-  attemptRunAway(playerField: PlayerPokemon[], enemyField: EnemyPokemon[], escapeChance: Utils.NumberHolder) {
+  attemptRunAway(playerField: PlayerPokemon[], enemyField: EnemyPokemon[], escapeChance: NumberHolder) {
     /** Sum of the speed of all enemy pokemon on the field */
     const enemySpeed = enemyField.reduce(
       (total: number, enemyPokemon: Pokemon) => total + enemyPokemon.getStat(Stat.SPD),

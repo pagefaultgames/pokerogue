@@ -1,7 +1,7 @@
 import { Gender } from "#app/data/gender";
 import { Nature } from "#enums/nature";
-import { allSpecies } from "#app/data/pokemon-species";
-import { GameModes } from "#app/game-mode";
+import { allSpecies } from "#app/data/data-lists";
+import { GameModes } from "#enums/game-modes";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import type { TitlePhase } from "#app/phases/title-phase";
@@ -9,10 +9,10 @@ import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler"
 import type SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
 import type OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
 import type StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
-import { Mode } from "#app/ui/ui";
-import { Abilities } from "#enums/abilities";
+import { UiMode } from "#enums/ui-mode";
+import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -44,12 +44,12 @@ describe("UI - Starter select", () => {
     }).length;
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
-    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+    game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
-    game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+    game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.LEFT);
@@ -60,7 +60,7 @@ describe("UI - Starter select", () => {
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
         options = optionSelectUiHandler.getOptionsWithScroll();
         resolve();
@@ -74,15 +74,15 @@ describe("UI - Starter select", () => {
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
         const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
         handler.processInput(Button.SUBMIT);
       });
-      game.onNextPrompt("SelectStarterPhase", Mode.CONFIRM, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.CONFIRM, () => {
         const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
         handler.processInput(Button.ACTION);
       });
-      game.onNextPrompt("SelectStarterPhase", Mode.SAVE_SLOT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.SAVE_SLOT, () => {
         const saveSlotSelectUiHandler = game.scene.ui.getHandler() as SaveSlotSelectUiHandler;
         saveSlotSelectUiHandler.processInput(Button.ACTION);
         resolve();
@@ -90,11 +90,11 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
     expect(game.scene.getPlayerParty()[0].variant).toBe(2);
     expect(game.scene.getPlayerParty()[0].gender).toBe(Gender.MALE);
-  }, 20000);
+  });
 
   it("Bulbasaur - shiny - variant 2 female hardy overgrow", async () => {
     await game.importData("./test/testUtils/saves/everything.prsv");
@@ -104,12 +104,12 @@ describe("UI - Starter select", () => {
     }).length;
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
-    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+    game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
-    game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+    game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.LEFT);
@@ -121,7 +121,7 @@ describe("UI - Starter select", () => {
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
         options = optionSelectUiHandler.getOptionsWithScroll();
         resolve();
@@ -135,15 +135,15 @@ describe("UI - Starter select", () => {
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
         const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
         handler.processInput(Button.SUBMIT);
       });
-      game.onNextPrompt("SelectStarterPhase", Mode.CONFIRM, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.CONFIRM, () => {
         const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
         handler.processInput(Button.ACTION);
       });
-      game.onNextPrompt("SelectStarterPhase", Mode.SAVE_SLOT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.SAVE_SLOT, () => {
         const saveSlotSelectUiHandler = game.scene.ui.getHandler() as SaveSlotSelectUiHandler;
         saveSlotSelectUiHandler.processInput(Button.ACTION);
         resolve();
@@ -151,12 +151,12 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
     expect(game.scene.getPlayerParty()[0].variant).toBe(2);
     expect(game.scene.getPlayerParty()[0].nature).toBe(Nature.HARDY);
-    expect(game.scene.getPlayerParty()[0].getAbility().id).toBe(Abilities.OVERGROW);
-  }, 20000);
+    expect(game.scene.getPlayerParty()[0].getAbility().id).toBe(AbilityId.OVERGROW);
+  });
 
   it("Bulbasaur - shiny - variant 2 female lonely chlorophyl", async () => {
     await game.importData("./test/testUtils/saves/everything.prsv");
@@ -166,12 +166,12 @@ describe("UI - Starter select", () => {
     }).length;
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
-    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+    game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
-    game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+    game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.LEFT);
@@ -185,7 +185,7 @@ describe("UI - Starter select", () => {
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
         options = optionSelectUiHandler.getOptionsWithScroll();
         resolve();
@@ -199,15 +199,15 @@ describe("UI - Starter select", () => {
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
         const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
         handler.processInput(Button.SUBMIT);
       });
-      game.onNextPrompt("SelectStarterPhase", Mode.CONFIRM, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.CONFIRM, () => {
         const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
         handler.processInput(Button.ACTION);
       });
-      game.onNextPrompt("SelectStarterPhase", Mode.SAVE_SLOT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.SAVE_SLOT, () => {
         const saveSlotSelectUiHandler = game.scene.ui.getHandler() as SaveSlotSelectUiHandler;
         saveSlotSelectUiHandler.processInput(Button.ACTION);
         resolve();
@@ -215,13 +215,13 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
     expect(game.scene.getPlayerParty()[0].variant).toBe(2);
     expect(game.scene.getPlayerParty()[0].gender).toBe(Gender.FEMALE);
     expect(game.scene.getPlayerParty()[0].nature).toBe(Nature.LONELY);
-    expect(game.scene.getPlayerParty()[0].getAbility().id).toBe(Abilities.CHLOROPHYLL);
-  }, 20000);
+    expect(game.scene.getPlayerParty()[0].getAbility().id).toBe(AbilityId.CHLOROPHYLL);
+  });
 
   it("Bulbasaur - shiny - variant 2 female", async () => {
     await game.importData("./test/testUtils/saves/everything.prsv");
@@ -231,12 +231,12 @@ describe("UI - Starter select", () => {
     }).length;
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
-    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+    game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
-    game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+    game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.LEFT);
@@ -248,7 +248,7 @@ describe("UI - Starter select", () => {
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
         options = optionSelectUiHandler.getOptionsWithScroll();
         resolve();
@@ -262,15 +262,15 @@ describe("UI - Starter select", () => {
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
         const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
         handler.processInput(Button.SUBMIT);
       });
-      game.onNextPrompt("SelectStarterPhase", Mode.CONFIRM, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.CONFIRM, () => {
         const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
         handler.processInput(Button.ACTION);
       });
-      game.onNextPrompt("SelectStarterPhase", Mode.SAVE_SLOT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.SAVE_SLOT, () => {
         const saveSlotSelectUiHandler = game.scene.ui.getHandler() as SaveSlotSelectUiHandler;
         saveSlotSelectUiHandler.processInput(Button.ACTION);
         resolve();
@@ -278,11 +278,11 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
     expect(game.scene.getPlayerParty()[0].variant).toBe(2);
     expect(game.scene.getPlayerParty()[0].gender).toBe(Gender.FEMALE);
-  }, 20000);
+  });
 
   it("Bulbasaur - not shiny", async () => {
     await game.importData("./test/testUtils/saves/everything.prsv");
@@ -292,12 +292,12 @@ describe("UI - Starter select", () => {
     }).length;
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
-    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+    game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
-    game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+    game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.LEFT);
@@ -309,7 +309,7 @@ describe("UI - Starter select", () => {
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
         options = optionSelectUiHandler.getOptionsWithScroll();
         resolve();
@@ -323,15 +323,15 @@ describe("UI - Starter select", () => {
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
         const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
         handler.processInput(Button.SUBMIT);
       });
-      game.onNextPrompt("SelectStarterPhase", Mode.CONFIRM, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.CONFIRM, () => {
         const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
         handler.processInput(Button.ACTION);
       });
-      game.onNextPrompt("SelectStarterPhase", Mode.SAVE_SLOT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.SAVE_SLOT, () => {
         const saveSlotSelectUiHandler = game.scene.ui.getHandler() as SaveSlotSelectUiHandler;
         saveSlotSelectUiHandler.processInput(Button.ACTION);
         resolve();
@@ -339,10 +339,10 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(false);
     expect(game.scene.getPlayerParty()[0].variant).toBe(0);
-  }, 20000);
+  });
 
   it("Bulbasaur - shiny - variant 1", async () => {
     await game.importData("./test/testUtils/saves/everything.prsv");
@@ -352,12 +352,12 @@ describe("UI - Starter select", () => {
     }).length;
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
-    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+    game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
-    game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+    game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.LEFT);
@@ -371,7 +371,7 @@ describe("UI - Starter select", () => {
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
         options = optionSelectUiHandler.getOptionsWithScroll();
         resolve();
@@ -385,15 +385,15 @@ describe("UI - Starter select", () => {
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
         const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
         handler.processInput(Button.SUBMIT);
       });
-      game.onNextPrompt("SelectStarterPhase", Mode.CONFIRM, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.CONFIRM, () => {
         const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
         handler.processInput(Button.ACTION);
       });
-      game.onNextPrompt("SelectStarterPhase", Mode.SAVE_SLOT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.SAVE_SLOT, () => {
         const saveSlotSelectUiHandler = game.scene.ui.getHandler() as SaveSlotSelectUiHandler;
         saveSlotSelectUiHandler.processInput(Button.ACTION);
         resolve();
@@ -401,10 +401,10 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
     expect(game.scene.getPlayerParty()[0].variant).toBe(1);
-  }, 20000);
+  });
 
   it("Bulbasaur - shiny - variant 0", async () => {
     await game.importData("./test/testUtils/saves/everything.prsv");
@@ -414,12 +414,12 @@ describe("UI - Starter select", () => {
     }).length;
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
-    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+    game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
-    game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+    game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.LEFT);
@@ -432,7 +432,7 @@ describe("UI - Starter select", () => {
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
         options = optionSelectUiHandler.getOptionsWithScroll();
         resolve();
@@ -446,15 +446,15 @@ describe("UI - Starter select", () => {
     optionSelectUiHandler?.processInput(Button.ACTION);
 
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
         const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
         handler.processInput(Button.SUBMIT);
       });
-      game.onNextPrompt("SelectStarterPhase", Mode.CONFIRM, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.CONFIRM, () => {
         const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
         handler.processInput(Button.ACTION);
       });
-      game.onNextPrompt("SelectStarterPhase", Mode.SAVE_SLOT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.SAVE_SLOT, () => {
         const saveSlotSelectUiHandler = game.scene.ui.getHandler() as SaveSlotSelectUiHandler;
         saveSlotSelectUiHandler.processInput(Button.ACTION);
         resolve();
@@ -462,10 +462,10 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
     expect(game.scene.getPlayerParty()[0].variant).toBe(0);
-  }, 20000);
+  });
 
   it("Check if first pokemon in party is caterpie from gen 1 and 1rd row, 3rd column", async () => {
     await game.importData("./test/testUtils/saves/everything.prsv");
@@ -475,12 +475,12 @@ describe("UI - Starter select", () => {
     }).length;
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
-    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+    game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
-    game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+    game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.RIGHT);
@@ -492,7 +492,7 @@ describe("UI - Starter select", () => {
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
         options = optionSelectUiHandler.getOptionsWithScroll();
         resolve();
@@ -507,7 +507,7 @@ describe("UI - Starter select", () => {
 
     let starterSelectUiHandler: StarterSelectUiHandler;
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
         starterSelectUiHandler = game.scene.ui.getHandler() as StarterSelectUiHandler;
         starterSelectUiHandler.processInput(Button.SUBMIT);
         resolve();
@@ -519,17 +519,17 @@ describe("UI - Starter select", () => {
     // expect(starterSelectUiHandler.cursorObj.x).toBe(132 + 4 * 18);
     // expect(starterSelectUiHandler.cursorObj.y).toBe(10);
 
-    game.onNextPrompt("SelectStarterPhase", Mode.CONFIRM, () => {
+    game.onNextPrompt("SelectStarterPhase", UiMode.CONFIRM, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.ACTION);
     });
-    game.onNextPrompt("SelectStarterPhase", Mode.SAVE_SLOT, () => {
+    game.onNextPrompt("SelectStarterPhase", UiMode.SAVE_SLOT, () => {
       const saveSlotSelectUiHandler = game.scene.ui.getHandler() as SaveSlotSelectUiHandler;
       saveSlotSelectUiHandler.processInput(Button.ACTION);
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.CATERPIE);
-  }, 20000);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.CATERPIE);
+  });
 
   it("Check if first pokemon in party is nidoran_m from gen 1 and 2nd row, 4th column (cursor (9+4)-1)", async () => {
     await game.importData("./test/testUtils/saves/everything.prsv");
@@ -539,12 +539,12 @@ describe("UI - Starter select", () => {
     }).length;
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
-    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+    game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
-    game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+    game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.RIGHT);
@@ -557,7 +557,7 @@ describe("UI - Starter select", () => {
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.OPTION_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.OPTION_SELECT, () => {
         optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
         options = optionSelectUiHandler.getOptionsWithScroll();
         resolve();
@@ -572,7 +572,7 @@ describe("UI - Starter select", () => {
 
     let starterSelectUiHandler: StarterSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectStarterPhase", Mode.STARTER_SELECT, () => {
+      game.onNextPrompt("SelectStarterPhase", UiMode.STARTER_SELECT, () => {
         starterSelectUiHandler = game.scene.ui.getHandler() as StarterSelectUiHandler;
         starterSelectUiHandler.processInput(Button.SUBMIT);
         resolve();
@@ -585,15 +585,15 @@ describe("UI - Starter select", () => {
     expect(starterSelectUiHandler?.cursorObj.x).toBe(53);
     expect(starterSelectUiHandler?.cursorObj.y).toBe(31);
 
-    game.onNextPrompt("SelectStarterPhase", Mode.CONFIRM, () => {
+    game.onNextPrompt("SelectStarterPhase", UiMode.CONFIRM, () => {
       const handler = game.scene.ui.getHandler() as StarterSelectUiHandler;
       handler.processInput(Button.ACTION);
     });
-    game.onNextPrompt("SelectStarterPhase", Mode.SAVE_SLOT, () => {
+    game.onNextPrompt("SelectStarterPhase", UiMode.SAVE_SLOT, () => {
       const saveSlotSelectUiHandler = game.scene.ui.getHandler() as SaveSlotSelectUiHandler;
       saveSlotSelectUiHandler.processInput(Button.ACTION);
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.NIDORAN_M);
-  }, 20000);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.NIDORAN_M);
+  });
 });

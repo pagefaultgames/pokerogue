@@ -1,5 +1,5 @@
 import type { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
-import type { Moves } from "#app/enums/moves";
+import type { MoveId } from "#enums/move-id";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
@@ -12,7 +12,7 @@ import {
 } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import type { CanLearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
 import { CanLearnMoveRequirement } from "./requirements/can-learn-move-requirement";
-import { isNullOrUndefined, randSeedInt } from "#app/utils";
+import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 
 // biome-ignore lint/suspicious/noConfusingVoidType: void unions in callbacks are OK
@@ -300,7 +300,7 @@ export class MysteryEncounterOptionBuilder implements Partial<IMysteryEncounterO
    * @param options see {@linkcode CanLearnMoveRequirementOptions}
    * @returns
    */
-  withPokemonCanLearnMoveRequirement(move: Moves | Moves[], options?: CanLearnMoveRequirementOptions) {
+  withPokemonCanLearnMoveRequirement(move: MoveId | MoveId[], options?: CanLearnMoveRequirementOptions) {
     return this.withPrimaryPokemonRequirement(new CanLearnMoveRequirement(move, options));
   }
 

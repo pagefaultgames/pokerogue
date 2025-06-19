@@ -1,17 +1,18 @@
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { initLoggedInUser } from "#app/account";
-import { initAbilities } from "#app/data/ability";
+import { initAbilities } from "#app/data/abilities/ability";
 import { initBiomes } from "#app/data/balance/biomes";
 import { initEggMoves } from "#app/data/balance/egg-moves";
-import { initPokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { initPokemonPrevolutions, initPokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import { initMoves } from "#app/data/moves/move";
+import { initModifierPools } from "#app/modifier/init-modifier-pools";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
 import { initPokemonForms } from "#app/data/pokemon-forms";
 import { initSpecies } from "#app/data/pokemon-species";
 import { initAchievements } from "#app/system/achv";
 import { initVouchers } from "#app/system/voucher";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
-import { setCookie } from "#app/utils";
+import { setCookie } from "#app/utils/cookies";
 import { blobToString } from "#test/testUtils/gameManagerUtils";
 import { MockConsoleLog } from "#test/testUtils/mocks/mockConsoleLog";
 import { mockContext } from "#test/testUtils/mocks/mockContextCanvas";
@@ -21,6 +22,8 @@ import Phaser from "phaser";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { manageListeners } from "./listenersManager";
+import { initI18n } from "#app/plugins/i18n";
+import { initModifierTypes } from "#app/modifier/modifier-type";
 
 let wasInitialized = false;
 /**
@@ -69,10 +72,10 @@ export function initTestFile() {
    * @param x The relative x position
    * @param y The relative y position
    */
-  const setPositionRelative = function (guideObject: any, x: number, y: number) {
+  const setPositionRelative = function (guideObject: any, x: number, y: number): any {
     const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
     const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));
-    this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
+    return this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
   };
 
   Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
@@ -84,9 +87,11 @@ export function initTestFile() {
   HTMLCanvasElement.prototype.getContext = () => mockContext;
 
   // Initialize all of these things if and only if they have not been initialized yet
-  // initSpecies();
   if (!wasInitialized) {
     wasInitialized = true;
+    initI18n();
+    initModifierTypes();
+    initModifierPools();
     initVouchers();
     initAchievements();
     initStatsKeys();
@@ -99,6 +104,8 @@ export function initTestFile() {
     initAbilities();
     initLoggedInUser();
     initMysteryEncounters();
+    // init the pokemon starters for the pokedex
+    initPokemonStarters();
   }
 
   manageListeners();

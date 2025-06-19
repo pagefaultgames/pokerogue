@@ -1,16 +1,14 @@
 import { TextStyle, addTextObject } from "./text";
-import type { Mode } from "./ui";
+import type { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";
 import type { Challenge } from "#app/data/challenge";
-import * as Utils from "../utils";
+import { getLocalizedSpriteKey } from "#app/utils/common";
 import { Challenges } from "#app/enums/challenges";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Color, ShadowColor } from "#app/enums/color";
-import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import { TitlePhase } from "#app/phases/title-phase";
 import { globalScene } from "#app/global-scene";
 
 /**
@@ -50,7 +48,7 @@ export default class GameChallengesUiHandler extends UiHandler {
   private readonly leftArrowGap: number = 90; // distance from the label to the left arrow
   private readonly arrowSpacing: number = 3; // distance between the arrows and the value area
 
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     super(mode);
   }
 
@@ -193,7 +191,7 @@ export default class GameChallengesUiHandler extends UiHandler {
       };
     }
 
-    this.monoTypeValue = globalScene.add.sprite(8, 98, Utils.getLocalizedSpriteKey("types"));
+    this.monoTypeValue = globalScene.add.sprite(8, 98, getLocalizedSpriteKey("types"));
     this.monoTypeValue.setName("challenge-value-monotype-sprite");
     this.monoTypeValue.setScale(0.86);
     this.monoTypeValue.setVisible(false);
@@ -383,16 +381,16 @@ export default class GameChallengesUiHandler extends UiHandler {
         this.cursorObj?.setVisible(true);
         this.updateChallengeArrows(this.startCursor.visible);
       } else {
-        globalScene.clearPhaseQueue();
-        globalScene.pushPhase(new TitlePhase());
-        globalScene.getCurrentPhase()?.end();
+        globalScene.phaseManager.clearPhaseQueue();
+        globalScene.phaseManager.pushNew("TitlePhase");
+        globalScene.phaseManager.getCurrentPhase()?.end();
       }
       success = true;
     } else if (button === Button.SUBMIT || button === Button.ACTION) {
       if (this.hasSelectedChallenge) {
         if (this.startCursor.visible) {
-          globalScene.unshiftPhase(new SelectStarterPhase());
-          globalScene.getCurrentPhase()?.end();
+          globalScene.phaseManager.unshiftNew("SelectStarterPhase");
+          globalScene.phaseManager.getCurrentPhase()?.end();
         } else {
           this.startCursor.setVisible(true);
           this.cursorObj?.setVisible(false);

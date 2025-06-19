@@ -5,23 +5,39 @@ on:
   # but only for the main branch
   push:
     branches:
-      - main  # Trigger on push events to the main branch
+      - main # Trigger on push events to the main branch
       - beta # Trigger on push events to the beta branch
   pull_request:
     branches:
-      - main  # Trigger on pull request events targeting the main branch
+      - main # Trigger on pull request events targeting the main branch
       - beta # Trigger on pull request events targeting the beta branch
   merge_group:
     types: [checks_requested]
 
 jobs:
+  check-path-change-filter:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      all: ${{ steps.filter.outputs.all }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
+        id: filter
+        with:
+          filters: .github/test-filters.yml
+
   run-tests:
-    name: Run Tests 
+    name: Run Tests
+    needs: check-path-change-filter
     strategy:
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        shard: [1, 2, 3, 4, 5]
     uses: ./.github/workflows/test-shard-template.yml
     with:
       project: main
       shard: ${{ matrix.shard }}
-      totalShards: 10
+      totalShards: 5
+      skip: ${{ needs.check-path-change-filter.outputs.all != 'true'}}

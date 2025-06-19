@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { PokeballType } from "#enums/pokeball";
-import type { Variant } from "#app/data/variant";
-import { getFrameMs, randGauss } from "#app/utils";
+import type { Variant } from "#app/sprites/variant";
+import { getFrameMs, randGauss } from "#app/utils/common";
 
 export function addPokeballOpenParticles(x: number, y: number, pokeballType: PokeballType): void {
   switch (pokeballType) {

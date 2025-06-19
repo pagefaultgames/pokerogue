@@ -1,8 +1,10 @@
-import { bypassLogin } from "#app/battle-scene";
+import { bypassLogin } from "#app/global-vars/bypass-login";
 import { globalScene } from "#app/global-scene";
 import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
-import { Mode } from "./ui";
-import * as Utils from "../utils";
+import { UiMode } from "#enums/ui-mode";
+import { getEnumKeys, isLocal, fixedInt, sessionIdKey } from "#app/utils/common";
+import { isBeta } from "#app/utils/utility-vars";
+import { getCookie } from "#app/utils/cookies";
 import { addWindow, WindowVariant } from "./ui-theme";
 import MessageUiHandler from "./message-ui-handler";
 import type { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui-handler";
@@ -13,7 +15,6 @@ import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
 import type AwaitableUiHandler from "./awaitable-ui-handler";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { AdminMode, getAdminModeName } from "./admin-ui-handler";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
@@ -31,7 +32,7 @@ enum MenuOptions {
 }
 
 let wikiUrl = "https://wiki.pokerogue.net/start";
-const discordUrl = "https://discord.gg/uWpTfdKG49";
+const discordUrl = "https://discord.gg/pokerogue";
 const githubUrl = "https://github.com/pagefaultgames/pokerogue";
 const redditUrl = "https://www.reddit.com/r/pokerogue";
 const donateUrl = "https://github.com/sponsors/pagefaultgames";
@@ -64,18 +65,18 @@ export default class MenuUiHandler extends MessageUiHandler {
 
   public bgmBar: BgmBar;
 
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     super(mode);
 
     this.excludedMenus = () => [
       {
-        condition: [Mode.COMMAND, Mode.TITLE].includes(mode ?? Mode.TITLE),
+        condition: [UiMode.COMMAND, UiMode.TITLE].includes(mode ?? UiMode.TITLE),
         options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST],
       },
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
     ];
 
-    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+    this.menuOptions = getEnumKeys(MenuOptions)
       .map(m => Number.parseInt(MenuOptions[m]) as MenuOptions)
       .filter(m => {
         return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
@@ -124,13 +125,13 @@ export default class MenuUiHandler extends MessageUiHandler {
     const ui = this.getUi();
     this.excludedMenus = () => [
       {
-        condition: globalScene.getCurrentPhase() instanceof SelectModifierPhase,
+        condition: !!globalScene.phaseManager.getCurrentPhase()?.is("SelectModifierPhase"),
         options: [MenuOptions.EGG_GACHA],
       },
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
     ];
 
-    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+    this.menuOptions = getEnumKeys(MenuOptions)
       .map(m => Number.parseInt(MenuOptions[m]) as MenuOptions)
       .filter(m => {
         return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
@@ -234,11 +235,11 @@ export default class MenuUiHandler extends MessageUiHandler {
             ]),
           xOffset: 98,
         };
-        ui.setOverlayMode(Mode.MENU_OPTION_SELECT, config);
+        ui.setOverlayMode(UiMode.MENU_OPTION_SELECT, config);
       });
     };
 
-    if (Utils.isLocal || Utils.isBeta) {
+    if (isLocal || isBeta) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importSession"),
         handler: () => {
@@ -292,7 +293,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true,
     });
-    if (Utils.isLocal || Utils.isBeta) {
+    if (isLocal || isBeta) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
         handler: () => {
@@ -328,7 +329,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true,
       },
     );
-    if (Utils.isLocal || Utils.isBeta) {
+    if (isLocal || isBeta) {
       // this should make sure we don't have this option in live
       manageDataOptions.push({
         label: "Test Dialogue",
@@ -377,7 +378,7 @@ export default class MenuUiHandler extends MessageUiHandler {
               ui.revertMode();
             },
           ];
-          ui.setMode(Mode.TEST_DIALOGUE, buttonAction, prefilledText);
+          ui.setMode(UiMode.TEST_DIALOGUE, buttonAction, prefilledText);
           return true;
         },
         keepOpen: true,
@@ -456,7 +457,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                 handler: () => {
                   ui.playSelect();
                   ui.setOverlayMode(
-                    Mode.ADMIN,
+                    UiMode.ADMIN,
                     {
                       buttonActions: [
                         // we double revert here and below to go back 2 layers of menus
@@ -483,7 +484,7 @@ export default class MenuUiHandler extends MessageUiHandler {
               return true;
             },
           });
-          globalScene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+          globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
             options: options,
             delay: 0,
           });
@@ -510,7 +511,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.render();
     super.show(args);
 
-    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+    this.menuOptions = getEnumKeys(MenuOptions)
       .map(m => Number.parseInt(MenuOptions[m]) as MenuOptions)
       .filter(m => {
         return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
@@ -557,35 +558,35 @@ export default class MenuUiHandler extends MessageUiHandler {
       this.showText("", 0);
       switch (adjustedCursor) {
         case MenuOptions.GAME_SETTINGS:
-          ui.setOverlayMode(Mode.SETTINGS);
+          ui.setOverlayMode(UiMode.SETTINGS);
           success = true;
           break;
         case MenuOptions.ACHIEVEMENTS:
-          ui.setOverlayMode(Mode.ACHIEVEMENTS);
+          ui.setOverlayMode(UiMode.ACHIEVEMENTS);
           success = true;
           break;
         case MenuOptions.STATS:
-          ui.setOverlayMode(Mode.GAME_STATS);
+          ui.setOverlayMode(UiMode.GAME_STATS);
           success = true;
           break;
         case MenuOptions.EGG_LIST:
           if (globalScene.gameData.eggs.length) {
             ui.revertMode();
-            ui.setOverlayMode(Mode.EGG_LIST);
+            ui.setOverlayMode(UiMode.EGG_LIST);
             success = true;
           } else {
-            ui.showText(i18next.t("menuUiHandler:noEggs"), null, () => ui.showText(""), Utils.fixedInt(1500));
+            ui.showText(i18next.t("menuUiHandler:noEggs"), null, () => ui.showText(""), fixedInt(1500));
             error = true;
           }
           break;
         case MenuOptions.EGG_GACHA:
           ui.revertMode();
-          ui.setOverlayMode(Mode.EGG_GACHA);
+          ui.setOverlayMode(UiMode.EGG_GACHA);
           success = true;
           break;
         case MenuOptions.POKEDEX:
           ui.revertMode();
-          ui.setOverlayMode(Mode.POKEDEX);
+          ui.setOverlayMode(UiMode.POKEDEX);
           success = true;
           break;
         case MenuOptions.MANAGE_DATA:
@@ -607,7 +608,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                     : i18next.t("menuUiHandler:unlinkDiscord"),
                 handler: () => {
                   if (loggedInUser?.discordId === "") {
-                    const token = Utils.getCookie(Utils.sessionIdKey);
+                    const token = getCookie(sessionIdKey);
                     const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
                     const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
                     const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify&state=${token}&prompt=none`;
@@ -627,7 +628,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                     : i18next.t("menuUiHandler:unlinkGoogle"),
                 handler: () => {
                   if (loggedInUser?.googleId === "") {
-                    const token = Utils.getCookie(Utils.sessionIdKey);
+                    const token = getCookie(sessionIdKey);
                     const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/google/callback`);
                     const googleId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
                     const googleUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}&response_type=code&redirect_uri=${redirectUri}&scope=openid&state=${token}`;
@@ -642,18 +643,18 @@ export default class MenuUiHandler extends MessageUiHandler {
               },
             );
           }
-          ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.manageDataConfig);
+          ui.setOverlayMode(UiMode.MENU_OPTION_SELECT, this.manageDataConfig);
           success = true;
           break;
         case MenuOptions.COMMUNITY:
-          ui.setOverlayMode(Mode.MENU_OPTION_SELECT, this.communityConfig);
+          ui.setOverlayMode(UiMode.MENU_OPTION_SELECT, this.communityConfig);
           success = true;
           break;
         case MenuOptions.SAVE_AND_QUIT:
           if (globalScene.currentBattle) {
             success = true;
             const doSaveQuit = () => {
-              ui.setMode(Mode.LOADING, {
+              ui.setMode(UiMode.LOADING, {
                 buttonActions: [],
                 fadeOut: () =>
                   globalScene.gameData.saveAll(true, true, true, true).then(() => {
@@ -668,7 +669,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                   return;
                 }
                 ui.setOverlayMode(
-                  Mode.CONFIRM,
+                  UiMode.CONFIRM,
                   doSaveQuit,
                   () => {
                     ui.revertMode();
@@ -685,10 +686,10 @@ export default class MenuUiHandler extends MessageUiHandler {
             error = true;
           }
           break;
-        case MenuOptions.LOG_OUT:
+        case MenuOptions.LOG_OUT: {
           success = true;
           const doLogout = () => {
-            ui.setMode(Mode.LOADING, {
+            ui.setMode(UiMode.LOADING, {
               buttonActions: [],
               fadeOut: () =>
                 pokerogueApi.account.logout().then(() => {
@@ -703,7 +704,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                 return;
               }
               ui.setOverlayMode(
-                Mode.CONFIRM,
+                UiMode.CONFIRM,
                 doLogout,
                 () => {
                   ui.revertMode();
@@ -717,12 +718,13 @@ export default class MenuUiHandler extends MessageUiHandler {
             doLogout();
           }
           break;
+        }
       }
     } else if (button === Button.CANCEL) {
       success = true;
       ui.revertMode().then(result => {
         if (!result) {
-          ui.setMode(Mode.MESSAGE);
+          ui.setMode(UiMode.MESSAGE);
         }
       });
     } else {

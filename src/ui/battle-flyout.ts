@@ -1,12 +1,12 @@
-import type { default as Pokemon } from "../field/pokemon";
+import type { EnemyPokemon, default as Pokemon } from "../field/pokemon";
 import { addTextObject, TextStyle } from "./text";
-import * as Utils from "../utils";
+import { fixedInt } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
 import type Move from "#app/data/moves/move";
 import type { BerryUsedEvent, MoveUsedEvent } from "../events/battle-scene";
 import { BattleSceneEventType } from "../events/battle-scene";
 import { BerryType } from "#enums/berry-type";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { UiTheme } from "#enums/ui-theme";
 import { getPokemonNameWithAffix } from "#app/messages";
 
@@ -126,7 +126,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
    * Links the given {@linkcode Pokemon} and subscribes to the {@linkcode BattleSceneEventType.MOVE_USED} event
    * @param pokemon {@linkcode Pokemon} to link to this flyout
    */
-  initInfo(pokemon: Pokemon) {
+  initInfo(pokemon: EnemyPokemon) {
     this.pokemon = pokemon;
 
     this.name = `Flyout ${getPokemonNameWithAffix(this.pokemon)}`;
@@ -154,7 +154,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   /** Updates all of the {@linkcode MoveInfo} objects in the moveInfo array */
   private onMoveUsed(event: Event) {
     const moveUsedEvent = event as MoveUsedEvent;
-    if (!moveUsedEvent || moveUsedEvent.pokemonId !== this.pokemon?.id || moveUsedEvent.move.id === Moves.STRUGGLE) {
+    if (!moveUsedEvent || moveUsedEvent.pokemonId !== this.pokemon?.id || moveUsedEvent.move.id === MoveId.STRUGGLE) {
       // Ignore Struggle
       return;
     }
@@ -201,7 +201,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     globalScene.tweens.add({
       targets: this.flyoutParent,
       x: visible ? this.anchorX : this.anchorX - this.translationX,
-      duration: Utils.fixedInt(125),
+      duration: fixedInt(125),
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0,
     });

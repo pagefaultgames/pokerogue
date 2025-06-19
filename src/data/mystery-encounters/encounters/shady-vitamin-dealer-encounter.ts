@@ -7,10 +7,10 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { randSeedInt } from "#app/utils";
+import { modifierTypes } from "#app/data/data-lists";
+import { randSeedInt } from "#app/utils/common";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
@@ -26,7 +26,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import type { Nature } from "#enums/nature";
 import { getNatureName } from "#app/data/nature";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
@@ -49,7 +49,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
   .withPrimaryPokemonHealthRatioRequirement([0.51, 1]) // At least 1 Pokemon must have above half HP
   .withIntroSpriteConfigs([
     {
-      spriteKey: Species.KROOKODILE.toString(),
+      spriteKey: SpeciesId.KROOKODILE.toString(),
       fileRoot: "pokemon",
       hasShadow: true,
       repeat: true,

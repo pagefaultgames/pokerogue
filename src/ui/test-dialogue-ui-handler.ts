@@ -4,15 +4,11 @@ import type { ModalConfig } from "./modal-ui-handler";
 import i18next from "i18next";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type { OptionSelectItem } from "./abstact-option-select-ui-handler";
-import { isNullOrUndefined } from "#app/utils";
-import { Mode } from "./ui";
+import { isNullOrUndefined } from "#app/utils/common";
+import { UiMode } from "#enums/ui-mode";
 
 export default class TestDialogueUiHandler extends FormModalUiHandler {
   keys: string[];
-
-  constructor(mode) {
-    super(mode);
-  }
 
   setup() {
     super.setup();
@@ -88,7 +84,7 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
     input.on("keydown", (inputObject, evt: KeyboardEvent) => {
       if (
         ["escape", "space"].some(v => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) &&
-        ui.getMode() === Mode.AUTO_COMPLETE
+        ui.getMode() === UiMode.AUTO_COMPLETE
       ) {
         // Delete autocomplete list and recovery focus.
         inputObject.on("blur", () => inputObject.node.focus(), { once: true });
@@ -98,7 +94,7 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
 
     input.on("textchange", (inputObject, evt: InputEvent) => {
       // Delete autocomplete.
-      if (ui.getMode() === Mode.AUTO_COMPLETE) {
+      if (ui.getMode() === UiMode.AUTO_COMPLETE) {
         ui.revertMode();
       }
 
@@ -133,7 +129,7 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
           maxOptions: 5,
           modalContainer: this.modalContainer,
         };
-        ui.setOverlayMode(Mode.AUTO_COMPLETE, modalOpts);
+        ui.setOverlayMode(UiMode.AUTO_COMPLETE, modalOpts);
       }
     });
 
@@ -147,7 +143,7 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
         this.inputs[0].text = args[1];
       }
       this.submitAction = _ => {
-        if (ui.getMode() === Mode.TEST_DIALOGUE) {
+        if (ui.getMode() === UiMode.TEST_DIALOGUE) {
           this.sanitizeInputs();
           const sanitizedName = btoa(unescape(encodeURIComponent(this.inputs[0].text)));
           config.buttonActions[0](sanitizedName);

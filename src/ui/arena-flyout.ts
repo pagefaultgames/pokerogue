@@ -1,6 +1,7 @@
 import { addTextObject, TextStyle } from "./text";
 import { globalScene } from "#app/global-scene";
-import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import { ArenaTrapTag } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { WeatherType } from "#enums/weather-type";
 import { TerrainType } from "#app/data/terrain";
 import { addWindow, WindowVariant } from "./ui-theme";
@@ -16,7 +17,7 @@ import type { TurnEndEvent } from "../events/battle-scene";
 import { BattleSceneEventType } from "../events/battle-scene";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import TimeOfDayWidget from "./time-of-day-widget";
-import * as Utils from "../utils";
+import { toCamelCaseString, formatText, fixedInt } from "#app/utils/common";
 import type { ParseKeys } from "i18next";
 import i18next from "i18next";
 
@@ -47,10 +48,10 @@ export function getFieldEffectText(arenaTagType: string): string {
   if (!arenaTagType || arenaTagType === ArenaTagType.NONE) {
     return arenaTagType;
   }
-  const effectName = Utils.toCamelCaseString(arenaTagType);
+  const effectName = toCamelCaseString(arenaTagType);
   const i18nKey = `arenaFlyout:${effectName}` as ParseKeys;
   const resultName = i18next.t(i18nKey);
-  return !resultName || resultName === i18nKey ? Utils.formatText(arenaTagType) : resultName;
+  return !resultName || resultName === i18nKey ? formatText(arenaTagType) : resultName;
 }
 
 export class ArenaFlyout extends Phaser.GameObjects.Container {
@@ -411,7 +412,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     globalScene.tweens.add({
       targets: this.flyoutParent,
       x: visible ? this.anchorX : this.anchorX - this.translationX,
-      duration: Utils.fixedInt(125),
+      duration: fixedInt(125),
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0,
       onComplete: () => (this.timeOfDayWidget.parentVisible = visible),

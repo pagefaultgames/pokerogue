@@ -3,10 +3,7 @@ import { PlayerGender } from "#app/enums/player-gender";
 import { BattlePhase } from "./battle-phase";
 
 export class ShowTrainerPhase extends BattlePhase {
-  constructor() {
-    super();
-  }
-
+  public readonly phaseName = "ShowTrainerPhase";
   start() {
     super.start();
 

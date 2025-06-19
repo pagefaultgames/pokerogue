@@ -1,19 +1,20 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
-import { CommonAnim } from "#app/data/battle-anims";
+import type { BattlerIndex } from "#enums/battler-index";
+import { CommonAnim } from "#enums/move-anims-common";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import { StatusEffect } from "#app/enums/status-effect";
-import { HitResult } from "#app/field/pokemon";
+import { HitResult } from "#enums/hit-result";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HealingBoosterModifier } from "#app/modifier/modifier";
 import { HealAchv } from "#app/system/achv";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import { CommonAnimPhase } from "./common-anim-phase";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type { HealBlockTag } from "#app/data/battler-tags";
 
 export class PokemonHealPhase extends CommonAnimPhase {
+  public readonly phaseName = "PokemonHealPhase";
   private hpHealed: number;
   private message: string | null;
   private showFullHpMessage: boolean;
@@ -67,16 +68,16 @@ export class PokemonHealPhase extends CommonAnimPhase {
     let lastStatusEffect = StatusEffect.NONE;
 
     if (healBlock && this.hpHealed > 0) {
-      globalScene.queueMessage(healBlock.onActivation(pokemon));
+      globalScene.phaseManager.queueMessage(healBlock.onActivation(pokemon));
       this.message = null;
       return super.end();
     }
     if (healOrDamage) {
-      const hpRestoreMultiplier = new Utils.NumberHolder(1);
+      const hpRestoreMultiplier = new NumberHolder(1);
       if (!this.revive) {
         globalScene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
       }
-      const healAmount = new Utils.NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
+      const healAmount = new NumberHolder(Math.floor(this.hpHealed * hpRestoreMultiplier.value));
       if (healAmount.value < 0) {
         pokemon.damageAndUpdate(healAmount.value * -1, { result: HitResult.INDIRECT });
         healAmount.value = 0;
@@ -118,11 +119,13 @@ export class PokemonHealPhase extends CommonAnimPhase {
     }
 
     if (this.message) {
-      globalScene.queueMessage(this.message);
+      globalScene.phaseManager.queueMessage(this.message);
     }
 
     if (this.healStatus && lastStatusEffect && !hasMessage) {
-      globalScene.queueMessage(getStatusEffectHealText(lastStatusEffect, getPokemonNameWithAffix(pokemon)));
+      globalScene.phaseManager.queueMessage(
+        getStatusEffectHealText(lastStatusEffect, getPokemonNameWithAffix(pokemon)),
+      );
     }
 
     if (!healOrDamage && !lastStatusEffect) {

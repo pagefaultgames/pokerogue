@@ -10,7 +10,7 @@ import {
   RibbonAchv,
   achvs,
 } from "#app/system/achv";
-import { NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -130,12 +130,6 @@ describe("RibbonAchv", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.moveset([]);
-    game.override.startingLevel(0);
-    game.override.starterSpecies(0);
-    game.override.enemyMoveset([]);
-    game.override.enemySpecies(0);
-    game.override.startingWave(0);
     scene = game.scene;
   });
 

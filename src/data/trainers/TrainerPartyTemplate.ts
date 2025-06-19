@@ -1,6 +1,8 @@
-import { startingWave } from "#app/battle-scene";
+import { startingWave } from "#app/starting-wave";
 import { globalScene } from "#app/global-scene";
 import { PartyMemberStrength } from "#enums/party-member-strength";
+import { GameModes } from "#enums/game-modes";
+import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 
 export class TrainerPartyTemplate {
   public size: number;
@@ -222,16 +224,16 @@ export const trainerPartyTemplates = {
  */
 export function getEvilGruntPartyTemplate(): TrainerPartyTemplate {
   const waveIndex = globalScene.currentBattle?.waveIndex;
-  if (waveIndex < 40) {
+  if (waveIndex <= ClassicFixedBossWaves.EVIL_GRUNT_1) {
     return trainerPartyTemplates.TWO_AVG;
   }
-  if (waveIndex < 63) {
+  if (waveIndex <= ClassicFixedBossWaves.EVIL_GRUNT_2) {
     return trainerPartyTemplates.THREE_AVG;
   }
-  if (waveIndex < 65) {
+  if (waveIndex <= ClassicFixedBossWaves.EVIL_GRUNT_3) {
     return trainerPartyTemplates.TWO_AVG_ONE_STRONG;
   }
-  if (waveIndex < 112) {
+  if (waveIndex <= ClassicFixedBossWaves.EVIL_ADMIN_1) {
     return trainerPartyTemplates.GYM_LEADER_4; // 3avg 1 strong 1 stronger
   }
   return trainerPartyTemplates.GYM_LEADER_5; // 3 avg 2 strong 1 stronger
@@ -245,11 +247,38 @@ export function getWavePartyTemplate(...templates: TrainerPartyTemplate[]) {
 }
 
 export function getGymLeaderPartyTemplate() {
-  return getWavePartyTemplate(
-    trainerPartyTemplates.GYM_LEADER_1,
-    trainerPartyTemplates.GYM_LEADER_2,
-    trainerPartyTemplates.GYM_LEADER_3,
-    trainerPartyTemplates.GYM_LEADER_4,
-    trainerPartyTemplates.GYM_LEADER_5,
-  );
+  const { currentBattle, gameMode } = globalScene;
+  switch (gameMode.modeId) {
+    case GameModes.DAILY:
+      if (currentBattle?.waveIndex <= 20) {
+        return trainerPartyTemplates.GYM_LEADER_2;
+      }
+      return trainerPartyTemplates.GYM_LEADER_3;
+    case GameModes.CHALLENGE: // In the future, there may be a ChallengeType to call here. For now, use classic's.
+    case GameModes.CLASSIC:
+      if (currentBattle?.waveIndex <= 20) {
+        return trainerPartyTemplates.GYM_LEADER_1; // 1 avg 1 strong
+      }
+      if (currentBattle?.waveIndex <= 30) {
+        return trainerPartyTemplates.GYM_LEADER_2; // 1 avg 1 strong 1 stronger
+      }
+      // 50 and 60
+      if (currentBattle?.waveIndex <= 60) {
+        return trainerPartyTemplates.GYM_LEADER_3; // 2 avg 1 strong 1 stronger
+      }
+      // 80 and 90
+      if (currentBattle?.waveIndex <= 90) {
+        return trainerPartyTemplates.GYM_LEADER_4; // 3 avg 1 strong 1 stronger
+      }
+      // 110+
+      return trainerPartyTemplates.GYM_LEADER_5; // 3 avg 2 strong 1 stronger
+    default:
+      return getWavePartyTemplate(
+        trainerPartyTemplates.GYM_LEADER_1,
+        trainerPartyTemplates.GYM_LEADER_2,
+        trainerPartyTemplates.GYM_LEADER_3,
+        trainerPartyTemplates.GYM_LEADER_4,
+        trainerPartyTemplates.GYM_LEADER_5,
+      );
+  }
 }

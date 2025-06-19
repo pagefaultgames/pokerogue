@@ -1,32 +1,36 @@
 import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import { pokemonEvolutions, pokemonPrevolutions, pokemonStarters } from "#app/data/balance/pokemon-evolutions";
-import type { Variant } from "#app/data/variant";
-import { getVariantTint, getVariantIcon } from "#app/data/variant";
+import type { Variant } from "#app/sprites/variant";
+import { getVariantTint, getVariantIcon } from "#app/sprites/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
-import { starterColors } from "#app/battle-scene";
-import { allAbilities } from "#app/data/ability";
+import { starterColors } from "#app/global-vars/starter-colors";
+import { allAbilities } from "#app/data/data-lists";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate, getGrowthRateColor } from "#app/data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { getNatureName } from "#app/data/nature";
 import type { SpeciesFormChange } from "#app/data/pokemon-forms";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import type { LevelMoves } from "#app/data/balance/pokemon-level-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, normalForm } from "#app/data/pokemon-species";
+import { getPokemonSpeciesForm, normalForm } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
+import { allSpecies } from "#app/data/data-lists";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { PokemonType } from "#enums/pokemon-type";
-import type { DexEntry, StarterAttributes } from "#app/system/game-data";
-import { AbilityAttr, DexAttr } from "#app/system/game-data";
+import type { StarterAttributes } from "#app/system/game-data";
+import type { DexEntry } from "#app/@types/dex-data";
+import { AbilityAttr } from "#enums/ability-attr";
+import { DexAttr } from "#enums/dex-attr";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { StatsContainer } from "#app/ui/stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions } from "#app/ui/text";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { addWindow } from "#app/ui/ui-theme";
 import { Egg } from "#app/data/egg";
 import Overrides from "#app/overrides";
@@ -36,8 +40,8 @@ import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import PokedexInfoOverlay from "#app/ui/pokedex-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { Device } from "#enums/devices";
-import type { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import type { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Button } from "#enums/buttons";
 import { EggSourceType } from "#enums/egg-source-types";
 import {
@@ -52,15 +56,15 @@ import {
   padInt,
   rgbHexToRgba,
   toReadableString,
-} from "#app/utils";
+} from "#app/utils/common";
 import type { Nature } from "#enums/nature";
-import * as Utils from "../utils";
+import { getEnumKeys } from "#app/utils/common";
 import { speciesTmMoves } from "#app/data/balance/tms";
 import type { BiomeTierTod } from "#app/data/balance/biomes";
 import { BiomePoolTier, catchableSpecies } from "#app/data/balance/biomes";
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { TimeOfDay } from "#app/enums/time-of-day";
-import type { Abilities } from "#app/enums/abilities";
+import type { AbilityId } from "#enums/ability-id";
 import { BaseStatsOverlay } from "#app/ui/base-stats-overlay";
 import { globalScene } from "#app/global-scene";
 import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
@@ -203,15 +207,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private species: PokemonSpecies;
   private starterId: number;
   private formIndex: number;
-  private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
+  private speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
   private levelMoves: LevelMoves;
-  private eggMoves: Moves[] = [];
+  private eggMoves: MoveId[] = [];
   private hasEggMoves: boolean[] = [];
-  private tmMoves: Moves[] = [];
-  private ability1: Abilities;
-  private ability2: Abilities | undefined;
-  private abilityHidden: Abilities | undefined;
-  private passive: Abilities;
+  private tmMoves: MoveId[] = [];
+  private ability1: AbilityId;
+  private ability2: AbilityId | undefined;
+  private abilityHidden: AbilityId | undefined;
+  private passive: AbilityId;
   private hasPassive: boolean;
   private hasAbilities: number[];
   private biomes: BiomeTierTod[];
@@ -256,7 +260,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   protected scale = 0.1666666667;
   private menuDescriptions: string[];
   private isFormGender: boolean;
-  private filteredIndices: Species[] | null = null;
+  private filteredIndices: SpeciesId[] | null = null;
 
   private availableVariants: number;
   private unlockedVariants: boolean[];
@@ -265,7 +269,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private exitCallback;
 
   constructor() {
-    super(Mode.POKEDEX_PAGE);
+    super(UiMode.POKEDEX_PAGE);
   }
 
   setup() {
@@ -291,6 +295,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     const starterSelectBg = globalScene.add.image(0, 0, "pokedex_summary_bg");
     starterSelectBg.setOrigin(0, 0);
     this.starterSelectContainer.add(starterSelectBg);
+
+    this.pokemonSprite = globalScene.add.sprite(53, 63, "pkmn__sub");
+    this.pokemonSprite.setPipeline(globalScene.spritePipeline, {
+      tone: [0.0, 0.0, 0.0, 0.0],
+      ignoreTimeTint: true,
+    });
+    this.starterSelectContainer.add(this.pokemonSprite);
 
     this.shinyOverlay = globalScene.add.image(6, 6, "summary_overlay_shiny");
     this.shinyOverlay.setOrigin(0, 0);
@@ -342,13 +353,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     this.starterSelectContainer.add(starterBoxContainer);
-
-    this.pokemonSprite = globalScene.add.sprite(53, 63, "pkmn__sub");
-    this.pokemonSprite.setPipeline(globalScene.spritePipeline, {
-      tone: [0.0, 0.0, 0.0, 0.0],
-      ignoreTimeTint: true,
-    });
-    this.starterSelectContainer.add(this.pokemonSprite);
 
     this.type1Icon = globalScene.add.sprite(8, 98, getLocalizedSpriteKey("types"));
     this.type1Icon.setScale(0.5);
@@ -592,7 +596,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.menuContainer.setVisible(false);
 
-    this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
+    this.menuOptions = getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
 
     this.optionSelectText = addBBCodeTextObject(
       0,
@@ -665,7 +669,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   show(args: any[]): boolean {
     // Allow the use of candies if we are in one of the whitelisted phases
     this.canUseCandies = ["TitlePhase", "SelectStarterPhase", "CommandPhase"].includes(
-      globalScene.getCurrentPhase()?.constructor.name ?? "",
+      globalScene.phaseManager.getCurrentPhase()?.phaseName ?? "",
     );
 
     if (args.length >= 1 && args[0] === "refresh") {
@@ -696,7 +700,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.starterAttributes = this.initStarterPrefs();
 
-    this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
+    this.menuOptions = getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
 
     this.menuContainer.setVisible(true);
 
@@ -824,7 +828,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     const allBiomes = catchableSpecies[species.speciesId] ?? [];
     this.preBiomes = this.sanitizeBiomes(
       (catchableSpecies[this.starterId] ?? []).filter(
-        b => !allBiomes.some(bm => b.biome === bm.biome && b.tier === bm.tier) && !(b.biome === Biome.TOWN),
+        b => !allBiomes.some(bm => b.biome === bm.biome && b.tier === bm.tier) && !(b.biome === BiomeId.TOWN),
       ),
       this.starterId,
     );
@@ -863,13 +867,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
   // Function to ensure that forms appear in the appropriate biome and tod
   sanitizeBiomes(biomes: BiomeTierTod[], speciesId: number): BiomeTierTod[] {
-    if (speciesId === Species.BURMY || speciesId === Species.WORMADAM) {
+    if (speciesId === SpeciesId.BURMY || speciesId === SpeciesId.WORMADAM) {
       return biomes.filter(b => {
         const formIndex = (() => {
           switch (b.biome) {
-            case Biome.BEACH:
+            case BiomeId.BEACH:
               return 1;
-            case Biome.SLUM:
+            case BiomeId.SLUM:
               return 2;
             default:
               return 0;
@@ -878,19 +882,19 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         return this.formIndex === formIndex;
       });
     }
-    if (speciesId === Species.ROTOM) {
+    if (speciesId === SpeciesId.ROTOM) {
       return biomes.filter(b => {
         const formIndex = (() => {
           switch (b.biome) {
-            case Biome.VOLCANO:
+            case BiomeId.VOLCANO:
               return 1;
-            case Biome.SEA:
+            case BiomeId.SEA:
               return 2;
-            case Biome.ICE_CAVE:
+            case BiomeId.ICE_CAVE:
               return 3;
-            case Biome.MOUNTAIN:
+            case BiomeId.MOUNTAIN:
               return 4;
-            case Biome.TALL_GRASS:
+            case BiomeId.TALL_GRASS:
               return 5;
             default:
               return 0;
@@ -899,7 +903,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         return this.formIndex === formIndex;
       });
     }
-    if (speciesId === Species.LYCANROC) {
+    if (speciesId === SpeciesId.LYCANROC) {
       return biomes.filter(b => {
         const formIndex = (() => {
           switch (b.tod[0]) {
@@ -921,16 +925,22 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     return biomes;
   }
 
+  /**
+   * Return the caughtAttr of a given species, sanitized.
+   *
+   * @param otherSpecies The species to check; defaults to current species
+   * @returns caught DexAttr for the species
+   */
   isCaught(otherSpecies?: PokemonSpecies): bigint {
+    const species = otherSpecies ? otherSpecies : this.species;
+
     if (globalScene.dexForDevs) {
-      return 255n;
+      species.getFullUnlocksData();
     }
 
-    const species = otherSpecies ? otherSpecies : this.species;
     const dexEntry = globalScene.gameData.dexData[species.speciesId];
-    const starterDexEntry = globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)];
 
-    return (dexEntry?.caughtAttr ?? 0n) & (starterDexEntry?.caughtAttr ?? 0n) & species.getFullUnlocksData();
+    return (dexEntry?.caughtAttr ?? 0n) & species.getFullUnlocksData();
   }
 
   /**
@@ -939,7 +949,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
    *
    * @param otherSpecies The species to check; defaults to current species
    * @param otherFormIndex The form index of the form to check; defaults to current form
-   * @returns StarterAttributes for the species
+   * @returns `true` if the form is caught
    */
   isFormCaught(otherSpecies?: PokemonSpecies, otherFormIndex?: number | undefined): boolean {
     if (globalScene.dexForDevs) {
@@ -954,6 +964,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     const isFormCaught = (caughtAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n;
+
     return isFormCaught;
   }
 
@@ -1082,11 +1093,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
    * @returns the id of the corresponding starter
    */
   getStarterSpeciesId(speciesId): number {
-    if (speciesId === Species.PIKACHU) {
+    if (speciesId === SpeciesId.PIKACHU) {
       if ([0, 1, 8].includes(this.formIndex)) {
-        return Species.PICHU;
+        return SpeciesId.PICHU;
       }
-      return Species.PIKACHU;
+      return SpeciesId.PIKACHU;
     }
     if (speciesStarterCosts.hasOwnProperty(speciesId)) {
       return speciesId;
@@ -1140,18 +1151,17 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         success = true;
       } else if (this.previousSpecies.length > 0) {
         this.blockInput = true;
-        ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
+        ui.setModeWithoutClear(UiMode.OPTION_SELECT).then(() => {
           const species = this.previousSpecies.pop();
           const starterAttributes = this.previousStarterAttributes.pop();
           this.moveInfoOverlay.clear();
           this.clearText();
-          ui.setModeForceTransition(Mode.POKEDEX_PAGE, species, starterAttributes);
+          ui.setModeForceTransition(UiMode.POKEDEX_PAGE, species, starterAttributes);
           success = true;
         });
         this.blockInput = false;
       } else {
         ui.revertMode().then(() => {
-          console.log("exitCallback", this.exitCallback);
           if (this.exitCallback instanceof Function) {
             const exitCallback = this.exitCallback;
             this.exitCallback = null;
@@ -1173,7 +1183,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             } else {
               this.blockInput = true;
 
-              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+              ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
                 ui.showText(i18next.t("pokedexUiHandler:showBaseStats"), null, () => {
                   this.baseStatsOverlay.show(this.baseStats, this.baseTotal);
 
@@ -1193,11 +1203,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             } else {
               this.blockInput = true;
 
-              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+              ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
                 ui.showText(i18next.t("pokedexUiHandler:showLevelMoves"), null, () => {
                   this.moveInfoOverlay.show(allMoves[this.levelMoves[0][1]]);
 
-                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                  ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
                     options: this.levelMoves
                       .map(m => {
                         const levelNumber = m[0] > 0 ? String(m[0]) : "";
@@ -1226,7 +1236,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                         handler: () => {
                           this.moveInfoOverlay.clear();
                           this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                          ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
                           return true;
                         },
                         onHover: () => {
@@ -1251,7 +1261,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             } else {
               this.blockInput = true;
 
-              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+              ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
                 if (this.eggMoves.length === 0) {
                   ui.showText(i18next.t("pokedexUiHandler:noEggMoves"));
                   this.blockInput = false;
@@ -1261,7 +1271,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 ui.showText(i18next.t("pokedexUiHandler:showEggMoves"), null, () => {
                   this.moveInfoOverlay.show(allMoves[this.eggMoves[0]]);
 
-                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                  ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
                     options: [
                       {
                         label: i18next.t("pokedexUiHandler:common"),
@@ -1294,7 +1304,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                         handler: () => {
                           this.moveInfoOverlay.clear();
                           this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                          ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
                           return true;
                         },
                         onHover: () => this.moveInfoOverlay.clear(),
@@ -1321,11 +1331,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             } else {
               this.blockInput = true;
 
-              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+              ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
                 ui.showText(i18next.t("pokedexUiHandler:showTmMoves"), null, () => {
                   this.moveInfoOverlay.show(allMoves[this.tmMoves[0]]);
 
-                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                  ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
                     options: this.tmMoves
                       .map(m => {
                         const option: OptionSelectItem = {
@@ -1344,7 +1354,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                         handler: () => {
                           this.moveInfoOverlay.clear();
                           this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                          ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
                           return true;
                         },
                         onHover: () => {
@@ -1369,7 +1379,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             } else {
               this.blockInput = true;
 
-              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+              ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
                 ui.showText(i18next.t("pokedexUiHandler:showAbilities"), null, () => {
                   this.infoOverlay.show(allAbilities[this.ability1].description);
 
@@ -1431,13 +1441,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     handler: () => {
                       this.infoOverlay.clear();
                       this.clearText();
-                      ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                      ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
                       return true;
                     },
                     onHover: () => this.infoOverlay.clear(),
                   });
 
-                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                  ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
                     options: options,
                     supportHover: true,
                     maxOptions: 8,
@@ -1457,7 +1467,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             } else {
               this.blockInput = true;
 
-              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+              ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
                 if ((!this.biomes || this.biomes?.length === 0) && (!this.preBiomes || this.preBiomes?.length === 0)) {
                   ui.showText(i18next.t("pokedexUiHandler:noBiomes"));
                   ui.playError();
@@ -1471,7 +1481,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                   this.biomes.map(b => {
                     options.push({
                       label:
-                        i18next.t(`biome:${Biome[b.biome].toUpperCase()}`) +
+                        i18next.t(`biome:${BiomeId[b.biome].toUpperCase()}`) +
                         " - " +
                         i18next.t(`biome:${BiomePoolTier[b.tier].toUpperCase()}`) +
                         (b.tod.length === 1 && b.tod[0] === -1
@@ -1492,7 +1502,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     this.preBiomes.map(b => {
                       options.push({
                         label:
-                          i18next.t(`biome:${Biome[b.biome].toUpperCase()}`) +
+                          i18next.t(`biome:${BiomeId[b.biome].toUpperCase()}`) +
                           " - " +
                           i18next.t(`biome:${BiomePoolTier[b.tier].toUpperCase()}`) +
                           (b.tod.length === 1 && b.tod[0] === -1
@@ -1510,13 +1520,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     handler: () => {
                       this.moveInfoOverlay.clear();
                       this.clearText();
-                      ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                      ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
                       return true;
                     },
                     onHover: () => this.moveInfoOverlay.clear(),
                   });
 
-                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                  ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
                     options: options,
                     supportHover: true,
                     maxOptions: 8,
@@ -1536,7 +1546,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             } else {
               this.blockInput = true;
 
-              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+              ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
                 const options: any[] = [];
 
                 if (
@@ -1589,7 +1599,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           this.savedStarterAttributes.form = newFormIndex;
                           this.moveInfoOverlay.clear();
                           this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, this.savedStarterAttributes);
+                          ui.setMode(UiMode.POKEDEX_PAGE, newSpecies, this.savedStarterAttributes);
                           return true;
                         },
                         onHover: () => this.showText(conditionText),
@@ -1631,7 +1641,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           this.savedStarterAttributes.form = newFormIndex;
                           this.moveInfoOverlay.clear();
                           this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, evoSpecies, this.savedStarterAttributes);
+                          ui.setMode(UiMode.POKEDEX_PAGE, evoSpecies, this.savedStarterAttributes);
                           return true;
                         },
                         onHover: () => this.showText(conditionText),
@@ -1676,7 +1686,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                             this.moveInfoOverlay.clear();
                             this.clearText();
                             ui.setMode(
-                              Mode.POKEDEX_PAGE,
+                              UiMode.POKEDEX_PAGE,
                               newSpecies,
                               this.savedStarterAttributes,
                               this.filteredIndices,
@@ -1694,13 +1704,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     handler: () => {
                       this.moveInfoOverlay.clear();
                       this.clearText();
-                      ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                      ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
                       return true;
                     },
                     onHover: () => this.moveInfoOverlay.clear(),
                   });
 
-                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                  ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
                     options: options,
                     supportHover: true,
                     maxOptions: 8,
@@ -1719,7 +1729,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               error = true;
             } else {
               this.toggleStatsMode();
-              ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+              ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
               success = true;
             }
             break;
@@ -1729,10 +1739,10 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               error = true;
             } else {
               this.blockInput = true;
-              ui.setMode(Mode.POKEDEX_PAGE, "refresh").then(() => {
+              ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
                 ui.showText(i18next.t("pokedexUiHandler:showNature"), null, () => {
                   const natures = globalScene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
-                  ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+                  ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
                     options: natures
                       .map((n: Nature, _i: number) => {
                         const option: OptionSelectItem = {
@@ -1747,7 +1757,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                         label: i18next.t("menu:cancel"),
                         handler: () => {
                           this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                          ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
                           this.blockInput = false;
                           return true;
                         },
@@ -1882,7 +1892,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
                 const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.starterId]);
                 options.push({
-                  label: `x${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")} (${allAbilities[this.passive].name})`,
+                  label: `x${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")}`,
                   handler: () => {
                     if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
                       starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
@@ -1897,7 +1907,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                       });
                       this.setSpeciesDetails(this.species);
                       globalScene.playSound("se/buy");
-                      ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                      ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
 
                       return true;
                     }
@@ -1927,7 +1937,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           return globalScene.reset(true);
                         }
                       });
-                      ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                      ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
                       globalScene.playSound("se/buy");
 
                       return true;
@@ -1976,7 +1986,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                         return globalScene.reset(true);
                       }
                     });
-                    ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                    ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
                     globalScene.playSound("se/buy");
 
                     return true;
@@ -1990,11 +2000,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               options.push({
                 label: i18next.t("menu:cancel"),
                 handler: () => {
-                  ui.setMode(Mode.POKEDEX_PAGE, "refresh");
+                  ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
                   return true;
                 },
               });
-              ui.setModeWithoutClear(Mode.OPTION_SELECT, {
+              ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
                 options: options,
                 yOffset: 47,
               });
@@ -2032,7 +2042,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               return true;
             }
             this.blockInput = true;
-            ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
+            ui.setModeWithoutClear(UiMode.OPTION_SELECT).then(() => {
               // Always go back to first selection after scrolling around
               if (this.previousSpecies.length === 0) {
                 this.previousSpecies.push(this.species);
@@ -2057,7 +2067,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               this.moveInfoOverlay.clear();
               this.clearText();
               ui.setModeForceTransition(
-                Mode.POKEDEX_PAGE,
+                UiMode.POKEDEX_PAGE,
                 newSpecies,
                 this.savedStarterAttributes,
                 this.filteredIndices,
@@ -2071,7 +2081,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               this.blockInput = false;
               return true;
             }
-            ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
+            ui.setModeWithoutClear(UiMode.OPTION_SELECT).then(() => {
               // Always go back to first selection after scrolling around
               if (this.previousSpecies.length === 0) {
                 this.previousSpecies.push(this.species);
@@ -2096,7 +2106,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               this.moveInfoOverlay.clear();
               this.clearText();
               ui.setModeForceTransition(
-                Mode.POKEDEX_PAGE,
+                UiMode.POKEDEX_PAGE,
                 newSpecies,
                 this.savedStarterAttributes,
                 this.filteredIndices,
@@ -2575,7 +2585,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
         this.pokemonUncaughtText.setVisible(false);
         this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry?.caughtCount}`);
-        if (species.speciesId === Species.MANAPHY || species.speciesId === Species.PHIONE) {
+        if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
           this.pokemonHatchedIcon.setFrame("manaphy");
         } else {
           this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
@@ -2608,7 +2618,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
         this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
         this.pokemonCandyCountText.setText(
-          `x${species.speciesId === Species.PIKACHU ? 0 : globalScene.gameData.starterData[this.starterId].candyCount}`,
+          `x${species.speciesId === SpeciesId.PIKACHU ? 0 : globalScene.gameData.starterData[this.starterId].candyCount}`,
         );
         this.pokemonCandyContainer.setVisible(true);
 

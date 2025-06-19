@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import i18next from "i18next";
-import { isNullOrUndefined, randSeedInt } from "#app/utils";
+import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
 import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
@@ -14,13 +14,13 @@ import { PlayerGender } from "#enums/player-gender";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "#app/field/anims";
 import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
 import { achvs } from "#app/system/achv";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import type { PartyOption } from "#app/ui/party-ui-handler";
 import { PartyUiMode } from "#app/ui/party-ui-handler";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import {
   getEncounterText,
@@ -29,13 +29,12 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { Gender } from "#app/data/gender";
 import type { PermanentStat } from "#enums/stat";
-import { VictoryPhase } from "#app/phases/victory-phase";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import type { Abilities } from "#enums/abilities";
+import type { AbilityId } from "#enums/ability-id";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
 
@@ -51,7 +50,7 @@ export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
  * @param variant
  */
 export function getSpriteKeysFromSpecies(
-  species: Species,
+  species: SpeciesId,
   female?: boolean,
   formIndex?: number,
   shiny?: boolean,
@@ -247,17 +246,17 @@ export function getHighestStatTotalPlayerPokemon(isAllowed = false, isFainted = 
  */
 export function getRandomSpeciesByStarterCost(
   starterTiers: number | [number, number],
-  excludedSpecies?: Species[],
+  excludedSpecies?: SpeciesId[],
   types?: PokemonType[],
   allowSubLegendary = true,
   allowLegendary = true,
   allowMythical = true,
-): Species {
+): SpeciesId {
   let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
   let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
 
   let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarterCosts)
-    .map(s => [Number.parseInt(s) as Species, speciesStarterCosts[s] as number])
+    .map(s => [Number.parseInt(s) as SpeciesId, speciesStarterCosts[s] as number])
     .filter(s => {
       const pokemonSpecies = getPokemonSpecies(s[0]);
       return (
@@ -294,7 +293,7 @@ export function getRandomSpeciesByStarterCost(
     return Phaser.Math.RND.shuffle(tryFilterStarterTiers)[index][0].speciesId;
   }
 
-  return Species.BULBASAUR;
+  return SpeciesId.BULBASAUR;
 }
 
 /**
@@ -675,7 +674,7 @@ export async function catchPokemon(
         if (!globalScene.getEnemyParty().some(p => p.id === pokemon.id)) {
           globalScene.getEnemyParty().push(pokemon);
         }
-        globalScene.unshiftPhase(new VictoryPhase(pokemon.id, true));
+        globalScene.phaseManager.unshiftNew("VictoryPhase", pokemon.id, true);
         globalScene.pokemonInfoContainer.hide();
         if (pokeball) {
           removePb(pokeball);
@@ -714,7 +713,7 @@ export async function catchPokemon(
               () => {
                 globalScene.pokemonInfoContainer.makeRoomForConfirmUi(1, true);
                 globalScene.ui.setMode(
-                  Mode.CONFIRM,
+                  UiMode.CONFIRM,
                   () => {
                     const newPokemon = globalScene.addPlayerPokemon(
                       pokemon.species,
@@ -729,12 +728,12 @@ export async function catchPokemon(
                       pokemon,
                     );
                     globalScene.ui.setMode(
-                      Mode.SUMMARY,
+                      UiMode.SUMMARY,
                       newPokemon,
                       0,
                       SummaryUiMode.DEFAULT,
                       () => {
-                        globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+                        globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
                           promptRelease();
                         });
                       },
@@ -749,13 +748,13 @@ export async function catchPokemon(
                       female: pokemon.gender === Gender.FEMALE,
                     };
                     globalScene.ui.setOverlayMode(
-                      Mode.POKEDEX_PAGE,
+                      UiMode.POKEDEX_PAGE,
                       pokemon.species,
                       pokemon.formIndex,
                       attributes,
                       null,
                       () => {
-                        globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+                        globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
                           promptRelease();
                         });
                       },
@@ -763,11 +762,11 @@ export async function catchPokemon(
                   },
                   () => {
                     globalScene.ui.setMode(
-                      Mode.PARTY,
+                      UiMode.PARTY,
                       PartyUiMode.RELEASE,
                       0,
                       (slotIndex: number, _option: PartyOption) => {
-                        globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+                        globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
                           if (slotIndex < 6) {
                             addToParty(slotIndex);
                           } else {
@@ -778,7 +777,7 @@ export async function catchPokemon(
                     );
                   },
                   () => {
-                    globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+                    globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
                       removePokemon();
                       end();
                     });
@@ -903,34 +902,34 @@ export function doPlayerFlee(pokemon: EnemyPokemon): Promise<void> {
 /**
  * Bug Species and their corresponding weights
  */
-const GOLDEN_BUG_NET_SPECIES_POOL: [Species, number][] = [
-  [Species.SCYTHER, 40],
-  [Species.SCIZOR, 40],
-  [Species.KLEAVOR, 40],
-  [Species.PINSIR, 40],
-  [Species.HERACROSS, 40],
-  [Species.YANMA, 40],
-  [Species.YANMEGA, 40],
-  [Species.SHUCKLE, 40],
-  [Species.ANORITH, 40],
-  [Species.ARMALDO, 40],
-  [Species.ESCAVALIER, 40],
-  [Species.ACCELGOR, 40],
-  [Species.JOLTIK, 40],
-  [Species.GALVANTULA, 40],
-  [Species.DURANT, 40],
-  [Species.LARVESTA, 40],
-  [Species.VOLCARONA, 40],
-  [Species.DEWPIDER, 40],
-  [Species.ARAQUANID, 40],
-  [Species.WIMPOD, 40],
-  [Species.GOLISOPOD, 40],
-  [Species.SIZZLIPEDE, 40],
-  [Species.CENTISKORCH, 40],
-  [Species.NYMBLE, 40],
-  [Species.LOKIX, 40],
-  [Species.BUZZWOLE, 1],
-  [Species.PHEROMOSA, 1],
+const GOLDEN_BUG_NET_SPECIES_POOL: [SpeciesId, number][] = [
+  [SpeciesId.SCYTHER, 40],
+  [SpeciesId.SCIZOR, 40],
+  [SpeciesId.KLEAVOR, 40],
+  [SpeciesId.PINSIR, 40],
+  [SpeciesId.HERACROSS, 40],
+  [SpeciesId.YANMA, 40],
+  [SpeciesId.YANMEGA, 40],
+  [SpeciesId.SHUCKLE, 40],
+  [SpeciesId.ANORITH, 40],
+  [SpeciesId.ARMALDO, 40],
+  [SpeciesId.ESCAVALIER, 40],
+  [SpeciesId.ACCELGOR, 40],
+  [SpeciesId.JOLTIK, 40],
+  [SpeciesId.GALVANTULA, 40],
+  [SpeciesId.DURANT, 40],
+  [SpeciesId.LARVESTA, 40],
+  [SpeciesId.VOLCARONA, 40],
+  [SpeciesId.DEWPIDER, 40],
+  [SpeciesId.ARAQUANID, 40],
+  [SpeciesId.WIMPOD, 40],
+  [SpeciesId.GOLISOPOD, 40],
+  [SpeciesId.SIZZLIPEDE, 40],
+  [SpeciesId.CENTISKORCH, 40],
+  [SpeciesId.NYMBLE, 40],
+  [SpeciesId.LOKIX, 40],
+  [SpeciesId.BUZZWOLE, 1],
+  [SpeciesId.PHEROMOSA, 1],
 ];
 
 /**
@@ -951,7 +950,7 @@ export function getGoldenBugNetSpecies(level: number): PokemonSpecies {
   }
 
   // Defaults to Scyther
-  return getPokemonSpecies(Species.SCYTHER);
+  return getPokemonSpecies(SpeciesId.SCYTHER);
 }
 
 /**
@@ -1024,16 +1023,13 @@ export function isPokemonValidForEncounterOptionSelection(
  * Permanently overrides the ability (not passive) of a pokemon.
  * If the pokemon is a fusion, instead overrides the fused pokemon's ability.
  */
-export function applyAbilityOverrideToPokemon(pokemon: Pokemon, ability: Abilities) {
+export function applyAbilityOverrideToPokemon(pokemon: Pokemon, ability: AbilityId) {
   if (pokemon.isFusion()) {
     if (!pokemon.fusionCustomPokemonData) {
       pokemon.fusionCustomPokemonData = new CustomPokemonData();
     }
     pokemon.fusionCustomPokemonData.ability = ability;
   } else {
-    if (!pokemon.customPokemonData) {
-      pokemon.customPokemonData = new CustomPokemonData();
-    }
     pokemon.customPokemonData.ability = ability;
   }
 }

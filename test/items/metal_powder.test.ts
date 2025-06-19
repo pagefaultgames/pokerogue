@@ -1,9 +1,9 @@
 import { Stat } from "#enums/stat";
 import { SpeciesStatBoosterModifier } from "#app/modifier/modifier";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import i18next from "#app/plugins/i18n";
-import * as Utils from "#app/utils";
-import { Species } from "#enums/species";
+import { NumberHolder } from "#app/utils/common";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -25,13 +25,13 @@ describe("Items - Metal Powder", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single");
+    game.override.battleStyle("single");
   });
 
   it("METAL_POWDER activates in battle correctly", async () => {
-    game.override.startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "METAL_POWDER" }]);
+    game.override.startingHeldItems([{ name: "RARE_SPECIES_STAT_BOOSTER", type: "METAL_POWDER" }]);
     const consoleSpy = vi.spyOn(console, "log");
-    await game.classicMode.startBattle([Species.DITTO]);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
 
     const partyMember = game.scene.getPlayerParty()[0];
 
@@ -82,30 +82,30 @@ describe("Items - Metal Powder", () => {
   });
 
   it("METAL_POWDER held by DITTO", async () => {
-    await game.startBattle([Species.DITTO]);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
 
     const partyMember = game.scene.getPlayerParty()[0];
 
     const defStat = partyMember.getStat(Stat.DEF);
 
     // Making sure modifier is not applied without holding item
-    const defValue = new Utils.NumberHolder(defStat);
+    const defValue = new NumberHolder(defStat);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["METAL_POWDER"])!.newModifier(partyMember),
+      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["METAL_POWDER"])!.newModifier(partyMember),
       true,
     );
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
-  }, 20000);
+  });
 
   it("METAL_POWDER held by fused DITTO (base)", async () => {
-    await game.startBattle([Species.DITTO, Species.MAROWAK]);
+    await game.classicMode.startBattle([SpeciesId.DITTO, SpeciesId.MAROWAK]);
 
     const partyMember = game.scene.getPlayerParty()[0];
     const ally = game.scene.getPlayerParty()[1];
@@ -122,23 +122,23 @@ describe("Items - Metal Powder", () => {
     const defStat = partyMember.getStat(Stat.DEF);
 
     // Making sure modifier is not applied without holding item
-    const defValue = new Utils.NumberHolder(defStat);
+    const defValue = new NumberHolder(defStat);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["METAL_POWDER"])!.newModifier(partyMember),
+      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["METAL_POWDER"])!.newModifier(partyMember),
       true,
     );
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
-  }, 20000);
+  });
 
   it("METAL_POWDER held by fused DITTO (part)", async () => {
-    await game.startBattle([Species.MAROWAK, Species.DITTO]);
+    await game.classicMode.startBattle([SpeciesId.MAROWAK, SpeciesId.DITTO]);
 
     const partyMember = game.scene.getPlayerParty()[0];
     const ally = game.scene.getPlayerParty()[1];
@@ -155,41 +155,41 @@ describe("Items - Metal Powder", () => {
     const defStat = partyMember.getStat(Stat.DEF);
 
     // Making sure modifier is not applied without holding item
-    const defValue = new Utils.NumberHolder(defStat);
+    const defValue = new NumberHolder(defStat);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["METAL_POWDER"])!.newModifier(partyMember),
+      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["METAL_POWDER"])!.newModifier(partyMember),
       true,
     );
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
-  }, 20000);
+  });
 
   it("METAL_POWDER not held by DITTO", async () => {
-    await game.startBattle([Species.MAROWAK]);
+    await game.classicMode.startBattle([SpeciesId.MAROWAK]);
 
     const partyMember = game.scene.getPlayerParty()[0];
 
     const defStat = partyMember.getStat(Stat.DEF);
 
     // Making sure modifier is not applied without holding item
-    const defValue = new Utils.NumberHolder(defStat);
+    const defValue = new NumberHolder(defStat);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["METAL_POWDER"])!.newModifier(partyMember),
+      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["METAL_POWDER"])!.newModifier(partyMember),
       true,
     );
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);
-  }, 20000);
+  });
 });

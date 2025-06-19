@@ -1,7 +1,7 @@
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -9,7 +9,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 describe("Moves - Magnet Rise", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const moveToUse = Moves.MAGNET_RISE;
+  const moveToUse = MoveId.MAGNET_RISE;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -23,17 +23,18 @@ describe("Moves - Magnet Rise", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
-    game.override.starterSpecies(Species.MAGNEZONE);
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyMoveset([Moves.DRILL_RUN, Moves.DRILL_RUN, Moves.DRILL_RUN, Moves.DRILL_RUN]);
-    game.override.disableCrits();
-    game.override.enemyLevel(1);
-    game.override.moveset([moveToUse, Moves.SPLASH, Moves.GRAVITY, Moves.BATON_PASS]);
+    game.override
+      .battleStyle("single")
+      .starterSpecies(SpeciesId.MAGNEZONE)
+      .enemySpecies(SpeciesId.RATTATA)
+      .enemyMoveset(MoveId.DRILL_RUN)
+      .criticalHits(false)
+      .enemyLevel(1)
+      .moveset([moveToUse, MoveId.SPLASH, MoveId.GRAVITY, MoveId.BATON_PASS]);
   });
 
   it("MAGNET RISE", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const startingHp = game.scene.getPlayerParty()[0].hp;
     game.move.select(moveToUse);
@@ -41,10 +42,10 @@ describe("Moves - Magnet Rise", () => {
     const finalHp = game.scene.getPlayerParty()[0].hp;
     const hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);
-  }, 20000);
+  });
 
   it("MAGNET RISE - Gravity", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const startingHp = game.scene.getPlayerParty()[0].hp;
     game.move.select(moveToUse);
@@ -52,10 +53,10 @@ describe("Moves - Magnet Rise", () => {
     let finalHp = game.scene.getPlayerParty()[0].hp;
     let hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);
-    game.move.select(Moves.GRAVITY);
+    game.move.select(MoveId.GRAVITY);
     await game.phaseInterceptor.to(TurnEndPhase);
     finalHp = game.scene.getPlayerParty()[0].hp;
     hpLost = finalHp - startingHp;
     expect(hpLost).not.toBe(0);
-  }, 20000);
+  });
 });

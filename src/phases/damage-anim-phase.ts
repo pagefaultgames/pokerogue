@@ -1,20 +1,27 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#enums/battler-index";
 import { BattleSpec } from "#enums/battle-spec";
-import { type DamageResult, HitResult } from "#app/field/pokemon";
-import { fixedInt } from "#app/utils";
+import type { DamageResult } from "#app/field/pokemon";
+import { HitResult } from "#enums/hit-result";
+import { fixedInt } from "#app/utils/common";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 
 export class DamageAnimPhase extends PokemonPhase {
+  public readonly phaseName = "DamageAnimPhase";
   private amount: number;
   private damageResult: DamageResult;
   private critical: boolean;
 
-  constructor(battlerIndex: BattlerIndex, amount: number, damageResult?: DamageResult, critical = false) {
+  constructor(
+    battlerIndex: BattlerIndex,
+    amount: number,
+    damageResult: DamageResult = HitResult.EFFECTIVE,
+    critical = false,
+  ) {
     super(battlerIndex);
 
     this.amount = amount;
-    this.damageResult = damageResult || HitResult.EFFECTIVE;
+    this.damageResult = damageResult;
     this.critical = critical;
   }
 

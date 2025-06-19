@@ -1,4 +1,4 @@
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import { hasTouchscreen } from "#app/touch-controls";
@@ -9,7 +9,7 @@ import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
-import { isLocal } from "#app/utils";
+import { isLocal } from "#app/utils/common";
 
 const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) =>
   i
@@ -193,35 +193,35 @@ export const Setting: Array<Setting> = [
     options: [
       {
         value: "1",
-        label: "1x",
+        label: i18next.t("settings:gameSpeed1x"),
       },
       {
         value: "1.25",
-        label: "1.25x",
+        label: i18next.t("settings:gameSpeed1_25x"),
       },
       {
         value: "1.5",
-        label: "1.5x",
+        label: i18next.t("settings:gameSpeed1_5x"),
       },
       {
         value: "2",
-        label: "2x",
+        label: i18next.t("settings:gameSpeed2x"),
       },
       {
         value: "2.5",
-        label: "2.5x",
+        label: i18next.t("settings:gameSpeed2_5x"),
       },
       {
         value: "3",
-        label: "3x",
+        label: i18next.t("settings:gameSpeed3x"),
       },
       {
         value: "4",
-        label: "4x",
+        label: i18next.t("settings:gameSpeed4x"),
       },
       {
         value: "5",
-        label: "5x",
+        label: i18next.t("settings:gameSpeed5x"),
       },
     ],
     default: 3,
@@ -804,6 +804,7 @@ export function setSetting(setting: string, value: number): boolean {
       break;
     case SettingKeys.Candy_Upgrade_Display:
       globalScene.candyUpgradeDisplay = value;
+      break;
     case SettingKeys.Money_Format:
       switch (Setting[index].options[value].value) {
         case "Normal":
@@ -906,7 +907,7 @@ export function setSetting(setting: string, value: number): boolean {
               return false;
             }
           };
-          globalScene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+          globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
             options: [
               {
                 label: "English",
@@ -921,10 +922,6 @@ export function setSetting(setting: string, value: number): boolean {
                 handler: () => changeLocaleHandler("es-MX"),
               },
               {
-                label: "Italiano",
-                handler: () => changeLocaleHandler("it"),
-              },
-              {
                 label: "Français",
                 handler: () => changeLocaleHandler("fr"),
               },
@@ -933,16 +930,12 @@ export function setSetting(setting: string, value: number): boolean {
                 handler: () => changeLocaleHandler("de"),
               },
               {
+                label: "Italiano",
+                handler: () => changeLocaleHandler("it"),
+              },
+              {
                 label: "Português (BR)",
                 handler: () => changeLocaleHandler("pt-BR"),
-              },
-              {
-                label: "简体中文",
-                handler: () => changeLocaleHandler("zh-CN"),
-              },
-              {
-                label: "繁體中文",
-                handler: () => changeLocaleHandler("zh-TW"),
               },
               {
                 label: "한국어",
@@ -953,8 +946,32 @@ export function setSetting(setting: string, value: number): boolean {
                 handler: () => changeLocaleHandler("ja"),
               },
               {
-                label: "Català",
-                handler: () => changeLocaleHandler("ca-ES"),
+                label: "简体中文",
+                handler: () => changeLocaleHandler("zh-CN"),
+              },
+              {
+                label: "繁體中文",
+                handler: () => changeLocaleHandler("zh-TW"),
+              },
+              {
+                label: "Català (Needs Help)",
+                handler: () => changeLocaleHandler("ca"),
+              },
+              {
+                label: "Türkçe (Needs Help)",
+                handler: () => changeLocaleHandler("tr"),
+              },
+              {
+                label: "Русский (Needs Help)",
+                handler: () => changeLocaleHandler("ru"),
+              },
+              {
+                label: "Dansk (Needs Help)",
+                handler: () => changeLocaleHandler("da"),
+              },
+              {
+                label: "Română (Needs Help)",
+                handler: () => changeLocaleHandler("ro"),
               },
               {
                 label: i18next.t("settings:back"),

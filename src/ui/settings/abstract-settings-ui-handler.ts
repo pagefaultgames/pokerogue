@@ -1,5 +1,5 @@
 import { TextStyle, addTextObject } from "#app/ui/text";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { addWindow } from "#app/ui/ui-theme";
 import { ScrollBar } from "#app/ui/scroll-bar";
@@ -42,7 +42,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
   protected settings: Array<Setting>;
   protected localStorageKey: string;
 
-  constructor(type: SettingType, mode: Mode | null = null) {
+  constructor(type: SettingType, mode: UiMode | null = null) {
     super(mode);
     this.settings = Setting.filter(s => s.type === type && !s?.isHidden?.());
     this.reloadRequired = false;
@@ -94,7 +94,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
     const iconCancel = globalScene.add.sprite(0, 0, "keyboard");
     iconCancel.setOrigin(0, -0.1);
-    iconCancel.setPositionRelative(actionsBg, this.navigationContainer.width - 100, 4);
+    iconCancel.setPositionRelative(actionsBg, actionText.x - 28, 4);
     this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
 
     const cancelText = addTextObject(0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
@@ -108,10 +108,12 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
     this.reloadSettings = this.settings.filter(s => s?.requireReload);
 
+    let anyReloadRequired = false;
     this.settings.forEach((setting, s) => {
       let settingName = setting.label;
       if (setting?.requireReload) {
-        settingName += ` (${i18next.t("settings:requireReload")})`;
+        settingName += "*";
+        anyReloadRequired = true;
       }
 
       this.settingLabels[s] = addTextObject(8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
@@ -187,6 +189,14 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
     this.settingsContainer.add(iconAction);
     this.settingsContainer.add(iconCancel);
     this.settingsContainer.add(actionText);
+    // Only add the ReloadRequired text on pages that have settings that require a reload.
+    if (anyReloadRequired) {
+      const reloadRequired = addTextObject(0, 0, `*${i18next.t("settings:requireReload")}`, TextStyle.SETTINGS_LABEL)
+        .setOrigin(0, 0.15)
+        .setPositionRelative(actionsBg, 6, 0)
+        .setY(actionText.y);
+      this.settingsContainer.add(reloadRequired);
+    }
     this.settingsContainer.add(cancelText);
     this.settingsContainer.add(this.messageBoxContainer);
 
@@ -322,12 +332,13 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
         case Button.CYCLE_SHINY:
           success = this.navigationContainer.navigate(button);
           break;
-        case Button.ACTION:
+        case Button.ACTION: {
           const setting: Setting = this.settings[cursor];
           if (setting?.activatable) {
             success = this.activateSetting(setting);
           }
           break;
+        }
       }
     }
 
@@ -425,7 +436,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
         const confirmationMessage =
           setting.options[cursor].confirmationMessage ?? i18next.t("settings:defaultConfirmMessage");
         globalScene.ui.showText(confirmationMessage, null, () => {
-          globalScene.ui.setOverlayMode(Mode.CONFIRM, confirmUpdateSetting, cancelUpdateSetting, null, null, 1, 750);
+          globalScene.ui.setOverlayMode(UiMode.CONFIRM, confirmUpdateSetting, cancelUpdateSetting, null, null, 1, 750);
         });
       } else {
         saveSetting();
