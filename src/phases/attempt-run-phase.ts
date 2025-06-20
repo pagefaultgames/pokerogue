@@ -7,6 +7,7 @@ import i18next from "i18next";
 import { NumberHolder } from "#app/utils/common";
 import { PokemonPhase } from "./pokemon-phase";
 import { globalScene } from "#app/global-scene";
+import { ArenaTagType } from "#enums/arena-tag-type";
 
 export class AttemptRunPhase extends PokemonPhase {
   public readonly phaseName = "AttemptRunPhase";
@@ -44,6 +45,9 @@ export class AttemptRunPhase extends PokemonPhase {
       });
 
       globalScene.clearEnemyHeldItemModifiers();
+
+      // clear all queued delayed attacks (e.g. from Future Sight)
+      globalScene.arena.removeTag(ArenaTagType.DELAYED_ATTACK);
 
       // biome-ignore lint/complexity/noForEach: TODO
       enemyField.forEach(enemyPokemon => {

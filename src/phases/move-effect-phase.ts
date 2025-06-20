@@ -275,12 +275,13 @@ export class MoveEffectPhase extends PokemonPhase {
       }
     }
 
+    const move = this.move;
+
     /**
      * Does an effect from this move override other effects on this turn?
      * e.g. Charging moves (Fly, etc.) on their first turn of use.
      */
     const overridden = new BooleanHolder(false);
-    const move = this.move;
 
     // Apply effects to override a move effect.
     // Assuming single target here works as this is (currently)
@@ -368,7 +369,7 @@ export class MoveEffectPhase extends PokemonPhase {
    */
   private postAnimCallback(user: Pokemon, targets: Pokemon[]) {
     // Add to the move history entry
-    if (this.firstHit) {
+    if (this.firstHit && this.useMode !== MoveUseMode.TRANSPARENT) {
       user.pushMoveHistory(this.moveHistoryEntry);
       applyExecutedMoveAbAttrs("ExecutedMoveAbAttr", user);
     }
