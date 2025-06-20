@@ -72,6 +72,10 @@ export class BerryHeldItem extends ConsumableHeldItem {
   apply(params: BERRY_PARAMS): boolean {
     const pokemon = params.pokemon;
 
+    if (!this.shouldApply(pokemon)) {
+      return false;
+    }
+
     const preserve = new BooleanHolder(false);
     globalScene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), pokemon, preserve);
     const consumed = !preserve.value;

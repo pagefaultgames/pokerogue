@@ -219,7 +219,6 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       : [];
     const optionsYOffset =
       shopTypeOptions.length > SHOP_OPTIONS_ROW_LIMIT ? -SINGLE_SHOP_ROW_YOFFSET : -DOUBLE_SHOP_ROW_YOFFSET;
-    console.log("ui_shop_options", shopTypeOptions);
 
     for (let m = 0; m < typeOptions.length; m++) {
       const sliceWidth = globalScene.game.canvas.width / 6 / (typeOptions.length + 2);
@@ -233,7 +232,6 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.modifierContainer.add(option);
       this.options.push(option);
     }
-    console.log("ui_options", this.options);
 
     // Set "Continue" button height based on number of rows in healing items shop
     const continueButton = this.continueButtonContainer.getAt<Phaser.GameObjects.Text>(0);
@@ -296,20 +294,14 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       },
     });
 
-    console.log("maxUpgradeCount", maxUpgradeCount);
-
     globalScene.time.delayedCall(1000 + maxUpgradeCount * 2000, () => {
-      console.log("delayed1", partyHasHeldItem);
       for (const shopOption of this.shopOptionsRows.flat()) {
-        console.log("uishop", shopOption);
         shopOption.show(0, 0);
       }
     });
 
     globalScene.time.delayedCall(4000 + maxUpgradeCount * 2000, () => {
-      console.log("delayed2", partyHasHeldItem);
       if (partyHasHeldItem) {
-        console.log("uihelditem", partyHasHeldItem);
         this.transferButtonContainer.setAlpha(0);
         this.transferButtonContainer.setVisible(true);
         globalScene.tweens.add({
@@ -363,8 +355,6 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         this.onActionInput = args[2];
       });
     });
-
-    console.log("ui_end");
 
     return true;
   }
@@ -779,7 +769,6 @@ class ModifierOption extends Phaser.GameObjects.Container {
     this.add(this.itemContainer);
 
     const getItem = () => {
-      console.log("SHOWING ICON", this.modifierTypeOption.type?.name, this.modifierTypeOption.type?.getIcon());
       const item = globalScene.add.sprite(0, 0, "items", this.modifierTypeOption.type?.getIcon());
       return item;
     };
@@ -815,7 +804,6 @@ class ModifierOption extends Phaser.GameObjects.Container {
   }
 
   show(remainingDuration: number, upgradeCountOffset: number) {
-    console.log("mo1");
     if (!this.modifierTypeOption.cost) {
       globalScene.tweens.add({
         targets: this.pb,
@@ -823,7 +811,6 @@ class ModifierOption extends Phaser.GameObjects.Container {
         duration: 1250,
         ease: "Bounce.Out",
       });
-      console.log("mo2");
 
       let lastValue = 1;
       let bounceCount = 0;
@@ -850,7 +837,6 @@ class ModifierOption extends Phaser.GameObjects.Container {
           lastValue = value;
         },
       });
-      console.log("mo3");
 
       for (let u = 0; u < this.modifierTypeOption.upgradeCount; u++) {
         const upgradeIndex = u;
@@ -888,14 +874,12 @@ class ModifierOption extends Phaser.GameObjects.Container {
           },
         );
       }
-      console.log("mo4");
     }
 
     globalScene.time.delayedCall(remainingDuration + 2000, () => {
       if (!globalScene) {
         return;
       }
-      console.log("mo5");
 
       if (!this.modifierTypeOption.cost) {
         this.pb.setTexture("pb", `${this.getPbAtlasKey(0)}_open`);
@@ -910,7 +894,6 @@ class ModifierOption extends Phaser.GameObjects.Container {
           onComplete: () => this.pb.destroy(),
         });
       }
-      console.log("mo6");
 
       globalScene.tweens.add({
         targets: this.itemContainer,
@@ -945,7 +928,6 @@ class ModifierOption extends Phaser.GameObjects.Container {
         });
       }
     });
-    console.log("mo_end");
   }
 
   getPbAtlasKey(tierOffset = 0) {

@@ -475,7 +475,6 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   getModifierTypeOptions(modifierCount: number): ModifierTypeOption[] {
-    console.log("HERE WE ARE", modifierCount, this.customModifierSettings);
     return getPlayerModifierTypeOptions(
       modifierCount,
       globalScene.getPlayerParty(),
