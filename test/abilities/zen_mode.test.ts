@@ -27,7 +27,7 @@ describe("Abilities - ZEN MODE", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyLevel(5)
@@ -85,8 +85,7 @@ describe("Abilities - ZEN MODE", () => {
   });
 
   it("should switch to base form on arena reset", async () => {
-    game.override.startingWave(4);
-    game.override.starterForms({
+    game.override.startingWave(4).starterForms({
       [SpeciesId.DARMANITAN]: zenForm,
     });
 

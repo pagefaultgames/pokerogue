@@ -27,7 +27,7 @@ describe("Moves - Moongeist Beam", () => {
       .ability(AbilityId.BALL_FETCH)
       .startingLevel(200)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.STURDY)
       .enemyMoveset(MoveId.SPLASH);
