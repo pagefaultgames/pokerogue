@@ -1671,6 +1671,7 @@ export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteraction
 
 /**
  * Class for abilities that convert single-strike moves to two-strike moves (i.e. Parental Bond).
+ * @param damageMultiplier the damage multiplier for the second strike, relative to the first.
  */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
   private damageMultiplier: number;
@@ -1711,7 +1712,7 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
  */
 export interface PreAttackModifyDamageAbAttrParams extends AugmentMoveInteractionAbAttrParams {
   /**
-   * The power of the move or amount of damage. May be modified by ability application.
+   * The amount of damage dealt by the move. May be modified by ability application.
    */
   damage: NumberHolder;
 }
@@ -3835,8 +3836,6 @@ export class ConditionalUserFieldBattlerTagImmunityAbAttr extends UserFieldBattl
    * @returns Whether the ability can be used to cancel the battler tag
    */
   override canApply(params: UserFieldBattlerTagImmunityAbAttrParams): boolean {
-    // the `!!params` here is to ensure the target is not null or undefined. This is defensive programming
-    // to guard against the case where
     return super.canApply(params) && this.condition(params.target);
   }
 
