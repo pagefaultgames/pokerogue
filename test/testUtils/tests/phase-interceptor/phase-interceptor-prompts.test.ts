@@ -13,40 +13,40 @@ import { beforeAll, beforeEach, describe, expect, it, vi, type Mock, type MockIn
 class testDialogueUiPhase extends mockPhase {
   public readonly phaseName = "testDialogueUiPhase";
   override start() {
-    void globalScene.ui.setMode(UiMode.TEST_DIALOGUE);
-    this.end();
+    void globalScene.ui.setMode(UiMode.TEST_DIALOGUE).then(() => this.end());
   }
 }
 
 class titleUiPhase extends mockPhase {
   public readonly phaseName = "titleUiPhase";
   override start() {
-    void globalScene.ui.setMode(UiMode.TITLE);
-    this.end();
+    void globalScene.ui.setMode(UiMode.TITLE).then(() => this.end());
   }
 }
 
 class dualUiPhase extends mockPhase {
   public readonly phaseName = "dualUiPhase";
   override start() {
-    void globalScene.ui.setMode(UiMode.TEST_DIALOGUE);
-    void globalScene.ui.setMode(UiMode.TEST_DIALOGUE);
-    this.end();
+    void globalScene.ui
+      .setMode(UiMode.TEST_DIALOGUE)
+      .then(() => globalScene.ui.setMode(UiMode.TEST_DIALOGUE))
+      .then(() => this.end());
   }
 }
 
 class argsUiPhase extends mockPhase {
   public readonly phaseName = "argsUiPhase";
   override start() {
-    void globalScene.ui.setMode(UiMode.TEST_DIALOGUE, 1, 2, 3, 4, 5);
-    this.end();
+    void globalScene.ui.setMode(UiMode.TEST_DIALOGUE, 1, 2, 3, 4, 5).then(() => this.end());
   }
 }
 
-describe("Utils - Phase Interceptor - Prompts", { timeout: 4000 }, () => {
+describe("Utils - Phase Interceptor - Prompts", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  let setModeInternal: MockInstance<(typeof game.scene.ui)["setModeInternal"]>;
+  /** Mock for the **original** `setModeInternal` UI function. */
+  let setModeInternal: MockInstance<(typeof game.phaseInterceptor)["originalSetModeInternal"]>;
+  /** Mock for the **wrapped** `setMode` phase interceptor function. */
   let setModeHelper: MockInstance<(typeof game.phaseInterceptor)["setMode"]>;
 
   let callback1: Mock;
@@ -59,17 +59,25 @@ describe("Utils - Phase Interceptor - Prompts", { timeout: 4000 }, () => {
   });
 
   beforeEach(() => {
-    // Mock the default `setModeInternal` implementation to avoid calling actual UI code.
-    // Done _before_ calling `new GameManager` to ensure the mock gets passed down to the phase interceptor
-    setModeInternal = vi.spyOn(UI.prototype as any, "setModeInternal").mockImplementation(async () => {});
-
     game = new GameManager(phaserGame);
-    setModeHelper = vi.spyOn(game.phaseInterceptor as any, "setMode");
+    // Mock the default `setModeInternal` implementation to avoid calling actual UI code.
+    setModeInternal = vi
+      .spyOn(game.phaseInterceptor as any, "originalSetModeInternal")
+      .mockImplementation(async (..._args) => {})
+      .mockName("setModeInternal exterior mock");
+
+    setModeHelper = vi
+      .spyOn(game.phaseInterceptor as any, "setMode")
+      .mockName("setMode function from phaseInterceptor");
 
     callback1 = vi.fn(() => console.log("callback 1 called!")).mockName("callback 1");
     callback2 = vi.fn(() => console.log("callback 2 called!")).mockName("callback 2");
 
     setPhases(testDialogueUiPhase, titleUiPhase, dualUiPhase);
+    // Stub out the default UI handler to always be active unless otherwise specified.
+    vi.spyOn(game.scene.ui, "getHandler").mockReturnValue({
+      active: true,
+    } as unknown as UiHandler);
   });
 
   function setPhases(phase: Constructor<mockPhase>, ...phases: Constructor<mockPhase>[]) {
@@ -95,39 +103,45 @@ describe("Utils - Phase Interceptor - Prompts", { timeout: 4000 }, () => {
 
   it("should trigger and remove prompts when the given UIMode is reached", async () => {
     onNextPrompt("testDialogueUiPhase", UiMode.TEST_DIALOGUE, () => callback1());
+    console.log(vi.isMockFunction(UI.prototype["setModeInternal"]));
 
     await to("testDialogueUiPhase");
+    // Order: helper --> original function --> callback
     expect(callback1).toHaveBeenCalledAfter(setModeInternal, true);
     expect(setModeInternal).toHaveBeenCalledAfter(setModeHelper, true);
     expect(game.phaseInterceptor["prompts"]).toHaveLength(0);
   });
 
   it("should pass along original function arguments to set mode", async () => {
-    setPhases(argsUiPhase); // passes 1, 2, 3, 4, 5 as args
+    setPhases(argsUiPhase); // passes 1, 2, 3, 4, 5 as extra args
+    console.log(vi.isMockFunction(UI.prototype["setModeInternal"]));
 
     await to("argsUiPhase");
 
-    expect(setModeHelper.mock.calls[0][1]).toEqual(setModeInternal.mock.calls[0]);
-    expect(setModeInternal).toHaveBeenCalledWith(setModeHelper, true);
+    expect(setModeHelper).toHaveBeenCalledExactlyOnceWith(setModeInternal.mock.calls[0][0]);
   });
 
-  it("should not run callback if wrong ui mode", async () => {
+  it("should skip running callback if wrong ui mode", async () => {
     onNextPrompt("testDialogueUiPhase", UiMode.TITLE, () => callback1());
+    onNextPrompt("testDialogueUiPhase", UiMode.TEST_DIALOGUE, () => callback2());
+    console.log(vi.isMockFunction(UI.prototype["setModeInternal"]));
 
     await to("testDialogueUiPhase");
     expect(callback1).not.toHaveBeenCalled();
+    expect(callback2).toHaveBeenCalled();
     expect(game.phaseInterceptor["prompts"]).toHaveLength(1);
   });
 
-  it("should not run callback if wrong phase", async () => {
+  it("should skip callback if wrong phase", async () => {
     onNextPrompt("titleUiPhase", UiMode.TEST_DIALOGUE, () => callback1());
+    console.log(vi.isMockFunction(UI.prototype["setModeInternal"]));
 
     await to("testDialogueUiPhase");
     expect(callback1).not.toHaveBeenCalled();
     expect(game.phaseInterceptor["prompts"]).toHaveLength(1);
   });
 
-  it("should not run callback if current UI handler is inactive", async () => {
+  it("should skip callback if current UI handler is inactive", async () => {
     vi.spyOn(game.scene.ui, "getHandler").mockReturnValue({
       active: false,
     } as unknown as UiHandler);
@@ -138,20 +152,20 @@ describe("Utils - Phase Interceptor - Prompts", { timeout: 4000 }, () => {
     expect(game.phaseInterceptor["prompts"]).toHaveLength(1);
   });
 
-  it("should not run callback if current UI handler is awaiting input", async () => {
+  it("should skip callback if current UI handler is not awaiting input when expected", async () => {
     vi.spyOn(game.scene.ui, "getHandler").mockReturnValue({
       active: true,
-      awaitingActionInput: true,
+      awaitingActionInput: false,
       __proto__: AwaitableUiHandler.prototype,
     } as unknown as AwaitableUiHandler);
-    onNextPrompt("testDialogueUiPhase", UiMode.TEST_DIALOGUE, () => callback1());
+    onNextPrompt("testDialogueUiPhase", UiMode.TEST_DIALOGUE, () => callback1(), undefined, true);
 
     await to("testDialogueUiPhase");
     expect(callback1).not.toHaveBeenCalled();
     expect(game.phaseInterceptor["prompts"]).toHaveLength(1);
   });
 
-  it("should be removed regardless of mode/phase if expiry function met", async () => {
+  it("should remove prompts with expiry conditions met", async () => {
     onNextPrompt(
       "titleUiPhase",
       UiMode.TITLE,

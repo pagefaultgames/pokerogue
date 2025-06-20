@@ -5,8 +5,6 @@ import type { PhaseString } from "#app/@types/phase-types";
 import { vi, type MockInstance } from "vitest";
 import { format } from "util";
 import AwaitableUiHandler from "#app/ui/awaitable-ui-handler";
-import { waitUntil } from "#test/testUtils/testUtils";
-
 interface PromptHandler {
   /** The {@linkcode PhaseString | name} of the Phase to execute the callback during. */
   phaseTarget: PhaseString;
@@ -16,10 +14,11 @@ interface PromptHandler {
   callback: () => void;
   /**
    * An optional callback function to determine if the prompt has expired and should be removed.
+   * Expired prompts are removed upon the next UI mode change without executing their callback.
    */
   expireFn?: () => boolean;
   /**
-   * If `true`, will only activate when the current UI handler is waiting for input.
+   * If `true`, restricts the prompt to only activate when the current UI handler is waiting for input.
    * @defaultValue `false`
    */
   awaitingActionInput: boolean;
@@ -33,9 +32,12 @@ export default class PhaseInterceptor {
   private scene: BattleScene;
   /** A log of phases having been executed. */
   public log: PhaseString[] = [];
+  /** An array of {@linkcode PromptHandler | prompts} with associated callbacks. */
   private prompts: PromptHandler[] = [];
-  /** A mock tracking when the shift phase method is called. */
-  private shiftSpy: MockInstance<typeof this.scene.phaseManager.shiftPhase>;
+  /** The original `setModeInternal` function, stored for posterity. */
+  private originalSetModeInternal: (typeof this.scene.ui)["setModeInternal"];
+  /** Whether we are currently running a phase or not. */
+  private isRunning = false;
 
   /**
    * Constructor to initialize the scene and properties, and to start the phase handling.
@@ -57,20 +59,19 @@ export default class PhaseInterceptor {
    * Method to initialize various mocks for intercepting phases.
    */
   initMocks() {
-    const originalSetMode = this.scene.ui["setModeInternal"];
+    this.originalSetModeInternal = this.scene.ui["setModeInternal"];
     // `any` assertion needed as we are mocking private property
     const uiSpy = vi.spyOn(this.scene.ui as any, "setModeInternal") as MockInstance<
       (typeof this.scene.ui)["setModeInternal"]
     >;
     uiSpy.mockImplementation(async (...args) => {
-      this.setMode(originalSetMode, args);
+      this.setMode(args);
     });
 
-    // Mock the private startCurrentPhase method to do nothing to let us
-    // start them manually ourselves.
-    vi.spyOn(this.scene.phaseManager as any, "startCurrentPhase").mockImplementation(() => {});
-
-    this.shiftSpy = vi.spyOn(this.scene.phaseManager, "shiftPhase");
+    // Mock the private startCurrentPhase method to toggle `isRunning` rather than actually starting the phase.
+    vi.spyOn(this.scene.phaseManager as any, "startCurrentPhase").mockImplementation(() => {
+      this.isRunning = false;
+    });
   }
 
   /**
@@ -98,18 +99,20 @@ export default class PhaseInterceptor {
         return;
       }
 
-      // Current phase is different; run and wait for it to finish
-      await this.run(currentPhase);
+      // Current phase is different; run and wait for it to finish.
+      // NB: Putting the `vi.waitUntil` inside `run` causes the test to start the next hook somehow.
+      // IDK why so will be keeping this here for now.
+      await Promise.all([this.run(currentPhase), vi.waitUntil(() => !this.isRunning, { timeout: 2000 })]);
       currentPhase = pm.getCurrentPhase();
     }
 
-    // We hit the target; run as applicable and wrap up.
     if (!runTarget) {
+      // We hit the target; run as applicable and wrap up.
       console.log(`PhaseInterceptor.to: Stopping on run of ${targetPhase}`);
       return;
     }
 
-    await this.run(currentPhase);
+    await Promise.all([this.run(currentPhase), vi.waitUntil(() => !this.isRunning)]);
   }
 
   /**
@@ -118,11 +121,10 @@ export default class PhaseInterceptor {
    * @returns A Promise that resolves when the phase is run.
    */
   private async run(currentPhase: Phase): Promise<void> {
-    this.shiftSpy.mockClear();
+    this.isRunning = true;
     try {
       this.logPhase(currentPhase.phaseName);
       currentPhase.start();
-      await waitUntil(() => this.shiftSpy.mock.calls.length > 0);
     } catch (error: unknown) {
       throw error instanceof Error
         ? error
@@ -132,8 +134,17 @@ export default class PhaseInterceptor {
     }
   }
 
-  /** Alias for {@linkcode PhaseManager.shiftPhase()}. */
+  /**
+   * Skip the currently running phase.
+   * @throws Error if already running a phase.
+   * @remarks
+   * This function is used for removing phases _not already started_.
+   * To stop ones already in the process of running, use `game.endPhase`
+   */
   shiftPhase() {
+    if (this.isRunning) {
+      throw new Error("Tried skipping phase while already running one!");
+    }
     console.log(`Skipping current phase ${this.scene.phaseManager.getCurrentPhase()?.phaseName}`);
     return this.scene.phaseManager.shiftPhase();
   }
@@ -144,13 +155,12 @@ export default class PhaseInterceptor {
    * @param args - Arguments having been passed to the original method.
    */
   private async setMode(
-    originalSetMode: (typeof this.scene.ui)["setModeInternal"],
     args: Parameters<(typeof this.scene.ui)["setModeInternal"]>,
   ): ReturnType<(typeof this.scene.ui)["setModeInternal"]> {
     const mode = args[0];
 
     console.log("setMode", `${UiMode[mode]} (=${mode})`, args.slice(1));
-    const ret = await originalSetMode.apply(this.scene.ui, [args]);
+    const ret = await this.originalSetModeInternal.apply(this.scene.ui, [args]);
     this.doPromptCheck(mode);
     return ret;
   }
@@ -160,37 +170,34 @@ export default class PhaseInterceptor {
    * @param mode - The {@linkcode UiMode} to set.
    */
   private doPromptCheck(uiMode: UiMode): void {
-    // remove all expired prompts
-    const firstNonExpired = this.prompts.findIndex(p => p.expireFn?.());
-    if (firstNonExpired > -1) {
-      this.prompts.splice(0, firstNonExpired + 1);
-    }
-
-    if (this.prompts.length === 0) {
-      return;
-    }
-
-    // Check if the current mode, phase, and handler match the expected values.
-    // If not, we just skip and wait.
-    // TODO: Should this continue onwards or stop after the first one?
-    const prompt = this.prompts[0];
+    const leftoverPrompts: PromptHandler[] = [];
     const currentPhase = this.scene.phaseManager.getCurrentPhase()?.phaseName;
     const currentHandler = this.scene.ui.getHandler();
-    if (
-      uiMode !== prompt.mode ||
-      currentPhase !== prompt.phaseTarget ||
-      !currentHandler.active ||
-      (prompt.awaitingActionInput &&
-        currentHandler instanceof AwaitableUiHandler &&
-        !currentHandler["awaitingActionInput"])
-    ) {
-      return;
+    for (const prompt of this.prompts) {
+      // remove expired prompts
+      if (prompt.expireFn?.()) {
+        continue;
+      }
+
+      // If the current mode, phase, and handler match the expected values, execute the callback.
+      // If not, add the prompt to the leftover pile.
+      if (
+        uiMode === prompt.mode &&
+        currentPhase === prompt.phaseTarget &&
+        currentHandler.active &&
+        !(
+          prompt.awaitingActionInput &&
+          currentHandler instanceof AwaitableUiHandler &&
+          !currentHandler["awaitingActionInput"]
+        )
+      ) {
+        prompt.callback();
+      } else {
+        leftoverPrompts.push(prompt);
+      }
     }
 
-    // Prompt matches; perform callback as applicable and return
-    this.prompts.shift();
-    prompt.callback();
-    return;
+    this.prompts = leftoverPrompts;
   }
 
   /**
@@ -223,7 +230,7 @@ export default class PhaseInterceptor {
    * This was previously used to reset timers created using `setInterval` on test end.
    * However, since we now use mocks created by {@linkcode vi.spyOn}
    * that innately reset on test end, this function has become a no-op.
-   * @deprecated - This is no longer needed and will be removed very shortly
+   * @deprecated This is no longer needed and will be removed very shortly
    */
   restoreOg() {}
 }

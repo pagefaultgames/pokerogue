@@ -37,7 +37,6 @@ import { PlayerGender } from "#enums/player-gender";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { generateStarter } from "#test/testUtils/gameManagerUtils";
-import { waitUntil } from "#test/testUtils/testUtils";
 import GameWrapper from "#test/testUtils/gameWrapper";
 import { ChallengeModeHelper } from "#test/testUtils/helpers/challengeModeHelper";
 import { ClassicModeHelper } from "#test/testUtils/helpers/classicModeHelper";
@@ -139,6 +138,7 @@ export default class GameManager {
     // Disables Mystery Encounters on all tests (can be overridden at test level)
     this.override.mysteryEncounterChance(0);
   }
+
   /**
    * Sets the game mode.
    * @param mode - The mode to set.
@@ -152,11 +152,8 @@ export default class GameManager {
    * @param mode - The mode to wait for.
    * @returns A promise that resolves when the mode is set.
    */
-  waitMode(mode: UiMode): Promise<void> {
-    return new Promise(async resolve => {
-      await waitUntil(() => this.scene.ui?.getMode() === mode);
-      return resolve();
-    });
+  async waitMode(mode: UiMode): Promise<void> {
+    await vi.waitUntil(() => this.scene.ui?.getMode() === mode);
   }
 
   /**
@@ -177,7 +174,7 @@ export default class GameManager {
    * Default `false`
    *
    * @remarks
-   * If multiple prompts are queued up in succession, **only the first will be checked** each time the UI mode changes.
+   * If multiple prompts are queued up in succession, all will be checked **independently** of one another every time the UI mode changes.
    */
   onNextPrompt(
     phaseTarget: PhaseString,

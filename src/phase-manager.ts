@@ -253,15 +253,11 @@ export class PhaseManager {
   constructor() {
     this.dynamicPhaseQueues = [new PostSummonPhasePriorityQueue()];
     this.dynamicPhaseTypes = [PostSummonPhase];
-  }
-
-  /* Phase Functions */
+  } /* Phase Functions */
 
   /**
    * Getter function to return the currently-in-progess {@linkcode Phase}.
    * @returns The current Phase, or `null` if no phase is currently active.
-   * @remarks
-   * Type narrowing can be done by the caller using {@linkcode Phase.is}.
    */
   getCurrentPhase(): Phase | null {
     return this.currentPhase;
