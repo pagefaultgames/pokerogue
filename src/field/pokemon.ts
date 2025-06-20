@@ -2505,14 +2505,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     atkScore *= 1.25; //give more value for the pokemon's typing
     const moveset = this.moveset;
-    let moveAtkScoreLenght = 0;
+    let moveAtkScoreLength = 0;
     for (const move of moveset) {
       if (move.getMove().category === MoveCategory.SPECIAL || move.getMove().category === MoveCategory.PHYSICAL) {
         atkScore += opponent.getAttackTypeEffectiveness(move.getMove().type, this, false, true, undefined, true);
-        moveAtkScoreLenght++;
+        moveAtkScoreLength++;
       }
     }
-    atkScore = atkScore / (moveAtkScoreLenght + 1); //calculate the median for the attack score
+    atkScore = atkScore / (moveAtkScoreLength + 1); //calculate the median for the attack score
     /**
      * Based on this Pokemon's HP ratio compared to that of the opponent.
      * This ratio is multiplied by 1.5 if this Pokemon outspeeds the opponent;
