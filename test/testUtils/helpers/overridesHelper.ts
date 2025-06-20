@@ -17,6 +17,7 @@ import { GameManagerHelper } from "./gameManagerHelper";
 import { coerceArray, shiftCharCodes } from "#app/utils/common";
 import type { RandomTrainerOverride } from "#app/overrides";
 import type { BattleType } from "#enums/battle-type";
+import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
 
 /**
  * Helper to handle overrides in tests
@@ -96,9 +97,9 @@ export class OverridesHelper extends GameManagerHelper {
    * @param items - The items to hold
    * @returns `this`
    */
-  public startingHeldItems(items: ModifierOverride[]): this {
-    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
-    this.log("Player Pokemon starting held items set to:", items);
+  public startingHeldItems(itemConfiguration: HeldItemConfiguration): this {
+    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(itemConfiguration);
+    this.log("Player Pokemon starting held items set to:", itemConfiguration);
     return this;
   }
 
@@ -416,9 +417,9 @@ export class OverridesHelper extends GameManagerHelper {
    * @param items the items to hold
    * @returns `this`
    */
-  public enemyHeldItems(items: ModifierOverride[]): this {
-    vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
-    this.log("Enemy Pokemon held items set to:", items);
+  public enemyHeldItems(itemConfiguration: HeldItemConfiguration): this {
+    vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(itemConfiguration);
+    this.log("Enemy Pokemon held items set to:", itemConfiguration);
     return this;
   }
 

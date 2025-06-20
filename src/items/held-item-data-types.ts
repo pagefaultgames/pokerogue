@@ -46,7 +46,7 @@ export type HeldItemCategoryEntry = HeldItemData & {
 };
 
 export function isHeldItemCategoryEntry(entry: any): entry is HeldItemCategoryEntry {
-  return isHeldItemCategoryEntry(entry.id) && "customWeights" in entry;
+  return entry?.id && isHeldItemCategoryEntry(entry.id) && "customWeights" in entry;
 }
 
 type HeldItemPoolEntry = {

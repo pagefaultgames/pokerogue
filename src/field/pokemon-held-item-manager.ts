@@ -150,6 +150,14 @@ export class PokemonItemManager {
     return currentItems.filter(it => !exclude && isItemInRequested(it, requestedItems));
   }
 
+  getHeldItemCount(): number {
+    let total = 0;
+    for (const properties of Object.values(this.heldItems)) {
+      total += properties?.stack ?? 0;
+    }
+    return total;
+  }
+
   addFormChangeItem(id: FormChangeItem) {
     if (!(id in this.formChangeItems)) {
       this.formChangeItems[id] = { active: false };

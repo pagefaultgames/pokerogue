@@ -1,5 +1,4 @@
 import { Stat } from "#enums/stat";
-import { SpeciesStatBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/data/data-lists";
 import i18next from "#app/plugins/i18n";
 import { NumberHolder } from "#app/utils/common";
@@ -7,6 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { HeldItemId } from "#enums/held-item-id";
 
 describe("Items - Light Ball", () => {
   let phaserGame: Phaser.Game;
@@ -29,7 +29,7 @@ describe("Items - Light Ball", () => {
   });
 
   it("LIGHT_BALL activates in battle correctly", async () => {
-    game.override.startingHeldItems([{ name: "RARE_SPECIES_STAT_BOOSTER", type: "LIGHT_BALL" }]);
+    game.override.startingHeldItems([{ entry: HeldItemId.LIGHT_BALL }]);
     const consoleSpy = vi.spyOn(console, "log");
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
