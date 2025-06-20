@@ -990,6 +990,10 @@ export class GameData {
         return resolve(false);
       }
 
+      if (newName === "") {
+        return resolve(true);
+      }
+
       sessionData.runNameText = newName;
       const updatedDataStr = JSON.stringify(sessionData);
       const encrypted = encrypt(updatedDataStr, bypassLogin);
@@ -997,19 +1001,22 @@ export class GameData {
       const trainerId = this.trainerId;
 
       if (!bypassLogin) {
-        pokerogueApi.savedata.session.update({ slot: slotId, trainerId, secretId, clientSessionId },encrypted).then(error => {
-          if (error) {
-            console.error("Failed to update session name:", error);
-            resolve(false);
-          } else {
-            localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`, encrypted);
-            updateUserInfo().then(success => {
-              if (success !== null && !success) {
-                return resolve(false);
-            }});
-            resolve(true);
-          }
-        });
+        pokerogueApi.savedata.session
+          .update({ slot: slotId, trainerId, secretId, clientSessionId }, encrypted)
+          .then(error => {
+            if (error) {
+              console.error("Failed to update session name:", error);
+              resolve(false);
+            } else {
+              localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`, encrypted);
+              updateUserInfo().then(success => {
+                if (success !== null && !success) {
+                  return resolve(false);
+                }
+              });
+              resolve(true);
+            }
+          });
       } else {
         localStorage.setItem(
           `sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`,
