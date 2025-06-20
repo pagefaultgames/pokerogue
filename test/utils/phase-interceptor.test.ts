@@ -16,8 +16,8 @@ abstract class mockPhase extends Phase {
   }
 }
 
-class normalPhase extends mockPhase {
-  public readonly phaseName = "normalPhase";
+class bananaPhase extends mockPhase {
+  public readonly phaseName = "bananaPhase";
 }
 
 class applePhase extends mockPhase {
@@ -36,7 +36,7 @@ class oneSecTimerPhase extends mockPhase {
 class unshifterPhase extends mockPhase {
   public readonly phaseName = "unshifterPhase";
   override start() {
-    game.scene.phaseManager.unshiftPhase(new normalPhase() as unknown as Phase);
+    game.scene.phaseManager.unshiftPhase(new bananaPhase() as unknown as Phase);
     game.scene.phaseManager.unshiftPhase(new applePhase() as unknown as Phase);
     super.start();
   }
@@ -52,7 +52,7 @@ describe("Utils - Phase Interceptor", { timeout: 4000 }, () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    setPhases(normalPhase, applePhase, oneSecTimerPhase, unshifterPhase, normalPhase);
+    setPhases(bananaPhase, applePhase, oneSecTimerPhase, unshifterPhase, bananaPhase);
   });
 
   function setPhases(...phases: Constructor<mockPhase>[]) {
@@ -78,29 +78,29 @@ describe("Utils - Phase Interceptor", { timeout: 4000 }, () => {
 
   describe("to", () => {
     it("should run the specified phase and halt after it ends", async () => {
-      await to("normalPhase");
+      await to("bananaPhase");
       expect(getCurrentPhaseName()).toBe("applePhase");
-      expect(getQueuedPhases()).toEqual(["oneSecTimerPhase", "unshifterPhase", "normalPhase"]);
-      expect(game.phaseInterceptor.log).toEqual(["normalPhase"]);
+      expect(getQueuedPhases()).toEqual(["oneSecTimerPhase", "unshifterPhase", "bananaPhase"]);
+      expect(game.phaseInterceptor.log).toEqual(["bananaPhase"]);
     });
 
     it("should run to the specified phase without starting/logging", async () => {
-      await to("normalPhase", false);
-      expect(getCurrentPhaseName()).toBe("normalPhase");
-      expect(getQueuedPhases()).toEqual(["applePhase", "oneSecTimerPhase", "unshifterPhase", "normalPhase"]);
+      await to("bananaPhase", false);
+      expect(getCurrentPhaseName()).toBe("bananaPhase");
+      expect(getQueuedPhases()).toEqual(["applePhase", "oneSecTimerPhase", "unshifterPhase", "bananaPhase"]);
       expect(game.phaseInterceptor.log).toHaveLength(0);
     });
 
     it("should start all phases between start and target", async () => {
       await to("oneSecTimerPhase");
-      expect(getQueuedPhases()).toEqual(["unshifterPhase", "normalPhase"]);
-      expect(game.phaseInterceptor.log).toEqual(["normalPhase", "applePhase", "oneSecTimerPhase"]);
+      expect(getQueuedPhases()).toEqual(["unshifterPhase", "bananaPhase"]);
+      expect(game.phaseInterceptor.log).toEqual(["bananaPhase", "applePhase", "oneSecTimerPhase"]);
     });
 
     it("should work on newly unshifted phases", async () => {
-      setPhases(unshifterPhase); // adds normalPhase and applePhase to queue
+      setPhases(unshifterPhase); // adds bananaPhase and applePhase to queue
       await to("applePhase");
-      expect(game.phaseInterceptor.log).toEqual(["unshifterPhase", "normalPhase", "applePhase"]);
+      expect(game.phaseInterceptor.log).toEqual(["unshifterPhase", "bananaPhase", "applePhase"]);
     });
 
     it("should wait until phase finishes before starting next", async () => {
@@ -112,13 +112,13 @@ describe("Utils - Phase Interceptor", { timeout: 4000 }, () => {
 
   describe("shift", () => {
     it("should skip the next phase without starting", async () => {
-      expect(getCurrentPhaseName()).toBe("normalPhase");
-      expect(getQueuedPhases()).toEqual(["applePhase", "oneSecTimerPhase", "unshifterPhase", "normalPhase"]);
+      expect(getCurrentPhaseName()).toBe("bananaPhase");
+      expect(getQueuedPhases()).toEqual(["applePhase", "oneSecTimerPhase", "unshifterPhase", "bananaPhase"]);
 
       game.phaseInterceptor.shiftPhase();
 
       expect(getCurrentPhaseName()).toBe("applePhase");
-      expect(getQueuedPhases()).toEqual(["oneSecTimerPhase", "unshifterPhase", "normalPhase"]);
+      expect(getQueuedPhases()).toEqual(["oneSecTimerPhase", "unshifterPhase", "bananaPhase"]);
       expect(game.phaseInterceptor.log).toEqual([]);
     });
   });

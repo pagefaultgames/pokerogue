@@ -197,11 +197,5 @@ export default class PhaseInterceptor {
     });
   }
 
-  /**
-   * Restores the original state of phases and clears intervals.
-   */
-  restoreOg() {
-    // clearInterval(this.promptInterval);
-    // clearInterval(this.intervalRun);
-  }
+  restoreOg() {}
 }
