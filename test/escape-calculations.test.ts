@@ -280,7 +280,6 @@ describe("Escape chance calculations", () => {
     commandPhase.handleCommand(Command.RUN, 0);
 
     await game.phaseInterceptor.to(AttemptRunPhase, false);
-    const _phase = game.scene.phaseManager.getCurrentPhase() as AttemptRunPhase;
     const escapePercentage = new NumberHolder(0);
 
     // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, the escapeAttempts are the number of escape attempts and the expectedEscapeChance is the chance it should be escaping
