@@ -63,7 +63,7 @@ export default class PhaseInterceptor {
    * @param phaseName - The name of the phase to log.
    */
   private logPhase(phaseName: PhaseString) {
-    // Exclude normal green highlighting due to issues with consoles
+    // Exclude normal green highlighting due to issues with consoles not rendering it at all
     console.log(`Start Phase ${phaseName}`);
     this.log.push(phaseName);
   }
@@ -197,5 +197,13 @@ export default class PhaseInterceptor {
     });
   }
 
+  /**
+   * Deprecated no-op function.
+   *
+   * This was previously used to reset timers created using `setInterval` on test end.
+   * However, since we now use mocks created by {@linkcode vi.spyOn}
+   * that innately reset on test end, this function has become a no-op.
+   * @deprecated - This is no longer needed and will be removed very shortly
+   */
   restoreOg() {}
 }
