@@ -13,6 +13,7 @@ import { TextStyle, addTextObject } from "./text";
 import { UiMode } from "#enums/ui-mode";
 import { addWindow } from "./ui-theme";
 import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
+import { GameModes } from "#enums/game-modes";
 
 const SESSION_SLOTS_COUNT = 5;
 const SLOTS_ON_SCREEN = 2;
@@ -385,7 +386,6 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
       this.sessionSlotsContainer.add(this.cursorObj);
     }
     const cursorPosition = cursor + this.scrollCursor;
-    const valueHeight = this.sessionSlots[prevSlotIndex ?? 0]?.saveData?.runNameText ? 76 : 76;
     const cursorIncrement = cursorPosition * 76;
     if (this.sessionSlots[cursorPosition] && this.cursorObj) {
       const hasData = this.sessionSlots[cursorPosition].hasData;
@@ -413,7 +413,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
   revertSessionSlot(slotIndex: number): void {
     const sessionSlot = this.sessionSlots[slotIndex];
     if (sessionSlot) {
-      const valueHeight = sessionSlot.saveData?.runNameText ? 76 : 76;
+      const valueHeight = 76;
       sessionSlot.setPosition(0, slotIndex * valueHeight);
     }
   }
@@ -498,34 +498,55 @@ class SessionSlot extends Phaser.GameObjects.Container {
     this.add(this.loadingLabel);
   }
 
+  decideFallback(data: SessionSaveData) {
+    let fallbackName;
+    switch (data.gameMode) {
+      case GameModes.CLASSIC:
+        fallbackName = `${GameMode.getModeName(data.gameMode)} (${globalScene.gameData.gameStats.classicSessionsPlayed + 1})`;
+        break;
+      case GameModes.ENDLESS:
+      case GameModes.SPLICED_ENDLESS:
+        fallbackName = `${GameMode.getModeName(data.gameMode)} (${globalScene.gameData.gameStats.endlessSessionsPlayed + 1})`;
+        break;
+      case GameModes.DAILY:
+        const runDay = new Date(data.timestamp).toLocaleDateString();
+        fallbackName = `${GameMode.getModeName(data.gameMode)} (${runDay})`;
+        break;
+      case GameModes.CHALLENGE:
+        fallbackName = `${GameMode.getModeName(data.gameMode)}`;
+        break;
+    }
+    return fallbackName;
+  }
+
   async setupWithData(data: SessionSaveData) {
     const hasName = data?.runNameText;
     this.remove(this.loadingLabel, true);
     if (hasName) {
       const nameLabel = addTextObject(8, 5, data.runNameText, TextStyle.WINDOW);
       this.add(nameLabel);
+    } else {
+      const fallbackName = this.decideFallback(data);
+      await globalScene.gameData.renameSession(this.slotId, fallbackName);
+      const nameLabel = addTextObject(8, 5, fallbackName, TextStyle.WINDOW);
+      this.add(nameLabel);
     }
 
     const gameModeLabel = addTextObject(
       8,
-      hasName ? 19 : 12,
+      19,
       `${GameMode.getModeName(data.gameMode) || i18next.t("gameMode:unkown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`,
       TextStyle.WINDOW,
     );
     this.add(gameModeLabel);
 
-    const timestampLabel = addTextObject(
-      8,
-      hasName ? 33 : 26,
-      new Date(data.timestamp).toLocaleString(),
-      TextStyle.WINDOW,
-    );
+    const timestampLabel = addTextObject(8, 33, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
     this.add(timestampLabel);
 
-    const playTimeLabel = addTextObject(8, hasName ? 47 : 40, getPlayTimeString(data.playTime), TextStyle.WINDOW);
+    const playTimeLabel = addTextObject(8, 47, getPlayTimeString(data.playTime), TextStyle.WINDOW);
     this.add(playTimeLabel);
 
-    const pokemonIconsContainer = globalScene.add.container(144, hasName ? 16 : 9);
+    const pokemonIconsContainer = globalScene.add.container(144, 16);
     data.party.forEach((p: PokemonData, i: number) => {
       const iconContainer = globalScene.add.container(26 * i, 0);
       iconContainer.setScale(0.75);
