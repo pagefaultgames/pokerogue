@@ -28,7 +28,7 @@ describe("Abilities - Fur Coat", () => {
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([MoveId.SPLASH])
       .enemyLevel(20)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("should reduce damage from a physical move after gaining Fur Coat", async () => {
