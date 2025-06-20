@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "774-indigo.png",
+			"image": "774-blue.png",
 			"format": "RGBA8888",
 			"size": {"w": 274, "h": 274},
 			"scale": 1,
