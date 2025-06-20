@@ -339,17 +339,6 @@ export class MovePhase extends BattlePhase {
       this.showMoveText();
     }
 
-    if (
-      //Prevent using Transform if either the user or target is already transformed
-      this.move.getMove().id === MoveId.TRANSFORM &&
-      (targets[0].isTransformed() || this.pokemon.isTransformed())
-    ) {
-      this.showMoveText();
-      this.showFailedText();
-      this.end();
-      return;
-    }
-
     // Clear out any two turn moves once they've been used.
     // TODO: Refactor move queues and remove this assignment;
     // Move queues should be handled by the calling `CommandPhase` or a manager for it

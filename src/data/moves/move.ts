@@ -7610,12 +7610,12 @@ export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
  */
 export class TransformAttr extends MoveEffectAttr {
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
+    if (!super.apply(user, target, move, args) || (target.isTransformed() || user.isTransformed())) {
+      globalScene.phaseManager.queueMessage(i18next.t("battle:attackFailed"));
       return false;
     }
 
     globalScene.phaseManager.unshiftNew("PokemonTransformPhase", user.getBattlerIndex(), target.getBattlerIndex());
-
 
     return true;
   }
