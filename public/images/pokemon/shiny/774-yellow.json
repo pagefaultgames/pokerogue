@@ -1,7 +1,7 @@
 {
 	"textures": [
 		{
-			"image": "774-yellow.png",
+			"image": "774-blue.png",
 			"format": "RGBA8888",
 			"size": {
 				"w": 37,
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:19b96795d3881734c6dcb8a60c8213c1:8ffae71c8fd82950c45b3ec4e10790e3:a0f9f47b818f7e67dd381af2f205c265$"
+		"smartupdate": "$TexturePacker:SmartUpdate:2414bcfae0bd84083e0b88e86461d897:b61b83191053ba4c1107ffa00ac21b90:0787168dbe37404ac3aa22b487979d47$"
 	}
 }

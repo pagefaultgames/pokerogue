@@ -351,6 +351,36 @@ const timedEvents: TimedEvent[] = [
       { wave: 25, type: "SHINY_CHARM" },
     ],
   },
+  {
+    name: "Pride 25",
+    eventType: EventType.SHINY,
+    startDate: new Date(Date.UTC(2025, 5, 18)),
+    endDate: new Date(Date.UTC(2025, 5, 30)),
+    bannerKey: "pride2025",
+    scale: 0.105,
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-MX", "pt-BR", "zh-CN", "zh-TW"],
+    shinyMultiplier: 2,
+    eventEncounters: [
+      { species: SpeciesId.CHARMANDER },
+      { species: SpeciesId.SANDILE },
+      { species: SpeciesId.FERROSEED },
+      { species: SpeciesId.FOONGUS },
+      { species: SpeciesId.CUTIEFLY },
+      { species: SpeciesId.DEWPIDER },
+      { species: SpeciesId.TYPE_NULL },
+      { species: SpeciesId.MINIOR },
+      { species: SpeciesId.SOBBLE },
+      { species: SpeciesId.INDEEDEE },
+      { species: SpeciesId.CAPSAKID },
+      { species: SpeciesId.ALOLA_MEOWTH },
+    ],
+    classicWaveRewards: [
+      { wave: 8, type: "SHINY_CHARM" },
+      { wave: 8, type: "ABILITY_CHARM" },
+      { wave: 8, type: "CATCHING_CHARM" },
+      { wave: 25, type: "SHINY_CHARM" },
+    ],
+  },
 ];
 
 export class TimedEventManager {

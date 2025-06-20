@@ -245,6 +245,7 @@ export async function initI18n(): Promise<void> {
       "pokeball",
       "pokedexUiHandler",
       "pokemon",
+      "pokemonCategory",
       "pokemonEvolutions",
       "pokemonForm",
       "pokemonInfo",
