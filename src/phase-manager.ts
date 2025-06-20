@@ -253,7 +253,9 @@ export class PhaseManager {
   constructor() {
     this.dynamicPhaseQueues = [new PostSummonPhasePriorityQueue()];
     this.dynamicPhaseTypes = [PostSummonPhase];
-  } /* Phase Functions */
+  } 
+
+  /* Phase Functions */
 
   /**
    * Getter function to return the currently-in-progess {@linkcode Phase}.
