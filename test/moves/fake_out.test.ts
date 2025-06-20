@@ -27,7 +27,7 @@ describe("Moves - Fake Out", () => {
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(10)
       .startingLevel(1) // prevent LevelUpPhase from happening
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("should only work the first turn a pokemon is sent out in a battle", async () => {

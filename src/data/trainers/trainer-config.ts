@@ -10,7 +10,7 @@ import {
   randSeedIntRange,
 } from "#app/utils/common";
 import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { tmSpecies } from "#app/data/balance/tms";
 import { doubleBattleDialogue } from "../double-battle-dialogue";
 import { TrainerVariant } from "#enums/trainer-variant";

@@ -20,7 +20,7 @@ import { PartyUiMode } from "#app/ui/party-ui-handler";
 import { SpeciesId } from "#enums/species-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import {
   getEncounterText,
@@ -751,7 +751,7 @@ export async function catchPokemon(
                       UiMode.POKEDEX_PAGE,
                       pokemon.species,
                       pokemon.formIndex,
-                      attributes,
+                      [attributes],
                       null,
                       () => {
                         globalScene.ui.setMode(UiMode.MESSAGE).then(() => {

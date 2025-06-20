@@ -3,7 +3,8 @@ import { BattleType } from "#enums/battle-type";
 import type BattleScene from "#app/battle-scene";
 import { getDailyRunStarters } from "#app/data/daily-run";
 import { Gender } from "#app/data/gender";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
+import { getPokemonSpeciesForm } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { getGameMode } from "#app/game-mode";
 import { GameModes } from "#enums/game-modes";
@@ -97,7 +98,7 @@ export function waitUntil(truth): Promise<unknown> {
   });
 }
 
-/** Get the index of `move` from the moveset of the pokemon on the player's field at location `pokemonIndex` */
+/** Get the index of `move` from the moveset of the pokemon on the player's field at location `pokemonIndex`. */
 export function getMovePosition(scene: BattleScene, pokemonIndex: 0 | 1, move: MoveId): number {
   const playerPokemon = scene.getPlayerField()[pokemonIndex];
   const moveSet = playerPokemon.getMoveset();
