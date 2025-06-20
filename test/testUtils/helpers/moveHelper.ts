@@ -11,7 +11,7 @@ import { MoveId } from "#enums/move-id";
 import { UiMode } from "#enums/ui-mode";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
-import { vi } from "vitest";
+import { expect, vi } from "vitest";
 import { coerceArray } from "#app/utils/common";
 import { MoveUseMode } from "#enums/move-use-mode";
 
@@ -160,12 +160,27 @@ export class MoveHelper extends GameManagerHelper {
 
   /**
    * Changes a pokemon's moveset to the given move(s).
+   *
    * Used when the normal moveset override can't be used (such as when it's necessary to check or update properties of the moveset).
+   *
+   * **Note**: Will disable the moveset override matching the pokemon's party.
    * @param pokemon - The {@linkcode Pokemon} being modified
    * @param moveset - The {@linkcode MoveId} (single or array) to change the Pokemon's moveset to.
    */
   public changeMoveset(pokemon: Pokemon, moveset: MoveId | MoveId[]): void {
+    if (pokemon.isPlayer()) {
+      if (coerceArray(Overrides.MOVESET_OVERRIDE).length > 0) {
+        vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
+        console.warn("Player moveset override disabled due to use of `game.move.changeMoveset`!");
+      }
+    } else {
+      if (coerceArray(Overrides.OPP_MOVESET_OVERRIDE).length > 0) {
+        vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([]);
+        console.warn("Enemy moveset override disabled due to use of `game.move.changeMoveset`!");
+      }
+    }
     moveset = coerceArray(moveset);
+    expect(moveset.length, "Cannot assign more than 4 moves to a moveset!").toBeLessThanOrEqual(4);
     pokemon.moveset = [];
     moveset.forEach(move => {
       pokemon.moveset.push(new PokemonMove(move));
