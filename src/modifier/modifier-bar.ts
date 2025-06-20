@@ -48,7 +48,7 @@ export const formChangeItemSortFunc = (a: FormChangeItem, b: FormChangeItem): nu
 export class ModifierBar extends Phaser.GameObjects.Container {
   private player: boolean;
   private modifierCache: (PersistentModifier | HeldItemId)[];
-  private totalVisibleLength = 0;
+  public totalVisibleLength = 0;
 
   constructor(enemy?: boolean) {
     super(globalScene, 1 + (enemy ? 302 : 0), 2);
@@ -72,19 +72,23 @@ export class ModifierBar extends Phaser.GameObjects.Container {
 
     this.totalVisibleLength = sortedVisibleModifiers.length + heldItemsA.length + heldItemsB.length;
 
-    sortedVisibleModifiers.forEach((modifier: PersistentModifier, i: number) => {
+    let iconCount = 0;
+    sortedVisibleModifiers.forEach(modifier => {
       const icon = modifier.getIcon();
-      this.addIcon(icon, i, modifier.type.name, modifier.type.getDescription());
+      iconCount += 1;
+      this.addIcon(icon, iconCount, modifier.type.name, modifier.type.getDescription());
     });
 
-    heldItemsA.forEach((item: HeldItemId, i: number) => {
+    heldItemsA.forEach(item => {
       const icon = allHeldItems[item].createPokemonIcon(pokemonA);
-      this.addIcon(icon, i, allHeldItems[item].name, allHeldItems[item].description);
+      iconCount += 1;
+      this.addIcon(icon, iconCount, allHeldItems[item].name, allHeldItems[item].description);
     });
 
-    heldItemsB.forEach((item: HeldItemId, i: number) => {
+    heldItemsB.forEach(item => {
       const icon = allHeldItems[item].createPokemonIcon(pokemonB);
-      this.addIcon(icon, i, allHeldItems[item].name, allHeldItems[item].description);
+      iconCount += 1;
+      this.addIcon(icon, iconCount, allHeldItems[item].name, allHeldItems[item].description);
     });
 
     for (const icon of this.getAll()) {

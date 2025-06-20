@@ -2058,7 +2058,7 @@ export default class BattleScene extends SceneBase {
   }
 
   updateUIPositions(): void {
-    const enemyModifierCount = this.enemyModifiers.filter(m => m.isIconVisible()).length;
+    const enemyModifierCount = this.enemyModifierBar.totalVisibleLength;
     const biomeWaveTextHeight = this.biomeWaveText.getBottomLeft().y - this.biomeWaveText.getTopLeft().y;
     this.biomeWaveText.setY(
       -(this.game.canvas.height / 6) +
@@ -2888,7 +2888,7 @@ export default class BattleScene extends SceneBase {
   }
 
   // TODO: Document this
-  updateModifiers(player = true): void {
+  updateModifiers(player = true, showHeldItems = true): void {
     const modifiers = player ? this.modifiers : (this.enemyModifiers as PersistentModifier[]);
 
     for (const modifier of modifiers) {
@@ -2909,7 +2909,14 @@ export default class BattleScene extends SceneBase {
 
     const pokemonA = player ? this.getPlayerParty()[0] : this.getEnemyParty()[0];
 
-    (player ? this.modifierBar : this.enemyModifierBar).updateModifiers(modifiers, pokemonA);
+    const bar = player ? this.modifierBar : this.enemyModifierBar;
+
+    if (showHeldItems) {
+      bar.updateModifiers(modifiers, pokemonA);
+    } else {
+      bar.updateModifiers(modifiers);
+    }
+
     if (!player) {
       this.updateUIPositions();
     }

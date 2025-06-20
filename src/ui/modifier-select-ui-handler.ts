@@ -269,7 +269,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const maxUpgradeCount = 0;
 
     /* Force updateModifiers without pokemon held items */
-    globalScene.getModifierBar().updateModifiers(globalScene.modifiers);
+    globalScene.updateModifiers(true, false);
 
     /* Multiplies the appearance duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
     globalScene.showShopOverlay(750 * globalScene.gameSpeed);
@@ -692,7 +692,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     globalScene.hideLuckText(250);
 
     /* Normally already called just after the shop, but not sure if it happens in 100% of cases */
-    globalScene.getModifierBar().updateModifiers(globalScene.modifiers);
+    globalScene.updateModifiers(true);
 
     const options = this.options.concat(this.shopOptionsRows.flat());
     this.options.splice(0, this.options.length);
