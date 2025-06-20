@@ -22,7 +22,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "#enums/nature";
 import type { MoveId } from "#enums/move-id";
 import { TypeColor, TypeShadow } from "#enums/color";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import { globalScene } from "#app/global-scene";
 import { pokemonFormChanges } from "./pokemon-forms";
 import { pokemonEvolutions } from "./balance/pokemon-evolutions";
@@ -459,11 +459,11 @@ export class SingleGenerationChallenge extends Challenge {
           .setGetTrainerFunc(getRandomTrainerFunc(trainerTypes, true))
           .setCustomModifierRewards({
             guaranteedModifierTiers: [
-              ModifierTier.ROGUE,
-              ModifierTier.ROGUE,
-              ModifierTier.ULTRA,
-              ModifierTier.ULTRA,
-              ModifierTier.ULTRA,
+              RewardTier.ROGUE,
+              RewardTier.ROGUE,
+              RewardTier.ULTRA,
+              RewardTier.ULTRA,
+              RewardTier.ULTRA,
             ],
             allowLuckUpgrades: false,
           });
@@ -476,12 +476,12 @@ export class SingleGenerationChallenge extends Challenge {
           .setGetTrainerFunc(getRandomTrainerFunc(trainerTypes, true))
           .setCustomModifierRewards({
             guaranteedModifierTiers: [
-              ModifierTier.ROGUE,
-              ModifierTier.ROGUE,
-              ModifierTier.ULTRA,
-              ModifierTier.ULTRA,
-              ModifierTier.ULTRA,
-              ModifierTier.ULTRA,
+              RewardTier.ROGUE,
+              RewardTier.ROGUE,
+              RewardTier.ULTRA,
+              RewardTier.ULTRA,
+              RewardTier.ULTRA,
+              RewardTier.ULTRA,
             ],
             allowLuckUpgrades: false,
           });

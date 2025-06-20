@@ -1,7 +1,10 @@
 export enum ModifierPoolType {
   PLAYER,
+  ENEMY_BUFF,
+}
+
+export enum HeldItemPoolType {
   WILD,
   TRAINER,
-  ENEMY_BUFF,
-  DAILY_STARTER
+  DAILY_STARTER,
 }

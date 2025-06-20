@@ -1,5 +1,6 @@
+import type Pokemon from "#app/field/pokemon";
+import type { BerryType } from "#enums/berry-type";
 import type Move from "../data/moves/move";
-import type { BerryModifier } from "../modifier/modifier";
 
 /** Alias for all {@linkcode BattleScene} events */
 export enum BattleSceneEventType {
@@ -81,12 +82,13 @@ export class MoveUsedEvent extends Event {
  * @extends Event
  */
 export class BerryUsedEvent extends Event {
-  /** The {@linkcode BerryModifier} being used */
-  public berryModifier: BerryModifier;
-  constructor(berry: BerryModifier) {
+  /** The {@linkcode BerryType} being used */
+  public pokemon: Pokemon;
+  public berryType: BerryType;
+  constructor(pokemon: Pokemon, berryType: BerryType) {
     super(BattleSceneEventType.BERRY_USED);
-
-    this.berryModifier = berry;
+    this.pokemon = pokemon;
+    this.berryType = berryType;
   }
 }
 

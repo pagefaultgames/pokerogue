@@ -17,7 +17,7 @@ import { CIVILIZATION_ENCOUNTER_BIOMES } from "#app/data/mystery-encounters/myst
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { UiMode } from "#enums/ui-mode";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import * as Utils from "#app/utils/common";
 
 const namespace = "mysteryEncounters/globalTradeSystem";
@@ -234,7 +234,7 @@ describe("Global Trade System - Mystery Encounter", () => {
         h => h instanceof ModifierSelectUiHandler,
       ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.tier).toBe(ModifierTier.MASTER);
+      expect(modifierSelectHandler.options[0].modifierTypeOption.type.tier).toBe(RewardTier.MASTER);
       const soulDewAfter = scene.findModifier(m => m instanceof PokemonNatureWeightModifier);
       expect(soulDewAfter?.stackCount).toBe(1);
     });

@@ -14,9 +14,7 @@ import { EncounterPhaseEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
 import { FieldPosition } from "#enums/field-position";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BoostBugSpawnModifier, IvScannerModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier";
-import { regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
+import { BoostBugSpawnModifier, IvScannerModifier } from "#app/modifier/modifier";
 import Overrides from "#app/overrides";
 import { BattlePhase } from "#app/phases/battle-phase";
 import { achvs } from "#app/system/achv";
@@ -271,10 +269,6 @@ export class EncounterPhase extends BattlePhase {
 
       if (!this.loaded && battle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
         // generate modifiers for MEs, overriding prior ones as applicable
-        regenerateModifierPoolThresholds(
-          globalScene.getEnemyField(),
-          battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD,
-        );
         globalScene.generateEnemyModifiers();
         overrideModifiers(false);
 
@@ -542,22 +536,6 @@ export class EncounterPhase extends BattlePhase {
     enemyField.forEach((enemyPokemon, e) => {
       if (enemyPokemon.isShiny(true)) {
         globalScene.phaseManager.unshiftNew("ShinySparklePhase", BattlerIndex.ENEMY + e);
-      }
-      /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen */
-      if (
-        enemyPokemon.species.speciesId === SpeciesId.ETERNATUS &&
-        (globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex) ||
-          globalScene.gameMode.isEndlessMajorBoss(globalScene.currentBattle.waveIndex))
-      ) {
-        const enemyMBH = globalScene.findModifier(
-          m => m instanceof TurnHeldItemTransferModifier,
-          false,
-        ) as TurnHeldItemTransferModifier;
-        if (enemyMBH) {
-          globalScene.removeModifier(enemyMBH, true);
-          enemyMBH.setTransferrableFalse();
-          globalScene.addEnemyModifier(enemyMBH);
-        }
       }
     });
 

@@ -14,7 +14,7 @@ import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { HealShopCostModifier, HitHealModifier, TurnHealModifier } from "#app/modifier/modifier";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/data/data-lists";
 import { CommandPhase } from "#app/phases/command-phase";
@@ -254,19 +254,19 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       expect(
         modifierSelectHandler.options[0].modifierTypeOption.type.tier -
           modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.ROGUE);
+      ).toEqual(RewardTier.ROGUE);
       expect(
         modifierSelectHandler.options[1].modifierTypeOption.type.tier -
           modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.ROGUE);
+      ).toEqual(RewardTier.ROGUE);
       expect(
         modifierSelectHandler.options[2].modifierTypeOption.type.tier -
           modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.ULTRA);
+      ).toEqual(RewardTier.ULTRA);
       expect(
         modifierSelectHandler.options[3].modifierTypeOption.type.tier -
           modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
-      ).toEqual(ModifierTier.GREAT);
+      ).toEqual(RewardTier.GREAT);
     });
   });
 });

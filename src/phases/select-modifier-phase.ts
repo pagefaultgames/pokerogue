@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import type { ModifierTier } from "#enums/modifier-tier";
+import type { RewardTier } from "#enums/reward-tier";
 import type { ModifierTypeOption, ModifierType } from "#app/modifier/modifier-type";
 import {
   regenerateModifierPoolThresholds,
@@ -12,15 +12,11 @@ import {
   PokemonPpRestoreModifierType,
   PokemonPpUpModifierType,
   getPlayerModifierTypeOptions,
+  HeldItemReward,
 } from "#app/modifier/modifier-type";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { Modifier } from "#app/modifier/modifier";
-import {
-  ExtraModifierModifier,
-  HealShopCostModifier,
-  PokemonHeldItemModifier,
-  TempExtraModifierModifier,
-} from "#app/modifier/modifier";
+import { ExtraModifierModifier, HealShopCostModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
@@ -36,7 +32,7 @@ export type ModifierSelectCallback = (rowCursor: number, cursor: number) => bool
 export class SelectModifierPhase extends BattlePhase {
   public readonly phaseName = "SelectModifierPhase";
   private rerollCount: number;
-  private modifierTiers?: ModifierTier[];
+  private modifierTiers?: RewardTier[];
   private customModifierSettings?: CustomModifierSettings;
   private isCopy: boolean;
 
@@ -44,7 +40,7 @@ export class SelectModifierPhase extends BattlePhase {
 
   constructor(
     rerollCount = 0,
-    modifierTiers?: ModifierTier[],
+    modifierTiers?: RewardTier[],
     customModifierSettings?: CustomModifierSettings,
     isCopy = false,
   ) {
@@ -172,7 +168,9 @@ export class SelectModifierPhase extends BattlePhase {
     modifierSelectCallback: ModifierSelectCallback,
   ): boolean {
     if (modifierType instanceof PokemonModifierType) {
-      if (modifierType instanceof FusePokemonModifierType) {
+      if (modifierType instanceof HeldItemReward) {
+        this.openGiveHeldItemMenu(modifierType, modifierSelectCallback);
+      } else if (modifierType instanceof FusePokemonModifierType) {
         this.openFusionMenu(modifierType, cost, modifierSelectCallback);
       } else {
         this.openModifierMenu(modifierType, cost, modifierSelectCallback);
@@ -194,7 +192,7 @@ export class SelectModifierPhase extends BattlePhase {
     globalScene.phaseManager.unshiftNew(
       "SelectModifierPhase",
       this.rerollCount + 1,
-      this.typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as ModifierTier[],
+      this.typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as RewardTier[],
     );
     globalScene.ui.clearText();
     globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
@@ -222,16 +220,14 @@ export class SelectModifierPhase extends BattlePhase {
           fromSlotIndex !== toSlotIndex &&
           itemIndex > -1
         ) {
-          const itemModifiers = globalScene.findModifiers(
-            m => m instanceof PokemonHeldItemModifier && m.isTransferable && m.pokemonId === party[fromSlotIndex].id,
-          ) as PokemonHeldItemModifier[];
-          const itemModifier = itemModifiers[itemIndex];
-          globalScene.tryTransferHeldItemModifier(
-            itemModifier,
+          const items = party[fromSlotIndex].heldItemManager.getTransferableHeldItems();
+          const item = items[itemIndex];
+          globalScene.tryTransferHeldItem(
+            item,
+            party[fromSlotIndex],
             party[toSlotIndex],
             true,
             itemQuantity,
-            undefined,
             undefined,
             false,
           );
@@ -369,6 +365,29 @@ export class SelectModifierPhase extends BattlePhase {
         : undefined,
       tmMoveId,
       isPpRestoreModifier,
+    );
+  }
+
+  private openGiveHeldItemMenu(reward, modifierSelectCallback) {
+    const party = globalScene.getPlayerParty();
+    const partyUiMode = PartyUiMode.MODIFIER;
+    globalScene.ui.setModeWithoutClear(
+      UiMode.PARTY,
+      partyUiMode,
+      -1,
+      (slotIndex: number, _option: PartyOption) => {
+        if (slotIndex < 6) {
+          globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
+            reward.apply(party[slotIndex]);
+            globalScene.ui.clearText();
+            globalScene.ui.setMode(UiMode.MESSAGE);
+            super.end();
+          });
+        } else {
+          this.resetModifierSelect(modifierSelectCallback);
+        }
+      },
+      reward.selectFilter,
     );
   }
 

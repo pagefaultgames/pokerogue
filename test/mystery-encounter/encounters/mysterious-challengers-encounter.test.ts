@@ -14,7 +14,7 @@ import { UiMode } from "#enums/ui-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import { MysteriousChallengersEncounter } from "#app/data/mystery-encounters/encounters/mysterious-challengers-encounter";
 import { TrainerConfig } from "#app/data/trainers/trainer-config";
 import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
@@ -218,19 +218,19 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       expect(
         modifierSelectHandler.options[0].modifierTypeOption.type.tier -
           modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
-      ).toBe(ModifierTier.ULTRA);
+      ).toBe(RewardTier.ULTRA);
       expect(
         modifierSelectHandler.options[1].modifierTypeOption.type.tier -
           modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
-      ).toBe(ModifierTier.ULTRA);
+      ).toBe(RewardTier.ULTRA);
       expect(
         modifierSelectHandler.options[2].modifierTypeOption.type.tier -
           modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
-      ).toBe(ModifierTier.GREAT);
+      ).toBe(RewardTier.GREAT);
       expect(
         modifierSelectHandler.options[3].modifierTypeOption.type.tier -
           modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
-      ).toBe(ModifierTier.GREAT);
+      ).toBe(RewardTier.GREAT);
     });
   });
 
@@ -275,19 +275,19 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       expect(
         modifierSelectHandler.options[0].modifierTypeOption.type.tier -
           modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
-      ).toBe(ModifierTier.ROGUE);
+      ).toBe(RewardTier.ROGUE);
       expect(
         modifierSelectHandler.options[1].modifierTypeOption.type.tier -
           modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
-      ).toBe(ModifierTier.ROGUE);
+      ).toBe(RewardTier.ROGUE);
       expect(
         modifierSelectHandler.options[2].modifierTypeOption.type.tier -
           modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
-      ).toBe(ModifierTier.ULTRA);
+      ).toBe(RewardTier.ULTRA);
       expect(
         modifierSelectHandler.options[3].modifierTypeOption.type.tier -
           modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
-      ).toBe(ModifierTier.GREAT);
+      ).toBe(RewardTier.GREAT);
     });
   });
 });

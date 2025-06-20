@@ -1004,6 +1004,7 @@ export function getRandomPartyMemberFunc(
       undefined,
       false,
       undefined,
+      undefined,
       postProcess,
     );
   };
@@ -1028,7 +1029,16 @@ function getSpeciesFilterRandomPartyMemberFunc(
         .getTrainerSpeciesForLevel(level, true, strength, waveIndex),
     );
 
-    return globalScene.addEnemyPokemon(species, level, trainerSlot, undefined, false, undefined, postProcess);
+    return globalScene.addEnemyPokemon(
+      species,
+      level,
+      trainerSlot,
+      undefined,
+      false,
+      undefined,
+      undefined,
+      postProcess,
+    );
   };
 }
 

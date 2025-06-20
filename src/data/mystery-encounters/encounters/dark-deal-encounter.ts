@@ -16,10 +16,9 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { PokemonFormChangeItemModifier } from "#app/modifier/modifier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { Challenges } from "#enums/challenges";
+import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/darkDeal";
@@ -149,7 +148,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         const removedPokemon = getRandomPlayerPokemon(true, false, true);
 
         // Get all the pokemon's held items
-        const modifiers = removedPokemon.getHeldItems().filter(m => !(m instanceof PokemonFormChangeItemModifier));
+        const itemConfig = removedPokemon.heldItemManager.generateHeldItemConfiguration();
         globalScene.removePokemonFromPlayerParty(removedPokemon);
 
         const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -158,7 +157,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         // Store removed pokemon types
         encounter.misc = {
           removedTypes: removedPokemon.getTypes(),
-          modifiers,
+          itemConfig: itemConfig,
         };
       })
       .withOptionPhase(async () => {
@@ -176,7 +175,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
           bossTypes = singleTypeChallenges.map(c => (c.value - 1) as PokemonType);
         }
 
-        const bossModifiers: PokemonHeldItemModifier[] = encounter.misc.modifiers;
+        const bossItemConfig: HeldItemConfiguration = encounter.misc.itemConfig;
         // Starter egg tier, 35/50/10/5 %odds for tiers 6/7/8/9+
         const roll = randSeedInt(100);
         const starterTier: number | [number, number] = roll >= 65 ? 6 : roll >= 15 ? 7 : roll >= 5 ? 8 : [9, 10];
@@ -184,12 +183,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         const pokemonConfig: EnemyPokemonConfig = {
           species: bossSpecies,
           isBoss: true,
-          modifierConfigs: bossModifiers.map(m => {
-            return {
-              modifier: m,
-              stackCount: m.getStackCount(),
-            };
-          }),
+          heldItemConfig: bossItemConfig,
         };
         if (!isNullOrUndefined(bossSpecies.forms) && bossSpecies.forms.length > 0) {
           pokemonConfig.formIndex = 0;

@@ -1,20 +1,12 @@
 import type Pokemon from "#app/field/pokemon";
-import {
-  dailyStarterModifierPool,
-  enemyBuffModifierPool,
-  modifierPool,
-  trainerModifierPool,
-  wildModifierPool,
-} from "#app/modifier/modifier-pools";
+import { enemyBuffModifierPool, modifierPool } from "#app/modifier/modifier-pools";
 import { globalScene } from "#app/global-scene";
-import { DoubleBattleChanceBoosterModifier, SpeciesCritBoosterModifier, TurnStatusEffectModifier } from "./modifier";
+import { DoubleBattleChanceBoosterModifier } from "./modifier";
 import { WeightedModifierType } from "./modifier-type";
-import { ModifierTier } from "../enums/modifier-tier";
+import { RewardTier } from "#app/enums/reward-tier";
 import type { WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
 import { modifierTypes } from "#app/data/data-lists";
 import { PokeballType } from "#enums/pokeball";
-import { BerryModifier } from "./modifier";
-import { BerryType } from "#enums/berry-type";
 import { SpeciesId } from "#enums/species-id";
 import { timedEventManager } from "#app/global-event-manager";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
@@ -26,41 +18,14 @@ import { AbilityId } from "#enums/ability-id";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 // biome-ignore lint/correctness/noUnusedImports: This is used in a tsdoc comment
 import type { initModifierTypes } from "./modifier-type";
-
-/**
- * Initialize the wild modifier pool
- */
-function initWildModifierPool() {
-  wildModifierPool[ModifierTier.COMMON] = [new WeightedModifierType(modifierTypes.BERRY, 1)].map(m => {
-    m.setTier(ModifierTier.COMMON);
-    return m;
-  });
-  wildModifierPool[ModifierTier.GREAT] = [new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 1)].map(m => {
-    m.setTier(ModifierTier.GREAT);
-    return m;
-  });
-  wildModifierPool[ModifierTier.ULTRA] = [
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.WHITE_HERB, 0),
-  ].map(m => {
-    m.setTier(ModifierTier.ULTRA);
-    return m;
-  });
-  wildModifierPool[ModifierTier.ROGUE] = [new WeightedModifierType(modifierTypes.LUCKY_EGG, 4)].map(m => {
-    m.setTier(ModifierTier.ROGUE);
-    return m;
-  });
-  wildModifierPool[ModifierTier.MASTER] = [new WeightedModifierType(modifierTypes.GOLDEN_EGG, 1)].map(m => {
-    m.setTier(ModifierTier.MASTER);
-    return m;
-  });
-}
+import { HeldItemId } from "#enums/held-item-id";
+import { allHeldItems } from "#app/items/all-held-items";
 
 /**
  * Initialize the common modifier pool
  */
 function initCommonModifierPool() {
-  modifierPool[ModifierTier.COMMON] = [
+  modifierPool[RewardTier.COMMON] = [
     new WeightedModifierType(modifierTypes.POKEBALL, () => (hasMaximumBalls(PokeballType.POKEBALL) ? 0 : 6), 6),
     new WeightedModifierType(modifierTypes.RARE_CANDY, 2),
     new WeightedModifierType(
@@ -92,7 +57,7 @@ function initCommonModifierPool() {
           party.filter(
             p =>
               p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY) &&
               p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
@@ -111,7 +76,7 @@ function initCommonModifierPool() {
           party.filter(
             p =>
               p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY) &&
               p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
@@ -128,7 +93,7 @@ function initCommonModifierPool() {
     new WeightedModifierType(modifierTypes.BERRY, 2),
     new WeightedModifierType(modifierTypes.TM_COMMON, 2),
   ].map(m => {
-    m.setTier(ModifierTier.COMMON);
+    m.setTier(RewardTier.COMMON);
     return m;
   });
 }
@@ -137,7 +102,7 @@ function initCommonModifierPool() {
  * Initialize the Great modifier pool
  */
 function initGreatModifierPool() {
-  modifierPool[ModifierTier.GREAT] = [
+  modifierPool[RewardTier.GREAT] = [
     new WeightedModifierType(modifierTypes.GREAT_BALL, () => (hasMaximumBalls(PokeballType.GREAT_BALL) ? 0 : 6), 6),
     new WeightedModifierType(modifierTypes.PP_UP, 2),
     new WeightedModifierType(
@@ -148,12 +113,10 @@ function initGreatModifierPool() {
             p =>
               p.hp &&
               !!p.status &&
-              !p.getHeldItems().some(i => {
-                if (i instanceof TurnStatusEffectModifier) {
-                  return (i as TurnStatusEffectModifier).getStatusEffect() === p.status?.effect;
-                }
-                return false;
-              }),
+              !p
+                .getHeldItems()
+                .filter(i => i in [HeldItemId.TOXIC_ORB, HeldItemId.FLAME_ORB])
+                .some(i => allHeldItems[i].effect === p.status?.effect),
           ).length,
           3,
         );
@@ -214,12 +177,10 @@ function initGreatModifierPool() {
             p =>
               p.hp &&
               !!p.status &&
-              !p.getHeldItems().some(i => {
-                if (i instanceof TurnStatusEffectModifier) {
-                  return (i as TurnStatusEffectModifier).getStatusEffect() === p.status?.effect;
-                }
-                return false;
-              }),
+              !p
+                .getHeldItems()
+                .filter(i => i in [HeldItemId.TOXIC_ORB, HeldItemId.FLAME_ORB])
+                .some(i => allHeldItems[i].effect === p.status?.effect),
           ).length,
           3,
         );
@@ -239,7 +200,7 @@ function initGreatModifierPool() {
           party.filter(
             p =>
               p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY) &&
               p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
@@ -258,7 +219,7 @@ function initGreatModifierPool() {
           party.filter(
             p =>
               p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY) &&
               p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
@@ -331,7 +292,7 @@ function initGreatModifierPool() {
       1,
     ),
   ].map(m => {
-    m.setTier(ModifierTier.GREAT);
+    m.setTier(RewardTier.GREAT);
     return m;
   });
 }
@@ -340,7 +301,7 @@ function initGreatModifierPool() {
  * Initialize the Ultra modifier pool
  */
 function initUltraModifierPool() {
-  modifierPool[ModifierTier.ULTRA] = [
+  modifierPool[RewardTier.ULTRA] = [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, () => (hasMaximumBalls(PokeballType.ULTRA_BALL) ? 0 : 15), 15),
     new WeightedModifierType(modifierTypes.MAX_LURE, lureWeightFunc(30, 4)),
     new WeightedModifierType(modifierTypes.BIG_NUGGET, skipInLastClassicWaveOrDefault(12)),
@@ -368,7 +329,7 @@ function initUltraModifierPool() {
               (p.isFusion() && p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))
           ) {
             // Check if Pokemon is already holding an Eviolite
-            return !p.getHeldItems().some(i => i.type.id === "EVIOLITE");
+            return !p.heldItemManager.hasItem(HeldItemId.EVIOLITE);
           }
           return false;
         })
@@ -385,7 +346,7 @@ function initUltraModifierPool() {
         // If a party member doesn't already have a Leek and is one of the relevant species, Leek can appear
         return party.some(
           p =>
-            !p.getHeldItems().some(i => i instanceof SpeciesCritBoosterModifier) &&
+            !p.heldItemManager.hasItem(HeldItemId.LEEK) &&
             (checkedSpecies.includes(p.getSpeciesForm(true).speciesId) ||
               (p.isFusion() && checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId))),
         )
@@ -398,7 +359,7 @@ function initUltraModifierPool() {
       modifierTypes.TOXIC_ORB,
       (party: Pokemon[]) => {
         return party.some(p => {
-          const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
+          const isHoldingOrb = p.getHeldItems().some(i => i in [HeldItemId.FLAME_ORB, HeldItemId.TOXIC_ORB]);
 
           if (!isHoldingOrb) {
             const moveset = p
@@ -444,7 +405,7 @@ function initUltraModifierPool() {
       modifierTypes.FLAME_ORB,
       (party: Pokemon[]) => {
         return party.some(p => {
-          const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
+          const isHoldingOrb = p.getHeldItems().some(i => i in [HeldItemId.FLAME_ORB, HeldItemId.TOXIC_ORB]);
 
           if (!isHoldingOrb) {
             const moveset = p
@@ -490,13 +451,8 @@ function initUltraModifierPool() {
       modifierTypes.MYSTICAL_ROCK,
       (party: Pokemon[]) => {
         return party.some(p => {
-          let isHoldingMax = false;
-          for (const i of p.getHeldItems()) {
-            if (i.type.id === "MYSTICAL_ROCK") {
-              isHoldingMax = i.getStackCount() === i.getMaxStackCount();
-              break;
-            }
-          }
+          const stack = p.heldItemManager.getStack(HeldItemId.MYSTICAL_ROCK);
+          const isHoldingMax = stack === allHeldItems[HeldItemId.MYSTICAL_ROCK].maxStackCount;
 
           if (!isHoldingMax) {
             const moveset = p.getMoveset(true).map(m => m.moveId);
@@ -558,13 +514,13 @@ function initUltraModifierPool() {
     new WeightedModifierType(modifierTypes.QUICK_CLAW, 3),
     new WeightedModifierType(modifierTypes.WIDE_LENS, 7),
   ].map(m => {
-    m.setTier(ModifierTier.ULTRA);
+    m.setTier(RewardTier.ULTRA);
     return m;
   });
 }
 
 function initRogueModifierPool() {
-  modifierPool[ModifierTier.ROGUE] = [
+  modifierPool[RewardTier.ROGUE] = [
     new WeightedModifierType(modifierTypes.ROGUE_BALL, () => (hasMaximumBalls(PokeballType.ROGUE_BALL) ? 0 : 16), 16),
     new WeightedModifierType(modifierTypes.RELIC_GOLD, skipInLastClassicWaveOrDefault(2)),
     new WeightedModifierType(modifierTypes.LEFTOVERS, 3),
@@ -602,7 +558,7 @@ function initRogueModifierPool() {
       3,
     ),
   ].map(m => {
-    m.setTier(ModifierTier.ROGUE);
+    m.setTier(RewardTier.ROGUE);
     return m;
   });
 }
@@ -611,7 +567,7 @@ function initRogueModifierPool() {
  * Initialize the Master modifier pool
  */
 function initMasterModifierPool() {
-  modifierPool[ModifierTier.MASTER] = [
+  modifierPool[RewardTier.MASTER] = [
     new WeightedModifierType(modifierTypes.MASTER_BALL, () => (hasMaximumBalls(PokeballType.MASTER_BALL) ? 0 : 24), 24),
     new WeightedModifierType(modifierTypes.SHINY_CHARM, 14),
     new WeightedModifierType(modifierTypes.HEALING_CHARM, 18),
@@ -644,47 +600,7 @@ function initMasterModifierPool() {
       1,
     ),
   ].map(m => {
-    m.setTier(ModifierTier.MASTER);
-    return m;
-  });
-}
-
-function initTrainerModifierPool() {
-  trainerModifierPool[ModifierTier.COMMON] = [
-    new WeightedModifierType(modifierTypes.BERRY, 8),
-    new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
-  ].map(m => {
-    m.setTier(ModifierTier.COMMON);
-    return m;
-  });
-  trainerModifierPool[ModifierTier.GREAT] = [new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3)].map(m => {
-    m.setTier(ModifierTier.GREAT);
-    return m;
-  });
-  trainerModifierPool[ModifierTier.ULTRA] = [
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.WHITE_HERB, 0),
-  ].map(m => {
-    m.setTier(ModifierTier.ULTRA);
-    return m;
-  });
-  trainerModifierPool[ModifierTier.ROGUE] = [
-    new WeightedModifierType(modifierTypes.FOCUS_BAND, 2),
-    new WeightedModifierType(modifierTypes.LUCKY_EGG, 4),
-    new WeightedModifierType(modifierTypes.QUICK_CLAW, 1),
-    new WeightedModifierType(modifierTypes.GRIP_CLAW, 1),
-    new WeightedModifierType(modifierTypes.WIDE_LENS, 1),
-  ].map(m => {
-    m.setTier(ModifierTier.ROGUE);
-    return m;
-  });
-  trainerModifierPool[ModifierTier.MASTER] = [
-    new WeightedModifierType(modifierTypes.KINGS_ROCK, 1),
-    new WeightedModifierType(modifierTypes.LEFTOVERS, 1),
-    new WeightedModifierType(modifierTypes.SHELL_BELL, 1),
-    new WeightedModifierType(modifierTypes.SCOPE_LENS, 1),
-  ].map(m => {
-    m.setTier(ModifierTier.MASTER);
+    m.setTier(RewardTier.MASTER);
     return m;
   });
 }
@@ -693,7 +609,7 @@ function initTrainerModifierPool() {
  * Initialize the enemy buff modifier pool
  */
 function initEnemyBuffModifierPool() {
-  enemyBuffModifierPool[ModifierTier.COMMON] = [
+  enemyBuffModifierPool[RewardTier.COMMON] = [
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 9),
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 9),
     new WeightedModifierType(modifierTypes.ENEMY_ATTACK_POISON_CHANCE, 3),
@@ -703,20 +619,20 @@ function initEnemyBuffModifierPool() {
     new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 4),
     new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 1),
   ].map(m => {
-    m.setTier(ModifierTier.COMMON);
+    m.setTier(RewardTier.COMMON);
     return m;
   });
-  enemyBuffModifierPool[ModifierTier.GREAT] = [
+  enemyBuffModifierPool[RewardTier.GREAT] = [
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 5),
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 5),
     new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 5),
     new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 5),
     new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 1),
   ].map(m => {
-    m.setTier(ModifierTier.GREAT);
+    m.setTier(RewardTier.GREAT);
     return m;
   });
-  enemyBuffModifierPool[ModifierTier.ULTRA] = [
+  enemyBuffModifierPool[RewardTier.ULTRA] = [
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 10),
     new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 10),
     new WeightedModifierType(modifierTypes.ENEMY_HEAL, 10),
@@ -724,60 +640,15 @@ function initEnemyBuffModifierPool() {
     new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 10),
     new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 5),
   ].map(m => {
-    m.setTier(ModifierTier.ULTRA);
+    m.setTier(RewardTier.ULTRA);
     return m;
   });
-  enemyBuffModifierPool[ModifierTier.ROGUE] = [].map((m: WeightedModifierType) => {
-    m.setTier(ModifierTier.ROGUE);
+  enemyBuffModifierPool[RewardTier.ROGUE] = [].map((m: WeightedModifierType) => {
+    m.setTier(RewardTier.ROGUE);
     return m;
   });
-  enemyBuffModifierPool[ModifierTier.MASTER] = [].map((m: WeightedModifierType) => {
-    m.setTier(ModifierTier.MASTER);
-    return m;
-  });
-}
-
-/**
- * Initialize the daily starter modifier pool
- */
-function initDailyStarterModifierPool() {
-  dailyStarterModifierPool[ModifierTier.COMMON] = [
-    new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 1),
-    new WeightedModifierType(modifierTypes.BERRY, 3),
-  ].map(m => {
-    m.setTier(ModifierTier.COMMON);
-    return m;
-  });
-  dailyStarterModifierPool[ModifierTier.GREAT] = [new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 5)].map(
-    m => {
-      m.setTier(ModifierTier.GREAT);
-      return m;
-    },
-  );
-  dailyStarterModifierPool[ModifierTier.ULTRA] = [
-    new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
-    new WeightedModifierType(modifierTypes.SOOTHE_BELL, 1),
-    new WeightedModifierType(modifierTypes.SOUL_DEW, 1),
-    new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, 1),
-  ].map(m => {
-    m.setTier(ModifierTier.ULTRA);
-    return m;
-  });
-  dailyStarterModifierPool[ModifierTier.ROGUE] = [
-    new WeightedModifierType(modifierTypes.GRIP_CLAW, 5),
-    new WeightedModifierType(modifierTypes.BATON, 2),
-    new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
-    new WeightedModifierType(modifierTypes.QUICK_CLAW, 3),
-    new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),
-  ].map(m => {
-    m.setTier(ModifierTier.ROGUE);
-    return m;
-  });
-  dailyStarterModifierPool[ModifierTier.MASTER] = [
-    new WeightedModifierType(modifierTypes.LEFTOVERS, 1),
-    new WeightedModifierType(modifierTypes.SHELL_BELL, 1),
-  ].map(m => {
-    m.setTier(ModifierTier.MASTER);
+  enemyBuffModifierPool[RewardTier.MASTER] = [].map((m: WeightedModifierType) => {
+    m.setTier(RewardTier.MASTER);
     return m;
   });
 }
@@ -795,10 +666,7 @@ export function initModifierPools() {
   initMasterModifierPool();
 
   // Modifier pools for specific scenarios
-  initWildModifierPool();
-  initTrainerModifierPool();
   initEnemyBuffModifierPool();
-  initDailyStarterModifierPool();
 }
 
 /**

@@ -19,7 +19,7 @@ import i18next from "i18next";
 import type { IEggOptions } from "#app/data/egg";
 import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import { modifierTypes } from "#app/data/data-lists";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 
@@ -165,7 +165,7 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
       setEncounterRewards(
         {
           guaranteedModifierTypeFuncs: [modifierTypes.SACRED_ASH],
-          guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ULTRA],
+          guaranteedModifierTiers: [RewardTier.ROGUE, RewardTier.ULTRA],
           fillRemaining: true,
         },
         [eggOptions],

@@ -9,7 +9,7 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import type Pokemon from "#app/field/pokemon";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import type { ModifierTypeOption } from "#app/modifier/modifier-type";
 import { getPlayerModifierTypeOptions, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
@@ -89,12 +89,12 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
     // Waves 10-40 GREAT, 60-120 ULTRA, 120-160 ROGUE, 160-180 MASTER
     const tier =
       globalScene.currentBattle.waveIndex > 160
-        ? ModifierTier.MASTER
+        ? RewardTier.MASTER
         : globalScene.currentBattle.waveIndex > 120
-          ? ModifierTier.ROGUE
+          ? RewardTier.ROGUE
           : globalScene.currentBattle.waveIndex > 40
-            ? ModifierTier.ULTRA
-            : ModifierTier.GREAT;
+            ? RewardTier.ULTRA
+            : RewardTier.GREAT;
     regenerateModifierPoolThresholds(globalScene.getPlayerParty(), ModifierPoolType.PLAYER, 0);
     let item: ModifierTypeOption | null = null;
     // TMs and Candy Jar excluded from possible rewards as they're too swingy in value for a singular item reward

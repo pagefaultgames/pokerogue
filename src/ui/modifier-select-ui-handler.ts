@@ -5,7 +5,7 @@ import { getPokeballAtlasKey } from "#app/data/pokeball";
 import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { LockModifierTiersModifier, PokemonHeldItemModifier, HealShopCostModifier } from "../modifier/modifier";
+import { LockModifierTiersModifier, HealShopCostModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
 import { Button } from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
@@ -183,7 +183,10 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.player = args[0];
 
     const partyHasHeldItem =
-      this.player && !!globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferable).length;
+      globalScene
+        .getPlayerParty()
+        .map(p => p.heldItemManager.getTransferableHeldItems().length)
+        .reduce((tot, i) => tot + i, 0) > 0;
     const canLockRarities = !!globalScene.findModifier(m => m instanceof LockModifierTiersModifier);
 
     this.transferButtonContainer.setVisible(false);
@@ -258,10 +261,13 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.shopOptionsRows[row].push(option);
     }
 
-    const maxUpgradeCount = typeOptions.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
+    //TODO: temporary stopgap so the game does not crash, will have to fix this later
+    //    console.log(typeOptions.map(to => to.upgradeCount))
+    //    const maxUpgradeCount = typeOptions.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
+    const maxUpgradeCount = 0;
 
-    /* Force updateModifiers without pokemonSpecificModifiers */
-    globalScene.getModifierBar().updateModifiers(globalScene.modifiers, true);
+    /* Force updateModifiers without pokemon held items */
+    globalScene.updateModifiers(true, false);
 
     /* Multiplies the appearance duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
     globalScene.showShopOverlay(750 * globalScene.gameSpeed);
@@ -676,7 +682,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     globalScene.hideLuckText(250);
 
     /* Normally already called just after the shop, but not sure if it happens in 100% of cases */
-    globalScene.getModifierBar().updateModifiers(globalScene.modifiers);
+    globalScene.updateModifiers(true);
 
     const options = this.options.concat(this.shopOptionsRows.flat());
     this.options.splice(0, this.options.length);
@@ -763,7 +769,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     this.add(this.itemContainer);
 
     const getItem = () => {
-      const item = globalScene.add.sprite(0, 0, "items", this.modifierTypeOption.type?.iconImage);
+      const item = globalScene.add.sprite(0, 0, "items", this.modifierTypeOption.type?.getIcon());
       return item;
     };
 
