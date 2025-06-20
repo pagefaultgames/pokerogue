@@ -3222,25 +3222,6 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
 }
 
 /**
- * Battler Tag indicating that a Pokémon has used {@linkcode MoveId.TRANSFORM}
- *
- * The tag allows us to prevent certain actions such as using Transform on a Pokemon which has already transformed,
- * and is used to ensure correct battle behavior after transformation.
- */
-export class TransformTag extends BattlerTag {
-  constructor(sourceId: number) {
-    super(BattlerTagType.TRANSFORM, BattlerTagLapseType.MOVE, Number.MAX_SAFE_INTEGER, MoveId.TRANSFORM, sourceId);
-  }
-  /**
-   * Adds the Transform battler tag to the Pokemon transforming.
-   * @param pokemon - The {@linkcode Pokemon} transforming
-   */
-  override onAdd(pokemon: Pokemon): void {
-    super.onAdd(pokemon);
-  }
-}
-
-/**
  * Battler Tag that applies the effects of Syrup Bomb to the target Pokemon.
  * For three turns, starting from the turn of hit, at the end of each turn, the target Pokemon's speed will decrease by 1.
  * The tag can also expire by taking the target Pokemon off the field, or the Pokemon that originally used the move.
@@ -3648,8 +3629,6 @@ export function getBattlerTag(
       return new TauntTag();
     case BattlerTagType.IMPRISON:
       return new ImprisonTag(sourceId);
-    case BattlerTagType.TRANSFORM:
-      return new TransformTag(sourceId);
     case BattlerTagType.SYRUP_BOMB:
       return new SyrupBombTag(sourceId);
     case BattlerTagType.TELEKINESIS:

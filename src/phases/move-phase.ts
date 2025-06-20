@@ -342,7 +342,7 @@ export class MovePhase extends BattlePhase {
     if (
       //Prevent using Transform if either the user or target is already transformed
       this.move.getMove().id === MoveId.TRANSFORM &&
-      (targets[0].getTag(BattlerTagType.TRANSFORM) || this.pokemon.getTag(BattlerTagType.TRANSFORM))
+      (targets[0].isTransformed() || this.pokemon.isTransformed())
     ) {
       this.showMoveText();
       this.showFailedText();

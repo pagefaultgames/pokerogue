@@ -1062,6 +1062,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return species;
   }
 
+  isTransformed(): boolean {
+    return this.summonData.speciesForm !== null;
+  }
+
   /**
    * @param {boolean} useIllusion - Whether we want the fusionSpeciesForm of the illusion or not.
    */
