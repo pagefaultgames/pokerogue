@@ -575,10 +575,11 @@ export class OverridesHelper extends GameManagerHelper {
     console.log("Overrides:", ...params);
   }
 
+  // TODO: Review if this can be removed - we mock the entire module in `vitest.setup.ts` to return defaults
   public sanitizeOverrides(): void {
     for (const key of Object.keys(defaultOverrides)) {
       if (Overrides[key] !== defaultOverrides[key]) {
-        vi.spyOn(Overrides, key as any, "get").mockReturnValue(defaultOverrides[key]);
+        vi.spyOn(Overrides, key as keyof typeof Overrides, "get").mockReturnValue(defaultOverrides[key]);
       }
     }
     expect(Overrides).toEqual(defaultOverrides);

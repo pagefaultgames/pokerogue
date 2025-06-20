@@ -7,10 +7,20 @@ import { vi, type MockInstance } from "vitest";
 import { format } from "util";
 
 interface PromptHandler {
+  /** The {@linkcode PhaseString | name} of the Phase to execute the callback during. */
   phaseTarget: PhaseString;
+  /** The {@linkcode UIMode} to wait for. */
   mode: UiMode;
+  /** The callback function to execute. */
   callback: () => void;
+  /**
+   * An optional callback function to determine if the prompt has expired and should be removed.
+   */
   expireFn?: () => boolean;
+  /**
+   * If `true`, will only activate when the current UI handler is waiting for input.
+   * @defaultValue `false`
+   */
   awaitingActionInput: boolean;
 }
 
@@ -122,10 +132,9 @@ export default class PhaseInterceptor {
   }
 
   /**
-   * Method to override UI mode setting with custom prompt support.
-   * @param originalSetMode - The original setMode method from the UI.
-   * @param mode - The {@linkcode UiMode} to set.
-   * @param args - Additional arguments to pass to the original method.
+   * Helper method to wrap UI mode changing with custom prompt support.
+   * @param originalSetMode - The original setMode method from the UI. Stored during mock initialization.
+   * @param args - Arguments having been passed to the original method.
    */
   private async setMode(
     originalSetMode: (typeof UI.prototype)["setModeInternal"],
@@ -133,16 +142,17 @@ export default class PhaseInterceptor {
   ): ReturnType<(typeof UI.prototype)["setModeInternal"]> {
     const mode = args[0];
 
-    console.log("setMode", `${UiMode[mode]} (=${mode})`, args);
+    console.log("setMode", `${UiMode[mode]} (=${mode})`, args.slice(1));
     const ret = originalSetMode.apply(this.scene.ui, [args]);
     this.doPromptCheck(mode);
     return ret;
   }
 
   /**
-   * Method to start the prompt handler.
+   * Method to perform prompt handling upon changing UI modes.
+   * @param mode - The {@linkcode UiMode} to set.
    */
-  private doPromptCheck(uiMode: UiMode) {
+  private doPromptCheck(uiMode: UiMode): void {
     const actionForNextPrompt = this.prompts[0] as PromptHandler | undefined;
     if (!actionForNextPrompt) {
       return;

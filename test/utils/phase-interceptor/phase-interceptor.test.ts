@@ -55,9 +55,9 @@ describe("Utils - Phase Interceptor", { timeout: 4000 }, () => {
     setPhases(bananaPhase, applePhase, oneSecTimerPhase, unshifterPhase, bananaPhase);
   });
 
-  function setPhases(...phases: Constructor<mockPhase>[]) {
+  function setPhases(phase: Constructor<mockPhase>, ...phases: Constructor<mockPhase>[]) {
     game.scene.phaseManager.clearAllPhases();
-    game.scene.phaseManager.phaseQueue = phases.map(m => new m());
+    game.scene.phaseManager.phaseQueue = [phase, ...phases].map(m => new m());
     game.scene.phaseManager.shiftPhase(); // start the thing going
   }
 
@@ -68,10 +68,10 @@ describe("Utils - Phase Interceptor", { timeout: 4000 }, () => {
   }
 
   function getCurrentPhaseName(): string {
-    return game.scene.phaseManager.getCurrentPhase()?.phaseName ?? "null";
+    return game.scene.phaseManager.getCurrentPhase()?.phaseName ?? "no phase";
   }
 
-  /** Wrapper function to make TS not complain about `PhaseString` stuff */
+  /** Wrapper function to make TS not complain about incompatible argument typing on `PhaseString`. */
   function to(phaseName: string, runTarget = true) {
     return game.phaseInterceptor.to(phaseName as unknown as PhaseString, runTarget);
   }
@@ -88,7 +88,7 @@ describe("Utils - Phase Interceptor", { timeout: 4000 }, () => {
       await to("bananaPhase", false);
       expect(getCurrentPhaseName()).toBe("bananaPhase");
       expect(getQueuedPhases()).toEqual(["applePhase", "oneSecTimerPhase", "unshifterPhase", "bananaPhase"]);
-      expect(game.phaseInterceptor.log).toHaveLength(0);
+      expect(game.phaseInterceptor.log).toEqual([]);
     });
 
     it("should start all phases between start and target", async () => {

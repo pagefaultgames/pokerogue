@@ -121,16 +121,23 @@ export default class GameManager {
     this.reload = new ReloadHelper(this);
     this.modifiers = new ModifierHelper(this);
     this.field = new FieldHelper(this);
+
     this.override.sanitizeOverrides();
+    this.initDefaultOverrides();
 
-    // Disables Mystery Encounters on all tests (can be overridden at test level)
-    this.override.mysteryEncounterChance(0);
-
-    this.scene.moveAnimations = false; // Disable move animations
+    // Disable move animations to avoid crashes
+    this.scene.moveAnimations = false;
 
     global.fetch = vi.fn(MockFetch) as any;
   }
 
+  /**
+   * Initialize various default overrides for starting tests, typically to .
+   */
+  private initDefaultOverrides(): void {
+    // Disables Mystery Encounters on all tests (can be overridden at test level)
+    this.override.mysteryEncounterChance(0);
+  }
   /**
    * Sets the game mode.
    * @param mode - The mode to set.
