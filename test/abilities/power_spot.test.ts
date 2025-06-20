@@ -26,11 +26,12 @@ describe("Abilities - Power Spot", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.moveset([MoveId.TACKLE, MoveId.BREAKING_SWIPE, MoveId.SPLASH, MoveId.DAZZLING_GLEAM]);
-    game.override.enemyMoveset(MoveId.SPLASH);
-    game.override.enemySpecies(SpeciesId.SHUCKLE);
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
+    game.override
+      .battleStyle("double")
+      .moveset([MoveId.TACKLE, MoveId.BREAKING_SWIPE, MoveId.SPLASH, MoveId.DAZZLING_GLEAM])
+      .enemyMoveset(MoveId.SPLASH)
+      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemyAbility(AbilityId.BALL_FETCH);
   });
 
   it("raises the power of allies' special moves by 30%", async () => {

@@ -24,7 +24,7 @@ describe("Multi-target damage reduction", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .disableCrits()
+      .criticalHits(false)
       .battleStyle("double")
       .enemyLevel(100)
       .startingLevel(100)

@@ -26,11 +26,12 @@ describe("Moves - Flower Shield", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.ability(AbilityId.NONE);
-    game.override.enemyAbility(AbilityId.NONE);
-    game.override.battleStyle("single");
-    game.override.moveset([MoveId.FLOWER_SHIELD, MoveId.SPLASH]);
-    game.override.enemyMoveset(MoveId.SPLASH);
+    game.override
+      .ability(AbilityId.NONE)
+      .enemyAbility(AbilityId.NONE)
+      .battleStyle("single")
+      .moveset([MoveId.FLOWER_SHIELD, MoveId.SPLASH])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("raises DEF stat stage by 1 for all Grass-type Pokemon on the field by one stage - single battle", async () => {

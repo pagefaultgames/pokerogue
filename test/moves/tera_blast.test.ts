@@ -35,7 +35,7 @@ describe("Moves - Tera Blast", () => {
 
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .starterSpecies(SpeciesId.FEEBAS)
       .moveset([MoveId.TERA_BLAST])
       .ability(AbilityId.BALL_FETCH)
@@ -62,7 +62,7 @@ describe("Moves - Tera Blast", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(spy).toHaveReturnedWith(2);
-  }, 20000);
+  });
 
   it("increases power if user is Stellar tera type", async () => {
     await game.classicMode.startBattle();

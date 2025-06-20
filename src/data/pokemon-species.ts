@@ -42,6 +42,8 @@ import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { loadPokemonVariantAssets } from "#app/sprites/pokemon-sprite";
 import { hasExpSprite } from "#app/sprites/sprite-utils";
 import { Gender } from "./gender";
+import { allSpecies } from "#app/data/data-lists";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 
 export enum Region {
   NORMAL,
@@ -81,23 +83,6 @@ export const normalForm: SpeciesId[] = [
   SpeciesId.ZARUDE,
   SpeciesId.CALYREX,
 ];
-
-/**
- * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode SpeciesId} enum given
- * @param species The species to fetch
- * @returns The associated {@linkcode PokemonSpecies} object
- */
-export function getPokemonSpecies(species: SpeciesId | SpeciesId[]): PokemonSpecies {
-  // If a special pool (named trainers) is used here it CAN happen that they have a array as species (which means choose one of those two). So we catch that with this code block
-  if (Array.isArray(species)) {
-    // Pick a random species from the list
-    species = species[Math.floor(Math.random() * species.length)];
-  }
-  if (species >= 2000) {
-    return allSpecies.find(s => s.speciesId === species)!; // TODO: is this bang correct?
-  }
-  return allSpecies[species - 1];
-}
 
 export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): PokemonSpeciesForm {
   const retSpecies: PokemonSpecies =
@@ -1449,8 +1434,6 @@ export function getPokerusStarters(): PokemonSpecies[] {
   return pokerusStarters;
 }
 
-export const allSpecies: PokemonSpecies[] = [];
-
 // biome-ignore format: manually formatted
 export function initSpecies() {
   allSpecies.push(
@@ -2718,13 +2701,13 @@ export function initSpecies() {
       new PokemonForm("Type: Fairy", "fairy", PokemonType.FAIRY, null, 2.3, 100.5, AbilityId.RKS_SYSTEM, AbilityId.NONE, AbilityId.NONE, 570, 95, 95, 95, 95, 95, 95, 3, 0, 285),
     ),
     new PokemonSpecies(SpeciesId.MINIOR, 7, false, false, false, "Meteor Pokémon", PokemonType.ROCK, PokemonType.FLYING, 0.3, 40, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 440, 60, 60, 100, 60, 100, 60, 30, 70, 154, GrowthRate.MEDIUM_SLOW, null, false, false,
-      new PokemonForm("Red Meteor Form", "red-meteor", PokemonType.ROCK, PokemonType.FLYING, 0.3, 40, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 440, 60, 60, 100, 60, 100, 60, 30, 70, 154, false, "", true),
-      new PokemonForm("Orange Meteor Form", "orange-meteor", PokemonType.ROCK, PokemonType.FLYING, 0.3, 40, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 440, 60, 60, 100, 60, 100, 60, 30, 70, 154, false, "", true),
-      new PokemonForm("Yellow Meteor Form", "yellow-meteor", PokemonType.ROCK, PokemonType.FLYING, 0.3, 40, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 440, 60, 60, 100, 60, 100, 60, 30, 70, 154, false, "", true),
-      new PokemonForm("Green Meteor Form", "green-meteor", PokemonType.ROCK, PokemonType.FLYING, 0.3, 40, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 440, 60, 60, 100, 60, 100, 60, 30, 70, 154, false, "", true),
-      new PokemonForm("Blue Meteor Form", "blue-meteor", PokemonType.ROCK, PokemonType.FLYING, 0.3, 40, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 440, 60, 60, 100, 60, 100, 60, 30, 70, 154, false, "", true),
-      new PokemonForm("Indigo Meteor Form", "indigo-meteor", PokemonType.ROCK, PokemonType.FLYING, 0.3, 40, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 440, 60, 60, 100, 60, 100, 60, 30, 70, 154, false, "", true),
-      new PokemonForm("Violet Meteor Form", "violet-meteor", PokemonType.ROCK, PokemonType.FLYING, 0.3, 40, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 440, 60, 60, 100, 60, 100, 60, 30, 70, 154, false, "", true),
+      new PokemonForm("Red Meteor Form", "red-meteor", PokemonType.ROCK, PokemonType.FLYING, 0.3, 40, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 440, 60, 60, 100, 60, 100, 60, 30, 70, 154, false, null, true),
+      new PokemonForm("Orange Meteor Form", "orange-meteor", PokemonType.ROCK, PokemonType.FLYING, 0.3, 40, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 440, 60, 60, 100, 60, 100, 60, 30, 70, 154, false, null, true),
+      new PokemonForm("Yellow Meteor Form", "yellow-meteor", PokemonType.ROCK, PokemonType.FLYING, 0.3, 40, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 440, 60, 60, 100, 60, 100, 60, 30, 70, 154, false, null, true),
+      new PokemonForm("Green Meteor Form", "green-meteor", PokemonType.ROCK, PokemonType.FLYING, 0.3, 40, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 440, 60, 60, 100, 60, 100, 60, 30, 70, 154, false, null, true),
+      new PokemonForm("Blue Meteor Form", "blue-meteor", PokemonType.ROCK, PokemonType.FLYING, 0.3, 40, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 440, 60, 60, 100, 60, 100, 60, 30, 70, 154, false, null, true),
+      new PokemonForm("Indigo Meteor Form", "indigo-meteor", PokemonType.ROCK, PokemonType.FLYING, 0.3, 40, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 440, 60, 60, 100, 60, 100, 60, 30, 70, 154, false, null, true),
+      new PokemonForm("Violet Meteor Form", "violet-meteor", PokemonType.ROCK, PokemonType.FLYING, 0.3, 40, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 440, 60, 60, 100, 60, 100, 60, 30, 70, 154, false, null, true),
       new PokemonForm("Red Core Form", "red", PokemonType.ROCK, PokemonType.FLYING, 0.3, 0.3, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 500, 60, 100, 60, 100, 60, 120, 30, 70, 175, false, null, true),
       new PokemonForm("Orange Core Form", "orange", PokemonType.ROCK, PokemonType.FLYING, 0.3, 0.3, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 500, 60, 100, 60, 100, 60, 120, 30, 70, 175, false, null, true),
       new PokemonForm("Yellow Core Form", "yellow", PokemonType.ROCK, PokemonType.FLYING, 0.3, 0.3, AbilityId.SHIELDS_DOWN, AbilityId.NONE, AbilityId.NONE, 500, 60, 100, 60, 100, 60, 120, 30, 70, 175, false, null, true),
