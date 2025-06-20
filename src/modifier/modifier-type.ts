@@ -2202,7 +2202,16 @@ function getNewModifierTypeOption(
   const pool = getModifierPoolForType(poolType);
   const thresholds = getPoolThresholds(poolType);
 
-  const tier = determineTier(party, player, baseTier, upgradeCount, retryCount, allowLuckUpgrades);
+  let tier = 0;
+  if (isNullOrUndefined(baseTier)) {
+    baseTier = randomBaseTier();
+  }
+  if (isNullOrUndefined(upgradeCount)) {
+    upgradeCount = allowLuckUpgrades ? getUpgradeCount(party, player, baseTier) : 0;
+    tier = baseTier + upgradeCount;
+  } else {
+    tier = baseTier;
+  }
 
   const tierThresholds = Object.keys(thresholds[tier]);
   const totalWeight = Number.parseInt(tierThresholds[tierThresholds.length - 1]);
@@ -2252,70 +2261,46 @@ function getPoolThresholds(poolType: ModifierPoolType) {
   return thresholds;
 }
 
-function determineTier(
+function randomBaseTier(): RewardTier {
+  const tierValue = randSeedInt(1024);
+
+  if (tierValue > 255) {
+    return RewardTier.COMMON;
+  }
+  if (tierValue > 60) {
+    return RewardTier.GREAT;
+  }
+  if (tierValue > 12) {
+    return RewardTier.ULTRA;
+  }
+  if (tierValue) {
+    return RewardTier.ROGUE;
+  }
+  return RewardTier.MASTER;
+}
+
+function getUpgradeCount(
   party: Pokemon[],
   player: boolean,
-  tier?: RewardTier,
-  upgradeCount?: number,
-  retryCount = 0,
+  baseTier: RewardTier,
   allowLuckUpgrades = true,
 ): RewardTier {
   const pool = getModifierPoolForType(ModifierPoolType.PLAYER);
-  if (tier === undefined) {
-    const tierValue = randSeedInt(1024);
-    if (!upgradeCount) {
-      upgradeCount = 0;
-    }
-    if (player && tierValue && allowLuckUpgrades) {
+  let upgradeCount = 0;
+  if (player) {
+    if (baseTier < RewardTier.MASTER && allowLuckUpgrades) {
       const partyLuckValue = getPartyLuckValue(party);
       const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
-      let upgraded = false;
-      do {
-        upgraded = randSeedInt(upgradeOdds) < 4;
-        if (upgraded) {
-          upgradeCount++;
-        }
-      } while (upgraded);
-    }
-
-    if (tierValue > 255) {
-      tier = RewardTier.COMMON;
-    } else if (tierValue > 60) {
-      tier = RewardTier.GREAT;
-    } else if (tierValue > 12) {
-      tier = RewardTier.ULTRA;
-    } else if (tierValue) {
-      tier = RewardTier.ROGUE;
-    } else {
-      tier = RewardTier.MASTER;
-    }
-
-    tier += upgradeCount;
-    while (tier && (!pool.hasOwnProperty(tier) || !pool[tier].length)) {
-      tier--;
-      if (upgradeCount) {
-        upgradeCount--;
-      }
-    }
-  } else if (upgradeCount === undefined && player) {
-    upgradeCount = 0;
-    if (tier < RewardTier.MASTER && allowLuckUpgrades) {
-      const partyLuckValue = getPartyLuckValue(party);
-      const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
-      while (pool.hasOwnProperty(tier + upgradeCount + 1) && pool[tier + upgradeCount + 1].length) {
+      while (pool.hasOwnProperty(baseTier + upgradeCount + 1) && pool[baseTier + upgradeCount + 1].length) {
         if (randSeedInt(upgradeOdds) < 4) {
           upgradeCount++;
         } else {
           break;
         }
       }
-      tier += upgradeCount;
     }
-  } else if (retryCount >= 100 && tier) {
-    retryCount = 0;
-    tier--;
   }
-  return tier;
+  return upgradeCount;
 }
 
 export function getDefaultModifierTypeForTier(tier: RewardTier): ModifierType {

@@ -261,10 +261,9 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.shopOptionsRows[row].push(option);
     }
 
-    //TODO: temporary stopgap so the game does not crash, will have to fix this later
-    //    console.log(typeOptions.map(to => to.upgradeCount))
-    //    const maxUpgradeCount = typeOptions.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
-    const maxUpgradeCount = 0;
+    const maxUpgradeCount = typeOptions
+      .map(to => to.upgradeCount ?? 0)
+      .reduce((max, current) => Math.max(current, max), 0);
 
     /* Force updateModifiers without pokemon held items */
     globalScene.updateModifiers(true, false);
