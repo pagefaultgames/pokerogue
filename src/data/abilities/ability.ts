@@ -3903,12 +3903,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     const targets = pokemon.getOpponents();
     const target = this.getTarget(targets);
 
-    //Prevents Imposter from triggering on a transformed target or if the user is already transformed
-    if (pokemon?.isTransformed() || target?.isTransformed()) {
-      return false;
-    }
-
-    if (target?.summonData?.illusion) {
+    if (target?.summonData?.illusion || pokemon?.isTransformed() || target?.isTransformed()) {
       return false;
     }
 
