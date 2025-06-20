@@ -69,7 +69,7 @@ export interface PromptHandler {
   phaseTarget?: string;
   mode?: UiMode;
   callback?: () => void;
-  expireFn?: () => void;
+  expireFn?: (() => void) | undefined;
   awaitingActionInput?: boolean;
 }
 

@@ -25,6 +25,7 @@ interface OldTurnMove {
 const fixMoveHistory: SessionSaveMigrator = {
   version: "1.10.0",
   migrate: (data: SessionSaveData): void => {
+    // @ts-expect-error - optional property jank
     const mapTurnMove = (tm: OldTurnMove): TurnMove => ({
       move: tm.move,
       targets: tm.targets,

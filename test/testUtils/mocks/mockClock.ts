@@ -17,6 +17,7 @@ export class MockClock extends Clock {
 
   addEvent(config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig): Phaser.Time.TimerEvent {
     const cfg = { ...config, delay: this.overrideDelay ?? config.delay };
-    return super.addEvent(cfg);
+    // Type assertion needed to get around optional property shit
+    return super.addEvent(cfg as Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig);
   }
 }

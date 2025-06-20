@@ -1763,14 +1763,11 @@ export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendWeatherChangeAbAttr extends PostDefendAbAttr {
-  private weatherType: WeatherType;
-  protected condition?: PokemonDefendCondition;
-
-  constructor(weatherType: WeatherType, condition?: PokemonDefendCondition) {
+  constructor(
+    private weatherType: WeatherType,
+    protected condition?: PokemonDefendCondition,
+  ) {
     super();
-
-    this.weatherType = weatherType;
-    this.condition = condition;
   }
 
   override canApplyPostDefend(
@@ -2758,13 +2755,10 @@ export class GorillaTacticsAbAttr extends ExecutedMoveAbAttr {
 }
 
 export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
-  private stealCondition: PokemonAttackCondition | null;
   private stolenItem?: PokemonHeldItemModifier;
 
-  constructor(stealCondition?: PokemonAttackCondition) {
+  constructor(private stealCondition?: PokemonAttackCondition) {
     super();
-
-    this.stealCondition = stealCondition ?? null;
   }
 
   override canApplyPostAttack(
@@ -2791,7 +2785,6 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
         }
       }
     }
-    this.stolenItem = undefined;
     return false;
   }
 
@@ -2817,7 +2810,6 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
         }),
       );
     }
-    this.stolenItem = undefined;
   }
 
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
@@ -2945,13 +2937,10 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
 }
 
 export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
-  private condition?: PokemonDefendCondition;
   private stolenItem?: PokemonHeldItemModifier;
 
-  constructor(condition?: PokemonDefendCondition) {
+  constructor(private condition?: PokemonDefendCondition) {
     super();
-
-    this.condition = condition;
   }
 
   override canApplyPostDefend(
@@ -2997,7 +2986,6 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
         }),
       );
     }
-    this.stolenItem = undefined;
   }
 
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
@@ -3375,18 +3363,16 @@ export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
  * Generic class to add an arena tag upon switching in
  */
 export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
-  private readonly tagType: ArenaTagType;
-  private readonly turnCount: number;
-  private readonly side?: ArenaTagSide;
-  private readonly quiet?: boolean;
   private sourceId: number;
 
-  constructor(showAbility: boolean, tagType: ArenaTagType, turnCount: number, side?: ArenaTagSide, quiet?: boolean) {
+  constructor(
+    showAbility: boolean,
+    private readonly tagType: ArenaTagType,
+    private readonly turnCount: number,
+    private readonly side?: ArenaTagSide,
+    private readonly quiet?: boolean,
+  ) {
     super(showAbility);
-    this.tagType = tagType;
-    this.turnCount = turnCount;
-    this.side = side;
-    this.quiet = quiet;
   }
 
   public override applyPostSummon(pokemon: Pokemon, _passive: boolean, simulated: boolean, _args: any[]): void {
@@ -4340,7 +4326,7 @@ export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
  */
 export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
   /** {@linkcode BattleStat} to protect or `undefined` if **all** {@linkcode BattleStat} are protected */
-  private protectedStat?: BattleStat;
+  private protectedStat: BattleStat | undefined = undefined;
 
   constructor(protectedStat?: BattleStat) {
     super();
@@ -6446,7 +6432,6 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
         }),
       );
     }
-    this.randItem = undefined;
   }
 }
 
@@ -7003,7 +6988,6 @@ export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageC
 export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
   private multiplier: number;
   private tagType: BattlerTagType;
-  private recoilDamageFunc?: (pokemon: Pokemon) => number;
   private triggerMessageFunc: (pokemon: Pokemon, abilityName: string) => string;
 
   constructor(
@@ -7011,13 +6995,12 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
     multiplier: number,
     tagType: BattlerTagType,
     triggerMessageFunc: (pokemon: Pokemon, abilityName: string) => string,
-    recoilDamageFunc?: (pokemon: Pokemon) => number,
+    private recoilDamageFunc?: (pokemon: Pokemon) => number,
   ) {
     super(condition, multiplier);
 
     this.multiplier = multiplier;
     this.tagType = tagType;
-    this.recoilDamageFunc = recoilDamageFunc;
     this.triggerMessageFunc = triggerMessageFunc;
   }
 

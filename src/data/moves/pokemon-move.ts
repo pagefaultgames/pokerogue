@@ -18,21 +18,19 @@ import type Move from "./move";
  * @see {@linkcode getName} - returns name of {@linkcode Move}.
  **/
 export class PokemonMove {
-  public moveId: MoveId;
-  public ppUsed: number;
-  public ppUp: number;
-
-  /**
-   * If defined and nonzero, overrides the maximum PP of the move (e.g., due to move being copied by Transform).
-   * This also nullifies all effects of `ppUp`.
-   */
-  public maxPpOverride?: number;
-
-  constructor(moveId: MoveId, ppUsed = 0, ppUp = 0, maxPpOverride?: number) {
+  constructor(
+    public moveId: MoveId,
+    public ppUsed = 0,
+    public ppUp = 0,
+    /**
+     * If defined and nonzero, overrides the maximum PP of the move (e.g., due to move being copied by Transform).
+     * This also nullifies all effects of `ppUp`.
+     */
+    public maxPpOverride = 0,
+  ) {
     this.moveId = moveId;
     this.ppUsed = ppUsed;
     this.ppUp = ppUp;
-    this.maxPpOverride = maxPpOverride;
   }
 
   /**
