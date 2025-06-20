@@ -1,9 +1,9 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { Stat } from "#app/enums/stat";
-import { MoveResult } from "#app/field/pokemon";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveResult } from "#enums/move-result";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -25,23 +25,23 @@ describe("Moves - Mirror Move", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.MIRROR_MOVE, Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH)
+      .moveset([MoveId.MIRROR_MOVE, MoveId.SPLASH])
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should use the last move that the target used on the user", async () => {
-    game.override.battleStyle("double").enemyMoveset([Moves.TACKLE, Moves.GROWL]);
-    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
+    game.override.battleStyle("double").enemyMoveset([MoveId.TACKLE, MoveId.GROWL]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
 
-    game.move.select(Moves.MIRROR_MOVE, 0, BattlerIndex.ENEMY); // target's last move is Tackle, enemy should receive damage from Mirror Move copying Tackle
-    game.move.select(Moves.SPLASH, 1);
-    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
-    await game.move.selectEnemyMove(Moves.GROWL, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.MIRROR_MOVE, 0, BattlerIndex.ENEMY); // target's last move is Tackle, enemy should receive damage from Mirror Move copying Tackle
+    game.move.select(MoveId.SPLASH, 1);
+    await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(MoveId.GROWL, BattlerIndex.PLAYER_2);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -49,10 +49,10 @@ describe("Moves - Mirror Move", () => {
   });
 
   it("should apply secondary effects of a move", async () => {
-    game.override.enemyMoveset(Moves.ACID_SPRAY);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    game.override.enemyMoveset(MoveId.ACID_SPRAY);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(Moves.MIRROR_MOVE);
+    game.move.select(MoveId.MIRROR_MOVE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -60,10 +60,10 @@ describe("Moves - Mirror Move", () => {
   });
 
   it("should be able to copy status moves", async () => {
-    game.override.enemyMoveset(Moves.GROWL);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    game.override.enemyMoveset(MoveId.GROWL);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(Moves.MIRROR_MOVE);
+    game.move.select(MoveId.MIRROR_MOVE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -71,9 +71,9 @@ describe("Moves - Mirror Move", () => {
   });
 
   it("should fail if the target has not used any moves", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(Moves.MIRROR_MOVE);
+    game.move.select(MoveId.MIRROR_MOVE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 

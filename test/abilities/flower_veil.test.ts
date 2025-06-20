@@ -1,7 +1,7 @@
-import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { BattlerIndex } from "#enums/battler-index";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -28,14 +28,14 @@ describe("Abilities - Flower Veil", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
-      .enemySpecies(Species.BULBASAUR)
-      .ability(Abilities.FLOWER_VEIL)
+      .moveset([MoveId.SPLASH])
+      .enemySpecies(SpeciesId.BULBASAUR)
+      .ability(AbilityId.FLOWER_VEIL)
       .battleStyle("single")
-      .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   /***********************************************
@@ -43,36 +43,36 @@ describe("Abilities - Flower Veil", () => {
    ***********************************************/
   it("should not prevent any source of self-inflicted status conditions", async () => {
     game.override
-      .enemyMoveset([Moves.TACKLE, Moves.SPLASH])
-      .moveset([Moves.REST, Moves.SPLASH])
+      .enemyMoveset([MoveId.TACKLE, MoveId.SPLASH])
+      .moveset([MoveId.REST, MoveId.SPLASH])
       .startingHeldItems([{ name: "FLAME_ORB" }]);
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
     const user = game.scene.getPlayerPokemon()!;
-    game.move.select(Moves.REST);
-    await game.move.selectEnemyMove(Moves.TACKLE);
+    game.move.select(MoveId.REST);
+    await game.move.selectEnemyMove(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
     expect(user.status?.effect).toBe(StatusEffect.SLEEP);
 
     // remove sleep status so we can get burn from the orb
     user.resetStatus();
-    game.move.select(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
     expect(user.status?.effect).toBe(StatusEffect.BURN);
   });
 
   it("should prevent drowsiness from yawn for a grass user and its grass allies", async () => {
-    game.override.enemyMoveset([Moves.YAWN]).moveset([Moves.SPLASH]).battleStyle("double");
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.BULBASAUR]);
+    game.override.enemyMoveset([MoveId.YAWN]).moveset([MoveId.SPLASH]).battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.BULBASAUR]);
 
     // Clear the ability of the ally to isolate the test
     const ally = game.scene.getPlayerField()[1]!;
-    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.YAWN, BattlerIndex.PLAYER);
-    await game.move.selectEnemyMove(Moves.YAWN, BattlerIndex.PLAYER_2);
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[AbilityId.BALL_FETCH]);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.YAWN, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(MoveId.YAWN, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to("BerryPhase");
     const user = game.scene.getPlayerPokemon()!;
@@ -81,28 +81,27 @@ describe("Abilities - Flower Veil", () => {
   });
 
   it("should prevent status conditions from moves like Thunder Wave for a grass user and its grass allies", async () => {
-    game.override.enemyMoveset([Moves.THUNDER_WAVE]).moveset([Moves.SPLASH]).battleStyle("double");
-    vi.spyOn(allMoves[Moves.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    game.override.enemyMoveset([MoveId.THUNDER_WAVE]).moveset([MoveId.SPLASH]).battleStyle("double");
+    vi.spyOn(allMoves[MoveId.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-    game.move.select(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.THUNDER_WAVE);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.THUNDER_WAVE);
     await game.toNextTurn();
     expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
-    vi.spyOn(allMoves[Moves.THUNDER_WAVE], "accuracy", "get").mockClear();
   });
 
   it("should not prevent status conditions for a non-grass user and its non-grass allies", async () => {
-    game.override.enemyMoveset([Moves.THUNDER_WAVE]).moveset([Moves.SPLASH]).battleStyle("double");
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    game.override.enemyMoveset([MoveId.THUNDER_WAVE]).moveset([MoveId.SPLASH]).battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
     const [user, ally] = game.scene.getPlayerField();
-    vi.spyOn(allMoves[Moves.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
+    vi.spyOn(allMoves[MoveId.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
     // Clear the ally ability to isolate the test
-    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.THUNDER_WAVE, BattlerIndex.PLAYER);
-    await game.move.selectEnemyMove(Moves.THUNDER_WAVE, BattlerIndex.PLAYER_2);
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[AbilityId.BALL_FETCH]);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.THUNDER_WAVE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(MoveId.THUNDER_WAVE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
     expect(user.status?.effect).toBe(StatusEffect.PARALYSIS);
     expect(ally.status?.effect).toBe(StatusEffect.PARALYSIS);
@@ -113,40 +112,40 @@ describe("Abilities - Flower Veil", () => {
    *******************************************/
 
   it("should prevent the status drops from enemies for the a grass user and its grass allies", async () => {
-    game.override.enemyMoveset([Moves.GROWL]).moveset([Moves.SPLASH]).battleStyle("double");
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.BULBASAUR]);
+    game.override.enemyMoveset([MoveId.GROWL]).moveset([MoveId.SPLASH]).battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.BULBASAUR]);
     const [user, ally] = game.scene.getPlayerField();
     // Clear the ally ability to isolate the test
-    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH);
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[AbilityId.BALL_FETCH]);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
     expect(user.getStatStage(Stat.ATK)).toBe(0);
     expect(ally.getStatStage(Stat.ATK)).toBe(0);
   });
 
   it("should not prevent status drops for a non-grass user and its non-grass allies", async () => {
-    game.override.enemyMoveset([Moves.GROWL]).moveset([Moves.SPLASH]).battleStyle("double");
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    game.override.enemyMoveset([MoveId.GROWL]).moveset([MoveId.SPLASH]).battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
     const [user, ally] = game.scene.getPlayerField();
     // Clear the ally ability to isolate the test
-    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH);
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[AbilityId.BALL_FETCH]);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
     expect(user.getStatStage(Stat.ATK)).toBe(-2);
     expect(ally.getStatStage(Stat.ATK)).toBe(-2);
   });
 
   it("should not prevent self-inflicted stat drops from moves like Close Combat for a user or its allies", async () => {
-    game.override.moveset([Moves.CLOSE_COMBAT]).battleStyle("double");
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.BULBASAUR]);
+    game.override.moveset([MoveId.CLOSE_COMBAT]).battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.BULBASAUR]);
     const [user, ally] = game.scene.getPlayerField();
     // Clear the ally ability to isolate the test
-    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[AbilityId.BALL_FETCH]);
 
-    game.move.select(Moves.CLOSE_COMBAT, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.CLOSE_COMBAT, 1, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.CLOSE_COMBAT, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.CLOSE_COMBAT, 1, BattlerIndex.ENEMY_2);
     await game.phaseInterceptor.to("BerryPhase");
     expect(user.getStatStage(Stat.DEF)).toBe(-1);
     expect(user.getStatStage(Stat.SPDEF)).toBe(-1);
@@ -155,10 +154,10 @@ describe("Abilities - Flower Veil", () => {
   });
 
   it("should prevent the drops while retaining the boosts from spicy extract", async () => {
-    game.override.enemyMoveset([Moves.SPICY_EXTRACT]).moveset([Moves.SPLASH]);
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    game.override.enemyMoveset([MoveId.SPICY_EXTRACT]).moveset([MoveId.SPLASH]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
     const user = game.scene.getPlayerPokemon()!;
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
     expect(user.getStatStage(Stat.ATK)).toBe(2);
     expect(user.getStatStage(Stat.DEF)).toBe(0);

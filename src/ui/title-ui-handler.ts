@@ -8,8 +8,8 @@ import { TimedEventDisplay } from "#app/timed-event-manager";
 import { version } from "../../package.json";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
-import type { Species } from "#enums/species";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import type { SpeciesId } from "#enums/species-id";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { PlayerGender } from "#enums/player-gender";
 import { timedEventManager } from "#app/global-event-manager";
 
@@ -105,7 +105,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
   /** Used solely to display a random Pokémon name in a splash message. */
   randomPokemon(): void {
     const rand = randInt(1025, 1);
-    const pokemon = getPokemonSpecies(rand as Species);
+    const pokemon = getPokemonSpecies(rand as SpeciesId);
     if (
       this.splashMessage === "splashMessages:underratedPokemon" ||
       this.splashMessage === "splashMessages:dontTalkAboutThePokemonIncident" ||

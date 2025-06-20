@@ -12,16 +12,15 @@ import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounte
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { TrainerType } from "#enums/trainer-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { randSeedInt } from "#app/utils/common";
 import i18next from "i18next";
 import type { IEggOptions } from "#app/data/egg";
 import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
-import { PartyHealPhase } from "#app/phases/party-heal-phase";
-import { ModifierTier } from "#app/modifier/modifier-tier";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { ModifierTier } from "#enums/modifier-tier";
+import { modifierTypes } from "#app/data/data-lists";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 
 /** the i18n namespace for the encounter */
@@ -54,27 +53,27 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
     switch (randSeedInt(5)) {
       case 1:
         trainerType = TrainerType.CHERYL;
-        spriteKeys = getSpriteKeysFromSpecies(Species.BLISSEY);
+        spriteKeys = getSpriteKeysFromSpecies(SpeciesId.BLISSEY);
         trainerNameKey = "cheryl";
         break;
       case 2:
         trainerType = TrainerType.MARLEY;
-        spriteKeys = getSpriteKeysFromSpecies(Species.ARCANINE);
+        spriteKeys = getSpriteKeysFromSpecies(SpeciesId.ARCANINE);
         trainerNameKey = "marley";
         break;
       case 3:
         trainerType = TrainerType.MIRA;
-        spriteKeys = getSpriteKeysFromSpecies(Species.ALAKAZAM, false, 1);
+        spriteKeys = getSpriteKeysFromSpecies(SpeciesId.ALAKAZAM, false, 1);
         trainerNameKey = "mira";
         break;
       case 4:
         trainerType = TrainerType.RILEY;
-        spriteKeys = getSpriteKeysFromSpecies(Species.LUCARIO, false, 1);
+        spriteKeys = getSpriteKeysFromSpecies(SpeciesId.LUCARIO, false, 1);
         trainerNameKey = "riley";
         break;
       default:
         trainerType = TrainerType.BUCK;
-        spriteKeys = getSpriteKeysFromSpecies(Species.CLAYDOL);
+        spriteKeys = getSpriteKeysFromSpecies(SpeciesId.CLAYDOL);
         trainerNameKey = "buck";
         break;
     }
@@ -182,7 +181,7 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
     async () => {
       const encounter = globalScene.currentBattle.mysteryEncounter!;
       // Full heal party
-      globalScene.unshiftPhase(new PartyHealPhase(true));
+      globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
 
       const eggOptions: IEggOptions = {
         pulled: false,

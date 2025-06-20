@@ -28,10 +28,8 @@
       ".vscode/*",
       "*.css", // TODO?
       "*.html", // TODO?
-      "src/overrides.ts",
       // TODO: these files are too big and complex, ignore them until their respective refactors
       "src/data/moves/move.ts",
-      "src/data/abilities/ability.ts",
 
       // this file is just too big:
       "src/data/balance/tms.ts"
@@ -42,17 +40,14 @@
   // TODO: Remove if we ever get down to 0 circular imports
   "organizeImports": { "enabled": false },
   "linter": {
-    "ignore": [
-      "src/phases/move-effect-phase.ts" // TODO: unignore after move-effect-phase refactor
-    ],
     "enabled": true,
     "rules": {
       "recommended": true,
       "correctness": {
         "noUndeclaredVariables": "off",
         "noUnusedVariables": "error",
-        "noSwitchDeclarations": "warn", // TODO: refactor and make this an error
-        "noVoidTypeReturn": "warn", // TODO: Refactor and make this an error
+        "noSwitchDeclarations": "error",
+        "noVoidTypeReturn": "error",
         "noUnusedImports": "error"
       },
       "style": {
@@ -89,7 +84,7 @@
         "useLiteralKeys": "off",
         "noForEach": "off", // Foreach vs for of is not that simple.
         "noUselessSwitchCase": "off", // Explicit > Implicit
-        "noUselessConstructor": "warn", // TODO: Refactor and make this an error
+        "noUselessConstructor": "error",
         "noBannedTypes": "warn" // TODO: Refactor and make this an error
       },
       "nursery": {
@@ -121,6 +116,28 @@
           },
           "style": {
             "noNamespaceImport": "off" // this is required for `vi.spyOn` to work in some tests
+          }
+        }
+      }
+    },
+
+    // Overrides to prevent unused import removal inside `overrides.ts` and enums files (for TSDoc linkcodes)
+    {
+      "include": ["src/overrides.ts", "src/enums/*"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedImports": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["src/overrides.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useImportType": "off"
           }
         }
       }

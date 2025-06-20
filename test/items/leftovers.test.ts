@@ -1,8 +1,8 @@
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -26,16 +26,16 @@ describe("Items - Leftovers", () => {
     game.override
       .battleStyle("single")
       .startingLevel(2000)
-      .ability(Abilities.UNNERVE)
-      .moveset([Moves.SPLASH])
-      .enemySpecies(Species.SHUCKLE)
-      .enemyAbility(Abilities.UNNERVE)
-      .enemyMoveset(Moves.TACKLE)
+      .ability(AbilityId.UNNERVE)
+      .moveset([MoveId.SPLASH])
+      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemyAbility(AbilityId.UNNERVE)
+      .enemyMoveset(MoveId.TACKLE)
       .startingHeldItems([{ name: "LEFTOVERS", count: 1 }]);
   });
 
   it("leftovers works", async () => {
-    await game.classicMode.startBattle([Species.ARCANINE]);
+    await game.classicMode.startBattle([SpeciesId.ARCANINE]);
 
     // Make sure leftovers are there
     expect(game.scene.modifiers[0].type.id).toBe("LEFTOVERS");
@@ -45,7 +45,7 @@ describe("Items - Leftovers", () => {
     // We should have full hp
     expect(leadPokemon.isFullHp()).toBe(true);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     // We should have less hp after the attack
     await game.phaseInterceptor.to(DamageAnimPhase, false);
@@ -56,5 +56,5 @@ describe("Items - Leftovers", () => {
     // Check if leftovers heal us
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(leadPokemon.hp).toBeGreaterThan(leadHpAfterDamage);
-  }, 20000);
+  });
 });

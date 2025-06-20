@@ -1,7 +1,7 @@
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -9,9 +9,9 @@ import {
   runSelectMysteryEncounterOption,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import type BattleScene from "#app/battle-scene";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { UiMode } from "#enums/ui-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -26,127 +26,121 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 
 const namespace = "mysteryEncounters/bugTypeSuperfan";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.WEEDLE];
-const defaultBiome = Biome.CAVE;
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.WEEDLE];
+const defaultBiome = BiomeId.CAVE;
 const defaultWave = 24;
 
 const POOL_1_POKEMON = [
-  Species.PARASECT,
-  Species.VENOMOTH,
-  Species.LEDIAN,
-  Species.ARIADOS,
-  Species.YANMA,
-  Species.BEAUTIFLY,
-  Species.DUSTOX,
-  Species.MASQUERAIN,
-  Species.NINJASK,
-  Species.VOLBEAT,
-  Species.ILLUMISE,
-  Species.ANORITH,
-  Species.KRICKETUNE,
-  Species.WORMADAM,
-  Species.MOTHIM,
-  Species.SKORUPI,
-  Species.JOLTIK,
-  Species.LARVESTA,
-  Species.VIVILLON,
-  Species.CHARJABUG,
-  Species.RIBOMBEE,
-  Species.SPIDOPS,
-  Species.LOKIX,
+  SpeciesId.PARASECT,
+  SpeciesId.VENOMOTH,
+  SpeciesId.LEDIAN,
+  SpeciesId.ARIADOS,
+  SpeciesId.YANMA,
+  SpeciesId.BEAUTIFLY,
+  SpeciesId.DUSTOX,
+  SpeciesId.MASQUERAIN,
+  SpeciesId.NINJASK,
+  SpeciesId.VOLBEAT,
+  SpeciesId.ILLUMISE,
+  SpeciesId.ANORITH,
+  SpeciesId.KRICKETUNE,
+  SpeciesId.WORMADAM,
+  SpeciesId.MOTHIM,
+  SpeciesId.SKORUPI,
+  SpeciesId.JOLTIK,
+  SpeciesId.LARVESTA,
+  SpeciesId.VIVILLON,
+  SpeciesId.CHARJABUG,
+  SpeciesId.RIBOMBEE,
+  SpeciesId.SPIDOPS,
+  SpeciesId.LOKIX,
 ];
 
 const POOL_2_POKEMON = [
-  Species.SCYTHER,
-  Species.PINSIR,
-  Species.HERACROSS,
-  Species.FORRETRESS,
-  Species.SCIZOR,
-  Species.SHUCKLE,
-  Species.SHEDINJA,
-  Species.ARMALDO,
-  Species.VESPIQUEN,
-  Species.DRAPION,
-  Species.YANMEGA,
-  Species.LEAVANNY,
-  Species.SCOLIPEDE,
-  Species.CRUSTLE,
-  Species.ESCAVALIER,
-  Species.ACCELGOR,
-  Species.GALVANTULA,
-  Species.VIKAVOLT,
-  Species.ARAQUANID,
-  Species.ORBEETLE,
-  Species.CENTISKORCH,
-  Species.FROSMOTH,
-  Species.KLEAVOR,
+  SpeciesId.SCYTHER,
+  SpeciesId.PINSIR,
+  SpeciesId.HERACROSS,
+  SpeciesId.FORRETRESS,
+  SpeciesId.SCIZOR,
+  SpeciesId.SHUCKLE,
+  SpeciesId.SHEDINJA,
+  SpeciesId.ARMALDO,
+  SpeciesId.VESPIQUEN,
+  SpeciesId.DRAPION,
+  SpeciesId.YANMEGA,
+  SpeciesId.LEAVANNY,
+  SpeciesId.SCOLIPEDE,
+  SpeciesId.CRUSTLE,
+  SpeciesId.ESCAVALIER,
+  SpeciesId.ACCELGOR,
+  SpeciesId.GALVANTULA,
+  SpeciesId.VIKAVOLT,
+  SpeciesId.ARAQUANID,
+  SpeciesId.ORBEETLE,
+  SpeciesId.CENTISKORCH,
+  SpeciesId.FROSMOTH,
+  SpeciesId.KLEAVOR,
 ];
 
-const POOL_3_POKEMON: { species: Species; formIndex?: number }[] = [
+const POOL_3_POKEMON: { species: SpeciesId; formIndex?: number }[] = [
   {
-    species: Species.PINSIR,
+    species: SpeciesId.PINSIR,
     formIndex: 1,
   },
   {
-    species: Species.SCIZOR,
+    species: SpeciesId.SCIZOR,
     formIndex: 1,
   },
   {
-    species: Species.HERACROSS,
+    species: SpeciesId.HERACROSS,
     formIndex: 1,
   },
   {
-    species: Species.ORBEETLE,
+    species: SpeciesId.ORBEETLE,
     formIndex: 1,
   },
   {
-    species: Species.CENTISKORCH,
+    species: SpeciesId.CENTISKORCH,
     formIndex: 1,
   },
   {
-    species: Species.DURANT,
+    species: SpeciesId.DURANT,
   },
   {
-    species: Species.VOLCARONA,
+    species: SpeciesId.VOLCARONA,
   },
   {
-    species: Species.GOLISOPOD,
+    species: SpeciesId.GOLISOPOD,
   },
 ];
 
-const POOL_4_POKEMON = [Species.GENESECT, Species.SLITHER_WING, Species.BUZZWOLE, Species.PHEROMOSA];
+const POOL_4_POKEMON = [SpeciesId.GENESECT, SpeciesId.SLITHER_WING, SpeciesId.BUZZWOLE, SpeciesId.PHEROMOSA];
 
 const PHYSICAL_TUTOR_MOVES = [
-  Moves.MEGAHORN,
-  Moves.ATTACK_ORDER,
-  Moves.BUG_BITE,
-  Moves.FIRST_IMPRESSION,
-  Moves.LUNGE
+  MoveId.MEGAHORN,
+  MoveId.ATTACK_ORDER,
+  MoveId.BUG_BITE,
+  MoveId.FIRST_IMPRESSION,
+  MoveId.LUNGE,
 ];
 
 const SPECIAL_TUTOR_MOVES = [
-  Moves.SILVER_WIND,
-  Moves.SIGNAL_BEAM,
-  Moves.BUG_BUZZ,
-  Moves.POLLEN_PUFF,
-  Moves.STRUGGLE_BUG
+  MoveId.SILVER_WIND,
+  MoveId.SIGNAL_BEAM,
+  MoveId.BUG_BUZZ,
+  MoveId.POLLEN_PUFF,
+  MoveId.STRUGGLE_BUG,
 ];
 
 const STATUS_TUTOR_MOVES = [
-  Moves.STRING_SHOT,
-  Moves.DEFEND_ORDER,
-  Moves.RAGE_POWDER,
-  Moves.STICKY_WEB,
-  Moves.SILK_TRAP
+  MoveId.STRING_SHOT,
+  MoveId.DEFEND_ORDER,
+  MoveId.RAGE_POWDER,
+  MoveId.STICKY_WEB,
+  MoveId.SILK_TRAP,
 ];
 
-const MISC_TUTOR_MOVES = [
-  Moves.LEECH_LIFE,
-  Moves.U_TURN,
-  Moves.HEAL_ORDER,
-  Moves.QUIVER_DANCE,
-  Moves.INFESTATION,
-];
+const MISC_TUTOR_MOVES = [MoveId.LEECH_LIFE, MoveId.U_TURN, MoveId.HEAL_ORDER, MoveId.QUIVER_DANCE, MoveId.INFESTATION];
 
 describe("Bug-Type Superfan - Mystery Encounter", () => {
   let phaserGame: Phaser.Game;
@@ -160,20 +154,19 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.BUG_TYPE_SUPERFAN]]]),
+      new Map<BiomeId, MysteryEncounterType[]>([[BiomeId.CAVE, [MysteryEncounterType.BUG_TYPE_SUPERFAN]]]),
     );
   });
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -238,11 +231,11 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyParty = scene.getEnemyParty();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyParty.length).toBe(2);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.BUG_TYPE_SUPERFAN);
-      expect(enemyParty[0].species.speciesId).toBe(Species.BEEDRILL);
-      expect(enemyParty[1].species.speciesId).toBe(Species.BUTTERFREE);
+      expect(enemyParty[0].species.speciesId).toBe(SpeciesId.BEEDRILL);
+      expect(enemyParty[1].species.speciesId).toBe(SpeciesId.BUTTERFREE);
     });
 
     it("should start battle against the Bug-Type Superfan with wave 50 party template", async () => {
@@ -251,11 +244,11 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyParty = scene.getEnemyParty();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyParty.length).toBe(3);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.BUG_TYPE_SUPERFAN);
-      expect(enemyParty[0].species.speciesId).toBe(Species.BEEDRILL);
-      expect(enemyParty[1].species.speciesId).toBe(Species.BUTTERFREE);
+      expect(enemyParty[0].species.speciesId).toBe(SpeciesId.BEEDRILL);
+      expect(enemyParty[1].species.speciesId).toBe(SpeciesId.BUTTERFREE);
       expect(POOL_1_POKEMON.includes(enemyParty[2].species.speciesId)).toBe(true);
     });
 
@@ -265,11 +258,11 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyParty = scene.getEnemyParty();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyParty.length).toBe(4);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.BUG_TYPE_SUPERFAN);
-      expect(enemyParty[0].species.speciesId).toBe(Species.BEEDRILL);
-      expect(enemyParty[1].species.speciesId).toBe(Species.BUTTERFREE);
+      expect(enemyParty[0].species.speciesId).toBe(SpeciesId.BEEDRILL);
+      expect(enemyParty[1].species.speciesId).toBe(SpeciesId.BUTTERFREE);
       expect(POOL_1_POKEMON.includes(enemyParty[2].species.speciesId)).toBe(true);
       expect(POOL_2_POKEMON.includes(enemyParty[3].species.speciesId)).toBe(true);
     });
@@ -280,11 +273,11 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyParty = scene.getEnemyParty();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyParty.length).toBe(5);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.BUG_TYPE_SUPERFAN);
-      expect(enemyParty[0].species.speciesId).toBe(Species.BEEDRILL);
-      expect(enemyParty[1].species.speciesId).toBe(Species.BUTTERFREE);
+      expect(enemyParty[0].species.speciesId).toBe(SpeciesId.BEEDRILL);
+      expect(enemyParty[1].species.speciesId).toBe(SpeciesId.BUTTERFREE);
       expect(POOL_1_POKEMON.includes(enemyParty[2].species.speciesId)).toBe(true);
       expect(POOL_2_POKEMON.includes(enemyParty[3].species.speciesId)).toBe(true);
       expect(POOL_2_POKEMON.includes(enemyParty[4].species.speciesId)).toBe(true);
@@ -296,12 +289,12 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyParty = scene.getEnemyParty();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyParty.length).toBe(5);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.BUG_TYPE_SUPERFAN);
-      expect(enemyParty[0].species.speciesId).toBe(Species.BEEDRILL);
+      expect(enemyParty[0].species.speciesId).toBe(SpeciesId.BEEDRILL);
       expect(enemyParty[0].formIndex).toBe(1);
-      expect(enemyParty[1].species.speciesId).toBe(Species.BUTTERFREE);
+      expect(enemyParty[1].species.speciesId).toBe(SpeciesId.BUTTERFREE);
       expect(enemyParty[1].formIndex).toBe(1);
       expect(POOL_2_POKEMON.includes(enemyParty[2].species.speciesId)).toBe(true);
       expect(POOL_2_POKEMON.includes(enemyParty[3].species.speciesId)).toBe(true);
@@ -314,12 +307,12 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyParty = scene.getEnemyParty();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyParty.length).toBe(5);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.BUG_TYPE_SUPERFAN);
-      expect(enemyParty[0].species.speciesId).toBe(Species.BEEDRILL);
+      expect(enemyParty[0].species.speciesId).toBe(SpeciesId.BEEDRILL);
       expect(enemyParty[0].formIndex).toBe(1);
-      expect(enemyParty[1].species.speciesId).toBe(Species.BUTTERFREE);
+      expect(enemyParty[1].species.speciesId).toBe(SpeciesId.BUTTERFREE);
       expect(enemyParty[1].formIndex).toBe(1);
       expect(POOL_2_POKEMON.includes(enemyParty[2].species.speciesId)).toBe(true);
       expect(POOL_3_POKEMON.some(config => enemyParty[3].species.speciesId === config.species)).toBe(true);
@@ -332,12 +325,12 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyParty = scene.getEnemyParty();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyParty.length).toBe(5);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.BUG_TYPE_SUPERFAN);
-      expect(enemyParty[0].species.speciesId).toBe(Species.BEEDRILL);
+      expect(enemyParty[0].species.speciesId).toBe(SpeciesId.BEEDRILL);
       expect(enemyParty[0].formIndex).toBe(1);
-      expect(enemyParty[1].species.speciesId).toBe(Species.BUTTERFREE);
+      expect(enemyParty[1].species.speciesId).toBe(SpeciesId.BUTTERFREE);
       expect(enemyParty[1].formIndex).toBe(1);
       expect(POOL_2_POKEMON.includes(enemyParty[2].species.speciesId)).toBe(true);
       expect(POOL_3_POKEMON.some(config => enemyParty[3].species.speciesId === config.species)).toBe(true);
@@ -350,14 +343,14 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyParty = scene.getEnemyParty();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyParty.length).toBe(5);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.BUG_TYPE_SUPERFAN);
-      expect(enemyParty[0].species.speciesId).toBe(Species.BEEDRILL);
+      expect(enemyParty[0].species.speciesId).toBe(SpeciesId.BEEDRILL);
       expect(enemyParty[0].formIndex).toBe(1);
       expect(enemyParty[0].isBoss()).toBe(true);
       expect(enemyParty[0].bossSegments).toBe(2);
-      expect(enemyParty[1].species.speciesId).toBe(Species.BUTTERFREE);
+      expect(enemyParty[1].species.speciesId).toBe(SpeciesId.BUTTERFREE);
       expect(enemyParty[1].formIndex).toBe(1);
       expect(enemyParty[1].isBoss()).toBe(true);
       expect(enemyParty[1].bossSegments).toBe(2);
@@ -372,7 +365,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game, false);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterRewardsPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterRewardsPhase.name);
       game.phaseInterceptor["prompts"] = []; // Clear out prompt handlers
       game.onNextPrompt("MysteryEncounterRewardsPhase", UiMode.OPTION_SELECT, () => {
         game.phaseInterceptor.superEndPhase();
@@ -401,10 +394,10 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should NOT be selectable if the player doesn't have any Bug types", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [Species.ABRA]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [SpeciesId.ABRA]);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
@@ -413,7 +406,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 2);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -423,7 +416,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 2);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
@@ -436,10 +429,13 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should proceed to rewards screen with 2-3 Bug Types reward options", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [Species.BUTTERFREE, Species.BEEDRILL]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [
+        SpeciesId.BUTTERFREE,
+        SpeciesId.BEEDRILL,
+      ]);
       await runMysteryEncounterToEnd(game, 2);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
@@ -454,14 +450,14 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
     it("should proceed to rewards screen with 4-5 Bug Types reward options", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [
-        Species.BUTTERFREE,
-        Species.BEEDRILL,
-        Species.GALVANTULA,
-        Species.VOLCARONA,
+        SpeciesId.BUTTERFREE,
+        SpeciesId.BEEDRILL,
+        SpeciesId.GALVANTULA,
+        SpeciesId.VOLCARONA,
       ]);
       await runMysteryEncounterToEnd(game, 2);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
@@ -476,16 +472,16 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
     it("should proceed to rewards screen with 6 Bug Types reward options (including form change item)", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [
-        Species.BUTTERFREE,
-        Species.BEEDRILL,
-        Species.GALVANTULA,
-        Species.VOLCARONA,
-        Species.ANORITH,
-        Species.GENESECT,
+        SpeciesId.BUTTERFREE,
+        SpeciesId.BEEDRILL,
+        SpeciesId.GALVANTULA,
+        SpeciesId.VOLCARONA,
+        SpeciesId.ANORITH,
+        SpeciesId.GENESECT,
       ]);
       await runMysteryEncounterToEnd(game, 2);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
@@ -537,7 +533,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       game.scene.modifiers = [];
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
@@ -546,7 +542,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 3);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -554,14 +550,14 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
     it("should remove the gifted item and proceed to rewards screen", async () => {
       game.override.startingHeldItems([{ name: "GRIP_CLAW", count: 1 }]);
-      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [Species.BUTTERFREE]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [SpeciesId.BUTTERFREE]);
 
       const gripClawCountBefore =
         scene.findModifier(m => m instanceof ContactHeldItemTransferChanceModifier)?.stackCount ?? 0;
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
@@ -581,7 +577,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       game.override.startingHeldItems([{ name: "GRIP_CLAW", count: 1 }]);
       const leaveEncounterWithoutBattleSpy = vi.spyOn(encounterPhaseUtils, "leaveEncounterWithoutBattle");
 
-      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [Species.BUTTERFREE]);
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [SpeciesId.BUTTERFREE]);
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();

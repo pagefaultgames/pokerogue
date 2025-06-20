@@ -1,13 +1,12 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { PokemonType } from "#enums/pokemon-type";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { FlinchAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 
 describe("Abilities - Sheer Force", () => {
@@ -28,25 +27,25 @@ describe("Abilities - Sheer Force", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .ability(Abilities.SHEER_FORCE)
-      .enemySpecies(Species.ONIX)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.SPLASH])
-      .disableCrits();
+      .ability(AbilityId.SHEER_FORCE)
+      .enemySpecies(SpeciesId.ONIX)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset([MoveId.SPLASH])
+      .criticalHits(false);
   });
 
   const SHEER_FORCE_MULT = 1.3;
 
   it("Sheer Force should boost the power of the move but disable secondary effects", async () => {
-    game.override.moveset([Moves.AIR_SLASH]);
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    game.override.moveset([MoveId.AIR_SLASH]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const airSlashMove = allMoves[Moves.AIR_SLASH];
+    const airSlashMove = allMoves[MoveId.AIR_SLASH];
     vi.spyOn(airSlashMove, "calculateBattlePower");
-    const airSlashFlinchAttr = airSlashMove.getAttrs(FlinchAttr)[0];
+    const airSlashFlinchAttr = airSlashMove.getAttrs("FlinchAttr")[0];
     vi.spyOn(airSlashFlinchAttr, "getMoveChance");
 
-    game.move.select(Moves.AIR_SLASH);
+    game.move.select(MoveId.AIR_SLASH);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
@@ -57,29 +56,29 @@ describe("Abilities - Sheer Force", () => {
   });
 
   it("Sheer Force does not affect the base damage or secondary effects of binding moves", async () => {
-    game.override.moveset([Moves.BIND]);
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    game.override.moveset([MoveId.BIND]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const bindMove = allMoves[Moves.BIND];
+    const bindMove = allMoves[MoveId.BIND];
     vi.spyOn(bindMove, "calculateBattlePower");
 
-    game.move.select(Moves.BIND);
+    game.move.select(MoveId.BIND);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(bindMove.calculateBattlePower).toHaveLastReturnedWith(bindMove.power);
-  }, 20000);
+  });
 
   it("Sheer Force does not boost the base damage of moves with no secondary effect", async () => {
-    game.override.moveset([Moves.TACKLE]);
-    await game.classicMode.startBattle([Species.PIDGEOT]);
+    game.override.moveset([MoveId.TACKLE]);
+    await game.classicMode.startBattle([SpeciesId.PIDGEOT]);
 
-    const tackleMove = allMoves[Moves.TACKLE];
+    const tackleMove = allMoves[MoveId.TACKLE];
     vi.spyOn(tackleMove, "calculateBattlePower");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
@@ -89,19 +88,19 @@ describe("Abilities - Sheer Force", () => {
 
   it("Sheer Force can disable the on-hit activation of specific abilities", async () => {
     game.override
-      .moveset([Moves.HEADBUTT])
-      .enemySpecies(Species.SQUIRTLE)
+      .moveset([MoveId.HEADBUTT])
+      .enemySpecies(SpeciesId.SQUIRTLE)
       .enemyLevel(10)
-      .enemyAbility(Abilities.COLOR_CHANGE);
+      .enemyAbility(AbilityId.COLOR_CHANGE);
 
-    await game.classicMode.startBattle([Species.PIDGEOT]);
+    await game.classicMode.startBattle([SpeciesId.PIDGEOT]);
     const enemyPokemon = game.scene.getEnemyPokemon();
-    const headbuttMove = allMoves[Moves.HEADBUTT];
+    const headbuttMove = allMoves[MoveId.HEADBUTT];
     vi.spyOn(headbuttMove, "calculateBattlePower");
-    const headbuttFlinchAttr = headbuttMove.getAttrs(FlinchAttr)[0];
+    const headbuttFlinchAttr = headbuttMove.getAttrs("FlinchAttr")[0];
     vi.spyOn(headbuttFlinchAttr, "getMoveChance");
 
-    game.move.select(Moves.HEADBUTT);
+    game.move.select(MoveId.HEADBUTT);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
@@ -113,14 +112,14 @@ describe("Abilities - Sheer Force", () => {
   });
 
   it("Two Pokemon with abilities disabled by Sheer Force hitting each other should not cause a crash", async () => {
-    const moveToUse = Moves.CRUNCH;
+    const moveToUse = MoveId.CRUNCH;
     game.override
-      .enemyAbility(Abilities.COLOR_CHANGE)
-      .ability(Abilities.COLOR_CHANGE)
+      .enemyAbility(AbilityId.COLOR_CHANGE)
+      .ability(AbilityId.COLOR_CHANGE)
       .moveset(moveToUse)
       .enemyMoveset(moveToUse);
 
-    await game.classicMode.startBattle([Species.PIDGEOT]);
+    await game.classicMode.startBattle([SpeciesId.PIDGEOT]);
 
     const pidgeot = game.scene.getPlayerParty()[0];
     const onix = game.scene.getEnemyParty()[0];
@@ -139,16 +138,16 @@ describe("Abilities - Sheer Force", () => {
 
   it("Sheer Force should disable Meloetta's transformation from Relic Song", async () => {
     game.override
-      .ability(Abilities.SHEER_FORCE)
-      .moveset([Moves.RELIC_SONG])
-      .enemyMoveset([Moves.SPLASH])
+      .ability(AbilityId.SHEER_FORCE)
+      .moveset([MoveId.RELIC_SONG])
+      .enemyMoveset([MoveId.SPLASH])
       .enemyLevel(100);
-    await game.classicMode.startBattle([Species.MELOETTA]);
+    await game.classicMode.startBattle([SpeciesId.MELOETTA]);
 
     const playerPokemon = game.scene.getPlayerPokemon();
     const formKeyStart = playerPokemon?.getFormKey();
 
-    game.move.select(Moves.RELIC_SONG);
+    game.move.select(MoveId.RELIC_SONG);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(formKeyStart).toBe(playerPokemon?.getFormKey());
   });

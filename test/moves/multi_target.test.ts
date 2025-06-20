@@ -1,8 +1,8 @@
-import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#app/enums/abilities";
-import { Species } from "#app/enums/species";
+import { BattlerIndex } from "#enums/battler-index";
+import { AbilityId } from "#enums/ability-id";
+import { SpeciesId } from "#enums/species-id";
 import { toDmgValue } from "#app/utils/common";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -24,24 +24,24 @@ describe("Multi-target damage reduction", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .disableCrits()
+      .criticalHits(false)
       .battleStyle("double")
       .enemyLevel(100)
       .startingLevel(100)
-      .enemySpecies(Species.POLIWAG)
-      .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .moveset([Moves.TACKLE, Moves.DAZZLING_GLEAM, Moves.EARTHQUAKE, Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH);
+      .enemySpecies(SpeciesId.POLIWAG)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .moveset([MoveId.TACKLE, MoveId.DAZZLING_GLEAM, MoveId.EARTHQUAKE, MoveId.SPLASH])
+      .ability(AbilityId.BALL_FETCH);
   });
 
   it("should reduce d.gleam damage when multiple enemies but not tackle", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
 
-    game.move.select(Moves.DAZZLING_GLEAM);
-    game.move.select(Moves.TACKLE, 1, BattlerIndex.ENEMY);
+    game.move.select(MoveId.DAZZLING_GLEAM);
+    game.move.select(MoveId.TACKLE, 1, BattlerIndex.ENEMY);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -56,8 +56,8 @@ describe("Multi-target damage reduction", () => {
     await game.killPokemon(enemy2);
     await game.toNextTurn();
 
-    game.move.select(Moves.DAZZLING_GLEAM);
-    game.move.select(Moves.TACKLE, 1, BattlerIndex.ENEMY);
+    game.move.select(MoveId.DAZZLING_GLEAM);
+    game.move.select(MoveId.TACKLE, 1, BattlerIndex.ENEMY);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -76,13 +76,13 @@ describe("Multi-target damage reduction", () => {
   });
 
   it("should reduce earthquake when more than one pokemon other than user is not fainted", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
     const player2 = game.scene.getPlayerParty()[1];
     const [enemy1, enemy2] = game.scene.getEnemyField();
 
-    game.move.select(Moves.EARTHQUAKE);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.EARTHQUAKE);
+    game.move.select(MoveId.SPLASH, 1);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -96,8 +96,8 @@ describe("Multi-target damage reduction", () => {
     await game.killPokemon(enemy2);
     await game.toNextTurn();
 
-    game.move.select(Moves.EARTHQUAKE);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.EARTHQUAKE);
+    game.move.select(MoveId.SPLASH, 1);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -115,7 +115,7 @@ describe("Multi-target damage reduction", () => {
     await game.killPokemon(player2);
     await game.toNextTurn();
 
-    game.move.select(Moves.EARTHQUAKE);
+    game.move.select(MoveId.EARTHQUAKE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");

@@ -1,6 +1,6 @@
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -32,33 +32,33 @@ describe("Items - Dire Hit", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(Moves.SPLASH)
-      .moveset([Moves.POUND])
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyMoveset(MoveId.SPLASH)
+      .moveset([MoveId.POUND])
       .startingHeldItems([{ name: "DIRE_HIT" }])
       .battleStyle("single");
-  }, 20000);
+  });
 
   it("should raise CRIT stage by 1", async () => {
-    await game.classicMode.startBattle([Species.GASTLY]);
+    await game.classicMode.startBattle([SpeciesId.GASTLY]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(enemyPokemon, "getCritStage");
 
-    game.move.select(Moves.POUND);
+    game.move.select(MoveId.POUND);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyPokemon.getCritStage).toHaveReturnedWith(1);
-  }, 20000);
+  });
 
   it("should renew how many battles are left of existing DIRE_HIT when picking up new DIRE_HIT", async () => {
     game.override.itemRewards([{ name: "DIRE_HIT" }]);
 
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.doKillOpponents();
 
@@ -93,5 +93,5 @@ describe("Items - Dire Hit", () => {
       }
     }
     expect(count).toBe(1);
-  }, 20000);
+  });
 });

@@ -1,6 +1,6 @@
-import { Moves } from "#app/enums/moves";
-import { Abilities } from "#enums/abilities";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { AbilityId } from "#enums/ability-id";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -24,44 +24,44 @@ describe("Abilities - Contrary", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.BULBASAUR)
-      .enemyAbility(Abilities.CONTRARY)
-      .ability(Abilities.INTIMIDATE)
-      .enemyMoveset(Moves.SPLASH);
+      .enemySpecies(SpeciesId.BULBASAUR)
+      .enemyAbility(AbilityId.CONTRARY)
+      .ability(AbilityId.INTIMIDATE)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should invert stat changes when applied", async () => {
-    await game.classicMode.startBattle([Species.SLOWBRO]);
+    await game.classicMode.startBattle([SpeciesId.SLOWBRO]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
-  }, 20000);
+  });
 
   describe("With Clear Body", () => {
     it("should apply positive effects", async () => {
-      game.override.enemyPassiveAbility(Abilities.CLEAR_BODY).moveset([Moves.TAIL_WHIP]);
-      await game.classicMode.startBattle([Species.SLOWBRO]);
+      game.override.enemyPassiveAbility(AbilityId.CLEAR_BODY).moveset([MoveId.TAIL_WHIP]);
+      await game.classicMode.startBattle([SpeciesId.SLOWBRO]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
 
-      game.move.select(Moves.TAIL_WHIP);
+      game.move.select(MoveId.TAIL_WHIP);
       await game.phaseInterceptor.to("TurnEndPhase");
 
       expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(1);
     });
 
     it("should block negative effects", async () => {
-      game.override.enemyPassiveAbility(Abilities.CLEAR_BODY).enemyMoveset(Moves.HOWL).moveset([Moves.SPLASH]);
-      await game.classicMode.startBattle([Species.SLOWBRO]);
+      game.override.enemyPassiveAbility(AbilityId.CLEAR_BODY).enemyMoveset(MoveId.HOWL).moveset([MoveId.SPLASH]);
+      await game.classicMode.startBattle([SpeciesId.SLOWBRO]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.phaseInterceptor.to("TurnEndPhase");
 
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);

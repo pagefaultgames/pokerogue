@@ -1,7 +1,8 @@
 import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { DexAttr, type SystemSaveData } from "#app/system/game-data";
-import { Species } from "#enums/species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
+import type { SystemSaveData } from "#app/system/game-data";
+import { DexAttr } from "#enums/dex-attr";
+import { SpeciesId } from "#enums/species-id";
 
 /**
  * If a starter is caught, but the only forms registered as caught are not starterSelectable,
@@ -17,7 +18,7 @@ const migratePichuForms: SystemSaveMigrator = {
       const caughtAttr = data.dexData[sd]?.caughtAttr;
       const species = getPokemonSpecies(sd);
       // An extra check because you never know
-      if (species.speciesId === Species.PICHU && caughtAttr) {
+      if (species.speciesId === SpeciesId.PICHU && caughtAttr) {
         // Ensuring that only existing forms are unlocked
         data.dexData[sd].caughtAttr &= species.getFullUnlocksData();
         // If no forms are unlocked now, since Pichu is caught, we unlock form 0

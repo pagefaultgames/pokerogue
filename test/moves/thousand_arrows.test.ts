@@ -1,9 +1,9 @@
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -24,20 +24,21 @@ describe("Moves - Thousand Arrows", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.TOGETIC);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.moveset([Moves.THOUSAND_ARROWS]);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.TOGETIC)
+      .startingLevel(100)
+      .enemyLevel(100)
+      .moveset([MoveId.THOUSAND_ARROWS])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("move should hit and ground Flying-type targets", async () => {
-    await game.classicMode.startBattle([Species.ILLUMISE]);
+    await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.THOUSAND_ARROWS);
+    game.move.select(MoveId.THOUSAND_ARROWS);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     // Enemy should not be grounded before move effect is applied
@@ -50,14 +51,13 @@ describe("Moves - Thousand Arrows", () => {
   });
 
   it("move should hit and ground targets with Levitate", async () => {
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyAbility(Abilities.LEVITATE);
+    game.override.enemySpecies(SpeciesId.SNORLAX).enemyAbility(AbilityId.LEVITATE);
 
-    await game.classicMode.startBattle([Species.ILLUMISE]);
+    await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.THOUSAND_ARROWS);
+    game.move.select(MoveId.THOUSAND_ARROWS);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
     // Enemy should not be grounded before move effect is applied
@@ -70,15 +70,15 @@ describe("Moves - Thousand Arrows", () => {
   });
 
   it("move should hit and ground targets under the effects of Magnet Rise", async () => {
-    game.override.enemySpecies(Species.SNORLAX);
+    game.override.enemySpecies(SpeciesId.SNORLAX);
 
-    await game.classicMode.startBattle([Species.ILLUMISE]);
+    await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    enemyPokemon.addTag(BattlerTagType.FLOATING, undefined, Moves.MAGNET_RISE);
+    enemyPokemon.addTag(BattlerTagType.FLOATING, undefined, MoveId.MAGNET_RISE);
 
-    game.move.select(Moves.THOUSAND_ARROWS);
+    game.move.select(MoveId.THOUSAND_ARROWS);
 
     await game.phaseInterceptor.to(BerryPhase, false);
 

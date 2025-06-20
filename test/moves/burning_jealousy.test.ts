@@ -1,9 +1,9 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { StatusEffect } from "#app/enums/status-effect";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -26,15 +26,15 @@ describe("Moves - Burning Jealousy", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.ICE_SCALES)
-      .enemyMoveset([Moves.HOWL])
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.ICE_SCALES)
+      .enemyMoveset([MoveId.HOWL])
       .startingLevel(10)
       .enemyLevel(10)
-      .starterSpecies(Species.FEEBAS)
-      .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.BURNING_JEALOUSY, Moves.GROWL]);
+      .starterSpecies(SpeciesId.FEEBAS)
+      .ability(AbilityId.BALL_FETCH)
+      .moveset([MoveId.BURNING_JEALOUSY, MoveId.GROWL]);
   });
 
   it("should burn the opponent if their stat stages were raised", async () => {
@@ -42,7 +42,7 @@ describe("Moves - Burning Jealousy", () => {
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.BURNING_JEALOUSY);
+    game.move.select(MoveId.BURNING_JEALOUSY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -51,12 +51,12 @@ describe("Moves - Burning Jealousy", () => {
 
   it("should still burn the opponent if their stat stages were both raised and lowered in the same turn", async () => {
     game.override.starterSpecies(0).battleStyle("double");
-    await game.classicMode.startBattle([Species.FEEBAS, Species.ABRA]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.ABRA]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.BURNING_JEALOUSY);
-    game.move.select(Moves.GROWL, 1);
+    game.move.select(MoveId.BURNING_JEALOUSY);
+    game.move.select(MoveId.GROWL, 1);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -64,12 +64,12 @@ describe("Moves - Burning Jealousy", () => {
   });
 
   it("should ignore stat stages raised by IMPOSTER", async () => {
-    game.override.enemySpecies(Species.DITTO).enemyAbility(Abilities.IMPOSTER).enemyMoveset(Moves.SPLASH);
+    game.override.enemySpecies(SpeciesId.DITTO).enemyAbility(AbilityId.IMPOSTER).enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.BURNING_JEALOUSY);
+    game.move.select(MoveId.BURNING_JEALOUSY);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy.status?.effect).toBeUndefined();
@@ -81,15 +81,15 @@ describe("Moves - Burning Jealousy", () => {
   });
 
   it("should be boosted by Sheer Force even if opponent didn't raise stat stages", async () => {
-    game.override.ability(Abilities.SHEER_FORCE).enemyMoveset(Moves.SPLASH);
-    vi.spyOn(allMoves[Moves.BURNING_JEALOUSY], "calculateBattlePower");
+    game.override.ability(AbilityId.SHEER_FORCE).enemyMoveset(MoveId.SPLASH);
+    vi.spyOn(allMoves[MoveId.BURNING_JEALOUSY], "calculateBattlePower");
     await game.classicMode.startBattle();
 
-    game.move.select(Moves.BURNING_JEALOUSY);
+    game.move.select(MoveId.BURNING_JEALOUSY);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(allMoves[Moves.BURNING_JEALOUSY].calculateBattlePower).toHaveReturnedWith(
-      allMoves[Moves.BURNING_JEALOUSY].power * 1.3,
+    expect(allMoves[MoveId.BURNING_JEALOUSY].calculateBattlePower).toHaveReturnedWith(
+      allMoves[MoveId.BURNING_JEALOUSY].power * 1.3,
     );
   });
 });

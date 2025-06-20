@@ -1,7 +1,7 @@
 import { Status } from "#app/data/status-effect";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -27,21 +27,21 @@ describe("Abilities - ZEN MODE", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyLevel(5)
-      .ability(Abilities.ZEN_MODE)
-      .moveset(Moves.SPLASH)
-      .enemyMoveset(Moves.SEISMIC_TOSS);
+      .ability(AbilityId.ZEN_MODE)
+      .moveset(MoveId.SPLASH)
+      .enemyMoveset(MoveId.SEISMIC_TOSS);
   });
 
   it("shouldn't change form when taking damage if not dropping below 50% HP", async () => {
-    await game.classicMode.startBattle([Species.DARMANITAN]);
+    await game.classicMode.startBattle([SpeciesId.DARMANITAN]);
     const darmanitan = game.scene.getPlayerPokemon()!;
     expect(darmanitan.formIndex).toBe(baseForm);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(darmanitan.getHpRatio()).toBeLessThan(1);
@@ -50,13 +50,13 @@ describe("Abilities - ZEN MODE", () => {
   });
 
   it("should change form when falling below 50% HP", async () => {
-    await game.classicMode.startBattle([Species.DARMANITAN]);
+    await game.classicMode.startBattle([SpeciesId.DARMANITAN]);
 
     const darmanitan = game.scene.getPlayerPokemon()!;
     darmanitan.hp = darmanitan.getMaxHp() / 2 + 1;
     expect(darmanitan.formIndex).toBe(baseForm);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(darmanitan.getHpRatio()).toBeLessThan(0.5);
@@ -64,18 +64,18 @@ describe("Abilities - ZEN MODE", () => {
   });
 
   it("should stay zen mode when fainted", async () => {
-    await game.classicMode.startBattle([Species.DARMANITAN, Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.DARMANITAN, SpeciesId.CHARIZARD]);
     const darmanitan = game.scene.getPlayerPokemon()!;
     darmanitan.hp = darmanitan.getMaxHp() / 2 + 1;
     expect(darmanitan.formIndex).toBe(baseForm);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(darmanitan.getHpRatio()).toBeLessThan(0.5);
     expect(darmanitan.formIndex).toBe(zenForm);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.killPokemon(darmanitan);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
@@ -85,12 +85,11 @@ describe("Abilities - ZEN MODE", () => {
   });
 
   it("should switch to base form on arena reset", async () => {
-    game.override.startingWave(4);
-    game.override.starterForms({
-      [Species.DARMANITAN]: zenForm,
+    game.override.startingWave(4).starterForms({
+      [SpeciesId.DARMANITAN]: zenForm,
     });
 
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.DARMANITAN]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.DARMANITAN]);
 
     const darmanitan = game.scene.getPlayerParty()[1];
     darmanitan.hp = 1;
@@ -100,7 +99,7 @@ describe("Abilities - ZEN MODE", () => {
     darmanitan.status = new Status(StatusEffect.FAINT);
     expect(darmanitan.isFainted()).toBe(true);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.toNextWave();
 

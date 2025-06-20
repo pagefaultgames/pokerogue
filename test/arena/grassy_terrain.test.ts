@@ -1,7 +1,7 @@
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -23,45 +23,45 @@ describe("Arena - Grassy Terrain", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemyLevel(1)
-      .enemySpecies(Species.SHUCKLE)
-      .enemyAbility(Abilities.STURDY)
-      .enemyMoveset(Moves.FLY)
-      .moveset([Moves.GRASSY_TERRAIN, Moves.EARTHQUAKE])
-      .ability(Abilities.NO_GUARD);
+      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemyAbility(AbilityId.STURDY)
+      .enemyMoveset(MoveId.FLY)
+      .moveset([MoveId.GRASSY_TERRAIN, MoveId.EARTHQUAKE])
+      .ability(AbilityId.NO_GUARD);
   });
 
   it("halves the damage of Earthquake", async () => {
-    await game.classicMode.startBattle([Species.TAUROS]);
+    await game.classicMode.startBattle([SpeciesId.TAUROS]);
 
-    const eq = allMoves[Moves.EARTHQUAKE];
+    const eq = allMoves[MoveId.EARTHQUAKE];
     vi.spyOn(eq, "calculateBattlePower");
 
-    game.move.select(Moves.EARTHQUAKE);
+    game.move.select(MoveId.EARTHQUAKE);
     await game.toNextTurn();
 
     expect(eq.calculateBattlePower).toHaveReturnedWith(100);
 
-    game.move.select(Moves.GRASSY_TERRAIN);
+    game.move.select(MoveId.GRASSY_TERRAIN);
     await game.toNextTurn();
 
-    game.move.select(Moves.EARTHQUAKE);
+    game.move.select(MoveId.EARTHQUAKE);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(eq.calculateBattlePower).toHaveReturnedWith(50);
   });
 
   it("Does not halve the damage of Earthquake if opponent is not grounded", async () => {
-    await game.classicMode.startBattle([Species.NINJASK]);
+    await game.classicMode.startBattle([SpeciesId.NINJASK]);
 
-    const eq = allMoves[Moves.EARTHQUAKE];
+    const eq = allMoves[MoveId.EARTHQUAKE];
     vi.spyOn(eq, "calculateBattlePower");
 
-    game.move.select(Moves.GRASSY_TERRAIN);
+    game.move.select(MoveId.GRASSY_TERRAIN);
     await game.toNextTurn();
 
-    game.move.select(Moves.EARTHQUAKE);
+    game.move.select(MoveId.EARTHQUAKE);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(eq.calculateBattlePower).toHaveReturnedWith(100);

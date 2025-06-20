@@ -1,8 +1,8 @@
-import { ArenaTagSide } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -24,34 +24,34 @@ describe("Moves - Fairy Lock", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.FAIRY_LOCK, Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH)
+      .moveset([MoveId.FAIRY_LOCK, MoveId.SPLASH])
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("double")
-      .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.SPLASH, Moves.U_TURN]);
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset([MoveId.SPLASH, MoveId.U_TURN]);
   });
 
   it("Applies Fairy Lock tag for two turns", async () => {
-    await game.classicMode.startBattle([Species.KLEFKI, Species.TYRUNT]);
+    await game.classicMode.startBattle([SpeciesId.KLEFKI, SpeciesId.TYRUNT]);
     const playerPokemon = game.scene.getPlayerField();
     const enemyField = game.scene.getEnemyField();
 
-    game.move.select(Moves.FAIRY_LOCK);
-    game.move.select(Moves.SPLASH, 1);
-    await game.move.selectEnemyMove(Moves.SPLASH, 1);
-    await game.move.selectEnemyMove(Moves.SPLASH, 1);
+    game.move.select(MoveId.FAIRY_LOCK);
+    game.move.select(MoveId.SPLASH, 1);
+    await game.move.selectEnemyMove(MoveId.SPLASH, 1);
+    await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER)).toBeDefined();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.ENEMY)).toBeDefined();
 
     await game.toNextTurn();
 
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.SPLASH, 1);
-    await game.move.selectEnemyMove(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH, 1);
+    await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
     expect(playerPokemon[0].isTrapped()).toEqual(true);
     expect(playerPokemon[1].isTrapped()).toEqual(true);
@@ -66,12 +66,12 @@ describe("Moves - Fairy Lock", () => {
   });
 
   it("Ghost types can escape Fairy Lock", async () => {
-    await game.classicMode.startBattle([Species.DUSKNOIR, Species.GENGAR, Species.TYRUNT]);
+    await game.classicMode.startBattle([SpeciesId.DUSKNOIR, SpeciesId.GENGAR, SpeciesId.TYRUNT]);
 
-    game.move.select(Moves.FAIRY_LOCK);
-    game.move.select(Moves.SPLASH, 1);
-    await game.move.selectEnemyMove(Moves.SPLASH, 1);
-    await game.move.selectEnemyMove(Moves.SPLASH, 1);
+    game.move.select(MoveId.FAIRY_LOCK);
+    game.move.select(MoveId.SPLASH, 1);
+    await game.move.selectEnemyMove(MoveId.SPLASH, 1);
+    await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER)).toBeDefined();
@@ -82,61 +82,61 @@ describe("Moves - Fairy Lock", () => {
     expect(game.scene.getPlayerField()[0].isTrapped()).toEqual(false);
     expect(game.scene.getPlayerField()[1].isTrapped()).toEqual(false);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     game.doSwitchPokemon(2);
-    await game.move.selectEnemyMove(Moves.SPLASH, 1);
-    await game.move.selectEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(MoveId.SPLASH, 1);
+    await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerField()[1].species.speciesId).not.toBe(Species.GENGAR);
+    expect(game.scene.getPlayerField()[1].species.speciesId).not.toBe(SpeciesId.GENGAR);
   });
 
   it("Phasing moves will still switch out", async () => {
-    game.override.enemyMoveset([Moves.SPLASH, Moves.WHIRLWIND]);
-    await game.classicMode.startBattle([Species.KLEFKI, Species.TYRUNT, Species.ZYGARDE]);
+    game.override.enemyMoveset([MoveId.SPLASH, MoveId.WHIRLWIND]);
+    await game.classicMode.startBattle([SpeciesId.KLEFKI, SpeciesId.TYRUNT, SpeciesId.ZYGARDE]);
 
-    game.move.select(Moves.FAIRY_LOCK);
-    game.move.select(Moves.SPLASH, 1);
-    await game.move.selectEnemyMove(Moves.SPLASH, 1);
-    await game.move.selectEnemyMove(Moves.SPLASH, 1);
+    game.move.select(MoveId.FAIRY_LOCK);
+    game.move.select(MoveId.SPLASH, 1);
+    await game.move.selectEnemyMove(MoveId.SPLASH, 1);
+    await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER)).toBeDefined();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.ENEMY)).toBeDefined();
 
     await game.toNextTurn();
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.WHIRLWIND, 0);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.WHIRLWIND, 0);
     game.doSelectPartyPokemon(2);
-    await game.move.selectEnemyMove(Moves.WHIRLWIND, 1);
+    await game.move.selectEnemyMove(MoveId.WHIRLWIND, 1);
     game.doSelectPartyPokemon(2);
     await game.phaseInterceptor.to("BerryPhase");
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerField()[0].species.speciesId).not.toBe(Species.KLEFKI);
-    expect(game.scene.getPlayerField()[1].species.speciesId).not.toBe(Species.TYRUNT);
+    expect(game.scene.getPlayerField()[0].species.speciesId).not.toBe(SpeciesId.KLEFKI);
+    expect(game.scene.getPlayerField()[1].species.speciesId).not.toBe(SpeciesId.TYRUNT);
   });
 
   it("If a Pokemon faints and is replaced the replacement is also trapped", async () => {
-    game.override.moveset([Moves.FAIRY_LOCK, Moves.SPLASH, Moves.MEMENTO]);
-    await game.classicMode.startBattle([Species.KLEFKI, Species.GUZZLORD, Species.TYRUNT, Species.ZYGARDE]);
+    game.override.moveset([MoveId.FAIRY_LOCK, MoveId.SPLASH, MoveId.MEMENTO]);
+    await game.classicMode.startBattle([SpeciesId.KLEFKI, SpeciesId.GUZZLORD, SpeciesId.TYRUNT, SpeciesId.ZYGARDE]);
 
-    game.move.select(Moves.FAIRY_LOCK);
-    game.move.select(Moves.MEMENTO, 1);
+    game.move.select(MoveId.FAIRY_LOCK);
+    game.move.select(MoveId.MEMENTO, 1);
     game.doSelectPartyPokemon(2);
-    await game.move.selectEnemyMove(Moves.SPLASH, 1);
-    await game.move.selectEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(MoveId.SPLASH, 1);
+    await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER)).toBeDefined();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.ENEMY)).toBeDefined();
 
     await game.toNextTurn();
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.SPLASH, 1);
-    await game.move.selectEnemyMove(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH, 1);
+    await game.move.selectEnemyMove(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.getPlayerField()[0].isTrapped()).toEqual(true);
     expect(game.scene.getPlayerField()[1].isTrapped()).toEqual(true);

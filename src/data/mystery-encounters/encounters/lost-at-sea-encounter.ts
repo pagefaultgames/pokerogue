@@ -1,6 +1,6 @@
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -11,10 +11,10 @@ import { applyDamageToPokemon } from "#app/data/mystery-encounters/utils/encount
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 
-const OPTION_1_REQUIRED_MOVE = Moves.SURF;
-const OPTION_2_REQUIRED_MOVE = Moves.FLY;
+const OPTION_1_REQUIRED_MOVE = MoveId.SURF;
+const OPTION_2_REQUIRED_MOVE = MoveId.FLY;
 /**
  * Damage percentage taken when wandering aimlessly.
  * Can be a number between `0` - `100`.
@@ -129,7 +129,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
  * Generic handler for using a guiding pokemon to guide you back.
  */
 function handlePokemonGuidingYouPhase() {
-  const laprasSpecies = getPokemonSpecies(Species.LAPRAS);
+  const laprasSpecies = getPokemonSpecies(SpeciesId.LAPRAS);
   const { mysteryEncounter } = globalScene.currentBattle;
 
   if (mysteryEncounter?.selectedOption?.primaryPokemon?.id) {

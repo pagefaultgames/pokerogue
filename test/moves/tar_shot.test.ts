@@ -1,9 +1,9 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { PokemonType } from "#enums/pokemon-type";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#app/enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -25,29 +25,29 @@ describe("Moves - Tar Shot", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
-      .enemySpecies(Species.TANGELA)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemySpecies(SpeciesId.TANGELA)
       .enemyLevel(1000)
-      .moveset([Moves.TAR_SHOT, Moves.FIRE_PUNCH])
-      .disableCrits();
+      .moveset([MoveId.TAR_SHOT, MoveId.FIRE_PUNCH])
+      .criticalHits(false);
   });
 
   it("lowers the target's Speed stat by one stage and doubles the effectiveness of Fire-type moves used on the target", async () => {
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(enemy, "getMoveEffectiveness");
 
-    game.move.select(Moves.TAR_SHOT);
+    game.move.select(MoveId.TAR_SHOT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.getStatStage(Stat.SPD)).toBe(-1);
 
     await game.toNextTurn();
 
-    game.move.select(Moves.FIRE_PUNCH);
+    game.move.select(MoveId.FIRE_PUNCH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -55,27 +55,27 @@ describe("Moves - Tar Shot", () => {
   });
 
   it("will not double the effectiveness of Fire-type moves used on a target that is already under the effect of Tar Shot (but may still lower its Speed)", async () => {
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(enemy, "getMoveEffectiveness");
 
-    game.move.select(Moves.TAR_SHOT);
+    game.move.select(MoveId.TAR_SHOT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.getStatStage(Stat.SPD)).toBe(-1);
 
     await game.toNextTurn();
 
-    game.move.select(Moves.TAR_SHOT);
+    game.move.select(MoveId.TAR_SHOT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.getStatStage(Stat.SPD)).toBe(-2);
 
     await game.toNextTurn();
 
-    game.move.select(Moves.FIRE_PUNCH);
+    game.move.select(MoveId.FIRE_PUNCH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -83,8 +83,8 @@ describe("Moves - Tar Shot", () => {
   });
 
   it("does not double the effectiveness of Fire-type moves against a Pokémon that is Terastallized", async () => {
-    game.override.enemySpecies(Species.SPRIGATITO);
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    game.override.enemySpecies(SpeciesId.SPRIGATITO);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.teraType = PokemonType.GRASS;
@@ -92,14 +92,14 @@ describe("Moves - Tar Shot", () => {
 
     vi.spyOn(enemy, "getMoveEffectiveness");
 
-    game.move.select(Moves.TAR_SHOT);
+    game.move.select(MoveId.TAR_SHOT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.getStatStage(Stat.SPD)).toBe(-1);
 
     await game.toNextTurn();
 
-    game.move.select(Moves.FIRE_PUNCH);
+    game.move.select(MoveId.FIRE_PUNCH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -107,14 +107,14 @@ describe("Moves - Tar Shot", () => {
   });
 
   it("doubles the effectiveness of Fire-type moves against a Pokémon that is already under the effects of Tar Shot before it Terastallized", async () => {
-    game.override.enemySpecies(Species.SPRIGATITO);
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    game.override.enemySpecies(SpeciesId.SPRIGATITO);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(enemy, "getMoveEffectiveness");
 
-    game.move.select(Moves.TAR_SHOT);
+    game.move.select(MoveId.TAR_SHOT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.getStatStage(Stat.SPD)).toBe(-1);
@@ -124,7 +124,7 @@ describe("Moves - Tar Shot", () => {
     enemy.teraType = PokemonType.GRASS;
     enemy.isTerastallized = true;
 
-    game.move.select(Moves.FIRE_PUNCH);
+    game.move.select(MoveId.FIRE_PUNCH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");

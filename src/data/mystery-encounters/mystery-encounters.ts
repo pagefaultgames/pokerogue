@@ -1,4 +1,4 @@
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { DarkDealEncounter } from "./encounters/dark-deal-encounter";
 import { DepartmentStoreSaleEncounter } from "./encounters/department-store-sale-encounter";
@@ -34,81 +34,45 @@ import { GlobalTradeSystemEncounter } from "#app/data/mystery-encounters/encount
 import { TheExpertPokemonBreederEncounter } from "#app/data/mystery-encounters/encounters/the-expert-pokemon-breeder-encounter";
 import { getBiomeName } from "#app/data/balance/biomes";
 
-/**
- * Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT
- */
-export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 3;
-/**
- * The divisor for determining ME spawns, defines the "maximum" weight required for a spawn
- * If spawn_weight === MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT, 100% chance to spawn a ME
- */
-export const MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT = 256;
-/**
- * When an ME spawn roll fails, WEIGHT_INCREMENT_ON_SPAWN_MISS is added to future rolls for ME spawn checks.
- * These values are cleared whenever the next ME spawns, and spawn weight returns to BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT
- */
-export const WEIGHT_INCREMENT_ON_SPAWN_MISS = 3;
-/**
- * Specifies the target average for total ME spawns in a single Classic run.
- * Used by anti-variance mechanic to check whether a run is above or below the target on a given wave.
- */
-export const AVERAGE_ENCOUNTERS_PER_RUN_TARGET = 12;
-/**
- * Will increase/decrease the chance of spawning a ME based on the current run's total MEs encountered vs AVERAGE_ENCOUNTERS_PER_RUN_TARGET
- * Example:
- * AVERAGE_ENCOUNTERS_PER_RUN_TARGET = 17 (expects avg 1 ME every 10 floors)
- * ANTI_VARIANCE_WEIGHT_MODIFIER = 15
- *
- * On wave 20, if 1 ME has been encountered, the difference from expected average is 0 MEs.
- * So anti-variance adds 0/256 to the spawn weight check for ME spawn.
- *
- * On wave 20, if 0 MEs have been encountered, the difference from expected average is 1 ME.
- * So anti-variance adds 15/256 to the spawn weight check for ME spawn.
- *
- * On wave 20, if 2 MEs have been encountered, the difference from expected average is -1 ME.
- * So anti-variance adds -15/256 to the spawn weight check for ME spawn.
- */
-export const ANTI_VARIANCE_WEIGHT_MODIFIER = 15;
-
 export const EXTREME_ENCOUNTER_BIOMES = [
-  Biome.SEA,
-  Biome.SEABED,
-  Biome.BADLANDS,
-  Biome.DESERT,
-  Biome.ICE_CAVE,
-  Biome.VOLCANO,
-  Biome.WASTELAND,
-  Biome.ABYSS,
-  Biome.SPACE,
-  Biome.END,
+  BiomeId.SEA,
+  BiomeId.SEABED,
+  BiomeId.BADLANDS,
+  BiomeId.DESERT,
+  BiomeId.ICE_CAVE,
+  BiomeId.VOLCANO,
+  BiomeId.WASTELAND,
+  BiomeId.ABYSS,
+  BiomeId.SPACE,
+  BiomeId.END,
 ];
 
 export const NON_EXTREME_ENCOUNTER_BIOMES = [
-  Biome.TOWN,
-  Biome.PLAINS,
-  Biome.GRASS,
-  Biome.TALL_GRASS,
-  Biome.METROPOLIS,
-  Biome.FOREST,
-  Biome.SWAMP,
-  Biome.BEACH,
-  Biome.LAKE,
-  Biome.MOUNTAIN,
-  Biome.CAVE,
-  Biome.MEADOW,
-  Biome.POWER_PLANT,
-  Biome.GRAVEYARD,
-  Biome.DOJO,
-  Biome.FACTORY,
-  Biome.RUINS,
-  Biome.CONSTRUCTION_SITE,
-  Biome.JUNGLE,
-  Biome.FAIRY_CAVE,
-  Biome.TEMPLE,
-  Biome.SLUM,
-  Biome.SNOWY_FOREST,
-  Biome.ISLAND,
-  Biome.LABORATORY,
+  BiomeId.TOWN,
+  BiomeId.PLAINS,
+  BiomeId.GRASS,
+  BiomeId.TALL_GRASS,
+  BiomeId.METROPOLIS,
+  BiomeId.FOREST,
+  BiomeId.SWAMP,
+  BiomeId.BEACH,
+  BiomeId.LAKE,
+  BiomeId.MOUNTAIN,
+  BiomeId.CAVE,
+  BiomeId.MEADOW,
+  BiomeId.POWER_PLANT,
+  BiomeId.GRAVEYARD,
+  BiomeId.DOJO,
+  BiomeId.FACTORY,
+  BiomeId.RUINS,
+  BiomeId.CONSTRUCTION_SITE,
+  BiomeId.JUNGLE,
+  BiomeId.FAIRY_CAVE,
+  BiomeId.TEMPLE,
+  BiomeId.SLUM,
+  BiomeId.SNOWY_FOREST,
+  BiomeId.ISLAND,
+  BiomeId.LABORATORY,
 ];
 
 /**
@@ -120,55 +84,55 @@ export const NON_EXTREME_ENCOUNTER_BIOMES = [
  * + ICE_CAVE
  */
 export const HUMAN_TRANSITABLE_BIOMES = [
-  Biome.TOWN,
-  Biome.PLAINS,
-  Biome.GRASS,
-  Biome.TALL_GRASS,
-  Biome.METROPOLIS,
-  Biome.FOREST,
-  Biome.SWAMP,
-  Biome.BEACH,
-  Biome.LAKE,
-  Biome.MOUNTAIN,
-  Biome.BADLANDS,
-  Biome.CAVE,
-  Biome.DESERT,
-  Biome.ICE_CAVE,
-  Biome.MEADOW,
-  Biome.POWER_PLANT,
-  Biome.GRAVEYARD,
-  Biome.DOJO,
-  Biome.FACTORY,
-  Biome.RUINS,
-  Biome.CONSTRUCTION_SITE,
-  Biome.JUNGLE,
-  Biome.FAIRY_CAVE,
-  Biome.TEMPLE,
-  Biome.SLUM,
-  Biome.SNOWY_FOREST,
-  Biome.ISLAND,
-  Biome.LABORATORY,
+  BiomeId.TOWN,
+  BiomeId.PLAINS,
+  BiomeId.GRASS,
+  BiomeId.TALL_GRASS,
+  BiomeId.METROPOLIS,
+  BiomeId.FOREST,
+  BiomeId.SWAMP,
+  BiomeId.BEACH,
+  BiomeId.LAKE,
+  BiomeId.MOUNTAIN,
+  BiomeId.BADLANDS,
+  BiomeId.CAVE,
+  BiomeId.DESERT,
+  BiomeId.ICE_CAVE,
+  BiomeId.MEADOW,
+  BiomeId.POWER_PLANT,
+  BiomeId.GRAVEYARD,
+  BiomeId.DOJO,
+  BiomeId.FACTORY,
+  BiomeId.RUINS,
+  BiomeId.CONSTRUCTION_SITE,
+  BiomeId.JUNGLE,
+  BiomeId.FAIRY_CAVE,
+  BiomeId.TEMPLE,
+  BiomeId.SLUM,
+  BiomeId.SNOWY_FOREST,
+  BiomeId.ISLAND,
+  BiomeId.LABORATORY,
 ];
 
 /**
  * Places where you could expect a town or city, some form of large civilization
  */
 export const CIVILIZATION_ENCOUNTER_BIOMES = [
-  Biome.TOWN,
-  Biome.PLAINS,
-  Biome.GRASS,
-  Biome.TALL_GRASS,
-  Biome.METROPOLIS,
-  Biome.BEACH,
-  Biome.LAKE,
-  Biome.MEADOW,
-  Biome.POWER_PLANT,
-  Biome.GRAVEYARD,
-  Biome.DOJO,
-  Biome.FACTORY,
-  Biome.CONSTRUCTION_SITE,
-  Biome.SLUM,
-  Biome.ISLAND,
+  BiomeId.TOWN,
+  BiomeId.PLAINS,
+  BiomeId.GRASS,
+  BiomeId.TALL_GRASS,
+  BiomeId.METROPOLIS,
+  BiomeId.BEACH,
+  BiomeId.LAKE,
+  BiomeId.MEADOW,
+  BiomeId.POWER_PLANT,
+  BiomeId.GRAVEYARD,
+  BiomeId.DOJO,
+  BiomeId.FACTORY,
+  BiomeId.CONSTRUCTION_SITE,
+  BiomeId.SLUM,
+  BiomeId.ISLAND,
 ];
 
 export const allMysteryEncounters: {
@@ -224,41 +188,41 @@ const anyBiomeEncounters: MysteryEncounterType[] = [
  * Adding specific Encounters to the mysteryEncountersByBiome map is for specific cases and special circumstances
  * that biome groups do not cover
  */
-export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
-  [Biome.TOWN, []],
-  [Biome.PLAINS, [MysteryEncounterType.SLUMBERING_SNORLAX]],
-  [Biome.GRASS, [MysteryEncounterType.SLUMBERING_SNORLAX, MysteryEncounterType.ABSOLUTE_AVARICE]],
-  [Biome.TALL_GRASS, [MysteryEncounterType.SLUMBERING_SNORLAX, MysteryEncounterType.ABSOLUTE_AVARICE]],
-  [Biome.METROPOLIS, []],
-  [Biome.FOREST, [MysteryEncounterType.SAFARI_ZONE, MysteryEncounterType.ABSOLUTE_AVARICE]],
-  [Biome.SEA, [MysteryEncounterType.LOST_AT_SEA]],
-  [Biome.SWAMP, [MysteryEncounterType.SAFARI_ZONE]],
-  [Biome.BEACH, []],
-  [Biome.LAKE, []],
-  [Biome.SEABED, []],
-  [Biome.MOUNTAIN, []],
-  [Biome.BADLANDS, [MysteryEncounterType.DANCING_LESSONS]],
-  [Biome.CAVE, [MysteryEncounterType.THE_STRONG_STUFF]],
-  [Biome.DESERT, [MysteryEncounterType.DANCING_LESSONS]],
-  [Biome.ICE_CAVE, []],
-  [Biome.MEADOW, []],
-  [Biome.POWER_PLANT, []],
-  [Biome.VOLCANO, [MysteryEncounterType.FIERY_FALLOUT, MysteryEncounterType.DANCING_LESSONS]],
-  [Biome.GRAVEYARD, []],
-  [Biome.DOJO, []],
-  [Biome.FACTORY, []],
-  [Biome.RUINS, []],
-  [Biome.WASTELAND, [MysteryEncounterType.DANCING_LESSONS]],
-  [Biome.ABYSS, [MysteryEncounterType.DANCING_LESSONS]],
-  [Biome.SPACE, [MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER]],
-  [Biome.CONSTRUCTION_SITE, []],
-  [Biome.JUNGLE, [MysteryEncounterType.SAFARI_ZONE]],
-  [Biome.FAIRY_CAVE, []],
-  [Biome.TEMPLE, []],
-  [Biome.SLUM, []],
-  [Biome.SNOWY_FOREST, []],
-  [Biome.ISLAND, []],
-  [Biome.LABORATORY, []],
+export const mysteryEncountersByBiome = new Map<BiomeId, MysteryEncounterType[]>([
+  [BiomeId.TOWN, []],
+  [BiomeId.PLAINS, [MysteryEncounterType.SLUMBERING_SNORLAX]],
+  [BiomeId.GRASS, [MysteryEncounterType.SLUMBERING_SNORLAX, MysteryEncounterType.ABSOLUTE_AVARICE]],
+  [BiomeId.TALL_GRASS, [MysteryEncounterType.SLUMBERING_SNORLAX, MysteryEncounterType.ABSOLUTE_AVARICE]],
+  [BiomeId.METROPOLIS, []],
+  [BiomeId.FOREST, [MysteryEncounterType.SAFARI_ZONE, MysteryEncounterType.ABSOLUTE_AVARICE]],
+  [BiomeId.SEA, [MysteryEncounterType.LOST_AT_SEA]],
+  [BiomeId.SWAMP, [MysteryEncounterType.SAFARI_ZONE]],
+  [BiomeId.BEACH, []],
+  [BiomeId.LAKE, []],
+  [BiomeId.SEABED, []],
+  [BiomeId.MOUNTAIN, []],
+  [BiomeId.BADLANDS, [MysteryEncounterType.DANCING_LESSONS]],
+  [BiomeId.CAVE, [MysteryEncounterType.THE_STRONG_STUFF]],
+  [BiomeId.DESERT, [MysteryEncounterType.DANCING_LESSONS]],
+  [BiomeId.ICE_CAVE, []],
+  [BiomeId.MEADOW, []],
+  [BiomeId.POWER_PLANT, []],
+  [BiomeId.VOLCANO, [MysteryEncounterType.FIERY_FALLOUT, MysteryEncounterType.DANCING_LESSONS]],
+  [BiomeId.GRAVEYARD, []],
+  [BiomeId.DOJO, []],
+  [BiomeId.FACTORY, []],
+  [BiomeId.RUINS, []],
+  [BiomeId.WASTELAND, [MysteryEncounterType.DANCING_LESSONS]],
+  [BiomeId.ABYSS, [MysteryEncounterType.DANCING_LESSONS]],
+  [BiomeId.SPACE, [MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER]],
+  [BiomeId.CONSTRUCTION_SITE, []],
+  [BiomeId.JUNGLE, [MysteryEncounterType.SAFARI_ZONE]],
+  [BiomeId.FAIRY_CAVE, []],
+  [BiomeId.TEMPLE, []],
+  [BiomeId.SLUM, []],
+  [BiomeId.SNOWY_FOREST, []],
+  [BiomeId.ISLAND, []],
+  [BiomeId.LABORATORY, []],
 ]);
 
 export function initMysteryEncounters() {

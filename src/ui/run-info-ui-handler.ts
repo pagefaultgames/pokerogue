@@ -1,4 +1,4 @@
-import { GameModes } from "../game-mode";
+import { GameModes } from "#enums/game-modes";
 import UiHandler from "./ui-handler";
 import type { SessionSaveData } from "../system/game-data";
 import { TextStyle, addTextObject, addBBCodeTextObject, getTextColor } from "./text";
@@ -10,7 +10,7 @@ import type PokemonData from "../system/pokemon-data";
 import i18next from "i18next";
 import { Button } from "../enums/buttons";
 import { BattleType } from "#enums/battle-type";
-import { TrainerVariant } from "../field/trainer";
+import { TrainerVariant } from "#enums/trainer-variant";
 import { Challenges } from "#enums/challenges";
 import { getLuckString, getLuckTextTint } from "../modifier/modifier-type";
 import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
@@ -21,7 +21,7 @@ import { getNatureStatMultiplier, getNatureName } from "../data/nature";
 import { getVariantTint } from "#app/sprites/variant";
 // biome-ignore lint/style/noNamespaceImport: See `src/system/game-data.ts`
 import * as Modifier from "#app/modifier/modifier";
-import type { Species } from "#enums/species";
+import type { SpeciesId } from "#enums/species-id";
 import { PlayerGender } from "#enums/player-gender";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { getBiomeName } from "#app/data/balance/biomes";
@@ -567,7 +567,7 @@ export default class RunInfoUiHandler extends UiHandler {
       case GameModes.SPLICED_ENDLESS:
         modeText.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
         break;
-      case GameModes.CHALLENGE:
+      case GameModes.CHALLENGE: {
         modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
         modeText.appendText(`${i18next.t("runHistory:challengeRules")}: `);
         modeText.setWrapMode(1); // wrap by word
@@ -582,6 +582,7 @@ export default class RunInfoUiHandler extends UiHandler {
           }
         }
         break;
+      }
       case GameModes.ENDLESS:
         modeText.appendText(`${i18next.t("gameMode:endless")}`, false);
         break;
@@ -687,7 +688,7 @@ export default class RunInfoUiHandler extends UiHandler {
           case Challenges.SINGLE_GENERATION:
             rules.push(i18next.t(`runHistory:challengeMonoGen${this.runInfo.challenges[i].value}`));
             break;
-          case Challenges.SINGLE_TYPE:
+          case Challenges.SINGLE_TYPE: {
             const typeRule = PokemonType[this.runInfo.challenges[i].value - 1];
             const typeTextColor = `[color=${TypeColor[typeRule]}]`;
             const typeShadowColor = `[shadow=${TypeShadow[typeRule]}]`;
@@ -695,16 +696,18 @@ export default class RunInfoUiHandler extends UiHandler {
               typeTextColor + typeShadowColor + i18next.t(`pokemonInfo:Type.${typeRule}`)! + "[/color]" + "[/shadow]";
             rules.push(typeText);
             break;
+          }
           case Challenges.INVERSE_BATTLE:
             rules.push(i18next.t("challenges:inverseBattle.shortName"));
             break;
-          default:
+          default: {
             const localisationKey = Challenges[this.runInfo.challenges[i].id]
               .split("_")
               .map((f, i) => (i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
               .join("");
             rules.push(i18next.t(`challenges:${localisationKey}.name`));
             break;
+          }
         }
       }
     }
@@ -1025,7 +1028,7 @@ export default class RunInfoUiHandler extends UiHandler {
         ignoreTimeTint: true,
       });
       this.hallofFameContainer.add(pokemonSprite);
-      const speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
+      const speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
       speciesLoaded.set(id, false);
 
       const female = pkmn.gender === 1;

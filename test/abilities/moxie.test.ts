@@ -1,11 +1,11 @@
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
@@ -26,19 +26,20 @@ describe("Abilities - Moxie", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const moveToUse = Moves.AERIAL_ACE;
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyAbility(Abilities.MOXIE);
-    game.override.ability(Abilities.MOXIE);
-    game.override.startingLevel(2000);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset(Moves.SPLASH);
+    const moveToUse = MoveId.AERIAL_ACE;
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.RATTATA)
+      .enemyAbility(AbilityId.MOXIE)
+      .ability(AbilityId.MOXIE)
+      .startingLevel(2000)
+      .moveset([moveToUse])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should raise ATK stat stage by 1 when winning a battle", async () => {
-    const moveToUse = Moves.AERIAL_ACE;
-    await game.classicMode.startBattle([Species.MIGHTYENA, Species.MIGHTYENA]);
+    const moveToUse = MoveId.AERIAL_ACE;
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -48,15 +49,15 @@ describe("Abilities - Moxie", () => {
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(VictoryPhase);
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
-  }, 20000);
+  });
 
   // TODO: Activate this test when MOXIE is corrected to work on faint and not on battle victory
   it.todo(
     "should raise ATK stat stage by 1 when defeating an ally Pokemon",
     async () => {
       game.override.battleStyle("double");
-      const moveToUse = Moves.AERIAL_ACE;
-      await game.classicMode.startBattle([Species.MIGHTYENA, Species.MIGHTYENA]);
+      const moveToUse = MoveId.AERIAL_ACE;
+      await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA]);
 
       const [firstPokemon, secondPokemon] = game.scene.getPlayerField();
 

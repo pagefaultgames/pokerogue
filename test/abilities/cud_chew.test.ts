@@ -2,10 +2,10 @@ import { RepeatBerryNextTurnAbAttr } from "#app/data/abilities/ability";
 import Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BerryType } from "#enums/berry-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import i18next from "i18next";
@@ -29,24 +29,24 @@ describe("Abilities - Cud Chew", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.BUG_BITE, Moves.SPLASH, Moves.HYPER_VOICE, Moves.STUFF_CHEEKS])
+      .moveset([MoveId.BUG_BITE, MoveId.SPLASH, MoveId.HYPER_VOICE, MoveId.STUFF_CHEEKS])
       .startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS, count: 1 }])
-      .ability(Abilities.CUD_CHEW)
+      .ability(AbilityId.CUD_CHEW)
       .battleStyle("single")
-      .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   describe("tracks berries eaten", () => {
     it("stores inside summonData at end of turn", async () => {
-      await game.classicMode.startBattle([Species.FARIGIRAF]);
+      await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
       farigiraf.hp = 1; // needed to allow sitrus procs
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.phaseInterceptor.to("BerryPhase");
 
       // berries tracked in turnData; not moved to battleData yet
@@ -67,16 +67,16 @@ describe("Abilities - Cud Chew", () => {
     });
 
     it("shows ability popup for eating berry, even if berry is useless", async () => {
-      const abDisplaySpy = vi.spyOn(globalScene, "queueAbilityDisplay");
-      game.override.enemyMoveset([Moves.SPLASH, Moves.HEAL_PULSE]);
-      await game.classicMode.startBattle([Species.FARIGIRAF]);
+      const abDisplaySpy = vi.spyOn(globalScene.phaseManager, "queueAbilityDisplay");
+      game.override.enemyMoveset([MoveId.SPLASH, MoveId.HEAL_PULSE]);
+      await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
       // Dip below half to eat berry
       farigiraf.hp = farigiraf.getMaxHp() / 2 - 1;
 
-      game.move.select(Moves.SPLASH);
-      await game.move.selectEnemyMove(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
+      await game.move.selectEnemyMove(MoveId.SPLASH);
       await game.phaseInterceptor.to("TurnEndPhase");
 
       // doesn't trigger since cud chew hasn't eaten berry yet
@@ -85,11 +85,11 @@ describe("Abilities - Cud Chew", () => {
       await game.toNextTurn();
 
       // get heal pulsed back to full before the cud chew proc
-      game.move.select(Moves.SPLASH);
-      await game.move.selectEnemyMove(Moves.HEAL_PULSE);
+      game.move.select(MoveId.SPLASH);
+      await game.move.selectEnemyMove(MoveId.HEAL_PULSE);
       await game.phaseInterceptor.to("TurnEndPhase");
 
-      // globalScene.queueAbilityDisplay should be called twice:
+      // globalScene.phaseManager.queueAbilityDisplay should be called twice:
       // once to show cud chew text before regurgitating berries,
       // once to hide ability text after finishing.
       expect(abDisplaySpy).toBeCalledTimes(2);
@@ -117,13 +117,13 @@ describe("Abilities - Cud Chew", () => {
           { name: "BERRY", type: BerryType.PETAYA, count: 3 },
           { name: "BERRY", type: BerryType.LIECHI, count: 3 },
         ])
-        .enemyMoveset(Moves.TEATIME);
-      await game.classicMode.startBattle([Species.FARIGIRAF]);
+        .enemyMoveset(MoveId.TEATIME);
+      await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
       farigiraf.hp = 1; // needed to allow berry procs
 
-      game.move.select(Moves.STUFF_CHEEKS);
+      game.move.select(MoveId.STUFF_CHEEKS);
       await game.toNextTurn();
 
       // Ate 2 petayas from moves + 1 of each at turn end; all 4 get tallied on turn end
@@ -135,7 +135,7 @@ describe("Abilities - Cud Chew", () => {
       ]);
       expect(farigiraf.turnData.berriesEaten).toEqual([]);
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
 
       // previous berries eaten and deleted from summon data as remaining eaten berries move to replace them
@@ -146,13 +146,13 @@ describe("Abilities - Cud Chew", () => {
     });
 
     it("should reset both arrays on switch", async () => {
-      await game.classicMode.startBattle([Species.FARIGIRAF, Species.GIRAFARIG]);
+      await game.classicMode.startBattle([SpeciesId.FARIGIRAF, SpeciesId.GIRAFARIG]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
       farigiraf.hp = 1;
 
       // eat berry turn 1, switch out turn 2
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
 
       const turn1Hp = farigiraf.hp;
@@ -174,13 +174,13 @@ describe("Abilities - Cud Chew", () => {
     });
 
     it("clears array if disabled", async () => {
-      game.override.enemyAbility(Abilities.NEUTRALIZING_GAS);
-      await game.classicMode.startBattle([Species.FARIGIRAF]);
+      game.override.enemyAbility(AbilityId.NEUTRALIZING_GAS);
+      await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
       farigiraf.hp = 1;
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.phaseInterceptor.to("BerryPhase");
 
       expect(farigiraf.summonData.berriesEatenLast).toEqual([]);
@@ -197,12 +197,12 @@ describe("Abilities - Cud Chew", () => {
   describe("regurgiates berries", () => {
     it("re-triggers effects on eater without pushing to array", async () => {
       const apply = vi.spyOn(RepeatBerryNextTurnAbAttr.prototype, "apply");
-      await game.classicMode.startBattle([Species.FARIGIRAF]);
+      await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
       farigiraf.hp = 1;
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
 
       // ate 1 sitrus the turn prior, spitball pending
@@ -212,7 +212,7 @@ describe("Abilities - Cud Chew", () => {
 
       const turn1Hp = farigiraf.hp;
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.phaseInterceptor.to("TurnEndPhase");
 
       // healed back up to half without adding any more to array
@@ -222,15 +222,15 @@ describe("Abilities - Cud Chew", () => {
     });
 
     it("bypasses unnerve", async () => {
-      game.override.enemyAbility(Abilities.UNNERVE);
-      await game.classicMode.startBattle([Species.FARIGIRAF]);
+      game.override.enemyAbility(AbilityId.UNNERVE);
+      await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
       farigiraf.hp = 1;
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.phaseInterceptor.to("TurnEndPhase");
 
       // Turn end proc set the berriesEatenLast array back to being empty
@@ -240,13 +240,13 @@ describe("Abilities - Cud Chew", () => {
     });
 
     it("doesn't trigger on non-eating removal", async () => {
-      game.override.enemyMoveset(Moves.INCINERATE);
-      await game.classicMode.startBattle([Species.FARIGIRAF]);
+      game.override.enemyMoveset(MoveId.INCINERATE);
+      await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
       farigiraf.hp = farigiraf.getMaxHp() / 4;
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
 
       // no berries eaten due to getting cooked
@@ -257,17 +257,17 @@ describe("Abilities - Cud Chew", () => {
 
     it("works with pluck", async () => {
       game.override
-        .enemySpecies(Species.BLAZIKEN)
+        .enemySpecies(SpeciesId.BLAZIKEN)
         .enemyHeldItems([{ name: "BERRY", type: BerryType.PETAYA, count: 1 }])
         .startingHeldItems([]);
-      await game.classicMode.startBattle([Species.FARIGIRAF]);
+      await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
 
-      game.move.select(Moves.BUG_BITE);
+      game.move.select(MoveId.BUG_BITE);
       await game.toNextTurn();
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
 
       // berry effect triggered twice - once for bug bite, once for cud chew
@@ -275,15 +275,15 @@ describe("Abilities - Cud Chew", () => {
     });
 
     it("works with Ripen", async () => {
-      game.override.passiveAbility(Abilities.RIPEN);
-      await game.classicMode.startBattle([Species.FARIGIRAF]);
+      game.override.passiveAbility(AbilityId.RIPEN);
+      await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
       farigiraf.hp = 1;
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
 
       // Rounding errors only ever cost a maximum of 4 hp
@@ -292,12 +292,12 @@ describe("Abilities - Cud Chew", () => {
 
     it("is preserved on reload/wave clear", async () => {
       game.override.enemyLevel(1);
-      await game.classicMode.startBattle([Species.FARIGIRAF]);
+      await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
       farigiraf.hp = 1;
 
-      game.move.select(Moves.HYPER_VOICE);
+      game.move.select(MoveId.HYPER_VOICE);
       await game.toNextWave();
 
       // berry went yummy yummy in big fat giraffe tummy
@@ -313,7 +313,7 @@ describe("Abilities - Cud Chew", () => {
       const wave1Hp = farigirafReloaded.hp;
 
       // blow up next wave and we should proc the repeat eating
-      game.move.select(Moves.HYPER_VOICE);
+      game.move.select(MoveId.HYPER_VOICE);
       await game.toNextWave();
 
       expect(farigirafReloaded.hp).toBeGreaterThan(wave1Hp);

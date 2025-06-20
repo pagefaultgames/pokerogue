@@ -1,13 +1,13 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -30,16 +30,17 @@ describe("Abilities - Ice Face", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.EISCUE);
-    game.override.enemyAbility(Abilities.ICE_FACE);
-    game.override.moveset([Moves.TACKLE, Moves.ICE_BEAM, Moves.TOXIC_THREAD, Moves.HAIL]);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.EISCUE)
+      .enemyAbility(AbilityId.ICE_FACE)
+      .moveset([MoveId.TACKLE, MoveId.ICE_BEAM, MoveId.TOXIC_THREAD, MoveId.HAIL]);
   });
 
   it("takes no damage from physical move and transforms to Noice", async () => {
-    await game.classicMode.startBattle([Species.HITMONLEE]);
+    await game.classicMode.startBattle([SpeciesId.HITMONLEE]);
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -51,11 +52,10 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("takes no damage from the first hit of multihit physical move and transforms to Noice", async () => {
-    game.override.moveset([Moves.SURGING_STRIKES]);
-    game.override.enemyLevel(1);
-    await game.classicMode.startBattle([Species.HITMONLEE]);
+    game.override.moveset([MoveId.SURGING_STRIKES]).enemyLevel(1);
+    await game.classicMode.startBattle([SpeciesId.HITMONLEE]);
 
-    game.move.select(Moves.SURGING_STRIKES);
+    game.move.select(MoveId.SURGING_STRIKES);
 
     const eiscue = game.scene.getEnemyPokemon()!;
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeDefined();
@@ -79,9 +79,9 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("takes damage from special moves", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    game.move.select(Moves.ICE_BEAM);
+    game.move.select(MoveId.ICE_BEAM);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -93,9 +93,9 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("takes effects from status moves", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    game.move.select(Moves.TOXIC_THREAD);
+    game.move.select(MoveId.TOXIC_THREAD);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -106,11 +106,11 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("transforms to Ice Face when Hail or Snow starts", async () => {
-    game.override.moveset([Moves.QUICK_ATTACK]).enemyMoveset(Moves.HAIL);
+    game.override.moveset([MoveId.QUICK_ATTACK]).enemyMoveset(MoveId.HAIL);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    game.move.select(Moves.QUICK_ATTACK);
+    game.move.select(MoveId.QUICK_ATTACK);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -127,11 +127,11 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("transforms to Ice Face when summoned on arena with active Snow or Hail", async () => {
-    game.override.enemyMoveset(Moves.TACKLE).moveset([Moves.SNOWSCAPE]);
+    game.override.enemyMoveset(MoveId.TACKLE).moveset([MoveId.SNOWSCAPE]);
 
-    await game.classicMode.startBattle([Species.EISCUE, Species.NINJASK]);
+    await game.classicMode.startBattle([SpeciesId.EISCUE, SpeciesId.NINJASK]);
 
-    game.move.select(Moves.SNOWSCAPE);
+    game.move.select(MoveId.SNOWSCAPE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
     let eiscue = game.scene.getPlayerPokemon()!;
@@ -153,11 +153,11 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("will not revert to its Ice Face if there is already Hail when it changes into Noice", async () => {
-    game.override.enemySpecies(Species.SHUCKLE).enemyMoveset(Moves.TACKLE);
+    game.override.enemySpecies(SpeciesId.SHUCKLE).enemyMoveset(MoveId.TACKLE);
 
-    await game.classicMode.startBattle([Species.EISCUE]);
+    await game.classicMode.startBattle([SpeciesId.EISCUE]);
 
-    game.move.select(Moves.HAIL);
+    game.move.select(MoveId.HAIL);
     const eiscue = game.scene.getPlayerPokemon()!;
 
     await game.phaseInterceptor.to(QuietFormChangePhase);
@@ -172,11 +172,11 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("persists form change when switched out", async () => {
-    game.override.enemyMoveset(Moves.QUICK_ATTACK);
+    game.override.enemyMoveset(MoveId.QUICK_ATTACK);
 
-    await game.classicMode.startBattle([Species.EISCUE, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.EISCUE, SpeciesId.MAGIKARP]);
 
-    game.move.select(Moves.ICE_BEAM);
+    game.move.select(MoveId.ICE_BEAM);
 
     await game.phaseInterceptor.to(TurnEndPhase);
     let eiscue = game.scene.getPlayerPokemon()!;
@@ -196,21 +196,22 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("reverts to Ice Face on arena reset", async () => {
-    game.override.startingWave(4);
-    game.override.startingLevel(4);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.starterForms({
-      [Species.EISCUE]: noiceForm,
-    });
+    game.override
+      .startingWave(4)
+      .startingLevel(4)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .starterForms({
+        [SpeciesId.EISCUE]: noiceForm,
+      });
 
-    await game.classicMode.startBattle([Species.EISCUE]);
+    await game.classicMode.startBattle([SpeciesId.EISCUE]);
 
     const eiscue = game.scene.getPlayerPokemon()!;
 
     expect(eiscue.formIndex).toBe(noiceForm);
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
 
-    game.move.select(Moves.ICE_BEAM);
+    game.move.select(MoveId.ICE_BEAM);
     await game.doKillOpponents();
     await game.phaseInterceptor.to(TurnEndPhase);
     game.doSelectModifier();
@@ -221,10 +222,10 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("doesn't trigger if user is behind a substitute", async () => {
-    game.override.enemyMoveset(Moves.SUBSTITUTE).moveset(Moves.POWER_TRIP);
+    game.override.enemyMoveset(MoveId.SUBSTITUTE).moveset(MoveId.POWER_TRIP);
     await game.classicMode.startBattle();
 
-    game.move.select(Moves.POWER_TRIP);
+    game.move.select(MoveId.POWER_TRIP);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -232,11 +233,11 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("cannot be suppressed", async () => {
-    game.override.moveset([Moves.GASTRO_ACID]);
+    game.override.moveset([MoveId.GASTRO_ACID]);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    game.move.select(Moves.GASTRO_ACID);
+    game.move.select(MoveId.GASTRO_ACID);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -248,11 +249,11 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("cannot be swapped with another ability", async () => {
-    game.override.moveset([Moves.SKILL_SWAP]);
+    game.override.moveset([MoveId.SKILL_SWAP]);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    game.move.select(Moves.SKILL_SWAP);
+    game.move.select(MoveId.SKILL_SWAP);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -260,15 +261,15 @@ describe("Abilities - Ice Face", () => {
 
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
     expect(eiscue.formIndex).toBe(icefaceForm);
-    expect(eiscue.hasAbility(Abilities.ICE_FACE)).toBe(true);
+    expect(eiscue.hasAbility(AbilityId.ICE_FACE)).toBe(true);
   });
 
   it("cannot be copied", async () => {
-    game.override.ability(Abilities.TRACE);
+    game.override.ability(AbilityId.TRACE);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    game.move.select(Moves.SIMPLE_BEAM);
+    game.move.select(MoveId.SIMPLE_BEAM);
 
     await game.phaseInterceptor.to(TurnInitPhase);
 
@@ -276,6 +277,6 @@ describe("Abilities - Ice Face", () => {
 
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
     expect(eiscue.formIndex).toBe(icefaceForm);
-    expect(game.scene.getPlayerPokemon()!.hasAbility(Abilities.TRACE)).toBe(true);
+    expect(game.scene.getPlayerPokemon()!.hasAbility(AbilityId.TRACE)).toBe(true);
   });
 });

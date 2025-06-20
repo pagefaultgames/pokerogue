@@ -1,7 +1,7 @@
 import { Stat } from "#enums/stat";
-import { Abilities } from "#app/enums/abilities";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MessagePhase } from "#app/phases/message-phase";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,28 +24,29 @@ describe("Abilities - COSTAR", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.ability(Abilities.COSTAR);
-    game.override.moveset([Moves.SPLASH, Moves.NASTY_PLOT]);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override
+      .battleStyle("double")
+      .ability(AbilityId.COSTAR)
+      .moveset([MoveId.SPLASH, MoveId.NASTY_PLOT])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   test("ability copies positive stat stages", async () => {
-    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.enemyAbility(AbilityId.BALL_FETCH);
 
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.FLAMIGO]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP, SpeciesId.FLAMIGO]);
 
     let [leftPokemon, rightPokemon] = game.scene.getPlayerField();
 
-    game.move.select(Moves.NASTY_PLOT);
+    game.move.select(MoveId.NASTY_PLOT);
     await game.phaseInterceptor.to(CommandPhase);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
     expect(leftPokemon.getStatStage(Stat.SPATK)).toBe(2);
     expect(rightPokemon.getStatStage(Stat.SPATK)).toBe(0);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to(CommandPhase);
     game.doSwitchPokemon(2);
     await game.phaseInterceptor.to(MessagePhase);
@@ -56,16 +57,16 @@ describe("Abilities - COSTAR", () => {
   });
 
   test("ability copies negative stat stages", async () => {
-    game.override.enemyAbility(Abilities.INTIMIDATE);
+    game.override.enemyAbility(AbilityId.INTIMIDATE);
 
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.FLAMIGO]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP, SpeciesId.FLAMIGO]);
 
     let [leftPokemon, rightPokemon] = game.scene.getPlayerField();
 
     expect(leftPokemon.getStatStage(Stat.ATK)).toBe(-2);
     expect(leftPokemon.getStatStage(Stat.ATK)).toBe(-2);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to(CommandPhase);
     game.doSwitchPokemon(2);
     await game.phaseInterceptor.to(MessagePhase);

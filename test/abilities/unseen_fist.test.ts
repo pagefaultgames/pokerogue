@@ -1,7 +1,7 @@
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -26,40 +26,39 @@ describe("Abilities - Unseen Fist", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .starterSpecies(Species.URSHIFU)
-      .enemySpecies(Species.SNORLAX)
-      .enemyMoveset(Moves.PROTECT)
+      .starterSpecies(SpeciesId.URSHIFU)
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyMoveset(MoveId.PROTECT)
       .startingLevel(100)
       .enemyLevel(100);
   });
 
   it("should cause a contact move to ignore Protect", async () =>
-    await testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, true));
+    await testUnseenFistHitResult(game, MoveId.QUICK_ATTACK, MoveId.PROTECT, true));
 
   it("should not cause a non-contact move to ignore Protect", async () =>
-    await testUnseenFistHitResult(game, Moves.ABSORB, Moves.PROTECT, false));
+    await testUnseenFistHitResult(game, MoveId.ABSORB, MoveId.PROTECT, false));
 
   it("should not apply if the source has Long Reach", async () => {
-    game.override.passiveAbility(Abilities.LONG_REACH);
-    await testUnseenFistHitResult(game, Moves.QUICK_ATTACK, Moves.PROTECT, false);
+    game.override.passiveAbility(AbilityId.LONG_REACH);
+    await testUnseenFistHitResult(game, MoveId.QUICK_ATTACK, MoveId.PROTECT, false);
   });
 
   it("should cause a contact move to ignore Wide Guard", async () =>
-    await testUnseenFistHitResult(game, Moves.BREAKING_SWIPE, Moves.WIDE_GUARD, true));
+    await testUnseenFistHitResult(game, MoveId.BREAKING_SWIPE, MoveId.WIDE_GUARD, true));
 
   it("should not cause a non-contact move to ignore Wide Guard", async () =>
-    await testUnseenFistHitResult(game, Moves.BULLDOZE, Moves.WIDE_GUARD, false));
+    await testUnseenFistHitResult(game, MoveId.BULLDOZE, MoveId.WIDE_GUARD, false));
 
   it("should cause a contact move to ignore Protect, but not Substitute", async () => {
-    game.override.enemyLevel(1);
-    game.override.moveset([Moves.TACKLE]);
+    game.override.enemyLevel(1).moveset([MoveId.TACKLE]);
 
     await game.classicMode.startBattle();
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
-    enemyPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, enemyPokemon.id);
+    enemyPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, enemyPokemon.id);
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(BerryPhase, false);
 
@@ -70,8 +69,8 @@ describe("Abilities - Unseen Fist", () => {
 
 async function testUnseenFistHitResult(
   game: GameManager,
-  attackMove: Moves,
-  protectMove: Moves,
+  attackMove: MoveId,
+  protectMove: MoveId,
   shouldSucceed = true,
 ): Promise<void> {
   game.override.moveset([attackMove]).enemyMoveset(protectMove);

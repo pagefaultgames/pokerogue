@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, expect, describe, it } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type BattleScene from "#app/battle-scene";
@@ -24,18 +24,17 @@ describe("Mystery Encounters", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.startingWave(11);
-    game.override.mysteryEncounterChance(100);
+    game.override.startingWave(11).mysteryEncounterChance(100);
   });
 
   it("Spawns a mystery encounter", async () => {
     await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [
-      Species.CHARIZARD,
-      Species.VOLCARONA,
+      SpeciesId.CHARIZARD,
+      SpeciesId.VOLCARONA,
     ]);
 
     await game.phaseInterceptor.to(MysteryEncounterPhase, false);
-    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(MysteryEncounterPhase.name);
+    expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(MysteryEncounterPhase.name);
   });
 
   it("Encounters should not run below wave 10", async () => {

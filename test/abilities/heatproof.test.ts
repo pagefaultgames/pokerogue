@@ -1,9 +1,9 @@
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#app/enums/status-effect";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { toDmgValue } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -26,14 +26,14 @@ describe("Abilities - Heatproof", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
-      .enemySpecies(Species.CHARMANDER)
-      .enemyAbility(Abilities.HEATPROOF)
-      .enemyMoveset(Moves.SPLASH)
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.CHARMANDER)
+      .enemyAbility(AbilityId.HEATPROOF)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(100)
-      .starterSpecies(Species.CHANDELURE)
-      .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.FLAMETHROWER, Moves.SPLASH])
+      .starterSpecies(SpeciesId.CHANDELURE)
+      .ability(AbilityId.BALL_FETCH)
+      .moveset([MoveId.FLAMETHROWER, MoveId.SPLASH])
       .startingLevel(100);
   });
 
@@ -44,14 +44,14 @@ describe("Abilities - Heatproof", () => {
     const initialHP = 1000;
     enemy.hp = initialHP;
 
-    game.move.select(Moves.FLAMETHROWER);
+    game.move.select(MoveId.FLAMETHROWER);
     await game.phaseInterceptor.to(TurnEndPhase);
     const heatproofDamage = initialHP - enemy.hp;
 
     enemy.hp = initialHP;
-    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.enemyAbility(AbilityId.BALL_FETCH);
 
-    game.move.select(Moves.FLAMETHROWER);
+    game.move.select(MoveId.FLAMETHROWER);
     await game.phaseInterceptor.to(TurnEndPhase);
     const regularDamage = initialHP - enemy.hp;
 
@@ -60,12 +60,12 @@ describe("Abilities - Heatproof", () => {
   });
 
   it("reduces Burn damage by half", async () => {
-    game.override.enemyStatusEffect(StatusEffect.BURN).enemySpecies(Species.ABRA);
+    game.override.enemyStatusEffect(StatusEffect.BURN).enemySpecies(SpeciesId.ABRA);
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     // Normal burn damage is /16

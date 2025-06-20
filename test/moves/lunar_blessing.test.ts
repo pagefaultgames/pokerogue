@@ -1,8 +1,8 @@
 import { StatusEffect } from "#app/enums/status-effect";
 import { CommandPhase } from "#app/phases/command-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -22,18 +22,17 @@ describe("Moves - Lunar Blessing", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("double");
-
-    game.override.enemySpecies(Species.SHUCKLE);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-
-    game.override.moveset([Moves.LUNAR_BLESSING, Moves.SPLASH]);
-    game.override.ability(Abilities.BALL_FETCH);
+    game.override
+      .battleStyle("double")
+      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .moveset([MoveId.LUNAR_BLESSING, MoveId.SPLASH])
+      .ability(AbilityId.BALL_FETCH);
   });
 
   it("should restore 25% HP of the user and its ally", async () => {
-    await game.classicMode.startBattle([Species.RATTATA, Species.RATTATA]);
+    await game.classicMode.startBattle([SpeciesId.RATTATA, SpeciesId.RATTATA]);
     const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
 
     vi.spyOn(leftPlayer, "getMaxHp").mockReturnValue(100);
@@ -47,9 +46,9 @@ describe("Moves - Lunar Blessing", () => {
     vi.spyOn(leftPlayer, "heal");
     vi.spyOn(rightPlayer, "heal");
 
-    game.move.select(Moves.LUNAR_BLESSING, 0);
+    game.move.select(MoveId.LUNAR_BLESSING, 0);
     await game.phaseInterceptor.to(CommandPhase);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
     expect(leftPlayer.heal).toHaveBeenCalledOnce();
@@ -61,15 +60,15 @@ describe("Moves - Lunar Blessing", () => {
 
   it("should cure status effect of the user and its ally", async () => {
     game.override.statusEffect(StatusEffect.BURN);
-    await game.classicMode.startBattle([Species.RATTATA, Species.RATTATA]);
+    await game.classicMode.startBattle([SpeciesId.RATTATA, SpeciesId.RATTATA]);
     const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
 
     vi.spyOn(leftPlayer, "resetStatus");
     vi.spyOn(rightPlayer, "resetStatus");
 
-    game.move.select(Moves.LUNAR_BLESSING, 0);
+    game.move.select(MoveId.LUNAR_BLESSING, 0);
     await game.phaseInterceptor.to(CommandPhase);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
     expect(leftPlayer.resetStatus).toHaveBeenCalledOnce();

@@ -1,7 +1,7 @@
 import { Stat } from "#enums/stat";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -24,22 +24,23 @@ describe("Moves - Make It Rain", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.moveset([Moves.MAKE_IT_RAIN, Moves.SPLASH]);
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyAbility(Abilities.INSOMNIA);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("double")
+      .moveset([MoveId.MAKE_IT_RAIN, MoveId.SPLASH])
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .enemyMoveset(MoveId.SPLASH)
+      .startingLevel(100)
+      .enemyLevel(100);
   });
 
   it("should only lower SPATK stat stage by 1 once in a double battle", async () => {
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.MAKE_IT_RAIN);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.MAKE_IT_RAIN);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -47,15 +48,16 @@ describe("Moves - Make It Rain", () => {
   });
 
   it("should apply effects even if the target faints", async () => {
-    game.override.enemyLevel(1); // ensures the enemy will faint
-    game.override.battleStyle("single");
+    game.override
+      .enemyLevel(1) // ensures the enemy will faint
+      .battleStyle("single");
 
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.MAKE_IT_RAIN);
+    game.move.select(MoveId.MAKE_IT_RAIN);
 
     await game.phaseInterceptor.to(StatStageChangePhase);
 
@@ -66,13 +68,13 @@ describe("Moves - Make It Rain", () => {
   it("should reduce Sp. Atk. once after KOing two enemies", async () => {
     game.override.enemyLevel(1); // ensures the enemy will faint
 
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyField();
 
-    game.move.select(Moves.MAKE_IT_RAIN);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.MAKE_IT_RAIN);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to(StatStageChangePhase);
 
@@ -81,12 +83,12 @@ describe("Moves - Make It Rain", () => {
   });
 
   it("should lower SPATK stat stage by 1 if it only hits the second target", async () => {
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.MAKE_IT_RAIN);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.MAKE_IT_RAIN);
+    game.move.select(MoveId.SPLASH, 1);
 
     // Make Make It Rain miss the first target
     await game.move.forceMiss(true);

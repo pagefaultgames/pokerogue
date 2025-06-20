@@ -1,13 +1,13 @@
 import { Stat } from "#enums/stat";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
+import { SpeciesId } from "#enums/species-id";
 
 // See also: TypeImmunityAbAttr
 describe("Abilities - Volt Absorb", () => {
@@ -26,19 +26,19 @@ describe("Abilities - Volt Absorb", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.disableCrits();
+    game.override.battleStyle("single").criticalHits(false);
   });
 
   it("does not activate when CHARGE is used", async () => {
-    const moveToUse = Moves.CHARGE;
-    const ability = Abilities.VOLT_ABSORB;
+    const moveToUse = MoveId.CHARGE;
+    const ability = AbilityId.VOLT_ABSORB;
 
-    game.override.moveset([moveToUse]);
-    game.override.ability(ability);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
-    game.override.enemySpecies(Species.DUSKULL);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override
+      .moveset([moveToUse])
+      .ability(ability)
+      .enemyMoveset([MoveId.SPLASH])
+      .enemySpecies(SpeciesId.DUSKULL)
+      .enemyAbility(AbilityId.BALL_FETCH);
 
     await game.classicMode.startBattle();
 
@@ -54,16 +54,17 @@ describe("Abilities - Volt Absorb", () => {
   });
 
   it("should activate regardless of accuracy checks", async () => {
-    game.override.moveset(Moves.THUNDERBOLT);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.VOLT_ABSORB);
+    game.override
+      .moveset(MoveId.THUNDERBOLT)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.VOLT_ABSORB);
 
     await game.classicMode.startBattle();
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.THUNDERBOLT);
+    game.move.select(MoveId.THUNDERBOLT);
     enemyPokemon.hp = enemyPokemon.hp - 1;
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEffectPhase");
@@ -74,16 +75,17 @@ describe("Abilities - Volt Absorb", () => {
   });
 
   it("regardless of accuracy should not trigger on pokemon in semi invulnerable state", async () => {
-    game.override.moveset(Moves.THUNDERBOLT);
-    game.override.enemyMoveset(Moves.DIVE);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.VOLT_ABSORB);
+    game.override
+      .moveset(MoveId.THUNDERBOLT)
+      .enemyMoveset(MoveId.DIVE)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.VOLT_ABSORB);
 
     await game.classicMode.startBattle();
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.THUNDERBOLT);
+    game.move.select(MoveId.THUNDERBOLT);
     enemyPokemon.hp = enemyPokemon.hp - 1;
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 

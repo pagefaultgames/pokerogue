@@ -5,20 +5,13 @@ import UiHandler from "./ui-handler";
 import i18next from "i18next";
 import { Button } from "#enums/buttons";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { CommandPhase } from "#app/phases/command-phase";
+import type { CommandPhase } from "#app/phases/command-phase";
 import { globalScene } from "#app/global-scene";
 import { TerastallizeAccessModifier } from "#app/modifier/modifier";
 import { PokemonType } from "#enums/pokemon-type";
 import { getTypeRgb } from "#app/data/type";
-import { Species } from "#enums/species";
-
-export enum Command {
-  FIGHT = 0,
-  BALL,
-  POKEMON,
-  RUN,
-  TERA,
-}
+import { SpeciesId } from "#enums/species-id";
+import { Command } from "#enums/command";
 
 export default class CommandUiHandler extends UiHandler {
   private commandsContainer: Phaser.GameObjects.Container;
@@ -74,11 +67,11 @@ export default class CommandUiHandler extends UiHandler {
     this.commandsContainer.setVisible(true);
 
     let commandPhase: CommandPhase;
-    const currentPhase = globalScene.getCurrentPhase();
-    if (currentPhase instanceof CommandPhase) {
+    const currentPhase = globalScene.phaseManager.getCurrentPhase();
+    if (currentPhase?.is("CommandPhase")) {
       commandPhase = currentPhase;
     } else {
-      commandPhase = globalScene.getStandbyPhase() as CommandPhase;
+      commandPhase = globalScene.phaseManager.getStandbyPhase() as CommandPhase;
     }
 
     if (this.canTera()) {
@@ -124,7 +117,7 @@ export default class CommandUiHandler extends UiHandler {
         switch (cursor) {
           // Fight
           case Command.FIGHT:
-            ui.setMode(UiMode.FIGHT, (globalScene.getCurrentPhase() as CommandPhase).getFieldIndex());
+            ui.setMode(UiMode.FIGHT, (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getFieldIndex());
             success = true;
             break;
           // Ball
@@ -137,7 +130,7 @@ export default class CommandUiHandler extends UiHandler {
             ui.setMode(
               UiMode.PARTY,
               PartyUiMode.SWITCH,
-              (globalScene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(),
+              (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(),
               null,
               PartyUiHandler.FilterNonFainted,
             );
@@ -145,16 +138,20 @@ export default class CommandUiHandler extends UiHandler {
             break;
           // Run
           case Command.RUN:
-            (globalScene.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
+            (globalScene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
             success = true;
             break;
           case Command.TERA:
-            ui.setMode(UiMode.FIGHT, (globalScene.getCurrentPhase() as CommandPhase).getFieldIndex(), Command.TERA);
+            ui.setMode(
+              UiMode.FIGHT,
+              (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getFieldIndex(),
+              Command.TERA,
+            );
             success = true;
             break;
         }
       } else {
-        (globalScene.getCurrentPhase() as CommandPhase).cancel();
+        (globalScene.phaseManager.getCurrentPhase() as CommandPhase).cancel();
       }
     } else {
       switch (button) {
@@ -198,7 +195,7 @@ export default class CommandUiHandler extends UiHandler {
     const hasTeraMod = !!globalScene.getModifiers(TerastallizeAccessModifier).length;
     const activePokemon = globalScene.getField()[this.fieldIndex];
     const isBlockedForm =
-      activePokemon.isMega() || activePokemon.isMax() || activePokemon.hasSpecies(Species.NECROZMA, "ultra");
+      activePokemon.isMega() || activePokemon.isMax() || activePokemon.hasSpecies(SpeciesId.NECROZMA, "ultra");
     const currentTeras = globalScene.arena.playerTerasUsed;
     const plannedTera =
       globalScene.currentBattle.preTurnCommands[0]?.command === Command.TERA && this.fieldIndex > 0 ? 1 : 0;

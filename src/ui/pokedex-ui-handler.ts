@@ -7,26 +7,31 @@ import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import type { PokemonForm } from "#app/data/pokemon-species";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import { allSpecies, getPokemonSpeciesForm, getPokerusStarters, normalForm } from "#app/data/pokemon-species";
+import { getPokemonSpeciesForm, getPokerusStarters, normalForm } from "#app/data/pokemon-species";
+import { allSpecies } from "#app/data/data-lists";
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { catchableSpecies } from "#app/data/balance/biomes";
 import { PokemonType } from "#enums/pokemon-type";
-import type { DexAttrProps, DexEntry, StarterAttributes, StarterPreferences } from "#app/system/game-data";
-import { AbilityAttr, DexAttr, loadStarterPreferences } from "#app/system/game-data";
+import type { DexAttrProps, StarterAttributes } from "#app/system/game-data";
+import type { StarterPreferences } from "#app/utils/data";
+import type { DexEntry } from "#app/@types/dex-data";
+import { loadStarterPreferences } from "#app/utils/data";
+import { AbilityAttr } from "#enums/ability-attr";
+import { DexAttr } from "#enums/dex-attr";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { UiMode } from "#enums/ui-mode";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { Passive as PassiveAttr } from "#enums/passive";
-import type { Species } from "#enums/species";
+import type { SpeciesId } from "#enums/species-id";
 import { Button } from "#enums/buttons";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#app/ui/dropdown";
 import { PokedexMonContainer } from "#app/ui/pokedex-mon-container";
 import { FilterBar } from "#app/ui/filter-bar";
 import { DropDownColumn } from "#enums/drop-down-column";
 import { ScrollBar } from "#app/ui/scroll-bar";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import {
   getPassiveCandyCount,
   getValueReductionCandyCounts,
@@ -41,7 +46,7 @@ import { allAbilities } from "#app/data/data-lists";
 import { allMoves } from "#app/data/data-lists";
 import { speciesTmMoves } from "#app/data/balance/tms";
 import { pokemonStarters } from "#app/data/balance/pokemon-evolutions";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { globalScene } from "#app/global-scene";
 
 interface LanguageSetting {
@@ -175,7 +180,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private oldCursor = -1;
 
   private lastSpecies: PokemonSpecies;
-  private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
+  private speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
   private pokerusSpecies: PokemonSpecies[] = [];
   private speciesStarterDexEntry: DexEntry | null;
 
@@ -227,7 +232,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private showFormTrayIconElement: Phaser.GameObjects.Sprite;
   private showFormTrayLabel: Phaser.GameObjects.Text;
   private canShowFormTray: boolean;
-  private filteredIndices: Species[];
+  private filteredIndices: SpeciesId[];
 
   constructor() {
     super(UiMode.POKEDEX);
@@ -314,11 +319,11 @@ export default class PokedexUiHandler extends MessageUiHandler {
     );
 
     // biome filter, making an entry in the dropdown for each biome
-    const biomeOptions = Object.values(Biome)
+    const biomeOptions = Object.values(BiomeId)
       .filter(value => typeof value === "number") // Filter numeric values from the enum
       .map(
         (biomeValue, index) =>
-          new DropDownOption(index, new DropDownLabel(i18next.t(`biome:${Biome[biomeValue].toUpperCase()}`))),
+          new DropDownOption(index, new DropDownLabel(i18next.t(`biome:${BiomeId[biomeValue].toUpperCase()}`))),
       );
     biomeOptions.push(new DropDownOption(biomeOptions.length, new DropDownLabel(i18next.t("filterBar:uncatchable"))));
     const biomeDropDown: DropDown = new DropDown(0, 0, biomeOptions, this.updateStarters, DropDownType.HYBRID);
@@ -1459,7 +1464,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // Biome filter
       const indexToBiome = new Map(
-        Object.values(Biome)
+        Object.values(BiomeId)
           .map((value, index) => (typeof value === "string" ? [index, value] : undefined))
           .filter((entry): entry is [number, string] => entry !== undefined),
       );
@@ -1467,7 +1472,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // We get biomes for both the mon and its starters to ensure that evolutions get the correct filters.
       // TODO: We might also need to do it the other way around.
-      const biomes = catchableSpecies[species.speciesId].concat(catchableSpecies[starterId]).map(b => Biome[b.biome]);
+      const biomes = catchableSpecies[species.speciesId].concat(catchableSpecies[starterId]).map(b => BiomeId[b.biome]);
       if (biomes.length === 0) {
         biomes.push("Uncatchable");
       }
@@ -1590,7 +1595,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // HA Filter
       const speciesHasHiddenAbility =
-        species.abilityHidden !== species.ability1 && species.abilityHidden !== Abilities.NONE;
+        species.abilityHidden !== species.ability1 && species.abilityHidden !== AbilityId.NONE;
       const hasHA = starterData.abilityAttr & AbilityAttr.ABILITY_HIDDEN;
       const fitsHA = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.ON) {

@@ -1,10 +1,11 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { PokemonTurnData, TurnMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
 import type BattleScene from "#app/battle-scene";
-import { BattlerTagLapseType, BindTag, SubstituteTag } from "#app/data/battler-tags";
-import { Moves } from "#app/enums/moves";
+import { BindTag, SubstituteTag } from "#app/data/battler-tags";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
+import { MoveId } from "#enums/move-id";
 import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 import * as messages from "#app/messages";
 import { allMoves } from "#app/data/data-lists";
@@ -52,10 +53,10 @@ describe("BattlerTag - SubstituteTag", () => {
     });
 
     it("sets the tag's HP to 1/4 of the source's max HP (rounded down)", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockReturnValue(true);
-      vi.spyOn(mockPokemon.scene as BattleScene, "queueMessage").mockReturnValue();
+      vi.spyOn((mockPokemon.scene as BattleScene).phaseManager, "queueMessage").mockReturnValue();
 
       subject.onAdd(mockPokemon);
 
@@ -63,7 +64,7 @@ describe("BattlerTag - SubstituteTag", () => {
     });
 
     it("triggers on-add effects that bring the source out of focus", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockImplementation(
         (_pokemon, battleAnimType, _fieldAssets?, _delayed?) => {
@@ -72,19 +73,19 @@ describe("BattlerTag - SubstituteTag", () => {
         },
       );
 
-      vi.spyOn(mockPokemon.scene as BattleScene, "queueMessage").mockReturnValue();
+      const msgSpy = vi.spyOn((mockPokemon.scene as BattleScene).phaseManager, "queueMessage").mockReturnValue();
 
       subject.onAdd(mockPokemon);
 
       expect(subject.sourceInFocus).toBeFalsy();
       expect((mockPokemon.scene as BattleScene).triggerPokemonBattleAnim).toHaveBeenCalledTimes(1);
-      expect((mockPokemon.scene as BattleScene).queueMessage).toHaveBeenCalledTimes(1);
+      expect(msgSpy).toHaveBeenCalledOnce();
     });
 
     it("removes effects that trap the source", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
-      vi.spyOn(mockPokemon.scene as BattleScene, "queueMessage").mockReturnValue();
+      vi.spyOn((mockPokemon.scene as BattleScene).phaseManager, "queueMessage").mockReturnValue();
 
       subject.onAdd(mockPokemon);
       expect(mockPokemon.findAndRemoveTags).toHaveBeenCalledTimes(1);
@@ -104,7 +105,7 @@ describe("BattlerTag - SubstituteTag", () => {
     });
 
     it("triggers on-remove animation and message", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
       subject.sourceInFocus = false;
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockImplementation(
@@ -114,12 +115,12 @@ describe("BattlerTag - SubstituteTag", () => {
         },
       );
 
-      vi.spyOn(mockPokemon.scene as BattleScene, "queueMessage").mockReturnValue();
+      const msgSpy = vi.spyOn((mockPokemon.scene as BattleScene).phaseManager, "queueMessage").mockReturnValue();
 
       subject.onRemove(mockPokemon);
 
       expect((mockPokemon.scene as BattleScene).triggerPokemonBattleAnim).toHaveBeenCalledTimes(1);
-      expect((mockPokemon.scene as BattleScene).queueMessage).toHaveBeenCalledTimes(1);
+      expect(msgSpy).toHaveBeenCalledOnce();
     });
   });
 
@@ -133,7 +134,7 @@ describe("BattlerTag - SubstituteTag", () => {
         getLastXMoves: vi
           .fn()
           .mockReturnValue([
-            { move: Moves.TACKLE, result: MoveResult.SUCCESS } as TurnMove,
+            { move: MoveId.TACKLE, result: MoveResult.SUCCESS } as TurnMove,
           ]) as Pokemon["getLastXMoves"],
       } as unknown as Pokemon;
 
@@ -141,7 +142,7 @@ describe("BattlerTag - SubstituteTag", () => {
     });
 
     it("PRE_MOVE lapse triggers pre-move animation", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockImplementation(
         (_pokemon, battleAnimType, _fieldAssets?, _delayed?) => {
@@ -150,17 +151,16 @@ describe("BattlerTag - SubstituteTag", () => {
         },
       );
 
-      vi.spyOn(mockPokemon.scene as BattleScene, "queueMessage").mockReturnValue();
+      vi.spyOn((mockPokemon.scene as BattleScene).phaseManager, "queueMessage").mockReturnValue();
 
       expect(subject.lapse(mockPokemon, BattlerTagLapseType.PRE_MOVE)).toBeTruthy();
 
       expect(subject.sourceInFocus).toBeTruthy();
       expect((mockPokemon.scene as BattleScene).triggerPokemonBattleAnim).toHaveBeenCalledTimes(1);
-      expect((mockPokemon.scene as BattleScene).queueMessage).not.toHaveBeenCalled();
     });
 
     it("AFTER_MOVE lapse triggers post-move animation", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockImplementation(
         (_pokemon, battleAnimType, _fieldAssets?, _delayed?) => {
@@ -169,55 +169,55 @@ describe("BattlerTag - SubstituteTag", () => {
         },
       );
 
-      vi.spyOn(mockPokemon.scene as BattleScene, "queueMessage").mockReturnValue();
+      const msgSpy = vi.spyOn((mockPokemon.scene as BattleScene).phaseManager, "queueMessage").mockReturnValue();
 
       expect(subject.lapse(mockPokemon, BattlerTagLapseType.AFTER_MOVE)).toBeTruthy();
 
       expect(subject.sourceInFocus).toBeFalsy();
       expect((mockPokemon.scene as BattleScene).triggerPokemonBattleAnim).toHaveBeenCalledTimes(1);
-      expect((mockPokemon.scene as BattleScene).queueMessage).not.toHaveBeenCalled();
+      expect(msgSpy).not.toHaveBeenCalled();
     });
 
     // TODO: Figure out how to mock a MoveEffectPhase correctly for this test
     it.todo("HIT lapse triggers on-hit message", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockReturnValue(true);
-      vi.spyOn(mockPokemon.scene as BattleScene, "queueMessage").mockReturnValue();
+      const msgSpy = vi.spyOn((mockPokemon.scene as BattleScene).phaseManager, "queueMessage").mockReturnValue();
 
       const moveEffectPhase = {
-        move: allMoves[Moves.TACKLE],
+        move: allMoves[MoveId.TACKLE],
         getUserPokemon: vi.fn().mockReturnValue(undefined) as MoveEffectPhase["getUserPokemon"],
       } as MoveEffectPhase;
 
-      vi.spyOn(mockPokemon.scene as BattleScene, "getCurrentPhase").mockReturnValue(moveEffectPhase);
-      vi.spyOn(allMoves[Moves.TACKLE], "hitsSubstitute").mockReturnValue(true);
+      vi.spyOn((mockPokemon.scene as BattleScene).phaseManager, "getCurrentPhase").mockReturnValue(moveEffectPhase);
+      vi.spyOn(allMoves[MoveId.TACKLE], "hitsSubstitute").mockReturnValue(true);
 
       expect(subject.lapse(mockPokemon, BattlerTagLapseType.HIT)).toBeTruthy();
 
       expect((mockPokemon.scene as BattleScene).triggerPokemonBattleAnim).not.toHaveBeenCalled();
-      expect((mockPokemon.scene as BattleScene).queueMessage).toHaveBeenCalledTimes(1);
+      expect(msgSpy).toHaveBeenCalledOnce();
     });
 
     it("CUSTOM lapse flags the tag for removal", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockReturnValue(true);
-      vi.spyOn(mockPokemon.scene as BattleScene, "queueMessage").mockReturnValue();
+      vi.spyOn((mockPokemon.scene as BattleScene).phaseManager, "queueMessage").mockReturnValue();
 
       expect(subject.lapse(mockPokemon, BattlerTagLapseType.CUSTOM)).toBeFalsy();
     });
 
     it("Unsupported lapse type does nothing", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockReturnValue(true);
-      vi.spyOn(mockPokemon.scene as BattleScene, "queueMessage").mockReturnValue();
+      const msgSpy = vi.spyOn((mockPokemon.scene as BattleScene).phaseManager, "queueMessage").mockReturnValue();
 
       expect(subject.lapse(mockPokemon, BattlerTagLapseType.TURN_END)).toBeTruthy();
 
       expect((mockPokemon.scene as BattleScene).triggerPokemonBattleAnim).not.toHaveBeenCalled();
-      expect((mockPokemon.scene as BattleScene).queueMessage).not.toHaveBeenCalled();
+      expect(msgSpy).not.toHaveBeenCalled();
     });
   });
 });

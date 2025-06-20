@@ -1,7 +1,7 @@
 import { BerryType } from "#app/enums/berry-type";
 import { Button } from "#app/enums/buttons";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";
 import { UiMode } from "#enums/ui-mode";
@@ -26,21 +26,22 @@ describe("UI - Transfer Items", () => {
 
   beforeEach(async () => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.startingLevel(100);
-    game.override.startingWave(1);
-    game.override.startingHeldItems([
-      { name: "BERRY", count: 1, type: BerryType.SITRUS },
-      { name: "BERRY", count: 2, type: BerryType.APICOT },
-      { name: "BERRY", count: 2, type: BerryType.LUM },
-    ]);
-    game.override.moveset([Moves.DRAGON_CLAW]);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([Moves.SPLASH]);
+    game.override
+      .battleStyle("single")
+      .startingLevel(100)
+      .startingWave(1)
+      .startingHeldItems([
+        { name: "BERRY", count: 1, type: BerryType.SITRUS },
+        { name: "BERRY", count: 2, type: BerryType.APICOT },
+        { name: "BERRY", count: 2, type: BerryType.LUM },
+      ])
+      .moveset([MoveId.DRAGON_CLAW])
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyMoveset([MoveId.SPLASH]);
 
-    await game.classicMode.startBattle([Species.RAYQUAZA, Species.RAYQUAZA, Species.RAYQUAZA]);
+    await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA]);
 
-    game.move.select(Moves.DRAGON_CLAW);
+    game.move.select(MoveId.DRAGON_CLAW);
 
     game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
@@ -76,7 +77,7 @@ describe("UI - Transfer Items", () => {
     });
 
     await game.phaseInterceptor.to("SelectModifierPhase");
-  }, 20000);
+  });
 
   it("check transfer option for pokemon to transfer to", async () => {
     game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, () => {
@@ -97,5 +98,5 @@ describe("UI - Transfer Items", () => {
     });
 
     await game.phaseInterceptor.to("SelectModifierPhase");
-  }, 20000);
+  });
 });

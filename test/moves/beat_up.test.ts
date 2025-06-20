@@ -1,6 +1,6 @@
-import { Abilities } from "#app/enums/abilities";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#app/enums/status-effect";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import GameManager from "#test/testUtils/gameManager";
@@ -23,32 +23,31 @@ describe("Moves - Beat Up", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyLevel(100);
-    game.override.enemyMoveset([Moves.SPLASH]);
-    game.override.enemyAbility(Abilities.INSOMNIA);
-
-    game.override.startingLevel(100);
-    game.override.moveset([Moves.BEAT_UP]);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyLevel(100)
+      .enemyMoveset([MoveId.SPLASH])
+      .enemyAbility(AbilityId.INSOMNIA)
+      .startingLevel(100)
+      .moveset([MoveId.BEAT_UP]);
   });
 
   it("should hit once for each healthy player Pokemon", async () => {
     await game.classicMode.startBattle([
-      Species.MAGIKARP,
-      Species.BULBASAUR,
-      Species.CHARMANDER,
-      Species.SQUIRTLE,
-      Species.PIKACHU,
-      Species.EEVEE,
+      SpeciesId.MAGIKARP,
+      SpeciesId.BULBASAUR,
+      SpeciesId.CHARMANDER,
+      SpeciesId.SQUIRTLE,
+      SpeciesId.PIKACHU,
+      SpeciesId.EEVEE,
     ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     let enemyStartingHp = enemyPokemon.hp;
 
-    game.move.select(Moves.BEAT_UP);
+    game.move.select(MoveId.BEAT_UP);
 
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -64,19 +63,19 @@ describe("Moves - Beat Up", () => {
 
   it("should not count player Pokemon with status effects towards hit count", async () => {
     await game.classicMode.startBattle([
-      Species.MAGIKARP,
-      Species.BULBASAUR,
-      Species.CHARMANDER,
-      Species.SQUIRTLE,
-      Species.PIKACHU,
-      Species.EEVEE,
+      SpeciesId.MAGIKARP,
+      SpeciesId.BULBASAUR,
+      SpeciesId.CHARMANDER,
+      SpeciesId.SQUIRTLE,
+      SpeciesId.PIKACHU,
+      SpeciesId.EEVEE,
     ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
     game.scene.getPlayerParty()[1].trySetStatus(StatusEffect.BURN);
 
-    game.move.select(Moves.BEAT_UP);
+    game.move.select(MoveId.BEAT_UP);
 
     await game.phaseInterceptor.to(MoveEffectPhase);
 

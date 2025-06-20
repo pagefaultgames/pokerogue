@@ -1,9 +1,9 @@
-import { Abilities } from "#enums/abilities";
-import { BattlerIndex } from "#app/battle";
+import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { Stat } from "#enums/stat";
 import { allMoves } from "#app/data/data-lists";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -24,12 +24,13 @@ describe("Moves - Spectral Thief", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyLevel(100)
-      .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .moveset([Moves.SPECTRAL_THIEF, Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH).disableCrits;
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .moveset([MoveId.SPECTRAL_THIEF, MoveId.SPLASH])
+      .ability(AbilityId.BALL_FETCH)
+      .criticalHits(false);
   });
 
   it("should steal max possible positive stat changes and ignore negative ones.", async () => {
@@ -50,7 +51,7 @@ describe("Moves - Spectral Thief", () => {
     player.setStatStage(Stat.SPDEF, 0);
     player.setStatStage(Stat.SPD, -2);
 
-    game.move.select(Moves.SPECTRAL_THIEF);
+    game.move.select(MoveId.SPECTRAL_THIEF);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     /**
@@ -65,26 +66,26 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should steal stat stages before dmg calculation", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).enemyLevel(50);
+    game.override.enemySpecies(SpeciesId.MAGIKARP).enemyLevel(50);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
-    const moveToCheck = allMoves[Moves.SPECTRAL_THIEF];
+    const moveToCheck = allMoves[MoveId.SPECTRAL_THIEF];
     const dmgBefore = enemy.getAttackDamage({ source: player, move: moveToCheck }).damage;
 
     enemy.setStatStage(Stat.ATK, 6);
 
     player.setStatStage(Stat.ATK, 0);
 
-    game.move.select(Moves.SPECTRAL_THIEF);
+    game.move.select(MoveId.SPECTRAL_THIEF);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(dmgBefore).toBeLessThan(enemy.getAttackDamage({ source: player, move: moveToCheck }).damage);
   });
 
   it("should steal stat stages as a negative value with Contrary.", async () => {
-    game.override.ability(Abilities.CONTRARY);
+    game.override.ability(AbilityId.CONTRARY);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -94,7 +95,7 @@ describe("Moves - Spectral Thief", () => {
 
     player.setStatStage(Stat.ATK, 0);
 
-    game.move.select(Moves.SPECTRAL_THIEF);
+    game.move.select(MoveId.SPECTRAL_THIEF);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStatStage(Stat.ATK)).toEqual(-6);
@@ -102,7 +103,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should steal double the stat stages with Simple.", async () => {
-    game.override.ability(Abilities.SIMPLE);
+    game.override.ability(AbilityId.SIMPLE);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -112,7 +113,7 @@ describe("Moves - Spectral Thief", () => {
 
     player.setStatStage(Stat.ATK, 0);
 
-    game.move.select(Moves.SPECTRAL_THIEF);
+    game.move.select(MoveId.SPECTRAL_THIEF);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStatStage(Stat.ATK)).toEqual(6);
@@ -120,7 +121,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should steal the stat stages through Clear Body.", async () => {
-    game.override.enemyAbility(Abilities.CLEAR_BODY);
+    game.override.enemyAbility(AbilityId.CLEAR_BODY);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -130,7 +131,7 @@ describe("Moves - Spectral Thief", () => {
 
     player.setStatStage(Stat.ATK, 0);
 
-    game.move.select(Moves.SPECTRAL_THIEF);
+    game.move.select(MoveId.SPECTRAL_THIEF);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStatStage(Stat.ATK)).toEqual(3);
@@ -138,7 +139,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should steal the stat stages through White Smoke.", async () => {
-    game.override.enemyAbility(Abilities.WHITE_SMOKE);
+    game.override.enemyAbility(AbilityId.WHITE_SMOKE);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -148,7 +149,7 @@ describe("Moves - Spectral Thief", () => {
 
     player.setStatStage(Stat.ATK, 0);
 
-    game.move.select(Moves.SPECTRAL_THIEF);
+    game.move.select(MoveId.SPECTRAL_THIEF);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStatStage(Stat.ATK)).toEqual(3);
@@ -156,7 +157,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should steal the stat stages through Hyper Cutter.", async () => {
-    game.override.enemyAbility(Abilities.HYPER_CUTTER);
+    game.override.enemyAbility(AbilityId.HYPER_CUTTER);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -166,7 +167,7 @@ describe("Moves - Spectral Thief", () => {
 
     player.setStatStage(Stat.ATK, 0);
 
-    game.move.select(Moves.SPECTRAL_THIEF);
+    game.move.select(MoveId.SPECTRAL_THIEF);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStatStage(Stat.ATK)).toEqual(3);
@@ -174,7 +175,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should bypass Substitute.", async () => {
-    game.override.enemyMoveset(Moves.SUBSTITUTE);
+    game.override.enemyMoveset(MoveId.SUBSTITUTE);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -184,7 +185,7 @@ describe("Moves - Spectral Thief", () => {
 
     player.setStatStage(Stat.ATK, 0);
 
-    game.move.select(Moves.SPECTRAL_THIEF);
+    game.move.select(MoveId.SPECTRAL_THIEF);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -194,7 +195,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should get blocked by protect.", async () => {
-    game.override.enemyMoveset(Moves.PROTECT);
+    game.override.enemyMoveset(MoveId.PROTECT);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -204,7 +205,7 @@ describe("Moves - Spectral Thief", () => {
 
     player.setStatStage(Stat.ATK, 0);
 
-    game.move.select(Moves.SPECTRAL_THIEF);
+    game.move.select(MoveId.SPECTRAL_THIEF);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStatStage(Stat.ATK)).toEqual(0);

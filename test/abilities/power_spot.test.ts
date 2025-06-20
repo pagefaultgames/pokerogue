@@ -1,9 +1,9 @@
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -26,50 +26,51 @@ describe("Abilities - Power Spot", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.moveset([Moves.TACKLE, Moves.BREAKING_SWIPE, Moves.SPLASH, Moves.DAZZLING_GLEAM]);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemySpecies(Species.SHUCKLE);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override
+      .battleStyle("double")
+      .moveset([MoveId.TACKLE, MoveId.BREAKING_SWIPE, MoveId.SPLASH, MoveId.DAZZLING_GLEAM])
+      .enemyMoveset(MoveId.SPLASH)
+      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemyAbility(AbilityId.BALL_FETCH);
   });
 
   it("raises the power of allies' special moves by 30%", async () => {
-    const moveToCheck = allMoves[Moves.DAZZLING_GLEAM];
+    const moveToCheck = allMoves[MoveId.DAZZLING_GLEAM];
     const basePower = moveToCheck.power;
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([Species.REGIELEKI, Species.STONJOURNER]);
-    game.move.select(Moves.DAZZLING_GLEAM);
-    game.move.select(Moves.SPLASH, 1);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.STONJOURNER]);
+    game.move.select(MoveId.DAZZLING_GLEAM);
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower * powerSpotMultiplier);
   });
 
   it("raises the power of allies' physical moves by 30%", async () => {
-    const moveToCheck = allMoves[Moves.BREAKING_SWIPE];
+    const moveToCheck = allMoves[MoveId.BREAKING_SWIPE];
     const basePower = moveToCheck.power;
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([Species.REGIELEKI, Species.STONJOURNER]);
-    game.move.select(Moves.BREAKING_SWIPE);
-    game.move.select(Moves.SPLASH, 1);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.STONJOURNER]);
+    game.move.select(MoveId.BREAKING_SWIPE);
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower * powerSpotMultiplier);
   });
 
   it("does not raise the power of the ability owner's moves", async () => {
-    const moveToCheck = allMoves[Moves.BREAKING_SWIPE];
+    const moveToCheck = allMoves[MoveId.BREAKING_SWIPE];
     const basePower = moveToCheck.power;
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([Species.STONJOURNER, Species.REGIELEKI]);
-    game.move.select(Moves.BREAKING_SWIPE);
-    game.move.select(Moves.SPLASH, 1);
+    await game.classicMode.startBattle([SpeciesId.STONJOURNER, SpeciesId.REGIELEKI]);
+    game.move.select(MoveId.BREAKING_SWIPE);
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower);

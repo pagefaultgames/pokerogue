@@ -1,11 +1,11 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { Stat } from "#enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 
 describe("Moves - Guard Split", () => {
   let phaserGame: Phaser.Game;
@@ -25,16 +25,16 @@ describe("Moves - Guard Split", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemyAbility(Abilities.NONE)
-      .enemySpecies(Species.MEW)
+      .enemyAbility(AbilityId.NONE)
+      .enemySpecies(SpeciesId.MEW)
       .enemyLevel(200)
-      .moveset([Moves.GUARD_SPLIT])
-      .ability(Abilities.NONE);
+      .moveset([MoveId.GUARD_SPLIT])
+      .ability(AbilityId.NONE);
   });
 
   it("should average the user's DEF and SPDEF stats with those of the target", async () => {
-    game.override.enemyMoveset(Moves.SPLASH);
-    await game.classicMode.startBattle([Species.INDEEDEE]);
+    game.override.enemyMoveset(MoveId.SPLASH);
+    await game.classicMode.startBattle([SpeciesId.INDEEDEE]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -42,7 +42,7 @@ describe("Moves - Guard Split", () => {
     const avgDef = Math.floor((player.getStat(Stat.DEF, false) + enemy.getStat(Stat.DEF, false)) / 2);
     const avgSpDef = Math.floor((player.getStat(Stat.SPDEF, false) + enemy.getStat(Stat.SPDEF, false)) / 2);
 
-    game.move.select(Moves.GUARD_SPLIT);
+    game.move.select(MoveId.GUARD_SPLIT);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStat(Stat.DEF, false)).toBe(avgDef);
@@ -50,11 +50,11 @@ describe("Moves - Guard Split", () => {
 
     expect(player.getStat(Stat.SPDEF, false)).toBe(avgSpDef);
     expect(enemy.getStat(Stat.SPDEF, false)).toBe(avgSpDef);
-  }, 20000);
+  });
 
   it("should be idempotent", async () => {
-    game.override.enemyMoveset([Moves.GUARD_SPLIT]);
-    await game.classicMode.startBattle([Species.INDEEDEE]);
+    game.override.enemyMoveset([MoveId.GUARD_SPLIT]);
+    await game.classicMode.startBattle([SpeciesId.INDEEDEE]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -62,10 +62,10 @@ describe("Moves - Guard Split", () => {
     const avgDef = Math.floor((player.getStat(Stat.DEF, false) + enemy.getStat(Stat.DEF, false)) / 2);
     const avgSpDef = Math.floor((player.getStat(Stat.SPDEF, false) + enemy.getStat(Stat.SPDEF, false)) / 2);
 
-    game.move.select(Moves.GUARD_SPLIT);
+    game.move.select(MoveId.GUARD_SPLIT);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    game.move.select(Moves.GUARD_SPLIT);
+    game.move.select(MoveId.GUARD_SPLIT);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStat(Stat.DEF, false)).toBe(avgDef);
@@ -73,5 +73,5 @@ describe("Moves - Guard Split", () => {
 
     expect(player.getStat(Stat.SPDEF, false)).toBe(avgSpDef);
     expect(enemy.getStat(Stat.SPDEF, false)).toBe(avgSpDef);
-  }, 20000);
+  });
 });
