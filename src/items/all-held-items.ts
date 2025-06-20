@@ -143,7 +143,7 @@ export function initHeldItems() {
   // vitamins
   for (const [statKey, heldItemType] of Object.entries(permanentStatToHeldItem)) {
     const stat = Number(statKey) as PermanentStat;
-    allHeldItems[heldItemType] = new BaseStatBoosterHeldItem(heldItemType, 10, stat)
+    allHeldItems[heldItemType] = new BaseStatBoosterHeldItem(heldItemType, 30, stat)
       .unstealable()
       .untransferable()
       .unsuppressable();

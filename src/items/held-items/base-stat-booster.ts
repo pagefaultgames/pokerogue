@@ -3,7 +3,6 @@ import { HeldItemId } from "#enums/held-item-id";
 import { getStatKey, type PermanentStat, Stat } from "#enums/stat";
 import i18next from "i18next";
 import { HeldItem, ITEM_EFFECT } from "../held-item";
-import type { STAT_BOOST_PARAMS } from "./stat-booster";
 
 export interface BASE_STAT_BOOSTER_PARAMS {
   /** The pokemon with the item */
@@ -78,11 +77,5 @@ export class BaseStatBoosterHeldItem extends HeldItem {
     const baseStats = params.baseStats;
     baseStats[this.stat] = Math.floor(baseStats[this.stat] * (1 + stackCount * 0.1));
     return true;
-  }
-
-  getMaxStackCount(params: STAT_BOOST_PARAMS): number {
-    const pokemon = params.pokemon;
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
-    return stackCount;
   }
 }
