@@ -360,7 +360,12 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.showMovePp = args.length > 6 && args[6];
 
     this.partyContainer.setVisible(true);
-    this.partyBg.setTexture(`party_bg${globalScene.currentBattle.double ? "_double" : ""}`);
+    if (this.isItemManageMode()) {
+      this.partyBg.setTexture(`party_bg${globalScene.currentBattle.double ? "_double_manage" : ""}`);
+    } else {
+      this.partyBg.setTexture(`party_bg${globalScene.currentBattle.double ? "_double" : ""}`);
+    }
+
     this.populatePartySlots();
     this.PartyDiscardModeButton.toggleIcon(this.partyUiMode);
     this.setCursor(0);
@@ -1785,7 +1790,9 @@ class PartySlot extends Phaser.GameObjects.Container {
         ? -184 +
             (globalScene.currentBattle.double ? -40 : 0) +
             (28 + (globalScene.currentBattle.double ? 8 : 0)) * slotIndex
-        : -124 + (globalScene.currentBattle.double ? -20 : 0) + slotIndex * 55,
+        : partyUiMode === PartyUiMode.MODIFIER_TRANSFER
+          ? -124 + (globalScene.currentBattle.double ? -20 : 0) + slotIndex * 55
+          : -124 + (globalScene.currentBattle.double ? -8 : 0) + slotIndex * 64,
     );
 
     this.slotIndex = slotIndex;
