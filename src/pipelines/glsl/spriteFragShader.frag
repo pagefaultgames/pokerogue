@@ -154,7 +154,7 @@ void main() {
 	for (int i = 0; i < 32; i++) {
 		if (baseVariantColors[i].a == 0.0)
 			break;
-		if (texture.a > 0.0 && all(lessThan(abs(texture.rgb - baseVariantColors[i].rgb), vec3(1.0/255.0)))) {
+		if (texture.a > 0.0 && all(lessThan(abs(texture.rgb - baseVariantColors[i].rgb), vec3(0.5/255.0)))) {
 			texture.rgb = variantColors[i].rgb;
 			break;
 		}
@@ -163,7 +163,7 @@ void main() {
 	for (int i = 0; i < 32; i++) {
 		if (spriteColors[i][3] == 0.0)
 			break;
-		if (texture.a > 0.0 && all(lessThan(abs(texture.rgb - spriteColors[i].rgb), vec3(1.0/255.0)))) {
+		if (texture.a > 0.0 && all(lessThan(abs(texture.rgb - spriteColors[i].rgb), vec3(0.5/255.0)))) {
 			vec3 fusionColor = vec3(fusionSpriteColors[i].rgb) / 255.0;
 			vec3 bg = spriteColors[i].rgb;
 			float gray = (bg.r + bg.g + bg.b) / 3.0;
