@@ -322,14 +322,6 @@ export class BlockRecoilDamageAttr extends AbAttr {
   override apply({ cancelled }: AbAttrParamsWithCancel): void {
     cancelled.value = true;
   }
-
-  override getTriggerMessage({ pokemon }: AbAttrParamsWithCancel, abilityName: string) {
-    // TODO: remove this because this does not exist on cartridge
-    return i18next.t("abilityTriggers:blockRecoilDamage", {
-      pokemonName: getPokemonNameWithAffix(pokemon),
-      abilityName: abilityName,
-    });
-  }
 }
 
 export interface DoubleBattleChanceAbAttrParams extends AbAttrBaseParams {
