@@ -36,7 +36,8 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { generateStarter, waitUntil } from "#test/testUtils/gameManagerUtils";
+import { generateStarter } from "#test/testUtils/gameManagerUtils";
+import { waitUntil } from "#test/testUtils/testUtils";
 import GameWrapper from "#test/testUtils/gameWrapper";
 import { ChallengeModeHelper } from "#test/testUtils/helpers/challengeModeHelper";
 import { ClassicModeHelper } from "#test/testUtils/helpers/classicModeHelper";
@@ -168,10 +169,15 @@ export default class GameManager {
   /**
    * Adds an action to be executed on the next prompt.
    * This can be used to (among other things) simulate inputs or run functions mid-phase.
-   * @param phaseTarget - The target phase.
-   * @param mode - The mode to wait for.
-   * @param callback - The callback function to execute on next prompt.
+   * @param phaseTarget - The name of the target phase.
+   * @param mode - The {@linkcode UiMode} to wait for.
+   * @param callback - The callback function to execute on the next prompt.
    * @param expireFn - Optional function to determine if the prompt has expired.
+   * @param awaitingActionInput - If `true`, will only activate when the current UI handler is waiting for input.
+   * Default `false`
+   *
+   * @remarks
+   * If multiple prompts are queued up in succession, **only the first will be checked** each time the UI mode changes.
    */
   onNextPrompt(
     phaseTarget: PhaseString,

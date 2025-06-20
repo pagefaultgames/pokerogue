@@ -87,23 +87,6 @@ function getTestRunStarters(seed: string, species?: SpeciesId[]): Starter[] {
   return starters;
 }
 
-/**
- * Wait until a given function returns a truthy value.
- * @param truth - A function to check against, called once per `timeout` interval.
- * @param timeout - The time in milliseconds to wait before giving up; default `1000`.
- * @returns A Promise that resolve once `truth` returns a truthy value.
- */
-export function waitUntil(truth: () => boolean, timeout = 1000): Promise<void> {
-  return new Promise(resolve => {
-    const interval = setInterval(() => {
-      if (truth()) {
-        clearInterval(interval);
-        resolve();
-      }
-    }, timeout);
-  });
-}
-
 /** Get the index of `move` from the moveset of the pokemon on the player's field at location `pokemonIndex`. */
 export function getMovePosition(scene: BattleScene, pokemonIndex: 0 | 1, move: MoveId): number {
   const playerPokemon = scene.getPlayerField()[pokemonIndex];

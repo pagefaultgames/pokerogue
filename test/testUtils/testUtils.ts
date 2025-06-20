@@ -29,3 +29,20 @@ export function arrayOfRange(start: number, end: number) {
 export function getApiBaseUrl() {
   return import.meta.env.VITE_SERVER_URL ?? "http://localhost:8001";
 }
+
+/**
+ * Wait until a given condition is met.
+ * @param condition - The function to check against, called once per `timeout` interval.
+ * @param timeout - The time in milliseconds to wait before each check; default `1000`.
+ * @returns A Promise that resolve once `condition` returns `true` or another truthy value.
+ */
+export function waitUntil(condition: () => boolean, timeout = 1000): Promise<void> {
+  return new Promise(resolve => {
+    const interval = setInterval(() => {
+      if (condition()) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, timeout);
+  });
+}

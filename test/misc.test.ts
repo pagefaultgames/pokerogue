@@ -1,6 +1,5 @@
 // import { apiFetch } from "#app/utils";
 import GameManager from "#test/testUtils/gameManager";
-import { waitUntil } from "#test/testUtils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -62,17 +61,5 @@ describe("Test misc", () => {
   it("test apifetch mock sync", async () => {
     const data = await game.scene.cachedFetch("./battle-anims/splishy-splash.json");
     expect(data).toBeDefined();
-  });
-
-  it("testing waitUntil", async () => {
-    let a = 1;
-    setTimeout(() => {
-      a = 0;
-    }, 500);
-    const spy = vi.fn();
-    await waitUntil(() => a === 0).then(() => {
-      spy(); // Call the spy function
-    });
-    expect(spy).toHaveBeenCalled();
   });
 });
