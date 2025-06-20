@@ -45,7 +45,6 @@ const namespace = "mysteryEncounters/slumberingSnorlax";
 export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuilder.withEncounterType(
   MysteryEncounterType.SLUMBERING_SNORLAX,
 )
-  .withDisallowedChallenges(Challenges.NO_AUTO_HEAL)
   .withEncounterTier(MysteryEncounterTier.GREAT)
   .withSceneWaveRangeRequirement(15, 150)
   .withCatchAllowed(true)

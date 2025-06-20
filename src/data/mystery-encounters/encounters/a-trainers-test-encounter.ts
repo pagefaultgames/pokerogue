@@ -22,7 +22,6 @@ import { EggTier } from "#enums/egg-type";
 import { ModifierTier } from "#enums/modifier-tier";
 import { modifierTypes } from "#app/data/data-lists";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { Challenges } from "#enums/challenges";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/aTrainersTest";
@@ -35,7 +34,6 @@ const namespace = "mysteryEncounters/aTrainersTest";
 export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.withEncounterType(
   MysteryEncounterType.A_TRAINERS_TEST,
 )
-  .withDisallowedChallenges(Challenges.NO_AUTO_HEAL)
   .withEncounterTier(MysteryEncounterTier.ROGUE)
   .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
   .withIntroSpriteConfigs([]) // These are set in onInit()
