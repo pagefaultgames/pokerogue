@@ -2498,14 +2498,39 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       defScore *=
         1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[1], opponent, false, false, undefined, true), 0.25);
     }
+    atkScore *= 1.25; //give more value for the pokemon's typing
+    const moveset = this.moveset;
+    let moveAtkScoreLength = 0;
+    for (const move of moveset) {
+      if (move.getMove().category === MoveCategory.SPECIAL || move.getMove().category === MoveCategory.PHYSICAL) {
+        atkScore += opponent.getAttackTypeEffectiveness(move.getMove().type, this, false, true, undefined, true);
+        moveAtkScoreLength++;
+      }
+    }
+    atkScore = atkScore / (moveAtkScoreLength + 1); //calculate the median for the attack score
     /**
      * Based on this Pokemon's HP ratio compared to that of the opponent.
      * This ratio is multiplied by 1.5 if this Pokemon outspeeds the opponent;
      * however, the final ratio cannot be higher than 1.
      */
-    let hpDiffRatio = this.getHpRatio() + (1 - opponent.getHpRatio());
-    if (outspeed) {
-      hpDiffRatio = Math.min(hpDiffRatio * 1.5, 1);
+    const hpRatio = this.getHpRatio();
+    const oppHpRatio = opponent.getHpRatio();
+    const isDying = hpRatio <= 0.2;
+    let hpDiffRatio = hpRatio + (1 - oppHpRatio);
+    if (isDying && this.isActive(true)) {
+      //It might be a sacrifice candidate if hp under 20%
+      const badMatchup = atkScore < 1.5 && defScore < 1.5;
+      if (!outspeed && badMatchup) {
+        //It might not be a worthy sacrifice if it doesn't outspeed or doesn't do enough damage
+        hpDiffRatio *= 0.85;
+      } else {
+        hpDiffRatio = Math.min(1 - hpRatio + (outspeed ? 0.2 : 0.1), 1);
+      }
+    } else if (outspeed) {
+      hpDiffRatio = Math.min(hpDiffRatio * 1.25, 1);
+    } else if (hpRatio > 0.2 && hpRatio <= 0.4) {
+      //Might be considered to be switched because it's not in low enough health
+      hpDiffRatio = Math.min(hpDiffRatio * 0.5, 1);
     }
     return (atkScore + defScore) * hpDiffRatio;
   }
