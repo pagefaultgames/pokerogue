@@ -1,10 +1,11 @@
 import type BattleScene from "#app/battle-scene";
 import type { Phase } from "#app/phase";
 import { UiMode } from "#enums/ui-mode";
-import UI from "#app/ui/ui";
 import type { PhaseString } from "#app/@types/phase-types";
 import { vi, type MockInstance } from "vitest";
 import { format } from "util";
+import AwaitableUiHandler from "#app/ui/awaitable-ui-handler";
+import { waitUntil } from "#test/testUtils/testUtils";
 
 interface PromptHandler {
   /** The {@linkcode PhaseString | name} of the Phase to execute the callback during. */
@@ -33,6 +34,8 @@ export default class PhaseInterceptor {
   /** A log of phases having been executed. */
   public log: PhaseString[] = [];
   private prompts: PromptHandler[] = [];
+  /** A mock tracking when the shift phase method is called. */
+  private shiftSpy: MockInstance<typeof this.scene.phaseManager.shiftPhase>;
 
   /**
    * Constructor to initialize the scene and properties, and to start the phase handling.
@@ -54,10 +57,10 @@ export default class PhaseInterceptor {
    * Method to initialize various mocks for intercepting phases.
    */
   initMocks() {
-    const originalSetMode = UI.prototype["setModeInternal"];
+    const originalSetMode = this.scene.ui["setModeInternal"];
     // `any` assertion needed as we are mocking private property
-    const uiSpy = vi.spyOn(UI.prototype as any, "setModeInternal") as MockInstance<
-      (typeof UI.prototype)["setModeInternal"]
+    const uiSpy = vi.spyOn(this.scene.ui as any, "setModeInternal") as MockInstance<
+      (typeof this.scene.ui)["setModeInternal"]
     >;
     uiSpy.mockImplementation(async (...args) => {
       this.setMode(originalSetMode, args);
@@ -66,6 +69,8 @@ export default class PhaseInterceptor {
     // Mock the private startCurrentPhase method to do nothing to let us
     // start them manually ourselves.
     vi.spyOn(this.scene.phaseManager as any, "startCurrentPhase").mockImplementation(() => {});
+
+    this.shiftSpy = vi.spyOn(this.scene.phaseManager, "shiftPhase");
   }
 
   /**
@@ -108,14 +113,16 @@ export default class PhaseInterceptor {
   }
 
   /**
-   * Wrapper method to run a phase and start the next phase.
+   * Wrapper method to run a phase and wait until it finishes.
    * @param currentPhase - The {@linkcode Phase} to run.
    * @returns A Promise that resolves when the phase is run.
    */
   private async run(currentPhase: Phase): Promise<void> {
+    this.shiftSpy.mockClear();
     try {
       this.logPhase(currentPhase.phaseName);
       currentPhase.start();
+      await waitUntil(() => this.shiftSpy.mock.calls.length > 0);
     } catch (error: unknown) {
       throw error instanceof Error
         ? error
@@ -137,13 +144,13 @@ export default class PhaseInterceptor {
    * @param args - Arguments having been passed to the original method.
    */
   private async setMode(
-    originalSetMode: (typeof UI.prototype)["setModeInternal"],
-    args: Parameters<(typeof UI.prototype)["setModeInternal"]>,
-  ): ReturnType<(typeof UI.prototype)["setModeInternal"]> {
+    originalSetMode: (typeof this.scene.ui)["setModeInternal"],
+    args: Parameters<(typeof this.scene.ui)["setModeInternal"]>,
+  ): ReturnType<(typeof this.scene.ui)["setModeInternal"]> {
     const mode = args[0];
 
     console.log("setMode", `${UiMode[mode]} (=${mode})`, args.slice(1));
-    const ret = originalSetMode.apply(this.scene.ui, [args]);
+    const ret = await originalSetMode.apply(this.scene.ui, [args]);
     this.doPromptCheck(mode);
     return ret;
   }
@@ -153,34 +160,37 @@ export default class PhaseInterceptor {
    * @param mode - The {@linkcode UiMode} to set.
    */
   private doPromptCheck(uiMode: UiMode): void {
-    const actionForNextPrompt = this.prompts[0] as PromptHandler | undefined;
-    if (!actionForNextPrompt) {
-      return;
+    // remove all expired prompts
+    const firstNonExpired = this.prompts.findIndex(p => p.expireFn?.());
+    if (firstNonExpired > -1) {
+      this.prompts.splice(0, firstNonExpired + 1);
     }
 
-    // Check for prompt expiry, removing prompt if applicable.
-    if (actionForNextPrompt.expireFn?.()) {
-      this.prompts.shift();
+    if (this.prompts.length === 0) {
       return;
     }
 
     // Check if the current mode, phase, and handler match the expected values.
     // If not, we just skip and wait.
-    // TODO: Should this check all prompts or only the first one?
+    // TODO: Should this continue onwards or stop after the first one?
+    const prompt = this.prompts[0];
     const currentPhase = this.scene.phaseManager.getCurrentPhase()?.phaseName;
     const currentHandler = this.scene.ui.getHandler();
     if (
-      uiMode === actionForNextPrompt.mode ||
-      currentPhase !== actionForNextPrompt.phaseTarget ||
+      uiMode !== prompt.mode ||
+      currentPhase !== prompt.phaseTarget ||
       !currentHandler.active ||
-      (actionForNextPrompt.awaitingActionInput && !currentHandler["awaitingActionInput"])
+      (prompt.awaitingActionInput &&
+        currentHandler instanceof AwaitableUiHandler &&
+        !currentHandler["awaitingActionInput"])
     ) {
       return;
     }
 
     // Prompt matches; perform callback as applicable and return
     this.prompts.shift();
-    actionForNextPrompt.callback();
+    prompt.callback();
+    return;
   }
 
   /**
