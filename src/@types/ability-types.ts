@@ -27,7 +27,7 @@ export type AbAttrMap = {
 };
 
 /**
- * Subset of ability attribute classes that may be passed to {@linkcode applyAbAttrs } method
+ * Subset of ability attribute classes that may be passed to {@linkcode applyAbAttrs} method
  *
  * @remarks
  * Our AbAttr classes violate Liskov Substitution Principle.

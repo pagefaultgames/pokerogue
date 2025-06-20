@@ -83,6 +83,11 @@ import type { Localizable } from "#app/@types/locales";
 import { applyAbAttrs } from "./apply-ab-attrs";
 import type { Closed, Exact } from "#app/@types/type-helpers";
 
+// biome-ignore lint/correctness/noUnusedImports: Used in TSDoc
+import type BattleScene from "#app/battle-scene";
+// biome-ignore lint/correctness/noUnusedImports: Used in TSDoc
+import type { SpeciesFormChangeRevertWeatherFormTrigger } from "../pokemon-forms/form-change-triggers";
+
 export class Ability implements Localizable {
   public id: AbilityId;
 
@@ -222,37 +227,32 @@ export class Ability implements Localizable {
   }
 }
 
-/**
- * Base set of parameters passed to every ability attribute's apply method
- */
+/** Base set of parameters passed to every ability attribute's apply method */
 export interface AbAttrBaseParams {
-  /**
-   * The pokemon that has the ability being applied
-   */
+  /** The pokemon that has the ability being applied */
   readonly pokemon: Pokemon;
 
-  /** Whether the ability's effects are being simulated.
+  /**
+   * Whether the ability's effects are being simulated.
    * Used to prevent, for instance, messages flyouts from being displayed.
    * Defaults to false.
    */
   readonly simulated?: boolean;
 
   /**
-   * (For callers of `{@linkcode applyAbAttrs}`): If provided, **only** apply ability attributes of the passive (true) or active (false).
+   * (For callers of {@linkcode applyAbAttrs}): If provided, **only** apply ability attributes of the passive (true) or active (false).
    *
    * This should almost always be left undefined, as otherwise it will *only* apply attributes of *either* the pokemon's passive (true) or
    * non-passive (false) abilities. In almost all cases, you want to apply attributes that are from either.
    *
-   * (For implementations of `AbAttr`): This will *never* be undefined, and will be `true` if the ability being applied
+   * (For implementations of {@linkcode AbAttr}): This will *never* be undefined, and will be `true` if the ability being applied
    * is the pokemon's passive, and `false` otherwise.
    */
   passive?: boolean;
 }
 
 export interface AbAttrParamsWithCancel extends AbAttrBaseParams {
-  /**
-   * Whether the ability application results in the interaction being cancelled
-   */
+  /** Whether the ability application results in the interaction being cancelled */
   readonly cancelled: BooleanHolder;
 }
 
@@ -287,9 +287,7 @@ export abstract class AbAttr {
 
   /**
    * Apply ability effects without checking conditions.
-   *
-   * For a description of parameters, see {@linkcode AbAttrBaseParams}
-   * @see {@linkcode AbAttrBaseParams}
+   * @see {@linkcode AbAttrBaseParams} for a description of the parameters
    */
   apply(_params: AbAttrBaseParams): void {}
 
@@ -470,7 +468,7 @@ type PreDefendAbAttrCondition = (pokemon: Pokemon, attacker: Pokemon, move: Move
 export interface AugmentMoveInteractionAbAttrParams extends AbAttrBaseParams {
   /** The move used by (or against, for defend attributes) */
   move: Move;
-  /** The pokemon on the other side of the interaction*/
+  /** The pokemon on the other side of the interaction */
   opponent: Pokemon;
 }
 
@@ -593,7 +591,7 @@ export class ReceivedTypeDamageMultiplierAbAttr extends ReceivedMoveDamageMultip
  * Shared interface used by several {@linkcode PreDefendAbAttr} abilities that influence the computed type effectiveness
  */
 export interface TypeMultiplierAbAttrParams extends AugmentMoveInteractionAbAttrParams {
-  /** Holds the type multiplier of an attack. In the case of an immunity, this value will be set to 0. */
+  /** Holds the type multiplier of an attack. In the case of an immunity, this value will be set to `0`. */
   typeMultiplier: NumberHolder;
   /** Its particular meaning depends on the ability attribute, though usually means that the "no effect" message should not be played */
   cancelled: BooleanHolder;
@@ -805,7 +803,7 @@ export interface MoveImmunityAbAttrParams extends AugmentMoveInteractionAbAttrPa
   /** Holds whether the standard "no effect" message (due to a type-based immunity) should be suppressed */
   cancelled: BooleanHolder;
 }
-// TODO: Consider examining whether the this move immunity ability attribute
+// TODO: Consider examining whether this move immunity ability attribute
 // can be merged with the MoveTypeMultiplierAbAttr in some way.
 export class MoveImmunityAbAttr extends PreDefendAbAttr {
   private immuneCondition: PreDefendAbAttrCondition;
@@ -899,9 +897,7 @@ export class PostDefendAbAttr extends AbAttr {
   override apply(_params: PostMoveInteractionAbAttrParams): void {}
 }
 
-/**
- * Class for abilities that make drain moves deal damage to user instead of healing them.
- */
+/** Class for abilities that make drain moves deal damage to user instead of healing them. */
 export class ReverseDrainAbAttr extends PostDefendAbAttr {
   override canApply({ move }: PostMoveInteractionAbAttrParams): boolean {
     return move.hasAttr("HitHealAttr");
@@ -1167,7 +1163,7 @@ export class EffectSporeAbAttr extends PostDefendContactApplyStatusEffectAbAttr 
 
   override canApply(params: PostMoveInteractionAbAttrParams): boolean {
     const attacker = params.opponent;
-    return !(attacker.hasAbility(AbilityId.OVERCOAT) || attacker.isOfType(PokemonType.GRASS)) && super.canApply(params);
+    return !(attacker.isOfType(PokemonType.GRASS) || attacker.hasAbility(AbilityId.OVERCOAT)) && super.canApply(params);
   }
 }
 
@@ -1404,6 +1400,15 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
   }
 }
 
+export interface PostStatStageChangeAbAttrParams extends AbAttrBaseParams {
+  /** The stats that were changed */
+  stats: BattleStat[];
+  /** The amount of stages that the stats changed by */
+  stages: number;
+  /** Whether the source of the stat stages were from the user's own move */
+  selfTarget: boolean;
+}
+
 export class PostStatStageChangeAbAttr extends AbAttr {
   private declare readonly _: never;
 
@@ -1412,15 +1417,6 @@ export class PostStatStageChangeAbAttr extends AbAttr {
   }
 
   override apply(_params: Closed<PostStatStageChangeAbAttrParams>) {}
-}
-
-export interface PostStatStageChangeAbAttrParams extends AbAttrBaseParams {
-  /** The stats that were changed */
-  stats: BattleStat[];
-  /** The amount of stages that the stats changed by */
-  stages: number;
-  /**Whether the source of the stat stages were from the user's own move */
-  selfTarget: boolean;
 }
 
 export class PostStatStageChangeStatStageChangeAbAttr extends PostStatStageChangeAbAttr {
@@ -1463,7 +1459,7 @@ export abstract class PreAttackAbAttr extends AbAttr {
 export interface ModifyMoveEffectChanceAbAttrParams extends AbAttrBaseParams {
   /** The move being used by the attacker */
   move: Move;
-  /** Holds the additional effect chance. Must be between 0 and 1*/
+  /** Holds the additional effect chance. Must be between `0` and `1` */
   chance: NumberHolder;
 }
 
@@ -1909,7 +1905,8 @@ export class StatMultiplierAbAttr extends AbAttr {
   private declare readonly _: never;
   private stat: BattleStat;
   private multiplier: number;
-  /** Function determining if the stat multiplier is able to be applied to the move.
+  /**
+   * Function determining if the stat multiplier is able to be applied to the move.
    *
    * @remarks
    * Currently only used by Hustle.
@@ -1934,7 +1931,9 @@ export class StatMultiplierAbAttr extends AbAttr {
 }
 
 export interface AllyStatMultiplierAbAttrParams extends StatMultiplierAbAttrParams {
-  /** Whether abilities are being ignored during the interaction (e.g. due to a Mold-Breaker like effect).
+  /**
+   * Whether abilities are being ignored during the interaction (e.g. due to a Mold-Breaker like effect).
+   *
    * Note that some abilities that provide stat multipliers to allies apply their boosts regardless of this flag.
    */
   ignoreAbility: boolean;
@@ -2011,7 +2010,7 @@ export class GorillaTacticsAbAttr extends ExecutedMoveAbAttr {
 
 /*
 Subclasses that override the `canApply` and `apply` are not allowed to change the type of their parameters.
-This is enforced via the {@linkcode Closed} type.
+This is enforced via the `Closed` type.
 */
 /**
  * Base class for abilities that apply some effect after the user's move successfully executes.
@@ -2019,7 +2018,7 @@ This is enforced via the {@linkcode Closed} type.
 export abstract class PostAttackAbAttr extends AbAttr {
   private attackCondition: PokemonAttackCondition;
 
-  /** The default attackCondition requires that the selected move is a damaging move */
+  /** The default `attackCondition` requires that the selected move is a damaging move */
   constructor(
     attackCondition: PokemonAttackCondition = (_user, _target, move) => move.category !== MoveCategory.STATUS,
     showAbility = true,
@@ -2031,8 +2030,8 @@ export abstract class PostAttackAbAttr extends AbAttr {
 
   /**
    * By default, this method checks that the move used is a damaging attack.
-   * This can be changed by providing a different {@link attackCondition} to the constructor. See {@link ConfusionOnStatusEffectAbAttr}
-   * for an example of an effect that does not require a damaging move.
+   * This can be changed by providing a different {@link attackCondition} to the constructor.
+   * @see {@link ConfusionOnStatusEffectAbAttr} for an example of an effect that does not require a damaging move.
    */
   override canApply({ pokemon, opponent, move }: Closed<PostMoveInteractionAbAttrParams>): boolean {
     return this.attackCondition(pokemon, opponent, move);
@@ -2238,14 +2237,14 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
  * Shared parameters used for abilities that apply an effect after the user is inflicted with a status condition.
  */
 export interface PostSetStatusAbAttrParams extends AbAttrBaseParams {
-  /** The pokemon that set the status condition, or undefined if not set by a pokemon */
+  /** The pokemon that set the status condition, or `undefined` if not set by a pokemon */
   sourcePokemon?: Pokemon;
-  /** The status effect that was set*/
+  /** The status effect that was set */
   effect: StatusEffect;
 }
 
 /*
-Subclasses that override the `canApply` and `apply` methods of PostSetStatusAbAttr are not allowed to change the
+Subclasses that override the `canApply` and `apply` methods of `PostSetStatusAbAttr` are not allowed to change the
 type of their parameters. This is enforced via the Closed type.
 */
 /**
@@ -2298,6 +2297,7 @@ export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
 
 /**
  * Base class for abilities that apply an effect after the user knocks out an opponent in battle.
+ *
  * Not to be confused with {@link PostKnockOutAbAttr}, which applies after any pokemon is knocked out in battle.
  */
 export class PostVictoryAbAttr extends AbAttr {
@@ -2358,6 +2358,7 @@ export interface PostKnockOutAbAttrParams extends AbAttrBaseParams {
 
 /**
  * Base class for ability attributes that apply after a Pokemon (other than the user) is knocked out, including indirectly.
+ *
  * Not to be confused with {@linkcode PostVictoryAbAttr}, which applies after the user directly knocks out an opponent.
  */
 export abstract class PostKnockOutAbAttr extends AbAttr {
@@ -2406,7 +2407,7 @@ export class CopyFaintedAllyAbilityAbAttr extends PostKnockOutAbAttr {
 }
 
 export interface IgnoreOpponentStatStagesAbAttrParams extends AbAttrBaseParams {
-  /** The to check for ignorability */
+  /** The stat to check for ignorability */
   stat: BattleStat;
   /** Holds whether the stat is ignored by the ability */
   ignored: BooleanHolder;
@@ -2778,7 +2779,6 @@ export class PostSummonClearAllyStatStagesAbAttr extends PostSummonAbAttr {
  * Download raises either the Attack stat or Special Attack stat by one stage depending on the foe's currently lowest defensive stat:
  * it will raise Attack if the foe's current Defense is lower than its current Special Defense stat;
  * otherwise, it will raise Special Attack.
- * @see {applyPostSummon}
  */
 export class DownloadAbAttr extends PostSummonAbAttr {
   private enemyDef: number;
@@ -3150,8 +3150,8 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
 
   /**
    * Calls the {@linkcode BattleScene.triggerPokemonFormChange | triggerPokemonFormChange} for both
-   * {@linkcode SpeciesFormChange.SpeciesFormChangeWeatherTrigger | SpeciesFormChangeWeatherTrigger} and
-   * {@linkcode SpeciesFormChange.SpeciesFormChangeWeatherTrigger | SpeciesFormChangeRevertWeatherFormTrigger} if it
+   * {@linkcode SpeciesFormChangeWeatherTrigger} and
+   * {@linkcode SpeciesFormChangeRevertWeatherFormTrigger} if it
    * is the specific Pokemon and ability
    */
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
@@ -3419,11 +3419,12 @@ export class PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr extends PreLeaveFi
 }
 
 export interface PreStatStageChangeAbAttrParams extends AbAttrBaseParams {
-  /* The stat being affected by the stat stage change */
+  /** The stat being affected by the stat stage change */
   stat: BattleStat;
   /** The amount of stages to change by (negative if the stat is being decreased) */
   stages: number;
-  /** The source of the stat stage drop. May be omitted if the source of the stat drop is the user itself.
+  /**
+   * The source of the stat stage drop. May be omitted if the source of the stat drop is the user itself.
    *
    * @remarks
    * Currently, only used by {@linkcode ReflectStatStageChangeAbAttr} in order to reflect the stat stage change
@@ -3432,6 +3433,7 @@ export interface PreStatStageChangeAbAttrParams extends AbAttrBaseParams {
   /** Holder that will be set to true if the stat stage change should be cancelled due to the ability */
   cancelled: BooleanHolder;
 }
+
 /**
  * Base class for ability attributes that apply their effect before a stat stage change.
  */
@@ -3546,7 +3548,7 @@ export class ConfusionOnStatusEffectAbAttr extends AbAttr {
   }
 
   /**
-   * @return Whether the ability can apply confusion to the opponent
+   * @returns Whether the ability can apply confusion to the opponent
    */
   override canApply({ opponent, effect }: ConfusionOnStatusEffectAbAttrParams): boolean {
     return this.effects.includes(effect) && !opponent.isFainted() && opponent.canAddTag(BattlerTagType.CONFUSED);
@@ -3760,7 +3762,8 @@ export interface PreApplyBattlerTagAbAttrParams extends AbAttrBaseParams {
 
 /**
  * Base class for ability attributes that apply their effect before a BattlerTag {@linkcode BattlerTag} is applied.
- * Subclasses violate Liskov Substitution Principle, so this class must not be provided to {@linkcode applyAbAttrs}
+ *
+ * ⚠️ Subclasses violate Liskov Substitution Principle, so this class must not be provided to {@linkcode applyAbAttrs}
  */
 export abstract class PreApplyBattlerTagAbAttr extends AbAttr {
   canApply(_params: PreApplyBattlerTagAbAttrParams): boolean {
@@ -3846,7 +3849,7 @@ export class ConditionalUserFieldBattlerTagImmunityAbAttr extends UserFieldBattl
 
 export interface BlockCritAbAttrParams extends AbAttrBaseParams {
   /**
-   * Holds a boolean that will be set to true if the user's ability prevents the attack from being critical
+   * Holds a boolean that will be set to `true` if the user's ability prevents the attack from being a critical hit
    */
   readonly blockCrit: BooleanHolder;
 }
@@ -4883,7 +4886,7 @@ export class PostBiomeChangeWeatherChangeAbAttr extends PostBiomeChangeAbAttr {
   }
 }
 
-/**@sealed */
+/** @sealed */
 export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
   private terrainType: TerrainType;
 
@@ -5040,7 +5043,7 @@ export class StatStageChangeMultiplierAbAttr extends AbAttr {
 export interface StatStageChangeCopyAbAttrParams extends AbAttrBaseParams {
   /** The stats to change */
   stats: BattleStat[];
-  /** The number of stages that were changed by the original*/
+  /** The number of stages that were changed by the original */
   numStages: number;
 }
 
@@ -5196,7 +5199,6 @@ export interface CheckTrappedAbAttrParams extends AbAttrBaseParams {
 /**
  * Determines whether a Pokemon is blocked from switching/running away
  * because of a trapping ability or move.
- * @see {@linkcode applyCheckTrapped}
  */
 export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
   override canApply({ pokemon, opponent }: CheckTrappedAbAttrParams): boolean {
@@ -5249,7 +5251,6 @@ export interface PostBattleAbAttrParams extends AbAttrBaseParams {
   victory: boolean;
 }
 
-// TODO PICKUP FROM HERE 6/12/2025
 export abstract class PostBattleAbAttr extends AbAttr {
   private declare readonly _: never;
   constructor(showAbility = true) {
@@ -5800,7 +5801,6 @@ export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageC
  * This is used in the Disguise and Ice Face abilities.
  *
  * Does not apply to a user's substitute
- * @see ReceivedMoveDamageMultiplierAbAttr
  * @sealed
  */
 export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
@@ -5955,7 +5955,7 @@ export class IllusionPostBattleAbAttr extends PostBattleAbAttr {
 }
 
 export interface BypassSpeedChanceAbAttrParams extends AbAttrBaseParams {
-  /** Holds whether the speed check is bypasseda after ability application */
+  /** Holds whether the speed check is bypassed after ability application */
   bypass: BooleanHolder;
 }
 
