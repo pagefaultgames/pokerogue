@@ -292,13 +292,18 @@ export class SpeciesFormEvolution {
     );
   }
 
+  /**
+   * Checks if this evolution is item-based and any conditions for it are fulfilled
+   * @param pokemon {@linkcode Pokemon} who wants to evolve
+   * @param forFusion defaults to False. Whether this evolution is meant for the secondary fused mon. In that case, use their form key.
+   * @returns whether this evolution uses an item and can apply to the Pokemon
+   */
   public isValidItemEvolution(pokemon: Pokemon, forFusion = false): boolean {
     return (
-      // If an item is given, check if it's the right one
       !isNullOrUndefined(this.item) &&
       pokemon.level >= this.level &&
       // Check form key, using the fusion's form key if we're checking the fusion
-      (isNullOrUndefined(this.preFormKey) || (forFusion ? pokemon.getFormKey() : pokemon.getFusionFormKey()) === this.preFormKey) &&
+      (isNullOrUndefined(this.preFormKey) || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey) &&
       (isNullOrUndefined(this.condition) || this.condition.conditionsFulfilled(pokemon))
     );
   }

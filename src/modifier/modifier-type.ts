@@ -1604,12 +1604,12 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
           )
           .flatMap(p => {
             const evolutions = pokemonEvolutions[p.fusionSpecies!.speciesId];
-            return evolutions.filter(e => e.validate(p, true));
+            return evolutions.filter(e => e.isValidItemEvolution(p, true));
           }),
       ]
         .flat()
         .flatMap(e => e.evoItem)
-        .filter(i => (!!i && i > 50) === rare);
+        .filter(i => !!i && i > 50 === rare);
 
       if (!evolutionItemPool.length) {
         return null;
