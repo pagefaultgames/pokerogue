@@ -1147,6 +1147,9 @@ export class PokemonMoveAccuracyBoosterModifierType extends PokemonHeldItemModif
   }
 
   getDescription(): string {
+    if (this.amount === -1) {
+      return i18next.t("modifierType:ModifierType.MICLE_BERRY.description");
+    }
     return i18next.t("modifierType:ModifierType.PokemonMoveAccuracyBoosterModifierType.description", {
       accuracyAmount: this.amount,
     });
@@ -2145,6 +2148,8 @@ const modifierTypeInitObj = Object.freeze({
   GRIP_CLAW: () =>
     new ContactHeldItemTransferChanceModifierType("modifierType:ModifierType.GRIP_CLAW", "grip_claw", 10),
   WIDE_LENS: () => new PokemonMoveAccuracyBoosterModifierType("modifierType:ModifierType.WIDE_LENS", "wide_lens", 5),
+  MICLE_BERRY: () =>
+    new PokemonMoveAccuracyBoosterModifierType("modifierType:ModifierType.MICLE_BERRY", "micle_berry", -1),
 
   MULTI_LENS: () => new PokemonMultiHitModifierType("modifierType:ModifierType.MULTI_LENS", "zoom_lens"),
 
