@@ -129,7 +129,7 @@ describe("Moves - Disable", () => {
     { name: "Copycat", moveId: MoveId.COPYCAT },
     { name: "Metronome", moveId: MoveId.METRONOME },
   ])("should ignore virtual moves called by $name", async ({ moveId }) => {
-    vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(MoveId.ABSORB);
+    vi.spyOn(RandomMoveAttr.prototype, "getMove").mockReturnValue(MoveId.ABSORB);
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
     const playerMon = game.scene.getPlayerPokemon()!;

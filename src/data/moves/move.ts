@@ -3102,7 +3102,6 @@ export class OverrideMoveEffectAttr extends MoveAttr {
 /**
  * Attack Move that doesn't hit the turn it is played and doesn't allow for multiple
  * uses on the same target. Examples are Future Sight or Doom Desire.
- * @extends OverrideMoveEffectAttr
  * @param tagType The {@linkcode ArenaTagType} that will be placed on the field when the move is used
  * @param chargeAnim The {@linkcode ChargeAnim | Charging Animation} used for the move
  * @param chargeText The text to display when the move is used
@@ -3147,7 +3146,6 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 /**
  * Attribute that cancels the associated move's effects when set to be combined with the user's ally's
  * subsequent move this turn. Used for Grass Pledge, Water Pledge, and Fire Pledge.
- * @extends OverrideMoveEffectAttr
  */
 export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
   constructor() {
@@ -6781,74 +6779,76 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
 }
 
 /**
- * Attribute used to call a move.
- * Used by other move attributes: {@linkcode RandomMoveAttr}, {@linkcode RandomMovesetMoveAttr}, {@linkcode CopyMoveAttr}
- * @see {@linkcode apply} for move call
- * @extends OverrideMoveEffectAttr
+ * Abstract attribute used for all move-calling moves, containing common functionality
+ * for executing called moves.
  */
-class CallMoveAttr extends OverrideMoveEffectAttr {
-  protected invalidMoves: ReadonlySet<MoveId>;
-  protected hasTarget: boolean;
+export abstract class CallMoveAttr extends OverrideMoveEffectAttr {
+  constructor(
+    /**
+     * Whether this move should target the user; default `true`.
+     * If `true`, will unleash non-spread moves against a random eligible target,
+     * or else the move's selected target.
+     */
+    override selfTarget = true,
+  ) {
+    super(selfTarget)
+  }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    // Get eligible targets for move, failing if we can't target anything
-    const replaceMoveTarget = move.moveTarget === MoveTarget.NEAR_OTHER ? MoveTarget.NEAR_ENEMY : undefined;
-    const moveTargets = getMoveTargets(user, move.id, replaceMoveTarget);
-    if (moveTargets.targets.length === 0) {
-      globalScene.phaseManager.queueMessage(i18next.t("battle:attackFailed"));
-      return false;
-    }
+  /**
+   * Abstract function yielding the move to be used.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} being targeted by the move
+   * @returns The MoveId that will be called and used.
+   */
+  protected abstract getMove(user: Pokemon, target: Pokemon): MoveId;
+
+  override apply(user: Pokemon, target: Pokemon): boolean {
+    const copiedMove = allMoves[this.getMove(user, target)];
+
+    const replaceMoveTarget = copiedMove.moveTarget === MoveTarget.NEAR_OTHER ? MoveTarget.NEAR_ENEMY : undefined;
+    const moveTargets = getMoveTargets(user, copiedMove.id, replaceMoveTarget);
 
     // Spread moves and ones with only 1 valid target will use their normal targeting.
     // If not, target the Mirror Move recipient or else a random enemy in our target list
     const targets = moveTargets.multiple || moveTargets.targets.length === 1
       ? moveTargets.targets
-      : [this.hasTarget
+      : [this.selfTarget
         ? target.getBattlerIndex()
         : moveTargets.targets[user.randBattleSeedInt(moveTargets.targets.length)]];
 
-    globalScene.phaseManager.unshiftNew("LoadMoveAnimPhase", move.id);
-    globalScene.phaseManager.unshiftNew("MovePhase", user, targets, new PokemonMove(move.id), MoveUseMode.FOLLOW_UP);
+    globalScene.phaseManager.unshiftNew("LoadMoveAnimPhase", copiedMove.id);
+    globalScene.phaseManager.unshiftNew("MovePhase", user, targets, new PokemonMove(copiedMove.id), MoveUseMode.FOLLOW_UP);
     return true;
   }
 }
 
 /**
- * Attribute used to call a random move.
- * Used for {@linkcode MoveId.METRONOME}
- * @see {@linkcode apply} for move selection and move call
- * @extends CallMoveAttr to call a selected move
+ * Attribute to call a random move among moves not in a banlist.
+ * Used for {@linkcode MoveId.METRONOME}.
  */
 export class RandomMoveAttr extends CallMoveAttr {
-  constructor(invalidMoves: ReadonlySet<MoveId>) {
-    super();
-    this.invalidMoves = invalidMoves;
+  constructor(
+    /**
+     * A {@linkcode ReadonlySet} containing all moves that this {@linkcode MoveAttr} cannot copy,
+     * in addition to unimplemented moves and {@linkcode MoveId.NONE}.
+     * The move will fail if the chosen move is inside this banlist (if it exists).
+     */
+    protected readonly invalidMoves: ReadonlySet<MoveId>,
+  ) {
+    super(true);
   }
 
   /**
-   * This function exists solely to allow tests to override the randomly selected move by mocking this function.
-   */
-  public getMoveOverride(): MoveId | null {
-    return null;
-  }
-
-  /**
-   * User calls a random moveId.
+   * Pick a random move to execute, barring unimplemented moves and ones
+   * in this move's {@linkcode invalidMetronomeMoves | exclusion list}.
+   * Overridden as public to allow tests to override move choice using mocks.
    *
-   * Invalid moves are indicated by what is passed in to invalidMoves: {@linkcode invalidMetronomeMoves}
-   * @param user Pokemon that used the move and will call a random move
-   * @param target Pokemon that will be targeted by the random move (if single target)
-   * @param move Move being used
-   * @param args Unused
+   * @param user - The {@linkcode Pokemon} using the move
+   * @returns The {@linkcode MoveId} that will be called.
    */
-  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const moveIds = getEnumValues(MoveId).map(m => !this.invalidMoves.has(m) && !allMoves[m].name.endsWith(" (N)") ? m : MoveId.NONE);
-    let moveId: MoveId = MoveId.NONE;
-    do {
-      moveId = this.getMoveOverride() ?? moveIds[user.randBattleSeedInt(moveIds.length)];
-    }
-    while (moveId === MoveId.NONE);
-    return super.apply(user, target, allMoves[moveId], args);
+  public override getMove(user: Pokemon): MoveId {
+    const moveIds = getEnumValues(MoveId).filter(m => m !== MoveId.NONE && !this.invalidMoves.has(m) && !allMoves[m].name.endsWith(" (N)"));
+    return moveIds[user.randBattleSeedInt(moveIds.length)];
   }
 }
 
@@ -6857,220 +6857,203 @@ export class RandomMoveAttr extends CallMoveAttr {
  * Used for {@linkcode MoveId.ASSIST} and {@linkcode MoveId.SLEEP_TALK}
  *
  * Fails if the user has no callable moves.
- *
- * Invalid moves are indicated by what is passed in to invalidMoves: {@linkcode invalidAssistMoves} or {@linkcode invalidSleepTalkMoves}
- * @extends RandomMoveAttr to use the callMove function on a moveId
- * @see {@linkcode getCondition} for move selection
  */
-export class RandomMovesetMoveAttr extends CallMoveAttr {
-  private includeParty: boolean;
-  private moveId: number;
-  constructor(invalidMoves: ReadonlySet<MoveId>, includeParty: boolean = false) {
-    super();
-    this.includeParty = includeParty;
-    this.invalidMoves = invalidMoves;
+export class RandomMovesetMoveAttr extends RandomMoveAttr {
+  /**
+   * The previously-selected {@linkcode MoveId} for this attribute.
+   * Reset to {@linkcode MoveId.NONE} after successful use.
+   */
+  private selectedMove: MoveId = MoveId.NONE
+  constructor(invalidMoves: ReadonlySet<MoveId>,
+    /**
+     * Whether to consider all moves from the user's party (`true`) or the user's own moveset (`false`);
+     * default `false`.
+     */
+    private includeParty = false
+  ) {
+    super(invalidMoves);
   }
 
   /**
-   * User calls a random moveId selected in {@linkcode getCondition}
-   * @param user Pokemon that used the move and will call a random move
-   * @param target Pokemon that will be targeted by the random move (if single target)
-   * @param move Move being used
-   * @param args Unused
+   * Select a random move from either the user's or its party members' movesets,
+   * or return an already-selected one if one exists.
+   *
+   * @param user - The {@linkcode Pokemon} using the move.
+   * @returns The {@linkcode MoveId} that will be called.
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    return super.apply(user, target, allMoves[this.moveId], args);
+  override getMove(user: Pokemon): MoveId {
+    if (this.selectedMove) {
+      const m = this.selectedMove;
+      this.selectedMove = MoveId.NONE;
+      return m;
+    }
+
+    // includeParty will be true for Assist, false for Sleep Talk
+    const allies: Pokemon[] = this.includeParty
+      ? (user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p !== user)
+      : [ user ];
+
+    // Assist & Sleep Talk consider duplicate moves for their selection (hence why we use an array instead of a set)
+    const moveset = allies.flatMap(p => p.moveset);
+    const eligibleMoves = moveset.filter(m => m.moveId !== MoveId.NONE && !this.invalidMoves.has(m.moveId) && !m.getMove().name.endsWith(" (N)"));
+    this.selectedMove = eligibleMoves[user.randBattleSeedInt(eligibleMoves.length)]?.moveId ?? MoveId.NONE; // will fail if 0 length array
+    return this.selectedMove;
   }
 
-  getCondition(): MoveConditionFunc {
-    return (user, target, move) => {
-      // includeParty will be true for Assist, false for Sleep Talk
-      let allies: Pokemon[];
-      if (this.includeParty) {
-        allies = user.isPlayer() ? globalScene.getPlayerParty().filter(p => p !== user) : globalScene.getEnemyParty().filter(p => p !== user);
-      } else {
-        allies = [ user ];
-      }
-      const partyMoveset = allies.map(p => p.moveset).flat();
-      const moves = partyMoveset.filter(m => !this.invalidMoves.has(m!.moveId) && !m!.getMove().name.endsWith(" (N)"));
-      if (moves.length === 0) {
-        return false;
-      }
-
-      this.moveId = moves[user.randBattleSeedInt(moves.length)].moveId;
-      return true;
-    };
+  override getCondition(): MoveConditionFunc {
+    return (user) => this.getMove(user) !== MoveId.NONE;
   }
 }
 
-// TODO: extend CallMoveAttr
-export class NaturePowerAttr extends OverrideMoveEffectAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    let moveId = MoveId.NONE;
-    switch (globalScene.arena.getTerrainType()) {
-    // this allows terrains to 'override' the biome move
-      case TerrainType.NONE:
-        switch (globalScene.arena.biomeType) {
-          case BiomeId.TOWN:
-            moveId = MoveId.ROUND;
-            break;
-          case BiomeId.METROPOLIS:
-            moveId = MoveId.TRI_ATTACK;
-            break;
-          case BiomeId.SLUM:
-            moveId = MoveId.SLUDGE_BOMB;
-            break;
-          case BiomeId.PLAINS:
-            moveId = MoveId.SILVER_WIND;
-            break;
-          case BiomeId.GRASS:
-            moveId = MoveId.GRASS_KNOT;
-            break;
-          case BiomeId.TALL_GRASS:
-            moveId = MoveId.POLLEN_PUFF;
-            break;
-          case BiomeId.MEADOW:
-            moveId = MoveId.GIGA_DRAIN;
-            break;
-          case BiomeId.FOREST:
-            moveId = MoveId.BUG_BUZZ;
-            break;
-          case BiomeId.JUNGLE:
-            moveId = MoveId.LEAF_STORM;
-            break;
-          case BiomeId.SEA:
-            moveId = MoveId.HYDRO_PUMP;
-            break;
-          case BiomeId.SWAMP:
-            moveId = MoveId.MUD_BOMB;
-            break;
-          case BiomeId.BEACH:
-            moveId = MoveId.SCALD;
-            break;
-          case BiomeId.LAKE:
-            moveId = MoveId.BUBBLE_BEAM;
-            break;
-          case BiomeId.SEABED:
-            moveId = MoveId.BRINE;
-            break;
-          case BiomeId.ISLAND:
-            moveId = MoveId.LEAF_TORNADO;
-            break;
-          case BiomeId.MOUNTAIN:
-            moveId = MoveId.AIR_SLASH;
-            break;
-          case BiomeId.BADLANDS:
-            moveId = MoveId.EARTH_POWER;
-            break;
-          case BiomeId.DESERT:
-            moveId = MoveId.SCORCHING_SANDS;
-            break;
-          case BiomeId.WASTELAND:
-            moveId = MoveId.DRAGON_PULSE;
-            break;
-          case BiomeId.CONSTRUCTION_SITE:
-            moveId = MoveId.STEEL_BEAM;
-            break;
-          case BiomeId.CAVE:
-            moveId = MoveId.POWER_GEM;
-            break;
-          case BiomeId.ICE_CAVE:
-            moveId = MoveId.ICE_BEAM;
-            break;
-          case BiomeId.SNOWY_FOREST:
-            moveId = MoveId.FROST_BREATH;
-            break;
-          case BiomeId.VOLCANO:
-            moveId = MoveId.LAVA_PLUME;
-            break;
-          case BiomeId.GRAVEYARD:
-            moveId = MoveId.SHADOW_BALL;
-            break;
-          case BiomeId.RUINS:
-            moveId = MoveId.ANCIENT_POWER;
-            break;
-          case BiomeId.TEMPLE:
-            moveId = MoveId.EXTRASENSORY;
-            break;
-          case BiomeId.DOJO:
-            moveId = MoveId.FOCUS_BLAST;
-            break;
-          case BiomeId.FAIRY_CAVE:
-            moveId = MoveId.ALLURING_VOICE;
-            break;
-          case BiomeId.ABYSS:
-            moveId = MoveId.OMINOUS_WIND;
-            break;
-          case BiomeId.SPACE:
-            moveId = MoveId.DRACO_METEOR;
-            break;
-          case BiomeId.FACTORY:
-            moveId = MoveId.FLASH_CANNON;
-            break;
-          case BiomeId.LABORATORY:
-            moveId = MoveId.ZAP_CANNON;
-            break;
-          case BiomeId.POWER_PLANT:
-            moveId = MoveId.CHARGE_BEAM;
-            break;
-          case BiomeId.END:
-            moveId = MoveId.ETERNABEAM;
-            break;
-        }
-        break;
-      case TerrainType.MISTY:
-        moveId = MoveId.MOONBLAST;
-        break;
-      case TerrainType.ELECTRIC:
-        moveId = MoveId.THUNDERBOLT;
-        break;
-      case TerrainType.GRASSY:
-        moveId = MoveId.ENERGY_BALL;
-        break;
-      case TerrainType.PSYCHIC:
-        moveId = MoveId.PSYCHIC;
-        break;
-      default:
-        // Just in case there's no match
-        moveId = MoveId.TRI_ATTACK;
-        break;
-    }
+/**
+ * Attribute to call a different move based on the current terrain and biome.
+ * Used by {@linkcode MoveId.NATURE_POWER}
+ */
+export class NaturePowerAttr extends CallMoveAttr {
+  constructor() {
+    super(false)
+  }
 
-    // Load the move's animation if we didn't already and unshift a new usage phase
-    globalScene.phaseManager.unshiftNew("LoadMoveAnimPhase", moveId);
-    globalScene.phaseManager.unshiftNew("MovePhase", user, [ target.getBattlerIndex() ], new PokemonMove(moveId), MoveUseMode.FOLLOW_UP);
-    return true;
+  override getMove(user: Pokemon): MoveId {
+    const moveId = this.getMoveIdForTerrain(globalScene.arena.getTerrainType(), globalScene.arena.biomeType)
+    // Unshift a phase to load the move's animation (in case it isn't already), then use the move.
+    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:naturePowerUse", {
+      pokemonName: getPokemonNameWithAffix(user),
+      moveName: allMoves[moveId].name,
+    }))
+
+    return moveId;
+  }
+
+  /**
+   * Helper function to retrieve the correct move for the current terrain and biome.
+   * Made into a separate function for brevity.
+   */
+  private getMoveIdForTerrain(terrain: TerrainType, biome: BiomeId): MoveId {
+    switch (terrain) {
+      case TerrainType.ELECTRIC:
+        return MoveId.THUNDERBOLT;
+      case TerrainType.GRASSY:
+        return MoveId.ENERGY_BALL;
+      case TerrainType.PSYCHIC:
+        return MoveId.PSYCHIC;
+      case TerrainType.MISTY:
+        return MoveId.MOONBLAST;
+      }
+
+    // No terrain means check biome
+    switch (biome) {
+      case BiomeId.TOWN:
+        return MoveId.ROUND;
+      case BiomeId.METROPOLIS:
+        return MoveId.TRI_ATTACK;
+      case BiomeId.SLUM:
+        return MoveId.SLUDGE_BOMB;
+      case BiomeId.PLAINS:
+        return MoveId.SILVER_WIND;
+      case BiomeId.GRASS:
+        return MoveId.GRASS_KNOT;
+      case BiomeId.TALL_GRASS:
+        return MoveId.POLLEN_PUFF;
+      case BiomeId.MEADOW:
+        return MoveId.GIGA_DRAIN;
+      case BiomeId.FOREST:
+        return MoveId.BUG_BUZZ;
+      case BiomeId.JUNGLE:
+        return MoveId.LEAF_STORM;
+      case BiomeId.SEA:
+        return MoveId.HYDRO_PUMP;
+      case BiomeId.SWAMP:
+        return MoveId.MUD_BOMB;
+      case BiomeId.BEACH:
+        return MoveId.SCALD;
+      case BiomeId.LAKE:
+        return MoveId.BUBBLE_BEAM;
+      case BiomeId.SEABED:
+        return MoveId.BRINE;
+      case BiomeId.ISLAND:
+        return MoveId.LEAF_TORNADO;
+      case BiomeId.MOUNTAIN:
+        return MoveId.AIR_SLASH;
+      case BiomeId.BADLANDS:
+        return MoveId.EARTH_POWER;
+      case BiomeId.DESERT:
+        return MoveId.SCORCHING_SANDS;
+      case BiomeId.WASTELAND:
+        return MoveId.DRAGON_PULSE;
+      case BiomeId.CONSTRUCTION_SITE:
+        return MoveId.STEEL_BEAM;
+      case BiomeId.CAVE:
+        return MoveId.POWER_GEM;
+      case BiomeId.ICE_CAVE:
+        return MoveId.ICE_BEAM;
+      case BiomeId.SNOWY_FOREST:
+        return MoveId.FROST_BREATH;
+      case BiomeId.VOLCANO:
+        return MoveId.LAVA_PLUME;
+      case BiomeId.GRAVEYARD:
+        return MoveId.SHADOW_BALL;
+      case BiomeId.RUINS:
+        return MoveId.ANCIENT_POWER;
+      case BiomeId.TEMPLE:
+        return MoveId.EXTRASENSORY;
+      case BiomeId.DOJO:
+        return MoveId.FOCUS_BLAST;
+      case BiomeId.FAIRY_CAVE:
+        return MoveId.ALLURING_VOICE;
+      case BiomeId.ABYSS:
+        return MoveId.OMINOUS_WIND;
+      case BiomeId.SPACE:
+        return MoveId.DRACO_METEOR;
+      case BiomeId.FACTORY:
+        return MoveId.FLASH_CANNON;
+      case BiomeId.LABORATORY:
+        return MoveId.ZAP_CANNON;
+      case BiomeId.POWER_PLANT:
+        return MoveId.CHARGE_BEAM;
+      case BiomeId.END:
+        return MoveId.ETERNABEAM;
+      default:
+        // Fallback for no match
+        biome satisfies never;
+        console.warn(`NaturePowerAttr lacks defined move to use for current biome ${toReadableString(BiomeId[biome])}; consider adding an appropriate move to the attribute's selection table.`)
+        return MoveId.TRI_ATTACK;
+    }
   }
 }
 
 /**
  * Attribute used to copy a previously-used move.
- * Used for {@linkcode MoveId.COPYCAT} and {@linkcode MoveId.MIRROR_MOVE}
- * @see {@linkcode apply} for move selection and move call
- * @extends CallMoveAttr to call a selected move
+ * Used for {@linkcode MoveId.COPYCAT} and {@linkcode MoveId.MIRROR_MOVE}.
  */
 export class CopyMoveAttr extends CallMoveAttr {
-  private mirrorMove: boolean;
-  constructor(mirrorMove: boolean, invalidMoves: ReadonlySet<MoveId> = new Set()) {
-    super();
-    this.mirrorMove = mirrorMove;
-    this.invalidMoves = invalidMoves;
+  constructor(
+    /**
+     * A {@linkcode ReadonlySet} containing all moves that this {@linkcode MoveAttr} cannot copy,
+     * in addition to unimplemented moves and {@linkcode MoveId.NONE}.
+     * The move will fail if the chosen move is inside this banlist (if it exists).
+     */
+    protected readonly invalidMoves: ReadonlySet<MoveId>,
+    selfTarget = true,
+  ) {
+    super(selfTarget);
   }
 
-  apply(user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
-    this.hasTarget = this.mirrorMove;
-    // bang is correct as condition func returns `false` and fails move if no last move exists
-    const lastMove = this.mirrorMove ? target.getLastNonVirtualMove(false, false)!.move : globalScene.currentBattle.lastMove;
-    return super.apply(user, target, allMoves[lastMove], args);
+  override getMove(_user: Pokemon, target: Pokemon): MoveId {
+    return this.selfTarget
+      ? globalScene.currentBattle.lastMove
+      : target.getLastXMoves()[0]?.move ?? MoveId.NONE
   }
 
   getCondition(): MoveConditionFunc {
     return (_user, target, _move) => {
-      const lastMove = this.mirrorMove ? target.getLastNonVirtualMove(false, false)?.move : globalScene.currentBattle.lastMove;
-      return !isNullOrUndefined(lastMove) && !this.invalidMoves.has(lastMove);
+      const chosenMove = this.getMove(_user, target);
+      return chosenMove !== MoveId.NONE && !this.invalidMoves.has(chosenMove);
     };
   }
 }
+
+
 
 /**
  * Attribute used for moves that cause the target to repeat their last used move.
@@ -8766,7 +8749,7 @@ export function initMoves() {
     new SelfStatusMove(MoveId.METRONOME, PokemonType.NORMAL, -1, 10, -1, 0, 1)
       .attr(RandomMoveAttr, invalidMetronomeMoves),
     new StatusMove(MoveId.MIRROR_MOVE, PokemonType.FLYING, -1, 20, -1, 0, 1)
-      .attr(CopyMoveAttr, true, invalidMirrorMoveMoves),
+      .attr(CopyMoveAttr, invalidMirrorMoveMoves, true),
     new AttackMove(MoveId.SELF_DESTRUCT, PokemonType.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, 0, 1)
       .attr(SacrificialAttr)
       .makesContact(false)
@@ -9638,7 +9621,7 @@ export function initMoves() {
       .target(MoveTarget.NEAR_ENEMY)
       .unimplemented(),
     new SelfStatusMove(MoveId.COPYCAT, PokemonType.NORMAL, -1, 20, -1, 0, 4)
-      .attr(CopyMoveAttr, false, invalidCopycatMoves),
+      .attr(CopyMoveAttr, invalidCopycatMoves),
     new StatusMove(MoveId.POWER_SWAP, PokemonType.PSYCHIC, -1, 10, 100, 0, 4)
       .attr(SwapStatStagesAttr, [ Stat.ATK, Stat.SPATK ])
       .ignoresSubstitute(),
