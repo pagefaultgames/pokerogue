@@ -967,27 +967,27 @@ export class PokemonBaseStatTotalModifierType
   extends PokemonHeldItemModifierType
   implements GeneratedPersistentModifierType
 {
-  private readonly good: boolean;
+  private readonly statModifier: 10 | -15;
 
-  constructor(good: boolean) {
+  constructor(statModifier: 10 | -15) {
     super(
-      good
-        ? "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.name"
-        : "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.name",
-      good ? "berry_juice_good" : "berry_juice_bad",
-      (_type, args) => new PokemonBaseStatTotalModifier(this, (args[0] as Pokemon).id, this.good),
+      statModifier > 0
+        ? "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD"
+        : "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD",
+      statModifier > 0 ? "berry_juice_good" : "berry_juice_bad",
+      (_type, args) => new PokemonBaseStatTotalModifier(this, (args[0] as Pokemon).id, statModifier),
     );
-    this.good = good;
+    this.statModifier = statModifier;
   }
 
   override getDescription(): string {
-    return this.good
+    return this.statModifier > 0
       ? i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.description")
       : i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.description");
   }
 
   public getPregenArgs(): any[] {
-    return [this.good];
+    return [this.statModifier];
   }
 }
 
@@ -2291,9 +2291,9 @@ const modifierTypeInitObj = Object.freeze({
   MYSTERY_ENCOUNTER_SHUCKLE_JUICE: () =>
     new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {
-        return new PokemonBaseStatTotalModifierType(pregenArgs[0] as boolean);
+        return new PokemonBaseStatTotalModifierType(pregenArgs[0] as 10 | -15);
       }
-      return new PokemonBaseStatTotalModifierType(true);
+      return new PokemonBaseStatTotalModifierType(10);
     }),
   MYSTERY_ENCOUNTER_OLD_GATEAU: () =>
     new PokemonHeldItemModifierType(

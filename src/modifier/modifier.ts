@@ -952,23 +952,23 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
 export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
   public override type: PokemonBaseStatTotalModifierType;
   public isTransferable = false;
-  public good: boolean;
+  public statModifier: 10 | -15;
 
-  constructor(type: PokemonBaseStatTotalModifierType, pokemonId: number, good: boolean, stackCount?: number) {
+  constructor(type: PokemonBaseStatTotalModifierType, pokemonId: number, statModifier: 10 | -15, stackCount?: number) {
     super(type, pokemonId, stackCount);
-    this.good = good;
+    this.statModifier = statModifier;
   }
 
   override matchType(modifier: Modifier): boolean {
-    return modifier instanceof PokemonBaseStatTotalModifier && this.good === modifier.good;
+    return modifier instanceof PokemonBaseStatTotalModifier && this.statModifier === modifier.statModifier;
   }
 
   override clone(): PersistentModifier {
-    return new PokemonBaseStatTotalModifier(this.type, this.pokemonId, this.good, this.stackCount);
+    return new PokemonBaseStatTotalModifier(this.type, this.pokemonId, this.statModifier, this.stackCount);
   }
 
   override getArgs(): any[] {
-    return super.getArgs().concat(this.good);
+    return super.getArgs().concat(this.statModifier);
   }
 
   /**
@@ -988,11 +988,10 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, baseStats: number[]): boolean {
-    const statModifier = this.good ? 10 : -15;
     // Modifies the passed in baseStats[] array
     baseStats.forEach((v, i) => {
       // HP is affected by half as much as other stats
-      const newVal = i === 0 ? Math.floor(v + statModifier / 2) : Math.floor(v + statModifier);
+      const newVal = i === 0 ? Math.floor(v + this.statModifier / 2) : Math.floor(v + this.statModifier);
       baseStats[i] = Math.min(Math.max(newVal, 1), 999999);
     });
 
