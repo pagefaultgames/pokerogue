@@ -14,7 +14,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { FieldPosition } from "#enums/field-position";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -406,7 +406,7 @@ function summonPlayerPokemonAnimation(pokemon: PlayerPokemon): Promise<void> {
               onComplete: () => {
                 pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
                 pokemon.getSprite().clearTint();
-                pokemon.resetSummonData();
+                pokemon.fieldSetup(true);
                 globalScene.time.delayedCall(1000, () => {
                   if (pokemon.isShiny()) {
                     globalScene.phaseManager.unshiftNew("ShinySparklePhase", pokemon.getBattlerIndex());

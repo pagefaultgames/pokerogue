@@ -15,12 +15,8 @@ import { allMoves } from "#app/data/data-lists";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
-import {
-  default as PokemonSpecies,
-  getFusedSpeciesName,
-  getPokemonSpecies,
-  getPokemonSpeciesForm,
-} from "#app/data/pokemon-species";
+import { default as PokemonSpecies, getFusedSpeciesName, getPokemonSpeciesForm } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import {
   NumberHolder,
@@ -79,11 +75,12 @@ import {
 import { PokeballType } from "#enums/pokeball";
 import { Gender } from "#app/data/gender";
 import { Status, getRandomStatus } from "#app/data/status-effect";
-import type { SpeciesFormEvolution, SpeciesEvolutionCondition } from "#app/data/balance/pokemon-evolutions";
+import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import {
   pokemonEvolutions,
   pokemonPrevolutions,
   FusionSpeciesFormEvolution,
+  validateShedinjaEvo,
 } from "#app/data/balance/pokemon-evolutions";
 import { reverseCompatibleTms, tmSpecies, tmPoolTiers } from "#app/data/balance/tms";
 import {
@@ -370,7 +367,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.metWave = dataSource.metWave ?? (this.metBiome === -1 ? -1 : 0);
       this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
-      this.evoCounter = dataSource.evoCounter ?? 0;
       this.fusionSpecies =
         dataSource.fusionSpecies instanceof PokemonSpecies
           ? dataSource.fusionSpecies
@@ -1356,8 +1352,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Calculate the critical-hit stage of a move used against this pokemon by
-   * the given source
+   * Calculate the critical-hit stage of a move used **against** this pokemon by
+   * the given source.
+   *
    * @param source - The {@linkcode Pokemon} using the move
    * @param move - The {@linkcode Move} being used
    * @returns The final critical-hit stage value
@@ -1370,11 +1367,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyAbAttrs("BonusCritAbAttr", source, null, false, critStage);
     const critBoostTag = source.getTag(CritBoostTag);
     if (critBoostTag) {
-      if (critBoostTag instanceof DragonCheerTag) {
-        critStage.value += critBoostTag.typesOnAdd.includes(PokemonType.DRAGON) ? 2 : 1;
-      } else {
-        critStage.value += 2;
-      }
+      // Dragon cheer only gives +1 crit stage to non-dragon types
+      critStage.value +=
+        critBoostTag instanceof DragonCheerTag && !critBoostTag.typesOnAdd.includes(PokemonType.DRAGON) ? 1 : 2;
     }
 
     console.log(`crit stage: +${critStage.value}`);
@@ -2503,14 +2498,39 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       defScore *=
         1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[1], opponent, false, false, undefined, true), 0.25);
     }
+    atkScore *= 1.25; //give more value for the pokemon's typing
+    const moveset = this.moveset;
+    let moveAtkScoreLength = 0;
+    for (const move of moveset) {
+      if (move.getMove().category === MoveCategory.SPECIAL || move.getMove().category === MoveCategory.PHYSICAL) {
+        atkScore += opponent.getAttackTypeEffectiveness(move.getMove().type, this, false, true, undefined, true);
+        moveAtkScoreLength++;
+      }
+    }
+    atkScore = atkScore / (moveAtkScoreLength + 1); //calculate the median for the attack score
     /**
      * Based on this Pokemon's HP ratio compared to that of the opponent.
      * This ratio is multiplied by 1.5 if this Pokemon outspeeds the opponent;
      * however, the final ratio cannot be higher than 1.
      */
-    let hpDiffRatio = this.getHpRatio() + (1 - opponent.getHpRatio());
-    if (outspeed) {
-      hpDiffRatio = Math.min(hpDiffRatio * 1.5, 1);
+    const hpRatio = this.getHpRatio();
+    const oppHpRatio = opponent.getHpRatio();
+    const isDying = hpRatio <= 0.2;
+    let hpDiffRatio = hpRatio + (1 - oppHpRatio);
+    if (isDying && this.isActive(true)) {
+      //It might be a sacrifice candidate if hp under 20%
+      const badMatchup = atkScore < 1.5 && defScore < 1.5;
+      if (!outspeed && badMatchup) {
+        //It might not be a worthy sacrifice if it doesn't outspeed or doesn't do enough damage
+        hpDiffRatio *= 0.85;
+      } else {
+        hpDiffRatio = Math.min(1 - hpRatio + (outspeed ? 0.2 : 0.1), 1);
+      }
+    } else if (outspeed) {
+      hpDiffRatio = Math.min(hpDiffRatio * 1.25, 1);
+    } else if (hpRatio > 0.2 && hpRatio <= 0.4) {
+      //Might be considered to be switched because it's not in low enough health
+      hpDiffRatio = Math.min(hpDiffRatio * 0.5, 1);
     }
     return (atkScore + defScore) * hpDiffRatio;
   }
@@ -2519,14 +2539,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (pokemonEvolutions.hasOwnProperty(this.species.speciesId)) {
       const evolutions = pokemonEvolutions[this.species.speciesId];
       for (const e of evolutions) {
-        if (
-          !e.item &&
-          this.level >= e.level &&
-          (isNullOrUndefined(e.preFormKey) || this.getFormKey() === e.preFormKey)
-        ) {
-          if (e.condition === null || (e.condition as SpeciesEvolutionCondition).predicate(this)) {
-            return e;
-          }
+        if (e.validate(this)) {
+          return e;
         }
       }
     }
@@ -2536,14 +2550,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         e => new FusionSpeciesFormEvolution(this.species.speciesId, e),
       );
       for (const fe of fusionEvolutions) {
-        if (
-          !fe.item &&
-          this.level >= fe.level &&
-          (isNullOrUndefined(fe.preFormKey) || this.getFusionFormKey() === fe.preFormKey)
-        ) {
-          if (fe.condition === null || (fe.condition as SpeciesEvolutionCondition).predicate(this)) {
-            return fe;
-          }
+        if (fe.validate(this)) {
+          return fe;
         }
       }
     }
@@ -2785,17 +2793,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public trySetShinySeed(thresholdOverride?: number, applyModifiersToOverride?: boolean): boolean {
     if (!this.shiny) {
-      const shinyThreshold = new NumberHolder(BASE_SHINY_CHANCE);
-      if (thresholdOverride === undefined || applyModifiersToOverride) {
-        if (thresholdOverride !== undefined && applyModifiersToOverride) {
-          shinyThreshold.value = thresholdOverride;
-        }
+      const shinyThreshold = new NumberHolder(thresholdOverride ?? BASE_SHINY_CHANCE);
+      if (applyModifiersToOverride) {
         if (timedEventManager.isEventActive()) {
           shinyThreshold.value *= timedEventManager.getShinyMultiplier();
         }
         globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
-      } else {
-        shinyThreshold.value = thresholdOverride;
       }
 
       this.shiny = randSeedInt(65536) < shinyThreshold.value;
@@ -2864,16 +2867,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.species.abilityHidden) {
       return false;
     }
-    const haThreshold = new NumberHolder(BASE_HIDDEN_ABILITY_CHANCE);
-    if (thresholdOverride === undefined || applyModifiersToOverride) {
-      if (thresholdOverride !== undefined && applyModifiersToOverride) {
-        haThreshold.value = thresholdOverride;
-      }
+    const haThreshold = new NumberHolder(thresholdOverride ?? BASE_HIDDEN_ABILITY_CHANCE);
+    if (applyModifiersToOverride) {
       if (!this.hasTrainer()) {
         globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, haThreshold);
       }
-    } else {
-      haThreshold.value = thresholdOverride;
     }
 
     if (randSeedInt(65536) < haThreshold.value) {
@@ -3888,33 +3886,39 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     };
   }
 
-  /** Calculate whether the given move critically hits this pokemon
+  /**
+   * Determine whether the given move will score a critical hit **against** this Pokemon.
    * @param source - The {@linkcode Pokemon} using the move
    * @param move - The {@linkcode Move} being used
-   * @param simulated - If `true`, suppresses changes to game state during calculation (defaults to `true`)
-   * @returns whether the move critically hits the pokemon
+   * @returns Whether the move will critically hit the defender.
    */
-  getCriticalHitResult(source: Pokemon, move: Move, simulated = true): boolean {
-    const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-    const noCritTag = globalScene.arena.getTagOnSide(NoCritTag, defendingSide);
-    if (noCritTag || Overrides.NEVER_CRIT_OVERRIDE || move.hasAttr("FixedDamageAttr")) {
+  getCriticalHitResult(source: Pokemon, move: Move): boolean {
+    if (move.hasAttr("FixedDamageAttr")) {
+      // fixed damage moves (Dragon Rage, etc.) will nevet crit
       return false;
     }
-    const isCritical = new BooleanHolder(false);
 
-    if (source.getTag(BattlerTagType.ALWAYS_CRIT)) {
-      isCritical.value = true;
-    }
-    applyMoveAttrs("CritOnlyAttr", source, this, move, isCritical);
-    applyAbAttrs("ConditionalCritAbAttr", source, null, simulated, isCritical, this, move);
-    if (!isCritical.value) {
-      const critChance = [24, 8, 2, 1][Math.max(0, Math.min(this.getCritStage(source, move), 3))];
-      isCritical.value = critChance === 1 || !globalScene.randBattleSeedInt(critChance);
-    }
+    const alwaysCrit = new BooleanHolder(false);
+    applyMoveAttrs("CritOnlyAttr", source, this, move, alwaysCrit);
+    applyAbAttrs("ConditionalCritAbAttr", source, null, false, alwaysCrit, this, move);
+    const alwaysCritTag = !!source.getTag(BattlerTagType.ALWAYS_CRIT);
+    const critChance = [24, 8, 2, 1][Phaser.Math.Clamp(this.getCritStage(source, move), 0, 3)];
 
-    applyAbAttrs("BlockCritAbAttr", this, null, simulated, isCritical);
+    let isCritical = alwaysCrit.value || alwaysCritTag || critChance === 1;
 
-    return isCritical.value;
+    // If we aren't already guaranteed to crit, do a random roll & check overrides
+    isCritical ||= Overrides.CRITICAL_HIT_OVERRIDE ?? globalScene.randBattleSeedInt(critChance) === 0;
+
+    // apply crit block effects from lucky chant & co., overriding previous effects
+    const blockCrit = new BooleanHolder(false);
+    applyAbAttrs("BlockCritAbAttr", this, null, false, blockCrit);
+    const blockCritTag = globalScene.arena.getTagOnSide(
+      NoCritTag,
+      this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
+    );
+    isCritical &&= !blockCritTag && !blockCrit.value; // need to roll a crit and not be blocked by either crit prevention effect
+
+    return isCritical;
   }
 
   /**
@@ -5492,6 +5496,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     this.turnData.berriesEaten.push(berryType);
   }
+
+  getPersistentTreasureCount(): number {
+    return (
+      this.getHeldItems().filter(m => m.is("DamageMoneyRewardModifier")).length +
+      globalScene.findModifiers(m => m.is("MoneyMultiplierModifier") || m.is("ExtraModifierModifier")).length
+    );
+  }
 }
 
 export class PlayerPokemon extends Pokemon {
@@ -5830,7 +5841,7 @@ export class PlayerPokemon extends Pokemon {
     if (evoSpecies?.speciesId === SpeciesId.NINCADA && evolution.speciesId === SpeciesId.NINJASK) {
       const newEvolution = pokemonEvolutions[evoSpecies.speciesId][1];
 
-      if (newEvolution.condition?.predicate(this)) {
+      if (validateShedinjaEvo()) {
         const newPokemon = globalScene.addPlayerPokemon(
           this.species,
           this.level,
@@ -5860,7 +5871,6 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.fusionLuck = this.fusionLuck;
         newPokemon.fusionTeraType = this.fusionTeraType;
         newPokemon.usedTMs = this.usedTMs;
-        newPokemon.evoCounter = this.evoCounter;
 
         globalScene.getPlayerParty().push(newPokemon);
         newPokemon.evolve(!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution), evoSpecies);
@@ -5949,7 +5959,6 @@ export class PlayerPokemon extends Pokemon {
     this.fusionGender = pokemon.gender;
     this.fusionLuck = pokemon.luck;
     this.fusionCustomPokemonData = pokemon.customPokemonData;
-    this.evoCounter = Math.max(pokemon.evoCounter, this.evoCounter);
     if (pokemon.pauseEvolutions || this.pauseEvolutions) {
       this.pauseEvolutions = true;
     }
@@ -6104,18 +6113,6 @@ export class EnemyPokemon extends Pokemon {
       }
 
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
-
-      let prevolution: SpeciesId;
-      let speciesId = species.speciesId;
-      while ((prevolution = pokemonPrevolutions[speciesId])) {
-        const evolution = pokemonEvolutions[prevolution].find(
-          pe => pe.speciesId === speciesId && (!pe.evoFormKey || pe.evoFormKey === this.getFormKey()),
-        );
-        if (evolution?.condition?.enforceFunc) {
-          evolution.condition.enforceFunc(this);
-        }
-        speciesId = prevolution;
-      }
 
       if (this.hasTrainer() && globalScene.currentBattle) {
         const { waveIndex } = globalScene.currentBattle;

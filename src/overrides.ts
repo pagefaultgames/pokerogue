@@ -80,7 +80,11 @@ class DefaultOverrides {
   /** Sets the level cap to this number during experience gain calculations. Set to `0` to disable override & use normal wave-based level caps,
   or any negative number to set it to 9 quadrillion (effectively disabling it). */
   readonly LEVEL_CAP_OVERRIDE: number = 0;
-  readonly NEVER_CRIT_OVERRIDE: boolean = false;
+  /**
+   * If defined, overrides random critical hit rolls to always or never succeed.
+   * Ignored if the move is guaranteed to always/never crit.
+   */
+  readonly CRITICAL_HIT_OVERRIDE: boolean | null = null;
   /** default 1000 */
   readonly STARTING_MONEY_OVERRIDE: number = 0;
   /** Sets all shop item prices to 0 */
