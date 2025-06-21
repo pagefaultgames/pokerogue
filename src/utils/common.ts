@@ -201,7 +201,7 @@ export function formatLargeNumber(count: number, threshold: number): string {
   let suffix = "";
   switch (Math.ceil(ret.length / 3) - 1) {
     case 1:
-      suffix = i18next.t("common:abrK");
+      suffix = i18next.t("common:abrThousand");
       break;
     case 2:
       suffix = i18next.t("common:abrMillion");
@@ -230,7 +230,7 @@ export function formatLargeNumber(count: number, threshold: number): string {
 function getAbbreviationsLargeNumber(): string[] {
   return [
     "",
-    i18next.t("common:abrK"),
+    i18next.t("common:abrThousand"),
     i18next.t("common:abrMillion"),
     i18next.t("common:abrBillion"),
     i18next.t("common:abrTrillion"),
