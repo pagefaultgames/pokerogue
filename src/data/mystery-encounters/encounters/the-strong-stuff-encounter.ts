@@ -54,7 +54,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withFleeAllowed(false)
   .withIntroSpriteConfigs([
     {
-      spriteKey: "berry_juice",
+      spriteKey: "berry_juice_good",
       fileRoot: "items",
       hasShadow: true,
       isItem: true,
