@@ -89,7 +89,7 @@ describe("Abilities - Lightningrod", () => {
 
   it("should redirect moves changed to electric type via ability", async () => {
     game.override.ability(AbilityId.GALVANIZE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
     game.field.mockAbility(enemy2, AbilityId.LIGHTNING_ROD);
