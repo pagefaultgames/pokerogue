@@ -66,7 +66,7 @@ describe("Abilities - Wonder Skin", () => {
     it(`does not affect pokemon with ${ability[1]}`, async () => {
       const moveToCheck = allMoves[MoveId.CHARM];
 
-      // @ts-ignore ts doesn't know that ability[0] is an ability and not a string...
+      // @ts-expect-error ts doesn't know that ability[0] is an ability and not a string...
       game.override.ability(ability[0]);
       vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
