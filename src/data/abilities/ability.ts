@@ -1544,7 +1544,7 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
   ): void {
     const effect =
       this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randBattleSeedInt(this.effects.length)];
-    attacker.trySetStatus(effect, true, pokemon);
+    attacker.trySetStatus(effect, pokemon);
   }
 }
 
@@ -2879,7 +2879,7 @@ export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
   ): void {
     const effect =
       this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randBattleSeedInt(this.effects.length)];
-    attacker.trySetStatus(effect, true, pokemon);
+    attacker.trySetStatus(effect, pokemon);
   }
 }
 
@@ -3086,7 +3086,7 @@ export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
     _args: any[],
   ): void {
     if (!simulated && sourcePokemon) {
-      sourcePokemon.trySetStatus(effect, true, pokemon);
+      sourcePokemon.trySetStatus(effect, pokemon);
     }
   }
 }
@@ -4452,7 +4452,7 @@ export class PreSetStatusAbAttr extends AbAttr {
     _pokemon: Pokemon,
     _passive: boolean,
     _simulated: boolean,
-    _effect: StatusEffect | undefined,
+    _effect: StatusEffect,
     _cancelled: BooleanHolder,
     _args: any[],
   ): boolean {
@@ -4463,7 +4463,7 @@ export class PreSetStatusAbAttr extends AbAttr {
     _pokemon: Pokemon,
     _passive: boolean,
     _simulated: boolean,
-    _effect: StatusEffect | undefined,
+    _effect: StatusEffect,
     _cancelled: BooleanHolder,
     _args: any[],
   ): void {}
@@ -8646,8 +8646,7 @@ export function initAbilities() {
       .unsuppressable()
       .bypassFaint(),
     new Ability(AbilityId.CORROSION, 7)
-      .attr(IgnoreTypeStatusEffectImmunityAbAttr, [ StatusEffect.POISON, StatusEffect.TOXIC ], [ PokemonType.STEEL, PokemonType.POISON ])
-      .edgeCase(), // Should poison itself with toxic orb.
+      .attr(IgnoreTypeStatusEffectImmunityAbAttr, [ StatusEffect.POISON, StatusEffect.TOXIC ], [ PokemonType.STEEL, PokemonType.POISON ]),
     new Ability(AbilityId.COMATOSE, 7)
       .attr(StatusEffectImmunityAbAttr, ...getNonVolatileStatusEffects())
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)

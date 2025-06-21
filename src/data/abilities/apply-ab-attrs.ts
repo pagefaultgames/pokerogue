@@ -583,7 +583,7 @@ export function applyPostStatStageChangeAbAttrs<K extends AbAttrString>(
 export function applyPreSetStatusAbAttrs<K extends AbAttrString>(
   attrType: AbAttrMap[K] extends PreSetStatusAbAttr ? K : never,
   pokemon: Pokemon,
-  effect: StatusEffect | undefined,
+  effect: StatusEffect,
   cancelled: BooleanHolder,
   simulated = false,
   ...args: any[]
