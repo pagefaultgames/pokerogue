@@ -259,7 +259,7 @@ describe("Abilities - Ice Face", () => {
 
     const eiscue = game.scene.getEnemyPokemon()!;
 
-    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeDefined();
     expect(eiscue.formIndex).toBe(icefaceForm);
     expect(eiscue.hasAbility(AbilityId.ICE_FACE)).toBe(true);
   });
@@ -269,13 +269,9 @@ describe("Abilities - Ice Face", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    game.move.select(MoveId.SIMPLE_BEAM);
-
-    await game.phaseInterceptor.to(TurnInitPhase);
-
     const eiscue = game.scene.getEnemyPokemon()!;
 
-    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeDefined();
     expect(eiscue.formIndex).toBe(icefaceForm);
     expect(game.scene.getPlayerPokemon()!.hasAbility(AbilityId.TRACE)).toBe(true);
   });

@@ -58,8 +58,7 @@ describe("Items - Dire Hit", () => {
 
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    game.move.select(MoveId.SPLASH);
-
+    game.move.use(MoveId.SPLASH);
     await game.doKillOpponents();
 
     await game.phaseInterceptor.to(BattleEndPhase);

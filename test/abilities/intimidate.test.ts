@@ -3,7 +3,6 @@ import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
 import { UiMode } from "#enums/ui-mode";
 import { Stat } from "#enums/stat";
-import { getMovePosition } from "#test/testUtils/gameManagerUtils";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -114,7 +113,7 @@ describe("Abilities - Intimidate", () => {
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
 
-    game.move.select(getMovePosition(game.scene, 0, MoveId.SPLASH));
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     enemyPokemon = game.scene.getEnemyPokemon()!;

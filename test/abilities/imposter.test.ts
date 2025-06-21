@@ -74,9 +74,8 @@ describe("Abilities - Imposter", () => {
     }
   });
 
+  // TODO: this doesn't actually test imposter - transforming happens before poewr split
   it("should copy in-battle overridden stats", async () => {
-    game.override.enemyMoveset([MoveId.POWER_SPLIT]);
-
     await game.classicMode.startBattle([SpeciesId.DITTO]);
 
     const player = game.scene.getPlayerPokemon()!;
@@ -85,7 +84,8 @@ describe("Abilities - Imposter", () => {
     const avgAtk = Math.floor((player.getStat(Stat.ATK, false) + enemy.getStat(Stat.ATK, false)) / 2);
     const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
 
-    game.move.select(MoveId.TACKLE);
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.POWER_SPLIT);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);
@@ -100,9 +100,6 @@ describe("Abilities - Imposter", () => {
 
     await game.classicMode.startBattle([SpeciesId.DITTO]);
     const player = game.scene.getPlayerPokemon()!;
-
-    game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to(TurnEndPhase);
 
     player.getMoveset().forEach(move => {
       // Should set correct maximum PP without touching `ppUp`
@@ -122,15 +119,10 @@ describe("Abilities - Imposter", () => {
 
     await game.classicMode.startBattle([SpeciesId.DITTO]);
 
-    game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to("MoveEndPhase");
-
     expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should persist transformed attributes across reloads", async () => {
-    game.override.moveset([MoveId.ABSORB]);
-
     await game.classicMode.startBattle([SpeciesId.DITTO]);
 
     const player = game.scene.getPlayerPokemon()!;
@@ -162,7 +154,7 @@ describe("Abilities - Imposter", () => {
   });
 
   it("should stay transformed with the correct form after reload", async () => {
-    game.override.moveset([MoveId.ABSORB]).enemySpecies(SpeciesId.UNOWN);
+    game.override.enemySpecies(SpeciesId.UNOWN);
     await game.classicMode.startBattle([SpeciesId.DITTO]);
 
     const enemy = game.scene.getEnemyPokemon()!;
