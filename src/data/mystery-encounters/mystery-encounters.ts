@@ -33,7 +33,8 @@ import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/
 import { GlobalTradeSystemEncounter } from "#app/data/mystery-encounters/encounters/global-trade-system-encounter";
 import { TheExpertPokemonBreederEncounter } from "#app/data/mystery-encounters/encounters/the-expert-pokemon-breeder-encounter";
 import { getBiomeName } from "#app/data/balance/biomes";
-import { SkyBattleEncounter } from "./encounters/sky-battle-encounter";
+// Temporarily disabled pending ME rebalancing
+// import { SkyBattleEncounter } from "./encounters/sky-battle-encounter";
 
 export const EXTREME_ENCOUNTER_BIOMES = [
   BiomeId.SEA,
