@@ -64,7 +64,7 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        `MoveHelper.selectWithTera called with move '${toReadableString(MoveId[move])}' not in moveset!
+        `MoveHelper.select called with move '${toReadableString(MoveId[move])}' not in moveset!
 Battler Index: ${toReadableString(BattlerIndex[pkmIndex])};
 Moveset: [${this.game.scene
           .getPlayerParty()

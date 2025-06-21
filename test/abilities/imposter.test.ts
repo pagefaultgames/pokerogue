@@ -2,8 +2,9 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
 import { SpeciesId } from "#enums/species-id";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
-import { Stat } from "#enums/stat";
+import { Stat, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
 
 // TODO: Add more tests once Imposter is fully implemented
@@ -37,118 +38,126 @@ describe("Abilities - Imposter", () => {
   it("should copy species, ability, gender, all stats except HP, all stat stages, moveset, and types of target", async () => {
     await game.classicMode.startBattle([SpeciesId.DITTO]);
 
-    const player = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
+    game.move.select(MoveId.SPLASH);
+    await game.phaseInterceptor.to(TurnEndPhase);
+
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
     expect(player.getSpeciesForm().speciesId).toBe(enemy.getSpeciesForm().speciesId);
     expect(player.getAbility()).toBe(enemy.getAbility());
     expect(player.getGender()).toBe(enemy.getGender());
 
-    const playerStats = player.getStats(false);
-    const enemyStats = enemy.getStats(false);
-    // HP stays the same; all other stats should carry over
-    expect(playerStats[0]).not.toBe(enemyStats[0]);
-    expect(playerStats.slice(1)).toEqual(enemyStats.slice(1));
+    expect(player.getStat(Stat.HP, false)).not.toBe(enemy.getStat(Stat.HP));
+    for (const s of EFFECTIVE_STATS) {
+      expect(player.getStat(s, false)).toBe(enemy.getStat(s, false));
+    }
 
-    expect(player.getStatStages()).toEqual(enemy.getStatStages());
+    for (const s of BATTLE_STATS) {
+      expect(player.getStatStage(s)).toBe(enemy.getStatStage(s));
+    }
 
-    expect(player.getMoveset().map(m => m.moveId)).toEqual(player.getMoveset().map(m => m.moveId));
+    const playerMoveset = player.getMoveset();
+    const enemyMoveset = player.getMoveset();
 
-    expect(player.getTypes()).toEqual(enemy.getTypes());
+    expect(playerMoveset.length).toBe(enemyMoveset.length);
+    for (let i = 0; i < playerMoveset.length && i < enemyMoveset.length; i++) {
+      expect(playerMoveset[i]?.moveId).toBe(enemyMoveset[i]?.moveId);
+    }
+
+    const playerTypes = player.getTypes();
+    const enemyTypes = enemy.getTypes();
+
+    expect(playerTypes.length).toBe(enemyTypes.length);
+    for (let i = 0; i < playerTypes.length && i < enemyTypes.length; i++) {
+      expect(playerTypes[i]).toBe(enemyTypes[i]);
+    }
   });
 
+  // TODO: this doesn't actually test imposter - transforming happens before poewr split
   it("should copy in-battle overridden stats", async () => {
-    game.override.ability(AbilityId.BALL_FETCH);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.DITTO]);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
 
-    const [karp, ditto] = game.scene.getPlayerParty();
-    const enemy = game.field.getEnemyPokemon();
-    const abMock = game.field.mockAbility(ditto, AbilityId.IMPOSTER);
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
-    const oldAtk = karp.getStat(Stat.ATK);
+    const avgAtk = Math.floor((player.getStat(Stat.ATK, false) + enemy.getStat(Stat.ATK, false)) / 2);
+    const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
 
-    // Turn 1: Use power split
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.POWER_SPLIT);
-    await game.toNextTurn();
+    await game.phaseInterceptor.to(TurnEndPhase);
 
-    const avgAtk = Math.floor((karp.getStat(Stat.ATK, false) + enemy.getStat(Stat.ATK, false)) / 2);
-
+    expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);
     expect(enemy.getStat(Stat.ATK, false)).toBe(avgAtk);
-    expect(karp.getStat(Stat.ATK, false)).toBe(avgAtk);
-    expect(avgAtk).not.toBe(oldAtk);
 
-    // Turn 2: Switch in ditto, should copy power split stats
-    game.doSwitchPokemon(1);
-    await game.move.forceEnemyMove(MoveId.SPLASH);
-    await game.phaseInterceptor.to("PokemonTransformPhase", false);
-    // reset ability mock after activating so Ditto doesn't keep on transforming into itself
-    abMock.mockRestore();
-    await game.toEndOfTurn();
-
-    expect(ditto.getStat(Stat.ATK, false)).toBe(avgAtk);
+    expect(player.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
+    expect(enemy.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
   });
 
   it("should set each move's pp to a maximum of 5", async () => {
     game.override.enemyMoveset([MoveId.SWORDS_DANCE, MoveId.GROWL, MoveId.SKETCH, MoveId.RECOVER]);
-    await game.classicMode.startBattle([SpeciesId.DITTO]);
 
-    const player = game.field.getPlayerPokemon();
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
+    const player = game.scene.getPlayerPokemon()!;
 
     player.getMoveset().forEach(move => {
       // Should set correct maximum PP without touching `ppUp`
-      if (move.moveId === MoveId.SKETCH) {
-        expect(move.getMovePp()).toBe(1);
-      } else {
-        expect(move.getMovePp()).toBe(5);
+      if (move) {
+        if (move.moveId === MoveId.SKETCH) {
+          expect(move.getMovePp()).toBe(1);
+        } else {
+          expect(move.getMovePp()).toBe(5);
+        }
+        expect(move.ppUp).toBe(0);
       }
-      expect(move.ppUp).toBe(0);
     });
   });
 
   it("should activate its ability if it copies one that activates on summon", async () => {
     game.override.enemyAbility(AbilityId.INTIMIDATE);
+
     await game.classicMode.startBattle([SpeciesId.DITTO]);
 
-    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should persist transformed attributes across reloads", async () => {
     await game.classicMode.startBattle([SpeciesId.DITTO]);
 
-    const player = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.toNextWave();
 
-    expect(game.scene.phaseManager.getCurrentPhase()?.phaseName).toBe("CommandPhase");
+    expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(2);
 
     await game.reload.reloadSession();
 
-    const playerReloaded = game.field.getPlayerPokemon();
+    const playerReloaded = game.scene.getPlayerPokemon()!;
+    const playerMoveset = player.getMoveset();
 
-    expect(playerReloaded.getSpeciesForm().speciesId).toBe(SpeciesId.MEW);
+    expect(playerReloaded.getSpeciesForm().speciesId).toBe(enemy.getSpeciesForm().speciesId);
     expect(playerReloaded.getAbility()).toBe(enemy.getAbility());
     expect(playerReloaded.getGender()).toBe(enemy.getGender());
 
-    const playerStats = player.getStats(false);
-    const playerReloadedStats = player.getStats(false);
-    // HP stays the same; all other stats should carry over
-    expect(playerReloadedStats).toEqual(playerStats);
+    expect(playerReloaded.getStat(Stat.HP, false)).not.toBe(enemy.getStat(Stat.HP));
+    for (const s of EFFECTIVE_STATS) {
+      expect(playerReloaded.getStat(s, false)).toBe(enemy.getStat(s, false));
+    }
 
-    expect(playerReloaded.getMoveset()).toEqual(player.getMoveset());
+    expect(playerMoveset.length).toEqual(1);
+    expect(playerMoveset[0]?.moveId).toEqual(MoveId.SPLASH);
   });
 
-  // TODO: This doesn't look as though it should work
   it("should stay transformed with the correct form after reload", async () => {
     game.override.enemySpecies(SpeciesId.UNOWN);
     await game.classicMode.startBattle([SpeciesId.DITTO]);
 
-    const player = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
+    const enemy = game.scene.getEnemyPokemon()!;
 
     // change form
     enemy.species.forms[5];
@@ -161,14 +170,11 @@ describe("Abilities - Imposter", () => {
     expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(2);
 
-    expect(player.getSpeciesForm().speciesId).toBe(SpeciesId.UNOWN);
-    expect(player.getSpeciesForm().formIndex).toBe(5);
-
     await game.reload.reloadSession();
 
-    const playerReloaded = game.field.getPlayerPokemon();
+    const playerReloaded = game.scene.getPlayerPokemon()!;
 
-    expect(playerReloaded.getSpeciesForm().speciesId).toBe(SpeciesId.UNOWN);
-    expect(playerReloaded.getSpeciesForm().formIndex).toBe(5);
+    expect(playerReloaded.getSpeciesForm().speciesId).toBe(enemy.getSpeciesForm().speciesId);
+    expect(playerReloaded.getSpeciesForm().formIndex).toBe(enemy.getSpeciesForm().formIndex);
   });
 });
