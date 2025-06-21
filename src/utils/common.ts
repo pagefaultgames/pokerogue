@@ -10,7 +10,7 @@ export const MissingTextureKey = "__MISSING";
 
 export function toReadableString(str: string): string {
   return str
-    .replace(/\_/g, " ")
+    .replace(/_/g, " ")
     .split(" ")
     .map(s => `${s.slice(0, 1)}${s.slice(1).toLowerCase()}`)
     .join(" ");
@@ -583,7 +583,7 @@ export function isBetween(num: number, min: number, max: number): boolean {
  * @param move the move for which the animation filename is needed
  */
 export function animationFileName(move: MoveId): string {
-  return MoveId[move].toLowerCase().replace(/\_/g, "-");
+  return MoveId[move].toLowerCase().replace(/_/g, "-");
 }
 
 /**
