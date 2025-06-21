@@ -1998,7 +1998,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Check if this Pokemon's typing includes the specified type.
    * @param type - The {@linkcode PokemonType} to check
-   * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `false`
+   * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `true`
    * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
    * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
    * @returns Whether this Pokemon is of the specified type.
