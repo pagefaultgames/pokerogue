@@ -34,6 +34,7 @@ import { isNullOrUndefined } from "#app/utils/common";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { invalidEncoreMoves } from "./moves/invalid-moves";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
+import type { TurnMove } from "#app/field/pokemon";
 
 /**
  * A {@linkcode BattlerTag} represents a semi-persistent effect that can be attached to a {@linkcode Pokemon}.
@@ -153,21 +154,21 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
   }
 
   /**
-   * Gets whether this tag is restricting a move.
+   * Check if this tag is currently restricting a move's use.
    *
-   * @param move - {@linkcode MoveId} ID to check restriction for.
-   * @param user - The {@linkcode Pokemon} involved
-   * @returns `true` if the move is restricted by this tag, otherwise `false`.
+   * @param move - The {@linkcode MoveId} whose usability is being checked.
+   * @param user - The {@linkcode Pokemon} using the move.
+   * @returns Whether the given move is restricted by this tag.
    */
   public abstract isMoveRestricted(move: MoveId, user?: Pokemon): boolean;
 
   /**
-   * Checks if this tag is restricting a move based on a user's decisions during the target selection phase
-   *
-   * @param {MoveId} _move {@linkcode MoveId} move ID to check restriction for
-   * @param {Pokemon} _user {@linkcode Pokemon} the user of the above move
-   * @param {Pokemon} _target {@linkcode Pokemon} the target of the above move
-   * @returns {boolean} `false` unless overridden by the child tag
+   * Check if this tag is restricting a move during target selection.
+   * Returns `false` by default unless overridden by a child class.
+   * @param _move - The {@linkcode MoveId} whose selectability is being checked.
+   * @param _user - The {@linkcode Pokemon} using the move.
+   * @param _target - The {@linkcode Pokemon} being targeted
+   * @returns Whether the given move should be unselectable when choosing targets.
    */
   isMoveTargetRestricted(_move: MoveId, _user: Pokemon, _target: Pokemon): boolean {
     return false;
@@ -315,9 +316,10 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
 
   /**
    * @override
-   * @param {Pokemon} pokemon {@linkcode Pokemon} attempting to use the restricted move
-   * @param {MoveId} move {@linkcode MoveId} ID of the move being interrupted
-   * @returns {string} text to display when the move is interrupted
+   * Display the text that occurs when a move is interrupted via Disable.
+   * @param pokemon - The {@linkcode Pokemon} attempting to use the restricted move.
+   * @param move - The {@linkcode MoveId} of the move being interrupted.
+   * @returns The text to display when the given move is interrupted.
    */
   override interruptedText(pokemon: Pokemon, move: MoveId): string {
     return i18next.t("battle:disableInterruptedMove", {
@@ -1876,9 +1878,9 @@ export class TruantTag extends AbilityBattlerTag {
       return super.lapse(pokemon, lapseType);
     }
 
-    const lastMove = pokemon.getLastXMoves()[0];
+    const lastMove: TurnMove | undefined = pokemon.getLastXMoves()[0];
 
-    if (!lastMove) {
+    if (!lastMove?.move) {
       // Don't interrupt move if last move was `Moves.NONE` OR no prior move was found
       return true;
     }
@@ -3419,7 +3421,8 @@ export class PsychoShiftTag extends BattlerTag {
 }
 
 /**
- * Tag associated with the move Magic Coat.
+ * Tag associated with {@linkcode Moves.MAGIC_COAT | Magic Coat} that reflects certain status moves directed at the user.
+ * TODO: Move Reflection code out of `move-effect-phase` and into here
  */
 export class MagicCoatTag extends BattlerTag {
   constructor() {

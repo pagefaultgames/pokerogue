@@ -1,6 +1,7 @@
 import type { AbAttrApplyFunc, AbAttrMap, AbAttrString, AbAttrSuccessFunc } from "#app/@types/ability-types";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
+import type { HitCheckEntry } from "#app/phases/move-effect-phase";
 import type { BooleanHolder, NumberHolder } from "#app/utils/common";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { HitResult } from "#enums/hit-result";
@@ -9,7 +10,6 @@ import type { StatusEffect } from "#enums/status-effect";
 import type { WeatherType } from "#enums/weather-type";
 import type { BattlerTag } from "../battler-tags";
 import type Move from "../moves/move";
-import type { PokemonMove } from "../moves/pokemon-move";
 import type { TerrainType } from "../terrain";
 import type { Weather } from "../weather";
 import type {
@@ -79,8 +79,6 @@ function applySingleAbAttrs<T extends AbAttrString>(
       continue;
     }
 
-    globalScene.phaseManager.setPhaseQueueSplice();
-
     if (attr.showAbility && !simulated) {
       globalScene.phaseManager.queueAbilityDisplay(pokemon, passive, true);
       abShown = true;
@@ -120,7 +118,6 @@ function applyAbAttrsInternal<T extends AbAttrString>(
   for (const passive of [false, true]) {
     if (pokemon) {
       applySingleAbAttrs(pokemon, passive, attrType, applyFunc, successFunc, args, gainedMidTurn, simulated, messages);
-      globalScene.phaseManager.clearPhaseQueueSplice();
     }
   }
 }
@@ -206,18 +203,20 @@ export function applyPostDefendAbAttrs<K extends AbAttrString>(
 export function applyPostMoveUsedAbAttrs<K extends AbAttrString>(
   attrType: AbAttrMap[K] extends PostMoveUsedAbAttr ? K : never,
   pokemon: Pokemon,
-  move: PokemonMove,
+  move: Move,
   source: Pokemon,
   targets: BattlerIndex[],
+  hitChecks: HitCheckEntry[],
   simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal(
     attrType,
     pokemon,
-    (attr, _passive) => (attr as PostMoveUsedAbAttr).applyPostMoveUsed(pokemon, move, source, targets, simulated, args),
     (attr, _passive) =>
-      (attr as PostMoveUsedAbAttr).canApplyPostMoveUsed(pokemon, move, source, targets, simulated, args),
+      (attr as PostMoveUsedAbAttr).applyPostMoveUsed(pokemon, move, source, targets, hitChecks, simulated, args),
+    (attr, _passive) =>
+      (attr as PostMoveUsedAbAttr).canApplyPostMoveUsed(pokemon, move, source, targets, hitChecks, simulated, args),
     args,
     simulated,
   );
