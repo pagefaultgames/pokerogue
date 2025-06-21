@@ -3903,7 +3903,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     const targets = pokemon.getOpponents();
     const target = this.getTarget(targets);
 
-    if (target.summonData.illusion) {
+    if (target?.summonData?.illusion || pokemon?.isTransformed() || target?.isTransformed()) {
       return false;
     }
 
