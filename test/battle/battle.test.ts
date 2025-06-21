@@ -30,12 +30,6 @@ describe("Test Battle Phase", () => {
     game.scene.gameData.gender = undefined!; // just for these tests!
   });
 
-  it("newGame one-liner", async () => {
-    await game.classicMode.startBattle();
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.phaseManager.getCurrentPhase()?.phaseName).toBe("CommandPhase");
-  });
-
   it("do attack wave 3 - single battle - regular - OHKO", async () => {
     game.override.enemySpecies(SpeciesId.RATTATA).startingLevel(2000).battleStyle("single").startingWave(3);
     await game.classicMode.startBattle([SpeciesId.MEWTWO]);

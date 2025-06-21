@@ -86,14 +86,14 @@ export default class PhaseInterceptor {
 
   /**
    * Method to transition to a target phase.
-   * @param targetPhase - The name of the phase to transition to.
+   * @param target - The name of the {@linkcode Phase} to transition to.
    * @param runTarget - Whether or not to run the target phase; default `true`.
-   * @returns A Promise that resolves when the target phase is reached.
+   * @returns A Promise that resolves when {@linkcode target} has been reached.
    */
-  public async to(targetPhase: PhaseString, runTarget = true): Promise<void> {
+  public async to(target: PhaseString, runTarget = true): Promise<void> {
     const pm = this.scene.phaseManager;
     let currentPhase = pm.getCurrentPhase();
-    while (!currentPhase?.is(targetPhase)) {
+    while (!currentPhase?.is(target)) {
       if (!currentPhase) {
         console.log("Reached end of phases without hitting target; resolving.");
         return;
@@ -108,7 +108,7 @@ export default class PhaseInterceptor {
 
     if (!runTarget) {
       // We hit the target; run as applicable and wrap up.
-      console.log(`PhaseInterceptor.to: Stopping on run of ${targetPhase}`);
+      console.log(`PhaseInterceptor.to: Stopping on run of ${target}`);
       return;
     }
 
@@ -120,18 +120,19 @@ export default class PhaseInterceptor {
    * @param currentPhase - The {@linkcode Phase} to run.
    * @returns A Promise that resolves when the phase is run.
    */
-  private async run(currentPhase: Phase): Promise<void> {
-    this.isRunning = true;
-    try {
+  private run(currentPhase: Phase): Promise<void> {
+    return new Promise<void>(resolve => {
+      this.isRunning = true;
       this.logPhase(currentPhase.phaseName);
       currentPhase.start();
-    } catch (error: unknown) {
+      resolve();
+    }).catch((error: unknown) => {
       throw error instanceof Error
         ? error
         : new Error(
             `Unknown error occurred while running phase ${currentPhase.phaseName}!\nError: ${format("%O", error)}`,
           );
-    }
+    });
   }
 
   /**
@@ -139,7 +140,7 @@ export default class PhaseInterceptor {
    * @throws Error if already running a phase.
    * @remarks
    * This function is used for removing phases _not already started_.
-   * To stop ones already in the process of running, use `game.endPhase`
+   * To stop ones already in the process of running, use `game.endPhase`.
    */
   shiftPhase() {
     if (this.isRunning) {

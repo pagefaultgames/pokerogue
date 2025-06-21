@@ -22,14 +22,21 @@ import type { BattleType } from "#enums/battle-type";
  * Helper to handle overrides in tests
  */
 export class OverridesHelper extends GameManagerHelper {
-  /** If `true`, removes the starting items from enemies at the start of each test; default `true` */
+  /**
+   * If `true`, will remove starting items from enemies at the start of every test that lacks a pre-defined
+   * held item override (via {@linkcode OVERRIDES.OPP_HELD_ITEMS_OVERRIDE}).
+   * @defaultValue `true`
+   */
   public removeEnemyStartingItems = true;
-  /** If `true`, sets the shiny overrides to disable shinies at the start of each test; default `true` */
+  /** If `true`, will forcibly disable player & enemy shinies at the start of each test.
+   *
+   * @defaultValue `true`
+   */
   public disableShinies = true;
 
   /**
    * Override the starting biome
-   * @warning Any event listeners that are attached to [NewArenaEvent](events\battle-scene.ts) may need to be handled down the line
+   * @warning Any event listeners that are attached to [NewArenaEvent](../../../src/events/battle-scene.ts) may need to be handled down the line
    * @param biome - The biome to set
    */
   public startingBiome(biome: BiomeId): this {
