@@ -7,7 +7,7 @@ import { PokemonPhase } from "#app/phases/pokemon-phase";
 
 /** The phase where all on-field Pokemon trigger Dancer and Dancer-like effects. */
 export class DancerPhase extends PokemonPhase {
-  public override readonly phaseName: "DancerPhase";
+  public override readonly phaseName = "DancerPhase";
 
   constructor(
     battlerIndex: BattlerIndex,

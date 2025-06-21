@@ -64,6 +64,8 @@ import { PostGameOverPhase } from "#app/phases/post-game-over-phase";
 import { RevivalBlessingPhase } from "#app/phases/revival-blessing-phase";
 
 import type { PhaseClass, PhaseString } from "#app/@types/phase-types";
+import { DancerPhase } from "#app/phases/dancer-phase";
+import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 
 export interface PromptHandler {
   phaseTarget?: string;
@@ -109,6 +111,7 @@ export default class PhaseInterceptor {
     [ToggleDoublePositionPhase, this.startPhase],
     [CheckSwitchPhase, this.startPhase],
     [ShowAbilityPhase, this.startPhase],
+    [HideAbilityPhase, this.startPhase],
     [MessagePhase, this.startPhase],
     [TurnInitPhase, this.startPhase],
     [CommandPhase, this.startPhase],
@@ -157,6 +160,7 @@ export default class PhaseInterceptor {
     [UnlockPhase, this.startPhase],
     [PostGameOverPhase, this.startPhase],
     [RevivalBlessingPhase, this.startPhase],
+    [DancerPhase, this.startPhase],
   ];
 
   private endBySetMode = [

@@ -34,7 +34,7 @@ describe("Abilities - Dancer", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .ability(AbilityId.DANCER)
       .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.BALL_FETCH)
@@ -65,6 +65,7 @@ describe("Abilities - Dancer", () => {
     expect(currentPhase.useMode).toBe(useMode);
   }
 
+  /** Go to and stop right before using the next move. */
   async function toNextMove() {
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MovePhase", false);
@@ -85,7 +86,7 @@ describe("Abilities - Dancer", () => {
     game.move.select(MoveId.SWORDS_DANCE);
     await game.move.selectEnemyMove(MoveId.VICTORY_DANCE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("BerryPhase");
+    await game.toEndOfTurn();
 
     // shpuldn't use PP if copied move is also in moveset
     expect(oricorio.moveset.map(m => m.ppUsed)).toEqual([0, 1]);
