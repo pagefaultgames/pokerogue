@@ -78,7 +78,7 @@ describe("Abilities - Imposter", () => {
     game.override.ability(AbilityId.BALL_FETCH);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.DITTO]);
 
-    const [karp, ditto] = game.scene.getPlayerField();
+    const [karp, ditto] = game.scene.getPlayerParty();
     const enemy = game.field.getEnemyPokemon();
     game.field.mockAbility(ditto, AbilityId.IMPOSTER);
 
@@ -93,7 +93,7 @@ describe("Abilities - Imposter", () => {
     expect(enemy.getStat(Stat.ATK, false)).toBe(avgAtk);
     expect(enemy.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
 
-    // Turn 2: Switch in ditto, should copy enemy ability
+    // Turn 2: Switch in ditto, should copy enemy stats
     game.doSwitchPokemon(1);
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
