@@ -1419,6 +1419,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreHeldItems - Whether to ignore the user's held items during stat calculation; default `false`.
    * @returns The final in-battle value for the given stat.
    */
+   // TODO: Replace the optional parameters with an object to make calling this method less cumbersome
   getEffectiveStat(
     stat: EffectiveStat,
     opponent?: Pokemon,
