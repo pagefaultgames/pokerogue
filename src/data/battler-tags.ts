@@ -77,7 +77,7 @@ export class BattlerTag {
   /**
    * Tick down this {@linkcode BattlerTag}'s duration.
    * @param _pokemon - The {@linkcode Pokemon} whom this tag belongs to.
-   * Unused by default but can be used by super classes.
+   * Unused by default but can be used by subclasses.
    * @param _lapseType - The {@linkcode BattlerTagLapseType} being lapsed.
    * Unused by default but can be used by super classes.
    * @returns `true` if the tag should be kept (`turnCount` > 0`)
