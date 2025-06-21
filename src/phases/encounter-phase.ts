@@ -2,7 +2,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { BattleType } from "#enums/battle-type";
 import { globalScene } from "#app/global-scene";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import { applyAbAttrs, applyPreSummonAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { initEncounterAnims, loadEncounterAnimAssets } from "#app/data/battle-anims";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -128,7 +128,7 @@ export class EncounterPhase extends BattlePhase {
             .slice(0, !battle.double ? 1 : 2)
             .reverse()
             .forEach(playerPokemon => {
-              applyAbAttrs("SyncEncounterNatureAbAttr", playerPokemon, null, false, battle.enemyParty[e]);
+              applyAbAttrs("SyncEncounterNatureAbAttr", { pokemon: playerPokemon, target: battle.enemyParty[e] });
             });
         }
       }
@@ -249,7 +249,7 @@ export class EncounterPhase extends BattlePhase {
         if (e < (battle.double ? 2 : 1)) {
           if (battle.battleType === BattleType.WILD) {
             for (const pokemon of globalScene.getField()) {
-              applyPreSummonAbAttrs("PreSummonAbAttr", pokemon, []);
+              applyAbAttrs("PreSummonAbAttr", { pokemon });
             }
             globalScene.field.add(enemyPokemon);
             battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);

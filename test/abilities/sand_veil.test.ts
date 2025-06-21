@@ -1,3 +1,4 @@
+import type { StatMultiplierAbAttrParams } from "#app/@types/ability-types";
 import { allAbilities } from "#app/data/data-lists";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
@@ -46,15 +47,13 @@ describe("Abilities - Sand Veil", () => {
     vi.spyOn(leadPokemon[0], "getAbility").mockReturnValue(allAbilities[AbilityId.SAND_VEIL]);
 
     const sandVeilAttr = allAbilities[AbilityId.SAND_VEIL].getAttrs("StatMultiplierAbAttr")[0];
-    vi.spyOn(sandVeilAttr, "applyStatStage").mockImplementation(
-      (_pokemon, _passive, _simulated, stat, statValue, _args) => {
-        if (stat === Stat.EVA && game.scene.arena.weather?.weatherType === WeatherType.SANDSTORM) {
-          statValue.value *= -1; // will make all attacks miss
-          return true;
-        }
-        return false;
-      },
-    );
+    vi.spyOn(sandVeilAttr, "apply").mockImplementation(({ stat, statVal }: StatMultiplierAbAttrParams) => {
+      if (stat === Stat.EVA && game.scene.arena.weather?.weatherType === WeatherType.SANDSTORM) {
+        statVal.value *= -1; // will make all attacks miss
+        return true;
+      }
+      return false;
+    });
 
     expect(leadPokemon[0].hasAbility(AbilityId.SAND_VEIL)).toBe(true);
     expect(leadPokemon[1].hasAbility(AbilityId.SAND_VEIL)).toBe(false);
