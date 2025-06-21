@@ -1,4 +1,5 @@
-import { addTextObject, TextStyle } from "./text";
+import { addTextObject } from "./text";
+import { TextStyle } from "#enums/text-style";
 import { globalScene } from "#app/global-scene";
 import { ArenaTrapTag } from "#app/data/arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";

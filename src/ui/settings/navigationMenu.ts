@@ -1,7 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
 import type { InputsIcons } from "#app/ui/settings/abstract-control-settings-ui-handler";
-import { addTextObject, setTextStyle, TextStyle } from "#app/ui/text";
+import { addTextObject, setTextStyle } from "#app/ui/text";
+import { TextStyle } from "#enums/text-style";
 import { addWindow } from "#app/ui/ui-theme";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";

@@ -1,5 +1,6 @@
 import { UiMode } from "#enums/ui-mode";
-import { TextStyle, addTextObject, getEggTierTextTint, getTextStyleOptions } from "./text";
+import { addTextObject, getEggTierTextTint, getTextStyleOptions } from "./text";
+import { TextStyle } from "#enums/text-style";
 import MessageUiHandler from "./message-ui-handler";
 import { getEnumValues, getEnumKeys, fixedInt, randSeedShuffle } from "#app/utils/common";
 import type { IEggOptions } from "../data/egg";
@@ -105,7 +106,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       const gachaInfoContainer = globalScene.add.container(160, 46);
 
       const currentLanguage = i18next.resolvedLanguage ?? "en";
-      let gachaTextStyle = TextStyle.WINDOW_ALT;
+      let gachaTextStyle: TextStyle = TextStyle.WINDOW_ALT;
       let gachaX = 4;
       let gachaY = 0;
       let pokemonIconX = -20;

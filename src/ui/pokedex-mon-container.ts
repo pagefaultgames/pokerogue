@@ -2,7 +2,8 @@ import type { Variant } from "#app/sprites/variant";
 import { globalScene } from "#app/global-scene";
 import { isNullOrUndefined } from "#app/utils/common";
 import type PokemonSpecies from "../data/pokemon-species";
-import { addTextObject, TextStyle } from "./text";
+import { addTextObject } from "./text";
+import { TextStyle } from "#enums/text-style";
 
 interface SpeciesDetails {
   shiny?: boolean;

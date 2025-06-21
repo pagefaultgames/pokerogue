@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import BattleFlyout from "../battle-flyout";
-import { addTextObject, TextStyle } from "#app/ui/text";
+import { addTextObject } from "#app/ui/text";
+import { TextStyle } from "#enums/text-style";
 import { addWindow, WindowVariant } from "#app/ui/ui-theme";
 import { Stat } from "#enums/stat";
 import i18next from "i18next";

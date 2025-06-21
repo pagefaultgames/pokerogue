@@ -1,6 +1,7 @@
 import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import { addTextObject, TextStyle } from "./text";
+import { addTextObject } from "./text";
+import { TextStyle } from "#enums/text-style";
 import { getTypeDamageMultiplierColor } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";
 import { Command } from "#enums/command";
@@ -278,7 +279,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
       const ppPercentLeft = pp / maxPP;
 
       //** Determines TextStyle according to percentage of PP remaining */
-      let ppColorStyle = TextStyle.MOVE_PP_FULL;
+      let ppColorStyle: TextStyle = TextStyle.MOVE_PP_FULL;
       if (ppPercentLeft > 0.25 && ppPercentLeft <= 0.5) {
         ppColorStyle = TextStyle.MOVE_PP_HALF_FULL;
       } else if (ppPercentLeft > 0 && ppPercentLeft <= 0.25) {
