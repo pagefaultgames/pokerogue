@@ -96,8 +96,8 @@ export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): Po
 }
 
 export function getFusedSpeciesName(speciesAName: string, speciesBName: string): string {
-  const fragAPattern = /([a-z]{2}.*?[aeiou(?:y$)\-\']+)(.*?)$/i;
-  const fragBPattern = /([a-z]{2}.*?[aeiou(?:y$)\-\'])(.*?)$/i;
+  const fragAPattern = /([a-z]{2}.*?[aeiou(?:y$)\-']+)(.*?)$/i;
+  const fragBPattern = /([a-z]{2}.*?[aeiou(?:y$)\-'])(.*?)$/i;
 
   const [speciesAPrefixMatch, speciesBPrefixMatch] = [speciesAName, speciesBName].map(n => /^(?:[^ ]+) /.exec(n));
   const [speciesAPrefix, speciesBPrefix] = [speciesAPrefixMatch, speciesBPrefixMatch].map(m => (m ? m[0] : ""));
@@ -134,7 +134,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
     if (fragBMatch) {
       const lastCharA = fragA.slice(fragA.length - 1);
       const prevCharB = fragBMatch[1].slice(fragBMatch.length - 1);
-      fragB = (/[\-']/.test(prevCharB) ? prevCharB : "") + fragBMatch[2] || prevCharB;
+      fragB = (/[-']/.test(prevCharB) ? prevCharB : "") + fragBMatch[2] || prevCharB;
       if (lastCharA === fragB[0]) {
         if (/[aiu]/.test(lastCharA)) {
           fragB = fragB.slice(1);
@@ -379,7 +379,7 @@ export abstract class PokemonSpeciesForm {
   }
 
   getSpriteAtlasPath(female: boolean, formIndex?: number, shiny?: boolean, variant?: number, back?: boolean): string {
-    const spriteId = this.getSpriteId(female, formIndex, shiny, variant, back).replace(/\_{2}/g, "/");
+    const spriteId = this.getSpriteId(female, formIndex, shiny, variant, back).replace(/_{2}/g, "/");
     return `${/_[1-3]$/.test(spriteId) ? "variant/" : ""}${spriteId}`;
   }
 
@@ -478,8 +478,8 @@ export abstract class PokemonSpeciesForm {
         case SpeciesId.DUDUNSPARCE:
           break;
         case SpeciesId.ZACIAN:
+        // biome-ignore lint/suspicious/noFallthroughSwitchClause: Intentionally falls through
         case SpeciesId.ZAMAZENTA:
-          // biome-ignore lint/suspicious/noFallthroughSwitchClause: Falls through
           if (formSpriteKey.startsWith("behemoth")) {
             formSpriteKey = "crowned";
           }
@@ -569,7 +569,7 @@ export abstract class PokemonSpeciesForm {
     const rootSpeciesId = this.getRootSpeciesId();
     for (const moveId of moveset) {
       if (speciesEggMoves.hasOwnProperty(rootSpeciesId)) {
-        const eggMoveIndex = speciesEggMoves[rootSpeciesId].findIndex(m => m === moveId);
+        const eggMoveIndex = speciesEggMoves[rootSpeciesId].indexOf(moveId);
         if (eggMoveIndex > -1 && eggMoves & (1 << eggMoveIndex)) {
           continue;
         }
@@ -764,7 +764,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   readonly subLegendary: boolean;
   readonly legendary: boolean;
   readonly mythical: boolean;
-  readonly species: string;
+  public category: string;
   readonly growthRate: GrowthRate;
   /** The chance (as a decimal) for this Species to be male, or `null` for genderless species */
   readonly malePercent: number | null;
@@ -778,7 +778,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     subLegendary: boolean,
     legendary: boolean,
     mythical: boolean,
-    species: string,
+    category: string,
     type1: PokemonType,
     type2: PokemonType | null,
     height: number,
@@ -829,7 +829,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     this.subLegendary = subLegendary;
     this.legendary = legendary;
     this.mythical = mythical;
-    this.species = species;
+    this.category = category;
     this.growthRate = growthRate;
     this.malePercent = malePercent;
     this.genderDiffs = genderDiffs;
@@ -968,6 +968,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
   localize(): void {
     this.name = i18next.t(`pokemon:${SpeciesId[this.speciesId].toLowerCase()}`);
+    this.category = i18next.t(`pokemonCategory:${SpeciesId[this.speciesId].toLowerCase()}_category`);
   }
 
   getWildSpeciesForLevel(level: number, allowEvolving: boolean, isBoss: boolean, gameMode: GameMode): SpeciesId {

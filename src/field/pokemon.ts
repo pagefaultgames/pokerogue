@@ -898,12 +898,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getSpriteAtlasPath(ignoreOverride?: boolean): string {
-    const spriteId = this.getSpriteId(ignoreOverride).replace(/\_{2}/g, "/");
+    const spriteId = this.getSpriteId(ignoreOverride).replace(/_{2}/g, "/");
     return `${/_[1-3]$/.test(spriteId) ? "variant/" : ""}${spriteId}`;
   }
 
   getBattleSpriteAtlasPath(back?: boolean, ignoreOverride?: boolean): string {
-    const spriteId = this.getBattleSpriteId(back, ignoreOverride).replace(/\_{2}/g, "/");
+    const spriteId = this.getBattleSpriteId(back, ignoreOverride).replace(/_{2}/g, "/");
     return `${/_[1-3]$/.test(spriteId) ? "variant/" : ""}${spriteId}`;
   }
 
@@ -977,7 +977,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getFusionBattleSpriteAtlasPath(back?: boolean, ignoreOverride?: boolean): string {
-    return this.getFusionBattleSpriteId(back, ignoreOverride).replace(/\_{2}/g, "/");
+    return this.getFusionBattleSpriteId(back, ignoreOverride).replace(/_{2}/g, "/");
   }
 
   getIconAtlasKey(ignoreOverride = false, useIllusion = true): string {
@@ -2498,14 +2498,39 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       defScore *=
         1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[1], opponent, false, false, undefined, true), 0.25);
     }
+    atkScore *= 1.25; //give more value for the pokemon's typing
+    const moveset = this.moveset;
+    let moveAtkScoreLength = 0;
+    for (const move of moveset) {
+      if (move.getMove().category === MoveCategory.SPECIAL || move.getMove().category === MoveCategory.PHYSICAL) {
+        atkScore += opponent.getAttackTypeEffectiveness(move.getMove().type, this, false, true, undefined, true);
+        moveAtkScoreLength++;
+      }
+    }
+    atkScore = atkScore / (moveAtkScoreLength + 1); //calculate the median for the attack score
     /**
      * Based on this Pokemon's HP ratio compared to that of the opponent.
      * This ratio is multiplied by 1.5 if this Pokemon outspeeds the opponent;
      * however, the final ratio cannot be higher than 1.
      */
-    let hpDiffRatio = this.getHpRatio() + (1 - opponent.getHpRatio());
-    if (outspeed) {
-      hpDiffRatio = Math.min(hpDiffRatio * 1.5, 1);
+    const hpRatio = this.getHpRatio();
+    const oppHpRatio = opponent.getHpRatio();
+    const isDying = hpRatio <= 0.2;
+    let hpDiffRatio = hpRatio + (1 - oppHpRatio);
+    if (isDying && this.isActive(true)) {
+      //It might be a sacrifice candidate if hp under 20%
+      const badMatchup = atkScore < 1.5 && defScore < 1.5;
+      if (!outspeed && badMatchup) {
+        //It might not be a worthy sacrifice if it doesn't outspeed or doesn't do enough damage
+        hpDiffRatio *= 0.85;
+      } else {
+        hpDiffRatio = Math.min(1 - hpRatio + (outspeed ? 0.2 : 0.1), 1);
+      }
+    } else if (outspeed) {
+      hpDiffRatio = Math.min(hpDiffRatio * 1.25, 1);
+    } else if (hpRatio > 0.2 && hpRatio <= 0.4) {
+      //Might be considered to be switched because it's not in low enough health
+      hpDiffRatio = Math.min(hpDiffRatio * 0.5, 1);
     }
     return (atkScore + defScore) * hpDiffRatio;
   }
@@ -2880,7 +2905,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           );
         };
 
-    let fusionOverride: PokemonSpecies | undefined = undefined;
+    let fusionOverride: PokemonSpecies | undefined;
 
     if (forStarter && this.isPlayer() && Overrides.STARTER_FUSION_SPECIES_OVERRIDE) {
       fusionOverride = getPokemonSpecies(Overrides.STARTER_FUSION_SPECIES_OVERRIDE);
@@ -4373,9 +4398,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       scene.time.delayedCall(fixedInt(Math.ceil(duration * 0.4)), () => {
         try {
           SoundFade.fadeOut(scene, cry, fixedInt(Math.ceil(duration * 0.2)));
-          fusionCry = this.getFusionSpeciesForm(undefined, true).cry(
-            Object.assign({ seek: Math.max(fusionCry.totalDuration * 0.4, 0) }, soundConfig),
-          );
+          fusionCry = this.getFusionSpeciesForm(undefined, true).cry({
+            seek: Math.max(fusionCry.totalDuration * 0.4, 0),
+            ...soundConfig,
+          });
           SoundFade.fadeIn(
             scene,
             fusionCry,
@@ -4517,13 +4543,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
         if (i === transitionIndex && fusionCryKey) {
           SoundFade.fadeOut(globalScene, cry, fixedInt(Math.ceil((duration / rate) * 0.2)));
-          fusionCry = globalScene.playSound(
-            fusionCryKey,
-            Object.assign({
-              seek: Math.max(fusionCry.totalDuration * 0.4, 0),
-              rate: rate,
-            }),
-          );
+          fusionCry = globalScene.playSound(fusionCryKey, {
+            seek: Math.max(fusionCry.totalDuration * 0.4, 0),
+            rate: rate,
+          });
           SoundFade.fadeIn(
             globalScene,
             fusionCry,
@@ -5316,10 +5339,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     for (let sc = 0; sc < spriteColors.length; sc++) {
       const delta = Math.min(...paletteDeltas[sc]);
-      const paletteIndex = Math.min(
-        paletteDeltas[sc].findIndex(pd => pd === delta),
-        fusionPalette.length - 1,
-      );
+      const paletteIndex = Math.min(paletteDeltas[sc].indexOf(delta), fusionPalette.length - 1);
       if (delta < 255) {
         const ratio = easeFunc(delta / 255);
         const color = [0, 0, 0, fusionSpriteColors[sc][3]];
