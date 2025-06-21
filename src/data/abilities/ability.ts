@@ -8382,7 +8382,7 @@ export function initAbilities() {
     new Ability(AbilityId.IMPOSTER, 5)
       .attr(PostSummonTransformAbAttr)
       .uncopiable()
-      .edgeCase(), // Should copy rage fist hit count
+      .edgeCase(), // Should copy rage fist hit count, etc (see Transform edge case for full list)
     new Ability(AbilityId.INFILTRATOR, 5)
       .attr(InfiltratorAbAttr)
       .partial(), // does not bypass Mist
