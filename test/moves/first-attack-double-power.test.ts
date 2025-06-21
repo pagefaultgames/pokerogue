@@ -27,7 +27,7 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .ability(AbilityId.BALL_FETCH)
+      .ability(AbilityId.STURDY)
       .battleStyle("single")
       .battleType(BattleType.TRAINER)
       .criticalHits(false)
@@ -77,7 +77,7 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
   it("should double power on the turn the target switches in", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(MoveId.BOLT_BEAK);
+    game.move.use(MoveId.BOLT_BEAK);
     game.forceEnemyToSwitch();
     await game.toEndOfTurn();
 
@@ -87,7 +87,7 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
   it("should double power on forced switch-induced sendouts", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(MoveId.BOLT_BEAK);
+    game.move.use(MoveId.BOLT_BEAK);
     await game.move.forceEnemyMove(MoveId.U_TURN);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();

@@ -1,7 +1,8 @@
-import { allMoves, allSpecies } from "#app/data/data-lists";
+import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -31,7 +32,8 @@ describe("Move - Payback", () => {
       .enemyLevel(100)
       .enemySpecies(SpeciesId.DRACOVISH)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(MoveId.SPLASH);
+      .enemyMoveset(MoveId.SPLASH)
+      .startingModifier([{ name: "POKEBALL", count: 5 }]);
 
     powerSpy = vi.spyOn(allMoves[MoveId.PAYBACK], "calculateBattlePower");
   });
@@ -54,12 +56,11 @@ describe("Move - Payback", () => {
     expect(powerSpy).toHaveLastReturnedWith(allMoves[MoveId.PAYBACK].power);
   });
 
-  it("should trigger for enemies on player failed ball catch", async () => {
-    // Make dracovish uncatchable so we don't flake out
-    vi.spyOn(allSpecies[SpeciesId.DRACOVISH], "catchRate", "get").mockReturnValue(0);
+  // TODO: Enable test once ability to force catch failure is added
+  it.todo("should trigger for enemies on player failed ball catch", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.doThrowPokeball(0);
+    game.doThrowPokeball(PokeballType.POKEBALL);
     await game.move.forceEnemyMove(MoveId.PAYBACK);
     await game.toEndOfTurn();
 
