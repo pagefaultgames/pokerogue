@@ -972,9 +972,9 @@ export class PokemonBaseStatTotalModifierType
   constructor(good: boolean) {
     super(
       good
-        ? "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD"
-        : "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD",
-      good ? "good_berry_juice" : "bad_berry_juice",
+        ? "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.name"
+        : "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.name",
+      good ? "berry_juice_good" : "berry_juice_bad",
       (_type, args) => new PokemonBaseStatTotalModifier(this, (args[0] as Pokemon).id, this.good),
     );
     this.good = good;
@@ -982,8 +982,8 @@ export class PokemonBaseStatTotalModifierType
 
   override getDescription(): string {
     return this.good
-      ? i18next.t("modifierType:ModifierType.PokemonBaseStatTotalModifierType.description.good")
-      : i18next.t("modifierType:ModifierType.PokemonBaseStatTotalModifierType.description.bad");
+      ? i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.description")
+      : i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.description");
   }
 
   public getPregenArgs(): any[] {
