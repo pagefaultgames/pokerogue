@@ -26,7 +26,14 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
-import { isVirtual, isIgnorePP, isReflected, MoveUseMode, isIgnoreStatus } from "#enums/move-use-mode";
+import {
+  isVirtual,
+  isIgnorePP,
+  isReflected,
+  MoveUseMode,
+  isIgnoreStatus,
+  isDancerCopiable,
+} from "#enums/move-use-mode";
 import { frenzyMissFunc } from "#app/data/moves/move-utils";
 
 export class MovePhase extends BattlePhase {
@@ -380,8 +387,9 @@ export class MovePhase extends BattlePhase {
       success = passesConditions && !failedDueToWeather && !failedDueToTerrain;
     }
 
-    // Update the battle's "last move" pointer, unless we're currently mimicking a move.
-    if (!allMoves[this.move.moveId].hasAttr("CopyMoveAttr")) {
+    // Update the battle's "last move" pointer, unless we're currently mimicking a move,
+    // reflecting a move or triggering Dancer.
+    if (!allMoves[this.move.moveId].hasAttr("CopyMoveAttr") && isDancerCopiable(this.useMode)) {
       // The last move used is unaffected by moves that fail
       if (success) {
         globalScene.currentBattle.lastMove = this.move.moveId;
