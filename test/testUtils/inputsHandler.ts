@@ -89,7 +89,7 @@ class Fakepad extends Phaser.Input.Gamepad.Gamepad {
   public index: number;
 
   constructor(pad) {
-    //@ts-ignore
+    //@ts-expect-error
     super(undefined, { ...pad, buttons: pad.deviceMapping, axes: [] }); //TODO: resolve ts-ignore
     this.id = "xbox_360_fakepad";
     this.index = 0;
