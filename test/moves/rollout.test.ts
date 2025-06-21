@@ -1,5 +1,4 @@
 import { allMoves } from "#app/data/data-lists";
-import { CommandPhase } from "#app/phases/command-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -57,7 +56,7 @@ describe("Moves - Rollout", () => {
 
     for (let i = 0; i < turns; i++) {
       game.move.select(MoveId.ROLLOUT);
-      await game.phaseInterceptor.to(CommandPhase);
+      await game.phaseInterceptor.to("CommandPhase");
 
       dmgHistory.push(previousHp - enemyPkm.hp);
       previousHp = enemyPkm.hp;

@@ -87,17 +87,6 @@ function getTestRunStarters(seed: string, species?: SpeciesId[]): Starter[] {
   return starters;
 }
 
-export function waitUntil(truth): Promise<unknown> {
-  return new Promise(resolve => {
-    const interval = setInterval(() => {
-      if (truth()) {
-        clearInterval(interval);
-        resolve(true);
-      }
-    }, 1000);
-  });
-}
-
 /** Get the index of `move` from the moveset of the pokemon on the player's field at location `pokemonIndex`. */
 export function getMovePosition(scene: BattleScene, pokemonIndex: 0 | 1, move: MoveId): number {
   const playerPokemon = scene.getPlayerField()[pokemonIndex];

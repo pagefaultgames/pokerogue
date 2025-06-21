@@ -1,8 +1,6 @@
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { SpeciesId } from "#enums/species-id";
-import { MovePhase } from "#app/phases/move-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -42,7 +40,7 @@ describe("Abilities - Flash Fire", () => {
     const blissey = game.scene.getPlayerPokemon()!;
 
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     expect(blissey.hp).toBe(blissey.getMaxHp());
   });
 
@@ -53,7 +51,7 @@ describe("Abilities - Flash Fire", () => {
     const blissey = game.scene.getPlayerPokemon()!;
 
     game.move.select(MoveId.PROTECT);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     expect(blissey!.getTag(BattlerTagType.FIRE_BOOST)).toBeUndefined();
   });
 
@@ -65,10 +63,10 @@ describe("Abilities - Flash Fire", () => {
 
     game.move.select(MoveId.SPLASH);
     await game.move.forceHit();
-    await game.phaseInterceptor.to(MovePhase, false);
+    await game.phaseInterceptor.to("MovePhase", false);
     await game.move.forceHit();
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     expect(blissey!.getTag(BattlerTagType.FIRE_BOOST)).toBeDefined();
   });
 
@@ -80,7 +78,7 @@ describe("Abilities - Flash Fire", () => {
 
     game.move.select(MoveId.SPLASH);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     expect(blissey!.getTag(BattlerTagType.FIRE_BOOST)).toBeDefined();
   });
 
@@ -94,7 +92,7 @@ describe("Abilities - Flash Fire", () => {
 
     game.doSelectPartyPokemon(1);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const chansey = game.scene.getPlayerPokemon()!;
     expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(SpeciesId.CHANSEY);
     expect(chansey!.getTag(BattlerTagType.FIRE_BOOST)).toBeUndefined();
@@ -114,7 +112,7 @@ describe("Abilities - Flash Fire", () => {
     // first turn
     game.move.select(MoveId.EMBER);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const originalDmg = initialHP - blissey.hp;
 
     expect(blissey.hp > 0);
@@ -122,7 +120,7 @@ describe("Abilities - Flash Fire", () => {
 
     // second turn
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const flashFireDmg = initialHP - blissey.hp;
 
     expect(flashFireDmg).toBeGreaterThan(originalDmg);
@@ -146,7 +144,7 @@ describe("Abilities - Flash Fire", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
     await game.move.forceMiss();
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const originalDmg = initialHP - blissey.hp;
 
     expect(blissey.hp > 0);
@@ -154,7 +152,7 @@ describe("Abilities - Flash Fire", () => {
 
     // second turn
     game.move.select(MoveId.FIRE_PLEDGE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const flashFireDmg = initialHP - blissey.hp;
 
     expect(flashFireDmg).toBeGreaterThan(originalDmg);

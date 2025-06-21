@@ -48,9 +48,8 @@ export class PokemonHealPhase extends CommonAnimPhase {
   }
 
   start() {
-    if (!this.skipAnim && (this.revive || this.getPokemon().hp) && !this.getPokemon().isFullHp()) {
-      super.start();
-    } else {
+    super.start();
+    if (!(this.skipAnim && (this.revive || this.getPokemon().hp) && !this.getPokemon().isFullHp())) {
       this.end();
     }
   }

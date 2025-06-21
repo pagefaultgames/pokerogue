@@ -2,7 +2,6 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#app/enums/status-effect";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -49,14 +48,14 @@ describe("Moves - Beat Up", () => {
 
     game.move.select(MoveId.BEAT_UP);
 
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(playerPokemon.turnData.hitCount).toBe(6);
     expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
 
     while (playerPokemon.turnData.hitsLeft > 0) {
       enemyStartingHp = enemyPokemon.hp;
-      await game.phaseInterceptor.to(MoveEffectPhase);
+      await game.phaseInterceptor.to("MoveEffectPhase");
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
     }
   });
@@ -77,7 +76,7 @@ describe("Moves - Beat Up", () => {
 
     game.move.select(MoveId.BEAT_UP);
 
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(playerPokemon.turnData.hitCount).toBe(5);
   });

@@ -2,7 +2,6 @@ import { allMoves } from "#app/data/data-lists";
 import { PokemonType } from "#enums/pokemon-type";
 import { Weather } from "#app/data/weather";
 import type { PlayerPokemon } from "#app/field/pokemon";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
@@ -46,7 +45,7 @@ describe("Abilities - Protean", () => {
     expect(leadPokemon).not.toBe(undefined);
 
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     testPokemonTypeMatchesDefaultMoveType(leadPokemon, MoveId.SPLASH);
   });
@@ -61,12 +60,12 @@ describe("Abilities - Protean", () => {
     expect(leadPokemon).not.toBe(undefined);
 
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     testPokemonTypeMatchesDefaultMoveType(leadPokemon, MoveId.SPLASH);
 
     game.move.select(MoveId.AGILITY);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.waveData.abilitiesApplied).toContain(AbilityId.PROTEAN);
     const leadPokemonType = PokemonType[leadPokemon.getTypes()[0]];
@@ -83,7 +82,7 @@ describe("Abilities - Protean", () => {
     expect(leadPokemon).not.toBe(undefined);
 
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     testPokemonTypeMatchesDefaultMoveType(leadPokemon, MoveId.SPLASH);
   });
@@ -98,7 +97,7 @@ describe("Abilities - Protean", () => {
 
     game.scene.arena.weather = new Weather(WeatherType.SUNNY);
     game.move.select(MoveId.WEATHER_BALL);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.waveData.abilitiesApplied).toContain(AbilityId.PROTEAN);
     expect(leadPokemon.getTypes()).toHaveLength(1);
@@ -116,7 +115,7 @@ describe("Abilities - Protean", () => {
     expect(leadPokemon).not.toBe(undefined);
 
     game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.waveData.abilitiesApplied).toContain(AbilityId.PROTEAN);
     expect(leadPokemon.getTypes()).toHaveLength(1);
@@ -135,7 +134,7 @@ describe("Abilities - Protean", () => {
 
     game.scene.arena.biomeType = BiomeId.MOUNTAIN;
     game.move.select(MoveId.NATURE_POWER);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     testPokemonTypeMatchesDefaultMoveType(leadPokemon, MoveId.AIR_SLASH);
   });
@@ -149,7 +148,7 @@ describe("Abilities - Protean", () => {
     expect(leadPokemon).not.toBe(undefined);
 
     game.move.select(MoveId.DIG);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     testPokemonTypeMatchesDefaultMoveType(leadPokemon, MoveId.DIG);
   });
@@ -164,7 +163,7 @@ describe("Abilities - Protean", () => {
 
     game.move.select(MoveId.TACKLE);
     await game.move.forceMiss();
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     expect(enemyPokemon.isFullHp()).toBe(true);
@@ -180,7 +179,7 @@ describe("Abilities - Protean", () => {
     expect(leadPokemon).not.toBe(undefined);
 
     game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     testPokemonTypeMatchesDefaultMoveType(leadPokemon, MoveId.TACKLE);
   });
@@ -194,7 +193,7 @@ describe("Abilities - Protean", () => {
     expect(leadPokemon).not.toBe(undefined);
 
     game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     testPokemonTypeMatchesDefaultMoveType(leadPokemon, MoveId.TACKLE);
   });
@@ -209,7 +208,7 @@ describe("Abilities - Protean", () => {
 
     leadPokemon.summonData.types = [allMoves[MoveId.SPLASH].type];
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.waveData.abilitiesApplied).not.toContain(AbilityId.PROTEAN);
   });
@@ -225,7 +224,7 @@ describe("Abilities - Protean", () => {
     leadPokemon.isTerastallized = true;
 
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.waveData.abilitiesApplied).not.toContain(AbilityId.PROTEAN);
   });
@@ -239,7 +238,7 @@ describe("Abilities - Protean", () => {
     expect(leadPokemon).not.toBe(undefined);
 
     game.move.select(MoveId.STRUGGLE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.waveData.abilitiesApplied).not.toContain(AbilityId.PROTEAN);
   });
@@ -253,7 +252,7 @@ describe("Abilities - Protean", () => {
     expect(leadPokemon).not.toBe(undefined);
 
     game.move.select(MoveId.BURN_UP);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.waveData.abilitiesApplied).not.toContain(AbilityId.PROTEAN);
   });
@@ -267,7 +266,7 @@ describe("Abilities - Protean", () => {
     expect(leadPokemon).not.toBe(undefined);
 
     game.move.select(MoveId.TRICK_OR_TREAT);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     testPokemonTypeMatchesDefaultMoveType(leadPokemon, MoveId.TRICK_OR_TREAT);
   });
@@ -281,7 +280,7 @@ describe("Abilities - Protean", () => {
     expect(leadPokemon).not.toBe(undefined);
 
     game.move.select(MoveId.CURSE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     testPokemonTypeMatchesDefaultMoveType(leadPokemon, MoveId.CURSE);
     expect(leadPokemon.getTag(BattlerTagType.CURSED)).not.toBe(undefined);

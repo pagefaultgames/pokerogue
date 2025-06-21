@@ -1,9 +1,5 @@
 import { BattlerIndex } from "#enums/battler-index";
 import { allMoves } from "#app/data/data-lists";
-import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -47,16 +43,16 @@ describe("Moves - Scale Shot", () => {
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
-    await game.phaseInterceptor.to(MoveEffectPhase);
-    await game.phaseInterceptor.to(DamageAnimPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+    await game.phaseInterceptor.to("DamageAnimPhase");
 
     //check that stats haven't changed after one or two hits have occurred
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
     expect(minccino.getStatStage(Stat.DEF)).toBe(0);
     expect(minccino.getStatStage(Stat.SPD)).toBe(0);
 
     //check that stats changed on last hit
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
     expect(minccino.getStatStage(Stat.DEF)).toBe(-1);
     expect(minccino.getStatStage(Stat.SPD)).toBe(1);
   });
@@ -73,7 +69,7 @@ describe("Moves - Scale Shot", () => {
     const minccino = game.scene.getPlayerPokemon()!;
 
     game.move.select(MoveId.SCALE_SHOT);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     //effect not nullified by sheer force
     expect(minccino.getStatStage(Stat.DEF)).toBe(-1);

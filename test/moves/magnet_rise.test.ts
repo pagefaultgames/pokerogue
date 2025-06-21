@@ -1,5 +1,3 @@
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -38,7 +36,7 @@ describe("Moves - Magnet Rise", () => {
 
     const startingHp = game.scene.getPlayerParty()[0].hp;
     game.move.select(moveToUse);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const finalHp = game.scene.getPlayerParty()[0].hp;
     const hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);
@@ -49,12 +47,12 @@ describe("Moves - Magnet Rise", () => {
 
     const startingHp = game.scene.getPlayerParty()[0].hp;
     game.move.select(moveToUse);
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
     let finalHp = game.scene.getPlayerParty()[0].hp;
     let hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);
     game.move.select(MoveId.GRAVITY);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     finalHp = game.scene.getPlayerParty()[0].hp;
     hpLost = finalHp - startingHp;
     expect(hpLost).not.toBe(0);

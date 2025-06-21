@@ -1,8 +1,6 @@
 import { Stat } from "#enums/stat";
 import { StockpilingTag } from "#app/data/battler-tags";
 import { MoveResult } from "#enums/move-result";
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -51,11 +49,11 @@ describe("Moves - Stockpile", () => {
       // use Stockpile four times
       for (let i = 0; i < 4; i++) {
         if (i !== 0) {
-          await game.phaseInterceptor.to(CommandPhase);
+          await game.phaseInterceptor.to("CommandPhase");
         }
 
         game.move.select(MoveId.STOCKPILE);
-        await game.phaseInterceptor.to(TurnInitPhase);
+        await game.phaseInterceptor.to("TurnInitPhase");
 
         const stockpilingTag = user.getTag(StockpilingTag)!;
 
@@ -93,7 +91,7 @@ describe("Moves - Stockpile", () => {
       expect(user.getStatStage(Stat.SPDEF)).toBe(6);
 
       game.move.select(MoveId.STOCKPILE);
-      await game.phaseInterceptor.to(TurnInitPhase);
+      await game.phaseInterceptor.to("TurnInitPhase");
 
       const stockpilingTag = user.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
@@ -102,10 +100,10 @@ describe("Moves - Stockpile", () => {
       expect(user.getStatStage(Stat.SPDEF)).toBe(6);
 
       // do it again, just for good measure
-      await game.phaseInterceptor.to(CommandPhase);
+      await game.phaseInterceptor.to("CommandPhase");
 
       game.move.select(MoveId.STOCKPILE);
-      await game.phaseInterceptor.to(TurnInitPhase);
+      await game.phaseInterceptor.to("TurnInitPhase");
 
       const stockpilingTagAgain = user.getTag(StockpilingTag)!;
       expect(stockpilingTagAgain).toBeDefined();

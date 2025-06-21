@@ -1,7 +1,6 @@
 import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { BerryPhase } from "#app/phases/berry-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -42,7 +41,7 @@ describe("Moves - Alluring Voice", () => {
 
     game.move.use(MoveId.ALLURING_VOICE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to(BerryPhase);
+    await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy.getTag(BattlerTagType.CONFUSED)?.tagType).toBe("CONFUSED");
   });

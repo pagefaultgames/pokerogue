@@ -1,5 +1,4 @@
 import { BattlerIndex } from "#enums/battler-index";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -43,7 +42,7 @@ describe("Moves - Spotlight", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.SPLASH);
 
-    await game.phaseInterceptor.to(TurnEndPhase, false);
+    await game.phaseInterceptor.to("TurnEndPhase", false);
 
     expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
     expect(enemyPokemon[1].hp).toBe(enemyPokemon[1].getMaxHp());

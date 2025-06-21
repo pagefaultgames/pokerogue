@@ -3,7 +3,6 @@ import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
 import { SpeciesId } from "#enums/species-id";
 import { MoveId } from "#enums/move-id";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { UiMode } from "#enums/ui-mode";
 import { Button } from "#app/enums/buttons";
 
@@ -33,7 +32,7 @@ describe("Learn Move Phase", () => {
     const newMovePos = pokemon?.getMoveset().length;
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
-    await game.phaseInterceptor.to(LearnMovePhase);
+    await game.phaseInterceptor.to("LearnMovePhase");
     const levelMove = pokemon.getLevelMoves(5)[0];
     const levelReq = levelMove[0];
     const levelMoveId = levelMove[1];
@@ -59,7 +58,7 @@ describe("Learn Move Phase", () => {
       game.scene.ui.setCursor(moveSlotNum);
       game.scene.ui.processInput(Button.ACTION);
     });
-    await game.phaseInterceptor.to(LearnMovePhase);
+    await game.phaseInterceptor.to("LearnMovePhase");
 
     const levelMove = bulbasaur.getLevelMoves(5)[0];
     const levelReq = levelMove[0];
@@ -92,7 +91,7 @@ describe("Learn Move Phase", () => {
     game.onNextPrompt("LearnMovePhase", UiMode.CONFIRM, () => {
       game.scene.ui.processInput(Button.ACTION);
     });
-    await game.phaseInterceptor.to(LearnMovePhase);
+    await game.phaseInterceptor.to("LearnMovePhase");
 
     const levelReq = bulbasaur.getLevelMoves(5)[0][0];
     expect(bulbasaur.level).toBeGreaterThanOrEqual(levelReq);

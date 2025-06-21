@@ -1,8 +1,5 @@
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { StatusEffect } from "#app/enums/status-effect";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { MovePhase } from "#app/phases/move-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -45,10 +42,10 @@ describe("Moves - Beak Blast", () => {
 
     game.move.select(MoveId.BEAK_BLAST);
 
-    await game.phaseInterceptor.to(MovePhase, false);
+    await game.phaseInterceptor.to("MovePhase", false);
     expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
   });
 
@@ -62,10 +59,10 @@ describe("Moves - Beak Blast", () => {
 
     game.move.select(MoveId.BEAK_BLAST);
 
-    await game.phaseInterceptor.to(MovePhase, false);
+    await game.phaseInterceptor.to("MovePhase", false);
     expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
   });
 
@@ -79,10 +76,10 @@ describe("Moves - Beak Blast", () => {
 
     game.move.select(MoveId.BEAK_BLAST);
 
-    await game.phaseInterceptor.to(MovePhase, false);
+    await game.phaseInterceptor.to("MovePhase", false);
     expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.BURN);
   });
 
@@ -95,7 +92,7 @@ describe("Moves - Beak Blast", () => {
 
     game.move.select(MoveId.BEAK_BLAST);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(leadPokemon.turnData.hitCount).toBe(2);
   });
 
@@ -109,10 +106,10 @@ describe("Moves - Beak Blast", () => {
 
     game.move.select(MoveId.BEAK_BLAST);
 
-    await game.phaseInterceptor.to(MovePhase, false);
+    await game.phaseInterceptor.to("MovePhase", false);
     expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
     expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeUndefined();
   });

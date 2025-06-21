@@ -20,7 +20,6 @@ import { MoveId } from "#enums/move-id";
 import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { TheWinstrateChallengeEncounter } from "#app/data/mystery-encounters/encounters/the-winstrate-challenge-encounter";
 import { Status } from "#app/data/status-effect";
-import { MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
 import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
@@ -295,9 +294,9 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
 
       // Should have Macho Brace in the rewards
       await skipBattleToNextBattle(game, true);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -339,7 +338,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_WINSTRATE_CHALLENGE, defaultParty);
       await runMysteryEncounterToEnd(game, 2);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -366,12 +365,11 @@ async function skipBattleToNextBattle(game: GameManager, isFinalBattle = false) 
     p.status = new Status(StatusEffect.FAINT);
     game.scene.field.remove(p);
   });
-  game.phaseInterceptor["onHold"] = [];
   game.scene.phaseManager.pushPhase(new VictoryPhase(0));
-  game.phaseInterceptor.superEndPhase();
+  game.phaseInterceptor.shiftPhase();
   if (isFinalBattle) {
-    await game.phaseInterceptor.to(MysteryEncounterRewardsPhase);
+    await game.phaseInterceptor.to("MysteryEncounterRewardsPhase");
   } else {
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
   }
 }

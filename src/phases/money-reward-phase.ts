@@ -16,6 +16,7 @@ export class MoneyRewardPhase extends BattlePhase {
   }
 
   start() {
+    super.start();
     const moneyAmount = new NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
 
     globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);

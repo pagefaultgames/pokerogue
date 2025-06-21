@@ -30,6 +30,7 @@ export class CommonAnimPhase extends PokemonPhase {
   }
 
   start() {
+    super.start();
     const target =
       this.targetIndex !== undefined
         ? (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField())[this.targetIndex]

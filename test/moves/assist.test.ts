@@ -1,7 +1,6 @@
 import { BattlerIndex } from "#enums/battler-index";
 import { Stat } from "#app/enums/stat";
 import { MoveResult } from "#enums/move-result";
-import { CommandPhase } from "#app/phases/command-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -80,7 +79,7 @@ describe("Moves - Assist", () => {
     // Player uses Sketch to copy Swords Dance, Player_2 stalls a turn. Player will attempt Assist and should have no usable moves
     await game.toNextTurn();
     game.move.select(MoveId.ASSIST, 0);
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
     game.move.select(MoveId.PROTECT, 1);
     await game.toNextTurn();
 
@@ -96,7 +95,7 @@ describe("Moves - Assist", () => {
     game.move.changeMoveset(shuckle, [MoveId.ASSIST, MoveId.SKETCH, MoveId.PROTECT, MoveId.DRAGON_TAIL]);
 
     game.move.select(MoveId.ASSIST, 0);
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
     game.move.select(MoveId.ASSIST, 1);
     await game.toNextTurn();
 

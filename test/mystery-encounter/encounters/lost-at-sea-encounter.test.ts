@@ -13,7 +13,6 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
 import type BattleScene from "#app/battle-scene";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { PartyExpPhase } from "#app/phases/party-exp-phase";
 import i18next from "i18next";
 
 const namespace = "mysteryEncounters/lostAtSea";
@@ -116,7 +115,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       const expBefore = blastoise!.exp;
 
       await runMysteryEncounterToEnd(game, 1);
-      await game.phaseInterceptor.to(PartyExpPhase);
+      await game.phaseInterceptor.to("PartyExpPhase");
 
       expect(blastoise?.exp).toBe(expBefore + Math.floor((laprasSpecies.baseExp * defaultWave) / 5 + 1));
     });
@@ -133,7 +132,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
     it("should be disabled if no surfable PKM is in party", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [SpeciesId.ARCANINE]);
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
@@ -181,7 +180,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       const expBefore = pidgeot!.exp;
 
       await runMysteryEncounterToEnd(game, 2);
-      await game.phaseInterceptor.to(PartyExpPhase);
+      await game.phaseInterceptor.to("PartyExpPhase");
 
       expect(pidgeot!.exp).toBe(expBefore + Math.floor((laprasBaseExp * defaultWave) / 5 + 1));
     });
@@ -198,7 +197,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
     it("should be disabled if no flyable PKM is in party", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [SpeciesId.ARCANINE]);
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);

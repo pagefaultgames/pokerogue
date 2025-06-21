@@ -1,7 +1,6 @@
 import { allAbilities } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import type Pokemon from "#app/field/pokemon";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -52,7 +51,7 @@ describe("Moves - Flame Burst", () => {
 
     game.move.select(MoveId.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
     game.move.select(MoveId.SPLASH, 1);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
     expect(rightEnemy.hp).toBe(rightEnemy.getMaxHp() - getEffectDamage(rightEnemy));
@@ -66,7 +65,7 @@ describe("Moves - Flame Burst", () => {
 
     game.move.select(MoveId.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
     game.move.select(MoveId.SPLASH, 1);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leftEnemy.hp).toBe(leftEnemy.getMaxHp());
     expect(rightEnemy.hp).toBe(rightEnemy.getMaxHp());
@@ -80,7 +79,7 @@ describe("Moves - Flame Burst", () => {
 
     game.move.select(MoveId.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
     game.move.select(MoveId.SPLASH, 1);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
     expect(rightEnemy.hp).toBe(rightEnemy.getMaxHp() - getEffectDamage(rightEnemy));
@@ -94,7 +93,7 @@ describe("Moves - Flame Burst", () => {
 
     game.move.select(MoveId.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
     game.move.select(MoveId.SPLASH, 1);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
     expect(rightEnemy.hp).toBe(rightEnemy.getMaxHp());

@@ -1,6 +1,6 @@
 import "vitest-canvas-mock";
-import { afterAll, beforeAll, vi } from "vitest";
-
+import { afterAll, beforeAll, vi, expect } from "vitest";
+import { format } from "util";
 import { initTestFile } from "./testUtils/testFileInitialization";
 
 /** Set the timezone to UTC for tests. */
@@ -49,10 +49,19 @@ vi.mock("i18next", async importOriginal => {
   return await importOriginal();
 });
 
-global.testFailed = false;
-
 beforeAll(() => {
   initTestFile();
+
+  process.on("uncaughtException", error => {
+    console.error(error);
+    expect.fail(`Unhandled exception occurred: ${format(error)}`);
+  });
+
+  // Global error handler for unhandled promise rejections
+  process.on("unhandledRejection", (reason, _promise) => {
+    console.error(reason);
+    expect.fail(`Unhandled promise rejection occurred: ${format(reason)}`);
+  });
 });
 
 afterAll(() => {

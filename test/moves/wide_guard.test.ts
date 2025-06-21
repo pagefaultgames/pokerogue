@@ -5,8 +5,6 @@ import { SpeciesId } from "#enums/species-id";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { Stat } from "#enums/stat";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { CommandPhase } from "#app/phases/command-phase";
 
 describe("Moves - Wide Guard", () => {
   let phaserGame: Phaser.Game;
@@ -42,11 +40,11 @@ describe("Moves - Wide Guard", () => {
 
     game.move.select(MoveId.WIDE_GUARD);
 
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
 
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     leadPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
   });
@@ -60,11 +58,11 @@ describe("Moves - Wide Guard", () => {
 
     game.move.select(MoveId.WIDE_GUARD);
 
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
 
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(0));
   });
@@ -78,11 +76,11 @@ describe("Moves - Wide Guard", () => {
 
     game.move.select(MoveId.WIDE_GUARD);
 
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
 
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(leadPokemon.some(p => p.hp < p.getMaxHp())).toBeTruthy();
   });
@@ -97,11 +95,11 @@ describe("Moves - Wide Guard", () => {
 
     game.move.select(MoveId.WIDE_GUARD);
 
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
 
     game.move.select(MoveId.SURF, 1);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(leadPokemon[0].hp).toBe(leadPokemon[0].getMaxHp());
     enemyPokemon.forEach(p => expect(p.hp).toBeLessThan(p.getMaxHp()));

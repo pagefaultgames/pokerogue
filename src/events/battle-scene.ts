@@ -76,6 +76,7 @@ export class MoveUsedEvent extends Event {
     this.ppUsed = ppUsed;
   }
 }
+
 /**
  * Container class for {@linkcode BattleSceneEventType.BERRY_USED} events
  * @extends Event
@@ -99,6 +100,7 @@ export class EncounterPhaseEvent extends Event {
     super(BattleSceneEventType.ENCOUNTER_PHASE);
   }
 }
+
 /**
  * Container class for {@linkcode BattleSceneEventType.TURN_INIT} events
  * @extends Event
@@ -108,6 +110,7 @@ export class TurnInitEvent extends Event {
     super(BattleSceneEventType.TURN_INIT);
   }
 }
+
 /**
  * Container class for {@linkcode BattleSceneEventType.TURN_END} events
  * @extends Event
@@ -121,6 +124,7 @@ export class TurnEndEvent extends Event {
     this.turnCount = turnCount;
   }
 }
+
 /**
  * Container class for {@linkcode BattleSceneEventType.NEW_ARENA} events
  * @extends Event

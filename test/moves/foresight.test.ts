@@ -1,6 +1,5 @@
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -48,7 +47,7 @@ describe("Moves - Foresight", () => {
     enemy.hp = enemy.getMaxHp();
 
     game.move.select(MoveId.MACH_PUNCH);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   });
@@ -63,7 +62,7 @@ describe("Moves - Foresight", () => {
     game.move.select(MoveId.FORESIGHT);
     await game.toNextTurn();
     game.move.select(MoveId.QUICK_ATTACK);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(pokemon.getAccuracyMultiplier).toHaveReturnedWith(1);
   });

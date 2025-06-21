@@ -87,6 +87,7 @@ export function initTestFile() {
   HTMLCanvasElement.prototype.getContext = () => mockContext;
 
   // Initialize all of these things if and only if they have not been initialized yet
+  // TODO: This should be handled by the `beforeAll` hook
   if (!wasInitialized) {
     wasInitialized = true;
     initI18n();

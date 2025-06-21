@@ -2,11 +2,6 @@ import { BattlerIndex } from "#enums/battler-index";
 import { allAbilities } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { WeatherType } from "#app/enums/weather-type";
-import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
-import { MovePhase } from "#app/phases/move-phase";
-import { PostSummonPhase } from "#app/phases/post-summon-phase";
-import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -184,7 +179,7 @@ describe("Abilities - Forecast", () => {
     await game.classicMode.startBattle([SpeciesId.CASTFORM]);
 
     game.move.select(MoveId.RAIN_DANCE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.getPlayerPokemon()?.formIndex).toBe(RAINY_FORM);
     expect(game.scene.getEnemyPokemon()?.formIndex).not.toBe(RAINY_FORM);
@@ -202,7 +197,7 @@ describe("Abilities - Forecast", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.move.forceHit();
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(castform.summonData.abilitySuppressed).toBe(true);
     expect(castform.formIndex).toBe(NORMAL_FORM);
@@ -215,7 +210,7 @@ describe("Abilities - Forecast", () => {
 
     // Third turn - switch in Castform
     game.doSwitchPokemon(1);
-    await game.phaseInterceptor.to(MovePhase);
+    await game.phaseInterceptor.to("MovePhase");
 
     expect(castform.summonData.abilitySuppressed).toBe(false);
     expect(castform.formIndex).toBe(RAINY_FORM);
@@ -231,16 +226,16 @@ describe("Abilities - Forecast", () => {
 
     // Second turn - switch in Castform, regains Forecast
     game.doSwitchPokemon(1);
-    await game.phaseInterceptor.to(PostSummonPhase);
+    await game.phaseInterceptor.to("PostSummonPhase");
 
     const castform = game.scene.getPlayerPokemon()!;
 
     // Damage phase should come first
-    await game.phaseInterceptor.to(DamageAnimPhase);
+    await game.phaseInterceptor.to("DamageAnimPhase");
     expect(castform.hp).toBeLessThan(castform.getMaxHp());
 
     // Then change form
-    await game.phaseInterceptor.to(QuietFormChangePhase);
+    await game.phaseInterceptor.to("QuietFormChangePhase");
     expect(castform.formIndex).toBe(RAINY_FORM);
   });
 

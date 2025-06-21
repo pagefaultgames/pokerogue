@@ -259,7 +259,7 @@ export default class BattleScene extends SceneBase {
    * - 0 = 'Switch'
    * - 1 = 'Set' - The option to switch the active pokemon at the start of a battle will not display.
    */
-  public battleStyle: number = BattleStyle.SWITCH;
+  public battleStyle: BattleStyle = BattleStyle.SWITCH;
 
   /**
    * Defines whether or not to show type effectiveness hints

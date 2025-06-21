@@ -5,8 +5,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 describe("Moves - Growth", () => {
   let phaserGame: Phaser.Game;
@@ -40,7 +38,7 @@ describe("Moves - Growth", () => {
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
 
     game.move.select(MoveId.GROWTH);
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
+    await game.toEndOfTurn();
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
   });

@@ -4,7 +4,6 @@ import type Move from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import type Pokemon from "#app/field/pokemon";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { NumberHolder } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -52,7 +51,7 @@ describe("Moves - Aurora Veil", () => {
 
     game.move.select(moveToUse);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const mockedDmg = getMockedMoveDamage(
       game.scene.getEnemyPokemon()!,
       game.scene.getPlayerPokemon()!,
@@ -71,7 +70,7 @@ describe("Moves - Aurora Veil", () => {
     game.move.select(moveToUse);
     game.move.select(moveToUse, 1);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const mockedDmg = getMockedMoveDamage(
       game.scene.getEnemyPokemon()!,
       game.scene.getPlayerPokemon()!,
@@ -87,7 +86,7 @@ describe("Moves - Aurora Veil", () => {
 
     game.move.select(moveToUse);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const mockedDmg = getMockedMoveDamage(
       game.scene.getEnemyPokemon()!,
@@ -107,7 +106,7 @@ describe("Moves - Aurora Veil", () => {
     game.move.select(moveToUse);
     game.move.select(moveToUse, 1);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const mockedDmg = getMockedMoveDamage(
       game.scene.getEnemyPokemon()!,
       game.scene.getPlayerPokemon()!,
@@ -123,7 +122,7 @@ describe("Moves - Aurora Veil", () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const mockedDmg = getMockedMoveDamage(
       game.scene.getEnemyPokemon()!,
@@ -140,7 +139,7 @@ describe("Moves - Aurora Veil", () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const mockedDmg = getMockedMoveDamage(
       game.scene.getEnemyPokemon()!,

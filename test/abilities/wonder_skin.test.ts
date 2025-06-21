@@ -1,5 +1,4 @@
 import { allMoves } from "#app/data/data-lists";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -39,7 +38,7 @@ describe("Abilities - Wonder Skin", () => {
 
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
     game.move.select(MoveId.CHARM);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(50);
   });
@@ -51,7 +50,7 @@ describe("Abilities - Wonder Skin", () => {
 
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
     game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100);
   });
@@ -72,7 +71,7 @@ describe("Abilities - Wonder Skin", () => {
 
       await game.classicMode.startBattle([SpeciesId.PIKACHU]);
       game.move.select(MoveId.CHARM);
-      await game.phaseInterceptor.to(MoveEffectPhase);
+      await game.phaseInterceptor.to("MoveEffectPhase");
 
       expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100);
     });

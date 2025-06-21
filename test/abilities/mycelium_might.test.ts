@@ -1,5 +1,4 @@
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { TurnStartPhase } from "#app/phases/turn-start-phase";
+import type { TurnStartPhase } from "#app/phases/turn-start-phase";
 import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#enums/stat";
@@ -51,7 +50,7 @@ describe("Abilities - Mycelium Might", () => {
 
     game.move.select(MoveId.BABY_DOLL_EYES);
 
-    await game.phaseInterceptor.to(TurnStartPhase, false);
+    await game.phaseInterceptor.to("TurnStartPhase", false);
     const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
@@ -59,7 +58,7 @@ describe("Abilities - Mycelium Might", () => {
     // The player Pokemon (with Mycelium Might) goes last despite having higher speed than the opponent.
     expect(speedOrder).toEqual([playerIndex, enemyIndex]);
     expect(commandOrder).toEqual([enemyIndex, playerIndex]);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
     expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
@@ -75,7 +74,7 @@ describe("Abilities - Mycelium Might", () => {
 
     game.move.select(MoveId.BABY_DOLL_EYES);
 
-    await game.phaseInterceptor.to(TurnStartPhase, false);
+    await game.phaseInterceptor.to("TurnStartPhase", false);
     const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
@@ -83,7 +82,7 @@ describe("Abilities - Mycelium Might", () => {
     // The enemy Pokemon goes second because its move is in a lower priority bracket.
     expect(speedOrder).toEqual([playerIndex, enemyIndex]);
     expect(commandOrder).toEqual([playerIndex, enemyIndex]);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
     expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
   });
@@ -96,7 +95,7 @@ describe("Abilities - Mycelium Might", () => {
 
     game.move.select(MoveId.QUICK_ATTACK);
 
-    await game.phaseInterceptor.to(TurnStartPhase, false);
+    await game.phaseInterceptor.to("TurnStartPhase", false);
     const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();

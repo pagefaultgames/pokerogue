@@ -1,5 +1,4 @@
 import { Stat } from "#enums/stat";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -38,7 +37,7 @@ describe("Abilities - Defiant", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnInitPhase);
+    await game.phaseInterceptor.to("TurnInitPhase");
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(3);
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(-1);
@@ -50,7 +49,7 @@ describe("Abilities - Defiant", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     game.move.select(MoveId.CLOSE_COMBAT);
-    await game.phaseInterceptor.to(TurnInitPhase);
+    await game.phaseInterceptor.to("TurnInitPhase");
 
     expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(-1);
@@ -63,7 +62,7 @@ describe("Abilities - Defiant", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnInitPhase);
+    await game.phaseInterceptor.to("TurnInitPhase");
 
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(0);
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(3);

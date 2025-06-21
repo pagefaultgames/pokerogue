@@ -16,6 +16,8 @@ export class PostSummonActivateAbilityPhase extends PostSummonPhase {
   }
 
   start() {
+    super.start();
+
     applyPostSummonAbAttrs("PostSummonAbAttr", this.getPokemon(), this.passive, false);
 
     this.end();

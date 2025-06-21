@@ -18,6 +18,8 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
   }
 
   start() {
+    super.start();
+
     const pokemon = this.getPokemon();
     if (pokemon?.isActive(true) && pokemon.status && pokemon.status.isPostTurn() && !pokemon.switchOutStatus) {
       pokemon.status.incrementTurn();

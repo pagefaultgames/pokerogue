@@ -1,5 +1,4 @@
 import { StatusEffect } from "#app/enums/status-effect";
-import { CommandPhase } from "#app/phases/command-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -40,7 +39,7 @@ describe("Moves - Lunar Dance", () => {
 
     game.move.select(MoveId.SPLASH, 0);
     game.move.select(MoveId.SPLASH, 1);
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
     await game.toNextTurn();
 
     // Bulbasaur should still be burned and have used a PP for splash and not at max hp
@@ -51,7 +50,7 @@ describe("Moves - Lunar Dance", () => {
     // Switch out Bulbasaur for Rattata so we can swtich bulbasaur back in with lunar dance
     game.doSwitchPokemon(2);
     game.move.select(MoveId.SPLASH, 1);
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
     await game.toNextTurn();
 
     game.move.select(MoveId.SPLASH, 0);
@@ -67,7 +66,7 @@ describe("Moves - Lunar Dance", () => {
 
     game.move.select(MoveId.SPLASH, 0);
     game.move.select(MoveId.LUNAR_DANCE);
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("CommandPhase");
     await game.toNextTurn();
 
     // Using Lunar dance again should fail because nothing in party and rattata should be alive

@@ -55,8 +55,7 @@ describe("Abilities - Intimidate", () => {
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
 
     game.doSwitchPokemon(1);
-    await game.phaseInterceptor.run("CommandPhase");
-    await game.phaseInterceptor.to("CommandPhase");
+    await game.toNextTurn();
 
     playerPokemon = game.scene.getPlayerPokemon()!;
     expect(playerPokemon.species.speciesId).toBe(SpeciesId.POOCHYENA);

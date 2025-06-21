@@ -1,4 +1,3 @@
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -39,7 +38,7 @@ describe("Items - Scope Lens", () => {
 
     game.move.select(MoveId.POUND);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemyPokemon.getCritStage).toHaveReturnedWith(1);
   });
