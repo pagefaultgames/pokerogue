@@ -3976,7 +3976,7 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
 /**
  * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Commander_(Ability) | Commander}.
  * When the source of an ability with this attribute detects a Dondozo as their active ally, the source "jumps
- * into the Dondozo's mouth"m sharply boosting the Dondozo's stats, cancelling the source's moves, and
+ * into the Dondozo's mouth", sharply boosting the Dondozo's stats, cancelling the source's moves, and
  * causing attacks that target the source to always miss.
  */
 export class CommanderAbAttr extends AbAttr {
