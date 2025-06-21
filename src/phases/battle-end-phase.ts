@@ -2,6 +2,9 @@ import { globalScene } from "#app/global-scene";
 import { applyPostBattleAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier";
 import { BattlePhase } from "./battle-phase";
+import { BooleanHolder } from "#app/utils/common";
+import { applyChallenges } from "#app/data/challenge";
+import { ChallengeType } from "#enums/challenge-type";
 
 export class BattleEndPhase extends BattlePhase {
   public readonly phaseName = "BattleEndPhase";
@@ -66,6 +69,16 @@ export class BattleEndPhase extends BattlePhase {
 
     for (const pokemon of globalScene.getPokemonAllowedInBattle()) {
       applyPostBattleAbAttrs("PostBattleAbAttr", pokemon, false, this.isVictory);
+    }
+    const canStay = new BooleanHolder(true);
+    applyChallenges(ChallengeType.DELETE_POKEMON, canStay);
+    if (!canStay.value) {
+      const party = globalScene.getPlayerParty().slice();
+      for (const pokemon of party) {
+        if (pokemon.isFainted()) {
+          globalScene.removePokemonFromPlayerParty(pokemon);
+        }
+      }
     }
 
     if (globalScene.currentBattle.moneyScattered) {

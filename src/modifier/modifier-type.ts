@@ -111,6 +111,7 @@ import {
   NumberHolder,
   padInt,
   randSeedInt,
+  BooleanHolder,
 } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
@@ -128,6 +129,8 @@ import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { getModifierPoolForType, getModifierType } from "#app/utils/modifier-utils";
 import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
+import { applyChallenges } from "#app/data/challenge";
+import { ChallengeType } from "#enums/challenge-type";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -2617,10 +2620,14 @@ function getModifierTypeOptionWithRetry(
   allowLuckUpgrades = allowLuckUpgrades ?? true;
   let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, tier, undefined, 0, allowLuckUpgrades);
   let r = 0;
+  const isValidForChallenge = new BooleanHolder(true);
+  applyChallenges(ChallengeType.RANDOM_ITEM_BLACKLIST, candidate, isValidForChallenge);
   while (
-    existingOptions.length &&
-    ++r < retryCount &&
-    existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group).length
+    (existingOptions.length &&
+      ++r < retryCount &&
+      existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group)
+        .length) ||
+    !isValidForChallenge.value
   ) {
     candidate = getNewModifierTypeOption(
       party,
@@ -2630,6 +2637,7 @@ function getModifierTypeOptionWithRetry(
       0,
       allowLuckUpgrades,
     );
+    applyChallenges(ChallengeType.RANDOM_ITEM_BLACKLIST, candidate, isValidForChallenge);
   }
   return candidate!;
 }
@@ -2660,7 +2668,9 @@ export function overridePlayerModifierTypeOptions(options: ModifierTypeOption[],
 }
 
 export function getPlayerShopModifierTypeOptionsForWave(waveIndex: number, baseCost: number): ModifierTypeOption[] {
-  if (!(waveIndex % 10)) {
+  const isHealPhaseActive = new BooleanHolder(true);
+  applyChallenges(ChallengeType.NO_HEAL_PHASE, isHealPhaseActive);
+  if (!(waveIndex % 10) && isHealPhaseActive.value) {
     return [];
   }
 
