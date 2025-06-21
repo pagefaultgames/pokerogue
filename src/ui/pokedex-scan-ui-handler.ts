@@ -160,8 +160,11 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
 
     if (super.show(args)) {
       const config = args[0] as ModalConfig;
-      this.inputs[0].resize(1150, 116);
-      this.inputContainers[0].list[0].width = 200;
+      const label = this.formLabels[0];
+
+      const inputWidth = label.width < 420 ? 200 : 200 - (label.width - 420) / 5.75;
+      this.inputs[0].resize(inputWidth * 5.75, 116);
+      this.inputContainers[0].list[0].width = inputWidth;
       if (args[1] && typeof (args[1] as PlayerPokemon).getNameToRender === "function") {
         this.inputs[0].text = (args[1] as PlayerPokemon).getNameToRender();
       } else {

@@ -71,6 +71,10 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       (hasTitle ? 31 : 5) + 20 * (config.length - 1) + 16 + this.getButtonTopMargin(),
       "",
       TextStyle.TOOLTIP_CONTENT,
+      {
+        fontSize: "42px",
+        wordWrap: { width: 850 },
+      },
     );
     this.errorMessage.setColor(this.getTextColor(TextStyle.SUMMARY_PINK));
     this.errorMessage.setShadowColor(this.getTextColor(TextStyle.SUMMARY_PINK, true));
@@ -83,20 +87,29 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     this.inputs = [];
     this.formLabels = [];
     fieldsConfig.forEach((config, f) => {
-      const label = addTextObject(10, (hasTitle ? 31 : 5) + 20 * f, config.label, TextStyle.TOOLTIP_CONTENT);
+      // The Pokédex Scan Window has a much bigger width, so there is currently no need to shorten the label
+      const label = addTextObject(
+        10,
+        (hasTitle ? 31 : 5) + 20 * f,
+        config.label.length > 25 && this.constructor.name !== "PokedexScanUiHandler"
+          ? config.label.slice(0, 20) + "..."
+          : config.label,
+        TextStyle.TOOLTIP_CONTENT,
+      );
       label.name = "formLabel" + f;
 
       this.formLabels.push(label);
       this.modalContainer.add(this.formLabels[this.formLabels.length - 1]);
 
-      const inputContainer = globalScene.add.container(70, (hasTitle ? 28 : 2) + 20 * f);
+      const inputWidth = label.width < 320 ? 80 : 80 - (label.width - 320) / 5.5;
+      const inputContainer = globalScene.add.container(70 + (80 - inputWidth), (hasTitle ? 28 : 2) + 20 * f);
       inputContainer.setVisible(false);
 
-      const inputBg = addWindow(0, 0, 80, 16, false, false, 0, 0, WindowVariant.XTHIN);
+      const inputBg = addWindow(0, 0, inputWidth, 16, false, false, 0, 0, WindowVariant.XTHIN);
 
       const isPassword = config?.isPassword;
       const isReadOnly = config?.isReadOnly;
-      const input = addTextInputObject(4, -2, 440, 116, TextStyle.TOOLTIP_CONTENT, {
+      const input = addTextInputObject(4, -2, inputWidth * 5.5, 116, TextStyle.TOOLTIP_CONTENT, {
         type: isPassword ? "password" : "text",
         maxLength: isPassword ? 64 : 20,
         readOnly: isReadOnly,
