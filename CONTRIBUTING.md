@@ -2,7 +2,7 @@
 
 Thank you for taking the time to contribute, every little bit helps. This project is entirely open-source and unmonetized - community contributions are what keep it alive!
 
-Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and absolutely *feel free to reach out reach out in the **#dev-corner** channel on Discord*. We are here to help and the better you understand what you're working on, the easier it will be for it to find its way into the game.
+Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and absolutely *feel free to reach out reach out in the **#dev-corner** channel on [Discord](https://discord.gg/pokerogue)*. We are here to help and the better you understand what you're working on, the easier it will be for it to find its way into the game.
 
 ## 📄 Table of Contents
 
