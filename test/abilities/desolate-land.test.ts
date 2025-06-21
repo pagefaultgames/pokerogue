@@ -8,6 +8,7 @@ import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
+import { globalScene } from "#app/global-scene";
 
 describe("Abilities - Desolate Land", () => {
   let phaserGame: Phaser.Game;
@@ -145,6 +146,7 @@ describe("Abilities - Desolate Land", () => {
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 
     vi.spyOn(game.scene.getPlayerPokemon()!, "randBattleSeedInt").mockReturnValue(0);
+    vi.spyOn(globalScene, "randBattleSeedInt").mockReturnValue(0);
 
     const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);
