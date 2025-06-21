@@ -1,4 +1,5 @@
 export enum SpeciesFormKey {
+  NORMAL = "normal",
   MEGA = "mega",
   MEGA_X = "mega-x",
   MEGA_Y = "mega-y",
@@ -10,4 +11,8 @@ export enum SpeciesFormKey {
   GIGANTAMAX_SINGLE = "gigantamax-single",
   GIGANTAMAX_RAPID = "gigantamax-rapid",
   ETERNAMAX = "eternamax",
+  SKY = "sky",
+  BLACK = "black",
+  WHITE = "white",
+  ARIA = "aria",
 }

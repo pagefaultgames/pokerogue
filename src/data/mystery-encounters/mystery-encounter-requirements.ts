@@ -1195,3 +1195,44 @@ export class AnyCombinationPokemonRequirement extends EncounterPokemonRequiremen
     return this.requirements[0].getDialogueToken(pokemon);
   }
 }
+
+/**
+ * Find out if Pokemon in the party are of a specific form.
+ */
+export class FormPokemonRequirement extends EncounterPokemonRequirement {
+  private form: string;
+
+  constructor(form: string, minNumberOfPokemon: number) {
+    super();
+    this.invertQuery = false;
+    this.minNumberOfPokemon = minNumberOfPokemon;
+    this.form = form;
+  }
+
+  /**
+   * Checks if at least {@linkcode minNumberOfPokemon} pokemon are of the specified form
+   * @returns true if at least {@linkcode minNumberOfPokemon} pokemon are of the specified form
+   */
+  override meetsRequirement(): boolean {
+    const party = globalScene.getPlayerParty();
+    return this.queryParty(party).length >= this.minNumberOfPokemon;
+  }
+
+  /**
+   * Queries the players party for all party members that are of the specified form
+   * @param partyPokemon The party of {@linkcode PlayerPokemon}
+   * @returns All party members that are of the specified form
+   */
+  override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
+    return partyPokemon.filter(pokemon => pokemon.getFormKey() === this.form);
+  }
+
+  /**
+   * Retrieves a dialogue token key/value pair for the given form.
+   * @param pokemon The {@linkcode PlayerPokemon} to check against
+   * @returns A dialogue token key/value pair
+   */
+  override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {
+    return ["form", pokemon?.getFormKey() ?? ""];
+  }
+}

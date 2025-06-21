@@ -5,7 +5,7 @@
 			"format": "RGBA8888",
 			"size": {
 				"w": 48,
-				"h": 79
+				"h": 84
 			},
 			"scale": 1,
 			"frames": [
@@ -15,19 +15,19 @@
 					"trimmed": true,
 					"sourceSize": {
 						"w": 48,
-						"h": 79
+						"h": 84
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
 						"w": 48,
-						"h": 79
+						"h": 84
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
 						"w": 48,
-						"h": 79
+						"h": 84
 					}
 				}
 			]

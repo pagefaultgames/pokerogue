@@ -16,6 +16,9 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import {
   AbilityRequirement,
   AnyCombinationPokemonRequirement,
+  CombinationPokemonRequirement,
+  FormPokemonRequirement,
+  SpeciesRequirement,
   TypeRequirement,
 } from "../mystery-encounter-requirements";
 import { PokemonType } from "#enums/pokemon-type";
@@ -36,66 +39,75 @@ import { getRandomPartyMemberFunc, type TrainerConfig, trainerConfigs } from "#a
 import { TrainerType } from "#enums/trainer-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { TrainerSlot } from "#enums/trainer-slot";
+import { SpeciesFormKey } from "#enums/species-form-key";
 
 /** The i18n namespace for the encounter */
 const namespace = "mysteryEncounters/skyBattle";
 
 const SKY_BATTLE_WAVES: [number, number] = [50, 180];
 
-/**
- * These pokemon come from serebii's
- * {@link https://www.serebii.net/xy/skybattles.shtml | Sky Battle Page}
- * Also pokemon that are expected to fly (e.g beedril and mew)
- */
-const POOL_0_POKEMON = [
-  SpeciesId.CHARIZARD,
+const POOL_ALL_FORMS = [
   SpeciesId.BUTTERFREE,
   SpeciesId.BEEDRILL,
+  SpeciesId.PIDGEY,
   SpeciesId.PIDGEOTTO,
   SpeciesId.PIDGEOT,
+  SpeciesId.SPEAROW,
   SpeciesId.FEAROW,
   SpeciesId.ZUBAT,
   SpeciesId.GOLBAT,
   SpeciesId.VENOMOTH,
+  SpeciesId.MAGNEMITE,
+  SpeciesId.MAGNETON,
+  SpeciesId.GASTLY,
   SpeciesId.HAUNTER,
+  SpeciesId.GENGAR,
   SpeciesId.KOFFING,
   SpeciesId.WEEZING,
   SpeciesId.SCYTHER,
   SpeciesId.GYARADOS,
+  SpeciesId.PORYGON,
   SpeciesId.AERODACTYL,
   SpeciesId.ARTICUNO,
   SpeciesId.ZAPDOS,
   SpeciesId.MOLTRES,
   SpeciesId.DRAGONITE,
-  SpeciesId.MEWTWO, // ?
+  SpeciesId.MEWTWO,
   SpeciesId.MEW,
+  SpeciesId.HOOTHOOT,
   SpeciesId.NOCTOWL,
   SpeciesId.LEDYBA,
   SpeciesId.LEDIAN,
   SpeciesId.CROBAT,
   SpeciesId.TOGETIC,
+  SpeciesId.NATU,
   SpeciesId.XATU,
   SpeciesId.HOPPIP,
   SpeciesId.SKIPLOOM,
   SpeciesId.JUMPLUFF,
   SpeciesId.YANMA,
+  SpeciesId.MURKROW,
   SpeciesId.MISDREAVUS,
-  SpeciesId.UNOWN,
-  SpeciesId.FORRETRESS, // ?
+  SpeciesId.UNOWN, // ALL (A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, !, ?)
   SpeciesId.GLIGAR,
+  SpeciesId.DELIBIRD,
   SpeciesId.MANTINE,
   SpeciesId.SKARMORY,
+  SpeciesId.PORYGON2,
   SpeciesId.LUGIA,
   SpeciesId.HO_OH,
   SpeciesId.CELEBI,
   SpeciesId.BEAUTIFLY,
   SpeciesId.DUSTOX,
+  SpeciesId.TAILLOW,
   SpeciesId.SWELLOW,
   SpeciesId.WINGULL,
   SpeciesId.PELIPPER,
   SpeciesId.MASQUERAIN,
   SpeciesId.NINJASK,
-  SpeciesId.SHEDINJA, // ?
+  SpeciesId.SHEDINJA,
+  SpeciesId.VOLBEAT,
+  SpeciesId.ILLUMISE,
   SpeciesId.VIBRAVA,
   SpeciesId.FLYGON,
   SpeciesId.SWABLU,
@@ -104,17 +116,20 @@ const POOL_0_POKEMON = [
   SpeciesId.SOLROCK,
   SpeciesId.BALTOY,
   SpeciesId.CLAYDOL,
+  SpeciesId.CASTFORM, // ALL (Normal, Sunny, Rainy, Snowy)
   SpeciesId.DUSKULL,
   SpeciesId.TROPIUS,
   SpeciesId.CHIMECHO,
-  SpeciesId.GLALIE, // ?
+  SpeciesId.GLALIE,
   SpeciesId.SALAMENCE,
+  SpeciesId.BELDUM,
   SpeciesId.METANG,
-  SpeciesId.METAGROSS, // ?
   SpeciesId.LATIAS,
   SpeciesId.LATIOS,
   SpeciesId.RAYQUAZA,
   SpeciesId.JIRACHI,
+  SpeciesId.DEOXYS, // ALL (Normal, Attack, Defense, Speed)
+  SpeciesId.STARLY,
   SpeciesId.STARAVIA,
   SpeciesId.STARAPTOR,
   SpeciesId.MOTHIM,
@@ -127,20 +142,28 @@ const POOL_0_POKEMON = [
   SpeciesId.CHINGLING,
   SpeciesId.BRONZOR,
   SpeciesId.BRONZONG,
+  SpeciesId.CHATOT,
   SpeciesId.CARNIVINE,
   SpeciesId.MANTYKE,
-  SpeciesId.MAGNEZONE, // ?
+  SpeciesId.MAGNEZONE,
   SpeciesId.TOGEKISS,
   SpeciesId.YANMEGA,
   SpeciesId.GLISCOR,
-  SpeciesId.DUSKNOIR, // ?
-  SpeciesId.ROTOM,
+  SpeciesId.PORYGON_Z,
+  SpeciesId.PROBOPASS,
+  SpeciesId.DUSKNOIR,
+  SpeciesId.FROSLASS,
+  SpeciesId.ROTOM, // ALL (Normal, Heat, Wash, Frost, Fan, Mow)
   SpeciesId.UXIE,
   SpeciesId.MESPRIT,
   SpeciesId.AZELF,
+  SpeciesId.DIALGA,
+  SpeciesId.PALKIA,
   SpeciesId.GIRATINA,
   SpeciesId.CRESSELIA,
-  SpeciesId.ARCEUS,
+  SpeciesId.DARKRAI,
+  SpeciesId.ARCEUS, // ALL (Normal, Fighting, Flying, Poison, Ground, Rock, Bug, Ghost, Steel, Fire, Water, Grass, Electric, Psychic, Ice, Dragon, Dark, Fairy)
+  SpeciesId.PIDOVE,
   SpeciesId.TRANQUILL,
   SpeciesId.UNFEZANT,
   SpeciesId.WOOBAT,
@@ -150,16 +173,24 @@ const POOL_0_POKEMON = [
   SpeciesId.SOLOSIS,
   SpeciesId.DUOSION,
   SpeciesId.REUNICLUS,
+  SpeciesId.DUCKLETT,
   SpeciesId.SWANNA,
+  SpeciesId.VANILLITE,
   SpeciesId.VANILLISH,
   SpeciesId.VANILLUXE,
   SpeciesId.EMOLGA,
+  SpeciesId.KLINK,
+  SpeciesId.KLANG,
+  SpeciesId.KLINKLANG,
   SpeciesId.TYNAMO,
   SpeciesId.EELEKTRIK,
   SpeciesId.EELEKTROSS,
+  SpeciesId.ELGYEM,
+  SpeciesId.BEHEEYEM,
   SpeciesId.LAMPENT,
   SpeciesId.CHANDELURE,
   SpeciesId.CRYOGONAL,
+  SpeciesId.RUFFLET,
   SpeciesId.BRAVIARY,
   SpeciesId.MANDIBUZZ,
   SpeciesId.HYDREIGON,
@@ -169,56 +200,96 @@ const POOL_0_POKEMON = [
   SpeciesId.RESHIRAM,
   SpeciesId.ZEKROM,
   SpeciesId.LANDORUS,
+  SpeciesId.FLETCHLING,
   SpeciesId.FLETCHINDER,
   SpeciesId.TALONFLAME,
-  SpeciesId.VIVILLON,
-  SpeciesId.FLOETTE,
-  SpeciesId.FLORGES,
-  SpeciesId.HAWLUCHA, // ?
+  SpeciesId.VIVILLON, // ALL (Meadow, Icy Snow, Polar, Tundra, Continental, Garden, Elegant, Modern, Marine, Archipelago, High Plains, Sandstorm, River, Monsoon, Savanna, Sun, Ocean, Jungle, Fancy, Poke Ball)
+  SpeciesId.HAWLUCHA,
+  SpeciesId.KLEFKI,
   SpeciesId.NOIBAT,
   SpeciesId.NOIVERN,
   SpeciesId.YVELTAL,
+  SpeciesId.HOOPA,
+  SpeciesId.ROWLET,
   SpeciesId.DARTRIX,
-  SpeciesId.DECIDUEYE, //?
+  SpeciesId.PIKIPEK,
   SpeciesId.TRUMBEAK,
   SpeciesId.TOUCANNON,
   SpeciesId.VIKAVOLT,
-  SpeciesId.ORICORIO,
+  SpeciesId.ORICORIO, // ALL (Baile, Pompom, Pau, Sensu)
+  SpeciesId.CUTIEFLY,
   SpeciesId.RIBOMBEE,
-  SpeciesId.COMFEY, //?
-  SpeciesId.MINIOR,
+  SpeciesId.COMFEY,
+  SpeciesId.MINIOR, // ALL (Red, Orange, Yellow, Green, Blue, Indigo, Violet and Meteors)
   SpeciesId.TAPU_KOKO,
   SpeciesId.TAPU_LELE,
   SpeciesId.TAPU_BULU,
   SpeciesId.TAPU_FINI,
+  SpeciesId.COSMOG,
+  SpeciesId.COSMOEM,
+  SpeciesId.SOLGALEO,
   SpeciesId.LUNALA,
   SpeciesId.NIHILEGO,
   SpeciesId.BUZZWOLE,
   SpeciesId.CELESTEELA,
-  SpeciesId.NECROZMA,
+  SpeciesId.KARTANA,
+  SpeciesId.NECROZMA, // ALL (Dusk Mane, Dawn Wings, Ultra)
   SpeciesId.POIPOLE,
   SpeciesId.NAGANADEL,
+  SpeciesId.ROOKIDEE,
   SpeciesId.CORVISQUIRE,
   SpeciesId.CORVIKNIGHT,
   SpeciesId.ORBEETLE,
   SpeciesId.FLAPPLE,
   SpeciesId.CRAMORANT,
+  SpeciesId.SINISTEA,
+  SpeciesId.POLTEAGEIST,
   SpeciesId.FROSMOTH,
+  SpeciesId.DREEPY,
   SpeciesId.DRAKLOAK,
   SpeciesId.DRAGAPULT,
   SpeciesId.ETERNATUS,
+  SpeciesId.REGIELEKI,
+  SpeciesId.REGIDRAGO,
+  SpeciesId.CALYREX,
   SpeciesId.ENAMORUS,
-  SpeciesId.SQUAWKABILLY,
+  SpeciesId.SQUAWKABILLY, // ALL (Green, Blue, Yellow, White)
   SpeciesId.WATTREL,
   SpeciesId.KILOWATTREL,
+  SpeciesId.RABSCA,
   SpeciesId.BOMBIRDIER,
+  SpeciesId.VAROOM,
+  SpeciesId.REVAVROOM,
+  SpeciesId.GLIMMET,
+  SpeciesId.GLIMMORA,
   SpeciesId.FLAMIGO,
+  SpeciesId.SCREAM_TAIL,
   SpeciesId.FLUTTER_MANE,
   SpeciesId.IRON_JUGULIS,
+  SpeciesId.IRON_MOTH,
+  SpeciesId.CHI_YU,
   SpeciesId.ROARING_MOON,
   SpeciesId.MIRAIDON,
-  SpeciesId.KORAIDON,
+  SpeciesId.POLTCHAGEIST,
+  SpeciesId.SINISTCHA,
+  SpeciesId.FEZANDIPITI,
+  SpeciesId.PECHARUNT,
+  SpeciesId.ALOLA_RAICHU,
+  SpeciesId.GALAR_WEEZING,
+  SpeciesId.GALAR_ARTICUNO,
+  SpeciesId.GALAR_MOLTRES,
+  SpeciesId.HISUI_BRAVIARY,
 ];
+const POOL_BASEFORM = [SpeciesId.CHARIZARD];
+const POOL_ARIA = [
+  SpeciesId.MELOETTA, // ARIA
+];
+const POOL_MEGA = [SpeciesId.ALAKAZAM, SpeciesId.PINSIR, SpeciesId.METAGROSS];
+const POOL_MEGA_X = [SpeciesId.CHARIZARD];
+const POOL_MEGA_Y = [SpeciesId.CHARIZARD];
+const POOL_SKY = [SpeciesId.SHAYMIN];
+const POOL_BLACK = [SpeciesId.KYUREM];
+const POOL_WHITE = [SpeciesId.KYUREM];
 
 const PHYSICAL_TUTOR_MOVES = [
   MoveId.FLY,
@@ -277,6 +348,42 @@ const sky_battle_requirements = new AnyCombinationPokemonRequirement(
   3,
   new TypeRequirement(PokemonType.FLYING, false, 1),
   new AbilityRequirement(AbilityId.LEVITATE, false, 1),
+  new SpeciesRequirement(POOL_ALL_FORMS, 1, false),
+  CombinationPokemonRequirement.Every(
+    new SpeciesRequirement(POOL_BASEFORM, 1, false),
+    CombinationPokemonRequirement.Some(
+      new FormPokemonRequirement("", 1),
+      new FormPokemonRequirement(SpeciesFormKey.NORMAL, 1),
+    ),
+  ),
+  CombinationPokemonRequirement.Every(
+    new SpeciesRequirement(POOL_MEGA, 1, false),
+    new FormPokemonRequirement(SpeciesFormKey.MEGA, 1),
+  ),
+  CombinationPokemonRequirement.Every(
+    new SpeciesRequirement(POOL_MEGA_X, 1, false),
+    new FormPokemonRequirement(SpeciesFormKey.MEGA_X, 1),
+  ),
+  CombinationPokemonRequirement.Every(
+    new SpeciesRequirement(POOL_MEGA_Y, 1, false),
+    new FormPokemonRequirement(SpeciesFormKey.MEGA_Y, 1),
+  ),
+  CombinationPokemonRequirement.Every(
+    new SpeciesRequirement(POOL_SKY, 1, false),
+    new FormPokemonRequirement(SpeciesFormKey.SKY, 1),
+  ),
+  CombinationPokemonRequirement.Every(
+    new SpeciesRequirement(POOL_BLACK, 1, false),
+    new FormPokemonRequirement(SpeciesFormKey.BLACK, 1),
+  ),
+  CombinationPokemonRequirement.Every(
+    new SpeciesRequirement(POOL_WHITE, 1, false),
+    new FormPokemonRequirement(SpeciesFormKey.WHITE, 1),
+  ),
+  CombinationPokemonRequirement.Every(
+    new SpeciesRequirement(POOL_ARIA, 1, false),
+    new FormPokemonRequirement(SpeciesFormKey.ARIA, 1),
+  ),
 );
 
 // Helpful variables
@@ -323,27 +430,26 @@ export const SkyBattleEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       {
         spriteKey: spriteKey,
         fileRoot: "trainer",
-        hasShadow: true,
+        hasShadow: false,
         x: 4,
         y: 7,
-        yShadow: 7,
       },
     ];
 
     const intro = [
       {
-        text: `${namespace}:intro` + female ? "_f" : "",
+        text: female ? `${namespace}:intro_f` : `${namespace}:intro`,
       },
       {
         speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue` + female ? "_f" : "",
+        text: female ? `${namespace}:intro_dialogue_f` : `${namespace}:intro_dialogue`,
       },
     ];
-    const title = `${namespace}:title` + female ? "_f" : "";
-    const description = `${namespace}:description` + female ? "_f" : "";
+    const title = female ? `${namespace}:title_f` : `${namespace}:title`;
+    const description = female ? `${namespace}:description_f` : `${namespace}:description`;
     const outro = [
       {
-        text: `${namespace}:outro` + female ? "_f" : "",
+        text: female ? `${namespace}:outro_f` : `${namespace}:outro`,
       },
     ];
 
@@ -496,7 +602,7 @@ function getTrainerConfig(party_size: number, female: boolean): TrainerConfig {
   const name = female ? "sky_trainer_f" : "sky_trainer_m";
   config.name = i18next.t("trainerNames:" + name);
 
-  let pool0Copy = POOL_0_POKEMON.slice(0);
+  let pool0Copy = POOL_ALL_FORMS.slice(0);
   pool0Copy = randSeedShuffle(pool0Copy);
   let pool0Mon = pool0Copy.pop()!;
 
@@ -516,7 +622,10 @@ function doFlyingTypeTutor(): Promise<void> {
   return new Promise<void>(async resolve => {
     const moveOptions = globalScene.currentBattle.mysteryEncounter!.misc.moveTutorOptions;
     const female = globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0].female; //TODO: Is this [0] correct enought?
-    await showEncounterDialogue(`${namespace}:battle_won` + female ? "_f" : "", `${namespace}:speaker`);
+    await showEncounterDialogue(
+      female ? `${namespace}:battle_won_f` : `${namespace}:battle_won`,
+      `${namespace}:speaker`,
+    );
 
     const overlayScale = 1;
     const moveInfoOverlay = new MoveInfoOverlay({

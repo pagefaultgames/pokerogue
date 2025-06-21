@@ -6046,7 +6046,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setLocalizedName("Future Self F")
     .setPartyTemplates(new TrainerPartyTemplate(6, PartyMemberStrength.STRONG)),
   [TrainerType.SKY_TRAINER]: new TrainerConfig(++t)
-    .setHasGenders("Sky Trainer Felicia")
+    .setHasGenders("Sky Trainer")
     .setMoneyMultiplier(2.25)
     .setEncounterBgm(TrainerType.ACE_TRAINER)
     .setPartyTemplates(new TrainerPartyTemplate(6, PartyMemberStrength.STRONG)),
