@@ -5682,6 +5682,7 @@ export class PlayerPokemon extends Pokemon {
           this.variant,
           this.ivs,
           this.nature,
+          this.heldItemManager.generateHeldItemConfiguration(),
           this,
         );
         this.fusionSpecies = originalFusionSpecies;
@@ -5704,6 +5705,7 @@ export class PlayerPokemon extends Pokemon {
           this.variant,
           this.ivs,
           this.nature,
+          this.heldItemManager.generateHeldItemConfiguration(),
           this,
         );
       }
@@ -5857,6 +5859,7 @@ export class PlayerPokemon extends Pokemon {
         this.variant,
         this.ivs,
         this.nature,
+        this.heldItemManager.generateHeldItemConfiguration(),
         this,
       );
       ret.loadAssets().then(() => resolve(ret));
@@ -6649,6 +6652,7 @@ export class EnemyPokemon extends Pokemon {
         this.variant,
         this.ivs,
         this.nature,
+        this.heldItemManager.generateHeldItemConfiguration(),
         this,
       );
 

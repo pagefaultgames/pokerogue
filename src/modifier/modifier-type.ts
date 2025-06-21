@@ -1030,7 +1030,7 @@ export class FormChangeItemReward extends PokemonModifierType {
   constructor(formChangeItem: FormChangeItem) {
     super(
       "",
-      "",
+      FormChangeItem[formChangeItem].toLowerCase(),
       () => null,
       (pokemon: PlayerPokemon) => {
         // Make sure the Pokemon has alternate forms
@@ -1062,6 +1062,19 @@ export class FormChangeItemReward extends PokemonModifierType {
 
   getDescription(): string {
     return i18next.t("modifierType:ModifierType.FormChangeItemModifierType.description");
+  }
+
+  apply(pokemon: Pokemon) {
+    if (pokemon.heldItemManager.hasFormChangeItem(this.formChangeItem)) {
+      return;
+    }
+
+    pokemon.heldItemManager.addFormChangeItem(this.formChangeItem);
+    pokemon.heldItemManager.toggleActive(this.formChangeItem);
+
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger);
+
+    globalScene.updateModifiers(true);
   }
 }
 

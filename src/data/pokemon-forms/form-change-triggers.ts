@@ -80,6 +80,7 @@ export class SpeciesFormChangeItemTrigger extends SpeciesFormChangeTrigger {
     if (!matchItem) {
       return false;
     }
+    console.log("CAN CHANGE FORMS:", matchItem.active === this.active);
     return matchItem.active === this.active;
   }
 }

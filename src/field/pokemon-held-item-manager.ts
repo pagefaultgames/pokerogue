@@ -6,15 +6,9 @@ import {
   isHeldItemSpecs,
   type HeldItemDataMap,
   type HeldItemSpecs,
+  type FormChangeItemPropertyMap,
+  type FormChangeItemSpecs,
 } from "#app/items/held-item-data-types";
-
-interface FormChangeItemProperties {
-  active: boolean;
-}
-
-export type FormChangeItemPropertyMap = {
-  [key in FormChangeItem]?: FormChangeItemProperties;
-};
 
 export class PokemonItemManager {
   public heldItems: HeldItemDataMap;
@@ -45,6 +39,11 @@ export class PokemonItemManager {
         const specs: HeldItemSpecs = { ...item, id };
         config.push({ entry: specs, count: 1 });
       }
+    }
+    for (const [k, item] of Object.entries(this.formChangeItems)) {
+      const id = Number(k);
+      const specs: FormChangeItemSpecs = { ...item, id };
+      config.push({ entry: specs, count: 1 });
     }
     return config;
   }
@@ -161,6 +160,12 @@ export class PokemonItemManager {
   addFormChangeItem(id: FormChangeItem) {
     if (!(id in this.formChangeItems)) {
       this.formChangeItems[id] = { active: false };
+    }
+  }
+
+  addFormChangeItemWithSpecs(item: FormChangeItemSpecs) {
+    if (!(item.id in this.formChangeItems)) {
+      this.formChangeItems[item.id] = { active: item.active };
     }
   }
 

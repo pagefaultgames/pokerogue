@@ -1,4 +1,5 @@
 import type Pokemon from "#app/field/pokemon";
+import type { FormChangeItem } from "#enums/form-change-item";
 import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { RewardTier } from "#enums/reward-tier";
 import type { Stat } from "#enums/stat";
@@ -34,6 +35,23 @@ export function isHeldItemSpecs(entry: any): entry is HeldItemSpecs {
   return typeof entry.id === "number" && "stack" in entry;
 }
 
+// Types used for form change items
+interface FormChangeItemData {
+  active: boolean;
+}
+
+export type FormChangeItemPropertyMap = {
+  [key in FormChangeItem]?: FormChangeItemData;
+};
+
+export type FormChangeItemSpecs = FormChangeItemData & {
+  id: FormChangeItem;
+};
+
+export function isFormChangeItemSpecs(entry: any): entry is FormChangeItemSpecs {
+  return typeof entry.id === "number" && "active" in entry;
+}
+
 export type HeldItemWeights = {
   [key in HeldItemId]?: number;
 };
@@ -65,7 +83,7 @@ export type HeldItemTieredPool = {
 };
 
 type HeldItemConfigurationEntry = {
-  entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
+  entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool | FormChangeItemSpecs;
   count?: number | (() => number);
 };
 

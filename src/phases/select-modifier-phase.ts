@@ -13,6 +13,7 @@ import {
   PokemonPpUpModifierType,
   getPlayerModifierTypeOptions,
   HeldItemReward,
+  FormChangeItemReward,
 } from "#app/modifier/modifier-type";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { Modifier } from "#app/modifier/modifier";
@@ -168,7 +169,7 @@ export class SelectModifierPhase extends BattlePhase {
     modifierSelectCallback: ModifierSelectCallback,
   ): boolean {
     if (modifierType instanceof PokemonModifierType) {
-      if (modifierType instanceof HeldItemReward) {
+      if (modifierType instanceof HeldItemReward || modifierType instanceof FormChangeItemReward) {
         this.openGiveHeldItemMenu(modifierType, modifierSelectCallback);
       } else if (modifierType instanceof FusePokemonModifierType) {
         this.openFusionMenu(modifierType, cost, modifierSelectCallback);
