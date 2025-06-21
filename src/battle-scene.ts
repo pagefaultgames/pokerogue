@@ -805,10 +805,9 @@ export default class BattleScene extends SceneBase {
    */
   public getPlayerField(active = false): PlayerPokemon[] {
     const party = this.getPlayerParty();
-    if (active) {
-      return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1)).filter(p => p.isActive());
-    }
-    return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
+    return party
+      .slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1))
+      .filter(p => !active || p.isActive());
   }
 
   public getEnemyParty(): EnemyPokemon[] {
