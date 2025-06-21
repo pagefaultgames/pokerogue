@@ -1680,7 +1680,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Check whether this Pokemon is shiny.
    * @param useIllusion - Whether to consider this pokemon's illusion if present; default `false`
-   * @returns Whether this Pokemon is shiny at least once.
+   * @returns Whether this Pokemon is shiny
    */
   isShiny(useIllusion = false): boolean {
     if (!useIllusion && this.summonData.illusion) {
