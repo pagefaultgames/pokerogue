@@ -1,3 +1,5 @@
+import type { IVTuple } from "#app/@types/stat-types";
+
 export interface DexData {
   [key: number]: DexEntry;
 }
@@ -9,5 +11,5 @@ export interface DexEntry {
   seenCount: number;
   caughtCount: number;
   hatchedCount: number;
-  ivs: number[];
+  ivs: IVTuple;
 }

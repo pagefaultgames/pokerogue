@@ -512,7 +512,7 @@ async function postProcessTransformedPokemon(
       const hiddenAbilityChance = new NumberHolder(256);
       globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
-      const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
+      const hasHiddenAbility = randSeedInt(hiddenAbilityChance.value) === 0;
 
       if (hasHiddenAbility) {
         newPokemon.abilityIndex = hiddenIndex;
