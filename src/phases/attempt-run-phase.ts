@@ -18,16 +18,18 @@ export class AttemptRunPhase extends PokemonPhase {
 
     const playerField = globalScene.getPlayerField();
     const enemyField = globalScene.getEnemyField();
-
-    const playerPokemon = this.getPokemon();
-
     const escapeChance = new NumberHolder(0);
 
     this.attemptRunAway(playerField, enemyField, escapeChance);
 
-    applyAbAttrs("RunSuccessAbAttr", playerPokemon, null, false, escapeChance);
+    applyAbAttrs("RunSuccessAbAttr", playerField[0], null, false, escapeChance);
 
-    if (playerPokemon.randBattleSeedInt(100) < escapeChance.value && !this.forceFailEscape) {
+    //TODO: needed?
+    if (globalScene.currentBattle.double) {
+      applyAbAttrs("RunSuccessAbAttr", playerField[1], null, false, escapeChance);
+    }
+
+    if (playerField[0].randBattleSeedInt(100) < escapeChance.value && !this.forceFailEscape) {
       enemyField.forEach(enemyPokemon => applyPreLeaveFieldAbAttrs("PreLeaveFieldAbAttr", enemyPokemon));
 
       globalScene.playSound("se/flee");
@@ -57,7 +59,12 @@ export class AttemptRunPhase extends PokemonPhase {
 
       globalScene.phaseManager.pushNew("NewBattlePhase");
     } else {
-      playerPokemon.turnData.failedRunAway = true;
+      playerField[0].turnData.failedRunAway = true;
+
+      if (globalScene.currentBattle.double) {
+        playerField[1].turnData.failedRunAway = true;
+      }
+
       globalScene.phaseManager.queueMessage(i18next.t("battle:runAwayCannotEscape"), null, true, 500);
     }
 
