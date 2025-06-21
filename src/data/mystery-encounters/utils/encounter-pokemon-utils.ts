@@ -375,10 +375,10 @@ export function applyHealToPokemon(pokemon: PlayerPokemon, heal: number) {
  * @param pokemon
  * @param value
  */
-export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: number) {
+export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, good: boolean) {
   const modType = modifierTypes
     .MYSTERY_ENCOUNTER_SHUCKLE_JUICE()
-    .generateType(globalScene.getPlayerParty(), [value])
+    .generateType(globalScene.getPlayerParty(), [good ? 10 : -15])
     ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE);
   const modifier = modType?.newModifier(pokemon);
   if (modifier) {

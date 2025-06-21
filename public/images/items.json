@@ -3307,7 +3307,28 @@
 					}
 				},
 				{
-					"filename": "berry_juice",
+					"filename": "berry_juice_good",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 32,
+						"h": 32
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 5,
+						"w": 22,
+						"h": 21
+					},
+					"frame": {
+						"x": 312,
+						"y": 21,
+						"w": 22,
+						"h": 21
+					}
+				},
+				{
+					"filename": "berry_juice_bad",
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
