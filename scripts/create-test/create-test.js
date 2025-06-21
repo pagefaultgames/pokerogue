@@ -1,7 +1,7 @@
 /**
  * This script creates a test boilerplate file in the appropriate
  * directory based on the type selected.
- * @example npm run test:create
+ * @example pnpm test:create
  */
 
 import chalk from "chalk";

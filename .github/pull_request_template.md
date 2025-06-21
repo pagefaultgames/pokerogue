@@ -68,8 +68,8 @@ Do the reviewers need to do something special in order to test your changes?
 - [ ] The PR is self-contained and cannot be split into smaller PRs?
 - [ ] Have I provided a clear explanation of the changes?
 - [ ] Have I tested the changes manually?
-- [ ] Are all unit tests still passing? (`npm run test:silent`)
-  - [ ] Have I created new automated tests (`npm run test:create`) or updated existing tests related to the PR's changes?
+- [ ] Are all unit tests still passing? (`pnpm test:silent`)
+  - [ ] Have I created new automated tests (`pnpm test:create`) or updated existing tests related to the PR's changes?
 - [ ] Have I provided screenshots/videos of the changes (if applicable)?
   - [ ] Have I made sure that any UI change works for both UI themes (default and legacy)?
 
