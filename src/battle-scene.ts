@@ -894,9 +894,19 @@ export default class BattleScene extends SceneBase {
     return activeOnly ? this.infoToggles.filter(t => t?.isActive()) : this.infoToggles;
   }
 
-  getPokemonById(pokemonId: number): Pokemon | null {
-    const findInParty = (party: Pokemon[]) => party.find(p => p.id === pokemonId);
-    return (findInParty(this.getPlayerParty()) || findInParty(this.getEnemyParty())) ?? null;
+  /**
+   * Return the {@linkcode Pokemon} associated with a given ID.
+   * @param pokemonId - The ID whose Pokemon will be retrieved.
+   * @returns The {@linkcode Pokemon} associated with the given id.
+   * Returns `null` if the ID is `undefined` or not present in either party.
+   */
+  getPokemonById(pokemonId: number | undefined): Pokemon | null {
+    if (isNullOrUndefined(pokemonId)) {
+      return null;
+    }
+
+    const party = (this.getPlayerParty() as Pokemon[]).concat(this.getEnemyParty());
+    return party.find(p => p.id === pokemonId) ?? null;
   }
 
   addPlayerPokemon(

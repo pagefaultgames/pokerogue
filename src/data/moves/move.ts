@@ -6887,12 +6887,12 @@ export class RandomMovesetMoveAttr extends CallMoveAttr {
       // includeParty will be true for Assist, false for Sleep Talk
       let allies: Pokemon[];
       if (this.includeParty) {
-        allies = user.isPlayer() ? globalScene.getPlayerParty().filter(p => p !== user) : globalScene.getEnemyParty().filter(p => p !== user);
+        allies = (user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p !== user);
       } else {
         allies = [ user ];
       }
-      const partyMoveset = allies.map(p => p.moveset).flat();
-      const moves = partyMoveset.filter(m => !this.invalidMoves.has(m!.moveId) && !m!.getMove().name.endsWith(" (N)"));
+      const partyMoveset = allies.flatMap(p => p.moveset);
+      const moves = partyMoveset.filter(m => !this.invalidMoves.has(m.moveId) && !m.getMove().name.endsWith(" (N)"));
       if (moves.length === 0) {
         return false;
       }

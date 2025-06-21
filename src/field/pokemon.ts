@@ -4125,7 +4125,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getTag<T extends BattlerTag>(tagType: Constructor<T>): T | undefined;
 
   getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | undefined {
-    return tagType instanceof Function
+    return typeof tagType === "function"
       ? this.summonData.tags.find(t => t instanceof tagType)
       : this.summonData.tags.find(t => t.tagType === tagType);
   }

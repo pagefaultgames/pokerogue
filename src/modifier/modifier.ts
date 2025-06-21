@@ -751,7 +751,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   }
 
   getPokemon(): Pokemon | undefined {
-    return this.pokemonId ? (globalScene.getPokemonById(this.pokemonId) ?? undefined) : undefined;
+    return globalScene.getPokemonById(this.pokemonId) ?? undefined;
   }
 
   getScoreMultiplier(): number {
