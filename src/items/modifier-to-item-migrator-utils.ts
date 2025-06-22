@@ -114,7 +114,8 @@ function mapModifierCategoryToItems(modifier: ModifierCategoryString, typeId: st
     return boost === 100 ? HeldItemId.GOLDEN_EGG : HeldItemId.LUCKY_EGG;
   }
   if (modifier === "PokemonBaseStatTotalModifier") {
-    // TODO: handle PokemonBaseStatTotalModifier
+    const statModifier = args[1] as number;
+    return statModifier > 0 ? HeldItemId.SHUCKLE_JUICE_GOOD : HeldItemId.SHUCKLE_JUICE_BAD;
   }
   return 0;
 }
