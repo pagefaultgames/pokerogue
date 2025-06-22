@@ -213,7 +213,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
         for (let i = 0; i < 4; i++) {
           const index = randSeedInt(berryMap.length);
           const randBerry = berryMap[index];
-          randBerry.pokemon.heldItemManager.remove(randBerry.item);
+          globalScene.getPokemonById(randBerry.pokemonId)?.heldItemManager.remove(randBerry.item.id);
           stolenBerryMap.push(randBerry);
           berryMap.splice(index, 1);
         }

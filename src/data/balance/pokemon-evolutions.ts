@@ -99,7 +99,7 @@ const EvoCondKey = {
   SPECIES_CAUGHT: 12,
   GENDER: 13,
   NATURE: 14,
-  HELD_ITEM: 15, // Currently checks only for species stat booster items
+  HELD_ITEM: 15,
 } as const;
 
 type EvolutionConditionData =

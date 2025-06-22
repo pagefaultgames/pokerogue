@@ -90,6 +90,6 @@ type HeldItemConfigurationEntry = {
 export type HeldItemConfiguration = HeldItemConfigurationEntry[];
 
 export type PokemonItemMap = {
-  item: HeldItemId;
-  pokemon: Pokemon;
+  item: HeldItemSpecs | FormChangeItemSpecs;
+  pokemonId: number;
 };

@@ -1327,7 +1327,7 @@ export function getPartyBerries(): PokemonItemMap[] {
     berries.forEach(berryId => {
       const berryStack = pokemon.heldItemManager.getStack(berryId);
       for (let i = 1; i <= berryStack; i++) {
-        pokemonItems.push({ item: berryId, pokemon: pokemon });
+        pokemonItems.push({ item: { id: berryId, stack: 1 }, pokemonId: pokemon.id });
       }
     });
   });
