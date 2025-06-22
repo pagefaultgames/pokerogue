@@ -20,16 +20,16 @@ export class TurnStartPhase extends FieldPhase {
   /**
    * This orders the active Pokemon on the field by speed into an BattlerIndex array and returns that array.
    * It also checks for Trick Room and reverses the array if it is present.
-   * @returns {@linkcode BattlerIndex[]} the battle indices of all pokemon on the field ordered by speed
+   * @returns An array of {@linkcode BattlerIndex}es containing all on-field Pokemon sorted in speed order.
    */
   getSpeedOrder(): BattlerIndex[] {
-    const playerField = globalScene.getPlayerField().filter(p => p.isActive()) as Pokemon[];
-    const enemyField = globalScene.getEnemyField().filter(p => p.isActive()) as Pokemon[];
+    const playerField = globalScene.getPlayerField().filter(p => p.isActive());
+    const enemyField = globalScene.getEnemyField().filter(p => p.isActive());
 
-    // We shuffle the list before sorting so speed ties produce random results
-    let orderedTargets: Pokemon[] = playerField.concat(enemyField);
-    // We seed it with the current turn to prevent an inconsistency where it
-    // was varying based on how long since you last reloaded
+    // Shuffle the list before sorting so speed ties produce random results
+    // This is seeded with the current turn to prevent turn order varying
+    // based on how long since you last reloaded.
+    let orderedTargets = (playerField as Pokemon[]).concat(enemyField);
     globalScene.executeWithSeedOffset(
       () => {
         orderedTargets = randSeedShuffle(orderedTargets);
@@ -38,25 +38,25 @@ export class TurnStartPhase extends FieldPhase {
       globalScene.waveSeed,
     );
 
-    // Next, a check for Trick Room is applied to determine sort order.
+    // Check for Trick Room and reverse sort order if active.
+    // Notably, Pokerogue does NOT have the "outspeed trick room" glitch at >1809 spd.
     const speedReversed = new BooleanHolder(false);
     globalScene.arena.applyTags(TrickRoomTag, false, speedReversed);
 
-    // Adjust the sort function based on whether Trick Room is active.
     orderedTargets.sort((a: Pokemon, b: Pokemon) => {
-      const aSpeed = a?.getEffectiveStat(Stat.SPD) ?? 0;
-      const bSpeed = b?.getEffectiveStat(Stat.SPD) ?? 0;
+      const aSpeed = a.getEffectiveStat(Stat.SPD);
+      const bSpeed = b.getEffectiveStat(Stat.SPD);
 
       return speedReversed.value ? aSpeed - bSpeed : bSpeed - aSpeed;
     });
 
-    return orderedTargets.map(t => t.getFieldIndex() + (!t.isPlayer() ? BattlerIndex.ENEMY : BattlerIndex.PLAYER));
+    return orderedTargets.map(t => t.getFieldIndex() + (t.isEnemy() ? BattlerIndex.ENEMY : BattlerIndex.PLAYER));
   }
 
   /**
    * This takes the result of getSpeedOrder and applies priority / bypass speed attributes to it.
-   * This also considers the priority levels of various commands and changes the result of getSpeedOrder based on such.
-   * @returns {@linkcode BattlerIndex[]} the final sequence of commands for this turn
+   * This also considers the priority levels of various commands and changes the result of `getSpeedOrder` based on such.
+   * @returns An array of {@linkcode BattlerIndex}es containing all on-field Pokemon sorted in action order.
    */
   getCommandOrder(): BattlerIndex[] {
     let moveOrder = this.getSpeedOrder();
@@ -113,7 +113,8 @@ export class TurnStartPhase extends FieldPhase {
         }
       }
 
-      // If there is no difference between the move's calculated priorities, the game checks for differences in battlerBypassSpeed and returns the result.
+      // If there is no difference between the move's calculated priorities,
+      // check for differences in battlerBypassSpeed and returns the result.
       if (battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value) {
         return battlerBypassSpeed[a].value ? -1 : 1;
       }
