@@ -51,15 +51,6 @@ import {
   BATTLE_STATS,
   EFFECTIVE_STATS,
 } from "#enums/stat";
-import {
-  EnemyDamageBoosterModifier,
-  EnemyDamageReducerModifier,
-  EnemyFusionChanceModifier,
-  HiddenAbilityRateBoosterModifier,
-  ShinyRateBoosterModifier,
-  TempStatStageBoosterModifier,
-  TempCritBoosterModifier,
-} from "#app/modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
 import { Gender } from "#app/data/gender";
 import { Status, getRandomStatus } from "#app/data/status-effect";
@@ -182,6 +173,7 @@ import { AiType } from "#enums/ai-type";
 import type { MoveResult } from "#enums/move-result";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { AbAttrMap, AbAttrString } from "#app/@types/ability-types";
+import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 
 /** Base typeclass for damage parameter methods, used for DRY */
 type damageParams = {
@@ -418,7 +410,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (level > 1) {
         const fused = new BooleanHolder(globalScene.gameMode.isSplicedOnly);
         if (!fused.value && this.isEnemy() && !this.hasTrainer()) {
-          globalScene.applyModifier(EnemyFusionChanceModifier, false, fused);
+          globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.ENEMY_FUSED_CHANCE, { booleanHolder: fused });
         }
 
         if (fused.value) {
@@ -601,7 +593,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // Roll for hidden ability chance, applying any ability charms for enemy mons
     const hiddenAbilityChance = new NumberHolder(BASE_HIDDEN_ABILITY_CHANCE);
     if (!this.hasTrainer()) {
-      globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+      globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HIDDEN_ABILITY_CHANCE_BOOSTER, {
+        numberHolder: hiddenAbilityChance,
+      });
     }
 
     // If the roll succeeded and we have one, use HA; otherwise pick a random ability
@@ -1353,7 +1347,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const critStage = new NumberHolder(0);
     applyMoveAttrs("HighCritAttr", source, this, move, critStage);
     applyHeldItems(HELD_ITEM_EFFECT.CRIT_BOOST, { pokemon: source, critStage: critStage });
-    globalScene.applyModifiers(TempCritBoosterModifier, source.isPlayer(), critStage);
+    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.TEMP_CRIT_BOOSTER, { numberHolder: critStage });
     applyAbAttrs("BonusCritAbAttr", source, null, false, critStage);
     const critBoostTag = source.getTag(CritBoostTag);
     if (critBoostTag) {
@@ -2756,7 +2750,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
       }
       if (!this.hasTrainer()) {
-        globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+        globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.SHINY_RATE_BOOSTER, { numberHolder: shinyThreshold });
       }
     } else {
       shinyThreshold.value = thresholdOverride;
@@ -2788,7 +2782,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (timedEventManager.isEventActive()) {
           shinyThreshold.value *= timedEventManager.getShinyMultiplier();
         }
-        globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+        globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.SHINY_RATE_BOOSTER, { numberHolder: shinyThreshold });
       }
 
       this.shiny = randSeedInt(65536) < shinyThreshold.value;
@@ -2860,7 +2854,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const haThreshold = new NumberHolder(thresholdOverride ?? BASE_HIDDEN_ABILITY_CHANCE);
     if (applyModifiersToOverride) {
       if (!this.hasTrainer()) {
-        globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, haThreshold);
+        globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HIDDEN_ABILITY_CHANCE_BOOSTER, { numberHolder: haThreshold });
       }
     }
 
@@ -2874,7 +2868,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public generateFusionSpecies(forStarter?: boolean): void {
     const hiddenAbilityChance = new NumberHolder(BASE_HIDDEN_ABILITY_CHANCE);
     if (!this.hasTrainer()) {
-      globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+      globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HIDDEN_ABILITY_CHANCE_BOOSTER, {
+        numberHolder: hiddenAbilityChance,
+      });
     }
 
     const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
@@ -3383,7 +3379,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!ignoreStatStage.value) {
       const statStageMultiplier = new NumberHolder(Math.max(2, 2 + statStage.value) / Math.max(2, 2 - statStage.value));
       if (!ignoreHeldItems) {
-        globalScene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), stat, statStageMultiplier);
+        globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.TEMP_STAT_STAGE_BOOSTER, {
+          numberHolder: statStageMultiplier,
+        });
       }
       return Math.min(statStageMultiplier.value, 4);
     }
@@ -3825,10 +3823,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     /** Apply the enemy's Damage and Resistance tokens */
     if (!source.isPlayer()) {
-      globalScene.applyModifiers(EnemyDamageBoosterModifier, false, damage);
+      globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.ENEMY_DAMAGE_BOOSTER, { numberHolder: damage });
     }
     if (!this.isPlayer()) {
-      globalScene.applyModifiers(EnemyDamageReducerModifier, false, damage);
+      globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.ENEMY_DAMAGE_REDUCER, { numberHolder: damage });
     }
 
     /** Apply this Pokemon's post-calc defensive modifiers (e.g. Fur Coat) */

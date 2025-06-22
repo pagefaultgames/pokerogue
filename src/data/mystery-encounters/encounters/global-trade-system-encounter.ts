@@ -32,7 +32,6 @@ import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { EnemyPokemon } from "#app/field/pokemon";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { HiddenAbilityRateBoosterModifier, ShinyRateBoosterModifier } from "#app/modifier/modifier";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import PokemonData from "#app/system/pokemon-data";
 import i18next from "i18next";
@@ -50,6 +49,7 @@ import { HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/he
 import { allHeldItems } from "#app/items/all-held-items";
 import { RewardTier } from "#enums/reward-tier";
 import { getHeldItemTier } from "#app/items/held-item-tiers";
+import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/globalTradeSystem";
@@ -276,7 +276,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
             if (timedEventManager.isEventActive()) {
               shinyThreshold.value *= timedEventManager.getShinyMultiplier();
             }
-            globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
+            globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.SHINY_RATE_BOOSTER, { numberHolder: shinyThreshold });
 
             // Base shiny chance of 512/65536 -> 1/128, affected by events and Shiny Charms
             // Maximum shiny chance of 4096/65536 -> 1/16, cannot improve further after that
@@ -290,7 +290,9 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
           if (tradePokemon.species.abilityHidden) {
             if (tradePokemon.abilityIndex < hiddenIndex) {
               const hiddenAbilityChance = new NumberHolder(64);
-              globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+              globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HIDDEN_ABILITY_CHANCE_BOOSTER, {
+                numberHolder: hiddenAbilityChance,
+              });
 
               const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
 

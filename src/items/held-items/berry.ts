@@ -3,10 +3,10 @@ import { BerryUsedEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { ConsumableHeldItem, HELD_ITEM_EFFECT } from "#app/items/held-item";
-import { PreserveBerryModifier } from "#app/modifier/modifier";
 import { BooleanHolder } from "#app/utils/common";
 import { BerryType } from "#enums/berry-type";
 import { HeldItemId } from "#enums/held-item-id";
+import { TRAINER_ITEM_EFFECT } from "../trainer-item";
 
 interface BerryTypeToHeldItemMap {
   [key: number]: HeldItemId;
@@ -77,7 +77,7 @@ export class BerryHeldItem extends ConsumableHeldItem {
     }
 
     const preserve = new BooleanHolder(false);
-    globalScene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), pokemon, preserve);
+    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.PRESERVE_BERRY, { pokemon: pokemon, doPreserve: preserve });
     const consumed = !preserve.value;
 
     // munch the berry and trigger unburden-like effects

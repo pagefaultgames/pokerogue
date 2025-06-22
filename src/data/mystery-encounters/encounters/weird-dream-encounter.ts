@@ -20,7 +20,6 @@ import { NumberHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "#
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { allSpecies } from "#app/data/data-lists";
-import { HiddenAbilityRateBoosterModifier } from "#app/modifier/modifier";
 import { achvs } from "#app/system/achv";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { modifierTypes } from "#app/data/data-lists";
@@ -43,6 +42,7 @@ import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { HeldItemConfiguration, HeldItemSpecs } from "#app/items/held-item-data-types";
 import { assignItemsFromConfiguration } from "#app/items/held-item-pool";
 import { HeldItemId } from "#enums/held-item-id";
+import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/weirdDream";
@@ -503,7 +503,9 @@ async function postProcessTransformedPokemon(
     const hiddenIndex = newPokemon.species.ability2 ? 2 : 1;
     if (newPokemon.abilityIndex < hiddenIndex) {
       const hiddenAbilityChance = new NumberHolder(256);
-      globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+      globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HIDDEN_ABILITY_CHANCE_BOOSTER, {
+        numberHolder: hiddenAbilityChance,
+      });
 
       const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
 

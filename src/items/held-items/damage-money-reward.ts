@@ -1,8 +1,8 @@
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import { MoneyMultiplierModifier } from "#app/modifier/modifier";
 import { NumberHolder } from "#app/utils/common";
 import { HeldItem, HELD_ITEM_EFFECT } from "../held-item";
+import { TRAINER_ITEM_EFFECT } from "../trainer-item";
 
 export interface DAMAGE_MONEY_REWARD_PARAMS {
   /** The pokemon with the item */
@@ -25,7 +25,7 @@ export class DamageMoneyRewardHeldItem extends HeldItem {
     const damage = params.damage;
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     const moneyAmount = new NumberHolder(Math.floor(damage * (0.5 * stackCount)));
-    globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
+    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
     globalScene.addMoney(moneyAmount.value);
 
     return true;

@@ -33,7 +33,6 @@ import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#enums/move-result";
 import { HitResult } from "#enums/hit-result";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { EnemyAttackStatusEffectChanceModifier, EnemyEndureChanceModifier } from "#app/modifier/modifier";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#app/utils/common";
 import type { nil } from "#app/utils/common";
@@ -49,6 +48,7 @@ import { DamageAchv } from "#app/system/achv";
 import { applyHeldItems } from "#app/items/all-held-items";
 import { HELD_ITEM_EFFECT } from "#app/items/held-item";
 import { isVirtual, isReflected, MoveUseMode } from "#enums/move-use-mode";
+import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
@@ -852,7 +852,7 @@ export class MoveEffectPhase extends PokemonPhase {
     if (isBlockedBySubstitute) {
       substitute.hp -= dmg;
     } else if (!target.isPlayer() && dmg >= target.hp) {
-      globalScene.applyModifiers(EnemyEndureChanceModifier, false, target);
+      globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.ENEMY_ENDURE_CHANCE, { pokemon: target });
     }
 
     const damage = isBlockedBySubstitute

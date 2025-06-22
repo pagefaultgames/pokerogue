@@ -40,9 +40,6 @@ import {
   applyPreDefendAbAttrs
 } from "../abilities/apply-ab-attrs";
 import { allAbilities, allMoves } from "../data-lists";
-import {
-  PreserveBerryModifier,
-} from "../../modifier/modifier";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattleType } from "#enums/battle-type";
 import { TerrainType } from "../terrain";
@@ -91,6 +88,7 @@ import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-it
 import { ChargingMove, MoveAttrMap, MoveAttrString, MoveKindString, MoveClassMap } from "#app/@types/move-types";
 import { applyMoveAttrs } from "./apply-attrs";
 import { frenzyMissFunc, getMoveTargets } from "./move-utils";
+import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -2758,7 +2756,7 @@ export class EatBerryAttr extends MoveEffectAttr {
     this.chosenBerry = heldBerries[user.randBattleSeedInt(heldBerries.length)];
     const preserve = new BooleanHolder(false);
     // check for berry pouch preservation
-    globalScene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), pokemon, preserve);
+    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.PRESERVE_BERRY, {pokemon: pokemon, doPreserve: preserve});
     if (!preserve.value) {
       this.reduceBerryModifier(pokemon);
     }

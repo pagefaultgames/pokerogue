@@ -13,7 +13,6 @@ import {
 import Trainer from "./field/trainer";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { GameMode } from "./game-mode";
-import { MoneyMultiplierModifier } from "./modifier/modifier";
 import type { PokeballType } from "#enums/pokeball";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { SpeciesFormKey } from "#enums/species-form-key";
@@ -36,6 +35,7 @@ import { BattleType } from "#enums/battle-type";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import type { HeldItemId } from "#enums/held-item-id";
 import { BattlerIndex } from "#enums/battler-index";
+import { TRAINER_ITEM_EFFECT } from "./items/trainer-item";
 
 export interface TurnCommand {
   command: Command;
@@ -176,7 +176,7 @@ export default class Battle {
 
   pickUpScatteredMoney(): void {
     const moneyAmount = new NumberHolder(globalScene.currentBattle.moneyScattered);
-    globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
+    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
 
     if (globalScene.arena.getTag(ArenaTagType.HAPPY_HOUR)) {
       moneyAmount.value *= 2;

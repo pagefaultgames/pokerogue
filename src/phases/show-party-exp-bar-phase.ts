@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
 import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 import { ExpNotification } from "#app/enums/exp-notification";
-import { ExpBoosterModifier } from "#app/modifier/modifier";
 import { NumberHolder } from "#app/utils/common";
 import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
+import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 
 export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "ShowPartyExpBarPhase";
@@ -20,7 +20,7 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
 
     const pokemon = this.getPokemon();
     const exp = new NumberHolder(this.expValue);
-    globalScene.applyModifiers(ExpBoosterModifier, true, exp);
+    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.EXP_BOOSTER, { numberHolder: exp });
     exp.value = Math.floor(exp.value);
 
     const lastLevel = pokemon.level;

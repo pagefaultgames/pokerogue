@@ -5,12 +5,12 @@ import { WeatherType } from "#app/enums/weather-type";
 import { TurnEndEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { EnemyTurnHealModifier, EnemyStatusEffectHealChanceModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { globalScene } from "#app/global-scene";
 import { applyHeldItems } from "#app/items/all-held-items";
 import { HELD_ITEM_EFFECT } from "#app/items/held-item";
+import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 
 export class TurnEndPhase extends FieldPhase {
   public readonly phaseName = "TurnEndPhase";
@@ -41,8 +41,8 @@ export class TurnEndPhase extends FieldPhase {
         }
 
         if (!pokemon.isPlayer()) {
-          globalScene.applyModifiers(EnemyTurnHealModifier, false, pokemon);
-          globalScene.applyModifier(EnemyStatusEffectHealChanceModifier, false, pokemon);
+          globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.ENEMY_HEAL, { pokemon: pokemon });
+          globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.ENEMY_STATUS_HEAL_CHANCE, { pokemon: pokemon });
         }
 
         applyPostTurnAbAttrs("PostTurnAbAttr", pokemon);
