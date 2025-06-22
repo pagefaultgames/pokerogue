@@ -29,7 +29,7 @@ const uniqueModifierToItem = {
   SwitchEffectTransferModifier: HeldItemId.BATON,
   TurnHeldItemTransferModifier: HeldItemId.MINI_BLACK_HOLE,
   ContactHeldItemTransferChanceModifier: HeldItemId.GRIP_CLAW,
-};
+} as const;
 
 type UniqueModifierString = keyof typeof uniqueModifierToItem;
 
