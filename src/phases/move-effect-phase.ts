@@ -997,7 +997,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     // We assume only enemy Pokemon are able to have the EnemyAttackStatusEffectChanceModifier from tokens
     if (!user.isPlayer() && this.move.is("AttackMove")) {
-      globalScene.applyShuffledModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
+      globalScene.applyShuffledStatusTokens(target);
     }
 
     // Apply Grip Claw's chance to steal an item from the target

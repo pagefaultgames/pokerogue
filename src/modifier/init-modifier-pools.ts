@@ -1,7 +1,6 @@
 import type Pokemon from "#app/field/pokemon";
 import { enemyBuffModifierPool, modifierPool } from "#app/modifier/modifier-pools";
 import { globalScene } from "#app/global-scene";
-import { DoubleBattleChanceBoosterModifier } from "./modifier";
 import { WeightedModifierType } from "./modifier-type";
 import { RewardTier } from "#app/enums/reward-tier";
 import type { WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
@@ -20,6 +19,8 @@ import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import type { initModifierTypes } from "./modifier-type";
 import { HeldItemId } from "#enums/held-item-id";
 import { allHeldItems } from "#app/items/all-held-items";
+import type { TrainerItemId } from "#enums/trainer-item-id";
+import { allTrainerItems } from "#app/items/all-trainer-items";
 
 /**
  * Initialize the common modifier pool
@@ -701,12 +702,11 @@ function skipInLastClassicWaveOrDefault(defaultWeight: number): WeightedModifier
  * @param weight The desired weight for the lure when it does spawn
  * @returns A WeightedModifierTypeWeightFunc
  */
-function lureWeightFunc(maxBattles: number, weight: number): WeightedModifierTypeWeightFunc {
+function lureWeightFunc(lureId: TrainerItemId, weight: number): WeightedModifierTypeWeightFunc {
   return () => {
-    const lures = globalScene.getModifiers(DoubleBattleChanceBoosterModifier);
+    const lureCount = globalScene.trainerItems.getStack(lureId);
     return !(globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex === 199) &&
-      (lures.length === 0 ||
-        lures.filter(m => m.getMaxBattles() === maxBattles && m.getBattleCount() >= maxBattles * 0.6).length === 0)
+      lureCount < allTrainerItems[lureId].getMaxStackCount() * 0.6
       ? weight
       : 0;
   };

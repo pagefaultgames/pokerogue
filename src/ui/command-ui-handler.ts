@@ -7,11 +7,11 @@ import { Button } from "#enums/buttons";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { CommandPhase } from "#app/phases/command-phase";
 import { globalScene } from "#app/global-scene";
-import { TerastallizeAccessModifier } from "#app/modifier/modifier";
 import { PokemonType } from "#enums/pokemon-type";
 import { getTypeRgb } from "#app/data/type";
 import { SpeciesId } from "#enums/species-id";
 import { Command } from "#enums/command";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 export default class CommandUiHandler extends UiHandler {
   private commandsContainer: Phaser.GameObjects.Container;
@@ -192,7 +192,7 @@ export default class CommandUiHandler extends UiHandler {
   }
 
   canTera(): boolean {
-    const hasTeraMod = !!globalScene.getModifiers(TerastallizeAccessModifier).length;
+    const hasTeraMod = !!globalScene.trainerItems.hasItem(TrainerItemId.TERA_ORB);
     const activePokemon = globalScene.getField()[this.fieldIndex];
     const isBlockedForm =
       activePokemon.isMega() || activePokemon.isMax() || activePokemon.hasSpecies(SpeciesId.NECROZMA, "ultra");

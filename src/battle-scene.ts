@@ -155,6 +155,7 @@ import { TrainerItemManager } from "./items/trainer-item-manager";
 import { TRAINER_ITEM_EFFECT } from "./items/trainer-item";
 import type { APPLY_TRAINER_ITEMS_PARAMS } from "./items/apply-trainer-items";
 import { TrainerItemId } from "#enums/trainer-item-id";
+import { allTrainerItems } from "./items/all-trainer-items";
 
 const DEBUG_RNG = false;
 
@@ -2919,16 +2920,6 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Get all of the modifiers that match `modifierType`
-   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @returns the list of all modifiers that matched `modifierType`.
-   */
-  getModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player = true): T[] {
-    return (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType);
-  }
-
-  /**
    * Get all of the modifiers that pass the `modifierFilter` function
    * @param modifierFilter The function used to filter a target's modifiers
    * @param isPlayer Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
@@ -2938,96 +2929,31 @@ export default class BattleScene extends SceneBase {
     return (isPlayer ? this.modifiers : this.enemyModifiers).filter(modifierFilter);
   }
 
-  /**
-   * Apply all modifiers that match `modifierType` in a random order
-   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @param ...args The list of arguments needed to invoke `modifierType.apply`
-   * @returns the list of all modifiers that matched `modifierType` and were applied.
-   */
-  applyShuffledModifiers<T extends PersistentModifier>(
-    modifierType: Constructor<T>,
-    player = true,
-    ...args: Parameters<T["apply"]>
-  ): T[] {
-    let modifiers = (player ? this.modifiers : this.enemyModifiers).filter(
-      (m): m is T => m instanceof modifierType && m.shouldApply(...args),
-    );
+  applyShuffledStatusTokens(pokemon: Pokemon) {
+    let tokens = [
+      TrainerItemId.ENEMY_ATTACK_BURN_CHANCE,
+      TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE,
+      TrainerItemId.ENEMY_ATTACK_POISON_CHANCE,
+    ].filter(t => this.enemyTrainerItems.hasItem(t));
+
     this.executeWithSeedOffset(
       () => {
-        const shuffleModifiers = mods => {
-          if (mods.length < 1) {
-            return mods;
+        const shuffleTokens = toks => {
+          if (toks.length < 1) {
+            return toks;
           }
-          const rand = randSeedInt(mods.length);
-          return [mods[rand], ...shuffleModifiers(mods.filter((_, i) => i !== rand))];
+          const rand = randSeedInt(toks.length);
+          return [toks[rand], ...shuffleTokens(toks.filter((_, i) => i !== rand))];
         };
-        modifiers = shuffleModifiers(modifiers);
+        tokens = shuffleTokens(tokens);
       },
       this.currentBattle.turn << 4,
       this.waveSeed,
     );
-    return this.applyModifiersInternal(modifiers, player, args);
-  }
 
-  /**
-   * Apply all modifiers that match `modifierType`
-   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @param ...args The list of arguments needed to invoke `modifierType.apply`
-   * @returns the list of all modifiers that matched `modifierType` and were applied.
-   */
-  applyModifiers<T extends PersistentModifier>(
-    modifierType: Constructor<T>,
-    player = true,
-    ...args: Parameters<T["apply"]>
-  ): T[] {
-    const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(
-      (m): m is T => m instanceof modifierType && m.shouldApply(...args),
-    );
-    return this.applyModifiersInternal(modifiers, player, args);
-  }
-
-  /** Helper function to apply all passed modifiers */
-  applyModifiersInternal<T extends PersistentModifier>(
-    modifiers: T[],
-    player: boolean,
-    args: Parameters<T["apply"]>,
-  ): T[] {
-    const appliedModifiers: T[] = [];
-    for (const modifier of modifiers) {
-      if (modifier.apply(...args)) {
-        console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
-        appliedModifiers.push(modifier);
-      }
+    for (const t in tokens) {
+      allTrainerItems[t].apply(this.enemyTrainerItems, { pokemon: pokemon });
     }
-
-    return appliedModifiers;
-  }
-
-  /**
-   * Apply the first modifier that matches `modifierType`
-   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @param ...args The list of arguments needed to invoke `modifierType.apply`
-   * @returns the first modifier that matches `modifierType` and was applied; return `null` if none matched
-   */
-  applyModifier<T extends PersistentModifier>(
-    modifierType: Constructor<T>,
-    player = true,
-    ...args: Parameters<T["apply"]>
-  ): T | null {
-    const modifiers = (player ? this.modifiers : this.enemyModifiers).filter(
-      (m): m is T => m instanceof modifierType && m.shouldApply(...args),
-    );
-    for (const modifier of modifiers) {
-      if (modifier.apply(...args)) {
-        console.log("Applied", modifier.type.name, !player ? "(enemy)" : "");
-        return modifier;
-      }
-    }
-
-    return null;
   }
 
   triggerPokemonFormChange(

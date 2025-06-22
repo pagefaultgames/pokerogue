@@ -10,6 +10,7 @@ import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "./data/balance/starters";
 import { MysteryEncounterType } from "./enums/mystery-encounter-type";
 import { MysteryEncounterTier } from "./enums/mystery-encounter-tier";
 import { Challenges } from "#enums/challenges";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 export enum EventType {
   SHINY,
@@ -59,7 +60,7 @@ interface TimedEvent extends EventBanner {
   startDate: Date;
   endDate: Date;
   eventEncounters?: EventEncounter[];
-  delibirdyBuff?: string[];
+  delibirdyBuff?: TrainerItemId[];
   weather?: WeatherPoolEntry[];
   mysteryEncounterTierChanges?: EventMysteryEncounterTier[];
   luckBoostedSpecies?: SpeciesId[];
@@ -103,7 +104,14 @@ const timedEvents: TimedEvent[] = [
       { species: SpeciesId.GALAR_DARUMAKA },
       { species: SpeciesId.IRON_BUNDLE },
     ],
-    delibirdyBuff: ["CATCHING_CHARM", "SHINY_CHARM", "ABILITY_CHARM", "EXP_CHARM", "SUPER_EXP_CHARM", "HEALING_CHARM"],
+    delibirdyBuff: [
+      TrainerItemId.CATCHING_CHARM,
+      TrainerItemId.SHINY_CHARM,
+      TrainerItemId.ABILITY_CHARM,
+      TrainerItemId.EXP_CHARM,
+      TrainerItemId.SUPER_EXP_CHARM,
+      TrainerItemId.HEALING_CHARM,
+    ],
     weather: [{ weatherType: WeatherType.SNOW, weight: 1 }],
     mysteryEncounterTierChanges: [
       {
@@ -460,8 +468,8 @@ export class TimedEventManager {
    * For events where Delibirdy gives extra items
    * @returns list of ids of {@linkcode ModifierType}s that Delibirdy hands out as a bonus
    */
-  getDelibirdyBuff(): string[] {
-    const ret: string[] = [];
+  getDelibirdyBuff(): TrainerItemId[] {
+    const ret: TrainerItemId[] = [];
     timedEvents
       .filter(te => this.isActive(te))
       .map(te => {
