@@ -21,12 +21,13 @@ export class PokemonTransformPhase extends PokemonPhase {
     super(userIndex);
 
     this.targetIndex = targetIndex;
+
     this.playSound = playSound;
   }
 
   public override start(): void {
     const user = this.getPokemon();
-    const target = globalScene.getField(true).find(p => p.getBattlerIndex() === this.targetIndex);
+    const target = globalScene.getField()[this.targetIndex];
 
     if (!target) {
       this.end();
@@ -58,6 +59,8 @@ export class PokemonTransformPhase extends PokemonPhase {
       console.warn(`Transform: somehow iterating over a ${m} value when copying moveset!`);
       return new PokemonMove(MoveId.NONE);
     });
+
+    // TODO: This should fallback to the target's original typing if none are left (from Burn Up, etc.)
     user.summonData.types = target.getTypes();
 
     const promises = [user.updateInfo()];
