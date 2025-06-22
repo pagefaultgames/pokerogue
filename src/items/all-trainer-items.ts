@@ -32,17 +32,13 @@ export function initTrainerItems() {
   allTrainerItems[TrainerItemId.MAP] = new TrainerItem(TrainerItemId.MAP, 1);
   allTrainerItems[TrainerItemId.IV_SCANNER] = new TrainerItem(TrainerItemId.IV_SCANNER, 1);
   allTrainerItems[TrainerItemId.LOCK_CAPSULE] = new TrainerItem(TrainerItemId.LOCK_CAPSULE, 1);
-  allTrainerItems[TrainerItemId.MEGA_EVOLUTION_ACCESS] = new TrainerItem(TrainerItemId.MEGA_EVOLUTION_ACCESS, 1);
-  allTrainerItems[TrainerItemId.GIGANTAMAX_ACCESS] = new TrainerItem(TrainerItemId.GIGANTAMAX_ACCESS, 1);
-  allTrainerItems[TrainerItemId.TERASTALLIZE_ACCESS] = new TrainerItem(TrainerItemId.TERASTALLIZE_ACCESS, 1);
+  allTrainerItems[TrainerItemId.MEGA_BRACELET] = new TrainerItem(TrainerItemId.MEGA_BRACELET, 1);
+  allTrainerItems[TrainerItemId.DYNAMAX_BAND] = new TrainerItem(TrainerItemId.DYNAMAX_BAND, 1);
+  allTrainerItems[TrainerItemId.TERA_ORB] = new TrainerItem(TrainerItemId.TERA_ORB, 1);
 
-  allTrainerItems[TrainerItemId.MULTIPLE_PARTICIPANT_EXP_BONUS] = new TrainerItem(
-    TrainerItemId.MULTIPLE_PARTICIPANT_EXP_BONUS,
-    5,
-  );
+  allTrainerItems[TrainerItemId.OVAL_CHARM] = new TrainerItem(TrainerItemId.OVAL_CHARM, 5);
   allTrainerItems[TrainerItemId.EXP_SHARE] = new TrainerItem(TrainerItemId.EXP_SHARE, 5);
   allTrainerItems[TrainerItemId.EXP_BALANCE] = new TrainerItem(TrainerItemId.EXP_BALANCE, 4);
-  allTrainerItems[TrainerItemId.TERASTALLIZE_ACCESS] = new TrainerItem(TrainerItemId.TERASTALLIZE_ACCESS, 1);
 
   allTrainerItems[TrainerItemId.CANDY_JAR] = new LevelIncrementBoosterTrainerItem(TrainerItemId.CANDY_JAR, 99);
   allTrainerItems[TrainerItemId.BERRY_POUCH] = new PreserveBerryTrainerItem(TrainerItemId.BERRY_POUCH, 3);
@@ -64,7 +60,7 @@ export function initTrainerItems() {
   );
 
   allTrainerItems[TrainerItemId.BLACK_SLUDGE] = new HealShopCostTrainerItem(TrainerItemId.BLACK_SLUDGE, 2.5, 1);
-  allTrainerItems[TrainerItemId.BUG_NET] = new TrainerItem(TrainerItemId.BUG_NET, 1);
+  allTrainerItems[TrainerItemId.GOLDEN_BUG_NET] = new TrainerItem(TrainerItemId.GOLDEN_BUG_NET, 1);
 
   allTrainerItems[TrainerItemId.LURE] = new DoubleBattleChanceBoosterTrainerItem(TrainerItemId.LURE, 10);
   allTrainerItems[TrainerItemId.SUPER_LURE] = new DoubleBattleChanceBoosterTrainerItem(TrainerItemId.SUPER_LURE, 15);

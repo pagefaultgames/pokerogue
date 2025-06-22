@@ -24,13 +24,7 @@ import type { Modifier, ModifierPredicate } from "./modifier/modifier";
 import {
   ConsumableModifier,
   ConsumablePokemonModifier,
-  DoubleBattleChanceBoosterModifier,
-  ExpBalanceModifier,
-  ExpShareModifier,
   FusePokemonModifier,
-  HealingBoosterModifier,
-  MultipleParticipantExpBonusModifier,
-  PersistentModifier,
   PokemonHpRestoreModifier,
   RememberMoveModifier,
 } from "./modifier/modifier";
@@ -157,6 +151,9 @@ import { PhaseManager } from "./phase-manager";
 import { HeldItemId } from "#enums/held-item-id";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "./items/held-item-pool";
 import type { HeldItemConfiguration } from "./items/held-item-data-types";
+import { TrainerItemManager } from "./items/trainer-item-manager";
+import { TRAINER_ITEM_EFFECT } from "./items/trainer-item";
+import type { APPLY_TRAINER_ITEMS_PARAMS } from "./items/apply-trainer-items";
 
 const DEBUG_RNG = false;
 
@@ -315,8 +312,8 @@ export default class BattleScene extends SceneBase {
   private shopOverlayShown = false;
   private shopOverlayOpacity = 0.8;
 
-  public modifiers: PersistentModifier[];
-  private enemyModifiers: PersistentModifier[];
+  public trainerItems: TrainerItemManager;
+  public enemyTrainerItems: TrainerItemManager;
   public uiContainer: Phaser.GameObjects.Container;
   public ui: UI;
 
@@ -497,8 +494,8 @@ export default class BattleScene extends SceneBase {
     this.shopOverlay.setAlpha(0);
     this.fieldUI.add(this.shopOverlay);
 
-    this.modifiers = [];
-    this.enemyModifiers = [];
+    this.trainerItems = new TrainerItemManager();
+    this.enemyTrainerItems = new TrainerItemManager();
 
     this.modifierBar = new ModifierBar();
     this.modifierBar.setName("modifier-bar");
@@ -1153,8 +1150,8 @@ export default class BattleScene extends SceneBase {
       this.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
     }
 
-    this.modifiers = [];
-    this.enemyModifiers = [];
+    this.trainerItems.clearItems();
+    this.enemyTrainerItems.clearItems();
     this.modifierBar.removeAll(true);
     this.enemyModifierBar.removeAll(true);
 
@@ -1258,7 +1255,7 @@ export default class BattleScene extends SceneBase {
 
   getDoubleBattleChance(newWaveIndex: number, playerField: PlayerPokemon[]) {
     const doubleChance = new NumberHolder(newWaveIndex % 10 === 0 ? 32 : 8);
-    this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
+    this.applyPlayerItems(TRAINER_ITEM_EFFECT.DOUBLE_BATTLE_CHANCE_BOOSTER, { numberHolder: doubleChance });
     for (const p of playerField) {
       applyAbAttrs("DoubleBattleChanceAbAttr", p, null, false, doubleChance);
     }
@@ -2603,6 +2600,10 @@ export default class BattleScene extends SceneBase {
     return Math.floor(moneyValue / 10) * 10;
   }
 
+  applyPlayerItems<T extends TRAINER_ITEM_EFFECT>(effect: T, params: APPLY_TRAINER_ITEMS_PARAMS[T]) {
+    applyTrainerItems(effect, this.trainerItems, params);
+  }
+
   addModifier(
     modifier: Modifier | null,
     ignoreUpdate?: boolean,
@@ -2655,7 +2656,7 @@ export default class BattleScene extends SceneBase {
           if (modifier instanceof PokemonHpRestoreModifier) {
             if (!(modifier as PokemonHpRestoreModifier).fainted) {
               const hpRestoreMultiplier = new NumberHolder(1);
-              this.applyModifiers(HealingBoosterModifier, true, hpRestoreMultiplier);
+              this.applyPlayerItems(TRAINER_ITEM_EFFECT.HEALING_BOOSTER, { numberHolder: hpRestoreMultiplier });
               args.push(hpRestoreMultiplier.value);
             } else {
               args.push(1);
@@ -2914,30 +2915,6 @@ export default class BattleScene extends SceneBase {
         }),
       ).then(() => resolve());
     });
-  }
-
-  hasModifier(modifier: PersistentModifier, enemy = false): boolean {
-    const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
-    return modifiers.indexOf(modifier) > -1;
-  }
-
-  /**
-   * Removes a currently owned item. If the item is stacked, the entire item stack
-   * gets removed. This function does NOT apply in-battle effects, such as Unburden.
-   * If in-battle effects are needed, use {@linkcode Pokemon.loseHeldItem} instead.
-   * @param modifier The item to be removed.
-   * @param enemy `true` to remove an item owned by the enemy rather than the player; default `false`.
-   * @returns `true` if the item exists and was successfully removed, `false` otherwise
-   */
-  removeModifier(modifier: PersistentModifier, enemy = false): boolean {
-    const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
-    const modifierIndex = modifiers.indexOf(modifier);
-    if (modifierIndex > -1) {
-      modifiers.splice(modifierIndex, 1);
-      return true;
-    }
-
-    return false;
   }
 
   /**

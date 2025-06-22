@@ -5,9 +5,9 @@ import { TrainerItemId, TrainerItemNames } from "#enums/trainer-item-id";
 import i18next from "i18next";
 import type { TrainerItemManager } from "./trainer-item-manager";
 import { addTextObject, TextStyle } from "#app/ui/text";
-import { Stat, type TempBattleStat } from "#enums/stat";
+import { getStatKey, Stat, type TempBattleStat } from "#enums/stat";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { getStatusEffectHealText } from "#app/data/status-effect";
+import { getStatusEffectDescriptor, getStatusEffectHealText } from "#app/data/status-effect";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { StatusEffect } from "#enums/status-effect";
 
@@ -163,18 +163,24 @@ export class HealingBoosterTrainerItem extends TrainerItem {
 // Exp Booster
 export class ExpBoosterTrainerItem extends TrainerItem {
   public effects: TRAINER_ITEM_EFFECT[] = [TRAINER_ITEM_EFFECT.EXP_BOOSTER];
-  private boostMultiplier: number;
+  private boostPercent: number;
 
   constructor(type: TrainerItemId, boostPercent: number, stackCount?: number) {
     super(type, stackCount);
 
-    this.boostMultiplier = boostPercent * 0.01;
+    this.boostPercent = boostPercent;
+  }
+
+  getDescription(): string {
+    return i18next.t("modifierType:ModifierType.ExpBoosterModifierType.description", {
+      boostPercent: this.boostPercent,
+    });
   }
 
   apply(manager: TrainerItemManager, params: NUMBER_HOLDER_PARAMS) {
     const boost = params.numberHolder;
     const stack = manager.getStack(this.type);
-    boost.value = Math.floor(boost.value * (1 + stack * this.boostMultiplier));
+    boost.value = Math.floor(boost.value * (1 + stack * this.boostPercent * 0.01));
   }
 }
 
@@ -278,6 +284,12 @@ export class LapsingTrainerItem extends TrainerItem {
 export class DoubleBattleChanceBoosterTrainerItem extends LapsingTrainerItem {
   public effects: TRAINER_ITEM_EFFECT[] = [TRAINER_ITEM_EFFECT.DOUBLE_BATTLE_CHANCE_BOOSTER];
 
+  getDescription(): string {
+    return i18next.t("modifierType:ModifierType.DoubleBattleChanceBoosterModifierType.description", {
+      battleCount: this.getMaxStackCount(),
+    });
+  }
+
   apply(_manager: TrainerItemManager, params: NUMBER_HOLDER_PARAMS) {
     const doubleBattleChance = params.numberHolder;
     // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using randSeedInt
@@ -309,6 +321,13 @@ export class TempStatStageBoosterTrainerItem extends LapsingTrainerItem {
     this.stat = stat;
   }
 
+  getDescription(): string {
+    return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
+      stat: i18next.t(getStatKey(this.stat)),
+      amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.extra.percentage"),
+    });
+  }
+
   apply(_manager: TrainerItemManager, params: NUMBER_HOLDER_PARAMS) {
     const statLevel = params.numberHolder;
     // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using randSeedInt
@@ -326,6 +345,13 @@ export class TempCritBoosterTrainerItem extends LapsingTrainerItem {
     super(type, stackCount);
 
     this.stat = stat;
+  }
+
+  getDescription(): string {
+    return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
+      stat: i18next.t("modifierType:ModifierType.DIRE_HIT.extra.raises"),
+      amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.extra.stage"),
+    });
   }
 
   apply(_manager: TrainerItemManager, params: NUMBER_HOLDER_PARAMS) {
@@ -409,16 +435,27 @@ export class EnemyAttackStatusEffectChanceTrainerItem extends TrainerItem {
     this.effect = effect;
   }
 
+  getDescription(): string {
+    return i18next.t("modifierType:ModifierType.EnemyAttackStatusEffectChanceModifierType.description", {
+      chancePercent: this.getChance() * 100,
+      statusEffect: getStatusEffectDescriptor(this.effect),
+    });
+  }
+
   apply(manager: TrainerItemManager, params: POKEMON_PARAMS): boolean {
     const stack = manager.getStack(this.type);
     const enemyPokemon = params.pokemon;
-    const chance = 0.025 * (this.effect === StatusEffect.BURN || this.effect === StatusEffect.POISON ? 2 : 1);
+    const chance = this.getChance();
 
     if (randSeedFloat() <= chance * stack) {
       return enemyPokemon.trySetStatus(this.effect, true);
     }
 
     return false;
+  }
+
+  getChance(): number {
+    return 0.025 * (this.effect === StatusEffect.BURN || this.effect === StatusEffect.POISON ? 2 : 1);
   }
 }
 
@@ -446,6 +483,12 @@ export class EnemyStatusEffectHealChanceTrainerItem extends TrainerItem {
 export class EnemyEndureChanceTrainerItem extends TrainerItem {
   public effects: TRAINER_ITEM_EFFECT[] = [TRAINER_ITEM_EFFECT.ENEMY_ENDURE_CHANCE];
   public chance = 2;
+
+  getDescription(): string {
+    return i18next.t("modifierType:ModifierType.EnemyEndureChanceModifierType.description", {
+      chancePercent: this.chance,
+    });
+  }
 
   apply(manager: TrainerItemManager, params: POKEMON_PARAMS): boolean {
     const stack = manager.getStack(this.type);
