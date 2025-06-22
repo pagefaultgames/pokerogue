@@ -39,7 +39,7 @@ import { setSettingGamepad, SettingGamepad, settingGamepadDefaults } from "#app/
 import type { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { setSettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { TagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
-// biome-ignore lint/style/noNamespaceImport: Something weird is going on here and I don't want to touch it
+// biome-ignore lint/performance/noNamespaceImport: Something weird is going on here and I don't want to touch it
 import * as Modifier from "#app/modifier/modifier";
 import { StatusEffect } from "#enums/status-effect";
 import ChallengeData from "#app/system/challenge-data";
@@ -300,7 +300,7 @@ export class GameData {
       voucherCounts: this.voucherCounts,
       eggs: this.eggs.map(e => new EggData(e)),
       gameVersion: globalScene.game.config.gameVersion,
-      timestamp: new Date().getTime(),
+      timestamp: Date.now(),
       eggPity: this.eggPity.slice(0),
       unlockPity: this.unlockPity.slice(0),
     };
@@ -930,7 +930,7 @@ export class GameData {
           ? new TrainerData(globalScene.currentBattle.trainer)
           : null,
       gameVersion: globalScene.game.config.gameVersion,
-      timestamp: new Date().getTime(),
+      timestamp: Date.now(),
       challenges: globalScene.gameMode.challenges.map(c => new ChallengeData(c)),
       mysteryEncounterType: globalScene.currentBattle.mysteryEncounter?.encounterType ?? -1,
       mysteryEncounterSaveData: globalScene.mysteryEncounterSaveData,
@@ -939,7 +939,7 @@ export class GameData {
   }
 
   getSession(slotId: number): Promise<SessionSaveData | null> {
-    // biome-ignore lint/suspicious/noAsyncPromiseExecutor: <explanation>
+    // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO: fix this
     return new Promise(async (resolve, reject) => {
       if (slotId < 0) {
         return resolve(null);
@@ -980,7 +980,7 @@ export class GameData {
   }
 
   loadSession(slotId: number, sessionData?: SessionSaveData): Promise<boolean> {
-    // biome-ignore lint/suspicious/noAsyncPromiseExecutor: <explanation>
+    // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO: fix this
     return new Promise(async (resolve, reject) => {
       try {
         const initSessionFromData = async (sessionData: SessionSaveData) => {
@@ -1610,7 +1610,7 @@ export class GameData {
       }
     }
 
-    this.defaultDexData = Object.assign({}, data);
+    this.defaultDexData = { ...data };
     this.dexData = data;
   }
 

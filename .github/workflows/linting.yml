@@ -31,9 +31,6 @@ jobs:
 
       - name: Install Node.js dependencies
         run: npm ci
-      
-      - name: Run ESLint
-        run: npm run eslint-ci
 
       - name: Lint with Biome
         run: npm run biome-ci

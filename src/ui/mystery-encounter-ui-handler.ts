@@ -591,9 +591,9 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     // Auto-color options green/blue for good/bad by looking for (+)/(-)
     if (text) {
-      const primaryStyleString = [...text.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))!][0];
+      const primaryStyleString = [...text.match(new RegExp(/\[color=[^[]*\]\[shadow=[^[]*\]/i))!][0];
       text = text.replace(
-        /(\(\+\)[^\(\[]*)/gi,
+        /(\(\+\)[^([]*)/gi,
         substring =>
           "[/color][/shadow]" +
           getBBCodeFrag(substring, TextStyle.SUMMARY_GREEN) +
@@ -601,7 +601,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
           primaryStyleString,
       );
       text = text.replace(
-        /(\(\-\)[^\(\[]*)/gi,
+        /(\(-\)[^([]*)/gi,
         substring =>
           "[/color][/shadow]" +
           getBBCodeFrag(substring, TextStyle.SUMMARY_BLUE) +

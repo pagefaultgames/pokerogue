@@ -35,7 +35,7 @@ describe("Abilities - Stall", () => {
    * References:
    * https://bulbapedia.bulbagarden.net/wiki/Stall_(Ability)
    * https://bulbapedia.bulbagarden.net/wiki/Priority
-   **/
+   */
 
   it("Pokemon with Stall should move last in its priority bracket regardless of speed", async () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);

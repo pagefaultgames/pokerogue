@@ -70,20 +70,20 @@ const repeatInputDelayMillis = 250;
  * providing a unified interface for all input-related interactions.
  */
 export class InputsController {
-  private gamepads: Array<Phaser.Input.Gamepad.Gamepad> = new Array();
+  private gamepads: Array<Phaser.Input.Gamepad.Gamepad> = [];
   public events: Phaser.Events.EventEmitter;
 
-  private buttonLock: Button[] = new Array();
+  private buttonLock: Button[] = [];
   private interactions: Map<Button, Map<string, boolean>> = new Map();
   private configs: Map<string, InterfaceConfig> = new Map();
 
   public gamepadSupport = true;
   public selectedDevice;
 
-  private disconnectedGamepads: Array<string> = new Array();
+  private disconnectedGamepads: Array<string> = [];
 
   public lastSource = "keyboard";
-  private inputInterval: NodeJS.Timeout[] = new Array();
+  private inputInterval: NodeJS.Timeout[] = [];
   private touchControls: TouchControl;
   public moveTouchControlsHandler: MoveTouchControlsHandler;
 

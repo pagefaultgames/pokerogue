@@ -299,7 +299,7 @@ export class GameOverPhase extends BattlePhase {
       battleType: globalScene.currentBattle.battleType,
       trainer: globalScene.currentBattle.trainer ? new TrainerData(globalScene.currentBattle.trainer) : null,
       gameVersion: globalScene.game.config.gameVersion,
-      timestamp: new Date().getTime(),
+      timestamp: Date.now(),
       challenges: globalScene.gameMode.challenges.map(c => new ChallengeData(c)),
       mysteryEncounterType: globalScene.currentBattle.mysteryEncounter?.encounterType ?? -1,
       mysteryEncounterSaveData: globalScene.mysteryEncounterSaveData,

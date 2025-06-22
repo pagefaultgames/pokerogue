@@ -696,12 +696,9 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param target - The {@linkcode Pokemon} to be removed
    */
   protected removeTarget(target: Pokemon): void {
-    const targetIndex = this.targets.findIndex(ind => ind === target.getBattlerIndex());
+    const targetIndex = this.targets.indexOf(target.getBattlerIndex());
     if (targetIndex !== -1) {
-      this.targets.splice(
-        this.targets.findIndex(ind => ind === target.getBattlerIndex()),
-        1,
-      );
+      this.targets.splice(this.targets.indexOf(target.getBattlerIndex()), 1);
     }
   }
 

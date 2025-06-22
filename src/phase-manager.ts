@@ -100,7 +100,7 @@ import { UnlockPhase } from "#app/phases/unlock-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import { WeatherEffectPhase } from "#app/phases/weather-effect-phase";
 
-/**
+/*
  * Manager for phases used by battle scene.
  *
  * *This file must not be imported or used directly. The manager is exclusively used by the battle scene and is not intended for external use.*

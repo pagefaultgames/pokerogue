@@ -19,7 +19,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { TypeColor, TypeShadow } from "#app/enums/color";
 import { getNatureStatMultiplier, getNatureName } from "../data/nature";
 import { getVariantTint } from "#app/sprites/variant";
-// biome-ignore lint/style/noNamespaceImport: See `src/system/game-data.ts`
+// biome-ignore lint/performance/noNamespaceImport: See `src/system/game-data.ts`
 import * as Modifier from "#app/modifier/modifier";
 import type { SpeciesId } from "#enums/species-id";
 import { PlayerGender } from "#enums/player-gender";

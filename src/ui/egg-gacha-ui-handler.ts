@@ -625,7 +625,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     const infoContainer = this.gachaInfoContainers[gachaType];
     switch (gachaType as GachaType) {
       case GachaType.LEGENDARY: {
-        const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(new Date().getTime()));
+        const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(Date.now()));
         const pokemonIcon = infoContainer.getAt(1) as Phaser.GameObjects.Sprite;
         pokemonIcon.setTexture(species.getIconAtlasKey(), species.getIconId(false));
         break;

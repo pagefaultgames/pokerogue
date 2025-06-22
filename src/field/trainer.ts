@@ -158,7 +158,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
    * @param {TrainerSlot} trainerSlot - The slot to determine which name to use. Defaults to TrainerSlot.NONE.
    * @param {boolean} includeTitle - Whether to include the title in the returned name. Defaults to false.
    * @returns {string} - The formatted name of the trainer.
-   **/
+   */
   getName(trainerSlot: TrainerSlot = TrainerSlot.NONE, includeTitle = false): string {
     // Get the base title based on the trainer slot and variant.
     let name = this.config.getTitle(trainerSlot, this.variant);

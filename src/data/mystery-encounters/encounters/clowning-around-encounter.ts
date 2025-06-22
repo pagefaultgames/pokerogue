@@ -135,7 +135,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
     );
     clownConfig.setPartyTemplates(clownPartyTemplate);
     clownConfig.setDoubleOnly();
-    // @ts-ignore
+    // @ts-expect-error
     clownConfig.partyTemplateFunc = null; // Overrides party template func if it exists
 
     // Generate random ability for Blacephalon from pool

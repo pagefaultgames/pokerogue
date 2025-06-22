@@ -1226,7 +1226,7 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
   );
 
   for (const value of meanEncountersPerRunPerBiomeSorted) {
-    stats += value[0] + "avg valid floors " + meanMEFloorsPerRunPerBiome.get(value[0]) + ", avg MEs ${value[1]},\n";
+    stats += value[0] + "avg valid floors " + meanMEFloorsPerRunPerBiome.get(value[0]) + `, avg MEs ${value[1]},\n`;
   }
 
   console.log(stats);

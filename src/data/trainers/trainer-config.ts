@@ -290,7 +290,7 @@ export class TrainerConfig {
    * @param {string} [nameFemale] The name of the female trainer. If 'Ivy', a localized name will be assigned.
    * @param {TrainerType | string} [femaleEncounterBgm] The encounter BGM for the female trainer, which can be a TrainerType or a string.
    * @returns {TrainerConfig} The updated TrainerConfig instance.
-   **/
+   */
   setHasGenders(nameFemale?: string, femaleEncounterBgm?: TrainerType | string): TrainerConfig {
     // If the female name is 'Ivy' (the rival), assign a localized name.
     if (nameFemale === "Ivy") {
@@ -335,7 +335,7 @@ export class TrainerConfig {
     if (doubleEncounterBgm) {
       this.doubleEncounterBgm =
         typeof doubleEncounterBgm === "number"
-          ? TrainerType[doubleEncounterBgm].toString().replace(/\_/g, " ").toLowerCase()
+          ? TrainerType[doubleEncounterBgm].toString().replace(/_/g, " ").toLowerCase()
           : doubleEncounterBgm;
     }
     return this;
@@ -540,7 +540,7 @@ export class TrainerConfig {
    * @param {SpeciesId | SpeciesId[]} signatureSpecies The signature species for the evil team leader.
    * @param specialtyType The specialty Type of the admin, if they have one
    * @returns {TrainerConfig} The updated TrainerConfig instance.
-   * **/
+   */
   initForEvilTeamAdmin(
     title: string,
     poolName: EvilTeam,
@@ -581,7 +581,7 @@ export class TrainerConfig {
    * Initializes the trainer configuration for a Stat Trainer, as part of the Trainer's Test Mystery Encounter.
    * @param _isMale Whether the stat trainer is Male or Female (for localization of the title).
    * @returns {TrainerConfig} The updated TrainerConfig instance.
-   **/
+   */
   initForStatTrainer(_isMale = false): TrainerConfig {
     if (!getIsInitialized()) {
       initI18n();
@@ -608,7 +608,7 @@ export class TrainerConfig {
    * @param {PokemonType} specialtyType The specialty type for the evil team Leader.
    * @param boolean Whether or not this is the rematch fight
    * @returns {TrainerConfig} The updated TrainerConfig instance.
-   * **/
+   */
   initForEvilTeamLeader(
     title: string,
     signatureSpecies: (SpeciesId | SpeciesId[])[],
@@ -651,7 +651,7 @@ export class TrainerConfig {
    * @param ignoreMinTeraWave Whether the Gym Leader always uses Tera (true), or only Teras after {@linkcode GYM_LEADER_TERA_WAVE} (false). Defaults to false.
    * @param teraSlot Optional, sets the party member in this slot to Terastallize. Wraps based on party size.
    * @returns {TrainerConfig} The updated TrainerConfig instance.
-   * **/
+   */
   initForGymLeader(
     signatureSpecies: (SpeciesId | SpeciesId[])[],
     isMale: boolean,
@@ -709,7 +709,7 @@ export class TrainerConfig {
    * @param specialtyType - The specialty type for the Elite Four member.
    * @param teraSlot - Optional, sets the party member in this slot to Terastallize.
    * @returns The updated TrainerConfig instance.
-   **/
+   */
   initForEliteFour(
     signatureSpecies: (SpeciesId | SpeciesId[])[],
     isMale: boolean,
@@ -765,7 +765,7 @@ export class TrainerConfig {
    * @param {SpeciesId | SpeciesId[]} signatureSpecies The signature species for the Champion.
    * @param isMale Whether the Champion is Male or Female (for localization of the title).
    * @returns {TrainerConfig} The updated TrainerConfig instance.
-   **/
+   */
   initForChampion(isMale: boolean): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
     if (!getIsInitialized()) {
@@ -815,7 +815,7 @@ export class TrainerConfig {
    * @param {TrainerSlot} trainerSlot - The slot to determine which title to use. Defaults to TrainerSlot.NONE.
    * @param {TrainerVariant} variant - The variant of the trainer to determine the specific title.
    * @returns {string} - The title of the trainer.
-   **/
+   */
   getTitle(trainerSlot: TrainerSlot = TrainerSlot.NONE, variant: TrainerVariant): string {
     const ret = this.name;
 

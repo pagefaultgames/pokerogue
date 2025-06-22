@@ -33,7 +33,7 @@ export abstract class ApiBase {
    * @param dataType The data-type of the {@linkcode bodyData}.
    */
   protected async doPost<D = undefined>(path: string, bodyData?: D, dataType: DataType = "json") {
-    let body: string | undefined = undefined;
+    let body: string | undefined;
     const headers: HeadersInit = {};
 
     if (bodyData) {

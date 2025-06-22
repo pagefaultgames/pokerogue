@@ -16,7 +16,7 @@ export class NavigationManager {
   private static instance: NavigationManager;
   public modes: UiMode[];
   public selectedMode: UiMode = UiMode.SETTINGS;
-  public navigationMenus: NavigationMenu[] = new Array<NavigationMenu>();
+  public navigationMenus: NavigationMenu[] = [];
   public labels: string[];
 
   /**
@@ -105,7 +105,7 @@ export class NavigationManager {
 
 export default class NavigationMenu extends Phaser.GameObjects.Container {
   private navigationIcons: InputsIcons;
-  protected headerTitles: Phaser.GameObjects.Text[] = new Array<Phaser.GameObjects.Text>();
+  protected headerTitles: Phaser.GameObjects.Text[] = [];
 
   /**
    * Creates an instance of NavigationMenu.
