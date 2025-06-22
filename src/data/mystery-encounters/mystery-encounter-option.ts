@@ -145,11 +145,13 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
       }
       if (truePrimaryPool.length > 0) {
         // always choose from the non-overlapping pokemon first
+        // TODO: should this use `randSeedItem`?
         this.primaryPokemon = truePrimaryPool[randSeedInt(truePrimaryPool.length)];
         return true;
       }
       // if there are multiple overlapping pokemon, we're okay - just choose one and take it out of the supporting pokemon pool
       if (overlap.length > 1 || this.secondaryPokemon.length - overlap.length >= 1) {
+        // TODO: should this use `randSeedItem`?
         this.primaryPokemon = overlap[randSeedInt(overlap.length)];
         this.secondaryPokemon = this.secondaryPokemon.filter(supp => supp !== this.primaryPokemon);
         return true;

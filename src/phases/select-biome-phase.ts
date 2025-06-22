@@ -56,6 +56,7 @@ export class SelectBiomePhase extends BattlePhase {
           delay: 1000,
         });
       } else {
+        // TODO: should this use `randSeedItem`?
         setNextBiome(biomes[randSeedInt(biomes.length)]);
       }
     } else if (biomeLinks.hasOwnProperty(currentBiome)) {

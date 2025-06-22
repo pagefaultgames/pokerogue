@@ -166,5 +166,6 @@ export function getDailyStartingBiome(): BiomeId {
   }
 
   // Fallback in case something went wrong
+  // TODO: should this use `randSeedItem`?
   return biomes[randSeedInt(biomes.length)];
 }

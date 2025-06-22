@@ -1099,8 +1099,10 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
           if (biomes! && biomes.length > 0) {
             const specialBiomes = biomes.filter(b => alwaysPickTheseBiomes.includes(b));
             if (specialBiomes.length > 0) {
+              // TODO: should this use `randSeedItem`?
               currentBiome = specialBiomes[randSeedInt(specialBiomes.length)];
             } else {
+              // TODO: should this use `randSeedItem`?
               currentBiome = biomes[randSeedInt(biomes.length)];
             }
           }

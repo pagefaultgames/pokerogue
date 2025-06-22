@@ -292,6 +292,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
 
       // Init the moves available for tutor
       const moveTutorOptions: PokemonMove[] = [];
+      // TODO: should this use `randSeedItem`?
       moveTutorOptions.push(new PokemonMove(PHYSICAL_TUTOR_MOVES[randSeedInt(PHYSICAL_TUTOR_MOVES.length)]));
       moveTutorOptions.push(new PokemonMove(SPECIAL_TUTOR_MOVES[randSeedInt(SPECIAL_TUTOR_MOVES.length)]));
       moveTutorOptions.push(new PokemonMove(STATUS_TUTOR_MOVES[randSeedInt(STATUS_TUTOR_MOVES.length)]));
@@ -389,6 +390,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
             specialOptions.push(rareFormChangeModifier);
           }
           if (specialOptions.length > 0) {
+            // TODO: should this use `randSeedItem`?
             modifierOptions.push(specialOptions[randSeedInt(specialOptions.length)]);
           }
 

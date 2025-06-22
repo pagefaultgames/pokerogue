@@ -2137,6 +2137,7 @@ export default class BattleScene extends SceneBase {
           ),
         ]
       : allSpecies.filter(s => s.isCatchable());
+    // TODO: should this use `randSeedItem`?
     return filteredSpecies[randSeedInt(filteredSpecies.length)];
   }
 
@@ -2162,6 +2163,7 @@ export default class BattleScene extends SceneBase {
       }
     }
 
+    // TODO: should this use `randSeedItem`?
     return biomes[randSeedInt(biomes.length)];
   }
 
@@ -3681,6 +3683,7 @@ export default class BattleScene extends SceneBase {
       console.log("No Mystery Encounters found, falling back to Mysterious Challengers.");
       return allMysteryEncounters[MysteryEncounterType.MYSTERIOUS_CHALLENGERS];
     }
+    // TODO: should this use `randSeedItem`?
     encounter = availableEncounters[randSeedInt(availableEncounters.length)];
     // New encounter object to not dirty flags
     encounter = new MysteryEncounter(encounter);

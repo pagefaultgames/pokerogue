@@ -3,7 +3,7 @@ export type EnumOrObject = Record<string | number, string | number>;
 
 /**
  * Utility type to extract the enum values from a `const object`,
- * or convert an `enum` object produced by `typeof Enum` into its literal value union.
+ * or convert an `enum` object produced by `typeof Enum` into the union type representing its values.
  */
 export type EnumValues<E> = E[keyof E];
 

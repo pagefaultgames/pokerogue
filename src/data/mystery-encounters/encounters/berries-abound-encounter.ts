@@ -15,7 +15,7 @@ import type { BerryModifierType, ModifierTypeOption } from "#app/modifier/modifi
 import { regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/data/data-lists";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
-import { randSeedInt } from "#app/utils/common";
+import { randSeedItem } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
@@ -38,6 +38,7 @@ import i18next from "#app/plugins/i18n";
 import { BerryType } from "#enums/berry-type";
 import { PERMANENT_STATS, Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { getEnumValues } from "#app/utils/enums";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/berriesAbound";
@@ -311,7 +312,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
   .build();
 
 function tryGiveBerry(prioritizedPokemon?: PlayerPokemon) {
-  const berryType = randSeedInt(Object.keys(BerryType).filter(s => !Number.isNaN(Number(s))).length) as BerryType;
+  const berryType = randSeedItem(getEnumValues(BerryType));
   const berry = generateModifierType(modifierTypes.BERRY, [berryType]) as BerryModifierType;
 
   const party = globalScene.getPlayerParty();

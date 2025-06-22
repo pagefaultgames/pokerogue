@@ -9,6 +9,7 @@ export type nil = null | undefined;
 export const MissingTextureKey = "__MISSING";
 
 // TODO: Draft tests for these utility functions
+// TODO: Break up this file
 /**
  * Convert a `snake_case` string in any capitalization (such as one from an enum reverse mapping)
  * into a readable `Title Case` version.
