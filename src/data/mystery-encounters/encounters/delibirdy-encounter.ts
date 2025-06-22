@@ -9,7 +9,6 @@ import {
 } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import {
-  generateModifierType,
   leaveEncounterWithoutBattle,
   selectPokemonForOption,
   updatePlayerMoney,
@@ -18,12 +17,6 @@ import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import {
-  HealingBoosterModifier,
-  LevelIncrementBoosterModifier,
-  MoneyMultiplierModifier,
-  PreserveBerryModifier,
-} from "#app/modifier/modifier";
 import { modifierTypes } from "#app/data/data-lists";
 import i18next from "#app/plugins/i18n";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
@@ -35,6 +28,7 @@ import { SpeciesId } from "#enums/species-id";
 import { timedEventManager } from "#app/global-event-manager";
 import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { allHeldItems } from "#app/items/all-held-items";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/delibirdy";
@@ -65,9 +59,8 @@ const doEventReward = () => {
   const event_buff = timedEventManager.getDelibirdyBuff();
   if (event_buff.length > 0) {
     const candidates = event_buff.filter(c => {
-      const mtype = generateModifierType(modifierTypes[c]);
-      const existingCharm = globalScene.findModifier(m => m.type.id === mtype?.id);
-      return !(existingCharm && existingCharm.getStackCount() >= existingCharm.getMaxStackCount());
+      const fullStack = globalScene.trainerItems.isMaxStack(c);
+      return !fullStack;
     });
     if (candidates.length > 0) {
       globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes[randSeedItem(candidates)]);
@@ -171,9 +164,9 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .withOptionPhase(async () => {
         // Give the player an Amulet Coin
         // Check if the player has max stacks of that item already
-        const existing = globalScene.findModifier(m => m instanceof MoneyMultiplierModifier) as MoneyMultiplierModifier;
+        const fullStack = globalScene.trainerItems.isMaxStack(TrainerItemId.AMULET_COIN);
 
-        if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
+        if (fullStack) {
           // At max stacks, give the first party pokemon a Shell Bell instead
           backupOption();
         } else {
@@ -241,11 +234,9 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         // Give the player a Candy Jar if they gave a Berry, and a Berry Pouch for Reviver Seed
         if (isItemInCategory(chosenItem, HeldItemCategoryId.BERRY)) {
           // Check if the player has max stacks of that Candy Jar already
-          const existing = globalScene.findModifier(
-            m => m instanceof LevelIncrementBoosterModifier,
-          ) as LevelIncrementBoosterModifier;
+          const fullStack = globalScene.trainerItems.isMaxStack(TrainerItemId.CANDY_JAR);
 
-          if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
+          if (fullStack) {
             // At max stacks, give the first party pokemon a Shell Bell instead
             backupOption();
           } else {
@@ -254,9 +245,9 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           }
         } else {
           // Check if the player has max stacks of that Berry Pouch already
-          const existing = globalScene.findModifier(m => m instanceof PreserveBerryModifier) as PreserveBerryModifier;
+          const fullStack = globalScene.trainerItems.isMaxStack(TrainerItemId.BERRY_POUCH);
 
-          if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
+          if (fullStack) {
             // At max stacks, give the first party pokemon a Shell Bell instead
             backupOption();
           } else {
@@ -325,9 +316,10 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
         // Check if the player has max stacks of Healing Charm already
-        const existing = globalScene.findModifier(m => m instanceof HealingBoosterModifier) as HealingBoosterModifier;
 
-        if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
+        const fullStack = globalScene.trainerItems.isMaxStack(TrainerItemId.HEALING_CHARM);
+
+        if (fullStack) {
           // At max stacks, give the first party pokemon a Shell Bell instead
           backupOption();
         } else {

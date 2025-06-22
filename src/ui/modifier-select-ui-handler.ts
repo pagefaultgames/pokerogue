@@ -5,7 +5,6 @@ import { getPokeballAtlasKey } from "#app/data/pokeball";
 import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { LockModifierTiersModifier, HealShopCostModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
 import { Button } from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
@@ -16,6 +15,8 @@ import i18next from "i18next";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 import Phaser from "phaser";
 import type { PokeballType } from "#enums/pokeball";
+import { TrainerItemId } from "#enums/trainer-item-id";
+import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 7;
 const SINGLE_SHOP_ROW_YOFFSET = 12;
@@ -187,7 +188,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
         .getPlayerParty()
         .map(p => p.heldItemManager.getTransferableHeldItems().length)
         .reduce((tot, i) => tot + i, 0) > 0;
-    const canLockRarities = !!globalScene.findModifier(m => m instanceof LockModifierTiersModifier);
+    const canLockRarities = !!globalScene.trainerItems.hasItem(TrainerItemId.LOCK_CAPSULE);
 
     this.transferButtonContainer.setVisible(false);
     this.transferButtonContainer.setAlpha(0);
@@ -213,7 +214,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const typeOptions = args[1] as ModifierTypeOption[];
     const removeHealShop = globalScene.gameMode.hasNoShop;
     const baseShopCost = new NumberHolder(globalScene.getWaveMoneyAmount(1));
-    globalScene.applyModifier(HealShopCostModifier, true, baseShopCost);
+    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HEAL_SHOP_COST, { numberHolder: baseShopCost });
     const shopTypeOptions = !removeHealShop
       ? getPlayerShopModifierTypeOptionsForWave(globalScene.currentBattle.waveIndex, baseShopCost.value)
       : [];

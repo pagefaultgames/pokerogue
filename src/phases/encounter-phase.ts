@@ -14,7 +14,6 @@ import { EncounterPhaseEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
 import { FieldPosition } from "#enums/field-position";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BoostBugSpawnModifier, IvScannerModifier } from "#app/modifier/modifier";
 import Overrides from "#app/overrides";
 import { BattlePhase } from "#app/phases/battle-phase";
 import { achvs } from "#app/system/achv";
@@ -30,6 +29,7 @@ import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
 import { getNatureName } from "#app/data/nature";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 export class EncounterPhase extends BattlePhase {
   // Union type is necessary as this is subclassed, and typescript will otherwise complain
@@ -105,7 +105,7 @@ export class EncounterPhase extends BattlePhase {
           let enemySpecies = globalScene.randomSpecies(battle.waveIndex, level, true);
           // If player has golden bug net, rolls 10% chance to replace non-boss wave wild species from the golden bug net bug pool
           if (
-            globalScene.findModifier(m => m instanceof BoostBugSpawnModifier) &&
+            globalScene.trainerItems.hasItem(TrainerItemId.GOLDEN_BUG_NET) &&
             !globalScene.gameMode.isBoss(battle.waveIndex) &&
             globalScene.arena.biomeType !== BiomeId.END &&
             randSeedInt(10) === 0
@@ -563,8 +563,7 @@ export class EncounterPhase extends BattlePhase {
           },
         ),
       );
-      const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
-      if (ivScannerModifier) {
+      if (globalScene.trainerItems.hasItem(TrainerItemId.IV_SCANNER)) {
         enemyField.map(p => globalScene.phaseManager.pushNew("ScanIvsPhase", p.getBattlerIndex()));
       }
     }

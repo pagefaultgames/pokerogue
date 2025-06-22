@@ -5,8 +5,6 @@ import { Gender } from "#app/data/gender";
 import { getBiomeKey } from "#app/field/arena";
 import { GameMode, getGameMode } from "#app/game-mode";
 import { GameModes } from "#enums/game-modes";
-import type { Modifier } from "#app/modifier/modifier";
-import { modifierTypes } from "#app/data/data-lists";
 import { Phase } from "#app/phase";
 import type { SessionSaveData } from "#app/system/game-data";
 import { Unlockables } from "#enums/unlockables";
@@ -19,6 +17,7 @@ import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { assignDailyRunStarterHeldItems } from "#app/items/held-item-pool";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 export class TitlePhase extends Phase {
   public readonly phaseName = "TitlePhase";
@@ -237,22 +236,12 @@ export class TitlePhase extends Phase {
           loadPokemonAssets.push(starterPokemon.loadAssets());
         }
 
-        const modifiers: Modifier[] = Array(3)
-          .fill(null)
-          .map(() => modifierTypes.EXP_SHARE().withIdFromFunc(modifierTypes.EXP_SHARE).newModifier())
-          .concat(
-            Array(3)
-              .fill(null)
-              .map(() => modifierTypes.GOLDEN_EXP_CHARM().withIdFromFunc(modifierTypes.GOLDEN_EXP_CHARM).newModifier()),
-          )
-          .concat([modifierTypes.MAP().withIdFromFunc(modifierTypes.MAP).newModifier()])
-          .filter(m => m !== null);
+        globalScene.trainerItems.add(TrainerItemId.EXP_SHARE, 3);
+        globalScene.trainerItems.add(TrainerItemId.GOLDEN_EXP_CHARM, 3);
+        globalScene.trainerItems.add(TrainerItemId.MAP);
 
         assignDailyRunStarterHeldItems(party);
 
-        for (const m of modifiers) {
-          globalScene.addModifier(m, true, false, false, true);
-        }
         globalScene.updateModifiers(true);
 
         Promise.all(loadPokemonAssets).then(() => {

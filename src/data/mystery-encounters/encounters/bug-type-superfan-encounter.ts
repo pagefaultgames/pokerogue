@@ -37,7 +37,6 @@ import {
 import { PokemonType } from "#enums/pokemon-type";
 import type { ModifierTypeOption } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/data/data-lists";
-import { GigantamaxAccessModifier, MegaEvolutionAccessModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { allMoves } from "#app/data/data-lists";
@@ -46,6 +45,7 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { HeldItemId } from "#enums/held-item-id";
 import { allHeldItems } from "#app/items/all-held-items";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/bugTypeSuperfan";
@@ -354,10 +354,10 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           const modifierOptions: ModifierTypeOption[] = [generateModifierTypeOption(modifierTypes.MASTER_BALL)!];
           const specialOptions: ModifierTypeOption[] = [];
 
-          if (!globalScene.findModifier(m => m instanceof MegaEvolutionAccessModifier)) {
+          if (!globalScene.trainerItems.hasItem(TrainerItemId.MEGA_BRACELET)) {
             modifierOptions.push(generateModifierTypeOption(modifierTypes.MEGA_BRACELET)!);
           }
-          if (!globalScene.findModifier(m => m instanceof GigantamaxAccessModifier)) {
+          if (!globalScene.trainerItems.hasItem(TrainerItemId.DYNAMAX_BAND)) {
             modifierOptions.push(generateModifierTypeOption(modifierTypes.DYNAMAX_BAND)!);
           }
           const nonRareEvolutionModifier = generateModifierTypeOption(modifierTypes.EVOLUTION_ITEM);

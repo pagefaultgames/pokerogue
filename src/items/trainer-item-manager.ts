@@ -134,6 +134,17 @@ export class TrainerItemManager {
     return total;
   }
 
+  lapseItems(): void {
+    for (const [item, properties] of Object.entries(this.trainerItems)) {
+      if (allTrainerItems[item].isLapsing && properties) {
+        properties.stack -= 1;
+      }
+      if (!properties || properties.stack <= 0) {
+        delete this.trainerItems[item];
+      }
+    }
+  }
+
   clearItems() {
     this.trainerItems = {};
   }

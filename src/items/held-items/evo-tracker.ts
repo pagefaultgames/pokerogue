@@ -4,6 +4,7 @@ import { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
 import i18next from "i18next";
 import { HeldItem, HELD_ITEM_EFFECT } from "../held-item";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 export interface EVO_TRACKER_PARAMS {
   /** The pokemon with the item */
@@ -63,11 +64,11 @@ export class GimmighoulEvoTrackerHeldItem extends EvoTrackerHeldItem {
   }
 
   getStackCount(pokemon: Pokemon): number {
-    const stackCount = pokemon.heldItemManager.getStack(this.type);
-    +pokemon.heldItemManager.getStack(HeldItemId.GOLDEN_PUNCH) +
-      globalScene.findModifiers(
-        m => m.is("MoneyMultiplierModifier") || m.is("ExtraModifierModifier") || m.is("TempExtraModifierModifier"),
-      ).length;
+    const stackCount =
+      pokemon.heldItemManager.getStack(this.type) +
+      pokemon.heldItemManager.getStack(HeldItemId.GOLDEN_PUNCH) +
+      globalScene.trainerItems.getStack(TrainerItemId.AMULET_COIN) +
+      globalScene.trainerItems.getStack(TrainerItemId.GOLDEN_POKEBALL);
     return stackCount;
   }
 }

@@ -1,6 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import { applyPostBattleAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { LapsingPersistentModifier } from "#app/modifier/modifier";
 import { BattlePhase } from "./battle-phase";
 
 export class BattleEndPhase extends BattlePhase {
@@ -80,15 +79,7 @@ export class BattleEndPhase extends BattlePhase {
       }
     }
 
-    const lapsingModifiers = globalScene.findModifiers(
-      m => m instanceof LapsingPersistentModifier,
-    ) as LapsingPersistentModifier[];
-    for (const m of lapsingModifiers) {
-      const args: any[] = [];
-      if (!m.lapse(...args)) {
-        globalScene.removeModifier(m);
-      }
-    }
+    globalScene.trainerItems.lapseItems();
 
     globalScene.updateModifiers();
     this.end();

@@ -154,6 +154,7 @@ import type { HeldItemConfiguration } from "./items/held-item-data-types";
 import { TrainerItemManager } from "./items/trainer-item-manager";
 import { TRAINER_ITEM_EFFECT } from "./items/trainer-item";
 import type { APPLY_TRAINER_ITEMS_PARAMS } from "./items/apply-trainer-items";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 const DEBUG_RNG = false;
 
@@ -2938,16 +2939,6 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Find the first modifier that pass the `modifierFilter` function
-   * @param modifierFilter The function used to filter a target's modifiers
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @returns the first modifier that passed the `modifierFilter` function; `undefined` if none passed
-   */
-  findModifier(modifierFilter: ModifierPredicate, player = true): PersistentModifier | undefined {
-    return (player ? this.modifiers : this.enemyModifiers).find(modifierFilter);
-  }
-
-  /**
    * Apply all modifiers that match `modifierType` in a random order
    * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
    * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
@@ -3230,11 +3221,9 @@ export default class BattleScene extends SceneBase {
   ): void {
     const participantIds = pokemonParticipantIds ?? this.currentBattle.playerParticipantIds;
     const party = this.getPlayerParty();
-    const expShareModifier = this.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
-    const expBalanceModifier = this.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
-    const multipleParticipantExpBonusModifier = this.findModifier(
-      m => m instanceof MultipleParticipantExpBonusModifier,
-    ) as MultipleParticipantExpBonusModifier;
+    const expShareStack = this.trainerItems.getStack(TrainerItemId.EXP_SHARE);
+    const expBalanceStack = this.trainerItems.getStack(TrainerItemId.EXP_BALANCE);
+    const ovalCharmStack = this.trainerItems.getStack(TrainerItemId.OVAL_CHARM);
     const nonFaintedPartyMembers = party.filter(p => p.hp);
     const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < this.getMaxExpLevel());
     const partyMemberExp: number[] = [];
@@ -3267,18 +3256,18 @@ export default class BattleScene extends SceneBase {
         if (!expPartyMembers.includes(partyMember)) {
           continue;
         }
-        if (!participated && !expShareModifier) {
+        if (!participated && !expShareStack) {
           partyMemberExp.push(0);
           continue;
         }
         let expMultiplier = 0;
         if (participated) {
           expMultiplier += 1 / participantIds.size;
-          if (participantIds.size > 1 && multipleParticipantExpBonusModifier) {
-            expMultiplier += multipleParticipantExpBonusModifier.getStackCount() * 0.2;
+          if (participantIds.size > 1 && ovalCharmStack) {
+            expMultiplier += ovalCharmStack * 0.2;
           }
-        } else if (expShareModifier) {
-          expMultiplier += (expShareModifier.getStackCount() * 0.2) / participantIds.size;
+        } else if (expShareStack) {
+          expMultiplier += (expShareStack * 0.2) / participantIds.size;
         }
         if (partyMember.pokerus) {
           expMultiplier *= 1.5;
@@ -3291,7 +3280,7 @@ export default class BattleScene extends SceneBase {
         partyMemberExp.push(Math.floor(pokemonExp.value));
       }
 
-      if (expBalanceModifier) {
+      if (expBalanceStack) {
         let totalLevel = 0;
         let totalExp = 0;
         expPartyMembers.forEach((expPartyMember, epm) => {
@@ -3314,7 +3303,7 @@ export default class BattleScene extends SceneBase {
           partyMemberExp[pm] = Phaser.Math.Linear(
             partyMemberExp[pm],
             recipientExpPartyMemberIndexes.indexOf(pm) > -1 ? splitExp : 0,
-            0.2 * expBalanceModifier.getStackCount(),
+            0.2 * expBalanceStack,
           );
         });
       }
