@@ -83,11 +83,10 @@ import type { Localizable } from "#app/@types/locales";
 import { applyAbAttrs } from "./apply-ab-attrs";
 import type { Closed, Exact } from "#app/@types/type-helpers";
 
-// biome-ignore lint/correctness/noUnusedImports: Used in TSDoc
+// biome-ignore-start lint/correctness/noUnusedImports: Used in TSDoc
 import type BattleScene from "#app/battle-scene";
-// biome-ignore lint/correctness/noUnusedImports: Used in TSDoc
 import type { SpeciesFormChangeRevertWeatherFormTrigger } from "../pokemon-forms/form-change-triggers";
-
+// biome-ignore-end lint/correctness/noUnusedImports: Used in TSDoc
 export class Ability implements Localizable {
   public id: AbilityId;
 
@@ -233,9 +232,11 @@ export interface AbAttrBaseParams {
   readonly pokemon: Pokemon;
 
   /**
-   * Whether the ability's effects are being simulated.
-   * Used to prevent, for instance, messages flyouts from being displayed.
-   * Defaults to false.
+   * Whether the ability's effects are being simulated (for instance, during AI damage calculations).
+   *
+   * @remarks
+   * Used to prevent message flyouts and other effects from being triggered.
+   * @defaultValue `false`
    */
   readonly simulated?: boolean;
 
@@ -243,7 +244,7 @@ export interface AbAttrBaseParams {
    * (For callers of {@linkcode applyAbAttrs}): If provided, **only** apply ability attributes of the passive (true) or active (false).
    *
    * This should almost always be left undefined, as otherwise it will *only* apply attributes of *either* the pokemon's passive (true) or
-   * non-passive (false) abilities. In almost all cases, you want to apply attributes that are from either.
+   * non-passive (false) ability. In almost all cases, you want to apply attributes that are from either.
    *
    * (For implementations of {@linkcode AbAttr}): This will *never* be undefined, and will be `true` if the ability being applied
    * is the pokemon's passive, and `false` otherwise.
@@ -287,7 +288,7 @@ export abstract class AbAttr {
 
   /**
    * Apply ability effects without checking conditions.
-   * @see {@linkcode AbAttrBaseParams} for a description of the parameters
+   * **Never call this method directly, use {@linkcode applyAbAttrs} instead.**
    */
   apply(_params: AbAttrBaseParams): void {}
 
@@ -463,10 +464,8 @@ type PreDefendAbAttrCondition = (pokemon: Pokemon, attacker: Pokemon, move: Move
  * Often extended by other interfaces to add more parameters.
  * Used, e.g. by {@linkcode PreDefendAbAttr} and {@linkcode PostAttackAbAttr}
  */
-// TODO: Consider making this not require `cancelled`, as many abilities do not do anything with the parameter.
-// Leaving it in bloats callsites.
 export interface AugmentMoveInteractionAbAttrParams extends AbAttrBaseParams {
-  /** The move used by (or against, for defend attributes) */
+  /** The move used by (or against, for defend attributes) the pokemon with the ability */
   move: Move;
   /** The pokemon on the other side of the interaction */
   opponent: Pokemon;
@@ -1751,7 +1750,7 @@ export interface PreAttackModifyPowerAbAttrParams extends AugmentMoveInteraction
 }
 
 /*
-This base class *is* allowed to be invoked directly by `abAttrApply`.
+This base class *is* allowed to be invoked directly by `applyAbAttrs`.
 As such, we require that all subclasses have compatible `apply` parameters.
 To do this, we use the `Closed` type. This ensures that any subclass of `VariableMovePowerAbAttr`
 may not modify the type of apply's parameter to an interface that introduces new fields
@@ -2299,7 +2298,7 @@ export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
 /**
  * Base class for abilities that apply an effect after the user knocks out an opponent in battle.
  *
- * Not to be confused with {@link PostKnockOutAbAttr}, which applies after any pokemon is knocked out in battle.
+ * Not to be confused with {@linkcode PostKnockOutAbAttr}, which applies after any pokemon is knocked out in battle.
  */
 export class PostVictoryAbAttr extends AbAttr {
   canApply(_params: Closed<AbAttrBaseParams>): boolean {
