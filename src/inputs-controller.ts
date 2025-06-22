@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { getEnumValues } from "#app/utils/common";
+import { getEnumValues } from "./utils/enums";
 import { deepCopy } from "#app/utils/data";
 import pad_generic from "./configs/inputs/pad_generic";
 import pad_unlicensedSNES from "./configs/inputs/pad_unlicensedSNES";

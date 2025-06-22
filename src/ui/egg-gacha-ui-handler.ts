@@ -1,7 +1,8 @@
 import { UiMode } from "#enums/ui-mode";
 import { TextStyle, addTextObject, getEggTierTextTint, getTextStyleOptions } from "./text";
 import MessageUiHandler from "./message-ui-handler";
-import { getEnumValues, getEnumKeys, fixedInt, randSeedShuffle } from "#app/utils/common";
+import { fixedInt, randSeedShuffle } from "#app/utils/common";
+import { getEnumValues, getEnumKeys } from "#app/utils/enums";
 import type { IEggOptions } from "../data/egg";
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
 import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
@@ -299,7 +300,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     this.eggGachaContainer.add(this.eggGachaOptionsContainer);
 
-    new Array(getEnumKeys(VoucherType).length).fill(null).map((_, i) => {
+    getEnumValues(VoucherType).forEach((voucher, i) => {
       const container = globalScene.add.container(globalScene.game.canvas.width / 6 - 56 * i, 0);
 
       const bg = addWindow(0, 0, 56, 22);
@@ -312,7 +313,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       this.voucherCountLabels.push(countLabel);
 
-      const iconImage = getVoucherTypeIcon(i as VoucherType);
+      const iconImage = getVoucherTypeIcon(voucher);
 
       const icon = globalScene.add.sprite(-19, 2, "items", iconImage);
       icon.setOrigin(0, 0);

@@ -6,13 +6,13 @@ import {
   getLocalizedSpriteKey,
   rgbHexToRgba,
   padInt,
-  getEnumValues,
   fixedInt,
   isNullOrUndefined,
   toReadableString,
   formatStat,
   getShinyDescriptor,
 } from "#app/utils/common";
+import { getEnumValues } from "#app/utils/enums";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";

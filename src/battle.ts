@@ -2,7 +2,6 @@ import { globalScene } from "#app/global-scene";
 import type { Command } from "#enums/command";
 import {
   randomString,
-  getEnumValues,
   NumberHolder,
   randSeedInt,
   shiftCharCodes,
@@ -10,6 +9,7 @@ import {
   randInt,
   randSeedFloat,
 } from "#app/utils/common";
+import { getEnumValues } from "./utils/enums";
 import Trainer from "./field/trainer";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { GameMode } from "./game-mode";

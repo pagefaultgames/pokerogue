@@ -2,7 +2,8 @@ import { bypassLogin } from "#app/global-vars/bypass-login";
 import { globalScene } from "#app/global-scene";
 import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
 import { UiMode } from "#enums/ui-mode";
-import { getEnumKeys, isLocal, fixedInt, sessionIdKey } from "#app/utils/common";
+import { isLocal, fixedInt, sessionIdKey } from "#app/utils/common";
+import { getEnumValues } from "#app/utils/enums";
 import { isBeta } from "#app/utils/utility-vars";
 import { getCookie } from "#app/utils/cookies";
 import { addWindow, WindowVariant } from "./ui-theme";
@@ -76,11 +77,9 @@ export default class MenuUiHandler extends MessageUiHandler {
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
     ];
 
-    this.menuOptions = getEnumKeys(MenuOptions)
-      .map(m => Number.parseInt(MenuOptions[m]) as MenuOptions)
-      .filter(m => {
-        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
-      });
+    this.menuOptions = getEnumValues(MenuOptions).filter(m => {
+      return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
+    });
   }
 
   setup(): void {
@@ -131,11 +130,9 @@ export default class MenuUiHandler extends MessageUiHandler {
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
     ];
 
-    this.menuOptions = getEnumKeys(MenuOptions)
-      .map(m => Number.parseInt(MenuOptions[m]) as MenuOptions)
-      .filter(m => {
-        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
-      });
+    this.menuOptions = getEnumValues(MenuOptions).filter(m => {
+      return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
+    });
 
     this.optionSelectText = addTextObject(
       0,
@@ -511,11 +508,9 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.render();
     super.show(args);
 
-    this.menuOptions = getEnumKeys(MenuOptions)
-      .map(m => Number.parseInt(MenuOptions[m]) as MenuOptions)
-      .filter(m => {
-        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
-      });
+    this.menuOptions = getEnumValues(MenuOptions).filter(m => {
+      return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
+    });
 
     this.menuContainer.setVisible(true);
     this.setCursor(0);

@@ -58,7 +58,7 @@ import {
   toReadableString,
 } from "#app/utils/common";
 import type { Nature } from "#enums/nature";
-import { getEnumKeys } from "#app/utils/common";
+import { getEnumValues } from "#app/utils/enums";
 import { speciesTmMoves } from "#app/data/balance/tms";
 import type { BiomeTierTod } from "#app/data/balance/biomes";
 import { BiomePoolTier, catchableSpecies } from "#app/data/balance/biomes";
@@ -603,7 +603,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.menuContainer.setVisible(false);
 
-    this.menuOptions = getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
+    this.menuOptions = getEnumValues(MenuOptions);
 
     this.optionSelectText = addBBCodeTextObject(
       0,
@@ -707,7 +707,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.starterAttributes = this.initStarterPrefs();
 
-    this.menuOptions = getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
+    this.menuOptions = getEnumValues(MenuOptions);
 
     this.menuContainer.setVisible(true);
 

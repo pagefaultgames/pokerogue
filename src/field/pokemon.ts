@@ -25,7 +25,6 @@ import {
   BooleanHolder,
   randSeedItem,
   isNullOrUndefined,
-  getEnumValues,
   toDmgValue,
   fixedInt,
   rgbaToInt,
@@ -38,6 +37,7 @@ import {
   randSeedIntRange,
   coerceArray,
 } from "#app/utils/common";
+import { getEnumValues } from "#app/utils/enums";
 import type { TypeDamageMultiplier } from "#app/data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";

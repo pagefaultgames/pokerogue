@@ -1,8 +1,8 @@
 import { allMoves } from "../data-lists";
-import { getEnumKeys, getEnumValues } from "#app/utils/common";
+import { getEnumKeys, getEnumValues } from "#app/utils/enums";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-
+import { toReadableString } from "#app/utils/common";
 
 export const speciesEggMoves = {
   [SpeciesId.BULBASAUR]: [ MoveId.SAPPY_SEED, MoveId.MALIGNANT_CHAIN, MoveId.EARTH_POWER, MoveId.MATCHA_GOTCHA ],
@@ -584,17 +584,24 @@ export const speciesEggMoves = {
   [SpeciesId.BLOODMOON_URSALUNA]: [ MoveId.NASTY_PLOT, MoveId.ROCK_POLISH, MoveId.SANDSEAR_STORM, MoveId.BOOMBURST ]
 };
 
+/**
+ * Parse a CSV-separated list of Egg Moves (such as one sourced from a Google Sheets)
+ * into code able to form the `speciesEggMoves` const object as above.
+ * @param content - The CSV-formatted string to convert into code.
+ */
+// TODO: Move this into the scripts folder and stop running it on initialization
 function parseEggMoves(content: string): void {
   let output = "";
 
   const speciesNames = getEnumKeys(SpeciesId);
   const speciesValues = getEnumValues(SpeciesId);
+  const moveNames = allMoves.map(m => m.name.replace(/ \([A-Z]\)$/, "").toLowerCase());
   const lines = content.split(/\n/g);
 
   for (const line of lines) {
     const cols = line.split(",").slice(0, 5);
-    const moveNames = allMoves.map(m => m.name.replace(/ \([A-Z]\)$/, "").toLowerCase());
-    const enumSpeciesName = cols[0].toUpperCase().replace(/[ -]/g, "_");
+    const enumSpeciesName = cols[0].toUpperCase().replace(/[ -]/g, "_") as keyof typeof SpeciesId;
+    // TODO: This should use reverse mapping instead of `indexOf`
     const species = speciesValues[speciesNames.indexOf(enumSpeciesName)];
 
     const eggMoves: MoveId[] = [];
@@ -602,14 +609,16 @@ function parseEggMoves(content: string): void {
     for (let m = 0; m < 4; m++) {
       const moveName = cols[m + 1].trim();
       const moveIndex = moveName !== "N/A" ? moveNames.indexOf(moveName.toLowerCase()) : -1;
-      eggMoves.push(moveIndex > -1 ? moveIndex as MoveId : MoveId.NONE);
-
       if (moveIndex === -1) {
         console.warn(moveName, "could not be parsed");
       }
+
+      eggMoves.push(moveIndex > -1 ? moveIndex as MoveId : MoveId.NONE);
     }
 
-    if (eggMoves.find(m => m !== MoveId.NONE)) {
+    if (eggMoves.every(m => m === MoveId.NONE)) {
+      console.warn(`Species ${toReadableString(SpeciesId[species])} could not be parsed, excluding from output...`)
+    } else {
       output += `[SpeciesId.${SpeciesId[species]}]: [ ${eggMoves.map(m => `MoveId.${MoveId[m]}`).join(", ")} ],\n`;
     }
   }

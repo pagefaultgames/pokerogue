@@ -10,7 +10,6 @@ import {
   fixedInt,
   getIvsFromId,
   randSeedInt,
-  getEnumValues,
   randomString,
   NumberHolder,
   shiftCharCodes,
@@ -19,6 +18,7 @@ import {
   BooleanHolder,
   type Constructor,
 } from "#app/utils/common";
+import { getEnumValues } from "./utils/enums";
 import { deepMergeSpriteData } from "#app/utils/data";
 import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import {
