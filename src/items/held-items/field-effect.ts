@@ -1,5 +1,5 @@
 import type Pokemon from "#app/field/pokemon";
-import { HeldItem, ITEM_EFFECT } from "#app/items/held-item";
+import { HeldItem, HELD_ITEM_EFFECT } from "#app/items/held-item";
 import type { NumberHolder } from "#app/utils/common";
 
 export interface FIELD_EFFECT_PARAMS {
@@ -15,7 +15,7 @@ export interface FIELD_EFFECT_PARAMS {
  * @see {@linkcode apply}
  */
 export class FieldEffectHeldItem extends HeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.FIELD_EFFECT];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.FIELD_EFFECT];
 
   /**
    * Provides two more turns per stack to any weather or terrain effect caused

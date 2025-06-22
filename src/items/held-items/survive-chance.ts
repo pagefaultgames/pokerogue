@@ -1,5 +1,5 @@
 import type Pokemon from "#app/field/pokemon";
-import { HeldItem, ITEM_EFFECT } from "#app/items/held-item";
+import { HeldItem, HELD_ITEM_EFFECT } from "#app/items/held-item";
 import type { BooleanHolder } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
 import i18next from "i18next";
@@ -18,7 +18,7 @@ export interface SURVIVE_CHANCE_PARAMS {
  * @see {@linkcode apply}
  */
 export class SurviveChanceHeldItem extends HeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.SURVIVE_CHANCE];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.SURVIVE_CHANCE];
 
   /**
    * Checks if the {@linkcode SurviveDamageModifier} should be applied

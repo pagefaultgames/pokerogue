@@ -1,6 +1,6 @@
 import type Pokemon from "#app/field/pokemon";
 import type { NumberHolder } from "#app/utils/common";
-import { HeldItem, ITEM_EFFECT } from "../held-item";
+import { HeldItem, HELD_ITEM_EFFECT } from "../held-item";
 
 export interface NATURE_WEIGHT_BOOST_PARAMS {
   /** The pokemon with the item */
@@ -10,7 +10,7 @@ export interface NATURE_WEIGHT_BOOST_PARAMS {
 }
 
 export class NatureWeightBoosterHeldItem extends HeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.NATURE_WEIGHT_BOOSTER];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.NATURE_WEIGHT_BOOSTER];
 
   /**
    * Applies {@linkcode PokemonNatureWeightModifier}

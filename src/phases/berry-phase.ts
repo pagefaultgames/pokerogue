@@ -7,7 +7,7 @@ import { FieldPhase } from "./field-phase";
 import { globalScene } from "#app/global-scene";
 import type Pokemon from "#app/field/pokemon";
 import { allHeldItems, applyHeldItems } from "#app/items/all-held-items";
-import { ITEM_EFFECT } from "#app/items/held-item";
+import { HELD_ITEM_EFFECT } from "#app/items/held-item";
 import { HeldItemCategoryId, isItemInCategory } from "#enums/held-item-id";
 
 /**
@@ -59,7 +59,7 @@ export class BerryPhase extends FieldPhase {
       CommonAnim.USE_ITEM,
     );
 
-    applyHeldItems(ITEM_EFFECT.BERRY, { pokemon: pokemon });
+    applyHeldItems(HELD_ITEM_EFFECT.BERRY, { pokemon: pokemon });
     globalScene.updateModifiers(pokemon.isPlayer());
 
     // AbilityId.CHEEK_POUCH only works once per round of nom noms

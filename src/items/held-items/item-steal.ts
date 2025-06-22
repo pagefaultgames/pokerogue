@@ -2,7 +2,7 @@ import Pokemon from "#app/field/pokemon";
 import { randSeedFloat } from "#app/utils/common";
 import type { HeldItemId } from "#enums/held-item-id";
 import i18next from "i18next";
-import { HeldItem, ITEM_EFFECT } from "../held-item";
+import { HeldItem, HELD_ITEM_EFFECT } from "../held-item";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { allHeldItems } from "../all-held-items";
 import { globalScene } from "#app/global-scene";
@@ -82,7 +82,7 @@ export abstract class ItemTransferHeldItem extends HeldItem {
  * @see {@linkcode modifierTypes[MINI_BLACK_HOLE]}
  */
 export class TurnEndItemStealHeldItem extends ItemTransferHeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.TURN_END_ITEM_STEAL];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.TURN_END_ITEM_STEAL];
   isTransferable = true;
 
   get description(): string {
@@ -124,7 +124,7 @@ export class TurnEndItemStealHeldItem extends ItemTransferHeldItem {
  * @see {@linkcode HeldItemTransferModifier}
  */
 export class ContactItemStealChanceHeldItem extends ItemTransferHeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.CONTACT_ITEM_STEAL_CHANCE];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.CONTACT_ITEM_STEAL_CHANCE];
   public readonly chancePercent: number;
   public readonly chance: number;
 

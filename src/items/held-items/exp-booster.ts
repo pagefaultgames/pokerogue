@@ -2,7 +2,7 @@ import type Pokemon from "#app/field/pokemon";
 import type { NumberHolder } from "#app/utils/common";
 import type { HeldItemId } from "#enums/held-item-id";
 import i18next from "i18next";
-import { HeldItem, ITEM_EFFECT } from "../held-item";
+import { HeldItem, HELD_ITEM_EFFECT } from "../held-item";
 
 export interface EXP_BOOST_PARAMS {
   /** The pokemon with the item */
@@ -12,7 +12,7 @@ export interface EXP_BOOST_PARAMS {
 }
 
 export class ExpBoosterHeldItem extends HeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.EXP_BOOSTER];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.EXP_BOOSTER];
   private boostPercent: number;
   private boostMultiplier: number;
 

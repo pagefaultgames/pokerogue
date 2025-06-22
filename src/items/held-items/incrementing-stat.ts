@@ -1,5 +1,5 @@
 import type Pokemon from "#app/field/pokemon";
-import { HeldItem, ITEM_EFFECT } from "../held-item";
+import { HeldItem, HELD_ITEM_EFFECT } from "../held-item";
 import { Stat } from "#enums/stat";
 import type { NumberHolder } from "#app/utils/common";
 import i18next from "i18next";
@@ -15,7 +15,7 @@ export interface INCREMENTING_STAT_PARAMS {
  * Currently used by Macho Brace item
  */
 export class IncrementingStatHeldItem extends HeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.INCREMENTING_STAT];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.INCREMENTING_STAT];
   public isTransferable = false;
 
   /**

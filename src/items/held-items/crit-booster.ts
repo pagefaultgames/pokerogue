@@ -2,7 +2,7 @@ import type Pokemon from "#app/field/pokemon";
 import type { NumberHolder } from "#app/utils/common";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
-import { HeldItem, ITEM_EFFECT } from "../held-item";
+import { HeldItem, HELD_ITEM_EFFECT } from "../held-item";
 
 export interface CRIT_BOOST_PARAMS {
   /** The pokemon with the item */
@@ -17,7 +17,7 @@ export interface CRIT_BOOST_PARAMS {
  * @see {@linkcode apply}
  */
 export class CritBoostHeldItem extends HeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.CRIT_BOOST];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.CRIT_BOOST];
 
   /** The amount of stages by which the held item increases the current critical-hit stage value */
   protected stageIncrement: number;

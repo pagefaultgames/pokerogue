@@ -1,5 +1,5 @@
 import type Pokemon from "#app/field/pokemon";
-import { HeldItem, ITEM_EFFECT } from "#app/items/held-item";
+import { HeldItem, HELD_ITEM_EFFECT } from "#app/items/held-item";
 import type { BooleanHolder } from "#app/utils/common";
 import type { HeldItemId } from "#enums/held-item-id";
 
@@ -16,7 +16,7 @@ export interface FLINCH_CHANCE_PARAMS {
  * @see {@linkcode apply}
  */
 export class FlinchChanceHeldItem extends HeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.FLINCH_CHANCE];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.FLINCH_CHANCE];
   private chance: number;
 
   constructor(type: HeldItemId, maxStackCount = 1, chance: number) {

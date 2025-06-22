@@ -2,7 +2,7 @@ import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { BATTLE_STATS } from "#enums/stat";
 import i18next from "i18next";
-import { ConsumableHeldItem, ITEM_EFFECT } from "../held-item";
+import { ConsumableHeldItem, HELD_ITEM_EFFECT } from "../held-item";
 import { getPokemonNameWithAffix } from "#app/messages";
 
 export interface RESET_NEGATIVE_STAT_STAGE_PARAMS {
@@ -19,7 +19,7 @@ export interface RESET_NEGATIVE_STAT_STAGE_PARAMS {
  * @see {@linkcode apply}
  */
 export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.RESET_NEGATIVE_STAT_STAGE];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.RESET_NEGATIVE_STAT_STAGE];
 
   get name(): string {
     return i18next.t("modifierType:ModifierType.WHITE_HERB.name");

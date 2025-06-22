@@ -25,7 +25,7 @@ import { isNullOrUndefined } from "#app/utils/common";
 import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { applyHeldItems } from "#app/items/all-held-items";
-import { ITEM_EFFECT } from "#app/items/held-item";
+import { HELD_ITEM_EFFECT } from "#app/items/held-item";
 
 export class FaintPhase extends PokemonPhase {
   public readonly phaseName = "FaintPhase";
@@ -59,7 +59,7 @@ export class FaintPhase extends PokemonPhase {
     faintPokemon.resetSummonData();
 
     if (!this.preventInstantRevive) {
-      applyHeldItems(ITEM_EFFECT.INSTANT_REVIVE, { pokemon: faintPokemon });
+      applyHeldItems(HELD_ITEM_EFFECT.INSTANT_REVIVE, { pokemon: faintPokemon });
     }
 
     /**

@@ -3,7 +3,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import i18next from "i18next";
 import type { NumberHolder } from "#app/utils/common";
 import type Pokemon from "#app/field/pokemon";
-import { HeldItem, ITEM_EFFECT } from "#app/items/held-item";
+import { HeldItem, HELD_ITEM_EFFECT } from "#app/items/held-item";
 
 export interface ATTACK_TYPE_BOOST_PARAMS {
   /** The pokemon with the item */
@@ -40,7 +40,7 @@ export const attackTypeToHeldItem: AttackTypeToHeldItemMap = {
 };
 
 export class AttackTypeBoosterHeldItem extends HeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.TURN_END_HEAL];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.TURN_END_HEAL];
   public moveType: PokemonType;
   public powerBoost: number;
 

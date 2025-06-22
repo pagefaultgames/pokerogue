@@ -18,7 +18,7 @@ import { Stat, type BattleStat, getStatKey, getStatStageChangeDescriptionKey } f
 import { OctolockTag } from "#app/data/battler-tags";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { applyHeldItems } from "#app/items/all-held-items";
-import { ITEM_EFFECT } from "#app/items/held-item";
+import { HELD_ITEM_EFFECT } from "#app/items/held-item";
 
 export type StatStageChangeCallback = (
   target: Pokemon | null,
@@ -241,7 +241,7 @@ export class StatStageChangePhase extends PokemonPhase {
       );
       if (!existingPhase?.is("StatStageChangePhase")) {
         // Apply White Herb if needed
-        applyHeldItems(ITEM_EFFECT.RESET_NEGATIVE_STAT_STAGE, { pokemon: pokemon, isPlayer: this.player });
+        applyHeldItems(HELD_ITEM_EFFECT.RESET_NEGATIVE_STAT_STAGE, { pokemon: pokemon, isPlayer: this.player });
       }
 
       pokemon.updateInfo();

@@ -1,6 +1,6 @@
 import type Pokemon from "#app/field/pokemon";
 import type { NumberHolder } from "#app/utils/common";
-import { HeldItem, ITEM_EFFECT } from "../held-item";
+import { HeldItem, HELD_ITEM_EFFECT } from "../held-item";
 
 export interface BATON_PARAMS {
   /** The pokemon with the item */
@@ -10,7 +10,7 @@ export interface BATON_PARAMS {
 }
 
 export class BatonHeldItem extends HeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.BATON];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.BATON];
 
   /**
    * Applies {@linkcode SwitchEffectTransferModifier}

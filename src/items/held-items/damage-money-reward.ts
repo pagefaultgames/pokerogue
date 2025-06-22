@@ -2,7 +2,7 @@ import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { MoneyMultiplierModifier } from "#app/modifier/modifier";
 import { NumberHolder } from "#app/utils/common";
-import { HeldItem, ITEM_EFFECT } from "../held-item";
+import { HeldItem, HELD_ITEM_EFFECT } from "../held-item";
 
 export interface DAMAGE_MONEY_REWARD_PARAMS {
   /** The pokemon with the item */
@@ -12,7 +12,7 @@ export interface DAMAGE_MONEY_REWARD_PARAMS {
 }
 
 export class DamageMoneyRewardHeldItem extends HeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.DAMAGE_MONEY_REWARD];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.DAMAGE_MONEY_REWARD];
 
   /**
    * Applies {@linkcode DamageMoneyRewardModifier}

@@ -152,7 +152,7 @@ import { starterColors } from "./global-vars/starter-colors";
 import { startingWave } from "./starting-wave";
 import { ModifierBar } from "./modifier/modifier-bar";
 import { allHeldItems, applyHeldItems } from "./items/all-held-items";
-import { ITEM_EFFECT } from "./items/held-item";
+import { HELD_ITEM_EFFECT } from "./items/held-item";
 import { PhaseManager } from "./phase-manager";
 import { HeldItemId } from "#enums/held-item-id";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "./items/held-item-pool";
@@ -3310,7 +3310,7 @@ export default class BattleScene extends SceneBase {
           expMultiplier = Overrides.XP_MULTIPLIER_OVERRIDE;
         }
         const pokemonExp = new NumberHolder(expValue * expMultiplier);
-        applyHeldItems(ITEM_EFFECT.EXP_BOOSTER, { pokemon: partyMember, expAmount: pokemonExp });
+        applyHeldItems(HELD_ITEM_EFFECT.EXP_BOOSTER, { pokemon: partyMember, expAmount: pokemonExp });
         partyMemberExp.push(Math.floor(pokemonExp.value));
       }
 

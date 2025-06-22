@@ -11,7 +11,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { TrickRoomTag } from "#app/data/arena-tag";
 import { SwitchType } from "#enums/switch-type";
 import { globalScene } from "#app/global-scene";
-import { ITEM_EFFECT } from "#app/items/held-item";
+import { HELD_ITEM_EFFECT } from "#app/items/held-item";
 import { applyHeldItems } from "#app/items/all-held-items";
 
 export class TurnStartPhase extends FieldPhase {
@@ -70,7 +70,7 @@ export class TurnStartPhase extends FieldPhase {
       applyAbAttrs("BypassSpeedChanceAbAttr", p, null, false, bypassSpeed);
       applyAbAttrs("PreventBypassSpeedChanceAbAttr", p, null, false, bypassSpeed, canCheckHeldItems);
       if (canCheckHeldItems.value) {
-        applyHeldItems(ITEM_EFFECT.BYPASS_SPEED_CHANCE, { pokemon: p, doBypassSpeed: bypassSpeed });
+        applyHeldItems(HELD_ITEM_EFFECT.BYPASS_SPEED_CHANCE, { pokemon: p, doBypassSpeed: bypassSpeed });
       }
       battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
     });

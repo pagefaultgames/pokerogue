@@ -1,7 +1,7 @@
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import i18next from "i18next";
-import { HeldItem, ITEM_EFFECT } from "#app/items/held-item";
+import { HeldItem, HELD_ITEM_EFFECT } from "#app/items/held-item";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { toDmgValue } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -12,7 +12,7 @@ export interface TURN_END_HEAL_PARAMS {
 }
 
 export class TurnEndHealHeldItem extends HeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.TURN_END_HEAL];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.TURN_END_HEAL];
 
   apply(params: TURN_END_HEAL_PARAMS): boolean {
     const pokemon = params.pokemon;

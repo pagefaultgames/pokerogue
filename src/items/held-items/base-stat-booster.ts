@@ -2,7 +2,7 @@ import type Pokemon from "#app/field/pokemon";
 import { HeldItemId } from "#enums/held-item-id";
 import { getStatKey, type PermanentStat, Stat } from "#enums/stat";
 import i18next from "i18next";
-import { HeldItem, ITEM_EFFECT } from "../held-item";
+import { HeldItem, HELD_ITEM_EFFECT } from "../held-item";
 
 export interface BASE_STAT_BOOSTER_PARAMS {
   /** The pokemon with the item */
@@ -33,7 +33,7 @@ export const statBoostItems: Record<PermanentStat, string> = {
 };
 
 export class BaseStatBoosterHeldItem extends HeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.BASE_STAT_BOOSTER];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.BASE_STAT_BOOSTER];
   public stat: PermanentStat;
 
   constructor(type: HeldItemId, maxStackCount = 1, stat: PermanentStat) {

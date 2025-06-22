@@ -1,6 +1,6 @@
 import type Pokemon from "#app/field/pokemon";
 import i18next from "i18next";
-import { HeldItem, ITEM_EFFECT } from "../held-item";
+import { HeldItem, HELD_ITEM_EFFECT } from "../held-item";
 import type { HeldItemId } from "#enums/held-item-id";
 
 export interface BASE_STAT_TOTAL_PARAMS {
@@ -14,7 +14,7 @@ export interface BASE_STAT_TOTAL_PARAMS {
  * Currently used by Shuckle Juice item
  */
 export class BaseStatTotalHeldItem extends HeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.BASE_STAT_TOTAL];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.BASE_STAT_TOTAL];
   public isTransferable = false;
   public statModifier: number;
 

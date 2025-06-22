@@ -85,7 +85,7 @@ import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves, invalidSketchMoves } from "./invalid-moves";
 import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { allHeldItems, applyHeldItems } from "#app/items/all-held-items";
-import { ITEM_EFFECT } from "#app/items/held-item";
+import { HELD_ITEM_EFFECT } from "#app/items/held-item";
 import { berryTypeToHeldItem } from "#app/items/held-items/berry";
 import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { ChargingMove, MoveAttrMap, MoveAttrString, MoveKindString, MoveClassMap } from "#app/@types/move-types";
@@ -770,7 +770,7 @@ export default abstract class Move implements Localizable {
     const isOhko = this.hasAttr("OneHitKOAccuracyAttr");
 
     if (!isOhko) {
-      applyHeldItems(ITEM_EFFECT.ACCURACY_BOOSTER, { pokemon: user, moveAccuracy: moveAccuracy });
+      applyHeldItems(HELD_ITEM_EFFECT.ACCURACY_BOOSTER, { pokemon: user, moveAccuracy: moveAccuracy });
     }
 
     if (globalScene.arena.weather?.weatherType === WeatherType.FOG) {
@@ -843,7 +843,7 @@ export default abstract class Move implements Localizable {
 
     if (!this.hasAttr("TypelessAttr")) {
       globalScene.arena.applyTags(WeakenMoveTypeTag, simulated, typeChangeHolder.value, power);
-      applyHeldItems(ITEM_EFFECT.ATTACK_TYPE_BOOST, {
+      applyHeldItems(HELD_ITEM_EFFECT.ATTACK_TYPE_BOOST, {
         pokemon: source, 
         moveType: typeChangeHolder.value,
         movePower: power,

@@ -10,7 +10,7 @@ import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { globalScene } from "#app/global-scene";
 import { applyHeldItems } from "#app/items/all-held-items";
-import { ITEM_EFFECT } from "#app/items/held-item";
+import { HELD_ITEM_EFFECT } from "#app/items/held-item";
 
 export class TurnEndPhase extends FieldPhase {
   public readonly phaseName = "TurnEndPhase";
@@ -26,7 +26,7 @@ export class TurnEndPhase extends FieldPhase {
       if (!pokemon.switchOutStatus) {
         pokemon.lapseTags(BattlerTagLapseType.TURN_END);
 
-        applyHeldItems(ITEM_EFFECT.TURN_END_HEAL, { pokemon: pokemon });
+        applyHeldItems(HELD_ITEM_EFFECT.TURN_END_HEAL, { pokemon: pokemon });
 
         if (globalScene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
           globalScene.phaseManager.unshiftNew(
@@ -48,9 +48,9 @@ export class TurnEndPhase extends FieldPhase {
         applyPostTurnAbAttrs("PostTurnAbAttr", pokemon);
       }
 
-      applyHeldItems(ITEM_EFFECT.TURN_END_STATUS, { pokemon: pokemon });
+      applyHeldItems(HELD_ITEM_EFFECT.TURN_END_STATUS, { pokemon: pokemon });
 
-      applyHeldItems(ITEM_EFFECT.TURN_END_ITEM_STEAL, { pokemon: pokemon });
+      applyHeldItems(HELD_ITEM_EFFECT.TURN_END_ITEM_STEAL, { pokemon: pokemon });
 
       pokemon.tempSummonData.turnCount++;
       pokemon.tempSummonData.waveTurnCount++;

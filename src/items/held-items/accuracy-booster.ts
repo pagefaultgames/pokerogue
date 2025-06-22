@@ -1,7 +1,7 @@
 import type Pokemon from "#app/field/pokemon";
 import type { NumberHolder } from "#app/utils/common";
 import type { HeldItemId } from "#enums/held-item-id";
-import { HeldItem, ITEM_EFFECT } from "../held-item";
+import { HeldItem, HELD_ITEM_EFFECT } from "../held-item";
 
 export interface ACCURACY_BOOST_PARAMS {
   /** The pokemon with the item */
@@ -11,7 +11,7 @@ export interface ACCURACY_BOOST_PARAMS {
 }
 
 export class AccuracyBoosterHeldItem extends HeldItem {
-  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.ACCURACY_BOOSTER];
+  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.ACCURACY_BOOSTER];
 
   private accuracyAmount: number;
 
