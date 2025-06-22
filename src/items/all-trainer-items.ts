@@ -1,32 +1,28 @@
 import type { TempBattleStat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import {
-  type BOOSTER_PARAMS,
   CriticalCatchChanceBoosterTrainerItem,
-  type DOUBLE_BATTLE_CHANCE_BOOSTER_PARAMS,
   DoubleBattleChanceBoosterTrainerItem,
-  type EXP_BOOSTER_PARAMS,
+  EnemyAttackStatusEffectChanceTrainerItem,
+  EnemyDamageBoosterTrainerItem,
+  EnemyDamageReducerTrainerItem,
+  EnemyEndureChanceTrainerItem,
+  EnemyFusionChanceTrainerItem,
+  EnemyStatusEffectHealChanceTrainerItem,
+  EnemyTurnHealTrainerItem,
   ExpBoosterTrainerItem,
-  type EXTRA_REWARD_PARAMS,
   ExtraRewardTrainerItem,
-  type HEAL_SHOP_COST_PARAMS,
-  type HEALING_BOOSTER_PARAMS,
   HealingBoosterTrainerItem,
   HealShopCostTrainerItem,
   HiddenAbilityChanceBoosterTrainerItem,
-  type LEVEL_INCREMENT_BOOSTER_PARAMS,
   LevelIncrementBoosterTrainerItem,
-  type MONEY_MULTIPLIER_PARAMS,
   MoneyMultiplierTrainerItem,
-  type PRESERVE_BERRY_PARAMS,
   PreserveBerryTrainerItem,
   ShinyRateBoosterTrainerItem,
-  type TEMP_CRIT_BOOSTER_PARAMS,
-  type TEMP_STAT_STAGE_BOOSTER_PARAMS,
   TempCritBoosterTrainerItem,
   TempStatStageBoosterTrainerItem,
   tempStatToTrainerItem,
-  TRAINER_ITEM_EFFECT,
   TrainerItem,
 } from "./trainer-item";
 
@@ -79,31 +75,39 @@ export function initTrainerItems() {
     allTrainerItems[trainerItemType] = new TempStatStageBoosterTrainerItem(trainerItemType, stat, 5);
   }
   allTrainerItems[TrainerItemId.DIRE_HIT] = new TempCritBoosterTrainerItem(TrainerItemId.DIRE_HIT, 5);
-}
 
-type APPLY_TRAINER_ITEMS_PARAMS = {
-  [TRAINER_ITEM_EFFECT.LEVEL_INCREMENT_BOOSTER]: LEVEL_INCREMENT_BOOSTER_PARAMS;
-  [TRAINER_ITEM_EFFECT.PRESERVE_BERRY]: PRESERVE_BERRY_PARAMS;
-  [TRAINER_ITEM_EFFECT.HEALING_BOOSTER]: HEALING_BOOSTER_PARAMS;
-  [TRAINER_ITEM_EFFECT.EXP_BOOSTER]: EXP_BOOSTER_PARAMS;
-  [TRAINER_ITEM_EFFECT.MONEY_MULTIPLIER]: MONEY_MULTIPLIER_PARAMS;
-  [TRAINER_ITEM_EFFECT.HIDDEN_ABILITY_CHANCE_BOOSTER]: BOOSTER_PARAMS;
-  [TRAINER_ITEM_EFFECT.SHINY_RATE_BOOSTER]: BOOSTER_PARAMS;
-  [TRAINER_ITEM_EFFECT.CRITICAL_CATCH_CHANCE_BOOSTER]: BOOSTER_PARAMS;
-  [TRAINER_ITEM_EFFECT.EXTRA_REWARD]: EXTRA_REWARD_PARAMS;
-  [TRAINER_ITEM_EFFECT.HEAL_SHOP_COST]: HEAL_SHOP_COST_PARAMS;
-  [TRAINER_ITEM_EFFECT.DOUBLE_BATTLE_CHANCE_BOOSTER]: DOUBLE_BATTLE_CHANCE_BOOSTER_PARAMS;
-  [TRAINER_ITEM_EFFECT.TEMP_STAT_STAGE_BOOSTER]: TEMP_STAT_STAGE_BOOSTER_PARAMS;
-  [TRAINER_ITEM_EFFECT.TEMP_CRIT_BOOSTER]: TEMP_CRIT_BOOSTER_PARAMS;
-};
-
-export function applyTrainerItems<T extends TRAINER_ITEM_EFFECT>(effect: T, params: APPLY_TRAINER_ITEMS_PARAMS[T]) {
-  const manager = params.manager;
-  if (manager) {
-    for (const item of Object.keys(manager.trainerItems)) {
-      if (allTrainerItems[item].effects.includes(effect)) {
-        allTrainerItems[item].apply(params);
-      }
-    }
-  }
+  allTrainerItems[TrainerItemId.ENEMY_DAMAGE_BOOSTER] = new EnemyDamageBoosterTrainerItem(
+    TrainerItemId.ENEMY_DAMAGE_BOOSTER,
+  );
+  allTrainerItems[TrainerItemId.ENEMY_DAMAGE_REDUCTION] = new EnemyDamageReducerTrainerItem(
+    TrainerItemId.ENEMY_DAMAGE_REDUCTION,
+  );
+  allTrainerItems[TrainerItemId.ENEMY_HEAL] = new EnemyTurnHealTrainerItem(TrainerItemId.ENEMY_HEAL, 10);
+  allTrainerItems[TrainerItemId.ENEMY_ATTACK_POISON_CHANCE] = new EnemyAttackStatusEffectChanceTrainerItem(
+    TrainerItemId.ENEMY_ATTACK_POISON_CHANCE,
+    StatusEffect.POISON,
+    10,
+  );
+  allTrainerItems[TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE] = new EnemyAttackStatusEffectChanceTrainerItem(
+    TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE,
+    StatusEffect.PARALYSIS,
+    10,
+  );
+  allTrainerItems[TrainerItemId.ENEMY_ATTACK_BURN_CHANCE] = new EnemyAttackStatusEffectChanceTrainerItem(
+    TrainerItemId.ENEMY_ATTACK_BURN_CHANCE,
+    StatusEffect.BURN,
+    10,
+  );
+  allTrainerItems[TrainerItemId.ENEMY_STATUS_EFFECT_HEAL_CHANCE] = new EnemyStatusEffectHealChanceTrainerItem(
+    TrainerItemId.ENEMY_STATUS_EFFECT_HEAL_CHANCE,
+    10,
+  );
+  allTrainerItems[TrainerItemId.ENEMY_ENDURE_CHANCE] = new EnemyEndureChanceTrainerItem(
+    TrainerItemId.ENEMY_ENDURE_CHANCE,
+    10,
+  );
+  allTrainerItems[TrainerItemId.ENEMY_FUSED_CHANCE] = new EnemyFusionChanceTrainerItem(
+    TrainerItemId.ENEMY_FUSED_CHANCE,
+    10,
+  );
 }
