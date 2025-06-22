@@ -96,8 +96,8 @@ export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): Po
 }
 
 export function getFusedSpeciesName(speciesAName: string, speciesBName: string): string {
-  const fragAPattern = /([a-z]{2}.*?[aeiou(?:y$)\-\']+)(.*?)$/i;
-  const fragBPattern = /([a-z]{2}.*?[aeiou(?:y$)\-\'])(.*?)$/i;
+  const fragAPattern = /([a-z]{2}.*?[aeiou(?:y$)\-']+)(.*?)$/i;
+  const fragBPattern = /([a-z]{2}.*?[aeiou(?:y$)\-'])(.*?)$/i;
 
   const [speciesAPrefixMatch, speciesBPrefixMatch] = [speciesAName, speciesBName].map(n => /^(?:[^ ]+) /.exec(n));
   const [speciesAPrefix, speciesBPrefix] = [speciesAPrefixMatch, speciesBPrefixMatch].map(m => (m ? m[0] : ""));
@@ -134,7 +134,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
     if (fragBMatch) {
       const lastCharA = fragA.slice(fragA.length - 1);
       const prevCharB = fragBMatch[1].slice(fragBMatch.length - 1);
-      fragB = (/[\-']/.test(prevCharB) ? prevCharB : "") + fragBMatch[2] || prevCharB;
+      fragB = (/[-']/.test(prevCharB) ? prevCharB : "") + fragBMatch[2] || prevCharB;
       if (lastCharA === fragB[0]) {
         if (/[aiu]/.test(lastCharA)) {
           fragB = fragB.slice(1);
@@ -379,7 +379,7 @@ export abstract class PokemonSpeciesForm {
   }
 
   getSpriteAtlasPath(female: boolean, formIndex?: number, shiny?: boolean, variant?: number, back?: boolean): string {
-    const spriteId = this.getSpriteId(female, formIndex, shiny, variant, back).replace(/\_{2}/g, "/");
+    const spriteId = this.getSpriteId(female, formIndex, shiny, variant, back).replace(/_{2}/g, "/");
     return `${/_[1-3]$/.test(spriteId) ? "variant/" : ""}${spriteId}`;
   }
 
@@ -478,8 +478,8 @@ export abstract class PokemonSpeciesForm {
         case SpeciesId.DUDUNSPARCE:
           break;
         case SpeciesId.ZACIAN:
+        // biome-ignore lint/suspicious/noFallthroughSwitchClause: Intentionally falls through
         case SpeciesId.ZAMAZENTA:
-          // biome-ignore lint/suspicious/noFallthroughSwitchClause: Falls through
           if (formSpriteKey.startsWith("behemoth")) {
             formSpriteKey = "crowned";
           }
@@ -569,7 +569,7 @@ export abstract class PokemonSpeciesForm {
     const rootSpeciesId = this.getRootSpeciesId();
     for (const moveId of moveset) {
       if (speciesEggMoves.hasOwnProperty(rootSpeciesId)) {
-        const eggMoveIndex = speciesEggMoves[rootSpeciesId].findIndex(m => m === moveId);
+        const eggMoveIndex = speciesEggMoves[rootSpeciesId].indexOf(moveId);
         if (eggMoveIndex > -1 && eggMoves & (1 << eggMoveIndex)) {
           continue;
         }

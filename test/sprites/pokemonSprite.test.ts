@@ -26,9 +26,9 @@ describe("check if every variant's sprite are correctly set", () => {
     femaleVariant = masterlist.female;
     backVariant = masterlist.back;
 
-    // @ts-ignore
+    // @ts-expect-error
     delete masterlist.female; // TODO: resolve ts-ignore
-    //@ts-ignore
+    //@ts-expect-error
     delete masterlist.back; //TODO: resolve ts-ignore
   });
 
