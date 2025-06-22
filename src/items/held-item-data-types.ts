@@ -2,25 +2,11 @@ import type Pokemon from "#app/field/pokemon";
 import type { FormChangeItem } from "#enums/form-change-item";
 import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { RewardTier } from "#enums/reward-tier";
-import type { Stat } from "#enums/stat";
-
-export interface BASE_STAT_TOTAL_DATA {
-  statModifier: number;
-}
-
-export interface BASE_STAT_FLAT_DATA {
-  statModifier: number;
-  stats: Stat[];
-}
-
-export type HeldItemExtraData = BASE_STAT_TOTAL_DATA | BASE_STAT_FLAT_DATA;
 
 export type HeldItemData = {
   stack: number;
   disabled?: boolean;
-  unstealable?: boolean;
   cooldown?: number;
-  data?: HeldItemExtraData;
 };
 
 export type HeldItemDataMap = {
