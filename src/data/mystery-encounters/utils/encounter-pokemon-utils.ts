@@ -27,7 +27,6 @@ import {
   showEncounterText,
 } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { modifierTypes } from "#app/data/data-lists";
 import { Gender } from "#app/data/gender";
 import type { PermanentStat } from "#enums/stat";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
@@ -368,24 +367,6 @@ export function applyHealToPokemon(pokemon: PlayerPokemon, heal: number) {
   applyHpChangeToPokemon(pokemon, heal);
 }
 
-/**
- * Will modify all of a Pokemon's base stats by a flat value
- * Base stats can never go below 1
- * @param pokemon
- * @param value
- */
-export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: number) {
-  const modType = modifierTypes
-    .MYSTERY_ENCOUNTER_SHUCKLE_JUICE()
-    .generateType(globalScene.getPlayerParty(), [value])
-    ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE);
-  const modifier = modType?.newModifier(pokemon);
-  if (modifier) {
-    globalScene.addModifier(modifier, false, false, false, true);
-    pokemon.calculateStats();
-  }
-}
-
 export function applyHeldItemWithFallback(pokemon: Pokemon, item: HeldItemId, fallbackItem?: HeldItemId) {
   const added = pokemon.heldItemManager.add(item);
   if (!added && fallbackItem) {
@@ -685,6 +666,7 @@ export async function catchPokemon(
                       pokemon.variant,
                       pokemon.ivs,
                       pokemon.nature,
+                      pokemon.heldItemManager.generateHeldItemConfiguration(),
                       pokemon,
                     );
                     globalScene.ui.setMode(

@@ -14,6 +14,7 @@ import {
   getPlayerModifierTypeOptions,
   HeldItemReward,
   FormChangeItemReward,
+  TrainerItemReward,
 } from "#app/modifier/modifier-type";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { Modifier } from "#app/modifier/modifier";
@@ -176,6 +177,8 @@ export class SelectModifierPhase extends BattlePhase {
       } else {
         this.openModifierMenu(modifierType, cost, modifierSelectCallback);
       }
+    } else if (modifierType instanceof TrainerItemReward) {
+      modifierType.apply();
     } else {
       this.applyModifier(modifierType.newModifier()!);
     }

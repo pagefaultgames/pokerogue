@@ -1,4 +1,4 @@
-import type { TempBattleStat } from "#enums/stat";
+import { Stat, type TempBattleStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import {
@@ -20,6 +20,7 @@ import {
   MoneyMultiplierTrainerItem,
   PreserveBerryTrainerItem,
   ShinyRateBoosterTrainerItem,
+  TempAccuracyBoosterTrainerItem,
   TempCritBoosterTrainerItem,
   TempStatStageBoosterTrainerItem,
   tempStatToTrainerItem,
@@ -69,7 +70,11 @@ export function initTrainerItems() {
 
   for (const [statKey, trainerItemType] of Object.entries(tempStatToTrainerItem)) {
     const stat = Number(statKey) as TempBattleStat;
-    allTrainerItems[trainerItemType] = new TempStatStageBoosterTrainerItem(trainerItemType, stat, 5);
+    if (stat === Stat.ACC) {
+      allTrainerItems[trainerItemType] = new TempAccuracyBoosterTrainerItem(trainerItemType, 5);
+    } else {
+      allTrainerItems[trainerItemType] = new TempStatStageBoosterTrainerItem(trainerItemType, stat, 5);
+    }
   }
   allTrainerItems[TrainerItemId.DIRE_HIT] = new TempCritBoosterTrainerItem(TrainerItemId.DIRE_HIT, 5);
 

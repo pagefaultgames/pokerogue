@@ -25,7 +25,7 @@ import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
-import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
+import { overrideHeldItems, overrideTrainerItems } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
 import { getNatureName } from "#app/data/nature";
@@ -270,7 +270,7 @@ export class EncounterPhase extends BattlePhase {
       if (!this.loaded && battle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
         // generate modifiers for MEs, overriding prior ones as applicable
         globalScene.generateEnemyItems();
-        overrideModifiers(false);
+        overrideTrainerItems(false);
 
         for (const enemy of globalScene.getEnemyField()) {
           overrideHeldItems(enemy, false);

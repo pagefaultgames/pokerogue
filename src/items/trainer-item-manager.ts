@@ -1,10 +1,5 @@
 import { allTrainerItems } from "#app/items/all-trainer-items";
-import {
-  isItemInCategory,
-  isItemInRequested,
-  type TrainerItemCategoryId,
-  type TrainerItemId,
-} from "#app/enums/trainer-item-id";
+import type { TrainerItemId } from "#app/enums/trainer-item-id";
 import {
   isTrainerItemSpecs,
   type TrainerItemConfiguration,
@@ -49,10 +44,6 @@ export class TrainerItemManager {
 
   hasItem(itemType: TrainerItemId): boolean {
     return itemType in this.trainerItems;
-  }
-
-  hasItemCategory(categoryId: TrainerItemCategoryId): boolean {
-    return Object.keys(this.trainerItems).some(id => isItemInCategory(Number(id), categoryId));
   }
 
   getStack(itemType: TrainerItemId): number {
@@ -121,9 +112,9 @@ export class TrainerItemManager {
     }
   }
 
-  filterRequestedItems(requestedItems: (TrainerItemCategoryId | TrainerItemId)[], exclude = false) {
+  filterRequestedItems(requestedItems: TrainerItemId[], exclude = false) {
     const currentItems = this.getTrainerItems();
-    return currentItems.filter(it => !exclude && isItemInRequested(it, requestedItems));
+    return currentItems.filter(it => !exclude && requestedItems.some(entry => it === entry));
   }
 
   getTrainerItemCount(): number {

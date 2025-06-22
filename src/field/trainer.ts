@@ -21,6 +21,7 @@ import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { signatureSpecies } from "#app/data/balance/signature-species";
 import { TrainerVariant } from "#enums/trainer-variant";
+import type { TrainerItemConfiguration } from "#app/items/trainer-item-data-types";
 
 export default class Trainer extends Phaser.GameObjects.Container {
   public config: TrainerConfig;
@@ -646,7 +647,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     }
   }
 
-  genModifiers(party: EnemyPokemon[]): PersistentModifier[] {
+  genTrainerItems(party: EnemyPokemon[]): TrainerItemConfiguration {
     if (this.config.genModifiersFunc) {
       return this.config.genModifiersFunc(party);
     }

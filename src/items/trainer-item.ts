@@ -26,15 +26,16 @@ export const TRAINER_ITEM_EFFECT = {
   DOUBLE_BATTLE_CHANCE_BOOSTER: 11,
 
   TEMP_STAT_STAGE_BOOSTER: 12,
-  TEMP_CRIT_BOOSTER: 13,
+  TEMP_ACCURACY_BOOSTER: 13,
+  TEMP_CRIT_BOOSTER: 14,
 
-  ENEMY_DAMAGE_BOOSTER: 14,
-  ENEMY_DAMAGE_REDUCER: 15,
-  ENEMY_HEAL: 16,
-  ENEMY_ATTACK_STATUS_CHANCE: 17,
-  ENEMY_STATUS_HEAL_CHANCE: 18,
-  ENEMY_ENDURE_CHANCE: 19,
-  ENEMY_FUSED_CHANCE: 20,
+  ENEMY_DAMAGE_BOOSTER: 15,
+  ENEMY_DAMAGE_REDUCER: 16,
+  ENEMY_HEAL: 17,
+  ENEMY_ATTACK_STATUS_CHANCE: 18,
+  ENEMY_STATUS_HEAL_CHANCE: 19,
+  ENEMY_ENDURE_CHANCE: 20,
+  ENEMY_FUSED_CHANCE: 21,
 } as const;
 
 export type TRAINER_ITEM_EFFECT = (typeof TRAINER_ITEM_EFFECT)[keyof typeof TRAINER_ITEM_EFFECT];
@@ -330,9 +331,24 @@ export class TempStatStageBoosterTrainerItem extends LapsingTrainerItem {
 
   apply(_manager: TrainerItemManager, params: NUMBER_HOLDER_PARAMS) {
     const statLevel = params.numberHolder;
-    // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using randSeedInt
-    // A double battle will initiate if the generated number is 0
-    const boost = this.stat !== Stat.ACC ? 0.3 : 1;
+    const boost = 0.3;
+    statLevel.value += boost;
+  }
+}
+
+export class TempAccuracyBoosterTrainerItem extends LapsingTrainerItem {
+  public effects: TRAINER_ITEM_EFFECT[] = [TRAINER_ITEM_EFFECT.TEMP_ACCURACY_BOOSTER];
+
+  getDescription(): string {
+    return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
+      stat: i18next.t(getStatKey(Stat.ACC)),
+      amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.extra.percentage"),
+    });
+  }
+
+  apply(_manager: TrainerItemManager, params: NUMBER_HOLDER_PARAMS) {
+    const statLevel = params.numberHolder;
+    const boost = 1;
     statLevel.value += boost;
   }
 }

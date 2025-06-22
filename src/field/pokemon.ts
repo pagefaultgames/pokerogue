@@ -3414,7 +3414,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyAbAttrs("IgnoreOpponentStatStagesAbAttr", this, null, false, Stat.EVA, ignoreEvaStatStage);
     applyMoveAttrs("IgnoreOpponentStatStagesAttr", this, target, sourceMove, ignoreEvaStatStage);
 
-    globalScene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), Stat.ACC, userAccStage);
+    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.TEMP_ACCURACY_BOOSTER, { numberHolder: userAccStage });
 
     userAccStage.value = ignoreAccStatStage.value ? 0 : Math.min(userAccStage.value, 6);
     targetEvaStage.value = ignoreEvaStatStage.value ? 0 : targetEvaStage.value;

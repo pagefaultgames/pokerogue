@@ -358,6 +358,12 @@ export class TrainerItemReward extends ModifierType {
   }
 }
 
+export class LapsingTrainerItemReward extends TrainerItemReward {
+  apply() {
+    globalScene.trainerItems.add(this.itemId, allTrainerItems[this.itemId].getMaxStackCount());
+  }
+}
+
 export class TerastallizeModifierType extends PokemonModifierType {
   private teraType: PokemonType;
 
@@ -1007,7 +1013,7 @@ class BaseStatBoosterRewardGenerator extends ModifierTypeGenerator {
   }
 }
 
-class TempStatStageBoosterModifierTypeGenerator extends ModifierTypeGenerator {
+class TempStatStageBoosterRewardGenerator extends ModifierTypeGenerator {
   public static readonly items: Record<TempBattleStat, string> = {
     [Stat.ATK]: "x_attack",
     [Stat.DEF]: "x_defense",
@@ -1020,10 +1026,10 @@ class TempStatStageBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
     super((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && TEMP_BATTLE_STATS.includes(pregenArgs[0])) {
-        return new TempStatStageBoosterModifierType(pregenArgs[0]);
+        return new LapsingTrainerItemReward(pregenArgs[0]);
       }
       const randStat: TempBattleStat = randSeedInt(Stat.ACC, Stat.ATK);
-      return new TempStatStageBoosterModifierType(randStat);
+      return new LapsingTrainerItemReward(randStat);
     });
   }
 }
@@ -1384,16 +1390,16 @@ const modifierTypeInitObj = Object.freeze({
   SUPER_REPEL: () => new DoubleBattleChanceBoosterModifierType('Super Repel', 10),
   MAX_REPEL: () => new DoubleBattleChanceBoosterModifierType('Max Repel', 25),*/
 
-  LURE: () => new TrainerItemReward(TrainerItemId.LURE),
-  SUPER_LURE: () => new TrainerItemReward(TrainerItemId.SUPER_LURE),
-  MAX_LURE: () => new TrainerItemReward(TrainerItemId.MAX_LURE),
+  LURE: () => new LapsingTrainerItemReward(TrainerItemId.LURE),
+  SUPER_LURE: () => new LapsingTrainerItemReward(TrainerItemId.SUPER_LURE),
+  MAX_LURE: () => new LapsingTrainerItemReward(TrainerItemId.MAX_LURE),
 
   SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterRewardGenerator(false),
   RARE_SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterRewardGenerator(true),
 
-  TEMP_STAT_STAGE_BOOSTER: () => new TempStatStageBoosterModifierTypeGenerator(),
+  TEMP_STAT_STAGE_BOOSTER: () => new TempStatStageBoosterRewardGenerator(),
 
-  DIRE_HIT: () => new TrainerItemReward(TrainerItemId.DIRE_HIT),
+  DIRE_HIT: () => new LapsingTrainerItemReward(TrainerItemId.DIRE_HIT),
 
   BASE_STAT_BOOSTER: () => new BaseStatBoosterRewardGenerator(),
 
