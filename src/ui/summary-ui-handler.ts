@@ -117,7 +117,7 @@ export default class SummaryUiHandler extends UiHandler {
 
   private pokemon: PlayerPokemon | null;
   private playerParty: boolean;
-  /**This is set to false when checking the summary of a freshly caught Pokemon as it is not part of a player's party yet but still needs to display its items**/
+  /**This is set to false when checking the summary of a freshly caught Pokemon as it is not part of a player's party yet but still needs to display its items*/
   private newMove: Move | null;
   private moveSelectFunction: Function | null;
   private transitioning: boolean;
