@@ -267,7 +267,7 @@ export class SelectModifierPhase extends BattlePhase {
    * @param playSound - Whether the 'obtain modifier' sound should be played when adding the modifier.
    */
   private applyModifier(modifier: Modifier, cost = -1, playSound = false): void {
-    const result = globalScene.addModifier(modifier, false, playSound, undefined, undefined, cost);
+    const result = globalScene.addModifier(modifier, playSound, undefined, cost);
     // Queue a copy of this phase when applying a TM or Memory Mushroom.
     // If the player selects either of these, then escapes out of consuming them,
     // they are returned to a shop in the same state.

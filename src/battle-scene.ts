@@ -43,12 +43,7 @@ import { GameData } from "#app/system/game-data";
 import { addTextObject, getTextColor, TextStyle } from "#app/ui/text";
 import { allMoves } from "./data/data-lists";
 import { MusicPreference } from "#app/system/settings/settings";
-import {
-  getDefaultModifierTypeForTier,
-  getLuckString,
-  getLuckTextTint,
-  getPartyLuckValue,
-} from "#app/modifier/modifier-type";
+import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#app/modifier/modifier-type";
 import { getModifierPoolForType } from "./utils/modifier-utils";
 import { HeldItemPoolType, ModifierPoolType } from "#enums/modifier-pool-type";
 import AbilityBar from "#app/ui/ability-bar";
@@ -2608,14 +2603,7 @@ export default class BattleScene extends SceneBase {
     applyTrainerItems(effect, this.trainerItems, params);
   }
 
-  addModifier(
-    modifier: Modifier | null,
-    ignoreUpdate?: boolean,
-    playSound?: boolean,
-    virtual?: boolean,
-    instant?: boolean,
-    cost?: number,
-  ): boolean {
+  addModifier(modifier: Modifier | null, playSound?: boolean, instant?: boolean, cost?: number): boolean {
     // We check against modifier.type to stop a bug related to loading in a pokemon that has a form change item, which prior to some patch
     // that changed form change modifiers worked, had previously set the `type` field to null.
     // TODO: This is not the right place to check for this; it should ideally go in a session migrator.
@@ -2625,29 +2613,7 @@ export default class BattleScene extends SceneBase {
     let success = false;
     const soundName = modifier.type.soundName;
     this.validateAchvs(ModifierAchv, modifier);
-    if (modifier instanceof PersistentModifier) {
-      if ((modifier as PersistentModifier).add(this.modifiers, !!virtual)) {
-        if (playSound && !this.sound.get(soundName)) {
-          this.playSound(soundName);
-        }
-      } else if (!virtual) {
-        const defaultModifierType = getDefaultModifierTypeForTier(modifier.type.tier);
-        this.phaseManager.queueMessage(
-          i18next.t("battle:itemStackFull", {
-            fullItemName: modifier.type.name,
-            itemName: defaultModifierType.name,
-          }),
-          undefined,
-          false,
-          3000,
-        );
-        return this.addModifier(defaultModifierType.newModifier(), ignoreUpdate, playSound, false, instant);
-      }
-
-      if (!ignoreUpdate && !virtual) {
-        this.updateModifiers(true);
-      }
-    } else if (modifier instanceof ConsumableModifier) {
+    if (modifier instanceof ConsumableModifier) {
       if (playSound && !this.sound.get(soundName)) {
         this.playSound(soundName);
       }
@@ -2833,10 +2799,8 @@ export default class BattleScene extends SceneBase {
       const party = this.getEnemyParty();
 
       if (this.currentBattle.trainer) {
-        const modifiers = this.currentBattle.trainer.genModifiers(party);
-        for (const modifier of modifiers) {
-          this.addEnemyModifier(modifier, true);
-        }
+        const trainerItemConfig = this.currentBattle.trainer.genTrainerItems(party);
+        this.assignTrainerItemsFromConfiguration(trainerItemConfig, false);
       }
 
       party.forEach((enemyPokemon: EnemyPokemon, i: number) => {
@@ -2904,9 +2868,9 @@ export default class BattleScene extends SceneBase {
     const bar = player ? this.modifierBar : this.enemyModifierBar;
 
     if (showHeldItems) {
-      bar.updateModifiers(trainerItems, pokemonA);
+      bar.updateItems(trainerItems, pokemonA);
     } else {
-      bar.updateModifiers(trainerItems);
+      bar.updateItems(trainerItems);
     }
 
     if (!player) {

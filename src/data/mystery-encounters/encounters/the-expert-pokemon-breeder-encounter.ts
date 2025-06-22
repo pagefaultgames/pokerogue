@@ -614,7 +614,6 @@ function removePokemonFromPartyAndStoreHeldItems(encounter: MysteryEncounter, ch
   party[chosenIndex] = party[0];
   party[0] = chosenPokemon;
   encounter.misc.originalParty = globalScene.getPlayerParty().slice(1);
-  encounter.misc.originalPartyHeldItems = encounter.misc.originalParty.map(p => p.getHeldItems());
   globalScene["party"] = [chosenPokemon];
 }
 
@@ -623,13 +622,6 @@ function restorePartyAndHeldItems() {
   // Restore original party
   globalScene.getPlayerParty().push(...encounter.misc.originalParty);
 
-  // Restore held items
-  const originalHeldItems = encounter.misc.originalPartyHeldItems;
-  for (const pokemonHeldItemsList of originalHeldItems) {
-    for (const heldItem of pokemonHeldItemsList) {
-      globalScene.addModifier(heldItem, true, false, false, true);
-    }
-  }
   globalScene.updateModifiers(true);
 }
 
