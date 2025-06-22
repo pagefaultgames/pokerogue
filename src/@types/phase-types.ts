@@ -1,3 +1,5 @@
+import type Pokemon from "#app/field/pokemon";
+import type { Phase } from "#app/phase";
 import type { PhaseConstructorMap } from "#app/phase-manager";
 
 // Intentionally export the types of everything in phase-manager, as this file is meant to be
@@ -27,3 +29,7 @@ export type PhaseString = keyof PhaseMap;
 export type DynamicPhaseString = "PostSummonPhase" | "SwitchSummonPhase" | "MovePhase" | "MoveHeaderPhase";
 
 export type StaticPhaseString = Exclude<PhaseString, DynamicPhaseString>;
+
+export interface DynamicPhase extends Phase {
+  getPokemon(): Pokemon;
+}

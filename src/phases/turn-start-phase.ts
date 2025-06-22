@@ -163,14 +163,6 @@ export class TurnStartPhase extends FieldPhase {
       }
     }
 
-    phaseManager.pushNew("WeatherEffectPhase");
-    phaseManager.pushNew("BerryPhase");
-
-    /** Add a new phase to check who should be taking status damage */
-    phaseManager.pushNew("CheckStatusEffectPhase", moveOrder);
-
-    phaseManager.pushNew("TurnEndPhase");
-
     /**
      * this.end() will call shiftPhase(), which dumps everything from PrependQueue (aka everything that is unshifted()) to the front
      * of the queue and dequeues to start the next phase

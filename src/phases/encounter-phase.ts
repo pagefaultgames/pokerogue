@@ -562,7 +562,6 @@ export class EncounterPhase extends BattlePhase {
     });
 
     if (![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)) {
-      enemyField.map(p => globalScene.phaseManager.pushNew("PostSummonPhase", p.getBattlerIndex()));
       const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier) {
         enemyField.map(p => globalScene.phaseManager.pushNew("ScanIvsPhase", p.getBattlerIndex()));
@@ -602,6 +601,9 @@ export class EncounterPhase extends BattlePhase {
           }
         }
       }
+    }
+    if (![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)) {
+      enemyField.map(p => globalScene.phaseManager.pushNew("PostSummonPhase", p.getBattlerIndex()));
     }
     handleTutorial(Tutorial.Access_Menu).then(() => super.end());
   }

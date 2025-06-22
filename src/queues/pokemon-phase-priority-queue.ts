@@ -1,12 +1,12 @@
-import type { PartyMemberPokemonPhase } from "#app/phases/party-member-pokemon-phase";
-import type { PokemonPhase } from "#app/phases/pokemon-phase";
+import type { DynamicPhase } from "#app/@types/phase-types";
 import { PhasePriorityQueue } from "#app/queues/phase-priority-queue";
 import { sortInSpeedOrder } from "#app/utils/speed-order";
 import type { BattlerIndex } from "#enums/battler-index";
 
-export class PokemonPhasePriorityQueue<T extends PokemonPhase | PartyMemberPokemonPhase> extends PhasePriorityQueue<T> {
+export class PokemonPhasePriorityQueue<T extends DynamicPhase> extends PhasePriorityQueue<T> {
   protected setOrder: BattlerIndex[] | undefined;
   public override reorder(): void {
+    this.queue = this.queue.filter(phase => phase.getPokemon()?.isActive(true));
     if (this.setOrder) {
       this.queue.sort(
         (a, b) =>

@@ -83,7 +83,7 @@ import type { Localizable } from "#app/@types/locales";
 import { applyAbAttrs } from "./apply-ab-attrs";
 import { MovePriorityModifier } from "#enums/move-priority-modifier";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
-import { MovePhase } from "#app/phases/move-phase";
+import type { MovePhase } from "#app/phases/move-phase";
 
 export class Ability implements Localizable {
   public id: AbilityId;
@@ -6102,7 +6102,14 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
       if (move.getMove().is("AttackMove") || move.getMove().is("StatusMove")) {
         const target = this.getTarget(dancer, source, targets);
-        globalScene.phaseManager.pushNew("MovePhase", dancer, target, move, MoveUseMode.INDIRECT, MovePhaseTimingModifier.FIRST);
+        globalScene.phaseManager.pushNew(
+          "MovePhase",
+          dancer,
+          target,
+          move,
+          MoveUseMode.INDIRECT,
+          MovePhaseTimingModifier.FIRST,
+        );
       } else if (move.getMove().is("SelfStatusMove")) {
         // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
         globalScene.phaseManager.pushNew(

@@ -1,6 +1,6 @@
 import type { Phase } from "#app/phase";
 import type { default as Pokemon } from "#app/field/pokemon";
-import type { DynamicPhaseString, PhaseMap, PhaseString, StaticPhaseString } from "./@types/phase-types";
+import type { PhaseMap, PhaseString, DynamicPhase, StaticPhaseString } from "./@types/phase-types";
 import { globalScene } from "#app/global-scene";
 import { AddEnemyBuffModifierPhase } from "#app/phases/add-enemy-buff-modifier-phase";
 import { AttemptCapturePhase } from "#app/phases/attempt-capture-phase";
@@ -214,6 +214,12 @@ const PHASES = Object.freeze({
 /** Maps Phase strings to their constructors */
 export type PhaseConstructorMap = typeof PHASES;
 
+const turnEndPhases: PhaseString[] = ["WeatherEffectPhase", "BerryPhase", "CheckStatusEffectPhase", "TurnEndPhase"];
+
+const ignorablePhases: PhaseString[] = ["ShowAbilityPhase", "HideAbilityPhase"];
+// TODO might be easier to define which phases should be dynamic instead
+const nonDynamicPokemonPhases: PhaseString[] = ["SummonPhase", "CommandPhase"];
+
 /**
  * PhaseManager is responsible for managing the phases in the battle scene
  */
@@ -232,6 +238,8 @@ export class PhaseManager {
   private currentPhase: Phase | null = null;
   private standbyPhase: Phase | null = null;
 
+  public turnEnded = false;
+
   /* Phase Functions */
   getCurrentPhase(): Phase | null {
     return this.currentPhase;
@@ -247,11 +255,11 @@ export class PhaseManager {
    * @param defer boolean on which queue to add to, defaults to false, and adds to phaseQueue
    */
   pushPhase(phase: Phase, defer = false): void {
-    if (this.dynamicQueueManager.isDynamicPhase(phase.phaseName)) {
+    if (this.isDynamicPhase(phase) && this.dynamicQueueManager.activeQueueExists(phase.phaseName)) {
       this.dynamicQueueManager.queueDynamicPhase(phase);
-    } else {
-      (!defer ? this.phaseQueue : this.nextCommandPhaseQueue).push(phase);
+      return;
     }
+    (!defer ? this.phaseQueue : this.nextCommandPhaseQueue).push(phase);
   }
 
   /**
@@ -259,6 +267,10 @@ export class PhaseManager {
    * @param phases {@linkcode Phase} the phase(s) to add
    */
   unshiftPhase(...phases: Phase[]): void {
+    if (this.isDynamicPhase(phases[0]) && this.dynamicQueueManager.activeQueueExists(phases[0].phaseName)) {
+      phases.forEach((p: DynamicPhase) => this.dynamicQueueManager.queueDynamicPhase(p));
+      return;
+    }
     if (this.phaseQueuePrependSpliceIndex === -1) {
       this.phaseQueuePrepend.push(...phases);
     } else {
@@ -283,6 +295,7 @@ export class PhaseManager {
     this.dynamicQueueManager.clearQueues();
     this.currentPhase = null;
     this.standbyPhase = null;
+    this.turnEnded = false;
     this.clearPhaseQueueSplice();
   }
 
@@ -323,14 +336,16 @@ export class PhaseManager {
         }
       }
     }
-    if (!this.phaseQueue.length) {
-      this.populatePhaseQueue();
+
+    this.queueDynamicPhasesAtFront();
+
+    if (this.phaseQueue.every(p => ignorablePhases.includes(p.phaseName))) {
+      this.startNextDynamicPhase();
     }
 
-    if (this.phaseQueue[0].is("WeatherEffectPhase")) {
-      const dynamicPhase = this.dynamicQueueManager.popNextPhase();
-      if (dynamicPhase) {
-        this.phaseQueue.unshift(dynamicPhase);
+    if (!this.turnEnded && (!this.phaseQueue.length || this.phaseQueue[0].is("BattleEndPhase"))) {
+      if (!this.startNextDynamicPhase()) {
+        this.turnEndSequence();
       }
     }
 
@@ -356,8 +371,8 @@ export class PhaseManager {
   }
 
   public hasPhaseOfType(type: PhaseString, condition?: PhaseConditionFunc): boolean {
-    if (this.dynamicQueueManager.isDynamicPhase(type)) {
-      return this.dynamicQueueManager.exists(type, condition);
+    if (this.dynamicQueueManager.exists(type, condition)) {
+      return true;
     }
     return [this.phaseQueue, this.phaseQueuePrepend].some((queue: Phase[]) =>
       queue.find(phase => phase.is(type) && (!condition || condition(phase))),
@@ -374,7 +389,7 @@ export class PhaseManager {
     phaseType: P,
     phaseFilter?: (phase: PhaseMap[P]) => boolean,
   ): PhaseMap[P] | undefined {
-    if (this.dynamicQueueManager.isDynamicPhase(phaseType)) {
+    if (this.dynamicQueueManager.exists(phaseType, phaseFilter)) {
       return this.dynamicQueueManager.findPhaseOfType(phaseType, phaseFilter) as PhaseMap[P];
     }
     return this.phaseQueue.find(phase => phase.is(phaseType) && (!phaseFilter || phaseFilter(phase))) as PhaseMap[P];
@@ -458,17 +473,6 @@ export class PhaseManager {
   }
 
   /**
-   * Unshifts the top phase from the corresponding dynamic queue onto {@linkcode phaseQueue}
-   * @param type {@linkcode DynamicPhaseString} The type of dynamic phase to start
-   */
-  public startNextDynamicPhase(type?: DynamicPhaseString): void {
-    const phase = this.dynamicQueueManager.popNextPhase(type);
-    if (phase) {
-      this.unshiftPhase(phase);
-    }
-  }
-
-  /**
    * Adds a MessagePhase, either to PhaseQueuePrepend or nextCommandPhaseQueue
    * @param message - string for MessagePhase
    * @param callbackDelay - optional param for MessagePhase constructor
@@ -518,12 +522,10 @@ export class PhaseManager {
   /**
    * Moves everything from nextCommandPhaseQueue to phaseQueue (keeping order)
    */
-  private populatePhaseQueue(): void {
-    const dynamicPhase = this.dynamicQueueManager.popNextPhase();
-    if (dynamicPhase) {
-      this.phaseQueue.unshift(dynamicPhase);
-      return;
-    }
+  private turnEndSequence(): void {
+    this.turnEnded = true;
+    this.dynamicQueueManager.clearQueues();
+    this.queueTurnEndPhases();
     if (this.nextCommandPhaseQueue.length) {
       this.phaseQueue.push(...this.nextCommandPhaseQueue);
       this.nextCommandPhaseQueue.splice(0, this.nextCommandPhaseQueue.length);
@@ -565,10 +567,7 @@ export class PhaseManager {
    * @param phase - The name of the phase to create
    * @param args - The arguments to pass to the phase constructor
    */
-  public unshiftNew<T extends StaticPhaseString>(
-    phase: T,
-    ...args: ConstructorParameters<PhaseConstructorMap[T]>
-  ): void {
+  public unshiftNew<T extends PhaseString>(phase: T, ...args: ConstructorParameters<PhaseConstructorMap[T]>): void {
     this.unshiftPhase(this.create(phase, ...args));
   }
 
@@ -614,5 +613,45 @@ export class PhaseManager {
 
   public changePhaseMove(phaseCondition: PhaseConditionFunc, move: PokemonMove) {
     this.dynamicQueueManager.setMoveForPhase(phaseCondition, move);
+  }
+
+  public queueTurnEndPhases(): void {
+    turnEndPhases
+      .slice()
+      .reverse()
+      .forEach(p => this.phaseQueue.unshift(this.create(p)));
+  }
+
+  private consecutivePokemonPhases(): DynamicPhase[] | undefined {
+    if (this.phaseQueue.length < 1 || !this.isDynamicPhase(this.phaseQueue[0])) {
+      return;
+    }
+
+    let spliceLength = this.phaseQueue.findIndex(p => !p.is(this.phaseQueue[0].phaseName));
+    spliceLength = spliceLength !== -1 ? spliceLength : this.phaseQueue.length;
+    if (spliceLength > 1) {
+      return this.phaseQueue.splice(0, spliceLength) as DynamicPhase[];
+    }
+  }
+
+  private queueDynamicPhasesAtFront(): void {
+    const dynamicPhases = this.consecutivePokemonPhases();
+    if (dynamicPhases) {
+      dynamicPhases.forEach((p: DynamicPhase) => {
+        globalScene.phaseManager.dynamicQueueManager.queueDynamicPhase(p);
+      });
+    }
+  }
+
+  public startNextDynamicPhase(): boolean {
+    const dynamicPhase = this.dynamicQueueManager.popNextPhase();
+    if (dynamicPhase) {
+      this.phaseQueue.unshift(dynamicPhase);
+    }
+    return !!dynamicPhase;
+  }
+
+  private isDynamicPhase(phase: Phase): phase is DynamicPhase {
+    return typeof (phase as any).getPokemon === "function" && !nonDynamicPokemonPhases.includes(phase.phaseName);
   }
 }

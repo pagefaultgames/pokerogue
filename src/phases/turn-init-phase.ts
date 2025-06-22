@@ -14,6 +14,7 @@ export class TurnInitPhase extends FieldPhase {
   start() {
     super.start();
 
+    globalScene.phaseManager.turnEnded = false;
     globalScene.getPlayerField().forEach(p => {
       // If this pokemon is in play and evolved into something illegal under the current challenge, force a switch
       if (p.isOnField() && !p.isAllowedInBattle()) {

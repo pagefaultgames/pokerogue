@@ -36,11 +36,6 @@ export class PostSummonPhase extends PokemonPhase {
     this.end();
   }
 
-  override end() {
-    globalScene.phaseManager.startNextDynamicPhase("PostSummonPhase");
-    super.end();
-  }
-
   public getPriority() {
     return 0;
   }
