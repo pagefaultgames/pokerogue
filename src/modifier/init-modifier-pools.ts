@@ -1,5 +1,5 @@
 import type Pokemon from "#app/field/pokemon";
-import { enemyBuffModifierPool, modifierPool } from "#app/modifier/modifier-pools";
+import { modifierPool } from "#app/modifier/modifier-pools";
 import { globalScene } from "#app/global-scene";
 import { WeightedModifierType } from "./modifier-type";
 import { RewardTier } from "#app/enums/reward-tier";
@@ -607,54 +607,6 @@ function initMasterModifierPool() {
 }
 
 /**
- * Initialize the enemy buff modifier pool
- */
-function initEnemyBuffModifierPool() {
-  enemyBuffModifierPool[RewardTier.COMMON] = [
-    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 9),
-    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 9),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_POISON_CHANCE, 3),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_PARALYZE_CHANCE, 3),
-    new WeightedModifierType(modifierTypes.ENEMY_ATTACK_BURN_CHANCE, 3),
-    new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 9),
-    new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 4),
-    new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 1),
-  ].map(m => {
-    m.setTier(RewardTier.COMMON);
-    return m;
-  });
-  enemyBuffModifierPool[RewardTier.GREAT] = [
-    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 5),
-    new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 1),
-  ].map(m => {
-    m.setTier(RewardTier.GREAT);
-    return m;
-  });
-  enemyBuffModifierPool[RewardTier.ULTRA] = [
-    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.ENEMY_DAMAGE_REDUCTION, 10),
-    new WeightedModifierType(modifierTypes.ENEMY_HEAL, 10),
-    new WeightedModifierType(modifierTypes.ENEMY_STATUS_EFFECT_HEAL_CHANCE, 10),
-    new WeightedModifierType(modifierTypes.ENEMY_ENDURE_CHANCE, 10),
-    new WeightedModifierType(modifierTypes.ENEMY_FUSED_CHANCE, 5),
-  ].map(m => {
-    m.setTier(RewardTier.ULTRA);
-    return m;
-  });
-  enemyBuffModifierPool[RewardTier.ROGUE] = [].map((m: WeightedModifierType) => {
-    m.setTier(RewardTier.ROGUE);
-    return m;
-  });
-  enemyBuffModifierPool[RewardTier.MASTER] = [].map((m: WeightedModifierType) => {
-    m.setTier(RewardTier.MASTER);
-    return m;
-  });
-}
-
-/**
  * Initialize {@linkcode modifierPool} with the initial set of modifier types.
  * {@linkcode initModifierTypes} MUST be called before this function.
  */
@@ -665,9 +617,6 @@ export function initModifierPools() {
   initUltraModifierPool();
   initRogueModifierPool();
   initMasterModifierPool();
-
-  // Modifier pools for specific scenarios
-  initEnemyBuffModifierPool();
 }
 
 /**

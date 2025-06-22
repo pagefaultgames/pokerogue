@@ -1844,41 +1844,6 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: number, baseC
   return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
 }
 
-export function getEnemyBuffModifierForWave(
-  tier: RewardTier,
-  enemyModifiers: PersistentModifier[],
-): EnemyPersistentModifier {
-  let tierStackCount: number;
-  switch (tier) {
-    case RewardTier.ULTRA:
-      tierStackCount = 5;
-      break;
-    case RewardTier.GREAT:
-      tierStackCount = 3;
-      break;
-    default:
-      tierStackCount = 1;
-      break;
-  }
-
-  const retryCount = 50;
-  let candidate = getNewModifierTypeOption([], ModifierPoolType.ENEMY_BUFF, tier);
-  let r = 0;
-  let matchingModifier: PersistentModifier | undefined;
-  while (
-    ++r < retryCount &&
-    (matchingModifier = enemyModifiers.find(m => m.type.id === candidate?.type?.id)) &&
-    matchingModifier.getMaxStackCount() < matchingModifier.stackCount + (r < 10 ? tierStackCount : 1)
-  ) {
-    candidate = getNewModifierTypeOption([], ModifierPoolType.ENEMY_BUFF, tier);
-  }
-
-  const modifier = candidate?.type?.newModifier() as EnemyPersistentModifier;
-  modifier.stackCount = tierStackCount;
-
-  return modifier;
-}
-
 /**
  * Generates a ModifierType from the specified pool
  * @param party party of the trainer using the item

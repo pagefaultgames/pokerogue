@@ -144,7 +144,6 @@ import { hasExpSprite } from "./sprites/sprite-utils";
 import { timedEventManager } from "./global-event-manager";
 import { starterColors } from "./global-vars/starter-colors";
 import { startingWave } from "./starting-wave";
-import { ModifierBar } from "./modifier/modifier-bar";
 import { allHeldItems, applyHeldItems } from "./items/all-held-items";
 import { HELD_ITEM_EFFECT } from "./items/held-item";
 import { PhaseManager } from "./phase-manager";
@@ -153,9 +152,12 @@ import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "./ite
 import type { HeldItemConfiguration } from "./items/held-item-data-types";
 import { TrainerItemManager } from "./items/trainer-item-manager";
 import { TRAINER_ITEM_EFFECT } from "./items/trainer-item";
-import type { APPLY_TRAINER_ITEMS_PARAMS } from "./items/apply-trainer-items";
+import { applyTrainerItems, type APPLY_TRAINER_ITEMS_PARAMS } from "./items/apply-trainer-items";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { allTrainerItems } from "./items/all-trainer-items";
+import { isTrainerItemPool, isTrainerItemSpecs, type TrainerItemConfiguration } from "./items/trainer-item-data-types";
+import { getNewTrainerItemFromPool } from "./items/trainer-item-pool";
+import { ItemBar } from "./modifier/modifier-bar";
 
 const DEBUG_RNG = false;
 
@@ -305,8 +307,8 @@ export default class BattleScene extends SceneBase {
   private scoreText: Phaser.GameObjects.Text;
   private luckLabelText: Phaser.GameObjects.Text;
   private luckText: Phaser.GameObjects.Text;
-  private modifierBar: ModifierBar;
-  private enemyModifierBar: ModifierBar;
+  private modifierBar: ItemBar;
+  private enemyModifierBar: ItemBar;
   public arenaFlyout: ArenaFlyout;
 
   private fieldOverlay: Phaser.GameObjects.Rectangle;
@@ -499,12 +501,12 @@ export default class BattleScene extends SceneBase {
     this.trainerItems = new TrainerItemManager();
     this.enemyTrainerItems = new TrainerItemManager();
 
-    this.modifierBar = new ModifierBar();
+    this.modifierBar = new ItemBar();
     this.modifierBar.setName("modifier-bar");
     this.add.existing(this.modifierBar);
     uiContainer.add(this.modifierBar);
 
-    this.enemyModifierBar = new ModifierBar(true);
+    this.enemyModifierBar = new ItemBar(true);
     this.enemyModifierBar.setName("enemy-modifier-bar");
     this.add.existing(this.enemyModifierBar);
     uiContainer.add(this.enemyModifierBar);
@@ -875,7 +877,7 @@ export default class BattleScene extends SceneBase {
    * @param isEnemy Whether to return the enemy's modifier bar
    * @returns {ModifierBar}
    */
-  getModifierBar(isEnemy?: boolean): ModifierBar {
+  getModifierBar(isEnemy?: boolean): ItemBar {
     return isEnemy ? this.enemyModifierBar : this.modifierBar;
   }
 
@@ -2687,13 +2689,6 @@ export default class BattleScene extends SceneBase {
     return success;
   }
 
-  addEnemyModifier(modifier: PersistentModifier, ignoreUpdate?: boolean) {
-    (modifier as PersistentModifier).add(this.enemyModifiers, false);
-    if (!ignoreUpdate) {
-      this.updateModifiers(false);
-    }
-  }
-
   addHeldItem(heldItemId: HeldItemId, pokemon: Pokemon, amount = 1, playSound?: boolean, ignoreUpdate?: boolean) {
     pokemon.heldItemManager.add(heldItemId, amount);
     if (!ignoreUpdate) {
@@ -2798,7 +2793,32 @@ export default class BattleScene extends SceneBase {
     return countTaken > 0;
   }
 
-  generateEnemyModifiers(heldItemConfigs?: HeldItemConfiguration[]): Promise<void> {
+  assignTrainerItemsFromConfiguration(config: TrainerItemConfiguration, isPlayer: boolean) {
+    const manager = isPlayer ? this.trainerItems : this.enemyTrainerItems;
+    config.forEach(item => {
+      const { entry, count } = item;
+      const actualCount = typeof count === "function" ? count() : (count ?? 1);
+
+      if (typeof entry === "number") {
+        manager.add(entry, actualCount);
+      }
+
+      if (isTrainerItemSpecs(entry)) {
+        manager.add(entry);
+      }
+
+      if (isTrainerItemPool(entry)) {
+        for (let i = 1; i <= actualCount; i++) {
+          const newItem = getNewTrainerItemFromPool(entry, manager);
+          if (newItem) {
+            manager.add(newItem);
+          }
+        }
+      }
+    });
+  }
+
+  generateEnemyItems(heldItemConfigs?: HeldItemConfiguration[]): Promise<void> {
     return new Promise(resolve => {
       if (this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
         return resolve();
@@ -2860,10 +2880,10 @@ export default class BattleScene extends SceneBase {
   /**
    * Removes all modifiers from enemy pokemon of {@linkcode PersistentModifier} type
    */
-  clearEnemyModifiers(): void {
-    const modifiersToRemove = this.enemyModifiers.filter(m => m instanceof PersistentModifier);
-    for (const m of modifiersToRemove) {
-      this.enemyModifiers.splice(this.enemyModifiers.indexOf(m), 1);
+  clearEnemyItems(): void {
+    this.enemyTrainerItems.clearItems();
+    for (const p of this.getEnemyParty()) {
+      p.heldItemManager.clearItems();
     }
     this.updateModifiers(false);
     this.updateUIPositions();
@@ -2875,21 +2895,7 @@ export default class BattleScene extends SceneBase {
 
   // TODO: Document this
   updateModifiers(player = true, showHeldItems = true): void {
-    const modifiers = player ? this.modifiers : (this.enemyModifiers as PersistentModifier[]);
-
-    for (const modifier of modifiers) {
-      if (modifier instanceof PersistentModifier) {
-        (modifier as PersistentModifier).virtualStackCount = 0;
-      }
-    }
-
-    // Removing modifiers with a stack count of 0, if they somehow got to this point
-    const modifiersClone = modifiers.slice(0);
-    for (const modifier of modifiersClone) {
-      if (!modifier.getStackCount()) {
-        modifiers.splice(modifiers.indexOf(modifier), 1);
-      }
-    }
+    const trainerItems = player ? this.trainerItems : this.enemyTrainerItems;
 
     this.updateParty(player ? this.getPlayerParty() : this.getEnemyParty(), true);
 
@@ -2898,9 +2904,9 @@ export default class BattleScene extends SceneBase {
     const bar = player ? this.modifierBar : this.enemyModifierBar;
 
     if (showHeldItems) {
-      bar.updateModifiers(modifiers, pokemonA);
+      bar.updateModifiers(trainerItems, pokemonA);
     } else {
-      bar.updateModifiers(modifiers);
+      bar.updateModifiers(trainerItems);
     }
 
     if (!player) {

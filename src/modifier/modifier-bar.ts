@@ -2,22 +2,23 @@ import { formChangeItemName } from "#app/data/pokemon-forms";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { allHeldItems } from "#app/items/all-held-items";
+import { allTrainerItems } from "#app/items/all-trainer-items";
+import type { TrainerItemManager } from "#app/items/trainer-item-manager";
 import type { FormChangeItem } from "#enums/form-change-item";
 import type { HeldItemId } from "#enums/held-item-id";
-import type { Modifier, PersistentModifier } from "./modifier";
+import type { TrainerItemId } from "#enums/trainer-item-id";
 
 const iconOverflowIndex = 24;
 
-export const modifierSortFunc = (a: Modifier, b: Modifier): number => {
-  const itemNameMatch = a.type.name.localeCompare(b.type.name);
-  const typeNameMatch = a.constructor.name.localeCompare(b.constructor.name);
+export const trainerItemSortFunc = (a: TrainerItemId, b: TrainerItemId): number => {
+  const itemNameMatch = allTrainerItems[a].name.localeCompare(allTrainerItems[b].name);
+  const itemIdMatch = a - b;
 
-  //Then sort by item type
-  if (typeNameMatch === 0) {
+  if (itemIdMatch === 0) {
     return itemNameMatch;
     //Finally sort by item name
   }
-  return typeNameMatch;
+  return itemIdMatch;
 };
 
 //TODO: revisit this function
@@ -45,9 +46,9 @@ export const formChangeItemSortFunc = (a: FormChangeItem, b: FormChangeItem): nu
   return itemIdMatch;
 };
 
-export class ModifierBar extends Phaser.GameObjects.Container {
+export class ItemBar extends Phaser.GameObjects.Container {
   private player: boolean;
-  private modifierCache: (PersistentModifier | HeldItemId)[];
+  private itemCache: number[];
   public totalVisibleLength = 0;
 
   constructor(enemy?: boolean) {
@@ -58,25 +59,25 @@ export class ModifierBar extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Method to update content displayed in {@linkcode ModifierBar}
-   * @param {PersistentModifier[]} modifiers - The list of modifiers to be displayed in the {@linkcode ModifierBar}
-   * @param {boolean} hideHeldItems - If set to "true", only modifiers not assigned to a Pokémon are displayed
+   * Method to update content displayed in {@linkcode ItemBar}
+   * @param {PersistentItem[]} items - The list of items to be displayed in the {@linkcode ItemBar}
+   * @param {boolean} hideHeldItems - If set to "true", only items not assigned to a Pokémon are displayed
    */
-  updateModifiers(modifiers: PersistentModifier[], pokemonA?: Pokemon, pokemonB?: Pokemon) {
+  updateItems(trainerItems: TrainerItemManager, pokemonA?: Pokemon, pokemonB?: Pokemon) {
     this.removeAll(true);
 
-    const sortedVisibleModifiers = modifiers.filter(m => m.isIconVisible()).sort(modifierSortFunc);
+    const sortedTrainerItems = trainerItems.getTrainerItems().sort(trainerItemSortFunc);
 
     const heldItemsA = pokemonA ? pokemonA.getHeldItems().sort(heldItemSortFunc) : [];
     const heldItemsB = pokemonB ? pokemonB.getHeldItems().sort(heldItemSortFunc) : [];
 
-    this.totalVisibleLength = sortedVisibleModifiers.length + heldItemsA.length + heldItemsB.length;
+    this.totalVisibleLength = sortedTrainerItems.length + heldItemsA.length + heldItemsB.length;
 
     let iconCount = 0;
-    sortedVisibleModifiers.forEach(modifier => {
-      const icon = modifier.getIcon();
+    sortedTrainerItems.forEach(item => {
+      const icon = allTrainerItems[item].createPokemonIcon(pokemonA);
       iconCount += 1;
-      this.addIcon(icon, iconCount, modifier.type.name, modifier.type.getDescription());
+      this.addIcon(icon, iconCount, allTrainerItems[item].name, allTrainerItems[item].description);
     });
 
     heldItemsA.forEach(item => {
@@ -95,7 +96,7 @@ export class ModifierBar extends Phaser.GameObjects.Container {
       this.sendToBack(icon);
     }
 
-    this.modifierCache = (modifiers as (PersistentModifier | HeldItemId)[]).concat(heldItemsA).concat(heldItemsB);
+    this.itemCache = sortedTrainerItems.concat(heldItemsA).concat(heldItemsB);
   }
 
   addIcon(icon: Phaser.GameObjects.Container, i: number, name: string, description: string) {
@@ -103,31 +104,31 @@ export class ModifierBar extends Phaser.GameObjects.Container {
       icon.setVisible(false);
     }
     this.add(icon);
-    this.setModifierIconPosition(icon, this.totalVisibleLength);
+    this.setItemIconPosition(icon, this.totalVisibleLength);
     icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 24), Phaser.Geom.Rectangle.Contains);
     icon.on("pointerover", () => {
       globalScene.ui.showTooltip(name, description);
-      if (this.modifierCache && this.modifierCache.length > iconOverflowIndex) {
-        this.updateModifierOverflowVisibility(true);
+      if (this.itemCache && this.itemCache.length > iconOverflowIndex) {
+        this.updateItemOverflowVisibility(true);
       }
     });
     icon.on("pointerout", () => {
       globalScene.ui.hideTooltip();
-      if (this.modifierCache && this.modifierCache.length > iconOverflowIndex) {
-        this.updateModifierOverflowVisibility(false);
+      if (this.itemCache && this.itemCache.length > iconOverflowIndex) {
+        this.updateItemOverflowVisibility(false);
       }
     });
   }
 
-  updateModifierOverflowVisibility(ignoreLimit: boolean) {
-    const modifierIcons = this.getAll().reverse();
-    for (const modifier of modifierIcons.map(m => m as Phaser.GameObjects.Container).slice(iconOverflowIndex)) {
-      modifier.setVisible(ignoreLimit);
+  updateItemOverflowVisibility(ignoreLimit: boolean) {
+    const itemIcons = this.getAll().reverse();
+    for (const item of itemIcons.map(m => m as Phaser.GameObjects.Container).slice(iconOverflowIndex)) {
+      item.setVisible(ignoreLimit);
     }
   }
 
-  setModifierIconPosition(icon: Phaser.GameObjects.Container, modifierCount: number) {
-    const rowIcons: number = 12 + 6 * Math.max(Math.ceil(Math.min(modifierCount, 24) / 12) - 2, 0);
+  setItemIconPosition(icon: Phaser.GameObjects.Container, itemCount: number) {
+    const rowIcons: number = 12 + 6 * Math.max(Math.ceil(Math.min(itemCount, 24) / 12) - 2, 0);
 
     const x = ((this.getIndex(icon) % rowIcons) * 26) / (rowIcons / 12);
     const y = Math.floor(this.getIndex(icon) / rowIcons) * 20;

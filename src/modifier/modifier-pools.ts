@@ -6,7 +6,3 @@
 import type { ModifierPool } from "#app/@types/modifier-types";
 
 export const modifierPool: ModifierPool = {};
-
-export const enemyBuffModifierPool: ModifierPool = {};
-
-export const dailyStarterModifierPool: ModifierPool = {};

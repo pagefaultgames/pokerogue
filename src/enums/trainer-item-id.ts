@@ -36,8 +36,8 @@ export const TrainerItemId = {
 
   X_ATTACK: 0x0D01,
   X_DEFENSE: 0x0D02,
-  X_SPATK: 0x0D03,
-  X_SPDEF: 0x0D04,
+  X_SP_ATK: 0x0D03,
+  X_SP_DEF: 0x0D04,
   X_SPEED: 0x0D05,
   X_ACCURACY: 0x0D06,
   DIRE_HIT: 0x0D07,

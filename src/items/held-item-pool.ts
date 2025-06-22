@@ -1,6 +1,6 @@
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { coerceArray, getEnumValues, randSeedFloat, randSeedInt } from "#app/utils/common";
+import { coerceArray, getEnumValues, pickWeightedIndex, randSeedInt } from "#app/utils/common";
 import { BerryType } from "#enums/berry-type";
 import { HeldItemCategoryId, HeldItemId, HeldItemNames, isCategoryId } from "#enums/held-item-id";
 import { HeldItemPoolType } from "#enums/modifier-pool-type";
@@ -117,7 +117,7 @@ function getRandomTier(): RewardTier {
   return RewardTier.MASTER;
 }
 
-function determineEnemyPoolTier(pool: HeldItemTieredPool, upgradeCount?: number): RewardTier {
+function determineItemPoolTier(pool: HeldItemTieredPool, upgradeCount?: number): RewardTier {
   let tier = getRandomTier();
 
   if (!upgradeCount) {
@@ -140,29 +140,10 @@ function getNewHeldItemFromTieredPool(
   pokemon: Pokemon,
   upgradeCount: number,
 ): HeldItemId | HeldItemSpecs {
-  const tier = determineEnemyPoolTier(pool, upgradeCount);
+  const tier = determineItemPoolTier(pool, upgradeCount);
   const tierPool = pool[tier];
 
   return getNewHeldItemFromPool(tierPool!, pokemon);
-}
-
-function pickWeightedIndex(weights: number[]): number {
-  const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-
-  if (totalWeight <= 0) {
-    throw new Error("Total weight must be greater than 0.");
-  }
-
-  let r = randSeedFloat() * totalWeight;
-
-  for (let i = 0; i < weights.length; i++) {
-    if (r < weights[i]) {
-      return i;
-    }
-    r -= weights[i];
-  }
-
-  return -1; // TODO: Change to something more appropriate
 }
 
 export function getNewVitaminHeldItem(customWeights: HeldItemWeights = {}, target?: Pokemon): HeldItemId {

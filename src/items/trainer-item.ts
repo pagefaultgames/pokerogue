@@ -305,8 +305,8 @@ interface TempStatToTrainerItemMap {
 export const tempStatToTrainerItem: TempStatToTrainerItemMap = {
   [Stat.ATK]: TrainerItemId.X_ATTACK,
   [Stat.DEF]: TrainerItemId.X_DEFENSE,
-  [Stat.SPATK]: TrainerItemId.X_SPATK,
-  [Stat.SPDEF]: TrainerItemId.X_SPDEF,
+  [Stat.SPATK]: TrainerItemId.X_SP_ATK,
+  [Stat.SPDEF]: TrainerItemId.X_SP_DEF,
   [Stat.SPD]: TrainerItemId.X_SPEED,
   [Stat.ACC]: TrainerItemId.X_ACCURACY,
 };

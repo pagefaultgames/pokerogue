@@ -546,7 +546,7 @@ export default class GameManager {
    * Removes all held items from enemy pokemon.
    */
   removeEnemyHeldItems(): void {
-    this.scene.clearEnemyModifiers();
+    this.scene.clearEnemyItems();
     console.log("Enemy held items removed");
   }
 }

@@ -17,7 +17,6 @@ import { Nature } from "#enums/nature";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { modifyPlayerPokemonBST } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MoveId } from "#enums/move-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -158,11 +157,11 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
       sortedParty.forEach((pokemon, index) => {
         if (index < 2) {
           // -15 to the two highest BST mons
-          modifyPlayerPokemonBST(pokemon, -HIGH_BST_REDUCTION_VALUE);
+          pokemon.heldItemManager.add(HeldItemId.SHUCKLE_JUICE_BAD);
           encounter.setDialogueToken("highBstPokemon" + (index + 1), pokemon.getNameToRender());
         } else {
           // +10 for the rest
-          modifyPlayerPokemonBST(pokemon, BST_INCREASE_VALUE);
+          pokemon.heldItemManager.add(HeldItemId.SHUCKLE_JUICE_GOOD);
         }
       });
 

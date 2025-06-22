@@ -13,7 +13,6 @@ import { SpeciesId } from "#enums/species-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type {
   EvolutionItemModifierType,
-  ModifierOverride,
   ModifierType,
   TerastallizeModifierType,
   TmModifierType,
@@ -23,9 +22,9 @@ import { globalScene } from "#app/global-scene";
 import type { ModifierInstanceMap, ModifierString } from "#app/@types/modifier-types";
 import { assignItemsFromConfiguration } from "#app/items/held-item-pool";
 import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
-import { modifierTypes } from "#app/data/data-lists";
 import { HeldItemId } from "#enums/held-item-id";
 import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
+import type { TrainerItemConfiguration } from "#app/items/trainer-item-data-types";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -554,39 +553,20 @@ export class MoneyRewardModifier extends ConsumableModifier {
  *  - The enemy
  * @param isPlayer {@linkcode boolean} for whether the player (`true`) or enemy (`false`) is being overridden
  */
-export function overrideModifiers(isPlayer = true): void {
-  const modifiersOverride: ModifierOverride[] = isPlayer
-    ? Overrides.STARTING_MODIFIER_OVERRIDE
-    : Overrides.OPP_MODIFIER_OVERRIDE;
-  if (!modifiersOverride || modifiersOverride.length === 0 || !globalScene) {
+export function overrideTrainerItems(isPlayer = true): void {
+  const trainerItemsOverride: TrainerItemConfiguration = isPlayer
+    ? Overrides.STARTING_TRAINER_ITEMS_OVERRIDE
+    : Overrides.OPP_TRAINER_ITEMS_OVERRIDE;
+  if (!trainerItemsOverride || trainerItemsOverride.length === 0 || !globalScene) {
     return;
   }
 
   // If it's the opponent, clear all of their current modifiers to avoid stacking
   if (!isPlayer) {
-    globalScene.clearEnemyModifiers();
+    globalScene.clearEnemyItems();
   }
 
-  for (const item of modifiersOverride) {
-    const modifierFunc = modifierTypes[item.name];
-    let modifierType: ModifierType | null = modifierFunc();
-
-    if (modifierType?.is("ModifierTypeGenerator")) {
-      const pregenArgs = "type" in item && item.type !== null ? [item.type] : undefined;
-      modifierType = modifierType.generateType([], pregenArgs);
-    }
-
-    const modifier = modifierType && (modifierType.withIdFromFunc(modifierFunc).newModifier() as PersistentModifier);
-    if (modifier) {
-      modifier.stackCount = item.count || 1;
-
-      if (isPlayer) {
-        globalScene.addModifier(modifier, true, false, false, true);
-      } else {
-        globalScene.addEnemyModifier(modifier, true);
-      }
-    }
-  }
+  globalScene.assignTrainerItemsFromConfiguration(trainerItemsOverride, isPlayer);
 }
 
 /**

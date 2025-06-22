@@ -1,14 +1,12 @@
 import type { EnemyPartyConfig, EnemyPokemonConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import {
   assignItemToFirstFreePokemon,
-  generateModifierType,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   loadCustomMovesForEncounter,
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { modifierTypes } from "#app/data/data-lists";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -29,6 +27,8 @@ import { randSeedInt } from "#app/utils/common";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { allHeldItems } from "#app/items/all-held-items";
+import { TrainerItemId } from "#enums/trainer-item-id";
+import { allTrainerItems } from "#app/items/all-trainer-items";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/trashToTreasure";
@@ -129,18 +129,14 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
         await transitionMysteryEncounterIntroVisuals();
         await tryApplyDigRewardItems();
 
-        const blackSludge = generateModifierType(modifierTypes.MYSTERY_ENCOUNTER_BLACK_SLUDGE, [
-          SHOP_ITEM_COST_MULTIPLIER,
-        ]);
-        const modifier = blackSludge?.newModifier();
-        if (modifier) {
-          await globalScene.addModifier(modifier, false, false, false, true);
+        const blackSludge = globalScene.trainerItems.add(TrainerItemId.BLACK_SLUDGE);
+        if (blackSludge) {
           globalScene.playSound("battle_anims/PRSFX- Venom Drench", {
             volume: 2,
           });
           await showEncounterText(
             i18next.t("battle:rewardGain", {
-              modifierName: modifier.type.name,
+              modifierName: allTrainerItems[TrainerItemId.BLACK_SLUDGE].name,
             }),
             null,
             undefined,
