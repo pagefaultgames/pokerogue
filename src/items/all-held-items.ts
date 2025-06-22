@@ -149,7 +149,11 @@ export function initHeldItems() {
       .unsuppressable();
   }
 
-  allHeldItems[HeldItemId.SHUCKLE_JUICE] = new BaseStatTotalHeldItem(HeldItemId.SHUCKLE_JUICE, 1)
+  allHeldItems[HeldItemId.SHUCKLE_JUICE_GOOD] = new BaseStatTotalHeldItem(HeldItemId.SHUCKLE_JUICE_GOOD, 1, 10)
+    .unstealable()
+    .untransferable()
+    .unsuppressable();
+  allHeldItems[HeldItemId.SHUCKLE_JUICE_BAD] = new BaseStatTotalHeldItem(HeldItemId.SHUCKLE_JUICE_BAD, 1, -15)
     .unstealable()
     .untransferable()
     .unsuppressable();

@@ -822,47 +822,6 @@ export class BaseStatTotalHeldItemReward extends HeldItemReward {
   }
 }
 
-class BaseStatTotalHeldItemRewardGenerator extends ModifierTypeGenerator {
-  constructor() {
-    super((_party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs) {
-        return new BaseStatTotalHeldItemReward(HeldItemId.SHUCKLE_JUICE, pregenArgs[0] as number);
-      }
-      return new BaseStatTotalHeldItemReward(HeldItemId.SHUCKLE_JUICE, randSeedInt(20, 1));
-    });
-  }
-}
-
-/**
- * Old Gateau item
- */
-export class BaseStatFlatHeldItemReward extends HeldItemReward {
-  private readonly statModifier: number;
-  private readonly stats: Stat[];
-
-  constructor(itemId: HeldItemId, statModifier: number, stats: Stat[]) {
-    super(itemId);
-    this.statModifier = statModifier;
-    this.stats = stats;
-  }
-
-  apply(pokemon: Pokemon) {
-    super.apply(pokemon);
-    pokemon.heldItemManager[this.itemId].data.statModifier = this.statModifier;
-  }
-}
-
-class BaseStatFlatHeldItemRewardGenerator extends ModifierTypeGenerator {
-  constructor() {
-    super((_party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs) {
-        return new BaseStatFlatHeldItemReward(HeldItemId.OLD_GATEAU, pregenArgs[0] as number, pregenArgs[1] as Stat[]);
-      }
-      return new BaseStatFlatHeldItemReward(HeldItemId.OLD_GATEAU, randSeedInt(20, 1), [Stat.HP, Stat.ATK, Stat.DEF]);
-    });
-  }
-}
-
 class AllPokemonFullHpRestoreModifierType extends ModifierType {
   private descriptionKey: string;
 
@@ -1846,9 +1805,10 @@ const modifierTypeInitObj = Object.freeze({
       (type, _args) => new EnemyFusionChanceModifier(type, 1),
     ),
 
-  MYSTERY_ENCOUNTER_SHUCKLE_JUICE: () => new BaseStatTotalHeldItemRewardGenerator(),
+  MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD: () => new HeldItemReward(HeldItemId.SHUCKLE_JUICE_GOOD),
+  MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD: () => new HeldItemReward(HeldItemId.SHUCKLE_JUICE_BAD),
 
-  MYSTERY_ENCOUNTER_OLD_GATEAU: () => new BaseStatFlatHeldItemRewardGenerator(),
+  MYSTERY_ENCOUNTER_OLD_GATEAU: () => new HeldItemReward(HeldItemId.OLD_GATEAU),
 
   MYSTERY_ENCOUNTER_BLACK_SLUDGE: () =>
     new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {

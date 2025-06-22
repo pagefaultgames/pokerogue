@@ -82,9 +82,10 @@ export const HeldItemId = {
   CARBOS: 0x0806,
 
   // Other stat boosting items
-  SHUCKLE_JUICE: 0x0907,
-  OLD_GATEAU: 0x0908,
-  MACHO_BRACE: 0x0909,
+  SHUCKLE_JUICE_GOOD: 0x0901,
+  SHUCKLE_JUICE_BAD: 0x0902,
+  OLD_GATEAU: 0x0903,
+  MACHO_BRACE: 0x0904,
 
   // Evo trackers
   GIMMIGHOUL_EVO_TRACKER: 0x0A01,
