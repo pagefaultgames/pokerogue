@@ -158,7 +158,6 @@ describe("Abilities - Protean/Libero", () => {
       game.override.passiveAbility(passive).enemySpecies(SpeciesId.SKARMORY);
       await game.classicMode.startBattle([SpeciesId.MEOWSCARADA]);
 
-      // FOCUS MISS IS REAL CHAT
       vi.spyOn(allMoves[MoveId.FOCUS_BLAST], "accuracy", "get").mockReturnValue(0);
 
       const meow = game.field.getPlayerPokemon();
