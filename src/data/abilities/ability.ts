@@ -8491,7 +8491,6 @@ export function initAbilities() {
       // TODO: needs testing on interaction with weather blockage
       .edgeCase(),
     new Ability(AbilityId.FUR_COAT, 6)
-      // TODO: Should double defense
       .attr(ReceivedMoveDamageMultiplierAbAttr, (_target, _user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
     new Ability(AbilityId.MAGICIAN, 6)
