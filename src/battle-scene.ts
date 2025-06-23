@@ -800,7 +800,7 @@ export default class BattleScene extends SceneBase {
   // TODO: Add `undefined` to return type
   /**
    * Returns an array of PlayerPokemon of length 1 or 2 depending on if in a double battle or not.
-   * @param active - Whether to consider only active on-field pokemon ({@see {@linkcode Pokemon.isActiveZ} for more information}); default `false`
+   * @param active - (Default `false`) Whether to consider only {@linkcode Pokemon.isActive | active} on-field pokemon
    * @returns array of {@linkcode PlayerPokemon}
    */
   public getPlayerField(active = false): PlayerPokemon[] {
