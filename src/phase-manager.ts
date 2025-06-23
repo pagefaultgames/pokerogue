@@ -225,7 +225,6 @@ export class PhaseManager {
 
   /** overrides default of inserting phases to end of phaseQueuePrepend array. Useful for inserting Phases "out of order" */
   private phaseQueuePrependSpliceIndex = -1;
-  private nextCommandPhaseQueue: Phase[] = [];
 
   /** Storage for {@linkcode PhasePriorityQueue}s which hold phases whose order dynamically changes */
   private dynamicPhaseQueues: PhasePriorityQueue[];
@@ -268,11 +267,11 @@ export class PhaseManager {
    * @param phase {@linkcode Phase} the phase to add
    * @param defer boolean on which queue to add to, defaults to false, and adds to phaseQueue
    */
-  pushPhase(phase: Phase, defer = false): void {
+  pushPhase(phase: Phase): void {
     if (this.getDynamicPhaseType(phase) !== undefined) {
       this.pushDynamicPhase(phase);
     } else {
-      (!defer ? this.phaseQueue : this.nextCommandPhaseQueue).push(phase);
+      this.phaseQueue.push(phase);
     }
   }
 
@@ -299,7 +298,7 @@ export class PhaseManager {
    * Clears all phase-related stuff, including all phase queues, the current and standby phases, and a splice index
    */
   clearAllPhases(): void {
-    for (const queue of [this.phaseQueue, this.phaseQueuePrepend, this.conditionalQueue, this.nextCommandPhaseQueue]) {
+    for (const queue of [this.phaseQueue, this.phaseQueuePrepend, this.conditionalQueue]) {
       queue.splice(0, queue.length);
     }
     this.dynamicPhaseQueues.forEach(queue => queue.clear());
@@ -583,10 +582,6 @@ export class PhaseManager {
    * Moves everything from nextCommandPhaseQueue to phaseQueue (keeping order)
    */
   private populatePhaseQueue(): void {
-    if (this.nextCommandPhaseQueue.length) {
-      this.phaseQueue.push(...this.nextCommandPhaseQueue);
-      this.nextCommandPhaseQueue.splice(0, this.nextCommandPhaseQueue.length);
-    }
     this.phaseQueue.push(new TurnInitPhase());
   }
 
