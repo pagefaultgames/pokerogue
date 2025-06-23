@@ -998,7 +998,7 @@ export default class BattleScene extends SceneBase {
       this.field.remove(pokemon, true);
       pokemon.destroy();
     }
-    this.updateModifiers(true);
+    this.updateItems(true);
   }
 
   addPokemonIcon(
@@ -2658,7 +2658,7 @@ export default class BattleScene extends SceneBase {
   addHeldItem(heldItemId: HeldItemId, pokemon: Pokemon, amount = 1, playSound?: boolean, ignoreUpdate?: boolean) {
     pokemon.heldItemManager.add(heldItemId, amount);
     if (!ignoreUpdate) {
-      this.updateModifiers(pokemon.isPlayer());
+      this.updateItems(pokemon.isPlayer());
     }
     const soundName = allHeldItems[heldItemId].soundName;
     if (playSound && !this.sound.get(soundName)) {
@@ -2725,7 +2725,7 @@ export default class BattleScene extends SceneBase {
     }
 
     if (source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
-      this.updateModifiers(source.isPlayer());
+      this.updateItems(source.isPlayer());
     }
 
     const soundName = allHeldItems[heldItemId].soundName;
@@ -2836,7 +2836,7 @@ export default class BattleScene extends SceneBase {
         }
         return true;
       });
-      this.updateModifiers(false);
+      this.updateItems(false);
       resolve();
     });
   }
@@ -2849,7 +2849,7 @@ export default class BattleScene extends SceneBase {
     for (const p of this.getEnemyParty()) {
       p.heldItemManager.clearItems();
     }
-    this.updateModifiers(false);
+    this.updateItems(false);
     this.updateUIPositions();
   }
 
@@ -2858,7 +2858,7 @@ export default class BattleScene extends SceneBase {
   }
 
   // TODO: Document this
-  updateModifiers(player = true, showHeldItems = true): void {
+  updateItems(player = true, showHeldItems = true): void {
     const trainerItems = player ? this.trainerItems : this.enemyTrainerItems;
 
     this.updateParty(player ? this.getPlayerParty() : this.getEnemyParty(), true);
@@ -3145,7 +3145,7 @@ export default class BattleScene extends SceneBase {
           const hasMachoBrace = partyMember.heldItemManager.hasItem(HeldItemId.MACHO_BRACE);
           if (hasMachoBrace) {
             partyMember.heldItemManager.add(HeldItemId.MACHO_BRACE);
-            this.updateModifiers(true);
+            this.updateItems(true);
             partyMember.updateInfo();
           }
         }

@@ -19,7 +19,7 @@ export class AddEnemyBuffModifierPhase extends Phase {
     for (let i = 0; i < count; i++) {
       assignEnemyBuffTokenForWave(tier);
     }
-    globalScene.updateModifiers(false);
+    globalScene.updateItems(false);
     this.end();
   }
 }

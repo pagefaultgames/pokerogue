@@ -150,7 +150,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
           }
 
           // Make held items show up again
-          globalScene.updateModifiers(true);
+          globalScene.updateItems(true);
           queueEncounterMessage(`${namespace}:option.1.finished`);
         };
 
@@ -220,7 +220,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
           globalScene.gameData.unlockSpeciesNature(playerPokemon.species, encounter.misc.chosenNature);
 
           // Make held items show up again
-          globalScene.updateModifiers(true);
+          globalScene.updateItems(true);
         };
 
         setEncounterRewards({ fillRemaining: true }, undefined, onBeforeRewardsPhase);
@@ -327,7 +327,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
           globalScene.gameData.setPokemonCaught(playerPokemon, false);
 
           // Make held items show up again
-          globalScene.updateModifiers(true);
+          globalScene.updateItems(true);
         };
 
         setEncounterRewards({ fillRemaining: true }, undefined, onBeforeRewardsPhase);

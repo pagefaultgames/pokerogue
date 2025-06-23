@@ -242,7 +242,7 @@ export class TitlePhase extends Phase {
 
         assignDailyRunStarterHeldItems(party);
 
-        globalScene.updateModifiers(true);
+        globalScene.updateItems(true);
 
         Promise.all(loadPokemonAssets).then(() => {
           globalScene.time.delayedCall(500, () => globalScene.playBgm());

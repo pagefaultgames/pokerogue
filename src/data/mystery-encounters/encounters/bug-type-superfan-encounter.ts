@@ -467,7 +467,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
         const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
         chosenPokemon.loseHeldItem(modifier, false);
-        globalScene.updateModifiers(true);
+        globalScene.updateItems(true);
 
         const bugNet = generateModifierTypeOption(modifierTypes.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET)!;
         bugNet.type.tier = RewardTier.ROGUE;

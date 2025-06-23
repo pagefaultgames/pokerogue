@@ -217,7 +217,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
           stolenBerryMap.push(randBerry);
           berryMap.splice(index, 1);
         }
-        await globalScene.updateModifiers(true);
+        await globalScene.updateItems(true);
 
         // Pokemon joins the team, with 2 egg moves
         const encounter = globalScene.currentBattle.mysteryEncounter!;

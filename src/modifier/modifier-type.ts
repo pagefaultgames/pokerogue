@@ -964,7 +964,7 @@ export class FormChangeItemReward extends PokemonModifierType {
 
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger);
 
-    globalScene.updateModifiers(true);
+    globalScene.updateItems(true);
   }
 }
 

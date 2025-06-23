@@ -154,7 +154,7 @@ export class ConsumableHeldItem extends HeldItem {
     if (remove) {
       pokemon.heldItemManager.remove(this.type, 1);
       // TODO: Turn this into updateItemBar or something
-      globalScene.updateModifiers(isPlayer);
+      globalScene.updateItems(isPlayer);
     }
     if (unburden) {
       applyPostItemLostAbAttrs("PostItemLostAbAttr", pokemon, false);

@@ -223,7 +223,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
       modifier.stackCount = 2;
       scene.addModifier(modifier, true, false, false, true);
-      await scene.updateModifiers(true);
+      await scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
@@ -250,7 +250,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
       modifier.stackCount = 1;
       scene.addModifier(modifier, true, false, false, true);
-      await scene.updateModifiers(true);
+      await scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 

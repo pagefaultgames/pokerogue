@@ -60,7 +60,7 @@ export class BerryPhase extends FieldPhase {
     );
 
     applyHeldItems(HELD_ITEM_EFFECT.BERRY, { pokemon: pokemon });
-    globalScene.updateModifiers(pokemon.isPlayer());
+    globalScene.updateItems(pokemon.isPlayer());
 
     // AbilityId.CHEEK_POUCH only works once per round of nom noms
     applyAbAttrs("HealFromBerryUseAbAttr", pokemon, new BooleanHolder(false));

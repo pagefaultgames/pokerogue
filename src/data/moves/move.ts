@@ -2699,7 +2699,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
 
     // Decrease item amount and update icon
     target.loseHeldItem(removedItem);
-    globalScene.updateModifiers(target.isPlayer());
+    globalScene.updateItems(target.isPlayer());
 
     if (this.berriesOnly) {
       globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:incineratedItem", 
@@ -2775,7 +2775,7 @@ export class EatBerryAttr extends MoveEffectAttr {
     if (this.chosenBerry) {
       target.loseHeldItem(this.chosenBerry);
     }
-    globalScene.updateModifiers(target.isPlayer());
+    globalScene.updateItems(target.isPlayer());
   }
 
 

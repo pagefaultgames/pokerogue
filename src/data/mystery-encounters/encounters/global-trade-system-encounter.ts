@@ -446,7 +446,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         });
 
         chosenPokemon.heldItemManager.remove(heldItemId);
-        await globalScene.updateModifiers(true);
+        await globalScene.updateItems(true);
 
         // Generate a trainer name
         const traderName = generateRandomTraderName();

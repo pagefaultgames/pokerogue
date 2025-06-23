@@ -391,5 +391,5 @@ async function addItemToPokemon(
   const itemMod = itemType.newModifier(pokemon) as PokemonHeldItemModifier;
   itemMod.stackCount = stackCount;
   scene.addModifier(itemMod, true, false, false, true);
-  await scene.updateModifiers(true);
+  await scene.updateItems(true);
 }

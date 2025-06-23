@@ -188,7 +188,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       scene.modifiers.forEach(mod => {
         scene.removeModifier(mod);
       });
-      await scene.updateModifiers(true);
+      await scene.updateItems(true);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
@@ -221,7 +221,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       const ganlonMod = ganlon.newModifier(scene.getPlayerParty()[0]) as BerryModifier;
       ganlonMod.stackCount = 3;
       scene.addModifier(ganlonMod, true, false, false, true);
-      await scene.updateModifiers(true);
+      await scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 2);
 

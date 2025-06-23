@@ -388,7 +388,7 @@ function summonPlayerPokemonAnimation(pokemon: PlayerPokemon): Promise<void> {
             globalScene.add.existing(pokemon);
             globalScene.field.add(pokemon);
             addPokeballOpenParticles(pokemon.x, pokemon.y - 16, pokemon.pokeball);
-            globalScene.updateModifiers(true);
+            globalScene.updateItems(true);
             globalScene.updateFieldScale();
             pokemon.showInfo();
             pokemon.playAnim();

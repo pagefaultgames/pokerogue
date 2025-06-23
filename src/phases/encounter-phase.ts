@@ -305,7 +305,7 @@ export class EncounterPhase extends BattlePhase {
 
   doEncounter() {
     globalScene.playBgm(undefined, true);
-    globalScene.updateModifiers(false);
+    globalScene.updateItems(false);
     globalScene.setFieldScale(1);
 
     const { battleType, waveIndex } = globalScene.currentBattle;

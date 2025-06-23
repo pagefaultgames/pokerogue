@@ -167,7 +167,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
       globalScene.getPokemonById(map.pokemonId)?.heldItemManager.remove(map.item.id);
     });
 
-    globalScene.updateModifiers(true);
+    globalScene.updateItems(true);
 
     return true;
   })
@@ -243,7 +243,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
             }
           }
         });
-        await globalScene.updateModifiers(true);
+        await globalScene.updateItems(true);
 
         await transitionMysteryEncounterIntroVisuals(true, true, 500);
         leaveEncounterWithoutBattle(true);
