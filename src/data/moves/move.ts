@@ -29,7 +29,7 @@ import { getTypeDamageMultiplier } from "../type";
 import { PokemonType } from "#enums/pokemon-type";
 import { BooleanHolder, NumberHolder, isNullOrUndefined, toDmgValue, randSeedItem, randSeedInt, getEnumValues, toReadableString, type Constructor, randSeedFloat } from "#app/utils/common";
 import { WeatherType } from "#enums/weather-type";
-import type { ArenaTrapTag } from "../arena-tag";
+import type { ArenaTrapTag, PendingHealTag } from "../arena-tag";
 import { WeakenMoveTypeTag } from "../arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import {
@@ -2081,24 +2081,16 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
       return false;
     }
 
-    // We don't know which party member will be chosen, so pick the highest max HP in the party
-    const party = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
-    const maxPartyMemberHp = party.map(p => p.getMaxHp()).reduce((maxHp: number, hp: number) => Math.max(hp, maxHp), 0);
-
-    const pm = globalScene.phaseManager;
-
-    pm.pushPhase(
-      pm.create("PokemonHealPhase",
-        user.getBattlerIndex(),
-        maxPartyMemberHp,
-        i18next.t(this.moveMessage, { pokemonName: getPokemonNameWithAffix(user) }),
-        true,
-        false,
-        false,
-        true,
-        false,
-        this.restorePP),
-      true);
+    globalScene.arena.addTag(ArenaTagType.PENDING_HEAL, 0, move.id, user.id);
+    const tag = globalScene.arena.getTag(ArenaTagType.PENDING_HEAL) as PendingHealTag;
+    if (tag) {
+      tag.queueHeal(user.getBattlerIndex(), {
+        sourceId: user.id,
+        moveId: move.id,
+        restorePP: this.restorePP,
+        healMessageKey: i18next.t(this.moveMessage, { pokemonName: getPokemonNameWithAffix(user) }),
+      });
+    }
 
     return true;
   }
