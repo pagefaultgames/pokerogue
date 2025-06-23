@@ -921,7 +921,7 @@ export default class SummaryUiHandler extends UiHandler {
           abilityInfo.nameText.setOrigin(0, 1);
           profileContainer.add(abilityInfo.nameText);
 
-          abilityInfo.descriptionText = addTextObject(7, 72, abilityInfo.ability?.description!, TextStyle.WINDOW_ALT, {
+          abilityInfo.descriptionText = addTextObject(7, 71, abilityInfo.ability?.description!, TextStyle.WINDOW_ALT, {
             wordWrap: { width: 1224 },
           }); // TODO: is this bang correct?
           abilityInfo.descriptionText.setOrigin(0, 0);
