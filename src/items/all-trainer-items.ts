@@ -27,7 +27,7 @@ import {
   TrainerItem,
 } from "./trainer-item";
 
-export const allTrainerItems = {};
+export const allTrainerItems: Record<TrainerItemId, TrainerItem> = {};
 
 export function initTrainerItems() {
   allTrainerItems[TrainerItemId.MAP] = new TrainerItem(TrainerItemId.MAP, 1);

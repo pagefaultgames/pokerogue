@@ -2,6 +2,7 @@ import { allTrainerItems } from "#app/items/all-trainer-items";
 import type { TrainerItemId } from "#app/enums/trainer-item-id";
 import {
   isTrainerItemSpecs,
+  type TrainerItemSaveData,
   type TrainerItemConfiguration,
   type TrainerItemDataMap,
   type TrainerItemSpecs,
@@ -36,6 +37,18 @@ export class TrainerItemManager {
       }
     }
     return config;
+  }
+
+  generateSaveData(): TrainerItemSaveData {
+    const saveData: TrainerItemSaveData = [];
+    for (const [k, item] of Object.entries(this.trainerItems)) {
+      const id = Number(k);
+      if (item) {
+        const specs: TrainerItemSpecs = { ...item, id };
+        saveData.push(specs);
+      }
+    }
+    return saveData;
   }
 
   getTrainerItems(): number[] {

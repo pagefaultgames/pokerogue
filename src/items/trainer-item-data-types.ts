@@ -35,8 +35,10 @@ export function isTrainerItemPool(value: any): value is TrainerItemPool {
 }
 
 type TrainerItemConfigurationEntry = {
-  entry: TrainerItemId | TrainerItemSpecs | TrainerItemPool;
+  entry: TrainerItemId | TrainerItemSpecs;
   count?: number | (() => number);
 };
 
 export type TrainerItemConfiguration = TrainerItemConfigurationEntry[];
+
+export type TrainerItemSaveData = TrainerItemSpecs[];

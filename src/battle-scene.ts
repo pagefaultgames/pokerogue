@@ -20,7 +20,7 @@ import {
   type Constructor,
 } from "#app/utils/common";
 import { deepMergeSpriteData } from "#app/utils/data";
-import type { Modifier, ModifierPredicate } from "./modifier/modifier";
+import type { Modifier } from "./modifier/modifier";
 import {
   ConsumableModifier,
   ConsumablePokemonModifier,
@@ -146,11 +146,16 @@ import { HeldItemId } from "#enums/held-item-id";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "./items/held-item-pool";
 import type { HeldItemConfiguration } from "./items/held-item-data-types";
 import { TrainerItemManager } from "./items/trainer-item-manager";
-import { TRAINER_ITEM_EFFECT } from "./items/trainer-item";
+import { type EnemyAttackStatusEffectChanceTrainerItem, TRAINER_ITEM_EFFECT } from "./items/trainer-item";
 import { applyTrainerItems, type APPLY_TRAINER_ITEMS_PARAMS } from "./items/apply-trainer-items";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { allTrainerItems } from "./items/all-trainer-items";
-import { isTrainerItemPool, isTrainerItemSpecs, type TrainerItemConfiguration } from "./items/trainer-item-data-types";
+import {
+  isTrainerItemPool,
+  isTrainerItemSpecs,
+  type TrainerItemSaveData,
+  type TrainerItemConfiguration,
+} from "./items/trainer-item-data-types";
 import { getNewTrainerItemFromPool } from "./items/trainer-item-pool";
 import { ItemBar } from "./modifier/modifier-bar";
 
@@ -2784,6 +2789,13 @@ export default class BattleScene extends SceneBase {
     });
   }
 
+  assignTrainerItemsFromSaveData(saveData: TrainerItemSaveData, isPlayer: boolean) {
+    const manager = isPlayer ? this.trainerItems : this.enemyTrainerItems;
+    for (const item of saveData) {
+      manager.add(item);
+    }
+  }
+
   generateEnemyItems(heldItemConfigs?: HeldItemConfiguration[]): Promise<void> {
     return new Promise(resolve => {
       if (this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
@@ -2889,16 +2901,6 @@ export default class BattleScene extends SceneBase {
     });
   }
 
-  /**
-   * Get all of the modifiers that pass the `modifierFilter` function
-   * @param modifierFilter The function used to filter a target's modifiers
-   * @param isPlayer Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @returns the list of all modifiers that passed the `modifierFilter` function
-   */
-  findModifiers(modifierFilter: ModifierPredicate, isPlayer = true): PersistentModifier[] {
-    return (isPlayer ? this.modifiers : this.enemyModifiers).filter(modifierFilter);
-  }
-
   applyShuffledStatusTokens(pokemon: Pokemon) {
     let tokens = [
       TrainerItemId.ENEMY_ATTACK_BURN_CHANCE,
@@ -2922,7 +2924,9 @@ export default class BattleScene extends SceneBase {
     );
 
     for (const t in tokens) {
-      allTrainerItems[t].apply(this.enemyTrainerItems, { pokemon: pokemon });
+      (allTrainerItems[t] as EnemyAttackStatusEffectChanceTrainerItem).apply(this.enemyTrainerItems, {
+        pokemon: pokemon,
+      });
     }
   }
 

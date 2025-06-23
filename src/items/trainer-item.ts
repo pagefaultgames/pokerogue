@@ -82,13 +82,13 @@ export class TrainerItem {
     return this.maxStackCount;
   }
 
-  createIcon(manager: TrainerItemManager): Phaser.GameObjects.Container {
+  createIcon(stackCount: number): Phaser.GameObjects.Container {
     const container = globalScene.add.container(0, 0);
 
     const item = globalScene.add.sprite(0, 12, "items").setFrame(this.iconName).setOrigin(0, 0.5);
     container.add(item);
 
-    const stackText = this.getIconStackText(manager);
+    const stackText = this.getIconStackText(stackCount);
     if (stackText) {
       container.add(stackText);
     }
@@ -96,12 +96,11 @@ export class TrainerItem {
     return container;
   }
 
-  getIconStackText(manager: TrainerItemManager): Phaser.GameObjects.BitmapText | null {
-    if (this.getMaxStackCount() === 1) {
+  getIconStackText(stackCount: number): Phaser.GameObjects.BitmapText | null {
+    if (this.getMaxStackCount() === 1 || stackCount < 1) {
       return null;
     }
 
-    const stackCount = manager.getStack(this.type);
     const text = globalScene.add.bitmapText(10, 15, "item-count", stackCount.toString(), 11);
     text.letterSpacing = -0.5;
     if (stackCount >= this.getMaxStackCount()) {
@@ -254,13 +253,11 @@ export class HealShopCostTrainerItem extends TrainerItem {
 export class LapsingTrainerItem extends TrainerItem {
   isLapsing = true;
 
-  createIcon(manager: TrainerItemManager): Phaser.GameObjects.Container {
+  createIcon(battleCount: number): Phaser.GameObjects.Container {
     const container = globalScene.add.container(0, 0);
 
     const item = globalScene.add.sprite(0, 12, "items").setFrame(this.iconName).setOrigin(0, 0.5);
     container.add(item);
-
-    const battleCount = manager.getStack(this.type);
 
     // Linear interpolation on hue
     const hue = Math.floor(120 * (battleCount / this.getMaxStackCount()) + 5);

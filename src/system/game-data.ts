@@ -12,7 +12,6 @@ import { speciesStarterCosts } from "#app/data/balance/starters";
 import { randInt, getEnumKeys, isLocal, executeIf, fixedInt, randSeedItem, NumberHolder } from "#app/utils/common";
 import Overrides from "#app/overrides";
 import PokemonData from "#app/system/pokemon-data";
-import PersistentModifierData from "#app/system/modifier-data";
 import ArenaData from "#app/system/arena-data";
 import { Unlockables } from "#enums/unlockables";
 import { getGameMode } from "#app/game-mode";
@@ -39,9 +38,6 @@ import { setSettingGamepad, SettingGamepad, settingGamepadDefaults } from "#app/
 import type { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { setSettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { TagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
-// biome-ignore lint/performance/noNamespaceImport: Something weird is going on here and I don't want to touch it
-import * as Modifier from "#app/modifier/modifier";
-import { StatusEffect } from "#enums/status-effect";
 import ChallengeData from "#app/system/challenge-data";
 import { Device } from "#enums/devices";
 import { GameDataType } from "#enums/game-data-type";
@@ -69,6 +65,7 @@ import { DexAttr } from "#enums/dex-attr";
 import { AbilityAttr } from "#enums/ability-attr";
 import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { encrypt, decrypt } from "#app/utils/data";
+import type { TrainerItemConfiguration, TrainerItemSaveData } from "#app/items/trainer-item-data-types";
 
 function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
   switch (dataType) {
@@ -117,8 +114,8 @@ export interface SessionSaveData {
   gameMode: GameModes;
   party: PokemonData[];
   enemyParty: PokemonData[];
-  modifiers: PersistentModifierData[];
-  enemyModifiers: PersistentModifierData[];
+  trainerItems: TrainerItemSaveData;
+  enemyTrainerItems: TrainerItemSaveData;
   arena: ArenaData;
   pokeballCounts: PokeballCounts;
   money: number;
@@ -917,8 +914,8 @@ export class GameData {
       gameMode: globalScene.gameMode.modeId,
       party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
-      modifiers: globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
-      enemyModifiers: globalScene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
+      trainerItems: globalScene.trainerItems.generateSaveData(),
+      enemyTrainerItems: globalScene.enemyTrainerItems.generateSaveData(),
       arena: new ArenaData(globalScene.arena),
       pokeballCounts: globalScene.pokeballCounts,
       money: Math.floor(globalScene.money),
@@ -1097,28 +1094,16 @@ export class GameData {
             }
           }
 
-          if (globalScene.modifiers.length) {
-            console.warn("Existing modifiers not cleared on session load, deleting...");
-            globalScene.modifiers = [];
-          }
-          for (const modifierData of sessionData.modifiers) {
-            const modifier = modifierData.toModifier(Modifier[modifierData.className]);
-            if (modifier) {
-              globalScene.addModifier(modifier, true);
-            }
-          }
-          globalScene.updateModifiers(true);
+          globalScene.trainerItems.clearItems();
+          globalScene.assignTrainerItemsFromSaveData(sessionData.trainerItems, true);
 
-          for (const enemyModifierData of sessionData.enemyModifiers) {
-            const modifier = enemyModifierData.toModifier(Modifier[enemyModifierData.className]);
-            if (modifier) {
-              globalScene.addEnemyModifier(modifier, true);
-            }
-          }
-
-          globalScene.updateModifiers(false);
+          globalScene.enemyTrainerItems.clearItems();
+          globalScene.assignTrainerItemsFromSaveData(sessionData.enemyTrainerItems, false);
 
           Promise.all(loadPokemonAssets).then(() => resolve(true));
+
+          globalScene.updateItems(true);
+          globalScene.updateItems(false);
         };
         if (sessionData) {
           initSessionFromData(sessionData);
@@ -1262,25 +1247,12 @@ export class GameData {
         case "trainer":
           return v ? new TrainerData(v) : null;
 
-        case "modifiers":
-        case "enemyModifiers": {
-          const ret: PersistentModifierData[] = [];
+        // TODO: Figure out what to do with this
+        case "trainerItems":
+        case "enemyTrainerItems": {
+          const ret: TrainerItemConfiguration = [];
           for (const md of v ?? []) {
-            if (md?.className === "ExpBalanceModifier") {
-              // Temporarily limit EXP Balance until it gets reworked
-              md.stackCount = Math.min(md.stackCount, 4);
-            }
-
-            if (
-              md instanceof Modifier.EnemyAttackStatusEffectChanceModifier &&
-              (md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP)
-            ) {
-              // Discard any old "sleep/freeze chance tokens".
-              // TODO: make this migrate script
-              continue;
-            }
-
-            ret.push(new PersistentModifierData(md, k === "modifiers"));
+            ret.push(md);
           }
           return ret;
         }

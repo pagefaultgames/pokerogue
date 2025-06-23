@@ -75,22 +75,26 @@ export class ItemBar extends Phaser.GameObjects.Container {
 
     let iconCount = 0;
     sortedTrainerItems.forEach(item => {
-      const icon = allTrainerItems[item].createPokemonIcon(pokemonA);
+      const icon = allTrainerItems[item].createIcon(trainerItems.getStack(item));
       iconCount += 1;
       this.addIcon(icon, iconCount, allTrainerItems[item].name, allTrainerItems[item].description);
     });
 
-    heldItemsA.forEach(item => {
-      const icon = allHeldItems[item].createPokemonIcon(pokemonA);
-      iconCount += 1;
-      this.addIcon(icon, iconCount, allHeldItems[item].name, allHeldItems[item].description);
-    });
+    if (pokemonA) {
+      heldItemsA.forEach(item => {
+        const icon = allHeldItems[item].createPokemonIcon(pokemonA);
+        iconCount += 1;
+        this.addIcon(icon, iconCount, allHeldItems[item].name, allHeldItems[item].description);
+      });
+    }
 
-    heldItemsB.forEach(item => {
-      const icon = allHeldItems[item].createPokemonIcon(pokemonB);
-      iconCount += 1;
-      this.addIcon(icon, iconCount, allHeldItems[item].name, allHeldItems[item].description);
-    });
+    if (pokemonB) {
+      heldItemsB.forEach(item => {
+        const icon = allHeldItems[item].createPokemonIcon(pokemonB);
+        iconCount += 1;
+        this.addIcon(icon, iconCount, allHeldItems[item].name, allHeldItems[item].description);
+      });
+    }
 
     for (const icon of this.getAll()) {
       this.sendToBack(icon);
