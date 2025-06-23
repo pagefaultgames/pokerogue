@@ -8,7 +8,7 @@ import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonPhase } from "./pokemon-phase";
 import { SpeciesFormChangeStatusEffectTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { applyPostSetStatusAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 
 /** The phase where pokemon obtain status effects. */
 export class ObtainStatusEffectPhase extends PokemonPhase {
@@ -23,18 +23,20 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
    * @param sleepTurnsRemaining - The number of turns to set {@linkcode StatusEffect.SLEEP} for;
    * defaults to a random number between 2 and 4 and is unused for non-Sleep statuses.
    * @param sourceText - The text to show for the source of the status effect, if any; default `null`.
-   * @param overrideMessage - A string containing text to be displayed upon status setting;
-   * defaults to normal key for status if blank or `undefined`.
+   * @param statusMessage - A string containing text to be displayed upon status setting;
+   * defaults to normal key for status if empty or omitted.
    */
   constructor(
     battlerIndex: BattlerIndex,
     private statusEffect: StatusEffect,
-    private sourcePokemon?: Pokemon | null,
-    private sleepTurnsRemaining?: number,
-    private sourceText?: string | null,
-    private overrideMessage?: string | undefined,
+    private sourcePokemon: Pokemon | null = null,
+    private sleepTurnsRemaining = 0,
+    private sourceText?: string | null = null, // TODO: This should take `undefined` instead of `null`
+    private statusMessage = '',
   ) {
     super(battlerIndex);
+
+    this.statusMessage ||= getStatusEffectObtainText(statusEffect, getPokemonNameWithAffix(this.getPokemon()), sourceText ?? undefined)
   }
 
   start() {
@@ -45,15 +47,17 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
 
     new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect - 1), pokemon).play(false, () => {
       globalScene.phaseManager.queueMessage(
-        this.overrideMessage ||
-          getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined),
-      );
+        this.statusMessage);
       if (this.statusEffect && this.statusEffect !== StatusEffect.FAINT) {
         globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeStatusEffectTrigger, true);
         // If the status was applied from a move, ensure abilities are not ignored for follow-up triggers.
         // TODO: Ensure this isn't breaking any other phases unshifted afterwards
         globalScene.arena.setIgnoreAbilities(false);
-        applyPostSetStatusAbAttrs("PostSetStatusAbAttr", pokemon, this.statusEffect, this.sourcePokemon);
+        applyAbAttrs("PostSetStatusAbAttr", {
+          pokemon,
+          effect: this.statusEffect,
+          sourcePokemon: this.sourcePokemon ?? undefined,
+        });
       }
       this.end();
     });

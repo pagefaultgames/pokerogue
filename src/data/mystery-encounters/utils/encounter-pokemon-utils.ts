@@ -751,7 +751,7 @@ export async function catchPokemon(
                       UiMode.POKEDEX_PAGE,
                       pokemon.species,
                       pokemon.formIndex,
-                      attributes,
+                      [attributes],
                       null,
                       () => {
                         globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
