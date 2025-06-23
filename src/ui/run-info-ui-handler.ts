@@ -603,7 +603,7 @@ export default class RunInfoUiHandler extends UiHandler {
     // Duration + Money
     const runInfoTextContainer = globalScene.add.container(0, 0);
     // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
-    const lineSpacing = i18next.resolvedLanguage === "ja" ? 12 : 3;
+    const lineSpacing = i18next.resolvedLanguage === "ja" ? 4 : 3;
     const runInfoText = addBBCodeTextObject(7, 0, "", TextStyle.WINDOW, {
       fontSize: "50px",
       lineSpacing: lineSpacing,
@@ -768,7 +768,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const pPassiveInfo = pokemon.passive ? passiveLabel + ": " + pokemon.getPassiveAbility().name : "";
       const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
       // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
-      const lineSpacing = i18next.resolvedLanguage === "ja" ? 12 : 3;
+      const lineSpacing = i18next.resolvedLanguage === "ja" ? 4 : 3;
       const pokeInfoText = addBBCodeTextObject(0, 0, pName, TextStyle.SUMMARY, {
         fontSize: textContainerFontSize,
         lineSpacing: lineSpacing,
