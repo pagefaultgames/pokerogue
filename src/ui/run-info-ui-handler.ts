@@ -27,6 +27,7 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import { allTrainerItems } from "#app/items/all-trainer-items";
 import { heldItemSortFunc } from "#app/modifier/modifier-bar";
+import { allHeldItems } from "#app/items/all-held-items";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -878,38 +879,22 @@ export default class RunInfoUiHandler extends UiHandler {
       const heldItemsScale =
         this.runInfo.gameMode === GameModes.SPLICED_ENDLESS || this.runInfo.gameMode === GameModes.ENDLESS ? 0.25 : 0.5;
       const heldItemsContainer = globalScene.add.container(-82, 2);
-      const heldItemsList: Modifier.PokemonHeldItemModifier[] = [];
-      if (this.runInfo.modifiers.length) {
-        for (const m of this.runInfo.modifiers) {
-          const modifier = m.toModifier(this.modifiersModule[m.className]);
-          if (modifier instanceof Modifier.PokemonHeldItemModifier && modifier.pokemonId === pokemon.id) {
-            modifier.stackCount = m["stackCount"];
-            heldItemsList.push(modifier);
-          }
+      let row = 0;
+      for (const [index, item] of pokemon.heldItemManager.getHeldItems().sort(heldItemSortFunc).entries()) {
+        if (index > 36) {
+          const overflowIcon = addTextObject(182, 4, "+", TextStyle.WINDOW);
+          heldItemsContainer.add(overflowIcon);
+          break;
         }
-        if (heldItemsList.length > 0) {
-          (heldItemsList as Modifier.PokemonHeldItemModifier[]).sort(heldItemSortFunc);
-          let row = 0;
-          for (const [index, item] of heldItemsList.entries()) {
-            if (index > 36) {
-              const overflowIcon = addTextObject(182, 4, "+", TextStyle.WINDOW);
-              heldItemsContainer.add(overflowIcon);
-              break;
-            }
-            const itemIcon = item?.getIcon(true);
-            if (
-              item?.stackCount < item?.getMaxHeldItemCount(pokemon) &&
-              itemIcon.list[1] instanceof Phaser.GameObjects.BitmapText
-            ) {
-              itemIcon.list[1].clearTint();
-            }
-            itemIcon.setScale(heldItemsScale);
-            itemIcon.setPosition((index % 19) * 10, row * 10);
-            heldItemsContainer.add(itemIcon);
-            if (index !== 0 && index % 18 === 0) {
-              row++;
-            }
-          }
+        const itemIcon = allHeldItems[item].createSummaryIcon(pokemon.heldItemManager.getStack(item));
+        if (!pokemon.heldItemManager.isMaxStack(item) && itemIcon.list[1] instanceof Phaser.GameObjects.BitmapText) {
+          itemIcon.list[1].clearTint();
+        }
+        itemIcon.setScale(heldItemsScale);
+        itemIcon.setPosition((index % 19) * 10, row * 10);
+        heldItemsContainer.add(itemIcon);
+        if (index !== 0 && index % 18 === 0) {
+          row++;
         }
       }
       heldItemsContainer.setName("heldItems");

@@ -1036,14 +1036,14 @@ export default class SummaryUiHandler extends UiHandler {
 
         heldItems?.forEach((itemKey, i) => {
           const heldItem = allHeldItems[itemKey];
-          const icon = heldItem.createSummaryIcon(this.pokemon);
+          const icon = heldItem.createSummaryIcon(this.pokemon?.heldItemManager.getStack(itemKey) ?? 0);
 
           console.log(icon);
           icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);
           this.statsContainer.add(icon);
 
           icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
-          icon.on("pointerover", () => globalScene.ui.showTooltip(heldItem.getName(), heldItem.getDescription(), true));
+          icon.on("pointerover", () => globalScene.ui.showTooltip(heldItem.name, heldItem.description, true));
           icon.on("pointerout", () => globalScene.ui.hideTooltip());
         });
         /*

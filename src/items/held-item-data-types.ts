@@ -79,3 +79,5 @@ export type PokemonItemMap = {
   item: HeldItemSpecs | FormChangeItemSpecs;
   pokemonId: number;
 };
+
+export type HeldItemSaveData = (HeldItemSpecs | FormChangeItemSpecs)[];

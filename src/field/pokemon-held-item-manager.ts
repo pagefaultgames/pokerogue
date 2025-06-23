@@ -8,6 +8,7 @@ import {
   type HeldItemSpecs,
   type FormChangeItemPropertyMap,
   type FormChangeItemSpecs,
+  type HeldItemSaveData,
 } from "#app/items/held-item-data-types";
 
 export class PokemonItemManager {
@@ -46,6 +47,23 @@ export class PokemonItemManager {
       config.push({ entry: specs, count: 1 });
     }
     return config;
+  }
+
+  generateSaveData(): HeldItemSaveData {
+    const saveData: HeldItemSaveData = [];
+    for (const [k, item] of Object.entries(this.heldItems)) {
+      const id = Number(k);
+      if (item) {
+        const specs: HeldItemSpecs = { ...item, id };
+        saveData.push(specs);
+      }
+    }
+    for (const [k, item] of Object.entries(this.formChangeItems)) {
+      const id = Number(k);
+      const specs: FormChangeItemSpecs = { ...item, id };
+      saveData.push(specs);
+    }
+    return saveData;
   }
 
   getHeldItems(): number[] {

@@ -57,6 +57,7 @@ export class TrainerItem {
   public type: TrainerItemId;
   public maxStackCount: number;
   public isLapsing = false;
+  public effects: TRAINER_ITEM_EFFECT[] = [];
 
   //TODO: If this is actually never changed by any subclass, perhaps it should not be here
   public soundName = "se/restore";

@@ -11,6 +11,7 @@ import { allHeldItems } from "./all-held-items";
 import {
   type HeldItemConfiguration,
   type HeldItemPool,
+  type HeldItemSaveData,
   type HeldItemSpecs,
   type HeldItemTieredPool,
   type HeldItemWeights,
@@ -303,4 +304,13 @@ export function assignItemsFromConfiguration(config: HeldItemConfiguration, poke
       }
     }
   });
+}
+
+// TODO: Handle form change items
+export function saveDataToConfig(saveData: HeldItemSaveData): HeldItemConfiguration {
+  const config: HeldItemConfiguration = [];
+  for (const specs of saveData) {
+    config.push({ entry: specs, count: 1 });
+  }
+  return config;
 }

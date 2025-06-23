@@ -174,6 +174,8 @@ import type { MoveResult } from "#enums/move-result";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { AbAttrMap, AbAttrString } from "#app/@types/ability-types";
 import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
+import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
+import { assignItemsFromConfiguration } from "#app/items/held-item-pool";
 
 /** Base typeclass for damage parameter methods, used for DRY */
 type damageParams = {
@@ -302,6 +304,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     variant?: Variant,
     ivs?: number[],
     nature?: Nature,
+    heldItemConfig?: HeldItemConfiguration,
     dataSource?: Pokemon | PokemonData,
   ) {
     super(globalScene, x, y);
@@ -332,6 +335,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.levelExp = dataSource?.levelExp || 0;
 
     this.heldItemManager = new PokemonItemManager();
+    if (heldItemConfig) {
+      assignItemsFromConfiguration(heldItemConfig, this);
+    }
 
     if (dataSource) {
       this.id = dataSource.id;
@@ -2164,8 +2170,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Gets the weight of the Pokemon with subtractive modifiers (Autotomize) happening first
-   * and then multiplicative modifiers happening after (Heavy Metal and Light Metal)
+   * Gets the weight of the Pokemon with subtractive abilities (Autotomize) happening first
+   * and then multiplicative abilities happening after (Heavy Metal and Light Metal)
    * @returns the kg of the Pokemon (minimum of 0.1)
    */
   public getWeight(): number {
@@ -3829,7 +3835,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.ENEMY_DAMAGE_REDUCER, { numberHolder: damage });
     }
 
-    /** Apply this Pokemon's post-calc defensive modifiers (e.g. Fur Coat) */
+    /** Apply this Pokemon's post-calc defensive attributes (e.g. Fur Coat) */
     if (!ignoreAbility) {
       applyPreDefendAbAttrs("ReceivedMoveDamageMultiplierAbAttr", this, source, move, cancelled, simulated, damage);
 
@@ -5487,9 +5493,24 @@ export class PlayerPokemon extends Pokemon {
     variant?: Variant,
     ivs?: number[],
     nature?: Nature,
+    heldItemConfig?: HeldItemConfiguration,
     dataSource?: Pokemon | PokemonData,
   ) {
-    super(106, 148, species, level, abilityIndex, formIndex, gender, shiny, variant, ivs, nature, dataSource);
+    super(
+      106,
+      148,
+      species,
+      level,
+      abilityIndex,
+      formIndex,
+      gender,
+      shiny,
+      variant,
+      ivs,
+      nature,
+      heldItemConfig,
+      dataSource,
+    );
 
     if (Overrides.STATUS_OVERRIDE) {
       this.status = new Status(Overrides.STATUS_OVERRIDE, 0, 4);
@@ -6013,6 +6034,7 @@ export class EnemyPokemon extends Pokemon {
     trainerSlot: TrainerSlot,
     boss: boolean,
     shinyLock = false,
+    heldItemConfig?: HeldItemConfiguration,
     dataSource?: PokemonData,
   ) {
     super(
@@ -6027,6 +6049,7 @@ export class EnemyPokemon extends Pokemon {
       !shinyLock && dataSource ? dataSource.variant : undefined,
       undefined,
       dataSource ? dataSource.nature : undefined,
+      heldItemConfig,
       dataSource,
     );
 

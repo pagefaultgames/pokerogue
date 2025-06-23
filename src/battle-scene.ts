@@ -920,15 +920,13 @@ export default class BattleScene extends SceneBase {
       variant,
       ivs,
       nature,
+      heldItemConfig,
       dataSource,
     );
     if (postProcess) {
       postProcess(pokemon);
     }
     pokemon.init();
-    if (heldItemConfig) {
-      assignItemsFromConfiguration(heldItemConfig, pokemon);
-    }
     return pokemon;
   }
 
@@ -951,7 +949,7 @@ export default class BattleScene extends SceneBase {
       boss = this.getEncounterBossSegments(this.currentBattle.waveIndex, level, species) > 1;
     }
 
-    const pokemon = new EnemyPokemon(species, level, trainerSlot, boss, shinyLock, dataSource);
+    const pokemon = new EnemyPokemon(species, level, trainerSlot, boss, shinyLock, heldItemConfig, dataSource);
     if (Overrides.OPP_FUSION_OVERRIDE) {
       pokemon.generateFusionSpecies();
     }
@@ -980,9 +978,7 @@ export default class BattleScene extends SceneBase {
     }
 
     pokemon.init();
-    if (heldItemConfig) {
-      assignItemsFromConfiguration(heldItemConfig, pokemon);
-    }
+
     return pokemon;
   }
 

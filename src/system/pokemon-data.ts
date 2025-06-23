@@ -15,6 +15,8 @@ import type { MoveId } from "#enums/move-id";
 import type { SpeciesId } from "#enums/species-id";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
+import type { HeldItemSaveData } from "#app/items/held-item-data-types";
+import { saveDataToConfig } from "#app/items/held-item-pool";
 
 export default class PokemonData {
   public id: number;
@@ -35,6 +37,7 @@ export default class PokemonData {
   public stats: number[];
   public ivs: number[];
   public nature: Nature;
+  public heldItems: HeldItemSaveData;
   public moveset: PokemonMove[];
   public status: Status | null;
   public friendship: number;
@@ -102,6 +105,9 @@ export default class PokemonData {
     this.hp = source.hp;
     this.stats = source.stats;
     this.ivs = source.ivs;
+    console.log("SAVE ITEMS:", sourcePokemon?.heldItemManager.generateSaveData());
+    console.log(sourcePokemon, sourcePokemon?.heldItemManager);
+    this.heldItems = sourcePokemon?.heldItemManager.generateSaveData() ?? source.heldItems;
 
     // TODO: Can't we move some of this verification stuff to an upgrade script?
     this.nature = source.nature ?? Nature.HARDY;
@@ -154,6 +160,8 @@ export default class PokemonData {
 
   toPokemon(battleType?: BattleType, partyMemberIndex = 0, double = false): Pokemon {
     const species = getPokemonSpecies(this.species);
+    console.log("LOADED ITEMS:", this.heldItems);
+    console.log(saveDataToConfig(this.heldItems));
     const ret: Pokemon = this.player
       ? globalScene.addPlayerPokemon(
           species,
@@ -165,6 +173,7 @@ export default class PokemonData {
           this.variant,
           this.ivs,
           this.nature,
+          saveDataToConfig(this.heldItems),
           this,
           playerPokemon => {
             if (this.nickname) {
@@ -182,6 +191,7 @@ export default class PokemonData {
             : TrainerSlot.NONE,
           this.boss,
           false,
+          saveDataToConfig(this.heldItems),
           this,
         );
 
