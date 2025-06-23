@@ -314,7 +314,7 @@ export class MovePhase extends BattlePhase {
     }
 
     // Check if the move has any attributes that can interrupt its own use **before** displaying text.
-    applyMoveAttrs("PreUseInterruptAttr", this.pokemon, targets[0], move);
+    // TODO: This should not rely on direct return values
     let failed = move.getAttrs("PreUseInterruptAttr").some(attr => attr.apply(this.pokemon, targets[0], move));
     if (failed) {
       this.failMove(false);
