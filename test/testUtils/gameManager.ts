@@ -12,7 +12,6 @@ import overrides from "#app/overrides";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
-import { FaintPhase } from "#app/phases/faint-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
@@ -452,17 +451,14 @@ export default class GameManager {
   }
 
   /**
-   * Faints a player or enemy pokemon instantly by setting their HP to 0.
+   * Faint a player or enemy pokemon instantly by setting their HP to 0.
    * @param pokemon - The player/enemy pokemon being fainted
-   * @returns A promise that resolves once the fainted pokemon's FaintPhase finishes running.
+   * @returns A Promise that resolves once the fainted pokemon's FaintPhase finishes running.
    */
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
-    return new Promise<void>(async (resolve, reject) => {
-      pokemon.hp = 0;
-      this.scene.phaseManager.pushPhase(new FaintPhase(pokemon.getBattlerIndex(), true));
-      await this.phaseInterceptor.to(FaintPhase).catch(e => reject(e));
-      resolve();
-    });
+    pokemon.hp = 0;
+    this.scene.phaseManager.pushNew("FaintPhase", pokemon.getBattlerIndex(), true);
+    await this.phaseInterceptor.to("FaintPhase");
   }
 
   /**

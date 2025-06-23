@@ -103,7 +103,7 @@ describe("Moves - Gastro Acid", () => {
     game.move.use(MoveId.WATER_GUN);
     await game.toNextTurn();
     // water gun should've dealt damage due to suppressed Water Absorb
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
 
     game.move.use(MoveId.SPORE);
     await game.toEndOfTurn();

@@ -6,6 +6,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { ArenaTrapTag } from "#app/data/arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
+import { BattlerIndex } from "#enums/battler-index";
 
 describe("Moves - Spikes", () => {
   let phaserGame: Phaser.Game;
@@ -81,12 +82,12 @@ describe("Moves - Spikes", () => {
   });
 
   it("should work when all targets fainted", async () => {
-    game.override.enemySpecies(SpeciesId.DIGLETT).battleStyle("double").startingLevel(50);
-    await game.classicMode.startBattle([SpeciesId.RAYQUAZA]);
+    game.override.enemySpecies(SpeciesId.DIGLETT).battleStyle("double").startingLevel(1000);
+    await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.SHUCKLE]);
 
-    game.move.use(MoveId.SPIKES);
-    await game.doKillOpponents();
-    await game.phaseInterceptor.to("TurnEndPhase");
+    game.move.use(MoveId.HYPER_VOICE, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SPIKES, BattlerIndex.PLAYER_2);
+    await game.toNextWave();
 
     expect(game.scene.arena.getTagOnSide(ArenaTrapTag, ArenaTagSide.ENEMY)).toBeDefined();
   });
