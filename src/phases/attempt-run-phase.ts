@@ -1,18 +1,16 @@
-import { applyAbAttrs, applyPreLeaveFieldAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { globalScene } from "#app/global-scene";
+import Overrides from "#app/overrides";
+import { FieldPhase } from "#app/phases/field-phase";
+import { NumberHolder } from "#app/utils/common";
+import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
-import { globalScene } from "#app/global-scene";
-import { FieldPhase } from "./field-phase";
-import Overrides from "#app/overrides";
-import { Stat } from "#enums/stat";
+
 export class AttemptRunPhase extends FieldPhase {
   public readonly phaseName = "AttemptRunPhase";
 
-  private getTeamRNG(range: number, min = 0) {
-    return globalScene.randBattleSeedInt(range, min);
-  }
-
-  start() {
+  public start() {
     super.start();
 
     // Increment escape attempts count on entry
@@ -21,15 +19,15 @@ export class AttemptRunPhase extends FieldPhase {
     const activePlayerField = globalScene.getPlayerField(true);
     const enemyField = globalScene.getEnemyField();
 
-    const escapeRoll = this.getTeamRNG(100);
-    const escapeChance = this.calculateEscapeChance(currentAttempts);
-    
-    activePlayerField.forEach(p => {
-      applyAbAttrs("RunSuccessAbAttr", p, null, false, { value: escapeChance });
+    const escapeRoll = globalScene.randBattleSeedInt(100);
+    const escapeChance = new NumberHolder(this.calculateEscapeChance(currentAttempts));
+
+    activePlayerField.forEach(pokemon => {
+      applyAbAttrs("RunSuccessAbAttr", { pokemon, chance: escapeChance });
     });
 
-    if (escapeRoll < escapeChance) {
-      enemyField.forEach(enemyPokemon => applyPreLeaveFieldAbAttrs("PreLeaveFieldAbAttr", enemyPokemon));
+    if (escapeRoll < escapeChance.value) {
+      enemyField.forEach(pokemon => applyAbAttrs("PreLeaveFieldAbAttr", { pokemon }));
 
       globalScene.playSound("se/flee");
       globalScene.phaseManager.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
@@ -71,10 +69,10 @@ export class AttemptRunPhase extends FieldPhase {
   /**
    * Calculate the chance for the player's team to successfully run away from battle.
    *
-   * @param escapeAttempts    The number of prior failed escape attempts in the current battle
+   * @param escapeAttempts - The number of prior failed escape attempts in the current battle
    * @returns The final escape chance, as percentage out of 100.
    */
-  calculateEscapeChance(escapeAttempts: number): number {
+  public calculateEscapeChance(escapeAttempts: number): number {
     const enemyField = globalScene.getEnemyField();
     const activePlayerField = globalScene.getPlayerField(true);
 
