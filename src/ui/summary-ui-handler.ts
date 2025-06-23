@@ -917,11 +917,11 @@ export default class SummaryUiHandler extends UiHandler {
           abilityInfo.labelImage.setOrigin(0, 0);
           profileContainer.add(abilityInfo.labelImage);
 
-          abilityInfo.nameText = addTextObject(7, 66, abilityInfo.ability?.name!, TextStyle.SUMMARY_ALT); // TODO: is this bang correct?
+          abilityInfo.nameText = addTextObject(7, 68, abilityInfo.ability?.name!, TextStyle.SUMMARY_ALT); // TODO: is this bang correct?
           abilityInfo.nameText.setOrigin(0, 1);
           profileContainer.add(abilityInfo.nameText);
 
-          abilityInfo.descriptionText = addTextObject(7, 69, abilityInfo.ability?.description!, TextStyle.WINDOW_ALT, {
+          abilityInfo.descriptionText = addTextObject(7, 72, abilityInfo.ability?.description!, TextStyle.WINDOW_ALT, {
             wordWrap: { width: 1224 },
           }); // TODO: is this bang correct?
           abilityInfo.descriptionText.setOrigin(0, 0);
