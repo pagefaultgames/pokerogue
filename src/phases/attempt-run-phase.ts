@@ -23,7 +23,7 @@ export class AttemptRunPhase extends FieldPhase {
 
     const escapeRoll = this.getTeamRNG(100);
     const escapeChance = this.calculateEscapeChance(currentAttempts);
-
+    
     activePlayerField.forEach(p => {
       applyAbAttrs("RunSuccessAbAttr", p, null, false, { value: escapeChance });
     });
@@ -39,14 +39,11 @@ export class AttemptRunPhase extends FieldPhase {
         alpha: 0,
         duration: 250,
         ease: "Sine.easeIn",
-        onComplete: () =>
-          // biome-ignore lint/complexity/noForEach: TODO
-          enemyField.forEach(enemyPokemon => enemyPokemon.destroy()),
+        onComplete: () => enemyField.forEach(enemyPokemon => enemyPokemon.destroy()),
       });
 
       globalScene.clearEnemyHeldItemModifiers();
 
-      // biome-ignore lint/complexity/noForEach: TODO
       enemyField.forEach(enemyPokemon => {
         enemyPokemon.hideInfo().then(() => enemyPokemon.destroy());
         enemyPokemon.hp = 0;

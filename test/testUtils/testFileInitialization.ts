@@ -47,7 +47,7 @@ export function initTestFile() {
   });
 
   BBCodeText.prototype.destroy = () => null;
-  // @ts-ignore
+  // @ts-expect-error
   BBCodeText.prototype.resize = () => null;
   InputText.prototype.setElement = () => null as any;
   InputText.prototype.resize = () => null as any;
