@@ -118,7 +118,13 @@ class DefaultOverrides {
    * or `false` to force it to never trigger.
    */
   readonly CONFUSION_ACTIVATION_OVERRIDE: boolean | null = null;
-
+  /**
+   * If non-null, will override random flee attempts to always or never succeed by forcing {@linkcode calculateEscapeChance} to return 100% or 0%.
+   * Set to `null` to disable.
+   *
+   * Is overridden if either player Pokemon has {@linkcode AbilityId.RUN_AWAY | Run Away}.
+   */
+  readonly RUN_SUCCESS_OVERRIDE: boolean | null = null;
   // ----------------
   // PLAYER OVERRIDES
   // ----------------

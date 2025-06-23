@@ -1,38 +1,33 @@
 import { applyAbAttrs, applyPreLeaveFieldAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
-import { NumberHolder, randSeedInt } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
 import { calculateEscapeChance } from "#app/utils/run-utils";
 import { FieldPhase } from "./field-phase";
 export class AttemptRunPhase extends FieldPhase {
   public readonly phaseName = "AttemptRunPhase";
-  /** For testing purposes: this is to force the pokemon to fail and escape */
-  public forceFailEscape = false;
 
   private getTeamRNG(range: number, min = 0) {
-    return globalScene.currentBattle ? globalScene.randBattleSeedInt(range, min) : randSeedInt(range, min);
+    return globalScene.randBattleSeedInt(range, min);
   }
 
   start() {
     super.start();
 
-    //Increment escape attempts count on entry
+    // Increment escape attempts count on entry
     const currentAttempts = globalScene.currentBattle.escapeAttempts++;
 
     const activePlayerField = globalScene.getPlayerField(true);
     const enemyField = globalScene.getEnemyField();
 
     const escapeRoll = this.getTeamRNG(100);
-    const escapeChance = new NumberHolder(0);
-
-    calculateEscapeChance(activePlayerField, enemyField, escapeChance, currentAttempts);
+    const escapeChance = calculateEscapeChance(currentAttempts);
 
     activePlayerField.forEach(p => {
-      applyAbAttrs("RunSuccessAbAttr", p, null, false, escapeChance);
+      applyAbAttrs("RunSuccessAbAttr", p, null, false, { value: escapeChance });
     });
 
-    if (escapeRoll < escapeChance.value && !this.forceFailEscape) {
+    if (escapeRoll < escapeChance) {
       enemyField.forEach(enemyPokemon => applyPreLeaveFieldAbAttrs("PreLeaveFieldAbAttr", enemyPokemon));
 
       globalScene.playSound("se/flee");
@@ -65,7 +60,10 @@ export class AttemptRunPhase extends FieldPhase {
 
       globalScene.phaseManager.pushNew("NewBattlePhase");
     } else {
-      globalScene.currentBattle.failedRunAway = true;
+      activePlayerField.forEach(p => {
+        p.turnData.failedRunAway = true;
+      });
+
       globalScene.phaseManager.queueMessage(i18next.t("battle:runAwayCannotEscape"), null, true, 500);
     }
 

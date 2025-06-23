@@ -208,7 +208,7 @@ export class TurnStartPhase extends FieldPhase {
           break;
         case Command.RUN:
           {
-            //Team Based action, no need for checking individual pokemon or whether its doubles
+            // Running (like ball throwing) is a team action taking up both Pokemon's turns.
             phaseManager.unshiftNew("AttemptRunPhase");
           }
           break;

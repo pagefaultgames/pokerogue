@@ -1,32 +1,20 @@
-import type { PlayerPokemon, EnemyPokemon } from "#app/field/pokemon";
-import type { NumberHolder } from "#app/utils/common";
-import type Pokemon from "#app/field/pokemon";
+import { globalScene } from "#app/global-scene";
 import { Stat } from "#enums/stat";
-
+import Overrides from "#app/overrides";
 /**
- * Calculates the chance for the player's team to successfully run away from battle.
+ * Calculate the chance for the player's team to successfully run away from battle.
  *
- * @param playerField       The player's currently active Pokémon
- * @param enemyField        The enemy team's Pokémon
- * @param escapeChance      A mutable NumberHolder to be assigned the final escape chance value
- * @param escapeAttempts    The number of previous escape attempts made in the battle
+ * @param escapeAttempts    The number of prior failed escape attempts in the current battle
+ * @returns The final escape chance, as percentage out of 100.
  */
-export function calculateEscapeChance(
-  playerField: PlayerPokemon[],
-  enemyField: EnemyPokemon[],
-  escapeChance: NumberHolder,
-  escapeAttempts: number,
-) {
-  /** Sum of the speed of all enemy pokemon on the field */
-  const enemySpeed = enemyField.reduce(
-    (total: number, enemyPokemon: Pokemon) => total + enemyPokemon.getStat(Stat.SPD),
-    0,
-  );
-  /** Sum of the speed of all player pokemon on the field */
-  const playerSpeed = playerField.reduce(
-    (total: number, playerPokemon: Pokemon) => total + playerPokemon.getStat(Stat.SPD),
-    0,
-  );
+export function calculateEscapeChance(escapeAttempts: number): number {
+  const enemyField = globalScene.getEnemyField();
+  const activePlayerField = globalScene.getPlayerField(true);
+
+  // Cf https://bulbapedia.bulbagarden.net/wiki/Escape#Generation_V_onwards
+  // From gen 5 onwards, running takes the _base_ speed totals of both party sides.
+  const enemySpeed = enemyField.reduce((total, enemy) => total + enemy.getStat(Stat.SPD), 0);
+  const playerSpeed = activePlayerField.reduce((total, player) => total + player.getStat(Stat.SPD), 0);
 
   /*  The way the escape chance works is by looking at the difference between your speed and the enemy field's average speed as a ratio. The higher this ratio, the higher your chance of success.
    *  However, there is a cap for the ratio of your speed vs enemy speed which beyond that point, you won't gain any advantage. It also looks at how many times you've tried to escape.
@@ -44,10 +32,8 @@ export function calculateEscapeChance(
    *  From the above, we can calculate the below values
    */
 
-  let isBoss = false;
-  for (let e = 0; e < enemyField.length; e++) {
-    isBoss = isBoss || enemyField[e].isBoss(); // this line checks if any of the enemy pokemon on the field are bosses; if so, the calculation for escaping is different
-  }
+  /** Whether at least 1 pokemon on the enemy field is a boss. */
+  const isBoss = enemyField.some(e => e.isBoss());
 
   /** The ratio between the speed of your active pokemon and the speed of the enemy field */
   const speedRatio = playerSpeed / enemySpeed;
@@ -62,8 +48,13 @@ export function calculateEscapeChance(
   /** Slope of the escape chance curve */
   const escapeSlope = (maxChance - minChance) / speedCap;
 
+  //   Check for override, guaranteeing or forbidding random flee attempts as applicable.
+  if (Overrides.RUN_SUCCESS_OVERRIDE !== null) {
+    return Overrides.RUN_SUCCESS_OVERRIDE ? 100 : 0;
+  }
+
   // This will calculate the escape chance given all of the above and clamp it to the range of [`minChance`, `maxChance`]
-  escapeChance.value = Phaser.Math.Clamp(
+  return Phaser.Math.Clamp(
     Math.round(escapeSlope * speedRatio + minChance + escapeBonus * escapeAttempts),
     minChance,
     maxChance,

@@ -94,7 +94,10 @@ export default class Battle {
   /** If the current battle is a Mystery Encounter, this will always be defined */
   public mysteryEncounter?: MysteryEncounter;
 
-  /**Tracks whether the last run attempt in battle failed*/
+  /**
+   * Tracker for whether the last run attempt failed.
+   * @defaultValue `false`
+   */
   public failedRunAway = false;
 
   private rngCounter = 0;
