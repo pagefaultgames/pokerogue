@@ -4710,7 +4710,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       case StatusEffect.POISON:
       case StatusEffect.TOXIC:
         // Check for type based immunities and/or Corrosion from the applier.
-        isImmune = types.some(defType => { // only 1 immunity needed to block
+        isImmune = types.some(defType => {
+          // only 1 immunity needed to block
           if (defType !== PokemonType.POISON && defType !== PokemonType.STEEL) {
             return false;
           }

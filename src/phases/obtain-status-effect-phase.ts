@@ -31,12 +31,16 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
     private statusEffect: StatusEffect,
     private sourcePokemon: Pokemon | null = null,
     private sleepTurnsRemaining = 0,
-    private sourceText?: string | null = null, // TODO: This should take `undefined` instead of `null`
-    private statusMessage = '',
+    sourceText: string | null = null, // TODO: This should take `undefined` instead of `null`
+    private statusMessage = "",
   ) {
     super(battlerIndex);
 
-    this.statusMessage ||= getStatusEffectObtainText(statusEffect, getPokemonNameWithAffix(this.getPokemon()), sourceText ?? undefined)
+    this.statusMessage ||= getStatusEffectObtainText(
+      statusEffect,
+      getPokemonNameWithAffix(this.getPokemon()),
+      sourceText ?? undefined,
+    );
   }
 
   start() {
@@ -46,8 +50,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
     pokemon.updateInfo(true);
 
     new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect - 1), pokemon).play(false, () => {
-      globalScene.phaseManager.queueMessage(
-        this.statusMessage);
+      globalScene.phaseManager.queueMessage(this.statusMessage);
       if (this.statusEffect && this.statusEffect !== StatusEffect.FAINT) {
         globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeStatusEffectTrigger, true);
         // If the status was applied from a move, ensure abilities are not ignored for follow-up triggers.
