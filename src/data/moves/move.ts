@@ -85,7 +85,7 @@ import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves, invalidSketchMoves } from "./invalid-moves";
 import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
-import { ChargingMove, MoveAttrMap, MoveAttrString, MoveKindString, MoveClassMap } from "#app/@types/move-types";
+import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveKindString, MoveClassMap } from "#app/@types/move-types";
 import { applyMoveAttrs } from "./apply-attrs";
 import { frenzyMissFunc, getMoveTargets } from "./move-utils";
 import { AbAttrBaseParams, AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrParams } from "../abilities/ability";
