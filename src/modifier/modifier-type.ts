@@ -62,7 +62,11 @@ import { allHeldItems } from "#app/items/all-held-items";
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 import { attackTypeToHeldItem } from "#app/items/held-items/attack-type-booster";
 import { permanentStatToHeldItem, statBoostItems } from "#app/items/held-items/base-stat-booster";
-import { SPECIES_STAT_BOOSTER_ITEMS, type SpeciesStatBoosterItemId } from "#app/items/held-items/stat-booster";
+import {
+  SPECIES_STAT_BOOSTER_ITEMS,
+  type SpeciesStatBoostHeldItem,
+  type SpeciesStatBoosterItemId,
+} from "#app/items/held-items/stat-booster";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { getModifierPoolForType } from "#app/utils/modifier-utils";
 import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
@@ -70,7 +74,7 @@ import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeld
 import { berryTypeToHeldItem } from "#app/items/held-items/berry";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { allTrainerItems } from "#app/items/all-trainer-items";
-import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
+import { tempStatToTrainerItem, TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 
 type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier | null;
 
@@ -342,6 +346,8 @@ export class TrainerItemReward extends ModifierType {
   }
 
   get name(): string {
+    console.log("ITEM:", this.itemId);
+    console.log(allTrainerItems[this.itemId]);
     return allTrainerItems[this.itemId].name;
   }
 
@@ -361,6 +367,7 @@ export class TrainerItemReward extends ModifierType {
 export class LapsingTrainerItemReward extends TrainerItemReward {
   apply() {
     globalScene.trainerItems.add(this.itemId, allTrainerItems[this.itemId].getMaxStackCount());
+    console.log("WE GOT HERE WE ADDED IT");
   }
 }
 
@@ -1026,10 +1033,10 @@ class TempStatStageBoosterRewardGenerator extends ModifierTypeGenerator {
   constructor() {
     super((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && TEMP_BATTLE_STATS.includes(pregenArgs[0])) {
-        return new LapsingTrainerItemReward(pregenArgs[0]);
+        return new LapsingTrainerItemReward(tempStatToTrainerItem[pregenArgs[0]]);
       }
       const randStat: TempBattleStat = randSeedInt(Stat.ACC, Stat.ATK);
-      return new LapsingTrainerItemReward(randStat);
+      return new LapsingTrainerItemReward(tempStatToTrainerItem[randStat]);
     });
   }
 }
@@ -1063,7 +1070,7 @@ class SpeciesStatBoosterRewardGenerator extends ModifierTypeGenerator {
         const hasFling = false; /* p.getMoveset(true).some(m => m.moveId === MoveId.FLING) */
 
         for (const i in tierItems) {
-          const checkedSpecies = allHeldItems[tierItems[i]].species;
+          const checkedSpecies = (allHeldItems[tierItems[i]] as SpeciesStatBoostHeldItem).species;
 
           // If party member already has the item being weighted currently, skip to the next item
           const hasItem = p.heldItemManager.hasItem(tierItems[i]);
@@ -1574,10 +1581,6 @@ export interface ModifierPool {
 let modifierPoolThresholds = {};
 let ignoredPoolIndexes = {};
 
-let enemyBuffModifierPoolThresholds = {};
-// biome-ignore lint/correctness/noUnusedVariables: TODO explain why this is marked as OK
-let enemyBuffIgnoredPoolIndexes = {};
-
 /**
  * Allows a unit test to check if an item exists in the Modifier Pool. Checks the pool directly, rather than attempting to reroll for the item.
  */
@@ -1599,19 +1602,18 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
         let i = 0;
         pool[t].reduce((total: number, modifierType: WeightedModifierType) => {
           const weightedModifierType = modifierType as WeightedModifierType;
-          const existingModifiers = globalScene.findModifiers(
-            m => m.type.id === weightedModifierType.modifierType.id,
-            poolType === ModifierPoolType.PLAYER,
-          );
           const itemModifierType =
             weightedModifierType.modifierType instanceof ModifierTypeGenerator
               ? weightedModifierType.modifierType.generateType(party)
               : weightedModifierType.modifierType;
+          const trainerItemfullStack =
+            itemModifierType instanceof TrainerItemReward
+              ? globalScene.trainerItems.isMaxStack(itemModifierType.itemId)
+              : false;
           const weight =
-            !existingModifiers.length ||
+            !trainerItemfullStack ||
             itemModifierType instanceof HeldItemReward ||
-            itemModifierType instanceof FormChangeItemReward ||
-            existingModifiers.find(m => m.stackCount < m.getMaxStackCount(true))
+            itemModifierType instanceof FormChangeItemReward
               ? weightedModifierType.weight instanceof Function
                 ? // biome-ignore lint/complexity/noBannedTypes: TODO: refactor to not use Function type
                   (weightedModifierType.weight as Function)(party, rerollCount)
@@ -1641,10 +1643,6 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
     case ModifierPoolType.PLAYER:
       modifierPoolThresholds = thresholds;
       ignoredPoolIndexes = ignoredIndexes;
-      break;
-    case ModifierPoolType.ENEMY_BUFF:
-      enemyBuffModifierPoolThresholds = thresholds;
-      enemyBuffIgnoredPoolIndexes = ignoredIndexes;
       break;
   }
 }
@@ -1922,9 +1920,6 @@ function getPoolThresholds(poolType: ModifierPoolType) {
   switch (poolType) {
     case ModifierPoolType.PLAYER:
       thresholds = modifierPoolThresholds;
-      break;
-    case ModifierPoolType.ENEMY_BUFF:
-      thresholds = enemyBuffModifierPoolThresholds;
       break;
   }
   return thresholds;

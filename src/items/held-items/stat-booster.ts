@@ -137,7 +137,7 @@ export const SPECIES_STAT_BOOSTER_ITEMS: SpeciesStatBoosterItemId[] = [
  */
 export class SpeciesStatBoostHeldItem extends StatBoostHeldItem {
   /** The species that the held item's stat boost(s) apply to */
-  private species: SpeciesId[];
+  public species: SpeciesId[];
 
   constructor(
     type: SpeciesStatBoosterItemId,

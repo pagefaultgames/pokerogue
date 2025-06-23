@@ -26,6 +26,8 @@ import { initI18n } from "#app/plugins/i18n";
 import { initModifierTypes } from "#app/modifier/modifier-type";
 import { initHeldItems } from "#app/items/all-held-items";
 import { initHeldItemPools } from "#app/items/init-held-item-pools";
+import { initTrainerItems } from "#app/items/all-trainer-items";
+import { initTrainerItemPools } from "#app/items/init-trainer-item-pools";
 
 let wasInitialized = false;
 /**
@@ -94,6 +96,8 @@ export function initTestFile() {
     initI18n();
     initHeldItems();
     initHeldItemPools();
+    initTrainerItems();
+    initTrainerItemPools();
     initModifierTypes();
     initModifierPools();
     initVouchers();

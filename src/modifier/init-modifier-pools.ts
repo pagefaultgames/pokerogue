@@ -19,8 +19,9 @@ import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import type { initModifierTypes } from "./modifier-type";
 import { HeldItemId } from "#enums/held-item-id";
 import { allHeldItems } from "#app/items/all-held-items";
-import type { TrainerItemId } from "#enums/trainer-item-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { allTrainerItems } from "#app/items/all-trainer-items";
+import type { TurnEndStatusHeldItem } from "#app/items/held-items/turn-end-status";
 
 /**
  * Initialize the common modifier pool
@@ -89,7 +90,7 @@ function initCommonModifierPool() {
       },
       3,
     ),
-    new WeightedModifierType(modifierTypes.LURE, lureWeightFunc(10, 2)),
+    new WeightedModifierType(modifierTypes.LURE, lureWeightFunc(TrainerItemId.LURE, 2)),
     new WeightedModifierType(modifierTypes.TEMP_STAT_STAGE_BOOSTER, 4),
     new WeightedModifierType(modifierTypes.BERRY, 2),
     new WeightedModifierType(modifierTypes.TM_COMMON, 2),
@@ -117,7 +118,7 @@ function initGreatModifierPool() {
               !p
                 .getHeldItems()
                 .filter(i => i in [HeldItemId.TOXIC_ORB, HeldItemId.FLAME_ORB])
-                .some(i => allHeldItems[i].effect === p.status?.effect),
+                .some(i => (allHeldItems[i] as TurnEndStatusHeldItem).effect === p.status?.effect),
           ).length,
           3,
         );
@@ -181,7 +182,7 @@ function initGreatModifierPool() {
               !p
                 .getHeldItems()
                 .filter(i => i in [HeldItemId.TOXIC_ORB, HeldItemId.FLAME_ORB])
-                .some(i => allHeldItems[i].effect === p.status?.effect),
+                .some(i => (allHeldItems[i] as TurnEndStatusHeldItem).effect === p.status?.effect),
           ).length,
           3,
         );
@@ -233,7 +234,7 @@ function initGreatModifierPool() {
       3,
     ),
     new WeightedModifierType(modifierTypes.DIRE_HIT, 4),
-    new WeightedModifierType(modifierTypes.SUPER_LURE, lureWeightFunc(15, 4)),
+    new WeightedModifierType(modifierTypes.SUPER_LURE, lureWeightFunc(TrainerItemId.SUPER_LURE, 4)),
     new WeightedModifierType(modifierTypes.NUGGET, skipInLastClassicWaveOrDefault(5)),
     new WeightedModifierType(modifierTypes.SPECIES_STAT_BOOSTER, 4),
     new WeightedModifierType(
@@ -304,7 +305,7 @@ function initGreatModifierPool() {
 function initUltraModifierPool() {
   modifierPool[RewardTier.ULTRA] = [
     new WeightedModifierType(modifierTypes.ULTRA_BALL, () => (hasMaximumBalls(PokeballType.ULTRA_BALL) ? 0 : 15), 15),
-    new WeightedModifierType(modifierTypes.MAX_LURE, lureWeightFunc(30, 4)),
+    new WeightedModifierType(modifierTypes.MAX_LURE, lureWeightFunc(TrainerItemId.MAX_LURE, 4)),
     new WeightedModifierType(modifierTypes.BIG_NUGGET, skipInLastClassicWaveOrDefault(12)),
     new WeightedModifierType(modifierTypes.PP_MAX, 3),
     new WeightedModifierType(modifierTypes.MINT, 4),
@@ -647,7 +648,7 @@ function skipInLastClassicWaveOrDefault(defaultWeight: number): WeightedModifier
 /**
  * High order function that returns a WeightedModifierTypeWeightFunc to ensure Lures don't spawn on Classic 199
  * or if the lure still has over 60% of its duration left
- * @param maxBattles The max battles the lure type in question lasts. 10 for green, 15 for Super, 30 for Max
+ * @param lureId The id of the lure type in question.
  * @param weight The desired weight for the lure when it does spawn
  * @returns A WeightedModifierTypeWeightFunc
  */

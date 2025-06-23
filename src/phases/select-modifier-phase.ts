@@ -178,7 +178,12 @@ export class SelectModifierPhase extends BattlePhase {
         this.openModifierMenu(modifierType, cost, modifierSelectCallback);
       }
     } else if (modifierType instanceof TrainerItemReward) {
+      console.log("WE GOT HERE");
       modifierType.apply();
+      globalScene.updateItems(true);
+      globalScene.ui.clearText();
+      globalScene.ui.setMode(UiMode.MESSAGE);
+      super.end();
     } else {
       this.applyModifier(modifierType.newModifier()!);
     }

@@ -17,7 +17,7 @@ export interface TURN_END_STATUS_PARAMS {
 export class TurnEndStatusHeldItem extends HeldItem {
   public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.TURN_END_STATUS];
   /** The status effect to be applied by the held item */
-  private effect: StatusEffect;
+  public effect: StatusEffect;
 
   constructor(type: HeldItemId, maxStackCount = 1, effect: StatusEffect) {
     super(type, maxStackCount);
