@@ -73,9 +73,10 @@ export function addTextObject(
     ret.setLineSpacing(scale * 30);
   }
 
-  if (ret.lineSpacing < 12 && i18next.resolvedLanguage === "ja") {
-    ret.setLineSpacing(ret.lineSpacing + 35);
-  }
+//Japanese Line Text Spacing
+  //if (ret.lineSpacing < 12 && i18next.resolvedLanguage === "ja") {
+    //ret.setLineSpacing(ret.lineSpacing + 35);
+  //}
 
   return ret;
 }
@@ -122,10 +123,6 @@ export function addBBCodeTextObject(
     ret.setLineSpacing(scale * 60);
   }
 
-  if (ret.lineSpacing < 12 && i18next.resolvedLanguage === "ja") {
-    ret.setLineSpacing(ret.lineSpacing + 35);
-  }
-
   return ret;
 }
 
@@ -166,13 +163,22 @@ export function getTextStyleOptions(
     },
   };
 
-  if (i18next.resolvedLanguage === "ja") {
-    scale = 0.1388888889;
-    styleOptions.padding = { top: 2, bottom: 4 };
-  }
+//Japanese General Scale
+  //if (i18next.resolvedLanguage === "ja") {
+   //styleOptions.padding = { top: 6, bottom: -2 };
+  //}
 
   switch (style) {
-    case TextStyle.SUMMARY:
+    case TextStyle.SUMMARY: {
+      let fontSizeLabel = "96px";
+      switch (lang) {
+        case "ja":
+		  styleOptions.padding = { top: 6, bottom: 4 };
+          break;
+      }
+      styleOptions.fontSize = fontSizeLabel;
+      break;
+    }
     case TextStyle.SUMMARY_ALT:
     case TextStyle.SUMMARY_BLUE:
     case TextStyle.SUMMARY_RED:
@@ -230,11 +236,35 @@ export function getTextStyleOptions(
       shadowXpos = 3.5;
       shadowYpos = 3.5;
       break;
-    case TextStyle.PARTY:
-    case TextStyle.PARTY_RED:
+    case TextStyle.PARTY: {
+      let fontSizeLabel = "66px";
+      switch (lang) {
+        case "ja":
+		  styleOptions.fontFamily = "pkmnems";
+		  styleOptions.padding = { top: -12, bottom: 4 };
+          break;
+        default:
+		  styleOptions.fontFamily = "pkmnems";
+          fontSizeLabel = "66px";
+          break;
+      }
+      styleOptions.fontSize = fontSizeLabel;
+      break;
+    }
+    case TextStyle.PARTY_RED: {
+      let fontSizeLabel = "30px";
+      switch (lang) {
+        case "ja":
+		  styleOptions.padding = { top: -12, bottom: 4 };
+          break;
+        default:
+          fontSizeLabel = "30px";
+          break;
+      }
       styleOptions.fontSize = defaultFontSize - 30;
       styleOptions.fontFamily = "pkmnems";
       break;
+    }
     case TextStyle.TOOLTIP_CONTENT:
       styleOptions.fontSize = defaultFontSize - 32;
       shadowXpos = 3;
