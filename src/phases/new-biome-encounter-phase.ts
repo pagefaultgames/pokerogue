@@ -14,7 +14,7 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
       if (pokemon) {
         pokemon.resetBattleAndWaveData();
         if (pokemon.isOnField()) {
-          applyAbAttrs("PostBiomeChangeAbAttr", pokemon, null);
+          applyAbAttrs("PostBiomeChangeAbAttr", { pokemon });
         }
       }
     }
