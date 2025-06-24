@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { TrainerItemReward, type ModifierType } from "#app/modifier/modifier-type";
+import type { ModifierType } from "#app/modifier/modifier-type";
 import type { ModifierTypeFunc } from "#app/@types/modifier-types";
 import { getModifierType } from "#app/utils/modifier-utils";
 import i18next from "i18next";
@@ -26,16 +26,12 @@ export class ModifierRewardPhase extends BattlePhase {
 
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
-      if (this.modifierType instanceof TrainerItemReward) {
-        this.modifierType.apply();
-      } else {
-        const newModifier = this.modifierType.newModifier();
-        globalScene.addModifier(newModifier);
-      }
+      const newModifier = this.modifierType.newModifier();
+      globalScene.addModifier(newModifier);
       globalScene.playSound("item_fanfare");
       globalScene.ui.showText(
         i18next.t("battle:rewardGain", {
-          modifierName: this.modifierType.name,
+          modifierName: newModifier?.type.name,
         }),
         null,
         () => resolve(),

@@ -58,7 +58,7 @@ export class HeldItem {
   }
 
   get name(): string {
-    return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.name`) + " (new)";
+    return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.name`);
   }
 
   get description(): string {

@@ -343,6 +343,7 @@ export class EncounterPhase extends BattlePhase {
         }
       },
     });
+    globalScene.updateItems(false);
 
     const encounterIntroVisuals = globalScene.currentBattle?.mysteryEncounter?.introVisuals;
     if (encounterIntroVisuals) {

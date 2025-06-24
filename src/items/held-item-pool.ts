@@ -1,6 +1,6 @@
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { coerceArray, getEnumValues, pickWeightedIndex, randSeedInt } from "#app/utils/common";
+import { coerceArray, getEnumValues, isNullOrUndefined, pickWeightedIndex, randSeedInt } from "#app/utils/common";
 import { BerryType } from "#enums/berry-type";
 import { HeldItemCategoryId, HeldItemId, HeldItemNames, isCategoryId } from "#enums/held-item-id";
 import { HeldItemPoolType } from "#enums/modifier-pool-type";
@@ -93,7 +93,9 @@ export function assignEnemyHeldItemsForWave(
       enemy,
       upgradeChance && !randSeedInt(upgradeChance) ? 1 : 0,
     );
-    enemy.heldItemManager.add(item);
+    if (item) {
+      enemy.heldItemManager.add(item);
+    }
   }
   if (!(waveIndex % 1000)) {
     enemy.heldItemManager.add(HeldItemId.MINI_BLACK_HOLE);
@@ -150,7 +152,8 @@ function getNewHeldItemFromTieredPool(
 export function getNewVitaminHeldItem(customWeights: HeldItemWeights = {}, target?: Pokemon): HeldItemId {
   const items = PERMANENT_STATS.map(s => permanentStatToHeldItem[s]);
   const weights = items.map(t => (target?.heldItemManager.isMaxStack(t) ? 0 : (customWeights[t] ?? 1)));
-  return items[pickWeightedIndex(weights)];
+  const pickedIndex = pickWeightedIndex(weights);
+  return !isNullOrUndefined(pickedIndex) ? items[pickedIndex] : 0;
 }
 
 export function getNewBerryHeldItem(customWeights: HeldItemWeights = {}, target?: Pokemon): HeldItemId {
@@ -166,7 +169,8 @@ export function getNewBerryHeldItem(customWeights: HeldItemWeights = {}, target?
         : 1,
   );
 
-  return items[pickWeightedIndex(weights)];
+  const pickedIndex = pickWeightedIndex(weights);
+  return !isNullOrUndefined(pickedIndex) ? items[pickedIndex] : 0;
 }
 
 export function getNewAttackTypeBoosterHeldItem(
@@ -203,8 +207,8 @@ export function getNewAttackTypeBoosterHeldItem(
       : (customWeights[attackTypeToHeldItem[type]] ?? attackMoveTypeWeights.get(type)!),
   );
 
-  const type = types[pickWeightedIndex(weights)];
-  return attackTypeToHeldItem[type];
+  const pickedIndex = pickWeightedIndex(weights);
+  return !isNullOrUndefined(pickedIndex) ? attackTypeToHeldItem[types[pickedIndex]] : 0;
 }
 
 export function getNewHeldItemFromCategory(
@@ -246,7 +250,11 @@ function getPoolWeights(pool: HeldItemPool, pokemon: Pokemon): number[] {
 function getNewHeldItemFromPool(pool: HeldItemPool, pokemon: Pokemon, party?: Pokemon[]): HeldItemId | HeldItemSpecs {
   const weights = getPoolWeights(pool, pokemon);
 
-  const entry = pool[pickWeightedIndex(weights)].entry;
+  const pickedIndex = pickWeightedIndex(weights);
+  if (isNullOrUndefined(pickedIndex)) {
+    return 0;
+  }
+  const entry = pool[pickedIndex].entry;
 
   if (typeof entry === "number") {
     if (isCategoryId(entry)) {

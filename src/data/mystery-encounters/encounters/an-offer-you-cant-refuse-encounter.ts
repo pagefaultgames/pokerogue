@@ -1,5 +1,4 @@
 import {
-  generateModifierType,
   leaveEncounterWithoutBattle,
   setEncounterExp,
   updatePlayerMoney,
@@ -24,6 +23,8 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import i18next from "i18next";
+import { allTrainerItems } from "#app/items/all-trainer-items";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/anOfferYouCantRefuse";
@@ -109,8 +110,8 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
       }
     }
 
-    const shinyCharm = generateModifierType(modifierTypes.SHINY_CHARM);
-    encounter.setDialogueToken("itemName", shinyCharm?.name ?? i18next.t("modifierType:ModifierType.SHINY_CHARM.name"));
+    const name = allTrainerItems[TrainerItemId.SHINY_CHARM].name;
+    encounter.setDialogueToken("itemName", name ?? i18next.t("modifierType:ModifierType.SHINY_CHARM.name"));
     encounter.setDialogueToken("liepardName", getPokemonSpecies(SpeciesId.LIEPARD).getName());
 
     return true;

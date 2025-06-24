@@ -1,5 +1,4 @@
 import type Battle from "#app/battle";
-import { BattleType } from "#enums/battle-type";
 import { biomeLinks, BiomePoolTier } from "#app/data/balance/biomes";
 import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
@@ -11,12 +10,7 @@ import { EnemyPokemon } from "#app/field/pokemon";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { FieldPosition } from "#enums/field-position";
 import type { CustomModifierSettings, ModifierType } from "#app/modifier/modifier-type";
-import {
-  getPartyLuckValue,
-  ModifierTypeGenerator,
-  ModifierTypeOption,
-  regenerateModifierPoolThresholds,
-} from "#app/modifier/modifier-type";
+import { getPartyLuckValue, ModifierTypeGenerator, ModifierTypeOption } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/data/data-lists";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type PokemonData from "#app/system/pokemon-data";
@@ -202,6 +196,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
 
   battle.enemyLevels.forEach((level, e) => {
     let enemySpecies: PokemonSpecies | undefined;
+    let heldItemConfig: HeldItemConfiguration = [];
     let dataSource: PokemonData | undefined;
     let isBoss = false;
     if (!loaded) {
@@ -213,12 +208,14 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
           dataSource = config.dataSource;
           enemySpecies = config.species;
           isBoss = config.isBoss;
+          heldItemConfig = config.heldItemConfig ?? [];
           battle.enemyParty[e] = globalScene.addEnemyPokemon(
             enemySpecies,
             level,
             TrainerSlot.TRAINER,
             isBoss,
             false,
+            heldItemConfig,
             dataSource,
           );
         } else {
@@ -228,6 +225,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
         if (partyConfig?.pokemonConfigs && e < partyConfig.pokemonConfigs.length) {
           const config = partyConfig.pokemonConfigs[e];
           level = config.level ? config.level : level;
+          heldItemConfig = config.heldItemConfig ?? [];
           dataSource = config.dataSource;
           enemySpecies = config.species;
           isBoss = config.isBoss;
@@ -244,6 +242,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
           TrainerSlot.NONE,
           isBoss,
           false,
+          heldItemConfig,
           dataSource,
         );
       }
@@ -430,16 +429,6 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
       enemyPokemon_2.x += 300;
     }
   });
-  if (!loaded) {
-    regenerateModifierPoolThresholds(
-      globalScene.getEnemyField(),
-      battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD,
-    );
-    const customModifierTypes = partyConfig?.pokemonConfigs
-      ?.filter(config => config?.heldItemConfig)
-      .map(config => config.heldItemConfig!);
-    globalScene.generateEnemyModifiers(customModifierTypes);
-  }
 }
 
 /**

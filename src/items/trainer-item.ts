@@ -68,7 +68,7 @@ export class TrainerItem {
   }
 
   get name(): string {
-    return i18next.t(`modifierType:ModifierType.${TrainerItemNames[this.type]}.name`) + " (new)";
+    return i18next.t(`modifierType:ModifierType.${TrainerItemNames[this.type]}.name`);
   }
 
   get description(): string {
@@ -172,7 +172,7 @@ export class ExpBoosterTrainerItem extends TrainerItem {
     this.boostPercent = boostPercent;
   }
 
-  getDescription(): string {
+  get description(): string {
     return i18next.t("modifierType:ModifierType.ExpBoosterModifierType.description", {
       boostPercent: this.boostPercent,
     });
@@ -283,7 +283,7 @@ export class LapsingTrainerItem extends TrainerItem {
 export class DoubleBattleChanceBoosterTrainerItem extends LapsingTrainerItem {
   public effects: TRAINER_ITEM_EFFECT[] = [TRAINER_ITEM_EFFECT.DOUBLE_BATTLE_CHANCE_BOOSTER];
 
-  getDescription(): string {
+  get description(): string {
     return i18next.t("modifierType:ModifierType.DoubleBattleChanceBoosterModifierType.description", {
       battleCount: this.getMaxStackCount(),
     });
@@ -320,7 +320,12 @@ export class TempStatStageBoosterTrainerItem extends LapsingTrainerItem {
     this.stat = stat;
   }
 
-  getDescription(): string {
+  get name(): string {
+    return i18next.t(`modifierType:TempStatStageBoosterItem.${TrainerItemNames[this.type]?.toLowerCase()}`);
+  }
+
+  get description(): string {
+    console.log();
     return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
       stat: i18next.t(getStatKey(this.stat)),
       amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.extra.percentage"),
@@ -337,7 +342,12 @@ export class TempStatStageBoosterTrainerItem extends LapsingTrainerItem {
 export class TempAccuracyBoosterTrainerItem extends LapsingTrainerItem {
   public effects: TRAINER_ITEM_EFFECT[] = [TRAINER_ITEM_EFFECT.TEMP_ACCURACY_BOOSTER];
 
-  getDescription(): string {
+  get name(): string {
+    return i18next.t(`modifierType:TempStatStageBoosterItem.${TrainerItemNames[this.type]?.toLowerCase()}`);
+  }
+
+  get description(): string {
+    console.log();
     return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
       stat: i18next.t(getStatKey(Stat.ACC)),
       amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.extra.percentage"),
@@ -361,7 +371,7 @@ export class TempCritBoosterTrainerItem extends LapsingTrainerItem {
     this.stat = stat;
   }
 
-  getDescription(): string {
+  get description(): string {
     return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
       stat: i18next.t("modifierType:ModifierType.DIRE_HIT.extra.raises"),
       amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.extra.stage"),
@@ -449,7 +459,7 @@ export class EnemyAttackStatusEffectChanceTrainerItem extends TrainerItem {
     this.effect = effect;
   }
 
-  getDescription(): string {
+  get description(): string {
     return i18next.t("modifierType:ModifierType.EnemyAttackStatusEffectChanceModifierType.description", {
       chancePercent: this.getChance() * 100,
       statusEffect: getStatusEffectDescriptor(this.effect),
@@ -498,7 +508,7 @@ export class EnemyEndureChanceTrainerItem extends TrainerItem {
   public effects: TRAINER_ITEM_EFFECT[] = [TRAINER_ITEM_EFFECT.ENEMY_ENDURE_CHANCE];
   public chance = 2;
 
-  getDescription(): string {
+  get description(): string {
     return i18next.t("modifierType:ModifierType.EnemyEndureChanceModifierType.description", {
       chancePercent: this.chance,
     });

@@ -643,11 +643,11 @@ export function enumValueToKey<T extends Record<string, string | number>>(input:
   throw new Error(`Invalid value passed to \`enumValueToKey\`! Value: ${val}`);
 }
 
-export function pickWeightedIndex(weights: number[]): number {
+export function pickWeightedIndex(weights: number[]): number | undefined {
   const totalWeight = weights.reduce((sum, w) => sum + w, 0);
 
   if (totalWeight <= 0) {
-    throw new Error("Total weight must be greater than 0.");
+    return undefined;
   }
 
   let r = randSeedFloat() * totalWeight;
@@ -659,5 +659,5 @@ export function pickWeightedIndex(weights: number[]): number {
     r -= weights[i];
   }
 
-  return -1; // TODO: Change to something more appropriate
+  return undefined; // TODO: Change to something more appropriate
 }

@@ -346,8 +346,6 @@ export class TrainerItemReward extends ModifierType {
   }
 
   get name(): string {
-    console.log("ITEM:", this.itemId);
-    console.log(allTrainerItems[this.itemId]);
     return allTrainerItems[this.itemId].name;
   }
 

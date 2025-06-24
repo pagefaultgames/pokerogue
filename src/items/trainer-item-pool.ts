@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { pickWeightedIndex } from "#app/utils/common";
+import { isNullOrUndefined, pickWeightedIndex } from "#app/utils/common";
 import { RewardTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import { allTrainerItems } from "./all-trainer-items";
@@ -20,7 +20,11 @@ function getPoolWeights(pool: TrainerItemPool, manager: TrainerItemManager): num
 export function getNewTrainerItemFromPool(pool: TrainerItemPool, manager: TrainerItemManager): TrainerItemId {
   const weights = getPoolWeights(pool, manager);
 
-  const entry = pool[pickWeightedIndex(weights)].entry;
+  const pickedIndex = pickWeightedIndex(weights);
+  if (isNullOrUndefined(pickedIndex)) {
+    return 0;
+  }
+  const entry = pool[pickedIndex].entry;
 
   return entry as TrainerItemId;
 }
