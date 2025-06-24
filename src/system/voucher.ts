@@ -12,28 +12,39 @@ export enum VoucherType {
   GOLDEN,
 }
 
+const VoucherTypeNames: Record<VoucherType, string> = {
+  [VoucherType.REGULAR]: "voucher:eggVoucher",
+  [VoucherType.PLUS]: "voucher:eggVoucherPlus",
+  [VoucherType.PREMIUM]: "voucher:eggVoucherPremium",
+  [VoucherType.GOLDEN]: "voucher:eggVoucherGold",
+};
+
+const VoucherTypeIcons: Record<VoucherType, string> = {
+  [VoucherType.REGULAR]: "coupon",
+  [VoucherType.PLUS]: "pair_of_tickets",
+  [VoucherType.PREMIUM]: "mystic_ticket",
+  [VoucherType.GOLDEN]: "golden_mystic_ticket",
+};
+
+const VoucherTiers: Record<VoucherType, AchvTier> = {
+  [VoucherType.REGULAR]: AchvTier.COMMON,
+  [VoucherType.PLUS]: AchvTier.GREAT,
+  [VoucherType.PREMIUM]: AchvTier.ULTRA,
+  [VoucherType.GOLDEN]: AchvTier.ROGUE,
+};
+
 export class Voucher {
-  public id: string;
-  public voucherType: VoucherType;
-  public description: string;
-
-  private conditionFunc: ConditionFn | undefined;
-
-  constructor(voucherType: VoucherType, description: string, conditionFunc?: ConditionFn) {
-    this.description = description;
-    this.voucherType = voucherType;
-    this.conditionFunc = conditionFunc;
-  }
+  public id = "";
+  constructor(
+    public voucherType: VoucherType,
+    public description: string,
+    private conditionFunc?: ConditionFn,
+  ) {}
 
   validate(args?: any[]): boolean {
     return !this.conditionFunc || this.conditionFunc(args);
   }
 
-  /**
-   * Get the name of the voucher
-   * @param _playerGender - this is ignored here. It's only there to match the signature of the function in the Achv class
-   * @returns the name of the voucher
-   */
   getName(_playerGender: PlayerGender): string {
     return getVoucherTypeName(this.voucherType);
   }
@@ -43,43 +54,16 @@ export class Voucher {
   }
 
   getTier(): AchvTier {
-    switch (this.voucherType) {
-      case VoucherType.REGULAR:
-        return AchvTier.COMMON;
-      case VoucherType.PLUS:
-        return AchvTier.GREAT;
-      case VoucherType.PREMIUM:
-        return AchvTier.ULTRA;
-      case VoucherType.GOLDEN:
-        return AchvTier.ROGUE;
-    }
+    return VoucherTiers[this.voucherType];
   }
 }
 
 export function getVoucherTypeName(voucherType: VoucherType): string {
-  switch (voucherType) {
-    case VoucherType.REGULAR:
-      return i18next.t("voucher:eggVoucher");
-    case VoucherType.PLUS:
-      return i18next.t("voucher:eggVoucherPlus");
-    case VoucherType.PREMIUM:
-      return i18next.t("voucher:eggVoucherPremium");
-    case VoucherType.GOLDEN:
-      return i18next.t("voucher:eggVoucherGold");
-  }
+  return i18next.t(VoucherTypeNames[voucherType]);
 }
 
 export function getVoucherTypeIcon(voucherType: VoucherType): string {
-  switch (voucherType) {
-    case VoucherType.REGULAR:
-      return "coupon";
-    case VoucherType.PLUS:
-      return "pair_of_tickets";
-    case VoucherType.PREMIUM:
-      return "mystic_ticket";
-    case VoucherType.GOLDEN:
-      return "golden_mystic_ticket";
-  }
+  return VoucherTypeIcons[voucherType];
 }
 
 export interface Vouchers {
@@ -89,35 +73,34 @@ export interface Vouchers {
 export const vouchers: Vouchers = {};
 
 export function initVouchers() {
-  for (const achv of [achvs.CLASSIC_VICTORY]) {
-    const voucherType =
-      achv.score >= 150
-        ? VoucherType.GOLDEN
-        : achv.score >= 100
-          ? VoucherType.PREMIUM
-          : achv.score >= 75
-            ? VoucherType.PLUS
-            : VoucherType.REGULAR;
-    vouchers[achv.id] = new Voucher(voucherType, getAchievementDescription(achv.localizationKey));
-  }
+  const getVoucherTypeByScore = (score: number): VoucherType => {
+    if (score >= 150) return VoucherType.GOLDEN;
+    if (score >= 100) return VoucherType.PREMIUM;
+    if (score >= 75) return VoucherType.PLUS;
+    return VoucherType.REGULAR;
+  };
 
-  const bossTrainerTypes = Object.keys(trainerConfigs).filter(
-    tt =>
-      trainerConfigs[tt].isBoss &&
-      trainerConfigs[tt].getDerivedType() !== TrainerType.RIVAL &&
-      trainerConfigs[tt].hasVoucher,
+  vouchers[achvs.CLASSIC_VICTORY.id] = new Voucher(
+    getVoucherTypeByScore(achvs.CLASSIC_VICTORY.score),
+    getAchievementDescription(achvs.CLASSIC_VICTORY.localizationKey),
   );
 
-  for (const trainerType of bossTrainerTypes) {
-    const voucherType = trainerConfigs[trainerType].moneyMultiplier < 10 ? VoucherType.PLUS : VoucherType.PREMIUM;
-    const key = TrainerType[trainerType];
-    const trainerName = trainerConfigs[trainerType].name;
-    const trainer = trainerConfigs[trainerType];
-    const title = trainer.title ? ` (${trainer.title})` : "";
-    vouchers[key] = new Voucher(voucherType, `${i18next.t("voucher:defeatTrainer", { trainerName })} ${title}`);
+  for (const [key, config] of Object.entries(trainerConfigs)) {
+    if (
+      config.isBoss &&
+      config.getDerivedType() !== TrainerType.RIVAL &&
+      config.hasVoucher
+    ) {
+      const voucherType = config.moneyMultiplier < 10 ? VoucherType.PLUS : VoucherType.PREMIUM;
+      const title = config.title ? ` (${config.title})` : "";
+      vouchers[TrainerType[key as keyof typeof TrainerType]] = new Voucher(
+        voucherType,
+        `${i18next.t("voucher:defeatTrainer", { trainerName: config.name })}${title}`,
+      );
+    }
   }
-  const voucherKeys = Object.keys(vouchers);
-  for (const k of voucherKeys) {
-    vouchers[k].id = k;
+
+  for (const [key, voucher] of Object.entries(vouchers)) {
+    voucher.id = key;
   }
 }
