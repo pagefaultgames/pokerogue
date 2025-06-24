@@ -586,6 +586,7 @@ export class MovePhase extends BattlePhase {
    *
    * If there is no last attacker or they are no longer on the field, a message is displayed and the
    * move is marked for failure.
+   * @todo Make this a feature of the move rather than basing logic on {@linkcode BattlerIndex.ATTACKER}
    */
   protected resolveCounterAttackTarget(): void {
     if (this.targets.length !== 1 || this.targets[0] !== BattlerIndex.ATTACKER) {
@@ -594,24 +595,23 @@ export class MovePhase extends BattlePhase {
 
     // TODO: This should be covered in move conditions
     if (this.pokemon.turnData.attacksReceived.length === 0) {
-      this.targets[0] = this.pokemon.turnData.attacksReceived[0].sourceBattlerIndex;
-
-      // account for metal burst and comeuppance hitting remaining targets in double battles
-      // counterattack will redirect to remaining ally if original attacker faints
-      if (
-        globalScene.currentBattle.double &&
-        this.move.getMove().hasFlag(MoveFlags.REDIRECT_COUNTER) &&
-        globalScene.getField()[this.targets[0]].hp === 0
-      ) {
-        const opposingField = this.pokemon.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
-        this.targets[0] = opposingField.find(p => p.hp > 0)?.getBattlerIndex() ?? BattlerIndex.ATTACKER;
-      }
-    }
-
-    if (this.targets[0] === BattlerIndex.ATTACKER) {
       this.fail();
       this.showMoveText();
       this.showFailedText();
+      return;
+    }
+
+    this.targets[0] = this.pokemon.turnData.attacksReceived[0].sourceBattlerIndex;
+
+    // account for metal burst and comeuppance hitting remaining targets in double battles
+    // counterattack will redirect to remaining ally if original attacker faints
+    if (
+      globalScene.currentBattle.double &&
+      this.move.getMove().hasFlag(MoveFlags.REDIRECT_COUNTER) &&
+      globalScene.getField()[this.targets[0]].hp === 0
+    ) {
+      const opposingField = this.pokemon.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
+      this.targets[0] = opposingField.find(p => p.hp > 0)?.getBattlerIndex() ?? BattlerIndex.ATTACKER;
     }
   }
 
