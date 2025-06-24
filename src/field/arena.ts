@@ -18,11 +18,7 @@ import { ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { BattlerIndex } from "#enums/battler-index";
 import { Terrain, TerrainType, getTerrainClearMessage, getTerrainStartMessage } from "#app/data/terrain";
-import {
-  applyAbAttrs,
-  applyPostTerrainChangeAbAttrs,
-  applyPostWeatherChangeAbAttrs,
-} from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import type Pokemon from "#app/field/pokemon";
 import Overrides from "#app/overrides";
 import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
@@ -370,7 +366,7 @@ export class Arena {
         pokemon.findAndRemoveTags(
           t => "weatherTypes" in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather),
         );
-        applyPostWeatherChangeAbAttrs("PostWeatherChangeAbAttr", pokemon, weather);
+        applyAbAttrs("PostWeatherChangeAbAttr", { pokemon, weather });
       });
 
     return true;
@@ -459,8 +455,8 @@ export class Arena {
         pokemon.findAndRemoveTags(
           t => "terrainTypes" in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain),
         );
-        applyPostTerrainChangeAbAttrs("PostTerrainChangeAbAttr", pokemon, terrain);
-        applyAbAttrs("TerrainEventTypeChangeAbAttr", pokemon, null, false);
+        applyAbAttrs("PostTerrainChangeAbAttr", { pokemon, terrain });
+        applyAbAttrs("TerrainEventTypeChangeAbAttr", { pokemon });
       });
 
     return true;
