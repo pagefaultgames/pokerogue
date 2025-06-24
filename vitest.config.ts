@@ -28,19 +28,23 @@ export default defineProject(({ mode }) => ({
         }
       },
     },
-    environment: "jsdom" as const,
+    environment: "jsdom",
     environmentOptions: {
       jsdom: {
         resources: "usable",
       },
+    },
+    typecheck: {
+      tsconfig: "tsconfig.json",
+      include: ["./test/types/**/*.{test,spec}{-|.}d.ts"],
     },
     threads: false,
     trace: true,
     restoreMocks: true,
     watch: false,
     coverage: {
-      provider: "istanbul" as const,
-      reportsDirectory: "coverage" as const,
+      provider: "istanbul",
+      reportsDirectory: "coverage",
       reporters: ["text-summary", "html"],
     },
     name: "main",

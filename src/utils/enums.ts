@@ -38,7 +38,7 @@ export function getEnumKeys<E extends EnumOrObject>(enumType: TSNumericEnum<E>):
  * @remarks
  * To retrieve the keys of a {@linkcode NormalEnum}, use {@linkcode Object.values} instead.
  */
-// NB: This does not use `EnumValues<E>` as it messes with variable highlighting in IDEs.
+// NB: This intentionally does not use `EnumValues<E>` as using `E[keyof E]` leads to improved variable highlighting in IDEs.
 export function getEnumValues<E extends EnumOrObject>(enumType: TSNumericEnum<E>): E[keyof E][] {
   return Object.values(enumType).filter(v => typeof v !== "string") as E[keyof E][];
 }
@@ -59,7 +59,10 @@ export function getEnumValues<E extends EnumOrObject>(enumType: TSNumericEnum<E>
  * @remarks
  * If multiple keys map to the same value, the first one (in insertion order) will be retrieved.
  */
-export function enumValueToKey<T extends EnumOrObject>(object: NormalEnum<T>, val: EnumValues<T>): keyof T {
+export function enumValueToKey<T extends EnumOrObject, V extends EnumValues<T>>(
+  object: NormalEnum<T>,
+  val: V,
+): keyof T {
   for (const [key, value] of Object.entries(object)) {
     if (val === value) {
       return key;
