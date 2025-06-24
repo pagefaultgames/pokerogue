@@ -177,7 +177,9 @@ export class EggHatchPhase extends Phase {
 
         globalScene.time.delayedCall(1000, () => {
           if (!this.hatched) {
-            this.evolutionBgm = globalScene.playSoundWithoutBgm("evolution");
+            if (globalScene.audioSettings.masterVolume > 0) {
+              this.evolutionBgm = globalScene.playSoundWithoutBgm("evolution");
+            }
           }
         });
 
