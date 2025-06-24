@@ -1,7 +1,7 @@
 import type { EnumOrObject, EnumValues, TSNumericEnum, NormalEnum } from "#app/@types/enum-types";
 
 import type { getEnumKeys, getEnumValues } from "#app/utils/enums";
-import { enumValueToKey } from "#app/utils/enums";
+import type { enumValueToKey } from "#app/utils/enums";
 
 import { expectTypeOf, describe, it } from "vitest";
 
@@ -94,8 +94,14 @@ describe("Enum Functions", () => {
 
   describe("enumValueToKey", () => {
     it("should retrieve values for a given key", () => {
-      // @ts-expect-error oopsie
-      expectTypeOf(enumValueToKey(testEnumString, testEnumString.testS1)).toEqualTypeOf<"testS1">();
+      expectTypeOf<
+        typeof enumValueToKey<typeof testEnumString, testEnumString.testS1>
+      >().returns.toEqualTypeOf<"testS1">();
+      expectTypeOf<typeof enumValueToKey<typeof testEnumString, testEnumString>>().returns.toEqualTypeOf<
+        "testS1" | "testS2"
+      >();
+      expectTypeOf<typeof enumValueToKey<typeof testObjNum, 1>>().returns.toEqualTypeOf<"testON1">();
+      expectTypeOf<typeof enumValueToKey<typeof testObjNum, 1 | 2>>().returns.toEqualTypeOf<"testON1" | "testON2">();
     });
   });
 });

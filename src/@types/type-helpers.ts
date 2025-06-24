@@ -2,8 +2,10 @@
  * A collection of custom utility types that aid in type checking and ensuring strict type conformity
  */
 
-// biome-ignore lint/correctness/noUnusedImports: Used in a tsdoc comment
+// biome-ignore-start lint/correctness/noUnusedImports: Used in a tsdoc comment
+import type { EnumValues } from "#app/@types/enum-types";
 import type { AbAttr } from "./ability-types";
+// biome-ignore-end lint/correctness/noUnusedImports: Used in a tsdoc comment
 
 /**
  * Exactly matches the type of the argument, preventing adding additional properties.
@@ -11,7 +13,7 @@ import type { AbAttr } from "./ability-types";
  * ⚠️ Should never be used with `extends`, as this will nullify the exactness of the type.
  *
  * As an example, used to ensure that the parameters of {@linkcode AbAttr.canApply} and {@linkcode AbAttr.getTriggerMessage} are compatible with
- * the type of the apply method
+ * the type of its {@linkcode AbAttr.apply | apply} method.
  *
  * @typeParam T - The type to match exactly
  */
@@ -26,9 +28,18 @@ export type Exact<T> = {
 export type Closed<X> = X;
 
 /**
- * Remove `readonly` from all properties of the provided type
- * @typeParam T - The type to make mutable
+ * Remove `readonly` from all properties of the provided type.
+ * @typeParam T - The type to make mutable.
  */
 export type Mutable<T> = {
   -readonly [P in keyof T]: T[P];
 };
+
+/**
+ * Type helper to obtain the keys associated with a given value inside a `const object`.
+ * @typeParam O - The type of the object
+ * @typeParam V - The type of one of O's values
+ */
+export type InferKeys<O extends Record<keyof any, unknown>, V extends EnumValues<O>> = {
+  [K in keyof O]: O[K] extends V ? K : never;
+}[keyof O];
