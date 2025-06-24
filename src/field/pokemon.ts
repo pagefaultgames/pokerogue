@@ -1404,7 +1404,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreHeldItems - Whether to ignore the user's held items during stat calculation; default `false`.
    * @returns The final in-battle value for the given stat.
    */
-   // TODO: Replace the optional parameters with an object to make calling this method less cumbersome
+  // TODO: Replace the optional parameters with an object to make calling this method less cumbersome
   getEffectiveStat(
     stat: EffectiveStat,
     opponent?: Pokemon,
@@ -2151,7 +2151,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (passive && !this.hasPassive()) {
       return false;
     }
-    const ability = !passive ? this.getAbility() : this.getPassiveAbility();
+    const ability = passive ? this.getPassiveAbility() : this.getAbility();
     if (this.isFusion() && ability.hasAttr("NoFusionAbilityAbAttr")) {
       return false;
     }

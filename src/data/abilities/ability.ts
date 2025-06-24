@@ -157,51 +157,96 @@ export class Ability implements Localizable {
     return this.attrs.some(attr => attr instanceof targetAttr);
   }
 
-  attr<T extends Constructor<AbAttr>>(AttrType: T, ...args: ConstructorParameters<T>): Ability {
+  /**
+   * Create a new {@linkcode AbAttr} instance and add it to this {@linkcode Ability}.
+   * @param attrType - The constructor of the {@linkcode AbAttr} to create.
+   * @param args - The arguments needed to instantiate the given class.
+   * @returns `this`
+   */
+  attr<T extends Constructor<AbAttr>>(AttrType: T, ...args: ConstructorParameters<T>): this {
     const attr = new AttrType(...args);
     this.attrs.push(attr);
 
     return this;
   }
 
+  /**
+   * Create a new {@linkcode AbAttr} instance with the given condition and add it to this {@linkcode Ability}.
+   * Checked before all other conditions, and is unique to the individual {@linkcode AbAttr} being created.
+   * @param condition - The {@linkcode AbAttrCondition} to add.
+   * @param attrType - The constructor of the {@linkcode AbAttr} to create.
+   * @param args - The arguments needed to instantiate the given class.
+   * @returns `this`
+   */
   conditionalAttr<T extends Constructor<AbAttr>>(
     condition: AbAttrCondition,
-    AttrType: T,
+    attrType: T,
     ...args: ConstructorParameters<T>
-  ): Ability {
-    const attr = new AttrType(...args);
+  ): this {
+    const attr = new attrType(...args);
     attr.addCondition(condition);
     this.attrs.push(attr);
 
     return this;
   }
 
-  bypassFaint(): Ability {
+  /**
+   * Make this ability trigger even if the user faints.
+   * @returns `this`
+   * @remarks
+   * This is required for abilities to trigger when revived via Reviver Seed.
+   */
+  bypassFaint(): this {
     this.isBypassFaint = true;
     return this;
   }
 
-  ignorable(): Ability {
+  /**
+   * Make this ability ignorable by effects like {@linkcode MoveId.SUNSTEEL_STRIKE | Sunsteel Strike} or {@linkcode AbilityId.MOLD_BREAKER | Mold Breaker}.
+   * @returns `this`
+   */
+  ignorable(): this {
     this.isIgnorable = true;
     return this;
   }
 
-  unsuppressable(): Ability {
+  /**
+   * Make this ability unsuppressable by effects like {@linkcode MoveId.GASTRO_ACID | Gastro Acid} or {@linkcode AbilityId.NEUTRALIZING_GAS | Neutralizing Gas}.
+   * @returns `this`
+   */
+  unsuppressable(): this {
     this.isSuppressable = false;
     return this;
   }
 
-  uncopiable(): Ability {
+  /**
+   * Make this ability uncopiable by effects like {@linkcode MoveId.ROLE_PLAY | Role Play} or {@linkcode AbilityId.TRACE | Trace}.
+   * @returns `this`
+   */
+  uncopiable(): this {
     this.isCopiable = false;
     return this;
   }
 
-  unreplaceable(): Ability {
+  /**
+   * Make this ability unreplaceable by effects like {@linkcode MoveId.SIMPLE_BEAM | Simple Beam} or {@linkcode MoveId.ENTRAINMENT | Entrainment}.
+   * @returns `this`
+   */
+  unreplaceable(): this {
     this.isReplaceable = false;
     return this;
   }
 
-  condition(condition: AbAttrCondition): Ability {
+  /**
+   * Add a condition for this ability to be applied.
+   * Applies to **all** attributes of the given ability.
+   * @param condition - The {@linkcode AbAttrCondition} to add
+   * @returns `this`
+   * @see {@linkcode AbAttr.canApply} for setting conditions per attribute type
+   * @see {@linkcode conditionalAttr} for setting individual conditions per attribute instance
+   * @todo Review if this is necessary anymore - this is used extremely sparingly
+   */
+  condition(condition: AbAttrCondition): this {
     this.conditions.push(condition);
 
     return this;
@@ -242,7 +287,11 @@ export class Ability implements Localizable {
   }
 }
 
-/** Base set of parameters passed to every ability attribute's apply method */
+/**
+ * Base set of parameters passed to every ability attribute's {@linkcode AbAttr.apply | apply} method.
+ *
+ * Extended by sub-classes to contain additional parameters pertaining to the ability type(s) being triggered.
+ */
 export interface AbAttrBaseParams {
   /** The pokemon that has the ability being applied */
   readonly pokemon: Pokemon;
@@ -273,9 +322,20 @@ export interface AbAttrParamsWithCancel extends AbAttrBaseParams {
   readonly cancelled: BooleanHolder;
 }
 
+/**
+ * Abstract class for all ability attributes.
+ *
+ * Each {@linkcode Ability} may have any number of individual attributes, each functioning independently from one another.
+ */
 export abstract class AbAttr {
-  public showAbility: boolean;
-  private extraCondition: AbAttrCondition;
+  /**
+   * Whether to show this ability as a flyout when applying its effects.
+   * Should be kept in parity with mainline where possible.
+   * @defaultValue `true`
+   */
+  public showAbility = true;
+  /** The additional condition associated with this AbAttr, if any. */
+  private extraCondition?: AbAttrCondition;
 
   /**
    * Return whether this attribute is of the given type.
@@ -303,21 +363,43 @@ export abstract class AbAttr {
   }
 
   /**
-   * Apply ability effects without checking conditions.
-   * **Never call this method directly, use {@linkcode applyAbAttrs} instead.**
+   * Apply this attribute's effects without checking conditions.
+   *
+   * @remarks
+   * **Never call this method directly!** \
+   * Use {@linkcode applyAbAttrs} instead.
    */
   apply(_params: AbAttrBaseParams): void {}
 
-  // The `Exact` in the next two signatures enforces that the type of the _params operand
-  // is always compatible with the type of apply. This allows fewer fields, but never a type with more.
+  /**
+   * Return the trigger message to show when this attribute is executed.
+   * @param _params - The parameters passed to this attribute's {@linkcode apply} function; must match type exactly
+   * @param _abilityName - The name of the current ability.
+   * @privateRemarks
+   * If more fields are provided than needed, any excess can be discarded using destructuring.
+   * @todo Remove `null` from signature in lieu of using an empty string
+   */
   getTriggerMessage(_params: Exact<Parameters<this["apply"]>[0]>, _abilityName: string): string | null {
     return null;
   }
 
+  /**
+   * Check whether this attribute can have its effects successfully applied.
+   * Applies to **all** instances of the given attribute.
+   * @param _params - The parameters passed to this attribute's {@linkcode apply} function; must match type exactly
+   * @privateRemarks
+   * If more fields are provided than needed, any excess can be discarded using destructuring.
+   */
   canApply(_params: Exact<Parameters<this["apply"]>[0]>): boolean {
     return true;
   }
 
+  /**
+   * Return the additional condition associated with this particular AbAttr instance, if any.
+   * @returns The extra condition for this {@linkcode AbAttr}, or `null` if none exist
+   * @todo Make this use `undefined` instead of `null`
+   * @todo Prevent this from being overridden by super classes
+   */
   getCondition(): AbAttrCondition | null {
     return this.extraCondition || null;
   }
@@ -621,7 +703,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
   private immuneType: PokemonType | null;
   private condition: AbAttrCondition | null;
 
-  // TODO: `immuneType` shouldn't be able to be `null`
+  // TODO: Change NonSuperEffectiveImmunityAbAttr` to not pass `null` as immune type
   constructor(immuneType: PokemonType | null, condition?: AbAttrCondition) {
     super(true);
 
@@ -5695,11 +5777,13 @@ export class InfiltratorAbAttr extends AbAttr {
  * Allows the source to bounce back {@linkcode MoveFlags.REFLECTABLE | Reflectable}
  *  moves as if the user had used {@linkcode MoveId.MAGIC_COAT | Magic Coat}.
  * @sealed
+ * @todo Make reflection a part of this ability's effects
  */
 export class ReflectStatusMoveAbAttr extends AbAttr {
   private declare readonly _: never;
 }
 
+// TODO: Make these ability attributes be flags instead of dummy attributes
 /** @sealed */
 export class NoTransformAbilityAbAttr extends AbAttr {
   private declare readonly _: never;

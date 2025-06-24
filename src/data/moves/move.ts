@@ -1235,7 +1235,8 @@ interface MoveEffectAttrOptions {
   effectChanceOverride?: number;
 }
 
-/** Base class defining all Move Effect Attributes
+/**
+ * Base class defining all Move Effect Attributes
  * @extends MoveAttr
  * @see {@linkcode apply}
  */
@@ -1253,8 +1254,7 @@ export class MoveEffectAttr extends MoveAttr {
 
   /**
    * Defines when this effect should trigger in the move's effect order.
-   * @default MoveEffectTrigger.POST_APPLY
-   * @see {@linkcode MoveEffectTrigger}
+   * @defaultValue {@linkcode MoveEffectTrigger.POST_APPLY}
    */
   public get trigger () {
     return this.options?.trigger ?? MoveEffectTrigger.POST_APPLY;
@@ -1263,7 +1263,7 @@ export class MoveEffectAttr extends MoveAttr {
   /**
    * `true` if this effect should only trigger on the first hit of
    * multi-hit moves.
-   * @default false
+   * @defaultValue `false`
    */
   public get firstHitOnly () {
     return this.options?.firstHitOnly ?? false;
@@ -1272,7 +1272,7 @@ export class MoveEffectAttr extends MoveAttr {
   /**
    * `true` if this effect should only trigger on the last hit of
    * multi-hit moves.
-   * @default false
+   * @defaultValue `false`
    */
   public get lastHitOnly () {
     return this.options?.lastHitOnly ?? false;
@@ -1281,7 +1281,7 @@ export class MoveEffectAttr extends MoveAttr {
   /**
    * `true` if this effect should apply only upon hitting a target
    * for the first time when targeting multiple {@linkcode Pokemon}.
-   * @default false
+   * @defaultValue `false`
    */
   public get firstTargetOnly () {
     return this.options?.firstTargetOnly ?? false;
@@ -3277,7 +3277,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
 
   /**
    * `true` to display a message for the stat change.
-   * @default true
+   * @defaultValue `true`
    */
   private get showMessage () {
     return this.options?.showMessage ?? true;

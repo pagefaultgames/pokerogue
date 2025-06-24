@@ -123,7 +123,7 @@ import { EaseType } from "#enums/ease-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattleStyle } from "#enums/battle-style";
 import { BiomeId } from "#enums/biome-id";
-import type { ExpNotification } from "#enums/exp-notification";
+import { ExpNotification } from "#enums/exp-notification";
 import { MoneyFormat } from "#enums/money-format";
 import { MoveId } from "#enums/move-id";
 import { PlayerGender } from "#enums/player-gender";
@@ -206,6 +206,7 @@ export default class BattleScene extends SceneBase {
   public enableMoveInfo = true;
   public enableRetries = false;
   public hideIvs = false;
+  // TODO: Remove all plain numbers in place of enums or `const object` equivalents for clarity
   /**
    * Determines the condition for a notification should be shown for Candy Upgrades
    * - 0 = 'Off'
@@ -223,7 +224,7 @@ export default class BattleScene extends SceneBase {
   public uiTheme: UiTheme = UiTheme.DEFAULT;
   public windowType = 0;
   public experimentalSprites = false;
-  public musicPreference: number = MusicPreference.ALLGENS;
+  public musicPreference: MusicPreference = MusicPreference.ALLGENS;
   public moveAnimations = true;
   public expGainsSpeed: ExpGainsSpeed = ExpGainsSpeed.DEFAULT;
   public skipSeenDialogues = false;
@@ -234,33 +235,18 @@ export default class BattleScene extends SceneBase {
    * - 2 = Always (automatically skip animation when hatching 2 or more eggs)
    */
   public eggSkipPreference = 0;
-
   /**
-   * Defines the experience gain display mode.
-   *
-   * @remarks
-   * The `expParty` can have several modes:
-   * - `0` - Default: The normal experience gain display, nothing changed.
-   * - `1` - Level Up Notification: Displays the level up in the small frame instead of a message.
-   * - `2` - Skip: No level up frame nor message.
-   *
-   * Modes `1` and `2` are still compatible with stats display, level up, new move, etc.
-   * @default 0 - Uses the default normal experience gain display.
+   * Defines the {@linkcode ExpNotification | Experience gain display mode}.
+   * @defaultValue {@linkcode ExpNotification.DEFAULT}
    */
-  public expParty: ExpNotification = 0;
+  public expParty: ExpNotification = ExpNotification.DEFAULT;
   public hpBarSpeed = 0;
   public fusionPaletteSwaps = true;
   public enableTouchControls = false;
   public enableVibration = false;
   public showBgmBar = true;
-
-  /**
-   * Determines the selected battle style.
-   * - 0 = 'Switch'
-   * - 1 = 'Set' - The option to switch the active pokemon at the start of a battle will not display.
-   */
-  public battleStyle: number = BattleStyle.SWITCH;
-
+  /** Determines the selected battle style. */
+  public battleStyle: BattleStyle = BattleStyle.SWITCH;
   /**
    * Defines whether or not to show type effectiveness hints
    * - true: No hints
