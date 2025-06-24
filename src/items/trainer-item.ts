@@ -388,6 +388,10 @@ export class EnemyDamageBoosterTrainerItem extends TrainerItem {
   public effects: TRAINER_ITEM_EFFECT[] = [TRAINER_ITEM_EFFECT.ENEMY_DAMAGE_BOOSTER];
   public damageBoost = 1.05;
 
+  get iconName(): string {
+    return "wl_item_drop";
+  }
+
   apply(manager: TrainerItemManager, params: NUMBER_HOLDER_PARAMS): boolean {
     const stack = manager.getStack(this.type);
     const multiplier = params.numberHolder;
@@ -406,6 +410,10 @@ export class EnemyDamageReducerTrainerItem extends TrainerItem {
   public effects: TRAINER_ITEM_EFFECT[] = [TRAINER_ITEM_EFFECT.ENEMY_DAMAGE_REDUCER];
   public damageReduction = 0.975;
 
+  get iconName(): string {
+    return "wl_guard_spec";
+  }
+
   apply(manager: TrainerItemManager, params: NUMBER_HOLDER_PARAMS): boolean {
     const stack = manager.getStack(this.type);
     const multiplier = params.numberHolder;
@@ -423,6 +431,10 @@ export class EnemyDamageReducerTrainerItem extends TrainerItem {
 export class EnemyTurnHealTrainerItem extends TrainerItem {
   public effects: TRAINER_ITEM_EFFECT[] = [TRAINER_ITEM_EFFECT.ENEMY_HEAL];
   public healPercent = 2;
+
+  get iconName(): string {
+    return "wl_potion";
+  }
 
   apply(manager: TrainerItemManager, params: POKEMON_PARAMS): boolean {
     const stack = manager.getStack(this.type);
@@ -459,6 +471,19 @@ export class EnemyAttackStatusEffectChanceTrainerItem extends TrainerItem {
     this.effect = effect;
   }
 
+  get iconName(): string {
+    if (this.effect === StatusEffect.POISON) {
+      return "wl_antidote";
+    }
+    if (this.effect === StatusEffect.PARALYSIS) {
+      return "wl_paralyze_heal";
+    }
+    if (this.effect === StatusEffect.BURN) {
+      return "wl_burn_heal";
+    }
+    return "";
+  }
+
   get description(): string {
     return i18next.t("modifierType:ModifierType.EnemyAttackStatusEffectChanceModifierType.description", {
       chancePercent: this.getChance() * 100,
@@ -487,6 +512,10 @@ export class EnemyStatusEffectHealChanceTrainerItem extends TrainerItem {
   public effects: TRAINER_ITEM_EFFECT[] = [TRAINER_ITEM_EFFECT.ENEMY_STATUS_HEAL_CHANCE];
   public chance = 0.025;
 
+  get iconName(): string {
+    return "wl_full_heal";
+  }
+
   apply(manager: TrainerItemManager, params: POKEMON_PARAMS): boolean {
     const stack = manager.getStack(this.type);
     const enemyPokemon = params.pokemon;
@@ -507,6 +536,10 @@ export class EnemyStatusEffectHealChanceTrainerItem extends TrainerItem {
 export class EnemyEndureChanceTrainerItem extends TrainerItem {
   public effects: TRAINER_ITEM_EFFECT[] = [TRAINER_ITEM_EFFECT.ENEMY_ENDURE_CHANCE];
   public chance = 2;
+
+  get iconName(): string {
+    return "wl_reset_urge";
+  }
 
   get description(): string {
     return i18next.t("modifierType:ModifierType.EnemyEndureChanceModifierType.description", {
@@ -533,6 +566,10 @@ export class EnemyEndureChanceTrainerItem extends TrainerItem {
 export class EnemyFusionChanceTrainerItem extends TrainerItem {
   public effects: TRAINER_ITEM_EFFECT[] = [TRAINER_ITEM_EFFECT.ENEMY_FUSED_CHANCE];
   public chance = 0.01;
+
+  get iconName(): string {
+    return "wl_custom_spliced";
+  }
 
   apply(manager: TrainerItemManager, params: BOOLEAN_HOLDER_PARAMS) {
     const stack = manager.getStack(this.type);
