@@ -7031,7 +7031,7 @@ export class NaturePowerAttr extends CallMoveAttr {
 }
 
 /**
- * Attribute used to copy a previously-used move.
+ * Attribute used to copy the last move executed.
  * Used for {@linkcode MoveId.COPYCAT} and {@linkcode MoveId.MIRROR_MOVE}.
  */
 export class CopyMoveAttr extends CallMoveAttr {
@@ -7047,10 +7047,14 @@ export class CopyMoveAttr extends CallMoveAttr {
     super(selfTarget);
   }
 
+  /**
+   * If `selfTarget` is `true`, grab the last successful move used by anyone.
+   * Otherwise, select the last move used by the target.
+   */
   override getMove(_user: Pokemon, target: Pokemon): MoveId {
     return this.selfTarget
-      ? globalScene.currentBattle.lastMove
-      : target.getLastXMoves()[0]?.move ?? MoveId.NONE
+      ? target.getLastXMoves()[0]?.move ?? MoveId.NONE
+      : globalScene.currentBattle.lastMove
   }
 
   getCondition(): MoveConditionFunc {
