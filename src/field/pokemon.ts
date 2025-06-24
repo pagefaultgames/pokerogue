@@ -4670,18 +4670,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Check if a status effect can be applied to this {@linkcode Pokemon}.
    *
-   * @param effect - The {@linkcode StatusEffect} whose applicability is being checked.
-   * @param quiet - Whether to suppress in-battle messages for status checks; default `false`.
-   * @param overrideStatus - Whether to allow overriding the Pokemon's current status with a different one; default `false`.
+   * @param effect - The {@linkcode StatusEffect} whose applicability is being checked
+   * @param quiet - Whether to suppress in-battle messages for status checks; default `false`
+   * @param overrideStatus - Whether to allow overriding the Pokemon's current status with a different one; default `false`
    * @param sourcePokemon - The {@linkcode Pokemon} applying the status effect to the target,
-   * or `null` if the status is applied from a non-Pokemon source (hazards, etc.); default `null`.
+   * or `null` if the status is applied from a non-Pokemon source (hazards, etc.); default `null`
    * @param ignoreField - Whether to ignore field effects (weather, terrain, etc.) preventing status application;
    * default `false`
    * @returns Whether {@linkcode effect} can be applied to this Pokemon.
    */
   // TODO: Review and verify the message order precedence in mainline if multiple status-blocking effects are present at once
   // TODO: Make argument order consistent with `trySetStatus`
-  canSetStatus(
+  public canSetStatus(
     effect: StatusEffect,
     quiet = false,
     overrideStatus = false,
@@ -4791,28 +4791,29 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Attempt to set this Pokemon's status to the specified condition.
    * Enqueues a new `ObtainStatusEffectPhase` to trigger animations, etc.
-   * @param effect - The {@linkcode StatusEffect} to set.
+   * @param effect - The {@linkcode StatusEffect} to set
    * @param sourcePokemon - The {@linkcode Pokemon} applying the status effect to the target,
-   * or `null` if the status is applied from a non-Pokemon source (hazards, etc.); default `null`.
+   * or `null` if the status is applied from a non-Pokemon source (hazards, etc.); default `null`
    * @param sleepTurnsRemaining - The number of turns to set {@linkcode StatusEffect.SLEEP} for;
-   * defaults to a random number between 2 and 4 and is unused for non-Sleep statuses.
-   * @param sourceText - The text to show for the source of the status effect, if any; default `null`.
-   * @param overrideStatus - Whether to allow overriding the Pokemon's current status with a different one; default `false`.
-   * @param quiet - Whether to suppress in-battle messages for status checks; default `true`.
-   * @param overrideMessage - A string containing text to be displayed upon status setting; defaults to normal key for status
+   * defaults to a random number between 2 and 4 and is unused for non-Sleep statuses
+   * @param sourceText - The text to show for the source of the status effect, if any; default `null`
+   * @param overrideStatus - Whether to allow overriding the Pokemon's current status with a different one; default `false`
+   * @param quiet - Whether to suppress in-battle messages for status checks; default `true`
+   * @param overrideMessage - String containing text to be displayed upon status setting; defaults to normal key for status
+   * and is used exclusively for Rest.
    * @returns Whether the status effect phase was successfully created.
    * @see {@linkcode doSetStatus} - alternate function that sets status immediately (albeit without condition checks).
    */
-  trySetStatus(
+  public trySetStatus(
     effect: StatusEffect,
     sourcePokemon: Pokemon | null = null,
     sleepTurnsRemaining?: number,
     sourceText: string | null = null,
     overrideStatus?: boolean,
     quiet = true,
-    overrideMessage?: string | undefined,
+    overrideMessage?: string,
   ): boolean {
-    // TODO: This needs to propagate failure status for non-status moves
+    // TODO: This needs to propagate failure status for status moves
     if (!effect) {
       return false;
     }
@@ -4863,7 +4864,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Set this Pokemon's {@linkcode status | status condition} to the specified effect.
    * Does **NOT** perform any feasibility checks whatsoever; must be checked by the caller.
    * @param effect - {@linkcode StatusEffect.SLEEP}
-   * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4.
+   * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
    */
   doSetStatus(effect: StatusEffect.SLEEP, sleepTurnsRemaining?: number): void;
   /**
@@ -4880,6 +4881,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param effect - The {@linkcode StatusEffect} to set
    * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
    * and is unused for all non-sleep Statuses.
+   * @todo Make this private and change tests to use a field-based helper or similar
    */
   doSetStatus(
     effect: StatusEffect,

@@ -30,7 +30,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
     battlerIndex: BattlerIndex,
     private statusEffect: StatusEffect,
     private sourcePokemon: Pokemon | null = null,
-    private sleepTurnsRemaining = 0,
+    private sleepTurnsRemaining?: number,
     sourceText: string | null = null, // TODO: This should take `undefined` instead of `null`
     private statusMessage = "",
   ) {
