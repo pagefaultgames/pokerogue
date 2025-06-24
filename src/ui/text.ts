@@ -220,17 +220,7 @@ export function getTextStyleOptions(
       shadowXpos = 3.5;
       shadowYpos = 3.5;
       break;
-    case TextStyle.PARTY: {
-      let fontSizeLabel = "66px";
-      switch (lang) {
-        case "ja":
-		  styleOptions.padding = { top: -12, bottom: 4 };
-          break;
-      }
-      styleOptions.fontSize = fontSizeLabel;
-	  styleOptions.fontFamily = "pkmnems";
-      break;
-    }
+    case TextStyle.PARTY:
     case TextStyle.PARTY_RED: {
       switch (lang) {
         case "ja":
