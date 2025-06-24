@@ -2,7 +2,8 @@
 
 Thank you for taking the time to contribute, every little bit helps. This project is entirely open-source and unmonetized - community contributions are what keep it alive!
 
-Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and absolutely *feel free to reach out reach out in the **#dev-corner** channel on [Discord](https://discord.gg/pokerogue)*. We are here to help and the better you understand what you're working on, the easier it will be for it to find its way into the game.
+Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and *feel free to reach out reach out in the **#dev-corner** channel on [Discord](https://discord.gg/pokerogue)*. 
+We are here to help and the better you understand what you're working on, the easier it will be for it to find its way into the game.
 
 ## 📄 Table of Contents
 
@@ -26,12 +27,22 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 
 - node: >=22.14.0 - [manage with pnpm](https://pnpm.io/cli/env) | [manage with fnm](https://github.com/Schniz/fnm) | [manage with nvm](https://github.com/nvm-sh/nvm)
 - pnpm: 10.x - [how to install](https://pnpm.io/installation) (not recommended to install via `npm` on Windows native) | [alternate method - volta.sh](https://volta.sh/)
+- Git (install [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)) - required to access the translations
 
-### Running Locally
+### Procedure
 
-1. Clone the repo and in the root directory run `pnpm install`
-    - *if you run into any errors, reach out in the **#dev-corner** channel on Discord*
-2. Run `pnpm start:dev` to locally run the project at `localhost:8000`
+1. Clone the repository through Git by running the following command in your desired directory:
+   ``bash
+   git clone --recurse-submodules https://github.com/pagefaultgames/pokerogue
+   ```
+   [^1]
+2. Run `pnpm install` in the newly cloned folder to download required dependencies.
+3. Run `pnpm start:dev` to locally run the project in `localhost:8000`
+
+If you run into any errors at any point, reach out in the **#dev-corner** channel in Discord and someone will be happy to help.
+
+[^1]: If you forget to use the `--recurse-submodules` flag when cloning initially (or do so via an alternate tool), consult [localization.md](./docs/localization.md) \
+for instructions on how to clone the `locales` submodule manually.
 
 ### Linting
 
@@ -60,8 +71,13 @@ You are free to comment on any issue so that you may be assigned to it and we ca
 ## 📚 Documentation
 
 You can find the auto-generated documentation [here](https://pagefaultgames.github.io/pokerogue/main/index.html).
-For information on enemy AI, check out the [enemy-ai.md](./docs/enemy-ai.md) file.
-For detailed guidelines on documenting your code, refer to the [comments.md](./docs/comments.md) file.
+
+Additionally, the [docs folder](./docs) contains a variety of in-depth documents and guides useful for aspiring contributors. \
+Notable topics include:
+- [Commenting your code](./docs/comments.md)
+- [Linting & Formatting](./docs/linting.md)
+- [Localization](./docs/localization.md)
+- [Enemy AI move selection](./docs/enemy-ai.md)
 
 Again, if you have unanswered questions please feel free to ask!
 
@@ -103,59 +119,7 @@ Most non-trivial changes (*especially bug fixes*) should come along with new tes
 
 ## 📜 Localization
 
-The project intends for all text to be localized. That is, strings are pulled from translation files using keys (depending on the current language) and *never* hardcoded as a particular language. Note that there is a PDF in a message pinned in **#dev-corner** which gives the following information in greater detail.
-
-### Setting Up and Updating the Locales Submodule
-> The locales (translation) files are set up as a git submodule. A project-in-a-project, if you will.
-
-To fetch translations when you first start development in your fork or to update them on your local branch, run:
-```bash
-git submodule update --progress --init --recursive
-```
-
-### How Localizations Work
-> This project uses the [i18next](https://www.i18next.com/) library to integrate translations from public/locales
-into the source code based on the user's settings or location. The basic process for
-fetching translated text is as follows:
-1. The source code fetches text by a given key, e.g.
-
-    ```ts 
-    i18next.t("fileName:keyName", { arg1: "Hello", arg2: "an example", ... }) 
-    ```
-2. The game looks up the key in the corresponding JSON file in the user's
-language, e.g.
-
-    ```ts
-    // from "en/file-name.json"...
-    "keyName": "{{arg1}}! This is {{arg2}} of translated text!" 
-    ```
-    If the key doesn't exist for the user's language, the game will default to the
-corresponding English key (in the case of LATAM Spanish, it will first default to ES Spanish).
-
-3. The game shows the text to the user:
-
-    ```ts
-    "Hello! This is an example of translated text!"
-    ```
-### Adding Translated Text
-> If your feature involves new or modified text in any form, then you will be modifying the [locales](https://github.com/pagefaultgames/pokerogue-locales) repository. ***Never hardcode new text in any language!*** 
-
-The workflow is:
-
-1.  Make a pull request to the main repository for your new feature. 
-If this feature requires new text, the text should be integrated into the code with a new i18next key pointing to where you plan to add it into the pokerogue-locales repository.
-
-2. Make another pull request -- this time to the [pokerogue-locales](https://github.com/pagefaultgames/pokerogue-locales)
-repository -- adding a new entry to the English locale with text for each key
-you added to your main PR. You *only* need to add the English key and value - the translation team will handle the rest.
-
-3.  If your feature is pulled from the mainline Pokémon games (e.g. a Move or Ability implementation), add a source link for any added text within the locale PR. 
-[Poké Corpus](https://abcboy101.github.io/poke-corpus) is a great resource for finding text from the latest mainline games; otherwise, a YouTube video link showing the text in mainline is sufficient.
-
-4. Ping @lugiadrien in **#dev-corner** or the current callout thread to make sure your locales PR is seen. 
-It'll be merged into the locales repository after any necessary corrections, at which point you can test it in your main PR (after updating locales from remote)
-
-5. The Dev team will approve your main PR, and your changes will be in the beta environment!
+See [localization.md](./docs/localization.md) for a detailed overview of the localization process.
 
 ## 😈 Development Save File
 > Some issues may require you to have unlocks on your save file which go beyond normal overrides. For this reason, the repository contains a [save file](../test/testUtils/saves/everything.psrv) with _everything_ unlocked (even ones not legitimately obtainable, like unimplemented variant shinies).
