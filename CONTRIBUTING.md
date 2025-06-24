@@ -32,7 +32,7 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 ### Procedure
 
 1. Clone the repository through Git by running the following command in your desired directory:
-   ``bash
+   ```bash
    git clone --recurse-submodules https://github.com/pagefaultgames/pokerogue
    ```
    [^1]
