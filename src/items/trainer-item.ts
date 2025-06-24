@@ -363,13 +363,6 @@ export class TempAccuracyBoosterTrainerItem extends LapsingTrainerItem {
 
 export class TempCritBoosterTrainerItem extends LapsingTrainerItem {
   public effects: TRAINER_ITEM_EFFECT[] = [TRAINER_ITEM_EFFECT.TEMP_CRIT_BOOSTER];
-  private stat: TempBattleStat;
-
-  constructor(type: TrainerItemId, stat: TempBattleStat, stackCount?: number) {
-    super(type, stackCount);
-
-    this.stat = stat;
-  }
 
   get description(): string {
     return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
