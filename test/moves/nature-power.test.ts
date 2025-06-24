@@ -30,7 +30,7 @@ describe("Move - Nature Power", () => {
     game.override
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.NO_GUARD)
       .enemyMoveset(MoveId.SPLASH)

@@ -116,7 +116,7 @@ describe("Moves - Chilly Reception", () => {
   });
 
   it("should succeed without message if called indirectly", async () => {
-    vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(MoveId.CHILLY_RECEPTION);
+    vi.spyOn(RandomMoveAttr.prototype, "getMove").mockReturnValue(MoveId.CHILLY_RECEPTION);
     await game.classicMode.startBattle([SpeciesId.SLOWKING, SpeciesId.MEOWTH]);
 
     const [slowking, meowth] = game.scene.getPlayerParty();
