@@ -5,7 +5,7 @@ export class MockVideoGameObject implements MockGameObject {
   public name: string;
   public active = true;
 
-  public play = () => null;
+  public play = () => this;
   public stop = () => this;
   public setOrigin = () => this;
   public setScale = () => this;

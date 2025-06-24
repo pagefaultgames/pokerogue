@@ -91,7 +91,7 @@ describe("Abilities - Gorilla Tactics", () => {
     game.move.select(MoveId.METRONOME);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    // Gorilla Tactics should bypass dancer and instruct
+    // Gorilla Tactics should lock into Metronome, not tackle
     expect(darmanitan.isMoveRestricted(MoveId.TACKLE)).toBe(true);
     expect(darmanitan.isMoveRestricted(MoveId.METRONOME)).toBe(false);
     expect(darmanitan.getLastXMoves(-1)).toEqual([

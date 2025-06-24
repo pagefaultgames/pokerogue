@@ -95,7 +95,7 @@ describe("Abilities - Harvest", () => {
 
     // Give ourselves harvest and disable enemy neut gas,
     // but force our roll to fail so we don't accidentally recover anything
-    vi.spyOn(PostTurnRestoreBerryAbAttr.prototype, "canApplyPostTurn").mockReturnValueOnce(false);
+    vi.spyOn(PostTurnRestoreBerryAbAttr.prototype, "canApply").mockReturnValueOnce(false);
     game.override.ability(AbilityId.HARVEST);
     game.move.select(MoveId.GASTRO_ACID);
     await game.move.selectEnemyMove(MoveId.NUZZLE);

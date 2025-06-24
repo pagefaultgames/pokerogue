@@ -140,9 +140,8 @@ describe("Moves - Safeguard", () => {
     game.field.mockAbility(player, AbilityId.STATIC);
     vi.spyOn(
       allAbilities[AbilityId.STATIC].getAttrs("PostDefendContactApplyStatusEffectAbAttr")[0],
-      "chance",
-      "get",
-    ).mockReturnValue(100);
+      "canApply",
+    ).mockReturnValue(true);
 
     game.move.select(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.SAFEGUARD);

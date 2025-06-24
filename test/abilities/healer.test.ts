@@ -42,7 +42,7 @@ describe("Abilities - Healer", () => {
   });
 
   it("should not queue a message phase for healing if the ally has fainted", async () => {
-    const abSpy = vi.spyOn(PostTurnResetStatusAbAttr.prototype, "canApplyPostTurn");
+    const abSpy = vi.spyOn(PostTurnResetStatusAbAttr.prototype, "canApply");
     game.override.moveset([MoveId.SPLASH, MoveId.LUNAR_DANCE]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
 

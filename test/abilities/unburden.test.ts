@@ -22,10 +22,7 @@ describe("Abilities - Unburden", () => {
    */
   function getHeldItemCount(pokemon: Pokemon): number {
     const stackCounts = pokemon.getHeldItems().map(m => m.getStackCount());
-    if (stackCounts.length) {
-      return stackCounts.reduce((a, b) => a + b);
-    }
-    return 0;
+    return stackCounts.reduce((a, b) => a + b, 0);
   }
 
   beforeAll(() => {
@@ -277,7 +274,7 @@ describe("Abilities - Unburden", () => {
     const initialTreeckoSpeed = treecko.getStat(Stat.SPD);
     const initialPurrloinSpeed = purrloin.getStat(Stat.SPD);
     const unburdenAttr = treecko.getAbilityAttrs("PostItemLostAbAttr")[0];
-    vi.spyOn(unburdenAttr, "applyPostItemLost");
+    vi.spyOn(unburdenAttr, "apply");
 
     // Player uses Baton Pass, which also passes the Baton item
     game.move.select(MoveId.BATON_PASS);
@@ -288,7 +285,7 @@ describe("Abilities - Unburden", () => {
     expect(getHeldItemCount(purrloin)).toBe(1);
     expect(treecko.getEffectiveStat(Stat.SPD)).toBe(initialTreeckoSpeed);
     expect(purrloin.getEffectiveStat(Stat.SPD)).toBe(initialPurrloinSpeed);
-    expect(unburdenAttr.applyPostItemLost).not.toHaveBeenCalled();
+    expect(unburdenAttr.apply).not.toHaveBeenCalled();
   });
 
   it("should not speed up a Pokemon after it loses the ability Unburden", async () => {
