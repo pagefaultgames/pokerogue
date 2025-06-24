@@ -159,16 +159,10 @@ export function getTextStyleOptions(
   };
 
   switch (style) {
-    case TextStyle.SUMMARY: {
-      let fontSizeLabel = "96px";
-      switch (lang) {
-        case "ja":
-		  styleOptions.padding = { top: 6, bottom: 4 };
-          break;
-      }
-      styleOptions.fontSize = fontSizeLabel;
+    case TextStyle.SUMMARY:
+      shadowXpos = 5;
+      shadowYpos = 5;
       break;
-    }
     case TextStyle.SUMMARY_ALT:
     case TextStyle.SUMMARY_BLUE:
     case TextStyle.SUMMARY_RED:
@@ -230,36 +224,37 @@ export function getTextStyleOptions(
       let fontSizeLabel = "66px";
       switch (lang) {
         case "ja":
-		  styleOptions.fontFamily = "pkmnems";
 		  styleOptions.padding = { top: -12, bottom: 4 };
-          break;
-        default:
-		  styleOptions.fontFamily = "pkmnems";
-          fontSizeLabel = "66px";
           break;
       }
       styleOptions.fontSize = fontSizeLabel;
+	  styleOptions.fontFamily = "pkmnems";
       break;
     }
     case TextStyle.PARTY_RED: {
-      let fontSizeLabel = "30px";
       switch (lang) {
         case "ja":
 		  styleOptions.padding = { top: -12, bottom: 4 };
           break;
-        default:
-          fontSizeLabel = "30px";
-          break;
       }
-      styleOptions.fontSize = defaultFontSize - 30;
+	  styleOptions.fontSize = defaultFontSize - 30;
       styleOptions.fontFamily = "pkmnems";
       break;
     }
-    case TextStyle.TOOLTIP_CONTENT:
-      styleOptions.fontSize = defaultFontSize - 32;
+    case TextStyle.TOOLTIP_CONTENT: {
+      switch (lang) {
+        case "ja":
+          styleOptions.fontSize = defaultFontSize - 44;
+		  styleOptions.padding = { top: 10, right: 10 };
+          break;
+        default:
+          styleOptions.fontSize = defaultFontSize - 32;
+          break;
+      }
       shadowXpos = 3;
       shadowYpos = 3;
       break;
+    }
     case TextStyle.MOVE_INFO_CONTENT:
       styleOptions.fontSize = defaultFontSize - 40;
       shadowXpos = 3;
