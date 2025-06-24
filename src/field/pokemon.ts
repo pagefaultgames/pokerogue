@@ -4663,7 +4663,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * or a {@linkcode TerrainType} for terrain-based blockages.
    * Defaults to "other".
    */
-  queueStatusImmuneMessage(quiet: boolean, reason: "overlap" | "other" | Exclude<TerrainType, TerrainType.NONE> = "other"): void {
+  queueStatusImmuneMessage(
+    quiet: boolean,
+    reason: "overlap" | "other" | Exclude<TerrainType, TerrainType.NONE> = "other",
+  ): void {
     if (quiet) {
       return;
     }
