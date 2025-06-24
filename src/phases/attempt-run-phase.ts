@@ -73,6 +73,11 @@ export class AttemptRunPhase extends FieldPhase {
    * @returns The final escape chance, as percentage out of 100.
    */
   public calculateEscapeChance(escapeAttempts: number): number {
+    //   Check for override, guaranteeing or forbidding random flee attempts as applicable.
+    if (Overrides.RUN_SUCCESS_OVERRIDE !== null) {
+      return Overrides.RUN_SUCCESS_OVERRIDE ? 100 : 0;
+    }
+
     const enemyField = globalScene.getEnemyField();
     const activePlayerField = globalScene.getPlayerField(true);
 
@@ -112,11 +117,6 @@ export class AttemptRunPhase extends FieldPhase {
     const escapeBonus = isBoss ? 2 : 10;
     /** Slope of the escape chance curve */
     const escapeSlope = (maxChance - minChance) / speedCap;
-
-    //   Check for override, guaranteeing or forbidding random flee attempts as applicable.
-    if (Overrides.RUN_SUCCESS_OVERRIDE !== null) {
-      return Overrides.RUN_SUCCESS_OVERRIDE ? 100 : 0;
-    }
 
     // This will calculate the escape chance given all of the above and clamp it to the range of [`minChance`, `maxChance`]
     return Phaser.Math.Clamp(
