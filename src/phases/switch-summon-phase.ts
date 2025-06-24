@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { applyPreSummonAbAttrs, applyPreSwitchOutAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { allMoves } from "#app/data/data-lists";
 import { getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
@@ -124,8 +124,8 @@ export class SwitchSummonPhase extends SummonPhase {
     switchedInPokemon.resetSummonData();
     switchedInPokemon.loadAssets(true);
 
-    applyPreSummonAbAttrs("PreSummonAbAttr", switchedInPokemon);
-    applyPreSwitchOutAbAttrs("PreSwitchOutAbAttr", this.lastPokemon);
+    applyAbAttrs("PreSummonAbAttr", { pokemon: switchedInPokemon });
+    applyAbAttrs("PreSwitchOutAbAttr", { pokemon: this.lastPokemon });
     if (!switchedInPokemon) {
       this.end();
       return;

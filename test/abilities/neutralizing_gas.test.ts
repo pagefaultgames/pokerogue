@@ -178,7 +178,7 @@ describe("Abilities - Neutralizing Gas", () => {
 
     const enemy = game.scene.getEnemyPokemon()!;
     const weatherChangeAttr = enemy.getAbilityAttrs("PostSummonWeatherChangeAbAttr", false)[0];
-    vi.spyOn(weatherChangeAttr, "applyPostSummon");
+    const weatherChangeSpy = vi.spyOn(weatherChangeAttr, "apply");
 
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
 
@@ -187,6 +187,6 @@ describe("Abilities - Neutralizing Gas", () => {
     await game.killPokemon(game.scene.getPlayerPokemon()!);
 
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
-    expect(weatherChangeAttr.applyPostSummon).not.toHaveBeenCalled();
+    expect(weatherChangeSpy).not.toHaveBeenCalled();
   });
 });
