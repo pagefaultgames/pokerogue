@@ -8,7 +8,7 @@ import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonPhase } from "./pokemon-phase";
 import { SpeciesFormChangeStatusEffectTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { applyPostSetStatusAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { isNullOrUndefined } from "#app/utils/common";
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
@@ -53,7 +53,11 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
             globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeStatusEffectTrigger, true);
             // If mold breaker etc was used to set this status, it shouldn't apply to abilities activated afterwards
             globalScene.arena.setIgnoreAbilities(false);
-            applyPostSetStatusAbAttrs("PostSetStatusAbAttr", pokemon, this.statusEffect, this.sourcePokemon);
+            applyAbAttrs("PostSetStatusAbAttr", {
+              pokemon,
+              effect: this.statusEffect,
+              sourcePokemon: this.sourcePokemon ?? undefined,
+            });
           }
           this.end();
         });
