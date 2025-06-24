@@ -126,21 +126,20 @@ describe("Moves - Instruct", () => {
     expect(game.scene.getPlayerPokemon()!.turnData.attacksReceived.length).toBe(2);
   });
 
-  it("should add moves to move queue for copycat", async () => {
-    game.override.battleStyle("double").moveset(MoveId.INSTRUCT).enemyLevel(5);
+  it("should be considered as the last move used for copycat", async () => {
+    game.override.battleStyle("double").enemyLevel(5);
     await game.classicMode.startBattle([SpeciesId.AMOONGUSS]);
 
     const [enemy1, enemy2] = game.scene.getEnemyField()!;
     game.move.changeMoveset(enemy1, MoveId.WATER_GUN);
     game.move.changeMoveset(enemy2, MoveId.COPYCAT);
 
-    game.move.select(MoveId.INSTRUCT, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.use(MoveId.INSTRUCT, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
 
     instructSuccess(enemy1, MoveId.WATER_GUN);
-    // amoonguss gets hit by water gun thrice; once by original attack, once by instructed use and once by copycat
-    expect(game.scene.getPlayerPokemon()!.turnData.attacksReceived.length).toBe(3);
+    expect(enemy2.getLastXMoves()[0].move).toBe(MoveId.WATER_GUN);
   });
 
   it("should fail on metronomed moves, even if also in moveset", async () => {

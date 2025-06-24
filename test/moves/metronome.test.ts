@@ -11,12 +11,11 @@ import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
+import { RandomMoveAttr } from "#app/data/moves/move";
 
 describe("Moves - Metronome", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-
-  const randomMoveAttr = allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0];
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -55,7 +54,7 @@ describe("Moves - Metronome", () => {
   });
 
   it("should become semi-invulnerable when using phasing moves", async () => {
-    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.DIVE);
+    vi.spyOn(RandomMoveAttr.prototype, "getMove").mockReturnValue(MoveId.DIVE);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
     const player = game.field.getPlayerPokemon();
@@ -77,7 +76,7 @@ describe("Moves - Metronome", () => {
   });
 
   it("should apply secondary effects of the called move", async () => {
-    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.WOOD_HAMMER);
+    vi.spyOn(RandomMoveAttr.prototype, "getMove").mockReturnValue(MoveId.WOOD_HAMMER);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
     game.move.select(MoveId.METRONOME);
@@ -91,7 +90,7 @@ describe("Moves - Metronome", () => {
   });
 
   it("should count as last move used for Copycat/Mirror Move", async () => {
-    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.ABSORB);
+    vi.spyOn(RandomMoveAttr.prototype, "getMove").mockReturnValue(MoveId.ABSORB);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
     game.move.select(MoveId.METRONOME);
@@ -110,7 +109,7 @@ describe("Moves - Metronome", () => {
   it("should recharge after using recharge moves", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
     const player = game.field.getPlayerPokemon();
-    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.HYPER_BEAM);
+    vi.spyOn(RandomMoveAttr.prototype, "getMove").mockReturnValue(MoveId.HYPER_BEAM);
     vi.spyOn(allMoves[MoveId.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
 
     game.move.select(MoveId.METRONOME);
@@ -121,7 +120,7 @@ describe("Moves - Metronome", () => {
 
   it("should charge for charging moves while still maintaining follow-up status", async () => {
     game.override.moveset([]).enemyMoveset(MoveId.SPITE);
-    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.SOLAR_BEAM);
+    vi.spyOn(RandomMoveAttr.prototype, "getMove").mockReturnValue(MoveId.SOLAR_BEAM);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
     const player = game.field.getPlayerPokemon();
@@ -160,7 +159,7 @@ describe("Moves - Metronome", () => {
 
     const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
     const [leftOpp, rightOpp] = game.scene.getEnemyField();
-    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.AROMATIC_MIST);
+    vi.spyOn(RandomMoveAttr.prototype, "getMove").mockReturnValue(MoveId.AROMATIC_MIST);
 
     game.move.select(MoveId.METRONOME, 0);
     game.move.select(MoveId.SPLASH, 1);
@@ -174,7 +173,7 @@ describe("Moves - Metronome", () => {
 
   it("should cause opponent to flee when using Roar", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.ROAR);
+    vi.spyOn(RandomMoveAttr.prototype, "getMove").mockReturnValue(MoveId.ROAR);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
