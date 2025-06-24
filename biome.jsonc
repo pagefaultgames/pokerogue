@@ -27,6 +27,7 @@
       "!**/.github/**/*",
       "!**/node_modules/**/*",
       "!**/.vscode/**/*",
+      "!**/typedoc/**/*",
       // TODO: lint css and html?
       "!**/*.css",
       "!**/*.html",
