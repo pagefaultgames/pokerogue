@@ -45,9 +45,7 @@ import { TrainerItemConfiguration } from "./items/trainer-item-data-types";
  * }
  * ```
  */
-const overrides = {
-  ITEM_REWARD_OVERRIDE: [{ name: "BERRY" }],
-} satisfies Partial<InstanceType<OverridesType>>;
+const overrides = {} satisfies Partial<InstanceType<OverridesType>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
