@@ -73,11 +73,6 @@ export function addTextObject(
     ret.setLineSpacing(scale * 30);
   }
 
-//Japanese Line Text Spacing
-  //if (ret.lineSpacing < 12 && i18next.resolvedLanguage === "ja") {
-    //ret.setLineSpacing(ret.lineSpacing + 35);
-  //}
-
   return ret;
 }
 
@@ -162,11 +157,6 @@ export function getTextStyleOptions(
       bottom: 6,
     },
   };
-
-//Japanese General Scale
-  //if (i18next.resolvedLanguage === "ja") {
-   //styleOptions.padding = { top: 6, bottom: -2 };
-  //}
 
   switch (style) {
     case TextStyle.SUMMARY: {
