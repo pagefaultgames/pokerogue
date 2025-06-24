@@ -5355,14 +5355,16 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
 
     const cancelled = new BooleanHolder(false);
     // TODO: This should be in speed order
-    globalScene.getField(true).forEach(p => applyAbAttrs("FieldPreventExplosiveMovesAbAttr", {pokemon: p, cancelled, simulated}));
+    globalScene
+      .getField(true)
+      .forEach(p => applyAbAttrs("FieldPreventExplosiveMovesAbAttr", { pokemon: p, cancelled, simulated }));
 
     if (cancelled.value) {
       return false;
     }
 
     // TODO: Does aftermath display text if the attacker has Magic Guard?
-    applyAbAttrs("BlockNonDirectDamageAbAttr", {pokemon: attacker, cancelled});
+    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: attacker, cancelled });
     return !cancelled.value;
   }
 
@@ -5400,7 +5402,7 @@ export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
     }
 
     const cancelled = new BooleanHolder(false);
-    applyAbAttrs("BlockNonDirectDamageAbAttr", {pokemon: attacker, cancelled});
+    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: attacker, cancelled });
     if (cancelled.value) {
       return;
     }
