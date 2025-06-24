@@ -1,4 +1,4 @@
-import { applyAbAttrs, applyPreLeaveFieldAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { PlayerPokemon, EnemyPokemon } from "#app/field/pokemon";
@@ -25,10 +25,10 @@ export class AttemptRunPhase extends PokemonPhase {
 
     this.attemptRunAway(playerField, enemyField, escapeChance);
 
-    applyAbAttrs("RunSuccessAbAttr", playerPokemon, null, false, escapeChance);
+    applyAbAttrs("RunSuccessAbAttr", { pokemon: playerPokemon, chance: escapeChance });
 
     if (playerPokemon.randBattleSeedInt(100) < escapeChance.value && !this.forceFailEscape) {
-      enemyField.forEach(enemyPokemon => applyPreLeaveFieldAbAttrs("PreLeaveFieldAbAttr", enemyPokemon));
+      enemyField.forEach(enemyPokemon => applyAbAttrs("PreLeaveFieldAbAttr", { pokemon: enemyPokemon }));
 
       globalScene.playSound("se/flee");
       globalScene.phaseManager.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
