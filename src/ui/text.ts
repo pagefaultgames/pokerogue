@@ -14,14 +14,19 @@ export enum TextStyle {
   BATTLE_INFO,
   PARTY,
   PARTY_RED,
+  PARTY_CANCEL_BUTTON,
   SUMMARY,
   SUMMARY_ALT,
+  SUMMARY_HEADER,
   SUMMARY_RED,
   SUMMARY_BLUE,
   SUMMARY_PINK,
   SUMMARY_GOLD,
   SUMMARY_GRAY,
   SUMMARY_GREEN,
+  SUMMARY_STATS,
+  SUMMARY_STATS_BLUE,
+  SUMMARY_STATS_PINK,
   MONEY, // Money default styling (pale yellow)
   MONEY_WINDOW, // Money displayed in Windows (needs different colors based on theme)
   STATS_LABEL,
@@ -72,6 +77,11 @@ export function addTextObject(
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
     ret.setLineSpacing(scale * 30);
   }
+
+//Japanese Line Text Spacing
+  //if (ret.lineSpacing < 12 && i18next.resolvedLanguage === "ja") {
+    //ret.setLineSpacing(ret.lineSpacing + 35);
+  //}
 
   return ret;
 }
@@ -158,8 +168,36 @@ export function getTextStyleOptions(
     },
   };
 
+//Japanese General Scale
+  //if (i18next.resolvedLanguage === "ja") {
+   //styleOptions.padding = { top: 6, bottom: -2 };
+  //}
+
   switch (style) {
-    case TextStyle.SUMMARY:
+    case TextStyle.SUMMARY: {
+      let fontSizeLabel = "96px";
+      switch (lang) {
+        case "ja":
+		  styleOptions.padding = { top: 6, bottom: 4 };
+          break;
+      }
+      styleOptions.fontSize = fontSizeLabel;
+      break;
+    }
+      shadowXpos = 5;
+      shadowYpos = 5;
+      break;
+	case TextStyle.SUMMARY_HEADER: {
+      let fontSizeLabel = "96px";
+      switch (lang) {
+        case "ja":
+		  styleOptions.padding = { bottom: 7 };
+		  fontSizeLabel = "80px";
+          break;
+      }
+      styleOptions.fontSize = fontSizeLabel;
+      break;
+    }
       shadowXpos = 5;
       shadowYpos = 5;
       break;
@@ -170,6 +208,9 @@ export function getTextStyleOptions(
     case TextStyle.SUMMARY_GOLD:
     case TextStyle.SUMMARY_GRAY:
     case TextStyle.SUMMARY_GREEN:
+    case TextStyle.SUMMARY_STATS:
+    case TextStyle.SUMMARY_STATS_BLUE:
+    case TextStyle.SUMMARY_STATS_PINK:
     case TextStyle.WINDOW:
     case TextStyle.WINDOW_ALT:
     case TextStyle.ME_OPTION_DEFAULT:
@@ -229,6 +270,15 @@ export function getTextStyleOptions(
       }
 	  styleOptions.fontSize = defaultFontSize - 30;
       styleOptions.fontFamily = "pkmnems";
+      break;
+    }
+	case TextStyle.PARTY_CANCEL_BUTTON: {
+      switch (lang) {
+        case "ja":
+		  styleOptions.padding = { top: 16 };
+          break;
+      }
+	  styleOptions.fontSize = defaultFontSize - 46;
       break;
     }
     case TextStyle.TOOLTIP_CONTENT: {
@@ -366,10 +416,13 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
       }
       return !shadow ? "#f8f8f8" : "#6b5a73";
     case TextStyle.PARTY:
+	case TextStyle.PARTY_CANCEL_BUTTON:
       return !shadow ? "#f8f8f8" : "#707070";
     case TextStyle.PARTY_RED:
       return !shadow ? "#f89890" : "#984038";
     case TextStyle.SUMMARY:
+	case TextStyle.SUMMARY_HEADER:
+    case TextStyle.SUMMARY_STATS:
       return !shadow ? "#f8f8f8" : "#636363";
     case TextStyle.SUMMARY_ALT:
       if (isLegacyTheme) {
@@ -380,8 +433,10 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.TOOLTIP_TITLE:
       return !shadow ? "#e70808" : "#ffbd73";
     case TextStyle.SUMMARY_BLUE:
+    case TextStyle.SUMMARY_STATS_BLUE:
       return !shadow ? "#40c8f8" : "#006090";
     case TextStyle.SUMMARY_PINK:
+    case TextStyle.SUMMARY_STATS_PINK:
       return !shadow ? "#f89890" : "#984038";
     case TextStyle.SUMMARY_GOLD:
     case TextStyle.MONEY:
