@@ -108,7 +108,7 @@ describe("Abilities - Wimp Out", () => {
   });
 
   it("Trapping moves do not prevent Wimp Out from activating.", async () => {
-    game.override.enemyMoveset([MoveId.SPIRIT_SHACKLE]).startingLevel(53).enemyLevel(45);
+    game.override.enemyMoveset([MoveId.SPIRIT_SHACKLE]).startingLevel(1).passiveAbility(AbilityId.STURDY);
     await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
 
     game.move.select(MoveId.SPLASH);
@@ -123,7 +123,7 @@ describe("Abilities - Wimp Out", () => {
   });
 
   it("If this Ability activates due to being hit by U-turn or Volt Switch, the user of that move will not be switched out.", async () => {
-    game.override.startingLevel(95).enemyMoveset([MoveId.U_TURN]);
+    game.override.startingLevel(1).enemyMoveset([MoveId.U_TURN]).passiveAbility(AbilityId.STURDY);
     await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
 
     game.move.select(MoveId.SPLASH);
