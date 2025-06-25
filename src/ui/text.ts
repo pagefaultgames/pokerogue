@@ -34,6 +34,7 @@ export enum TextStyle {
   STATS_VALUE,
   SETTINGS_VALUE,
   SETTINGS_LABEL,
+  SETTINGS_LABEL_NAVBAR,
   SETTINGS_SELECTED,
   SETTINGS_LOCKED,
   TOOLTIP_TITLE,
@@ -264,10 +265,56 @@ export function getTextStyleOptions(
       break;
     }
     case TextStyle.MESSAGE:
-    case TextStyle.SETTINGS_LABEL:
-    case TextStyle.SETTINGS_LOCKED:
-    case TextStyle.SETTINGS_SELECTED:
+		  styleOptions.fontSize = defaultFontSize
       break;
+    case TextStyle.SETTINGS_LABEL: {
+      shadowXpos = 3;
+      shadowYpos = 3;
+      let fontSizeValue = "96px";
+      switch (lang) {
+        case "ja":
+          fontSizeValue = "80px";
+		  styleOptions.padding = { top: 10 };
+          break;
+        default:
+          fontSizeValue = "96px";
+          break;
+      }
+      styleOptions.fontSize = fontSizeValue;
+      break;
+    }
+    case TextStyle.SETTINGS_LABEL_NAVBAR: {
+      shadowXpos = 3;
+      shadowYpos = 3;
+      let fontSizeValue = "96px";
+      switch (lang) {
+        case "ja":
+          fontSizeValue = "92px";
+          break;
+        default:
+          fontSizeValue = "96px";
+          break;
+      }
+      styleOptions.fontSize = fontSizeValue;
+      break;
+    }
+    case TextStyle.SETTINGS_LOCKED:
+    case TextStyle.SETTINGS_SELECTED: {
+      shadowXpos = 3;
+      shadowYpos = 3;
+      let fontSizeValue = "96px";
+      switch (lang) {
+        case "ja":
+          fontSizeValue = "80px";
+		  styleOptions.padding = { top: 10 };
+          break;
+        default:
+          fontSizeValue = "96px";
+          break;
+      }
+      styleOptions.fontSize = fontSizeValue;
+      break;
+    }
     case TextStyle.BATTLE_INFO:
     case TextStyle.MONEY:
     case TextStyle.MONEY_WINDOW:
@@ -475,6 +522,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.SUMMARY_GREEN:
       return !shadow ? "#78c850" : "#306850";
     case TextStyle.SETTINGS_LABEL:
+    case TextStyle.SETTINGS_LABEL_NAVBAR:
     case TextStyle.PERFECT_IV:
       return !shadow ? "#f8b050" : "#c07800";
     case TextStyle.SETTINGS_SELECTED:
