@@ -30,6 +30,7 @@ export enum TextStyle {
   SUMMARY_STATS_PINK,
   MONEY, // Money default styling (pale yellow)
   MONEY_WINDOW, // Money displayed in Windows (needs different colors based on theme)
+  HEADER_LABEL,
   STATS_LABEL,
   STATS_VALUE,
   SETTINGS_VALUE,
@@ -267,6 +268,10 @@ export function getTextStyleOptions(
     }
     case TextStyle.MESSAGE:
 		  styleOptions.fontSize = defaultFontSize
+      break;
+    case TextStyle.HEADER_LABEL:
+		  styleOptions.fontSize = defaultFontSize
+		  styleOptions.padding = { top: 6 };
       break;
     case TextStyle.SETTINGS_LABEL: {
       shadowXpos = 3;
@@ -543,6 +548,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
       return !shadow ? "#78c850" : "#306850";
     case TextStyle.SETTINGS_LABEL:
     case TextStyle.SETTINGS_LABEL_NAVBAR:
+	case TextStyle.HEADER_LABEL:
     case TextStyle.PERFECT_IV:
       return !shadow ? "#f8b050" : "#c07800";
     case TextStyle.SETTINGS_SELECTED:
