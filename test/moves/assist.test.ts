@@ -28,7 +28,7 @@ describe("Moves - Assist", () => {
     // Manual moveset overrides are required for the player pokemon in these tests
     // because the normal moveset override doesn't allow for accurate testing of moveset changes
     game.override
-      .ability(AbilityId.BALL_FETCH)
+      .ability(AbilityId.NO_GUARD)
       .battleStyle("single")
       .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)

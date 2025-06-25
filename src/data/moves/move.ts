@@ -7053,8 +7053,8 @@ export class CopyMoveAttr extends CallMoveAttr {
    */
   override getMove(_user: Pokemon, target: Pokemon): MoveId {
     return this.selfTarget
-      ? target.getLastXMoves()[0]?.move ?? MoveId.NONE
-      : globalScene.currentBattle.lastMove
+      ? globalScene.currentBattle.lastMove
+      : target.getLastXMoves()[0]?.move ?? MoveId.NONE
   }
 
   getCondition(): MoveConditionFunc {
