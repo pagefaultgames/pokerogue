@@ -37,6 +37,7 @@ export enum TextStyle {
   SETTINGS_LABEL_NAVBAR,
   SETTINGS_SELECTED,
   SETTINGS_LOCKED,
+  EGG_LIST,
   TOOLTIP_TITLE,
   TOOLTIP_CONTENT,
   MOVE_INFO_CONTENT,
@@ -298,7 +299,22 @@ export function getTextStyleOptions(
       styleOptions.fontSize = fontSizeValue;
       break;
     }
-    case TextStyle.SETTINGS_LOCKED:
+    case TextStyle.SETTINGS_LOCKED: {
+      shadowXpos = 3;
+      shadowYpos = 3;
+      let fontSizeValue = "96px";
+      switch (lang) {
+        case "ja":
+          fontSizeValue = "80px";
+		  styleOptions.padding = { top: 10 };
+          break;
+        default:
+          fontSizeValue = "96px";
+          break;
+      }
+      styleOptions.fontSize = fontSizeValue;
+      break;
+    }
     case TextStyle.SETTINGS_SELECTED: {
       shadowXpos = 3;
       shadowYpos = 3;
@@ -343,6 +359,9 @@ export function getTextStyleOptions(
 	  styleOptions.fontSize = defaultFontSize - 46;
       break;
     }
+    case TextStyle.EGG_LIST:
+		  styleOptions.fontSize = defaultFontSize - 34;
+      break;
     case TextStyle.TOOLTIP_CONTENT: {
       switch (lang) {
         case "ja":
@@ -450,6 +469,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.WINDOW_BATTLE_COMMAND:
     case TextStyle.MOVE_INFO_CONTENT:
     case TextStyle.MOVE_PP_FULL:
+	case TextStyle.EGG_LIST:
     case TextStyle.TOOLTIP_CONTENT:
     case TextStyle.SETTINGS_VALUE:
       if (isLegacyTheme) {
