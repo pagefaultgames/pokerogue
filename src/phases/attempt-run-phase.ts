@@ -1,22 +1,15 @@
-import {
-  applyAbAttrs,
-  applyPreLeaveFieldAbAttrs,
-  PreLeaveFieldAbAttr,
-  RunSuccessAbAttr,
-} from "#app/data/abilities/ability";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { PlayerPokemon, EnemyPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import i18next from "i18next";
 import { NumberHolder } from "#app/utils/common";
-import { BattleEndPhase } from "./battle-end-phase";
-import { NewBattlePhase } from "./new-battle-phase";
 import { PokemonPhase } from "./pokemon-phase";
 import { globalScene } from "#app/global-scene";
-import { SelectBiomePhase } from "./select-biome-phase";
 
 export class AttemptRunPhase extends PokemonPhase {
+  public readonly phaseName = "AttemptRunPhase";
   /** For testing purposes: this is to force the pokemon to fail and escape */
   public forceFailEscape = false;
 
@@ -32,43 +25,40 @@ export class AttemptRunPhase extends PokemonPhase {
 
     this.attemptRunAway(playerField, enemyField, escapeChance);
 
-    applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, false, escapeChance);
+    applyAbAttrs("RunSuccessAbAttr", { pokemon: playerPokemon, chance: escapeChance });
 
-    if (playerPokemon.randSeedInt(100) < escapeChance.value && !this.forceFailEscape) {
-      enemyField.forEach(enemyPokemon => applyPreLeaveFieldAbAttrs(PreLeaveFieldAbAttr, enemyPokemon));
+    if (playerPokemon.randBattleSeedInt(100) < escapeChance.value && !this.forceFailEscape) {
+      enemyField.forEach(enemyPokemon => applyAbAttrs("PreLeaveFieldAbAttr", { pokemon: enemyPokemon }));
 
       globalScene.playSound("se/flee");
-      globalScene.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
+      globalScene.phaseManager.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
 
       globalScene.tweens.add({
         targets: [globalScene.arenaEnemy, enemyField].flat(),
         alpha: 0,
         duration: 250,
         ease: "Sine.easeIn",
-        onComplete: () =>
-          // biome-ignore lint/complexity/noForEach: TODO
-          enemyField.forEach(enemyPokemon => enemyPokemon.destroy()),
+        onComplete: () => enemyField.forEach(enemyPokemon => enemyPokemon.destroy()),
       });
 
       globalScene.clearEnemyHeldItemModifiers();
 
-      // biome-ignore lint/complexity/noForEach: TODO
       enemyField.forEach(enemyPokemon => {
         enemyPokemon.hideInfo().then(() => enemyPokemon.destroy());
         enemyPokemon.hp = 0;
         enemyPokemon.trySetStatus(StatusEffect.FAINT);
       });
 
-      globalScene.pushPhase(new BattleEndPhase(false));
+      globalScene.phaseManager.pushNew("BattleEndPhase", false);
 
       if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
-        globalScene.pushPhase(new SelectBiomePhase());
+        globalScene.phaseManager.pushNew("SelectBiomePhase");
       }
 
-      globalScene.pushPhase(new NewBattlePhase());
+      globalScene.phaseManager.pushNew("NewBattlePhase");
     } else {
       playerPokemon.turnData.failedRunAway = true;
-      globalScene.queueMessage(i18next.t("battle:runAwayCannotEscape"), null, true, 500);
+      globalScene.phaseManager.queueMessage(i18next.t("battle:runAwayCannotEscape"), null, true, 500);
     }
 
     this.end();

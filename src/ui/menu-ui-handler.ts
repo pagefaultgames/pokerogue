@@ -15,7 +15,6 @@ import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
 import type AwaitableUiHandler from "./awaitable-ui-handler";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { AdminMode, getAdminModeName } from "./admin-ui-handler";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
@@ -33,7 +32,7 @@ enum MenuOptions {
 }
 
 let wikiUrl = "https://wiki.pokerogue.net/start";
-const discordUrl = "https://discord.gg/uWpTfdKG49";
+const discordUrl = "https://discord.gg/pokerogue";
 const githubUrl = "https://github.com/pagefaultgames/pokerogue";
 const redditUrl = "https://www.reddit.com/r/pokerogue";
 const donateUrl = "https://github.com/sponsors/pagefaultgames";
@@ -126,7 +125,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     const ui = this.getUi();
     this.excludedMenus = () => [
       {
-        condition: globalScene.getCurrentPhase() instanceof SelectModifierPhase,
+        condition: !!globalScene.phaseManager.getCurrentPhase()?.is("SelectModifierPhase"),
         options: [MenuOptions.EGG_GACHA],
       },
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
@@ -687,7 +686,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             error = true;
           }
           break;
-        case MenuOptions.LOG_OUT:
+        case MenuOptions.LOG_OUT: {
           success = true;
           const doLogout = () => {
             ui.setMode(UiMode.LOADING, {
@@ -719,6 +718,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             doLogout();
           }
           break;
+        }
       }
     } else if (button === Button.CANCEL) {
       success = true;

@@ -7,8 +7,8 @@ import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { trainerPartyTemplates } from "#app/data/trainers/TrainerPartyTemplate";
 import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
 import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { ModifierTier } from "#app/modifier/modifier-tier";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { ModifierTier } from "#enums/modifier-tier";
+import { modifierTypes } from "#app/data/data-lists";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { globalScene } from "#app/global-scene";
@@ -92,7 +92,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
     const brutalConfig = trainerConfigs[brutalTrainerType].clone();
     brutalConfig.title = trainerConfigs[brutalTrainerType].title;
     brutalConfig.setPartyTemplates(e4Template);
-    // @ts-ignore
+    // @ts-expect-error
     brutalConfig.partyTemplateFunc = null; // Overrides gym leader party template func
     female = false;
     if (brutalConfig.hasGenders) {

@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/performance/noNamespaceImport: Convenience */
+
 import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";
 import type { SettingsSaveMigrator } from "#app/@types/SettingsSaveMigrator";
 import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
@@ -48,20 +50,19 @@ export const settingsMigrators: Readonly<SettingsSaveMigrator[]> = [settingsMigr
 // import * as vA_B_C from "./versions/vA_B_C";
 
 // --- v1.0.4 (and below) PATCHES --- //
-// biome-ignore lint/style/noNamespaceImport: Convenience (TODO: make this a file-wide ignore when Biome supports those)
 import * as v1_0_4 from "./versions/v1_0_4";
 
 // --- v1.7.0 PATCHES --- //
-// biome-ignore lint/style/noNamespaceImport: Convenience
 import * as v1_7_0 from "./versions/v1_7_0";
 
 // --- v1.8.3 PATCHES --- //
-// biome-ignore lint/style/noNamespaceImport: Convenience
 import * as v1_8_3 from "./versions/v1_8_3";
 
 // --- v1.9.0 PATCHES --- //
-// biome-ignore lint/style/noNamespaceImport: Convenience
 import * as v1_9_0 from "./versions/v1_9_0";
+
+// --- v1.10.0 PATCHES --- //
+import * as v1_10_0 from "./versions/v1_10_0";
 
 /** Current game version */
 const LATEST_VERSION = version;
@@ -85,6 +86,7 @@ const sessionMigrators: SessionSaveMigrator[] = [];
 sessionMigrators.push(...v1_0_4.sessionMigrators);
 sessionMigrators.push(...v1_7_0.sessionMigrators);
 sessionMigrators.push(...v1_9_0.sessionMigrators);
+sessionMigrators.push(...v1_10_0.sessionMigrators);
 
 /** All settings migrators */
 const settingsMigrators: SettingsSaveMigrator[] = [];

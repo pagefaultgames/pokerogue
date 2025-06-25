@@ -5,10 +5,12 @@ import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import { PokemonType } from "#enums/pokemon-type";
 import { achvs } from "#app/system/achv";
-import { SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms";
-import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
+import { SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms/form-change-triggers";
+import { CommonBattleAnim } from "#app/data/battle-anims";
+import { CommonAnim } from "#enums/move-anims-common";
 
 export class TeraPhase extends BattlePhase {
+  public readonly phaseName = "TeraPhase";
   public pokemon: Pokemon;
 
   constructor(pokemon: Pokemon) {
@@ -20,7 +22,7 @@ export class TeraPhase extends BattlePhase {
   start() {
     super.start();
 
-    globalScene.queueMessage(
+    globalScene.phaseManager.queueMessage(
       i18next.t("battle:pokemonTerastallized", {
         pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
         type: i18next.t(`pokemonInfo:Type.${PokemonType[this.pokemon.getTeraType()]}`),

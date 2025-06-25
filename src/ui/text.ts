@@ -4,7 +4,7 @@ import type Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import { globalScene } from "#app/global-scene";
-import { ModifierTier } from "../modifier/modifier-tier";
+import { ModifierTier } from "../enums/modifier-tier";
 import i18next from "#app/plugins/i18n";
 
 export enum TextStyle {
@@ -300,7 +300,7 @@ export function getTextWithColors(
 ): string {
   // Apply primary styling before anything else
   let text = getBBCodeFrag(content, primaryStyle, uiTheme) + "[/color][/shadow]";
-  const primaryStyleString = [...text.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))!][0];
+  const primaryStyleString = [...text.match(new RegExp(/\[color=[^[]*\]\[shadow=[^[]*\]/i))!][0];
 
   /* For money text displayed in game windows, we can't use the default {@linkcode TextStyle.MONEY}
    * or it will look wrong in legacy mode because of the different window background color
@@ -320,7 +320,7 @@ export function getTextWithColors(
   });
 
   // Remove extra style block at the end
-  return text.replace(/\[color=[^\[]*\]\[shadow=[^\[]*\]\[\/color\]\[\/shadow\]/gi, "");
+  return text.replace(/\[color=[^[]*\]\[shadow=[^[]*\]\[\/color\]\[\/shadow\]/gi, "");
 }
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a giant switch which is the best option.

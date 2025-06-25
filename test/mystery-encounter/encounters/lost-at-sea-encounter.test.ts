@@ -1,10 +1,10 @@
 import { LostAtSeaEncounter } from "#app/data/mystery-encounters/encounters/lost-at-sea-encounter";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Biome } from "#app/enums/biome";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
+import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "../encounter-test-utils";
@@ -18,8 +18,8 @@ import i18next from "i18next";
 
 const namespace = "mysteryEncounters/lostAtSea";
 /** Blastoise for surf. Pidgeot for fly. Abra for none. */
-const defaultParty = [Species.BLASTOISE, Species.PIDGEOT, Species.ABRA];
-const defaultBiome = Biome.SEA;
+const defaultParty = [SpeciesId.BLASTOISE, SpeciesId.PIDGEOT, SpeciesId.ABRA];
+const defaultBiome = BiomeId.SEA;
 const defaultWave = 33;
 
 describe("Lost at Sea - Mystery Encounter", () => {
@@ -34,23 +34,22 @@ describe("Lost at Sea - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([
-        [Biome.SEA, [MysteryEncounterType.LOST_AT_SEA]],
-        [Biome.MOUNTAIN, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+      new Map<BiomeId, MysteryEncounterType[]>([
+        [BiomeId.SEA, [MysteryEncounterType.LOST_AT_SEA]],
+        [BiomeId.MOUNTAIN, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
       ]),
     );
   });
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -67,8 +66,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of sea biome", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
-    game.override.startingBiome(Biome.MOUNTAIN);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON).startingBiome(BiomeId.MOUNTAIN);
     await game.runToMysteryEncounter();
 
     expect(game.scene.currentBattle.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.LOST_AT_SEA);
@@ -110,11 +108,11 @@ describe("Lost at Sea - Mystery Encounter", () => {
     });
 
     it("should award exp to surfable PKM (Blastoise)", async () => {
-      const laprasSpecies = getPokemonSpecies(Species.LAPRAS);
+      const laprasSpecies = getPokemonSpecies(SpeciesId.LAPRAS);
 
       await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
       const party = game.scene.getPlayerParty();
-      const blastoise = party.find(pkm => pkm.species.speciesId === Species.BLASTOISE);
+      const blastoise = party.find(pkm => pkm.species.speciesId === SpeciesId.BLASTOISE);
       const expBefore = blastoise!.exp;
 
       await runMysteryEncounterToEnd(game, 1);
@@ -134,10 +132,10 @@ describe("Lost at Sea - Mystery Encounter", () => {
     });
 
     it("should be disabled if no surfable PKM is in party", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [Species.ARCANINE]);
+      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [SpeciesId.ARCANINE]);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
@@ -146,7 +144,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 1);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -179,7 +177,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
       const party = game.scene.getPlayerParty();
-      const pidgeot = party.find(pkm => pkm.species.speciesId === Species.PIDGEOT);
+      const pidgeot = party.find(pkm => pkm.species.speciesId === SpeciesId.PIDGEOT);
       const expBefore = pidgeot!.exp;
 
       await runMysteryEncounterToEnd(game, 2);
@@ -199,10 +197,10 @@ describe("Lost at Sea - Mystery Encounter", () => {
     });
 
     it("should be disabled if no flyable PKM is in party", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [Species.ARCANINE]);
+      await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [SpeciesId.ARCANINE]);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
@@ -211,7 +209,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 2);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -241,7 +239,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
 
       const party = game.scene.getPlayerParty();
-      const abra = party.find(pkm => pkm.species.speciesId === Species.ABRA)!;
+      const abra = party.find(pkm => pkm.species.speciesId === SpeciesId.ABRA)!;
       vi.spyOn(abra, "isAllowedInBattle").mockReturnValue(false);
 
       await runMysteryEncounterToEnd(game, 3);

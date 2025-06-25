@@ -1,12 +1,13 @@
 import { getPokeballName } from "../data/pokeball";
 import { addTextObject, getTextStyleOptions, TextStyle } from "./text";
-import { Command } from "./command-ui-handler";
+import { Command } from "#enums/command";
 import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
 import { Button } from "#enums/buttons";
 import type { CommandPhase } from "#app/phases/command-phase";
 import { globalScene } from "#app/global-scene";
+import i18next from "i18next";
 
 export default class BallUiHandler extends UiHandler {
   private pokeballSelectContainer: Phaser.GameObjects.Container;
@@ -31,7 +32,7 @@ export default class BallUiHandler extends UiHandler {
     for (let pb = 0; pb < Object.keys(globalScene.pokeballCounts).length; pb++) {
       optionsTextContent += `${getPokeballName(pb)}\n`;
     }
-    optionsTextContent += "Cancel";
+    optionsTextContent += i18next.t("commandUiHandler:ballCancel");
     const optionsText = addTextObject(0, 0, optionsTextContent, TextStyle.WINDOW, { align: "right", maxLines: 6 });
     const optionsTextWidth = optionsText.displayWidth;
     this.pokeballSelectContainer = globalScene.add.container(
@@ -77,7 +78,7 @@ export default class BallUiHandler extends UiHandler {
     const pokeballTypeCount = Object.keys(globalScene.pokeballCounts).length;
 
     if (button === Button.ACTION || button === Button.CANCEL) {
-      const commandPhase = globalScene.getCurrentPhase() as CommandPhase;
+      const commandPhase = globalScene.phaseManager.getCurrentPhase() as CommandPhase;
       success = true;
       if (button === Button.ACTION && this.cursor < pokeballTypeCount) {
         if (globalScene.pokeballCounts[this.cursor]) {

@@ -65,14 +65,14 @@ const fonts: Array<LoadingFontFaceProperty> = [
       unicodeRange: rangesByLanguage.chinese,
     }),
     extraOptions: { sizeAdjust: "70%", format: "woff2" },
-    only: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca"],
+    only: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "da", "tr", "ro", "ru"],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.subset.woff2)", {
       unicodeRange: rangesByLanguage.chinese,
     }),
     extraOptions: { format: "woff2" },
-    only: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca"],
+    only: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "da", "tr", "ro", "ru"],
   },
   // japanese
   {
@@ -101,6 +101,7 @@ const namespaceMap = {
   doubleBattleDialogue: "dialogue-double-battle",
   splashMessages: "splash-texts",
   mysteryEncounterMessages: "mystery-encounter-texts",
+  biome: "biomes",
 };
 
 //#region Functions
@@ -174,7 +175,24 @@ export async function initI18n(): Promise<void> {
       "es-MX": ["es-ES", "en"],
       default: ["en"],
     },
-    supportedLngs: ["en", "es-ES", "es-MX", "fr", "it", "de", "zh-CN", "zh-TW", "pt-BR", "ko", "ja", "ca-ES"],
+    supportedLngs: [
+      "en",
+      "es-ES",
+      "es-MX",
+      "fr",
+      "it",
+      "de",
+      "zh-CN",
+      "zh-TW",
+      "pt-BR",
+      "ko",
+      "ja",
+      "ca",
+      "da",
+      "tr",
+      "ro",
+      "ru",
+    ],
     backend: {
       loadPath(lng: string, [ns]: string[]) {
         let fileName: string;
@@ -227,6 +245,7 @@ export async function initI18n(): Promise<void> {
       "pokeball",
       "pokedexUiHandler",
       "pokemon",
+      "pokemonCategory",
       "pokemonEvolutions",
       "pokemonForm",
       "pokemonInfo",

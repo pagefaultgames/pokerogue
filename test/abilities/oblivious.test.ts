@@ -1,7 +1,7 @@
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -23,27 +23,27 @@ describe("Abilities - Oblivious", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH)
+      .moveset([MoveId.SPLASH])
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should remove taunt when gained", async () => {
     game.override
-      .ability(Abilities.OBLIVIOUS)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .moveset(Moves.SKILL_SWAP)
-      .enemyMoveset(Moves.SPLASH);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+      .ability(AbilityId.OBLIVIOUS)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .moveset(MoveId.SKILL_SWAP)
+      .enemyMoveset(MoveId.SPLASH);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
     const enemy = game.scene.getEnemyPokemon();
     enemy?.addTag(BattlerTagType.TAUNT);
     expect(enemy?.getTag(BattlerTagType.TAUNT)).toBeTruthy();
 
-    game.move.select(Moves.SKILL_SWAP);
+    game.move.select(MoveId.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy?.getTag(BattlerTagType.TAUNT)).toBeFalsy();
@@ -51,17 +51,17 @@ describe("Abilities - Oblivious", () => {
 
   it("should remove infatuation when gained", async () => {
     game.override
-      .ability(Abilities.OBLIVIOUS)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .moveset(Moves.SKILL_SWAP)
-      .enemyMoveset(Moves.SPLASH);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+      .ability(AbilityId.OBLIVIOUS)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .moveset(MoveId.SKILL_SWAP)
+      .enemyMoveset(MoveId.SPLASH);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
     const enemy = game.scene.getEnemyPokemon();
     vi.spyOn(enemy!, "isOppositeGender").mockReturnValue(true);
-    enemy?.addTag(BattlerTagType.INFATUATED, 5, Moves.JUDGMENT, game.scene.getPlayerPokemon()?.id); // sourceID needs to be defined
+    enemy?.addTag(BattlerTagType.INFATUATED, 5, MoveId.JUDGMENT, game.scene.getPlayerPokemon()?.id); // sourceID needs to be defined
     expect(enemy?.getTag(BattlerTagType.INFATUATED)).toBeTruthy();
 
-    game.move.select(Moves.SKILL_SWAP);
+    game.move.select(MoveId.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy?.getTag(BattlerTagType.INFATUATED)).toBeFalsy();

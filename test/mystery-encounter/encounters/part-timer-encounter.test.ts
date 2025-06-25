@@ -1,7 +1,7 @@
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
@@ -14,14 +14,14 @@ import { CIVILIZATION_ENCOUNTER_BIOMES } from "#app/data/mystery-encounters/myst
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { PartTimerEncounter } from "#app/data/mystery-encounters/encounters/part-timer-encounter";
-import { PokemonMove } from "#app/field/pokemon";
-import { Moves } from "#enums/moves";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
+import { MoveId } from "#enums/move-id";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 
 const namespace = "mysteryEncounters/partTimer";
 // Pyukumuku for lowest speed, Regieleki for highest speed, Feebas for lowest "bulk", Melmetal for highest "bulk"
-const defaultParty = [Species.PYUKUMUKU, Species.REGIELEKI, Species.FEEBAS, Species.MELMETAL];
-const defaultBiome = Biome.PLAINS;
+const defaultParty = [SpeciesId.PYUKUMUKU, SpeciesId.REGIELEKI, SpeciesId.FEEBAS, SpeciesId.MELMETAL];
+const defaultBiome = BiomeId.PLAINS;
 const defaultWave = 37;
 
 describe("Part-Timer - Mystery Encounter", () => {
@@ -36,13 +36,14 @@ describe("Part-Timer - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
-    const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+    const biomeMap = new Map<BiomeId, MysteryEncounterType[]>([
+      [BiomeId.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
     ]);
     CIVILIZATION_ENCOUNTER_BIOMES.forEach(biome => {
       biomeMap.set(biome, [MysteryEncounterType.PART_TIMER]);
@@ -52,8 +53,6 @@ describe("Part-Timer - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -76,8 +75,7 @@ describe("Part-Timer - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of CIVILIZATION_ENCOUNTER_BIOMES", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
-    game.override.startingBiome(Biome.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON).startingBiome(BiomeId.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.PART_TIMER);
@@ -238,7 +236,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       scene.getPlayerParty().forEach(p => (p.moveset = []));
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
@@ -247,7 +245,7 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 3);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -259,7 +257,7 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.PART_TIMER, defaultParty);
       // Mock moveset
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(Moves.ATTRACT)];
+      scene.getPlayerParty()[0].moveset = [new PokemonMove(MoveId.ATTRACT)];
       await runMysteryEncounterToEnd(game, 3);
 
       expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(2.5), true, false);

@@ -1,11 +1,11 @@
-import { GameModes } from "#app/game-mode";
+import { GameModes } from "#enums/game-modes";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import type OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { Button } from "#enums/buttons";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import type { MockClock } from "#test/testUtils/mocks/mockClock";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -43,7 +43,7 @@ describe("Reload", () => {
     const postReloadRngState = Phaser.Math.RND.state();
 
     expect(preReloadRngState).toBe(postReloadRngState);
-  }, 20000);
+  });
 
   it("should not have RNG inconsistencies after a biome switch", async () => {
     game.override
@@ -51,12 +51,12 @@ describe("Reload", () => {
       .battleStyle("single")
       .startingLevel(100) // Avoid levelling up
       .disableTrainerWaves()
-      .moveset([Moves.SPLASH])
-      .enemyMoveset(Moves.SPLASH);
+      .moveset([MoveId.SPLASH])
+      .enemyMoveset(MoveId.SPLASH);
     await game.dailyMode.startBattle();
 
     // Transition from Wave 10 to Wave 11 in order to trigger biome switch
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     game.onNextPrompt("SelectBiomePhase", UiMode.OPTION_SELECT, () => {
       (game.scene.time as MockClock).overrideDelay = null;
@@ -75,21 +75,21 @@ describe("Reload", () => {
     const postReloadRngState = Phaser.Math.RND.state();
 
     expect(preReloadRngState).toBe(postReloadRngState);
-  }, 20000);
+  });
 
   it("should not have weather inconsistencies after a biome switch", async () => {
     game.override
       .startingWave(10)
-      .startingBiome(Biome.ICE_CAVE) // Will lead to Snowy Forest with randomly generated weather
+      .startingBiome(BiomeId.ICE_CAVE) // Will lead to Snowy Forest with randomly generated weather
       .battleStyle("single")
       .startingLevel(100) // Avoid levelling up
       .disableTrainerWaves()
-      .moveset([Moves.SPLASH])
-      .enemyMoveset(Moves.SPLASH);
+      .moveset([MoveId.SPLASH])
+      .enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle(); // Apparently daily mode would override the biome
 
     // Transition from Wave 10 to Wave 11 in order to trigger biome switch
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.toNextWave();
     expect(game.phaseInterceptor.log).toContain("NewBiomeEncounterPhase");
@@ -101,7 +101,7 @@ describe("Reload", () => {
     const postReloadWeather = game.scene.arena.weather;
 
     expect(postReloadWeather).toStrictEqual(preReloadWeather);
-  }, 20000);
+  });
 
   it("should not have RNG inconsistencies at a Daily run wild Pokemon fight", async () => {
     await game.dailyMode.startBattle();
@@ -113,7 +113,7 @@ describe("Reload", () => {
     const postReloadRngState = Phaser.Math.RND.state();
 
     expect(preReloadRngState).toBe(postReloadRngState);
-  }, 20000);
+  });
 
   it("should not have RNG inconsistencies at a Daily run double battle", async () => {
     game.override.battleStyle("double");
@@ -126,7 +126,7 @@ describe("Reload", () => {
     const postReloadRngState = Phaser.Math.RND.state();
 
     expect(preReloadRngState).toBe(postReloadRngState);
-  }, 20000);
+  });
 
   it("should not have RNG inconsistencies at a Daily run Gym Leader fight", async () => {
     game.override.battleStyle("single").startingWave(40);
@@ -139,7 +139,7 @@ describe("Reload", () => {
     const postReloadRngState = Phaser.Math.RND.state();
 
     expect(preReloadRngState).toBe(postReloadRngState);
-  }, 20000);
+  });
 
   it("should not have RNG inconsistencies at a Daily run regular trainer fight", async () => {
     game.override.battleStyle("single").startingWave(45);
@@ -152,11 +152,11 @@ describe("Reload", () => {
     const postReloadRngState = Phaser.Math.RND.state();
 
     expect(preReloadRngState).toBe(postReloadRngState);
-  }, 20000);
+  });
 
   it("should not have RNG inconsistencies at a Daily run wave 50 Boss fight", async () => {
     game.override.battleStyle("single").startingWave(50);
-    await game.runToFinalBossEncounter([Species.BULBASAUR], GameModes.DAILY);
+    await game.runToFinalBossEncounter([SpeciesId.BULBASAUR], GameModes.DAILY);
 
     const preReloadRngState = Phaser.Math.RND.state();
 
@@ -165,5 +165,5 @@ describe("Reload", () => {
     const postReloadRngState = Phaser.Math.RND.state();
 
     expect(preReloadRngState).toBe(postReloadRngState);
-  }, 20000);
+  });
 });

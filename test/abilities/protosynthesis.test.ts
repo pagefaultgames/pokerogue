@@ -1,11 +1,11 @@
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Protosynthesis", () => {
@@ -25,23 +25,23 @@ describe("Abilities - Protosynthesis", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH, Moves.TACKLE])
-      .ability(Abilities.PROTOSYNTHESIS)
+      .moveset([MoveId.SPLASH, MoveId.TACKLE])
+      .ability(AbilityId.PROTOSYNTHESIS)
       .battleStyle("single")
-      .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should not consider temporary items when determining which stat to boost", async () => {
     // Mew has uniform base stats
     game.override
       .startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.DEF }])
-      .enemyMoveset(Moves.SUNNY_DAY)
+      .enemyMoveset(MoveId.SUNNY_DAY)
       .startingLevel(100)
       .enemyLevel(100);
-    await game.classicMode.startBattle([Species.MEW]);
+    await game.classicMode.startBattle([SpeciesId.MEW]);
     const mew = game.scene.getPlayerPokemon()!;
     // Nature of starting mon is randomized. We need to fix it to a neutral nature for the automated test.
     mew.setNature(Nature.HARDY);
@@ -69,7 +69,7 @@ describe("Abilities - Protosynthesis", () => {
       true,
     );
     const initialHp = enemy.hp;
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
     const unboosted_dmg = initialHp - enemy.hp;
@@ -96,7 +96,7 @@ describe("Abilities - Protosynthesis", () => {
       false,
       true,
     );
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
     const boosted_dmg = initialHp - enemy.hp;

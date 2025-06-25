@@ -1,11 +1,11 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { Stat, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 
 // TODO: Add more tests once Imposter is fully implemented
 describe("Abilities - Imposter", () => {
@@ -26,19 +26,19 @@ describe("Abilities - Imposter", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.MEW)
+      .enemySpecies(SpeciesId.MEW)
       .enemyLevel(200)
-      .enemyAbility(Abilities.BEAST_BOOST)
-      .enemyPassiveAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
-      .ability(Abilities.IMPOSTER)
-      .moveset(Moves.SPLASH);
+      .enemyAbility(AbilityId.BEAST_BOOST)
+      .enemyPassiveAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH)
+      .ability(AbilityId.IMPOSTER)
+      .moveset(MoveId.SPLASH);
   });
 
   it("should copy species, ability, gender, all stats except HP, all stat stages, moveset, and types of target", async () => {
-    await game.classicMode.startBattle([Species.DITTO]);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     const player = game.scene.getPlayerPokemon()!;
@@ -75,9 +75,9 @@ describe("Abilities - Imposter", () => {
   });
 
   it("should copy in-battle overridden stats", async () => {
-    game.override.enemyMoveset([Moves.POWER_SPLIT]);
+    game.override.enemyMoveset([MoveId.POWER_SPLIT]);
 
-    await game.classicMode.startBattle([Species.DITTO]);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -85,7 +85,7 @@ describe("Abilities - Imposter", () => {
     const avgAtk = Math.floor((player.getStat(Stat.ATK, false) + enemy.getStat(Stat.ATK, false)) / 2);
     const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);
@@ -96,18 +96,18 @@ describe("Abilities - Imposter", () => {
   });
 
   it("should set each move's pp to a maximum of 5", async () => {
-    game.override.enemyMoveset([Moves.SWORDS_DANCE, Moves.GROWL, Moves.SKETCH, Moves.RECOVER]);
+    game.override.enemyMoveset([MoveId.SWORDS_DANCE, MoveId.GROWL, MoveId.SKETCH, MoveId.RECOVER]);
 
-    await game.classicMode.startBattle([Species.DITTO]);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
     const player = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     player.getMoveset().forEach(move => {
       // Should set correct maximum PP without touching `ppUp`
       if (move) {
-        if (move.moveId === Moves.SKETCH) {
+        if (move.moveId === MoveId.SKETCH) {
           expect(move.getMovePp()).toBe(1);
         } else {
           expect(move.getMovePp()).toBe(5);
@@ -118,29 +118,29 @@ describe("Abilities - Imposter", () => {
   });
 
   it("should activate its ability if it copies one that activates on summon", async () => {
-    game.override.enemyAbility(Abilities.INTIMIDATE);
+    game.override.enemyAbility(AbilityId.INTIMIDATE);
 
-    await game.classicMode.startBattle([Species.DITTO]);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should persist transformed attributes across reloads", async () => {
-    game.override.moveset([Moves.ABSORB]);
+    game.override.moveset([MoveId.ABSORB]);
 
-    await game.classicMode.startBattle([Species.DITTO]);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.toNextWave();
 
-    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(2);
 
     await game.reload.reloadSession();
@@ -158,13 +158,12 @@ describe("Abilities - Imposter", () => {
     }
 
     expect(playerMoveset.length).toEqual(1);
-    expect(playerMoveset[0]?.moveId).toEqual(Moves.SPLASH);
+    expect(playerMoveset[0]?.moveId).toEqual(MoveId.SPLASH);
   });
 
   it("should stay transformed with the correct form after reload", async () => {
-    game.override.moveset([Moves.ABSORB]);
-    game.override.enemySpecies(Species.UNOWN);
-    await game.classicMode.startBattle([Species.DITTO]);
+    game.override.moveset([MoveId.ABSORB]).enemySpecies(SpeciesId.UNOWN);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
@@ -172,11 +171,11 @@ describe("Abilities - Imposter", () => {
     enemy.species.forms[5];
     enemy.species.formIndex = 5;
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.toNextWave();
 
-    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(2);
 
     await game.reload.reloadSession();

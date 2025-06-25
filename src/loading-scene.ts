@@ -18,9 +18,11 @@ import { initChallenges } from "#app/data/challenge";
 import i18next from "i18next";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { initVouchers } from "#app/system/voucher";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
 import { timedEventManager } from "./global-event-manager";
+import { initModifierPools } from "./modifier/init-modifier-pools";
+import { initModifierTypes } from "./modifier/modifier-type";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -177,8 +179,8 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("default_bg", "arenas");
     // Load arena images
-    getEnumValues(Biome).map(bt => {
-      const btKey = Biome[bt].toLowerCase();
+    getEnumValues(BiomeId).map(bt => {
+      const btKey = BiomeId[bt].toLowerCase();
       const isBaseAnimated = btKey === "end";
       const baseAKey = `${btKey}_a`;
       const baseBKey = `${btKey}_b`;
@@ -362,6 +364,9 @@ export class LoadingScene extends SceneBase {
     );
 
     this.loadLoadingScreen();
+
+    initModifierTypes();
+    initModifierPools();
 
     initAchievements();
     initVouchers();

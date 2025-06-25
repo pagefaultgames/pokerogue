@@ -2,11 +2,11 @@ import {
   leaveEncounterWithoutBattle,
   setEncounterRewards,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import type { ModifierTypeFunc } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import type { ModifierTypeFunc } from "#app/@types/modifier-types";
+import { modifierTypes } from "#app/data/data-lists";
 import { randSeedInt } from "#app/utils/common";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -35,7 +35,7 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
     {
       spriteKey: "",
       fileRoot: "",
-      species: Species.FURFROU,
+      species: SpeciesId.FURFROU,
       hasShadow: true,
       repeat: true,
       x: 30,

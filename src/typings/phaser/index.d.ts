@@ -20,37 +20,37 @@ declare module "phaser" {
       /**
        * Sets this object's position relative to another object with a given offset
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
+			setPositionRelative(guideObject: any, x: number, y: number): this;
 		}
 		interface Sprite {
       /**
        * Sets this object's position relative to another object with a given offset
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
+			setPositionRelative(guideObject: any, x: number, y: number): this;
 		}
 		interface Image {
       /**
        * Sets this object's position relative to another object with a given offset
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
+			setPositionRelative(guideObject: any, x: number, y: number): this;
 		}
 		interface NineSlice {
       /**
        * Sets this object's position relative to another object with a given offset
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
+			setPositionRelative(guideObject: any, x: number, y: number): this;
 		}
 		interface Text {
       /**
        * Sets this object's position relative to another object with a given offset
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
+			setPositionRelative(guideObject: any, x: number, y: number): this;
 		}
 		interface Rectangle {
       /**
        * Sets this object's position relative to another object with a given offset
        */
-			setPositionRelative(guideObject: any, x: number, y: number): void;
+			setPositionRelative(guideObject: any, x: number, y: number): this;
 		}
 	}
 

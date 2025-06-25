@@ -1,8 +1,8 @@
 import { Gender } from "#app/data/gender";
 import { PokeballType } from "#app/enums/pokeball";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -25,16 +25,16 @@ describe("Abilities - Illusion", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.ZORUA)
-      .enemyAbility(Abilities.ILLUSION)
-      .enemyMoveset(Moves.TACKLE)
+      .enemySpecies(SpeciesId.ZORUA)
+      .enemyAbility(AbilityId.ILLUSION)
+      .enemyMoveset(MoveId.TACKLE)
       .enemyHeldItems([{ name: "WIDE_LENS", count: 3 }])
-      .moveset([Moves.WORRY_SEED, Moves.SOAK, Moves.TACKLE])
+      .moveset([MoveId.WORRY_SEED, MoveId.SOAK, MoveId.TACKLE])
       .startingHeldItems([{ name: "WIDE_LENS", count: 3 }]);
   });
 
   it("creates illusion at the start", async () => {
-    await game.classicMode.startBattle([Species.ZOROARK, Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.ZOROARK, SpeciesId.FEEBAS]);
     const zoroark = game.scene.getPlayerPokemon()!;
     const zorua = game.scene.getEnemyPokemon()!;
 
@@ -43,8 +43,8 @@ describe("Abilities - Illusion", () => {
   });
 
   it("break after receiving damaging move", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
-    game.move.select(Moves.TACKLE);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -55,8 +55,8 @@ describe("Abilities - Illusion", () => {
   });
 
   it("break after getting ability changed", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
-    game.move.select(Moves.WORRY_SEED);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    game.move.select(MoveId.WORRY_SEED);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -66,8 +66,8 @@ describe("Abilities - Illusion", () => {
   });
 
   it("breaks with neutralizing gas", async () => {
-    game.override.enemyAbility(Abilities.NEUTRALIZING_GAS);
-    await game.classicMode.startBattle([Species.KOFFING]);
+    game.override.enemyAbility(AbilityId.NEUTRALIZING_GAS);
+    await game.classicMode.startBattle([SpeciesId.KOFFING]);
 
     const zorua = game.scene.getEnemyPokemon()!;
 
@@ -76,11 +76,11 @@ describe("Abilities - Illusion", () => {
 
   it("does not activate if neutralizing gas is active", async () => {
     game.override
-      .enemyAbility(Abilities.NEUTRALIZING_GAS)
-      .ability(Abilities.ILLUSION)
-      .moveset(Moves.SPLASH)
-      .enemyMoveset(Moves.SPLASH);
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS, Species.MAGIKARP]);
+      .enemyAbility(AbilityId.NEUTRALIZING_GAS)
+      .ability(AbilityId.ILLUSION)
+      .moveset(MoveId.SPLASH)
+      .enemyMoveset(MoveId.SPLASH);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
 
     game.doSwitchPokemon(1);
     await game.toNextTurn();
@@ -89,8 +89,8 @@ describe("Abilities - Illusion", () => {
   });
 
   it("causes enemy AI to consider the illusion's type instead of the actual type when considering move effectiveness", async () => {
-    game.override.enemyMoveset([Moves.FLAMETHROWER, Moves.PSYCHIC, Moves.TACKLE]);
-    await game.classicMode.startBattle([Species.ZOROARK, Species.FEEBAS]);
+    game.override.enemyMoveset([MoveId.FLAMETHROWER, MoveId.PSYCHIC, MoveId.TACKLE]);
+    await game.classicMode.startBattle([SpeciesId.ZOROARK, SpeciesId.FEEBAS]);
 
     const enemy = game.scene.getEnemyPokemon()!;
     const zoroark = game.scene.getPlayerPokemon()!;
@@ -116,26 +116,23 @@ describe("Abilities - Illusion", () => {
     expect(psychicEffectiveness).above(flameThrowerEffectiveness);
   });
 
-  it("does not break from indirect damage", async () => {
-    game.override.enemySpecies(Species.GIGALITH);
-    game.override.enemyAbility(Abilities.SAND_STREAM);
-    game.override.enemyMoveset(Moves.WILL_O_WISP);
-    game.override.moveset([Moves.FLARE_BLITZ]);
+  it("should not break from indirect damage from status, weather or recoil", async () => {
+    game.override.enemySpecies(SpeciesId.GIGALITH).enemyAbility(AbilityId.SAND_STREAM);
 
-    await game.classicMode.startBattle([Species.ZOROARK, Species.AZUMARILL]);
+    await game.classicMode.startBattle([SpeciesId.ZOROARK, SpeciesId.AZUMARILL]);
 
-    game.move.select(Moves.FLARE_BLITZ);
-
-    await game.phaseInterceptor.to("TurnEndPhase");
+    game.move.use(MoveId.FLARE_BLITZ);
+    await game.move.forceEnemyMove(MoveId.WILL_O_WISP);
+    await game.toEndOfTurn();
 
     const zoroark = game.scene.getPlayerPokemon()!;
-
     expect(!!zoroark.summonData.illusion).equals(true);
   });
 
   it("copies the the name, nickname, gender, shininess, and pokeball from the illusion source", async () => {
-    game.override.enemyMoveset(Moves.SPLASH);
-    await game.classicMode.startBattle([Species.ABRA, Species.ZOROARK, Species.AXEW]);
+    game.override.enemyMoveset(MoveId.SPLASH);
+    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.ZOROARK, SpeciesId.AXEW]);
+
     const axew = game.scene.getPlayerParty().at(2)!;
     axew.shiny = true;
     axew.nickname = btoa(unescape(encodeURIComponent("axew nickname")));
@@ -156,13 +153,13 @@ describe("Abilities - Illusion", () => {
   });
 
   it("breaks when suppressed", async () => {
-    game.override.moveset(Moves.GASTRO_ACID);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    game.override.moveset(MoveId.GASTRO_ACID);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     const zorua = game.scene.getEnemyPokemon()!;
 
     expect(!!zorua.summonData?.illusion).toBe(true);
 
-    game.move.select(Moves.GASTRO_ACID);
+    game.move.select(MoveId.GASTRO_ACID);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(zorua.isFullHp()).toBe(true);

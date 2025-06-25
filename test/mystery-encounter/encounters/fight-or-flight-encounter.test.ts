@@ -1,7 +1,7 @@
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -9,9 +9,9 @@ import {
   runSelectMysteryEncounterOption,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import type BattleScene from "#app/battle-scene";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { UiMode } from "#enums/ui-mode";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -24,8 +24,8 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 
 const namespace = "mysteryEncounters/fightOrFlight";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
-const defaultBiome = Biome.CAVE;
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
+const defaultBiome = BiomeId.CAVE;
 const defaultWave = 45;
 
 describe("Fight or Flight - Mystery Encounter", () => {
@@ -40,20 +40,19 @@ describe("Fight or Flight - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.FIGHT_OR_FLIGHT]]]),
+      new Map<BiomeId, MysteryEncounterType[]>([[BiomeId.CAVE, [MysteryEncounterType.FIGHT_OR_FLIGHT]]]),
     );
   });
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -111,7 +110,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
     });
@@ -124,7 +123,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
 
@@ -158,7 +157,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
       scene.getPlayerParty().forEach(p => (p.moveset = []));
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
@@ -167,7 +166,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 2);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -179,12 +178,12 @@ describe("Fight or Flight - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIGHT_OR_FLIGHT, defaultParty);
 
       // Mock moveset
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(Moves.KNOCK_OFF)];
+      scene.getPlayerParty()[0].moveset = [new PokemonMove(MoveId.KNOCK_OFF)];
       const item = game.scene.currentBattle.mysteryEncounter!.misc;
 
       await runMysteryEncounterToEnd(game, 2);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
 
