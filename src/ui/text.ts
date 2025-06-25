@@ -11,6 +11,7 @@ export enum TextStyle {
   MESSAGE,
   WINDOW,
   WINDOW_ALT,
+  WINDOW_BATTLE_COMMAND,
   BATTLE_INFO,
   PARTY,
   PARTY_RED,
@@ -218,6 +219,20 @@ export function getTextStyleOptions(
       shadowXpos = 3;
       shadowYpos = 3;
       break;
+	case TextStyle.WINDOW_BATTLE_COMMAND: {
+      let fontSizeLabel = "96px";
+      switch (lang) {
+        case "ja":
+		  styleOptions.padding = { top: 2 };
+		  fontSizeLabel = "92px";
+          break;
+      }
+      styleOptions.fontSize = fontSizeLabel;
+      break;
+    }
+      shadowXpos = 5;
+      shadowYpos = 5;
+      break;
     case TextStyle.STATS_LABEL: {
       let fontSizeLabel = "96px";
       switch (lang) {
@@ -385,6 +400,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.MESSAGE:
       return !shadow ? "#f8f8f8" : "#6b5a73";
     case TextStyle.WINDOW:
+    case TextStyle.WINDOW_BATTLE_COMMAND:
     case TextStyle.MOVE_INFO_CONTENT:
     case TextStyle.MOVE_PP_FULL:
     case TextStyle.TOOLTIP_CONTENT:
