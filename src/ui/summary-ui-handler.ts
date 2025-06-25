@@ -148,7 +148,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.tabSprite.setOrigin(1, 1);
     this.summaryContainer.add(this.tabSprite);
 
-    const summaryLabel = addTextObject(4, -165, i18next.t("pokemonSummary:pokemonInfo"), TextStyle.SUMMARY);
+    const summaryLabel = addTextObject(4, -165, i18next.t("pokemonSummary:pokemonInfo"), TextStyle.SUMMARY_HEADER);
     summaryLabel.setOrigin(0, 1);
     this.summaryContainer.add(summaryLabel);
 
@@ -1000,10 +1000,10 @@ export default class SummaryUiHandler extends UiHandler {
             16 * rowIndex,
             statName,
             natureStatMultiplier === 1
-              ? TextStyle.SUMMARY
+              ? TextStyle.SUMMARY_STATS
               : natureStatMultiplier > 1
-                ? TextStyle.SUMMARY_PINK
-                : TextStyle.SUMMARY_BLUE,
+                ? TextStyle.SUMMARY_STATS_PINK
+                : TextStyle.SUMMARY_STATS_BLUE,
           );
           const ivLabel = addTextObject(
             115 * colIndex + (colIndex === 1 ? 5 : 0),
