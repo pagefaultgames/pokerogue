@@ -6,6 +6,8 @@ import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { HeldItemId } from "#enums/held-item-id";
+import { allHeldItems } from "#app/items/all-held-items";
+import type { ContactItemStealChanceHeldItem } from "#app/items/held-items/item-steal";
 
 describe("Items - Grip Claw", () => {
   let phaserGame: Phaser.Game;
@@ -44,8 +46,9 @@ describe("Items - Grip Claw", () => {
 
     const [playerPokemon] = game.scene.getPlayerField();
 
-    const gripClaw = playerPokemon.getHeldItems()[0] as ContactHeldItemTransferChanceModifier;
-    vi.spyOn(gripClaw, "chance", "get").mockReturnValue(100);
+    vi.spyOn(allHeldItems[HeldItemId.GRIP_CLAW] as ContactItemStealChanceHeldItem, "chance", "get").mockReturnValue(
+      100,
+    );
 
     const enemyPokemon = game.scene.getEnemyField();
 
@@ -73,8 +76,9 @@ describe("Items - Grip Claw", () => {
 
     const [playerPokemon] = game.scene.getPlayerField();
 
-    const gripClaw = playerPokemon.getHeldItems()[0] as ContactHeldItemTransferChanceModifier;
-    vi.spyOn(gripClaw, "chance", "get").mockReturnValue(100);
+    vi.spyOn(allHeldItems[HeldItemId.GRIP_CLAW] as ContactItemStealChanceHeldItem, "chance", "get").mockReturnValue(
+      100,
+    );
 
     const enemyPokemon = game.scene.getEnemyField();
 
