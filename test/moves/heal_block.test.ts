@@ -42,7 +42,7 @@ describe("Moves - Heal Block", () => {
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
-    player.damageAndUpdate(enemy.getMaxHp() - 1);
+    player.damageAndUpdate(player.getMaxHp() - 1);
 
     game.move.select(MoveId.ABSORB);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
