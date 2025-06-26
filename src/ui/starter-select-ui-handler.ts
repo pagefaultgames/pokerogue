@@ -944,7 +944,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const moveBg = globalScene.add.nineslice(0, 0, "type_bgs", "unknown", 92, 14, 2, 2, 2, 2);
       moveBg.setOrigin(1, 0);
 
-      const moveLabel = addTextObject(-moveBg.width / 2, 0, "-", TextStyle.PARTY);
+      const moveLabel = addTextObject(-moveBg.width / 2, 0, "-", TextStyle.MOVE_LABEL);
       moveLabel.setOrigin(0.5, 0);
 
       this.pokemonMoveBgs.push(moveBg);
@@ -961,7 +961,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       -this.pokemonMoveBgs[0].width / 2,
       56,
       "(+0)",
-      TextStyle.PARTY,
+      TextStyle.MOVE_LABEL,
     );
     this.pokemonAdditionalMoveCountLabel.setOrigin(0.5, 0);
 
@@ -983,7 +983,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       const eggMoveBg = globalScene.add.nineslice(0, 0, "type_bgs", "unknown", 92, 14, 2, 2, 2, 2);
       eggMoveBg.setOrigin(1, 0);
 
-      const eggMoveLabel = addTextObject(-eggMoveBg.width / 2, 0, "???", TextStyle.PARTY);
+      const eggMoveLabel = addTextObject(-eggMoveBg.width / 2, 0, "???", TextStyle.MOVE_LABEL);
       eggMoveLabel.setOrigin(0.5, 0);
 
       this.pokemonEggMoveBgs.push(eggMoveBg);
