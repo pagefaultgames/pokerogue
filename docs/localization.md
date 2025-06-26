@@ -104,7 +104,7 @@ PRs that modify existing text have different risks with respect to coordination 
 
 ## Filming Locales Changes
 
-After making a PR involving any outwards-facing behavior (but _especially_ locales-related ones), it's generally considered good practice to attach a video of those changes working in-game.
+After making a PR involving any outwards-facing behavior (but _especially_ locales-related ones), it's generally considered good practice to attach a video or screenshots of those changes working in-game.
 
 Basic procedure:
 <!-- TODO: Update links after contributing.md PR -->
