@@ -29,6 +29,7 @@ export enum TextStyle {
   SUMMARY_STATS,
   SUMMARY_STATS_BLUE,
   SUMMARY_STATS_PINK,
+  GROWTH_RATE_TYPE,
   MONEY, // Money default styling (pale yellow)
   MONEY_WINDOW, // Money displayed in Windows (needs different colors based on theme)
   HEADER_LABEL,
@@ -214,6 +215,17 @@ export function getTextStyleOptions(
       shadowXpos = 3;
       shadowYpos = 3;
       break;
+    case TextStyle.GROWTH_RATE_TYPE: {
+      switch (lang) {
+        case "ja":
+		  styleOptions.padding = { left: 24 };
+          break;
+      }
+	  styleOptions.fontSize = defaultFontSize - 30;
+      shadowXpos = 3;
+      shadowYpos = 3;
+      break;
+    }
     case TextStyle.WINDOW_BATTLE_COMMAND: {
       let fontSizeLabel = "96px";
       switch (lang) {
@@ -530,6 +542,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.SUMMARY_STATS:
       return !shadow ? "#f8f8f8" : "#636363";
     case TextStyle.SUMMARY_ALT:
+    case TextStyle.GROWTH_RATE_TYPE:
       if (isLegacyTheme) {
         return !shadow ? "#f8f8f8" : "#636363";
       }
