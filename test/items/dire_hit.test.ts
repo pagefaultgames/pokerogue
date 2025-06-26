@@ -5,7 +5,6 @@ import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
-import { TempCritBoosterModifier } from "#app/modifier/modifier";
 import { UiMode } from "#enums/ui-mode";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { Button } from "#app/enums/buttons";
@@ -13,6 +12,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 describe("Items - Dire Hit", () => {
   let phaserGame: Phaser.Game;
@@ -35,7 +35,7 @@ describe("Items - Dire Hit", () => {
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.SPLASH)
       .moveset([MoveId.POUND])
-      .startingHeldItems([{ name: "DIRE_HIT" }])
+      .startingTrainerItems([{ entry: TrainerItemId.DIRE_HIT }])
       .battleStyle("single");
   });
 
@@ -64,8 +64,8 @@ describe("Items - Dire Hit", () => {
 
     await game.phaseInterceptor.to(BattleEndPhase);
 
-    const modifier = game.scene.findModifier(m => m instanceof TempCritBoosterModifier) as TempCritBoosterModifier;
-    expect(modifier.getBattleCount()).toBe(4);
+    const stack = game.scene.trainerItems.getStack(TrainerItemId.DIRE_HIT);
+    expect(stack).toBe(4);
 
     // Forced DIRE_HIT to spawn in the first slot with override
     game.onNextPrompt(
@@ -84,14 +84,7 @@ describe("Items - Dire Hit", () => {
 
     await game.phaseInterceptor.to(TurnInitPhase);
 
-    // Making sure only one booster is in the modifier list even after picking up another
-    let count = 0;
-    for (const m of game.scene.modifiers) {
-      if (m instanceof TempCritBoosterModifier) {
-        count++;
-        expect((m as TempCritBoosterModifier).getBattleCount()).toBe(5);
-      }
-    }
-    expect(count).toBe(1);
+    const newStack = game.scene.trainerItems.getStack(TrainerItemId.DIRE_HIT);
+    expect(newStack).toBe(5);
   });
 });

@@ -1,4 +1,4 @@
-import { applyPostItemLostAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { HeldItemNames, type HeldItemId } from "#enums/held-item-id";
@@ -156,7 +156,7 @@ export class ConsumableHeldItem extends HeldItem {
       globalScene.updateItems(isPlayer);
     }
     if (unburden) {
-      applyPostItemLostAbAttrs("PostItemLostAbAttr", pokemon, false);
+      applyAbAttrs("PostItemLostAbAttr", { pokemon: pokemon });
     }
   }
 }

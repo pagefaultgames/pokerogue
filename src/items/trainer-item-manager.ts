@@ -79,11 +79,14 @@ export class TrainerItemManager {
     }
   }
 
-  add(itemType: TrainerItemId | TrainerItemSpecs, addStack = 1): boolean {
+  add(itemType: TrainerItemId | TrainerItemSpecs, addStack?: number): boolean {
     if (isTrainerItemSpecs(itemType)) {
       return this.addItemWithSpecs(itemType);
     }
 
+    if (!addStack) {
+      addStack = allTrainerItems[itemType].isLapsing ? allTrainerItems[itemType].getMaxStackCount() : 1;
+    }
     const maxStack = allTrainerItems[itemType].getMaxStackCount();
     const item = this.trainerItems[itemType];
 

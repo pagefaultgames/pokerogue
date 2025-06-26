@@ -2774,7 +2774,7 @@ export default class BattleScene extends SceneBase {
     const manager = isPlayer ? this.trainerItems : this.enemyTrainerItems;
     config.forEach(item => {
       const { entry, count } = item;
-      const actualCount = typeof count === "function" ? count() : (count ?? 1);
+      const actualCount = typeof count === "function" ? count() : count;
 
       if (typeof entry === "number") {
         manager.add(entry, actualCount);
@@ -2785,7 +2785,7 @@ export default class BattleScene extends SceneBase {
       }
 
       if (isTrainerItemPool(entry)) {
-        for (let i = 1; i <= actualCount; i++) {
+        for (let i = 1; i <= (actualCount ?? 1); i++) {
           const newItem = getNewTrainerItemFromPool(entry, manager);
           if (newItem) {
             manager.add(newItem);
