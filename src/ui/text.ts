@@ -39,6 +39,7 @@ export enum TextStyle {
   SETTINGS_SELECTED,
   SETTINGS_LOCKED,
   EGG_LIST,
+  STARTER_VALUE_LIMIT,
   TOOLTIP_TITLE,
   TOOLTIP_CONTENT,
   MOVE_INFO_CONTENT,
@@ -362,6 +363,11 @@ export function getTextStyleOptions(
     case TextStyle.EGG_LIST:
       styleOptions.fontSize = defaultFontSize - 34;
       break;
+    case TextStyle.STARTER_VALUE_LIMIT:
+      styleOptions.fontSize = defaultFontSize - 36;
+      shadowXpos = 3;
+      shadowYpos = 3;
+      break;
     case TextStyle.TOOLTIP_CONTENT: {
       switch (lang) {
         case "ja":
@@ -471,6 +477,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.MOVE_PP_FULL:
     case TextStyle.EGG_LIST:
     case TextStyle.TOOLTIP_CONTENT:
+    case TextStyle.STARTER_VALUE_LIMIT:
     case TextStyle.SETTINGS_VALUE:
       if (isLegacyTheme) {
         return !shadow ? "#484848" : "#d0d0c8";
