@@ -117,7 +117,7 @@ Basic procedure:
    ```
 2. Set some of the [in-game overrides](../README.md#-faq) inside `overrides.ts` to values corresponding to the interactions being tested.
 3. Start a local dev server (`npm run start:dev`) and open localhost in your browser.
-4. Film the locales change being displayed in the recording software of your choice[^2].
+4. Take screenshots showing your changes in-game or record video of the locales changes being displayed using the recording software of your choice[^2].
 
 [^2]: For those lacking a screen capture device, [OBS Studio](https://obsproject.com) is a popular open-source option.
 
