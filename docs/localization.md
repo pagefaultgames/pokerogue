@@ -5,7 +5,7 @@ As a developer, it's important to help maintain global accessibility by effectiv
 
 This document aims to cover everything you need to know to help keep the integration process for localization smooth and simple.
 
-# Stupid Assumptions
+# Prerequisites
 Before you continue, this document assumes:
 <!-- TODO: Move to contributing.md once that is released -->
 - You have already forked the repository and set up a development environment according to the [respository README](https://github.com/pagefaultgames/pokerogue/blob/beta/README.md).
