@@ -2,7 +2,7 @@
 
 Thank you for taking the time to contribute, every little bit helps. This project is entirely open-source and unmonetized - community contributions are what keep it alive!
 
-Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and *feel free to reach out in the **#dev-corner** channel on [Discord](https://discord.gg/pokerogue)*. 
+Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and *feel free to reach out reach out in the **#dev-corner** channel on [Discord](https://discord.gg/pokerogue)*. 
 We are here to help and the better you understand what you're working on, the easier it will be for it to find its way into the game.
 
 ## 📄 Table of Contents
@@ -12,7 +12,6 @@ We are here to help and the better you understand what you're working on, the ea
 - [Getting Started](#-getting-started)
 - [Documentation](#-documentation)
 - [Testing Your Changes](#-testing-your-changes)
-- [Localization](#-localization)
 - [Development Save File (Unlock Everything)](#-development-save-file)
 
 ## 🛠️ Development Basics
@@ -27,21 +26,14 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 
 - node: >=22.14.0 - [manage with pnpm](https://pnpm.io/cli/env) | [manage with fnm](https://github.com/Schniz/fnm) | [manage with nvm](https://github.com/nvm-sh/nvm)
 - pnpm: 10.x - [how to install](https://pnpm.io/installation) (not recommended to install via `npm` on Windows native) | [alternate method - volta.sh](https://volta.sh/)
-- Git (install [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)) - required to access the translations
 
 ### Procedure
 
-1. Clone the repository through Git by running the following command in your desired directory:
-   ```bash
-   git clone --recurse-submodules https://github.com/pagefaultgames/pokerogue
-   ```
-   [^1]
-2. Run `pnpm install` in the newly cloned folder to download required dependencies.
-3. Run `pnpm start:dev` to locally run the project in `localhost:8000`
+1. Clone the repo with the `--recurse-submodules` flag[^1] and in the root directory run `pnpm install`
+    - If you run into any errors, reach out in the **#dev-corner** channel on Discord and someone will be happy to help.
+2. Run `pnpm start:dev` to locally run the project at `localhost:8000`
 
-If you run into any errors at any point, reach out in the **#dev-corner** channel in Discord and someone will be happy to help.
-
-[^1]: If you forget to use the `--recurse-submodules` flag when cloning initially (or do so via an alternate tool), consult [localization.md](./docs/localization.md) \
+[^1]: If you forget to include the `--recurse-submodules` flag when cloning initially (or do so via an alternate tool), consult [localization.md](./docs/localization.md) \
 for instructions on how to clone the `locales` submodule manually.
 
 ### Linting
@@ -116,10 +108,6 @@ Most non-trivial changes (*especially bug fixes*) should come along with new tes
     - Are deterministic. In other words, the test should never pass or fail when it shouldn't due to randomness. This involves primarily ensuring that abilities and moves are never randomly selected.
     - As much as possible, are unit tests. If you have made two distinct changes, they should be tested in two separate cases.
     - Test edge cases. A good strategy is to think of edge cases beforehand and create tests for them using `it.todo`. Once the edge case has been handled, you can remove the `todo` marker.
-
-## 📜 Localization
-
-See [localization.md](./docs/localization.md) for a detailed overview of the localization process.
 
 ## 😈 Development Save File
 > Some issues may require you to have unlocks on your save file which go beyond normal overrides. For this reason, the repository contains a [save file](../test/testUtils/saves/everything.psrv) with _everything_ unlocked (even ones not legitimately obtainable, like unimplemented variant shinies).
