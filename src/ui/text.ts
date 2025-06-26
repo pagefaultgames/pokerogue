@@ -359,10 +359,12 @@ export function getTextStyleOptions(
       switch (lang) {
         case "ja":
 		  styleOptions.fontSize = defaultFontSize - 46;
-		  styleOptions.padding = { top: 16 };
+		  styleOptions.padding = { top: 5 };
+          break;
+        default:
+          styleOptions.fontSize = defaultFontSize - 30;
           break;
       }
-	  styleOptions.fontSize = defaultFontSize - 30;
       styleOptions.fontFamily = "pkmnems";
       break;
     }
