@@ -185,7 +185,7 @@ export function getNewAttackTypeBoosterHeldItem(
     p
       .getMoveset()
       .filter(m => m.getMove().is("AttackMove"))
-      .map(m => m.getMove().type),
+      .map(m => p.getMoveType(m.getMove(), true)),
   );
   if (!attackMoveTypes.length) {
     return null;
