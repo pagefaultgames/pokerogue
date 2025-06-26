@@ -101,6 +101,14 @@ export class PokemonItemManager {
     return item ? item.stack : 0;
   }
 
+  // Use for tests if necessary to go over stack limit
+  setStack(itemType: HeldItemId, stack: number): void {
+    const item = this.heldItems[itemType];
+    if (item) {
+      item.stack = stack;
+    }
+  }
+
   isMaxStack(itemType: HeldItemId): boolean {
     const item = this.heldItems[itemType];
     return item ? item.stack >= allHeldItems[itemType].getMaxStackCount() : false;

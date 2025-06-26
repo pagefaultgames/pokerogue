@@ -4,10 +4,8 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { HeldItemId } from "#enums/held-item-id";
-import { allHeldItems } from "#app/items/all-held-items";
-import type { ContactItemStealChanceHeldItem } from "#app/items/held-items/item-steal";
 
 describe("Items - Grip Claw", () => {
   let phaserGame: Phaser.Game;
@@ -45,12 +43,8 @@ describe("Items - Grip Claw", () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
     const [playerPokemon] = game.scene.getPlayerField();
-
-    vi.spyOn(allHeldItems[HeldItemId.GRIP_CLAW] as ContactItemStealChanceHeldItem, "chance", "get").mockReturnValue(
-      100,
-    );
-
     const enemyPokemon = game.scene.getEnemyField();
+    playerPokemon.heldItemManager.setStack(HeldItemId.GRIP_CLAW, 10);
 
     const playerHeldItemCount = playerPokemon.heldItemManager.getHeldItemCount();
     const enemy1HeldItemCount = enemyPokemon[0].heldItemManager.getHeldItemCount();
@@ -75,11 +69,6 @@ describe("Items - Grip Claw", () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
     const [playerPokemon] = game.scene.getPlayerField();
-
-    vi.spyOn(allHeldItems[HeldItemId.GRIP_CLAW] as ContactItemStealChanceHeldItem, "chance", "get").mockReturnValue(
-      100,
-    );
-
     const enemyPokemon = game.scene.getEnemyField();
 
     const playerHeldItemCount = playerPokemon.heldItemManager.getHeldItemCount();
@@ -109,9 +98,7 @@ describe("Items - Grip Claw", () => {
     await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.OMANYTE]);
 
     const [leftPokemon, rightPokemon] = game.scene.getPlayerField();
-
-    const gripClaw = leftPokemon.getHeldItems()[0] as ContactHeldItemTransferChanceModifier;
-    vi.spyOn(gripClaw, "chance", "get").mockReturnValue(100);
+    leftPokemon.heldItemManager.setStack(HeldItemId.GRIP_CLAW, 10);
 
     const heldItemCountBefore = rightPokemon.heldItemManager.getHeldItemCount();
 
