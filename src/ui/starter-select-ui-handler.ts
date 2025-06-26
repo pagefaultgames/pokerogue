@@ -969,6 +969,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     this.starterSelectContainer.add(this.pokemonMovesContainer);
 
+    const eggMovesTitleText = addTextObject(85, 85, i18next.t("starterSelectUiHandler:eggMoves"), TextStyle.WINDOW_ALT, { fontSize: 34 });
+    eggMovesTitleText.setOrigin(0.5, 0);
+    this.starterSelectContainer.add(eggMovesTitleText);
+
     this.pokemonEggMovesContainer = globalScene.add.container(102, 85);
     this.pokemonEggMovesContainer.setScale(0.375);
 
