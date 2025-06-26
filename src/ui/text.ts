@@ -82,11 +82,6 @@ export function addTextObject(
     ret.setLineSpacing(scale * 30);
   }
 
-//Japanese Line Text Spacing
-  //if (ret.lineSpacing < 12 && i18next.resolvedLanguage === "ja") {
-    //ret.setLineSpacing(ret.lineSpacing + 35);
-  //}
-
   return ret;
 }
 
