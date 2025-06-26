@@ -1,4 +1,4 @@
-import { applyPostTurnAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { TerrainType } from "#app/data/terrain";
 import { WeatherType } from "#app/enums/weather-type";
@@ -45,7 +45,7 @@ export class TurnEndPhase extends FieldPhase {
           globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.ENEMY_STATUS_HEAL_CHANCE, { pokemon: pokemon });
         }
 
-        applyPostTurnAbAttrs("PostTurnAbAttr", pokemon);
+        applyAbAttrs("PostTurnAbAttr", { pokemon });
       }
 
       applyHeldItems(HELD_ITEM_EFFECT.TURN_END_STATUS, { pokemon: pokemon });

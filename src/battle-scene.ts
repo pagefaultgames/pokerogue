@@ -47,7 +47,7 @@ import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#app/modifier
 import { getModifierPoolForType } from "./utils/modifier-utils";
 import { HeldItemPoolType, ModifierPoolType } from "#enums/modifier-pool-type";
 import AbilityBar from "#app/ui/ability-bar";
-import { applyAbAttrs, applyPostBattleInitAbAttrs, applyPostItemLostAbAttrs } from "./data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "./data/abilities/apply-ab-attrs";
 import { allAbilities } from "./data/data-lists";
 import type { FixedBattleConfig } from "#app/battle";
 import Battle from "#app/battle";
@@ -891,9 +891,19 @@ export default class BattleScene extends SceneBase {
     return activeOnly ? this.infoToggles.filter(t => t?.isActive()) : this.infoToggles;
   }
 
-  getPokemonById(pokemonId: number): Pokemon | null {
-    const findInParty = (party: Pokemon[]) => party.find(p => p.id === pokemonId);
-    return (findInParty(this.getPlayerParty()) || findInParty(this.getEnemyParty())) ?? null;
+  /**
+   * Return the {@linkcode Pokemon} associated with a given ID.
+   * @param pokemonId - The ID whose Pokemon will be retrieved.
+   * @returns The {@linkcode Pokemon} associated with the given id.
+   * Returns `null` if the ID is `undefined` or not present in either party.
+   */
+  getPokemonById(pokemonId: number | undefined): Pokemon | null {
+    if (isNullOrUndefined(pokemonId)) {
+      return null;
+    }
+
+    const party = (this.getPlayerParty() as Pokemon[]).concat(this.getEnemyParty());
+    return party.find(p => p.id === pokemonId) ?? null;
   }
 
   addPlayerPokemon(
@@ -1257,7 +1267,7 @@ export default class BattleScene extends SceneBase {
     const doubleChance = new NumberHolder(newWaveIndex % 10 === 0 ? 32 : 8);
     this.applyPlayerItems(TRAINER_ITEM_EFFECT.DOUBLE_BATTLE_CHANCE_BOOSTER, { numberHolder: doubleChance });
     for (const p of playerField) {
-      applyAbAttrs("DoubleBattleChanceAbAttr", p, null, false, doubleChance);
+      applyAbAttrs("DoubleBattleChanceAbAttr", { pokemon: p, chance: doubleChance });
     }
     return Math.max(doubleChance.value, 1);
   }
@@ -1462,7 +1472,7 @@ export default class BattleScene extends SceneBase {
         for (const pokemon of this.getPlayerParty()) {
           pokemon.resetBattleAndWaveData();
           pokemon.resetTera();
-          applyPostBattleInitAbAttrs("PostBattleInitAbAttr", pokemon);
+          applyAbAttrs("PostBattleInitAbAttr", { pokemon });
           if (
             pokemon.hasSpecies(SpeciesId.TERAPAGOS) ||
             (this.gameMode.isClassic && this.currentBattle.waveIndex > 180 && this.currentBattle.waveIndex <= 190)
@@ -2698,7 +2708,7 @@ export default class BattleScene extends SceneBase {
     const cancelled = new BooleanHolder(false);
 
     if (source && source.isPlayer() !== target.isPlayer()) {
-      applyAbAttrs("BlockItemTheftAbAttr", source, cancelled);
+      applyAbAttrs("BlockItemTheftAbAttr", { pokemon: source, cancelled });
     }
 
     if (cancelled.value) {
@@ -2722,7 +2732,7 @@ export default class BattleScene extends SceneBase {
     target.heldItemManager.add(itemSpecs);
 
     if (source.heldItemManager.getStack(heldItemId) === 0 && itemLost) {
-      applyPostItemLostAbAttrs("PostItemLostAbAttr", source, false);
+      applyAbAttrs("PostItemLostAbAttr", { pokemon: source });
     }
 
     if (source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
@@ -2741,7 +2751,7 @@ export default class BattleScene extends SceneBase {
     const cancelled = new BooleanHolder(false);
 
     if (source && source.isPlayer() !== target.isPlayer()) {
-      applyAbAttrs("BlockItemTheftAbAttr", source, cancelled);
+      applyAbAttrs("BlockItemTheftAbAttr", { pokemon: source, cancelled });
     }
 
     if (cancelled.value) {

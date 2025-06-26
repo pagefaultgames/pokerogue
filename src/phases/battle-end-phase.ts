@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { applyPostBattleAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { BattlePhase } from "./battle-phase";
 
 export class BattleEndPhase extends BattlePhase {
@@ -64,7 +64,7 @@ export class BattleEndPhase extends BattlePhase {
     }
 
     for (const pokemon of globalScene.getPokemonAllowedInBattle()) {
-      applyPostBattleAbAttrs("PostBattleAbAttr", pokemon, false, this.isVictory);
+      applyAbAttrs("PostBattleAbAttr", { pokemon, victory: this.isVictory });
     }
 
     if (globalScene.currentBattle.moneyScattered) {

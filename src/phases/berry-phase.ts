@@ -21,7 +21,7 @@ export class BerryPhase extends FieldPhase {
 
     this.executeForAll(pokemon => {
       this.eatBerries(pokemon);
-      applyAbAttrs("RepeatBerryNextTurnAbAttr", pokemon, null);
+      applyAbAttrs("CudChewConsumeBerryAbAttr", { pokemon });
     });
 
     this.end();
@@ -42,7 +42,7 @@ export class BerryPhase extends FieldPhase {
 
     // TODO: If both opponents on field have unnerve, which one displays its message?
     const cancelled = new BooleanHolder(false);
-    pokemon.getOpponents().forEach(opp => applyAbAttrs("PreventBerryUseAbAttr", opp, cancelled));
+    pokemon.getOpponents().forEach(opp => applyAbAttrs("PreventBerryUseAbAttr", { pokemon: opp, cancelled }));
     if (cancelled.value) {
       globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:preventBerryUse", {
@@ -63,6 +63,6 @@ export class BerryPhase extends FieldPhase {
     globalScene.updateItems(pokemon.isPlayer());
 
     // AbilityId.CHEEK_POUCH only works once per round of nom noms
-    applyAbAttrs("HealFromBerryUseAbAttr", pokemon, new BooleanHolder(false));
+    applyAbAttrs("HealFromBerryUseAbAttr", { pokemon });
   }
 }

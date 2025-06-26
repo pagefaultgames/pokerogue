@@ -67,8 +67,12 @@ export class TurnStartPhase extends FieldPhase {
     globalScene.getField(true).forEach(p => {
       const bypassSpeed = new BooleanHolder(false);
       const canCheckHeldItems = new BooleanHolder(true);
-      applyAbAttrs("BypassSpeedChanceAbAttr", p, null, false, bypassSpeed);
-      applyAbAttrs("PreventBypassSpeedChanceAbAttr", p, null, false, bypassSpeed, canCheckHeldItems);
+      applyAbAttrs("BypassSpeedChanceAbAttr", { pokemon: p, bypass: bypassSpeed });
+      applyAbAttrs("PreventBypassSpeedChanceAbAttr", {
+        pokemon: p,
+        bypass: bypassSpeed,
+        canCheckHeldItems: canCheckHeldItems,
+      });
       if (canCheckHeldItems.value) {
         applyHeldItems(HELD_ITEM_EFFECT.BYPASS_SPEED_CHANCE, { pokemon: p, doBypassSpeed: bypassSpeed });
       }
