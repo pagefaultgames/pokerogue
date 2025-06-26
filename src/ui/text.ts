@@ -218,10 +218,10 @@ export function getTextStyleOptions(
     case TextStyle.GROWTH_RATE_TYPE: {
       switch (lang) {
         case "ja":
-		  styleOptions.padding = { left: 24 };
+          styleOptions.padding = { left: 24 };
           break;
       }
-	  styleOptions.fontSize = defaultFontSize - 30;
+      styleOptions.fontSize = defaultFontSize - 30;
       shadowXpos = 3;
       shadowYpos = 3;
       break;
