@@ -130,7 +130,7 @@ The basic procedure is roughly as follows:
 ## Notifying Translation
 Put simply, stating that a PR exists makes it much easier to review and merge.
 
-The easiest way to do this is by **pinging the current Head of Translation** in the [Discord](https://discord.gg/pokerogue) (ideally in `#dev-corner` or similar).
+The easiest way to do this is by **pinging the current Head of Translation** in the [community Discord](https://discord.gg/pokerogue) (ideally in `#dev-corner` or similar).
 
 <!-- Remember to update this everytime the head of translation changes! -->
 > [!IMPORTANT]
@@ -139,4 +139,4 @@ The easiest way to do this is by **pinging the current Head of Translation** in 
 
 # Closing Remarks
 If you have any questions about the developer process for localization, don't hesitate to ask!
-Feel free to contact us on [Discord](https://discord.gg/pokerogue) - the Dev Team and Translation Team will be happy to answer any questions.
+Feel free to contact us on Discord - the Dev Team and Translation Team will be happy to answer any questions.
