@@ -6,6 +6,7 @@ import { UiMode } from "#enums/ui-mode";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 describe("Items - Lock Capsule", () => {
   let phaserGame: Phaser.Game;
@@ -29,7 +30,7 @@ describe("Items - Lock Capsule", () => {
       .startingLevel(200)
       .moveset([MoveId.SURF])
       .enemyAbility(AbilityId.BALL_FETCH)
-      .startingModifier([{ name: "LOCK_CAPSULE" }]);
+      .startingTrainerItems([{ entry: TrainerItemId.LOCK_CAPSULE }]);
   });
 
   it("doesn't set the cost of common tier items to 0", async () => {

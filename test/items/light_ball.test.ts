@@ -1,5 +1,4 @@
 import { Stat } from "#enums/stat";
-import { modifierTypes } from "#app/data/data-lists";
 import i18next from "#app/plugins/i18n";
 import { NumberHolder } from "#app/utils/common";
 import { SpeciesId } from "#enums/species-id";
@@ -7,6 +6,8 @@ import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { HeldItemId } from "#enums/held-item-id";
+import { applyHeldItems } from "#app/items/all-held-items";
+import { HELD_ITEM_EFFECT } from "#app/items/held-item";
 
 describe("Items - Light Ball", () => {
   let phaserGame: Phaser.Game;
@@ -91,20 +92,17 @@ describe("Items - Light Ball", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, atkValue);
+    applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statValue: atkValue });
     const spAtkValue = new NumberHolder(spAtkStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPDEF, spAtkValue);
-
+    applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPDEF, statValue: spAtkValue });
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
-    // Giving Eviolite to party member and testing if it applies
-    await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember),
-      true,
-    );
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
+    // Giving Light Ball to party member and testing if it applies
+    partyMember.heldItemManager.add(HeldItemId.LIGHT_BALL);
+
+    applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
+    applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPATK, statValue: spAtkValue });
 
     expect(atkValue.value / atkStat).toBe(2);
     expect(spAtkValue.value / spAtkStat).toBe(2);
@@ -130,20 +128,18 @@ describe("Items - Light Ball", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, atkValue);
+    applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statValue: atkValue });
     const spAtkValue = new NumberHolder(spAtkStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPDEF, spAtkValue);
+    applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPDEF, statValue: spAtkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
-    // Giving Eviolite to party member and testing if it applies
-    await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember),
-      true,
-    );
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
+    // Giving Light Ball to party member and testing if it applies
+    partyMember.heldItemManager.add(HeldItemId.LIGHT_BALL);
+
+    applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
+    applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPATK, statValue: spAtkValue });
 
     expect(atkValue.value / atkStat).toBe(2);
     expect(spAtkValue.value / spAtkStat).toBe(2);
@@ -169,20 +165,18 @@ describe("Items - Light Ball", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, atkValue);
+    applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statValue: atkValue });
     const spAtkValue = new NumberHolder(spAtkStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPDEF, spAtkValue);
+    applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPDEF, statValue: spAtkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
-    // Giving Eviolite to party member and testing if it applies
-    await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember),
-      true,
-    );
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
+    // Giving Light Ball to party member and testing if it applies
+    partyMember.heldItemManager.add(HeldItemId.LIGHT_BALL);
+
+    applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
+    applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPATK, statValue: spAtkValue });
 
     expect(atkValue.value / atkStat).toBe(2);
     expect(spAtkValue.value / spAtkStat).toBe(2);
@@ -198,20 +192,17 @@ describe("Items - Light Ball", () => {
 
     // Making sure modifier is not applied without holding item
     const atkValue = new NumberHolder(atkStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, atkValue);
+    applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: Stat.DEF, statValue: atkValue });
     const spAtkValue = new NumberHolder(spAtkStat);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPDEF, spAtkValue);
+    applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPDEF, statValue: spAtkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);
 
-    // Giving Eviolite to party member and testing if it applies
-    await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["LIGHT_BALL"])!.newModifier(partyMember),
-      true,
-    );
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.ATK, atkValue);
-    game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPATK, spAtkValue);
+    // Giving Light Ball to party member and testing if it applies
+    partyMember.heldItemManager.add(HeldItemId.LIGHT_BALL);
+    applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
+    applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPATK, statValue: spAtkValue });
 
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);

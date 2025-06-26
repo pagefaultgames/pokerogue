@@ -1,9 +1,11 @@
 import { AbilityId } from "#enums/ability-id";
-import { PokemonExpBoosterModifier } from "#app/modifier/modifier";
 import { NumberHolder } from "#app/utils/common";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { HeldItemId } from "#enums/held-item-id";
+import { applyHeldItems } from "#app/items/all-held-items";
+import { HELD_ITEM_EFFECT } from "#app/items/held-item";
 
 describe("EXP Modifier Items", () => {
   let phaserGame: Phaser.Game;
@@ -26,13 +28,13 @@ describe("EXP Modifier Items", () => {
   });
 
   it("EXP booster items stack multiplicatively", async () => {
-    game.override.startingHeldItems([{ name: "LUCKY_EGG", count: 3 }, { name: "GOLDEN_EGG" }]);
+    game.override.startingHeldItems([{ entry: HeldItemId.LUCKY_EGG, count: 3 }, { entry: HeldItemId.GOLDEN_EGG }]);
     await game.classicMode.startBattle();
 
     const partyMember = game.scene.getPlayerPokemon()!;
     partyMember.exp = 100;
     const expHolder = new NumberHolder(partyMember.exp);
-    game.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, expHolder);
+    applyHeldItems(HELD_ITEM_EFFECT.EXP_BOOSTER, { pokemon: partyMember, expAmount: expHolder });
     expect(expHolder.value).toBe(440);
   });
 });
