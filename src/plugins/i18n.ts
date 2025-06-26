@@ -65,27 +65,27 @@ const fonts: Array<LoadingFontFaceProperty> = [
       unicodeRange: rangesByLanguage.chinese,
     }),
     extraOptions: { sizeAdjust: "70%", format: "woff2" },
-    only: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "da", "tr", "ro", "ru"],
+    only: ["zh"],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.subset.woff2)", {
       unicodeRange: rangesByLanguage.chinese,
     }),
     extraOptions: { format: "woff2" },
-    only: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "da", "tr", "ro", "ru"],
+    only: ["zh"],
   },
   // japanese
   {
     face: new FontFace("emerald", "url(./fonts/pokemon-bw.otf)", {
       unicodeRange: rangesByLanguage.japanese,
     }),
-    only: ["ja"],
+    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru"],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/pokemon-bw.otf)", {
       unicodeRange: rangesByLanguage.japanese,
     }),
-    only: ["ja"],
+    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru"],
   },
 ];
 
