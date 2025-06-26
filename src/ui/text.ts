@@ -167,11 +167,6 @@ export function getTextStyleOptions(
     },
   };
 
-//Japanese General Scale
-  //if (i18next.resolvedLanguage === "ja") {
-   //styleOptions.padding = { top: 6, bottom: -2 };
-  //}
-
   switch (style) {
     case TextStyle.SUMMARY: {
       let fontSizeLabel = "96px";
