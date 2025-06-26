@@ -7,10 +7,10 @@ This document aims to cover everything you need to know to help keep the integra
 
 # Prerequisites
 Before you continue, this document assumes:
-<!-- TODO: Move to contributing.md once that is released -->
-- You have already forked the repository and set up a development environment according to the [respository README](https://github.com/pagefaultgames/pokerogue/blob/beta/README.md).
+- You have already forked the repository and set up a development environment according to [CONTRIBUTING.md](../CONTRIBUTING.md).
 - You have a basic level of familiarity with Git commands and GitHub repositories.
-- You have joined the [community Discord](https://discord.gg/pokerogue) and have access to `#dev-corner` and related channels via **[#select-roles](https://discord.com/channels/1125469663833370665/1194825607738052621)**. This is the easiest way to keep in touch with both the Translation Team and other like-minded contributors!
+- You have joined the [community Discord](https://discord.gg/pokerogue) and have access to `#dev-corner` and related channels via **[#select-roles](https://discord.com/channels/1125469663833370665/1194825607738052621)**.
+This is the easiest way to keep in touch with both the Translation Team and other like-minded contributors!
 
 # About the `pokerogue-locales` submodule
 
@@ -19,7 +19,8 @@ This repository is integrated into the main one as a [git submodule](https://git
 
 ## What Is a Submodule?
 
-In essence, a submodule is a way for one repository (i.e. `pokerogue`) to use another repository (i.e. `pokerogue-locales`) internally. The parent repo (the "superproject") houses a cloned version of the 2nd repository (the "submodule") inside it, making locales effectively a "repository within a repository", so to speak.
+In essence, a submodule is a way for one repository (i.e. `pokerogue`) to use another repository (i.e. `pokerogue-locales`) internally. 
+The parent repo (the "superproject") houses a cloned version of the 2nd repository (the "submodule") inside it, making locales effectively a "repository within a repository", so to speak.
 
 >[!TIP]
 > Many popular IDEs have integrated `git` support with special handling around submodules:
@@ -35,7 +36,7 @@ Once you have set up your fork, run the following command to initialize your bra
 git submodule update --init --recursive
 ```
 
-This is run automatically after merge or switching branches, so you _usually_ won't have to run it yourself after the first time.
+This is run automatically after merging or switching branches, so you _usually_ won't have to run it yourself after the first time.
 
 > [!WARNING]
 If you run into issues with your development environment afterwards, try deleting the `.git/modules/public` and `public/locales` folders before re-running the command.
@@ -51,9 +52,11 @@ The basic process for fetching translated text goes roughly as follows:
     );
     ```
 2. The game looks up the key in the corresponding JSON file for the user's language.
-    ```ts
+    ```jsonc
     // from "en/file-name.json"...
-    "keyName": "{{arg1}}! This is {{arg2}} of translated text!"
+    {
+      "keyName": "{{arg1}}! This is {{arg2}} of translated text!"
+    }
     ```
     If the key doesn't exist for the given language, the game will default to an appropriate fallback (usually the corresponding English key).
 3. The game shows the translated text to the user.
@@ -87,7 +90,7 @@ If this feature requires new text, the text should be integrated into the code w
   - For any feature pulled from the mainline Pokémon games (e.g. a Move or Ability implementation), it's best practice to include a source link for any added text. \
   [Poké Corpus](https://abcboy101.github.io/poke-corpus/) is a great resource for finding text from the mainline games; otherwise, a video/picture showing the text being displayed should suffice.
   - You should also [notify the current Head of Translation](#notifying-translation) to ensure a fast response.
-3. At this point, you may begin [testing locales integration in your main PR](#filming-locales-changes).
+3. At this point, you may begin [testing locales integration in your main PR](#documenting-locales-changes).
 4. The Translation Team will approve the locale PR (after corrections, if necessary), then merge it into `pokerogue-locales`.
 5. The Dev Team will approve your main PR for your feature, then merge it into PokéRogue's beta environment.
 
@@ -102,12 +105,11 @@ PRs that modify existing text have different risks with respect to coordination 
 - After your main PR is approved, the Translation Team will merge your locale PR, and you may update the submodule and post video evidence of integration into the **locales PR**.
 - A Lead or Senior Translator from the Translation Team will then approve your main PR (if all is well), clearing your feature for merging into `beta`.
 
-## Filming Locales Changes
+## Documenting Locales Changes
 
-After making a PR involving any outwards-facing behavior (but _especially_ locales-related ones), it's generally considered good practice to attach a video or screenshots of those changes working in-game.
+After making a PR involving any outwards-facing behavior (but _especially_ locales-related ones), it's generally considered good practice to attach proof of those changes working in-game.
 
-Basic procedure:
-<!-- TODO: Update links after contributing.md PR -->
+The basic procedure is roughly as follows:
 1. Update your locales submodule to point to **the branch you used to make the locales PR**. \
    Many IDEs with `git` integration support doing this from the GUI, \
    or you can simply do it via command-line:
@@ -115,11 +117,15 @@ Basic procedure:
    cd public/locales
    git checkout your-branch-name-here
    ```
-2. Set some of the [in-game overrides](../README.md#-faq) inside `overrides.ts` to values corresponding to the interactions being tested.
+2. Set some of the [in-game overrides](../CONTRIBUTING.md#1---manual-testing) inside `overrides.ts` to values corresponding to the interactions being tested.
 3. Start a local dev server (`pnpm start:dev`) and open localhost in your browser.
-4. Take screenshots showing your changes in-game or record video of the locales changes being displayed using the recording software of your choice[^2].
+4. Take screenshots or record a video of the locales changes being displayed in-game using the software of your choice[^2].
 
 [^2]: For those lacking a screen capture device, [OBS Studio](https://obsproject.com) is a popular open-source option.
+
+> [!INFO]
+> For those aiming to film their changes, bear in mind that GitHub has a hard **10mB limit** on uploaded media content.
+> If your video is too large, consider making it shorter or downscaling the quality.
 
 ## Notifying Translation
 Put simply, stating that a PR exists makes it much easier to review and merge.
