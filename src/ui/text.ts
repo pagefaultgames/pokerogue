@@ -348,11 +348,12 @@ export function getTextStyleOptions(
     case TextStyle.PARTY_CANCEL_BUTTON: {
       switch (lang) {
         case "ja":
-          styleOptions.fontSize = defaultFontSize - 46;
-          styleOptions.padding = { top: 5 };
+          styleOptions.fontSize = defaultFontSize - 42;
+          styleOptions.padding = { top: 4 };
           break;
         default:
           styleOptions.fontSize = defaultFontSize - 30;
+          styleOptions.padding = { left: 12 };
           break;
       }
       styleOptions.fontFamily = "pkmnems";
