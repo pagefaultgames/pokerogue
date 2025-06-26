@@ -155,7 +155,7 @@ export function getTextStyleOptions(
   const lang = i18next.resolvedLanguage;
   let shadowXpos = 4;
   let shadowYpos = 5;
-  let scale = 0.1666666667;
+  const scale = 0.1666666667;
   const defaultFontSize = 96;
 
   let styleOptions: Phaser.Types.GameObjects.Text.TextStyle = {
@@ -169,32 +169,32 @@ export function getTextStyleOptions(
 
   switch (style) {
     case TextStyle.SUMMARY: {
-      let fontSizeLabel = "96px";
+      const fontSizeLabel = "96px";
       switch (lang) {
         case "ja":
-		  styleOptions.padding = { top: 6, bottom: 4 };
+          styleOptions.padding = { top: 6, bottom: 4 };
           break;
       }
       styleOptions.fontSize = fontSizeLabel;
       break;
     }
-      shadowXpos = 5;
-      shadowYpos = 5;
-      break;
-	case TextStyle.SUMMARY_HEADER: {
+    // shadowXpos = 5;
+    // shadowYpos = 5;
+    // break;
+    case TextStyle.SUMMARY_HEADER: {
       let fontSizeLabel = "96px";
       switch (lang) {
         case "ja":
-		  styleOptions.padding = { bottom: 7 };
-		  fontSizeLabel = "80px";
+          styleOptions.padding = { bottom: 7 };
+          fontSizeLabel = "80px";
           break;
       }
       styleOptions.fontSize = fontSizeLabel;
       break;
     }
-      shadowXpos = 5;
-      shadowYpos = 5;
-      break;
+    // shadowXpos = 5;
+    // shadowYpos = 5;
+    // break;
     case TextStyle.SUMMARY_ALT:
     case TextStyle.SUMMARY_BLUE:
     case TextStyle.SUMMARY_RED:
@@ -212,20 +212,20 @@ export function getTextStyleOptions(
       shadowXpos = 3;
       shadowYpos = 3;
       break;
-	case TextStyle.WINDOW_BATTLE_COMMAND: {
+    case TextStyle.WINDOW_BATTLE_COMMAND: {
       let fontSizeLabel = "96px";
       switch (lang) {
         case "ja":
-		  styleOptions.padding = { top: 2 };
-		  fontSizeLabel = "92px";
+          styleOptions.padding = { top: 2 };
+          fontSizeLabel = "92px";
           break;
       }
       styleOptions.fontSize = fontSizeLabel;
       break;
     }
-      shadowXpos = 5;
-      shadowYpos = 5;
-      break;
+    // shadowXpos = 5;
+    // shadowYpos = 5;
+    // break;
     case TextStyle.STATS_LABEL: {
       let fontSizeLabel = "96px";
       switch (lang) {
@@ -257,11 +257,11 @@ export function getTextStyleOptions(
       break;
     }
     case TextStyle.MESSAGE:
-		  styleOptions.fontSize = defaultFontSize
+      styleOptions.fontSize = defaultFontSize;
       break;
     case TextStyle.HEADER_LABEL:
-		  styleOptions.fontSize = defaultFontSize
-		  styleOptions.padding = { top: 6 };
+      styleOptions.fontSize = defaultFontSize;
+      styleOptions.padding = { top: 6 };
       break;
     case TextStyle.SETTINGS_LABEL: {
       shadowXpos = 3;
@@ -270,7 +270,7 @@ export function getTextStyleOptions(
       switch (lang) {
         case "ja":
           fontSizeValue = "80px";
-		  styleOptions.padding = { top: 10 };
+          styleOptions.padding = { top: 10 };
           break;
         default:
           fontSizeValue = "96px";
@@ -301,7 +301,7 @@ export function getTextStyleOptions(
       switch (lang) {
         case "ja":
           fontSizeValue = "80px";
-		  styleOptions.padding = { top: 10 };
+          styleOptions.padding = { top: 10 };
           break;
         default:
           fontSizeValue = "96px";
@@ -317,7 +317,7 @@ export function getTextStyleOptions(
       switch (lang) {
         case "ja":
           fontSizeValue = "80px";
-		  styleOptions.padding = { top: 10 };
+          styleOptions.padding = { top: 10 };
           break;
         default:
           fontSizeValue = "96px";
@@ -338,18 +338,18 @@ export function getTextStyleOptions(
     case TextStyle.PARTY_RED: {
       switch (lang) {
         case "ja":
-		  styleOptions.padding = { top: -12, bottom: 4 };
+          styleOptions.padding = { top: -12, bottom: 4 };
           break;
       }
-	  styleOptions.fontSize = defaultFontSize - 30;
+      styleOptions.fontSize = defaultFontSize - 30;
       styleOptions.fontFamily = "pkmnems";
       break;
     }
-	case TextStyle.PARTY_CANCEL_BUTTON: {
+    case TextStyle.PARTY_CANCEL_BUTTON: {
       switch (lang) {
         case "ja":
-		  styleOptions.fontSize = defaultFontSize - 46;
-		  styleOptions.padding = { top: 5 };
+          styleOptions.fontSize = defaultFontSize - 46;
+          styleOptions.padding = { top: 5 };
           break;
         default:
           styleOptions.fontSize = defaultFontSize - 30;
@@ -359,13 +359,13 @@ export function getTextStyleOptions(
       break;
     }
     case TextStyle.EGG_LIST:
-		  styleOptions.fontSize = defaultFontSize - 34;
+      styleOptions.fontSize = defaultFontSize - 34;
       break;
     case TextStyle.TOOLTIP_CONTENT: {
       switch (lang) {
         case "ja":
           styleOptions.fontSize = defaultFontSize - 44;
-		  styleOptions.padding = { top: 10, right: 10 };
+          styleOptions.padding = { top: 10, right: 10 };
           break;
         default:
           styleOptions.fontSize = defaultFontSize - 32;
@@ -468,7 +468,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.WINDOW_BATTLE_COMMAND:
     case TextStyle.MOVE_INFO_CONTENT:
     case TextStyle.MOVE_PP_FULL:
-	case TextStyle.EGG_LIST:
+    case TextStyle.EGG_LIST:
     case TextStyle.TOOLTIP_CONTENT:
     case TextStyle.SETTINGS_VALUE:
       if (isLegacyTheme) {
@@ -498,12 +498,12 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
       }
       return !shadow ? "#f8f8f8" : "#6b5a73";
     case TextStyle.PARTY:
-	case TextStyle.PARTY_CANCEL_BUTTON:
+    case TextStyle.PARTY_CANCEL_BUTTON:
       return !shadow ? "#f8f8f8" : "#707070";
     case TextStyle.PARTY_RED:
       return !shadow ? "#f89890" : "#984038";
     case TextStyle.SUMMARY:
-	case TextStyle.SUMMARY_HEADER:
+    case TextStyle.SUMMARY_HEADER:
     case TextStyle.SUMMARY_STATS:
       return !shadow ? "#f8f8f8" : "#636363";
     case TextStyle.SUMMARY_ALT:
@@ -542,7 +542,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
       return !shadow ? "#78c850" : "#306850";
     case TextStyle.SETTINGS_LABEL:
     case TextStyle.SETTINGS_LABEL_NAVBAR:
-	case TextStyle.HEADER_LABEL:
+    case TextStyle.HEADER_LABEL:
     case TextStyle.PERFECT_IV:
       return !shadow ? "#f8b050" : "#c07800";
     case TextStyle.SETTINGS_SELECTED:

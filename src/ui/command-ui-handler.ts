@@ -53,7 +53,12 @@ export default class CommandUiHandler extends UiHandler {
     this.commandsContainer.add(this.teraButton);
 
     for (let c = 0; c < commands.length; c++) {
-      const commandText = addTextObject(c % 2 === 0 ? 0 : 55.8, c < 2 ? 0 : 16, commands[c], TextStyle.WINDOW_BATTLE_COMMAND);
+      const commandText = addTextObject(
+        c % 2 === 0 ? 0 : 55.8,
+        c < 2 ? 0 : 16,
+        commands[c],
+        TextStyle.WINDOW_BATTLE_COMMAND,
+      );
       commandText.setName(commands[c]);
       this.commandsContainer.add(commandText);
     }
