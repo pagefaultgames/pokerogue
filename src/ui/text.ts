@@ -358,10 +358,12 @@ export function getTextStyleOptions(
 	case TextStyle.PARTY_CANCEL_BUTTON: {
       switch (lang) {
         case "ja":
+		  styleOptions.fontSize = defaultFontSize - 46;
 		  styleOptions.padding = { top: 16 };
           break;
       }
-	  styleOptions.fontSize = defaultFontSize - 46;
+	  styleOptions.fontSize = defaultFontSize - 30;
+      styleOptions.fontFamily = "pkmnems";
       break;
     }
     case TextStyle.EGG_LIST:
