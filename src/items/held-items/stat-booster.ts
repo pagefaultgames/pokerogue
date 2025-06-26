@@ -103,7 +103,7 @@ export class EvolutionStatBoostHeldItem extends StatBoostHeldItem {
       params.statValue.value *= 1 + (this.multiplier - 1) / 2;
       return true;
     }
-    if (isUnevolved) {
+    if (isUnevolved && !pokemon.isMax()) {
       // Full boost applied if holder is unfused and unevolved or, if fused, both parts of fusion are unevolved
       return super.apply(params);
     }
