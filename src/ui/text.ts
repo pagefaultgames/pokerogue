@@ -364,8 +364,8 @@ export function getTextStyleOptions(
     case TextStyle.MOVE_LABEL: {
       switch (lang) {
         case "ja":
-		  styleOptions.fontSize = defaultFontSize - 16;
-		  styleOptions.padding = { top: -12, bottom: 4 };
+          styleOptions.fontSize = defaultFontSize - 16;
+          styleOptions.padding = { top: -12, bottom: 4 };
           break;
         default:
           styleOptions.fontSize = defaultFontSize - 30;
