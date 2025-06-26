@@ -9,7 +9,6 @@ This document aims to cover everything you need to know to help keep the integra
 Before you continue, this document assumes:
 <!-- TODO: Move to contributing.md once that is released -->
 - You have already forked the repository and set up a development environment according to the [respository README](https://github.com/pagefaultgames/pokerogue/blob/beta/README.md).
-<!-- TODO: Ask @SirsBenjie for a good Git/GH tutorial for noobs -->
 - You have a basic level of familiarity with Git commands and GitHub repositories.
 - You have joined the [community Discord](https://discord.gg/pokerogue) and have access to `#dev-corner` and related channels via **[#select-roles](https://discord.com/channels/1125469663833370665/1194825607738052621)**. This is the easiest way to keep in touch with both the Translation Team and other like-minded contributors!
 
