@@ -624,11 +624,11 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.pokemonNumberText = addTextObject(17, 1, "0000", TextStyle.SUMMARY);
+    this.pokemonNumberText = addTextObject(17, 1, "0000", TextStyle.SUMMARY_DEX_NUM);
     this.pokemonNumberText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNumberText);
 
-    this.pokemonNameText = addTextObject(6, 112, "", TextStyle.SUMMARY);
+    this.pokemonNameText = addTextObject(6, 112, "", TextStyle.SUMMARY_DEX_NUM);
     this.pokemonNameText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNameText);
 
@@ -3818,9 +3818,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
 
       this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
-      this.pokemonNumberText.setColor(this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, false));
+      this.pokemonNumberText.setColor(this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, false));
       this.pokemonNumberText.setShadowColor(
-        this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, true),
+        this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, true),
       );
 
       if (forSeen ? this.speciesStarterDexEntry?.seenAttr : this.speciesStarterDexEntry?.caughtAttr) {
