@@ -1009,7 +1009,7 @@ export default class SummaryUiHandler extends UiHandler {
             115 * colIndex + (colIndex === 1 ? 5 : 0),
             16 * rowIndex,
             statName,
-            this.pokemon?.ivs[stat] === 31 ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY,
+            this.pokemon?.ivs[stat] === 31 ? TextStyle.SUMMARY_STATS_GOLD : TextStyle.SUMMARY_STATS,
           );
 
           statLabel.setOrigin(0.5, 0);
