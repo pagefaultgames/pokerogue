@@ -19,6 +19,8 @@ export enum TextStyle {
   INSTRUCTIONS_TEXT,
   MOVE_LABEL,
   SUMMARY,
+  SUMMARY_DEX_NUM,
+  SUMMARY_DEX_NUM_GOLD,
   SUMMARY_ALT,
   SUMMARY_HEADER,
   SUMMARY_RED,
@@ -200,6 +202,30 @@ export function getTextStyleOptions(
     // shadowXpos = 5;
     // shadowYpos = 5;
     // break;
+    case TextStyle.SUMMARY_DEX_NUM: {
+      let fontSizeLabel = "96px";
+      switch (lang) {
+        case "ja":
+		  styleOptions.padding = { top: 2, bottom: 10 };
+          break;
+      }
+      styleOptions.fontSize = fontSizeLabel;
+	  shadowXpos = 5;
+	  shadowYpos = 5;
+      break;
+    }
+    case TextStyle.SUMMARY_DEX_NUM_GOLD: {
+      let fontSizeLabel = "96px";
+      switch (lang) {
+        case "ja":
+		  styleOptions.padding = { top: 2, bottom: 10 };
+          break;
+      }
+      styleOptions.fontSize = fontSizeLabel;
+	  shadowXpos = 5;
+	  shadowYpos = 5;
+      break;
+    }
     case TextStyle.SUMMARY_ALT:
     case TextStyle.SUMMARY_BLUE:
     case TextStyle.SUMMARY_RED:
@@ -554,6 +580,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.PARTY_RED:
       return !shadow ? "#f89890" : "#984038";
     case TextStyle.SUMMARY:
+    case TextStyle.SUMMARY_DEX_NUM:
     case TextStyle.SUMMARY_HEADER:
     case TextStyle.SUMMARY_STATS:
       return !shadow ? "#f8f8f8" : "#636363";
@@ -573,6 +600,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.SUMMARY_STATS_PINK:
       return !shadow ? "#f89890" : "#984038";
     case TextStyle.SUMMARY_GOLD:
+    case TextStyle.SUMMARY_DEX_NUM_GOLD:
     case TextStyle.SUMMARY_STATS_GOLD:
     case TextStyle.MONEY:
       return !shadow ? "#e8e8a8" : "#a0a060"; // Pale Yellow/Gold
