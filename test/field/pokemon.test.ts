@@ -31,7 +31,7 @@ describe("Spec - Pokemon", () => {
     const pkm = game.scene.getPlayerPokemon()!;
     expect(pkm).toBeDefined();
 
-    expect(pkm.trySetStatus(undefined)).toBe(true);
+    expect(pkm.trySetStatus(undefined)).toBe(false);
   });
 
   describe("Add To Party", () => {

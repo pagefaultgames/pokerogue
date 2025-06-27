@@ -294,7 +294,7 @@ export class Egg {
 
   public getEggDescriptor(): string {
     if (this.isManaphyEgg()) {
-      return "Manaphy";
+      return i18next.t("egg:manaphyTier");
     }
     switch (this.tier) {
       case EggTier.RARE:

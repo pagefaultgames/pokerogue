@@ -2,7 +2,7 @@
 
 Thank you for taking the time to contribute, every little bit helps. This project is entirely open-source and unmonetized - community contributions are what keep it alive!
 
-Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and absolutely *feel free to reach out reach out in the **#dev-corner** channel on [Discord](https://discord.gg/pokerogue)*. We are here to help and the better you understand what you're working on, the easier it will be for it to find its way into the game.
+Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and absolutely *feel free to reach out in the **#dev-corner** channel on [Discord](https://discord.gg/pokerogue)*. We are here to help and the better you understand what you're working on, the easier it will be for it to find its way into the game.
 
 ## 📄 Table of Contents
 
@@ -24,14 +24,14 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 
 ### Prerequisites
 
-- node: >=22.14.0
-- npm: [how to install](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+- node: >=22.14.0 - [manage with pnpm](https://pnpm.io/cli/env) | [manage with fnm](https://github.com/Schniz/fnm) | [manage with nvm](https://github.com/nvm-sh/nvm)
+- pnpm: 10.x - [how to install](https://pnpm.io/installation) (not recommended to install via `npm` on Windows native) | [alternate method - volta.sh](https://volta.sh/)
 
 ### Running Locally
 
-1. Clone the repo and in the root directory run `npm install`
+1. Clone the repo and in the root directory run `pnpm install`
     - *if you run into any errors, reach out in the **#dev-corner** channel on Discord*
-2. Run `npm run start:dev` to locally run the project in `localhost:8000`
+2. Run `pnpm start:dev` to locally run the project at `localhost:8000`
 
 ### Linting
 
@@ -91,11 +91,11 @@ You can get help testing your specific changes, and you might have found a new o
 
 > PokéRogue uses [Vitest](https://vitest.dev/) for automatic testing. Checking out the existing tests in the [test](./test/) folder is a great way to understand how this works, and to get familiar with the project as a whole.
 
-To make sure your changes didn't break any existing test cases, run `npm run test:silent` in your terminal. You can also provide an argument to the command: to run only the Dancer (ability) tests, you could write `npm run test:silent dancer`. 
+To make sure your changes didn't break any existing test cases, run `pnpm test:silent` in your terminal. You can also provide an argument to the command: to run only the Dancer (ability) tests, you could write `pnpm test:silent dancer`. 
   - __Note that passing all test cases does *not* guarantee that everything is working properly__. The project does not have complete regression testing.
 
 Most non-trivial changes (*especially bug fixes*) should come along with new test cases. 
-  - To make a new test file, run `npm run create-test` and follow the prompts. If the move/ability/etc. you're modifying already has tests, simply add new cases to the end of the file. As mentioned before, the easiest way to get familiar with the system and understand how to write your own tests is simply to read the existing tests, particularly ones similar to the tests you intend to write.
+  - To make a new test file, run `pnpm test:create` and follow the prompts. If the move/ability/etc. you're modifying already has tests, simply add new cases to the end of the file. As mentioned before, the easiest way to get familiar with the system and understand how to write your own tests is simply to read the existing tests, particularly ones similar to the tests you intend to write.
   - Ensure that new tests:
     - Are deterministic. In other words, the test should never pass or fail when it shouldn't due to randomness. This involves primarily ensuring that abilities and moves are never randomly selected.
     - As much as possible, are unit tests. If you have made two distinct changes, they should be tested in two separate cases.
