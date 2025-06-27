@@ -33,7 +33,6 @@ describe("UI - Transfer Items", () => {
       { name: "BERRY", count: 2, type: BerryType.APICOT },
       { name: "BERRY", count: 2, type: BerryType.LUM },
     ]);
-    game.override.moveset(MoveId.DRAGON_CLAW);
     game.override.enemySpecies(SpeciesId.MAGIKARP);
     game.override.enemyMoveset(MoveId.SPLASH);
 

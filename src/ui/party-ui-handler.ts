@@ -1099,7 +1099,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         break;
       case Button.LEFT:
         if (this.cursor >= battlerCount && this.cursor <= 6) {
-          success = this.setCursor(0);
+          success = this.setCursor(this.isItemManageMode() ? 7 : 0);
         }
         break;
       case Button.RIGHT:
@@ -2052,6 +2052,7 @@ class PartyCancelButton extends Phaser.GameObjects.Container {
 
     this.setup();
   }
+
   setup() {
     const partyCancelBg = globalScene.add.sprite(0, 0, "party_cancel");
     this.add(partyCancelBg);
