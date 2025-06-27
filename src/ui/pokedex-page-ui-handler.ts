@@ -1899,14 +1899,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
                 const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.starterId]);
                 options.push({
-                  label: `x${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")}`,
+                  label: `×${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")}`,
                   handler: () => {
                     if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
                       starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
                       if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                         starterData.candyCount -= passiveCost;
                       }
-                      this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                      this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
                       globalScene.gameData.saveSystem().then(success => {
                         if (!success) {
                           return globalScene.reset(true);
@@ -1931,14 +1931,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               if (valueReduction < valueReductionMax) {
                 const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.starterId])[valueReduction];
                 options.push({
-                  label: `x${reductionCost} ${i18next.t("pokedexUiHandler:reduceCost")}`,
+                  label: `×${reductionCost} ${i18next.t("pokedexUiHandler:reduceCost")}`,
                   handler: () => {
                     if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
                       starterData.valueReduction++;
                       if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                         starterData.candyCount -= reductionCost;
                       }
-                      this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                      this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
                       globalScene.gameData.saveSystem().then(success => {
                         if (!success) {
                           return globalScene.reset(true);
@@ -1960,7 +1960,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               // Same species egg menu option.
               const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.starterId]);
               options.push({
-                label: `x${sameSpeciesEggCost} ${i18next.t("pokedexUiHandler:sameSpeciesEgg")}`,
+                label: `×${sameSpeciesEggCost} ${i18next.t("pokedexUiHandler:sameSpeciesEgg")}`,
                 handler: () => {
                   if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost) {
                     if (globalScene.gameData.eggs.length >= 99 && !Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
@@ -1979,7 +1979,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                       starterData.candyCount -= sameSpeciesEggCost;
                     }
-                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                    this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
 
                     const egg = new Egg({
                       scene: globalScene,
@@ -2634,7 +2634,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
         this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
         this.pokemonCandyCountText.setText(
-          `x${species.speciesId === SpeciesId.PIKACHU ? 0 : globalScene.gameData.starterData[this.starterId].candyCount}`,
+          `×${species.speciesId === SpeciesId.PIKACHU ? 0 : globalScene.gameData.starterData[this.starterId].candyCount}`,
         );
         this.pokemonCandyContainer.setVisible(true);
 
