@@ -158,7 +158,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.pokemonCandyIcon.setVisible(true);
     this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
     this.pokemonCandyOverlayIcon.setVisible(true);
-    this.pokemonCandyCountText.setText(`x${globalScene.gameData.starterData[species.speciesId].candyCount}`);
+    this.pokemonCandyCountText.setText(`×${globalScene.gameData.starterData[species.speciesId].candyCount}`);
     this.pokemonCandyCountText.setVisible(true);
 
     this.pokemonNumberText.setText(padInt(species.speciesId, 4));
