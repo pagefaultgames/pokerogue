@@ -5628,7 +5628,10 @@ export class PlayerPokemon extends Pokemon {
     }
 
     if (!dataSource) {
-      if (globalScene.gameMode.isDaily) {
+      if (
+        globalScene.gameMode.isDaily ||
+        (Overrides.STARTER_SPECIES_OVERRIDE && Overrides.STARTER_SPECIES_OVERRIDE !== SpeciesId.KELDEO)
+      ) {
         this.generateAndPopulateMoveset();
       } else {
         this.moveset = [];
