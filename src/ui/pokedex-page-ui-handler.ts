@@ -82,13 +82,21 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "38px",
   },
   de: {
-    starterInfoTextSize: "48px",
+    starterInfoTextSize: "54px",
     instructionTextSize: "35px",
-    starterInfoXPos: 33,
+    starterInfoXPos: 35,
   },
   "es-ES": {
-    starterInfoTextSize: "56px",
-    instructionTextSize: "35px",
+    starterInfoTextSize: "50px",
+    instructionTextSize: "38px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 38,
+  },
+  "es-MX": {
+    starterInfoTextSize: "50px",
+    instructionTextSize: "38px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 38,
   },
   fr: {
     starterInfoTextSize: "54px",
@@ -98,33 +106,52 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
-  pt_BR: {
-    starterInfoTextSize: "47px",
-    instructionTextSize: "38px",
+  "pt-BR": {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "42px",
+    starterInfoYOffset: 0.5,
     starterInfoXPos: 33,
   },
   zh: {
-    starterInfoTextSize: "47px",
-    instructionTextSize: "38px",
-    starterInfoYOffset: 1,
-    starterInfoXPos: 24,
-  },
-  pt: {
-    starterInfoTextSize: "48px",
-    instructionTextSize: "42px",
-    starterInfoXPos: 33,
+    starterInfoTextSize: "56px",
+    instructionTextSize: "36px",
+    starterInfoXPos: 26,
   },
   ko: {
-    starterInfoTextSize: "52px",
+    starterInfoTextSize: "60px",
     instructionTextSize: "38px",
+    starterInfoYOffset: -0.5,
+    starterInfoXPos: 30,
   },
   ja: {
-    starterInfoTextSize: "51px",
-    instructionTextSize: "38px",
+    starterInfoTextSize: "48px",
+    instructionTextSize: "40px",
+    starterInfoYOffset: 1,
+    starterInfoXPos: 32,
   },
-  "ca-ES": {
+  ca: {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "38px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 29,
+  },
+  da: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
+  },
+  tr: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
+  ro: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
+  ru: {
+    starterInfoTextSize: "46px",
+    instructionTextSize: "38px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 26,
   },
 };
 
@@ -470,7 +497,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.instructionRowX + this.instructionRowTextOffset,
       this.instructionRowY,
       i18next.t("pokedexUiHandler:candyUpgrade"),
-      TextStyle.PARTY,
+      TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
     );
     this.candyUpgradeLabel.setName("text-candyUpgrade-label");
@@ -491,7 +518,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.instructionRowX + this.instructionRowTextOffset,
       this.instructionRowY,
       i18next.t("pokedexUiHandler:cycleShiny"),
-      TextStyle.PARTY,
+      TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
     );
     this.shinyLabel.setName("text-shiny-label");
@@ -510,7 +537,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.instructionRowX + this.instructionRowTextOffset,
       this.instructionRowY,
       i18next.t("pokedexUiHandler:cycleForm"),
-      TextStyle.PARTY,
+      TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
     );
     this.formLabel.setName("text-form-label");
@@ -529,7 +556,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.instructionRowX + this.instructionRowTextOffset,
       this.instructionRowY,
       i18next.t("pokedexUiHandler:cycleGender"),
-      TextStyle.PARTY,
+      TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
     );
     this.genderLabel.setName("text-gender-label");
@@ -548,7 +575,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.instructionRowX + this.instructionRowTextOffset,
       this.instructionRowY,
       i18next.t("pokedexUiHandler:cycleVariant"),
-      TextStyle.PARTY,
+      TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
     );
     this.variantLabel.setName("text-variant-label");
@@ -557,7 +584,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.showBackSpriteIconElement.setName("show-backSprite-icon-element");
     this.showBackSpriteIconElement.setScale(0.675);
     this.showBackSpriteIconElement.setOrigin(0.0, 0.0);
-    this.showBackSpriteLabel = addTextObject(60, 7, i18next.t("pokedexUiHandler:showBackSprite"), TextStyle.PARTY, {
+    this.showBackSpriteLabel = addTextObject(60, 7, i18next.t("pokedexUiHandler:showBackSprite"), TextStyle.INSTRUCTIONS_TEXT, {
       fontSize: instructionTextSize,
     });
     this.showBackSpriteLabel.setName("show-backSprite-label");
