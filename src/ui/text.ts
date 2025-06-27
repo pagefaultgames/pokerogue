@@ -16,6 +16,7 @@ export enum TextStyle {
   PARTY,
   PARTY_RED,
   PARTY_CANCEL_BUTTON,
+  INSTRUCTIONS_TEXT,
   MOVE_LABEL,
   SUMMARY,
   SUMMARY_ALT,
@@ -375,6 +376,16 @@ export function getTextStyleOptions(
       styleOptions.fontFamily = "pkmnems";
       break;
     }
+    case TextStyle.INSTRUCTIONS_TEXT: {
+      switch (lang) {
+        case "ja":
+          styleOptions.padding = { top: -3, bottom: 4 };
+          break;
+      }
+      styleOptions.fontSize = defaultFontSize - 30;
+      styleOptions.fontFamily = "pkmnems";
+      break;
+      }
     case TextStyle.MOVE_LABEL: {
       switch (lang) {
         case "ja":
@@ -535,6 +546,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
       return !shadow ? "#f8f8f8" : "#6b5a73";
     case TextStyle.PARTY:
     case TextStyle.PARTY_CANCEL_BUTTON:
+    case TextStyle.INSTRUCTIONS_TEXT:
     case TextStyle.MOVE_LABEL:
       return !shadow ? "#f8f8f8" : "#707070";
     case TextStyle.PARTY_RED:
