@@ -465,7 +465,7 @@ export class MovePhase extends BattlePhase {
     // Protean and Libero apply on the charging turn of charge moves, even before showing usage text
     applyAbAttrs("PokemonTypeChangeAbAttr", {
       pokemon: this.pokemon,
-      move: this.move.getMove(),
+      move,
       opponent: targets[0],
     });
 
