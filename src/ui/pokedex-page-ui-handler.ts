@@ -328,7 +328,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.pokemonGrowthRateLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonGrowthRateLabelText);
 
-    this.pokemonGrowthRateText = addTextObject(34, 106, "", TextStyle.SUMMARY_PINK, { fontSize: "36px" });
+    this.pokemonGrowthRateText = addTextObject(34, 106, "", TextStyle.GROWTH_RATE_TYPE, { fontSize: "36px" });
     this.pokemonGrowthRateText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonGrowthRateText);
 
