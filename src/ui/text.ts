@@ -384,6 +384,8 @@ export function getTextStyleOptions(
       }
       styleOptions.fontSize = defaultFontSize - 30;
       styleOptions.fontFamily = "pkmnems";
+      shadowXpos = 3;
+      shadowYpos = 3;
       break;
       }
     case TextStyle.MOVE_LABEL: {
