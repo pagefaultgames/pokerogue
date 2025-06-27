@@ -123,7 +123,7 @@ The basic procedure is roughly as follows:
 
 [^2]: For those lacking a screen capture device, [OBS Studio](https://obsproject.com) is a popular open-source option.
 
-> [!INFO]
+> [!NOTE]
 > For those aiming to film their changes, bear in mind that GitHub has a hard **10mB limit** on uploaded media content.
 > If your video is too large, consider making it shorter or downscaling the quality.
 
