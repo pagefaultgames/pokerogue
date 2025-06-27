@@ -471,7 +471,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.pokemonNameText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNameText);
 
-    this.pokemonFormText = addTextObject(6, 121, "", TextStyle.PARTY, {
+    this.pokemonFormText = addTextObject(6, 121, "", TextStyle.INSTRUCTIONS_TEXT, {
       fontSize: textSettings.instructionTextSize,
     });
     this.pokemonFormText.setOrigin(0, 0);
