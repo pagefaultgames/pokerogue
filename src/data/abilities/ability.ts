@@ -1608,8 +1608,8 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
 }
 
 /**
- * Attribute to change the ability holder's type to that of the move being executed.
- * Used by {@linkcode Abilities.PROTEAN} and {@linkcode Abilities.LIBERO}.
+ * Attribute to change the user's type to that of the move currently being executed.
+ * Used by {@linkcode AbilityId.PROTEAN} and {@linkcode AbilityId.LIBERO}.
  */
 export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
   private moveType: PokemonType = PokemonType.UNKNOWN;
