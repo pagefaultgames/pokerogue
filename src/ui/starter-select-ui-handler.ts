@@ -628,7 +628,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonNumberText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNumberText);
 
-    this.pokemonNameText = addTextObject(6, 112, "", TextStyle.SUMMARY_DEX_NUM);
+    this.pokemonNameText = addTextObject(6, 112, "", TextStyle.SUMMARY);
     this.pokemonNameText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNameText);
 
