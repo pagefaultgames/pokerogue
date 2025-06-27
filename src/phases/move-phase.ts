@@ -417,7 +417,7 @@ export class MovePhase extends BattlePhase {
     ) {
       applyAbAttrs("PokemonTypeChangeAbAttr", {
         pokemon: this.pokemon,
-        move: this.move.getMove(),
+        move,
         opponent: targets[0],
       });
     }
