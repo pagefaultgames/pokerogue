@@ -2850,18 +2850,22 @@ export default class BattleScene extends SceneBase {
     }
     return false;
   }
-
+  /**
+   * Attempt to discard one or more copies of a held item.
+   * @param itemModifier - The {@linkcode PokemonHeldItemModifier} being discarded
+   * @param discardQuantity - The number of copies to remove (up to the amount currently held); default `1`
+   * @returns Whether the item was successfully discarded.
+   * Removing fewer items than requested is still considered a success.
+   */
   tryDiscardHeldItemModifier(itemModifier: PokemonHeldItemModifier, discardQuantity = 1): boolean {
     const countTaken = Math.min(discardQuantity, itemModifier.stackCount);
     itemModifier.stackCount -= countTaken;
 
-    const removeOld = itemModifier.stackCount === 0;
-
-    if (removeOld) {
-      return this.removeModifier(itemModifier);
+    if (itemModifier.stackCount > 0) {
+      return true;
     }
 
-    return true;
+    return this.removeModifier(itemModifier);
   }
 
   canTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferQuantity = 1): boolean {

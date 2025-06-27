@@ -102,7 +102,7 @@ export enum PartyUiMode {
    */
   SELECT,
   /**
-   * Indicates that the party UI is open to select a party member from which to discard an item from
+   * Indicates that the party UI is open to select a party member from which items will be discarded.
    * This type of selection can be cancelled.
    */
   DISCARD,
@@ -159,7 +159,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private partySlotsContainer: Phaser.GameObjects.Container;
   private partySlots: PartySlot[];
   private partyCancelButton: PartyCancelButton;
-  private PartyDiscardModeButton: PartyDiscardModeButton;
+  private partyDiscardModeButton: PartyDiscardModeButton;
   private partyMessageBox: Phaser.GameObjects.NineSlice;
   private moveInfoOverlay: MoveInfoOverlay;
 
@@ -317,7 +317,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     partyContainer.add(partyDiscardModeButton);
 
-    this.PartyDiscardModeButton = partyDiscardModeButton;
+    this.partyDiscardModeButton = partyDiscardModeButton;
 
     // prepare move overlay. in case it appears to be too big, set the overlayScale to .5
     const overlayScale = 1;
@@ -367,7 +367,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     }
 
     this.populatePartySlots();
-    this.PartyDiscardModeButton.toggleIcon(this.partyUiMode);
+    this.partyDiscardModeButton.toggleIcon(this.partyUiMode);
     this.setCursor(0);
 
     return true;
@@ -1013,7 +1013,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           ui.playError();
           break;
       }
-      this.PartyDiscardModeButton.toggleIcon(this.partyUiMode);
+      this.partyDiscardModeButton.toggleIcon(this.partyUiMode);
       ui.playSelect();
     }
     // Pressing return button
@@ -1036,7 +1036,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.clearTransfer();
       ui.playSelect();
     } else if (this.allowCancel()) {
-      this.PartyDiscardModeButton.clear();
+      this.partyDiscardModeButton.clear();
       if (this.selectCallback) {
         const selectCallback = this.selectCallback;
         this.selectCallback = null;
@@ -1058,26 +1058,20 @@ export default class PartyUiHandler extends MessageUiHandler {
     let success = false;
     switch (button) {
       case Button.UP:
-        if (this.cursor === 1) {
-          if (this.isItemManageMode()) {
+        if (this.isItemManageMode()) {
+          if (this.cursor === 1) {
             success = this.setCursor(globalScene.currentBattle.double ? 0 : 7);
             break;
           }
-        }
-        if (this.cursor === 2) {
-          if (this.isItemManageMode()) {
+          if (this.cursor === 2) {
             success = this.setCursor(globalScene.currentBattle.double ? 7 : 1);
             break;
           }
-        }
-        if (this.cursor === 6) {
-          if (this.isItemManageMode()) {
+          if (this.cursor === 6) {
             success = this.setCursor(slotCount <= globalScene.currentBattle.getBattlerCount() ? 7 : slotCount - 1);
             break;
           }
-        }
-        if (this.cursor === 7) {
-          if (this.isItemManageMode()) {
+          if (this.cursor === 7) {
             success = this.setCursor(globalScene.currentBattle.double && slotCount > 1 ? 1 : 0);
             break;
           }
@@ -1085,20 +1079,16 @@ export default class PartyUiHandler extends MessageUiHandler {
         success = this.setCursor(this.cursor ? (this.cursor < 6 ? this.cursor - 1 : slotCount - 1) : 6);
         break;
       case Button.DOWN:
-        if (this.cursor === 0) {
-          if (this.isItemManageMode()) {
+        if (this.isItemManageMode()) {
+          if (this.cursor === 0) {
             success = this.setCursor(globalScene.currentBattle.double && slotCount > 1 ? 1 : 7);
             break;
           }
-        }
-        if (this.cursor === 1) {
-          if (this.isItemManageMode()) {
+          if (this.cursor === 1) {
             success = this.setCursor(globalScene.currentBattle.double ? 7 : slotCount > 2 ? 2 : 6);
             break;
           }
-        }
-        if (this.cursor === 7) {
-          if (this.isItemManageMode()) {
+          if (this.cursor === 7) {
             success = this.setCursor(
               slotCount > globalScene.currentBattle.getBattlerCount() ? globalScene.currentBattle.getBattlerCount() : 6,
             );
@@ -1170,14 +1160,14 @@ export default class PartyUiHandler extends MessageUiHandler {
       } else if (this.lastCursor === 6) {
         this.partyCancelButton.deselect();
       } else if (this.lastCursor === 7) {
-        this.PartyDiscardModeButton.deselect();
+        this.partyDiscardModeButton.deselect();
       }
       if (cursor < 6) {
         this.partySlots[cursor].select();
       } else if (cursor === 6) {
         this.partyCancelButton.select();
       } else if (cursor === 7) {
-        this.PartyDiscardModeButton.select();
+        this.partyDiscardModeButton.select();
       }
     }
     return changed;

@@ -33,13 +33,13 @@ describe("UI - Transfer Items", () => {
       { name: "BERRY", count: 2, type: BerryType.APICOT },
       { name: "BERRY", count: 2, type: BerryType.LUM },
     ]);
-    game.override.moveset([MoveId.DRAGON_CLAW]);
+    game.override.moveset(MoveId.DRAGON_CLAW);
     game.override.enemySpecies(SpeciesId.MAGIKARP);
-    game.override.enemyMoveset([MoveId.SPLASH]);
+    game.override.enemyMoveset(MoveId.SPLASH);
 
     await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA]);
 
-    game.move.select(MoveId.DRAGON_CLAW);
+    game.move.use(MoveId.DRAGON_CLAW);
   });
 
   it("manage button exists in the proper screen", async () => {
@@ -47,7 +47,7 @@ describe("UI - Transfer Items", () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
 
       const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
-      handler.setCursor(1); //manage items menu, manage button should exist
+      handler.setCursor(1); // Select/click manage items button
       handler.processInput(Button.ACTION);
 
       void game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.MODIFIER_TRANSFER);
@@ -55,19 +55,19 @@ describe("UI - Transfer Items", () => {
 
     await game.phaseInterceptor.to("BattleEndPhase");
 
-    game.phaseInterceptor.addToNextPrompt("SelectModifierPhase", UiMode.PARTY, () => {
+    game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(PartyUiHandler);
       const handler = game.scene.ui.getHandler() as PartyUiHandler;
 
       handler.processInput(Button.DOWN);
       handler.processInput(Button.ACTION);
-      expect(handler.optionsContainer.list.length).toBe(0); //should select manage button,which has no menu
+      expect(handler.optionsContainer.list).toHaveLength(0); // should select manage button, which has no menu
 
       game.phaseInterceptor.unlock();
     });
 
     await game.phaseInterceptor.to("SelectModifierPhase");
-  }, 20000);
+  });
 
   it("manage button doesn't exist in the other screens", async () => {
     game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
@@ -88,11 +88,11 @@ describe("UI - Transfer Items", () => {
 
       handler.processInput(Button.DOWN);
       handler.processInput(Button.ACTION);
-      expect(handler.optionsContainer.list.length).toBeGreaterThan(0); //should select a pokemon, which has at least the cancel option
+      expect(handler.optionsContainer.list.length).toBeGreaterThan(0); // should select a pokemon, which has at least the cancel option
 
       game.phaseInterceptor.unlock();
     });
 
     await game.phaseInterceptor.to("SelectModifierPhase");
-  }, 20000);
+  });
 });
