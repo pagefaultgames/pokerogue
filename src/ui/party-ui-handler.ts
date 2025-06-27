@@ -675,7 +675,13 @@ export default class PartyUiHandler extends MessageUiHandler {
     }
 
     if (success) {
-      this.showText("Item has been discarded.", undefined, () => this.showText("", 0), null, true); // missing confirm message call from i18next.t.
+      this.showText(
+        i18next.t("partyUiHandler:discardItemConfirmation", { pokemonName: getPokemonNameWithAffix(pokemon) }),
+        undefined,
+        () => this.showText("", 0),
+        null,
+        true,
+      );
       ui.playSelect();
     } else {
       ui.playError();
@@ -1267,7 +1273,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         }
         break;
       case PartyUiMode.DISCARD:
-        optionsMessage = "Select a held item to discard.\nUse < and > to change quantity."; //Missing discard i18next.t call message
+        optionsMessage = i18next.t("partyUiHandler:changeQuantityDiscard");
     }
 
     this.showText(optionsMessage, 0);
@@ -2165,7 +2171,7 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
         this.discardIcon.setVisible(true);
         this.partyDiscardPb.setVisible(true);
         this.textBox.setVisible(true);
-        this.textBox.setText("Discard");
+        this.textBox.setText(i18next.t("partyUiHandler:DISCARD"));
         this.setPosition(
           globalScene.currentBattle.double ? 64 : 60,
           globalScene.currentBattle.double ? -48 : -globalScene.game.canvas.height / 15 - 1,
