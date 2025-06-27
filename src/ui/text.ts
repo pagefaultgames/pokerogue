@@ -29,6 +29,7 @@ export enum TextStyle {
   SUMMARY_STATS,
   SUMMARY_STATS_BLUE,
   SUMMARY_STATS_PINK,
+  SUMMARY_STATS_GOLD,
   GROWTH_RATE_TYPE,
   MONEY, // Money default styling (pale yellow)
   MONEY_WINDOW, // Money displayed in Windows (needs different colors based on theme)
@@ -208,6 +209,7 @@ export function getTextStyleOptions(
     case TextStyle.SUMMARY_STATS:
     case TextStyle.SUMMARY_STATS_BLUE:
     case TextStyle.SUMMARY_STATS_PINK:
+    case TextStyle.SUMMARY_STATS_GOLD:
     case TextStyle.WINDOW:
     case TextStyle.WINDOW_ALT:
     case TextStyle.ME_OPTION_DEFAULT:
@@ -557,6 +559,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.SUMMARY_STATS_PINK:
       return !shadow ? "#f89890" : "#984038";
     case TextStyle.SUMMARY_GOLD:
+    case TextStyle.SUMMARY_STATS_GOLD:
     case TextStyle.MONEY:
       return !shadow ? "#e8e8a8" : "#a0a060"; // Pale Yellow/Gold
     case TextStyle.MONEY_WINDOW:
