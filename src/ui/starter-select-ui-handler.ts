@@ -2202,14 +2202,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
               const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.lastSpecies.speciesId]);
               options.push({
-                label: `x${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")}`,
+                label: `×${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")}`,
                 handler: () => {
                   if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
                     starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
                     if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                       starterData.candyCount -= passiveCost;
                     }
-                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                    this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
                     globalScene.gameData.saveSystem().then(success => {
                       if (!success) {
                         return globalScene.reset(true);
@@ -2242,14 +2242,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                 valueReduction
               ];
               options.push({
-                label: `x${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
+                label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
                 handler: () => {
                   if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
                     starterData.valueReduction++;
                     if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                       starterData.candyCount -= reductionCost;
                     }
-                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                    this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
                     globalScene.gameData.saveSystem().then(success => {
                       if (!success) {
                         return globalScene.reset(true);
@@ -2276,7 +2276,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             // Same species egg menu option.
             const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId]);
             options.push({
-              label: `x${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
+              label: `×${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
               handler: () => {
                 if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost) {
                   if (globalScene.gameData.eggs.length >= 99 && !Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
@@ -2295,7 +2295,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                   if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                     starterData.candyCount -= sameSpeciesEggCost;
                   }
-                  this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                  this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
 
                   const egg = new Egg({
                     species: this.lastSpecies.speciesId,
@@ -3564,7 +3564,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonShinyIcon.setY(117);
           this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
           this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
-          this.pokemonCandyCountText.setText(`x${globalScene.gameData.starterData[species.speciesId].candyCount}`);
+          this.pokemonCandyCountText.setText(`×${globalScene.gameData.starterData[species.speciesId].candyCount}`);
           this.pokemonCandyContainer.setVisible(true);
           this.pokemonFormText.setY(42);
           this.pokemonHatchedIcon.setVisible(true);
