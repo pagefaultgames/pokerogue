@@ -46,6 +46,8 @@ export enum TextStyle {
   SETTINGS_SELECTED,
   SETTINGS_LOCKED,
   EGG_LIST,
+  EGG_SUMMARY_NAME,
+  EGG_SUMMARY_DEX,
   STARTER_VALUE_LIMIT,
   TOOLTIP_TITLE,
   TOOLTIP_CONTENT,
@@ -432,6 +434,22 @@ export function getTextStyleOptions(
     case TextStyle.EGG_LIST:
       styleOptions.fontSize = defaultFontSize - 34;
       break;
+    case TextStyle.EGG_SUMMARY_NAME: {
+      switch (lang) {
+        case "ja":
+          styleOptions.padding = { top: -1 };
+          break;
+      }
+      break;
+    }
+    case TextStyle.EGG_SUMMARY_DEX: {
+      switch (lang) {
+        case "ja":
+          styleOptions.padding = { top: 2 };
+          break;
+      }
+      break;
+    }
     case TextStyle.STARTER_VALUE_LIMIT:
       styleOptions.fontSize = defaultFontSize - 36;
       shadowXpos = 3;
@@ -591,6 +609,8 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.SUMMARY_DEX_NUM:
     case TextStyle.SUMMARY_HEADER:
     case TextStyle.SUMMARY_STATS:
+    case TextStyle.EGG_SUMMARY_NAME:
+    case TextStyle.EGG_SUMMARY_DEX:
       return !shadow ? "#f8f8f8" : "#636363";
     case TextStyle.SUMMARY_ALT:
     case TextStyle.GROWTH_RATE_TYPE:
