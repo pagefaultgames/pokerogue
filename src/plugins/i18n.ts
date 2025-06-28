@@ -76,13 +76,13 @@ const fonts: Array<LoadingFontFaceProperty> = [
   },
   // japanese
   {
-    face: new FontFace("emerald", "url(./fonts/pokemon-bw.otf)", {
+    face: new FontFace("emerald", "url(./fonts/pokemon-bw.ttf)", {
       unicodeRange: rangesByLanguage.japanese,
     }),
     only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru"],
   },
   {
-    face: new FontFace("pkmnems", "url(./fonts/pokemon-bw.otf)", {
+    face: new FontFace("pkmnems", "url(./fonts/pokemon-bw.ttf)", {
       unicodeRange: rangesByLanguage.japanese,
     }),
     only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru"],
