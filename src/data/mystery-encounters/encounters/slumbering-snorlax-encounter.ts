@@ -29,7 +29,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 import { randSeedInt } from "#app/utils/common";
 import { MoveUseMode } from "#enums/move-use-mode";
 

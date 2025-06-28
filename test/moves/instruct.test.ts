@@ -1,7 +1,7 @@
+import type { TurnMove } from "#app/@types/turn-move";
 import { allMoves } from "#app/data/data-lists";
 import { RandomMoveAttr } from "#app/data/moves/move";
 import type Pokemon from "#app/field/pokemon";
-import type { TurnMove } from "#app/field/pokemon";
 import type { MovePhase } from "#app/phases/move-phase";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
