@@ -106,7 +106,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       moveBg.setOrigin(1, 0);
       moveBg.setName("nineslice-move-bg");
 
-      const moveLabel = addTextObject(-moveBg.width / 2, 0, "-", TextStyle.PARTY);
+      const moveLabel = addTextObject(-moveBg.width / 2, 0, "-", TextStyle.MOVE_LABEL);
       moveLabel.setOrigin(0.5, 0);
       moveLabel.setName("text-move-label");
 
