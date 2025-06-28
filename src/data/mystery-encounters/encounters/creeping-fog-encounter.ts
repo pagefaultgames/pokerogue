@@ -17,7 +17,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Nature } from "#enums/nature";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { TimeOfDayRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { TimeOfDay } from "#enums/time-of-day";
@@ -165,7 +165,6 @@ export const CreepingFogEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
         //Battle Fog Boss
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         globalScene.arena.trySetWeather(WeatherType.HEAVY_FOG);
-        //TODO start fog and stuff
         const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
         setEncounterRewards({
           guaranteedModifierTiers: [ModifierTier.ROGUE, ModifierTier.ROGUE],
@@ -293,7 +292,7 @@ export const CreepingFogEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
         ease: "Sine.easeOut",
         duration: 2000,
       });
-      const pokemon = globalScene.getPlayerPokemon(); //Can we use this?
+      const pokemon = globalScene.getPlayerPokemon();
       globalScene.arena.trySetWeather(WeatherType.FOG, pokemon);
 
       // Leave encounter with no rewards or exp
@@ -303,10 +302,12 @@ export const CreepingFogEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
   )
   .build();
 
+type FogEncounterPokemonConfig = [SpeciesId, Nature, AbilityId | null, boolean, MoveId[], HeldModifierConfig[]][];
+
 function chooseBoss() {
   const biome = globalScene.arena.biomeType;
   const wave = globalScene.currentBattle.waveIndex;
-  const allBiomePokemon = [
+  const allBiomePokemon: FogEncounterPokemonConfig = [
     [
       SpeciesId.MACHAMP,
       Nature.JOLLY,
@@ -418,31 +419,29 @@ function chooseBoss() {
     ],
   ];
 
-  let pool = allBiomePokemon as [SpeciesId, Nature, AbilityId, boolean, MoveId[], HeldModifierConfig[]][];
+  let pool: FogEncounterPokemonConfig = allBiomePokemon;
 
   // Include biome-specific Pokémon if within wave 50-80
   if (wave >= 50) {
     if (biome === BiomeId.FOREST || biome === BiomeId.TALL_GRASS) {
-      pool = pool.concat(
-        ForestTallGrassPokemon as [SpeciesId, Nature, AbilityId, boolean, MoveId[], HeldModifierConfig[]][],
-      );
+      pool = pool.concat(ForestTallGrassPokemon as FogEncounterPokemonConfig);
     }
     if (biome === BiomeId.SWAMP || biome === BiomeId.LAKE) {
-      pool = pool.concat(SwampLakePokemon as [SpeciesId, Nature, AbilityId, boolean, MoveId[], HeldModifierConfig[]][]);
+      pool = pool.concat(SwampLakePokemon as FogEncounterPokemonConfig);
     }
     if (biome === BiomeId.GRAVEYARD) {
-      pool = pool.concat(GraveyardPokemon as [SpeciesId, Nature, AbilityId, boolean, MoveId[], HeldModifierConfig[]][]);
+      pool = pool.concat(GraveyardPokemon as FogEncounterPokemonConfig);
     }
   }
 
-  // Waves 110-140 content
+  // Waves 110-140
   if (wave >= 110) {
-    pool = pool.concat(wave110_140Pokemon as [SpeciesId, Nature, AbilityId, boolean, MoveId[], HeldModifierConfig[]][]);
+    pool = pool.concat(wave110_140Pokemon as FogEncounterPokemonConfig);
   }
 
   // Wave 140+
   if (wave >= 140) {
-    pool = pool.concat(wave140PlusPokemon as [SpeciesId, Nature, AbilityId, boolean, MoveId[], HeldModifierConfig[]][]);
+    pool = pool.concat(wave140PlusPokemon as FogEncounterPokemonConfig);
   }
   // Randomly choose one
   return pool[randSeedInt(pool.length, 0)];

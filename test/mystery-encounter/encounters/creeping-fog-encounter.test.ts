@@ -3,7 +3,6 @@ import { CreepingFogEncounter } from "#app/data/mystery-encounters/encounters/cr
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { BiomeId } from "#enums/biome-id";
-import { TimeOfDay } from "#enums/time-of-day";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
@@ -86,7 +85,6 @@ describe("Creeping Fog - Mystery Encounter", () => {
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
     game.override.disableTrainerWaves();
-    game.override.startingTimeOfDay(TimeOfDay.NIGHT);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<BiomeId, MysteryEncounterType[]>([
@@ -119,7 +117,6 @@ describe("Creeping Fog - Mystery Encounter", () => {
   it("should not spawn outside of proper biomes", async () => {
     game.override.mysteryEncounterTier(MysteryEncounterTier.ULTRA);
     game.override.startingBiome(BiomeId.SPACE);
-    game.override.startingTimeOfDay(TimeOfDay.NIGHT);
 
     await game.runToMysteryEncounter();
     expect(game.scene.currentBattle.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.CREEPING_FOG);
@@ -127,7 +124,6 @@ describe("Creeping Fog - Mystery Encounter", () => {
 
   it("should not spawn outside of proper time of day", async () => {
     game.override.mysteryEncounterTier(MysteryEncounterTier.ULTRA);
-    game.override.startingTimeOfDay(TimeOfDay.DAY);
 
     await game.runToMysteryEncounter();
     expect(game.scene.currentBattle.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.CREEPING_FOG);
