@@ -165,8 +165,8 @@ export default abstract class Move implements Localizable {
   }
 
   /**
-   * Get all move attributes that match `attrType`
-   * @param attrType - The constructor of a {@linkcode MoveAttr} to check.
+   * Get all move attributes that match `attrType`.
+   * @param attrType - The name of a {@linkcode MoveAttr} to search for
    * @returns An array containing all attributes matching `attrType`, or an empty array if none match.
    */
   getAttrs<T extends MoveAttrString>(attrType: T): (MoveAttrMap[T])[] {
@@ -178,9 +178,9 @@ export default abstract class Move implements Localizable {
   }
 
   /**
-   * Check if a move has an attribute that matches `attrType`
-   * @param attrType - The constructor of a {@linkcode MoveAttr}
-   * @returns Whether this move has an attribute matching `attrType`
+   * Check if a move has an attribute that matches `attrType`.
+   * @param attrType - The name of a {@linkcode MoveAttr} to search for
+   * @returns Whether this move has at least 1 attribute that matches `attrType`
    */
   hasAttr(attrType: MoveAttrString): boolean {
     const targetAttr = MoveAttrs[attrType];
@@ -193,8 +193,8 @@ export default abstract class Move implements Localizable {
 
   /**
    * Find the first attribute that matches a given predicate function.
-   * @param attrPredicate - The predicate function to search `MoveAttr`s by.
-   * @returns The first {@linkcode MoveAttr} for which `attrPredicate` returns `true`.
+   * @param attrPredicate - The predicate function to search `MoveAttr`s by
+   * @returns The first {@linkcode MoveAttr} for which `attrPredicate` returns `true`
    */
   findAttr(attrPredicate: (attr: MoveAttr) => boolean): MoveAttr {
     // TODO: Remove bang and make return type `MoveAttr | undefined`,
