@@ -306,6 +306,7 @@ export function getTextStyleOptions(
       styleOptions.fontSize = defaultFontSize;
       styleOptions.padding = { top: 6 };
       break;
+    case TextStyle.SETTINGS_VALUE: {
     case TextStyle.SETTINGS_LABEL: {
       shadowXpos = 3;
       shadowYpos = 3;
