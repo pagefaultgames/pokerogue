@@ -202,7 +202,7 @@ export default class RunInfoUiHandler extends UiHandler {
       );
       this.runContainer.add(abilityButtonContainer);
     }
-    const headerText = addTextObject(0, 0, i18next.t("runHistory:runInfo"), TextStyle.SETTINGS_LABEL);
+    const headerText = addTextObject(0, 0, i18next.t("runHistory:runInfo"), TextStyle.HEADER_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
     this.runContainer.add(headerText);
