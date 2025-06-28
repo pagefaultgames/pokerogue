@@ -33,6 +33,7 @@ export enum TextStyle {
   SUMMARY_STATS_BLUE,
   SUMMARY_STATS_PINK,
   SUMMARY_STATS_GOLD,
+  STATS_HEXAGON,
   GROWTH_RATE_TYPE,
   MONEY, // Money default styling (pale yellow)
   MONEY_WINDOW, // Money displayed in Windows (needs different colors based on theme)
@@ -450,6 +451,11 @@ export function getTextStyleOptions(
       shadowYpos = 3;
       break;
     }
+    case TextStyle.STATS_HEXAGON:
+      styleOptions.fontSize = defaultFontSize - 32;
+      shadowXpos = 3;
+      shadowYpos = 3;
+      break;
     case TextStyle.MOVE_INFO_CONTENT:
       styleOptions.fontSize = defaultFontSize - 40;
       shadowXpos = 3;
@@ -542,6 +548,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.WINDOW:
     case TextStyle.WINDOW_BATTLE_COMMAND:
     case TextStyle.MOVE_INFO_CONTENT:
+    case TextStyle.STATS_HEXAGON:
     case TextStyle.MOVE_PP_FULL:
     case TextStyle.EGG_LIST:
     case TextStyle.TOOLTIP_CONTENT:
