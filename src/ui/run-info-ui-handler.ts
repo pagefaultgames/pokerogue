@@ -866,7 +866,7 @@ export default class RunInfoUiHandler extends UiHandler {
         moveContainer.setScale(0.5);
         const moveBg = globalScene.add.nineslice(0, 0, "type_bgs", "unknown", 85, 15, 2, 2, 2, 2);
         moveBg.setOrigin(1, 0);
-        const moveLabel = addTextObject(-moveBg.width / 2, 2, "-", TextStyle.PARTY);
+        const moveLabel = addTextObject(-moveBg.width / 2, 1, "-", TextStyle.MOVE_LABEL);
         moveLabel.setOrigin(0.5, 0);
         moveLabel.setName("text-move-label");
         pokemonMoveBgs.push(moveBg);
