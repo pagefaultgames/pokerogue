@@ -2,7 +2,7 @@
 
 Thank you for taking the time to contribute, every little bit helps. This project is entirely open-source and unmonetized - community contributions are what keep it alive!
 
-Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and *feel free to reach out reach out in the **#dev-corner** channel on [Discord](https://discord.gg/pokerogue)*. 
+Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and absolutely *feel free to reach out in the **#dev-corner** channel on [Discord](https://discord.gg/pokerogue)*. 
 We are here to help and the better you understand what you're working on, the easier it will be for it to find its way into the game.
 
 ## 📄 Table of Contents
@@ -35,10 +35,6 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 
 [^1]: If you forget to include the `--recurse-submodules` flag when cloning initially (or do so via an alternate tool), consult [localization.md](./docs/localization.md) \
 for instructions on how to clone the `locales` submodule manually.
-
-### Linting
-
-Check out our [in-depth file](./docs/linting.md) on linting and formatting!
 
 ## 🚀 Getting Started
 
