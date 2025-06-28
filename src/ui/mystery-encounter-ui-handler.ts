@@ -517,7 +517,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     descriptionTextObject.setMask(abilityDescriptionTextMask);
 
-    const descriptionLineCount = Math.floor(descriptionTextObject.displayHeight / 10);
+    const descriptionLineCount = Math.floor(descriptionTextObject.displayHeight / 9.2);
 
     if (this.descriptionScrollTween) {
       this.descriptionScrollTween.remove();
