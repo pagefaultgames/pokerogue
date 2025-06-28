@@ -49,13 +49,11 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.pokemonListContainer.add(this.currentPokemonSprite);
 
     // setup name and number
-    this.pokemonNumberText = addTextObject(80, 107.5, "0000", TextStyle.SUMMARY, { fontSize: 74 });
+    this.pokemonNumberText = addTextObject(84, 107, "0000", TextStyle.EGG_SUMMARY_DEX, { fontSize: 78 });
     this.pokemonNumberText.setOrigin(0, 0);
     this.pokemonListContainer.add(this.pokemonNumberText);
 
-    this.pokemonNameText = addTextObject(7, 107.5, "", TextStyle.SUMMARY, {
-      fontSize: 74,
-    });
+    this.pokemonNameText = addTextObject(7, 109, "", TextStyle.EGG_SUMMARY_NAME, { fontSize: 64 });
     this.pokemonNameText.setOrigin(0, 0);
     this.pokemonListContainer.add(this.pokemonNameText);
 
