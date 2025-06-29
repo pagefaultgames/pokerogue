@@ -27,6 +27,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     infoContainerLabelXPos: -15,
     infoContainerTextXPos: -12,
   },
+  ja: {
+    infoContainerLabelXPos: -27,
+    infoContainerTextXPos: -25,
+  },
 };
 
 export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
@@ -445,12 +449,12 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.pokemonShinyIcon.setPosition(82, 87);
     this.pokemonShinyNewIcon.setPosition(72, 87);
 
-    this.pokemonFormLabelText.setPosition(infoContainerLabelXPos, 152);
-    this.pokemonFormText.setPosition(infoContainerTextXPos, 152);
-    this.pokemonAbilityLabelText.setPosition(infoContainerLabelXPos, 110);
-    this.pokemonAbilityText.setPosition(infoContainerTextXPos, 110);
-    this.pokemonNatureLabelText.setPosition(infoContainerLabelXPos, 125);
-    this.pokemonNatureText.setPosition(infoContainerTextXPos, 125);
+    this.pokemonFormLabelText.setPosition(infoContainerLabelXPos, 153);
+    this.pokemonFormText.setPosition(infoContainerTextXPos, 153);
+    this.pokemonAbilityLabelText.setPosition(infoContainerLabelXPos, 111);
+    this.pokemonAbilityText.setPosition(infoContainerTextXPos, 111);
+    this.pokemonNatureLabelText.setPosition(infoContainerLabelXPos, 126);
+    this.pokemonNatureText.setPosition(infoContainerTextXPos, 126);
 
     this.statsContainer.setScale(0.7);
     this.statsContainer.setPosition(30, -3);
