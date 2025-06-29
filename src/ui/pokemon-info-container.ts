@@ -28,6 +28,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     infoContainerTextXPos: -12,
   },
   ja: {
+    infoContainerTextSize: "64px",
     infoContainerLabelXPos: -27,
     infoContainerTextXPos: -25,
   },
