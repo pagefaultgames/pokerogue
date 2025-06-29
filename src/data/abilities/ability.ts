@@ -7334,16 +7334,13 @@ export function initAbilities() {
       .unreplaceable()
       .unsuppressable()
       .bypassFaint(),
-    new Ability(AbilityId.POWER_CONSTRUCT, 7)
-      // Change to 10% PC or 50% PC after battle ends,
-      // change to 10% complete or 50% complete on switchout/turn end if at <50% HP
-      // TODO: change condition functions to remove duplicate changes
-      .conditionalAttr(pokemon => pokemon.formIndex === 2 || pokemon.formIndex === 4, PostBattleInitFormChangeAbAttr, () => 2)
-      .conditionalAttr(pokemon => pokemon.formIndex === 3 || pokemon.formIndex === 5, PostBattleInitFormChangeAbAttr, () => 3)
-      .conditionalAttr(pokemon => pokemon.formIndex === 2 || pokemon.formIndex === 4, PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "complete" ? 4 : 2)
-      .conditionalAttr(pokemon => pokemon.formIndex === 2 || pokemon.formIndex === 4, PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "complete" ? 4 : 2)
-      .conditionalAttr(pokemon => pokemon.formIndex === 3 || pokemon.formIndex === 5, PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "10-complete" ? 5 : 3)
-      .conditionalAttr(pokemon => pokemon.formIndex === 3 || pokemon.formIndex === 5, PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "10-complete" ? 5 : 3)
+    new Ability(AbilityId.POWER_CONSTRUCT,
+      // Change to 10% complete or 50% complete on switchout/turn end if at <50% HP;
+      // revert to 10% PC or 50% PC before a new battle starts
+      // TODO: Should this revert the form change even if it would re-activate on summon?
+      .conditionalAttr(p => p.formIndex === 4 || p.formIndex === 5, PostBattleInitFormChangeAbAttr, p => p.formIndex - 2)
+      .conditionalAttr(p => p.getHpRatio() <= 0.5 && (p.formIndex === 2 || p.formIndex === 3), PostSummonFormChangeAbAttr, p => p.formIndex + 2)
+      .conditionalAttr(p => p.getHpRatio() <= 0.5 && (p.formIndex === 2 || p.formIndex === 3), PostTurnFormChangeAbAttr, p => p.formIndex + 2)
       .attr(NoFusionAbilityAbAttr)
       .uncopiable()
       .unreplaceable()
