@@ -52,6 +52,7 @@ export enum TextStyle {
   STARTER_VALUE_LIMIT,
   TOOLTIP_TITLE,
   TOOLTIP_CONTENT,
+  FILTER_BAR_MAIN,
   MOVE_INFO_CONTENT,
   MOVE_PP_FULL,
   MOVE_PP_HALF_FULL,
@@ -482,6 +483,20 @@ export function getTextStyleOptions(
       shadowYpos = 3;
       break;
     }
+    case TextStyle.FILTER_BAR_MAIN: {
+      switch (lang) {
+        case "ja":
+          styleOptions.fontSize = defaultFontSize - 48;
+          styleOptions.padding = { top: 10, right: 10 };
+          break;
+        default:
+          styleOptions.fontSize = defaultFontSize - 32;
+          break;
+      }
+      shadowXpos = 3;
+      shadowYpos = 3;
+      break;
+    }
     case TextStyle.STATS_HEXAGON:
       styleOptions.fontSize = defaultFontSize - 32;
       shadowXpos = 3;
@@ -583,6 +598,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.MOVE_PP_FULL:
     case TextStyle.EGG_LIST:
     case TextStyle.TOOLTIP_CONTENT:
+    case TextStyle.FILTER_BAR_MAIN:
     case TextStyle.STARTER_VALUE_LIMIT:
     case TextStyle.SETTINGS_VALUE:
       if (isLegacyTheme) {
