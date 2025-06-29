@@ -864,7 +864,7 @@ export default class SummaryUiHandler extends UiHandler {
             141 + luckLabelText.displayWidth + 2,
             28,
             this.pokemon.getLuck().toString(),
-            TextStyle.SUMMARY,
+            TextStyle.LUCK_VALUE,
           );
           luckText.setOrigin(0, 0);
           luckText.setTint(getVariantTint(Math.min(this.pokemon.getLuck() - 1, 2) as Variant));
