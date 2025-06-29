@@ -22,6 +22,11 @@ interface LanguageSetting {
 }
 
 const languageSettings: { [key: string]: LanguageSetting } = {
+  en: {
+    infoContainerTextSize: "64px",
+    infoContainerLabelXPos: -20,
+    infoContainerTextXPos: -17,
+  },
   pt: {
     infoContainerTextSize: "60px",
     infoContainerLabelXPos: -15,
