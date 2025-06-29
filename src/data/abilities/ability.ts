@@ -7265,6 +7265,7 @@ export function initAbilities() {
     new Ability(AbilityId.SHIELDS_DOWN, 7, -1)
       // Change into Meteor Form on switch-in or turn end if HP >= 50%,
       // or Core Form if HP <= 50%.
+      .attr(PostBattleInitFormChangeAbAttr, p => p.formIndex % 7)
       .attr(PostSummonFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostTurnFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       // All variants of Meteor Form are immune to status effects & Yawn
@@ -7337,7 +7338,6 @@ export function initAbilities() {
     new Ability(AbilityId.POWER_CONSTRUCT, 7)
       // Change to 10% complete or 50% complete on switchout/turn end if at <50% HP;
       // revert to 10% PC or 50% PC before a new battle starts
-      // TODO: Should this revert the form change even if it would re-activate on summon?
       .conditionalAttr(p => p.formIndex === 4 || p.formIndex === 5, PostBattleInitFormChangeAbAttr, p => p.formIndex - 2)
       .conditionalAttr(p => p.getHpRatio() <= 0.5 && (p.formIndex === 2 || p.formIndex === 3), PostSummonFormChangeAbAttr, p => p.formIndex + 2)
       .conditionalAttr(p => p.getHpRatio() <= 0.5 && (p.formIndex === 2 || p.formIndex === 3), PostTurnFormChangeAbAttr, p => p.formIndex + 2)
