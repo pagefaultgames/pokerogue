@@ -7263,12 +7263,13 @@ export function initAbilities() {
     new Ability(AbilityId.MERCILESS, 7)
       .attr(ConditionalCritAbAttr, (_user, target, _move) => target?.status?.effect === StatusEffect.TOXIC || target?.status?.effect === StatusEffect.POISON),
     new Ability(AbilityId.SHIELDS_DOWN, 7, -1)
-      // Change into Meteor Form on switch-in or turn end with HP >= 50%,
-      // or Core Form with HP <= 50%.
+      // Change into Meteor Form on switch-in or turn end if HP >= 50%,
+      // or Core Form if HP <= 50%.
       .attr(PostSummonFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostTurnFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
-      .conditionalAttr(p => p.formIndex !== 7, StatusEffectImmunityAbAttr)
-      .conditionalAttr(p => p.formIndex !== 7, BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
+      // All variants of Meteor Form are immune to status effects & Yawn
+      .conditionalAttr(p => p.formIndex < 7, StatusEffectImmunityAbAttr)
+      .conditionalAttr(p => p.formIndex < 7, BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .attr(NoFusionAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .uncopiable()
