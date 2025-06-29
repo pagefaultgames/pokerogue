@@ -398,7 +398,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.pokemonLuckLabelText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonLuckLabelText);
 
-    this.pokemonLuckText = addTextObject(8 + this.pokemonLuckLabelText.displayWidth + 2, 89, "0", TextStyle.WINDOW, {
+    this.pokemonLuckText = addTextObject(8 + this.pokemonLuckLabelText.displayWidth + 2, 89, "0", TextStyle.LUCK_VALUE, {
       fontSize: "56px",
     });
     this.pokemonLuckText.setOrigin(0, 0);
