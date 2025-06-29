@@ -33,6 +33,7 @@ export enum TextStyle {
   SUMMARY_STATS_BLUE,
   SUMMARY_STATS_PINK,
   SUMMARY_STATS_GOLD,
+  LUCK_VALUE,
   STATS_HEXAGON,
   GROWTH_RATE_TYPE,
   MONEY, // Money default styling (pale yellow)
@@ -247,6 +248,18 @@ export function getTextStyleOptions(
       shadowXpos = 3;
       shadowYpos = 3;
       break;
+    case TextStyle.LUCK_VALUE: {
+      let fontSizeLabel = "96px";
+      switch (lang) {
+        case "ja":
+          styleOptions.padding = { top: -6 };
+          break;
+      }
+      styleOptions.fontSize = fontSizeLabel;
+      shadowXpos = 3;
+      shadowYpos = 4;
+      break;
+    }
     case TextStyle.GROWTH_RATE_TYPE: {
       switch (lang) {
         case "ja":
@@ -611,6 +624,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
     case TextStyle.SUMMARY_STATS:
     case TextStyle.EGG_SUMMARY_NAME:
     case TextStyle.EGG_SUMMARY_DEX:
+    case TextStyle.LUCK_VALUE:
       return !shadow ? "#f8f8f8" : "#636363";
     case TextStyle.SUMMARY_ALT:
     case TextStyle.GROWTH_RATE_TYPE:
