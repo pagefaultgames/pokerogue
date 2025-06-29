@@ -252,7 +252,7 @@ export function getTextStyleOptions(
       let fontSizeLabel = "96px";
       switch (lang) {
         case "ja":
-          styleOptions.padding = { top: -6 };
+          styleOptions.padding = { top: -6, bottom: 2 };
           break;
       }
       styleOptions.fontSize = fontSizeLabel;
