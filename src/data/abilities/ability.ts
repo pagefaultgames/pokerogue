@@ -7263,7 +7263,8 @@ export function initAbilities() {
     new Ability(AbilityId.MERCILESS, 7)
       .attr(ConditionalCritAbAttr, (_user, target, _move) => target?.status?.effect === StatusEffect.TOXIC || target?.status?.effect === StatusEffect.POISON),
     new Ability(AbilityId.SHIELDS_DOWN, 7, -1)
-      .attr(PostBattleInitFormChangeAbAttr, () => 0)
+      // Change into Meteor Form on switch-in or turn end with HP >= 50%,
+      // or Core Form with HP <= 50%.
       .attr(PostSummonFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostTurnFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .conditionalAttr(p => p.formIndex !== 7, StatusEffectImmunityAbAttr)
@@ -7333,6 +7334,9 @@ export function initAbilities() {
       .unsuppressable()
       .bypassFaint(),
     new Ability(AbilityId.POWER_CONSTRUCT, 7)
+      // Change to 10% PC or 50% PC after battle ends,
+      // change to 10% complete or 50% complete on switchout/turn end if at <50% HP
+      // TODO: change condition functions to remove duplicate changes
       .conditionalAttr(pokemon => pokemon.formIndex === 2 || pokemon.formIndex === 4, PostBattleInitFormChangeAbAttr, () => 2)
       .conditionalAttr(pokemon => pokemon.formIndex === 3 || pokemon.formIndex === 5, PostBattleInitFormChangeAbAttr, () => 3)
       .conditionalAttr(pokemon => pokemon.formIndex === 2 || pokemon.formIndex === 4, PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "complete" ? 4 : 2)
