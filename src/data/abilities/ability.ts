@@ -7334,7 +7334,7 @@ export function initAbilities() {
       .unreplaceable()
       .unsuppressable()
       .bypassFaint(),
-    new Ability(AbilityId.POWER_CONSTRUCT,
+    new Ability(AbilityId.POWER_CONSTRUCT, 7)
       // Change to 10% complete or 50% complete on switchout/turn end if at <50% HP;
       // revert to 10% PC or 50% PC before a new battle starts
       // TODO: Should this revert the form change even if it would re-activate on summon?
