@@ -17,7 +17,8 @@ import { MoneyMultiplierModifier, type PokemonHeldItemModifier } from "./modifie
 import type { PokeballType } from "#enums/pokeball";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { SpeciesFormKey } from "#enums/species-form-key";
-import type { EnemyPokemon, PlayerPokemon, TurnMove } from "#app/field/pokemon";
+import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import type { TurnMove } from "./@types/turn-move";
 import type Pokemon from "#app/field/pokemon";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
@@ -178,7 +179,7 @@ export default class Battle {
         )
         .map(i => {
           const ret = i as PokemonHeldItemModifier;
-          //@ts-ignore - this is awful to fix/change
+          //@ts-expect-error - this is awful to fix/change
           ret.pokemonId = null;
           return ret;
         }),

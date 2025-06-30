@@ -2,6 +2,19 @@
 module.exports = {
   forbidden: [
     {
+      name: "no-non-type-@type-exports",
+      severity: "error",
+      comment:
+        "Files in @types should not export anything but types and interfaces. " +
+        "The folder is intended to house imports that are removed at runtime, " +
+        "and thus should not contain anything with a bearing on runtime code.",
+      from: {},
+      to: {
+        path: "(^|/)src/@types",
+        dependencyTypesNot: ["type-only"],
+      },
+    },
+    {
       name: "only-type-imports",
       severity: "error",
       comment: "Files in 'enums/' and '@types/' must only use type imports.",
@@ -310,7 +323,7 @@ module.exports = {
       conditionNames: ["import", "require", "node", "default", "types"],
       /*
          The extensions, by default are the same as the ones dependency-cruiser
-         can access (run `npx depcruise --info` to see which ones that are in
+         can access (run `pnpm exec depcruise --info` to see which ones that are in
          _your_ environment). If that list is larger than you need you can pass
          the extensions you actually use (e.g. [".js", ".jsx"]). This can speed
          up module resolution, which is the most expensive step.
