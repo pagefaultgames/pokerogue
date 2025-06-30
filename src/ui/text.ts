@@ -208,27 +208,27 @@ export function getTextStyleOptions(
     // shadowYpos = 5;
     // break;
     case TextStyle.SUMMARY_DEX_NUM: {
-      let fontSizeLabel = "96px";
+      const fontSizeLabel = "96px";
       switch (lang) {
         case "ja":
-		  styleOptions.padding = { top: 2, bottom: 10 };
+          styleOptions.padding = { top: 2, bottom: 10 };
           break;
       }
       styleOptions.fontSize = fontSizeLabel;
-	  shadowXpos = 5;
-	  shadowYpos = 5;
+      shadowXpos = 5;
+      shadowYpos = 5;
       break;
     }
     case TextStyle.SUMMARY_DEX_NUM_GOLD: {
-      let fontSizeLabel = "96px";
+      const fontSizeLabel = "96px";
       switch (lang) {
         case "ja":
-		  styleOptions.padding = { top: 2, bottom: 10 };
+          styleOptions.padding = { top: 2, bottom: 10 };
           break;
       }
       styleOptions.fontSize = fontSizeLabel;
-	  shadowXpos = 5;
-	  shadowYpos = 5;
+      shadowXpos = 5;
+      shadowYpos = 5;
       break;
     }
     case TextStyle.SUMMARY_ALT:
@@ -250,7 +250,7 @@ export function getTextStyleOptions(
       shadowYpos = 3;
       break;
     case TextStyle.LUCK_VALUE: {
-      let fontSizeLabel = "96px";
+      const fontSizeLabel = "96px";
       switch (lang) {
         case "ja":
           styleOptions.padding = { top: -6, bottom: 2 };
@@ -431,7 +431,7 @@ export function getTextStyleOptions(
       shadowXpos = 3;
       shadowYpos = 3;
       break;
-      }
+    }
     case TextStyle.MOVE_LABEL: {
       switch (lang) {
         case "ja":

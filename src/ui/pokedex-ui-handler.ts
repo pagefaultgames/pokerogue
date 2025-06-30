@@ -588,9 +588,15 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.showFormTrayIconElement.setName("sprite-showFormTray-icon-element");
     this.showFormTrayIconElement.setScale(0.675);
     this.showFormTrayIconElement.setOrigin(0.0, 0.0);
-    this.showFormTrayLabel = addTextObject(16, 168, i18next.t("pokedexUiHandler:showForms"), TextStyle.INSTRUCTIONS_TEXT, {
-      fontSize: instructionTextSize,
-    });
+    this.showFormTrayLabel = addTextObject(
+      16,
+      168,
+      i18next.t("pokedexUiHandler:showForms"),
+      TextStyle.INSTRUCTIONS_TEXT,
+      {
+        fontSize: instructionTextSize,
+      },
+    );
     this.showFormTrayLabel.setName("text-showFormTray-label");
     this.showFormTrayIconElement.setVisible(false);
     this.showFormTrayLabel.setVisible(false);

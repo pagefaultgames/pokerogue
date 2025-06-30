@@ -398,9 +398,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.pokemonLuckLabelText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonLuckLabelText);
 
-    this.pokemonLuckText = addTextObject(8 + this.pokemonLuckLabelText.displayWidth + 2, 89, "0", TextStyle.LUCK_VALUE, {
-      fontSize: "56px",
-    });
+    this.pokemonLuckText = addTextObject(
+      8 + this.pokemonLuckLabelText.displayWidth + 2,
+      89,
+      "0",
+      TextStyle.LUCK_VALUE,
+      {
+        fontSize: "56px",
+      },
+    );
     this.pokemonLuckText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonLuckText);
 
@@ -584,9 +590,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.showBackSpriteIconElement.setName("show-backSprite-icon-element");
     this.showBackSpriteIconElement.setScale(0.675);
     this.showBackSpriteIconElement.setOrigin(0.0, 0.0);
-    this.showBackSpriteLabel = addTextObject(60, 7, i18next.t("pokedexUiHandler:showBackSprite"), TextStyle.INSTRUCTIONS_TEXT, {
-      fontSize: instructionTextSize,
-    });
+    this.showBackSpriteLabel = addTextObject(
+      60,
+      7,
+      i18next.t("pokedexUiHandler:showBackSprite"),
+      TextStyle.INSTRUCTIONS_TEXT,
+      {
+        fontSize: instructionTextSize,
+      },
+    );
     this.showBackSpriteLabel.setName("show-backSprite-label");
     this.starterSelectContainer.add(this.showBackSpriteIconElement);
     this.starterSelectContainer.add(this.showBackSpriteLabel);
@@ -2507,7 +2519,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       const isFormSeen = this.isSeen();
 
       this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
-      this.pokemonNumberText.setColor(this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, false));
+      this.pokemonNumberText.setColor(
+        this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, false),
+      );
       this.pokemonNumberText.setShadowColor(
         this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, true),
       );
