@@ -1,17 +1,17 @@
-import { Button } from "#enums/buttons";
-import i18next from "i18next";
-import type { Achv } from "#app/system/achv";
-import { achvs, getAchievementDescription } from "#app/system/achv";
-import type { Voucher } from "#app/system/voucher";
-import { getVoucherTypeIcon, getVoucherTypeName, vouchers } from "#app/system/voucher";
-import MessageUiHandler from "#app/ui/message-ui-handler";
-import { addTextObject, TextStyle } from "#app/ui/text";
-import type { UiMode } from "#enums/ui-mode";
-import { addWindow } from "#app/ui/ui-theme";
-import { ScrollBar } from "#app/ui/scroll-bar";
-import { PlayerGender } from "#enums/player-gender";
 import { globalScene } from "#app/global-scene";
-import type { AchvUnlocks, VoucherUnlocks } from "#app/system/game-data";
+import { Button } from "#enums/buttons";
+import { PlayerGender } from "#enums/player-gender";
+import type { UiMode } from "#enums/ui-mode";
+import type { Achv } from "#system/achv";
+import { achvs, getAchievementDescription } from "#system/achv";
+import type { AchvUnlocks, VoucherUnlocks } from "#system/game-data";
+import type { Voucher } from "#system/voucher";
+import { getVoucherTypeIcon, getVoucherTypeName, vouchers } from "#system/voucher";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { ScrollBar } from "#ui/scroll-bar";
+import { addTextObject, TextStyle } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import i18next from "i18next";
 
 const Page = {
   ACHIEVEMENTS: 0,
@@ -27,7 +27,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   de: { TextSize: "80px" },
 };
 
-export default class AchvsUiHandler extends MessageUiHandler {
+export class AchvsUiHandler extends MessageUiHandler {
   private readonly ROWS = 4;
   private readonly COLS = 17;
 

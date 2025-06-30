@@ -1,11 +1,11 @@
-import { BattlerIndex } from "#enums/battler-index";
-import type Pokemon from "#app/field/pokemon";
-import type { ContactHeldItemTransferChanceModifier } from "#app/modifier/modifier";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import type { Pokemon } from "#field/pokemon";
+import type { ContactHeldItemTransferChanceModifier } from "#modifiers/modifier";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

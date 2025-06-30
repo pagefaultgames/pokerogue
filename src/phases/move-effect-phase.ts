@@ -1,33 +1,27 @@
-import { BattlerIndex } from "#enums/battler-index";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { ConditionalProtectTag } from "#app/data/arena-tag";
+import { getPokemonNameWithAffix } from "#app/messages";
+import type { Phase } from "#app/phase";
+import { ConditionalProtectTag } from "#data/arena-tag";
+import { MoveAnim } from "#data/battle-anims";
+import { DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag, TypeBoostTag } from "#data/battler-tags";
+import { SpeciesFormChangePostMoveTrigger } from "#data/form-change-triggers";
+import type { TypeDamageMultiplier } from "#data/type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
-import { MoveAnim } from "#app/data/battle-anims";
-import {
-  DamageProtectedTag,
-  ProtectedTag,
-  SemiInvulnerableTag,
-  SubstituteTag,
-  TypeBoostTag,
-} from "#app/data/battler-tags";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
-import type { MoveAttr } from "#app/data/moves/move";
-import { getMoveTargets } from "#app/data/moves/move-utils";
-import { applyFilteredMoveAttrs, applyMoveAttrs } from "#app/data/moves/apply-attrs";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { HitCheckResult } from "#enums/hit-check-result";
+import { HitResult } from "#enums/hit-result";
+import { MoveCategory } from "#enums/MoveCategory";
 import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveTarget } from "#enums/MoveTarget";
-import { MoveCategory } from "#enums/MoveCategory";
-import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { PokemonType } from "#enums/pokemon-type";
-import type { DamageResult } from "#app/@types/damage-result";
-import type { TurnMove } from "#app/@types/turn-move";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import type Pokemon from "#app/field/pokemon";
+import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
-import { HitResult } from "#enums/hit-result";
-import { getPokemonNameWithAffix } from "#app/messages";
+import { isReflected, isVirtual, MoveUseMode } from "#enums/move-use-mode";
+import { PokemonType } from "#enums/pokemon-type";
+import type { Pokemon } from "#field/pokemon";
 import {
   ContactHeldItemTransferChanceModifier,
   DamageMoneyRewardModifier,
@@ -36,20 +30,18 @@ import {
   FlinchChanceModifier,
   HitHealModifier,
   PokemonMultiHitModifier,
-} from "#app/modifier/modifier";
-import { PokemonPhase } from "#app/phases/pokemon-phase";
-import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#app/utils/common";
-import type { nil } from "#app/utils/common";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { MoveId } from "#enums/move-id";
+} from "#modifiers/modifier";
+import { applyFilteredMoveAttrs, applyMoveAttrs } from "#moves/apply-attrs";
+import type { Move, MoveAttr } from "#moves/move";
+import { getMoveTargets, isFieldTargeted } from "#moves/move-utils";
+import { PokemonMove } from "#moves/pokemon-move";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import { DamageAchv } from "#system/achv";
+import type { DamageResult } from "#types/damage-result";
+import type { TurnMove } from "#types/turn-move";
+import type { nil } from "#utils/common";
+import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#utils/common";
 import i18next from "i18next";
-import type { Phase } from "#app/phase";
-import type { TypeDamageMultiplier } from "#app/data/type";
-import { HitCheckResult } from "#enums/hit-check-result";
-import type Move from "#app/data/moves/move";
-import { isFieldTargeted } from "#app/data/moves/move-utils";
-import { DamageAchv } from "#app/system/achv";
-import { isVirtual, isReflected, MoveUseMode } from "#enums/move-use-mode";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 

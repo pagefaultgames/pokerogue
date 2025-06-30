@@ -1,9 +1,9 @@
-import type Pokemon from "../field/pokemon";
-import type Move from "./moves/move";
-import { PokemonType } from "#enums/pokemon-type";
-import type { BattlerIndex } from "#enums/battler-index";
-import i18next from "i18next";
 import { getPokemonNameWithAffix } from "#app/messages";
+import type { BattlerIndex } from "#enums/battler-index";
+import { PokemonType } from "#enums/pokemon-type";
+import type { Pokemon } from "#field/pokemon";
+import type { Move } from "#moves/move";
+import i18next from "i18next";
 
 export enum TerrainType {
   NONE,

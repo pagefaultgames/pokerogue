@@ -1,8 +1,8 @@
-import type { BattlerIndex } from "#enums/battler-index";
 import { globalScene } from "#app/global-scene";
+import { CommonBattleAnim } from "#data/battle-anims";
+import type { BattlerIndex } from "#enums/battler-index";
 import type { CommonAnim } from "#enums/move-anims-common";
-import { CommonBattleAnim } from "#app/data/battle-anims";
-import { PokemonPhase } from "./pokemon-phase";
+import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class CommonAnimPhase extends PokemonPhase {
   // PokemonHealPhase extends CommonAnimPhase, and to make typescript happy,

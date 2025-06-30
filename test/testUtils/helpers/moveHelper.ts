@@ -1,19 +1,19 @@
-import type { BattlerIndex } from "#enums/battler-index";
-import { getMoveTargets } from "#app/data/moves/move-utils";
-import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
 import Overrides from "#app/overrides";
-import type { CommandPhase } from "#app/phases/command-phase";
-import type { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import type { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { UiMode } from "#enums/ui-mode";
+import type { Pokemon } from "#field/pokemon";
+import { getMoveTargets } from "#moves/move-utils";
+import { PokemonMove } from "#moves/pokemon-move";
+import type { CommandPhase } from "#phases/command-phase";
+import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
+import { coerceArray } from "#utils/common";
 import { vi } from "vitest";
-import { coerceArray } from "#app/utils/common";
-import { MoveUseMode } from "#enums/move-use-mode";
 
 /**
  * Helper to handle a Pokemon's move

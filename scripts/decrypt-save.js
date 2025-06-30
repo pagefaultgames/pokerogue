@@ -1,7 +1,8 @@
-import pkg from "crypto-js";
-const { AES, enc } = pkg;
-// biome-ignore lint: This is how you import fs from node
+// biome-ignore lint/performance/noNamespaceImport: This is how you import fs from node
 import * as fs from "node:fs";
+import pkg from "crypto-js";
+
+const { AES, enc } = pkg;
 
 const SAVE_KEY = "x0i2O7WRiANTqPmZ";
 

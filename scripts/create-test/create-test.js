@@ -4,11 +4,11 @@
  * @example pnpm test:create
  */
 
-import chalk from "chalk";
-import inquirer from "inquirer";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import chalk from "chalk";
+import inquirer from "inquirer";
 
 //#region Constants
 

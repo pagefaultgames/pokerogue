@@ -1,21 +1,21 @@
-import { UiMode } from "#enums/ui-mode";
-import { TextStyle, addTextObject, getEggTierTextTint, getTextStyleOptions } from "./text";
-import MessageUiHandler from "./message-ui-handler";
-import { getEnumValues, getEnumKeys, fixedInt, randSeedShuffle } from "#app/utils/common";
-import type { IEggOptions } from "../data/egg";
-import { Egg, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
-import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { addWindow } from "./ui-theme";
-import { Tutorial, handleTutorial } from "../tutorial";
-import { Button } from "#enums/buttons";
-import Overrides from "#app/overrides";
-import { GachaType } from "#app/enums/gacha-types";
-import i18next from "i18next";
-import { EggTier } from "#enums/egg-type";
 import { globalScene } from "#app/global-scene";
+import Overrides from "#app/overrides";
+import { handleTutorial, Tutorial } from "#app/tutorial";
+import type { IEggOptions } from "#data/egg";
+import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#data/egg";
+import { Button } from "#enums/buttons";
+import { EggTier } from "#enums/egg-type";
+import { GachaType } from "#enums/gacha-types";
+import { UiMode } from "#enums/ui-mode";
+import { getVoucherTypeIcon, VoucherType } from "#system/voucher";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { addTextObject, getEggTierTextTint, getTextStyleOptions, TextStyle } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import { fixedInt, getEnumKeys, getEnumValues, randSeedShuffle } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import i18next from "i18next";
 
-export default class EggGachaUiHandler extends MessageUiHandler {
+export class EggGachaUiHandler extends MessageUiHandler {
   private eggGachaContainer: Phaser.GameObjects.Container;
   private eggGachaMessageBox: Phaser.GameObjects.NineSlice;
   private eggGachaOptionsContainer: Phaser.GameObjects.Container;

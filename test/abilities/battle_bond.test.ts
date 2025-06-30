@@ -1,11 +1,11 @@
-import { allMoves } from "#app/data/data-lists";
-import { MultiHitType } from "#enums/MultiHitType";
-import { Status } from "#app/data/status-effect";
+import { allMoves } from "#data/data-lists";
+import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
+import { MultiHitType } from "#enums/MultiHitType";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - BATTLE BOND", () => {

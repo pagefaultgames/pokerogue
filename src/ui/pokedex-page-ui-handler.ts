@@ -1,72 +1,70 @@
-import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
-import { pokemonEvolutions, pokemonPrevolutions, pokemonStarters } from "#app/data/balance/pokemon-evolutions";
-import type { Variant } from "#app/sprites/variant";
-import { getVariantTint, getVariantIcon } from "#app/sprites/variant";
-import { argbFromRgba } from "@material/material-color-utilities";
-import i18next from "i18next";
+import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
-import { allAbilities } from "#app/data/data-lists";
-import { speciesEggMoves } from "#app/data/balance/egg-moves";
-import { GrowthRate, getGrowthRateColor } from "#app/data/exp";
-import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
-import { allMoves } from "#app/data/data-lists";
-import { getNatureName } from "#app/data/nature";
-import type { SpeciesFormChange } from "#app/data/pokemon-forms";
-import { pokemonFormChanges } from "#app/data/pokemon-forms";
-import type { LevelMoves } from "#app/data/balance/pokemon-level-moves";
-import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpeciesForm, normalForm } from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { allSpecies } from "#app/data/data-lists";
-import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
-import { starterPassiveAbilities } from "#app/data/balance/passives";
-import { PokemonType } from "#enums/pokemon-type";
-import type { StarterAttributes } from "#app/system/game-data";
-import type { DexEntry } from "#app/@types/dex-data";
-import { AbilityAttr } from "#enums/ability-attr";
-import { DexAttr } from "#enums/dex-attr";
-import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import MessageUiHandler from "#app/ui/message-ui-handler";
-import { StatsContainer } from "#app/ui/stats-container";
-import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions } from "#app/ui/text";
-import { UiMode } from "#enums/ui-mode";
-import { addWindow } from "#app/ui/ui-theme";
-import { Egg } from "#app/data/egg";
 import Overrides from "#app/overrides";
-import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
-import { Passive as PassiveAttr } from "#enums/passive";
-import MoveInfoOverlay from "#app/ui/move-info-overlay";
-import PokedexInfoOverlay from "#app/ui/pokedex-info-overlay";
-import { getEggTierForSpecies } from "#app/data/egg";
-import { Device } from "#enums/devices";
-import type { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
-import { Button } from "#enums/buttons";
-import { EggSourceType } from "#enums/egg-source-types";
+import type { BiomeTierTod } from "#balance/biomes";
+import { BiomePoolTier, catchableSpecies } from "#balance/biomes";
+import { speciesEggMoves } from "#balance/egg-moves";
+import { starterPassiveAbilities } from "#balance/passives";
+import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { pokemonEvolutions, pokemonPrevolutions, pokemonStarters } from "#balance/pokemon-evolutions";
+import type { LevelMoves } from "#balance/pokemon-level-moves";
+import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
 import {
   getPassiveCandyCount,
-  getValueReductionCandyCounts,
   getSameSpeciesEggCandyCounts,
-} from "#app/data/balance/starters";
+  getStarterValueFriendshipCap,
+  getValueReductionCandyCounts,
+  speciesStarterCosts,
+} from "#balance/starters";
+import { speciesTmMoves } from "#balance/tms";
+import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
+import { Egg, getEggTierForSpecies } from "#data/egg";
+import { GrowthRate, getGrowthRateColor } from "#data/exp";
+import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
+import { getNatureName } from "#data/nature";
+import type { SpeciesFormChange } from "#data/pokemon-forms";
+import { pokemonFormChanges } from "#data/pokemon-forms";
+import type { PokemonSpecies } from "#data/pokemon-species";
+import { getPokemonSpeciesForm, normalForm } from "#data/pokemon-species";
+import { AbilityAttr } from "#enums/ability-attr";
+import type { AbilityId } from "#enums/ability-id";
+import { BiomeId } from "#enums/biome-id";
+import { Button } from "#enums/buttons";
+import { Device } from "#enums/devices";
+import { DexAttr } from "#enums/dex-attr";
+import { EggSourceType } from "#enums/egg-source-types";
+import type { MoveId } from "#enums/move-id";
+import type { Nature } from "#enums/nature";
+import { Passive as PassiveAttr } from "#enums/passive";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import { TimeOfDay } from "#enums/time-of-day";
+import { UiMode } from "#enums/ui-mode";
+import type { Variant } from "#sprites/variant";
+import { getVariantIcon, getVariantTint } from "#sprites/variant";
+import type { StarterAttributes } from "#system/game-data";
+import { SettingKeyboard } from "#system/settings-keyboard";
+import type { DexEntry } from "#types/dex-data";
+import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import { BaseStatsOverlay } from "#ui/base-stats-overlay";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { MoveInfoOverlay } from "#ui/move-info-overlay";
+import { PokedexInfoOverlay } from "#ui/pokedex-info-overlay";
+import { StatsContainer } from "#ui/stats-container";
+import { addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions, TextStyle } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
 import {
   BooleanHolder,
+  getEnumKeys,
   getLocalizedSpriteKey,
   isNullOrUndefined,
   padInt,
   rgbHexToRgba,
   toReadableString,
-} from "#app/utils/common";
-import type { Nature } from "#enums/nature";
-import { getEnumKeys } from "#app/utils/common";
-import { speciesTmMoves } from "#app/data/balance/tms";
-import type { BiomeTierTod } from "#app/data/balance/biomes";
-import { BiomePoolTier, catchableSpecies } from "#app/data/balance/biomes";
-import { BiomeId } from "#enums/biome-id";
-import { TimeOfDay } from "#app/enums/time-of-day";
-import type { AbilityId } from "#enums/ability-id";
-import { BaseStatsOverlay } from "#app/ui/base-stats-overlay";
-import { globalScene } from "#app/global-scene";
+} from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { argbFromRgba } from "@material/material-color-utilities";
+import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
 interface LanguageSetting {
@@ -152,7 +150,7 @@ enum MenuOptions {
   EVOLUTIONS,
 }
 
-export default class PokedexPageUiHandler extends MessageUiHandler {
+export class PokedexPageUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private shinyOverlay: Phaser.GameObjects.Image;
   private pokemonNumberText: Phaser.GameObjects.Text;

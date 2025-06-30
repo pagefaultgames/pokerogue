@@ -1,8 +1,8 @@
-import { coerceArray } from "#app/utils/common";
-import type MockTextureManager from "#test/testUtils/mocks/mockTextureManager";
-import type { MockGameObject } from "../mockGameObject";
+import type { MockGameObject } from "#test/testUtils/mocks/mockGameObject";
+import type { MockTextureManager } from "#test/testUtils/mocks/mockTextureManager";
+import { coerceArray } from "#utils/common";
 
-export default class MockContainer implements MockGameObject {
+export class MockContainer implements MockGameObject {
   protected x: number;
   protected y: number;
   protected scene;

@@ -1,12 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/testUtils/gameManager";
-import { UiMode } from "#enums/ui-mode";
-import { Stat } from "#enums/stat";
-import { getMovePosition } from "#test/testUtils/gameManagerUtils";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { UiMode } from "#enums/ui-mode";
+import { GameManager } from "#test/testUtils/gameManager";
+import { getMovePosition } from "#test/testUtils/gameManagerUtils";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Intimidate", () => {
   let phaserGame: Phaser.Game;

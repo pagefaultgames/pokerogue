@@ -1,10 +1,10 @@
-import { Stat } from "#enums/stat";
-import { SpeciesStatBoosterModifier } from "#app/modifier/modifier";
-import { modifierTypes } from "#app/data/data-lists";
-import i18next from "#app/plugins/i18n";
-import { NumberHolder } from "#app/utils/common";
+import { modifierTypes } from "#data/data-lists";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { SpeciesStatBoosterModifier } from "#modifiers/modifier";
+import i18next from "#plugins/i18n";
+import { GameManager } from "#test/testUtils/gameManager";
+import { NumberHolder } from "#utils/common";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

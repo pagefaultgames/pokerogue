@@ -1,8 +1,8 @@
-import { startingWave } from "#app/starting-wave";
 import { globalScene } from "#app/global-scene";
-import { PartyMemberStrength } from "#enums/party-member-strength";
-import { GameModes } from "#enums/game-modes";
+import { startingWave } from "#app/starting-wave";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
+import { GameModes } from "#enums/game-modes";
+import { PartyMemberStrength } from "#enums/party-member-strength";
 
 export class TrainerPartyTemplate {
   public size: number;

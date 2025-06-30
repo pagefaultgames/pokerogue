@@ -1,12 +1,12 @@
+import { pokerogueApi } from "#api/pokerogue-api";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
-import { MapModifier } from "#app/modifier/modifier";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
+import { MapModifier } from "#modifiers/modifier";
+import { GameManager } from "#test/testUtils/gameManager";
+import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
 
 //const TIMEOUT = 20 * 1000;
 

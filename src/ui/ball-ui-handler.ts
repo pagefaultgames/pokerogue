@@ -1,15 +1,15 @@
-import { getPokeballName } from "../data/pokeball";
-import { addTextObject, getTextStyleOptions, TextStyle } from "./text";
+import { globalScene } from "#app/global-scene";
+import { getPokeballName } from "#data/pokeball";
+import { Button } from "#enums/buttons";
 import { Command } from "#enums/command";
 import { UiMode } from "#enums/ui-mode";
-import UiHandler from "./ui-handler";
-import { addWindow } from "./ui-theme";
-import { Button } from "#enums/buttons";
-import type { CommandPhase } from "#app/phases/command-phase";
-import { globalScene } from "#app/global-scene";
+import type { CommandPhase } from "#phases/command-phase";
+import { addTextObject, getTextStyleOptions, TextStyle } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 
-export default class BallUiHandler extends UiHandler {
+export class BallUiHandler extends UiHandler {
   private pokeballSelectContainer: Phaser.GameObjects.Container;
   private pokeballSelectBg: Phaser.GameObjects.NineSlice;
   private countsText: Phaser.GameObjects.Text;

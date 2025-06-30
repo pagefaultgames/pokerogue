@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import type Pokemon from "../field/pokemon";
+import type { Pokemon } from "#field/pokemon";
 
-export default class PokeballTray extends Phaser.GameObjects.Container {
+export class PokeballTray extends Phaser.GameObjects.Container {
   private player: boolean;
 
   private bg: Phaser.GameObjects.NineSlice;

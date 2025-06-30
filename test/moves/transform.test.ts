@@ -1,12 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/testUtils/gameManager";
-import { SpeciesId } from "#enums/species-id";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { MoveId } from "#enums/move-id";
-import { Stat, EFFECTIVE_STATS } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
+import { EFFECTIVE_STATS, Stat } from "#enums/stat";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 // TODO: Add more tests once Transform is fully implemented
 describe("Moves - Transform", () => {

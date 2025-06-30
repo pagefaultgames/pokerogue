@@ -1,12 +1,11 @@
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { globalScene } from "#app/global-scene";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import type { PlayerPokemon, EnemyPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
+import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
-import { NumberHolder } from "#app/utils/common";
-import { PokemonPhase } from "./pokemon-phase";
-import { globalScene } from "#app/global-scene";
 
 export class AttemptRunPhase extends PokemonPhase {
   public readonly phaseName = "AttemptRunPhase";

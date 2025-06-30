@@ -1,24 +1,24 @@
-import PokemonInfoContainer from "#app/ui/pokemon-info-container";
-import { Gender } from "#app/data/gender";
-import { PokemonType } from "#enums/pokemon-type";
-import { rgbHexToRgba, padInt } from "#app/utils/common";
-import { TextStyle, addTextObject } from "#app/ui/text";
-import { speciesEggMoves } from "#app/data/balance/egg-moves";
-import { allMoves } from "#app/data/data-lists";
-import { SpeciesId } from "#enums/species-id";
-import { getEggTierForSpecies } from "#app/data/egg";
-import { starterColors } from "#app/global-vars/starter-colors";
 import { globalScene } from "#app/global-scene";
+import { starterColors } from "#app/global-vars/starter-colors";
+import { speciesEggMoves } from "#balance/egg-moves";
+import { allMoves } from "#data/data-lists";
+import { getEggTierForSpecies } from "#data/egg";
+import type { EggHatchData } from "#data/egg-hatch-data";
+import { Gender } from "#data/gender";
+import { getPokemonSpeciesForm } from "#data/pokemon-species";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import type { PlayerPokemon } from "#field/pokemon";
+import { PokemonInfoContainer } from "#ui/pokemon-info-container";
+import { addTextObject, TextStyle } from "#ui/text";
+import { padInt, rgbHexToRgba } from "#utils/common";
 import { argbFromRgba } from "@material/material-color-utilities";
-import type { EggHatchData } from "#app/data/egg-hatch-data";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import { getPokemonSpeciesForm } from "#app/data/pokemon-species";
 
 /**
  * Class for the hatch info summary of each pokemon
  * Holds an info container as well as an additional egg sprite, name, egg moves and main sprite
  */
-export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
+export class PokemonHatchInfoContainer extends PokemonInfoContainer {
   private currentPokemonSprite: Phaser.GameObjects.Sprite;
   private pokemonNumberText: Phaser.GameObjects.Text;
   private pokemonNameText: Phaser.GameObjects.Text;

@@ -1,16 +1,16 @@
-import { BATTLE_STATS, Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import { AbilityId } from "#enums/ability-id";
+import { Button } from "#enums/buttons";
+import { MoveId } from "#enums/move-id";
+import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
+import { BATTLE_STATS, Stat } from "#enums/stat";
+import { UiMode } from "#enums/ui-mode";
+import { TempStatStageBoosterModifier } from "#modifiers/modifier";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { MoveId } from "#enums/move-id";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { AbilityId } from "#enums/ability-id";
-import { TempStatStageBoosterModifier } from "#app/modifier/modifier";
-import { UiMode } from "#enums/ui-mode";
-import { Button } from "#app/enums/buttons";
-import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 describe("Items - Temporary Stat Stage Boosters", () => {
   let phaserGame: Phaser.Game;
