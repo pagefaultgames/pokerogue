@@ -3073,14 +3073,14 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     return mon;
   }
 
-  override canApplyPostSummon(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): boolean {
+  override canApply({ pokemon }: AbAttrBaseParams): boolean {
     const target = this.getTarget(pokemon);
+
     return !!target;
   }
 
-  override applyPostSummon(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): void {
+  override apply({ pokemon }: AbAttrBaseParams): void {
     globalScene.phaseManager.unshiftNew("PokemonTransformPhase", pokemon.getBattlerIndex(), this.targetIndex, true);
-
   }
 }
 

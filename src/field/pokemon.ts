@@ -1056,6 +1056,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return species;
   }
 
+  /**
+   * Getter function that returns whether this {@linkcode Pokemon} is currently transformed into another one
+   * (such as by the effects of {@linkcode MoveId.TRANSFORM} or {@linkcode AbilityId.IMPOSTER}.
+   * @returns Whether this Pokemon is currently transformed.
+   */
   isTransformed(): boolean {
     return this.summonData.speciesForm !== null;
   }
