@@ -3351,10 +3351,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getOpponentDescriptor(): string {
-    const opponents = this.getOpponents();
-    if (opponents.length === 1) {
-      return opponents[0].name;
-    }
     return this.isPlayer() ? i18next.t("arenaTag:opposingTeam") : i18next.t("arenaTag:yourTeam");
   }
 
