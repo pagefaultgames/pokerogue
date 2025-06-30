@@ -1,7 +1,7 @@
-/**
+/*
  * This script creates a test boilerplate file in the appropriate
  * directory based on the type selected.
- * @example pnpm test:create
+ * Usage: `pnpm test:create`
  */
 
 import fs from "node:fs";

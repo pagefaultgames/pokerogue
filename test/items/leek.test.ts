@@ -3,7 +3,7 @@ import { SpeciesId } from "#enums/species-id";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/testUtils/gameManager";
 import { randInt } from "#utils/common";
-import Phase from "phaser";
+import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Leek", () => {
@@ -11,7 +11,7 @@ describe("Items - Leek", () => {
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });

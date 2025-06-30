@@ -1,3 +1,7 @@
+/** biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
+import type { NewArenaEvent } from "#app/events/battle-scene";
+/** biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
+
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides, { defaultOverrides } from "#app/overrides";
 import { Weather } from "#data/weather";

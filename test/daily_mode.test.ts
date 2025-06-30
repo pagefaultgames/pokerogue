@@ -8,8 +8,6 @@ import { GameManager } from "#test/testUtils/gameManager";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-//const TIMEOUT = 20 * 1000;
-
 describe("Daily Mode", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;

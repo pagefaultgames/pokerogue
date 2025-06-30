@@ -6,7 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import type { Pokemon } from "#field/pokemon";
 import type { ContactHeldItemTransferChanceModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/testUtils/gameManager";
-import Phase from "phaser";
+import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Grip Claw", () => {
@@ -14,7 +14,7 @@ describe("Items - Grip Claw", () => {
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });

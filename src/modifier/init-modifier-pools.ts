@@ -1,6 +1,5 @@
 /* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
 import type { initModifierTypes } from "#modifiers/modifier-type";
-
 /* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
 import { timedEventManager } from "#app/global-event-manager";

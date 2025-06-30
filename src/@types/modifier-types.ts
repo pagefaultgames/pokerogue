@@ -1,10 +1,9 @@
-/**
- * Re-exports of all the types defined in the modifier module.
- */
+// Intentionally re-exports `ModifierConstructorMap` from `modifier.ts`
 
 import type { Pokemon } from "#field/pokemon";
 import type { ModifierConstructorMap } from "#modifiers/modifier";
 import type { ModifierType, WeightedModifierType } from "#modifiers/modifier-type";
+
 export type ModifierTypeFunc = () => ModifierType;
 export type WeightedModifierTypeWeightFunc = (party: Pokemon[], rerollCount?: number) => number;
 

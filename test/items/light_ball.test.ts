@@ -5,7 +5,7 @@ import { SpeciesStatBoosterModifier } from "#modifiers/modifier";
 import i18next from "#plugins/i18n";
 import { GameManager } from "#test/testUtils/gameManager";
 import { NumberHolder } from "#utils/common";
-import Phase from "phaser";
+import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Light Ball", () => {
@@ -13,7 +13,7 @@ describe("Items - Light Ball", () => {
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });

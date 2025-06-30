@@ -2,7 +2,7 @@ import { AbilityId } from "#enums/ability-id";
 import { PokemonExpBoosterModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/testUtils/gameManager";
 import { NumberHolder } from "#utils/common";
-import Phase from "phaser";
+import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("EXP Modifier Items", () => {
@@ -10,7 +10,7 @@ describe("EXP Modifier Items", () => {
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });

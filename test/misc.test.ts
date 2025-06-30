@@ -1,4 +1,3 @@
-// import { apiFetch } from "#app/utils";
 import { GameManager } from "#test/testUtils/gameManager";
 import { waitUntil } from "#test/testUtils/gameManagerUtils";
 import Phaser from "phaser";

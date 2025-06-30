@@ -9,7 +9,7 @@ import { TempStatStageBoosterModifier } from "#modifiers/modifier";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/testUtils/gameManager";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
-import Phase from "phaser";
+import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Temporary Stat Stage Boosters", () => {
@@ -17,7 +17,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });

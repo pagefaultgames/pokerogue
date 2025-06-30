@@ -1,7 +1,6 @@
 /* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
 import type { BattleScene } from "#app/battle-scene";
 import type { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
-
 /* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
