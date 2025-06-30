@@ -25,7 +25,7 @@ import {
   TrainerPartyCompoundTemplate,
   TrainerPartyTemplate,
   trainerPartyTemplates,
-} from "./TrainerPartyTemplate";
+} from "./trainer-party-template";
 import { evilAdminTrainerPools } from "./evil-admin-trainer-pools";
 
 // Enum imports

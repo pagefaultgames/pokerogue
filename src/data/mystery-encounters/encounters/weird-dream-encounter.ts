@@ -42,7 +42,7 @@ import PokemonData from "#app/system/pokemon-data";
 import { Nature } from "#enums/nature";
 import type HeldModifierConfig from "#app/@types/held-modifier-config";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
-import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
+import { TrainerPartyTemplate } from "#app/data/trainers/trainer-party-template";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 
 /** i18n namespace for encounter */

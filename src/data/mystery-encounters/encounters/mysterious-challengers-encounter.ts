@@ -4,9 +4,9 @@ import {
   setEncounterRewards,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
-import { trainerPartyTemplates } from "#app/data/trainers/TrainerPartyTemplate";
-import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
+import { trainerPartyTemplates } from "#app/data/trainers/trainer-party-template";
+import { TrainerPartyCompoundTemplate } from "#app/data/trainers/trainer-party-template";
+import { TrainerPartyTemplate } from "#app/data/trainers/trainer-party-template";
 import { ModifierTier } from "#enums/modifier-tier";
 import { modifierTypes } from "#app/data/data-lists";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";

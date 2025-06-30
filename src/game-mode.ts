@@ -1,6 +1,7 @@
 import i18next from "i18next";
-import type { FixedBattleConfigs } from "./battle";
-import { classicFixedBattles, FixedBattleConfig } from "./battle";
+import type { FixedBattleConfigs } from "./data/trainers/fixed-battle-configs";
+import { FixedBattleConfig } from "./battle";
+import { classicFixedBattles } from "./data/trainers/fixed-battle-configs";
 import type { Challenge } from "./data/challenge";
 import { allChallenges, applyChallenges, copyChallenge } from "./data/challenge";
 import { ChallengeType } from "#enums/challenge-type";
