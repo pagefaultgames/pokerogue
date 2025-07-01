@@ -4,7 +4,7 @@ import { defaultStarterSpecies } from "#app/constants";
 import { AbilityAttr } from "#enums/ability-attr";
 import { DexAttr } from "#enums/dex-attr";
 import { allSpecies } from "#app/data/data-lists";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 import { isNullOrUndefined } from "#app/utils/common";
 import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
 import type { SettingsSaveMigrator } from "#app/@types/SettingsSaveMigrator";
