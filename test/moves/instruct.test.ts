@@ -361,7 +361,7 @@ describe("Moves - Instruct", () => {
       useMode: MoveUseMode.NORMAL,
     });
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
     expect(game.field.getEnemyPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
