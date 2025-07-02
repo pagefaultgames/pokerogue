@@ -1,4 +1,4 @@
-import { BooleanHolder, type NumberHolder, randSeedItem } from "#app/utils/common";
+import { BooleanHolder, type NumberHolder, randSeedItem, isNullOrUndefined } from "#app/utils/common";
 import { deepCopy } from "#app/utils/data";
 import i18next from "i18next";
 import type { DexAttrProps, GameData } from "#app/system/game-data";
@@ -358,12 +358,21 @@ export abstract class Challenge {
   }
 
   /**
+   * An apply function for NO_SHOP_PHASE. Derived classes should alter this.
+   * @param _applyShopPhase {@link BooleanHolder} Whether it should apply the shop phase.
+   * @returns {@link boolean} if this function did anything.
+   */
+  applyNoShopPhase(_applyShopPhase: BooleanHolder): boolean {
+    return false;
+  }
+
+  /**
    * An apply function for PREVENT_REVIVE. Derived classes should alter this.
    * @param _canBeRevived {@link BooleanHolder} Whether it should revive the fainted Pokemon.
    * @returns {@link boolean} if this function did anything.
    */
   applyRevivePrevention(_canBeRevived: BooleanHolder): boolean {
-    return true;
+    return false;
   }
 
   /**
@@ -974,12 +983,23 @@ export class LowerStarterPointsChallenge extends Challenge {
  */
 export class NoFreeHealsChallenge extends Challenge {
   constructor() {
-    super(Challenges.NO_AUTO_HEAL, 1);
+    super(Challenges.NO_AUTO_HEAL, 3);
   }
 
   applyNoHealPhase(applyHealPhase: BooleanHolder): boolean {
-    applyHealPhase.value = false;
-    return true;
+    if (this.value !== 1) {
+      applyHealPhase.value = false;
+      return true;
+    }
+    return false;
+  }
+
+  applyNoShopPhase(applyShopPhase: BooleanHolder): boolean {
+    if (this.value !== 2) {
+      applyShopPhase.value = false;
+      return true;
+    }
+    return false;
   }
 
   static loadChallenge(source: NoFreeHealsChallenge | any): NoFreeHealsChallenge {
@@ -1001,6 +1021,8 @@ export class HardcoreChallenge extends Challenge {
     "modifierType:ModifierType.REVIVER_SEED",
   ];
 
+  private moveBlacklist = [MoveId.REVIVAL_BLESSING];
+
   constructor() {
     super(Challenges.HARDCORE, 2);
   }
@@ -1018,9 +1040,11 @@ export class HardcoreChallenge extends Challenge {
   }
 
   applyMoveBlacklist(move: PokemonMove, moveCanBeUsed: BooleanHolder): boolean {
-    const moveBlacklist = [MoveId.REVIVAL_BLESSING];
-    moveCanBeUsed.value = !moveBlacklist.includes(move.moveId);
-    return true;
+    if (this.moveBlacklist.includes(move.moveId)) {
+      moveCanBeUsed.value = false;
+      return true;
+    }
+    return false;
   }
 
   applyRevivePrevention(canBeRevived: BooleanHolder): boolean {
@@ -1033,15 +1057,17 @@ export class HardcoreChallenge extends Challenge {
       canStay.value = false;
     } else {
       canStay.value = true;
+      return true;
     }
-    return true;
+    return false;
   }
 
   override applyShouldFuse(pokemon: Pokemon, pokemonToFuse: Pokemon, canFuse: BooleanHolder): boolean {
     if (pokemon!.isFainted() || pokemonToFuse.isFainted()) {
       canFuse.value = false;
+      return true;
     }
-    return true;
+    return false;
   }
 
   static override loadChallenge(source: HardcoreChallenge | any): HardcoreChallenge {
@@ -1068,14 +1094,17 @@ export class LimitedCatchChallenge extends Challenge {
   }
 
   override applyAddPokemonToParty(waveIndex: number, canAddToParty: BooleanHolder): boolean {
-    const lastMystery = globalScene.lastMysteryEncounter?.encounterType;
-    if (lastMystery === undefined && !(waveIndex % 10 === 1)) {
-      canAddToParty.value = false;
+    if (waveIndex % 10 !== 1) {
+      const lastMystery = globalScene.lastMysteryEncounter?.encounterType;
+      if (
+        isNullOrUndefined(lastMystery) ||
+        !(waveIndex % 10 === 2 && !this.mysteryEncounterBlacklist.includes(lastMystery!))
+      ) {
+        canAddToParty.value = false;
+        return true;
+      }
+      return false;
     }
-    if (!(waveIndex % 10 === 1) && !(!this.mysteryEncounterBlacklist.includes(lastMystery!) && waveIndex % 10 === 2)) {
-      canAddToParty.value = false;
-    }
-    return true;
   }
 
   static override loadChallenge(source: LimitedCatchChallenge | any): LimitedCatchChallenge {
@@ -1244,6 +1273,14 @@ export function applyChallenges(challengeType: ChallengeType.FLIP_STAT, pokemon:
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(challengeType: ChallengeType.NO_HEAL_PHASE, applyHealPhase: BooleanHolder): boolean;
+
+/**
+ * Apply all challenges that modify whether the shop will appear.
+ * @param challengeType {@link ChallengeType} ChallengeType.NO_SHOP_PHASE
+ * @param applyShopPhase {@link BooleanHolder} Whether it should apply the shop phase.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(challengeType: ChallengeType.NO_SHOP_PHASE, applyShopPhase: BooleanHolder): boolean;
 /**
  * Apply all challenges that modify whether a shop item should be blacklisted.
  * @param challengeType {@link ChallengeType} ChallengeType.SHOP_ITEM_BLACKLIST
@@ -1371,6 +1408,9 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
           break;
         case ChallengeType.NO_HEAL_PHASE:
           ret ||= c.applyNoHealPhase(args[0]);
+          break;
+        case ChallengeType.NO_SHOP_PHASE:
+          ret ||= c.applyNoShopPhase(args[0]);
           break;
         case ChallengeType.SHOP_ITEM_BLACKLIST:
           ret ||= c.applyShopItemBlacklist(args[0], args[1]);

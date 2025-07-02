@@ -71,6 +71,10 @@ export enum ChallengeType {
    */
   NO_HEAL_PHASE,
   /**
+   * Challenge that modifies if the shop should appear
+   */
+  NO_SHOP_PHASE,
+  /**
    * Modifies if the shop item is blacklisted
    * @see {@linkcode Challenge.applyShopItemBlacklist}
    */
