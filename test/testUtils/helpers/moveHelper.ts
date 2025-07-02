@@ -65,12 +65,12 @@ export class MoveHelper extends GameManagerHelper {
     if (movePosition === -1) {
       expect.fail(
         `MoveHelper.select called with move '${toReadableString(MoveId[move])}' not in moveset!` +
-        `\nBattler Index: ${toReadableString(BattlerIndex[pkmIndex])}` +
-        `\nMoveset: [${this.game.scene
-          .getPlayerParty()
-          [pkmIndex].getMoveset()
-          .map(pm => toReadableString(MoveId[pm.moveId]))
-          .join(", ")}]`,
+          `\nBattler Index: ${toReadableString(BattlerIndex[pkmIndex])}` +
+          `\nMoveset: [${this.game.scene
+            .getPlayerParty()
+            [pkmIndex].getMoveset()
+            .map(pm => toReadableString(MoveId[pm.moveId]))
+            .join(", ")}]`,
       );
     }
 
@@ -109,12 +109,12 @@ export class MoveHelper extends GameManagerHelper {
     if (movePosition === -1) {
       expect.fail(
         `MoveHelper.selectWithTera called with move '${toReadableString(MoveId[move])}' not in moveset!` +
-        `\nBattler Index: ${toReadableString(BattlerIndex[pkmIndex])}` +
-        `\nMoveset: [${this.game.scene
-          .getPlayerParty()
-          [pkmIndex].getMoveset()
-          .map(pm => toReadableString(MoveId[pm.moveId]))
-          .join(", ")}]`,
+          `\nBattler Index: ${toReadableString(BattlerIndex[pkmIndex])}` +
+          `\nMoveset: [${this.game.scene
+            .getPlayerParty()
+            [pkmIndex].getMoveset()
+            .map(pm => toReadableString(MoveId[pm.moveId]))
+            .join(", ")}]`,
       );
     }
 
