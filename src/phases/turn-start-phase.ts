@@ -1,6 +1,5 @@
 import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { allMoves } from "#app/data/data-lists";
-import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
@@ -213,27 +212,8 @@ export class TurnStartPhase extends FieldPhase {
           break;
         case Command.RUN:
           {
-            let runningPokemon = pokemon;
-            if (globalScene.currentBattle.double) {
-              const playerActivePokemon = field.filter(pokemon => {
-                if (pokemon) {
-                  return pokemon.isPlayer() && pokemon.isActive();
-                }
-                return;
-              });
-              // if only one pokemon is alive, use that one
-              if (playerActivePokemon.length > 1) {
-                // find which active pokemon has faster speed
-                const fasterPokemon =
-                  playerActivePokemon[0].getStat(Stat.SPD) > playerActivePokemon[1].getStat(Stat.SPD)
-                    ? playerActivePokemon[0]
-                    : playerActivePokemon[1];
-                // check if either active pokemon has the ability "Run Away"
-                const hasRunAway = playerActivePokemon.find(p => p.hasAbility(AbilityId.RUN_AWAY));
-                runningPokemon = hasRunAway !== undefined ? hasRunAway : fasterPokemon;
-              }
-            }
-            phaseManager.unshiftNew("AttemptRunPhase", runningPokemon.getFieldIndex());
+            // Running (like ball throwing) is a team action taking up both Pokemon's turns.
+            phaseManager.unshiftNew("AttemptRunPhase");
           }
           break;
       }
