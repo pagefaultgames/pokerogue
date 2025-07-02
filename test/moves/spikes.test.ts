@@ -81,14 +81,14 @@ describe("Moves - Spikes", () => {
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   });
 
-  // TODO: This is failing and IDK why
+  // TODO: re-enable after re-fixing hazards moves
   it.todo("should work when all targets fainted", async () => {
     game.override.enemySpecies(SpeciesId.DIGLETT).battleStyle("double").startingLevel(1000);
     await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.SHUCKLE]);
 
     game.move.use(MoveId.HYPER_VOICE, BattlerIndex.PLAYER);
     game.move.use(MoveId.SPIKES, BattlerIndex.PLAYER_2);
-    await game.toNextWave();
+    await game.toEndOfTurn();
 
     expect(game.scene.arena.getTagOnSide(ArenaTrapTag, ArenaTagSide.ENEMY)).toBeDefined();
   });
