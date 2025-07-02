@@ -86,10 +86,14 @@ describe("Moves - Spikes", () => {
     game.override.enemySpecies(SpeciesId.DIGLETT).battleStyle("double").startingLevel(1000);
     await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.SHUCKLE]);
 
+    const [enemy1, enemy2] = game.scene.getEnemyField();
+
     game.move.use(MoveId.HYPER_VOICE, BattlerIndex.PLAYER);
     game.move.use(MoveId.SPIKES, BattlerIndex.PLAYER_2);
     await game.toEndOfTurn();
 
+    expect(enemy1.isFainted()).toBe(true);
+    expect(enemy2.isFainted()).toBe(true);
     expect(game.scene.arena.getTagOnSide(ArenaTrapTag, ArenaTagSide.ENEMY)).toBeDefined();
   });
 });
