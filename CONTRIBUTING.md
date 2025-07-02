@@ -29,12 +29,9 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 
 ### Procedure
 
-1. Clone the repo with the `--recurse-submodules` flag[^1] and in the root directory run `pnpm install`
+1. Clone the repo and in the root directory run `pnpm install`
     - If you run into any errors, reach out in the **#dev-corner** channel on Discord and someone will be happy to help.
 2. Run `pnpm start:dev` to locally run the project at `localhost:8000`
-
-[^1]: If you forget to include the `--recurse-submodules` flag when cloning initially (or do so via an alternate tool), consult [localization.md](./docs/localization.md) \
-for instructions on how to clone the `locales` submodule manually.
 
 ## 🚀 Getting Started
 
