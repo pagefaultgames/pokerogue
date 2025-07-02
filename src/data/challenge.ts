@@ -1103,8 +1103,8 @@ export class LimitedCatchChallenge extends Challenge {
         canAddToParty.value = false;
         return true;
       }
-      return false;
     }
+    return false;
   }
 
   static override loadChallenge(source: LimitedCatchChallenge | any): LimitedCatchChallenge {
