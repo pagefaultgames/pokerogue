@@ -1,3 +1,4 @@
+import { globalScene } from "#app/global-scene";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
@@ -164,6 +165,7 @@ describe("Abilities - Neutralizing Gas", () => {
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
 
     vi.spyOn(game.scene.getPlayerPokemon()!, "randBattleSeedInt").mockReturnValue(0);
+    vi.spyOn(globalScene, "randBattleSeedInt").mockReturnValue(0);
 
     const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);

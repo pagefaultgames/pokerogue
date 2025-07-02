@@ -1,3 +1,4 @@
+import { globalScene } from "#app/global-scene";
 import { AbilityId } from "#enums/ability-id";
 import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
@@ -145,6 +146,7 @@ describe("Abilities - Desolate Land", () => {
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 
     vi.spyOn(game.scene.getPlayerPokemon()!, "randBattleSeedInt").mockReturnValue(0);
+    vi.spyOn(globalScene, "randBattleSeedInt").mockReturnValue(0);
 
     const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);
