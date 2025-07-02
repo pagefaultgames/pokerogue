@@ -28,18 +28,19 @@ The parent repo (the "superproject") houses a cloned version of the 2nd reposito
 >
 > ![Image showing Visual Studio Code's Source Control tab. A separate dropdown can be seen for each individual submodule.](https://github.com/user-attachments/assets/8b4d3f64-aec1-4474-91df-03dc1252a2fa "Making commits on submodules without even changing directories!")
 
-From the perspective of the main project, the locales submodule is fairly simple to work with, but there are some important commands to keep in mind.
+From the perspective of the main project, the locales submodule is fairly simple to work with.
 ## Fetching Changes from Submodules
 
-Once you have set up your fork, run the following command to initialize your branch's locales repository and update its HEAD:
+The following command will initialize your branch's locales repository and update its HEAD:
 ```bash
 git submodule update --init --recursive
 ```
 
-This is run automatically after merging or switching branches, so you _usually_ won't have to run it yourself after the first time.
+> [!INFO]
+> This is run _automatically_ after cloning, merging or changing branches, so you should rarely have to run it manually.
 
 > [!WARNING]
-If you run into issues with your development environment afterwards, try deleting the `.git/modules/public` and `public/locales` folders before re-running the command.
+> If you run into issues with the `locales` submodule, try deleting the `.git/modules/public` and `public/locales` folders before re-running the command.
 
 ## How Are Translations Integrated?
 
