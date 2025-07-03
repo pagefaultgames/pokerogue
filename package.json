@@ -21,7 +21,7 @@
     "biome-ci": "biome ci --diagnostic-level=error --reporter=github --no-errors-on-unmatched",
     "docs": "typedoc",
     "depcruise": "depcruise src test",
-    "postinstall": "lefthook install && git submodule update --init --recursive",
+    "postinstall": "lefthook install; git submodule update --init --recursive",
     "update-version:patch": "pnpm version patch --force --no-git-tag-version",
     "update-version:minor": "pnpm version minor --force --no-git-tag-version",
     "update-locales:remote": "git submodule update --progress --init --recursive --force --remote"

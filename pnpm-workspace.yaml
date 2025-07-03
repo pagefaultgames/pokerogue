@@ -2,3 +2,5 @@ onlyBuiltDependencies:
   - esbuild
   - msw
   - lefthook
+
+shellEmulator: true
