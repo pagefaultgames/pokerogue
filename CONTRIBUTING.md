@@ -57,7 +57,7 @@ You are free to comment on any issue so that you may be assigned to it and we ca
 
 You can find the auto-generated documentation [here](https://pagefaultgames.github.io/pokerogue/main/index.html).
 
-Additionally, the [docs folder](./docs) contains a variety of in-depth documents and guides useful for aspiring contributors. \
+Additionally, the [docs folder](./docs) contains a variety of in-depth documents and guides useful for aspiring contributors.  
 Notable topics include:
 - [Commenting your code](./docs/comments.md)
 - [Linting & Formatting](./docs/linting.md)
