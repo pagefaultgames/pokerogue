@@ -26,11 +26,12 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 
 - node: >=22.14.0 - [manage with pnpm](https://pnpm.io/cli/env) | [manage with fnm](https://github.com/Schniz/fnm) | [manage with nvm](https://github.com/nvm-sh/nvm)
 - pnpm: 10.x - [how to install](https://pnpm.io/installation) (not recommended to install via `npm` on Windows native) | [alternate method - volta.sh](https://volta.sh/)
+- The repository [forked](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) and [cloned](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) locally on your device
 
 ### Running Locally
 
-1. Clone the repo and in the root directory run `pnpm install`
-    - If you run into any errors, reach out in the **#dev-corner** channel on Discord and someone will be happy to help.
+1. Run `pnpm install` from the repository root
+    - *if you run into any errors, reach out in the **#dev-corner** channel on Discord*
 2. Run `pnpm start:dev` to locally run the project at `localhost:8000`
 
 ## 🚀 Getting Started
