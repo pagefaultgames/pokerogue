@@ -874,7 +874,7 @@ export default abstract class Move implements Localizable {
 
   getPriorityModifier(user: Pokemon, simulated = true): MovePriorityModifier {
     const modifierHolder = new NumberHolder(MovePriorityModifier.NORMAL);
-    applyAbAttrs("ChangeMovePriorityModifierAbAttr", user, null, simulated, this, modifierHolder);
+    applyAbAttrs("ChangeMovePriorityModifierAbAttr", {pokemon: user, simulated: simulated, move: this, priority: modifierHolder});
     modifierHolder.value = user.getTag(BattlerTagType.BYPASS_SPEED) ? MovePriorityModifier.FIRST_IN_BRACKET : modifierHolder.value;
     return modifierHolder.value;
   }

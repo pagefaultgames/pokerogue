@@ -5983,11 +5983,6 @@ export class IllusionPostBattleAbAttr extends PostBattleAbAttr {
   }
 }
 
-export interface BypassSpeedChanceAbAttrParams extends AbAttrBaseParams {
-  /** Holds whether the speed check is bypassed after ability application */
-  bypass: BooleanHolder;
-}
-
 /**
  * If a Pokémon with this Ability selects a damaging move, it has a 30% chance of going first in its priority bracket. If the Ability activates, this is announced at the start of the turn (after move selection).
  * @sealed
@@ -6003,7 +5998,7 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
     this.chance = chance;
   }
 
-  override canApply({ bypass, simulated, pokemon }: BypassSpeedChanceAbAttrParams): boolean {
+  override canApply({ simulated, pokemon }: AbAttrBaseParams): boolean {
     // TODO: Consider whether we can move the simulated check to the `apply` method
     // May be difficult as we likely do not want to modify the randBattleSeed
     const turnCommand = globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
@@ -6020,11 +6015,11 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
   /**
    * bypass move order in their priority bracket when pokemon choose damaging move
    */
-  override apply({ pokemon }: BypassSpeedChanceAbAttrParams): void {
+  override apply({ pokemon }: AbAttrBaseParams): void {
     pokemon.addTag(BattlerTagType.BYPASS_SPEED);
   }
 
-  override getTriggerMessage({ pokemon }: BypassSpeedChanceAbAttrParams, _abilityName: string): string {
+  override getTriggerMessage({ pokemon }: AbAttrBaseParams, _abilityName: string): string {
     return i18next.t("abilityTriggers:quickDraw", { pokemonName: getPokemonNameWithAffix(pokemon) });
   }
 }

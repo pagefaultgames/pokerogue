@@ -1,4 +1,3 @@
-import { Stat } from "#app/enums/stat";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { Command } from "#enums/command";
 import { FieldPhase } from "./field-phase";
@@ -74,7 +73,7 @@ export class TurnStartPhase extends FieldPhase {
 
     const phaseManager = globalScene.phaseManager;
     applyInSpeedOrder(activeField, (p: Pokemon) => {
-      applyAbAttrs("BypassSpeedChanceAbAttr", p, null);
+      applyAbAttrs("BypassSpeedChanceAbAttr", { pokemon: p });
       globalScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p);
     });
 
