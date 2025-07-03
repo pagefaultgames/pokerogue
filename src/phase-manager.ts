@@ -101,7 +101,7 @@ import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import { StaticSwitchSummonPhase } from "#app/phases/static-switch-summon-phase";
 
-/**
+/*
  * Manager for phases used by battle scene.
  *
  * *This file must not be imported or used directly. The manager is exclusively used by the battle scene and is not intended for external use.*

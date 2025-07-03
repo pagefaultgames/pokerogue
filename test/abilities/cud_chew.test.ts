@@ -1,4 +1,4 @@
-import { RepeatBerryNextTurnAbAttr } from "#app/data/abilities/ability";
+import { CudChewConsumeBerryAbAttr } from "#app/data/abilities/ability";
 import Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -196,7 +196,7 @@ describe("Abilities - Cud Chew", () => {
 
   describe("regurgiates berries", () => {
     it("re-triggers effects on eater without pushing to array", async () => {
-      const apply = vi.spyOn(RepeatBerryNextTurnAbAttr.prototype, "apply");
+      const apply = vi.spyOn(CudChewConsumeBerryAbAttr.prototype, "apply");
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;

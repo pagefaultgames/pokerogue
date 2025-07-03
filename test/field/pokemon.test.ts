@@ -5,7 +5,7 @@ import { PokeballType } from "#enums/pokeball";
 import type BattleScene from "#app/battle-scene";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 
 describe("Spec - Pokemon", () => {
   let phaserGame: Phaser.Game;
@@ -31,7 +31,7 @@ describe("Spec - Pokemon", () => {
     const pkm = game.scene.getPlayerPokemon()!;
     expect(pkm).toBeDefined();
 
-    expect(pkm.trySetStatus(undefined)).toBe(true);
+    expect(pkm.trySetStatus(undefined)).toBe(false);
   });
 
   describe("Add To Party", () => {
