@@ -1,6 +1,5 @@
 import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { allMoves } from "#app/data/data-lists";
-import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
@@ -207,22 +206,7 @@ export class TurnStartPhase extends FieldPhase {
         );
         break;
       case Command.RUN:
-        {
-          const playerActivePokemon = globalScene.getPokemonAllowedInBattle();
-          if (!globalScene.currentBattle.double || playerActivePokemon.length === 1) {
-            // If not in doubles, attempt to run with the currently active Pokemon.
-            globalScene.phaseManager.unshiftNew("AttemptRunPhase", pokemon.getFieldIndex());
-            return;
-          }
-
-          // Use the fastest first pokemon we find with Run Away, or else the faster of the 2 player pokemon.
-          // This intentionally does not check for Trick Room.
-          // TODO: This phase should not take a pokemon at all
-          const sortedPkmn = playerActivePokemon.sort((p1, p2) => p1.getStat(Stat.SPD) - p2.getStat(Stat.SPD));
-          const runningPokemon = sortedPkmn.find(p => p.hasAbility(AbilityId.RUN_AWAY)) ?? sortedPkmn[0];
-
-          globalScene.phaseManager.unshiftNew("AttemptRunPhase", runningPokemon.getFieldIndex());
-        }
+        globalScene.phaseManager.unshiftNew("AttemptRunPhase");
         break;
     }
   }
