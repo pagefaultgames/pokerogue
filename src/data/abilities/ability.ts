@@ -6817,7 +6817,7 @@ export function initAbilities() {
       .unreplaceable()
       .attr(NoFusionAbilityAbAttr)
       .attr(PostSummonFormChangeByWeatherAbAttr, AbilityId.FORECAST)
-      .attr(PostWeatherChangeFormChangeAbAttr, AbilityId.FORECAST, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG ]),
+      .attr(PostWeatherChangeFormChangeAbAttr, AbilityId.FORECAST, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HEAVY_FOG ]),
     new Ability(AbilityId.STICKY_HOLD, 3)
       .attr(BlockItemTheftAbAttr)
       .bypassFaint()
@@ -7005,7 +7005,7 @@ export function initAbilities() {
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), AllyStatMultiplierAbAttr, Stat.SPDEF, 1.5)
       .attr(NoFusionAbilityAbAttr)
       .attr(PostSummonFormChangeByWeatherAbAttr, AbilityId.FLOWER_GIFT)
-      .attr(PostWeatherChangeFormChangeAbAttr, AbilityId.FLOWER_GIFT, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HAIL, WeatherType.HEAVY_RAIN, WeatherType.SNOW, WeatherType.RAIN ])
+      .attr(PostWeatherChangeFormChangeAbAttr, AbilityId.FLOWER_GIFT, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HEAVY_FOG, WeatherType.HAIL, WeatherType.HEAVY_RAIN, WeatherType.SNOW, WeatherType.RAIN ])
       .uncopiable()
       .unreplaceable()
       .ignorable(),
@@ -7720,7 +7720,7 @@ export function initAbilities() {
       .unreplaceable()
       .ignorable(),
     new Ability(AbilityId.TERAFORM_ZERO, 9)
-      .attr(ClearWeatherAbAttr, [ WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN, WeatherType.STRONG_WINDS ])
+      .attr(ClearWeatherAbAttr, [ WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN, WeatherType.STRONG_WINDS ])
       .attr(ClearTerrainAbAttr, [ TerrainType.MISTY, TerrainType.ELECTRIC, TerrainType.GRASSY, TerrainType.PSYCHIC ])
       .uncopiable()
       .unreplaceable()
