@@ -69,6 +69,7 @@ describe("UI - Transfer Items", () => {
   });
 
   it("manage button doesn't exist in the other screens", async () => {
+    // Select and enter team summary menu
     game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
 
