@@ -12,7 +12,6 @@ import overrides from "#app/overrides";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
-import { FaintPhase } from "#app/phases/faint-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
@@ -202,9 +201,8 @@ export default class GameManager {
   /**
    * Helper function to run to the final boss encounter as it's a bit tricky due to extra dialogue
    * Also handles Major/Minor bosses from endless modes
-   * @param game - The game manager
-   * @param species
-   * @param mode
+   * @param species - Array of {@linkcode SpeciesId}s to start the final battle with.
+   * @param mode - The {@linkcode GameModes} to spawn the final boss encounter in.
    */
   async runToFinalBossEncounter(species: SpeciesId[], mode: GameModes) {
     console.log("===to final boss encounter===");
@@ -231,9 +229,9 @@ export default class GameManager {
 
   /**
    * Runs the game to a mystery encounter phase.
-   * @param encounterType if specified, will expect encounter to have been spawned
-   * @param species Optional array of species for party.
-   * @returns A promise that resolves when the EncounterPhase ends.
+   * @param encounterType - If specified, will expect encounter to be the given type.
+   * @param species - Optional array of species for party to start with.
+   * @returns A Promise that resolves when the EncounterPhase ends.
    */
   async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: SpeciesId[]) {
     if (!isNullOrUndefined(encounterType)) {
@@ -278,6 +276,7 @@ export default class GameManager {
    * Will trigger during the next {@linkcode SelectTargetPhase}
    * @param targetIndex - The {@linkcode BattlerIndex} of the attack target, or `undefined` for multi-target attacks
    * @param movePosition - The 0-indexed position of the move in the pokemon's moveset array
+   * @throws Immediately fails tests
    */
   selectTarget(movePosition: number, targetIndex?: BattlerIndex) {
     this.onNextPrompt(
@@ -293,7 +292,7 @@ export default class GameManager {
           handler.setCursor(targetIndex !== undefined ? targetIndex : BattlerIndex.ENEMY);
         }
         if (move.isMultiTarget() && targetIndex !== undefined) {
-          throw new Error(`targetIndex was passed to selectMove() but move ("${move.name}") is not targetted`);
+          expect.fail(`targetIndex was passed to selectMove() but move ("${move.name}") is not targetted`);
         }
         handler.processInput(Button.ACTION);
       },
@@ -453,17 +452,14 @@ export default class GameManager {
   }
 
   /**
-   * Faints a player or enemy pokemon instantly by setting their HP to 0.
+   * Faint a player or enemy pokemon instantly by setting their HP to 0.
    * @param pokemon - The player/enemy pokemon being fainted
-   * @returns A promise that resolves once the fainted pokemon's FaintPhase finishes running.
+   * @returns A Promise that resolves once the fainted pokemon's FaintPhase finishes running.
    */
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
-    return new Promise<void>(async (resolve, reject) => {
-      pokemon.hp = 0;
-      this.scene.phaseManager.pushPhase(new FaintPhase(pokemon.getBattlerIndex(), true));
-      await this.phaseInterceptor.to(FaintPhase).catch(e => reject(e));
-      resolve();
-    });
+    pokemon.hp = 0;
+    this.scene.phaseManager.pushNew("FaintPhase", pokemon.getBattlerIndex(), true);
+    await this.phaseInterceptor.to("FaintPhase");
   }
 
   /**

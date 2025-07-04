@@ -28,6 +28,7 @@ describe("Abilities - Intimidate", () => {
       .enemySpecies(SpeciesId.RATTATA)
       .enemyAbility(AbilityId.INTIMIDATE)
       .ability(AbilityId.INTIMIDATE)
+      .passiveAbility(AbilityId.NO_GUARD)
       .enemyMoveset(MoveId.SPLASH);
   });
 
@@ -68,8 +69,7 @@ describe("Abilities - Intimidate", () => {
   });
 
   it("should trigger on moves that switch user/target out during trainer battles", async () => {
-    game.override.battleType(BattleType.TRAINER).startingWave(50).passiveAbility(AbilityId.NO_GUARD);
-
+    game.override.battleType(BattleType.TRAINER).startingWave(50);
     await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
 
     const player = game.field.getPlayerPokemon();
