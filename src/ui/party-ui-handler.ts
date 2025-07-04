@@ -666,8 +666,9 @@ export default class PartyUiHandler extends MessageUiHandler {
     let success = true;
     if (this.optionsCursor === itemModifiers.length) {
       for (let i = 0; i < itemModifiers.length; i++) {
-        success = globalScene.tryDiscardHeldItemModifier(itemModifiers[i], this.transferQuantities[i]);
+        globalScene.tryDiscardHeldItemModifier(itemModifiers[i], this.transferQuantities[i]);
       }
+      success = this.getTransferrableItemsFromPokemon(pokemon).length === 0;
     } else {
       success = globalScene.tryDiscardHeldItemModifier(
         itemModifiers[this.optionsCursor],
@@ -678,10 +679,6 @@ export default class PartyUiHandler extends MessageUiHandler {
     if (success) {
       this.showText(
         i18next.t("partyUiHandler:discardItemConfirmation", { pokemonName: getPokemonNameWithAffix(pokemon) }),
-        undefined,
-        () => this.showText("", 0),
-        null,
-        true,
       );
       ui.playSelect();
     } else {

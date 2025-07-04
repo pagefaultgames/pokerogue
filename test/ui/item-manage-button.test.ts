@@ -46,7 +46,7 @@ describe("UI - Transfer Items", () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
 
       const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
-      handler.setCursor(1); // Select/click manage items button
+      handler.setCursor(1);
       handler.processInput(Button.ACTION);
 
       void game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.MODIFIER_TRANSFER);
@@ -74,7 +74,7 @@ describe("UI - Transfer Items", () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
 
       const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
-      handler.setCursor(2); //check team menu,manage button shouldn't exist
+      handler.setCursor(2);
       handler.processInput(Button.ACTION);
 
       void game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.MODIFIER_TRANSFER);
@@ -97,12 +97,12 @@ describe("UI - Transfer Items", () => {
   });
 
   // Test that the manage button actually discards items, needs proofreading
-  it("should actually discard items", async () => {
+  it("should discard items when button is selected", async () => {
     game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
 
       const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
-      handler.setCursor(1); //check team menu,manage button shouldn't exist
+      handler.setCursor(1);
       handler.processInput(Button.ACTION);
 
       void game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.MODIFIER_TRANSFER);
@@ -111,20 +111,22 @@ describe("UI - Transfer Items", () => {
     await game.phaseInterceptor.to("BattleEndPhase");
 
     game.phaseInterceptor.addToNextPrompt("SelectModifierPhase", UiMode.PARTY, () => {
-      expect(game.scene.ui.getHandler()).toBeInstanceOf(Number.POSITIVE_INFINITY);
+      expect(game.scene.ui.getHandler()).toBeInstanceOf(PartyUiHandler);
       const handler = game.scene.ui.getHandler() as PartyUiHandler;
 
-      handler.processInput(Button.DOWN);
-      handler.processInput(Button.ACTION); //activate discard mode
-      handler.processInput(Button.UP);
-      handler.processInput(Button.ACTION); //select pokemon's items
+      // Enter discard mode and select first party member
+      handler.setCursor(7);
+      handler.processInput(Button.ACTION);
+      handler.setCursor(0);
+      handler.processInput(Button.ACTION);
+      const pokemon = game.field.getPlayerPokemon();
 
-      const pokemon = game.scene.getPlayerParty()[0];
-      expect.soft(pokemon.getHeldItems()[0].stackCount).toBe(1);
-      handler.processInput(Button.ACTION); //discard the items
+      expect(pokemon.getHeldItems()).toHaveLength(3);
+      expect(pokemon.getHeldItems().map(h => h.stackCount)).toEqual([1, 2, 2]);
 
-      handler.processInput(Button.ACTION); //reselect pokemon's items
-      expect.soft(pokemon.getHeldItems()[0].stackCount).toBe(2); //second item has a different count
+      // Sitrus berry was discarded, leaving 2 stacks of 2 berries behind
+      expect(pokemon.getHeldItems()).toHaveLength(2);
+      expect(pokemon.getHeldItems().map(h => h.stackCount)).toEqual([2, 2]);
 
       game.phaseInterceptor.unlock();
     });
