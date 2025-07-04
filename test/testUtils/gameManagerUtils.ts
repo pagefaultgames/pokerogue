@@ -10,7 +10,7 @@ import { getGameMode } from "#app/game-mode";
 import { GameModes } from "#enums/game-modes";
 import type { StarterMoveset } from "#app/system/game-data";
 import type { Starter } from "#app/ui/starter-select-ui-handler";
-import { MoveId } from "#enums/move-id";
+import type { MoveId } from "#enums/move-id";
 import type { SpeciesId } from "#enums/species-id";
 
 /** Function to convert Blob to string */
@@ -96,15 +96,6 @@ export function waitUntil(truth): Promise<unknown> {
       }
     }, 1000);
   });
-}
-
-/** Get the index of `move` from the moveset of the pokemon on the player's field at location `pokemonIndex`. */
-export function getMovePosition(scene: BattleScene, pokemonIndex: 0 | 1, move: MoveId): number {
-  const playerPokemon = scene.getPlayerField()[pokemonIndex];
-  const moveSet = playerPokemon.getMoveset();
-  const index = moveSet.findIndex(m => m.moveId === move && m.ppUsed < m.getMovePp());
-  console.log(`Move position for ${MoveId[move]} (=${move}):`, index);
-  return index;
 }
 
 /**

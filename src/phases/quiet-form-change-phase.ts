@@ -181,9 +181,10 @@ export class QuietFormChangePhase extends BattlePhase {
       }
     }
     if (this.formChange.trigger instanceof SpeciesFormChangeTeraTrigger) {
-      applyAbAttrs("PostTeraFormChangeStatChangeAbAttr", this.pokemon, null);
-      applyAbAttrs("ClearWeatherAbAttr", this.pokemon, null);
-      applyAbAttrs("ClearTerrainAbAttr", this.pokemon, null);
+      const params = { pokemon: this.pokemon };
+      applyAbAttrs("PostTeraFormChangeStatChangeAbAttr", params);
+      applyAbAttrs("ClearWeatherAbAttr", params);
+      applyAbAttrs("ClearTerrainAbAttr", params);
     }
 
     super.end();
