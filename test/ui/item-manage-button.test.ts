@@ -94,4 +94,40 @@ describe("UI - Transfer Items", () => {
 
     await game.phaseInterceptor.to("SelectModifierPhase");
   });
+
+  // Test that the manage button actually discards items, needs proofreading
+  it("should actually discard items", async () => {
+    game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
+      expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
+
+      const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+      handler.setCursor(1); //check team menu,manage button shouldn't exist
+      handler.processInput(Button.ACTION);
+
+      void game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.MODIFIER_TRANSFER);
+    });
+
+    await game.phaseInterceptor.to("BattleEndPhase");
+
+    game.phaseInterceptor.addToNextPrompt("SelectModifierPhase", UiMode.PARTY, () => {
+      expect(game.scene.ui.getHandler()).toBeInstanceOf(Number.POSITIVE_INFINITY);
+      const handler = game.scene.ui.getHandler() as PartyUiHandler;
+
+      handler.processInput(Button.DOWN);
+      handler.processInput(Button.ACTION); //activate discard mode
+      handler.processInput(Button.UP);
+      handler.processInput(Button.ACTION); //select pokemon's items
+
+      const pokemon = game.scene.getPlayerParty()[0];
+      expect.soft(pokemon.getHeldItems()[0].stackCount).toBe(1);
+      handler.processInput(Button.ACTION); //discard the items
+
+      handler.processInput(Button.ACTION); //reselect pokemon's items
+      expect.soft(pokemon.getHeldItems()[0].stackCount).toBe(2); //second item has a different count
+
+      game.phaseInterceptor.unlock();
+    });
+
+    await game.phaseInterceptor.to("SelectModifierPhase");
+  });
 });
