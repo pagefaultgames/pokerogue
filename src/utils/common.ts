@@ -10,7 +10,7 @@ export const MissingTextureKey = "__MISSING";
 
 export function toReadableString(str: string): string {
   return str
-    .replace(/\_/g, " ")
+    .replace(/_/g, " ")
     .split(" ")
     .map(s => `${s.slice(0, 1)}${s.slice(1).toLowerCase()}`)
     .join(" ");
@@ -201,19 +201,19 @@ export function formatLargeNumber(count: number, threshold: number): string {
   let suffix = "";
   switch (Math.ceil(ret.length / 3) - 1) {
     case 1:
-      suffix = "K";
+      suffix = i18next.t("common:abrThousand");
       break;
     case 2:
-      suffix = "M";
+      suffix = i18next.t("common:abrMillion");
       break;
     case 3:
-      suffix = "B";
+      suffix = i18next.t("common:abrBillion");
       break;
     case 4:
-      suffix = "T";
+      suffix = i18next.t("common:abrTrillion");
       break;
     case 5:
-      suffix = "q";
+      suffix = i18next.t("common:abrQuadrillion");
       break;
     default:
       return "?";
@@ -227,15 +227,31 @@ export function formatLargeNumber(count: number, threshold: number): string {
 }
 
 // Abbreviations from 10^0 to 10^33
-const AbbreviationsLargeNumber: string[] = ["", "K", "M", "B", "t", "q", "Q", "s", "S", "o", "n", "d"];
+function getAbbreviationsLargeNumber(): string[] {
+  return [
+    "",
+    i18next.t("common:abrThousand"),
+    i18next.t("common:abrMillion"),
+    i18next.t("common:abrBillion"),
+    i18next.t("common:abrTrillion"),
+    i18next.t("common:abrQuadrillion"),
+    i18next.t("common:abrQuintillion"),
+    i18next.t("common:abrSextillion"),
+    i18next.t("common:abrSeptillion"),
+    i18next.t("common:abrOctillion"),
+    i18next.t("common:abrNonillion"),
+    i18next.t("common:abrDecillion"),
+  ];
+}
 
 export function formatFancyLargeNumber(number: number, rounded = 3): string {
+  const abbreviations = getAbbreviationsLargeNumber();
   let exponent: number;
 
   if (number < 1000) {
     exponent = 0;
   } else {
-    const maxExp = AbbreviationsLargeNumber.length - 1;
+    const maxExp = abbreviations.length - 1;
 
     exponent = Math.floor(Math.log(number) / Math.log(1000));
     exponent = Math.min(exponent, maxExp);
@@ -243,7 +259,7 @@ export function formatFancyLargeNumber(number: number, rounded = 3): string {
     number /= Math.pow(1000, exponent);
   }
 
-  return `${(exponent === 0) || number % 1 === 0 ? number : number.toFixed(rounded)}${AbbreviationsLargeNumber[exponent]}`;
+  return `${exponent === 0 || number % 1 === 0 ? number : number.toFixed(rounded)}${abbreviations[exponent]}`;
 }
 
 export function formatMoney(format: MoneyFormat, amount: number) {
@@ -584,7 +600,7 @@ export function isBetween(num: number, min: number, max: number): boolean {
  * @param move the move for which the animation filename is needed
  */
 export function animationFileName(move: MoveId): string {
-  return MoveId[move].toLowerCase().replace(/\_/g, "-");
+  return MoveId[move].toLowerCase().replace(/_/g, "-");
 }
 
 /**

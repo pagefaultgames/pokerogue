@@ -44,7 +44,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
 import { MoveCategory } from "#enums/MoveCategory";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { Challenges } from "#enums/challenges";
@@ -135,7 +135,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
     );
     clownConfig.setPartyTemplates(clownPartyTemplate);
     clownConfig.setDoubleOnly();
-    // @ts-ignore
+    // @ts-expect-error
     clownConfig.partyTemplateFunc = null; // Overrides party template func if it exists
 
     // Generate random ability for Blacephalon from pool
