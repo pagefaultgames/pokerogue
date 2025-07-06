@@ -1,12 +1,6 @@
 import { BattlerIndex } from "#enums/battler-index";
 import { globalScene } from "#app/global-scene";
-import {
-  applyExecutedMoveAbAttrs,
-  applyPostAttackAbAttrs,
-  applyPostDamageAbAttrs,
-  applyPostDefendAbAttrs,
-  applyPreAttackAbAttrs,
-} from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { ConditionalProtectTag } from "#app/data/arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { MoveAnim } from "#app/data/battle-anims";
@@ -27,7 +21,8 @@ import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { PokemonType } from "#enums/pokemon-type";
-import type { DamageResult, TurnMove } from "#app/field/pokemon";
+import type { DamageResult } from "#app/@types/damage-result";
+import type { TurnMove } from "#app/@types/turn-move";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#enums/move-result";
@@ -323,7 +318,7 @@ export class MoveEffectPhase extends PokemonPhase {
       // Assume single target for multi hit
       applyMoveAttrs("MultiHitAttr", user, this.getFirstTarget() ?? null, move, hitCount);
       // If Parental Bond is applicable, add another hit
-      applyPreAttackAbAttrs("AddSecondStrikeAbAttr", user, null, move, false, hitCount, null);
+      applyAbAttrs("AddSecondStrikeAbAttr", { pokemon: user, move, hitCount });
       // If Multi-Lens is applicable, add hits equal to the number of held Multi-Lenses
       globalScene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, move.id, hitCount);
       // Set the user's relevant turnData fields to reflect the final hit count
@@ -371,7 +366,7 @@ export class MoveEffectPhase extends PokemonPhase {
     // Add to the move history entry
     if (this.firstHit && this.useMode !== MoveUseMode.TRANSPARENT) {
       user.pushMoveHistory(this.moveHistoryEntry);
-      applyExecutedMoveAbAttrs("ExecutedMoveAbAttr", user);
+      applyAbAttrs("ExecutedMoveAbAttr", { pokemon: user });
     }
 
     try {
@@ -440,7 +435,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param hitResult - The {@linkcode HitResult} of the attempted move
    */
   protected applyOnGetHitAbEffects(user: Pokemon, target: Pokemon, hitResult: HitResult): void {
-    applyPostDefendAbAttrs("PostDefendAbAttr", target, user, this.move, hitResult);
+    applyAbAttrs("PostDefendAbAttr", { pokemon: target, opponent: user, move: this.move, hitResult });
     target.lapseTags(BattlerTagLapseType.AFTER_HIT);
   }
 
@@ -697,12 +692,9 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param target - The {@linkcode Pokemon} to be removed
    */
   protected removeTarget(target: Pokemon): void {
-    const targetIndex = this.targets.findIndex(ind => ind === target.getBattlerIndex());
+    const targetIndex = this.targets.indexOf(target.getBattlerIndex());
     if (targetIndex !== -1) {
-      this.targets.splice(
-        this.targets.findIndex(ind => ind === target.getBattlerIndex()),
-        1,
-      );
+      this.targets.splice(this.targets.indexOf(target.getBattlerIndex()), 1);
     }
   }
 
@@ -809,7 +801,9 @@ export class MoveEffectPhase extends PokemonPhase {
 
       // Multi-hit check for Wimp Out/Emergency Exit
       if (user.turnData.hitCount > 1) {
-        applyPostDamageAbAttrs("PostDamageAbAttr", target, 0, target.hasPassive(), false, [], user);
+        // TODO: Investigate why 0 is being passed for damage amount here
+        // and then determing if refactoring `applyMove` to return the damage dealt is appropriate.
+        applyAbAttrs("PostDamageAbAttr", { pokemon: target, damage: 0, source: user });
       }
     }
   }
@@ -1003,7 +997,7 @@ export class MoveEffectPhase extends PokemonPhase {
     this.triggerMoveEffects(MoveEffectTrigger.POST_APPLY, user, target, firstTarget, false);
     this.applyHeldItemFlinchCheck(user, target, dealsDamage);
     this.applyOnGetHitAbEffects(user, target, hitResult);
-    applyPostAttackAbAttrs("PostAttackAbAttr", user, target, this.move, hitResult);
+    applyAbAttrs("PostAttackAbAttr", { pokemon: user, opponent: target, move: this.move, hitResult });
 
     // We assume only enemy Pokemon are able to have the EnemyAttackStatusEffectChanceModifier from tokens
     if (!user.isPlayer() && this.move.is("AttackMove")) {

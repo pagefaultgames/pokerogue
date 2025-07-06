@@ -967,67 +967,27 @@ export class PokemonBaseStatTotalModifierType
   extends PokemonHeldItemModifierType
   implements GeneratedPersistentModifierType
 {
-  private readonly statModifier: number;
+  private readonly statModifier: 10 | -15;
 
-  constructor(statModifier: number) {
+  constructor(statModifier: 10 | -15) {
     super(
-      "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE",
-      "berry_juice",
-      (_type, args) => new PokemonBaseStatTotalModifier(this, (args[0] as Pokemon).id, this.statModifier),
+      statModifier > 0
+        ? "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD"
+        : "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD",
+      statModifier > 0 ? "berry_juice_good" : "berry_juice_bad",
+      (_type, args) => new PokemonBaseStatTotalModifier(this, (args[0] as Pokemon).id, statModifier),
     );
     this.statModifier = statModifier;
   }
 
   override getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonBaseStatTotalModifierType.description", {
-      increaseDecrease: i18next.t(
-        this.statModifier >= 0
-          ? "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.increase"
-          : "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.decrease",
-      ),
-      blessCurse: i18next.t(
-        this.statModifier >= 0
-          ? "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.blessed"
-          : "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.cursed",
-      ),
-      statValue: this.statModifier,
-    });
+    return this.statModifier > 0
+      ? i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.description")
+      : i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.description");
   }
 
   public getPregenArgs(): any[] {
     return [this.statModifier];
-  }
-}
-
-/**
- * Old Gateau item
- */
-export class PokemonBaseStatFlatModifierType
-  extends PokemonHeldItemModifierType
-  implements GeneratedPersistentModifierType
-{
-  private readonly statModifier: number;
-  private readonly stats: Stat[];
-
-  constructor(statModifier: number, stats: Stat[]) {
-    super(
-      "modifierType:ModifierType.MYSTERY_ENCOUNTER_OLD_GATEAU",
-      "old_gateau",
-      (_type, args) => new PokemonBaseStatFlatModifier(this, (args[0] as Pokemon).id, this.statModifier, this.stats),
-    );
-    this.statModifier = statModifier;
-    this.stats = stats;
-  }
-
-  override getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonBaseStatFlatModifierType.description", {
-      stats: this.stats.map(stat => i18next.t(getStatKey(stat))).join("/"),
-      statValue: this.statModifier,
-    });
-  }
-
-  public getPregenArgs(): any[] {
-    return [this.statModifier, this.stats];
   }
 }
 
@@ -1585,7 +1545,9 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
               pokemonEvolutions.hasOwnProperty(p.species.speciesId) &&
               (!p.pauseEvolutions ||
                 p.species.speciesId === SpeciesId.SLOWPOKE ||
-                p.species.speciesId === SpeciesId.EEVEE),
+                p.species.speciesId === SpeciesId.EEVEE ||
+                p.species.speciesId === SpeciesId.KIRLIA ||
+                p.species.speciesId === SpeciesId.SNORUNT),
           )
           .flatMap(p => {
             const evolutions = pokemonEvolutions[p.species.speciesId];
@@ -1599,16 +1561,18 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
               pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId) &&
               (!p.pauseEvolutions ||
                 p.fusionSpecies.speciesId === SpeciesId.SLOWPOKE ||
-                p.fusionSpecies.speciesId === SpeciesId.EEVEE),
+                p.fusionSpecies.speciesId === SpeciesId.EEVEE ||
+                p.fusionSpecies.speciesId === SpeciesId.KIRLIA ||
+                p.fusionSpecies.speciesId === SpeciesId.SNORUNT),
           )
           .flatMap(p => {
             const evolutions = pokemonEvolutions[p.fusionSpecies!.speciesId];
-            return evolutions.filter(e => e.validate(p, true));
+            return evolutions.filter(e => e.isValidItemEvolution(p, true));
           }),
       ]
         .flat()
         .flatMap(e => e.evoItem)
-        .filter(i => (!!i && i > 50) === rare);
+        .filter(i => !!i && i > 50 === rare);
 
       if (!evolutionItemPool.length) {
         return null;
@@ -2327,17 +2291,16 @@ const modifierTypeInitObj = Object.freeze({
   MYSTERY_ENCOUNTER_SHUCKLE_JUICE: () =>
     new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {
-        return new PokemonBaseStatTotalModifierType(pregenArgs[0] as number);
+        return new PokemonBaseStatTotalModifierType(pregenArgs[0] as 10 | -15);
       }
-      return new PokemonBaseStatTotalModifierType(randSeedInt(20, 1));
+      return new PokemonBaseStatTotalModifierType(10);
     }),
   MYSTERY_ENCOUNTER_OLD_GATEAU: () =>
-    new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs) {
-        return new PokemonBaseStatFlatModifierType(pregenArgs[0] as number, pregenArgs[1] as Stat[]);
-      }
-      return new PokemonBaseStatFlatModifierType(randSeedInt(20, 1), [Stat.HP, Stat.ATK, Stat.DEF]);
-    }),
+    new PokemonHeldItemModifierType(
+      "modifierType:ModifierType.MYSTERY_ENCOUNTER_OLD_GATEAU",
+      "old_gateau",
+      (type, args) => new PokemonBaseStatFlatModifier(type, (args[0] as Pokemon).id),
+    ),
   MYSTERY_ENCOUNTER_BLACK_SLUDGE: () =>
     new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {

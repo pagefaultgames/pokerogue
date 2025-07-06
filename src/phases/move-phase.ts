@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#enums/battler-index";
 import { globalScene } from "#app/global-scene";
-import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { CommonAnim } from "#enums/move-anims-common";
 import { CenterOfAttentionTag } from "#app/data/battler-tags";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
@@ -10,7 +10,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
 import { PokemonType } from "#enums/pokemon-type";
-import { getTerrainBlockMessage, getWeatherBlockMessage } from "#app/data/weather";
+import { getWeatherBlockMessage } from "#app/data/weather";
 import { MoveUsedEvent } from "#app/events/battle-scene";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
@@ -24,6 +24,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
+import { getTerrainBlockMessage } from "#app/data/terrain";
 import { isVirtual, isIgnorePP, isReflected, MoveUseMode, isIgnoreStatus } from "#enums/move-use-mode";
 import { frenzyMissFunc } from "#app/data/moves/move-utils";
 
@@ -226,14 +227,11 @@ export class MovePhase extends BattlePhase {
       case StatusEffect.SLEEP: {
         applyMoveAttrs("BypassSleepAttr", this.pokemon, null, this.move.getMove());
         const turnsRemaining = new NumberHolder(this.pokemon.status.sleepTurnsRemaining ?? 0);
-        applyAbAttrs(
-          "ReduceStatusEffectDurationAbAttr",
-          this.pokemon,
-          null,
-          false,
-          this.pokemon.status.effect,
-          turnsRemaining,
-        );
+        applyAbAttrs("ReduceStatusEffectDurationAbAttr", {
+          pokemon: this.pokemon,
+          statusEffect: this.pokemon.status.effect,
+          duration: turnsRemaining,
+        });
         this.pokemon.status.sleepTurnsRemaining = turnsRemaining.value;
         healed = this.pokemon.status.sleepTurnsRemaining <= 0;
         activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
@@ -367,7 +365,8 @@ export class MovePhase extends BattlePhase {
      */
     if (success) {
       const move = this.move.getMove();
-      applyPreAttackAbAttrs("PokemonTypeChangeAbAttr", this.pokemon, null, move);
+      // TODO: Investigate whether PokemonTypeChangeAbAttr can drop the "opponent" parameter
+      applyAbAttrs("PokemonTypeChangeAbAttr", { pokemon: this.pokemon, move, opponent: targets[0] });
       globalScene.phaseManager.unshiftNew(
         "MoveEffectPhase",
         this.pokemon.getBattlerIndex(),
@@ -377,7 +376,11 @@ export class MovePhase extends BattlePhase {
       );
     } else {
       if ([MoveId.ROAR, MoveId.WHIRLWIND, MoveId.TRICK_OR_TREAT, MoveId.FORESTS_CURSE].includes(this.move.moveId)) {
-        applyPreAttackAbAttrs("PokemonTypeChangeAbAttr", this.pokemon, null, this.move.getMove());
+        applyAbAttrs("PokemonTypeChangeAbAttr", {
+          pokemon: this.pokemon,
+          move: this.move.getMove(),
+          opponent: targets[0],
+        });
       }
 
       this.pokemon.pushMoveHistory({
@@ -409,7 +412,7 @@ export class MovePhase extends BattlePhase {
     if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !dancerModes.includes(this.useMode)) {
       // TODO: Fix in dancer PR to move to MEP for hit checks
       globalScene.getField(true).forEach(pokemon => {
-        applyPostMoveUsedAbAttrs("PostMoveUsedAbAttr", pokemon, this.move, this.pokemon, this.targets);
+        applyAbAttrs("PostMoveUsedAbAttr", { pokemon, move: this.move, source: this.pokemon, targets: this.targets });
       });
     }
   }
@@ -441,7 +444,11 @@ export class MovePhase extends BattlePhase {
     }
 
     // Protean and Libero apply on the charging turn of charge moves
-    applyPreAttackAbAttrs("PokemonTypeChangeAbAttr", this.pokemon, null, this.move.getMove());
+    applyAbAttrs("PokemonTypeChangeAbAttr", {
+      pokemon: this.pokemon,
+      move: this.move.getMove(),
+      opponent: targets[0],
+    });
 
     globalScene.phaseManager.unshiftNew(
       "MoveChargePhase",
@@ -494,7 +501,12 @@ export class MovePhase extends BattlePhase {
         .getField(true)
         .filter(p => p !== this.pokemon)
         .forEach(p =>
-          applyAbAttrs("RedirectMoveAbAttr", p, null, false, this.move.moveId, redirectTarget, this.pokemon),
+          applyAbAttrs("RedirectMoveAbAttr", {
+            pokemon: p,
+            moveId: this.move.moveId,
+            targetIndex: redirectTarget,
+            sourcePokemon: this.pokemon,
+          }),
         );
 
       /** `true` if an Ability is responsible for redirecting the move to another target; `false` otherwise */
@@ -639,6 +651,9 @@ export class MovePhase extends BattlePhase {
       }),
       500,
     );
+
+    // Moves with pre-use messages (Magnitude, Chilly Reception, Fickle Beam, etc.) always display their messages even on failure
+    // TODO: This assumes single target for message funcs - is this sustainable?
     applyMoveAttrs("PreMoveMessageAttr", this.pokemon, this.pokemon.getOpponents(false)[0], this.move.getMove());
   }
 

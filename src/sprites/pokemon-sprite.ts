@@ -9,7 +9,7 @@ import type BattleScene from "#app/battle-scene";
 // Regex patterns
 
 /** Regex matching double underscores */
-const DUNDER_REGEX = /\_{2}/g;
+const DUNDER_REGEX = /_{2}/g;
 
 /**
  * Calculate the sprite ID from a pokemon form.

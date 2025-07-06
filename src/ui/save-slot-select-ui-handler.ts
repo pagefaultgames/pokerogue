@@ -2,7 +2,7 @@ import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { GameMode } from "../game-mode";
-// biome-ignore lint/style/noNamespaceImport: See `src/system/game-data.ts`
+// biome-ignore lint/performance/noNamespaceImport: See `src/system/game-data.ts`
 import * as Modifier from "#app/modifier/modifier";
 import type { SessionSaveData } from "../system/game-data";
 import type PokemonData from "../system/pokemon-data";
