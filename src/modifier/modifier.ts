@@ -938,10 +938,9 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
 export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
   public override type: PokemonBaseStatTotalModifierType;
   public isTransferable = false;
+  public statModifier: 10 | -15;
 
-  private statModifier: number;
-
-  constructor(type: PokemonBaseStatTotalModifierType, pokemonId: number, statModifier: number, stackCount?: number) {
+  constructor(type: PokemonBaseStatTotalModifierType, pokemonId: number, statModifier: 10 | -15, stackCount?: number) {
     super(type, pokemonId, stackCount);
     this.statModifier = statModifier;
   }
@@ -998,31 +997,14 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
  * Currently used by Old Gateau item
  */
 export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
-  private statModifier: number;
-  private stats: Stat[];
   public isTransferable = false;
 
-  constructor(type: ModifierType, pokemonId: number, statModifier: number, stats: Stat[], stackCount?: number) {
-    super(type, pokemonId, stackCount);
-
-    this.statModifier = statModifier;
-    this.stats = stats;
-  }
-
   override matchType(modifier: Modifier): boolean {
-    return (
-      modifier instanceof PokemonBaseStatFlatModifier &&
-      modifier.statModifier === this.statModifier &&
-      this.stats.every(s => modifier.stats.some(stat => s === stat))
-    );
+    return modifier instanceof PokemonBaseStatFlatModifier;
   }
 
   override clone(): PersistentModifier {
-    return new PokemonBaseStatFlatModifier(this.type, this.pokemonId, this.statModifier, this.stats, this.stackCount);
-  }
-
-  override getArgs(): any[] {
-    return [...super.getArgs(), this.statModifier, this.stats];
+    return new PokemonBaseStatFlatModifier(this.type, this.pokemonId, this.stackCount);
   }
 
   /**
@@ -1041,16 +1023,34 @@ export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
    * @param baseStats The base stats of the {@linkcode Pokemon}
    * @returns always `true`
    */
-  override apply(_pokemon: Pokemon, baseStats: number[]): boolean {
+  override apply(pokemon: Pokemon, baseStats: number[]): boolean {
     // Modifies the passed in baseStats[] array by a flat value, only if the stat is specified in this.stats
+    const stats = this.getStats(pokemon);
+    const statModifier = 20;
     baseStats.forEach((v, i) => {
-      if (this.stats.includes(i)) {
-        const newVal = Math.floor(v + this.statModifier);
+      if (stats.includes(i)) {
+        const newVal = Math.floor(v + statModifier);
         baseStats[i] = Math.min(Math.max(newVal, 1), 999999);
       }
     });
 
     return true;
+  }
+
+  /**
+   * Get the lowest of HP/Spd, lowest of Atk/SpAtk, and lowest of Def/SpDef
+   * @returns Array of 3 {@linkcode Stat}s to boost
+   */
+  getStats(pokemon: Pokemon): Stat[] {
+    const stats: Stat[] = [];
+    const baseStats = pokemon.getSpeciesForm().baseStats.slice(0);
+    // HP or Speed
+    stats.push(baseStats[Stat.HP] < baseStats[Stat.SPD] ? Stat.HP : Stat.SPD);
+    // Attack or SpAtk
+    stats.push(baseStats[Stat.ATK] < baseStats[Stat.SPATK] ? Stat.ATK : Stat.SPATK);
+    // Def or SpDef
+    stats.push(baseStats[Stat.DEF] < baseStats[Stat.SPDEF] ? Stat.DEF : Stat.SPDEF);
+    return stats;
   }
 
   override getScoreMultiplier(): number {

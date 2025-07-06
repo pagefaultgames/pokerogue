@@ -17,7 +17,8 @@ import { MoneyMultiplierModifier, type PokemonHeldItemModifier } from "./modifie
 import type { PokeballType } from "#enums/pokeball";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { SpeciesFormKey } from "#enums/species-form-key";
-import type { EnemyPokemon, PlayerPokemon, TurnMove } from "#app/field/pokemon";
+import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import type { TurnMove } from "./@types/turn-move";
 import type Pokemon from "#app/field/pokemon";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
@@ -93,6 +94,12 @@ export default class Battle {
   public mysteryEncounterType?: MysteryEncounterType;
   /** If the current battle is a Mystery Encounter, this will always be defined */
   public mysteryEncounter?: MysteryEncounter;
+
+  /**
+   * Tracker for whether the last run attempt failed.
+   * @defaultValue `false`
+   */
+  public failedRunAway = false;
 
   private rngCounter = 0;
 
