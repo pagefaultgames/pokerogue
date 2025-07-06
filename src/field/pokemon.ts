@@ -7059,7 +7059,6 @@ export class PokemonTurnData {
   /**
    * - `-1`: Calculate how many hits are left
    * - `0`: Move is finished
-   * - Anything `>0`: Number of hits left to check (barring early interrupts)
    */
   public hitsLeft = -1;
   public totalDamageDealt = 0;
