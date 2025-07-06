@@ -74,8 +74,7 @@ describe("Moves - Assist", () => {
     expect(feebas.getLastXMoves(-1)).toHaveLength(2);
     expect(feebas.getLastXMoves()[0]).toMatchObject({
       move: MoveId.HYPER_BEAM,
-      target: [BattlerIndex.ENEMY],
-      virtual: true,
+      useMode: MoveUseMode.INDIRECT,
       result: MoveResult.SUCCESS,
     });
   });
