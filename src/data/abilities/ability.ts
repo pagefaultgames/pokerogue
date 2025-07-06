@@ -1621,9 +1621,9 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
     if (
       pokemon.isTerastallized ||
       move.id === MoveId.STRUGGLE ||
-      /**
+      /*
        * Skip moves that call other moves because these moves generate a following move that will trigger this ability attribute
-       * @see {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves}
+       * See: https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves
        */
       move.hasAttr("CallMoveAttr") ||
       move.hasAttr("NaturePowerAttr") // TODO: remove this line when nature power is made to extend from `CallMoveAttr`
