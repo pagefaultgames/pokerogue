@@ -1201,7 +1201,8 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
  * It is the responsibility of the caller to ensure that this ability is only applied
  * when the user has been hit by a critical hit; such an event is not checked here.
  *
- * @sealed */
+ * @sealed
+ */
 export class PostDefendCritStatStageChangeAbAttr extends AbAttr {
   private stat: BattleStat;
   private stages: number;
