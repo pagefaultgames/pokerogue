@@ -184,13 +184,9 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
       .withPreOptionPhase(async (): Promise<boolean> => {
         // Open menu for selecting pokemon and Nature
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const natures: Nature[] = [];
-        for (const nature of getEnumValues(Nature)) {
-          natures.push(nature);
-        }
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Return the options for nature selection
-          return natures.map((nature: Nature) => {
+          return getEnumValues(Nature).map((nature: Nature) => {
             const option: OptionSelectItem = {
               label: getNatureName(nature, true, true, true, globalScene.uiTheme),
               handler: () => {
