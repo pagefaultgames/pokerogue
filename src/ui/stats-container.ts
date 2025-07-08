@@ -19,7 +19,7 @@ const ivLabelOffset = [0, sideLabelOffset, -sideLabelOffset, sideLabelOffset, -s
 const ivChartLabelyOffset = [0, 5, 0, 5, 0, 0]; // doing this so attack does not overlap with (+N)
 const ivChartStatIndexes = [0, 1, 2, 5, 4, 3]; // swap special attack and speed
 
-const defaultIvChartData = new Array(12).fill(null).map(() => 0);
+const defaultIvChartData: number[] = new Array(12).fill(0);
 
 export class StatsContainer extends Phaser.GameObjects.Container {
   private showDiff: boolean;
