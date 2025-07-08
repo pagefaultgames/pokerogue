@@ -59,6 +59,7 @@ describe("Move - Court Change", () => {
   it("should swap safeguard to the enemy side ", async () => {
     game.override.enemyMoveset(MoveId.TOXIC_THREAD);
     await game.classicMode.startBattle([SpeciesId.NINJASK]);
+
     const ninjask = game.field.getPlayerPokemon();
 
     game.move.use(MoveId.SAFEGUARD);
