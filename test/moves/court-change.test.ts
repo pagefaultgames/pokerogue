@@ -68,6 +68,8 @@ describe("Move - Court Change", () => {
     await game.toEndOfTurn();
 
     // Ninjask should now be poisoned due to lack of Safeguard
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER)).toBeUndefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.ENEMY)).toBeDefined();
     expect(ninjask.status?.effect).toBe(StatusEffect.POISON);
   });
 });
