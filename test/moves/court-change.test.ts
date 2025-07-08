@@ -26,51 +26,48 @@ describe("Move - Court Change", () => {
     game.override
       .ability(AbilityId.BALL_FETCH)
       .criticalHits(false)
-      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyAbility(AbilityId.STURDY)
       .startingLevel(100)
-      .battleStyle("double")
-      .enemyLevel(100);
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("Court Change should swap the swamp from the enemy to the own teams side ", async () => {
+  it("should swap the pledge effect to the opposite side ", async () => {
+    game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.SHUCKLE]);
-    const [regieleki, shuckle] = game.scene.getPlayerParty();
-    game.move.changeMoveset(regieleki, [MoveId.WATER_PLEDGE, MoveId.COURT_CHANGE, MoveId.SPLASH]);
-    game.move.changeMoveset(shuckle, [MoveId.GRASS_PLEDGE, MoveId.COURT_CHANGE, MoveId.SPLASH]);
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const regieleki = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
-    game.move.use(MoveId.WATER_PLEDGE, 0);
+    game.move.use(MoveId.WATER_PLEDGE);
     game.move.use(MoveId.GRASS_PLEDGE, 1);
-    await game.toEndOfTurn();
+    await game.toNextTurn();
 
-    //enemy team will be in the swamp and slowed
-    expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBe(enemyPokemon.getStat(Stat.SPD) >> 2);
+    // enemy team will be in the swamp and slowed
+    expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBe(enemyPokemon.getStat(Stat.SPD) / 4);
 
-    game.move.use(MoveId.COURT_CHANGE, 0);
+    game.move.use(MoveId.COURT_CHANGE);
     game.move.use(MoveId.SPLASH, 1);
     await game.toEndOfTurn();
-
-    //own team should now be in the swamp and slowed
-
-    expect(regieleki.getEffectiveStat(Stat.SPD)).toBe(regieleki.getStat(Stat.SPD) >> 2);
+    // own team should now be in the swamp and slowed
+    expect(regieleki.getEffectiveStat(Stat.SPD)).toBe(regieleki.getStat(Stat.SPD) / 4);
   });
 
-  it("Court Change should swap safeguard to the enemy side ", async () => {
-    game.override.battleStyle("single").enemySpecies(SpeciesId.GRIMER).enemyMoveset(MoveId.TOXIC_THREAD);
+  it("should swap safeguard to the enemy side ", async () => {
+    game.override.enemyMoveset(MoveId.TOXIC_THREAD);
     await game.classicMode.startBattle([SpeciesId.NINJASK]);
-    const [ninjask] = game.scene.getPlayerParty();
-    game.move.changeMoveset(ninjask, [MoveId.SAFEGUARD, MoveId.COURT_CHANGE, MoveId.NUZZLE, MoveId.SPLASH]);
+    const ninjask = game.field.getPlayerPokemon();
 
-    game.move.use(MoveId.SAFEGUARD, 0);
-    await game.toEndOfTurn();
+    game.move.use(MoveId.SAFEGUARD);
+    await game.toNextTurn();
 
-    //Ninjask will not be poisoned because of Safeguard
+    // Ninjask will not be poisoned because of Safeguard
     expect(ninjask.status?.effect).not.toBe(StatusEffect.POISON);
 
     game.move.use(MoveId.COURT_CHANGE);
     await game.toEndOfTurn();
 
-    //Ninjask should now be poisoned
+    // Ninjask should now be poisoned due to lack of Safeguard
     expect(ninjask.status?.effect).toBe(StatusEffect.POISON);
   });
 });
