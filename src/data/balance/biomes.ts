@@ -1247,7 +1247,7 @@ export const biomePokemonPools: BiomePokemonPools = {
         { 1: [ SpeciesId.HOUNDOUR ], 24: [ SpeciesId.HOUNDOOM ] },
         SpeciesId.SABLEYE,
         { 1: [ SpeciesId.PURRLOIN ], 20: [ SpeciesId.LIEPARD ] },
-        { 1: [ SpeciesId.PAWNIARD ], 40: [ SpeciesId.KINGAMBIT ], 52: [ SpeciesId.BISHARP ] },
+        { 1: [ SpeciesId.PAWNIARD ], 52: [ SpeciesId.BISHARP ], 64: [ SpeciesId.KINGAMBIT ] },
         { 1: [ SpeciesId.NICKIT ], 18: [ SpeciesId.THIEVUL ] },
         { 1: [ SpeciesId.IMPIDIMP ], 32: [ SpeciesId.MORGREM ], 42: [ SpeciesId.GRIMMSNARL ] },
         { 1: [ SpeciesId.MASCHIFF ], 30: [ SpeciesId.MABOSSTIFF ] }
