@@ -1,4 +1,4 @@
-import { PostDefendCritStatStageChangeAbAttr } from "#app/data/abilities/ability";
+import { PostReceiveCritStatStageChangeAbAttr } from "#app/data/abilities/ability";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -55,7 +55,7 @@ describe("Ability - Anger Point", () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
     const enemy = game.scene.getEnemyPokemon()!;
     vi.spyOn(enemy, "getCriticalHitResult").mockReturnValueOnce(true);
-    const angerPointSpy = vi.spyOn(PostDefendCritStatStageChangeAbAttr.prototype, "apply");
+    const angerPointSpy = vi.spyOn(PostReceiveCritStatStageChangeAbAttr.prototype, "apply");
     game.move.select(MoveId.BULLET_SEED);
     await game.phaseInterceptor.to("BerryPhase");
     expect(angerPointSpy).toHaveBeenCalledTimes(1);

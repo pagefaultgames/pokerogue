@@ -439,7 +439,7 @@ export class MoveEffectPhase extends PokemonPhase {
     applyAbAttrs("PostDefendAbAttr", params);
 
     if (wasCritical) {
-      applyAbAttrs("PostDefendCritStatStageChangeAbAttr", params);
+      applyAbAttrs("PostReceiveCritStatStageChangeAbAttr", params);
     }
     target.lapseTags(BattlerTagLapseType.AFTER_HIT);
   }

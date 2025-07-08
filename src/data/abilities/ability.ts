@@ -1198,12 +1198,12 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
  * Set stat stages when the user gets hit by a critical hit
  *
  * @privateremarks
- * It is the responsibility of the caller to ensure that this ability is only applied
+ * It is the responsibility of the caller to ensure that this ability attribute is only applied
  * when the user has been hit by a critical hit; such an event is not checked here.
  *
  * @sealed
  */
-export class PostDefendCritStatStageChangeAbAttr extends AbAttr {
+export class PostReceiveCritStatStageChangeAbAttr extends AbAttr {
   private stat: BattleStat;
   private stages: number;
 
@@ -6420,7 +6420,7 @@ const AbilityAttrs = Object.freeze({
   PostDefendContactApplyStatusEffectAbAttr,
   EffectSporeAbAttr,
   PostDefendContactApplyTagChanceAbAttr,
-  PostDefendCritStatStageChangeAbAttr,
+  PostReceiveCritStatStageChangeAbAttr,
   PostDefendContactDamageAbAttr,
   PostDefendPerishSongAbAttr,
   PostDefendWeatherChangeAbAttr,
@@ -6889,7 +6889,7 @@ export function initAbilities() {
     new Ability(AbilityId.GLUTTONY, 4)
       .attr(ReduceBerryUseThresholdAbAttr),
     new Ability(AbilityId.ANGER_POINT, 4)
-      .attr(PostDefendCritStatStageChangeAbAttr, Stat.ATK, 12),
+      .attr(PostReceiveCritStatStageChangeAbAttr, Stat.ATK, 12),
     new Ability(AbilityId.UNBURDEN, 4)
       .attr(PostItemLostApplyBattlerTagAbAttr, BattlerTagType.UNBURDEN)
       .bypassFaint() // Allows reviver seed to activate Unburden
