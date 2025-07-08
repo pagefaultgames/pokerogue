@@ -267,10 +267,10 @@ export default class GameStatsUiHandler extends UiHandler {
 
     this.statsContainer = globalScene.add.container(0, 0);
 
-    new Array(18).fill(null).map((_, s) => {
+    for (let i = 0; i < 18; i++) {
       const statLabel = addTextObject(
-        8 + (s % 2 === 1 ? statsBgWidth : 0),
-        28 + Math.floor(s / 2) * 16,
+        8 + (i % 2 === 1 ? statsBgWidth : 0),
+        28 + Math.floor(i / 2) * 16,
         "",
         TextStyle.STATS_LABEL,
       );
@@ -278,11 +278,11 @@ export default class GameStatsUiHandler extends UiHandler {
       this.statsContainer.add(statLabel);
       this.statLabels.push(statLabel);
 
-      const statValue = addTextObject(statsBgWidth * ((s % 2) + 1) - 8, statLabel.y, "", TextStyle.STATS_VALUE);
+      const statValue = addTextObject(statsBgWidth * ((i % 2) + 1) - 8, statLabel.y, "", TextStyle.STATS_VALUE);
       statValue.setOrigin(1, 0);
       this.statsContainer.add(statValue);
       this.statValues.push(statValue);
-    });
+    }
 
     this.gameStatsContainer.add(headerBg);
     this.gameStatsContainer.add(headerText);
