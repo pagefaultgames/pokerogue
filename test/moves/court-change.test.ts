@@ -50,6 +50,8 @@ describe("Move - Court Change", () => {
     game.move.use(MoveId.SPLASH, 1);
     await game.toEndOfTurn();
     // own team should now be in the swamp and slowed
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY)).toBeUndefined();
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.PLAYER)).toBeDefined();
     expect(regieleki.getEffectiveStat(Stat.SPD)).toBe(regieleki.getStat(Stat.SPD) / 4);
   });
 
