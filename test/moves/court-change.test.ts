@@ -44,6 +44,7 @@ describe("Move - Court Change", () => {
     await game.toNextTurn();
 
     // enemy team will be in the swamp and slowed
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY)).toBeDefined();
     expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBe(enemyPokemon.getStat(Stat.SPD) / 4);
 
     game.move.use(MoveId.COURT_CHANGE);
