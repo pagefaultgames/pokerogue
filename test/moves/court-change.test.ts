@@ -32,7 +32,7 @@ describe("Move - Court Change", () => {
       .enemyLevel(100);
   });
 
-  it("Court Change should swap the swamp from the enemy to the own teams side ", async () => {
+  it("should swap combined Pledge effects to the opposite side", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.SHUCKLE]);
     const [regieleki, shuckle] = game.scene.getPlayerParty();
     game.move.changeMoveset(regieleki, [MoveId.WATER_PLEDGE, MoveId.COURT_CHANGE, MoveId.SPLASH]);
