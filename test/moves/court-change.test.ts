@@ -43,7 +43,7 @@ describe("Move - Court Change", () => {
     game.move.use(MoveId.GRASS_PLEDGE, 1);
     await game.toEndOfTurn();
 
-    //enemy team will be in the swamp and slowed
+    // enemy team will be in the swamp and slowed
     expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBe(enemyPokemon.getStat(Stat.SPD) >> 2);
 
     game.move.use(MoveId.COURT_CHANGE, 0);
