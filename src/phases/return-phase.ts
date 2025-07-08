@@ -1,9 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { SwitchType } from "#enums/switch-type";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 
 export class ReturnPhase extends SwitchSummonPhase {
+  public readonly phaseName = "ReturnPhase";
   constructor(fieldIndex: number) {
     super(SwitchType.SWITCH, fieldIndex, -1, true);
   }
@@ -12,7 +13,7 @@ export class ReturnPhase extends SwitchSummonPhase {
     this.end();
   }
 
-  summon(): void { }
+  summon(): void {}
 
   onEnd(): void {
     const pokemon = this.getPokemon();

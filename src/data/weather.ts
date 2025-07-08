@@ -1,16 +1,15 @@
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { WeatherType } from "#enums/weather-type";
 import { getPokemonNameWithAffix } from "../messages";
 import type Pokemon from "../field/pokemon";
-import { Type } from "#enums/type";
-import type Move from "./move";
-import { AttackMove } from "./move";
-import * as Utils from "../utils";
-import { SuppressWeatherEffectAbAttr } from "./ability";
-import { TerrainType, getTerrainName } from "./terrain";
+import { PokemonType } from "#enums/pokemon-type";
+import type Move from "./moves/move";
+import { randSeedInt } from "#app/utils/common";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import type { Arena } from "#app/field/arena";
+import { timedEventManager } from "#app/global-event-manager";
+import type { SuppressWeatherEffectAbAttr } from "./abilities/ability";
 
 export class Weather {
   public weatherType: WeatherType;
@@ -53,34 +52,34 @@ export class Weather {
     return false;
   }
 
-  isTypeDamageImmune(type: Type): boolean {
+  isTypeDamageImmune(type: PokemonType): boolean {
     switch (this.weatherType) {
       case WeatherType.SANDSTORM:
-        return type === Type.GROUND || type === Type.ROCK || type === Type.STEEL;
+        return type === PokemonType.GROUND || type === PokemonType.ROCK || type === PokemonType.STEEL;
       case WeatherType.HAIL:
-        return type === Type.ICE;
+        return type === PokemonType.ICE;
     }
 
     return false;
   }
 
-  getAttackTypeMultiplier(attackType: Type): number {
+  getAttackTypeMultiplier(attackType: PokemonType): number {
     switch (this.weatherType) {
       case WeatherType.SUNNY:
       case WeatherType.HARSH_SUN:
-        if (attackType === Type.FIRE) {
+        if (attackType === PokemonType.FIRE) {
           return 1.5;
         }
-        if (attackType === Type.WATER) {
+        if (attackType === PokemonType.WATER) {
           return 0.5;
         }
         break;
       case WeatherType.RAIN:
       case WeatherType.HEAVY_RAIN:
-        if (attackType === Type.FIRE) {
+        if (attackType === PokemonType.FIRE) {
           return 0.5;
         }
-        if (attackType === Type.WATER) {
+        if (attackType === PokemonType.WATER) {
           return 1.5;
         }
         break;
@@ -94,9 +93,9 @@ export class Weather {
 
     switch (this.weatherType) {
       case WeatherType.HARSH_SUN:
-        return move instanceof AttackMove && moveType === Type.WATER;
+        return move.is("AttackMove") && moveType === PokemonType.WATER;
       case WeatherType.HEAVY_RAIN:
-        return move instanceof AttackMove && moveType === Type.FIRE;
+        return move.is("AttackMove") && moveType === PokemonType.FIRE;
     }
 
     return false;
@@ -106,9 +105,13 @@ export class Weather {
     const field = globalScene.getField(true);
 
     for (const pokemon of field) {
-      let suppressWeatherEffectAbAttr: SuppressWeatherEffectAbAttr | null  = pokemon.getAbility().getAttrs(SuppressWeatherEffectAbAttr)[0];
+      let suppressWeatherEffectAbAttr: SuppressWeatherEffectAbAttr | null = pokemon
+        .getAbility()
+        .getAttrs("SuppressWeatherEffectAbAttr")[0];
       if (!suppressWeatherEffectAbAttr) {
-        suppressWeatherEffectAbAttr = pokemon.hasPassive() ? pokemon.getPassiveAbility().getAttrs(SuppressWeatherEffectAbAttr)[0] : null;
+        suppressWeatherEffectAbAttr = pokemon.hasPassive()
+          ? pokemon.getPassiveAbility().getAttrs("SuppressWeatherEffectAbAttr")[0]
+          : null;
       }
       if (suppressWeatherEffectAbAttr && (!this.isImmutable() || suppressWeatherEffectAbAttr.affectsImmutable)) {
         return true;
@@ -172,9 +175,13 @@ export function getWeatherLapseMessage(weatherType: WeatherType): string | null 
 export function getWeatherDamageMessage(weatherType: WeatherType, pokemon: Pokemon): string | null {
   switch (weatherType) {
     case WeatherType.SANDSTORM:
-      return i18next.t("weather:sandstormDamageMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
+      return i18next.t("weather:sandstormDamageMessage", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      });
     case WeatherType.HAIL:
-      return i18next.t("weather:hailDamageMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
+      return i18next.t("weather:hailDamageMessage", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      });
   }
 
   return null;
@@ -205,43 +212,26 @@ export function getWeatherClearMessage(weatherType: WeatherType): string | null 
   return null;
 }
 
-export function getTerrainStartMessage(terrainType: TerrainType): string | null {
-  switch (terrainType) {
-    case TerrainType.MISTY:
-      return i18next.t("terrain:mistyStartMessage");
-    case TerrainType.ELECTRIC:
-      return i18next.t("terrain:electricStartMessage");
-    case TerrainType.GRASSY:
-      return i18next.t("terrain:grassyStartMessage");
-    case TerrainType.PSYCHIC:
-      return i18next.t("terrain:psychicStartMessage");
-    default:
-      console.warn("getTerrainStartMessage not defined. Using default null");
-      return null;
+export function getLegendaryWeatherContinuesMessage(weatherType: WeatherType): string | null {
+  switch (weatherType) {
+    case WeatherType.HARSH_SUN:
+      return i18next.t("weather:harshSunContinueMessage");
+    case WeatherType.HEAVY_RAIN:
+      return i18next.t("weather:heavyRainContinueMessage");
+    case WeatherType.STRONG_WINDS:
+      return i18next.t("weather:strongWindsContinueMessage");
   }
+  return null;
 }
 
-export function getTerrainClearMessage(terrainType: TerrainType): string | null {
-  switch (terrainType) {
-    case TerrainType.MISTY:
-      return i18next.t("terrain:mistyClearMessage");
-    case TerrainType.ELECTRIC:
-      return i18next.t("terrain:electricClearMessage");
-    case TerrainType.GRASSY:
-      return i18next.t("terrain:grassyClearMessage");
-    case TerrainType.PSYCHIC:
-      return i18next.t("terrain:psychicClearMessage");
-    default:
-      console.warn("getTerrainClearMessage not defined. Using default null");
-      return null;
+export function getWeatherBlockMessage(weatherType: WeatherType): string {
+  switch (weatherType) {
+    case WeatherType.HARSH_SUN:
+      return i18next.t("weather:harshSunEffectMessage");
+    case WeatherType.HEAVY_RAIN:
+      return i18next.t("weather:heavyRainEffectMessage");
   }
-}
-
-export function getTerrainBlockMessage(pokemon: Pokemon, terrainType: TerrainType): string {
-  if (terrainType === TerrainType.MISTY) {
-    return i18next.t("terrain:mistyBlockMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
-  }
-  return i18next.t("terrain:defaultBlockMessage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), terrainName: getTerrainName(terrainType) });
+  return i18next.t("weather:defaultEffectMessage");
 }
 
 export interface WeatherPoolEntry {
@@ -253,15 +243,13 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
   let weatherPool: WeatherPoolEntry[] = [];
   const hasSun = arena.getTimeOfDay() < 2;
   switch (arena.biomeType) {
-    case Biome.GRASS:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 7 }
-      ];
+    case BiomeId.GRASS:
+      weatherPool = [{ weatherType: WeatherType.NONE, weight: 7 }];
       if (hasSun) {
         weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 3 });
       }
       break;
-    case Biome.TALL_GRASS:
+    case BiomeId.TALL_GRASS:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
         { weatherType: WeatherType.RAIN, weight: 5 },
@@ -270,101 +258,99 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
         weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 8 });
       }
       break;
-    case Biome.FOREST:
+    case BiomeId.FOREST:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.RAIN, weight: 5 }
+        { weatherType: WeatherType.RAIN, weight: 5 },
       ];
       break;
-    case Biome.SEA:
+    case BiomeId.SEA:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 3 },
-        { weatherType: WeatherType.RAIN, weight: 12 }
+        { weatherType: WeatherType.RAIN, weight: 12 },
       ];
       break;
-    case Biome.SWAMP:
+    case BiomeId.SWAMP:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 3 },
         { weatherType: WeatherType.RAIN, weight: 4 },
-        { weatherType: WeatherType.FOG, weight: 1 }
+        { weatherType: WeatherType.FOG, weight: 1 },
       ];
       break;
-    case Biome.BEACH:
+    case BiomeId.BEACH:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.RAIN, weight: 3 }
+        { weatherType: WeatherType.RAIN, weight: 3 },
       ];
       if (hasSun) {
         weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 5 });
       }
       break;
-    case Biome.LAKE:
+    case BiomeId.LAKE:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 10 },
         { weatherType: WeatherType.RAIN, weight: 5 },
-        { weatherType: WeatherType.FOG, weight: 1 }
+        { weatherType: WeatherType.FOG, weight: 1 },
       ];
       break;
-    case Biome.SEABED:
-      weatherPool = [
-        { weatherType: WeatherType.RAIN, weight: 1 }
-      ];
+    case BiomeId.SEABED:
+      weatherPool = [{ weatherType: WeatherType.RAIN, weight: 1 }];
       break;
-    case Biome.BADLANDS:
+    case BiomeId.BADLANDS:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.SANDSTORM, weight: 2 }
+        { weatherType: WeatherType.SANDSTORM, weight: 2 },
       ];
       if (hasSun) {
         weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 5 });
       }
       break;
-    case Biome.DESERT:
-      weatherPool = [
-        { weatherType: WeatherType.SANDSTORM, weight: 2 }
-      ];
+    case BiomeId.DESERT:
+      weatherPool = [{ weatherType: WeatherType.SANDSTORM, weight: 2 }];
       if (hasSun) {
         weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 2 });
       }
       break;
-    case Biome.ICE_CAVE:
+    case BiomeId.ICE_CAVE:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 3 },
         { weatherType: WeatherType.SNOW, weight: 4 },
-        { weatherType: WeatherType.HAIL, weight: 1 }
+        { weatherType: WeatherType.HAIL, weight: 1 },
       ];
       break;
-    case Biome.MEADOW:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 2 }
-      ];
+    case BiomeId.MEADOW:
+      weatherPool = [{ weatherType: WeatherType.NONE, weight: 2 }];
       if (hasSun) {
         weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 2 });
       }
-    case Biome.VOLCANO:
+      break;
+    case BiomeId.VOLCANO:
       weatherPool = [
-        { weatherType: hasSun ? WeatherType.SUNNY : WeatherType.NONE, weight: 1 }
+        {
+          weatherType: hasSun ? WeatherType.SUNNY : WeatherType.NONE,
+          weight: 1,
+        },
       ];
       break;
-    case Biome.GRAVEYARD:
+    case BiomeId.GRAVEYARD:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 3 },
-        { weatherType: WeatherType.FOG, weight: 1 }
+        { weatherType: WeatherType.FOG, weight: 1 },
       ];
       break;
-    case Biome.JUNGLE:
+    case BiomeId.JUNGLE:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.RAIN, weight: 2 }
+        { weatherType: WeatherType.RAIN, weight: 2 },
       ];
       break;
-    case Biome.SNOWY_FOREST:
+    case BiomeId.SNOWY_FOREST:
       weatherPool = [
         { weatherType: WeatherType.SNOW, weight: 7 },
-        { weatherType: WeatherType.HAIL, weight: 1 }
+        { weatherType: WeatherType.HAIL, weight: 1 },
       ];
       break;
-    case Biome.ISLAND:
+    case BiomeId.ISLAND:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 5 },
         { weatherType: WeatherType.RAIN, weight: 1 },
@@ -375,15 +361,17 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
       break;
   }
 
-  if (arena.biomeType === Biome.TOWN && globalScene.eventManager.isEventActive()) {
-    globalScene.eventManager.getWeather()?.map(w => weatherPool.push(w));
+  if (arena.biomeType === BiomeId.TOWN && timedEventManager.isEventActive()) {
+    timedEventManager.getWeather()?.map(w => weatherPool.push(w));
   }
 
   if (weatherPool.length > 1) {
     let totalWeight = 0;
-    weatherPool.forEach(w => totalWeight += w.weight);
+    for (const w of weatherPool) {
+      totalWeight += w.weight;
+    }
 
-    const rand = Utils.randSeedInt(totalWeight);
+    const rand = randSeedInt(totalWeight);
     let w = 0;
     for (const weather of weatherPool) {
       w += weather.weight;
@@ -393,7 +381,5 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
     }
   }
 
-  return weatherPool.length
-    ? weatherPool[0].weatherType
-    : WeatherType.NONE;
+  return weatherPool.length ? weatherPool[0].weatherType : WeatherType.NONE;
 }

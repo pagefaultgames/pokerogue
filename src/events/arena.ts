@@ -1,4 +1,4 @@
-import type { ArenaTagSide } from "#app/data/arena-tag";
+import type { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { TerrainType } from "#app/data/terrain";
 import type { WeatherType } from "#enums/weather-type";
@@ -32,7 +32,7 @@ export class ArenaEvent extends Event {
 /**
  * Container class for {@linkcode ArenaEventType.WEATHER_CHANGED} events
  * @extends ArenaEvent
-*/
+ */
 export class WeatherChangedEvent extends ArenaEvent {
   /** The {@linkcode WeatherType} being overridden */
   public oldWeatherType: WeatherType;
@@ -48,7 +48,7 @@ export class WeatherChangedEvent extends ArenaEvent {
 /**
  * Container class for {@linkcode ArenaEventType.TERRAIN_CHANGED} events
  * @extends ArenaEvent
-*/
+ */
 export class TerrainChangedEvent extends ArenaEvent {
   /** The {@linkcode TerrainType} being overridden */
   public oldTerrainType: TerrainType;
@@ -65,7 +65,7 @@ export class TerrainChangedEvent extends ArenaEvent {
 /**
  * Container class for {@linkcode ArenaEventType.TAG_ADDED} events
  * @extends ArenaEvent
-*/
+ */
 export class TagAddedEvent extends ArenaEvent {
   /** The {@linkcode ArenaTagType} being added */
   public arenaTagType: ArenaTagType;
@@ -76,7 +76,13 @@ export class TagAddedEvent extends ArenaEvent {
   /** The maximum amount of layers of the arena trap. */
   public arenaTagMaxLayers: number;
 
-  constructor(arenaTagType: ArenaTagType, arenaTagSide: ArenaTagSide, duration: number, arenaTagLayers?: number, arenaTagMaxLayers?: number) {
+  constructor(
+    arenaTagType: ArenaTagType,
+    arenaTagSide: ArenaTagSide,
+    duration: number,
+    arenaTagLayers?: number,
+    arenaTagMaxLayers?: number,
+  ) {
     super(ArenaEventType.TAG_ADDED, duration);
 
     this.arenaTagType = arenaTagType;
@@ -88,7 +94,7 @@ export class TagAddedEvent extends ArenaEvent {
 /**
  * Container class for {@linkcode ArenaEventType.TAG_REMOVED} events
  * @extends ArenaEvent
-*/
+ */
 export class TagRemovedEvent extends ArenaEvent {
   /** The {@linkcode ArenaTagType} being removed */
   public arenaTagType: ArenaTagType;

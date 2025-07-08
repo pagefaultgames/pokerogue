@@ -13,7 +13,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
   public classicWinIcon: Phaser.GameObjects.Image;
   public candyUpgradeIcon: Phaser.GameObjects.Image;
   public candyUpgradeOverlayIcon: Phaser.GameObjects.Image;
-  public cost: number = 0;
+  public cost = 0;
 
   constructor(species: PokemonSpecies) {
     super(globalScene, 0, 0);
@@ -32,10 +32,16 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.starterPassiveBgs = starterPassiveBg;
 
     // icon
-    this.icon = globalScene.add.sprite(-2, 2, species.getIconAtlasKey(defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
+    this.icon = globalScene.add.sprite(
+      -2,
+      2,
+      species.getIconAtlasKey(defaultProps.formIndex, defaultProps.shiny, defaultProps.variant),
+    );
     this.icon.setScale(0.5);
     this.icon.setOrigin(0, 0);
-    this.icon.setFrame(species.getIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant));
+    this.icon.setFrame(
+      species.getIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant),
+    );
     this.checkIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant);
     this.icon.setTint(0);
     this.add(this.icon);
@@ -51,7 +57,9 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.add(this.shinyIcons);
 
     // value label
-    const label = addTextObject(1, 2, "0", TextStyle.WINDOW, { fontSize: "32px" });
+    const label = addTextObject(1, 2, "0", TextStyle.WINDOW, {
+      fontSize: "32px",
+    });
     label.setShadowOffset(2, 2);
     label.setOrigin(0, 0);
     label.setVisible(false);

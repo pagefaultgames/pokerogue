@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import type { TextStyle } from "#app/ui/text";
 import { getTextWithColors } from "#app/ui/text";
 import { UiTheme } from "#enums/ui-theme";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 import i18next from "i18next";
 
 /**
@@ -51,7 +51,7 @@ function getTextWithDialogueTokens(keyOrString: string): string | null {
  */
 export function queueEncounterMessage(contentKey: string): void {
   const text: string | null = getEncounterText(contentKey);
-  globalScene.queueMessage(text ?? "", null, true);
+  globalScene.phaseManager.queueMessage(text ?? "", null, true);
 }
 
 /**
@@ -63,7 +63,13 @@ export function queueEncounterMessage(contentKey: string): void {
  * @param callbackDelay
  * @param promptDelay
  */
-export function showEncounterText(contentKey: string, delay: number | null = null, callbackDelay: number = 0, prompt: boolean = true, promptDelay: number | null = null): Promise<void> {
+export function showEncounterText(
+  contentKey: string,
+  delay: number | null = null,
+  callbackDelay = 0,
+  prompt = true,
+  promptDelay: number | null = null,
+): Promise<void> {
   return new Promise<void>(resolve => {
     const text: string | null = getEncounterText(contentKey);
     globalScene.ui.showText(text ?? "", delay, () => resolve(), callbackDelay, prompt, promptDelay);
@@ -78,7 +84,12 @@ export function showEncounterText(contentKey: string, delay: number | null = nul
  * @param speakerContentKey
  * @param callbackDelay
  */
-export function showEncounterDialogue(textContentKey: string, speakerContentKey: string, delay: number | null = null, callbackDelay: number = 0): Promise<void> {
+export function showEncounterDialogue(
+  textContentKey: string,
+  speakerContentKey: string,
+  delay: number | null = null,
+  callbackDelay = 0,
+): Promise<void> {
   return new Promise<void>(resolve => {
     const text: string | null = getEncounterText(textContentKey);
     const speaker: string | null = getEncounterText(speakerContentKey);

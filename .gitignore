@@ -13,7 +13,8 @@ dist-ssr
 *.local
 
 # Editor directories and files
-.vscode/*
+.vscode
+*.code-workspace
 .idea
 .DS_Store
 *.suo
@@ -41,3 +42,7 @@ coverage
 
 /dependency-graph.svg
 /.vs
+
+
+# Script outputs
+./*.csv

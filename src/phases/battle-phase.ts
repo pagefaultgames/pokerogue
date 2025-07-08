@@ -1,18 +1,18 @@
 import { globalScene } from "#app/global-scene";
-import { TrainerSlot } from "#app/data/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { Phase } from "#app/phase";
 
-export class BattlePhase extends Phase {
-  constructor() {
-    super();
-  }
-
+export abstract class BattlePhase extends Phase {
   showEnemyTrainer(trainerSlot: TrainerSlot = TrainerSlot.NONE): void {
-    const sprites = globalScene.currentBattle.trainer?.getSprites()!; // TODO: is this bang correct?
-    const tintSprites = globalScene.currentBattle.trainer?.getTintSprites()!; // TODO: is this bang correct?
+    if (!globalScene.currentBattle.trainer) {
+      console.warn("Enemy trainer is missing!");
+      return;
+    }
+    const sprites = globalScene.currentBattle.trainer.getSprites();
+    const tintSprites = globalScene.currentBattle.trainer.getTintSprites();
     for (let i = 0; i < sprites.length; i++) {
       const visible = !trainerSlot || !i === (trainerSlot === TrainerSlot.TRAINER) || sprites.length < 2;
-      [ sprites[i], tintSprites[i] ].map(sprite => {
+      [sprites[i], tintSprites[i]].map(sprite => {
         if (visible) {
           sprite.x = trainerSlot || sprites.length < 2 ? 0 : i ? 16 : -16;
         }
@@ -30,7 +30,7 @@ export class BattlePhase extends Phase {
       y: "+=16",
       alpha: 1,
       ease: "Sine.easeInOut",
-      duration: 750
+      duration: 750,
     });
   }
 
@@ -41,7 +41,7 @@ export class BattlePhase extends Phase {
       y: "-=16",
       alpha: 0,
       ease: "Sine.easeInOut",
-      duration: 750
+      duration: 750,
     });
   }
 }

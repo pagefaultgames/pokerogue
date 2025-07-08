@@ -1,12 +1,12 @@
 import { TextStyle, addTextObject } from "../ui/text";
-import type { DamageResult } from "./pokemon";
+import type { DamageResult } from "../@types/damage-result";
 import type Pokemon from "./pokemon";
-import { HitResult } from "./pokemon";
-import * as Utils from "../utils";
-import type { BattlerIndex } from "../battle";
+import { HitResult } from "#enums/hit-result";
+import { formatStat, fixedInt } from "#app/utils/common";
+import type { BattlerIndex } from "#enums/battler-index";
 import { globalScene } from "#app/global-scene";
 
-type TextAndShadowArr = [ string | null, string | null ];
+type TextAndShadowArr = [string | null, string | null];
 
 export default class DamageNumberHandler {
   private damageNumbers: Map<BattlerIndex, Phaser.GameObjects.Text[]>;
@@ -15,35 +15,46 @@ export default class DamageNumberHandler {
     this.damageNumbers = new Map();
   }
 
-  add(target: Pokemon, amount: number, result: DamageResult | HitResult.HEAL = HitResult.EFFECTIVE, critical: boolean = false): void {
+  add(
+    target: Pokemon,
+    amount: number,
+    result: DamageResult | HitResult.HEAL = HitResult.EFFECTIVE,
+    critical = false,
+  ): void {
     if (!globalScene?.damageNumbersMode) {
       return;
     }
 
     const battlerIndex = target.getBattlerIndex();
     const baseScale = target.getSpriteScale() / 6;
-    const damageNumber = addTextObject(target.x, -(globalScene.game.canvas.height / 6) + target.y - target.getSprite().height / 2, Utils.formatStat(amount, true), TextStyle.SUMMARY);
+    const damageNumber = addTextObject(
+      target.x,
+      -(globalScene.game.canvas.height / 6) + target.y - target.getSprite().height / 2,
+      formatStat(amount, true),
+      TextStyle.SUMMARY,
+    );
     damageNumber.setName("text-damage-number");
     damageNumber.setOrigin(0.5, 1);
     damageNumber.setScale(baseScale);
 
-    let [ textColor, shadowColor ] : TextAndShadowArr = [ null, null ];
+    let [textColor, shadowColor]: TextAndShadowArr = [null, null];
 
     switch (result) {
       case HitResult.SUPER_EFFECTIVE:
-        [ textColor, shadowColor ] = [ "#f8d030", "#b8a038" ];
+        [textColor, shadowColor] = ["#f8d030", "#b8a038"];
         break;
       case HitResult.NOT_VERY_EFFECTIVE:
-        [ textColor, shadowColor ] = [ "#f08030", "#c03028" ];
+        [textColor, shadowColor] = ["#f08030", "#c03028"];
         break;
+      case HitResult.INDIRECT_KO:
       case HitResult.ONE_HIT_KO:
-        [ textColor, shadowColor ] = [ "#a040a0", "#483850" ];
+        [textColor, shadowColor] = ["#a040a0", "#483850"];
         break;
       case HitResult.HEAL:
-        [ textColor, shadowColor ] = [ "#78c850", "#588040" ];
+        [textColor, shadowColor] = ["#78c850", "#588040"];
         break;
       default:
-        [ textColor, shadowColor ] = [ "#ffffff", "#636363" ];
+        [textColor, shadowColor] = ["#ffffff", "#636363"];
         break;
     }
 
@@ -75,20 +86,20 @@ export default class DamageNumberHandler {
     if (globalScene.damageNumbersMode === 1) {
       globalScene.tweens.add({
         targets: damageNumber,
-        duration: Utils.fixedInt(750),
+        duration: fixedInt(750),
         alpha: 1,
-        y: "-=32"
+        y: "-=32",
       });
       globalScene.tweens.add({
         delay: 375,
         targets: damageNumber,
-        duration: Utils.fixedInt(625),
+        duration: fixedInt(625),
         alpha: 0,
         ease: "Sine.easeIn",
         onComplete: () => {
           this.damageNumbers.get(battlerIndex)!.splice(this.damageNumbers.get(battlerIndex)!.indexOf(damageNumber), 1);
           damageNumber.destroy(true);
-        }
+        },
       });
       return;
     }
@@ -99,82 +110,84 @@ export default class DamageNumberHandler {
       targets: damageNumber,
       tweens: [
         {
-          duration: Utils.fixedInt(250),
+          duration: fixedInt(250),
           alpha: 1,
           scaleX: 0.75 * baseScale,
           scaleY: 1.25 * baseScale,
           y: "-=16",
-          ease: "Cubic.easeOut"
+          ease: "Cubic.easeOut",
         },
         {
-          duration: Utils.fixedInt(175),
+          duration: fixedInt(175),
           alpha: 1,
           scaleX: 0.875 * baseScale,
           scaleY: 1.125 * baseScale,
           y: "+=16",
-          ease: "Cubic.easeIn"
+          ease: "Cubic.easeIn",
         },
         {
-          duration: Utils.fixedInt(100),
+          duration: fixedInt(100),
           scaleX: 1.25 * baseScale,
           scaleY: 0.75 * baseScale,
-          ease: "Cubic.easeOut"
+          ease: "Cubic.easeOut",
         },
         {
-          duration: Utils.fixedInt(175),
+          duration: fixedInt(175),
           scaleX: 0.875 * baseScale,
           scaleY: 1.125 * baseScale,
           y: "-=8",
-          ease: "Cubic.easeOut"
+          ease: "Cubic.easeOut",
         },
         {
-          duration: Utils.fixedInt(50),
+          duration: fixedInt(50),
           scaleX: 0.925 * baseScale,
           scaleY: 1.075 * baseScale,
           y: "+=8",
-          ease: "Cubic.easeIn"
+          ease: "Cubic.easeIn",
         },
         {
-          duration: Utils.fixedInt(100),
+          duration: fixedInt(100),
           scaleX: 1.125 * baseScale,
           scaleY: 0.875 * baseScale,
-          ease: "Cubic.easeOut"
+          ease: "Cubic.easeOut",
         },
         {
-          duration: Utils.fixedInt(175),
+          duration: fixedInt(175),
           scaleX: 0.925 * baseScale,
           scaleY: 1.075 * baseScale,
           y: "-=4",
-          ease: "Cubic.easeOut"
+          ease: "Cubic.easeOut",
         },
         {
-          duration: Utils.fixedInt(50),
+          duration: fixedInt(50),
           scaleX: 0.975 * baseScale,
           scaleY: 1.025 * baseScale,
           y: "+=4",
-          ease: "Cubic.easeIn"
+          ease: "Cubic.easeIn",
         },
         {
-          duration: Utils.fixedInt(100),
+          duration: fixedInt(100),
           scaleX: 1.075 * baseScale,
           scaleY: 0.925 * baseScale,
-          ease: "Cubic.easeOut"
+          ease: "Cubic.easeOut",
         },
         {
-          duration: Utils.fixedInt(25),
+          duration: fixedInt(25),
           scaleX: baseScale,
           scaleY: baseScale,
-          ease: "Cubic.easeOut"
+          ease: "Cubic.easeOut",
         },
         {
-          delay: Utils.fixedInt(500),
+          delay: fixedInt(500),
           alpha: 0,
           onComplete: () => {
-            this.damageNumbers.get(battlerIndex)!.splice(this.damageNumbers.get(battlerIndex)!.indexOf(damageNumber), 1);
+            this.damageNumbers
+              .get(battlerIndex)!
+              .splice(this.damageNumbers.get(battlerIndex)!.indexOf(damageNumber), 1);
             damageNumber.destroy(true);
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
   }
 }

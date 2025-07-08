@@ -1,10 +1,10 @@
 import i18next from "i18next";
 import { ModalUiHandler } from "./modal-ui-handler";
 import { addTextObject, TextStyle } from "./text";
-import type { Mode } from "./ui";
+import type { UiMode } from "#enums/ui-mode";
 
 export default class LoadingModalUiHandler extends ModalUiHandler {
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     super(mode);
   }
 
@@ -21,11 +21,11 @@ export default class LoadingModalUiHandler extends ModalUiHandler {
   }
 
   getMargin(): [number, number, number, number] {
-    return [ 0, 0, 48, 0 ];
+    return [0, 0, 48, 0];
   }
 
   getButtonLabels(): string[] {
-    return [ ];
+    return [];
   }
 
   setup(): void {

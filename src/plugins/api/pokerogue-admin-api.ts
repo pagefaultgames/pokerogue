@@ -22,12 +22,11 @@ export class PokerogueAdminApi extends ApiBase {
 
       if (response.ok) {
         return null;
-      } else {
-        console.warn("Could not link account with discord!", response.status, response.statusText);
+      }
+      console.warn("Could not link account with discord!", response.status, response.statusText);
 
-        if (response.status === 404) {
-          return this.ERR_USERNAME_NOT_FOUND;
-        }
+      if (response.status === 404) {
+        return this.ERR_USERNAME_NOT_FOUND;
       }
     } catch (err) {
       console.warn("Could not link account with discord!", err);
@@ -47,12 +46,11 @@ export class PokerogueAdminApi extends ApiBase {
 
       if (response.ok) {
         return null;
-      } else {
-        console.warn("Could not unlink account from discord!", response.status, response.statusText);
+      }
+      console.warn("Could not unlink account from discord!", response.status, response.statusText);
 
-        if (response.status === 404) {
-          return this.ERR_USERNAME_NOT_FOUND;
-        }
+      if (response.status === 404) {
+        return this.ERR_USERNAME_NOT_FOUND;
       }
     } catch (err) {
       console.warn("Could not unlink account from discord!", err);
@@ -72,12 +70,11 @@ export class PokerogueAdminApi extends ApiBase {
 
       if (response.ok) {
         return null;
-      } else {
-        console.warn("Could not link account with google!", response.status, response.statusText);
+      }
+      console.warn("Could not link account with google!", response.status, response.statusText);
 
-        if (response.status === 404) {
-          return this.ERR_USERNAME_NOT_FOUND;
-        }
+      if (response.status === 404) {
+        return this.ERR_USERNAME_NOT_FOUND;
       }
     } catch (err) {
       console.warn("Could not link account with google!", err);
@@ -97,12 +94,11 @@ export class PokerogueAdminApi extends ApiBase {
 
       if (response.ok) {
         return null;
-      } else {
-        console.warn("Could not unlink account from google!", response.status, response.statusText);
+      }
+      console.warn("Could not unlink account from google!", response.status, response.statusText);
 
-        if (response.status === 404) {
-          return this.ERR_USERNAME_NOT_FOUND;
-        }
+      if (response.status === 404) {
+        return this.ERR_USERNAME_NOT_FOUND;
       }
     } catch (err) {
       console.warn("Could not unlink account from google!", err);
@@ -123,18 +119,17 @@ export class PokerogueAdminApi extends ApiBase {
 
       if (response.ok) {
         const resData: SearchAccountResponse = await response.json();
-        return [ resData, undefined ];
-      } else {
-        console.warn("Could not find account!", response.status, response.statusText);
+        return [resData, undefined];
+      }
+      console.warn("Could not find account!", response.status, response.statusText);
 
-        if (response.status === 404) {
-          return [ undefined, this.ERR_USERNAME_NOT_FOUND ];
-        }
+      if (response.status === 404) {
+        return [undefined, this.ERR_USERNAME_NOT_FOUND];
       }
     } catch (err) {
       console.warn("Could not find account!", err);
     }
 
-    return [ undefined, this.ERR_GENERIC ];
+    return [undefined, this.ERR_GENERIC];
   }
 }

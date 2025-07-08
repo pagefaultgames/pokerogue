@@ -20,17 +20,20 @@ export class PokerogueSessionSavedataApi extends ApiBase {
    * *This is **NOT** the same as {@linkcode clear | clear()}.*
    * @param params The {@linkcode NewClearSessionSavedataRequest} to send
    * @returns The raw savedata as `string`.
+   * @throws Error if the request fails
    */
   public async newclear(params: NewClearSessionSavedataRequest) {
     try {
       const urlSearchParams = this.toUrlSearchParams(params);
       const response = await this.doGet(`/savedata/session/newclear?${urlSearchParams}`);
       const json = await response.json();
-
-      return Boolean(json);
+      if (response.ok) {
+        return Boolean(json);
+      }
+      throw new Error("Could not newclear session!");
     } catch (err) {
       console.warn("Could not newclear session!", err);
-      return false;
+      throw new Error("Could not newclear session!");
     }
   }
 
@@ -82,9 +85,8 @@ export class PokerogueSessionSavedataApi extends ApiBase {
 
       if (response.ok) {
         return null;
-      } else {
-        return await response.text();
       }
+      return await response.text();
     } catch (err) {
       console.warn("Could not delete session savedata!", err);
       return "Unknown error";

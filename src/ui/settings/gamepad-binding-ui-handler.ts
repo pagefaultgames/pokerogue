@@ -1,14 +1,13 @@
 import AbstractBindingUiHandler from "./abstract-binding-ui-handler";
-import type { Mode } from "../ui";
+import type { UiMode } from "#enums/ui-mode";
 import { Device } from "#enums/devices";
 import { getIconWithSettingName, getKeyWithKeycode } from "#app/configs/inputs/configHandler";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import { globalScene } from "#app/global-scene";
-
+import i18next from "i18next";
 
 export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
-
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     super(mode);
     globalScene.input.gamepad?.on("down", this.gamepadButtonDown, this);
   }
@@ -21,9 +20,13 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
     this.newButtonIcon.setOrigin(0.5);
     this.newButtonIcon.setVisible(false);
 
-    this.swapText = addTextObject(0, 0, "will swap with", TextStyle.WINDOW);
+    this.swapText = addTextObject(0, 0, i18next.t("settings:willSwapWith"), TextStyle.WINDOW);
     this.swapText.setOrigin(0.5);
-    this.swapText.setPositionRelative(this.optionSelectBg, this.optionSelectBg.width / 2 - 2, this.optionSelectBg.height / 2 - 2);
+    this.swapText.setPositionRelative(
+      this.optionSelectBg,
+      this.optionSelectBg.width / 2 - 2,
+      this.optionSelectBg.height / 2 - 2,
+    );
     this.swapText.setVisible(false);
 
     this.targetButtonIcon = globalScene.add.sprite(0, 0, "xbox");
@@ -31,7 +34,7 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
     this.targetButtonIcon.setOrigin(0.5);
     this.targetButtonIcon.setVisible(false);
 
-    this.actionLabel = addTextObject(0, 0, "Confirm swap", TextStyle.SETTINGS_LABEL);
+    this.actionLabel = addTextObject(0, 0, i18next.t("settings:confirmSwap"), TextStyle.SETTINGS_LABEL);
     this.actionLabel.setOrigin(0, 0.5);
     this.actionLabel.setPositionRelative(this.actionBg, this.actionBg.width - 75, this.actionBg.height / 2);
     this.actionsContainer.add(this.actionLabel);
@@ -45,10 +48,15 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
     return globalScene.inputController?.selectedDevice[Device.GAMEPAD];
   }
 
-  gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void {
-    const blacklist = [ 12, 13, 14, 15 ]; // d-pad buttons are blacklisted.
+  gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, _value: number): void {
+    const blacklist = [12, 13, 14, 15]; // d-pad buttons are blacklisted.
     // Check conditions before processing the button press.
-    if (!this.listening || pad.id.toLowerCase() !== this.getSelectedDevice() || blacklist.includes(button.index) || this.buttonPressed !== null) {
+    if (
+      !this.listening ||
+      pad.id.toLowerCase() !== this.getSelectedDevice() ||
+      blacklist.includes(button.index) ||
+      this.buttonPressed !== null
+    ) {
       return;
     }
     const activeConfig = globalScene.inputController.getActiveConfig(Device.GAMEPAD);
@@ -73,8 +81,8 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
   }
 
   /**
-     * Clear the UI elements and state.
-     */
+   * Clear the UI elements and state.
+   */
   clear() {
     super.clear();
     this.targetButtonIcon.setVisible(false);

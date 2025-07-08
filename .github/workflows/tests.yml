@@ -1,48 +1,42 @@
 name: Tests
 
 on:
-  # Trigger the workflow on push or pull request,
-  # but only for the main branch
   push:
     branches:
-      - main  # Trigger on push events to the main branch
-      - beta # Trigger on push events to the beta branch
+      - main
+      - beta
   pull_request:
     branches:
-      - main  # Trigger on pull request events targeting the main branch
-      - beta # Trigger on pull request events targeting the beta branch
+      - main
+      - beta
   merge_group:
     types: [checks_requested]
 
 jobs:
-  pre-test:
-    name: Run Pre-test
+  check-path-change-filter:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      all: ${{ steps.filter.outputs.all }}
     steps:
-      - name: Check out Git repository
+      - name: checkout
         uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
+        id: filter
         with:
-          submodules: 'recursive'
-          path: tests-action
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Install Node.js dependencies
-        working-directory: tests-action
-        run: npm ci
-      - name: Run Pre-test
-        working-directory: tests-action
-        run: npx vitest run --project pre ${{ !runner.debug && '--silent' || '' }}
+          filters: .github/test-filters.yml
 
   run-tests:
-    name: Run Tests 
-    needs: [pre-test]
+    name: Run Tests
+    needs: check-path-change-filter
     strategy:
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        shard: [1, 2, 3, 4, 5]
     uses: ./.github/workflows/test-shard-template.yml
     with:
       project: main
       shard: ${{ matrix.shard }}
-      totalShards: 10
+      totalShards: 5
+      skip: ${{ needs.check-path-change-filter.outputs.all != 'true'}}

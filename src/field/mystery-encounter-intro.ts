@@ -1,11 +1,12 @@
 import type { GameObjects } from "phaser";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import type { Species } from "#enums/species";
-import { isNullOrUndefined } from "#app/utils";
+import type { SpeciesId } from "#enums/species-id";
+import { isNullOrUndefined } from "#app/utils/common";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import type { Variant } from "#app/data/variant";
+import type { Variant } from "#app/sprites/variant";
 import { doShinySparkleAnim } from "#app/field/anims";
+import { loadPokemonVariantAssets } from "#app/sprites/pokemon-sprite";
 import PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
 
 type KnownFileRoot =
@@ -36,9 +37,9 @@ export class MysteryEncounterSpriteConfig {
   /** The sprite key (which is the image file name). e.g. "ace_trainer_f" */
   spriteKey: string;
   /** Refer to [/public/images](../../public/images) directorty for all folder names */
-  fileRoot: KnownFileRoot & string | string;
+  fileRoot: (KnownFileRoot & string) | string;
   /** Optional replacement for `spriteKey`/`fileRoot`. Just know this defaults to male/genderless, form 0, no shiny */
-  species?: Species;
+  species?: SpeciesId;
   /** Enable shadow. Defaults to `false` */
   hasShadow?: boolean = false;
   /** Disable animation. Defaults to `false` */
@@ -80,7 +81,10 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
   public encounter: MysteryEncounter;
   public spriteConfigs: MysteryEncounterSpriteConfig[];
   public enterFromRight: boolean;
-  private shinySparkleSprites: { sprite: Phaser.GameObjects.Sprite, variant: Variant }[];
+  private shinySparkleSprites: {
+    sprite: Phaser.GameObjects.Sprite;
+    variant: Variant;
+  }[];
 
   constructor(encounter: MysteryEncounter) {
     super(globalScene, -72, 76);
@@ -89,7 +93,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     // Shallow copy configs to allow visual config updates at runtime without dirtying master copy of Encounter
     this.spriteConfigs = encounter.spriteConfigs.map(config => {
       const result = {
-        ...config
+        ...config,
       };
 
       if (!isNullOrUndefined(result.species)) {
@@ -108,14 +112,22 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     const getSprite = (spriteKey: string, hasShadow?: boolean, yShadow?: number) => {
       const ret = globalScene.addFieldSprite(0, 0, spriteKey);
       ret.setOrigin(0.5, 1);
-      ret.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow, yShadowOffset: yShadow ?? 0 });
+      ret.setPipeline(globalScene.spritePipeline, {
+        tone: [0.0, 0.0, 0.0, 0.0],
+        hasShadow: !!hasShadow,
+        yShadowOffset: yShadow ?? 0,
+      });
       return ret;
     };
 
     const getItemSprite = (spriteKey: string, hasShadow?: boolean, yShadow?: number) => {
       const icon = globalScene.add.sprite(-19, 2, "items", spriteKey);
       icon.setOrigin(0.5, 1);
-      icon.setPipeline(globalScene.spritePipeline, { tone: [ 0.0, 0.0, 0.0, 0.0 ], hasShadow: !!hasShadow, yShadowOffset: yShadow ?? 0 });
+      icon.setPipeline(globalScene.spritePipeline, {
+        tone: [0.0, 0.0, 0.0, 0.0],
+        hasShadow: !!hasShadow,
+        yShadowOffset: yShadow ?? 0,
+      });
       return icon;
     };
 
@@ -129,7 +141,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
 
     this.shinySparkleSprites = [];
     const shinySparkleSprites = globalScene.add.container(0, 0);
-    this.spriteConfigs?.forEach((config) => {
+    this.spriteConfigs?.forEach(config => {
       const { spriteKey, isItem, hasShadow, scale, x, y, yShadow, alpha, isPokemon, isShiny, variant } = config;
 
       let sprite: GameObjects.Sprite;
@@ -154,7 +166,10 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
           pokemonShinySparkle = globalScene.add.sprite(sprite.x, sprite.y, "shiny");
           pokemonShinySparkle.setOrigin(0.5, 1);
           pokemonShinySparkle.setVisible(false);
-          this.shinySparkleSprites.push({ sprite: pokemonShinySparkle, variant: variant ?? 0 });
+          this.shinySparkleSprites.push({
+            sprite: pokemonShinySparkle,
+            variant: variant ?? 0,
+          });
           shinySparkleSprites.add(pokemonShinySparkle);
         }
       }
@@ -216,11 +231,11 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       }
 
       const shinyPromises: Promise<void>[] = [];
-      this.spriteConfigs.forEach((config) => {
+      this.spriteConfigs.forEach(config => {
         if (config.isPokemon) {
           globalScene.loadPokemonAtlas(config.spriteKey, config.fileRoot);
-          if (config.isShiny) {
-            shinyPromises.push(globalScene.loadPokemonVariantAssets(config.spriteKey, config.fileRoot, config.variant));
+          if (config.isShiny && !isNullOrUndefined(config.variant)) {
+            shinyPromises.push(loadPokemonVariantAssets(config.spriteKey, config.fileRoot, config.variant));
           }
         } else if (config.isItem) {
           globalScene.loadAtlas("items", "");
@@ -230,7 +245,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       });
 
       globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
-        this.spriteConfigs.every((config) => {
+        this.spriteConfigs.every(config => {
           if (config.isItem) {
             return true;
           }
@@ -238,17 +253,21 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
           const originalWarn = console.warn;
 
           // Ignore warnings for missing frames, because there will be a lot
-          console.warn = () => {
-          };
-          const frameNames = globalScene.anims.generateFrameNames(config.spriteKey, { zeroPad: 4, suffix: ".png", start: 1, end: 128 });
+          console.warn = () => {};
+          const frameNames = globalScene.anims.generateFrameNames(config.spriteKey, {
+            zeroPad: 4,
+            suffix: ".png",
+            start: 1,
+            end: 128,
+          });
 
           console.warn = originalWarn;
-          if (!(globalScene.anims.exists(config.spriteKey))) {
+          if (!globalScene.anims.exists(config.spriteKey)) {
             globalScene.anims.create({
               key: config.spriteKey,
               frames: frameNames,
               frameRate: 10,
-              repeat: -1
+              repeat: -1,
             });
           }
 
@@ -313,7 +332,11 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
    * @param animConfig {@linkcode Phaser.Types.Animations.PlayAnimationConfig} to pass to {@linkcode Phaser.GameObjects.Sprite.play}
    * @returns true if the sprite was able to be animated
    */
-  tryPlaySprite(sprite: Phaser.GameObjects.Sprite, tintSprite: Phaser.GameObjects.Sprite, animConfig: Phaser.Types.Animations.PlayAnimationConfig): boolean {
+  tryPlaySprite(
+    sprite: Phaser.GameObjects.Sprite,
+    tintSprite: Phaser.GameObjects.Sprite,
+    animConfig: Phaser.Types.Animations.PlayAnimationConfig,
+  ): boolean {
     // Show an error in the console if there isn't a texture loaded
     if (sprite.texture.key === "__MISSING") {
       console.error(`No texture found for '${animConfig.key}'!`);
@@ -359,7 +382,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         const trainerAnimConfig: PlayAnimationConfig = {
           key: config.spriteKey,
           repeat: config?.repeat ? -1 : 0,
-          startFrame: config?.startFrame ?? 0
+          startFrame: config?.startFrame ?? 0,
         };
 
         this.tryPlaySprite(sprites[i], tintSprites[i], trainerAnimConfig);
@@ -392,7 +415,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     }
 
     const ret: Phaser.GameObjects.Sprite[] = [];
-    this.spriteConfigs.forEach((config, i) => {
+    this.spriteConfigs.forEach((_, i) => {
       ret.push(this.getAt(i * 2));
     });
     return ret;
@@ -407,7 +430,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
     }
 
     const ret: Phaser.GameObjects.Sprite[] = [];
-    this.spriteConfigs.forEach((config, i) => {
+    this.spriteConfigs.forEach((_, i) => {
       ret.push(this.getAt(i * 2 + 1));
     });
 
@@ -434,7 +457,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         targets: sprite,
         alpha: alpha || 1,
         duration: duration,
-        ease: ease || "Linear"
+        ease: ease || "Linear",
       });
     } else {
       sprite.setAlpha(alpha);
@@ -471,7 +494,7 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
         onComplete: () => {
           sprite.setVisible(false);
           sprite.setAlpha(1);
-        }
+        },
       });
     } else {
       sprite.setVisible(false);
@@ -497,9 +520,9 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
    * @param value - true for visible, false for hidden
    */
   setVisible(value: boolean): this {
-    this.getSprites().forEach(sprite => {
+    for (const sprite of this.getSprites()) {
       sprite.setVisible(value);
-    });
+    }
     return super.setVisible(value);
   }
 }

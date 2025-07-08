@@ -1,14 +1,13 @@
 import AbstractBindingUiHandler from "./abstract-binding-ui-handler";
-import type { Mode } from "../ui";
+import type { UiMode } from "#enums/ui-mode";
 import { getKeyWithKeycode } from "#app/configs/inputs/configHandler";
 import { Device } from "#enums/devices";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import { globalScene } from "#app/global-scene";
-
+import i18next from "i18next";
 
 export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
-
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     super(mode);
     // Listen to gamepad button down events to initiate binding.
     globalScene.input.keyboard?.on("keydown", this.onKeyDown, this);
@@ -23,7 +22,7 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
     this.newButtonIcon.setOrigin(0.5);
     this.newButtonIcon.setVisible(false);
 
-    this.actionLabel = addTextObject(0, 0, "Assign button", TextStyle.SETTINGS_LABEL);
+    this.actionLabel = addTextObject(0, 0, i18next.t("settings:assignButton"), TextStyle.SETTINGS_LABEL);
     this.actionLabel.setOrigin(0, 0.5);
     this.actionLabel.setPositionRelative(this.actionBg, this.actionBg.width - 80, this.actionBg.height / 2);
     this.actionsContainer.add(this.actionLabel);
@@ -70,5 +69,4 @@ export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
     }
     return false;
   }
-
 }

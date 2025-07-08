@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { TextStyle } from "./text";
 import { getTextColor } from "./text";
-import type { Mode } from "./ui";
+import type { UiMode } from "#enums/ui-mode";
 import type { Button } from "#enums/buttons";
 
 /**
@@ -9,13 +9,13 @@ import type { Button } from "#enums/buttons";
  */
 export default abstract class UiHandler {
   protected mode: number | null;
-  protected cursor: number = 0;
-  public active: boolean = false;
+  protected cursor = 0;
+  public active = false;
 
   /**
    * @param mode The mode of the UI element. These should be unique.
    */
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     this.mode = mode;
   }
 
@@ -33,7 +33,7 @@ export default abstract class UiHandler {
     return globalScene.ui;
   }
 
-  getTextColor(style: TextStyle, shadow: boolean = false): string {
+  getTextColor(style: TextStyle, shadow = false): string {
     return getTextColor(style, shadow, globalScene.uiTheme);
   }
 

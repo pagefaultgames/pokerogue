@@ -1,10 +1,10 @@
 import type { ModalConfig } from "./modal-ui-handler";
 import { ModalUiHandler } from "./modal-ui-handler";
-import type { Mode } from "./ui";
+import type { UiMode } from "#enums/ui-mode";
 import { TextStyle, addTextInputObject, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
-import * as Utils from "../utils";
+import { fixedInt } from "#app/utils/common";
 import { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
 
@@ -21,7 +21,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   protected tween: Phaser.Tweens.Tween;
   protected formLabels: Phaser.GameObjects.Text[];
 
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     super(mode);
 
     this.editing = false;
@@ -38,7 +38,13 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   abstract getInputFieldConfigs(): InputFieldConfig[];
 
   getHeight(config?: ModalConfig): number {
-    return 20 * this.getInputFieldConfigs().length + (this.getModalTitle() ? 26 : 0) + ((config as FormModalConfig)?.errorMessage ? 12 : 0) + this.getButtonTopMargin() + 28;
+    return (
+      20 * this.getInputFieldConfigs().length +
+      (this.getModalTitle() ? 26 : 0) +
+      ((config as FormModalConfig)?.errorMessage ? 12 : 0) +
+      this.getButtonTopMargin() +
+      28
+    );
   }
 
   getReadableErrorMessage(error: string): string {
@@ -60,7 +66,12 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       this.updateFields(config, hasTitle);
     }
 
-    this.errorMessage = addTextObject(10, (hasTitle ? 31 : 5) + 20 * (config.length - 1) + 16 + this.getButtonTopMargin(), "", TextStyle.TOOLTIP_CONTENT);
+    this.errorMessage = addTextObject(
+      10,
+      (hasTitle ? 31 : 5) + 20 * (config.length - 1) + 16 + this.getButtonTopMargin(),
+      "",
+      TextStyle.TOOLTIP_CONTENT,
+    );
     this.errorMessage.setColor(this.getTextColor(TextStyle.SUMMARY_PINK));
     this.errorMessage.setShadowColor(this.getTextColor(TextStyle.SUMMARY_PINK, true));
     this.errorMessage.setVisible(false);
@@ -85,7 +96,11 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
 
       const isPassword = config?.isPassword;
       const isReadOnly = config?.isReadOnly;
-      const input = addTextInputObject(4, -2, 440, 116, TextStyle.TOOLTIP_CONTENT, { type: isPassword ? "password" : "text", maxLength: isPassword ? 64 : 20, readOnly: isReadOnly });
+      const input = addTextInputObject(4, -2, 440, 116, TextStyle.TOOLTIP_CONTENT, {
+        type: isPassword ? "password" : "text",
+        maxLength: isPassword ? 64 : 20,
+        readOnly: isReadOnly,
+      });
       input.setOrigin(0, 0);
 
       inputContainer.add(inputBg);
@@ -104,14 +119,12 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
 
       const config = args[0] as FormModalConfig;
 
-      this.submitAction = config.buttonActions.length
-        ? config.buttonActions[0]
-        : null;
+      this.submitAction = config.buttonActions.length ? config.buttonActions[0] : null;
 
       if (this.buttonBgs.length) {
         this.buttonBgs[0].off("pointerdown");
         this.buttonBgs[0].on("pointerdown", () => {
-          if (this.submitAction) {
+          if (this.submitAction && globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
             this.submitAction();
           }
         });
@@ -122,10 +135,10 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
 
       this.tween = globalScene.tweens.add({
         targets: this.modalContainer,
-        duration: Utils.fixedInt(1000),
+        duration: fixedInt(1000),
         ease: "Sine.easeInOut",
         y: "-=24",
-        alpha: 1
+        alpha: 1,
       });
 
       return true;
@@ -171,7 +184,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
 }
 
 export interface InputFieldConfig {
-  label: string,
-  isPassword?: boolean,
-  isReadOnly?: boolean
+  label: string;
+  isPassword?: boolean;
+  isReadOnly?: boolean;
 }

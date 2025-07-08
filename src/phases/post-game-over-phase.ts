@@ -1,15 +1,15 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import type { EndCardPhase } from "./end-card-phase";
-import { TitlePhase } from "./title-phase";
 
 export class PostGameOverPhase extends Phase {
-  private endCardPhase: EndCardPhase | null;
+  public readonly phaseName = "PostGameOverPhase";
+  private endCardPhase?: EndCardPhase;
 
   constructor(endCardPhase?: EndCardPhase) {
     super();
 
-    this.endCardPhase = endCardPhase!; // TODO: is this bang correct?
+    this.endCardPhase = endCardPhase;
   }
 
   start() {
@@ -20,14 +20,16 @@ export class PostGameOverPhase extends Phase {
         if (!success) {
           return globalScene.reset(true);
         }
-        globalScene.gameData.tryClearSession(globalScene.sessionSlotId).then((success: boolean | [boolean, boolean]) => {
-          if (!success[0]) {
-            return globalScene.reset(true);
-          }
-          globalScene.reset();
-          globalScene.unshiftPhase(new TitlePhase());
-          this.end();
-        });
+        globalScene.gameData
+          .tryClearSession(globalScene.sessionSlotId)
+          .then((success: boolean | [boolean, boolean]) => {
+            if (!success[0]) {
+              return globalScene.reset(true);
+            }
+            globalScene.reset();
+            globalScene.phaseManager.unshiftNew("TitlePhase");
+            this.end();
+          });
       });
     };
 

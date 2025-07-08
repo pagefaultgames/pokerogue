@@ -2,25 +2,25 @@ import { globalScene } from "#app/global-scene";
 import { SubstituteTag } from "#app/data/battler-tags";
 import type Pokemon from "#app/field/pokemon";
 import { BattlePhase } from "#app/phases/battle-phase";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
-import { Species } from "#enums/species";
-
+import { SpeciesId } from "#enums/species-id";
 
 export class PokemonAnimPhase extends BattlePhase {
+  public readonly phaseName = "PokemonAnimPhase";
   /** The type of animation to play in this phase */
-  private key: PokemonAnimType;
+  protected key: PokemonAnimType;
   /** The Pokemon to which this animation applies */
-  private pokemon: Pokemon;
+  protected pokemon: Pokemon;
   /** Any other field sprites affected by this animation */
-  private fieldAssets: Phaser.GameObjects.Sprite[];
+  protected fieldAssets: Phaser.GameObjects.Sprite[];
 
-  constructor(key: PokemonAnimType, pokemon: Pokemon, fieldAssets?: Phaser.GameObjects.Sprite[]) {
+  constructor(key: PokemonAnimType, pokemon: Pokemon, fieldAssets: Phaser.GameObjects.Sprite[] = []) {
     super();
 
     this.key = key;
     this.pokemon = pokemon;
-    this.fieldAssets = fieldAssets ?? [];
+    this.fieldAssets = fieldAssets;
   }
 
   start(): void {
@@ -53,26 +53,27 @@ export class PokemonAnimPhase extends BattlePhase {
   private doSubstituteAddAnim(): void {
     const substitute = this.pokemon.getTag(SubstituteTag);
     if (isNullOrUndefined(substitute)) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const getSprite = () => {
       const sprite = globalScene.addFieldSprite(
         this.pokemon.x + this.pokemon.getSprite().x,
         this.pokemon.y + this.pokemon.getSprite().y,
-        `pkmn${this.pokemon.isPlayer() ? "__back" : ""}__sub`
+        `pkmn${this.pokemon.isPlayer() ? "__back" : ""}__sub`,
       );
       sprite.setOrigin(0.5, 1);
       globalScene.field.add(sprite);
       return sprite;
     };
 
-    const [ subSprite, subTintSprite ] = [ getSprite(), getSprite() ];
+    const [subSprite, subTintSprite] = [getSprite(), getSprite()];
     const subScale = this.pokemon.getSpriteScale() * (this.pokemon.isPlayer() ? 0.5 : 1);
 
     subSprite.setVisible(false);
     subSprite.setScale(subScale);
-    subTintSprite.setTintFill(0xFFFFFF);
+    subTintSprite.setTintFill(0xffffff);
     subTintSprite.setScale(0.01);
 
     if (this.pokemon.isPlayer()) {
@@ -87,7 +88,7 @@ export class PokemonAnimPhase extends BattlePhase {
       x: this.pokemon.x + this.pokemon.getSubstituteOffset()[0],
       y: this.pokemon.y + this.pokemon.getSubstituteOffset()[1],
       alpha: 0.5,
-      ease: "Sine.easeIn"
+      ease: "Sine.easeIn",
     });
 
     globalScene.tweens.add({
@@ -108,27 +109,29 @@ export class PokemonAnimPhase extends BattlePhase {
             subTintSprite.destroy();
             substitute.sprite = subSprite;
             this.end();
-          }
+          },
         });
-      }
+      },
     });
   }
 
   private doSubstitutePreMoveAnim(): void {
     if (this.fieldAssets.length !== 1) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const subSprite = this.fieldAssets[0];
     if (subSprite === undefined) {
-      return this.end();
+      this.end();
+      return;
     }
 
     globalScene.tweens.add({
       targets: subSprite,
       alpha: 0,
       ease: "Sine.easeInOut",
-      duration: 500
+      duration: 500,
     });
 
     globalScene.tweens.add({
@@ -139,18 +142,20 @@ export class PokemonAnimPhase extends BattlePhase {
       ease: "Sine.easeInOut",
       delay: 250,
       duration: 500,
-      onComplete: () => this.end()
+      onComplete: () => this.end(),
     });
   }
 
   private doSubstitutePostMoveAnim(): void {
     if (this.fieldAssets.length !== 1) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const subSprite = this.fieldAssets[0];
     if (subSprite === undefined) {
-      return this.end();
+      this.end();
+      return;
     }
 
     globalScene.tweens.add({
@@ -159,7 +164,7 @@ export class PokemonAnimPhase extends BattlePhase {
       y: subSprite.y + this.pokemon.getSubstituteOffset()[1],
       alpha: 0.5,
       ease: "Sine.easeInOut",
-      duration: 500
+      duration: 500,
     });
 
     globalScene.tweens.add({
@@ -168,25 +173,27 @@ export class PokemonAnimPhase extends BattlePhase {
       ease: "Sine.easeInOut",
       delay: 250,
       duration: 500,
-      onComplete: () => this.end()
+      onComplete: () => this.end(),
     });
   }
 
   private doSubstituteRemoveAnim(): void {
     if (this.fieldAssets.length !== 1) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const subSprite = this.fieldAssets[0];
     if (subSprite === undefined) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const getSprite = () => {
       const sprite = globalScene.addFieldSprite(
         subSprite.x,
         subSprite.y,
-        `pkmn${this.pokemon.isPlayer() ? "__back" : ""}__sub`
+        `pkmn${this.pokemon.isPlayer() ? "__back" : ""}__sub`,
       );
       sprite.setOrigin(0.5, 1);
       globalScene.field.add(sprite);
@@ -196,7 +203,7 @@ export class PokemonAnimPhase extends BattlePhase {
     const subTintSprite = getSprite();
     const subScale = this.pokemon.getSpriteScale() * (this.pokemon.isPlayer() ? 0.5 : 1);
     subTintSprite.setAlpha(0);
-    subTintSprite.setTintFill(0xFFFFFF);
+    subTintSprite.setTintFill(0xffffff);
     subTintSprite.setScale(subScale);
 
     globalScene.tweens.add({
@@ -219,7 +226,7 @@ export class PokemonAnimPhase extends BattlePhase {
                 targets: subTintSprite,
                 scale: 0.01,
                 ease: "Sine.cubicEaseIn",
-                duration: 500
+                duration: 500,
               });
 
               globalScene.tweens.add({
@@ -233,31 +240,42 @@ export class PokemonAnimPhase extends BattlePhase {
                 onComplete: () => {
                   subTintSprite.destroy();
                   this.end();
-                }
+                },
               });
             }
-          }
+          },
         });
-      }
+      },
     });
   }
 
   private doCommanderApplyAnim(): void {
     if (!globalScene.currentBattle?.double) {
-      return this.end();
+      this.end();
+      return;
     }
     const dondozo = this.pokemon.getAlly();
 
-    if (dondozo?.species?.speciesId !== Species.DONDOZO) {
-      return this.end();
+    if (dondozo?.species?.speciesId !== SpeciesId.DONDOZO) {
+      this.end();
+      return;
     }
 
     const tatsugiriX = this.pokemon.x + this.pokemon.getSprite().x;
     const tatsugiriY = this.pokemon.y + this.pokemon.getSprite().y;
 
     const getSourceSprite = () => {
-      const sprite = globalScene.addPokemonSprite(this.pokemon, tatsugiriX, tatsugiriY, this.pokemon.getSprite().texture, this.pokemon.getSprite()!.frame.name, true);
-      [ "spriteColors", "fusionSpriteColors" ].map(k => sprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k]);
+      const sprite = globalScene.addPokemonSprite(
+        this.pokemon,
+        tatsugiriX,
+        tatsugiriY,
+        this.pokemon.getSprite().texture,
+        this.pokemon.getSprite()!.frame.name,
+        true,
+      );
+      ["spriteColors", "fusionSpriteColors"].map(
+        k => (sprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k]),
+      );
       sprite.setPipelineData("spriteKey", this.pokemon.getBattleSpriteKey());
       sprite.setPipelineData("shiny", this.pokemon.shiny);
       sprite.setPipelineData("variant", this.pokemon.variant);
@@ -281,8 +299,14 @@ export class PokemonAnimPhase extends BattlePhase {
       targets: sourceSprite,
       duration: 375,
       scale: 0.5,
-      x: { value: tatsugiriX + (dondozoFpOffset[0] - sourceFpOffset[0]) / 2, ease: "Linear" },
-      y: { value: (this.pokemon.isPlayer() ? 100 : 65) + sourceFpOffset[1], ease: "Sine.easeOut" },
+      x: {
+        value: tatsugiriX + (dondozoFpOffset[0] - sourceFpOffset[0]) / 2,
+        ease: "Linear",
+      },
+      y: {
+        value: (this.pokemon.isPlayer() ? 100 : 65) + sourceFpOffset[1],
+        ease: "Sine.easeOut",
+      },
       onComplete: () => {
         globalScene.field.bringToTop(dondozo);
         globalScene.tweens.add({
@@ -300,11 +324,11 @@ export class PokemonAnimPhase extends BattlePhase {
               ease: "Sine.easeInOut",
               scale: 0.85,
               yoyo: true,
-              onComplete: () => this.end()
+              onComplete: () => this.end(),
             });
-          }
+          },
         });
-      }
+      },
     });
   }
 
@@ -314,7 +338,8 @@ export class PokemonAnimPhase extends BattlePhase {
     const tatsugiri = this.pokemon.getAlly();
     if (isNullOrUndefined(tatsugiri)) {
       console.warn("Aborting COMMANDER_REMOVE anim: Tatsugiri is undefined");
-      return this.end();
+      this.end();
+      return;
     }
 
     const tatsuSprite = globalScene.addPokemonSprite(
@@ -323,9 +348,11 @@ export class PokemonAnimPhase extends BattlePhase {
       this.pokemon.y + this.pokemon.getSprite().y + this.pokemon.height / 2,
       tatsugiri.getSprite().texture,
       tatsugiri.getSprite()!.frame.name,
-      true
+      true,
     );
-    [ "spriteColors", "fusionSpriteColors" ].map(k => tatsuSprite.pipelineData[k] = tatsugiri.getSprite().pipelineData[k]);
+    ["spriteColors", "fusionSpriteColors"].map(
+      k => (tatsuSprite.pipelineData[k] = tatsugiri.getSprite().pipelineData[k]),
+    );
     tatsuSprite.setPipelineData("spriteKey", tatsugiri.getBattleSpriteKey());
     tatsuSprite.setPipelineData("shiny", tatsugiri.shiny);
     tatsuSprite.setPipelineData("variant", tatsugiri.variant);
@@ -352,14 +379,17 @@ export class PokemonAnimPhase extends BattlePhase {
           duration: 500,
           scale: 1,
           x: { value: tatsugiri.x + tatsugiri.getSprite().x, ease: "Linear" },
-          y: { value: tatsugiri.y + tatsugiri.getSprite().y, ease: "Sine.easeIn" },
+          y: {
+            value: tatsugiri.y + tatsugiri.getSprite().y,
+            ease: "Sine.easeIn",
+          },
           onComplete: () => {
             tatsugiri.setVisible(true);
             tatsuSprite.destroy();
             this.end();
-          }
+          },
         });
-      }
+      },
     });
   }
 }
