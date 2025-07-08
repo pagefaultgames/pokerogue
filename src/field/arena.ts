@@ -981,14 +981,15 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     this.base = globalScene.addFieldSprite(0, 0, "plains_a", undefined, 1);
     this.base.setOrigin(0, 0);
 
-    this.props = !player
-      ? new Array(3).fill(null).map(() => {
-          const ret = globalScene.addFieldSprite(0, 0, "plains_b", undefined, 1);
-          ret.setOrigin(0, 0);
-          ret.setVisible(false);
-          return ret;
-        })
-      : [];
+    this.props = [];
+    if (!player) {
+      for (let i = 0; i < 3; i++) {
+        const ret = globalScene.addFieldSprite(0, 0, "plains_b", undefined, 1);
+        ret.setOrigin(0, 0);
+        ret.setVisible(false);
+        this.props.push(ret);
+      }
+    }
   }
 
   setBiome(biome: BiomeId, propValue?: number): void {
