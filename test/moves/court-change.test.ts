@@ -62,6 +62,7 @@ describe("Move - Court Change", () => {
     const ninjask = game.field.getPlayerPokemon();
 
     game.move.use(MoveId.SAFEGUARD);
+    await game.move.forceEnemyMove(MoveId.TOXIC_THREAD);
     await game.toNextTurn();
 
     // Ninjask will not be poisoned because of Safeguard
