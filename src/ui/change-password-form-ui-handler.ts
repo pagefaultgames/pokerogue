@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-// import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { UiMode } from "#enums/ui-mode";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
