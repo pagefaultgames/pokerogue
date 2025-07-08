@@ -36,6 +36,7 @@ describe("Move - Court Change", () => {
   it("should swap combined Pledge effects to the opposite side", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.SHUCKLE]);
+
     const regieleki = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
