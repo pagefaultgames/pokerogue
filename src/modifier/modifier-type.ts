@@ -2766,7 +2766,7 @@ function getNewModifierTypeOption(
     baseTier = randomBaseTier();
   }
   if (isNullOrUndefined(upgradeCount)) {
-    upgradeCount = allowLuckUpgrades ? getUpgradeCount(party, player, baseTier) : 0;
+    upgradeCount = allowLuckUpgrades && player ? getUpgradeCount(party, baseTier) : 0;
     tier = baseTier + upgradeCount;
   } else {
     tier = baseTier;
@@ -2808,25 +2808,18 @@ function getNewModifierTypeOption(
 }
 
 function getPoolThresholds(poolType: ModifierPoolType) {
-  let thresholds: object;
   switch (poolType) {
     case ModifierPoolType.PLAYER:
-      thresholds = modifierPoolThresholds;
-      break;
+      return modifierPoolThresholds;
     case ModifierPoolType.WILD:
-      thresholds = enemyModifierPoolThresholds;
-      break;
+      return enemyModifierPoolThresholds;
     case ModifierPoolType.TRAINER:
-      thresholds = enemyModifierPoolThresholds;
-      break;
+      return enemyModifierPoolThresholds;
     case ModifierPoolType.ENEMY_BUFF:
-      thresholds = enemyBuffModifierPoolThresholds;
-      break;
+      return enemyBuffModifierPoolThresholds;
     case ModifierPoolType.DAILY_STARTER:
-      thresholds = dailyStarterModifierPoolThresholds;
-      break;
+      return dailyStarterModifierPoolThresholds;
   }
-  return thresholds;
 }
 
 function randomBaseTier(): ModifierTier {
@@ -2849,22 +2842,19 @@ function randomBaseTier(): ModifierTier {
 
 function getUpgradeCount(
   party: Pokemon[],
-  player: boolean,
   baseTier: ModifierTier,
   allowLuckUpgrades = true,
 ): ModifierTier {
   const pool = getModifierPoolForType(ModifierPoolType.PLAYER);
   let upgradeCount = 0;
-  if (player) {
-    if (baseTier < ModifierTier.MASTER && allowLuckUpgrades) {
-      const partyLuckValue = getPartyLuckValue(party);
-      const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
-      while (pool.hasOwnProperty(baseTier + upgradeCount + 1) && pool[baseTier + upgradeCount + 1].length) {
-        if (randSeedInt(upgradeOdds) < 4) {
-          upgradeCount++;
-        } else {
-          break;
-        }
+  if (baseTier < ModifierTier.MASTER && allowLuckUpgrades) {
+    const partyLuckValue = getPartyLuckValue(party);
+    const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
+    while (pool.hasOwnProperty(baseTier + upgradeCount + 1) && pool[baseTier + upgradeCount + 1].length) {
+      if (randSeedInt(upgradeOdds) < 4) {
+        upgradeCount++;
+      } else {
+        break;
       }
     }
   }
