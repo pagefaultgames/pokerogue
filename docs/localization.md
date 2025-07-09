@@ -1,6 +1,6 @@
 # Localization 101
 
-PokéRogue's localization team puts immense effort into making the game accessible around the world, supporting over 12 different languages at the time of writing this document. \
+PokéRogue's localization team puts immense effort into making the game accessible around the world, supporting over 12 different languages at the time of writing this document.  
 As a developer, it's important to help maintain global accessibility by effectively coordinating with the Translation Team on any new features or enhancements.
 
 This document aims to cover everything you need to know to help keep the integration process for localization smooth and simple.
@@ -28,7 +28,6 @@ The parent repo (the "superproject") houses a cloned version of the 2nd reposito
 >
 > ![Image showing Visual Studio Code's Source Control tab. A separate dropdown can be seen for each individual submodule.](https://github.com/user-attachments/assets/8b4d3f64-aec1-4474-91df-03dc1252a2fa "Making commits on submodules without even changing directories!")
 
-From the perspective of the main project, the locales submodule is fairly simple to work with.
 ## Fetching Changes from Submodules
 
 The following command will initialize your branch's locales repository and update its HEAD:
@@ -36,10 +35,10 @@ The following command will initialize your branch's locales repository and updat
 git submodule update --init --recursive
 ```
 
-> [!INFO]
-> This is run _automatically_ after cloning, merging or changing branches, so you should rarely have to run it manually.
+> [!TIP]
+> This command is run _automatically_ after cloning, merging or changing branches, so you should rarely have to run it manually.
 
-> [!WARNING]
+> [!IMPORTANT]
 > If you run into issues with the `locales` submodule, try deleting the `.git/modules/public` and `public/locales` folders before re-running the command.
 
 ## How Are Translations Integrated?
@@ -66,7 +65,7 @@ The basic process for fetching translated text goes roughly as follows:
     ```
 
 # Submitting Locales Changes
-If you have a feature or enhancement that requires additions or changes to in-game text, you will need to make a fork of the `pokerogue-locales` repo and submit your text changes as a pull request _in addition_ to your pull request to the main project. \
+If you have a feature or enhancement that requires additions or changes to in-game text, you will need to make a fork of the `pokerogue-locales` repo and submit your text changes as a pull request _in addition_ to your pull request to the main project.  
 Since these two PRs aren't _technically_ linked, it's important to coordinate with the Translation Team to ensure that both PRs are integrated safely into the project.
 
 > [!CAUTION]
@@ -78,8 +77,8 @@ One perk of submodules is you don't actually _need_ to clone the locales reposit
 
 Given `pokerogue-locales` is a full-fledged `git` repository _inside_ `pokerogue`, making changes is roughly the same as normal, merely using `public/locales` as your root directory.
 
-> [!IMPORTANT]
-> Make sure to checkout or rebase onto `upstream/HEAD` **BEFORE** creating a PR! \
+> [!WARNING]
+> Make sure to checkout or rebase onto `upstream/HEAD` **BEFORE** creating a PR!
 > The checked-out commit is based on the superproject's SHA-1 by default, so hastily making changes may see you basing your commits on last week's `HEAD`.
 
 ## Requirements for Adding Translated Text
@@ -88,7 +87,7 @@ When your new feature or enhancement requires adding a new locales key **without
 If this feature requires new text, the text should be integrated into the code with a new `i18next` key pointing to where you plan to add it into the locales repository.
 2. You then make another pull request — this time to the `pokerogue-locales` repository — adding a new entry with text for each key you added to your main PR.
   - You must add the corresponding **English keys** while making the PR; the Translation Team can take care of the rest[^2].
-  - For any feature pulled from the mainline Pokémon games (e.g. a Move or Ability implementation), it's best practice to include a source link for any added text. \
+  - For any feature pulled from the mainline Pokémon games (e.g. a Move or Ability implementation), it's best practice to include a source link for any added text.  
   [Poké Corpus](https://abcboy101.github.io/poke-corpus/) is a great resource for finding text from the mainline games; otherwise, a video/picture showing the text being displayed should suffice.
   - You should also [notify the current Head of Translation](#notifying-translation) to ensure a fast response.
 3. At this point, you may begin [testing locales integration in your main PR](#documenting-locales-changes).
