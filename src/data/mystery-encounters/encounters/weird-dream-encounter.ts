@@ -29,7 +29,6 @@ import {
   TransformationScreenPosition,
 } from "#app/data/mystery-encounters/utils/encounter-transformation-sequence";
 import { getLevelTotalExp } from "#app/data/exp";
-import { Stat } from "#enums/stat";
 import { Challenges } from "#enums/challenges";
 import { RewardTier } from "#enums/reward-tier";
 import { PlayerGender } from "#enums/player-gender";
@@ -102,8 +101,6 @@ const EXCLUDED_TRANSFORMATION_SPECIES = [
 
 const SUPER_LEGENDARY_BST_THRESHOLD = 600;
 const NON_LEGENDARY_BST_THRESHOLD = 570;
-
-const OLD_GATEAU_STATS_UP = 20;
 
 /** 0-100 */
 const PERCENT_LEVEL_LOSS_ON_REFUSE = 10;
@@ -269,14 +266,8 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
 
         // Any pokemon that is below 570 BST gets +20 permanent BST to 3 stats
         if (shouldGetOldGateau(newPokemon)) {
-          const stats = getOldGateauBoostedStats(newPokemon);
-          const gateauItem = {
-            id: HeldItemId.OLD_GATEAU,
-            stack: 1,
-            data: { statModifier: OLD_GATEAU_STATS_UP, stats: stats },
-          } as HeldItemSpecs;
           newPokemonHeldItemConfig.push({
-            entry: gateauItem,
+            entry: HeldItemId.OLD_GATEAU,
             count: 1,
           });
         }
@@ -452,18 +443,11 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
 
     // Any pokemon that is below 570 BST gets +20 permanent BST to 3 stats
     if (shouldGetOldGateau(newPokemon)) {
-      const stats = getOldGateauBoostedStats(newPokemon);
-      const gateauItem = {
-        id: HeldItemId.OLD_GATEAU,
-        stack: 1,
-        data: { statModifier: OLD_GATEAU_STATS_UP, stats: stats },
-      } as HeldItemSpecs;
       heldItemConfiguration.push({
-        entry: gateauItem,
+        entry: HeldItemId.OLD_GATEAU,
         count: 1,
       });
     }
-    assignItemsFromConfiguration(heldItemConfiguration, newPokemon);
 
     newPokemon.calculateStats();
     await newPokemon.updateInfo();
@@ -609,22 +593,6 @@ async function postProcessTransformedPokemon(
  */
 function shouldGetOldGateau(pokemon: Pokemon): boolean {
   return pokemon.getSpeciesForm().getBaseStatTotal() < NON_LEGENDARY_BST_THRESHOLD;
-}
-
-/**
- * Get the lowest of HP/Spd, lowest of Atk/SpAtk, and lowest of Def/SpDef
- * @returns Array of 3 {@linkcode Stat}s to boost
- */
-function getOldGateauBoostedStats(pokemon: Pokemon): Stat[] {
-  const stats: Stat[] = [];
-  const baseStats = pokemon.getSpeciesForm().baseStats.slice(0);
-  // HP or Speed
-  stats.push(baseStats[Stat.HP] < baseStats[Stat.SPD] ? Stat.HP : Stat.SPD);
-  // Attack or SpAtk
-  stats.push(baseStats[Stat.ATK] < baseStats[Stat.SPATK] ? Stat.ATK : Stat.SPATK);
-  // Def or SpDef
-  stats.push(baseStats[Stat.DEF] < baseStats[Stat.SPDEF] ? Stat.DEF : Stat.SPDEF);
-  return stats;
 }
 
 function getTransformedSpecies(

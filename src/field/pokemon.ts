@@ -79,7 +79,6 @@ import {
   TarShotTag,
   AutotomizedTag,
   PowerTrickTag,
-  loadBattlerTag,
   type GrudgeTag,
 } from "../data/battler-tags";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
@@ -130,7 +129,14 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { Challenges } from "#enums/challenges";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import {
+  CustomPokemonData,
+  PokemonBattleData,
+  PokemonSummonData,
+  PokemonTempSummonData,
+  PokemonTurnData,
+  PokemonWaveData,
+} from "#app/data/pokemon/pokemon-data";
 import { SwitchType } from "#enums/switch-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { getStatusEffectOverlapText } from "#app/data/status-effect";
@@ -154,8 +160,10 @@ import { isVirtual, isIgnorePP, MoveUseMode } from "#enums/move-use-mode";
 import { FieldPosition } from "#enums/field-position";
 import { HitResult } from "#enums/hit-result";
 import { AiType } from "#enums/ai-type";
-import type { MoveResult } from "#enums/move-result";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
+import type { IllusionData } from "#app/@types/illusion-data";
+import type { TurnMove } from "#app/@types/turn-move";
+import type { DamageCalculationResult, DamageResult } from "#app/@types/damage-result";
 import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#app/@types/ability-types";
 import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
@@ -6803,242 +6811,4 @@ export class EnemyPokemon extends Pokemon {
   toggleFlyout(visible: boolean): void {
     this.battleInfo.toggleFlyout(visible);
   }
-}
-
-/**
- * Illusion property
- */
-interface IllusionData {
-  basePokemon: {
-    /** The actual name of the Pokemon */
-    name: string;
-    /** The actual nickname of the Pokemon */
-    nickname: string;
-    /** Whether the base pokemon is shiny or not */
-    shiny: boolean;
-    /** The shiny variant of the base pokemon */
-    variant: Variant;
-    /** Whether the fusion species of the base pokemon is shiny or not */
-    fusionShiny: boolean;
-    /** The variant of the fusion species of the base pokemon */
-    fusionVariant: Variant;
-  };
-  /** The species of the illusion */
-  species: SpeciesId;
-  /** The formIndex of the illusion */
-  formIndex: number;
-  /** The gender of the illusion */
-  gender: Gender;
-  /** The pokeball of the illusion */
-  pokeball: PokeballType;
-  /** The fusion species of the illusion if it's a fusion */
-  fusionSpecies?: PokemonSpecies;
-  /** The fusionFormIndex of the illusion */
-  fusionFormIndex?: number;
-  /** The fusionGender of the illusion if it's a fusion */
-  fusionGender?: Gender;
-  /** The level of the illusion (not used currently) */
-  level?: number;
-}
-
-export interface TurnMove {
-  move: MoveId;
-  targets: BattlerIndex[];
-  useMode: MoveUseMode;
-  result?: MoveResult;
-  turn?: number;
-}
-
-export interface AttackMoveResult {
-  move: MoveId;
-  result: DamageResult;
-  damage: number;
-  critical: boolean;
-  sourceId: number;
-  sourceBattlerIndex: BattlerIndex;
-}
-
-/**
- * Persistent in-battle data for a {@linkcode Pokemon}.
- * Resets on switch or new battle.
- */
-export class PokemonSummonData {
-  /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
-  public statStages: number[] = [0, 0, 0, 0, 0, 0, 0];
-  /**
-   * A queue of moves yet to be executed, used by charging, recharging and frenzy moves.
-   * So long as this array is nonempty, this Pokemon's corresponding `CommandPhase` will be skipped over entirely
-   * in favor of using the queued move.
-   * TODO: Clean up a lot of the code surrounding the move queue.
-   */
-  public moveQueue: TurnMove[] = [];
-  public tags: BattlerTag[] = [];
-  public abilitySuppressed = false;
-
-  // Overrides for transform.
-  // TODO: Move these into a separate class & add rage fist hit count
-  public speciesForm: PokemonSpeciesForm | null = null;
-  public fusionSpeciesForm: PokemonSpeciesForm | null = null;
-  public ability: AbilityId | undefined;
-  public passiveAbility: AbilityId | undefined;
-  public gender: Gender | undefined;
-  public fusionGender: Gender | undefined;
-  public stats: number[] = [0, 0, 0, 0, 0, 0];
-  public moveset: PokemonMove[] | null;
-
-  // If not initialized this value will not be populated from save data.
-  public types: PokemonType[] = [];
-  public addedType: PokemonType | null = null;
-
-  /** Data pertaining to this pokemon's illusion. */
-  public illusion: IllusionData | null = null;
-  public illusionBroken = false;
-
-  /** Array containing all berries eaten in the last turn; used by {@linkcode AbilityId.CUD_CHEW} */
-  public berriesEatenLast: BerryType[] = [];
-
-  /**
-   * An array of all moves this pokemon has used since entering the battle.
-   * Used for most moves and abilities that check prior move usage or copy already-used moves.
-   */
-  public moveHistory: TurnMove[] = [];
-
-  constructor(source?: PokemonSummonData | Partial<PokemonSummonData>) {
-    if (isNullOrUndefined(source)) {
-      return;
-    }
-
-    // TODO: Rework this into an actual generic function for use elsewhere
-    for (const [key, value] of Object.entries(source)) {
-      if (isNullOrUndefined(value) && this.hasOwnProperty(key)) {
-        continue;
-      }
-
-      if (key === "moveset") {
-        this.moveset = value?.map((m: any) => PokemonMove.loadMove(m));
-        continue;
-      }
-
-      if (key === "tags") {
-        // load battler tags
-        this.tags = value.map((t: BattlerTag) => loadBattlerTag(t));
-        continue;
-      }
-      this[key] = value;
-    }
-  }
-}
-
-// TODO: Merge this inside `summmonData` but exclude from save if/when a save data serializer is added
-export class PokemonTempSummonData {
-  /**
-   * The number of turns this pokemon has spent without switching out.
-   * Only currently used for positioning the battle cursor.
-   */
-  turnCount = 1;
-
-  /**
-   * The number of turns this pokemon has spent in the active position since the start of the wave
-   * without switching out.
-   * Reset on switch and new wave, but not stored in `SummonData` to avoid being written to the save file.
-
-   * Used to evaluate "first turn only" conditions such as
-   * {@linkcode MoveId.FAKE_OUT | Fake Out} and {@linkcode MoveId.FIRST_IMPRESSION | First Impression}).
-   */
-  waveTurnCount = 1;
-}
-
-/**
- * Persistent data for a {@linkcode Pokemon}.
- * Resets at the start of a new battle (but not on switch).
- */
-export class PokemonBattleData {
-  /** Counter tracking direct hits this Pokemon has received during this battle; used for {@linkcode MoveId.RAGE_FIST} */
-  public hitCount = 0;
-  /** Whether this Pokemon has eaten a berry this battle; used for {@linkcode MoveId.BELCH} */
-  public hasEatenBerry = false;
-  /** Array containing all berries eaten and not yet recovered during this current battle; used by {@linkcode AbilityId.HARVEST} */
-  public berriesEaten: BerryType[] = [];
-
-  constructor(source?: PokemonBattleData | Partial<PokemonBattleData>) {
-    if (!isNullOrUndefined(source)) {
-      this.hitCount = source.hitCount ?? 0;
-      this.hasEatenBerry = source.hasEatenBerry ?? false;
-      this.berriesEaten = source.berriesEaten ?? [];
-    }
-  }
-}
-
-/**
- * Temporary data for a {@linkcode Pokemon}.
- * Resets on new wave/battle start (but not on switch).
- */
-export class PokemonWaveData {
-  /** Whether the pokemon has endured due to a {@linkcode BattlerTagType.ENDURE_TOKEN} */
-  public endured = false;
-  /**
-   * A set of all the abilities this {@linkcode Pokemon} has used in this wave.
-   * Used to track once per battle conditions, as well as (hopefully) by the updated AI for move effectiveness.
-   */
-  public abilitiesApplied: Set<AbilityId> = new Set<AbilityId>();
-  /** Whether the pokemon's ability has been revealed or not */
-  public abilityRevealed = false;
-}
-
-/**
- * Temporary data for a {@linkcode Pokemon}.
- * Resets at the start of a new turn, as well as on switch.
- */
-export class PokemonTurnData {
-  public acted = false;
-  /** How many times the current move should hit the target(s) */
-  public hitCount = 0;
-  /**
-   * - `-1` = Calculate how many hits are left
-   * - `0` = Move is finished
-   */
-  public hitsLeft = -1;
-  public totalDamageDealt = 0;
-  public singleHitDamageDealt = 0;
-  public damageTaken = 0;
-  public attacksReceived: AttackMoveResult[] = [];
-  public order: number;
-  public statStagesIncreased = false;
-  public statStagesDecreased = false;
-  public moveEffectiveness: TypeDamageMultiplier | null = null;
-  public combiningPledge?: MoveId;
-  public switchedInThisTurn = false;
-  public failedRunAway = false;
-  public joinedRound = false;
-  /**
-   * The amount of times this Pokemon has acted again and used a move in the current turn.
-   * Used to make sure multi-hits occur properly when the user is
-   * forced to act again in the same turn, and **must be incremented** by any effects that grant extra actions.
-   */
-  public extraTurns = 0;
-  /**
-   * All berries eaten by this pokemon in this turn.
-   * Saved into {@linkcode PokemonSummonData | SummonData} by {@linkcode AbilityId.CUD_CHEW} on turn end.
-   * @see {@linkcode PokemonSummonData.berriesEatenLast}
-   */
-  public berriesEaten: BerryType[] = [];
-}
-
-export type DamageResult =
-  | HitResult.EFFECTIVE
-  | HitResult.SUPER_EFFECTIVE
-  | HitResult.NOT_VERY_EFFECTIVE
-  | HitResult.ONE_HIT_KO
-  | HitResult.CONFUSION
-  | HitResult.INDIRECT_KO
-  | HitResult.INDIRECT;
-
-/** Interface containing the results of a damage calculation for a given move */
-export interface DamageCalculationResult {
-  /** `true` if the move was cancelled (thus suppressing "No Effect" messages) */
-  cancelled: boolean;
-  /** The effectiveness of the move */
-  result: HitResult;
-  /** The damage dealt by the move */
-  damage: number;
 }

@@ -1195,7 +1195,16 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
   }
 }
 
-export class PostDefendCritStatStageChangeAbAttr extends PostDefendAbAttr {
+/**
+ * Set stat stages when the user gets hit by a critical hit
+ *
+ * @privateremarks
+ * It is the responsibility of the caller to ensure that this ability attribute is only applied
+ * when the user has been hit by a critical hit; such an event is not checked here.
+ *
+ * @sealed
+ */
+export class PostReceiveCritStatStageChangeAbAttr extends AbAttr {
   private stat: BattleStat;
   private stages: number;
 
@@ -1216,12 +1225,6 @@ export class PostDefendCritStatStageChangeAbAttr extends PostDefendAbAttr {
         this.stages,
       );
     }
-  }
-
-  override getCondition(): AbAttrCondition {
-    return (pokemon: Pokemon) =>
-      pokemon.turnData.attacksReceived.length !== 0 &&
-      pokemon.turnData.attacksReceived[pokemon.turnData.attacksReceived.length - 1].critical;
   }
 }
 
@@ -6389,7 +6392,7 @@ const AbilityAttrs = Object.freeze({
   PostDefendContactApplyStatusEffectAbAttr,
   EffectSporeAbAttr,
   PostDefendContactApplyTagChanceAbAttr,
-  PostDefendCritStatStageChangeAbAttr,
+  PostReceiveCritStatStageChangeAbAttr,
   PostDefendContactDamageAbAttr,
   PostDefendPerishSongAbAttr,
   PostDefendWeatherChangeAbAttr,
@@ -6858,7 +6861,7 @@ export function initAbilities() {
     new Ability(AbilityId.GLUTTONY, 4)
       .attr(ReduceBerryUseThresholdAbAttr),
     new Ability(AbilityId.ANGER_POINT, 4)
-      .attr(PostDefendCritStatStageChangeAbAttr, Stat.ATK, 6),
+      .attr(PostReceiveCritStatStageChangeAbAttr, Stat.ATK, 12),
     new Ability(AbilityId.UNBURDEN, 4)
       .attr(PostItemLostApplyBattlerTagAbAttr, BattlerTagType.UNBURDEN)
       .bypassFaint() // Allows reviver seed to activate Unburden
@@ -7235,11 +7238,14 @@ export function initAbilities() {
     new Ability(AbilityId.MERCILESS, 7)
       .attr(ConditionalCritAbAttr, (_user, target, _move) => target?.status?.effect === StatusEffect.TOXIC || target?.status?.effect === StatusEffect.POISON),
     new Ability(AbilityId.SHIELDS_DOWN, 7, -1)
-      .attr(PostBattleInitFormChangeAbAttr, () => 0)
+      // Change into Meteor Form on switch-in or turn end if HP >= 50%,
+      // or Core Form if HP <= 50%.
+      .attr(PostBattleInitFormChangeAbAttr, p => p.formIndex % 7)
       .attr(PostSummonFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostTurnFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
-      .conditionalAttr(p => p.formIndex !== 7, StatusEffectImmunityAbAttr)
-      .conditionalAttr(p => p.formIndex !== 7, BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
+      // All variants of Meteor Form are immune to status effects & Yawn
+      .conditionalAttr(p => p.formIndex < 7, StatusEffectImmunityAbAttr)
+      .conditionalAttr(p => p.formIndex < 7, BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .attr(NoFusionAbilityAbAttr)
       .attr(NoTransformAbilityAbAttr)
       .uncopiable()
@@ -7305,12 +7311,11 @@ export function initAbilities() {
       .unsuppressable()
       .bypassFaint(),
     new Ability(AbilityId.POWER_CONSTRUCT, 7)
-      .conditionalAttr(pokemon => pokemon.formIndex === 2 || pokemon.formIndex === 4, PostBattleInitFormChangeAbAttr, () => 2)
-      .conditionalAttr(pokemon => pokemon.formIndex === 3 || pokemon.formIndex === 5, PostBattleInitFormChangeAbAttr, () => 3)
-      .conditionalAttr(pokemon => pokemon.formIndex === 2 || pokemon.formIndex === 4, PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "complete" ? 4 : 2)
-      .conditionalAttr(pokemon => pokemon.formIndex === 2 || pokemon.formIndex === 4, PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "complete" ? 4 : 2)
-      .conditionalAttr(pokemon => pokemon.formIndex === 3 || pokemon.formIndex === 5, PostSummonFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "10-complete" ? 5 : 3)
-      .conditionalAttr(pokemon => pokemon.formIndex === 3 || pokemon.formIndex === 5, PostTurnFormChangeAbAttr, p => p.getHpRatio() <= 0.5 || p.getFormKey() === "10-complete" ? 5 : 3)
+      // Change to 10% complete or 50% complete on switchout/turn end if at <50% HP;
+      // revert to 10% PC or 50% PC before a new battle starts
+      .conditionalAttr(p => p.formIndex === 4 || p.formIndex === 5, PostBattleInitFormChangeAbAttr, p => p.formIndex - 2)
+      .conditionalAttr(p => p.getHpRatio() <= 0.5 && (p.formIndex === 2 || p.formIndex === 3), PostSummonFormChangeAbAttr, p => p.formIndex + 2)
+      .conditionalAttr(p => p.getHpRatio() <= 0.5 && (p.formIndex === 2 || p.formIndex === 3), PostTurnFormChangeAbAttr, p => p.formIndex + 2)
       .attr(NoFusionAbilityAbAttr)
       .uncopiable()
       .unreplaceable()

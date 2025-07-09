@@ -30,7 +30,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { Gender } from "#app/data/gender";
 import type { PermanentStat } from "#enums/stat";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 import type { AbilityId } from "#enums/ability-id";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";

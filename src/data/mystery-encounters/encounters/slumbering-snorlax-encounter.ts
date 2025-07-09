@@ -25,7 +25,7 @@ import { AiType } from "#enums/ai-type";
 import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 import { randSeedInt } from "#app/utils/common";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveUseMode } from "#enums/move-use-mode";

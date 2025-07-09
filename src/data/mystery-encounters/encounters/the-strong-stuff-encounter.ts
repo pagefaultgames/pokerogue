@@ -21,7 +21,7 @@ import { MoveId } from "#enums/move-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { HeldItemId } from "#enums/held-item-id";
@@ -51,7 +51,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withFleeAllowed(false)
   .withIntroSpriteConfigs([
     {
-      spriteKey: "berry_juice",
+      spriteKey: "berry_juice_good",
       fileRoot: "items",
       hasShadow: true,
       isItem: true,
