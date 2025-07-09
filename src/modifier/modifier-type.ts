@@ -2457,12 +2457,31 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
 }
 
 export interface CustomModifierSettings {
+  /** If specified, will override the next X items to be the specified tier. These can upgrade with luck. */
   guaranteedModifierTiers?: ModifierTier[];
+  /** If specified, will override the first X items to be specific modifier options (these should be pre-genned). */
   guaranteedModifierTypeOptions?: ModifierTypeOption[];
+  /** If specified, will override the next X items to be auto-generated from specific modifier functions (these don't have to be pre-genned). */
   guaranteedModifierTypeFuncs?: ModifierTypeFunc[];
+  /**
+   * If set to `true`, will fill the remainder of shop items that were not overridden by the 3 options above, up to the `count` param value.
+   * @example
+   * ```ts
+   * count = 4;
+   * customModifierSettings = { guaranteedModifierTiers: [ModifierTier.GREAT], fillRemaining: true };
+   * ```
+   * The first item in the shop will be `GREAT` tier, and the remaining `3` items will be generated normally.
+   *
+   * If `fillRemaining: false` in the same scenario, only 1 `GREAT` tier item will appear in the shop (regardless of the value of `count`).
+   * @defaultValue `false`
+   */
   fillRemaining?: boolean;
-  /** Set to negative value to disable rerolls completely in shop */
+  /** If specified, can adjust the amount of money required for a shop reroll. If set to a negative value, the shop will not allow rerolls at all. */
   rerollMultiplier?: number;
+  /**
+   * If `false`, will prevent set item tiers from upgrading via luck.
+   * @defaultValue `true`
+   */
   allowLuckUpgrades?: boolean;
 }
 
@@ -2472,19 +2491,10 @@ export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
 
 /**
  * Generates modifier options for a {@linkcode SelectModifierPhase}
- * @param count Determines the number of items to generate
- * @param party Party is required for generating proper modifier pools
- * @param modifierTiers (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
- * @param customModifierSettings (Optional) If specified, can customize the item shop rewards further.
- *  - `guaranteedModifierTypeOptions?: ModifierTypeOption[]` If specified, will override the first X items to be specific modifier options (these should be pre-genned).
- *  - `guaranteedModifierTypeFuncs?: ModifierTypeFunc[]` If specified, will override the next X items to be auto-generated from specific modifier functions (these don't have to be pre-genned).
- *  - `guaranteedModifierTiers?: ModifierTier[]` If specified, will override the next X items to be the specified tier. These can upgrade with luck.
- *  - `fillRemaining?: boolean` Default 'false'. If set to true, will fill the remainder of shop items that were not overridden by the 3 options above, up to the 'count' param value.
- *    - Example: `count = 4`, `customModifierSettings = { guaranteedModifierTiers: [ModifierTier.GREAT], fillRemaining: true }`,
- *    - The first item in the shop will be `GREAT` tier, and the remaining 3 items will be generated normally.
- *    - If `fillRemaining = false` in the same scenario, only 1 `GREAT` tier item will appear in the shop (regardless of `count` value).
- *  - `rerollMultiplier?: number` If specified, can adjust the amount of money required for a shop reroll. If set to a negative value, the shop will not allow rerolls at all.
- *  - `allowLuckUpgrades?: boolean` Default `true`, if `false` will prevent set item tiers from upgrading via luck
+ * @param count - Determines the number of items to generate
+ * @param party - Party is required for generating proper modifier pools
+ * @param modifierTiers - (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
+ * @param customModifierSettings - See {@linkcode CustomModifierSettings}
  */
 export function getPlayerModifierTypeOptions(
   count: number,
@@ -2495,16 +2505,10 @@ export function getPlayerModifierTypeOptions(
   const options: ModifierTypeOption[] = [];
   const retryCount = Math.min(count * 5, 50);
   if (!customModifierSettings) {
-    new Array(count).fill(0).map((_, i) => {
-      options.push(
-        getModifierTypeOptionWithRetry(
-          options,
-          retryCount,
-          party,
-          modifierTiers && modifierTiers.length > i ? modifierTiers[i] : undefined,
-        ),
-      );
-    });
+    for (let i = 0; i < count; i++) {
+      const tier = modifierTiers && modifierTiers.length > i ? modifierTiers[i] : undefined;
+      options.push(getModifierTypeOptionWithRetry(options, retryCount, party, tier));
+    }
   } else {
     // Guaranteed mod options first
     if (
