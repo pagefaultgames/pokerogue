@@ -1,6 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import { Gender, getGenderSymbol } from "#app/data/gender";
-import { PokeballType } from "#enums/pokeball";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonType } from "#enums/pokemon-type";
 import { coerceArray, isNullOrUndefined, randSeedInt } from "#app/utils/common";
@@ -100,6 +99,7 @@ const EvoCondKey = {
   GENDER: 13,
   NATURE: 14,
   HELD_ITEM: 15, // Currently checks only for species stat booster items
+  USE_MOVE_COUNT: 16,
 } as const;
 
 type EvolutionConditionData =
@@ -114,6 +114,7 @@ type EvolutionConditionData =
   {key: typeof EvoCondKey.NATURE, nature: Nature[]} |
   {key: typeof EvoCondKey.WEATHER, weather: WeatherType[]} |
   {key: typeof EvoCondKey.TYROGUE, move: TyrogueMove} |
+  {key: typeof EvoCondKey.USE_MOVE_COUNT, move: MoveId, value: number} |
   {key: typeof EvoCondKey.SHEDINJA};
 
 export class SpeciesEvolutionCondition {
@@ -157,6 +158,8 @@ export class SpeciesEvolutionCondition {
           return i18next.t("pokemonEvolutions:caught", {species: getPokemonSpecies(cond.speciesCaught).name});
         case EvoCondKey.HELD_ITEM:
           return i18next.t(`pokemonEvolutions:heldItem.${cond.itemKey}`);
+        case EvoCondKey.USE_MOVE_COUNT:
+          return i18next.t("pokemonEvolutions:moveUseCount", {move: allMoves[cond.move].name, count: cond.value});
       }
     }).filter(s => !isNullOrUndefined(s)); // Filter out stringless conditions
     return this.desc;
@@ -201,14 +204,12 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.SPECIES_CAUGHT:
           return !!globalScene.gameData.dexData[cond.speciesCaught].caughtAttr;
         case EvoCondKey.HELD_ITEM:
-          return pokemon.getHeldItems().some(m => m.is("SpeciesStatBoosterModifier") && (m.type as SpeciesStatBoosterModifierType).key === cond.itemKey)
+          return pokemon.getHeldItems().some(m => m.is("SpeciesStatBoosterModifier") && (m.type as SpeciesStatBoosterModifierType).key === cond.itemKey);
+        case EvoCondKey.USE_MOVE_COUNT:
+          return pokemon.getHeldItems().some(m => m.is("MoveTrackerModifier") && m.shouldApply(pokemon, cond.move) && m.getStackCount() >= cond.value);
       }
     });
   }
-}
-
-export function validateShedinjaEvo(): boolean {
-  return globalScene.getPlayerParty().length < 6 && globalScene.pokeballCounts[PokeballType.POKEBALL] > 0;
 }
 
 export class SpeciesFormEvolution {
@@ -1550,7 +1551,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.MAMOSWINE, 1, null, {key: EvoCondKey.MOVE, move: MoveId.ANCIENT_POWER}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.STANTLER]: [
-    new SpeciesEvolution(SpeciesId.WYRDEER, 25, null, {key: EvoCondKey.MOVE, move: MoveId.PSYSHIELD_BASH}, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.WYRDEER, 25, null, {key: EvoCondKey.USE_MOVE_COUNT, move: MoveId.PSYSHIELD_BASH, value: 10}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.LOMBRE]: [
     new SpeciesEvolution(SpeciesId.LUDICOLO, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1796,7 +1797,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.ALOLA_GOLEM, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.PRIMEAPE]: [
-    new SpeciesEvolution(SpeciesId.ANNIHILAPE, 35, null, {key: EvoCondKey.MOVE, move: MoveId.RAGE_FIST}, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.ANNIHILAPE, 35, null, {key: EvoCondKey.USE_MOVE_COUNT, move: MoveId.RAGE_FIST, value: 10}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.GOLBAT]: [
     new SpeciesEvolution(SpeciesId.CROBAT, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 120}, SpeciesWildEvolutionDelay.VERY_LONG)

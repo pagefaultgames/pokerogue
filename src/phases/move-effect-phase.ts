@@ -50,6 +50,7 @@ import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { DamageAchv } from "#app/system/achv";
 import { isVirtual, isReflected, MoveUseMode } from "#enums/move-use-mode";
+import { handleMoveUseTracker } from "#app/utils/evolution-utils";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
@@ -803,6 +804,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
     if (this.lastHit) {
       globalScene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
+      handleMoveUseTracker(user, this.move.id);
 
       // Multi-hit check for Wimp Out/Emergency Exit
       if (user.turnData.hitCount > 1) {
