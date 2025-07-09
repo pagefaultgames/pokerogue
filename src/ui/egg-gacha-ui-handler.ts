@@ -299,8 +299,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     this.eggGachaContainer.add(this.eggGachaOptionsContainer);
 
-    new Array(getEnumKeys(VoucherType).length).fill(null).map((_, i) => {
-      const container = globalScene.add.container(globalScene.game.canvas.width / 6 - 56 * i, 0);
+    for (const voucher of getEnumValues(VoucherType)) {
+      const container = globalScene.add.container(globalScene.game.canvas.width / 6 - 56 * voucher, 0);
 
       const bg = addWindow(0, 0, 56, 22);
       bg.setOrigin(1, 0);
@@ -312,7 +312,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       this.voucherCountLabels.push(countLabel);
 
-      const iconImage = getVoucherTypeIcon(i as VoucherType);
+      const iconImage = getVoucherTypeIcon(voucher);
 
       const icon = globalScene.add.sprite(-19, 2, "items", iconImage);
       icon.setOrigin(0, 0);
@@ -320,7 +320,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       container.add(icon);
 
       this.eggGachaContainer.add(container);
-    });
+    }
 
     this.eggGachaOverlay = globalScene.add.rectangle(0, 0, bg.displayWidth, bg.displayHeight, 0x000000);
     this.eggGachaOverlay.setOrigin(0, 0);
@@ -625,7 +625,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     const infoContainer = this.gachaInfoContainers[gachaType];
     switch (gachaType as GachaType) {
       case GachaType.LEGENDARY: {
-        const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(new Date().getTime()));
+        const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(Date.now()));
         const pokemonIcon = infoContainer.getAt(1) as Phaser.GameObjects.Sprite;
         pokemonIcon.setTexture(species.getIconAtlasKey(), species.getIconId(false));
         break;

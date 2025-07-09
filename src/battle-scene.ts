@@ -18,6 +18,7 @@ import {
   isNullOrUndefined,
   BooleanHolder,
   type Constructor,
+  isBetween,
 } from "#app/utils/common";
 import { deepMergeSpriteData } from "#app/utils/data";
 import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "./modifier/modifier";
@@ -67,7 +68,7 @@ import { modifierTypes } from "./data/data-lists";
 import { getModifierPoolForType } from "./utils/modifier-utils";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import AbilityBar from "#app/ui/ability-bar";
-import { applyAbAttrs, applyPostBattleInitAbAttrs, applyPostItemLostAbAttrs } from "./data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "./data/abilities/apply-ab-attrs";
 import { allAbilities } from "./data/data-lists";
 import type { FixedBattleConfig } from "#app/battle";
 import Battle from "#app/battle";
@@ -163,10 +164,6 @@ import { startingWave } from "./starting-wave";
 import { PhaseManager } from "./phase-manager";
 
 const DEBUG_RNG = false;
-
-const OPP_IVS_OVERRIDE_VALIDATED: number[] = (
-  Array.isArray(Overrides.OPP_IVS_OVERRIDE) ? Overrides.OPP_IVS_OVERRIDE : new Array(6).fill(Overrides.OPP_IVS_OVERRIDE)
-).map(iv => (Number.isNaN(iv) || iv === null || iv > 31 ? -1 : iv));
 
 export interface PokeballCounts {
   [pb: string]: number;
@@ -468,7 +465,7 @@ export default class BattleScene extends SceneBase {
       true,
     );
 
-    //@ts-ignore (the defined types in the package are incromplete...)
+    //@ts-expect-error (the defined types in the package are incromplete...)
     transition.transit({
       mode: "blinds",
       ease: "Cubic.easeInOut",
@@ -800,12 +797,14 @@ export default class BattleScene extends SceneBase {
   // TODO: Add `undefined` to return type
   /**
    * Returns an array of PlayerPokemon of length 1 or 2 depending on if in a double battle or not.
-   * Does not actually check if the pokemon are on the field or not.
+   * @param active - (Default `false`) Whether to consider only {@linkcode Pokemon.isActive | active} on-field pokemon
    * @returns array of {@linkcode PlayerPokemon}
    */
-  public getPlayerField(): PlayerPokemon[] {
+  public getPlayerField(active = false): PlayerPokemon[] {
     const party = this.getPlayerParty();
-    return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
+    return party
+      .slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1))
+      .filter(p => !active || p.isActive());
   }
 
   public getEnemyParty(): EnemyPokemon[] {
@@ -894,9 +893,19 @@ export default class BattleScene extends SceneBase {
     return activeOnly ? this.infoToggles.filter(t => t?.isActive()) : this.infoToggles;
   }
 
-  getPokemonById(pokemonId: number): Pokemon | null {
-    const findInParty = (party: Pokemon[]) => party.find(p => p.id === pokemonId);
-    return (findInParty(this.getPlayerParty()) || findInParty(this.getEnemyParty())) ?? null;
+  /**
+   * Return the {@linkcode Pokemon} associated with a given ID.
+   * @param pokemonId - The ID whose Pokemon will be retrieved.
+   * @returns The {@linkcode Pokemon} associated with the given id.
+   * Returns `null` if the ID is `undefined` or not present in either party.
+   */
+  getPokemonById(pokemonId: number | undefined): Pokemon | null {
+    if (isNullOrUndefined(pokemonId)) {
+      return null;
+    }
+
+    const party = (this.getPlayerParty() as Pokemon[]).concat(this.getEnemyParty());
+    return party.find(p => p.id === pokemonId) ?? null;
   }
 
   addPlayerPokemon(
@@ -924,9 +933,32 @@ export default class BattleScene extends SceneBase {
       nature,
       dataSource,
     );
+
     if (postProcess) {
       postProcess(pokemon);
     }
+
+    if (Overrides.IVS_OVERRIDE === null) {
+      // do nothing
+    } else if (Array.isArray(Overrides.IVS_OVERRIDE)) {
+      if (Overrides.IVS_OVERRIDE.length !== 6) {
+        throw new Error("The Player IVs override must be an array of length 6 or a number!");
+      }
+      if (Overrides.IVS_OVERRIDE.some(value => !isBetween(value, 0, 31))) {
+        throw new Error("All IVs in the player IV override must be between 0 and 31!");
+      }
+      pokemon.ivs = Overrides.IVS_OVERRIDE;
+    } else {
+      if (!isBetween(Overrides.IVS_OVERRIDE, 0, 31)) {
+        throw new Error("The Player IV override must be a value between 0 and 31!");
+      }
+      pokemon.ivs = new Array(6).fill(Overrides.IVS_OVERRIDE);
+    }
+
+    if (Overrides.NATURE_OVERRIDE !== null) {
+      pokemon.nature = Overrides.NATURE_OVERRIDE;
+    }
+
     pokemon.init();
     return pokemon;
   }
@@ -971,10 +1003,25 @@ export default class BattleScene extends SceneBase {
       postProcess(pokemon);
     }
 
-    for (let i = 0; i < pokemon.ivs.length; i++) {
-      if (OPP_IVS_OVERRIDE_VALIDATED[i] > -1) {
-        pokemon.ivs[i] = OPP_IVS_OVERRIDE_VALIDATED[i];
+    if (Overrides.ENEMY_IVS_OVERRIDE === null) {
+      // do nothing
+    } else if (Array.isArray(Overrides.ENEMY_IVS_OVERRIDE)) {
+      if (Overrides.ENEMY_IVS_OVERRIDE.length !== 6) {
+        throw new Error("The Enemy IVs override must be an array of length 6 or a number!");
       }
+      if (Overrides.ENEMY_IVS_OVERRIDE.some(value => !isBetween(value, 0, 31))) {
+        throw new Error("All IVs in the enemy IV override must be between 0 and 31!");
+      }
+      pokemon.ivs = Overrides.ENEMY_IVS_OVERRIDE;
+    } else {
+      if (!isBetween(Overrides.ENEMY_IVS_OVERRIDE, 0, 31)) {
+        throw new Error("The Enemy IV override must be a value between 0 and 31!");
+      }
+      pokemon.ivs = new Array(6).fill(Overrides.ENEMY_IVS_OVERRIDE);
+    }
+
+    if (Overrides.ENEMY_NATURE_OVERRIDE !== null) {
+      pokemon.nature = Overrides.ENEMY_NATURE_OVERRIDE;
     }
 
     pokemon.init();
@@ -1167,7 +1214,7 @@ export default class BattleScene extends SceneBase {
       this.field.remove(this.currentBattle.mysteryEncounter?.introVisuals, true);
     }
 
-    //@ts-ignore  - allowing `null` for currentBattle causes a lot of trouble
+    //@ts-expect-error  - allowing `null` for currentBattle causes a lot of trouble
     this.currentBattle = null; // TODO: resolve ts-ignore
 
     // Reset RNG after end of game or save & quit.
@@ -1256,7 +1303,7 @@ export default class BattleScene extends SceneBase {
     const doubleChance = new NumberHolder(newWaveIndex % 10 === 0 ? 32 : 8);
     this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
     for (const p of playerField) {
-      applyAbAttrs("DoubleBattleChanceAbAttr", p, null, false, doubleChance);
+      applyAbAttrs("DoubleBattleChanceAbAttr", { pokemon: p, chance: doubleChance });
     }
     return Math.max(doubleChance.value, 1);
   }
@@ -1461,7 +1508,7 @@ export default class BattleScene extends SceneBase {
         for (const pokemon of this.getPlayerParty()) {
           pokemon.resetBattleAndWaveData();
           pokemon.resetTera();
-          applyPostBattleInitAbAttrs("PostBattleInitAbAttr", pokemon);
+          applyAbAttrs("PostBattleInitAbAttr", { pokemon });
           if (
             pokemon.hasSpecies(SpeciesId.TERAPAGOS) ||
             (this.gameMode.isClassic && this.currentBattle.waveIndex > 180 && this.currentBattle.waveIndex <= 190)
@@ -2478,6 +2525,10 @@ export default class BattleScene extends SceneBase {
         return 10.344;
       case "battle_legendary_zac_zam": //SWSH Zacian & Zamazenta Battle
         return 11.424;
+      case "battle_legendary_eternatus_p1": //SWSH Eternatus Battle
+        return 11.102;
+      case "battle_legendary_eternatus_p2": //SWSH Eternamax Eternatus Battle
+        return 0.0;
       case "battle_legendary_glas_spec": //SWSH Glastrier & Spectrier Battle
         return 12.503;
       case "battle_legendary_calyrex": //SWSH Calyrex Battle
@@ -2743,7 +2794,7 @@ export default class BattleScene extends SceneBase {
     const cancelled = new BooleanHolder(false);
 
     if (source && source.isPlayer() !== target.isPlayer()) {
-      applyAbAttrs("BlockItemTheftAbAttr", source, cancelled);
+      applyAbAttrs("BlockItemTheftAbAttr", { pokemon: source, cancelled });
     }
 
     if (cancelled.value) {
@@ -2783,13 +2834,13 @@ export default class BattleScene extends SceneBase {
           if (target.isPlayer()) {
             this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant);
             if (source && itemLost) {
-              applyPostItemLostAbAttrs("PostItemLostAbAttr", source, false);
+              applyAbAttrs("PostItemLostAbAttr", { pokemon: source });
             }
             return true;
           }
           this.addEnemyModifier(newItemModifier, ignoreUpdate, instant);
           if (source && itemLost) {
-            applyPostItemLostAbAttrs("PostItemLostAbAttr", source, false);
+            applyAbAttrs("PostItemLostAbAttr", { pokemon: source });
           }
           return true;
         }
@@ -2812,7 +2863,7 @@ export default class BattleScene extends SceneBase {
     const cancelled = new BooleanHolder(false);
 
     if (source && source.isPlayer() !== target.isPlayer()) {
-      applyAbAttrs("BlockItemTheftAbAttr", source, cancelled);
+      applyAbAttrs("BlockItemTheftAbAttr", { pokemon: source, cancelled });
     }
 
     if (cancelled.value) {
@@ -3237,7 +3288,7 @@ export default class BattleScene extends SceneBase {
       (!this.gameData.achvUnlocks.hasOwnProperty(achv.id) || Overrides.ACHIEVEMENTS_REUNLOCK_OVERRIDE) &&
       achv.validate(args)
     ) {
-      this.gameData.achvUnlocks[achv.id] = new Date().getTime();
+      this.gameData.achvUnlocks[achv.id] = Date.now();
       this.ui.achvBar.showAchv(achv);
       if (vouchers.hasOwnProperty(achv.id)) {
         this.validateVoucher(vouchers[achv.id]);
@@ -3250,7 +3301,7 @@ export default class BattleScene extends SceneBase {
 
   validateVoucher(voucher: Voucher, args?: unknown[]): boolean {
     if (!this.gameData.voucherUnlocks.hasOwnProperty(voucher.id) && voucher.validate(args)) {
-      this.gameData.voucherUnlocks[voucher.id] = new Date().getTime();
+      this.gameData.voucherUnlocks[voucher.id] = Date.now();
       this.ui.achvBar.showAchv(voucher);
       this.gameData.voucherCounts[voucher.voucherType]++;
       return true;

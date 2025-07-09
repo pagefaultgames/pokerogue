@@ -650,8 +650,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.KIRLIA, 20, null, null)
   ],
   [SpeciesId.KIRLIA]: [
-    new SpeciesEvolution(SpeciesId.GARDEVOIR, 30, null, {key: EvoCondKey.GENDER, gender: Gender.FEMALE}),
-    new SpeciesEvolution(SpeciesId.GALLADE, 30, null, {key: EvoCondKey.GENDER, gender: Gender.MALE})
+    new SpeciesEvolution(SpeciesId.GARDEVOIR, 30, null, null),
+    new SpeciesEvolution(SpeciesId.GALLADE, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.MALE})
   ],
   [SpeciesId.SURSKIT]: [
     new SpeciesEvolution(SpeciesId.MASQUERAIN, 22, null, null)
@@ -739,8 +739,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.DUSCLOPS, 37, null, null)
   ],
   [SpeciesId.SNORUNT]: [
-    new SpeciesEvolution(SpeciesId.GLALIE, 42, null, {key: EvoCondKey.GENDER, gender: Gender.MALE}),
-    new SpeciesEvolution(SpeciesId.FROSLASS, 42, null, {key: EvoCondKey.GENDER, gender: Gender.FEMALE})
+    new SpeciesEvolution(SpeciesId.GLALIE, 42, null, null),
+    new SpeciesEvolution(SpeciesId.FROSLASS, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.FEMALE})
   ],
   [SpeciesId.SPHEAL]: [
     new SpeciesEvolution(SpeciesId.SEALEO, 32, null, null)

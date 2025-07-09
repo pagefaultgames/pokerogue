@@ -483,13 +483,14 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     starterBoxContainer.add(this.starterSelectScrollBar);
 
-    this.pokerusCursorObjs = new Array(POKERUS_STARTER_COUNT).fill(null).map(() => {
+    this.pokerusCursorObjs = [];
+    for (let i = 0; i < POKERUS_STARTER_COUNT; i++) {
       const cursorObj = globalScene.add.image(0, 0, "select_cursor_pokerus");
       cursorObj.setVisible(false);
       cursorObj.setOrigin(0, 0);
       starterBoxContainer.add(cursorObj);
-      return cursorObj;
-    });
+      this.pokerusCursorObjs.push(cursorObj);
+    }
 
     this.cursorObj = globalScene.add.image(0, 0, "select_cursor");
     this.cursorObj.setOrigin(0, 0);
@@ -1389,7 +1390,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       const fitsMoves = fitsMove1 && fitsMove2;
 
       if (fitsEggMove1 && !fitsLevelMove1) {
-        const em1 = eggMoves.findIndex(name => name === selectedMove1);
+        const em1 = eggMoves.indexOf(selectedMove1);
         if ((starterData.eggMoves & (1 << em1)) === 0) {
           data.eggMove1 = false;
         } else {
@@ -1399,7 +1400,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         data.tmMove1 = true;
       }
       if (fitsEggMove2 && !fitsLevelMove2) {
-        const em2 = eggMoves.findIndex(name => name === selectedMove2);
+        const em2 = eggMoves.indexOf(selectedMove2);
         if ((starterData.eggMoves & (1 << em2)) === 0) {
           data.eggMove2 = false;
         } else {

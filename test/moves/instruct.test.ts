@@ -1,12 +1,13 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { RandomMoveAttr } from "#app/data/moves/move";
+import type { TurnMove } from "#app/@types/turn-move";
 import { allMoves } from "#app/data/data-lists";
+import { RandomMoveAttr } from "#app/data/moves/move";
 import type Pokemon from "#app/field/pokemon";
-import { MoveResult } from "#enums/move-result";
 import type { MovePhase } from "#app/phases/move-phase";
 import { AbilityId } from "#enums/ability-id";
-import { MoveUseMode } from "#enums/move-use-mode";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
@@ -202,21 +203,32 @@ describe("Moves - Instruct", () => {
     game.override.battleStyle("double").enemyMoveset(MoveId.SPLASH).enemySpecies(SpeciesId.MAGIKARP).enemyLevel(1);
     await game.classicMode.startBattle([SpeciesId.HISUI_ELECTRODE, SpeciesId.KOMMO_O]);
 
-    const [electrode, kommo_o] = game.scene.getPlayerField()!;
-    game.move.changeMoveset(electrode, MoveId.CHLOROBLAST);
+    const [electrode, kommo_o] = game.scene.getPlayerField();
+    game.move.changeMoveset(electrode, MoveId.THUNDERBOLT);
     game.move.changeMoveset(kommo_o, MoveId.INSTRUCT);
 
-    game.move.select(MoveId.CHLOROBLAST, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(MoveId.THUNDERBOLT, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(MoveId.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
-    await game.phaseInterceptor.to("BerryPhase");
+    await game.toEndOfTurn();
 
-    // Chloroblast always deals 50% max HP% recoil UNLESS you whiff
-    // due to lack of targets or similar,
-    // so all we have to do is check whether electrode fainted or not.
-    // Naturally, both karps should also be dead as well.
-    expect(electrode.isFainted()).toBe(true);
-    const [karp1, karp2] = game.scene.getEnemyField()!;
+    expect(electrode.getMoveHistory()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining<TurnMove>({
+          result: MoveResult.SUCCESS,
+          move: MoveId.THUNDERBOLT,
+          targets: [BattlerIndex.ENEMY],
+          useMode: MoveUseMode.NORMAL,
+        }),
+        expect.objectContaining<TurnMove>({
+          result: MoveResult.SUCCESS,
+          move: MoveId.THUNDERBOLT,
+          targets: [BattlerIndex.ENEMY_2],
+          useMode: MoveUseMode.NORMAL,
+        }),
+      ]),
+    );
+    const [karp1, karp2] = game.scene.getEnemyField();
     expect(karp1.isFainted()).toBe(true);
     expect(karp2.isFainted()).toBe(true);
   });
@@ -349,7 +361,7 @@ describe("Moves - Instruct", () => {
       useMode: MoveUseMode.NORMAL,
     });
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
     expect(game.field.getEnemyPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
