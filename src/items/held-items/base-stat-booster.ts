@@ -36,7 +36,7 @@ export class BaseStatBoosterHeldItem extends HeldItem {
   public effects: HeldItemEffect[] = [HeldItemEffect.BASE_STAT_BOOSTER];
   public stat: PermanentStat;
 
-  constructor(type: HeldItemId, maxStackCount = 1, stat: PermanentStat) {
+  constructor(type: HeldItemId, maxStackCount: number, stat: PermanentStat) {
     super(type, maxStackCount);
     this.stat = stat;
   }

@@ -16,7 +16,7 @@ export class ExpBoosterHeldItem extends HeldItem {
   private boostPercent: number;
   private boostMultiplier: number;
 
-  constructor(type: HeldItemId, maxStackCount = 1, boostPercent: number) {
+  constructor(type: HeldItemId, maxStackCount: number, boostPercent: number) {
     super(type, maxStackCount);
     this.boostPercent = boostPercent;
     this.boostMultiplier = boostPercent * 0.01;

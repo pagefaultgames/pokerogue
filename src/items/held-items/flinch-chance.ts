@@ -19,7 +19,7 @@ export class FlinchChanceHeldItem extends HeldItem {
   public effects: HeldItemEffect[] = [HeldItemEffect.FLINCH_CHANCE];
   private chance: number;
 
-  constructor(type: HeldItemId, maxStackCount = 1, chance: number) {
+  constructor(type: HeldItemId, maxStackCount: number, chance: number) {
     super(type, maxStackCount);
 
     this.chance = chance; // 10

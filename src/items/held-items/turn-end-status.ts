@@ -19,7 +19,7 @@ export class TurnEndStatusHeldItem extends HeldItem {
   /** The status effect to be applied by the held item */
   public effect: StatusEffect;
 
-  constructor(type: HeldItemId, maxStackCount = 1, effect: StatusEffect) {
+  constructor(type: HeldItemId, maxStackCount: number, effect: StatusEffect) {
     super(type, maxStackCount);
 
     this.effect = effect;

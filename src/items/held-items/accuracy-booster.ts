@@ -15,7 +15,7 @@ export class AccuracyBoosterHeldItem extends HeldItem {
 
   private accuracyAmount: number;
 
-  constructor(type: HeldItemId, maxStackCount = 1, accuracy: number) {
+  constructor(type: HeldItemId, maxStackCount: number, accuracy: number) {
     super(type, maxStackCount);
     this.accuracyAmount = accuracy;
   }

@@ -18,7 +18,7 @@ export class EvoTrackerHeldItem extends HeldItem {
   protected required: number;
   public isTransferable = false;
 
-  constructor(type: HeldItemId, maxStackCount = 1, species: SpeciesId, required: number) {
+  constructor(type: HeldItemId, maxStackCount: number, species: SpeciesId, required: number) {
     super(type, maxStackCount);
     this.species = species;
     this.required = required;

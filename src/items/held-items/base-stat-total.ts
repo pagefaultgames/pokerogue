@@ -18,7 +18,7 @@ export class BaseStatTotalHeldItem extends HeldItem {
   public isTransferable = false;
   public statModifier: number;
 
-  constructor(type: HeldItemId, maxStackCount = 1, statModifier: number) {
+  constructor(type: HeldItemId, maxStackCount: number, statModifier: number) {
     super(type, maxStackCount);
     this.statModifier = statModifier;
   }

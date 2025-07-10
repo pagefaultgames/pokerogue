@@ -22,7 +22,7 @@ export class CritBoostHeldItem extends HeldItem {
   /** The amount of stages by which the held item increases the current critical-hit stage value */
   protected stageIncrement: number;
 
-  constructor(type: HeldItemId, maxStackCount = 1, stageIncrement: number) {
+  constructor(type: HeldItemId, maxStackCount: number, stageIncrement: number) {
     super(type, maxStackCount);
 
     this.stageIncrement = stageIncrement;
@@ -50,7 +50,7 @@ export class SpeciesCritBoostHeldItem extends CritBoostHeldItem {
   /** The species that the held item's critical-hit stage boost applies to */
   private species: SpeciesId[];
 
-  constructor(type: HeldItemId, maxStackCount = 1, stageIncrement: number, species: SpeciesId[]) {
+  constructor(type: HeldItemId, maxStackCount: number, stageIncrement: number, species: SpeciesId[]) {
     super(type, maxStackCount, stageIncrement);
 
     this.species = species;

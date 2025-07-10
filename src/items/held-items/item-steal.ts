@@ -15,7 +15,7 @@ export interface ItemStealParams {
   target?: Pokemon;
 }
 
-//  constructor(type: HeldItemId, maxStackCount = 1, boostPercent: number) {
+//  constructor(type: HeldItemId, maxStackCount: number, boostPercent: number) {
 
 /**
  * Abstract class for held items that steal other Pokemon's items.
@@ -129,7 +129,7 @@ export class ContactItemStealChanceHeldItem extends ItemTransferHeldItem {
   public readonly chancePercent: number;
   public readonly chance: number;
 
-  constructor(type: HeldItemId, maxStackCount = 1, chancePercent: number) {
+  constructor(type: HeldItemId, maxStackCount: number, chancePercent: number) {
     super(type, maxStackCount);
 
     this.chancePercent = chancePercent;

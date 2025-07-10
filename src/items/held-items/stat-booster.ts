@@ -26,7 +26,7 @@ export class StatBoostHeldItem extends HeldItem {
   /** The multiplier used to increase the relevant stat(s) */
   protected multiplier: number;
 
-  constructor(type: HeldItemId, maxStackCount = 1, stats: Stat[], multiplier: number) {
+  constructor(type: HeldItemId, maxStackCount: number, stats: Stat[], multiplier: number) {
     super(type, maxStackCount);
 
     this.stats = stats;
@@ -141,7 +141,7 @@ export class SpeciesStatBoostHeldItem extends StatBoostHeldItem {
 
   constructor(
     type: SpeciesStatBoosterItemId,
-    maxStackCount = 1,
+    maxStackCount: number,
     stats: Stat[],
     multiplier: number,
     species: SpeciesId[],
