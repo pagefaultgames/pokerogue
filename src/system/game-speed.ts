@@ -51,9 +51,9 @@ export function initGameSpeed(): void {
     }
   };
 
-  const originalAddEvent: = globalScene.time.addEvent;
+  const originalAddEvent = globalScene.time.addEvent;
   globalScene.time.addEvent = (config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig) => {
-    if (config instanceof Phaser.Types.Time.TimerEventConfig) {
+    if (!(config instanceof Phaser.Time.TimerEvent)) {
       config.delay = transformValue(config.delay);
     }
     return originalAddEvent.apply(globalScene, [config]);
@@ -62,10 +62,10 @@ export function initGameSpeed(): void {
   // Mutate tween functions
   for (const funcName of ["add", "addCounter", "chain", "create", "addMultiple"]) {
     const origTweenFunc = globalScene.tweens[funcName];
-    globalScene.tweens[funcName] = (config) => {
-      // TODO: Review whether `allowArray` is needed here
-      mutateProperties(config, funcName === "create" || funcName === "addMultiple");
-      return origTweenFunc.apply(globalScene, [config]);
+    globalScene.tweens[funcName] = (args) => {
+      // TODO: review what allowArray is used for and why it is necessary
+      mutateProperties(args, funcName === "create" || funcName === "addMultiple");
+      return origTweenFunc.apply(globalScene, [args]);
     }
   }
 
