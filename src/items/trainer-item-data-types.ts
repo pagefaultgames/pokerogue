@@ -1,3 +1,4 @@
+// TODO: move to `src/@types/`
 import type { RewardTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 

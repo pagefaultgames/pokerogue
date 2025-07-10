@@ -68,6 +68,7 @@ function mapModifierCategoryToItems(modifier: ModifierCategoryString, typeId: st
   if (modifier === "SpeciesStatBoosterModifier") {
     const stats = args[1];
     const species = args[3];
+    // TODO: why is this not `species === SpeciesId.SPECIES_NAME`?
     if (SpeciesId.PIKACHU in species) {
       return HeldItemId.LIGHT_BALL;
     }
