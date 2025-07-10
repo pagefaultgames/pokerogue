@@ -90,7 +90,7 @@ export class HeldItem {
   }
 
   createSummaryIcon(pokemon?: Pokemon, overrideStackCount?: number): Phaser.GameObjects.Container {
-    const stackCount = overrideStackCount ?? this.getStackCount(pokemon);
+    const stackCount = overrideStackCount ?? (pokemon ? this.getStackCount(pokemon) : 0);
 
     const container = globalScene.add.container(0, 0);
 

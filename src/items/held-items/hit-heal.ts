@@ -34,7 +34,7 @@ export class HitHealHeldItem extends HeldItem {
   apply(params: HIT_HEAL_PARAMS): boolean {
     const pokemon = params.pokemon;
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    if (pokemon.turnData.totalDamageDealt && !pokemon.isFullHp()) {
+    if (pokemon.turnData.totalDamageDealt > 0 && !pokemon.isFullHp()) {
       // TODO: this shouldn't be undefined AFAIK
       globalScene.unshiftPhase(
         new PokemonHealPhase(
