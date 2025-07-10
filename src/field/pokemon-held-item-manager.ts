@@ -10,6 +10,7 @@ import {
   type FormChangeItemSpecs,
   type HeldItemSaveData,
 } from "#app/items/held-item-data-types";
+import { getTypedEntries, getTypedKeys } from "#app/utils/common";
 
 export class PokemonItemManager {
   public heldItems: HeldItemDataMap;
@@ -34,58 +35,58 @@ export class PokemonItemManager {
 
   generateHeldItemConfiguration(restrictedIds?: HeldItemId[]): HeldItemConfiguration {
     const config: HeldItemConfiguration = [];
-    for (const [k, item] of Object.entries(this.heldItems)) {
-      const id = Number(k);
+    for (const [id, item] of getTypedEntries(this.heldItems)) {
       if (item && (!restrictedIds || id in restrictedIds)) {
         const specs: HeldItemSpecs = { ...item, id };
         config.push({ entry: specs, count: 1 });
       }
     }
-    for (const [k, item] of Object.entries(this.formChangeItems)) {
-      const id = Number(k);
-      const specs: FormChangeItemSpecs = { ...item, id };
-      config.push({ entry: specs, count: 1 });
+    for (const [id, item] of getTypedEntries(this.formChangeItems)) {
+      if (item) {
+        const specs: FormChangeItemSpecs = { ...item, id };
+        config.push({ entry: specs, count: 1 });
+      }
     }
     return config;
   }
 
   generateSaveData(): HeldItemSaveData {
     const saveData: HeldItemSaveData = [];
-    for (const [k, item] of Object.entries(this.heldItems)) {
-      const id = Number(k);
+    for (const [id, item] of getTypedEntries(this.heldItems)) {
       if (item) {
         const specs: HeldItemSpecs = { ...item, id };
         saveData.push(specs);
       }
     }
-    for (const [k, item] of Object.entries(this.formChangeItems)) {
-      const id = Number(k);
-      const specs: FormChangeItemSpecs = { ...item, id };
-      saveData.push(specs);
+    for (const [id, item] of getTypedEntries(this.formChangeItems)) {
+      if (item) {
+        const specs: FormChangeItemSpecs = { ...item, id };
+        saveData.push(specs);
+      }
     }
     return saveData;
   }
 
-  getHeldItems(): number[] {
-    return Object.keys(this.heldItems).map(k => Number(k));
+  getHeldItems(): HeldItemId[] {
+    return getTypedKeys(this.heldItems);
   }
 
-  getTransferableHeldItems(): number[] {
-    return Object.keys(this.heldItems)
+  getTransferableHeldItems(): HeldItemId[] {
+    return getTypedKeys(this.heldItems)
       .filter(k => allHeldItems[k].isTransferable)
-      .map(k => Number(k));
+      .map(k => k);
   }
 
-  getStealableHeldItems(): number[] {
-    return Object.keys(this.heldItems)
+  getStealableHeldItems(): HeldItemId[] {
+    return getTypedKeys(this.heldItems)
       .filter(k => allHeldItems[k].isStealable)
-      .map(k => Number(k));
+      .map(k => k);
   }
 
-  getSuppressableHeldItems(): number[] {
-    return Object.keys(this.heldItems)
+  getSuppressableHeldItems(): HeldItemId[] {
+    return getTypedKeys(this.heldItems)
       .filter(k => allHeldItems[k].isSuppressable)
-      .map(k => Number(k));
+      .map(k => k);
   }
 
   hasItem(itemType: HeldItemId): boolean {
@@ -93,7 +94,7 @@ export class PokemonItemManager {
   }
 
   hasItemCategory(categoryId: HeldItemCategoryId): boolean {
-    return Object.keys(this.heldItems).some(id => isItemInCategory(Number(id), categoryId));
+    return getTypedKeys(this.heldItems).some(id => isItemInCategory(id, categoryId));
   }
 
   getStack(itemType: HeldItemId): number {
@@ -117,7 +118,7 @@ export class PokemonItemManager {
   overrideItems(newItems: HeldItemDataMap) {
     this.heldItems = newItems;
     // The following is to allow randomly generated item configs to have stack 0
-    for (const [item, properties] of Object.entries(this.heldItems)) {
+    for (const [item, properties] of getTypedEntries(this.heldItems)) {
       if (!properties || properties.stack <= 0) {
         delete this.heldItems[item];
       }
@@ -208,7 +209,7 @@ export class PokemonItemManager {
   }
 
   getFormChangeItems(): FormChangeItem[] {
-    return Object.keys(this.formChangeItems).map(k => Number(k));
+    return getTypedKeys(this.formChangeItems).map(k => k);
   }
 
   getActiveFormChangeItems(): FormChangeItem[] {

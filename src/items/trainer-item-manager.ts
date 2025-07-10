@@ -7,6 +7,7 @@ import {
   type TrainerItemDataMap,
   type TrainerItemSpecs,
 } from "#app/items/trainer-item-data-types";
+import { getTypedEntries, getTypedKeys } from "#app/utils/common";
 
 export class TrainerItemManager {
   public trainerItems: TrainerItemDataMap;
@@ -29,8 +30,7 @@ export class TrainerItemManager {
 
   generateTrainerItemConfiguration(restrictedIds?: TrainerItemId[]): TrainerItemConfiguration {
     const config: TrainerItemConfiguration = [];
-    for (const [k, item] of Object.entries(this.trainerItems)) {
-      const id = Number(k);
+    for (const [id, item] of getTypedEntries(this.trainerItems)) {
       if (item && (!restrictedIds || id in restrictedIds)) {
         const specs: TrainerItemSpecs = { ...item, id };
         config.push({ entry: specs, count: 1 });
@@ -41,8 +41,7 @@ export class TrainerItemManager {
 
   generateSaveData(): TrainerItemSaveData {
     const saveData: TrainerItemSaveData = [];
-    for (const [k, item] of Object.entries(this.trainerItems)) {
-      const id = Number(k);
+    for (const [id, item] of getTypedEntries(this.trainerItems)) {
       if (item) {
         const specs: TrainerItemSpecs = { ...item, id };
         saveData.push(specs);
@@ -51,8 +50,8 @@ export class TrainerItemManager {
     return saveData;
   }
 
-  getTrainerItems(): number[] {
-    return Object.keys(this.trainerItems).map(k => Number(k));
+  getTrainerItems(): TrainerItemId[] {
+    return getTypedKeys(this.trainerItems);
   }
 
   hasItem(itemType: TrainerItemId): boolean {

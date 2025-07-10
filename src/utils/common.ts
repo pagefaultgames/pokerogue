@@ -285,6 +285,14 @@ export function getEnumValues(enumType: any): number[] {
     .map(v => Number.parseInt(v!.toString()));
 }
 
+export function getTypedKeys<T extends Record<number, any>, K extends number = Extract<keyof T, number>>(obj: T): K[] {
+  return Object.keys(obj).map(k => Number(k) as K);
+}
+
+export function getTypedEntries<T extends object>(obj: T): [keyof T, T[keyof T]][] {
+  return Object.entries(obj) as [keyof T, T[keyof T]][];
+}
+
 export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null> {
   return condition ? promiseFunc() : new Promise<T | null>(resolve => resolve(null));
 }
