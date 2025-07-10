@@ -1,50 +1,11 @@
-import { formChangeItemName } from "#app/data/pokemon-forms";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { allHeldItems } from "#app/data/data-lists";
 import { allTrainerItems } from "#app/data/data-lists";
 import type { TrainerItemManager } from "#app/items/trainer-item-manager";
-import type { FormChangeItem } from "#enums/form-change-item";
-import type { HeldItemId } from "#enums/held-item-id";
-import type { TrainerItemId } from "#enums/trainer-item-id";
+import { heldItemSortFunc, trainerItemSortFunc } from "#app/items/item-utility";
 
 const iconOverflowIndex = 24;
-
-export const trainerItemSortFunc = (a: TrainerItemId, b: TrainerItemId): number => {
-  const itemNameMatch = allTrainerItems[a].name.localeCompare(allTrainerItems[b].name);
-  const itemIdMatch = a - b;
-
-  if (itemIdMatch === 0) {
-    return itemNameMatch;
-    //Finally sort by item name
-  }
-  return itemIdMatch;
-};
-
-//TODO: revisit this function
-export const heldItemSortFunc = (a: HeldItemId, b: HeldItemId): number => {
-  const itemNameMatch = allHeldItems[a].name.localeCompare(allHeldItems[b].name);
-  const itemIdMatch = a - b;
-
-  if (itemIdMatch === 0) {
-    return itemNameMatch;
-    //Finally sort by item name
-  }
-  return itemIdMatch;
-};
-
-export const formChangeItemSortFunc = (a: FormChangeItem, b: FormChangeItem): number => {
-  const nameA = formChangeItemName(a);
-  const nameB = formChangeItemName(b);
-  const itemNameMatch = nameA.localeCompare(nameB);
-  const itemIdMatch = a - b;
-
-  if (itemIdMatch === 0) {
-    return itemNameMatch;
-    //Finally sort by item name
-  }
-  return itemIdMatch;
-};
 
 export class ItemBar extends Phaser.GameObjects.Container {
   private player: boolean;

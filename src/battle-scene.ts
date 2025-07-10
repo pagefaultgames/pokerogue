@@ -5,7 +5,7 @@ import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { allSpecies } from "#app/data/data-lists";
+import { allHeldItems, allSpecies, allTrainerItems } from "#app/data/data-lists";
 import {
   fixedInt,
   getIvsFromId,
@@ -140,7 +140,7 @@ import { hasExpSprite } from "./sprites/sprite-utils";
 import { timedEventManager } from "./global-event-manager";
 import { starterColors } from "./global-vars/starter-colors";
 import { startingWave } from "./starting-wave";
-import { allHeldItems, applyHeldItems } from "./items/all-held-items";
+import { applyHeldItems } from "./items/all-held-items";
 import { HELD_ITEM_EFFECT } from "./items/held-item";
 import { PhaseManager } from "./phase-manager";
 import { HeldItemId } from "#enums/held-item-id";
@@ -150,7 +150,6 @@ import { TrainerItemManager } from "./items/trainer-item-manager";
 import { type EnemyAttackStatusEffectChanceTrainerItem, TRAINER_ITEM_EFFECT } from "./items/trainer-item";
 import { applyTrainerItems, type APPLY_TRAINER_ITEMS_PARAMS } from "./items/apply-trainer-items";
 import { TrainerItemId } from "#enums/trainer-item-id";
-import { allTrainerItems } from "./items/all-trainer-items";
 import {
   isTrainerItemPool,
   isTrainerItemSpecs,
@@ -158,7 +157,7 @@ import {
   type TrainerItemConfiguration,
 } from "./items/trainer-item-data-types";
 import { getNewTrainerItemFromPool } from "./items/trainer-item-pool";
-import { ItemBar } from "./modifier/modifier-bar";
+import { ItemBar } from "./ui/item-bar-ui";
 
 const DEBUG_RNG = false;
 
@@ -304,8 +303,8 @@ export default class BattleScene extends SceneBase {
   private scoreText: Phaser.GameObjects.Text;
   private luckLabelText: Phaser.GameObjects.Text;
   private luckText: Phaser.GameObjects.Text;
-  private modifierBar: ItemBar;
-  private enemyModifierBar: ItemBar;
+  private itemBar: ItemBar;
+  private enemyItemBar: ItemBar;
   public arenaFlyout: ArenaFlyout;
 
   private fieldOverlay: Phaser.GameObjects.Rectangle;
@@ -498,15 +497,15 @@ export default class BattleScene extends SceneBase {
     this.trainerItems = new TrainerItemManager();
     this.enemyTrainerItems = new TrainerItemManager();
 
-    this.modifierBar = new ItemBar();
-    this.modifierBar.setName("modifier-bar");
-    this.add.existing(this.modifierBar);
-    uiContainer.add(this.modifierBar);
+    this.itemBar = new ItemBar();
+    this.itemBar.setName("modifier-bar");
+    this.add.existing(this.itemBar);
+    uiContainer.add(this.itemBar);
 
-    this.enemyModifierBar = new ItemBar(true);
-    this.enemyModifierBar.setName("enemy-modifier-bar");
-    this.add.existing(this.enemyModifierBar);
-    uiContainer.add(this.enemyModifierBar);
+    this.enemyItemBar = new ItemBar(true);
+    this.enemyItemBar.setName("enemy-modifier-bar");
+    this.add.existing(this.enemyItemBar);
+    uiContainer.add(this.enemyItemBar);
 
     this.charSprite = new CharSprite();
     this.charSprite.setName("sprite-char");
@@ -876,8 +875,8 @@ export default class BattleScene extends SceneBase {
    * @param isEnemy Whether to return the enemy's modifier bar
    * @returns {ModifierBar}
    */
-  getModifierBar(isEnemy?: boolean): ItemBar {
-    return isEnemy ? this.enemyModifierBar : this.modifierBar;
+  getItemBar(isEnemy?: boolean): ItemBar {
+    return isEnemy ? this.enemyItemBar : this.itemBar;
   }
 
   // store info toggles to be accessible by the ui
@@ -1199,8 +1198,8 @@ export default class BattleScene extends SceneBase {
 
     this.trainerItems.clearItems();
     this.enemyTrainerItems.clearItems();
-    this.modifierBar.removeAll(true);
-    this.enemyModifierBar.removeAll(true);
+    this.itemBar.removeAll(true);
+    this.enemyItemBar.removeAll(true);
 
     for (const p of this.getPlayerParty()) {
       p.destroy();
@@ -2004,11 +2003,11 @@ export default class BattleScene extends SceneBase {
   }
 
   showEnemyModifierBar(): void {
-    this.enemyModifierBar.setVisible(true);
+    this.enemyItemBar.setVisible(true);
   }
 
   hideEnemyModifierBar(): void {
-    this.enemyModifierBar.setVisible(false);
+    this.enemyItemBar.setVisible(false);
   }
 
   updateBiomeWaveText(): void {
@@ -2101,7 +2100,7 @@ export default class BattleScene extends SceneBase {
   }
 
   updateUIPositions(): void {
-    const enemyModifierCount = this.enemyModifierBar.totalVisibleLength;
+    const enemyModifierCount = this.enemyItemBar.totalVisibleLength;
     const biomeWaveTextHeight = this.biomeWaveText.getBottomLeft().y - this.biomeWaveText.getTopLeft().y;
     this.biomeWaveText.setY(
       -(this.game.canvas.height / 6) +
@@ -2913,7 +2912,7 @@ export default class BattleScene extends SceneBase {
   }
 
   setModifiersVisible(visible: boolean) {
-    [this.modifierBar, this.enemyModifierBar].map(m => m.setVisible(visible));
+    [this.itemBar, this.enemyItemBar].map(m => m.setVisible(visible));
   }
 
   // TODO: Document this
@@ -2924,7 +2923,7 @@ export default class BattleScene extends SceneBase {
 
     const pokemonA = player ? this.getPlayerParty()[0] : this.getEnemyParty()[0];
 
-    const bar = player ? this.modifierBar : this.enemyModifierBar;
+    const bar = player ? this.itemBar : this.enemyItemBar;
 
     if (showHeldItems) {
       bar.updateItems(trainerItems, pokemonA);

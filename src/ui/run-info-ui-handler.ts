@@ -26,8 +26,8 @@ import { getBiomeName } from "#app/data/balance/biomes";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import { allTrainerItems } from "#app/data/data-lists";
-import { heldItemSortFunc } from "#app/modifier/modifier-bar";
 import { allHeldItems } from "#app/data/data-lists";
+import { heldItemSortFunc } from "#app/items/item-utility";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -886,7 +886,7 @@ export default class RunInfoUiHandler extends UiHandler {
           heldItemsContainer.add(overflowIcon);
           break;
         }
-        const itemIcon = allHeldItems[item].createSummaryIcon(pokemon.heldItemManager.getStack(item));
+        const itemIcon = allHeldItems[item].createSummaryIcon(pokemon);
         if (!pokemon.heldItemManager.isMaxStack(item) && itemIcon.list[1] instanceof Phaser.GameObjects.BitmapText) {
           itemIcon.list[1].clearTint();
         }

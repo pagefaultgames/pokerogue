@@ -34,12 +34,12 @@ import { getVariantTint } from "#app/sprites/variant";
 import { Button } from "#enums/buttons";
 import type { Ability } from "#app/data/abilities/ability";
 import i18next from "i18next";
-import { heldItemSortFunc } from "#app/modifier/modifier-bar";
 import { PlayerGender } from "#enums/player-gender";
 import { Stat, PERMANENT_STATS, getStatKey } from "#enums/stat";
 import { Nature } from "#enums/nature";
 import { achvs } from "#app/system/achv";
 import { allHeldItems } from "#app/data/data-lists";
+import { heldItemSortFunc } from "#app/items/item-utility";
 
 enum Page {
   PROFILE,
@@ -1036,15 +1036,18 @@ export default class SummaryUiHandler extends UiHandler {
 
         heldItems?.forEach((itemKey, i) => {
           const heldItem = allHeldItems[itemKey];
-          const icon = heldItem.createSummaryIcon(this.pokemon?.heldItemManager.getStack(itemKey) ?? 0);
 
-          console.log(icon);
-          icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);
-          this.statsContainer.add(icon);
+          if (this.pokemon) {
+            const icon = heldItem.createSummaryIcon(this.pokemon);
 
-          icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
-          icon.on("pointerover", () => globalScene.ui.showTooltip(heldItem.name, heldItem.description, true));
-          icon.on("pointerout", () => globalScene.ui.hideTooltip());
+            console.log(icon);
+            icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);
+            this.statsContainer.add(icon);
+
+            icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
+            icon.on("pointerover", () => globalScene.ui.showTooltip(heldItem.name, heldItem.description, true));
+            icon.on("pointerout", () => globalScene.ui.hideTooltip());
+          }
         });
         /*
         const formChangeItems = this.pokemon?.heldItemManager.getFormChangeItems().sort(formChangeItemSortFunc);
