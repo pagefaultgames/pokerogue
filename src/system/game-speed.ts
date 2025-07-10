@@ -53,7 +53,7 @@ export function initGameSpeed(): void {
 
   const originalAddEvent = globalScene.time.addEvent;
   globalScene.time.addEvent = (config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig) => {
-    if (!(config instanceof Phaser.Time.TimerEvent && config.delay)) {
+    if (!(config instanceof Phaser.Time.TimerEvent) && config.delay) {
       config.delay = transformValue(config.delay);
     }
     return originalAddEvent.apply(globalScene, [config]);
