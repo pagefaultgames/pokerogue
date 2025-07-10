@@ -1,7 +1,7 @@
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import i18next from "i18next";
-import { HeldItem, HELD_ITEM_EFFECT } from "#app/items/held-item";
+import { HeldItemEffect, HeldItem } from "#app/items/held-item";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { toDmgValue } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -12,7 +12,7 @@ export interface HIT_HEAL_PARAMS {
 }
 
 export class HitHealHeldItem extends HeldItem {
-  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.TURN_END_HEAL];
+  public effects: HeldItemEffect[] = [HeldItemEffect.TURN_END_HEAL];
 
   get name(): string {
     return i18next.t("modifierType:ModifierType.SHELL_BELL.name");

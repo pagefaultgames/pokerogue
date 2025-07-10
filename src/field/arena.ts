@@ -35,7 +35,7 @@ import {
 } from "#app/data/pokemon-forms/form-change-triggers";
 import { WeatherType } from "#enums/weather-type";
 import { applyHeldItems } from "#app/items/all-held-items";
-import { HELD_ITEM_EFFECT } from "#app/items/held-item";
+import { HeldItemEffect } from "#app/items/held-item";
 
 export class Arena {
   public biomeType: BiomeId;
@@ -339,7 +339,7 @@ export class Arena {
 
     if (!isNullOrUndefined(user)) {
       weatherDuration.value = 5;
-      applyHeldItems(HELD_ITEM_EFFECT.FIELD_EFFECT, { pokemon: user, fieldDuration: weatherDuration });
+      applyHeldItems(HeldItemEffect.FIELD_EFFECT, { pokemon: user, fieldDuration: weatherDuration });
     }
 
     this.weather = weather ? new Weather(weather, weatherDuration.value) : null;
@@ -426,7 +426,7 @@ export class Arena {
 
     if (!isNullOrUndefined(user)) {
       terrainDuration.value = 5;
-      applyHeldItems(HELD_ITEM_EFFECT.FIELD_EFFECT, { pokemon: user, fieldDuration: terrainDuration });
+      applyHeldItems(HeldItemEffect.FIELD_EFFECT, { pokemon: user, fieldDuration: terrainDuration });
     }
 
     this.terrain = terrain ? new Terrain(terrain, terrainDuration.value) : null;

@@ -1,7 +1,7 @@
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import i18next from "i18next";
-import { ConsumableHeldItem, HELD_ITEM_EFFECT } from "../held-item";
+import { ConsumableHeldItem, HeldItemEffect } from "../held-item";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { toDmgValue } from "#app/utils/common";
@@ -19,7 +19,7 @@ export interface INSTANT_REVIVE_PARAMS {
  * @see {@linkcode apply}
  */
 export class InstantReviveHeldItem extends ConsumableHeldItem {
-  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.INSTANT_REVIVE];
+  public effects: HeldItemEffect[] = [HeldItemEffect.INSTANT_REVIVE];
 
   get name(): string {
     return i18next.t("modifierType:ModifierType.REVIVER_SEED.name");

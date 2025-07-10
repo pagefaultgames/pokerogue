@@ -1,5 +1,5 @@
 import type Pokemon from "#app/field/pokemon";
-import { HeldItem, HELD_ITEM_EFFECT } from "#app/items/held-item";
+import { HeldItemEffect, HeldItem } from "#app/items/held-item";
 import type { StatusEffect } from "#enums/status-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 
@@ -15,7 +15,7 @@ export interface TURN_END_STATUS_PARAMS {
  * @see {@linkcode apply}
  */
 export class TurnEndStatusHeldItem extends HeldItem {
-  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.TURN_END_STATUS];
+  public effects: HeldItemEffect[] = [HeldItemEffect.TURN_END_STATUS];
   /** The status effect to be applied by the held item */
   public effect: StatusEffect;
 

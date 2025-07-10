@@ -5,7 +5,7 @@ import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { HeldItemId } from "#enums/held-item-id";
 import { applyHeldItems } from "#app/items/all-held-items";
-import { HELD_ITEM_EFFECT } from "#app/items/held-item";
+import { HeldItemEffect } from "#app/items/held-item";
 
 describe("EXP Modifier Items", () => {
   let phaserGame: Phaser.Game;
@@ -34,7 +34,7 @@ describe("EXP Modifier Items", () => {
     const partyMember = game.scene.getPlayerPokemon()!;
     partyMember.exp = 100;
     const expHolder = new NumberHolder(partyMember.exp);
-    applyHeldItems(HELD_ITEM_EFFECT.EXP_BOOSTER, { pokemon: partyMember, expAmount: expHolder });
+    applyHeldItems(HeldItemEffect.EXP_BOOSTER, { pokemon: partyMember, expAmount: expHolder });
     expect(expHolder.value).toBe(440);
   });
 });

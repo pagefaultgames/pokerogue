@@ -4,7 +4,7 @@ import type { NumberHolder } from "#app/utils/common";
 import { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
-import { HeldItem, HELD_ITEM_EFFECT } from "../held-item";
+import { HeldItemEffect, HeldItem } from "../held-item";
 
 export interface STAT_BOOST_PARAMS {
   /** The pokemon with the item */
@@ -20,7 +20,7 @@ export interface STAT_BOOST_PARAMS {
  * @see {@linkcode apply}
  */
 export class StatBoostHeldItem extends HeldItem {
-  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.STAT_BOOST];
+  public effects: HeldItemEffect[] = [HeldItemEffect.STAT_BOOST];
   /** The stats that the held item boosts */
   protected stats: Stat[];
   /** The multiplier used to increase the relevant stat(s) */

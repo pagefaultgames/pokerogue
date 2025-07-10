@@ -1,5 +1,5 @@
 import type Pokemon from "#app/field/pokemon";
-import { HeldItem, HELD_ITEM_EFFECT } from "../held-item";
+import { HeldItemEffect, HeldItem } from "../held-item";
 import { Stat } from "#enums/stat";
 import i18next from "i18next";
 
@@ -14,7 +14,7 @@ export interface BASE_STAT_FLAT_PARAMS {
  * Currently used by Old Gateau item
  */
 export class BaseStatFlatHeldItem extends HeldItem {
-  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.BASE_STAT_FLAT];
+  public effects: HeldItemEffect[] = [HeldItemEffect.BASE_STAT_FLAT];
   public isTransferable = false;
 
   get description(): string {

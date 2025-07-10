@@ -4,7 +4,8 @@ import { globalScene } from "#app/global-scene";
 import { HeldItemNames, type HeldItemId } from "#enums/held-item-id";
 import i18next from "i18next";
 
-export const HELD_ITEM_EFFECT = {
+// TODO: this should be moved to its own file
+export const HeldItemEffect = {
   ATTACK_TYPE_BOOST: 1,
   TURN_END_HEAL: 2,
   HIT_HEAL: 3,
@@ -35,7 +36,7 @@ export const HELD_ITEM_EFFECT = {
   INCREMENTING_STAT: 52,
 } as const;
 
-export type HELD_ITEM_EFFECT = (typeof HELD_ITEM_EFFECT)[keyof typeof HELD_ITEM_EFFECT];
+export type HeldItemEffect = (typeof HeldItemEffect)[keyof typeof HeldItemEffect];
 
 export class HeldItem {
   //  public pokemonId: number;

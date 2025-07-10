@@ -1,16 +1,16 @@
 import { MoveChargeAnim } from "../battle-anims";
 import { ChargeAnim } from "#enums/move-anims-common";
 import {
-  CommandedTag,
-  EncoreTag,
-  GulpMissileTag,
-  HelpingHandTag,
-  SemiInvulnerableTag,
-  ShellTrapTag,
-  StockpilingTag,
-  SubstituteTag,
-  TrappedTag,
-  TypeBoostTag,
+    CommandedTag,
+    EncoreTag,
+    GulpMissileTag,
+    HelpingHandTag,
+    SemiInvulnerableTag,
+    ShellTrapTag,
+    StockpilingTag,
+    SubstituteTag,
+    TrappedTag,
+    TypeBoostTag,
 } from "../battler-tags";
 import { getPokemonNameWithAffix } from "../../messages";
 import type { TurnMove } from "#app/@types/turn-move";
@@ -22,9 +22,9 @@ import { MoveResult } from "#enums/move-result";
 import { HitResult } from "#enums/hit-result";
 import { FieldPosition } from "#enums/field-position";
 import {
-  getNonVolatileStatusEffects,
-  getStatusEffectHealText,
-  isNonVolatileStatusEffect,
+    getNonVolatileStatusEffects,
+    getStatusEffectHealText,
+    isNonVolatileStatusEffect,
 } from "../status-effect";
 import { getTypeDamageMultiplier } from "../type";
 import { PokemonType } from "#enums/pokemon-type";
@@ -34,13 +34,12 @@ import type { ArenaTrapTag } from "../arena-tag";
 import { WeakenMoveTypeTag } from "../arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import {
-  applyAbAttrs
+    applyAbAttrs
 } from "../abilities/apply-ab-attrs";
 import { allAbilities, allHeldItems, allMoves } from "../data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattleType } from "#enums/battle-type";
 import { TerrainType } from "../terrain";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { Command } from "#enums/command";
 import i18next from "i18next";
 import type { Localizable } from "#app/@types/locales";
@@ -53,11 +52,11 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { MoveUsedEvent } from "#app/events/battle-scene";
 import {
-  BATTLE_STATS,
-  type BattleStat,
-  type EffectiveStat,
-  getStatKey,
-  Stat,
+    BATTLE_STATS,
+    type BattleStat,
+    type EffectiveStat,
+    getStatKey,
+    Stat,
 } from "#app/enums/stat";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { MovePhase } from "#app/phases/move-phase";
@@ -78,14 +77,14 @@ import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves, invalidSketchMoves } from "./invalid-moves";
 import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
-import { HELD_ITEM_EFFECT } from "#app/items/held-item";
+import { HeldItemEffect } from "#app/items/held-item";
 import { BerryHeldItem, berryTypeToHeldItem } from "#app/items/held-items/berry";
 import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveKindString, MoveClassMap } from "#app/@types/move-types";
 import { applyMoveAttrs } from "./apply-attrs";
 import { frenzyMissFunc, getMoveTargets } from "./move-utils";
 import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
-import { AbAttrBaseParams, AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrParams } from "../abilities/ability";
+import { AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrParams } from "../abilities/ability";
 import { applyHeldItems } from "#app/items/all-held-items";
 
 /**
@@ -766,7 +765,7 @@ export default abstract class Move implements Localizable {
     const isOhko = this.hasAttr("OneHitKOAccuracyAttr");
 
     if (!isOhko) {
-      applyHeldItems(HELD_ITEM_EFFECT.ACCURACY_BOOSTER, { pokemon: user, moveAccuracy: moveAccuracy });
+      applyHeldItems(HeldItemEffect.ACCURACY_BOOSTER, { pokemon: user, moveAccuracy: moveAccuracy });
     }
 
     if (globalScene.arena.weather?.weatherType === WeatherType.FOG) {
@@ -848,7 +847,7 @@ export default abstract class Move implements Localizable {
 
     if (!this.hasAttr("TypelessAttr")) {
       globalScene.arena.applyTags(WeakenMoveTypeTag, simulated, typeChangeHolder.value, power);
-      applyHeldItems(HELD_ITEM_EFFECT.ATTACK_TYPE_BOOST, {
+      applyHeldItems(HeldItemEffect.ATTACK_TYPE_BOOST, {
         pokemon: source, 
         moveType: typeChangeHolder.value,
         movePower: power,

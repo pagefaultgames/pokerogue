@@ -1,5 +1,5 @@
 import { applyHeldItems } from "#app/items/all-held-items";
-import { HELD_ITEM_EFFECT } from "#app/items/held-item";
+import { HeldItemEffect } from "#app/items/held-item";
 import { NumberHolder, randItem } from "#app/utils/common";
 import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
@@ -34,7 +34,7 @@ describe("Items - Eviolite", () => {
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: stat, statValue: statValue });
+      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: stat, statValue: statValue });
 
       return Math.floor(statValue.value);
     });
@@ -53,7 +53,7 @@ describe("Items - Eviolite", () => {
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: stat, statValue: statValue });
+      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: stat, statValue: statValue });
 
       // Ignore other calculations for simplicity
 
@@ -83,7 +83,7 @@ describe("Items - Eviolite", () => {
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: stat, statValue: statValue });
+      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: stat, statValue: statValue });
 
       // Ignore other calculations for simplicity
 
@@ -113,7 +113,7 @@ describe("Items - Eviolite", () => {
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: stat, statValue: statValue });
+      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: stat, statValue: statValue });
 
       // Ignore other calculations for simplicity
 
@@ -143,7 +143,7 @@ describe("Items - Eviolite", () => {
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: stat, statValue: statValue });
+      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: stat, statValue: statValue });
 
       // Ignore other calculations for simplicity
 
@@ -173,7 +173,7 @@ describe("Items - Eviolite", () => {
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: stat, statValue: statValue });
+      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: stat, statValue: statValue });
 
       // Ignore other calculations for simplicity
 
@@ -203,7 +203,7 @@ describe("Items - Eviolite", () => {
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));
-      applyHeldItems(HELD_ITEM_EFFECT.STAT_BOOST, { pokemon: partyMember, stat: stat, statValue: statValue });
+      applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: stat, statValue: statValue });
 
       // Ignore other calculations for simplicity
 

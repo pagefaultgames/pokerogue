@@ -1,5 +1,5 @@
 import type Pokemon from "#app/field/pokemon";
-import { HeldItem, HELD_ITEM_EFFECT } from "#app/items/held-item";
+import { HeldItemEffect, HeldItem } from "#app/items/held-item";
 import { isNullOrUndefined, type NumberHolder } from "#app/utils/common";
 import type { MoveId } from "#enums/move-id";
 import { allMoves } from "#app/data/data-lists";
@@ -19,7 +19,7 @@ export interface MULTI_HIT_PARAMS {
  * @see {@linkcode apply}
  */
 export class MultiHitHeldItem extends HeldItem {
-  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.MULTI_HIT];
+  public effects: HeldItemEffect[] = [HeldItemEffect.MULTI_HIT];
 
   get description(): string {
     return i18next.t("modifierType:ModifierType.PokemonMultiHitModifierType.description");

@@ -2,7 +2,7 @@ import { getBerryEffectDescription, getBerryEffectFunc, getBerryName, getBerryPr
 import { BerryUsedEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import { ConsumableHeldItem, HELD_ITEM_EFFECT } from "#app/items/held-item";
+import { ConsumableHeldItem, HeldItemEffect } from "#app/items/held-item";
 import { BooleanHolder } from "#app/utils/common";
 import { BerryType } from "#enums/berry-type";
 import { HeldItemId } from "#enums/held-item-id";
@@ -33,7 +33,7 @@ export interface BERRY_PARAMS {
 
 // TODO: Maybe split up into subclasses?
 export class BerryHeldItem extends ConsumableHeldItem {
-  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.BERRY];
+  public effects: HeldItemEffect[] = [HeldItemEffect.BERRY];
   public berryType: BerryType;
 
   constructor(berryType: BerryType, maxStackCount = 1) {

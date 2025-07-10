@@ -1,7 +1,7 @@
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { NumberHolder } from "#app/utils/common";
-import { HeldItem, HELD_ITEM_EFFECT } from "../held-item";
+import { HeldItemEffect, HeldItem } from "../held-item";
 import { TRAINER_ITEM_EFFECT } from "../trainer-item";
 
 export interface DAMAGE_MONEY_REWARD_PARAMS {
@@ -12,7 +12,7 @@ export interface DAMAGE_MONEY_REWARD_PARAMS {
 }
 
 export class DamageMoneyRewardHeldItem extends HeldItem {
-  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.DAMAGE_MONEY_REWARD];
+  public effects: HeldItemEffect[] = [HeldItemEffect.DAMAGE_MONEY_REWARD];
 
   /**
    * Applies {@linkcode DamageMoneyRewardModifier}

@@ -3,7 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
 import i18next from "i18next";
-import { HeldItem, HELD_ITEM_EFFECT } from "../held-item";
+import { HeldItemEffect, HeldItem } from "../held-item";
 import { TrainerItemId } from "#enums/trainer-item-id";
 
 export interface EVO_TRACKER_PARAMS {
@@ -12,7 +12,7 @@ export interface EVO_TRACKER_PARAMS {
 }
 
 export class EvoTrackerHeldItem extends HeldItem {
-  public effects: HELD_ITEM_EFFECT[] = [HELD_ITEM_EFFECT.EVO_TRACKER];
+  public effects: HeldItemEffect[] = [HeldItemEffect.EVO_TRACKER];
 
   protected species: SpeciesId;
   protected required: number;
