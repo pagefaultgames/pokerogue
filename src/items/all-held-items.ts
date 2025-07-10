@@ -71,6 +71,7 @@ export function initHeldItems() {
 
   // SILK_SCARF, BLACK_BELT, etc...
   for (const [typeKey, heldItemType] of Object.entries(attackTypeToHeldItem)) {
+    // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2114957526
     const pokemonType = Number(typeKey) as PokemonType;
     allHeldItems[heldItemType] = new AttackTypeBoosterHeldItem(heldItemType, 99, pokemonType, 0.2);
   }

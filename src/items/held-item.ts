@@ -85,6 +85,7 @@ export class HeldItem {
     return this;
   }
 
+  // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2114950716
   getMaxStackCount(): number {
     return this.maxStackCount;
   }
@@ -137,6 +138,7 @@ export class HeldItem {
     const text = globalScene.add.bitmapText(10, 15, "item-count", stackCount.toString(), 11);
     text.letterSpacing = -0.5;
     if (stackCount >= this.getMaxStackCount()) {
+      // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2114955458
       text.setTint(0xf89890);
     }
     text.setOrigin(0);

@@ -1,3 +1,4 @@
+// TODO: make category the lower 2 bytes
 export const HeldItemId = {
   NONE: 0x0000,
 

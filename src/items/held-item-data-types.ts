@@ -1,3 +1,4 @@
+// TODO: move to `src/@types/`
 import type Pokemon from "#app/field/pokemon";
 import type { FormChangeItem } from "#enums/form-change-item";
 import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";

@@ -8,6 +8,7 @@ export interface INCREMENTING_STAT_PARAMS {
   /** The pokemon with the item */
   pokemon: Pokemon;
   stat: Stat;
+  // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2135612276
   statHolder: NumberHolder;
 }
 

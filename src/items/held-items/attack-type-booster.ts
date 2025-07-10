@@ -11,6 +11,7 @@ export interface ATTACK_TYPE_BOOST_PARAMS {
   /** The resolved type of the move */
   moveType: PokemonType;
   /** Holder for the damage value */
+  // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2119660807
   movePower: NumberHolder;
 }
 

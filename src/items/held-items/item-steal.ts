@@ -11,6 +11,7 @@ export interface ITEM_STEAL_PARAMS {
   /** The pokemon with the item */
   pokemon: Pokemon;
   /** The pokemon to steal from (optional) */
+  // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2135607083
   target?: Pokemon;
 }
 
