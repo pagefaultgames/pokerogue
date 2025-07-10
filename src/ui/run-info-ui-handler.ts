@@ -25,9 +25,9 @@ import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { getBiomeName } from "#app/data/balance/biomes";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
-import { allTrainerItems } from "#app/items/all-trainer-items";
+import { allTrainerItems } from "#app/data/data-lists";
 import { heldItemSortFunc } from "#app/modifier/modifier-bar";
-import { allHeldItems } from "#app/items/all-held-items";
+import { allHeldItems } from "#app/data/data-lists";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.

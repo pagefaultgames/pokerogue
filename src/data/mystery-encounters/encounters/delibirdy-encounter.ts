@@ -27,7 +27,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { timedEventManager } from "#app/global-event-manager";
 import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
-import { allHeldItems } from "#app/items/all-held-items";
+import { allHeldItems } from "#app/data/data-lists";
 import { TrainerItemId } from "#enums/trainer-item-id";
 
 /** the i18n namespace for this encounter */

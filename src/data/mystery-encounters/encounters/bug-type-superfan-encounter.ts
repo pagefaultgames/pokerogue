@@ -44,7 +44,7 @@ import { RewardTier } from "#enums/reward-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { HeldItemId } from "#enums/held-item-id";
-import { allHeldItems } from "#app/items/all-held-items";
+import { allHeldItems } from "#app/data/data-lists";
 import { TrainerItemId } from "#enums/trainer-item-id";
 
 /** the i18n namespace for the encounter */

@@ -58,7 +58,7 @@ import { Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import i18next from "i18next";
 import { timedEventManager } from "#app/global-event-manager";
 import { HeldItemId } from "#enums/held-item-id";
-import { allHeldItems } from "#app/items/all-held-items";
+import { allHeldItems } from "#app/data/data-lists";
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 import { attackTypeToHeldItem } from "#app/items/held-items/attack-type-booster";
 import { permanentStatToHeldItem, statBoostItems } from "#app/items/held-items/base-stat-booster";
@@ -73,7 +73,7 @@ import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#app/@typ
 import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeldItem } from "#app/items/held-item-pool";
 import { berryTypeToHeldItem } from "#app/items/held-items/berry";
 import { TrainerItemId } from "#enums/trainer-item-id";
-import { allTrainerItems } from "#app/items/all-trainer-items";
+import { allTrainerItems } from "#app/data/data-lists";
 import { tempStatToTrainerItem, TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 
 type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier | null;

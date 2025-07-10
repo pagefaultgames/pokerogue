@@ -1,8 +1,8 @@
 import { formChangeItemName } from "#app/data/pokemon-forms";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import { allHeldItems } from "#app/items/all-held-items";
-import { allTrainerItems } from "#app/items/all-trainer-items";
+import { allHeldItems } from "#app/data/data-lists";
+import { allTrainerItems } from "#app/data/data-lists";
 import type { TrainerItemManager } from "#app/items/trainer-item-manager";
 import type { FormChangeItem } from "#enums/form-change-item";
 import type { HeldItemId } from "#enums/held-item-id";

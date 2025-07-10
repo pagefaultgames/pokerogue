@@ -26,7 +26,7 @@ import { getNatureName } from "#app/data/nature";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import i18next from "i18next";
 import { getNewVitaminHeldItem } from "#app/items/held-item-pool";
-import { allHeldItems } from "#app/items/all-held-items";
+import { allHeldItems } from "#app/data/data-lists";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/shadyVitaminDealer";

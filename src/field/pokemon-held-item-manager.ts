@@ -1,4 +1,4 @@
-import { allHeldItems } from "#app/items/all-held-items";
+import { allHeldItems } from "#app/data/data-lists";
 import { isItemInCategory, isItemInRequested, type HeldItemCategoryId, type HeldItemId } from "#app/enums/held-item-id";
 import type { FormChangeItem } from "#enums/form-change-item";
 import {

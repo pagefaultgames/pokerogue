@@ -48,7 +48,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { timedEventManager } from "#app/global-event-manager";
 import type { HeldItemConfiguration, PokemonItemMap } from "#app/items/held-item-data-types";
 import { HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/held-item-id";
-import { allHeldItems } from "#app/items/all-held-items";
+import { allHeldItems } from "#app/data/data-lists";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter

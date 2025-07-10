@@ -46,7 +46,7 @@ import { doShinySparkleAnim } from "#app/field/anims";
 import { TrainerType } from "#enums/trainer-type";
 import { timedEventManager } from "#app/global-event-manager";
 import { HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/held-item-id";
-import { allHeldItems } from "#app/items/all-held-items";
+import { allHeldItems } from "#app/data/data-lists";
 import { RewardTier } from "#enums/reward-tier";
 import { getHeldItemTier } from "#app/items/held-item-tiers";
 import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";

@@ -31,7 +31,7 @@ import i18next from "i18next";
 import type { MysteryEncounterSpriteConfig } from "#app/field/mystery-encounter-intro";
 import { MoveUseMode } from "#enums/move-use-mode";
 import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
-import { allHeldItems } from "#app/items/all-held-items";
+import { allHeldItems } from "#app/data/data-lists";
 import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { HeldItemRequirement } from "../mystery-encounter-requirements";
 

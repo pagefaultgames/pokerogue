@@ -10,7 +10,7 @@ import { TextStyle, addTextObject } from "./text";
 import { UiMode } from "#enums/ui-mode";
 import { addWindow } from "./ui-theme";
 import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
-import { allTrainerItems } from "#app/items/all-trainer-items";
+import { allTrainerItems } from "#app/data/data-lists";
 
 const SESSION_SLOTS_COUNT = 5;
 const SLOTS_ON_SCREEN = 3;

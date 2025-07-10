@@ -1,3 +1,4 @@
+import { allTrainerItems } from "#app/data/data-lists";
 import { Stat, type TempBattleStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
@@ -26,8 +27,6 @@ import {
   tempStatToTrainerItem,
   TrainerItem,
 } from "./trainer-item";
-
-export const allTrainerItems: Record<TrainerItemId, TrainerItem> = {};
 
 export function initTrainerItems() {
   allTrainerItems[TrainerItemId.MAP] = new TrainerItem(TrainerItemId.MAP, 1);

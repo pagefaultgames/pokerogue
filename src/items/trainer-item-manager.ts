@@ -1,4 +1,4 @@
-import { allTrainerItems } from "#app/items/all-trainer-items";
+import { allTrainerItems } from "#app/data/data-lists";
 import type { TrainerItemId } from "#app/enums/trainer-item-id";
 import {
   isTrainerItemSpecs,

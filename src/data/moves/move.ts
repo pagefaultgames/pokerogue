@@ -36,7 +36,7 @@ import { ArenaTagSide } from "#enums/arena-tag-side";
 import {
   applyAbAttrs
 } from "../abilities/apply-ab-attrs";
-import { allAbilities, allMoves } from "../data-lists";
+import { allAbilities, allHeldItems, allMoves } from "../data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattleType } from "#enums/battle-type";
 import { TerrainType } from "../terrain";
@@ -78,7 +78,6 @@ import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves, invalidSketchMoves } from "./invalid-moves";
 import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
-import { allHeldItems, applyHeldItems } from "#app/items/all-held-items";
 import { HELD_ITEM_EFFECT } from "#app/items/held-item";
 import { BerryHeldItem, berryTypeToHeldItem } from "#app/items/held-items/berry";
 import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
@@ -87,6 +86,7 @@ import { applyMoveAttrs } from "./apply-attrs";
 import { frenzyMissFunc, getMoveTargets } from "./move-utils";
 import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 import { AbAttrBaseParams, AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrParams } from "../abilities/ability";
+import { applyHeldItems } from "#app/items/all-held-items";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.

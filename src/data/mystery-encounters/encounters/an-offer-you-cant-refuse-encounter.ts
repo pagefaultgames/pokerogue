@@ -23,7 +23,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import i18next from "i18next";
-import { allTrainerItems } from "#app/items/all-trainer-items";
+import { allTrainerItems } from "#app/data/data-lists";
 import { TrainerItemId } from "#enums/trainer-item-id";
 
 /** the i18n namespace for this encounter */

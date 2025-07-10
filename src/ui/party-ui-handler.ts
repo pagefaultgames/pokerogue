@@ -30,7 +30,7 @@ import type { CommandPhase } from "#app/phases/command-phase";
 import { globalScene } from "#app/global-scene";
 import { HeldItemId } from "#enums/held-item-id";
 import { formChangeItemName } from "#app/data/pokemon-forms";
-import { allHeldItems } from "#app/items/all-held-items";
+import { allHeldItems } from "#app/data/data-lists";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 

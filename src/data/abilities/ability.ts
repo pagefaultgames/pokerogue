@@ -78,7 +78,7 @@ import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
 import type { Constructor } from "#app/utils/common";
 import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
-import { allHeldItems } from "#app/items/all-held-items";
+import { allHeldItems } from "#app/data/data-lists";
 import { type BerryHeldItem, berryTypeToHeldItem } from "#app/items/held-items/berry";
 import type { Localizable } from "#app/@types/locales";
 import { applyAbAttrs } from "./apply-ab-attrs";
@@ -2221,7 +2221,6 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
     }
     this.stolenItem = undefined;
   }
-
 }
 
 /**

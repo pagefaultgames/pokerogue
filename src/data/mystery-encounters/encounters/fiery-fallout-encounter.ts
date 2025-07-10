@@ -44,7 +44,7 @@ import { Stat } from "#enums/stat";
 import { FIRE_RESISTANT_ABILITIES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { getNewHeldItemFromCategory } from "#app/items/held-item-pool";
-import { allHeldItems } from "#app/items/all-held-items";
+import { allHeldItems } from "#app/data/data-lists";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { allAbilities } from "#app/data/data-lists";
 

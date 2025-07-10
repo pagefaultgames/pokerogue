@@ -18,9 +18,9 @@ import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 // biome-ignore lint/correctness/noUnusedImports: This is used in a tsdoc comment
 import type { initModifierTypes } from "./modifier-type";
 import { HeldItemId } from "#enums/held-item-id";
-import { allHeldItems } from "#app/items/all-held-items";
+import { allHeldItems } from "#app/data/data-lists";
 import { TrainerItemId } from "#enums/trainer-item-id";
-import { allTrainerItems } from "#app/items/all-trainer-items";
+import { allTrainerItems } from "#app/data/data-lists";
 import type { TurnEndStatusHeldItem } from "#app/items/held-items/turn-end-status";
 
 /**
