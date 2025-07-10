@@ -51,7 +51,7 @@ export const TrainerItemId = {
   ENEMY_STATUS_EFFECT_HEAL_CHANCE: 0x0E07,
   ENEMY_ENDURE_CHANCE: 0x0E08,
   ENEMY_FUSED_CHANCE: 0x0E09,
-};
+} as const;
 
 export type TrainerItemId = (typeof TrainerItemId)[keyof typeof TrainerItemId];
 
