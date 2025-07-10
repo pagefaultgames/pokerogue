@@ -17,7 +17,7 @@ const PROPERTIES = ["delay", "completeDelay", "loopDelay", "duration", "repeatDe
  */
 function transformValue(duration: number | FixedInt): number {
   // We do not mutate `FixedInt` duration
-  if (typeof duration === "object") {
+  if (typeof duration !== "number") {
     return duration.value;
   }
   return Math.ceil(duration / globalScene.gameSpeed);
