@@ -405,7 +405,7 @@ export default class BattleScene extends SceneBase {
 
   create() {
     this.scene.remove(LoadingScene.KEY);
-    initGameSpeed.apply(this);
+    initGameSpeed();
     this.inputController = new InputsController();
     this.uiInputs = new UiInputs(this.inputController);
 
