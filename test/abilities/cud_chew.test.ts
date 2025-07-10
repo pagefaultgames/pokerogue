@@ -4,6 +4,7 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
 import { BerryType } from "#enums/berry-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
@@ -30,7 +31,7 @@ describe("Abilities - Cud Chew", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([MoveId.BUG_BITE, MoveId.SPLASH, MoveId.HYPER_VOICE, MoveId.STUFF_CHEEKS])
-      .startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS, count: 1 }])
+      .startingHeldItems([{ entry: HeldItemId.SITRUS_BERRY }])
       .ability(AbilityId.CUD_CHEW)
       .battleStyle("single")
       .criticalHits(false)
@@ -114,8 +115,8 @@ describe("Abilities - Cud Chew", () => {
       vi.spyOn(Pokemon.prototype, "randBattleSeedInt").mockReturnValue(0);
       game.override
         .startingHeldItems([
-          { name: "BERRY", type: BerryType.PETAYA, count: 3 },
-          { name: "BERRY", type: BerryType.LIECHI, count: 3 },
+          { entry: HeldItemId.PETAYA_BERRY, count: 3 },
+          { entry: HeldItemId.LIECHI_BERRY, count: 3 },
         ])
         .enemyMoveset(MoveId.TEATIME);
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
@@ -258,7 +259,7 @@ describe("Abilities - Cud Chew", () => {
     it("works with pluck", async () => {
       game.override
         .enemySpecies(SpeciesId.BLAZIKEN)
-        .enemyHeldItems([{ name: "BERRY", type: BerryType.PETAYA, count: 1 }])
+        .enemyHeldItems([{ entry: HeldItemId.PETAYA_BERRY }])
         .startingHeldItems([]);
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 

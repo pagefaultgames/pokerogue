@@ -1,7 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import i18next from "i18next";
 import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
-import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import {
@@ -28,8 +27,6 @@ import {
   showEncounterText,
 } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/data/data-lists";
 import { Gender } from "#app/data/gender";
 import type { PermanentStat } from "#enums/stat";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
@@ -37,6 +34,7 @@ import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 import type { AbilityId } from "#enums/ability-id";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
+import type { HeldItemId } from "#enums/held-item-id";
 
 /** Will give +1 level every 10 waves */
 export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
@@ -369,58 +367,11 @@ export function applyHealToPokemon(pokemon: PlayerPokemon, heal: number) {
   applyHpChangeToPokemon(pokemon, heal);
 }
 
-/**
- * Will modify all of a Pokemon's base stats by a flat value
- * Base stats can never go below 1
- * @param pokemon
- * @param value
- */
-export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, good: boolean) {
-  const modType = modifierTypes
-    .MYSTERY_ENCOUNTER_SHUCKLE_JUICE()
-    .generateType(globalScene.getPlayerParty(), [good ? 10 : -15])
-    ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE);
-  const modifier = modType?.newModifier(pokemon);
-  if (modifier) {
-    globalScene.addModifier(modifier, false, false, false, true);
-    pokemon.calculateStats();
+export function applyHeldItemWithFallback(pokemon: Pokemon, item: HeldItemId, fallbackItem?: HeldItemId) {
+  const added = pokemon.heldItemManager.add(item);
+  if (!added && fallbackItem) {
+    pokemon.heldItemManager.add(fallbackItem);
   }
-}
-
-/**
- * Will attempt to add a new modifier to a Pokemon.
- * If the Pokemon already has max stacks of that item, it will instead apply 'fallbackModifierType', if specified.
- * @param scene
- * @param pokemon
- * @param modType
- * @param fallbackModifierType
- */
-export async function applyModifierTypeToPlayerPokemon(
-  pokemon: PlayerPokemon,
-  modType: PokemonHeldItemModifierType,
-  fallbackModifierType?: PokemonHeldItemModifierType,
-) {
-  // Check if the Pokemon has max stacks of that item already
-  const modifier = modType.newModifier(pokemon);
-  const existing = globalScene.findModifier(
-    m =>
-      m instanceof PokemonHeldItemModifier &&
-      m.type.id === modType.id &&
-      m.pokemonId === pokemon.id &&
-      m.matchType(modifier),
-  ) as PokemonHeldItemModifier;
-
-  // At max stacks
-  if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
-    if (!fallbackModifierType) {
-      return;
-    }
-
-    // Apply fallback
-    return applyModifierTypeToPlayerPokemon(pokemon, fallbackModifierType);
-  }
-
-  globalScene.addModifier(modifier, false, false, false, true);
 }
 
 /**
@@ -687,20 +638,10 @@ export async function catchPokemon(
         }
       };
       const addToParty = (slotIndex?: number) => {
-        const newPokemon = pokemon.addToParty(pokeballType, slotIndex);
-        const modifiers = globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
+        pokemon.addToParty(pokeballType, slotIndex);
         if (globalScene.getPlayerParty().filter(p => p.isShiny()).length === 6) {
           globalScene.validateAchv(achvs.SHINY_PARTY);
         }
-        Promise.all(modifiers.map(m => globalScene.addModifier(m, true))).then(() => {
-          globalScene.updateModifiers(true);
-          removePokemon();
-          if (newPokemon) {
-            newPokemon.loadAssets().then(end);
-          } else {
-            end();
-          }
-        });
       };
       Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
         if (globalScene.getPlayerParty().length === 6) {
@@ -725,6 +666,7 @@ export async function catchPokemon(
                       pokemon.variant,
                       pokemon.ivs,
                       pokemon.nature,
+                      pokemon.heldItemManager.generateHeldItemConfiguration(),
                       pokemon,
                     );
                     globalScene.ui.setMode(

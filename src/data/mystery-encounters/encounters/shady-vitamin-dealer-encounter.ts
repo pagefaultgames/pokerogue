@@ -1,5 +1,4 @@
 import {
-  generateModifierType,
   leaveEncounterWithoutBattle,
   selectPokemonForOption,
   setEncounterExp,
@@ -7,7 +6,6 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { modifierTypes } from "#app/data/data-lists";
 import { randSeedInt } from "#app/utils/common";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
@@ -19,7 +17,6 @@ import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter
 import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import {
   applyDamageToPokemon,
-  applyModifierTypeToPlayerPokemon,
   isPokemonValidForEncounterOptionSelection,
 } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -28,6 +25,8 @@ import type { Nature } from "#enums/nature";
 import { getNatureName } from "#app/data/nature";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import i18next from "i18next";
+import { getNewVitaminHeldItem } from "#app/items/held-item-pool";
+import { allHeldItems } from "#app/data/data-lists";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/shadyVitaminDealer";
@@ -97,15 +96,12 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
           // Update money
           updatePlayerMoney(-(encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney);
           // Calculate modifiers and dialogue tokens
-          const modifiers = [
-            generateModifierType(modifierTypes.BASE_STAT_BOOSTER)!,
-            generateModifierType(modifierTypes.BASE_STAT_BOOSTER)!,
-          ];
-          encounter.setDialogueToken("boost1", modifiers[0].name);
-          encounter.setDialogueToken("boost2", modifiers[1].name);
+          const items = [getNewVitaminHeldItem(), getNewVitaminHeldItem()];
+          encounter.setDialogueToken("boost1", allHeldItems[items[0]].name);
+          encounter.setDialogueToken("boost2", allHeldItems[items[1]].name);
           encounter.misc = {
             chosenPokemon: pokemon,
-            modifiers: modifiers,
+            items: items,
           };
         };
 
@@ -132,10 +128,10 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
         // Choose Cheap Option
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const chosenPokemon = encounter.misc.chosenPokemon;
-        const modifiers = encounter.misc.modifiers;
+        const items = encounter.misc.items;
 
-        for (const modType of modifiers) {
-          await applyModifierTypeToPlayerPokemon(chosenPokemon, modType);
+        for (const item of items) {
+          chosenPokemon.heldItemManager.add(item);
         }
 
         leaveEncounterWithoutBattle(true);
@@ -180,15 +176,12 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
           // Update money
           updatePlayerMoney(-(encounter.options[1].requirements[0] as MoneyRequirement).requiredMoney);
           // Calculate modifiers and dialogue tokens
-          const modifiers = [
-            generateModifierType(modifierTypes.BASE_STAT_BOOSTER)!,
-            generateModifierType(modifierTypes.BASE_STAT_BOOSTER)!,
-          ];
-          encounter.setDialogueToken("boost1", modifiers[0].name);
-          encounter.setDialogueToken("boost2", modifiers[1].name);
+          const items = [getNewVitaminHeldItem(), getNewVitaminHeldItem()];
+          encounter.setDialogueToken("boost1", allHeldItems[items[0]].name);
+          encounter.setDialogueToken("boost2", allHeldItems[items[1]].name);
           encounter.misc = {
             chosenPokemon: pokemon,
-            modifiers: modifiers,
+            items: items,
           };
         };
 
@@ -203,10 +196,10 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
         // Choose Expensive Option
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const chosenPokemon = encounter.misc.chosenPokemon;
-        const modifiers = encounter.misc.modifiers;
+        const items = encounter.misc.items;
 
-        for (const modType of modifiers) {
-          await applyModifierTypeToPlayerPokemon(chosenPokemon, modType);
+        for (const item of items) {
+          chosenPokemon.heldItemManager.add(item);
         }
 
         leaveEncounterWithoutBattle(true);

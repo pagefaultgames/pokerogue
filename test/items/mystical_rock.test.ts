@@ -5,6 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { HeldItemId } from "#enums/held-item-id";
 
 describe("Items - Mystical Rock", () => {
   let phaserGame: Phaser.Game;
@@ -28,7 +29,7 @@ describe("Items - Mystical Rock", () => {
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH)
       .moveset([MoveId.SUNNY_DAY, MoveId.GRASSY_TERRAIN])
-      .startingHeldItems([{ name: "MYSTICAL_ROCK", count: 2 }])
+      .startingHeldItems([{ entry: HeldItemId.MYSTICAL_ROCK, count: 2 }])
       .battleStyle("single");
   });
 

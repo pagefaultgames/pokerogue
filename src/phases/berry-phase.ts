@@ -1,13 +1,14 @@
 import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { CommonAnim } from "#enums/move-anims-common";
-import { BerryUsedEvent } from "#app/events/battle-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BerryModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { BooleanHolder } from "#app/utils/common";
 import { FieldPhase } from "./field-phase";
 import { globalScene } from "#app/global-scene";
 import type Pokemon from "#app/field/pokemon";
+import { allHeldItems, applyHeldItems } from "#app/items/all-held-items";
+import { HELD_ITEM_EFFECT } from "#app/items/held-item";
+import { HeldItemCategoryId, isItemInCategory } from "#enums/held-item-id";
 
 /**
  * The phase after attacks where the pokemon eat berries.
@@ -31,10 +32,9 @@ export class BerryPhase extends FieldPhase {
    * @param pokemon - The {@linkcode Pokemon} to check
    */
   eatBerries(pokemon: Pokemon): void {
-    const hasUsableBerry = !!globalScene.findModifier(
-      m => m instanceof BerryModifier && m.shouldApply(pokemon),
-      pokemon.isPlayer(),
-    );
+    const hasUsableBerry = pokemon.getHeldItems().some(m => {
+      return isItemInCategory(m, HeldItemCategoryId.BERRY) && allHeldItems[m].shouldApply(pokemon);
+    });
 
     if (!hasUsableBerry) {
       return;
@@ -59,15 +59,8 @@ export class BerryPhase extends FieldPhase {
       CommonAnim.USE_ITEM,
     );
 
-    for (const berryModifier of globalScene.applyModifiers(BerryModifier, pokemon.isPlayer(), pokemon)) {
-      // No need to track berries being eaten; already done inside applyModifiers
-      if (berryModifier.consumed) {
-        berryModifier.consumed = false;
-        pokemon.loseHeldItem(berryModifier);
-      }
-      globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(berryModifier));
-    }
-    globalScene.updateModifiers(pokemon.isPlayer());
+    applyHeldItems(HELD_ITEM_EFFECT.BERRY, { pokemon: pokemon });
+    globalScene.updateItems(pokemon.isPlayer());
 
     // AbilityId.CHEEK_POUCH only works once per round of nom noms
     applyAbAttrs("HealFromBerryUseAbAttr", { pokemon });

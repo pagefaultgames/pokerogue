@@ -1,6 +1,7 @@
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -31,16 +32,16 @@ describe("Items - Leftovers", () => {
       .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.UNNERVE)
       .enemyMoveset(MoveId.TACKLE)
-      .startingHeldItems([{ name: "LEFTOVERS", count: 1 }]);
+      .startingHeldItems([{ entry: HeldItemId.LEFTOVERS }]);
   });
 
   it("leftovers works", async () => {
     await game.classicMode.startBattle([SpeciesId.ARCANINE]);
 
-    // Make sure leftovers are there
-    expect(game.scene.modifiers[0].type.id).toBe("LEFTOVERS");
-
     const leadPokemon = game.scene.getPlayerPokemon()!;
+
+    // Make sure leftovers are there
+    expect(leadPokemon.heldItemManager.hasItem(HeldItemId.LEFTOVERS)).toBe(true);
 
     // We should have full hp
     expect(leadPokemon.isFullHp()).toBe(true);

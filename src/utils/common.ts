@@ -658,3 +658,22 @@ export function enumValueToKey<T extends Record<string, string | number>>(input:
   }
   throw new Error(`Invalid value passed to \`enumValueToKey\`! Value: ${val}`);
 }
+
+export function pickWeightedIndex(weights: number[]): number | undefined {
+  const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+
+  if (totalWeight <= 0) {
+    return undefined;
+  }
+
+  let r = randSeedFloat() * totalWeight;
+
+  for (let i = 0; i < weights.length; i++) {
+    if (r < weights[i]) {
+      return i;
+    }
+    r -= weights[i];
+  }
+
+  return undefined; // TODO: Change to something more appropriate
+}

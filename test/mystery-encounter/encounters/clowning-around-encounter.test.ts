@@ -20,7 +20,7 @@ import { UiMode } from "#enums/ui-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import { ClowningAroundEncounter } from "#app/data/mystery-encounters/encounters/clowning-around-encounter";
 import { TrainerType } from "#enums/trainer-type";
 import { AbilityId } from "#enums/ability-id";
@@ -296,10 +296,10 @@ describe("Clowning Around - Mystery Encounter", () => {
 
       const leadItemsAfter = scene.getPlayerParty()[0].getHeldItems();
       const ultraCountAfter = leadItemsAfter
-        .filter(m => m.type.tier === ModifierTier.ULTRA)
+        .filter(m => m.type.tier === RewardTier.ULTRA)
         .reduce((a, b) => a + b.stackCount, 0);
       const rogueCountAfter = leadItemsAfter
-        .filter(m => m.type.tier === ModifierTier.ROGUE)
+        .filter(m => m.type.tier === RewardTier.ROGUE)
         .reduce((a, b) => a + b.stackCount, 0);
       expect(ultraCountAfter).toBe(13);
       expect(rogueCountAfter).toBe(7);
@@ -391,5 +391,5 @@ async function addItemToPokemon(
   const itemMod = itemType.newModifier(pokemon) as PokemonHeldItemModifier;
   itemMod.stackCount = stackCount;
   scene.addModifier(itemMod, true, false, false, true);
-  await scene.updateModifiers(true);
+  await scene.updateItems(true);
 }

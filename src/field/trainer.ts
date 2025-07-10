@@ -12,7 +12,6 @@ import { TrainerPoolTier } from "#enums/trainer-pool-tier";
 import { TeraAIMode } from "#enums/tera-ai-mode";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import { randSeedWeightedItem, randSeedItem, randSeedInt } from "#app/utils/common";
-import type { PersistentModifier } from "#app/modifier/modifier";
 import { ArenaTrapTag } from "#app/data/arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";
@@ -22,6 +21,7 @@ import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { signatureSpecies } from "#app/data/balance/signature-species";
 import { TrainerVariant } from "#enums/trainer-variant";
+import type { TrainerItemConfiguration } from "#app/items/trainer-item-data-types";
 
 export default class Trainer extends Phaser.GameObjects.Container {
   public config: TrainerConfig;
@@ -647,7 +647,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
     }
   }
 
-  genModifiers(party: EnemyPokemon[]): PersistentModifier[] {
+  genTrainerItems(party: EnemyPokemon[]): TrainerItemConfiguration {
     if (this.config.genModifiersFunc) {
       return this.config.genModifiersFunc(party);
     }

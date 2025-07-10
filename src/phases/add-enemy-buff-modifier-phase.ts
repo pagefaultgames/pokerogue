@@ -1,9 +1,7 @@
-import { ModifierTier } from "#enums/modifier-tier";
-import { regenerateModifierPoolThresholds, getEnemyBuffModifierForWave } from "#app/modifier/modifier-type";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
-import { EnemyPersistentModifier } from "#app/modifier/modifier";
+import { RewardTier } from "#enums/reward-tier";
 import { Phase } from "#app/phase";
 import { globalScene } from "#app/global-scene";
+import { assignEnemyBuffTokenForWave } from "#app/items/trainer-item-pool";
 
 export class AddEnemyBuffModifierPhase extends Phase {
   public readonly phaseName = "AddEnemyBuffModifierPhase";
@@ -11,26 +9,13 @@ export class AddEnemyBuffModifierPhase extends Phase {
     super.start();
 
     const waveIndex = globalScene.currentBattle.waveIndex;
-    const tier = !(waveIndex % 1000)
-      ? ModifierTier.ULTRA
-      : !(waveIndex % 250)
-        ? ModifierTier.GREAT
-        : ModifierTier.COMMON;
-
-    regenerateModifierPoolThresholds(globalScene.getEnemyParty(), ModifierPoolType.ENEMY_BUFF);
+    const tier = !(waveIndex % 1000) ? RewardTier.ULTRA : !(waveIndex % 250) ? RewardTier.GREAT : RewardTier.COMMON;
 
     const count = Math.ceil(waveIndex / 250);
     for (let i = 0; i < count; i++) {
-      globalScene.addEnemyModifier(
-        getEnemyBuffModifierForWave(
-          tier,
-          globalScene.findModifiers(m => m instanceof EnemyPersistentModifier, false),
-        ),
-        true,
-        true,
-      );
+      assignEnemyBuffTokenForWave(tier);
     }
-    globalScene.updateModifiers(false, true);
+    globalScene.updateItems(false);
     this.end();
   }
 }

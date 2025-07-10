@@ -21,8 +21,12 @@ import { initVouchers } from "#app/system/voucher";
 import { BiomeId } from "#enums/biome-id";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
 import { timedEventManager } from "./global-event-manager";
+import { initHeldItems } from "./items/all-held-items";
 import { initModifierPools } from "./modifier/init-modifier-pools";
 import { initModifierTypes } from "./modifier/modifier-type";
+import { initHeldItemPools } from "./items/init-held-item-pools";
+import { initTrainerItemPools } from "./items/init-trainer-item-pools";
+import { initTrainerItems } from "./items/all-trainer-items";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -367,6 +371,8 @@ export class LoadingScene extends SceneBase {
 
     initModifierTypes();
     initModifierPools();
+    initHeldItemPools();
+    initTrainerItemPools();
 
     initAchievements();
     initVouchers();
@@ -380,6 +386,8 @@ export class LoadingScene extends SceneBase {
     initSpecies();
     initMoves();
     initAbilities();
+    initHeldItems();
+    initTrainerItems();
     initChallenges();
     initMysteryEncounters();
   }

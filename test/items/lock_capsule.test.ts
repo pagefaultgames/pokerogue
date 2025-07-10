@@ -1,11 +1,12 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { UiMode } from "#enums/ui-mode";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 describe("Items - Lock Capsule", () => {
   let phaserGame: Phaser.Game;
@@ -29,14 +30,14 @@ describe("Items - Lock Capsule", () => {
       .startingLevel(200)
       .moveset([MoveId.SURF])
       .enemyAbility(AbilityId.BALL_FETCH)
-      .startingModifier([{ name: "LOCK_CAPSULE" }]);
+      .startingTrainerItems([{ entry: TrainerItemId.LOCK_CAPSULE }]);
   });
 
   it("doesn't set the cost of common tier items to 0", async () => {
     await game.classicMode.startBattle();
     game.scene.phaseManager.overridePhase(
       new SelectModifierPhase(0, undefined, {
-        guaranteedModifierTiers: [ModifierTier.COMMON, ModifierTier.COMMON, ModifierTier.COMMON],
+        guaranteedModifierTiers: [RewardTier.COMMON, RewardTier.COMMON, RewardTier.COMMON],
         fillRemaining: false,
       }),
     );

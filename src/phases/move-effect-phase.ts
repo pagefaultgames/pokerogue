@@ -28,15 +28,6 @@ import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#enums/move-result";
 import { HitResult } from "#enums/hit-result";
 import { getPokemonNameWithAffix } from "#app/messages";
-import {
-  ContactHeldItemTransferChanceModifier,
-  DamageMoneyRewardModifier,
-  EnemyAttackStatusEffectChanceModifier,
-  EnemyEndureChanceModifier,
-  FlinchChanceModifier,
-  HitHealModifier,
-  PokemonMultiHitModifier,
-} from "#app/modifier/modifier";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#app/utils/common";
 import type { nil } from "#app/utils/common";
@@ -49,7 +40,10 @@ import { HitCheckResult } from "#enums/hit-check-result";
 import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { DamageAchv } from "#app/system/achv";
+import { applyHeldItems } from "#app/items/all-held-items";
+import { HELD_ITEM_EFFECT } from "#app/items/held-item";
 import { isVirtual, isReflected, MoveUseMode } from "#enums/move-use-mode";
+import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
@@ -319,7 +313,7 @@ export class MoveEffectPhase extends PokemonPhase {
       // If Parental Bond is applicable, add another hit
       applyAbAttrs("AddSecondStrikeAbAttr", { pokemon: user, move, hitCount });
       // If Multi-Lens is applicable, add hits equal to the number of held Multi-Lenses
-      globalScene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, move.id, hitCount);
+      applyHeldItems(HELD_ITEM_EFFECT.MULTI_HIT, { pokemon: user, moveId: move.id, count: hitCount });
       // Set the user's relevant turnData fields to reflect the final hit count
       user.turnData.hitCount = hitCount.value;
       user.turnData.hitsLeft = hitCount.value;
@@ -419,7 +413,7 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.phaseManager.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
     }
 
-    globalScene.applyModifiers(HitHealModifier, this.player, user);
+    applyHeldItems(HELD_ITEM_EFFECT.HIT_HEAL, { pokemon: user });
     this.getTargets().forEach(target => {
       target.turnData.moveEffectiveness = null;
     });
@@ -461,7 +455,7 @@ export class MoveEffectPhase extends PokemonPhase {
       !this.move.hitsSubstitute(user, target)
     ) {
       const flinched = new BooleanHolder(false);
-      globalScene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
+      applyHeldItems(HELD_ITEM_EFFECT.FLINCH_CHANCE, { pokemon: user, flinched: flinched });
       if (flinched.value) {
         target.addTag(BattlerTagType.FLINCHED, undefined, this.move.id, user.id);
       }
@@ -862,7 +856,7 @@ export class MoveEffectPhase extends PokemonPhase {
     if (isBlockedBySubstitute) {
       substitute.hp -= dmg;
     } else if (!target.isPlayer() && dmg >= target.hp) {
-      globalScene.applyModifiers(EnemyEndureChanceModifier, false, target);
+      globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.ENEMY_ENDURE_CHANCE, { pokemon: target });
     }
 
     const damage = isBlockedBySubstitute
@@ -906,7 +900,7 @@ export class MoveEffectPhase extends PokemonPhase {
     });
 
     if (user.isPlayer() && target.isEnemy()) {
-      globalScene.applyModifiers(DamageMoneyRewardModifier, true, user, new NumberHolder(damage));
+      applyHeldItems(HELD_ITEM_EFFECT.DAMAGE_MONEY_REWARD, { pokemon: user, damage: damage });
     }
 
     return [result, isCritical];
@@ -1014,12 +1008,12 @@ export class MoveEffectPhase extends PokemonPhase {
 
     // We assume only enemy Pokemon are able to have the EnemyAttackStatusEffectChanceModifier from tokens
     if (!user.isPlayer() && this.move.is("AttackMove")) {
-      globalScene.applyShuffledModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
+      globalScene.applyShuffledStatusTokens(target);
     }
 
     // Apply Grip Claw's chance to steal an item from the target
     if (this.move.is("AttackMove")) {
-      globalScene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target);
+      applyHeldItems(HELD_ITEM_EFFECT.CONTACT_ITEM_STEAL_CHANCE, { pokemon: user, target: target });
     }
   }
 }

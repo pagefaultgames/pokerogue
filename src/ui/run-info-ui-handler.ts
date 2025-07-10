@@ -19,14 +19,15 @@ import { PokemonType } from "#enums/pokemon-type";
 import { TypeColor, TypeShadow } from "#app/enums/color";
 import { getNatureStatMultiplier, getNatureName } from "../data/nature";
 import { getVariantTint } from "#app/sprites/variant";
-// biome-ignore lint/performance/noNamespaceImport: See `src/system/game-data.ts`
-import * as Modifier from "#app/modifier/modifier";
 import type { SpeciesId } from "#enums/species-id";
 import { PlayerGender } from "#enums/player-gender";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { getBiomeName } from "#app/data/balance/biomes";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
+import { allTrainerItems } from "#app/data/data-lists";
+import { allHeldItems } from "#app/data/data-lists";
+import { heldItemSortFunc } from "#app/items/item-utility";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -66,7 +67,6 @@ export default class RunInfoUiHandler extends UiHandler {
   private endCardContainer: Phaser.GameObjects.Container;
 
   private partyVisibility: boolean;
-  private modifiersModule: any;
 
   constructor() {
     super(UiMode.RUN_INFO);
@@ -74,8 +74,6 @@ export default class RunInfoUiHandler extends UiHandler {
 
   override async setup() {
     this.runContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
-    // The import of the modifiersModule is loaded here to sidestep async/await issues.
-    this.modifiersModule = Modifier;
     this.runContainer.setVisible(false);
     globalScene.loadImage("encounter_exclaim", "mystery-encounters");
   }
@@ -176,7 +174,7 @@ export default class RunInfoUiHandler extends UiHandler {
     const headerBg = addWindow(0, 0, globalScene.game.canvas.width / 6 - 2, 24);
     headerBg.setOrigin(0, 0);
     this.runContainer.add(headerBg);
-    if (this.runInfo.modifiers.length !== 0) {
+    if (this.runInfo.trainerItems.length !== 0) {
       const headerBgCoords = headerBg.getTopRight();
       const abilityButtonContainer = globalScene.add.container(0, 0);
       const abilityButtonText = addTextObject(8, 0, i18next.t("runHistory:viewHeldItems"), TextStyle.WINDOW, {
@@ -641,34 +639,31 @@ export default class RunInfoUiHandler extends UiHandler {
 
     // Player Held Items
     // A max of 20 items can be displayed. A + sign will be added if the run's held items pushes past this maximum to show the user that there are more.
-    if (this.runInfo.modifiers.length) {
-      let visibleModifierIndex = 0;
+    if (this.runInfo.trainerItems.length) {
+      let visibleTrainerItemIndex = 0;
 
-      const modifierIconsContainer = globalScene.add.container(
+      const trainerItemIconsContainer = globalScene.add.container(
         8,
         this.runInfo.gameMode === GameModes.CHALLENGE ? 20 : 15,
       );
-      modifierIconsContainer.setScale(0.45);
-      for (const m of this.runInfo.modifiers) {
-        const modifier = m.toModifier(this.modifiersModule[m.className]);
-        if (modifier instanceof Modifier.PokemonHeldItemModifier) {
-          continue;
-        }
-        const icon = modifier?.getIcon(false);
+      trainerItemIconsContainer.setScale(0.45);
+      for (const m of this.runInfo.trainerItems) {
+        const itemId = m.id;
+        const icon = allTrainerItems[itemId].createIcon(m.stack);
         if (icon) {
-          const rowHeightModifier = Math.floor(visibleModifierIndex / 7);
-          icon.setPosition(24 * (visibleModifierIndex % 7), 20 + 35 * rowHeightModifier);
-          modifierIconsContainer.add(icon);
+          const rowHeightTrainerItem = Math.floor(visibleTrainerItemIndex / 7);
+          icon.setPosition(24 * (visibleTrainerItemIndex % 7), 20 + 35 * rowHeightTrainerItem);
+          trainerItemIconsContainer.add(icon);
         }
 
-        if (++visibleModifierIndex === 20) {
+        if (++visibleTrainerItemIndex === 20) {
           const maxItems = addTextObject(45, 90, "+", TextStyle.WINDOW);
-          maxItems.setPositionRelative(modifierIconsContainer, 70, 45);
+          maxItems.setPositionRelative(trainerItemIconsContainer, 70, 45);
           this.runInfoContainer.add(maxItems);
           break;
         }
       }
-      this.runInfoContainer.add(modifierIconsContainer);
+      this.runInfoContainer.add(trainerItemIconsContainer);
     }
 
     this.runInfoContainer.add(modeText);
@@ -884,38 +879,22 @@ export default class RunInfoUiHandler extends UiHandler {
       const heldItemsScale =
         this.runInfo.gameMode === GameModes.SPLICED_ENDLESS || this.runInfo.gameMode === GameModes.ENDLESS ? 0.25 : 0.5;
       const heldItemsContainer = globalScene.add.container(-82, 2);
-      const heldItemsList: Modifier.PokemonHeldItemModifier[] = [];
-      if (this.runInfo.modifiers.length) {
-        for (const m of this.runInfo.modifiers) {
-          const modifier = m.toModifier(this.modifiersModule[m.className]);
-          if (modifier instanceof Modifier.PokemonHeldItemModifier && modifier.pokemonId === pokemon.id) {
-            modifier.stackCount = m["stackCount"];
-            heldItemsList.push(modifier);
-          }
+      let row = 0;
+      for (const [index, item] of pokemon.heldItemManager.getHeldItems().sort(heldItemSortFunc).entries()) {
+        if (index > 36) {
+          const overflowIcon = addTextObject(182, 4, "+", TextStyle.WINDOW);
+          heldItemsContainer.add(overflowIcon);
+          break;
         }
-        if (heldItemsList.length > 0) {
-          (heldItemsList as Modifier.PokemonHeldItemModifier[]).sort(Modifier.modifierSortFunc);
-          let row = 0;
-          for (const [index, item] of heldItemsList.entries()) {
-            if (index > 36) {
-              const overflowIcon = addTextObject(182, 4, "+", TextStyle.WINDOW);
-              heldItemsContainer.add(overflowIcon);
-              break;
-            }
-            const itemIcon = item?.getIcon(true);
-            if (
-              item?.stackCount < item?.getMaxHeldItemCount(pokemon) &&
-              itemIcon.list[1] instanceof Phaser.GameObjects.BitmapText
-            ) {
-              itemIcon.list[1].clearTint();
-            }
-            itemIcon.setScale(heldItemsScale);
-            itemIcon.setPosition((index % 19) * 10, row * 10);
-            heldItemsContainer.add(itemIcon);
-            if (index !== 0 && index % 18 === 0) {
-              row++;
-            }
-          }
+        const itemIcon = allHeldItems[item].createSummaryIcon(pokemon);
+        if (!pokemon.heldItemManager.isMaxStack(item) && itemIcon.list[1] instanceof Phaser.GameObjects.BitmapText) {
+          itemIcon.list[1].clearTint();
+        }
+        itemIcon.setScale(heldItemsScale);
+        itemIcon.setPosition((index % 19) * 10, row * 10);
+        heldItemsContainer.add(itemIcon);
+        if (index !== 0 && index % 18 === 0) {
+          row++;
         }
       }
       heldItemsContainer.setName("heldItems");
@@ -1142,7 +1121,7 @@ export default class RunInfoUiHandler extends UiHandler {
         }
         break;
       case Button.CYCLE_ABILITY:
-        if (this.runInfo.modifiers.length !== 0 && this.pageMode === RunInfoUiMode.MAIN) {
+        if (this.runInfo.trainerItems.length !== 0 && this.pageMode === RunInfoUiMode.MAIN) {
           if (this.partyVisibility) {
             this.showParty(false);
           } else {

@@ -4,7 +4,7 @@ import { ChallengeType } from "#enums/challenge-type";
 import { Gender } from "#app/data/gender";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
+import { overrideHeldItems, overrideTrainerItems } from "#app/modifier/modifier";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
 import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
@@ -102,7 +102,7 @@ export class SelectStarterPhase extends Phase {
       party.push(starterPokemon);
       loadPokemonAssets.push(starterPokemon.loadAssets());
     });
-    overrideModifiers();
+    overrideTrainerItems();
     overrideHeldItems(party[0]);
     Promise.all(loadPokemonAssets).then(() => {
       SoundFade.fadeOut(globalScene, globalScene.sound.get("menu"), 500, true);

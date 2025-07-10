@@ -1,11 +1,11 @@
 import { globalScene } from "#app/global-scene";
 import { biomeLinks, getBiomeName } from "#app/data/balance/biomes";
 import { BiomeId } from "#enums/biome-id";
-import { MoneyInterestModifier, MapModifier } from "#app/modifier/modifier";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import { BattlePhase } from "./battle-phase";
 import { randSeedInt } from "#app/utils/common";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 export class SelectBiomePhase extends BattlePhase {
   public readonly phaseName = "SelectBiomePhase";
@@ -19,7 +19,6 @@ export class SelectBiomePhase extends BattlePhase {
 
     const setNextBiome = (nextBiome: BiomeId) => {
       if (nextWaveIndex % 10 === 1) {
-        globalScene.applyModifiers(MoneyInterestModifier, true);
         globalScene.phaseManager.unshiftNew("PartyHealPhase", false);
       }
       globalScene.phaseManager.unshiftNew("SwitchBiomePhase", nextBiome);
@@ -39,7 +38,7 @@ export class SelectBiomePhase extends BattlePhase {
         .filter(b => !Array.isArray(b) || !randSeedInt(b[1]))
         .map(b => (!Array.isArray(b) ? b : b[0]));
 
-      if (biomes.length > 1 && globalScene.findModifier(m => m instanceof MapModifier)) {
+      if (biomes.length > 1 && globalScene.trainerItems.hasItem(TrainerItemId.MAP)) {
         const biomeSelectItems = biomes.map(b => {
           const ret: OptionSelectItem = {
             label: getBiomeName(b),

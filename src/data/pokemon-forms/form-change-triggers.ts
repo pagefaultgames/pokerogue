@@ -3,7 +3,6 @@ import { coerceArray, type Constructor } from "#app/utils/common";
 import type { TimeOfDay } from "#enums/time-of-day";
 import type Pokemon from "#app/field/pokemon";
 import type { SpeciesFormChange } from "#app/data/pokemon-forms";
-import type { PokemonFormChangeItemModifier } from "#app/modifier/modifier";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { globalScene } from "#app/global-scene";
 import { FormChangeItem } from "#enums/form-change-item";
@@ -77,16 +76,12 @@ export class SpeciesFormChangeItemTrigger extends SpeciesFormChangeTrigger {
   }
 
   canChange(pokemon: Pokemon): boolean {
-    return !!globalScene.findModifier(r => {
-      // Assume that if m has the `formChangeItem` property, then it is a PokemonFormChangeItemModifier
-      const m = r as PokemonFormChangeItemModifier;
-      return (
-        "formChangeItem" in m &&
-        m.pokemonId === pokemon.id &&
-        m.formChangeItem === this.item &&
-        m.active === this.active
-      );
-    });
+    const matchItem = pokemon.heldItemManager.formChangeItems[this.item];
+    if (!matchItem) {
+      return false;
+    }
+    console.log("CAN CHANGE FORMS:", matchItem.active === this.active);
+    return matchItem.active === this.active;
   }
 }
 

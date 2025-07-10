@@ -1,7 +1,6 @@
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import {
-  generateModifierType,
   generateModifierTypeOption,
   getRandomEncounterSpecies,
   initBattleWithEnemyConfig,
@@ -11,7 +10,7 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import type { BerryModifierType, ModifierTypeOption } from "#app/modifier/modifier-type";
+import type { ModifierTypeOption } from "#app/modifier/modifier-type";
 import { regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/data/data-lists";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
@@ -26,18 +25,17 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import {
-  applyModifierTypeToPlayerPokemon,
   getEncounterPokemonLevelForWave,
   getHighestStatPlayerPokemon,
   getSpriteKeysFromPokemon,
   STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER,
 } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import PokemonData from "#app/system/pokemon-data";
-import { BerryModifier } from "#app/modifier/modifier";
 import i18next from "#app/plugins/i18n";
 import { BerryType } from "#enums/berry-type";
 import { PERMANENT_STATS, Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { berryTypeToHeldItem } from "#app/items/held-items/berry";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/berriesAbound";
@@ -312,35 +310,17 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
 
 function tryGiveBerry(prioritizedPokemon?: PlayerPokemon) {
   const berryType = randSeedInt(Object.keys(BerryType).filter(s => !Number.isNaN(Number(s))).length) as BerryType;
-  const berry = generateModifierType(modifierTypes.BERRY, [berryType]) as BerryModifierType;
+  const berry = berryTypeToHeldItem[berryType];
 
   const party = globalScene.getPlayerParty();
 
-  // Will try to apply to prioritized pokemon first, then do normal application method if it fails
-  if (prioritizedPokemon) {
-    const heldBerriesOfType = globalScene.findModifier(
-      m =>
-        m instanceof BerryModifier &&
-        m.pokemonId === prioritizedPokemon.id &&
-        (m as BerryModifier).berryType === berryType,
-      true,
-    ) as BerryModifier;
-
-    if (!heldBerriesOfType || heldBerriesOfType.getStackCount() < heldBerriesOfType.getMaxStackCount()) {
-      applyModifierTypeToPlayerPokemon(prioritizedPokemon, berry);
-      return;
-    }
+  // Will give the berry to a Pokemon, starting from the prioritized one
+  if (prioritizedPokemon?.heldItemManager.add(berry)) {
+    return;
   }
 
-  // Iterate over the party until berry was successfully given
   for (const pokemon of party) {
-    const heldBerriesOfType = globalScene.findModifier(
-      m => m instanceof BerryModifier && m.pokemonId === pokemon.id && (m as BerryModifier).berryType === berryType,
-      true,
-    ) as BerryModifier;
-
-    if (!heldBerriesOfType || heldBerriesOfType.getStackCount() < heldBerriesOfType.getMaxStackCount()) {
-      applyModifierTypeToPlayerPokemon(pokemon, berry);
+    if (pokemon.heldItemManager.add(berry)) {
       return;
     }
   }

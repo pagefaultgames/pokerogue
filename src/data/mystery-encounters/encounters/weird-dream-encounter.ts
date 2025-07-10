@@ -7,7 +7,6 @@ import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-en
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import type { EnemyPartyConfig, EnemyPokemonConfig } from "../utils/encounter-phase-utils";
 import {
-  generateModifierType,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterRewards,
@@ -21,11 +20,8 @@ import { NumberHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "#
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { allSpecies } from "#app/data/data-lists";
-import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier } from "#app/modifier/modifier";
 import { achvs } from "#app/system/achv";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/data/data-lists";
 import i18next from "#app/plugins/i18n";
 import {
@@ -34,15 +30,18 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-transformation-sequence";
 import { getLevelTotalExp } from "#app/data/exp";
 import { Challenges } from "#enums/challenges";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import PokemonData from "#app/system/pokemon-data";
 import { Nature } from "#enums/nature";
-import type HeldModifierConfig from "#app/@types/held-modifier-config";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
 import { PartyMemberStrength } from "#enums/party-member-strength";
+import type { HeldItemConfiguration, HeldItemSpecs } from "#app/items/held-item-data-types";
+import { assignItemsFromConfiguration } from "#app/items/held-item-pool";
+import { HeldItemId } from "#enums/held-item-id";
+import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/weirdDream";
@@ -262,20 +261,14 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         dataSource.player = false;
 
         // Copy held items to new pokemon
-        const newPokemonHeldItemConfigs: HeldModifierConfig[] = [];
-        for (const item of transformation.heldItems) {
-          newPokemonHeldItemConfigs.push({
-            modifier: item.clone() as PokemonHeldItemModifier,
-            stackCount: item.getStackCount(),
-            isTransferable: false,
-          });
-        }
+        // TODO: Make items untransferable
+        const newPokemonHeldItemConfig = transformation.heldItems;
+
         // Any pokemon that is below 570 BST gets +20 permanent BST to 3 stats
         if (shouldGetOldGateau(newPokemon)) {
-          newPokemonHeldItemConfigs.push({
-            modifier: generateModifierType(modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU) as PokemonHeldItemModifierType,
-            stackCount: 1,
-            isTransferable: false,
+          newPokemonHeldItemConfig.push({
+            entry: HeldItemId.OLD_GATEAU,
+            count: 1,
           });
         }
 
@@ -284,7 +277,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
           isBoss: newPokemon.getSpeciesForm().getBaseStatTotal() > NON_LEGENDARY_BST_THRESHOLD,
           level: previousPokemon.level,
           dataSource: dataSource,
-          modifierConfigs: newPokemonHeldItemConfigs,
+          heldItemConfig: newPokemonHeldItemConfig,
         };
 
         enemyPokemonConfigs.push(enemyConfig);
@@ -316,12 +309,12 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       setEncounterRewards(
         {
           guaranteedModifierTiers: [
-            ModifierTier.ROGUE,
-            ModifierTier.ROGUE,
-            ModifierTier.ULTRA,
-            ModifierTier.ULTRA,
-            ModifierTier.GREAT,
-            ModifierTier.GREAT,
+            RewardTier.ROGUE,
+            RewardTier.ROGUE,
+            RewardTier.ULTRA,
+            RewardTier.ULTRA,
+            RewardTier.GREAT,
+            RewardTier.GREAT,
           ],
           fillRemaining: false,
         },
@@ -365,7 +358,7 @@ interface PokemonTransformation {
   previousPokemon: PlayerPokemon;
   newSpecies: PokemonSpecies;
   newPokemon: PlayerPokemon;
-  heldItems: PokemonHeldItemModifier[];
+  heldItems: HeldItemConfiguration;
 }
 
 function getTeamTransformations(): PokemonTransformation[] {
@@ -390,9 +383,7 @@ function getTeamTransformations(): PokemonTransformation[] {
   for (let i = 0; i < numPokemon; i++) {
     const removed = removedPokemon[i];
     const index = pokemonTransformations.findIndex(p => p.previousPokemon.id === removed.id);
-    pokemonTransformations[index].heldItems = removed
-      .getHeldItems()
-      .filter(m => !(m instanceof PokemonFormChangeItemModifier));
+    pokemonTransformations[index].heldItems = removed.heldItemManager.generateHeldItemConfiguration();
 
     const bst = removed.getSpeciesForm().getBaseStatTotal();
     let newBstRange: [number, number];
@@ -448,17 +439,14 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
     }
 
     // Copy old items to new pokemon
-    for (const item of transformation.heldItems) {
-      item.pokemonId = newPokemon.id;
-      globalScene.addModifier(item, false, false, false, true);
-    }
+    const heldItemConfiguration = transformation.heldItems;
+
     // Any pokemon that is below 570 BST gets +20 permanent BST to 3 stats
     if (shouldGetOldGateau(newPokemon)) {
-      const modType = modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU();
-      const modifier = modType?.newModifier(newPokemon);
-      if (modifier) {
-        globalScene.addModifier(modifier, false, false, false, true);
-      }
+      heldItemConfiguration.push({
+        entry: HeldItemId.OLD_GATEAU,
+        count: 1,
+      });
     }
 
     newPokemon.calculateStats();
@@ -499,7 +487,9 @@ async function postProcessTransformedPokemon(
     const hiddenIndex = newPokemon.species.ability2 ? 2 : 1;
     if (newPokemon.abilityIndex < hiddenIndex) {
       const hiddenAbilityChance = new NumberHolder(256);
-      globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+      globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HIDDEN_ABILITY_CHANCE_BOOSTER, {
+        numberHolder: hiddenAbilityChance,
+      });
 
       const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
 

@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import type { ModifierTier } from "#enums/modifier-tier";
+import type { RewardTier } from "#enums/reward-tier";
 import type { ModifierTypeOption, ModifierType } from "#app/modifier/modifier-type";
 import {
   regenerateModifierPoolThresholds,
@@ -12,15 +12,12 @@ import {
   PokemonPpRestoreModifierType,
   PokemonPpUpModifierType,
   getPlayerModifierTypeOptions,
+  HeldItemReward,
+  FormChangeItemReward,
+  TrainerItemReward,
 } from "#app/modifier/modifier-type";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { Modifier } from "#app/modifier/modifier";
-import {
-  ExtraModifierModifier,
-  HealShopCostModifier,
-  PokemonHeldItemModifier,
-  TempExtraModifierModifier,
-} from "#app/modifier/modifier";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
@@ -30,13 +27,14 @@ import { BattlePhase } from "./battle-phase";
 import Overrides from "#app/overrides";
 import type { CustomModifierSettings } from "#app/modifier/modifier-type";
 import { isNullOrUndefined, NumberHolder } from "#app/utils/common";
+import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 
 export type ModifierSelectCallback = (rowCursor: number, cursor: number) => boolean;
 
 export class SelectModifierPhase extends BattlePhase {
   public readonly phaseName = "SelectModifierPhase";
   private rerollCount: number;
-  private modifierTiers?: ModifierTier[];
+  private modifierTiers?: RewardTier[];
   private customModifierSettings?: CustomModifierSettings;
   private isCopy: boolean;
 
@@ -44,7 +42,7 @@ export class SelectModifierPhase extends BattlePhase {
 
   constructor(
     rerollCount = 0,
-    modifierTiers?: ModifierTier[],
+    modifierTiers?: RewardTier[],
     customModifierSettings?: CustomModifierSettings,
     isCopy = false,
   ) {
@@ -154,7 +152,7 @@ export class SelectModifierPhase extends BattlePhase {
     const modifierType = shopOption.type;
     // Apply Black Sludge to healing item cost
     const healingItemCost = new NumberHolder(shopOption.cost);
-    globalScene.applyModifier(HealShopCostModifier, true, healingItemCost);
+    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HEAL_SHOP_COST, { numberHolder: healingItemCost });
     const cost = healingItemCost.value;
 
     if (globalScene.money < cost && !Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
@@ -172,11 +170,20 @@ export class SelectModifierPhase extends BattlePhase {
     modifierSelectCallback: ModifierSelectCallback,
   ): boolean {
     if (modifierType instanceof PokemonModifierType) {
-      if (modifierType instanceof FusePokemonModifierType) {
+      if (modifierType instanceof HeldItemReward || modifierType instanceof FormChangeItemReward) {
+        this.openGiveHeldItemMenu(modifierType, modifierSelectCallback);
+      } else if (modifierType instanceof FusePokemonModifierType) {
         this.openFusionMenu(modifierType, cost, modifierSelectCallback);
       } else {
         this.openModifierMenu(modifierType, cost, modifierSelectCallback);
       }
+    } else if (modifierType instanceof TrainerItemReward) {
+      console.log("WE GOT HERE");
+      modifierType.apply();
+      globalScene.updateItems(true);
+      globalScene.ui.clearText();
+      globalScene.ui.setMode(UiMode.MESSAGE);
+      super.end();
     } else {
       this.applyModifier(modifierType.newModifier()!);
     }
@@ -194,7 +201,7 @@ export class SelectModifierPhase extends BattlePhase {
     globalScene.phaseManager.unshiftNew(
       "SelectModifierPhase",
       this.rerollCount + 1,
-      this.typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as ModifierTier[],
+      this.typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as RewardTier[],
     );
     globalScene.ui.clearText();
     globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
@@ -222,16 +229,14 @@ export class SelectModifierPhase extends BattlePhase {
           fromSlotIndex !== toSlotIndex &&
           itemIndex > -1
         ) {
-          const itemModifiers = globalScene.findModifiers(
-            m => m instanceof PokemonHeldItemModifier && m.isTransferable && m.pokemonId === party[fromSlotIndex].id,
-          ) as PokemonHeldItemModifier[];
-          const itemModifier = itemModifiers[itemIndex];
-          globalScene.tryTransferHeldItemModifier(
-            itemModifier,
+          const items = party[fromSlotIndex].heldItemManager.getTransferableHeldItems();
+          const item = items[itemIndex];
+          globalScene.tryTransferHeldItem(
+            item,
+            party[fromSlotIndex],
             party[toSlotIndex],
             true,
             itemQuantity,
-            undefined,
             undefined,
             false,
           );
@@ -267,7 +272,7 @@ export class SelectModifierPhase extends BattlePhase {
    * @param playSound - Whether the 'obtain modifier' sound should be played when adding the modifier.
    */
   private applyModifier(modifier: Modifier, cost = -1, playSound = false): void {
-    const result = globalScene.addModifier(modifier, false, playSound, undefined, undefined, cost);
+    const result = globalScene.addModifier(modifier, playSound, undefined, cost);
     // Queue a copy of this phase when applying a TM or Memory Mushroom.
     // If the player selects either of these, then escapes out of consuming them,
     // they are returned to a shop in the same state.
@@ -372,11 +377,33 @@ export class SelectModifierPhase extends BattlePhase {
     );
   }
 
+  private openGiveHeldItemMenu(reward, modifierSelectCallback) {
+    const party = globalScene.getPlayerParty();
+    const partyUiMode = PartyUiMode.MODIFIER;
+    globalScene.ui.setModeWithoutClear(
+      UiMode.PARTY,
+      partyUiMode,
+      -1,
+      (slotIndex: number, _option: PartyOption) => {
+        if (slotIndex < 6) {
+          globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
+            reward.apply(party[slotIndex]);
+            globalScene.ui.clearText();
+            globalScene.ui.setMode(UiMode.MESSAGE);
+            super.end();
+          });
+        } else {
+          this.resetModifierSelect(modifierSelectCallback);
+        }
+      },
+      reward.selectFilter,
+    );
+  }
+
   // Function that determines how many reward slots are available
   private getModifierCount(): number {
     const modifierCountHolder = new NumberHolder(3);
-    globalScene.applyModifiers(ExtraModifierModifier, true, modifierCountHolder);
-    globalScene.applyModifiers(TempExtraModifierModifier, true, modifierCountHolder);
+    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.EXTRA_REWARD, { numberHolder: modifierCountHolder });
 
     // If custom modifiers are specified, overrides default item count
     if (this.customModifierSettings) {
@@ -447,7 +474,7 @@ export class SelectModifierPhase extends BattlePhase {
 
     // Apply Black Sludge to reroll cost
     const modifiedRerollCost = new NumberHolder(baseMultiplier);
-    globalScene.applyModifier(HealShopCostModifier, true, modifiedRerollCost);
+    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HEAL_SHOP_COST, { numberHolder: modifiedRerollCost });
     return modifiedRerollCost.value;
   }
 

@@ -1,13 +1,13 @@
 import { BattlerIndex } from "#enums/battler-index";
 import { allMoves } from "#app/data/data-lists";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import type { PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { HeldItemId } from "#enums/held-item-id";
 
 describe("Items - Reviver Seed", () => {
   let phaserGame: Phaser.Game;
@@ -32,8 +32,8 @@ describe("Items - Reviver Seed", () => {
       .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .startingHeldItems([{ name: "REVIVER_SEED" }])
-      .enemyHeldItems([{ name: "REVIVER_SEED" }])
+      .startingHeldItems([{ entry: HeldItemId.REVIVER_SEED }])
+      .enemyHeldItems([{ entry: HeldItemId.REVIVER_SEED }])
       .enemyMoveset(MoveId.SPLASH);
     vi.spyOn(allMoves[MoveId.SHEER_COLD], "accuracy", "get").mockReturnValue(100);
     vi.spyOn(allMoves[MoveId.LEECH_SEED], "accuracy", "get").mockReturnValue(100);

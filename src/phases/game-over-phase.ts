@@ -18,7 +18,6 @@ import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
 import type { SessionSaveData } from "#app/system/game-data";
-import PersistentModifierData from "#app/system/modifier-data";
 import PokemonData from "#app/system/pokemon-data";
 import ChallengeData from "#app/system/challenge-data";
 import TrainerData from "#app/system/trainer-data";
@@ -285,12 +284,10 @@ export class GameOverPhase extends BattlePhase {
       gameMode: globalScene.gameMode.modeId,
       party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
-      modifiers: preWaveSessionData
-        ? preWaveSessionData.modifiers
-        : globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
-      enemyModifiers: preWaveSessionData
-        ? preWaveSessionData.enemyModifiers
-        : globalScene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
+      trainerItems: preWaveSessionData ? preWaveSessionData.trainerItems : globalScene.trainerItems.generateSaveData(),
+      enemyTrainerItems: preWaveSessionData
+        ? preWaveSessionData.enemyTrainerItems
+        : globalScene.enemyTrainerItems.generateSaveData(),
       arena: new ArenaData(globalScene.arena),
       pokeballCounts: globalScene.pokeballCounts,
       money: Math.floor(globalScene.money),

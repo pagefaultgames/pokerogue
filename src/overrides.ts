@@ -23,6 +23,8 @@ import { TrainerType } from "#enums/trainer-type";
 import { Unlockables } from "#enums/unlockables";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
+import { HeldItemConfiguration } from "./items/held-item-data-types";
+import { TrainerItemConfiguration } from "./items/trainer-item-data-types";
 
 /**
  * This comment block exists to prevent IDEs from automatically removing unused imports
@@ -271,18 +273,15 @@ class DefaultOverrides {
    * STARTING_HELD_ITEM_OVERRIDE = [{name: "BERRY"}]
    * ```
    */
-  readonly STARTING_MODIFIER_OVERRIDE: ModifierOverride[] = [];
-  /**
-   * Override array of {@linkcode ModifierOverride}s used to provide modifiers to enemies.
-   *
-   * Note that any previous modifiers are cleared.
-   */
-  readonly OPP_MODIFIER_OVERRIDE: ModifierOverride[] = [];
+  /** Override array of {@linkcode ModifierOverride}s used to provide held items to first party member when starting a new game. */
+  readonly STARTING_TRAINER_ITEMS_OVERRIDE: TrainerItemConfiguration = [];
+  /** Override array of {@linkcode ModifierOverride}s used to provide held items to enemies on spawn. */
+  readonly OPP_TRAINER_ITEMS_OVERRIDE: TrainerItemConfiguration = [];
 
   /** Override array of {@linkcode ModifierOverride}s used to provide held items to first party member when starting a new game. */
-  readonly STARTING_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
+  readonly STARTING_HELD_ITEMS_OVERRIDE: HeldItemConfiguration = [];
   /** Override array of {@linkcode ModifierOverride}s used to provide held items to enemies on spawn. */
-  readonly OPP_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
+  readonly OPP_HELD_ITEMS_OVERRIDE: HeldItemConfiguration = [];
 
   /**
    * Override array of {@linkcode ModifierOverride}s used to replace the generated item rolls after a wave.

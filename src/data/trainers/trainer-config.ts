@@ -49,7 +49,7 @@ import type { EnemyPokemon } from "#app/field/pokemon";
 import type { EvilTeam } from "./evil-admin-trainer-pools";
 import type {
   PartyMemberFunc,
-  GenModifiersFunc,
+  GenTrainerItemsFunc,
   GenAIFunc,
   PartyTemplateFunc,
   TrainerTierPools,
@@ -118,7 +118,7 @@ export class TrainerConfig {
   public femaleEncounterBgm: string;
   public doubleEncounterBgm: string;
   public victoryBgm: string;
-  public genModifiersFunc: GenModifiersFunc;
+  public genModifiersFunc: GenTrainerItemsFunc;
   public genAIFuncs: GenAIFunc[] = [];
   public modifierRewardFuncs: ModifierTypeFunc[] = [];
   public partyTemplates: TrainerPartyTemplate[];
@@ -470,7 +470,7 @@ export class TrainerConfig {
     return this;
   }
 
-  setGenModifiersFunc(genModifiersFunc: GenModifiersFunc): TrainerConfig {
+  setGenModifiersFunc(genModifiersFunc: GenTrainerItemsFunc): TrainerConfig {
     this.genModifiersFunc = genModifiersFunc;
     return this;
   }
@@ -1004,6 +1004,7 @@ export function getRandomPartyMemberFunc(
       undefined,
       false,
       undefined,
+      undefined,
       postProcess,
     );
   };
@@ -1028,7 +1029,16 @@ function getSpeciesFilterRandomPartyMemberFunc(
         .getTrainerSpeciesForLevel(level, true, strength, waveIndex),
     );
 
-    return globalScene.addEnemyPokemon(species, level, trainerSlot, undefined, false, undefined, postProcess);
+    return globalScene.addEnemyPokemon(
+      species,
+      level,
+      trainerSlot,
+      undefined,
+      false,
+      undefined,
+      undefined,
+      postProcess,
+    );
   };
 }
 

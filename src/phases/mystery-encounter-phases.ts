@@ -13,10 +13,10 @@ import { getCharVariantFromDialogue } from "../data/dialogue";
 import type { OptionSelectSettings } from "../data/mystery-encounters/utils/encounter-phase-utils";
 import { transitionMysteryEncounterIntroVisuals } from "../data/mystery-encounters/utils/encounter-phase-utils";
 import { TrainerSlot } from "#enums/trainer-slot";
-import { IvScannerModifier } from "../modifier/modifier";
 import { Phase } from "../phase";
 import { UiMode } from "#enums/ui-mode";
 import { isNullOrUndefined, randSeedItem } from "#app/utils/common";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 /**
  * Will handle (in order):
@@ -414,8 +414,7 @@ export class MysteryEncounterBattlePhase extends Phase {
     // PostSummon and ShinySparkle phases are handled by SummonPhase
 
     if (encounterMode !== MysteryEncounterMode.TRAINER_BATTLE) {
-      const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
-      if (ivScannerModifier) {
+      if (globalScene.trainerItems.hasItem(TrainerItemId.IV_SCANNER)) {
         enemyField.map(p => globalScene.phaseManager.pushNew("ScanIvsPhase", p.getBattlerIndex()));
       }
     }

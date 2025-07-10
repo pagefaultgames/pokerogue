@@ -25,7 +25,6 @@ import { MoveCategory } from "#enums/MoveCategory";
 import { getPokeballAtlasKey } from "#app/data/pokeball";
 import { getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { getLevelRelExp, getLevelTotalExp } from "#app/data/exp";
-import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { StatusEffect } from "#enums/status-effect";
 import { getBiomeName } from "#app/data/balance/biomes";
 import { getNatureName, getNatureStatMultiplier } from "#app/data/nature";
@@ -35,11 +34,12 @@ import { getVariantTint } from "#app/sprites/variant";
 import { Button } from "#enums/buttons";
 import type { Ability } from "#app/data/abilities/ability";
 import i18next from "i18next";
-import { modifierSortFunc } from "#app/modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";
 import { Stat, PERMANENT_STATS, getStatKey } from "#enums/stat";
 import { Nature } from "#enums/nature";
 import { achvs } from "#app/system/achv";
+import { allHeldItems } from "#app/data/data-lists";
+import { heldItemSortFunc } from "#app/items/item-utility";
 
 enum Page {
   PROFILE,
@@ -1032,24 +1032,39 @@ export default class SummaryUiHandler extends UiHandler {
         });
         this.ivContainer.setVisible(false);
 
-        const itemModifiers = (
-          globalScene.findModifiers(
-            m => m instanceof PokemonHeldItemModifier && m.pokemonId === this.pokemon?.id,
-            this.playerParty,
-          ) as PokemonHeldItemModifier[]
-        ).sort(modifierSortFunc);
+        const heldItems = this.pokemon?.getHeldItems().sort(heldItemSortFunc);
 
-        itemModifiers.forEach((item, i) => {
-          const icon = item.getIcon(true);
+        heldItems?.forEach((itemKey, i) => {
+          const heldItem = allHeldItems[itemKey];
 
+          if (this.pokemon) {
+            const icon = heldItem.createSummaryIcon(this.pokemon);
+
+            console.log(icon);
+            icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);
+            this.statsContainer.add(icon);
+
+            icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
+            icon.on("pointerover", () => globalScene.ui.showTooltip(heldItem.name, heldItem.description, true));
+            icon.on("pointerout", () => globalScene.ui.hideTooltip());
+          }
+        });
+        /*
+        const formChangeItems = this.pokemon?.heldItemManager.getFormChangeItems().sort(formChangeItemSortFunc);
+        
+        //TODO: Make an equivalent function for form change items
+        formChangeItems?.forEach((itemKey, i) => {
+          const icon = heldItem.createSummaryIcon(stack);
+
+          console.log(icon);
           icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);
           this.statsContainer.add(icon);
 
           icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
-          icon.on("pointerover", () => globalScene.ui.showTooltip(item.type.name, item.type.getDescription(), true));
+          icon.on("pointerover", () => globalScene.ui.showTooltip(heldItem.getName(), heldItem.getDescription(), true));
           icon.on("pointerout", () => globalScene.ui.hideTooltip());
         });
-
+*/
         const pkmLvl = this.pokemon?.level!; // TODO: is this bang correct?
         const pkmLvlExp = this.pokemon?.levelExp!; // TODO: is this bang correct?
         const pkmExp = this.pokemon?.exp!; // TODO: is this bang correct?

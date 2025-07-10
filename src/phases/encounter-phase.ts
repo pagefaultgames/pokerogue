@@ -14,9 +14,6 @@ import { EncounterPhaseEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
 import { FieldPosition } from "#enums/field-position";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BoostBugSpawnModifier, IvScannerModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier";
-import { regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
 import Overrides from "#app/overrides";
 import { BattlePhase } from "#app/phases/battle-phase";
 import { achvs } from "#app/system/achv";
@@ -28,10 +25,11 @@ import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
-import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
+import { overrideHeldItems, overrideTrainerItems } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
 import { getNatureName } from "#app/data/nature";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 export class EncounterPhase extends BattlePhase {
   // Union type is necessary as this is subclassed, and typescript will otherwise complain
@@ -107,7 +105,7 @@ export class EncounterPhase extends BattlePhase {
           let enemySpecies = globalScene.randomSpecies(battle.waveIndex, level, true);
           // If player has golden bug net, rolls 10% chance to replace non-boss wave wild species from the golden bug net bug pool
           if (
-            globalScene.findModifier(m => m instanceof BoostBugSpawnModifier) &&
+            globalScene.trainerItems.hasItem(TrainerItemId.GOLDEN_BUG_NET) &&
             !globalScene.gameMode.isBoss(battle.waveIndex) &&
             globalScene.arena.biomeType !== BiomeId.END &&
             randSeedInt(10) === 0
@@ -271,12 +269,8 @@ export class EncounterPhase extends BattlePhase {
 
       if (!this.loaded && battle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
         // generate modifiers for MEs, overriding prior ones as applicable
-        regenerateModifierPoolThresholds(
-          globalScene.getEnemyField(),
-          battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD,
-        );
-        globalScene.generateEnemyModifiers();
-        overrideModifiers(false);
+        globalScene.generateEnemyItems();
+        overrideTrainerItems(false);
 
         for (const enemy of globalScene.getEnemyField()) {
           overrideHeldItems(enemy, false);
@@ -311,7 +305,7 @@ export class EncounterPhase extends BattlePhase {
 
   doEncounter() {
     globalScene.playBgm(undefined, true);
-    globalScene.updateModifiers(false);
+    globalScene.updateItems(false);
     globalScene.setFieldScale(1);
 
     const { battleType, waveIndex } = globalScene.currentBattle;
@@ -349,6 +343,7 @@ export class EncounterPhase extends BattlePhase {
         }
       },
     });
+    globalScene.updateItems(false);
 
     const encounterIntroVisuals = globalScene.currentBattle?.mysteryEncounter?.introVisuals;
     if (encounterIntroVisuals) {
@@ -543,22 +538,6 @@ export class EncounterPhase extends BattlePhase {
       if (enemyPokemon.isShiny(true)) {
         globalScene.phaseManager.unshiftNew("ShinySparklePhase", BattlerIndex.ENEMY + e);
       }
-      /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen */
-      if (
-        enemyPokemon.species.speciesId === SpeciesId.ETERNATUS &&
-        (globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex) ||
-          globalScene.gameMode.isEndlessMajorBoss(globalScene.currentBattle.waveIndex))
-      ) {
-        const enemyMBH = globalScene.findModifier(
-          m => m instanceof TurnHeldItemTransferModifier,
-          false,
-        ) as TurnHeldItemTransferModifier;
-        if (enemyMBH) {
-          globalScene.removeModifier(enemyMBH, true);
-          enemyMBH.setTransferrableFalse();
-          globalScene.addEnemyModifier(enemyMBH);
-        }
-      }
     });
 
     if (![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)) {
@@ -585,8 +564,7 @@ export class EncounterPhase extends BattlePhase {
           },
         ),
       );
-      const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
-      if (ivScannerModifier) {
+      if (globalScene.trainerItems.hasItem(TrainerItemId.IV_SCANNER)) {
         enemyField.map(p => globalScene.phaseManager.pushNew("ScanIvsPhase", p.getBattlerIndex()));
       }
     }

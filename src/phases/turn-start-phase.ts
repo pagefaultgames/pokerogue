@@ -3,7 +3,6 @@ import { allMoves } from "#app/data/data-lists";
 import { Stat } from "#app/enums/stat";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { BypassSpeedChanceModifier } from "#app/modifier/modifier";
 import { Command } from "#enums/command";
 import { randSeedShuffle, BooleanHolder } from "#app/utils/common";
 import { FieldPhase } from "./field-phase";
@@ -11,6 +10,8 @@ import { BattlerIndex } from "#enums/battler-index";
 import { TrickRoomTag } from "#app/data/arena-tag";
 import { SwitchType } from "#enums/switch-type";
 import { globalScene } from "#app/global-scene";
+import { HELD_ITEM_EFFECT } from "#app/items/held-item";
+import { applyHeldItems } from "#app/items/all-held-items";
 
 export class TurnStartPhase extends FieldPhase {
   public readonly phaseName = "TurnStartPhase";
@@ -72,7 +73,7 @@ export class TurnStartPhase extends FieldPhase {
         canCheckHeldItems: canCheckHeldItems,
       });
       if (canCheckHeldItems.value) {
-        globalScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
+        applyHeldItems(HELD_ITEM_EFFECT.BYPASS_SPEED_CHANCE, { pokemon: p, doBypassSpeed: bypassSpeed });
       }
       battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
     });

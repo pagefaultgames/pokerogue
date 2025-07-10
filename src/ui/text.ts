@@ -4,7 +4,7 @@ import type Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import { globalScene } from "#app/global-scene";
-import { ModifierTier } from "../enums/modifier-tier";
+import { RewardTier } from "#app/enums/reward-tier";
 import i18next from "#app/plugins/i18n";
 
 export enum TextStyle {
@@ -423,19 +423,19 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   }
 }
 
-export function getModifierTierTextTint(tier: ModifierTier): number {
+export function getModifierTierTextTint(tier: RewardTier): number {
   switch (tier) {
-    case ModifierTier.COMMON:
+    case RewardTier.COMMON:
       return 0xf8f8f8;
-    case ModifierTier.GREAT:
+    case RewardTier.GREAT:
       return 0x4998f8;
-    case ModifierTier.ULTRA:
+    case RewardTier.ULTRA:
       return 0xf8d038;
-    case ModifierTier.ROGUE:
+    case RewardTier.ROGUE:
       return 0xdb4343;
-    case ModifierTier.MASTER:
+    case RewardTier.MASTER:
       return 0xe331c5;
-    case ModifierTier.LUXURY:
+    case RewardTier.LUXURY:
       return 0xe74c18;
   }
 }
@@ -443,12 +443,12 @@ export function getModifierTierTextTint(tier: ModifierTier): number {
 export function getEggTierTextTint(tier: EggTier): number {
   switch (tier) {
     case EggTier.COMMON:
-      return getModifierTierTextTint(ModifierTier.COMMON);
+      return getModifierTierTextTint(RewardTier.COMMON);
     case EggTier.RARE:
-      return getModifierTierTextTint(ModifierTier.GREAT);
+      return getModifierTierTextTint(RewardTier.GREAT);
     case EggTier.EPIC:
-      return getModifierTierTextTint(ModifierTier.ULTRA);
+      return getModifierTierTextTint(RewardTier.ULTRA);
     case EggTier.LEGENDARY:
-      return getModifierTierTextTint(ModifierTier.MASTER);
+      return getModifierTierTextTint(RewardTier.MASTER);
   }
 }

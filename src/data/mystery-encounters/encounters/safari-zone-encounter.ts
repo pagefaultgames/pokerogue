@@ -11,7 +11,6 @@ import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-en
 import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { TrainerSlot } from "#enums/trainer-slot";
-import { HiddenAbilityRateBoosterModifier, IvScannerModifier } from "#app/modifier/modifier";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import { PokeballType } from "#enums/pokeball";
 import { PlayerGender } from "#enums/player-gender";
@@ -31,6 +30,8 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
+import { TrainerItemId } from "#enums/trainer-item-id";
+import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/safariZone";
@@ -297,7 +298,9 @@ async function summonSafariPokemon() {
         const hiddenIndex = pokemon.species.ability2 ? 2 : 1;
         if (pokemon.abilityIndex < hiddenIndex) {
           const hiddenAbilityChance = new NumberHolder(256);
-          globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+          globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HIDDEN_ABILITY_CHANCE_BOOSTER, {
+            numberHolder: hiddenAbilityChance,
+          });
 
           const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
 
@@ -332,8 +335,7 @@ async function summonSafariPokemon() {
   // shows up and the IV scanner breaks. For now, we place the IV scanner code
   // separately so that at least the IV scanner works.
 
-  const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
-  if (ivScannerModifier) {
+  if (globalScene.trainerItems.hasItem(TrainerItemId.IV_SCANNER)) {
     globalScene.phaseManager.pushNew("ScanIvsPhase", pokemon.getBattlerIndex());
   }
 }

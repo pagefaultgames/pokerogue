@@ -1,7 +1,7 @@
 import type BattleScene from "#app/battle-scene";
 import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { PlayerPokemon } from "#app/field/pokemon";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import type { CustomModifierSettings } from "#app/modifier/modifier-type";
 import { ModifierTypeOption } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/data/data-lists";
@@ -129,7 +129,7 @@ describe("SelectModifierPhase", () => {
       h => h instanceof ModifierSelectUiHandler,
     ) as ModifierSelectUiHandler;
     expect(modifierSelectHandler.options.length).toEqual(3);
-    const firstRollTiers: ModifierTier[] = modifierSelectHandler.options.map(o => o.modifierTypeOption.type.tier);
+    const firstRollTiers: RewardTier[] = modifierSelectHandler.options.map(o => o.modifierTypeOption.type.tier);
 
     // TODO: nagivate ui to reroll with lock capsule enabled
 
@@ -184,11 +184,11 @@ describe("SelectModifierPhase", () => {
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
       guaranteedModifierTiers: [
-        ModifierTier.COMMON,
-        ModifierTier.GREAT,
-        ModifierTier.ULTRA,
-        ModifierTier.ROGUE,
-        ModifierTier.MASTER,
+        RewardTier.COMMON,
+        RewardTier.GREAT,
+        RewardTier.ULTRA,
+        RewardTier.ROGUE,
+        RewardTier.MASTER,
       ],
     };
     const pokemon = new PlayerPokemon(getPokemonSpecies(SpeciesId.BULBASAUR), 10, undefined, 0, undefined, true, 2);
@@ -212,23 +212,23 @@ describe("SelectModifierPhase", () => {
     expect(
       modifierSelectHandler.options[0].modifierTypeOption.type.tier -
         modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
-    ).toEqual(ModifierTier.COMMON);
+    ).toEqual(RewardTier.COMMON);
     expect(
       modifierSelectHandler.options[1].modifierTypeOption.type.tier -
         modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
-    ).toEqual(ModifierTier.GREAT);
+    ).toEqual(RewardTier.GREAT);
     expect(
       modifierSelectHandler.options[2].modifierTypeOption.type.tier -
         modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
-    ).toEqual(ModifierTier.ULTRA);
+    ).toEqual(RewardTier.ULTRA);
     expect(
       modifierSelectHandler.options[3].modifierTypeOption.type.tier -
         modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
-    ).toEqual(ModifierTier.ROGUE);
+    ).toEqual(RewardTier.ROGUE);
     expect(
       modifierSelectHandler.options[4].modifierTypeOption.type.tier -
         modifierSelectHandler.options[4].modifierTypeOption.upgradeCount,
-    ).toEqual(ModifierTier.MASTER);
+    ).toEqual(RewardTier.MASTER);
   });
 
   it("should generate custom modifiers and modifier tiers together", async () => {
@@ -236,7 +236,7 @@ describe("SelectModifierPhase", () => {
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
       guaranteedModifierTypeFuncs: [modifierTypes.MEMORY_MUSHROOM, modifierTypes.TM_COMMON],
-      guaranteedModifierTiers: [ModifierTier.MASTER, ModifierTier.MASTER],
+      guaranteedModifierTiers: [RewardTier.MASTER, RewardTier.MASTER],
     };
     const selectModifierPhase = new SelectModifierPhase(0, undefined, customModifiers);
     scene.phaseManager.unshiftPhase(selectModifierPhase);
@@ -250,8 +250,8 @@ describe("SelectModifierPhase", () => {
     expect(modifierSelectHandler.options.length).toEqual(4);
     expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("MEMORY_MUSHROOM");
     expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toEqual("TM_COMMON");
-    expect(modifierSelectHandler.options[2].modifierTypeOption.type.tier).toEqual(ModifierTier.MASTER);
-    expect(modifierSelectHandler.options[3].modifierTypeOption.type.tier).toEqual(ModifierTier.MASTER);
+    expect(modifierSelectHandler.options[2].modifierTypeOption.type.tier).toEqual(RewardTier.MASTER);
+    expect(modifierSelectHandler.options[3].modifierTypeOption.type.tier).toEqual(RewardTier.MASTER);
   });
 
   it("should fill remaining modifiers if fillRemaining is true with custom modifiers", async () => {
@@ -259,7 +259,7 @@ describe("SelectModifierPhase", () => {
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
       guaranteedModifierTypeFuncs: [modifierTypes.MEMORY_MUSHROOM],
-      guaranteedModifierTiers: [ModifierTier.MASTER],
+      guaranteedModifierTiers: [RewardTier.MASTER],
       fillRemaining: true,
     };
     const selectModifierPhase = new SelectModifierPhase(0, undefined, customModifiers);
@@ -273,6 +273,6 @@ describe("SelectModifierPhase", () => {
     ) as ModifierSelectUiHandler;
     expect(modifierSelectHandler.options.length).toEqual(3);
     expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("MEMORY_MUSHROOM");
-    expect(modifierSelectHandler.options[1].modifierTypeOption.type.tier).toEqual(ModifierTier.MASTER);
+    expect(modifierSelectHandler.options[1].modifierTypeOption.type.tier).toEqual(RewardTier.MASTER);
   });
 });

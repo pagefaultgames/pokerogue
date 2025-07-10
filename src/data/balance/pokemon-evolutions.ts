@@ -11,11 +11,11 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { TimeOfDay } from "#enums/time-of-day";
-import type { SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#app/modifier/modifier-type";
 import { speciesStarterCosts } from "./starters";
 import i18next from "i18next";
 import { allMoves } from "#app/data/data-lists";
 import { getPokemonSpecies } from "#app/utils/pokemon-utils";
+import { HeldItemId } from "#enums/held-item-id";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,
@@ -99,7 +99,7 @@ const EvoCondKey = {
   SPECIES_CAUGHT: 12,
   GENDER: 13,
   NATURE: 14,
-  HELD_ITEM: 15, // Currently checks only for species stat booster items
+  HELD_ITEM: 15,
 } as const;
 
 type EvolutionConditionData =
@@ -110,7 +110,7 @@ type EvolutionConditionData =
   {key: typeof EvoCondKey.GENDER, gender: Gender} |
   {key: typeof EvoCondKey.MOVE_TYPE | typeof EvoCondKey.PARTY_TYPE, pkmnType: PokemonType} |
   {key: typeof EvoCondKey.SPECIES_CAUGHT, speciesCaught: SpeciesId} |
-  {key: typeof EvoCondKey.HELD_ITEM, itemKey: SpeciesStatBoosterItem} |
+  {key: typeof EvoCondKey.HELD_ITEM, itemKey: HeldItemId} |
   {key: typeof EvoCondKey.NATURE, nature: Nature[]} |
   {key: typeof EvoCondKey.WEATHER, weather: WeatherType[]} |
   {key: typeof EvoCondKey.TYROGUE, move: TyrogueMove} |
@@ -201,7 +201,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.SPECIES_CAUGHT:
           return !!globalScene.gameData.dexData[cond.speciesCaught].caughtAttr;
         case EvoCondKey.HELD_ITEM:
-          return pokemon.getHeldItems().some(m => m.is("SpeciesStatBoosterModifier") && (m.type as SpeciesStatBoosterModifierType).key === cond.itemKey)
+          return pokemon.heldItemManager.hasItem(cond.itemKey);
       }
     });
   }
@@ -1765,8 +1765,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.DUSKNOIR, 1, EvolutionItem.REAPER_CLOTH, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.CLAMPERL]: [
-    new SpeciesEvolution(SpeciesId.HUNTAIL, 1, EvolutionItem.LINKING_CORD, {key: EvoCondKey.HELD_ITEM, itemKey: "DEEP_SEA_TOOTH"}, SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesEvolution(SpeciesId.GOREBYSS, 1, EvolutionItem.LINKING_CORD, {key: EvoCondKey.HELD_ITEM, itemKey: "DEEP_SEA_SCALE"}, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.HUNTAIL, 1, EvolutionItem.LINKING_CORD, {key: EvoCondKey.HELD_ITEM, itemKey: HeldItemId.DEEP_SEA_TOOTH}, SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesEvolution(SpeciesId.GOREBYSS, 1, EvolutionItem.LINKING_CORD, {key: EvoCondKey.HELD_ITEM, itemKey: HeldItemId.DEEP_SEA_SCALE}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.BOLDORE]: [
     new SpeciesEvolution(SpeciesId.GIGALITH, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)

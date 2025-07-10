@@ -1,6 +1,5 @@
 import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import {
-  generateModifierType,
   generateModifierTypeOption,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
@@ -31,28 +30,22 @@ import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler"
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import {
-  AttackTypeBoosterHeldItemTypeRequirement,
   CombinationPokemonRequirement,
   HeldItemRequirement,
   TypeRequirement,
 } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { PokemonType } from "#enums/pokemon-type";
-import type { AttackTypeBoosterModifierType, ModifierTypeOption } from "#app/modifier/modifier-type";
+import type { ModifierTypeOption } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/data/data-lists";
-import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import {
-  AttackTypeBoosterModifier,
-  BypassSpeedChanceModifier,
-  ContactHeldItemTransferChanceModifier,
-  GigantamaxAccessModifier,
-  MegaEvolutionAccessModifier,
-} from "#app/modifier/modifier";
 import i18next from "i18next";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { allMoves } from "#app/data/data-lists";
-import { ModifierTier } from "#enums/modifier-tier";
+import { RewardTier } from "#enums/reward-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+import { HeldItemId } from "#enums/held-item-id";
+import { allHeldItems } from "#app/data/data-lists";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/bugTypeSuperfan";
@@ -143,6 +136,8 @@ const POOL_3_POKEMON: { species: SpeciesId; formIndex?: number }[] = [
 
 const POOL_4_POKEMON = [SpeciesId.GENESECT, SpeciesId.SLITHER_WING, SpeciesId.BUZZWOLE, SpeciesId.PHEROMOSA];
 
+const REQUIRED_ITEMS = [HeldItemId.QUICK_CLAW, HeldItemId.GRIP_CLAW, HeldItemId.SILVER_POWDER];
+
 const PHYSICAL_TUTOR_MOVES = [
   MoveId.MEGAHORN,
   MoveId.ATTACK_ORDER,
@@ -186,8 +181,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
   .withPrimaryPokemonRequirement(
     CombinationPokemonRequirement.Some(
       // Must have at least 1 Bug type on team, OR have a bug item somewhere on the team
-      new HeldItemRequirement(["BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier"], 1),
-      new AttackTypeBoosterHeldItemTypeRequirement(PokemonType.BUG, 1),
+      new HeldItemRequirement(REQUIRED_ITEMS, 1),
       new TypeRequirement(PokemonType.BUG, false, 1),
     ),
   )
@@ -259,13 +253,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
       },
     ];
 
-    const requiredItems = [
-      generateModifierType(modifierTypes.QUICK_CLAW),
-      generateModifierType(modifierTypes.GRIP_CLAW),
-      generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [PokemonType.BUG]),
-    ];
-
-    const requiredItemString = requiredItems.map(m => m?.name ?? "unknown").join("/");
+    const requiredItemString = REQUIRED_ITEMS.map(m => allHeldItems[m].name ?? "unknown").join("/");
     encounter.setDialogueToken("requiredBugItems", requiredItemString);
 
     return true;
@@ -366,10 +354,10 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           const modifierOptions: ModifierTypeOption[] = [generateModifierTypeOption(modifierTypes.MASTER_BALL)!];
           const specialOptions: ModifierTypeOption[] = [];
 
-          if (!globalScene.findModifier(m => m instanceof MegaEvolutionAccessModifier)) {
+          if (!globalScene.trainerItems.hasItem(TrainerItemId.MEGA_BRACELET)) {
             modifierOptions.push(generateModifierTypeOption(modifierTypes.MEGA_BRACELET)!);
           }
-          if (!globalScene.findModifier(m => m instanceof GigantamaxAccessModifier)) {
+          if (!globalScene.trainerItems.hasItem(TrainerItemId.DYNAMAX_BAND)) {
             modifierOptions.push(generateModifierTypeOption(modifierTypes.DYNAMAX_BAND)!);
           }
           const nonRareEvolutionModifier = generateModifierTypeOption(modifierTypes.EVOLUTION_ITEM);
@@ -415,8 +403,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
       .withPrimaryPokemonRequirement(
         CombinationPokemonRequirement.Some(
           // Meets one or both of the below reqs
-          new HeldItemRequirement(["BypassSpeedChanceModifier", "ContactHeldItemTransferChanceModifier"], 1),
-          new AttackTypeBoosterHeldItemTypeRequirement(PokemonType.BUG, 1),
+          new HeldItemRequirement(REQUIRED_ITEMS, 1),
         ),
       )
       .withDialogue({
@@ -439,25 +426,19 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
 
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Get Pokemon held items and filter for valid ones
-          const validItems = pokemon.getHeldItems().filter(item => {
-            return (
-              (item instanceof BypassSpeedChanceModifier ||
-                item instanceof ContactHeldItemTransferChanceModifier ||
-                (item instanceof AttackTypeBoosterModifier &&
-                  (item.type as AttackTypeBoosterModifierType).moveType === PokemonType.BUG)) &&
-              item.isTransferable
-            );
+          const validItems = pokemon.heldItemManager.getTransferableHeldItems().filter(item => {
+            item in REQUIRED_ITEMS;
           });
 
-          return validItems.map((modifier: PokemonHeldItemModifier) => {
+          return validItems.map((item: HeldItemId) => {
             const option: OptionSelectItem = {
-              label: modifier.type.name,
+              label: allHeldItems[item].name,
               handler: () => {
                 // Pokemon and item selected
-                encounter.setDialogueToken("selectedItem", modifier.type.name);
+                encounter.setDialogueToken("selectedItem", allHeldItems[item].name);
                 encounter.misc = {
                   chosenPokemon: pokemon,
-                  chosenModifier: modifier,
+                  chosenItem: item,
                 };
                 return true;
               },
@@ -469,12 +450,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
         const selectableFilter = (pokemon: Pokemon) => {
           // If pokemon has valid item, it can be selected
           const hasValidItem = pokemon.getHeldItems().some(item => {
-            return (
-              item instanceof BypassSpeedChanceModifier ||
-              item instanceof ContactHeldItemTransferChanceModifier ||
-              (item instanceof AttackTypeBoosterModifier &&
-                (item.type as AttackTypeBoosterModifierType).moveType === PokemonType.BUG)
-            );
+            item in REQUIRED_ITEMS;
           });
           if (!hasValidItem) {
             return getEncounterText(`${namespace}:option.3.invalid_selection`) ?? null;
@@ -491,10 +467,10 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
         const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
         chosenPokemon.loseHeldItem(modifier, false);
-        globalScene.updateModifiers(true, true);
+        globalScene.updateItems(true);
 
         const bugNet = generateModifierTypeOption(modifierTypes.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET)!;
-        bugNet.type.tier = ModifierTier.ROGUE;
+        bugNet.type.tier = RewardTier.ROGUE;
 
         setEncounterRewards({
           guaranteedModifierTypeOptions: [bugNet],

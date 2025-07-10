@@ -1,4 +1,4 @@
-export enum ModifierTier {
+export enum RewardTier {
   COMMON,
   GREAT,
   ULTRA,

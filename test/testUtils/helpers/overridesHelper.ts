@@ -20,6 +20,8 @@ import type { Unlockables } from "#enums/unlockables";
 import { WeatherType } from "#enums/weather-type";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { expect, vi } from "vitest";
+import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
+import type { TrainerItemConfiguration } from "#app/items/trainer-item-data-types";
 
 /**
  * Helper to handle overrides in tests
@@ -115,9 +117,20 @@ export class OverridesHelper extends GameManagerHelper {
    * @param items - The items to hold
    * @returns `this`
    */
-  public startingHeldItems(items: ModifierOverride[]): this {
-    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
-    this.log("Player Pokemon starting held items set to:", items);
+  public startingHeldItems(itemConfiguration: HeldItemConfiguration): this {
+    vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(itemConfiguration);
+    this.log("Player Pokemon starting held items set to:", itemConfiguration);
+    return this;
+  }
+
+  /**
+   * Override the player's starting trainer items
+   * @param items - The items to have
+   * @returns `this`
+   */
+  public startingTrainerItems(itemConfiguration: TrainerItemConfiguration): this {
+    vi.spyOn(Overrides, "STARTING_TRAINER_ITEMS_OVERRIDE", "get").mockReturnValue(itemConfiguration);
+    this.log("Player starting trainer items set to:", itemConfiguration);
     return this;
   }
 
@@ -164,17 +177,6 @@ export class OverridesHelper extends GameManagerHelper {
       .map(([speciesId, formIndex]) => `${SpeciesId[speciesId]}=${formIndex}`)
       .join(", ");
     this.log(`Player Pokemon form set to: ${formsStr}!`);
-    return this;
-  }
-
-  /**
-   * Override the player's starting modifiers
-   * @param modifiers - The modifiers to set
-   * @returns `this`
-   */
-  public startingModifier(modifiers: ModifierOverride[]): this {
-    vi.spyOn(Overrides, "STARTING_MODIFIER_OVERRIDE", "get").mockReturnValue(modifiers);
-    this.log(`Player starting modifiers set to: ${modifiers}`);
     return this;
   }
 
@@ -509,9 +511,20 @@ export class OverridesHelper extends GameManagerHelper {
    * @param items the items to hold
    * @returns `this`
    */
-  public enemyHeldItems(items: ModifierOverride[]): this {
-    vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
-    this.log("Enemy Pokemon held items set to:", items);
+  public enemyHeldItems(itemConfiguration: HeldItemConfiguration): this {
+    vi.spyOn(Overrides, "OPP_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(itemConfiguration);
+    this.log("Enemy Pokemon held items set to:", itemConfiguration);
+    return this;
+  }
+
+  /**
+   * Override the enemy's trainer items
+   * @param items - The items to have
+   * @returns `this`
+   */
+  public enemyTrainerItems(itemConfiguration: TrainerItemConfiguration): this {
+    vi.spyOn(Overrides, "OPP_TRAINER_ITEMS_OVERRIDE", "get").mockReturnValue(itemConfiguration);
+    this.log("Enemy trainer items set to:", itemConfiguration);
     return this;
   }
 

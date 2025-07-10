@@ -5,7 +5,6 @@ import { getPokeballAtlasKey } from "#app/data/pokeball";
 import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { LockModifierTiersModifier, PokemonHeldItemModifier, HealShopCostModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
 import { Button } from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
@@ -16,6 +15,8 @@ import i18next from "i18next";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 import Phaser from "phaser";
 import type { PokeballType } from "#enums/pokeball";
+import { TrainerItemId } from "#enums/trainer-item-id";
+import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 7;
 const SINGLE_SHOP_ROW_YOFFSET = 12;
@@ -183,8 +184,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.player = args[0];
 
     const partyHasHeldItem =
-      this.player && !!globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier && m.isTransferable).length;
-    const canLockRarities = !!globalScene.findModifier(m => m instanceof LockModifierTiersModifier);
+      globalScene
+        .getPlayerParty()
+        .map(p => p.heldItemManager.getTransferableHeldItems().length)
+        .reduce((tot, i) => tot + i, 0) > 0;
+    const canLockRarities = !!globalScene.trainerItems.hasItem(TrainerItemId.LOCK_CAPSULE);
 
     this.transferButtonContainer.setVisible(false);
     this.transferButtonContainer.setAlpha(0);
@@ -210,7 +214,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const typeOptions = args[1] as ModifierTypeOption[];
     const removeHealShop = globalScene.gameMode.hasNoShop;
     const baseShopCost = new NumberHolder(globalScene.getWaveMoneyAmount(1));
-    globalScene.applyModifier(HealShopCostModifier, true, baseShopCost);
+    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HEAL_SHOP_COST, { numberHolder: baseShopCost });
     const shopTypeOptions = !removeHealShop
       ? getPlayerShopModifierTypeOptionsForWave(globalScene.currentBattle.waveIndex, baseShopCost.value)
       : [];
@@ -258,10 +262,12 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.shopOptionsRows[row].push(option);
     }
 
-    const maxUpgradeCount = typeOptions.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
+    const maxUpgradeCount = typeOptions
+      .map(to => to.upgradeCount ?? 0)
+      .reduce((max, current) => Math.max(current, max), 0);
 
-    /* Force updateModifiers without pokemonSpecificModifiers */
-    globalScene.getModifierBar().updateModifiers(globalScene.modifiers, true);
+    /* Force updateItems without pokemon held items */
+    globalScene.updateItems(true, false);
 
     /* Multiplies the appearance duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
     globalScene.showShopOverlay(750 * globalScene.gameSpeed);
@@ -676,7 +682,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     globalScene.hideLuckText(250);
 
     /* Normally already called just after the shop, but not sure if it happens in 100% of cases */
-    globalScene.getModifierBar().updateModifiers(globalScene.modifiers);
+    globalScene.updateItems(true);
 
     const options = this.options.concat(this.shopOptionsRows.flat());
     this.options.splice(0, this.options.length);
@@ -763,7 +769,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     this.add(this.itemContainer);
 
     const getItem = () => {
-      const item = globalScene.add.sprite(0, 0, "items", this.modifierTypeOption.type?.iconImage);
+      const item = globalScene.add.sprite(0, 0, "items", this.modifierTypeOption.type?.getIcon());
       return item;
     };
 

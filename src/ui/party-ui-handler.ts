@@ -8,7 +8,6 @@ import { Command } from "#enums/command";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import { BooleanHolder, toReadableString, randInt, getLocalizedSpriteKey } from "#app/utils/common";
-import type { PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { allMoves } from "#app/data/data-lists";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { StatusEffect } from "#enums/status-effect";
@@ -29,6 +28,9 @@ import { SpeciesId } from "#enums/species-id";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { CommandPhase } from "#app/phases/command-phase";
 import { globalScene } from "#app/global-scene";
+import { HeldItemId } from "#enums/held-item-id";
+import { formChangeItemName } from "#app/data/pokemon-forms";
+import { allHeldItems } from "#app/data/data-lists";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 
@@ -139,10 +141,7 @@ export type PartyModifierTransferSelectCallback = (
 ) => void;
 export type PartyModifierSpliceSelectCallback = (fromCursor: number, toCursor?: number) => void;
 export type PokemonSelectFilter = (pokemon: PlayerPokemon) => string | null;
-export type PokemonModifierTransferSelectFilter = (
-  pokemon: PlayerPokemon,
-  modifier: PokemonHeldItemModifier,
-) => string | null;
+export type PokemonModifierTransferSelectFilter = (pokemon: PlayerPokemon, item: HeldItemId) => string | null;
 export type PokemonMoveSelectFilter = (pokemonMove: PokemonMove) => string | null;
 
 export default class PartyUiHandler extends MessageUiHandler {
@@ -221,11 +220,8 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   private static FilterAllMoves = (_pokemonMove: PokemonMove) => null;
 
-  public static FilterItemMaxStacks = (pokemon: PlayerPokemon, modifier: PokemonHeldItemModifier) => {
-    const matchingModifier = globalScene.findModifier(
-      m => m.is("PokemonHeldItemModifier") && m.pokemonId === pokemon.id && m.matchType(modifier),
-    ) as PokemonHeldItemModifier;
-    if (matchingModifier && matchingModifier.stackCount === matchingModifier.getMaxStackCount()) {
+  public static FilterItemMaxStacks = (pokemon: PlayerPokemon, item: HeldItemId) => {
+    if (pokemon.heldItemManager.isMaxStack(item)) {
       return i18next.t("partyUiHandler:tooManyItems", { pokemonName: getPokemonNameWithAffix(pokemon, false) });
     }
     return null;
@@ -504,8 +500,10 @@ export default class PartyUiHandler extends MessageUiHandler {
     const ui = this.getUi();
     if (this.transferCursor !== this.cursor) {
       if (this.transferAll) {
-        this.getTransferrableItemsFromPokemon(globalScene.getPlayerParty()[this.transferCursor]).forEach(
-          (_, i, array) => {
+        globalScene
+          .getPlayerParty()
+          [this.transferCursor].heldItemManager.getTransferableHeldItems()
+          .forEach((_, i, array) => {
             const invertedIndex = array.length - 1 - i;
             (this.selectCallback as PartyModifierTransferSelectCallback)(
               this.transferCursor,
@@ -513,8 +511,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               this.transferQuantitiesMax[invertedIndex],
               this.cursor,
             );
-          },
-        );
+          });
       } else {
         (this.selectCallback as PartyModifierTransferSelectCallback)(
           this.transferCursor,
@@ -549,18 +546,15 @@ export default class PartyUiHandler extends MessageUiHandler {
         const newPokemon = globalScene.getPlayerParty()[p];
         // this next bit checks to see if the the selected item from the original transfer pokemon exists on the new pokemon `p`
         // this returns `undefined` if the new pokemon doesn't have the item at all, otherwise it returns the `pokemonHeldItemModifier` for that item
-        const matchingModifier = globalScene.findModifier(
-          m =>
-            m.is("PokemonHeldItemModifier") &&
-            m.pokemonId === newPokemon.id &&
-            m.matchType(this.getTransferrableItemsFromPokemon(pokemon)[this.transferOptionCursor]),
-        ) as PokemonHeldItemModifier;
+        const transferItem = pokemon.heldItemManager.getTransferableHeldItems()[this.transferOptionCursor];
+        const matchingItem = newPokemon.heldItemManager.hasItem(transferItem);
+
         const partySlot = this.partySlots.filter(m => m.getPokemon() === newPokemon)[0]; // this gets pokemon [p] for us
         if (p !== this.transferCursor) {
           // this skips adding the able/not able labels on the pokemon doing the transfer
-          if (matchingModifier) {
+          if (matchingItem) {
             // if matchingModifier exists then the item exists on the new pokemon
-            if (matchingModifier.getMaxStackCount() === matchingModifier.stackCount) {
+            if (newPokemon.heldItemManager.isMaxStack(transferItem)) {
               // checks to see if the stack of items is at max stack; if so, set the description label to "Not able"
               ableToTransferText = i18next.t("partyUiHandler:notAble");
             } else {
@@ -682,12 +676,6 @@ export default class PartyUiHandler extends MessageUiHandler {
     return success;
   }
 
-  private getTransferrableItemsFromPokemon(pokemon: PlayerPokemon) {
-    return globalScene.findModifiers(
-      m => m.is("PokemonHeldItemModifier") && m.isTransferable && m.pokemonId === pokemon.id,
-    ) as PokemonHeldItemModifier[];
-  }
-
   private getFilterResult(option: number, pokemon: PlayerPokemon): string | null {
     let filterResult: string | null;
     if (option !== PartyOption.TRANSFER && option !== PartyOption.SPLICE) {
@@ -701,7 +689,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     } else {
       filterResult = (this.selectFilter as PokemonModifierTransferSelectFilter)(
         pokemon,
-        this.getTransferrableItemsFromPokemon(globalScene.getPlayerParty()[this.transferCursor])[
+        globalScene.getPlayerParty()[this.transferCursor].heldItemManager.getTransferableHeldItems()[
           this.transferOptionCursor
         ],
       );
@@ -752,9 +740,9 @@ export default class PartyUiHandler extends MessageUiHandler {
       globalScene.phaseManager.getCurrentPhase()?.is("SelectModifierPhase") &&
       this.partyUiMode === PartyUiMode.CHECK
     ) {
-      const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
-      const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
-      modifier.active = !modifier.active;
+      const formChangeItems = this.getFormChangeItems(pokemon);
+      const item = formChangeItems[option - PartyOption.FORM_CHANGE_ITEM];
+      pokemon.heldItemManager.toggleActive(item);
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
     }
 
@@ -923,14 +911,10 @@ export default class PartyUiHandler extends MessageUiHandler {
     if (this.cursor < 6) {
       if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode) {
         /** Initialize item quantities for the selected Pokemon */
-        const itemModifiers = globalScene.findModifiers(
-          m =>
-            m.is("PokemonHeldItemModifier") &&
-            m.isTransferable &&
-            m.pokemonId === globalScene.getPlayerParty()[this.cursor].id,
-        ) as PokemonHeldItemModifier[];
-        this.transferQuantities = itemModifiers.map(item => item.getStackCount());
-        this.transferQuantitiesMax = itemModifiers.map(item => item.getStackCount());
+        const pokemon = globalScene.getPlayerParty()[this.cursor];
+        const items = pokemon.heldItemManager.getTransferableHeldItems();
+        this.transferQuantities = items.map(item => pokemon.heldItemManager.getStack(item));
+        this.transferQuantitiesMax = items.map(item => pokemon.heldItemManager.getStack(item));
       }
       this.showOptions();
       ui.playSelect();
@@ -1161,9 +1145,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private allowBatonModifierSwitch(): boolean {
     return !!(
       this.partyUiMode !== PartyUiMode.FAINT_SWITCH &&
-      globalScene.findModifier(
-        m => m.is("SwitchEffectTransferModifier") && m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
-      )
+      globalScene.getPlayerField()[this.fieldIndex].heldItemManager.hasItem(HeldItemId.BATON)
     );
   }
 
@@ -1175,14 +1157,6 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.partyUiMode === PartyUiMode.FAINT_SWITCH &&
       lastMove?.result === MoveResult.SUCCESS &&
       allMoves[lastMove.move].getAttrs("ForceSwitchOutAttr")[0]?.isBatonPass()
-    );
-  }
-
-  private getItemModifiers(pokemon: Pokemon): PokemonHeldItemModifier[] {
-    return (
-      (globalScene.findModifiers(
-        m => m.is("PokemonHeldItemModifier") && m.isTransferable && m.pokemonId === pokemon.id,
-      ) as PokemonHeldItemModifier[]) ?? []
     );
   }
 
@@ -1205,11 +1179,11 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   private updateOptionsWithModifierTransferMode(pokemon): void {
-    const itemModifiers = this.getItemModifiers(pokemon);
-    for (let im = 0; im < itemModifiers.length; im++) {
+    const items = pokemon.getHeldItems();
+    for (let im = 0; im < items.length; im++) {
       this.options.push(im);
     }
-    if (itemModifiers.length > 1) {
+    if (items.length > 1) {
       this.options.push(PartyOption.ALL);
     }
   }
@@ -1336,8 +1310,8 @@ export default class PartyUiHandler extends MessageUiHandler {
         break;
       case PartyUiMode.CHECK:
         if (globalScene.phaseManager.getCurrentPhase()?.is("SelectModifierPhase")) {
-          const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
-          for (let i = 0; i < formChangeItemModifiers.length; i++) {
+          const formChangeItems = this.getFormChangeItems(pokemon);
+          for (let i = 0; i < formChangeItems.length; i++) {
             this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
           }
         }
@@ -1398,10 +1372,10 @@ export default class PartyUiHandler extends MessageUiHandler {
             break;
           }
           default: {
-            const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
-            if (formChangeItemModifiers && option >= PartyOption.FORM_CHANGE_ITEM) {
-              const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
-              optionName = `${modifier.active ? i18next.t("partyUiHandler:DEACTIVATE") : i18next.t("partyUiHandler:ACTIVATE")} ${modifier.type.name}`;
+            const formChangeItems = this.getFormChangeItems(pokemon);
+            if (formChangeItems && option >= PartyOption.FORM_CHANGE_ITEM) {
+              const item = formChangeItems[option - PartyOption.FORM_CHANGE_ITEM];
+              optionName = `${pokemon.heldItemManager.hasActiveFormChangeItem(item) ? i18next.t("partyUiHandler:DEACTIVATE") : i18next.t("partyUiHandler:ACTIVATE")} ${formChangeItemName(item)}`;
             } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
               optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:UNPAUSE_EVOLUTION") : i18next.t("partyUiHandler:PAUSE_EVOLUTION")}`;
             } else {
@@ -1425,9 +1399,9 @@ export default class PartyUiHandler extends MessageUiHandler {
       } else if (option === PartyOption.ALL) {
         optionName = i18next.t("partyUiHandler:ALL");
       } else {
-        const itemModifiers = this.getItemModifiers(pokemon);
-        const itemModifier = itemModifiers[option];
-        optionName = itemModifier.type.name;
+        const items = pokemon.getHeldItems();
+        const item = items[option];
+        optionName = allHeldItems[item].name;
       }
 
       const yCoord = -6 - 16 * o;
@@ -1439,19 +1413,19 @@ export default class PartyUiHandler extends MessageUiHandler {
       optionText.setOrigin(0, 0);
 
       /** For every item that has stack bigger than 1, display the current quantity selection */
-      const itemModifiers = this.getItemModifiers(pokemon);
-      const itemModifier = itemModifiers[option];
+      const items = pokemon.getHeldItems();
+      const item = items[option];
       if (
         this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER &&
         this.transferQuantitiesMax[option] > 1 &&
         !this.transferMode &&
-        itemModifier !== undefined &&
-        itemModifier.type.name === optionName
+        item !== undefined &&
+        allHeldItems[item].name === optionName
       ) {
         let amountText = ` (${this.transferQuantities[option]})`;
 
         /** If the amount held is the maximum, display the count in red */
-        if (this.transferQuantitiesMax[option] === itemModifier.getMaxHeldItemCount(undefined)) {
+        if (this.transferQuantitiesMax[option] === allHeldItems[item].maxStackCount) {
           amountText = `[color=${getTextColor(TextStyle.SUMMARY_RED)}]${amountText}[/color]`;
         }
 
@@ -1500,7 +1474,6 @@ export default class PartyUiHandler extends MessageUiHandler {
       null,
       () => {
         this.clearPartySlots();
-        globalScene.removePartyMemberModifiers(slotIndex);
         const releasedPokemon = globalScene.getPlayerParty().splice(slotIndex, 1)[0];
         releasedPokemon.destroy();
         this.populatePartySlots();
@@ -1561,29 +1534,24 @@ export default class PartyUiHandler extends MessageUiHandler {
     });
   }
 
-  getFormChangeItemsModifiers(pokemon: Pokemon) {
-    let formChangeItemModifiers = globalScene.findModifiers(
-      m => m.is("PokemonFormChangeItemModifier") && m.pokemonId === pokemon.id,
-    ) as PokemonFormChangeItemModifier[];
-    const ultraNecrozmaModifiers = formChangeItemModifiers.filter(
-      m => m.active && m.formChangeItem === FormChangeItem.ULTRANECROZIUM_Z,
-    );
-    if (ultraNecrozmaModifiers.length > 0) {
+  getFormChangeItems(pokemon: Pokemon) {
+    let formChangeItems = pokemon.heldItemManager.getFormChangeItems();
+    const hasActiveFormChangeItems = pokemon.heldItemManager.getFormChangeItems().length;
+    const ultraNecrozmaActive = pokemon.heldItemManager.hasActiveFormChangeItem(FormChangeItem.ULTRANECROZIUM_Z);
+    if (ultraNecrozmaActive) {
       // ULTRANECROZIUM_Z is active and deactivating it should be the only option
-      return ultraNecrozmaModifiers;
+      return [FormChangeItem.ULTRANECROZIUM_Z];
     }
-    if (formChangeItemModifiers.find(m => m.active)) {
+    if (hasActiveFormChangeItems) {
       // a form is currently active. the user has to disable the form or activate ULTRANECROZIUM_Z
-      formChangeItemModifiers = formChangeItemModifiers.filter(
-        m => m.active || m.formChangeItem === FormChangeItem.ULTRANECROZIUM_Z,
+      formChangeItems = formChangeItems.filter(
+        m => pokemon.heldItemManager.hasActiveFormChangeItem(m) || m === FormChangeItem.ULTRANECROZIUM_Z,
       );
     } else if (pokemon.species.speciesId === SpeciesId.NECROZMA) {
       // no form is currently active. the user has to activate some form, except ULTRANECROZIUM_Z
-      formChangeItemModifiers = formChangeItemModifiers.filter(
-        m => m.formChangeItem !== FormChangeItem.ULTRANECROZIUM_Z,
-      );
+      formChangeItems = formChangeItems.filter(m => m !== FormChangeItem.ULTRANECROZIUM_Z);
     }
-    return formChangeItemModifiers;
+    return formChangeItems;
   }
 
   getOptionsCursorWithScroll(): number {
