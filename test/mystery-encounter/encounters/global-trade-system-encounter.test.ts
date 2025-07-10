@@ -9,9 +9,6 @@ import type BattleScene from "#app/battle-scene";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { PokemonNatureWeightModifier } from "#app/modifier/modifier";
-import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { modifierTypes } from "#app/data/data-lists";
 import { GlobalTradeSystemEncounter } from "#app/data/mystery-encounters/encounters/global-trade-system-encounter";
 import { CIVILIZATION_ENCOUNTER_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
@@ -19,6 +16,7 @@ import { UiMode } from "#enums/ui-mode";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { RewardTier } from "#enums/reward-tier";
 import * as Utils from "#app/utils/common";
+import { HeldItemId } from "#enums/held-item-id";
 
 const namespace = "mysteryEncounters/globalTradeSystem";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
@@ -218,11 +216,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, defaultParty);
 
       // Set 2 Soul Dew on party lead
-      scene.modifiers = [];
-      const soulDew = generateModifierType(modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
-      modifier.stackCount = 2;
-      scene.addModifier(modifier, true, false, false, true);
+      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.SOUL_DEW, 2);
       await scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
@@ -235,8 +229,8 @@ describe("Global Trade System - Mystery Encounter", () => {
       ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.tier).toBe(RewardTier.MASTER);
-      const soulDewAfter = scene.findModifier(m => m instanceof PokemonNatureWeightModifier);
-      expect(soulDewAfter?.stackCount).toBe(1);
+      const soulDewAfter = scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SOUL_DEW);
+      expect(soulDewAfter).toBe(1);
     });
 
     it("should leave encounter without battle", async () => {
@@ -245,11 +239,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, defaultParty);
 
       // Set 1 Soul Dew on party lead
-      scene.modifiers = [];
-      const soulDew = generateModifierType(modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
-      modifier.stackCount = 1;
-      scene.addModifier(modifier, true, false, false, true);
+      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.SOUL_DEW, 1);
       await scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });

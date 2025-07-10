@@ -16,7 +16,6 @@ import {
 } from "#test/mystery-encounter/encounter-test-utils";
 import { MoveId } from "#enums/move-id";
 import type BattleScene from "#app/battle-scene";
-import { AttackTypeBoosterModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { PokemonType } from "#enums/pokemon-type";
 import { Status } from "#app/data/status-effect";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
@@ -30,6 +29,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { AbilityId } from "#enums/ability-id";
 import i18next from "i18next";
 import { StatusEffect } from "#enums/status-effect";
+import { HeldItemCategoryId } from "#enums/held-item-id";
 
 const namespace = "mysteryEncounters/fieryFallout";
 /** Arcanine and Ninetails for 2 Fire types. Lapras, Gengar, Abra for burnable mon. */
@@ -179,13 +179,10 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
-      const leadPokemonId = scene.getPlayerParty()?.[0].id;
-      const leadPokemonItems = scene.findModifiers(
-        m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === leadPokemonId,
-        true,
-      ) as PokemonHeldItemModifier[];
-      const item = leadPokemonItems.find(i => i instanceof AttackTypeBoosterModifier);
-      expect(item).toBeDefined;
+      const hasAttackBooster = scene
+        .getPlayerParty()?.[0]
+        .heldItemManager.hasItemCategory(HeldItemCategoryId.TYPE_ATTACK_BOOSTER);
+      expect(hasAttackBooster).toBe(true);
     });
   });
 
@@ -268,9 +265,10 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
-      const leadPokemonItems = scene.getPlayerParty()?.[0].getHeldItems() as PokemonHeldItemModifier[];
-      const item = leadPokemonItems.find(i => i instanceof AttackTypeBoosterModifier);
-      expect(item).toBeDefined;
+      const hasAttackBooster = scene
+        .getPlayerParty()?.[0]
+        .heldItemManager.hasItemCategory(HeldItemCategoryId.TYPE_ATTACK_BOOSTER);
+      expect(hasAttackBooster).toBe(true);
     });
 
     it("should leave encounter without battle", async () => {
