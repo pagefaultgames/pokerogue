@@ -1,11 +1,6 @@
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import type FadeIn from "phaser3-rex-plugins/plugins/audio/fade/FadeIn";
-import type FadeOut from "phaser3-rex-plugins/plugins/audio/fade/FadeOut";
-import type BattleScene from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import { FixedInt } from "#app/utils/common";
-
-type TweenManager = typeof Phaser.Tweens.TweenManager.prototype;
 
 /** The list of properties to mutate */
 const PROPERTIES = ["delay", "completeDelay", "loopDelay", "duration", "repeatDelay", "hold", "startDelay"];
@@ -13,10 +8,10 @@ const PROPERTIES = ["delay", "completeDelay", "loopDelay", "duration", "repeatDe
 /**
  * Adjust an animation's duration based on the current game speed.
  * @param duration - The original duration in seconds, either as a number or a {@linkcode FixedInt}.
- * @returns The adjusted duration value, rounded to the nearest second.
+ * @returns The adjusted duration value, rounded to the nearest millisecond.
  */
 function transformValue(duration: number | FixedInt): number {
-  // We do not mutate `FixedInt` duration
+  // We do not mutate `FixedInt` durations
   if (typeof duration !== "number") {
     return duration.value;
   }
@@ -56,50 +51,23 @@ export function initGameSpeed(): void {
     }
   };
 
-  // TODO: clean up
-  const originalAddEvent: typeof Phaser.Time.Clock.prototype.addEvent = this.time.addEvent;
-  this.time.addEvent = function (config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig) {
-    if (!(config instanceof Phaser.Time.TimerEvent) && config.delay) {
+  const originalAddEvent: = globalScene.time.addEvent;
+  globalScene.time.addEvent = (config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig) => {
+    if (config instanceof Phaser.Types.Time.TimerEventConfig) {
       config.delay = transformValue(config.delay);
     }
-    return originalAddEvent.apply(this, [config]);
+    return originalAddEvent.apply(globalScene, [config]);
   };
-  const originalTweensAdd: TweenManager["add"] = this.tweens.add;
 
-  this.tweens.add = function (
-    config:
-      | Phaser.Types.Tweens.TweenBuilderConfig
-      | Phaser.Types.Tweens.TweenChainBuilderConfig
-      | Phaser.Tweens.Tween
-      | Phaser.Tweens.TweenChain,
-  ) {
-    mutateProperties(config);
-    return originalTweensAdd.apply(this, [config]);
-  } as typeof originalTweensAdd;
-
-  const originalTweensChain: TweenManager["chain"] = this.tweens.chain;
-  this.tweens.chain = function (config: Phaser.Types.Tweens.TweenChainBuilderConfig): Phaser.Tweens.TweenChain {
-    mutateProperties(config);
-    return originalTweensChain.apply(this, [config]);
-  } as typeof originalTweensChain;
-  const originalAddCounter: TweenManager["addCounter"] = this.tweens.addCounter;
-
-  this.tweens.addCounter = function (config: Phaser.Types.Tweens.NumberTweenBuilderConfig) {
-    mutateProperties(config);
-    return originalAddCounter.apply(this, [config]);
-  } as typeof originalAddCounter;
-
-  const originalCreate: TweenManager["create"] = this.tweens.create;
-  this.tweens.create = function (config: Phaser.Types.Tweens.TweenBuilderConfig) {
-    mutateProperties(config, true);
-    return originalCreate.apply(this, [config]);
-  } as typeof originalCreate;
-
-  const originalAddMultiple: TweenManager["addMultiple"] = this.tweens.addMultiple;
-  this.tweens.addMultiple = function (config: Phaser.Types.Tweens.TweenBuilderConfig[]) {
-    mutateProperties(config, true);
-    return originalAddMultiple.apply(this, [config]);
-  } as typeof originalAddMultiple;
+  // Mutate tween functions
+  for (const funcName of ["add", "addCounter", "chain", "create", "addMultiple"]) {
+    const origTweenFunc = globalScene.tweens[funcName];
+    globalScene.tweens[funcName] = (config) => {
+      // TODO: Review whether `allowArray` is needed here
+      mutateProperties(config, funcName === "create" || funcName === "addMultiple");
+      return origTweenFunc.apply(globalScene, [config]);
+    }
+  }
 
   const originalFadeOut = SoundFade.fadeOut;
   SoundFade.fadeOut = ((_scene: Phaser.Scene, sound: Phaser.Sound.BaseSound, duration: number, destroy?: boolean) =>
