@@ -140,7 +140,5 @@ export function isItemInRequested(
   itemId: HeldItemId,
   requestedItems: (HeldItemCategoryId | HeldItemId)[]
 ): boolean {
-  return requestedItems.some(entry => {
-    itemId === entry || (itemId & ITEM_CATEGORY_MASK) === entry
-  });
+  return requestedItems.some(entry => itemId === entry || (itemId & ITEM_CATEGORY_MASK) === entry);
 }
