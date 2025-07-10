@@ -165,7 +165,6 @@ export function initHeldItems() {
     .unstealable()
     .untransferable()
     .unsuppressable();
-
   allHeldItems[HeldItemId.GIMMIGHOUL_EVO_TRACKER] = new GimmighoulEvoTrackerHeldItem(
     HeldItemId.GIMMIGHOUL_EVO_TRACKER,
     999,

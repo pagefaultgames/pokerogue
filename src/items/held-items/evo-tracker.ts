@@ -31,23 +31,6 @@ export class EvoTrackerHeldItem extends HeldItem {
   apply(): boolean {
     return true;
   }
-
-  getIconStackText(pokemon: Pokemon): Phaser.GameObjects.BitmapText | null {
-    const stackCount = this.getFullCount(pokemon);
-
-    const text = globalScene.add.bitmapText(10, 15, "item-count", stackCount.toString(), 11);
-    text.letterSpacing = -0.5;
-    if (stackCount >= this.required) {
-      text.setTint(0xf89890);
-    }
-    text.setOrigin(0, 0);
-
-    return text;
-  }
-
-  getFullCount(pokemon: Pokemon): number {
-    return pokemon.heldItemManager.getStack(this.type);
-  }
 }
 
 export class GimmighoulEvoTrackerHeldItem extends EvoTrackerHeldItem {

@@ -89,7 +89,9 @@ export class HeldItem {
     return this.maxStackCount;
   }
 
-  createSummaryIcon(stackCount: number): Phaser.GameObjects.Container {
+  createSummaryIcon(pokemon: Pokemon, overrideStackCount: number): Phaser.GameObjects.Container {
+    const stackCount = overrideStackCount ?? this.getStackCount(pokemon);
+
     const container = globalScene.add.container(0, 0);
 
     const item = globalScene.add.sprite(0, 12, "items").setFrame(this.iconName).setOrigin(0, 0.5);
@@ -119,7 +121,7 @@ export class HeldItem {
       .setTexture("items", this.iconName);
     container.add(item);
 
-    const stackText = this.getIconStackText(pokemon.heldItemManager.getStack(this.type));
+    const stackText = this.getIconStackText(this.getStackCount(pokemon));
     if (stackText) {
       container.add(stackText);
     }
@@ -140,6 +142,11 @@ export class HeldItem {
     text.setOrigin(0);
 
     return text;
+  }
+
+  getStackCount(pokemon: Pokemon): number {
+    const stackCount = pokemon.heldItemManager.getStack(this.type);
+    return stackCount;
   }
 
   getScoreMultiplier(): number {
