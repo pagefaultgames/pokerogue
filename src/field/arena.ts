@@ -168,19 +168,17 @@ export class Arena {
 
       ret = getPokemonSpecies(species!);
 
-      if (ret.subLegendary || ret.legendary || ret.mythical) {
+      if (ret.subLegendary || ret.legendary || ret.mythical || ret) {
+        const waveDifficulty = globalScene.gameMode.getWaveForDifficulty(waveIndex);
         switch (true) {
-          case ret.baseTotal >= 720:
-            regen = level < 90;
+          case ret.baseTotal >= 660:
+            regen = waveDifficulty < 80; // Wave 50+ in daily (not possible)
             break;
-          case ret.baseTotal >= 670:
-            regen = level < 70;
-            break;
-          case ret.baseTotal >= 580:
-            regen = level < 50;
+          case ret.baseTotal >= 570:
+            regen = waveDifficulty < 55; // Wave 25+ in daily
             break;
           default:
-            regen = level < 30;
+            regen = waveDifficulty < 30; // Wave 0+ in daily
             break;
         }
       }
@@ -499,7 +497,7 @@ export class Arena {
   getTrainerChance(): number {
     switch (this.biomeType) {
       case BiomeId.METROPOLIS:
-        return 2;
+        return 3;
       case BiomeId.SLUM:
       case BiomeId.BEACH:
       case BiomeId.DOJO:
@@ -509,28 +507,29 @@ export class Arena {
       case BiomeId.GRASS:
       case BiomeId.LAKE:
       case BiomeId.CAVE:
+      case BiomeId.DESERT:
         return 6;
       case BiomeId.TALL_GRASS:
       case BiomeId.FOREST:
-      case BiomeId.SEA:
       case BiomeId.SWAMP:
       case BiomeId.MOUNTAIN:
       case BiomeId.BADLANDS:
-      case BiomeId.DESERT:
       case BiomeId.MEADOW:
       case BiomeId.POWER_PLANT:
-      case BiomeId.GRAVEYARD:
       case BiomeId.FACTORY:
       case BiomeId.SNOWY_FOREST:
         return 8;
+      case BiomeId.SEA:
+      case BiomeId.RUINS:
+      case BiomeId.FAIRY_CAVE:
+      case BiomeId.ISLAND:
+        return 10;
       case BiomeId.ICE_CAVE:
       case BiomeId.VOLCANO:
-      case BiomeId.RUINS:
+      case BiomeId.GRAVEYARD:
       case BiomeId.WASTELAND:
       case BiomeId.JUNGLE:
-      case BiomeId.FAIRY_CAVE:
         return 12;
-      case BiomeId.SEABED:
       case BiomeId.ABYSS:
       case BiomeId.SPACE:
       case BiomeId.TEMPLE:

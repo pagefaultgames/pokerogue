@@ -1516,7 +1516,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.TOGEKISS, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.AIPOM]: [
-    new SpeciesEvolution(SpeciesId.AMBIPOM, 32, null, {key: EvoCondKey.MOVE, move: MoveId.DOUBLE_HIT}, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.AMBIPOM, 32, null, {key: EvoCondKey.MOVE, move: MoveId.DOUBLE_HIT}, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [SpeciesId.SUNKERN]: [
     new SpeciesEvolution(SpeciesId.SUNFLORA, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1630,7 +1630,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.TSAREENA, 28, null, {key: EvoCondKey.MOVE, move: MoveId.STOMP}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.POIPOLE]: [
-    new SpeciesEvolution(SpeciesId.NAGANADEL, 1, null, {key: EvoCondKey.MOVE, move: MoveId.DRAGON_PULSE}, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.NAGANADEL, 1, null, {key: EvoCondKey.MOVE, move: MoveId.DRAGON_PULSE}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.ALOLA_SANDSHREW]: [
     new SpeciesEvolution(SpeciesId.ALOLA_SANDSLASH, 1, EvolutionItem.ICE_STONE, null, SpeciesWildEvolutionDelay.LONG)
