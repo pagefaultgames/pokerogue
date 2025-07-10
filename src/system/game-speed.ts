@@ -7,28 +7,31 @@ import { FixedInt } from "#app/utils/common";
 
 type TweenManager = typeof Phaser.Tweens.TweenManager.prototype;
 
-/** The set of properties to mutate */
+/** The list of properties to mutate */
 const PROPERTIES = ["delay", "completeDelay", "loopDelay", "duration", "repeatDelay", "hold", "startDelay"];
 
-type FadeInType = typeof FadeIn;
-type FadeOutType = typeof FadeOut;
-export function initGameSpeed() {
-  const thisArg = this as BattleScene;
+/**
+ * Adjust an animation's duration based on the current game speed.
+ * @param duration - The original duration in seconds, either as a number or a {@linkcode FixedInt}.
+ * @returns The adjusted duration value, rounded to the nearest second.
+ */
+function transformValue(duration: number | FixedInt): number {
+  // We do not mutate `FixedInt` duration
+  if (typeof duration === "object") {
+    return duration.value;
+  }
+  return Math.ceil(duration / globalScene.gameSpeed);
+};
 
-  const transformValue = (value: number | FixedInt): number => {
-    if (value instanceof FixedInt) {
-      return (value as FixedInt).value;
-    }
-    return thisArg.gameSpeed === 1 ? value : Math.ceil((value /= thisArg.gameSpeed));
-  };
-
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complexity is necessary here
+/** Adjust various Phaser objects' methods to scale durations with the current game speed. */
+export function initGameSpeed(): void {
   const mutateProperties = (obj: any, allowArray = false) => {
     // We do not mutate Tweens or TweenChain objects themselves.
     if (obj instanceof Phaser.Tweens.Tween || obj instanceof Phaser.Tweens.TweenChain) {
       return;
     }
-    // If allowArray is true then check if first obj is an array and if so, mutate the tweens inside
+
+    // If allowArray is true and obj is an array, mutate all its constituent tweens.
     if (allowArray && Array.isArray(obj)) {
       for (const tween of obj) {
         mutateProperties(tween);
@@ -36,12 +39,14 @@ export function initGameSpeed() {
       return;
     }
 
+    // Adjust durations of number or FixedInt properties
     for (const prop of PROPERTIES) {
       const objProp = obj[prop];
       if (typeof objProp === "number" || objProp instanceof FixedInt) {
         obj[prop] = transformValue(objProp);
       }
     }
+
     // If the object has a 'tweens' property that is an array, then it is a tween chain
     // and we need to mutate its properties as well
     if (obj.tweens && Array.isArray(obj.tweens)) {
@@ -51,6 +56,7 @@ export function initGameSpeed() {
     }
   };
 
+  // TODO: clean up
   const originalAddEvent: typeof Phaser.Time.Clock.prototype.addEvent = this.time.addEvent;
   this.time.addEvent = function (config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig) {
     if (!(config instanceof Phaser.Time.TimerEvent) && config.delay) {
@@ -97,7 +103,7 @@ export function initGameSpeed() {
 
   const originalFadeOut = SoundFade.fadeOut;
   SoundFade.fadeOut = ((_scene: Phaser.Scene, sound: Phaser.Sound.BaseSound, duration: number, destroy?: boolean) =>
-    originalFadeOut(globalScene, sound, transformValue(duration), destroy)) as FadeOutType;
+    originalFadeOut(globalScene, sound, transformValue(duration), destroy)) as typeof originalFadeOut;
 
   const originalFadeIn = SoundFade.fadeIn;
   SoundFade.fadeIn = ((
@@ -106,5 +112,5 @@ export function initGameSpeed() {
     duration: number,
     endVolume?: number,
     startVolume?: number,
-  ) => originalFadeIn(globalScene, sound, transformValue(duration), endVolume, startVolume)) as FadeInType;
+  ) => originalFadeIn(globalScene, sound, transformValue(duration), endVolume, startVolume)) as typeof originalFadeIn;
 }
