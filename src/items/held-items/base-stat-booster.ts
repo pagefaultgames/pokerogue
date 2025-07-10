@@ -4,7 +4,7 @@ import { getStatKey, type PermanentStat, Stat } from "#enums/stat";
 import i18next from "i18next";
 import { HeldItemEffect, HeldItem } from "../held-item";
 
-export interface BASE_STAT_BOOSTER_PARAMS {
+export interface BaseStatBoosterParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   baseStats: number[];
@@ -71,7 +71,7 @@ export class BaseStatBoosterHeldItem extends HeldItem {
    * @param baseStats the base stats of the {@linkcode Pokemon}
    * @returns always `true`
    */
-  apply(params: BASE_STAT_BOOSTER_PARAMS): boolean {
+  apply(params: BaseStatBoosterParams): boolean {
     const pokemon = params.pokemon;
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     const baseStats = params.baseStats;

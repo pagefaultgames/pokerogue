@@ -165,7 +165,7 @@ import type { IllusionData } from "#app/@types/illusion-data";
 import type { TurnMove } from "#app/@types/turn-move";
 import type { DamageCalculationResult, DamageResult } from "#app/@types/damage-result";
 import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#app/@types/ability-types";
-import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
+import { TrainerItemEffect } from "#app/items/trainer-item";
 import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
 import { assignItemsFromConfiguration } from "#app/items/held-item-pool";
 import { getTerrainBlockMessage } from "#app/data/terrain";
@@ -410,7 +410,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (level > 1) {
         const fused = new BooleanHolder(globalScene.gameMode.isSplicedOnly);
         if (!fused.value && this.isEnemy() && !this.hasTrainer()) {
-          globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.ENEMY_FUSED_CHANCE, { booleanHolder: fused });
+          globalScene.applyPlayerItems(TrainerItemEffect.ENEMY_FUSED_CHANCE, { booleanHolder: fused });
         }
 
         if (fused.value) {
@@ -593,7 +593,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // Roll for hidden ability chance, applying any ability charms for enemy mons
     const hiddenAbilityChance = new NumberHolder(BASE_HIDDEN_ABILITY_CHANCE);
     if (!this.hasTrainer()) {
-      globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HIDDEN_ABILITY_CHANCE_BOOSTER, {
+      globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, {
         numberHolder: hiddenAbilityChance,
       });
     }
@@ -1347,7 +1347,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const critStage = new NumberHolder(0);
     applyMoveAttrs("HighCritAttr", source, this, move, critStage);
     applyHeldItems(HeldItemEffect.CRIT_BOOST, { pokemon: source, critStage: critStage });
-    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.TEMP_CRIT_BOOSTER, { numberHolder: critStage });
+    globalScene.applyPlayerItems(TrainerItemEffect.TEMP_CRIT_BOOSTER, { numberHolder: critStage });
     applyAbAttrs("BonusCritAbAttr", { pokemon: source, critStage });
     const critBoostTag = source.getTag(CritBoostTag);
     if (critBoostTag) {
@@ -2784,7 +2784,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         }
       }
       if (!this.hasTrainer()) {
-        globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.SHINY_RATE_BOOSTER, { numberHolder: shinyThreshold });
+        globalScene.applyPlayerItems(TrainerItemEffect.SHINY_RATE_BOOSTER, { numberHolder: shinyThreshold });
       }
     } else {
       shinyThreshold.value = thresholdOverride;
@@ -2816,7 +2816,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (timedEventManager.isEventActive()) {
           shinyThreshold.value *= timedEventManager.getShinyMultiplier();
         }
-        globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.SHINY_RATE_BOOSTER, { numberHolder: shinyThreshold });
+        globalScene.applyPlayerItems(TrainerItemEffect.SHINY_RATE_BOOSTER, { numberHolder: shinyThreshold });
       }
 
       this.shiny = randSeedInt(65536) < shinyThreshold.value;
@@ -2888,7 +2888,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const haThreshold = new NumberHolder(thresholdOverride ?? BASE_HIDDEN_ABILITY_CHANCE);
     if (applyModifiersToOverride) {
       if (!this.hasTrainer()) {
-        globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HIDDEN_ABILITY_CHANCE_BOOSTER, { numberHolder: haThreshold });
+        globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, { numberHolder: haThreshold });
       }
     }
 
@@ -2902,7 +2902,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public generateFusionSpecies(forStarter?: boolean): void {
     const hiddenAbilityChance = new NumberHolder(BASE_HIDDEN_ABILITY_CHANCE);
     if (!this.hasTrainer()) {
-      globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HIDDEN_ABILITY_CHANCE_BOOSTER, {
+      globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, {
         numberHolder: hiddenAbilityChance,
       });
     }
@@ -3418,7 +3418,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!ignoreStatStage.value) {
       const statStageMultiplier = new NumberHolder(Math.max(2, 2 + statStage.value) / Math.max(2, 2 - statStage.value));
       if (!ignoreHeldItems) {
-        globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.TEMP_STAT_STAGE_BOOSTER, {
+        globalScene.applyPlayerItems(TrainerItemEffect.TEMP_STAT_STAGE_BOOSTER, {
           numberHolder: statStageMultiplier,
         });
       }
@@ -3454,7 +3454,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyAbAttrs("IgnoreOpponentStatStagesAbAttr", { pokemon: this, stat: Stat.EVA, ignored: ignoreEvaStatStage });
     applyMoveAttrs("IgnoreOpponentStatStagesAttr", this, target, sourceMove, ignoreEvaStatStage);
 
-    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.TEMP_ACCURACY_BOOSTER, { numberHolder: userAccStage });
+    globalScene.applyPlayerItems(TrainerItemEffect.TEMP_ACCURACY_BOOSTER, { numberHolder: userAccStage });
 
     userAccStage.value = ignoreAccStatStage.value ? 0 : Math.min(userAccStage.value, 6);
     targetEvaStage.value = ignoreEvaStatStage.value ? 0 : targetEvaStage.value;
@@ -3878,10 +3878,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     /** Apply the enemy's Damage and Resistance tokens */
     if (!source.isPlayer()) {
-      globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.ENEMY_DAMAGE_BOOSTER, { numberHolder: damage });
+      globalScene.applyPlayerItems(TrainerItemEffect.ENEMY_DAMAGE_BOOSTER, { numberHolder: damage });
     }
     if (!this.isPlayer()) {
-      globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.ENEMY_DAMAGE_REDUCER, { numberHolder: damage });
+      globalScene.applyPlayerItems(TrainerItemEffect.ENEMY_DAMAGE_REDUCER, { numberHolder: damage });
     }
 
     const abAttrParams: PreAttackModifyDamageAbAttrParams = {

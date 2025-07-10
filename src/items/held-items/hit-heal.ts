@@ -6,7 +6,7 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { toDmgValue } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
 
-export interface HIT_HEAL_PARAMS {
+export interface HitHealParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
 }
@@ -31,7 +31,7 @@ export class HitHealHeldItem extends HeldItem {
    * @param pokemon The {@linkcode Pokemon} that holds the item
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
-  apply(params: HIT_HEAL_PARAMS): boolean {
+  apply(params: HitHealParams): boolean {
     const pokemon = params.pokemon;
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (pokemon.turnData.totalDamageDealt > 0 && !pokemon.isFullHp()) {

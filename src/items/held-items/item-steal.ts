@@ -7,7 +7,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { allHeldItems } from "../all-held-items";
 import { globalScene } from "#app/global-scene";
 
-export interface ITEM_STEAL_PARAMS {
+export interface ItemStealParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   /** The pokemon to steal from (optional) */
@@ -30,7 +30,7 @@ export abstract class ItemTransferHeldItem extends HeldItem {
    * @param _args N/A
    * @returns `true` if an item was stolen; false otherwise.
    */
-  apply(params: ITEM_STEAL_PARAMS): boolean {
+  apply(params: ItemStealParams): boolean {
     const opponents = this.getTargets(params);
 
     if (!opponents.length) {
@@ -70,11 +70,11 @@ export abstract class ItemTransferHeldItem extends HeldItem {
     return !!transferredModifierTypes.length;
   }
 
-  abstract getTargets(params: ITEM_STEAL_PARAMS): Pokemon[];
+  abstract getTargets(params: ItemStealParams): Pokemon[];
 
-  abstract getTransferredItemCount(params: ITEM_STEAL_PARAMS): number;
+  abstract getTransferredItemCount(params: ItemStealParams): number;
 
-  abstract getTransferMessage(params: ITEM_STEAL_PARAMS, itemId: HeldItemId): string;
+  abstract getTransferMessage(params: ItemStealParams, itemId: HeldItemId): string;
 }
 
 /**
@@ -96,15 +96,15 @@ export class TurnEndItemStealHeldItem extends ItemTransferHeldItem {
    * @param _args N/A
    * @returns the opponents of the source {@linkcode Pokemon}
    */
-  getTargets(params: ITEM_STEAL_PARAMS): Pokemon[] {
+  getTargets(params: ItemStealParams): Pokemon[] {
     return params.pokemon instanceof Pokemon ? params.pokemon.getOpponents() : [];
   }
 
-  getTransferredItemCount(_params: ITEM_STEAL_PARAMS): number {
+  getTransferredItemCount(_params: ItemStealParams): number {
     return 1;
   }
 
-  getTransferMessage(params: ITEM_STEAL_PARAMS, itemId: HeldItemId): string {
+  getTransferMessage(params: ItemStealParams, itemId: HeldItemId): string {
     return i18next.t("modifier:turnHeldItemTransferApply", {
       pokemonNameWithAffix: getPokemonNameWithAffix(params.target),
       itemName: allHeldItems[itemId].name,
@@ -148,16 +148,16 @@ export class ContactItemStealChanceHeldItem extends ItemTransferHeldItem {
    * @param targetPokemon The {@linkcode Pokemon} the holder is targeting with an attack
    * @returns The target {@linkcode Pokemon} as array for further use in `apply` implementations
    */
-  getTargets(params: ITEM_STEAL_PARAMS): Pokemon[] {
+  getTargets(params: ItemStealParams): Pokemon[] {
     return params.target ? [params.target] : [];
   }
 
-  getTransferredItemCount(params: ITEM_STEAL_PARAMS): number {
+  getTransferredItemCount(params: ItemStealParams): number {
     const stackCount = params.pokemon.heldItemManager.getStack(this.type);
     return randSeedFloat() <= this.chance * stackCount ? 1 : 0;
   }
 
-  getTransferMessage(params: ITEM_STEAL_PARAMS, itemId: HeldItemId): string {
+  getTransferMessage(params: ItemStealParams, itemId: HeldItemId): string {
     return i18next.t("modifier:contactHeldItemTransferApply", {
       pokemonNameWithAffix: getPokemonNameWithAffix(params.target),
       itemName: allHeldItems[itemId].name,

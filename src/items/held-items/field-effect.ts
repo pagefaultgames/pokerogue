@@ -2,7 +2,7 @@ import type Pokemon from "#app/field/pokemon";
 import { HeldItemEffect, HeldItem } from "#app/items/held-item";
 import type { NumberHolder } from "#app/utils/common";
 
-export interface FIELD_EFFECT_PARAMS {
+export interface FieldEffectParams {
   pokemon: Pokemon;
   /** The pokemon with the item */
   fieldDuration: NumberHolder;
@@ -24,7 +24,7 @@ export class FieldEffectHeldItem extends HeldItem {
    * @param fieldDuration {@linkcode NumberHolder} that stores the current field effect duration
    * @returns `true` if the field effect extension was applied successfully
    */
-  apply(params: FIELD_EFFECT_PARAMS): boolean {
+  apply(params: FieldEffectParams): boolean {
     const pokemon = params.pokemon;
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     params.fieldDuration.value += 2 * stackCount;

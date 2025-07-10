@@ -3,7 +3,7 @@ import type { NumberHolder } from "#app/utils/common";
 import i18next from "i18next";
 import { HeldItemEffect, HeldItem } from "../held-item";
 
-export interface FRIENDSHIP_BOOST_PARAMS {
+export interface FriendshipBoostParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   /** The amount of exp to gain */
@@ -23,7 +23,7 @@ export class FriendshipBoosterHeldItem extends HeldItem {
    * @param friendship {@linkcode NumberHolder} holding the friendship boost value
    * @returns always `true`
    */
-  apply(params: FRIENDSHIP_BOOST_PARAMS): boolean {
+  apply(params: FriendshipBoostParams): boolean {
     const pokemon = params.pokemon;
     const friendship = params.friendship;
     const stackCount = pokemon.heldItemManager.getStack(this.type);

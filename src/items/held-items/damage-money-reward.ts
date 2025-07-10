@@ -2,9 +2,9 @@ import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { NumberHolder } from "#app/utils/common";
 import { HeldItemEffect, HeldItem } from "../held-item";
-import { TRAINER_ITEM_EFFECT } from "../trainer-item";
+import { TrainerItemEffect } from "../trainer-item";
 
-export interface DAMAGE_MONEY_REWARD_PARAMS {
+export interface DamageMoneyRewardParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   /** The amount of exp to gain */
@@ -20,12 +20,12 @@ export class DamageMoneyRewardHeldItem extends HeldItem {
    * @param multiplier {@linkcode NumberHolder} holding the multiplier value
    * @returns always `true`
    */
-  apply(params: DAMAGE_MONEY_REWARD_PARAMS): boolean {
+  apply(params: DamageMoneyRewardParams): boolean {
     const pokemon = params.pokemon;
     const damage = params.damage;
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     const moneyAmount = new NumberHolder(Math.floor(damage * (0.5 * stackCount)));
-    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
+    globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
     globalScene.addMoney(moneyAmount.value);
 
     return true;

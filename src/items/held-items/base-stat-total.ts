@@ -3,7 +3,7 @@ import i18next from "i18next";
 import { HeldItemEffect, HeldItem } from "../held-item";
 import type { HeldItemId } from "#enums/held-item-id";
 
-export interface BASE_STAT_TOTAL_PARAMS {
+export interface BaseStatTotalParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   /** The amount of exp to gain */
@@ -56,7 +56,7 @@ export class BaseStatTotalHeldItem extends HeldItem {
    * @param baseStats the base stats of the {@linkcode Pokemon}
    * @returns always `true`
    */
-  apply(params: BASE_STAT_TOTAL_PARAMS): boolean {
+  apply(params: BaseStatTotalParams): boolean {
     const baseStats = params.baseStats;
     // Modifies the passed in baseStats[] array
     baseStats.forEach((v, i) => {

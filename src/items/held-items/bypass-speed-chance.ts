@@ -6,7 +6,7 @@ import i18next from "i18next";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { Command } from "#enums/command";
 
-export interface BYPASS_SPEED_CHANCE_PARAMS {
+export interface BypassSpeedChanceParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   doBypassSpeed: BooleanHolder;
@@ -37,7 +37,7 @@ export class BypassSpeedChanceHeldItem extends HeldItem {
    * @param doBypassSpeed {@linkcode BooleanHolder} that is `true` if speed should be bypassed
    * @returns `true` if {@linkcode BypassSpeedChanceModifier} has been applied
    */
-  apply(params: BYPASS_SPEED_CHANCE_PARAMS): boolean {
+  apply(params: BypassSpeedChanceParams): boolean {
     const pokemon = params.pokemon;
     const doBypassSpeed = params.doBypassSpeed;
     const stackCount = pokemon.heldItemManager.getStack(this.type);

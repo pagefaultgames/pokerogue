@@ -10,7 +10,7 @@ import { FieldPhase } from "./field-phase";
 import { globalScene } from "#app/global-scene";
 import { applyHeldItems } from "#app/items/all-held-items";
 import { HeldItemEffect } from "#app/items/held-item";
-import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
+import { TrainerItemEffect } from "#app/items/trainer-item";
 
 export class TurnEndPhase extends FieldPhase {
   public readonly phaseName = "TurnEndPhase";
@@ -41,8 +41,8 @@ export class TurnEndPhase extends FieldPhase {
         }
 
         if (!pokemon.isPlayer()) {
-          globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.ENEMY_HEAL, { pokemon: pokemon });
-          globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.ENEMY_STATUS_HEAL_CHANCE, { pokemon: pokemon });
+          globalScene.applyPlayerItems(TrainerItemEffect.ENEMY_HEAL, { pokemon: pokemon });
+          globalScene.applyPlayerItems(TrainerItemEffect.ENEMY_STATUS_HEAL_CHANCE, { pokemon: pokemon });
         }
 
         applyAbAttrs("PostTurnAbAttr", { pokemon });

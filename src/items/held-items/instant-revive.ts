@@ -7,7 +7,7 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { toDmgValue } from "#app/utils/common";
 import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 
-export interface INSTANT_REVIVE_PARAMS {
+export interface InstantReviveParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
 }
@@ -38,7 +38,7 @@ export class InstantReviveHeldItem extends ConsumableHeldItem {
    * @param pokemon {@linkcode Pokemon} that holds the item
    * @returns `true` if any stat stages were reset, false otherwise
    */
-  apply(params: INSTANT_REVIVE_PARAMS): boolean {
+  apply(params: InstantReviveParams): boolean {
     const pokemon = params.pokemon;
     // Restore the Pokemon to half HP
     globalScene.phaseManager.unshiftPhase(

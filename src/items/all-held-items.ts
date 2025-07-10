@@ -7,51 +7,47 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat, type PermanentStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { HeldItemEffect } from "./held-item";
-import { type ACCURACY_BOOST_PARAMS, AccuracyBoosterHeldItem } from "./held-items/accuracy-booster";
+import { type AccuracyBoostParams, AccuracyBoosterHeldItem } from "./held-items/accuracy-booster";
 import {
-  type ATTACK_TYPE_BOOST_PARAMS,
+  type AttackTypeBoostParams,
   AttackTypeBoosterHeldItem,
   attackTypeToHeldItem,
 } from "./held-items/attack-type-booster";
 import {
-  type BASE_STAT_BOOSTER_PARAMS,
+  type BaseStatBoosterParams,
   BaseStatBoosterHeldItem,
   permanentStatToHeldItem,
 } from "./held-items/base-stat-booster";
-import { type BASE_STAT_FLAT_PARAMS, BaseStatFlatHeldItem } from "./held-items/base-stat-flat";
-import { type BASE_STAT_TOTAL_PARAMS, BaseStatTotalHeldItem } from "./held-items/base-stat-total";
-import { type BATON_PARAMS, BatonHeldItem } from "./held-items/baton";
-import { type BERRY_PARAMS, BerryHeldItem, berryTypeToHeldItem } from "./held-items/berry";
-import { type BYPASS_SPEED_CHANCE_PARAMS, BypassSpeedChanceHeldItem } from "./held-items/bypass-speed-chance";
-import { type CRIT_BOOST_PARAMS, CritBoostHeldItem, SpeciesCritBoostHeldItem } from "./held-items/crit-booster";
-import { type DAMAGE_MONEY_REWARD_PARAMS, DamageMoneyRewardHeldItem } from "./held-items/damage-money-reward";
-import { type EVO_TRACKER_PARAMS, GimmighoulEvoTrackerHeldItem } from "./held-items/evo-tracker";
-import { type EXP_BOOST_PARAMS, ExpBoosterHeldItem } from "./held-items/exp-booster";
-import { type FIELD_EFFECT_PARAMS, FieldEffectHeldItem } from "./held-items/field-effect";
-import { type FLINCH_CHANCE_PARAMS, FlinchChanceHeldItem } from "./held-items/flinch-chance";
-import { type FRIENDSHIP_BOOST_PARAMS, FriendshipBoosterHeldItem } from "./held-items/friendship-booster";
-import { type HIT_HEAL_PARAMS, HitHealHeldItem } from "./held-items/hit-heal";
-import { type INCREMENTING_STAT_PARAMS, IncrementingStatHeldItem } from "./held-items/incrementing-stat";
-import { InstantReviveHeldItem, type INSTANT_REVIVE_PARAMS } from "./held-items/instant-revive";
+import { type BaseStatFlatParams, BaseStatFlatHeldItem } from "./held-items/base-stat-flat";
+import { type BaseStatTotalParams, BaseStatTotalHeldItem } from "./held-items/base-stat-total";
+import { type BatonParams, BatonHeldItem } from "./held-items/baton";
+import { type BerryParams, BerryHeldItem, berryTypeToHeldItem } from "./held-items/berry";
+import { type BypassSpeedChanceParams, BypassSpeedChanceHeldItem } from "./held-items/bypass-speed-chance";
+import { type CritBoostParams, CritBoostHeldItem, SpeciesCritBoostHeldItem } from "./held-items/crit-booster";
+import { type DamageMoneyRewardParams, DamageMoneyRewardHeldItem } from "./held-items/damage-money-reward";
+import { type EvoTrackerParams, GimmighoulEvoTrackerHeldItem } from "./held-items/evo-tracker";
+import { type ExpBoostParams, ExpBoosterHeldItem } from "./held-items/exp-booster";
+import { type FieldEffectParams, FieldEffectHeldItem } from "./held-items/field-effect";
+import { type FlinchChanceParams, FlinchChanceHeldItem } from "./held-items/flinch-chance";
+import { type FriendshipBoostParams, FriendshipBoosterHeldItem } from "./held-items/friendship-booster";
+import { type HitHealParams, HitHealHeldItem } from "./held-items/hit-heal";
+import { type IncrementingStatParams, IncrementingStatHeldItem } from "./held-items/incrementing-stat";
+import { InstantReviveHeldItem, type InstantReviveParams } from "./held-items/instant-revive";
 import {
   ContactItemStealChanceHeldItem,
-  type ITEM_STEAL_PARAMS,
+  type ItemStealParams,
   TurnEndItemStealHeldItem,
 } from "./held-items/item-steal";
-import { type MULTI_HIT_PARAMS, MultiHitHeldItem } from "./held-items/multi-hit";
-import { type NATURE_WEIGHT_BOOST_PARAMS, NatureWeightBoosterHeldItem } from "./held-items/nature-weight-booster";
+import { type MultiHitParams, MultiHitHeldItem } from "./held-items/multi-hit";
+import { type NatureWeightBoostParams, NatureWeightBoosterHeldItem } from "./held-items/nature-weight-booster";
 import {
   ResetNegativeStatStageHeldItem,
-  type RESET_NEGATIVE_STAT_STAGE_PARAMS,
+  type ResetNegativeStatStageParams,
 } from "./held-items/reset-negative-stat-stage";
-import {
-  EvolutionStatBoostHeldItem,
-  SpeciesStatBoostHeldItem,
-  type STAT_BOOST_PARAMS,
-} from "./held-items/stat-booster";
-import { type SURVIVE_CHANCE_PARAMS, SurviveChanceHeldItem } from "./held-items/survive-chance";
-import { type TURN_END_HEAL_PARAMS, TurnEndHealHeldItem } from "./held-items/turn-end-heal";
-import { type TURN_END_STATUS_PARAMS, TurnEndStatusHeldItem } from "./held-items/turn-end-status";
+import { EvolutionStatBoostHeldItem, SpeciesStatBoostHeldItem, type StatBoostParams } from "./held-items/stat-booster";
+import { type SurviveChanceParams, SurviveChanceHeldItem } from "./held-items/survive-chance";
+import { type TurnEndHealParams, TurnEndHealHeldItem } from "./held-items/turn-end-heal";
+import { type TurnEndStatusParams, TurnEndStatusHeldItem } from "./held-items/turn-end-status";
 
 export function initHeldItems() {
   for (const berry of getEnumValues(BerryType)) {
@@ -173,37 +169,37 @@ export function initHeldItems() {
   );
 }
 
-type APPLY_HELD_ITEMS_PARAMS = {
-  [HeldItemEffect.ATTACK_TYPE_BOOST]: ATTACK_TYPE_BOOST_PARAMS;
-  [HeldItemEffect.TURN_END_HEAL]: TURN_END_HEAL_PARAMS;
-  [HeldItemEffect.HIT_HEAL]: HIT_HEAL_PARAMS;
-  [HeldItemEffect.RESET_NEGATIVE_STAT_STAGE]: RESET_NEGATIVE_STAT_STAGE_PARAMS;
-  [HeldItemEffect.EXP_BOOSTER]: EXP_BOOST_PARAMS;
-  [HeldItemEffect.BERRY]: BERRY_PARAMS;
-  [HeldItemEffect.BASE_STAT_BOOSTER]: BASE_STAT_BOOSTER_PARAMS;
-  [HeldItemEffect.INSTANT_REVIVE]: INSTANT_REVIVE_PARAMS;
-  [HeldItemEffect.STAT_BOOST]: STAT_BOOST_PARAMS;
-  [HeldItemEffect.CRIT_BOOST]: CRIT_BOOST_PARAMS;
-  [HeldItemEffect.TURN_END_STATUS]: TURN_END_STATUS_PARAMS;
-  [HeldItemEffect.SURVIVE_CHANCE]: SURVIVE_CHANCE_PARAMS;
-  [HeldItemEffect.BYPASS_SPEED_CHANCE]: BYPASS_SPEED_CHANCE_PARAMS;
-  [HeldItemEffect.FLINCH_CHANCE]: FLINCH_CHANCE_PARAMS;
-  [HeldItemEffect.FIELD_EFFECT]: FIELD_EFFECT_PARAMS;
-  [HeldItemEffect.FRIENDSHIP_BOOSTER]: FRIENDSHIP_BOOST_PARAMS;
-  [HeldItemEffect.NATURE_WEIGHT_BOOSTER]: NATURE_WEIGHT_BOOST_PARAMS;
-  [HeldItemEffect.ACCURACY_BOOSTER]: ACCURACY_BOOST_PARAMS;
-  [HeldItemEffect.MULTI_HIT]: MULTI_HIT_PARAMS;
-  [HeldItemEffect.DAMAGE_MONEY_REWARD]: DAMAGE_MONEY_REWARD_PARAMS;
-  [HeldItemEffect.BATON]: BATON_PARAMS;
-  [HeldItemEffect.CONTACT_ITEM_STEAL_CHANCE]: ITEM_STEAL_PARAMS;
-  [HeldItemEffect.TURN_END_ITEM_STEAL]: ITEM_STEAL_PARAMS;
-  [HeldItemEffect.BASE_STAT_TOTAL]: BASE_STAT_TOTAL_PARAMS;
-  [HeldItemEffect.BASE_STAT_FLAT]: BASE_STAT_FLAT_PARAMS;
-  [HeldItemEffect.INCREMENTING_STAT]: INCREMENTING_STAT_PARAMS;
-  [HeldItemEffect.EVO_TRACKER]: EVO_TRACKER_PARAMS;
+type ApplyHeldItemsParams = {
+  [HeldItemEffect.ATTACK_TYPE_BOOST]: AttackTypeBoostParams;
+  [HeldItemEffect.TURN_END_HEAL]: TurnEndHealParams;
+  [HeldItemEffect.HIT_HEAL]: HitHealParams;
+  [HeldItemEffect.RESET_NEGATIVE_STAT_STAGE]: ResetNegativeStatStageParams;
+  [HeldItemEffect.EXP_BOOSTER]: ExpBoostParams;
+  [HeldItemEffect.BERRY]: BerryParams;
+  [HeldItemEffect.BASE_STAT_BOOSTER]: BaseStatBoosterParams;
+  [HeldItemEffect.INSTANT_REVIVE]: InstantReviveParams;
+  [HeldItemEffect.STAT_BOOST]: StatBoostParams;
+  [HeldItemEffect.CRIT_BOOST]: CritBoostParams;
+  [HeldItemEffect.TURN_END_STATUS]: TurnEndStatusParams;
+  [HeldItemEffect.SURVIVE_CHANCE]: SurviveChanceParams;
+  [HeldItemEffect.BYPASS_SPEED_CHANCE]: BypassSpeedChanceParams;
+  [HeldItemEffect.FLINCH_CHANCE]: FlinchChanceParams;
+  [HeldItemEffect.FIELD_EFFECT]: FieldEffectParams;
+  [HeldItemEffect.FRIENDSHIP_BOOSTER]: FriendshipBoostParams;
+  [HeldItemEffect.NATURE_WEIGHT_BOOSTER]: NatureWeightBoostParams;
+  [HeldItemEffect.ACCURACY_BOOSTER]: AccuracyBoostParams;
+  [HeldItemEffect.MULTI_HIT]: MultiHitParams;
+  [HeldItemEffect.DAMAGE_MONEY_REWARD]: DamageMoneyRewardParams;
+  [HeldItemEffect.BATON]: BatonParams;
+  [HeldItemEffect.CONTACT_ITEM_STEAL_CHANCE]: ItemStealParams;
+  [HeldItemEffect.TURN_END_ITEM_STEAL]: ItemStealParams;
+  [HeldItemEffect.BASE_STAT_TOTAL]: BaseStatTotalParams;
+  [HeldItemEffect.BASE_STAT_FLAT]: BaseStatFlatParams;
+  [HeldItemEffect.INCREMENTING_STAT]: IncrementingStatParams;
+  [HeldItemEffect.EVO_TRACKER]: EvoTrackerParams;
 };
 
-export function applyHeldItems<T extends HeldItemEffect>(effect: T, params: APPLY_HELD_ITEMS_PARAMS[T]) {
+export function applyHeldItems<T extends HeldItemEffect>(effect: T, params: ApplyHeldItemsParams[T]) {
   const pokemon = params.pokemon;
   if (pokemon) {
     for (const item of Object.keys(pokemon.heldItemManager.heldItems)) {

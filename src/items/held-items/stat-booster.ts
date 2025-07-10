@@ -6,7 +6,7 @@ import type { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
 import { HeldItemEffect, HeldItem } from "../held-item";
 
-export interface STAT_BOOST_PARAMS {
+export interface StatBoostParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   stat: Stat;
@@ -53,7 +53,7 @@ export class StatBoostHeldItem extends HeldItem {
    * @returns `true` if the stat boost applies successfully, false otherwise
    * @see shouldApply
    */
-  apply(params: STAT_BOOST_PARAMS): boolean {
+  apply(params: StatBoostParams): boolean {
     params.statValue.value *= this.multiplier;
     return true;
   }
@@ -94,7 +94,7 @@ export class EvolutionStatBoostHeldItem extends StatBoostHeldItem {
    * @returns `true` if the stat boost applies successfully, false otherwise
    * @see shouldApply
    */
-  override apply(params: STAT_BOOST_PARAMS): boolean {
+  override apply(params: StatBoostParams): boolean {
     const pokemon = params.pokemon;
     const isUnevolved = pokemon.getSpeciesForm(true).speciesId in pokemonEvolutions;
 
@@ -166,7 +166,7 @@ export class SpeciesStatBoostHeldItem extends StatBoostHeldItem {
   //    );
   //  }
 
-  apply(params: STAT_BOOST_PARAMS): boolean {
+  apply(params: StatBoostParams): boolean {
     const pokemon = params.pokemon;
     const fitsSpecies =
       this.species.includes(pokemon.getSpeciesForm(true).speciesId) ||

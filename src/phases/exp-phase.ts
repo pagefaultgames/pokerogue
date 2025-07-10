@@ -3,7 +3,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
 import { NumberHolder } from "#app/utils/common";
 import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
-import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
+import { TrainerItemEffect } from "#app/items/trainer-item";
 
 export class ExpPhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "ExpPhase";
@@ -20,7 +20,7 @@ export class ExpPhase extends PlayerPartyMemberPokemonPhase {
 
     const pokemon = this.getPokemon();
     const exp = new NumberHolder(this.expValue);
-    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.EXP_BOOSTER, { numberHolder: exp });
+    globalScene.applyPlayerItems(TrainerItemEffect.EXP_BOOSTER, { numberHolder: exp });
     exp.value = Math.floor(exp.value);
     globalScene.ui.showText(
       i18next.t("battle:expGain", {

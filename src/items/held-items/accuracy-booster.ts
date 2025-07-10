@@ -3,7 +3,7 @@ import type { NumberHolder } from "#app/utils/common";
 import type { HeldItemId } from "#enums/held-item-id";
 import { HeldItemEffect, HeldItem } from "../held-item";
 
-export interface ACCURACY_BOOST_PARAMS {
+export interface AccuracyBoostParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   /** The amount of exp to gain */
@@ -36,7 +36,7 @@ export class AccuracyBoosterHeldItem extends HeldItem {
    * @param moveAccuracy {@linkcode NumberHolder} holding the move accuracy boost
    * @returns always `true`
    */
-  apply(params: ACCURACY_BOOST_PARAMS): boolean {
+  apply(params: AccuracyBoostParams): boolean {
     const pokemon = params.pokemon;
     const moveAccuracy = params.moveAccuracy;
     const stackCount = pokemon.heldItemManager.getStack(this.type);

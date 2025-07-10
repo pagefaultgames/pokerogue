@@ -5,7 +5,7 @@ import type { MoveId } from "#enums/move-id";
 import { allMoves } from "#app/data/data-lists";
 import i18next from "i18next";
 
-export interface MULTI_HIT_PARAMS {
+export interface MultiHitParams {
   pokemon: Pokemon;
   moveId: MoveId;
   count?: NumberHolder;
@@ -33,7 +33,7 @@ export class MultiHitHeldItem extends HeldItem {
    * @param damageMultiplier {@linkcode NumberHolder} holding a damage multiplier applied to a strike of this move
    * @returns always `true`
    */
-  apply(params: MULTI_HIT_PARAMS): boolean {
+  apply(params: MultiHitParams): boolean {
     const pokemon = params.pokemon;
     const move = allMoves[params.moveId];
     /**

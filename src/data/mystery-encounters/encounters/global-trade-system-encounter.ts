@@ -49,7 +49,7 @@ import { HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/he
 import { allHeldItems } from "#app/data/data-lists";
 import { RewardTier } from "#enums/reward-tier";
 import { getHeldItemTier } from "#app/items/held-item-tiers";
-import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
+import { TrainerItemEffect } from "#app/items/trainer-item";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/globalTradeSystem";
@@ -276,7 +276,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
             if (timedEventManager.isEventActive()) {
               shinyThreshold.value *= timedEventManager.getShinyMultiplier();
             }
-            globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.SHINY_RATE_BOOSTER, { numberHolder: shinyThreshold });
+            globalScene.applyPlayerItems(TrainerItemEffect.SHINY_RATE_BOOSTER, { numberHolder: shinyThreshold });
 
             // Base shiny chance of 512/65536 -> 1/128, affected by events and Shiny Charms
             // Maximum shiny chance of 4096/65536 -> 1/16, cannot improve further after that
@@ -290,7 +290,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
           if (tradePokemon.species.abilityHidden) {
             if (tradePokemon.abilityIndex < hiddenIndex) {
               const hiddenAbilityChance = new NumberHolder(64);
-              globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HIDDEN_ABILITY_CHANCE_BOOSTER, {
+              globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, {
                 numberHolder: hiddenAbilityChance,
               });
 

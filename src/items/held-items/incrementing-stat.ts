@@ -4,7 +4,7 @@ import { Stat } from "#enums/stat";
 import type { NumberHolder } from "#app/utils/common";
 import i18next from "i18next";
 
-export interface INCREMENTING_STAT_PARAMS {
+export interface IncrementingStatParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   stat: Stat;
@@ -45,7 +45,7 @@ export class IncrementingStatHeldItem extends HeldItem {
    * @param statHolder The {@linkcode NumberHolder} that holds the stat
    * @returns always `true`
    */
-  apply(params: INCREMENTING_STAT_PARAMS): boolean {
+  apply(params: IncrementingStatParams): boolean {
     const pokemon = params.pokemon;
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     const statHolder = params.statHolder;

@@ -2,7 +2,7 @@ import type Pokemon from "#app/field/pokemon";
 import type { NumberHolder } from "#app/utils/common";
 import { HeldItemEffect, HeldItem } from "../held-item";
 
-export interface BATON_PARAMS {
+export interface BatonParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   /** The amount of exp to gain */

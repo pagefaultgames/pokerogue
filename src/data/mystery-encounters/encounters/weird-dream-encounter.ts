@@ -38,10 +38,9 @@ import { Nature } from "#enums/nature";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import type { HeldItemConfiguration, HeldItemSpecs } from "#app/items/held-item-data-types";
-import { assignItemsFromConfiguration } from "#app/items/held-item-pool";
+import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
 import { HeldItemId } from "#enums/held-item-id";
-import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
+import { TrainerItemEffect } from "#app/items/trainer-item";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/weirdDream";
@@ -487,7 +486,7 @@ async function postProcessTransformedPokemon(
     const hiddenIndex = newPokemon.species.ability2 ? 2 : 1;
     if (newPokemon.abilityIndex < hiddenIndex) {
       const hiddenAbilityChance = new NumberHolder(256);
-      globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HIDDEN_ABILITY_CHANCE_BOOSTER, {
+      globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, {
         numberHolder: hiddenAbilityChance,
       });
 

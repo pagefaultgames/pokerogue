@@ -31,7 +31,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
 import { TrainerItemId } from "#enums/trainer-item-id";
-import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
+import { TrainerItemEffect } from "#app/items/trainer-item";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/safariZone";
@@ -298,7 +298,7 @@ async function summonSafariPokemon() {
         const hiddenIndex = pokemon.species.ability2 ? 2 : 1;
         if (pokemon.abilityIndex < hiddenIndex) {
           const hiddenAbilityChance = new NumberHolder(256);
-          globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HIDDEN_ABILITY_CHANCE_BOOSTER, {
+          globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, {
             numberHolder: hiddenAbilityChance,
           });
 

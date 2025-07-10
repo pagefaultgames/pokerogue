@@ -23,7 +23,7 @@ import type { ModifierInstanceMap, ModifierString } from "#app/@types/modifier-t
 import { assignItemsFromConfiguration } from "#app/items/held-item-pool";
 import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
 import { HeldItemId } from "#enums/held-item-id";
-import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
+import { TrainerItemEffect } from "#app/items/trainer-item";
 import type { TrainerItemConfiguration } from "#app/items/trainer-item-data-types";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -383,7 +383,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
    * @returns always `true`
    */
   override apply(playerPokemon: PlayerPokemon, levelCount: NumberHolder = new NumberHolder(1)): boolean {
-    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.LEVEL_INCREMENT_BOOSTER, { numberHolder: levelCount });
+    globalScene.applyPlayerItems(TrainerItemEffect.LEVEL_INCREMENT_BOOSTER, { numberHolder: levelCount });
 
     playerPokemon.level += levelCount.value;
     if (playerPokemon.level <= globalScene.getMaxExpLevel(true)) {
@@ -532,7 +532,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
   override apply(): boolean {
     const moneyAmount = new NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
 
-    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
+    globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
 
     globalScene.addMoney(moneyAmount.value);
 

@@ -16,7 +16,7 @@ import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 import Phaser from "phaser";
 import type { PokeballType } from "#enums/pokeball";
 import { TrainerItemId } from "#enums/trainer-item-id";
-import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
+import { TrainerItemEffect } from "#app/items/trainer-item";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 7;
 const SINGLE_SHOP_ROW_YOFFSET = 12;
@@ -214,7 +214,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const typeOptions = args[1] as ModifierTypeOption[];
     const removeHealShop = globalScene.gameMode.hasNoShop;
     const baseShopCost = new NumberHolder(globalScene.getWaveMoneyAmount(1));
-    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HEAL_SHOP_COST, { numberHolder: baseShopCost });
+    globalScene.applyPlayerItems(TrainerItemEffect.HEAL_SHOP_COST, { numberHolder: baseShopCost });
     const shopTypeOptions = !removeHealShop
       ? getPlayerShopModifierTypeOptionsForWave(globalScene.currentBattle.waveIndex, baseShopCost.value)
       : [];

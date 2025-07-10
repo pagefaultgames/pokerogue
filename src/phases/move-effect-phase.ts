@@ -43,7 +43,7 @@ import { DamageAchv } from "#app/system/achv";
 import { applyHeldItems } from "#app/items/all-held-items";
 import { HeldItemEffect } from "#app/items/held-item";
 import { isVirtual, isReflected, MoveUseMode } from "#enums/move-use-mode";
-import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
+import { TrainerItemEffect } from "#app/items/trainer-item";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
@@ -856,7 +856,7 @@ export class MoveEffectPhase extends PokemonPhase {
     if (isBlockedBySubstitute) {
       substitute.hp -= dmg;
     } else if (!target.isPlayer() && dmg >= target.hp) {
-      globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.ENEMY_ENDURE_CHANCE, { pokemon: target });
+      globalScene.applyPlayerItems(TrainerItemEffect.ENEMY_ENDURE_CHANCE, { pokemon: target });
     }
 
     const damage = isBlockedBySubstitute

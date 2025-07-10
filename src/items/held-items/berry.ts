@@ -6,7 +6,7 @@ import { ConsumableHeldItem, HeldItemEffect } from "#app/items/held-item";
 import { BooleanHolder } from "#app/utils/common";
 import { BerryType } from "#enums/berry-type";
 import { HeldItemId } from "#enums/held-item-id";
-import { TRAINER_ITEM_EFFECT } from "../trainer-item";
+import { TrainerItemEffect } from "../trainer-item";
 
 interface BerryTypeToHeldItemMap {
   [key: number]: HeldItemId;
@@ -26,7 +26,7 @@ export const berryTypeToHeldItem: BerryTypeToHeldItemMap = {
   [BerryType.LEPPA]: HeldItemId.LEPPA_BERRY,
 };
 
-export interface BERRY_PARAMS {
+export interface BerryParams {
   /** The pokemon with the berry */
   pokemon: Pokemon;
 }
@@ -69,7 +69,7 @@ export class BerryHeldItem extends ConsumableHeldItem {
    * @param pokemon The {@linkcode Pokemon} that holds the berry
    * @returns always `true`
    */
-  apply(params: BERRY_PARAMS): boolean {
+  apply(params: BerryParams): boolean {
     const pokemon = params.pokemon;
 
     if (!this.shouldApply(pokemon)) {
@@ -77,7 +77,7 @@ export class BerryHeldItem extends ConsumableHeldItem {
     }
 
     const preserve = new BooleanHolder(false);
-    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.PRESERVE_BERRY, { pokemon: pokemon, doPreserve: preserve });
+    globalScene.applyPlayerItems(TrainerItemEffect.PRESERVE_BERRY, { pokemon: pokemon, doPreserve: preserve });
     const consumed = !preserve.value;
 
     // munch the berry and trigger unburden-like effects

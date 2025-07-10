@@ -6,7 +6,7 @@ import i18next from "i18next";
 import { HeldItemEffect, HeldItem } from "../held-item";
 import { TrainerItemId } from "#enums/trainer-item-id";
 
-export interface EVO_TRACKER_PARAMS {
+export interface EvoTrackerParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
 }

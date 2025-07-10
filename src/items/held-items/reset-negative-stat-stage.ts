@@ -5,7 +5,7 @@ import i18next from "i18next";
 import { ConsumableHeldItem, HeldItemEffect } from "../held-item";
 import { getPokemonNameWithAffix } from "#app/messages";
 
-export interface RESET_NEGATIVE_STAT_STAGE_PARAMS {
+export interface ResetNegativeStatStageParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   /** Whether the move was used by a player pokemon */
@@ -38,7 +38,7 @@ export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem {
    * @param pokemon {@linkcode Pokemon} that holds the item
    * @returns `true` if any stat stages were reset, false otherwise
    */
-  apply(params: RESET_NEGATIVE_STAT_STAGE_PARAMS): boolean {
+  apply(params: ResetNegativeStatStageParams): boolean {
     const pokemon = params.pokemon;
     const isPlayer = params.isPlayer;
     let statRestored = false;

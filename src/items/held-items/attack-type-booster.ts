@@ -5,7 +5,7 @@ import type { NumberHolder } from "#app/utils/common";
 import type Pokemon from "#app/field/pokemon";
 import { HeldItemEffect, HeldItem } from "#app/items/held-item";
 
-export interface ATTACK_TYPE_BOOST_PARAMS {
+export interface AttackTypeBoostParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   /** The resolved type of the move */
@@ -66,7 +66,7 @@ export class AttackTypeBoosterHeldItem extends HeldItem {
     return `${HeldItemNames[this.type]?.toLowerCase()}`;
   }
 
-  apply(params: ATTACK_TYPE_BOOST_PARAMS): void {
+  apply(params: AttackTypeBoostParams): void {
     const pokemon = params.pokemon;
     const moveType = params.moveType;
     const movePower = params.movePower;

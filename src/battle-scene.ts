@@ -147,8 +147,8 @@ import { HeldItemId } from "#enums/held-item-id";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "./items/held-item-pool";
 import type { HeldItemConfiguration } from "./items/held-item-data-types";
 import { TrainerItemManager } from "./items/trainer-item-manager";
-import { type EnemyAttackStatusEffectChanceTrainerItem, TRAINER_ITEM_EFFECT } from "./items/trainer-item";
-import { applyTrainerItems, type APPLY_TRAINER_ITEMS_PARAMS } from "./items/apply-trainer-items";
+import { type EnemyAttackStatusEffectChanceTrainerItem, TrainerItemEffect } from "./items/trainer-item";
+import { applyTrainerItems, type ApplyTrainerItemsParams } from "./items/apply-trainer-items";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import {
   isTrainerItemPool,
@@ -1301,7 +1301,7 @@ export default class BattleScene extends SceneBase {
 
   getDoubleBattleChance(newWaveIndex: number, playerField: PlayerPokemon[]) {
     const doubleChance = new NumberHolder(newWaveIndex % 10 === 0 ? 32 : 8);
-    this.applyPlayerItems(TRAINER_ITEM_EFFECT.DOUBLE_BATTLE_CHANCE_BOOSTER, { numberHolder: doubleChance });
+    this.applyPlayerItems(TrainerItemEffect.DOUBLE_BATTLE_CHANCE_BOOSTER, { numberHolder: doubleChance });
     for (const p of playerField) {
       applyAbAttrs("DoubleBattleChanceAbAttr", { pokemon: p, chance: doubleChance });
     }
@@ -2650,7 +2650,7 @@ export default class BattleScene extends SceneBase {
     return Math.floor(moneyValue / 10) * 10;
   }
 
-  applyPlayerItems<T extends TRAINER_ITEM_EFFECT>(effect: T, params: APPLY_TRAINER_ITEMS_PARAMS[T]) {
+  applyPlayerItems<T extends TrainerItemEffect>(effect: T, params: ApplyTrainerItemsParams[T]) {
     applyTrainerItems(effect, this.trainerItems, params);
   }
 
@@ -2677,7 +2677,7 @@ export default class BattleScene extends SceneBase {
           if (modifier instanceof PokemonHpRestoreModifier) {
             if (!(modifier as PokemonHpRestoreModifier).fainted) {
               const hpRestoreMultiplier = new NumberHolder(1);
-              this.applyPlayerItems(TRAINER_ITEM_EFFECT.HEALING_BOOSTER, { numberHolder: hpRestoreMultiplier });
+              this.applyPlayerItems(TrainerItemEffect.HEALING_BOOSTER, { numberHolder: hpRestoreMultiplier });
               args.push(hpRestoreMultiplier.value);
             } else {
               args.push(1);

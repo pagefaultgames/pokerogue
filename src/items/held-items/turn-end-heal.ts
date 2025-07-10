@@ -6,7 +6,7 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { toDmgValue } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
 
-export interface TURN_END_HEAL_PARAMS {
+export interface TurnEndHealParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
 }
@@ -14,7 +14,7 @@ export interface TURN_END_HEAL_PARAMS {
 export class TurnEndHealHeldItem extends HeldItem {
   public effects: HeldItemEffect[] = [HeldItemEffect.TURN_END_HEAL];
 
-  apply(params: TURN_END_HEAL_PARAMS): boolean {
+  apply(params: TurnEndHealParams): boolean {
     const pokemon = params.pokemon;
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (pokemon.isFullHp()) {

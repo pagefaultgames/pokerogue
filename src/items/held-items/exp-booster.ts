@@ -4,7 +4,7 @@ import type { HeldItemId } from "#enums/held-item-id";
 import i18next from "i18next";
 import { HeldItemEffect, HeldItem } from "../held-item";
 
-export interface EXP_BOOST_PARAMS {
+export interface ExpBoostParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   /** The amount of exp to gain */
@@ -45,7 +45,7 @@ export class ExpBoosterHeldItem extends HeldItem {
    * @param boost {@linkcode NumberHolder} holding the exp boost value
    * @returns always `true`
    */
-  apply(params: EXP_BOOST_PARAMS): boolean {
+  apply(params: ExpBoostParams): boolean {
     const pokemon = params.pokemon;
     const expAmount = params.expAmount;
     const stackCount = pokemon.heldItemManager.getStack(this.type);

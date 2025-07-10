@@ -27,7 +27,7 @@ import { BattlePhase } from "./battle-phase";
 import Overrides from "#app/overrides";
 import type { CustomModifierSettings } from "#app/modifier/modifier-type";
 import { isNullOrUndefined, NumberHolder } from "#app/utils/common";
-import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
+import { TrainerItemEffect } from "#app/items/trainer-item";
 
 export type ModifierSelectCallback = (rowCursor: number, cursor: number) => boolean;
 
@@ -152,7 +152,7 @@ export class SelectModifierPhase extends BattlePhase {
     const modifierType = shopOption.type;
     // Apply Black Sludge to healing item cost
     const healingItemCost = new NumberHolder(shopOption.cost);
-    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HEAL_SHOP_COST, { numberHolder: healingItemCost });
+    globalScene.applyPlayerItems(TrainerItemEffect.HEAL_SHOP_COST, { numberHolder: healingItemCost });
     const cost = healingItemCost.value;
 
     if (globalScene.money < cost && !Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
@@ -403,7 +403,7 @@ export class SelectModifierPhase extends BattlePhase {
   // Function that determines how many reward slots are available
   private getModifierCount(): number {
     const modifierCountHolder = new NumberHolder(3);
-    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.EXTRA_REWARD, { numberHolder: modifierCountHolder });
+    globalScene.applyPlayerItems(TrainerItemEffect.EXTRA_REWARD, { numberHolder: modifierCountHolder });
 
     // If custom modifiers are specified, overrides default item count
     if (this.customModifierSettings) {
@@ -474,7 +474,7 @@ export class SelectModifierPhase extends BattlePhase {
 
     // Apply Black Sludge to reroll cost
     const modifiedRerollCost = new NumberHolder(baseMultiplier);
-    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.HEAL_SHOP_COST, { numberHolder: modifiedRerollCost });
+    globalScene.applyPlayerItems(TrainerItemEffect.HEAL_SHOP_COST, { numberHolder: modifiedRerollCost });
     return modifiedRerollCost.value;
   }
 

@@ -83,7 +83,7 @@ import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-it
 import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveKindString, MoveClassMap } from "#app/@types/move-types";
 import { applyMoveAttrs } from "./apply-attrs";
 import { frenzyMissFunc, getMoveTargets } from "./move-utils";
-import { TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
+import { TrainerItemEffect } from "#app/items/trainer-item";
 import { AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrParams } from "../abilities/ability";
 import { applyHeldItems } from "#app/items/all-held-items";
 
@@ -2764,7 +2764,7 @@ export class EatBerryAttr extends MoveEffectAttr {
     this.chosenBerry = heldBerries[user.randBattleSeedInt(heldBerries.length)];
     const preserve = new BooleanHolder(false);
     // check for berry pouch preservation
-    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.PRESERVE_BERRY, {pokemon: pokemon, doPreserve: preserve});
+    globalScene.applyPlayerItems(TrainerItemEffect.PRESERVE_BERRY, {pokemon: pokemon, doPreserve: preserve});
     if (!preserve.value) {
       this.reduceBerryModifier(pokemon);
     }

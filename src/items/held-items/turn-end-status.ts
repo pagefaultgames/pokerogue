@@ -3,7 +3,7 @@ import { HeldItemEffect, HeldItem } from "#app/items/held-item";
 import type { StatusEffect } from "#enums/status-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 
-export interface TURN_END_STATUS_PARAMS {
+export interface TurnEndStatusParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
 }
@@ -30,7 +30,7 @@ export class TurnEndStatusHeldItem extends HeldItem {
    * @param pokemon {@linkcode Pokemon} that holds the held item
    * @returns `true` if the status effect was applied successfully
    */
-  apply(params: TURN_END_STATUS_PARAMS): boolean {
+  apply(params: TurnEndStatusParams): boolean {
     return params.pokemon.trySetStatus(this.effect, true, undefined, undefined, this.name);
   }
 

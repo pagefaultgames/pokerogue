@@ -3,7 +3,7 @@ import { HeldItemEffect, HeldItem } from "#app/items/held-item";
 import type { BooleanHolder } from "#app/utils/common";
 import type { HeldItemId } from "#enums/held-item-id";
 
-export interface FLINCH_CHANCE_PARAMS {
+export interface FlinchChanceParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   flinched: BooleanHolder;
@@ -41,7 +41,7 @@ export class FlinchChanceHeldItem extends HeldItem {
    * @param flinched - A {@linkcode BooleanHolder} holding whether the pokemon has flinched
    * @returns `true` if {@linkcode FlinchChanceModifier} was applied successfully
    */
-  apply(params: FLINCH_CHANCE_PARAMS): boolean {
+  apply(params: FlinchChanceParams): boolean {
     const pokemon = params.pokemon;
     const flinched = params.flinched;
     const stackCount = pokemon.heldItemManager.getStack(this.type);

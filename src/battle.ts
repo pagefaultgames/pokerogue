@@ -36,7 +36,7 @@ import { BattleType } from "#enums/battle-type";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import type { HeldItemId } from "#enums/held-item-id";
 import { BattlerIndex } from "#enums/battler-index";
-import { TRAINER_ITEM_EFFECT } from "./items/trainer-item";
+import { TrainerItemEffect } from "./items/trainer-item";
 
 export interface TurnCommand {
   command: Command;
@@ -183,7 +183,7 @@ export default class Battle {
 
   pickUpScatteredMoney(): void {
     const moneyAmount = new NumberHolder(globalScene.currentBattle.moneyScattered);
-    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
+    globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
 
     if (globalScene.arena.getTag(ArenaTagType.HAPPY_HOUR)) {
       moneyAmount.value *= 2;

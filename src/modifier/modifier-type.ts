@@ -74,7 +74,7 @@ import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeld
 import { berryTypeToHeldItem } from "#app/items/held-items/berry";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { allTrainerItems } from "#app/data/data-lists";
-import { tempStatToTrainerItem, TRAINER_ITEM_EFFECT } from "#app/items/trainer-item";
+import { tempStatToTrainerItem, TrainerItemEffect } from "#app/items/trainer-item";
 
 type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier | null;
 
@@ -818,7 +818,7 @@ export class MoneyRewardModifierType extends ModifierType {
 
   getDescription(): string {
     const moneyAmount = new NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
-    globalScene.applyPlayerItems(TRAINER_ITEM_EFFECT.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
+    globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
     const formattedMoney = formatMoney(globalScene.moneyFormat, moneyAmount.value);
 
     return i18next.t("modifierType:ModifierType.MoneyRewardModifierType.description", {

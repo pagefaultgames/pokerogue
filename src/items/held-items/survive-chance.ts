@@ -5,7 +5,7 @@ import { globalScene } from "#app/global-scene";
 import i18next from "i18next";
 import { getPokemonNameWithAffix } from "#app/messages";
 
-export interface SURVIVE_CHANCE_PARAMS {
+export interface SurviveChanceParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   surviveDamage: BooleanHolder;
@@ -36,7 +36,7 @@ export class SurviveChanceHeldItem extends HeldItem {
    * @param surviveDamage {@linkcode BooleanHolder} that holds the survive damage
    * @returns `true` if the survive damage has been applied
    */
-  apply(params: SURVIVE_CHANCE_PARAMS): boolean {
+  apply(params: SurviveChanceParams): boolean {
     const pokemon = params.pokemon;
     const surviveDamage = params.surviveDamage;
     const stackCount = pokemon.heldItemManager.getStack(this.type);

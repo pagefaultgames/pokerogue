@@ -4,7 +4,7 @@ import type { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
 import { HeldItemEffect, HeldItem } from "../held-item";
 
-export interface CRIT_BOOST_PARAMS {
+export interface CritBoostParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
   critStage: NumberHolder;
@@ -34,7 +34,7 @@ export class CritBoostHeldItem extends HeldItem {
    * @param critStage {@linkcode NumberHolder} that holds the resulting critical-hit level
    * @returns always `true`
    */
-  apply(params: CRIT_BOOST_PARAMS): boolean {
+  apply(params: CritBoostParams): boolean {
     params.critStage.value += this.stageIncrement;
     return true;
   }
@@ -71,7 +71,7 @@ export class SpeciesCritBoostHeldItem extends CritBoostHeldItem {
   //    );
   //  }
 
-  apply(params: CRIT_BOOST_PARAMS): boolean {
+  apply(params: CritBoostParams): boolean {
     const pokemon = params.pokemon;
     const fitsSpecies =
       this.species.includes(pokemon.getSpeciesForm(true).speciesId) ||
