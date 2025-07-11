@@ -144,7 +144,7 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
     let relative: Phaser.GameObjects.Sprite | Phaser.GameObjects.Text = iconPreviousTab;
     let relativeWidth: number = iconPreviousTab.width * 6;
     for (const label of navigationManager.labels) {
-      const labelText = addTextObject(0, 0, label, TextStyle.SETTINGS_LABEL);
+      const labelText = addTextObject(0, 0, label, TextStyle.SETTINGS_LABEL_NAVBAR);
       labelText.setOrigin(0, 0);
       labelText.setPositionRelative(relative, 6 + relativeWidth / 6, 0);
       this.add(labelText);

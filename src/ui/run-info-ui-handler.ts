@@ -202,7 +202,7 @@ export default class RunInfoUiHandler extends UiHandler {
       );
       this.runContainer.add(abilityButtonContainer);
     }
-    const headerText = addTextObject(0, 0, i18next.t("runHistory:runInfo"), TextStyle.SETTINGS_LABEL);
+    const headerText = addTextObject(0, 0, i18next.t("runHistory:runInfo"), TextStyle.HEADER_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
     this.runContainer.add(headerText);
@@ -603,7 +603,7 @@ export default class RunInfoUiHandler extends UiHandler {
     // Duration + Money
     const runInfoTextContainer = globalScene.add.container(0, 0);
     // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
-    const lineSpacing = i18next.resolvedLanguage === "ja" ? 12 : 3;
+    const lineSpacing = i18next.resolvedLanguage === "ja" ? 3 : 3;
     const runInfoText = addBBCodeTextObject(7, 0, "", TextStyle.WINDOW, {
       fontSize: "50px",
       lineSpacing: lineSpacing,
@@ -768,7 +768,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const pPassiveInfo = pokemon.passive ? passiveLabel + ": " + pokemon.getPassiveAbility().name : "";
       const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
       // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
-      const lineSpacing = i18next.resolvedLanguage === "ja" ? 12 : 3;
+      const lineSpacing = i18next.resolvedLanguage === "ja" ? 3 : 3;
       const pokeInfoText = addBBCodeTextObject(0, 0, pName, TextStyle.SUMMARY, {
         fontSize: textContainerFontSize,
         lineSpacing: lineSpacing,
@@ -866,7 +866,7 @@ export default class RunInfoUiHandler extends UiHandler {
         moveContainer.setScale(0.5);
         const moveBg = globalScene.add.nineslice(0, 0, "type_bgs", "unknown", 85, 15, 2, 2, 2, 2);
         moveBg.setOrigin(1, 0);
-        const moveLabel = addTextObject(-moveBg.width / 2, 2, "-", TextStyle.PARTY);
+        const moveLabel = addTextObject(-moveBg.width / 2, 1, "-", TextStyle.MOVE_LABEL);
         moveLabel.setOrigin(0.5, 0);
         moveLabel.setName("text-move-label");
         pokemonMoveBgs.push(moveBg);
