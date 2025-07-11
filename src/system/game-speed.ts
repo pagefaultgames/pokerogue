@@ -1,4 +1,5 @@
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import type { BattleScene } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import { FixedInt } from "#app/utils/common";
 
@@ -8,18 +9,19 @@ const PROPERTIES = ["delay", "completeDelay", "loopDelay", "duration", "repeatDe
 /**
  * Adjust an animation's duration based on the current game speed.
  * @param duration - The original duration in seconds, either as a number or a {@linkcode FixedInt}.
+ * @param speed - The current game speed value.
  * @returns The adjusted duration value, rounded to the nearest millisecond.
  */
-function transformValue(duration: number | FixedInt): number {
-  // We do not mutate `FixedInt` durations
+function transformValue(duration: number | FixedInt, speed: number): number {
+  // We do not mutate `FixedInt`s' durations
   if (typeof duration !== "number") {
     return duration.value;
   }
-  return Math.ceil(duration / globalScene.gameSpeed);
+  return Math.ceil(duration / speed);
 };
 
 /** Adjust various Phaser objects' methods to scale durations with the current game speed. */
-export function initGameSpeed(): void {
+export function initGameSpeed(this: BattleScene): void {
   const mutateProperties = (obj: any, allowArray = false) => {
     // We do not mutate Tweens or TweenChain objects themselves.
     if (obj instanceof Phaser.Tweens.Tween || obj instanceof Phaser.Tweens.TweenChain) {
@@ -38,7 +40,7 @@ export function initGameSpeed(): void {
     for (const prop of PROPERTIES) {
       const objProp = obj[prop];
       if (typeof objProp === "number" || objProp instanceof FixedInt) {
-        obj[prop] = transformValue(objProp);
+        obj[prop] = transformValue(objProp, this.gameSpeed);
       }
     }
 
@@ -51,27 +53,27 @@ export function initGameSpeed(): void {
     }
   };
 
-  const originalAddEvent = globalScene.time.addEvent;
-  globalScene.time.addEvent = (config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig) => {
+  const originalAddEvent = this.time.addEvent;
+  this.time.addEvent = (config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig) => {
     if (!(config instanceof Phaser.Time.TimerEvent) && config.delay) {
-      config.delay = transformValue(config.delay);
+      config.delay = transformValue(config.delay, this.gameSpeed);
     }
-    return originalAddEvent.apply(globalScene, [config]);
+    return originalAddEvent.apply(this, [config]);
   };
 
   // Mutate tween functions
   for (const funcName of ["add", "addCounter", "chain", "create", "addMultiple"]) {
-    const origTweenFunc = globalScene.tweens[funcName];
-    globalScene.tweens[funcName] = (args) => {
+    const origTweenFunc = this.tweens[funcName];
+    this.tweens[funcName] = (args) => {
       // TODO: review what allowArray is used for and why it is necessary
       mutateProperties(args, funcName === "create" || funcName === "addMultiple");
-      return origTweenFunc.apply(globalScene, [args]);
+      return origTweenFunc.apply(this, [args]);
     }
   }
 
   const originalFadeOut = SoundFade.fadeOut;
   SoundFade.fadeOut = ((_scene: Phaser.Scene, sound: Phaser.Sound.BaseSound, duration: number, destroy?: boolean) =>
-    originalFadeOut(globalScene, sound, transformValue(duration), destroy)) as typeof originalFadeOut;
+    originalFadeOut(this, sound, transformValue(duration, this.gameSpeed), destroy)) as typeof originalFadeOut;
 
   const originalFadeIn = SoundFade.fadeIn;
   SoundFade.fadeIn = ((
@@ -80,5 +82,5 @@ export function initGameSpeed(): void {
     duration: number,
     endVolume?: number,
     startVolume?: number,
-  ) => originalFadeIn(globalScene, sound, transformValue(duration), endVolume, startVolume)) as typeof originalFadeIn;
+  ) => originalFadeIn(this, sound, transformValue(duration, this.gameSpeed), endVolume, startVolume)) as typeof originalFadeIn;
 }
