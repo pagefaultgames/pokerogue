@@ -891,15 +891,22 @@ class ToxicSpikesTag extends ArenaTrapTag {
  * @see {@linkcode DelayedAttackTag}
  */
 interface DelayedAttack {
+  /** The {@linkcode PID | Pokemon.id} of the {@linkcode Pokemon} initiating the attack. */
   sourceId: number;
+  /** The {@linkcode MoveId} that was used to trigger the delayed attack. */
   move: MoveId;
+  /** The {@linkcode BattlerIndex} of the attack's target. */
   targetIndex: BattlerIndex;
+  /** 
+   * The number of turns left.
+   * The attack will trigger once its turn count reaches 0, at which point it is removed.
+   */
   turnCount: number;
 }
 
 /**
  * Arena Tag to manage execution of delayed attacks, such as {@linkcode MoveId.FUTURE_SIGHT} or {@linkcode MoveId.DOOM_DESIRE}.
- * Delayed attacks do nothing for the first 3 turns after use (including the turn the move is used),
+ * Delayed attacks do nothing for the first several turns after use (including the turn the move is used),
  * dealing damage to the specified slot after the turn count has been elapsed.
  */
 export class DelayedAttackTag extends ArenaTag {
@@ -928,7 +935,8 @@ export class DelayedAttackTag extends ArenaTag {
 
   /**
    * Check whether a delayed attack can be queued against the given target.
-   * @param targetIndex - The {@linkcode BattlerIndex} of the target Pokemon.
+   * @param targetIndex - The {@linkcode BattlerIndex} of the target Pokemon
+   * @returns Whether another delayed attack can be successfully added.
    */
   public canAddAttack(targetIndex: BattlerIndex): boolean {
     return this.delayedAttacks.every(atk => atk.targetIndex !== targetIndex);
@@ -936,12 +944,12 @@ export class DelayedAttackTag extends ArenaTag {
 
   /**
    * Tick down all existing delayed attacks, activating them if their timers have elapsed.
-   * @returns `true` if at least 1 delayed attack has not been completed
+   * @returns Whether this tag should remain (at least 1 delayed attack still active).
    */
   override lapse(_arena: Arena): boolean {
     for (const attack of this.delayedAttacks) {
       const source = globalScene.getPokemonById(attack.sourceId);
-      const target: Pokemon | null = globalScene.getField()[attack.targetIndex];
+      const target: Pokemon | undefined = globalScene.getField()[attack.targetIndex];
 
       if (--attack.turnCount > 0) {
         // attack still cooking
@@ -976,7 +984,7 @@ export class DelayedAttackTag extends ArenaTag {
 
   /**
    * Remove all finished attacks from the current queue.
-   * @returns Whether at least 1 attack has not finished triggering
+   * @returns Whether at least 1 attack has not finished triggering.
    */
   removeDoneAttacks(): boolean {
     this.delayedAttacks = this.delayedAttacks.filter(a => a.turnCount > 0);
