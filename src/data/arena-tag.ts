@@ -907,7 +907,7 @@ interface DelayedAttack {
 /**
  * Arena Tag to manage execution of delayed attacks, such as {@linkcode MoveId.FUTURE_SIGHT} or {@linkcode MoveId.DOOM_DESIRE}.
  * Delayed attacks do nothing for the first several turns after use (including the turn the move is used),
- * dealing damage to the specified slot after the turn count has been elapsed.
+ * triggerung against a certain slot after the turn count has elapsed.
  */
 export class DelayedAttackTag extends ArenaTag {
   /** Contains all queued delayed attacks on the field */
@@ -957,7 +957,8 @@ export class DelayedAttackTag extends ArenaTag {
       }
 
       if (!source || !target || source === target || target.isFainted()) {
-        // source/target either not present or the exact same pokemon; silently mark for deletion
+        // source/target either nonexistent or the exact same pokemon; silently mark for deletion
+        // TODO: move into an overriddable method if wish is made into a delayed attack 
         attack.turnCount = -1;
         continue;
       }
@@ -977,10 +978,13 @@ export class DelayedAttackTag extends ArenaTag {
     return this.delayedAttacks.length > 0;
   }
 
-  /** Trigger a delayed attack. */
+  /** 
+   * Trigger a delayed attack's effects prior to being removed.
+   * @param attack - The {@linkcode DelayedAttack} being activated
+   */
   protected triggerAttack(attack: DelayedAttack): void {
+    const source = globalScene.getPokemonById(attack.sourceId)!;
     const target = globalScene.getField()[attack.targetIndex];
-    // Queue attack message and then unshift a new MoveEffectPhase for this move's attack phase.
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(target),
