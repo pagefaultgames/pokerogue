@@ -1,5 +1,5 @@
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import type { BattleScene } from "#app/battle-scene";
+import type BattleScene from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import { FixedInt } from "#app/utils/common";
 
