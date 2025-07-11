@@ -142,6 +142,9 @@ export class TurnStartPhase extends FieldPhase {
       }
     }
 
+    // TODO: In an ideal world, this is handled by the phase manager. The change is nontrivial due to the ordering of post-turn phases like those queued by VictoryPhase
+    globalScene.phaseManager.queueTurnEndPhases();
+
     /**
      * this.end() will call shiftPhase(), which dumps everything from PrependQueue (aka everything that is unshifted()) to the front
      * of the queue and dequeues to start the next phase

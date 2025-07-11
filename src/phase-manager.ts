@@ -343,7 +343,7 @@ export class PhaseManager {
       this.startNextDynamicPhase();
     }
 
-    if (!this.turnEnded && (!this.phaseQueue.length || this.phaseQueue[0].is("BattleEndPhase"))) {
+    if (!this.turnEnded && (!this.phaseQueue.length || this.phaseQueue[0].is("WeatherEffectPhase"))) {
       if (!this.startNextDynamicPhase()) {
         this.turnEndSequence();
       }
@@ -525,7 +525,6 @@ export class PhaseManager {
   private turnEndSequence(): void {
     this.turnEnded = true;
     this.dynamicQueueManager.clearQueues();
-    this.queueTurnEndPhases();
     if (this.nextCommandPhaseQueue.length) {
       this.phaseQueue.push(...this.nextCommandPhaseQueue);
       this.nextCommandPhaseQueue.splice(0, this.nextCommandPhaseQueue.length);
@@ -616,10 +615,7 @@ export class PhaseManager {
   }
 
   public queueTurnEndPhases(): void {
-    turnEndPhases
-      .slice()
-      .reverse()
-      .forEach(p => this.phaseQueue.unshift(this.create(p)));
+    turnEndPhases.forEach(p => this.phaseQueue.push(this.create(p)));
   }
 
   private consecutivePokemonPhases(): DynamicPhase[] | undefined {
