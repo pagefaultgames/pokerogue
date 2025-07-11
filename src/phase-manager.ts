@@ -218,7 +218,7 @@ const turnEndPhases: PhaseString[] = ["WeatherEffectPhase", "BerryPhase", "Check
 
 const ignorablePhases: PhaseString[] = ["ShowAbilityPhase", "HideAbilityPhase"];
 // TODO might be easier to define which phases should be dynamic instead
-const nonDynamicPokemonPhases: PhaseString[] = ["SummonPhase", "CommandPhase"];
+const nonDynamicPokemonPhases: PhaseString[] = ["SummonPhase", "CommandPhase", "LearnMovePhase"];
 
 /**
  * PhaseManager is responsible for managing the phases in the battle scene
