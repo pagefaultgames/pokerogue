@@ -154,7 +154,7 @@ describe("Abilities - Magic Guard", () => {
 
   it("Magic Guard prevents damage caused by entry hazards", async () => {
     //Adds and applies Spikes to both sides of the arena
-    const newTag = getArenaTag(ArenaTagType.SPIKES, 5, MoveId.SPIKES, 0, 0, ArenaTagSide.BOTH)!;
+    const newTag = getArenaTag(ArenaTagType.SPIKES, 5, MoveId.SPIKES, 0, ArenaTagSide.BOTH)!;
     game.scene.arena.tags.push(newTag);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
@@ -177,8 +177,8 @@ describe("Abilities - Magic Guard", () => {
 
   it("Magic Guard does not prevent poison from Toxic Spikes", async () => {
     //Adds and applies Spikes to both sides of the arena
-    const playerTag = getArenaTag(ArenaTagType.TOXIC_SPIKES, 5, MoveId.TOXIC_SPIKES, 0, 0, ArenaTagSide.PLAYER)!;
-    const enemyTag = getArenaTag(ArenaTagType.TOXIC_SPIKES, 5, MoveId.TOXIC_SPIKES, 0, 0, ArenaTagSide.ENEMY)!;
+    const playerTag = getArenaTag(ArenaTagType.TOXIC_SPIKES, 5, MoveId.TOXIC_SPIKES, 0, ArenaTagSide.PLAYER)!;
+    const enemyTag = getArenaTag(ArenaTagType.TOXIC_SPIKES, 5, MoveId.TOXIC_SPIKES, 0, ArenaTagSide.ENEMY)!;
     game.scene.arena.tags.push(playerTag);
     game.scene.arena.tags.push(enemyTag);
 
