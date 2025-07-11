@@ -79,7 +79,7 @@ export function initGameSpeed(this: BattleScene): void {
 
   const originalFadeOut = SoundFade.fadeOut;
   SoundFade.fadeOut = ((_scene: Phaser.Scene, sound: Phaser.Sound.BaseSound, duration: number, destroy?: boolean) =>
-    originalFadeOut(this, sound, transformValue(duration, this.gameSpeed), destroy)) as typeof originalFadeOut;
+    originalFadeOut(globalScene, sound, transformValue(duration, globalScene.gameSpeed), destroy)) as typeof originalFadeOut;
 
   const originalFadeIn = SoundFade.fadeIn;
   SoundFade.fadeIn = ((
@@ -88,5 +88,5 @@ export function initGameSpeed(this: BattleScene): void {
     duration: number,
     endVolume?: number,
     startVolume?: number,
-  ) => originalFadeIn(this, sound, transformValue(duration, this.gameSpeed), endVolume, startVolume)) as typeof originalFadeIn;
+  ) => originalFadeIn(globalScene, sound, transformValue(duration, globalScene.gameSpeed), endVolume, startVolume)) as typeof originalFadeIn;
 }
