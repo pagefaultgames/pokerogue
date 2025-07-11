@@ -14,15 +14,15 @@ const PROPERTIES = ["delay", "completeDelay", "loopDelay", "duration", "repeatDe
  * {@linkcode FixedInt}s will not be affected by changes to game speed.
  */
 function transformValue(duration: number | FixedInt, speed: number): number {
-  // We do not mutate `FixedInt`s' durations
+  // We do not mutate `FixedInt` durations
   if (typeof duration !== "number") {
     return duration.value;
   }
   return Math.ceil(duration / speed);
-};
+}
 
-/** 
- * Adjust various Phaser objects' methods to scale durations with the current game speed. 
+/**
+ * Adjust various Phaser objects' methods to scale durations with the current game speed.
  * @param this - The current {@linkcode BattleScene}
  */
 export function initGameSpeed(this: BattleScene): void {
@@ -74,14 +74,19 @@ export function initGameSpeed(this: BattleScene): void {
       // TODO: review what allowArray is used for and document why it is necessary
       mutateProperties(args, funcName === "create" || funcName === "addMultiple");
       return origTweenFunc.apply(this, [args]);
-    }
+    };
   }
 
   // TODO: Either make these methods use `this` instead of globalScene or vice versa
   // (for consistency)
   const originalFadeOut = SoundFade.fadeOut;
   SoundFade.fadeOut = ((_scene: Phaser.Scene, sound: Phaser.Sound.BaseSound, duration: number, destroy?: boolean) =>
-    originalFadeOut(globalScene, sound, transformValue(duration, globalScene.gameSpeed), destroy)) as typeof originalFadeOut;
+    originalFadeOut(
+      globalScene,
+      sound,
+      transformValue(duration, globalScene.gameSpeed),
+      destroy,
+    )) as typeof originalFadeOut;
 
   const originalFadeIn = SoundFade.fadeIn;
   SoundFade.fadeIn = ((
@@ -90,5 +95,12 @@ export function initGameSpeed(this: BattleScene): void {
     duration: number,
     endVolume?: number,
     startVolume?: number,
-  ) => originalFadeIn(globalScene, sound, transformValue(duration, globalScene.gameSpeed), endVolume, startVolume)) as typeof originalFadeIn;
+  ) =>
+    originalFadeIn(
+      globalScene,
+      sound,
+      transformValue(duration, globalScene.gameSpeed),
+      endVolume,
+      startVolume,
+    )) as typeof originalFadeIn;
 }
