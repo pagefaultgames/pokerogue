@@ -174,11 +174,8 @@ export class Arena {
           case ret.baseTotal >= 660:
             regen = waveDifficulty < 80; // Wave 50+ in daily (not possible)
             break;
-          case ret.baseTotal >= 570:
-            regen = waveDifficulty < 55; // Wave 25+ in daily
-            break;
           default:
-            regen = waveDifficulty < 30; // Wave 0+ in daily
+            regen = waveDifficulty < 55; // Wave 25+ in daily
             break;
         }
       }
