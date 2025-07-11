@@ -8,9 +8,10 @@ const PROPERTIES = ["delay", "completeDelay", "loopDelay", "duration", "repeatDe
 
 /**
  * Adjust an animation's duration based on the current game speed.
- * @param duration - The original duration in seconds, either as a number or a {@linkcode FixedInt}.
- * @param speed - The current game speed value.
+ * @param duration - The original duration in seconds, either as a number or a {@linkcode FixedInt}
+ * @param speed - The current game speed value
  * @returns The adjusted duration value, rounded to the nearest millisecond.
+ * {@linkcode FixedInt}s will not be affected by changes to game speed.
  */
 function transformValue(duration: number | FixedInt, speed: number): number {
   // We do not mutate `FixedInt`s' durations
@@ -20,7 +21,10 @@ function transformValue(duration: number | FixedInt, speed: number): number {
   return Math.ceil(duration / speed);
 };
 
-/** Adjust various Phaser objects' methods to scale durations with the current game speed. */
+/** 
+ * Adjust various Phaser objects' methods to scale durations with the current game speed. 
+ * @param this - The current {@linkcode BattleScene}
+ */
 export function initGameSpeed(this: BattleScene): void {
   const mutateProperties = (obj: any, allowArray = false) => {
     // We do not mutate Tweens or TweenChain objects themselves.
@@ -53,8 +57,10 @@ export function initGameSpeed(this: BattleScene): void {
     }
   };
 
+  // NB: anonymous functions are used instead of arrow functions
+  // to preserve `this` values.
   const originalAddEvent = this.time.addEvent;
-  this.time.addEvent = (config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig) => {
+  this.time.addEvent = function (config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig) {
     if (!(config instanceof Phaser.Time.TimerEvent) && config.delay) {
       config.delay = transformValue(config.delay, this.gameSpeed);
     }
@@ -64,7 +70,7 @@ export function initGameSpeed(this: BattleScene): void {
   // Mutate tween functions
   for (const funcName of ["add", "addCounter", "chain", "create", "addMultiple"]) {
     const origTweenFunc = this.tweens[funcName];
-    this.tweens[funcName] = (args) => {
+    this.tweens[funcName] = function (args) {
       // TODO: review what allowArray is used for and why it is necessary
       mutateProperties(args, funcName === "create" || funcName === "addMultiple");
       return origTweenFunc.apply(this, [args]);
