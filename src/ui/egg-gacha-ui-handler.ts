@@ -1,7 +1,7 @@
 import { UiMode } from "#enums/ui-mode";
 import { TextStyle, addTextObject, getEggTierTextTint, getTextStyleOptions } from "./text";
 import MessageUiHandler from "./message-ui-handler";
-import { getEnumKeys, fixedInt, randSeedShuffle } from "#app/utils/common";
+import { fixedInt, randSeedShuffle, getEnumValues } from "#app/utils/common";
 import type { IEggOptions } from "../data/egg";
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
 import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
@@ -39,7 +39,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   private defaultText: string;
 
   /** The tween chain playing the egg drop animation sequence */
-  private eggDropTweenChain: Phaser.Tweens.TweenChain | undefined = undefined;
+  private eggDropTweenChain?: Phaser.Tweens.TweenChain;
 
   private scale = 0.1666666667;
 
@@ -339,8 +339,6 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
     this.eggGachaContainer.setActive(true).setVisible(true);
 
-    // this.eggGachaContainer.setVisible(true);
-
     handleTutorial(Tutorial.Egg_Gacha);
 
     this.legendaryExpiration.setText(this.getLegendaryGachaTimeLeft());
@@ -359,14 +357,14 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   private firstDropAnims(): Phaser.Types.Tweens.TweenBuilderConfig[] {
     globalScene.playSound("se/gacha_dial");
     return [
-      // Tween 0 animates the gacha knob turning left
+      // Tween 1 animates the gacha knob turning left
       {
         targets: this.gachaKnobs[this.gachaCursor],
         duration: this.getDelayValue(350),
         angle: 90,
         ease: "Cubic.easeInOut",
       },
-      // Tween 1 animates the gacha knob turning back
+      // Tween 2 animates the gacha knob turning back
       {
         targets: this.gachaKnobs[this.gachaCursor],
         duration: this.getDelayValue(350),
@@ -435,7 +433,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
           y: { value: 110, ease: "Back.easeOut" },
         },
       },
-      // Tween 3 "closes" the gacha hatch and moves the up while enlarging it
+      // Tween 3 "closes" the gacha hatch and moves the egg up while enlarging it
       {
         onStart: () => {
           this.gachaHatches[this.gachaCursor].play("close");
@@ -525,7 +523,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       }
       const eggSprite = globalScene.add.sprite(127, 75, "egg", `egg_${eggs[i].getKey()}`).setScale(0.5);
       gachaContainer.addAt(eggSprite, 2);
-      await this.doPullAnim(eggSprite, i).then(() => gachaContainer.remove(eggSprite, true));
+      // biome-ignore lint/nursery/noAwaitInLoop: The point of this loop is to play the animations, one after another
+      await this.doPullAnim(eggSprite, i).finally(() => gachaContainer.remove(eggSprite, true));
     }
 
     this.showSummary(eggs);
@@ -740,7 +739,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     let errorKey: string | undefined;
     const freePulls = Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE;
 
-    if (!Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE && globalScene.gameData.eggs.length + pulls > 99) {
+    if (!freePulls && globalScene.gameData.eggs.length + pulls > 99) {
       errorKey = "egg:tooManyEggs";
     } else if (!freePulls && !globalScene.gameData.voucherCounts[voucherType]) {
       errorKey = "egg:notEnoughVouchers";
@@ -771,7 +770,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       this.transitionCancelled = true;
       // When transition is cancelled, ensure the active chain playing the egg drop animation is sped up
       // We cannot cancel it, as this would leave sprite positions at their current position in the animation
-      this?.eggDropTweenChain?.setTimeScale(50);
+      this.eggDropTweenChain?.setTimeScale(50);
       return true;
     }
   }
@@ -783,7 +782,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
    */
   private processNormalInput(button: Button): boolean | undefined {
     const ui = this.getUi();
-    let success = false;
+    let success: boolean | undefined;
     switch (button) {
       case Button.ACTION:
         return this.handleVoucherSelectAction(this.cursor);
@@ -813,7 +812,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         break;
     }
 
-    // Return undefined here because we do not play error sound in case of
+    // Return undefined here because we do not play error sound in case of failed directional movements
     return success || undefined;
   }
 
@@ -835,7 +834,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
    * @returns - Whether an input event occured.
    */
   processInput(button: Button): boolean {
-    let success: boolean | undefined = undefined;
+    let success: boolean | undefined;
     if (this.transitioning) {
       success = this.processTransitionInput(button);
     } else if (this.eggGachaSummaryContainer.visible) {
