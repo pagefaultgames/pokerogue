@@ -71,7 +71,7 @@ export function initGameSpeed(this: BattleScene): void {
   for (const funcName of ["add", "addCounter", "chain", "create", "addMultiple"]) {
     const origTweenFunc = this.tweens[funcName];
     this.tweens[funcName] = function (args) {
-      // TODO: review what allowArray is used for and why it is necessary
+      // TODO: review what allowArray is used for and document why it is necessary
       mutateProperties(args, funcName === "create" || funcName === "addMultiple");
       return origTweenFunc.apply(this, [args]);
     }
