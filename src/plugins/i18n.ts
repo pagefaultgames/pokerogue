@@ -65,28 +65,27 @@ const fonts: Array<LoadingFontFaceProperty> = [
       unicodeRange: rangesByLanguage.chinese,
     }),
     extraOptions: { sizeAdjust: "70%", format: "woff2" },
-    only: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "da", "tr", "ro", "ru", "he"],
+    only: ["zh"],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.subset.woff2)", {
       unicodeRange: rangesByLanguage.chinese,
     }),
     extraOptions: { format: "woff2" },
-    only: ["en", "es", "fr", "it", "de", "zh", "pt", "ko", "ca", "da", "tr", "ro", "ru", "he"],
+    only: ["zh"],
   },
   // japanese
   {
-    face: new FontFace("emerald", "url(./fonts/Galmuri11.subset.woff2)", {
+    face: new FontFace("emerald", "url(./fonts/pokemon-bw.ttf)", {
       unicodeRange: rangesByLanguage.japanese,
     }),
-    extraOptions: { sizeAdjust: "66%" },
-    only: ["ja"],
+    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "he"],
   },
   {
-    face: new FontFace("pkmnems", "url(./fonts/Galmuri9.subset.woff2)", {
+    face: new FontFace("pkmnems", "url(./fonts/pokemon-bw.ttf)", {
       unicodeRange: rangesByLanguage.japanese,
     }),
-    only: ["ja"],
+    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "he"],
   },
 ];
 
