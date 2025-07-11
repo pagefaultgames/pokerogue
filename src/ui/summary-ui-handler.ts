@@ -148,7 +148,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.tabSprite.setOrigin(1, 1);
     this.summaryContainer.add(this.tabSprite);
 
-    const summaryLabel = addTextObject(4, -165, i18next.t("pokemonSummary:pokemonInfo"), TextStyle.SUMMARY);
+    const summaryLabel = addTextObject(4, -165, i18next.t("pokemonSummary:pokemonInfo"), TextStyle.SUMMARY_HEADER);
     summaryLabel.setOrigin(0, 1);
     this.summaryContainer.add(summaryLabel);
 
@@ -418,7 +418,7 @@ export default class SummaryUiHandler extends UiHandler {
     }
 
     this.candyCountText.setText(
-      `x${globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].candyCount}`,
+      `×${globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].candyCount}`,
     );
 
     this.candyShadow.setCrop(0, 0, 16, candyCropY);
@@ -430,7 +430,7 @@ export default class SummaryUiHandler extends UiHandler {
       this.friendshipShadow.on("pointerout", () => globalScene.ui.hideTooltip());
     }
 
-    this.friendshipText.setText(`${this.pokemon?.friendship || "0"} / 255`);
+    this.friendshipText.setText(` ${this.pokemon?.friendship || "0"}/255`);
 
     this.friendshipShadow.setCrop(0, 0, 16, 16 - 16 * ((this.pokemon?.friendship || 0) / 255));
 
@@ -864,7 +864,7 @@ export default class SummaryUiHandler extends UiHandler {
             141 + luckLabelText.displayWidth + 2,
             28,
             this.pokemon.getLuck().toString(),
-            TextStyle.SUMMARY,
+            TextStyle.LUCK_VALUE,
           );
           luckText.setOrigin(0, 0);
           luckText.setTint(getVariantTint(Math.min(this.pokemon.getLuck() - 1, 2) as Variant));
@@ -917,11 +917,11 @@ export default class SummaryUiHandler extends UiHandler {
           abilityInfo.labelImage.setOrigin(0, 0);
           profileContainer.add(abilityInfo.labelImage);
 
-          abilityInfo.nameText = addTextObject(7, 66, abilityInfo.ability?.name!, TextStyle.SUMMARY_ALT); // TODO: is this bang correct?
+          abilityInfo.nameText = addTextObject(7, 68, abilityInfo.ability?.name!, TextStyle.SUMMARY_ALT); // TODO: is this bang correct?
           abilityInfo.nameText.setOrigin(0, 1);
           profileContainer.add(abilityInfo.nameText);
 
-          abilityInfo.descriptionText = addTextObject(7, 69, abilityInfo.ability?.description!, TextStyle.WINDOW_ALT, {
+          abilityInfo.descriptionText = addTextObject(7, 71, abilityInfo.ability?.description!, TextStyle.WINDOW_ALT, {
             wordWrap: { width: 1224 },
           }); // TODO: is this bang correct?
           abilityInfo.descriptionText.setOrigin(0, 0);
@@ -1000,16 +1000,16 @@ export default class SummaryUiHandler extends UiHandler {
             16 * rowIndex,
             statName,
             natureStatMultiplier === 1
-              ? TextStyle.SUMMARY
+              ? TextStyle.SUMMARY_STATS
               : natureStatMultiplier > 1
-                ? TextStyle.SUMMARY_PINK
-                : TextStyle.SUMMARY_BLUE,
+                ? TextStyle.SUMMARY_STATS_PINK
+                : TextStyle.SUMMARY_STATS_BLUE,
           );
           const ivLabel = addTextObject(
             115 * colIndex + (colIndex === 1 ? 5 : 0),
             16 * rowIndex,
             statName,
-            this.pokemon?.ivs[stat] === 31 ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY,
+            this.pokemon?.ivs[stat] === 31 ? TextStyle.SUMMARY_STATS_GOLD : TextStyle.SUMMARY_STATS,
           );
 
           statLabel.setOrigin(0.5, 0);

@@ -1938,7 +1938,7 @@ class PartyCancelButton extends Phaser.GameObjects.Container {
 
     this.partyCancelPb = partyCancelPb;
 
-    const partyCancelText = addTextObject(-8, -7, i18next.t("partyUiHandler:cancel"), TextStyle.PARTY);
+    const partyCancelText = addTextObject(-10, -7, i18next.t("partyUiHandler:cancel"), TextStyle.PARTY_CANCEL_BUTTON);
     this.add(partyCancelText);
   }
 
