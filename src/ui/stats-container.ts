@@ -86,7 +86,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
           4 +
           (this.showDiff ? 0 : ivChartLabelyOffset[s]),
         i18next.t(getStatKey(s)),
-        TextStyle.TOOLTIP_CONTENT,
+        TextStyle.STATS_HEXAGON,
       );
       statLabel.setOrigin(0.5);
 
@@ -94,7 +94,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         statLabel.x - (this.showDiff ? 0 : ivLabelOffset[s]),
         statLabel.y + 8,
         "0",
-        TextStyle.TOOLTIP_CONTENT,
+        TextStyle.STATS_HEXAGON,
       );
       this.ivStatValueTexts[s].setOrigin(0.5);
 

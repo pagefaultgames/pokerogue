@@ -80,7 +80,6 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
         },
       },
     );
-    this.desc.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
 
     // limit the text rendering, required for scrolling later on
     const maskPointOrigin = {
