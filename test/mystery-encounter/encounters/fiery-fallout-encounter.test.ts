@@ -180,8 +180,8 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
       const hasAttackBooster = scene
-        .getPlayerParty()?.[0]
-        .heldItemManager.hasItemCategory(HeldItemCategoryId.TYPE_ATTACK_BOOSTER);
+        .getPlayerParty()[0]
+        .heldItemManager.hasItem(HeldItemCategoryId.TYPE_ATTACK_BOOSTER);
       expect(hasAttackBooster).toBe(true);
     });
   });
@@ -266,8 +266,8 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
       const hasAttackBooster = scene
-        .getPlayerParty()?.[0]
-        .heldItemManager.hasItemCategory(HeldItemCategoryId.TYPE_ATTACK_BOOSTER);
+        .getPlayerParty()[0]
+        .heldItemManager.hasItem(HeldItemCategoryId.TYPE_ATTACK_BOOSTER);
       expect(hasAttackBooster).toBe(true);
     });
 

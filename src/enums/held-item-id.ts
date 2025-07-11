@@ -129,7 +129,7 @@ export function getHeldItemCategory(itemId: HeldItemId): HeldItemCategoryId {
 }
 
 export function isCategoryId(id: number): boolean {
-  return (id & ITEM_CATEGORY_MASK) === id && id in HeldItemCategoryId;
+  return (Object.values(HeldItemCategoryId) as number[]).includes(id);
 }
 
 export function isItemInCategory(itemId: HeldItemId, category: HeldItemCategoryId): boolean {

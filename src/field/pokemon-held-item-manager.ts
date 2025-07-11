@@ -1,9 +1,9 @@
 import { allHeldItems } from "#app/data/data-lists";
 import {
+  type HeldItemCategoryId,
   isCategoryId,
   isItemInCategory,
   isItemInRequested,
-  type HeldItemCategoryId,
   type HeldItemId,
 } from "#app/enums/held-item-id";
 import type { FormChangeItem } from "#enums/form-change-item";

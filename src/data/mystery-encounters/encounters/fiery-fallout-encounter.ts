@@ -299,7 +299,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
 
 function giveLeadPokemonAttackTypeBoostItem() {
   // Give first party pokemon attack type boost item for free at end of battle
-  const leadPokemon = globalScene.getPlayerParty()?.[0];
+  const leadPokemon = globalScene.getPlayerParty()[0];
   if (leadPokemon) {
     // Generate type booster held item, default to Charcoal if item fails to generate
     let item = getNewHeldItemFromCategory(HeldItemCategoryId.TYPE_ATTACK_BOOSTER, leadPokemon);
