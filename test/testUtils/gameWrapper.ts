@@ -15,15 +15,15 @@ import { vi } from "vitest";
 import { version } from "../../package.json";
 import { MockGameObjectCreator } from "./mocks/mockGameObjectCreator";
 import { MockTimedEventManager } from "./mocks/mockTimedEventManager";
+import { PokedexMonContainer } from "#app/ui/pokedex-mon-container";
+import MockContainer from "./mocks/mocksContainer/mockContainer";
 import InputManager = Phaser.Input.InputManager;
 import KeyboardManager = Phaser.Input.Keyboard.KeyboardManager;
 import KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
 import GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
 import EventEmitter = Phaser.Events.EventEmitter;
 import UpdateList = Phaser.GameObjects.UpdateList;
-import { PokedexMonContainer } from "#app/ui/pokedex-mon-container";
-import MockContainer from "./mocks/mocksContainer/mockContainer";
-// biome-ignore lint/style/noNamespaceImport: Necessary in order to mock the var
+// biome-ignore lint/performance/noNamespaceImport: Necessary in order to mock the var
 import * as bypassLoginModule from "#app/global-vars/bypass-login";
 
 window.URL.createObjectURL = (blob: Blob) => {
@@ -122,15 +122,20 @@ export default class GameWrapper {
       },
     };
 
+    // TODO: Replace this with a proper mock of phaser's TweenManager.
     this.scene.tweens = {
       add: data => {
-        if (data.onComplete) {
-          data.onComplete();
-        }
+        // TODO: our mock of `add` should have the same signature as the real one, which returns the tween
+        data.onComplete?.();
       },
       getTweensOf: () => [],
       killTweensOf: () => [],
-      chain: () => null,
+
+      chain: data => {
+        // TODO: our mock of `chain` should have the same signature as the real one, which returns the chain
+        data?.tweens?.forEach(tween => tween.onComplete?.());
+        data.onComplete?.();
+      },
       addCounter: data => {
         if (data.onComplete) {
           data.onComplete();

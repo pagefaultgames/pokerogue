@@ -82,13 +82,21 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "38px",
   },
   de: {
-    starterInfoTextSize: "48px",
+    starterInfoTextSize: "54px",
     instructionTextSize: "35px",
-    starterInfoXPos: 33,
+    starterInfoXPos: 35,
   },
   "es-ES": {
-    starterInfoTextSize: "56px",
-    instructionTextSize: "35px",
+    starterInfoTextSize: "50px",
+    instructionTextSize: "38px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 38,
+  },
+  "es-MX": {
+    starterInfoTextSize: "50px",
+    instructionTextSize: "38px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 38,
   },
   fr: {
     starterInfoTextSize: "54px",
@@ -98,33 +106,52 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
-  pt_BR: {
-    starterInfoTextSize: "47px",
-    instructionTextSize: "38px",
+  "pt-BR": {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "42px",
+    starterInfoYOffset: 0.5,
     starterInfoXPos: 33,
   },
   zh: {
-    starterInfoTextSize: "47px",
-    instructionTextSize: "38px",
-    starterInfoYOffset: 1,
-    starterInfoXPos: 24,
-  },
-  pt: {
-    starterInfoTextSize: "48px",
-    instructionTextSize: "42px",
-    starterInfoXPos: 33,
+    starterInfoTextSize: "56px",
+    instructionTextSize: "36px",
+    starterInfoXPos: 26,
   },
   ko: {
-    starterInfoTextSize: "52px",
+    starterInfoTextSize: "60px",
     instructionTextSize: "38px",
+    starterInfoYOffset: -0.5,
+    starterInfoXPos: 30,
   },
   ja: {
-    starterInfoTextSize: "51px",
-    instructionTextSize: "38px",
+    starterInfoTextSize: "48px",
+    instructionTextSize: "40px",
+    starterInfoYOffset: 1,
+    starterInfoXPos: 32,
   },
-  "ca-ES": {
+  ca: {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "38px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 29,
+  },
+  da: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
+  },
+  tr: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
+  ro: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
+  ru: {
+    starterInfoTextSize: "46px",
+    instructionTextSize: "38px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 26,
   },
 };
 
@@ -174,6 +201,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private pokemonCaughtHatchedContainer: Phaser.GameObjects.Container;
   private pokemonCaughtCountText: Phaser.GameObjects.Text;
   private pokemonFormText: Phaser.GameObjects.Text;
+  private pokemonCategoryText: Phaser.GameObjects.Text;
   private pokemonHatchedIcon: Phaser.GameObjects.Sprite;
   private pokemonHatchedCountText: Phaser.GameObjects.Text;
   private pokemonShinyIcons: Phaser.GameObjects.Sprite[];
@@ -308,7 +336,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.shinyOverlay.setVisible(false);
     this.starterSelectContainer.add(this.shinyOverlay);
 
-    this.pokemonNumberText = addTextObject(17, 1, "0000", TextStyle.SUMMARY);
+    this.pokemonNumberText = addTextObject(17, 1, "0000", TextStyle.SUMMARY_DEX_NUM);
     this.pokemonNumberText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNumberText);
 
@@ -327,7 +355,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.pokemonGrowthRateLabelText.setVisible(false);
     this.starterSelectContainer.add(this.pokemonGrowthRateLabelText);
 
-    this.pokemonGrowthRateText = addTextObject(34, 106, "", TextStyle.SUMMARY_PINK, { fontSize: "36px" });
+    this.pokemonGrowthRateText = addTextObject(34, 106, "", TextStyle.GROWTH_RATE_TYPE, { fontSize: "36px" });
     this.pokemonGrowthRateText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonGrowthRateText);
 
@@ -370,9 +398,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.pokemonLuckLabelText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonLuckLabelText);
 
-    this.pokemonLuckText = addTextObject(8 + this.pokemonLuckLabelText.displayWidth + 2, 89, "0", TextStyle.WINDOW, {
-      fontSize: "56px",
-    });
+    this.pokemonLuckText = addTextObject(
+      8 + this.pokemonLuckLabelText.displayWidth + 2,
+      89,
+      "0",
+      TextStyle.LUCK_VALUE,
+      {
+        fontSize: "56px",
+      },
+    );
     this.pokemonLuckText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonLuckText);
 
@@ -408,6 +442,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     });
     this.pokemonFormText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonFormText);
+
+    this.pokemonCategoryText = addTextObject(100, 18, "Category", TextStyle.WINDOW_ALT, {
+      fontSize: "42px",
+    });
+    this.pokemonCategoryText.setOrigin(1, 0);
+    this.starterSelectContainer.add(this.pokemonCategoryText);
 
     this.pokemonCaughtHatchedContainer = globalScene.add.container(2, 25);
     this.pokemonCaughtHatchedContainer.setScale(0.5);
@@ -463,7 +503,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.instructionRowX + this.instructionRowTextOffset,
       this.instructionRowY,
       i18next.t("pokedexUiHandler:candyUpgrade"),
-      TextStyle.PARTY,
+      TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
     );
     this.candyUpgradeLabel.setName("text-candyUpgrade-label");
@@ -484,7 +524,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.instructionRowX + this.instructionRowTextOffset,
       this.instructionRowY,
       i18next.t("pokedexUiHandler:cycleShiny"),
-      TextStyle.PARTY,
+      TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
     );
     this.shinyLabel.setName("text-shiny-label");
@@ -503,7 +543,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.instructionRowX + this.instructionRowTextOffset,
       this.instructionRowY,
       i18next.t("pokedexUiHandler:cycleForm"),
-      TextStyle.PARTY,
+      TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
     );
     this.formLabel.setName("text-form-label");
@@ -522,7 +562,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.instructionRowX + this.instructionRowTextOffset,
       this.instructionRowY,
       i18next.t("pokedexUiHandler:cycleGender"),
-      TextStyle.PARTY,
+      TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
     );
     this.genderLabel.setName("text-gender-label");
@@ -541,7 +581,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.instructionRowX + this.instructionRowTextOffset,
       this.instructionRowY,
       i18next.t("pokedexUiHandler:cycleVariant"),
-      TextStyle.PARTY,
+      TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
     );
     this.variantLabel.setName("text-variant-label");
@@ -550,9 +590,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.showBackSpriteIconElement.setName("show-backSprite-icon-element");
     this.showBackSpriteIconElement.setScale(0.675);
     this.showBackSpriteIconElement.setOrigin(0.0, 0.0);
-    this.showBackSpriteLabel = addTextObject(60, 7, i18next.t("pokedexUiHandler:showBackSprite"), TextStyle.PARTY, {
-      fontSize: instructionTextSize,
-    });
+    this.showBackSpriteLabel = addTextObject(
+      60,
+      7,
+      i18next.t("pokedexUiHandler:showBackSprite"),
+      TextStyle.INSTRUCTIONS_TEXT,
+      {
+        fontSize: instructionTextSize,
+      },
+    );
     this.showBackSpriteLabel.setName("show-backSprite-label");
     this.starterSelectContainer.add(this.showBackSpriteIconElement);
     this.starterSelectContainer.add(this.showBackSpriteLabel);
@@ -1892,14 +1938,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
                 const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.starterId]);
                 options.push({
-                  label: `x${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")}`,
+                  label: `×${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")}`,
                   handler: () => {
                     if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
                       starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
                       if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                         starterData.candyCount -= passiveCost;
                       }
-                      this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                      this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
                       globalScene.gameData.saveSystem().then(success => {
                         if (!success) {
                           return globalScene.reset(true);
@@ -1924,14 +1970,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               if (valueReduction < valueReductionMax) {
                 const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.starterId])[valueReduction];
                 options.push({
-                  label: `x${reductionCost} ${i18next.t("pokedexUiHandler:reduceCost")}`,
+                  label: `×${reductionCost} ${i18next.t("pokedexUiHandler:reduceCost")}`,
                   handler: () => {
                     if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
                       starterData.valueReduction++;
                       if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                         starterData.candyCount -= reductionCost;
                       }
-                      this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                      this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
                       globalScene.gameData.saveSystem().then(success => {
                         if (!success) {
                           return globalScene.reset(true);
@@ -1953,7 +1999,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               // Same species egg menu option.
               const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.starterId]);
               options.push({
-                label: `x${sameSpeciesEggCost} ${i18next.t("pokedexUiHandler:sameSpeciesEgg")}`,
+                label: `×${sameSpeciesEggCost} ${i18next.t("pokedexUiHandler:sameSpeciesEgg")}`,
                 handler: () => {
                   if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost) {
                     if (globalScene.gameData.eggs.length >= 99 && !Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
@@ -1972,7 +2018,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                       starterData.candyCount -= sameSpeciesEggCost;
                     }
-                    this.pokemonCandyCountText.setText(`x${starterData.candyCount}`);
+                    this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
 
                     const egg = new Egg({
                       scene: globalScene,
@@ -2050,7 +2096,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               }
               let newSpecies: PokemonSpecies;
               if (this.filteredIndices) {
-                const index = this.filteredIndices.findIndex(id => id === this.species.speciesId);
+                const index = this.filteredIndices.indexOf(this.species.speciesId);
                 const newIndex = index <= 0 ? this.filteredIndices.length - 1 : index - 1;
                 newSpecies = getPokemonSpecies(this.filteredIndices[newIndex]);
               } else {
@@ -2089,7 +2135,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               }
               let newSpecies: PokemonSpecies;
               if (this.filteredIndices) {
-                const index = this.filteredIndices.findIndex(id => id === this.species.speciesId);
+                const index = this.filteredIndices.indexOf(this.species.speciesId);
                 const newIndex = index >= this.filteredIndices.length - 1 ? 0 : index + 1;
                 newSpecies = getPokemonSpecies(this.filteredIndices[newIndex]);
               } else {
@@ -2314,7 +2360,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.showStats();
       } else {
         this.statsContainer.setVisible(false);
-        //@ts-ignore
+        //@ts-expect-error
         this.statsContainer.updateIvs(null); // TODO: resolve ts-ignore. what. how? huh?
       }
     }
@@ -2354,6 +2400,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonCaughtHatchedContainer.setVisible(true);
         this.pokemonCandyContainer.setVisible(false);
         this.pokemonFormText.setVisible(false);
+        this.pokemonCategoryText.setVisible(false);
 
         const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, true, true);
         const props = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
@@ -2382,6 +2429,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.pokemonCaughtHatchedContainer.setVisible(false);
       this.pokemonCandyContainer.setVisible(false);
       this.pokemonFormText.setVisible(false);
+      this.pokemonCategoryText.setVisible(false);
 
       this.setSpeciesDetails(species!, {
         // TODO: is this bang correct?
@@ -2471,9 +2519,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       const isFormSeen = this.isSeen();
 
       this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
-      this.pokemonNumberText.setColor(this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, false));
+      this.pokemonNumberText.setColor(
+        this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, false),
+      );
       this.pokemonNumberText.setShadowColor(
-        this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, true),
+        this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, true),
       );
 
       const assetLoadCancelled = new BooleanHolder(false);
@@ -2532,6 +2582,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonNameText.setText(species.name);
       } else {
         this.pokemonNameText.setText(species ? "???" : "");
+      }
+
+      // Setting the category
+      if (isFormCaught) {
+        this.pokemonCategoryText.setText(species.category);
+      } else {
+        this.pokemonCategoryText.setText("");
       }
 
       // Setting tint of the sprite
@@ -2618,7 +2675,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
         this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
         this.pokemonCandyCountText.setText(
-          `x${species.speciesId === SpeciesId.PIKACHU ? 0 : globalScene.gameData.starterData[this.starterId].candyCount}`,
+          `×${species.speciesId === SpeciesId.PIKACHU ? 0 : globalScene.gameData.starterData[this.starterId].candyCount}`,
         );
         this.pokemonCandyContainer.setVisible(true);
 
@@ -2770,7 +2827,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.statsMode = false;
       this.statsContainer.setVisible(false);
       this.pokemonSprite.setVisible(true);
-      //@ts-ignore
+      //@ts-expect-error
       this.statsContainer.updateIvs(null); // TODO: resolve ts-ignore. !?!?
     }
   }

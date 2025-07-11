@@ -517,7 +517,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     descriptionTextObject.setMask(abilityDescriptionTextMask);
 
-    const descriptionLineCount = Math.floor(descriptionTextObject.displayHeight / 10);
+    const descriptionLineCount = Math.floor(descriptionTextObject.displayHeight / 9.2);
 
     if (this.descriptionScrollTween) {
       this.descriptionScrollTween.remove();
@@ -591,9 +591,9 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     // Auto-color options green/blue for good/bad by looking for (+)/(-)
     if (text) {
-      const primaryStyleString = [...text.match(new RegExp(/\[color=[^\[]*\]\[shadow=[^\[]*\]/i))!][0];
+      const primaryStyleString = [...text.match(new RegExp(/\[color=[^[]*\]\[shadow=[^[]*\]/i))!][0];
       text = text.replace(
-        /(\(\+\)[^\(\[]*)/gi,
+        /(\(\+\)[^([]*)/gi,
         substring =>
           "[/color][/shadow]" +
           getBBCodeFrag(substring, TextStyle.SUMMARY_GREEN) +
@@ -601,7 +601,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
           primaryStyleString,
       );
       text = text.replace(
-        /(\(\-\)[^\(\[]*)/gi,
+        /(\(-\)[^([]*)/gi,
         substring =>
           "[/color][/shadow]" +
           getBBCodeFrag(substring, TextStyle.SUMMARY_BLUE) +
@@ -614,6 +614,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       const tooltipTextObject = addBBCodeTextObject(6, 7, text, TextStyle.TOOLTIP_CONTENT, {
         wordWrap: { width: 600 },
         fontSize: "72px",
+        padding: { top: 8 },
+        lineSpacing: 1.25,
       });
       this.tooltipContainer.add(tooltipTextObject);
 
@@ -627,7 +629,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       const textMask = tooltipTextMaskRect.createGeometryMask();
       tooltipTextObject.setMask(textMask);
 
-      const tooltipLineCount = Math.floor(tooltipTextObject.displayHeight / 11.2);
+      const tooltipLineCount = Math.floor(tooltipTextObject.displayHeight / 10.2);
 
       if (this.tooltipScrollTween) {
         this.tooltipScrollTween.remove();
