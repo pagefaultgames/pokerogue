@@ -77,6 +77,8 @@ export function initGameSpeed(this: BattleScene): void {
     }
   }
 
+  // TODO: Either make these methods use `this` instead of globalScene or vice versa
+  // (for consistency)
   const originalFadeOut = SoundFade.fadeOut;
   SoundFade.fadeOut = ((_scene: Phaser.Scene, sound: Phaser.Sound.BaseSound, duration: number, destroy?: boolean) =>
     originalFadeOut(globalScene, sound, transformValue(duration, globalScene.gameSpeed), destroy)) as typeof originalFadeOut;
