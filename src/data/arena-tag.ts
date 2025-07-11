@@ -917,7 +917,7 @@ export class DelayedAttackTag extends ArenaTag {
     super(ArenaTagType.DELAYED_ATTACK, 0);
   }
 
-  loadTag(source: ArenaTag | any): void {
+  override loadTag(source: ArenaTag | any): void {
     super.loadTag(source);
     this.delayedAttacks = source.delayedAttacks;
   }
@@ -962,21 +962,7 @@ export class DelayedAttackTag extends ArenaTag {
         continue;
       }
 
-      // Queue attack message and then unshift a new MoveEffectPhase for this move's attack phase.
-      globalScene.phaseManager.queueMessage(
-        i18next.t("moveTriggers:tookMoveAttack", {
-          pokemonName: getPokemonNameWithAffix(target),
-          moveName: allMoves[attack.move].name,
-        }),
-      );
-
-      globalScene.phaseManager.unshiftNew(
-        "MoveEffectPhase",
-        attack.sourceId,
-        [attack.targetIndex],
-        allMoves[attack.move],
-        MoveUseMode.TRANSPARENT,
-      );
+      this.triggerAttack(attack);
     }
 
     return this.removeDoneAttacks();
@@ -986,9 +972,29 @@ export class DelayedAttackTag extends ArenaTag {
    * Remove all finished attacks from the current queue.
    * @returns Whether at least 1 attack has not finished triggering.
    */
-  removeDoneAttacks(): boolean {
+  private removeDoneAttacks(): boolean {
     this.delayedAttacks = this.delayedAttacks.filter(a => a.turnCount > 0);
     return this.delayedAttacks.length > 0;
+  }
+
+  /** Trigger a delayed attack. */
+  protected triggerAttack(attack: DelayedAttack): void {
+    const target = globalScene.getField()[attack.targetIndex];
+    // Queue attack message and then unshift a new MoveEffectPhase for this move's attack phase.
+    globalScene.phaseManager.queueMessage(
+      i18next.t("moveTriggers:tookMoveAttack", {
+        pokemonName: getPokemonNameWithAffix(target),
+        moveName: allMoves[attack.move].name,
+      }),
+    );
+
+    globalScene.phaseManager.unshiftNew(
+      "MoveEffectPhase",
+      attack.sourceId,
+      [attack.targetIndex],
+      allMoves[attack.move],
+      MoveUseMode.TRANSPARENT,
+    );
   }
 
   /** Override on remove func to do nothing. */
