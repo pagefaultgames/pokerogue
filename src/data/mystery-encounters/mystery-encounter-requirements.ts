@@ -800,13 +800,13 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
 }
 
 export class HeldItemRequirement extends EncounterPokemonRequirement {
-  requiredHeldItems: HeldItemId[] | HeldItemCategoryId[];
+  requiredHeldItems: (HeldItemId | HeldItemCategoryId)[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
   requireTransferable: boolean;
 
   constructor(
-    heldItem: HeldItemId | HeldItemId[] | HeldItemCategoryId | HeldItemCategoryId[],
+    heldItem: HeldItemId | HeldItemCategoryId | (HeldItemId | HeldItemCategoryId)[],
     minNumberOfPokemon = 1,
     invertQuery = false,
     requireTransferable = true,
@@ -830,8 +830,10 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
     if (!this.invertQuery) {
       return partyPokemon.filter(pokemon =>
         this.requiredHeldItems.some(heldItem => {
-          (pokemon.heldItemManager.hasItem(heldItem) || pokemon.heldItemManager.hasItemCategory(heldItem)) &&
-            (!this.requireTransferable || allHeldItems[heldItem].isTransferable);
+          return (
+            pokemon.heldItemManager.hasItem(heldItem) &&
+            (!this.requireTransferable || allHeldItems[heldItem].isTransferable)
+          );
         }),
       );
     }

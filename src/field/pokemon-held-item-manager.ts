@@ -1,5 +1,11 @@
 import { allHeldItems } from "#app/data/data-lists";
-import { isItemInCategory, isItemInRequested, type HeldItemCategoryId, type HeldItemId } from "#app/enums/held-item-id";
+import {
+  isCategoryId,
+  isItemInCategory,
+  isItemInRequested,
+  type HeldItemCategoryId,
+  type HeldItemId,
+} from "#app/enums/held-item-id";
 import type { FormChangeItem } from "#enums/form-change-item";
 import {
   type HeldItemConfiguration,
@@ -89,12 +95,11 @@ export class PokemonItemManager {
       .map(k => k);
   }
 
-  hasItem(itemType: HeldItemId): boolean {
+  hasItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
+    if (isCategoryId(itemType)) {
+      return getTypedKeys(this.heldItems).some(id => isItemInCategory(id, itemType as HeldItemCategoryId));
+    }
     return itemType in this.heldItems;
-  }
-
-  hasItemCategory(categoryId: HeldItemCategoryId): boolean {
-    return getTypedKeys(this.heldItems).some(id => isItemInCategory(id, categoryId));
   }
 
   getStack(itemType: HeldItemId): number {
