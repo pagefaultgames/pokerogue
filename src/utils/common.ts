@@ -341,6 +341,10 @@ export class NumberHolder {
   constructor(value: number) {
     this.value = value;
   }
+
+  valueOf(): number {
+    return this.value;
+  }
 }
 
 export class FixedInt {
@@ -348,6 +352,10 @@ export class FixedInt {
 
   constructor(value: number) {
     this.value = value;
+  }
+
+  [Symbol.toPrimitive](_hint: string): number {
+    return this.value;
   }
 }
 
