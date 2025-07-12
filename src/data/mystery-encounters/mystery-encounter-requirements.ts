@@ -886,33 +886,24 @@ export class HeldItemRequirement extends EncounterSceneRequirement {
     if (isNullOrUndefined(partyPokemon)) {
       return false;
     }
+    console.log("COUNTED:", this.queryPartyForItems(partyPokemon), this.minNumberOfItems);
     return this.queryPartyForItems(partyPokemon) >= this.minNumberOfItems;
   }
 
   queryPartyForItems(partyPokemon: PlayerPokemon[]): number {
-    if (!this.invertQuery) {
-      return partyPokemon.reduce((count, pokemon) => {
-        const matchingItems = this.requiredHeldItems.filter(heldItem => {
-          return this.requireTransferable
-            ? pokemon.heldItemManager.hasTransferableItem(heldItem)
-            : pokemon.heldItemManager.hasItem(heldItem);
-        });
-        return count + matchingItems.length;
-      }, 0);
-    }
-    // for an inverted query, we only want to get the pokemon that have any held items that are NOT in requiredHeldItemModifiers
-    // E.g. functions as a blacklist
-    return partyPokemon.reduce((count, pokemon) => {
-      const matchingItems = pokemon.getHeldItems().filter(item => {
-        const notRequired = !this.requiredHeldItems.some(
+    let count = 0;
+    for (const pokemon of partyPokemon) {
+      for (const item of pokemon.getHeldItems()) {
+        const itemInList = this.requiredHeldItems.some(
           heldItem => item === heldItem || getHeldItemCategory(item) === heldItem,
         );
-        const transferableOk = !this.requireTransferable || allHeldItems[item].isTransferable;
-        return notRequired && transferableOk;
-      });
-
-      return count + matchingItems.length;
-    }, 0);
+        const requiredItem = this.invertQuery ? !itemInList : itemInList;
+        if (requiredItem && (!this.requireTransferable || allHeldItems[item].isTransferable)) {
+          count += pokemon.heldItemManager.getStack(item);
+        }
+      }
+    }
+    return count;
   }
 
   override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {

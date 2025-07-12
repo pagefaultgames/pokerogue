@@ -30,7 +30,7 @@ import { Stat } from "#enums/stat";
 import i18next from "i18next";
 import type { MysteryEncounterSpriteConfig } from "#app/field/mystery-encounter-intro";
 import { MoveUseMode } from "#enums/move-use-mode";
-import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
+import type { HeldItemConfiguration, PokemonItemMap } from "#app/items/held-item-data-types";
 import { allHeldItems } from "#app/data/data-lists";
 import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { HeldItemRequirement } from "../mystery-encounter-requirements";
@@ -113,7 +113,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
     // Get all berries in party, with references to the pokemon
     const berryItems = getPartyBerries();
 
-    encounter.misc.berryItemsMap = berryItems;
+    encounter.misc = { berryItemsMap: berryItems };
 
     // Adds stolen berries to the Greedent item configuration
     const bossHeldItemConfig: HeldItemConfiguration = [];
@@ -164,7 +164,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
     // Session has been safely saved at this point, so data won't be lost
     const berryItems = getPartyBerries();
     berryItems.forEach(map => {
-      globalScene.getPokemonById(map.pokemonId)?.heldItemManager.remove(map.item.id);
+      globalScene.getPokemonById(map.pokemonId)?.heldItemManager.remove(map.item.id as HeldItemId);
     });
 
     globalScene.updateItems(true);
@@ -225,13 +225,12 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
       })
       .withOptionPhase(async () => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const berryMap = encounter.misc.berryItemsMap;
+        const berryMap = encounter.misc.berryItemsMap as PokemonItemMap[];
 
         // Returns 2/5 of the berries stolen to each Pokemon
         const party = globalScene.getPlayerParty();
         party.forEach(pokemon => {
-          // TODO: is this check legal?
-          const stolenBerries = berryMap.filter(map => map.pokemon === pokemon);
+          const stolenBerries = berryMap.filter(map => map.pokemonId === pokemon.id);
           const returnedBerryCount = Math.floor(((stolenBerries.length ?? 0) * 2) / 5);
 
           if (returnedBerryCount > 0) {
@@ -239,7 +238,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
               // Shuffle remaining berry types and pop
               Phaser.Math.RND.shuffle(stolenBerries);
               const randBerryType = stolenBerries.pop();
-              pokemon.heldItemManager.add(randBerryType);
+              pokemon.heldItemManager.add(randBerryType?.item.id as HeldItemId);
             }
           }
         });
