@@ -695,7 +695,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonEggMoveBgs = [];
     this.pokemonEggMoveLabels = [];
 
-    this.valueLimitLabel = addTextObject(teamWindowX + 17, 150, "0/10", TextStyle.STARTER_VALUE_LIMIT).setOrigin(0.5, 0);
+    this.valueLimitLabel = addTextObject(teamWindowX + 17, 150, "0/10", TextStyle.STARTER_VALUE_LIMIT).setOrigin(
+      0.5,
+      0,
+    );
 
     const startLabel = addTextObject(
       teamWindowX + 17,
@@ -915,17 +918,29 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       .setName("sprite-shiny-icon-element")
       .setScale(0.675)
       .setOrigin(0);
-    this.shinyLabel = addTextObject(iRowTextX, iRowY, i18next.t("starterSelectUiHandler:cycleShiny"), TextStyle.INSTRUCTIONS_TEXT, {
-      fontSize: instructionTextSize,
-    }).setName("text-shiny-label");
+    this.shinyLabel = addTextObject(
+      iRowTextX,
+      iRowY,
+      i18next.t("starterSelectUiHandler:cycleShiny"),
+      TextStyle.INSTRUCTIONS_TEXT,
+      {
+        fontSize: instructionTextSize,
+      },
+    ).setName("text-shiny-label");
 
     this.formIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "F.png")
       .setName("sprite-form-icon-element")
       .setScale(0.675)
       .setOrigin(0);
-    this.formLabel = addTextObject(iRowTextX, iRowY, i18next.t("starterSelectUiHandler:cycleForm"), TextStyle.INSTRUCTIONS_TEXT, {
-      fontSize: instructionTextSize,
-    }).setName("text-form-label");
+    this.formLabel = addTextObject(
+      iRowTextX,
+      iRowY,
+      i18next.t("starterSelectUiHandler:cycleForm"),
+      TextStyle.INSTRUCTIONS_TEXT,
+      {
+        fontSize: instructionTextSize,
+      },
+    ).setName("text-form-label");
 
     this.genderIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "G.png")
       .setName("sprite-gender-icon-element")
@@ -967,9 +982,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       .setName("sprite-tera-icon-element")
       .setScale(0.675)
       .setOrigin(0);
-    this.teraLabel = addTextObject(iRowTextX, iRowY, i18next.t("starterSelectUiHandler:cycleTera"), TextStyle.INSTRUCTIONS_TEXT, {
-      fontSize: instructionTextSize,
-    }).setName("text-tera-label");
+    this.teraLabel = addTextObject(
+      iRowTextX,
+      iRowY,
+      i18next.t("starterSelectUiHandler:cycleTera"),
+      TextStyle.INSTRUCTIONS_TEXT,
+      {
+        fontSize: instructionTextSize,
+      },
+    ).setName("text-tera-label");
 
     this.goFilterIconElement = new Phaser.GameObjects.Sprite(
       globalScene,
