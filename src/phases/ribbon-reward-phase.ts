@@ -3,10 +3,10 @@ import type PokemonSpecies from "#app/data/pokemon-species";
 import type { ModifierTypeFunc } from "#app/@types/modifier-types";
 import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
-import { ModifierRewardPhase } from "./modifier-reward-phase";
+import { RewardPhase } from "./reward-phase";
 
-export class RibbonModifierRewardPhase extends ModifierRewardPhase {
-  public readonly phaseName = "RibbonModifierRewardPhase";
+export class RibbonRewardPhase extends RewardPhase {
+  public readonly phaseName = "RibbonRewardPhase";
   private species: PokemonSpecies;
 
   constructor(modifierTypeFunc: ModifierTypeFunc, species: PokemonSpecies) {

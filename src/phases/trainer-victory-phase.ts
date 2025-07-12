@@ -22,7 +22,7 @@ export class TrainerVictoryPhase extends BattlePhase {
 
     const modifierRewardFuncs = globalScene.currentBattle.trainer?.config.modifierRewardFuncs!; // TODO: is this bang correct?
     for (const modifierRewardFunc of modifierRewardFuncs) {
-      globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierRewardFunc);
+      globalScene.phaseManager.unshiftNew("RewardPhase", modifierRewardFunc);
     }
 
     const trainerType = globalScene.currentBattle.trainer?.config.trainerType!; // TODO: is this bang correct?
@@ -34,7 +34,7 @@ export class TrainerVictoryPhase extends BattlePhase {
       ) {
         if (timedEventManager.getUpgradeUnlockedVouchers()) {
           globalScene.phaseManager.unshiftNew(
-            "ModifierRewardPhase",
+            "RewardPhase",
             [
               modifierTypes.VOUCHER_PLUS,
               modifierTypes.VOUCHER_PLUS,
@@ -44,7 +44,7 @@ export class TrainerVictoryPhase extends BattlePhase {
           );
         } else {
           globalScene.phaseManager.unshiftNew(
-            "ModifierRewardPhase",
+            "RewardPhase",
             [modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM][
               vouchers[TrainerType[trainerType]].voucherType
             ],

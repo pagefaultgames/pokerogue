@@ -151,10 +151,10 @@ export class GameOverPhase extends BattlePhase {
               this.handleUnlocks();
 
               for (const species of this.firstRibbons) {
-                globalScene.phaseManager.unshiftNew("RibbonModifierRewardPhase", modifierTypes.VOUCHER_PLUS, species);
+                globalScene.phaseManager.unshiftNew("RibbonRewardPhase", modifierTypes.VOUCHER_PLUS, species);
               }
               if (!firstClear) {
-                globalScene.phaseManager.unshiftNew("GameOverModifierRewardPhase", modifierTypes.VOUCHER_PREMIUM);
+                globalScene.phaseManager.unshiftNew("GameOverRewardPhase", modifierTypes.VOUCHER_PREMIUM);
               }
             }
             this.getRunHistoryEntry().then(runHistoryEntry => {

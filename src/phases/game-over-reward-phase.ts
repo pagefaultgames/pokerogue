@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
-import { ModifierRewardPhase } from "./modifier-reward-phase";
+import { RewardPhase } from "./reward-phase";
 
-export class GameOverModifierRewardPhase extends ModifierRewardPhase {
-  public readonly phaseName = "GameOverModifierRewardPhase";
+export class GameOverRewardPhase extends RewardPhase {
+  public readonly phaseName = "GameOverRewardPhase";
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();

@@ -63,10 +63,10 @@ const doEventReward = () => {
       return !fullStack;
     });
     if (candidates.length > 0) {
-      globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes[randSeedItem(candidates)]);
+      globalScene.phaseManager.unshiftNew("RewardPhase", modifierTypes[randSeedItem(candidates)]);
     } else {
       // At max stacks, give a Voucher instead
-      globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.VOUCHER);
+      globalScene.phaseManager.unshiftNew("RewardPhase", modifierTypes.VOUCHER);
     }
   }
 };
@@ -170,7 +170,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           // At max stacks, give the first party pokemon a Shell Bell instead
           backupOption();
         } else {
-          globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.AMULET_COIN);
+          globalScene.phaseManager.unshiftNew("RewardPhase", modifierTypes.AMULET_COIN);
           doEventReward();
         }
 
@@ -240,7 +240,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
             // At max stacks, give the first party pokemon a Shell Bell instead
             backupOption();
           } else {
-            globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.CANDY_JAR);
+            globalScene.phaseManager.unshiftNew("RewardPhase", modifierTypes.CANDY_JAR);
             doEventReward();
           }
         } else {
@@ -251,7 +251,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
             // At max stacks, give the first party pokemon a Shell Bell instead
             backupOption();
           } else {
-            globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.BERRY_POUCH);
+            globalScene.phaseManager.unshiftNew("RewardPhase", modifierTypes.BERRY_POUCH);
             doEventReward();
           }
         }
@@ -323,7 +323,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           // At max stacks, give the first party pokemon a Shell Bell instead
           backupOption();
         } else {
-          globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.HEALING_CHARM);
+          globalScene.phaseManager.unshiftNew("RewardPhase", modifierTypes.HEALING_CHARM);
           doEventReward();
         }
 

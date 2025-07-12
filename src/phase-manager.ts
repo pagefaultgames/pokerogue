@@ -26,7 +26,7 @@ import { EvolutionPhase } from "#app/phases/evolution-phase";
 import { ExpPhase } from "#app/phases/exp-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { FormChangePhase } from "#app/phases/form-change-phase";
-import { GameOverModifierRewardPhase } from "#app/phases/game-over-modifier-reward-phase";
+import { GameOverRewardPhase } from "#app/phases/game-over-reward-phase";
 import { GameOverPhase } from "#app/phases/game-over-phase";
 import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 import { HidePartyExpBarPhase } from "#app/phases/hide-party-exp-bar-phase";
@@ -36,7 +36,7 @@ import { LevelUpPhase } from "#app/phases/level-up-phase";
 import { LoadMoveAnimPhase } from "#app/phases/load-move-anim-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { MessagePhase } from "#app/phases/message-phase";
-import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
+import { RewardPhase } from "#app/phases/reward-phase";
 import { MoneyRewardPhase } from "#app/phases/money-reward-phase";
 import { MoveAnimPhase } from "#app/phases/move-anim-phase";
 import { MoveChargePhase } from "#app/phases/move-charge-phase";
@@ -70,7 +70,7 @@ import { ReloadSessionPhase } from "#app/phases/reload-session-phase";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
 import { ReturnPhase } from "#app/phases/return-phase";
 import { RevivalBlessingPhase } from "#app/phases/revival-blessing-phase";
-import { RibbonModifierRewardPhase } from "#app/phases/ribbon-modifier-reward-phase";
+import { RibbonRewardPhase } from "#app/phases/ribbon-reward-phase";
 import { ScanIvsPhase } from "#app/phases/scan-ivs-phase";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 import { SelectChallengePhase } from "#app/phases/select-challenge-phase";
@@ -138,7 +138,7 @@ const PHASES = Object.freeze({
   FaintPhase,
   FormChangePhase,
   GameOverPhase,
-  GameOverModifierRewardPhase,
+  GameOverRewardPhase,
   HideAbilityPhase,
   HidePartyExpBarPhase,
   LearnMovePhase,
@@ -147,7 +147,7 @@ const PHASES = Object.freeze({
   LoadMoveAnimPhase,
   LoginPhase,
   MessagePhase,
-  ModifierRewardPhase,
+  RewardPhase,
   MoneyRewardPhase,
   MoveAnimPhase,
   MoveChargePhase,
@@ -178,7 +178,7 @@ const PHASES = Object.freeze({
   ResetStatusPhase,
   ReturnPhase,
   RevivalBlessingPhase,
-  RibbonModifierRewardPhase,
+  RibbonRewardPhase,
   ScanIvsPhase,
   SelectBiomePhase,
   SelectChallengePhase,

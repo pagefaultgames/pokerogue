@@ -163,7 +163,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
       .withOptionPhase(async () => {
         // Give the player 5 Rogue Balls
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.ROGUE_BALL);
+        globalScene.phaseManager.unshiftNew("RewardPhase", modifierTypes.ROGUE_BALL);
 
         // Start encounter with random legendary (7-10 starter strength) that has level additive
         // If this is a mono-type challenge, always ensure the required type is filtered for

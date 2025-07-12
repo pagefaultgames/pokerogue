@@ -53,12 +53,12 @@ import {
   MysteryEncounterRewardsPhase,
   PostMysteryEncounterPhase,
 } from "#app/phases/mystery-encounter-phases";
-import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
+import { RewardPhase } from "#app/phases/reward-phase";
 import { PartyExpPhase } from "#app/phases/party-exp-phase";
 import { ExpPhase } from "#app/phases/exp-phase";
 import { GameOverPhase } from "#app/phases/game-over-phase";
-import { RibbonModifierRewardPhase } from "#app/phases/ribbon-modifier-reward-phase";
-import { GameOverModifierRewardPhase } from "#app/phases/game-over-modifier-reward-phase";
+import { RibbonRewardPhase } from "#app/phases/ribbon-reward-phase";
+import { GameOverRewardPhase } from "#app/phases/game-over-reward-phase";
 import { UnlockPhase } from "#app/phases/unlock-phase";
 import { PostGameOverPhase } from "#app/phases/post-game-over-phase";
 import { RevivalBlessingPhase } from "#app/phases/revival-blessing-phase";
@@ -147,9 +147,9 @@ export default class PhaseInterceptor {
     [MysteryEncounterBattlePhase, this.startPhase],
     [MysteryEncounterRewardsPhase, this.startPhase],
     [PostMysteryEncounterPhase, this.startPhase],
-    [RibbonModifierRewardPhase, this.startPhase],
-    [GameOverModifierRewardPhase, this.startPhase],
-    [ModifierRewardPhase, this.startPhase],
+    [RibbonRewardPhase, this.startPhase],
+    [GameOverRewardPhase, this.startPhase],
+    [RewardPhase, this.startPhase],
     [PartyExpPhase, this.startPhase],
     [ExpPhase, this.startPhase],
     [EncounterPhase, this.startPhase],
