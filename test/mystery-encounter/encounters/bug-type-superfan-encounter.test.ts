@@ -18,12 +18,12 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
 import { TrainerType } from "#enums/trainer-type";
 import { MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
-import { ContactHeldItemTransferChanceModifier } from "#app/modifier/modifier";
 import { CommandPhase } from "#app/phases/command-phase";
 import { BugTypeSuperfanEncounter } from "#app/data/mystery-encounters/encounters/bug-type-superfan-encounter";
 import * as encounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import { HeldItemId } from "#enums/held-item-id";
 
 const namespace = "mysteryEncounters/bugTypeSuperfan";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.WEEDLE];
@@ -528,11 +528,11 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should NOT be selectable if the player doesn't have any Bug items", async () => {
-      game.scene.modifiers = [];
+      game.scene.trainerItems.clearItems();
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      game.scene.modifiers = [];
+      game.scene.trainerItems.clearItems();
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
@@ -549,11 +549,10 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should remove the gifted item and proceed to rewards screen", async () => {
-      game.override.startingHeldItems([{ name: "GRIP_CLAW", count: 1 }]);
+      game.override.startingHeldItems([{ entry: HeldItemId.GRIP_CLAW, count: 1 }]);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [SpeciesId.BUTTERFREE]);
 
-      const gripClawCountBefore =
-        scene.findModifier(m => m instanceof ContactHeldItemTransferChanceModifier)?.stackCount ?? 0;
+      const gripClawCountBefore = scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.GRIP_CLAW);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
@@ -568,13 +567,12 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toBe("MYSTERY_ENCOUNTER_GOLDEN_BUG_NET");
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toBe("REVIVER_SEED");
 
-      const gripClawCountAfter =
-        scene.findModifier(m => m instanceof ContactHeldItemTransferChanceModifier)?.stackCount ?? 0;
+      const gripClawCountAfter = scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.GRIP_CLAW);
       expect(gripClawCountBefore - 1).toBe(gripClawCountAfter);
     });
 
     it("should leave encounter without battle", async () => {
-      game.override.startingHeldItems([{ name: "GRIP_CLAW", count: 1 }]);
+      game.override.startingHeldItems([{ entry: HeldItemId.GRIP_CLAW, count: 1 }]);
       const leaveEncounterWithoutBattleSpy = vi.spyOn(encounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, [SpeciesId.BUTTERFREE]);

@@ -4,7 +4,7 @@ import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-en
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import {
   CombinationPokemonRequirement,
-  HeldItemRequirement,
+  HoldingItemRequirement,
   MoneyRequirement,
 } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -85,8 +85,8 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   .withPrimaryPokemonRequirement(
     CombinationPokemonRequirement.Some(
       // Must also have either option 2 or 3 available to spawn
-      new HeldItemRequirement(OPTION_2_ALLOWED_MODIFIERS),
-      new HeldItemRequirement(OPTION_3_DISALLOWED_MODIFIERS, 1, true),
+      new HoldingItemRequirement(OPTION_2_ALLOWED_MODIFIERS),
+      new HoldingItemRequirement(OPTION_3_DISALLOWED_MODIFIERS, 1, true),
     ),
   )
   .withIntroSpriteConfigs([
@@ -180,7 +180,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   )
   .withOption(
     MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-      .withPrimaryPokemonRequirement(new HeldItemRequirement(OPTION_2_ALLOWED_MODIFIERS))
+      .withPrimaryPokemonRequirement(new HoldingItemRequirement(OPTION_2_ALLOWED_MODIFIERS))
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
@@ -264,7 +264,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   )
   .withOption(
     MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-      .withPrimaryPokemonRequirement(new HeldItemRequirement(OPTION_3_DISALLOWED_MODIFIERS, 1, true))
+      .withPrimaryPokemonRequirement(new HoldingItemRequirement(OPTION_3_DISALLOWED_MODIFIERS, 1, true))
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,

@@ -14,7 +14,7 @@ import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
-import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
+import { getHeldItemCategory, type HeldItemCategoryId, type HeldItemId } from "#enums/held-item-id";
 import { allHeldItems } from "#app/data/data-lists";
 
 export interface EncounterRequirement {
@@ -799,7 +799,7 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
   }
 }
 
-export class HeldItemRequirement extends EncounterPokemonRequirement {
+export class HoldingItemRequirement extends EncounterPokemonRequirement {
   requiredHeldItems: (HeldItemId | HeldItemCategoryId)[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
@@ -830,24 +830,89 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
     if (!this.invertQuery) {
       return partyPokemon.filter(pokemon =>
         this.requiredHeldItems.some(heldItem => {
-          return (
-            pokemon.heldItemManager.hasItem(heldItem) &&
-            (!this.requireTransferable || allHeldItems[heldItem].isTransferable)
-          );
+          return this.requireTransferable
+            ? pokemon.heldItemManager.hasTransferableItem(heldItem)
+            : pokemon.heldItemManager.hasItem(heldItem);
         }),
       );
     }
     // for an inverted query, we only want to get the pokemon that have any held items that are NOT in requiredHeldItemModifiers
     // E.g. functions as a blacklist
-    return partyPokemon.filter(
-      pokemon =>
-        pokemon.getHeldItems().filter(item => {
-          return (
-            !this.requiredHeldItems.some(heldItem => item === heldItem) &&
-            (!this.requireTransferable || allHeldItems[item].isTransferable)
-          );
-        }).length > 0,
+    return partyPokemon.filter(pokemon =>
+      pokemon.getHeldItems().some(item => {
+        return (
+          !this.requiredHeldItems.some(heldItem => item === heldItem || getHeldItemCategory(item) === heldItem) &&
+          (!this.requireTransferable || allHeldItems[item].isTransferable)
+        );
+      }),
     );
+  }
+
+  override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {
+    const requiredItems = pokemon?.getHeldItems().filter(item => {
+      return (
+        this.requiredHeldItems.some(heldItem => item === heldItem) &&
+        (!this.requireTransferable || allHeldItems[item].isTransferable)
+      );
+    });
+    if (requiredItems && requiredItems.length > 0) {
+      return ["heldItem", allHeldItems[requiredItems[0]].name];
+    }
+    return ["heldItem", ""];
+  }
+}
+
+export class HeldItemRequirement extends EncounterSceneRequirement {
+  requiredHeldItems: (HeldItemId | HeldItemCategoryId)[];
+  minNumberOfItems: number;
+  invertQuery: boolean;
+  requireTransferable: boolean;
+
+  constructor(
+    heldItem: HeldItemId | HeldItemCategoryId | (HeldItemId | HeldItemCategoryId)[],
+    minNumberOfItems = 1,
+    invertQuery = false,
+    requireTransferable = true,
+  ) {
+    super();
+    this.minNumberOfItems = minNumberOfItems;
+    this.invertQuery = invertQuery;
+    this.requiredHeldItems = coerceArray(heldItem);
+    this.requireTransferable = requireTransferable;
+  }
+
+  override meetsRequirement(): boolean {
+    const partyPokemon = globalScene.getPlayerParty();
+    if (isNullOrUndefined(partyPokemon)) {
+      return false;
+    }
+    return this.queryPartyForItems(partyPokemon) >= this.minNumberOfItems;
+  }
+
+  queryPartyForItems(partyPokemon: PlayerPokemon[]): number {
+    if (!this.invertQuery) {
+      return partyPokemon.reduce((count, pokemon) => {
+        const matchingItems = this.requiredHeldItems.filter(heldItem => {
+          return this.requireTransferable
+            ? pokemon.heldItemManager.hasTransferableItem(heldItem)
+            : pokemon.heldItemManager.hasItem(heldItem);
+        });
+        return count + matchingItems.length;
+      }, 0);
+    }
+    // for an inverted query, we only want to get the pokemon that have any held items that are NOT in requiredHeldItemModifiers
+    // E.g. functions as a blacklist
+    return partyPokemon.reduce((count, pokemon) => {
+      const matchingItems = pokemon.getHeldItems().filter(item => {
+        const notRequired = !this.requiredHeldItems.some(
+          heldItem => item === heldItem || getHeldItemCategory(item) === heldItem,
+        );
+        const transferableOk = !this.requireTransferable || allHeldItems[item].isTransferable;
+        return notRequired && transferableOk;
+      });
+
+      return count + matchingItems.length;
+    }, 0);
   }
 
   override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {

@@ -102,6 +102,15 @@ export class PokemonItemManager {
     return itemType in this.heldItems;
   }
 
+  hasTransferableItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
+    if (isCategoryId(itemType)) {
+      return getTypedKeys(this.heldItems).some(
+        id => isItemInCategory(id, itemType as HeldItemCategoryId) && allHeldItems[id].isTransferable,
+      );
+    }
+    return itemType in this.heldItems && allHeldItems[itemType].isTransferable;
+  }
+
   getStack(itemType: HeldItemId): number {
     const item = this.heldItems[itemType];
     return item ? item.stack : 0;

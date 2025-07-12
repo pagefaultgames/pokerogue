@@ -31,7 +31,7 @@ import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/myst
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import {
   CombinationPokemonRequirement,
-  HeldItemRequirement,
+  HoldingItemRequirement,
   TypeRequirement,
 } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { PokemonType } from "#enums/pokemon-type";
@@ -181,7 +181,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
   .withPrimaryPokemonRequirement(
     CombinationPokemonRequirement.Some(
       // Must have at least 1 Bug type on team, OR have a bug item somewhere on the team
-      new HeldItemRequirement(REQUIRED_ITEMS, 1),
+      new HoldingItemRequirement(REQUIRED_ITEMS, 1),
       new TypeRequirement(PokemonType.BUG, false, 1),
     ),
   )
@@ -403,7 +403,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
       .withPrimaryPokemonRequirement(
         CombinationPokemonRequirement.Some(
           // Meets one or both of the below reqs
-          new HeldItemRequirement(REQUIRED_ITEMS, 1),
+          new HoldingItemRequirement(REQUIRED_ITEMS, 1),
         ),
       )
       .withDialogue({
@@ -426,9 +426,9 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
 
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Get Pokemon held items and filter for valid ones
-          const validItems = pokemon.heldItemManager.getTransferableHeldItems().filter(item => {
-            item in REQUIRED_ITEMS;
-          });
+          const validItems = pokemon.heldItemManager
+            .getTransferableHeldItems()
+            .filter(item => REQUIRED_ITEMS.some(i => i === item));
 
           return validItems.map((item: HeldItemId) => {
             const option: OptionSelectItem = {
@@ -449,9 +449,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
 
         const selectableFilter = (pokemon: Pokemon) => {
           // If pokemon has valid item, it can be selected
-          const hasValidItem = pokemon.getHeldItems().some(item => {
-            item in REQUIRED_ITEMS;
-          });
+          const hasValidItem = pokemon.getHeldItems().some(item => REQUIRED_ITEMS.some(i => i === item));
           if (!hasValidItem) {
             return getEncounterText(`${namespace}:option.3.invalid_selection`) ?? null;
           }
@@ -463,10 +461,10 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
       })
       .withOptionPhase(async () => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const modifier = encounter.misc.chosenModifier;
+        const lostItem = encounter.misc.chosenItem;
         const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
-        chosenPokemon.loseHeldItem(modifier, false);
+        chosenPokemon.loseHeldItem(lostItem, false);
         globalScene.updateItems(true);
 
         const bugNet = generateModifierTypeOption(modifierTypes.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET)!;
