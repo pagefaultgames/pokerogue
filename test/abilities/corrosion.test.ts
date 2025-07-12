@@ -80,7 +80,7 @@ describe("Abilities - Corrosion", () => {
     const salazzle = game.field.getPlayerPokemon();
     expect(salazzle.status?.effect).toBeUndefined();
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(salazzle.status?.effect).toBe(StatusEffect.TOXIC);
