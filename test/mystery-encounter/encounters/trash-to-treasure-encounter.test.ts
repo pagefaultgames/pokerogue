@@ -13,7 +13,7 @@ import { RewardTier } from "#enums/reward-tier";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import * as Utils from "#app/utils/common";
 import { MoveId } from "#enums/move-id";
@@ -210,8 +210,8 @@ describe("Trash to Treasure - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(4);
       expect(
         modifierSelectHandler.options[0].modifierTypeOption.type.tier -

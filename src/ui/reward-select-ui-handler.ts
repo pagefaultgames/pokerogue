@@ -23,7 +23,7 @@ const SINGLE_SHOP_ROW_YOFFSET = 12;
 const DOUBLE_SHOP_ROW_YOFFSET = 24;
 const OPTION_BUTTON_YPOSITION = -62;
 
-export default class ModifierSelectUiHandler extends AwaitableUiHandler {
+export default class RewardSelectUiHandler extends AwaitableUiHandler {
   private modifierContainer: Phaser.GameObjects.Container;
   private rerollButtonContainer: Phaser.GameObjects.Container;
   private lockRarityButtonContainer: Phaser.GameObjects.Container;

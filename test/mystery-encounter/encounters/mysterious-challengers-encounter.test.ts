@@ -21,7 +21,7 @@ import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTem
 import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
 import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
@@ -168,8 +168,8 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(3);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toContain("TM_COMMON");
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toContain("TM_GREAT");
@@ -212,8 +212,8 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(4);
       expect(
         modifierSelectHandler.options[0].modifierTypeOption.type.tier -
@@ -269,8 +269,8 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(4);
       expect(
         modifierSelectHandler.options[0].modifierTypeOption.type.tier -

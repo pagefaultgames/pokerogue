@@ -2,7 +2,7 @@ import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { MapModifier } from "#app/modifier/modifier";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -77,7 +77,7 @@ describe("Shop modifications", async () => {
     await game.doKillOpponents();
     await game.phaseInterceptor.to("BattleEndPhase");
     game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
-      expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
+      expect(game.scene.ui.getHandler()).toBeInstanceOf(RewardSelectUiHandler);
       game.modifiers.testCheck("EVIOLITE", false).testCheck("MINI_BLACK_HOLE", false);
     });
   });
@@ -88,7 +88,7 @@ describe("Shop modifications", async () => {
     await game.doKillOpponents();
     await game.phaseInterceptor.to("BattleEndPhase");
     game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
-      expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
+      expect(game.scene.ui.getHandler()).toBeInstanceOf(RewardSelectUiHandler);
       game.modifiers.testCheck("EVIOLITE", true).testCheck("MINI_BLACK_HOLE", true);
     });
   });

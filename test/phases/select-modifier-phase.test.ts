@@ -6,7 +6,7 @@ import type { CustomModifierSettings } from "#app/modifier/modifier-type";
 import { ModifierTypeOption } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/data/data-lists";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import { shiftCharCodes } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
@@ -61,8 +61,8 @@ describe("SelectModifierPhase", () => {
 
     expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
-      h => h instanceof ModifierSelectUiHandler,
-    ) as ModifierSelectUiHandler;
+      h => h instanceof RewardSelectUiHandler,
+    ) as RewardSelectUiHandler;
     expect(modifierSelectHandler.options.length).toEqual(3);
   });
 
@@ -99,8 +99,8 @@ describe("SelectModifierPhase", () => {
     //const smphase = scene.phaseManager.getCurrentPhase() as SelectModifierPhase;
     expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
-      h => h instanceof ModifierSelectUiHandler,
-    ) as ModifierSelectUiHandler;
+      h => h instanceof RewardSelectUiHandler,
+    ) as RewardSelectUiHandler;
     expect(modifierSelectHandler.options.length).toEqual(3);
 
     modifierSelectHandler.processInput(Button.ACTION);
@@ -127,8 +127,8 @@ describe("SelectModifierPhase", () => {
 
     expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
-      h => h instanceof ModifierSelectUiHandler,
-    ) as ModifierSelectUiHandler;
+      h => h instanceof RewardSelectUiHandler,
+    ) as RewardSelectUiHandler;
     expect(modifierSelectHandler.options.length).toEqual(3);
     const firstRollTiers: RewardTier[] = modifierSelectHandler.options.map(o => o.modifierTypeOption.type.tier);
 
@@ -170,8 +170,8 @@ describe("SelectModifierPhase", () => {
 
     expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
-      h => h instanceof ModifierSelectUiHandler,
-    ) as ModifierSelectUiHandler;
+      h => h instanceof RewardSelectUiHandler,
+    ) as RewardSelectUiHandler;
     expect(modifierSelectHandler.options.length).toEqual(5);
     expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("MEMORY_MUSHROOM");
     expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toEqual("TM_ULTRA");
@@ -207,8 +207,8 @@ describe("SelectModifierPhase", () => {
 
     expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
-      h => h instanceof ModifierSelectUiHandler,
-    ) as ModifierSelectUiHandler;
+      h => h instanceof RewardSelectUiHandler,
+    ) as RewardSelectUiHandler;
     expect(modifierSelectHandler.options.length).toEqual(5);
     expect(
       modifierSelectHandler.options[0].modifierTypeOption.type.tier -
@@ -246,8 +246,8 @@ describe("SelectModifierPhase", () => {
 
     expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
-      h => h instanceof ModifierSelectUiHandler,
-    ) as ModifierSelectUiHandler;
+      h => h instanceof RewardSelectUiHandler,
+    ) as RewardSelectUiHandler;
     expect(modifierSelectHandler.options.length).toEqual(4);
     expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("MEMORY_MUSHROOM");
     expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toEqual("TM_COMMON");
@@ -270,8 +270,8 @@ describe("SelectModifierPhase", () => {
 
     expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
-      h => h instanceof ModifierSelectUiHandler,
-    ) as ModifierSelectUiHandler;
+      h => h instanceof RewardSelectUiHandler,
+    ) as RewardSelectUiHandler;
     expect(modifierSelectHandler.options.length).toEqual(3);
     expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("MEMORY_MUSHROOM");
     expect(modifierSelectHandler.options[1].modifierTypeOption.type.tier).toEqual(RewardTier.MASTER);

@@ -13,7 +13,7 @@ import { FieldTripEncounter } from "#app/data/mystery-encounters/encounters/fiel
 import { MoveId } from "#enums/move-id";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { UiMode } from "#enums/ui-mode";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
 import i18next from "i18next";
 
 const namespace = "mysteryEncounters/fieldTrip";
@@ -89,8 +89,8 @@ describe("Field Trip - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(0);
     });
 
@@ -101,8 +101,8 @@ describe("Field Trip - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_attack"),
@@ -150,8 +150,8 @@ describe("Field Trip - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(0);
     });
 
@@ -162,8 +162,8 @@ describe("Field Trip - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_sp_atk"),
@@ -211,8 +211,8 @@ describe("Field Trip - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(0);
     });
 
@@ -224,8 +224,8 @@ describe("Field Trip - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_accuracy"),

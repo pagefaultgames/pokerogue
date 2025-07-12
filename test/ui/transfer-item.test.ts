@@ -1,7 +1,7 @@
 import { Button } from "#app/enums/buttons";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
 import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import GameManager from "#test/testUtils/gameManager";
@@ -44,9 +44,9 @@ describe("UI - Transfer Items", () => {
     game.move.select(MoveId.DRAGON_CLAW);
 
     game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
-      expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
+      expect(game.scene.ui.getHandler()).toBeInstanceOf(RewardSelectUiHandler);
 
-      const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+      const handler = game.scene.ui.getHandler() as RewardSelectUiHandler;
       handler.setCursor(1);
       handler.processInput(Button.ACTION);
 

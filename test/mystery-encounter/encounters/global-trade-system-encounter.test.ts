@@ -13,7 +13,7 @@ import { GlobalTradeSystemEncounter } from "#app/data/mystery-encounters/encount
 import { CIVILIZATION_ENCOUNTER_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { UiMode } from "#enums/ui-mode";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
 import { RewardTier } from "#enums/reward-tier";
 import * as Utils from "#app/utils/common";
 import { HeldItemId } from "#enums/held-item-id";
@@ -225,8 +225,8 @@ describe("Global Trade System - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.tier).toBe(RewardTier.MASTER);
       const soulDewAfter = scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SOUL_DEW);

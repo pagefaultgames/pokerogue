@@ -5,7 +5,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 import { UiMode } from "#enums/ui-mode";
-import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import type RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
 import { Button } from "#app/enums/buttons";
 import { TrainerItemId } from "#enums/trainer-item-id";
 
@@ -77,7 +77,7 @@ describe("Items - Double Battle Chance Boosters", () => {
       "SelectModifierPhase",
       UiMode.MODIFIER_SELECT,
       () => {
-        const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+        const handler = game.scene.ui.getHandler() as RewardSelectUiHandler;
         // Traverse to first modifier slot
         handler.setCursor(0);
         handler.setRowCursor(ShopCursorTarget.REWARDS);

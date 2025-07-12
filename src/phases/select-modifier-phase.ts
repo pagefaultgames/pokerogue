@@ -18,8 +18,8 @@ import {
 } from "#app/modifier/modifier-type";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { Modifier } from "#app/modifier/modifier";
-import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
+import type RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
+import { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/reward-select-ui-handler";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
@@ -258,7 +258,7 @@ export class SelectModifierPhase extends BattlePhase {
       return false;
     }
     globalScene.lockModifierTiers = !globalScene.lockModifierTiers;
-    const uiHandler = globalScene.ui.getHandler() as ModifierSelectUiHandler;
+    const uiHandler = globalScene.ui.getHandler() as RewardSelectUiHandler;
     uiHandler.setRerollCost(this.getRerollCost(globalScene.lockModifierTiers));
     uiHandler.updateLockRaritiesText();
     uiHandler.updateRerollCostText();

@@ -11,7 +11,7 @@ import {
 } from "#test/mystery-encounter/encounter-test-utils";
 import type BattleScene from "#app/battle-scene";
 import { UiMode } from "#enums/ui-mode";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
@@ -145,8 +145,8 @@ describe("Weird Dream - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("MEMORY_MUSHROOM");
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toEqual("ROGUE_BALL");
@@ -201,8 +201,8 @@ describe("Weird Dream - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(6);
       expect(
         modifierSelectHandler.options[0].modifierTypeOption.type.tier -

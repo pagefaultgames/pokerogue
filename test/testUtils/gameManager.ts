@@ -25,7 +25,7 @@ import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import type BallUiHandler from "#app/ui/ball-ui-handler";
 import type BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
 import type CommandUiHandler from "#app/ui/command-ui-handler";
-import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import type RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
 import type PartyUiHandler from "#app/ui/party-ui-handler";
 import type StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
 import type TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
@@ -317,7 +317,7 @@ export default class GameManager {
       "SelectModifierPhase",
       UiMode.MODIFIER_SELECT,
       () => {
-        const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
+        const handler = this.scene.ui.getHandler() as RewardSelectUiHandler;
         handler.processInput(Button.CANCEL);
       },
       () =>
@@ -331,7 +331,7 @@ export default class GameManager {
       "SelectModifierPhase",
       UiMode.CONFIRM,
       () => {
-        const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
+        const handler = this.scene.ui.getHandler() as RewardSelectUiHandler;
         handler.processInput(Button.ACTION);
       },
       () =>

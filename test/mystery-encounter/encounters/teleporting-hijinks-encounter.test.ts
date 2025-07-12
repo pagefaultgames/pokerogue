@@ -9,7 +9,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import GameManager from "#test/testUtils/gameManager";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -305,8 +305,8 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+        h => h instanceof RewardSelectUiHandler,
+      ) as RewardSelectUiHandler;
       expect(
         modifierSelectHandler.options.some(
           opt => opt.modifierTypeOption.type.name === i18next.t("modifierType:AttackTypeBoosterItem.metal_coat"),

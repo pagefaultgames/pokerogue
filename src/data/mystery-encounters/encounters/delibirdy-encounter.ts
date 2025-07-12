@@ -34,10 +34,10 @@ import { TrainerItemId } from "#enums/trainer-item-id";
 const namespace = "mysteryEncounters/delibirdy";
 
 /** Berries only */
-const OPTION_2_ALLOWED_MODIFIERS = [HeldItemCategoryId.BERRY, HeldItemId.REVIVER_SEED];
+const OPTION_2_ALLOWED_HELD_ITEMS = [HeldItemCategoryId.BERRY, HeldItemId.REVIVER_SEED];
 
 /** Disallowed items are berries, Reviver Seeds, and Vitamins (form change items and fusion items are not PokemonHeldItemModifiers) */
-const OPTION_3_DISALLOWED_MODIFIERS = [HeldItemCategoryId.BERRY, HeldItemId.REVIVER_SEED];
+const OPTION_3_DISALLOWED_HELD_ITEMS = [HeldItemCategoryId.BERRY, HeldItemId.REVIVER_SEED];
 
 const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 2;
 
@@ -85,8 +85,8 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   .withPrimaryPokemonRequirement(
     CombinationPokemonRequirement.Some(
       // Must also have either option 2 or 3 available to spawn
-      new HoldingItemRequirement(OPTION_2_ALLOWED_MODIFIERS),
-      new HoldingItemRequirement(OPTION_3_DISALLOWED_MODIFIERS, 1, true),
+      new HoldingItemRequirement(OPTION_2_ALLOWED_HELD_ITEMS),
+      new HoldingItemRequirement(OPTION_3_DISALLOWED_HELD_ITEMS, 1, true),
     ),
   )
   .withIntroSpriteConfigs([
@@ -180,7 +180,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   )
   .withOption(
     MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-      .withPrimaryPokemonRequirement(new HoldingItemRequirement(OPTION_2_ALLOWED_MODIFIERS))
+      .withPrimaryPokemonRequirement(new HoldingItemRequirement(OPTION_2_ALLOWED_HELD_ITEMS))
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
@@ -195,7 +195,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Get Pokemon held items and filter for valid ones
-          const validItems = pokemon.heldItemManager.filterRequestedItems(OPTION_2_ALLOWED_MODIFIERS, true);
+          const validItems = pokemon.heldItemManager.filterRequestedItems(OPTION_2_ALLOWED_HELD_ITEMS, true);
 
           return validItems.map((item: HeldItemId) => {
             const option: OptionSelectItem = {
@@ -264,7 +264,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   )
   .withOption(
     MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
-      .withPrimaryPokemonRequirement(new HoldingItemRequirement(OPTION_3_DISALLOWED_MODIFIERS, 1, true))
+      .withPrimaryPokemonRequirement(new HoldingItemRequirement(OPTION_3_DISALLOWED_HELD_ITEMS, 1, true))
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
@@ -279,7 +279,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Get Pokemon held items and filter for valid ones
-          const validItems = pokemon.heldItemManager.filterRequestedItems(OPTION_3_DISALLOWED_MODIFIERS, true, true);
+          const validItems = pokemon.heldItemManager.filterRequestedItems(OPTION_3_DISALLOWED_HELD_ITEMS, true, true);
 
           return validItems.map((item: HeldItemId) => {
             const option: OptionSelectItem = {
@@ -312,7 +312,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       })
       .withOptionPhase(async () => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const modifier = encounter.misc.chosenModifier;
+        const chosenItem = encounter.misc.chosenItem;
         const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
         // Check if the player has max stacks of Healing Charm already
@@ -327,7 +327,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           doEventReward();
         }
 
-        chosenPokemon.loseHeldItem(modifier, false);
+        chosenPokemon.loseHeldItem(chosenItem, false);
 
         leaveEncounterWithoutBattle(true);
       })

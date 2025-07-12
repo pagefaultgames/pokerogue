@@ -6,7 +6,7 @@ import PartyUiHandler from "./party-ui-handler";
 import FightUiHandler from "./fight-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
 import ConfirmUiHandler from "./confirm-ui-handler";
-import ModifierSelectUiHandler from "./modifier-select-ui-handler";
+import RewardSelectUiHandler from "./modifier-select-ui-handler";
 import BallUiHandler from "./ball-ui-handler";
 import SummaryUiHandler from "./summary-ui-handler";
 import StarterSelectUiHandler from "./starter-select-ui-handler";
@@ -131,7 +131,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new FightUiHandler(),
       new BallUiHandler(),
       new TargetSelectUiHandler(),
-      new ModifierSelectUiHandler(),
+      new RewardSelectUiHandler(),
       new SaveSlotSelectUiHandler(),
       new PartyUiHandler(),
       new SummaryUiHandler(),

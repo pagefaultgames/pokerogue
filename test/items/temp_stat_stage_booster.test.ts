@@ -8,7 +8,7 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { UiMode } from "#enums/ui-mode";
 import { Button } from "#app/enums/buttons";
-import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
+import type RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 
 describe("Items - Temporary Stat Stage Boosters", () => {
@@ -138,7 +138,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
       "SelectModifierPhase",
       UiMode.MODIFIER_SELECT,
       () => {
-        const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+        const handler = game.scene.ui.getHandler() as RewardSelectUiHandler;
         // Traverse to first modifier slot
         handler.setCursor(0);
         handler.setRowCursor(ShopCursorTarget.REWARDS);
