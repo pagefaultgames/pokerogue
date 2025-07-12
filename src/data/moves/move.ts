@@ -3120,8 +3120,8 @@ export class OverrideMoveEffectAttr extends MoveAttr {
 
 /**
  * Attribute to implement delayed attacks, such as {@linkcode MoveId.FUTURE_SIGHT} or {@linkcode MoveId.DOOM_DESIRE}.
- * Delays the attack's effect by adding an arena tag,
- * only  after the turn count is fully elapsed.
+ * Delays the attack's effect with a {@linkcode DelayedAttackTag},
+ * activating against the given slot after the given turn count has elapsed.
  */
 export class DelayedAttackAttr extends OverrideMoveEffectAttr {
   public chargeAnim: ChargeAnim;
@@ -3160,7 +3160,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
     // Display the move animation to foresee an attack
     globalScene.phaseManager.unshiftNew("MoveAnimPhase", new MoveChargeAnim(this.chargeAnim, move.id, user));
     globalScene.phaseManager.queueMessage(i18next.t(this.chargeText,
-      // uncomment if any new delayed moves actually use target in the move text
+      // uncomment if any new delayed moves actually use target in the move text.
       {pokemonName: getPokemonNameWithAffix(user)/*, targetName: getPokemonNameWithAffix(target) */}))
 
     user.pushMoveHistory({move: move.id, targets: [target.getBattlerIndex()], result: MoveResult.OTHER, useMode: useMode, turn: globalScene.currentBattle.turn})
@@ -9235,9 +9235,7 @@ export function initMoves() {
       .ignoresProtect()
       /*
        * Should not apply abilities or held items if user is off the field
-       * Not affected by Electrify (queued phase activates after Electrify tag is removed)
-       * Should not apply Shell Bell recovery
-       * Should not apply post faint attributes if user is not on field
+       * Triggered move phase occurs after Electrify tag is removed
       */
       .edgeCase(),
     new AttackMove(MoveId.ROCK_SMASH, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 15, 50, 0, 2)
@@ -9577,7 +9575,10 @@ export function initMoves() {
     new AttackMove(MoveId.DOOM_DESIRE, PokemonType.STEEL, MoveCategory.SPECIAL, 140, 100, 5, -1, 0, 3)
       .attr(DelayedAttackAttr, ChargeAnim.DOOM_DESIRE_CHARGING, "moveTriggers:choseDoomDesireAsDestiny")
       .ignoresProtect()
-      /* See Future Sight for full list of bugs */
+      /*
+       * Should not apply abilities or held items if user is off the field
+       * Triggered move phase occurs after Electrify tag is removed
+      */
       .edgeCase(),
     new AttackMove(MoveId.PSYCHO_BOOST, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 140, 90, 5, -1, 0, 3)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -2, true),
