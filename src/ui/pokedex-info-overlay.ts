@@ -2,7 +2,6 @@ import type { InfoToggle } from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { addWindow } from "./ui-theme";
 import { fixedInt } from "#app/utils/common";
-import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 
 export interface PokedexInfoOverlaySettings {
@@ -55,7 +54,6 @@ export default class PokedexInfoOverlay extends Phaser.GameObjects.Container imp
     this.desc = addTextObject(BORDER, BORDER - 2, "", TextStyle.BATTLE_INFO, {
       wordWrap: { width: (this.width - (BORDER - 2) * 2) * GLOBAL_SCALE },
     });
-    this.desc.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
 
     // limit the text rendering, required for scrolling later on
     this.maskPointOriginX = options?.x || 0;
