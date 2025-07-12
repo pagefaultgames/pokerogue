@@ -907,7 +907,7 @@ interface DelayedAttack {
 /**
  * Arena Tag to manage execution of delayed attacks, such as {@linkcode MoveId.FUTURE_SIGHT} or {@linkcode MoveId.DOOM_DESIRE}.
  * Delayed attacks do nothing for the first several turns after use (including the turn the move is used),
- * triggerung against a certain slot after the turn count has elapsed.
+ * triggering against a certain slot after the turn count has elapsed.
  */
 export class DelayedAttackTag extends ArenaTag {
   /** Contains all queued delayed attacks on the field */
@@ -927,7 +927,7 @@ export class DelayedAttackTag extends ArenaTag {
    * @param source - The {@linkcode Pokemon} using the move
    * @param move - The {@linkcode MoveId} being used
    * @param targetIndex - The {@linkcode BattlerIndex} being targeted
-   * @param turnCount - The number of turns to delay the attack; default `3`
+   * @param turnCount - The number of turns to delay the attack (_including the turn the move is used_); default `3`
    */
   public queueAttack(source: Pokemon, move: MoveId, targetIndex: BattlerIndex, turnCount = 3): void {
     this.delayedAttacks.push({ sourceId: source.id, move, targetIndex, turnsLeft: turnCount });
@@ -974,7 +974,7 @@ export class DelayedAttackTag extends ArenaTag {
    * @returns Whether at least 1 attack has not finished triggering.
    */
   private removeDoneAttacks(): boolean {
-    this.delayedAttacks = this.delayedAttacks.filter(a => a.turnCount > 0);
+    this.delayedAttacks = this.delayedAttacks.filter(a => a.turnsLeft > 0);
     return this.delayedAttacks.length > 0;
   }
 
