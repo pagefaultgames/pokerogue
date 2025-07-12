@@ -25,7 +25,7 @@ function transformValue(duration: number | FixedInt): number {
  * @param this - The current {@linkcode BattleScene}
  */
 export function initGameSpeed(this: BattleScene): void {
-  /** 
+  /**
    * Recursively mutate duration-based properties to scale with the current game speed.
    * @param obj - The object being mutated
    * @param allowArray - Whether to recurse once into array-like objects; default `false`
@@ -110,8 +110,13 @@ export function initGameSpeed(this: BattleScene): void {
 
   // Mutate sound fade in/out
   const originalFadeOut = SoundFade.fadeOut;
-  SoundFade.fadeOut = function (scene: Phaser.Scene, sound: Phaser.Sound.BaseSound, duration: number, destroy?: boolean) {
-    duration = transformValue(duration)
+  SoundFade.fadeOut = function (
+    scene: Phaser.Scene,
+    sound: Phaser.Sound.BaseSound,
+    duration: number,
+    destroy?: boolean,
+  ) {
+    duration = transformValue(duration);
     return originalFadeOut(scene, sound, duration, destroy);
   } as typeof originalFadeOut;
 
@@ -123,7 +128,7 @@ export function initGameSpeed(this: BattleScene): void {
     endVolume?: number,
     startVolume?: number,
   ) {
-    duration = transformValue(duration)
+    duration = transformValue(duration);
     return originalFadeIn(scene, sound, duration, endVolume, startVolume);
   } as typeof originalFadeIn;
 }
