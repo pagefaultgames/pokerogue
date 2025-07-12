@@ -1969,7 +1969,7 @@ export class HealAttr extends MoveEffectAttr {
     return Math.round(score / (1 - this.healRatio / 2));
   }
 
-  // TODO: Change post move failure rework
+  // TODO: Change to fail move
   override canApply(user: Pokemon, target: Pokemon, _move: Move, _args?: any[]): boolean {
     if (!super.canApply(user, target, _move, _args)) {
       return false;
@@ -2010,6 +2010,7 @@ export class RestAttr extends HealAttr {
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", user.getBattlerIndex(), user.getMaxHp(), null)
   }
 
+  // TODO: change after HealAttr is changed to fail move
   override getCondition(): MoveConditionFunc {
     return (user, target, move) =>
       super.canApply(user, target, move, [])
