@@ -61,7 +61,8 @@ export class TurnEndPhase extends FieldPhase {
 
     this.executeForAll(handlePokemon);
 
-    // TODO: This needs to be moved up before the `handlePokemon` call for Electrify, while also
+    // TODO: This needs to be moved up earlier to allow Future Sight to be affected by
+    // Electrify before the latter is removed
     globalScene.arena.lapseTags();
 
     if (globalScene.arena.weather && !globalScene.arena.weather.lapse()) {
