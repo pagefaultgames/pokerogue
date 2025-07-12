@@ -25,7 +25,12 @@ function transformValue(duration: number | FixedInt): number {
  * @param this - The current {@linkcode BattleScene}
  */
 export function initGameSpeed(this: BattleScene): void {
-  const mutateProperties = (obj: any, allowArray = false) => {
+  /** 
+   * Recursively mutate duration-based properties to scale with the current game speed.
+   * @param obj - The object being mutated
+   * @param allowArray - Whether to recurse once into array-like objects; default `false`
+   */
+  const mutateProperties = (obj: any, allowArray = false): void => {
     // We do not mutate Tweens or TweenChain objects themselves.
     if (obj instanceof Phaser.Tweens.Tween || obj instanceof Phaser.Tweens.TweenChain) {
       return;
@@ -67,6 +72,7 @@ export function initGameSpeed(this: BattleScene): void {
   };
 
   // Mutate tween functions
+  const originalTweensAdd = this.tweens.add;
   this.tweens.add = function (
     config:
       | Phaser.Types.Tweens.TweenBuilderConfig
