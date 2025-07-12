@@ -231,15 +231,15 @@ describe("Moves - Delayed Attacks", () => {
     );
   });
 
-  // TODO: ArenaTags currently proc concurrently with battler tag removal in `TurnEndPhase`,
+  // TODO: ArenaTags currently procs concurrently with battler tag removal in `TurnEndPhase`,
   // meaning the queued `MoveEffectPhase` no longer has Electrify applied to it
-  it.todo("should consider type changes at moment of execution & ignore Lightning Rod redirection", async () => {
+  it.todo("should consider type changes at moment of execution while ignoring redirection", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     // fake left enemy having lightning rod
     const [enemy1, enemy2] = game.scene.getEnemyField();
-    vi.spyOn(enemy1, "getAbility").mockReturnValue(allAbilities[AbilityId.LIGHTNING_ROD]);
+    game.field.mockAbility(enemy1, AbilityId.LIGHTNING_ROD);
     // helps with logging
     vi.spyOn(enemy1, "getNameToRender").mockReturnValue("Karp 1");
     vi.spyOn(enemy2, "getNameToRender").mockReturnValue("Karp 2");
@@ -252,7 +252,6 @@ describe("Moves - Delayed Attacks", () => {
     await passTurns(1);
 
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
-    game.move.changeMoveset(enemy1, MoveId.ELECTRIFY);
     await game.move.forceEnemyMove(MoveId.ELECTRIFY, BattlerIndex.PLAYER);
     await game.phaseInterceptor.to("TurnEndPhase");
     await game.phaseInterceptor.to("MoveEffectPhase", false);
@@ -274,6 +273,9 @@ describe("Moves - Delayed Attacks", () => {
     expect(typeMock).toHaveLastReturnedWith(PokemonType.ELECTRIC);
   });
 
+  // TODO: this is not implemented
+  it.todo("should not apply Shell Bell recovery, even if user is on field")
+
   // TODO: Enable once code is added to MEP to do this
   it.todo("should not apply the user's abilities when dealing damage if the user is inactive", async () => {
     game.override.ability(AbilityId.NORMALIZE).enemySpecies(SpeciesId.LUNALA);
@@ -287,26 +289,27 @@ describe("Moves - Delayed Attacks", () => {
     await passTurns(1);
 
     game.doSwitchPokemon(1);
-    const karp = game.field.getPlayerPokemon();
-    const typeMock = vi.spyOn(karp, "getMoveType");
+    const typeMock = vi.spyOn(game.field.getPlayerPokemon(), "getMoveType");
+
     await game.toNextTurn();
 
+    // Player Normalize was not applied due to being off field
     const enemy = game.field.getEnemyPokemon();
-    expect(enemy.hp).toBe(enemy.getMaxHp());
+    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
     expect(game.textInterceptor.logs).toContain(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(enemy),
-        moveName: allMoves[MoveId.FUTURE_SIGHT].name,
+        moveName: allMoves[MoveId.DOOM_DESIRE].name,
       }),
     );
-    expect(typeMock).toHaveLastReturnedWith(PokemonType.NORMAL);
+    expect(typeMock).toHaveLastReturnedWith(PokemonType.STEEL);
   });
 
   it.todo("should not apply the user's held items when dealing damage if the user is inactive", async () => {
-    game.override.startingHeldItems([{ name: "ATTACK_TYPE_BOOSTER", count: 99, type: PokemonType.STEEL }]);
+    game.override.startingHeldItems([{ name: "ATTACK_TYPE_BOOSTER", count: 99, type: PokemonType.PSYCHIC }]);
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
-    game.move.use(MoveId.DOOM_DESIRE);
+    game.move.use(MoveId.FUTURE_SIGHT);
     await game.toNextTurn();
 
     expectFutureSightActive();
@@ -315,7 +318,7 @@ describe("Moves - Delayed Attacks", () => {
 
     game.doSwitchPokemon(1);
 
-    const powerMock = vi.spyOn(allMoves[MoveId.DOOM_DESIRE], "calculateBattlePower");
+    const powerMock = vi.spyOn(allMoves[MoveId.FUTURE_SIGHT], "calculateBattlePower");
     const typeBoostSpy = vi.spyOn(AttackTypeBoosterModifier.prototype, "apply");
 
     await game.toNextTurn();
