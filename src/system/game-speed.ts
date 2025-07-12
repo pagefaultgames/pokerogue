@@ -9,16 +9,15 @@ const PROPERTIES = ["delay", "completeDelay", "loopDelay", "duration", "repeatDe
 /**
  * Adjust an animation's duration based on the current game speed.
  * @param duration - The original duration in seconds, either as a number or a {@linkcode FixedInt}
- * @param speed - The current game speed value
  * @returns The adjusted duration value, rounded to the nearest millisecond.
  * {@linkcode FixedInt}s will not be affected by changes to game speed.
  */
-function transformValue(duration: number | FixedInt, speed: number): number {
+function transformValue(duration: number | FixedInt): number {
   // We do not mutate `FixedInt` durations
   if (typeof duration !== "number") {
     return duration.value;
   }
-  return Math.ceil(duration / speed);
+  return Math.ceil(duration / globalScene.gameSpeed);
 }
 
 /**
@@ -44,7 +43,7 @@ export function initGameSpeed(this: BattleScene): void {
     for (const prop of PROPERTIES) {
       const objProp = obj[prop];
       if (typeof objProp === "number" || objProp instanceof FixedInt) {
-        obj[prop] = transformValue(objProp, this.gameSpeed);
+        obj[prop] = transformValue(objProp);
       }
     }
 
@@ -58,49 +57,67 @@ export function initGameSpeed(this: BattleScene): void {
   };
 
   // NB: anonymous functions are used instead of arrow functions
-  // to preserve `this` values.
+  // to preserve `this` values in their original contexts.
   const originalAddEvent = this.time.addEvent;
   this.time.addEvent = function (config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig) {
     if (!(config instanceof Phaser.Time.TimerEvent) && config.delay) {
-      config.delay = transformValue(config.delay, this.gameSpeed);
+      config.delay = transformValue(config.delay);
     }
     return originalAddEvent.apply(this, [config]);
   };
 
   // Mutate tween functions
-  for (const funcName of ["add", "addCounter", "chain", "create", "addMultiple"]) {
-    const origTweenFunc = this.tweens[funcName];
-    this.tweens[funcName] = function (args) {
-      // TODO: review what allowArray is used for and document why it is necessary
-      mutateProperties(args, funcName === "create" || funcName === "addMultiple");
-      return origTweenFunc.apply(this, [args]);
-    };
+  this.tweens.add = function (
+    config:
+      | Phaser.Types.Tweens.TweenBuilderConfig
+      | Phaser.Types.Tweens.TweenChainBuilderConfig
+      | Phaser.Tweens.Tween
+      | Phaser.Tweens.TweenChain,
+  ) {
+    mutateProperties(config);
+    return originalTweensAdd.call(this, config);
+  };
+
+  const originalTweensChain = this.tweens.chain;
+  this.tweens.chain = function (config: Phaser.Types.Tweens.TweenChainBuilderConfig): Phaser.Tweens.TweenChain {
+    mutateProperties(config);
+    return originalTweensChain.call(this, config);
+  };
+
+  const originalAddCounter = this.tweens.addCounter;
+  this.tweens.addCounter = function (config: Phaser.Types.Tweens.NumberTweenBuilderConfig) {
+    mutateProperties(config);
+    return originalAddCounter.call(this, config);
+  };
+
+  const originalCreate = this.tweens.create;
+  this.tweens.create = function (config: Phaser.Types.Tweens.TweenBuilderConfig) {
+    mutateProperties(config, true);
+    return originalCreate.call(this, config);
+  };
+
+  const originalAddMultiple = this.tweens.addMultiple;
+  this.tweens.addMultiple = function (config: Phaser.Types.Tweens.TweenBuilderConfig[]) {
+    mutateProperties(config, true);
+    return originalAddMultiple.call(this, config);
+  };
+
+  // Mutate sound fade in/out
+  const originalFadeOut = SoundFade.fadeOut;
+  SoundFade.fadeOut = function (scene: Phaser.Scene, sound: Phaser.Sound.BaseSound, duration: number, destroy?: boolean) {
+    duration = transformValue(duration)
+    return originalFadeOut(scene, sound, duration, destroy);
   }
 
-  // TODO: Either make these methods use `this` instead of globalScene or vice versa
-  // (for consistency)
-  const originalFadeOut = SoundFade.fadeOut;
-  SoundFade.fadeOut = ((_scene: Phaser.Scene, sound: Phaser.Sound.BaseSound, duration: number, destroy?: boolean) =>
-    originalFadeOut(
-      globalScene,
-      sound,
-      transformValue(duration, globalScene.gameSpeed),
-      destroy,
-    )) as typeof originalFadeOut;
-
   const originalFadeIn = SoundFade.fadeIn;
-  SoundFade.fadeIn = ((
-    _scene: Phaser.Scene,
+  SoundFade.fadeIn = function (
+    scene: Phaser.Scene,
     sound: string | Phaser.Sound.BaseSound,
     duration: number,
     endVolume?: number,
     startVolume?: number,
-  ) =>
-    originalFadeIn(
-      globalScene,
-      sound,
-      transformValue(duration, globalScene.gameSpeed),
-      endVolume,
-      startVolume,
-    )) as typeof originalFadeIn;
+  ) {
+    duration = transformValue(duration)
+    return originalFadeIn(scene, sound, duration, endVolume, startVolume);
+  }
 }
