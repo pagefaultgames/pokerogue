@@ -15,19 +15,16 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { CommandPhase } from "#app/phases/command-phase";
 import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/uncommon-breed-encounter";
 import { MovePhase } from "#app/phases/move-phase";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { BerryType } from "#enums/berry-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
-import type { BerryModifier } from "#app/modifier/modifier";
-import { modifierTypes } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
 
 const namespace = "mysteryEncounters/uncommonBreed";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
@@ -184,11 +181,6 @@ describe("Uncommon Breed - Mystery Encounter", () => {
     // TODO: there is some severe test flakiness occurring for this file, needs to be looked at/addressed in separate issue
     it.skip("should NOT be selectable if the player doesn't have enough berries", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
-      // Clear out any pesky mods that slipped through test spin-up
-      scene.modifiers.forEach(mod => {
-        scene.removeModifier(mod);
-      });
-      await scene.updateItems(true);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
@@ -213,15 +205,9 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
 
       // Berries on party lead
-      const sitrus = generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS])!;
-      const sitrusMod = sitrus.newModifier(scene.getPlayerParty()[0]) as BerryModifier;
-      sitrusMod.stackCount = 2;
-      scene.addModifier(sitrusMod, true, false, false, true);
-      const ganlon = generateModifierType(modifierTypes.BERRY, [BerryType.GANLON])!;
-      const ganlonMod = ganlon.newModifier(scene.getPlayerParty()[0]) as BerryModifier;
-      ganlonMod.stackCount = 3;
-      scene.addModifier(ganlonMod, true, false, false, true);
-      await scene.updateItems(true);
+      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.SITRUS_BERRY, 2);
+      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.GANLON_BERRY, 3);
+      scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 2);
 

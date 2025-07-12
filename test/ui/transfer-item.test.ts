@@ -1,4 +1,3 @@
-import { BerryType } from "#app/enums/berry-type";
 import { Button } from "#app/enums/buttons";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -9,6 +8,7 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { HeldItemId } from "#enums/held-item-id";
 
 describe("UI - Transfer Items", () => {
   let phaserGame: Phaser.Game;
@@ -31,9 +31,9 @@ describe("UI - Transfer Items", () => {
       .startingLevel(100)
       .startingWave(1)
       .startingHeldItems([
-        { name: "BERRY", count: 1, type: BerryType.SITRUS },
-        { name: "BERRY", count: 2, type: BerryType.APICOT },
-        { name: "BERRY", count: 2, type: BerryType.LUM },
+        { entry: HeldItemId.SITRUS_BERRY, count: 1 },
+        { entry: HeldItemId.APICOT_BERRY, count: 2 },
+        { entry: HeldItemId.LUM_BERRY, count: 2 },
       ])
       .moveset([MoveId.DRAGON_CLAW])
       .enemySpecies(SpeciesId.MAGIKARP)

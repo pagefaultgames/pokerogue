@@ -3,20 +3,13 @@ import * as BattleAnims from "#app/data/battle-anims";
 import { TrashToTreasureEncounter } from "#app/data/mystery-encounters/encounters/trash-to-treasure-encounter";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import {
-  type EnemyPartyConfig,
-  type EnemyPokemonConfig,
-  generateModifierType,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import type { EnemyPartyConfig, EnemyPokemonConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { HealShopCostModifier, HitHealModifier, TurnHealModifier } from "#app/modifier/modifier";
 import { RewardTier } from "#enums/reward-tier";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/data/data-lists";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
@@ -33,6 +26,9 @@ import {
 import GameManager from "#test/testUtils/gameManager";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
+import { randSeedInt } from "#app/utils/common";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 const namespace = "mysteryEncounters/trashToTreasure";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
@@ -101,41 +97,13 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       formIndex: 1, // Gmax
       bossSegmentModifier: 1, // +1 Segment from normal
       moveSet: [MoveId.GUNK_SHOT, MoveId.STOMPING_TANTRUM, MoveId.HAMMER_ARM, MoveId.PAYBACK],
-      modifierConfigs: [
-        {
-          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.TOXIC_ORB) as PokemonHeldItemModifierType,
-          stackCount: Utils.randSeedInt(2, 0),
-        },
-        {
-          modifier: generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType,
-          stackCount: Utils.randSeedInt(2, 1),
-        },
-        {
-          modifier: generateModifierType(modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType,
-          stackCount: Utils.randSeedInt(3, 1),
-        },
-        {
-          modifier: generateModifierType(modifierTypes.GOLDEN_EGG) as PokemonHeldItemModifierType,
-          stackCount: Utils.randSeedInt(2, 0),
-        },
+      heldItemConfig: [
+        { entry: HeldItemCategoryId.BERRY, count: 4 },
+        { entry: HeldItemCategoryId.BASE_STAT_BOOST, count: 2 },
+        { entry: HeldItemId.TOXIC_ORB, count: randSeedInt(2, 0) },
+        { entry: HeldItemId.SOOTHE_BELL, count: randSeedInt(2, 1) },
+        { entry: HeldItemId.LUCKY_EGG, count: randSeedInt(3, 1) },
+        { entry: HeldItemId.GOLDEN_EGG, count: randSeedInt(2, 0) },
       ],
     };
     const config: EnemyPartyConfig = {
@@ -175,17 +143,11 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
-      const leftovers = scene.findModifier(m => m instanceof TurnHealModifier) as TurnHealModifier;
-      expect(leftovers).toBeDefined();
-      expect(leftovers?.stackCount).toBe(2);
+      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.LEFTOVERS)).toBe(2);
 
-      const shellBell = scene.findModifier(m => m instanceof HitHealModifier) as HitHealModifier;
-      expect(shellBell).toBeDefined();
-      expect(shellBell?.stackCount).toBe(1);
+      expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SHELL_BELL)).toBe(1);
 
-      const blackSludge = scene.findModifier(m => m instanceof HealShopCostModifier) as HealShopCostModifier;
-      expect(blackSludge).toBeDefined();
-      expect(blackSludge?.stackCount).toBe(1);
+      expect(scene.trainerItems.getStack(TrainerItemId.BLACK_SLUDGE)).toBe(1);
     });
 
     it("should leave encounter without battle", async () => {

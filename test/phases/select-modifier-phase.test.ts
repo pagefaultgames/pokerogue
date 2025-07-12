@@ -17,6 +17,7 @@ import GameManager from "#test/testUtils/gameManager";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 describe("SelectModifierPhase", () => {
   let phaserGame: Phaser.Game;
@@ -110,7 +111,7 @@ describe("SelectModifierPhase", () => {
   });
 
   it.todo("should generate random modifiers of same tier for reroll with reroll lock", async () => {
-    game.override.startingModifier([{ name: "LOCK_CAPSULE" }]);
+    game.override.startingTrainerItems([{ entry: TrainerItemId.LOCK_CAPSULE }]);
     await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     scene.money = 1000000;
     // Just use fully random seed for this test

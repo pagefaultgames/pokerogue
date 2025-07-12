@@ -35,7 +35,7 @@ import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { MoveUseMode } from "#enums/move-use-mode";
 import type { PokemonItemMap } from "#app/items/held-item-data-types";
-import { HeldItemCategoryId } from "#enums/held-item-id";
+import { HeldItemCategoryId, type HeldItemId } from "#enums/held-item-id";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/uncommonBreed";
@@ -213,7 +213,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
         for (let i = 0; i < 4; i++) {
           const index = randSeedInt(berryMap.length);
           const randBerry = berryMap[index];
-          globalScene.getPokemonById(randBerry.pokemonId)?.heldItemManager.remove(randBerry.item.id);
+          globalScene.getPokemonById(randBerry.pokemonId)?.heldItemManager.remove(randBerry.item.id as HeldItemId);
           stolenBerryMap.push(randBerry);
           berryMap.splice(index, 1);
         }
