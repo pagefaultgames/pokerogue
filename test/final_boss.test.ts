@@ -1,5 +1,4 @@
 import { GameModes } from "#enums/game-modes";
-import { TurnHeldItemTransferModifier } from "#app/modifier/modifier";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
@@ -7,6 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { HeldItemId } from "#enums/held-item-id";
 
 const FinalWave = {
   Classic: 200,
@@ -93,9 +93,7 @@ describe("Final Boss", () => {
     expect(eternatus.formIndex).toBe(1);
     expect(eternatus.bossSegments).toBe(5);
     expect(eternatus.bossSegmentIndex).toBe(4);
-    const miniBlackHole = eternatus.getHeldItems().find(m => m instanceof TurnHeldItemTransferModifier);
-    expect(miniBlackHole).toBeDefined();
-    expect(miniBlackHole?.stackCount).toBe(1);
+    expect(eternatus.heldItemManager.getStack(HeldItemId.MINI_BLACK_HOLE)).toBe(1);
   });
 
   it("should change form on status damage down to last boss fragment", async () => {
@@ -136,8 +134,6 @@ describe("Final Boss", () => {
     expect(eternatus.formIndex).toBe(1);
     expect(eternatus.bossSegments).toBe(5);
     expect(eternatus.bossSegmentIndex).toBe(4);
-    const miniBlackHole = eternatus.getHeldItems().find(m => m instanceof TurnHeldItemTransferModifier);
-    expect(miniBlackHole).toBeDefined();
-    expect(miniBlackHole?.stackCount).toBe(1);
+    expect(eternatus.heldItemManager.getStack(HeldItemId.MINI_BLACK_HOLE)).toBe(1);
   });
 });

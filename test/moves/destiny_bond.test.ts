@@ -10,7 +10,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { BattlerIndex } from "#enums/battler-index";
 import { StatusEffect } from "#enums/status-effect";
-import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
+import { HeldItemId } from "#enums/held-item-id";
 
 describe("Moves - Destiny Bond", () => {
   let phaserGame: Phaser.Game;
@@ -232,7 +232,7 @@ describe("Moves - Destiny Bond", () => {
   it("should not allow the opponent to revive via Reviver Seed", async () => {
     const moveToUse = MoveId.TACKLE;
 
-    game.override.moveset(moveToUse).startingHeldItems([{ name: "REVIVER_SEED" }]);
+    game.override.moveset(moveToUse).startingHeldItems([{ entry: HeldItemId.REVIVER_SEED }]);
     await game.classicMode.startBattle(defaultParty);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
@@ -246,9 +246,6 @@ describe("Moves - Destiny Bond", () => {
     expect(playerPokemon?.isFainted()).toBe(true);
 
     // Check that the Tackle user's Reviver Seed did not activate
-    const revSeeds = game.scene
-      .getModifiers(PokemonInstantReviveModifier)
-      .filter(m => m.pokemonId === playerPokemon?.id);
-    expect(revSeeds.length).toBe(1);
+    expect(playerPokemon?.heldItemManager.getStack(HeldItemId.REVIVER_SEED)).toBe(1);
   });
 });

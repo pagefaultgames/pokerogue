@@ -1,12 +1,12 @@
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
-import { MapModifier } from "#app/modifier/modifier";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 //const TIMEOUT = 20 * 1000;
 
@@ -38,7 +38,7 @@ describe("Daily Mode", () => {
       expect(pkm.level).toBe(20);
       expect(pkm.moveset.length).toBeGreaterThan(0);
     });
-    expect(game.scene.getModifiers(MapModifier).length).toBeGreaterThan(0);
+    expect(game.scene.trainerItems.getStack(TrainerItemId.MAP)).toBe(1);
   });
 });
 

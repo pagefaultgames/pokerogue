@@ -15,10 +15,10 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
 import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { MoveId } from "#enums/move-id";
-import { ShinyRateBoosterModifier } from "#app/modifier/modifier";
 import { SelectRewardPhase } from "#app/phases/select-reward-phase";
 import i18next from "i18next";
 import { AbilityId } from "#enums/ability-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 const namespace = "mysteryEncounters/anOfferYouCantRefuse";
 /** Gyarados for Indimidate */
@@ -144,10 +144,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
 
-      const itemModifier = scene.findModifier(m => m instanceof ShinyRateBoosterModifier) as ShinyRateBoosterModifier;
-
-      expect(itemModifier).toBeDefined();
-      expect(itemModifier?.stackCount).toBe(1);
+      expect(scene.trainerItems.getStack(TrainerItemId.SHINY_CHARM)).toBe(1);
     });
 
     it("Should remove the Pokemon from the party", async () => {

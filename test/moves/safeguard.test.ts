@@ -7,6 +7,7 @@ import { SpeciesId } from "#enums/species-id";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
 
 describe("Moves - Safeguard", () => {
   let phaserGame: Phaser.Game;
@@ -113,7 +114,7 @@ describe("Moves - Safeguard", () => {
   });
 
   it("doesn't protect from self-inflicted status from Rest or Flame Orb", async () => {
-    game.override.enemyHeldItems([{ name: "FLAME_ORB" }]);
+    game.override.enemyHeldItems([{ entry: HeldItemId.FLAME_ORB }]);
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     enemyPokemon.hp = 1;

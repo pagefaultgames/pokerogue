@@ -10,6 +10,7 @@ import { UiMode } from "#enums/ui-mode";
 import { Button } from "#app/enums/buttons";
 import type RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 describe("Items - Temporary Stat Stage Boosters", () => {
   let phaserGame: Phaser.Game;
@@ -34,7 +35,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH)
       .moveset([MoveId.TACKLE, MoveId.SPLASH, MoveId.HONE_CLAWS, MoveId.BELLY_DRUM])
-      .startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
+      .startingTrainerItems([{ entry: TrainerItemId.X_ATTACK }]);
   });
 
   it("should provide a x1.3 stat stage multiplier", async () => {
@@ -52,7 +53,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
   });
 
   it("should increase existing ACC stat stage by 1 for X_ACCURACY only", async () => {
-    game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]).ability(AbilityId.SIMPLE);
+    game.override.startingTrainerItems([{ entry: TrainerItemId.X_ACCURACY }]).ability(AbilityId.SIMPLE);
 
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
@@ -94,10 +95,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
   });
 
   it("should not increase past maximum stat stage multiplier", async () => {
-    game.override.startingModifier([
-      { name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC },
-      { name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK },
-    ]);
+    game.override.startingTrainerItems([{ entry: TrainerItemId.X_ATTACK }, { entry: TrainerItemId.X_ACCURACY }]);
 
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
@@ -128,10 +126,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     await game.phaseInterceptor.to("BattleEndPhase");
 
-    const modifier = game.scene.findModifier(
-      m => m instanceof TempStatStageBoosterModifier,
-    ) as TempStatStageBoosterModifier;
-    expect(modifier.getBattleCount()).toBe(4);
+    expect(game.scene.trainerItems.getStack(TrainerItemId.X_ATTACK)).toBe(4);
 
     // Forced X_ATTACK to spawn in the first slot with override
     game.onNextPrompt(
@@ -151,14 +146,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
     await game.phaseInterceptor.to("TurnInitPhase");
 
     // Making sure only one booster is in the modifier list even after picking up another
-    let count = 0;
-    for (const m of game.scene.modifiers) {
-      if (m instanceof TempStatStageBoosterModifier) {
-        count++;
-        const modifierInstance = m as TempStatStageBoosterModifier;
-        expect(modifierInstance.getBattleCount()).toBe(modifierInstance.getMaxBattles());
-      }
-    }
-    expect(count).toBe(1);
+
+    expect(game.scene.trainerItems.getStack(TrainerItemId.X_ATTACK)).toBe(5);
   });
 });

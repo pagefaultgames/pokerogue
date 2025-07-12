@@ -10,6 +10,7 @@ import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { HeldItemId } from "#enums/held-item-id";
 
 describe("Moves - Dragon Tail", () => {
   let phaserGame: Phaser.Game;
@@ -162,7 +163,7 @@ describe("Moves - Dragon Tail", () => {
   it("should not cause a softlock when activating an opponent trainer's reviver seed", async () => {
     game.override
       .startingWave(5)
-      .enemyHeldItems([{ name: "REVIVER_SEED" }])
+      .enemyHeldItems([{ entry: HeldItemId.REVIVER_SEED }])
       .startingLevel(1000); // To make sure Dragon Tail KO's the opponent
     await game.classicMode.startBattle([SpeciesId.DRATINI]);
 
@@ -179,7 +180,7 @@ describe("Moves - Dragon Tail", () => {
 
   it("should not cause a softlock when activating a player's reviver seed", async () => {
     game.override
-      .startingHeldItems([{ name: "REVIVER_SEED" }])
+      .startingHeldItems([{ entry: HeldItemId.REVIVER_SEED }])
       .enemyMoveset(MoveId.DRAGON_TAIL)
       .enemyLevel(1000); // To make sure Dragon Tail KO's the player
     await game.classicMode.startBattle([SpeciesId.DRATINI, SpeciesId.BULBASAUR]);

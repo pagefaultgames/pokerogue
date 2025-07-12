@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#enums/battler-index";
-import { allMoves } from "#app/data/data-lists";
+import { allHeldItems, allMoves } from "#app/data/data-lists";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -8,6 +8,7 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { HeldItemId } from "#enums/held-item-id";
+import type { InstantReviveHeldItem } from "#app/items/held-items/instant-revive";
 
 describe("Items - Reviver Seed", () => {
   let phaserGame: Phaser.Game;
@@ -54,7 +55,7 @@ describe("Items - Reviver Seed", () => {
     const player = game.scene.getPlayerPokemon()!;
     player.damageAndUpdate(player.hp - 1);
 
-    const reviverSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
+    const reviverSeed = allHeldItems[HeldItemId.REVIVER_SEED] as InstantReviveHeldItem;
     vi.spyOn(reviverSeed, "apply");
 
     game.move.select(MoveId.TACKLE);
@@ -70,7 +71,7 @@ describe("Items - Reviver Seed", () => {
     player.damageAndUpdate(player.hp - 1);
     player.addTag(BattlerTagType.CONFUSED, 3);
 
-    const reviverSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
+    const reviverSeed = allHeldItems[HeldItemId.REVIVER_SEED] as InstantReviveHeldItem;
     vi.spyOn(reviverSeed, "apply");
 
     vi.spyOn(player, "randBattleSeedInt").mockReturnValue(0); // Force confusion self-hit
@@ -122,8 +123,8 @@ describe("Items - Reviver Seed", () => {
     const player = game.scene.getPlayerPokemon()!;
     player.damageAndUpdate(player.hp - 1);
 
-    const playerSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
-    vi.spyOn(playerSeed, "apply");
+    const reviverSeed = allHeldItems[HeldItemId.REVIVER_SEED] as InstantReviveHeldItem;
+    vi.spyOn(reviverSeed, "apply");
 
     game.move.select(move);
     await game.phaseInterceptor.to("TurnEndPhase");

@@ -1,10 +1,9 @@
 import { allMoves } from "#app/data/data-lists";
-import type { EnemyPersistentModifier } from "#app/modifier/modifier";
-import { modifierTypes } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -72,9 +71,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
 
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const dmg_redux_modifier = modifierTypes.ENEMY_DAMAGE_REDUCTION().newModifier() as EnemyPersistentModifier;
-    dmg_redux_modifier.stackCount = 1000;
-    await game.scene.addEnemyModifier(modifierTypes.ENEMY_DAMAGE_REDUCTION().newModifier() as EnemyPersistentModifier);
+    game.scene.enemyTrainerItems.add(TrainerItemId.ENEMY_DAMAGE_REDUCTION, 1000);
 
     const aggron = game.scene.getEnemyPokemon()!;
 

@@ -11,13 +11,13 @@ import { UiMode } from "#enums/ui-mode";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { HeldItemId } from "#enums/held-item-id";
 
 describe("Moves - Substitute", () => {
   let phaserGame: Phaser.Game;
@@ -296,7 +296,7 @@ describe("Moves - Substitute", () => {
   });
 
   it("should prevent the user's items from being stolen", async () => {
-    game.override.enemyMoveset(MoveId.THIEF).startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
+    game.override.enemyMoveset(MoveId.THIEF).startingHeldItems([{ entry: HeldItemId.SITRUS_BERRY }]);
     vi.spyOn(allMoves[MoveId.THIEF], "attrs", "get").mockReturnValue([new StealHeldItemChanceAttr(1.0)]); // give Thief 100% steal rate
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
@@ -313,7 +313,7 @@ describe("Moves - Substitute", () => {
   });
 
   it("should prevent the user's items from being removed", async () => {
-    game.override.moveset([MoveId.KNOCK_OFF]).enemyHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
+    game.override.moveset([MoveId.KNOCK_OFF]).enemyHeldItems([{ entry: HeldItemId.SITRUS_BERRY }]);
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
@@ -330,7 +330,7 @@ describe("Moves - Substitute", () => {
   });
 
   it("move effect should prevent the user's berries from being stolen and eaten", async () => {
-    game.override.enemyMoveset(MoveId.BUG_BITE).startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
+    game.override.enemyMoveset(MoveId.BUG_BITE).startingHeldItems([{ entry: HeldItemId.SITRUS_BERRY }]);
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 

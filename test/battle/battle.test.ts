@@ -1,5 +1,4 @@
 import { allSpecies } from "#app/data/data-lists";
-import { Stat } from "#enums/stat";
 import { getGameMode } from "#app/game-mode";
 import { GameModes } from "#enums/game-modes";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
@@ -25,6 +24,7 @@ import { SpeciesId } from "#enums/species-id";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { BiomeId } from "#enums/biome-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -312,7 +312,7 @@ describe("Test Battle Phase", () => {
       .startingLevel(100)
       .moveset([moveToUse])
       .enemyMoveset(MoveId.SPLASH)
-      .startingHeldItems([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]);
+      .startingTrainerItems([{ entry: TrainerItemId.X_ACCURACY }]);
 
     await game.classicMode.startBattle();
     game.scene.getPlayerPokemon()!.hp = 1;

@@ -6,6 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { HeldItemId } from "#enums/held-item-id";
 
 describe("Items - Multi Lens", () => {
   let phaserGame: Phaser.Game;
@@ -26,7 +27,7 @@ describe("Items - Multi Lens", () => {
     game.override
       .moveset([MoveId.TACKLE, MoveId.TRAILBLAZE, MoveId.TACHYON_CUTTER, MoveId.FUTURE_SIGHT])
       .ability(AbilityId.BALL_FETCH)
-      .startingHeldItems([{ name: "MULTI_LENS" }])
+      .startingHeldItems([{ entry: HeldItemId.MULTI_LENS }])
       .battleStyle("single")
       .criticalHits(false)
       .enemySpecies(SpeciesId.SNORLAX)
@@ -42,7 +43,7 @@ describe("Items - Multi Lens", () => {
   ])(
     "$stackCount count: should deal {$firstHitDamage}x damage on the first hit, then hit $stackCount times for 0.25x",
     async ({ stackCount, firstHitDamage }) => {
-      game.override.startingHeldItems([{ name: "MULTI_LENS", count: stackCount }]);
+      game.override.startingHeldItems([{ entry: HeldItemId.MULTI_LENS, count: stackCount }]);
 
       await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
@@ -116,7 +117,7 @@ describe("Items - Multi Lens", () => {
   });
 
   it("should enhance fixed-damage moves while also applying damage reduction", async () => {
-    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]).moveset(MoveId.SEISMIC_TOSS);
+    game.override.startingHeldItems([{ entry: HeldItemId.MULTI_LENS }]).moveset(MoveId.SEISMIC_TOSS);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
@@ -137,7 +138,7 @@ describe("Items - Multi Lens", () => {
 
   it("should result in correct damage for hp% attacks with 1 lens", async () => {
     game.override
-      .startingHeldItems([{ name: "MULTI_LENS", count: 1 }])
+      .startingHeldItems([{ entry: HeldItemId.MULTI_LENS }])
       .moveset(MoveId.SUPER_FANG)
       .ability(AbilityId.COMPOUND_EYES)
       .enemyLevel(1000)
@@ -155,7 +156,7 @@ describe("Items - Multi Lens", () => {
 
   it("should result in correct damage for hp% attacks with 2 lenses", async () => {
     game.override
-      .startingHeldItems([{ name: "MULTI_LENS", count: 2 }])
+      .startingHeldItems([{ entry: HeldItemId.MULTI_LENS, count: 2 }])
       .moveset(MoveId.SUPER_FANG)
       .ability(AbilityId.COMPOUND_EYES)
       .enemyMoveset(MoveId.SPLASH)
@@ -174,7 +175,7 @@ describe("Items - Multi Lens", () => {
 
   it("should result in correct damage for hp% attacks with 2 lenses + Parental Bond", async () => {
     game.override
-      .startingHeldItems([{ name: "MULTI_LENS", count: 2 }])
+      .startingHeldItems([{ entry: HeldItemId.MULTI_LENS, count: 2 }])
       .moveset(MoveId.SUPER_FANG)
       .ability(AbilityId.PARENTAL_BOND)
       .passiveAbility(AbilityId.COMPOUND_EYES)

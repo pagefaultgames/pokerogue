@@ -10,6 +10,7 @@ import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { HeldItemId } from "#enums/held-item-id";
 
 describe("Moves - Ceaseless Edge", () => {
   let phaserGame: Phaser.Game;
@@ -61,7 +62,7 @@ describe("Moves - Ceaseless Edge", () => {
   });
 
   test("move should hit twice with multi lens and apply two layers of spikes", async () => {
-    game.override.startingHeldItems([{ name: "MULTI_LENS" }]);
+    game.override.startingHeldItems([{ entry: HeldItemId.MULTI_LENS }]);
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -83,7 +84,7 @@ describe("Moves - Ceaseless Edge", () => {
   });
 
   test("trainer - move should hit twice, apply two layers of spikes, force switch opponent - opponent takes damage", async () => {
-    game.override.startingHeldItems([{ name: "MULTI_LENS" }]).startingWave(25);
+    game.override.startingHeldItems([{ entry: HeldItemId.MULTI_LENS }]).startingWave(25);
 
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 

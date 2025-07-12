@@ -9,6 +9,7 @@ import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { HeldItemId } from "#enums/held-item-id";
 
 // Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Heal_Block_(move)
 describe("Moves - Heal Block", () => {
@@ -132,7 +133,7 @@ describe("Moves - Heal Block", () => {
   });
 
   it("should stop healing from items", async () => {
-    game.override.startingHeldItems([{ name: "LEFTOVERS" }]);
+    game.override.startingHeldItems([{ entry: HeldItemId.LEFTOVERS }]);
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
