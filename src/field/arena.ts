@@ -168,7 +168,7 @@ export class Arena {
 
       ret = getPokemonSpecies(species!);
 
-      if (ret.subLegendary || ret.legendary || ret.mythical || ret) {
+      if (ret.subLegendary || ret.legendary || ret.mythical) {
         const waveDifficulty = globalScene.gameMode.getWaveForDifficulty(waveIndex);
         switch (true) {
           case ret.baseTotal >= 660:
