@@ -4669,7 +4669,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param reason - The reason for the status application failure -
    * can be "overlap" (already has same status), "other" (generic fail message)
    * or a {@linkcode TerrainType} for terrain-based blockages.
-   * Defaults to "other".
+   * Default "other"
    */
   queueStatusImmuneMessage(
     quiet: boolean,
@@ -4784,7 +4784,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (isImmune) {
-      this.queueImmuneMessage(quiet, reason);
+      this.queueStatusImmuneMessage(quiet, reason);
       return false;
     }
 
@@ -4834,7 +4834,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param overrideStatus - Whether to allow overriding the Pokemon's current status with a different one; default `false`
    * @param quiet - Whether to suppress in-battle messages for status checks; default `true`
    * @param overrideMessage - String containing text to be displayed upon status setting; defaults to normal key for status
-   * and is used exclusively for Rest.
+   * and is used exclusively for Rest
    * @returns Whether the status effect phase was successfully created.
    * @see {@linkcode doSetStatus} - alternate function that sets status immediately (albeit without condition checks).
    */
@@ -4906,7 +4906,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Does **NOT** perform any feasibility checks whatsoever; must be checked by the caller.
    * @param effect - The {@linkcode StatusEffect} to set
    * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
-   * and is unused for all non-sleep Statuses.
+   * and is unused for all non-sleep Statuses
    */
   doSetStatus(effect: StatusEffect, sleepTurnsRemaining?: number): void;
   /**
@@ -4914,7 +4914,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Does **NOT** perform any feasibility checks whatsoever; must be checked by the caller.
    * @param effect - The {@linkcode StatusEffect} to set
    * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
-   * and is unused for all non-sleep Statuses.
+   * and is unused for all non-sleep Statuses
    * @todo Make this private and change tests to use a field-based helper or similar
    */
   doSetStatus(
