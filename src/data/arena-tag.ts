@@ -898,10 +898,10 @@ interface DelayedAttack {
   /** The {@linkcode BattlerIndex} of the attack's target. */
   targetIndex: BattlerIndex;
   /** 
-   * The number of turns left.
+   * The number of turns left until activation.
    * The attack will trigger once its turn count reaches 0, at which point it is removed.
    */
-  turnCount: number;
+  turnsLeft: number;
 }
 
 /**
@@ -930,7 +930,7 @@ export class DelayedAttackTag extends ArenaTag {
    * @param turnCount - The number of turns to delay the attack; default `3`
    */
   public queueAttack(source: Pokemon, move: MoveId, targetIndex: BattlerIndex, turnCount = 3): void {
-    this.delayedAttacks.push({ sourceId: source.id, move, targetIndex, turnCount });
+    this.delayedAttacks.push({ sourceId: source.id, move, targetIndex, turnsLeft: turnCount });
   }
 
   /**
@@ -951,7 +951,7 @@ export class DelayedAttackTag extends ArenaTag {
       const source = globalScene.getPokemonById(attack.sourceId);
       const target: Pokemon | undefined = globalScene.getField()[attack.targetIndex];
 
-      if (--attack.turnCount > 0) {
+      if (--attack.turnsLeft > 0) {
         // attack still cooking
         continue;
       }
@@ -959,7 +959,7 @@ export class DelayedAttackTag extends ArenaTag {
       if (!source || !target || source === target || target.isFainted()) {
         // source/target either nonexistent or the exact same pokemon; silently mark for deletion
         // TODO: move into an overriddable method if wish is made into a delayed attack 
-        attack.turnCount = -1;
+        attack.turnsLeft = -1;
         continue;
       }
 
@@ -985,6 +985,8 @@ export class DelayedAttackTag extends ArenaTag {
   protected triggerAttack(attack: DelayedAttack): void {
     const source = globalScene.getPokemonById(attack.sourceId)!;
     const target = globalScene.getField()[attack.targetIndex];
+
+    source.turnData.extraTurns++;
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(target),
