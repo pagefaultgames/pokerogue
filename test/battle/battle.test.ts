@@ -93,7 +93,7 @@ describe("Test Battle Phase", () => {
     game.override.enemySpecies(SpeciesId.RATTATA).startingLevel(2000).battleStyle("single").startingWave(3);
     await game.classicMode.startBattle([SpeciesId.MEWTWO]);
     game.move.use(MoveId.TACKLE);
-    await game.phaseInterceptor.to("SelectModifierPhase");
+    await game.phaseInterceptor.to("SelectRewardPhase");
   });
 
   it("do attack wave 3 - single battle - regular - NO OHKO with opponent using non damage attack", async () => {

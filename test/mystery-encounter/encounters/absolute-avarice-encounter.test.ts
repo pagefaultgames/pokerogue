@@ -16,7 +16,7 @@ import { AbsoluteAvariceEncounter } from "#app/data/mystery-encounters/encounter
 import { MoveId } from "#enums/move-id";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { SelectRewardPhase } from "#app/phases/select-reward-phase";
 import { HeldItemId } from "#enums/held-item-id";
 
 const namespace = "mysteryEncounters/absoluteAvarice";
@@ -143,8 +143,8 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      await game.phaseInterceptor.to(SelectRewardPhase, false);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
 
       for (const partyPokemon of scene.getPlayerParty()) {
         expect(partyPokemon.heldItemManager.getStack(HeldItemId.REVIVER_SEED)).toBe(1);

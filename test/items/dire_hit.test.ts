@@ -68,7 +68,7 @@ describe("Items - Dire Hit", () => {
 
     // Forced DIRE_HIT to spawn in the first slot with override
     game.onNextPrompt(
-      "SelectModifierPhase",
+      "SelectRewardPhase",
       UiMode.MODIFIER_SELECT,
       () => {
         const handler = game.scene.ui.getHandler() as RewardSelectUiHandler;

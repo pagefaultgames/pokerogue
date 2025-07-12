@@ -737,7 +737,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     // TODO: This risks hitting the other options (.MOVE_i and ALL) so does it? Do we need an extra check?
     if (
       option >= PartyOption.FORM_CHANGE_ITEM &&
-      globalScene.phaseManager.getCurrentPhase()?.is("SelectModifierPhase") &&
+      globalScene.phaseManager.getCurrentPhase()?.is("SelectRewardPhase") &&
       this.partyUiMode === PartyUiMode.CHECK
     ) {
       const formChangeItems = this.getFormChangeItems(pokemon);
@@ -1309,7 +1309,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         this.addCommonOptions(pokemon);
         break;
       case PartyUiMode.CHECK:
-        if (globalScene.phaseManager.getCurrentPhase()?.is("SelectModifierPhase")) {
+        if (globalScene.phaseManager.getCurrentPhase()?.is("SelectRewardPhase")) {
           const formChangeItems = this.getFormChangeItems(pokemon);
           for (let i = 0; i < formChangeItems.length; i++) {
             this.options.push(PartyOption.FORM_CHANGE_ITEM + i);

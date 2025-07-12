@@ -43,7 +43,7 @@ describe("UI - Transfer Items", () => {
 
     game.move.select(MoveId.DRAGON_CLAW);
 
-    game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
+    game.onNextPrompt("SelectRewardPhase", UiMode.MODIFIER_SELECT, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(RewardSelectUiHandler);
 
       const handler = game.scene.ui.getHandler() as RewardSelectUiHandler;
@@ -57,7 +57,7 @@ describe("UI - Transfer Items", () => {
   });
 
   it("check red tint for held item limit in transfer menu", async () => {
-    game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, () => {
+    game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(PartyUiHandler);
 
       const handler = game.scene.ui.getHandler() as PartyUiHandler;
@@ -76,11 +76,11 @@ describe("UI - Transfer Items", () => {
       game.phaseInterceptor.unlock();
     });
 
-    await game.phaseInterceptor.to("SelectModifierPhase");
+    await game.phaseInterceptor.to("SelectRewardPhase");
   });
 
   it("check transfer option for pokemon to transfer to", async () => {
-    game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, () => {
+    game.onNextPrompt("SelectRewardPhase", UiMode.PARTY, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(PartyUiHandler);
 
       const handler = game.scene.ui.getHandler() as PartyUiHandler;
@@ -97,6 +97,6 @@ describe("UI - Transfer Items", () => {
       game.phaseInterceptor.unlock();
     });
 
-    await game.phaseInterceptor.to("SelectModifierPhase");
+    await game.phaseInterceptor.to("SelectRewardPhase");
   });
 });

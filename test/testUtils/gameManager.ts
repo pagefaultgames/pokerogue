@@ -311,10 +311,10 @@ export default class GameManager {
     }
   }
 
-  /** Queue up button presses to skip taking an item on the next {@linkcode SelectModifierPhase} */
+  /** Queue up button presses to skip taking an item on the next {@linkcode SelectRewardPhase} */
   doSelectModifier() {
     this.onNextPrompt(
-      "SelectModifierPhase",
+      "SelectRewardPhase",
       UiMode.MODIFIER_SELECT,
       () => {
         const handler = this.scene.ui.getHandler() as RewardSelectUiHandler;
@@ -328,7 +328,7 @@ export default class GameManager {
     );
 
     this.onNextPrompt(
-      "SelectModifierPhase",
+      "SelectRewardPhase",
       UiMode.CONFIRM,
       () => {
         const handler = this.scene.ui.getHandler() as RewardSelectUiHandler;
@@ -369,7 +369,7 @@ export default class GameManager {
   }
 
   /**
-   * Queue up button presses to skip taking an item on the next {@linkcode SelectModifierPhase},
+   * Queue up button presses to skip taking an item on the next {@linkcode SelectRewardPhase},
    * and then transition to the next {@linkcode CommandPhase}.
    */
   async toNextWave() {

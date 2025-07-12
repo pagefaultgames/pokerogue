@@ -547,7 +547,7 @@ describe("Abilities - Wimp Out", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.ENDURE);
 
-    await game.phaseInterceptor.to("SelectModifierPhase");
+    await game.phaseInterceptor.to("SelectRewardPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(wave + 1);
   });
 });

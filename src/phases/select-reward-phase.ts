@@ -31,8 +31,8 @@ import { TrainerItemEffect } from "#app/items/trainer-item";
 
 export type ModifierSelectCallback = (rowCursor: number, cursor: number) => boolean;
 
-export class SelectModifierPhase extends BattlePhase {
-  public readonly phaseName = "SelectModifierPhase";
+export class SelectRewardPhase extends BattlePhase {
+  public readonly phaseName = "SelectRewardPhase";
   private rerollCount: number;
   private modifierTiers?: RewardTier[];
   private customModifierSettings?: CustomModifierSettings;
@@ -199,7 +199,7 @@ export class SelectModifierPhase extends BattlePhase {
     }
     globalScene.reroll = true;
     globalScene.phaseManager.unshiftNew(
-      "SelectModifierPhase",
+      "SelectRewardPhase",
       this.rerollCount + 1,
       this.typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as RewardTier[],
     );
@@ -288,7 +288,7 @@ export class SelectModifierPhase extends BattlePhase {
           globalScene.animateMoneyChanged(false);
         }
         globalScene.playSound("se/buy");
-        (globalScene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
+        (globalScene.ui.getHandler() as RewardSelectUiHandler).updateCostText();
       } else {
         globalScene.ui.playError();
       }
@@ -491,9 +491,9 @@ export class SelectModifierPhase extends BattlePhase {
     );
   }
 
-  copy(): SelectModifierPhase {
+  copy(): SelectRewardPhase {
     return globalScene.phaseManager.create(
-      "SelectModifierPhase",
+      "SelectRewardPhase",
       this.rerollCount,
       this.modifierTiers,
       {

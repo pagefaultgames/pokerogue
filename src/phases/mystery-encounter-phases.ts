@@ -551,8 +551,8 @@ export class MysteryEncounterRewardsPhase extends Phase {
     if (encounter.doEncounterRewards) {
       encounter.doEncounterRewards();
     } else if (this.addHealPhase) {
-      globalScene.phaseManager.tryRemovePhase(p => p.is("SelectModifierPhase"));
-      globalScene.phaseManager.unshiftNew("SelectModifierPhase", 0, undefined, {
+      globalScene.phaseManager.tryRemovePhase(p => p.is("SelectRewardPhase"));
+      globalScene.phaseManager.unshiftNew("SelectRewardPhase", 0, undefined, {
         fillRemaining: false,
         rerollMultiplier: -1,
       });

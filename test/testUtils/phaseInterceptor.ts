@@ -26,7 +26,7 @@ import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
 import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 import { SelectGenderPhase } from "#app/phases/select-gender-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { SelectRewardPhase } from "#app/phases/select-reward-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import { SelectTargetPhase } from "#app/phases/select-target-phase";
 import { ShinySparklePhase } from "#app/phases/shiny-sparkle-phase";
@@ -122,7 +122,7 @@ export default class PhaseInterceptor {
     [TurnEndPhase, this.startPhase],
     [BattleEndPhase, this.startPhase],
     [EggLapsePhase, this.startPhase],
-    [SelectModifierPhase, this.startPhase],
+    [SelectRewardPhase, this.startPhase],
     [NextEncounterPhase, this.startPhase],
     [NewBattlePhase, this.startPhase],
     [VictoryPhase, this.startPhase],
@@ -163,7 +163,7 @@ export default class PhaseInterceptor {
     TitlePhase,
     SelectGenderPhase,
     CommandPhase,
-    SelectModifierPhase,
+    SelectRewardPhase,
     MysteryEncounterPhase,
     PostMysteryEncounterPhase,
   ];

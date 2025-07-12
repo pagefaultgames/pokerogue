@@ -75,7 +75,7 @@ import { ScanIvsPhase } from "#app/phases/scan-ivs-phase";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 import { SelectChallengePhase } from "#app/phases/select-challenge-phase";
 import { SelectGenderPhase } from "#app/phases/select-gender-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { SelectRewardPhase } from "#app/phases/select-reward-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import { SelectTargetPhase } from "#app/phases/select-target-phase";
 import { ShinySparklePhase } from "#app/phases/shiny-sparkle-phase";
@@ -183,7 +183,7 @@ const PHASES = Object.freeze({
   SelectBiomePhase,
   SelectChallengePhase,
   SelectGenderPhase,
-  SelectModifierPhase,
+  SelectRewardPhase,
   SelectStarterPhase,
   SelectTargetPhase,
   ShinySparklePhase,

@@ -65,7 +65,7 @@ export class VictoryPhase extends PokemonPhase {
         }
         if (globalScene.currentBattle.waveIndex % 10) {
           globalScene.phaseManager.pushNew(
-            "SelectModifierPhase",
+            "SelectRewardPhase",
             undefined,
             undefined,
             this.getFixedBattleCustomModifiers(),
@@ -124,7 +124,7 @@ export class VictoryPhase extends PokemonPhase {
 
   /**
    * If this wave is a fixed battle with special custom modifier rewards,
-   * will pass those settings to the upcoming {@linkcode SelectModifierPhase}`.
+   * will pass those settings to the upcoming {@linkcode SelectRewardPhase}`.
    */
   getFixedBattleCustomModifiers(): CustomModifierSettings | undefined {
     const gameMode = globalScene.gameMode;

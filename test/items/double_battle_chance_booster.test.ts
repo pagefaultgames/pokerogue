@@ -74,7 +74,7 @@ describe("Items - Double Battle Chance Boosters", () => {
 
     // Forced LURE to spawn in the first slot with override
     game.onNextPrompt(
-      "SelectModifierPhase",
+      "SelectRewardPhase",
       UiMode.MODIFIER_SELECT,
       () => {
         const handler = game.scene.ui.getHandler() as RewardSelectUiHandler;

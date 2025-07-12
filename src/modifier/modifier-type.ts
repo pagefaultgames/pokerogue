@@ -1677,7 +1677,7 @@ export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
 }
 
 /**
- * Generates modifier options for a {@linkcode SelectModifierPhase}
+ * Generates modifier options for a {@linkcode SelectRewardPhase}
  * @param count - Determines the number of items to generate
  * @param party - Party is required for generating proper modifier pools
  * @param modifierTiers - (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.

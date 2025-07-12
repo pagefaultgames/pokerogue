@@ -135,7 +135,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     // Forced X_ATTACK to spawn in the first slot with override
     game.onNextPrompt(
-      "SelectModifierPhase",
+      "SelectRewardPhase",
       UiMode.MODIFIER_SELECT,
       () => {
         const handler = game.scene.ui.getHandler() as RewardSelectUiHandler;

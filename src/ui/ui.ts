@@ -6,7 +6,7 @@ import PartyUiHandler from "./party-ui-handler";
 import FightUiHandler from "./fight-ui-handler";
 import MessageUiHandler from "./message-ui-handler";
 import ConfirmUiHandler from "./confirm-ui-handler";
-import RewardSelectUiHandler from "./modifier-select-ui-handler";
+import RewardSelectUiHandler from "./reward-select-ui-handler";
 import BallUiHandler from "./ball-ui-handler";
 import SummaryUiHandler from "./summary-ui-handler";
 import StarterSelectUiHandler from "./starter-select-ui-handler";

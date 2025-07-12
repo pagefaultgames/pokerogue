@@ -7,7 +7,7 @@ export class ModifierHelper extends GameManagerHelper {
   /**
    * Adds a Modifier to the list of modifiers to check for.
    *
-   * Note that all modifiers are updated during the start of `SelectModifierPhase`.
+   * Note that all modifiers are updated during the start of `SelectRewardPhase`.
    * @param modifier The Modifier to add.
    * @returns `this`
    */
@@ -23,7 +23,7 @@ export class ModifierHelper extends GameManagerHelper {
    *
    * If the item is *not* in the Modifier Pool, will return `false`.
    *
-   * If a `SelectModifierPhase` has not occurred, and we do not know if the item is in the Modifier Pool or not, will return `undefined`.
+   * If a `SelectRewardPhase` has not occurred, and we do not know if the item is in the Modifier Pool or not, will return `undefined`.
    * @param modifier
    * @returns
    */
@@ -34,7 +34,7 @@ export class ModifierHelper extends GameManagerHelper {
   /**
    * `expect`s a Modifier `toBeTruthy` (in the Modifier Pool) or `Falsy` (unobtainable on this floor). Use during a test.
    *
-   * Note that if a `SelectModifierPhase` has not been run yet, these values will be `undefined`, and the check will fail.
+   * Note that if a `SelectRewardPhase` has not been run yet, these values will be `undefined`, and the check will fail.
    * @param modifier The modifier to check.
    * @param expectToBePreset Whether the Modifier should be in the Modifier Pool. Set to `false` to expect it to be absent instead.
    * @returns `this`
