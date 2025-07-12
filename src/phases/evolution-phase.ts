@@ -388,7 +388,7 @@ export class EvolutionPhase extends Phase {
         globalScene.ui.showText(
           i18next.t("menu:evolutionDone", {
             pokemonName: this.preEvolvedPokemonName,
-            evolvedPokemonName: this.pokemon.species.getExpandedSpeciesName(),
+            evolvedPokemonName: this.pokemon.name,
           }),
           null,
           () => this.end(),

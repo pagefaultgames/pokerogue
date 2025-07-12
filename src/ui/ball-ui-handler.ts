@@ -115,7 +115,7 @@ export default class BallUiHandler extends UiHandler {
   updateCounts() {
     this.countsText.setText(
       Object.values(globalScene.pokeballCounts)
-        .map(c => `x${c}`)
+        .map(c => `×${c}`)
         .join("\n"),
     );
   }

@@ -5,8 +5,6 @@ import { randSeedInt, NumberHolder, isNullOrUndefined, type Constructor } from "
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import {
-  getTerrainClearMessage,
-  getTerrainStartMessage,
   getWeatherClearMessage,
   getWeatherStartMessage,
   getLegendaryWeatherContinuesMessage,
@@ -19,7 +17,7 @@ import type { ArenaTag } from "#app/data/arena-tag";
 import { ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { BattlerIndex } from "#enums/battler-index";
-import { Terrain, TerrainType } from "#app/data/terrain";
+import { Terrain, TerrainType, getTerrainClearMessage, getTerrainStartMessage } from "#app/data/terrain";
 import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import type Pokemon from "#app/field/pokemon";
 import Overrides from "#app/overrides";
@@ -445,9 +443,9 @@ export class Arena {
           CommonAnim.MISTY_TERRAIN + (terrain - 1),
         );
       }
-      globalScene.phaseManager.queueMessage(getTerrainStartMessage(terrain)!); // TODO: is this bang correct?
+      globalScene.phaseManager.queueMessage(getTerrainStartMessage(terrain));
     } else {
-      globalScene.phaseManager.queueMessage(getTerrainClearMessage(oldTerrainType)!); // TODO: is this bang correct?
+      globalScene.phaseManager.queueMessage(getTerrainClearMessage(oldTerrainType));
     }
 
     globalScene
@@ -899,7 +897,7 @@ export class Arena {
       case BiomeId.WASTELAND:
         return 6.336;
       case BiomeId.ABYSS:
-        return 5.13;
+        return 20.113;
       case BiomeId.SPACE:
         return 20.036;
       case BiomeId.CONSTRUCTION_SITE:
@@ -983,14 +981,15 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     this.base = globalScene.addFieldSprite(0, 0, "plains_a", undefined, 1);
     this.base.setOrigin(0, 0);
 
-    this.props = !player
-      ? new Array(3).fill(null).map(() => {
-          const ret = globalScene.addFieldSprite(0, 0, "plains_b", undefined, 1);
-          ret.setOrigin(0, 0);
-          ret.setVisible(false);
-          return ret;
-        })
-      : [];
+    this.props = [];
+    if (!player) {
+      for (let i = 0; i < 3; i++) {
+        const ret = globalScene.addFieldSprite(0, 0, "plains_b", undefined, 1);
+        ret.setOrigin(0, 0);
+        ret.setVisible(false);
+        this.props.push(ret);
+      }
+    }
   }
 
   setBiome(biome: BiomeId, propValue?: number): void {
