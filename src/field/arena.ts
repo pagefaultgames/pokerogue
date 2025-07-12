@@ -170,13 +170,10 @@ export class Arena {
 
       if (ret.subLegendary || ret.legendary || ret.mythical) {
         const waveDifficulty = globalScene.gameMode.getWaveForDifficulty(waveIndex);
-        switch (true) {
-          case ret.baseTotal >= 660:
-            regen = waveDifficulty < 80; // Wave 50+ in daily (not possible)
-            break;
-          default:
-            regen = waveDifficulty < 55; // Wave 25+ in daily
-            break;
+        if (ret.baseTotal >= 660) {
+          regen = waveDifficulty < 80; // Wave 50+ in daily (however, max Daily wave is 50 currently so not possible)
+        } else {
+          regen = waveDifficulty < 55; // Wave 25+ in daily
         }
       }
     }
