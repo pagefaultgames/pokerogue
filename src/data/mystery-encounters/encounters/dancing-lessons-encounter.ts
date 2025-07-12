@@ -154,7 +154,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
     }
 
     const oricorioData = new PokemonData(enemyPokemon);
-    const oricorio = globalScene.addEnemyPokemon(species, level, TrainerSlot.NONE, false, false, oricorioData);
+    const oricorio = globalScene.addEnemyPokemon(species, level, TrainerSlot.NONE, false, false, [], oricorioData);
 
     // Adds a real Pokemon sprite to the field (required for the animation)
     for (const enemyPokemon of globalScene.getEnemyParty()) {

@@ -4,7 +4,7 @@ import type { HeldItemId } from "#enums/held-item-id";
 import i18next from "i18next";
 import { HeldItemEffect, HeldItem } from "../held-item";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { allHeldItems } from "../all-held-items";
+import { allHeldItems } from "#app/data/data-lists";
 import { globalScene } from "#app/global-scene";
 
 export interface ItemStealParams {

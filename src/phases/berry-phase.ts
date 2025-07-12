@@ -6,7 +6,8 @@ import { BooleanHolder } from "#app/utils/common";
 import { FieldPhase } from "./field-phase";
 import { globalScene } from "#app/global-scene";
 import type Pokemon from "#app/field/pokemon";
-import { allHeldItems, applyHeldItems } from "#app/items/all-held-items";
+import { applyHeldItems } from "#app/items/all-held-items";
+import { allHeldItems } from "#app/data/data-lists";
 import { HeldItemEffect } from "#app/items/held-item";
 import { HeldItemCategoryId, isItemInCategory } from "#enums/held-item-id";
 

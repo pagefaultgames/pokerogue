@@ -13,7 +13,7 @@ import { SpeciesFormKey } from "#enums/species-form-key";
 import { TimeOfDay } from "#enums/time-of-day";
 import { speciesStarterCosts } from "./starters";
 import i18next from "i18next";
-import { allMoves } from "#app/data/data-lists";
+import { allHeldItems, allMoves } from "#app/data/data-lists";
 import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { HeldItemId } from "#enums/held-item-id";
 
@@ -177,10 +177,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.PARTY_TYPE:
           return globalScene.getPlayerParty().some(p => p.getTypes(false, false, true).includes(cond.pkmnType))
         case EvoCondKey.EVO_TREASURE_TRACKER:
-          return pokemon.getHeldItems().some(m =>
-            m.is("EvoTrackerModifier") &&
-            m.getStackCount() + pokemon.getPersistentTreasureCount() >= cond.value
-          );
+          return allHeldItems[HeldItemId.GIMMIGHOUL_EVO_TRACKER].getStackCount(pokemon) >= cond.value;
         case EvoCondKey.GENDER:
           return pokemon.gender === cond.gender;
         case EvoCondKey.SHEDINJA: // Shedinja cannot be evolved into directly

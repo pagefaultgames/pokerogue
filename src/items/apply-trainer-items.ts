@@ -1,4 +1,4 @@
-import { allTrainerItems } from "./all-trainer-items";
+import { allTrainerItems } from "#app/data/data-lists";
 import {
   type BooleanHolderParams,
   type NumberHolderParams,

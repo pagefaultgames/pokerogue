@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { isNullOrUndefined, pickWeightedIndex } from "#app/utils/common";
 import { RewardTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
-import { allTrainerItems } from "./all-trainer-items";
+import { allTrainerItems } from "#app/data/data-lists";
 import type { TrainerItemPool, TrainerItemTieredPool } from "./trainer-item-data-types";
 import type { TrainerItemManager } from "./trainer-item-manager";
 

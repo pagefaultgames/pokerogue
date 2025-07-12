@@ -7,7 +7,7 @@ import { HeldItemPoolType } from "#enums/modifier-pool-type";
 import type { PokemonType } from "#enums/pokemon-type";
 import { RewardTier } from "#enums/reward-tier";
 import { PERMANENT_STATS } from "#enums/stat";
-import { allHeldItems } from "./all-held-items";
+import { allHeldItems } from "#app/data/data-lists";
 import {
   type HeldItemConfiguration,
   type HeldItemPool,
