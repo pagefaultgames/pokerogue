@@ -2911,6 +2911,19 @@ export default class BattleScene extends SceneBase {
     this.updateUIPositions();
   }
 
+  clearAllItems(): void {
+    this.trainerItems.clearItems();
+    this.enemyTrainerItems.clearItems();
+    for (const p of this.getPlayerParty()) {
+      p.heldItemManager.clearItems();
+    }
+    for (const p of this.getEnemyParty()) {
+      p.heldItemManager.clearItems();
+    }
+    this.updateItems(false);
+    this.updateUIPositions();
+  }
+
   setModifiersVisible(visible: boolean) {
     [this.itemBar, this.enemyItemBar].map(m => m.setVisible(visible));
   }
