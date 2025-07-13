@@ -358,6 +358,7 @@ export class GameStatsUiHandler extends UiHandler {
 
     this.arrowUp = globalScene.add
       .sprite(arrowX, headerBg.height + (isLegacyTheme ? 7 : 3), "prompt") //
+      .setVisible(false)
       .setFlipY(true);
 
     this.gameStatsContainer.add([this.arrowDown, this.arrowUp]);
@@ -366,14 +367,13 @@ export class GameStatsUiHandler extends UiHandler {
 
     this.setCursor(0);
     this.gameStatsContainer.setVisible(false);
-    this.clear();
   }
 
   show(args: any[]): boolean {
     super.show(args);
     this.gameStatsContainer.setActive(true).setVisible(true);
 
-    this.arrowUp.setActive(true).play("prompt");
+    this.arrowUp.setActive(true).play("prompt").setVisible(false);
     this.arrowDown.setActive(true).play("prompt");
     /* `setCursor` handles updating stats if the position is different from before.
        When opening this UI, we want to update stats regardless of the prior position. */
@@ -473,6 +473,7 @@ export class GameStatsUiHandler extends UiHandler {
     this.cursor = newCursor;
 
     this.updateStats();
+    // NOTE: Do not toggle the arrows' "active" property here, as this would cause their animations to desync
     this.arrowUp.setVisible(this.cursor > 0);
     this.arrowDown.setVisible(this.cursor < this.maxCursorPos);
 
@@ -482,8 +483,6 @@ export class GameStatsUiHandler extends UiHandler {
   clear() {
     super.clear();
     this.gameStatsContainer.setVisible(false).setActive(false);
-    this.arrowDown.setVisible(false).setActive(false);
-    this.arrowUp.setVisible(false).setActive(false);
   }
 }
 
