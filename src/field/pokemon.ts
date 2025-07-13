@@ -5619,6 +5619,38 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       globalScene.findModifiers(m => m.is("MoneyMultiplierModifier") || m.is("ExtraModifierModifier")).length
     );
   }
+
+  /**
+   * Determine whether this pokemon is one of the prevolutions of the other pokemon (including stage 1 to stage 3)
+   * @param other - The pokemon to check prevolution against
+   * @returns Whether this Pokemon is a prevolution of the other Pokemon
+   */
+  public isPrevolutionOf(other: Pokemon): boolean {
+    let prevolution: SpeciesId | undefined;
+    while ((prevolution = pokemonPrevolutions[other.species.speciesId])) {
+      if (prevolution === this.species.speciesId) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Determine whether this pokemon can fuse with the other pokemon
+   *
+   * @remarks
+   *
+   * This checks if the two Pokemon are the same species, or if one is a prevolution of the other.
+   * Does not check if one of the pokemon is already a fusion.
+   *
+   * @param other - The pokemon to check fusion compatibility with
+   * @returns Whether this Pokemon can fuse with the other Pokemon.
+   */
+  public isFusionForbidden(other: Pokemon): boolean {
+    return (
+      this.species.speciesId === other.species.speciesId || other.isPrevolutionOf(this) || this.isPrevolutionOf(other)
+    );
+  }
 }
 
 export class PlayerPokemon extends Pokemon {

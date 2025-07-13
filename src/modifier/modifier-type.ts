@@ -100,7 +100,7 @@ import {
 import { ModifierTier } from "#enums/modifier-tier";
 import Overrides from "#app/overrides";
 import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#app/system/voucher";
-import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#app/ui/party-ui-handler";
+import type { PokemonFuseSelectFilter, PokemonMoveSelectFilter, PokemonSelectFilter } from "#app/ui/party-ui-handler";
 import PartyUiHandler from "#app/ui/party-ui-handler";
 import { getModifierTierTextTint } from "#app/ui/text";
 import {
@@ -1264,18 +1264,24 @@ export class FormChangeItemModifierType extends PokemonModifierType implements G
 }
 
 export class FusePokemonModifierType extends PokemonModifierType {
+  public selectFilter: PokemonFuseSelectFilter;
   constructor(localeKey: string, iconImage: string) {
     super(
       localeKey,
       iconImage,
       (_type, args) => new FusePokemonModifier(this, (args[0] as PlayerPokemon).id, (args[1] as PlayerPokemon).id),
-      (pokemon: PlayerPokemon) => {
-        if (pokemon.isFusion()) {
-          return PartyUiHandler.NoEffectMessage;
-        }
-        return null;
-      },
     );
+
+    this.selectFilter = (pokemon: PlayerPokemon, first?: PlayerPokemon) => {
+      if (pokemon.isFusion()) {
+        return PartyUiHandler.NoEffectMessage;
+      }
+      if (first?.isFusionForbidden(pokemon)) {
+        return PartyUiHandler.FusionForbiddenMessage;
+      }
+
+      return null;
+    };
   }
 
   getDescription(): string {
