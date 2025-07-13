@@ -2,7 +2,7 @@ import { UiMode } from "#enums/ui-mode";
 import { TextStyle, addTextObject, getEggTierTextTint, getTextStyleOptions } from "./text";
 import MessageUiHandler from "./message-ui-handler";
 import { fixedInt, randSeedShuffle } from "#app/utils/common";
-import { getEnumValues, getEnumKeys } from "#app/utils/enums";
+import { getEnumValues } from "#app/utils/enums";
 import type { IEggOptions } from "../data/egg";
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
 import { VoucherType, getVoucherTypeIcon } from "../system/voucher";

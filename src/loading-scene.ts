@@ -5,7 +5,7 @@ import { SceneBase } from "#app/scene-base";
 import { WindowVariant, getWindowVariantSuffix } from "#app/ui/ui-theme";
 import { isMobile } from "#app/touch-controls";
 import { localPing, hasAllLocalizedSprites } from "#app/utils/common";
-import { getEnumValues, getEnumKeys } from "#app/utils/enums";
+import { getEnumValues } from "#app/utils/enums";
 import { initPokemonPrevolutions, initPokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import { initBiomes } from "#app/data/balance/biomes";
 import { initEggMoves } from "#app/data/balance/egg-moves";
