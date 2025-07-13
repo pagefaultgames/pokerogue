@@ -1,7 +1,7 @@
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { NumberHolder } from "#app/utils/common";
-import { HeldItemEffect, HeldItem } from "../held-item";
+import { HeldItem, HeldItemEffect } from "../held-item";
 import { TrainerItemEffect } from "../trainer-item";
 
 export interface DamageMoneyRewardParams {

@@ -1,10 +1,10 @@
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import i18next from "i18next";
-import { HeldItemEffect, HeldItem } from "#app/items/held-item";
+import { HeldItem, HeldItemEffect } from "#app/items/held-item";
+import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { toDmgValue } from "#app/utils/common";
-import { getPokemonNameWithAffix } from "#app/messages";
+import i18next from "i18next";
 
 export interface TurnEndHealParams {
   /** The pokemon with the item */

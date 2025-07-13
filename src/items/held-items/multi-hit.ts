@@ -1,8 +1,8 @@
+import { allMoves } from "#app/data/data-lists";
 import type Pokemon from "#app/field/pokemon";
-import { HeldItemEffect, HeldItem } from "#app/items/held-item";
+import { HeldItem, HeldItemEffect } from "#app/items/held-item";
 import { isNullOrUndefined, type NumberHolder } from "#app/utils/common";
 import type { MoveId } from "#enums/move-id";
-import { allMoves } from "#app/data/data-lists";
 import i18next from "i18next";
 
 export interface MultiHitParams {

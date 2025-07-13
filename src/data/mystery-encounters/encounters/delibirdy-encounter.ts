@@ -18,7 +18,11 @@ import {
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
-import { CombinationPokemonRequirement, HoldingItemRequirement, MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import {
+  CombinationPokemonRequirement,
+  HoldingItemRequirement,
+  MoneyRequirement,
+} from "#mystery-encounters/mystery-encounter-requirements";
 import i18next from "#plugins/i18n";
 import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
 import { randSeedItem } from "#utils/common";

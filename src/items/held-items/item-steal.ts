@@ -1,11 +1,11 @@
+import { allHeldItems } from "#app/data/data-lists";
 import Pokemon from "#app/field/pokemon";
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
 import { randSeedFloat } from "#app/utils/common";
 import type { HeldItemId } from "#enums/held-item-id";
 import i18next from "i18next";
-import { HeldItemEffect, HeldItem } from "../held-item";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { allHeldItems } from "#app/data/data-lists";
-import { globalScene } from "#app/global-scene";
+import { HeldItem, HeldItemEffect } from "../held-item";
 
 export interface ItemStealParams {
   /** The pokemon with the item */

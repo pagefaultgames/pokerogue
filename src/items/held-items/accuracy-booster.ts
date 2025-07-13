@@ -1,7 +1,7 @@
 import type Pokemon from "#app/field/pokemon";
 import type { NumberHolder } from "#app/utils/common";
 import type { HeldItemId } from "#enums/held-item-id";
-import { HeldItemEffect, HeldItem } from "../held-item";
+import { HeldItem, HeldItemEffect } from "../held-item";
 
 export interface AccuracyBoostParams {
   /** The pokemon with the item */

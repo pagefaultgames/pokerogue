@@ -1,9 +1,9 @@
-import { HeldItemNames, HeldItemId } from "#enums/held-item-id";
+import type Pokemon from "#app/field/pokemon";
+import { HeldItem, HeldItemEffect } from "#app/items/held-item";
+import type { NumberHolder } from "#app/utils/common";
+import { HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import { PokemonType } from "#enums/pokemon-type";
 import i18next from "i18next";
-import type { NumberHolder } from "#app/utils/common";
-import type Pokemon from "#app/field/pokemon";
-import { HeldItemEffect, HeldItem } from "#app/items/held-item";
 
 export interface AttackTypeBoostParams {
   /** The pokemon with the item */

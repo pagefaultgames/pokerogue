@@ -1,4 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { allTrainerItems } from "#app/data/data-lists";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
 import { modifierTypes } from "#data/data-lists";
@@ -6,6 +7,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import {
   leaveEncounterWithoutBattle,
   setEncounterExp,
@@ -23,8 +25,6 @@ import {
 import { EXTORTION_ABILITIES, EXTORTION_MOVES } from "#mystery-encounters/requirement-groups";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
-import { allTrainerItems } from "#app/data/data-lists";
-import { TrainerItemId } from "#enums/trainer-item-id";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/anOfferYouCantRefuse";

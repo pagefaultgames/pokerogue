@@ -4,7 +4,7 @@ import type { NumberHolder } from "#app/utils/common";
 import { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
-import { HeldItemEffect, HeldItem } from "../held-item";
+import { HeldItem, HeldItemEffect } from "../held-item";
 
 export interface StatBoostParams {
   /** The pokemon with the item */

@@ -1,15 +1,15 @@
+import { getStatusEffectDescriptor, getStatusEffectHealText } from "#app/data/status-effect";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import { hslToHex, randSeedFloat, toDmgValue, type BooleanHolder, type NumberHolder } from "#app/utils/common";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { addTextObject, TextStyle } from "#app/ui/text";
+import { type BooleanHolder, hslToHex, type NumberHolder, randSeedFloat, toDmgValue } from "#app/utils/common";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { getStatKey, Stat, type TempBattleStat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemId, TrainerItemNames } from "#enums/trainer-item-id";
 import i18next from "i18next";
 import type { TrainerItemManager } from "./trainer-item-manager";
-import { addTextObject, TextStyle } from "#app/ui/text";
-import { getStatKey, Stat, type TempBattleStat } from "#enums/stat";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { getStatusEffectDescriptor, getStatusEffectHealText } from "#app/data/status-effect";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { StatusEffect } from "#enums/status-effect";
 
 export const TrainerItemEffect = {
   LEVEL_INCREMENT_BOOSTER: 1,

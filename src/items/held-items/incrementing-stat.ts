@@ -1,8 +1,8 @@
 import type Pokemon from "#app/field/pokemon";
-import { HeldItemEffect, HeldItem } from "../held-item";
-import { Stat } from "#enums/stat";
 import type { NumberHolder } from "#app/utils/common";
+import { Stat } from "#enums/stat";
 import i18next from "i18next";
+import { HeldItem, HeldItemEffect } from "../held-item";
 
 export interface IncrementingStatParams {
   /** The pokemon with the item */

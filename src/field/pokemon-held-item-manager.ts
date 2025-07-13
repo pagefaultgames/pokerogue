@@ -1,22 +1,22 @@
 import { allHeldItems } from "#app/data/data-lists";
 import {
   type HeldItemCategoryId,
+  type HeldItemId,
   isCategoryId,
   isItemInCategory,
   isItemInRequested,
-  type HeldItemId,
 } from "#app/enums/held-item-id";
-import type { FormChangeItem } from "#enums/form-change-item";
 import {
-  type HeldItemConfiguration,
-  isHeldItemSpecs,
-  type HeldItemDataMap,
-  type HeldItemSpecs,
   type FormChangeItemPropertyMap,
   type FormChangeItemSpecs,
+  type HeldItemConfiguration,
+  type HeldItemDataMap,
   type HeldItemSaveData,
+  type HeldItemSpecs,
+  isHeldItemSpecs,
 } from "#app/items/held-item-data-types";
 import { getTypedEntries, getTypedKeys } from "#app/utils/common";
+import type { FormChangeItem } from "#enums/form-change-item";
 
 export class PokemonItemManager {
   public heldItems: HeldItemDataMap;

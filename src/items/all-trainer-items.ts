@@ -24,8 +24,8 @@ import {
   TempAccuracyBoosterTrainerItem,
   TempCritBoosterTrainerItem,
   TempStatStageBoosterTrainerItem,
-  tempStatToTrainerItem,
   TrainerItem,
+  tempStatToTrainerItem,
 } from "./trainer-item";
 
 export function initTrainerItems() {

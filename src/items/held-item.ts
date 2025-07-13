@@ -1,7 +1,7 @@
 import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import { HeldItemNames, type HeldItemId } from "#enums/held-item-id";
+import { type HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import i18next from "i18next";
 
 // TODO: this should be moved to its own file

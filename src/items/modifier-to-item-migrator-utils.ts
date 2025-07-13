@@ -2,12 +2,12 @@ import type ModifierData from "#app/system/modifier-data";
 import type { BerryType } from "#enums/berry-type";
 import { HeldItemId } from "#enums/held-item-id";
 import type { PokemonType } from "#enums/pokemon-type";
-import { Stat, type PermanentStat } from "#enums/stat";
+import { SpeciesId } from "#enums/species-id";
+import { type PermanentStat, Stat } from "#enums/stat";
 import type { PokemonItemMap } from "./held-item-data-types";
 import { attackTypeToHeldItem } from "./held-items/attack-type-booster";
 import { permanentStatToHeldItem } from "./held-items/base-stat-booster";
 import { berryTypeToHeldItem } from "./held-items/berry";
-import { SpeciesId } from "#enums/species-id";
 
 const uniqueModifierToItem = {
   EvoTrackerModifier: HeldItemId.GIMMIGHOUL_EVO_TRACKER,

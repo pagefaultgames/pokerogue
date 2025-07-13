@@ -2,9 +2,9 @@ import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
-import i18next from "i18next";
-import { HeldItemEffect, HeldItem } from "../held-item";
 import { TrainerItemId } from "#enums/trainer-item-id";
+import i18next from "i18next";
+import { HeldItem, HeldItemEffect } from "../held-item";
 
 export interface EvoTrackerParams {
   /** The pokemon with the item */

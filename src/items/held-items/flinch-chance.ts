@@ -1,5 +1,5 @@
 import type Pokemon from "#app/field/pokemon";
-import { HeldItemEffect, HeldItem } from "#app/items/held-item";
+import { HeldItem, HeldItemEffect } from "#app/items/held-item";
 import type { BooleanHolder } from "#app/utils/common";
 import type { HeldItemId } from "#enums/held-item-id";
 

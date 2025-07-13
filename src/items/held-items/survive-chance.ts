@@ -1,9 +1,9 @@
 import type Pokemon from "#app/field/pokemon";
-import { HeldItemEffect, HeldItem } from "#app/items/held-item";
-import type { BooleanHolder } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
-import i18next from "i18next";
+import { HeldItem, HeldItemEffect } from "#app/items/held-item";
 import { getPokemonNameWithAffix } from "#app/messages";
+import type { BooleanHolder } from "#app/utils/common";
+import i18next from "i18next";
 
 export interface SurviveChanceParams {
   /** The pokemon with the item */

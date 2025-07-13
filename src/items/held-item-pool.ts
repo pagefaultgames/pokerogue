@@ -1,5 +1,6 @@
-import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import { allHeldItems } from "#app/data/data-lists";
 import type Pokemon from "#app/field/pokemon";
+import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { coerceArray, getEnumValues, isNullOrUndefined, pickWeightedIndex, randSeedInt } from "#app/utils/common";
 import { BerryType } from "#enums/berry-type";
 import { HeldItemCategoryId, HeldItemId, HeldItemNames, isCategoryId } from "#enums/held-item-id";
@@ -7,7 +8,6 @@ import { HeldItemPoolType } from "#enums/modifier-pool-type";
 import type { PokemonType } from "#enums/pokemon-type";
 import { RewardTier } from "#enums/reward-tier";
 import { PERMANENT_STATS } from "#enums/stat";
-import { allHeldItems } from "#app/data/data-lists";
 import {
   type HeldItemConfiguration,
   type HeldItemPool,

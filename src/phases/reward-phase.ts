@@ -1,6 +1,6 @@
-import { globalScene } from "#app/global-scene";
-import { TrainerItemReward, type ModifierType } from "#app/modifier/modifier-type";
 import type { ModifierTypeFunc } from "#app/@types/modifier-types";
+import { globalScene } from "#app/global-scene";
+import { type ModifierType, TrainerItemReward } from "#app/modifier/modifier-type";
 import { getModifierType } from "#app/utils/modifier-utils";
 import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";

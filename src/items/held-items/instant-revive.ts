@@ -1,11 +1,11 @@
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import i18next from "i18next";
-import { ConsumableHeldItem, HeldItemEffect } from "../held-item";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { toDmgValue } from "#app/utils/common";
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import i18next from "i18next";
+import { ConsumableHeldItem, HeldItemEffect } from "../held-item";
 
 export interface InstantReviveParams {
   /** The pokemon with the item */
