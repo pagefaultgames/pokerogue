@@ -320,7 +320,6 @@ export function getTextStyleOptions(
       styleOptions.fontSize = defaultFontSize;
       break;
     case TextStyle.HEADER_LABEL: {
-      let fontSizeValue = "96px";
       switch (lang) {
         case "ja":
           styleOptions.padding = { top: 6 };
