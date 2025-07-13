@@ -5,8 +5,8 @@ import { HeldItemId } from "#enums/held-item-id";
 import { BerryUsedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { ConsumableHeldItem, HeldItemEffect } from "#items/held-item";
+import { TrainerItemEffect } from "#items/trainer-item";
 import { BooleanHolder } from "#utils/common";
-import { TrainerItemEffect } from "../trainer-item";
 
 interface BerryTypeToHeldItemMap {
   [key: number]: HeldItemId;

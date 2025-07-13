@@ -5,8 +5,8 @@ import {
   type PokemonParams,
   type PreserveBerryParams,
   TrainerItemEffect,
-} from "./trainer-item";
-import type { TrainerItemManager } from "./trainer-item-manager";
+} from "#items/trainer-item";
+import type { TrainerItemManager } from "#items/trainer-item-manager";
 
 export type ApplyTrainerItemsParams = {
   [TrainerItemEffect.LEVEL_INCREMENT_BOOSTER]: NumberHolderParams;

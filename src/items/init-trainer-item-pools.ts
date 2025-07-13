@@ -1,6 +1,6 @@
 import { RewardTier } from "#enums/reward-tier";
 import { TrainerItemId } from "#enums/trainer-item-id";
-import { enemyBuffTokenPool } from "./trainer-item-pool";
+import { enemyBuffTokenPool } from "#items/trainer-item-pool";
 
 /**
  * Initialize the enemy buff modifier pool

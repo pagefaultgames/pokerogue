@@ -1,6 +1,6 @@
 import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { RewardTier } from "#enums/reward-tier";
-import { dailyStarterHeldItemPool, trainerHeldItemPool, wildHeldItemPool } from "./held-item-pool";
+import { dailyStarterHeldItemPool, trainerHeldItemPool, wildHeldItemPool } from "#items/held-item-pool";
 
 /**
  * Initialize the wild held item pool

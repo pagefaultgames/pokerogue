@@ -6,7 +6,9 @@ import type { PokemonType } from "#enums/pokemon-type";
 import { RewardTier } from "#enums/reward-tier";
 import { PERMANENT_STATS } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
-import { coerceArray, getEnumValues, isNullOrUndefined, pickWeightedIndex, randSeedInt } from "#utils/common";
+import { attackTypeToHeldItem } from "#items/attack-type-booster";
+import { permanentStatToHeldItem } from "#items/base-stat-booster";
+import { berryTypeToHeldItem } from "#items/berry";
 import {
   type HeldItemConfiguration,
   type HeldItemPool,
@@ -18,10 +20,8 @@ import {
   isHeldItemCategoryEntry,
   isHeldItemPool,
   isHeldItemSpecs,
-} from "./held-item-data-types";
-import { attackTypeToHeldItem } from "./held-items/attack-type-booster";
-import { permanentStatToHeldItem } from "./held-items/base-stat-booster";
-import { berryTypeToHeldItem } from "./held-items/berry";
+} from "#items/held-item-data-types";
+import { coerceArray, getEnumValues, isNullOrUndefined, pickWeightedIndex, randSeedInt } from "#utils/common";
 
 export const wildHeldItemPool: HeldItemTieredPool = {};
 

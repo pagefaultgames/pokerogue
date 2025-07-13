@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
 import { type ModifierType, TrainerItemReward } from "#modifiers/modifier-type";
+import { BattlePhase } from "#phases/battle-phase";
 import type { ModifierTypeFunc } from "#types/modifier-types";
 import { getModifierType } from "#utils/modifier-utils";
 import i18next from "i18next";
-import { BattlePhase } from "./battle-phase";
 
 export class RewardPhase extends BattlePhase {
   // RibbonRewardPhase extends RewardPhase and to make typescript happy

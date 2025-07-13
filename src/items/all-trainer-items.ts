@@ -26,7 +26,7 @@ import {
   TempStatStageBoosterTrainerItem,
   TrainerItem,
   tempStatToTrainerItem,
-} from "./trainer-item";
+} from "#items/trainer-item";
 
 export function initTrainerItems() {
   allTrainerItems[TrainerItemId.MAP] = new TrainerItem(TrainerItemId.MAP, 1);
