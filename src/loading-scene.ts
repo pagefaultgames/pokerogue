@@ -17,7 +17,7 @@ import { initTrainerItems } from "#items/all-trainer-items";
 import { initHeldItemPools } from "#items/init-held-item-pools";
 import { initTrainerItemPools } from "#items/init-trainer-item-pools";
 import { initModifierPools } from "#modifiers/init-modifier-pools";
-import { initModifierTypes } from "#modifiers/modifier-type";
+import { initRewards } from "#modifiers/modifier-type";
 import { initMoves } from "#moves/move";
 import { initMysteryEncounters } from "#mystery-encounters/mystery-encounters";
 import { CacheBustedLoaderPlugin } from "#plugins/cache-busted-loader-plugin";
@@ -369,7 +369,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadLoadingScreen();
 
-    initModifierTypes();
+    initRewards();
     initModifierPools();
     initHeldItemPools();
     initTrainerItemPools();

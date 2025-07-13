@@ -18,7 +18,7 @@ export class BaseStatFlatHeldItem extends HeldItem {
   public isTransferable = false;
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.PokemonBaseStatFlatModifierType.description");
+    return i18next.t("modifierType:ModifierType.PokemonBaseStatFlatReward.description");
   }
 
   /**

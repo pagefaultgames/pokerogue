@@ -466,7 +466,7 @@ export class TimedEventManager {
 
   /**
    * For events where Delibirdy gives extra items
-   * @returns list of ids of {@linkcode ModifierType}s that Delibirdy hands out as a bonus
+   * @returns list of ids of {@linkcode Reward}s that Delibirdy hands out as a bonus
    */
   getDelibirdyBuff(): TrainerItemId[] {
     const ret: TrainerItemId[] = [];

@@ -31,8 +31,8 @@ import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
-import type { CustomModifierSettings, ModifierType } from "#modifiers/modifier-type";
-import { getPartyLuckValue, ModifierTypeGenerator, ModifierTypeOption } from "#modifiers/modifier-type";
+import type { CustomModifierSettings, Reward } from "#modifiers/modifier-type";
+import { getPartyLuckValue, RewardGenerator, RewardOption } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
 import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
@@ -479,22 +479,20 @@ export function updatePlayerMoney(changeValue: number, playSound = true, showMes
  * @param modifier
  * @param pregenArgs Can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
  */
-export function generateModifierType(modifier: () => ModifierType, pregenArgs?: any[]): ModifierType | null {
+export function generateReward(modifier: () => Reward, pregenArgs?: any[]): Reward | null {
   const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifier);
   if (!modifierId) {
     return null;
   }
 
-  let result: ModifierType = modifierTypes[modifierId]();
+  let result: Reward = modifierTypes[modifierId]();
 
   // Populates item id and tier (order matters)
   result = result
     .withIdFromFunc(modifierTypes[modifierId])
     .withTierFromPool(ModifierPoolType.PLAYER, globalScene.getPlayerParty());
 
-  return result instanceof ModifierTypeGenerator
-    ? result.generateType(globalScene.getPlayerParty(), pregenArgs)
-    : result;
+  return result instanceof RewardGenerator ? result.generateType(globalScene.getPlayerParty(), pregenArgs) : result;
 }
 
 /**
@@ -502,13 +500,10 @@ export function generateModifierType(modifier: () => ModifierType, pregenArgs?: 
  * @param modifier
  * @param pregenArgs - can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
  */
-export function generateModifierTypeOption(
-  modifier: () => ModifierType,
-  pregenArgs?: any[],
-): ModifierTypeOption | null {
-  const result = generateModifierType(modifier, pregenArgs);
+export function generateRewardOption(modifier: () => Reward, pregenArgs?: any[]): RewardOption | null {
+  const result = generateReward(modifier, pregenArgs);
   if (result) {
-    return new ModifierTypeOption(result, 0);
+    return new RewardOption(result, 0);
   }
   return result;
 }

@@ -11,7 +11,7 @@ import { initTrainerItems } from "#items/all-trainer-items";
 import { initHeldItemPools } from "#items/init-held-item-pools";
 import { initTrainerItemPools } from "#items/init-trainer-item-pools";
 import { initModifierPools } from "#modifiers/init-modifier-pools";
-import { initModifierTypes } from "#modifiers/modifier-type";
+import { initRewards } from "#modifiers/modifier-type";
 import { initMoves } from "#moves/move";
 import { initMysteryEncounters } from "#mystery-encounters/mystery-encounters";
 import { initI18n } from "#plugins/i18n";
@@ -98,7 +98,7 @@ export function initTestFile() {
     initHeldItemPools();
     initTrainerItems();
     initTrainerItemPools();
-    initModifierTypes();
+    initRewards();
     initModifierPools();
     initVouchers();
     initAchievements();

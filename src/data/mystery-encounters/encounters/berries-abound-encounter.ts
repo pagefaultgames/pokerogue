@@ -11,12 +11,12 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PERMANENT_STATS, Stat } from "#enums/stat";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { berryTypeToHeldItem } from "#items/berry";
-import type { ModifierTypeOption } from "#modifiers/modifier-type";
+import type { RewardOption } from "#modifiers/modifier-type";
 import { regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
 import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  generateModifierTypeOption,
+  generateRewardOption,
   getRandomEncounterSpecies,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
@@ -158,20 +158,16 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
         }
       };
 
-      const shopOptions: ModifierTypeOption[] = [];
+      const shopOptions: RewardOption[] = [];
       for (let i = 0; i < 5; i++) {
         // Generate shop berries
-        const mod = generateModifierTypeOption(modifierTypes.BERRY);
+        const mod = generateRewardOption(modifierTypes.BERRY);
         if (mod) {
           shopOptions.push(mod);
         }
       }
 
-      setEncounterRewards(
-        { guaranteedModifierTypeOptions: shopOptions, fillRemaining: false },
-        undefined,
-        doBerryRewards,
-      );
+      setEncounterRewards({ guaranteedRewardOptions: shopOptions, fillRemaining: false }, undefined, doBerryRewards);
       await initBattleWithEnemyConfig(globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
     },
   )
@@ -189,10 +185,10 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
         const speedDiff = fastestPokemon.getStat(Stat.SPD) / (enemySpeed * 1.1);
         const numBerries: number = encounter.misc.numBerries;
 
-        const shopOptions: ModifierTypeOption[] = [];
+        const shopOptions: RewardOption[] = [];
         for (let i = 0; i < 5; i++) {
           // Generate shop berries
-          const mod = generateModifierTypeOption(modifierTypes.BERRY);
+          const mod = generateRewardOption(modifierTypes.BERRY);
           if (mod) {
             shopOptions.push(mod);
           }
@@ -245,7 +241,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
           };
           setEncounterRewards(
             {
-              guaranteedModifierTypeOptions: shopOptions,
+              guaranteedRewardOptions: shopOptions,
               fillRemaining: false,
             },
             undefined,
@@ -278,7 +274,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
         setEncounterExp(fastestPokemon.id, encounter.enemyPartyConfigs[0].pokemonConfigs![0].species.baseExp);
         setEncounterRewards(
           {
-            guaranteedModifierTypeOptions: shopOptions,
+            guaranteedRewardOptions: shopOptions,
             fillRemaining: false,
           },
           undefined,

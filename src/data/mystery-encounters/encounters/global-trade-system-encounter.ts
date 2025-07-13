@@ -22,8 +22,8 @@ import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
 import { getHeldItemTier } from "#items/held-item-tiers";
 import { TrainerItemEffect } from "#items/trainer-item";
-import type { ModifierTypeOption } from "#modifiers/modifier-type";
-import { getPlayerModifierTypeOptions, regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
+import type { RewardOption } from "#modifiers/modifier-type";
+import { getPlayerRewardOptions, regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
 import { getEncounterText, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
@@ -421,10 +421,10 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         }
 
         regenerateModifierPoolThresholds(party, ModifierPoolType.PLAYER, 0);
-        let item: ModifierTypeOption | null = null;
+        let item: RewardOption | null = null;
         // TMs excluded from possible rewards
         while (!item || item.type.id.includes("TM_")) {
-          item = getPlayerModifierTypeOptions(1, party, [], {
+          item = getPlayerRewardOptions(1, party, [], {
             guaranteedModifierTiers: [tier],
             allowLuckUpgrades: false,
           })[0];
@@ -432,7 +432,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
 
         encounter.setDialogueToken("itemName", item.type.name);
         setEncounterRewards({
-          guaranteedModifierTypeOptions: [item],
+          guaranteedRewardOptions: [item],
           fillRemaining: false,
         });
 

@@ -94,14 +94,13 @@ import {
 } from "#items/trainer-item-data-types";
 import { TrainerItemManager } from "#items/trainer-item-manager";
 import { getNewTrainerItemFromPool } from "#items/trainer-item-pool";
-import type { Modifier } from "#modifiers/modifier";
 import {
-  ConsumableModifier,
-  ConsumablePokemonModifier,
-  FusePokemonModifier,
-  PokemonHpRestoreModifier,
-  RememberMoveModifier,
-} from "#modifiers/modifier";
+  Consumable,
+  FusePokemonConsumable,
+  PokemonConsumable,
+  PokemonHpRestoreConsumable,
+  RememberMoveConsumable,
+} from "#modifiers/consumable";
 import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#modifiers/modifier-type";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
@@ -112,7 +111,7 @@ import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant } from "#sprites/variant";
 import { clearVariantData, variantData } from "#sprites/variant";
 import type { Achv } from "#system/achv";
-import { achvs, HeldItemAchv, ModifierAchv, MoneyAchv } from "#system/achv";
+import { achvs, HeldItemAchv, MoneyAchv } from "#system/achv";
 import { GameData } from "#system/game-data";
 import { initGameSpeed } from "#system/game-speed";
 import type { PokemonData } from "#system/pokemon-data";
@@ -2650,7 +2649,7 @@ export class BattleScene extends SceneBase {
     applyTrainerItems(effect, this.trainerItems, params);
   }
 
-  addModifier(modifier: Modifier | null, playSound?: boolean, instant?: boolean, cost?: number): boolean {
+  addModifier(modifier: Consumable | null, playSound?: boolean, instant?: boolean, cost?: number): boolean {
     // We check against modifier.type to stop a bug related to loading in a pokemon that has a form change item, which prior to some patch
     // that changed form change modifiers worked, had previously set the `type` field to null.
     // TODO: This is not the right place to check for this; it should ideally go in a session migrator.
@@ -2659,28 +2658,27 @@ export class BattleScene extends SceneBase {
     }
     let success = false;
     const soundName = modifier.type.soundName;
-    this.validateAchvs(ModifierAchv, modifier);
-    if (modifier instanceof ConsumableModifier) {
+    if (modifier instanceof Consumable) {
       if (playSound && !this.sound.get(soundName)) {
         this.playSound(soundName);
       }
 
-      if (modifier instanceof ConsumablePokemonModifier) {
+      if (modifier instanceof PokemonConsumable) {
         for (const p in this.party) {
           const pokemon = this.party[p];
 
           const args: unknown[] = [];
-          if (modifier instanceof PokemonHpRestoreModifier) {
-            if (!(modifier as PokemonHpRestoreModifier).fainted) {
+          if (modifier instanceof PokemonHpRestoreConsumable) {
+            if (!(modifier as PokemonHpRestoreConsumable).fainted) {
               const hpRestoreMultiplier = new NumberHolder(1);
               this.applyPlayerItems(TrainerItemEffect.HEALING_BOOSTER, { numberHolder: hpRestoreMultiplier });
               args.push(hpRestoreMultiplier.value);
             } else {
               args.push(1);
             }
-          } else if (modifier instanceof FusePokemonModifier) {
+          } else if (modifier instanceof FusePokemonConsumable) {
             args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
-          } else if (modifier instanceof RememberMoveModifier && !isNullOrUndefined(cost)) {
+          } else if (modifier instanceof RememberMoveConsumable && !isNullOrUndefined(cost)) {
             args.push(cost);
           }
 

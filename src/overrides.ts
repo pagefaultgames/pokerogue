@@ -248,16 +248,16 @@ class DefaultOverrides {
   // -------------------------
   /**
    * Overrides labeled `MODIFIER` deal with any modifier so long as it doesn't require a party
-   * member to hold it (typically this is, extends, or generates a {@linkcode ModifierType}),
+   * member to hold it (typically this is, extends, or generates a {@linkcode Reward}),
    * like `EXP_SHARE`, `CANDY_JAR`, etc.
    *
    * Overrides labeled `HELD_ITEM` specifically pertain to any entry in {@linkcode modifierTypes} that
-   * extends, or generates a {@linkcode PokemonHeldItemModifierType}, like `SOUL_DEW`, `TOXIC_ORB`, etc.
+   * extends, or generates a {@linkcode PokemonHeldItemReward}, like `SOUL_DEW`, `TOXIC_ORB`, etc.
    *
    * Note that, if count is not provided, it will default to 1.
    *
    * Additionally, note that some held items and modifiers are grouped together via
-   * a {@linkcode ModifierTypeGenerator} and require pre-generation arguments to get
+   * a {@linkcode RewardGenerator} and require pre-generation arguments to get
    * a specific item from that group. If a type is not set, the generator will either
    * use the party to weight item choice or randomly pick an item.
    *

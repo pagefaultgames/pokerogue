@@ -1,4 +1,4 @@
-import type { ModifierTypeKeys } from "#modifiers/modifier-type";
+import type { RewardKeys } from "#modifiers/modifier-type";
 import { itemPoolChecks } from "#modifiers/modifier-type";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { expect } from "vitest";
@@ -11,7 +11,7 @@ export class ModifierHelper extends GameManagerHelper {
    * @param modifier The Modifier to add.
    * @returns `this`
    */
-  addCheck(modifier: ModifierTypeKeys): this {
+  addCheck(modifier: RewardKeys): this {
     itemPoolChecks.set(modifier, undefined);
     return this;
   }
@@ -27,7 +27,7 @@ export class ModifierHelper extends GameManagerHelper {
    * @param modifier
    * @returns
    */
-  getCheck(modifier: ModifierTypeKeys): boolean | undefined {
+  getCheck(modifier: RewardKeys): boolean | undefined {
     return itemPoolChecks.get(modifier);
   }
 
@@ -39,7 +39,7 @@ export class ModifierHelper extends GameManagerHelper {
    * @param expectToBePreset Whether the Modifier should be in the Modifier Pool. Set to `false` to expect it to be absent instead.
    * @returns `this`
    */
-  testCheck(modifier: ModifierTypeKeys, expectToBePreset: boolean): this {
+  testCheck(modifier: RewardKeys, expectToBePreset: boolean): this {
     if (expectToBePreset) {
       expect(itemPoolChecks.get(modifier)).toBeTruthy();
     }

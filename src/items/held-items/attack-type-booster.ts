@@ -57,7 +57,7 @@ export class AttackTypeBoosterHeldItem extends HeldItem {
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.AttackTypeBoosterModifierType.description", {
+    return i18next.t("modifierType:ModifierType.AttackTypeBoosterReward.description", {
       moveType: i18next.t(`pokemonInfo:Type.${PokemonType[this.moveType]}`),
     });
   }

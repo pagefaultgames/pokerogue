@@ -38,26 +38,26 @@ import {
 } from "#items/stat-booster";
 import { TrainerItemEffect, tempStatToTrainerItem } from "#items/trainer-item";
 import {
-  AddPokeballModifier,
-  AddVoucherModifier,
-  EvolutionItemModifier,
-  FusePokemonModifier,
-  type Modifier,
-  MoneyRewardModifier,
-  PokemonAllMovePpRestoreModifier,
-  PokemonHpRestoreModifier,
-  PokemonLevelIncrementModifier,
-  PokemonNatureChangeModifier,
-  PokemonPpRestoreModifier,
-  PokemonPpUpModifier,
-  PokemonStatusHealModifier,
-  RememberMoveModifier,
-  TerrastalizeModifier,
-  TmModifier,
-} from "#modifiers/modifier";
+  AddPokeballConsumable,
+  AddVoucherConsumable,
+  type Consumable,
+  EvolutionItemConsumable,
+  FusePokemonConsumable,
+  MoneyRewardConsumable,
+  PokemonAllMovePpRestoreConsumable,
+  PokemonHpRestoreConsumable,
+  PokemonLevelIncrementConsumable,
+  PokemonNatureChangeConsumable,
+  PokemonPpRestoreConsumable,
+  PokemonPpUpConsumable,
+  PokemonStatusHealConsumable,
+  RememberMoveConsumable,
+  TerrastalizeConsumable,
+  TmConsumable,
+} from "#modifiers/consumable";
 import type { PokemonMove } from "#moves/pokemon-move";
 import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#system/voucher";
-import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#types/modifier-types";
+import type { RewardFunc, WeightedRewardWeightFunc } from "#types/modifier-types";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getModifierTierTextTint } from "#ui/text";
@@ -73,24 +73,24 @@ import {
 import { getModifierPoolForType } from "#utils/modifier-utils";
 import i18next from "i18next";
 
-type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier | null;
+type NewConsumableFunc = (type: Reward, args: any[]) => Consumable | null;
 
-export class ModifierType {
+export class Reward {
   public id: string;
   public localeKey: string;
   public iconImage: string;
   public group: string;
   public soundName: string;
   public tier: RewardTier;
-  protected newModifierFunc: NewModifierFunc | null;
+  protected newConsumableFunc: NewConsumableFunc | null;
 
   /**
    * Checks if the modifier type is of a specific type
    * @param modifierType - The type to check against
    * @return Whether the modifier type is of the specified type
    */
-  public is<K extends ModifierTypeString>(modifierType: K): this is ModifierTypeInstanceMap[K] {
-    const targetType = ModifierTypeConstructorMap[modifierType];
+  public is<K extends RewardString>(modifierType: K): this is RewardInstanceMap[K] {
+    const targetType = RewardConstructorMap[modifierType];
     if (!targetType) {
       return false;
     }
@@ -100,7 +100,7 @@ export class ModifierType {
   constructor(
     localeKey: string | null,
     iconImage: string | null,
-    newModifierFunc: NewModifierFunc | null,
+    newConsumableFunc: NewConsumableFunc | null,
     group?: string,
     soundName?: string,
   ) {
@@ -108,7 +108,7 @@ export class ModifierType {
     this.iconImage = iconImage!; // TODO: is this bang correct?
     this.group = group!; // TODO: is this bang correct?
     this.soundName = soundName ?? "se/restore";
-    this.newModifierFunc = newModifierFunc;
+    this.newConsumableFunc = newConsumableFunc;
   }
 
   get name(): string {
@@ -128,31 +128,31 @@ export class ModifierType {
   }
 
   /**
-   * Populates item id for ModifierType instance
+   * Populates item id for Reward instance
    * @param func
    */
-  withIdFromFunc(func: ModifierTypeFunc): ModifierType {
+  withIdFromFunc(func: RewardFunc): Reward {
     this.id = Object.keys(modifierTypeInitObj).find(k => modifierTypeInitObj[k] === func)!; // TODO: is this bang correct?
     return this;
   }
 
   /**
-   * Populates item tier for ModifierType instance
+   * Populates item tier for Reward instance
    * Tier is a necessary field for items that appear in player shop (determines the Pokeball visual they use)
    * To find the tier, this function performs a reverse lookup of the item type in modifier pools
    * It checks the weight of the item and will use the first tier for which the weight is greater than 0
    * This is to allow items to be in multiple item pools depending on the conditions, for example for events
    * If all tiers have a weight of 0 for the item, the first tier where the item was found is used
    * @param poolType Default 'ModifierPoolType.PLAYER'. Which pool to lookup item tier from
-   * @param party optional. Needed to check the weight of modifiers with conditional weight (see {@linkcode WeightedModifierTypeWeightFunc})
+   * @param party optional. Needed to check the weight of modifiers with conditional weight (see {@linkcode WeightedRewardWeightFunc})
    *  if not provided or empty, the weight check will be ignored
-   * @param rerollCount Default `0`. Used to check the weight of modifiers with conditional weight (see {@linkcode WeightedModifierTypeWeightFunc})
+   * @param rerollCount Default `0`. Used to check the weight of modifiers with conditional weight (see {@linkcode WeightedRewardWeightFunc})
    */
   withTierFromPool(
     poolType: ModifierPoolType = ModifierPoolType.PLAYER,
     party?: PlayerPokemon[],
     rerollCount = 0,
-  ): ModifierType {
+  ): Reward {
     let defaultTier: undefined | RewardTier;
     for (const tier of Object.values(getModifierPoolForType(poolType))) {
       for (const modifier of tier) {
@@ -183,18 +183,18 @@ export class ModifierType {
     return this;
   }
 
-  newModifier(...args: any[]): Modifier | null {
+  newModifier(...args: any[]): Consumable | null {
     // biome-ignore lint/complexity/useOptionalChain: Changing to optional would coerce null return into undefined
-    return this.newModifierFunc && this.newModifierFunc(this, args);
+    return this.newConsumableFunc && this.newConsumableFunc(this, args);
   }
 }
 
-type ModifierTypeGeneratorFunc = (party: Pokemon[], pregenArgs?: any[]) => ModifierType | null;
+type RewardGeneratorFunc = (party: Pokemon[], pregenArgs?: any[]) => Reward | null;
 
-export class ModifierTypeGenerator extends ModifierType {
-  private genTypeFunc: ModifierTypeGeneratorFunc;
+export class RewardGenerator extends Reward {
+  private genTypeFunc: RewardGeneratorFunc;
 
-  constructor(genTypeFunc: ModifierTypeGeneratorFunc) {
+  constructor(genTypeFunc: RewardGeneratorFunc) {
     super(null, null, null);
     this.genTypeFunc = genTypeFunc;
   }
@@ -209,29 +209,35 @@ export class ModifierTypeGenerator extends ModifierType {
   }
 }
 
-export interface GeneratedPersistentModifierType {
+export interface GeneratedPersistentReward {
   getPregenArgs(): any[];
 }
 
-export class AddPokeballModifierType extends ModifierType {
+export class AddPokeballConsumableType extends Reward {
   private pokeballType: PokeballType;
   private count: number;
 
   constructor(iconImage: string, pokeballType: PokeballType, count: number) {
-    super("", iconImage, (_type, _args) => new AddPokeballModifier(this, pokeballType, count), "pb", "se/pb_bounce_1");
+    super(
+      "",
+      iconImage,
+      (_type, _args) => new AddPokeballConsumable(this, pokeballType, count),
+      "pb",
+      "se/pb_bounce_1",
+    );
     this.pokeballType = pokeballType;
     this.count = count;
   }
 
   get name(): string {
-    return i18next.t("modifierType:ModifierType.AddPokeballModifierType.name", {
+    return i18next.t("modifierType:ModifierType.AddPokeballConsumableType.name", {
       modifierCount: this.count,
       pokeballName: getPokeballName(this.pokeballType),
     });
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.AddPokeballModifierType.description", {
+    return i18next.t("modifierType:ModifierType.AddPokeballConsumableType.description", {
       modifierCount: this.count,
       pokeballName: getPokeballName(this.pokeballType),
       catchRate:
@@ -243,7 +249,7 @@ export class AddPokeballModifierType extends ModifierType {
   }
 }
 
-export class AddVoucherModifierType extends ModifierType {
+export class AddVoucherConsumableType extends Reward {
   private voucherType: VoucherType;
   private count: number;
 
@@ -251,7 +257,7 @@ export class AddVoucherModifierType extends ModifierType {
     super(
       "",
       getVoucherTypeIcon(voucherType),
-      (_type, _args) => new AddVoucherModifier(this, voucherType, count),
+      (_type, _args) => new AddVoucherConsumable(this, voucherType, count),
       "voucher",
     );
     this.count = count;
@@ -259,38 +265,38 @@ export class AddVoucherModifierType extends ModifierType {
   }
 
   get name(): string {
-    return i18next.t("modifierType:ModifierType.AddVoucherModifierType.name", {
+    return i18next.t("modifierType:ModifierType.AddVoucherConsumableType.name", {
       modifierCount: this.count,
       voucherTypeName: getVoucherTypeName(this.voucherType),
     });
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.AddVoucherModifierType.description", {
+    return i18next.t("modifierType:ModifierType.AddVoucherConsumableType.description", {
       modifierCount: this.count,
       voucherTypeName: getVoucherTypeName(this.voucherType),
     });
   }
 }
 
-export class PokemonModifierType extends ModifierType {
+export class PokemonReward extends Reward {
   public selectFilter: PokemonSelectFilter | undefined;
 
   constructor(
     localeKey: string,
     iconImage: string,
-    newModifierFunc: NewModifierFunc,
+    newConsumableFunc: NewConsumableFunc,
     selectFilter?: PokemonSelectFilter,
     group?: string,
     soundName?: string,
   ) {
-    super(localeKey, iconImage, newModifierFunc, group, soundName);
+    super(localeKey, iconImage, newConsumableFunc, group, soundName);
 
     this.selectFilter = selectFilter;
   }
 }
 
-export class HeldItemReward extends PokemonModifierType {
+export class HeldItemReward extends PokemonReward {
   public itemId: HeldItemId;
   constructor(itemId: HeldItemId, group?: string, soundName?: string) {
     super(
@@ -301,12 +307,12 @@ export class HeldItemReward extends PokemonModifierType {
         const hasItem = pokemon.heldItemManager.hasItem(this.itemId);
         const maxStackCount = allHeldItems[this.itemId].getMaxStackCount();
         if (!maxStackCount) {
-          return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.inoperable", {
+          return i18next.t("modifierType:ModifierType.PokemonHeldItemReward.extra.inoperable", {
             pokemonName: getPokemonNameWithAffix(pokemon),
           });
         }
         if (hasItem && pokemon.heldItemManager.getStack(this.itemId) === maxStackCount) {
-          return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.tooMany", {
+          return i18next.t("modifierType:ModifierType.PokemonHeldItemReward.extra.tooMany", {
             pokemonName: getPokemonNameWithAffix(pokemon),
           });
         }
@@ -335,7 +341,7 @@ export class HeldItemReward extends PokemonModifierType {
   }
 }
 
-export class TrainerItemReward extends ModifierType {
+export class TrainerItemReward extends Reward {
   public itemId: TrainerItemId;
   constructor(itemId: TrainerItemId, group?: string, soundName?: string) {
     super("", "", () => null, group, soundName);
@@ -366,14 +372,14 @@ export class LapsingTrainerItemReward extends TrainerItemReward {
   }
 }
 
-export class TerastallizeModifierType extends PokemonModifierType {
+export class TerastallizeReward extends PokemonReward {
   private teraType: PokemonType;
 
   constructor(teraType: PokemonType) {
     super(
       "",
       `${PokemonType[teraType].toLowerCase()}_tera_shard`,
-      (type, args) => new TerrastalizeModifier(type as TerastallizeModifierType, (args[0] as Pokemon).id, teraType),
+      (type, args) => new TerrastalizeConsumable(type as TerastallizeReward, (args[0] as Pokemon).id, teraType),
       (pokemon: PlayerPokemon) => {
         if (
           [pokemon.species.speciesId, pokemon.fusionSpecies?.speciesId].filter(
@@ -391,13 +397,13 @@ export class TerastallizeModifierType extends PokemonModifierType {
   }
 
   get name(): string {
-    return i18next.t("modifierType:ModifierType.TerastallizeModifierType.name", {
+    return i18next.t("modifierType:ModifierType.TerastallizeReward.name", {
       teraType: i18next.t(`pokemonInfo:Type.${PokemonType[this.teraType]}`),
     });
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.TerastallizeModifierType.description", {
+    return i18next.t("modifierType:ModifierType.TerastallizeReward.description", {
       teraType: i18next.t(`pokemonInfo:Type.${PokemonType[this.teraType]}`),
     });
   }
@@ -407,7 +413,7 @@ export class TerastallizeModifierType extends PokemonModifierType {
   }
 }
 
-export class PokemonHpRestoreModifierType extends PokemonModifierType {
+export class PokemonHpRestoreReward extends PokemonReward {
   protected restorePoints: number;
   protected restorePercent: number;
   protected healStatus: boolean;
@@ -418,16 +424,16 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
     restorePoints: number,
     restorePercent: number,
     healStatus = false,
-    newModifierFunc?: NewModifierFunc,
+    newConsumableFunc?: NewConsumableFunc,
     selectFilter?: PokemonSelectFilter,
     group?: string,
   ) {
     super(
       localeKey,
       iconImage,
-      newModifierFunc ||
+      newConsumableFunc ||
         ((_type, args) =>
-          new PokemonHpRestoreModifier(
+          new PokemonHpRestoreConsumable(
             this,
             (args[0] as PlayerPokemon).id,
             this.restorePoints,
@@ -455,17 +461,17 @@ export class PokemonHpRestoreModifierType extends PokemonModifierType {
 
   getDescription(): string {
     return this.restorePoints
-      ? i18next.t("modifierType:ModifierType.PokemonHpRestoreModifierType.description", {
+      ? i18next.t("modifierType:ModifierType.PokemonHpRestoreReward.description", {
           restorePoints: this.restorePoints,
           restorePercent: this.restorePercent,
         })
       : this.healStatus
-        ? i18next.t("modifierType:ModifierType.PokemonHpRestoreModifierType.extra.fullyWithStatus")
-        : i18next.t("modifierType:ModifierType.PokemonHpRestoreModifierType.extra.fully");
+        ? i18next.t("modifierType:ModifierType.PokemonHpRestoreReward.extra.fullyWithStatus")
+        : i18next.t("modifierType:ModifierType.PokemonHpRestoreReward.extra.fully");
   }
 }
 
-export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
+export class PokemonReviveReward extends PokemonHpRestoreReward {
   constructor(localeKey: string, iconImage: string, restorePercent: number) {
     super(
       localeKey,
@@ -474,7 +480,7 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
       restorePercent,
       false,
       (_type, args) =>
-        new PokemonHpRestoreModifier(this, (args[0] as PlayerPokemon).id, 0, this.restorePercent, false, true),
+        new PokemonHpRestoreConsumable(this, (args[0] as PlayerPokemon).id, 0, this.restorePercent, false, true),
       (pokemon: PlayerPokemon) => {
         if (!pokemon.isFainted()) {
           return PartyUiHandler.NoEffectMessage;
@@ -493,18 +499,18 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonReviveModifierType.description", {
+    return i18next.t("modifierType:ModifierType.PokemonReviveReward.description", {
       restorePercent: this.restorePercent,
     });
   }
 }
 
-export class PokemonStatusHealModifierType extends PokemonModifierType {
+export class PokemonStatusHealReward extends PokemonReward {
   constructor(localeKey: string, iconImage: string) {
     super(
       localeKey,
       iconImage,
-      (_type, args) => new PokemonStatusHealModifier(this, (args[0] as PlayerPokemon).id),
+      (_type, args) => new PokemonStatusHealConsumable(this, (args[0] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
         if (!pokemon.hp || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))) {
           return PartyUiHandler.NoEffectMessage;
@@ -515,28 +521,28 @@ export class PokemonStatusHealModifierType extends PokemonModifierType {
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonStatusHealModifierType.description");
+    return i18next.t("modifierType:ModifierType.PokemonStatusHealReward.description");
   }
 }
 
-export abstract class PokemonMoveModifierType extends PokemonModifierType {
+export abstract class PokemonMoveReward extends PokemonReward {
   public moveSelectFilter: PokemonMoveSelectFilter | undefined;
 
   constructor(
     localeKey: string,
     iconImage: string,
-    newModifierFunc: NewModifierFunc,
+    newConsumableFunc: NewConsumableFunc,
     selectFilter?: PokemonSelectFilter,
     moveSelectFilter?: PokemonMoveSelectFilter,
     group?: string,
   ) {
-    super(localeKey, iconImage, newModifierFunc, selectFilter, group);
+    super(localeKey, iconImage, newConsumableFunc, selectFilter, group);
 
     this.moveSelectFilter = moveSelectFilter;
   }
 }
 
-export class PokemonPpRestoreModifierType extends PokemonMoveModifierType {
+export class PokemonPpRestoreReward extends PokemonMoveReward {
   protected restorePoints: number;
 
   constructor(localeKey: string, iconImage: string, restorePoints: number) {
@@ -544,7 +550,7 @@ export class PokemonPpRestoreModifierType extends PokemonMoveModifierType {
       localeKey,
       iconImage,
       (_type, args) =>
-        new PokemonPpRestoreModifier(this, (args[0] as PlayerPokemon).id, args[1] as number, this.restorePoints),
+        new PokemonPpRestoreConsumable(this, (args[0] as PlayerPokemon).id, args[1] as number, this.restorePoints),
       (_pokemon: PlayerPokemon) => {
         return null;
       },
@@ -562,21 +568,21 @@ export class PokemonPpRestoreModifierType extends PokemonMoveModifierType {
 
   getDescription(): string {
     return this.restorePoints > -1
-      ? i18next.t("modifierType:ModifierType.PokemonPpRestoreModifierType.description", {
+      ? i18next.t("modifierType:ModifierType.PokemonPpRestoreReward.description", {
           restorePoints: this.restorePoints,
         })
-      : i18next.t("modifierType:ModifierType.PokemonPpRestoreModifierType.extra.fully");
+      : i18next.t("modifierType:ModifierType.PokemonPpRestoreReward.extra.fully");
   }
 }
 
-export class PokemonAllMovePpRestoreModifierType extends PokemonModifierType {
+export class PokemonAllMovePpRestoreReward extends PokemonReward {
   protected restorePoints: number;
 
   constructor(localeKey: string, iconImage: string, restorePoints: number) {
     super(
       localeKey,
       iconImage,
-      (_type, args) => new PokemonAllMovePpRestoreModifier(this, (args[0] as PlayerPokemon).id, this.restorePoints),
+      (_type, args) => new PokemonAllMovePpRestoreConsumable(this, (args[0] as PlayerPokemon).id, this.restorePoints),
       (pokemon: PlayerPokemon) => {
         if (!pokemon.getMoveset().filter(m => m.ppUsed).length) {
           return PartyUiHandler.NoEffectMessage;
@@ -591,21 +597,21 @@ export class PokemonAllMovePpRestoreModifierType extends PokemonModifierType {
 
   getDescription(): string {
     return this.restorePoints > -1
-      ? i18next.t("modifierType:ModifierType.PokemonAllMovePpRestoreModifierType.description", {
+      ? i18next.t("modifierType:ModifierType.PokemonAllMovePpRestoreReward.description", {
           restorePoints: this.restorePoints,
         })
-      : i18next.t("modifierType:ModifierType.PokemonAllMovePpRestoreModifierType.extra.fully");
+      : i18next.t("modifierType:ModifierType.PokemonAllMovePpRestoreReward.extra.fully");
   }
 }
 
-export class PokemonPpUpModifierType extends PokemonMoveModifierType {
+export class PokemonPpUpReward extends PokemonMoveReward {
   protected upPoints: number;
 
   constructor(localeKey: string, iconImage: string, upPoints: number) {
     super(
       localeKey,
       iconImage,
-      (_type, args) => new PokemonPpUpModifier(this, (args[0] as PlayerPokemon).id, args[1] as number, this.upPoints),
+      (_type, args) => new PokemonPpUpConsumable(this, (args[0] as PlayerPokemon).id, args[1] as number, this.upPoints),
       (_pokemon: PlayerPokemon) => {
         return null;
       },
@@ -622,11 +628,11 @@ export class PokemonPpUpModifierType extends PokemonMoveModifierType {
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonPpUpModifierType.description", { upPoints: this.upPoints });
+    return i18next.t("modifierType:ModifierType.PokemonPpUpReward.description", { upPoints: this.upPoints });
   }
 }
 
-export class PokemonNatureChangeModifierType extends PokemonModifierType {
+export class PokemonNatureChangeReward extends PokemonReward {
   protected nature: Nature;
 
   constructor(nature: Nature) {
@@ -637,7 +643,7 @@ export class PokemonNatureChangeModifierType extends PokemonModifierType {
           .find(s => getNatureStatMultiplier(nature, Stat[s]) > 1)
           ?.toLowerCase() || "neutral"
       }`,
-      (_type, args) => new PokemonNatureChangeModifier(this, (args[0] as PlayerPokemon).id, this.nature),
+      (_type, args) => new PokemonNatureChangeConsumable(this, (args[0] as PlayerPokemon).id, this.nature),
       (pokemon: PlayerPokemon) => {
         if (pokemon.getNature() === this.nature) {
           return PartyUiHandler.NoEffectMessage;
@@ -651,24 +657,24 @@ export class PokemonNatureChangeModifierType extends PokemonModifierType {
   }
 
   get name(): string {
-    return i18next.t("modifierType:ModifierType.PokemonNatureChangeModifierType.name", {
+    return i18next.t("modifierType:ModifierType.PokemonNatureChangeReward.name", {
       natureName: getNatureName(this.nature),
     });
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonNatureChangeModifierType.description", {
+    return i18next.t("modifierType:ModifierType.PokemonNatureChangeReward.description", {
       natureName: getNatureName(this.nature, true, true, true),
     });
   }
 }
 
-export class RememberMoveModifierType extends PokemonModifierType {
+export class RememberMoveReward extends PokemonReward {
   constructor(localeKey: string, iconImage: string, group?: string) {
     super(
       localeKey,
       iconImage,
-      (type, args) => new RememberMoveModifier(type, (args[0] as PlayerPokemon).id, args[1] as number),
+      (type, args) => new RememberMoveConsumable(type, (args[0] as PlayerPokemon).id, args[1] as number),
       (pokemon: PlayerPokemon) => {
         if (!pokemon.getLearnableLevelMoves().length) {
           return PartyUiHandler.NoEffectMessage;
@@ -680,7 +686,7 @@ export class RememberMoveModifierType extends PokemonModifierType {
   }
 }
 
-class BerryRewardGenerator extends ModifierTypeGenerator {
+class BerryRewardGenerator extends RewardGenerator {
   constructor() {
     super((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in BerryType) {
@@ -693,7 +699,7 @@ class BerryRewardGenerator extends ModifierTypeGenerator {
   }
 }
 
-export class AttackTypeBoosterReward extends HeldItemReward implements GeneratedPersistentModifierType {
+export class AttackTypeBoosterReward extends HeldItemReward implements GeneratedPersistentReward {
   public moveType: PokemonType;
   public boostPercent: number;
 
@@ -709,12 +715,12 @@ export class AttackTypeBoosterReward extends HeldItemReward implements Generated
   }
 }
 
-export class PokemonLevelIncrementModifierType extends PokemonModifierType {
+export class PokemonLevelIncrementReward extends PokemonReward {
   constructor(localeKey: string, iconImage: string) {
     super(
       localeKey,
       iconImage,
-      (_type, args) => new PokemonLevelIncrementModifier(this, (args[0] as PlayerPokemon).id),
+      (_type, args) => new PokemonLevelIncrementConsumable(this, (args[0] as PlayerPokemon).id),
       (_pokemon: PlayerPokemon) => null,
     );
   }
@@ -723,20 +729,20 @@ export class PokemonLevelIncrementModifierType extends PokemonModifierType {
     let levels = 1;
     const candyJarStack = globalScene.trainerItems.getStack(TrainerItemId.CANDY_JAR);
     levels += candyJarStack;
-    return i18next.t("modifierType:ModifierType.PokemonLevelIncrementModifierType.description", { levels });
+    return i18next.t("modifierType:ModifierType.PokemonLevelIncrementReward.description", { levels });
   }
 }
 
-export class AllPokemonLevelIncrementModifierType extends ModifierType {
+export class AllPokemonLevelIncrementReward extends Reward {
   constructor(localeKey: string, iconImage: string) {
-    super(localeKey, iconImage, (_type, _args) => new PokemonLevelIncrementModifier(this, -1));
+    super(localeKey, iconImage, (_type, _args) => new PokemonLevelIncrementConsumable(this, -1));
   }
 
   getDescription(): string {
     let levels = 1;
     const candyJarStack = globalScene.trainerItems.getStack(TrainerItemId.CANDY_JAR);
     levels += candyJarStack;
-    return i18next.t("modifierType:ModifierType.AllPokemonLevelIncrementModifierType.description", { levels });
+    return i18next.t("modifierType:ModifierType.AllPokemonLevelIncrementReward.description", { levels });
   }
 }
 
@@ -771,14 +777,14 @@ export class BaseStatTotalHeldItemReward extends HeldItemReward {
   }
 }
 
-class AllPokemonFullHpRestoreModifierType extends ModifierType {
+class AllPokemonFullHpRestoreReward extends Reward {
   private descriptionKey: string;
 
-  constructor(localeKey: string, iconImage: string, descriptionKey?: string, newModifierFunc?: NewModifierFunc) {
+  constructor(localeKey: string, iconImage: string, descriptionKey?: string, newConsumableFunc?: NewConsumableFunc) {
     super(
       localeKey,
       iconImage,
-      newModifierFunc || ((_type, _args) => new PokemonHpRestoreModifier(this, -1, 0, 100, false)),
+      newConsumableFunc || ((_type, _args) => new PokemonHpRestoreConsumable(this, -1, 0, 100, false)),
     );
 
     this.descriptionKey = descriptionKey!; // TODO: is this bang correct?
@@ -786,28 +792,28 @@ class AllPokemonFullHpRestoreModifierType extends ModifierType {
 
   getDescription(): string {
     return i18next.t(
-      `${this.descriptionKey || "modifierType:ModifierType.AllPokemonFullHpRestoreModifierType"}.description` as any,
+      `${this.descriptionKey || "modifierType:ModifierType.AllPokemonFullHpRestoreReward"}.description` as any,
     );
   }
 }
 
-class AllPokemonFullReviveModifierType extends AllPokemonFullHpRestoreModifierType {
+class AllPokemonFullReviveReward extends AllPokemonFullHpRestoreReward {
   constructor(localeKey: string, iconImage: string) {
     super(
       localeKey,
       iconImage,
-      "modifierType:ModifierType.AllPokemonFullReviveModifierType",
-      (_type, _args) => new PokemonHpRestoreModifier(this, -1, 0, 100, false, true),
+      "modifierType:ModifierType.AllPokemonFullReviveReward",
+      (_type, _args) => new PokemonHpRestoreConsumable(this, -1, 0, 100, false, true),
     );
   }
 }
 
-export class MoneyRewardModifierType extends ModifierType {
+export class MoneyRewardReward extends Reward {
   private moneyMultiplier: number;
   private moneyMultiplierDescriptorKey: string;
 
   constructor(localeKey: string, iconImage: string, moneyMultiplier: number, moneyMultiplierDescriptorKey: string) {
-    super(localeKey, iconImage, (_type, _args) => new MoneyRewardModifier(this, moneyMultiplier), "money", "se/buy");
+    super(localeKey, iconImage, (_type, _args) => new MoneyRewardConsumable(this, moneyMultiplier), "money", "se/buy");
 
     this.moneyMultiplier = moneyMultiplier;
     this.moneyMultiplierDescriptorKey = moneyMultiplierDescriptorKey;
@@ -818,21 +824,21 @@ export class MoneyRewardModifierType extends ModifierType {
     globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
     const formattedMoney = formatMoney(globalScene.moneyFormat, moneyAmount.value);
 
-    return i18next.t("modifierType:ModifierType.MoneyRewardModifierType.description", {
+    return i18next.t("modifierType:ModifierType.MoneyRewardReward.description", {
       moneyMultiplier: i18next.t(this.moneyMultiplierDescriptorKey as any),
       moneyAmount: formattedMoney,
     });
   }
 }
 
-export class TmModifierType extends PokemonModifierType {
+export class TmReward extends PokemonReward {
   public moveId: MoveId;
 
   constructor(moveId: MoveId) {
     super(
       "",
       `tm_${PokemonType[allMoves[moveId].type].toLowerCase()}`,
-      (_type, args) => new TmModifier(this, (args[0] as PlayerPokemon).id),
+      (_type, args) => new TmConsumable(this, (args[0] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
         if (
           pokemon.compatibleTms.indexOf(moveId) === -1 ||
@@ -849,7 +855,7 @@ export class TmModifierType extends PokemonModifierType {
   }
 
   get name(): string {
-    return i18next.t("modifierType:ModifierType.TmModifierType.name", {
+    return i18next.t("modifierType:ModifierType.TmReward.name", {
       moveId: padInt(Object.keys(tmSpecies).indexOf(this.moveId.toString()) + 1, 3),
       moveName: allMoves[this.moveId].name,
     });
@@ -858,21 +864,21 @@ export class TmModifierType extends PokemonModifierType {
   getDescription(): string {
     return i18next.t(
       globalScene.enableMoveInfo
-        ? "modifierType:ModifierType.TmModifierTypeWithInfo.description"
-        : "modifierType:ModifierType.TmModifierType.description",
+        ? "modifierType:ModifierType.TmRewardWithInfo.description"
+        : "modifierType:ModifierType.TmReward.description",
       { moveName: allMoves[this.moveId].name },
     );
   }
 }
 
-export class EvolutionItemModifierType extends PokemonModifierType implements GeneratedPersistentModifierType {
+export class EvolutionItemReward extends PokemonReward implements GeneratedPersistentReward {
   public evolutionItem: EvolutionItem;
 
   constructor(evolutionItem: EvolutionItem) {
     super(
       "",
       EvolutionItem[evolutionItem].toLowerCase(),
-      (_type, args) => new EvolutionItemModifier(this, (args[0] as PlayerPokemon).id),
+      (_type, args) => new EvolutionItemConsumable(this, (args[0] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
         if (
           pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) &&
@@ -905,7 +911,7 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.EvolutionItemModifierType.description");
+    return i18next.t("modifierType:ModifierType.EvolutionItemReward.description");
   }
 
   getPregenArgs(): any[] {
@@ -916,7 +922,7 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
 /**
  * Class that represents form changing items
  */
-export class FormChangeItemReward extends PokemonModifierType {
+export class FormChangeItemReward extends PokemonReward {
   public formChangeItem: FormChangeItem;
 
   constructor(formChangeItem: FormChangeItem) {
@@ -953,7 +959,7 @@ export class FormChangeItemReward extends PokemonModifierType {
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.FormChangeItemModifierType.description");
+    return i18next.t("modifierType:ModifierType.FormChangeItemReward.description");
   }
 
   apply(pokemon: Pokemon) {
@@ -970,12 +976,12 @@ export class FormChangeItemReward extends PokemonModifierType {
   }
 }
 
-export class FusePokemonModifierType extends PokemonModifierType {
+export class FusePokemonReward extends PokemonReward {
   constructor(localeKey: string, iconImage: string) {
     super(
       localeKey,
       iconImage,
-      (_type, args) => new FusePokemonModifier(this, (args[0] as PlayerPokemon).id, (args[1] as PlayerPokemon).id),
+      (_type, args) => new FusePokemonConsumable(this, (args[0] as PlayerPokemon).id, (args[1] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
         if (pokemon.isFusion()) {
           return PartyUiHandler.NoEffectMessage;
@@ -986,11 +992,11 @@ export class FusePokemonModifierType extends PokemonModifierType {
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.FusePokemonModifierType.description");
+    return i18next.t("modifierType:ModifierType.FusePokemonReward.description");
   }
 }
 
-class AttackTypeBoosterRewardGenerator extends ModifierTypeGenerator {
+class AttackTypeBoosterRewardGenerator extends RewardGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
@@ -1004,7 +1010,7 @@ class AttackTypeBoosterRewardGenerator extends ModifierTypeGenerator {
   }
 }
 
-class BaseStatBoosterRewardGenerator extends ModifierTypeGenerator {
+class BaseStatBoosterRewardGenerator extends RewardGenerator {
   constructor() {
     super((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {
@@ -1015,7 +1021,7 @@ class BaseStatBoosterRewardGenerator extends ModifierTypeGenerator {
   }
 }
 
-class TempStatStageBoosterRewardGenerator extends ModifierTypeGenerator {
+class TempStatStageBoosterRewardGenerator extends RewardGenerator {
   public static readonly items: Record<TempBattleStat, string> = {
     [Stat.ATK]: "x_attack",
     [Stat.DEF]: "x_defense",
@@ -1037,12 +1043,12 @@ class TempStatStageBoosterRewardGenerator extends ModifierTypeGenerator {
 }
 
 /**
- * Modifier type generator for {@linkcode SpeciesStatBoosterModifierType}, which
+ * Consumable type generator for {@linkcode SpeciesStatBoosterReward}, which
  * encapsulates the logic for weighting the most useful held item from
  * the current list of {@linkcode items}.
- * @extends ModifierTypeGenerator
+ * @extends RewardGenerator
  */
-class SpeciesStatBoosterRewardGenerator extends ModifierTypeGenerator {
+class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
   /** Object comprised of the currently available species-based stat boosting held items */
 
   constructor(rare: boolean) {
@@ -1108,11 +1114,11 @@ class SpeciesStatBoosterRewardGenerator extends ModifierTypeGenerator {
   }
 }
 
-class TmModifierTypeGenerator extends ModifierTypeGenerator {
+class TmRewardGenerator extends RewardGenerator {
   constructor(tier: RewardTier) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in MoveId) {
-        return new TmModifierType(pregenArgs[0] as MoveId);
+        return new TmReward(pregenArgs[0] as MoveId);
       }
       const partyMemberCompatibleTms = party.map(p => {
         const previousLevelMoves = p.getLearnableLevelMoves();
@@ -1129,16 +1135,16 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
         return null;
       }
       const randTmIndex = randSeedInt(tierUniqueCompatibleTms.length);
-      return new TmModifierType(tierUniqueCompatibleTms[randTmIndex]);
+      return new TmReward(tierUniqueCompatibleTms[randTmIndex]);
     });
   }
 }
 
-class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
+class EvolutionItemRewardGenerator extends RewardGenerator {
   constructor(rare: boolean) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in EvolutionItem) {
-        return new EvolutionItemModifierType(pregenArgs[0] as EvolutionItem);
+        return new EvolutionItemReward(pregenArgs[0] as EvolutionItem);
       }
 
       const evolutionItemPool = [
@@ -1181,12 +1187,12 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
         return null;
       }
 
-      return new EvolutionItemModifierType(evolutionItemPool[randSeedInt(evolutionItemPool.length)]!); // TODO: is the bang correct?
+      return new EvolutionItemReward(evolutionItemPool[randSeedInt(evolutionItemPool.length)]!); // TODO: is the bang correct?
     });
   }
 }
 
-export class FormChangeItemRewardGenerator extends ModifierTypeGenerator {
+export class FormChangeItemRewardGenerator extends RewardGenerator {
   constructor(isRareFormChangeItem: boolean) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in FormChangeItem) {
@@ -1262,15 +1268,15 @@ export class FormChangeItemRewardGenerator extends ModifierTypeGenerator {
   }
 }
 
-export class WeightedModifierType {
-  public modifierType: ModifierType;
-  public weight: number | WeightedModifierTypeWeightFunc;
-  public maxWeight: number | WeightedModifierTypeWeightFunc;
+export class WeightedReward {
+  public modifierType: Reward;
+  public weight: number | WeightedRewardWeightFunc;
+  public maxWeight: number | WeightedRewardWeightFunc;
 
   constructor(
-    modifierTypeFunc: ModifierTypeFunc,
-    weight: number | WeightedModifierTypeWeightFunc,
-    maxWeight?: number | WeightedModifierTypeWeightFunc,
+    modifierTypeFunc: RewardFunc,
+    weight: number | WeightedRewardWeightFunc,
+    maxWeight?: number | WeightedRewardWeightFunc,
   ) {
     this.modifierType = modifierTypeFunc();
     this.modifierType.id = Object.keys(modifierTypeInitObj).find(k => modifierTypeInitObj[k] === modifierTypeFunc)!; // TODO: is this bang correct?
@@ -1284,11 +1290,11 @@ export class WeightedModifierType {
 }
 
 type BaseModifierOverride = {
-  name: Exclude<ModifierTypeKeys, GeneratorModifierOverride["name"]>;
+  name: Exclude<RewardKeys, GeneratorModifierOverride["name"]>;
   count?: number;
 };
 
-/** Type for modifiers and held items that are constructed via {@linkcode ModifierTypeGenerator}. */
+/** Type for modifiers and held items that are constructed via {@linkcode RewardGenerator}. */
 export type GeneratorModifierOverride = {
   count?: number;
 } & (
@@ -1333,20 +1339,20 @@ export type GeneratorModifierOverride = {
 /** Type used to construct modifiers and held items for overriding purposes. */
 export type ModifierOverride = GeneratorModifierOverride | BaseModifierOverride;
 
-export type ModifierTypeKeys = keyof typeof modifierTypeInitObj;
+export type RewardKeys = keyof typeof modifierTypeInitObj;
 
 const modifierTypeInitObj = Object.freeze({
-  POKEBALL: () => new AddPokeballModifierType("pb", PokeballType.POKEBALL, 5),
-  GREAT_BALL: () => new AddPokeballModifierType("gb", PokeballType.GREAT_BALL, 5),
-  ULTRA_BALL: () => new AddPokeballModifierType("ub", PokeballType.ULTRA_BALL, 5),
-  ROGUE_BALL: () => new AddPokeballModifierType("rb", PokeballType.ROGUE_BALL, 5),
-  MASTER_BALL: () => new AddPokeballModifierType("mb", PokeballType.MASTER_BALL, 1),
+  POKEBALL: () => new AddPokeballConsumableType("pb", PokeballType.POKEBALL, 5),
+  GREAT_BALL: () => new AddPokeballConsumableType("gb", PokeballType.GREAT_BALL, 5),
+  ULTRA_BALL: () => new AddPokeballConsumableType("ub", PokeballType.ULTRA_BALL, 5),
+  ROGUE_BALL: () => new AddPokeballConsumableType("rb", PokeballType.ROGUE_BALL, 5),
+  MASTER_BALL: () => new AddPokeballConsumableType("mb", PokeballType.MASTER_BALL, 1),
 
-  RARE_CANDY: () => new PokemonLevelIncrementModifierType("modifierType:ModifierType.RARE_CANDY", "rare_candy"),
-  RARER_CANDY: () => new AllPokemonLevelIncrementModifierType("modifierType:ModifierType.RARER_CANDY", "rarer_candy"),
+  RARE_CANDY: () => new PokemonLevelIncrementReward("modifierType:ModifierType.RARE_CANDY", "rare_candy"),
+  RARER_CANDY: () => new AllPokemonLevelIncrementReward("modifierType:ModifierType.RARER_CANDY", "rarer_candy"),
 
-  EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(false),
-  RARE_EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(true),
+  EVOLUTION_ITEM: () => new EvolutionItemRewardGenerator(false),
+  RARE_EVOLUTION_ITEM: () => new EvolutionItemRewardGenerator(true),
 
   FORM_CHANGE_ITEM: () => new FormChangeItemRewardGenerator(false),
   RARE_FORM_CHANGE_ITEM: () => new FormChangeItemRewardGenerator(true),
@@ -1359,38 +1365,36 @@ const modifierTypeInitObj = Object.freeze({
 
   MAP: () => new TrainerItemReward(TrainerItemId.MAP),
 
-  POTION: () => new PokemonHpRestoreModifierType("modifierType:ModifierType.POTION", "potion", 20, 10),
-  SUPER_POTION: () =>
-    new PokemonHpRestoreModifierType("modifierType:ModifierType.SUPER_POTION", "super_potion", 50, 25),
-  HYPER_POTION: () =>
-    new PokemonHpRestoreModifierType("modifierType:ModifierType.HYPER_POTION", "hyper_potion", 200, 50),
-  MAX_POTION: () => new PokemonHpRestoreModifierType("modifierType:ModifierType.MAX_POTION", "max_potion", 0, 100),
+  POTION: () => new PokemonHpRestoreReward("modifierType:ModifierType.POTION", "potion", 20, 10),
+  SUPER_POTION: () => new PokemonHpRestoreReward("modifierType:ModifierType.SUPER_POTION", "super_potion", 50, 25),
+  HYPER_POTION: () => new PokemonHpRestoreReward("modifierType:ModifierType.HYPER_POTION", "hyper_potion", 200, 50),
+  MAX_POTION: () => new PokemonHpRestoreReward("modifierType:ModifierType.MAX_POTION", "max_potion", 0, 100),
   FULL_RESTORE: () =>
-    new PokemonHpRestoreModifierType("modifierType:ModifierType.FULL_RESTORE", "full_restore", 0, 100, true),
+    new PokemonHpRestoreReward("modifierType:ModifierType.FULL_RESTORE", "full_restore", 0, 100, true),
 
-  REVIVE: () => new PokemonReviveModifierType("modifierType:ModifierType.REVIVE", "revive", 50),
-  MAX_REVIVE: () => new PokemonReviveModifierType("modifierType:ModifierType.MAX_REVIVE", "max_revive", 100),
+  REVIVE: () => new PokemonReviveReward("modifierType:ModifierType.REVIVE", "revive", 50),
+  MAX_REVIVE: () => new PokemonReviveReward("modifierType:ModifierType.MAX_REVIVE", "max_revive", 100),
 
-  FULL_HEAL: () => new PokemonStatusHealModifierType("modifierType:ModifierType.FULL_HEAL", "full_heal"),
+  FULL_HEAL: () => new PokemonStatusHealReward("modifierType:ModifierType.FULL_HEAL", "full_heal"),
 
-  SACRED_ASH: () => new AllPokemonFullReviveModifierType("modifierType:ModifierType.SACRED_ASH", "sacred_ash"),
+  SACRED_ASH: () => new AllPokemonFullReviveReward("modifierType:ModifierType.SACRED_ASH", "sacred_ash"),
 
   REVIVER_SEED: () => new HeldItemReward(HeldItemId.REVIVER_SEED),
 
   WHITE_HERB: () => new HeldItemReward(HeldItemId.WHITE_HERB),
 
-  ETHER: () => new PokemonPpRestoreModifierType("modifierType:ModifierType.ETHER", "ether", 10),
-  MAX_ETHER: () => new PokemonPpRestoreModifierType("modifierType:ModifierType.MAX_ETHER", "max_ether", -1),
+  ETHER: () => new PokemonPpRestoreReward("modifierType:ModifierType.ETHER", "ether", 10),
+  MAX_ETHER: () => new PokemonPpRestoreReward("modifierType:ModifierType.MAX_ETHER", "max_ether", -1),
 
-  ELIXIR: () => new PokemonAllMovePpRestoreModifierType("modifierType:ModifierType.ELIXIR", "elixir", 10),
-  MAX_ELIXIR: () => new PokemonAllMovePpRestoreModifierType("modifierType:ModifierType.MAX_ELIXIR", "max_elixir", -1),
+  ELIXIR: () => new PokemonAllMovePpRestoreReward("modifierType:ModifierType.ELIXIR", "elixir", 10),
+  MAX_ELIXIR: () => new PokemonAllMovePpRestoreReward("modifierType:ModifierType.MAX_ELIXIR", "max_elixir", -1),
 
-  PP_UP: () => new PokemonPpUpModifierType("modifierType:ModifierType.PP_UP", "pp_up", 1),
-  PP_MAX: () => new PokemonPpUpModifierType("modifierType:ModifierType.PP_MAX", "pp_max", 3),
+  PP_UP: () => new PokemonPpUpReward("modifierType:ModifierType.PP_UP", "pp_up", 1),
+  PP_MAX: () => new PokemonPpUpReward("modifierType:ModifierType.PP_MAX", "pp_max", 3),
 
-  /*REPEL: () => new DoubleBattleChanceBoosterModifierType('Repel', 5),
-  SUPER_REPEL: () => new DoubleBattleChanceBoosterModifierType('Super Repel', 10),
-  MAX_REPEL: () => new DoubleBattleChanceBoosterModifierType('Max Repel', 25),*/
+  /*REPEL: () => new DoubleBattleChanceBoosterReward('Repel', 5),
+  SUPER_REPEL: () => new DoubleBattleChanceBoosterReward('Super Repel', 10),
+  MAX_REPEL: () => new DoubleBattleChanceBoosterReward('Max Repel', 25),*/
 
   LURE: () => new LapsingTrainerItemReward(TrainerItemId.LURE),
   SUPER_LURE: () => new LapsingTrainerItemReward(TrainerItemId.SUPER_LURE),
@@ -1408,19 +1412,19 @@ const modifierTypeInitObj = Object.freeze({
   ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterRewardGenerator(),
 
   MINT: () =>
-    new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
+    new RewardGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in Nature) {
-        return new PokemonNatureChangeModifierType(pregenArgs[0] as Nature);
+        return new PokemonNatureChangeReward(pregenArgs[0] as Nature);
       }
-      return new PokemonNatureChangeModifierType(randSeedInt(getEnumValues(Nature).length) as Nature);
+      return new PokemonNatureChangeReward(randSeedInt(getEnumValues(Nature).length) as Nature);
     }),
 
   MYSTICAL_ROCK: () => new HeldItemReward(HeldItemId.MYSTICAL_ROCK),
 
   TERA_SHARD: () =>
-    new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
+    new RewardGenerator((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
-        return new TerastallizeModifierType(pregenArgs[0] as PokemonType);
+        return new TerastallizeReward(pregenArgs[0] as PokemonType);
       }
       if (!globalScene.trainerItems.hasItem(TrainerItemId.TERA_ORB)) {
         return null;
@@ -1441,16 +1445,16 @@ const modifierTypeInitObj = Object.freeze({
       while (shardType === excludedType) {
         shardType = randSeedInt(64) ? (randSeedInt(18) as PokemonType) : PokemonType.STELLAR;
       }
-      return new TerastallizeModifierType(shardType);
+      return new TerastallizeReward(shardType);
     }),
 
   BERRY: () => new BerryRewardGenerator(),
 
-  TM_COMMON: () => new TmModifierTypeGenerator(RewardTier.COMMON),
-  TM_GREAT: () => new TmModifierTypeGenerator(RewardTier.GREAT),
-  TM_ULTRA: () => new TmModifierTypeGenerator(RewardTier.ULTRA),
+  TM_COMMON: () => new TmRewardGenerator(RewardTier.COMMON),
+  TM_GREAT: () => new TmRewardGenerator(RewardTier.GREAT),
+  TM_ULTRA: () => new TmRewardGenerator(RewardTier.ULTRA),
 
-  MEMORY_MUSHROOM: () => new RememberMoveModifierType("modifierType:ModifierType.MEMORY_MUSHROOM", "big_mushroom"),
+  MEMORY_MUSHROOM: () => new RememberMoveReward("modifierType:ModifierType.MEMORY_MUSHROOM", "big_mushroom"),
 
   EXP_SHARE: () => new TrainerItemReward(TrainerItemId.EXP_SHARE),
   EXP_BALANCE: () => new TrainerItemReward(TrainerItemId.EXP_BALANCE),
@@ -1473,25 +1477,25 @@ const modifierTypeInitObj = Object.freeze({
   SOUL_DEW: () => new HeldItemReward(HeldItemId.SOUL_DEW),
 
   NUGGET: () =>
-    new MoneyRewardModifierType(
+    new MoneyRewardReward(
       "modifierType:ModifierType.NUGGET",
       "nugget",
       1,
-      "modifierType:ModifierType.MoneyRewardModifierType.extra.small",
+      "modifierType:ModifierType.MoneyRewardReward.extra.small",
     ),
   BIG_NUGGET: () =>
-    new MoneyRewardModifierType(
+    new MoneyRewardReward(
       "modifierType:ModifierType.BIG_NUGGET",
       "big_nugget",
       2.5,
-      "modifierType:ModifierType.MoneyRewardModifierType.extra.moderate",
+      "modifierType:ModifierType.MoneyRewardReward.extra.moderate",
     ),
   RELIC_GOLD: () =>
-    new MoneyRewardModifierType(
+    new MoneyRewardReward(
       "modifierType:ModifierType.RELIC_GOLD",
       "relic_gold",
       10,
-      "modifierType:ModifierType.MoneyRewardModifierType.extra.large",
+      "modifierType:ModifierType.MoneyRewardReward.extra.large",
     ),
 
   AMULET_COIN: () => new TrainerItemReward(TrainerItemId.AMULET_COIN),
@@ -1531,19 +1535,19 @@ const modifierTypeInitObj = Object.freeze({
 
   IV_SCANNER: () => new TrainerItemReward(TrainerItemId.IV_SCANNER),
 
-  DNA_SPLICERS: () => new FusePokemonModifierType("modifierType:ModifierType.DNA_SPLICERS", "dna_splicers"),
+  DNA_SPLICERS: () => new FusePokemonReward("modifierType:ModifierType.DNA_SPLICERS", "dna_splicers"),
 
   MINI_BLACK_HOLE: () => new HeldItemReward(HeldItemId.MINI_BLACK_HOLE),
 
-  VOUCHER: () => new AddVoucherModifierType(VoucherType.REGULAR, 1),
-  VOUCHER_PLUS: () => new AddVoucherModifierType(VoucherType.PLUS, 1),
-  VOUCHER_PREMIUM: () => new AddVoucherModifierType(VoucherType.PREMIUM, 1),
+  VOUCHER: () => new AddVoucherConsumableType(VoucherType.REGULAR, 1),
+  VOUCHER_PLUS: () => new AddVoucherConsumableType(VoucherType.PLUS, 1),
+  VOUCHER_PREMIUM: () => new AddVoucherConsumableType(VoucherType.PREMIUM, 1),
 
   GOLDEN_POKEBALL: () => new TrainerItemReward(TrainerItemId.GOLDEN_POKEBALL),
 
   ENEMY_DAMAGE_BOOSTER: () => new TrainerItemReward(TrainerItemId.ENEMY_DAMAGE_BOOSTER),
   ENEMY_DAMAGE_REDUCTION: () => new TrainerItemReward(TrainerItemId.ENEMY_DAMAGE_REDUCTION),
-  //ENEMY_SUPER_EFFECT_BOOSTER: () => new ModifierType('Type Advantage Token', 'Increases damage of super effective attacks by 30%', (type, _args) => new EnemySuperEffectiveDamageBoosterModifier(type, 30), 'wl_custom_super_effective'),
+  //ENEMY_SUPER_EFFECT_BOOSTER: () => new Reward('Type Advantage Token', 'Increases damage of super effective attacks by 30%', (type, _args) => new EnemySuperEffectiveDamageBoosterModifier(type, 30), 'wl_custom_super_effective'),
   ENEMY_HEAL: () => new TrainerItemReward(TrainerItemId.ENEMY_HEAL),
   ENEMY_ATTACK_POISON_CHANCE: () => new TrainerItemReward(TrainerItemId.ENEMY_ATTACK_POISON_CHANCE),
   ENEMY_ATTACK_PARALYZE_CHANCE: () => new TrainerItemReward(TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE),
@@ -1567,19 +1571,19 @@ const modifierTypeInitObj = Object.freeze({
 /**
  * The initial set of modifier types, used to generate the modifier pool.
  */
-export type ModifierTypes = typeof modifierTypeInitObj;
+export type Rewards = typeof modifierTypeInitObj;
 
 export interface ModifierPool {
-  [tier: string]: WeightedModifierType[];
+  [tier: string]: WeightedReward[];
 }
 
 let modifierPoolThresholds = {};
 let ignoredPoolIndexes = {};
 
 /**
- * Allows a unit test to check if an item exists in the Modifier Pool. Checks the pool directly, rather than attempting to reroll for the item.
+ * Allows a unit test to check if an item exists in the Consumable Pool. Checks the pool directly, rather than attempting to reroll for the item.
  */
-export const itemPoolChecks: Map<ModifierTypeKeys, boolean | undefined> = new Map();
+export const itemPoolChecks: Map<RewardKeys, boolean | undefined> = new Map();
 
 export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount = 0) {
   const pool = getModifierPoolForType(poolType);
@@ -1595,27 +1599,23 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
         const thresholds = new Map();
         const tierModifierIds: string[] = [];
         let i = 0;
-        pool[t].reduce((total: number, modifierType: WeightedModifierType) => {
-          const weightedModifierType = modifierType as WeightedModifierType;
-          const itemModifierType =
-            weightedModifierType.modifierType instanceof ModifierTypeGenerator
-              ? weightedModifierType.modifierType.generateType(party)
-              : weightedModifierType.modifierType;
+        pool[t].reduce((total: number, modifierType: WeightedReward) => {
+          const weightedReward = modifierType as WeightedReward;
+          const itemReward =
+            weightedReward.modifierType instanceof RewardGenerator
+              ? weightedReward.modifierType.generateType(party)
+              : weightedReward.modifierType;
           const trainerItemfullStack =
-            itemModifierType instanceof TrainerItemReward
-              ? globalScene.trainerItems.isMaxStack(itemModifierType.itemId)
-              : false;
+            itemReward instanceof TrainerItemReward ? globalScene.trainerItems.isMaxStack(itemReward.itemId) : false;
           const weight =
-            !trainerItemfullStack ||
-            itemModifierType instanceof HeldItemReward ||
-            itemModifierType instanceof FormChangeItemReward
-              ? weightedModifierType.weight instanceof Function
+            !trainerItemfullStack || itemReward instanceof HeldItemReward || itemReward instanceof FormChangeItemReward
+              ? weightedReward.weight instanceof Function
                 ? // biome-ignore lint/complexity/noBannedTypes: TODO: refactor to not use Function type
-                  (weightedModifierType.weight as Function)(party, rerollCount)
-                : (weightedModifierType.weight as number)
+                  (weightedReward.weight as Function)(party, rerollCount)
+                : (weightedReward.weight as number)
               : 0;
-          if (weightedModifierType.maxWeight) {
-            const modifierId = weightedModifierType.modifierType.id;
+          if (weightedReward.maxWeight) {
+            const modifierId = weightedReward.modifierType.id;
             tierModifierIds.push(modifierId);
           }
           if (weight) {
@@ -1624,8 +1624,8 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
             ignoredIndexes[t].push(i++);
             return total;
           }
-          if (itemPoolChecks.has(modifierType.modifierType.id as ModifierTypeKeys)) {
-            itemPoolChecks.set(modifierType.modifierType.id as ModifierTypeKeys, true);
+          if (itemPoolChecks.has(modifierType.modifierType.id as RewardKeys)) {
+            itemPoolChecks.set(modifierType.modifierType.id as RewardKeys, true);
           }
           thresholds.set(total, i++);
           return total;
@@ -1644,9 +1644,9 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
 
 export interface CustomModifierSettings {
   guaranteedModifierTiers?: RewardTier[];
-  guaranteedModifierTypeOptions?: ModifierTypeOption[];
+  guaranteedRewardOptions?: RewardOption[];
   /** If specified, will override the next X items to be auto-generated from specific modifier functions (these don't have to be pre-genned). */
-  guaranteedModifierTypeFuncs?: ModifierTypeFunc[];
+  guaranteedRewardFuncs?: RewardFunc[];
   /**
    * If set to `true`, will fill the remainder of shop items that were not overridden by the 3 options above, up to the `count` param value.
    * @example
@@ -1669,7 +1669,7 @@ export interface CustomModifierSettings {
   allowLuckUpgrades?: boolean;
 }
 
-export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
+export function getRewardFuncById(id: string): RewardFunc {
   return modifierTypeInitObj[id];
 }
 
@@ -1680,46 +1680,39 @@ export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
  * @param modifierTiers - (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
  * @param customModifierSettings - See {@linkcode CustomModifierSettings}
  */
-export function getPlayerModifierTypeOptions(
+export function getPlayerRewardOptions(
   count: number,
   party: PlayerPokemon[],
   modifierTiers?: RewardTier[],
   customModifierSettings?: CustomModifierSettings,
-): ModifierTypeOption[] {
-  const options: ModifierTypeOption[] = [];
+): RewardOption[] {
+  const options: RewardOption[] = [];
   const retryCount = Math.min(count * 5, 50);
   if (!customModifierSettings) {
     for (let i = 0; i < count; i++) {
       const tier = modifierTiers && modifierTiers.length > i ? modifierTiers[i] : undefined;
-      options.push(getModifierTypeOptionWithRetry(options, retryCount, party, tier));
+      options.push(getRewardOptionWithRetry(options, retryCount, party, tier));
     }
   } else {
     // Guaranteed mod options first
-    if (
-      customModifierSettings?.guaranteedModifierTypeOptions &&
-      customModifierSettings.guaranteedModifierTypeOptions.length > 0
-    ) {
-      options.push(...customModifierSettings.guaranteedModifierTypeOptions!);
+    if (customModifierSettings?.guaranteedRewardOptions && customModifierSettings.guaranteedRewardOptions.length > 0) {
+      options.push(...customModifierSettings.guaranteedRewardOptions!);
     }
 
     // Guaranteed mod functions second
-    if (
-      customModifierSettings.guaranteedModifierTypeFuncs &&
-      customModifierSettings.guaranteedModifierTypeFuncs.length > 0
-    ) {
-      customModifierSettings.guaranteedModifierTypeFuncs!.forEach((mod, _i) => {
+    if (customModifierSettings.guaranteedRewardFuncs && customModifierSettings.guaranteedRewardFuncs.length > 0) {
+      customModifierSettings.guaranteedRewardFuncs!.forEach((mod, _i) => {
         const modifierId = Object.keys(modifierTypeInitObj).find(k => modifierTypeInitObj[k] === mod) as string;
-        let guaranteedMod: ModifierType = modifierTypeInitObj[modifierId]?.();
+        let guaranteedMod: Reward = modifierTypeInitObj[modifierId]?.();
 
         // Populates item id and tier
         guaranteedMod = guaranteedMod
           .withIdFromFunc(modifierTypeInitObj[modifierId])
           .withTierFromPool(ModifierPoolType.PLAYER, party);
 
-        const modType =
-          guaranteedMod instanceof ModifierTypeGenerator ? guaranteedMod.generateType(party) : guaranteedMod;
+        const modType = guaranteedMod instanceof RewardGenerator ? guaranteedMod.generateType(party) : guaranteedMod;
         if (modType) {
-          const option = new ModifierTypeOption(modType, 0);
+          const option = new RewardOption(modType, 0);
           options.push(option);
         }
       });
@@ -1729,40 +1722,40 @@ export function getPlayerModifierTypeOptions(
     if (customModifierSettings.guaranteedModifierTiers && customModifierSettings.guaranteedModifierTiers.length > 0) {
       const allowLuckUpgrades = customModifierSettings.allowLuckUpgrades ?? true;
       for (const tier of customModifierSettings.guaranteedModifierTiers) {
-        options.push(getModifierTypeOptionWithRetry(options, retryCount, party, tier, allowLuckUpgrades));
+        options.push(getRewardOptionWithRetry(options, retryCount, party, tier, allowLuckUpgrades));
       }
     }
 
     // Fill remaining
     if (options.length < count && customModifierSettings.fillRemaining) {
       while (options.length < count) {
-        options.push(getModifierTypeOptionWithRetry(options, retryCount, party, undefined));
+        options.push(getRewardOptionWithRetry(options, retryCount, party, undefined));
       }
     }
   }
 
-  overridePlayerModifierTypeOptions(options, party);
+  overridePlayerRewardOptions(options, party);
 
   return options;
 }
 
 /**
- * Will generate a {@linkcode ModifierType} from the {@linkcode ModifierPoolType.PLAYER} pool, attempting to retry duplicated items up to retryCount
+ * Will generate a {@linkcode Reward} from the {@linkcode ModifierPoolType.PLAYER} pool, attempting to retry duplicated items up to retryCount
  * @param existingOptions Currently generated options
  * @param retryCount How many times to retry before allowing a dupe item
  * @param party Current player party, used to calculate items in the pool
  * @param tier If specified will generate item of tier
  * @param allowLuckUpgrades `true` to allow items to upgrade tiers (the little animation that plays and is affected by luck)
  */
-function getModifierTypeOptionWithRetry(
-  existingOptions: ModifierTypeOption[],
+function getRewardOptionWithRetry(
+  existingOptions: RewardOption[],
   retryCount: number,
   party: PlayerPokemon[],
   tier?: RewardTier,
   allowLuckUpgrades?: boolean,
-): ModifierTypeOption {
+): RewardOption {
   allowLuckUpgrades = allowLuckUpgrades ?? true;
-  let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, tier, undefined, 0, allowLuckUpgrades);
+  let candidate = getNewRewardOption(party, ModifierPoolType.PLAYER, tier, undefined, 0, allowLuckUpgrades);
   let r = 0;
   while (
     existingOptions.length &&
@@ -1774,7 +1767,7 @@ function getModifierTypeOptionWithRetry(
     console.log(candidate?.type.name);
     console.log(existingOptions.filter(o => o.type.name === candidate?.type.name).length);
     console.log(existingOptions.filter(o => o.type.group === candidate?.type.group).length);
-    candidate = getNewModifierTypeOption(
+    candidate = getNewRewardOption(
       party,
       ModifierPoolType.PLAYER,
       candidate?.type.tier ?? tier,
@@ -1787,20 +1780,20 @@ function getModifierTypeOptionWithRetry(
 }
 
 /**
- * Replaces the {@linkcode ModifierType} of the entries within {@linkcode options} with any
+ * Replaces the {@linkcode Reward} of the entries within {@linkcode options} with any
  * {@linkcode ModifierOverride} entries listed in {@linkcode Overrides.ITEM_REWARD_OVERRIDE}
  * up to the smallest amount of entries between {@linkcode options} and the override array.
- * @param options Array of naturally rolled {@linkcode ModifierTypeOption}s
+ * @param options Array of naturally rolled {@linkcode RewardOption}s
  * @param party Array of the player's current party
  */
-export function overridePlayerModifierTypeOptions(options: ModifierTypeOption[], party: PlayerPokemon[]) {
+export function overridePlayerRewardOptions(options: RewardOption[], party: PlayerPokemon[]) {
   const minLength = Math.min(options.length, Overrides.ITEM_REWARD_OVERRIDE.length);
   for (let i = 0; i < minLength; i++) {
     const override: ModifierOverride = Overrides.ITEM_REWARD_OVERRIDE[i];
     const modifierFunc = modifierTypeInitObj[override.name];
-    let modifierType: ModifierType | null = modifierFunc();
+    let modifierType: Reward | null = modifierFunc();
 
-    if (modifierType instanceof ModifierTypeGenerator) {
+    if (modifierType instanceof RewardGenerator) {
       const pregenArgs = "type" in override && override.type !== null ? [override.type] : undefined;
       modifierType = modifierType.generateType(party, pregenArgs);
     }
@@ -1811,57 +1804,57 @@ export function overridePlayerModifierTypeOptions(options: ModifierTypeOption[],
   }
 }
 
-export function getPlayerShopModifierTypeOptionsForWave(waveIndex: number, baseCost: number): ModifierTypeOption[] {
+export function getPlayerShopRewardOptionsForWave(waveIndex: number, baseCost: number): RewardOption[] {
   if (!(waveIndex % 10)) {
     return [];
   }
 
   const options = [
     [
-      new ModifierTypeOption(modifierTypeInitObj.POTION(), 0, baseCost * 0.2),
-      new ModifierTypeOption(modifierTypeInitObj.ETHER(), 0, baseCost * 0.4),
-      new ModifierTypeOption(modifierTypeInitObj.REVIVE(), 0, baseCost * 2),
+      new RewardOption(modifierTypeInitObj.POTION(), 0, baseCost * 0.2),
+      new RewardOption(modifierTypeInitObj.ETHER(), 0, baseCost * 0.4),
+      new RewardOption(modifierTypeInitObj.REVIVE(), 0, baseCost * 2),
     ],
     [
-      new ModifierTypeOption(modifierTypeInitObj.SUPER_POTION(), 0, baseCost * 0.45),
-      new ModifierTypeOption(modifierTypeInitObj.FULL_HEAL(), 0, baseCost),
+      new RewardOption(modifierTypeInitObj.SUPER_POTION(), 0, baseCost * 0.45),
+      new RewardOption(modifierTypeInitObj.FULL_HEAL(), 0, baseCost),
     ],
     [
-      new ModifierTypeOption(modifierTypeInitObj.ELIXIR(), 0, baseCost),
-      new ModifierTypeOption(modifierTypeInitObj.MAX_ETHER(), 0, baseCost),
+      new RewardOption(modifierTypeInitObj.ELIXIR(), 0, baseCost),
+      new RewardOption(modifierTypeInitObj.MAX_ETHER(), 0, baseCost),
     ],
     [
-      new ModifierTypeOption(modifierTypeInitObj.HYPER_POTION(), 0, baseCost * 0.8),
-      new ModifierTypeOption(modifierTypeInitObj.MAX_REVIVE(), 0, baseCost * 2.75),
-      new ModifierTypeOption(modifierTypeInitObj.MEMORY_MUSHROOM(), 0, baseCost * 4),
+      new RewardOption(modifierTypeInitObj.HYPER_POTION(), 0, baseCost * 0.8),
+      new RewardOption(modifierTypeInitObj.MAX_REVIVE(), 0, baseCost * 2.75),
+      new RewardOption(modifierTypeInitObj.MEMORY_MUSHROOM(), 0, baseCost * 4),
     ],
     [
-      new ModifierTypeOption(modifierTypeInitObj.MAX_POTION(), 0, baseCost * 1.5),
-      new ModifierTypeOption(modifierTypeInitObj.MAX_ELIXIR(), 0, baseCost * 2.5),
+      new RewardOption(modifierTypeInitObj.MAX_POTION(), 0, baseCost * 1.5),
+      new RewardOption(modifierTypeInitObj.MAX_ELIXIR(), 0, baseCost * 2.5),
     ],
-    [new ModifierTypeOption(modifierTypeInitObj.FULL_RESTORE(), 0, baseCost * 2.25)],
-    [new ModifierTypeOption(modifierTypeInitObj.SACRED_ASH(), 0, baseCost * 10)],
+    [new RewardOption(modifierTypeInitObj.FULL_RESTORE(), 0, baseCost * 2.25)],
+    [new RewardOption(modifierTypeInitObj.SACRED_ASH(), 0, baseCost * 10)],
   ];
   return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
 }
 
 /**
- * Generates a ModifierType from the specified pool
+ * Generates a Reward from the specified pool
  * @param party party of the trainer using the item
  * @param poolType PLAYER/WILD/TRAINER
  * @param tier If specified, will override the initial tier of an item (can still upgrade with luck)
- * @param upgradeCount If defined, means that this is a new ModifierType being generated to override another via luck upgrade. Used for recursive logic
- * @param retryCount Max allowed tries before the next tier down is checked for a valid ModifierType
- * @param allowLuckUpgrades Default true. If false, will not allow ModifierType to randomly upgrade to next tier
+ * @param upgradeCount If defined, means that this is a new Reward being generated to override another via luck upgrade. Used for recursive logic
+ * @param retryCount Max allowed tries before the next tier down is checked for a valid Reward
+ * @param allowLuckUpgrades Default true. If false, will not allow Reward to randomly upgrade to next tier
  */
-function getNewModifierTypeOption(
+function getNewRewardOption(
   party: Pokemon[],
   poolType: ModifierPoolType,
   baseTier?: RewardTier,
   upgradeCount?: number,
   retryCount = 0,
   allowLuckUpgrades = true,
-): ModifierTypeOption | null {
+): RewardOption | null {
   const player = !poolType;
   const pool = getModifierPoolForType(poolType);
   const thresholds = getPoolThresholds(poolType);
@@ -1896,20 +1889,20 @@ function getNewModifierTypeOption(
   if (player) {
     console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
   }
-  let modifierType: ModifierType | null = pool[tier][index].modifierType;
-  if (modifierType instanceof ModifierTypeGenerator) {
-    modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
+  let modifierType: Reward | null = pool[tier][index].modifierType;
+  if (modifierType instanceof RewardGenerator) {
+    modifierType = (modifierType as RewardGenerator).generateType(party);
     if (modifierType === null) {
       if (player) {
         console.log(RewardTier[tier], upgradeCount);
       }
-      return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount);
+      return getNewRewardOption(party, poolType, tier, upgradeCount, ++retryCount);
     }
   }
 
   console.log(modifierType, !player ? "(enemy)" : "");
 
-  return new ModifierTypeOption(modifierType as ModifierType, upgradeCount!); // TODO: is this bang correct?
+  return new RewardOption(modifierType as Reward, upgradeCount!); // TODO: is this bang correct?
 }
 
 function getPoolThresholds(poolType: ModifierPoolType) {
@@ -1964,21 +1957,21 @@ function getUpgradeCount(
   return upgradeCount;
 }
 
-export function getDefaultModifierTypeForTier(tier: RewardTier): ModifierType {
+export function getDefaultRewardForTier(tier: RewardTier): Reward {
   const modifierPool = getModifierPoolForType(ModifierPoolType.PLAYER);
-  let modifierType: ModifierType | WeightedModifierType = modifierPool[tier || RewardTier.COMMON][0];
-  if (modifierType instanceof WeightedModifierType) {
-    modifierType = (modifierType as WeightedModifierType).modifierType;
+  let modifierType: Reward | WeightedReward = modifierPool[tier || RewardTier.COMMON][0];
+  if (modifierType instanceof WeightedReward) {
+    modifierType = (modifierType as WeightedReward).modifierType;
   }
   return modifierType;
 }
 
-export class ModifierTypeOption {
-  public type: ModifierType;
+export class RewardOption {
+  public type: Reward;
   public upgradeCount: number;
   public cost: number;
 
-  constructor(type: ModifierType, upgradeCount: number, cost = 0) {
+  constructor(type: Reward, upgradeCount: number, cost = 0) {
     this.type = type;
     this.upgradeCount = upgradeCount;
     this.cost = Math.min(Math.round(cost), Number.MAX_SAFE_INTEGER);
@@ -2035,7 +2028,7 @@ export function getLuckTextTint(luckValue: number): number {
   return getModifierTierTextTint(modifierTier);
 }
 
-export function initModifierTypes() {
+export function initRewards() {
   for (const [key, value] of Object.entries(modifierTypeInitObj)) {
     modifierTypes[key] = value;
   }
@@ -2043,20 +2036,20 @@ export function initModifierTypes() {
 
 // TODO: If necessary, add the rest of the modifier types here.
 // For now, doing the minimal work until the modifier rework lands.
-const ModifierTypeConstructorMap = Object.freeze({
-  ModifierTypeGenerator,
+const RewardConstructorMap = Object.freeze({
+  RewardGenerator,
 });
 
 /**
  * Map of of modifier type strings to their constructor type
  */
-export type ModifierTypeConstructorMap = typeof ModifierTypeConstructorMap;
+export type RewardConstructorMap = typeof RewardConstructorMap;
 
 /**
  * Map of modifier type strings to their instance type
  */
-export type ModifierTypeInstanceMap = {
-  [K in keyof ModifierTypeConstructorMap]: InstanceType<ModifierTypeConstructorMap[K]>;
+export type RewardInstanceMap = {
+  [K in keyof RewardConstructorMap]: InstanceType<RewardConstructorMap[K]>;
 };
 
-export type ModifierTypeString = keyof ModifierTypeConstructorMap;
+export type RewardString = keyof RewardConstructorMap;

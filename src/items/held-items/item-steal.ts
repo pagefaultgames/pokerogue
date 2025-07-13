@@ -47,7 +47,7 @@ export abstract class ItemTransferHeldItem extends HeldItem {
     }
 
     // TODO: Change this logic to use held items
-    const transferredModifierTypes: HeldItemId[] = [];
+    const transferredRewards: HeldItemId[] = [];
     const heldItems = targetPokemon.heldItemManager.getTransferableHeldItems();
 
     for (let i = 0; i < transferredItemCount; i++) {
@@ -58,16 +58,16 @@ export abstract class ItemTransferHeldItem extends HeldItem {
       const randItem = heldItems[randItemIndex];
       // TODO: Fix this after updating the various methods in battle-scene.ts
       if (globalScene.tryTransferHeldItem(randItem, targetPokemon, pokemon, false)) {
-        transferredModifierTypes.push(randItem);
+        transferredRewards.push(randItem);
         heldItems.splice(randItemIndex, 1);
       }
     }
 
-    for (const mt of transferredModifierTypes) {
+    for (const mt of transferredRewards) {
       globalScene.phaseManager.queueMessage(this.getTransferMessage(params, mt));
     }
 
-    return !!transferredModifierTypes.length;
+    return !!transferredRewards.length;
   }
 
   abstract getTargets(params: ItemStealParams): Pokemon[];
@@ -87,7 +87,7 @@ export class TurnEndItemStealHeldItem extends ItemTransferHeldItem {
   isTransferable = true;
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.TurnHeldItemTransferModifierType.description");
+    return i18next.t("modifierType:ModifierType.TurnHeldItemTransferReward.description");
   }
 
   /**
@@ -137,7 +137,7 @@ export class ContactItemStealChanceHeldItem extends ItemTransferHeldItem {
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.ContactHeldItemTransferChanceModifierType.description", {
+    return i18next.t("modifierType:ModifierType.ContactHeldItemTransferChanceReward.description", {
       chancePercent: this.chancePercent,
     });
   }

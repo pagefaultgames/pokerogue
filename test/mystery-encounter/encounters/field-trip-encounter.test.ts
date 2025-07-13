@@ -234,13 +234,13 @@ describe("Field Trip - Mystery Encounter", () => {
         i18next.t("modifierType:TempStatStageBoosterItem.x_speed"),
       );
       expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe(
-        i18next.t("modifierType:ModifierType.AddPokeballModifierType.name", {
+        i18next.t("modifierType:ModifierType.AddPokeballConsumableType.name", {
           modifierCount: 5,
           pokeballName: i18next.t("pokeball:greatBall"),
         }),
       );
       expect(i18next.t).toHaveBeenCalledWith(
-        "modifierType:ModifierType.AddPokeballModifierType.name",
+        "modifierType:ModifierType.AddPokeballConsumableType.name",
         expect.objectContaining({ modifierCount: 5 }),
       );
       expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe(

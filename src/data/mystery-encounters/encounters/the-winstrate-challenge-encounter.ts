@@ -17,7 +17,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { showEncounterDialogue, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  generateModifierTypeOption,
+  generateRewardOption,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterRewards,
@@ -140,7 +140,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
       // Refuse the challenge, they full heal the party and give the player a Rarer Candy
       globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
       setEncounterRewards({
-        guaranteedModifierTypeFuncs: [modifierTypes.RARER_CANDY],
+        guaranteedRewardFuncs: [modifierTypes.RARER_CANDY],
         fillRemaining: false,
       });
       leaveEncounterWithoutBattle();
@@ -163,10 +163,10 @@ async function spawnNextTrainerOrEndEncounter() {
 
     await showEncounterDialogue(`${namespace}:victory_2`, `${namespace}:speaker`);
     globalScene.ui.clearText(); // Clears "Winstrate" title from screen as rewards get animated in
-    const machoBrace = generateModifierTypeOption(modifierTypes.MYSTERY_ENCOUNTER_MACHO_BRACE)!;
+    const machoBrace = generateRewardOption(modifierTypes.MYSTERY_ENCOUNTER_MACHO_BRACE)!;
     machoBrace.type.tier = RewardTier.MASTER;
     setEncounterRewards({
-      guaranteedModifierTypeOptions: [machoBrace],
+      guaranteedRewardOptions: [machoBrace],
       fillRemaining: false,
     });
     encounter.doContinueEncounter = undefined;

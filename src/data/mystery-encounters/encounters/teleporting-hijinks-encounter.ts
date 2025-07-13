@@ -17,7 +17,7 @@ import { getPartyLuckValue } from "#modifiers/modifier-type";
 import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  generateModifierTypeOption,
+  generateRewardOption,
   initBattleWithEnemyConfig,
   setEncounterExp,
   setEncounterRewards,
@@ -173,10 +173,10 @@ export const TeleportingHijinksEncounter: MysteryEncounter = MysteryEncounterBui
         ],
       };
 
-      const magnet = generateModifierTypeOption(modifierTypes.ATTACK_TYPE_BOOSTER, [PokemonType.STEEL])!;
-      const metalCoat = generateModifierTypeOption(modifierTypes.ATTACK_TYPE_BOOSTER, [PokemonType.ELECTRIC])!;
+      const magnet = generateRewardOption(modifierTypes.ATTACK_TYPE_BOOSTER, [PokemonType.STEEL])!;
+      const metalCoat = generateRewardOption(modifierTypes.ATTACK_TYPE_BOOSTER, [PokemonType.ELECTRIC])!;
       setEncounterRewards({
-        guaranteedModifierTypeOptions: [magnet, metalCoat],
+        guaranteedRewardOptions: [magnet, metalCoat],
         fillRemaining: true,
       });
       await transitionMysteryEncounterIntroVisuals(true, true);

@@ -46,7 +46,7 @@ export class BaseStatBoosterHeldItem extends HeldItem {
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.BaseStatBoosterModifierType.description", {
+    return i18next.t("modifierType:ModifierType.BaseStatBoosterReward.description", {
       stat: i18next.t(getStatKey(this.stat)),
     });
   }

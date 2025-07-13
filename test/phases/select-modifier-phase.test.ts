@@ -9,7 +9,7 @@ import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import { PlayerPokemon } from "#field/pokemon";
 import type { CustomModifierSettings } from "#modifiers/modifier-type";
-import { ModifierTypeOption } from "#modifiers/modifier-type";
+import { RewardOption } from "#modifiers/modifier-type";
 import { SelectRewardPhase } from "#phases/select-reward-phase";
 import { GameManager } from "#test/testUtils/gameManager";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
@@ -69,16 +69,16 @@ describe("SelectRewardPhase", () => {
   it("should modify reroll cost", async () => {
     initSceneWithoutEncounterPhase(scene, [SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     const options = [
-      new ModifierTypeOption(modifierTypes.POTION(), 0, 100),
-      new ModifierTypeOption(modifierTypes.ETHER(), 0, 400),
-      new ModifierTypeOption(modifierTypes.REVIVE(), 0, 1000),
+      new RewardOption(modifierTypes.POTION(), 0, 100),
+      new RewardOption(modifierTypes.ETHER(), 0, 400),
+      new RewardOption(modifierTypes.REVIVE(), 0, 1000),
     ];
 
     const selectModifierPhase1 = new SelectRewardPhase(0, undefined, {
-      guaranteedModifierTypeOptions: options,
+      guaranteedRewardOptions: options,
     });
     const selectModifierPhase2 = new SelectRewardPhase(0, undefined, {
-      guaranteedModifierTypeOptions: options,
+      guaranteedRewardOptions: options,
       rerollMultiplier: 2,
     });
 
@@ -155,7 +155,7 @@ describe("SelectRewardPhase", () => {
     await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
-      guaranteedModifierTypeFuncs: [
+      guaranteedRewardFuncs: [
         modifierTypes.MEMORY_MUSHROOM,
         modifierTypes.TM_ULTRA,
         modifierTypes.LEFTOVERS,
@@ -236,7 +236,7 @@ describe("SelectRewardPhase", () => {
     await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
-      guaranteedModifierTypeFuncs: [modifierTypes.MEMORY_MUSHROOM, modifierTypes.TM_COMMON],
+      guaranteedRewardFuncs: [modifierTypes.MEMORY_MUSHROOM, modifierTypes.TM_COMMON],
       guaranteedModifierTiers: [RewardTier.MASTER, RewardTier.MASTER],
     };
     const selectModifierPhase = new SelectRewardPhase(0, undefined, customModifiers);
@@ -259,7 +259,7 @@ describe("SelectRewardPhase", () => {
     await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
-      guaranteedModifierTypeFuncs: [modifierTypes.MEMORY_MUSHROOM],
+      guaranteedRewardFuncs: [modifierTypes.MEMORY_MUSHROOM],
       guaranteedModifierTiers: [RewardTier.MASTER],
       fillRemaining: true,
     };

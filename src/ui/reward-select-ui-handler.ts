@@ -9,8 +9,8 @@ import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import { TrainerItemEffect } from "#items/trainer-item";
-import type { ModifierTypeOption } from "#modifiers/modifier-type";
-import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "#modifiers/modifier-type";
+import type { RewardOption } from "#modifiers/modifier-type";
+import { getPlayerShopRewardOptionsForWave, TmReward } from "#modifiers/modifier-type";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions, TextStyle } from "#ui/text";
@@ -211,12 +211,12 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
 
     this.updateRerollCostText();
 
-    const typeOptions = args[1] as ModifierTypeOption[];
+    const typeOptions = args[1] as RewardOption[];
     const removeHealShop = globalScene.gameMode.hasNoShop;
     const baseShopCost = new NumberHolder(globalScene.getWaveMoneyAmount(1));
     globalScene.applyPlayerItems(TrainerItemEffect.HEAL_SHOP_COST, { numberHolder: baseShopCost });
     const shopTypeOptions = !removeHealShop
-      ? getPlayerShopModifierTypeOptionsForWave(globalScene.currentBattle.waveIndex, baseShopCost.value)
+      ? getPlayerShopRewardOptionsForWave(globalScene.currentBattle.waveIndex, baseShopCost.value)
       : [];
     const optionsYOffset =
       shopTypeOptions.length > SHOP_OPTIONS_ROW_LIMIT ? -SINGLE_SHOP_ROW_YOFFSET : -DOUBLE_SHOP_ROW_YOFFSET;
@@ -548,7 +548,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
 
       const type = options[this.cursor].modifierTypeOption.type;
       type && ui.showText(type.getDescription());
-      if (type instanceof TmModifierType) {
+      if (type instanceof TmReward) {
         // prepare the move overlay to be shown with the toggle
         this.moveInfoOverlay.show(allMoves[type.moveId]);
       }
@@ -730,7 +730,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
 }
 
 class ModifierOption extends Phaser.GameObjects.Container {
-  public modifierTypeOption: ModifierTypeOption;
+  public modifierTypeOption: RewardOption;
   private pb: Phaser.GameObjects.Sprite;
   private pbTint: Phaser.GameObjects.Sprite;
   private itemContainer: Phaser.GameObjects.Container;
@@ -739,7 +739,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
   private itemText: Phaser.GameObjects.Text;
   private itemCostText: Phaser.GameObjects.Text;
 
-  constructor(x: number, y: number, modifierTypeOption: ModifierTypeOption) {
+  constructor(x: number, y: number, modifierTypeOption: RewardOption) {
     super(globalScene, x, y);
 
     this.modifierTypeOption = modifierTypeOption;

@@ -24,15 +24,15 @@ export interface AbilityTranslationEntries {
   [key: string]: AbilityTranslationEntry;
 }
 
-export interface ModifierTypeTranslationEntry {
+export interface RewardTranslationEntry {
   name?: string;
   description?: string;
   extra?: SimpleTranslationEntries;
 }
 
-export interface ModifierTypeTranslationEntries {
-  ModifierType: { [key: string]: ModifierTypeTranslationEntry };
-  SpeciesBoosterItem: { [key: string]: ModifierTypeTranslationEntry };
+export interface RewardTranslationEntries {
+  Reward: { [key: string]: RewardTranslationEntry };
+  SpeciesBoosterItem: { [key: string]: RewardTranslationEntry };
   AttackTypeBoosterItem: SimpleTranslationEntries;
   TempStatStageBoosterItem: SimpleTranslationEntries;
   BaseStatBoosterItem: SimpleTranslationEntries;

@@ -164,7 +164,7 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
       encounter.setDialogueToken("eggType", i18next.t(`${namespace}:eggTypes.epic`));
       setEncounterRewards(
         {
-          guaranteedModifierTypeFuncs: [modifierTypes.SACRED_ASH],
+          guaranteedRewardFuncs: [modifierTypes.SACRED_ASH],
           guaranteedModifierTiers: [RewardTier.ROGUE, RewardTier.ULTRA],
           fillRemaining: true,
         },

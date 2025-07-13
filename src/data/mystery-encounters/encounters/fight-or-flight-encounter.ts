@@ -7,8 +7,8 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { RewardTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
-import type { ModifierTypeOption } from "#modifiers/modifier-type";
-import { getPlayerModifierTypeOptions, regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
+import type { RewardOption } from "#modifiers/modifier-type";
+import { getPlayerRewardOptions, regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
@@ -96,10 +96,10 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
             ? RewardTier.ULTRA
             : RewardTier.GREAT;
     regenerateModifierPoolThresholds(globalScene.getPlayerParty(), ModifierPoolType.PLAYER, 0);
-    let item: ModifierTypeOption | null = null;
+    let item: RewardOption | null = null;
     // TMs and Candy Jar excluded from possible rewards as they're too swingy in value for a singular item reward
     while (!item || item.type.id.includes("TM_") || item.type.id === "CANDY_JAR") {
-      item = getPlayerModifierTypeOptions(1, globalScene.getPlayerParty(), [], {
+      item = getPlayerRewardOptions(1, globalScene.getPlayerParty(), [], {
         guaranteedModifierTiers: [tier],
         allowLuckUpgrades: false,
       })[0];
@@ -151,9 +151,9 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
     async () => {
       // Pick battle
       // Pokemon will randomly boost 1 stat by 2 stages
-      const item = globalScene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
+      const item = globalScene.currentBattle.mysteryEncounter!.misc as RewardOption;
       setEncounterRewards({
-        guaranteedModifierTypeOptions: [item],
+        guaranteedRewardOptions: [item],
         fillRemaining: false,
       });
       await initBattleWithEnemyConfig(globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
@@ -175,9 +175,9 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
       .withOptionPhase(async () => {
         // Pick steal
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const item = globalScene.currentBattle.mysteryEncounter!.misc as ModifierTypeOption;
+        const item = globalScene.currentBattle.mysteryEncounter!.misc as RewardOption;
         setEncounterRewards({
-          guaranteedModifierTypeOptions: [item],
+          guaranteedRewardOptions: [item],
           fillRemaining: false,
         });
 

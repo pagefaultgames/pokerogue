@@ -193,7 +193,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
       // Pick battle
       const encounter = globalScene.currentBattle.mysteryEncounter!;
       setEncounterRewards({
-        guaranteedModifierTypeFuncs: [modifierTypes.SOUL_DEW],
+        guaranteedRewardFuncs: [modifierTypes.SOUL_DEW],
         fillRemaining: true,
       });
       encounter.startOfBattleEffects.push(

@@ -9,7 +9,7 @@ import { Stat } from "#enums/stat";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 import {
-  generateModifierTypeOption,
+  generateRewardOption,
   leaveEncounterWithoutBattle,
   selectPokemonForOption,
   setEncounterExp,
@@ -96,15 +96,15 @@ export const FieldTripEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         if (encounter.misc.correctMove) {
           const modifiers = [
-            generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.ATK])!,
-            generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.DEF])!,
-            generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
-            generateModifierTypeOption(modifierTypes.DIRE_HIT)!,
-            generateModifierTypeOption(modifierTypes.RARER_CANDY)!,
+            generateRewardOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.ATK])!,
+            generateRewardOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.DEF])!,
+            generateRewardOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
+            generateRewardOption(modifierTypes.DIRE_HIT)!,
+            generateRewardOption(modifierTypes.RARER_CANDY)!,
           ];
 
           setEncounterRewards({
-            guaranteedModifierTypeOptions: modifiers,
+            guaranteedRewardOptions: modifiers,
             fillRemaining: false,
           });
         }
@@ -144,15 +144,15 @@ export const FieldTripEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         if (encounter.misc.correctMove) {
           const modifiers = [
-            generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPATK])!,
-            generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPDEF])!,
-            generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
-            generateModifierTypeOption(modifierTypes.DIRE_HIT)!,
-            generateModifierTypeOption(modifierTypes.RARER_CANDY)!,
+            generateRewardOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPATK])!,
+            generateRewardOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPDEF])!,
+            generateRewardOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
+            generateRewardOption(modifierTypes.DIRE_HIT)!,
+            generateRewardOption(modifierTypes.RARER_CANDY)!,
           ];
 
           setEncounterRewards({
-            guaranteedModifierTypeOptions: modifiers,
+            guaranteedRewardOptions: modifiers,
             fillRemaining: false,
           });
         }
@@ -192,15 +192,15 @@ export const FieldTripEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         if (encounter.misc.correctMove) {
           const modifiers = [
-            generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.ACC])!,
-            generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
-            generateModifierTypeOption(modifierTypes.GREAT_BALL)!,
-            generateModifierTypeOption(modifierTypes.IV_SCANNER)!,
-            generateModifierTypeOption(modifierTypes.RARER_CANDY)!,
+            generateRewardOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.ACC])!,
+            generateRewardOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
+            generateRewardOption(modifierTypes.GREAT_BALL)!,
+            generateRewardOption(modifierTypes.IV_SCANNER)!,
+            generateRewardOption(modifierTypes.RARER_CANDY)!,
           ];
 
           setEncounterRewards({
-            guaranteedModifierTypeOptions: modifiers,
+            guaranteedRewardOptions: modifiers,
             fillRemaining: false,
           });
         }

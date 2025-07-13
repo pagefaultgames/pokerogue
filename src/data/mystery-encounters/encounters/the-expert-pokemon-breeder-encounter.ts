@@ -294,7 +294,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         const eggOptions = getEggOptions(pokemon1CommonEggs, pokemon1RareEggs);
         setEncounterRewards(
           {
-            guaranteedModifierTypeFuncs: [modifierTypes.SOOTHE_BELL],
+            guaranteedRewardFuncs: [modifierTypes.SOOTHE_BELL],
             fillRemaining: true,
           },
           eggOptions,
@@ -353,7 +353,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         const eggOptions = getEggOptions(pokemon2CommonEggs, pokemon2RareEggs);
         setEncounterRewards(
           {
-            guaranteedModifierTypeFuncs: [modifierTypes.SOOTHE_BELL],
+            guaranteedRewardFuncs: [modifierTypes.SOOTHE_BELL],
             fillRemaining: true,
           },
           eggOptions,
@@ -412,7 +412,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         const eggOptions = getEggOptions(pokemon3CommonEggs, pokemon3RareEggs);
         setEncounterRewards(
           {
-            guaranteedModifierTypeFuncs: [modifierTypes.SOOTHE_BELL],
+            guaranteedRewardFuncs: [modifierTypes.SOOTHE_BELL],
             fillRemaining: true,
           },
           eggOptions,

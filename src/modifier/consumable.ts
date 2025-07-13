@@ -15,22 +15,15 @@ import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { assignItemsFromConfiguration } from "#items/held-item-pool";
 import { TrainerItemEffect } from "#items/trainer-item";
 import type { TrainerItemConfiguration } from "#items/trainer-item-data-types";
-import type {
-  EvolutionItemModifierType,
-  ModifierType,
-  TerastallizeModifierType,
-  TmModifierType,
-} from "#modifiers/modifier-type";
+import type { EvolutionItemReward, Reward, TerastallizeReward, TmReward } from "#modifiers/modifier-type";
 import type { VoucherType } from "#system/voucher";
 import type { ModifierInstanceMap, ModifierString } from "#types/modifier-types";
 import { isNullOrUndefined, NumberHolder } from "#utils/common";
 
-export type ModifierPredicate = (modifier: Modifier) => boolean;
+export abstract class Consumable {
+  public type: Reward;
 
-export abstract class Modifier {
-  public type: ModifierType;
-
-  constructor(type: ModifierType) {
+  constructor(type: Reward) {
     this.type = type;
   }
 
@@ -51,10 +44,6 @@ export abstract class Modifier {
     return this instanceof targetModifier;
   }
 
-  match(_modifier: Modifier): boolean {
-    return false;
-  }
-
   /**
    * Checks if {@linkcode Modifier} should be applied
    * @param _args parameters passed to {@linkcode Modifier.apply}
@@ -71,17 +60,11 @@ export abstract class Modifier {
   abstract apply(...args: unknown[]): boolean;
 }
 
-export abstract class ConsumableModifier extends Modifier {
-  add(_modifiers: Modifier[]): boolean {
-    return true;
-  }
-}
-
-export class AddPokeballModifier extends ConsumableModifier {
+export class AddPokeballConsumable extends Consumable {
   private pokeballType: PokeballType;
   private count: number;
 
-  constructor(type: ModifierType, pokeballType: PokeballType, count: number) {
+  constructor(type: Reward, pokeballType: PokeballType, count: number) {
     super(type);
 
     this.pokeballType = pokeballType;
@@ -89,7 +72,7 @@ export class AddPokeballModifier extends ConsumableModifier {
   }
 
   /**
-   * Applies {@linkcode AddPokeballModifier}
+   * Applies {@linkcode AddPokeballConsumable}
    * @param battleScene {@linkcode BattleScene}
    * @returns always `true`
    */
@@ -104,11 +87,11 @@ export class AddPokeballModifier extends ConsumableModifier {
   }
 }
 
-export class AddVoucherModifier extends ConsumableModifier {
+export class AddVoucherConsumable extends Consumable {
   private voucherType: VoucherType;
   private count: number;
 
-  constructor(type: ModifierType, voucherType: VoucherType, count: number) {
+  constructor(type: Reward, voucherType: VoucherType, count: number) {
     super(type);
 
     this.voucherType = voucherType;
@@ -116,7 +99,7 @@ export class AddVoucherModifier extends ConsumableModifier {
   }
 
   /**
-   * Applies {@linkcode AddVoucherModifier}
+   * Applies {@linkcode AddVoucherConsumable}
    * @param battleScene {@linkcode BattleScene}
    * @returns always `true`
    */
@@ -128,29 +111,29 @@ export class AddVoucherModifier extends ConsumableModifier {
   }
 }
 
-export abstract class ConsumablePokemonModifier extends ConsumableModifier {
+export abstract class PokemonConsumable extends Consumable {
   public pokemonId: number;
 
-  constructor(type: ModifierType, pokemonId: number) {
+  constructor(type: Reward, pokemonId: number) {
     super(type);
 
     this.pokemonId = pokemonId;
   }
 
   /**
-   * Checks if {@linkcode ConsumablePokemonModifier} should be applied
+   * Checks if {@linkcode PokemonConsumable} should be applied
    * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
    * @param _args N/A
-   * @returns `true` if {@linkcode ConsumablePokemonModifier} should be applied
+   * @returns `true` if {@linkcode PokemonConsumable} should be applied
    */
   override shouldApply(playerPokemon?: PlayerPokemon, ..._args: unknown[]): boolean {
     return !!playerPokemon && (this.pokemonId === -1 || playerPokemon.id === this.pokemonId);
   }
 
   /**
-   * Applies {@linkcode ConsumablePokemonModifier}
+   * Applies {@linkcode PokemonConsumable}
    * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
-   * @param args Additional arguments passed to {@linkcode ConsumablePokemonModifier.apply}
+   * @param args Additional arguments passed to {@linkcode PokemonConsumable.apply}
    */
   abstract override apply(playerPokemon: PlayerPokemon, ...args: unknown[]): boolean;
 
@@ -159,20 +142,20 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
   }
 }
 
-export class TerrastalizeModifier extends ConsumablePokemonModifier {
-  public override type: TerastallizeModifierType;
+export class TerrastalizeConsumable extends PokemonConsumable {
+  public override type: TerastallizeReward;
   public teraType: PokemonType;
 
-  constructor(type: TerastallizeModifierType, pokemonId: number, teraType: PokemonType) {
+  constructor(type: TerastallizeReward, pokemonId: number, teraType: PokemonType) {
     super(type, pokemonId);
 
     this.teraType = teraType;
   }
 
   /**
-   * Checks if {@linkcode TerrastalizeModifier} should be applied
+   * Checks if {@linkcode TerrastalizeConsumable} should be applied
    * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
-   * @returns `true` if the {@linkcode TerrastalizeModifier} should be applied
+   * @returns `true` if the {@linkcode TerrastalizeConsumable} should be applied
    */
   override shouldApply(playerPokemon?: PlayerPokemon): boolean {
     return (
@@ -184,7 +167,7 @@ export class TerrastalizeModifier extends ConsumablePokemonModifier {
   }
 
   /**
-   * Applies {@linkcode TerrastalizeModifier}
+   * Applies {@linkcode TerrastalizeConsumable}
    * @param pokemon The {@linkcode PlayerPokemon} that consumes the item
    * @returns `true` if hp was restored
    */
@@ -194,14 +177,14 @@ export class TerrastalizeModifier extends ConsumablePokemonModifier {
   }
 }
 
-export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
+export class PokemonHpRestoreConsumable extends PokemonConsumable {
   private restorePoints: number;
   private restorePercent: number;
   private healStatus: boolean;
   public fainted: boolean;
 
   constructor(
-    type: ModifierType,
+    type: Reward,
     pokemonId: number,
     restorePoints: number,
     restorePercent: number,
@@ -217,10 +200,10 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
   }
 
   /**
-   * Checks if {@linkcode PokemonHpRestoreModifier} should be applied
+   * Checks if {@linkcode PokemonHpRestoreConsumable} should be applied
    * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
    * @param multiplier The multiplier of the hp restore
-   * @returns `true` if the {@linkcode PokemonHpRestoreModifier} should be applied
+   * @returns `true` if the {@linkcode PokemonHpRestoreConsumable} should be applied
    */
   override shouldApply(playerPokemon?: PlayerPokemon, multiplier?: number): boolean {
     return (
@@ -230,7 +213,7 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
   }
 
   /**
-   * Applies {@linkcode PokemonHpRestoreModifier}
+   * Applies {@linkcode PokemonHpRestoreConsumable}
    * @param pokemon The {@linkcode PlayerPokemon} that consumes the item
    * @param multiplier The multiplier of the hp restore
    * @returns `true` if hp was restored
@@ -255,9 +238,9 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
   }
 }
 
-export class PokemonStatusHealModifier extends ConsumablePokemonModifier {
+export class PokemonStatusHealConsumable extends PokemonConsumable {
   /**
-   * Applies {@linkcode PokemonStatusHealModifier}
+   * Applies {@linkcode PokemonStatusHealConsumable}
    * @param playerPokemon The {@linkcode PlayerPokemon} that gets healed from the status
    * @returns always `true`
    */
@@ -267,27 +250,27 @@ export class PokemonStatusHealModifier extends ConsumablePokemonModifier {
   }
 }
 
-export abstract class ConsumablePokemonMoveModifier extends ConsumablePokemonModifier {
+export abstract class PokemonMoveConsumable extends PokemonConsumable {
   public moveIndex: number;
 
-  constructor(type: ModifierType, pokemonId: number, moveIndex: number) {
+  constructor(type: Reward, pokemonId: number, moveIndex: number) {
     super(type, pokemonId);
 
     this.moveIndex = moveIndex;
   }
 }
 
-export class PokemonPpRestoreModifier extends ConsumablePokemonMoveModifier {
+export class PokemonPpRestoreConsumable extends PokemonMoveConsumable {
   private restorePoints: number;
 
-  constructor(type: ModifierType, pokemonId: number, moveIndex: number, restorePoints: number) {
+  constructor(type: Reward, pokemonId: number, moveIndex: number, restorePoints: number) {
     super(type, pokemonId, moveIndex);
 
     this.restorePoints = restorePoints;
   }
 
   /**
-   * Applies {@linkcode PokemonPpRestoreModifier}
+   * Applies {@linkcode PokemonPpRestoreConsumable}
    * @param playerPokemon The {@linkcode PlayerPokemon} that should get move pp restored
    * @returns always `true`
    */
@@ -302,17 +285,17 @@ export class PokemonPpRestoreModifier extends ConsumablePokemonMoveModifier {
   }
 }
 
-export class PokemonAllMovePpRestoreModifier extends ConsumablePokemonModifier {
+export class PokemonAllMovePpRestoreConsumable extends PokemonConsumable {
   private restorePoints: number;
 
-  constructor(type: ModifierType, pokemonId: number, restorePoints: number) {
+  constructor(type: Reward, pokemonId: number, restorePoints: number) {
     super(type, pokemonId);
 
     this.restorePoints = restorePoints;
   }
 
   /**
-   * Applies {@linkcode PokemonAllMovePpRestoreModifier}
+   * Applies {@linkcode PokemonAllMovePpRestoreConsumable}
    * @param playerPokemon The {@linkcode PlayerPokemon} that should get all move pp restored
    * @returns always `true`
    */
@@ -327,17 +310,17 @@ export class PokemonAllMovePpRestoreModifier extends ConsumablePokemonModifier {
   }
 }
 
-export class PokemonPpUpModifier extends ConsumablePokemonMoveModifier {
+export class PokemonPpUpConsumable extends PokemonMoveConsumable {
   private upPoints: number;
 
-  constructor(type: ModifierType, pokemonId: number, moveIndex: number, upPoints: number) {
+  constructor(type: Reward, pokemonId: number, moveIndex: number, upPoints: number) {
     super(type, pokemonId, moveIndex);
 
     this.upPoints = upPoints;
   }
 
   /**
-   * Applies {@linkcode PokemonPpUpModifier}
+   * Applies {@linkcode PokemonPpUpConsumable}
    * @param playerPokemon The {@linkcode PlayerPokemon} that gets a pp up on move-slot {@linkcode moveIndex}
    * @returns
    */
@@ -352,17 +335,17 @@ export class PokemonPpUpModifier extends ConsumablePokemonMoveModifier {
   }
 }
 
-export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
+export class PokemonNatureChangeConsumable extends PokemonConsumable {
   public nature: Nature;
 
-  constructor(type: ModifierType, pokemonId: number, nature: Nature) {
+  constructor(type: Reward, pokemonId: number, nature: Nature) {
     super(type, pokemonId);
 
     this.nature = nature;
   }
 
   /**
-   * Applies {@linkcode PokemonNatureChangeModifier}
+   * Applies {@linkcode PokemonNatureChangeConsumable}
    * @param playerPokemon {@linkcode PlayerPokemon} to apply the {@linkcode Nature} change to
    * @returns
    */
@@ -374,9 +357,9 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
   }
 }
 
-export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
+export class PokemonLevelIncrementConsumable extends PokemonConsumable {
   /**
-   * Applies {@linkcode PokemonLevelIncrementModifier}
+   * Applies {@linkcode PokemonLevelIncrementConsumable}
    * @param playerPokemon The {@linkcode PlayerPokemon} that should get levels incremented
    * @param levelCount The amount of levels to increment
    * @returns always `true`
@@ -403,11 +386,11 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
   }
 }
 
-export class TmModifier extends ConsumablePokemonModifier {
-  public override type: TmModifierType;
+export class TmConsumable extends PokemonConsumable {
+  public override type: TmReward;
 
   /**
-   * Applies {@linkcode TmModifier}
+   * Applies {@linkcode TmConsumable}
    * @param playerPokemon The {@linkcode PlayerPokemon} that should learn the TM
    * @returns always `true`
    */
@@ -423,17 +406,17 @@ export class TmModifier extends ConsumablePokemonModifier {
   }
 }
 
-export class RememberMoveModifier extends ConsumablePokemonModifier {
+export class RememberMoveConsumable extends PokemonConsumable {
   public levelMoveIndex: number;
 
-  constructor(type: ModifierType, pokemonId: number, levelMoveIndex: number) {
+  constructor(type: Reward, pokemonId: number, levelMoveIndex: number) {
     super(type, pokemonId);
 
     this.levelMoveIndex = levelMoveIndex;
   }
 
   /**
-   * Applies {@linkcode RememberMoveModifier}
+   * Applies {@linkcode RememberMoveConsumable}
    * @param playerPokemon The {@linkcode PlayerPokemon} that should remember the move
    * @returns always `true`
    */
@@ -450,10 +433,10 @@ export class RememberMoveModifier extends ConsumablePokemonModifier {
   }
 }
 
-export class EvolutionItemModifier extends ConsumablePokemonModifier {
-  public override type: EvolutionItemModifierType;
+export class EvolutionItemConsumable extends PokemonConsumable {
+  public override type: EvolutionItemReward;
   /**
-   * Applies {@linkcode EvolutionItemModifier}
+   * Applies {@linkcode EvolutionItemConsumable}
    * @param playerPokemon The {@linkcode PlayerPokemon} that should evolve via item
    * @returns `true` if the evolution was successful
    */
@@ -482,20 +465,20 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
   }
 }
 
-export class FusePokemonModifier extends ConsumablePokemonModifier {
+export class FusePokemonConsumable extends PokemonConsumable {
   public fusePokemonId: number;
 
-  constructor(type: ModifierType, pokemonId: number, fusePokemonId: number) {
+  constructor(type: Reward, pokemonId: number, fusePokemonId: number) {
     super(type, pokemonId);
 
     this.fusePokemonId = fusePokemonId;
   }
 
   /**
-   * Checks if {@linkcode FusePokemonModifier} should be applied
+   * Checks if {@linkcode FusePokemonConsumable} should be applied
    * @param playerPokemon {@linkcode PlayerPokemon} that should be fused
    * @param playerPokemon2 {@linkcode PlayerPokemon} that should be fused with {@linkcode playerPokemon}
-   * @returns `true` if {@linkcode FusePokemonModifier} should be applied
+   * @returns `true` if {@linkcode FusePokemonConsumable} should be applied
    */
   override shouldApply(playerPokemon?: PlayerPokemon, playerPokemon2?: PlayerPokemon): boolean {
     return (
@@ -504,7 +487,7 @@ export class FusePokemonModifier extends ConsumablePokemonModifier {
   }
 
   /**
-   * Applies {@linkcode FusePokemonModifier}
+   * Applies {@linkcode FusePokemonConsumable}
    * @param playerPokemon {@linkcode PlayerPokemon} that should be fused
    * @param playerPokemon2 {@linkcode PlayerPokemon} that should be fused with {@linkcode playerPokemon}
    * @returns always Promise<true>
@@ -515,17 +498,17 @@ export class FusePokemonModifier extends ConsumablePokemonModifier {
   }
 }
 
-export class MoneyRewardModifier extends ConsumableModifier {
+export class MoneyRewardConsumable extends Consumable {
   private moneyMultiplier: number;
 
-  constructor(type: ModifierType, moneyMultiplier: number) {
+  constructor(type: Reward, moneyMultiplier: number) {
     super(type);
 
     this.moneyMultiplier = moneyMultiplier;
   }
 
   /**
-   * Applies {@linkcode MoneyRewardModifier}
+   * Applies {@linkcode MoneyRewardConsumable}
    * @returns always `true`
    */
   override apply(): boolean {
@@ -598,23 +581,23 @@ export function overrideHeldItems(pokemon: Pokemon, isPlayer = true): void {
  * requiring modifier types to be imported in every file.
  */
 const ModifierClassMap = Object.freeze({
-  ConsumableModifier,
-  AddPokeballModifier,
-  AddVoucherModifier,
-  ConsumablePokemonModifier,
-  TerrastalizeModifier,
-  PokemonHpRestoreModifier,
-  PokemonStatusHealModifier,
-  ConsumablePokemonMoveModifier,
-  PokemonPpRestoreModifier,
-  PokemonAllMovePpRestoreModifier,
-  PokemonPpUpModifier,
-  PokemonNatureChangeModifier,
-  PokemonLevelIncrementModifier,
-  TmModifier,
-  RememberMoveModifier,
-  EvolutionItemModifier,
-  FusePokemonModifier,
+  Consumable,
+  AddPokeballConsumable,
+  AddVoucherConsumable,
+  PokemonConsumable,
+  TerrastalizeConsumable,
+  PokemonHpRestoreConsumable,
+  PokemonStatusHealConsumable,
+  PokemonMoveConsumable,
+  PokemonPpRestoreConsumable,
+  PokemonAllMovePpRestoreConsumable,
+  PokemonPpUpConsumable,
+  PokemonNatureChangeConsumable,
+  PokemonLevelIncrementConsumable,
+  TmConsumable,
+  RememberMoveConsumable,
+  EvolutionItemConsumable,
+  FusePokemonConsumable,
 });
 
 export type ModifierConstructorMap = typeof ModifierClassMap;

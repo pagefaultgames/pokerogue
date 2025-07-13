@@ -31,7 +31,7 @@ import {
   TrainerPartyTemplate,
   trainerPartyTemplates,
 } from "#trainers/TrainerPartyTemplate";
-import type { ModifierTypeFunc } from "#types/modifier-types";
+import type { RewardFunc } from "#types/modifier-types";
 import type {
   GenAIFunc,
   GenTrainerItemsFunc,
@@ -115,7 +115,7 @@ export class TrainerConfig {
   public victoryBgm: string;
   public genModifiersFunc: GenTrainerItemsFunc;
   public genAIFuncs: GenAIFunc[] = [];
-  public modifierRewardFuncs: ModifierTypeFunc[] = [];
+  public modifierRewardFuncs: RewardFunc[] = [];
   public partyTemplates: TrainerPartyTemplate[];
   public partyTemplateFunc: PartyTemplateFunc;
   public partyMemberFuncs: PartyMemberFuncs = {};
@@ -518,7 +518,7 @@ export class TrainerConfig {
   //   return ret;
   // }
 
-  setModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
+  setModifierRewardFuncs(...modifierTypeFuncs: (() => RewardFunc)[]): TrainerConfig {
     this.modifierRewardFuncs = modifierTypeFuncs.map(func => () => {
       const modifierTypeFunc = func();
       const modifierType = modifierTypeFunc();
