@@ -242,7 +242,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public ivs: number[];
   public nature: Nature;
   public moveset: PokemonMove[];
-  /** 
+  /**
    * This Pokemon's current {@link https://m.bulbapedia.bulbagarden.net/wiki/Status_condition#Non-volatile_status | non-volatile status condition},
    * or `null` if none exist.
    * @todo Make private
@@ -4902,7 +4902,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   doSetStatus(effect: Exclude<StatusEffect, StatusEffect.SLEEP>): void;
   /**
    * Set this Pokemon's {@linkcode status | non-volatile status condition} to the specified effect.
-   * Does **NOT** perform any feasibility checks whatsoever; must be checked by the caller.
    * @param effect - {@linkcode StatusEffect.SLEEP}
    * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
    * @remarks
