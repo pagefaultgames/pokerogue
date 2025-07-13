@@ -61,7 +61,7 @@ export class InstantReviveHeldItem extends ConsumableHeldItem {
     // Reapply Commander on the Pokemon's side of the field, if applicable
     const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
     for (const p of field) {
-      applyAbAttrs("CommanderAbAttr", p, null, false);
+      applyAbAttrs("CommanderAbAttr", { pokemon: p });
     }
     return true;
   }

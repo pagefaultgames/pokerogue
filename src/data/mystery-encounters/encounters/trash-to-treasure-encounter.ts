@@ -11,11 +11,11 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { RewardTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
+import { assignItemToFirstFreePokemon } from "#items/item-utility";
 import { PokemonMove } from "#moves/pokemon-move";
 import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig, EnemyPokemonConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  assignItemToFirstFreePokemon,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   loadCustomMovesForEncounter,

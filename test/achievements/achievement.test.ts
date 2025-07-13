@@ -1,11 +1,15 @@
 import type { BattleScene } from "#app/battle-scene";
-import { TurnHeldItemTransferModifier } from "#modifiers/modifier";
+import { allSpecies } from "#data/data-lists";
+import { HeldItemId } from "#enums/held-item-id";
+import { SpeciesId } from "#enums/species-id";
+import { PlayerPokemon } from "#field/pokemon";
 import {
   Achv,
   AchvTier,
   achvs,
   DamageAchv,
   HealAchv,
+  HeldItemAchv,
   LevelAchv,
   ModifierAchv,
   MoneyAchv,
@@ -204,32 +208,26 @@ describe("LevelAchv", () => {
   });
 });
 
-describe("ModifierAchv", () => {
+describe("HeldItemAchv", () => {
   it("should create an instance of ModifierAchv", () => {
-    const modifierAchv = new ModifierAchv(
+    const heldItemAchv = new HeldItemAchv(
       "",
-      "Test Modifier Achievement",
+      "Test Held Item Achievement",
       "Test Description",
       "modifier_icon",
       10,
       () => true,
     );
-    expect(modifierAchv).toBeInstanceOf(ModifierAchv);
-    expect(modifierAchv instanceof Achv).toBe(true);
+    expect(heldItemAchv).toBeInstanceOf(HeldItemAchv);
+    expect(heldItemAchv instanceof Achv).toBe(true);
   });
 
-  it("should validate the achievement based on the modifier function", () => {
-    const modifierAchv = new ModifierAchv(
-      "",
-      "Test Modifier Achievement",
-      "Test Description",
-      "modifier_icon",
-      10,
-      () => true,
-    );
-    const modifier = new TurnHeldItemTransferModifier(null!, 3, 1);
-
-    expect(modifierAchv.validate([modifier])).toBe(true);
+  it("should validate the mini black hole achievement", () => {
+    const heldItemAchv = achvs.MINI_BLACK_HOLE;
+    const pokemon = new PlayerPokemon(allSpecies[SpeciesId.BULBASAUR], 1);
+    expect(heldItemAchv.validate([pokemon])).toBe(false);
+    pokemon.heldItemManager.add(HeldItemId.MINI_BLACK_HOLE);
+    expect(heldItemAchv.validate([pokemon])).toBe(true);
   });
 });
 
