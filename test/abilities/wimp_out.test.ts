@@ -1,16 +1,16 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { allMoves } from "#app/data/data-lists";
-import GameManager from "#test/testUtils/gameManager";
-import { toDmgValue } from "#app/utils/common";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
+import { GameManager } from "#test/testUtils/gameManager";
+import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

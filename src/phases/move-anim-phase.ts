@@ -1,5 +1,5 @@
-import type { MoveAnim } from "#app/data/battle-anims";
 import { Phase } from "#app/phase";
+import type { MoveAnim } from "#data/battle-anims";
 
 /**
  * Plays the given {@linkcode MoveAnim} sequentially.

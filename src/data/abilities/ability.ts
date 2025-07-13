@@ -1,92 +1,80 @@
-import { MoveResult } from "#enums/move-result";
-import { HitResult } from "#enums/hit-result";
-import {
-  BooleanHolder,
-  NumberHolder,
-  toDmgValue,
-  isNullOrUndefined,
-  randSeedItem,
-  randSeedInt,
-  randSeedFloat,
-  coerceArray,
-} from "#app/utils/common";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { GroundedTag } from "#app/data/battler-tags";
-import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
-import {
-  getNonVolatileStatusEffects,
-  getStatusEffectDescriptor,
-  getStatusEffectHealText,
-} from "#app/data/status-effect";
-import { Gender } from "#app/data/gender";
-import { applyMoveAttrs } from "../moves/apply-attrs";
-import { allMoves } from "../data-lists";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { TerrainType } from "#app/data/terrain";
-import { pokemonFormChanges } from "../pokemon-forms";
-import {
-  SpeciesFormChangeWeatherTrigger,
-  SpeciesFormChangeAbilityTrigger,
-} from "../pokemon-forms/form-change-triggers";
-import i18next from "i18next";
-import { Command } from "#enums/command";
-import { BerryModifierType } from "#app/modifier/modifier-type";
-import { getPokeballName } from "#app/data/pokeball";
-import { BattleType } from "#enums/battle-type";
-import { globalScene } from "#app/global-scene";
-import { allAbilities } from "#app/data/data-lists";
+/* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
+import type { BattleScene } from "#app/battle-scene";
+import type { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
+/* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
-// Enum imports
-import { Stat, BATTLE_STATS, EFFECTIVE_STATS, getStatKey } from "#enums/stat";
-import { PokemonType } from "#enums/pokemon-type";
-import { PokemonAnimType } from "#enums/pokemon-anim-type";
-import { StatusEffect } from "#enums/status-effect";
-import { WeatherType } from "#enums/weather-type";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import type { ArenaTrapTag, SuppressAbilitiesTag } from "#data/arena-tag";
+import type { BattlerTag } from "#data/battler-tags";
+import { GroundedTag } from "#data/battler-tags";
+import { getBerryEffectFunc } from "#data/berry";
+import { allAbilities, allMoves } from "#data/data-lists";
+import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
+import { Gender } from "#data/gender";
+import { getPokeballName } from "#data/pokeball";
+import { pokemonFormChanges } from "#data/pokemon-forms";
+import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#data/status-effect";
+import { TerrainType } from "#data/terrain";
+import type { Weather } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
-import { SwitchType } from "#enums/switch-type";
+import type { BerryType } from "#enums/berry-type";
+import { Command } from "#enums/command";
+import { HitResult } from "#enums/hit-result";
+import { MoveCategory } from "#enums/MoveCategory";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveTarget } from "#enums/MoveTarget";
-import { MoveCategory } from "#enums/MoveCategory";
 import { CommonAnim } from "#enums/move-anims-common";
-import { getBerryEffectFunc } from "#app/data/berry";
-import { BerryUsedEvent } from "#app/events/battle-scene";
-import { noAbilityTypeOverrideMoves } from "#app/data/moves/invalid-moves";
+import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { MoveUseMode } from "#enums/move-use-mode";
-
-// Type imports
-import type { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { PokemonAnimType } from "#enums/pokemon-anim-type";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
 import type { BattleStat, EffectiveStat } from "#enums/stat";
-import type { BerryType } from "#enums/berry-type";
-import type { EnemyPokemon } from "#app/field/pokemon";
-import type { PokemonMove } from "../moves/pokemon-move";
-import type Pokemon from "#app/field/pokemon";
-import type { Weather } from "#app/data/weather";
-import type { BattlerTag } from "#app/data/battler-tags";
+import { BATTLE_STATS, EFFECTIVE_STATS, getStatKey, Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { SwitchType } from "#enums/switch-type";
+import { WeatherType } from "#enums/weather-type";
+import { BerryUsedEvent } from "#events/battle-scene";
+import type { EnemyPokemon, Pokemon } from "#field/pokemon";
+import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
+import { BerryModifierType } from "#modifiers/modifier-type";
+import { applyMoveAttrs } from "#moves/apply-attrs";
+import { noAbilityTypeOverrideMoves } from "#moves/invalid-moves";
+import type { Move } from "#moves/move";
+import type { PokemonMove } from "#moves/pokemon-move";
+import type { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import type {
   AbAttrCondition,
+  AbAttrMap,
+  AbAttrString,
+  PokemonAttackCondition,
   PokemonDefendCondition,
   PokemonStatStageChangeCondition,
-  PokemonAttackCondition,
-  AbAttrString,
-  AbAttrMap,
-} from "#app/@types/ability-types";
-import type { BattlerIndex } from "#enums/battler-index";
-import type Move from "#app/data/moves/move";
-import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
-import type { Constructor } from "#app/utils/common";
-import type { Localizable } from "#app/@types/locales";
-import { applyAbAttrs } from "./apply-ab-attrs";
-import type { Closed, Exact } from "#app/@types/type-helpers";
+} from "#types/ability-types";
+import type { Localizable } from "#types/locales";
+import type { Closed, Exact } from "#types/type-helpers";
+import type { Constructor } from "#utils/common";
+import {
+  BooleanHolder,
+  coerceArray,
+  isNullOrUndefined,
+  NumberHolder,
+  randSeedFloat,
+  randSeedInt,
+  randSeedItem,
+  toDmgValue,
+} from "#utils/common";
+import i18next from "i18next";
 
-// biome-ignore-start lint/correctness/noUnusedImports: Used in TSDoc
-import type BattleScene from "#app/battle-scene";
-import type { SpeciesFormChangeRevertWeatherFormTrigger } from "../pokemon-forms/form-change-triggers";
-// biome-ignore-end lint/correctness/noUnusedImports: Used in TSDoc
 export class Ability implements Localizable {
   public id: AbilityId;
 
@@ -3051,61 +3039,40 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
  * Attribute used by {@linkcode AbilityId.IMPOSTER} to transform into a random opposing pokemon on entry.
  */
 export class PostSummonTransformAbAttr extends PostSummonAbAttr {
+  private targetIndex: BattlerIndex = BattlerIndex.ATTACKER;
   constructor() {
     super(true, false);
   }
 
-  private getTarget(targets: Pokemon[]): Pokemon {
-    let target: Pokemon = targets[0];
-    if (targets.length > 1) {
-      globalScene.executeWithSeedOffset(() => {
-        // in a double battle, if one of the opposing pokemon is fused the other one will be chosen
-        // if both are fused, then Imposter will fail below
-        if (targets[0].fusionSpecies) {
-          target = targets[1];
-          return;
-        }
-        if (targets[1].fusionSpecies) {
-          target = targets[0];
-          return;
-        }
-        target = randSeedItem(targets);
-      }, globalScene.currentBattle.waveIndex);
-    } else {
-      target = targets[0];
+  /**
+   * Return the correct opponent for Imposter to copy, barring enemies with fusions, substitutes and illusions.
+   * @param user - The {@linkcode Pokemon} with this ability.
+   * @returns The {@linkcode Pokemon} to transform into, or `undefined` if none are eligible.
+   * @remarks
+   * This sets the private `targetIndex` field to the target's {@linkcode BattlerIndex} on success.
+   */
+  private getTarget(user: Pokemon): Pokemon | undefined {
+    // As opposed to the mainline behavior of "always copy the opposite slot",
+    // PKR Imposter instead attempts to copy a random eligible opposing Pokemon meeting Transform's criteria.
+    // If none are eligible to copy, it will not activate.
+    const targets = user.getOpponents().filter(opp => user.canTransformInto(opp));
+    if (targets.length === 0) {
+      return undefined;
     }
 
-    target = target!;
-
-    return target;
+    const mon = targets[user.randBattleSeedInt(targets.length)];
+    this.targetIndex = mon.getBattlerIndex();
+    return mon;
   }
 
-  override canApply({ pokemon, simulated }: AbAttrBaseParams): boolean {
-    const targets = pokemon.getOpponents();
-    const target = this.getTarget(targets);
+  override canApply({ pokemon }: AbAttrBaseParams): boolean {
+    const target = this.getTarget(pokemon);
 
-    if (target.summonData.illusion) {
-      return false;
-    }
-
-    // TODO: Consider moving the simulated check to the apply method
-    if (simulated || !targets.length) {
-      return !!simulated;
-    }
-
-    // transforming from or into fusion pokemon causes various problems (including crashes and save corruption)
-    return !(this.getTarget(targets).fusionSpecies || pokemon.fusionSpecies);
+    return !!target;
   }
 
   override apply({ pokemon }: AbAttrBaseParams): void {
-    const target = this.getTarget(pokemon.getOpponents());
-
-    globalScene.phaseManager.unshiftNew(
-      "PokemonTransformPhase",
-      pokemon.getBattlerIndex(),
-      target.getBattlerIndex(),
-      true,
-    );
+    globalScene.phaseManager.unshiftNew("PokemonTransformPhase", pokemon.getBattlerIndex(), this.targetIndex, true);
   }
 }
 
@@ -3168,7 +3135,7 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
 /**
  * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Commander_(Ability) | Commander}.
  * When the source of an ability with this attribute detects a Dondozo as their active ally, the source "jumps
- * into the Dondozo's mouth," sharply boosting the Dondozo's stats, cancelling the source's moves, and
+ * into the Dondozo's mouth", sharply boosting the Dondozo's stats, cancelling the source's moves, and
  * causing attacks that target the source to always miss.
  */
 export class CommanderAbAttr extends AbAttr {
@@ -7115,7 +7082,8 @@ export function initAbilities() {
       .bypassFaint(),
     new Ability(AbilityId.IMPOSTER, 5)
       .attr(PostSummonTransformAbAttr)
-      .uncopiable(),
+      .uncopiable()
+      .edgeCase(), // Should copy rage fist hit count, etc (see Transform edge case for full list)
     new Ability(AbilityId.INFILTRATOR, 5)
       .attr(InfiltratorAbAttr)
       .partial(), // does not bypass Mist

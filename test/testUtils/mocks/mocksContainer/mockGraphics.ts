@@ -1,6 +1,6 @@
-import type { MockGameObject } from "../mockGameObject";
+import type { MockGameObject } from "#test/testUtils/mocks/mockGameObject";
 
-export default class MockGraphics implements MockGameObject {
+export class MockGraphics implements MockGameObject {
   private scene;
   public list: MockGameObject[] = [];
   public name: string;

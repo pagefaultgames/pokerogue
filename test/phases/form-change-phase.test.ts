@@ -1,12 +1,12 @@
+import { modifierTypes } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { generateModifierType } from "#mystery-encounters/encounter-phase-utils";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { PokemonType } from "#enums/pokemon-type";
-import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { modifierTypes } from "#app/data/data-lists";
 
 describe("Form Change Phase", () => {
   let phaserGame: Phaser.Game;

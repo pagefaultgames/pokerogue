@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
-import { PersistentModifier } from "#app/modifier/modifier";
-import type { GeneratedPersistentModifierType, ModifierType } from "#app/modifier/modifier-type";
-import { ModifierTypeGenerator, getModifierTypeFuncById } from "#app/modifier/modifier-type";
+import { PersistentModifier } from "#modifiers/modifier";
+import type { GeneratedPersistentModifierType, ModifierType } from "#modifiers/modifier-type";
+import { getModifierTypeFuncById, ModifierTypeGenerator } from "#modifiers/modifier-type";
 
-export default class ModifierData {
+export class ModifierData {
   public player: boolean;
   public typeId: string;
   public typePregenArgs: any[];

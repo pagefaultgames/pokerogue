@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import type { PhaseMap, PhaseString } from "./@types/phase-types";
+import type { PhaseMap, PhaseString } from "#types/phase-types";
 
 export abstract class Phase {
   start() {}
