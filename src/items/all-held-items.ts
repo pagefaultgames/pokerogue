@@ -40,16 +40,10 @@ import { getEnumValues } from "#utils/common";
 
 export function initHeldItems() {
   for (const berry of getEnumValues(BerryType)) {
-    let maxStackCount: number;
-    if ([BerryType.LUM, BerryType.LEPPA, BerryType.SITRUS, BerryType.ENIGMA].includes(berry)) {
-      maxStackCount = 2;
-    } else {
-      maxStackCount = 3;
-    }
+    const maxStackCount = [BerryType.LUM, BerryType.LEPPA, BerryType.SITRUS, BerryType.ENIGMA].includes(berry) ? 2 : 3;
     const berryId = berryTypeToHeldItem[berry];
     allHeldItems[berryId] = new BerryHeldItem(berry, maxStackCount);
   }
-  console.log(allHeldItems);
 
   allHeldItems[HeldItemId.REVIVER_SEED] = new InstantReviveHeldItem(HeldItemId.REVIVER_SEED, 1);
   allHeldItems[HeldItemId.WHITE_HERB] = new ResetNegativeStatStageHeldItem(HeldItemId.WHITE_HERB, 2);
