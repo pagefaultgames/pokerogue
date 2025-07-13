@@ -28,7 +28,7 @@ export default defineProject(({ mode }) => ({
         }
       },
     },
-    environment: "jsdom",
+    environment: "jsdom" as const,
     environmentOptions: {
       jsdom: {
         resources: "usable",
@@ -43,8 +43,8 @@ export default defineProject(({ mode }) => ({
     restoreMocks: true,
     watch: false,
     coverage: {
-      provider: "istanbul",
-      reportsDirectory: "coverage",
+      provider: "istanbul" as const,
+      reportsDirectory: "coverage" as const,
       reporters: ["text-summary", "html"],
     },
     name: "main",
