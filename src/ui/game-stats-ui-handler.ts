@@ -271,7 +271,7 @@ export class GameStatsUiHandler extends UiHandler {
    */
   private calcEntryY(index: number): number {
     if (!this.singleCol) {
-      // Don't use `/=2` since we want 1 to go to 0
+      // Floor division by 2 as we want 1 to go to 0
       index >>= 1;
     }
     return 28 + index * 16;
@@ -312,12 +312,11 @@ export class GameStatsUiHandler extends UiHandler {
       Phaser.Geom.Rectangle.Contains,
     );
 
-    const headerBg = addWindow(0, 0, sWidth - 2, 24);
-    headerBg.setOrigin(0, 0);
+    const headerBg = addWindow(0, 0, sWidth - 2, 24).setOrigin(0);
 
-    const headerText = addTextObject(0, 0, i18next.t("gameStatsUiHandler:stats"), TextStyle.HEADER_LABEL);
-    headerText.setOrigin(0, 0);
-    headerText.setPositionRelative(headerBg, 8, 4);
+    const headerText = addTextObject(0, 0, i18next.t("gameStatsUiHandler:stats"), TextStyle.HEADER_LABEL)
+      .setOrigin(0)
+      .setPositionRelative(headerBg, 8, 4);
 
     this.gameStatsContainer.add([headerBg, headerText]);
 
@@ -325,15 +324,18 @@ export class GameStatsUiHandler extends UiHandler {
     /** The width of one stat column */
     const colWidth = this.colWidth;
     const columnCount = this.columnCount;
-    /** Height of the header */
-    const headHeight = headerBg.height;
-    /** Height of  */
-    const statsBgHeight = Math.floor(globalScene.scaledCanvas.height - headerBg.height - 2);
-    const maskOffsetX = columnCount === 1 ? 0 : -3;
-    for (let i = 0; i < columnCount; i++) {
-      gameStatsContainer.add(
-        addWindow(i * this.colBgWidth, headHeight, colWidth, statsBgHeight, false, false, maskOffsetX, 1).setOrigin(0),
-      );
+    {
+      /** Height of the header */
+      const headHeight = headerBg.height;
+      /** Height of  the stats background */
+      const statsBgHeight = Math.floor(globalScene.scaledCanvas.height - headerBg.height - 2);
+      const maskOffsetX = columnCount === 1 ? 0 : -3;
+      for (let i = 0; i < columnCount; i++) {
+        gameStatsContainer.add(
+          addWindow(i * this.colBgWidth, headHeight, colWidth, statsBgHeight, false, false, maskOffsetX, 1) // formatting
+            .setOrigin(0),
+        );
+      }
     }
     // #endregion Windows for stat columns
 
@@ -363,26 +365,25 @@ export class GameStatsUiHandler extends UiHandler {
     ui.add(this.gameStatsContainer);
 
     this.setCursor(0);
-
     this.gameStatsContainer.setVisible(false);
+    this.clear();
   }
 
   show(args: any[]): boolean {
     super.show(args);
     this.gameStatsContainer.setActive(true).setVisible(true);
 
-    this.setCursor(0);
-
-    this.updateStats();
-
-    this.arrowUp.play("prompt");
-    this.arrowDown.play("prompt");
+    this.arrowUp.setActive(true).play("prompt");
+    this.arrowDown.setActive(true).play("prompt");
+    /* `setCursor` handles updating stats if the position is different from before.
+       If the position was the same, re-showing this scene should force stats to update. */
+    if (!this.setCursor(0)) {
+      this.updateStats();
+    }
     if (globalScene.uiTheme === UiTheme.LEGACY) {
       this.arrowUp.setTint(0x484848);
       this.arrowDown.setTint(0x484848);
     }
-
-    this.updateArrows();
 
     this.getUi()
       .moveTo(this.gameStatsContainer, this.getUi().length - 1)
@@ -391,6 +392,14 @@ export class GameStatsUiHandler extends UiHandler {
     return true;
   }
 
+  /**
+   * Update the stat labels and values to reflect the current cursor position.
+   *
+   * @remarks
+   *
+   * Invokes each stat's {@linkcode DisplayStat.sourceFunc | sourceFunc} to obtain its value
+   * Stat labels are shown as `???` if the stat is marked as hidden and its value is nonzero
+   */
   private updateStats(): void {
     const perPage = this.statsPerPage;
     const statKeys = Object.keys(displayStats).slice(this.cursor * 2, this.cursor * 2 + perPage);
@@ -409,18 +418,9 @@ export class GameStatsUiHandler extends UiHandler {
     }
   }
 
-  /** Whether the down arrow should be visible. */
-  private get canArrowDown(): boolean {
-    // should be true if
-    return this.cursor < (Object.keys(displayStats).length - this.statsPerPage) / 2;
-  }
-
-  /**
-   * Show arrows at the top / bottom of the page if it's possible to scroll in that direction
-   */
-  updateArrows(): void {
-    this.arrowUp.setVisible(this.cursor > 0);
-    this.arrowDown.setVisible(this.canArrowDown);
+  /** The maximum cursor position. */
+  private get maxCursorPos(): number {
+    return (Object.keys(displayStats).length - this.statsPerPage) / 2 - 1;
   }
 
   processInput(button: Button): boolean {
@@ -428,45 +428,60 @@ export class GameStatsUiHandler extends UiHandler {
 
     let success = false;
 
-    if (button === Button.CANCEL) {
-      success = true;
-      globalScene.ui.revertMode();
-    } else {
-      switch (button) {
-        case Button.UP:
-          if (this.cursor) {
-            success = this.setCursor(this.cursor - 1);
-          }
-          break;
-        case Button.DOWN:
-          if (this.canArrowDown) {
-            success = this.setCursor(this.cursor + 1);
-          }
-          break;
-      }
+    /** Move the cursor  */
+    let dir: 1 | -1 = 1;
+    switch (button) {
+      case Button.CANCEL:
+        success = true;
+        globalScene.ui.revertMode();
+        break;
+      // biome-ignore lint/suspicious/noFallthroughSwitchClause: intentional
+      case Button.UP:
+        dir = -1;
+      case Button.DOWN:
+        success = this.setCursor(this.cursor + dir);
     }
 
     if (success) {
       ui.playSelect();
+      return true;
     }
 
-    return success;
+    return false;
   }
 
-  setCursor(cursor: number): boolean {
-    const ret = super.setCursor(cursor);
-
-    if (ret) {
-      this.updateStats();
-      this.updateArrows();
+  /**
+   * Set the cursor to the specified position, if able and update the stats display.
+   *
+   * @remarks
+   *
+   * If `newCursor` is not between `0` and {@linkcode maxCursorPos}, or if it is the same as {@linkcode newCursor}
+   * then no updates happen and `false` is returned.
+   *
+   * Otherwise, updates the up/down arrow visibility and calls {@linkcode updateStats}
+   *
+   * @param newCursor - The position to set the cursor to.
+   * @returns Whether the cursor successfully moved to a new position
+   */
+  override setCursor(newCursor: number): boolean {
+    if (newCursor < 0 || newCursor > this.maxCursorPos || this.cursor === newCursor) {
+      return false;
     }
 
-    return ret;
+    this.cursor = newCursor;
+
+    this.updateStats();
+    this.arrowUp.setVisible(this.cursor > 0);
+    this.arrowDown.setVisible(this.cursor < this.maxCursorPos);
+
+    return true;
   }
 
   clear() {
     super.clear();
     this.gameStatsContainer.setVisible(false).setActive(false);
+    this.arrowDown.setVisible(false).setActive(false);
+    this.arrowUp.setVisible(false).setActive(false);
   }
 }
 
