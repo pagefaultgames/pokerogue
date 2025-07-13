@@ -76,7 +76,7 @@ describe("Abilities - Unburden", () => {
   it("should activate when a berry is eaten, even if Berry Pouch preserves the berry", async () => {
     game.override
       .enemyMoveset(MoveId.FALSE_SWIPE)
-      .startingHeldItems([{ entry: TrainerItemId.BERRY_POUCH, count: 5850 }]);
+      .startingTrainerItems([{ entry: TrainerItemId.BERRY_POUCH, count: 5850 }]);
     await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
