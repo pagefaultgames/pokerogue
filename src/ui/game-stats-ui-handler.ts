@@ -2,7 +2,6 @@ import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
 import { Button } from "#enums/buttons";
 import { DexAttr } from "#enums/dex-attr";
-import type { UiMode } from "#enums/ui-mode";
 import { UiTheme } from "#enums/ui-theme";
 import type { GameData } from "#system/game-data";
 import { addTextObject, TextStyle } from "#ui/text";
@@ -214,93 +213,152 @@ const displayStats: DisplayStats = {
 };
 
 export class GameStatsUiHandler extends UiHandler {
+  /** List of languages that display stats in single-column mode*/
   private gameStatsContainer: Phaser.GameObjects.Container;
   private statsContainer: Phaser.GameObjects.Container;
 
-  private statLabels: Phaser.GameObjects.Text[];
-  private statValues: Phaser.GameObjects.Text[];
+  /** The number of rows enabled per page. */
+  private static readonly ROWS_PER_PAGE = 9;
+
+  private statLabels: Phaser.GameObjects.Text[] = [];
+  private statValues: Phaser.GameObjects.Text[] = [];
 
   private arrowUp: Phaser.GameObjects.Sprite;
   private arrowDown: Phaser.GameObjects.Sprite;
 
-  constructor(mode: UiMode | null = null) {
-    super(mode);
-
-    this.statLabels = [];
-    this.statValues = [];
+  /** Whether the UI is single column mode */
+  private get singleCol(): boolean {
+    const resolvedLang = i18next.resolvedLanguage ?? "en";
+    // NOTE TO TRANSLATION TEAM: Add more languages that want single-column here: add `|| resolvedLang === "lang"`
+    return resolvedLang === "ru";
   }
+  /** The number of columns used by this menu in the resolved language */
+  private get columnCount(): 1 | 2 {
+    return this.singleCol ? 1 : 2;
+  }
+
+  // #region Columnar-specific properties
+
+  /** The with of each column in the stats view */
+  private get colWidth(): number {
+    return (globalScene.scaledCanvas.width - 2) / this.columnCount;
+  }
+
+  /** THe width of a column's background window */
+  private get colBgWidth(): number {
+    return this.colWidth - 2;
+  }
+
+  /**
+   * Calculate the `x` position of the stat label based on its index.
+   *
+   * @remarks
+   * Should be used for stat labels (e.g. stat name, not its value). For stat value, use {@linkcode calcTextX}.
+   * @param index - The index of the stat label
+   * @returns The `x` position for the stat label
+   */
+  private calcLabelX(index: number): number {
+    if (this.singleCol || !(index & 1)) {
+      return 8;
+    }
+    return 8 + (index & 1 ? this.colBgWidth : 0);
+  }
+
+  /**
+   * Calculate the `y` position of the stat label/text based on its index.
+   * @param index - The index of the stat label
+   * @returns The `y` position for the stat label
+   */
+  private calcEntryY(index: number): number {
+    if (!this.singleCol) {
+      // Don't use `/=2` since we want 1 to go to 0
+      index >>= 1;
+    }
+    return 28 + index * 16;
+  }
+
+  /**
+   * Calculate the `x` position of the stat value based on its index.
+   * @param index - The index of the stat value
+   * @returns The calculated `x` position
+   */
+  private calcTextX(index: number): number {
+    if (this.singleCol || !(index & 1)) {
+      return this.colBgWidth - 8;
+    }
+    return this.colBgWidth * 2 - 8;
+  }
+
+  /** The number of stats on screen at one time (varies with column count) */
+  private get statsPerPage(): number {
+    return GameStatsUiHandler.ROWS_PER_PAGE * this.columnCount;
+  }
+
+  // #endregion Columnar-specific properties
 
   setup() {
     const ui = this.getUi();
 
-    this.gameStatsContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
+    /** The scaled width of the global canvas */
+    const sWidth = globalScene.scaledCanvas.width;
+    /** The scaled height of the global canvas */
+    const sHeight = globalScene.scaledCanvas.height;
+
+    const gameStatsContainer = globalScene.add.container(1, -sHeight + 1);
+    this.gameStatsContainer = gameStatsContainer;
 
     this.gameStatsContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6),
+      new Phaser.Geom.Rectangle(0, 0, sWidth, sHeight),
       Phaser.Geom.Rectangle.Contains,
     );
 
-    const headerBg = addWindow(0, 0, globalScene.game.canvas.width / 6 - 2, 24);
+    const headerBg = addWindow(0, 0, sWidth - 2, 24);
     headerBg.setOrigin(0, 0);
 
     const headerText = addTextObject(0, 0, i18next.t("gameStatsUiHandler:stats"), TextStyle.HEADER_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
-    const statsBgWidth = (globalScene.game.canvas.width / 6 - 2) / 2;
-    const [statsBgLeft, statsBgRight] = new Array(2).fill(null).map((_, i) => {
-      const width = statsBgWidth + 2;
-      const height = Math.floor(globalScene.game.canvas.height / 6 - headerBg.height - 2);
-      const statsBg = addWindow(
-        (statsBgWidth - 2) * i,
-        headerBg.height,
-        width,
-        height,
-        false,
-        false,
-        i > 0 ? -3 : 0,
-        1,
+    this.gameStatsContainer.add([headerBg, headerText]);
+
+    // #region Windows for stat columns
+    /** The width of one stat column */
+    const colWidth = this.colWidth;
+    const columnCount = this.columnCount;
+    /** Height of the header */
+    const headHeight = headerBg.height;
+    /** Height of  */
+    const statsBgHeight = Math.floor(globalScene.scaledCanvas.height - headerBg.height - 2);
+    const maskOffsetX = columnCount === 1 ? 0 : -3;
+    for (let i = 0; i < columnCount; i++) {
+      gameStatsContainer.add(
+        addWindow(i * this.colBgWidth, headHeight, colWidth, statsBgHeight, false, false, maskOffsetX, 1).setOrigin(0),
       );
-      statsBg.setOrigin(0, 0);
-      return statsBg;
-    });
-
-    this.statsContainer = globalScene.add.container(0, 0);
-
-    for (let i = 0; i < 18; i++) {
-      const statLabel = addTextObject(
-        8 + (i % 2 === 1 ? statsBgWidth : 0),
-        28 + Math.floor(i / 2) * 16,
-        "",
-        TextStyle.STATS_LABEL,
-      );
-      statLabel.setOrigin(0, 0);
-      this.statsContainer.add(statLabel);
-      this.statLabels.push(statLabel);
-
-      const statValue = addTextObject(statsBgWidth * ((i % 2) + 1) - 8, statLabel.y, "", TextStyle.STATS_VALUE);
-      statValue.setOrigin(1, 0);
-      this.statsContainer.add(statValue);
-      this.statValues.push(statValue);
     }
+    // #endregion Windows for stat columns
 
-    this.gameStatsContainer.add(headerBg);
-    this.gameStatsContainer.add(headerText);
-    this.gameStatsContainer.add(statsBgLeft);
-    this.gameStatsContainer.add(statsBgRight);
+    const length = this.statsPerPage;
+    this.statLabels = Array.from({ length }, (_, i) =>
+      addTextObject(this.calcLabelX(i), this.calcEntryY(i), "", TextStyle.STATS_LABEL).setOrigin(0),
+    );
+
+    this.statValues = Array.from({ length }, (_, i) =>
+      addTextObject(this.calcTextX(i), this.calcEntryY(i), "", TextStyle.STATS_VALUE).setOrigin(1, 0),
+    );
+    this.statsContainer = globalScene.add.container(0, 0, [...this.statLabels, ...this.statValues]);
+
     this.gameStatsContainer.add(this.statsContainer);
 
     // arrows to show that we can scroll through the stats
     const isLegacyTheme = globalScene.uiTheme === UiTheme.LEGACY;
-    this.arrowDown = globalScene.add.sprite(
-      statsBgWidth,
-      globalScene.game.canvas.height / 6 - (isLegacyTheme ? 9 : 5),
-      "prompt",
-    );
-    this.gameStatsContainer.add(this.arrowDown);
-    this.arrowUp = globalScene.add.sprite(statsBgWidth, headerBg.height + (isLegacyTheme ? 7 : 3), "prompt");
-    this.arrowUp.flipY = true;
-    this.gameStatsContainer.add(this.arrowUp);
+    const arrowX = this.singleCol ? colWidth / 2 : colWidth;
+    this.arrowDown = globalScene.add.sprite(arrowX, sHeight - (isLegacyTheme ? 9 : 5), "prompt");
+
+    this.arrowUp = globalScene.add
+      .sprite(arrowX, headerBg.height + (isLegacyTheme ? 7 : 3), "prompt") //
+      .setFlipY(true);
+
+    this.gameStatsContainer.add([this.arrowDown, this.arrowUp]);
 
     ui.add(this.gameStatsContainer);
 
@@ -311,6 +369,7 @@ export class GameStatsUiHandler extends UiHandler {
 
   show(args: any[]): boolean {
     super.show(args);
+    this.gameStatsContainer.setActive(true).setVisible(true);
 
     this.setCursor(0);
 
@@ -325,44 +384,43 @@ export class GameStatsUiHandler extends UiHandler {
 
     this.updateArrows();
 
-    this.gameStatsContainer.setVisible(true);
-
-    this.getUi().moveTo(this.gameStatsContainer, this.getUi().length - 1);
-
-    this.getUi().hideTooltip();
+    this.getUi()
+      .moveTo(this.gameStatsContainer, this.getUi().length - 1)
+      .hideTooltip();
 
     return true;
   }
 
-  updateStats(): void {
-    const statKeys = Object.keys(displayStats).slice(this.cursor * 2, this.cursor * 2 + 18);
+  private updateStats(): void {
+    const perPage = this.statsPerPage;
+    const statKeys = Object.keys(displayStats).slice(this.cursor * 2, this.cursor * 2 + perPage);
     statKeys.forEach((key, s) => {
       const stat = displayStats[key] as DisplayStat;
-      const value = stat.sourceFunc!(globalScene.gameData); // TODO: is this bang correct?
+      const value = stat.sourceFunc?.(globalScene.gameData) ?? "-";
+      const valAsInt = Number.parseInt(value);
       this.statLabels[s].setText(
-        !stat.hidden || Number.isNaN(Number.parseInt(value)) || Number.parseInt(value)
-          ? i18next.t(`gameStatsUiHandler:${stat.label_key}`)
-          : "???",
+        !stat.hidden || Number.isNaN(value) || valAsInt ? i18next.t(`gameStatsUiHandler:${stat.label_key}`) : "???",
       );
       this.statValues[s].setText(value);
     });
-    if (statKeys.length < 18) {
-      for (let s = statKeys.length; s < 18; s++) {
-        this.statLabels[s].setText("");
-        this.statValues[s].setText("");
-      }
+    for (let s = statKeys.length; s < perPage; s++) {
+      this.statLabels[s].setText("");
+      this.statValues[s].setText("");
     }
+  }
+
+  /** Whether the down arrow should be visible. */
+  private get canArrowDown(): boolean {
+    // should be true if
+    return this.cursor < (Object.keys(displayStats).length - this.statsPerPage) / 2;
   }
 
   /**
    * Show arrows at the top / bottom of the page if it's possible to scroll in that direction
    */
   updateArrows(): void {
-    const showUpArrow = this.cursor > 0;
-    this.arrowUp.setVisible(showUpArrow);
-
-    const showDownArrow = this.cursor < Math.ceil((Object.keys(displayStats).length - 18) / 2);
-    this.arrowDown.setVisible(showDownArrow);
+    this.arrowUp.setVisible(this.cursor > 0);
+    this.arrowDown.setVisible(this.canArrowDown);
   }
 
   processInput(button: Button): boolean {
@@ -381,7 +439,7 @@ export class GameStatsUiHandler extends UiHandler {
           }
           break;
         case Button.DOWN:
-          if (this.cursor < Math.ceil((Object.keys(displayStats).length - 18) / 2)) {
+          if (this.canArrowDown) {
             success = this.setCursor(this.cursor + 1);
           }
           break;
@@ -408,7 +466,7 @@ export class GameStatsUiHandler extends UiHandler {
 
   clear() {
     super.clear();
-    this.gameStatsContainer.setVisible(false);
+    this.gameStatsContainer.setVisible(false).setActive(false);
   }
 }
 
