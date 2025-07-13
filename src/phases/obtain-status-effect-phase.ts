@@ -15,7 +15,6 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
   public readonly phaseName = "ObtainStatusEffectPhase";
 
   /**
-   * Create a new ObtainStatusEffectPhase.
    * @param battlerIndex - The {@linkcode BattlerIndex} of the Pokemon obtaining the status effect.
    * @param statusEffect - The {@linkcode StatusEffect} being applied.
    * @param sourcePokemon - The {@linkcode Pokemon} applying the status effect to the target,
