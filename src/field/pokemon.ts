@@ -4674,7 +4674,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param reason - The reason for the status application failure -
    * can be "overlap" (already has same status), "other" (generic fail message)
    * or a {@linkcode TerrainType} for terrain-based blockages.
-   * Default "other"
+   * Default `"other"`
    */
   queueStatusImmuneMessage(
     quiet: boolean,
