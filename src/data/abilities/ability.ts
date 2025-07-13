@@ -75,7 +75,7 @@ import type {
   AbAttrString,
   AbAttrMap,
 } from "#app/@types/ability-types";
-import type { BattlerIndex } from "#enums/battler-index";
+import { BattlerIndex } from "#enums/battler-index";
 import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
 import type { Constructor } from "#app/utils/common";
@@ -3051,61 +3051,40 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
  * Attribute used by {@linkcode AbilityId.IMPOSTER} to transform into a random opposing pokemon on entry.
  */
 export class PostSummonTransformAbAttr extends PostSummonAbAttr {
+  private targetIndex: BattlerIndex = BattlerIndex.ATTACKER;
   constructor() {
     super(true, false);
   }
 
-  private getTarget(targets: Pokemon[]): Pokemon {
-    let target: Pokemon = targets[0];
-    if (targets.length > 1) {
-      globalScene.executeWithSeedOffset(() => {
-        // in a double battle, if one of the opposing pokemon is fused the other one will be chosen
-        // if both are fused, then Imposter will fail below
-        if (targets[0].fusionSpecies) {
-          target = targets[1];
-          return;
-        }
-        if (targets[1].fusionSpecies) {
-          target = targets[0];
-          return;
-        }
-        target = randSeedItem(targets);
-      }, globalScene.currentBattle.waveIndex);
-    } else {
-      target = targets[0];
+  /**
+   * Return the correct opponent for Imposter to copy, barring enemies with fusions, substitutes and illusions.
+   * @param user - The {@linkcode Pokemon} with this ability.
+   * @returns The {@linkcode Pokemon} to transform into, or `undefined` if none are eligible.
+   * @remarks
+   * This sets the private `targetIndex` field to the target's {@linkcode BattlerIndex} on success.
+   */
+  private getTarget(user: Pokemon): Pokemon | undefined {
+    // As opposed to the mainline behavior of "always copy the opposite slot",
+    // PKR Imposter instead attempts to copy a random eligible opposing Pokemon meeting Transform's criteria.
+    // If none are eligible to copy, it will not activate.
+    const targets = user.getOpponents().filter(opp => user.canTransformInto(opp));
+    if (targets.length === 0) {
+      return undefined;
     }
 
-    target = target!;
-
-    return target;
+    const mon = targets[user.randBattleSeedInt(targets.length)];
+    this.targetIndex = mon.getBattlerIndex();
+    return mon;
   }
 
-  override canApply({ pokemon, simulated }: AbAttrBaseParams): boolean {
-    const targets = pokemon.getOpponents();
-    const target = this.getTarget(targets);
+  override canApply({ pokemon }: AbAttrBaseParams): boolean {
+    const target = this.getTarget(pokemon);
 
-    if (target.summonData.illusion) {
-      return false;
-    }
-
-    // TODO: Consider moving the simulated check to the apply method
-    if (simulated || !targets.length) {
-      return !!simulated;
-    }
-
-    // transforming from or into fusion pokemon causes various problems (including crashes and save corruption)
-    return !(this.getTarget(targets).fusionSpecies || pokemon.fusionSpecies);
+    return !!target;
   }
 
   override apply({ pokemon }: AbAttrBaseParams): void {
-    const target = this.getTarget(pokemon.getOpponents());
-
-    globalScene.phaseManager.unshiftNew(
-      "PokemonTransformPhase",
-      pokemon.getBattlerIndex(),
-      target.getBattlerIndex(),
-      true,
-    );
+    globalScene.phaseManager.unshiftNew("PokemonTransformPhase", pokemon.getBattlerIndex(), this.targetIndex, true);
   }
 }
 
@@ -3168,7 +3147,7 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
 /**
  * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Commander_(Ability) | Commander}.
  * When the source of an ability with this attribute detects a Dondozo as their active ally, the source "jumps
- * into the Dondozo's mouth," sharply boosting the Dondozo's stats, cancelling the source's moves, and
+ * into the Dondozo's mouth", sharply boosting the Dondozo's stats, cancelling the source's moves, and
  * causing attacks that target the source to always miss.
  */
 export class CommanderAbAttr extends AbAttr {
@@ -7105,7 +7084,8 @@ export function initAbilities() {
       .bypassFaint(),
     new Ability(AbilityId.IMPOSTER, 5)
       .attr(PostSummonTransformAbAttr)
-      .uncopiable(),
+      .uncopiable()
+      .edgeCase(), // Should copy rage fist hit count, etc (see Transform edge case for full list)
     new Ability(AbilityId.INFILTRATOR, 5)
       .attr(InfiltratorAbAttr)
       .partial(), // does not bypass Mist

@@ -1057,6 +1057,39 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Getter function that returns whether this {@linkcode Pokemon} is currently transformed into another one
+   * (such as by the effects of {@linkcode MoveId.TRANSFORM} or {@linkcode AbilityId.IMPOSTER}.
+   * @returns Whether this Pokemon is currently transformed.
+   */
+  isTransformed(): boolean {
+    return this.summonData.speciesForm !== null;
+  }
+
+  /**
+   * Return whether this Pokemon can transform into an opposing Pokemon.
+   * @param target - The {@linkcode Pokemon} being transformed into
+   * @returns Whether this Pokemon can transform into `target`.
+   */
+  canTransformInto(target: Pokemon): boolean {
+    return !(
+      // Neither pokemon can be already transformed
+      (
+        this.isTransformed() ||
+        target.isTransformed() ||
+        // Neither pokemon can be behind an illusion
+        target.summonData.illusion ||
+        this.summonData.illusion ||
+        // The target cannot be behind a substitute
+        target.getTag(BattlerTagType.SUBSTITUTE) ||
+        // Transforming to/from fusion pokemon causes various problems (crashes, etc.)
+        // TODO: Consider lifting restriction once bug is fixed
+        this.isFusion() ||
+        target.isFusion()
+      )
+    );
+  }
+
+  /**
    * @param {boolean} useIllusion - Whether we want the fusionSpeciesForm of the illusion or not.
    */
   getFusionSpeciesForm(ignoreOverride?: boolean, useIllusion = false): PokemonSpeciesForm {
@@ -1270,39 +1303,39 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Retrieves the entire set of stats of this {@linkcode Pokemon}.
-   * @param bypassSummonData - whether to use actual stats or in-battle overriden stats from Transform; default `true`
-   * @returns the numeric values of this {@linkcode Pokemon}'s stats
+   * @param bypassSummonData - Whether to prefer actual stats (`true`) or in-battle overridden stats (`false`); default `true`
+   * @returns The numeric values of this {@linkcode Pokemon}'s stats as an array.
    */
   getStats(bypassSummonData = true): number[] {
-    if (!bypassSummonData && this.summonData.stats) {
-      return this.summonData.stats;
+    if (!bypassSummonData) {
+      // Only grab summon data stats if nonzero
+      return this.summonData.stats.map((s, i) => s || this.stats[i]);
     }
     return this.stats;
   }
 
   /**
    * Retrieves the corresponding {@linkcode PermanentStat} of the {@linkcode Pokemon}.
-   * @param stat the desired {@linkcode PermanentStat}
-   * @param bypassSummonData prefer actual stats (`true` by default) or in-battle overridden stats (`false`)
-   * @returns the numeric value of the desired {@linkcode Stat}
+   * @param stat - The {@linkcode PermanentStat} to retrieve
+   * @param bypassSummonData - Whether to prefer actual stats (`true`) or in-battle overridden stats (`false`); default `true`
+   * @returns The numeric value of the desired {@linkcode Stat}.
    */
   getStat(stat: PermanentStat, bypassSummonData = true): number {
-    if (!bypassSummonData && this.summonData.stats[stat] !== 0) {
-      return this.summonData.stats[stat];
+    if (!bypassSummonData) {
+      // 0 = no override
+      return this.summonData.stats[stat] || this.stats[stat];
     }
     return this.stats[stat];
   }
 
   /**
-   * Writes the value to the corrseponding {@linkcode PermanentStat} of the {@linkcode Pokemon}.
-   *
-   * Note that this does nothing if {@linkcode value} is less than 0.
-   * @param stat the desired {@linkcode PermanentStat} to be overwritten
-   * @param value the desired numeric value
-   * @param bypassSummonData write to actual stats (`true` by default) or in-battle overridden stats (`false`)
+   * Change one of this {@linkcode Pokemon}'s {@linkcode PermanentStat}s to the specified value.
+   * @param stat - The {@linkcode PermanentStat} to be overwritten
+   * @param value - The stat value to set. Ignored if `<=0`
+   * @param bypassSummonData - Whether to write to actual stats (`true`) or in-battle overridden stats (`false`); default `true`
    */
   setStat(stat: PermanentStat, value: number, bypassSummonData = true): void {
-    if (value < 0) {
+    if (value <= 0) {
       return;
     }
 
@@ -1318,31 +1351,25 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns the numeric values of the {@linkcode Pokemon}'s in-battle stat stages if available, a fresh stat stage array otherwise
    */
   getStatStages(): number[] {
-    return this.summonData ? this.summonData.statStages : [0, 0, 0, 0, 0, 0, 0];
+    return this.summonData.statStages;
   }
 
   /**
-   * Retrieves the in-battle stage of the specified {@linkcode BattleStat}.
-   * @param stat the {@linkcode BattleStat} whose stage is desired
-   * @returns the stage of the desired {@linkcode BattleStat} if available, 0 otherwise
+   * Retrieve the value of the given stat stage for this {@linkcode Pokemon}.
+   * @param stat - The {@linkcode BattleStat} to retrieve the stat stage for
+   * @returns The value of the desired stat stage as a number within the range `[-6, +6]`.
    */
   getStatStage(stat: BattleStat): number {
-    return this.summonData ? this.summonData.statStages[stat - 1] : 0;
+    return this.summonData.statStages[stat - 1];
   }
 
   /**
-   * Writes the value to the in-battle stage of the corresponding {@linkcode BattleStat} of the {@linkcode Pokemon}.
-   *
-   * Note that, if the value is not within a range of [-6, 6], it will be forced to the closest range bound.
-   * @param stat the {@linkcode BattleStat} whose stage is to be overwritten
-   * @param value the desired numeric value
+   * Sets this {@linkcode Pokemon}'s in-battle stat stage to the corresponding value.
+   * @param stat - The {@linkcode BattleStat} whose stage is to be overwritten
+   * @param value - The value of the stat stage to set, forcibly clamped within the range `[-6, +6]`.
    */
   setStatStage(stat: BattleStat, value: number): void {
-    if (value >= -6) {
-      this.summonData.statStages[stat - 1] = Math.min(value, 6);
-    } else {
-      this.summonData.statStages[stat - 1] = Math.max(value, -6);
-    }
+    this.summonData.statStages[stat - 1] = Phaser.Math.Clamp(value, -6, 6);
   }
 
   /**
@@ -3345,7 +3372,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param onField - whether to also check if the pokemon is currently on the field (defaults to true)
    */
   getOpponents(onField = true): Pokemon[] {
-    return ((this.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField()) as Pokemon[]).filter(p =>
+    return (this.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField()).filter(p =>
       p.isActive(onField),
     );
   }
