@@ -414,9 +414,8 @@ export class GameStatsUiHandler extends UiHandler {
     }
   }
 
-  /** The maximum cursor position. */
+  /** The maximum cursor position */
   private get maxCursorPos(): number {
-    // Should be 31 for single column and
     return Math.ceil((Object.keys(displayStats).length - this.statsPerPage) / this.columnCount);
   }
 
