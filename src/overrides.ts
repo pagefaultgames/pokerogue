@@ -22,8 +22,8 @@ import { Unlockables } from "#enums/unlockables";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 import { HeldItemConfiguration } from "#items/held-item-data-types";
+import { type RewardOverride } from "#items/reward";
 import { TrainerItemConfiguration } from "#items/trainer-item-data-types";
-import { type ModifierOverride } from "#modifiers/modifier-type";
 import { Variant } from "#sprites/variant";
 
 /**
@@ -251,7 +251,7 @@ class DefaultOverrides {
    * member to hold it (typically this is, extends, or generates a {@linkcode Reward}),
    * like `EXP_SHARE`, `CANDY_JAR`, etc.
    *
-   * Overrides labeled `HELD_ITEM` specifically pertain to any entry in {@linkcode modifierTypes} that
+   * Overrides labeled `HELD_ITEM` specifically pertain to any entry in {@linkcode rewards} that
    * extends, or generates a {@linkcode PokemonHeldItemReward}, like `SOUL_DEW`, `TOXIC_ORB`, etc.
    *
    * Note that, if count is not provided, it will default to 1.
@@ -273,25 +273,25 @@ class DefaultOverrides {
    * STARTING_HELD_ITEM_OVERRIDE = [{name: "BERRY"}]
    * ```
    */
-  /** Override array of {@linkcode ModifierOverride}s used to provide held items to first party member when starting a new game. */
+  /** Override array of {@linkcode RewardOverride}s used to provide held items to first party member when starting a new game. */
   readonly STARTING_TRAINER_ITEMS_OVERRIDE: TrainerItemConfiguration = [];
-  /** Override array of {@linkcode ModifierOverride}s used to provide held items to enemies on spawn. */
+  /** Override array of {@linkcode RewardOverride}s used to provide held items to enemies on spawn. */
   readonly OPP_TRAINER_ITEMS_OVERRIDE: TrainerItemConfiguration = [];
 
-  /** Override array of {@linkcode ModifierOverride}s used to provide held items to first party member when starting a new game. */
+  /** Override array of {@linkcode RewardOverride}s used to provide held items to first party member when starting a new game. */
   readonly STARTING_HELD_ITEMS_OVERRIDE: HeldItemConfiguration = [];
-  /** Override array of {@linkcode ModifierOverride}s used to provide held items to enemies on spawn. */
+  /** Override array of {@linkcode RewardOverride}s used to provide held items to enemies on spawn. */
   readonly OPP_HELD_ITEMS_OVERRIDE: HeldItemConfiguration = [];
 
   /**
-   * Override array of {@linkcode ModifierOverride}s used to replace the generated item rolls after a wave.
+   * Override array of {@linkcode RewardOverride}s used to replace the generated item rolls after a wave.
    *
    * If less entries are listed than rolled, only those entries will be used to replace the corresponding items while the rest randomly generated.
    * If more entries are listed than rolled, only the first X entries will be used, where X is the number of items rolled.
    *
    * Note that, for all items in the array, `count` is not used.
    */
-  readonly ITEM_REWARD_OVERRIDE: ModifierOverride[] = [];
+  readonly ITEM_REWARD_OVERRIDE: RewardOverride[] = [];
 
   /**
    * If `true`, disable all non-scripted opponent trainer encounters.

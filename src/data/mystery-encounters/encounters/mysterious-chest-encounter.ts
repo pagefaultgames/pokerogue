@@ -141,7 +141,7 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
         if (roll >= RAND_LENGTH - COMMON_REWARDS_PERCENT) {
           // Choose between 2 COMMON / 2 GREAT tier items (20%)
           setEncounterRewards({
-            guaranteedModifierTiers: [RewardTier.COMMON, RewardTier.COMMON, RewardTier.GREAT, RewardTier.GREAT],
+            guaranteedRewardTiers: [RewardTier.COMMON, RewardTier.COMMON, RewardTier.GREAT, RewardTier.GREAT],
           });
           // Display result message then proceed to rewards
           queueEncounterMessage(`${namespace}:option.1.normal`);
@@ -149,7 +149,7 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
         } else if (roll >= RAND_LENGTH - COMMON_REWARDS_PERCENT - ULTRA_REWARDS_PERCENT) {
           // Choose between 3 ULTRA tier items (30%)
           setEncounterRewards({
-            guaranteedModifierTiers: [RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.ULTRA],
+            guaranteedRewardTiers: [RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.ULTRA],
           });
           // Display result message then proceed to rewards
           queueEncounterMessage(`${namespace}:option.1.good`);
@@ -157,7 +157,7 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
         } else if (roll >= RAND_LENGTH - COMMON_REWARDS_PERCENT - ULTRA_REWARDS_PERCENT - ROGUE_REWARDS_PERCENT) {
           // Choose between 2 ROGUE tier items (10%)
           setEncounterRewards({
-            guaranteedModifierTiers: [RewardTier.ROGUE, RewardTier.ROGUE],
+            guaranteedRewardTiers: [RewardTier.ROGUE, RewardTier.ROGUE],
           });
           // Display result message then proceed to rewards
           queueEncounterMessage(`${namespace}:option.1.great`);
@@ -168,7 +168,7 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
         ) {
           // Choose 1 MASTER tier item (5%)
           setEncounterRewards({
-            guaranteedModifierTiers: [RewardTier.MASTER],
+            guaranteedRewardTiers: [RewardTier.MASTER],
           });
           // Display result message then proceed to rewards
           queueEncounterMessage(`${namespace}:option.1.amazing`);

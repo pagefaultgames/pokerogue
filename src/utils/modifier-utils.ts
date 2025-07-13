@@ -1,21 +1,21 @@
-import { modifierTypes } from "#data/data-lists";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
-import { modifierPool } from "#modifiers/modifier-pools";
-import type { Reward } from "#modifiers/modifier-type";
-import type { ModifierPool, RewardFunc } from "#types/modifier-types";
+import { rewards } from "#data/data-lists";
+import { RewardPoolType } from "#enums/reward-pool-type";
+import type { Reward } from "#items/reward";
+import { rewardPool } from "#items/reward-pools";
+import type { RewardFunc, RewardPool } from "#types/rewards";
 
-export function getModifierPoolForType(poolType: ModifierPoolType): ModifierPool {
+export function getRewardPoolForType(poolType: RewardPoolType): RewardPool {
   switch (poolType) {
-    case ModifierPoolType.PLAYER:
-      return modifierPool;
+    case RewardPoolType.PLAYER:
+      return rewardPool;
   }
 }
 
 // TODO: document this
-export function getReward(modifierTypeFunc: RewardFunc): Reward {
-  const modifierType = modifierTypeFunc();
-  if (!modifierType.id) {
-    modifierType.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifierTypeFunc)!; // TODO: is this bang correct?
+export function getReward(rewardFunc: RewardFunc): Reward {
+  const reward = rewardFunc();
+  if (!reward.id) {
+    reward.id = Object.keys(rewards).find(k => rewards[k] === rewardFunc)!; // TODO: is this bang correct?
   }
-  return modifierType;
+  return reward;
 }

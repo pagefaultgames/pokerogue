@@ -228,7 +228,7 @@ describe("Global Trade System - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.tier).toBe(RewardTier.MASTER);
+      expect(modifierSelectHandler.options[0].rewardOption.type.tier).toBe(RewardTier.MASTER);
       const soulDewAfter = scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SOUL_DEW);
       expect(soulDewAfter).toBe(1);
     });

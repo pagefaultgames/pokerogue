@@ -19,8 +19,8 @@ import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
+import type { CustomRewardSettings } from "#items/reward";
 import { TrainerItemEffect } from "#items/trainer-item";
-import type { CustomModifierSettings } from "#modifiers/modifier-type";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import i18next from "#plugins/i18n";
 import { MusicPreference } from "#system/settings";
@@ -483,7 +483,7 @@ export class FixedBattleConfig {
   public getTrainer: GetTrainerFunc;
   public getEnemyParty: GetEnemyPartyFunc;
   public seedOffsetWaveIndex: number;
-  public customModifierRewardSettings?: CustomModifierSettings;
+  public customRewardSettings?: CustomRewardSettings;
 
   setBattleType(battleType: BattleType): FixedBattleConfig {
     this.battleType = battleType;
@@ -510,8 +510,8 @@ export class FixedBattleConfig {
     return this;
   }
 
-  setCustomModifierRewards(customModifierRewardSettings: CustomModifierSettings) {
-    this.customModifierRewardSettings = customModifierRewardSettings;
+  setCustomRewards(customRewardSettings: CustomRewardSettings) {
+    this.customRewardSettings = customRewardSettings;
     return this;
   }
 }
@@ -603,8 +603,8 @@ export const classicFixedBattles: FixedBattleConfigs = {
           globalScene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT,
         ),
     )
-    .setCustomModifierRewards({
-      guaranteedModifierTiers: [RewardTier.ULTRA, RewardTier.GREAT, RewardTier.GREAT],
+    .setCustomRewards({
+      guaranteedRewardTiers: [RewardTier.ULTRA, RewardTier.GREAT, RewardTier.GREAT],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.EVIL_GRUNT_1]: new FixedBattleConfig()
@@ -635,8 +635,8 @@ export const classicFixedBattles: FixedBattleConfigs = {
           globalScene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT,
         ),
     )
-    .setCustomModifierRewards({
-      guaranteedModifierTiers: [RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.GREAT, RewardTier.GREAT],
+    .setCustomRewards({
+      guaranteedRewardTiers: [RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.GREAT, RewardTier.GREAT],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.EVIL_GRUNT_2]: new FixedBattleConfig()
@@ -708,8 +708,8 @@ export const classicFixedBattles: FixedBattleConfigs = {
           globalScene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT,
         ),
     )
-    .setCustomModifierRewards({
-      guaranteedModifierTiers: [RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.ULTRA],
+    .setCustomRewards({
+      guaranteedRewardTiers: [RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.ULTRA],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.EVIL_GRUNT_4]: new FixedBattleConfig()
@@ -770,14 +770,8 @@ export const classicFixedBattles: FixedBattleConfigs = {
         TrainerType.PENNY,
       ]),
     )
-    .setCustomModifierRewards({
-      guaranteedModifierTiers: [
-        RewardTier.ROGUE,
-        RewardTier.ROGUE,
-        RewardTier.ULTRA,
-        RewardTier.ULTRA,
-        RewardTier.ULTRA,
-      ],
+    .setCustomRewards({
+      guaranteedRewardTiers: [RewardTier.ROGUE, RewardTier.ROGUE, RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.ULTRA],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.RIVAL_5]: new FixedBattleConfig()
@@ -789,14 +783,8 @@ export const classicFixedBattles: FixedBattleConfigs = {
           globalScene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT,
         ),
     )
-    .setCustomModifierRewards({
-      guaranteedModifierTiers: [
-        RewardTier.ROGUE,
-        RewardTier.ROGUE,
-        RewardTier.ROGUE,
-        RewardTier.ULTRA,
-        RewardTier.ULTRA,
-      ],
+    .setCustomRewards({
+      guaranteedRewardTiers: [RewardTier.ROGUE, RewardTier.ROGUE, RewardTier.ROGUE, RewardTier.ULTRA, RewardTier.ULTRA],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.EVIL_BOSS_2]: new FixedBattleConfig()
@@ -816,8 +804,8 @@ export const classicFixedBattles: FixedBattleConfigs = {
         TrainerType.PENNY_2,
       ]),
     )
-    .setCustomModifierRewards({
-      guaranteedModifierTiers: [
+    .setCustomRewards({
+      guaranteedRewardTiers: [
         RewardTier.ROGUE,
         RewardTier.ROGUE,
         RewardTier.ULTRA,
@@ -920,8 +908,8 @@ export const classicFixedBattles: FixedBattleConfigs = {
           globalScene.gameData.gender === PlayerGender.MALE ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT,
         ),
     )
-    .setCustomModifierRewards({
-      guaranteedModifierTiers: [
+    .setCustomRewards({
+      guaranteedRewardTiers: [
         RewardTier.ROGUE,
         RewardTier.ROGUE,
         RewardTier.ULTRA,

@@ -54,7 +54,6 @@ import type { ExpNotification } from "#enums/exp-notification";
 import { FormChangeItem } from "#enums/form-change-item";
 import { GameModes } from "#enums/game-modes";
 import { HeldItemId } from "#enums/held-item-id";
-import { HeldItemPoolType, ModifierPoolType } from "#enums/modifier-pool-type";
 import { MoneyFormat } from "#enums/money-format";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -65,6 +64,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { PokeballType } from "#enums/pokeball";
 import type { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
+import { HeldItemPoolType, RewardPoolType } from "#enums/reward-pool-type";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -82,9 +82,17 @@ import { PokemonSpriteSparkleHandler } from "#field/pokemon-sprite-sparkle-handl
 import { Trainer } from "#field/trainer";
 import { applyHeldItems } from "#items/all-held-items";
 import { type ApplyTrainerItemsParams, applyTrainerItems } from "#items/apply-trainer-items";
+import {
+  Consumable,
+  FusePokemonConsumable,
+  PokemonConsumable,
+  PokemonHpRestoreConsumable,
+  RememberMoveConsumable,
+} from "#items/consumable";
 import { HeldItemEffect } from "#items/held-item";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
+import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#items/reward";
 import { type EnemyAttackStatusEffectChanceTrainerItem, TrainerItemEffect } from "#items/trainer-item";
 import {
   isTrainerItemPool,
@@ -94,14 +102,6 @@ import {
 } from "#items/trainer-item-data-types";
 import { TrainerItemManager } from "#items/trainer-item-manager";
 import { getNewTrainerItemFromPool } from "#items/trainer-item-pool";
-import {
-  Consumable,
-  FusePokemonConsumable,
-  PokemonConsumable,
-  PokemonHpRestoreConsumable,
-  RememberMoveConsumable,
-} from "#modifiers/consumable";
-import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#modifiers/modifier-type";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import { allMysteryEncounters, mysteryEncountersByBiome } from "#mystery-encounters/mystery-encounters";
@@ -147,7 +147,7 @@ import {
   shiftCharCodes,
 } from "#utils/common";
 import { deepMergeSpriteData } from "#utils/data";
-import { getModifierPoolForType } from "#utils/modifier-utils";
+import { getRewardPoolForType } from "#utils/modifier-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -280,7 +280,7 @@ export class BattleScene extends SceneBase {
   public arena: Arena;
   public gameMode: GameMode;
   public score: number;
-  public lockModifierTiers: boolean;
+  public lockRewardTiers: boolean;
   public trainer: Phaser.GameObjects.Sprite;
   public lastEnemyTrainer: Trainer | null;
   public currentBattle: Battle;
@@ -1179,7 +1179,7 @@ export class BattleScene extends SceneBase {
     this.score = 0;
     this.money = 0;
 
-    this.lockModifierTiers = false;
+    this.lockRewardTiers = false;
 
     this.pokeballCounts = Object.fromEntries(
       getEnumValues(PokeballType)
@@ -1255,12 +1255,12 @@ export class BattleScene extends SceneBase {
         ...allSpecies,
         ...allMoves,
         ...allAbilities,
-        ...getEnumValues(ModifierPoolType)
-          .map(mpt => getModifierPoolForType(mpt))
+        ...getEnumValues(RewardPoolType)
+          .map(mpt => getRewardPoolForType(mpt))
           .flatMap(mp =>
             Object.values(mp)
               .flat()
-              .map(mt => mt.modifierType)
+              .map(mt => mt.reward)
               .filter(mt => "localize" in mt)
               .map(lpb => lpb as unknown as Localizable),
           ),

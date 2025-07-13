@@ -3,7 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions, pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { signatureSpecies } from "#balance/signature-species";
 import { tmSpecies } from "#balance/tms";
-import { modifierTypes } from "#data/data-lists";
+import { rewards } from "#data/data-lists";
 import { doubleBattleDialogue } from "#data/double-battle-dialogue";
 import { Gender } from "#data/gender";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
@@ -31,7 +31,7 @@ import {
   TrainerPartyTemplate,
   trainerPartyTemplates,
 } from "#trainers/TrainerPartyTemplate";
-import type { RewardFunc } from "#types/modifier-types";
+import type { RewardFunc } from "#types/rewards";
 import type {
   GenAIFunc,
   GenTrainerItemsFunc,
@@ -513,17 +513,17 @@ export class TrainerConfig {
   //   for (let t = 0; t < Math.min(count, party.length); t++) {
   //     const randomIndex = Utils.randSeedItem(partyMemberIndexes);
   //     partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
-  //     ret.push(modifierTypes.TERA_SHARD().generateType([], [ Utils.randSeedItem(types ? types : party[randomIndex].getTypes()) ])!.withIdFromFunc(modifierTypes.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier); // TODO: is the bang correct?
+  //     ret.push(rewards.TERA_SHARD().generateType([], [ Utils.randSeedItem(types ? types : party[randomIndex].getTypes()) ])!.withIdFromFunc(rewards.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier); // TODO: is the bang correct?
   //   }
   //   return ret;
   // }
 
-  setModifierRewardFuncs(...modifierTypeFuncs: (() => RewardFunc)[]): TrainerConfig {
-    this.modifierRewardFuncs = modifierTypeFuncs.map(func => () => {
-      const modifierTypeFunc = func();
-      const modifierType = modifierTypeFunc();
-      modifierType.withIdFromFunc(modifierTypeFunc);
-      return modifierType;
+  setModifierRewardFuncs(...rewardFuncs: (() => RewardFunc)[]): TrainerConfig {
+    this.modifierRewardFuncs = rewardFuncs.map(func => () => {
+      const rewardFunc = func();
+      const reward = rewardFunc();
+      reward.withIdFromFunc(rewardFunc);
+      return reward;
     });
     return this;
   }
@@ -4444,8 +4444,8 @@ export const trainerConfigs: TrainerConfigs = {
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL)
     .setModifierRewardFuncs(
-      () => modifierTypes.SUPER_EXP_CHARM,
-      () => modifierTypes.EXP_SHARE,
+      () => rewards.SUPER_EXP_CHARM,
+      () => rewards.EXP_SHARE,
     )
     .setPartyMemberFunc(
       0,
@@ -4513,7 +4513,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival")
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_2)
-    .setModifierRewardFuncs(() => modifierTypes.EXP_SHARE)
+    .setModifierRewardFuncs(() => rewards.EXP_SHARE)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -4666,7 +4666,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival_2")
     .setMixedBattleBgm("battle_rival_2")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_4)
-    .setModifierRewardFuncs(() => modifierTypes.TERA_ORB)
+    .setModifierRewardFuncs(() => rewards.TERA_ORB)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(

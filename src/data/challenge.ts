@@ -457,8 +457,8 @@ export class SingleGenerationChallenge extends Challenge {
           .setBattleType(BattleType.TRAINER)
           .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)
           .setGetTrainerFunc(getRandomTrainerFunc(trainerTypes, true))
-          .setCustomModifierRewards({
-            guaranteedModifierTiers: [
+          .setCustomRewards({
+            guaranteedRewardTiers: [
               RewardTier.ROGUE,
               RewardTier.ROGUE,
               RewardTier.ULTRA,
@@ -474,8 +474,8 @@ export class SingleGenerationChallenge extends Challenge {
           .setBattleType(BattleType.TRAINER)
           .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)
           .setGetTrainerFunc(getRandomTrainerFunc(trainerTypes, true))
-          .setCustomModifierRewards({
-            guaranteedModifierTiers: [
+          .setCustomRewards({
+            guaranteedRewardTiers: [
               RewardTier.ROGUE,
               RewardTier.ROGUE,
               RewardTier.ULTRA,

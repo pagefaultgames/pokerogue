@@ -1,7 +1,7 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { EncounterBattleAnim } from "#data/battle-anims";
-import { modifierTypes } from "#data/data-lists";
+import { rewards } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
@@ -219,7 +219,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
 
         await hideOricorioPokemon();
         setEncounterRewards({
-          guaranteedRewardFuncs: [modifierTypes.BATON],
+          guaranteedRewardFuncs: [rewards.BATON],
           fillRemaining: true,
         });
         await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);

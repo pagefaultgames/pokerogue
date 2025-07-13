@@ -8,11 +8,11 @@ import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getTypeRgb } from "#data/type";
 import { HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/held-item-id";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { PokeballType } from "#enums/pokeball";
+import { RewardPoolType } from "#enums/reward-pool-type";
 import { RewardTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
@@ -21,9 +21,9 @@ import { doShinySparkleAnim } from "#field/anims";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
 import { getHeldItemTier } from "#items/held-item-tiers";
+import type { RewardOption } from "#items/reward";
+import { getPlayerRewardOptions, regenerateRewardPoolThresholds } from "#items/reward";
 import { TrainerItemEffect } from "#items/trainer-item";
-import type { RewardOption } from "#modifiers/modifier-type";
-import { getPlayerRewardOptions, regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
 import { getEncounterText, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
@@ -420,12 +420,12 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
           tier++;
         }
 
-        regenerateModifierPoolThresholds(party, ModifierPoolType.PLAYER, 0);
+        regenerateRewardPoolThresholds(party, RewardPoolType.PLAYER, 0);
         let item: RewardOption | null = null;
         // TMs excluded from possible rewards
         while (!item || item.type.id.includes("TM_")) {
           item = getPlayerRewardOptions(1, party, [], {
-            guaranteedModifierTiers: [tier],
+            guaranteedRewardTiers: [tier],
             allowLuckUpgrades: false,
           })[0];
         }

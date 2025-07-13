@@ -1,4 +1,4 @@
-import { modifierTypes } from "#data/data-lists";
+import { rewards } from "#data/data-lists";
 import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
@@ -98,7 +98,7 @@ describe("Items - Quick Powder", () => {
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["QUICK_POWDER"])!.newModifier(partyMember),
+      rewards.RARE_SPECIES_STAT_BOOSTER().generateType([], ["QUICK_POWDER"])!.newModifier(partyMember),
       true,
     );
     applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPD, statValue: spdValue });
@@ -131,7 +131,7 @@ describe("Items - Quick Powder", () => {
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["QUICK_POWDER"])!.newModifier(partyMember),
+      rewards.RARE_SPECIES_STAT_BOOSTER().generateType([], ["QUICK_POWDER"])!.newModifier(partyMember),
       true,
     );
     applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPD, statValue: spdValue });
@@ -164,7 +164,7 @@ describe("Items - Quick Powder", () => {
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["QUICK_POWDER"])!.newModifier(partyMember),
+      rewards.RARE_SPECIES_STAT_BOOSTER().generateType([], ["QUICK_POWDER"])!.newModifier(partyMember),
       true,
     );
     applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPD, statValue: spdValue });
@@ -187,7 +187,7 @@ describe("Items - Quick Powder", () => {
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["QUICK_POWDER"])!.newModifier(partyMember),
+      rewards.RARE_SPECIES_STAT_BOOSTER().generateType([], ["QUICK_POWDER"])!.newModifier(partyMember),
       true,
     );
     applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.SPD, statValue: spdValue });

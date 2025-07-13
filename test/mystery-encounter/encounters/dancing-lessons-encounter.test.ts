@@ -135,7 +135,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(3); // Should fill remaining
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toContain("BATON");
+      expect(modifierSelectHandler.options[0].rewardOption.type.id).toContain("BATON");
     });
   });
 

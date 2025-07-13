@@ -304,7 +304,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toBe("MYSTERY_ENCOUNTER_MACHO_BRACE");
+      expect(modifierSelectHandler.options[0].rewardOption.type.id).toBe("MYSTERY_ENCOUNTER_MACHO_BRACE");
     });
   });
 
@@ -346,7 +346,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toBe("RARER_CANDY");
+      expect(modifierSelectHandler.options[0].rewardOption.type.id).toBe("RARER_CANDY");
     });
   });
 });

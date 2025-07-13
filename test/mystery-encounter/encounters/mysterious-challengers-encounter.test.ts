@@ -170,9 +170,9 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(3);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toContain("TM_COMMON");
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toContain("TM_GREAT");
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.id).toContain("MEMORY_MUSHROOM");
+      expect(modifierSelectHandler.options[0].rewardOption.type.id).toContain("TM_COMMON");
+      expect(modifierSelectHandler.options[1].rewardOption.type.id).toContain("TM_GREAT");
+      expect(modifierSelectHandler.options[2].rewardOption.type.id).toContain("MEMORY_MUSHROOM");
     });
   });
 
@@ -215,20 +215,20 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(4);
       expect(
-        modifierSelectHandler.options[0].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[0].rewardOption.type.tier -
+          modifierSelectHandler.options[0].rewardOption.upgradeCount,
       ).toBe(RewardTier.ULTRA);
       expect(
-        modifierSelectHandler.options[1].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[1].rewardOption.type.tier -
+          modifierSelectHandler.options[1].rewardOption.upgradeCount,
       ).toBe(RewardTier.ULTRA);
       expect(
-        modifierSelectHandler.options[2].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[2].rewardOption.type.tier -
+          modifierSelectHandler.options[2].rewardOption.upgradeCount,
       ).toBe(RewardTier.GREAT);
       expect(
-        modifierSelectHandler.options[3].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[3].rewardOption.type.tier -
+          modifierSelectHandler.options[3].rewardOption.upgradeCount,
       ).toBe(RewardTier.GREAT);
     });
   });
@@ -272,20 +272,20 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(4);
       expect(
-        modifierSelectHandler.options[0].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[0].rewardOption.type.tier -
+          modifierSelectHandler.options[0].rewardOption.upgradeCount,
       ).toBe(RewardTier.ROGUE);
       expect(
-        modifierSelectHandler.options[1].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[1].rewardOption.type.tier -
+          modifierSelectHandler.options[1].rewardOption.upgradeCount,
       ).toBe(RewardTier.ROGUE);
       expect(
-        modifierSelectHandler.options[2].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[2].rewardOption.type.tier -
+          modifierSelectHandler.options[2].rewardOption.upgradeCount,
       ).toBe(RewardTier.ULTRA);
       expect(
-        modifierSelectHandler.options[3].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[3].rewardOption.type.tier -
+          modifierSelectHandler.options[3].rewardOption.upgradeCount,
       ).toBe(RewardTier.GREAT);
     });
   });

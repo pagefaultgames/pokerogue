@@ -1,6 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#data/data-lists";
+import { rewards } from "#data/data-lists";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -147,7 +147,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
       const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
       setEncounterRewards({
-        guaranteedRewardFuncs: [modifierTypes.TM_COMMON, modifierTypes.TM_GREAT, modifierTypes.MEMORY_MUSHROOM],
+        guaranteedRewardFuncs: [rewards.TM_COMMON, rewards.TM_GREAT, rewards.MEMORY_MUSHROOM],
         fillRemaining: true,
       });
 
@@ -175,7 +175,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
       const config: EnemyPartyConfig = encounter.enemyPartyConfigs[1];
 
       setEncounterRewards({
-        guaranteedModifierTiers: [RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.GREAT, RewardTier.GREAT],
+        guaranteedRewardTiers: [RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.GREAT, RewardTier.GREAT],
         fillRemaining: true,
       });
 
@@ -206,7 +206,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
       encounter.expMultiplier = 0.9;
 
       setEncounterRewards({
-        guaranteedModifierTiers: [RewardTier.ROGUE, RewardTier.ROGUE, RewardTier.ULTRA, RewardTier.GREAT],
+        guaranteedRewardTiers: [RewardTier.ROGUE, RewardTier.ROGUE, RewardTier.ULTRA, RewardTier.GREAT],
         fillRemaining: true,
       });
 

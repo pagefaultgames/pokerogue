@@ -3,6 +3,6 @@
  * Can be safely imported without worrying about circular dependencies.
  */
 
-import type { ModifierPool } from "#types/modifier-types";
+import type { RewardPool } from "#types/rewards";
 
-export const modifierPool: ModifierPool = {};
+export const rewardPool: RewardPool = {};

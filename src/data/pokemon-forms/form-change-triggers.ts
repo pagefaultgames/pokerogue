@@ -68,10 +68,10 @@ export class SpeciesFormChangeItemTrigger extends SpeciesFormChangeTrigger {
     this.active = active;
     this.description = this.active
       ? i18next.t("pokemonEvolutions:Forms.item", {
-          item: i18next.t(`modifierType:FormChangeItem.${FormChangeItem[this.item]}`),
+          item: i18next.t(`reward:FormChangeItem.${FormChangeItem[this.item]}`),
         })
       : i18next.t("pokemonEvolutions:Forms.deactivateItem", {
-          item: i18next.t(`modifierType:FormChangeItem.${FormChangeItem[this.item]}`),
+          item: i18next.t(`reward:FormChangeItem.${FormChangeItem[this.item]}`),
         });
   }
 

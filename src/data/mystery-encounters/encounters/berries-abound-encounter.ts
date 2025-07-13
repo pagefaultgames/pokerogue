@@ -1,18 +1,18 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { modifierTypes } from "#data/data-lists";
+import { rewards } from "#data/data-lists";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RewardPoolType } from "#enums/reward-pool-type";
 import { PERMANENT_STATS, Stat } from "#enums/stat";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { berryTypeToHeldItem } from "#items/berry";
-import type { RewardOption } from "#modifiers/modifier-type";
-import { regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
+import type { RewardOption } from "#items/reward";
+import { regenerateRewardPoolThresholds } from "#items/reward";
 import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
@@ -87,7 +87,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
           : globalScene.currentBattle.waveIndex > 40
             ? 4
             : 2;
-    regenerateModifierPoolThresholds(globalScene.getPlayerParty(), ModifierPoolType.PLAYER, 0);
+    regenerateRewardPoolThresholds(globalScene.getPlayerParty(), RewardPoolType.PLAYER, 0);
     encounter.misc = { numBerries };
 
     const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(bossPokemon);
@@ -161,7 +161,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
       const shopOptions: RewardOption[] = [];
       for (let i = 0; i < 5; i++) {
         // Generate shop berries
-        const mod = generateRewardOption(modifierTypes.BERRY);
+        const mod = generateRewardOption(rewards.BERRY);
         if (mod) {
           shopOptions.push(mod);
         }
@@ -188,7 +188,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
         const shopOptions: RewardOption[] = [];
         for (let i = 0; i < 5; i++) {
           // Generate shop berries
-          const mod = generateRewardOption(modifierTypes.BERRY);
+          const mod = generateRewardOption(rewards.BERRY);
           if (mod) {
             shopOptions.push(mod);
           }

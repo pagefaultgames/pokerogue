@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#data/data-lists";
+import { rewards } from "#data/data-lists";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { AiType } from "#enums/ai-type";
 import { BattlerIndex } from "#enums/battler-index";
@@ -116,7 +116,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
       // Pick battle
       const encounter = globalScene.currentBattle.mysteryEncounter!;
       setEncounterRewards({
-        guaranteedRewardFuncs: [modifierTypes.LEFTOVERS],
+        guaranteedRewardFuncs: [rewards.LEFTOVERS],
         fillRemaining: true,
       });
       encounter.startOfBattleEffects.push({
@@ -163,7 +163,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
         // Steal the Snorlax's Leftovers
         const instance = globalScene.currentBattle.mysteryEncounter!;
         setEncounterRewards({
-          guaranteedRewardFuncs: [modifierTypes.LEFTOVERS],
+          guaranteedRewardFuncs: [rewards.LEFTOVERS],
           fillRemaining: false,
         });
         // Snorlax exp to Pokemon that did the stealing

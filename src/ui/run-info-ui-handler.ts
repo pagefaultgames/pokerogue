@@ -16,7 +16,7 @@ import type { SpeciesId } from "#enums/species-id";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 import { heldItemSortFunc } from "#items/item-utility";
-import { getLuckString, getLuckTextTint } from "#modifiers/modifier-type";
+import { getLuckString, getLuckTextTint } from "#items/reward";
 import { getVariantTint } from "#sprites/variant";
 import type { SessionSaveData } from "#system/game-data";
 import type { PokemonData } from "#system/pokemon-data";

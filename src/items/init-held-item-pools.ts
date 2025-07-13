@@ -47,7 +47,7 @@ function initTrainerHeldItemPool() {
 /**
  * Initialize the daily starter held item pool
  */
-function initDailyStarterModifierPool() {
+function initDailyStarterRewardPool() {
   dailyStarterHeldItemPool[RewardTier.COMMON] = [
     { entry: HeldItemCategoryId.BASE_STAT_BOOST, weight: 1 },
     { entry: HeldItemCategoryId.BERRY, weight: 3 },
@@ -76,5 +76,5 @@ export function initHeldItemPools() {
   // Default held item pools for specific scenarios
   initWildHeldItemPool();
   initTrainerHeldItemPool();
-  initDailyStarterModifierPool();
+  initDailyStarterRewardPool();
 }

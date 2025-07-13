@@ -238,7 +238,7 @@ export async function initI18n(): Promise<void> {
       "menu",
       "menuUiHandler",
       "modifier",
-      "modifierType",
+      "reward",
       "move",
       "nature",
       "pokeball",

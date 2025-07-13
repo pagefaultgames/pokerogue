@@ -104,19 +104,19 @@ describe("Field Trip - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(
+      expect(modifierSelectHandler.options[0].rewardOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_attack"),
       );
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe(
+      expect(modifierSelectHandler.options[1].rewardOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_defense"),
       );
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe(
+      expect(modifierSelectHandler.options[2].rewardOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_speed"),
       );
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe(
+      expect(modifierSelectHandler.options[3].rewardOption.type.name).toBe(
         i18next.t("modifierType:ModifierType.DIRE_HIT.name"),
       );
-      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe(
+      expect(modifierSelectHandler.options[4].rewardOption.type.name).toBe(
         i18next.t("modifierType:ModifierType.RARER_CANDY.name"),
       );
     });
@@ -165,19 +165,19 @@ describe("Field Trip - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(
+      expect(modifierSelectHandler.options[0].rewardOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_sp_atk"),
       );
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe(
+      expect(modifierSelectHandler.options[1].rewardOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_sp_def"),
       );
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe(
+      expect(modifierSelectHandler.options[2].rewardOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_speed"),
       );
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe(
+      expect(modifierSelectHandler.options[3].rewardOption.type.name).toBe(
         i18next.t("modifierType:ModifierType.DIRE_HIT.name"),
       );
-      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe(
+      expect(modifierSelectHandler.options[4].rewardOption.type.name).toBe(
         i18next.t("modifierType:ModifierType.RARER_CANDY.name"),
       );
     });
@@ -227,13 +227,13 @@ describe("Field Trip - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(
+      expect(modifierSelectHandler.options[0].rewardOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_accuracy"),
       );
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.name).toBe(
+      expect(modifierSelectHandler.options[1].rewardOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_speed"),
       );
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.name).toBe(
+      expect(modifierSelectHandler.options[2].rewardOption.type.name).toBe(
         i18next.t("modifierType:ModifierType.AddPokeballConsumableType.name", {
           modifierCount: 5,
           pokeballName: i18next.t("pokeball:greatBall"),
@@ -243,10 +243,10 @@ describe("Field Trip - Mystery Encounter", () => {
         "modifierType:ModifierType.AddPokeballConsumableType.name",
         expect.objectContaining({ modifierCount: 5 }),
       );
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.name).toBe(
+      expect(modifierSelectHandler.options[3].rewardOption.type.name).toBe(
         i18next.t("modifierType:ModifierType.IV_SCANNER.name"),
       );
-      expect(modifierSelectHandler.options[4].modifierTypeOption.type.name).toBe(
+      expect(modifierSelectHandler.options[4].rewardOption.type.name).toBe(
         i18next.t("modifierType:ModifierType.RARER_CANDY.name"),
       );
     });

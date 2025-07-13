@@ -1,5 +1,5 @@
-import type { RewardKeys } from "#modifiers/modifier-type";
-import { itemPoolChecks } from "#modifiers/modifier-type";
+import type { RewardKeys } from "#items/reward";
+import { itemPoolChecks } from "#items/reward";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { expect } from "vitest";
 

@@ -1,6 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#data/data-lists";
+import { rewards } from "#data/data-lists";
 import { Challenges } from "#enums/challenges";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -160,7 +160,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
       .withOptionPhase(async () => {
         // Give the player 5 Rogue Balls
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        globalScene.phaseManager.unshiftNew("RewardPhase", modifierTypes.ROGUE_BALL);
+        globalScene.phaseManager.unshiftNew("RewardPhase", rewards.ROGUE_BALL);
 
         // Start encounter with random legendary (7-10 starter strength) that has level additive
         // If this is a mono-type challenge, always ensure the required type is filtered for

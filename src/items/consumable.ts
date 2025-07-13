@@ -13,11 +13,11 @@ import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { assignItemsFromConfiguration } from "#items/held-item-pool";
+import type { EvolutionItemReward, Reward, TerastallizeReward, TmReward } from "#items/reward";
 import { TrainerItemEffect } from "#items/trainer-item";
 import type { TrainerItemConfiguration } from "#items/trainer-item-data-types";
-import type { EvolutionItemReward, Reward, TerastallizeReward, TmReward } from "#modifiers/modifier-type";
 import type { VoucherType } from "#system/voucher";
-import type { ModifierInstanceMap, ModifierString } from "#types/modifier-types";
+import type { ModifierInstanceMap, ModifierString } from "#types/rewards";
 import { isNullOrUndefined, NumberHolder } from "#utils/common";
 
 export abstract class Consumable {

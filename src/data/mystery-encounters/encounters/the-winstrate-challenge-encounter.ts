@@ -1,7 +1,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#data/data-lists";
+import { rewards } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger } from "#data/form-change-triggers";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -140,7 +140,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
       // Refuse the challenge, they full heal the party and give the player a Rarer Candy
       globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
       setEncounterRewards({
-        guaranteedRewardFuncs: [modifierTypes.RARER_CANDY],
+        guaranteedRewardFuncs: [rewards.RARER_CANDY],
         fillRemaining: false,
       });
       leaveEncounterWithoutBattle();
@@ -156,14 +156,14 @@ async function spawnNextTrainerOrEndEncounter() {
     await showEncounterDialogue(`${namespace}:victory`, `${namespace}:speaker`);
 
     // Give 10x Voucher
-    const newModifier = modifierTypes.VOUCHER_PREMIUM().newModifier();
+    const newModifier = rewards.VOUCHER_PREMIUM().newModifier();
     globalScene.addModifier(newModifier);
     globalScene.playSound("item_fanfare");
     await showEncounterText(i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }));
 
     await showEncounterDialogue(`${namespace}:victory_2`, `${namespace}:speaker`);
     globalScene.ui.clearText(); // Clears "Winstrate" title from screen as rewards get animated in
-    const machoBrace = generateRewardOption(modifierTypes.MYSTERY_ENCOUNTER_MACHO_BRACE)!;
+    const machoBrace = generateRewardOption(rewards.MYSTERY_ENCOUNTER_MACHO_BRACE)!;
     machoBrace.type.tier = RewardTier.MASTER;
     setEncounterRewards({
       guaranteedRewardOptions: [machoBrace],

@@ -102,7 +102,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
       for (const option of modifierSelectHandler.options) {
-        expect(option.modifierTypeOption.type.id).toContain("TM_");
+        expect(option.rewardOption.type.id).toContain("TM_");
       }
     });
 
@@ -140,8 +140,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(modifierSelectHandler.options.length).toEqual(3);
       for (const option of modifierSelectHandler.options) {
         expect(
-          option.modifierTypeOption.type.id.includes("PP_UP") ||
-            option.modifierTypeOption.type.id.includes("BASE_STAT_BOOSTER"),
+          option.rewardOption.type.id.includes("PP_UP") || option.rewardOption.type.id.includes("BASE_STAT_BOOSTER"),
         ).toBeTruthy();
       }
     });
@@ -180,8 +179,8 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(modifierSelectHandler.options.length).toEqual(5);
       for (const option of modifierSelectHandler.options) {
         expect(
-          option.modifierTypeOption.type.id.includes("DIRE_HIT") ||
-            option.modifierTypeOption.type.id.includes("TEMP_STAT_STAGE_BOOSTER"),
+          option.rewardOption.type.id.includes("DIRE_HIT") ||
+            option.rewardOption.type.id.includes("TEMP_STAT_STAGE_BOOSTER"),
         ).toBeTruthy();
       }
     });
@@ -219,7 +218,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(4);
       for (const option of modifierSelectHandler.options) {
-        expect(option.modifierTypeOption.type.id).toContain("BALL");
+        expect(option.rewardOption.type.id).toContain("BALL");
       }
     });
 

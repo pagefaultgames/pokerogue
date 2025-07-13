@@ -1,4 +1,4 @@
-export enum ModifierPoolType {
+export enum RewardPoolType {
   PLAYER,
 }
 

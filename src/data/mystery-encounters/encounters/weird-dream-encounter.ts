@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { allSpecies, modifierTypes } from "#data/data-lists";
+import { allSpecies, rewards } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { Challenges } from "#enums/challenges";
@@ -219,11 +219,11 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         await doNewTeamPostProcess(transformations);
         setEncounterRewards({
           guaranteedRewardFuncs: [
-            modifierTypes.MEMORY_MUSHROOM,
-            modifierTypes.ROGUE_BALL,
-            modifierTypes.MINT,
-            modifierTypes.MINT,
-            modifierTypes.MINT,
+            rewards.MEMORY_MUSHROOM,
+            rewards.ROGUE_BALL,
+            rewards.MINT,
+            rewards.MINT,
+            rewards.MINT,
           ],
           fillRemaining: false,
         });
@@ -305,7 +305,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
 
       setEncounterRewards(
         {
-          guaranteedModifierTiers: [
+          guaranteedRewardTiers: [
             RewardTier.ROGUE,
             RewardTier.ROGUE,
             RewardTier.ULTRA,

@@ -37,7 +37,7 @@ describe("Items - Lock Capsule", () => {
     await game.classicMode.startBattle();
     game.scene.phaseManager.overridePhase(
       new SelectRewardPhase(0, undefined, {
-        guaranteedModifierTiers: [RewardTier.COMMON, RewardTier.COMMON, RewardTier.COMMON],
+        guaranteedRewardTiers: [RewardTier.COMMON, RewardTier.COMMON, RewardTier.COMMON],
         fillRemaining: false,
       }),
     );

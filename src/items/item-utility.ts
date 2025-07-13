@@ -8,7 +8,7 @@ import i18next from "i18next";
 import type { PokemonItemMap } from "./held-item-data-types";
 
 export function formChangeItemName(id: FormChangeItem) {
-  return i18next.t(`modifierType:FormChangeItem.${FormChangeItem[id]}`);
+  return i18next.t(`reward:FormChangeItem.${FormChangeItem[id]}`);
 }
 
 export const trainerItemSortFunc = (a: TrainerItemId, b: TrainerItemId): number => {

@@ -8,12 +8,12 @@ import type { PokeballType } from "#enums/pokeball";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
+import type { RewardOption } from "#items/reward";
+import { getPlayerShopRewardOptionsForWave, TmReward } from "#items/reward";
 import { TrainerItemEffect } from "#items/trainer-item";
-import type { RewardOption } from "#modifiers/modifier-type";
-import { getPlayerShopRewardOptionsForWave, TmReward } from "#modifiers/modifier-type";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
-import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions, TextStyle } from "#ui/text";
+import { addTextObject, getRewardTierTextTint, getTextColor, getTextStyleOptions, TextStyle } from "#ui/text";
 import { formatMoney, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -546,7 +546,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
         );
       }
 
-      const type = options[this.cursor].modifierTypeOption.type;
+      const type = options[this.cursor].rewardOption.type;
       type && ui.showText(type.getDescription());
       if (type instanceof TmReward) {
         // prepare the move overlay to be shown with the toggle
@@ -658,7 +658,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   }
 
   updateLockRaritiesText(): void {
-    const textStyle = globalScene.lockModifierTiers ? TextStyle.SUMMARY_BLUE : TextStyle.PARTY;
+    const textStyle = globalScene.lockRewardTiers ? TextStyle.SUMMARY_BLUE : TextStyle.PARTY;
     this.lockRarityButtonText.setColor(this.getTextColor(textStyle));
     this.lockRarityButtonText.setShadowColor(this.getTextColor(textStyle, true));
   }
@@ -730,7 +730,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
 }
 
 class ModifierOption extends Phaser.GameObjects.Container {
-  public modifierTypeOption: RewardOption;
+  public rewardOption: RewardOption;
   private pb: Phaser.GameObjects.Sprite;
   private pbTint: Phaser.GameObjects.Sprite;
   private itemContainer: Phaser.GameObjects.Container;
@@ -739,18 +739,18 @@ class ModifierOption extends Phaser.GameObjects.Container {
   private itemText: Phaser.GameObjects.Text;
   private itemCostText: Phaser.GameObjects.Text;
 
-  constructor(x: number, y: number, modifierTypeOption: RewardOption) {
+  constructor(x: number, y: number, rewardOption: RewardOption) {
     super(globalScene, x, y);
 
-    this.modifierTypeOption = modifierTypeOption;
+    this.rewardOption = rewardOption;
 
     this.setup();
   }
 
   setup() {
-    if (!this.modifierTypeOption.cost) {
+    if (!this.rewardOption.cost) {
       const getPb = (): Phaser.GameObjects.Sprite => {
-        const pb = globalScene.add.sprite(0, -182, "pb", this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount));
+        const pb = globalScene.add.sprite(0, -182, "pb", this.getPbAtlasKey(-this.rewardOption.upgradeCount));
         pb.setScale(2);
         return pb;
       };
@@ -769,28 +769,28 @@ class ModifierOption extends Phaser.GameObjects.Container {
     this.add(this.itemContainer);
 
     const getItem = () => {
-      const item = globalScene.add.sprite(0, 0, "items", this.modifierTypeOption.type?.getIcon());
+      const item = globalScene.add.sprite(0, 0, "items", this.rewardOption.type?.getIcon());
       return item;
     };
 
     this.item = getItem();
     this.itemContainer.add(this.item);
 
-    if (!this.modifierTypeOption.cost) {
+    if (!this.rewardOption.cost) {
       this.itemTint = getItem();
       this.itemTint.setTintFill(Phaser.Display.Color.GetColor(255, 192, 255));
       this.itemContainer.add(this.itemTint);
     }
 
-    this.itemText = addTextObject(0, 35, this.modifierTypeOption.type?.name!, TextStyle.PARTY, { align: "center" }); // TODO: is this bang correct?
+    this.itemText = addTextObject(0, 35, this.rewardOption.type?.name!, TextStyle.PARTY, { align: "center" }); // TODO: is this bang correct?
     this.itemText.setOrigin(0.5, 0);
     this.itemText.setAlpha(0);
     this.itemText.setTint(
-      this.modifierTypeOption.type?.tier ? getModifierTierTextTint(this.modifierTypeOption.type?.tier) : undefined,
+      this.rewardOption.type?.tier ? getRewardTierTextTint(this.rewardOption.type?.tier) : undefined,
     );
     this.add(this.itemText);
 
-    if (this.modifierTypeOption.cost) {
+    if (this.rewardOption.cost) {
       this.itemCostText = addTextObject(0, 45, "", TextStyle.MONEY, {
         align: "center",
       });
@@ -804,7 +804,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
   }
 
   show(remainingDuration: number, upgradeCountOffset: number) {
-    if (!this.modifierTypeOption.cost) {
+    if (!this.rewardOption.cost) {
       globalScene.tweens.add({
         targets: this.pb,
         y: 0,
@@ -838,10 +838,10 @@ class ModifierOption extends Phaser.GameObjects.Container {
         },
       });
 
-      for (let u = 0; u < this.modifierTypeOption.upgradeCount; u++) {
+      for (let u = 0; u < this.rewardOption.upgradeCount; u++) {
         const upgradeIndex = u;
         globalScene.time.delayedCall(
-          remainingDuration - 2000 * (this.modifierTypeOption.upgradeCount - (upgradeIndex + 1 + upgradeCountOffset)),
+          remainingDuration - 2000 * (this.rewardOption.upgradeCount - (upgradeIndex + 1 + upgradeCountOffset)),
           () => {
             globalScene.playSound("se/upgrade", {
               rate: 1 + 0.25 * upgradeIndex,
@@ -856,10 +856,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
               duration: 1000,
               ease: "Sine.easeIn",
               onComplete: () => {
-                this.pb.setTexture(
-                  "pb",
-                  this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount + (upgradeIndex + 1)),
-                );
+                this.pb.setTexture("pb", this.getPbAtlasKey(-this.rewardOption.upgradeCount + (upgradeIndex + 1)));
                 globalScene.tweens.add({
                   targets: this.pbTint,
                   alpha: 0,
@@ -881,7 +878,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
         return;
       }
 
-      if (!this.modifierTypeOption.cost) {
+      if (!this.rewardOption.cost) {
         this.pb.setTexture("pb", `${this.getPbAtlasKey(0)}_open`);
         globalScene.playSound("se/pb_rel");
 
@@ -902,7 +899,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
         scale: 2,
         alpha: 1,
       });
-      if (!this.modifierTypeOption.cost) {
+      if (!this.rewardOption.cost) {
         globalScene.tweens.add({
           targets: this.itemTint,
           alpha: 0,
@@ -931,11 +928,11 @@ class ModifierOption extends Phaser.GameObjects.Container {
   }
 
   getPbAtlasKey(tierOffset = 0) {
-    return getPokeballAtlasKey((this.modifierTypeOption.type?.tier! + tierOffset) as number as PokeballType); // TODO: is this bang correct?
+    return getPokeballAtlasKey((this.rewardOption.type?.tier! + tierOffset) as number as PokeballType); // TODO: is this bang correct?
   }
 
   updateCostText(): void {
-    const cost = Overrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.modifierTypeOption.cost;
+    const cost = Overrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.rewardOption.cost;
     const textStyle = cost <= globalScene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
     const formattedMoney = formatMoney(globalScene.moneyFormat, cost);

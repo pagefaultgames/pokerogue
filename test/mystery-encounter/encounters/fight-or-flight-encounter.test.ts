@@ -131,7 +131,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
-      expect(item.type.name).toBe(modifierSelectHandler.options[0].modifierTypeOption.type.name);
+      expect(item.type.name).toBe(modifierSelectHandler.options[0].rewardOption.type.name);
     });
   });
 
@@ -191,7 +191,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
-      expect(item.type.name).toBe(modifierSelectHandler.options[0].modifierTypeOption.type.name);
+      expect(item.type.name).toBe(modifierSelectHandler.options[0].rewardOption.type.name);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });

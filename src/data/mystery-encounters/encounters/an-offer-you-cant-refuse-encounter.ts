@@ -1,7 +1,7 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
-import { allTrainerItems, modifierTypes } from "#data/data-lists";
+import { allTrainerItems, rewards } from "#data/data-lists";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -136,7 +136,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
       })
       .withOptionPhase(async () => {
         // Give the player a Shiny Charm
-        globalScene.phaseManager.unshiftNew("RewardPhase", modifierTypes.SHINY_CHARM);
+        globalScene.phaseManager.unshiftNew("RewardPhase", rewards.SHINY_CHARM);
         leaveEncounterWithoutBattle(true);
       })
       .build(),

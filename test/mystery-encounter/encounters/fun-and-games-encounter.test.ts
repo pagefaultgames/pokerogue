@@ -221,7 +221,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("WIDE_LENS");
+      expect(modifierSelectHandler.options[0].rewardOption.type.id).toEqual("WIDE_LENS");
     });
 
     it("should have Scope Lens item in rewards if Wubboffet is at 3-15% HP remaining", async () => {
@@ -251,7 +251,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("SCOPE_LENS");
+      expect(modifierSelectHandler.options[0].rewardOption.type.id).toEqual("SCOPE_LENS");
     });
 
     it("should have Multi Lens item in rewards if Wubboffet is at <3% HP remaining", async () => {
@@ -281,7 +281,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("MULTI_LENS");
+      expect(modifierSelectHandler.options[0].rewardOption.type.id).toEqual("MULTI_LENS");
     });
   });
 

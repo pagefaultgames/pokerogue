@@ -1,6 +1,6 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#data/data-lists";
+import { rewards } from "#data/data-lists";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import { BiomeId } from "#enums/biome-id";
 import { TrainerSlot } from "#enums/trainer-slot";
@@ -35,17 +35,14 @@ export class TrainerVictoryPhase extends BattlePhase {
         if (timedEventManager.getUpgradeUnlockedVouchers()) {
           globalScene.phaseManager.unshiftNew(
             "RewardPhase",
-            [
-              modifierTypes.VOUCHER_PLUS,
-              modifierTypes.VOUCHER_PLUS,
-              modifierTypes.VOUCHER_PLUS,
-              modifierTypes.VOUCHER_PREMIUM,
-            ][vouchers[TrainerType[trainerType]].voucherType],
+            [rewards.VOUCHER_PLUS, rewards.VOUCHER_PLUS, rewards.VOUCHER_PLUS, rewards.VOUCHER_PREMIUM][
+              vouchers[TrainerType[trainerType]].voucherType
+            ],
           );
         } else {
           globalScene.phaseManager.unshiftNew(
             "RewardPhase",
-            [modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM][
+            [rewards.VOUCHER, rewards.VOUCHER, rewards.VOUCHER_PLUS, rewards.VOUCHER_PREMIUM][
               vouchers[TrainerType[trainerType]].voucherType
             ],
           );

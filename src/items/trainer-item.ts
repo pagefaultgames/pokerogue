@@ -68,11 +68,11 @@ export class TrainerItem {
   }
 
   get name(): string {
-    return i18next.t(`modifierType:ModifierType.${TrainerItemNames[this.type]}.name`);
+    return i18next.t(`reward:ModifierType.${TrainerItemNames[this.type]}.name`);
   }
 
   get description(): string {
-    return i18next.t(`modifierType:ModifierType.${TrainerItemNames[this.type]}.description`);
+    return i18next.t(`reward:ModifierType.${TrainerItemNames[this.type]}.description`);
   }
 
   get iconName(): string {
@@ -321,7 +321,7 @@ export class TempStatStageBoosterTrainerItem extends LapsingTrainerItem {
   }
 
   get name(): string {
-    return i18next.t(`modifierType:TempStatStageBoosterItem.${TrainerItemNames[this.type]?.toLowerCase()}`);
+    return i18next.t(`reward:TempStatStageBoosterItem.${TrainerItemNames[this.type]?.toLowerCase()}`);
   }
 
   get description(): string {
@@ -343,7 +343,7 @@ export class TempAccuracyBoosterTrainerItem extends LapsingTrainerItem {
   public effects: TrainerItemEffect[] = [TrainerItemEffect.TEMP_ACCURACY_BOOSTER];
 
   get name(): string {
-    return i18next.t(`modifierType:TempStatStageBoosterItem.${TrainerItemNames[this.type]?.toLowerCase()}`);
+    return i18next.t(`reward:TempStatStageBoosterItem.${TrainerItemNames[this.type]?.toLowerCase()}`);
   }
 
   get description(): string {

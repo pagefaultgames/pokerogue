@@ -15,9 +15,9 @@ import { getBiomeHasProps } from "#field/arena";
 import { initHeldItems } from "#items/all-held-items";
 import { initTrainerItems } from "#items/all-trainer-items";
 import { initHeldItemPools } from "#items/init-held-item-pools";
+import { initRewardPools } from "#items/init-reward-pools";
 import { initTrainerItemPools } from "#items/init-trainer-item-pools";
-import { initModifierPools } from "#modifiers/init-modifier-pools";
-import { initRewards } from "#modifiers/modifier-type";
+import { initRewards } from "#items/reward";
 import { initMoves } from "#moves/move";
 import { initMysteryEncounters } from "#mystery-encounters/mystery-encounters";
 import { CacheBustedLoaderPlugin } from "#plugins/cache-busted-loader-plugin";
@@ -370,7 +370,7 @@ export class LoadingScene extends SceneBase {
     this.loadLoadingScreen();
 
     initRewards();
-    initModifierPools();
+    initRewardPools();
     initHeldItemPools();
     initTrainerItemPools();
 

@@ -1,8 +1,8 @@
 import { allHeldItems } from "#data/data-lists";
 import { BerryType } from "#enums/berry-type";
 import { HeldItemCategoryId, HeldItemId, HeldItemNames, isCategoryId } from "#enums/held-item-id";
-import { HeldItemPoolType } from "#enums/modifier-pool-type";
 import type { PokemonType } from "#enums/pokemon-type";
+import { HeldItemPoolType } from "#enums/reward-pool-type";
 import { RewardTier } from "#enums/reward-tier";
 import { PERMANENT_STATS } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";

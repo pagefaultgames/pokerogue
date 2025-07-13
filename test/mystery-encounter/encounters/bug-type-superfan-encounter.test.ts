@@ -424,8 +424,8 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(2);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toBe("SUPER_LURE");
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toBe("GREAT_BALL");
+      expect(modifierSelectHandler.options[0].rewardOption.type.id).toBe("SUPER_LURE");
+      expect(modifierSelectHandler.options[1].rewardOption.type.id).toBe("GREAT_BALL");
     });
 
     it("should proceed to rewards screen with 2-3 Bug Types reward options", async () => {
@@ -443,9 +443,9 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(3);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toBe("QUICK_CLAW");
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toBe("MAX_LURE");
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.id).toBe("ULTRA_BALL");
+      expect(modifierSelectHandler.options[0].rewardOption.type.id).toBe("QUICK_CLAW");
+      expect(modifierSelectHandler.options[1].rewardOption.type.id).toBe("MAX_LURE");
+      expect(modifierSelectHandler.options[2].rewardOption.type.id).toBe("ULTRA_BALL");
     });
 
     it("should proceed to rewards screen with 4-5 Bug Types reward options", async () => {
@@ -465,9 +465,9 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(3);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toBe("GRIP_CLAW");
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toBe("MAX_LURE");
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.id).toBe("ROGUE_BALL");
+      expect(modifierSelectHandler.options[0].rewardOption.type.id).toBe("GRIP_CLAW");
+      expect(modifierSelectHandler.options[1].rewardOption.type.id).toBe("MAX_LURE");
+      expect(modifierSelectHandler.options[2].rewardOption.type.id).toBe("ROGUE_BALL");
     });
 
     it("should proceed to rewards screen with 6 Bug Types reward options (including form change item)", async () => {
@@ -489,10 +489,10 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(4);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toBe("MASTER_BALL");
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toBe("MEGA_BRACELET");
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.id).toBe("DYNAMAX_BAND");
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.id).toBe("FORM_CHANGE_ITEM");
+      expect(modifierSelectHandler.options[0].rewardOption.type.id).toBe("MASTER_BALL");
+      expect(modifierSelectHandler.options[1].rewardOption.type.id).toBe("MEGA_BRACELET");
+      expect(modifierSelectHandler.options[2].rewardOption.type.id).toBe("DYNAMAX_BAND");
+      expect(modifierSelectHandler.options[3].rewardOption.type.id).toBe("FORM_CHANGE_ITEM");
     });
 
     it("should leave encounter without battle", async () => {
@@ -564,8 +564,8 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(2);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toBe("MYSTERY_ENCOUNTER_GOLDEN_BUG_NET");
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toBe("REVIVER_SEED");
+      expect(modifierSelectHandler.options[0].rewardOption.type.id).toBe("MYSTERY_ENCOUNTER_GOLDEN_BUG_NET");
+      expect(modifierSelectHandler.options[1].rewardOption.type.id).toBe("REVIVER_SEED");
 
       const gripClawCountAfter = scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.GRIP_CLAW);
       expect(gripClawCountBefore - 1).toBe(gripClawCountAfter);

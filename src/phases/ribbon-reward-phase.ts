@@ -2,22 +2,22 @@ import { globalScene } from "#app/global-scene";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { UiMode } from "#enums/ui-mode";
 import { RewardPhase } from "#phases/reward-phase";
-import type { RewardFunc } from "#types/modifier-types";
+import type { RewardFunc } from "#types/rewards";
 import i18next from "i18next";
 
 export class RibbonRewardPhase extends RewardPhase {
   public readonly phaseName = "RibbonRewardPhase";
   private species: PokemonSpecies;
 
-  constructor(modifierTypeFunc: RewardFunc, species: PokemonSpecies) {
-    super(modifierTypeFunc);
+  constructor(rewardFunc: RewardFunc, species: PokemonSpecies) {
+    super(rewardFunc);
 
     this.species = species;
   }
 
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
-      const newModifier = this.modifierType.newModifier();
+      const newModifier = this.reward.newModifier();
       globalScene.addModifier(newModifier);
       globalScene.playSound("level_up_fanfare");
       globalScene.ui.setMode(UiMode.MESSAGE);

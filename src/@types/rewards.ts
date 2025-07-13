@@ -1,13 +1,13 @@
 // Intentionally re-exports `ModifierConstructorMap` from `modifier.ts`
 
 import type { Pokemon } from "#field/pokemon";
-import type { ModifierConstructorMap } from "#modifiers/consumable";
-import type { Reward, WeightedReward } from "#modifiers/modifier-type";
+import type { ModifierConstructorMap } from "#items/consumable";
+import type { Reward, WeightedReward } from "#items/reward";
 
 export type RewardFunc = () => Reward;
 export type WeightedRewardWeightFunc = (party: Pokemon[], rerollCount?: number) => number;
 
-export type { ModifierConstructorMap } from "#modifiers/consumable";
+export type { ModifierConstructorMap } from "#items/consumable";
 
 /**
  * Map of modifier names to their respective instance types
@@ -26,6 +26,6 @@ export type ModifierClass = ModifierConstructorMap[keyof ModifierConstructorMap]
  */
 export type ModifierString = keyof ModifierConstructorMap;
 
-export type ModifierPool = {
+export type RewardPool = {
   [tier: string]: WeightedReward[];
 };

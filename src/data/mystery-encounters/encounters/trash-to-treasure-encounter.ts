@@ -167,7 +167,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
         const encounter = globalScene.currentBattle.mysteryEncounter!;
 
         setEncounterRewards({
-          guaranteedModifierTiers: [RewardTier.ROGUE, RewardTier.ROGUE, RewardTier.ULTRA, RewardTier.GREAT],
+          guaranteedRewardTiers: [RewardTier.ROGUE, RewardTier.ROGUE, RewardTier.ULTRA, RewardTier.GREAT],
           fillRemaining: true,
         });
         encounter.startOfBattleEffects.push(

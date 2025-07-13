@@ -5,7 +5,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { EvolutionItem, pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { tmPoolTiers, tmSpecies } from "#balance/tms";
-import { allHeldItems, allMoves, allTrainerItems, modifierTypes } from "#data/data-lists";
+import { allHeldItems, allMoves, allTrainerItems, rewards } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
 import { getPokeballCatchMultiplier, getPokeballName } from "#data/pokeball";
@@ -14,11 +14,11 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { FormChangeItem } from "#enums/form-change-item";
 import { HeldItemId } from "#enums/held-item-id";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
+import { RewardPoolType } from "#enums/reward-pool-type";
 import { RewardTier } from "#enums/reward-tier";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
@@ -29,14 +29,6 @@ import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem, statBoostItems } from "#items/base-stat-booster";
 import { berryTypeToHeldItem } from "#items/berry";
-import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeldItem } from "#items/held-item-pool";
-import { formChangeItemName } from "#items/item-utility";
-import {
-  SPECIES_STAT_BOOSTER_ITEMS,
-  type SpeciesStatBoosterItemId,
-  type SpeciesStatBoostHeldItem,
-} from "#items/stat-booster";
-import { TrainerItemEffect, tempStatToTrainerItem } from "#items/trainer-item";
 import {
   AddPokeballConsumable,
   AddVoucherConsumable,
@@ -54,13 +46,21 @@ import {
   RememberMoveConsumable,
   TerrastalizeConsumable,
   TmConsumable,
-} from "#modifiers/consumable";
+} from "#items/consumable";
+import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeldItem } from "#items/held-item-pool";
+import { formChangeItemName } from "#items/item-utility";
+import {
+  SPECIES_STAT_BOOSTER_ITEMS,
+  type SpeciesStatBoosterItemId,
+  type SpeciesStatBoostHeldItem,
+} from "#items/stat-booster";
+import { TrainerItemEffect, tempStatToTrainerItem } from "#items/trainer-item";
 import type { PokemonMove } from "#moves/pokemon-move";
 import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#system/voucher";
-import type { RewardFunc, WeightedRewardWeightFunc } from "#types/modifier-types";
+import type { RewardFunc, WeightedRewardWeightFunc } from "#types/rewards";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
-import { getModifierTierTextTint } from "#ui/text";
+import { getRewardTierTextTint } from "#ui/text";
 import {
   formatMoney,
   getEnumKeys,
@@ -70,7 +70,7 @@ import {
   padInt,
   randSeedInt,
 } from "#utils/common";
-import { getModifierPoolForType } from "#utils/modifier-utils";
+import { getRewardPoolForType } from "#utils/modifier-utils";
 import i18next from "i18next";
 
 type NewConsumableFunc = (type: Reward, args: any[]) => Consumable | null;
@@ -86,11 +86,11 @@ export class Reward {
 
   /**
    * Checks if the modifier type is of a specific type
-   * @param modifierType - The type to check against
+   * @param reward - The type to check against
    * @return Whether the modifier type is of the specified type
    */
-  public is<K extends RewardString>(modifierType: K): this is RewardInstanceMap[K] {
-    const targetType = RewardConstructorMap[modifierType];
+  public is<K extends RewardString>(reward: K): this is RewardInstanceMap[K] {
+    const targetType = RewardConstructorMap[reward];
     if (!targetType) {
       return false;
     }
@@ -132,7 +132,7 @@ export class Reward {
    * @param func
    */
   withIdFromFunc(func: RewardFunc): Reward {
-    this.id = Object.keys(modifierTypeInitObj).find(k => modifierTypeInitObj[k] === func)!; // TODO: is this bang correct?
+    this.id = Object.keys(rewardInitObj).find(k => rewardInitObj[k] === func)!; // TODO: is this bang correct?
     return this;
   }
 
@@ -143,20 +143,16 @@ export class Reward {
    * It checks the weight of the item and will use the first tier for which the weight is greater than 0
    * This is to allow items to be in multiple item pools depending on the conditions, for example for events
    * If all tiers have a weight of 0 for the item, the first tier where the item was found is used
-   * @param poolType Default 'ModifierPoolType.PLAYER'. Which pool to lookup item tier from
+   * @param poolType Default 'RewardPoolType.PLAYER'. Which pool to lookup item tier from
    * @param party optional. Needed to check the weight of modifiers with conditional weight (see {@linkcode WeightedRewardWeightFunc})
    *  if not provided or empty, the weight check will be ignored
    * @param rerollCount Default `0`. Used to check the weight of modifiers with conditional weight (see {@linkcode WeightedRewardWeightFunc})
    */
-  withTierFromPool(
-    poolType: ModifierPoolType = ModifierPoolType.PLAYER,
-    party?: PlayerPokemon[],
-    rerollCount = 0,
-  ): Reward {
+  withTierFromPool(poolType: RewardPoolType = RewardPoolType.PLAYER, party?: PlayerPokemon[], rerollCount = 0): Reward {
     let defaultTier: undefined | RewardTier;
-    for (const tier of Object.values(getModifierPoolForType(poolType))) {
+    for (const tier of Object.values(getRewardPoolForType(poolType))) {
       for (const modifier of tier) {
-        if (this.id === modifier.modifierType.id) {
+        if (this.id === modifier.reward.id) {
           let weight: number;
           if (modifier.weight instanceof Function) {
             weight = party ? modifier.weight(party, rerollCount) : 0;
@@ -164,12 +160,12 @@ export class Reward {
             weight = modifier.weight;
           }
           if (weight > 0) {
-            this.tier = modifier.modifierType.tier;
+            this.tier = modifier.reward.tier;
             return this;
           }
           if (isNullOrUndefined(defaultTier)) {
             // If weight is 0, keep track of the first tier where the item was found
-            defaultTier = modifier.modifierType.tier;
+            defaultTier = modifier.reward.tier;
           }
         }
       }
@@ -907,7 +903,7 @@ export class EvolutionItemReward extends PokemonReward implements GeneratedPersi
   }
 
   get name(): string {
-    return i18next.t(`modifierType:EvolutionItem.${EvolutionItem[this.evolutionItem]}`);
+    return i18next.t(`reward:EvolutionItem.${EvolutionItem[this.evolutionItem]}`);
   }
 
   getDescription(): string {
@@ -1269,79 +1265,79 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
 }
 
 export class WeightedReward {
-  public modifierType: Reward;
+  public reward: Reward;
   public weight: number | WeightedRewardWeightFunc;
   public maxWeight: number | WeightedRewardWeightFunc;
 
   constructor(
-    modifierTypeFunc: RewardFunc,
+    rewardFunc: RewardFunc,
     weight: number | WeightedRewardWeightFunc,
     maxWeight?: number | WeightedRewardWeightFunc,
   ) {
-    this.modifierType = modifierTypeFunc();
-    this.modifierType.id = Object.keys(modifierTypeInitObj).find(k => modifierTypeInitObj[k] === modifierTypeFunc)!; // TODO: is this bang correct?
+    this.reward = rewardFunc();
+    this.reward.id = Object.keys(rewardInitObj).find(k => rewardInitObj[k] === rewardFunc)!; // TODO: is this bang correct?
     this.weight = weight;
     this.maxWeight = maxWeight || (!(weight instanceof Function) ? weight : 0);
   }
 
   setTier(tier: RewardTier) {
-    this.modifierType.setTier(tier);
+    this.reward.setTier(tier);
   }
 }
 
-type BaseModifierOverride = {
-  name: Exclude<RewardKeys, GeneratorModifierOverride["name"]>;
+type BaseRewardOverride = {
+  name: Exclude<RewardKeys, GeneratorRewardOverride["name"]>;
   count?: number;
 };
 
 /** Type for modifiers and held items that are constructed via {@linkcode RewardGenerator}. */
-export type GeneratorModifierOverride = {
+export type GeneratorRewardOverride = {
   count?: number;
 } & (
   | {
-      name: keyof Pick<typeof modifierTypeInitObj, "SPECIES_STAT_BOOSTER" | "RARE_SPECIES_STAT_BOOSTER">;
+      name: keyof Pick<typeof rewardInitObj, "SPECIES_STAT_BOOSTER" | "RARE_SPECIES_STAT_BOOSTER">;
       type?: SpeciesStatBoosterItemId;
     }
   | {
-      name: keyof Pick<typeof modifierTypeInitObj, "TEMP_STAT_STAGE_BOOSTER">;
+      name: keyof Pick<typeof rewardInitObj, "TEMP_STAT_STAGE_BOOSTER">;
       type?: TempBattleStat;
     }
   | {
-      name: keyof Pick<typeof modifierTypeInitObj, "BASE_STAT_BOOSTER">;
+      name: keyof Pick<typeof rewardInitObj, "BASE_STAT_BOOSTER">;
       type?: Stat;
     }
   | {
-      name: keyof Pick<typeof modifierTypeInitObj, "MINT">;
+      name: keyof Pick<typeof rewardInitObj, "MINT">;
       type?: Nature;
     }
   | {
-      name: keyof Pick<typeof modifierTypeInitObj, "ATTACK_TYPE_BOOSTER" | "TERA_SHARD">;
+      name: keyof Pick<typeof rewardInitObj, "ATTACK_TYPE_BOOSTER" | "TERA_SHARD">;
       type?: PokemonType;
     }
   | {
-      name: keyof Pick<typeof modifierTypeInitObj, "BERRY">;
+      name: keyof Pick<typeof rewardInitObj, "BERRY">;
       type?: BerryType;
     }
   | {
-      name: keyof Pick<typeof modifierTypeInitObj, "EVOLUTION_ITEM" | "RARE_EVOLUTION_ITEM">;
+      name: keyof Pick<typeof rewardInitObj, "EVOLUTION_ITEM" | "RARE_EVOLUTION_ITEM">;
       type?: EvolutionItem;
     }
   | {
-      name: keyof Pick<typeof modifierTypeInitObj, "FORM_CHANGE_ITEM" | "RARE_FORM_CHANGE_ITEM">;
+      name: keyof Pick<typeof rewardInitObj, "FORM_CHANGE_ITEM" | "RARE_FORM_CHANGE_ITEM">;
       type?: FormChangeItem;
     }
   | {
-      name: keyof Pick<typeof modifierTypeInitObj, "TM_COMMON" | "TM_GREAT" | "TM_ULTRA">;
+      name: keyof Pick<typeof rewardInitObj, "TM_COMMON" | "TM_GREAT" | "TM_ULTRA">;
       type?: MoveId;
     }
 );
 
 /** Type used to construct modifiers and held items for overriding purposes. */
-export type ModifierOverride = GeneratorModifierOverride | BaseModifierOverride;
+export type RewardOverride = GeneratorRewardOverride | BaseRewardOverride;
 
-export type RewardKeys = keyof typeof modifierTypeInitObj;
+export type RewardKeys = keyof typeof rewardInitObj;
 
-const modifierTypeInitObj = Object.freeze({
+const rewardInitObj = Object.freeze({
   POKEBALL: () => new AddPokeballConsumableType("pb", PokeballType.POKEBALL, 5),
   GREAT_BALL: () => new AddPokeballConsumableType("gb", PokeballType.GREAT_BALL, 5),
   ULTRA_BALL: () => new AddPokeballConsumableType("ub", PokeballType.ULTRA_BALL, 5),
@@ -1571,13 +1567,13 @@ const modifierTypeInitObj = Object.freeze({
 /**
  * The initial set of modifier types, used to generate the modifier pool.
  */
-export type Rewards = typeof modifierTypeInitObj;
+export type Rewards = typeof rewardInitObj;
 
-export interface ModifierPool {
+export interface RewardPool {
   [tier: string]: WeightedReward[];
 }
 
-let modifierPoolThresholds = {};
+let rewardPoolThresholds = {};
 let ignoredPoolIndexes = {};
 
 /**
@@ -1585,8 +1581,8 @@ let ignoredPoolIndexes = {};
  */
 export const itemPoolChecks: Map<RewardKeys, boolean | undefined> = new Map();
 
-export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: ModifierPoolType, rerollCount = 0) {
-  const pool = getModifierPoolForType(poolType);
+export function regenerateRewardPoolThresholds(party: Pokemon[], poolType: RewardPoolType, rerollCount = 0) {
+  const pool = getRewardPoolForType(poolType);
   itemPoolChecks.forEach((_v, k) => {
     itemPoolChecks.set(k, false);
   });
@@ -1599,12 +1595,12 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
         const thresholds = new Map();
         const tierModifierIds: string[] = [];
         let i = 0;
-        pool[t].reduce((total: number, modifierType: WeightedReward) => {
-          const weightedReward = modifierType as WeightedReward;
+        pool[t].reduce((total: number, reward: WeightedReward) => {
+          const weightedReward = reward as WeightedReward;
           const itemReward =
-            weightedReward.modifierType instanceof RewardGenerator
-              ? weightedReward.modifierType.generateType(party)
-              : weightedReward.modifierType;
+            weightedReward.reward instanceof RewardGenerator
+              ? weightedReward.reward.generateType(party)
+              : weightedReward.reward;
           const trainerItemfullStack =
             itemReward instanceof TrainerItemReward ? globalScene.trainerItems.isMaxStack(itemReward.itemId) : false;
           const weight =
@@ -1615,8 +1611,8 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
                 : (weightedReward.weight as number)
               : 0;
           if (weightedReward.maxWeight) {
-            const modifierId = weightedReward.modifierType.id;
-            tierModifierIds.push(modifierId);
+            const rewardId = weightedReward.reward.id;
+            tierModifierIds.push(rewardId);
           }
           if (weight) {
             total += weight;
@@ -1624,8 +1620,8 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
             ignoredIndexes[t].push(i++);
             return total;
           }
-          if (itemPoolChecks.has(modifierType.modifierType.id as RewardKeys)) {
-            itemPoolChecks.set(modifierType.modifierType.id as RewardKeys, true);
+          if (itemPoolChecks.has(reward.reward.id as RewardKeys)) {
+            itemPoolChecks.set(reward.reward.id as RewardKeys, true);
           }
           thresholds.set(total, i++);
           return total;
@@ -1635,15 +1631,15 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
     ),
   );
   switch (poolType) {
-    case ModifierPoolType.PLAYER:
-      modifierPoolThresholds = thresholds;
+    case RewardPoolType.PLAYER:
+      rewardPoolThresholds = thresholds;
       ignoredPoolIndexes = ignoredIndexes;
       break;
   }
 }
 
-export interface CustomModifierSettings {
-  guaranteedModifierTiers?: RewardTier[];
+export interface CustomRewardSettings {
+  guaranteedRewardTiers?: RewardTier[];
   guaranteedRewardOptions?: RewardOption[];
   /** If specified, will override the next X items to be auto-generated from specific modifier functions (these don't have to be pre-genned). */
   guaranteedRewardFuncs?: RewardFunc[];
@@ -1652,7 +1648,7 @@ export interface CustomModifierSettings {
    * @example
    * ```ts
    * count = 4;
-   * customModifierSettings = { guaranteedModifierTiers: [ModifierTier.GREAT], fillRemaining: true };
+   * customRewardSettings = { guaranteedRewardTiers: [RewardTier.GREAT], fillRemaining: true };
    * ```
    * The first item in the shop will be `GREAT` tier, and the remaining `3` items will be generated normally.
    *
@@ -1670,45 +1666,45 @@ export interface CustomModifierSettings {
 }
 
 export function getRewardFuncById(id: string): RewardFunc {
-  return modifierTypeInitObj[id];
+  return rewardInitObj[id];
 }
 
 /**
  * Generates modifier options for a {@linkcode SelectRewardPhase}
  * @param count - Determines the number of items to generate
  * @param party - Party is required for generating proper modifier pools
- * @param modifierTiers - (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
- * @param customModifierSettings - See {@linkcode CustomModifierSettings}
+ * @param rewardTiers - (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
+ * @param customRewardSettings - See {@linkcode CustomRewardSettings}
  */
 export function getPlayerRewardOptions(
   count: number,
   party: PlayerPokemon[],
-  modifierTiers?: RewardTier[],
-  customModifierSettings?: CustomModifierSettings,
+  rewardTiers?: RewardTier[],
+  customRewardSettings?: CustomRewardSettings,
 ): RewardOption[] {
   const options: RewardOption[] = [];
   const retryCount = Math.min(count * 5, 50);
-  if (!customModifierSettings) {
+  if (!customRewardSettings) {
     for (let i = 0; i < count; i++) {
-      const tier = modifierTiers && modifierTiers.length > i ? modifierTiers[i] : undefined;
+      const tier = rewardTiers && rewardTiers.length > i ? rewardTiers[i] : undefined;
       options.push(getRewardOptionWithRetry(options, retryCount, party, tier));
     }
   } else {
     // Guaranteed mod options first
-    if (customModifierSettings?.guaranteedRewardOptions && customModifierSettings.guaranteedRewardOptions.length > 0) {
-      options.push(...customModifierSettings.guaranteedRewardOptions!);
+    if (customRewardSettings?.guaranteedRewardOptions && customRewardSettings.guaranteedRewardOptions.length > 0) {
+      options.push(...customRewardSettings.guaranteedRewardOptions!);
     }
 
     // Guaranteed mod functions second
-    if (customModifierSettings.guaranteedRewardFuncs && customModifierSettings.guaranteedRewardFuncs.length > 0) {
-      customModifierSettings.guaranteedRewardFuncs!.forEach((mod, _i) => {
-        const modifierId = Object.keys(modifierTypeInitObj).find(k => modifierTypeInitObj[k] === mod) as string;
-        let guaranteedMod: Reward = modifierTypeInitObj[modifierId]?.();
+    if (customRewardSettings.guaranteedRewardFuncs && customRewardSettings.guaranteedRewardFuncs.length > 0) {
+      customRewardSettings.guaranteedRewardFuncs!.forEach((mod, _i) => {
+        const rewardId = Object.keys(rewardInitObj).find(k => rewardInitObj[k] === mod) as string;
+        let guaranteedMod: Reward = rewardInitObj[rewardId]?.();
 
         // Populates item id and tier
         guaranteedMod = guaranteedMod
-          .withIdFromFunc(modifierTypeInitObj[modifierId])
-          .withTierFromPool(ModifierPoolType.PLAYER, party);
+          .withIdFromFunc(rewardInitObj[rewardId])
+          .withTierFromPool(RewardPoolType.PLAYER, party);
 
         const modType = guaranteedMod instanceof RewardGenerator ? guaranteedMod.generateType(party) : guaranteedMod;
         if (modType) {
@@ -1719,15 +1715,15 @@ export function getPlayerRewardOptions(
     }
 
     // Guaranteed tiers third
-    if (customModifierSettings.guaranteedModifierTiers && customModifierSettings.guaranteedModifierTiers.length > 0) {
-      const allowLuckUpgrades = customModifierSettings.allowLuckUpgrades ?? true;
-      for (const tier of customModifierSettings.guaranteedModifierTiers) {
+    if (customRewardSettings.guaranteedRewardTiers && customRewardSettings.guaranteedRewardTiers.length > 0) {
+      const allowLuckUpgrades = customRewardSettings.allowLuckUpgrades ?? true;
+      for (const tier of customRewardSettings.guaranteedRewardTiers) {
         options.push(getRewardOptionWithRetry(options, retryCount, party, tier, allowLuckUpgrades));
       }
     }
 
     // Fill remaining
-    if (options.length < count && customModifierSettings.fillRemaining) {
+    if (options.length < count && customRewardSettings.fillRemaining) {
       while (options.length < count) {
         options.push(getRewardOptionWithRetry(options, retryCount, party, undefined));
       }
@@ -1740,7 +1736,7 @@ export function getPlayerRewardOptions(
 }
 
 /**
- * Will generate a {@linkcode Reward} from the {@linkcode ModifierPoolType.PLAYER} pool, attempting to retry duplicated items up to retryCount
+ * Will generate a {@linkcode Reward} from the {@linkcode RewardPoolType.PLAYER} pool, attempting to retry duplicated items up to retryCount
  * @param existingOptions Currently generated options
  * @param retryCount How many times to retry before allowing a dupe item
  * @param party Current player party, used to calculate items in the pool
@@ -1755,7 +1751,7 @@ function getRewardOptionWithRetry(
   allowLuckUpgrades?: boolean,
 ): RewardOption {
   allowLuckUpgrades = allowLuckUpgrades ?? true;
-  let candidate = getNewRewardOption(party, ModifierPoolType.PLAYER, tier, undefined, 0, allowLuckUpgrades);
+  let candidate = getNewRewardOption(party, RewardPoolType.PLAYER, tier, undefined, 0, allowLuckUpgrades);
   let r = 0;
   while (
     existingOptions.length &&
@@ -1769,7 +1765,7 @@ function getRewardOptionWithRetry(
     console.log(existingOptions.filter(o => o.type.group === candidate?.type.group).length);
     candidate = getNewRewardOption(
       party,
-      ModifierPoolType.PLAYER,
+      RewardPoolType.PLAYER,
       candidate?.type.tier ?? tier,
       candidate?.upgradeCount,
       0,
@@ -1781,7 +1777,7 @@ function getRewardOptionWithRetry(
 
 /**
  * Replaces the {@linkcode Reward} of the entries within {@linkcode options} with any
- * {@linkcode ModifierOverride} entries listed in {@linkcode Overrides.ITEM_REWARD_OVERRIDE}
+ * {@linkcode RewardOverride} entries listed in {@linkcode Overrides.ITEM_REWARD_OVERRIDE}
  * up to the smallest amount of entries between {@linkcode options} and the override array.
  * @param options Array of naturally rolled {@linkcode RewardOption}s
  * @param party Array of the player's current party
@@ -1789,17 +1785,17 @@ function getRewardOptionWithRetry(
 export function overridePlayerRewardOptions(options: RewardOption[], party: PlayerPokemon[]) {
   const minLength = Math.min(options.length, Overrides.ITEM_REWARD_OVERRIDE.length);
   for (let i = 0; i < minLength; i++) {
-    const override: ModifierOverride = Overrides.ITEM_REWARD_OVERRIDE[i];
-    const modifierFunc = modifierTypeInitObj[override.name];
-    let modifierType: Reward | null = modifierFunc();
+    const override: RewardOverride = Overrides.ITEM_REWARD_OVERRIDE[i];
+    const rewardFunc = rewardInitObj[override.name];
+    let reward: Reward | null = rewardFunc();
 
-    if (modifierType instanceof RewardGenerator) {
+    if (reward instanceof RewardGenerator) {
       const pregenArgs = "type" in override && override.type !== null ? [override.type] : undefined;
-      modifierType = modifierType.generateType(party, pregenArgs);
+      reward = reward.generateType(party, pregenArgs);
     }
 
-    if (modifierType) {
-      options[i].type = modifierType.withIdFromFunc(modifierFunc).withTierFromPool(ModifierPoolType.PLAYER, party);
+    if (reward) {
+      options[i].type = reward.withIdFromFunc(rewardFunc).withTierFromPool(RewardPoolType.PLAYER, party);
     }
   }
 }
@@ -1811,29 +1807,26 @@ export function getPlayerShopRewardOptionsForWave(waveIndex: number, baseCost: n
 
   const options = [
     [
-      new RewardOption(modifierTypeInitObj.POTION(), 0, baseCost * 0.2),
-      new RewardOption(modifierTypeInitObj.ETHER(), 0, baseCost * 0.4),
-      new RewardOption(modifierTypeInitObj.REVIVE(), 0, baseCost * 2),
+      new RewardOption(rewardInitObj.POTION(), 0, baseCost * 0.2),
+      new RewardOption(rewardInitObj.ETHER(), 0, baseCost * 0.4),
+      new RewardOption(rewardInitObj.REVIVE(), 0, baseCost * 2),
     ],
     [
-      new RewardOption(modifierTypeInitObj.SUPER_POTION(), 0, baseCost * 0.45),
-      new RewardOption(modifierTypeInitObj.FULL_HEAL(), 0, baseCost),
+      new RewardOption(rewardInitObj.SUPER_POTION(), 0, baseCost * 0.45),
+      new RewardOption(rewardInitObj.FULL_HEAL(), 0, baseCost),
+    ],
+    [new RewardOption(rewardInitObj.ELIXIR(), 0, baseCost), new RewardOption(rewardInitObj.MAX_ETHER(), 0, baseCost)],
+    [
+      new RewardOption(rewardInitObj.HYPER_POTION(), 0, baseCost * 0.8),
+      new RewardOption(rewardInitObj.MAX_REVIVE(), 0, baseCost * 2.75),
+      new RewardOption(rewardInitObj.MEMORY_MUSHROOM(), 0, baseCost * 4),
     ],
     [
-      new RewardOption(modifierTypeInitObj.ELIXIR(), 0, baseCost),
-      new RewardOption(modifierTypeInitObj.MAX_ETHER(), 0, baseCost),
+      new RewardOption(rewardInitObj.MAX_POTION(), 0, baseCost * 1.5),
+      new RewardOption(rewardInitObj.MAX_ELIXIR(), 0, baseCost * 2.5),
     ],
-    [
-      new RewardOption(modifierTypeInitObj.HYPER_POTION(), 0, baseCost * 0.8),
-      new RewardOption(modifierTypeInitObj.MAX_REVIVE(), 0, baseCost * 2.75),
-      new RewardOption(modifierTypeInitObj.MEMORY_MUSHROOM(), 0, baseCost * 4),
-    ],
-    [
-      new RewardOption(modifierTypeInitObj.MAX_POTION(), 0, baseCost * 1.5),
-      new RewardOption(modifierTypeInitObj.MAX_ELIXIR(), 0, baseCost * 2.5),
-    ],
-    [new RewardOption(modifierTypeInitObj.FULL_RESTORE(), 0, baseCost * 2.25)],
-    [new RewardOption(modifierTypeInitObj.SACRED_ASH(), 0, baseCost * 10)],
+    [new RewardOption(rewardInitObj.FULL_RESTORE(), 0, baseCost * 2.25)],
+    [new RewardOption(rewardInitObj.SACRED_ASH(), 0, baseCost * 10)],
   ];
   return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
 }
@@ -1849,14 +1842,14 @@ export function getPlayerShopRewardOptionsForWave(waveIndex: number, baseCost: n
  */
 function getNewRewardOption(
   party: Pokemon[],
-  poolType: ModifierPoolType,
+  poolType: RewardPoolType,
   baseTier?: RewardTier,
   upgradeCount?: number,
   retryCount = 0,
   allowLuckUpgrades = true,
 ): RewardOption | null {
   const player = !poolType;
-  const pool = getModifierPoolForType(poolType);
+  const pool = getRewardPoolForType(poolType);
   const thresholds = getPoolThresholds(poolType);
 
   let tier = 0;
@@ -1889,10 +1882,10 @@ function getNewRewardOption(
   if (player) {
     console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
   }
-  let modifierType: Reward | null = pool[tier][index].modifierType;
-  if (modifierType instanceof RewardGenerator) {
-    modifierType = (modifierType as RewardGenerator).generateType(party);
-    if (modifierType === null) {
+  let reward: Reward | null = pool[tier][index].reward;
+  if (reward instanceof RewardGenerator) {
+    reward = (reward as RewardGenerator).generateType(party);
+    if (reward === null) {
       if (player) {
         console.log(RewardTier[tier], upgradeCount);
       }
@@ -1900,16 +1893,16 @@ function getNewRewardOption(
     }
   }
 
-  console.log(modifierType, !player ? "(enemy)" : "");
+  console.log(reward, !player ? "(enemy)" : "");
 
-  return new RewardOption(modifierType as Reward, upgradeCount!); // TODO: is this bang correct?
+  return new RewardOption(reward as Reward, upgradeCount!); // TODO: is this bang correct?
 }
 
-function getPoolThresholds(poolType: ModifierPoolType) {
+function getPoolThresholds(poolType: RewardPoolType) {
   let thresholds: object;
   switch (poolType) {
-    case ModifierPoolType.PLAYER:
-      thresholds = modifierPoolThresholds;
+    case RewardPoolType.PLAYER:
+      thresholds = rewardPoolThresholds;
       break;
   }
   return thresholds;
@@ -1939,7 +1932,7 @@ function getUpgradeCount(
   baseTier: RewardTier,
   allowLuckUpgrades = true,
 ): RewardTier {
-  const pool = getModifierPoolForType(ModifierPoolType.PLAYER);
+  const pool = getRewardPoolForType(RewardPoolType.PLAYER);
   let upgradeCount = 0;
   if (player) {
     if (baseTier < RewardTier.MASTER && allowLuckUpgrades) {
@@ -1958,12 +1951,12 @@ function getUpgradeCount(
 }
 
 export function getDefaultRewardForTier(tier: RewardTier): Reward {
-  const modifierPool = getModifierPoolForType(ModifierPoolType.PLAYER);
-  let modifierType: Reward | WeightedReward = modifierPool[tier || RewardTier.COMMON][0];
-  if (modifierType instanceof WeightedReward) {
-    modifierType = (modifierType as WeightedReward).modifierType;
+  const rewardPool = getRewardPoolForType(RewardPoolType.PLAYER);
+  let reward: Reward | WeightedReward = rewardPool[tier || RewardTier.COMMON][0];
+  if (reward instanceof WeightedReward) {
+    reward = (reward as WeightedReward).reward;
   }
-  return modifierType;
+  return reward;
 }
 
 export class RewardOption {
@@ -2011,26 +2004,26 @@ export function getLuckString(luckValue: number): string {
 }
 
 export function getLuckTextTint(luckValue: number): number {
-  let modifierTier: RewardTier;
+  let rewardTier: RewardTier;
   if (luckValue > 11) {
-    modifierTier = RewardTier.LUXURY;
+    rewardTier = RewardTier.LUXURY;
   } else if (luckValue > 9) {
-    modifierTier = RewardTier.MASTER;
+    rewardTier = RewardTier.MASTER;
   } else if (luckValue > 5) {
-    modifierTier = RewardTier.ROGUE;
+    rewardTier = RewardTier.ROGUE;
   } else if (luckValue > 2) {
-    modifierTier = RewardTier.ULTRA;
+    rewardTier = RewardTier.ULTRA;
   } else if (luckValue) {
-    modifierTier = RewardTier.GREAT;
+    rewardTier = RewardTier.GREAT;
   } else {
-    modifierTier = RewardTier.COMMON;
+    rewardTier = RewardTier.COMMON;
   }
-  return getModifierTierTextTint(modifierTier);
+  return getRewardTierTextTint(rewardTier);
 }
 
 export function initRewards() {
-  for (const [key, value] of Object.entries(modifierTypeInitObj)) {
-    modifierTypes[key] = value;
+  for (const [key, value] of Object.entries(rewardInitObj)) {
+    rewards[key] = value;
   }
 }
 

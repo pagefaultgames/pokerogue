@@ -7,7 +7,7 @@ export class GameOverRewardPhase extends RewardPhase {
   public readonly phaseName = "GameOverRewardPhase";
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
-      const newModifier = this.modifierType.newModifier();
+      const newModifier = this.reward.newModifier();
       globalScene.addModifier(newModifier);
       // Sound loaded into game as is
       globalScene.playSound("level_up_fanfare");

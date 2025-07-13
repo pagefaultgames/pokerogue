@@ -155,7 +155,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
       for (const option of modifierSelectHandler.options) {
-        expect(option.modifierTypeOption.type.id).toContain("BERRY");
+        expect(option.rewardOption.type.id).toContain("BERRY");
       }
     });
   });
@@ -240,7 +240,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
       for (const option of modifierSelectHandler.options) {
-        expect(option.modifierTypeOption.type.id).toContain("BERRY");
+        expect(option.rewardOption.type.id).toContain("BERRY");
       }
 
       expect(EncounterDialogueUtils.showEncounterText).toHaveBeenCalledWith(`${namespace}:option.2.selected`);

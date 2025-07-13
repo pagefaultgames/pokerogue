@@ -231,7 +231,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(3);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("SOUL_DEW");
+      expect(modifierSelectHandler.options[0].rewardOption.type.id).toEqual("SOUL_DEW");
     });
   });
 });

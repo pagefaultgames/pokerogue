@@ -5,7 +5,7 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BiomePoolTier, biomeLinks } from "#balance/biomes";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
-import { modifierTypes } from "#data/data-lists";
+import { rewards } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
 import { Egg } from "#data/egg";
 import type { Gender } from "#data/gender";
@@ -17,11 +17,11 @@ import type { AiType } from "#enums/ai-type";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { FieldPosition } from "#enums/field-position";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import type { Nature } from "#enums/nature";
 import { PokemonType } from "#enums/pokemon-type";
+import { RewardPoolType } from "#enums/reward-pool-type";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { TrainerType } from "#enums/trainer-type";
@@ -31,8 +31,8 @@ import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
-import type { CustomModifierSettings, Reward } from "#modifiers/modifier-type";
-import { getPartyLuckValue, RewardGenerator, RewardOption } from "#modifiers/modifier-type";
+import type { CustomRewardSettings, Reward } from "#items/reward";
+import { getPartyLuckValue, RewardGenerator, RewardOption } from "#items/reward";
 import { PokemonMove } from "#moves/pokemon-move";
 import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
@@ -480,17 +480,17 @@ export function updatePlayerMoney(changeValue: number, playSound = true, showMes
  * @param pregenArgs Can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
  */
 export function generateReward(modifier: () => Reward, pregenArgs?: any[]): Reward | null {
-  const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifier);
-  if (!modifierId) {
+  const rewardId = Object.keys(rewards).find(k => rewards[k] === modifier);
+  if (!rewardId) {
     return null;
   }
 
-  let result: Reward = modifierTypes[modifierId]();
+  let result: Reward = rewards[rewardId]();
 
   // Populates item id and tier (order matters)
   result = result
-    .withIdFromFunc(modifierTypes[modifierId])
-    .withTierFromPool(ModifierPoolType.PLAYER, globalScene.getPlayerParty());
+    .withIdFromFunc(rewards[rewardId])
+    .withTierFromPool(RewardPoolType.PLAYER, globalScene.getPlayerParty());
 
   return result instanceof RewardGenerator ? result.generateType(globalScene.getPlayerParty(), pregenArgs) : result;
 }
@@ -727,7 +727,7 @@ export function selectOptionThenPokemon(
  * @param preRewardsCallback - can execute an arbitrary callback before the new phases if necessary (useful for updating items/party/injecting new phases before {@linkcode MysteryEncounterRewardsPhase})
  */
 export function setEncounterRewards(
-  customShopRewards?: CustomModifierSettings,
+  customShopRewards?: CustomRewardSettings,
   eggRewards?: IEggOptions[],
   preRewardsCallback?: Function,
 ) {

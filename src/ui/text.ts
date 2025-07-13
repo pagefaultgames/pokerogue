@@ -706,7 +706,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme: Ui
   }
 }
 
-export function getModifierTierTextTint(tier: RewardTier): number {
+export function getRewardTierTextTint(tier: RewardTier): number {
   switch (tier) {
     case RewardTier.COMMON:
       return 0xf8f8f8;
@@ -726,12 +726,12 @@ export function getModifierTierTextTint(tier: RewardTier): number {
 export function getEggTierTextTint(tier: EggTier): number {
   switch (tier) {
     case EggTier.COMMON:
-      return getModifierTierTextTint(RewardTier.COMMON);
+      return getRewardTierTextTint(RewardTier.COMMON);
     case EggTier.RARE:
-      return getModifierTierTextTint(RewardTier.GREAT);
+      return getRewardTierTextTint(RewardTier.GREAT);
     case EggTier.EPIC:
-      return getModifierTierTextTint(RewardTier.ULTRA);
+      return getRewardTierTextTint(RewardTier.ULTRA);
     case EggTier.LEGENDARY:
-      return getModifierTierTextTint(RewardTier.MASTER);
+      return getRewardTierTextTint(RewardTier.MASTER);
   }
 }

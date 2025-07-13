@@ -1,7 +1,7 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { modifierTypes } from "#data/data-lists";
+import { rewards } from "#data/data-lists";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
 import { FieldPosition } from "#enums/field-position";
@@ -281,21 +281,21 @@ function handleNextTurn() {
     if (healthRatio < 0.03) {
       // Grand prize
       setEncounterRewards({
-        guaranteedRewardFuncs: [modifierTypes.MULTI_LENS],
+        guaranteedRewardFuncs: [rewards.MULTI_LENS],
         fillRemaining: false,
       });
       resultMessageKey = `${namespace}:best_result`;
     } else if (healthRatio < 0.15) {
       // 2nd prize
       setEncounterRewards({
-        guaranteedRewardFuncs: [modifierTypes.SCOPE_LENS],
+        guaranteedRewardFuncs: [rewards.SCOPE_LENS],
         fillRemaining: false,
       });
       resultMessageKey = `${namespace}:great_result`;
     } else if (healthRatio < 0.33) {
       // 3rd prize
       setEncounterRewards({
-        guaranteedRewardFuncs: [modifierTypes.WIDE_LENS],
+        guaranteedRewardFuncs: [rewards.WIDE_LENS],
         fillRemaining: false,
       });
       resultMessageKey = `${namespace}:good_result`;

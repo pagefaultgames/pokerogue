@@ -7,7 +7,7 @@ import { Gender } from "#data/gender";
 import { ChallengeType } from "#enums/challenge-type";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { overrideHeldItems, overrideTrainerItems } from "#modifiers/modifier";
+import { overrideHeldItems, overrideTrainerItems } from "#items/modifier";
 import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
 import type { Starter } from "#ui/starter-select-ui-handler";
 import { isNullOrUndefined } from "#utils/common";

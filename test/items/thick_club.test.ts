@@ -1,4 +1,4 @@
-import { modifierTypes } from "#data/data-lists";
+import { rewards } from "#data/data-lists";
 import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
@@ -98,7 +98,7 @@ describe("Items - Thick Club", () => {
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
+      rewards.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
       true,
     );
     applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
@@ -121,7 +121,7 @@ describe("Items - Thick Club", () => {
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
+      rewards.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
       true,
     );
     applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
@@ -144,7 +144,7 @@ describe("Items - Thick Club", () => {
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
+      rewards.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
       true,
     );
     applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
@@ -181,7 +181,7 @@ describe("Items - Thick Club", () => {
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
+      rewards.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
       true,
     );
     applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
@@ -218,7 +218,7 @@ describe("Items - Thick Club", () => {
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
+      rewards.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
       true,
     );
     applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
@@ -241,7 +241,7 @@ describe("Items - Thick Club", () => {
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
+      rewards.RARE_SPECIES_STAT_BOOSTER().generateType([], ["THICK_CLUB"])!.newModifier(partyMember),
       true,
     );
     applyHeldItems(HeldItemEffect.STAT_BOOST, { pokemon: partyMember, stat: Stat.ATK, statValue: atkValue });
