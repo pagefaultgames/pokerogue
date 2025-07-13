@@ -1747,7 +1747,7 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
   }
 
   /**
-   * Attempt to inflicts the holder with the associated {@linkcode StatusEffect}.
+   * Attempt to inflict the holder with the associated {@linkcode StatusEffect}.
    * @param pokemon - The {@linkcode Pokemon} holds the item.
    * @returns `true` if the status effect was applied successfully
    */
