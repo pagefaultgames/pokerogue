@@ -1,7 +1,7 @@
-import type BattleScene from "#app/battle-scene";
-import pad_xbox360 from "#app/configs/inputs/pad_xbox360";
+import type { BattleScene } from "#app/battle-scene";
 import type { InputsController } from "#app/inputs-controller";
-import TouchControl from "#app/touch-controls";
+import { TouchControl } from "#app/touch-controls";
+import pad_xbox360 from "#inputs/pad_xbox360";
 import { holdOn } from "#test/testUtils/gameManagerUtils";
 import fs from "node:fs";
 import { JSDOM } from "jsdom";
@@ -12,7 +12,7 @@ interface LogEntry {
   button: any;
 }
 
-export default class InputsHandler {
+export class InputsHandler {
   private scene: BattleScene;
   private events: Phaser.Events.EventEmitter;
   private inputController: InputsController;

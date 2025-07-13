@@ -1,14 +1,14 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { RandomMoveAttr } from "#app/data/moves/move";
-import { MoveId } from "#enums/move-id";
 import { AbilityId } from "#enums/ability-id";
-import { SpeciesId } from "#enums/species-id";
-import { Stat } from "#app/enums/stat";
-import GameManager from "#test/testUtils/gameManager";
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { BattlerIndex } from "#enums/battler-index";
+import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { MoveUseMode } from "#enums/move-use-mode";
+import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { RandomMoveAttr } from "#moves/move";
+import { GameManager } from "#test/testUtils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Gorilla Tactics", () => {
   let phaserGame: Phaser.Game;

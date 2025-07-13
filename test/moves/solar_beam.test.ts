@@ -1,13 +1,13 @@
-import { allMoves } from "#app/data/data-lists";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { WeatherType } from "#enums/weather-type";
-import { MoveResult } from "#enums/move-result";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { WeatherType } from "#enums/weather-type";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Solar Beam", () => {
   let phaserGame: Phaser.Game;

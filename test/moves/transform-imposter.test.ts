@@ -1,20 +1,20 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/testUtils/gameManager";
-import { SpeciesId } from "#enums/species-id";
-import { MoveId } from "#enums/move-id";
-import { Stat } from "#enums/stat";
+import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
-import { BattlerIndex } from "#enums/battler-index";
-import { StatusEffect } from "#enums/status-effect";
-import { MoveResult } from "#enums/move-result";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { Status } from "#app/data/status-effect";
-import { PokemonType } from "#enums/pokemon-type";
-import { BerryType } from "#enums/berry-type";
-import type { EnemyPokemon } from "#app/field/pokemon";
-import Pokemon from "#app/field/pokemon";
 import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BerryType } from "#enums/berry-type";
+import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import type { EnemyPokemon } from "#field/pokemon";
+import { Pokemon } from "#field/pokemon";
+import { GameManager } from "#test/testUtils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
 
 // TODO: Add more tests once Transform/Imposter are fully implemented
 describe("Transforming Effects", () => {
