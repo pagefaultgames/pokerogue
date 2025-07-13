@@ -30,6 +30,7 @@ import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem, statBoostItems } from "#items/base-stat-booster";
 import { berryTypeToHeldItem } from "#items/berry";
 import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeldItem } from "#items/held-item-pool";
+import { formChangeItemName } from "#items/item-utility";
 import {
   SPECIES_STAT_BOOSTER_ITEMS,
   type SpeciesStatBoosterItemId,

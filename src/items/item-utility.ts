@@ -1,7 +1,12 @@
 import { allHeldItems, allTrainerItems } from "#data/data-lists";
-import type { FormChangeItem } from "#enums/form-change-item";
+import { FormChangeItem } from "#enums/form-change-item";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { TrainerItemId } from "#enums/trainer-item-id";
+import i18next from "i18next";
+
+export function formChangeItemName(id: FormChangeItem) {
+  return i18next.t(`modifierType:FormChangeItem.${FormChangeItem[id]}`);
+}
 
 export const trainerItemSortFunc = (a: TrainerItemId, b: TrainerItemId): number => {
   const itemNameMatch = allTrainerItems[a].name.localeCompare(allTrainerItems[b].name);
