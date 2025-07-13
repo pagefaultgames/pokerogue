@@ -1,7 +1,7 @@
+import type { TurnMove } from "#app/@types/turn-move";
 import { allMoves } from "#app/data/data-lists";
 import { RandomMoveAttr } from "#app/data/moves/move";
 import type Pokemon from "#app/field/pokemon";
-import type { TurnMove } from "#app/field/pokemon";
 import type { MovePhase } from "#app/phases/move-phase";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
@@ -361,7 +361,7 @@ describe("Moves - Instruct", () => {
       useMode: MoveUseMode.NORMAL,
     });
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
     expect(game.field.getEnemyPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);

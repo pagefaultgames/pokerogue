@@ -33,7 +33,7 @@ import { modifierTypes } from "#app/data/data-lists";
 import { Gender } from "#app/data/gender";
 import type { PermanentStat } from "#enums/stat";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 import type { AbilityId } from "#enums/ability-id";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
@@ -375,10 +375,10 @@ export function applyHealToPokemon(pokemon: PlayerPokemon, heal: number) {
  * @param pokemon
  * @param value
  */
-export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: number) {
+export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, good: boolean) {
   const modType = modifierTypes
     .MYSTERY_ENCOUNTER_SHUCKLE_JUICE()
-    .generateType(globalScene.getPlayerParty(), [value])
+    .generateType(globalScene.getPlayerParty(), [good ? 10 : -15])
     ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE);
   const modifier = modType?.newModifier(pokemon);
   if (modifier) {
