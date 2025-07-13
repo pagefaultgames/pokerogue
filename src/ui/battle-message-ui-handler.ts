@@ -96,7 +96,6 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     const levelUpStatsLabelsContent = addTextObject(globalScene.game.canvas.width / 6 - 73, -94, "", TextStyle.WINDOW, {
       maxLines: 6,
     });
-    levelUpStatsLabelsContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     let levelUpStatsLabelText = "";
 
     for (const s of PERMANENT_STATS) {
@@ -123,7 +122,6 @@ export class BattleMessageUiHandler extends MessageUiHandler {
       TextStyle.WINDOW,
       { maxLines: 6 },
     );
-    levelUpStatsIncrContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     levelUpStatsContainer.add(levelUpStatsIncrContent);
 
     this.levelUpStatsIncrContent = levelUpStatsIncrContent;
@@ -135,7 +133,6 @@ export class BattleMessageUiHandler extends MessageUiHandler {
       TextStyle.WINDOW,
       { maxLines: 6, lineSpacing: 5 },
     );
-    levelUpStatsValuesContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     levelUpStatsValuesContent.setOrigin(1, 0);
     levelUpStatsValuesContent.setAlign("right");
     levelUpStatsContainer.add(levelUpStatsValuesContent);

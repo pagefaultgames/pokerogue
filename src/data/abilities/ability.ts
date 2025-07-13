@@ -22,7 +22,7 @@ import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
-import type { BattlerIndex } from "#enums/battler-index";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { BerryType } from "#enums/berry-type";
@@ -1182,7 +1182,16 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
   }
 }
 
-export class PostDefendCritStatStageChangeAbAttr extends PostDefendAbAttr {
+/**
+ * Set stat stages when the user gets hit by a critical hit
+ *
+ * @privateremarks
+ * It is the responsibility of the caller to ensure that this ability attribute is only applied
+ * when the user has been hit by a critical hit; such an event is not checked here.
+ *
+ * @sealed
+ */
+export class PostReceiveCritStatStageChangeAbAttr extends AbAttr {
   private stat: BattleStat;
   private stages: number;
 
@@ -1203,12 +1212,6 @@ export class PostDefendCritStatStageChangeAbAttr extends PostDefendAbAttr {
         this.stages,
       );
     }
-  }
-
-  override getCondition(): AbAttrCondition {
-    return (pokemon: Pokemon) =>
-      pokemon.turnData.attacksReceived.length !== 0 &&
-      pokemon.turnData.attacksReceived[pokemon.turnData.attacksReceived.length - 1].critical;
   }
 }
 
@@ -1595,37 +1598,38 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
   }
 }
 
-/** Ability attribute for changing a pokemon's type before using a move */
+/**
+ * Attribute to change the user's type to that of the move currently being executed.
+ * Used by {@linkcode AbilityId.PROTEAN} and {@linkcode AbilityId.LIBERO}.
+ */
 export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
-  private moveType: PokemonType;
-
+  private moveType: PokemonType = PokemonType.UNKNOWN;
   constructor() {
     super(true);
   }
 
   override canApply({ move, pokemon }: AugmentMoveInteractionAbAttrParams): boolean {
     if (
-      !pokemon.isTerastallized &&
-      move.id !== MoveId.STRUGGLE &&
-      /**
+      pokemon.isTerastallized ||
+      move.id === MoveId.STRUGGLE ||
+      /*
        * Skip moves that call other moves because these moves generate a following move that will trigger this ability attribute
-       * @see {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves}
+       * See: https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves
        */
-      !move.findAttr(
-        attr =>
-          attr.is("RandomMovesetMoveAttr") ||
-          attr.is("RandomMoveAttr") ||
-          attr.is("NaturePowerAttr") ||
-          attr.is("CopyMoveAttr"),
-      )
+      move.hasAttr("CallMoveAttr") ||
+      move.hasAttr("NaturePowerAttr") // TODO: remove this line when nature power is made to extend from `CallMoveAttr`
     ) {
-      const moveType = pokemon.getMoveType(move);
-      if (pokemon.getTypes().some(t => t !== moveType)) {
-        this.moveType = moveType;
-        return true;
-      }
+      return false;
     }
-    return false;
+
+    // Skip changing type if we're already of the given type as-is
+    const moveType = pokemon.getMoveType(move);
+    if (pokemon.getTypes().every(t => t === moveType)) {
+      return false;
+    }
+
+    this.moveType = moveType;
+    return true;
   }
 
   override apply({ simulated, pokemon, move }: AugmentMoveInteractionAbAttrParams): void {
@@ -3035,61 +3039,40 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
  * Attribute used by {@linkcode AbilityId.IMPOSTER} to transform into a random opposing pokemon on entry.
  */
 export class PostSummonTransformAbAttr extends PostSummonAbAttr {
+  private targetIndex: BattlerIndex = BattlerIndex.ATTACKER;
   constructor() {
     super(true, false);
   }
 
-  private getTarget(targets: Pokemon[]): Pokemon {
-    let target: Pokemon = targets[0];
-    if (targets.length > 1) {
-      globalScene.executeWithSeedOffset(() => {
-        // in a double battle, if one of the opposing pokemon is fused the other one will be chosen
-        // if both are fused, then Imposter will fail below
-        if (targets[0].fusionSpecies) {
-          target = targets[1];
-          return;
-        }
-        if (targets[1].fusionSpecies) {
-          target = targets[0];
-          return;
-        }
-        target = randSeedItem(targets);
-      }, globalScene.currentBattle.waveIndex);
-    } else {
-      target = targets[0];
+  /**
+   * Return the correct opponent for Imposter to copy, barring enemies with fusions, substitutes and illusions.
+   * @param user - The {@linkcode Pokemon} with this ability.
+   * @returns The {@linkcode Pokemon} to transform into, or `undefined` if none are eligible.
+   * @remarks
+   * This sets the private `targetIndex` field to the target's {@linkcode BattlerIndex} on success.
+   */
+  private getTarget(user: Pokemon): Pokemon | undefined {
+    // As opposed to the mainline behavior of "always copy the opposite slot",
+    // PKR Imposter instead attempts to copy a random eligible opposing Pokemon meeting Transform's criteria.
+    // If none are eligible to copy, it will not activate.
+    const targets = user.getOpponents().filter(opp => user.canTransformInto(opp));
+    if (targets.length === 0) {
+      return undefined;
     }
 
-    target = target!;
-
-    return target;
+    const mon = targets[user.randBattleSeedInt(targets.length)];
+    this.targetIndex = mon.getBattlerIndex();
+    return mon;
   }
 
-  override canApply({ pokemon, simulated }: AbAttrBaseParams): boolean {
-    const targets = pokemon.getOpponents();
-    const target = this.getTarget(targets);
+  override canApply({ pokemon }: AbAttrBaseParams): boolean {
+    const target = this.getTarget(pokemon);
 
-    if (target.summonData.illusion) {
-      return false;
-    }
-
-    // TODO: Consider moving the simulated check to the apply method
-    if (simulated || !targets.length) {
-      return !!simulated;
-    }
-
-    // transforming from or into fusion pokemon causes various problems (including crashes and save corruption)
-    return !(this.getTarget(targets).fusionSpecies || pokemon.fusionSpecies);
+    return !!target;
   }
 
   override apply({ pokemon }: AbAttrBaseParams): void {
-    const target = this.getTarget(pokemon.getOpponents());
-
-    globalScene.phaseManager.unshiftNew(
-      "PokemonTransformPhase",
-      pokemon.getBattlerIndex(),
-      target.getBattlerIndex(),
-      true,
-    );
+    globalScene.phaseManager.unshiftNew("PokemonTransformPhase", pokemon.getBattlerIndex(), this.targetIndex, true);
   }
 }
 
@@ -3152,7 +3135,7 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
 /**
  * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Commander_(Ability) | Commander}.
  * When the source of an ability with this attribute detects a Dondozo as their active ally, the source "jumps
- * into the Dondozo's mouth," sharply boosting the Dondozo's stats, cancelling the source's moves, and
+ * into the Dondozo's mouth", sharply boosting the Dondozo's stats, cancelling the source's moves, and
  * causing attacks that target the source to always miss.
  */
 export class CommanderAbAttr extends AbAttr {
@@ -6405,7 +6388,7 @@ const AbilityAttrs = Object.freeze({
   PostDefendContactApplyStatusEffectAbAttr,
   EffectSporeAbAttr,
   PostDefendContactApplyTagChanceAbAttr,
-  PostDefendCritStatStageChangeAbAttr,
+  PostReceiveCritStatStageChangeAbAttr,
   PostDefendContactDamageAbAttr,
   PostDefendPerishSongAbAttr,
   PostDefendWeatherChangeAbAttr,
@@ -6874,7 +6857,7 @@ export function initAbilities() {
     new Ability(AbilityId.GLUTTONY, 4)
       .attr(ReduceBerryUseThresholdAbAttr),
     new Ability(AbilityId.ANGER_POINT, 4)
-      .attr(PostDefendCritStatStageChangeAbAttr, Stat.ATK, 6),
+      .attr(PostReceiveCritStatStageChangeAbAttr, Stat.ATK, 12),
     new Ability(AbilityId.UNBURDEN, 4)
       .attr(PostItemLostApplyBattlerTagAbAttr, BattlerTagType.UNBURDEN)
       .bypassFaint() // Allows reviver seed to activate Unburden
@@ -7089,7 +7072,8 @@ export function initAbilities() {
       .bypassFaint(),
     new Ability(AbilityId.IMPOSTER, 5)
       .attr(PostSummonTransformAbAttr)
-      .uncopiable(),
+      .uncopiable()
+      .edgeCase(), // Should copy rage fist hit count, etc (see Transform edge case for full list)
     new Ability(AbilityId.INFILTRATOR, 5)
       .attr(InfiltratorAbAttr)
       .partial(), // does not bypass Mist
@@ -7165,8 +7149,10 @@ export function initAbilities() {
     new Ability(AbilityId.CHEEK_POUCH, 6)
       .attr(HealFromBerryUseAbAttr, 1 / 3),
     new Ability(AbilityId.PROTEAN, 6)
-      .attr(PokemonTypeChangeAbAttr),
-    //.condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.PROTEAN)), //Gen 9 Implementation
+      .attr(PokemonTypeChangeAbAttr)
+      // .condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.PROTEAN)) //Gen 9 Implementation
+      // TODO: needs testing on interaction with weather blockage
+      .edgeCase(),
     new Ability(AbilityId.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (_target, _user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
@@ -7419,8 +7405,10 @@ export function initAbilities() {
     new Ability(AbilityId.DAUNTLESS_SHIELD, 8)
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true),
     new Ability(AbilityId.LIBERO, 8)
-      .attr(PokemonTypeChangeAbAttr),
-    //.condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.LIBERO)), //Gen 9 Implementation
+      .attr(PokemonTypeChangeAbAttr)
+    //.condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.LIBERO)), //Gen 9 Implementation
+      // TODO: needs testing on interaction with weather blockage
+      .edgeCase(),
     new Ability(AbilityId.BALL_FETCH, 8)
       .attr(FetchBallAbAttr)
       .condition(getOncePerBattleCondition(AbilityId.BALL_FETCH)),

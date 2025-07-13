@@ -28,11 +28,11 @@ describe("Abilities - Screen Cleaner", () => {
   });
 
   it("removes Aurora Veil", async () => {
-    game.override.moveset([MoveId.HAIL]).enemyMoveset(MoveId.AURORA_VEIL);
+    game.override.enemyMoveset(MoveId.AURORA_VEIL);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
 
-    game.move.select(MoveId.HAIL);
+    game.move.use(MoveId.HAIL);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.AURORA_VEIL)).toBeDefined();
@@ -49,7 +49,7 @@ describe("Abilities - Screen Cleaner", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.LIGHT_SCREEN)).toBeDefined();
@@ -66,7 +66,7 @@ describe("Abilities - Screen Cleaner", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.REFLECT)).toBeDefined();

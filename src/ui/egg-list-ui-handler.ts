@@ -49,11 +49,11 @@ export class EggListUiHandler extends MessageUiHandler {
 
     this.eggNameText = addTextObject(8, 68, "", TextStyle.SUMMARY).setOrigin(0);
 
-    this.eggDateText = addTextObject(8, 91, "", TextStyle.TOOLTIP_CONTENT);
+    this.eggDateText = addTextObject(8, 91, "", TextStyle.EGG_LIST);
 
-    this.eggHatchWavesText = addTextObject(8, 108, "", TextStyle.TOOLTIP_CONTENT).setWordWrapWidth(540);
+    this.eggHatchWavesText = addTextObject(8, 108, "", TextStyle.EGG_LIST).setWordWrapWidth(540);
 
-    this.eggGachaInfoText = addTextObject(8, 152, "", TextStyle.TOOLTIP_CONTENT).setWordWrapWidth(540);
+    this.eggGachaInfoText = addTextObject(8, 152, "", TextStyle.EGG_LIST).setWordWrapWidth(540);
 
     this.eggListIconContainer = globalScene.add.container(113, 5);
 

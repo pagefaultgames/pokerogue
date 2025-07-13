@@ -21,7 +21,7 @@ import { initAchievements } from "#system/achv";
 import { initVouchers } from "#system/voucher";
 import { initStatsKeys } from "#ui/game-stats-ui-handler";
 import { getWindowVariantSuffix, WindowVariant } from "#ui/ui-theme";
-import { getEnumKeys, getEnumValues, hasAllLocalizedSprites, localPing } from "#utils/common";
+import { getEnumValues, hasAllLocalizedSprites, localPing } from "#utils/common";
 import i18next from "i18next";
 
 export class LoadingScene extends SceneBase {
@@ -270,7 +270,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("egg_icons", "egg");
     this.loadAtlas("egg_shard", "egg");
     this.loadAtlas("egg_lightrays", "egg");
-    for (const gt of getEnumKeys(GachaType)) {
+    for (const gt of Object.keys(GachaType)) {
       const key = gt.toLowerCase();
       this.loadImage(`gacha_${key}`, "egg");
       this.loadAtlas(`gacha_underlay_${key}`, "egg");

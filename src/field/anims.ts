@@ -150,7 +150,7 @@ function doFanOutParticle(
 }
 
 export function addPokeballCaptureStars(pokeball: Phaser.GameObjects.Sprite): void {
-  const addParticle = () => {
+  const addParticle = (): void => {
     const particle = globalScene.add.sprite(pokeball.x, pokeball.y, "pb_particles", "4.png");
     particle.setOrigin(pokeball.originX, pokeball.originY);
     particle.setAlpha(0.5);
@@ -188,7 +188,9 @@ export function addPokeballCaptureStars(pokeball: Phaser.GameObjects.Sprite): vo
     });
   };
 
-  new Array(3).fill(null).map(() => addParticle());
+  for (let i = 0; i < 3; i++) {
+    addParticle();
+  }
 }
 
 export function sin(index: number, amplitude: number): number {

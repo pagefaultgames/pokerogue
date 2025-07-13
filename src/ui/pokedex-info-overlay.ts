@@ -3,7 +3,6 @@ import { globalScene } from "#app/global-scene";
 import { addTextObject, TextStyle } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
-import i18next from "i18next";
 
 export interface PokedexInfoOverlaySettings {
   delayVisibility?: boolean; // if true, showing the overlay will only set it to active and populate the fields and the handler using this field has to manually call setVisible later.
@@ -55,7 +54,6 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
     this.desc = addTextObject(BORDER, BORDER - 2, "", TextStyle.BATTLE_INFO, {
       wordWrap: { width: (this.width - (BORDER - 2) * 2) * GLOBAL_SCALE },
     });
-    this.desc.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
 
     // limit the text rendering, required for scrolling later on
     this.maskPointOriginX = options?.x || 0;

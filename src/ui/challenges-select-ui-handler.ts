@@ -82,7 +82,7 @@ export class GameChallengesUiHandler extends UiHandler {
     headerBg.setName("window-header-bg");
     headerBg.setOrigin(0, 0);
 
-    const headerText = addTextObject(0, 0, i18next.t("challenges:title"), TextStyle.SETTINGS_LABEL);
+    const headerText = addTextObject(0, 0, i18next.t("challenges:title"), TextStyle.HEADER_LABEL);
     headerText.setName("text-header");
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);

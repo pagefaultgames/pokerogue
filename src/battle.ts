@@ -381,6 +381,11 @@ export class Battle {
             case SpeciesId.ZACIAN:
             case SpeciesId.ZAMAZENTA:
               return "battle_legendary_zac_zam";
+            case SpeciesId.ETERNATUS:
+              if (pokemon.getFormKey() === "eternamax") {
+                return "battle_legendary_eternatus_p2";
+              }
+              return "battle_legendary_eternatus_p1";
             case SpeciesId.GLASTRIER:
             case SpeciesId.SPECTRIER:
               return "battle_legendary_glas_spec";

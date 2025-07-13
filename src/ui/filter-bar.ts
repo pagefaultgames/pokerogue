@@ -60,7 +60,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
 
     this.columns.push(column);
 
-    const filterTypesLabel = addTextObject(0, 3, title, TextStyle.TOOLTIP_CONTENT);
+    const filterTypesLabel = addTextObject(0, 3, title, TextStyle.FILTER_BAR_MAIN);
     this.labels.push(filterTypesLabel);
     this.add(filterTypesLabel);
     this.dropDowns.push(dropDown);

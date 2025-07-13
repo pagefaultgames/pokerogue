@@ -45,9 +45,6 @@ importers:
       '@biomejs/biome':
         specifier: 2.0.0
         version: 2.0.0
-      '@hpcc-js/wasm':
-        specifier: ^2.22.4
-        version: 2.22.4
       '@types/jsdom':
         specifier: ^21.1.7
         version: 21.1.7
@@ -435,10 +432,6 @@ packages:
 
   '@gerrit0/mini-shiki@3.2.2':
     resolution: {integrity: sha512-vaZNGhGLKMY14HbF53xxHNgFO9Wz+t5lTlGNpl2N9xFiKQ0I5oIe0vKjU9dh7Nb3Dw6lZ7wqUE0ri+zcdpnK+Q==}
-
-  '@hpcc-js/wasm@2.22.4':
-    resolution: {integrity: sha512-58JkRkxZffiBAbZhc7z+9iaaAOmn1cyxLL3rRwsUvco/I0Wwb7uVAlHM9HiU6XASe2k11jrIjCFff1t9QKjlqg==}
-    hasBin: true
 
   '@inquirer/checkbox@4.1.4':
     resolution: {integrity: sha512-d30576EZdApjAMceijXA5jDzRQHT/MygbC+J8I7EqA6f/FRpYxlRtRJbHF8gHeWYeSdOuTEJqonn7QLB1ELezA==}
@@ -2331,10 +2324,6 @@ snapshots:
       '@shikijs/themes': 3.2.1
       '@shikijs/types': 3.2.1
       '@shikijs/vscode-textmate': 10.0.2
-
-  '@hpcc-js/wasm@2.22.4':
-    dependencies:
-      yargs: 17.7.2
 
   '@inquirer/checkbox@4.1.4(@types/node@22.13.14)':
     dependencies:

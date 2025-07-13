@@ -22,10 +22,20 @@ interface LanguageSetting {
 }
 
 const languageSettings: { [key: string]: LanguageSetting } = {
+  en: {
+    infoContainerTextSize: "64px",
+    infoContainerLabelXPos: -20,
+    infoContainerTextXPos: -17,
+  },
   pt: {
     infoContainerTextSize: "60px",
     infoContainerLabelXPos: -15,
     infoContainerTextXPos: -12,
+  },
+  ja: {
+    infoContainerTextSize: "64px",
+    infoContainerLabelXPos: -27,
+    infoContainerTextXPos: -25,
   },
 };
 
@@ -106,7 +116,7 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
       moveBg.setOrigin(1, 0);
       moveBg.setName("nineslice-move-bg");
 
-      const moveLabel = addTextObject(-moveBg.width / 2, 0, "-", TextStyle.PARTY);
+      const moveLabel = addTextObject(-moveBg.width / 2, 0, "-", TextStyle.MOVE_LABEL);
       moveLabel.setOrigin(0.5, 0);
       moveLabel.setName("text-move-label");
 
@@ -445,12 +455,12 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.pokemonShinyIcon.setPosition(82, 87);
     this.pokemonShinyNewIcon.setPosition(72, 87);
 
-    this.pokemonFormLabelText.setPosition(infoContainerLabelXPos, 152);
-    this.pokemonFormText.setPosition(infoContainerTextXPos, 152);
-    this.pokemonAbilityLabelText.setPosition(infoContainerLabelXPos, 110);
-    this.pokemonAbilityText.setPosition(infoContainerTextXPos, 110);
-    this.pokemonNatureLabelText.setPosition(infoContainerLabelXPos, 125);
-    this.pokemonNatureText.setPosition(infoContainerTextXPos, 125);
+    this.pokemonFormLabelText.setPosition(infoContainerLabelXPos, 153);
+    this.pokemonFormText.setPosition(infoContainerTextXPos, 153);
+    this.pokemonAbilityLabelText.setPosition(infoContainerLabelXPos, 111);
+    this.pokemonAbilityText.setPosition(infoContainerTextXPos, 111);
+    this.pokemonNatureLabelText.setPosition(infoContainerLabelXPos, 126);
+    this.pokemonNatureText.setPosition(infoContainerTextXPos, 126);
 
     this.statsContainer.setScale(0.7);
     this.statsContainer.setPosition(30, -3);

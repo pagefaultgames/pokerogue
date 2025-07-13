@@ -68,7 +68,7 @@ export class FieldHelper extends GameManagerHelper {
    * @see {@linkcode vi.spyOn}
    * @see https://vitest.dev/api/mock#mockreturnvalue
    */
-  public mockAbility(pokemon: Pokemon, ability: AbilityId): MockInstance<(baseOnly?: boolean) => Ability> {
+  public mockAbility(pokemon: Pokemon, ability: AbilityId): MockInstance<(ignoreOverride?: boolean) => Ability> {
     return vi.spyOn(pokemon, "getAbility").mockReturnValue(allAbilities[ability]);
   }
 

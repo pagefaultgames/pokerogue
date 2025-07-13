@@ -7,6 +7,7 @@ import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
+// TODO: Condense with lightning rod tests sometime
 describe("Abilities - Storm Drain", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -39,7 +40,7 @@ describe("Abilities - Storm Drain", () => {
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
 
-    enemy2.summonData.ability = AbilityId.STORM_DRAIN;
+    game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
 
     game.move.select(MoveId.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
@@ -55,7 +56,7 @@ describe("Abilities - Storm Drain", () => {
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
 
-    enemy2.summonData.ability = AbilityId.STORM_DRAIN;
+    game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
 
     game.move.select(MoveId.AERIAL_ACE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
@@ -68,8 +69,7 @@ describe("Abilities - Storm Drain", () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
 
     const enemy2 = game.scene.getEnemyField()[1];
-
-    enemy2.summonData.ability = AbilityId.STORM_DRAIN;
+    game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
 
     game.move.select(MoveId.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
@@ -85,8 +85,7 @@ describe("Abilities - Storm Drain", () => {
 
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
-
-    enemy2.summonData.ability = AbilityId.STORM_DRAIN;
+    game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
 
     game.move.select(MoveId.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
@@ -96,16 +95,15 @@ describe("Abilities - Storm Drain", () => {
   });
 
   it("should redirect moves changed to water type via ability", async () => {
-    game.override.ability(AbilityId.LIQUID_VOICE).moveset(MoveId.PSYCHIC_NOISE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    game.override.ability(AbilityId.LIQUID_VOICE);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
 
-    enemy2.summonData.ability = AbilityId.STORM_DRAIN;
+    game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
 
-    game.move.select(MoveId.PSYCHIC_NOISE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.use(MoveId.ROUND, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy1.isFullHp()).toBe(true);

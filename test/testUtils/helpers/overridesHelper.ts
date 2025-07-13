@@ -4,7 +4,6 @@ import type { NewArenaEvent } from "#app/events/battle-scene";
 
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides, { defaultOverrides } from "#app/overrides";
-import { Weather } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
 import type { BattleType } from "#enums/battle-type";
 import { BiomeId } from "#enums/biome-id";
@@ -15,7 +14,7 @@ import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import type { Unlockables } from "#enums/unlockables";
-import type { WeatherType } from "#enums/weather-type";
+import { WeatherType } from "#enums/weather-type";
 import type { ModifierOverride } from "#modifiers/modifier-type";
 import type { Variant } from "#sprites/variant";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
@@ -356,7 +355,7 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public weather(type: WeatherType): this {
     vi.spyOn(Overrides, "WEATHER_OVERRIDE", "get").mockReturnValue(type);
-    this.log(`Weather set to ${Weather[type]} (=${type})!`);
+    this.log(`Weather set to ${WeatherType[type]} (=${type})!`);
     return this;
   }
 

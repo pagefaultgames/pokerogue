@@ -9,7 +9,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import type { Nature } from "#enums/nature";
+import { Nature } from "#enums/nature";
 import { getStatKey } from "#enums/stat";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonHeldItemModifier } from "#modifiers/modifier";
@@ -28,7 +28,7 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { PokemonData } from "#system/pokemon-data";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
-import { isNullOrUndefined, randSeedShuffle } from "#utils/common";
+import { getEnumValues, isNullOrUndefined, randSeedShuffle } from "#utils/common";
 import i18next from "i18next";
 
 /** The i18n namespace for the encounter */
@@ -183,10 +183,9 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
       .withPreOptionPhase(async (): Promise<boolean> => {
         // Open menu for selecting pokemon and Nature
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const natures = new Array(25).fill(null).map((_val, i) => i as Nature);
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Return the options for nature selection
-          return natures.map((nature: Nature) => {
+          return getEnumValues(Nature).map((nature: Nature) => {
             const option: OptionSelectItem = {
               label: getNatureName(nature, true, true, true, globalScene.uiTheme),
               handler: () => {

@@ -105,7 +105,7 @@ export class PokemonData {
 
     // TODO: Can't we move some of this verification stuff to an upgrade script?
     this.nature = source.nature ?? Nature.HARDY;
-    this.moveset = source.moveset.map((m: any) => PokemonMove.loadMove(m));
+    this.moveset = source.moveset?.map((m: any) => PokemonMove.loadMove(m)) ?? [];
     this.status = source.status
       ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
       : null;

@@ -65,8 +65,7 @@ describe("Abilities - Moxie", () => {
 
       secondPokemon.hp = 1;
 
-      game.move.select(moveToUse);
-      game.selectTarget(BattlerIndex.PLAYER_2);
+      game.move.select(moveToUse, BattlerIndex.PLAYER_2);
 
       await game.phaseInterceptor.to(TurnEndPhase);
 

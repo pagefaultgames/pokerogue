@@ -36,6 +36,7 @@ import { NewBiomeEncounterPhase } from "#phases/new-biome-encounter-phase";
 import { NextEncounterPhase } from "#phases/next-encounter-phase";
 import { PartyExpPhase } from "#phases/party-exp-phase";
 import { PartyHealPhase } from "#phases/party-heal-phase";
+import { PokemonTransformPhase } from "#phases/pokemon-transform-phase";
 import { PostGameOverPhase } from "#phases/post-game-over-phase";
 import { PostSummonPhase } from "#phases/post-summon-phase";
 import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
@@ -141,6 +142,7 @@ export class PhaseInterceptor {
     [LevelCapPhase, this.startPhase],
     [AttemptRunPhase, this.startPhase],
     [SelectBiomePhase, this.startPhase],
+    [PokemonTransformPhase, this.startPhase],
     [MysteryEncounterPhase, this.startPhase],
     [MysteryEncounterOptionSelectedPhase, this.startPhase],
     [MysteryEncounterBattlePhase, this.startPhase],

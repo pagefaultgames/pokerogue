@@ -517,7 +517,7 @@ export class MysteryEncounterUiHandler extends UiHandler {
 
     descriptionTextObject.setMask(abilityDescriptionTextMask);
 
-    const descriptionLineCount = Math.floor(descriptionTextObject.displayHeight / 10);
+    const descriptionLineCount = Math.floor(descriptionTextObject.displayHeight / 9.2);
 
     if (this.descriptionScrollTween) {
       this.descriptionScrollTween.remove();
@@ -614,6 +614,8 @@ export class MysteryEncounterUiHandler extends UiHandler {
       const tooltipTextObject = addBBCodeTextObject(6, 7, text, TextStyle.TOOLTIP_CONTENT, {
         wordWrap: { width: 600 },
         fontSize: "72px",
+        padding: { top: 8 },
+        lineSpacing: 1.25,
       });
       this.tooltipContainer.add(tooltipTextObject);
 
@@ -627,7 +629,7 @@ export class MysteryEncounterUiHandler extends UiHandler {
       const textMask = tooltipTextMaskRect.createGeometryMask();
       tooltipTextObject.setMask(textMask);
 
-      const tooltipLineCount = Math.floor(tooltipTextObject.displayHeight / 11.2);
+      const tooltipLineCount = Math.floor(tooltipTextObject.displayHeight / 10.2);
 
       if (this.tooltipScrollTween) {
         this.tooltipScrollTween.remove();

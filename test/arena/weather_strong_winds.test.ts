@@ -86,7 +86,7 @@ describe("Weather - Strong Winds", () => {
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1;
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.arena.weather?.weatherType).toBeUndefined();
