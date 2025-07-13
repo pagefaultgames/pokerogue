@@ -251,7 +251,7 @@ class DefaultOverrides {
    * member to hold it (typically this is, extends, or generates a {@linkcode Reward}),
    * like `EXP_SHARE`, `CANDY_JAR`, etc.
    *
-   * Overrides labeled `HELD_ITEM` specifically pertain to any entry in {@linkcode rewards} that
+   * Overrides labeled `HELD_ITEM` specifically pertain to any entry in {@linkcode allRewards} that
    * extends, or generates a {@linkcode PokemonHeldItemReward}, like `SOUL_DEW`, `TOXIC_ORB`, etc.
    *
    * Note that, if count is not provided, it will default to 1.

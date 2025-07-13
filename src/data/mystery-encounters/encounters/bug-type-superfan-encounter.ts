@@ -1,6 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { allHeldItems, allMoves, rewards } from "#data/data-lists";
+import { allHeldItems, allMoves, allRewards } from "#data/data-lists";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -284,7 +284,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
         moveTutorOptions,
       };
 
-      // Assigns callback that teaches move before continuing to rewards
+      // Assigns callback that teaches move before continuing to allRewards
       encounter.onRewards = doBugTypeMoveTutor;
 
       setEncounterRewards({ fillRemaining: true });
@@ -304,7 +304,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
         // Player shows off their bug types
         const encounter = globalScene.currentBattle.mysteryEncounter!;
 
-        // Player gets different rewards depending on the number of bug types they have
+        // Player gets different allRewards depending on the number of bug types they have
         const numBugTypes = globalScene.getPlayerParty().filter(p => p.isOfType(PokemonType.BUG, true)).length;
         const numBugTypesText = i18next.t(`${namespace}:numBugTypes`, {
           count: numBugTypes,
@@ -313,7 +313,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
 
         if (numBugTypes < 2) {
           setEncounterRewards({
-            guaranteedRewardFuncs: [rewards.SUPER_LURE, rewards.GREAT_BALL],
+            guaranteedRewardFuncs: [allRewards.SUPER_LURE, allRewards.GREAT_BALL],
             fillRemaining: false,
           });
           encounter.selectedOption!.dialogue!.selected = [
@@ -324,7 +324,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           ];
         } else if (numBugTypes < 4) {
           setEncounterRewards({
-            guaranteedRewardFuncs: [rewards.QUICK_CLAW, rewards.MAX_LURE, rewards.ULTRA_BALL],
+            guaranteedRewardFuncs: [allRewards.QUICK_CLAW, allRewards.MAX_LURE, allRewards.ULTRA_BALL],
             fillRemaining: false,
           });
           encounter.selectedOption!.dialogue!.selected = [
@@ -335,7 +335,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           ];
         } else if (numBugTypes < 6) {
           setEncounterRewards({
-            guaranteedRewardFuncs: [rewards.GRIP_CLAW, rewards.MAX_LURE, rewards.ROGUE_BALL],
+            guaranteedRewardFuncs: [allRewards.GRIP_CLAW, allRewards.MAX_LURE, allRewards.ROGUE_BALL],
             fillRemaining: false,
           });
           encounter.selectedOption!.dialogue!.selected = [
@@ -347,37 +347,37 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
         } else {
           // If the player has any evolution/form change items that are valid for their party,
           // spawn one of those items in addition to Dynamax Band, Mega Band, and Master Ball
-          const modifierOptions: RewardOption[] = [generateRewardOption(rewards.MASTER_BALL)!];
+          const rewardOptions: RewardOption[] = [generateRewardOption(allRewards.MASTER_BALL)!];
           const specialOptions: RewardOption[] = [];
 
           if (!globalScene.trainerItems.hasItem(TrainerItemId.MEGA_BRACELET)) {
-            modifierOptions.push(generateRewardOption(rewards.MEGA_BRACELET)!);
+            rewardOptions.push(generateRewardOption(allRewards.MEGA_BRACELET)!);
           }
           if (!globalScene.trainerItems.hasItem(TrainerItemId.DYNAMAX_BAND)) {
-            modifierOptions.push(generateRewardOption(rewards.DYNAMAX_BAND)!);
+            rewardOptions.push(generateRewardOption(allRewards.DYNAMAX_BAND)!);
           }
-          const nonRareEvolutionModifier = generateRewardOption(rewards.EVOLUTION_ITEM);
-          if (nonRareEvolutionModifier) {
-            specialOptions.push(nonRareEvolutionModifier);
+          const nonRareEvolutionReward = generateRewardOption(allRewards.EVOLUTION_ITEM);
+          if (nonRareEvolutionReward) {
+            specialOptions.push(nonRareEvolutionReward);
           }
-          const rareEvolutionModifier = generateRewardOption(rewards.RARE_EVOLUTION_ITEM);
-          if (rareEvolutionModifier) {
-            specialOptions.push(rareEvolutionModifier);
+          const rareEvolutionReward = generateRewardOption(allRewards.RARE_EVOLUTION_ITEM);
+          if (rareEvolutionReward) {
+            specialOptions.push(rareEvolutionReward);
           }
-          const formChangeModifier = generateRewardOption(rewards.FORM_CHANGE_ITEM);
-          if (formChangeModifier) {
-            specialOptions.push(formChangeModifier);
+          const formChangeReward = generateRewardOption(allRewards.FORM_CHANGE_ITEM);
+          if (formChangeReward) {
+            specialOptions.push(formChangeReward);
           }
-          const rareFormChangeModifier = generateRewardOption(rewards.RARE_FORM_CHANGE_ITEM);
-          if (rareFormChangeModifier) {
-            specialOptions.push(rareFormChangeModifier);
+          const rareFormChangeReward = generateRewardOption(allRewards.RARE_FORM_CHANGE_ITEM);
+          if (rareFormChangeReward) {
+            specialOptions.push(rareFormChangeReward);
           }
           if (specialOptions.length > 0) {
-            modifierOptions.push(specialOptions[randSeedInt(specialOptions.length)]);
+            rewardOptions.push(specialOptions[randSeedInt(specialOptions.length)]);
           }
 
           setEncounterRewards({
-            guaranteedRewardOptions: modifierOptions,
+            guaranteedRewardOptions: rewardOptions,
             fillRemaining: false,
           });
           encounter.selectedOption!.dialogue!.selected = [
@@ -463,12 +463,12 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
         chosenPokemon.loseHeldItem(lostItem, false);
         globalScene.updateItems(true);
 
-        const bugNet = generateRewardOption(rewards.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET)!;
+        const bugNet = generateRewardOption(allRewards.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET)!;
         bugNet.type.tier = RewardTier.ROGUE;
 
         setEncounterRewards({
           guaranteedRewardOptions: [bugNet],
-          guaranteedRewardFuncs: [rewards.REVIVER_SEED],
+          guaranteedRewardFuncs: [allRewards.REVIVER_SEED],
           fillRemaining: false,
         });
         leaveEncounterWithoutBattle(true);
@@ -742,7 +742,7 @@ function doBugTypeMoveTutor(): Promise<void> {
       );
     }
 
-    // Complete battle and go to rewards
+    // Complete battle and go to allRewards
     resolve();
   });
 }

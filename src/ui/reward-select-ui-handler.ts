@@ -69,8 +69,8 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
 
     if (context) {
       context.font = styleOptions.fontSize + "px " + styleOptions.fontFamily;
-      this.transferButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:transfer")).width;
-      this.checkButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:checkTeam")).width;
+      this.transferButtonWidth = context.measureText(i18next.t("rewardSelectUiHandler:transfer")).width;
+      this.checkButtonWidth = context.measureText(i18next.t("rewardSelectUiHandler:checkTeam")).width;
     }
 
     this.transferButtonContainer = globalScene.add.container(
@@ -81,7 +81,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     this.transferButtonContainer.setVisible(false);
     ui.add(this.transferButtonContainer);
 
-    const transferButtonText = addTextObject(-4, -2, i18next.t("modifierSelectUiHandler:transfer"), TextStyle.PARTY);
+    const transferButtonText = addTextObject(-4, -2, i18next.t("rewardSelectUiHandler:transfer"), TextStyle.PARTY);
     transferButtonText.setName("text-transfer-btn");
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
@@ -94,7 +94,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     this.checkButtonContainer.setVisible(false);
     ui.add(this.checkButtonContainer);
 
-    const checkButtonText = addTextObject(-4, -2, i18next.t("modifierSelectUiHandler:checkTeam"), TextStyle.PARTY);
+    const checkButtonText = addTextObject(-4, -2, i18next.t("rewardSelectUiHandler:checkTeam"), TextStyle.PARTY);
     checkButtonText.setName("text-use-btn");
     checkButtonText.setOrigin(1, 0);
     this.checkButtonContainer.add(checkButtonText);
@@ -104,7 +104,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     this.rerollButtonContainer.setVisible(false);
     ui.add(this.rerollButtonContainer);
 
-    const rerollButtonText = addTextObject(-4, -2, i18next.t("modifierSelectUiHandler:reroll"), TextStyle.PARTY);
+    const rerollButtonText = addTextObject(-4, -2, i18next.t("rewardSelectUiHandler:reroll"), TextStyle.PARTY);
     rerollButtonText.setName("text-reroll-btn");
     rerollButtonText.setOrigin(0, 0);
     this.rerollButtonContainer.add(rerollButtonText);
@@ -119,12 +119,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonContainer.setVisible(false);
     ui.add(this.lockRarityButtonContainer);
 
-    this.lockRarityButtonText = addTextObject(
-      -4,
-      -2,
-      i18next.t("modifierSelectUiHandler:lockRarities"),
-      TextStyle.PARTY,
-    );
+    this.lockRarityButtonText = addTextObject(-4, -2, i18next.t("rewardSelectUiHandler:lockRarities"), TextStyle.PARTY);
     this.lockRarityButtonText.setOrigin(0, 0);
     this.lockRarityButtonContainer.add(this.lockRarityButtonText);
 
@@ -139,7 +134,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     const continueButtonText = addTextObject(
       -24,
       5,
-      i18next.t("modifierSelectUiHandler:continueNextWaveButton"),
+      i18next.t("rewardSelectUiHandler:continueNextWaveButton"),
       TextStyle.MESSAGE,
     );
     continueButtonText.setName("text-continue-btn");
@@ -524,7 +519,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
           -globalScene.game.canvas.height / 12 -
             (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2),
         );
-        ui.showText(i18next.t("modifierSelectUiHandler:continueNextWaveDescription"));
+        ui.showText(i18next.t("rewardSelectUiHandler:continueNextWaveDescription"));
         return ret;
       }
 
@@ -557,22 +552,22 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
         6,
         this.lockRarityButtonContainer.visible ? OPTION_BUTTON_YPOSITION - 8 : OPTION_BUTTON_YPOSITION + 4,
       );
-      ui.showText(i18next.t("modifierSelectUiHandler:rerollDesc"));
+      ui.showText(i18next.t("rewardSelectUiHandler:rerollDesc"));
     } else if (cursor === 1) {
       this.cursorObj.setPosition(
         (globalScene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth) / 6 - 30,
         OPTION_BUTTON_YPOSITION + 4,
       );
-      ui.showText(i18next.t("modifierSelectUiHandler:transferDesc"));
+      ui.showText(i18next.t("rewardSelectUiHandler:transferDesc"));
     } else if (cursor === 2) {
       this.cursorObj.setPosition(
         (globalScene.game.canvas.width - this.checkButtonWidth) / 6 - 10,
         OPTION_BUTTON_YPOSITION + 4,
       );
-      ui.showText(i18next.t("modifierSelectUiHandler:checkTeamDesc"));
+      ui.showText(i18next.t("rewardSelectUiHandler:checkTeamDesc"));
     } else {
       this.cursorObj.setPosition(6, OPTION_BUTTON_YPOSITION + 4);
-      ui.showText(i18next.t("modifierSelectUiHandler:lockRaritiesDesc"));
+      ui.showText(i18next.t("rewardSelectUiHandler:lockRaritiesDesc"));
     }
 
     return ret;
@@ -652,7 +647,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
 
     const formattedMoney = formatMoney(globalScene.moneyFormat, this.rerollCost);
 
-    this.rerollCostText.setText(i18next.t("modifierSelectUiHandler:rerollCost", { formattedMoney }));
+    this.rerollCostText.setText(i18next.t("rewardSelectUiHandler:rerollCost", { formattedMoney }));
     this.rerollCostText.setColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
     this.rerollCostText.setShadowColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED, true));
   }
@@ -937,7 +932,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
 
     const formattedMoney = formatMoney(globalScene.moneyFormat, cost);
 
-    this.itemCostText.setText(i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney }));
+    this.itemCostText.setText(i18next.t("rewardSelectUiHandler:itemCost", { formattedMoney }));
     this.itemCostText.setColor(getTextColor(textStyle, false, globalScene.uiTheme));
     this.itemCostText.setShadowColor(getTextColor(textStyle, true, globalScene.uiTheme));
   }

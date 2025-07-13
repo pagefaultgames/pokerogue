@@ -559,7 +559,7 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public itemRewards(items: RewardOverride[]): this {
     vi.spyOn(Overrides, "ITEM_REWARD_OVERRIDE", "get").mockReturnValue(items);
-    this.log("Item rewards set to:", items);
+    this.log("Item allRewards set to:", items);
     return this;
   }
 

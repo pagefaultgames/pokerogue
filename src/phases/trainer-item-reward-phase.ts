@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import type { Reward } from "#items/reward";
 import { BattlePhase } from "#phases/battle-phase";
 import type { RewardFunc } from "#types/rewards";
-import { getReward } from "#utils/modifier-utils";
+import { getReward } from "#utils/reward-utils";
 import i18next from "i18next";
 
 export class RewardPhase extends BattlePhase {

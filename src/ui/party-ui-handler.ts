@@ -61,27 +61,27 @@ export enum PartyUiMode {
    * Indicates that the party UI is open to select a mon to apply a modifier to.
    * This type of selection can be cancelled.
    */
-  MODIFIER,
+  REWARD,
   /**
    * Indicates that the party UI is open to select a mon to apply a move
    * modifier to (such as an Ether or PP Up).  This type of selection can be cancelled.
    */
-  MOVE_MODIFIER,
+  MOVE_REWARD,
   /**
    * Indicates that the party UI is open to select a mon to teach a TM.  This
    * type of selection can be cancelled.
    */
-  TM_MODIFIER,
+  TM_REWARD,
   /**
    * Indicates that the party UI is open to select a mon to remember a move.
    * This type of selection can be cancelled.
    */
-  REMEMBER_MOVE_MODIFIER,
+  REMEMBER_MOVE_REWARD,
   /**
    * Indicates that the party UI is open to transfer items between mons.  This
    * type of selection can be cancelled.
    */
-  MODIFIER_TRANSFER,
+  ITEM_TRANSFER,
   /**
    * Indicates that the party UI is open because of a DNA Splicer.  This
    * type of selection can be cancelled.
@@ -131,15 +131,15 @@ export enum PartyOption {
 }
 
 export type PartySelectCallback = (cursor: number, option: PartyOption) => void;
-export type PartyModifierTransferSelectCallback = (
+export type PartyItemTransferSelectCallback = (
   fromCursor: number,
   index: number,
   itemQuantity?: number,
   toCursor?: number,
 ) => void;
-export type PartyModifierSpliceSelectCallback = (fromCursor: number, toCursor?: number) => void;
+export type PartyRewardSpliceSelectCallback = (fromCursor: number, toCursor?: number) => void;
 export type PokemonSelectFilter = (pokemon: PlayerPokemon) => string | null;
-export type PokemonModifierTransferSelectFilter = (pokemon: PlayerPokemon, item: HeldItemId) => string | null;
+export type PokemonItemTransferSelectFilter = (pokemon: PlayerPokemon, item: HeldItemId) => string | null;
 export type PokemonMoveSelectFilter = (pokemonMove: PokemonMove) => string | null;
 
 export class PartyUiHandler extends MessageUiHandler {
@@ -176,8 +176,8 @@ export class PartyUiHandler extends MessageUiHandler {
   private transferAll: boolean;
 
   private lastCursor = 0;
-  private selectCallback: PartySelectCallback | PartyModifierTransferSelectCallback | null;
-  private selectFilter: PokemonSelectFilter | PokemonModifierTransferSelectFilter;
+  private selectCallback: PartySelectCallback | PartyItemTransferSelectCallback | null;
+  private selectFilter: PokemonSelectFilter | PokemonItemTransferSelectFilter;
   private moveSelectFilter: PokemonMoveSelectFilter;
   private tmMoveId: MoveId;
   private showMovePp: boolean;
@@ -503,7 +503,7 @@ export class PartyUiHandler extends MessageUiHandler {
           [this.transferCursor].heldItemManager.getTransferableHeldItems()
           .forEach((_, i, array) => {
             const invertedIndex = array.length - 1 - i;
-            (this.selectCallback as PartyModifierTransferSelectCallback)(
+            (this.selectCallback as PartyItemTransferSelectCallback)(
               this.transferCursor,
               invertedIndex,
               this.transferQuantitiesMax[invertedIndex],
@@ -511,7 +511,7 @@ export class PartyUiHandler extends MessageUiHandler {
             );
           });
       } else {
-        (this.selectCallback as PartyModifierTransferSelectCallback)(
+        (this.selectCallback as PartyItemTransferSelectCallback)(
           this.transferCursor,
           this.transferOptionCursor,
           this.transferQuantities[this.transferOptionCursor],
@@ -526,7 +526,7 @@ export class PartyUiHandler extends MessageUiHandler {
   }
 
   // TODO: This will be largely changed with the modifier rework
-  private processModifierTransferModeInput(pokemon: PlayerPokemon) {
+  private processItemTransferModeInput(pokemon: PlayerPokemon) {
     const ui = this.getUi();
     const option = this.options[this.optionsCursor];
 
@@ -581,12 +581,12 @@ export class PartyUiHandler extends MessageUiHandler {
   }
 
   // TODO: Might need to check here for when this.transferMode is active.
-  private processModifierTransferModeLeftRightInput(button: Button) {
+  private processItemTransferModeLeftRightInput(button: Button) {
     let success = false;
     const option = this.options[this.optionsCursor];
     if (button === Button.LEFT) {
       /** Decrease quantity for the current item and update UI */
-      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+      if (this.partyUiMode === PartyUiMode.ITEM_TRANSFER) {
         this.transferQuantities[option] =
           this.transferQuantities[option] === 1
             ? this.transferQuantitiesMax[option]
@@ -600,7 +600,7 @@ export class PartyUiHandler extends MessageUiHandler {
 
     if (button === Button.RIGHT) {
       /** Increase quantity for the current item and update UI */
-      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+      if (this.partyUiMode === PartyUiMode.ITEM_TRANSFER) {
         this.transferQuantities[option] =
           this.transferQuantities[option] === this.transferQuantitiesMax[option]
             ? 1
@@ -615,11 +615,11 @@ export class PartyUiHandler extends MessageUiHandler {
   }
 
   // TODO: Might need to check here for when this.transferMode is active.
-  private processModifierTransferModeUpDownInput(button: Button.UP | Button.DOWN) {
+  private processItemTransferModeUpDownInput(button: Button.UP | Button.DOWN) {
     let success = false;
     const option = this.options[this.optionsCursor];
 
-    if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+    if (this.partyUiMode === PartyUiMode.ITEM_TRANSFER) {
       if (option !== PartyOption.ALL) {
         this.transferQuantities[option] = this.transferQuantitiesMax[option];
       }
@@ -681,11 +681,11 @@ export class PartyUiHandler extends MessageUiHandler {
       if (filterResult === null && (option === PartyOption.SEND_OUT || option === PartyOption.PASS_BATON)) {
         filterResult = this.FilterChallengeLegal(pokemon);
       }
-      if (filterResult === null && this.partyUiMode === PartyUiMode.MOVE_MODIFIER) {
+      if (filterResult === null && this.partyUiMode === PartyUiMode.MOVE_REWARD) {
         filterResult = this.moveSelectFilter(pokemon.moveset[this.optionsCursor]);
       }
     } else {
-      filterResult = (this.selectFilter as PokemonModifierTransferSelectFilter)(
+      filterResult = (this.selectFilter as PokemonItemTransferSelectFilter)(
         pokemon,
         globalScene.getPlayerParty()[this.transferCursor].heldItemManager.getTransferableHeldItems()[
           this.transferOptionCursor
@@ -706,12 +706,12 @@ export class PartyUiHandler extends MessageUiHandler {
 
     // TODO: Careful about using success for the return values here. Find a better way
     // PartyOption.ALL, and options specific to the mode (held items)
-    if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-      return this.processModifierTransferModeInput(pokemon);
+    if (this.partyUiMode === PartyUiMode.ITEM_TRANSFER) {
+      return this.processItemTransferModeInput(pokemon);
     }
 
     // options specific to the mode (moves)
-    if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
+    if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_REWARD) {
       return this.processRememberMoveModeInput(pokemon);
     }
 
@@ -757,13 +757,13 @@ export class PartyUiHandler extends MessageUiHandler {
     // PartyUiMode.RELEASE (RELEASE)
     // PartyUiMode.FAINT_SWITCH (SEND_OUT or PASS_BATON (?))
     // PartyUiMode.REVIVAL_BLESSING (REVIVE)
-    // PartyUiMode.MODIFIER_TRANSFER (held items, and ALL)
+    // PartyUiMode.ITEM_TRANSFER (held items, and ALL)
     // PartyUiMode.CHECK --- no specific option, only relevant on cancel?
     // PartyUiMode.SPLICE (SPLICE)
-    // PartyUiMode.MOVE_MODIFIER (MOVE_1, MOVE_2, MOVE_3, MOVE_4)
-    // PartyUiMode.TM_MODIFIER (TEACH)
-    // PartyUiMode.REMEMBER_MOVE_MODIFIER (no specific option, callback is invoked when selecting a move)
-    // PartyUiMode.MODIFIER (APPLY option)
+    // PartyUiMode.MOVE_REWARD (MOVE_1, MOVE_2, MOVE_3, MOVE_4)
+    // PartyUiMode.TM_REWARD (TEACH)
+    // PartyUiMode.REMEMBER_MOVE_REWARD (no specific option, callback is invoked when selecting a move)
+    // PartyUiMode.REWARD (APPLY option)
     // PartyUiMode.POST_BATTLE_SWITCH (SEND_OUT)
 
     // These are the options that need a callback
@@ -773,7 +773,7 @@ export class PartyUiHandler extends MessageUiHandler {
 
     if (this.partyUiMode === PartyUiMode.SPLICE) {
       if (option === PartyOption.SPLICE) {
-        (this.selectCallback as PartyModifierSpliceSelectCallback)(this.transferCursor, this.cursor);
+        (this.selectCallback as PartyRewardSpliceSelectCallback)(this.transferCursor, this.cursor);
         this.clearTransfer();
       } else if (option === PartyOption.APPLY) {
         this.startTransfer();
@@ -837,11 +837,11 @@ export class PartyUiHandler extends MessageUiHandler {
     }
 
     if (button === Button.UP || button === Button.DOWN) {
-      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-        return this.processModifierTransferModeUpDownInput(button);
+      if (this.partyUiMode === PartyUiMode.ITEM_TRANSFER) {
+        return this.processItemTransferModeUpDownInput(button);
       }
 
-      if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
+      if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_REWARD) {
         return this.processRememberMoveModeUpDownInput(button);
       }
 
@@ -849,8 +849,8 @@ export class PartyUiHandler extends MessageUiHandler {
     }
 
     if (button === Button.LEFT || button === Button.RIGHT) {
-      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-        return this.processModifierTransferModeLeftRightInput(button);
+      if (this.partyUiMode === PartyUiMode.ITEM_TRANSFER) {
+        return this.processItemTransferModeLeftRightInput(button);
       }
     }
 
@@ -907,7 +907,7 @@ export class PartyUiHandler extends MessageUiHandler {
   private processPartyActionInput(): boolean {
     const ui = this.getUi();
     if (this.cursor < 6) {
-      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode) {
+      if (this.partyUiMode === PartyUiMode.ITEM_TRANSFER && !this.transferMode) {
         /** Initialize item quantities for the selected Pokemon */
         const pokemon = globalScene.getPlayerParty()[this.cursor];
         const items = pokemon.heldItemManager.getTransferableHeldItems();
@@ -931,7 +931,7 @@ export class PartyUiHandler extends MessageUiHandler {
   private processPartyCancelInput(): boolean {
     const ui = this.getUi();
     if (
-      (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER || this.partyUiMode === PartyUiMode.SPLICE) &&
+      (this.partyUiMode === PartyUiMode.ITEM_TRANSFER || this.partyUiMode === PartyUiMode.SPLICE) &&
       this.transferMode
     ) {
       this.clearTransfer();
@@ -1111,10 +1111,10 @@ export class PartyUiHandler extends MessageUiHandler {
     let optionsMessage = i18next.t("partyUiHandler:doWhatWithThisPokemon");
 
     switch (this.partyUiMode) {
-      case PartyUiMode.MOVE_MODIFIER:
+      case PartyUiMode.MOVE_REWARD:
         optionsMessage = i18next.t("partyUiHandler:selectAMove");
         break;
-      case PartyUiMode.MODIFIER_TRANSFER:
+      case PartyUiMode.ITEM_TRANSFER:
         if (!this.transferMode) {
           optionsMessage = i18next.t("partyUiHandler:changeQuantity");
         }
@@ -1131,7 +1131,7 @@ export class PartyUiHandler extends MessageUiHandler {
     this.updateOptions();
 
     /** When an item is being selected for transfer, the message box is taller as the message occupies two lines */
-    if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+    if (this.partyUiMode === PartyUiMode.ITEM_TRANSFER) {
       this.partyMessageBox.setSize(262 - Math.max(this.optionsBg.displayWidth - 56, 0), 42);
     } else {
       this.partyMessageBox.setSize(262 - Math.max(this.optionsBg.displayWidth - 56, 0), 30);
@@ -1140,7 +1140,7 @@ export class PartyUiHandler extends MessageUiHandler {
     this.setCursor(0);
   }
 
-  private allowBatonModifierSwitch(): boolean {
+  private allowBatonItemSwitch(): boolean {
     return !!(
       this.partyUiMode !== PartyUiMode.FAINT_SWITCH &&
       globalScene.getPlayerField()[this.fieldIndex].heldItemManager.hasItem(HeldItemId.BATON)
@@ -1158,7 +1158,7 @@ export class PartyUiHandler extends MessageUiHandler {
     );
   }
 
-  private updateOptionsWithRememberMoveModifierMode(pokemon): void {
+  private updateOptionsWithRememberMoveRewardMode(pokemon): void {
     const learnableMoves = pokemon.getLearnableLevelMoves();
     for (let m = 0; m < learnableMoves.length; m++) {
       this.options.push(m);
@@ -1169,14 +1169,14 @@ export class PartyUiHandler extends MessageUiHandler {
     }
   }
 
-  private updateOptionsWithMoveModifierMode(pokemon): void {
+  private updateOptionsWithMoveRewardMode(pokemon): void {
     // MOVE_1, MOVE_2, MOVE_3, MOVE_4
     for (let m = 0; m < pokemon.moveset.length; m++) {
       this.options.push(PartyOption.MOVE_1 + m);
     }
   }
 
-  private updateOptionsWithModifierTransferMode(pokemon): void {
+  private updateOptionsWithItemTransferMode(pokemon): void {
     const items = pokemon.getHeldItems();
     for (let im = 0; im < items.length; im++) {
       this.options.push(im);
@@ -1233,15 +1233,15 @@ export class PartyUiHandler extends MessageUiHandler {
     }
 
     switch (this.partyUiMode) {
-      case PartyUiMode.MOVE_MODIFIER:
-        this.updateOptionsWithMoveModifierMode(pokemon);
+      case PartyUiMode.MOVE_REWARD:
+        this.updateOptionsWithMoveRewardMode(pokemon);
         break;
-      case PartyUiMode.REMEMBER_MOVE_MODIFIER:
-        this.updateOptionsWithRememberMoveModifierMode(pokemon);
+      case PartyUiMode.REMEMBER_MOVE_REWARD:
+        this.updateOptionsWithRememberMoveRewardMode(pokemon);
         break;
-      case PartyUiMode.MODIFIER_TRANSFER:
+      case PartyUiMode.ITEM_TRANSFER:
         if (!this.transferMode) {
-          this.updateOptionsWithModifierTransferMode(pokemon);
+          this.updateOptionsWithItemTransferMode(pokemon);
         } else {
           this.options.push(PartyOption.TRANSFER);
           this.addCommonOptions(pokemon);
@@ -1254,17 +1254,15 @@ export class PartyUiHandler extends MessageUiHandler {
       case PartyUiMode.FAINT_SWITCH:
       case PartyUiMode.POST_BATTLE_SWITCH:
         if (this.cursor >= globalScene.currentBattle.getBattlerCount()) {
-          const allowBatonModifierSwitch = this.allowBatonModifierSwitch();
+          const allowBatonItemSwitch = this.allowBatonItemSwitch();
           const isBatonPassMove = this.isBatonPassMove();
 
-          // isBatonPassMove and allowBatonModifierSwitch shouldn't ever be true
+          // isBatonPassMove and allowBatonItemSwitch shouldn't ever be true
           // at the same time, because they both explicitly check for a mutually
           // exclusive partyUiMode. But better safe than sorry.
-          this.options.push(
-            isBatonPassMove && !allowBatonModifierSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT,
-          );
-          if (allowBatonModifierSwitch && !isBatonPassMove) {
-            // the BATON modifier gives an extra switch option for
+          this.options.push(isBatonPassMove && !allowBatonItemSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT);
+          if (allowBatonItemSwitch && !isBatonPassMove) {
+            // the BATON item gives an extra switch option for
             // pokemon-command switches, allowing buffs to be optionally passed
             this.options.push(PartyOption.PASS_BATON);
           }
@@ -1281,11 +1279,11 @@ export class PartyUiHandler extends MessageUiHandler {
         this.options.push(PartyOption.REVIVE);
         this.addCommonOptions(pokemon);
         break;
-      case PartyUiMode.MODIFIER:
+      case PartyUiMode.REWARD:
         this.options.push(PartyOption.APPLY);
         this.addCommonOptions(pokemon);
         break;
-      case PartyUiMode.TM_MODIFIER:
+      case PartyUiMode.TM_REWARD:
         this.options.push(PartyOption.TEACH);
         this.addCommonOptions(pokemon);
         break;
@@ -1350,8 +1348,8 @@ export class PartyUiHandler extends MessageUiHandler {
       } else if (option === PartyOption.SCROLL_DOWN) {
         optionName = "↓";
       } else if (
-        (this.partyUiMode !== PartyUiMode.REMEMBER_MOVE_MODIFIER &&
-          (this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER || this.transferMode)) ||
+        (this.partyUiMode !== PartyUiMode.REMEMBER_MOVE_REWARD &&
+          (this.partyUiMode !== PartyUiMode.ITEM_TRANSFER || this.transferMode)) ||
         option === PartyOption.CANCEL
       ) {
         switch (option) {
@@ -1386,7 +1384,7 @@ export class PartyUiHandler extends MessageUiHandler {
             break;
           }
         }
-      } else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
+      } else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_REWARD) {
         const learnableLevelMoves = pokemon.getLearnableLevelMoves();
         const move = learnableLevelMoves[option];
         optionName = allMoves[move].name;
@@ -1414,7 +1412,7 @@ export class PartyUiHandler extends MessageUiHandler {
       const items = pokemon.getHeldItems();
       const item = items[option];
       if (
-        this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER &&
+        this.partyUiMode === PartyUiMode.ITEM_TRANSFER &&
         this.transferQuantitiesMax[option] > 1 &&
         !this.transferMode &&
         item !== undefined &&
@@ -1815,7 +1813,7 @@ class PartySlot extends Phaser.GameObjects.Container {
 
     slotInfoContainer.add([this.slotHpBar, this.slotHpOverlay, this.slotHpText, this.slotDescriptionLabel]);
 
-    if (partyUiMode !== PartyUiMode.TM_MODIFIER) {
+    if (partyUiMode !== PartyUiMode.TM_REWARD) {
       this.slotDescriptionLabel.setVisible(false);
       this.slotHpBar.setVisible(true);
       this.slotHpOverlay.setVisible(true);

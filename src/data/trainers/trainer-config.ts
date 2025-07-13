@@ -3,7 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions, pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { signatureSpecies } from "#balance/signature-species";
 import { tmSpecies } from "#balance/tms";
-import { rewards } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import { doubleBattleDialogue } from "#data/double-battle-dialogue";
 import { Gender } from "#data/gender";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
@@ -115,7 +115,7 @@ export class TrainerConfig {
   public victoryBgm: string;
   public genModifiersFunc: GenTrainerItemsFunc;
   public genAIFuncs: GenAIFunc[] = [];
-  public modifierRewardFuncs: RewardFunc[] = [];
+  public rewardFuncs: RewardFunc[] = [];
   public partyTemplates: TrainerPartyTemplate[];
   public partyTemplateFunc: PartyTemplateFunc;
   public partyMemberFuncs: PartyMemberFuncs = {};
@@ -513,13 +513,13 @@ export class TrainerConfig {
   //   for (let t = 0; t < Math.min(count, party.length); t++) {
   //     const randomIndex = Utils.randSeedItem(partyMemberIndexes);
   //     partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
-  //     ret.push(rewards.TERA_SHARD().generateType([], [ Utils.randSeedItem(types ? types : party[randomIndex].getTypes()) ])!.withIdFromFunc(rewards.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier); // TODO: is the bang correct?
+  //     ret.push(allRewards.TERA_SHARD().generateType([], [ Utils.randSeedItem(types ? types : party[randomIndex].getTypes()) ])!.withIdFromFunc(allRewards.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier); // TODO: is the bang correct?
   //   }
   //   return ret;
   // }
 
-  setModifierRewardFuncs(...rewardFuncs: (() => RewardFunc)[]): TrainerConfig {
-    this.modifierRewardFuncs = rewardFuncs.map(func => () => {
+  setRewardFuncs(...rewardFuncs: (() => RewardFunc)[]): TrainerConfig {
+    this.rewardFuncs = rewardFuncs.map(func => () => {
       const rewardFunc = func();
       const reward = rewardFunc();
       reward.withIdFromFunc(rewardFunc);
@@ -929,9 +929,9 @@ export class TrainerConfig {
     clone = this.victoryBgm ? clone.setVictoryBgm(this.victoryBgm) : clone;
     clone = this.genModifiersFunc ? clone.setGenModifiersFunc(this.genModifiersFunc) : clone;
 
-    if (this.modifierRewardFuncs) {
+    if (this.rewardFuncs) {
       // Clones array instead of passing ref
-      clone.modifierRewardFuncs = this.modifierRewardFuncs.slice(0);
+      clone.rewardFuncs = this.rewardFuncs.slice(0);
     }
 
     if (this.partyTemplates) {
@@ -4443,9 +4443,9 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival")
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL)
-    .setModifierRewardFuncs(
-      () => rewards.SUPER_EXP_CHARM,
-      () => rewards.EXP_SHARE,
+    .setRewardFuncs(
+      () => allRewards.SUPER_EXP_CHARM,
+      () => allRewards.EXP_SHARE,
     )
     .setPartyMemberFunc(
       0,
@@ -4513,7 +4513,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival")
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_2)
-    .setModifierRewardFuncs(() => rewards.EXP_SHARE)
+    .setRewardFuncs(() => allRewards.EXP_SHARE)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -4666,7 +4666,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival_2")
     .setMixedBattleBgm("battle_rival_2")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_4)
-    .setModifierRewardFuncs(() => rewards.TERA_ORB)
+    .setRewardFuncs(() => allRewards.TERA_ORB)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(

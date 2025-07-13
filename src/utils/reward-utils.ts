@@ -1,4 +1,4 @@
-import { rewards } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import type { Reward } from "#items/reward";
 import { rewardPool } from "#items/reward-pools";
@@ -15,7 +15,7 @@ export function getRewardPoolForType(poolType: RewardPoolType): RewardPool {
 export function getReward(rewardFunc: RewardFunc): Reward {
   const reward = rewardFunc();
   if (!reward.id) {
-    reward.id = Object.keys(rewards).find(k => rewards[k] === rewardFunc)!; // TODO: is this bang correct?
+    reward.id = Object.keys(allRewards).find(k => allRewards[k] === rewardFunc)!; // TODO: is this bang correct?
   }
   return reward;
 }

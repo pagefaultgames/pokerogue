@@ -118,7 +118,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       expect(movePhases.filter(p => (p as MovePhase).move.moveId === MoveId.REVELATION_DANCE).length).toBe(1); // Revelation Dance used before battle
     });
 
-    it("should have a Baton in the rewards after battle", async () => {
+    it("should have a Baton in the allRewards after battle", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
       // Make party lead's level arbitrarily high to not get KOed by move
       const partyLead = scene.getPlayerParty()[0];
@@ -130,12 +130,12 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
       await game.phaseInterceptor.run(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(3); // Should fill remaining
-      expect(modifierSelectHandler.options[0].rewardOption.type.id).toContain("BATON");
+      expect(rewardSelectHandler.options.length).toEqual(3); // Should fill remaining
+      expect(rewardSelectHandler.options[0].rewardOption.type.id).toContain("BATON");
     });
   });
 

@@ -66,7 +66,7 @@ const TOUCH_CONTROLS_OPTIONS: SettingOption[] = [
 const SHOP_CURSOR_TARGET_OPTIONS: SettingOption[] = [
   {
     value: "Rewards",
-    label: i18next.t("settings:rewards"),
+    label: i18next.t("settings:allRewards"),
   },
   {
     value: "Shop",

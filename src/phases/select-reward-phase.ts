@@ -3,7 +3,7 @@ import Overrides from "#app/overrides";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import type { RewardTier } from "#enums/reward-tier";
 import { UiMode } from "#enums/ui-mode";
-import type { Modifier } from "#items/modifier";
+import type { Consumable } from "#items/consumable";
 import type { CustomRewardSettings, Reward, RewardOption } from "#items/reward";
 import {
   FormChangeItemReward,
@@ -27,7 +27,7 @@ import { type RewardSelectUiHandler, SHOP_OPTIONS_ROW_LIMIT } from "#ui/reward-s
 import { isNullOrUndefined, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
-export type ModifierSelectCallback = (rowCursor: number, cursor: number) => boolean;
+export type RewardSelectCallback = (rowCursor: number, cursor: number) => boolean;
 
 export class SelectRewardPhase extends BattlePhase {
   public readonly phaseName = "SelectRewardPhase";
@@ -73,7 +73,7 @@ export class SelectRewardPhase extends BattlePhase {
 
     this.typeOptions = this.getRewardOptions(modifierCount);
 
-    const modifierSelectCallback = (rowCursor: number, cursor: number) => {
+    const rewardSelectCallback = (rowCursor: number, cursor: number) => {
       if (rowCursor < 0 || cursor < 0) {
         globalScene.ui.showText(i18next.t("battle:skipItemQuestion"), null, () => {
           globalScene.ui.setOverlayMode(
@@ -83,7 +83,7 @@ export class SelectRewardPhase extends BattlePhase {
               globalScene.ui.setMode(UiMode.MESSAGE);
               super.end();
             },
-            () => this.resetModifierSelect(modifierSelectCallback),
+            () => this.resetRewardSelect(rewardSelectCallback),
           );
         });
         return false;
@@ -94,13 +94,13 @@ export class SelectRewardPhase extends BattlePhase {
         case 0:
           switch (cursor) {
             case 0:
-              return this.rerollModifiers();
+              return this.rerollRewards();
             case 1:
-              return this.openModifierTransferScreen(modifierSelectCallback);
+              return this.openItemTransferScreen(rewardSelectCallback);
             // Check the party, pass a callback to restore the modifier select screen.
             case 2:
               globalScene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK, -1, () => {
-                this.resetModifierSelect(modifierSelectCallback);
+                this.resetRewardSelect(rewardSelectCallback);
               });
               return true;
             case 3:
@@ -108,21 +108,21 @@ export class SelectRewardPhase extends BattlePhase {
             default:
               return false;
           }
-        // Pick an option from the rewards
+        // Pick an option from the allRewards
         case 1:
-          return this.selectRewardModifierOption(cursor, modifierSelectCallback);
+          return this.selectRewardOption(cursor, rewardSelectCallback);
         // Pick an option from the shop
         default: {
-          return this.selectShopModifierOption(rowCursor, cursor, modifierSelectCallback);
+          return this.selectShopOption(rowCursor, cursor, rewardSelectCallback);
         }
       }
     };
 
-    this.resetModifierSelect(modifierSelectCallback);
+    this.resetRewardSelect(rewardSelectCallback);
   }
 
-  // Pick a modifier from among the rewards and apply it
-  private selectRewardModifierOption(cursor: number, modifierSelectCallback: ModifierSelectCallback): boolean {
+  // Pick a modifier from among the allRewards and apply it
+  private selectRewardOption(cursor: number, rewardSelectCallback: RewardSelectCallback): boolean {
     if (this.typeOptions.length === 0) {
       globalScene.ui.clearText();
       globalScene.ui.setMode(UiMode.MESSAGE);
@@ -130,15 +130,11 @@ export class SelectRewardPhase extends BattlePhase {
       return true;
     }
     const reward = this.typeOptions[cursor].type;
-    return this.applyChosenModifier(reward, -1, modifierSelectCallback);
+    return this.applyChosenReward(reward, -1, rewardSelectCallback);
   }
 
   // Pick a modifier from the shop and apply it
-  private selectShopModifierOption(
-    rowCursor: number,
-    cursor: number,
-    modifierSelectCallback: ModifierSelectCallback,
-  ): boolean {
+  private selectShopOption(rowCursor: number, cursor: number, rewardSelectCallback: RewardSelectCallback): boolean {
     const shopOptions = getPlayerShopRewardOptionsForWave(
       globalScene.currentBattle.waveIndex,
       globalScene.getWaveMoneyAmount(1),
@@ -158,18 +154,18 @@ export class SelectRewardPhase extends BattlePhase {
       return false;
     }
 
-    return this.applyChosenModifier(reward, cost, modifierSelectCallback);
+    return this.applyChosenReward(reward, cost, rewardSelectCallback);
   }
 
   // Apply a chosen modifier: do an effect or open the party menu
-  private applyChosenModifier(reward: Reward, cost: number, modifierSelectCallback: ModifierSelectCallback): boolean {
+  private applyChosenReward(reward: Reward, cost: number, rewardSelectCallback: RewardSelectCallback): boolean {
     if (reward instanceof PokemonReward) {
       if (reward instanceof HeldItemReward || reward instanceof FormChangeItemReward) {
-        this.openGiveHeldItemMenu(reward, modifierSelectCallback);
+        this.openGiveHeldItemMenu(reward, rewardSelectCallback);
       } else if (reward instanceof FusePokemonReward) {
-        this.openFusionMenu(reward, cost, modifierSelectCallback);
+        this.openFusionMenu(reward, cost, rewardSelectCallback);
       } else {
-        this.openModifierMenu(reward, cost, modifierSelectCallback);
+        this.openModifierMenu(reward, cost, rewardSelectCallback);
       }
     } else if (reward instanceof TrainerItemReward) {
       console.log("WE GOT HERE");
@@ -179,13 +175,13 @@ export class SelectRewardPhase extends BattlePhase {
       globalScene.ui.setMode(UiMode.MESSAGE);
       super.end();
     } else {
-      this.applyModifier(reward.newModifier()!);
+      this.applyConsumable(reward.newModifier()!);
     }
     return !cost;
   }
 
-  // Reroll rewards
-  private rerollModifiers() {
+  // Reroll allRewards
+  private rerollRewards() {
     const rerollCost = this.getRerollCost(globalScene.lockRewardTiers);
     if (rerollCost < 0 || globalScene.money < rerollCost) {
       globalScene.ui.playError();
@@ -209,11 +205,11 @@ export class SelectRewardPhase extends BattlePhase {
   }
 
   // Transfer modifiers among party pokemon
-  private openModifierTransferScreen(modifierSelectCallback: ModifierSelectCallback) {
+  private openItemTransferScreen(rewardSelectCallback: RewardSelectCallback) {
     const party = globalScene.getPlayerParty();
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
-      PartyUiMode.MODIFIER_TRANSFER,
+      PartyUiMode.ITEM_TRANSFER,
       -1,
       (fromSlotIndex: number, itemIndex: number, itemQuantity: number, toSlotIndex: number) => {
         if (
@@ -235,7 +231,7 @@ export class SelectRewardPhase extends BattlePhase {
             false,
           );
         } else {
-          this.resetModifierSelect(modifierSelectCallback);
+          this.resetRewardSelect(rewardSelectCallback);
         }
       },
       PartyUiHandler.FilterItemMaxStacks,
@@ -265,7 +261,7 @@ export class SelectRewardPhase extends BattlePhase {
    * @param cost - The cost of the modifier if it was purchased, or -1 if selected as the modifier reward
    * @param playSound - Whether the 'obtain modifier' sound should be played when adding the modifier.
    */
-  private applyModifier(modifier: Modifier, cost = -1, playSound = false): void {
+  private applyConsumable(modifier: Consumable, cost = -1, playSound = false): void {
     const result = globalScene.addModifier(modifier, playSound, undefined, cost);
     // Queue a copy of this phase when applying a TM or Memory Mushroom.
     // If the player selects either of these, then escapes out of consuming them,
@@ -294,7 +290,7 @@ export class SelectRewardPhase extends BattlePhase {
   }
 
   // Opens the party menu specifically for fusions
-  private openFusionMenu(reward: PokemonReward, cost: number, modifierSelectCallback: ModifierSelectCallback): void {
+  private openFusionMenu(reward: PokemonReward, cost: number, rewardSelectCallback: RewardSelectCallback): void {
     const party = globalScene.getPlayerParty();
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
@@ -307,12 +303,12 @@ export class SelectRewardPhase extends BattlePhase {
           spliceSlotIndex < 6 &&
           fromSlotIndex !== spliceSlotIndex
         ) {
-          globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
+          globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
             const modifier = reward.newModifier(party[fromSlotIndex], party[spliceSlotIndex])!; //TODO: is the bang correct?
-            this.applyModifier(modifier, cost, true);
+            this.applyConsumable(modifier, cost, true);
           });
         } else {
-          this.resetModifierSelect(modifierSelectCallback);
+          this.resetRewardSelect(rewardSelectCallback);
         }
       },
       reward.selectFilter,
@@ -320,7 +316,7 @@ export class SelectRewardPhase extends BattlePhase {
   }
 
   // Opens the party menu to apply one of various modifiers
-  private openModifierMenu(reward: PokemonReward, cost: number, modifierSelectCallback: ModifierSelectCallback): void {
+  private openModifierMenu(reward: PokemonReward, cost: number, rewardSelectCallback: RewardSelectCallback): void {
     const party = globalScene.getPlayerParty();
     const pokemonReward = reward as PokemonReward;
     const isMoveModifier = reward instanceof PokemonMoveReward;
@@ -328,12 +324,12 @@ export class SelectRewardPhase extends BattlePhase {
     const isRememberMoveModifier = reward instanceof RememberMoveReward;
     const isPpRestoreModifier = reward instanceof PokemonPpRestoreReward || reward instanceof PokemonPpUpReward;
     const partyUiMode = isMoveModifier
-      ? PartyUiMode.MOVE_MODIFIER
+      ? PartyUiMode.MOVE_REWARD
       : isTmModifier
-        ? PartyUiMode.TM_MODIFIER
+        ? PartyUiMode.TM_REWARD
         : isRememberMoveModifier
-          ? PartyUiMode.REMEMBER_MOVE_MODIFIER
-          : PartyUiMode.MODIFIER;
+          ? PartyUiMode.REMEMBER_MOVE_REWARD
+          : PartyUiMode.REWARD;
     const tmMoveId = isTmModifier ? (reward as TmReward).moveId : undefined;
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
@@ -341,16 +337,16 @@ export class SelectRewardPhase extends BattlePhase {
       -1,
       (slotIndex: number, option: PartyOption) => {
         if (slotIndex < 6) {
-          globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
+          globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
             const modifier = !isMoveModifier
               ? !isRememberMoveModifier
                 ? reward.newModifier(party[slotIndex])
                 : reward.newModifier(party[slotIndex], option as number)
               : reward.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
-            this.applyModifier(modifier!, cost, true); // TODO: is the bang correct?
+            this.applyConsumable(modifier!, cost, true); // TODO: is the bang correct?
           });
         } else {
-          this.resetModifierSelect(modifierSelectCallback);
+          this.resetRewardSelect(rewardSelectCallback);
         }
       },
       pokemonReward.selectFilter,
@@ -360,23 +356,23 @@ export class SelectRewardPhase extends BattlePhase {
     );
   }
 
-  private openGiveHeldItemMenu(reward, modifierSelectCallback) {
+  private openGiveHeldItemMenu(reward, rewardSelectCallback) {
     const party = globalScene.getPlayerParty();
-    const partyUiMode = PartyUiMode.MODIFIER;
+    const partyUiMode = PartyUiMode.REWARD;
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
       partyUiMode,
       -1,
       (slotIndex: number, _option: PartyOption) => {
         if (slotIndex < 6) {
-          globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
+          globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
             reward.apply(party[slotIndex]);
             globalScene.ui.clearText();
             globalScene.ui.setMode(UiMode.MESSAGE);
             super.end();
           });
         } else {
-          this.resetModifierSelect(modifierSelectCallback);
+          this.resetRewardSelect(rewardSelectCallback);
         }
       },
       reward.selectFilter,
@@ -407,12 +403,12 @@ export class SelectRewardPhase extends BattlePhase {
 
   // Function that resets the reward selection screen,
   // e.g. after pressing cancel in the party ui or while learning a move
-  private resetModifierSelect(modifierSelectCallback: ModifierSelectCallback) {
+  private resetRewardSelect(rewardSelectCallback: RewardSelectCallback) {
     globalScene.ui.setMode(
-      UiMode.MODIFIER_SELECT,
+      UiMode.REWARD_SELECT,
       this.isPlayer(),
       this.typeOptions,
-      modifierSelectCallback,
+      rewardSelectCallback,
       this.getRerollCost(globalScene.lockRewardTiers),
     );
   }

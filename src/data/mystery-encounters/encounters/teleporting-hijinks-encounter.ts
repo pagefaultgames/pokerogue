@@ -1,7 +1,7 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { rewards } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -173,8 +173,8 @@ export const TeleportingHijinksEncounter: MysteryEncounter = MysteryEncounterBui
         ],
       };
 
-      const magnet = generateRewardOption(rewards.ATTACK_TYPE_BOOSTER, [PokemonType.STEEL])!;
-      const metalCoat = generateRewardOption(rewards.ATTACK_TYPE_BOOSTER, [PokemonType.ELECTRIC])!;
+      const magnet = generateRewardOption(allRewards.ATTACK_TYPE_BOOSTER, [PokemonType.STEEL])!;
+      const metalCoat = generateRewardOption(allRewards.ATTACK_TYPE_BOOSTER, [PokemonType.ELECTRIC])!;
       setEncounterRewards({
         guaranteedRewardOptions: [magnet, metalCoat],
         fillRemaining: true,

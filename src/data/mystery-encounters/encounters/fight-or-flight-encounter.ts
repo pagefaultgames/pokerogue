@@ -97,7 +97,7 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
             : RewardTier.GREAT;
     regenerateRewardPoolThresholds(globalScene.getPlayerParty(), RewardPoolType.PLAYER, 0);
     let item: RewardOption | null = null;
-    // TMs and Candy Jar excluded from possible rewards as they're too swingy in value for a singular item reward
+    // TMs and Candy Jar excluded from possible allRewards as they're too swingy in value for a singular item reward
     while (!item || item.type.id.includes("TM_") || item.type.id === "CANDY_JAR") {
       item = getPlayerRewardOptions(1, globalScene.getPlayerParty(), [], {
         guaranteedRewardTiers: [tier],
@@ -199,7 +199,7 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
       ],
     },
     async () => {
-      // Leave encounter with no rewards or exp
+      // Leave encounter with no allRewards or exp
       leaveEncounterWithoutBattle(true);
       return true;
     },

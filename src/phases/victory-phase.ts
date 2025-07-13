@@ -1,6 +1,6 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { rewards } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import { BattleType } from "#enums/battle-type";
 import type { BattlerIndex } from "#enums/battler-index";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
@@ -55,11 +55,11 @@ export class VictoryPhase extends PokemonPhase {
               // Get event modifiers for this wave
               timedEventManager
                 .getFixedBattleEventRewards(globalScene.currentBattle.waveIndex)
-                .map(r => globalScene.phaseManager.pushNew("RewardPhase", rewards[r]));
+                .map(r => globalScene.phaseManager.pushNew("RewardPhase", allRewards[r]));
               break;
             case ClassicFixedBossWaves.EVIL_BOSS_2:
-              // Should get Lock Capsule on 165 before shop phase so it can be used in the rewards shop
-              globalScene.phaseManager.pushNew("RewardPhase", rewards.LOCK_CAPSULE);
+              // Should get Lock Capsule on 165 before shop phase so it can be used in the allRewards shop
+              globalScene.phaseManager.pushNew("RewardPhase", allRewards.LOCK_CAPSULE);
               break;
           }
         }
@@ -71,17 +71,17 @@ export class VictoryPhase extends PokemonPhase {
             this.getFixedBattleCustomRewards(),
           );
         } else if (globalScene.gameMode.isDaily) {
-          globalScene.phaseManager.pushNew("RewardPhase", rewards.EXP_CHARM);
+          globalScene.phaseManager.pushNew("RewardPhase", allRewards.EXP_CHARM);
           if (
             globalScene.currentBattle.waveIndex > 10 &&
             !globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)
           ) {
-            globalScene.phaseManager.pushNew("RewardPhase", rewards.GOLDEN_POKEBALL);
+            globalScene.phaseManager.pushNew("RewardPhase", allRewards.GOLDEN_POKEBALL);
           }
         } else {
           const superExpWave = !globalScene.gameMode.isEndless ? (globalScene.offsetGym ? 0 : 20) : 10;
           if (globalScene.gameMode.isEndless && globalScene.currentBattle.waveIndex === 10) {
-            globalScene.phaseManager.pushNew("RewardPhase", rewards.EXP_SHARE);
+            globalScene.phaseManager.pushNew("RewardPhase", allRewards.EXP_SHARE);
           }
           if (
             globalScene.currentBattle.waveIndex <= 750 &&
@@ -90,17 +90,17 @@ export class VictoryPhase extends PokemonPhase {
             globalScene.phaseManager.pushNew(
               "RewardPhase",
               globalScene.currentBattle.waveIndex % 30 !== superExpWave || globalScene.currentBattle.waveIndex > 250
-                ? rewards.EXP_CHARM
-                : rewards.SUPER_EXP_CHARM,
+                ? allRewards.EXP_CHARM
+                : allRewards.SUPER_EXP_CHARM,
             );
           }
           if (globalScene.currentBattle.waveIndex <= 150 && !(globalScene.currentBattle.waveIndex % 50)) {
-            globalScene.phaseManager.pushNew("RewardPhase", rewards.GOLDEN_POKEBALL);
+            globalScene.phaseManager.pushNew("RewardPhase", allRewards.GOLDEN_POKEBALL);
           }
           if (globalScene.gameMode.isEndless && !(globalScene.currentBattle.waveIndex % 50)) {
             globalScene.phaseManager.pushNew(
               "RewardPhase",
-              !(globalScene.currentBattle.waveIndex % 250) ? rewards.VOUCHER_PREMIUM : rewards.VOUCHER_PLUS,
+              !(globalScene.currentBattle.waveIndex % 250) ? allRewards.VOUCHER_PREMIUM : allRewards.VOUCHER_PLUS,
             );
             globalScene.phaseManager.pushNew("AddEnemyBuffModifierPhase");
           }
@@ -123,7 +123,7 @@ export class VictoryPhase extends PokemonPhase {
   }
 
   /**
-   * If this wave is a fixed battle with special custom modifier rewards,
+   * If this wave is a fixed battle with special custom modifier allRewards,
    * will pass those settings to the upcoming {@linkcode SelectRewardPhase}`.
    */
   getFixedBattleCustomRewards(): CustomRewardSettings | undefined {

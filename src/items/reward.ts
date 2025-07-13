@@ -5,7 +5,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { EvolutionItem, pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { tmPoolTiers, tmSpecies } from "#balance/tms";
-import { allHeldItems, allMoves, allTrainerItems, rewards } from "#data/data-lists";
+import { allHeldItems, allMoves, allRewards, allTrainerItems } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
 import { getPokeballCatchMultiplier, getPokeballName } from "#data/pokeball";
@@ -70,7 +70,7 @@ import {
   padInt,
   randSeedInt,
 } from "#utils/common";
-import { getRewardPoolForType } from "#utils/modifier-utils";
+import { getRewardPoolForType } from "#utils/reward-utils";
 import i18next from "i18next";
 
 type NewConsumableFunc = (type: Reward, args: any[]) => Consumable | null;
@@ -2023,7 +2023,7 @@ export function getLuckTextTint(luckValue: number): number {
 
 export function initRewards() {
   for (const [key, value] of Object.entries(rewardInitObj)) {
-    rewards[key] = value;
+    allRewards[key] = value;
   }
 }
 

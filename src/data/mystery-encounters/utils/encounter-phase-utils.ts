@@ -5,7 +5,7 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BiomePoolTier, biomeLinks } from "#balance/biomes";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
-import { rewards } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
 import { Egg } from "#data/egg";
 import type { Gender } from "#data/gender";
@@ -480,16 +480,16 @@ export function updatePlayerMoney(changeValue: number, playSound = true, showMes
  * @param pregenArgs Can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
  */
 export function generateReward(modifier: () => Reward, pregenArgs?: any[]): Reward | null {
-  const rewardId = Object.keys(rewards).find(k => rewards[k] === modifier);
+  const rewardId = Object.keys(allRewards).find(k => allRewards[k] === modifier);
   if (!rewardId) {
     return null;
   }
 
-  let result: Reward = rewards[rewardId]();
+  let result: Reward = allRewards[rewardId]();
 
   // Populates item id and tier (order matters)
   result = result
-    .withIdFromFunc(rewards[rewardId])
+    .withIdFromFunc(allRewards[rewardId])
     .withTierFromPool(RewardPoolType.PLAYER, globalScene.getPlayerParty());
 
   return result instanceof RewardGenerator ? result.generateType(globalScene.getPlayerParty(), pregenArgs) : result;
@@ -722,7 +722,7 @@ export function selectOptionThenPokemon(
 /**
  * Will initialize reward phases to follow the mystery encounter
  * Can have shop displayed or skipped
- * @param customShopRewards - adds a shop phase with the specified rewards / reward tiers
+ * @param customShopRewards - adds a shop phase with the specified allRewards / reward tiers
  * @param eggRewards
  * @param preRewardsCallback - can execute an arbitrary callback before the new phases if necessary (useful for updating items/party/injecting new phases before {@linkcode MysteryEncounterRewardsPhase})
  */
@@ -804,8 +804,8 @@ export function initSubsequentOptionSelect(optionSelectSettings: OptionSelectSet
 
 /**
  * Can be used to exit an encounter without any battles or followup
- * Will skip any shops and rewards, and queue the next encounter phase as normal
- * @param addHealPhase - when true, will add a shop phase to end of encounter with 0 rewards but healing items are available
+ * Will skip any shops and allRewards, and queue the next encounter phase as normal
+ * @param addHealPhase - when true, will add a shop phase to end of encounter with 0 allRewards but healing items are available
  * @param encounterMode - Can set custom encounter mode if necessary (may be required for forcing Pokemon to return before next phase)
  */
 export function leaveEncounterWithoutBattle(

@@ -1,6 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { rewards } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -147,7 +147,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
       const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
       setEncounterRewards({
-        guaranteedRewardFuncs: [rewards.TM_COMMON, rewards.TM_GREAT, rewards.MEMORY_MUSHROOM],
+        guaranteedRewardFuncs: [allRewards.TM_COMMON, allRewards.TM_GREAT, allRewards.MEMORY_MUSHROOM],
         fillRemaining: true,
       });
 

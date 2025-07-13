@@ -3,7 +3,7 @@ import { BattleScene } from "#app/battle-scene";
 import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import overrides from "#app/overrides";
-import { rewards } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { Button } from "#enums/buttons";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
@@ -316,7 +316,7 @@ export class GameManager {
   doSelectModifier() {
     this.onNextPrompt(
       "SelectRewardPhase",
-      UiMode.MODIFIER_SELECT,
+      UiMode.REWARD_SELECT,
       () => {
         const handler = this.scene.ui.getHandler() as RewardSelectUiHandler;
         handler.processInput(Button.CANCEL);
@@ -482,7 +482,7 @@ export class GameManager {
    */
   doRevivePokemon(pokemonIndex: number) {
     const party = this.scene.getPlayerParty();
-    const candidate = new RewardOption(rewards.MAX_REVIVE(), 0);
+    const candidate = new RewardOption(allRewards.MAX_REVIVE(), 0);
     const modifier = candidate.type!.newModifier(party[pokemonIndex]);
     this.scene.addModifier(modifier, false);
   }

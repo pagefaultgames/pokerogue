@@ -43,14 +43,14 @@ describe("UI - Transfer Items", () => {
 
     game.move.select(MoveId.DRAGON_CLAW);
 
-    game.onNextPrompt("SelectRewardPhase", UiMode.MODIFIER_SELECT, () => {
+    game.onNextPrompt("SelectRewardPhase", UiMode.REWARD_SELECT, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(RewardSelectUiHandler);
 
       const handler = game.scene.ui.getHandler() as RewardSelectUiHandler;
       handler.setCursor(1);
       handler.processInput(Button.ACTION);
 
-      void game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.MODIFIER_TRANSFER);
+      void game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.ITEM_TRANSFER);
     });
 
     await game.phaseInterceptor.to("BattleEndPhase");

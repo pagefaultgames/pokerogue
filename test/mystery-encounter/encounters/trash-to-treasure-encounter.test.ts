@@ -200,7 +200,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       expect(movePhases.filter(p => (p as MovePhase).move.moveId === MoveId.STOCKPILE).length).toBe(1);
     });
 
-    it("should have 2 Rogue, 1 Ultra, 1 Great in rewards", async () => {
+    it("should have 2 Rogue, 1 Ultra, 1 Great in allRewards", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
@@ -208,26 +208,26 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
       await game.phaseInterceptor.run(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(4);
+      expect(rewardSelectHandler.options.length).toEqual(4);
       expect(
-        modifierSelectHandler.options[0].rewardOption.type.tier -
-          modifierSelectHandler.options[0].rewardOption.upgradeCount,
+        rewardSelectHandler.options[0].rewardOption.type.tier -
+          rewardSelectHandler.options[0].rewardOption.upgradeCount,
       ).toEqual(RewardTier.ROGUE);
       expect(
-        modifierSelectHandler.options[1].rewardOption.type.tier -
-          modifierSelectHandler.options[1].rewardOption.upgradeCount,
+        rewardSelectHandler.options[1].rewardOption.type.tier -
+          rewardSelectHandler.options[1].rewardOption.upgradeCount,
       ).toEqual(RewardTier.ROGUE);
       expect(
-        modifierSelectHandler.options[2].rewardOption.type.tier -
-          modifierSelectHandler.options[2].rewardOption.upgradeCount,
+        rewardSelectHandler.options[2].rewardOption.type.tier -
+          rewardSelectHandler.options[2].rewardOption.upgradeCount,
       ).toEqual(RewardTier.ULTRA);
       expect(
-        modifierSelectHandler.options[3].rewardOption.type.tier -
-          modifierSelectHandler.options[3].rewardOption.upgradeCount,
+        rewardSelectHandler.options[3].rewardOption.type.tier -
+          rewardSelectHandler.options[3].rewardOption.upgradeCount,
       ).toEqual(RewardTier.GREAT);
     });
   });

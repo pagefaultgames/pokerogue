@@ -1,5 +1,5 @@
 import type { BattleScene } from "#app/battle-scene";
-import { rewards } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
@@ -51,7 +51,7 @@ describe("SelectRewardPhase", () => {
     scene.phaseManager.unshiftPhase(selectModifierPhase);
     await game.phaseInterceptor.to(SelectRewardPhase);
 
-    expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
+    expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
   });
 
   it("should generate random modifiers", async () => {
@@ -59,19 +59,19 @@ describe("SelectRewardPhase", () => {
     game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to("SelectRewardPhase");
 
-    expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-    const modifierSelectHandler = scene.ui.handlers.find(
+    expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+    const rewardSelectHandler = scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
-    expect(modifierSelectHandler.options.length).toEqual(3);
+    expect(rewardSelectHandler.options.length).toEqual(3);
   });
 
   it("should modify reroll cost", async () => {
     initSceneWithoutEncounterPhase(scene, [SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     const options = [
-      new RewardOption(rewards.POTION(), 0, 100),
-      new RewardOption(rewards.ETHER(), 0, 400),
-      new RewardOption(rewards.REVIVE(), 0, 1000),
+      new RewardOption(allRewards.POTION(), 0, 100),
+      new RewardOption(allRewards.ETHER(), 0, 400),
+      new RewardOption(allRewards.REVIVE(), 0, 1000),
     ];
 
     const selectModifierPhase1 = new SelectRewardPhase(0, undefined, {
@@ -97,17 +97,17 @@ describe("SelectRewardPhase", () => {
 
     // TODO: nagivate the ui to reroll somehow
     //const smphase = scene.phaseManager.getCurrentPhase() as SelectRewardPhase;
-    expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-    const modifierSelectHandler = scene.ui.handlers.find(
+    expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+    const rewardSelectHandler = scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
-    expect(modifierSelectHandler.options.length).toEqual(3);
+    expect(rewardSelectHandler.options.length).toEqual(3);
 
-    modifierSelectHandler.processInput(Button.ACTION);
+    rewardSelectHandler.processInput(Button.ACTION);
 
     expect(scene.money).toBe(1000000 - 250);
-    expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-    expect(modifierSelectHandler.options.length).toEqual(3);
+    expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+    expect(rewardSelectHandler.options.length).toEqual(3);
   });
 
   it.todo("should generate random modifiers of same tier for reroll with reroll lock", async () => {
@@ -125,29 +125,26 @@ describe("SelectRewardPhase", () => {
     game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to("SelectRewardPhase");
 
-    expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-    const modifierSelectHandler = scene.ui.handlers.find(
+    expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+    const rewardSelectHandler = scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
-    expect(modifierSelectHandler.options.length).toEqual(3);
-    const firstRollTiers: RewardTier[] = modifierSelectHandler.options.map(o => o.rewardOption.type.tier);
+    expect(rewardSelectHandler.options.length).toEqual(3);
+    const firstRollTiers: RewardTier[] = rewardSelectHandler.options.map(o => o.rewardOption.type.tier);
 
     // TODO: nagivate ui to reroll with lock capsule enabled
 
-    expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-    expect(modifierSelectHandler.options.length).toEqual(3);
+    expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+    expect(rewardSelectHandler.options.length).toEqual(3);
     // Reroll with lock can still upgrade
     expect(
-      modifierSelectHandler.options[0].rewardOption.type.tier -
-        modifierSelectHandler.options[0].rewardOption.upgradeCount,
+      rewardSelectHandler.options[0].rewardOption.type.tier - rewardSelectHandler.options[0].rewardOption.upgradeCount,
     ).toEqual(firstRollTiers[0]);
     expect(
-      modifierSelectHandler.options[1].rewardOption.type.tier -
-        modifierSelectHandler.options[1].rewardOption.upgradeCount,
+      rewardSelectHandler.options[1].rewardOption.type.tier - rewardSelectHandler.options[1].rewardOption.upgradeCount,
     ).toEqual(firstRollTiers[1]);
     expect(
-      modifierSelectHandler.options[2].rewardOption.type.tier -
-        modifierSelectHandler.options[2].rewardOption.upgradeCount,
+      rewardSelectHandler.options[2].rewardOption.type.tier - rewardSelectHandler.options[2].rewardOption.upgradeCount,
     ).toEqual(firstRollTiers[2]);
   });
 
@@ -156,11 +153,11 @@ describe("SelectRewardPhase", () => {
     scene.money = 1000000;
     const customRewards: CustomRewardSettings = {
       guaranteedRewardFuncs: [
-        rewards.MEMORY_MUSHROOM,
-        rewards.TM_ULTRA,
-        rewards.LEFTOVERS,
-        rewards.AMULET_COIN,
-        rewards.GOLDEN_PUNCH,
+        allRewards.MEMORY_MUSHROOM,
+        allRewards.TM_ULTRA,
+        allRewards.LEFTOVERS,
+        allRewards.AMULET_COIN,
+        allRewards.GOLDEN_PUNCH,
       ],
     };
     const selectModifierPhase = new SelectRewardPhase(0, undefined, customRewards);
@@ -168,16 +165,16 @@ describe("SelectRewardPhase", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("SelectRewardPhase");
 
-    expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-    const modifierSelectHandler = scene.ui.handlers.find(
+    expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+    const rewardSelectHandler = scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
-    expect(modifierSelectHandler.options.length).toEqual(5);
-    expect(modifierSelectHandler.options[0].rewardOption.type.id).toEqual("MEMORY_MUSHROOM");
-    expect(modifierSelectHandler.options[1].rewardOption.type.id).toEqual("TM_ULTRA");
-    expect(modifierSelectHandler.options[2].rewardOption.type.id).toEqual("LEFTOVERS");
-    expect(modifierSelectHandler.options[3].rewardOption.type.id).toEqual("AMULET_COIN");
-    expect(modifierSelectHandler.options[4].rewardOption.type.id).toEqual("GOLDEN_PUNCH");
+    expect(rewardSelectHandler.options.length).toEqual(5);
+    expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual("MEMORY_MUSHROOM");
+    expect(rewardSelectHandler.options[1].rewardOption.type.id).toEqual("TM_ULTRA");
+    expect(rewardSelectHandler.options[2].rewardOption.type.id).toEqual("LEFTOVERS");
+    expect(rewardSelectHandler.options[3].rewardOption.type.id).toEqual("AMULET_COIN");
+    expect(rewardSelectHandler.options[4].rewardOption.type.id).toEqual("GOLDEN_PUNCH");
   });
 
   it("should generate custom modifier tiers that can upgrade from luck", async () => {
@@ -205,30 +202,25 @@ describe("SelectRewardPhase", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("SelectRewardPhase");
 
-    expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-    const modifierSelectHandler = scene.ui.handlers.find(
+    expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+    const rewardSelectHandler = scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
-    expect(modifierSelectHandler.options.length).toEqual(5);
+    expect(rewardSelectHandler.options.length).toEqual(5);
     expect(
-      modifierSelectHandler.options[0].rewardOption.type.tier -
-        modifierSelectHandler.options[0].rewardOption.upgradeCount,
+      rewardSelectHandler.options[0].rewardOption.type.tier - rewardSelectHandler.options[0].rewardOption.upgradeCount,
     ).toEqual(RewardTier.COMMON);
     expect(
-      modifierSelectHandler.options[1].rewardOption.type.tier -
-        modifierSelectHandler.options[1].rewardOption.upgradeCount,
+      rewardSelectHandler.options[1].rewardOption.type.tier - rewardSelectHandler.options[1].rewardOption.upgradeCount,
     ).toEqual(RewardTier.GREAT);
     expect(
-      modifierSelectHandler.options[2].rewardOption.type.tier -
-        modifierSelectHandler.options[2].rewardOption.upgradeCount,
+      rewardSelectHandler.options[2].rewardOption.type.tier - rewardSelectHandler.options[2].rewardOption.upgradeCount,
     ).toEqual(RewardTier.ULTRA);
     expect(
-      modifierSelectHandler.options[3].rewardOption.type.tier -
-        modifierSelectHandler.options[3].rewardOption.upgradeCount,
+      rewardSelectHandler.options[3].rewardOption.type.tier - rewardSelectHandler.options[3].rewardOption.upgradeCount,
     ).toEqual(RewardTier.ROGUE);
     expect(
-      modifierSelectHandler.options[4].rewardOption.type.tier -
-        modifierSelectHandler.options[4].rewardOption.upgradeCount,
+      rewardSelectHandler.options[4].rewardOption.type.tier - rewardSelectHandler.options[4].rewardOption.upgradeCount,
     ).toEqual(RewardTier.MASTER);
   });
 
@@ -236,7 +228,7 @@ describe("SelectRewardPhase", () => {
     await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     scene.money = 1000000;
     const customRewards: CustomRewardSettings = {
-      guaranteedRewardFuncs: [rewards.MEMORY_MUSHROOM, rewards.TM_COMMON],
+      guaranteedRewardFuncs: [allRewards.MEMORY_MUSHROOM, allRewards.TM_COMMON],
       guaranteedRewardTiers: [RewardTier.MASTER, RewardTier.MASTER],
     };
     const selectModifierPhase = new SelectRewardPhase(0, undefined, customRewards);
@@ -244,22 +236,22 @@ describe("SelectRewardPhase", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.run(SelectRewardPhase);
 
-    expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-    const modifierSelectHandler = scene.ui.handlers.find(
+    expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+    const rewardSelectHandler = scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
-    expect(modifierSelectHandler.options.length).toEqual(4);
-    expect(modifierSelectHandler.options[0].rewardOption.type.id).toEqual("MEMORY_MUSHROOM");
-    expect(modifierSelectHandler.options[1].rewardOption.type.id).toEqual("TM_COMMON");
-    expect(modifierSelectHandler.options[2].rewardOption.type.tier).toEqual(RewardTier.MASTER);
-    expect(modifierSelectHandler.options[3].rewardOption.type.tier).toEqual(RewardTier.MASTER);
+    expect(rewardSelectHandler.options.length).toEqual(4);
+    expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual("MEMORY_MUSHROOM");
+    expect(rewardSelectHandler.options[1].rewardOption.type.id).toEqual("TM_COMMON");
+    expect(rewardSelectHandler.options[2].rewardOption.type.tier).toEqual(RewardTier.MASTER);
+    expect(rewardSelectHandler.options[3].rewardOption.type.tier).toEqual(RewardTier.MASTER);
   });
 
   it("should fill remaining modifiers if fillRemaining is true with custom modifiers", async () => {
     await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     scene.money = 1000000;
     const customRewards: CustomRewardSettings = {
-      guaranteedRewardFuncs: [rewards.MEMORY_MUSHROOM],
+      guaranteedRewardFuncs: [allRewards.MEMORY_MUSHROOM],
       guaranteedRewardTiers: [RewardTier.MASTER],
       fillRemaining: true,
     };
@@ -268,12 +260,12 @@ describe("SelectRewardPhase", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.run(SelectRewardPhase);
 
-    expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-    const modifierSelectHandler = scene.ui.handlers.find(
+    expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+    const rewardSelectHandler = scene.ui.handlers.find(
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
-    expect(modifierSelectHandler.options.length).toEqual(3);
-    expect(modifierSelectHandler.options[0].rewardOption.type.id).toEqual("MEMORY_MUSHROOM");
-    expect(modifierSelectHandler.options[1].rewardOption.type.tier).toEqual(RewardTier.MASTER);
+    expect(rewardSelectHandler.options.length).toEqual(3);
+    expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual("MEMORY_MUSHROOM");
+    expect(rewardSelectHandler.options[1].rewardOption.type.tier).toEqual(RewardTier.MASTER);
   });
 });

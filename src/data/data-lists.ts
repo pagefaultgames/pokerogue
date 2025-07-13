@@ -15,4 +15,4 @@ export const allHeldItems: Record<HeldItemId, HeldItem> = {};
 export const allTrainerItems: Record<TrainerItemId, TrainerItem> = {};
 
 // TODO: Figure out what this is used for and provide an appropriate tsdoc comment
-export const rewards = {} as Rewards;
+export const allRewards = {} as Rewards;

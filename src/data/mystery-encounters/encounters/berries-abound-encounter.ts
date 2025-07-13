@@ -1,7 +1,7 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { rewards } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -161,7 +161,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
       const shopOptions: RewardOption[] = [];
       for (let i = 0; i < 5; i++) {
         // Generate shop berries
-        const mod = generateRewardOption(rewards.BERRY);
+        const mod = generateRewardOption(allRewards.BERRY);
         if (mod) {
           shopOptions.push(mod);
         }
@@ -188,7 +188,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
         const shopOptions: RewardOption[] = [];
         for (let i = 0; i < 5; i++) {
           // Generate shop berries
-          const mod = generateRewardOption(rewards.BERRY);
+          const mod = generateRewardOption(allRewards.BERRY);
           if (mod) {
             shopOptions.push(mod);
           }
@@ -296,7 +296,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
       ],
     },
     async () => {
-      // Leave encounter with no rewards or exp
+      // Leave encounter with no allRewards or exp
       leaveEncounterWithoutBattle(true);
       return true;
     },

@@ -227,7 +227,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
       ],
     },
     async () => {
-      // Leave encounter with no rewards or exp
+      // Leave encounter with no allRewards or exp
       leaveEncounterWithoutBattle(true);
       return true;
     },

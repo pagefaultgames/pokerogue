@@ -264,7 +264,7 @@ export async function initI18n(): Promise<void> {
       "voucher",
       "weather",
       "partyUiHandler",
-      "modifierSelectUiHandler",
+      "rewardSelectUiHandler",
       "moveTriggers",
       "runHistory",
       "mysteryEncounters/mysteriousChallengers",

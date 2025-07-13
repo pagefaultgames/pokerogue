@@ -295,7 +295,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       expect(enemyField[0].isBoss()).toBe(true);
     });
 
-    it("should have Magnet and Metal Coat in rewards after battle", async () => {
+    it("should have Magnet and Metal Coat in allRewards after battle", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, defaultParty);
       await runMysteryEncounterToEnd(game, 3, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
@@ -303,17 +303,17 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
       await game.phaseInterceptor.run(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(
-        modifierSelectHandler.options.some(
+        rewardSelectHandler.options.some(
           opt => opt.rewardOption.type.name === i18next.t("modifierType:AttackTypeBoosterItem.metal_coat"),
         ),
       ).toBe(true);
       expect(
-        modifierSelectHandler.options.some(
+        rewardSelectHandler.options.some(
           opt => opt.rewardOption.type.name === i18next.t("modifierType:AttackTypeBoosterItem.magnet"),
         ),
       ).toBe(true);

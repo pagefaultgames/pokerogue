@@ -147,8 +147,8 @@ import {
   shiftCharCodes,
 } from "#utils/common";
 import { deepMergeSpriteData } from "#utils/data";
-import { getRewardPoolForType } from "#utils/modifier-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getRewardPoolForType } from "#utils/reward-utils";
 import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
@@ -493,12 +493,12 @@ export class BattleScene extends SceneBase {
     this.enemyTrainerItems = new TrainerItemManager();
 
     this.itemBar = new ItemBar();
-    this.itemBar.setName("modifier-bar");
+    this.itemBar.setName("item-bar");
     this.add.existing(this.itemBar);
     uiContainer.add(this.itemBar);
 
     this.enemyItemBar = new ItemBar(true);
-    this.enemyItemBar.setName("enemy-modifier-bar");
+    this.enemyItemBar.setName("enemy-item-bar");
     this.add.existing(this.enemyItemBar);
     uiContainer.add(this.enemyItemBar);
 

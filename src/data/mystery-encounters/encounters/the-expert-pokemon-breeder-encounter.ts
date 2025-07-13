@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
-import { rewards } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
 import { getPokeballTintColor } from "#data/pokeball";
 import { BiomeId } from "#enums/biome-id";
@@ -294,7 +294,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         const eggOptions = getEggOptions(pokemon1CommonEggs, pokemon1RareEggs);
         setEncounterRewards(
           {
-            guaranteedRewardFuncs: [rewards.SOOTHE_BELL],
+            guaranteedRewardFuncs: [allRewards.SOOTHE_BELL],
             fillRemaining: true,
           },
           eggOptions,
@@ -304,7 +304,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         // Remove all Pokemon from the party except the chosen Pokemon
         removePokemonFromPartyAndStoreHeldItems(encounter, pokemon1);
 
-        // Configure outro dialogue for egg rewards
+        // Configure outro dialogue for egg allRewards
         encounter.dialogue.outro = [
           {
             speaker: trainerNameKey,
@@ -353,7 +353,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         const eggOptions = getEggOptions(pokemon2CommonEggs, pokemon2RareEggs);
         setEncounterRewards(
           {
-            guaranteedRewardFuncs: [rewards.SOOTHE_BELL],
+            guaranteedRewardFuncs: [allRewards.SOOTHE_BELL],
             fillRemaining: true,
           },
           eggOptions,
@@ -363,7 +363,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         // Remove all Pokemon from the party except the chosen Pokemon
         removePokemonFromPartyAndStoreHeldItems(encounter, pokemon2);
 
-        // Configure outro dialogue for egg rewards
+        // Configure outro dialogue for egg allRewards
         encounter.dialogue.outro = [
           {
             speaker: trainerNameKey,
@@ -412,7 +412,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         const eggOptions = getEggOptions(pokemon3CommonEggs, pokemon3RareEggs);
         setEncounterRewards(
           {
-            guaranteedRewardFuncs: [rewards.SOOTHE_BELL],
+            guaranteedRewardFuncs: [allRewards.SOOTHE_BELL],
             fillRemaining: true,
           },
           eggOptions,
@@ -422,7 +422,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         // Remove all Pokemon from the party except the chosen Pokemon
         removePokemonFromPartyAndStoreHeldItems(encounter, pokemon3);
 
-        // Configure outro dialogue for egg rewards
+        // Configure outro dialogue for egg allRewards
         encounter.dialogue.outro = [
           {
             speaker: trainerNameKey,
@@ -640,7 +640,7 @@ function onGameOver() {
   const chosenPokemon = encounter.misc.chosenPokemon;
   chosenPokemon.friendship = 0;
 
-  // Clear all rewards that would have been earned
+  // Clear all allRewards that would have been earned
   encounter.doEncounterRewards = undefined;
 
   // Set flag that encounter was failed

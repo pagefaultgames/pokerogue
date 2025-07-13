@@ -422,7 +422,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
 
         regenerateRewardPoolThresholds(party, RewardPoolType.PLAYER, 0);
         let item: RewardOption | null = null;
-        // TMs excluded from possible rewards
+        // TMs excluded from possible allRewards
         while (!item || item.type.id.includes("TM_")) {
           item = getPlayerRewardOptions(1, party, [], {
             guaranteedRewardTiers: [tier],
@@ -458,7 +458,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
       ],
     },
     async () => {
-      // Leave encounter with no rewards or exp
+      // Leave encounter with no allRewards or exp
       leaveEncounterWithoutBattle(true);
       return true;
     },

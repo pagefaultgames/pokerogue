@@ -1,5 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { rewards } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
@@ -59,23 +59,23 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
     },
     async () => {
       // Choose TMs
-      const modifiers: RewardFunc[] = [];
+      const rewards: RewardFunc[] = [];
       let i = 0;
       while (i < 5) {
         // 2/2/1 weight on TM rarity
         const roll = randSeedInt(5);
         if (roll < 2) {
-          modifiers.push(rewards.TM_COMMON);
+          rewards.push(allRewards.TM_COMMON);
         } else if (roll < 4) {
-          modifiers.push(rewards.TM_GREAT);
+          rewards.push(allRewards.TM_GREAT);
         } else {
-          modifiers.push(rewards.TM_ULTRA);
+          rewards.push(allRewards.TM_ULTRA);
         }
         i++;
       }
 
       setEncounterRewards({
-        guaranteedRewardFuncs: modifiers,
+        guaranteedRewardFuncs: rewards,
         fillRemaining: false,
       });
       leaveEncounterWithoutBattle();
@@ -88,21 +88,21 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
     },
     async () => {
       // Choose Vitamins
-      const modifiers: RewardFunc[] = [];
+      const rewards: RewardFunc[] = [];
       let i = 0;
       while (i < 3) {
         // 2/1 weight on base stat booster vs PP Up
         const roll = randSeedInt(3);
         if (roll === 0) {
-          modifiers.push(rewards.PP_UP);
+          rewards.push(allRewards.PP_UP);
         } else {
-          modifiers.push(rewards.BASE_STAT_BOOSTER);
+          rewards.push(allRewards.BASE_STAT_BOOSTER);
         }
         i++;
       }
 
       setEncounterRewards({
-        guaranteedRewardFuncs: modifiers,
+        guaranteedRewardFuncs: rewards,
         fillRemaining: false,
       });
       leaveEncounterWithoutBattle();
@@ -115,21 +115,21 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
     },
     async () => {
       // Choose X Items
-      const modifiers: RewardFunc[] = [];
+      const rewards: RewardFunc[] = [];
       let i = 0;
       while (i < 5) {
         // 4/1 weight on base stat booster vs Dire Hit
         const roll = randSeedInt(5);
         if (roll === 0) {
-          modifiers.push(rewards.DIRE_HIT);
+          rewards.push(allRewards.DIRE_HIT);
         } else {
-          modifiers.push(rewards.TEMP_STAT_STAGE_BOOSTER);
+          rewards.push(allRewards.TEMP_STAT_STAGE_BOOSTER);
         }
         i++;
       }
 
       setEncounterRewards({
-        guaranteedRewardFuncs: modifiers,
+        guaranteedRewardFuncs: rewards,
         fillRemaining: false,
       });
       leaveEncounterWithoutBattle();
@@ -142,25 +142,25 @@ export const DepartmentStoreSaleEncounter: MysteryEncounter = MysteryEncounterBu
     },
     async () => {
       // Choose Pokeballs
-      const modifiers: RewardFunc[] = [];
+      const rewards: RewardFunc[] = [];
       let i = 0;
       while (i < 4) {
         // 10/30/20/5 weight on pokeballs
         const roll = randSeedInt(65);
         if (roll < 10) {
-          modifiers.push(rewards.POKEBALL);
+          rewards.push(allRewards.POKEBALL);
         } else if (roll < 40) {
-          modifiers.push(rewards.GREAT_BALL);
+          rewards.push(allRewards.GREAT_BALL);
         } else if (roll < 60) {
-          modifiers.push(rewards.ULTRA_BALL);
+          rewards.push(allRewards.ULTRA_BALL);
         } else {
-          modifiers.push(rewards.ROGUE_BALL);
+          rewards.push(allRewards.ROGUE_BALL);
         }
         i++;
       }
 
       setEncounterRewards({
-        guaranteedRewardFuncs: modifiers,
+        guaranteedRewardFuncs: rewards,
         fillRemaining: false,
       });
       leaveEncounterWithoutBattle();

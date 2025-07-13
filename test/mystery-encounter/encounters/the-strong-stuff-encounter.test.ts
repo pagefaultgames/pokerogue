@@ -218,7 +218,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       expect(movePhases.filter(p => (p as MovePhase).move.moveId === MoveId.STEALTH_ROCK).length).toBe(1);
     });
 
-    it("should have Soul Dew in rewards", async () => {
+    it("should have Soul Dew in allRewards", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
@@ -226,12 +226,12 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
       await game.phaseInterceptor.run(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(3);
-      expect(modifierSelectHandler.options[0].rewardOption.type.id).toEqual("SOUL_DEW");
+      expect(rewardSelectHandler.options.length).toEqual(3);
+      expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual("SOUL_DEW");
     });
   });
 });

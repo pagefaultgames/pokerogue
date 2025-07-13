@@ -1,4 +1,4 @@
-import { rewards } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
@@ -44,7 +44,7 @@ describe("Form Change Phase", () => {
     expect(zacian.calculateBaseStats()).toStrictEqual([92, 120, 115, 80, 115, 138]);
 
     // Give Zacian a Rusted Sword
-    const rustedSwordType = generateReward(rewards.RARE_FORM_CHANGE_ITEM)!;
+    const rustedSwordType = generateReward(allRewards.RARE_FORM_CHANGE_ITEM)!;
     const rustedSword = rustedSwordType.newModifier(zacian);
     await game.scene.addModifier(rustedSword);
 
