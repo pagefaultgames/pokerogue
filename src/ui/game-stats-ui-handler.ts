@@ -213,7 +213,6 @@ const displayStats: DisplayStats = {
 };
 
 export class GameStatsUiHandler extends UiHandler {
-  /** List of languages that display stats in single-column mode*/
   private gameStatsContainer: Phaser.GameObjects.Container;
   private statsContainer: Phaser.GameObjects.Container;
 
@@ -229,8 +228,9 @@ export class GameStatsUiHandler extends UiHandler {
   /** Whether the UI is single column mode */
   private get singleCol(): boolean {
     const resolvedLang = i18next.resolvedLanguage ?? "en";
-    // NOTE TO TRANSLATION TEAM: Add more languages that want single-column here: add `|| resolvedLang === "lang"`
-    return resolvedLang === "ru";
+    // NOTE TO TRANSLATION TEAM: Add more languages that want to display
+    // in a single-column inside of the `[]` (e.g. `["ru", "fr"]`)
+    return ["ru"].includes(resolvedLang);
   }
   /** The number of columns used by this menu in the resolved language */
   private get columnCount(): 1 | 2 {
