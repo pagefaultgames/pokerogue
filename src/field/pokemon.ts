@@ -242,6 +242,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public ivs: number[];
   public nature: Nature;
   public moveset: PokemonMove[];
+  /** 
+   * This Pokemon's current {@link https://m.bulbapedia.bulbagarden.net/wiki/Status_condition#Non-volatile_status | non-volatile status condition},
+   * or `null` if none exist.
+   * @todo Make private
+   */
   public status: Status | null;
   public friendship: number;
   public metLevel: number;
@@ -4889,33 +4894,38 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Set this Pokemon's {@linkcode status | status condition} to the specified effect.
-   * Does **NOT** perform any feasibility checks whatsoever; must be checked by the caller.
+   * Set this Pokemon's {@linkcode status | non-volatile status condition} to the specified effect.
    * @param effect - The {@linkcode StatusEffect} to set
+   * @remarks
+   * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
    */
   doSetStatus(effect: Exclude<StatusEffect, StatusEffect.SLEEP>): void;
   /**
-   * Set this Pokemon's {@linkcode status | status condition} to the specified effect.
+   * Set this Pokemon's {@linkcode status | non-volatile status condition} to the specified effect.
    * Does **NOT** perform any feasibility checks whatsoever; must be checked by the caller.
    * @param effect - {@linkcode StatusEffect.SLEEP}
    * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
+   * @remarks
+   * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
    */
   doSetStatus(effect: StatusEffect.SLEEP, sleepTurnsRemaining?: number): void;
   /**
-   * Set this Pokemon's {@linkcode status | status condition} to the specified effect.
-   * Does **NOT** perform any feasibility checks whatsoever; must be checked by the caller.
+   * Set this Pokemon's {@linkcode status | non-volatile status condition} to the specified effect.
    * @param effect - The {@linkcode StatusEffect} to set
    * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
    * and is unused for all non-sleep Statuses
+   * @remarks
+   * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
    */
   doSetStatus(effect: StatusEffect, sleepTurnsRemaining?: number): void;
   /**
-   * Set this Pokemon's {@linkcode status | status condition} to the specified effect.
-   * Does **NOT** perform any feasibility checks whatsoever; must be checked by the caller.
+   * Set this Pokemon's {@linkcode status | non-volatile status condition} to the specified effect.
    * @param effect - The {@linkcode StatusEffect} to set
    * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
    * and is unused for all non-sleep Statuses
-   * @todo Make this private and change tests to use a field-based helper or similar
+   * @remarks
+   * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
+   * @todo Make this and all related fields private and change tests to use a field-based helper or similar
    */
   doSetStatus(
     effect: StatusEffect,
