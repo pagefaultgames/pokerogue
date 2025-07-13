@@ -1,8 +1,8 @@
-import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -93,8 +93,6 @@ describe("Abilities - Tera Shell", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(spy).toHaveLastReturnedWith(1);
     expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp() - 40);
-
-    spy.mockRestore();
   });
 
   it("should change the effectiveness of all strikes of a multi-strike move", async () => {
@@ -114,6 +112,5 @@ describe("Abilities - Tera Shell", () => {
       expect(spy).toHaveLastReturnedWith(0.5);
     }
     expect(spy).toHaveReturnedTimes(2);
-    spy.mockRestore();
   });
 });

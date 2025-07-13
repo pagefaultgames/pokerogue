@@ -1,13 +1,13 @@
-import { BattleStyle } from "#app/enums/battle-style";
-import { Button } from "#app/enums/buttons";
 import overrides from "#app/overrides";
-import { CommandPhase } from "#app/phases/command-phase";
-import { EncounterPhase } from "#app/phases/encounter-phase";
-import { TitlePhase } from "#app/phases/title-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import type SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
+import { BattleStyle } from "#enums/battle-style";
+import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
-import { GameManagerHelper } from "./gameManagerHelper";
+import { CommandPhase } from "#phases/command-phase";
+import { EncounterPhase } from "#phases/encounter-phase";
+import { TitlePhase } from "#phases/title-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
+import type { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
 
 /**
  * Helper to handle daily mode specifics
@@ -16,8 +16,9 @@ export class DailyModeHelper extends GameManagerHelper {
   /**
    * Runs the daily game to the summon phase.
    * @returns A promise that resolves when the summon phase is reached.
+   * @remarks Please do not use for starting normal battles - use {@linkcode startBattle} instead
    */
-  async runToSummon() {
+  async runToSummon(): Promise<void> {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -45,7 +46,7 @@ export class DailyModeHelper extends GameManagerHelper {
    * Transitions to the start of a battle.
    * @returns A promise that resolves when the battle is started.
    */
-  async startBattle() {
+  async startBattle(): Promise<void> {
     await this.runToSummon();
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {

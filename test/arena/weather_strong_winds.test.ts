@@ -1,10 +1,10 @@
-import { allMoves } from "#app/data/data-lists";
-import { StatusEffect } from "#app/enums/status-effect";
-import { TurnStartPhase } from "#app/phases/turn-start-phase";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { StatusEffect } from "#enums/status-effect";
+import { TurnStartPhase } from "#phases/turn-start-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -24,11 +24,12 @@ describe("Weather - Strong Winds", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.startingLevel(10);
-    game.override.enemySpecies(SpeciesId.TAILLOW);
-    game.override.enemyAbility(AbilityId.DELTA_STREAM);
-    game.override.moveset([MoveId.THUNDERBOLT, MoveId.ICE_BEAM, MoveId.ROCK_SLIDE]);
+    game.override
+      .battleStyle("single")
+      .startingLevel(10)
+      .enemySpecies(SpeciesId.TAILLOW)
+      .enemyAbility(AbilityId.DELTA_STREAM)
+      .moveset([MoveId.THUNDERBOLT, MoveId.ICE_BEAM, MoveId.ROCK_SLIDE]);
   });
 
   it("electric type move is not very effective on Rayquaza", async () => {
@@ -85,7 +86,7 @@ describe("Weather - Strong Winds", () => {
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1;
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.arena.weather?.weatherType).toBeUndefined();

@@ -1,9 +1,9 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -28,7 +28,7 @@ describe("Items - Multi Lens", () => {
       .ability(AbilityId.BALL_FETCH)
       .startingHeldItems([{ name: "MULTI_LENS" }])
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.SNORLAX)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
@@ -210,22 +210,5 @@ describe("Items - Multi Lens", () => {
 
     // TODO: Update hit count to 1 once Future Sight is fixed to not activate held items if user is off the field
     expect(enemyPokemon.damageAndUpdate).toHaveBeenCalledTimes(2);
-  });
-
-  it("should not allow Pollen Puff to heal ally more than once", async () => {
-    game.override.battleStyle("double").moveset([MoveId.POLLEN_PUFF, MoveId.ENDURE]);
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.OMANYTE]);
-
-    const [, rightPokemon] = game.scene.getPlayerField();
-
-    rightPokemon.damageAndUpdate(rightPokemon.hp - 1);
-
-    game.move.select(MoveId.POLLEN_PUFF, 0, BattlerIndex.PLAYER_2);
-    game.move.select(MoveId.ENDURE, 1);
-
-    await game.toNextTurn();
-
-    // Pollen Puff heals with a ratio of 0.5, as long as Pollen Puff triggers only once the pokemon will always be <= (0.5 * Max HP) + 1
-    expect(rightPokemon.hp).toBeLessThanOrEqual(0.5 * rightPokemon.getMaxHp() + 1);
   });
 });

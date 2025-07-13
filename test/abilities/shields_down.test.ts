@@ -1,12 +1,12 @@
-import { Status } from "#app/data/status-effect";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("Abilities - SHIELDS DOWN", () => {
@@ -26,17 +26,17 @@ describe("Abilities - SHIELDS DOWN", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = MoveId.SPLASH;
-    game.override.battleStyle("single");
-    game.override.ability(AbilityId.SHIELDS_DOWN);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([MoveId.TACKLE]);
+    game.override
+      .battleStyle("single")
+      .ability(AbilityId.SHIELDS_DOWN)
+      .moveset([moveToUse])
+      .enemyMoveset([MoveId.TACKLE]);
   });
 
   test("check if fainted pokemon switched to base form on arena reset", async () => {
     const meteorForm = 0,
       coreForm = 7;
-    game.override.startingWave(4);
-    game.override.starterForms({
+    game.override.startingWave(4).starterForms({
       [SpeciesId.MINIOR]: coreForm,
     });
 
@@ -70,8 +70,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   });
 
   test("should still ignore non-volatile status moves used by a pokemon with mold breaker", async () => {
-    game.override.enemyAbility(AbilityId.MOLD_BREAKER);
-    game.override.enemyMoveset([MoveId.SPORE]);
+    game.override.enemyAbility(AbilityId.MOLD_BREAKER).enemyMoveset([MoveId.SPORE]);
 
     await game.classicMode.startBattle([SpeciesId.MINIOR]);
 
@@ -94,8 +93,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   });
 
   test("should ignore status moves even through mold breaker", async () => {
-    game.override.enemyMoveset([MoveId.SPORE]);
-    game.override.enemyAbility(AbilityId.MOLD_BREAKER);
+    game.override.enemyMoveset([MoveId.SPORE]).enemyAbility(AbilityId.MOLD_BREAKER);
 
     await game.classicMode.startBattle([SpeciesId.MINIOR]);
 
@@ -108,8 +106,9 @@ describe("Abilities - SHIELDS DOWN", () => {
 
   // toxic spikes currently does not poison flying types when gravity is in effect
   test.todo("should become poisoned by toxic spikes when grounded", async () => {
-    game.override.enemyMoveset([MoveId.GRAVITY, MoveId.TOXIC_SPIKES, MoveId.SPLASH]);
-    game.override.moveset([MoveId.GRAVITY, MoveId.SPLASH]);
+    game.override
+      .enemyMoveset([MoveId.GRAVITY, MoveId.TOXIC_SPIKES, MoveId.SPLASH])
+      .moveset([MoveId.GRAVITY, MoveId.SPLASH]);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MINIOR]);
 
@@ -155,9 +154,7 @@ describe("Abilities - SHIELDS DOWN", () => {
 
   // the `NoTransformAbilityAbAttr` attribute is not checked anywhere, so this test cannot pass.
   test.todo("ditto should not be immune to status after transforming", async () => {
-    game.override.enemySpecies(SpeciesId.DITTO);
-    game.override.enemyAbility(AbilityId.IMPOSTER);
-    game.override.moveset([MoveId.SPLASH, MoveId.SPORE]);
+    game.override.enemySpecies(SpeciesId.DITTO).enemyAbility(AbilityId.IMPOSTER).moveset([MoveId.SPLASH, MoveId.SPORE]);
 
     await game.classicMode.startBattle([SpeciesId.MINIOR]);
 
@@ -169,11 +166,12 @@ describe("Abilities - SHIELDS DOWN", () => {
   });
 
   test("should not prevent minior from receiving the fainted status effect in trainer battles", async () => {
-    game.override.enemyMoveset([MoveId.TACKLE]);
-    game.override.moveset([MoveId.THUNDERBOLT]);
-    game.override.startingLevel(100);
-    game.override.startingWave(5);
-    game.override.enemySpecies(SpeciesId.MINIOR);
+    game.override
+      .enemyMoveset([MoveId.TACKLE])
+      .moveset([MoveId.THUNDERBOLT])
+      .startingLevel(100)
+      .startingWave(5)
+      .enemySpecies(SpeciesId.MINIOR);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
     const minior = game.scene.getEnemyPokemon()!;
 

@@ -1,8 +1,8 @@
 import { BiomeId } from "#enums/biome-id";
-import { SpeciesId } from "#enums/species-id";
 import { GameModes } from "#enums/game-modes";
+import { SpeciesId } from "#enums/species-id";
+import { GameManager } from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
 
 const EndlessBossWave = {
   Minor: 250,
@@ -21,7 +21,7 @@ describe("Endless Boss", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.startingBiome(BiomeId.END).disableCrits();
+    game.override.startingBiome(BiomeId.END).criticalHits(false);
   });
 
   afterEach(() => {

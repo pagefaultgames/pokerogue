@@ -1,9 +1,8 @@
-import { allAbilities } from "#app/data/data-lists";
-import { allMoves } from "#app/data/data-lists";
+import { allAbilities, allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -28,11 +27,12 @@ describe("Abilities - Steely Spirit", () => {
   beforeEach(() => {
     ironHeadPower = allMoves[moveToCheck].power;
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.enemySpecies(SpeciesId.SHUCKLE);
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.moveset([MoveId.IRON_HEAD, MoveId.SPLASH]);
-    game.override.enemyMoveset(MoveId.SPLASH);
+    game.override
+      .battleStyle("double")
+      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .moveset([MoveId.IRON_HEAD, MoveId.SPLASH])
+      .enemyMoveset(MoveId.SPLASH);
     vi.spyOn(allMoves[moveToCheck], "calculateBattlePower");
   });
 

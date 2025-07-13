@@ -1,10 +1,10 @@
-import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MessagePhase } from "#app/phases/message-phase";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { CommandPhase } from "#phases/command-phase";
+import { MessagePhase } from "#phases/message-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -24,10 +24,11 @@ describe("Abilities - COSTAR", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.ability(AbilityId.COSTAR);
-    game.override.moveset([MoveId.SPLASH, MoveId.NASTY_PLOT]);
-    game.override.enemyMoveset(MoveId.SPLASH);
+    game.override
+      .battleStyle("double")
+      .ability(AbilityId.COSTAR)
+      .moveset([MoveId.SPLASH, MoveId.NASTY_PLOT])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   test("ability copies positive stat stages", async () => {

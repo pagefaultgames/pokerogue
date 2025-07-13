@@ -1,10 +1,10 @@
-import { StockpilingTag } from "#app/data/battler-tags";
-import type Pokemon from "#app/field/pokemon";
-import { PokemonSummonData } from "#app/field/pokemon";
 import * as messages from "#app/messages";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { StockpilingTag } from "#data/battler-tags";
+import { PokemonSummonData } from "#data/pokemon-data";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import type { Pokemon } from "#field/pokemon";
+import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 beforeEach(() => {

@@ -1,6 +1,6 @@
-import GameManager from "#test/testUtils/gameManager";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -27,7 +27,7 @@ describe("Moves - Fake Out", () => {
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(10)
       .startingLevel(1) // prevent LevelUpPhase from happening
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("should only work the first turn a pokemon is sent out in a battle", async () => {

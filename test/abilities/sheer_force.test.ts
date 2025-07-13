@@ -1,13 +1,13 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { PokemonType } from "#enums/pokemon-type";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { allMoves } from "#app/data/data-lists";
 
 describe("Abilities - Sheer Force", () => {
   let phaserGame: Phaser.Game;
@@ -31,7 +31,7 @@ describe("Abilities - Sheer Force", () => {
       .enemySpecies(SpeciesId.ONIX)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([MoveId.SPLASH])
-      .disableCrits();
+      .criticalHits(false);
   });
 
   const SHEER_FORCE_MULT = 1.3;
@@ -69,7 +69,7 @@ describe("Abilities - Sheer Force", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(bindMove.calculateBattlePower).toHaveLastReturnedWith(bindMove.power);
-  }, 20000);
+  });
 
   it("Sheer Force does not boost the base damage of moves with no secondary effect", async () => {
     game.override.moveset([MoveId.TACKLE]);

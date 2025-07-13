@@ -1,8 +1,8 @@
-import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import { TurnStartPhase } from "#phases/turn-start-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -31,7 +31,7 @@ describe("Moves - Fusion Flare", () => {
       .enemyMoveset(MoveId.REST)
       .battleStyle("single")
       .startingWave(97)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("should thaw freeze status condition", async () => {

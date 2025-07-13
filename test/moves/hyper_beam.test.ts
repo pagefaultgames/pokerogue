@@ -1,11 +1,11 @@
-import { allMoves } from "#app/data/data-lists";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import GameManager from "#test/testUtils/gameManager";
+import { BerryPhase } from "#phases/berry-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -26,14 +26,14 @@ describe("Moves - Hyper Beam", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("single");
-    game.override.ability(AbilityId.BALL_FETCH);
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.enemyMoveset([MoveId.SPLASH]);
-    game.override.enemyLevel(100);
-
-    game.override.moveset([MoveId.HYPER_BEAM, MoveId.TACKLE]);
+    game.override
+      .battleStyle("single")
+      .ability(AbilityId.BALL_FETCH)
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset([MoveId.SPLASH])
+      .enemyLevel(100)
+      .moveset([MoveId.HYPER_BEAM, MoveId.TACKLE]);
     vi.spyOn(allMoves[MoveId.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
   });
 

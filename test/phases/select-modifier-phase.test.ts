@@ -1,20 +1,20 @@
-import type BattleScene from "#app/battle-scene";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { PlayerPokemon } from "#app/field/pokemon";
-import { ModifierTier } from "#enums/modifier-tier";
-import type { CustomModifierSettings } from "#app/modifier/modifier-type";
-import { ModifierTypeOption } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/data/data-lists";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { shiftCharCodes } from "#app/utils/common";
+import type { BattleScene } from "#app/battle-scene";
+import { modifierTypes } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
+import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { UiMode } from "#enums/ui-mode";
+import { PlayerPokemon } from "#field/pokemon";
+import type { CustomModifierSettings } from "#modifiers/modifier-type";
+import { ModifierTypeOption } from "#modifiers/modifier-type";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { shiftCharCodes } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -42,8 +42,6 @@ describe("SelectModifierPhase", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-
-    vi.clearAllMocks();
   });
 
   it("should start a select modifier phase", async () => {

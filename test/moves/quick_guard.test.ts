@@ -1,12 +1,12 @@
+import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
+import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
-import { SpeciesId } from "#enums/species-id";
-import { AbilityId } from "#enums/ability-id";
-import { MoveId } from "#enums/move-id";
-import { Stat } from "#enums/stat";
-import { BattlerIndex } from "#enums/battler-index";
-import { MoveResult } from "#enums/move-result";
 
 describe("Moves - Quick Guard", () => {
   let phaserGame: Phaser.Game;
@@ -25,16 +25,14 @@ describe("Moves - Quick Guard", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("double");
-
-    game.override.moveset([MoveId.QUICK_GUARD, MoveId.SPLASH, MoveId.FOLLOW_ME]);
-
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-    game.override.enemyMoveset([MoveId.QUICK_ATTACK]);
-    game.override.enemyAbility(AbilityId.INSOMNIA);
-
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("double")
+      .moveset([MoveId.QUICK_GUARD, MoveId.SPLASH, MoveId.FOLLOW_ME])
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyMoveset([MoveId.QUICK_ATTACK])
+      .enemyAbility(AbilityId.INSOMNIA)
+      .startingLevel(100)
+      .enemyLevel(100);
   });
 
   test("should protect the user and allies from priority moves", async () => {
@@ -51,8 +49,7 @@ describe("Moves - Quick Guard", () => {
   });
 
   test("should protect the user and allies from Prankster-boosted moves", async () => {
-    game.override.enemyAbility(AbilityId.PRANKSTER);
-    game.override.enemyMoveset([MoveId.GROWL]);
+    game.override.enemyAbility(AbilityId.PRANKSTER).enemyMoveset([MoveId.GROWL]);
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
@@ -84,8 +81,7 @@ describe("Moves - Quick Guard", () => {
   });
 
   test("should fail if the user is the last to move in the turn", async () => {
-    game.override.battleStyle("single");
-    game.override.enemyMoveset([MoveId.QUICK_GUARD]);
+    game.override.battleStyle("single").enemyMoveset([MoveId.QUICK_GUARD]);
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 

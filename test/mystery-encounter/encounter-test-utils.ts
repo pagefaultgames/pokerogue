@@ -1,24 +1,24 @@
-// biome-ignore lint/style/noNamespaceImport: Necessary for mocks
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { Status } from "#app/data/status-effect";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MessagePhase } from "#app/phases/message-phase";
+import { Status } from "#data/status-effect";
+import { Button } from "#enums/buttons";
+import { StatusEffect } from "#enums/status-effect";
+import { UiMode } from "#enums/ui-mode";
+// biome-ignore lint/performance/noNamespaceImport: Necessary for mocks
+import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
+import { CommandPhase } from "#phases/command-phase";
+import { MessagePhase } from "#phases/message-phase";
 import {
   MysteryEncounterBattlePhase,
   MysteryEncounterOptionSelectedPhase,
   MysteryEncounterPhase,
   MysteryEncounterRewardsPhase,
-} from "#app/phases/mystery-encounter-phases";
-import { VictoryPhase } from "#app/phases/victory-phase";
-import type MessageUiHandler from "#app/ui/message-ui-handler";
-import type MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
-import type PartyUiHandler from "#app/ui/party-ui-handler";
-import type OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { isNullOrUndefined } from "#app/utils/common";
-import { Button } from "#enums/buttons";
-import { StatusEffect } from "#enums/status-effect";
-import type GameManager from "#test/testUtils/gameManager";
+} from "#phases/mystery-encounter-phases";
+import { VictoryPhase } from "#phases/victory-phase";
+import type { GameManager } from "#test/testUtils/gameManager";
+import type { MessageUiHandler } from "#ui/message-ui-handler";
+import type { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
+import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
+import type { PartyUiHandler } from "#ui/party-ui-handler";
+import { isNullOrUndefined } from "#utils/common";
 import { expect, vi } from "vitest";
 
 /**

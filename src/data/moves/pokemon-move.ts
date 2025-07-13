@@ -1,8 +1,8 @@
-import type Pokemon from "#app/field/pokemon";
-import { toDmgValue } from "#app/utils/common";
+import { allMoves } from "#data/data-lists";
 import type { MoveId } from "#enums/move-id";
-import { allMoves } from "../data-lists";
-import type Move from "./move";
+import type { Pokemon } from "#field/pokemon";
+import type { Move } from "#moves/move";
+import { toDmgValue } from "#utils/common";
 
 /**
  * Wrapper class for the {@linkcode Move} class for Pokemon to interact with.
@@ -16,12 +16,11 @@ import type Move from "./move";
  * @see {@linkcode getMovePp} - returns amount of PP a move currently has.
  * @see {@linkcode getPpRatio} - returns the current PP amount / max PP amount.
  * @see {@linkcode getName} - returns name of {@linkcode Move}.
- **/
+ */
 export class PokemonMove {
   public moveId: MoveId;
   public ppUsed: number;
   public ppUp: number;
-  public virtual: boolean;
 
   /**
    * If defined and nonzero, overrides the maximum PP of the move (e.g., due to move being copied by Transform).
@@ -29,11 +28,10 @@ export class PokemonMove {
    */
   public maxPpOverride?: number;
 
-  constructor(moveId: MoveId, ppUsed = 0, ppUp = 0, virtual = false, maxPpOverride?: number) {
+  constructor(moveId: MoveId, ppUsed = 0, ppUp = 0, maxPpOverride?: number) {
     this.moveId = moveId;
     this.ppUsed = ppUsed;
     this.ppUp = ppUp;
-    this.virtual = virtual;
     this.maxPpOverride = maxPpOverride;
   }
 
@@ -47,6 +45,7 @@ export class PokemonMove {
    * @returns `true` if the move can be selected and used by the Pokemon, otherwise `false`.
    */
   isUsable(pokemon: Pokemon, ignorePp = false, ignoreRestrictionTags = false): boolean {
+    // TODO: Add Sky Drop's 1 turn stall
     if (this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)) {
       return false;
     }
@@ -88,6 +87,6 @@ export class PokemonMove {
    * @returns A valid {@linkcode PokemonMove} object
    */
   static loadMove(source: PokemonMove | any): PokemonMove {
-    return new PokemonMove(source.moveId, source.ppUsed, source.ppUp, source.virtual, source.maxPpOverride);
+    return new PokemonMove(source.moveId, source.ppUsed, source.ppUp, source.maxPpOverride);
   }
 }

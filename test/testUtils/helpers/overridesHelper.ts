@@ -1,35 +1,54 @@
-import type { Variant } from "#app/sprites/variant";
-import { Weather } from "#app/data/weather";
-import { AbilityId } from "#enums/ability-id";
-import type { ModifierOverride } from "#app/modifier/modifier-type";
-import type { BattleStyle } from "#app/overrides";
+/** biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
+import type { NewArenaEvent } from "#events/battle-scene";
+/** biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
+
+import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides, { defaultOverrides } from "#app/overrides";
-import type { Unlockables } from "#enums/unlockables";
+import { AbilityId } from "#enums/ability-id";
+import type { BattleType } from "#enums/battle-type";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import type { WeatherType } from "#enums/weather-type";
+import type { Unlockables } from "#enums/unlockables";
+import { WeatherType } from "#enums/weather-type";
+import type { ModifierOverride } from "#modifiers/modifier-type";
+import type { Variant } from "#sprites/variant";
+import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
+import { coerceArray, shiftCharCodes } from "#utils/common";
 import { expect, vi } from "vitest";
-import { GameManagerHelper } from "./gameManagerHelper";
-import { coerceArray, shiftCharCodes } from "#app/utils/common";
-import type { RandomTrainerOverride } from "#app/overrides";
-import type { BattleType } from "#enums/battle-type";
 
 /**
  * Helper to handle overrides in tests
  */
 export class OverridesHelper extends GameManagerHelper {
-  /** If `true`, removes the starting items from enemies at the start of each test; default `true` */
+  /**
+   * If `true`, removes the starting items from enemies at the start of each test.
+   * @defaultValue `true`
+   */
   public removeEnemyStartingItems = true;
-  /** If `true`, sets the shiny overrides to disable shinies at the start of each test; default `true` */
+  /**
+   * If `true`, sets the shiny overrides to disable shinies at the start of each test.
+   * @defaultValue `true`
+   */
   public disableShinies = true;
+  /**
+   * If `true`, will set the IV overrides for player and enemy pokemon to `31` at the start of each test.
+   * @defaultValue `true`
+   */
+  public normalizeIVs = true;
+  /**
+   * If `true`, will set the Nature overrides for player and enemy pokemon to a neutral nature at the start of each test.
+   * @defaultValue `true`
+   */
+  public normalizeNatures = true;
 
   /**
    * Override the starting biome
-   * @warning Any event listeners that are attached to [NewArenaEvent](events\battle-scene.ts) may need to be handled down the line
+   * @warning Any event listeners that are attached to {@linkcode NewArenaEvent} may need to be handled down the line
    * @param biome - The biome to set
    */
   public startingBiome(biome: BiomeId): this {
@@ -220,6 +239,80 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
+   * Overrides the IVs of the player pokemon
+   * @param ivs - If set to a number, all IVs are set to the same value. Must be between `0` and `31`!
+   *
+   * If set to an array, that array is applied to the pokemon's IV field as-is.
+   * All values must be between `0` and `31`, and the array must be of exactly length `6`!
+   *
+   * If set to `null`, the override is disabled.
+   * @returns `this`
+   */
+  public playerIVs(ivs: number | number[] | null): this {
+    this.normalizeIVs = false;
+    vi.spyOn(Overrides, "IVS_OVERRIDE", "get").mockReturnValue(ivs);
+    if (ivs === null) {
+      this.log("Player IVs override disabled!");
+    } else {
+      this.log(`Player IVs set to ${ivs}!`);
+    }
+    return this;
+  }
+
+  /**
+   * Overrides the nature of the player's pokemon
+   * @param nature - The nature to set, or `null` to disable the override.
+   * @returns `this`
+   */
+  public nature(nature: Nature | null): this {
+    this.normalizeNatures = false;
+    vi.spyOn(Overrides, "NATURE_OVERRIDE", "get").mockReturnValue(nature);
+    if (nature === null) {
+      this.log("Player Nature override disabled!");
+    } else {
+      this.log(`Player Nature set to ${Nature[nature]} (=${nature})!`);
+    }
+    return this;
+  }
+
+  /**
+   * Overrides the IVs of the enemy pokemon
+   * @param ivs - If set to a number, all IVs are set to the same value. Must be between `0` and `31`!
+   *
+   * If set to an array, that array is applied to the pokemon's IV field as-is.
+   * All values must be between `0` and `31`, and the array must be of exactly length `6`!
+   *
+   * If set to `null`, the override is disabled.
+   * @returns `this`
+   */
+  public enemyIVs(ivs: number | number[] | null): this {
+    this.normalizeIVs = false;
+    vi.spyOn(Overrides, "ENEMY_IVS_OVERRIDE", "get").mockReturnValue(ivs);
+    if (ivs === null) {
+      this.log("Enemy IVs override disabled!");
+    } else {
+      this.log(`Enemy IVs set to ${ivs}!`);
+    }
+    return this;
+  }
+
+  /**
+   * Overrides the nature of the enemy's pokemon
+   * @param nature - The nature to set, or `null` to disable the override.
+   * @returns `this`
+   */
+  public enemyNature(nature: Nature | null): this {
+    this.normalizeNatures = false;
+    vi.spyOn(Overrides, "ENEMY_NATURE_OVERRIDE", "get").mockReturnValue(nature);
+    if (nature === null) {
+      this.log("Enemy Nature override disabled!");
+    } else {
+      this.log(`Enemy Nature set to ${Nature[nature]} (=${nature})!`);
+    }
+    return this;
+  }
+
+  /**
    * Override each wave to not have standard trainer battles
    * @returns `this`
    */
@@ -243,12 +336,15 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override each wave to not have critical hits
+   * Force random critical hit rolls to always or never suceed.
+   * @param crits - `true` to guarantee crits on eligible moves, `false` to force rolls to fail, `null` to disable override
+   * @remarks This does not bypass effects that guarantee or block critical hits; it merely mocks the chance-based rolls.
    * @returns `this`
    */
-  public disableCrits(): this {
-    vi.spyOn(Overrides, "NEVER_CRIT_OVERRIDE", "get").mockReturnValue(true);
-    this.log("Critical hits are disabled!");
+  public criticalHits(crits: boolean | null): this {
+    vi.spyOn(Overrides, "CRITICAL_HIT_OVERRIDE", "get").mockReturnValue(crits);
+    const freq = crits === true ? "always" : crits === false ? "never" : "randomly";
+    this.log(`Critical hit rolls set to ${freq} succeed!`);
     return this;
   }
 
@@ -259,7 +355,7 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public weather(type: WeatherType): this {
     vi.spyOn(Overrides, "WEATHER_OVERRIDE", "get").mockReturnValue(type);
-    this.log(`Weather set to ${Weather[type]} (=${type})!`);
+    this.log(`Weather set to ${WeatherType[type]} (=${type})!`);
     return this;
   }
 

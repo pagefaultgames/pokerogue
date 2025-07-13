@@ -1,35 +1,34 @@
 import { globalScene } from "#app/global-scene";
-import type { ModifierTier } from "#enums/modifier-tier";
-import type { ModifierTypeOption, ModifierType } from "#app/modifier/modifier-type";
-import {
-  regenerateModifierPoolThresholds,
-  getPlayerShopModifierTypeOptionsForWave,
-  PokemonModifierType,
-  FusePokemonModifierType,
-  PokemonMoveModifierType,
-  TmModifierType,
-  RememberMoveModifierType,
-  PokemonPpRestoreModifierType,
-  PokemonPpUpModifierType,
-  getPlayerModifierTypeOptions,
-} from "#app/modifier/modifier-type";
+import Overrides from "#app/overrides";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
-import type { Modifier } from "#app/modifier/modifier";
+import type { ModifierTier } from "#enums/modifier-tier";
+import { UiMode } from "#enums/ui-mode";
+import type { Modifier } from "#modifiers/modifier";
 import {
   ExtraModifierModifier,
   HealShopCostModifier,
   PokemonHeldItemModifier,
   TempExtraModifierModifier,
-} from "#app/modifier/modifier";
-import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
-import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
-import { UiMode } from "#enums/ui-mode";
+} from "#modifiers/modifier";
+import type { CustomModifierSettings, ModifierType, ModifierTypeOption } from "#modifiers/modifier-type";
+import {
+  FusePokemonModifierType,
+  getPlayerModifierTypeOptions,
+  getPlayerShopModifierTypeOptionsForWave,
+  PokemonModifierType,
+  PokemonMoveModifierType,
+  PokemonPpRestoreModifierType,
+  PokemonPpUpModifierType,
+  RememberMoveModifierType,
+  regenerateModifierPoolThresholds,
+  TmModifierType,
+} from "#modifiers/modifier-type";
+import { BattlePhase } from "#phases/battle-phase";
+import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { SHOP_OPTIONS_ROW_LIMIT } from "#ui/modifier-select-ui-handler";
+import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { isNullOrUndefined, NumberHolder } from "#utils/common";
 import i18next from "i18next";
-import { BattlePhase } from "./battle-phase";
-import Overrides from "#app/overrides";
-import type { CustomModifierSettings } from "#app/modifier/modifier-type";
-import { isNullOrUndefined, NumberHolder } from "#app/utils/common";
 
 export type ModifierSelectCallback = (rowCursor: number, cursor: number) => boolean;
 
@@ -134,7 +133,7 @@ export class SelectModifierPhase extends BattlePhase {
       return true;
     }
     const modifierType = this.typeOptions[cursor].type;
-    return this.applyChosenModifier(modifierType, 0, modifierSelectCallback);
+    return this.applyChosenModifier(modifierType, -1, modifierSelectCallback);
   }
 
   // Pick a modifier from the shop and apply it
@@ -260,8 +259,13 @@ export class SelectModifierPhase extends BattlePhase {
     return false;
   }
 
-  // Applies the effects of the chosen modifier
-  private applyModifier(modifier: Modifier, cost = 0, playSound = false): void {
+  /**
+   * Apply the effects of the chosen modifier
+   * @param modifier - The modifier to apply
+   * @param cost - The cost of the modifier if it was purchased, or -1 if selected as the modifier reward
+   * @param playSound - Whether the 'obtain modifier' sound should be played when adding the modifier.
+   */
+  private applyModifier(modifier: Modifier, cost = -1, playSound = false): void {
     const result = globalScene.addModifier(modifier, false, playSound, undefined, undefined, cost);
     // Queue a copy of this phase when applying a TM or Memory Mushroom.
     // If the player selects either of these, then escapes out of consuming them,
@@ -270,7 +274,7 @@ export class SelectModifierPhase extends BattlePhase {
       globalScene.phaseManager.unshiftPhase(this.copy());
     }
 
-    if (cost && !(modifier.type instanceof RememberMoveModifierType)) {
+    if (cost !== -1 && !(modifier.type instanceof RememberMoveModifierType)) {
       if (result) {
         if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
           globalScene.money -= cost;

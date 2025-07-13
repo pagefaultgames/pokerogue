@@ -1,12 +1,12 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { applyAbAttrs, applyPreDefendAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { NumberHolder } from "#app/utils/common";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import { NumberHolder } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -26,12 +26,13 @@ describe("Abilities - Shield Dust", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.ONIX);
-    game.override.enemyAbility(AbilityId.SHIELD_DUST);
-    game.override.startingLevel(100);
-    game.override.moveset(MoveId.AIR_SLASH);
-    game.override.enemyMoveset(MoveId.TACKLE);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.ONIX)
+      .enemyAbility(AbilityId.SHIELD_DUST)
+      .startingLevel(100)
+      .moveset(MoveId.AIR_SLASH)
+      .enemyMoveset(MoveId.TACKLE);
   });
 
   it("Shield Dust", async () => {
@@ -51,25 +52,16 @@ describe("Abilities - Shield Dust", () => {
     expect(move.id).toBe(MoveId.AIR_SLASH);
 
     const chance = new NumberHolder(move.chance);
-    await applyAbAttrs(
-      "MoveEffectChanceMultiplierAbAttr",
-      phase.getUserPokemon()!,
-      null,
-      false,
+    applyAbAttrs("MoveEffectChanceMultiplierAbAttr", {
+      pokemon: phase.getUserPokemon()!,
       chance,
       move,
-      phase.getFirstTarget(),
-      false,
-    );
-    await applyPreDefendAbAttrs(
-      "IgnoreMoveEffectsAbAttr",
-      phase.getFirstTarget()!,
-      phase.getUserPokemon()!,
-      null,
-      null,
-      false,
+    });
+    applyAbAttrs("IgnoreMoveEffectsAbAttr", {
+      pokemon: phase.getFirstTarget()!,
+      move,
       chance,
-    );
+    });
     expect(chance.value).toBe(0);
   });
 

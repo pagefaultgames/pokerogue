@@ -1,12 +1,12 @@
-import { allMoves } from "#app/data/data-lists";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import type { Move } from "#moves/move";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type Move from "#app/data/moves/move";
 
 describe("Moves - Hard Press", () => {
   let phaserGame: Phaser.Game;
@@ -27,12 +27,13 @@ describe("Moves - Hard Press", () => {
   beforeEach(() => {
     moveToCheck = allMoves[MoveId.HARD_PRESS];
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.ability(AbilityId.BALL_FETCH);
-    game.override.enemySpecies(SpeciesId.MUNCHLAX);
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.enemyMoveset(MoveId.SPLASH);
-    game.override.moveset([MoveId.HARD_PRESS]);
+    game.override
+      .battleStyle("single")
+      .ability(AbilityId.BALL_FETCH)
+      .enemySpecies(SpeciesId.MUNCHLAX)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH)
+      .moveset([MoveId.HARD_PRESS]);
     vi.spyOn(moveToCheck, "calculateBattlePower");
   });
 

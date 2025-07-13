@@ -1,11 +1,11 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/testUtils/gameManager";
-import { SpeciesId } from "#enums/species-id";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { MoveId } from "#enums/move-id";
-import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Power Split", () => {
   let phaserGame: Phaser.Game;
@@ -50,7 +50,7 @@ describe("Moves - Power Split", () => {
 
     expect(player.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
     expect(enemy.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
-  }, 20000);
+  });
 
   it("should be idempotent", async () => {
     game.override.enemyMoveset([MoveId.POWER_SPLIT]);
@@ -73,5 +73,5 @@ describe("Moves - Power Split", () => {
 
     expect(player.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
     expect(enemy.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
-  }, 20000);
+  });
 });

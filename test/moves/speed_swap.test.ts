@@ -1,11 +1,11 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/testUtils/gameManager";
-import { SpeciesId } from "#enums/species-id";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { MoveId } from "#enums/move-id";
-import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Speed Swap", () => {
   let phaserGame: Phaser.Game;
@@ -47,5 +47,5 @@ describe("Moves - Speed Swap", () => {
 
     expect(player.getStat(Stat.SPD, false)).toBe(enemySpd);
     expect(enemy.getStat(Stat.SPD, false)).toBe(playerSpd);
-  }, 20000);
+  });
 });

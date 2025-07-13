@@ -1,42 +1,41 @@
 import { globalScene } from "#app/global-scene";
-import i18next from "i18next";
-import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
-import { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { speciesStarterCosts } from "#balance/starters";
+import { modifierTypes } from "#data/data-lists";
+import { Gender } from "#data/gender";
 import {
   doPokeballBounceAnim,
   getPokeballAtlasKey,
   getPokeballCatchMultiplier,
   getPokeballTintColor,
-} from "#app/data/pokeball";
+} from "#data/pokeball";
+import { CustomPokemonData } from "#data/pokemon-data";
+import type { PokemonSpecies } from "#data/pokemon-species";
+import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
+import type { AbilityId } from "#enums/ability-id";
 import { PlayerGender } from "#enums/player-gender";
-import { addPokeballCaptureStars, addPokeballOpenParticles } from "#app/field/anims";
-import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
-import { achvs } from "#app/system/achv";
-import { UiMode } from "#enums/ui-mode";
-import type { PartyOption } from "#app/ui/party-ui-handler";
-import { PartyUiMode } from "#app/ui/party-ui-handler";
-import { SpeciesId } from "#enums/species-id";
+import type { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { speciesStarterCosts } from "#app/data/balance/starters";
+import { SpeciesId } from "#enums/species-id";
+import type { PermanentStat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { UiMode } from "#enums/ui-mode";
+import { addPokeballCaptureStars, addPokeballOpenParticles } from "#field/anims";
+import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
+import { PokemonHeldItemModifier } from "#modifiers/modifier";
+import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
 import {
   getEncounterText,
   queueEncounterMessage,
   showEncounterText,
-} from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { getPokemonNameWithAffix } from "#app/messages";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/data/data-lists";
-import { Gender } from "#app/data/gender";
-import type { PermanentStat } from "#enums/stat";
-import { SummaryUiMode } from "#app/ui/summary-ui-handler";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import type { AbilityId } from "#enums/ability-id";
-import type { PokeballType } from "#enums/pokeball";
-import { StatusEffect } from "#enums/status-effect";
+} from "#mystery-encounters/encounter-dialogue-utils";
+import { achvs } from "#system/achv";
+import type { PartyOption } from "#ui/party-ui-handler";
+import { PartyUiMode } from "#ui/party-ui-handler";
+import { SummaryUiMode } from "#ui/summary-ui-handler";
+import { isNullOrUndefined, randSeedInt } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import i18next from "i18next";
 
 /** Will give +1 level every 10 waves */
 export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
@@ -375,10 +374,10 @@ export function applyHealToPokemon(pokemon: PlayerPokemon, heal: number) {
  * @param pokemon
  * @param value
  */
-export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: number) {
+export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, good: boolean) {
   const modType = modifierTypes
     .MYSTERY_ENCOUNTER_SHUCKLE_JUICE()
-    .generateType(globalScene.getPlayerParty(), [value])
+    .generateType(globalScene.getPlayerParty(), [good ? 10 : -15])
     ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE);
   const modifier = modType?.newModifier(pokemon);
   if (modifier) {
@@ -751,7 +750,7 @@ export async function catchPokemon(
                       UiMode.POKEDEX_PAGE,
                       pokemon.species,
                       pokemon.formIndex,
-                      attributes,
+                      [attributes],
                       null,
                       () => {
                         globalScene.ui.setMode(UiMode.MESSAGE).then(() => {

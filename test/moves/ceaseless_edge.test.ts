@@ -1,13 +1,13 @@
-import { ArenaTrapTag } from "#app/data/arena-tag";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { allMoves } from "#app/data/data-lists";
+import { ArenaTrapTag } from "#data/arena-tag";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -27,14 +27,15 @@ describe("Moves - Ceaseless Edge", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.RATTATA);
-    game.override.enemyAbility(AbilityId.RUN_AWAY);
-    game.override.enemyPassiveAbility(AbilityId.RUN_AWAY);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.moveset([MoveId.CEASELESS_EDGE, MoveId.SPLASH, MoveId.ROAR]);
-    game.override.enemyMoveset(MoveId.SPLASH);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.RATTATA)
+      .enemyAbility(AbilityId.RUN_AWAY)
+      .enemyPassiveAbility(AbilityId.RUN_AWAY)
+      .startingLevel(100)
+      .enemyLevel(100)
+      .moveset([MoveId.CEASELESS_EDGE, MoveId.SPLASH, MoveId.ROAR])
+      .enemyMoveset(MoveId.SPLASH);
     vi.spyOn(allMoves[MoveId.CEASELESS_EDGE], "accuracy", "get").mockReturnValue(100);
   });
 
@@ -82,8 +83,7 @@ describe("Moves - Ceaseless Edge", () => {
   });
 
   test("trainer - move should hit twice, apply two layers of spikes, force switch opponent - opponent takes damage", async () => {
-    game.override.startingHeldItems([{ name: "MULTI_LENS" }]);
-    game.override.startingWave(25);
+    game.override.startingHeldItems([{ name: "MULTI_LENS" }]).startingWave(25);
 
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 

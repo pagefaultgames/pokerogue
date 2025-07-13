@@ -1,46 +1,37 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import type { BiomeTierTrainerPools, PokemonPools } from "#app/data/balance/biomes";
-import { biomePokemonPools, BiomePoolTier, biomeTrainerPools } from "#app/data/balance/biomes";
-import { randSeedInt, NumberHolder, isNullOrUndefined, type Constructor } from "#app/utils/common";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import Overrides from "#app/overrides";
+import type { BiomeTierTrainerPools, PokemonPools } from "#balance/biomes";
+import { BiomePoolTier, biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
+import type { ArenaTag } from "#data/arena-tag";
+import { ArenaTrapTag, getArenaTag } from "#data/arena-tag";
+import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
+import type { PokemonSpecies } from "#data/pokemon-species";
+import { getTerrainClearMessage, getTerrainStartMessage, Terrain, TerrainType } from "#data/terrain";
 import {
-  getTerrainClearMessage,
-  getTerrainStartMessage,
+  getLegendaryWeatherContinuesMessage,
   getWeatherClearMessage,
   getWeatherStartMessage,
-  getLegendaryWeatherContinuesMessage,
   Weather,
-} from "#app/data/weather";
-import { CommonAnim } from "#enums/move-anims-common";
-import type { PokemonType } from "#enums/pokemon-type";
-import type Move from "#app/data/moves/move";
-import type { ArenaTag } from "#app/data/arena-tag";
-import { ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
+} from "#data/weather";
+import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
-import type { BattlerIndex } from "#enums/battler-index";
-import { Terrain, TerrainType } from "#app/data/terrain";
-import {
-  applyAbAttrs,
-  applyPostTerrainChangeAbAttrs,
-  applyPostWeatherChangeAbAttrs,
-} from "#app/data/abilities/apply-ab-attrs";
-import type Pokemon from "#app/field/pokemon";
-import Overrides from "#app/overrides";
-import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
 import type { ArenaTagType } from "#enums/arena-tag-type";
+import type { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
+import { CommonAnim } from "#enums/move-anims-common";
 import type { MoveId } from "#enums/move-id";
+import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
-import { AbilityId } from "#enums/ability-id";
-import {
-  SpeciesFormChangeRevertWeatherFormTrigger,
-  SpeciesFormChangeWeatherTrigger,
-} from "#app/data/pokemon-forms/form-change-triggers";
 import { WeatherType } from "#enums/weather-type";
-import { FieldEffectModifier } from "#app/modifier/modifier";
+import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
+import type { Pokemon } from "#field/pokemon";
+import { FieldEffectModifier } from "#modifiers/modifier";
+import type { Move } from "#moves/move";
+import { type Constructor, isNullOrUndefined, NumberHolder, randSeedInt } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 export class Arena {
   public biomeType: BiomeId;
@@ -372,7 +363,7 @@ export class Arena {
         pokemon.findAndRemoveTags(
           t => "weatherTypes" in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather),
         );
-        applyPostWeatherChangeAbAttrs("PostWeatherChangeAbAttr", pokemon, weather);
+        applyAbAttrs("PostWeatherChangeAbAttr", { pokemon, weather });
       });
 
     return true;
@@ -449,9 +440,9 @@ export class Arena {
           CommonAnim.MISTY_TERRAIN + (terrain - 1),
         );
       }
-      globalScene.phaseManager.queueMessage(getTerrainStartMessage(terrain)!); // TODO: is this bang correct?
+      globalScene.phaseManager.queueMessage(getTerrainStartMessage(terrain));
     } else {
-      globalScene.phaseManager.queueMessage(getTerrainClearMessage(oldTerrainType)!); // TODO: is this bang correct?
+      globalScene.phaseManager.queueMessage(getTerrainClearMessage(oldTerrainType));
     }
 
     globalScene
@@ -461,8 +452,8 @@ export class Arena {
         pokemon.findAndRemoveTags(
           t => "terrainTypes" in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain),
         );
-        applyPostTerrainChangeAbAttrs("PostTerrainChangeAbAttr", pokemon, terrain);
-        applyAbAttrs("TerrainEventTypeChangeAbAttr", pokemon, null, false);
+        applyAbAttrs("PostTerrainChangeAbAttr", { pokemon, terrain });
+        applyAbAttrs("TerrainEventTypeChangeAbAttr", { pokemon });
       });
 
     return true;
@@ -765,6 +756,9 @@ export class Arena {
         );
   }
 
+  // TODO: Add an overload similar to `Array.prototype.find` if the predicate func is of the form
+  // `(x): x is T`
+
   /**
    * Uses {@linkcode findTagsOnSide} to filter (using the parameter function) for specific tags that apply to both sides
    * @param tagPredicate a function mapping {@linkcode ArenaTag}s to `boolean`s
@@ -900,7 +894,7 @@ export class Arena {
       case BiomeId.WASTELAND:
         return 6.336;
       case BiomeId.ABYSS:
-        return 5.13;
+        return 20.113;
       case BiomeId.SPACE:
         return 20.036;
       case BiomeId.CONSTRUCTION_SITE:
@@ -984,14 +978,15 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     this.base = globalScene.addFieldSprite(0, 0, "plains_a", undefined, 1);
     this.base.setOrigin(0, 0);
 
-    this.props = !player
-      ? new Array(3).fill(null).map(() => {
-          const ret = globalScene.addFieldSprite(0, 0, "plains_b", undefined, 1);
-          ret.setOrigin(0, 0);
-          ret.setVisible(false);
-          return ret;
-        })
-      : [];
+    this.props = [];
+    if (!player) {
+      for (let i = 0; i < 3; i++) {
+        const ret = globalScene.addFieldSprite(0, 0, "plains_b", undefined, 1);
+        ret.setOrigin(0, 0);
+        ret.setVisible(false);
+        this.props.push(ret);
+      }
+    }
   }
 
   setBiome(biome: BiomeId, propValue?: number): void {

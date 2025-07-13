@@ -1,40 +1,40 @@
+import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
-import type { Command } from "#enums/command";
-import {
-  randomString,
-  getEnumValues,
-  NumberHolder,
-  randSeedInt,
-  shiftCharCodes,
-  randSeedItem,
-  randInt,
-  randSeedFloat,
-} from "#app/utils/common";
-import Trainer from "./field/trainer";
-import { TrainerVariant } from "#enums/trainer-variant";
-import type { GameMode } from "./game-mode";
-import { MoneyMultiplierModifier, type PokemonHeldItemModifier } from "./modifier/modifier";
-import type { PokeballType } from "#enums/pokeball";
-import { trainerConfigs } from "#app/data/trainers/trainer-config";
-import { SpeciesFormKey } from "#enums/species-form-key";
-import type { EnemyPokemon, PlayerPokemon, TurnMove } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
+import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
+import type { Command } from "#enums/command";
+import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
+import { ModifierTier } from "#enums/modifier-tier";
 import type { MoveId } from "#enums/move-id";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
-import { MusicPreference } from "#app/system/settings/settings";
+import type { PokeballType } from "#enums/pokeball";
+import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
-import i18next from "#app/plugins/i18n";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import type { CustomModifierSettings } from "#app/modifier/modifier-type";
-import { ModifierTier } from "#enums/modifier-tier";
-import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { BattleType } from "#enums/battle-type";
-import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
-import { BattlerIndex } from "#enums/battler-index";
+import { TrainerVariant } from "#enums/trainer-variant";
+import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
+import { Trainer } from "#field/trainer";
+import { MoneyMultiplierModifier, type PokemonHeldItemModifier } from "#modifiers/modifier";
+import type { CustomModifierSettings } from "#modifiers/modifier-type";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import i18next from "#plugins/i18n";
+import { MusicPreference } from "#system/settings";
+import { trainerConfigs } from "#trainers/trainer-config";
+import type { TurnMove } from "#types/turn-move";
+import {
+  getEnumValues,
+  NumberHolder,
+  randInt,
+  randomString,
+  randSeedFloat,
+  randSeedInt,
+  randSeedItem,
+  shiftCharCodes,
+} from "#utils/common";
 
 export interface TurnCommand {
   command: Command;
@@ -54,7 +54,7 @@ interface TurnCommands {
   [key: number]: TurnCommand | null;
 }
 
-export default class Battle {
+export class Battle {
   protected gameMode: GameMode;
   public waveIndex: number;
   public battleType: BattleType;
@@ -93,6 +93,12 @@ export default class Battle {
   public mysteryEncounterType?: MysteryEncounterType;
   /** If the current battle is a Mystery Encounter, this will always be defined */
   public mysteryEncounter?: MysteryEncounter;
+
+  /**
+   * Tracker for whether the last run attempt failed.
+   * @defaultValue `false`
+   */
+  public failedRunAway = false;
 
   private rngCounter = 0;
 
@@ -178,7 +184,7 @@ export default class Battle {
         )
         .map(i => {
           const ret = i as PokemonHeldItemModifier;
-          //@ts-ignore - this is awful to fix/change
+          //@ts-expect-error - this is awful to fix/change
           ret.pokemonId = null;
           return ret;
         }),
@@ -375,6 +381,11 @@ export default class Battle {
             case SpeciesId.ZACIAN:
             case SpeciesId.ZAMAZENTA:
               return "battle_legendary_zac_zam";
+            case SpeciesId.ETERNATUS:
+              if (pokemon.getFormKey() === "eternamax") {
+                return "battle_legendary_eternatus_p2";
+              }
+              return "battle_legendary_eternatus_p1";
             case SpeciesId.GLASTRIER:
             case SpeciesId.SPECTRIER:
               return "battle_legendary_glas_spec";

@@ -1,12 +1,12 @@
-import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { MoveEndPhase } from "#phases/move-end-phase";
+import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 
 describe("Moves - Make It Rain", () => {
   let phaserGame: Phaser.Game;
@@ -24,13 +24,14 @@ describe("Moves - Make It Rain", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.moveset([MoveId.MAKE_IT_RAIN, MoveId.SPLASH]);
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-    game.override.enemyAbility(AbilityId.INSOMNIA);
-    game.override.enemyMoveset(MoveId.SPLASH);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("double")
+      .moveset([MoveId.MAKE_IT_RAIN, MoveId.SPLASH])
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .enemyMoveset(MoveId.SPLASH)
+      .startingLevel(100)
+      .enemyLevel(100);
   });
 
   it("should only lower SPATK stat stage by 1 once in a double battle", async () => {
@@ -47,8 +48,9 @@ describe("Moves - Make It Rain", () => {
   });
 
   it("should apply effects even if the target faints", async () => {
-    game.override.enemyLevel(1); // ensures the enemy will faint
-    game.override.battleStyle("single");
+    game.override
+      .enemyLevel(1) // ensures the enemy will faint
+      .battleStyle("single");
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 

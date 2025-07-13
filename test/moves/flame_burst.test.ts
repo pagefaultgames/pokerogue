@@ -1,10 +1,10 @@
-import { allAbilities } from "#app/data/data-lists";
+import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import type Pokemon from "#app/field/pokemon";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import type { Pokemon } from "#field/pokemon";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -35,14 +35,15 @@ describe("Moves - Flame Burst", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.moveset([MoveId.FLAME_BURST, MoveId.SPLASH]);
-    game.override.disableCrits();
-    game.override.ability(AbilityId.UNNERVE);
-    game.override.startingWave(4);
-    game.override.enemySpecies(SpeciesId.SHUCKLE);
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.enemyMoveset([MoveId.SPLASH]);
+    game.override
+      .battleStyle("double")
+      .moveset([MoveId.FLAME_BURST, MoveId.SPLASH])
+      .criticalHits(false)
+      .ability(AbilityId.UNNERVE)
+      .startingWave(4)
+      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("inflicts damage to the target's ally equal to 1/16 of its max HP", async () => {

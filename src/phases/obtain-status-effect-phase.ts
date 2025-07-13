@@ -1,15 +1,15 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#enums/battler-index";
-import { CommonBattleAnim } from "#app/data/battle-anims";
-import { CommonAnim } from "#enums/move-anims-common";
-import { getStatusEffectObtainText, getStatusEffectOverlapText } from "#app/data/status-effect";
-import { StatusEffect } from "#app/enums/status-effect";
-import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { PokemonPhase } from "./pokemon-phase";
-import { SpeciesFormChangeStatusEffectTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { applyPostSetStatusAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { isNullOrUndefined } from "#app/utils/common";
+import { CommonBattleAnim } from "#data/battle-anims";
+import { SpeciesFormChangeStatusEffectTrigger } from "#data/form-change-triggers";
+import { getStatusEffectObtainText, getStatusEffectOverlapText } from "#data/status-effect";
+import type { BattlerIndex } from "#enums/battler-index";
+import { CommonAnim } from "#enums/move-anims-common";
+import { StatusEffect } from "#enums/status-effect";
+import type { Pokemon } from "#field/pokemon";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import { isNullOrUndefined } from "#utils/common";
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
   public readonly phaseName = "ObtainStatusEffectPhase";
@@ -53,7 +53,11 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
             globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeStatusEffectTrigger, true);
             // If mold breaker etc was used to set this status, it shouldn't apply to abilities activated afterwards
             globalScene.arena.setIgnoreAbilities(false);
-            applyPostSetStatusAbAttrs("PostSetStatusAbAttr", pokemon, this.statusEffect, this.sourcePokemon);
+            applyAbAttrs("PostSetStatusAbAttr", {
+              pokemon,
+              effect: this.statusEffect,
+              sourcePokemon: this.sourcePokemon ?? undefined,
+            });
           }
           this.end();
         });

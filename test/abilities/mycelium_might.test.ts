@@ -1,10 +1,10 @@
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { TurnStartPhase } from "#app/phases/turn-start-phase";
-import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
-import { Stat } from "#enums/stat";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { TurnStartPhase } from "#phases/turn-start-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -26,7 +26,7 @@ describe("Abilities - Mycelium Might", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.CLEAR_BODY)
 
@@ -40,7 +40,7 @@ describe("Abilities - Mycelium Might", () => {
    * https://bulbapedia.bulbagarden.net/wiki/Mycelium_Might_(Ability)
    * https://bulbapedia.bulbagarden.net/wiki/Priority
    * https://www.smogon.com/forums/threads/scarlet-violet-battle-mechanics-research.3709545/page-24
-   **/
+   */
 
   it("will move last in its priority bracket and ignore protective abilities", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
@@ -63,7 +63,7 @@ describe("Abilities - Mycelium Might", () => {
 
     // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
     expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
-  }, 20000);
+  });
 
   it("will still go first if a status move that is in a higher priority bracket than the opponent's move is used", async () => {
     game.override.enemyMoveset(MoveId.TACKLE);
@@ -86,7 +86,7 @@ describe("Abilities - Mycelium Might", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
     expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
-  }, 20000);
+  });
 
   it("will not affect non-status moves", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
@@ -105,5 +105,5 @@ describe("Abilities - Mycelium Might", () => {
     // This means that the commandOrder should be identical to the speedOrder
     expect(speedOrder).toEqual([playerIndex, enemyIndex]);
     expect(commandOrder).toEqual([playerIndex, enemyIndex]);
-  }, 20000);
+  });
 });

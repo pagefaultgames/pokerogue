@@ -1,12 +1,12 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { allAbilities } from "#app/data/data-lists";
+import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { Stat } from "#app/enums/stat";
-import { WeatherType } from "#app/enums/weather-type";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { WeatherType } from "#enums/weather-type";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -47,9 +47,10 @@ describe("Abilities - Flower Gift", () => {
     allyAbility = AbilityId.BALL_FETCH,
     enemyAbility = AbilityId.BALL_FETCH,
   ): Promise<[number, number]> => {
-    game.override.battleStyle("double");
-    game.override.moveset([MoveId.SPLASH, MoveId.SUNNY_DAY, move, MoveId.HEAL_PULSE]);
-    game.override.enemyMoveset([MoveId.SPLASH, MoveId.HEAL_PULSE]);
+    game.override
+      .battleStyle("double")
+      .moveset([MoveId.SPLASH, MoveId.SUNNY_DAY, move, MoveId.HEAL_PULSE])
+      .enemyMoveset([MoveId.SPLASH, MoveId.HEAL_PULSE]);
     const target_index = allyAttacker ? BattlerIndex.ENEMY : BattlerIndex.PLAYER_2;
     const attacker_index = allyAttacker ? BattlerIndex.PLAYER_2 : BattlerIndex.ENEMY;
     const ally_move = allyAttacker ? move : MoveId.SPLASH;

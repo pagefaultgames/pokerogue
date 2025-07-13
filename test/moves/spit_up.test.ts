@@ -1,18 +1,17 @@
-import { Stat } from "#enums/stat";
-import { StockpilingTag } from "#app/data/battler-tags";
-import { allMoves } from "#app/data/data-lists";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import type { TurnMove } from "#app/field/pokemon";
-import { MoveResult } from "#enums/move-result";
-import GameManager from "#test/testUtils/gameManager";
+import { StockpilingTag } from "#data/battler-tags";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
-import type Move from "#app/data/moves/move";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import type { Move } from "#moves/move";
+import { MovePhase } from "#phases/move-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { MovePhase } from "#app/phases/move-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 describe("Moves - Spit Up", () => {
   let phaserGame: Phaser.Game;
@@ -32,15 +31,14 @@ describe("Moves - Spit Up", () => {
     spitUp = allMoves[MoveId.SPIT_UP];
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("single");
-
-    game.override.enemySpecies(SpeciesId.RATTATA);
-    game.override.enemyMoveset(MoveId.SPLASH);
-    game.override.enemyAbility(AbilityId.NONE);
-    game.override.enemyLevel(2000);
-
-    game.override.moveset(new Array(4).fill(spitUp.id));
-    game.override.ability(AbilityId.NONE);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.RATTATA)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyAbility(AbilityId.NONE)
+      .enemyLevel(2000)
+      .moveset(MoveId.SPIT_UP)
+      .ability(AbilityId.NONE);
 
     vi.spyOn(spitUp, "calculateBattlePower");
   });
@@ -127,7 +125,7 @@ describe("Moves - Spit Up", () => {
     game.move.select(MoveId.SPIT_UP);
     await game.phaseInterceptor.to(TurnInitPhase);
 
-    expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+    expect(pokemon.getMoveHistory().at(-1)).toMatchObject({
       move: MoveId.SPIT_UP,
       result: MoveResult.FAIL,
       targets: [game.scene.getEnemyPokemon()!.getBattlerIndex()],
@@ -154,7 +152,7 @@ describe("Moves - Spit Up", () => {
 
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject({
         move: MoveId.SPIT_UP,
         result: MoveResult.SUCCESS,
         targets: [game.scene.getEnemyPokemon()!.getBattlerIndex()],
@@ -186,7 +184,7 @@ describe("Moves - Spit Up", () => {
       game.move.select(MoveId.SPIT_UP);
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject({
         move: MoveId.SPIT_UP,
         result: MoveResult.SUCCESS,
         targets: [game.scene.getEnemyPokemon()!.getBattlerIndex()],

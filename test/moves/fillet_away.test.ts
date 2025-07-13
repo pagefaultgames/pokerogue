@@ -1,9 +1,9 @@
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { toDmgValue } from "#app/utils/common";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -28,12 +28,13 @@ describe("Moves - FILLET AWAY", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.starterSpecies(SpeciesId.MAGIKARP);
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.moveset([MoveId.FILLET_AWAY]);
-    game.override.enemyMoveset(MoveId.SPLASH);
+    game.override
+      .starterSpecies(SpeciesId.MAGIKARP)
+      .enemySpecies(SpeciesId.SNORLAX)
+      .startingLevel(100)
+      .enemyLevel(100)
+      .moveset([MoveId.FILLET_AWAY])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/fillet_away_(move)

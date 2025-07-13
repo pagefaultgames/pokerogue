@@ -1,8 +1,8 @@
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { CommandPhase } from "#phases/command-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -28,7 +28,7 @@ describe("Moves - Magnet Rise", () => {
       .starterSpecies(SpeciesId.MAGNEZONE)
       .enemySpecies(SpeciesId.RATTATA)
       .enemyMoveset(MoveId.DRILL_RUN)
-      .disableCrits()
+      .criticalHits(false)
       .enemyLevel(1)
       .moveset([moveToUse, MoveId.SPLASH, MoveId.GRAVITY, MoveId.BATON_PASS]);
   });
@@ -42,7 +42,7 @@ describe("Moves - Magnet Rise", () => {
     const finalHp = game.scene.getPlayerParty()[0].hp;
     const hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);
-  }, 20000);
+  });
 
   it("MAGNET RISE - Gravity", async () => {
     await game.classicMode.startBattle();
@@ -58,5 +58,5 @@ describe("Moves - Magnet Rise", () => {
     finalHp = game.scene.getPlayerParty()[0].hp;
     hpLost = finalHp - startingHp;
     expect(hpLost).not.toBe(0);
-  }, 20000);
+  });
 });

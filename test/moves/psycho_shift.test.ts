@@ -1,8 +1,8 @@
-import { StatusEffect } from "#app/enums/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { StatusEffect } from "#enums/status-effect";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -27,7 +27,7 @@ describe("Moves - Psycho Shift", () => {
       .ability(AbilityId.BALL_FETCH)
       .statusEffect(StatusEffect.POISON)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyLevel(20)
       .enemyAbility(AbilityId.SYNCHRONIZE)

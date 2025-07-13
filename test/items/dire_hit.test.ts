@@ -1,25 +1,25 @@
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
+import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import Phase from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
-import { TempCritBoosterModifier } from "#app/modifier/modifier";
 import { UiMode } from "#enums/ui-mode";
-import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { Button } from "#app/enums/buttons";
-import { CommandPhase } from "#app/phases/command-phase";
-import { NewBattlePhase } from "#app/phases/new-battle-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
+import { TempCritBoosterModifier } from "#modifiers/modifier";
+import { BattleEndPhase } from "#phases/battle-end-phase";
+import { CommandPhase } from "#phases/command-phase";
+import { NewBattlePhase } from "#phases/new-battle-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Dire Hit", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });
@@ -37,7 +37,7 @@ describe("Items - Dire Hit", () => {
       .moveset([MoveId.POUND])
       .startingHeldItems([{ name: "DIRE_HIT" }])
       .battleStyle("single");
-  }, 20000);
+  });
 
   it("should raise CRIT stage by 1", async () => {
     await game.classicMode.startBattle([SpeciesId.GASTLY]);
@@ -51,15 +51,14 @@ describe("Items - Dire Hit", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyPokemon.getCritStage).toHaveReturnedWith(1);
-  }, 20000);
+  });
 
   it("should renew how many battles are left of existing DIRE_HIT when picking up new DIRE_HIT", async () => {
     game.override.itemRewards([{ name: "DIRE_HIT" }]);
 
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    game.move.select(MoveId.SPLASH);
-
+    game.move.use(MoveId.SPLASH);
     await game.doKillOpponents();
 
     await game.phaseInterceptor.to(BattleEndPhase);
@@ -93,5 +92,5 @@ describe("Items - Dire Hit", () => {
       }
     }
     expect(count).toBe(1);
-  }, 20000);
+  });
 });

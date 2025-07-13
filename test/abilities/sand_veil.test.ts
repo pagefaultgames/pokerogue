@@ -1,13 +1,14 @@
-import { allAbilities } from "#app/data/data-lists";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
-import GameManager from "#test/testUtils/gameManager";
+import { CommandPhase } from "#phases/command-phase";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { MoveEndPhase } from "#phases/move-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import type { StatMultiplierAbAttrParams } from "#types/ability-types";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -46,15 +47,13 @@ describe("Abilities - Sand Veil", () => {
     vi.spyOn(leadPokemon[0], "getAbility").mockReturnValue(allAbilities[AbilityId.SAND_VEIL]);
 
     const sandVeilAttr = allAbilities[AbilityId.SAND_VEIL].getAttrs("StatMultiplierAbAttr")[0];
-    vi.spyOn(sandVeilAttr, "applyStatStage").mockImplementation(
-      (_pokemon, _passive, _simulated, stat, statValue, _args) => {
-        if (stat === Stat.EVA && game.scene.arena.weather?.weatherType === WeatherType.SANDSTORM) {
-          statValue.value *= -1; // will make all attacks miss
-          return true;
-        }
-        return false;
-      },
-    );
+    vi.spyOn(sandVeilAttr, "apply").mockImplementation(({ stat, statVal }: StatMultiplierAbAttrParams) => {
+      if (stat === Stat.EVA && game.scene.arena.weather?.weatherType === WeatherType.SANDSTORM) {
+        statVal.value *= -1; // will make all attacks miss
+        return true;
+      }
+      return false;
+    });
 
     expect(leadPokemon[0].hasAbility(AbilityId.SAND_VEIL)).toBe(true);
     expect(leadPokemon[1].hasAbility(AbilityId.SAND_VEIL)).toBe(false);

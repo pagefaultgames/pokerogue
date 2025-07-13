@@ -1,10 +1,10 @@
-import { afterEach, beforeAll, beforeEach, expect, describe, it } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
-import Phaser from "phaser";
-import { SpeciesId } from "#enums/species-id";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
+import type { BattleScene } from "#app/battle-scene";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import type BattleScene from "#app/battle-scene";
+import { SpeciesId } from "#enums/species-id";
+import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { GameManager } from "#test/testUtils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Mystery Encounters", () => {
   let phaserGame: Phaser.Game;
@@ -24,8 +24,7 @@ describe("Mystery Encounters", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.startingWave(11);
-    game.override.mysteryEncounterChance(100);
+    game.override.startingWave(11).mysteryEncounterChance(100);
   });
 
   it("Spawns a mystery encounter", async () => {

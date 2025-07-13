@@ -1,11 +1,11 @@
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
-import { Stat } from "#enums/stat";
-import { allMoves } from "#app/data/data-lists";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -29,7 +29,8 @@ describe("Moves - Spectral Thief", () => {
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH)
       .moveset([MoveId.SPECTRAL_THIEF, MoveId.SPLASH])
-      .ability(AbilityId.BALL_FETCH).disableCrits;
+      .ability(AbilityId.BALL_FETCH)
+      .criticalHits(false);
   });
 
   it("should steal max possible positive stat changes and ignore negative ones.", async () => {

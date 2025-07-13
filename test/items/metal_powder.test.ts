@@ -1,11 +1,11 @@
-import { Stat } from "#enums/stat";
-import { SpeciesStatBoosterModifier } from "#app/modifier/modifier";
-import { modifierTypes } from "#app/data/data-lists";
-import i18next from "#app/plugins/i18n";
-import { NumberHolder } from "#app/utils/common";
+import { modifierTypes } from "#data/data-lists";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import Phase from "phaser";
+import { Stat } from "#enums/stat";
+import { SpeciesStatBoosterModifier } from "#modifiers/modifier";
+import i18next from "#plugins/i18n";
+import { GameManager } from "#test/testUtils/gameManager";
+import { NumberHolder } from "#utils/common";
+import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Metal Powder", () => {
@@ -13,7 +13,7 @@ describe("Items - Metal Powder", () => {
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });
@@ -102,7 +102,7 @@ describe("Items - Metal Powder", () => {
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
-  }, 20000);
+  });
 
   it("METAL_POWDER held by fused DITTO (base)", async () => {
     await game.classicMode.startBattle([SpeciesId.DITTO, SpeciesId.MAROWAK]);
@@ -135,7 +135,7 @@ describe("Items - Metal Powder", () => {
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
-  }, 20000);
+  });
 
   it("METAL_POWDER held by fused DITTO (part)", async () => {
     await game.classicMode.startBattle([SpeciesId.MAROWAK, SpeciesId.DITTO]);
@@ -168,7 +168,7 @@ describe("Items - Metal Powder", () => {
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
-  }, 20000);
+  });
 
   it("METAL_POWDER not held by DITTO", async () => {
     await game.classicMode.startBattle([SpeciesId.MAROWAK]);
@@ -191,5 +191,5 @@ describe("Items - Metal Powder", () => {
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);
-  }, 20000);
+  });
 });

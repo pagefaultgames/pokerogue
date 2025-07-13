@@ -1,14 +1,14 @@
-import { Stat } from "#enums/stat";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { SubstituteTag } from "#data/battler-tags";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { MoveEndPhase } from "#phases/move-end-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SubstituteTag } from "#app/data/battler-tags";
 
 describe("Moves - Tidy Up", () => {
   let phaserGame: Phaser.Game;
@@ -26,14 +26,15 @@ describe("Moves - Tidy Up", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.MAGIKARP);
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.enemyMoveset(MoveId.SPLASH);
-    game.override.starterSpecies(SpeciesId.FEEBAS);
-    game.override.ability(AbilityId.BALL_FETCH);
-    game.override.moveset([MoveId.TIDY_UP]);
-    game.override.startingLevel(50);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH)
+      .starterSpecies(SpeciesId.FEEBAS)
+      .ability(AbilityId.BALL_FETCH)
+      .moveset([MoveId.TIDY_UP])
+      .startingLevel(50);
   });
 
   it("spikes are cleared", async () => {
@@ -45,7 +46,7 @@ describe("Moves - Tidy Up", () => {
     game.move.select(MoveId.TIDY_UP);
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.arena.getTag(ArenaTagType.SPIKES)).toBeUndefined();
-  }, 20000);
+  });
 
   it("stealth rocks are cleared", async () => {
     game.override.moveset([MoveId.STEALTH_ROCK, MoveId.TIDY_UP]).enemyMoveset(MoveId.STEALTH_ROCK);
@@ -56,7 +57,7 @@ describe("Moves - Tidy Up", () => {
     game.move.select(MoveId.TIDY_UP);
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.arena.getTag(ArenaTagType.STEALTH_ROCK)).toBeUndefined();
-  }, 20000);
+  });
 
   it("toxic spikes are cleared", async () => {
     game.override.moveset([MoveId.TOXIC_SPIKES, MoveId.TIDY_UP]).enemyMoveset(MoveId.TOXIC_SPIKES);
@@ -67,7 +68,7 @@ describe("Moves - Tidy Up", () => {
     game.move.select(MoveId.TIDY_UP);
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.arena.getTag(ArenaTagType.TOXIC_SPIKES)).toBeUndefined();
-  }, 20000);
+  });
 
   it("sticky webs are cleared", async () => {
     game.override.moveset([MoveId.STICKY_WEB, MoveId.TIDY_UP]).enemyMoveset(MoveId.STICKY_WEB);
@@ -79,7 +80,7 @@ describe("Moves - Tidy Up", () => {
     game.move.select(MoveId.TIDY_UP);
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.arena.getTag(ArenaTagType.STICKY_WEB)).toBeUndefined();
-  }, 20000);
+  });
 
   it("substitutes are cleared", async () => {
     game.override.moveset([MoveId.SUBSTITUTE, MoveId.TIDY_UP]).enemyMoveset(MoveId.SUBSTITUTE);
@@ -96,7 +97,7 @@ describe("Moves - Tidy Up", () => {
       expect(p).toBeDefined();
       expect(p!.getTag(SubstituteTag)).toBeUndefined();
     });
-  }, 20000);
+  });
 
   it("user's stats are raised with no traps set", async () => {
     await game.classicMode.startBattle();
@@ -111,5 +112,5 @@ describe("Moves - Tidy Up", () => {
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
     expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
-  }, 20000);
+  });
 });

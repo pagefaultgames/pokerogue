@@ -1,8 +1,8 @@
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import Phase from "phaser";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Scope Lens", () => {
@@ -10,7 +10,7 @@ describe("Items - Scope Lens", () => {
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });
@@ -28,7 +28,7 @@ describe("Items - Scope Lens", () => {
       .moveset([MoveId.POUND])
       .startingHeldItems([{ name: "SCOPE_LENS" }])
       .battleStyle("single");
-  }, 20000);
+  });
 
   it("should raise CRIT stage by 1", async () => {
     await game.classicMode.startBattle([SpeciesId.GASTLY]);
@@ -42,5 +42,5 @@ describe("Items - Scope Lens", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyPokemon.getCritStage).toHaveReturnedWith(1);
-  }, 20000);
+  });
 });

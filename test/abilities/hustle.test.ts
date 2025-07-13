@@ -1,9 +1,9 @@
-import { allMoves } from "#app/data/data-lists";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { Stat } from "#app/enums/stat";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -26,7 +26,7 @@ describe("Abilities - Hustle", () => {
     game.override
       .ability(AbilityId.HUSTLE)
       .moveset([MoveId.TACKLE, MoveId.GIGA_DRAIN, MoveId.FISSURE])
-      .disableCrits()
+      .criticalHits(false)
       .battleStyle("single")
       .enemyMoveset(MoveId.SPLASH)
       .enemySpecies(SpeciesId.SHUCKLE)
@@ -75,8 +75,7 @@ describe("Abilities - Hustle", () => {
   });
 
   it("does not affect OHKO moves", async () => {
-    game.override.startingLevel(100);
-    game.override.enemyLevel(30);
+    game.override.startingLevel(100).enemyLevel(30);
 
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
     const pikachu = game.scene.getPlayerPokemon()!;

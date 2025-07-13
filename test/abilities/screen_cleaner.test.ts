@@ -1,10 +1,10 @@
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { PostSummonPhase } from "#app/phases/post-summon-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { PostSummonPhase } from "#phases/post-summon-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -24,17 +24,15 @@ describe("Abilities - Screen Cleaner", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.ability(AbilityId.SCREEN_CLEANER);
-    game.override.enemySpecies(SpeciesId.SHUCKLE);
+    game.override.battleStyle("single").ability(AbilityId.SCREEN_CLEANER).enemySpecies(SpeciesId.SHUCKLE);
   });
 
   it("removes Aurora Veil", async () => {
-    game.override.moveset([MoveId.HAIL]).enemyMoveset(MoveId.AURORA_VEIL);
+    game.override.enemyMoveset(MoveId.AURORA_VEIL);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
 
-    game.move.select(MoveId.HAIL);
+    game.move.use(MoveId.HAIL);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.AURORA_VEIL)).toBeDefined();
@@ -51,7 +49,7 @@ describe("Abilities - Screen Cleaner", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.LIGHT_SCREEN)).toBeDefined();
@@ -68,7 +66,7 @@ describe("Abilities - Screen Cleaner", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.arena.getTag(ArenaTagType.REFLECT)).toBeDefined();

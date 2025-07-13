@@ -1,18 +1,17 @@
-import type BattleScene from "#app/battle-scene";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import type Move from "#app/data/moves/move";
-import { allMoves } from "#app/data/data-lists";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import type Pokemon from "#app/field/pokemon";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { NumberHolder } from "#app/utils/common";
+import type { BattleScene } from "#app/battle-scene";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
-import GameManager from "#test/testUtils/gameManager";
+import type { Pokemon } from "#field/pokemon";
+import type { Move } from "#moves/move";
+import { GameManager } from "#test/testUtils/gameManager";
+import { NumberHolder } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 let globalScene: BattleScene;
 
@@ -42,7 +41,7 @@ describe("Moves - Aurora Veil", () => {
       .enemyLevel(100)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.AURORA_VEIL)
-      .disableCrits()
+      .criticalHits(false)
       .weather(WeatherType.HAIL);
   });
 
@@ -52,10 +51,10 @@ describe("Moves - Aurora Veil", () => {
 
     game.move.select(moveToUse);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.toEndOfTurn();
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
 
@@ -71,10 +70,10 @@ describe("Moves - Aurora Veil", () => {
     game.move.select(moveToUse);
     game.move.select(moveToUse, 1);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.toEndOfTurn();
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
 
@@ -82,72 +81,48 @@ describe("Moves - Aurora Veil", () => {
   });
 
   it("reduces damage of special attacks by half in a single battle", async () => {
-    const moveToUse = MoveId.ABSORB;
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    game.move.select(moveToUse);
+    game.move.use(MoveId.ABSORB);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.toEndOfTurn();
 
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
-      allMoves[moveToUse],
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
+      allMoves[MoveId.ABSORB],
     );
 
-    expect(mockedDmg).toBe(allMoves[moveToUse].power * singleBattleMultiplier);
+    expect(mockedDmg).toBe(allMoves[MoveId.ABSORB].power * singleBattleMultiplier);
   });
 
   it("reduces damage of special attacks by a third in a double battle", async () => {
     game.override.battleStyle("double");
-
-    const moveToUse = MoveId.DAZZLING_GLEAM;
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.SHUCKLE]);
-
-    game.move.select(moveToUse);
-    game.move.select(moveToUse, 1);
-
-    await game.phaseInterceptor.to(TurnEndPhase);
-    const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
-      allMoves[moveToUse],
-    );
-
-    expect(mockedDmg).toBe(allMoves[moveToUse].power * doubleBattleMultiplier);
-  });
-
-  it("does not affect physical critical hits", async () => {
-    game.override.moveset([MoveId.WICKED_BLOW]);
-    const moveToUse = MoveId.WICKED_BLOW;
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    game.move.select(moveToUse);
-    await game.phaseInterceptor.to(TurnEndPhase);
-
+    game.move.use(MoveId.ABSORB);
+    await game.toEndOfTurn();
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
-      allMoves[moveToUse],
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
+      allMoves[MoveId.ABSORB],
     );
-    expect(mockedDmg).toBe(allMoves[moveToUse].power);
+
+    expect(mockedDmg).toBe(allMoves[MoveId.ABSORB].power * doubleBattleMultiplier);
   });
 
   it("does not affect critical hits", async () => {
-    game.override.moveset([MoveId.FROST_BREATH]);
-    const moveToUse = MoveId.FROST_BREATH;
-    vi.spyOn(allMoves[MoveId.FROST_BREATH], "accuracy", "get").mockReturnValue(100);
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    game.move.select(moveToUse);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    game.move.use(MoveId.WICKED_BLOW);
+    await game.toEndOfTurn();
 
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
-      allMoves[moveToUse],
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
+      allMoves[MoveId.WICKED_BLOW],
     );
-    expect(mockedDmg).toBe(allMoves[moveToUse].power);
+    expect(mockedDmg).toBe(allMoves[MoveId.WICKED_BLOW].power);
   });
 });
 

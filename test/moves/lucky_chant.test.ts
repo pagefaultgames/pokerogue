@@ -1,11 +1,10 @@
 import { AbilityId } from "#enums/ability-id";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Lucky Chant", () => {
   let phaserGame: Phaser.Game;
@@ -29,74 +28,91 @@ describe("Moves - Lucky Chant", () => {
       .moveset([MoveId.LUCKY_CHANT, MoveId.SPLASH, MoveId.FOLLOW_ME])
       .enemySpecies(SpeciesId.SNORLAX)
       .enemyAbility(AbilityId.INSOMNIA)
-      .enemyMoveset([MoveId.FLOWER_TRICK])
+      .enemyMoveset(MoveId.TACKLE)
       .startingLevel(100)
       .enemyLevel(100);
   });
 
-  it("should prevent critical hits from moves", async () => {
+  it("should prevent random critical hits from moves", async () => {
+    game.override.criticalHits(true);
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const charizard = game.scene.getPlayerPokemon()!;
+    expect(charizard).toBeDefined();
+    const critSpy = vi.spyOn(charizard, "getCriticalHitResult"); // called on the defender (ie player)
 
     game.move.select(MoveId.SPLASH);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    const firstTurnDamage = playerPokemon.getMaxHp() - playerPokemon.hp;
+    expect(critSpy).toHaveLastReturnedWith(true);
+    const firstTurnDamage = charizard.getInverseHp();
 
     game.move.select(MoveId.LUCKY_CHANT);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    expect(critSpy).toHaveLastReturnedWith(false);
+    const secondTurnDamage = charizard.getInverseHp() - firstTurnDamage;
+    expect(secondTurnDamage).toBeLessThan(firstTurnDamage);
+  });
 
-    const secondTurnDamage = playerPokemon.getMaxHp() - playerPokemon.hp - firstTurnDamage;
+  it("should prevent guaranteed critical hits from moves", async () => {
+    game.override.enemyMoveset(MoveId.FLOWER_TRICK);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+
+    const charizard = game.scene.getPlayerPokemon()!;
+    expect(charizard).toBeDefined();
+
+    game.move.select(MoveId.SPLASH);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    const firstTurnDamage = charizard.getInverseHp();
+
+    game.move.select(MoveId.LUCKY_CHANT);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    const secondTurnDamage = charizard.getInverseHp() - firstTurnDamage;
     expect(secondTurnDamage).toBeLessThan(firstTurnDamage);
   });
 
   it("should prevent critical hits against the user's ally", async () => {
-    game.override.battleStyle("double");
+    game.override.battleStyle("double").criticalHits(true);
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
-    const playerPokemon = game.scene.getPlayerField();
+    const charizard = game.scene.getPlayerPokemon()!;
+    expect(charizard).toBeDefined();
 
-    game.move.select(MoveId.FOLLOW_ME);
-    game.move.select(MoveId.SPLASH, 1);
+    game.move.select(MoveId.FOLLOW_ME, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    const firstTurnDamage = charizard.getInverseHp();
 
-    const firstTurnDamage = playerPokemon[0].getMaxHp() - playerPokemon[0].hp;
+    game.move.select(MoveId.FOLLOW_ME, BattlerIndex.PLAYER);
+    game.move.select(MoveId.LUCKY_CHANT, BattlerIndex.PLAYER_2);
 
-    game.move.select(MoveId.FOLLOW_ME);
-    game.move.select(MoveId.LUCKY_CHANT, 1);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    await game.phaseInterceptor.to(BerryPhase, false);
-
-    const secondTurnDamage = playerPokemon[0].getMaxHp() - playerPokemon[0].hp - firstTurnDamage;
+    const secondTurnDamage = charizard.getInverseHp() - firstTurnDamage;
     expect(secondTurnDamage).toBeLessThan(firstTurnDamage);
   });
 
   it("should prevent critical hits from field effects", async () => {
-    game.override.enemyMoveset([MoveId.TACKLE]);
-
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
-
-    enemyPokemon.addTag(BattlerTagType.ALWAYS_CRIT, 2, MoveId.NONE, 0);
+    const charizard = game.field.getPlayerPokemon();
+    const snorlax = game.field.getEnemyPokemon();
+    snorlax.addTag(BattlerTagType.ALWAYS_CRIT, 2, MoveId.NONE, 0);
 
     game.move.select(MoveId.SPLASH);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    const firstTurnDamage = playerPokemon.getMaxHp() - playerPokemon.hp;
+    const firstTurnDamage = charizard.getInverseHp();
 
     game.move.select(MoveId.LUCKY_CHANT);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    await game.phaseInterceptor.to(BerryPhase, false);
-
-    const secondTurnDamage = playerPokemon.getMaxHp() - playerPokemon.hp - firstTurnDamage;
+    const secondTurnDamage = charizard.getInverseHp() - firstTurnDamage;
     expect(secondTurnDamage).toBeLessThan(firstTurnDamage);
   });
 });

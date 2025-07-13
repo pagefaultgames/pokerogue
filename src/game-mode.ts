@@ -1,21 +1,21 @@
-import i18next from "i18next";
-import type { FixedBattleConfigs } from "./battle";
-import { classicFixedBattles, FixedBattleConfig } from "./battle";
-import type { Challenge } from "./data/challenge";
-import { allChallenges, applyChallenges, copyChallenge } from "./data/challenge";
-import { ChallengeType } from "#enums/challenge-type";
-import type PokemonSpecies from "./data/pokemon-species";
-import { allSpecies } from "./data/pokemon-species";
-import type { Arena } from "./field/arena";
-import Overrides from "#app/overrides";
-import { isNullOrUndefined, randSeedInt, randSeedItem } from "#app/utils/common";
-import { BiomeId } from "#enums/biome-id";
-import { SpeciesId } from "#enums/species-id";
-import { Challenges } from "./enums/challenges";
+import type { FixedBattleConfigs } from "#app/battle";
+import { classicFixedBattles, FixedBattleConfig } from "#app/battle";
+import { CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { getDailyStartingBiome } from "./data/daily-run";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES, CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES } from "./constants";
+import Overrides from "#app/overrides";
+import type { Challenge } from "#data/challenge";
+import { allChallenges, applyChallenges, copyChallenge } from "#data/challenge";
+import { getDailyStartingBiome } from "#data/daily-run";
+import { allSpecies } from "#data/data-lists";
+import type { PokemonSpecies } from "#data/pokemon-species";
+import { BiomeId } from "#enums/biome-id";
+import { ChallengeType } from "#enums/challenge-type";
+import { Challenges } from "#enums/challenges";
 import { GameModes } from "#enums/game-modes";
+import { SpeciesId } from "#enums/species-id";
+import type { Arena } from "#field/arena";
+import { isNullOrUndefined, randSeedInt, randSeedItem } from "#utils/common";
+import i18next from "i18next";
 
 interface GameModeConfig {
   isClassic?: boolean;
@@ -90,13 +90,14 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
+   * Helper function to get starting level for game mode.
    * @returns either:
-   * - override from overrides.ts
+   * - starting level override from overrides.ts
    * - 20 for Daily Runs
    * - 5 for all other modes
    */
   getStartingLevel(): number {
-    if (Overrides.STARTING_LEVEL_OVERRIDE) {
+    if (Overrides.STARTING_LEVEL_OVERRIDE > 0) {
       return Overrides.STARTING_LEVEL_OVERRIDE;
     }
     switch (this.modeId) {

@@ -1,14 +1,14 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { BerryPhase } from "#phases/berry-phase";
+import { FaintPhase } from "#phases/faint-phase";
+import { MessagePhase } from "#phases/message-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, test } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
-import { Stat } from "#enums/stat";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { FaintPhase } from "#app/phases/faint-phase";
-import { MessagePhase } from "#app/phases/message-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 describe("Moves - Parting Shot", () => {
   let phaserGame: Phaser.Game;
@@ -26,11 +26,12 @@ describe("Moves - Parting Shot", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.moveset([MoveId.PARTING_SHOT, MoveId.SPLASH]);
-    game.override.enemyMoveset(MoveId.SPLASH);
-    game.override.startingLevel(5);
-    game.override.enemyLevel(5);
+    game.override
+      .battleStyle("single")
+      .moveset([MoveId.PARTING_SHOT, MoveId.SPLASH])
+      .enemyMoveset(MoveId.SPLASH)
+      .startingLevel(5)
+      .enemyLevel(5);
   });
 
   test("Parting Shot when buffed by prankster should fail against dark types", async () => {

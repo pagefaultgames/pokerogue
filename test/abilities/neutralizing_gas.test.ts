@@ -1,13 +1,14 @@
-import { BattlerIndex } from "#enums/battler-index";
-import type { CommandPhase } from "#app/phases/command-phase";
-import { Command } from "#enums/command";
+import { globalScene } from "#app/global-scene";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerIndex } from "#enums/battler-index";
+import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import type { CommandPhase } from "#phases/command-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -31,7 +32,7 @@ describe("Abilities - Neutralizing Gas", () => {
       .moveset([MoveId.SPLASH])
       .ability(AbilityId.NEUTRALIZING_GAS)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
@@ -164,6 +165,7 @@ describe("Abilities - Neutralizing Gas", () => {
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
 
     vi.spyOn(game.scene.getPlayerPokemon()!, "randBattleSeedInt").mockReturnValue(0);
+    vi.spyOn(globalScene, "randBattleSeedInt").mockReturnValue(0);
 
     const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);
@@ -178,7 +180,7 @@ describe("Abilities - Neutralizing Gas", () => {
 
     const enemy = game.scene.getEnemyPokemon()!;
     const weatherChangeAttr = enemy.getAbilityAttrs("PostSummonWeatherChangeAbAttr", false)[0];
-    vi.spyOn(weatherChangeAttr, "applyPostSummon");
+    const weatherChangeSpy = vi.spyOn(weatherChangeAttr, "apply");
 
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
 
@@ -187,6 +189,6 @@ describe("Abilities - Neutralizing Gas", () => {
     await game.killPokemon(game.scene.getPlayerPokemon()!);
 
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
-    expect(weatherChangeAttr.applyPostSummon).not.toHaveBeenCalled();
+    expect(weatherChangeSpy).not.toHaveBeenCalled();
   });
 });

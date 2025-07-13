@@ -1,13 +1,13 @@
-import { Status } from "#app/data/status-effect";
-import { AbilityId } from "#enums/ability-id";
 import { getGameMode } from "#app/game-mode";
+import { Status } from "#data/status-effect";
+import { AbilityId } from "#enums/ability-id";
 import { GameModes } from "#enums/game-modes";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import { BattleEndPhase } from "#phases/battle-end-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -56,7 +56,7 @@ describe("Double Battles", () => {
 
     await game.phaseInterceptor.to(TurnInitPhase);
     expect(game.scene.getPlayerField().filter(p => !p.isFainted())).toHaveLength(2);
-  }, 20000);
+  });
 
   it("randomly chooses between single and double battles if there is no battle type override", async () => {
     let rngSweepProgress = 0; // Will simulate RNG rolls by slowly increasing from 0 to 1

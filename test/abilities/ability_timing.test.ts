@@ -1,11 +1,11 @@
-import { BattleStyle } from "#app/enums/battle-style";
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import i18next from "#app/plugins/i18n";
-import { UiMode } from "#enums/ui-mode";
 import { AbilityId } from "#enums/ability-id";
+import { BattleStyle } from "#enums/battle-style";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { UiMode } from "#enums/ui-mode";
+import { CommandPhase } from "#phases/command-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import i18next from "#plugins/i18n";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -50,5 +50,5 @@ describe("Ability Timing", () => {
 
     await game.phaseInterceptor.to("MessagePhase");
     expect(i18next.t).toHaveBeenCalledWith("battle:statFell", expect.objectContaining({ count: 1 }));
-  }, 5000);
+  });
 });

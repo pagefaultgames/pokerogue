@@ -1,7 +1,7 @@
-import { allMoves } from "../data-lists";
-import { getEnumKeys, getEnumValues } from "#app/utils/common";
+import { allMoves } from "#data/data-lists";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { getEnumKeys, getEnumValues } from "#utils/common";
 
 
 export const speciesEggMoves = {
@@ -595,13 +595,13 @@ function parseEggMoves(content: string): void {
     const cols = line.split(",").slice(0, 5);
     const moveNames = allMoves.map(m => m.name.replace(/ \([A-Z]\)$/, "").toLowerCase());
     const enumSpeciesName = cols[0].toUpperCase().replace(/[ -]/g, "_");
-    const species = speciesValues[speciesNames.findIndex(s => s === enumSpeciesName)];
+    const species = speciesValues[speciesNames.indexOf(enumSpeciesName)];
 
     const eggMoves: MoveId[] = [];
 
     for (let m = 0; m < 4; m++) {
       const moveName = cols[m + 1].trim();
-      const moveIndex = moveName !== "N/A" ? moveNames.findIndex(mn => mn === moveName.toLowerCase()) : -1;
+      const moveIndex = moveName !== "N/A" ? moveNames.indexOf(moveName.toLowerCase()) : -1;
       eggMoves.push(moveIndex > -1 ? moveIndex as MoveId : MoveId.NONE);
 
       if (moveIndex === -1) {

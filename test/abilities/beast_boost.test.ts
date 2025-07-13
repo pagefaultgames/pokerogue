@@ -1,9 +1,9 @@
-import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -47,7 +47,7 @@ describe("Abilities - Beast Boost", () => {
     await game.phaseInterceptor.to("VictoryPhase");
 
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(1);
-  }, 20000);
+  });
 
   it("should use in-battle overriden stats when determining the stat stage to raise by 1", async () => {
     game.override.enemyMoveset([MoveId.GUARD_SPLIT]);
@@ -66,7 +66,7 @@ describe("Abilities - Beast Boost", () => {
     await game.phaseInterceptor.to("VictoryPhase");
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
-  }, 20000);
+  });
 
   it("should have order preference in case of stat ties", async () => {
     // Order preference follows the order of EFFECTIVE_STAT
@@ -84,5 +84,5 @@ describe("Abilities - Beast Boost", () => {
     await game.phaseInterceptor.to("VictoryPhase");
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
-  }, 20000);
+  });
 });

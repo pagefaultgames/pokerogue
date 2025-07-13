@@ -1,12 +1,12 @@
-import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { EnemyCommandPhase } from "#phases/enemy-command-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 describe("Moves - Growth", () => {
   let phaserGame: Phaser.Game;
@@ -24,11 +24,12 @@ describe("Moves - Growth", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemyAbility(AbilityId.MOXIE);
-    game.override.ability(AbilityId.INSOMNIA);
-    game.override.moveset([MoveId.GROWTH]);
-    game.override.enemyMoveset(MoveId.SPLASH);
+    game.override
+      .battleStyle("single")
+      .enemyAbility(AbilityId.MOXIE)
+      .ability(AbilityId.INSOMNIA)
+      .moveset([MoveId.GROWTH])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should raise SPATK stat stage by 1", async () => {
@@ -42,5 +43,5 @@ describe("Moves - Growth", () => {
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
-  }, 20000);
+  });
 });

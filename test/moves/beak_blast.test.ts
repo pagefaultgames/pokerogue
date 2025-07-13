@@ -1,12 +1,12 @@
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { StatusEffect } from "#app/enums/status-effect";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { MovePhase } from "#app/phases/move-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { StatusEffect } from "#enums/status-effect";
+import { BerryPhase } from "#phases/berry-phase";
+import { MovePhase } from "#phases/move-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -129,8 +129,7 @@ describe("Moves - Beak Blast", () => {
   });
 
   it("should not burn a long reach enemy that hits the user with a contact move", async () => {
-    game.override.enemyAbility(AbilityId.LONG_REACH);
-    game.override.enemyMoveset([MoveId.FALSE_SWIPE]).enemyLevel(100);
+    game.override.enemyAbility(AbilityId.LONG_REACH).enemyMoveset([MoveId.FALSE_SWIPE]).enemyLevel(100);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     game.move.select(MoveId.BEAK_BLAST);
     await game.phaseInterceptor.to("BerryPhase", false);

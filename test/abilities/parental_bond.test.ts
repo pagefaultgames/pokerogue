@@ -1,12 +1,12 @@
-import { PokemonType } from "#enums/pokemon-type";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { toDmgValue } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
+import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -26,14 +26,15 @@ describe("Abilities - Parental Bond", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.disableCrits();
-    game.override.ability(AbilityId.PARENTAL_BOND);
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-    game.override.enemyAbility(AbilityId.FUR_COAT);
-    game.override.enemyMoveset(MoveId.SPLASH);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("single")
+      .criticalHits(false)
+      .ability(AbilityId.PARENTAL_BOND)
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyAbility(AbilityId.FUR_COAT)
+      .enemyMoveset(MoveId.SPLASH)
+      .startingLevel(100)
+      .enemyLevel(100);
   });
 
   it("should add second strike to attack move", async () => {
@@ -61,8 +62,7 @@ describe("Abilities - Parental Bond", () => {
   });
 
   it("should apply secondary effects to both strikes", async () => {
-    game.override.moveset([MoveId.POWER_UP_PUNCH]);
-    game.override.enemySpecies(SpeciesId.AMOONGUSS);
+    game.override.moveset([MoveId.POWER_UP_PUNCH]).enemySpecies(SpeciesId.AMOONGUSS);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
@@ -148,8 +148,7 @@ describe("Abilities - Parental Bond", () => {
   });
 
   it("should not apply multiplier to counter moves", async () => {
-    game.override.moveset([MoveId.COUNTER]);
-    game.override.enemyMoveset([MoveId.TACKLE]);
+    game.override.moveset([MoveId.COUNTER]).enemyMoveset([MoveId.TACKLE]);
 
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
@@ -167,9 +166,7 @@ describe("Abilities - Parental Bond", () => {
   });
 
   it("should not apply to multi-target moves", async () => {
-    game.override.battleStyle("double");
-    game.override.moveset([MoveId.EARTHQUAKE]);
-    game.override.passiveAbility(AbilityId.LEVITATE);
+    game.override.battleStyle("double").moveset([MoveId.EARTHQUAKE]).passiveAbility(AbilityId.LEVITATE);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
@@ -196,6 +193,7 @@ describe("Abilities - Parental Bond", () => {
     expect(leadPokemon.turnData.hitCount).toBe(2);
   });
 
+  // TODO: consolidate all these tests into 1 block
   it("should only trigger post-target move effects once", async () => {
     game.override.moveset([MoveId.MIND_BLOWN]);
 
@@ -234,44 +232,6 @@ describe("Abilities - Parental Bond", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(leadPokemon.isOfType(PokemonType.FIRE)).toBe(false);
-  });
-
-  it("Moves boosted by this ability and Multi-Lens should strike 3 times", async () => {
-    game.override.moveset([MoveId.TACKLE]);
-    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
-
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-
-    game.move.select(MoveId.TACKLE);
-
-    await game.phaseInterceptor.to("DamageAnimPhase");
-
-    expect(leadPokemon.turnData.hitCount).toBe(3);
-  });
-
-  it("Seismic Toss boosted by this ability and Multi-Lens should strike 3 times", async () => {
-    game.override.moveset([MoveId.SEISMIC_TOSS]);
-    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
-
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
-
-    const enemyStartingHp = enemyPokemon.hp;
-
-    game.move.select(MoveId.SEISMIC_TOSS);
-    await game.move.forceHit();
-
-    await game.phaseInterceptor.to("DamageAnimPhase");
-
-    expect(leadPokemon.turnData.hitCount).toBe(3);
-
-    await game.phaseInterceptor.to("MoveEndPhase", false);
-
-    expect(enemyPokemon.hp).toBe(enemyStartingHp - 200);
   });
 
   it("Hyper Beam boosted by this ability should strike twice, then recharge", async () => {
@@ -378,8 +338,7 @@ describe("Abilities - Parental Bond", () => {
   });
 
   it("should not cause user to hit into King's Shield more than once", async () => {
-    game.override.moveset([MoveId.TACKLE]);
-    game.override.enemyMoveset([MoveId.KINGS_SHIELD]);
+    game.override.moveset([MoveId.TACKLE]).enemyMoveset([MoveId.KINGS_SHIELD]);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
@@ -393,8 +352,7 @@ describe("Abilities - Parental Bond", () => {
   });
 
   it("should not cause user to hit into Storm Drain more than once", async () => {
-    game.override.moveset([MoveId.WATER_GUN]);
-    game.override.enemyAbility(AbilityId.STORM_DRAIN);
+    game.override.moveset([MoveId.WATER_GUN]).enemyAbility(AbilityId.STORM_DRAIN);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 

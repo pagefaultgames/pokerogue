@@ -1,10 +1,10 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/testUtils/gameManager";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 /** HP Cost of Move */
 const RATIO = 3;
@@ -27,12 +27,13 @@ describe("Moves - Clangorous Soul", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.starterSpecies(SpeciesId.MAGIKARP);
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.moveset([MoveId.CLANGOROUS_SOUL]);
-    game.override.enemyMoveset(MoveId.SPLASH);
+    game.override
+      .starterSpecies(SpeciesId.MAGIKARP)
+      .enemySpecies(SpeciesId.SNORLAX)
+      .startingLevel(100)
+      .enemyLevel(100)
+      .moveset([MoveId.CLANGOROUS_SOUL])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Clangorous_Soul_(move)

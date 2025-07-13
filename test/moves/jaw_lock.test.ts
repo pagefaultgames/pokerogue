@@ -1,13 +1,13 @@
-import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#enums/ability-id";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { FaintPhase } from "#app/phases/faint-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import GameManager from "#test/testUtils/gameManager";
+import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { BerryPhase } from "#phases/berry-phase";
+import { FaintPhase } from "#phases/faint-phase";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -36,7 +36,7 @@ describe("Moves - Jaw Lock", () => {
       .moveset([MoveId.JAW_LOCK, MoveId.SPLASH])
       .startingLevel(100)
       .enemyLevel(100)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("should trap the move's user and target", async () => {

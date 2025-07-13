@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
-import { MoveId } from "#enums/move-id";
 import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import Phase from "phaser";
+import { GameManager } from "#test/testUtils/gameManager";
+import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Items - Mystical Rock", () => {
@@ -11,7 +11,7 @@ describe("Items - Mystical Rock", () => {
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });

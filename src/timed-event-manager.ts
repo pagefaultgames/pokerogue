@@ -1,15 +1,15 @@
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addTextObject } from "#app/ui/text";
-import type { nil } from "#app/utils/common";
-import { isNullOrUndefined } from "#app/utils/common";
-import i18next from "i18next";
-import { SpeciesId } from "#enums/species-id";
-import type { WeatherPoolEntry } from "#app/data/weather";
-import { WeatherType } from "#enums/weather-type";
-import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "./data/balance/starters";
-import { MysteryEncounterType } from "./enums/mystery-encounter-type";
-import { MysteryEncounterTier } from "./enums/mystery-encounter-tier";
+import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "#balance/starters";
+import type { WeatherPoolEntry } from "#data/weather";
 import { Challenges } from "#enums/challenges";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
+import { WeatherType } from "#enums/weather-type";
+import { addTextObject, TextStyle } from "#ui/text";
+import type { nil } from "#utils/common";
+import { isNullOrUndefined } from "#utils/common";
+import i18next from "i18next";
 
 export enum EventType {
   SHINY,
@@ -343,6 +343,36 @@ const timedEvents: TimedEvent[] = [
       { species: SpeciesId.DRAMPA },
       { species: SpeciesId.JANGMO_O },
       { species: SpeciesId.APPLIN },
+    ],
+    classicWaveRewards: [
+      { wave: 8, type: "SHINY_CHARM" },
+      { wave: 8, type: "ABILITY_CHARM" },
+      { wave: 8, type: "CATCHING_CHARM" },
+      { wave: 25, type: "SHINY_CHARM" },
+    ],
+  },
+  {
+    name: "Pride 25",
+    eventType: EventType.SHINY,
+    startDate: new Date(Date.UTC(2025, 5, 18)),
+    endDate: new Date(Date.UTC(2025, 5, 30)),
+    bannerKey: "pride2025",
+    scale: 0.105,
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-MX", "pt-BR", "zh-CN", "zh-TW"],
+    shinyMultiplier: 2,
+    eventEncounters: [
+      { species: SpeciesId.CHARMANDER },
+      { species: SpeciesId.SANDILE },
+      { species: SpeciesId.FERROSEED },
+      { species: SpeciesId.FOONGUS },
+      { species: SpeciesId.CUTIEFLY },
+      { species: SpeciesId.DEWPIDER },
+      { species: SpeciesId.TYPE_NULL },
+      { species: SpeciesId.MINIOR },
+      { species: SpeciesId.SOBBLE },
+      { species: SpeciesId.INDEEDEE },
+      { species: SpeciesId.CAPSAKID },
+      { species: SpeciesId.ALOLA_MEOWTH },
     ],
     classicWaveRewards: [
       { wave: 8, type: "SHINY_CHARM" },

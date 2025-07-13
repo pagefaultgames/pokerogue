@@ -1,15 +1,15 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { allAbilities } from "#app/data/data-lists";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { Stat } from "#app/enums/stat";
-import { StatusEffect } from "#app/enums/status-effect";
-import { WeatherType } from "#app/enums/weather-type";
+import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { WeatherType } from "#enums/weather-type";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -33,7 +33,7 @@ describe("Abilities - Good As Gold", () => {
       .moveset([MoveId.SPLASH])
       .ability(AbilityId.GOOD_AS_GOLD)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
@@ -45,7 +45,7 @@ describe("Abilities - Good As Gold", () => {
 
     const player = game.scene.getPlayerPokemon()!;
 
-    game.move.select(MoveId.SPLASH, 0);
+    game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -54,18 +54,20 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should block memento and prevent the user from fainting", async () => {
-    game.override.enemyMoveset([MoveId.MEMENTO]);
+    game.override.enemyAbility(AbilityId.GOOD_AS_GOLD);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    game.move.select(MoveId.MEMENTO);
+
+    game.move.use(MoveId.MEMENTO);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getPlayerPokemon()!.isFainted()).toBe(false);
-    expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(0);
+    expect(game.field.getPlayerPokemon().isFainted()).toBe(false);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(0);
   });
 
   it("should not block any status moves that target the field, one side, or all pokemon", async () => {
-    game.override.battleStyle("double");
-    game.override.enemyMoveset([MoveId.STEALTH_ROCK, MoveId.HAZE]);
-    game.override.moveset([MoveId.SWORDS_DANCE, MoveId.SAFEGUARD]);
+    game.override
+      .battleStyle("double")
+      .enemyMoveset([MoveId.STEALTH_ROCK, MoveId.HAZE])
+      .moveset([MoveId.SWORDS_DANCE, MoveId.SAFEGUARD]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
     const [good_as_gold, ball_fetch] = game.scene.getPlayerField();
 
@@ -85,8 +87,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should not block field targeted effects in singles", async () => {
-    game.override.battleStyle("single");
-    game.override.enemyMoveset([MoveId.SPIKES]);
+    game.override.battleStyle("single").enemyMoveset([MoveId.SPIKES]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.SPLASH, 0);
@@ -96,8 +97,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should block the ally's helping hand", async () => {
-    game.override.battleStyle("double");
-    game.override.moveset([MoveId.HELPING_HAND, MoveId.TACKLE]);
+    game.override.battleStyle("double").moveset([MoveId.HELPING_HAND, MoveId.TACKLE]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
     game.move.select(MoveId.HELPING_HAND, 0);
@@ -129,8 +129,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should not block field targeted effects like rain dance", async () => {
-    game.override.battleStyle("single");
-    game.override.enemyMoveset([MoveId.RAIN_DANCE]);
+    game.override.battleStyle("single").enemyMoveset([MoveId.RAIN_DANCE]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.use(MoveId.SPLASH, 0);

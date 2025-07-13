@@ -1,10 +1,11 @@
-import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#enums/ability-id";
-import { MoveResult } from "#enums/move-result";
-import { MovePhase } from "#app/phases/move-phase";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { MovePhase } from "#phases/move-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -59,5 +60,38 @@ describe("Moves - After You", () => {
     await game.phaseInterceptor.to(MovePhase);
 
     expect(game.scene.getPlayerField()[1].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+  });
+
+  // TODO: Enable once rampaging moves and move queue are fixed.
+  // Currently does literally nothing because `MoveUseMode` is overridden from move queue
+  // within `MovePhase`, but should be enabled once that jank is removed
+  it.todo("should maintain PP ignore status of rampaging moves", async () => {
+    game.override.moveset([]);
+    await game.classicMode.startBattle([SpeciesId.ACCELGOR, SpeciesId.RATTATA]);
+
+    const [accelgor, rattata] = game.scene.getPlayerField();
+    expect(accelgor).toBeDefined();
+    expect(rattata).toBeDefined();
+
+    game.move.changeMoveset(accelgor, [MoveId.SPLASH, MoveId.AFTER_YOU]);
+    game.move.changeMoveset(rattata, MoveId.OUTRAGE);
+
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER);
+    game.move.select(MoveId.OUTRAGE, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    const outrageMove = rattata.getMoveset().find(m => m.moveId === MoveId.OUTRAGE);
+    expect(outrageMove?.ppUsed).toBe(1);
+
+    game.move.select(MoveId.AFTER_YOU, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(accelgor.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(outrageMove?.ppUsed).toBe(1);
+    expect(rattata.getLastXMoves()[0]).toMatchObject({
+      move: MoveId.OUTRAGE,
+      result: MoveResult.SUCCESS,
+      useMode: MoveUseMode.IGNORE_PP,
+    });
   });
 });

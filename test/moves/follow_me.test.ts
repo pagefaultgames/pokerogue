@@ -1,10 +1,10 @@
-import { Stat } from "#enums/stat";
-import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#enums/ability-id";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -24,14 +24,15 @@ describe("Moves - Follow Me", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.starterSpecies(SpeciesId.AMOONGUSS);
-    game.override.ability(AbilityId.BALL_FETCH);
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.moveset([MoveId.FOLLOW_ME, MoveId.RAGE_POWDER, MoveId.SPOTLIGHT, MoveId.QUICK_ATTACK]);
-    game.override.enemyMoveset([MoveId.TACKLE, MoveId.FOLLOW_ME, MoveId.SPLASH]);
+    game.override
+      .battleStyle("double")
+      .starterSpecies(SpeciesId.AMOONGUSS)
+      .ability(AbilityId.BALL_FETCH)
+      .enemySpecies(SpeciesId.SNORLAX)
+      .startingLevel(100)
+      .enemyLevel(100)
+      .moveset([MoveId.FOLLOW_ME, MoveId.RAGE_POWDER, MoveId.SPOTLIGHT, MoveId.QUICK_ATTACK])
+      .enemyMoveset([MoveId.TACKLE, MoveId.FOLLOW_ME, MoveId.SPLASH]);
   });
 
   test("move should redirect enemy attacks to the user", async () => {
@@ -73,8 +74,7 @@ describe("Moves - Follow Me", () => {
   });
 
   test("move effect should be bypassed by Stalwart", async () => {
-    game.override.ability(AbilityId.STALWART);
-    game.override.moveset([MoveId.QUICK_ATTACK]);
+    game.override.ability(AbilityId.STALWART).moveset([MoveId.QUICK_ATTACK]);
 
     await game.classicMode.startBattle([SpeciesId.AMOONGUSS, SpeciesId.CHARIZARD]);
 

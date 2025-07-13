@@ -1,15 +1,15 @@
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
-import { SpeciesId } from "#enums/species-id";
+import { ArenaTrapTag } from "#data/arena-tag";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { MoveId } from "#enums/move-id";
-import { Stat } from "#enums/stat";
-import { allMoves } from "#app/data/data-lists";
-import { ArenaTrapTag } from "#app/data/arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { BattlerIndex } from "#enums/battler-index";
+import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
+import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { GameManager } from "#test/testUtils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("Moves - Protect", () => {
   let phaserGame: Phaser.Game;
@@ -28,16 +28,14 @@ describe("Moves - Protect", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("single");
-
-    game.override.moveset([MoveId.PROTECT]);
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-
-    game.override.enemyAbility(AbilityId.INSOMNIA);
-    game.override.enemyMoveset([MoveId.TACKLE]);
-
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("single")
+      .moveset([MoveId.PROTECT])
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .enemyMoveset([MoveId.TACKLE])
+      .startingLevel(100)
+      .enemyLevel(100);
   });
 
   test("should protect the user from attacks", async () => {

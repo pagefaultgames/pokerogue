@@ -1,11 +1,11 @@
-import { Stat } from "#enums/stat";
-import { SpeciesStatBoosterModifier } from "#app/modifier/modifier";
-import { modifierTypes } from "#app/data/data-lists";
-import i18next from "#app/plugins/i18n";
-import { NumberHolder } from "#app/utils/common";
+import { modifierTypes } from "#data/data-lists";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import Phase from "phaser";
+import { Stat } from "#enums/stat";
+import { SpeciesStatBoosterModifier } from "#modifiers/modifier";
+import i18next from "#plugins/i18n";
+import { GameManager } from "#test/testUtils/gameManager";
+import { NumberHolder } from "#utils/common";
+import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Light Ball", () => {
@@ -13,7 +13,7 @@ describe("Items - Light Ball", () => {
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });
@@ -108,7 +108,7 @@ describe("Items - Light Ball", () => {
 
     expect(atkValue.value / atkStat).toBe(2);
     expect(spAtkValue.value / spAtkStat).toBe(2);
-  }, 20000);
+  });
 
   it("LIGHT_BALL held by fused PIKACHU (base)", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.MAROWAK]);
@@ -147,7 +147,7 @@ describe("Items - Light Ball", () => {
 
     expect(atkValue.value / atkStat).toBe(2);
     expect(spAtkValue.value / spAtkStat).toBe(2);
-  }, 20000);
+  });
 
   it("LIGHT_BALL held by fused PIKACHU (part)", async () => {
     await game.classicMode.startBattle([SpeciesId.MAROWAK, SpeciesId.PIKACHU]);
@@ -186,7 +186,7 @@ describe("Items - Light Ball", () => {
 
     expect(atkValue.value / atkStat).toBe(2);
     expect(spAtkValue.value / spAtkStat).toBe(2);
-  }, 20000);
+  });
 
   it("LIGHT_BALL not held by PIKACHU", async () => {
     await game.classicMode.startBattle([SpeciesId.MAROWAK]);
@@ -215,5 +215,5 @@ describe("Items - Light Ball", () => {
 
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);
-  }, 20000);
+  });
 });

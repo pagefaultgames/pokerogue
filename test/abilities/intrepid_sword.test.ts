@@ -1,8 +1,8 @@
-import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
-import { CommandPhase } from "#app/phases/command-phase";
 import { AbilityId } from "#enums/ability-id";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { CommandPhase } from "#phases/command-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -22,10 +22,11 @@ describe("Abilities - Intrepid Sword", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.ZACIAN);
-    game.override.enemyAbility(AbilityId.INTREPID_SWORD);
-    game.override.ability(AbilityId.INTREPID_SWORD);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.ZACIAN)
+      .enemyAbility(AbilityId.INTREPID_SWORD)
+      .ability(AbilityId.INTREPID_SWORD);
   });
 
   it("should raise ATK stat stage by 1 on entry", async () => {
@@ -38,5 +39,5 @@ describe("Abilities - Intrepid Sword", () => {
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
-  }, 20000);
+  });
 });

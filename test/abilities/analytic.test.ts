@@ -1,9 +1,9 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { isBetween, toDmgValue } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
+import { isBetween, toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -27,7 +27,7 @@ describe("Abilities - Analytic", () => {
       .moveset([MoveId.SPLASH, MoveId.TACKLE])
       .ability(AbilityId.ANALYTIC)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .startingLevel(200)
       .enemyLevel(200)
       .enemySpecies(SpeciesId.SNORLAX)

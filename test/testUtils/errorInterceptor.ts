@@ -1,4 +1,4 @@
-export default class ErrorInterceptor {
+export class ErrorInterceptor {
   private static instance: ErrorInterceptor;
   public running;
 

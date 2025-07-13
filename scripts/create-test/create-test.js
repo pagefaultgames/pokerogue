@@ -1,14 +1,14 @@
-/**
+/*
  * This script creates a test boilerplate file in the appropriate
  * directory based on the type selected.
- * @example npm run test:create
+ * Usage: `pnpm test:create`
  */
 
-import chalk from "chalk";
-import inquirer from "inquirer";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import chalk from "chalk";
+import inquirer from "inquirer";
 
 //#region Constants
 
@@ -48,7 +48,7 @@ async function promptTestType() {
     {
       type: "list",
       name: "selectedOption",
-      message: "What type of test would you like to create:",
+      message: "What type of test would you like to create?",
       choices: [...choices.map(choice => ({ name: choice.label, value: choice })), "EXIT"],
     },
   ]);
