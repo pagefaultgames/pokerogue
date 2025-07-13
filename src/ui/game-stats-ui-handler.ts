@@ -358,7 +358,6 @@ export class GameStatsUiHandler extends UiHandler {
 
     this.arrowUp = globalScene.add
       .sprite(arrowX, headerBg.height + (isLegacyTheme ? 7 : 3), "prompt") //
-      .setVisible(false)
       .setFlipY(true);
 
     this.gameStatsContainer.add([this.arrowDown, this.arrowUp]);
