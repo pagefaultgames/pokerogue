@@ -170,7 +170,7 @@ export class GameMode implements GameModeConfig {
       let allowTrainerBattle = true;
       if (trainerChance) {
         const waveBase = Math.floor(waveIndex / 10) * 10;
-        // Stop generic trainers from spawning in within 2 waves of a trainer battle
+        // Stop generic trainers from spawning in within 2 waves of a fixed trainer battle
         for (let w = Math.max(waveIndex - 2, waveBase + 2); w <= Math.min(waveIndex + 2, waveBase + 9); w++) {
           if (w === waveIndex) {
             continue;
