@@ -1,6 +1,4 @@
-import { Status } from "#app/data/status-effect";
-import type { EnemyPokemon } from "#app/field/pokemon";
-import { Pokemon } from "#app/field/pokemon";
+import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
@@ -12,6 +10,8 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import type { EnemyPokemon } from "#field/pokemon";
+import { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
