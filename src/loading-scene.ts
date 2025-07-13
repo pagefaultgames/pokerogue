@@ -5,7 +5,7 @@ import { SceneBase } from "#app/scene-base";
 import { WindowVariant, getWindowVariantSuffix } from "#app/ui/ui-theme";
 import { isMobile } from "#app/touch-controls";
 import { localPing, hasAllLocalizedSprites } from "#app/utils/common";
-import { getEnumValues, getEnumKeys } from "./utils/enums";
+import { getEnumValues, getEnumKeys } from "#app/utils/enums";
 import { initPokemonPrevolutions, initPokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import { initBiomes } from "#app/data/balance/biomes";
 import { initEggMoves } from "#app/data/balance/egg-moves";
@@ -271,7 +271,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("egg_icons", "egg");
     this.loadAtlas("egg_shard", "egg");
     this.loadAtlas("egg_lightrays", "egg");
-    for (const gt of getEnumKeys(GachaType)) {
+    for (const gt of Object.keys(GachaType)) {
       const key = gt.toLowerCase();
       this.loadImage(`gacha_${key}`, "egg");
       this.loadAtlas(`gacha_underlay_${key}`, "egg");

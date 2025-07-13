@@ -471,7 +471,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.pokemonNameText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNameText);
 
-    this.pokemonFormText = addTextObject(6, 121, "", TextStyle.PARTY, {
+    this.pokemonFormText = addTextObject(6, 121, "", TextStyle.INSTRUCTIONS_TEXT, {
       fontSize: textSettings.instructionTextSize,
     });
     this.pokemonFormText.setOrigin(0, 0);
@@ -483,13 +483,14 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     starterBoxContainer.add(this.starterSelectScrollBar);
 
-    this.pokerusCursorObjs = new Array(POKERUS_STARTER_COUNT).fill(null).map(() => {
+    this.pokerusCursorObjs = [];
+    for (let i = 0; i < POKERUS_STARTER_COUNT; i++) {
       const cursorObj = globalScene.add.image(0, 0, "select_cursor_pokerus");
       cursorObj.setVisible(false);
       cursorObj.setOrigin(0, 0);
       starterBoxContainer.add(cursorObj);
-      return cursorObj;
-    });
+      this.pokerusCursorObjs.push(cursorObj);
+    }
 
     this.cursorObj = globalScene.add.image(0, 0, "select_cursor");
     this.cursorObj.setOrigin(0, 0);
@@ -561,7 +562,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.goFilterIconElement2.setName("sprite-goFilter2-icon-element");
     this.goFilterIconElement2.setScale(0.675);
     this.goFilterIconElement2.setOrigin(0.0, 0.0);
-    this.goFilterLabel = addTextObject(30, 2, i18next.t("pokedexUiHandler:goFilters"), TextStyle.PARTY, {
+    this.goFilterLabel = addTextObject(30, 2, i18next.t("pokedexUiHandler:goFilters"), TextStyle.INSTRUCTIONS_TEXT, {
       fontSize: instructionTextSize,
     });
     this.goFilterLabel.setName("text-goFilter-label");
@@ -577,7 +578,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       20,
       10,
       i18next.t("pokedexUiHandler:toggleDecorations"),
-      TextStyle.PARTY,
+      TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
     );
     this.toggleDecorationsLabel.setName("text-toggleDecorations-label");
@@ -588,9 +589,15 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.showFormTrayIconElement.setName("sprite-showFormTray-icon-element");
     this.showFormTrayIconElement.setScale(0.675);
     this.showFormTrayIconElement.setOrigin(0.0, 0.0);
-    this.showFormTrayLabel = addTextObject(16, 168, i18next.t("pokedexUiHandler:showForms"), TextStyle.PARTY, {
-      fontSize: instructionTextSize,
-    });
+    this.showFormTrayLabel = addTextObject(
+      16,
+      168,
+      i18next.t("pokedexUiHandler:showForms"),
+      TextStyle.INSTRUCTIONS_TEXT,
+      {
+        fontSize: instructionTextSize,
+      },
+    );
     this.showFormTrayLabel.setName("text-showFormTray-label");
     this.showFormTrayIconElement.setVisible(false);
     this.showFormTrayLabel.setVisible(false);
