@@ -1,15 +1,15 @@
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { MoveResult } from "#enums/move-result";
-import GameManager from "#test/testUtils/gameManager";
+import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
+import { RandomMoveAttr } from "#moves/move";
+import { PokemonMove } from "#moves/pokemon-move";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { StatusEffect } from "#app/enums/status-effect";
-import { BattlerIndex } from "#enums/battler-index";
-import { RandomMoveAttr } from "#app/data/moves/move";
-import { allMoves } from "#app/data/data-lists";
 
 describe("Moves - Sketch", () => {
   let phaserGame: Phaser.Game;

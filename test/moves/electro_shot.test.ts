@@ -1,13 +1,13 @@
+import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
-import { MoveResult } from "#enums/move-result";
-import { AbilityId } from "#enums/ability-id";
-import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Electro Shot", () => {
   let phaserGame: Phaser.Game;

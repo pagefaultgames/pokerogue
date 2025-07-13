@@ -1,13 +1,12 @@
-import { PokemonType } from "#enums/pokemon-type";
-import { randSeedInt, getEnumValues } from "#app/utils/common";
-import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
-import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import i18next from "i18next";
+import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { BiomeId } from "#enums/biome-id";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
-// import beautify from "json-beautify";
+import { getEnumValues, randSeedInt } from "#utils/common";
+import i18next from "i18next";
 
 export function getBiomeName(biome: BiomeId | -1) {
   if (biome === -1) {

@@ -1,9 +1,9 @@
-import { PostReceiveCritStatStageChangeAbAttr } from "#app/data/abilities/ability";
+import { PostReceiveCritStatStageChangeAbAttr } from "#abilities/ability";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

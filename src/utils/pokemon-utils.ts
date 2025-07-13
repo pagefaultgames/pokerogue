@@ -1,5 +1,5 @@
-import { allSpecies } from "#app/data/data-lists";
-import type PokemonSpecies from "#app/data/pokemon-species";
+import { allSpecies } from "#data/data-lists";
+import type { PokemonSpecies } from "#data/pokemon-species";
 import type { SpeciesId } from "#enums/species-id";
 
 /**

@@ -1,10 +1,10 @@
-import { getLevelRelExp, getLevelTotalExp } from "#app/data/exp";
-import type { PlayerPokemon } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
+import { getLevelRelExp, getLevelTotalExp } from "#data/exp";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { Stat } from "#enums/stat";
-import BattleInfo from "./battle-info";
-import type { BattleInfoParamList } from "./battle-info";
+import type { PlayerPokemon } from "#field/pokemon";
+import type { BattleInfoParamList } from "#ui/battle-info";
+import { BattleInfo } from "#ui/battle-info";
 
 export class PlayerBattleInfo extends BattleInfo {
   protected player: true = true;

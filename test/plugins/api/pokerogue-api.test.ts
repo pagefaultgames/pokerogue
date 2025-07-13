@@ -1,10 +1,10 @@
-import type { TitleStatsResponse } from "#app/@types/PokerogueApi";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import { getApiBaseUrl } from "#test/testUtils/testUtils";
-import { http, HttpResponse } from "msw";
-import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { pokerogueApi } from "#api/pokerogue-api";
 import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
+import { getApiBaseUrl } from "#test/testUtils/testUtils";
+import type { TitleStatsResponse } from "#types/PokerogueApi";
+import { HttpResponse, http } from "msw";
 import type { SetupServerApi } from "msw/node";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiBase = getApiBaseUrl();
 let server: SetupServerApi;
