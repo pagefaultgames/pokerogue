@@ -320,24 +320,20 @@ export class GameStatsUiHandler extends UiHandler {
 
     this.gameStatsContainer.add([headerBg, headerText]);
 
-    // #region Windows for stat columns
-    /** The width of one stat column */
     const colWidth = this.colWidth;
-    const columnCount = this.columnCount;
+
     {
-      /** Height of the header */
-      const headHeight = headerBg.height;
-      /** Height of  the stats background */
+      const columnCount = this.columnCount;
+      const headerHeight = headerBg.height;
       const statsBgHeight = Math.floor(globalScene.scaledCanvas.height - headerBg.height - 2);
       const maskOffsetX = columnCount === 1 ? 0 : -3;
       for (let i = 0; i < columnCount; i++) {
         gameStatsContainer.add(
-          addWindow(i * this.colBgWidth, headHeight, colWidth, statsBgHeight, false, false, maskOffsetX, 1) // formatting
+          addWindow(i * this.colBgWidth, headerHeight, colWidth, statsBgHeight, false, false, maskOffsetX, 1, undefined) // formatting
             .setOrigin(0),
         );
       }
     }
-    // #endregion Windows for stat columns
 
     const length = this.statsPerPage;
     this.statLabels = Array.from({ length }, (_, i) =>
@@ -396,8 +392,8 @@ export class GameStatsUiHandler extends UiHandler {
    *
    * @remarks
    *
-   * Invokes each stat's {@linkcode DisplayStat.sourceFunc | sourceFunc} to obtain its value
-   * Stat labels are shown as `???` if the stat is marked as hidden and its value is nonzero
+   * Invokes each stat's {@linkcode DisplayStat.sourceFunc | sourceFunc} to obtain its value.
+   * Stat labels are shown as `???` if the stat is marked as hidden and its value is zero.
    */
   private updateStats(): void {
     const perPage = this.statsPerPage;
