@@ -1067,7 +1067,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return whether this Pokemon can transform into an opposing Pokemon.
-   * @param target - The {@linkcode Pokemon} being transformed into.
+   * @param target - The {@linkcode Pokemon} being transformed into
    * @returns Whether this Pokemon can transform into `target`.
    */
   canTransformInto(target: Pokemon): boolean {
@@ -1316,7 +1316,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Retrieves the corresponding {@linkcode PermanentStat} of the {@linkcode Pokemon}.
-   * @param stat - The desired {@linkcode PermanentStat}.
+   * @param stat - The {@linkcode PermanentStat} to retrieve
    * @param bypassSummonData - Whether to prefer actual stats (`true`) or in-battle overridden stats (`false`); default `true`
    * @returns The numeric value of the desired {@linkcode Stat}.
    */
@@ -1330,7 +1330,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Change one of this {@linkcode Pokemon}'s {@linkcode PermanentStat}s to the specified value.
-   * @param stat - The {@linkcode PermanentStat} to be overwritten.
+   * @param stat - The {@linkcode PermanentStat} to be overwritten
    * @param value - The stat value to set. Ignored if `<=0`
    * @param bypassSummonData - Whether to write to actual stats (`true`) or in-battle overridden stats (`false`); default `true`
    */
@@ -1356,7 +1356,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Retrieve the value of the given stat stage for this {@linkcode Pokemon}.
-   * @param stat - The {@linkcode BattleStat} to retrieve the stat stage for.
+   * @param stat - The {@linkcode BattleStat} to retrieve the stat stage for
    * @returns The value of the desired stat stage as a number within the range `[-6, +6]`.
    */
   getStatStage(stat: BattleStat): number {
@@ -1365,7 +1365,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Sets this {@linkcode Pokemon}'s in-battle stat stage to the corresponding value.
-   * @param stat - The {@linkcode BattleStat} whose stage is to be overwritten.
+   * @param stat - The {@linkcode BattleStat} whose stage is to be overwritten
    * @param value - The value of the stat stage to set, forcibly clamped within the range `[-6, +6]`.
    */
   setStatStage(stat: BattleStat, value: number): void {

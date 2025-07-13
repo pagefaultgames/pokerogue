@@ -21,7 +21,6 @@ export class PokemonTransformPhase extends PokemonPhase {
     super(userIndex);
 
     this.targetIndex = targetIndex;
-
     this.playSound = playSound;
   }
 
