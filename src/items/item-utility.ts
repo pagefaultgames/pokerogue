@@ -1,5 +1,4 @@
-import { allHeldItems, allTrainerItems } from "#app/data/data-lists";
-import { formChangeItemName } from "#app/data/pokemon-forms";
+import { allHeldItems, allTrainerItems } from "#data/data-lists";
 import type { FormChangeItem } from "#enums/form-change-item";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { TrainerItemId } from "#enums/trainer-item-id";

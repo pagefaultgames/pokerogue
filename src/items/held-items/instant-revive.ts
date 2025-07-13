@@ -1,9 +1,9 @@
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import type Pokemon from "#app/field/pokemon";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { toDmgValue } from "#app/utils/common";
+import type { Pokemon } from "#field/pokemon";
+import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
+import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 import { ConsumableHeldItem, HeldItemEffect } from "../held-item";
 

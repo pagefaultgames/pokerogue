@@ -1,6 +1,6 @@
-import type Pokemon from "#app/field/pokemon";
-import type { NumberHolder } from "#app/utils/common";
+import type { Pokemon } from "#field/pokemon";
 import { HeldItem, HeldItemEffect } from "#items/held-item";
+import type { NumberHolder } from "#utils/common";
 
 export interface FieldEffectParams {
   pokemon: Pokemon;

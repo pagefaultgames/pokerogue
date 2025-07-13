@@ -1,5 +1,5 @@
-import type Pokemon from "#app/field/pokemon";
 import { Stat } from "#enums/stat";
+import type { Pokemon } from "#field/pokemon";
 import i18next from "i18next";
 import { HeldItem, HeldItemEffect } from "../held-item";
 

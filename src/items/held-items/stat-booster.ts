@@ -1,9 +1,9 @@
-import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import type Pokemon from "#app/field/pokemon";
-import type { NumberHolder } from "#app/utils/common";
+import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
+import type { Pokemon } from "#field/pokemon";
+import type { NumberHolder } from "#utils/common";
 import { HeldItem, HeldItemEffect } from "../held-item";
 
 export interface StatBoostParams {

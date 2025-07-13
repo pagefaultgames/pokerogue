@@ -1,5 +1,5 @@
-import type Pokemon from "#app/field/pokemon";
-import type { NumberHolder } from "#app/utils/common";
+import type { Pokemon } from "#field/pokemon";
+import type { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 import { HeldItem, HeldItemEffect } from "../held-item";
 

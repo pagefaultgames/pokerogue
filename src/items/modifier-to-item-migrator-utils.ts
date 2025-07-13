@@ -1,4 +1,3 @@
-import type ModifierData from "#app/system/modifier-data";
 import type { BerryType } from "#enums/berry-type";
 import { HeldItemId } from "#enums/held-item-id";
 import type { PokemonType } from "#enums/pokemon-type";

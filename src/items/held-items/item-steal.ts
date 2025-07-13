@@ -1,9 +1,9 @@
-import { allHeldItems } from "#app/data/data-lists";
-import Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { randSeedFloat } from "#app/utils/common";
+import { allHeldItems } from "#data/data-lists";
 import type { HeldItemId } from "#enums/held-item-id";
+import { Pokemon } from "#field/pokemon";
+import { randSeedFloat } from "#utils/common";
 import i18next from "i18next";
 import { HeldItem, HeldItemEffect } from "../held-item";
 

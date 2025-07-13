@@ -1,6 +1,6 @@
-import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import { NumberHolder } from "#app/utils/common";
+import type { Pokemon } from "#field/pokemon";
+import { NumberHolder } from "#utils/common";
 import { HeldItem, HeldItemEffect } from "../held-item";
 import { TrainerItemEffect } from "../trainer-item";
 

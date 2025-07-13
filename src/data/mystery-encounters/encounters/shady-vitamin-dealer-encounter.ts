@@ -1,6 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { allHeldItems } from "#app/data/data-lists";
 import { globalScene } from "#app/global-scene";
+import { allHeldItems } from "#data/data-lists";
 import { getNatureName } from "#data/nature";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";

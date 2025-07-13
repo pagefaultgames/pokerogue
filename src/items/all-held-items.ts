@@ -1,11 +1,11 @@
-import { allHeldItems } from "#app/data/data-lists";
-import { getEnumValues } from "#app/utils/common";
+import { allHeldItems } from "#data/data-lists";
 import { BerryType } from "#enums/berry-type";
 import { HeldItemId } from "#enums/held-item-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { type PermanentStat, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { getEnumValues } from "#utils/common";
 import { HeldItemEffect } from "./held-item";
 import { AccuracyBoosterHeldItem, type AccuracyBoostParams } from "./held-items/accuracy-booster";
 import {

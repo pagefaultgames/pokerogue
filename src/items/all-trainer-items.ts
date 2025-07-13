@@ -1,4 +1,4 @@
-import { allTrainerItems } from "#app/data/data-lists";
+import { allTrainerItems } from "#data/data-lists";
 import { Stat, type TempBattleStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";

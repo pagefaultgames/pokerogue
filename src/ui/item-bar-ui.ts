@@ -1,6 +1,6 @@
-import { allHeldItems, allTrainerItems } from "#app/data/data-lists";
-import type { Pokemon } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
+import { allHeldItems, allTrainerItems } from "#data/data-lists";
+import type { Pokemon } from "#field/pokemon";
 import { heldItemSortFunc, trainerItemSortFunc } from "#items/item-utility";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
 

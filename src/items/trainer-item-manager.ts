@@ -1,6 +1,5 @@
-import { allTrainerItems } from "#app/data/data-lists";
-import type { TrainerItemId } from "#app/enums/trainer-item-id";
-import { getTypedEntries, getTypedKeys } from "#app/utils/common";
+import { allTrainerItems } from "#data/data-lists";
+import type { TrainerItemId } from "#enums/trainer-item-id";
 import {
   isTrainerItemSpecs,
   type TrainerItemConfiguration,
@@ -8,6 +7,7 @@ import {
   type TrainerItemSaveData,
   type TrainerItemSpecs,
 } from "#items/trainer-item-data-types";
+import { getTypedEntries, getTypedKeys } from "#utils/common";
 
 export class TrainerItemManager {
   public trainerItems: TrainerItemDataMap;

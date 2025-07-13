@@ -1,5 +1,4 @@
 import type { BattleScene } from "#app/battle-scene";
-import { randSeedInt } from "#app/utils/common";
 import * as BattleAnims from "#data/battle-anims";
 import { BiomeId } from "#enums/biome-id";
 import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
@@ -27,6 +26,7 @@ import { GameManager } from "#test/testUtils/gameManager";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
 import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import * as Utils from "#utils/common";
+import { randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

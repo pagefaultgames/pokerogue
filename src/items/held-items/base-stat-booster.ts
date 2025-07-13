@@ -1,6 +1,6 @@
-import type Pokemon from "#app/field/pokemon";
 import { HeldItemId } from "#enums/held-item-id";
 import { getStatKey, type PermanentStat, Stat } from "#enums/stat";
+import type { Pokemon } from "#field/pokemon";
 import i18next from "i18next";
 import { HeldItem, HeldItemEffect } from "../held-item";
 
