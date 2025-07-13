@@ -1,7 +1,9 @@
 /** biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
 import type { NewArenaEvent } from "#events/battle-scene";
+
 /** biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
+import type { PokeballCounts } from "#app/battle-scene";
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides, { defaultOverrides } from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
@@ -131,6 +133,17 @@ export class OverridesHelper extends GameManagerHelper {
   public startingTrainerItems(itemConfiguration: TrainerItemConfiguration): this {
     vi.spyOn(Overrides, "STARTING_TRAINER_ITEMS_OVERRIDE", "get").mockReturnValue(itemConfiguration);
     this.log("Player starting trainer items set to:", itemConfiguration);
+    return this;
+  }
+
+  /**
+   * Override the player's starting pokeballs
+   * @param items - The items to hold
+   * @returns `this`
+   */
+  public startingPokeballs(pokeballs: PokeballCounts): this {
+    vi.spyOn(Overrides, "POKEBALL_OVERRIDE", "get").mockReturnValue({ active: true, pokeballs: pokeballs });
+    this.log("Player Pokemon starting held items set to:", { active: true, pokeballs: pokeballs });
     return this;
   }
 

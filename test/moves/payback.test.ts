@@ -33,7 +33,7 @@ describe("Move - Payback", () => {
       .enemySpecies(SpeciesId.DRACOVISH)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
-      .startingModifier([{ name: "POKEBALL", count: 5 }]);
+      .startingPokeballs({ [PokeballType.POKEBALL]: 5 });
 
     powerSpy = vi.spyOn(allMoves[MoveId.PAYBACK], "calculateBattlePower");
   });
