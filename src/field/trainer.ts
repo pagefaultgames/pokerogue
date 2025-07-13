@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import type { TrainerItemConfiguration } from "#app/items/trainer-item-data-types";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { signatureSpecies } from "#balance/signature-species";
 import { ArenaTrapTag } from "#data/arena-tag";
@@ -13,6 +12,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon } from "#field/pokemon";
+import type { TrainerItemConfiguration } from "#items/trainer-item-data-types";
 import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { TrainerPartyTemplate } from "#trainers/TrainerPartyTemplate";
 import { TrainerPartyCompoundTemplate, trainerPartyTemplates } from "#trainers/TrainerPartyTemplate";

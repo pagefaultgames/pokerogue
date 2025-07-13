@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import { TrainerItemEffect } from "#app/items/trainer-item";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
+import { TrainerItemEffect } from "#items/trainer-item";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
 import { NumberHolder } from "#utils/common";
 

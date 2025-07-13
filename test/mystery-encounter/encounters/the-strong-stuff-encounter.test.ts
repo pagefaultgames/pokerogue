@@ -1,6 +1,4 @@
 import type { BattleScene } from "#app/battle-scene";
-import { applyHeldItems } from "#app/items/all-held-items";
-import { HeldItemEffect } from "#app/items/held-item";
 import * as BattleAnims from "#data/battle-anims";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { AbilityId } from "#enums/ability-id";
@@ -14,6 +12,8 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
+import { applyHeldItems } from "#items/all-held-items";
+import { HeldItemEffect } from "#items/held-item";
 import { PokemonMove } from "#moves/pokemon-move";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";

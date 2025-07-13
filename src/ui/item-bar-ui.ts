@@ -1,8 +1,8 @@
 import { allHeldItems, allTrainerItems } from "#app/data/data-lists";
 import type { Pokemon } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import { heldItemSortFunc, trainerItemSortFunc } from "#app/items/item-utility";
-import type { TrainerItemManager } from "#app/items/trainer-item-manager";
+import { heldItemSortFunc, trainerItemSortFunc } from "#items/item-utility";
+import type { TrainerItemManager } from "#items/trainer-item-manager";
 
 const iconOverflowIndex = 24;
 

@@ -1,6 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { berryTypeToHeldItem } from "#app/items/held-items/berry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes } from "#data/data-lists";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -11,6 +10,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PERMANENT_STATS, Stat } from "#enums/stat";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import { berryTypeToHeldItem } from "#items/berry";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
 import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";

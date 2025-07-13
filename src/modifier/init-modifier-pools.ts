@@ -4,7 +4,6 @@ import type { initModifierTypes } from "#modifiers/modifier-type";
 
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import type { TurnEndStatusHeldItem } from "#app/items/held-items/turn-end-status";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { allHeldItems, allTrainerItems, modifierTypes } from "#data/data-lists";
 import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
@@ -18,6 +17,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { Unlockables } from "#enums/unlockables";
 import type { Pokemon } from "#field/pokemon";
+import type { TurnEndStatusHeldItem } from "#items/turn-end-status";
 import { modifierPool } from "#modifiers/modifier-pools";
 import { WeightedModifierType } from "#modifiers/modifier-type";
 import type { WeightedModifierTypeWeightFunc } from "#types/modifier-types";

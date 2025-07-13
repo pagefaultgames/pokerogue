@@ -1,7 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { applyHeldItems } from "#app/items/all-held-items";
-import { HeldItemEffect } from "#app/items/held-item";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { FRIENDSHIP_LOSS_FROM_FAINT } from "#balance/starters";
 import { allMoves } from "#data/data-lists";
@@ -16,6 +14,8 @@ import { HitResult } from "#enums/hit-result";
 import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
+import { applyHeldItems } from "#items/all-held-items";
+import { HeldItemEffect } from "#items/held-item";
 import { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import { isNullOrUndefined } from "#utils/common";

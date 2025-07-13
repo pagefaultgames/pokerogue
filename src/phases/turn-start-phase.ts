@@ -1,7 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { applyHeldItems } from "#app/items/all-held-items";
-import { HeldItemEffect } from "#app/items/held-item";
 import { TrickRoomTag } from "#data/arena-tag";
 import { allMoves } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
@@ -9,6 +7,8 @@ import { Command } from "#enums/command";
 import { Stat } from "#enums/stat";
 import { SwitchType } from "#enums/switch-type";
 import type { Pokemon } from "#field/pokemon";
+import { applyHeldItems } from "#items/all-held-items";
+import { HeldItemEffect } from "#items/held-item";
 import { PokemonMove } from "#moves/pokemon-move";
 import { FieldPhase } from "#phases/field-phase";
 import { BooleanHolder, randSeedShuffle } from "#utils/common";

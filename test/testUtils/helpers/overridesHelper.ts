@@ -2,8 +2,6 @@
 import type { NewArenaEvent } from "#events/battle-scene";
 /** biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
-import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
-import type { TrainerItemConfiguration } from "#app/items/trainer-item-data-types";
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides, { defaultOverrides } from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
@@ -17,6 +15,8 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import type { Unlockables } from "#enums/unlockables";
 import { WeatherType } from "#enums/weather-type";
+import type { HeldItemConfiguration } from "#items/held-item-data-types";
+import type { TrainerItemConfiguration } from "#items/trainer-item-data-types";
 import type { ModifierOverride } from "#modifiers/modifier-type";
 import type { Variant } from "#sprites/variant";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";

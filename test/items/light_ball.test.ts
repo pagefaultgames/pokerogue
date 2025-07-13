@@ -1,8 +1,8 @@
-import { applyHeldItems } from "#app/items/all-held-items";
-import { HeldItemEffect } from "#app/items/held-item";
 import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { applyHeldItems } from "#items/all-held-items";
+import { HeldItemEffect } from "#items/held-item";
 import i18next from "#plugins/i18n";
 import { GameManager } from "#test/testUtils/gameManager";
 import { NumberHolder } from "#utils/common";

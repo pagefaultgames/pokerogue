@@ -1,8 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { applyHeldItems } from "#app/items/all-held-items";
-import { HeldItemEffect } from "#app/items/held-item";
-import { TrainerItemEffect } from "#app/items/trainer-item";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { Phase } from "#app/phase";
 import { ConditionalProtectTag } from "#data/arena-tag";
@@ -25,6 +22,9 @@ import { MoveResult } from "#enums/move-result";
 import { isReflected, isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
+import { applyHeldItems } from "#items/all-held-items";
+import { HeldItemEffect } from "#items/held-item";
+import { TrainerItemEffect } from "#items/trainer-item";
 import { applyFilteredMoveAttrs, applyMoveAttrs } from "#moves/apply-attrs";
 import type { Move, MoveAttr } from "#moves/move";
 import { getMoveTargets, isFieldTargeted } from "#moves/move-utils";

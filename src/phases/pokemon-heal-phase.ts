@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import { TrainerItemEffect } from "#app/items/trainer-item";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { HealBlockTag } from "#data/battler-tags";
 import { getStatusEffectHealText } from "#data/status-effect";
@@ -8,6 +7,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { HitResult } from "#enums/hit-result";
 import { CommonAnim } from "#enums/move-anims-common";
 import { StatusEffect } from "#enums/status-effect";
+import { TrainerItemEffect } from "#items/trainer-item";
 import { CommonAnimPhase } from "#phases/common-anim-phase";
 import { HealAchv } from "#system/achv";
 import { NumberHolder } from "#utils/common";

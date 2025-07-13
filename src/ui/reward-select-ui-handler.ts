@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import { TrainerItemEffect } from "#app/items/trainer-item";
 import Overrides from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { allMoves } from "#data/data-lists";
@@ -9,6 +8,7 @@ import type { PokeballType } from "#enums/pokeball";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
+import { TrainerItemEffect } from "#items/trainer-item";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "#modifiers/modifier-type";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";

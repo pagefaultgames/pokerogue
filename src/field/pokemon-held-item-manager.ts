@@ -6,6 +6,8 @@ import {
   isItemInCategory,
   isItemInRequested,
 } from "#app/enums/held-item-id";
+import { getTypedEntries, getTypedKeys } from "#app/utils/common";
+import type { FormChangeItem } from "#enums/form-change-item";
 import {
   type FormChangeItemPropertyMap,
   type FormChangeItemSpecs,
@@ -14,9 +16,7 @@ import {
   type HeldItemSaveData,
   type HeldItemSpecs,
   isHeldItemSpecs,
-} from "#app/items/held-item-data-types";
-import { getTypedEntries, getTypedKeys } from "#app/utils/common";
-import type { FormChangeItem } from "#enums/form-change-item";
+} from "#items/held-item-data-types";
 
 export class PokemonItemManager {
   public heldItems: HeldItemDataMap;

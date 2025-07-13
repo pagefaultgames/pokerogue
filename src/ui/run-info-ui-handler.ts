@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import { heldItemSortFunc } from "#app/items/item-utility";
 import { getBiomeName } from "#balance/biomes";
 import { allHeldItems, allTrainerItems } from "#data/data-lists";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
@@ -16,6 +15,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
+import { heldItemSortFunc } from "#items/item-utility";
 import { getLuckString, getLuckTextTint } from "#modifiers/modifier-type";
 import { getVariantTint } from "#sprites/variant";
 import type { SessionSaveData } from "#system/game-data";

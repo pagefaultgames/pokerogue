@@ -1,9 +1,9 @@
 import type { Ability } from "#abilities/ability";
-import type { HeldItem } from "#app/items/held-item";
-import type { TrainerItem } from "#app/items/trainer-item";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { TrainerItemId } from "#enums/trainer-item-id";
+import type { HeldItem } from "#items/held-item";
+import type { TrainerItem } from "#items/trainer-item";
 import type { ModifierTypes } from "#modifiers/modifier-type";
 import type { Move } from "#moves/move";
 

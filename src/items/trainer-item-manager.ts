@@ -1,13 +1,13 @@
 import { allTrainerItems } from "#app/data/data-lists";
 import type { TrainerItemId } from "#app/enums/trainer-item-id";
+import { getTypedEntries, getTypedKeys } from "#app/utils/common";
 import {
   isTrainerItemSpecs,
   type TrainerItemConfiguration,
   type TrainerItemDataMap,
   type TrainerItemSaveData,
   type TrainerItemSpecs,
-} from "#app/items/trainer-item-data-types";
-import { getTypedEntries, getTypedKeys } from "#app/utils/common";
+} from "#items/trainer-item-data-types";
 
 export class TrainerItemManager {
   public trainerItems: TrainerItemDataMap;

@@ -2,10 +2,10 @@ import { getBerryEffectDescription, getBerryEffectFunc, getBerryName, getBerryPr
 import { BerryUsedEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import { ConsumableHeldItem, HeldItemEffect } from "#app/items/held-item";
 import { BooleanHolder } from "#app/utils/common";
 import { BerryType } from "#enums/berry-type";
 import { HeldItemId } from "#enums/held-item-id";
+import { ConsumableHeldItem, HeldItemEffect } from "#items/held-item";
 import { TrainerItemEffect } from "../trainer-item";
 
 interface BerryTypeToHeldItemMap {

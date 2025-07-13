@@ -1,7 +1,6 @@
 import { loggedInUser } from "#app/account";
 import { GameMode, getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
-import { assignDailyRunStarterHeldItems } from "#app/items/held-item-pool";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
 import { fetchDailyRunSeed, getDailyRunStarters } from "#data/daily-run";
@@ -12,6 +11,7 @@ import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import { Unlockables } from "#enums/unlockables";
 import { getBiomeKey } from "#field/arena";
+import { assignDailyRunStarterHeldItems } from "#items/held-item-pool";
 import type { SessionSaveData } from "#system/game-data";
 import { vouchers } from "#system/voucher";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstact-option-select-ui-handler";

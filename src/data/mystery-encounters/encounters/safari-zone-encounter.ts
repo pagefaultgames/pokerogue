@@ -1,6 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { TrainerItemEffect } from "#app/items/trainer-item";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { NON_LEGEND_PARADOX_POKEMON } from "#balance/special-species-groups";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -12,6 +11,7 @@ import { PokeballType } from "#enums/pokeball";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { EnemyPokemon } from "#field/pokemon";
+import { TrainerItemEffect } from "#items/trainer-item";
 import { getEncounterText, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
   initSubsequentOptionSelect,

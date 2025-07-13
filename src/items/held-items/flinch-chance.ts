@@ -1,7 +1,7 @@
 import type Pokemon from "#app/field/pokemon";
-import { HeldItem, HeldItemEffect } from "#app/items/held-item";
 import type { BooleanHolder } from "#app/utils/common";
 import type { HeldItemId } from "#enums/held-item-id";
+import { HeldItem, HeldItemEffect } from "#items/held-item";
 
 export interface FlinchChanceParams {
   /** The pokemon with the item */

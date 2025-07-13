@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
-import { TrainerItemEffect } from "#app/items/trainer-item";
 import Overrides from "#app/overrides";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { RewardTier } from "#enums/reward-tier";
 import { UiMode } from "#enums/ui-mode";
+import { TrainerItemEffect } from "#items/trainer-item";
 import type { Modifier } from "#modifiers/modifier";
 import type { CustomModifierSettings, ModifierType, ModifierTypeOption } from "#modifiers/modifier-type";
 import {

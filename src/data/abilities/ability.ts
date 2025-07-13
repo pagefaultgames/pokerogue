@@ -5,7 +5,6 @@ import type { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-chang
 
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { type BerryHeldItem, berryTypeToHeldItem } from "#app/items/held-items/berry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#data/arena-tag";
 import type { BattlerTag } from "#data/battler-tags";
@@ -47,6 +46,7 @@ import { SwitchType } from "#enums/switch-type";
 import { WeatherType } from "#enums/weather-type";
 import { BerryUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
+import { type BerryHeldItem, berryTypeToHeldItem } from "#items/berry";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { noAbilityTypeOverrideMoves } from "#moves/invalid-moves";
 import type { Move } from "#moves/move";

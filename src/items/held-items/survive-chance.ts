@@ -1,8 +1,8 @@
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import { HeldItem, HeldItemEffect } from "#app/items/held-item";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { BooleanHolder } from "#app/utils/common";
+import { HeldItem, HeldItemEffect } from "#items/held-item";
 import i18next from "i18next";
 
 export interface SurviveChanceParams {

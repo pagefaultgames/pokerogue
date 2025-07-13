@@ -1,5 +1,4 @@
 import type { BattleScene } from "#app/battle-scene";
-import { getHeldItemTier } from "#app/items/held-item-tiers";
 import * as BattleAnims from "#data/battle-anims";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
@@ -14,6 +13,7 @@ import { RewardTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
+import { getHeldItemTier } from "#items/held-item-tiers";
 import { PokemonMove } from "#moves/pokemon-move";
 import { ClowningAroundEncounter } from "#mystery-encounters/clowning-around-encounter";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";

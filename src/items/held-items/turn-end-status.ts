@@ -1,7 +1,7 @@
 import type Pokemon from "#app/field/pokemon";
-import { HeldItem, HeldItemEffect } from "#app/items/held-item";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { StatusEffect } from "#enums/status-effect";
+import { HeldItem, HeldItemEffect } from "#items/held-item";
 
 export interface TurnEndStatusParams {
   /** The pokemon with the item */

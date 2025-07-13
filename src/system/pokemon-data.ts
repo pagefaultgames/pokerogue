@@ -1,6 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import type { HeldItemSaveData } from "#app/items/held-item-data-types";
-import { saveDataToConfig } from "#app/items/held-item-pool";
 import type { Gender } from "#data/gender";
 import { CustomPokemonData, PokemonBattleData, PokemonSummonData } from "#data/pokemon-data";
 import { getPokemonSpeciesForm } from "#data/pokemon-species";
@@ -14,6 +12,8 @@ import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { EnemyPokemon, Pokemon } from "#field/pokemon";
+import type { HeldItemSaveData } from "#items/held-item-data-types";
+import { saveDataToConfig } from "#items/held-item-pool";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
 import { getPokemonSpecies } from "#utils/pokemon-utils";

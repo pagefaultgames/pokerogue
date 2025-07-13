@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import { assignEnemyBuffTokenForWave } from "#app/items/trainer-item-pool";
 import { Phase } from "#app/phase";
 import { RewardTier } from "#enums/reward-tier";
+import { assignEnemyBuffTokenForWave } from "#items/trainer-item-pool";
 
 export class AddEnemyBuffModifierPhase extends Phase {
   public readonly phaseName = "AddEnemyBuffModifierPhase";

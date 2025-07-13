@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import type { HeldItemConfiguration, PokemonItemMap } from "#app/items/held-item-data-types";
 import { allHeldItems } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -16,6 +15,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import type { MysteryEncounterSpriteConfig } from "#field/mystery-encounter-intro";
 import type { Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
+import type { HeldItemConfiguration, PokemonItemMap } from "#items/held-item-data-types";
 import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";

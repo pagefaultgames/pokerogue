@@ -1,7 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { assignItemsFromConfiguration } from "#app/items/held-item-pool";
-import { getHeldItemTier } from "#app/items/held-item-tiers";
 import { EncounterBattleAnim } from "#data/battle-anims";
 import { allAbilities } from "#data/data-lists";
 import { CustomPokemonData } from "#data/pokemon-data";
@@ -23,6 +21,8 @@ import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
+import { assignItemsFromConfiguration } from "#items/held-item-pool";
+import { getHeldItemTier } from "#items/held-item-tiers";
 import { PokemonMove } from "#moves/pokemon-move";
 import { showEncounterDialogue, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";

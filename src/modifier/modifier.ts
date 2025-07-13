@@ -1,8 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
-import { assignItemsFromConfiguration } from "#app/items/held-item-pool";
-import { TrainerItemEffect } from "#app/items/trainer-item";
-import type { TrainerItemConfiguration } from "#app/items/trainer-item-data-types";
 import Overrides from "#app/overrides";
 import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#balance/starters";
@@ -15,6 +11,10 @@ import type { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { HeldItemConfiguration } from "#items/held-item-data-types";
+import { assignItemsFromConfiguration } from "#items/held-item-pool";
+import { TrainerItemEffect } from "#items/trainer-item";
+import type { TrainerItemConfiguration } from "#items/trainer-item-data-types";
 import type {
   EvolutionItemModifierType,
   ModifierType,

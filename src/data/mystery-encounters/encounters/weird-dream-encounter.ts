@@ -1,6 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
-import { TrainerItemEffect } from "#app/items/trainer-item";
 import { allSpecies, modifierTypes } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -17,6 +15,8 @@ import { RewardTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { HeldItemConfiguration } from "#items/held-item-data-types";
+import { TrainerItemEffect } from "#items/trainer-item";
 import { PokemonMove } from "#moves/pokemon-move";
 import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig, EnemyPokemonConfig } from "#mystery-encounters/encounter-phase-utils";

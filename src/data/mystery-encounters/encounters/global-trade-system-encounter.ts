@@ -1,8 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { getHeldItemTier } from "#app/items/held-item-tiers";
-import { TrainerItemEffect } from "#app/items/trainer-item";
 import { allHeldItems, allSpecies } from "#data/data-lists";
 import { Gender, getGenderSymbol } from "#data/gender";
 import { getNatureName } from "#data/nature";
@@ -22,6 +20,8 @@ import { TrainerType } from "#enums/trainer-type";
 import { doShinySparkleAnim } from "#field/anims";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
+import { getHeldItemTier } from "#items/held-item-tiers";
+import { TrainerItemEffect } from "#items/trainer-item";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { getPlayerModifierTypeOptions, regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";

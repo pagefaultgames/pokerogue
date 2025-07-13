@@ -1,6 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { getNewHeldItemFromCategory } from "#app/items/held-item-pool";
 import { EncounterBattleAnim } from "#data/battle-anims";
 import { allAbilities, allHeldItems } from "#data/data-lists";
 import { Gender } from "#data/gender";
@@ -20,6 +19,7 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
+import { getNewHeldItemFromCategory } from "#items/held-item-pool";
 import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";

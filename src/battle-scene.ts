@@ -13,20 +13,6 @@ import { timedEventManager } from "#app/global-event-manager";
 import { initGlobalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import { InputsController } from "#app/inputs-controller";
-import { applyHeldItems } from "#app/items/all-held-items";
-import { type ApplyTrainerItemsParams, applyTrainerItems } from "#app/items/apply-trainer-items";
-import { HeldItemEffect } from "#app/items/held-item";
-import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
-import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#app/items/held-item-pool";
-import { type EnemyAttackStatusEffectChanceTrainerItem, TrainerItemEffect } from "#app/items/trainer-item";
-import {
-  isTrainerItemPool,
-  isTrainerItemSpecs,
-  type TrainerItemConfiguration,
-  type TrainerItemSaveData,
-} from "#app/items/trainer-item-data-types";
-import { TrainerItemManager } from "#app/items/trainer-item-manager";
-import { getNewTrainerItemFromPool } from "#app/items/trainer-item-pool";
 import { LoadingScene } from "#app/loading-scene";
 import Overrides from "#app/overrides";
 import type { Phase } from "#app/phase";
@@ -94,6 +80,20 @@ import type { Pokemon } from "#field/pokemon";
 import { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { PokemonSpriteSparkleHandler } from "#field/pokemon-sprite-sparkle-handler";
 import { Trainer } from "#field/trainer";
+import { applyHeldItems } from "#items/all-held-items";
+import { type ApplyTrainerItemsParams, applyTrainerItems } from "#items/apply-trainer-items";
+import { HeldItemEffect } from "#items/held-item";
+import type { HeldItemConfiguration } from "#items/held-item-data-types";
+import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
+import { type EnemyAttackStatusEffectChanceTrainerItem, TrainerItemEffect } from "#items/trainer-item";
+import {
+  isTrainerItemPool,
+  isTrainerItemSpecs,
+  type TrainerItemConfiguration,
+  type TrainerItemSaveData,
+} from "#items/trainer-item-data-types";
+import { TrainerItemManager } from "#items/trainer-item-manager";
+import { getNewTrainerItemFromPool } from "#items/trainer-item-pool";
 import type { Modifier } from "#modifiers/modifier";
 import {
   ConsumableModifier,

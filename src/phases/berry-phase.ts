@@ -1,12 +1,12 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { applyHeldItems } from "#app/items/all-held-items";
-import { HeldItemEffect } from "#app/items/held-item";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { allHeldItems } from "#data/data-lists";
 import { HeldItemCategoryId, isItemInCategory } from "#enums/held-item-id";
 import { CommonAnim } from "#enums/move-anims-common";
 import type { Pokemon } from "#field/pokemon";
+import { applyHeldItems } from "#items/all-held-items";
+import { HeldItemEffect } from "#items/held-item";
 import { FieldPhase } from "#phases/field-phase";
 import { BooleanHolder } from "#utils/common";
 import i18next from "i18next";

@@ -1,7 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { applyHeldItems } from "#app/items/all-held-items";
-import { HeldItemEffect } from "#app/items/held-item";
 import Overrides from "#app/overrides";
 import type { BiomeTierTrainerPools, PokemonPools } from "#balance/biomes";
 import { BiomePoolTier, biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
@@ -30,6 +28,8 @@ import { TrainerType } from "#enums/trainer-type";
 import { WeatherType } from "#enums/weather-type";
 import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
 import type { Pokemon } from "#field/pokemon";
+import { applyHeldItems } from "#items/all-held-items";
+import { HeldItemEffect } from "#items/held-item";
 import type { Move } from "#moves/move";
 import { type Constructor, isNullOrUndefined, NumberHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
