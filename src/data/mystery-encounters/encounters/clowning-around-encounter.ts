@@ -1,4 +1,31 @@
-import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { assignItemsFromConfiguration } from "#app/items/held-item-pool";
+import { getHeldItemTier } from "#app/items/held-item-tiers";
+import { EncounterBattleAnim } from "#data/battle-anims";
+import { allAbilities } from "#data/data-lists";
+import { CustomPokemonData } from "#data/pokemon-data";
+import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
+import { Challenges } from "#enums/challenges";
+import { EncounterAnim } from "#enums/encounter-anims";
+import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
+import { MoveCategory } from "#enums/MoveCategory";
+import { MoveId } from "#enums/move-id";
+import { MoveUseMode } from "#enums/move-use-mode";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PartyMemberStrength } from "#enums/party-member-strength";
+import { PokemonType } from "#enums/pokemon-type";
+import { RewardTier } from "#enums/reward-tier";
+import { SpeciesId } from "#enums/species-id";
+import { TrainerType } from "#enums/trainer-type";
+import { UiMode } from "#enums/ui-mode";
+import type { PlayerPokemon } from "#field/pokemon";
+import { PokemonMove } from "#moves/pokemon-move";
+import { showEncounterDialogue, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
+import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
@@ -6,45 +33,17 @@ import {
   selectPokemonForOption,
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { trainerConfigs } from "#app/data/trainers/trainer-config";
-import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { RewardTier } from "#enums/reward-tier";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { PartyMemberStrength } from "#enums/party-member-strength";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { SpeciesId } from "#enums/species-id";
-import { TrainerType } from "#enums/trainer-type";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { AbilityId } from "#enums/ability-id";
-import { applyAbilityOverrideToPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { PokemonType } from "#enums/pokemon-type";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { randSeedInt, randSeedShuffle } from "#app/utils/common";
-import { showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { UiMode } from "#enums/ui-mode";
+} from "#mystery-encounters/encounter-phase-utils";
+import { applyAbilityOverrideToPokemon } from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/TrainerPartyTemplate";
+import { trainerConfigs } from "#trainers/trainer-config";
+import type { OptionSelectConfig } from "#ui/abstact-option-select-ui-handler";
+import { randSeedInt, randSeedShuffle } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
-import type { OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handler";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { BattlerIndex } from "#enums/battler-index";
-import { MoveId } from "#enums/move-id";
-import { EncounterBattleAnim } from "#app/data/battle-anims";
-import { MoveCategory } from "#enums/MoveCategory";
-import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { EncounterAnim } from "#enums/encounter-anims";
-import { Challenges } from "#enums/challenges";
-import { MoveUseMode } from "#enums/move-use-mode";
-import { allAbilities } from "#app/data/data-lists";
-import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
-import { getHeldItemTier } from "#app/items/held-item-tiers";
-import { assignItemsFromConfiguration } from "#app/items/held-item-pool";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/clowningAround";

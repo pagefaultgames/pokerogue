@@ -1,14 +1,14 @@
-import { Stat } from "#enums/stat";
+import { allMoves } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
-import { allMoves } from "#app/data/data-lists";
-import type Move from "#app/data/moves/move";
-import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { MovePhase } from "#app/phases/move-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import type { Move } from "#moves/move";
+import { DamageAnimPhase } from "#phases/damage-anim-phase";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { MoveEndPhase } from "#phases/move-end-phase";
+import { MovePhase } from "#phases/move-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

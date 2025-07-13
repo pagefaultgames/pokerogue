@@ -1,6 +1,6 @@
-import type Pokemon from "#app/field/pokemon";
 import type { BerryType } from "#enums/berry-type";
-import type Move from "../data/moves/move";
+import type { Pokemon } from "#field/pokemon";
+import type { Move } from "#moves/move";
 
 /** Alias for all {@linkcode BattleScene} events */
 export enum BattleSceneEventType {

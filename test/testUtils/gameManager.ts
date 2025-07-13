@@ -1,45 +1,38 @@
 import { updateUserInfo } from "#app/account";
-import { BattlerIndex } from "#enums/battler-index";
-import BattleScene from "#app/battle-scene";
-import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import Trainer from "#app/field/trainer";
+import { BattleScene } from "#app/battle-scene";
 import { getGameMode } from "#app/game-mode";
-import { GameModes } from "#enums/game-modes";
 import { globalScene } from "#app/global-scene";
-import { ModifierTypeOption } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/data/data-lists";
 import overrides from "#app/overrides";
-import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
-import { CommandPhase } from "#app/phases/command-phase";
-import { EncounterPhase } from "#app/phases/encounter-phase";
-import { LoginPhase } from "#app/phases/login-phase";
-import { MovePhase } from "#app/phases/move-phase";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { NewBattlePhase } from "#app/phases/new-battle-phase";
-import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import type { SelectTargetPhase } from "#app/phases/select-target-phase";
-import { TitlePhase } from "#app/phases/title-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { TurnStartPhase } from "#app/phases/turn-start-phase";
-import type BallUiHandler from "#app/ui/ball-ui-handler";
-import type BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
-import type CommandUiHandler from "#app/ui/command-ui-handler";
-import type RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
-import type PartyUiHandler from "#app/ui/party-ui-handler";
-import type StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
-import type TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
-import { isNullOrUndefined } from "#app/utils/common";
+import { modifierTypes } from "#data/data-lists";
+import { BattlerIndex } from "#enums/battler-index";
 import { Button } from "#enums/buttons";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
+import { GameModes } from "#enums/game-modes";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
+import type { PokeballType } from "#enums/pokeball";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import ErrorInterceptor from "#test/testUtils/errorInterceptor";
+import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
+import { Trainer } from "#field/trainer";
+import { ModifierTypeOption } from "#modifiers/modifier-type";
+import { CheckSwitchPhase } from "#phases/check-switch-phase";
+import { CommandPhase } from "#phases/command-phase";
+import { EncounterPhase } from "#phases/encounter-phase";
+import { LoginPhase } from "#phases/login-phase";
+import { MovePhase } from "#phases/move-phase";
+import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { NewBattlePhase } from "#phases/new-battle-phase";
+import { SelectStarterPhase } from "#phases/select-starter-phase";
+import type { SelectTargetPhase } from "#phases/select-target-phase";
+import { TitlePhase } from "#phases/title-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { TurnStartPhase } from "#phases/turn-start-phase";
+import { ErrorInterceptor } from "#test/testUtils/errorInterceptor";
 import { generateStarter, waitUntil } from "#test/testUtils/gameManagerUtils";
-import GameWrapper from "#test/testUtils/gameWrapper";
+import { GameWrapper } from "#test/testUtils/gameWrapper";
 import { ChallengeModeHelper } from "#test/testUtils/helpers/challengeModeHelper";
 import { ClassicModeHelper } from "#test/testUtils/helpers/classicModeHelper";
 import { DailyModeHelper } from "#test/testUtils/helpers/dailyModeHelper";
@@ -49,18 +42,26 @@ import { MoveHelper } from "#test/testUtils/helpers/moveHelper";
 import { OverridesHelper } from "#test/testUtils/helpers/overridesHelper";
 import { ReloadHelper } from "#test/testUtils/helpers/reloadHelper";
 import { SettingsHelper } from "#test/testUtils/helpers/settingsHelper";
-import type InputsHandler from "#test/testUtils/inputsHandler";
+import type { InputsHandler } from "#test/testUtils/inputsHandler";
 import { MockFetch } from "#test/testUtils/mocks/mockFetch";
-import PhaseInterceptor from "#test/testUtils/phaseInterceptor";
-import TextInterceptor from "#test/testUtils/TextInterceptor";
-import { AES, enc } from "crypto-js";
+import { PhaseInterceptor } from "#test/testUtils/phaseInterceptor";
+import { TextInterceptor } from "#test/testUtils/TextInterceptor";
+import type { BallUiHandler } from "#ui/ball-ui-handler";
+import type { BattleMessageUiHandler } from "#ui/battle-message-ui-handler";
+import type { CommandUiHandler } from "#ui/command-ui-handler";
+import type { PartyUiHandler } from "#ui/party-ui-handler";
+import type { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
+import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
+import type { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
+import { isNullOrUndefined } from "#utils/common";
 import fs from "node:fs";
+import { AES, enc } from "crypto-js";
 import { expect, vi } from "vitest";
 
 /**
  * Class to manage the game state and transitions between phases.
  */
-export default class GameManager {
+export class GameManager {
   public gameWrapper: GameWrapper;
   public scene: BattleScene;
   public phaseInterceptor: PhaseInterceptor;
@@ -507,9 +508,9 @@ export default class GameManager {
   /**
    * Select the BALL option from the command menu, then press Action; in the BALL
    * menu, select a pokéball type and press Action again to throw it.
-   * @param ballIndex - The index of the pokeball to throw
+   * @param ballIndex - The {@linkcode PokeballType} to throw
    */
-  public doThrowPokeball(ballIndex: number) {
+  public doThrowPokeball(ballIndex: PokeballType) {
     this.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       (this.scene.ui.getHandler() as CommandUiHandler).setCursor(1);
       (this.scene.ui.getHandler() as CommandUiHandler).processInput(Button.ACTION);

@@ -1,11 +1,11 @@
 import { globalScene } from "#app/global-scene";
-import { biomeLinks, getBiomeName } from "#app/data/balance/biomes";
+import { biomeLinks, getBiomeName } from "#balance/biomes";
 import { BiomeId } from "#enums/biome-id";
-import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { BattlePhase } from "./battle-phase";
-import { randSeedInt } from "#app/utils/common";
 import { TrainerItemId } from "#enums/trainer-item-id";
+import { UiMode } from "#enums/ui-mode";
+import { BattlePhase } from "#phases/battle-phase";
+import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import { randSeedInt } from "#utils/common";
 
 export class SelectBiomePhase extends BattlePhase {
   public readonly phaseName = "SelectBiomePhase";

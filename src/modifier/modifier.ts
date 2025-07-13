@@ -1,30 +1,29 @@
-import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { getLevelTotalExp } from "#app/data/exp";
-import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
-import type Pokemon from "#app/field/pokemon";
-import type { PlayerPokemon } from "#app/field/pokemon";
+import { globalScene } from "#app/global-scene";
+import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
+import { assignItemsFromConfiguration } from "#app/items/held-item-pool";
+import { TrainerItemEffect } from "#app/items/trainer-item";
+import type { TrainerItemConfiguration } from "#app/items/trainer-item-data-types";
 import Overrides from "#app/overrides";
+import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#balance/starters";
+import { getLevelTotalExp } from "#data/exp";
+import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
+import { HeldItemId } from "#enums/held-item-id";
 import { LearnMoveType } from "#enums/learn-move-type";
-import type { VoucherType } from "#app/system/voucher";
-import { isNullOrUndefined, NumberHolder } from "#app/utils/common";
 import type { Nature } from "#enums/nature";
 import type { PokeballType } from "#enums/pokeball";
-import { SpeciesId } from "#enums/species-id";
 import type { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type {
   EvolutionItemModifierType,
   ModifierType,
   TerastallizeModifierType,
   TmModifierType,
-} from "./modifier-type";
-import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
-import { globalScene } from "#app/global-scene";
-import type { ModifierInstanceMap, ModifierString } from "#app/@types/modifier-types";
-import { assignItemsFromConfiguration } from "#app/items/held-item-pool";
-import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
-import { HeldItemId } from "#enums/held-item-id";
-import { TrainerItemEffect } from "#app/items/trainer-item";
-import type { TrainerItemConfiguration } from "#app/items/trainer-item-data-types";
+} from "#modifiers/modifier-type";
+import type { VoucherType } from "#system/voucher";
+import type { ModifierInstanceMap, ModifierString } from "#types/modifier-types";
+import { isNullOrUndefined, NumberHolder } from "#utils/common";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 

@@ -1,17 +1,17 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { allMoves } from "#app/data/data-lists";
-import { getPokeballTintColor } from "#app/data/pokeball";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { TrainerSlot } from "#enums/trainer-slot";
-import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { SubstituteTag } from "#data/battler-tags";
+import { allMoves } from "#data/data-lists";
+import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
+import { getPokeballTintColor } from "#data/pokeball";
 import { Command } from "#enums/command";
-import i18next from "i18next";
-import { SummonPhase } from "./summon-phase";
-import { SubstituteTag } from "#app/data/battler-tags";
-import { SwitchType } from "#enums/switch-type";
 import { HeldItemId } from "#enums/held-item-id";
+import { SwitchType } from "#enums/switch-type";
+import { TrainerSlot } from "#enums/trainer-slot";
+import type { Pokemon } from "#field/pokemon";
+import { SummonPhase } from "#phases/summon-phase";
+import i18next from "i18next";
 
 export class SwitchSummonPhase extends SummonPhase {
   public readonly phaseName: "SwitchSummonPhase" | "ReturnPhase" = "SwitchSummonPhase";

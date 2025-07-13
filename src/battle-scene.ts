@@ -1,163 +1,159 @@
-import Phaser from "phaser";
-import UI from "#app/ui/ui";
-import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { allHeldItems, allSpecies, allTrainerItems } from "#app/data/data-lists";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import type { FixedBattleConfig } from "#app/battle";
+import { Battle } from "#app/battle";
 import {
-  fixedInt,
-  getIvsFromId,
-  randSeedInt,
-  getEnumValues,
-  randomString,
-  NumberHolder,
-  shiftCharCodes,
-  formatMoney,
-  isNullOrUndefined,
-  BooleanHolder,
-  type Constructor,
-  isBetween,
-} from "#app/utils/common";
-import { deepMergeSpriteData } from "#app/utils/data";
-import type { Modifier } from "./modifier/modifier";
+  ANTI_VARIANCE_WEIGHT_MODIFIER,
+  AVERAGE_ENCOUNTERS_PER_RUN_TARGET,
+  BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT,
+  MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT,
+} from "#app/constants";
+import type { GameMode } from "#app/game-mode";
+import { getGameMode } from "#app/game-mode";
+import { timedEventManager } from "#app/global-event-manager";
+import { initGlobalScene } from "#app/global-scene";
+import { starterColors } from "#app/global-vars/starter-colors";
+import { InputsController } from "#app/inputs-controller";
+import { applyHeldItems } from "#app/items/all-held-items";
+import { type ApplyTrainerItemsParams, applyTrainerItems } from "#app/items/apply-trainer-items";
+import { HeldItemEffect } from "#app/items/held-item";
+import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
+import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#app/items/held-item-pool";
+import { type EnemyAttackStatusEffectChanceTrainerItem, TrainerItemEffect } from "#app/items/trainer-item";
 import {
-  ConsumableModifier,
-  ConsumablePokemonModifier,
-  FusePokemonModifier,
-  PokemonHpRestoreModifier,
-  RememberMoveModifier,
-} from "./modifier/modifier";
-import { PokeballType } from "#enums/pokeball";
+  isTrainerItemPool,
+  isTrainerItemSpecs,
+  type TrainerItemConfiguration,
+  type TrainerItemSaveData,
+} from "#app/items/trainer-item-data-types";
+import { TrainerItemManager } from "#app/items/trainer-item-manager";
+import { getNewTrainerItemFromPool } from "#app/items/trainer-item-pool";
+import { LoadingScene } from "#app/loading-scene";
+import Overrides from "#app/overrides";
+import type { Phase } from "#app/phase";
+import { PhaseManager } from "#app/phase-manager";
+import { FieldSpritePipeline } from "#app/pipelines/field-sprite";
+import { InvertPostFX } from "#app/pipelines/invert";
+import { SpritePipeline } from "#app/pipelines/sprite";
+import { SceneBase } from "#app/scene-base";
+import { startingWave } from "#app/starting-wave";
+import { TimedEventManager } from "#app/timed-event-manager";
+import { UiInputs } from "#app/ui-inputs";
+import { biomeDepths, getBiomeName } from "#balance/biomes";
+import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
+import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
 import {
   initCommonAnims,
   initMoveAnim,
   loadCommonAnimAssets,
   loadMoveAnimAssets,
   populateAnims,
-} from "#app/data/battle-anims";
-import type { Phase } from "#app/phase";
-import { initGameSpeed } from "#app/system/game-speed";
-import { Arena, ArenaBase } from "#app/field/arena";
-import { GameData } from "#app/system/game-data";
-import { addTextObject, getTextColor, TextStyle } from "#app/ui/text";
-import { allMoves } from "./data/data-lists";
-import { MusicPreference } from "#app/system/settings/settings";
-import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#app/modifier/modifier-type";
-import { getModifierPoolForType } from "./utils/modifier-utils";
-import { HeldItemPoolType, ModifierPoolType } from "#enums/modifier-pool-type";
-import AbilityBar from "#app/ui/ability-bar";
-import { applyAbAttrs } from "./data/abilities/apply-ab-attrs";
-import { allAbilities } from "./data/data-lists";
-import type { FixedBattleConfig } from "#app/battle";
-import Battle from "#app/battle";
-import { BattleType } from "#enums/battle-type";
-import type { GameMode } from "#app/game-mode";
-import { getGameMode } from "#app/game-mode";
-import { GameModes } from "#enums/game-modes";
-import FieldSpritePipeline from "#app/pipelines/field-sprite";
-import SpritePipeline from "#app/pipelines/sprite";
-import PartyExpBar from "#app/ui/party-exp-bar";
-import type { TrainerSlot } from "./enums/trainer-slot";
-import { trainerConfigs } from "#app/data/trainers/trainer-config";
-import Trainer from "#app/field/trainer";
-import { TrainerVariant } from "#enums/trainer-variant";
-import type TrainerData from "#app/system/trainer-data";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
-import PokeballTray from "#app/ui/pokeball-tray";
-import InvertPostFX from "#app/pipelines/invert";
-import type { Achv } from "#app/system/achv";
-import { achvs, HeldItemAchv, ModifierAchv, MoneyAchv } from "#app/system/achv";
-import type { Voucher } from "#app/system/voucher";
-import { vouchers } from "#app/system/voucher";
-import { Gender } from "#app/data/gender";
-import type UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
-import { addUiThemeOverrides } from "#app/ui/ui-theme";
-import type PokemonData from "#app/system/pokemon-data";
-import { Nature } from "#enums/nature";
-import type { SpeciesFormChange } from "#app/data/pokemon-forms";
-import type { SpeciesFormChangeTrigger } from "./data/pokemon-forms/form-change-triggers";
-import { pokemonFormChanges } from "#app/data/pokemon-forms";
-import { SpeciesFormChangeTimeOfDayTrigger } from "./data/pokemon-forms/form-change-triggers";
-import { SpeciesFormChangeManualTrigger } from "./data/pokemon-forms/form-change-triggers";
-import { FormChangeItem } from "#enums/form-change-item";
-import { getTypeRgb } from "#app/data/type";
-import { PokemonType } from "#enums/pokemon-type";
-import PokemonSpriteSparkleHandler from "#app/field/pokemon-sprite-sparkle-handler";
-import CharSprite from "#app/ui/char-sprite";
-import DamageNumberHandler from "#app/field/damage-number-handler";
-import PokemonInfoContainer from "#app/ui/pokemon-info-container";
-import { biomeDepths, getBiomeName } from "#app/data/balance/biomes";
-import { SceneBase } from "#app/scene-base";
-import CandyBar from "#app/ui/candy-bar";
-import type { Variant } from "#app/sprites/variant";
-import { variantData, clearVariantData } from "#app/sprites/variant";
-import type { Localizable } from "#app/@types/locales";
-import Overrides from "#app/overrides";
-import { InputsController } from "#app/inputs-controller";
-import { UiInputs } from "#app/ui-inputs";
-import { NewArenaEvent } from "#app/events/battle-scene";
-import { ArenaFlyout } from "#app/ui/arena-flyout";
-import { EaseType } from "#enums/ease-type";
+} from "#data/battle-anims";
+import { allAbilities, allHeldItems, allMoves, allSpecies, allTrainerItems } from "#data/data-lists";
+import { battleSpecDialogue } from "#data/dialogue";
+import type { SpeciesFormChangeTrigger } from "#data/form-change-triggers";
+import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger } from "#data/form-change-triggers";
+import { Gender } from "#data/gender";
+import type { SpeciesFormChange } from "#data/pokemon-forms";
+import { pokemonFormChanges } from "#data/pokemon-forms";
+import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
+import { getTypeRgb } from "#data/type";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattleStyle } from "#enums/battle-style";
+import { BattleType } from "#enums/battle-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
+import { EaseType } from "#enums/ease-type";
+import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import type { ExpNotification } from "#enums/exp-notification";
+import { FormChangeItem } from "#enums/form-change-item";
+import { GameModes } from "#enums/game-modes";
+import { HeldItemId } from "#enums/held-item-id";
+import { HeldItemPoolType, ModifierPoolType } from "#enums/modifier-pool-type";
 import { MoneyFormat } from "#enums/money-format";
 import { MoveId } from "#enums/move-id";
-import { PlayerGender } from "#enums/player-gender";
-import { SpeciesId } from "#enums/species-id";
-import { UiTheme } from "#enums/ui-theme";
-import { TimedEventManager } from "#app/timed-event-manager";
-import type { PokemonAnimType } from "#enums/pokemon-anim-type";
-import i18next from "i18next";
-import { TrainerType } from "#enums/trainer-type";
-import { battleSpecDialogue } from "#app/data/dialogue";
-import { LoadingScene } from "#app/loading-scene";
-import type { MovePhase } from "#app/phases/move-phase";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
-import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { allMysteryEncounters, mysteryEncountersByBiome } from "#app/data/mystery-encounters/mystery-encounters";
-import {
-  ANTI_VARIANCE_WEIGHT_MODIFIER,
-  AVERAGE_ENCOUNTERS_PER_RUN_TARGET,
-  BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT,
-  MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT,
-} from "./constants";
-import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { ExpGainsSpeed } from "#enums/exp-gains-speed";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Nature } from "#enums/nature";
+import { PlayerGender } from "#enums/player-gender";
+import { PokeballType } from "#enums/pokeball";
+import type { PokemonAnimType } from "#enums/pokemon-anim-type";
+import { PokemonType } from "#enums/pokemon-type";
+import { ShopCursorTarget } from "#enums/shop-cursor-target";
+import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { initGlobalScene } from "#app/global-scene";
-import { expSpriteKeys } from "./sprites/sprite-keys";
-import { hasExpSprite } from "./sprites/sprite-utils";
-import { timedEventManager } from "./global-event-manager";
-import { starterColors } from "./global-vars/starter-colors";
-import { startingWave } from "./starting-wave";
-import { applyHeldItems } from "./items/all-held-items";
-import { HeldItemEffect } from "./items/held-item";
-import { PhaseManager } from "./phase-manager";
-import { HeldItemId } from "#enums/held-item-id";
-import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "./items/held-item-pool";
-import type { HeldItemConfiguration } from "./items/held-item-data-types";
-import { TrainerItemManager } from "./items/trainer-item-manager";
-import { type EnemyAttackStatusEffectChanceTrainerItem, TrainerItemEffect } from "./items/trainer-item";
-import { applyTrainerItems, type ApplyTrainerItemsParams } from "./items/apply-trainer-items";
 import { TrainerItemId } from "#enums/trainer-item-id";
+import type { TrainerSlot } from "#enums/trainer-slot";
+import { TrainerType } from "#enums/trainer-type";
+import { TrainerVariant } from "#enums/trainer-variant";
+import { UiTheme } from "#enums/ui-theme";
+import { NewArenaEvent } from "#events/battle-scene";
+import { Arena, ArenaBase } from "#field/arena";
+import { DamageNumberHandler } from "#field/damage-number-handler";
+import type { Pokemon } from "#field/pokemon";
+import { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
+import { PokemonSpriteSparkleHandler } from "#field/pokemon-sprite-sparkle-handler";
+import { Trainer } from "#field/trainer";
+import type { Modifier } from "#modifiers/modifier";
 import {
-  isTrainerItemPool,
-  isTrainerItemSpecs,
-  type TrainerItemSaveData,
-  type TrainerItemConfiguration,
-} from "./items/trainer-item-data-types";
-import { getNewTrainerItemFromPool } from "./items/trainer-item-pool";
-import { ItemBar } from "./ui/item-bar-ui";
+  ConsumableModifier,
+  ConsumablePokemonModifier,
+  FusePokemonModifier,
+  PokemonHpRestoreModifier,
+  RememberMoveModifier,
+} from "#modifiers/modifier";
+import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#modifiers/modifier-type";
+import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
+import { allMysteryEncounters, mysteryEncountersByBiome } from "#mystery-encounters/mystery-encounters";
+import type { MovePhase } from "#phases/move-phase";
+import { expSpriteKeys } from "#sprites/sprite-keys";
+import { hasExpSprite } from "#sprites/sprite-utils";
+import type { Variant } from "#sprites/variant";
+import { clearVariantData, variantData } from "#sprites/variant";
+import type { Achv } from "#system/achv";
+import { achvs, HeldItemAchv, ModifierAchv, MoneyAchv } from "#system/achv";
+import { GameData } from "#system/game-data";
+import { initGameSpeed } from "#system/game-speed";
+import type { PokemonData } from "#system/pokemon-data";
+import { MusicPreference } from "#system/settings";
+import type { TrainerData } from "#system/trainer-data";
+import type { Voucher } from "#system/voucher";
+import { vouchers } from "#system/voucher";
+import { trainerConfigs } from "#trainers/trainer-config";
+import type { Localizable } from "#types/locales";
+import { AbilityBar } from "#ui/ability-bar";
+import { ArenaFlyout } from "#ui/arena-flyout";
+import { CandyBar } from "#ui/candy-bar";
+import { CharSprite } from "#ui/char-sprite";
+import { ItemBar } from "#ui/item-bar-ui";
+import { PartyExpBar } from "#ui/party-exp-bar";
+import { PokeballTray } from "#ui/pokeball-tray";
+import { PokemonInfoContainer } from "#ui/pokemon-info-container";
+import { addTextObject, getTextColor, TextStyle } from "#ui/text";
+import { UI } from "#ui/ui";
+import { addUiThemeOverrides } from "#ui/ui-theme";
+import {
+  BooleanHolder,
+  type Constructor,
+  fixedInt,
+  formatMoney,
+  getEnumValues,
+  getIvsFromId,
+  isBetween,
+  isNullOrUndefined,
+  NumberHolder,
+  randomString,
+  randSeedInt,
+  shiftCharCodes,
+} from "#utils/common";
+import { deepMergeSpriteData } from "#utils/data";
+import { getModifierPoolForType } from "#utils/modifier-utils";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import i18next from "i18next";
+import Phaser from "phaser";
+import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import type UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
 const DEBUG_RNG = false;
 
@@ -172,7 +168,7 @@ export interface InfoToggle {
   isActive(): boolean;
 }
 
-export default class BattleScene extends SceneBase {
+export class BattleScene extends SceneBase {
   public rexUI: UIPlugin;
   public inputController: InputsController;
   public uiInputs: UiInputs;
@@ -880,8 +876,8 @@ export default class BattleScene extends SceneBase {
   }
 
   // store info toggles to be accessible by the ui
-  addInfoToggle(infoToggle: InfoToggle): void {
-    this.infoToggles.push(infoToggle);
+  addInfoToggle(...infoToggles: InfoToggle[]): void {
+    this.infoToggles.push(...infoToggles);
   }
 
   // return the stored info toggles; used by ui-inputs

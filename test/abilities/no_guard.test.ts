@@ -1,13 +1,13 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
+import { HitCheckResult } from "#enums/hit-check-result";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { HitCheckResult } from "#enums/hit-check-result";
-import GameManager from "#test/testUtils/gameManager";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { MoveEndPhase } from "#phases/move-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - No Guard", () => {
   let phaserGame: Phaser.Game;

@@ -1,33 +1,31 @@
 import { globalScene } from "#app/global-scene";
+import { TrainerItemEffect } from "#app/items/trainer-item";
+import Overrides from "#app/overrides";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { RewardTier } from "#enums/reward-tier";
-import type { ModifierTypeOption, ModifierType } from "#app/modifier/modifier-type";
+import { UiMode } from "#enums/ui-mode";
+import type { Modifier } from "#modifiers/modifier";
+import type { CustomModifierSettings, ModifierType, ModifierTypeOption } from "#modifiers/modifier-type";
 import {
-  regenerateModifierPoolThresholds,
-  getPlayerShopModifierTypeOptionsForWave,
-  PokemonModifierType,
+  FormChangeItemReward,
   FusePokemonModifierType,
+  getPlayerModifierTypeOptions,
+  getPlayerShopModifierTypeOptionsForWave,
+  HeldItemReward,
+  PokemonModifierType,
   PokemonMoveModifierType,
-  TmModifierType,
-  RememberMoveModifierType,
   PokemonPpRestoreModifierType,
   PokemonPpUpModifierType,
-  getPlayerModifierTypeOptions,
-  HeldItemReward,
-  FormChangeItemReward,
+  RememberMoveModifierType,
+  regenerateModifierPoolThresholds,
+  TmModifierType,
   TrainerItemReward,
-} from "#app/modifier/modifier-type";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
-import type { Modifier } from "#app/modifier/modifier";
-import type RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
-import { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/reward-select-ui-handler";
-import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
-import { UiMode } from "#enums/ui-mode";
+} from "#modifiers/modifier-type";
+import { BattlePhase } from "#phases/battle-phase";
+import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { type RewardSelectUiHandler, SHOP_OPTIONS_ROW_LIMIT } from "#ui/reward-select-ui-handler";
+import { isNullOrUndefined, NumberHolder } from "#utils/common";
 import i18next from "i18next";
-import { BattlePhase } from "./battle-phase";
-import Overrides from "#app/overrides";
-import type { CustomModifierSettings } from "#app/modifier/modifier-type";
-import { isNullOrUndefined, NumberHolder } from "#app/utils/common";
-import { TrainerItemEffect } from "#app/items/trainer-item";
 
 export type ModifierSelectCallback = (rowCursor: number, cursor: number) => boolean;
 

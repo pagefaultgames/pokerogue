@@ -1,21 +1,21 @@
 import { globalScene } from "#app/global-scene";
-import { Gender, getGenderSymbol } from "#app/data/gender";
-import { PokeballType } from "#enums/pokeball";
-import type Pokemon from "#app/field/pokemon";
-import { PokemonType } from "#enums/pokemon-type";
-import { coerceArray, isNullOrUndefined, randSeedInt } from "#app/utils/common";
-import { WeatherType } from "#enums/weather-type";
-import { Nature } from "#enums/nature";
+import { speciesStarterCosts } from "#balance/starters";
+import { allHeldItems, allMoves } from "#data/data-lists";
+import { Gender, getGenderSymbol } from "#data/gender";
 import { BiomeId } from "#enums/biome-id";
-import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
-import { SpeciesFormKey } from "#enums/species-form-key";
-import { TimeOfDay } from "#enums/time-of-day";
-import { speciesStarterCosts } from "./starters";
-import i18next from "i18next";
-import { allHeldItems, allMoves } from "#app/data/data-lists";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { HeldItemId } from "#enums/held-item-id";
+import { MoveId } from "#enums/move-id";
+import { Nature } from "#enums/nature";
+import { PokeballType } from "#enums/pokeball";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesFormKey } from "#enums/species-form-key";
+import { SpeciesId } from "#enums/species-id";
+import { TimeOfDay } from "#enums/time-of-day";
+import { WeatherType } from "#enums/weather-type";
+import type { Pokemon } from "#field/pokemon";
+import { coerceArray, isNullOrUndefined, randSeedInt } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import i18next from "i18next";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,

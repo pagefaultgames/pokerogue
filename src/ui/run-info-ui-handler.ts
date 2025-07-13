@@ -1,33 +1,32 @@
-import { GameModes } from "#enums/game-modes";
-import UiHandler from "./ui-handler";
-import type { SessionSaveData } from "../system/game-data";
-import { TextStyle, addTextObject, addBBCodeTextObject, getTextColor } from "./text";
-import { UiMode } from "#enums/ui-mode";
-import { addWindow } from "./ui-theme";
-import { getPokeballAtlasKey } from "#app/data/pokeball";
-import { formatLargeNumber, getPlayTimeString, formatMoney, formatFancyLargeNumber } from "#app/utils/common";
-import type PokemonData from "../system/pokemon-data";
-import i18next from "i18next";
-import { Button } from "../enums/buttons";
-import { BattleType } from "#enums/battle-type";
-import { TrainerVariant } from "#enums/trainer-variant";
-import { Challenges } from "#enums/challenges";
-import { getLuckString, getLuckTextTint } from "../modifier/modifier-type";
-import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
-import { getTypeRgb } from "#app/data/type";
-import { PokemonType } from "#enums/pokemon-type";
-import { TypeColor, TypeShadow } from "#app/enums/color";
-import { getNatureStatMultiplier, getNatureName } from "../data/nature";
-import { getVariantTint } from "#app/sprites/variant";
-import type { SpeciesId } from "#enums/species-id";
-import { PlayerGender } from "#enums/player-gender";
-import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
-import { getBiomeName } from "#app/data/balance/biomes";
-import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
-import { allTrainerItems } from "#app/data/data-lists";
-import { allHeldItems } from "#app/data/data-lists";
 import { heldItemSortFunc } from "#app/items/item-utility";
+import { getBiomeName } from "#balance/biomes";
+import { allHeldItems, allTrainerItems } from "#data/data-lists";
+import { getNatureName, getNatureStatMultiplier } from "#data/nature";
+import { getPokeballAtlasKey } from "#data/pokeball";
+import { getTypeRgb } from "#data/type";
+import { BattleType } from "#enums/battle-type";
+import { Button } from "#enums/buttons";
+import { Challenges } from "#enums/challenges";
+import { TypeColor, TypeShadow } from "#enums/color";
+import { GameModes } from "#enums/game-modes";
+import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PlayerGender } from "#enums/player-gender";
+import { PokemonType } from "#enums/pokemon-type";
+import type { SpeciesId } from "#enums/species-id";
+import { TrainerVariant } from "#enums/trainer-variant";
+import { UiMode } from "#enums/ui-mode";
+import { getLuckString, getLuckTextTint } from "#modifiers/modifier-type";
+import { getVariantTint } from "#sprites/variant";
+import type { SessionSaveData } from "#system/game-data";
+import type { PokemonData } from "#system/pokemon-data";
+import { SettingKeyboard } from "#system/settings-keyboard";
+import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { addWindow } from "#ui/ui-theme";
+import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getPlayTimeString } from "#utils/common";
+import i18next from "i18next";
+import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -51,7 +50,7 @@ export enum RunDisplayMode {
  * I believe that it is possible that the contents/methods of the first page will be placed in their own class that is an extension of RunInfoUiHandler as more pages are added.
  * For now, I leave as is.
  */
-export default class RunInfoUiHandler extends UiHandler {
+export class RunInfoUiHandler extends UiHandler {
   protected runDisplayMode: RunDisplayMode;
   protected runInfo: SessionSaveData;
   protected isVictory: boolean;

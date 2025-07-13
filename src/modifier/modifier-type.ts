@@ -1,23 +1,48 @@
+import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { tmPoolTiers, tmSpecies } from "#app/data/balance/tms";
-import { allMoves, modifierTypes } from "#app/data/data-lists";
-import { getNatureName, getNatureStatMultiplier } from "#app/data/nature";
-import { getPokeballCatchMultiplier, getPokeballName } from "#app/data/pokeball";
-import { pokemonFormChanges, SpeciesFormChangeCondition } from "#app/data/pokemon-forms";
-import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { FormChangeItem } from "#enums/form-change-item";
-import { formChangeItemName } from "#app/data/pokemon-forms";
-import { PokemonType } from "#enums/pokemon-type";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
-import type Pokemon from "#app/field/pokemon";
+import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeldItem } from "#app/items/held-item-pool";
+import { attackTypeToHeldItem } from "#app/items/held-items/attack-type-booster";
+import { permanentStatToHeldItem, statBoostItems } from "#app/items/held-items/base-stat-booster";
+import { berryTypeToHeldItem } from "#app/items/held-items/berry";
+import {
+  SPECIES_STAT_BOOSTER_ITEMS,
+  type SpeciesStatBoosterItemId,
+  type SpeciesStatBoostHeldItem,
+} from "#app/items/held-items/stat-booster";
+import { TrainerItemEffect, tempStatToTrainerItem } from "#app/items/trainer-item";
 import { getPokemonNameWithAffix } from "#app/messages";
+import Overrides from "#app/overrides";
+import { EvolutionItem, pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { tmPoolTiers, tmSpecies } from "#balance/tms";
+import { allHeldItems, allMoves, allTrainerItems, modifierTypes } from "#data/data-lists";
+import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
+import { getNatureName, getNatureStatMultiplier } from "#data/nature";
+import { getPokeballCatchMultiplier, getPokeballName } from "#data/pokeball";
+import { pokemonFormChanges, SpeciesFormChangeCondition } from "#data/pokemon-forms";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BerryType } from "#enums/berry-type";
+import { FormChangeItem } from "#enums/form-change-item";
+import { HeldItemId } from "#enums/held-item-id";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
+import { MoveId } from "#enums/move-id";
+import { Nature } from "#enums/nature";
+import { PokeballType } from "#enums/pokeball";
+import { PokemonType } from "#enums/pokemon-type";
+import { RewardTier } from "#enums/reward-tier";
+import { SpeciesFormKey } from "#enums/species-form-key";
+import { SpeciesId } from "#enums/species-id";
+import type { PermanentStat, TempBattleStat } from "#enums/stat";
+import { Stat, TEMP_BATTLE_STATS } from "#enums/stat";
+import { TrainerItemId } from "#enums/trainer-item-id";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import {
   AddPokeballModifier,
   AddVoucherModifier,
   EvolutionItemModifier,
   FusePokemonModifier,
+  type Modifier,
+  MoneyRewardModifier,
   PokemonAllMovePpRestoreModifier,
   PokemonHpRestoreModifier,
   PokemonLevelIncrementModifier,
@@ -28,15 +53,13 @@ import {
   RememberMoveModifier,
   TerrastalizeModifier,
   TmModifier,
-  type Modifier,
-  MoneyRewardModifier,
-} from "#app/modifier/modifier";
-import { RewardTier } from "#enums/reward-tier";
-import Overrides from "#app/overrides";
-import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#app/system/voucher";
-import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#app/ui/party-ui-handler";
-import PartyUiHandler from "#app/ui/party-ui-handler";
-import { getModifierTierTextTint } from "#app/ui/text";
+} from "#modifiers/modifier";
+import type { PokemonMove } from "#moves/pokemon-move";
+import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#system/voucher";
+import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#types/modifier-types";
+import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
+import { PartyUiHandler } from "#ui/party-ui-handler";
+import { getModifierTierTextTint } from "#ui/text";
 import {
   formatMoney,
   getEnumKeys,
@@ -45,36 +68,9 @@ import {
   NumberHolder,
   padInt,
   randSeedInt,
-} from "#app/utils/common";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { BerryType } from "#enums/berry-type";
-import { MoveId } from "#enums/move-id";
-import { Nature } from "#enums/nature";
-import { PokeballType } from "#enums/pokeball";
-import { SpeciesId } from "#enums/species-id";
-import { SpeciesFormKey } from "#enums/species-form-key";
-import type { PermanentStat, TempBattleStat } from "#enums/stat";
-import { Stat, TEMP_BATTLE_STATS } from "#enums/stat";
+} from "#utils/common";
+import { getModifierPoolForType } from "#utils/modifier-utils";
 import i18next from "i18next";
-import { timedEventManager } from "#app/global-event-manager";
-import { HeldItemId } from "#enums/held-item-id";
-import { allHeldItems } from "#app/data/data-lists";
-import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
-import { attackTypeToHeldItem } from "#app/items/held-items/attack-type-booster";
-import { permanentStatToHeldItem, statBoostItems } from "#app/items/held-items/base-stat-booster";
-import {
-  SPECIES_STAT_BOOSTER_ITEMS,
-  type SpeciesStatBoostHeldItem,
-  type SpeciesStatBoosterItemId,
-} from "#app/items/held-items/stat-booster";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
-import { getModifierPoolForType } from "#app/utils/modifier-utils";
-import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
-import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeldItem } from "#app/items/held-item-pool";
-import { berryTypeToHeldItem } from "#app/items/held-items/berry";
-import { TrainerItemId } from "#enums/trainer-item-id";
-import { allTrainerItems } from "#app/data/data-lists";
-import { tempStatToTrainerItem, TrainerItemEffect } from "#app/items/trainer-item";
 
 type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier | null;
 

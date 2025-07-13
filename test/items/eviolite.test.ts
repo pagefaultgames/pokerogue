@@ -1,18 +1,18 @@
 import { applyHeldItems } from "#app/items/all-held-items";
 import { HeldItemEffect } from "#app/items/held-item";
-import { NumberHolder, randItem } from "#app/utils/common";
 import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
-import Phase from "phaser";
+import { GameManager } from "#test/testUtils/gameManager";
+import { NumberHolder, randItem } from "#utils/common";
+import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Eviolite", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });

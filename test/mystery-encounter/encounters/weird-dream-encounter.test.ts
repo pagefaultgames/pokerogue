@@ -1,25 +1,25 @@
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
+import type { BattleScene } from "#app/battle-scene";
 import { BiomeId } from "#enums/biome-id";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RewardTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { UiMode } from "#enums/ui-mode";
+import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
+import * as EncounterTransformationSequence from "#mystery-encounters/encounter-transformation-sequence";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { WeirdDreamEncounter } from "#mystery-encounters/weird-dream-encounter";
+import { CommandPhase } from "#phases/command-phase";
+import { SelectRewardPhase } from "#phases/select-reward-phase";
 import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import type BattleScene from "#app/battle-scene";
-import { UiMode } from "#enums/ui-mode";
-import RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { GameManager } from "#test/testUtils/gameManager";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import { WeirdDreamEncounter } from "#app/data/mystery-encounters/encounters/weird-dream-encounter";
-import * as EncounterTransformationSequence from "#app/data/mystery-encounters/utils/encounter-transformation-sequence";
-import { SelectRewardPhase } from "#app/phases/select-reward-phase";
-import { CommandPhase } from "#app/phases/command-phase";
-import { RewardTier } from "#enums/reward-tier";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/weirdDream";
 const defaultParty = [SpeciesId.MAGBY, SpeciesId.HAUNTER, SpeciesId.ABRA];

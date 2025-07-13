@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
-import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
-import { ExpNotification } from "#app/enums/exp-notification";
-import { NumberHolder } from "#app/utils/common";
-import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
 import { TrainerItemEffect } from "#app/items/trainer-item";
+import { ExpGainsSpeed } from "#enums/exp-gains-speed";
+import { ExpNotification } from "#enums/exp-notification";
+import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
+import { NumberHolder } from "#utils/common";
 
 export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "ShowPartyExpBarPhase";

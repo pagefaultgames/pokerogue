@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
+import { RewardPhase } from "#phases/reward-phase";
 import i18next from "i18next";
-import { RewardPhase } from "./reward-phase";
 
 export class GameOverRewardPhase extends RewardPhase {
   public readonly phaseName = "GameOverRewardPhase";

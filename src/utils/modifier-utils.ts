@@ -1,8 +1,8 @@
+import { modifierTypes } from "#data/data-lists";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
-import { modifierPool } from "#app/modifier/modifier-pools";
-import type { ModifierPool, ModifierTypeFunc } from "#app/@types/modifier-types";
-import { modifierTypes } from "#app/data/data-lists";
-import type { ModifierType } from "#app/modifier/modifier-type";
+import { modifierPool } from "#modifiers/modifier-pools";
+import type { ModifierType } from "#modifiers/modifier-type";
+import type { ModifierPool, ModifierTypeFunc } from "#types/modifier-types";
 
 export function getModifierPoolForType(poolType: ModifierPoolType): ModifierPool {
   switch (poolType) {

@@ -1,12 +1,12 @@
-import cfg_keyboard_qwerty from "#app/configs/inputs/cfg_keyboard_qwerty";
-import { getKeyWithKeycode, getKeyWithSettingName } from "#app/configs/inputs/configHandler";
 import type { InterfaceConfig } from "#app/inputs-controller";
-import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
-import { deepCopy } from "#app/utils/data";
 import { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
+import cfg_keyboard_qwerty from "#inputs/cfg_keyboard_qwerty";
+import { getKeyWithKeycode, getKeyWithSettingName } from "#inputs/configHandler";
+import { SettingKeyboard } from "#system/settings-keyboard";
 import { InGameManip } from "#test/settingMenu/helpers/inGameManip";
 import { MenuManip } from "#test/settingMenu/helpers/menuManip";
+import { deepCopy } from "#utils/data";
 import { beforeEach, describe, expect, it } from "vitest";
 
 describe("Test Rebinding", () => {

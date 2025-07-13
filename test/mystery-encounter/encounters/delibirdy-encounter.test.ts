@@ -1,22 +1,22 @@
+import type { BattleScene } from "#app/battle-scene";
 import { BiomeId } from "#enums/biome-id";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
+import { HeldItemId } from "#enums/held-item-id";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { TrainerItemId } from "#enums/trainer-item-id";
+import { DelibirdyEncounter } from "#mystery-encounters/delibirdy-encounter";
+import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
+import type { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,
 } from "#test/mystery-encounter/encounter-test-utils";
-import type BattleScene from "#app/battle-scene";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { DelibirdyEncounter } from "#app/data/mystery-encounters/encounters/delibirdy-encounter";
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import type { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { TrainerItemId } from "#enums/trainer-item-id";
-import { HeldItemId } from "#enums/held-item-id";
+import { GameManager } from "#test/testUtils/gameManager";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/delibirdy";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];

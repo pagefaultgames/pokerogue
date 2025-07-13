@@ -1,17 +1,17 @@
-import i18next from "i18next";
-import { coerceArray, type Constructor } from "#app/utils/common";
-import type { TimeOfDay } from "#enums/time-of-day";
-import type Pokemon from "#app/field/pokemon";
-import type { SpeciesFormChange } from "#app/data/pokemon-forms";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { globalScene } from "#app/global-scene";
-import { FormChangeItem } from "#enums/form-change-item";
+import { getPokemonNameWithAffix } from "#app/messages";
+import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { AbilityId } from "#enums/ability-id";
 import { Challenges } from "#enums/challenges";
+import { FormChangeItem } from "#enums/form-change-item";
 import { MoveId } from "#enums/move-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { StatusEffect } from "#enums/status-effect";
+import type { TimeOfDay } from "#enums/time-of-day";
 import { WeatherType } from "#enums/weather-type";
+import type { Pokemon } from "#field/pokemon";
+import { type Constructor, coerceArray } from "#utils/common";
+import i18next from "i18next";
 
 export abstract class SpeciesFormChangeTrigger {
   public description = "";

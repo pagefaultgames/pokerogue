@@ -1,23 +1,23 @@
-import type BattleScene from "#app/battle-scene";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { PlayerPokemon } from "#app/field/pokemon";
-import { RewardTier } from "#enums/reward-tier";
-import type { CustomModifierSettings } from "#app/modifier/modifier-type";
-import { ModifierTypeOption } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/data/data-lists";
-import { SelectRewardPhase } from "#app/phases/select-reward-phase";
-import RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { shiftCharCodes } from "#app/utils/common";
+import type { BattleScene } from "#app/battle-scene";
+import { modifierTypes } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
+import { RewardTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { TrainerItemId } from "#enums/trainer-item-id";
+import { UiMode } from "#enums/ui-mode";
+import { PlayerPokemon } from "#field/pokemon";
+import type { CustomModifierSettings } from "#modifiers/modifier-type";
+import { ModifierTypeOption } from "#modifiers/modifier-type";
+import { SelectRewardPhase } from "#phases/select-reward-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
+import { shiftCharCodes } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { TrainerItemId } from "#enums/trainer-item-id";
 
 describe("SelectRewardPhase", () => {
   let phaserGame: Phaser.Game;

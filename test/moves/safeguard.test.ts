@@ -1,13 +1,13 @@
+import { allAbilities } from "#data/data-lists";
+import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
-import { allAbilities } from "#app/data/data-lists";
-import { StatusEffect } from "#app/enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { AbilityId } from "#enums/ability-id";
-import { HeldItemId } from "#enums/held-item-id";
 
 describe("Moves - Safeguard", () => {
   let phaserGame: Phaser.Game;

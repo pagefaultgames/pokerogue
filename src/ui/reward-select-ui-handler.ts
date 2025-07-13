@@ -1,29 +1,29 @@
 import { globalScene } from "#app/global-scene";
-import type { ModifierTypeOption } from "../modifier/modifier-type";
-import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "../modifier/modifier-type";
-import { getPokeballAtlasKey } from "#app/data/pokeball";
-import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
-import AwaitableUiHandler from "./awaitable-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { handleTutorial, Tutorial } from "../tutorial";
-import { Button } from "#enums/buttons";
-import MoveInfoOverlay from "./move-info-overlay";
-import { allMoves } from "#app/data/data-lists";
-import { formatMoney, NumberHolder } from "#app/utils/common";
-import Overrides from "#app/overrides";
-import i18next from "i18next";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
-import Phaser from "phaser";
-import type { PokeballType } from "#enums/pokeball";
-import { TrainerItemId } from "#enums/trainer-item-id";
 import { TrainerItemEffect } from "#app/items/trainer-item";
+import Overrides from "#app/overrides";
+import { handleTutorial, Tutorial } from "#app/tutorial";
+import { allMoves } from "#data/data-lists";
+import { getPokeballAtlasKey } from "#data/pokeball";
+import { Button } from "#enums/buttons";
+import type { PokeballType } from "#enums/pokeball";
+import { ShopCursorTarget } from "#enums/shop-cursor-target";
+import { TrainerItemId } from "#enums/trainer-item-id";
+import { UiMode } from "#enums/ui-mode";
+import type { ModifierTypeOption } from "#modifiers/modifier-type";
+import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "#modifiers/modifier-type";
+import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
+import { MoveInfoOverlay } from "#ui/move-info-overlay";
+import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions, TextStyle } from "#ui/text";
+import { formatMoney, NumberHolder } from "#utils/common";
+import i18next from "i18next";
+import Phaser from "phaser";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 7;
 const SINGLE_SHOP_ROW_YOFFSET = 12;
 const DOUBLE_SHOP_ROW_YOFFSET = 24;
 const OPTION_BUTTON_YPOSITION = -62;
 
-export default class RewardSelectUiHandler extends AwaitableUiHandler {
+export class RewardSelectUiHandler extends AwaitableUiHandler {
   private modifierContainer: Phaser.GameObjects.Container;
   private rerollButtonContainer: Phaser.GameObjects.Container;
   private lockRarityButtonContainer: Phaser.GameObjects.Container;

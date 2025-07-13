@@ -1,23 +1,23 @@
 import { loggedInUser } from "#app/account";
-import { BattleType } from "#enums/battle-type";
-import { fetchDailyRunSeed, getDailyRunStarters } from "#app/data/daily-run";
-import { Gender } from "#app/data/gender";
-import { getBiomeKey } from "#app/field/arena";
 import { GameMode, getGameMode } from "#app/game-mode";
-import { GameModes } from "#enums/game-modes";
-import { Phase } from "#app/phase";
-import type { SessionSaveData } from "#app/system/game-data";
-import { Unlockables } from "#enums/unlockables";
-import { vouchers } from "#app/system/voucher";
-import type { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { isLocal, isLocalServerConnected, isNullOrUndefined } from "#app/utils/common";
-import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
 import { assignDailyRunStarterHeldItems } from "#app/items/held-item-pool";
+import Overrides from "#app/overrides";
+import { Phase } from "#app/phase";
+import { fetchDailyRunSeed, getDailyRunStarters } from "#data/daily-run";
+import { Gender } from "#data/gender";
+import { BattleType } from "#enums/battle-type";
+import { GameModes } from "#enums/game-modes";
 import { TrainerItemId } from "#enums/trainer-item-id";
+import { UiMode } from "#enums/ui-mode";
+import { Unlockables } from "#enums/unlockables";
+import { getBiomeKey } from "#field/arena";
+import type { SessionSaveData } from "#system/game-data";
+import { vouchers } from "#system/voucher";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
+import { isLocal, isLocalServerConnected, isNullOrUndefined } from "#utils/common";
+import i18next from "i18next";
 
 export class TitlePhase extends Phase {
   public readonly phaseName = "TitlePhase";

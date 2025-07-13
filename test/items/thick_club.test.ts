@@ -1,19 +1,19 @@
-import { Stat } from "#enums/stat";
-import { modifierTypes } from "#app/data/data-lists";
-import i18next from "#app/plugins/i18n";
-import { NumberHolder, randInt } from "#app/utils/common";
-import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import Phase from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { modifierTypes } from "#data/data-lists";
 import { HeldItemId } from "#enums/held-item-id";
+import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import i18next from "#plugins/i18n";
+import { GameManager } from "#test/testUtils/gameManager";
+import { NumberHolder, randInt } from "#utils/common";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Thick Club", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });

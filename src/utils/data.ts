@@ -1,7 +1,7 @@
 import { loggedInUser } from "#app/account";
-import type { StarterAttributes } from "#app/system/game-data";
-import { AES, enc } from "crypto-js";
 import { saveKey } from "#app/constants";
+import type { StarterAttributes } from "#system/game-data";
+import { AES, enc } from "crypto-js";
 
 /**
  * Perform a deep copy of an object.

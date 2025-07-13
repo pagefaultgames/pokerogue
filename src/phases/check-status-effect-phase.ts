@@ -1,6 +1,6 @@
+import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import type { BattlerIndex } from "#enums/battler-index";
-import { globalScene } from "#app/global-scene";
 
 export class CheckStatusEffectPhase extends Phase {
   public readonly phaseName = "CheckStatusEffectPhase";

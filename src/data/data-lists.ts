@@ -1,11 +1,11 @@
-import type PokemonSpecies from "#app/data/pokemon-species";
+import type { Ability } from "#abilities/ability";
 import type { HeldItem } from "#app/items/held-item";
 import type { TrainerItem } from "#app/items/trainer-item";
-import type { ModifierTypes } from "#app/modifier/modifier-type";
+import type { PokemonSpecies } from "#data/pokemon-species";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { TrainerItemId } from "#enums/trainer-item-id";
-import type { Ability } from "./abilities/ability";
-import type Move from "./moves/move";
+import type { ModifierTypes } from "#modifiers/modifier-type";
+import type { Move } from "#moves/move";
 
 export const allAbilities: Ability[] = [];
 export const allMoves: Move[] = [];

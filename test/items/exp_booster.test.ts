@@ -1,18 +1,18 @@
-import { AbilityId } from "#enums/ability-id";
-import { NumberHolder } from "#app/utils/common";
-import GameManager from "#test/testUtils/gameManager";
-import Phase from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { HeldItemId } from "#enums/held-item-id";
 import { applyHeldItems } from "#app/items/all-held-items";
 import { HeldItemEffect } from "#app/items/held-item";
+import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
+import { GameManager } from "#test/testUtils/gameManager";
+import { NumberHolder } from "#utils/common";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("EXP Modifier Items", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });

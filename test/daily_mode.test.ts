@@ -1,14 +1,12 @@
+import { pokerogueApi } from "#api/pokerogue-api";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
 import { SpeciesId } from "#enums/species-id";
-import { UiMode } from "#enums/ui-mode";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
 import { TrainerItemId } from "#enums/trainer-item-id";
-
-//const TIMEOUT = 20 * 1000;
+import { UiMode } from "#enums/ui-mode";
+import { GameManager } from "#test/testUtils/gameManager";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Daily Mode", () => {
   let phaserGame: Phaser.Game;

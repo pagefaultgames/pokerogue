@@ -1,46 +1,44 @@
-import { PokemonType } from "#enums/pokemon-type";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { SpeciesId } from "#enums/species-id";
 import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import type { EnemyPartyConfig, EnemyPokemonConfig } from "../utils/encounter-phase-utils";
+import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
+import { TrainerItemEffect } from "#app/items/trainer-item";
+import { allSpecies, modifierTypes } from "#data/data-lists";
+import { getLevelTotalExp } from "#data/exp";
+import type { PokemonSpecies } from "#data/pokemon-species";
+import { Challenges } from "#enums/challenges";
+import { HeldItemId } from "#enums/held-item-id";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Nature } from "#enums/nature";
+import { PartyMemberStrength } from "#enums/party-member-strength";
+import { PlayerGender } from "#enums/player-gender";
+import { PokemonType } from "#enums/pokemon-type";
+import { RewardTier } from "#enums/reward-tier";
+import { SpeciesId } from "#enums/species-id";
+import { TrainerType } from "#enums/trainer-type";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import { PokemonMove } from "#moves/pokemon-move";
+import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
+import type { EnemyPartyConfig, EnemyPokemonConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterRewards,
-} from "../utils/encounter-phase-utils";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { NumberHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils/common";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { allSpecies } from "#app/data/data-lists";
-import { achvs } from "#app/system/achv";
-import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { modifierTypes } from "#app/data/data-lists";
-import i18next from "#app/plugins/i18n";
+} from "#mystery-encounters/encounter-phase-utils";
 import {
   doPokemonTransformationSequence,
   TransformationScreenPosition,
-} from "#app/data/mystery-encounters/utils/encounter-transformation-sequence";
-import { getLevelTotalExp } from "#app/data/exp";
-import { Challenges } from "#enums/challenges";
-import { RewardTier } from "#enums/reward-tier";
-import { PlayerGender } from "#enums/player-gender";
-import { TrainerType } from "#enums/trainer-type";
-import PokemonData from "#app/system/pokemon-data";
-import { Nature } from "#enums/nature";
-import { trainerConfigs } from "#app/data/trainers/trainer-config";
-import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { PartyMemberStrength } from "#enums/party-member-strength";
-import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
-import { HeldItemId } from "#enums/held-item-id";
-import { TrainerItemEffect } from "#app/items/trainer-item";
+} from "#mystery-encounters/encounter-transformation-sequence";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import i18next from "#plugins/i18n";
+import { achvs } from "#system/achv";
+import { PokemonData } from "#system/pokemon-data";
+import { TrainerPartyTemplate } from "#trainers/TrainerPartyTemplate";
+import { trainerConfigs } from "#trainers/trainer-config";
+import { isNullOrUndefined, NumberHolder, randSeedInt, randSeedShuffle } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/weirdDream";

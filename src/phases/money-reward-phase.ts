@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import i18next from "i18next";
-import { NumberHolder } from "#app/utils/common";
-import { BattlePhase } from "./battle-phase";
 import { TrainerItemEffect } from "#app/items/trainer-item";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlePhase } from "#phases/battle-phase";
+import { NumberHolder } from "#utils/common";
+import i18next from "i18next";
 
 export class MoneyRewardPhase extends BattlePhase {
   public readonly phaseName = "MoneyRewardPhase";

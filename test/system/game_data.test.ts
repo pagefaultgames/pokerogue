@@ -1,12 +1,12 @@
+import { pokerogueApi } from "#api/pokerogue-api";
+import * as account from "#app/account";
 import * as bypassLoginModule from "#app/global-vars/bypass-login";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import type { SessionSaveData } from "#app/system/game-data";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import GameManager from "#test/testUtils/gameManager";
+import type { SessionSaveData } from "#system/game-data";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import * as account from "#app/account";
 
 describe("System - Game Data", () => {
   let phaserGame: Phaser.Game;

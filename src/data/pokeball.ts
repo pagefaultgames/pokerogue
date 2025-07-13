@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { TrainerItemEffect } from "#app/items/trainer-item";
-import { NumberHolder } from "#app/utils/common";
 import { PokeballType } from "#enums/pokeball";
+import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 export const MAX_PER_TYPE_POKEBALLS: number = 99;

@@ -1,17 +1,17 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { StealHeldItemChanceAttr } from "#app/data/moves/move";
-import { allMoves } from "#app/data/data-lists";
-import type Pokemon from "#app/field/pokemon";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import { TrainerItemId } from "#enums/trainer-item-id";
+import type { Pokemon } from "#field/pokemon";
+import { StealHeldItemChanceAttr } from "#moves/move";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { HeldItemId } from "#enums/held-item-id";
-import { TrainerItemId } from "#enums/trainer-item-id";
 
 describe("Abilities - Unburden", () => {
   let phaserGame: Phaser.Game;

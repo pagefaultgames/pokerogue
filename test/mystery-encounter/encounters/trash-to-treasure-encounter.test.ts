@@ -1,34 +1,34 @@
-import type BattleScene from "#app/battle-scene";
-import * as BattleAnims from "#app/data/battle-anims";
-import { TrashToTreasureEncounter } from "#app/data/mystery-encounters/encounters/trash-to-treasure-encounter";
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import type { EnemyPartyConfig, EnemyPokemonConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
+import type { BattleScene } from "#app/battle-scene";
+import { randSeedInt } from "#app/utils/common";
+import * as BattleAnims from "#data/battle-anims";
 import { BiomeId } from "#enums/biome-id";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { SpeciesId } from "#enums/species-id";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { RewardTier } from "#enums/reward-tier";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MovePhase } from "#app/phases/move-phase";
-import { SelectRewardPhase } from "#app/phases/select-reward-phase";
-import RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import * as Utils from "#app/utils/common";
+import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RewardTier } from "#enums/reward-tier";
+import { SpeciesId } from "#enums/species-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
+import { UiMode } from "#enums/ui-mode";
+import { PokemonMove } from "#moves/pokemon-move";
+import type { EnemyPartyConfig, EnemyPokemonConfig } from "#mystery-encounters/encounter-phase-utils";
+import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { TrashToTreasureEncounter } from "#mystery-encounters/trash-to-treasure-encounter";
+import { CommandPhase } from "#phases/command-phase";
+import { MovePhase } from "#phases/move-phase";
+import { SelectRewardPhase } from "#phases/select-reward-phase";
 import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
+import * as Utils from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
-import { randSeedInt } from "#app/utils/common";
-import { TrainerItemId } from "#enums/trainer-item-id";
 
 const namespace = "mysteryEncounters/trashToTreasure";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];

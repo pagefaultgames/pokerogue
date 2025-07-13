@@ -1,25 +1,25 @@
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
+import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import Phase from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
-import { UiMode } from "#enums/ui-mode";
-import type RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
-import { Button } from "#app/enums/buttons";
-import { CommandPhase } from "#app/phases/command-phase";
-import { NewBattlePhase } from "#app/phases/new-battle-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 import { TrainerItemId } from "#enums/trainer-item-id";
+import { UiMode } from "#enums/ui-mode";
+import { BattleEndPhase } from "#phases/battle-end-phase";
+import { CommandPhase } from "#phases/command-phase";
+import { NewBattlePhase } from "#phases/new-battle-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import type { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Dire Hit", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });

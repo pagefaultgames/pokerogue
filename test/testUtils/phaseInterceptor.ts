@@ -1,69 +1,69 @@
 import { Phase } from "#app/phase";
-import ErrorInterceptor from "#test/testUtils/errorInterceptor";
-import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
-import { CommandPhase } from "#app/phases/command-phase";
-import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
-import { EggLapsePhase } from "#app/phases/egg-lapse-phase";
-import { EncounterPhase } from "#app/phases/encounter-phase";
-import { EndEvolutionPhase } from "#app/phases/end-evolution-phase";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
-import { EvolutionPhase } from "#app/phases/evolution-phase";
-import { FaintPhase } from "#app/phases/faint-phase";
-import { FormChangePhase } from "#app/phases/form-change-phase";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
-import { LevelCapPhase } from "#app/phases/level-cap-phase";
-import { LoginPhase } from "#app/phases/login-phase";
-import { MessagePhase } from "#app/phases/message-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { MovePhase } from "#app/phases/move-phase";
-import { NewBattlePhase } from "#app/phases/new-battle-phase";
-import { NewBiomeEncounterPhase } from "#app/phases/new-biome-encounter-phase";
-import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
-import { PostSummonPhase } from "#app/phases/post-summon-phase";
-import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
-import { SelectGenderPhase } from "#app/phases/select-gender-phase";
-import { SelectRewardPhase } from "#app/phases/select-reward-phase";
-import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import { SelectTargetPhase } from "#app/phases/select-target-phase";
-import { ShinySparklePhase } from "#app/phases/shiny-sparkle-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { SummonPhase } from "#app/phases/summon-phase";
-import { SwitchPhase } from "#app/phases/switch-phase";
-import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
-import { TitlePhase } from "#app/phases/title-phase";
-import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { TurnStartPhase } from "#app/phases/turn-start-phase";
-import { UnavailablePhase } from "#app/phases/unavailable-phase";
-import { VictoryPhase } from "#app/phases/victory-phase";
-import { PartyHealPhase } from "#app/phases/party-heal-phase";
-import UI from "#app/ui/ui";
 import { UiMode } from "#enums/ui-mode";
-import { SelectBiomePhase } from "#app/phases/select-biome-phase";
+import { AttemptRunPhase } from "#phases/attempt-run-phase";
+import { BattleEndPhase } from "#phases/battle-end-phase";
+import { BerryPhase } from "#phases/berry-phase";
+import { CheckSwitchPhase } from "#phases/check-switch-phase";
+import { CommandPhase } from "#phases/command-phase";
+import { DamageAnimPhase } from "#phases/damage-anim-phase";
+import { EggLapsePhase } from "#phases/egg-lapse-phase";
+import { EncounterPhase } from "#phases/encounter-phase";
+import { EndEvolutionPhase } from "#phases/end-evolution-phase";
+import { EnemyCommandPhase } from "#phases/enemy-command-phase";
+import { EvolutionPhase } from "#phases/evolution-phase";
+import { ExpPhase } from "#phases/exp-phase";
+import { FaintPhase } from "#phases/faint-phase";
+import { FormChangePhase } from "#phases/form-change-phase";
+import { GameOverPhase } from "#phases/game-over-phase";
+import { GameOverRewardPhase } from "#phases/game-over-reward-phase";
+import { LearnMovePhase } from "#phases/learn-move-phase";
+import { LevelCapPhase } from "#phases/level-cap-phase";
+import { LoginPhase } from "#phases/login-phase";
+import { MessagePhase } from "#phases/message-phase";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { MoveEndPhase } from "#phases/move-end-phase";
+import { MovePhase } from "#phases/move-phase";
 import {
   MysteryEncounterBattlePhase,
   MysteryEncounterOptionSelectedPhase,
   MysteryEncounterPhase,
   MysteryEncounterRewardsPhase,
   PostMysteryEncounterPhase,
-} from "#app/phases/mystery-encounter-phases";
-import { RewardPhase } from "#app/phases/reward-phase";
-import { PartyExpPhase } from "#app/phases/party-exp-phase";
-import { ExpPhase } from "#app/phases/exp-phase";
-import { GameOverPhase } from "#app/phases/game-over-phase";
-import { RibbonRewardPhase } from "#app/phases/ribbon-reward-phase";
-import { GameOverRewardPhase } from "#app/phases/game-over-reward-phase";
-import { UnlockPhase } from "#app/phases/unlock-phase";
-import { PostGameOverPhase } from "#app/phases/post-game-over-phase";
-import { RevivalBlessingPhase } from "#app/phases/revival-blessing-phase";
-
-import type { PhaseClass, PhaseString } from "#app/@types/phase-types";
+} from "#phases/mystery-encounter-phases";
+import { NewBattlePhase } from "#phases/new-battle-phase";
+import { NewBiomeEncounterPhase } from "#phases/new-biome-encounter-phase";
+import { NextEncounterPhase } from "#phases/next-encounter-phase";
+import { PartyExpPhase } from "#phases/party-exp-phase";
+import { PartyHealPhase } from "#phases/party-heal-phase";
+import { PokemonTransformPhase } from "#phases/pokemon-transform-phase";
+import { PostGameOverPhase } from "#phases/post-game-over-phase";
+import { PostSummonPhase } from "#phases/post-summon-phase";
+import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
+import { RevivalBlessingPhase } from "#phases/revival-blessing-phase";
+import { RewardPhase } from "#phases/reward-phase";
+import { RibbonRewardPhase } from "#phases/ribbon-reward-phase";
+import { SelectBiomePhase } from "#phases/select-biome-phase";
+import { SelectGenderPhase } from "#phases/select-gender-phase";
+import { SelectRewardPhase } from "#phases/select-reward-phase";
+import { SelectStarterPhase } from "#phases/select-starter-phase";
+import { SelectTargetPhase } from "#phases/select-target-phase";
+import { ShinySparklePhase } from "#phases/shiny-sparkle-phase";
+import { ShowAbilityPhase } from "#phases/show-ability-phase";
+import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
+import { SummonPhase } from "#phases/summon-phase";
+import { SwitchPhase } from "#phases/switch-phase";
+import { SwitchSummonPhase } from "#phases/switch-summon-phase";
+import { TitlePhase } from "#phases/title-phase";
+import { ToggleDoublePositionPhase } from "#phases/toggle-double-position-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { TurnStartPhase } from "#phases/turn-start-phase";
+import { UnavailablePhase } from "#phases/unavailable-phase";
+import { UnlockPhase } from "#phases/unlock-phase";
+import { VictoryPhase } from "#phases/victory-phase";
+import { ErrorInterceptor } from "#test/testUtils/errorInterceptor";
+import type { PhaseClass, PhaseString } from "#types/phase-types";
+import { UI } from "#ui/ui";
 
 export interface PromptHandler {
   phaseTarget?: string;
@@ -75,7 +75,7 @@ export interface PromptHandler {
 
 type PhaseInterceptorPhase = PhaseClass | PhaseString;
 
-export default class PhaseInterceptor {
+export class PhaseInterceptor {
   public scene;
   public phases = {};
   public log: string[];
@@ -142,6 +142,7 @@ export default class PhaseInterceptor {
     [LevelCapPhase, this.startPhase],
     [AttemptRunPhase, this.startPhase],
     [SelectBiomePhase, this.startPhase],
+    [PokemonTransformPhase, this.startPhase],
     [MysteryEncounterPhase, this.startPhase],
     [MysteryEncounterOptionSelectedPhase, this.startPhase],
     [MysteryEncounterBattlePhase, this.startPhase],

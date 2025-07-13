@@ -1,27 +1,27 @@
-import type Pokemon from "#app/field/pokemon";
-import { modifierPool } from "#app/modifier/modifier-pools";
-import { globalScene } from "#app/global-scene";
-import { WeightedModifierType } from "./modifier-type";
-import { RewardTier } from "#app/enums/reward-tier";
-import type { WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
-import { modifierTypes } from "#app/data/data-lists";
-import { PokeballType } from "#enums/pokeball";
-import { SpeciesId } from "#enums/species-id";
+/* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
+import type { initModifierTypes } from "#modifiers/modifier-type";
+/* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
+
 import { timedEventManager } from "#app/global-event-manager";
-import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { Unlockables } from "#enums/unlockables";
-import { isNullOrUndefined } from "#app/utils/common";
-import { MoveId } from "#enums/move-id";
-import { StatusEffect } from "#enums/status-effect";
-import { AbilityId } from "#enums/ability-id";
-import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
-// biome-ignore lint/correctness/noUnusedImports: This is used in a tsdoc comment
-import type { initModifierTypes } from "./modifier-type";
-import { HeldItemId } from "#enums/held-item-id";
-import { allHeldItems } from "#app/data/data-lists";
-import { TrainerItemId } from "#enums/trainer-item-id";
-import { allTrainerItems } from "#app/data/data-lists";
+import { globalScene } from "#app/global-scene";
 import type { TurnEndStatusHeldItem } from "#app/items/held-items/turn-end-status";
+import { pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { allHeldItems, allTrainerItems, modifierTypes } from "#data/data-lists";
+import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
+import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
+import { MoveId } from "#enums/move-id";
+import { PokeballType } from "#enums/pokeball";
+import { RewardTier } from "#enums/reward-tier";
+import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
+import { TrainerItemId } from "#enums/trainer-item-id";
+import { Unlockables } from "#enums/unlockables";
+import type { Pokemon } from "#field/pokemon";
+import { modifierPool } from "#modifiers/modifier-pools";
+import { WeightedModifierType } from "#modifiers/modifier-type";
+import type { WeightedModifierTypeWeightFunc } from "#types/modifier-types";
+import { isNullOrUndefined } from "#utils/common";
 
 /**
  * Initialize the common modifier pool

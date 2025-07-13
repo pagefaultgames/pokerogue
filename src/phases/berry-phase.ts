@@ -1,15 +1,15 @@
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { CommonAnim } from "#enums/move-anims-common";
-import { getPokemonNameWithAffix } from "#app/messages";
-import i18next from "i18next";
-import { BooleanHolder } from "#app/utils/common";
-import { FieldPhase } from "./field-phase";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import type Pokemon from "#app/field/pokemon";
 import { applyHeldItems } from "#app/items/all-held-items";
-import { allHeldItems } from "#app/data/data-lists";
 import { HeldItemEffect } from "#app/items/held-item";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { allHeldItems } from "#data/data-lists";
 import { HeldItemCategoryId, isItemInCategory } from "#enums/held-item-id";
+import { CommonAnim } from "#enums/move-anims-common";
+import type { Pokemon } from "#field/pokemon";
+import { FieldPhase } from "#phases/field-phase";
+import { BooleanHolder } from "#utils/common";
+import i18next from "i18next";
 
 /**
  * The phase after attacks where the pokemon eat berries.

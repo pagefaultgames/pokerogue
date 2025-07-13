@@ -1,22 +1,22 @@
-import type { Modifier } from "typescript";
-import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import i18next from "i18next";
-import { NumberHolder } from "#app/utils/common";
-import { PlayerGender } from "#enums/player-gender";
-import type { Challenge } from "#app/data/challenge";
+import { globalScene } from "#app/global-scene";
+import { pokemonEvolutions } from "#balance/pokemon-evolutions";
+import type { Challenge } from "#data/challenge";
 import {
   FlipStatChallenge,
   FreshStartChallenge,
+  InverseBattleChallenge,
   SingleGenerationChallenge,
   SingleTypeChallenge,
-  InverseBattleChallenge,
-} from "#app/data/challenge";
-import type { ConditionFn } from "#app/@types/common";
-import { Stat, getShortenedStatKey } from "#app/enums/stat";
-import { Challenges } from "#app/enums/challenges";
-import { globalScene } from "#app/global-scene";
+} from "#data/challenge";
+import { Challenges } from "#enums/challenges";
 import { HeldItemId } from "#enums/held-item-id";
-import type Pokemon from "#app/field/pokemon";
+import { PlayerGender } from "#enums/player-gender";
+import { getShortenedStatKey, Stat } from "#enums/stat";
+import type { Pokemon } from "#field/pokemon";
+import type { ConditionFn } from "#types/common";
+import { NumberHolder } from "#utils/common";
+import i18next from "i18next";
+import type { Modifier } from "typescript";
 
 export enum AchvTier {
   COMMON,

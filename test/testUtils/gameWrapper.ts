@@ -1,30 +1,32 @@
 // @ts-nocheck - TODO: remove this
-import BattleScene from "#app/battle-scene";
-import { MoveAnim } from "#app/data/battle-anims";
-import Pokemon from "#app/field/pokemon";
-import { sessionIdKey } from "#app/utils/common";
-import { setCookie } from "#app/utils/cookies";
+
+import { BattleScene } from "#app/battle-scene";
+// biome-ignore lint/performance/noNamespaceImport: Necessary in order to mock the var
+import * as bypassLoginModule from "#app/global-vars/bypass-login";
+import { MoveAnim } from "#data/battle-anims";
+import { Pokemon } from "#field/pokemon";
+import { version } from "#package.json";
 import { blobToString } from "#test/testUtils/gameManagerUtils";
 import { MockClock } from "#test/testUtils/mocks/mockClock";
 import { MockFetch } from "#test/testUtils/mocks/mockFetch";
-import MockLoader from "#test/testUtils/mocks/mockLoader";
-import MockTextureManager from "#test/testUtils/mocks/mockTextureManager";
+import { MockGameObjectCreator } from "#test/testUtils/mocks/mockGameObjectCreator";
+import { MockLoader } from "#test/testUtils/mocks/mockLoader";
+import { MockContainer } from "#test/testUtils/mocks/mocksContainer/mockContainer";
+import { MockTextureManager } from "#test/testUtils/mocks/mockTextureManager";
+import { MockTimedEventManager } from "#test/testUtils/mocks/mockTimedEventManager";
+import { PokedexMonContainer } from "#ui/pokedex-mon-container";
+import { sessionIdKey } from "#utils/common";
+import { setCookie } from "#utils/cookies";
 import fs from "node:fs";
 import Phaser from "phaser";
 import { vi } from "vitest";
-import { version } from "../../package.json";
-import { MockGameObjectCreator } from "./mocks/mockGameObjectCreator";
-import { MockTimedEventManager } from "./mocks/mockTimedEventManager";
-import { PokedexMonContainer } from "#app/ui/pokedex-mon-container";
-import MockContainer from "./mocks/mocksContainer/mockContainer";
-import InputManager = Phaser.Input.InputManager;
-import KeyboardManager = Phaser.Input.Keyboard.KeyboardManager;
-import KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
-import GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
-import EventEmitter = Phaser.Events.EventEmitter;
-import UpdateList = Phaser.GameObjects.UpdateList;
-// biome-ignore lint/performance/noNamespaceImport: Necessary in order to mock the var
-import * as bypassLoginModule from "#app/global-vars/bypass-login";
+
+const InputManager = Phaser.Input.InputManager;
+const KeyboardManager = Phaser.Input.Keyboard.KeyboardManager;
+const KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
+const GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
+const EventEmitter = Phaser.Events.EventEmitter;
+const UpdateList = Phaser.GameObjects.UpdateList;
 
 window.URL.createObjectURL = (blob: Blob) => {
   blobToString(blob).then((data: string) => {
@@ -40,7 +42,7 @@ window.matchMedia = () => ({
   matches: false,
 });
 
-export default class GameWrapper {
+export class GameWrapper {
   public game: Phaser.Game;
   public scene: BattleScene;
 

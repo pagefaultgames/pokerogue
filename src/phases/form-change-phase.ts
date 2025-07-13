@@ -1,15 +1,15 @@
 import { globalScene } from "#app/global-scene";
-import { fixedInt } from "#app/utils/common";
-import { achvs } from "../system/achv";
-import type { SpeciesFormChange } from "../data/pokemon-forms";
-import { getSpeciesFormChangeMessage } from "#app/data/pokemon-forms/form-change-triggers";
-import type { default as Pokemon, PlayerPokemon } from "../field/pokemon";
-import { UiMode } from "#enums/ui-mode";
-import type PartyUiHandler from "../ui/party-ui-handler";
-import { getPokemonNameWithAffix } from "../messages";
-import { EvolutionPhase } from "./evolution-phase";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { getSpeciesFormChangeMessage } from "#data/form-change-triggers";
+import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
+import { UiMode } from "#enums/ui-mode";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import { EvolutionPhase } from "#phases/evolution-phase";
+import { achvs } from "#system/achv";
+import type { PartyUiHandler } from "#ui/party-ui-handler";
+import { fixedInt } from "#utils/common";
 
 export class FormChangePhase extends EvolutionPhase {
   public readonly phaseName = "FormChangePhase";

@@ -1,11 +1,11 @@
+import { globalScene } from "#app/global-scene";
 import { EggTier } from "#enums/egg-type";
+import { RewardTier } from "#enums/reward-tier";
 import { UiTheme } from "#enums/ui-theme";
+import i18next from "#plugins/i18n";
 import type Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
-import { globalScene } from "#app/global-scene";
-import { RewardTier } from "#app/enums/reward-tier";
-import i18next from "#app/plugins/i18n";
 
 export enum TextStyle {
   MESSAGE,

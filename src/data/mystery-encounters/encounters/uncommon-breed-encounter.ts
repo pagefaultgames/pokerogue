@@ -1,5 +1,20 @@
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import type { PokemonItemMap } from "#app/items/held-item-data-types";
+import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { HeldItemCategoryId, type HeldItemId } from "#enums/held-item-id";
+import type { MoveId } from "#enums/move-id";
+import { MoveUseMode } from "#enums/move-use-mode";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PokeballType } from "#enums/pokeball";
+import { Stat } from "#enums/stat";
+import type { EnemyPokemon, Pokemon } from "#field/pokemon";
+import { PokemonMove } from "#moves/pokemon-move";
+import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
+import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   getPartyBerries,
   getRandomEncounterSpecies,
@@ -7,35 +22,19 @@ import {
   leaveEncounterWithoutBattle,
   setEncounterExp,
   setEncounterRewards,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { CHARMING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import type Pokemon from "#app/field/pokemon";
-import type { EnemyPokemon } from "#app/field/pokemon";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { HeldItemRequirement, MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+} from "#mystery-encounters/encounter-phase-utils";
 import {
   catchPokemon,
   getHighestLevelPlayerPokemon,
   getSpriteKeysFromPokemon,
-} from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import PokemonData from "#app/system/pokemon-data";
-import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
-import type { MoveId } from "#enums/move-id";
-import { BattlerIndex } from "#enums/battler-index";
-import { PokeballType } from "#enums/pokeball";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { Stat } from "#enums/stat";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { MoveUseMode } from "#enums/move-use-mode";
-import type { PokemonItemMap } from "#app/items/held-item-data-types";
-import { HeldItemCategoryId, type HeldItemId } from "#enums/held-item-id";
+} from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { HeldItemRequirement, MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import { CHARMING_MOVES } from "#mystery-encounters/requirement-groups";
+import { PokemonData } from "#system/pokemon-data";
+import { isNullOrUndefined, randSeedInt } from "#utils/common";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/uncommonBreed";

@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
-import { BattlerIndex } from "#enums/battler-index";
-import { Command } from "#enums/command";
-import { FieldPhase } from "./field-phase";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { Command } from "#enums/command";
+import { FieldPhase } from "#phases/field-phase";
 
 /**
  * Phase for determining an enemy AI's action for the next turn.

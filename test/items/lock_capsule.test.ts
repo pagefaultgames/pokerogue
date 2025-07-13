@@ -1,19 +1,19 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { RewardTier } from "#enums/reward-tier";
-import { SelectRewardPhase } from "#app/phases/select-reward-phase";
-import { UiMode } from "#enums/ui-mode";
-import GameManager from "#test/testUtils/gameManager";
-import Phase from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { TrainerItemId } from "#enums/trainer-item-id";
+import { UiMode } from "#enums/ui-mode";
+import { SelectRewardPhase } from "#phases/select-reward-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Items - Lock Capsule", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });

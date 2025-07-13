@@ -1,36 +1,34 @@
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type { TurnMove } from "#app/@types/turn-move";
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
-import type Pokemon from "#app/field/pokemon";
-import { MoveResult } from "#enums/move-result";
-import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#app/ui/text";
-import { Command } from "#enums/command";
-import MessageUiHandler from "#app/ui/message-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { BooleanHolder, toReadableString, randInt, getLocalizedSpriteKey } from "#app/utils/common";
-import { allMoves } from "#app/data/data-lists";
-import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
-import { StatusEffect } from "#enums/status-effect";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
-import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { addWindow } from "#app/ui/ui-theme";
-import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { FormChangeItem } from "#enums/form-change-item";
-import { getVariantTint } from "#app/sprites/variant";
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { applyChallenges } from "#data/challenge";
+import { allHeldItems, allMoves } from "#data/data-lists";
+import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
+import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
+import { formChangeItemName } from "#data/pokemon-forms";
 import { Button } from "#enums/buttons";
-import { applyChallenges } from "#app/data/challenge";
 import { ChallengeType } from "#enums/challenge-type";
-import MoveInfoOverlay from "#app/ui/move-info-overlay";
+import { Command } from "#enums/command";
+import { FormChangeItem } from "#enums/form-change-item";
+import { HeldItemId } from "#enums/held-item-id";
+import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
+import { UiMode } from "#enums/ui-mode";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { PokemonMove } from "#moves/pokemon-move";
+import type { CommandPhase } from "#phases/command-phase";
+import { getVariantTint } from "#sprites/variant";
+import type { TurnMove } from "#types/turn-move";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { MoveInfoOverlay } from "#ui/move-info-overlay";
+import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-handler";
+import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import { BooleanHolder, getLocalizedSpriteKey, randInt, toReadableString } from "#utils/common";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
-import { getPokemonNameWithAffix } from "#app/messages";
-import type { CommandPhase } from "#app/phases/command-phase";
-import { globalScene } from "#app/global-scene";
-import { HeldItemId } from "#enums/held-item-id";
-import { formChangeItemName } from "#app/data/pokemon-forms";
-import { allHeldItems } from "#app/data/data-lists";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 
@@ -144,7 +142,7 @@ export type PokemonSelectFilter = (pokemon: PlayerPokemon) => string | null;
 export type PokemonModifierTransferSelectFilter = (pokemon: PlayerPokemon, item: HeldItemId) => string | null;
 export type PokemonMoveSelectFilter = (pokemonMove: PokemonMove) => string | null;
 
-export default class PartyUiHandler extends MessageUiHandler {
+export class PartyUiHandler extends MessageUiHandler {
   private partyUiMode: PartyUiMode;
   private fieldIndex: number;
 

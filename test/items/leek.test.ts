@@ -1,10 +1,10 @@
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { randInt } from "#app/utils/common";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import Phase from "phaser";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import { randInt } from "#utils/common";
+import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Leek", () => {
@@ -12,7 +12,7 @@ describe("Items - Leek", () => {
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });

@@ -1,14 +1,14 @@
-import { Button } from "#app/enums/buttons";
+import { Button } from "#enums/buttons";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import RewardSelectUiHandler from "#app/ui/reward-select-ui-handler";
-import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
+import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import Phaser from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { HeldItemId } from "#enums/held-item-id";
 
 describe("UI - Transfer Items", () => {
   let phaserGame: Phaser.Game;

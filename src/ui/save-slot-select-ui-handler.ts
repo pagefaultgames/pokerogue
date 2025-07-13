@@ -1,16 +1,16 @@
-import i18next from "i18next";
+import { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
+import { allTrainerItems } from "#data/data-lists";
 import { Button } from "#enums/buttons";
-import { GameMode } from "../game-mode";
-import type { SessionSaveData } from "../system/game-data";
-import type PokemonData from "../system/pokemon-data";
-import { isNullOrUndefined, fixedInt, getPlayTimeString, formatLargeNumber } from "#app/utils/common";
-import MessageUiHandler from "./message-ui-handler";
-import { TextStyle, addTextObject } from "./text";
 import { UiMode } from "#enums/ui-mode";
-import { addWindow } from "./ui-theme";
-import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
-import { allTrainerItems } from "#app/data/data-lists";
+import type { SessionSaveData } from "#system/game-data";
+import type { PokemonData } from "#system/pokemon-data";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { RunDisplayMode } from "#ui/run-info-ui-handler";
+import { addTextObject, TextStyle } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import { fixedInt, formatLargeNumber, getPlayTimeString, isNullOrUndefined } from "#utils/common";
+import i18next from "i18next";
 
 const SESSION_SLOTS_COUNT = 5;
 const SLOTS_ON_SCREEN = 3;
@@ -22,7 +22,7 @@ export enum SaveSlotUiMode {
 
 export type SaveSlotSelectCallback = (cursor: number) => void;
 
-export default class SaveSlotSelectUiHandler extends MessageUiHandler {
+export class SaveSlotSelectUiHandler extends MessageUiHandler {
   private saveSlotSelectContainer: Phaser.GameObjects.Container;
   private sessionSlotsContainer: Phaser.GameObjects.Container;
   private saveSlotSelectMessageBox: Phaser.GameObjects.NineSlice;
