@@ -234,7 +234,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     return !this.fieldIndex ? this.cursor : this.cursor2;
   }
 
-  /**@returns TextStyle according to percentage of PP remaining */
+  /** @returns TextStyle according to percentage of PP remaining */
   private static ppRatioToColor(ppRatio: number): TextStyle {
     if (ppRatio > 0.25 && ppRatio <= 0.5) {
       return TextStyle.MOVE_PP_HALF_FULL;
