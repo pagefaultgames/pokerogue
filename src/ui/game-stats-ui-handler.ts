@@ -376,7 +376,7 @@ export class GameStatsUiHandler extends UiHandler {
     this.arrowUp.setActive(true).play("prompt");
     this.arrowDown.setActive(true).play("prompt");
     /* `setCursor` handles updating stats if the position is different from before.
-       If the position was the same, re-showing this scene should force stats to update. */
+       When opening this UI, we want to update stats regardless of the prior position. */
     if (!this.setCursor(0)) {
       this.updateStats();
     }
@@ -402,7 +402,8 @@ export class GameStatsUiHandler extends UiHandler {
    */
   private updateStats(): void {
     const perPage = this.statsPerPage;
-    const statKeys = Object.keys(displayStats).slice(this.cursor * 2, this.cursor * 2 + perPage);
+    const columns = this.columnCount;
+    const statKeys = Object.keys(displayStats).slice(this.cursor * columns, this.cursor * columns + perPage);
     statKeys.forEach((key, s) => {
       const stat = displayStats[key] as DisplayStat;
       const value = stat.sourceFunc?.(globalScene.gameData) ?? "-";
@@ -420,7 +421,8 @@ export class GameStatsUiHandler extends UiHandler {
 
   /** The maximum cursor position. */
   private get maxCursorPos(): number {
-    return (Object.keys(displayStats).length - this.statsPerPage) / 2 - 1;
+    // Should be 31 for single column and
+    return Math.ceil((Object.keys(displayStats).length - this.statsPerPage) / this.columnCount);
   }
 
   processInput(button: Button): boolean {
