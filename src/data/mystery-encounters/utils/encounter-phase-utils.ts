@@ -5,7 +5,7 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BiomePoolTier, biomeLinks } from "#balance/biomes";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
-import { allHeldItems, modifierTypes } from "#data/data-lists";
+import { modifierTypes } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
 import { Egg } from "#data/egg";
 import type { Gender } from "#data/gender";
@@ -17,7 +17,6 @@ import type { AiType } from "#enums/ai-type";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { FieldPosition } from "#enums/field-position";
-import { HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -31,7 +30,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
-import type { HeldItemConfiguration, PokemonItemMap } from "#items/held-item-data-types";
+import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import type { CustomModifierSettings, ModifierType } from "#modifiers/modifier-type";
 import { getPartyLuckValue, ModifierTypeGenerator, ModifierTypeOption } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
@@ -1293,30 +1292,4 @@ export function calculateRareSpawnAggregateStats(luckValue: number) {
   const stats = `Avg Commons: ${commonMean}\nAvg Rare: ${rareMean}\nAvg Super Rare: ${superRareMean}\nAvg Ultra Rare: ${ultraRareMean}\n`;
 
   console.log(stats);
-}
-
-// Iterate over the party until an item is successfully given
-export function assignItemToFirstFreePokemon(item: HeldItemId, party: Pokemon[]): void {
-  for (const pokemon of party) {
-    const stack = pokemon.heldItemManager.getStack(item);
-    if (stack < allHeldItems[item].getMaxStackCount()) {
-      pokemon.heldItemManager.add(item);
-      return;
-    }
-  }
-}
-
-// Creates an item map of berries to pokemon, storing each berry separately (splitting up stacks)
-export function getPartyBerries(): PokemonItemMap[] {
-  const pokemonItems: PokemonItemMap[] = [];
-  globalScene.getPlayerParty().forEach(pokemon => {
-    const berries = pokemon.getHeldItems().filter(item => isItemInCategory(item, HeldItemCategoryId.BERRY));
-    berries.forEach(berryId => {
-      const berryStack = pokemon.heldItemManager.getStack(berryId);
-      for (let i = 1; i <= berryStack; i++) {
-        pokemonItems.push({ item: { id: berryId, stack: 1 }, pokemonId: pokemon.id });
-      }
-    });
-  });
-  return pokemonItems;
 }

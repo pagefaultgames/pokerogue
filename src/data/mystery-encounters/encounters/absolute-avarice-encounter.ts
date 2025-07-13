@@ -16,11 +16,11 @@ import type { MysteryEncounterSpriteConfig } from "#field/mystery-encounter-intr
 import type { Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
 import type { HeldItemConfiguration, PokemonItemMap } from "#items/held-item-data-types";
+import { getPartyBerries } from "#items/item-utility";
 import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  getPartyBerries,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterRewards,

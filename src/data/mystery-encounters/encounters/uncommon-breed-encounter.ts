@@ -12,11 +12,11 @@ import { PokeballType } from "#enums/pokeball";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonItemMap } from "#items/held-item-data-types";
+import { getPartyBerries } from "#items/item-utility";
 import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  getPartyBerries,
   getRandomEncounterSpecies,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,

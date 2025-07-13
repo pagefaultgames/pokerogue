@@ -6,6 +6,8 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
+import type { HeldItemSpecs } from "#items/held-item-data-types";
+import { getPartyBerries } from "#items/item-utility";
 import { BerriesAboundEncounter } from "#mystery-encounters/berries-abound-encounter";
 import * as EncounterDialogueUtils from "#mystery-encounters/encounter-dialogue-utils";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
@@ -133,8 +135,8 @@ describe("Berries Abound - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectRewardPhase, false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
 
-      const berriesAfter = scene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
-      const berriesAfterCount = berriesAfter.reduce((a, b) => a + b.stackCount, 0);
+      const berriesAfter = getPartyBerries();
+      const berriesAfterCount = berriesAfter.reduce((a, b) => a + (b.item as HeldItemSpecs).stack, 0);
 
       expect(numBerries).toBe(berriesAfterCount);
     });

@@ -1,8 +1,11 @@
+import { globalScene } from "#app/global-scene";
 import { allHeldItems, allTrainerItems } from "#data/data-lists";
 import { FormChangeItem } from "#enums/form-change-item";
-import type { HeldItemId } from "#enums/held-item-id";
+import { HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import type { TrainerItemId } from "#enums/trainer-item-id";
+import type { Pokemon } from "#field/pokemon";
 import i18next from "i18next";
+import type { PokemonItemMap } from "./held-item-data-types";
 
 export function formChangeItemName(id: FormChangeItem) {
   return i18next.t(`modifierType:FormChangeItem.${FormChangeItem[id]}`);
@@ -43,3 +46,29 @@ export const formChangeItemSortFunc = (a: FormChangeItem, b: FormChangeItem): nu
   }
   return itemIdMatch;
 };
+
+// Iterate over the party until an item is successfully given
+export function assignItemToFirstFreePokemon(item: HeldItemId, party: Pokemon[]): void {
+  for (const pokemon of party) {
+    const stack = pokemon.heldItemManager.getStack(item);
+    if (stack < allHeldItems[item].getMaxStackCount()) {
+      pokemon.heldItemManager.add(item);
+      return;
+    }
+  }
+}
+
+// Creates an item map of berries to pokemon, storing each berry separately (splitting up stacks)
+export function getPartyBerries(): PokemonItemMap[] {
+  const pokemonItems: PokemonItemMap[] = [];
+  globalScene.getPlayerParty().forEach(pokemon => {
+    const berries = pokemon.getHeldItems().filter(item => isItemInCategory(item, HeldItemCategoryId.BERRY));
+    berries.forEach(berryId => {
+      const berryStack = pokemon.heldItemManager.getStack(berryId);
+      for (let i = 1; i <= berryStack; i++) {
+        pokemonItems.push({ item: { id: berryId, stack: 1 }, pokemonId: pokemon.id });
+      }
+    });
+  });
+  return pokemonItems;
+}
