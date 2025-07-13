@@ -287,7 +287,7 @@ export function assignItemsFromConfiguration(config: HeldItemConfiguration, poke
       if (isCategoryId(entry)) {
         assignItemsFromCategory(entry, pokemon, actualCount);
       }
-      pokemon.heldItemManager.add(entry, actualCount);
+      pokemon.heldItemManager.add(entry as HeldItemId, actualCount);
     }
 
     if (isHeldItemSpecs(entry)) {

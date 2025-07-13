@@ -1,5 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { allHeldItems, allTrainerItems } from "#data/data-lists";
+import type { HeldItemId } from "#enums/held-item-id";
+import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { Pokemon } from "#field/pokemon";
 import { heldItemSortFunc, trainerItemSortFunc } from "#items/item-utility";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
@@ -8,7 +10,7 @@ const iconOverflowIndex = 24;
 
 export class ItemBar extends Phaser.GameObjects.Container {
   private player: boolean;
-  private itemCache: number[];
+  private itemCache: (HeldItemId | TrainerItemId)[];
   public totalVisibleLength = 0;
 
   constructor(enemy?: boolean) {
@@ -60,7 +62,10 @@ export class ItemBar extends Phaser.GameObjects.Container {
       this.sendToBack(icon);
     }
 
-    this.itemCache = sortedTrainerItems.concat(heldItemsA).concat(heldItemsB);
+    this.itemCache = ([] as (TrainerItemId | HeldItemId)[])
+      .concat(sortedTrainerItems)
+      .concat(heldItemsA)
+      .concat(heldItemsB);
   }
 
   addIcon(icon: Phaser.GameObjects.Container, i: number, name: string, description: string) {

@@ -128,7 +128,7 @@ export function getHeldItemCategory(itemId: HeldItemId): HeldItemCategoryId {
   return (itemId & ITEM_CATEGORY_MASK) as HeldItemCategoryId;
 }
 
-export function isCategoryId(id: number): boolean {
+export function isCategoryId(id: number): id is HeldItemCategoryId {
   return (Object.values(HeldItemCategoryId) as number[]).includes(id);
 }
 

@@ -6,6 +6,7 @@ import { HeldItemCategoryId, isItemInCategory } from "#enums/held-item-id";
 import { CommonAnim } from "#enums/move-anims-common";
 import type { Pokemon } from "#field/pokemon";
 import { applyHeldItems } from "#items/all-held-items";
+import type { BerryHeldItem } from "#items/berry";
 import { HeldItemEffect } from "#items/held-item";
 import { FieldPhase } from "#phases/field-phase";
 import { BooleanHolder } from "#utils/common";
@@ -34,7 +35,7 @@ export class BerryPhase extends FieldPhase {
    */
   eatBerries(pokemon: Pokemon): void {
     const hasUsableBerry = pokemon.getHeldItems().some(m => {
-      return isItemInCategory(m, HeldItemCategoryId.BERRY) && allHeldItems[m].shouldApply(pokemon);
+      return isItemInCategory(m, HeldItemCategoryId.BERRY) && (allHeldItems[m] as BerryHeldItem).shouldApply(pokemon);
     });
 
     if (!hasUsableBerry) {
