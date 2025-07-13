@@ -1,14 +1,14 @@
-import { Stat } from "#enums/stat";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { SubstituteTag } from "#data/battler-tags";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
-import GameManager from "#test/testUtils/gameManager";
+import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { MoveEndPhase } from "#phases/move-end-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { SubstituteTag } from "#app/data/battler-tags";
-import { SpeciesId } from "#enums/species-id";
 
 describe("Moves - Tidy Up", () => {
   let phaserGame: Phaser.Game;

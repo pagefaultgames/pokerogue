@@ -1,30 +1,31 @@
-import { BattlerIndex } from "#enums/battler-index";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import { SubstituteTag } from "#app/data/battler-tags";
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { SubstituteTag } from "#data/battler-tags";
+import { Gender } from "#data/gender";
 import {
   doPokeballBounceAnim,
+  getCriticalCaptureChance,
   getPokeballAtlasKey,
   getPokeballCatchMultiplier,
   getPokeballTintColor,
-  getCriticalCaptureChance,
-} from "#app/data/pokeball";
-import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
-import { addPokeballCaptureStars, addPokeballOpenParticles } from "#app/field/anims";
-import type { EnemyPokemon } from "#app/field/pokemon";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { PokemonPhase } from "#app/phases/pokemon-phase";
-import { achvs } from "#app/system/achv";
-import type { PartyOption } from "#app/ui/party-ui-handler";
-import { PartyUiMode } from "#app/ui/party-ui-handler";
-import { SummaryUiMode } from "#app/ui/summary-ui-handler";
-import { UiMode } from "#enums/ui-mode";
+} from "#data/pokeball";
+import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
+import { BattlerIndex } from "#enums/battler-index";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
+import { UiMode } from "#enums/ui-mode";
+import { addPokeballCaptureStars, addPokeballOpenParticles } from "#field/anims";
+import type { EnemyPokemon } from "#field/pokemon";
+import { PokemonHeldItemModifier } from "#modifiers/modifier";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import { achvs } from "#system/achv";
+import type { PartyOption } from "#ui/party-ui-handler";
+import { PartyUiMode } from "#ui/party-ui-handler";
+import { SummaryUiMode } from "#ui/summary-ui-handler";
 import i18next from "i18next";
-import { globalScene } from "#app/global-scene";
-import { Gender } from "#app/data/gender";
 
+// TODO: Refactor and split up to allow for overriding capture chance
 export class AttemptCapturePhase extends PokemonPhase {
   public readonly phaseName = "AttemptCapturePhase";
   private pokeballType: PokeballType;

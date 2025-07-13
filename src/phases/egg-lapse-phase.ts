@@ -1,13 +1,13 @@
 import { globalScene } from "#app/global-scene";
-import type { Egg } from "#app/data/egg";
-import { EGG_SEED } from "#app/data/egg";
-import { Phase } from "#app/phase";
-import i18next from "i18next";
 import Overrides from "#app/overrides";
+import { Phase } from "#app/phase";
+import type { Egg } from "#data/egg";
+import { EGG_SEED } from "#data/egg";
+import { EggHatchData } from "#data/egg-hatch-data";
 import { UiMode } from "#enums/ui-mode";
-import { achvs } from "#app/system/achv";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import { EggHatchData } from "#app/data/egg-hatch-data";
+import type { PlayerPokemon } from "#field/pokemon";
+import { achvs } from "#system/achv";
+import i18next from "i18next";
 
 /**
  * Phase that handles updating eggs, and hatching any ready eggs

@@ -1,17 +1,16 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { allAbilities } from "#app/data/data-lists";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { allMoves } from "#app/data/data-lists";
-import { PokemonType } from "#enums/pokemon-type";
-import { ArenaTagType } from "#enums/arena-tag-type";
-import { Stat } from "#enums/stat";
-import { toDmgValue } from "#app/utils/common";
+import { allAbilities, allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { GameManager } from "#test/testUtils/gameManager";
+import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Pledge Moves", () => {
   let phaserGame: Phaser.Game;

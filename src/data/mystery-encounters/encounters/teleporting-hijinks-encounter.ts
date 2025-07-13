@@ -1,4 +1,21 @@
-import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { modifierTypes } from "#data/data-lists";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BiomeId } from "#enums/biome-id";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PokemonType } from "#enums/pokemon-type";
+import { Stat } from "#enums/stat";
+import { TrainerSlot } from "#enums/trainer-slot";
+import { getBiomeKey } from "#field/arena";
+import type { Pokemon } from "#field/pokemon";
+import { EnemyPokemon } from "#field/pokemon";
+import { getPartyLuckValue } from "#modifiers/modifier-type";
+import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
+import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   generateModifierTypeOption,
   initBattleWithEnemyConfig,
@@ -6,34 +23,17 @@ import {
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
   updatePlayerMoney,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { randSeedInt } from "#app/utils/common";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MoneyRequirement, WaveModulusRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon } from "#app/field/pokemon";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import PokemonData from "#app/system/pokemon-data";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { BiomeId } from "#enums/biome-id";
-import { getBiomeKey } from "#app/field/arena";
-import { PokemonType } from "#enums/pokemon-type";
-import { getPartyLuckValue } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/data/data-lists";
-import { TrainerSlot } from "#enums/trainer-slot";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { Stat } from "#enums/stat";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+} from "#mystery-encounters/encounter-phase-utils";
 import {
   getEncounterPokemonLevelForWave,
   STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER,
-} from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+} from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { MoneyRequirement, WaveModulusRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import { PokemonData } from "#system/pokemon-data";
+import { randSeedInt } from "#utils/common";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/teleportingHijinks";

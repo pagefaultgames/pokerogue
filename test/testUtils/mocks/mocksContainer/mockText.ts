@@ -1,7 +1,7 @@
-import UI from "#app/ui/ui";
-import type { MockGameObject } from "../mockGameObject";
+import type { MockGameObject } from "#test/testUtils/mocks/mockGameObject";
+import { UI } from "#ui/ui";
 
-export default class MockText implements MockGameObject {
+export class MockText implements MockGameObject {
   private phaserText;
   private wordWrapWidth;
   private splitRegExp;

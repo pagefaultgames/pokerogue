@@ -1,31 +1,37 @@
-import type Pokemon from "#app/field/pokemon";
+/* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
+import type { initModifierTypes } from "#modifiers/modifier-type";
+/* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
+
+import { timedEventManager } from "#app/global-event-manager";
+import { globalScene } from "#app/global-scene";
+import { pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { modifierTypes } from "#data/data-lists";
+import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
+import { AbilityId } from "#enums/ability-id";
+import { BerryType } from "#enums/berry-type";
+import { ModifierTier } from "#enums/modifier-tier";
+import { MoveId } from "#enums/move-id";
+import { PokeballType } from "#enums/pokeball";
+import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
+import { Unlockables } from "#enums/unlockables";
+import type { Pokemon } from "#field/pokemon";
+import {
+  BerryModifier,
+  DoubleBattleChanceBoosterModifier,
+  SpeciesCritBoosterModifier,
+  TurnStatusEffectModifier,
+} from "#modifiers/modifier";
 import {
   dailyStarterModifierPool,
   enemyBuffModifierPool,
   modifierPool,
   trainerModifierPool,
   wildModifierPool,
-} from "#app/modifier/modifier-pools";
-import { globalScene } from "#app/global-scene";
-import { DoubleBattleChanceBoosterModifier, SpeciesCritBoosterModifier, TurnStatusEffectModifier } from "./modifier";
-import { WeightedModifierType } from "./modifier-type";
-import { ModifierTier } from "../enums/modifier-tier";
-import type { WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
-import { modifierTypes } from "#app/data/data-lists";
-import { PokeballType } from "#enums/pokeball";
-import { BerryModifier } from "./modifier";
-import { BerryType } from "#enums/berry-type";
-import { SpeciesId } from "#enums/species-id";
-import { timedEventManager } from "#app/global-event-manager";
-import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { Unlockables } from "#enums/unlockables";
-import { isNullOrUndefined } from "#app/utils/common";
-import { MoveId } from "#enums/move-id";
-import { StatusEffect } from "#enums/status-effect";
-import { AbilityId } from "#enums/ability-id";
-import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
-// biome-ignore lint/correctness/noUnusedImports: This is used in a tsdoc comment
-import type { initModifierTypes } from "./modifier-type";
+} from "#modifiers/modifier-pools";
+import { WeightedModifierType } from "#modifiers/modifier-type";
+import type { WeightedModifierTypeWeightFunc } from "#types/modifier-types";
+import { isNullOrUndefined } from "#utils/common";
 
 /**
  * Initialize the wild modifier pool
