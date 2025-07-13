@@ -884,8 +884,8 @@ export default class BattleScene extends SceneBase {
   }
 
   // store info toggles to be accessible by the ui
-  addInfoToggle(infoToggle: InfoToggle): void {
-    this.infoToggles.push(infoToggle);
+  addInfoToggle(...infoToggles: InfoToggle[]): void {
+    this.infoToggles.push(...infoToggles);
   }
 
   // return the stored info toggles; used by ui-inputs
@@ -2525,6 +2525,10 @@ export default class BattleScene extends SceneBase {
         return 10.344;
       case "battle_legendary_zac_zam": //SWSH Zacian & Zamazenta Battle
         return 11.424;
+      case "battle_legendary_eternatus_p1": //SWSH Eternatus Battle
+        return 11.102;
+      case "battle_legendary_eternatus_p2": //SWSH Eternamax Eternatus Battle
+        return 0.0;
       case "battle_legendary_glas_spec": //SWSH Glastrier & Spectrier Battle
         return 12.503;
       case "battle_legendary_calyrex": //SWSH Calyrex Battle

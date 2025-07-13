@@ -2,7 +2,6 @@
 import type { NewArenaEvent } from "#app/events/battle-scene";
 /** biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
-import { Weather } from "#app/data/weather";
 import type { ModifierOverride } from "#app/modifier/modifier-type";
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides, { defaultOverrides } from "#app/overrides";
@@ -18,7 +17,7 @@ import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import type { Unlockables } from "#enums/unlockables";
-import type { WeatherType } from "#enums/weather-type";
+import { WeatherType } from "#enums/weather-type";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { expect, vi } from "vitest";
 
@@ -356,7 +355,7 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public weather(type: WeatherType): this {
     vi.spyOn(Overrides, "WEATHER_OVERRIDE", "get").mockReturnValue(type);
-    this.log(`Weather set to ${Weather[type]} (=${type})!`);
+    this.log(`Weather set to ${WeatherType[type]} (=${type})!`);
     return this;
   }
 

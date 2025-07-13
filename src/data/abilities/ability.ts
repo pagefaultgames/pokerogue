@@ -1194,7 +1194,16 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
   }
 }
 
-export class PostDefendCritStatStageChangeAbAttr extends PostDefendAbAttr {
+/**
+ * Set stat stages when the user gets hit by a critical hit
+ *
+ * @privateremarks
+ * It is the responsibility of the caller to ensure that this ability attribute is only applied
+ * when the user has been hit by a critical hit; such an event is not checked here.
+ *
+ * @sealed
+ */
+export class PostReceiveCritStatStageChangeAbAttr extends AbAttr {
   private stat: BattleStat;
   private stages: number;
 
@@ -1215,12 +1224,6 @@ export class PostDefendCritStatStageChangeAbAttr extends PostDefendAbAttr {
         this.stages,
       );
     }
-  }
-
-  override getCondition(): AbAttrCondition {
-    return (pokemon: Pokemon) =>
-      pokemon.turnData.attacksReceived.length !== 0 &&
-      pokemon.turnData.attacksReceived[pokemon.turnData.attacksReceived.length - 1].critical;
   }
 }
 
@@ -1607,37 +1610,38 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
   }
 }
 
-/** Ability attribute for changing a pokemon's type before using a move */
+/**
+ * Attribute to change the user's type to that of the move currently being executed.
+ * Used by {@linkcode AbilityId.PROTEAN} and {@linkcode AbilityId.LIBERO}.
+ */
 export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
-  private moveType: PokemonType;
-
+  private moveType: PokemonType = PokemonType.UNKNOWN;
   constructor() {
     super(true);
   }
 
   override canApply({ move, pokemon }: AugmentMoveInteractionAbAttrParams): boolean {
     if (
-      !pokemon.isTerastallized &&
-      move.id !== MoveId.STRUGGLE &&
-      /**
+      pokemon.isTerastallized ||
+      move.id === MoveId.STRUGGLE ||
+      /*
        * Skip moves that call other moves because these moves generate a following move that will trigger this ability attribute
-       * @see {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves}
+       * See: https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves
        */
-      !move.findAttr(
-        attr =>
-          attr.is("RandomMovesetMoveAttr") ||
-          attr.is("RandomMoveAttr") ||
-          attr.is("NaturePowerAttr") ||
-          attr.is("CopyMoveAttr"),
-      )
+      move.hasAttr("CallMoveAttr") ||
+      move.hasAttr("NaturePowerAttr") // TODO: remove this line when nature power is made to extend from `CallMoveAttr`
     ) {
-      const moveType = pokemon.getMoveType(move);
-      if (pokemon.getTypes().some(t => t !== moveType)) {
-        this.moveType = moveType;
-        return true;
-      }
+      return false;
     }
-    return false;
+
+    // Skip changing type if we're already of the given type as-is
+    const moveType = pokemon.getMoveType(move);
+    if (pokemon.getTypes().every(t => t === moveType)) {
+      return false;
+    }
+
+    this.moveType = moveType;
+    return true;
   }
 
   override apply({ simulated, pokemon, move }: AugmentMoveInteractionAbAttrParams): void {
@@ -6396,7 +6400,7 @@ const AbilityAttrs = Object.freeze({
   PostDefendContactApplyStatusEffectAbAttr,
   EffectSporeAbAttr,
   PostDefendContactApplyTagChanceAbAttr,
-  PostDefendCritStatStageChangeAbAttr,
+  PostReceiveCritStatStageChangeAbAttr,
   PostDefendContactDamageAbAttr,
   PostDefendPerishSongAbAttr,
   PostDefendWeatherChangeAbAttr,
@@ -6865,7 +6869,7 @@ export function initAbilities() {
     new Ability(AbilityId.GLUTTONY, 4)
       .attr(ReduceBerryUseThresholdAbAttr),
     new Ability(AbilityId.ANGER_POINT, 4)
-      .attr(PostDefendCritStatStageChangeAbAttr, Stat.ATK, 6),
+      .attr(PostReceiveCritStatStageChangeAbAttr, Stat.ATK, 12),
     new Ability(AbilityId.UNBURDEN, 4)
       .attr(PostItemLostApplyBattlerTagAbAttr, BattlerTagType.UNBURDEN)
       .bypassFaint() // Allows reviver seed to activate Unburden
@@ -7157,8 +7161,10 @@ export function initAbilities() {
     new Ability(AbilityId.CHEEK_POUCH, 6)
       .attr(HealFromBerryUseAbAttr, 1 / 3),
     new Ability(AbilityId.PROTEAN, 6)
-      .attr(PokemonTypeChangeAbAttr),
-    //.condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.PROTEAN)), //Gen 9 Implementation
+      .attr(PokemonTypeChangeAbAttr)
+      // .condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.PROTEAN)) //Gen 9 Implementation
+      // TODO: needs testing on interaction with weather blockage
+      .edgeCase(),
     new Ability(AbilityId.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (_target, _user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
@@ -7411,8 +7417,10 @@ export function initAbilities() {
     new Ability(AbilityId.DAUNTLESS_SHIELD, 8)
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true),
     new Ability(AbilityId.LIBERO, 8)
-      .attr(PokemonTypeChangeAbAttr),
-    //.condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.LIBERO)), //Gen 9 Implementation
+      .attr(PokemonTypeChangeAbAttr)
+    //.condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.LIBERO)), //Gen 9 Implementation
+      // TODO: needs testing on interaction with weather blockage
+      .edgeCase(),
     new Ability(AbilityId.BALL_FETCH, 8)
       .attr(FetchBallAbAttr)
       .condition(getOncePerBattleCondition(AbilityId.BALL_FETCH)),
