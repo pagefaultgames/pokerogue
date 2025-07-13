@@ -681,13 +681,7 @@ export default abstract class Move implements Localizable {
    * @returns boolean: false if any of the apply()'s return false, else true
    */
   applyConditions(user: Pokemon, target: Pokemon, move: Move): boolean {
-    for (const condition of this.conditions) {
-      if (!condition.apply(user, target, move)) {
-        return false;
-      }
-    }
-
-    return true;
+    return this.conditions.every(cond => cond.apply(user, target, move));
   }
 
   /**
