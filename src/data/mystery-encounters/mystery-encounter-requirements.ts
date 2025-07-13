@@ -1147,3 +1147,92 @@ export class WeightRequirement extends EncounterPokemonRequirement {
     return ["weight", pokemon?.getWeight().toString() ?? ""];
   }
 }
+
+/**
+ * This class tests for the minimum number of pokemon that passes any of the requirements
+ * E.g. having 3 pokemon that are either flying type, or have the levitate ability
+ */
+export class AnyCombinationPokemonRequirement extends EncounterPokemonRequirement {
+  private requirements: EncounterPokemonRequirement[];
+
+  constructor(minNumberOfPokemon: number, ...requirements: EncounterPokemonRequirement[]) {
+    super();
+    this.invertQuery = false;
+    this.minNumberOfPokemon = minNumberOfPokemon;
+    this.requirements = requirements;
+  }
+
+  /**
+   * Checks if at least {@linkcode minNumberOfPokemon} pokemon meet any of the requirements
+   * @returns true if at least {@linkcode minNumberOfPokemon} pokemon meet any of the requirements
+   */
+  override meetsRequirement(): boolean {
+    const party = globalScene.getPlayerParty();
+    return this.queryParty(party).length >= this.minNumberOfPokemon;
+  }
+
+  /**
+   * Queries the players party for all party members that are compatible with any of the requirements
+   * @param partyPokemon The party of {@linkcode PlayerPokemon}
+   * @returns All party members that are compatible with any of the requirements
+   */
+  override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
+    return partyPokemon.filter(pokemon => this.requirements.some(req => req.queryParty([pokemon]).length !== 0));
+  }
+
+  /**
+   * Retrieves a dialogue token key/value pair for the given {@linkcode EncounterPokemonRequirement | requirements}.
+   * @param pokemon The {@linkcode PlayerPokemon} to check against
+   * @returns A dialogue token key/value pair
+   */
+  override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {
+    for (const req of this.requirements) {
+      if (req.meetsRequirement()) {
+        return req.getDialogueToken(pokemon);
+      }
+    }
+
+    return this.requirements[0].getDialogueToken(pokemon);
+  }
+}
+
+/**
+ * Find out if Pokemon in the party are of a specific form.
+ */
+export class FormPokemonRequirement extends EncounterPokemonRequirement {
+  private form: string;
+
+  constructor(form: string, minNumberOfPokemon: number) {
+    super();
+    this.invertQuery = false;
+    this.minNumberOfPokemon = minNumberOfPokemon;
+    this.form = form;
+  }
+
+  /**
+   * Checks if at least {@linkcode minNumberOfPokemon} pokemon are of the specified form
+   * @returns true if at least {@linkcode minNumberOfPokemon} pokemon are of the specified form
+   */
+  override meetsRequirement(): boolean {
+    const party = globalScene.getPlayerParty();
+    return this.queryParty(party).length >= this.minNumberOfPokemon;
+  }
+
+  /**
+   * Queries the players party for all party members that are of the specified form
+   * @param partyPokemon The party of {@linkcode PlayerPokemon}
+   * @returns All party members that are of the specified form
+   */
+  override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
+    return partyPokemon.filter(pokemon => pokemon.getFormKey() === this.form);
+  }
+
+  /**
+   * Retrieves a dialogue token key/value pair for the given form.
+   * @param pokemon The {@linkcode PlayerPokemon} to check against
+   * @returns A dialogue token key/value pair
+   */
+  override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {
+    return ["form", pokemon?.getFormKey() ?? ""];
+  }
+}
