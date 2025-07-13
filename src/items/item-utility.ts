@@ -65,9 +65,7 @@ export function getPartyBerries(): PokemonItemMap[] {
     const berries = pokemon.getHeldItems().filter(item => isItemInCategory(item, HeldItemCategoryId.BERRY));
     berries.forEach(berryId => {
       const berryStack = pokemon.heldItemManager.getStack(berryId);
-      for (let i = 1; i <= berryStack; i++) {
-        pokemonItems.push({ item: { id: berryId, stack: 1 }, pokemonId: pokemon.id });
-      }
+      pokemonItems.push({ item: { id: berryId, stack: berryStack }, pokemonId: pokemon.id });
     });
   });
   return pokemonItems;

@@ -11,7 +11,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
-import type { PokemonItemMap } from "#items/held-item-data-types";
+import type { HeldItemSpecs } from "#items/held-item-data-types";
 import { getPartyBerries } from "#items/item-utility";
 import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
@@ -34,7 +34,7 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { HeldItemRequirement, MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { CHARMING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
-import { isNullOrUndefined, randSeedInt } from "#utils/common";
+import { isNullOrUndefined, pickWeightedIndex, randSeedInt } from "#utils/common";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/uncommonBreed";
@@ -204,17 +204,14 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
         // Give it some food
 
         // Remove 4 random berries from player's party
-        // Get all player berry items, remove from party, and store reference
-
         const berryMap = getPartyBerries();
-        const stolenBerryMap: PokemonItemMap[] = [];
 
         for (let i = 0; i < 4; i++) {
-          const index = randSeedInt(berryMap.length);
+          const berryWeights = berryMap.map(b => (b.item as HeldItemSpecs).stack);
+          const index = pickWeightedIndex(berryWeights) ?? 0;
           const randBerry = berryMap[index];
           globalScene.getPokemonById(randBerry.pokemonId)?.heldItemManager.remove(randBerry.item.id as HeldItemId);
-          stolenBerryMap.push(randBerry);
-          berryMap.splice(index, 1);
+          (randBerry.item as HeldItemSpecs).stack -= 1;
         }
         await globalScene.updateItems(true);
 

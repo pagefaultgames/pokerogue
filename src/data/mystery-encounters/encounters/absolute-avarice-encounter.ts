@@ -15,7 +15,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import type { MysteryEncounterSpriteConfig } from "#field/mystery-encounter-intro";
 import type { Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
-import type { HeldItemConfiguration, PokemonItemMap } from "#items/held-item-data-types";
+import type { HeldItemConfiguration, HeldItemSpecs, PokemonItemMap } from "#items/held-item-data-types";
 import { getPartyBerries } from "#items/item-utility";
 import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
@@ -31,7 +31,7 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { HeldItemRequirement } from "#mystery-encounters/mystery-encounter-requirements";
-import { randInt } from "#utils/common";
+import { pickWeightedIndex, randInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -231,14 +231,17 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
         const party = globalScene.getPlayerParty();
         party.forEach(pokemon => {
           const stolenBerries = berryMap.filter(map => map.pokemonId === pokemon.id);
-          const returnedBerryCount = Math.floor(((stolenBerries.length ?? 0) * 2) / 5);
+          const stolenBerryCount = stolenBerries.reduce((a, b) => a + (b.item as HeldItemSpecs).stack, 0);
+          const returnedBerryCount = Math.floor(((stolenBerryCount ?? 0) * 2) / 5);
 
           if (returnedBerryCount > 0) {
             for (let i = 0; i < returnedBerryCount; i++) {
               // Shuffle remaining berry types and pop
-              Phaser.Math.RND.shuffle(stolenBerries);
-              const randBerryType = stolenBerries.pop();
-              pokemon.heldItemManager.add(randBerryType?.item.id as HeldItemId);
+              const berryWeights = stolenBerries.map(b => (b.item as HeldItemSpecs).stack);
+              const which = pickWeightedIndex(berryWeights) ?? 0;
+              const randBerry = stolenBerries[which];
+              pokemon.heldItemManager.add(randBerry.item.id as HeldItemId);
+              (randBerry.item as HeldItemSpecs).stack -= 1;
             }
           }
         });
