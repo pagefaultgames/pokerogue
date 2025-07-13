@@ -25,7 +25,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { MoveUseMode } from "#enums/move-use-mode";
@@ -54,7 +54,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withFleeAllowed(false)
   .withIntroSpriteConfigs([
     {
-      spriteKey: "berry_juice",
+      spriteKey: "berry_juice_good",
       fileRoot: "items",
       hasShadow: true,
       isItem: true,
@@ -171,11 +171,11 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
       sortedParty.forEach((pokemon, index) => {
         if (index < 2) {
           // -15 to the two highest BST mons
-          modifyPlayerPokemonBST(pokemon, -HIGH_BST_REDUCTION_VALUE);
+          modifyPlayerPokemonBST(pokemon, false);
           encounter.setDialogueToken("highBstPokemon" + (index + 1), pokemon.getNameToRender());
         } else {
           // +10 for the rest
-          modifyPlayerPokemonBST(pokemon, BST_INCREASE_VALUE);
+          modifyPlayerPokemonBST(pokemon, true);
         }
       });
 

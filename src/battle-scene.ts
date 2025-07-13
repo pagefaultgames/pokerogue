@@ -18,6 +18,7 @@ import {
   isNullOrUndefined,
   BooleanHolder,
   type Constructor,
+  isBetween,
 } from "#app/utils/common";
 import { deepMergeSpriteData } from "#app/utils/data";
 import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "./modifier/modifier";
@@ -163,10 +164,6 @@ import { startingWave } from "./starting-wave";
 import { PhaseManager } from "./phase-manager";
 
 const DEBUG_RNG = false;
-
-const OPP_IVS_OVERRIDE_VALIDATED: number[] = (
-  Array.isArray(Overrides.OPP_IVS_OVERRIDE) ? Overrides.OPP_IVS_OVERRIDE : new Array(6).fill(Overrides.OPP_IVS_OVERRIDE)
-).map(iv => (Number.isNaN(iv) || iv === null || iv > 31 ? -1 : iv));
 
 export interface PokeballCounts {
   [pb: string]: number;
@@ -800,12 +797,14 @@ export default class BattleScene extends SceneBase {
   // TODO: Add `undefined` to return type
   /**
    * Returns an array of PlayerPokemon of length 1 or 2 depending on if in a double battle or not.
-   * Does not actually check if the pokemon are on the field or not.
+   * @param active - (Default `false`) Whether to consider only {@linkcode Pokemon.isActive | active} on-field pokemon
    * @returns array of {@linkcode PlayerPokemon}
    */
-  public getPlayerField(): PlayerPokemon[] {
+  public getPlayerField(active = false): PlayerPokemon[] {
     const party = this.getPlayerParty();
-    return party.slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1));
+    return party
+      .slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1))
+      .filter(p => !active || p.isActive());
   }
 
   public getEnemyParty(): EnemyPokemon[] {
@@ -885,8 +884,8 @@ export default class BattleScene extends SceneBase {
   }
 
   // store info toggles to be accessible by the ui
-  addInfoToggle(infoToggle: InfoToggle): void {
-    this.infoToggles.push(infoToggle);
+  addInfoToggle(...infoToggles: InfoToggle[]): void {
+    this.infoToggles.push(...infoToggles);
   }
 
   // return the stored info toggles; used by ui-inputs
@@ -934,9 +933,32 @@ export default class BattleScene extends SceneBase {
       nature,
       dataSource,
     );
+
     if (postProcess) {
       postProcess(pokemon);
     }
+
+    if (Overrides.IVS_OVERRIDE === null) {
+      // do nothing
+    } else if (Array.isArray(Overrides.IVS_OVERRIDE)) {
+      if (Overrides.IVS_OVERRIDE.length !== 6) {
+        throw new Error("The Player IVs override must be an array of length 6 or a number!");
+      }
+      if (Overrides.IVS_OVERRIDE.some(value => !isBetween(value, 0, 31))) {
+        throw new Error("All IVs in the player IV override must be between 0 and 31!");
+      }
+      pokemon.ivs = Overrides.IVS_OVERRIDE;
+    } else {
+      if (!isBetween(Overrides.IVS_OVERRIDE, 0, 31)) {
+        throw new Error("The Player IV override must be a value between 0 and 31!");
+      }
+      pokemon.ivs = new Array(6).fill(Overrides.IVS_OVERRIDE);
+    }
+
+    if (Overrides.NATURE_OVERRIDE !== null) {
+      pokemon.nature = Overrides.NATURE_OVERRIDE;
+    }
+
     pokemon.init();
     return pokemon;
   }
@@ -981,10 +1003,25 @@ export default class BattleScene extends SceneBase {
       postProcess(pokemon);
     }
 
-    for (let i = 0; i < pokemon.ivs.length; i++) {
-      if (OPP_IVS_OVERRIDE_VALIDATED[i] > -1) {
-        pokemon.ivs[i] = OPP_IVS_OVERRIDE_VALIDATED[i];
+    if (Overrides.ENEMY_IVS_OVERRIDE === null) {
+      // do nothing
+    } else if (Array.isArray(Overrides.ENEMY_IVS_OVERRIDE)) {
+      if (Overrides.ENEMY_IVS_OVERRIDE.length !== 6) {
+        throw new Error("The Enemy IVs override must be an array of length 6 or a number!");
       }
+      if (Overrides.ENEMY_IVS_OVERRIDE.some(value => !isBetween(value, 0, 31))) {
+        throw new Error("All IVs in the enemy IV override must be between 0 and 31!");
+      }
+      pokemon.ivs = Overrides.ENEMY_IVS_OVERRIDE;
+    } else {
+      if (!isBetween(Overrides.ENEMY_IVS_OVERRIDE, 0, 31)) {
+        throw new Error("The Enemy IV override must be a value between 0 and 31!");
+      }
+      pokemon.ivs = new Array(6).fill(Overrides.ENEMY_IVS_OVERRIDE);
+    }
+
+    if (Overrides.ENEMY_NATURE_OVERRIDE !== null) {
+      pokemon.nature = Overrides.ENEMY_NATURE_OVERRIDE;
     }
 
     pokemon.init();
@@ -2488,6 +2525,10 @@ export default class BattleScene extends SceneBase {
         return 10.344;
       case "battle_legendary_zac_zam": //SWSH Zacian & Zamazenta Battle
         return 11.424;
+      case "battle_legendary_eternatus_p1": //SWSH Eternatus Battle
+        return 11.102;
+      case "battle_legendary_eternatus_p2": //SWSH Eternamax Eternatus Battle
+        return 0.0;
       case "battle_legendary_glas_spec": //SWSH Glastrier & Spectrier Battle
         return 12.503;
       case "battle_legendary_calyrex": //SWSH Calyrex Battle
