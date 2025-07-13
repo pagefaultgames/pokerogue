@@ -56,6 +56,7 @@ import TextInterceptor from "#test/testUtils/TextInterceptor";
 import { AES, enc } from "crypto-js";
 import fs from "node:fs";
 import { expect, vi } from "vitest";
+import type { PokeballType } from "#enums/pokeball";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -507,9 +508,9 @@ export default class GameManager {
   /**
    * Select the BALL option from the command menu, then press Action; in the BALL
    * menu, select a pokéball type and press Action again to throw it.
-   * @param ballIndex - The index of the pokeball to throw
+   * @param ballIndex - The {@linkcode PokeballType} to throw
    */
-  public doThrowPokeball(ballIndex: number) {
+  public doThrowPokeball(ballIndex: PokeballType) {
     this.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       (this.scene.ui.getHandler() as CommandUiHandler).setCursor(1);
       (this.scene.ui.getHandler() as CommandUiHandler).processInput(Button.ACTION);
