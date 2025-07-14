@@ -1,11 +1,11 @@
 /** biome-ignore-all lint/performance/noNamespaceImport: Convenience */
 
-import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";
-import type { SettingsSaveMigrator } from "#app/@types/SettingsSaveMigrator";
-import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
-import type { SessionSaveData, SystemSaveData } from "#app/system/game-data";
+import { version } from "#package.json";
+import type { SessionSaveData, SystemSaveData } from "#system/game-data";
+import type { SessionSaveMigrator } from "#types/SessionSaveMigrator";
+import type { SettingsSaveMigrator } from "#types/SettingsSaveMigrator";
+import type { SystemSaveMigrator } from "#types/SystemSaveMigrator";
 import { compareVersions } from "compare-versions";
-import { version } from "../../../package.json";
 
 /*
 // template for save migrator creation
@@ -24,7 +24,7 @@ const systemMigratorA: SystemSaveMigrator = {
   },
 };
 
-export const systemMigrators: Readonly<SystemSaveMigrator[]> = [systemMigratorA] as const;
+export const systemMigrators: readonly SystemSaveMigrator[] = [systemMigratorA] as const;
 
 const sessionMigratorA: SessionSaveMigrator = {
   version: "A.B.C",
@@ -33,7 +33,7 @@ const sessionMigratorA: SessionSaveMigrator = {
   },
 };
 
-export const sessionMigrators: Readonly<SessionSaveMigrator[]> = [sessionMigratorA] as const;
+export const sessionMigrators: readonly SessionSaveMigrator[] = [sessionMigratorA] as const;
 
 const settingsMigratorA: SettingsSaveMigrator = {
   version: "A.B.C",
@@ -43,26 +43,17 @@ const settingsMigratorA: SettingsSaveMigrator = {
   },
 };
 
-export const settingsMigrators: Readonly<SettingsSaveMigrator[]> = [settingsMigratorA] as const;
+export const settingsMigrators: readonly SettingsSaveMigrator[] = [settingsMigratorA] as const;
 */
 
-// --- vA.B.C PATCHES --- //
-// import * as vA_B_C from "./versions/vA_B_C";
+// Add migrator imports below:
+// Example: import * as vA_B_C from "#system/vA_B_C";
 
-// --- v1.0.4 (and below) PATCHES --- //
-import * as v1_0_4 from "./versions/v1_0_4";
-
-// --- v1.7.0 PATCHES --- //
-import * as v1_7_0 from "./versions/v1_7_0";
-
-// --- v1.8.3 PATCHES --- //
-import * as v1_8_3 from "./versions/v1_8_3";
-
-// --- v1.9.0 PATCHES --- //
-import * as v1_9_0 from "./versions/v1_9_0";
-
-// --- v1.10.0 PATCHES --- //
-import * as v1_10_0 from "./versions/v1_10_0";
+import * as v1_0_4 from "#system/v1_0_4";
+import * as v1_7_0 from "#system/v1_7_0";
+import * as v1_8_3 from "#system/v1_8_3";
+import * as v1_9_0 from "#system/v1_9_0";
+import * as v1_10_0 from "#system/v1_10_0";
 
 /** Current game version */
 const LATEST_VERSION = version;

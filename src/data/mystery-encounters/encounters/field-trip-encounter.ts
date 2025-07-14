@@ -1,25 +1,25 @@
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { modifierTypes } from "#data/data-lists";
 import { MoveCategory } from "#enums/MoveCategory";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Stat } from "#enums/stat";
+import type { PlayerPokemon } from "#field/pokemon";
+import type { PokemonMove } from "#moves/pokemon-move";
 import {
   generateModifierTypeOption,
   leaveEncounterWithoutBattle,
   selectPokemonForOption,
   setEncounterExp,
   setEncounterRewards,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
-import { modifierTypes } from "#app/data/data-lists";
-import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { Stat } from "#enums/stat";
+} from "#mystery-encounters/encounter-phase-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
 import i18next from "i18next";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounters/fieldTrip";

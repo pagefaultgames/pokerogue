@@ -3,7 +3,7 @@
  */
 
 // biome-ignore lint/correctness/noUnusedImports: Used in a tsdoc comment
-import type { AbAttr } from "./ability-types";
+import type { AbAttr } from "#types/ability-types";
 
 /**
  * Exactly matches the type of the argument, preventing adding additional properties.

@@ -1,8 +1,8 @@
-import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
-import { CommandPhase } from "#app/phases/command-phase";
 import { AbilityId } from "#enums/ability-id";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { CommandPhase } from "#phases/command-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

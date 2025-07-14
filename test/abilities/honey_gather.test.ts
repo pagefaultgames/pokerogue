@@ -1,12 +1,12 @@
-import type { CommandPhase } from "#app/phases/command-phase";
-import { Command } from "#enums/command";
+import Overrides from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
+import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import type { CommandPhase } from "#phases/command-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import Overrides from "#app/overrides";
 
 describe("Abilities - Honey Gather", () => {
   let phaserGame: Phaser.Game;

@@ -1,9 +1,9 @@
-import AwaitableUiHandler from "./awaitable-ui-handler";
-import type { UiMode } from "#enums/ui-mode";
-import { getFrameMs } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
+import type { UiMode } from "#enums/ui-mode";
+import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
+import { getFrameMs } from "#utils/common";
 
-export default abstract class MessageUiHandler extends AwaitableUiHandler {
+export abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent | null;
   protected textCallbackTimer: Phaser.Time.TimerEvent | null;
   public pendingPrompt: boolean;

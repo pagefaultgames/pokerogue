@@ -1,16 +1,16 @@
-import Phaser from "phaser";
-import { TextStyle, addTextObject } from "#app/ui/text";
-import type { UiMode } from "#enums/ui-mode";
-import UiHandler from "#app/ui/ui-handler";
-import { addWindow } from "#app/ui/ui-theme";
-import { getPlayTimeString, formatFancyLargeNumber, toReadableString } from "#app/utils/common";
-import type { GameData } from "#app/system/game-data";
-import { DexAttr } from "#enums/dex-attr";
-import { speciesStarterCosts } from "#app/data/balance/starters";
-import { Button } from "#enums/buttons";
-import i18next from "i18next";
-import { UiTheme } from "#enums/ui-theme";
 import { globalScene } from "#app/global-scene";
+import { speciesStarterCosts } from "#balance/starters";
+import { Button } from "#enums/buttons";
+import { DexAttr } from "#enums/dex-attr";
+import type { UiMode } from "#enums/ui-mode";
+import { UiTheme } from "#enums/ui-theme";
+import type { GameData } from "#system/game-data";
+import { addTextObject, TextStyle } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { addWindow } from "#ui/ui-theme";
+import { formatFancyLargeNumber, getPlayTimeString, toReadableString } from "#utils/common";
+import i18next from "i18next";
+import Phaser from "phaser";
 
 interface DisplayStat {
   label_key?: string;
@@ -213,7 +213,7 @@ const displayStats: DisplayStats = {
   },
 };
 
-export default class GameStatsUiHandler extends UiHandler {
+export class GameStatsUiHandler extends UiHandler {
   private gameStatsContainer: Phaser.GameObjects.Container;
   private statsContainer: Phaser.GameObjects.Container;
 
