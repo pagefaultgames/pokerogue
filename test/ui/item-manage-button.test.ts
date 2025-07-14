@@ -34,16 +34,14 @@ describe("UI - Transfer Items", () => {
         { name: "BERRY", count: 2, type: BerryType.APICOT },
         { name: "BERRY", count: 2, type: BerryType.LUM },
       ])
-      .moveset([MoveId.DRAGON_CLAW])
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.SPLASH);
 
     await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA]);
 
-    game.move.select(MoveId.DRAGON_CLAW);
+    game.move.use(MoveId.DRAGON_CLAW);
 
-    await game.phaseInterceptor.to("EggLapsePhase");
-    await game.phaseInterceptor.run("SelectModifierPhase");
+    await game.phaseInterceptor.to("SelectModifierPhase");
   });
 
   it("manage button exists in the proper screen", async () => {
@@ -53,6 +51,7 @@ describe("UI - Transfer Items", () => {
       //select manage items menu
       game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
         const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+
         handler.processInput(Button.DOWN);
         handler.setCursor(1);
         handler.processInput(Button.ACTION);
@@ -65,6 +64,8 @@ describe("UI - Transfer Items", () => {
         handler.processInput(Button.DOWN);
         handler.processInput(Button.ACTION);
         handlerLength = handler.optionsContainer.list;
+
+        handler.processInput(Button.CANCEL);
 
         resolve();
       });
@@ -80,6 +81,7 @@ describe("UI - Transfer Items", () => {
       //select check items menu
       game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
         const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+
         handler.processInput(Button.DOWN);
         handler.setCursor(2);
         handler.processInput(Button.ACTION);
@@ -92,6 +94,9 @@ describe("UI - Transfer Items", () => {
         handler.processInput(Button.DOWN);
         handler.processInput(Button.ACTION);
         handlerLength = handler.optionsContainer.list;
+
+        handler.processInput(Button.CANCEL);
+        handler.processInput(Button.CANCEL);
 
         resolve();
       });
@@ -108,6 +113,7 @@ describe("UI - Transfer Items", () => {
       //select manage items menu
       game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
         const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+
         handler.processInput(Button.DOWN);
         handler.setCursor(1);
         handler.processInput(Button.ACTION);
@@ -139,6 +145,8 @@ describe("UI - Transfer Items", () => {
         const handler = game.scene.ui.getHandler() as PartyUiHandler;
         handler.processInput(Button.ACTION);
         pokemon = game.field.getPlayerPokemon();
+
+        handler.processInput(Button.CANCEL);
 
         resolve();
       });
