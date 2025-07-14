@@ -1,4 +1,5 @@
 import Overrides from "#app/overrides";
+import { allMoves } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
@@ -12,6 +13,7 @@ import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
 import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { coerceArray, toReadableString } from "#utils/common";
+import type { MockInstance } from "vitest";
 import { expect, vi } from "vitest";
 
 /**
@@ -304,5 +306,21 @@ export class MoveHelper extends GameManagerHelper {
      * force a move for each enemy in a double battle.
      */
     await this.game.phaseInterceptor.to("EnemyCommandPhase");
+  }
+
+  /**
+   * Force the move used by Metronome to be a specific move.
+   * @param move - The move to force metronome to use
+   * @param once - If `true`, uses {@linkcode MockInstance#mockReturnValueOnce} when mocking, else uses {@linkcode MockInstance#mockReturnValue}.
+   * @returns The spy that for Metronome that was mocked (Usually unneeded).
+   */
+  public forceMetronomeMove(move: MoveId, once = false): MockInstance {
+    const spy = vi.spyOn(allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0], "getMoveOverride");
+    if (once) {
+      spy.mockReturnValueOnce(move);
+    } else {
+      spy.mockReturnValue(move);
+    }
+    return spy;
   }
 }
