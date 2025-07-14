@@ -185,6 +185,8 @@ export class PartyUiHandler extends MessageUiHandler {
   private transferAll: boolean;
 
   private lastCursor = 0;
+  private lastLeftPokemonCursor = 0;
+  private lastRightPokemonCursor = 0;
   private selectCallback: PartySelectCallback | PartyModifierTransferSelectCallback | null;
   private selectFilter: PokemonSelectFilter | PokemonModifierTransferSelectFilter;
   private moveSelectFilter: PokemonMoveSelectFilter;
@@ -992,11 +994,9 @@ export class PartyUiHandler extends MessageUiHandler {
       switch (this.partyUiMode) {
         case PartyUiMode.DISCARD:
           this.partyUiMode = PartyUiMode.MODIFIER_TRANSFER;
-          ui.playSelect();
           break;
         case PartyUiMode.MODIFIER_TRANSFER:
           this.partyUiMode = PartyUiMode.DISCARD;
-          ui.playSelect();
           break;
         default:
           ui.playError();
@@ -1045,6 +1045,13 @@ export class PartyUiHandler extends MessageUiHandler {
     const slotCount = this.partySlots.length;
     const battlerCount = globalScene.currentBattle.getBattlerCount();
 
+    if (this.lastCursor < battlerCount) {
+      this.lastLeftPokemonCursor = this.lastCursor;
+    }
+    if (this.lastCursor >= battlerCount && this.lastCursor < 6) {
+      this.lastRightPokemonCursor = this.lastCursor;
+    }
+
     let success = false;
     switch (button) {
       case Button.UP:
@@ -1088,21 +1095,20 @@ export class PartyUiHandler extends MessageUiHandler {
         success = this.setCursor(this.cursor < 6 ? (this.cursor < slotCount - 1 ? this.cursor + 1 : 6) : 0);
         break;
       case Button.LEFT:
-        if (this.cursor >= battlerCount && this.cursor <= 6) {
-          success = this.setCursor(this.isItemManageMode() ? 7 : 0);
+        if (this.cursor === 6) {
+          success = this.setCursor(this.isItemManageMode() ? 7 : this.lastLeftPokemonCursor);
+        }
+        if (this.cursor >= battlerCount && this.cursor < 6) {
+          success = this.setCursor(this.lastLeftPokemonCursor);
         }
         break;
       case Button.RIGHT:
-        if ((this.cursor === 7 && this.isItemManageMode()) || slotCount === battlerCount) {
+        if (this.cursor === 7 || slotCount <= battlerCount) {
           success = this.setCursor(6);
           break;
         }
-        if (battlerCount >= 2 && slotCount > battlerCount && this.getCursor() === 0 && this.lastCursor === 1) {
-          success = this.setCursor(2);
-          break;
-        }
         if (slotCount > battlerCount && this.cursor < battlerCount) {
-          success = this.setCursor(this.lastCursor < 6 ? this.lastCursor || battlerCount : battlerCount);
+          success = this.setCursor(this.lastRightPokemonCursor || battlerCount);
           break;
         }
     }
