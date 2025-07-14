@@ -1,5 +1,4 @@
 export const DexAttr = Object.freeze({
-  GENDERLESS: 0n,
   NON_SHINY: 1n,
   SHINY: 2n,
   MALE: 4n,
