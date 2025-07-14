@@ -1,5 +1,6 @@
 import { BattlerIndex } from "#enums/battler-index";
-import { Stat } from "#app/enums/stat";
+import { Stat } from "#enums/stat";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { MoveResult } from "#enums/move-result";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -33,7 +34,7 @@ describe("Moves - Mirror Move", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("should use the last move that the target used against any pokemon", async () => {
+  it("should use the last move that the target used against it", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
 
@@ -44,9 +45,20 @@ describe("Moves - Mirror Move", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
+    // Feebas copied enemy tackle against it
     const [feebas, magikarp] = game.scene.getPlayerField();
-    expect(feebas.getLastXMoves()[0].move).toBe(MoveId.TACKLE);
-    expect(magikarp.getLastXMoves()[0].move).toBe(MoveId.SWORDS_DANCE);
+    expect(feebas.getLastXMoves()[0]).toMatchObject({
+      move: MoveId.TACKLE,
+      targets: [BattlerIndex.ENEMY],
+      useMode: MoveUseMode.FOLLOW_UP,
+    });
+    expect(game.field.getEnemyPokemon().isFullHp()).toBe(false);
+    expect(magikarp.getLastXMoves()[0]).toMatchObject({
+      move: MoveId.SWORDS_DANCE,
+      targets: [BattlerIndex.PLAYER_2],
+      useMode: MoveUseMode.FOLLOW_UP,
+    });
+    expect(magikarp.getStatStage(Stat.ATK)).toBe(2);
   });
 
   it("should apply secondary effects of the called move", async () => {
