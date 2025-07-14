@@ -6,10 +6,13 @@ import type { NumberHolder } from "#utils/common";
 export interface AccuracyBoostParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
-  /** The amount of exp to gain */
+  /** Holds the move's accuracy, which may be modified after item application */
   moveAccuracy: NumberHolder;
 }
 
+/**
+ * @sealed
+ */
 export class AccuracyBoosterHeldItem extends HeldItem {
   public effects: HeldItemEffect[] = [HeldItemEffect.ACCURACY_BOOSTER];
 
@@ -22,8 +25,8 @@ export class AccuracyBoosterHeldItem extends HeldItem {
 
   /**
    * Checks if {@linkcode PokemonMoveAccuracyBoosterModifier} should be applied
-   * @param pokemon The {@linkcode Pokemon} to apply the move accuracy boost to
-   * @param moveAccuracy {@linkcode NumberHolder} holding the move accuracy boost
+   * @param pokemon - The {@linkcode Pokemon} to apply the move accuracy boost to
+   * @param moveAccuracy - {@linkcode NumberHolder} holding the move accuracy boost
    * @returns `true` if {@linkcode PokemonMoveAccuracyBoosterModifier} should be applied
    */
   //  override shouldApply(pokemon?: Pokemon, moveAccuracy?: NumberHolder): boolean {
@@ -32,15 +35,10 @@ export class AccuracyBoosterHeldItem extends HeldItem {
 
   /**
    * Applies {@linkcode PokemonMoveAccuracyBoosterModifier}
-   * @param _pokemon The {@linkcode Pokemon} to apply the move accuracy boost to
-   * @param moveAccuracy {@linkcode NumberHolder} holding the move accuracy boost
-   * @returns always `true`
    */
-  apply(params: AccuracyBoostParams): boolean {
-    const pokemon = params.pokemon;
-    const moveAccuracy = params.moveAccuracy;
+  apply({ pokemon, moveAccuracy }: AccuracyBoostParams): true {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    moveAccuracy.value = moveAccuracy.value + this.accuracyAmount * stackCount;
+    moveAccuracy.value += this.accuracyAmount * stackCount;
 
     return true;
   }

@@ -3,8 +3,9 @@ import { HeldItem, HeldItemEffect } from "#items/held-item";
 import type { NumberHolder } from "#utils/common";
 
 export interface FieldEffectParams {
-  pokemon: Pokemon;
   /** The pokemon with the item */
+  pokemon: Pokemon;
+  /** Holder for the field effect duration*/
   fieldDuration: NumberHolder;
 }
 
@@ -20,14 +21,11 @@ export class FieldEffectHeldItem extends HeldItem {
   /**
    * Provides two more turns per stack to any weather or terrain effect caused
    * by the holder.
-   * @param pokemon {@linkcode Pokemon} that holds the held item
-   * @param fieldDuration {@linkcode NumberHolder} that stores the current field effect duration
-   * @returns `true` if the field effect extension was applied successfully
+   * @returns always `true`
    */
-  apply(params: FieldEffectParams): boolean {
-    const pokemon = params.pokemon;
+  apply({ pokemon, fieldDuration }: FieldEffectParams): true {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    params.fieldDuration.value += 2 * stackCount;
+    fieldDuration.value += 2 * stackCount;
     return true;
   }
 }

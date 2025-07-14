@@ -35,11 +35,9 @@ export class InstantReviveHeldItem extends ConsumableHeldItem {
   /**
    * Goes through the holder's stat stages and, if any are negative, resets that
    * stat stage back to 0.
-   * @param pokemon {@linkcode Pokemon} that holds the item
    * @returns `true` if any stat stages were reset, false otherwise
    */
-  apply(params: InstantReviveParams): boolean {
-    const pokemon = params.pokemon;
+  apply({ pokemon }: InstantReviveParams): boolean {
     // Restore the Pokemon to half HP
     globalScene.phaseManager.unshiftPhase(
       new PokemonHealPhase(

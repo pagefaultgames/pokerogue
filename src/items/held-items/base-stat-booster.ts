@@ -7,6 +7,7 @@ import i18next from "i18next";
 export interface BaseStatBoosterParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
+  /** The base stats of the {@linkcode pokemon} */
   baseStats: number[];
 }
 
@@ -57,8 +58,8 @@ export class BaseStatBoosterHeldItem extends HeldItem {
 
   /**
    * Checks if {@linkcode BaseStatModifier} should be applied to the specified {@linkcode Pokemon}.
-   * @param _pokemon the {@linkcode Pokemon} to be modified
-   * @param baseStats the base stats of the {@linkcode Pokemon}
+   * @param _pokemon - The {@linkcode Pokemon} to be modified
+   * @param baseStats - The base stats of the {@linkcode Pokemon}
    * @returns `true` if the {@linkcode Pokemon} should be modified
    */
   //  override shouldApply(_pokemon?: Pokemon, baseStats?: number[]): boolean {
@@ -67,14 +68,9 @@ export class BaseStatBoosterHeldItem extends HeldItem {
 
   /**
    * Applies the {@linkcode BaseStatModifier} to the specified {@linkcode Pokemon}.
-   * @param _pokemon the {@linkcode Pokemon} to be modified
-   * @param baseStats the base stats of the {@linkcode Pokemon}
-   * @returns always `true`
    */
-  apply(params: BaseStatBoosterParams): boolean {
-    const pokemon = params.pokemon;
+  apply({ pokemon, baseStats }: BaseStatBoosterParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    const baseStats = params.baseStats;
     baseStats[this.stat] = Math.floor(baseStats[this.stat] * (1 + stackCount * 0.1));
     return true;
   }

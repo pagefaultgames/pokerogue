@@ -7,7 +7,9 @@ import i18next from "i18next";
 export interface IncrementingStatParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
+  /** The stat whose value is being impacted */
   stat: Stat;
+  /** Holds the stat's value, which may be modified after item application */
   // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2135612276
   statHolder: NumberHolder;
 }
@@ -40,19 +42,14 @@ export class IncrementingStatHeldItem extends HeldItem {
 
   /**
    * Applies the {@linkcode PokemonIncrementingStatModifier}
-   * @param _pokemon The {@linkcode Pokemon} that holds the item
-   * @param stat The affected {@linkcode Stat}
-   * @param statHolder The {@linkcode NumberHolder} that holds the stat
    * @returns always `true`
    */
-  apply(params: IncrementingStatParams): boolean {
-    const pokemon = params.pokemon;
+  apply({ pokemon, statHolder, stat }: IncrementingStatParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    const statHolder = params.statHolder;
 
     // Modifies the passed in stat number holder by +2 per stack for HP, +1 per stack for other stats
     // If the Macho Brace is at max stacks (50), adds additional 10% to total HP and 5% to other stats
-    const isHp = params.stat === Stat.HP;
+    const isHp = stat === Stat.HP;
 
     if (isHp) {
       statHolder.value += 2 * stackCount;

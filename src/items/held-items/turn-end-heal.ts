@@ -14,8 +14,7 @@ export interface TurnEndHealParams {
 export class TurnEndHealHeldItem extends HeldItem {
   public effects: HeldItemEffect[] = [HeldItemEffect.TURN_END_HEAL];
 
-  apply(params: TurnEndHealParams): boolean {
-    const pokemon = params.pokemon;
+  apply({ pokemon }: TurnEndHealParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (pokemon.isFullHp()) {
       return false;

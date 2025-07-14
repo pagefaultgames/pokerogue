@@ -16,7 +16,7 @@ export class BatonHeldItem extends HeldItem {
    * Applies {@linkcode SwitchEffectTransferModifier}
    * @returns always `true`
    */
-  apply(): boolean {
+  apply(): true {
     return true;
   }
 }
