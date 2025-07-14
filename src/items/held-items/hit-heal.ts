@@ -28,11 +28,9 @@ export class HitHealHeldItem extends HeldItem {
 
   /**
    * Applies {@linkcode HitHealModifier}
-   * @param pokemon The {@linkcode Pokemon} that holds the item
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
-  apply(params: HitHealParams): boolean {
-    const pokemon = params.pokemon;
+  apply({ pokemon }: HitHealParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (pokemon.turnData.totalDamageDealt > 0 && !pokemon.isFullHp()) {
       // TODO: this shouldn't be undefined AFAIK

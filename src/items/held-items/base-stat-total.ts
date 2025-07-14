@@ -6,7 +6,7 @@ import i18next from "i18next";
 export interface BaseStatTotalParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
-  /** The amount of exp to gain */
+  /** Array of the pokemon's base stat; modified in place after item application */
   baseStats: number[];
 }
 
@@ -56,8 +56,7 @@ export class BaseStatTotalHeldItem extends HeldItem {
    * @param baseStats the base stats of the {@linkcode Pokemon}
    * @returns always `true`
    */
-  apply(params: BaseStatTotalParams): boolean {
-    const baseStats = params.baseStats;
+  apply({ baseStats }: BaseStatTotalParams): true {
     // Modifies the passed in baseStats[] array
     baseStats.forEach((v, i) => {
       // HP is affected by half as much as other stats

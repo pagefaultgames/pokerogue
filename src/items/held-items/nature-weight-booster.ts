@@ -5,7 +5,7 @@ import type { NumberHolder } from "#utils/common";
 export interface NatureWeightBoostParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
-  /** The amount of exp to gain */
+  /** Holder for the multiplier */
   multiplier: NumberHolder;
 }
 
@@ -14,13 +14,9 @@ export class NatureWeightBoosterHeldItem extends HeldItem {
 
   /**
    * Applies {@linkcode PokemonNatureWeightModifier}
-   * @param _pokemon The {@linkcode Pokemon} to apply the nature weight to
-   * @param multiplier {@linkcode NumberHolder} holding the nature weight
    * @returns `true` if multiplier was applied
    */
-  apply(params: NatureWeightBoostParams): boolean {
-    const pokemon = params.pokemon;
-    const multiplier = params.multiplier;
+  apply({ pokemon, multiplier }: NatureWeightBoostParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (multiplier.value !== 1) {
       multiplier.value += 0.1 * stackCount * (multiplier.value > 1 ? 1 : -1);

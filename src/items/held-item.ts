@@ -41,7 +41,7 @@ export type HeldItemEffect = (typeof HeldItemEffect)[keyof typeof HeldItemEffect
 export class HeldItem {
   //  public pokemonId: number;
   public type: HeldItemId;
-  public maxStackCount: number;
+  public readonly maxStackCount: number;
   public isTransferable = true;
   public isStealable = true;
   public isSuppressable = true;

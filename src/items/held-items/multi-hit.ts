@@ -6,9 +6,13 @@ import { isNullOrUndefined, type NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 export interface MultiHitParams {
+  /** The pokemon with the item */
   pokemon: Pokemon;
+  /** The move being used */
   moveId: MoveId;
+  /** Holder for the move's hit count for the turn */
   count?: NumberHolder;
+  /** Holder for the damage multiplier applied to a strike of the move */
   damageMultiplier?: NumberHolder;
 }
 
@@ -27,16 +31,11 @@ export class MultiHitHeldItem extends HeldItem {
 
   /**
    * For each stack, converts 25 percent of attack damage into an additional strike.
-   * @param pokemon The {@linkcode Pokemon} using the move
-   * @param moveId The {@linkcode MoveId | identifier} for the move being used
-   * @param count {@linkcode NumberHolder} holding the move's hit count for this turn
-   * @param damageMultiplier {@linkcode NumberHolder} holding a damage multiplier applied to a strike of this move
-   * @returns always `true`
+   * @returns Whether the item applies its effects to move
    */
-  apply(params: MultiHitParams): boolean {
-    const pokemon = params.pokemon;
-    const move = allMoves[params.moveId];
-    /**
+  apply({ pokemon, count, moveId, damageMultiplier }: MultiHitParams): boolean {
+    const move = allMoves[moveId];
+    /*
      * The move must meet Parental Bond's restrictions for this item
      * to apply. This means
      * - Only attacks are boosted
@@ -49,11 +48,11 @@ export class MultiHitHeldItem extends HeldItem {
       return false;
     }
 
-    if (!isNullOrUndefined(params.count)) {
-      return this.applyHitCountBoost(pokemon, params.count);
+    if (!isNullOrUndefined(count)) {
+      return this.applyHitCountBoost(pokemon, count);
     }
-    if (!isNullOrUndefined(params.damageMultiplier)) {
-      return this.applyDamageModifier(pokemon, params.damageMultiplier);
+    if (!isNullOrUndefined(damageMultiplier)) {
+      return this.applyDamageModifier(pokemon, damageMultiplier);
     }
 
     return false;

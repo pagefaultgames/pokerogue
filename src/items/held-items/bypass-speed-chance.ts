@@ -9,14 +9,12 @@ import i18next from "i18next";
 export interface BypassSpeedChanceParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
+  /** Holder for whether the speed should be bypassed */
   doBypassSpeed: BooleanHolder;
 }
 
 /**
- * Modifier used for held items, namely Toxic Orb and Flame Orb, that apply a
- * set {@linkcode StatusEffect} at the end of a turn.
- * @extends PokemonHeldItemModifier
- * @see {@linkcode apply}
+ * Modifier used for items that allow a Pokémon to bypass the speed chance (Quick Claw).
  */
 export class BypassSpeedChanceHeldItem extends HeldItem {
   public effects: HeldItemEffect[] = [HeldItemEffect.BYPASS_SPEED_CHANCE];
@@ -33,13 +31,9 @@ export class BypassSpeedChanceHeldItem extends HeldItem {
 
   /**
    * Applies {@linkcode BypassSpeedChanceModifier}
-   * @param pokemon the {@linkcode Pokemon} that holds the item
-   * @param doBypassSpeed {@linkcode BooleanHolder} that is `true` if speed should be bypassed
    * @returns `true` if {@linkcode BypassSpeedChanceModifier} has been applied
    */
-  apply(params: BypassSpeedChanceParams): boolean {
-    const pokemon = params.pokemon;
-    const doBypassSpeed = params.doBypassSpeed;
+  apply({ pokemon, doBypassSpeed }: BypassSpeedChanceParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (!doBypassSpeed.value && pokemon.randBattleSeedInt(10) < stackCount) {
       doBypassSpeed.value = true;
