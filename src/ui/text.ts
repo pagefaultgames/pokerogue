@@ -319,10 +319,14 @@ export function getTextStyleOptions(
     case TextStyle.MESSAGE:
       styleOptions.fontSize = defaultFontSize;
       break;
-    case TextStyle.HEADER_LABEL:
-      styleOptions.fontSize = defaultFontSize;
-      styleOptions.padding = { top: 6 };
+    case TextStyle.HEADER_LABEL: {
+      switch (lang) {
+        case "ja":
+          styleOptions.padding = { top: 6 };
+          break;
+      }
       break;
+    }
     case TextStyle.SETTINGS_VALUE:
     case TextStyle.SETTINGS_LABEL: {
       shadowXpos = 3;
