@@ -1,36 +1,35 @@
-import type { Ability } from "#app/data/abilities/ability";
-import { allAbilities } from "#app/data/data-lists";
-import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import type { Ability } from "#abilities/ability";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { speciesStarterCosts } from "#balance/starters";
+import { allAbilities } from "#data/data-lists";
+import { getNatureName } from "#data/nature";
+import { AbilityAttr } from "#enums/ability-attr";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Nature } from "#enums/nature";
+import { getStatKey } from "#enums/stat";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { PokemonHeldItemModifier } from "#modifiers/modifier";
+import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
+import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   selectPokemonForOption,
   setEncounterRewards,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { getNatureName } from "#app/data/nature";
-import { speciesStarterCosts } from "#app/data/balance/starters";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { AbilityAttr } from "#enums/ability-attr";
-import PokemonData from "#app/system/pokemon-data";
-import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { getEnumValues, isNullOrUndefined, randSeedShuffle } from "#app/utils/common";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import type HeldModifierConfig from "#app/@types/held-modifier-config";
+} from "#mystery-encounters/encounter-phase-utils";
+import { isPokemonValidForEncounterOptionSelection } from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { PokemonData } from "#system/pokemon-data";
+import type { HeldModifierConfig } from "#types/held-modifier-config";
+import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import { getEnumValues, isNullOrUndefined, randSeedShuffle } from "#utils/common";
 import i18next from "i18next";
-import { getStatKey } from "#enums/stat";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { Nature } from "#enums/nature";
 
 /** The i18n namespace for the encounter */
 const namespace = "mysteryEncounters/trainingSession";

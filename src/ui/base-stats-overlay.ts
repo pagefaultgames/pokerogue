@@ -1,10 +1,10 @@
-import type { InfoToggle } from "../battle-scene";
-import { addTextObject } from "./text";
-import { TextStyle } from "#enums/text-style";
-import { addWindow } from "./ui-theme";
-import { fixedInt } from "#app/utils/common";
-import i18next from "i18next";
+import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
+import { TextStyle } from "#enums/text-style";
+import { addTextObject } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import { fixedInt } from "#utils/common";
+import i18next from "i18next";
 
 interface BaseStatsOverlaySettings {
   scale?: number; // scale the box? A scale of 0.5 is recommended

@@ -1,20 +1,20 @@
-import { addTextObject } from "./text";
-import { TextStyle } from "#enums/text-style";
-import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import UiHandler from "./ui-handler";
-import i18next from "i18next";
-import { Button } from "#enums/buttons";
-import { getPokemonNameWithAffix } from "#app/messages";
-import type { CommandPhase } from "#app/phases/command-phase";
 import { globalScene } from "#app/global-scene";
-import { TerastallizeAccessModifier } from "#app/modifier/modifier";
-import { PokemonType } from "#enums/pokemon-type";
-import { getTypeRgb } from "#app/data/type";
-import { SpeciesId } from "#enums/species-id";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { getTypeRgb } from "#data/type";
+import { Button } from "#enums/buttons";
 import { Command } from "#enums/command";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import { TerastallizeAccessModifier } from "#modifiers/modifier";
+import type { CommandPhase } from "#phases/command-phase";
+import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { addTextObject } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import i18next from "i18next";
 
-export default class CommandUiHandler extends UiHandler {
+export class CommandUiHandler extends UiHandler {
   private commandsContainer: Phaser.GameObjects.Container;
   private cursorObj: Phaser.GameObjects.Image | null;
 

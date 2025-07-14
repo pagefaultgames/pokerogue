@@ -1,14 +1,14 @@
-import type { default as Pokemon } from "../../field/pokemon";
-import { getLocalizedSpriteKey, fixedInt, getShinyDescriptor } from "#app/utils/common";
-import { addTextObject } from "../text";
-import { TextStyle } from "#enums/text-style";
-import { getGenderSymbol, getGenderColor, Gender } from "../../data/gender";
-import { StatusEffect } from "#enums/status-effect";
 import { globalScene } from "#app/global-scene";
-import { getTypeRgb } from "#app/data/type";
+import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
+import { getTypeRgb } from "#data/type";
 import { PokemonType } from "#enums/pokemon-type";
-import { getVariantTint } from "#app/sprites/variant";
 import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { TextStyle } from "#enums/text-style";
+import type { Pokemon } from "#field/pokemon";
+import { getVariantTint } from "#sprites/variant";
+import { addTextObject } from "#ui/text";
+import { fixedInt, getLocalizedSpriteKey, getShinyDescriptor } from "#utils/common";
 import i18next from "i18next";
 
 /**
@@ -38,7 +38,7 @@ export type BattleInfoParamList = {
   };
 };
 
-export default abstract class BattleInfo extends Phaser.GameObjects.Container {
+export abstract class BattleInfo extends Phaser.GameObjects.Container {
   public static readonly EXP_GAINS_DURATION_BASE = 1650;
 
   protected baseY: number;

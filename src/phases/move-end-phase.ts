@@ -1,9 +1,9 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
-import { PokemonPhase } from "./pokemon-phase";
 import type { BattlerIndex } from "#enums/battler-index";
-import type Pokemon from "#app/field/pokemon";
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
+import type { Pokemon } from "#field/pokemon";
+import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class MoveEndPhase extends PokemonPhase {
   public readonly phaseName = "MoveEndPhase";

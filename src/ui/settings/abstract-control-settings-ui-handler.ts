@@ -1,16 +1,16 @@
-import UiHandler from "#app/ui/ui-handler";
-import type { UiMode } from "#enums/ui-mode";
-import type { InterfaceConfig } from "#app/inputs-controller";
-import { addWindow } from "#app/ui/ui-theme";
-import { addTextObject } from "#app/ui/text";
-import { TextStyle } from "#enums/text-style";
-import { ScrollBar } from "#app/ui/scroll-bar";
-import { getIconWithSettingName } from "#app/configs/inputs/configHandler";
-import NavigationMenu, { NavigationManager } from "#app/ui/settings/navigationMenu";
-import type { Device } from "#enums/devices";
-import { Button } from "#enums/buttons";
-import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
+import type { InterfaceConfig } from "#app/inputs-controller";
+import { Button } from "#enums/buttons";
+import type { Device } from "#enums/devices";
+import { TextStyle } from "#enums/text-style";
+import type { UiMode } from "#enums/ui-mode";
+import { getIconWithSettingName } from "#inputs/configHandler";
+import { NavigationManager, NavigationMenu } from "#ui/navigationMenu";
+import { ScrollBar } from "#ui/scroll-bar";
+import { addTextObject } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { addWindow } from "#ui/ui-theme";
+import i18next from "i18next";
 
 export interface InputsIcons {
   [key: string]: Phaser.GameObjects.Sprite;
@@ -28,7 +28,7 @@ export interface LayoutConfig {
 /**
  * Abstract class for handling UI elements related to control settings.
  */
-export default abstract class AbstractControlSettingsUiHandler extends UiHandler {
+export abstract class AbstractControlSettingsUiHandler extends UiHandler {
   protected settingsContainer: Phaser.GameObjects.Container;
   protected optionsContainer: Phaser.GameObjects.Container;
   protected navigationContainer: NavigationMenu;

@@ -1,20 +1,20 @@
-import { getVariantTint } from "#app/sprites/variant";
-import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { globalScene } from "#app/global-scene";
-import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
-import { getNatureName } from "../data/nature";
-import { PokemonType } from "#enums/pokemon-type";
-import type Pokemon from "../field/pokemon";
-import i18next from "i18next";
-import type { StarterDataEntry } from "../system/game-data";
-import type { DexEntry } from "#app/@types/dex-data";
+import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
+import { getNatureName } from "#data/nature";
 import { DexAttr } from "#enums/dex-attr";
-import { fixedInt, getShinyDescriptor } from "#app/utils/common";
-import ConfirmUiHandler from "./confirm-ui-handler";
-import { StatsContainer } from "./stats-container";
-import { addBBCodeTextObject, addTextObject, getTextColor } from "./text";
+import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
-import { addWindow } from "./ui-theme";
+import type { Pokemon } from "#field/pokemon";
+import { getVariantTint } from "#sprites/variant";
+import type { StarterDataEntry } from "#system/game-data";
+import type { DexEntry } from "#types/dex-data";
+import { ConfirmUiHandler } from "#ui/confirm-ui-handler";
+import { StatsContainer } from "#ui/stats-container";
+import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import { fixedInt, getShinyDescriptor } from "#utils/common";
+import i18next from "i18next";
+import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 interface LanguageSetting {
   infoContainerTextSize: string;
@@ -40,7 +40,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   },
 };
 
-export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
+export class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private readonly infoWindowWidth = 104;
 
   private pokemonFormLabelText: Phaser.GameObjects.Text;

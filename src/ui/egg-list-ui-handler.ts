@@ -1,16 +1,16 @@
-import { UiMode } from "#enums/ui-mode";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
-import { addTextObject } from "#app/ui/text";
-import { TextStyle } from "#enums/text-style";
-import MessageUiHandler from "#app/ui/message-ui-handler";
-import { addWindow } from "#app/ui/ui-theme";
-import { Button } from "#enums/buttons";
-import i18next from "i18next";
-import ScrollableGridUiHandler from "#app/ui/scrollable-grid-handler";
-import { ScrollBar } from "#app/ui/scroll-bar";
 import { globalScene } from "#app/global-scene";
+import { Button } from "#enums/buttons";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-handler";
+import { ScrollBar } from "#ui/scroll-bar";
+import { ScrollableGridUiHandler } from "#ui/scrollable-grid-handler";
+import { addTextObject } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import i18next from "i18next";
 
-export default class EggListUiHandler extends MessageUiHandler {
+export class EggListUiHandler extends MessageUiHandler {
   private readonly ROWS = 9;
   private readonly COLUMNS = 11;
 

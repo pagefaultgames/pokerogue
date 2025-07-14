@@ -1,14 +1,14 @@
-import { addTextObject } from "./text";
-import { TextStyle } from "#enums/text-style";
-import i18next from "i18next";
-import { formatText } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
+import { TextStyle } from "#enums/text-style";
+import { addTextObject } from "#ui/text";
+import { formatText } from "#utils/common";
+import i18next from "i18next";
 
 const hiddenX = -150;
 const shownX = 0;
 const baseY = 0;
 
-export default class BgmBar extends Phaser.GameObjects.Container {
+export class BgmBar extends Phaser.GameObjects.Container {
   private defaultWidth: number;
   private defaultHeight: number;
 

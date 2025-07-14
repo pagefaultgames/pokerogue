@@ -1,8 +1,4 @@
-import type { TurnMove } from "#app/@types/turn-move";
-import { allMoves } from "#app/data/data-lists";
-import { RandomMoveAttr } from "#app/data/moves/move";
-import type Pokemon from "#app/field/pokemon";
-import type { MovePhase } from "#app/phases/move-phase";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
@@ -10,7 +6,11 @@ import { MoveResult } from "#enums/move-result";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import type { Pokemon } from "#field/pokemon";
+import { RandomMoveAttr } from "#moves/move";
+import type { MovePhase } from "#phases/move-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import type { TurnMove } from "#types/turn-move";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

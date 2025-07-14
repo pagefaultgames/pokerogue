@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import { UiMode } from "#enums/ui-mode";
-import type { InputsIcons } from "#app/ui/settings/abstract-control-settings-ui-handler";
-import { addTextObject, setTextStyle } from "#app/ui/text";
-import { TextStyle } from "#enums/text-style";
-import { addWindow } from "#app/ui/ui-theme";
 import { Button } from "#enums/buttons";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
+import { addTextObject, setTextStyle } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 
 const LEFT = "LEFT";
@@ -104,7 +104,7 @@ export class NavigationManager {
   }
 }
 
-export default class NavigationMenu extends Phaser.GameObjects.Container {
+export class NavigationMenu extends Phaser.GameObjects.Container {
   private navigationIcons: InputsIcons;
   protected headerTitles: Phaser.GameObjects.Text[] = [];
 

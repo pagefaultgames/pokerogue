@@ -1,20 +1,20 @@
-import OptionSelectUiHandler from "./settings/option-select-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { fixedInt, randInt, randItem } from "#app/utils/common";
-import { addTextObject } from "./text";
-import { TextStyle } from "#enums/text-style";
-import { getSplashMessages } from "../data/splash-messages";
-import i18next from "i18next";
-import { TimedEventDisplay } from "#app/timed-event-manager";
-import { version } from "../../package.json";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import { globalScene } from "#app/global-scene";
-import type { SpeciesId } from "#enums/species-id";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { PlayerGender } from "#enums/player-gender";
+import { pokerogueApi } from "#api/pokerogue-api";
 import { timedEventManager } from "#app/global-event-manager";
+import { globalScene } from "#app/global-scene";
+import { TimedEventDisplay } from "#app/timed-event-manager";
+import { getSplashMessages } from "#data/splash-messages";
+import { PlayerGender } from "#enums/player-gender";
+import type { SpeciesId } from "#enums/species-id";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import { version } from "#package.json";
+import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
+import { addTextObject } from "#ui/text";
+import { fixedInt, randInt, randItem } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import i18next from "i18next";
 
-export default class TitleUiHandler extends OptionSelectUiHandler {
+export class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
   private static readonly BATTLES_WON_FALLBACK: number = -1;
 

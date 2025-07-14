@@ -1,68 +1,65 @@
-import type { CandyUpgradeNotificationChangedEvent } from "#app/events/battle-scene";
-import { BattleSceneEventType } from "#app/events/battle-scene";
-import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
-import type { Variant } from "#app/sprites/variant";
-import { getVariantTint, getVariantIcon } from "#app/sprites/variant";
-import { argbFromRgba } from "@material/material-color-utilities";
-import i18next from "i18next";
-import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { starterColors } from "#app/global-vars/starter-colors";
+import type { Ability } from "#abilities/ability";
+import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import type { Ability } from "#app/data/abilities/ability";
-import { allAbilities } from "#app/data/data-lists";
-import { speciesEggMoves } from "#app/data/balance/egg-moves";
-import { GrowthRate, getGrowthRateColor } from "#app/data/exp";
-import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
-import { allMoves } from "#app/data/data-lists";
-import { getNatureName } from "#app/data/nature";
-import { pokemonFormChanges } from "#app/data/pokemon-forms";
-import type { LevelMoves } from "#app/data/balance/pokemon-level-moves";
-import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpeciesForm, getPokerusStarters } from "#app/data/pokemon-species";
-import { allSpecies } from "#app/data/data-lists";
-import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
-import { PokemonType } from "#enums/pokemon-type";
-import { GameModes } from "#enums/game-modes";
-import type { DexAttrProps, StarterMoveset, StarterAttributes } from "#app/system/game-data";
-import type { StarterPreferences } from "#app/utils/data";
-import type { DexEntry } from "#app/@types/dex-data";
-import { loadStarterPreferences, saveStarterPreferences } from "#app/utils/data";
-import { AbilityAttr } from "#enums/ability-attr";
-import { DexAttr } from "#enums/dex-attr";
-import { Tutorial, handleTutorial } from "#app/tutorial";
-import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import MessageUiHandler from "#app/ui/message-ui-handler";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
-import { StatsContainer } from "#app/ui/stats-container";
-import { addBBCodeTextObject, addTextObject } from "#app/ui/text";
-import { TextStyle } from "#enums/text-style";
-import { UiMode } from "#enums/ui-mode";
-import { addWindow } from "#app/ui/ui-theme";
-import { Egg } from "#app/data/egg";
+import { starterColors } from "#app/global-vars/starter-colors";
 import Overrides from "#app/overrides";
-import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
-import { Passive as PassiveAttr } from "#enums/passive";
-import { applyChallenges } from "#app/data/challenge";
-import { ChallengeType } from "#enums/challenge-type";
-import MoveInfoOverlay from "#app/ui/move-info-overlay";
-import { getEggTierForSpecies } from "#app/data/egg";
-import { Device } from "#enums/devices";
-import type { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
-import { Button } from "#enums/buttons";
-import { EggSourceType } from "#enums/egg-source-types";
-import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#app/ui/dropdown";
-import { StarterContainer } from "#app/ui/starter-container";
-import { FilterBar } from "#app/ui/filter-bar";
-import { DropDownColumn } from "#enums/drop-down-column";
-import { ScrollBar } from "#app/ui/scroll-bar";
-import { AbilityId } from "#enums/ability-id";
+import { handleTutorial, Tutorial } from "#app/tutorial";
+import { speciesEggMoves } from "#balance/egg-moves";
+import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
+import type { LevelMoves } from "#balance/pokemon-level-moves";
+import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
 import {
   getPassiveCandyCount,
-  getValueReductionCandyCounts,
   getSameSpeciesEggCandyCounts,
-} from "#app/data/balance/starters";
+  getStarterValueFriendshipCap,
+  getValueReductionCandyCounts,
+  POKERUS_STARTER_COUNT,
+  speciesStarterCosts,
+} from "#balance/starters";
+import { applyChallenges, checkStarterValidForChallenge } from "#data/challenge";
+import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
+import { Egg, getEggTierForSpecies } from "#data/egg";
+import { GrowthRate, getGrowthRateColor } from "#data/exp";
+import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
+import { getNatureName } from "#data/nature";
+import { pokemonFormChanges } from "#data/pokemon-forms";
+import type { PokemonSpecies } from "#data/pokemon-species";
+import { getPokemonSpeciesForm, getPokerusStarters } from "#data/pokemon-species";
+import { AbilityAttr } from "#enums/ability-attr";
+import { AbilityId } from "#enums/ability-id";
+import { Button } from "#enums/buttons";
+import { ChallengeType } from "#enums/challenge-type";
+import { Device } from "#enums/devices";
+import { DexAttr } from "#enums/dex-attr";
+import { DropDownColumn } from "#enums/drop-down-column";
+import { EggSourceType } from "#enums/egg-source-types";
+import { GameModes } from "#enums/game-modes";
+import type { MoveId } from "#enums/move-id";
+import type { Nature } from "#enums/nature";
+import { Passive as PassiveAttr } from "#enums/passive";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import type { CandyUpgradeNotificationChangedEvent } from "#events/battle-scene";
+import { BattleSceneEventType } from "#events/battle-scene";
+import type { Variant } from "#sprites/variant";
+import { getVariantIcon, getVariantTint } from "#sprites/variant";
+import { achvs } from "#system/achv";
+import type { DexAttrProps, StarterAttributes, StarterMoveset } from "#system/game-data";
+import { SettingKeyboard } from "#system/settings-keyboard";
+import type { DexEntry } from "#types/dex-data";
+import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
+import { FilterBar } from "#ui/filter-bar";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { MoveInfoOverlay } from "#ui/move-info-overlay";
+import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-handler";
+import { ScrollBar } from "#ui/scroll-bar";
+import { StarterContainer } from "#ui/starter-container";
+import { StatsContainer } from "#ui/stats-container";
+import { addBBCodeTextObject, addTextObject } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
 import {
   BooleanHolder,
   fixedInt,
@@ -73,12 +70,13 @@ import {
   randIntRange,
   rgbHexToRgba,
   toReadableString,
-} from "#app/utils/common";
-import type { Nature } from "#enums/nature";
-import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import { achvs } from "#app/system/achv";
+} from "#utils/common";
+import type { StarterPreferences } from "#utils/data";
+import { loadStarterPreferences, saveStarterPreferences } from "#utils/data";
+import { argbFromRgba } from "@material/material-color-utilities";
+import i18next from "i18next";
 import type { GameObjects } from "phaser";
-import { checkStarterValidForChallenge } from "#app/data/challenge";
+import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -266,7 +264,7 @@ interface SpeciesDetails {
   teraType?: PokemonType;
 }
 
-export default class StarterSelectUiHandler extends MessageUiHandler {
+export class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private starterSelectScrollBar: ScrollBar;
   private filterBarContainer: Phaser.GameObjects.Container;

@@ -1,19 +1,19 @@
-import UiHandler from "../ui-handler";
-import type { UiMode } from "#enums/ui-mode";
-import { addWindow } from "../ui-theme";
-import { addTextObject } from "../text";
-import { TextStyle } from "#enums/text-style";
-import { Button } from "#enums/buttons";
-import { NavigationManager } from "#app/ui/settings/navigationMenu";
-import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
+import { Button } from "#enums/buttons";
+import { TextStyle } from "#enums/text-style";
+import type { UiMode } from "#enums/ui-mode";
+import { NavigationManager } from "#ui/navigationMenu";
+import { addTextObject } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { addWindow } from "#ui/ui-theme";
+import i18next from "i18next";
 
 type CancelFn = (succes?: boolean) => boolean;
 
 /**
  * Abstract class for handling UI elements related to button bindings.
  */
-export default abstract class AbstractBindingUiHandler extends UiHandler {
+export abstract class AbstractBindingUiHandler extends UiHandler {
   // Containers for different segments of the UI.
   protected optionSelectContainer: Phaser.GameObjects.Container;
   protected actionsContainer: Phaser.GameObjects.Container;

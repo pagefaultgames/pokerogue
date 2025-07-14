@@ -1,17 +1,17 @@
-import { type BattlerTag, loadBattlerTag } from "#app/data/battler-tags";
-import type { Gender } from "#app/data/gender";
-import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
-import type { TypeDamageMultiplier } from "#app/data/type";
-import { isNullOrUndefined } from "#app/utils/common";
+import { type BattlerTag, loadBattlerTag } from "#data/battler-tags";
+import type { Gender } from "#data/gender";
+import { PokemonMove } from "#data/moves/pokemon-move";
+import type { PokemonSpeciesForm } from "#data/pokemon-species";
+import type { TypeDamageMultiplier } from "#data/type";
 import type { AbilityId } from "#enums/ability-id";
 import type { BerryType } from "#enums/berry-type";
 import type { MoveId } from "#enums/move-id";
-import type { PokemonType } from "#enums/pokemon-type";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import type { TurnMove } from "#app/@types/turn-move";
-import type { AttackMoveResult } from "#app/@types/attack-move-result";
 import type { Nature } from "#enums/nature";
-import type { IllusionData } from "#app/@types/illusion-data";
+import type { PokemonType } from "#enums/pokemon-type";
+import type { AttackMoveResult } from "#types/attack-move-result";
+import type { IllusionData } from "#types/illusion-data";
+import type { TurnMove } from "#types/turn-move";
+import { isNullOrUndefined } from "#utils/common";
 
 /**
  * Permanent data that can customize a Pokemon in non-standard ways from its Species.
