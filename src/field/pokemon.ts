@@ -558,7 +558,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getDexAttr(): bigint {
     let ret = 0n;
-    ret |= this.gender !== Gender.FEMALE ? DexAttr.MALE : DexAttr.FEMALE;
+    ret |=
+      this.gender === Gender.GENDERLESS
+        ? DexAttr.GENDERLESS
+        : this.gender === Gender.FEMALE
+          ? DexAttr.FEMALE
+          : DexAttr.MALE;
+
     ret |= !this.shiny ? DexAttr.NON_SHINY : DexAttr.SHINY;
     ret |= this.variant >= 2 ? DexAttr.VARIANT_3 : this.variant === 1 ? DexAttr.VARIANT_2 : DexAttr.DEFAULT_VARIANT;
     ret |= globalScene.gameData.getFormAttr(this.formIndex);
