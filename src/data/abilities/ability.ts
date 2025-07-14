@@ -5334,7 +5334,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
       return false;
     }
 
-    // TODO: Does aftermath display text if the attacker has Magic Guard?
+    // Confirmed: Aftermath does not activate or show text vs Magic Guard killers
     applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: attacker, cancelled });
     return !cancelled.value;
   }
@@ -5366,9 +5366,9 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
  * @sealed
  */
 export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
-  override apply({ pokemon, move, attacker }: PostFaintAbAttrParams): void {
+  override apply({ simulated, pokemon, move, attacker }: PostFaintAbAttrParams): void {
     // return early if the user died to indirect damage, target has magic guard or was KO'd by an ally
-    if (move === undefined || attacker === undefined || attacker.getAlly() === pokemon) {
+    if (!move || !attacker || simulated || attacker.getAlly() === pokemon) {
       return;
     }
 
@@ -5384,6 +5384,7 @@ export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
   }
 
   // Oddly, Innards Out still shows a flyout if the effect was blocked due to Magic Guard...
+  // TODO: Verify on cart
   override getTriggerMessage({ pokemon }: PostFaintAbAttrParams, abilityName: string): string {
     return i18next.t("abilityTriggers:postFaintHpDamage", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
