@@ -1,13 +1,17 @@
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import type { BattleScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
+import { FixedInt } from "#utils/common";
 import type FadeIn from "phaser3-rex-plugins/plugins/audio/fade/FadeIn";
 import type FadeOut from "phaser3-rex-plugins/plugins/audio/fade/FadeOut";
-import type BattleScene from "#app/battle-scene";
-import { globalScene } from "#app/global-scene";
-import { FixedInt } from "#app/utils/common";
+import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+
+type TweenManager = typeof Phaser.Tweens.TweenManager.prototype;
+
+/** The set of properties to mutate */
+const PROPERTIES = ["delay", "completeDelay", "loopDelay", "duration", "repeatDelay", "hold", "startDelay"];
 
 type FadeInType = typeof FadeIn;
 type FadeOutType = typeof FadeOut;
-
 export function initGameSpeed() {
   const thisArg = this as BattleScene;
 
@@ -18,14 +22,44 @@ export function initGameSpeed() {
     return thisArg.gameSpeed === 1 ? value : Math.ceil((value /= thisArg.gameSpeed));
   };
 
-  const originalAddEvent = this.time.addEvent;
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complexity is necessary here
+  const mutateProperties = (obj: any, allowArray = false) => {
+    // We do not mutate Tweens or TweenChain objects themselves.
+    if (obj instanceof Phaser.Tweens.Tween || obj instanceof Phaser.Tweens.TweenChain) {
+      return;
+    }
+    // If allowArray is true then check if first obj is an array and if so, mutate the tweens inside
+    if (allowArray && Array.isArray(obj)) {
+      for (const tween of obj) {
+        mutateProperties(tween);
+      }
+      return;
+    }
+
+    for (const prop of PROPERTIES) {
+      const objProp = obj[prop];
+      if (typeof objProp === "number" || objProp instanceof FixedInt) {
+        obj[prop] = transformValue(objProp);
+      }
+    }
+    // If the object has a 'tweens' property that is an array, then it is a tween chain
+    // and we need to mutate its properties as well
+    if (obj.tweens && Array.isArray(obj.tweens)) {
+      for (const tween of obj.tweens) {
+        mutateProperties(tween);
+      }
+    }
+  };
+
+  const originalAddEvent: typeof Phaser.Time.Clock.prototype.addEvent = this.time.addEvent;
   this.time.addEvent = function (config: Phaser.Time.TimerEvent | Phaser.Types.Time.TimerEventConfig) {
     if (!(config instanceof Phaser.Time.TimerEvent) && config.delay) {
       config.delay = transformValue(config.delay);
     }
     return originalAddEvent.apply(this, [config]);
   };
-  const originalTweensAdd = this.tweens.add;
+  const originalTweensAdd: TweenManager["add"] = this.tweens.add;
+
   this.tweens.add = function (
     config:
       | Phaser.Types.Tweens.TweenBuilderConfig
@@ -33,71 +67,33 @@ export function initGameSpeed() {
       | Phaser.Tweens.Tween
       | Phaser.Tweens.TweenChain,
   ) {
-    if (config.loopDelay) {
-      config.loopDelay = transformValue(config.loopDelay as number);
-    }
-
-    if (!(config instanceof Phaser.Tweens.TweenChain)) {
-      if (config.duration) {
-        config.duration = transformValue(config.duration);
-      }
-
-      if (!(config instanceof Phaser.Tweens.Tween)) {
-        if (config.delay) {
-          config.delay = transformValue(config.delay as number);
-        }
-        if (config.repeatDelay) {
-          config.repeatDelay = transformValue(config.repeatDelay);
-        }
-        if (config.hold) {
-          config.hold = transformValue(config.hold);
-        }
-      }
-    }
+    mutateProperties(config);
     return originalTweensAdd.apply(this, [config]);
-  };
-  const originalTweensChain = this.tweens.chain;
+  } as typeof originalTweensAdd;
+
+  const originalTweensChain: TweenManager["chain"] = this.tweens.chain;
   this.tweens.chain = function (config: Phaser.Types.Tweens.TweenChainBuilderConfig): Phaser.Tweens.TweenChain {
-    if (config.tweens) {
-      for (const t of config.tweens) {
-        if (t.duration) {
-          t.duration = transformValue(t.duration);
-        }
-        if (t.delay) {
-          t.delay = transformValue(t.delay as number);
-        }
-        if (t.repeatDelay) {
-          t.repeatDelay = transformValue(t.repeatDelay);
-        }
-        if (t.loopDelay) {
-          t.loopDelay = transformValue(t.loopDelay as number);
-        }
-        if (t.hold) {
-          t.hold = transformValue(t.hold);
-        }
-      }
-    }
+    mutateProperties(config);
     return originalTweensChain.apply(this, [config]);
-  };
-  const originalAddCounter = this.tweens.addCounter;
+  } as typeof originalTweensChain;
+  const originalAddCounter: TweenManager["addCounter"] = this.tweens.addCounter;
+
   this.tweens.addCounter = function (config: Phaser.Types.Tweens.NumberTweenBuilderConfig) {
-    if (config.duration) {
-      config.duration = transformValue(config.duration);
-    }
-    if (config.delay) {
-      config.delay = transformValue(config.delay);
-    }
-    if (config.repeatDelay) {
-      config.repeatDelay = transformValue(config.repeatDelay);
-    }
-    if (config.loopDelay) {
-      config.loopDelay = transformValue(config.loopDelay as number);
-    }
-    if (config.hold) {
-      config.hold = transformValue(config.hold);
-    }
+    mutateProperties(config);
     return originalAddCounter.apply(this, [config]);
-  };
+  } as typeof originalAddCounter;
+
+  const originalCreate: TweenManager["create"] = this.tweens.create;
+  this.tweens.create = function (config: Phaser.Types.Tweens.TweenBuilderConfig) {
+    mutateProperties(config, true);
+    return originalCreate.apply(this, [config]);
+  } as typeof originalCreate;
+
+  const originalAddMultiple: TweenManager["addMultiple"] = this.tweens.addMultiple;
+  this.tweens.addMultiple = function (config: Phaser.Types.Tweens.TweenBuilderConfig[]) {
+    mutateProperties(config, true);
+    return originalAddMultiple.apply(this, [config]);
+  } as typeof originalAddMultiple;
 
   const originalFadeOut = SoundFade.fadeOut;
   SoundFade.fadeOut = ((_scene: Phaser.Scene, sound: Phaser.Sound.BaseSound, duration: number, destroy?: boolean) =>

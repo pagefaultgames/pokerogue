@@ -1,4 +1,4 @@
-import type { SessionSaveData, SystemSaveData } from "#app/system/game-data";
+import type { SessionSaveData, SystemSaveData } from "#system/game-data";
 
 export interface UpdateAllSavedataRequest {
   system: SystemSaveData;

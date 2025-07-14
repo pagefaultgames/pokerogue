@@ -1,10 +1,10 @@
-import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";
 import type { BattlerIndex } from "#enums/battler-index";
-import type { TurnMove } from "#app/field/pokemon";
-import type { MoveResult } from "#enums/move-result";
-import type { SessionSaveData } from "#app/system/game-data";
-import { MoveUseMode } from "#enums/move-use-mode";
 import type { MoveId } from "#enums/move-id";
+import type { MoveResult } from "#enums/move-result";
+import { MoveUseMode } from "#enums/move-use-mode";
+import type { SessionSaveData } from "#system/game-data";
+import type { SessionSaveMigrator } from "#types/SessionSaveMigrator";
+import type { TurnMove } from "#types/turn-move";
 
 /** Prior signature of `TurnMove`; used to ensure parity */
 interface OldTurnMove {
@@ -45,4 +45,4 @@ const fixMoveHistory: SessionSaveMigrator = {
   },
 };
 
-export const sessionMigrators: Readonly<SessionSaveMigrator[]> = [fixMoveHistory] as const;
+export const sessionMigrators: readonly SessionSaveMigrator[] = [fixMoveHistory] as const;

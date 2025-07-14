@@ -1,13 +1,13 @@
-import type { AccountInfoResponse } from "#app/@types/PokerogueAccountApi";
+import { PokerogueAccountApi } from "#api/pokerogue-account-api";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
-import { PokerogueAccountApi } from "#app/plugins/api/pokerogue-account-api";
-import { getApiBaseUrl } from "#test/testUtils/testUtils";
-import * as CookieUtils from "#app/utils/cookies";
-import * as cookies from "#app/utils/cookies";
-import { http, HttpResponse } from "msw";
-import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
+import { getApiBaseUrl } from "#test/testUtils/testUtils";
+import type { AccountInfoResponse } from "#types/PokerogueAccountApi";
+import * as CookieUtils from "#utils/cookies";
+import * as cookies from "#utils/cookies";
+import { HttpResponse, http } from "msw";
 import type { SetupServerApi } from "msw/node";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiBase = getApiBaseUrl();
 const accountApi = new PokerogueAccountApi(apiBase);

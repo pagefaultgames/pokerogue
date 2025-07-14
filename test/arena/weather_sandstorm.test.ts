@@ -1,9 +1,9 @@
 import { AbilityId } from "#enums/ability-id";
-import { Stat } from "#app/enums/stat";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

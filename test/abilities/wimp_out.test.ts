@@ -1,16 +1,16 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { allMoves } from "#app/data/data-lists";
-import GameManager from "#test/testUtils/gameManager";
-import { toDmgValue } from "#app/utils/common";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
+import { GameManager } from "#test/testUtils/gameManager";
+import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -108,7 +108,7 @@ describe("Abilities - Wimp Out", () => {
   });
 
   it("Trapping moves do not prevent Wimp Out from activating.", async () => {
-    game.override.enemyMoveset([MoveId.SPIRIT_SHACKLE]).startingLevel(53).enemyLevel(45);
+    game.override.enemyMoveset([MoveId.SPIRIT_SHACKLE]).startingLevel(1).passiveAbility(AbilityId.STURDY);
     await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
 
     game.move.select(MoveId.SPLASH);
@@ -123,7 +123,7 @@ describe("Abilities - Wimp Out", () => {
   });
 
   it("If this Ability activates due to being hit by U-turn or Volt Switch, the user of that move will not be switched out.", async () => {
-    game.override.startingLevel(95).enemyMoveset([MoveId.U_TURN]);
+    game.override.startingLevel(1).enemyMoveset([MoveId.U_TURN]).passiveAbility(AbilityId.STURDY);
     await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
 
     game.move.select(MoveId.SPLASH);

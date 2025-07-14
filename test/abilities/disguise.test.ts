@@ -1,11 +1,11 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { toDmgValue } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
+import { toDmgValue } from "#utils/common";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Disguise", () => {

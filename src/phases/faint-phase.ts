@@ -1,30 +1,24 @@
-import type { BattlerIndex } from "#enums/battler-index";
-import { BattleType } from "#enums/battle-type";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import {
-  applyPostFaintAbAttrs,
-  applyPostKnockOutAbAttrs,
-  applyPostVictoryAbAttrs,
-} from "#app/data/abilities/apply-ab-attrs";
-import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
-import { battleSpecDialogue } from "#app/data/dialogue";
-import { allMoves } from "#app/data/data-lists";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { BattleSpec } from "#app/enums/battle-spec";
-import { StatusEffect } from "#app/enums/status-effect";
-import type { EnemyPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { HitResult } from "#enums/hit-result";
-import type { PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
-import { SwitchType } from "#enums/switch-type";
-import i18next from "i18next";
-import { PokemonPhase } from "./pokemon-phase";
-import { isNullOrUndefined } from "#app/utils/common";
-import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
+import { FRIENDSHIP_LOSS_FROM_FAINT } from "#balance/starters";
+import { allMoves } from "#data/data-lists";
+import { battleSpecDialogue } from "#data/dialogue";
+import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
+import { BattleSpec } from "#enums/battle-spec";
+import { BattleType } from "#enums/battle-type";
+import type { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { HitResult } from "#enums/hit-result";
+import { StatusEffect } from "#enums/status-effect";
+import { SwitchType } from "#enums/switch-type";
+import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
+import { PokemonInstantReviveModifier } from "#modifiers/modifier";
+import { PokemonMove } from "#moves/pokemon-move";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import { isNullOrUndefined } from "#utils/common";
+import i18next from "i18next";
 
 export class FaintPhase extends PokemonPhase {
   public readonly phaseName = "FaintPhase";
@@ -117,29 +111,31 @@ export class FaintPhase extends PokemonPhase {
 
     pokemon.resetTera();
 
+    // TODO: this can be simplified by just checking whether lastAttack is defined
     if (pokemon.turnData.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
-      applyPostFaintAbAttrs(
-        "PostFaintAbAttr",
-        pokemon,
-        globalScene.getPokemonById(lastAttack.sourceId)!,
-        new PokemonMove(lastAttack.move).getMove(),
-        lastAttack.result,
-      ); // TODO: is this bang correct?
+      applyAbAttrs("PostFaintAbAttr", {
+        pokemon: pokemon,
+        // TODO: We should refactor lastAttack's sourceId to forbid null and just use undefined
+        attacker: globalScene.getPokemonById(lastAttack.sourceId) ?? undefined,
+        // TODO: improve the way that we provide the move that knocked out the pokemon...
+        move: new PokemonMove(lastAttack.move).getMove(),
+        hitResult: lastAttack.result,
+      }); // TODO: is this bang correct?
     } else {
       //If killed by indirect damage, apply post-faint abilities without providing a last move
-      applyPostFaintAbAttrs("PostFaintAbAttr", pokemon);
+      applyAbAttrs("PostFaintAbAttr", { pokemon });
     }
 
     const alivePlayField = globalScene.getField(true);
     for (const p of alivePlayField) {
-      applyPostKnockOutAbAttrs("PostKnockOutAbAttr", p, pokemon);
+      applyAbAttrs("PostKnockOutAbAttr", { pokemon: p, victim: pokemon });
     }
     if (pokemon.turnData.attacksReceived?.length) {
       const defeatSource = this.source;
 
       if (defeatSource?.isOnField()) {
-        applyPostVictoryAbAttrs("PostVictoryAbAttr", defeatSource);
+        applyAbAttrs("PostVictoryAbAttr", { pokemon: defeatSource });
         const pvmove = allMoves[pokemon.turnData.attacksReceived[0].move];
         const pvattrs = pvmove.getAttrs("PostVictoryStatStageChangeAttr");
         if (pvattrs.length) {

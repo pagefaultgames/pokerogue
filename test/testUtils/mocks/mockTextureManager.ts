@@ -1,18 +1,18 @@
-import MockContainer from "#test/testUtils/mocks/mocksContainer/mockContainer";
+import type { MockGameObject } from "#test/testUtils/mocks/mockGameObject";
+import { MockContainer } from "#test/testUtils/mocks/mocksContainer/mockContainer";
 import { MockImage } from "#test/testUtils/mocks/mocksContainer/mockImage";
-import MockNineslice from "#test/testUtils/mocks/mocksContainer/mockNineslice";
-import MockPolygon from "#test/testUtils/mocks/mocksContainer/mockPolygon";
-import MockRectangle from "#test/testUtils/mocks/mocksContainer/mockRectangle";
-import MockSprite from "#test/testUtils/mocks/mocksContainer/mockSprite";
-import MockText from "#test/testUtils/mocks/mocksContainer/mockText";
-import MockTexture from "#test/testUtils/mocks/mocksContainer/mockTexture";
-import type { MockGameObject } from "./mockGameObject";
-import { MockVideoGameObject } from "./mockVideoGameObject";
+import { MockNineslice } from "#test/testUtils/mocks/mocksContainer/mockNineslice";
+import { MockPolygon } from "#test/testUtils/mocks/mocksContainer/mockPolygon";
+import { MockRectangle } from "#test/testUtils/mocks/mocksContainer/mockRectangle";
+import { MockSprite } from "#test/testUtils/mocks/mocksContainer/mockSprite";
+import { MockText } from "#test/testUtils/mocks/mocksContainer/mockText";
+import { MockTexture } from "#test/testUtils/mocks/mocksContainer/mockTexture";
+import { MockVideoGameObject } from "#test/testUtils/mocks/mockVideoGameObject";
 
 /**
  * Stub class for Phaser.Textures.TextureManager
  */
-export default class MockTextureManager {
+export class MockTextureManager {
   private textures: Map<string, any>;
   private scene;
   public add;

@@ -1,24 +1,24 @@
-import type BattleScene from "#app/battle-scene";
-import { TeleportingHijinksEncounter } from "#app/data/mystery-encounters/encounters/teleporting-hijinks-encounter";
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
+import type { BattleScene } from "#app/battle-scene";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { SpeciesId } from "#enums/species-id";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import GameManager from "#test/testUtils/gameManager";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { UiMode } from "#enums/ui-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
+import { UiMode } from "#enums/ui-mode";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { TeleportingHijinksEncounter } from "#mystery-encounters/teleporting-hijinks-encounter";
+import { CommandPhase } from "#phases/command-phase";
+import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
+import { GameManager } from "#test/testUtils/gameManager";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import i18next from "i18next";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

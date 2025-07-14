@@ -1,22 +1,23 @@
-import type { BattlerIndex } from "#enums/battler-index";
-import { getMoveTargets } from "#app/data/moves/move-utils";
-import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
 import Overrides from "#app/overrides";
-import type { CommandPhase } from "#app/phases/command-phase";
-import type { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { allMoves } from "#data/data-lists";
+import { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
-import { UiMode } from "#enums/ui-mode";
-import { getMovePosition } from "#test/testUtils/gameManagerUtils";
-import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
-import { vi } from "vitest";
-import { coerceArray } from "#app/utils/common";
 import { MoveUseMode } from "#enums/move-use-mode";
+import { UiMode } from "#enums/ui-mode";
+import type { Pokemon } from "#field/pokemon";
+import { getMoveTargets } from "#moves/move-utils";
+import { PokemonMove } from "#moves/pokemon-move";
+import type { CommandPhase } from "#phases/command-phase";
+import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
+import { coerceArray, toReadableString } from "#utils/common";
+import type { MockInstance } from "vitest";
+import { expect, vi } from "vitest";
 
 /**
- * Helper to handle a Pokemon's move
+ * Helper to handle using a Pokemon's moves.
  */
 export class MoveHelper extends GameManagerHelper {
   /**
@@ -49,13 +50,31 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Select the move to be used by the given Pokemon(-index). Triggers during the next {@linkcode CommandPhase}
-   * @param move - the move to use
-   * @param pkmIndex - the pokemon index. Relevant for double-battles only (defaults to 0)
-   * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves, or `null` if a manual call to `selectTarget()` is required
+   * Select a move _already in the player's moveset_ to be used during the next {@linkcode CommandPhase}.
+   * @param move - The {@linkcode MoveId} to use.
+   * @param pkmIndex - The {@linkcode BattlerIndex} of the player Pokemon using the move. Relevant for double battles only and defaults to {@linkcode BattlerIndex.PLAYER} if not specified.
+   * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves; should be omitted for multi-target moves.
+   * If set to `null`, will forgo normal target selection entirely (useful for UI tests).
+   * @remarks
+   * Will fail the current test if the move being selected is not in the user's moveset.
    */
-  public select(move: MoveId, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null) {
-    const movePosition = getMovePosition(this.game.scene, pkmIndex, move);
+  public select(
+    move: MoveId,
+    pkmIndex: BattlerIndex.PLAYER | BattlerIndex.PLAYER_2 = BattlerIndex.PLAYER,
+    targetIndex?: BattlerIndex | null,
+  ) {
+    const movePosition = this.getMovePosition(pkmIndex, move);
+    if (movePosition === -1) {
+      expect.fail(
+        `MoveHelper.select called with move '${toReadableString(MoveId[move])}' not in moveset!` +
+          `\nBattler Index: ${toReadableString(BattlerIndex[pkmIndex])}` +
+          `\nMoveset: [${this.game.scene
+            .getPlayerParty()
+            [pkmIndex].getMoveset()
+            .map(pm => toReadableString(MoveId[pm.moveId]))
+            .join(", ")}]`,
+      );
+    }
 
     this.game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       this.game.scene.ui.setMode(
@@ -77,14 +96,30 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Select the move to be used by the given Pokemon(-index), **which will also terastallize on this turn**.
-   * Triggers during the next {@linkcode CommandPhase}
-   * @param move - the move to use
-   * @param pkmIndex - the pokemon index. Relevant for double-battles only (defaults to 0)
-   * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves, or `null` if a manual call to `selectTarget()` is required
+   * Select a move _already in the player's moveset_ to be used during the next {@linkcode CommandPhase}, **which will also terastallize on this turn**.
+   * @param move - The {@linkcode MoveId} to use.
+   * @param pkmIndex - The {@linkcode BattlerIndex} of the player Pokemon using the move. Relevant for double battles only and defaults to {@linkcode BattlerIndex.PLAYER} if not specified.
+   * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves; should be omitted for multi-target moves.
+   * If set to `null`, will forgo normal target selection entirely (useful for UI tests)
    */
-  public selectWithTera(move: MoveId, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null) {
-    const movePosition = getMovePosition(this.game.scene, pkmIndex, move);
+  public selectWithTera(
+    move: MoveId,
+    pkmIndex: BattlerIndex.PLAYER | BattlerIndex.PLAYER_2 = BattlerIndex.PLAYER,
+    targetIndex?: BattlerIndex | null,
+  ) {
+    const movePosition = this.getMovePosition(pkmIndex, move);
+    if (movePosition === -1) {
+      expect.fail(
+        `MoveHelper.selectWithTera called with move '${toReadableString(MoveId[move])}' not in moveset!` +
+          `\nBattler Index: ${toReadableString(BattlerIndex[pkmIndex])}` +
+          `\nMoveset: [${this.game.scene
+            .getPlayerParty()
+            [pkmIndex].getMoveset()
+            .map(pm => toReadableString(MoveId[pm.moveId]))
+            .join(", ")}]`,
+      );
+    }
+
     this.game.scene.getPlayerParty()[pkmIndex].isTerastallized = false;
 
     this.game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
@@ -107,6 +142,15 @@ export class MoveHelper extends GameManagerHelper {
     }
   }
 
+  /** Helper function to get the index of the selected move in the selected part member's moveset. */
+  private getMovePosition(pokemonIndex: BattlerIndex.PLAYER | BattlerIndex.PLAYER_2, move: MoveId): number {
+    const playerPokemon = this.game.scene.getPlayerField()[pokemonIndex];
+    const moveset = playerPokemon.getMoveset();
+    const index = moveset.findIndex(m => m.moveId === move && m.ppUsed < m.getMovePp());
+    console.log(`Move position for ${MoveId[move]} (=${move}):`, index);
+    return index;
+  }
+
   /**
    * Modifies a player pokemon's moveset to contain only the selected move and then
    * selects it to be used during the next {@linkcode CommandPhase}.
@@ -116,14 +160,19 @@ export class MoveHelper extends GameManagerHelper {
    * Note: If you need to check for changes in the player's moveset as part of the test, it may be
    * best to use {@linkcode changeMoveset} and {@linkcode select} instead.
    * @param moveId - the move to use
-   * @param pkmIndex - the pokemon index. Relevant for double-battles only (defaults to 0)
-   * @param targetIndex - (optional) The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves, or `null` if a manual call to `selectTarget()` is required
-   * @param useTera - If `true`, the Pokemon also chooses to Terastallize. This does not require a Tera Orb. Default: `false`.
+   * @param pkmIndex - The {@linkcode BattlerIndex} of the player Pokemon using the move. Relevant for double battles only and defaults to {@linkcode BattlerIndex.PLAYER} if not specified.
+   * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves; should be omitted for multi-target moves.
+   * @param useTera - If `true`, the Pokemon will attempt to Terastallize even without a Tera Orb; default `false`.
    */
-  public use(moveId: MoveId, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null, useTera = false): void {
+  public use(
+    moveId: MoveId,
+    pkmIndex: BattlerIndex.PLAYER | BattlerIndex.PLAYER_2 = BattlerIndex.PLAYER,
+    targetIndex?: BattlerIndex,
+    useTera = false,
+  ): void {
     if ([Overrides.MOVESET_OVERRIDE].flat().length > 0) {
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
-      console.warn("Warning: `use` overwrites the Pokemon's moveset and disables the player moveset override!");
+      console.warn("Warning: `MoveHelper.use` overwriting player pokemon moveset and disabling moveset override!");
     }
 
     const pokemon = this.game.scene.getPlayerField()[pkmIndex];
@@ -257,5 +306,21 @@ export class MoveHelper extends GameManagerHelper {
      * force a move for each enemy in a double battle.
      */
     await this.game.phaseInterceptor.to("EnemyCommandPhase");
+  }
+
+  /**
+   * Force the move used by Metronome to be a specific move.
+   * @param move - The move to force metronome to use
+   * @param once - If `true`, uses {@linkcode MockInstance#mockReturnValueOnce} when mocking, else uses {@linkcode MockInstance#mockReturnValue}.
+   * @returns The spy that for Metronome that was mocked (Usually unneeded).
+   */
+  public forceMetronomeMove(move: MoveId, once = false): MockInstance {
+    const spy = vi.spyOn(allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0], "getMoveOverride");
+    if (once) {
+      spy.mockReturnValueOnce(move);
+    } else {
+      spy.mockReturnValue(move);
+    }
+    return spy;
   }
 }

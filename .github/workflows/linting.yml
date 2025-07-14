@@ -23,20 +23,22 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install Node.js dependencies
-        run: npm ci
-      
-      - name: Run ESLint
-        run: npm run eslint-ci
+        run: pnpm i
 
       - name: Lint with Biome
-        run: npm run biome-ci
+        run: pnpm biome-ci
 
       - name: Check dependencies with depcruise
-        run: npm run depcruise
+        run: pnpm depcruise

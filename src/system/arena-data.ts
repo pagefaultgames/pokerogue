@@ -1,11 +1,11 @@
-import { Arena } from "../field/arena";
-import type { ArenaTag } from "../data/arena-tag";
-import { loadArenaTag } from "../data/arena-tag";
+import type { ArenaTag } from "#data/arena-tag";
+import { loadArenaTag } from "#data/arena-tag";
+import { Terrain } from "#data/terrain";
+import { Weather } from "#data/weather";
 import type { BiomeId } from "#enums/biome-id";
-import { Weather } from "../data/weather";
-import { Terrain } from "#app/data/terrain";
+import { Arena } from "#field/arena";
 
-export default class ArenaData {
+export class ArenaData {
   public biome: BiomeId;
   public weather: Weather | null;
   public terrain: Terrain | null;
