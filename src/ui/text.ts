@@ -4,17 +4,10 @@ import { ModifierTier } from "#enums/modifier-tier";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import i18next from "#plugins/i18n";
+import type { TextStyleOptions } from "#types/ui";
 import type Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
-
-export interface TextStyleOptions {
-  scale: number;
-  styleOptions: Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig;
-  shadowColor: string;
-  shadowXpos: number;
-  shadowYpos: number;
-}
 
 export function addTextObject(
   x: number,
