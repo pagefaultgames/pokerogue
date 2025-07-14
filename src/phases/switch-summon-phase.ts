@@ -1,17 +1,17 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { applyPreSummonAbAttrs, applyPreSwitchOutAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { allMoves } from "#app/data/data-lists";
-import { getPokeballTintColor } from "#app/data/pokeball";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { TrainerSlot } from "#enums/trainer-slot";
-import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { SwitchEffectTransferModifier } from "#app/modifier/modifier";
+import { SubstituteTag } from "#data/battler-tags";
+import { allMoves } from "#data/data-lists";
+import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
+import { getPokeballTintColor } from "#data/pokeball";
 import { Command } from "#enums/command";
-import i18next from "i18next";
-import { SummonPhase } from "./summon-phase";
-import { SubstituteTag } from "#app/data/battler-tags";
 import { SwitchType } from "#enums/switch-type";
+import { TrainerSlot } from "#enums/trainer-slot";
+import type { Pokemon } from "#field/pokemon";
+import { SwitchEffectTransferModifier } from "#modifiers/modifier";
+import { SummonPhase } from "#phases/summon-phase";
+import i18next from "i18next";
 
 export class SwitchSummonPhase extends SummonPhase {
   public readonly phaseName: "SwitchSummonPhase" | "ReturnPhase" = "SwitchSummonPhase";
@@ -44,7 +44,7 @@ export class SwitchSummonPhase extends SummonPhase {
   preSummon(): void {
     if (!this.player) {
       if (this.slotIndex === -1) {
-        //@ts-ignore
+        //@ts-expect-error
         this.slotIndex = globalScene.currentBattle.trainer?.getNextSummonIndex(
           !this.fieldIndex ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
         ); // TODO: what would be the default trainer-slot fallback?
@@ -124,8 +124,8 @@ export class SwitchSummonPhase extends SummonPhase {
     switchedInPokemon.resetSummonData();
     switchedInPokemon.loadAssets(true);
 
-    applyPreSummonAbAttrs("PreSummonAbAttr", switchedInPokemon);
-    applyPreSwitchOutAbAttrs("PreSwitchOutAbAttr", this.lastPokemon);
+    applyAbAttrs("PreSummonAbAttr", { pokemon: switchedInPokemon });
+    applyAbAttrs("PreSwitchOutAbAttr", { pokemon: this.lastPokemon });
     if (!switchedInPokemon) {
       this.end();
       return;

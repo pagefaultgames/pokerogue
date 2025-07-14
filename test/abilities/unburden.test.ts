@@ -1,15 +1,15 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { StealHeldItemChanceAttr } from "#app/data/moves/move";
-import { allMoves } from "#app/data/data-lists";
-import type Pokemon from "#app/field/pokemon";
-import type { ContactHeldItemTransferChanceModifier } from "#app/modifier/modifier";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import type { Pokemon } from "#field/pokemon";
+import type { ContactHeldItemTransferChanceModifier } from "#modifiers/modifier";
+import { StealHeldItemChanceAttr } from "#moves/move";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -22,10 +22,7 @@ describe("Abilities - Unburden", () => {
    */
   function getHeldItemCount(pokemon: Pokemon): number {
     const stackCounts = pokemon.getHeldItems().map(m => m.getStackCount());
-    if (stackCounts.length) {
-      return stackCounts.reduce((a, b) => a + b);
-    }
-    return 0;
+    return stackCounts.reduce((a, b) => a + b, 0);
   }
 
   beforeAll(() => {
@@ -277,7 +274,7 @@ describe("Abilities - Unburden", () => {
     const initialTreeckoSpeed = treecko.getStat(Stat.SPD);
     const initialPurrloinSpeed = purrloin.getStat(Stat.SPD);
     const unburdenAttr = treecko.getAbilityAttrs("PostItemLostAbAttr")[0];
-    vi.spyOn(unburdenAttr, "applyPostItemLost");
+    vi.spyOn(unburdenAttr, "apply");
 
     // Player uses Baton Pass, which also passes the Baton item
     game.move.select(MoveId.BATON_PASS);
@@ -288,7 +285,7 @@ describe("Abilities - Unburden", () => {
     expect(getHeldItemCount(purrloin)).toBe(1);
     expect(treecko.getEffectiveStat(Stat.SPD)).toBe(initialTreeckoSpeed);
     expect(purrloin.getEffectiveStat(Stat.SPD)).toBe(initialPurrloinSpeed);
-    expect(unburdenAttr.applyPostItemLost).not.toHaveBeenCalled();
+    expect(unburdenAttr.apply).not.toHaveBeenCalled();
   });
 
   it("should not speed up a Pokemon after it loses the ability Unburden", async () => {

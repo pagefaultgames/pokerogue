@@ -1,14 +1,14 @@
+import { PostTurnResetStatusAbAttr } from "#abilities/ability";
+import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import type { Pokemon } from "#field/pokemon";
+import { GameManager } from "#test/testUtils/gameManager";
+import { isNullOrUndefined } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { isNullOrUndefined } from "#app/utils/common";
-import { allAbilities } from "#app/data/data-lists";
-import type Pokemon from "#app/field/pokemon";
-import { PostTurnResetStatusAbAttr } from "#app/data/abilities/ability";
 
 describe("Abilities - Healer", () => {
   let phaserGame: Phaser.Game;
@@ -42,7 +42,7 @@ describe("Abilities - Healer", () => {
   });
 
   it("should not queue a message phase for healing if the ally has fainted", async () => {
-    const abSpy = vi.spyOn(PostTurnResetStatusAbAttr.prototype, "canApplyPostTurn");
+    const abSpy = vi.spyOn(PostTurnResetStatusAbAttr.prototype, "canApply");
     game.override.moveset([MoveId.SPLASH, MoveId.LUNAR_DANCE]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
 

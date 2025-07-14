@@ -1,17 +1,16 @@
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { allMoves } from "#app/data/data-lists";
-import { AbilityId } from "#enums/ability-id";
-import { Stat } from "#app/enums/stat";
-import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { BypassSpeedChanceModifier } from "#app/modifier/modifier";
-import { Command } from "#enums/command";
-import { randSeedShuffle, BooleanHolder } from "#app/utils/common";
-import { FieldPhase } from "./field-phase";
-import { BattlerIndex } from "#enums/battler-index";
-import { TrickRoomTag } from "#app/data/arena-tag";
-import { SwitchType } from "#enums/switch-type";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
+import { TrickRoomTag } from "#data/arena-tag";
+import { allMoves } from "#data/data-lists";
+import { BattlerIndex } from "#enums/battler-index";
+import { Command } from "#enums/command";
+import { Stat } from "#enums/stat";
+import { SwitchType } from "#enums/switch-type";
+import type { Pokemon } from "#field/pokemon";
+import { BypassSpeedChanceModifier } from "#modifiers/modifier";
+import { PokemonMove } from "#moves/pokemon-move";
+import { FieldPhase } from "#phases/field-phase";
+import { BooleanHolder, randSeedShuffle } from "#utils/common";
 
 export class TurnStartPhase extends FieldPhase {
   public readonly phaseName = "TurnStartPhase";
@@ -66,8 +65,12 @@ export class TurnStartPhase extends FieldPhase {
     globalScene.getField(true).forEach(p => {
       const bypassSpeed = new BooleanHolder(false);
       const canCheckHeldItems = new BooleanHolder(true);
-      applyAbAttrs("BypassSpeedChanceAbAttr", p, null, false, bypassSpeed);
-      applyAbAttrs("PreventBypassSpeedChanceAbAttr", p, null, false, bypassSpeed, canCheckHeldItems);
+      applyAbAttrs("BypassSpeedChanceAbAttr", { pokemon: p, bypass: bypassSpeed });
+      applyAbAttrs("PreventBypassSpeedChanceAbAttr", {
+        pokemon: p,
+        bypass: bypassSpeed,
+        canCheckHeldItems: canCheckHeldItems,
+      });
       if (canCheckHeldItems.value) {
         globalScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
       }
@@ -209,27 +212,8 @@ export class TurnStartPhase extends FieldPhase {
           break;
         case Command.RUN:
           {
-            let runningPokemon = pokemon;
-            if (globalScene.currentBattle.double) {
-              const playerActivePokemon = field.filter(pokemon => {
-                if (pokemon) {
-                  return pokemon.isPlayer() && pokemon.isActive();
-                }
-                return;
-              });
-              // if only one pokemon is alive, use that one
-              if (playerActivePokemon.length > 1) {
-                // find which active pokemon has faster speed
-                const fasterPokemon =
-                  playerActivePokemon[0].getStat(Stat.SPD) > playerActivePokemon[1].getStat(Stat.SPD)
-                    ? playerActivePokemon[0]
-                    : playerActivePokemon[1];
-                // check if either active pokemon has the ability "Run Away"
-                const hasRunAway = playerActivePokemon.find(p => p.hasAbility(AbilityId.RUN_AWAY));
-                runningPokemon = hasRunAway !== undefined ? hasRunAway : fasterPokemon;
-              }
-            }
-            phaseManager.unshiftNew("AttemptRunPhase", runningPokemon.getFieldIndex());
+            // Running (like ball throwing) is a team action taking up both Pokemon's turns.
+            phaseManager.unshiftNew("AttemptRunPhase");
           }
           break;
       }

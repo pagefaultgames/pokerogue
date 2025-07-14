@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
+import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#enums/command";
 import { UiMode } from "#enums/ui-mode";
-import { PokemonPhase } from "./pokemon-phase";
-import i18next from "#app/plugins/i18n";
-import { allMoves } from "#app/data/data-lists";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import i18next from "#plugins/i18n";
 
 export class SelectTargetPhase extends PokemonPhase {
   public readonly phaseName = "SelectTargetPhase";

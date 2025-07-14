@@ -1,15 +1,14 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { allMoves } from "#app/data/data-lists";
-import { PokemonType } from "#enums/pokemon-type";
+import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
+import { allAbilities, allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
+import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
-import { allAbilities } from "#app/data/data-lists";
-import { toDmgValue } from "#app/utils/common";
 
 /**
  * Tests for abilities that change the type of normal moves to

@@ -1,34 +1,34 @@
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
+import type { BattleScene } from "#app/battle-scene";
+import * as BattleAnims from "#data/battle-anims";
+import { CustomPokemonData } from "#data/pokemon-data";
+import { AbilityId } from "#enums/ability-id";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BerryType } from "#enums/berry-type";
 import { BiomeId } from "#enums/biome-id";
+import { MoveId } from "#enums/move-id";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import * as BattleAnims from "#app/data/battle-anims";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { UiMode } from "#enums/ui-mode";
+import { BerryModifier, PokemonBaseStatTotalModifier } from "#modifiers/modifier";
+import { PokemonMove } from "#moves/pokemon-move";
+import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { TheStrongStuffEncounter } from "#mystery-encounters/the-strong-stuff-encounter";
+import { CommandPhase } from "#phases/command-phase";
+import { MovePhase } from "#phases/move-phase";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { MoveId } from "#enums/move-id";
-import type BattleScene from "#app/battle-scene";
-import { TheStrongStuffEncounter } from "#app/data/mystery-encounters/encounters/the-strong-stuff-encounter";
-import { Nature } from "#enums/nature";
-import { BerryType } from "#enums/berry-type";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { UiMode } from "#enums/ui-mode";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { BerryModifier, PokemonBaseStatTotalModifier } from "#app/modifier/modifier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { GameManager } from "#test/testUtils/gameManager";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MovePhase } from "#app/phases/move-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import { AbilityId } from "#enums/ability-id";
+import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/theStrongStuff";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];

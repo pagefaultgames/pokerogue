@@ -1,9 +1,9 @@
-import { TextStyle, addTextObject } from "./text";
-import type { UiMode } from "#enums/ui-mode";
-import UiHandler from "./ui-handler";
-import { WindowVariant, addWindow } from "./ui-theme";
-import type { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
+import type { Button } from "#enums/buttons";
+import type { UiMode } from "#enums/ui-mode";
+import { addTextObject, TextStyle } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { addWindow, WindowVariant } from "#ui/ui-theme";
 
 export interface ModalConfig {
   buttonActions: Function[];

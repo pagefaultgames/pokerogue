@@ -1,21 +1,21 @@
 import { globalScene } from "#app/global-scene";
-import { allAbilities } from "../data-lists";
-import { Nature } from "#enums/nature";
-import { pokemonFormChanges } from "#app/data/pokemon-forms";
-import { SpeciesFormChangeItemTrigger } from "../pokemon-forms/form-change-triggers";
-import { FormChangeItem } from "#enums/form-change-item";
-import { StatusEffect } from "#enums/status-effect";
-import { PokemonType } from "#enums/pokemon-type";
-import { WeatherType } from "#enums/weather-type";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
-import type { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
-import { coerceArray, isNullOrUndefined } from "#app/utils/common";
+import { allAbilities } from "#data/data-lists";
+import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
+import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { AbilityId } from "#enums/ability-id";
+import { FormChangeItem } from "#enums/form-change-item";
 import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Nature } from "#enums/nature";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
+import { WeatherType } from "#enums/weather-type";
+import type { PlayerPokemon } from "#field/pokemon";
+import { AttackTypeBoosterModifier } from "#modifiers/modifier";
+import type { AttackTypeBoosterModifierType } from "#modifiers/modifier-type";
+import { coerceArray, isNullOrUndefined } from "#utils/common";
 
 export interface EncounterRequirement {
   meetsRequirement(): boolean; // Boolean to see if a requirement is met

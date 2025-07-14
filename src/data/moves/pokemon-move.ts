@@ -1,8 +1,8 @@
-import type Pokemon from "#app/field/pokemon";
-import { toDmgValue } from "#app/utils/common";
+import { allMoves } from "#data/data-lists";
 import type { MoveId } from "#enums/move-id";
-import { allMoves } from "../data-lists";
-import type Move from "./move";
+import type { Pokemon } from "#field/pokemon";
+import type { Move } from "#moves/move";
+import { toDmgValue } from "#utils/common";
 
 /**
  * Wrapper class for the {@linkcode Move} class for Pokemon to interact with.
@@ -16,7 +16,7 @@ import type Move from "./move";
  * @see {@linkcode getMovePp} - returns amount of PP a move currently has.
  * @see {@linkcode getPpRatio} - returns the current PP amount / max PP amount.
  * @see {@linkcode getName} - returns name of {@linkcode Move}.
- **/
+ */
 export class PokemonMove {
   public moveId: MoveId;
   public ppUsed: number;
