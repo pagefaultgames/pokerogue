@@ -41,16 +41,15 @@ describe("AbilityId - Magic Guard", () => {
   it.each<{ name: string; move?: MoveId; enemyMove?: MoveId }>([
     { name: "Non-Volatile Status Conditions", enemyMove: MoveId.TOXIC },
     { name: "Volatile Status Conditions", enemyMove: MoveId.LEECH_SEED },
-    { name: "Crash Damage", move: MoveId.HIGH_JUMP_KICK },
+    { name: "Crash Damage", move: MoveId.HIGH_JUMP_KICK, enemyMove: MoveId.PROTECT }, // Protect triggers crash damage
     { name: "Variable Recoil Moves", move: MoveId.DOUBLE_EDGE },
     { name: "HP% Recoil Moves", move: MoveId.CHLOROBLAST },
   ])("should prevent damage from $name", async ({ move = MoveId.SPLASH, enemyMove = MoveId.SPLASH }) => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    // force a miss on HJK
-    vi.spyOn(allMoves[MoveId.HIGH_JUMP_KICK], "accuracy", "get").mockReturnValue(0);
 
     game.move.use(move);
     await game.move.forceEnemyMove(enemyMove);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     const magikarp = game.field.getPlayerPokemon();
@@ -94,11 +93,11 @@ describe("AbilityId - Magic Guard", () => {
 
     game.move.use(move);
     await game.move.forceEnemyMove(enemyMove);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]); // For confuse ray
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]); // Ensure confuse ray goes first
     await game.toEndOfTurn();
 
-    const leadPokemon = game.field.getPlayerPokemon();
-    expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
+    const magikarp = game.field.getPlayerPokemon();
+    expect(magikarp.hp).toBeLessThan(magikarp.getMaxHp());
   });
 
   it("should preserve toxic turn count and deal appropriate damage when disabled", async () => {
@@ -120,6 +119,7 @@ describe("AbilityId - Magic Guard", () => {
     await game.toNextTurn();
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
+
     expect(magikarp.status?.toxicTurnCount).toBe(4);
 
     game.move.use(MoveId.SPLASH);
@@ -142,12 +142,12 @@ describe("AbilityId - Magic Guard", () => {
     const magikarp = game.field.getPlayerPokemon();
     expect(magikarp.hp).toBe(magikarp.getMaxHp());
     expect(magikarp.status?.effect).toBe(StatusEffect.BURN);
+    expect(getStatusEffectCatchRateMultiplier(magikarp.status!.effect)).toBe(1.5);
 
+    // Heal blissey to full & use tackle again
     const blissey = game.field.getEnemyPokemon();
     const prevDmg = blissey.getInverseHp();
     blissey.hp = blissey.getMaxHp();
-
-    expect(getStatusEffectCatchRateMultiplier(magikarp.status!.effect)).toBe(1.5);
 
     game.move.use(MoveId.TACKLE);
     await game.toNextTurn();
