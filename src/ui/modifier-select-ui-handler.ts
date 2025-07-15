@@ -47,8 +47,6 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
   public options: ModifierOption[];
   public shopOptionsRows: ModifierOption[][];
 
-  private isAnimating;
-
   private cursorObj: Phaser.GameObjects.Image | null;
 
   constructor() {
@@ -182,7 +180,6 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     // DO NOT REMOVE: Fixes bug which allows action input to be processed before the UI is shown,
     // causing errors if reroll is selected
-    this.awaitingActionInput = false;
 
     this.getUi().clearText();
 
@@ -275,6 +272,8 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     globalScene.updateBiomeWaveText();
     globalScene.updateMoneyText();
 
+    console.log("Preventing action input!");
+    this.awaitingActionInput = false;
     let i = 0;
 
     // TODO: Replace with `Promise.withResolvers` when possible.
@@ -364,6 +363,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
           if (res) {
             updateCursorTarget();
           }
+          console.log("Allowing action to be processed once again");
           this.awaitingActionInput = true;
           this.onActionInput = args[2];
         });
@@ -707,7 +707,11 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       scale: 0.01,
       duration: 250,
       ease: "Cubic.easeIn",
-      onComplete: () => options.forEach(o => o.destroy()),
+      onComplete: () => {
+        options.forEach(o => {
+          o.destroy();
+        });
+      },
     });
 
     [
@@ -839,7 +843,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
           if (!globalScene) {
             return;
           }
-          const value = t.getValue();
+          const value = t.getValue()!;
           if (!bounce && value > lastValue) {
             globalScene.playSound("se/pb_bounce_1", {
               volume: 1 / ++bounceCount,
@@ -852,41 +856,35 @@ class ModifierOption extends Phaser.GameObjects.Container {
         },
       });
 
+      // TODO: replace the entire loop with a tween chain
       for (let u = 0; u < this.modifierTypeOption.upgradeCount; u++) {
-        const upgradeIndex = u;
-        globalScene.time.delayedCall(
-          remainingDuration - 2000 * (this.modifierTypeOption.upgradeCount - (upgradeIndex + 1 + upgradeCountOffset)),
-          () => {
-            globalScene.playSound("se/upgrade", {
-              rate: 1 + 0.25 * upgradeIndex,
-            });
-            this.pbTint.setPosition(this.pb.x, this.pb.y);
-            this.pbTint.setTintFill(0xffffff);
-            this.pbTint.setAlpha(0);
-            this.pbTint.setVisible(true);
-            globalScene.tweens.add({
+        globalScene.playSound("se/upgrade", {
+          rate: 1 + 0.25 * u,
+        });
+        this.pbTint.setPosition(this.pb.x, this.pb.y).setTintFill(0xffffff).setVisible(true);
+        globalScene.tweens.chain({
+          tweens: [
+            {
+              delay: remainingDuration - 2000 * (this.modifierTypeOption.upgradeCount - (u + 1 + upgradeCountOffset)),
               targets: this.pbTint,
-              alpha: 1,
+              alpha: { from: 0, to: 1 },
               duration: 1000,
               ease: "Sine.easeIn",
               onComplete: () => {
-                this.pb.setTexture(
-                  "pb",
-                  this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount + (upgradeIndex + 1)),
-                );
-                globalScene.tweens.add({
-                  targets: this.pbTint,
-                  alpha: 0,
-                  duration: 750,
-                  ease: "Sine.easeOut",
-                  onComplete: () => {
-                    this.pbTint.setVisible(false);
-                  },
-                });
+                this.pb.setTexture("pb", this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount + (u + 1)));
               },
-            });
-          },
-        );
+            },
+            {
+              targets: this.pbTint,
+              alpha: 0,
+              duration: 750,
+              ease: "Sine.easeOut",
+              onComplete: () => {
+                this.pbTint.setVisible(false);
+              },
+            },
+          ],
+        });
       }
     }
 
