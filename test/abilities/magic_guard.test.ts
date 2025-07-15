@@ -1,4 +1,3 @@
-import { allMoves } from "#data/data-lists";
 import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -10,7 +9,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/testUtils/gameManager";
 import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("AbilityId - Magic Guard", () => {
   let phaserGame: Phaser.Game;
