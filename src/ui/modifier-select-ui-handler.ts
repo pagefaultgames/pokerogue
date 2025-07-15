@@ -272,7 +272,6 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     globalScene.updateBiomeWaveText();
     globalScene.updateMoneyText();
 
-    console.log("Preventing action input!");
     this.awaitingActionInput = false;
     let i = 0;
 
@@ -363,7 +362,6 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
           if (res) {
             updateCursorTarget();
           }
-          console.log("Allowing action to be processed once again");
           this.awaitingActionInput = true;
           this.onActionInput = args[2];
         });
@@ -856,18 +854,21 @@ class ModifierOption extends Phaser.GameObjects.Container {
         },
       });
 
-      // TODO: replace the entire loop with a tween chain
+      // TODO: Figure out proper delay between chains and then convert this into a single tween chain
+      // rather than starting multiple tween chains.
       for (let u = 0; u < this.modifierTypeOption.upgradeCount; u++) {
-        globalScene.playSound("se/upgrade", {
-          rate: 1 + 0.25 * u,
-        });
-        this.pbTint.setPosition(this.pb.x, this.pb.y).setTintFill(0xffffff).setVisible(true);
         globalScene.tweens.chain({
           tweens: [
             {
               delay: remainingDuration - 2000 * (this.modifierTypeOption.upgradeCount - (u + 1 + upgradeCountOffset)),
+              onStart: () => {
+                globalScene.playSound("se/upgrade", {
+                  rate: 1 + 0.25 * u,
+                });
+                this.pbTint.setPosition(this.pb.x, this.pb.y).setTintFill(0xffffff).setVisible(true).setAlpha(0);
+              },
               targets: this.pbTint,
-              alpha: { from: 0, to: 1 },
+              alpha: 1,
               duration: 1000,
               ease: "Sine.easeIn",
               onComplete: () => {
