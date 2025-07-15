@@ -26,7 +26,8 @@ import { applyMoveAttrs } from "#moves/apply-attrs";
 import { frenzyMissFunc } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
 import { BattlePhase } from "#phases/battle-phase";
-import { enumValueToKey, NumberHolder } from "#utils/common";
+import { NumberHolder } from "#utils/common";
+import { enumValueToKey } from "#utils/enums";
 import i18next from "i18next";
 
 export class MovePhase extends BattlePhase {

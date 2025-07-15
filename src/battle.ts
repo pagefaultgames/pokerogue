@@ -26,7 +26,6 @@ import { MusicPreference } from "#system/settings";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { TurnMove } from "#types/turn-move";
 import {
-  getEnumValues,
   NumberHolder,
   randInt,
   randomString,
@@ -35,6 +34,7 @@ import {
   randSeedItem,
   shiftCharCodes,
 } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 
 export interface TurnCommand {
   command: Command;

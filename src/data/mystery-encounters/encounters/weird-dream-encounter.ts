@@ -305,6 +305,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         // One random pokemon will get its passive unlocked
         const passiveDisabledPokemon = globalScene.getPlayerParty().filter(p => !p.passive);
         if (passiveDisabledPokemon?.length > 0) {
+          // TODO: should this use `randSeedItem`?
           const enablePassiveMon = passiveDisabledPokemon[randSeedInt(passiveDisabledPokemon.length)];
           enablePassiveMon.passive = true;
           enablePassiveMon.updateInfo(true);
@@ -466,6 +467,7 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
   // One random pokemon will get its passive unlocked
   const passiveDisabledPokemon = globalScene.getPlayerParty().filter(p => !p.passive);
   if (passiveDisabledPokemon?.length > 0) {
+    // TODO: should this use `randSeedItem`?
     const enablePassiveMon = passiveDisabledPokemon[randSeedInt(passiveDisabledPokemon.length)];
     enablePassiveMon.passive = true;
     await enablePassiveMon.updateInfo(true);

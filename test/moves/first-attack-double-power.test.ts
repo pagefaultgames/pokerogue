@@ -5,6 +5,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
+import { TrainerType } from "#enums/trainer-type";
 import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -29,6 +30,7 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
       .ability(AbilityId.STURDY)
       .battleStyle("single")
       .battleType(BattleType.TRAINER)
+      .randomTrainer({ trainerType: TrainerType.YOUNGSTER })
       .criticalHits(false)
       .enemyLevel(100)
       .enemySpecies(SpeciesId.DRACOVISH)
