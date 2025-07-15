@@ -87,13 +87,12 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     this.inputs = [];
     this.formLabels = [];
     fieldsConfig.forEach((config, f) => {
-      // The Pokédex Scan Window has a much bigger width, so there is currently no need to shorten the label
+      // The Pokédex Scan Window uses width `300` instead of `160` like the other forms
+      // Therefore, the label does not need to be shortened
       const label = addTextObject(
         10,
         (hasTitle ? 31 : 5) + 20 * f,
-        config.label.length > 25 && this.constructor.name !== "PokedexScanUiHandler"
-          ? config.label.slice(0, 20) + "..."
-          : config.label,
+        config.label.length > 25 && this.getWidth() < 200 ? config.label.slice(0, 20) + "..." : config.label,
         TextStyle.TOOLTIP_CONTENT,
       );
       label.name = "formLabel" + f;
