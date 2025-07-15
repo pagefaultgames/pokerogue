@@ -47,6 +47,8 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
   public options: ModifierOption[];
   public shopOptionsRows: ModifierOption[][];
 
+  private isAnimating;
+
   private cursorObj: Phaser.GameObjects.Image | null;
 
   constructor() {
@@ -178,6 +180,10 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     super.show(args);
 
+    // DO NOT REMOVE: Fixes bug which allows action input to be processed before the UI is shown,
+    // causing errors if reroll is selected
+    this.awaitingActionInput = false;
+
     this.getUi().clearText();
 
     this.player = args[0];
@@ -271,6 +277,9 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     let i = 0;
 
+    // TODO: Replace with `Promise.withResolvers` when possible.
+    let tweenResolve: () => void;
+    const tweenPromise = new Promise<void>(resolve => (tweenResolve = resolve));
     globalScene.tweens.addCounter({
       ease: "Sine.easeIn",
       duration: 1250,
@@ -286,67 +295,77 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
           i++;
         }
       },
+      onComplete: () => {
+        tweenResolve();
+      },
     });
 
-    globalScene.time.delayedCall(1000 + maxUpgradeCount * 2000, () => {
-      for (const shopOption of this.shopOptionsRows.flat()) {
-        shopOption.show(0, 0);
-      }
+    let shopResolve: () => void;
+    const shopPromise = new Promise<void>(resolve => (shopResolve = resolve));
+    tweenPromise.then(() => {
+      globalScene.time.delayedCall(1000, () => {
+        for (const shopOption of this.shopOptionsRows.flat()) {
+          shopOption.show(0, 0);
+        }
+        shopResolve();
+      });
     });
 
-    globalScene.time.delayedCall(4000 + maxUpgradeCount * 2000, () => {
-      if (partyHasHeldItem) {
-        this.transferButtonContainer.setAlpha(0);
-        this.transferButtonContainer.setVisible(true);
+    shopPromise.then(() => {
+      globalScene.time.delayedCall(500, () => {
+        if (partyHasHeldItem) {
+          this.transferButtonContainer.setAlpha(0);
+          this.transferButtonContainer.setVisible(true);
+          globalScene.tweens.add({
+            targets: this.transferButtonContainer,
+            alpha: 1,
+            duration: 250,
+          });
+        }
+
+        this.rerollButtonContainer.setAlpha(0);
+        this.checkButtonContainer.setAlpha(0);
+        this.lockRarityButtonContainer.setAlpha(0);
+        this.continueButtonContainer.setAlpha(0);
+        this.rerollButtonContainer.setVisible(true);
+        this.checkButtonContainer.setVisible(true);
+        this.continueButtonContainer.setVisible(this.rerollCost < 0);
+        this.lockRarityButtonContainer.setVisible(canLockRarities);
+
         globalScene.tweens.add({
-          targets: this.transferButtonContainer,
+          targets: [this.checkButtonContainer, this.continueButtonContainer],
           alpha: 1,
           duration: 250,
         });
-      }
 
-      this.rerollButtonContainer.setAlpha(0);
-      this.checkButtonContainer.setAlpha(0);
-      this.lockRarityButtonContainer.setAlpha(0);
-      this.continueButtonContainer.setAlpha(0);
-      this.rerollButtonContainer.setVisible(true);
-      this.checkButtonContainer.setVisible(true);
-      this.continueButtonContainer.setVisible(this.rerollCost < 0);
-      this.lockRarityButtonContainer.setVisible(canLockRarities);
+        globalScene.tweens.add({
+          targets: [this.rerollButtonContainer, this.lockRarityButtonContainer],
+          alpha: this.rerollCost < 0 ? 0.5 : 1,
+          duration: 250,
+        });
 
-      globalScene.tweens.add({
-        targets: [this.checkButtonContainer, this.continueButtonContainer],
-        alpha: 1,
-        duration: 250,
-      });
+        const updateCursorTarget = () => {
+          if (globalScene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
+            this.setRowCursor(0);
+            this.setCursor(2);
+          } else if (globalScene.shopCursorTarget === ShopCursorTarget.SHOP && globalScene.gameMode.hasNoShop) {
+            this.setRowCursor(ShopCursorTarget.REWARDS);
+            this.setCursor(0);
+          } else {
+            this.setRowCursor(globalScene.shopCursorTarget);
+            this.setCursor(0);
+          }
+        };
 
-      globalScene.tweens.add({
-        targets: [this.rerollButtonContainer, this.lockRarityButtonContainer],
-        alpha: this.rerollCost < 0 ? 0.5 : 1,
-        duration: 250,
-      });
+        updateCursorTarget();
 
-      const updateCursorTarget = () => {
-        if (globalScene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
-          this.setRowCursor(0);
-          this.setCursor(2);
-        } else if (globalScene.shopCursorTarget === ShopCursorTarget.SHOP && globalScene.gameMode.hasNoShop) {
-          this.setRowCursor(ShopCursorTarget.REWARDS);
-          this.setCursor(0);
-        } else {
-          this.setRowCursor(globalScene.shopCursorTarget);
-          this.setCursor(0);
-        }
-      };
-
-      updateCursorTarget();
-
-      handleTutorial(Tutorial.Select_Item).then(res => {
-        if (res) {
-          updateCursorTarget();
-        }
-        this.awaitingActionInput = true;
-        this.onActionInput = args[2];
+        handleTutorial(Tutorial.Select_Item).then(res => {
+          if (res) {
+            updateCursorTarget();
+          }
+          this.awaitingActionInput = true;
+          this.onActionInput = args[2];
+        });
       });
     });
 
