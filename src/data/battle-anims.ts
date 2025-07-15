@@ -7,15 +7,8 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { AnimBlendType, AnimFocus, AnimFrameTarget, ChargeAnim, CommonAnim } from "#enums/move-anims-common";
 import { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
-import {
-  animationFileName,
-  coerceArray,
-  getEnumKeys,
-  getEnumValues,
-  getFrameMs,
-  isNullOrUndefined,
-  type nil,
-} from "#utils/common";
+import { animationFileName, coerceArray, getFrameMs, isNullOrUndefined, type nil } from "#utils/common";
+import { getEnumKeys, getEnumValues } from "#utils/enums";
 import Phaser from "phaser";
 
 export class AnimConfig {
@@ -1406,10 +1399,10 @@ export class EncounterBattleAnim extends BattleAnim {
 export async function populateAnims() {
   const commonAnimNames = getEnumKeys(CommonAnim).map(k => k.toLowerCase());
   const commonAnimMatchNames = commonAnimNames.map(k => k.replace(/_/g, ""));
-  const commonAnimIds = getEnumValues(CommonAnim) as CommonAnim[];
+  const commonAnimIds = getEnumValues(CommonAnim);
   const chargeAnimNames = getEnumKeys(ChargeAnim).map(k => k.toLowerCase());
   const chargeAnimMatchNames = chargeAnimNames.map(k => k.replace(/_/g, " "));
-  const chargeAnimIds = getEnumValues(ChargeAnim) as ChargeAnim[];
+  const chargeAnimIds = getEnumValues(ChargeAnim);
   const commonNamePattern = /name: (?:Common:)?(Opp )?(.*)/;
   const moveNameToId = {};
   for (const move of getEnumValues(MoveId).slice(1)) {

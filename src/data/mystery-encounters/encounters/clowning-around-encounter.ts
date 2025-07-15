@@ -138,6 +138,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
     clownConfig.partyTemplateFunc = null; // Overrides party template func if it exists
 
     // Generate random ability for Blacephalon from pool
+    // TODO: should this use `randSeedItem`?
     const ability = RANDOM_ABILITY_POOL[randSeedInt(RANDOM_ABILITY_POOL.length)];
     encounter.setDialogueToken("ability", allAbilities[ability].name);
     encounter.misc = { ability };

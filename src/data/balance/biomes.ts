@@ -5,7 +5,8 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
-import { getEnumValues, randSeedInt } from "#utils/common";
+import { randSeedInt } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 
 export function getBiomeName(biome: BiomeId | -1) {
@@ -7707,10 +7708,10 @@ export function initBiomes() {
 
   const traverseBiome = (biome: BiomeId, depth: number) => {
     if (biome === BiomeId.END) {
-      const biomeList = Object.keys(BiomeId).filter(key => !Number.isNaN(Number(key)));
+      const biomeList = getEnumValues(BiomeId)
       biomeList.pop(); // Removes BiomeId.END from the list
       const randIndex = randSeedInt(biomeList.length, 1); // Will never be BiomeId.TOWN
-      biome = BiomeId[biomeList[randIndex]];
+      biome = biomeList[randIndex];
     }
     const linkedBiomes: (BiomeId | [ BiomeId, number ])[] = Array.isArray(biomeLinks[biome])
       ? biomeLinks[biome] as (BiomeId | [ BiomeId, number ])[]
