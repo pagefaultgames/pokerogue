@@ -2560,6 +2560,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       moveAtkScoreLength++;
     }
     // Get average attack score of all damaging moves (|| 1 prevents division by zero))
+    // TODO: Averaging the attack score is excessively simplistic, and doesn't reflect the AI's move selection logic
+    // e.g. if the mon has one 4x effective move and three 0.5x effective moves, this score would be ~1.375
+    // instead of
+    // That is, this atkScore logic does not reflect the AI's move selection logic.
     atkScore /= moveAtkScoreLength || 1;
     /**
      * Based on this Pokemon's HP ratio compared to that of the opponent.
@@ -2568,6 +2572,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
      */
     const hpRatio = this.getHpRatio();
     const oppHpRatio = opponent.getHpRatio();
+    // TODO: use better logic for predicting whether the pokemon "is dying"
+    // E.g., perhaps check if it would faint if the opponent were to use the same move it just used
+    // (twice if the user is slower)
     const isDying = hpRatio <= 0.2;
     let hpDiffRatio = hpRatio + (1 - oppHpRatio);
     if (isDying && this.isActive(true)) {
