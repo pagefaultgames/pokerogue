@@ -178,9 +178,6 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     super.show(args);
 
-    // DO NOT REMOVE: Fixes bug which allows action input to be processed before the UI is shown,
-    // causing errors if reroll is selected
-
     this.getUi().clearText();
 
     this.player = args[0];
@@ -272,17 +269,21 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     globalScene.updateBiomeWaveText();
     globalScene.updateMoneyText();
 
+    // DO NOT REMOVE: Fixes bug which allows action input to be processed before the UI is shown,
+    // causing errors if reroll is selected
     this.awaitingActionInput = false;
-    let i = 0;
 
     // TODO: Replace with `Promise.withResolvers` when possible.
     let tweenResolve: () => void;
     const tweenPromise = new Promise<void>(resolve => (tweenResolve = resolve));
+    let i = 0;
+
+    // TODO: Rework this bespoke logic for animating the modifier options.
     globalScene.tweens.addCounter({
       ease: "Sine.easeIn",
       duration: 1250,
       onUpdate: t => {
-        // The bang here is safe, as `getValue()` only returns undefined if the tween has been destroyed (which obviously isn't the case inside onUpdate)
+        // The bang here is safe, as `getValue()` only returns null if the tween has been destroyed (which obviously isn't the case inside onUpdate)
         const value = t.getValue()!;
         const index = Math.floor(value * typeOptions.length);
         if (index > i && index <= typeOptions.length) {
