@@ -1,8 +1,8 @@
+import { pokerogueApi } from "#api/pokerogue-api";
 import { MoneyFormat } from "#enums/money-format";
 import { MoveId } from "#enums/move-id";
+import type { Variant } from "#sprites/variant";
 import i18next from "i18next";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import type { Variant } from "#app/sprites/variant";
 
 export type nil = null | undefined;
 
@@ -341,6 +341,10 @@ export class NumberHolder {
   constructor(value: number) {
     this.value = value;
   }
+
+  valueOf(): number {
+    return this.value;
+  }
 }
 
 export class FixedInt {
@@ -348,6 +352,10 @@ export class FixedInt {
 
   constructor(value: number) {
     this.value = value;
+  }
+
+  [Symbol.toPrimitive](_hint: string): number {
+    return this.value;
   }
 }
 

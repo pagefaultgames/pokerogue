@@ -1,28 +1,28 @@
-import { GachaType } from "#enums/gacha-types";
-import { getBiomeHasProps } from "#app/field/arena";
-import CacheBustedLoaderPlugin from "#app/plugins/cache-busted-loader-plugin";
+import { initAbilities } from "#abilities/ability";
+import { timedEventManager } from "#app/global-event-manager";
 import { SceneBase } from "#app/scene-base";
-import { WindowVariant, getWindowVariantSuffix } from "#app/ui/ui-theme";
 import { isMobile } from "#app/touch-controls";
-import { localPing, getEnumValues, hasAllLocalizedSprites, getEnumKeys } from "#app/utils/common";
-import { initPokemonPrevolutions, initPokemonStarters } from "#app/data/balance/pokemon-evolutions";
-import { initBiomes } from "#app/data/balance/biomes";
-import { initEggMoves } from "#app/data/balance/egg-moves";
-import { initPokemonForms } from "#app/data/pokemon-forms";
-import { initSpecies } from "#app/data/pokemon-species";
-import { initMoves } from "#app/data/moves/move";
-import { initAbilities } from "#app/data/abilities/ability";
-import { initAchievements } from "#app/system/achv";
-import { initTrainerTypeDialogue } from "#app/data/dialogue";
-import { initChallenges } from "#app/data/challenge";
-import i18next from "i18next";
-import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
-import { initVouchers } from "#app/system/voucher";
+import { initBiomes } from "#balance/biomes";
+import { initEggMoves } from "#balance/egg-moves";
+import { initPokemonPrevolutions, initPokemonStarters } from "#balance/pokemon-evolutions";
+import { initChallenges } from "#data/challenge";
+import { initTrainerTypeDialogue } from "#data/dialogue";
+import { initPokemonForms } from "#data/pokemon-forms";
+import { initSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
-import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
-import { timedEventManager } from "./global-event-manager";
-import { initModifierPools } from "./modifier/init-modifier-pools";
-import { initModifierTypes } from "./modifier/modifier-type";
+import { GachaType } from "#enums/gacha-types";
+import { getBiomeHasProps } from "#field/arena";
+import { initModifierPools } from "#modifiers/init-modifier-pools";
+import { initModifierTypes } from "#modifiers/modifier-type";
+import { initMoves } from "#moves/move";
+import { initMysteryEncounters } from "#mystery-encounters/mystery-encounters";
+import { CacheBustedLoaderPlugin } from "#plugins/cache-busted-loader-plugin";
+import { initAchievements } from "#system/achv";
+import { initVouchers } from "#system/voucher";
+import { initStatsKeys } from "#ui/game-stats-ui-handler";
+import { getWindowVariantSuffix, WindowVariant } from "#ui/ui-theme";
+import { getEnumValues, hasAllLocalizedSprites, localPing } from "#utils/common";
+import i18next from "i18next";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -270,7 +270,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("egg_icons", "egg");
     this.loadAtlas("egg_shard", "egg");
     this.loadAtlas("egg_lightrays", "egg");
-    for (const gt of getEnumKeys(GachaType)) {
+    for (const gt of Object.keys(GachaType)) {
       const key = gt.toLowerCase();
       this.loadImage(`gacha_${key}`, "egg");
       this.loadAtlas(`gacha_underlay_${key}`, "egg");

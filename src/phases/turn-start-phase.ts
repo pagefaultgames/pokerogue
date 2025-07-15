@@ -1,17 +1,17 @@
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { allMoves } from "#app/data/data-lists";
-import { Stat } from "#app/enums/stat";
-import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { BypassSpeedChanceModifier } from "#app/modifier/modifier";
-import { Command } from "#enums/command";
-import { randSeedShuffle, BooleanHolder } from "#app/utils/common";
-import { FieldPhase } from "./field-phase";
-import { BattlerIndex } from "#enums/battler-index";
-import { TrickRoomTag } from "#app/data/arena-tag";
-import { SwitchType } from "#enums/switch-type";
-import { globalScene } from "#app/global-scene";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import type { TurnCommand } from "#app/battle";
+import { globalScene } from "#app/global-scene";
+import { TrickRoomTag } from "#data/arena-tag";
+import { allMoves } from "#data/data-lists";
+import { BattlerIndex } from "#enums/battler-index";
+import { Command } from "#enums/command";
+import { Stat } from "#enums/stat";
+import { SwitchType } from "#enums/switch-type";
+import type { Pokemon } from "#field/pokemon";
+import { BypassSpeedChanceModifier } from "#modifiers/modifier";
+import { PokemonMove } from "#moves/pokemon-move";
+import { FieldPhase } from "#phases/field-phase";
+import { BooleanHolder, randSeedShuffle } from "#utils/common";
 
 export class TurnStartPhase extends FieldPhase {
   public readonly phaseName = "TurnStartPhase";

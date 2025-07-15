@@ -1,8 +1,8 @@
-import { coerceArray } from "#app/utils/common";
+import { coerceArray } from "#utils/common";
 
 let manifest: object;
 
-export default class CacheBustedLoaderPlugin extends Phaser.Loader.LoaderPlugin {
+export class CacheBustedLoaderPlugin extends Phaser.Loader.LoaderPlugin {
   get manifest() {
     return manifest;
   }

@@ -1,6 +1,6 @@
-import { getSplashMessages } from "#app/data/splash-messages";
-import { describe, expect, it, vi, afterEach, beforeEach } from "vitest";
 import * as Constants from "#app/constants";
+import { getSplashMessages } from "#data/splash-messages";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Data - Splash Messages", () => {
   it("should contain at least 15 splash messages", () => {

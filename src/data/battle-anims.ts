@@ -1,22 +1,22 @@
 import { globalScene } from "#app/global-scene";
-import { allMoves } from "#app/data/data-lists";
+import { allMoves } from "#data/data-lists";
+import type { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { EncounterAnim } from "#enums/encounter-anims";
 import { MoveFlags } from "#enums/MoveFlags";
-import type Pokemon from "#app/field/pokemon";
+import { AnimBlendType, AnimFocus, AnimFrameTarget, ChargeAnim, CommonAnim } from "#enums/move-anims-common";
+import { MoveId } from "#enums/move-id";
+import type { Pokemon } from "#field/pokemon";
 import {
-  type nil,
-  getFrameMs,
-  getEnumKeys,
-  getEnumValues,
   animationFileName,
   coerceArray,
+  getEnumKeys,
+  getEnumValues,
+  getFrameMs,
   isNullOrUndefined,
-} from "#app/utils/common";
-import type { BattlerIndex } from "#enums/battler-index";
-import { MoveId } from "#enums/move-id";
+  type nil,
+} from "#utils/common";
 import Phaser from "phaser";
-import { EncounterAnim } from "#enums/encounter-anims";
-import { AnimBlendType, AnimFrameTarget, AnimFocus, ChargeAnim, CommonAnim } from "#enums/move-anims-common";
-import { BattlerTagType } from "#enums/battler-tag-type";
 
 export class AnimConfig {
   public id: number;
@@ -879,6 +879,10 @@ export abstract class BattleAnim {
       }
       targetSprite.pipelineData["tone"] = [0.0, 0.0, 0.0, 0.0];
       targetSprite.setAngle(0);
+
+      // Remove animation event listeners to enable sprites to be freed.
+      userSprite.off("animationupdate");
+      targetSprite.off("animationupdate");
 
       /**
        * This and `targetSpriteToShow` are used to restore context lost

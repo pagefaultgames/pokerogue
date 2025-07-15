@@ -1,11 +1,11 @@
-import type { InputFieldConfig } from "./form-modal-ui-handler";
-import { FormModalUiHandler } from "./form-modal-ui-handler";
-import type { ModalConfig } from "./modal-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { TextStyle, addTextObject } from "./text";
-import i18next from "i18next";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
+import { UiMode } from "#enums/ui-mode";
+import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
+import type { ModalConfig } from "#ui/modal-ui-handler";
+import { addTextObject, TextStyle } from "#ui/text";
+import i18next from "i18next";
 
 interface LanguageSetting {
   inputFieldFontSize?: string;
@@ -20,7 +20,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   },
 };
 
-export default class RegistrationFormUiHandler extends FormModalUiHandler {
+export class RegistrationFormUiHandler extends FormModalUiHandler {
   getModalTitle(_config?: ModalConfig): string {
     return i18next.t("menu:register");
   }

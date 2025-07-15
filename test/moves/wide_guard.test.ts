@@ -1,12 +1,12 @@
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
-import { SpeciesId } from "#enums/species-id";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { CommandPhase } from "#app/phases/command-phase";
+import { BerryPhase } from "#phases/berry-phase";
+import { CommandPhase } from "#phases/command-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("Moves - Wide Guard", () => {
   let phaserGame: Phaser.Game;

@@ -1,8 +1,8 @@
-import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
-import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
-import { PERMANENT_STATS, getStatKey } from "#app/enums/stat";
-import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
+import { getStatKey, PERMANENT_STATS } from "#enums/stat";
+import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#ui/text";
+import i18next from "i18next";
+import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
 const ivChartSize = 24;
 const ivChartStatCoordMultipliers = [
@@ -86,7 +86,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
           4 +
           (this.showDiff ? 0 : ivChartLabelyOffset[s]),
         i18next.t(getStatKey(s)),
-        TextStyle.TOOLTIP_CONTENT,
+        TextStyle.STATS_HEXAGON,
       );
       statLabel.setOrigin(0.5);
 
@@ -94,7 +94,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         statLabel.x - (this.showDiff ? 0 : ivLabelOffset[s]),
         statLabel.y + 8,
         "0",
-        TextStyle.TOOLTIP_CONTENT,
+        TextStyle.STATS_HEXAGON,
       );
       this.ivStatValueTexts[s].setOrigin(0.5);
 
