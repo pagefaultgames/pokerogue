@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
+import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
 import { SwitchType } from "#enums/switch-type";
-import { SwitchSummonPhase } from "./switch-summon-phase";
+import { SwitchSummonPhase } from "#phases/switch-summon-phase";
 
 export class ReturnPhase extends SwitchSummonPhase {
   public readonly phaseName = "ReturnPhase";

@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { fixedInt, coerceArray } from "#app/utils/common";
+import { coerceArray, fixedInt } from "#utils/common";
 
 export enum PokemonIconAnimMode {
   NONE,
@@ -9,7 +9,7 @@ export enum PokemonIconAnimMode {
 
 type PokemonIcon = Phaser.GameObjects.Container | Phaser.GameObjects.Sprite;
 
-export default class PokemonIconAnimHandler {
+export class PokemonIconAnimHandler {
   private icons: Map<PokemonIcon, PokemonIconAnimMode>;
   private toggled: boolean;
 

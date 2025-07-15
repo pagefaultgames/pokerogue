@@ -1,11 +1,10 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/testUtils/gameManager";
-import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { BattleType } from "#enums/battle-type";
+import { Stat } from "#enums/stat";
+import { GameManager } from "#test/testUtils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Intimidate", () => {
   let phaserGame: Phaser.Game;
@@ -24,6 +23,7 @@ describe("Abilities - Intimidate", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
+      .criticalHits(false)
       .battleStyle("single")
       .enemySpecies(SpeciesId.RATTATA)
       .enemyAbility(AbilityId.INTIMIDATE)
@@ -55,8 +55,8 @@ describe("Abilities - Intimidate", () => {
   });
 
   it("should not trigger on switching moves used by wild Pokemon", async () => {
-    game.override.enemyMoveset(MoveId.VOLT_SWITCH).battleType(BattleType.WILD);
-    await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
+    game.override.enemyMoveset(MoveId.VOLT_SWITCH);
+    await game.classicMode.startBattle([SpeciesId.VENUSAUR]);
 
     const player = game.field.getPlayerPokemon();
     expect(player.getStatStage(Stat.ATK)).toBe(-1);
@@ -69,7 +69,7 @@ describe("Abilities - Intimidate", () => {
   });
 
   it("should trigger on moves that switch user/target out during trainer battles", async () => {
-    game.override.battleType(BattleType.TRAINER).startingWave(50);
+    game.override.startingWave(5).enemyLevel(100);
     await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
 
     const player = game.field.getPlayerPokemon();

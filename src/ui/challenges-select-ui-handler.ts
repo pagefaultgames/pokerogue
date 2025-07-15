@@ -1,20 +1,20 @@
-import { TextStyle, addTextObject } from "./text";
-import type { UiMode } from "#enums/ui-mode";
-import UiHandler from "./ui-handler";
-import { addWindow } from "./ui-theme";
-import { Button } from "#enums/buttons";
-import i18next from "i18next";
-import type { Challenge } from "#app/data/challenge";
-import { getLocalizedSpriteKey } from "#app/utils/common";
-import { Challenges } from "#app/enums/challenges";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { Color, ShadowColor } from "#app/enums/color";
 import { globalScene } from "#app/global-scene";
+import type { Challenge } from "#data/challenge";
+import { Button } from "#enums/buttons";
+import { Challenges } from "#enums/challenges";
+import { Color, ShadowColor } from "#enums/color";
+import type { UiMode } from "#enums/ui-mode";
+import { addTextObject, TextStyle } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { addWindow } from "#ui/ui-theme";
+import { getLocalizedSpriteKey } from "#utils/common";
+import i18next from "i18next";
+import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 /**
  * Handles all the UI for choosing optional challenges.
  */
-export default class GameChallengesUiHandler extends UiHandler {
+export class GameChallengesUiHandler extends UiHandler {
   private challengesContainer: Phaser.GameObjects.Container;
   private valuesContainer: Phaser.GameObjects.Container;
 

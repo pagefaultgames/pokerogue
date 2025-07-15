@@ -1,11 +1,11 @@
+import { globalScene } from "#app/global-scene";
 import { EggTier } from "#enums/egg-type";
+import { ModifierTier } from "#enums/modifier-tier";
 import { UiTheme } from "#enums/ui-theme";
+import i18next from "#plugins/i18n";
 import type Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
-import { globalScene } from "#app/global-scene";
-import { ModifierTier } from "../enums/modifier-tier";
-import i18next from "#app/plugins/i18n";
 
 export enum TextStyle {
   MESSAGE,
@@ -319,10 +319,14 @@ export function getTextStyleOptions(
     case TextStyle.MESSAGE:
       styleOptions.fontSize = defaultFontSize;
       break;
-    case TextStyle.HEADER_LABEL:
-      styleOptions.fontSize = defaultFontSize;
-      styleOptions.padding = { top: 6 };
+    case TextStyle.HEADER_LABEL: {
+      switch (lang) {
+        case "ja":
+          styleOptions.padding = { top: 6 };
+          break;
+      }
       break;
+    }
     case TextStyle.SETTINGS_VALUE:
     case TextStyle.SETTINGS_LABEL: {
       shadowXpos = 3;

@@ -1,24 +1,23 @@
 import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import { addTextObject, TextStyle } from "./text";
-import { getTypeDamageMultiplierColor } from "#app/data/type";
-import { PokemonType } from "#enums/pokemon-type";
-import { Command } from "#enums/command";
-import { UiMode } from "#enums/ui-mode";
-import UiHandler from "./ui-handler";
-import { getLocalizedSpriteKey, fixedInt, padInt } from "#app/utils/common";
-import { MoveCategory } from "#enums/MoveCategory";
-import i18next from "i18next";
-import { Button } from "#enums/buttons";
-import type { EnemyPokemon } from "#app/field/pokemon";
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
-import type Pokemon from "#app/field/pokemon";
-import type { CommandPhase } from "#app/phases/command-phase";
-import MoveInfoOverlay from "./move-info-overlay";
+import { getTypeDamageMultiplierColor } from "#data/type";
 import { BattleType } from "#enums/battle-type";
+import { Button } from "#enums/buttons";
+import { Command } from "#enums/command";
+import { MoveCategory } from "#enums/MoveCategory";
 import { MoveUseMode } from "#enums/move-use-mode";
+import { PokemonType } from "#enums/pokemon-type";
+import { UiMode } from "#enums/ui-mode";
+import type { EnemyPokemon, Pokemon } from "#field/pokemon";
+import type { PokemonMove } from "#moves/pokemon-move";
+import type { CommandPhase } from "#phases/command-phase";
+import { MoveInfoOverlay } from "#ui/move-info-overlay";
+import { addTextObject, TextStyle } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { fixedInt, getLocalizedSpriteKey, padInt } from "#utils/common";
+import i18next from "i18next";
 
-export default class FightUiHandler extends UiHandler implements InfoToggle {
+export class FightUiHandler extends UiHandler implements InfoToggle {
   public static readonly MOVES_CONTAINER_NAME = "moves";
 
   private movesContainer: Phaser.GameObjects.Container;
@@ -135,6 +134,8 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     const pokemon = (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getPokemon();
     if (pokemon.tempSummonData.turnCount <= 1) {
       this.setCursor(0);
+    } else {
+      this.setCursor(this.fieldIndex ? this.cursor2 : this.cursor);
     }
     this.displayMoves();
     this.toggleInfo(false); // in case cancel was pressed while info toggle is active

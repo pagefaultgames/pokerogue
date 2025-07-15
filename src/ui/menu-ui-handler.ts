@@ -1,23 +1,23 @@
-import { bypassLogin } from "#app/global-vars/bypass-login";
+import { pokerogueApi } from "#api/pokerogue-api";
+import { loggedInUser, updateUserInfo } from "#app/account";
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
-import { UiMode } from "#enums/ui-mode";
-import { isLocal, fixedInt, sessionIdKey } from "#app/utils/common";
-import { getEnumValues } from "#app/utils/enums";
-import { isBeta } from "#app/utils/utility-vars";
-import { getCookie } from "#app/utils/cookies";
-import { addWindow, WindowVariant } from "./ui-theme";
-import MessageUiHandler from "./message-ui-handler";
-import type { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui-handler";
-import { Tutorial, handleTutorial } from "../tutorial";
-import { loggedInUser, updateUserInfo } from "../account";
-import i18next from "i18next";
+import { bypassLogin } from "#app/global-vars/bypass-login";
+import { handleTutorial, Tutorial } from "#app/tutorial";
 import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
-import BgmBar from "#app/ui/bgm-bar";
-import type AwaitableUiHandler from "./awaitable-ui-handler";
-import { AdminMode, getAdminModeName } from "./admin-ui-handler";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import { UiMode } from "#enums/ui-mode";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import { AdminMode, getAdminModeName } from "#ui/admin-ui-handler";
+import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
+import { BgmBar } from "#ui/bgm-bar";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { addTextObject, getTextStyleOptions, TextStyle } from "#ui/text";
+import { addWindow, WindowVariant } from "#ui/ui-theme";
+import { fixedInt, isLocal, sessionIdKey } from "#utils/common";
+import { getCookie } from "#utils/cookies";
+import { getEnumValues } from "#utils/enums";
+import { isBeta } from "#utils/utility-vars";
+import i18next from "i18next";
 
 enum MenuOptions {
   GAME_SETTINGS,
@@ -38,7 +38,7 @@ const githubUrl = "https://github.com/pagefaultgames/pokerogue";
 const redditUrl = "https://www.reddit.com/r/pokerogue";
 const donateUrl = "https://github.com/sponsors/pagefaultgames";
 
-export default class MenuUiHandler extends MessageUiHandler {
+export class MenuUiHandler extends MessageUiHandler {
   private readonly textPadding = 8;
   private readonly defaultMessageBoxWidth = 220;
   private readonly defaultWordWrapWidth = 1224;

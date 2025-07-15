@@ -1,8 +1,8 @@
-import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
-import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
-import { PERMANENT_STATS, getStatKey } from "#app/enums/stat";
-import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
+import { getStatKey, PERMANENT_STATS } from "#enums/stat";
+import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#ui/text";
+import i18next from "i18next";
+import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
 const ivChartSize = 24;
 const ivChartStatCoordMultipliers = [

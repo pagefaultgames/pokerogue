@@ -3,9 +3,10 @@
  */
 
 // biome-ignore-start lint/correctness/noUnusedImports: Used in a tsdoc comment
-import type { EnumValues } from "#app/@types/enum-types";
-import type { AbAttr } from "./ability-types";
+import type { AbAttr } from "#abilities/ability";
 // biome-ignore-end lint/correctness/noUnusedImports: Used in a tsdoc comment
+
+import type { EnumValues } from "#types/enum-types";
 
 /**
  * Exactly matches the type of the argument, preventing adding additional properties.

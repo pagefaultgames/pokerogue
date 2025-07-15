@@ -1,18 +1,20 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { getMoveTargets } from "#app/data/moves/move-utils";
-import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
 import Overrides from "#app/overrides";
-import type { CommandPhase } from "#app/phases/command-phase";
-import type { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { allMoves } from "#data/data-lists";
+import { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
-import { UiMode } from "#enums/ui-mode";
-import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
-import { expect, vi } from "vitest";
-import { coerceArray, toReadableString } from "#app/utils/common";
 import { MoveUseMode } from "#enums/move-use-mode";
+import { UiMode } from "#enums/ui-mode";
+import type { Pokemon } from "#field/pokemon";
+import { getMoveTargets } from "#moves/move-utils";
+import { PokemonMove } from "#moves/pokemon-move";
+import type { CommandPhase } from "#phases/command-phase";
+import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
+import { coerceArray, toReadableString } from "#utils/common";
+import type { MockInstance } from "vitest";
+import { expect, vi } from "vitest";
 
 /**
  * Helper to handle using a Pokemon's moves.
@@ -304,5 +306,21 @@ export class MoveHelper extends GameManagerHelper {
      * force a move for each enemy in a double battle.
      */
     await this.game.phaseInterceptor.to("EnemyCommandPhase");
+  }
+
+  /**
+   * Force the move used by Metronome to be a specific move.
+   * @param move - The move to force metronome to use
+   * @param once - If `true`, uses {@linkcode MockInstance#mockReturnValueOnce} when mocking, else uses {@linkcode MockInstance#mockReturnValue}.
+   * @returns The spy that for Metronome that was mocked (Usually unneeded).
+   */
+  public forceMetronomeMove(move: MoveId, once = false): MockInstance {
+    const spy = vi.spyOn(allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0], "getMoveOverride");
+    if (once) {
+      spy.mockReturnValueOnce(move);
+    } else {
+      spy.mockReturnValue(move);
+    }
+    return spy;
   }
 }

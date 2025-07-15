@@ -1,10 +1,10 @@
-import { coerceArray } from "#app/utils/common";
+import type { MockGameObject } from "#test/testUtils/mocks/mockGameObject";
+import { coerceArray } from "#utils/common";
 import Phaser from "phaser";
-import type { MockGameObject } from "../mockGameObject";
 
 type Frame = Phaser.Textures.Frame;
 
-export default class MockSprite implements MockGameObject {
+export class MockSprite implements MockGameObject {
   private phaserSprite;
   public pipelineData;
   public texture;
