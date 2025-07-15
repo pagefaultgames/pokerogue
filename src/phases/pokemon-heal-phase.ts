@@ -70,8 +70,8 @@ export class PokemonHealPhase extends CommonAnimPhase {
 
     if (healBlock && this.hpHealed > 0) {
       globalScene.phaseManager.queueMessage(healBlock.onActivation(pokemon));
-      super.end();
-      return;
+      this.message = null;
+      return super.end();
     }
 
     if (healOrDamage) {
