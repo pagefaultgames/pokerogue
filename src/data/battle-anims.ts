@@ -7,13 +7,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { AnimBlendType, AnimFocus, AnimFrameTarget, ChargeAnim, CommonAnim } from "#enums/move-anims-common";
 import { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
-import {
-  animationFileName,
-  coerceArray,
-  getFrameMs,
-  isNullOrUndefined,
-  type nil,
-} from "#utils/common";
+import { animationFileName, coerceArray, getFrameMs, isNullOrUndefined, type nil } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import Phaser from "phaser";
 

@@ -1,4 +1,4 @@
-import type { EnumOrObject, EnumValues, TSNumericEnum, NormalEnum } from "#app/@types/enum-types";
+import type { EnumOrObject, EnumValues, NormalEnum, TSNumericEnum } from "#app/@types/enum-types";
 import type { InferKeys } from "#app/@types/type-helpers";
 
 /**
