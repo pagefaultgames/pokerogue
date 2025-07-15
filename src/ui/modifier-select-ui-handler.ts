@@ -284,7 +284,8 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       ease: "Sine.easeIn",
       duration: 1250,
       onUpdate: t => {
-        const value = t.getValue();
+        // The bang here is safe, as `getValue()` only returns undefined if the tween has been destroyed (which obviously isn't the case inside onUpdate)
+        const value = t.getValue()!;
         const index = Math.floor(value * typeOptions.length);
         if (index > i && index <= typeOptions.length) {
           const option = this.options[i];
