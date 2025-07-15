@@ -2562,8 +2562,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // Get average attack score of all damaging moves (|| 1 prevents division by zero))
     // TODO: Averaging the attack score is excessively simplistic, and doesn't reflect the AI's move selection logic
     // e.g. if the mon has one 4x effective move and three 0.5x effective moves, this score would be ~1.375
-    // instead of
-    // That is, this atkScore logic does not reflect the AI's move selection logic.
+    // which does not seem fair, given that if the AI were to switch, in all likelihood it would use the 4x move.
+    // We could consider a weighted average...
     atkScore /= moveAtkScoreLength || 1;
     /**
      * Based on this Pokemon's HP ratio compared to that of the opponent.
