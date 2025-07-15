@@ -134,6 +134,8 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
     const pokemon = (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getPokemon();
     if (pokemon.tempSummonData.turnCount <= 1) {
       this.setCursor(0);
+    } else {
+      this.setCursor(this.fieldIndex ? this.cursor2 : this.cursor);
     }
     this.displayMoves();
     this.toggleInfo(false); // in case cancel was pressed while info toggle is active
