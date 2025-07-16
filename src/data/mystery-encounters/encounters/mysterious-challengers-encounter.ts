@@ -10,7 +10,11 @@ import { initBattleWithEnemyConfig, setEncounterRewards } from "#mystery-encount
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { trainerConfigs } from "#trainers/trainer-config";
-import { TrainerPartyCompoundTemplate, TrainerPartyTemplate, trainerPartyTemplates } from "#trainers/trainer-party-template";
+import {
+  TrainerPartyCompoundTemplate,
+  TrainerPartyTemplate,
+  trainerPartyTemplates,
+} from "#trainers/trainer-party-template";
 import { randSeedInt } from "#utils/common";
 
 /** the i18n namespace for the encounter */

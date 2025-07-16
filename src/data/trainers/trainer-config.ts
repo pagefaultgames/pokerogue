@@ -23,7 +23,14 @@ import { PokemonMove } from "#moves/pokemon-move";
 import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { EvilTeam } from "#trainers/evil-admin-trainer-pools";
 import { evilAdminTrainerPools } from "#trainers/evil-admin-trainer-pools";
-import { getEvilGruntPartyTemplate, getGymLeaderPartyTemplate, getWavePartyTemplate, TrainerPartyCompoundTemplate, TrainerPartyTemplate, trainerPartyTemplates } from "#trainers/trainer-party-template";
+import {
+  getEvilGruntPartyTemplate,
+  getGymLeaderPartyTemplate,
+  getWavePartyTemplate,
+  TrainerPartyCompoundTemplate,
+  TrainerPartyTemplate,
+  trainerPartyTemplates,
+} from "#trainers/trainer-party-template";
 import type { ModifierTypeFunc } from "#types/modifier-types";
 import type {
   GenAIFunc,
