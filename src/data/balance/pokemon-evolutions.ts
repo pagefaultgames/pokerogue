@@ -1630,7 +1630,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.TSAREENA, 28, null, {key: EvoCondKey.MOVE, move: MoveId.STOMP}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.POIPOLE]: [
-    new SpeciesEvolution(SpeciesId.NAGANADEL, 1, null, {key: EvoCondKey.MOVE, move: MoveId.DRAGON_PULSE}, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.NAGANADEL, 1, null, {key: EvoCondKey.MOVE, move: MoveId.DRAGON_PULSE}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.ALOLA_SANDSHREW]: [
     new SpeciesEvolution(SpeciesId.ALOLA_SANDSLASH, 1, EvolutionItem.ICE_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1845,7 +1845,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.LEAVANNY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 120}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.TYPE_NULL]: [
-    new SpeciesEvolution(SpeciesId.SILVALLY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 100}, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.SILVALLY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 100}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.ALOLA_MEOWTH]: [
     new SpeciesEvolution(SpeciesId.ALOLA_PERSIAN, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 120}, SpeciesWildEvolutionDelay.LONG)
