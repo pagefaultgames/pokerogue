@@ -3790,7 +3790,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         female ??= false;
         if (shouldUpdateSprite) {
           species.loadAssets(female, formIndex, shiny, variant, true).then(() => {
-            // TODO: is this bang correct?
             if (assetLoadCancelled.value) {
               return;
             }
