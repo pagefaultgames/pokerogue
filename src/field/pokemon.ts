@@ -155,7 +155,6 @@ import {
   coerceArray,
   deltaRgb,
   fixedInt,
-  getEnumValues,
   getIvsFromId,
   isBetween,
   isNullOrUndefined,
@@ -169,6 +168,7 @@ import {
   rgbToHsv,
   toDmgValue,
 } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";

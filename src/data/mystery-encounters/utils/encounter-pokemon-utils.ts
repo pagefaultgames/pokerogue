@@ -110,20 +110,24 @@ export function getRandomPlayerPokemon(
     // If there is only 1 legal/unfainted mon left, select from fainted legal mons
     const faintedLegalMons = party.filter(p => (!isAllowed || p.isAllowedInChallenge()) && p.isFainted());
     if (faintedLegalMons.length > 0) {
+      // TODO: should this use `randSeedItem`?
       chosenIndex = randSeedInt(faintedLegalMons.length);
       chosenPokemon = faintedLegalMons[chosenIndex];
     }
   }
   if (!chosenPokemon && fullyLegalMons.length > 0) {
+    // TODO: should this use `randSeedItem`?
     chosenIndex = randSeedInt(fullyLegalMons.length);
     chosenPokemon = fullyLegalMons[chosenIndex];
   }
   if (!chosenPokemon && isAllowed && allowedOnlyMons.length > 0) {
+    // TODO: should this use `randSeedItem`?
     chosenIndex = randSeedInt(allowedOnlyMons.length);
     chosenPokemon = allowedOnlyMons[chosenIndex];
   }
   if (!chosenPokemon) {
     // If no other options worked, returns fully random
+    // TODO: should this use `randSeedItem`?
     chosenIndex = randSeedInt(party.length);
     chosenPokemon = party[chosenIndex];
   }
