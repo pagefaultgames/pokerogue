@@ -1,4 +1,4 @@
-import type { PhaseConditionFunc } from "#app/@types/phase-condition";
+import type { GeneralPhaseConditionFunc } from "#app/@types/phase-condition";
 import type { Phase } from "#app/phase";
 
 /**
@@ -42,7 +42,7 @@ export abstract class PhasePriorityQueue<T extends Phase> {
     return !this.queue.length;
   }
 
-  public remove(condition: PhaseConditionFunc): boolean {
+  public remove(condition: GeneralPhaseConditionFunc): boolean {
     const phaseIndex = this.queue.findIndex(condition);
     if (phaseIndex > -1) {
       this.queue.splice(phaseIndex, 1);
@@ -51,11 +51,11 @@ export abstract class PhasePriorityQueue<T extends Phase> {
     return false;
   }
 
-  public findPhase(condition?: PhaseConditionFunc): Phase | undefined {
+  public findPhase(condition?: GeneralPhaseConditionFunc): T | undefined {
     return this.queue.find(phase => !condition || condition(phase));
   }
 
-  public hasPhaseWithCondition(condition?: PhaseConditionFunc): boolean {
+  public hasPhaseWithCondition(condition?: GeneralPhaseConditionFunc): boolean {
     return this.queue.find(phase => !condition || condition(phase)) !== undefined;
   }
 }

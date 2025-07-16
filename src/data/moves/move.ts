@@ -3191,7 +3191,7 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
 
     const overridden = args[0] as BooleanHolder;
 
-    const allyMovePhase = globalScene.phaseManager.findPhase("MovePhase", (phase) => phase.pokemon.isPlayer() === user.isPlayer());
+    const allyMovePhase = globalScene.phaseManager.getMovePhase((phase) => phase.pokemon.isPlayer() === user.isPlayer());
     if (allyMovePhase) {
       const allyMove = allyMovePhase.move.getMove();
       if (allyMove !== move && allyMove.hasAttr("AwaitCombinedPledgeAttr")) {
@@ -4545,8 +4545,7 @@ export class CueNextRoundAttr extends MoveEffectAttr {
   }
 
   override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
-    const nextRoundPhase = globalScene.phaseManager.findPhase("MovePhase", phase => phase.move.moveId === MoveId.ROUND
-    );
+    const nextRoundPhase = globalScene.phaseManager.getMovePhase(phase => phase.move.moveId === MoveId.ROUND);
 
     if (!nextRoundPhase) {
       return false;
@@ -6231,11 +6230,11 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
         // Handle cases where revived pokemon needs to get switched in on same turn
         if (allyPokemon.isFainted() || allyPokemon === pokemon) {
           // Enemy switch phase should be removed and replaced with the revived pkmn switching in
-          globalScene.phaseManager.tryRemovePhase((phase: SwitchSummonPhase) => phase.is("StaticSwitchSummonPhase") && phase.getPokemon() === pokemon);
+          globalScene.phaseManager.tryRemovePhase("SwitchSummonPhase", phase => phase.getPokemon() === pokemon);
           // If the pokemon being revived was alive earlier in the turn, cancel its move
           // (revived pokemon can't move in the turn they're brought back)
           // TODO: might make sense to move this to `FaintPhase` after checking for Rev Seed (rather than handling it in the move)
-          globalScene.phaseManager.findPhase("MovePhase", (phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
+          globalScene.phaseManager.getMovePhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
           if (user.fieldPosition === FieldPosition.CENTER) {
             user.setFieldPosition(FieldPosition.LEFT);
           }

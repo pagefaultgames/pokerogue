@@ -3,6 +3,7 @@ import type { PhaseString, DynamicPhase } from "#app/@types/phase-types";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
 import type { Phase } from "#app/phase";
+import type { MovePhase } from "#app/phases/move-phase";
 import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
 import type { PhasePriorityQueue } from "#app/queues/phase-priority-queue";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
@@ -11,10 +12,12 @@ import { SwitchSummonPhasePriorityQueue } from "#app/queues/switch-summon-phase-
 import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
+// TODO might be easier to define which phases should be dynamic instead
+const nonDynamicPokemonPhases: PhaseString[] = ["SummonPhase", "CommandPhase", "LearnMovePhase"];
+
 export class DynamicQueueManager {
   private dynamicPhaseMap: Map<PhaseString, PhasePriorityQueue<Phase>>;
   private alwaysDynamic: PhaseString[] = ["SwitchSummonPhase", "PostSummonPhase", "MovePhase"];
-  private popOrder: PhaseString[] = [];
 
   constructor() {
     this.dynamicPhaseMap = new Map();
@@ -27,22 +30,22 @@ export class DynamicQueueManager {
     for (const queue of this.dynamicPhaseMap.values()) {
       queue.clear();
     }
-    this.popOrder.splice(0, this.popOrder.length);
   }
 
-  public queueDynamicPhase<T extends DynamicPhase>(phase: T): void {
+  public queueDynamicPhase<T extends Phase>(phase: T): boolean {
+    if (!this.isDynamicPhase(phase)) {
+      return false;
+    }
+
     if (!this.dynamicPhaseMap.has(phase.phaseName)) {
-      this.dynamicPhaseMap.set(phase.phaseName, new PokemonPhasePriorityQueue<T>());
+      // TS can't figure out that T is dynamic at this point, but it does know that `typeof phase` is
+      this.dynamicPhaseMap.set(phase.phaseName, new PokemonPhasePriorityQueue<typeof phase>());
     }
     this.dynamicPhaseMap.get(phase.phaseName)?.push(phase);
-    this.popOrder.push(phase.phaseName);
+    return true;
   }
 
-  public popNextPhase(): Phase | undefined {
-    const type = this.popOrder.pop();
-    if (!type) {
-      return;
-    }
+  public popNextPhase(type: PhaseString): Phase | undefined {
     if (!this.alwaysDynamic.includes(type)) {
       return this.dynamicPhaseMap.get(type)?.pop();
     }
@@ -52,7 +55,7 @@ export class DynamicQueueManager {
       ?.pop();
   }
 
-  public findPhaseOfType(type: PhaseString, condition?: PhaseConditionFunc): Phase | undefined {
+  public findPhaseOfType<T extends PhaseString>(type: T, condition?: PhaseConditionFunc<T>): Phase | undefined {
     return this.dynamicPhaseMap.get(type)?.findPhase(condition);
   }
 
@@ -60,28 +63,35 @@ export class DynamicQueueManager {
     return this.alwaysDynamic.includes(type) || this.dynamicPhaseMap.get(type)?.isEmpty() === false;
   }
 
-  public exists(type: PhaseString, condition?: PhaseConditionFunc): boolean {
+  public exists<T extends PhaseString>(type: T, condition?: PhaseConditionFunc<T>): boolean {
     return !!this.dynamicPhaseMap.get(type)?.hasPhaseWithCondition(condition);
   }
 
-  public removePhase(condition: PhaseConditionFunc) {
-    for (const queue of this.dynamicPhaseMap.values()) {
-      if (queue.remove(condition)) {
-        return true;
-      }
-    }
-    return false;
+  public removePhase<T extends PhaseString>(type: T, condition: PhaseConditionFunc<T>) {
+    return this.dynamicPhaseMap.get(type)?.remove(condition);
   }
 
-  public setMoveTimingModifier(condition: PhaseConditionFunc, modifier: MovePhaseTimingModifier) {
+  public setMoveTimingModifier(condition: PhaseConditionFunc<"MovePhase">, modifier: MovePhaseTimingModifier) {
     this.getMovePhaseQueue().setTimingModifier(condition, modifier);
   }
 
-  public setMoveForPhase(condition: PhaseConditionFunc, move: PokemonMove) {
+  public setMoveForPhase(condition: PhaseConditionFunc<"MovePhase">, move: PokemonMove) {
     this.getMovePhaseQueue().setMoveForPhase(condition, move);
   }
 
-  public setMoveOrder(order: BattlerIndex[]) {
+  public redirectMoves(removedPokemon: Pokemon, allyPokemon: Pokemon) {
+    this.getMovePhaseQueue().redirectMoves(removedPokemon, allyPokemon);
+  }
+
+  public getMovePhase(condition: PhaseConditionFunc<"MovePhase">): MovePhase | undefined {
+    return this.getMovePhaseQueue().findPhase(condition);
+  }
+
+  public cancelMovePhase(condition: PhaseConditionFunc<"MovePhase">): void {
+    this.getMovePhaseQueue().cancelMove(condition);
+  }
+
+  public setMoveOrder(order: BattlerIndex[]): void {
     this.getMovePhaseQueue().setMoveOrder(order);
   }
 
@@ -97,7 +107,7 @@ export class DynamicQueueManager {
     return this.dynamicPhaseMap.get("MovePhase") as MovePhasePriorityQueue;
   }
 
-  public addPopType(type: PhaseString): void {
-    this.popOrder.push(type);
+  private isDynamicPhase(phase: Phase): phase is DynamicPhase {
+    return typeof (phase as any).getPokemon === "function" && !nonDynamicPokemonPhases.includes(phase.phaseName);
   }
 }

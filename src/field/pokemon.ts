@@ -182,7 +182,6 @@ import type { IllusionData } from "#app/@types/illusion-data";
 import type { TurnMove } from "#app/@types/turn-move";
 import type { DamageCalculationResult, DamageResult } from "#app/@types/damage-result";
 import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#app/@types/ability-types";
-import type { TurnCommand } from "#app/battle";
 import { getTerrainBlockMessage } from "#app/data/terrain";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 

@@ -1,6 +1,7 @@
 import type { PhaseConditionFunc } from "#app/@types/phase-condition";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
+import { globalScene } from "#app/global-scene";
 import type { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import { isNullOrUndefined } from "#app/utils/common";
@@ -16,17 +17,45 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
     console.log(this.queue.map(p => p.getPokemon().name));
   }
 
-  public setTimingModifier(condition: PhaseConditionFunc, modifier: MovePhaseTimingModifier): void {
-    const phase = this.queue.find(phase => condition(phase));
+  public cancelMove(condition: PhaseConditionFunc<"MovePhase">): void {
+    const phase = this.queue.find(p => condition(p));
+    if (!isNullOrUndefined(phase)) {
+      phase.cancel();
+    }
+  }
+
+  public setTimingModifier(condition: PhaseConditionFunc<"MovePhase">, modifier: MovePhaseTimingModifier): void {
+    const phase = this.queue.find(p => condition(p));
     if (!isNullOrUndefined(phase)) {
       phase.timingModifier = modifier;
     }
   }
 
-  public setMoveForPhase(condition: PhaseConditionFunc, move: PokemonMove) {
-    const phase = this.queue.find(phase => condition(phase));
+  public setMoveForPhase(condition: PhaseConditionFunc<"MovePhase">, move: PokemonMove) {
+    const phase = this.queue.find(p => condition(p));
     if (!isNullOrUndefined(phase)) {
       phase.move = move;
+    }
+  }
+
+  public redirectMoves(removedPokemon: Pokemon, allyPokemon: Pokemon): void {
+    // failsafe: if not a double battle just return
+    if (!globalScene.currentBattle.double) {
+      return;
+    }
+    if (allyPokemon?.isActive(true)) {
+      this.queue
+        .filter(
+          mp =>
+            mp.targets.length === 1 &&
+            mp.targets[0] === removedPokemon.getBattlerIndex() &&
+            mp.pokemon.isPlayer() !== allyPokemon.isPlayer(),
+        )
+        .forEach(targetingMovePhase => {
+          if (targetingMovePhase && targetingMovePhase.targets[0] !== allyPokemon.getBattlerIndex()) {
+            targetingMovePhase.targets[0] = allyPokemon.getBattlerIndex();
+          }
+        });
     }
   }
 
