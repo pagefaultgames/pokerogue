@@ -511,15 +511,14 @@ export class Arena {
       case BiomeId.SNOWY_FOREST:
         return 8;
       case BiomeId.SEA:
-      case BiomeId.RUINS:
-      case BiomeId.FAIRY_CAVE:
-      case BiomeId.ISLAND:
-        return 10;
       case BiomeId.ICE_CAVE:
       case BiomeId.VOLCANO:
       case BiomeId.GRAVEYARD:
+      case BiomeId.RUINS:
       case BiomeId.WASTELAND:
       case BiomeId.JUNGLE:
+      case BiomeId.FAIRY_CAVE:
+      case BiomeId.ISLAND:
         return 12;
       case BiomeId.ABYSS:
       case BiomeId.SPACE:
