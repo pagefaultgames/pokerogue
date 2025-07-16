@@ -506,18 +506,18 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     // Sets up the mask that hides the description text to give an illusion of scrolling
     const descriptionTextMaskRect = globalScene.make.graphics({});
-    const MaskHeight = 57;
+    const maskHeight = 57;
     descriptionTextMaskRect.setScale(6);
     descriptionTextMaskRect.fillStyle(0xffffff);
     descriptionTextMaskRect.beginPath();
-    descriptionTextMaskRect.fillRect(6, 53, 206, MaskHeight);
+    descriptionTextMaskRect.fillRect(6, 53, 206, maskHeight);
 
     const abilityDescriptionTextMask = descriptionTextMaskRect.createGeometryMask();
 
     descriptionTextObject.setMask(abilityDescriptionTextMask);
 
     const displayHeight = descriptionTextObject.displayHeight;
-    const scrollAmount = displayHeight - MaskHeight;
+    const scrollAmount = displayHeight - maskHeight;
 
     if (this.descriptionScrollTween) {
       this.descriptionScrollTween.remove();
@@ -525,7 +525,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     }
 
     // Animates the description text moving upwards
-    if (displayHeight > MaskHeight) {
+    if (displayHeight > maskHeight) {
       this.descriptionScrollTween = globalScene.tweens.add({
         targets: descriptionTextObject,
         delay: fixedInt(2000),
@@ -619,17 +619,17 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
       // Sets up the mask that hides the description text to give an illusion of scrolling
       const tooltipTextMaskRect = globalScene.make.graphics({});
-      const MaskHeight = 32;
+      const maskHeight = 32;
       tooltipTextMaskRect.setScale(6);
       tooltipTextMaskRect.fillStyle(0xffffff);
       tooltipTextMaskRect.beginPath();
-      tooltipTextMaskRect.fillRect(this.tooltipContainer.x, this.tooltipContainer.y + 188.5, 150, MaskHeight);
+      tooltipTextMaskRect.fillRect(this.tooltipContainer.x, this.tooltipContainer.y + 188.5, 150, maskHeight);
 
       const textMask = tooltipTextMaskRect.createGeometryMask();
       tooltipTextObject.setMask(textMask);
 
       const displayHeight = tooltipTextObject.displayHeight;
-      const scrollAmount = displayHeight - MaskHeight;
+      const scrollAmount = displayHeight - maskHeight;
 
       if (this.tooltipScrollTween) {
         this.tooltipScrollTween.remove();
@@ -637,7 +637,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       }
 
       // Animates the tooltip text moving upwards
-      if (displayHeight > MaskHeight) {
+      if (displayHeight > maskHeight) {
         this.tooltipScrollTween = globalScene.tweens.add({
           targets: tooltipTextObject,
           delay: fixedInt(1200),
