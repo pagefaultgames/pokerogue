@@ -44,8 +44,8 @@ import {
   HeldItemRequirement,
   TypeRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
-import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/TrainerPartyTemplate";
 import { getRandomPartyMemberFunc, trainerConfigs } from "#trainers/trainer-config";
+import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#utils/common";

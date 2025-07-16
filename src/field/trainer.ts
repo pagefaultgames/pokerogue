@@ -14,10 +14,13 @@ import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon } from "#field/pokemon";
 import type { PersistentModifier } from "#modifiers/modifier";
 import { getIsInitialized, initI18n } from "#plugins/i18n";
-import type { TrainerPartyTemplate } from "#trainers/TrainerPartyTemplate";
-import { TrainerPartyCompoundTemplate, trainerPartyTemplates } from "#trainers/TrainerPartyTemplate";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
+import {
+  TrainerPartyCompoundTemplate,
+  type TrainerPartyTemplate,
+  trainerPartyTemplates,
+} from "#trainers/trainer-party-template";
 import { randSeedInt, randSeedItem, randSeedWeightedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
