@@ -1,5 +1,4 @@
 import type { TurnCommand } from "#app/battle";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { speciesStarterCosts } from "#balance/starters";
@@ -8,6 +7,7 @@ import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { Command } from "#enums/command";
 import { FieldPosition } from "#enums/field-position";
@@ -19,9 +19,9 @@ import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { MoveTargetSet } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
+import { FieldPhase } from "#phases/field-phase";
 import type { TurnMove } from "#types/turn-move";
 import i18next from "i18next";
-import { FieldPhase } from "./field-phase";
 
 export class CommandPhase extends FieldPhase {
   public readonly phaseName = "CommandPhase";
