@@ -87,7 +87,8 @@ import type { AttackMoveResult } from "#types/attack-move-result";
 import type { Localizable } from "#types/locales";
 import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveClassMap, MoveKindString } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
-import { BooleanHolder, type Constructor, getEnumValues, isNullOrUndefined, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue, toReadableString } from "#utils/common";
+import { BooleanHolder, type Constructor, isNullOrUndefined, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue, toReadableString } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 
 /**

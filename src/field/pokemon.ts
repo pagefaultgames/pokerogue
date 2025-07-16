@@ -155,7 +155,6 @@ import {
   coerceArray,
   deltaRgb,
   fixedInt,
-  getEnumValues,
   getIvsFromId,
   isBetween,
   isNullOrUndefined,
@@ -169,6 +168,7 @@ import {
   rgbToHsv,
   toDmgValue,
 } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -558,7 +558,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getDexAttr(): bigint {
     let ret = 0n;
-    ret |= this.gender !== Gender.FEMALE ? DexAttr.MALE : DexAttr.FEMALE;
+    if (this.gender !== Gender.GENDERLESS) {
+      ret |= this.gender !== Gender.FEMALE ? DexAttr.MALE : DexAttr.FEMALE;
+    }
     ret |= !this.shiny ? DexAttr.NON_SHINY : DexAttr.SHINY;
     ret |= this.variant >= 2 ? DexAttr.VARIANT_3 : this.variant === 1 ? DexAttr.VARIANT_2 : DexAttr.DEFAULT_VARIANT;
     ret |= globalScene.gameData.getFormAttr(this.formIndex);

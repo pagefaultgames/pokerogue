@@ -34,6 +34,10 @@ export default defineProject(({ mode }) => ({
         resources: "usable",
       },
     },
+    typecheck: {
+      tsconfig: "tsconfig.json",
+      include: ["./test/types/**/*.{test,spec}{-|.}d.ts"],
+    },
     threads: false,
     trace: true,
     restoreMocks: true,

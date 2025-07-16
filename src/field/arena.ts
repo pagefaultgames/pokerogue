@@ -143,6 +143,7 @@ export class Arena {
     if (!tierPool.length) {
       ret = globalScene.randomSpecies(waveIndex, level);
     } else {
+      // TODO: should this use `randSeedItem`?
       const entry = tierPool[randSeedInt(tierPool.length)];
       let species: SpeciesId;
       if (typeof entry === "number") {
@@ -154,6 +155,7 @@ export class Arena {
           if (level >= levelThreshold) {
             const speciesIds = entry[levelThreshold];
             if (speciesIds.length > 1) {
+              // TODO: should this use `randSeedItem`?
               species = speciesIds[randSeedInt(speciesIds.length)];
             } else {
               species = speciesIds[0];
