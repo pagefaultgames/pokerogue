@@ -36,8 +36,8 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import i18next from "#plugins/i18n";
 import { achvs } from "#system/achv";
 import { PokemonData } from "#system/pokemon-data";
-import { TrainerPartyTemplate } from "#trainers/TrainerPartyTemplate";
 import { trainerConfigs } from "#trainers/trainer-config";
+import { TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import { isNullOrUndefined, NumberHolder, randSeedInt, randSeedShuffle } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
