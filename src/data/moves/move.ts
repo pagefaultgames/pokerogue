@@ -1,5 +1,14 @@
-import { MoveChargeAnim } from "../battle-anims";
-import { ChargeAnim } from "#enums/move-anims-common";
+import { AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrParams } from "#abilities/ability";
+import {
+  applyAbAttrs
+} from "#abilities/apply-ab-attrs";
+import { loggedInUser } from "#app/account";
+import type { GameMode } from "#app/game-mode";
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import type { ArenaTrapTag, PendingHealTag } from "#data/arena-tag";
+import { WeakenMoveTypeTag } from "#data/arena-tag";
+import { MoveChargeAnim } from "#data/battle-anims";
 import {
   CommandedTag,
   EncoreTag,
@@ -11,31 +20,53 @@ import {
   SubstituteTag,
   TrappedTag,
   TypeBoostTag,
-} from "../battler-tags";
-import { getPokemonNameWithAffix } from "../../messages";
-import type { AttackMoveResult, TurnMove } from "../../field/pokemon";
-import type Pokemon from "../../field/pokemon";
-import type { EnemyPokemon } from "#app/field/pokemon";
-import { PokemonMove } from "./pokemon-move";
-import { MoveResult } from "#enums/move-result";
-import { HitResult } from "#enums/hit-result";
-import { FieldPosition } from "#enums/field-position";
+} from "#data/battler-tags";
+import { getBerryEffectFunc } from "#data/berry";
+import { applyChallenges } from "#data/challenge";
+import { allAbilities, allMoves } from "#data/data-lists";
+import { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
 import {
   getNonVolatileStatusEffects,
   getStatusEffectHealText,
   isNonVolatileStatusEffect,
-} from "../status-effect";
-import { getTypeDamageMultiplier } from "../type";
-import { PokemonType } from "#enums/pokemon-type";
-import { BooleanHolder, NumberHolder, isNullOrUndefined, toDmgValue, randSeedItem, randSeedInt, getEnumValues, toReadableString, type Constructor, randSeedFloat } from "#app/utils/common";
-import { WeatherType } from "#enums/weather-type";
-import type { ArenaTrapTag, PendingHealTag } from "../arena-tag";
-import { WeakenMoveTypeTag } from "../arena-tag";
+} from "#data/status-effect";
+import { TerrainType } from "#data/terrain";
+import { getTypeDamageMultiplier } from "#data/type";
+import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattleType } from "#enums/battle-type";
+import type { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BiomeId } from "#enums/biome-id";
+import { ChallengeType } from "#enums/challenge-type";
+import { Command } from "#enums/command";
+import { FieldPosition } from "#enums/field-position";
+import { HitResult } from "#enums/hit-result";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
+import { ChargeAnim } from "#enums/move-anims-common";
+import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
+import { MoveCategory } from "#enums/MoveCategory";
+import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
+import { MoveFlags } from "#enums/MoveFlags";
+import { MoveTarget } from "#enums/MoveTarget";
+import { MultiHitType } from "#enums/MultiHitType";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
 import {
-  applyAbAttrs
-} from "../abilities/apply-ab-attrs";
-import { allAbilities, allMoves } from "../data-lists";
+  BATTLE_STATS,
+  type BattleStat,
+  type EffectiveStat,
+  getStatKey,
+  Stat,
+} from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { SwitchType } from "#enums/switch-type";
+import { WeatherType } from "#enums/weather-type";
+import { MoveUsedEvent } from "#events/battle-scene";
+import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import {
   AttackTypeBoosterModifier,
   BerryModifier,
@@ -43,52 +74,22 @@ import {
   PokemonMoveAccuracyBoosterModifier,
   PokemonMultiHitModifier,
   PreserveBerryModifier,
-} from "../../modifier/modifier";
-import type { BattlerIndex } from "#enums/battler-index";
-import { BattleType } from "#enums/battle-type";
-import { TerrainType } from "../terrain";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
-import { Command } from "#enums/command";
+} from "#modifiers/modifier";
+import { applyMoveAttrs } from "#moves/apply-attrs";
+import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSketchMoves, invalidSleepTalkMoves } from "#moves/invalid-moves";
+import { frenzyMissFunc, getMoveTargets } from "#moves/move-utils";
+import { PokemonMove } from "#moves/pokemon-move";
+import { MoveEndPhase } from "#phases/move-end-phase";
+import { MovePhase } from "#phases/move-phase";
+import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
+import { SwitchSummonPhase } from "#phases/switch-summon-phase";
+import type { AttackMoveResult } from "#types/attack-move-result";
+import type { Localizable } from "#types/locales";
+import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveClassMap, MoveKindString } from "#types/move-types";
+import type { TurnMove } from "#types/turn-move";
+import { BooleanHolder, type Constructor, isNullOrUndefined, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue, toReadableString } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 import i18next from "i18next";
-import type { Localizable } from "#app/@types/locales";
-import { getBerryEffectFunc } from "../berry";
-import { AbilityId } from "#enums/ability-id";
-import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { BiomeId } from "#enums/biome-id";
-import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
-import { MoveUsedEvent } from "#app/events/battle-scene";
-import {
-  BATTLE_STATS,
-  type BattleStat,
-  type EffectiveStat,
-  getStatKey,
-  Stat,
-} from "#app/enums/stat";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { MovePhase } from "#app/phases/move-phase";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
-import { SpeciesFormChangeRevertWeatherFormTrigger } from "../pokemon-forms/form-change-triggers";
-import type { GameMode } from "#app/game-mode";
-import { applyChallenges } from "../challenge";
-import { ChallengeType } from "#enums/challenge-type";
-import { SwitchType } from "#enums/switch-type";
-import { StatusEffect } from "#enums/status-effect";
-import { globalScene } from "#app/global-scene";
-import { loggedInUser } from "#app/account";
-import { MoveCategory } from "#enums/MoveCategory";
-import { MoveTarget } from "#enums/MoveTarget";
-import { MoveFlags } from "#enums/MoveFlags";
-import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
-import { MultiHitType } from "#enums/MultiHitType";
-import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves, invalidSketchMoves } from "./invalid-moves";
-import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
-import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveKindString, MoveClassMap } from "#app/@types/move-types";
-import { applyMoveAttrs } from "./apply-attrs";
-import { frenzyMissFunc, getMoveTargets } from "./move-utils";
-import { AbAttrBaseParams, AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrParams } from "../abilities/ability";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -97,7 +98,7 @@ import { AbAttrBaseParams, AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrPar
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 export type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
 
-export default abstract class Move implements Localizable {
+export abstract class Move implements Localizable {
   public id: MoveId;
   public name: string;
   private _type: PokemonType;
@@ -680,13 +681,7 @@ export default abstract class Move implements Localizable {
    * @returns boolean: false if any of the apply()'s return false, else true
    */
   applyConditions(user: Pokemon, target: Pokemon, move: Move): boolean {
-    for (const condition of this.conditions) {
-      if (!condition.apply(user, target, move)) {
-        return false;
-      }
-    }
-
-    return true;
+    return this.conditions.every(cond => cond.apply(user, target, move));
   }
 
   /**
@@ -4089,30 +4084,6 @@ export class OpponentHighHpPowerAttr extends VariablePowerAttr {
     return true;
   }
 }
-
-/**
- * Attribute to double this move's power if the target hasn't acted yet in the current turn.
- * Used by {@linkcode Moves.BOLT_BEAK} and {@linkcode Moves.FISHIOUS_REND}
- */
-export class FirstAttackDoublePowerAttr extends VariablePowerAttr {
-  /**
-   * Double this move's power if the user is acting before the target.
-   * @param user - Unused
-   * @param target - The {@linkcode Pokemon} being targeted by this move
-   * @param move - Unused
-   * @param args `[0]` - A {@linkcode NumberHolder} containing move base power
-   * @returns Whether the attribute was successfully applied
-   */
-  apply(_user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
-    if (target.turnData.acted) {
-      return false;
-    }
-
-    args[0].value *= 2;
-    return true;
-  }
-}
-
 
 export class TurnDamagedDoublePowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -7606,7 +7577,9 @@ export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
 }
 
 /**
- * Used by Transform
+ * Attribute used to transform into the target on move use.
+ *
+ * Used for {@linkcode MoveId.TRANSFORM}.
  */
 export class TransformAttr extends MoveEffectAttr {
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -7615,10 +7588,11 @@ export class TransformAttr extends MoveEffectAttr {
     }
 
     globalScene.phaseManager.unshiftNew("PokemonTransformPhase", user.getBattlerIndex(), target.getBattlerIndex());
-
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:transformedIntoTarget", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
-
     return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target) => user.canTransformInto(target)
   }
 }
 
@@ -8293,7 +8267,6 @@ const MoveAttrs = Object.freeze({
   CompareWeightPowerAttr,
   HpPowerAttr,
   OpponentHighHpPowerAttr,
-  FirstAttackDoublePowerAttr,
   TurnDamagedDoublePowerAttr,
   MagnitudePowerAttr,
   AntiSunlightPowerDecreaseAttr,
@@ -8841,12 +8814,12 @@ export function initMoves() {
       .makesContact(false),
     new StatusMove(MoveId.TRANSFORM, PokemonType.NORMAL, -1, 10, -1, 0, 1)
       .attr(TransformAttr)
-      .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
-      .condition((user, target, move) => !target.summonData.illusion && !user.summonData.illusion)
-      // transforming from or into fusion pokemon causes various problems (such as crashes)
-      .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE) && !user.fusionSpecies && !target.fusionSpecies)
       .ignoresProtect()
-      // Transforming should copy the target's rage fist hit count
+      /* Transform:
+       * Does not copy the target's rage fist hit count
+       * Does not copy the target's volatile status conditions (ie BattlerTags)
+       * Renders user typeless when copying typeless opponent (should revert to original typing)
+      */
       .edgeCase(),
     new AttackMove(MoveId.BUBBLE, PokemonType.WATER, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1)
@@ -9596,7 +9569,8 @@ export function initMoves() {
     new AttackMove(MoveId.CLOSE_COMBAT, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 4)
       .attr(StatStageChangeAttr, [ Stat.DEF, Stat.SPDEF ], -1, true),
     new AttackMove(MoveId.PAYBACK, PokemonType.DARK, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 4)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getLastXMoves(1).find(m => m.turn === globalScene.currentBattle.turn) || globalScene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.BALL ? 2 : 1),
+      // Payback boosts power on item use
+      .attr(MovePowerMultiplierAttr, (_user, target) => target.turnData.acted || globalScene.currentBattle.turnCommands[target.getBattlerIndex()]?.command === Command.BALL ? 2 : 1),
     new AttackMove(MoveId.ASSURANCE, PokemonType.DARK, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.turnData.damageTaken > 0 ? 2 : 1),
     new StatusMove(MoveId.EMBARGO, PokemonType.DARK, 100, 15, -1, 0, 4)
@@ -10808,9 +10782,9 @@ export function initMoves() {
       .condition(failIfGhostTypeCondition)
       .attr(AddBattlerTagAttr, BattlerTagType.OCTOLOCK, false, true, 1),
     new AttackMove(MoveId.BOLT_BEAK, PokemonType.ELECTRIC, MoveCategory.PHYSICAL, 85, 100, 10, -1, 0, 8)
-      .attr(FirstAttackDoublePowerAttr),
+      .attr(MovePowerMultiplierAttr, (_user, target) => target.turnData.acted ? 1 : 2),
     new AttackMove(MoveId.FISHIOUS_REND, PokemonType.WATER, MoveCategory.PHYSICAL, 85, 100, 10, -1, 0, 8)
-      .attr(FirstAttackDoublePowerAttr)
+      .attr(MovePowerMultiplierAttr, (_user, target) => target.turnData.acted ? 1 : 2)
       .bitingMove(),
     new StatusMove(MoveId.COURT_CHANGE, PokemonType.NORMAL, 100, 10, -1, 0, 8)
       .attr(SwapArenaTagsAttr, [ ArenaTagType.AURORA_VEIL, ArenaTagType.LIGHT_SCREEN, ArenaTagType.MIST, ArenaTagType.REFLECT, ArenaTagType.SPIKES, ArenaTagType.STEALTH_ROCK, ArenaTagType.STICKY_WEB, ArenaTagType.TAILWIND, ArenaTagType.TOXIC_SPIKES ]),

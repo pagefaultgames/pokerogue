@@ -27,6 +27,7 @@
       "!**/.github/**/*",
       "!**/node_modules/**/*",
       "!**/.vscode/**/*",
+      "!**/typedoc/**/*",
       // TODO: lint css and html?
       "!**/*.css",
       "!**/*.html",
@@ -37,14 +38,13 @@
     ]
   },
 
-  // TODO: Configure and enable import sorting
   "assist": {
     "actions": {
       "source": {
         "organizeImports": {
-          "level": "off",
+          "level": "on",
           "options": {
-            "groups": []
+            "groups": [":ALIAS:", ":NODE:", ":PACKAGE_WITH_PROTOCOL:", ":PACKAGE:", ":PATH:"]
           }
         }
       }
@@ -69,7 +69,10 @@
       },
       "style": {
         "useEnumInitializers": "off", // large enums like Moves/Species would make this cumbersome
-        "useBlockStatements": "error",
+        "useBlockStatements": {
+          "level": "error",
+          "fix": "safe"
+        },
         "useConst": "error",
         "useImportType": "error",
         "noNonNullAssertion": "off", // TODO: Turn this on ASAP and fix all non-null assertions in non-test files

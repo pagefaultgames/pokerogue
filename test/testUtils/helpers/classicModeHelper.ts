@@ -1,15 +1,16 @@
-import { BattleStyle } from "#app/enums/battle-style";
-import type { SpeciesId } from "#enums/species-id";
 import { getGameMode } from "#app/game-mode";
-import { GameModes } from "#enums/game-modes";
 import overrides from "#app/overrides";
-import { CommandPhase } from "#app/phases/command-phase";
-import { EncounterPhase } from "#app/phases/encounter-phase";
-import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { BattleStyle } from "#enums/battle-style";
+import { GameModes } from "#enums/game-modes";
+import { Nature } from "#enums/nature";
+import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { generateStarter } from "../gameManagerUtils";
-import { GameManagerHelper } from "./gameManagerHelper";
+import { CommandPhase } from "#phases/command-phase";
+import { EncounterPhase } from "#phases/encounter-phase";
+import { SelectStarterPhase } from "#phases/select-starter-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { generateStarter } from "#test/testUtils/gameManagerUtils";
+import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 
 /**
  * Helper to handle classic-mode specific operations.
@@ -35,6 +36,12 @@ export class ClassicModeHelper extends GameManagerHelper {
 
     if (this.game.override.disableShinies) {
       this.game.override.shiny(false).enemyShiny(false);
+    }
+    if (this.game.override.normalizeIVs) {
+      this.game.override.playerIVs(31).enemyIVs(31);
+    }
+    if (this.game.override.normalizeNatures) {
+      this.game.override.nature(Nature.HARDY).enemyNature(Nature.HARDY);
     }
 
     this.game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {

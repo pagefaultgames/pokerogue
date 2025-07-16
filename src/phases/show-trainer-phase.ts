@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import { PlayerGender } from "#app/enums/player-gender";
-import { BattlePhase } from "./battle-phase";
+import { PlayerGender } from "#enums/player-gender";
+import { BattlePhase } from "#phases/battle-phase";
 
 export class ShowTrainerPhase extends BattlePhase {
   public readonly phaseName = "ShowTrainerPhase";

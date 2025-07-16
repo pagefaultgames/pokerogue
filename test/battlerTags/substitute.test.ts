@@ -1,16 +1,17 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { PokemonTurnData, TurnMove } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import { MoveResult } from "#enums/move-result";
-import type BattleScene from "#app/battle-scene";
-import { BindTag, SubstituteTag } from "#app/data/battler-tags";
+import type { BattleScene } from "#app/battle-scene";
+import * as messages from "#app/messages";
+import { BindTag, SubstituteTag } from "#data/battler-tags";
+import { allMoves } from "#data/data-lists";
+import type { PokemonTurnData } from "#data/pokemon-data";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { MoveId } from "#enums/move-id";
-import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
-import * as messages from "#app/messages";
-import { allMoves } from "#app/data/data-lists";
-import type { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import GameManager from "#test/testUtils/gameManager";
+import { MoveResult } from "#enums/move-result";
+import { PokemonAnimType } from "#enums/pokemon-anim-type";
+import type { Pokemon } from "#field/pokemon";
+import type { MoveEffectPhase } from "#phases/move-effect-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import type { TurnMove } from "#types/turn-move";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("BattlerTag - SubstituteTag", () => {
   let phaserGame: Phaser.Game;

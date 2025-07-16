@@ -1,11 +1,11 @@
-import type MockTextureManager from "#test/testUtils/mocks/mockTextureManager";
-import type { MockGameObject } from "../mockGameObject";
+import type { MockGameObject } from "#test/testUtils/mocks/mockGameObject";
+import type { MockTextureManager } from "#test/testUtils/mocks/mockTextureManager";
 
 /**
  * Stub for Phaser.Textures.Texture object
  * Just mocks the function calls and data required for use in tests
  */
-export default class MockTexture implements MockGameObject {
+export class MockTexture implements MockGameObject {
   public manager: MockTextureManager;
   public key: string;
   public source;

@@ -1,29 +1,28 @@
 import { globalScene } from "#app/global-scene";
-import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import type { TrainerConfig } from "#app/data/trainers/trainer-config";
-import type { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { trainerConfigs } from "#app/data/trainers/trainer-config";
-import { trainerPartyTemplates } from "#app/data/trainers/TrainerPartyTemplate";
-import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { TrainerSlot } from "#enums/trainer-slot";
-import { TrainerPoolTier } from "#enums/trainer-pool-tier";
-import { TeraAIMode } from "#enums/tera-ai-mode";
-import type { EnemyPokemon } from "#app/field/pokemon";
-import { randSeedWeightedItem, randSeedItem, randSeedInt } from "#app/utils/common";
-import type { PersistentModifier } from "#app/modifier/modifier";
-import { ArenaTrapTag } from "#app/data/arena-tag";
+import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
+import { signatureSpecies } from "#balance/signature-species";
+import { ArenaTrapTag } from "#data/arena-tag";
+import type { PokemonSpecies } from "#data/pokemon-species";
 import { ArenaTagSide } from "#enums/arena-tag-side";
-import { getIsInitialized, initI18n } from "#app/plugins/i18n";
-import i18next from "i18next";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
+import { TeraAIMode } from "#enums/tera-ai-mode";
+import { TrainerPoolTier } from "#enums/trainer-pool-tier";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
-import { signatureSpecies } from "#app/data/balance/signature-species";
 import { TrainerVariant } from "#enums/trainer-variant";
+import type { EnemyPokemon } from "#field/pokemon";
+import type { PersistentModifier } from "#modifiers/modifier";
+import { getIsInitialized, initI18n } from "#plugins/i18n";
+import type { TrainerPartyTemplate } from "#trainers/TrainerPartyTemplate";
+import { TrainerPartyCompoundTemplate, trainerPartyTemplates } from "#trainers/TrainerPartyTemplate";
+import type { TrainerConfig } from "#trainers/trainer-config";
+import { trainerConfigs } from "#trainers/trainer-config";
+import { randSeedInt, randSeedItem, randSeedWeightedItem } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import i18next from "i18next";
 
-export default class Trainer extends Phaser.GameObjects.Container {
+export class Trainer extends Phaser.GameObjects.Container {
   public config: TrainerConfig;
   public variant: TrainerVariant;
   public partyTemplateIndex: number;
@@ -421,7 +420,8 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
         // If useNewSpeciesPool is true, we need to generate a new species from the new species pool, otherwise we generate a random species
         let species = useNewSpeciesPool
-          ? getPokemonSpecies(newSpeciesPool[Math.floor(randSeedInt(newSpeciesPool.length))])
+          ? // TODO: should this use `randSeedItem`?
+            getPokemonSpecies(newSpeciesPool[Math.floor(randSeedInt(newSpeciesPool.length))])
           : template.isSameSpecies(index) && index > offset
             ? getPokemonSpecies(
                 battle.enemyParty[offset].species.getTrainerSpeciesForLevel(
@@ -619,6 +619,8 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
     if (maxScorePartyMemberIndexes.length > 1) {
       let rand: number;
+      // TODO: should this use `randSeedItem`?
+
       globalScene.executeWithSeedOffset(
         () => (rand = randSeedInt(maxScorePartyMemberIndexes.length)),
         globalScene.currentBattle.turn << 2,

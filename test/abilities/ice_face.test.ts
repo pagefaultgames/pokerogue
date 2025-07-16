@@ -1,14 +1,14 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { MoveEndPhase } from "#phases/move-end-phase";
+import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -259,7 +259,7 @@ describe("Abilities - Ice Face", () => {
 
     const eiscue = game.scene.getEnemyPokemon()!;
 
-    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeDefined();
     expect(eiscue.formIndex).toBe(icefaceForm);
     expect(eiscue.hasAbility(AbilityId.ICE_FACE)).toBe(true);
   });
@@ -269,13 +269,9 @@ describe("Abilities - Ice Face", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    game.move.select(MoveId.SIMPLE_BEAM);
-
-    await game.phaseInterceptor.to(TurnInitPhase);
-
     const eiscue = game.scene.getEnemyPokemon()!;
 
-    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
+    expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeDefined();
     expect(eiscue.formIndex).toBe(icefaceForm);
     expect(game.scene.getPlayerPokemon()!.hasAbility(AbilityId.TRACE)).toBe(true);
   });

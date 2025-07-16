@@ -1,8 +1,7 @@
 pre-commit:
-  parallel: true
   commands:
     biome-lint:
-      run: npx biome check --write --reporter=summary --staged --no-errors-on-unmatched
+      run: pnpm exec biome check --write --reporter=summary --staged --no-errors-on-unmatched
       stage_fixed: true
       skip:
         - merge

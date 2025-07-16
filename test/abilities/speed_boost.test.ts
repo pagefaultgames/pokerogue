@@ -1,13 +1,14 @@
-import { Stat } from "#enums/stat";
+import Overrides from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
+import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { AttemptRunPhase } from "#phases/attempt-run-phase";
+import type { CommandPhase } from "#phases/command-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import type { CommandPhase } from "#app/phases/command-phase";
-import { Command } from "#enums/command";
-import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Speed Boost", () => {
   let phaserGame: Phaser.Game;
@@ -96,12 +97,15 @@ describe("Abilities - Speed Boost", () => {
   });
 
   it("should not trigger if pokemon fails to escape", async () => {
+    //Account for doubles, should not trigger on either pokemon
+    game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+
+    vi.spyOn(Overrides, "RUN_SUCCESS_OVERRIDE", "get").mockReturnValue(false);
 
     const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);
-    const runPhase = game.scene.phaseManager.getCurrentPhase() as AttemptRunPhase;
-    runPhase.forceFailEscape = true;
+
     await game.phaseInterceptor.to(AttemptRunPhase);
     await game.toNextTurn();
 

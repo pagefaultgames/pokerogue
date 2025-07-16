@@ -1,11 +1,11 @@
-import { SpeciesId } from "#enums/species-id";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
-import { PokeballType } from "#enums/pokeball";
-import type BattleScene from "#app/battle-scene";
+import type { BattleScene } from "#app/battle-scene";
+import { CustomPokemonData } from "#data/pokemon-data";
 import { MoveId } from "#enums/move-id";
+import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { SpeciesId } from "#enums/species-id";
+import { GameManager } from "#test/testUtils/gameManager";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Spec - Pokemon", () => {
   let phaserGame: Phaser.Game;
