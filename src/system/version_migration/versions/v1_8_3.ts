@@ -1,8 +1,8 @@
-import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import type { SystemSaveData } from "#app/system/game-data";
 import { DexAttr } from "#enums/dex-attr";
 import { SpeciesId } from "#enums/species-id";
+import type { SystemSaveData } from "#system/game-data";
+import type { SystemSaveMigrator } from "#types/SystemSaveMigrator";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /**
  * If a starter is caught, but the only forms registered as caught are not starterSelectable,
@@ -28,4 +28,4 @@ const migratePichuForms: SystemSaveMigrator = {
   },
 };
 
-export const systemMigrators: Readonly<SystemSaveMigrator[]> = [migratePichuForms] as const;
+export const systemMigrators: readonly SystemSaveMigrator[] = [migratePichuForms] as const;

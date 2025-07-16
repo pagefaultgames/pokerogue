@@ -1,49 +1,45 @@
-import type { Localizable } from "#app/@types/locales";
-import { AbilityId } from "#enums/ability-id";
-import { PartyMemberStrength } from "#enums/party-member-strength";
-import { SpeciesId } from "#enums/species-id";
-import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
-import i18next from "i18next";
 import type { AnySound } from "#app/battle-scene";
-import { globalScene } from "#app/global-scene";
 import type { GameMode } from "#app/game-mode";
-import type { StarterMoveset } from "#app/system/game-data";
-import { DexAttr } from "#enums/dex-attr";
-import {
-  isNullOrUndefined,
-  capitalizeString,
-  randSeedInt,
-  randSeedGauss,
-  randSeedItem,
-  randSeedFloat,
-} from "#app/utils/common";
-import { uncatchableSpecies } from "#app/data/balance/biomes";
-import { speciesEggMoves } from "#app/data/balance/egg-moves";
-import { GrowthRate } from "#app/data/exp";
-import type { EvolutionLevel } from "#app/data/balance/pokemon-evolutions";
-import {
-  SpeciesWildEvolutionDelay,
-  pokemonEvolutions,
-  pokemonPrevolutions,
-} from "#app/data/balance/pokemon-evolutions";
-import { PokemonType } from "#enums/pokemon-type";
-import type { LevelMoves } from "#app/data/balance/pokemon-level-moves";
+import { globalScene } from "#app/global-scene";
+import { uncatchableSpecies } from "#balance/biomes";
+import { speciesEggMoves } from "#balance/egg-moves";
+import { starterPassiveAbilities } from "#balance/passives";
+import type { EvolutionLevel } from "#balance/pokemon-evolutions";
+import { pokemonEvolutions, pokemonPrevolutions, SpeciesWildEvolutionDelay } from "#balance/pokemon-evolutions";
+import type { LevelMoves } from "#balance/pokemon-level-moves";
 import {
   pokemonFormLevelMoves,
   pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves,
   pokemonSpeciesLevelMoves,
-} from "#app/data/balance/pokemon-level-moves";
-import type { Stat } from "#enums/stat";
-import type { Variant, VariantSet } from "#app/sprites/variant";
-import { populateVariantColorCache, variantColorCache, variantData } from "#app/sprites/variant";
-import { speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
+} from "#balance/pokemon-level-moves";
+import { POKERUS_STARTER_COUNT, speciesStarterCosts } from "#balance/starters";
+import { allSpecies } from "#data/data-lists";
+import { GrowthRate } from "#data/exp";
+import { Gender } from "#data/gender";
+import { AbilityId } from "#enums/ability-id";
+import { DexAttr } from "#enums/dex-attr";
+import { PartyMemberStrength } from "#enums/party-member-strength";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
-import { starterPassiveAbilities } from "#app/data/balance/passives";
-import { loadPokemonVariantAssets } from "#app/sprites/pokemon-sprite";
-import { hasExpSprite } from "#app/sprites/sprite-utils";
-import { Gender } from "./gender";
-import { allSpecies } from "#app/data/data-lists";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
+import { SpeciesId } from "#enums/species-id";
+import type { Stat } from "#enums/stat";
+import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
+import { hasExpSprite } from "#sprites/sprite-utils";
+import type { Variant, VariantSet } from "#sprites/variant";
+import { populateVariantColorCache, variantColorCache, variantData } from "#sprites/variant";
+import type { StarterMoveset } from "#system/game-data";
+import type { Localizable } from "#types/locales";
+import {
+  capitalizeString,
+  isNullOrUndefined,
+  randSeedFloat,
+  randSeedGauss,
+  randSeedInt,
+  randSeedItem,
+} from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
+import i18next from "i18next";
 
 export enum Region {
   NORMAL,
@@ -759,7 +755,7 @@ export abstract class PokemonSpeciesForm {
   }
 }
 
-export default class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
+export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   public name: string;
   readonly subLegendary: boolean;
   readonly legendary: boolean;

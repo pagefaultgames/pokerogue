@@ -1,10 +1,10 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier";
-import { BattlePhase } from "./battle-phase";
-import { BooleanHolder } from "#app/utils/common";
-import { applyChallenges } from "#app/data/challenge";
+import { applyChallenges } from "#data/challenge";
 import { ChallengeType } from "#enums/challenge-type";
+import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#modifiers/modifier";
+import { BattlePhase } from "#phases/battle-phase";
+import { BooleanHolder } from "#utils/common";
 
 export class BattleEndPhase extends BattlePhase {
   public readonly phaseName = "BattleEndPhase";

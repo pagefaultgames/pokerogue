@@ -1,9 +1,9 @@
-import { PokemonType } from "#enums/pokemon-type";
-import { Challenges } from "#app/enums/challenges";
 import { AbilityId } from "#enums/ability-id";
+import { Challenges } from "#enums/challenges";
 import { MoveId } from "#enums/move-id";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

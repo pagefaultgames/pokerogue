@@ -1,13 +1,13 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { allMoves } from "#app/data/data-lists";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { MoveResult } from "#enums/move-result";
-import { describe, beforeAll, afterEach, beforeEach, it, expect } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Dig", () => {
   let phaserGame: Phaser.Game;

@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import { BooleanHolder, fixedInt } from "#app/utils/common";
-import { BattlePhase } from "./battle-phase";
-import { applyChallenges } from "#app/data/challenge";
+import { applyChallenges } from "#data/challenge";
 import { ChallengeType } from "#enums/challenge-type";
+import { BattlePhase } from "#phases/battle-phase";
+import { BooleanHolder, fixedInt } from "#utils/common";
 
 export class PartyHealPhase extends BattlePhase {
   public readonly phaseName = "PartyHealPhase";

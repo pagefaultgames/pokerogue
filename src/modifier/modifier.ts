@@ -1,30 +1,31 @@
-import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { getBerryEffectFunc, getBerryPredicate } from "#app/data/berry";
-import { getLevelTotalExp } from "#app/data/exp";
-import { allMoves, modifierTypes } from "#app/data/data-lists";
-import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
-import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import type { FormChangeItem } from "#enums/form-change-item";
-import { getStatusEffectHealText } from "#app/data/status-effect";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
-import { LearnMoveType } from "#enums/learn-move-type";
-import type { VoucherType } from "#app/system/voucher";
-import { Command } from "#enums/command";
-import { addTextObject, TextStyle } from "#app/ui/text";
-import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, randSeedFloat, toDmgValue } from "#app/utils/common";
+import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#balance/starters";
+import { getBerryEffectFunc, getBerryPredicate } from "#data/berry";
+import { applyChallenges } from "#data/challenge";
+import { allMoves, modifierTypes } from "#data/data-lists";
+import { getLevelTotalExp } from "#data/exp";
+import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
+import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
+import { getStatusEffectHealText } from "#data/status-effect";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
+import { ChallengeType } from "#enums/challenge-type";
+import { Color, ShadowColor } from "#enums/color";
+import { Command } from "#enums/command";
+import type { FormChangeItem } from "#enums/form-change-item";
+import { LearnMoveType } from "#enums/learn-move-type";
 import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import type { PokeballType } from "#enums/pokeball";
-import { SpeciesId } from "#enums/species-id";
-import { type PermanentStat, type TempBattleStat, BATTLE_STATS, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
-import { StatusEffect } from "#enums/status-effect";
 import type { PokemonType } from "#enums/pokemon-type";
-import i18next from "i18next";
+import { SpeciesId } from "#enums/species-id";
+import { BATTLE_STATS, type PermanentStat, Stat, TEMP_BATTLE_STATS, type TempBattleStat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type {
   DoubleBattleChanceBoosterModifierType,
   EvolutionItemModifierType,
@@ -38,15 +39,13 @@ import type {
   PokemonMultiHitModifierType,
   TerastallizeModifierType,
   TmModifierType,
-} from "./modifier-type";
-import { getModifierType } from "#app/utils/modifier-utils";
-import { Color, ShadowColor } from "#enums/color";
-import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { globalScene } from "#app/global-scene";
-import type { ModifierInstanceMap, ModifierString } from "#app/@types/modifier-types";
-import { applyChallenges } from "#app/data/challenge";
-import { ChallengeType } from "#enums/challenge-type";
+} from "#modifiers/modifier-type";
+import type { VoucherType } from "#system/voucher";
+import type { ModifierInstanceMap, ModifierString } from "#types/modifier-types";
+import { addTextObject, TextStyle } from "#ui/text";
+import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, randSeedFloat, toDmgValue } from "#utils/common";
+import { getModifierType } from "#utils/modifier-utils";
+import i18next from "i18next";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -954,10 +953,9 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
 export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
   public override type: PokemonBaseStatTotalModifierType;
   public isTransferable = false;
+  public statModifier: 10 | -15;
 
-  private statModifier: number;
-
-  constructor(type: PokemonBaseStatTotalModifierType, pokemonId: number, statModifier: number, stackCount?: number) {
+  constructor(type: PokemonBaseStatTotalModifierType, pokemonId: number, statModifier: 10 | -15, stackCount?: number) {
     super(type, pokemonId, stackCount);
     this.statModifier = statModifier;
   }
@@ -1014,31 +1012,14 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
  * Currently used by Old Gateau item
  */
 export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
-  private statModifier: number;
-  private stats: Stat[];
   public isTransferable = false;
 
-  constructor(type: ModifierType, pokemonId: number, statModifier: number, stats: Stat[], stackCount?: number) {
-    super(type, pokemonId, stackCount);
-
-    this.statModifier = statModifier;
-    this.stats = stats;
-  }
-
   override matchType(modifier: Modifier): boolean {
-    return (
-      modifier instanceof PokemonBaseStatFlatModifier &&
-      modifier.statModifier === this.statModifier &&
-      this.stats.every(s => modifier.stats.some(stat => s === stat))
-    );
+    return modifier instanceof PokemonBaseStatFlatModifier;
   }
 
   override clone(): PersistentModifier {
-    return new PokemonBaseStatFlatModifier(this.type, this.pokemonId, this.statModifier, this.stats, this.stackCount);
-  }
-
-  override getArgs(): any[] {
-    return [...super.getArgs(), this.statModifier, this.stats];
+    return new PokemonBaseStatFlatModifier(this.type, this.pokemonId, this.stackCount);
   }
 
   /**
@@ -1057,16 +1038,34 @@ export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
    * @param baseStats The base stats of the {@linkcode Pokemon}
    * @returns always `true`
    */
-  override apply(_pokemon: Pokemon, baseStats: number[]): boolean {
+  override apply(pokemon: Pokemon, baseStats: number[]): boolean {
     // Modifies the passed in baseStats[] array by a flat value, only if the stat is specified in this.stats
+    const stats = this.getStats(pokemon);
+    const statModifier = 20;
     baseStats.forEach((v, i) => {
-      if (this.stats.includes(i)) {
-        const newVal = Math.floor(v + this.statModifier);
+      if (stats.includes(i)) {
+        const newVal = Math.floor(v + statModifier);
         baseStats[i] = Math.min(Math.max(newVal, 1), 999999);
       }
     });
 
     return true;
+  }
+
+  /**
+   * Get the lowest of HP/Spd, lowest of Atk/SpAtk, and lowest of Def/SpDef
+   * @returns Array of 3 {@linkcode Stat}s to boost
+   */
+  getStats(pokemon: Pokemon): Stat[] {
+    const stats: Stat[] = [];
+    const baseStats = pokemon.getSpeciesForm().baseStats.slice(0);
+    // HP or Speed
+    stats.push(baseStats[Stat.HP] < baseStats[Stat.SPD] ? Stat.HP : Stat.SPD);
+    // Attack or SpAtk
+    stats.push(baseStats[Stat.ATK] < baseStats[Stat.SPATK] ? Stat.ATK : Stat.SPATK);
+    // Def or SpDef
+    stats.push(baseStats[Stat.DEF] < baseStats[Stat.SPDEF] ? Stat.DEF : Stat.SPDEF);
+    return stats;
   }
 
   override getScoreMultiplier(): number {

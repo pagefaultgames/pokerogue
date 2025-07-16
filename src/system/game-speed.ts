@@ -1,9 +1,9 @@
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import type { BattleScene } from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
+import { FixedInt } from "#utils/common";
 import type FadeIn from "phaser3-rex-plugins/plugins/audio/fade/FadeIn";
 import type FadeOut from "phaser3-rex-plugins/plugins/audio/fade/FadeOut";
-import type BattleScene from "#app/battle-scene";
-import { globalScene } from "#app/global-scene";
-import { FixedInt } from "#app/utils/common";
+import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 
 type TweenManager = typeof Phaser.Tweens.TweenManager.prototype;
 
