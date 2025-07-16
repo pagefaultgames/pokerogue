@@ -488,11 +488,11 @@ export class Arena {
   getTrainerChance(): number {
     switch (this.biomeType) {
       case BiomeId.METROPOLIS:
-      case BiomeId.BEACH:
       case BiomeId.DOJO:
         return 4;
       case BiomeId.PLAINS:
       case BiomeId.GRASS:
+      case BiomeId.BEACH:
       case BiomeId.LAKE:
       case BiomeId.CAVE:
       case BiomeId.DESERT:
