@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { speciesStarterCosts } from "#balance/starters";
-import { applyChallenges } from "#data/challenge";
+import { applyChallenges } from "#data/apply-challenges";
 import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import {

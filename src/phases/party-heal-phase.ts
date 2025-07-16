@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { applyChallenges } from "#data/challenge";
+import { applyChallenges } from "#data/apply-challenges";
 import { ChallengeType } from "#enums/challenge-type";
 import { BattlePhase } from "#phases/battle-phase";
 import { BooleanHolder, fixedInt } from "#utils/common";

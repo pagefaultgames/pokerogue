@@ -1,7 +1,7 @@
-import { applyChallenges } from "#app/data/challenge";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { BooleanHolder } from "#app/utils/common";
+import { applyChallenges } from "#data/apply-challenges";
 import { modifierTypes } from "#data/data-lists";
 import { BattleType } from "#enums/battle-type";
 import type { BattlerIndex } from "#enums/battler-index";

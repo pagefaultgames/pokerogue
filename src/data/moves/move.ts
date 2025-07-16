@@ -6,6 +6,7 @@ import { loggedInUser } from "#app/account";
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { applyChallenges } from "#data/apply-challenges";
 import type { ArenaTrapTag } from "#data/arena-tag";
 import { WeakenMoveTypeTag } from "#data/arena-tag";
 import { MoveChargeAnim } from "#data/battle-anims";
@@ -22,7 +23,6 @@ import {
   TypeBoostTag,
 } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
-import { applyChallenges } from "#data/challenge";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
 import {

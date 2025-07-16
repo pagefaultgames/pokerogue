@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
-import { applyChallenges } from "#data/challenge";
+import { applyChallenges } from "#data/apply-challenges";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#data/form-change-triggers";
 import { Gender } from "#data/gender";
 import { ChallengeType } from "#enums/challenge-type";

@@ -1,8 +1,8 @@
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { applyChallenges } from "#data/apply-challenges";
 import { SubstituteTag } from "#data/battler-tags";
-import { applyChallenges } from "#data/challenge";
 import { Gender } from "#data/gender";
 import {
   doPokeballBounceAnim,

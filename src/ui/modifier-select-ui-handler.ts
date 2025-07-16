@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import { applyChallenges } from "#data/challenge";
+import { applyChallenges } from "#data/apply-challenges";
 import { allMoves } from "#data/data-lists";
 import { getPokeballAtlasKey } from "#data/pokeball";
 import { Button } from "#enums/buttons";

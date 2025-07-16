@@ -19,6 +19,7 @@ import { EVOLVE_MOVE, RELEARN_MOVE } from "#balance/pokemon-level-moves";
 import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
 import { reverseCompatibleTms, tmPoolTiers, tmSpecies } from "#balance/tms";
+import { applyChallenges } from "#data/apply-challenges";
 import type { SuppressAbilitiesTag } from "#data/arena-tag";
 import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import {
@@ -40,7 +41,6 @@ import {
   TrappedTag,
   TypeImmuneTag,
 } from "#data/battler-tags";
-import { applyChallenges } from "#data/challenge";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
