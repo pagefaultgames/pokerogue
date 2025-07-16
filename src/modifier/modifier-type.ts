@@ -118,7 +118,15 @@ import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#types/mo
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getModifierTierTextTint } from "#ui/text";
-import { BooleanHolder, formatMoney, isNullOrUndefined, NumberHolder, padInt, randSeedInt, randSeedItem } from "#utils/common";
+import {
+  BooleanHolder,
+  formatMoney,
+  isNullOrUndefined,
+  NumberHolder,
+  padInt,
+  randSeedInt,
+  randSeedItem,
+} from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
 import i18next from "i18next";
