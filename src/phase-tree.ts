@@ -1,29 +1,19 @@
 import type { PhaseConditionFunc } from "#app/@types/phase-condition";
 import type { PhaseMap, PhaseString } from "#app/@types/phase-types";
-import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
-import { DynamicQueueManager } from "#app/queues/dynamic-queue-manager";
 
 export class PhaseTree {
   private levels: Phase[][];
   private currentLevel: number;
 
-  private dynamicQueueManager: DynamicQueueManager;
-
   constructor() {
     this.currentLevel = 0;
     this.levels = [[]];
-    this.dynamicQueueManager = new DynamicQueueManager();
   }
 
   private add(phase: Phase, level: number) {
-    let phaseToAdd = phase;
-    if (this.dynamicQueueManager.queueDynamicPhase(phase)) {
-      phaseToAdd = globalScene.phaseManager.create("DynamicPhaseMarker", phase.phaseName);
-    }
-
     const addIndex = this.levels[level].findIndex(p => p.is("FaintPhase"));
-    this.levels[level].splice(addIndex, 0, phaseToAdd);
+    this.levels[level].splice(addIndex, 0, phase);
   }
 
   public addPhase(phase: Phase, deepen = true): void {
@@ -49,11 +39,7 @@ export class PhaseTree {
     }
 
     // We always increase the level in anticipation of the popped phase increasing the depth
-    let phase = this.levels[this.currentLevel++].pop();
-    if (phase?.is("DynamicPhaseMarker")) {
-      phase = this.dynamicQueueManager.popNextPhase(phase.phaseType);
-    }
-    return phase;
+    return this.levels[this.currentLevel++].pop();
   }
 
   public find<P extends PhaseString>(phaseType: P, phaseFilter?: PhaseConditionFunc<P>): PhaseMap[P] | undefined {

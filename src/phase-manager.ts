@@ -249,7 +249,7 @@ export class PhaseManager {
    * @param defer boolean on which queue to add to, defaults to false, and adds to phaseQueue
    */
   pushPhase(phase: Phase, _defer = false): void {
-    this.phaseQueue.pushPhase(phase);
+    this.phaseQueue.pushPhase(this.checkDynamic(phase));
   }
 
   /**
@@ -258,8 +258,15 @@ export class PhaseManager {
    */
   unshiftPhase(...phases: Phase[]): void {
     phases.forEach(p => {
-      this.phaseQueue.addPhase(p);
+      this.phaseQueue.addPhase(this.checkDynamic(p));
     });
+  }
+
+  private checkDynamic(phase: Phase): Phase {
+    if (this.dynamicQueueManager.queueDynamicPhase(phase)) {
+      return new DynamicPhaseMarker(phase.phaseName);
+    }
+    return phase;
   }
 
   /**
@@ -293,6 +300,10 @@ export class PhaseManager {
     }
 
     this.currentPhase = this.phaseQueue.getNextPhase() ?? null;
+
+    if (this.currentPhase?.is("DynamicPhaseMarker")) {
+      this.currentPhase = this.dynamicQueueManager.popNextPhase(this.currentPhase.phaseType) ?? null;
+    }
 
     if (this.currentPhase === null) {
       this.turnEndSequence();
