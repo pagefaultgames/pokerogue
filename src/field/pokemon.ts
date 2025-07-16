@@ -2537,7 +2537,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const moveset = this.moveset;
-    // Start at 1 to prevent division by zero later on
     let moveAtkScoreLength = 0;
     let atkScore = 0;
     // TODO: this calculation needs to consider more factors; it's currently very simplistic
@@ -2552,7 +2551,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
       // Add STAB multiplier for attack type effectiveness.
       // For now, simply don't apply STAB to moves that may change type
-      if (this.getTypes(true).includes(moveType) && move.getMove().hasAttr("VariableMoveTypeAttr")) {
+      if (this.getTypes(true).includes(moveType) && !move.getMove().hasAttr("VariableMoveTypeAttr")) {
         thisScore *= 1.5;
       }
 
