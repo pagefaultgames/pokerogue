@@ -1,5 +1,5 @@
 import { FixedBattleConfig, getRandomTrainerFunc } from "#app/battle";
-import Trainer from "#app/field/trainer";
+import { Trainer } from "#app/field/trainer";
 import { globalScene } from "#app/global-scene";
 import { randSeedInt } from "#app/utils/common";
 import { BattleType } from "#enums/battle-type";

@@ -1,16 +1,14 @@
-// -- start tsdoc imports --
-// biome-ignore lint/correctness/noUnusedImports: TSDoc import
+/* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
 import type { globalScene } from "#app/global-scene";
-// -- end tsdoc imports --
+/* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
-import type { BattlerIndex } from "#enums/battler-index";
-import type { Ability } from "#app/data/abilities/ability";
-import { allAbilities } from "#app/data/data-lists";
-import type Pokemon from "#app/field/pokemon";
-import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import type { Ability } from "#abilities/ability";
+import { allAbilities } from "#data/data-lists";
 import type { AbilityId } from "#enums/ability-id";
+import type { BattlerIndex } from "#enums/battler-index";
 import type { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
+import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { expect, type MockInstance, vi } from "vitest";
 
@@ -70,7 +68,7 @@ export class FieldHelper extends GameManagerHelper {
    * @see {@linkcode vi.spyOn}
    * @see https://vitest.dev/api/mock#mockreturnvalue
    */
-  public mockAbility(pokemon: Pokemon, ability: AbilityId): MockInstance<(baseOnly?: boolean) => Ability> {
+  public mockAbility(pokemon: Pokemon, ability: AbilityId): MockInstance<(ignoreOverride?: boolean) => Ability> {
     return vi.spyOn(pokemon, "getAbility").mockReturnValue(allAbilities[ability]);
   }
 

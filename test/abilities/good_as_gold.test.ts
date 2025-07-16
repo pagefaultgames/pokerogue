@@ -1,15 +1,15 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { allAbilities } from "#app/data/data-lists";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { Stat } from "#app/enums/stat";
-import { StatusEffect } from "#app/enums/status-effect";
-import { WeatherType } from "#app/enums/weather-type";
+import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { WeatherType } from "#enums/weather-type";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -45,7 +45,7 @@ describe("Abilities - Good As Gold", () => {
 
     const player = game.scene.getPlayerPokemon()!;
 
-    game.move.select(MoveId.SPLASH, 0);
+    game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -54,12 +54,13 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should block memento and prevent the user from fainting", async () => {
-    game.override.enemyMoveset([MoveId.MEMENTO]);
+    game.override.enemyAbility(AbilityId.GOOD_AS_GOLD);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    game.move.select(MoveId.MEMENTO);
+
+    game.move.use(MoveId.MEMENTO);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getPlayerPokemon()!.isFainted()).toBe(false);
-    expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(0);
+    expect(game.field.getPlayerPokemon().isFainted()).toBe(false);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(0);
   });
 
   it("should not block any status moves that target the field, one side, or all pokemon", async () => {

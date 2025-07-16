@@ -1,6 +1,6 @@
 import { defineProject } from "vitest/config";
-import { defaultConfig } from "./vite.config";
 import { BaseSequencer, type TestSpecification } from "vitest/node";
+import { defaultConfig } from "./vite.config";
 
 function getTestOrder(testName: string): number {
   if (testName.includes("battle-scene.test.ts")) {
@@ -33,6 +33,10 @@ export default defineProject(({ mode }) => ({
       jsdom: {
         resources: "usable",
       },
+    },
+    typecheck: {
+      tsconfig: "tsconfig.json",
+      include: ["./test/types/**/*.{test,spec}{-|.}d.ts"],
     },
     threads: false,
     trace: true,

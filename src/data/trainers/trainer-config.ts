@@ -1,61 +1,49 @@
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "../data-lists";
-import { PokemonMove } from "../moves/pokemon-move";
-import {
-  toReadableString,
-  isNullOrUndefined,
-  randSeedItem,
-  randSeedInt,
-  coerceArray,
-  randSeedIntRange,
-} from "#app/utils/common";
-import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { tmSpecies } from "#app/data/balance/tms";
-import { doubleBattleDialogue } from "../double-battle-dialogue";
-import { TrainerVariant } from "#enums/trainer-variant";
-import { getIsInitialized, initI18n } from "#app/plugins/i18n";
-import i18next from "i18next";
-import { Gender } from "#app/data/gender";
-import { signatureSpecies } from "../balance/signature-species";
-import {
-  getEvilGruntPartyTemplate,
-  getGymLeaderPartyTemplate,
-  getWavePartyTemplate,
-  TrainerPartyCompoundTemplate,
-  TrainerPartyTemplate,
-  trainerPartyTemplates,
-} from "./trainer-party-template";
-import { evilAdminTrainerPools } from "./evil-admin-trainer-pools";
-
-// Enum imports
+import { pokemonEvolutions, pokemonPrevolutions } from "#balance/pokemon-evolutions";
+import { signatureSpecies } from "#balance/signature-species";
+import { tmSpecies } from "#balance/tms";
+import { modifierTypes } from "#data/data-lists";
+import { doubleBattleDialogue } from "#data/double-battle-dialogue";
+import { Gender } from "#data/gender";
+import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import { SpeciesId } from "#enums/species-id";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
-import { MoveId } from "#enums/move-id";
-import { AbilityId } from "#enums/ability-id";
+import { SpeciesId } from "#enums/species-id";
 import { TeraAIMode } from "#enums/tera-ai-mode";
 import { TrainerPoolTier } from "#enums/trainer-pool-tier";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
-import { timedEventManager } from "#app/global-event-manager";
-
-// Type imports
-import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import type { ModifierTypeFunc } from "#app/@types/modifier-types";
-import type { EnemyPokemon } from "#app/field/pokemon";
-import type { EvilTeam } from "./evil-admin-trainer-pools";
+import { TrainerVariant } from "#enums/trainer-variant";
+import type { EnemyPokemon } from "#field/pokemon";
+import { PokemonMove } from "#moves/pokemon-move";
+import { getIsInitialized, initI18n } from "#plugins/i18n";
+import type { EvilTeam } from "#trainers/evil-admin-trainer-pools";
+import { evilAdminTrainerPools } from "#trainers/evil-admin-trainer-pools";
+import { getEvilGruntPartyTemplate, getGymLeaderPartyTemplate, getWavePartyTemplate, TrainerPartyCompoundTemplate, TrainerPartyTemplate, trainerPartyTemplates } from "#trainers/trainer-party-template";
+import type { ModifierTypeFunc } from "#types/modifier-types";
 import type {
-  PartyMemberFunc,
-  GenModifiersFunc,
   GenAIFunc,
-  PartyTemplateFunc,
-  TrainerTierPools,
-  TrainerConfigs,
+  GenModifiersFunc,
+  PartyMemberFunc,
   PartyMemberFuncs,
-} from "../../@types/trainer-funcs";
+  PartyTemplateFunc,
+  TrainerConfigs,
+  TrainerTierPools,
+} from "#types/trainer-funcs";
+import {
+  coerceArray,
+  isNullOrUndefined,
+  randSeedInt,
+  randSeedIntRange,
+  randSeedItem,
+  toReadableString,
+} from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import i18next from "i18next";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
 const ELITE_FOUR_MINIMUM_BST = 460;

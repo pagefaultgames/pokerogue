@@ -1,26 +1,26 @@
-import type BattleScene from "#app/battle-scene";
-import { speciesStarterCosts } from "#app/data/balance/starters";
-import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import type { BattleScene } from "#app/battle-scene";
+import { speciesStarterCosts } from "#balance/starters";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
 import {
   getEncounterText,
   queueEncounterMessage,
   showEncounterDialogue,
   showEncounterText,
-} from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+} from "#mystery-encounters/encounter-dialogue-utils";
 import {
   getHighestLevelPlayerPokemon,
   getLowestLevelPlayerPokemon,
   getRandomPlayerPokemon,
   getRandomSpeciesByStarterCost,
   koPlayerPokemon,
-} from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { PokemonType } from "#enums/pokemon-type";
-import { MessagePhase } from "#app/phases/message-phase";
-import GameManager from "#test/testUtils/gameManager";
-import { SpeciesId } from "#enums/species-id";
-import { StatusEffect } from "#enums/status-effect";
+} from "#mystery-encounters/encounter-pokemon-utils";
+import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MessagePhase } from "#phases/message-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

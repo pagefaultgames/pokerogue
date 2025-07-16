@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import type TouchControl from "#app/touch-controls";
-import type UI from "#app/ui/ui";
+import type { TouchControl } from "#app/touch-controls";
+import type { UI } from "#ui/ui";
 import i18next from "i18next";
 
 export const TOUCH_CONTROL_POSITIONS_LANDSCAPE = "touchControlPositionsLandscape";
@@ -24,7 +24,7 @@ type ToolbarRefs = {
 /**
  * Handles the dragging of touch controls around the screen.
  */
-export default class MoveTouchControlsHandler {
+export class MoveTouchControlsHandler {
   /** The element that is currently being dragged */
   private draggingElement: HTMLElement | null = null;
 

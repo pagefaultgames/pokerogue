@@ -1,10 +1,10 @@
-import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#enums/ability-id";
-import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
-import { MoveResult } from "#enums/move-result";
 import { BattleType } from "#enums/battle-type";
-import GameManager from "#test/testUtils/gameManager";
+import { BattlerIndex } from "#enums/battler-index";
+import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { SpeciesId } from "#enums/species-id";
+import { GameManager } from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Gastro Acid", () => {
@@ -100,12 +100,12 @@ describe("Moves - Gastro Acid", () => {
     await game.toNextTurn();
     expect(enemyPokemon.summonData.abilitySuppressed).toBe(true);
 
-    game.move.select(MoveId.WATER_GUN);
+    game.move.use(MoveId.WATER_GUN);
     await game.toNextTurn();
     // water gun should've dealt damage due to suppressed Water Absorb
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
 
-    game.move.select(MoveId.SPORE);
+    game.move.use(MoveId.SPORE);
     await game.toEndOfTurn();
 
     // Comatose should block stauts effect

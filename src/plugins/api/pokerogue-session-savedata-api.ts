@@ -1,3 +1,5 @@
+import { ApiBase } from "#api/api-base";
+import type { SessionSaveData } from "#system/game-data";
 import type {
   ClearSessionSavedataRequest,
   ClearSessionSavedataResponse,
@@ -5,9 +7,7 @@ import type {
   GetSessionSavedataRequest,
   NewClearSessionSavedataRequest,
   UpdateSessionSavedataRequest,
-} from "#app/@types/PokerogueSessionSavedataApi";
-import { ApiBase } from "#app/plugins/api/api-base";
-import type { SessionSaveData } from "#app/system/game-data";
+} from "#types/PokerogueSessionSavedataApi";
 
 /**
  * A wrapper for PokéRogue session savedata API requests.

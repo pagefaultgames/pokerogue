@@ -1,5 +1,4 @@
-import { CudChewConsumeBerryAbAttr } from "#app/data/abilities/ability";
-import Pokemon from "#app/field/pokemon";
+import { CudChewConsumeBerryAbAttr } from "#abilities/ability";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
@@ -7,7 +6,8 @@ import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import { Pokemon } from "#field/pokemon";
+import { GameManager } from "#test/testUtils/gameManager";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
