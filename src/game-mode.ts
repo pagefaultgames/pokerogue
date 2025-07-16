@@ -1,5 +1,4 @@
-import type { FixedBattleConfigs } from "#app/battle";
-import { classicFixedBattles, FixedBattleConfig } from "#app/battle";
+import { FixedBattleConfig } from "#app/battle";
 import { CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
@@ -14,6 +13,7 @@ import { Challenges } from "#enums/challenges";
 import { GameModes } from "#enums/game-modes";
 import { SpeciesId } from "#enums/species-id";
 import type { Arena } from "#field/arena";
+import { classicFixedBattles, type FixedBattleConfigs } from "#trainers/fixed-battle-configs";
 import { isNullOrUndefined, randSeedInt, randSeedItem } from "#utils/common";
 import i18next from "i18next";
 
