@@ -21,7 +21,9 @@ export class PhaseTree {
     if (this.dynamicQueueManager.queueDynamicPhase(phase)) {
       phaseToAdd = globalScene.phaseManager.create("DynamicPhaseMarker", phase.phaseName);
     }
-    this.levels[level].push(phaseToAdd);
+
+    const addIndex = this.levels[level].findIndex(p => p.is("FaintPhase"));
+    this.levels[level].splice(addIndex, 0, phaseToAdd);
   }
 
   public addPhase(phase: Phase, deepen = true): void {

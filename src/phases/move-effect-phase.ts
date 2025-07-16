@@ -906,9 +906,6 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param target - The {@linkcode Pokemon} that fainted
    */
   protected onFaintTarget(user: Pokemon, target: Pokemon): void {
-    // set splice index here, so future scene queues happen before FaintedPhase
-    globalScene.phaseManager.setPhaseQueueSplice();
-
     globalScene.phaseManager.unshiftNew("FaintPhase", target.getBattlerIndex(), false, user);
 
     target.destroySubstitute();

@@ -49,7 +49,6 @@ export class MysteryEncounterPhase extends Phase {
 
     // Clears out queued phases that are part of standard battle
     globalScene.phaseManager.clearPhaseQueue();
-    globalScene.phaseManager.clearPhaseQueueSplice();
 
     const encounter = globalScene.currentBattle.mysteryEncounter!;
     encounter.updateSeedOffset();
@@ -550,7 +549,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
     if (encounter.doEncounterRewards) {
       encounter.doEncounterRewards();
     } else if (this.addHealPhase) {
-      globalScene.phaseManager.tryRemovePhase(p => p.is("SelectModifierPhase"));
+      globalScene.phaseManager.removeAllPhasesOfType("SelectModifierPhase");
       globalScene.phaseManager.unshiftNew("SelectModifierPhase", 0, undefined, {
         fillRemaining: false,
         rerollMultiplier: -1,

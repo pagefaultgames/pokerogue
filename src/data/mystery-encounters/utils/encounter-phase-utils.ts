@@ -756,7 +756,7 @@ export function setEncounterRewards(
     if (customShopRewards) {
       globalScene.phaseManager.unshiftNew("SelectModifierPhase", 0, undefined, customShopRewards);
     } else {
-      globalScene.phaseManager.tryRemovePhase(p => p.is("MysteryEncounterRewardsPhase"));
+      globalScene.phaseManager.removeAllPhasesOfType("MysteryEncounterRewardsPhase");
     }
 
     if (eggRewards) {
@@ -831,7 +831,6 @@ export function leaveEncounterWithoutBattle(
 ) {
   globalScene.currentBattle.mysteryEncounter!.encounterMode = encounterMode;
   globalScene.phaseManager.clearPhaseQueue();
-  globalScene.phaseManager.clearPhaseQueueSplice();
   handleMysteryEncounterVictory(addHealPhase);
 }
 

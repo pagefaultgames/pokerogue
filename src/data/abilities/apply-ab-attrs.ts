@@ -34,8 +34,6 @@ function applySingleAbAttrs<T extends AbAttrString>(
       continue;
     }
 
-    globalScene.phaseManager.setPhaseQueueSplice();
-
     if (attr.showAbility && !simulated) {
       globalScene.phaseManager.queueAbilityDisplay(pokemon, passive, true);
       abShown = true;
@@ -58,8 +56,6 @@ function applySingleAbAttrs<T extends AbAttrString>(
     if (!simulated) {
       pokemon.waveData.abilitiesApplied.add(ability.id);
     }
-
-    globalScene.phaseManager.clearPhaseQueueSplice();
   }
 }
 
@@ -81,7 +77,6 @@ function applyAbAttrsInternal<T extends CallableAbAttrString>(
   for (const passive of [false, true]) {
     params.passive = passive;
     applySingleAbAttrs(attrType, params, gainedMidTurn, messages);
-    globalScene.phaseManager.clearPhaseQueueSplice();
   }
   // We need to restore passive to its original state in the case that it was undefined on entry
   // this is necessary in case this method is called with an object that is reused.

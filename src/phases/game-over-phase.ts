@@ -223,7 +223,6 @@ export class GameOverPhase extends BattlePhase {
         .then(success => doGameOver(!globalScene.gameMode.isDaily || !!success))
         .catch(_err => {
           globalScene.phaseManager.clearPhaseQueue();
-          globalScene.phaseManager.clearPhaseQueueSplice();
           globalScene.phaseManager.unshiftNew("MessagePhase", i18next.t("menu:serverCommunicationFailed"), 2500);
           // force the game to reload after 2 seconds.
           setTimeout(() => {
