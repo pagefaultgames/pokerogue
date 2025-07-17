@@ -164,14 +164,14 @@ export class GameMode implements GameModeConfig {
     if (waveIndex % 10 !== 1 && waveIndex % 10) {
       /**
        * Do not check X1 floors since there's a bug that stops trainer sprites from appearing
-       * after a X0 full party heal
+       * after a X0 full party heal, this also allows for a smoother biome transition for general gameplay feel
        */
       const trainerChance = arena.getTrainerChance();
       let allowTrainerBattle = true;
       if (trainerChance) {
         const waveBase = Math.floor(waveIndex / 10) * 10;
-        // Stop generic trainers from spawning in within 3 waves of a trainer battle
-        for (let w = Math.max(waveIndex - 3, waveBase + 2); w <= Math.min(waveIndex + 3, waveBase + 9); w++) {
+        // Stop generic trainers from spawning in within 2 waves of a fixed trainer battle
+        for (let w = Math.max(waveIndex - 2, waveBase + 2); w <= Math.min(waveIndex + 2, waveBase + 9); w++) {
           if (w === waveIndex) {
             continue;
           }
