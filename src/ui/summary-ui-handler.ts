@@ -810,12 +810,23 @@ export class SummaryUiHandler extends UiHandler {
       case Page.PROFILE: {
         const profileContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(profileContainer);
+        const otColor =
+          globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE;
+        const usernameReplacement =
+          globalScene.gameData.gender === PlayerGender.FEMALE
+            ? i18next.t("trainerNames:player_f")
+            : i18next.t("trainerNames:player_m");
 
         // TODO: should add field for original trainer name to Pokemon object, to support gift/traded Pokemon from MEs
         const trainerText = addBBCodeTextObject(
           7,
           12,
-          `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(loggedInUser?.username || i18next.t("pokemonSummary:unknown"), globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE)}`,
+          `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(
+            !globalScene.hideUsername
+              ? loggedInUser?.username || i18next.t("pokemonSummary:unknown")
+              : usernameReplacement,
+            otColor,
+          )}`,
           TextStyle.SUMMARY_ALT,
         );
         trainerText.setOrigin(0, 0);
@@ -824,7 +835,9 @@ export class SummaryUiHandler extends UiHandler {
         const trainerIdText = addTextObject(
           141,
           12,
-          `${i18next.t("pokemonSummary:idNo")}${globalScene.gameData.trainerId.toString()}`,
+          !globalScene.hideUsername
+            ? `${i18next.t("pokemonSummary:idNo")}${globalScene.gameData.trainerId.toString()}`
+            : "",
           TextStyle.SUMMARY_ALT,
         );
         trainerIdText.setOrigin(0, 0);

@@ -236,6 +236,7 @@ export class BattleScene extends SceneBase {
   public enableTouchControls = false;
   public enableVibration = false;
   public showBgmBar = true;
+  public hideUsername = false;
   /** Determines the selected battle style. */
   public battleStyle: BattleStyle = BattleStyle.SWITCH;
   /**
