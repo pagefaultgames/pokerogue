@@ -6,6 +6,7 @@ import {
   SpeciesFormChangeAbilityTrigger,
   SpeciesFormChangeActiveTrigger,
   SpeciesFormChangeCompoundTrigger,
+  SpeciesFormChangeFaintTrigger,
   SpeciesFormChangeItemTrigger,
   SpeciesFormChangeLapseTeraTrigger,
   SpeciesFormChangeManualTrigger,
@@ -388,7 +389,8 @@ export const pokemonFormChanges: PokemonFormChanges = {
   ],
   [SpeciesId.GRENINJA]: [
     new SpeciesFormChange(SpeciesId.GRENINJA, "battle-bond", "ash", new SpeciesFormChangeAbilityTrigger(), true),
-    new SpeciesFormChange(SpeciesId.GRENINJA, "ash", "battle-bond", new SpeciesFormChangeAbilityTrigger(), true)
+    new SpeciesFormChange(SpeciesId.GRENINJA, "ash", "battle-bond", new SpeciesFormChangeAbilityTrigger(), true),
+    new SpeciesFormChange(SpeciesId.GRENINJA, "ash", "battle-bond", new SpeciesFormChangeFaintTrigger(), true)
   ],
   [SpeciesId.PALAFIN] : [
     new SpeciesFormChange(SpeciesId.PALAFIN, "zero", "hero", new SpeciesFormChangeAbilityTrigger(), true),

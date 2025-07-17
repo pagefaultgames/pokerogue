@@ -4,7 +4,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { FRIENDSHIP_LOSS_FROM_FAINT } from "#balance/starters";
 import { allMoves } from "#data/data-lists";
 import { battleSpecDialogue } from "#data/dialogue";
-import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
+import { SpeciesFormChangeActiveTrigger, SpeciesFormChangeFaintTrigger } from "#data/form-change-triggers";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattleType } from "#enums/battle-type";
 import type { BattlerIndex } from "#enums/battler-index";
@@ -107,6 +107,7 @@ export class FaintPhase extends PokemonPhase {
       null,
       true,
     );
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeFaintTrigger, true);
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
 
     pokemon.resetTera();

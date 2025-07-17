@@ -310,6 +310,12 @@ export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChange
   }
 }
 
+export class SpeciesFormChangeFaintTrigger extends SpeciesFormChangeTrigger {
+  canChange(pokemon: Pokemon): boolean {
+    return pokemon.isFainted();
+  }
+}
+
 export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: SpeciesFormChange, preName: string): string {
   const isMega = formChange.formKey.indexOf(SpeciesFormKey.MEGA) > -1;
   const isGmax = formChange.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1;
