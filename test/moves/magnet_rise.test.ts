@@ -8,7 +8,6 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 describe("Moves - Magnet Rise", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const moveToUse = MoveId.MAGNET_RISE;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -24,37 +23,36 @@ describe("Moves - Magnet Rise", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .starterSpecies(SpeciesId.MAGNEZONE)
       .enemySpecies(SpeciesId.RATTATA)
-      .enemyMoveset(MoveId.DRILL_RUN)
+      .enemyMoveset(MoveId.EARTHQUAKE)
       .criticalHits(false)
       .enemyLevel(1)
-      .moveset([moveToUse, MoveId.SPLASH, MoveId.GRAVITY, MoveId.BATON_PASS]);
   });
 
-  it("MAGNET RISE", async () => {
-    await game.classicMode.startBattle();
+  it("should make the user immune to ground-type moves", async () => {
+    await game.classicMode.startBattle([SpeciesId.MAGNEZONE);
 
-    const startingHp = game.scene.getPlayerParty()[0].hp;
-    game.move.select(moveToUse);
-    await game.phaseInterceptor.to(TurnEndPhase);
-    const finalHp = game.scene.getPlayerParty()[0].hp;
-    const hpLost = finalHp - startingHp;
-    expect(hpLost).toBe(0);
+    game.move.use(MoveId.MAGNET_RISE);
+    await game.toEndOfTurn();
+
+    const magnezone = game.field.getPlayerPokemon();
+    expect(magnezone.hp).toBe(magnezone.getMaxHp());
+    expect(magnezone.isGrounded()).toBe(false);
   });
 
-  it("MAGNET RISE - Gravity", async () => {
+  it("should be removed by gravity", async () => {
     await game.classicMode.startBattle();
 
-    const startingHp = game.scene.getPlayerParty()[0].hp;
-    game.move.select(moveToUse);
-    let finalHp = game.scene.getPlayerParty()[0].hp;
-    let hpLost = finalHp - startingHp;
-    expect(hpLost).toBe(0);
-    game.move.select(MoveId.GRAVITY);
-    await game.phaseInterceptor.to(TurnEndPhase);
-    finalHp = game.scene.getPlayerParty()[0].hp;
-    hpLost = finalHp - startingHp;
-    expect(hpLost).not.toBe(0);
+    game.move.use(MoveId.MAGNET_RISE);
+    await game.toNextTurn();
+
+    const magnezone = game.field.getPlayerPokemon();
+    expect(magnezone.hp).toBe(magnezone.getMaxHp());
+
+    game.move.use(MoveId.GRAVITY);
+    await game.toEndOfTurn();
+
+    expect(magnezone.hp).toBeLessThan(magnezone.getMaxHp());
+    expect(magnezone.isGrounded()).toBe(true);
   });
 });
