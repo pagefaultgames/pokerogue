@@ -29,7 +29,6 @@ describe("Final Boss", () => {
       .startingBiome(BiomeId.END)
       .criticalHits(false)
       .enemyMoveset(MoveId.SPLASH)
-      .moveset([MoveId.SPLASH, MoveId.WILL_O_WISP, MoveId.DRAGON_PULSE])
       .startingLevel(10000);
   });
 
@@ -80,13 +79,14 @@ describe("Final Boss", () => {
     // phase 1
     const eternatus = game.scene.getEnemyPokemon()!;
     const phase1Hp = eternatus.getMaxHp();
-    game.move.select(MoveId.DRAGON_PULSE);
+
+    game.move.use(MoveId.DRAGON_PULSE);
     await game.toNextTurn();
 
     // Eternatus phase 2: changed form, healed fully and restored its shields
     expect(eternatus.species.speciesId).toBe(SpeciesId.ETERNATUS);
-    expect(eternatus.hp).toBeGreaterThan(phase1Hp);
     expect(eternatus.hp).toBe(eternatus.getMaxHp());
+    expect(eternatus.getMaxHp()).toBeGreaterThan(phase1Hp);
     expect(eternatus.formIndex).toBe(1);
     expect(eternatus.bossSegments).toBe(5);
     expect(eternatus.bossSegmentIndex).toBe(4);
@@ -97,13 +97,13 @@ describe("Final Boss", () => {
 
   it("should change form on status damage down to last boss fragment", async () => {
     game.override.ability(AbilityId.NO_GUARD);
-    await game.runToFinalBossEncounter([SpeciesId.BIDOOF], GameModes.CLASSIC);
+    await game.runToFinalBossEncounter([SpeciesId.SALAZZLE], GameModes.CLASSIC);
 
     // Eternatus phase 1
     const eternatus = game.scene.getEnemyPokemon()!;
     const phase1Hp = eternatus.getMaxHp();
 
-    game.move.select(MoveId.WILL_O_WISP);
+    game.move.use(MoveId.WILL_O_WISP);
     await game.toNextTurn();
     expect(eternatus.status?.effect).toBe(StatusEffect.BURN);
 
@@ -123,7 +123,7 @@ describe("Final Boss", () => {
     // Eternatus phase 2: changed form, healed and restored its shields
     expect(eternatus.hp).toBeGreaterThan(phase1Hp);
     expect(eternatus.hp).toBe(eternatus.getMaxHp());
-    expect(eternatus.status).toBeFalsy();
+    expect(eternatus.status?.effect).toBeUndefined();
     expect(eternatus.formIndex).toBe(1);
     expect(eternatus.bossSegments).toBe(5);
     expect(eternatus.bossSegmentIndex).toBe(4);
