@@ -115,7 +115,7 @@ describe("UI - Transfer Items", () => {
         const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
 
         handler.processInput(Button.DOWN);
-        handler.setCursor(7);
+        handler.setCursor(1);
         handler.processInput(Button.ACTION);
       });
 
