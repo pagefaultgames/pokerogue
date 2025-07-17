@@ -1,6 +1,5 @@
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -26,11 +25,11 @@ describe("Moves - Magnet Rise", () => {
       .enemySpecies(SpeciesId.RATTATA)
       .enemyMoveset(MoveId.EARTHQUAKE)
       .criticalHits(false)
-      .enemyLevel(1)
+      .enemyLevel(1);
   });
 
   it("should make the user immune to ground-type moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGNEZONE);
+    await game.classicMode.startBattle([SpeciesId.MAGNEZONE]);
 
     game.move.use(MoveId.MAGNET_RISE);
     await game.toEndOfTurn();
@@ -41,7 +40,7 @@ describe("Moves - Magnet Rise", () => {
   });
 
   it("should be removed by gravity", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([SpeciesId.MAGNEZONE]);
 
     game.move.use(MoveId.MAGNET_RISE);
     await game.toNextTurn();
