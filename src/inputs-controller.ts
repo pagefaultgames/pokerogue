@@ -15,8 +15,8 @@ import type { SettingKeyboard } from "#system/settings-keyboard";
 import { MoveTouchControlsHandler } from "#ui/move-touch-controls-handler";
 import type { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
 import type { SettingsKeyboardUiHandler } from "#ui/settings-keyboard-ui-handler";
-import { getEnumValues } from "#utils/common";
 import { deepCopy } from "#utils/data";
+import { getEnumValues } from "#utils/enums";
 import Phaser from "phaser";
 
 export interface DeviceMapping {
