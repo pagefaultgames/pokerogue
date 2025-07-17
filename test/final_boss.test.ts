@@ -111,7 +111,7 @@ describe("Final Boss", () => {
     const lastShieldHp = Math.ceil(phase1Hp / eternatus.bossSegments);
     // Stall until the burn is one hit away from breaking the last shield
     while (eternatus.hp - tickDamage > lastShieldHp) {
-      game.move.select(MoveId.SPLASH);
+      game.move.use(MoveId.SPLASH);
       await game.toNextTurn();
     }
 
