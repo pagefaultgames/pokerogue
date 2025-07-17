@@ -11,7 +11,7 @@ on:
 
 jobs:
   deploy:
-    if: github.repository == 'pagefaultgames/pokerogue' && github.ref_name == ${{ vars.BETA_DEPLOY_BRANCH || 'beta' }}
+    if: github.repository == 'pagefaultgames/pokerogue' && github.ref_name == (vars.BETA_DEPLOY_BRANCH || 'beta')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
