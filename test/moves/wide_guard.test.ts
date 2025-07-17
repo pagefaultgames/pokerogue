@@ -3,7 +3,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { BerryPhase } from "#phases/berry-phase";
-import { CommandPhase } from "#phases/command-phase";
 import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -41,9 +40,6 @@ describe("Moves - Wide Guard", () => {
     const leadPokemon = game.scene.getPlayerField();
 
     game.move.select(MoveId.WIDE_GUARD);
-
-    await game.phaseInterceptor.to(CommandPhase);
-
     game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to(BerryPhase, false);
@@ -59,9 +55,6 @@ describe("Moves - Wide Guard", () => {
     const leadPokemon = game.scene.getPlayerField();
 
     game.move.select(MoveId.WIDE_GUARD);
-
-    await game.phaseInterceptor.to(CommandPhase);
-
     game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to(BerryPhase, false);
@@ -77,9 +70,6 @@ describe("Moves - Wide Guard", () => {
     const leadPokemon = game.scene.getPlayerField();
 
     game.move.select(MoveId.WIDE_GUARD);
-
-    await game.phaseInterceptor.to(CommandPhase);
-
     game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to(BerryPhase, false);
@@ -96,9 +86,6 @@ describe("Moves - Wide Guard", () => {
     const enemyPokemon = game.scene.getEnemyField();
 
     game.move.select(MoveId.WIDE_GUARD);
-
-    await game.phaseInterceptor.to(CommandPhase);
-
     game.move.select(MoveId.SURF, 1);
 
     await game.phaseInterceptor.to(BerryPhase, false);

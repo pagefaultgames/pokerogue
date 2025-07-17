@@ -4,7 +4,6 @@ import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { CommandPhase } from "#phases/command-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
 import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -51,7 +50,6 @@ describe("Moves - Stockpile", () => {
       // use Stockpile four times
       for (let i = 0; i < 4; i++) {
         if (i !== 0) {
-          await game.phaseInterceptor.to(CommandPhase);
         }
 
         game.move.select(MoveId.STOCKPILE);
@@ -102,7 +100,6 @@ describe("Moves - Stockpile", () => {
       expect(user.getStatStage(Stat.SPDEF)).toBe(6);
 
       // do it again, just for good measure
-      await game.phaseInterceptor.to(CommandPhase);
 
       game.move.select(MoveId.STOCKPILE);
       await game.phaseInterceptor.to(TurnInitPhase);

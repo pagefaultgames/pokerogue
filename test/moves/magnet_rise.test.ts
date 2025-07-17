@@ -1,6 +1,5 @@
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { CommandPhase } from "#phases/command-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -49,7 +48,6 @@ describe("Moves - Magnet Rise", () => {
 
     const startingHp = game.scene.getPlayerParty()[0].hp;
     game.move.select(moveToUse);
-    await game.phaseInterceptor.to(CommandPhase);
     let finalHp = game.scene.getPlayerParty()[0].hp;
     let hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);

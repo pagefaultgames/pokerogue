@@ -3,7 +3,6 @@ import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { CommandPhase } from "#phases/command-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -80,7 +79,6 @@ describe("Abilities - Sweet Veil", () => {
 
     expect(game.scene.getPlayerField().some(p => !!p.getTag(BattlerTagType.DROWSY))).toBe(true);
 
-    await game.phaseInterceptor.to(CommandPhase);
     game.move.select(MoveId.SPLASH);
     game.doSwitchPokemon(2);
 
