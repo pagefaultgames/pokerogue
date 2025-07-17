@@ -117,7 +117,7 @@ describe("Final Boss", () => {
 
     expect(eternatus.bossSegmentIndex).toBe(1);
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
     // Eternatus phase 2: changed form, healed and restored its shields
