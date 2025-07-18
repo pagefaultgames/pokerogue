@@ -31,7 +31,7 @@ import { TurnEndPhase } from "#phases/turn-end-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
 import { TurnStartPhase } from "#phases/turn-start-phase";
 import { ErrorInterceptor } from "#test/testUtils/errorInterceptor";
-import { generateStarter, waitUntil } from "#test/testUtils/gameManagerUtils";
+import { generateStarter } from "#test/testUtils/gameManagerUtils";
 import { GameWrapper } from "#test/testUtils/gameWrapper";
 import { ChallengeModeHelper } from "#test/testUtils/helpers/challengeModeHelper";
 import { ClassicModeHelper } from "#test/testUtils/helpers/classicModeHelper";
@@ -85,33 +85,22 @@ export class GameManager {
   constructor(phaserGame: Phaser.Game, bypassLogin = true) {
     localStorage.clear();
     ErrorInterceptor.getInstance().clear();
-    BattleScene.prototype.randBattleSeedInt = (range, min = 0) => min + range - 1; // This simulates a max roll
+    // Simulate max rolls on RNG functions
+    // TODO: Create helpers for disabling/enabling battle RNG
+    BattleScene.prototype.randBattleSeedInt = (range, min = 0) => min + range - 1;
     this.gameWrapper = new GameWrapper(phaserGame, bypassLogin);
 
-    let firstTimeScene = false;
+    // TODO: Figure out a way to optimize and re-use the same game manager for each test
 
+    // Re-use an existing `globalScene` if present, or else create a new scene from scratch.
     if (globalScene) {
       this.scene = globalScene;
+      this.phaseInterceptor = new PhaseInterceptor(this.scene);
+      this.resetScene();
     } else {
       this.scene = new BattleScene();
+      this.phaseInterceptor = new PhaseInterceptor(this.scene);
       this.gameWrapper.setScene(this.scene);
-      firstTimeScene = true;
-    }
-
-    this.phaseInterceptor = new PhaseInterceptor(this.scene);
-
-    if (!firstTimeScene) {
-      this.scene.reset(false, true);
-      (this.scene.ui.handlers[UiMode.STARTER_SELECT] as StarterSelectUiHandler).clearStarterPreferences();
-      this.scene.phaseManager.clearAllPhases();
-
-      // Must be run after phase interceptor has been initialized.
-
-      this.scene.phaseManager.pushNew("LoginPhase");
-      this.scene.phaseManager.pushNew("TitlePhase");
-      this.scene.phaseManager.shiftPhase();
-
-      this.gameWrapper.scene = this.scene;
     }
 
     this.textInterceptor = new TextInterceptor(this.scene);
@@ -124,12 +113,32 @@ export class GameManager {
     this.reload = new ReloadHelper(this);
     this.modifiers = new ModifierHelper(this);
     this.field = new FieldHelper(this);
-    this.override.sanitizeOverrides();
 
+    this.override.sanitizeOverrides();
+    this.initDefaultOverrides();
+
+    // TODO: remove `any` assertion
+    global.fetch = vi.fn(MockFetch) as any;
+  }
+
+  /** Reset a prior `BattleScene` instance to the proper initial state. */
+  private resetScene(): void {
+    this.scene.reset(false, true);
+    (this.scene.ui.handlers[UiMode.STARTER_SELECT] as StarterSelectUiHandler).clearStarterPreferences();
+
+    this.gameWrapper.scene = this.scene;
+    this.scene.phaseManager.unshiftNew("LoginPhase");
+    this.scene.phaseManager.unshiftNew("TitlePhase");
+    this.scene.phaseManager.shiftPhase();
+  }
+
+  /**
+   * Initialize various default overrides for starting tests, typically to alleviate randomness.
+   */
+  // TODO: This should not be here
+  private initDefaultOverrides(): void {
     // Disables Mystery Encounters on all tests (can be overridden at test level)
     this.override.mysteryEncounterChance(0);
-
-    global.fetch = vi.fn(MockFetch) as any;
   }
 
   /**
@@ -153,7 +162,7 @@ export class GameManager {
   }
 
   /**
-   * Ends the current phase.
+   * End the currently running phase immediately.
    */
   endPhase() {
     this.scene.phaseManager.getCurrentPhase()?.end();
@@ -288,12 +297,11 @@ export class GameManager {
           .getPokemon()
           .getMoveset()
           [movePosition].getMove();
-        if (!move.isMultiTarget()) {
-          handler.setCursor(targetIndex !== undefined ? targetIndex : BattlerIndex.ENEMY);
-        }
+
         if (move.isMultiTarget() && targetIndex !== undefined) {
           expect.fail(`targetIndex was passed to selectMove() but move ("${move.name}") is not targetted`);
         }
+        handler.setCursor(targetIndex ?? BattlerIndex.ENEMY);
         handler.processInput(Button.ACTION);
       },
       () =>

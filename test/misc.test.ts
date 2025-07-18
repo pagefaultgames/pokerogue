@@ -1,5 +1,4 @@
 import { GameManager } from "#test/testUtils/gameManager";
-import { waitUntil } from "#test/testUtils/gameManagerUtils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -61,20 +60,5 @@ describe("Test misc", () => {
   it("test apifetch mock sync", async () => {
     const data = await game.scene.cachedFetch("./battle-anims/splishy-splash.json");
     expect(data).toBeDefined();
-  });
-
-  it("testing wait phase queue", async () => {
-    const fakeScene = {
-      phaseQueue: [1, 2, 3], // Initially not empty
-    };
-    setTimeout(() => {
-      fakeScene.phaseQueue = [];
-    }, 500);
-    const spy = vi.fn();
-    await waitUntil(() => fakeScene.phaseQueue.length === 0).then(result => {
-      expect(result).toBe(true);
-      spy(); // Call the spy function
-    });
-    expect(spy).toHaveBeenCalled();
   });
 });
