@@ -64,7 +64,6 @@ export type NonFunctionProperties<T> = {
 
 /**
  * Type helper to extract out non-function properties from a type, recursively applying to nested properties.
- *
  */
 export type NonFunctionPropertiesRecursive<Class> = {
   [K in keyof Class as Class[K] extends AnyFn ? never : K]: Class[K] extends Array<infer U>
