@@ -905,7 +905,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
    */
   getFormNameToDisplay(formIndex = 0, append = false): string {
     const formKey = this.forms?.[formIndex!]?.formKey;
-    const formText = capitalizeString(formKey, "-", false, false) || "";
+    const formText = capitalizeString(formKey, "-", false, false);
     const speciesName = capitalizeString(SpeciesId[this.speciesId], "_", true, false);
     let ret = "";
 

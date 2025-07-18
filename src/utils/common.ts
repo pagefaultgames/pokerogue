@@ -528,21 +528,22 @@ export function reverseValueToKeySetting(input: string) {
  * Capitalize a string.
  * @param str - The string to be capitalized.
  * @param sep - The separator between the words of the string.
- * @param lowerFirstChar - Whether the first character of the string should be lowercase or not.
- * @param returnWithSpaces - Whether the returned string should have spaces between the words or not.
+ * @param lowerFirstChar - Whether the first character of the string should be lowercase or not; default `true`
+ * @param returnWithSpaces - Whether the returned string should have spaces between the words or not; default `false`
  * @returns The capitalized string.
  */
-export function capitalizeString(str: string, sep: string, lowerFirstChar = true, returnWithSpaces = false) {
-  if (str) {
-    const splitedStr = str.toLowerCase().split(sep);
-
-    for (let i = +lowerFirstChar; i < splitedStr?.length; i++) {
-      splitedStr[i] = splitedStr[i].charAt(0).toUpperCase() + splitedStr[i].substring(1);
-    }
-
-    return returnWithSpaces ? splitedStr.join(" ") : splitedStr.join("");
+export function capitalizeString(str: string, sep: string, lowerFirstChar = true, returnWithSpaces = false): string {
+  if (!str) {
+    return "";
   }
-  return null;
+
+  const splitedStr = str.toLowerCase().split(sep);
+
+  for (let i = +lowerFirstChar; i < splitedStr.length; i++) {
+    splitedStr[i] = splitedStr[i].charAt(0).toUpperCase() + splitedStr[i].substring(1);
+  }
+
+  return returnWithSpaces ? splitedStr.join(" ") : splitedStr.join("");
 }
 
 /**
