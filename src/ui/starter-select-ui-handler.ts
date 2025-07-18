@@ -4321,7 +4321,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           ui.setMode(UiMode.STARTER_SELECT);
           // Non-challenge modes go directly back to title, while challenge modes go to the selection screen.
           if (!globalScene.gameMode.isChallenge) {
-            globalScene.phaseManager.toTitleScreen(true);
+            globalScene.phaseManager.toTitleScreen();
           } else {
             globalScene.phaseManager.clearPhaseQueue();
             globalScene.phaseManager.pushNew("SelectChallengePhase");

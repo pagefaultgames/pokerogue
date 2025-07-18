@@ -669,7 +669,7 @@ export class BattleScene extends SceneBase {
       ).then(() => loadMoveAnimAssets(defaultMoves, true)),
       this.initStarterColors(),
     ]).then(() => {
-      this.phaseManager.toTitleScreen("addLogin");
+      this.phaseManager.toTitleScreen(true);
     });
   }
 

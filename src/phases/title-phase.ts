@@ -118,7 +118,7 @@ export class TitlePhase extends Phase {
           options.push({
             label: i18next.t("menu:cancel"),
             handler: () => {
-              globalScene.phaseManager.toTitleScreen(true);
+              globalScene.phaseManager.toTitleScreen();
               super.end();
               return true;
             },
@@ -192,7 +192,7 @@ export class TitlePhase extends Phase {
     globalScene.ui.clearText();
     globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
       if (slotId === -1) {
-        globalScene.phaseManager.toTitleScreen(true);
+        globalScene.phaseManager.toTitleScreen();
         super.end();
         return;
       }

@@ -105,7 +105,7 @@ export class GameManager {
       (this.scene.ui.handlers[UiMode.STARTER_SELECT] as StarterSelectUiHandler).clearStarterPreferences();
 
       // Must be run after phase interceptor has been initialized.
-      this.scene.phaseManager.toTitlePhase("addLogin");
+      this.scene.phaseManager.toTitleScreen(true);
       this.scene.phaseManager.shiftPhase();
 
       this.gameWrapper.scene = this.scene;

@@ -257,18 +257,15 @@ export class PhaseManager {
   }
 
   /**
-   * Add a new {@linkcode TitlePhase}.
-   * @param clearPhaseQueue - Whether to clear the phase queue before adding a new {@linkcode TitlePhase}.
-   * If set to `addLogin`, will add a new {@linkcode LoginPhase} before the {@linkcode TitlePhase}
+   * Clear all previously set phases, then add a new {@linkcode TitlePhase} to transition to the title screen.
+   * @param addLogin - Whether to add a new {@linkcode LoginPhase} before the {@linkcode TitlePhase}
    * (but reset everything else).
    * Default `false`
    */
-  public toTitleScreen(clearPhaseQueue: boolean | "addLogin" = false): void {
-    if (clearPhaseQueue) {
-      this.clearAllPhases();
-    }
+  public toTitleScreen(addLogin = false): void {
+    this.clearAllPhases();
 
-    if (clearPhaseQueue === "addLogin") {
+    if (addLogin) {
       this.unshiftNew("LoginPhase");
     }
     this.unshiftNew("TitlePhase");

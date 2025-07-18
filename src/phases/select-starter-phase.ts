@@ -26,7 +26,7 @@ export class SelectStarterPhase extends Phase {
       globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
         // If clicking cancel, back out to title screen
         if (slotId === -1) {
-          globalScene.phaseManager.toTitleScreen(true);
+          globalScene.phaseManager.toTitleScreen();
           this.end();
           return;
         }
