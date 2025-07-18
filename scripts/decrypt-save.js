@@ -144,7 +144,7 @@ function main() {
     process.exit(0);
   }
 
-  writeToFile(destPath, decrypt);
+  writeToFile(args[1], decrypt);
 }
 
 main();
