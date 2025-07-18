@@ -291,7 +291,7 @@ describe("Transforming Effects", () => {
         player: false,
       },
       {
-        cause: "user is tera-steller",
+        cause: "user is currently Tera Steller",
         callback: p => game.field.forceTera(p, PokemonType.STELLAR),
       },
     ])("should fail if $cause", async ({ callback, player = true }) => {
@@ -380,13 +380,13 @@ describe("Transforming Effects", () => {
       expect(game.phaseInterceptor.log).not.toContain("PokemonTransformPhase");
     });
 
-    it("should not activate if currently tera-steller", async () => {
-      game.override.battleStyle("single");
+    it("should not activate if currently Tera Steller", async () => {
       await game.classicMode.startBattle([SpeciesId.GYARADOS, SpeciesId.DITTO]);
 
-      const [, ditto] = game.scene.getPlayerParty();
-      const enemy1 = game.scene.getEnemyParty()[0];
+      const ditto = game.scene.getPlayerParty()[1];
+      const enemy1 = game.field.getEnemyPokemon();
 
+      // Override Ditto to be Tera Stellar
       game.field.forceTera(ditto, PokemonType.STELLAR);
       expect(ditto.canTransformInto(enemy1)).toBe(false);
 
