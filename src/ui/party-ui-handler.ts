@@ -1285,17 +1285,18 @@ export class PartyUiHandler extends MessageUiHandler {
           const allowBatonModifierSwitch = this.allowBatonModifierSwitch();
           const isBatonPassMove = this.isBatonPassMove();
 
+          if (allowBatonModifierSwitch && !isBatonPassMove) {
+            // the BATON modifier gives an extra switch option for
+            // pokemon-command switches, allowing buffs to be optionally passed
+            this.options.push(PartyOption.PASS_BATON);
+          }
+
           // isBatonPassMove and allowBatonModifierSwitch shouldn't ever be true
           // at the same time, because they both explicitly check for a mutually
           // exclusive partyUiMode. But better safe than sorry.
           this.options.push(
             isBatonPassMove && !allowBatonModifierSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT,
           );
-          if (allowBatonModifierSwitch && !isBatonPassMove) {
-            // the BATON modifier gives an extra switch option for
-            // pokemon-command switches, allowing buffs to be optionally passed
-            this.options.push(PartyOption.PASS_BATON);
-          }
         }
         this.addCommonOptions(pokemon);
         if (this.partyUiMode === PartyUiMode.SWITCH) {
@@ -1335,13 +1336,13 @@ export class PartyUiHandler extends MessageUiHandler {
         this.addCommonOptions(pokemon);
         break;
       case PartyUiMode.CHECK:
+        this.addCommonOptions(pokemon);
         if (globalScene.phaseManager.getCurrentPhase()?.is("SelectModifierPhase")) {
           const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
           for (let i = 0; i < formChangeItemModifiers.length; i++) {
             this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
           }
         }
-        this.addCommonOptions(pokemon);
         break;
       case PartyUiMode.SELECT:
         this.options.push(PartyOption.SELECT);

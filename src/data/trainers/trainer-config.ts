@@ -30,7 +30,7 @@ import {
   TrainerPartyCompoundTemplate,
   TrainerPartyTemplate,
   trainerPartyTemplates,
-} from "#trainers/TrainerPartyTemplate";
+} from "#trainers/trainer-party-template";
 import type { ModifierTypeFunc } from "#types/modifier-types";
 import type {
   GenAIFunc,
