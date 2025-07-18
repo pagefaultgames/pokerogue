@@ -1,22 +1,21 @@
-import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
-import type { OptionPhaseCallback } from "#app/data/mystery-encounters/mystery-encounter-option";
-import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
-import { SeenEncounterData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
-import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { globalScene } from "#app/global-scene";
+import { Phase } from "#app/phase";
+import { getCharVariantFromDialogue } from "#data/dialogue";
 import { BattleSpec } from "#enums/battle-spec";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { SwitchType } from "#enums/switch-type";
-import i18next from "i18next";
-import { globalScene } from "#app/global-scene";
-import { getCharVariantFromDialogue } from "../data/dialogue";
-import type { OptionSelectSettings } from "../data/mystery-encounters/utils/encounter-phase-utils";
-import { transitionMysteryEncounterIntroVisuals } from "../data/mystery-encounters/utils/encounter-phase-utils";
 import { TrainerSlot } from "#enums/trainer-slot";
-import { IvScannerModifier } from "../modifier/modifier";
-import { Phase } from "../phase";
 import { UiMode } from "#enums/ui-mode";
-import { isNullOrUndefined, randSeedItem } from "#app/utils/common";
+import { IvScannerModifier } from "#modifiers/modifier";
+import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
+import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-utils";
+import { transitionMysteryEncounterIntroVisuals } from "#mystery-encounters/encounter-phase-utils";
+import type { MysteryEncounterOption, OptionPhaseCallback } from "#mystery-encounters/mystery-encounter-option";
+import { SeenEncounterData } from "#mystery-encounters/mystery-encounter-save-data";
+import { isNullOrUndefined, randSeedItem } from "#utils/common";
+import i18next from "i18next";
 
 /**
  * Will handle (in order):

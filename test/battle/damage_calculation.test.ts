@@ -1,11 +1,10 @@
-import { allMoves } from "#app/data/data-lists";
-import type { EnemyPersistentModifier } from "#app/modifier/modifier";
-import { modifierTypes } from "#app/data/data-lists";
+import { allMoves, modifierTypes } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import type { EnemyPersistentModifier } from "#modifiers/modifier";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

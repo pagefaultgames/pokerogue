@@ -1,9 +1,9 @@
-import { toReadableString } from "#app/utils/common";
-import { TextStyle, getBBCodeFrag } from "../ui/text";
 import { Nature } from "#enums/nature";
+import { EFFECTIVE_STATS, getShortenedStatKey, Stat } from "#enums/stat";
 import { UiTheme } from "#enums/ui-theme";
+import { getBBCodeFrag, TextStyle } from "#ui/text";
+import { toReadableString } from "#utils/common";
 import i18next from "i18next";
-import { Stat, EFFECTIVE_STATS, getShortenedStatKey } from "#enums/stat";
 
 export function getNatureName(
   nature: Nature,

@@ -1,20 +1,19 @@
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { Phase } from "#app/phase";
 import type { AnySound } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
-import { FusionSpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
-import type EvolutionSceneHandler from "#app/ui/evolution-scene-handler";
-import { fixedInt, getFrameMs, randInt } from "#app/utils/common";
-import { UiMode } from "#enums/ui-mode";
-import { cos, sin } from "#app/field/anims";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import { LearnMoveSituation } from "#enums/learn-move-situation";
-import { getTypeRgb } from "#app/data/type";
-import i18next from "i18next";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { EVOLVE_MOVE } from "#app/data/balance/pokemon-level-moves";
+import { Phase } from "#app/phase";
+import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { EVOLVE_MOVE } from "#balance/pokemon-level-moves";
+import { getTypeRgb } from "#data/type";
+import { LearnMoveSituation } from "#enums/learn-move-situation";
+import { UiMode } from "#enums/ui-mode";
+import { cos, sin } from "#field/anims";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { EvolutionSceneHandler } from "#ui/evolution-scene-handler";
+import { fixedInt, getFrameMs, randInt } from "#utils/common";
+import i18next from "i18next";
+import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 
 export class EvolutionPhase extends Phase {
   // FormChangePhase inherits from this, but EvolutionPhase is not abstract.
@@ -240,7 +239,7 @@ export class EvolutionPhase extends Phase {
       to: 1,
       duration: 2000,
       onUpdate: t => {
-        this.pokemonTintSprite.setAlpha(t.getValue());
+        this.pokemonTintSprite.setAlpha(t.getValue() ?? 1);
       },
       onComplete: () => {
         this.pokemonSprite.setVisible(false);

@@ -11,18 +11,41 @@
     "rootDir": ".",
     "baseUrl": "./src",
     "paths": {
+      "#abilities/*": ["./data/abilities/*.ts"],
+      "#api/*": ["./plugins/api/*.ts"],
+      "#balance/*": ["./data/balance/*.ts"],
       "#enums/*": ["./enums/*.ts"],
-      "#app/*": ["*.ts"],
-      "#test/*": ["../test/*.ts"]
+      "#events/*": ["./events/*.ts"],
+      "#field/*": ["./field/*.ts"],
+      "#inputs/*": ["./configs/inputs/*.ts"],
+      "#modifiers/*": ["./modifier/*.ts"],
+      "#moves/*": ["./data/moves/*.ts"],
+      "#mystery-encounters/*": [
+        "./data/mystery-encounters/utils/*.ts",
+        "./data/mystery-encounters/encounters/*.ts",
+        "./data/mystery-encounters/requirements/*.ts",
+        "./data/mystery-encounters/*.ts"
+      ],
+      "#package.json": ["../package.json"],
+      "#phases/*": ["./phases/*.ts"],
+      "#plugins/*": ["./plugins/vite/*.ts", "./plugins/*.ts"],
+      "#sprites/*": ["./sprites/*.ts"],
+      "#system/*": [
+        "./system/settings/*.ts",
+        "./system/version_migration/versions/*.ts",
+        "./system/version_migration/*.ts",
+        "./system/*.ts"
+      ],
+      "#trainers/*": ["./data/trainers/*.ts"],
+      "#types/*": ["./@types/*.ts", "./typings/phaser/*.ts"],
+      "#ui/*": ["./ui/battle-info/*.ts", "./ui/settings/*.ts", "./ui/*.ts"],
+      "#utils/*": ["./utils/*.ts"],
+      "#data/*": ["./data/pokemon-forms/*.ts", "./data/pokemon/*.ts", "./data/*.ts"],
+      "#test/*": ["../test/*.ts"],
+      "#app/*": ["*.ts"]
     },
     "outDir": "./build",
     "noEmit": true
-  },
-  "typedocOptions": {
-    "entryPoints": ["./src"],
-    "entryPointStrategy": "expand",
-    "exclude": "**/*+.test.ts",
-    "out": "typedoc"
   },
   "exclude": ["node_modules", "dist", "vite.config.ts", "vitest.config.ts", "vitest.workspace.ts"]
 }

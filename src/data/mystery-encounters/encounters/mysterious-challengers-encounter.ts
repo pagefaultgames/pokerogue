@@ -1,22 +1,21 @@
-import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import {
-  initBattleWithEnemyConfig,
-  setEncounterRewards,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { trainerConfigs } from "#app/data/trainers/trainer-config";
-import { trainerPartyTemplates } from "#app/data/trainers/TrainerPartyTemplate";
-import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { modifierTypes } from "#data/data-lists";
 import { ModifierTier } from "#enums/modifier-tier";
-import { modifierTypes } from "#app/data/data-lists";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import { globalScene } from "#app/global-scene";
-import { randSeedInt } from "#app/utils/common";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
+import { initBattleWithEnemyConfig, setEncounterRewards } from "#mystery-encounters/encounter-phase-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { trainerConfigs } from "#trainers/trainer-config";
+import {
+  TrainerPartyCompoundTemplate,
+  TrainerPartyTemplate,
+  trainerPartyTemplates,
+} from "#trainers/trainer-party-template";
+import { randSeedInt } from "#utils/common";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/mysteriousChallengers";
