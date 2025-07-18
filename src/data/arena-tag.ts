@@ -49,7 +49,7 @@ instead be defined as a getter.
 A static property is also acceptable, though static properties are less ergonomic with inheritance.
 
 If the data is mutable (i.e. it can change over the course of the tag's lifetime), then it *must*
-be defined as a field, *must* be part of the accompanying `SerializedTag` interface.
+be defined as a field, and it must be set in the `loadTag` method.
 Such fields cannot be marked as `private/protected`, as if they were, typescript would complain
 that the class does not properly implement the `SerializedTag` interface.
 
