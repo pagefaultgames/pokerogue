@@ -127,7 +127,7 @@ export function doPokemonTransformationSequence(
           to: 1,
           duration: 1000,
           onUpdate: t => {
-            pokemonTintSprite.setAlpha(t.getValue());
+            pokemonTintSprite.setAlpha(t.getValue() ?? 1);
           },
           onComplete: () => {
             pokemonSprite.setVisible(false);

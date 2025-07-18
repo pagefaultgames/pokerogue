@@ -523,7 +523,7 @@ export function trainerThrowPokeball(
                   repeatDelay: 500,
                   onUpdate: t => {
                     if (shakeCount && shakeCount < 4) {
-                      const value = t.getValue();
+                      const value = t.getValue() ?? 0;
                       const directionMultiplier = shakeCount % 2 === 1 ? 1 : -1;
                       pokeball.setX(pbX + value * 4 * directionMultiplier);
                       pokeball.setAngle(value * 27.5 * directionMultiplier);
