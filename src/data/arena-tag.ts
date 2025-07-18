@@ -19,17 +19,47 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
-import type { Mutable } from "#types/type-helpers";
+import type {
+  ArenaDelayedAttackTagType,
+  ArenaScreenTagType,
+  ArenaTagTypeData,
+  ArenaTrapTagType,
+  SerializableArenaTagType,
+} from "#types/arena-tags";
+import type { Mutable, NonFunctionProperties } from "#types/type-helpers";
 import { BooleanHolder, NumberHolder, toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
 /*
-Interface for ArenaTag data.
-Any 
+ArenaTags are are meant for effects that are tied to the arena (as opposed to a specific pokemon).
+Examples include (but are not limited to)
+- Cross-turn effects that persist even if the user/target switches out, such as Wish, Future Sight, and Happy Hour
+- Effects that are applied to a specific side of the field, such as Crafty Shield, Reflect, and Spikes
+- Field-Effects, like Gravity and Trick Room
+
+Any arena tag that persists across turns *must* extend from `SerializableArenaTag` to the class definition signature.
+
+Serializable ArenaTags have strict rules for their fields.
+These rules ensure that only the data necessary to reconstruct the tag is serialized, and that the
+session loader is able to deserialize saved tags correctly.
+
+If the data is static (i.e. it is always the same for all instances of the class, such as the 
+type that is weakened by Mud Sport/Water Sport), then it must not be defined as a field, and must
+instead be defined as a getter.
+A static property is also acceptable, though static properties are less ergonomic with inheritance.
+
+If the data is mutable (i.e. it can change over the course of the tag's lifetime), then it *must*
+be defined as a field, *must* be part of the accompanying `SerializedTag` interface.
+Such fields cannot be marked as `private/protected`, as if they were, typescript would complain
+that the class does not properly implement the `SerializedTag` interface.
+
+For data that is mutable only within a turn (e.g. SuppressAbilitiesTag's beingRemoved field),
+where it does not make sense to be serialized, the field should use ES2020's private field syntax (a `#` prepended to the field name).
+If the field should be accessible outside of the class, then a public getter should be used.
 */
-interface ArenaTagData {
-  /** The type of the arena tag */
-  tagType: ArenaTagType;
+
+/** Interface of the serializable fields of ArenaTagData */
+interface BaseArenaTag {
   /** The turns that have passed since the tag was added */
   turnCount: number;
   /** The id of the move that set the tag, or undefined if not set by a move */
@@ -45,12 +75,10 @@ interface ArenaTagData {
 }
 
 /**
- * Abstract base class for `ArenaTag`.
- *
- * ⚠️ If any new properties are added to the class that must be tracked across saves,
- * then it is required for `loadTag` to be overridden, and the new properties to be added
+ * Abstract base class for `ArenaTag`s
  */
-export abstract class ArenaTag implements ArenaTagData {
+export abstract class ArenaTag implements BaseArenaTag {
+  /** The type of the arena tag */
   public abstract readonly tagType: ArenaTagType;
   public turnCount: number;
   public sourceMove?: MoveId;
@@ -105,7 +133,7 @@ export abstract class ArenaTag implements ArenaTagData {
    * This is meant to be inherited from by any arena tag with custom attributes
    * @param {ArenaTag | any} source An arena tag
    */
-  loadTag(source: ArenaTagData): void {
+  loadTag(source: BaseArenaTag): void {
     this.turnCount = source.turnCount;
     this.sourceMove = source.sourceMove;
     this.sourceId = source.sourceId;
@@ -138,14 +166,18 @@ export abstract class ArenaTag implements ArenaTagData {
   }
 }
 
-export interface MistTagData extends ArenaTagData {
-  tagType: ArenaTagType.MIST;
+/**
+ * Abstract class for arena tags that can persist across turns.
+ */
+export abstract class SerializableArenaTag extends ArenaTag {
+  abstract readonly tagType: SerializableArenaTagType;
 }
+
 /**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Mist_(move) Mist}.
  * Prevents Pokémon on the opposing side from lowering the stats of the Pokémon in the Mist.
  */
-export class MistTag extends ArenaTag implements MistTagData {
+export class MistTag extends SerializableArenaTag {
   readonly tagType = ArenaTagType.MIST;
   constructor(turnCount: number, sourceId: number | undefined, side: ArenaTagSide) {
     super(turnCount, MoveId.MIST, sourceId, side);
@@ -206,7 +238,8 @@ export class MistTag extends ArenaTag implements MistTagData {
 /**
  * Reduces the damage of specific move categories in the arena.
  */
-export abstract class WeakenMoveScreenTag extends ArenaTag {
+export abstract class WeakenMoveScreenTag extends SerializableArenaTag {
+  public abstract readonly tagType: ArenaScreenTagType;
   // Getter, to avoid unnecessary serialization and prevent modification
   protected abstract get weakenedCategories(): MoveCategory[];
 
@@ -240,15 +273,11 @@ export abstract class WeakenMoveScreenTag extends ArenaTag {
   }
 }
 
-export interface ReflectTagData extends ArenaTagData {
-  tagType: ArenaTagType.REFLECT;
-}
-
 /**
  * Reduces the damage of physical moves.
  * Used by {@linkcode MoveId.REFLECT}
  */
-class ReflectTag extends WeakenMoveScreenTag implements ReflectTagData {
+class ReflectTag extends WeakenMoveScreenTag {
   public readonly tagType = ArenaTagType.REFLECT;
   protected get weakenedCategories(): [MoveCategory.PHYSICAL] {
     return [MoveCategory.PHYSICAL];
@@ -269,15 +298,12 @@ class ReflectTag extends WeakenMoveScreenTag implements ReflectTagData {
   }
 }
 
-export interface LightScreenTagData extends ArenaTagData {
-  tagType: ArenaTagType.LIGHT_SCREEN;
-}
 /**
  * Reduces the damage of special moves.
  * Used by {@linkcode MoveId.LIGHT_SCREEN}
  */
 class LightScreenTag extends WeakenMoveScreenTag {
-  public tagType = ArenaTagType.LIGHT_SCREEN;
+  public readonly tagType = ArenaTagType.LIGHT_SCREEN;
   protected get weakenedCategories(): [MoveCategory.SPECIAL] {
     return [MoveCategory.SPECIAL];
   }
@@ -296,16 +322,12 @@ class LightScreenTag extends WeakenMoveScreenTag {
   }
 }
 
-export interface AuroraVeilTagData extends ArenaTagData {
-  /** The type of the arena tag */
-  tagType: ArenaTagType.AURORA_VEIL;
-}
 /**
  * Reduces the damage of physical and special moves.
  * Used by {@linkcode MoveId.AURORA_VEIL}
  */
 class AuroraVeilTag extends WeakenMoveScreenTag {
-  public override tagType = ArenaTagType.AURORA_VEIL;
+  public readonly tagType = ArenaTagType.AURORA_VEIL;
   protected get weakenedCategories(): [MoveCategory.PHYSICAL, MoveCategory.SPECIAL] {
     return [MoveCategory.PHYSICAL, MoveCategory.SPECIAL];
   }
@@ -540,7 +562,7 @@ class CraftyShieldTag extends ConditionalProtectTag {
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Lucky_Chant_(move) Lucky Chant}.
  * Prevents critical hits against the tag's side.
  */
-export class NoCritTag extends ArenaTag {
+export class NoCritTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.NO_CRIT;
 
   /** Queues a message upon adding this effect to the field */
@@ -569,21 +591,11 @@ export class NoCritTag extends ArenaTag {
   }
 }
 
-export interface WishTagData extends ArenaTag {
-  tagType: ArenaTagType.WISH;
-  /** The slot index that wish is assigned to */
-  battlerIndex: BattlerIndex;
-  /** The amount of HP that the wish will heal */
-  healHp: number;
-  /** Snapshot of the pokemon name (via {@linkcode getPokemonNameWithAffix}) at the time the tag was added */
-  sourceName: string;
-}
-
 /**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Wish_(move) | Wish}.
  * Heals the Pokémon in the user's position the turn after Wish is used.
  */
-class WishTag extends ArenaTag implements WishTagData {
+class WishTag extends SerializableArenaTag {
   readonly battlerIndex: BattlerIndex;
   readonly healHp: number;
   readonly sourceName: string;
@@ -618,7 +630,7 @@ class WishTag extends ArenaTag implements WishTagData {
     }
   }
 
-  override loadTag(source: WishTagData): void {
+  override loadTag(source: NonFunctionProperties<WishTag>): void {
     super.loadTag(source);
     (this as Mutable<this>).battlerIndex = source.battlerIndex;
     (this as Mutable<this>).healHp = source.healHp;
@@ -629,14 +641,9 @@ class WishTag extends ArenaTag implements WishTagData {
 /**
  * Abstract class to implement weakened moves of a specific type.
  */
-export abstract class WeakenMoveTypeTag extends ArenaTag {
-  weakenedType: PokemonType;
-
-  constructor(turnCount: number, type: PokemonType, sourceMove: MoveId, sourceId?: number) {
-    super(turnCount, sourceMove, sourceId);
-
-    this.weakenedType = type;
-  }
+export abstract class WeakenMoveTypeTag extends SerializableArenaTag {
+  abstract readonly tagType: ArenaTagType.MUD_SPORT | ArenaTagType.WATER_SPORT;
+  abstract get weakenedType(): PokemonType;
 
   /**
    * Reduces an attack's power by 0.33x if it matches this tag's weakened type.
@@ -655,17 +662,17 @@ export abstract class WeakenMoveTypeTag extends ArenaTag {
   }
 }
 
-export interface MudSportTagData extends ArenaTagData {
-  tagType: ArenaTagType.MUD_SPORT;
-}
 /**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Mud_Sport_(move) Mud Sport}.
  * Weakens Electric type moves for a set amount of turns, usually 5.
  */
 class MudSportTag extends WeakenMoveTypeTag {
   public readonly tagType = ArenaTagType.MUD_SPORT;
+  override get weakenedType(): PokemonType {
+    return PokemonType.ELECTRIC;
+  }
   constructor(turnCount: number, sourceId?: number) {
-    super(turnCount, PokemonType.ELECTRIC, MoveId.MUD_SPORT, sourceId);
+    super(turnCount, MoveId.MUD_SPORT, sourceId);
   }
 
   onAdd(_arena: Arena): void {
@@ -683,8 +690,11 @@ class MudSportTag extends WeakenMoveTypeTag {
  */
 class WaterSportTag extends WeakenMoveTypeTag {
   public readonly tagType = ArenaTagType.WATER_SPORT;
+  override get weakenedType(): PokemonType {
+    return PokemonType.FIRE;
+  }
   constructor(turnCount: number, sourceId?: number) {
-    super(turnCount, PokemonType.FIRE, MoveId.WATER_SPORT, sourceId);
+    super(turnCount, MoveId.WATER_SPORT, sourceId);
   }
 
   onAdd(_arena: Arena): void {
@@ -733,7 +743,8 @@ export class IonDelugeTag extends ArenaTag {
 /**
  * Abstract class to implement arena traps.
  */
-export abstract class ArenaTrapTag extends ArenaTag {
+export abstract class ArenaTrapTag extends SerializableArenaTag {
+  abstract readonly tagType: ArenaTrapTagType;
   public layers: number;
   public maxLayers: number;
 
@@ -786,7 +797,7 @@ export abstract class ArenaTrapTag extends ArenaTag {
       : Phaser.Math.Linear(0, 1 / Math.pow(2, this.layers), Math.min(pokemon.getHpRatio(), 0.5) * 2);
   }
 
-  loadTag(source: any): void {
+  loadTag(source: NonFunctionProperties<ArenaTrapTag>): void {
     super.loadTag(source);
     this.layers = source.layers;
     this.maxLayers = source.maxLayers;
@@ -858,12 +869,12 @@ class SpikesTag extends ArenaTrapTag {
  * Pokémon summoned into this trap remove it entirely.
  */
 class ToxicSpikesTag extends ArenaTrapTag {
-  private neutralized: boolean;
+  #neutralized: boolean;
   public readonly tagType = ArenaTagType.TOXIC_SPIKES;
 
   constructor(sourceId: number | undefined, side: ArenaTagSide) {
     super(MoveId.TOXIC_SPIKES, sourceId, side, 2);
-    this.neutralized = false;
+    this.#neutralized = false;
   }
 
   onAdd(arena: Arena, quiet = false): void {
@@ -889,7 +900,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
   }
 
   onRemove(arena: Arena): void {
-    if (!this.neutralized) {
+    if (!this.#neutralized) {
       super.onRemove(arena);
     }
   }
@@ -900,7 +911,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
         return true;
       }
       if (pokemon.isOfType(PokemonType.POISON)) {
-        this.neutralized = true;
+        this.#neutralized = true;
         if (globalScene.arena.removeTag(this.tagType)) {
           globalScene.phaseManager.queueMessage(
             i18next.t("arenaTag:toxicSpikesActivateTrapPoison", {
@@ -932,48 +943,6 @@ class ToxicSpikesTag extends ArenaTrapTag {
     }
     return super.getMatchupScoreMultiplier(pokemon);
   }
-}
-
-/**
- * Arena Tag class for delayed attacks, such as {@linkcode MoveId.FUTURE_SIGHT} or {@linkcode MoveId.DOOM_DESIRE}.
- * Delays the attack's effect by a set amount of turns, usually 3 (including the turn the move is used),
- * and deals damage after the turn count is reached.
- */
-export class DelayedAttackTag extends ArenaTag {
-  public targetIndex: BattlerIndex;
-  public readonly tagType: ArenaTagType.DOOM_DESIRE | ArenaTagType.FUTURE_SIGHT;
-
-  constructor(
-    tagType: ArenaTagType.DOOM_DESIRE | ArenaTagType.FUTURE_SIGHT,
-    sourceMove: MoveId | undefined,
-    sourceId: number | undefined,
-    targetIndex: BattlerIndex,
-    side: ArenaTagSide = ArenaTagSide.BOTH,
-  ) {
-    super(3, sourceMove, sourceId, side);
-    this.tagType = tagType;
-    this.targetIndex = targetIndex;
-    this.side = side;
-  }
-
-  lapse(arena: Arena): boolean {
-    const ret = super.lapse(arena);
-
-    if (!ret) {
-      // TODO: This should not add to move history (for Spite)
-      globalScene.phaseManager.unshiftNew(
-        "MoveEffectPhase",
-        this.sourceId!,
-        [this.targetIndex],
-        allMoves[this.sourceMove!],
-        MoveUseMode.FOLLOW_UP,
-      ); // TODO: are those bangs correct?
-    }
-
-    return ret;
-  }
-
-  onRemove(_arena: Arena): void {}
 }
 
 /**
@@ -1142,11 +1111,53 @@ class StickyWebTag extends ArenaTrapTag {
 }
 
 /**
+ * Arena Tag class for delayed attacks, such as {@linkcode MoveId.FUTURE_SIGHT} or {@linkcode MoveId.DOOM_DESIRE}.
+ * Delays the attack's effect by a set amount of turns, usually 3 (including the turn the move is used),
+ * and deals damage after the turn count is reached.
+ */
+export class DelayedAttackTag extends SerializableArenaTag {
+  public targetIndex: BattlerIndex;
+  public readonly tagType: ArenaDelayedAttackTagType;
+
+  constructor(
+    tagType: ArenaTagType.DOOM_DESIRE | ArenaTagType.FUTURE_SIGHT,
+    sourceMove: MoveId | undefined,
+    sourceId: number | undefined,
+    targetIndex: BattlerIndex,
+    side: ArenaTagSide = ArenaTagSide.BOTH,
+  ) {
+    super(3, sourceMove, sourceId, side);
+    this.tagType = tagType;
+    this.targetIndex = targetIndex;
+    this.side = side;
+  }
+
+  lapse(arena: Arena): boolean {
+    const ret = super.lapse(arena);
+
+    if (!ret) {
+      // TODO: This should not add to move history (for Spite)
+      globalScene.phaseManager.unshiftNew(
+        "MoveEffectPhase",
+        this.sourceId!,
+        [this.targetIndex],
+        allMoves[this.sourceMove!],
+        MoveUseMode.FOLLOW_UP,
+      ); // TODO: are those bangs correct?
+    }
+
+    return ret;
+  }
+
+  onRemove(_arena: Arena): void {}
+}
+
+/**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Trick_Room_(move) Trick Room}.
  * Reverses the Speed stats for all Pokémon on the field as long as this arena tag is up,
  * also reversing the turn order for all Pokémon on the field as well.
  */
-export class TrickRoomTag extends ArenaTag {
+export class TrickRoomTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.TRICK_ROOM;
   constructor(turnCount: number, sourceId?: number) {
     super(turnCount, MoveId.TRICK_ROOM, sourceId);
@@ -1191,7 +1202,7 @@ export class TrickRoomTag extends ArenaTag {
  * Grounds all Pokémon on the field, including Flying-types and those with
  * {@linkcode AbilityId.LEVITATE} for the duration of the arena tag, usually 5 turns.
  */
-export class GravityTag extends ArenaTag {
+export class GravityTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.GRAVITY;
   constructor(turnCount: number, sourceId?: number) {
     super(turnCount, MoveId.GRAVITY, sourceId);
@@ -1220,7 +1231,7 @@ export class GravityTag extends ArenaTag {
  * Doubles the Speed of the Pokémon who created this arena tag, as well as all allied Pokémon.
  * Applies this arena tag for 4 turns (including the turn the move was used).
  */
-class TailwindTag extends ArenaTag {
+class TailwindTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.TAILWIND;
   constructor(turnCount: number, sourceId: number | undefined, side: ArenaTagSide) {
     super(turnCount, MoveId.TAILWIND, sourceId, side);
@@ -1289,7 +1300,7 @@ class TailwindTag extends ArenaTag {
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Happy_Hour_(move) Happy Hour}.
  * Doubles the prize money from trainers and money moves like {@linkcode MoveId.PAY_DAY} and {@linkcode MoveId.MAKE_IT_RAIN}.
  */
-class HappyHourTag extends ArenaTag {
+class HappyHourTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.HAPPY_HOUR;
   constructor(turnCount: number, sourceId: number | undefined, side: ArenaTagSide) {
     super(turnCount, MoveId.HAPPY_HOUR, sourceId, side);
@@ -1333,6 +1344,7 @@ class NoneTag extends ArenaTag {
     super(0);
   }
 }
+
 /**
  * This arena tag facilitates the application of the move Imprison
  * Imprison remains in effect as long as the source Pokemon is active and present on the field.
@@ -1409,7 +1421,7 @@ class ImprisonTag extends ArenaTrapTag {
  * Damages all non-Fire-type Pokemon on the given side of the field at the end
  * of each turn for 4 turns.
  */
-class FireGrassPledgeTag extends ArenaTag {
+class FireGrassPledgeTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.FIRE_GRASS_PLEDGE;
   constructor(sourceId: number | undefined, side: ArenaTagSide) {
     super(4, MoveId.FIRE_PLEDGE, sourceId, side);
@@ -1458,7 +1470,7 @@ class FireGrassPledgeTag extends ArenaTag {
  * Doubles the secondary effect chance of moves from Pokemon on the
  * given side of the field for 4 turns.
  */
-class WaterFirePledgeTag extends ArenaTag {
+class WaterFirePledgeTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.WATER_FIRE_PLEDGE;
   constructor(sourceId: number | undefined, side: ArenaTagSide) {
     super(4, MoveId.WATER_PLEDGE, sourceId, side);
@@ -1493,7 +1505,7 @@ class WaterFirePledgeTag extends ArenaTag {
  * and {@link https://bulbapedia.bulbagarden.net/wiki/Water_Pledge_(move) | Water Pledge}.
  * Quarters the Speed of Pokemon on the given side of the field for 4 turns.
  */
-class GrassWaterPledgeTag extends ArenaTag {
+class GrassWaterPledgeTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.GRASS_WATER_PLEDGE;
   constructor(sourceId: number | undefined, side: ArenaTagSide) {
     super(4, MoveId.GRASS_PLEDGE, sourceId, side);
@@ -1516,7 +1528,7 @@ class GrassWaterPledgeTag extends ArenaTag {
  * If a Pokémon that's on the field when Fairy Lock is used goes on to faint later in the same turn,
  * the Pokémon that replaces it will still be unable to switch out in the following turn.
  */
-export class FairyLockTag extends ArenaTag {
+export class FairyLockTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.FAIRY_LOCK;
   constructor(turnCount: number, sourceId?: number) {
     super(turnCount, MoveId.FAIRY_LOCK, sourceId);
@@ -1527,31 +1539,32 @@ export class FairyLockTag extends ArenaTag {
   }
 }
 
-export interface SuppressAbilitiesTagData extends ArenaTagData {
-  tagType: ArenaTagType.NEUTRALIZING_GAS;
-  /** The number of pokemon on the field with Neutralizing Gas */
-  sourceCount: number;
-}
-
 /**
  * Arena tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Neutralizing_Gas_(Ability) Neutralizing Gas}
  *
  * Keeps track of the number of pokemon on the field with Neutralizing Gas - If it drops to zero, the effect is ended and abilities are reactivated
  *
  * Additionally ends onLose abilities when it is activated
+ * @sealed
  */
-export class SuppressAbilitiesTag extends ArenaTag {
+export class SuppressAbilitiesTag extends SerializableArenaTag {
   public readonly sourceCount: number;
-  public readonly beingRemoved: boolean;
   public readonly tagType = ArenaTagType.NEUTRALIZING_GAS;
+  // Private field prevents field from appearing during serialization
+  /** Whether the tag is in the process of being removed */
+  #beingRemoved: boolean;
+  /** Whether the tag is in the process of being removed */
+  public get beingRemoved(): boolean {
+    return this.#beingRemoved;
+  }
 
   constructor(sourceId?: number) {
     super(0, undefined, sourceId);
     this.sourceCount = 1;
-    this.beingRemoved = false;
+    this.#beingRemoved = false;
   }
 
-  public override loadTag(source: SuppressAbilitiesTagData): void {
+  public override loadTag(source: NonFunctionProperties<SuppressAbilitiesTag>): void {
     super.loadTag(source);
     (this as Mutable<this>).sourceCount = source.sourceCount;
   }
@@ -1597,7 +1610,7 @@ export class SuppressAbilitiesTag extends ArenaTag {
   }
 
   public override onRemove(_arena: Arena, quiet = false) {
-    (this as Mutable<this>).beingRemoved = true;
+    this.#beingRemoved = true;
     if (!quiet) {
       globalScene.phaseManager.queueMessage(i18next.t("arenaTag:neutralizingGasOnRemove"));
     }
@@ -1614,10 +1627,6 @@ export class SuppressAbilitiesTag extends ArenaTag {
 
   public shouldApplyToSelf(): boolean {
     return this.sourceCount > 1;
-  }
-
-  public isBeingRemoved() {
-    return this.beingRemoved;
   }
 
   private playActivationMessage(pokemon: Pokemon | null) {
@@ -1713,7 +1722,7 @@ export function getArenaTag(
  * @param source - An arena tag
  * @returns The valid arena tag
  */
-export function loadArenaTag(source: (ArenaTag | ArenaTagData) & { targetIndex?: BattlerIndex }): ArenaTag {
+export function loadArenaTag(source: (ArenaTag | ArenaTagTypeData) & { targetIndex?: BattlerIndex }): ArenaTag {
   const tag =
     getArenaTag(
       source.tagType,
@@ -1726,3 +1735,37 @@ export function loadArenaTag(source: (ArenaTag | ArenaTagData) & { targetIndex?:
   tag.loadTag(source);
   return tag;
 }
+
+export type ArenaTagTypeMap = {
+  [ArenaTagType.MUD_SPORT]: MudSportTag;
+  [ArenaTagType.WATER_SPORT]: WaterSportTag;
+  [ArenaTagType.ION_DELUGE]: IonDelugeTag;
+  [ArenaTagType.SPIKES]: SpikesTag;
+  [ArenaTagType.MIST]: MistTag;
+  [ArenaTagType.QUICK_GUARD]: QuickGuardTag;
+  [ArenaTagType.WIDE_GUARD]: WideGuardTag;
+  [ArenaTagType.MAT_BLOCK]: MatBlockTag;
+  [ArenaTagType.CRAFTY_SHIELD]: CraftyShieldTag;
+  [ArenaTagType.NO_CRIT]: NoCritTag;
+  [ArenaTagType.TOXIC_SPIKES]: ToxicSpikesTag;
+  [ArenaTagType.FUTURE_SIGHT]: DelayedAttackTag;
+  [ArenaTagType.DOOM_DESIRE]: DelayedAttackTag;
+  [ArenaTagType.WISH]: WishTag;
+  [ArenaTagType.STEALTH_ROCK]: StealthRockTag;
+  [ArenaTagType.STICKY_WEB]: StickyWebTag;
+  [ArenaTagType.TRICK_ROOM]: TrickRoomTag;
+  [ArenaTagType.GRAVITY]: GravityTag;
+  [ArenaTagType.REFLECT]: ReflectTag;
+  [ArenaTagType.LIGHT_SCREEN]: LightScreenTag;
+  [ArenaTagType.AURORA_VEIL]: AuroraVeilTag;
+  [ArenaTagType.TAILWIND]: TailwindTag;
+  [ArenaTagType.HAPPY_HOUR]: HappyHourTag;
+  [ArenaTagType.SAFEGUARD]: SafeguardTag;
+  [ArenaTagType.IMPRISON]: ImprisonTag;
+  [ArenaTagType.FIRE_GRASS_PLEDGE]: FireGrassPledgeTag;
+  [ArenaTagType.WATER_FIRE_PLEDGE]: WaterFirePledgeTag;
+  [ArenaTagType.GRASS_WATER_PLEDGE]: GrassWaterPledgeTag;
+  [ArenaTagType.FAIRY_LOCK]: FairyLockTag;
+  [ArenaTagType.NEUTRALIZING_GAS]: SuppressAbilitiesTag;
+  [ArenaTagType.NONE]: NoneTag;
+};

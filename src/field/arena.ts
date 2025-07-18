@@ -3,7 +3,7 @@ import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import type { BiomeTierTrainerPools, PokemonPools } from "#balance/biomes";
 import { BiomePoolTier, biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
-import type { ArenaTag } from "#data/arena-tag";
+import type { ArenaTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import { ArenaTrapTag, getArenaTag } from "#data/arena-tag";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -644,7 +644,7 @@ export class Arena {
    * @param args array of parameters that the called upon tags may need
    */
   applyTagsForSide(
-    tagType: ArenaTagType | Constructor<ArenaTag>,
+    tagType: ArenaTagType | Constructor<ArenaTag> | typeof WeakenMoveScreenTag,
     side: ArenaTagSide,
     simulated: boolean,
     ...args: unknown[]

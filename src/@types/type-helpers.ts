@@ -57,7 +57,6 @@ export type AnyFn = (...args: any[]) => any;
  * Useful to produce a type that is roughly the same as the type of `{... obj}`, where `obj` is an instance of `T`.
  * A couple of differences:
  * - Private and protected properties are not included.
- * -
  */
 export type NonFunctionProperties<T> = {
   [K in keyof T as T[K] extends AnyFn ? never : K]: T[K];

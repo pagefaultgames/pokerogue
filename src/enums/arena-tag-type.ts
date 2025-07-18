@@ -1,3 +1,12 @@
+import type { ArenaTagTypeMap } from "#data/arena-tag";
+import type { NonSerializableArenaTagType, SerializableArenaTagType } from "#types/arena-tags";
+
+/**
+ * @privateremarks
+ * ⚠️ When modifying the fields in this enum, ensure that:
+ * - The entry is added to / removed from {@linkcode ArenaTagTypeMap} 
+ * - The tag is added to / removed from {@linkcode NonSerializableArenaTagType} or {@linkcode SerializableArenaTagType}
+*/
 export enum ArenaTagType {
   NONE = "NONE",
   MUD_SPORT = "MUD_SPORT",
