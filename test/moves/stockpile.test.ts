@@ -49,11 +49,8 @@ describe("Moves - Stockpile", () => {
 
       // use Stockpile four times
       for (let i = 0; i < 4; i++) {
-        if (i !== 0) {
-        }
-
         game.move.select(MoveId.STOCKPILE);
-        await game.phaseInterceptor.to(TurnInitPhase);
+        await game.toNextTurn();
 
         const stockpilingTag = user.getTag(StockpilingTag)!;
 
