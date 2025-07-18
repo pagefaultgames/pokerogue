@@ -13,7 +13,7 @@ import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
 import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { coerceArray } from "#utils/common";
-import { capitalCase } from "change-case";
+import { toTitleCase } from "#utils/strings";
 import type { MockInstance } from "vitest";
 import { expect, vi } from "vitest";
 
@@ -67,12 +67,12 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        `MoveHelper.select called with move '${capitalCase(MoveId[move])}' not in moveset!` +
-          `\nBattler Index: ${capitalCase(BattlerIndex[pkmIndex])}` +
+        `MoveHelper.select called with move '${toTitleCase(MoveId[move])}' not in moveset!` +
+          `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}` +
           `\nMoveset: [${this.game.scene
             .getPlayerParty()
             [pkmIndex].getMoveset()
-            .map(pm => capitalCase(MoveId[pm.moveId]))
+            .map(pm => toTitleCase(MoveId[pm.moveId]))
             .join(", ")}]`,
       );
     }
@@ -111,12 +111,12 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        `MoveHelper.selectWithTera called with move '${capitalCase(MoveId[move])}' not in moveset!` +
-          `\nBattler Index: ${capitalCase(BattlerIndex[pkmIndex])}` +
+        `MoveHelper.selectWithTera called with move '${toTitleCase(MoveId[move])}' not in moveset!` +
+          `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}` +
           `\nMoveset: [${this.game.scene
             .getPlayerParty()
             [pkmIndex].getMoveset()
-            .map(pm => capitalCase(MoveId[pm.moveId]))
+            .map(pm => toTitleCase(MoveId[pm.moveId]))
             .join(", ")}]`,
       );
     }

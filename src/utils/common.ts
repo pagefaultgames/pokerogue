@@ -1,6 +1,5 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { MoneyFormat } from "#enums/money-format";
-import { MoveId } from "#enums/move-id";
 import type { Variant } from "#sprites/variant";
 import i18next from "i18next";
 
@@ -482,16 +481,6 @@ export function isNullOrUndefined(val: any): val is null | undefined {
 }
 
 /**
- * Capitalize the first letter of a string.
- * @param str - The string whose first letter is being capitalized
- * @return The original string with its first letter capitalized
- */
-// TODO: Do we need this?
-export function capitalizeFirstLetter(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-/**
  * This function is used in the context of a Pokémon battle game to calculate the actual integer damage value from a float result.
  * Many damage calculation formulas involve various parameters and result in float values.
  * The actual damage applied to a Pokémon's HP must be an integer.
@@ -523,26 +512,6 @@ export function getLocalizedSpriteKey(baseKey: string) {
  */
 export function isBetween(num: number, min: number, max: number): boolean {
   return min <= num && num <= max;
-}
-
-/**
- * Helper method to return the animation filename for a given move
- *
- * @param move the move for which the animation filename is needed
- */
-export function animationFileName(move: MoveId): string {
-  return MoveId[move].toLowerCase().replace(/_/g, "-");
-}
-
-/**
- * Transforms a camelCase string into a kebab-case string
- * @param str The camelCase string
- * @returns A kebab-case string
- *
- * @source {@link https://stackoverflow.com/a/67243723/}
- */
-export function camelCaseToKebabCase(str: string): string {
-  return str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, (s, o) => (o ? "-" : "") + s.toLowerCase());
 }
 
 /** Get the localized shiny descriptor for the provided variant

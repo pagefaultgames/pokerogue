@@ -31,8 +31,8 @@ import type { StarterMoveset } from "#system/game-data";
 import type { Localizable } from "#types/locales";
 import { isNullOrUndefined, randSeedFloat, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { toCamelCase, toPascalCase } from "#utils/strings";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
-import { camelCase, pascalCase } from "change-case";
 import i18next from "i18next";
 
 export enum Region {
@@ -899,8 +899,8 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
    */
   getFormNameToDisplay(formIndex = 0, append = false): string {
     const formKey = this.forms?.[formIndex!]?.formKey;
-    const formText = pascalCase(formKey);
-    const speciesName = camelCase(SpeciesId[this.speciesId]);
+    const formText = toPascalCase(formKey);
+    const speciesName = toCamelCase(SpeciesId[this.speciesId]);
     let ret = "";
 
     const region = this.getRegion();
@@ -931,7 +931,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       if (i18next.exists(i18key)) {
         ret = i18next.t(i18key);
       } else {
-        const rootSpeciesName = camelCase(SpeciesId[this.getRootSpeciesId()]);
+        const rootSpeciesName = toCamelCase(SpeciesId[this.getRootSpeciesId()]);
         const i18RootKey = `pokemonForm:${rootSpeciesName}${formText}`;
         ret = i18next.exists(i18RootKey) ? i18next.t(i18RootKey) : formText;
       }

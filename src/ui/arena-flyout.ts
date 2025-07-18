@@ -18,7 +18,7 @@ import { addTextObject, TextStyle } from "#ui/text";
 import { TimeOfDayWidget } from "#ui/time-of-day-widget";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
-import { camelCase, capitalCase } from "change-case";
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import type { ParseKeys } from "i18next";
 import i18next from "i18next";
 
@@ -49,10 +49,10 @@ export function getFieldEffectText(arenaTagType: string): string {
   if (!arenaTagType || arenaTagType === ArenaTagType.NONE) {
     return arenaTagType;
   }
-  const effectName = camelCase(arenaTagType);
+  const effectName = toCamelCase(arenaTagType);
   const i18nKey = `arenaFlyout:${effectName}` as ParseKeys;
   const resultName = i18next.t(i18nKey);
-  return !resultName || resultName === i18nKey ? capitalCase(arenaTagType) : resultName;
+  return !resultName || resultName === i18nKey ? toTitleCase(arenaTagType) : resultName;
 }
 
 export class ArenaFlyout extends Phaser.GameObjects.Container {

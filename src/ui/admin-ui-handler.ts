@@ -6,7 +6,7 @@ import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import { TextStyle } from "#ui/text";
-import { capitalCase } from "change-case";
+import { toTitleCase } from "#utils/strings";
 
 type AdminUiHandlerService = "discord" | "google";
 type AdminUiHandlerServiceMode = "Link" | "Unlink";
@@ -21,9 +21,9 @@ export class AdminUiHandler extends FormModalUiHandler {
   private readonly httpUserNotFoundErrorCode: number = 404;
   private readonly ERR_REQUIRED_FIELD = (field: string) => {
     if (field === "username") {
-      return `${capitalCase(field)} is required`;
+      return `${toTitleCase(field)} is required`;
     }
-    return `${capitalCase(field)} Id is required`;
+    return `${toTitleCase(field)} Id is required`;
   };
   // returns a string saying whether a username has been successfully linked/unlinked to discord/google
   private readonly SUCCESS_SERVICE_MODE = (service: string, mode: string) => {

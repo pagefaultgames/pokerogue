@@ -56,8 +56,8 @@ import { addWindow } from "#ui/ui-theme";
 import { BooleanHolder, getLocalizedSpriteKey, isNullOrUndefined, padInt, rgbHexToRgba } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
-import { capitalCase } from "change-case";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
@@ -2613,7 +2613,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
       // Setting growth rate text
       if (isFormCaught) {
-        let growthReadable = capitalCase(GrowthRate[species.growthRate]);
+        let growthReadable = toTitleCase(GrowthRate[species.growthRate]);
         const growthAux = growthReadable.replace(" ", "_");
         if (i18next.exists("growth:" + growthAux)) {
           growthReadable = i18next.t(("growth:" + growthAux) as any);

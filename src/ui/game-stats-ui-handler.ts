@@ -9,7 +9,7 @@ import { addTextObject, TextStyle } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { formatFancyLargeNumber, getPlayTimeString } from "#utils/common";
-import { capitalCase } from "change-case";
+import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
 
@@ -436,7 +436,7 @@ export function initStatsKeys() {
     }
     if (!displayStats[key].label_key) {
       const splittableKey = key.replace(/([a-z]{2,})([A-Z]{1}(?:[^A-Z]|$))/g, "$1_$2");
-      displayStats[key].label_key = capitalCase(splittableKey);
+      displayStats[key].label_key = toTitleCase(splittableKey);
     }
   }
 }
