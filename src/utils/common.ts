@@ -10,19 +10,6 @@ export const MissingTextureKey = "__MISSING";
 
 // TODO: Draft tests for these utility functions
 // TODO: Break up this file
-/**
- * Convert a `snake_case` string in any capitalization (such as one from an enum reverse mapping)
- * into a readable `Title Case` version.
- * @param str - The snake case string to be converted.
- * @returns The result of converting `str` into title case.
- */
-export function toReadableString(str: string): string {
-  return str
-    .replace(/_/g, " ")
-    .split(" ")
-    .map(s => capitalizeFirstLetter(s.toLowerCase()))
-    .join(" ");
-}
 
 export function randomString(length: number, seeded = false) {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -278,7 +265,7 @@ export function formatMoney(format: MoneyFormat, amount: number) {
 }
 
 export function formatStat(stat: number, forHp = false): string {
-  return formatLargeNumber(stat, forHp ? 100000 : 1000000);
+  return formatLargeNumber(stat, forHp ? 100_000 : 1_000_000);
 }
 
 export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null> {
@@ -357,31 +344,6 @@ export class FixedInt {
 
 export function fixedInt(value: number): number {
   return new FixedInt(value) as unknown as number;
-}
-
-/**
- * Formats a string to title case
- * @param unformattedText Text to be formatted
- * @returns the formatted string
- */
-export function formatText(unformattedText: string): string {
-  const text = unformattedText.split("_");
-  for (let i = 0; i < text.length; i++) {
-    text[i] = text[i].charAt(0).toUpperCase() + text[i].substring(1).toLowerCase();
-  }
-
-  return text.join(" ");
-}
-
-export function toCamelCaseString(unformattedText: string): string {
-  if (!unformattedText) {
-    return "";
-  }
-  return unformattedText
-    .split(/[_ ]/)
-    .filter(f => f)
-    .map((f, i) => (i ? `${f[0].toUpperCase()}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
-    .join("");
 }
 
 export function rgbToHsv(r: number, g: number, b: number) {
@@ -511,42 +473,6 @@ export function truncateString(str: string, maxLength = 10) {
 }
 
 /**
- * Convert a space-separated string into a capitalized and underscored string.
- * @param input - The string to be converted.
- * @returns The converted string with words capitalized and separated by underscores.
- */
-export function reverseValueToKeySetting(input: string) {
-  // Split the input string into an array of words
-  const words = input.split(" ");
-  // Capitalize the first letter of each word and convert the rest to lowercase
-  const capitalizedWords = words.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
-  // Join the capitalized words with underscores and return the result
-  return capitalizedWords.join("_");
-}
-
-/**
- * Capitalize a string.
- * @param str - The string to be capitalized.
- * @param sep - The separator between the words of the string.
- * @param lowerFirstChar - Whether the first character of the string should be lowercase or not; default `true`
- * @param returnWithSpaces - Whether the returned string should have spaces between the words or not; default `false`
- * @returns The capitalized string.
- */
-export function capitalizeString(str: string, sep: string, lowerFirstChar = true, returnWithSpaces = false): string {
-  if (!str) {
-    return "";
-  }
-
-  const splitedStr = str.toLowerCase().split(sep);
-
-  for (let i = +lowerFirstChar; i < splitedStr.length; i++) {
-    splitedStr[i] = splitedStr[i].charAt(0).toUpperCase() + splitedStr[i].substring(1);
-  }
-
-  return returnWithSpaces ? splitedStr.join(" ") : splitedStr.join("");
-}
-
-/**
  * Report whether a given value is nullish (`null`/`undefined`).
  * @param val - The value whose nullishness is being checked
  * @returns `true` if `val` is either `null` or `undefined`
@@ -560,6 +486,7 @@ export function isNullOrUndefined(val: any): val is null | undefined {
  * @param str - The string whose first letter is being capitalized
  * @return The original string with its first letter capitalized
  */
+// TODO: Do we need this?
 export function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }

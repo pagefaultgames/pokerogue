@@ -1,5 +1,5 @@
 import pkg from "#package.json";
-import { camelCaseToKebabCase } from "#utils/common";
+import { kebabCase } from "change-case";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
@@ -198,9 +198,9 @@ export async function initI18n(): Promise<void> {
         if (namespaceMap[ns]) {
           fileName = namespaceMap[ns];
         } else if (ns.startsWith("mysteryEncounters/")) {
-          fileName = camelCaseToKebabCase(ns + "Dialogue");
+          fileName = kebabCase(ns + "Dialogue");
         } else {
-          fileName = camelCaseToKebabCase(ns);
+          fileName = kebabCase(ns);
         }
         return `./locales/${lng}/${fileName}.json?v=${pkg.version}`;
       },

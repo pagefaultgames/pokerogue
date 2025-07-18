@@ -41,15 +41,9 @@ import type {
   TrainerConfigs,
   TrainerTierPools,
 } from "#types/trainer-funcs";
-import {
-  coerceArray,
-  isNullOrUndefined,
-  randSeedInt,
-  randSeedIntRange,
-  randSeedItem,
-  toReadableString,
-} from "#utils/common";
+import { coerceArray, isNullOrUndefined, randSeedInt, randSeedIntRange, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { capitalCase } from "change-case";
 import i18next from "i18next";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
@@ -140,7 +134,7 @@ export class TrainerConfig {
   constructor(trainerType: TrainerType, allowLegendaries?: boolean) {
     this.trainerType = trainerType;
     this.trainerAI = new TrainerAI();
-    this.name = toReadableString(TrainerType[this.getDerivedType()]);
+    this.name = capitalCase(TrainerType[this.getDerivedType()]);
     this.battleBgm = "battle_trainer";
     this.mixedBattleBgm = "battle_trainer";
     this.victoryBgm = "victory_trainer";

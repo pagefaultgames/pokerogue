@@ -2,7 +2,7 @@ import { Nature } from "#enums/nature";
 import { EFFECTIVE_STATS, getShortenedStatKey, Stat } from "#enums/stat";
 import { UiTheme } from "#enums/ui-theme";
 import { getBBCodeFrag, TextStyle } from "#ui/text";
-import { toReadableString } from "#utils/common";
+import { capitalCase } from "change-case";
 import i18next from "i18next";
 
 export function getNatureName(
@@ -12,7 +12,7 @@ export function getNatureName(
   ignoreBBCode = false,
   uiTheme: UiTheme = UiTheme.DEFAULT,
 ): string {
-  let ret = toReadableString(Nature[nature]);
+  let ret = capitalCase(Nature[nature]);
   //Translating nature
   if (i18next.exists(`nature:${ret}`)) {
     ret = i18next.t(`nature:${ret}` as any);

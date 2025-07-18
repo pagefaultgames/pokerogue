@@ -14,7 +14,8 @@ import {
 import { AbstractControlSettingsUiHandler } from "#ui/abstract-control-settings-ui-handler";
 import { NavigationManager } from "#ui/navigationMenu";
 import { addTextObject, TextStyle } from "#ui/text";
-import { reverseValueToKeySetting, truncateString } from "#utils/common";
+import { truncateString } from "#utils/common";
+import { pascalSnakeCase } from "change-case";
 import i18next from "i18next";
 
 /**
@@ -100,7 +101,7 @@ export class SettingsKeyboardUiHandler extends AbstractControlSettingsUiHandler 
     }
     const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.
     const selection = this.settingLabels[cursor].text;
-    const key = reverseValueToKeySetting(selection);
+    const key = pascalSnakeCase(selection);
     const settingName = SettingKeyboard[key];
     const activeConfig = this.getActiveConfig();
     const success = deleteBind(this.getActiveConfig(), settingName);

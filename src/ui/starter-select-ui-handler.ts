@@ -68,11 +68,11 @@ import {
   padInt,
   randIntRange,
   rgbHexToRgba,
-  toReadableString,
 } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences, saveStarterPreferences } from "#utils/data";
 import { argbFromRgba } from "@material/material-color-utilities";
+import { capitalCase } from "change-case";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
@@ -3526,7 +3526,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
 
         //Growth translate
-        let growthReadable = toReadableString(GrowthRate[species.growthRate]);
+        let growthReadable = capitalCase(GrowthRate[species.growthRate]);
         const growthAux = growthReadable.replace(" ", "_");
         if (i18next.exists("growth:" + growthAux)) {
           growthReadable = i18next.t(("growth:" + growthAux) as any);

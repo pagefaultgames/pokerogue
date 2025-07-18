@@ -29,16 +29,10 @@ import type { Variant, VariantSet } from "#sprites/variant";
 import { populateVariantColorCache, variantColorCache, variantData } from "#sprites/variant";
 import type { StarterMoveset } from "#system/game-data";
 import type { Localizable } from "#types/locales";
-import {
-  capitalizeString,
-  isNullOrUndefined,
-  randSeedFloat,
-  randSeedGauss,
-  randSeedInt,
-  randSeedItem,
-} from "#utils/common";
+import { isNullOrUndefined, randSeedFloat, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
+import { camelCase, pascalCase } from "change-case";
 import i18next from "i18next";
 
 export enum Region {
@@ -905,13 +899,13 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
    */
   getFormNameToDisplay(formIndex = 0, append = false): string {
     const formKey = this.forms?.[formIndex!]?.formKey;
-    const formText = capitalizeString(formKey, "-", false, false);
-    const speciesName = capitalizeString(SpeciesId[this.speciesId], "_", true, false);
+    const formText = pascalCase(formKey);
+    const speciesName = camelCase(SpeciesId[this.speciesId]);
     let ret = "";
 
     const region = this.getRegion();
     if (this.speciesId === SpeciesId.ARCEUS) {
-      ret = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
+      ret = i18next.t(`pokemonInfo:Type.${formText.toUpperCase()}`);
     } else if (
       [
         SpeciesFormKey.MEGA,
@@ -937,7 +931,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       if (i18next.exists(i18key)) {
         ret = i18next.t(i18key);
       } else {
-        const rootSpeciesName = capitalizeString(SpeciesId[this.getRootSpeciesId()], "_", true, false);
+        const rootSpeciesName = camelCase(SpeciesId[this.getRootSpeciesId()]);
         const i18RootKey = `pokemonForm:${rootSpeciesName}${formText}`;
         ret = i18next.exists(i18RootKey) ? i18next.t(i18RootKey) : formText;
       }
