@@ -99,8 +99,6 @@ describe("Moves - Stockpile", () => {
       expect(user.getStatStage(Stat.DEF)).toBe(6);
       expect(user.getStatStage(Stat.SPDEF)).toBe(6);
 
-      // do it again, just for good measure
-
       game.move.select(MoveId.STOCKPILE);
       await game.phaseInterceptor.to(TurnInitPhase);
 
