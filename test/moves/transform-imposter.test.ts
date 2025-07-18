@@ -290,6 +290,10 @@ describe("Transforming Effects", () => {
         callback: p => p.addTag(BattlerTagType.SUBSTITUTE, 1, MoveId.SUBSTITUTE, p.id),
         player: false,
       },
+      {
+        cause: "user is tera-steller",
+        callback: p => game.field.forceTera(p, PokemonType.STELLAR),
+      },
     ])("should fail if $cause", async ({ callback, player = true }) => {
       game.override.battleType(BattleType.TRAINER); // ensures 2 enemy pokemon for illusion
       await game.classicMode.startBattle([SpeciesId.DITTO, SpeciesId.ABOMASNOW]);
@@ -367,6 +371,26 @@ describe("Transforming Effects", () => {
       // Switch out to Ditto
       game.doSwitchPokemon(2);
       game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+      await game.toEndOfTurn();
+
+      expect(ditto.isActive()).toBe(true);
+      expect(ditto.isTransformed()).toBe(false);
+      expect(ditto.getSpeciesForm().speciesId).toBe(SpeciesId.DITTO);
+      expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
+      expect(game.phaseInterceptor.log).not.toContain("PokemonTransformPhase");
+    });
+
+    it("should not activate if currently tera-steller", async () => {
+      game.override.battleStyle("single");
+      await game.classicMode.startBattle([SpeciesId.GYARADOS, SpeciesId.DITTO]);
+
+      const [, ditto] = game.scene.getPlayerParty();
+      const enemy1 = game.scene.getEnemyParty()[0];
+
+      game.field.forceTera(ditto, PokemonType.STELLAR);
+      expect(ditto.canTransformInto(enemy1)).toBe(false);
+
+      game.doSwitchPokemon(1);
       await game.toEndOfTurn();
 
       expect(ditto.isActive()).toBe(true);

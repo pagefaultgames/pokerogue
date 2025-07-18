@@ -1071,6 +1071,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         // Neither pokemon can be behind an illusion
         target.summonData.illusion ||
         this.summonData.illusion ||
+        // The user cannot be tera-steller
+        this.isOfType(PokemonType.STELLAR) ||
         // The target cannot be behind a substitute
         target.getTag(BattlerTagType.SUBSTITUTE) ||
         // Transforming to/from fusion pokemon causes various problems (crashes, etc.)
