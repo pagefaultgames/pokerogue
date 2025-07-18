@@ -154,11 +154,9 @@ export class GameManager {
    * @param mode - The mode to wait for.
    * @returns A promise that resolves when the mode is set.
    */
-  waitMode(mode: UiMode): Promise<void> {
-    return new Promise(async resolve => {
-      await waitUntil(() => this.scene.ui?.getMode() === mode);
-      return resolve();
-    });
+  // TODO: This is unused
+  async waitMode(mode: UiMode): Promise<void> {
+    await vi.waitUntil(() => this.scene.ui?.getMode() === mode);
   }
 
   /**
