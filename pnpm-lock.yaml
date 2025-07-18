@@ -11,6 +11,9 @@ importers:
       '@material/material-color-utilities':
         specifier: ^0.2.7
         version: 0.2.7
+      change-case:
+        specifier: ^5.4.4
+        version: 5.4.4
       compare-versions:
         specifier: ^6.1.1
         version: 6.1.1
@@ -57,9 +60,6 @@ importers:
       chalk:
         specifier: ^5.4.1
         version: 5.4.1
-      change-case:
-        specifier: ^5.4.4
-        version: 5.4.4
       dependency-cruiser:
         specifier: ^16.10.4
         version: 16.10.4
