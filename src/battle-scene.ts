@@ -250,7 +250,7 @@ export class BattleScene extends SceneBase {
    * - 0 = 'Switch'
    * - 1 = 'Set' - The option to switch the active pokemon at the start of a battle will not display.
    */
-  public battleStyle: number = BattleStyle.SWITCH;
+  public battleStyle: BattleStyle = BattleStyle.SWITCH;
 
   /**
    * Defines whether or not to show type effectiveness hints
@@ -669,10 +669,7 @@ export class BattleScene extends SceneBase {
       ).then(() => loadMoveAnimAssets(defaultMoves, true)),
       this.initStarterColors(),
     ]).then(() => {
-      this.phaseManager.pushNew("LoginPhase");
-      this.phaseManager.pushNew("TitlePhase");
-
-      this.phaseManager.shiftPhase();
+      this.phaseManager.toTitleScreen("addLogin");
     });
   }
 
@@ -713,16 +710,16 @@ export class BattleScene extends SceneBase {
     if (expSpriteKeys.size > 0) {
       return;
     }
-    this.cachedFetch("./exp-sprites.json")
-      .then(res => res.json())
-      .then(keys => {
-        if (Array.isArray(keys)) {
-          for (const key of keys) {
-            expSpriteKeys.add(key);
-          }
-        }
-        Promise.resolve();
-      });
+    const res = await this.cachedFetch("./exp-sprites.json");
+    const keys = await res.json();
+    if (!Array.isArray(keys)) {
+      throw new Error("EXP Sprites were not array when fetched!");
+    }
+
+    // TODO: Optimize this
+    for (const k of keys) {
+      expSpriteKeys.add(k);
+    }
   }
 
   /**
@@ -1280,13 +1277,12 @@ export class BattleScene extends SceneBase {
         duration: 250,
         ease: "Sine.easeInOut",
         onComplete: () => {
-          this.phaseManager.clearPhaseQueue();
-
           this.ui.freeUIData();
           this.uiContainer.remove(this.ui, true);
           this.uiContainer.destroy();
           this.children.removeAll(true);
           this.game.domContainer.innerHTML = "";
+          // TODO: `launchBattle` calls `reset(false, false, true)`
           this.launchBattle();
         },
       });

@@ -103,12 +103,9 @@ export class GameManager {
     if (!firstTimeScene) {
       this.scene.reset(false, true);
       (this.scene.ui.handlers[UiMode.STARTER_SELECT] as StarterSelectUiHandler).clearStarterPreferences();
-      this.scene.phaseManager.clearAllPhases();
 
       // Must be run after phase interceptor has been initialized.
-
-      this.scene.phaseManager.pushNew("LoginPhase");
-      this.scene.phaseManager.pushNew("TitlePhase");
+      this.scene.phaseManager.toTitlePhase("addLogin");
       this.scene.phaseManager.shiftPhase();
 
       this.gameWrapper.scene = this.scene;

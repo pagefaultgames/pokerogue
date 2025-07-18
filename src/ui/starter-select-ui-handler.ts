@@ -4302,7 +4302,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return true;
   }
 
-  tryExit(): boolean {
+  /**
+   * Attempt to back out of the starter selection screen into the appropriate parent modal
+   */
+  tryExit(): void {
     this.blockInput = true;
     const ui = this.getUi();
 
@@ -4316,12 +4319,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         UiMode.CONFIRM,
         () => {
           ui.setMode(UiMode.STARTER_SELECT);
-          globalScene.phaseManager.clearPhaseQueue();
-          if (globalScene.gameMode.isChallenge) {
+          // Non-challenge modes go directly back to title, while challenge modes go to the selection screen.
+          if (!globalScene.gameMode.isChallenge) {
+            globalScene.phaseManager.toTitleScreen(true);
+          } else {
+            globalScene.phaseManager.clearPhaseQueue();
             globalScene.phaseManager.pushNew("SelectChallengePhase");
             globalScene.phaseManager.pushNew("EncounterPhase");
-          } else {
-            globalScene.phaseManager.pushNew("TitlePhase");
           }
           this.clearText();
           globalScene.phaseManager.getCurrentPhase()?.end();
@@ -4332,8 +4336,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         19,
       );
     });
-
-    return true;
   }
 
   tryStart(manualTrigger = false): boolean {

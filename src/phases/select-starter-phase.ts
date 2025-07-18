@@ -24,10 +24,11 @@ export class SelectStarterPhase extends Phase {
     globalScene.ui.setMode(UiMode.STARTER_SELECT, (starters: Starter[]) => {
       globalScene.ui.clearText();
       globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
+        // If clicking cancel, back out to title screen
         if (slotId === -1) {
-          globalScene.phaseManager.clearPhaseQueue();
-          globalScene.phaseManager.pushNew("TitlePhase");
-          return this.end();
+          globalScene.phaseManager.toTitleScreen(true);
+          this.end();
+          return;
         }
         globalScene.sessionSlotId = slotId;
         this.initBattle(starters);
