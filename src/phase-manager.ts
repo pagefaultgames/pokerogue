@@ -462,7 +462,7 @@ export class PhaseManager {
   /**
    * Search for a specific phase in the {@linkcode phaseQueue} and remove the first matching result.
    * @param phaseFilter - The function to filter the phase queue by
-   * @returns Whether a matching phase was found and removed
+   * @returns Whether a matching phase was found and removed.
    */
   tryRemovePhase(phaseFilter: (phase: Phase) => boolean): boolean {
     const phaseIndex = this.phaseQueue.findIndex(phaseFilter);
@@ -474,30 +474,32 @@ export class PhaseManager {
   }
 
   /**
-   * Search for a specific phase in {@linkcode phaseQueuePrepend} and remove the first matching result.   * @param phaseFilter - The function to filter the phase queue by
-   * @returns Whether a matching phase was found and removed
+   * Search for a specific phase in {@linkcode phaseQueuePrepend} and remove the first matching result.
+   * @param phaseFilter - The function to filter the phase queue by
+   * @returns Whether a matching phase was found and removed.
    */
   tryRemoveUnshiftedPhase(phaseFilter: (phase: Phase) => boolean): boolean {
     const phaseIndex = this.phaseQueuePrepend.findIndex(phaseFilter);
-    if (phaseIndex > -1) {
-      this.phaseQueuePrepend.splice(phaseIndex, 1);
-      return true;
+    if (phaseIndex === -1) {
+      return false;
     }
-    return false;
+    this.phaseQueuePrepend.splice(phaseIndex, 1);
+    return true;
   }
 
   /**
-   * Attempt to add the input phase to index before target phase in the phaseQueue, else simply calls unshiftPhase()
-   * @param phase - The phase to be added
-   * @param targetPhase - The phase to search for in phaseQueue
-   * @returns Whether a targetPhase was found and added
+   * Attempt to add {@linkcode phase} directly **before** the first instance of {@linkcode target} in the {@linkcode phaseQueue}.
+   * If none are found, will call {@linkcode unshiftPhase()} to add the phase to the end of {@linkcode phaseQueuePrepend}.
+   * @param phase - The {@linkcode Phase} (single or array) to add
+   * @param targetPhase - The {@linkcode PhaseString | name} of the Phase to search for
+   * @returns Whether a {@linkcode targetPhase} was found successfully.
    */
   prependToPhase(phase: Phase | Phase[], targetPhase: PhaseString): boolean {
     phase = coerceArray(phase);
     const target = PHASES[targetPhase];
     const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof target);
 
-    if (targetIndex !== -1) {
+    if (targetIndex > -1) {
       this.phaseQueue.splice(targetIndex, 0, ...phase);
       return true;
     }
@@ -506,11 +508,12 @@ export class PhaseManager {
   }
 
   /**
-   * Tries to add the input phase(s) to index after target phase in the {@linkcode phaseQueue}, else simply calls {@linkcode unshiftPhase()}
-   * @param phase - One or more {@linkcode Phase}s to be added
-   * @param targetPhase - The type of target {@linkcode Phase} phase to search for in {@linkcode phaseQueue}
+   * Attempt to add {@linkcode phase} directly **after** the first instance of {@linkcode target} in the {@linkcode phaseQueue}.
+   * If none are found, will call {@linkcode unshiftPhase()} to add the phase to the end of {@linkcode phaseQueuePrepend}.
+   * @param phase - The {@linkcode Phase} (single or array) to add
+   * @param targetPhase - The {@linkcode PhaseString | name} of the queued Phase to search for
    * @param condition - If provided, will only consider target phases passing the condition
-   * @returns `true` if a `targetPhase` was found to append to
+   * @returns Whether a {@linkcode targetPhase} was found successfully
    */
   appendToPhase(phase: Phase | Phase[], targetPhase: PhaseString, condition?: (p: Phase) => boolean): boolean {
     phase = coerceArray(phase);
@@ -526,9 +529,9 @@ export class PhaseManager {
   }
 
   /**
-   * Checks a phase and returns the matching {@linkcode DynamicPhaseType}, or undefined if it does not match one
+   * Check a phase and return its matching {@linkcode DynamicPhaseType}
    * @param phase - The {@linkcode Phase} to check
-   * @returns The corresponding {@linkcode DynamicPhaseType} or `undefined`
+   * @returns The corresponding {@linkcode DynamicPhaseType}, or `undefined` if it lacks one.
    */
   public getDynamicPhaseType(phase: Phase | null): DynamicPhaseType | undefined {
     let phaseType: DynamicPhaseType | undefined;
@@ -542,10 +545,13 @@ export class PhaseManager {
   }
 
   /**
-   * Pushes a phase onto its corresponding dynamic queue and marks the activation point in {@linkcode phaseQueue}
+   * Unshift an {@linkcode ActivatePriorityQueuePhase} for {@linkcode phase}, then push {@linkcode phase}
+   * onto its respective dynamic queue.
    *
-   * The {@linkcode ActivatePriorityQueuePhase} will run the top phase in the dynamic queue (not necessarily {@linkcode phase})
-   * @param phase The {@linkcode Phase} to push
+   * The {@linkcode ActivatePriorityQueuePhase} will run the top phase in the queue (not necessarily {@linkcode phase})
+   * each time a queued phase would otherwise execute.
+   * @param phase - The {@linkcode Phase} to push
+   * @see {@linkcode unshiftDynamicPhase} Similar method that unshifts instead of pushing
    */
   public pushDynamicPhase(phase: Phase): void {
     const type = this.getDynamicPhaseType(phase);
@@ -558,7 +564,7 @@ export class PhaseManager {
   }
 
   /**
-   * Unshifts the top phase from the corresponding dynamic queue onto {@linkcode phaseQueue}
+   * Unshifts the top phase from the corresponding dynamic queue onto {@linkcode phaseQueue}.
    * @param type - The {@linkcode DynamicPhaseType} corresponding to the dynamic phase being started
    */
   public startDynamicPhaseType(type: DynamicPhaseType): void {
@@ -569,12 +575,15 @@ export class PhaseManager {
   }
 
   /**
-   * Unshifts an {@linkcode ActivatePriorityQueuePhase} for {@linkcode phase}, then pushes {@linkcode phase} to its dynamic queue
+   * Unshift an {@linkcode ActivatePriorityQueuePhase} for {@linkcode phase}, then push {@linkcode phase}
+   * onto its respective dynamic queue.
    *
-   * This is the same as {@linkcode pushDynamicPhase}, except the activation phase is unshifted
+   * The {@linkcode ActivatePriorityQueuePhase} will run the top phase in the queue (not necessarily {@linkcode phase})
+   * each time a queued phase would otherwise execute.
    *
-   * {@linkcode phase} is not guaranteed to be the next phase from the queue to run (if the queue is not empty)
-   * @param phase - The {@linkcode Phase} to add
+   * @param phase - The {@linkcode Phase} to unshift
+   * @see {@linkcode pushDynamicPhase} Similar method that pushes instead of unshifting
+   * @todo - Consider renaming to `unshiftDymanicPhase`
    */
   public startDynamicPhase(phase: Phase): void {
     const type = this.getDynamicPhaseType(phase);
@@ -588,7 +597,7 @@ export class PhaseManager {
 
   /**
    * Adds a MessagePhase, either to PhaseQueuePrepend or nextCommandPhaseQueue
-   * @param message - string for MessagePhase
+   * @param message - The message to be displayed.
    * @param callbackDelay - optional param for MessagePhase constructor
    * @param prompt - optional param for MessagePhase constructor
    * @param promptDelay - optional param for MessagePhase constructor
@@ -608,16 +617,16 @@ export class PhaseManager {
       // adds to the end of PhaseQueuePrepend
       this.unshiftPhase(phase);
     } else {
-      //remember that pushPhase adds it to nextCommandPhaseQueue
+      // remember that pushPhase adds it to nextCommandPhaseQueue
       this.pushPhase(phase);
     }
   }
 
   /**
-   * Queues an ability bar flyout phase
-   * @param pokemon The pokemon who has the ability
-   * @param passive Whether the ability is a passive
-   * @param show Whether to show or hide the bar
+   * Queue an ability bar flyout phase.
+   * @param pokemon - The pokemon with the ability
+   * @param passive - Whether the ability is a passive
+   * @param show - Whether to show or hide the bar
    */
   public queueAbilityDisplay(pokemon: Pokemon, passive: boolean, show: boolean): void {
     this.unshiftPhase(show ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive) : new HideAbilityPhase());
@@ -625,7 +634,7 @@ export class PhaseManager {
   }
 
   /**
-   * Hides the ability bar if it is currently visible
+   * Hide the ability bar if it is currently visible.
    */
   public hideAbilityBar(): void {
     if (globalScene.abilityBar.isVisible()) {
@@ -646,13 +655,13 @@ export class PhaseManager {
   }
 
   /**
-   * Dynamically create the named phase from the provided arguments
+   * Dynamically create the named phase from the provided arguments.
    *
    * @remarks
    * Used to avoid importing each phase individually, allowing for dynamic creation of phases.
-   * @param phase - The name of the phase to create.
-   * @param args - The arguments to pass to the phase constructor.
-   * @returns The requested phase instance
+   * @param phase - The {@linkcode PhaseString | name} of the Phase to create
+   * @param args - The arguments to pass to the phase constructor
+   * @returns The requested phase instance.
    */
   public create<T extends PhaseString>(phase: T, ...args: ConstructorParameters<PhaseConstructorMap[T]>): PhaseMap[T] {
     const PhaseClass = PHASES[phase];
@@ -666,8 +675,9 @@ export class PhaseManager {
   }
 
   /**
-   * Create a new phase and immediately push it to the phase queue. Equivalent to calling {@linkcode create} followed by {@linkcode pushPhase}.
-   * @param phase - The name of the phase to create
+   * Create a new phase and immediately push it to the phase queue.
+   * Equivalent to calling {@linkcode create} immediately followed by {@linkcode pushPhase}.
+   * @param phase - The {@linkcode PhaseString | name} of the Phase to create
    * @param args - The arguments to pass to the phase constructor
    */
   public pushNew<T extends PhaseString>(phase: T, ...args: ConstructorParameters<PhaseConstructorMap[T]>): void {
@@ -675,8 +685,9 @@ export class PhaseManager {
   }
 
   /**
-   * Create a new phase and immediately unshift it to the phase queue. Equivalent to calling {@linkcode create} followed by {@linkcode unshiftPhase}.
-   * @param phase - The name of the phase to create
+   * Create a new phase and immediately unshift it to the phase queue.
+   * Equivalent to calling {@linkcode create} followed by {@linkcode unshiftPhase}.
+   * @param phase - The {@linkcode PhaseString | name} of the Phase to create
    * @param args - The arguments to pass to the phase constructor
    */
   public unshiftNew<T extends PhaseString>(phase: T, ...args: ConstructorParameters<PhaseConstructorMap[T]>): void {
@@ -686,10 +697,10 @@ export class PhaseManager {
   /**
    * Create a new phase and immediately prepend it to an existing phase in the phase queue.
    * Equivalent to calling {@linkcode create} followed by {@linkcode prependToPhase}.
-   * @param targetPhase - The phase to search for in phaseQueue
-   * @param phase - The name of the phase to create
+   * @param targetPhase - The {@linkcode PhaseString | name} of the Phase to search for
+   * @param phase - The {@linkcode PhaseString | name} of the Phase to create
    * @param args - The arguments to pass to the phase constructor
-   * @returns `true` if a `targetPhase` was found to prepend to
+   * @returns Whether a {@linkcode targetPhase} was found successfully.
    */
   public prependNewToPhase<T extends PhaseString>(
     targetPhase: PhaseString,
@@ -700,12 +711,12 @@ export class PhaseManager {
   }
 
   /**
-   * Create a new phase and immediately append it to an existing phase the phase queue.
+   * Create a new phase and immediately append it to an existing phase in the phase queue.
    * Equivalent to calling {@linkcode create} followed by {@linkcode appendToPhase}.
-   * @param targetPhase - The phase to search for in phaseQueue
-   * @param phase - The name of the phase to create
+   * @param targetPhase - The {@linkcode PhaseString | name} of the Phase to search for
+   * @param phase - The {@linkcode PhaseString | name} of the Phase to create
    * @param args - The arguments to pass to the phase constructor
-   * @returns `true` if a `targetPhase` was found to append to
+   * @returns Whether a {@linkcode targetPhase} was found successfully.
    */
   public appendNewToPhase<T extends PhaseString>(
     targetPhase: PhaseString,
@@ -715,6 +726,13 @@ export class PhaseManager {
     return this.appendToPhase(this.create(phase, ...args), targetPhase);
   }
 
+  /**
+   * Create a new dynamic phase, unshift a {@linkcode ActivatePriorityQueuePhase} for it,
+   * then push it onto its corresponnding dynamic queue
+   * Equivalent to calling {@linkcode create} followed by {@linkcode startDynamicPhase}.
+   * @param phase - The {@linkcode PhaseString | name} of the Phase to create
+   * @param args - The arguments to pass to the phase constructor
+   */
   public startNewDynamicPhase<T extends PhaseString>(
     phase: T,
     ...args: ConstructorParameters<PhaseConstructorMap[T]>
