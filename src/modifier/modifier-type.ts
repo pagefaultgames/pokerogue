@@ -61,15 +61,8 @@ import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#types/mo
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getModifierTierTextTint } from "#ui/text";
-import {
-  formatMoney,
-  getEnumKeys,
-  getEnumValues,
-  isNullOrUndefined,
-  NumberHolder,
-  padInt,
-  randSeedInt,
-} from "#utils/common";
+import { formatMoney, isNullOrUndefined, NumberHolder, padInt, randSeedInt, randSeedItem } from "#utils/common";
+import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { getModifierPoolForType } from "#utils/modifier-utils";
 import i18next from "i18next";
 
@@ -1128,6 +1121,7 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
       if (!tierUniqueCompatibleTms.length) {
         return null;
       }
+      // TODO: should this use `randSeedItem`?
       const randTmIndex = randSeedInt(tierUniqueCompatibleTms.length);
       return new TmModifierType(tierUniqueCompatibleTms[randTmIndex]);
     });
@@ -1181,6 +1175,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
         return null;
       }
 
+      // TODO: should this use `randSeedItem`?
       return new EvolutionItemModifierType(evolutionItemPool[randSeedInt(evolutionItemPool.length)]!); // TODO: is the bang correct?
     });
   }
@@ -1257,6 +1252,7 @@ export class FormChangeItemRewardGenerator extends ModifierTypeGenerator {
         return null;
       }
 
+      // TODO: should this use `randSeedItem`?
       return new FormChangeItemReward(formChangeItemPool[randSeedInt(formChangeItemPool.length)]);
     });
   }
@@ -1412,7 +1408,7 @@ const modifierTypeInitObj = Object.freeze({
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in Nature) {
         return new PokemonNatureChangeModifierType(pregenArgs[0] as Nature);
       }
-      return new PokemonNatureChangeModifierType(randSeedInt(getEnumValues(Nature).length) as Nature);
+      return new PokemonNatureChangeModifierType(randSeedItem(getEnumValues(Nature)));
     }),
 
   MYSTICAL_ROCK: () => new HeldItemReward(HeldItemId.MYSTICAL_ROCK),

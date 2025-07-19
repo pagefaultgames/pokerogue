@@ -14,10 +14,13 @@ import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon } from "#field/pokemon";
 import type { TrainerItemConfiguration } from "#items/trainer-item-data-types";
 import { getIsInitialized, initI18n } from "#plugins/i18n";
-import type { TrainerPartyTemplate } from "#trainers/TrainerPartyTemplate";
-import { TrainerPartyCompoundTemplate, trainerPartyTemplates } from "#trainers/TrainerPartyTemplate";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
+import {
+  TrainerPartyCompoundTemplate,
+  type TrainerPartyTemplate,
+  trainerPartyTemplates,
+} from "#trainers/trainer-party-template";
 import { randSeedInt, randSeedItem, randSeedWeightedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
@@ -420,7 +423,8 @@ export class Trainer extends Phaser.GameObjects.Container {
 
         // If useNewSpeciesPool is true, we need to generate a new species from the new species pool, otherwise we generate a random species
         let species = useNewSpeciesPool
-          ? getPokemonSpecies(newSpeciesPool[Math.floor(randSeedInt(newSpeciesPool.length))])
+          ? // TODO: should this use `randSeedItem`?
+            getPokemonSpecies(newSpeciesPool[Math.floor(randSeedInt(newSpeciesPool.length))])
           : template.isSameSpecies(index) && index > offset
             ? getPokemonSpecies(
                 battle.enemyParty[offset].species.getTrainerSpeciesForLevel(
@@ -618,6 +622,8 @@ export class Trainer extends Phaser.GameObjects.Container {
 
     if (maxScorePartyMemberIndexes.length > 1) {
       let rand: number;
+      // TODO: should this use `randSeedItem`?
+
       globalScene.executeWithSeedOffset(
         () => (rand = randSeedInt(maxScorePartyMemberIndexes.length)),
         globalScene.currentBattle.turn << 2,

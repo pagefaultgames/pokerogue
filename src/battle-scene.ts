@@ -138,7 +138,6 @@ import {
   type Constructor,
   fixedInt,
   formatMoney,
-  getEnumValues,
   getIvsFromId,
   isBetween,
   isNullOrUndefined,
@@ -148,6 +147,7 @@ import {
   shiftCharCodes,
 } from "#utils/common";
 import { deepMergeSpriteData } from "#utils/data";
+import { getEnumValues } from "#utils/enums";
 import { getModifierPoolForType } from "#utils/modifier-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
@@ -2178,6 +2178,7 @@ export class BattleScene extends SceneBase {
           ),
         ]
       : allSpecies.filter(s => s.isCatchable());
+    // TODO: should this use `randSeedItem`?
     return filteredSpecies[randSeedInt(filteredSpecies.length)];
   }
 
@@ -2203,6 +2204,7 @@ export class BattleScene extends SceneBase {
       }
     }
 
+    // TODO: should this use `randSeedItem`?
     return biomes[randSeedInt(biomes.length)];
   }
 
@@ -3497,6 +3499,7 @@ export class BattleScene extends SceneBase {
       console.log("No Mystery Encounters found, falling back to Mysterious Challengers.");
       return allMysteryEncounters[MysteryEncounterType.MYSTERIOUS_CHALLENGERS];
     }
+    // TODO: should this use `randSeedItem`?
     encounter = availableEncounters[randSeedInt(availableEncounters.length)];
     // New encounter object to not dirty flags
     encounter = new MysteryEncounter(encounter);

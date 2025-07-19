@@ -185,7 +185,7 @@ export class SelectRewardPhase extends BattlePhase {
     } else {
       this.applyModifier(modifierType.newModifier()!);
     }
-    return !cost;
+    return cost === -1;
   }
 
   // Reroll rewards

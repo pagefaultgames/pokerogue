@@ -34,7 +34,8 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import i18next from "#plugins/i18n";
 import { PokemonData } from "#system/pokemon-data";
-import { randSeedInt } from "#utils/common";
+import { randSeedItem } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/berriesAbound";
@@ -308,7 +309,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
   .build();
 
 function tryGiveBerry(prioritizedPokemon?: PlayerPokemon) {
-  const berryType = randSeedInt(Object.keys(BerryType).filter(s => !Number.isNaN(Number(s))).length) as BerryType;
+  const berryType = randSeedItem(getEnumValues(BerryType));
   const berry = berryTypeToHeldItem[berryType];
 
   const party = globalScene.getPlayerParty();
