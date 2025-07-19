@@ -323,7 +323,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         // It is safe to skip awaiting the `show` method here,
         // as the promise it returns is also part of the promise appended to `shopAnimPromises`,
         // which is awaited later on.
-        shopOption.show(0, 0, shopAnimPromises);
+        shopOption.show(0, 0, shopAnimPromises, false);
       }
     });
 
@@ -857,15 +857,21 @@ class ModifierOption extends Phaser.GameObjects.Container {
    * @param remainingDuration - The duration in milliseconds that the animation can play for
    * @param upgradeCountOffset - The offset to apply to the upgrade count for options whose rarity is being upgraded
    * @param promiseHolder - A promise that resolves once all tweens started by this method have completed will be pushed to this array.
+   * @param isReward - Whether the option being shown is a reward, meaning it should show pokeball and upgrade animations.
    * @returns A promise that resolves once the *option's apperance animations* have completed. This promise will resolve _before_ all
    *   promises that are initiated in this method complete. Instead, the `promiseHolder` array will contain a new promise
    *   that will resolve once all animations have completed.
    *
    */
-  async show(remainingDuration: number, upgradeCountOffset: number, promiseHolder: Promise<void>[]): Promise<void> {
+  async show(
+    remainingDuration: number,
+    upgradeCountOffset: number,
+    promiseHolder: Promise<void>[],
+    isReward = true,
+  ): Promise<void> {
     /** Promises for the pokeball and upgrade animations */
     const animPromises: Promise<void>[] = [];
-    if (!this.modifierTypeOption.cost) {
+    if (isReward) {
       globalScene.tweens.add({
         targets: this.pb,
         y: 0,
@@ -920,7 +926,6 @@ class ModifierOption extends Phaser.GameObjects.Container {
               ease: "Sine.easeIn",
               onComplete: () => {
                 this.pb.setTexture("pb", this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount + (u + 1)));
-                resolve();
               },
             },
             {
@@ -931,6 +936,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
               onComplete: () => {
                 console.log("pbTint complete");
                 this.pbTint.setVisible(false);
+                resolve();
               },
             },
           ],
@@ -939,24 +945,17 @@ class ModifierOption extends Phaser.GameObjects.Container {
       }
     }
 
-    // await new Promise(resolve => globalScene.time.delayedCall(remainingDuration + 2000, resolve));
-
-    // Return a set of animations that should play
-
     const finalPromises: Promise<void>[] = [];
     globalScene.time.delayedCall(remainingDuration + 2000, () => {
-      if (!this.modifierTypeOption.cost) {
+      if (isReward) {
         this.pb.setTexture("pb", `${this.getPbAtlasKey(0)}_open`);
         globalScene.playSound("se/pb_rel");
 
         const { resolve: pbResolve, promise: pbPromise } = Promise.withResolvers<void>();
 
-        // Shallow copy the current set of promises
-
         globalScene.tweens.add({
           targets: this.pb,
           duration: 500,
-          delay: 250,
           ease: "Sine.easeIn",
           alpha: 0,
           onComplete: () => {
@@ -967,9 +966,13 @@ class ModifierOption extends Phaser.GameObjects.Container {
         finalPromises.push(pbPromise);
       }
 
+      /** Delay for the rest of the tweens to ensure they show after the pokeball animation begins to appear */
+      const delay = isReward ? 250 : 0;
+
       const { resolve: itemResolve, promise: itemPromise } = Promise.withResolvers<void>();
       globalScene.tweens.add({
         targets: this.itemContainer,
+        delay,
         duration: 500,
         ease: "Elastic.Out",
         scale: 2,
@@ -980,11 +983,12 @@ class ModifierOption extends Phaser.GameObjects.Container {
       });
       finalPromises.push(itemPromise);
 
-      if (!this.modifierTypeOption.cost) {
+      if (isReward) {
         const { resolve: itemTintResolve, promise: itemTintPromise } = Promise.withResolvers<void>();
         globalScene.tweens.add({
           targets: this.itemTint,
           alpha: 0,
+          delay,
           duration: 500,
           ease: "Sine.easeIn",
           onComplete: () => {
@@ -998,6 +1002,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
       const { resolve: itemTextResolve, promise: itemTextPromise } = Promise.withResolvers<void>();
       globalScene.tweens.add({
         targets: this.itemText,
+        delay,
         duration: 500,
         alpha: 1,
         y: 25,
@@ -1010,6 +1015,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
         const { resolve: itemCostResolve, promise: itemCostPromise } = Promise.withResolvers<void>();
         globalScene.tweens.add({
           targets: this.itemCostText,
+          delay,
           duration: 500,
           alpha: 1,
           y: 35,
