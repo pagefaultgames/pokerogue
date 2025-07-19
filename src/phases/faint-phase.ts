@@ -181,14 +181,7 @@ export class FaintPhase extends PokemonPhase {
           .filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot)
           .length;
         if (hasReservePartyMember) {
-          globalScene.phaseManager.pushNew(
-            "StaticSwitchSummonPhase",
-            SwitchType.SWITCH,
-            this.fieldIndex,
-            -1,
-            false,
-            false,
-          );
+          globalScene.phaseManager.pushNew("SwitchSummonPhase", SwitchType.SWITCH, this.fieldIndex, -1, false, false);
         }
       }
     }

@@ -50,7 +50,7 @@ export class RevivalBlessingPhase extends BattlePhase {
             if (slotIndex <= 1) {
               // Revived ally pokemon
               globalScene.phaseManager.unshiftNew(
-                "StaticSwitchSummonPhase",
+                "SwitchSummonPhase",
                 SwitchType.SWITCH,
                 pokemon.getFieldIndex(),
                 slotIndex,
@@ -61,7 +61,7 @@ export class RevivalBlessingPhase extends BattlePhase {
             } else if (allyPokemon.isFainted()) {
               // Revived party pokemon, and ally pokemon is fainted
               globalScene.phaseManager.unshiftNew(
-                "StaticSwitchSummonPhase",
+                "SwitchSummonPhase",
                 SwitchType.SWITCH,
                 allyPokemon.getFieldIndex(),
                 slotIndex,

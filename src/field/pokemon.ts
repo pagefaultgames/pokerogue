@@ -5723,7 +5723,7 @@ export class PlayerPokemon extends Pokemon {
           if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
             globalScene.phaseManager.prependNewToPhase(
               "MoveEndPhase",
-              "StaticSwitchSummonPhase",
+              "SwitchSummonPhase",
               switchType,
               this.getFieldIndex(),
               slotIndex,

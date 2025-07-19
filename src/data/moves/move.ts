@@ -6238,7 +6238,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
           if (user.fieldPosition === FieldPosition.CENTER) {
             user.setFieldPosition(FieldPosition.LEFT);
           }
-          globalScene.phaseManager.unshiftNew("StaticSwitchSummonPhase", SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, false);
+          globalScene.phaseManager.unshiftNew("SwitchSummonPhase", SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, false);
         }
       }
       return true;
@@ -6318,7 +6318,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
           globalScene.phaseManager.prependNewToPhase(
             "MoveEndPhase",
-            "StaticSwitchSummonPhase",
+            "SwitchSummonPhase",
             this.switchType,
             switchOutTarget.getFieldIndex(),
             slotIndex,
@@ -6357,7 +6357,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           switchOutTarget.leaveField(true);
           const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
           globalScene.phaseManager.prependNewToPhase("MoveEndPhase",
-            "StaticSwitchSummonPhase",
+            "SwitchSummonPhase",
               this.switchType,
               switchOutTarget.getFieldIndex(),
               slotIndex,
@@ -6367,7 +6367,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         } else {
           switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
           globalScene.phaseManager.prependNewToPhase("MoveEndPhase",
-            "StaticSwitchSummonPhase",
+            "SwitchSummonPhase",
             this.switchType,
             switchOutTarget.getFieldIndex(),
             (globalScene.currentBattle.trainer ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),

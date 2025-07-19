@@ -6177,7 +6177,7 @@ class ForceSwitchOutHelper {
           : 0;
         globalScene.phaseManager.prependNewToPhase(
           "MoveEndPhase",
-          "StaticSwitchSummonPhase",
+          "SwitchSummonPhase",
           this.switchType,
           switchOutTarget.getFieldIndex(),
           summonIndex,
