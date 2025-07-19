@@ -2478,7 +2478,7 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
 
   override apply({ pokemon, simulated, cancelled }: AbAttrParamsWithCancel): void {
     if (!simulated) {
-      globalScene.phaseManager.pushNew(
+      globalScene.phaseManager.unshiftNew(
         "StatStageChangePhase",
         pokemon.getBattlerIndex(),
         false,
@@ -4978,7 +4978,7 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
       if (move.getMove().is("AttackMove") || move.getMove().is("StatusMove")) {
         const target = this.getTarget(pokemon, source, targets);
-        globalScene.phaseManager.pushNew(
+        globalScene.phaseManager.unshiftNew(
           "MovePhase",
           pokemon,
           target,
@@ -4988,7 +4988,7 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
         );
       } else if (move.getMove().is("SelfStatusMove")) {
         // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
-        globalScene.phaseManager.pushNew(
+        globalScene.phaseManager.unshiftNew(
           "MovePhase",
           pokemon,
           [pokemon.getBattlerIndex()],

@@ -415,7 +415,7 @@ function summonPlayerPokemonAnimation(pokemon: PlayerPokemon): Promise<void> {
                   pokemon.resetTurnData();
 
                   globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
-                  globalScene.phaseManager.pushNew("PostSummonPhase", pokemon.getBattlerIndex());
+                  globalScene.phaseManager.unshiftNew("PostSummonPhase", pokemon.getBattlerIndex());
                   resolve();
                 });
               },

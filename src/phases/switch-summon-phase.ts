@@ -245,7 +245,7 @@ export class SwitchSummonPhase extends SummonPhase {
   }
 
   queuePostSummon(): void {
-    globalScene.phaseManager.pushNew("PostSummonPhase", this.getPokemon().getBattlerIndex());
+    globalScene.phaseManager.unshiftNew("PostSummonPhase", this.getPokemon().getBattlerIndex());
   }
 
   /**

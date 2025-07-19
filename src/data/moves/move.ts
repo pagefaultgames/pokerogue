@@ -6794,7 +6794,7 @@ class CallMoveAttr extends OverrideMoveEffectAttr {
         : moveTargets.targets[user.randBattleSeedInt(moveTargets.targets.length)]];
 
     globalScene.phaseManager.unshiftNew("LoadMoveAnimPhase", move.id);
-    globalScene.phaseManager.pushNew("MovePhase", user, targets, new PokemonMove(move.id), MoveUseMode.FOLLOW_UP, MovePhaseTimingModifier.FIRST);
+    globalScene.phaseManager.unshiftNew("MovePhase", user, targets, new PokemonMove(move.id), MoveUseMode.FOLLOW_UP, MovePhaseTimingModifier.FIRST);
     return true;
   }
 }
@@ -7024,7 +7024,7 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
 
     // Load the move's animation if we didn't already and unshift a new usage phase
     globalScene.phaseManager.unshiftNew("LoadMoveAnimPhase", moveId);
-    globalScene.phaseManager.pushNew("MovePhase", user, [ target.getBattlerIndex() ], new PokemonMove(moveId), MoveUseMode.FOLLOW_UP, MovePhaseTimingModifier.FIRST);
+    globalScene.phaseManager.unshiftNew("MovePhase", user, [ target.getBattlerIndex() ], new PokemonMove(moveId), MoveUseMode.FOLLOW_UP, MovePhaseTimingModifier.FIRST);
     return true;
   }
 }
@@ -7109,7 +7109,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
       targetPokemonName: getPokemonNameWithAffix(target)
     }));
     target.turnData.extraTurns++;
-    globalScene.phaseManager.pushNew("MovePhase", target, moveTargets, movesetMove, MoveUseMode.NORMAL, MovePhaseTimingModifier.FIRST);
+    globalScene.phaseManager.unshiftNew("MovePhase", target, moveTargets, movesetMove, MoveUseMode.NORMAL, MovePhaseTimingModifier.FIRST);
     return true;
   }
 

@@ -973,7 +973,7 @@ export function handleMysteryEncounterBattleStartEffects() {
     const effects = encounter.startOfBattleEffects;
     effects.forEach(effect => {
       const source = effect.sourcePokemon ?? globalScene.getField()[effect.sourceBattlerIndex ?? 0];
-      globalScene.phaseManager.pushNew("MovePhase", source, effect.targets, effect.move, effect.useMode);
+      globalScene.phaseManager.unshiftNew("MovePhase", source, effect.targets, effect.move, effect.useMode);
     });
 
     // Pseudo turn end phase to reset flinch states, Endure, etc.

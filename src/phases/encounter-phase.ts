@@ -603,7 +603,7 @@ export class EncounterPhase extends BattlePhase {
       }
     }
     if (![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)) {
-      enemyField.map(p => globalScene.phaseManager.pushNew("PostSummonPhase", p.getBattlerIndex()));
+      enemyField.map(p => globalScene.phaseManager.unshiftNew("PostSummonPhase", p.getBattlerIndex()));
     }
     handleTutorial(Tutorial.Access_Menu).then(() => super.end());
   }
