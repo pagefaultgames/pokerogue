@@ -13,7 +13,7 @@ import { getPlayerShopRewardOptionsForWave, TmReward } from "#items/reward";
 import { TrainerItemEffect } from "#items/trainer-item";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
-import { addTextObject, getRewardTierTextTint, getTextColor, getTextStyleOptions, TextStyle } from "#ui/text";
+import { addTextObject, getRarityTierTextTint, getTextColor, getTextStyleOptions, TextStyle } from "#ui/text";
 import { formatMoney, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -653,7 +653,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   }
 
   updateLockRaritiesText(): void {
-    const textStyle = globalScene.lockRewardTiers ? TextStyle.SUMMARY_BLUE : TextStyle.PARTY;
+    const textStyle = globalScene.lockRarityTiers ? TextStyle.SUMMARY_BLUE : TextStyle.PARTY;
     this.lockRarityButtonText.setColor(this.getTextColor(textStyle));
     this.lockRarityButtonText.setShadowColor(this.getTextColor(textStyle, true));
   }
@@ -781,7 +781,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     this.itemText.setOrigin(0.5, 0);
     this.itemText.setAlpha(0);
     this.itemText.setTint(
-      this.rewardOption.type?.tier ? getRewardTierTextTint(this.rewardOption.type?.tier) : undefined,
+      this.rewardOption.type?.tier ? getRarityTierTextTint(this.rewardOption.type?.tier) : undefined,
     );
     this.add(this.itemText);
 

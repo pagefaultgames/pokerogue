@@ -4,7 +4,7 @@ import { HeldItemId } from "#enums/held-item-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
@@ -228,7 +228,7 @@ describe("Global Trade System - Mystery Encounter", () => {
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
       expect(rewardSelectHandler.options.length).toEqual(1);
-      expect(rewardSelectHandler.options[0].rewardOption.type.tier).toBe(RewardTier.MASTER);
+      expect(rewardSelectHandler.options[0].rewardOption.type.tier).toBe(RarityTier.MASTER);
       const soulDewAfter = scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SOUL_DEW);
       expect(soulDewAfter).toBe(1);
     });

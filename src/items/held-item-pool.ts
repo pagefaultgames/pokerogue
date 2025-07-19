@@ -3,7 +3,7 @@ import { BerryType } from "#enums/berry-type";
 import { HeldItemCategoryId, HeldItemId, HeldItemNames, isCategoryId } from "#enums/held-item-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import { HeldItemPoolType } from "#enums/reward-pool-type";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { PERMANENT_STATS } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
@@ -34,7 +34,7 @@ export function assignDailyRunStarterHeldItems(party: PlayerPokemon[]) {
     for (let m = 0; m < 3; m++) {
       const tierValue = randSeedInt(64);
 
-      const tier = getDailyRewardTier(tierValue);
+      const tier = getDailyRarityTier(tierValue);
 
       const item = getNewHeldItemFromPool(
         getHeldItemPool(HeldItemPoolType.DAILY_STARTER)[tier] as HeldItemPool,
@@ -46,20 +46,20 @@ export function assignDailyRunStarterHeldItems(party: PlayerPokemon[]) {
   }
 }
 
-function getDailyRewardTier(tierValue: number): RewardTier {
+function getDailyRarityTier(tierValue: number): RarityTier {
   if (tierValue > 25) {
-    return RewardTier.COMMON;
+    return RarityTier.COMMON;
   }
   if (tierValue > 12) {
-    return RewardTier.GREAT;
+    return RarityTier.GREAT;
   }
   if (tierValue > 4) {
-    return RewardTier.ULTRA;
+    return RarityTier.ULTRA;
   }
   if (tierValue > 0) {
-    return RewardTier.ROGUE;
+    return RarityTier.ROGUE;
   }
-  return RewardTier.MASTER;
+  return RarityTier.MASTER;
 }
 
 function getHeldItemPool(poolType: HeldItemPoolType): HeldItemTieredPool {
@@ -101,25 +101,25 @@ export function assignEnemyHeldItemsForWave(
   }
 }
 
-function getRandomTier(): RewardTier {
+function getRandomTier(): RarityTier {
   const tierValue = randSeedInt(1024);
 
   if (tierValue > 255) {
-    return RewardTier.COMMON;
+    return RarityTier.COMMON;
   }
   if (tierValue > 60) {
-    return RewardTier.GREAT;
+    return RarityTier.GREAT;
   }
   if (tierValue > 12) {
-    return RewardTier.ULTRA;
+    return RarityTier.ULTRA;
   }
   if (tierValue) {
-    return RewardTier.ROGUE;
+    return RarityTier.ROGUE;
   }
-  return RewardTier.MASTER;
+  return RarityTier.MASTER;
 }
 
-function determineItemPoolTier(pool: HeldItemTieredPool, upgradeCount?: number): RewardTier {
+function determineItemPoolTier(pool: HeldItemTieredPool, upgradeCount?: number): RarityTier {
   let tier = getRandomTier();
 
   if (!upgradeCount) {

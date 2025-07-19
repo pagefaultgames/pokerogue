@@ -12,7 +12,7 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
@@ -604,7 +604,7 @@ export const classicFixedBattles: FixedBattleConfigs = {
         ),
     )
     .setCustomRewards({
-      guaranteedRewardTiers: [RewardTier.ULTRA, RewardTier.GREAT, RewardTier.GREAT],
+      guaranteedRarityTiers: [RarityTier.ULTRA, RarityTier.GREAT, RarityTier.GREAT],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.EVIL_GRUNT_1]: new FixedBattleConfig()
@@ -636,7 +636,7 @@ export const classicFixedBattles: FixedBattleConfigs = {
         ),
     )
     .setCustomRewards({
-      guaranteedRewardTiers: [RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.GREAT, RewardTier.GREAT],
+      guaranteedRarityTiers: [RarityTier.ULTRA, RarityTier.ULTRA, RarityTier.GREAT, RarityTier.GREAT],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.EVIL_GRUNT_2]: new FixedBattleConfig()
@@ -709,7 +709,7 @@ export const classicFixedBattles: FixedBattleConfigs = {
         ),
     )
     .setCustomRewards({
-      guaranteedRewardTiers: [RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.ULTRA],
+      guaranteedRarityTiers: [RarityTier.ULTRA, RarityTier.ULTRA, RarityTier.ULTRA, RarityTier.ULTRA],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.EVIL_GRUNT_4]: new FixedBattleConfig()
@@ -771,7 +771,7 @@ export const classicFixedBattles: FixedBattleConfigs = {
       ]),
     )
     .setCustomRewards({
-      guaranteedRewardTiers: [RewardTier.ROGUE, RewardTier.ROGUE, RewardTier.ULTRA, RewardTier.ULTRA, RewardTier.ULTRA],
+      guaranteedRarityTiers: [RarityTier.ROGUE, RarityTier.ROGUE, RarityTier.ULTRA, RarityTier.ULTRA, RarityTier.ULTRA],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.RIVAL_5]: new FixedBattleConfig()
@@ -784,7 +784,7 @@ export const classicFixedBattles: FixedBattleConfigs = {
         ),
     )
     .setCustomRewards({
-      guaranteedRewardTiers: [RewardTier.ROGUE, RewardTier.ROGUE, RewardTier.ROGUE, RewardTier.ULTRA, RewardTier.ULTRA],
+      guaranteedRarityTiers: [RarityTier.ROGUE, RarityTier.ROGUE, RarityTier.ROGUE, RarityTier.ULTRA, RarityTier.ULTRA],
       allowLuckUpgrades: false,
     }),
   [ClassicFixedBossWaves.EVIL_BOSS_2]: new FixedBattleConfig()
@@ -805,13 +805,13 @@ export const classicFixedBattles: FixedBattleConfigs = {
       ]),
     )
     .setCustomRewards({
-      guaranteedRewardTiers: [
-        RewardTier.ROGUE,
-        RewardTier.ROGUE,
-        RewardTier.ULTRA,
-        RewardTier.ULTRA,
-        RewardTier.ULTRA,
-        RewardTier.ULTRA,
+      guaranteedRarityTiers: [
+        RarityTier.ROGUE,
+        RarityTier.ROGUE,
+        RarityTier.ULTRA,
+        RarityTier.ULTRA,
+        RarityTier.ULTRA,
+        RarityTier.ULTRA,
       ],
       allowLuckUpgrades: false,
     }),
@@ -909,13 +909,13 @@ export const classicFixedBattles: FixedBattleConfigs = {
         ),
     )
     .setCustomRewards({
-      guaranteedRewardTiers: [
-        RewardTier.ROGUE,
-        RewardTier.ROGUE,
-        RewardTier.ULTRA,
-        RewardTier.ULTRA,
-        RewardTier.GREAT,
-        RewardTier.GREAT,
+      guaranteedRarityTiers: [
+        RarityTier.ROGUE,
+        RarityTier.ROGUE,
+        RarityTier.ULTRA,
+        RarityTier.ULTRA,
+        RarityTier.GREAT,
+        RarityTier.GREAT,
       ],
       allowLuckUpgrades: false,
     }),

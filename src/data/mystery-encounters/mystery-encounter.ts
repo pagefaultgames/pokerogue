@@ -240,7 +240,7 @@ export class MysteryEncounter implements IMysteryEncounter {
    * Defaults to true so that the first shop does not override the specified allRewards.
    * Will be set to false after a shop is shown (so can't reroll same rarity items for free)
    */
-  lockEncounterRewardTiers: boolean;
+  lockEncounterRarityTiers: boolean;
   /**
    * Will be set automatically, indicates special moves in startOfBattleEffects are complete (so will not repeat)
    */
@@ -295,7 +295,7 @@ export class MysteryEncounter implements IMysteryEncounter {
 
     // Reset any dirty flags or encounter data
     this.startOfBattleEffectsComplete = false;
-    this.lockEncounterRewardTiers = true;
+    this.lockEncounterRarityTiers = true;
     this.dialogueTokens = {};
     this.enemyPartyConfigs = [];
     this.startOfBattleEffects = [];
@@ -559,7 +559,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   continuousEncounter = false;
   catchAllowed = false;
   fleeAllowed = true;
-  lockEncounterRewardTiers = false;
+  lockEncounterRarityTiers = false;
   startOfBattleEffectsComplete = false;
   hasBattleAnimationsWithoutTargets = false;
   skipEnemyBattleTurns = false;

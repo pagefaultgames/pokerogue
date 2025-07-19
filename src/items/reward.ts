@@ -22,7 +22,7 @@ import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
 import { RewardPoolType } from "#enums/reward-pool-type";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import type { PermanentStat, TempBattleStat } from "#enums/stat";
@@ -45,7 +45,7 @@ import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#system/vou
 import type { RewardFunc, WeightedRewardWeightFunc } from "#types/rewards";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
-import { getRewardTierTextTint } from "#ui/text";
+import { getRarityTierTextTint } from "#ui/text";
 import {
   formatMoney,
   getEnumKeys,
@@ -64,7 +64,7 @@ export class Reward {
   public iconImage: string;
   public group: string;
   public soundName: string;
-  public tier: RewardTier;
+  public tier: RarityTier;
 
   /**
    * Checks if the modifier type is of a specific type
@@ -98,7 +98,7 @@ export class Reward {
     return this.iconImage;
   }
 
-  setTier(tier: RewardTier): void {
+  setTier(tier: RarityTier): void {
     this.tier = tier;
   }
 }
@@ -1217,7 +1217,7 @@ class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
 }
 
 class TmRewardGenerator extends RewardGenerator {
-  constructor(tier: RewardTier) {
+  constructor(tier: RarityTier) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in MoveId) {
         return new TmReward(pregenArgs[0] as MoveId);
@@ -1386,7 +1386,7 @@ export class WeightedReward {
     this.maxWeight = maxWeight || (!(weight instanceof Function) ? weight : 0);
   }
 
-  setTier(tier: RewardTier) {
+  setTier(tier: RarityTier) {
     this.reward.setTier(tier);
   }
 }
@@ -1549,9 +1549,9 @@ const rewardInitObj = Object.freeze({
       return new TerastallizeReward(shardType);
     }),
 
-  TM_COMMON: () => new TmRewardGenerator(RewardTier.COMMON),
-  TM_GREAT: () => new TmRewardGenerator(RewardTier.GREAT),
-  TM_ULTRA: () => new TmRewardGenerator(RewardTier.ULTRA),
+  TM_COMMON: () => new TmRewardGenerator(RarityTier.COMMON),
+  TM_GREAT: () => new TmRewardGenerator(RarityTier.GREAT),
+  TM_ULTRA: () => new TmRewardGenerator(RarityTier.ULTRA),
 
   MEMORY_MUSHROOM: () => new RememberMoveReward("modifierType:ModifierType.MEMORY_MUSHROOM", "big_mushroom"),
 
@@ -1753,7 +1753,7 @@ export function regenerateRewardPoolThresholds(party: Pokemon[], poolType: Rewar
 }
 
 export interface CustomRewardSettings {
-  guaranteedRewardTiers?: RewardTier[];
+  guaranteedRarityTiers?: RarityTier[];
   guaranteedRewardOptions?: RewardOption[];
   /** If specified, will override the next X items to be auto-generated from specific modifier functions (these don't have to be pre-genned). */
   guaranteedRewardFuncs?: RewardFunc[];
@@ -1762,7 +1762,7 @@ export interface CustomRewardSettings {
    * @example
    * ```ts
    * count = 4;
-   * customRewardSettings = { guaranteedRewardTiers: [RewardTier.GREAT], fillRemaining: true };
+   * customRewardSettings = { guaranteedRarityTiers: [RarityTier.GREAT], fillRemaining: true };
    * ```
    * The first item in the shop will be `GREAT` tier, and the remaining `3` items will be generated normally.
    *
@@ -1787,20 +1787,20 @@ export function getRewardFuncById(id: string): RewardFunc {
  * Generates modifier options for a {@linkcode SelectRewardPhase}
  * @param count - Determines the number of items to generate
  * @param party - Party is required for generating proper modifier pools
- * @param rewardTiers - (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
+ * @param rarityTiers - (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
  * @param customRewardSettings - See {@linkcode CustomRewardSettings}
  */
 export function getPlayerRewardOptions(
   count: number,
   party: PlayerPokemon[],
-  rewardTiers?: RewardTier[],
+  rarityTiers?: RarityTier[],
   customRewardSettings?: CustomRewardSettings,
 ): RewardOption[] {
   const options: RewardOption[] = [];
   const retryCount = Math.min(count * 5, 50);
   if (!customRewardSettings) {
     for (let i = 0; i < count; i++) {
-      const tier = rewardTiers && rewardTiers.length > i ? rewardTiers[i] : undefined;
+      const tier = rarityTiers && rarityTiers.length > i ? rarityTiers[i] : undefined;
       options.push(getRewardOptionWithRetry(options, retryCount, party, tier));
     }
   } else {
@@ -1827,9 +1827,9 @@ export function getPlayerRewardOptions(
     }
 
     // Guaranteed tiers third
-    if (customRewardSettings.guaranteedRewardTiers && customRewardSettings.guaranteedRewardTiers.length > 0) {
+    if (customRewardSettings.guaranteedRarityTiers && customRewardSettings.guaranteedRarityTiers.length > 0) {
       const allowLuckUpgrades = customRewardSettings.allowLuckUpgrades ?? true;
-      for (const tier of customRewardSettings.guaranteedRewardTiers) {
+      for (const tier of customRewardSettings.guaranteedRarityTiers) {
         options.push(getRewardOptionWithRetry(options, retryCount, party, tier, allowLuckUpgrades));
       }
     }
@@ -1859,7 +1859,7 @@ function getRewardOptionWithRetry(
   existingOptions: RewardOption[],
   retryCount: number,
   party: PlayerPokemon[],
-  tier?: RewardTier,
+  tier?: RarityTier,
   allowLuckUpgrades?: boolean,
 ): RewardOption {
   allowLuckUpgrades = allowLuckUpgrades ?? true;
@@ -1955,7 +1955,7 @@ export function getPlayerShopRewardOptionsForWave(waveIndex: number, baseCost: n
 function getNewRewardOption(
   party: Pokemon[],
   poolType: RewardPoolType,
-  baseTier?: RewardTier,
+  baseTier?: RarityTier,
   upgradeCount?: number,
   retryCount = 0,
   allowLuckUpgrades = true,
@@ -1999,7 +1999,7 @@ function getNewRewardOption(
     reward = (reward as RewardGenerator).generateReward(party);
     if (reward === null) {
       if (player) {
-        console.log(RewardTier[tier], upgradeCount);
+        console.log(RarityTier[tier], upgradeCount);
       }
       return getNewRewardOption(party, poolType, tier, upgradeCount, ++retryCount);
     }
@@ -2020,34 +2020,34 @@ function getPoolThresholds(poolType: RewardPoolType) {
   return thresholds;
 }
 
-function randomBaseTier(): RewardTier {
+function randomBaseTier(): RarityTier {
   const tierValue = randSeedInt(1024);
 
   if (tierValue > 255) {
-    return RewardTier.COMMON;
+    return RarityTier.COMMON;
   }
   if (tierValue > 60) {
-    return RewardTier.GREAT;
+    return RarityTier.GREAT;
   }
   if (tierValue > 12) {
-    return RewardTier.ULTRA;
+    return RarityTier.ULTRA;
   }
   if (tierValue) {
-    return RewardTier.ROGUE;
+    return RarityTier.ROGUE;
   }
-  return RewardTier.MASTER;
+  return RarityTier.MASTER;
 }
 
 function getUpgradeCount(
   party: Pokemon[],
   player: boolean,
-  baseTier: RewardTier,
+  baseTier: RarityTier,
   allowLuckUpgrades = true,
-): RewardTier {
+): RarityTier {
   const pool = getRewardPoolForType(RewardPoolType.PLAYER);
   let upgradeCount = 0;
   if (player) {
-    if (baseTier < RewardTier.MASTER && allowLuckUpgrades) {
+    if (baseTier < RarityTier.MASTER && allowLuckUpgrades) {
       const partyLuckValue = getPartyLuckValue(party);
       const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
       while (pool.hasOwnProperty(baseTier + upgradeCount + 1) && pool[baseTier + upgradeCount + 1].length) {
@@ -2062,9 +2062,9 @@ function getUpgradeCount(
   return upgradeCount;
 }
 
-export function getDefaultRewardForTier(tier: RewardTier): Reward {
+export function getDefaultRewardForTier(tier: RarityTier): Reward {
   const rewardPool = getRewardPoolForType(RewardPoolType.PLAYER);
-  let reward: Reward | WeightedReward = rewardPool[tier || RewardTier.COMMON][0];
+  let reward: Reward | WeightedReward = rewardPool[tier || RarityTier.COMMON][0];
   if (reward instanceof WeightedReward) {
     reward = (reward as WeightedReward).reward;
   }
@@ -2116,21 +2116,21 @@ export function getLuckString(luckValue: number): string {
 }
 
 export function getLuckTextTint(luckValue: number): number {
-  let rewardTier: RewardTier;
+  let rarityTier: RarityTier;
   if (luckValue > 11) {
-    rewardTier = RewardTier.LUXURY;
+    rarityTier = RarityTier.LUXURY;
   } else if (luckValue > 9) {
-    rewardTier = RewardTier.MASTER;
+    rarityTier = RarityTier.MASTER;
   } else if (luckValue > 5) {
-    rewardTier = RewardTier.ROGUE;
+    rarityTier = RarityTier.ROGUE;
   } else if (luckValue > 2) {
-    rewardTier = RewardTier.ULTRA;
+    rarityTier = RarityTier.ULTRA;
   } else if (luckValue) {
-    rewardTier = RewardTier.GREAT;
+    rarityTier = RarityTier.GREAT;
   } else {
-    rewardTier = RewardTier.COMMON;
+    rarityTier = RarityTier.COMMON;
   }
-  return getRewardTierTextTint(rewardTier);
+  return getRarityTierTextTint(rarityTier);
 }
 
 export function initRewards() {

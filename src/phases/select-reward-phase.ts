@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { RewardPoolType } from "#enums/reward-pool-type";
-import type { RewardTier } from "#enums/reward-tier";
+import type { RarityTier } from "#enums/reward-tier";
 import { UiMode } from "#enums/ui-mode";
 import type { CustomRewardSettings, Reward, RewardOption } from "#items/reward";
 import {
@@ -31,7 +31,7 @@ export type RewardSelectCallback = (rowCursor: number, cursor: number) => boolea
 export class SelectRewardPhase extends BattlePhase {
   public readonly phaseName = "SelectRewardPhase";
   private rerollCount: number;
-  private rewardTiers?: RewardTier[];
+  private rarityTiers?: RarityTier[];
   private customRewardSettings?: CustomRewardSettings;
   private isCopy: boolean;
 
@@ -39,14 +39,14 @@ export class SelectRewardPhase extends BattlePhase {
 
   constructor(
     rerollCount = 0,
-    rewardTiers?: RewardTier[],
+    rarityTiers?: RarityTier[],
     customRewardSettings?: CustomRewardSettings,
     isCopy = false,
   ) {
     super();
 
     this.rerollCount = rerollCount;
-    this.rewardTiers = rewardTiers;
+    this.rarityTiers = rarityTiers;
     this.customRewardSettings = customRewardSettings;
     this.isCopy = isCopy;
   }
@@ -181,7 +181,7 @@ export class SelectRewardPhase extends BattlePhase {
 
   // Reroll allRewards
   private rerollRewards() {
-    const rerollCost = this.getRerollCost(globalScene.lockRewardTiers);
+    const rerollCost = this.getRerollCost(globalScene.lockRarityTiers);
     if (rerollCost < 0 || globalScene.money < rerollCost) {
       globalScene.ui.playError();
       return false;
@@ -190,7 +190,7 @@ export class SelectRewardPhase extends BattlePhase {
     globalScene.phaseManager.unshiftNew(
       "SelectRewardPhase",
       this.rerollCount + 1,
-      this.typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as RewardTier[],
+      this.typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as RarityTier[],
     );
     globalScene.ui.clearText();
     globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
@@ -240,15 +240,15 @@ export class SelectRewardPhase extends BattlePhase {
 
   // Toggle reroll lock
   private toggleRerollLock() {
-    const rerollCost = this.getRerollCost(globalScene.lockRewardTiers);
+    const rerollCost = this.getRerollCost(globalScene.lockRarityTiers);
     if (rerollCost < 0) {
       // Reroll lock button is also disabled when reroll is disabled
       globalScene.ui.playError();
       return false;
     }
-    globalScene.lockRewardTiers = !globalScene.lockRewardTiers;
+    globalScene.lockRarityTiers = !globalScene.lockRarityTiers;
     const uiHandler = globalScene.ui.getHandler() as RewardSelectUiHandler;
-    uiHandler.setRerollCost(this.getRerollCost(globalScene.lockRewardTiers));
+    uiHandler.setRerollCost(this.getRerollCost(globalScene.lockRarityTiers));
     uiHandler.updateLockRaritiesText();
     uiHandler.updateRerollCostText();
     return false;
@@ -386,7 +386,7 @@ export class SelectRewardPhase extends BattlePhase {
     // If custom modifiers are specified, overrides default item count
     if (this.customRewardSettings) {
       const newItemCount =
-        (this.customRewardSettings.guaranteedRewardTiers?.length ?? 0) +
+        (this.customRewardSettings.guaranteedRarityTiers?.length ?? 0) +
         (this.customRewardSettings.guaranteedRewardOptions?.length ?? 0) +
         (this.customRewardSettings.guaranteedRewardFuncs?.length ?? 0);
       if (this.customRewardSettings.fillRemaining) {
@@ -408,7 +408,7 @@ export class SelectRewardPhase extends BattlePhase {
       this.isPlayer(),
       this.typeOptions,
       rewardSelectCallback,
-      this.getRerollCost(globalScene.lockRewardTiers),
+      this.getRerollCost(globalScene.lockRarityTiers),
     );
   }
 
@@ -464,7 +464,7 @@ export class SelectRewardPhase extends BattlePhase {
     return getPlayerRewardOptions(
       modifierCount,
       globalScene.getPlayerParty(),
-      globalScene.lockRewardTiers ? this.rewardTiers : undefined,
+      globalScene.lockRarityTiers ? this.rarityTiers : undefined,
       this.customRewardSettings,
     );
   }
@@ -473,7 +473,7 @@ export class SelectRewardPhase extends BattlePhase {
     return globalScene.phaseManager.create(
       "SelectRewardPhase",
       this.rerollCount,
-      this.rewardTiers,
+      this.rarityTiers,
       {
         guaranteedRewardOptions: this.typeOptions,
         rerollMultiplier: this.customRewardSettings?.rerollMultiplier,

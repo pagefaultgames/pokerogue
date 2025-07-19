@@ -16,7 +16,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { PokemonType } from "#enums/pokemon-type";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
@@ -328,11 +328,11 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
         let numRogue = 0;
 
         for (const m of items) {
-          const tier = getHeldItemTier(m) ?? RewardTier.ULTRA;
+          const tier = getHeldItemTier(m) ?? RarityTier.ULTRA;
           const stack = mostHeldItemsPokemon.heldItemManager.getStack(m);
-          if (tier === RewardTier.ROGUE) {
+          if (tier === RarityTier.ROGUE) {
             numRogue += stack;
-          } else if (tier === RewardTier.ULTRA) {
+          } else if (tier === RarityTier.ULTRA) {
             numUltra += stack;
           }
           mostHeldItemsPokemon.heldItemManager.remove(m, stack);

@@ -1,5 +1,5 @@
 // TODO: move to `src/@types/`
-import type { RewardTier } from "#enums/reward-tier";
+import type { RarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 
 export type TrainerItemData = {
@@ -28,7 +28,7 @@ type TrainerItemPoolEntry = {
 export type TrainerItemPool = TrainerItemPoolEntry[];
 
 export type TrainerItemTieredPool = {
-  [key in RewardTier]?: TrainerItemPool;
+  [key in RarityTier]?: TrainerItemPool;
 };
 
 export function isTrainerItemPool(value: any): value is TrainerItemPool {

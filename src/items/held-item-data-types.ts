@@ -2,7 +2,7 @@
 
 import type { FormChangeItem } from "#enums/form-change-item";
 import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
-import type { RewardTier } from "#enums/reward-tier";
+import type { RarityTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
 
 export type HeldItemData = {
@@ -67,7 +67,7 @@ export function isHeldItemPool(value: any): value is HeldItemPool {
 }
 
 export type HeldItemTieredPool = {
-  [key in RewardTier]?: HeldItemPool;
+  [key in RarityTier]?: HeldItemPool;
 };
 
 type HeldItemConfigurationEntry = {

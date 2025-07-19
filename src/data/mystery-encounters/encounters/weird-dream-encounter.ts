@@ -11,7 +11,7 @@ import { Nature } from "#enums/nature";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { PlayerGender } from "#enums/player-gender";
 import { PokemonType } from "#enums/pokemon-type";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
@@ -305,13 +305,13 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
 
       setEncounterRewards(
         {
-          guaranteedRewardTiers: [
-            RewardTier.ROGUE,
-            RewardTier.ROGUE,
-            RewardTier.ULTRA,
-            RewardTier.ULTRA,
-            RewardTier.GREAT,
-            RewardTier.GREAT,
+          guaranteedRarityTiers: [
+            RarityTier.ROGUE,
+            RarityTier.ROGUE,
+            RarityTier.ULTRA,
+            RarityTier.ULTRA,
+            RarityTier.GREAT,
+            RarityTier.GREAT,
           ],
           fillRemaining: false,
         },

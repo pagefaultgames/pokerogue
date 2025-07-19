@@ -3,7 +3,7 @@ import { allRewards } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
@@ -130,7 +130,7 @@ describe("SelectRewardPhase", () => {
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
     expect(rewardSelectHandler.options.length).toEqual(3);
-    const firstRollTiers: RewardTier[] = rewardSelectHandler.options.map(o => o.rewardOption.type.tier);
+    const firstRollTiers: RarityTier[] = rewardSelectHandler.options.map(o => o.rewardOption.type.tier);
 
     // TODO: nagivate ui to reroll with lock capsule enabled
 
@@ -181,12 +181,12 @@ describe("SelectRewardPhase", () => {
     await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     scene.money = 1000000;
     const customRewards: CustomRewardSettings = {
-      guaranteedRewardTiers: [
-        RewardTier.COMMON,
-        RewardTier.GREAT,
-        RewardTier.ULTRA,
-        RewardTier.ROGUE,
-        RewardTier.MASTER,
+      guaranteedRarityTiers: [
+        RarityTier.COMMON,
+        RarityTier.GREAT,
+        RarityTier.ULTRA,
+        RarityTier.ROGUE,
+        RarityTier.MASTER,
       ],
     };
     const pokemon = new PlayerPokemon(getPokemonSpecies(SpeciesId.BULBASAUR), 10, undefined, 0, undefined, true, 2);
@@ -209,19 +209,19 @@ describe("SelectRewardPhase", () => {
     expect(rewardSelectHandler.options.length).toEqual(5);
     expect(
       rewardSelectHandler.options[0].rewardOption.type.tier - rewardSelectHandler.options[0].rewardOption.upgradeCount,
-    ).toEqual(RewardTier.COMMON);
+    ).toEqual(RarityTier.COMMON);
     expect(
       rewardSelectHandler.options[1].rewardOption.type.tier - rewardSelectHandler.options[1].rewardOption.upgradeCount,
-    ).toEqual(RewardTier.GREAT);
+    ).toEqual(RarityTier.GREAT);
     expect(
       rewardSelectHandler.options[2].rewardOption.type.tier - rewardSelectHandler.options[2].rewardOption.upgradeCount,
-    ).toEqual(RewardTier.ULTRA);
+    ).toEqual(RarityTier.ULTRA);
     expect(
       rewardSelectHandler.options[3].rewardOption.type.tier - rewardSelectHandler.options[3].rewardOption.upgradeCount,
-    ).toEqual(RewardTier.ROGUE);
+    ).toEqual(RarityTier.ROGUE);
     expect(
       rewardSelectHandler.options[4].rewardOption.type.tier - rewardSelectHandler.options[4].rewardOption.upgradeCount,
-    ).toEqual(RewardTier.MASTER);
+    ).toEqual(RarityTier.MASTER);
   });
 
   it("should generate custom modifiers and modifier tiers together", async () => {
@@ -229,7 +229,7 @@ describe("SelectRewardPhase", () => {
     scene.money = 1000000;
     const customRewards: CustomRewardSettings = {
       guaranteedRewardFuncs: [allRewards.MEMORY_MUSHROOM, allRewards.TM_COMMON],
-      guaranteedRewardTiers: [RewardTier.MASTER, RewardTier.MASTER],
+      guaranteedRarityTiers: [RarityTier.MASTER, RarityTier.MASTER],
     };
     const selectModifierPhase = new SelectRewardPhase(0, undefined, customRewards);
     scene.phaseManager.unshiftPhase(selectModifierPhase);
@@ -243,8 +243,8 @@ describe("SelectRewardPhase", () => {
     expect(rewardSelectHandler.options.length).toEqual(4);
     expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual("MEMORY_MUSHROOM");
     expect(rewardSelectHandler.options[1].rewardOption.type.id).toEqual("TM_COMMON");
-    expect(rewardSelectHandler.options[2].rewardOption.type.tier).toEqual(RewardTier.MASTER);
-    expect(rewardSelectHandler.options[3].rewardOption.type.tier).toEqual(RewardTier.MASTER);
+    expect(rewardSelectHandler.options[2].rewardOption.type.tier).toEqual(RarityTier.MASTER);
+    expect(rewardSelectHandler.options[3].rewardOption.type.tier).toEqual(RarityTier.MASTER);
   });
 
   it("should fill remaining modifiers if fillRemaining is true with custom modifiers", async () => {
@@ -252,7 +252,7 @@ describe("SelectRewardPhase", () => {
     scene.money = 1000000;
     const customRewards: CustomRewardSettings = {
       guaranteedRewardFuncs: [allRewards.MEMORY_MUSHROOM],
-      guaranteedRewardTiers: [RewardTier.MASTER],
+      guaranteedRarityTiers: [RarityTier.MASTER],
       fillRemaining: true,
     };
     const selectModifierPhase = new SelectRewardPhase(0, undefined, customRewards);
@@ -266,6 +266,6 @@ describe("SelectRewardPhase", () => {
     ) as RewardSelectUiHandler;
     expect(rewardSelectHandler.options.length).toEqual(3);
     expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual("MEMORY_MUSHROOM");
-    expect(rewardSelectHandler.options[1].rewardOption.type.tier).toEqual(RewardTier.MASTER);
+    expect(rewardSelectHandler.options[1].rewardOption.type.tier).toEqual(RarityTier.MASTER);
   });
 });

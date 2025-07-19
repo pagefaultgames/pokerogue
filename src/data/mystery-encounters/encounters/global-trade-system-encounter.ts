@@ -13,7 +13,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { PokeballType } from "#enums/pokeball";
 import { RewardPoolType } from "#enums/reward-pool-type";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
@@ -413,10 +413,10 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
         // Check tier of the traded item, the received item will be one tier up
-        let tier = getHeldItemTier(heldItemId) ?? RewardTier.GREAT;
+        let tier = getHeldItemTier(heldItemId) ?? RarityTier.GREAT;
 
         // Increment tier by 1
-        if (tier < RewardTier.MASTER) {
+        if (tier < RarityTier.MASTER) {
           tier++;
         }
 
@@ -425,7 +425,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         // TMs excluded from possible allRewards
         while (!item || item.type.id.includes("TM_")) {
           item = getPlayerRewardOptions(1, party, [], {
-            guaranteedRewardTiers: [tier],
+            guaranteedRarityTiers: [tier],
             allowLuckUpgrades: false,
           })[0];
         }

@@ -5,7 +5,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { MysteriousChallengersEncounter } from "#mystery-encounters/mysterious-challengers-encounter";
@@ -217,19 +217,19 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       expect(
         rewardSelectHandler.options[0].rewardOption.type.tier -
           rewardSelectHandler.options[0].rewardOption.upgradeCount,
-      ).toBe(RewardTier.ULTRA);
+      ).toBe(RarityTier.ULTRA);
       expect(
         rewardSelectHandler.options[1].rewardOption.type.tier -
           rewardSelectHandler.options[1].rewardOption.upgradeCount,
-      ).toBe(RewardTier.ULTRA);
+      ).toBe(RarityTier.ULTRA);
       expect(
         rewardSelectHandler.options[2].rewardOption.type.tier -
           rewardSelectHandler.options[2].rewardOption.upgradeCount,
-      ).toBe(RewardTier.GREAT);
+      ).toBe(RarityTier.GREAT);
       expect(
         rewardSelectHandler.options[3].rewardOption.type.tier -
           rewardSelectHandler.options[3].rewardOption.upgradeCount,
-      ).toBe(RewardTier.GREAT);
+      ).toBe(RarityTier.GREAT);
     });
   });
 
@@ -274,19 +274,19 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       expect(
         rewardSelectHandler.options[0].rewardOption.type.tier -
           rewardSelectHandler.options[0].rewardOption.upgradeCount,
-      ).toBe(RewardTier.ROGUE);
+      ).toBe(RarityTier.ROGUE);
       expect(
         rewardSelectHandler.options[1].rewardOption.type.tier -
           rewardSelectHandler.options[1].rewardOption.upgradeCount,
-      ).toBe(RewardTier.ROGUE);
+      ).toBe(RarityTier.ROGUE);
       expect(
         rewardSelectHandler.options[2].rewardOption.type.tier -
           rewardSelectHandler.options[2].rewardOption.upgradeCount,
-      ).toBe(RewardTier.ULTRA);
+      ).toBe(RarityTier.ULTRA);
       expect(
         rewardSelectHandler.options[3].rewardOption.type.tier -
           rewardSelectHandler.options[3].rewardOption.upgradeCount,
-      ).toBe(RewardTier.GREAT);
+      ).toBe(RarityTier.GREAT);
     });
   });
 });

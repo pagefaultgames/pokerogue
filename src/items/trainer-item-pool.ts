@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { allTrainerItems } from "#data/data-lists";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { TrainerItemPool, TrainerItemTieredPool } from "#items/trainer-item-data-types";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
@@ -29,13 +29,13 @@ export function getNewTrainerItemFromPool(pool: TrainerItemPool, manager: Traine
   return entry as TrainerItemId;
 }
 
-export function assignEnemyBuffTokenForWave(tier: RewardTier) {
+export function assignEnemyBuffTokenForWave(tier: RarityTier) {
   let tierStackCount: number;
   switch (tier) {
-    case RewardTier.ULTRA:
+    case RarityTier.ULTRA:
       tierStackCount = 5;
       break;
-    case RewardTier.GREAT:
+    case RarityTier.GREAT:
       tierStackCount = 3;
       break;
     default:

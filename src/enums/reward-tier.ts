@@ -1,4 +1,4 @@
-export enum RewardTier {
+export enum RarityTier {
   COMMON,
   GREAT,
   ULTRA,

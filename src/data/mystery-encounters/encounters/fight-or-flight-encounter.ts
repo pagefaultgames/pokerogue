@@ -5,7 +5,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { RewardPoolType } from "#enums/reward-pool-type";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
 import type { RewardOption } from "#items/reward";
 import { getPlayerRewardOptions, regenerateRewardPoolThresholds } from "#items/reward";
@@ -89,18 +89,18 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
     // Waves 10-40 GREAT, 60-120 ULTRA, 120-160 ROGUE, 160-180 MASTER
     const tier =
       globalScene.currentBattle.waveIndex > 160
-        ? RewardTier.MASTER
+        ? RarityTier.MASTER
         : globalScene.currentBattle.waveIndex > 120
-          ? RewardTier.ROGUE
+          ? RarityTier.ROGUE
           : globalScene.currentBattle.waveIndex > 40
-            ? RewardTier.ULTRA
-            : RewardTier.GREAT;
+            ? RarityTier.ULTRA
+            : RarityTier.GREAT;
     regenerateRewardPoolThresholds(globalScene.getPlayerParty(), RewardPoolType.PLAYER, 0);
     let item: RewardOption | null = null;
     // TMs and Candy Jar excluded from possible allRewards as they're too swingy in value for a singular item reward
     while (!item || item.type.id.includes("TM_") || item.type.id === "CANDY_JAR") {
       item = getPlayerRewardOptions(1, globalScene.getPlayerParty(), [], {
-        guaranteedRewardTiers: [tier],
+        guaranteedRarityTiers: [tier],
         allowLuckUpgrades: false,
       })[0];
     }

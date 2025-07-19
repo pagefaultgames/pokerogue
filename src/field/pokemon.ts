@@ -92,7 +92,7 @@ import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import {
@@ -3049,11 +3049,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
           }
         }
         if (compatible && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
-          if (tmPoolTiers[moveId] === RewardTier.COMMON && this.level >= 15) {
+          if (tmPoolTiers[moveId] === RarityTier.COMMON && this.level >= 15) {
             movePool.push([moveId, 4]);
-          } else if (tmPoolTiers[moveId] === RewardTier.GREAT && this.level >= 30) {
+          } else if (tmPoolTiers[moveId] === RarityTier.GREAT && this.level >= 30) {
             movePool.push([moveId, 8]);
-          } else if (tmPoolTiers[moveId] === RewardTier.ULTRA && this.level >= 50) {
+          } else if (tmPoolTiers[moveId] === RarityTier.ULTRA && this.level >= 50) {
             movePool.push([moveId, 14]);
           }
         }

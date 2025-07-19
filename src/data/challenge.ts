@@ -16,7 +16,7 @@ import type { MoveId } from "#enums/move-id";
 import type { MoveSourceType } from "#enums/move-source-type";
 import { Nature } from "#enums/nature";
 import { PokemonType } from "#enums/pokemon-type";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
@@ -458,12 +458,12 @@ export class SingleGenerationChallenge extends Challenge {
           .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)
           .setGetTrainerFunc(getRandomTrainerFunc(trainerTypes, true))
           .setCustomRewards({
-            guaranteedRewardTiers: [
-              RewardTier.ROGUE,
-              RewardTier.ROGUE,
-              RewardTier.ULTRA,
-              RewardTier.ULTRA,
-              RewardTier.ULTRA,
+            guaranteedRarityTiers: [
+              RarityTier.ROGUE,
+              RarityTier.ROGUE,
+              RarityTier.ULTRA,
+              RarityTier.ULTRA,
+              RarityTier.ULTRA,
             ],
             allowLuckUpgrades: false,
           });
@@ -475,13 +475,13 @@ export class SingleGenerationChallenge extends Challenge {
           .setSeedOffsetWave(ClassicFixedBossWaves.EVIL_GRUNT_1)
           .setGetTrainerFunc(getRandomTrainerFunc(trainerTypes, true))
           .setCustomRewards({
-            guaranteedRewardTiers: [
-              RewardTier.ROGUE,
-              RewardTier.ROGUE,
-              RewardTier.ULTRA,
-              RewardTier.ULTRA,
-              RewardTier.ULTRA,
-              RewardTier.ULTRA,
+            guaranteedRarityTiers: [
+              RarityTier.ROGUE,
+              RarityTier.ROGUE,
+              RarityTier.ULTRA,
+              RarityTier.ULTRA,
+              RarityTier.ULTRA,
+              RarityTier.ULTRA,
             ],
             allowLuckUpgrades: false,
           });

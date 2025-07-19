@@ -6,7 +6,7 @@ import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
@@ -165,7 +165,7 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
       setEncounterRewards(
         {
           guaranteedRewardFuncs: [allRewards.SACRED_ASH],
-          guaranteedRewardTiers: [RewardTier.ROGUE, RewardTier.ULTRA],
+          guaranteedRarityTiers: [RarityTier.ROGUE, RarityTier.ULTRA],
           fillRemaining: true,
         },
         [eggOptions],

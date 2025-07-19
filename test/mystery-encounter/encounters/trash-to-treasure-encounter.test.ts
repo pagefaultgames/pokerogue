@@ -6,7 +6,7 @@ import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
@@ -216,19 +216,19 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       expect(
         rewardSelectHandler.options[0].rewardOption.type.tier -
           rewardSelectHandler.options[0].rewardOption.upgradeCount,
-      ).toEqual(RewardTier.ROGUE);
+      ).toEqual(RarityTier.ROGUE);
       expect(
         rewardSelectHandler.options[1].rewardOption.type.tier -
           rewardSelectHandler.options[1].rewardOption.upgradeCount,
-      ).toEqual(RewardTier.ROGUE);
+      ).toEqual(RarityTier.ROGUE);
       expect(
         rewardSelectHandler.options[2].rewardOption.type.tier -
           rewardSelectHandler.options[2].rewardOption.upgradeCount,
-      ).toEqual(RewardTier.ULTRA);
+      ).toEqual(RarityTier.ULTRA);
       expect(
         rewardSelectHandler.options[3].rewardOption.type.tier -
           rewardSelectHandler.options[3].rewardOption.upgradeCount,
-      ).toEqual(RewardTier.GREAT);
+      ).toEqual(RarityTier.GREAT);
     });
   });
 });

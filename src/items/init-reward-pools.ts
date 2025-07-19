@@ -11,7 +11,7 @@ import { AbilityId } from "#enums/ability-id";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
@@ -27,7 +27,7 @@ import { isNullOrUndefined } from "#utils/common";
  * Initialize the common modifier pool
  */
 function initCommonRewardPool() {
-  rewardPool[RewardTier.COMMON] = [
+  rewardPool[RarityTier.COMMON] = [
     new WeightedReward(allRewards.POKEBALL, () => (hasMaximumBalls(PokeballType.POKEBALL) ? 0 : 6), 6),
     new WeightedReward(allRewards.RARE_CANDY, 2),
     new WeightedReward(
@@ -95,7 +95,7 @@ function initCommonRewardPool() {
     new WeightedReward(allRewards.BERRY, 2),
     new WeightedReward(allRewards.TM_COMMON, 2),
   ].map(m => {
-    m.setTier(RewardTier.COMMON);
+    m.setTier(RarityTier.COMMON);
     return m;
   });
 }
@@ -104,7 +104,7 @@ function initCommonRewardPool() {
  * Initialize the Great modifier pool
  */
 function initGreatRewardPool() {
-  rewardPool[RewardTier.GREAT] = [
+  rewardPool[RarityTier.GREAT] = [
     new WeightedReward(allRewards.GREAT_BALL, () => (hasMaximumBalls(PokeballType.GREAT_BALL) ? 0 : 6), 6),
     new WeightedReward(allRewards.PP_UP, 2),
     new WeightedReward(
@@ -294,7 +294,7 @@ function initGreatRewardPool() {
       1,
     ),
   ].map(m => {
-    m.setTier(RewardTier.GREAT);
+    m.setTier(RarityTier.GREAT);
     return m;
   });
 }
@@ -303,7 +303,7 @@ function initGreatRewardPool() {
  * Initialize the Ultra modifier pool
  */
 function initUltraRewardPool() {
-  rewardPool[RewardTier.ULTRA] = [
+  rewardPool[RarityTier.ULTRA] = [
     new WeightedReward(allRewards.ULTRA_BALL, () => (hasMaximumBalls(PokeballType.ULTRA_BALL) ? 0 : 15), 15),
     new WeightedReward(allRewards.MAX_LURE, lureWeightFunc(TrainerItemId.MAX_LURE, 4)),
     new WeightedReward(allRewards.BIG_NUGGET, skipInLastClassicWaveOrDefault(12)),
@@ -516,13 +516,13 @@ function initUltraRewardPool() {
     new WeightedReward(allRewards.QUICK_CLAW, 3),
     new WeightedReward(allRewards.WIDE_LENS, 7),
   ].map(m => {
-    m.setTier(RewardTier.ULTRA);
+    m.setTier(RarityTier.ULTRA);
     return m;
   });
 }
 
 function initRogueRewardPool() {
-  rewardPool[RewardTier.ROGUE] = [
+  rewardPool[RarityTier.ROGUE] = [
     new WeightedReward(allRewards.ROGUE_BALL, () => (hasMaximumBalls(PokeballType.ROGUE_BALL) ? 0 : 16), 16),
     new WeightedReward(allRewards.RELIC_GOLD, skipInLastClassicWaveOrDefault(2)),
     new WeightedReward(allRewards.LEFTOVERS, 3),
@@ -560,7 +560,7 @@ function initRogueRewardPool() {
       3,
     ),
   ].map(m => {
-    m.setTier(RewardTier.ROGUE);
+    m.setTier(RarityTier.ROGUE);
     return m;
   });
 }
@@ -569,7 +569,7 @@ function initRogueRewardPool() {
  * Initialize the Master modifier pool
  */
 function initMasterRewardPool() {
-  rewardPool[RewardTier.MASTER] = [
+  rewardPool[RarityTier.MASTER] = [
     new WeightedReward(allRewards.MASTER_BALL, () => (hasMaximumBalls(PokeballType.MASTER_BALL) ? 0 : 24), 24),
     new WeightedReward(allRewards.SHINY_CHARM, 14),
     new WeightedReward(allRewards.HEALING_CHARM, 18),
@@ -602,7 +602,7 @@ function initMasterRewardPool() {
       1,
     ),
   ].map(m => {
-    m.setTier(RewardTier.MASTER);
+    m.setTier(RarityTier.MASTER);
     return m;
   });
 }

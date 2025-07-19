@@ -11,7 +11,7 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { showEncounterDialogue, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
@@ -164,7 +164,7 @@ async function spawnNextTrainerOrEndEncounter() {
     await showEncounterDialogue(`${namespace}:victory_2`, `${namespace}:speaker`);
     globalScene.ui.clearText(); // Clears "Winstrate" title from screen as allRewards get animated in
     const machoBrace = generateRewardOption(allRewards.MYSTERY_ENCOUNTER_MACHO_BRACE)!;
-    machoBrace.type.tier = RewardTier.MASTER;
+    machoBrace.type.tier = RarityTier.MASTER;
     setEncounterRewards({
       guaranteedRewardOptions: [machoBrace],
       fillRemaining: false,

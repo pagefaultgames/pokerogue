@@ -280,7 +280,7 @@ export class BattleScene extends SceneBase {
   public arena: Arena;
   public gameMode: GameMode;
   public score: number;
-  public lockRewardTiers: boolean;
+  public lockRarityTiers: boolean;
   public trainer: Phaser.GameObjects.Sprite;
   public lastEnemyTrainer: Trainer | null;
   public currentBattle: Battle;
@@ -1179,7 +1179,7 @@ export class BattleScene extends SceneBase {
     this.score = 0;
     this.money = 0;
 
-    this.lockRewardTiers = false;
+    this.lockRarityTiers = false;
 
     this.pokeballCounts = Object.fromEntries(
       getEnumValues(PokeballType)

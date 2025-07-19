@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import { SelectRewardPhase } from "#phases/select-reward-phase";
@@ -37,7 +37,7 @@ describe("Items - Lock Capsule", () => {
     await game.classicMode.startBattle();
     game.scene.phaseManager.overridePhase(
       new SelectRewardPhase(0, undefined, {
-        guaranteedRewardTiers: [RewardTier.COMMON, RewardTier.COMMON, RewardTier.COMMON],
+        guaranteedRarityTiers: [RarityTier.COMMON, RarityTier.COMMON, RarityTier.COMMON],
         fillRemaining: false,
       }),
     );
