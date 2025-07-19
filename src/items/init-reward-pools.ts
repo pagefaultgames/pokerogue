@@ -1,5 +1,5 @@
 /* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
-import type { initRewards } from "#items/reward";
+import type { initRewards, Reward } from "#items/reward";
 /* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
 import { timedEventManager } from "#app/global-event-manager";
@@ -16,8 +16,8 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { Unlockables } from "#enums/unlockables";
-import type { Pokemon } from "#field/pokemon";
-import { WeightedReward } from "#items/reward";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import { matchingRewards, WeightedReward } from "#items/reward";
 import { rewardPool } from "#items/reward-pools";
 import type { TurnEndStatusHeldItem } from "#items/turn-end-status";
 import type { WeightedRewardWeightFunc } from "#types/rewards";
@@ -669,4 +669,43 @@ function lureWeightFunc(lureId: TrainerItemId, weight: number): WeightedRewardWe
  */
 function hasMaximumBalls(ballType: PokeballType): boolean {
   return globalScene.gameMode.isClassic && globalScene.pokeballCounts[ballType] >= MAX_PER_TYPE_POKEBALLS;
+}
+
+/**
+ * Populates item tier for Reward instance
+ * Tier is a necessary field for items that appear in player shop (determines the Pokeball visual they use)
+ * To find the tier, this function performs a reverse lookup of the item type in modifier pools
+ * It checks the weight of the item and will use the first tier for which the weight is greater than 0
+ * This is to allow items to be in multiple item pools depending on the conditions, for example for events
+ * If all tiers have a weight of 0 for the item, the first tier where the item was found is used
+ * @param poolType Default 'RewardPoolType.PLAYER'. Which pool to lookup item tier from
+ * @param party optional. Needed to check the weight of modifiers with conditional weight (see {@linkcode WeightedRewardWeightFunc})
+ *  if not provided or empty, the weight check will be ignored
+ * @param rerollCount Default `0`. Used to check the weight of modifiers with conditional weight (see {@linkcode WeightedRewardWeightFunc})
+ */
+export function getTierFromPool(reward: Reward, party?: PlayerPokemon[], rerollCount = 0): RarityTier {
+  let defaultTier: undefined | RarityTier;
+  for (const tier of Object.values(rewardPool)) {
+    for (const weighted of tier) {
+      if (matchingRewards(reward, weighted.reward)) {
+        //TODO: need to rework this to use id
+        let weight: number;
+        if (weighted.weight instanceof Function) {
+          weight = party ? weighted.weight(party, rerollCount) : 0;
+        } else {
+          weight = weighted.weight;
+        }
+        if (weight > 0) {
+          this.tier = weighted.reward.tier;
+          return this;
+        }
+        if (isNullOrUndefined(defaultTier)) {
+          // If weight is 0, keep track of the first tier where the item was found
+          defaultTier = weighted.reward.tier;
+        }
+      }
+    }
+  }
+
+  return defaultTier ?? RarityTier.COMMON;
 }
