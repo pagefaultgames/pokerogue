@@ -65,8 +65,10 @@ export enum RewardClass {
   REWARD,
   POKEMON_REWARD,
   POKEMON_MOVE_REWARD,
+  POKEMON_MOVE_RECALL_REWARD,
   POKEMON_FUSION_REWARD,
 }
+
 export class Reward {
   public id: RewardId;
   public rewardClass: RewardClass;
@@ -279,18 +281,23 @@ export class PokemonReward extends Reward {
 }
 
 export interface PokemonRewardParams {
-  pokemon: Pokemon;
+  pokemon: PlayerPokemon;
 }
 
 export interface PokemonMoveRewardParams {
-  pokemon: Pokemon;
+  pokemon: PlayerPokemon;
+  moveIndex: number;
+}
+
+export interface PokemonMoveRecallRewardParams {
+  pokemon: PlayerPokemon;
   moveIndex: number;
   cost?: number;
 }
 
 export interface PokemonFusionRewardParams {
-  playerPokemon: PlayerPokemon;
-  playerPokemon2: PlayerPokemon;
+  pokemon: PlayerPokemon;
+  pokemon2: PlayerPokemon;
 }
 
 export class HeldItemReward extends PokemonReward {
@@ -815,7 +822,7 @@ export class RememberMoveReward extends PokemonReward {
    * @param playerPokemon The {@linkcode PlayerPokemon} that should remember the move
    * @returns always `true`
    */
-  apply({ pokemon, moveIndex, cost }: PokemonMoveRewardParams): boolean {
+  apply({ pokemon, moveIndex, cost }: PokemonMoveRecallRewardParams): boolean {
     globalScene.phaseManager.unshiftNew(
       "LearnMovePhase",
       globalScene.getPlayerParty().indexOf(pokemon as PlayerPokemon),
@@ -982,9 +989,6 @@ export class TmReward extends PokemonReward {
    * @returns always `true`
    */
   apply({ pokemon }: PokemonRewardParams): boolean {
-    if (!pokemon.isPlayer()) {
-      return false;
-    }
     globalScene.phaseManager.unshiftNew(
       "LearnMovePhase",
       globalScene.getPlayerParty().indexOf(pokemon),
@@ -1059,7 +1063,7 @@ export class EvolutionItemReward extends PokemonReward {
       }
     }
 
-    if (matchingEvolution && pokemon.isPlayer()) {
+    if (matchingEvolution) {
       globalScene.phaseManager.unshiftNew("EvolutionPhase", pokemon, matchingEvolution, pokemon.level - 1);
       return true;
     }
@@ -1145,8 +1149,8 @@ export class FusePokemonReward extends PokemonReward {
    * @param playerPokemon2 {@linkcode PlayerPokemon} that should be fused with {@linkcode playerPokemon}
    * @returns always Promise<true>
    */
-  apply({ playerPokemon, playerPokemon2 }: PokemonFusionRewardParams): boolean {
-    playerPokemon.fuse(playerPokemon2);
+  apply({ pokemon, pokemon2 }: PokemonFusionRewardParams): boolean {
+    pokemon.fuse(pokemon2);
     return true;
   }
 }

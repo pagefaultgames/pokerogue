@@ -482,7 +482,7 @@ export class GameManager {
   doRevivePokemon(pokemonIndex: number) {
     const party = this.scene.getPlayerParty();
     const reward = allRewards.MAX_REVIVE();
-    reward.apply(party[pokemonIndex]);
+    reward.apply({ pokemon: party[pokemonIndex] });
   }
 
   /**
