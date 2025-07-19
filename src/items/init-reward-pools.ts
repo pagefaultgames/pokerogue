@@ -94,10 +94,7 @@ function initCommonRewardPool() {
     new WeightedReward(allRewards.TEMP_STAT_STAGE_BOOSTER, 4),
     new WeightedReward(allRewards.BERRY, 2),
     new WeightedReward(allRewards.TM_COMMON, 2),
-  ].map(m => {
-    m.setTier(RarityTier.COMMON);
-    return m;
-  });
+  ];
 }
 
 /**
@@ -293,10 +290,7 @@ function initGreatRewardPool() {
       (_party: Pokemon[], rerollCount: number) => (!globalScene.gameMode.isDaily ? Math.max(1 - rerollCount, 0) : 0),
       1,
     ),
-  ].map(m => {
-    m.setTier(RarityTier.GREAT);
-    return m;
-  });
+  ];
 }
 
 /**
@@ -515,10 +509,7 @@ function initUltraRewardPool() {
     ),
     new WeightedReward(allRewards.QUICK_CLAW, 3),
     new WeightedReward(allRewards.WIDE_LENS, 7),
-  ].map(m => {
-    m.setTier(RarityTier.ULTRA);
-    return m;
-  });
+  ];
 }
 
 function initRogueRewardPool() {
@@ -559,10 +550,7 @@ function initRogueRewardPool() {
         !globalScene.gameMode.isDaily ? Math.max(3 - rerollCount * 1, 0) : 0,
       3,
     ),
-  ].map(m => {
-    m.setTier(RarityTier.ROGUE);
-    return m;
-  });
+  ];
 }
 
 /**
@@ -601,10 +589,7 @@ function initMasterRewardPool() {
           : 0,
       1,
     ),
-  ].map(m => {
-    m.setTier(RarityTier.MASTER);
-    return m;
-  });
+  ];
 }
 
 /**
@@ -683,7 +668,7 @@ function hasMaximumBalls(ballType: PokeballType): boolean {
  *  if not provided or empty, the weight check will be ignored
  * @param rerollCount Default `0`. Used to check the weight of modifiers with conditional weight (see {@linkcode WeightedRewardWeightFunc})
  */
-export function getTierFromPool(reward: Reward, party?: PlayerPokemon[], rerollCount = 0): RarityTier {
+export function getRewardTierFromPool(reward: Reward, party?: PlayerPokemon[], rerollCount = 0): RarityTier {
   let defaultTier: undefined | RarityTier;
   for (const tier of Object.values(rewardPool)) {
     for (const weighted of tier) {

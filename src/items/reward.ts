@@ -58,6 +58,7 @@ import {
 } from "#utils/common";
 import { getRewardPoolForType } from "#utils/reward-utils";
 import i18next from "i18next";
+import { getRewardTierFromPool } from "./init-reward-pools";
 
 export class Reward {
   public id: RewardId;
@@ -1422,10 +1423,6 @@ export class WeightedReward {
     this.weight = weight;
     this.maxWeight = maxWeight || (!(weight instanceof Function) ? weight : 0);
   }
-
-  setTier(tier: RarityTier) {
-    this.reward.setTier(tier);
-  }
 }
 
 type BaseRewardOverride = {
@@ -1896,14 +1893,14 @@ export function getPlayerRewardOptions(
     if (customRewardSettings.guaranteedRewardFuncs && customRewardSettings.guaranteedRewardFuncs.length > 0) {
       customRewardSettings.guaranteedRewardFuncs!.forEach((mod, _i) => {
         const rewardId = Object.keys(rewardInitObj).find(k => rewardInitObj[k] === mod) as string;
-        let guaranteedMod: Reward = rewardInitObj[rewardId]?.();
+        const guaranteedMod: Reward = rewardInitObj[rewardId]?.();
 
         // Populates item id and tier
-        guaranteedMod = guaranteedMod.withTierFromPool(RewardPoolType.PLAYER, party);
+        const guaranteedModTier = getRewardTierFromPool(guaranteedMod, party);
 
         const modType = guaranteedMod instanceof RewardGenerator ? guaranteedMod.generateReward(party) : guaranteedMod;
         if (modType) {
-          const option = new RewardOption(modType, 0);
+          const option = new RewardOption(modType, 0, guaranteedModTier);
           options.push(option);
         }
       });
@@ -1990,7 +1987,8 @@ export function overridePlayerRewardOptions(options: RewardOption[], party: Play
     }
 
     if (reward) {
-      options[i].type = reward.withTierFromPool(RewardPoolType.PLAYER, party);
+      options[i].type = reward;
+      options[i].tier = getRewardTierFromPool(reward);
     }
   }
 }
