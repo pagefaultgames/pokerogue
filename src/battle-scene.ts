@@ -86,12 +86,12 @@ import { HeldItemEffect } from "#items/held-item";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
 import {
+  type ApplyRewardParams,
   getLuckString,
   getLuckTextTint,
   getPartyLuckValue,
-  PokemonReward,
-  RememberMoveReward,
   type Reward,
+  type RewardClass,
 } from "#items/reward";
 import { type EnemyAttackStatusEffectChanceTrainerItem, TrainerItemEffect } from "#items/trainer-item";
 import {
@@ -2651,7 +2651,7 @@ export class BattleScene extends SceneBase {
     applyTrainerItems(effect, this.trainerItems, params);
   }
 
-  applyReward(reward: Reward, playSound?: boolean, instant?: boolean, cost?: number): boolean {
+  applyReward<T extends RewardClass>(reward: Reward, params: ApplyRewardParams[T], playSound?: boolean): boolean {
     if (!reward) {
       return false;
     }
@@ -2662,23 +2662,8 @@ export class BattleScene extends SceneBase {
       this.playSound(soundName);
     }
 
-    const args = {};
-
-    if (reward instanceof PokemonReward) {
-      for (const p in this.party) {
-        const pokemon = this.party[p];
-
-        args[pokemon] = pokemon;
-        if (reward instanceof RememberMoveReward && !isNullOrUndefined(cost)) {
-          args[cost] = cost;
-        }
-      }
-
-      this.party.map(p => p.updateInfo(instant));
-    }
-
-    if (reward.shouldApply(args)) {
-      const result = reward.apply(args);
+    if (reward.shouldApply(params)) {
+      const result = reward.apply(params);
       success ||= result;
     }
 

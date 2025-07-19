@@ -1,9 +1,17 @@
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
+import { RewardId } from "#enums/reward-id";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import type { RarityTier } from "#enums/reward-tier";
 import { UiMode } from "#enums/ui-mode";
-import type { CustomRewardSettings, Reward, RewardOption } from "#items/reward";
+import type {
+  CustomRewardSettings,
+  PokemonMoveRecallRewardParams,
+  PokemonMoveRewardParams,
+  PokemonRewardParams,
+  Reward,
+  RewardOption,
+} from "#items/reward";
 import {
   FormChangeItemReward,
   FusePokemonReward,
@@ -11,11 +19,10 @@ import {
   getPlayerRewardOptions,
   getPlayerShopRewardOptionsForWave,
   HeldItemReward,
-  PokemonMoveReward,
-  PokemonPpRestoreReward,
-  PokemonPpUpReward,
+  type PokemonMoveReward,
   PokemonReward,
   RememberMoveReward,
+  RewardClass,
   TmReward,
   TrainerItemReward,
 } from "#items/reward";
@@ -68,9 +75,9 @@ export class SelectRewardPhase extends BattlePhase {
     if (!this.isCopy) {
       generateRewardPoolWeights(party, this.getPoolType(), this.rerollCount);
     }
-    const modifierCount = this.getModifierCount();
+    const rewardCount = this.getRewardCount();
 
-    this.typeOptions = this.getRewardOptions(modifierCount);
+    this.typeOptions = this.getRewardOptions(rewardCount);
 
     const rewardSelectCallback = (rowCursor: number, cursor: number) => {
       if (rowCursor < 0 || cursor < 0) {
@@ -96,7 +103,7 @@ export class SelectRewardPhase extends BattlePhase {
               return this.rerollRewards();
             case 1:
               return this.openItemTransferScreen(rewardSelectCallback);
-            // Check the party, pass a callback to restore the modifier select screen.
+            // Check the party, pass a callback to restore the reward select screen.
             case 2:
               globalScene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK, -1, () => {
                 this.resetRewardSelect(rewardSelectCallback);
@@ -120,7 +127,7 @@ export class SelectRewardPhase extends BattlePhase {
     this.resetRewardSelect(rewardSelectCallback);
   }
 
-  // Pick a modifier from among the allRewards and apply it
+  // Pick a reward from among the allRewards and apply it
   private selectRewardOption(cursor: number, rewardSelectCallback: RewardSelectCallback): boolean {
     if (this.typeOptions.length === 0) {
       globalScene.ui.clearText();
@@ -132,7 +139,7 @@ export class SelectRewardPhase extends BattlePhase {
     return this.applyChosenReward(reward, -1, rewardSelectCallback);
   }
 
-  // Pick a modifier from the shop and apply it
+  // Pick a reward from the shop and apply it
   private selectShopOption(rowCursor: number, cursor: number, rewardSelectCallback: RewardSelectCallback): boolean {
     const shopOptions = getPlayerShopRewardOptionsForWave(
       globalScene.currentBattle.waveIndex,
@@ -156,7 +163,7 @@ export class SelectRewardPhase extends BattlePhase {
     return this.applyChosenReward(reward, cost, rewardSelectCallback);
   }
 
-  // Apply a chosen modifier: do an effect or open the party menu
+  // Apply a chosen reward: do an effect or open the party menu
   private applyChosenReward(reward: Reward, cost: number, rewardSelectCallback: RewardSelectCallback): boolean {
     if (reward instanceof PokemonReward) {
       if (reward instanceof HeldItemReward || reward instanceof FormChangeItemReward) {
@@ -164,7 +171,7 @@ export class SelectRewardPhase extends BattlePhase {
       } else if (reward instanceof FusePokemonReward) {
         this.openFusionMenu(reward, cost, rewardSelectCallback);
       } else {
-        this.openModifierMenu(reward, cost, rewardSelectCallback);
+        this.openPokemonRewardMenu(reward, cost, rewardSelectCallback);
       }
     } else if (reward instanceof TrainerItemReward) {
       console.log("WE GOT HERE");
@@ -203,7 +210,7 @@ export class SelectRewardPhase extends BattlePhase {
     return true;
   }
 
-  // Transfer modifiers among party pokemon
+  // Transfer rewards among party pokemon
   private openItemTransferScreen(rewardSelectCallback: RewardSelectCallback) {
     const party = globalScene.getPlayerParty();
     globalScene.ui.setModeWithoutClear(
@@ -254,15 +261,83 @@ export class SelectRewardPhase extends BattlePhase {
     return false;
   }
 
+  // Opens the party menu specifically for fusions
+  private openFusionMenu(reward: FusePokemonReward, _cost: number, rewardSelectCallback: RewardSelectCallback): void {
+    const party = globalScene.getPlayerParty();
+    globalScene.ui.setModeWithoutClear(
+      UiMode.PARTY,
+      PartyUiMode.SPLICE,
+      -1,
+      (fromSlotIndex: number, spliceSlotIndex: number) => {
+        if (
+          spliceSlotIndex !== undefined &&
+          fromSlotIndex < 6 &&
+          spliceSlotIndex < 6 &&
+          fromSlotIndex !== spliceSlotIndex
+        ) {
+          globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
+            reward.apply({ pokemon: party[fromSlotIndex], pokemon2: party[spliceSlotIndex] });
+          });
+        } else {
+          this.resetRewardSelect(rewardSelectCallback);
+        }
+      },
+      reward.selectFilter,
+    );
+  }
+
+  // Opens the party menu to apply one of various rewards
+  private openPokemonRewardMenu(reward: PokemonReward, cost: number, rewardSelectCallback: RewardSelectCallback): void {
+    const party = globalScene.getPlayerParty();
+    const pokemonReward = reward as PokemonReward;
+
+    const isMoveReward = reward.rewardClass === RewardClass.POKEMON_MOVE_REWARD;
+    const isRememberMoveReward = reward.rewardClass === RewardClass.POKEMON_MOVE_RECALL_REWARD;
+    const isTmReward =
+      reward.id === RewardId.TM_COMMON || reward.id === RewardId.TM_GREAT || reward.id === RewardId.TM_ULTRA;
+    const partyUiMode = isMoveReward
+      ? PartyUiMode.MOVE_REWARD
+      : isTmReward
+        ? PartyUiMode.TM_REWARD
+        : isRememberMoveReward
+          ? PartyUiMode.REMEMBER_MOVE_REWARD
+          : PartyUiMode.REWARD;
+    const tmMoveId = isTmReward ? (reward as TmReward).moveId : undefined;
+
+    globalScene.ui.setModeWithoutClear(
+      UiMode.PARTY,
+      partyUiMode,
+      -1,
+      (slotIndex: number, option: PartyOption) => {
+        if (slotIndex < 6) {
+          globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
+            const params = !isMoveReward
+              ? !isRememberMoveReward
+                ? ({ pokemon: party[slotIndex] } as PokemonRewardParams)
+                : ({ pokemon: party[slotIndex], moveIndex: option, cost: cost } as PokemonMoveRecallRewardParams)
+              : ({ pokemon: party[slotIndex], moveIndex: option - PartyOption.MOVE_1 } as PokemonMoveRewardParams);
+            const result = globalScene.applyReward(reward, params, true);
+            this.postApplyPokemonReward(reward, result, cost); // TODO: is the bang correct?
+          });
+        } else {
+          this.resetRewardSelect(rewardSelectCallback);
+        }
+      },
+      pokemonReward.selectFilter,
+      isMoveReward ? (reward as PokemonMoveReward).moveSelectFilter : undefined,
+      tmMoveId,
+      isMoveReward,
+    );
+  }
+
   // TODO: Rework this to work properly with rewards
   /**
-   * Apply the effects of the chosen modifier
-   * @param modifier - The modifier to apply
-   * @param cost - The cost of the modifier if it was purchased, or -1 if selected as the modifier reward
-   * @param playSound - Whether the 'obtain modifier' sound should be played when adding the modifier.
+   * Apply the effects of the chosen reward
+   * @param reward - The reward to apply
+   * @param cost - The cost of the reward if it was purchased, or -1 if selected as the reward reward
+   * @param playSound - Whether the 'obtain reward' sound should be played when adding the reward.
    */
-  private applyConsumable(reward: Reward, cost = -1, playSound = false): void {
-    const result = globalScene.applyReward(reward, playSound, undefined, cost);
+  private postApplyPokemonReward(reward: Reward, result = false, cost = -1): void {
     // Queue a copy of this phase when applying a TM or Memory Mushroom.
     // If the player selects either of these, then escapes out of consuming them,
     // they are returned to a shop in the same state.
@@ -289,72 +364,6 @@ export class SelectRewardPhase extends BattlePhase {
     }
   }
 
-  // Opens the party menu specifically for fusions
-  private openFusionMenu(reward: FusePokemonReward, _cost: number, rewardSelectCallback: RewardSelectCallback): void {
-    const party = globalScene.getPlayerParty();
-    globalScene.ui.setModeWithoutClear(
-      UiMode.PARTY,
-      PartyUiMode.SPLICE,
-      -1,
-      (fromSlotIndex: number, spliceSlotIndex: number) => {
-        if (
-          spliceSlotIndex !== undefined &&
-          fromSlotIndex < 6 &&
-          spliceSlotIndex < 6 &&
-          fromSlotIndex !== spliceSlotIndex
-        ) {
-          globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
-            reward.apply({ playerPokemon: party[fromSlotIndex], playerPokemon2: party[spliceSlotIndex] });
-          });
-        } else {
-          this.resetRewardSelect(rewardSelectCallback);
-        }
-      },
-      reward.selectFilter,
-    );
-  }
-
-  // Opens the party menu to apply one of various modifiers
-  private openModifierMenu(reward: PokemonReward, cost: number, rewardSelectCallback: RewardSelectCallback): void {
-    const party = globalScene.getPlayerParty();
-    const pokemonReward = reward as PokemonReward;
-    const isMoveModifier = reward instanceof PokemonMoveReward;
-    const isTmModifier = reward instanceof TmReward;
-    const isRememberMoveModifier = reward instanceof RememberMoveReward;
-    const isPpRestoreModifier = reward instanceof PokemonPpRestoreReward || reward instanceof PokemonPpUpReward;
-    const partyUiMode = isMoveModifier
-      ? PartyUiMode.MOVE_REWARD
-      : isTmModifier
-        ? PartyUiMode.TM_REWARD
-        : isRememberMoveModifier
-          ? PartyUiMode.REMEMBER_MOVE_REWARD
-          : PartyUiMode.REWARD;
-    const tmMoveId = isTmModifier ? (reward as TmReward).moveId : undefined;
-    globalScene.ui.setModeWithoutClear(
-      UiMode.PARTY,
-      partyUiMode,
-      -1,
-      (slotIndex: number, option: PartyOption) => {
-        if (slotIndex < 6) {
-          globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
-            const modifier = !isMoveModifier
-              ? !isRememberMoveModifier
-                ? reward.apply({ pokemon: party[slotIndex] })
-                : reward.apply({ pokemon: party[slotIndex], moveIndex: option })
-              : reward.apply({ pokemon: party[slotIndex], moveIndex: option - PartyOption.MOVE_1 });
-            this.applyConsumable(modifier!, cost, true); // TODO: is the bang correct?
-          });
-        } else {
-          this.resetRewardSelect(rewardSelectCallback);
-        }
-      },
-      pokemonReward.selectFilter,
-      reward instanceof PokemonMoveReward ? (reward as PokemonMoveReward).moveSelectFilter : undefined,
-      tmMoveId,
-      isPpRestoreModifier,
-    );
-  }
-
   private openGiveHeldItemMenu(reward, rewardSelectCallback) {
     const party = globalScene.getPlayerParty();
     const partyUiMode = PartyUiMode.REWARD;
@@ -379,25 +388,25 @@ export class SelectRewardPhase extends BattlePhase {
   }
 
   // Function that determines how many reward slots are available
-  private getModifierCount(): number {
-    const modifierCountHolder = new NumberHolder(3);
-    globalScene.applyPlayerItems(TrainerItemEffect.EXTRA_REWARD, { numberHolder: modifierCountHolder });
+  private getRewardCount(): number {
+    const rewardCountHolder = new NumberHolder(3);
+    globalScene.applyPlayerItems(TrainerItemEffect.EXTRA_REWARD, { numberHolder: rewardCountHolder });
 
-    // If custom modifiers are specified, overrides default item count
+    // If custom rewards are specified, overrides default item count
     if (this.customRewardSettings) {
       const newItemCount =
         (this.customRewardSettings.guaranteedRarityTiers?.length ?? 0) +
         (this.customRewardSettings.guaranteedRewardOptions?.length ?? 0) +
         (this.customRewardSettings.guaranteedRewardFuncs?.length ?? 0);
       if (this.customRewardSettings.fillRemaining) {
-        const originalCount = modifierCountHolder.value;
-        modifierCountHolder.value = originalCount > newItemCount ? originalCount : newItemCount;
+        const originalCount = rewardCountHolder.value;
+        rewardCountHolder.value = originalCount > newItemCount ? originalCount : newItemCount;
       } else {
-        modifierCountHolder.value = newItemCount;
+        rewardCountHolder.value = newItemCount;
       }
     }
 
-    return modifierCountHolder.value;
+    return rewardCountHolder.value;
   }
 
   // Function that resets the reward selection screen,
@@ -460,9 +469,9 @@ export class SelectRewardPhase extends BattlePhase {
     return RewardPoolType.PLAYER;
   }
 
-  getRewardOptions(modifierCount: number): RewardOption[] {
+  getRewardOptions(rewardCount: number): RewardOption[] {
     return getPlayerRewardOptions(
-      modifierCount,
+      rewardCount,
       globalScene.getPlayerParty(),
       globalScene.lockRarityTiers ? this.rarityTiers : undefined,
       this.customRewardSettings,

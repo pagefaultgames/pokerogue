@@ -300,6 +300,14 @@ export interface PokemonFusionRewardParams {
   pokemon2: PlayerPokemon;
 }
 
+export type ApplyRewardParams = {
+  [RewardClass.REWARD]: {};
+  [RewardClass.POKEMON_REWARD]: PokemonRewardParams;
+  [RewardClass.POKEMON_MOVE_REWARD]: PokemonMoveRewardParams;
+  [RewardClass.POKEMON_MOVE_RECALL_REWARD]: PokemonMoveRecallRewardParams;
+  [RewardClass.POKEMON_FUSION_REWARD]: PokemonFusionRewardParams;
+};
+
 export class HeldItemReward extends PokemonReward {
   public itemId: HeldItemId;
   constructor(itemId: HeldItemId, group?: string, soundName?: string) {
