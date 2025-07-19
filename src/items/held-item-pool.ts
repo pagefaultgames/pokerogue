@@ -21,7 +21,8 @@ import {
   isHeldItemPool,
   isHeldItemSpecs,
 } from "#items/held-item-data-types";
-import { coerceArray, getEnumValues, isNullOrUndefined, pickWeightedIndex, randSeedInt } from "#utils/common";
+import { coerceArray, isNullOrUndefined, pickWeightedIndex, randSeedInt } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 
 export const wildHeldItemPool: HeldItemTieredPool = {};
 

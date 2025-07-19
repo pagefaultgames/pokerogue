@@ -1,8 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import { type Reward, TrainerItemReward } from "#items/reward";
+import type { Reward } from "#items/reward";
 import { BattlePhase } from "#phases/battle-phase";
 import type { RewardFunc } from "#types/rewards";
-import { getReward } from "#utils/reward-utils";
 import i18next from "i18next";
 
 export class RewardPhase extends BattlePhase {
@@ -14,7 +13,7 @@ export class RewardPhase extends BattlePhase {
   constructor(rewardFunc: RewardFunc) {
     super();
 
-    this.reward = getReward(rewardFunc);
+    this.reward = rewardFunc();
   }
 
   start() {
@@ -25,12 +24,7 @@ export class RewardPhase extends BattlePhase {
 
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
-      if (this.reward instanceof TrainerItemReward) {
-        this.reward.apply();
-      } else {
-        const newModifier = this.reward.newModifier();
-        globalScene.addModifier(newModifier);
-      }
+      globalScene.applyReward(this.reward);
       globalScene.playSound("item_fanfare");
       globalScene.ui.showText(
         i18next.t("battle:rewardGain", {

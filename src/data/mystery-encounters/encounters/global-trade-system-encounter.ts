@@ -22,7 +22,7 @@ import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
 import { getHeldItemTier } from "#items/held-item-tiers";
 import type { RewardOption } from "#items/reward";
-import { getPlayerRewardOptions, regenerateRewardPoolThresholds } from "#items/reward";
+import { generateRewardPoolWeights, getPlayerRewardOptions } from "#items/reward";
 import { TrainerItemEffect } from "#items/trainer-item";
 import { PokemonMove } from "#moves/pokemon-move";
 import { getEncounterText, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
@@ -420,7 +420,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
           tier++;
         }
 
-        regenerateRewardPoolThresholds(party, RewardPoolType.PLAYER, 0);
+        generateRewardPoolWeights(party, RewardPoolType.PLAYER, 0);
         let item: RewardOption | null = null;
         // TMs excluded from possible allRewards
         while (!item || item.type.id.includes("TM_")) {

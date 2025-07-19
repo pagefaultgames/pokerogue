@@ -47,38 +47,41 @@ import type { RewardFunc, WeightedRewardWeightFunc } from "#types/rewards";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getRarityTierTextTint } from "#ui/text";
-import { formatMoney, isNullOrUndefined, NumberHolder, padInt, randSeedInt, randSeedItem } from "#utils/common";
+import {
+  formatMoney,
+  isNullOrUndefined,
+  NumberHolder,
+  padInt,
+  pickWeightedIndex,
+  randSeedInt,
+  randSeedItem,
+} from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { getRewardPoolForType } from "#utils/reward-utils";
 import i18next from "i18next";
 import { getRewardTierFromPool } from "./init-reward-pools";
 
+export enum RewardClass {
+  REWARD,
+  POKEMON_REWARD,
+  POKEMON_MOVE_REWARD,
+  POKEMON_FUSION_REWARD,
+}
 export class Reward {
   public id: RewardId;
+  public rewardClass: RewardClass;
   public localeKey: string;
   public iconImage: string;
   public group: string;
   public soundName: string;
   public tier: RarityTier;
 
-  /**
-   * Checks if the modifier type is of a specific type
-   * @param reward - The type to check against
-   * @return Whether the modifier type is of the specified type
-   */
-  public is<K extends RewardString>(reward: K): this is RewardInstanceMap[K] {
-    const targetType = RewardConstructorMap[reward];
-    if (!targetType) {
-      return false;
-    }
-    return this instanceof targetType;
-  }
-
   constructor(localeKey: string | null, iconImage: string | null, group?: string, soundName?: string) {
     this.localeKey = localeKey!; // TODO: is this bang correct?
     this.iconImage = iconImage!; // TODO: is this bang correct?
     this.group = group!; // TODO: is this bang correct?
     this.soundName = soundName ?? "se/restore";
+    this.rewardClass = RewardClass.REWARD;
   }
 
   get name(): string {
@@ -108,6 +111,9 @@ export class RewardGenerator extends Reward {
     const ret = this.genRewardFunc(party, pregenArgs);
     if (ret && this.id) {
       ret.id = this.id;
+    }
+    if (ret && this.rewardClass) {
+      ret.rewardClass = this.rewardClass;
     }
     return ret;
   }
@@ -259,9 +265,32 @@ export class PokemonReward extends Reward {
     soundName?: string,
   ) {
     super(localeKey, iconImage, group, soundName);
-
     this.selectFilter = selectFilter;
+    this.rewardClass = RewardClass.POKEMON_REWARD;
   }
+
+  apply(_params: PokemonRewardParams): boolean {
+    return false;
+  }
+
+  shouldApply(_params: PokemonRewardParams): boolean {
+    return false;
+  }
+}
+
+export interface PokemonRewardParams {
+  pokemon: Pokemon;
+}
+
+export interface PokemonMoveRewardParams {
+  pokemon: Pokemon;
+  moveIndex: number;
+  cost?: number;
+}
+
+export interface PokemonFusionRewardParams {
+  playerPokemon: PlayerPokemon;
+  playerPokemon2: PlayerPokemon;
 }
 
 export class HeldItemReward extends PokemonReward {
@@ -304,7 +333,7 @@ export class HeldItemReward extends PokemonReward {
     return allHeldItems[this.itemId].iconName;
   }
 
-  apply(pokemon: PlayerPokemon): boolean {
+  apply({ pokemon }: PokemonRewardParams): boolean {
     return pokemon.heldItemManager.add(this.itemId);
   }
 }
@@ -389,9 +418,9 @@ export class TerastallizeReward extends PokemonReward {
    * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
    * @returns `true` if the {@linkcode TerrastalizeConsumable} should be applied
    */
-  shouldApply(playerPokemon?: PlayerPokemon): boolean {
+  shouldApply({ pokemon }: PokemonRewardParams): boolean {
     return (
-      [playerPokemon?.species.speciesId, playerPokemon?.fusionSpecies?.speciesId].filter(
+      [pokemon?.species.speciesId, pokemon?.fusionSpecies?.speciesId].filter(
         s => s === SpeciesId.TERAPAGOS || s === SpeciesId.OGERPON || s === SpeciesId.SHEDINJA,
       ).length === 0
     );
@@ -402,7 +431,7 @@ export class TerastallizeReward extends PokemonReward {
    * @param pokemon The {@linkcode PlayerPokemon} that consumes the item
    * @returns `true` if hp was restored
    */
-  apply(pokemon: Pokemon): boolean {
+  apply({ pokemon }: PokemonRewardParams): boolean {
     pokemon.teraType = this.teraType;
     return true;
   }
@@ -482,8 +511,8 @@ export class PokemonHpRestoreReward extends PokemonReward {
         : i18next.t("modifierType:ModifierType.PokemonHpRestoreReward.extra.fully");
   }
 
-  apply(playerPokemon: PlayerPokemon): boolean {
-    return restorePokemonHp(playerPokemon, this.restorePercent, this.restorePoints, this.healStatus, false);
+  apply({ pokemon }: PokemonRewardParams): boolean {
+    return restorePokemonHp(pokemon, this.restorePercent, this.restorePoints, this.healStatus, false);
   }
 }
 
@@ -519,8 +548,8 @@ export class PokemonReviveReward extends PokemonHpRestoreReward {
     });
   }
 
-  apply(playerPokemon: PlayerPokemon): boolean {
-    return restorePokemonHp(playerPokemon, this.restorePercent, 0, false, true);
+  apply({ pokemon }: PokemonRewardParams): boolean {
+    return restorePokemonHp(pokemon, this.restorePercent, 0, false, true);
   }
 }
 
@@ -554,8 +583,8 @@ export class PokemonStatusHealReward extends PokemonReward {
     return i18next.t("modifierType:ModifierType.PokemonStatusHealReward.description");
   }
 
-  apply(playerPokemon: PlayerPokemon): boolean {
-    playerPokemon.resetStatus(true, true, false, false);
+  apply({ pokemon }: PokemonRewardParams): boolean {
+    pokemon.resetStatus(true, true, false, false);
     return true;
   }
 }
@@ -572,12 +601,12 @@ export abstract class PokemonMoveReward extends PokemonReward {
     group?: string,
   ) {
     super(localeKey, iconImage, selectFilter, group);
-
     this.moveSelectFilter = moveSelectFilter;
     this.id = id;
+    this.rewardClass = RewardClass.POKEMON_MOVE_REWARD;
   }
 
-  apply(_playerPokemon: PlayerPokemon, _moveIndex: number): boolean {
+  apply(_params: PokemonMoveRewardParams): boolean {
     return false;
   }
 }
@@ -618,8 +647,8 @@ export class PokemonPpRestoreReward extends PokemonMoveReward {
    * @param playerPokemon The {@linkcode PlayerPokemon} that should get move pp restored
    * @returns always `true`
    */
-  override apply(playerPokemon: PlayerPokemon, moveIndex: number): boolean {
-    const move = playerPokemon.getMoveset()[moveIndex];
+  apply({ pokemon, moveIndex }: PokemonMoveRewardParams): boolean {
+    const move = pokemon.getMoveset()[moveIndex];
 
     if (move) {
       move.ppUsed = this.restorePoints > -1 ? Math.max(move.ppUsed - this.restorePoints, 0) : 0;
@@ -662,8 +691,8 @@ export class PokemonAllMovePpRestoreReward extends PokemonReward {
    * @param playerPokemon The {@linkcode PlayerPokemon} that should get all move pp restored
    * @returns always `true`
    */
-  apply(playerPokemon: PlayerPokemon): boolean {
-    for (const move of playerPokemon.getMoveset()) {
+  apply({ pokemon }: PokemonRewardParams): boolean {
+    for (const move of pokemon.getMoveset()) {
       if (move) {
         move.ppUsed = this.restorePoints > -1 ? Math.max(move.ppUsed - this.restorePoints, 0) : 0;
       }
@@ -705,8 +734,8 @@ export class PokemonPpUpReward extends PokemonMoveReward {
    * @param playerPokemon The {@linkcode PlayerPokemon} that gets a pp up on move-slot {@linkcode moveIndex}
    * @returns
    */
-  override apply(playerPokemon: PlayerPokemon, moveIndex: number): boolean {
-    const move = playerPokemon.getMoveset()[moveIndex];
+  apply({ pokemon, moveIndex }: PokemonMoveRewardParams): boolean {
+    const move = pokemon.getMoveset()[moveIndex];
 
     if (move && !move.maxPpOverride) {
       move.ppUp = Math.min(move.ppUp + this.upPoints, 3);
@@ -757,9 +786,9 @@ export class PokemonNatureChangeReward extends PokemonReward {
    * @param playerPokemon {@linkcode PlayerPokemon} to apply the {@linkcode Nature} change to
    * @returns
    */
-  apply(playerPokemon: PlayerPokemon): boolean {
-    playerPokemon.setCustomNature(this.nature);
-    globalScene.gameData.unlockSpeciesNature(playerPokemon.species, this.nature);
+  apply({ pokemon }: PokemonRewardParams): boolean {
+    pokemon.setCustomNature(this.nature);
+    globalScene.gameData.unlockSpeciesNature(pokemon.species, this.nature);
 
     return true;
   }
@@ -786,12 +815,11 @@ export class RememberMoveReward extends PokemonReward {
    * @param playerPokemon The {@linkcode PlayerPokemon} that should remember the move
    * @returns always `true`
    */
-  //TODO: Do we really need this cost parameter here?
-  apply(playerPokemon: PlayerPokemon, levelMoveIndex: number, cost?: number): boolean {
+  apply({ pokemon, moveIndex, cost }: PokemonMoveRewardParams): boolean {
     globalScene.phaseManager.unshiftNew(
       "LearnMovePhase",
-      globalScene.getPlayerParty().indexOf(playerPokemon),
-      playerPokemon.getLearnableLevelMoves()[levelMoveIndex],
+      globalScene.getPlayerParty().indexOf(pokemon as PlayerPokemon),
+      pokemon.getLearnableLevelMoves()[moveIndex],
       LearnMoveType.MEMORY,
       cost,
     );
@@ -830,27 +858,26 @@ export class AttackTypeBoosterReward extends HeldItemReward {
   }
 }
 
-function incrementLevelWithCandy(
-  playerPokemon: PlayerPokemon,
-  levelCount: NumberHolder = new NumberHolder(1),
-): boolean {
+function incrementLevelWithCandy(pokemon: Pokemon): boolean {
+  const levelCount = new NumberHolder(1);
   globalScene.applyPlayerItems(TrainerItemEffect.LEVEL_INCREMENT_BOOSTER, { numberHolder: levelCount });
 
-  playerPokemon.level += levelCount.value;
-  if (playerPokemon.level <= globalScene.getMaxExpLevel(true)) {
-    playerPokemon.exp = getLevelTotalExp(playerPokemon.level, playerPokemon.species.growthRate);
-    playerPokemon.levelExp = 0;
+  pokemon.level += levelCount.value;
+  if (pokemon.level <= globalScene.getMaxExpLevel(true)) {
+    pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
+    pokemon.levelExp = 0;
   }
 
-  playerPokemon.addFriendship(FRIENDSHIP_GAIN_FROM_RARE_CANDY);
+  if (pokemon.isPlayer()) {
+    pokemon.addFriendship(FRIENDSHIP_GAIN_FROM_RARE_CANDY);
 
-  globalScene.phaseManager.unshiftNew(
-    "LevelUpPhase",
-    globalScene.getPlayerParty().indexOf(playerPokemon),
-    playerPokemon.level - levelCount.value,
-    playerPokemon.level,
-  );
-
+    globalScene.phaseManager.unshiftNew(
+      "LevelUpPhase",
+      globalScene.getPlayerParty().indexOf(pokemon),
+      pokemon.level - levelCount.value,
+      pokemon.level,
+    );
+  }
   return true;
 }
 
@@ -873,8 +900,8 @@ export class PokemonLevelIncrementReward extends PokemonReward {
    * @param levelCount The amount of levels to increment
    * @returns always `true`
    */
-  apply(playerPokemon: PlayerPokemon, levelCount: NumberHolder = new NumberHolder(1)): boolean {
-    return incrementLevelWithCandy(playerPokemon, levelCount);
+  apply({ pokemon }: PokemonRewardParams): boolean {
+    return incrementLevelWithCandy(pokemon);
   }
 }
 
@@ -888,9 +915,9 @@ export class AllPokemonLevelIncrementReward extends Reward {
     return i18next.t("modifierType:ModifierType.AllPokemonLevelIncrementReward.description", { levels });
   }
 
-  apply(levelCount: NumberHolder = new NumberHolder(1)): boolean {
+  apply(): boolean {
     for (const pokemon of globalScene.getPlayerParty()) {
-      incrementLevelWithCandy(pokemon, levelCount);
+      incrementLevelWithCandy(pokemon);
     }
 
     return true;
@@ -954,10 +981,13 @@ export class TmReward extends PokemonReward {
    * @param playerPokemon The {@linkcode PlayerPokemon} that should learn the TM
    * @returns always `true`
    */
-  apply(playerPokemon: PlayerPokemon): boolean {
+  apply({ pokemon }: PokemonRewardParams): boolean {
+    if (!pokemon.isPlayer()) {
+      return false;
+    }
     globalScene.phaseManager.unshiftNew(
       "LearnMovePhase",
-      globalScene.getPlayerParty().indexOf(playerPokemon),
+      globalScene.getPlayerParty().indexOf(pokemon),
       this.moveId,
       LearnMoveType.TM,
     );
@@ -1013,24 +1043,24 @@ export class EvolutionItemReward extends PokemonReward {
    * @param playerPokemon The {@linkcode PlayerPokemon} that should evolve via item
    * @returns `true` if the evolution was successful
    */
-  apply(playerPokemon: PlayerPokemon): boolean {
-    let matchingEvolution = pokemonEvolutions.hasOwnProperty(playerPokemon.species.speciesId)
-      ? pokemonEvolutions[playerPokemon.species.speciesId].find(
-          e => e.evoItem === this.evolutionItem && e.validate(playerPokemon, false, e.item!),
+  apply({ pokemon }: PokemonRewardParams): boolean {
+    let matchingEvolution = pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)
+      ? pokemonEvolutions[pokemon.species.speciesId].find(
+          e => e.evoItem === this.evolutionItem && e.validate(pokemon, false, e.item!),
         )
       : null;
 
-    if (!matchingEvolution && playerPokemon.isFusion()) {
-      matchingEvolution = pokemonEvolutions[playerPokemon.fusionSpecies!.speciesId].find(
-        e => e.evoItem === this.evolutionItem && e.validate(playerPokemon, true, e.item!),
+    if (!matchingEvolution && pokemon.isFusion()) {
+      matchingEvolution = pokemonEvolutions[pokemon.fusionSpecies!.speciesId].find(
+        e => e.evoItem === this.evolutionItem && e.validate(pokemon, true, e.item!),
       );
       if (matchingEvolution) {
-        matchingEvolution = new FusionSpeciesFormEvolution(playerPokemon.species.speciesId, matchingEvolution);
+        matchingEvolution = new FusionSpeciesFormEvolution(pokemon.species.speciesId, matchingEvolution);
       }
     }
 
-    if (matchingEvolution) {
-      globalScene.phaseManager.unshiftNew("EvolutionPhase", playerPokemon, matchingEvolution, playerPokemon.level - 1);
+    if (matchingEvolution && pokemon.isPlayer()) {
+      globalScene.phaseManager.unshiftNew("EvolutionPhase", pokemon, matchingEvolution, pokemon.level - 1);
       return true;
     }
 
@@ -1077,9 +1107,9 @@ export class FormChangeItemReward extends PokemonReward {
     return i18next.t("modifierType:ModifierType.FormChangeItemReward.description");
   }
 
-  apply(pokemon: Pokemon) {
+  apply({ pokemon }: PokemonRewardParams): boolean {
     if (pokemon.heldItemManager.hasFormChangeItem(this.formChangeItem)) {
-      return;
+      return false;
     }
 
     pokemon.heldItemManager.addFormChangeItem(this.formChangeItem);
@@ -1088,6 +1118,8 @@ export class FormChangeItemReward extends PokemonReward {
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger);
 
     globalScene.updateItems(true);
+
+    return true;
   }
 }
 
@@ -1100,6 +1132,7 @@ export class FusePokemonReward extends PokemonReward {
       return null;
     });
     this.id = RewardId.DNA_SPLICERS;
+    this.rewardClass = RewardClass.POKEMON_FUSION_REWARD;
   }
 
   getDescription(): string {
@@ -1112,7 +1145,7 @@ export class FusePokemonReward extends PokemonReward {
    * @param playerPokemon2 {@linkcode PlayerPokemon} that should be fused with {@linkcode playerPokemon}
    * @returns always Promise<true>
    */
-  apply(playerPokemon: PlayerPokemon, playerPokemon2: PlayerPokemon): boolean {
+  apply({ playerPokemon, playerPokemon2 }: PokemonFusionRewardParams): boolean {
     playerPokemon.fuse(playerPokemon2);
     return true;
   }
@@ -1763,71 +1796,29 @@ export interface RewardPool {
   [tier: string]: WeightedReward[];
 }
 
-let rewardPoolThresholds = {};
-let ignoredPoolIndexes = {};
+const rewardPoolWeights = {};
 
 /**
  * Allows a unit test to check if an item exists in the Consumable Pool. Checks the pool directly, rather than attempting to reroll for the item.
  */
 export const itemPoolChecks: Map<RewardKeys, boolean | undefined> = new Map();
 
-export function regenerateRewardPoolThresholds(party: Pokemon[], poolType: RewardPoolType, rerollCount = 0) {
+export function generateRewardPoolWeights(party: Pokemon[], poolType: RewardPoolType, rerollCount = 0) {
   const pool = getRewardPoolForType(poolType);
   itemPoolChecks.forEach((_v, k) => {
     itemPoolChecks.set(k, false);
   });
 
-  const ignoredIndexes = {};
-  const thresholds = Object.fromEntries(
-    new Map(
-      Object.keys(pool).map(t => {
-        ignoredIndexes[t] = [];
-        const thresholds = new Map();
-        const tierModifierIds: string[] = [];
-        let i = 0;
-        pool[t].reduce((total: number, reward: WeightedReward) => {
-          const weightedReward = reward as WeightedReward;
-          const itemReward =
-            weightedReward.reward instanceof RewardGenerator
-              ? weightedReward.reward.generateReward(party)
-              : weightedReward.reward;
-          const trainerItemfullStack =
-            itemReward instanceof TrainerItemReward ? globalScene.trainerItems.isMaxStack(itemReward.itemId) : false;
-          const weight =
-            !trainerItemfullStack || itemReward instanceof HeldItemReward || itemReward instanceof FormChangeItemReward
-              ? weightedReward.weight instanceof Function
-                ? // biome-ignore lint/complexity/noBannedTypes: TODO: refactor to not use Function type
-                  (weightedReward.weight as Function)(party, rerollCount)
-                : (weightedReward.weight as number)
-              : 0;
-          if (weightedReward.maxWeight) {
-            const rewardId = weightedReward.reward.id;
-            tierModifierIds.push(rewardId);
-          }
-          if (weight) {
-            total += weight;
-          } else {
-            ignoredIndexes[t].push(i++);
-            return total;
-          }
-          if (itemPoolChecks.has(reward.reward.id as RewardKeys)) {
-            itemPoolChecks.set(reward.reward.id as RewardKeys, true);
-          }
-          thresholds.set(total, i++);
-          return total;
-        }, 0);
-        return [t, Object.fromEntries(thresholds)];
-      }),
-    ),
-  );
-  switch (poolType) {
-    case RewardPoolType.PLAYER:
-      rewardPoolThresholds = thresholds;
-      ignoredPoolIndexes = ignoredIndexes;
-      break;
+  for (const tier of Object.keys(pool)) {
+    const poolWeights = pool[tier].map(w => {
+      if (typeof w.weight === "number") {
+        return w.weight;
+      }
+      return w.weight(party, rerollCount);
+    });
+    rewardPoolWeights[tier] = poolWeights;
   }
 }
-
 export interface CustomRewardSettings {
   guaranteedRarityTiers?: RarityTier[];
   guaranteedRewardOptions?: RewardOption[];
@@ -2039,7 +2030,7 @@ function getNewRewardOption(
 ): RewardOption | null {
   const player = !poolType;
   const pool = getRewardPoolForType(poolType);
-  const thresholds = getPoolThresholds(poolType);
+  const weights = getPoolWeights(poolType);
 
   let tier = 0;
   if (isNullOrUndefined(baseTier)) {
@@ -2052,25 +2043,13 @@ function getNewRewardOption(
     tier = baseTier;
   }
 
-  const tierThresholds = Object.keys(thresholds[tier]);
-  const totalWeight = Number.parseInt(tierThresholds[tierThresholds.length - 1]);
-  const value = randSeedInt(totalWeight);
-  let index: number | undefined;
-  for (const t of tierThresholds) {
-    const threshold = Number.parseInt(t);
-    if (value < threshold) {
-      index = thresholds[tier][threshold];
-      break;
-    }
-  }
+  const tierWeights = weights[tier];
+  const index = pickWeightedIndex(tierWeights);
 
   if (index === undefined) {
     return null;
   }
 
-  if (player) {
-    console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
-  }
   let reward: Reward | null = pool[tier][index].reward;
   if (reward instanceof RewardGenerator) {
     reward = (reward as RewardGenerator).generateReward(party);
@@ -2087,14 +2066,14 @@ function getNewRewardOption(
   return new RewardOption(reward as Reward, upgradeCount!, tier); // TODO: is this bang correct?
 }
 
-function getPoolThresholds(poolType: RewardPoolType) {
-  let thresholds: object;
+function getPoolWeights(poolType: RewardPoolType) {
+  let weights: object;
   switch (poolType) {
     case RewardPoolType.PLAYER:
-      thresholds = rewardPoolThresholds;
+      weights = rewardPoolWeights;
       break;
   }
-  return thresholds;
+  return weights;
 }
 
 function randomBaseTier(): RarityTier {

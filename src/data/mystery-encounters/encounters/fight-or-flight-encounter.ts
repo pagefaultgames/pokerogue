@@ -8,7 +8,7 @@ import { RewardPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
 import type { RewardOption } from "#items/reward";
-import { getPlayerRewardOptions, regenerateRewardPoolThresholds } from "#items/reward";
+import { generateRewardPoolWeights, getPlayerRewardOptions } from "#items/reward";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
@@ -95,7 +95,7 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
           : globalScene.currentBattle.waveIndex > 40
             ? RarityTier.ULTRA
             : RarityTier.GREAT;
-    regenerateRewardPoolThresholds(globalScene.getPlayerParty(), RewardPoolType.PLAYER, 0);
+    generateRewardPoolWeights(globalScene.getPlayerParty(), RewardPoolType.PLAYER, 0);
     let item: RewardOption | null = null;
     // TMs and Candy Jar excluded from possible allRewards as they're too swingy in value for a singular item reward
     while (!item || item.type.id.includes("TM_") || item.type.id === "CANDY_JAR") {

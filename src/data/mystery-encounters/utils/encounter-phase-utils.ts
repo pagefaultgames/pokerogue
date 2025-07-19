@@ -5,7 +5,6 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BiomePoolTier, biomeLinks } from "#balance/biomes";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
-import { allRewards } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
 import { Egg } from "#data/egg";
 import type { Gender } from "#data/gender";
@@ -21,7 +20,6 @@ import type { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import type { Nature } from "#enums/nature";
 import { PokemonType } from "#enums/pokemon-type";
-import { RewardPoolType } from "#enums/reward-pool-type";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { TrainerType } from "#enums/trainer-type";
@@ -31,6 +29,7 @@ import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
+import { getRewardTierFromPool } from "#items/init-reward-pools";
 import type { CustomRewardSettings, Reward } from "#items/reward";
 import { getPartyLuckValue, RewardGenerator, RewardOption } from "#items/reward";
 import { PokemonMove } from "#moves/pokemon-move";
@@ -476,36 +475,26 @@ export function updatePlayerMoney(changeValue: number, playSound = true, showMes
 
 /**
  * Converts modifier bullshit to an actual item
- * @param modifier
+ * @param rewardFunc
  * @param pregenArgs Can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
  */
-export function generateReward(modifier: () => Reward, pregenArgs?: any[]): Reward | null {
-  const rewardId = Object.keys(allRewards).find(k => allRewards[k] === modifier);
-  if (!rewardId) {
-    return null;
-  }
-
-  let result: Reward = allRewards[rewardId]();
-
-  // Populates item id and tier (order matters)
-  result = result
-    .withIdFromFunc(allRewards[rewardId])
-    .withTierFromPool(RewardPoolType.PLAYER, globalScene.getPlayerParty());
-
-  return result instanceof RewardGenerator ? result.generateReward(globalScene.getPlayerParty(), pregenArgs) : result;
+export function generateReward(rewardFunc: () => Reward, pregenArgs?: any[]): Reward | null {
+  const reward = rewardFunc();
+  return reward instanceof RewardGenerator ? reward.generateReward(globalScene.getPlayerParty(), pregenArgs) : reward;
 }
 
 /**
  * Converts modifier bullshit to an actual item
- * @param modifier
+ * @param rewardFunc
  * @param pregenArgs - can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
  */
-export function generateRewardOption(modifier: () => Reward, pregenArgs?: any[]): RewardOption | null {
-  const result = generateReward(modifier, pregenArgs);
-  if (result) {
-    return new RewardOption(result, 0);
+export function generateRewardOption(rewardFunc: () => Reward, pregenArgs?: any[]): RewardOption | null {
+  const reward = generateReward(rewardFunc, pregenArgs);
+  if (reward) {
+    const tier = getRewardTierFromPool(reward);
+    return new RewardOption(reward, 0, tier);
   }
-  return result;
+  return null;
 }
 
 /**

@@ -7,6 +7,7 @@ import type { CustomRewardSettings, Reward, RewardOption } from "#items/reward";
 import {
   FormChangeItemReward,
   FusePokemonReward,
+  generateRewardPoolWeights,
   getPlayerRewardOptions,
   getPlayerShopRewardOptionsForWave,
   HeldItemReward,
@@ -15,7 +16,6 @@ import {
   PokemonPpUpReward,
   PokemonReward,
   RememberMoveReward,
-  regenerateRewardPoolThresholds,
   TmReward,
   TrainerItemReward,
 } from "#items/reward";
@@ -66,7 +66,7 @@ export class SelectRewardPhase extends BattlePhase {
 
     const party = globalScene.getPlayerParty();
     if (!this.isCopy) {
-      regenerateRewardPoolThresholds(party, this.getPoolType(), this.rerollCount);
+      generateRewardPoolWeights(party, this.getPoolType(), this.rerollCount);
     }
     const modifierCount = this.getModifierCount();
 
@@ -304,7 +304,7 @@ export class SelectRewardPhase extends BattlePhase {
           fromSlotIndex !== spliceSlotIndex
         ) {
           globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
-            reward.apply(party[fromSlotIndex], party[spliceSlotIndex]);
+            reward.apply({ playerPokemon: party[fromSlotIndex], playerPokemon2: party[spliceSlotIndex] });
           });
         } else {
           this.resetRewardSelect(rewardSelectCallback);
@@ -339,9 +339,9 @@ export class SelectRewardPhase extends BattlePhase {
           globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
             const modifier = !isMoveModifier
               ? !isRememberMoveModifier
-                ? reward.apply(party[slotIndex])
-                : reward.apply(party[slotIndex], option as number)
-              : reward.apply(party[slotIndex], option - PartyOption.MOVE_1);
+                ? reward.apply({ pokemon: party[slotIndex] })
+                : reward.apply({ pokemon: party[slotIndex], moveIndex: option })
+              : reward.apply({ pokemon: party[slotIndex], moveIndex: option - PartyOption.MOVE_1 });
             this.applyConsumable(modifier!, cost, true); // TODO: is the bang correct?
           });
         } else {
@@ -365,7 +365,7 @@ export class SelectRewardPhase extends BattlePhase {
       (slotIndex: number, _option: PartyOption) => {
         if (slotIndex < 6) {
           globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
-            reward.apply(party[slotIndex]);
+            reward.apply({ pokemon: party[slotIndex] });
             globalScene.ui.clearText();
             globalScene.ui.setMode(UiMode.MESSAGE);
             super.end();

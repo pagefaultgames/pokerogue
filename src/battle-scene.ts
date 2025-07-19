@@ -2662,28 +2662,24 @@ export class BattleScene extends SceneBase {
       this.playSound(soundName);
     }
 
+    const args = {};
+
     if (reward instanceof PokemonReward) {
       for (const p in this.party) {
         const pokemon = this.party[p];
 
-        const args: unknown[] = [];
+        args[pokemon] = pokemon;
         if (reward instanceof RememberMoveReward && !isNullOrUndefined(cost)) {
-          args.push(cost);
-        }
-
-        if (reward.shouldApply(pokemon, ...args)) {
-          const result = reward.apply(pokemon, ...args);
-          success ||= result;
+          args[cost] = cost;
         }
       }
 
       this.party.map(p => p.updateInfo(instant));
-    } else {
-      const args = [this];
-      if (reward.shouldApply(...args)) {
-        const result = reward.apply(...args);
-        success ||= result;
-      }
+    }
+
+    if (reward.shouldApply(args)) {
+      const result = reward.apply(args);
+      success ||= result;
     }
 
     return success;
