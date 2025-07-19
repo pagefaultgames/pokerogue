@@ -82,17 +82,17 @@ import { PokemonSpriteSparkleHandler } from "#field/pokemon-sprite-sparkle-handl
 import { Trainer } from "#field/trainer";
 import { applyHeldItems } from "#items/all-held-items";
 import { type ApplyTrainerItemsParams, applyTrainerItems } from "#items/apply-trainer-items";
-import {
-  Consumable,
-  FusePokemonConsumable,
-  PokemonConsumable,
-  PokemonHpRestoreConsumable,
-  RememberMoveConsumable,
-} from "#items/consumable";
 import { HeldItemEffect } from "#items/held-item";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
-import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#items/reward";
+import {
+  getLuckString,
+  getLuckTextTint,
+  getPartyLuckValue,
+  PokemonReward,
+  RememberMoveReward,
+  type Reward,
+} from "#items/reward";
 import { type EnemyAttackStatusEffectChanceTrainerItem, TrainerItemEffect } from "#items/trainer-item";
 import {
   isTrainerItemPool,
@@ -2649,54 +2649,41 @@ export class BattleScene extends SceneBase {
     applyTrainerItems(effect, this.trainerItems, params);
   }
 
-  addModifier(modifier: Consumable | null, playSound?: boolean, instant?: boolean, cost?: number): boolean {
-    // We check against modifier.type to stop a bug related to loading in a pokemon that has a form change item, which prior to some patch
-    // that changed form change modifiers worked, had previously set the `type` field to null.
-    // TODO: This is not the right place to check for this; it should ideally go in a session migrator.
-    if (!modifier || !modifier.type) {
+  applyReward(reward: Reward, playSound?: boolean, instant?: boolean, cost?: number): boolean {
+    if (!reward) {
       return false;
     }
     let success = false;
-    const soundName = modifier.type.soundName;
-    if (modifier instanceof Consumable) {
-      if (playSound && !this.sound.get(soundName)) {
-        this.playSound(soundName);
-      }
+    const soundName = reward.soundName;
 
-      if (modifier instanceof PokemonConsumable) {
-        for (const p in this.party) {
-          const pokemon = this.party[p];
+    if (playSound && !this.sound.get(soundName)) {
+      this.playSound(soundName);
+    }
 
-          const args: unknown[] = [];
-          if (modifier instanceof PokemonHpRestoreConsumable) {
-            if (!(modifier as PokemonHpRestoreConsumable).fainted) {
-              const hpRestoreMultiplier = new NumberHolder(1);
-              this.applyPlayerItems(TrainerItemEffect.HEALING_BOOSTER, { numberHolder: hpRestoreMultiplier });
-              args.push(hpRestoreMultiplier.value);
-            } else {
-              args.push(1);
-            }
-          } else if (modifier instanceof FusePokemonConsumable) {
-            args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
-          } else if (modifier instanceof RememberMoveConsumable && !isNullOrUndefined(cost)) {
-            args.push(cost);
-          }
+    if (reward instanceof PokemonReward) {
+      for (const p in this.party) {
+        const pokemon = this.party[p];
 
-          if (modifier.shouldApply(pokemon, ...args)) {
-            const result = modifier.apply(pokemon, ...args);
-            success ||= result;
-          }
+        const args: unknown[] = [];
+        if (reward instanceof RememberMoveReward && !isNullOrUndefined(cost)) {
+          args.push(cost);
         }
 
-        this.party.map(p => p.updateInfo(instant));
-      } else {
-        const args = [this];
-        if (modifier.shouldApply(...args)) {
-          const result = modifier.apply(...args);
+        if (reward.shouldApply(pokemon, ...args)) {
+          const result = reward.apply(pokemon, ...args);
           success ||= result;
         }
       }
+
+      this.party.map(p => p.updateInfo(instant));
+    } else {
+      const args = [this];
+      if (reward.shouldApply(...args)) {
+        const result = reward.apply(...args);
+        success ||= result;
+      }
     }
+
     return success;
   }
 

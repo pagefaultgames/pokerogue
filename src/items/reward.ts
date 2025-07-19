@@ -3,17 +3,20 @@ import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
-import { EvolutionItem, pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { EvolutionItem, FusionSpeciesFormEvolution, pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#balance/starters";
 import { tmPoolTiers, tmSpecies } from "#balance/tms";
 import { allHeldItems, allMoves, allRewards, allTrainerItems } from "#data/data-lists";
+import { getLevelTotalExp } from "#data/exp";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
-import { getPokeballCatchMultiplier, getPokeballName } from "#data/pokeball";
+import { getPokeballCatchMultiplier, getPokeballName, MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
 import { pokemonFormChanges, SpeciesFormChangeCondition } from "#data/pokemon-forms";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { FormChangeItem } from "#enums/form-change-item";
 import { HeldItemId } from "#enums/held-item-id";
+import { LearnMoveType } from "#enums/learn-move-type";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
@@ -29,24 +32,6 @@ import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem, statBoostItems } from "#items/base-stat-booster";
 import { berryTypeToHeldItem } from "#items/berry";
-import {
-  AddPokeballConsumable,
-  AddVoucherConsumable,
-  type Consumable,
-  EvolutionItemConsumable,
-  FusePokemonConsumable,
-  MoneyRewardConsumable,
-  PokemonAllMovePpRestoreConsumable,
-  PokemonHpRestoreConsumable,
-  PokemonLevelIncrementConsumable,
-  PokemonNatureChangeConsumable,
-  PokemonPpRestoreConsumable,
-  PokemonPpUpConsumable,
-  PokemonStatusHealConsumable,
-  RememberMoveConsumable,
-  TerrastalizeConsumable,
-  TmConsumable,
-} from "#items/consumable";
 import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeldItem } from "#items/held-item-pool";
 import { formChangeItemName } from "#items/item-utility";
 import {
@@ -73,8 +58,6 @@ import {
 import { getRewardPoolForType } from "#utils/reward-utils";
 import i18next from "i18next";
 
-type NewConsumableFunc = (type: Reward, args: any[]) => Consumable | null;
-
 export class Reward {
   public id: string;
   public localeKey: string;
@@ -82,7 +65,6 @@ export class Reward {
   public group: string;
   public soundName: string;
   public tier: RewardTier;
-  protected newConsumableFunc: NewConsumableFunc | null;
 
   /**
    * Checks if the modifier type is of a specific type
@@ -97,18 +79,11 @@ export class Reward {
     return this instanceof targetType;
   }
 
-  constructor(
-    localeKey: string | null,
-    iconImage: string | null,
-    newConsumableFunc: NewConsumableFunc | null,
-    group?: string,
-    soundName?: string,
-  ) {
+  constructor(localeKey: string | null, iconImage: string | null, group?: string, soundName?: string) {
     this.localeKey = localeKey!; // TODO: is this bang correct?
     this.iconImage = iconImage!; // TODO: is this bang correct?
     this.group = group!; // TODO: is this bang correct?
     this.soundName = soundName ?? "se/restore";
-    this.newConsumableFunc = newConsumableFunc;
   }
 
   get name(): string {
@@ -126,77 +101,20 @@ export class Reward {
   setTier(tier: RewardTier): void {
     this.tier = tier;
   }
-
-  /**
-   * Populates item id for Reward instance
-   * @param func
-   */
-  withIdFromFunc(func: RewardFunc): Reward {
-    this.id = Object.keys(rewardInitObj).find(k => rewardInitObj[k] === func)!; // TODO: is this bang correct?
-    return this;
-  }
-
-  /**
-   * Populates item tier for Reward instance
-   * Tier is a necessary field for items that appear in player shop (determines the Pokeball visual they use)
-   * To find the tier, this function performs a reverse lookup of the item type in modifier pools
-   * It checks the weight of the item and will use the first tier for which the weight is greater than 0
-   * This is to allow items to be in multiple item pools depending on the conditions, for example for events
-   * If all tiers have a weight of 0 for the item, the first tier where the item was found is used
-   * @param poolType Default 'RewardPoolType.PLAYER'. Which pool to lookup item tier from
-   * @param party optional. Needed to check the weight of modifiers with conditional weight (see {@linkcode WeightedRewardWeightFunc})
-   *  if not provided or empty, the weight check will be ignored
-   * @param rerollCount Default `0`. Used to check the weight of modifiers with conditional weight (see {@linkcode WeightedRewardWeightFunc})
-   */
-  withTierFromPool(poolType: RewardPoolType = RewardPoolType.PLAYER, party?: PlayerPokemon[], rerollCount = 0): Reward {
-    let defaultTier: undefined | RewardTier;
-    for (const tier of Object.values(getRewardPoolForType(poolType))) {
-      for (const modifier of tier) {
-        if (this.id === modifier.reward.id) {
-          let weight: number;
-          if (modifier.weight instanceof Function) {
-            weight = party ? modifier.weight(party, rerollCount) : 0;
-          } else {
-            weight = modifier.weight;
-          }
-          if (weight > 0) {
-            this.tier = modifier.reward.tier;
-            return this;
-          }
-          if (isNullOrUndefined(defaultTier)) {
-            // If weight is 0, keep track of the first tier where the item was found
-            defaultTier = modifier.reward.tier;
-          }
-        }
-      }
-    }
-
-    // Didn't find a pool with weight > 0, fallback to first tier where the item was found, if any
-    if (defaultTier) {
-      this.tier = defaultTier;
-    }
-
-    return this;
-  }
-
-  newModifier(...args: any[]): Consumable | null {
-    // biome-ignore lint/complexity/useOptionalChain: Changing to optional would coerce null return into undefined
-    return this.newConsumableFunc && this.newConsumableFunc(this, args);
-  }
 }
 
 type RewardGeneratorFunc = (party: Pokemon[], pregenArgs?: any[]) => Reward | null;
 
 export class RewardGenerator extends Reward {
-  private genTypeFunc: RewardGeneratorFunc;
+  private genRewardFunc: RewardGeneratorFunc;
 
-  constructor(genTypeFunc: RewardGeneratorFunc) {
-    super(null, null, null);
-    this.genTypeFunc = genTypeFunc;
+  constructor(genRewardFunc: RewardGeneratorFunc) {
+    super(null, null);
+    this.genRewardFunc = genRewardFunc;
   }
 
-  generateType(party: Pokemon[], pregenArgs?: any[]) {
-    const ret = this.genTypeFunc(party, pregenArgs);
+  generateReward(party: Pokemon[], pregenArgs?: any[]) {
+    const ret = this.genRewardFunc(party, pregenArgs);
     if (ret) {
       ret.id = this.id;
       ret.setTier(this.tier);
@@ -209,18 +127,12 @@ export interface GeneratedPersistentReward {
   getPregenArgs(): any[];
 }
 
-export class AddPokeballConsumableType extends Reward {
+export class AddPokeballReward extends Reward {
   private pokeballType: PokeballType;
   private count: number;
 
   constructor(iconImage: string, pokeballType: PokeballType, count: number) {
-    super(
-      "",
-      iconImage,
-      (_type, _args) => new AddPokeballConsumable(this, pokeballType, count),
-      "pb",
-      "se/pb_bounce_1",
-    );
+    super("", iconImage, "pb", "se/pb_bounce_1");
     this.pokeballType = pokeballType;
     this.count = count;
   }
@@ -243,19 +155,29 @@ export class AddPokeballConsumableType extends Reward {
       pokeballAmount: `${globalScene.pokeballCounts[this.pokeballType]}`,
     });
   }
+
+  /**
+   * Applies {@linkcode AddPokeballReward}
+   * @param battleScene {@linkcode BattleScene}
+   * @returns always `true`
+   */
+  apply(): boolean {
+    const pokeballCounts = globalScene.pokeballCounts;
+    pokeballCounts[this.pokeballType] = Math.min(
+      pokeballCounts[this.pokeballType] + this.count,
+      MAX_PER_TYPE_POKEBALLS,
+    );
+
+    return true;
+  }
 }
 
-export class AddVoucherConsumableType extends Reward {
+export class AddVoucherReward extends Reward {
   private voucherType: VoucherType;
   private count: number;
 
   constructor(voucherType: VoucherType, count: number) {
-    super(
-      "",
-      getVoucherTypeIcon(voucherType),
-      (_type, _args) => new AddVoucherConsumable(this, voucherType, count),
-      "voucher",
-    );
+    super("", getVoucherTypeIcon(voucherType), "voucher");
     this.count = count;
     this.voucherType = voucherType;
   }
@@ -273,6 +195,62 @@ export class AddVoucherConsumableType extends Reward {
       voucherTypeName: getVoucherTypeName(this.voucherType),
     });
   }
+
+  /**
+   * Applies {@linkcode AddVoucherReward}
+   * @param battleScene {@linkcode BattleScene}
+   * @returns always `true`
+   */
+  apply(): boolean {
+    const voucherCounts = globalScene.gameData.voucherCounts;
+    voucherCounts[this.voucherType] += this.count;
+
+    return true;
+  }
+}
+
+export class AddMoneyReward extends Reward {
+  private moneyMultiplier: number;
+  private moneyMultiplierDescriptorKey: string;
+
+  constructor(localeKey: string, iconImage: string, moneyMultiplier: number, moneyMultiplierDescriptorKey: string) {
+    super(localeKey, iconImage, "money", "se/buy");
+
+    this.moneyMultiplier = moneyMultiplier;
+    this.moneyMultiplierDescriptorKey = moneyMultiplierDescriptorKey;
+  }
+
+  getDescription(): string {
+    const moneyAmount = new NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
+    globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
+    const formattedMoney = formatMoney(globalScene.moneyFormat, moneyAmount.value);
+
+    return i18next.t("modifierType:ModifierType.MoneyRewardReward.description", {
+      moneyMultiplier: i18next.t(this.moneyMultiplierDescriptorKey as any),
+      moneyAmount: formattedMoney,
+    });
+  }
+
+  /**
+   * Applies {@linkcode AddMoneyReward}
+   * @returns always `true`
+   */
+  apply(): boolean {
+    const moneyAmount = new NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
+
+    globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
+
+    globalScene.addMoney(moneyAmount.value);
+
+    for (const p of globalScene.getPlayerParty()) {
+      if (p.species?.speciesId === SpeciesId.GIMMIGHOUL || p.fusionSpecies?.speciesId === SpeciesId.GIMMIGHOUL) {
+        const factor = Math.min(Math.floor(this.moneyMultiplier), 3);
+        p.heldItemManager.add(HeldItemId.GIMMIGHOUL_EVO_TRACKER, factor);
+      }
+    }
+
+    return true;
+  }
 }
 
 export class PokemonReward extends Reward {
@@ -281,12 +259,11 @@ export class PokemonReward extends Reward {
   constructor(
     localeKey: string,
     iconImage: string,
-    newConsumableFunc: NewConsumableFunc,
     selectFilter?: PokemonSelectFilter,
     group?: string,
     soundName?: string,
   ) {
-    super(localeKey, iconImage, newConsumableFunc, group, soundName);
+    super(localeKey, iconImage, group, soundName);
 
     this.selectFilter = selectFilter;
   }
@@ -298,7 +275,6 @@ export class HeldItemReward extends PokemonReward {
     super(
       "",
       "",
-      () => null,
       (pokemon: PlayerPokemon) => {
         const hasItem = pokemon.heldItemManager.hasItem(this.itemId);
         const maxStackCount = allHeldItems[this.itemId].getMaxStackCount();
@@ -332,15 +308,15 @@ export class HeldItemReward extends PokemonReward {
     return allHeldItems[this.itemId].iconName;
   }
 
-  apply(pokemon: Pokemon) {
-    pokemon.heldItemManager.add(this.itemId);
+  apply(pokemon: PlayerPokemon): boolean {
+    return pokemon.heldItemManager.add(this.itemId);
   }
 }
 
 export class TrainerItemReward extends Reward {
   public itemId: TrainerItemId;
   constructor(itemId: TrainerItemId, group?: string, soundName?: string) {
-    super("", "", () => null, group, soundName);
+    super("", "", group, soundName);
     this.itemId = itemId;
   }
 
@@ -364,7 +340,6 @@ export class TrainerItemReward extends Reward {
 export class LapsingTrainerItemReward extends TrainerItemReward {
   apply() {
     globalScene.trainerItems.add(this.itemId, allTrainerItems[this.itemId].getMaxStackCount());
-    console.log("WE GOT HERE WE ADDED IT");
   }
 }
 
@@ -375,7 +350,6 @@ export class TerastallizeReward extends PokemonReward {
     super(
       "",
       `${PokemonType[teraType].toLowerCase()}_tera_shard`,
-      (type, args) => new TerrastalizeConsumable(type as TerastallizeReward, (args[0] as Pokemon).id, teraType),
       (pokemon: PlayerPokemon) => {
         if (
           [pokemon.species.speciesId, pokemon.fusionSpecies?.speciesId].filter(
@@ -407,6 +381,55 @@ export class TerastallizeReward extends PokemonReward {
   getPregenArgs(): any[] {
     return [this.teraType];
   }
+
+  /**
+   * Checks if {@linkcode TerrastalizeConsumable} should be applied
+   * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
+   * @returns `true` if the {@linkcode TerrastalizeConsumable} should be applied
+   */
+  shouldApply(playerPokemon?: PlayerPokemon): boolean {
+    return (
+      [playerPokemon?.species.speciesId, playerPokemon?.fusionSpecies?.speciesId].filter(
+        s => s === SpeciesId.TERAPAGOS || s === SpeciesId.OGERPON || s === SpeciesId.SHEDINJA,
+      ).length === 0
+    );
+  }
+
+  /**
+   * Applies {@linkcode TerrastalizeConsumable}
+   * @param pokemon The {@linkcode PlayerPokemon} that consumes the item
+   * @returns `true` if hp was restored
+   */
+  apply(pokemon: Pokemon): boolean {
+    pokemon.teraType = this.teraType;
+    return true;
+  }
+}
+
+function restorePokemonHp(
+  pokemon: Pokemon,
+  percentToRestore: number,
+  pointsToRestore = 0,
+  healStatus = false,
+  fainted = false,
+): boolean {
+  if (!pokemon.hp === fainted) {
+    if (fainted || healStatus) {
+      pokemon.resetStatus(true, true, false, false);
+    }
+    // Apply HealingCharm
+    let multiplier = 1;
+    if (!fainted) {
+      const hpRestoreMultiplier = new NumberHolder(1);
+      this.applyPlayerItems(TrainerItemEffect.HEALING_BOOSTER, { numberHolder: hpRestoreMultiplier });
+      multiplier = hpRestoreMultiplier.value;
+    }
+    const restorePoints = Math.floor(pointsToRestore * multiplier);
+    const restorePercent = Math.floor(percentToRestore * 0.01 * multiplier * pokemon.getMaxHp());
+    pokemon.heal(Math.max(restorePercent, restorePoints, 1));
+    return true;
+  }
+  return false;
 }
 
 export class PokemonHpRestoreReward extends PokemonReward {
@@ -420,23 +443,12 @@ export class PokemonHpRestoreReward extends PokemonReward {
     restorePoints: number,
     restorePercent: number,
     healStatus = false,
-    newConsumableFunc?: NewConsumableFunc,
     selectFilter?: PokemonSelectFilter,
     group?: string,
   ) {
     super(
       localeKey,
       iconImage,
-      newConsumableFunc ||
-        ((_type, args) =>
-          new PokemonHpRestoreConsumable(
-            this,
-            (args[0] as PlayerPokemon).id,
-            this.restorePoints,
-            this.restorePercent,
-            this.healStatus,
-            false,
-          )),
       selectFilter ||
         ((pokemon: PlayerPokemon) => {
           if (
@@ -465,6 +477,10 @@ export class PokemonHpRestoreReward extends PokemonReward {
         ? i18next.t("modifierType:ModifierType.PokemonHpRestoreReward.extra.fullyWithStatus")
         : i18next.t("modifierType:ModifierType.PokemonHpRestoreReward.extra.fully");
   }
+
+  apply(playerPokemon: PlayerPokemon): boolean {
+    return restorePokemonHp(playerPokemon, this.restorePercent, this.restorePoints, this.healStatus, false);
+  }
 }
 
 export class PokemonReviveReward extends PokemonHpRestoreReward {
@@ -475,8 +491,6 @@ export class PokemonReviveReward extends PokemonHpRestoreReward {
       0,
       restorePercent,
       false,
-      (_type, args) =>
-        new PokemonHpRestoreConsumable(this, (args[0] as PlayerPokemon).id, 0, this.restorePercent, false, true),
       (pokemon: PlayerPokemon) => {
         if (!pokemon.isFainted()) {
           return PartyUiHandler.NoEffectMessage;
@@ -499,25 +513,43 @@ export class PokemonReviveReward extends PokemonHpRestoreReward {
       restorePercent: this.restorePercent,
     });
   }
+
+  apply(playerPokemon: PlayerPokemon): boolean {
+    return restorePokemonHp(playerPokemon, this.restorePercent, 0, false, true);
+  }
+}
+
+class AllPokemonFullReviveReward extends Reward {
+  constructor(localeKey: string, iconImage: string) {
+    super(localeKey, iconImage, "modifierType:ModifierType.AllPokemonFullReviveReward");
+  }
+
+  apply(): boolean {
+    for (const pokemon of globalScene.getPlayerParty()) {
+      restorePokemonHp(pokemon, 100, 0, false, true);
+    }
+
+    return true;
+  }
 }
 
 export class PokemonStatusHealReward extends PokemonReward {
   constructor(localeKey: string, iconImage: string) {
-    super(
-      localeKey,
-      iconImage,
-      (_type, args) => new PokemonStatusHealConsumable(this, (args[0] as PlayerPokemon).id),
-      (pokemon: PlayerPokemon) => {
-        if (!pokemon.hp || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))) {
-          return PartyUiHandler.NoEffectMessage;
-        }
-        return null;
-      },
-    );
+    super(localeKey, iconImage, (pokemon: PlayerPokemon) => {
+      if (!pokemon.hp || (!pokemon.status && !pokemon.getTag(BattlerTagType.CONFUSED))) {
+        return PartyUiHandler.NoEffectMessage;
+      }
+      return null;
+    });
   }
 
   getDescription(): string {
     return i18next.t("modifierType:ModifierType.PokemonStatusHealReward.description");
+  }
+
+  apply(playerPokemon: PlayerPokemon): boolean {
+    playerPokemon.resetStatus(true, true, false, false);
+    return true;
   }
 }
 
@@ -527,14 +559,17 @@ export abstract class PokemonMoveReward extends PokemonReward {
   constructor(
     localeKey: string,
     iconImage: string,
-    newConsumableFunc: NewConsumableFunc,
     selectFilter?: PokemonSelectFilter,
     moveSelectFilter?: PokemonMoveSelectFilter,
     group?: string,
   ) {
-    super(localeKey, iconImage, newConsumableFunc, selectFilter, group);
+    super(localeKey, iconImage, selectFilter, group);
 
     this.moveSelectFilter = moveSelectFilter;
+  }
+
+  apply(_playerPokemon: PlayerPokemon, _moveIndex: number): boolean {
+    return false;
   }
 }
 
@@ -545,8 +580,6 @@ export class PokemonPpRestoreReward extends PokemonMoveReward {
     super(
       localeKey,
       iconImage,
-      (_type, args) =>
-        new PokemonPpRestoreConsumable(this, (args[0] as PlayerPokemon).id, args[1] as number, this.restorePoints),
       (_pokemon: PlayerPokemon) => {
         return null;
       },
@@ -569,6 +602,21 @@ export class PokemonPpRestoreReward extends PokemonMoveReward {
         })
       : i18next.t("modifierType:ModifierType.PokemonPpRestoreReward.extra.fully");
   }
+
+  /**
+   * Applies {@linkcode PokemonPpRestoreConsumable}
+   * @param playerPokemon The {@linkcode PlayerPokemon} that should get move pp restored
+   * @returns always `true`
+   */
+  override apply(playerPokemon: PlayerPokemon, moveIndex: number): boolean {
+    const move = playerPokemon.getMoveset()[moveIndex];
+
+    if (move) {
+      move.ppUsed = this.restorePoints > -1 ? Math.max(move.ppUsed - this.restorePoints, 0) : 0;
+    }
+
+    return true;
+  }
 }
 
 export class PokemonAllMovePpRestoreReward extends PokemonReward {
@@ -578,7 +626,6 @@ export class PokemonAllMovePpRestoreReward extends PokemonReward {
     super(
       localeKey,
       iconImage,
-      (_type, args) => new PokemonAllMovePpRestoreConsumable(this, (args[0] as PlayerPokemon).id, this.restorePoints),
       (pokemon: PlayerPokemon) => {
         if (!pokemon.getMoveset().filter(m => m.ppUsed).length) {
           return PartyUiHandler.NoEffectMessage;
@@ -598,6 +645,21 @@ export class PokemonAllMovePpRestoreReward extends PokemonReward {
         })
       : i18next.t("modifierType:ModifierType.PokemonAllMovePpRestoreReward.extra.fully");
   }
+
+  /**
+   * Applies {@linkcode PokemonAllMovePpRestoreConsumable}
+   * @param playerPokemon The {@linkcode PlayerPokemon} that should get all move pp restored
+   * @returns always `true`
+   */
+  apply(playerPokemon: PlayerPokemon): boolean {
+    for (const move of playerPokemon.getMoveset()) {
+      if (move) {
+        move.ppUsed = this.restorePoints > -1 ? Math.max(move.ppUsed - this.restorePoints, 0) : 0;
+      }
+    }
+
+    return true;
+  }
 }
 
 export class PokemonPpUpReward extends PokemonMoveReward {
@@ -607,7 +669,6 @@ export class PokemonPpUpReward extends PokemonMoveReward {
     super(
       localeKey,
       iconImage,
-      (_type, args) => new PokemonPpUpConsumable(this, (args[0] as PlayerPokemon).id, args[1] as number, this.upPoints),
       (_pokemon: PlayerPokemon) => {
         return null;
       },
@@ -626,6 +687,21 @@ export class PokemonPpUpReward extends PokemonMoveReward {
   getDescription(): string {
     return i18next.t("modifierType:ModifierType.PokemonPpUpReward.description", { upPoints: this.upPoints });
   }
+
+  /**
+   * Applies {@linkcode PokemonPpUpConsumable}
+   * @param playerPokemon The {@linkcode PlayerPokemon} that gets a pp up on move-slot {@linkcode moveIndex}
+   * @returns
+   */
+  override apply(playerPokemon: PlayerPokemon, moveIndex: number): boolean {
+    const move = playerPokemon.getMoveset()[moveIndex];
+
+    if (move && !move.maxPpOverride) {
+      move.ppUp = Math.min(move.ppUp + this.upPoints, 3);
+    }
+
+    return true;
+  }
 }
 
 export class PokemonNatureChangeReward extends PokemonReward {
@@ -639,7 +715,6 @@ export class PokemonNatureChangeReward extends PokemonReward {
           .find(s => getNatureStatMultiplier(nature, Stat[s]) > 1)
           ?.toLowerCase() || "neutral"
       }`,
-      (_type, args) => new PokemonNatureChangeConsumable(this, (args[0] as PlayerPokemon).id, this.nature),
       (pokemon: PlayerPokemon) => {
         if (pokemon.getNature() === this.nature) {
           return PartyUiHandler.NoEffectMessage;
@@ -663,6 +738,18 @@ export class PokemonNatureChangeReward extends PokemonReward {
       natureName: getNatureName(this.nature, true, true, true),
     });
   }
+
+  /**
+   * Applies {@linkcode PokemonNatureChangeConsumable}
+   * @param playerPokemon {@linkcode PlayerPokemon} to apply the {@linkcode Nature} change to
+   * @returns
+   */
+  apply(playerPokemon: PlayerPokemon): boolean {
+    playerPokemon.setCustomNature(this.nature);
+    globalScene.gameData.unlockSpeciesNature(playerPokemon.species, this.nature);
+
+    return true;
+  }
 }
 
 export class RememberMoveReward extends PokemonReward {
@@ -670,7 +757,6 @@ export class RememberMoveReward extends PokemonReward {
     super(
       localeKey,
       iconImage,
-      (type, args) => new RememberMoveConsumable(type, (args[0] as PlayerPokemon).id, args[1] as number),
       (pokemon: PlayerPokemon) => {
         if (!pokemon.getLearnableLevelMoves().length) {
           return PartyUiHandler.NoEffectMessage;
@@ -679,6 +765,24 @@ export class RememberMoveReward extends PokemonReward {
       },
       group,
     );
+  }
+
+  /**
+   * Applies {@linkcode RememberMoveConsumable}
+   * @param playerPokemon The {@linkcode PlayerPokemon} that should remember the move
+   * @returns always `true`
+   */
+  //TODO: Do we really need this cost parameter here?
+  apply(playerPokemon: PlayerPokemon, levelMoveIndex: number, cost?: number): boolean {
+    globalScene.phaseManager.unshiftNew(
+      "LearnMovePhase",
+      globalScene.getPlayerParty().indexOf(playerPokemon),
+      playerPokemon.getLearnableLevelMoves()[levelMoveIndex],
+      LearnMoveType.MEMORY,
+      cost,
+    );
+
+    return true;
   }
 }
 
@@ -711,14 +815,33 @@ export class AttackTypeBoosterReward extends HeldItemReward implements Generated
   }
 }
 
+function incrementLevelWithCandy(
+  playerPokemon: PlayerPokemon,
+  levelCount: NumberHolder = new NumberHolder(1),
+): boolean {
+  globalScene.applyPlayerItems(TrainerItemEffect.LEVEL_INCREMENT_BOOSTER, { numberHolder: levelCount });
+
+  playerPokemon.level += levelCount.value;
+  if (playerPokemon.level <= globalScene.getMaxExpLevel(true)) {
+    playerPokemon.exp = getLevelTotalExp(playerPokemon.level, playerPokemon.species.growthRate);
+    playerPokemon.levelExp = 0;
+  }
+
+  playerPokemon.addFriendship(FRIENDSHIP_GAIN_FROM_RARE_CANDY);
+
+  globalScene.phaseManager.unshiftNew(
+    "LevelUpPhase",
+    globalScene.getPlayerParty().indexOf(playerPokemon),
+    playerPokemon.level - levelCount.value,
+    playerPokemon.level,
+  );
+
+  return true;
+}
+
 export class PokemonLevelIncrementReward extends PokemonReward {
   constructor(localeKey: string, iconImage: string) {
-    super(
-      localeKey,
-      iconImage,
-      (_type, args) => new PokemonLevelIncrementConsumable(this, (args[0] as PlayerPokemon).id),
-      (_pokemon: PlayerPokemon) => null,
-    );
+    super(localeKey, iconImage, (_pokemon: PlayerPokemon) => null);
   }
 
   getDescription(): string {
@@ -727,18 +850,32 @@ export class PokemonLevelIncrementReward extends PokemonReward {
     levels += candyJarStack;
     return i18next.t("modifierType:ModifierType.PokemonLevelIncrementReward.description", { levels });
   }
+
+  /**
+   * Applies {@linkcode PokemonLevelIncrementConsumable}
+   * @param playerPokemon The {@linkcode PlayerPokemon} that should get levels incremented
+   * @param levelCount The amount of levels to increment
+   * @returns always `true`
+   */
+  apply(playerPokemon: PlayerPokemon, levelCount: NumberHolder = new NumberHolder(1)): boolean {
+    return incrementLevelWithCandy(playerPokemon, levelCount);
+  }
 }
 
 export class AllPokemonLevelIncrementReward extends Reward {
-  constructor(localeKey: string, iconImage: string) {
-    super(localeKey, iconImage, (_type, _args) => new PokemonLevelIncrementConsumable(this, -1));
-  }
-
   getDescription(): string {
     let levels = 1;
     const candyJarStack = globalScene.trainerItems.getStack(TrainerItemId.CANDY_JAR);
     levels += candyJarStack;
     return i18next.t("modifierType:ModifierType.AllPokemonLevelIncrementReward.description", { levels });
+  }
+
+  apply(levelCount: NumberHolder = new NumberHolder(1)): boolean {
+    for (const pokemon of globalScene.getPlayerParty()) {
+      incrementLevelWithCandy(pokemon, levelCount);
+    }
+
+    return true;
   }
 }
 
@@ -756,77 +893,6 @@ export class BaseStatBoosterReward extends HeldItemReward {
   }
 }
 
-/**
- * Shuckle Juice item
- */
-export class BaseStatTotalHeldItemReward extends HeldItemReward {
-  private readonly statModifier: number;
-
-  constructor(itemId: HeldItemId, statModifier: number) {
-    super(itemId);
-    this.statModifier = statModifier;
-  }
-
-  apply(pokemon: Pokemon) {
-    super.apply(pokemon);
-    pokemon.heldItemManager[this.itemId].data.statModifier = this.statModifier;
-  }
-}
-
-class AllPokemonFullHpRestoreReward extends Reward {
-  private descriptionKey: string;
-
-  constructor(localeKey: string, iconImage: string, descriptionKey?: string, newConsumableFunc?: NewConsumableFunc) {
-    super(
-      localeKey,
-      iconImage,
-      newConsumableFunc || ((_type, _args) => new PokemonHpRestoreConsumable(this, -1, 0, 100, false)),
-    );
-
-    this.descriptionKey = descriptionKey!; // TODO: is this bang correct?
-  }
-
-  getDescription(): string {
-    return i18next.t(
-      `${this.descriptionKey || "modifierType:ModifierType.AllPokemonFullHpRestoreReward"}.description` as any,
-    );
-  }
-}
-
-class AllPokemonFullReviveReward extends AllPokemonFullHpRestoreReward {
-  constructor(localeKey: string, iconImage: string) {
-    super(
-      localeKey,
-      iconImage,
-      "modifierType:ModifierType.AllPokemonFullReviveReward",
-      (_type, _args) => new PokemonHpRestoreConsumable(this, -1, 0, 100, false, true),
-    );
-  }
-}
-
-export class MoneyRewardReward extends Reward {
-  private moneyMultiplier: number;
-  private moneyMultiplierDescriptorKey: string;
-
-  constructor(localeKey: string, iconImage: string, moneyMultiplier: number, moneyMultiplierDescriptorKey: string) {
-    super(localeKey, iconImage, (_type, _args) => new MoneyRewardConsumable(this, moneyMultiplier), "money", "se/buy");
-
-    this.moneyMultiplier = moneyMultiplier;
-    this.moneyMultiplierDescriptorKey = moneyMultiplierDescriptorKey;
-  }
-
-  getDescription(): string {
-    const moneyAmount = new NumberHolder(globalScene.getWaveMoneyAmount(this.moneyMultiplier));
-    globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
-    const formattedMoney = formatMoney(globalScene.moneyFormat, moneyAmount.value);
-
-    return i18next.t("modifierType:ModifierType.MoneyRewardReward.description", {
-      moneyMultiplier: i18next.t(this.moneyMultiplierDescriptorKey as any),
-      moneyAmount: formattedMoney,
-    });
-  }
-}
-
 export class TmReward extends PokemonReward {
   public moveId: MoveId;
 
@@ -834,7 +900,6 @@ export class TmReward extends PokemonReward {
     super(
       "",
       `tm_${PokemonType[allMoves[moveId].type].toLowerCase()}`,
-      (_type, args) => new TmConsumable(this, (args[0] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
         if (
           pokemon.compatibleTms.indexOf(moveId) === -1 ||
@@ -865,39 +930,50 @@ export class TmReward extends PokemonReward {
       { moveName: allMoves[this.moveId].name },
     );
   }
+
+  /**
+   * Applies {@linkcode TmConsumable}
+   * @param playerPokemon The {@linkcode PlayerPokemon} that should learn the TM
+   * @returns always `true`
+   */
+  apply(playerPokemon: PlayerPokemon): boolean {
+    globalScene.phaseManager.unshiftNew(
+      "LearnMovePhase",
+      globalScene.getPlayerParty().indexOf(playerPokemon),
+      this.moveId,
+      LearnMoveType.TM,
+    );
+
+    return true;
+  }
 }
 
 export class EvolutionItemReward extends PokemonReward implements GeneratedPersistentReward {
   public evolutionItem: EvolutionItem;
 
   constructor(evolutionItem: EvolutionItem) {
-    super(
-      "",
-      EvolutionItem[evolutionItem].toLowerCase(),
-      (_type, args) => new EvolutionItemConsumable(this, (args[0] as PlayerPokemon).id),
-      (pokemon: PlayerPokemon) => {
-        if (
-          pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) &&
-          pokemonEvolutions[pokemon.species.speciesId].filter(e => e.validate(pokemon, false, this.evolutionItem))
-            .length &&
-          pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX
-        ) {
-          return null;
-        }
-        if (
-          pokemon.isFusion() &&
-          pokemon.fusionSpecies &&
-          pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) &&
-          pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => e.validate(pokemon, true, this.evolutionItem))
-            .length &&
-          pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
-        ) {
-          return null;
-        }
+    super("", EvolutionItem[evolutionItem].toLowerCase(), (pokemon: PlayerPokemon) => {
+      if (
+        pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) &&
+        pokemonEvolutions[pokemon.species.speciesId].filter(e => e.validate(pokemon, false, this.evolutionItem))
+          .length &&
+        pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX
+      ) {
+        return null;
+      }
+      if (
+        pokemon.isFusion() &&
+        pokemon.fusionSpecies &&
+        pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) &&
+        pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => e.validate(pokemon, true, this.evolutionItem))
+          .length &&
+        pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
+      ) {
+        return null;
+      }
 
-        return PartyUiHandler.NoEffectMessage;
-      },
-    );
+      return PartyUiHandler.NoEffectMessage;
+    });
 
     this.evolutionItem = evolutionItem;
   }
@@ -913,6 +989,35 @@ export class EvolutionItemReward extends PokemonReward implements GeneratedPersi
   getPregenArgs(): any[] {
     return [this.evolutionItem];
   }
+
+  /**
+   * Applies {@linkcode EvolutionItemConsumable}
+   * @param playerPokemon The {@linkcode PlayerPokemon} that should evolve via item
+   * @returns `true` if the evolution was successful
+   */
+  apply(playerPokemon: PlayerPokemon): boolean {
+    let matchingEvolution = pokemonEvolutions.hasOwnProperty(playerPokemon.species.speciesId)
+      ? pokemonEvolutions[playerPokemon.species.speciesId].find(
+          e => e.evoItem === this.evolutionItem && e.validate(playerPokemon, false, e.item!),
+        )
+      : null;
+
+    if (!matchingEvolution && playerPokemon.isFusion()) {
+      matchingEvolution = pokemonEvolutions[playerPokemon.fusionSpecies!.speciesId].find(
+        e => e.evoItem === this.evolutionItem && e.validate(playerPokemon, true, e.item!),
+      );
+      if (matchingEvolution) {
+        matchingEvolution = new FusionSpeciesFormEvolution(playerPokemon.species.speciesId, matchingEvolution);
+      }
+    }
+
+    if (matchingEvolution) {
+      globalScene.phaseManager.unshiftNew("EvolutionPhase", playerPokemon, matchingEvolution, playerPokemon.level - 1);
+      return true;
+    }
+
+    return false;
+  }
 }
 
 /**
@@ -922,30 +1027,25 @@ export class FormChangeItemReward extends PokemonReward {
   public formChangeItem: FormChangeItem;
 
   constructor(formChangeItem: FormChangeItem) {
-    super(
-      "",
-      FormChangeItem[formChangeItem].toLowerCase(),
-      () => null,
-      (pokemon: PlayerPokemon) => {
-        // Make sure the Pokemon has alternate forms
-        if (
-          pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) &&
-          // Get all form changes for this species with an item trigger, including any compound triggers
-          pokemonFormChanges[pokemon.species.speciesId]
-            .filter(
-              fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger) && fc.preFormKey === pokemon.getFormKey(),
-            )
-            // Returns true if any form changes match this item
-            .flatMap(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
-            .flatMap(fc => fc.item)
-            .includes(this.formChangeItem)
-        ) {
-          return null;
-        }
+    super("", FormChangeItem[formChangeItem].toLowerCase(), (pokemon: PlayerPokemon) => {
+      // Make sure the Pokemon has alternate forms
+      if (
+        pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) &&
+        // Get all form changes for this species with an item trigger, including any compound triggers
+        pokemonFormChanges[pokemon.species.speciesId]
+          .filter(
+            fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger) && fc.preFormKey === pokemon.getFormKey(),
+          )
+          // Returns true if any form changes match this item
+          .flatMap(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
+          .flatMap(fc => fc.item)
+          .includes(this.formChangeItem)
+      ) {
+        return null;
+      }
 
-        return PartyUiHandler.NoEffectMessage;
-      },
-    );
+      return PartyUiHandler.NoEffectMessage;
+    });
 
     this.formChangeItem = formChangeItem;
   }
@@ -974,21 +1074,27 @@ export class FormChangeItemReward extends PokemonReward {
 
 export class FusePokemonReward extends PokemonReward {
   constructor(localeKey: string, iconImage: string) {
-    super(
-      localeKey,
-      iconImage,
-      (_type, args) => new FusePokemonConsumable(this, (args[0] as PlayerPokemon).id, (args[1] as PlayerPokemon).id),
-      (pokemon: PlayerPokemon) => {
-        if (pokemon.isFusion()) {
-          return PartyUiHandler.NoEffectMessage;
-        }
-        return null;
-      },
-    );
+    super(localeKey, iconImage, (pokemon: PlayerPokemon) => {
+      if (pokemon.isFusion()) {
+        return PartyUiHandler.NoEffectMessage;
+      }
+      return null;
+    });
   }
 
   getDescription(): string {
     return i18next.t("modifierType:ModifierType.FusePokemonReward.description");
+  }
+
+  /**
+   * Applies {@linkcode FusePokemonConsumable}
+   * @param playerPokemon {@linkcode PlayerPokemon} that should be fused
+   * @param playerPokemon2 {@linkcode PlayerPokemon} that should be fused with {@linkcode playerPokemon}
+   * @returns always Promise<true>
+   */
+  apply(playerPokemon: PlayerPokemon, playerPokemon2: PlayerPokemon): boolean {
+    playerPokemon.fuse(playerPokemon2);
+    return true;
   }
 }
 
@@ -1338,28 +1444,50 @@ export type RewardOverride = GeneratorRewardOverride | BaseRewardOverride;
 export type RewardKeys = keyof typeof rewardInitObj;
 
 const rewardInitObj = Object.freeze({
-  POKEBALL: () => new AddPokeballConsumableType("pb", PokeballType.POKEBALL, 5),
-  GREAT_BALL: () => new AddPokeballConsumableType("gb", PokeballType.GREAT_BALL, 5),
-  ULTRA_BALL: () => new AddPokeballConsumableType("ub", PokeballType.ULTRA_BALL, 5),
-  ROGUE_BALL: () => new AddPokeballConsumableType("rb", PokeballType.ROGUE_BALL, 5),
-  MASTER_BALL: () => new AddPokeballConsumableType("mb", PokeballType.MASTER_BALL, 1),
+  // Pokeball rewards
+  POKEBALL: () => new AddPokeballReward("pb", PokeballType.POKEBALL, 5),
+  GREAT_BALL: () => new AddPokeballReward("gb", PokeballType.GREAT_BALL, 5),
+  ULTRA_BALL: () => new AddPokeballReward("ub", PokeballType.ULTRA_BALL, 5),
+  ROGUE_BALL: () => new AddPokeballReward("rb", PokeballType.ROGUE_BALL, 5),
+  MASTER_BALL: () => new AddPokeballReward("mb", PokeballType.MASTER_BALL, 1),
 
-  RARE_CANDY: () => new PokemonLevelIncrementReward("modifierType:ModifierType.RARE_CANDY", "rare_candy"),
+  // Voucher rewards
+  VOUCHER: () => new AddVoucherReward(VoucherType.REGULAR, 1),
+  VOUCHER_PLUS: () => new AddVoucherReward(VoucherType.PLUS, 1),
+  VOUCHER_PREMIUM: () => new AddVoucherReward(VoucherType.PREMIUM, 1),
+
+  // Money rewards
+  NUGGET: () =>
+    new AddMoneyReward(
+      "modifierType:ModifierType.NUGGET",
+      "nugget",
+      1,
+      "modifierType:ModifierType.MoneyRewardReward.extra.small",
+    ),
+  BIG_NUGGET: () =>
+    new AddMoneyReward(
+      "modifierType:ModifierType.BIG_NUGGET",
+      "big_nugget",
+      2.5,
+      "modifierType:ModifierType.MoneyRewardReward.extra.moderate",
+    ),
+  RELIC_GOLD: () =>
+    new AddMoneyReward(
+      "modifierType:ModifierType.RELIC_GOLD",
+      "relic_gold",
+      10,
+      "modifierType:ModifierType.MoneyRewardReward.extra.large",
+    ),
+
+  // Party-wide consumables
   RARER_CANDY: () => new AllPokemonLevelIncrementReward("modifierType:ModifierType.RARER_CANDY", "rarer_candy"),
+  SACRED_ASH: () => new AllPokemonFullReviveReward("modifierType:ModifierType.SACRED_ASH", "sacred_ash"),
+
+  // Pokemon consumables
+  RARE_CANDY: () => new PokemonLevelIncrementReward("modifierType:ModifierType.RARE_CANDY", "rare_candy"),
 
   EVOLUTION_ITEM: () => new EvolutionItemRewardGenerator(false),
   RARE_EVOLUTION_ITEM: () => new EvolutionItemRewardGenerator(true),
-
-  FORM_CHANGE_ITEM: () => new FormChangeItemRewardGenerator(false),
-  RARE_FORM_CHANGE_ITEM: () => new FormChangeItemRewardGenerator(true),
-
-  EVOLUTION_TRACKER_GIMMIGHOUL: () => new HeldItemReward(HeldItemId.GIMMIGHOUL_EVO_TRACKER),
-
-  MEGA_BRACELET: () => new TrainerItemReward(TrainerItemId.MEGA_BRACELET),
-  DYNAMAX_BAND: () => new TrainerItemReward(TrainerItemId.DYNAMAX_BAND),
-  TERA_ORB: () => new TrainerItemReward(TrainerItemId.TERA_ORB),
-
-  MAP: () => new TrainerItemReward(TrainerItemId.MAP),
 
   POTION: () => new PokemonHpRestoreReward("modifierType:ModifierType.POTION", "potion", 20, 10),
   SUPER_POTION: () => new PokemonHpRestoreReward("modifierType:ModifierType.SUPER_POTION", "super_potion", 50, 25),
@@ -1372,12 +1500,6 @@ const rewardInitObj = Object.freeze({
   MAX_REVIVE: () => new PokemonReviveReward("modifierType:ModifierType.MAX_REVIVE", "max_revive", 100),
 
   FULL_HEAL: () => new PokemonStatusHealReward("modifierType:ModifierType.FULL_HEAL", "full_heal"),
-
-  SACRED_ASH: () => new AllPokemonFullReviveReward("modifierType:ModifierType.SACRED_ASH", "sacred_ash"),
-
-  REVIVER_SEED: () => new HeldItemReward(HeldItemId.REVIVER_SEED),
-
-  WHITE_HERB: () => new HeldItemReward(HeldItemId.WHITE_HERB),
 
   ETHER: () => new PokemonPpRestoreReward("modifierType:ModifierType.ETHER", "ether", 10),
   MAX_ETHER: () => new PokemonPpRestoreReward("modifierType:ModifierType.MAX_ETHER", "max_ether", -1),
@@ -1392,21 +1514,6 @@ const rewardInitObj = Object.freeze({
   SUPER_REPEL: () => new DoubleBattleChanceBoosterReward('Super Repel', 10),
   MAX_REPEL: () => new DoubleBattleChanceBoosterReward('Max Repel', 25),*/
 
-  LURE: () => new LapsingTrainerItemReward(TrainerItemId.LURE),
-  SUPER_LURE: () => new LapsingTrainerItemReward(TrainerItemId.SUPER_LURE),
-  MAX_LURE: () => new LapsingTrainerItemReward(TrainerItemId.MAX_LURE),
-
-  SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterRewardGenerator(false),
-  RARE_SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterRewardGenerator(true),
-
-  TEMP_STAT_STAGE_BOOSTER: () => new TempStatStageBoosterRewardGenerator(),
-
-  DIRE_HIT: () => new LapsingTrainerItemReward(TrainerItemId.DIRE_HIT),
-
-  BASE_STAT_BOOSTER: () => new BaseStatBoosterRewardGenerator(),
-
-  ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterRewardGenerator(),
-
   MINT: () =>
     new RewardGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in Nature) {
@@ -1414,8 +1521,6 @@ const rewardInitObj = Object.freeze({
       }
       return new PokemonNatureChangeReward(randSeedInt(getEnumValues(Nature).length) as Nature);
     }),
-
-  MYSTICAL_ROCK: () => new HeldItemReward(HeldItemId.MYSTICAL_ROCK),
 
   TERA_SHARD: () =>
     new RewardGenerator((party: Pokemon[], pregenArgs?: any[]) => {
@@ -1444,21 +1549,32 @@ const rewardInitObj = Object.freeze({
       return new TerastallizeReward(shardType);
     }),
 
-  BERRY: () => new BerryRewardGenerator(),
-
   TM_COMMON: () => new TmRewardGenerator(RewardTier.COMMON),
   TM_GREAT: () => new TmRewardGenerator(RewardTier.GREAT),
   TM_ULTRA: () => new TmRewardGenerator(RewardTier.ULTRA),
 
   MEMORY_MUSHROOM: () => new RememberMoveReward("modifierType:ModifierType.MEMORY_MUSHROOM", "big_mushroom"),
 
-  EXP_SHARE: () => new TrainerItemReward(TrainerItemId.EXP_SHARE),
-  EXP_BALANCE: () => new TrainerItemReward(TrainerItemId.EXP_BALANCE),
+  DNA_SPLICERS: () => new FusePokemonReward("modifierType:ModifierType.DNA_SPLICERS", "dna_splicers"),
 
-  OVAL_CHARM: () => new TrainerItemReward(TrainerItemId.OVAL_CHARM),
+  // Held items
+  FORM_CHANGE_ITEM: () => new FormChangeItemRewardGenerator(false),
+  RARE_FORM_CHANGE_ITEM: () => new FormChangeItemRewardGenerator(true),
 
-  EXP_CHARM: () => new TrainerItemReward(TrainerItemId.EXP_CHARM),
-  SUPER_EXP_CHARM: () => new TrainerItemReward(TrainerItemId.SUPER_EXP_CHARM),
+  REVIVER_SEED: () => new HeldItemReward(HeldItemId.REVIVER_SEED),
+
+  WHITE_HERB: () => new HeldItemReward(HeldItemId.WHITE_HERB),
+
+  SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterRewardGenerator(false),
+  RARE_SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterRewardGenerator(true),
+
+  BASE_STAT_BOOSTER: () => new BaseStatBoosterRewardGenerator(),
+
+  ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterRewardGenerator(),
+
+  MYSTICAL_ROCK: () => new HeldItemReward(HeldItemId.MYSTICAL_ROCK),
+
+  BERRY: () => new BerryRewardGenerator(),
 
   LUCKY_EGG: () => new HeldItemReward(HeldItemId.LUCKY_EGG),
   GOLDEN_EGG: () => new HeldItemReward(HeldItemId.GOLDEN_EGG),
@@ -1472,42 +1588,12 @@ const rewardInitObj = Object.freeze({
 
   SOUL_DEW: () => new HeldItemReward(HeldItemId.SOUL_DEW),
 
-  NUGGET: () =>
-    new MoneyRewardReward(
-      "modifierType:ModifierType.NUGGET",
-      "nugget",
-      1,
-      "modifierType:ModifierType.MoneyRewardReward.extra.small",
-    ),
-  BIG_NUGGET: () =>
-    new MoneyRewardReward(
-      "modifierType:ModifierType.BIG_NUGGET",
-      "big_nugget",
-      2.5,
-      "modifierType:ModifierType.MoneyRewardReward.extra.moderate",
-    ),
-  RELIC_GOLD: () =>
-    new MoneyRewardReward(
-      "modifierType:ModifierType.RELIC_GOLD",
-      "relic_gold",
-      10,
-      "modifierType:ModifierType.MoneyRewardReward.extra.large",
-    ),
-
-  AMULET_COIN: () => new TrainerItemReward(TrainerItemId.AMULET_COIN),
   GOLDEN_PUNCH: () => new HeldItemReward(HeldItemId.GOLDEN_PUNCH),
-
-  LOCK_CAPSULE: () => new TrainerItemReward(TrainerItemId.LOCK_CAPSULE),
 
   GRIP_CLAW: () => new HeldItemReward(HeldItemId.GRIP_CLAW),
   WIDE_LENS: () => new HeldItemReward(HeldItemId.WIDE_LENS),
 
   MULTI_LENS: () => new HeldItemReward(HeldItemId.MULTI_LENS),
-
-  HEALING_CHARM: () => new TrainerItemReward(TrainerItemId.HEALING_CHARM),
-  CANDY_JAR: () => new TrainerItemReward(TrainerItemId.CANDY_JAR),
-
-  BERRY_POUCH: () => new TrainerItemReward(TrainerItemId.BERRY_POUCH),
 
   FOCUS_BAND: () => new HeldItemReward(HeldItemId.FOCUS_BAND),
 
@@ -1525,22 +1611,49 @@ const rewardInitObj = Object.freeze({
 
   BATON: () => new HeldItemReward(HeldItemId.BATON),
 
+  MINI_BLACK_HOLE: () => new HeldItemReward(HeldItemId.MINI_BLACK_HOLE),
+
+  // Trainer items
+  MEGA_BRACELET: () => new TrainerItemReward(TrainerItemId.MEGA_BRACELET),
+  DYNAMAX_BAND: () => new TrainerItemReward(TrainerItemId.DYNAMAX_BAND),
+  TERA_ORB: () => new TrainerItemReward(TrainerItemId.TERA_ORB),
+
+  MAP: () => new TrainerItemReward(TrainerItemId.MAP),
+
+  LURE: () => new LapsingTrainerItemReward(TrainerItemId.LURE),
+  SUPER_LURE: () => new LapsingTrainerItemReward(TrainerItemId.SUPER_LURE),
+  MAX_LURE: () => new LapsingTrainerItemReward(TrainerItemId.MAX_LURE),
+
+  TEMP_STAT_STAGE_BOOSTER: () => new TempStatStageBoosterRewardGenerator(),
+
+  DIRE_HIT: () => new LapsingTrainerItemReward(TrainerItemId.DIRE_HIT),
+
+  EXP_SHARE: () => new TrainerItemReward(TrainerItemId.EXP_SHARE),
+  EXP_BALANCE: () => new TrainerItemReward(TrainerItemId.EXP_BALANCE),
+
+  OVAL_CHARM: () => new TrainerItemReward(TrainerItemId.OVAL_CHARM),
+
+  EXP_CHARM: () => new TrainerItemReward(TrainerItemId.EXP_CHARM),
+  SUPER_EXP_CHARM: () => new TrainerItemReward(TrainerItemId.SUPER_EXP_CHARM),
+
+  AMULET_COIN: () => new TrainerItemReward(TrainerItemId.AMULET_COIN),
+
+  LOCK_CAPSULE: () => new TrainerItemReward(TrainerItemId.LOCK_CAPSULE),
+
+  HEALING_CHARM: () => new TrainerItemReward(TrainerItemId.HEALING_CHARM),
+  CANDY_JAR: () => new TrainerItemReward(TrainerItemId.CANDY_JAR),
+
+  BERRY_POUCH: () => new TrainerItemReward(TrainerItemId.BERRY_POUCH),
+
   SHINY_CHARM: () => new TrainerItemReward(TrainerItemId.SHINY_CHARM),
   ABILITY_CHARM: () => new TrainerItemReward(TrainerItemId.ABILITY_CHARM),
   CATCHING_CHARM: () => new TrainerItemReward(TrainerItemId.CATCHING_CHARM),
 
   IV_SCANNER: () => new TrainerItemReward(TrainerItemId.IV_SCANNER),
 
-  DNA_SPLICERS: () => new FusePokemonReward("modifierType:ModifierType.DNA_SPLICERS", "dna_splicers"),
-
-  MINI_BLACK_HOLE: () => new HeldItemReward(HeldItemId.MINI_BLACK_HOLE),
-
-  VOUCHER: () => new AddVoucherConsumableType(VoucherType.REGULAR, 1),
-  VOUCHER_PLUS: () => new AddVoucherConsumableType(VoucherType.PLUS, 1),
-  VOUCHER_PREMIUM: () => new AddVoucherConsumableType(VoucherType.PREMIUM, 1),
-
   GOLDEN_POKEBALL: () => new TrainerItemReward(TrainerItemId.GOLDEN_POKEBALL),
 
+  // Tokens //TODO: do we even need them here?
   ENEMY_DAMAGE_BOOSTER: () => new TrainerItemReward(TrainerItemId.ENEMY_DAMAGE_BOOSTER),
   ENEMY_DAMAGE_REDUCTION: () => new TrainerItemReward(TrainerItemId.ENEMY_DAMAGE_REDUCTION),
   //ENEMY_SUPER_EFFECT_BOOSTER: () => new Reward('Type Advantage Token', 'Increases damage of super effective attacks by 30%', (type, _args) => new EnemySuperEffectiveDamageBoosterModifier(type, 30), 'wl_custom_super_effective'),
@@ -1552,6 +1665,7 @@ const rewardInitObj = Object.freeze({
   ENEMY_ENDURE_CHANCE: () => new TrainerItemReward(TrainerItemId.ENEMY_ENDURE_CHANCE),
   ENEMY_FUSED_CHANCE: () => new TrainerItemReward(TrainerItemId.ENEMY_FUSED_CHANCE),
 
+  // Items from mystery encounters
   MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD: () => new HeldItemReward(HeldItemId.SHUCKLE_JUICE_GOOD),
   MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD: () => new HeldItemReward(HeldItemId.SHUCKLE_JUICE_BAD),
 
@@ -1599,7 +1713,7 @@ export function regenerateRewardPoolThresholds(party: Pokemon[], poolType: Rewar
           const weightedReward = reward as WeightedReward;
           const itemReward =
             weightedReward.reward instanceof RewardGenerator
-              ? weightedReward.reward.generateType(party)
+              ? weightedReward.reward.generateReward(party)
               : weightedReward.reward;
           const trainerItemfullStack =
             itemReward instanceof TrainerItemReward ? globalScene.trainerItems.isMaxStack(itemReward.itemId) : false;
@@ -1702,11 +1816,9 @@ export function getPlayerRewardOptions(
         let guaranteedMod: Reward = rewardInitObj[rewardId]?.();
 
         // Populates item id and tier
-        guaranteedMod = guaranteedMod
-          .withIdFromFunc(rewardInitObj[rewardId])
-          .withTierFromPool(RewardPoolType.PLAYER, party);
+        guaranteedMod = guaranteedMod.withTierFromPool(RewardPoolType.PLAYER, party);
 
-        const modType = guaranteedMod instanceof RewardGenerator ? guaranteedMod.generateType(party) : guaranteedMod;
+        const modType = guaranteedMod instanceof RewardGenerator ? guaranteedMod.generateReward(party) : guaranteedMod;
         if (modType) {
           const option = new RewardOption(modType, 0);
           options.push(option);
@@ -1791,11 +1903,11 @@ export function overridePlayerRewardOptions(options: RewardOption[], party: Play
 
     if (reward instanceof RewardGenerator) {
       const pregenArgs = "type" in override && override.type !== null ? [override.type] : undefined;
-      reward = reward.generateType(party, pregenArgs);
+      reward = reward.generateReward(party, pregenArgs);
     }
 
     if (reward) {
-      options[i].type = reward.withIdFromFunc(rewardFunc).withTierFromPool(RewardPoolType.PLAYER, party);
+      options[i].type = reward.withTierFromPool(RewardPoolType.PLAYER, party);
     }
   }
 }
@@ -1884,7 +1996,7 @@ function getNewRewardOption(
   }
   let reward: Reward | null = pool[tier][index].reward;
   if (reward instanceof RewardGenerator) {
-    reward = (reward as RewardGenerator).generateType(party);
+    reward = (reward as RewardGenerator).generateReward(party);
     if (reward === null) {
       if (player) {
         console.log(RewardTier[tier], upgradeCount);

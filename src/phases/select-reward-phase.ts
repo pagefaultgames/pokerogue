@@ -3,7 +3,6 @@ import Overrides from "#app/overrides";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import type { RewardTier } from "#enums/reward-tier";
 import { UiMode } from "#enums/ui-mode";
-import type { Consumable } from "#items/consumable";
 import type { CustomRewardSettings, Reward, RewardOption } from "#items/reward";
 import {
   FormChangeItemReward,
@@ -175,7 +174,7 @@ export class SelectRewardPhase extends BattlePhase {
       globalScene.ui.setMode(UiMode.MESSAGE);
       super.end();
     } else {
-      this.applyConsumable(reward.newModifier()!);
+      this.applyConsumable(reward);
     }
     return !cost;
   }
@@ -255,22 +254,23 @@ export class SelectRewardPhase extends BattlePhase {
     return false;
   }
 
+  // TODO: Rework this to work properly with rewards
   /**
    * Apply the effects of the chosen modifier
    * @param modifier - The modifier to apply
    * @param cost - The cost of the modifier if it was purchased, or -1 if selected as the modifier reward
    * @param playSound - Whether the 'obtain modifier' sound should be played when adding the modifier.
    */
-  private applyConsumable(modifier: Consumable, cost = -1, playSound = false): void {
-    const result = globalScene.addModifier(modifier, playSound, undefined, cost);
+  private applyConsumable(reward: Reward, cost = -1, playSound = false): void {
+    const result = globalScene.applyReward(reward, playSound, undefined, cost);
     // Queue a copy of this phase when applying a TM or Memory Mushroom.
     // If the player selects either of these, then escapes out of consuming them,
     // they are returned to a shop in the same state.
-    if (modifier.type instanceof RememberMoveReward || modifier.type instanceof TmReward) {
+    if (reward instanceof RememberMoveReward || reward instanceof TmReward) {
       globalScene.phaseManager.unshiftPhase(this.copy());
     }
 
-    if (cost !== -1 && !(modifier.type instanceof RememberMoveReward)) {
+    if (cost !== -1 && !(reward instanceof RememberMoveReward)) {
       if (result) {
         if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
           globalScene.money -= cost;
@@ -290,7 +290,7 @@ export class SelectRewardPhase extends BattlePhase {
   }
 
   // Opens the party menu specifically for fusions
-  private openFusionMenu(reward: PokemonReward, cost: number, rewardSelectCallback: RewardSelectCallback): void {
+  private openFusionMenu(reward: FusePokemonReward, _cost: number, rewardSelectCallback: RewardSelectCallback): void {
     const party = globalScene.getPlayerParty();
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
@@ -304,8 +304,7 @@ export class SelectRewardPhase extends BattlePhase {
           fromSlotIndex !== spliceSlotIndex
         ) {
           globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
-            const modifier = reward.newModifier(party[fromSlotIndex], party[spliceSlotIndex])!; //TODO: is the bang correct?
-            this.applyConsumable(modifier, cost, true);
+            reward.apply(party[fromSlotIndex], party[spliceSlotIndex]);
           });
         } else {
           this.resetRewardSelect(rewardSelectCallback);
@@ -340,9 +339,9 @@ export class SelectRewardPhase extends BattlePhase {
           globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
             const modifier = !isMoveModifier
               ? !isRememberMoveModifier
-                ? reward.newModifier(party[slotIndex])
-                : reward.newModifier(party[slotIndex], option as number)
-              : reward.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
+                ? reward.apply(party[slotIndex])
+                : reward.apply(party[slotIndex], option as number)
+              : reward.apply(party[slotIndex], option - PartyOption.MOVE_1);
             this.applyConsumable(modifier!, cost, true); // TODO: is the bang correct?
           });
         } else {
@@ -482,9 +481,5 @@ export class SelectRewardPhase extends BattlePhase {
       },
       true,
     );
-  }
-
-  addModifier(modifier: Modifier): boolean {
-    return globalScene.addModifier(modifier, false, true);
   }
 }

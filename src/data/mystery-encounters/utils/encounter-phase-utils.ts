@@ -492,7 +492,7 @@ export function generateReward(modifier: () => Reward, pregenArgs?: any[]): Rewa
     .withIdFromFunc(allRewards[rewardId])
     .withTierFromPool(RewardPoolType.PLAYER, globalScene.getPlayerParty());
 
-  return result instanceof RewardGenerator ? result.generateType(globalScene.getPlayerParty(), pregenArgs) : result;
+  return result instanceof RewardGenerator ? result.generateReward(globalScene.getPlayerParty(), pregenArgs) : result;
 }
 
 /**

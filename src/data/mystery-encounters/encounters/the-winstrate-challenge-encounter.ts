@@ -156,10 +156,10 @@ async function spawnNextTrainerOrEndEncounter() {
     await showEncounterDialogue(`${namespace}:victory`, `${namespace}:speaker`);
 
     // Give 10x Voucher
-    const newModifier = allRewards.VOUCHER_PREMIUM().newModifier();
-    globalScene.addModifier(newModifier);
+    const reward = allRewards.VOUCHER_PREMIUM();
+    globalScene.applyReward(reward);
     globalScene.playSound("item_fanfare");
-    await showEncounterText(i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }));
+    await showEncounterText(i18next.t("battle:rewardGain", { modifierName: reward.name }));
 
     await showEncounterDialogue(`${namespace}:victory_2`, `${namespace}:speaker`);
     globalScene.ui.clearText(); // Clears "Winstrate" title from screen as allRewards get animated in

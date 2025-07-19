@@ -507,22 +507,10 @@ export class TrainerConfig {
     return this;
   }
 
-  // function getRandomTeraModifiers(party: EnemyPokemon[], count: integer, types?: Type[]): PersistentModifier[] {
-  //   const ret: PersistentModifier[] = [];
-  //   const partyMemberIndexes = new Array(party.length).fill(null).map((_, i) => i);
-  //   for (let t = 0; t < Math.min(count, party.length); t++) {
-  //     const randomIndex = Utils.randSeedItem(partyMemberIndexes);
-  //     partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
-  //     ret.push(allRewards.TERA_SHARD().generateType([], [ Utils.randSeedItem(types ? types : party[randomIndex].getTypes()) ])!.withIdFromFunc(allRewards.TERA_SHARD).newModifier(party[randomIndex]) as PersistentModifier); // TODO: is the bang correct?
-  //   }
-  //   return ret;
-  // }
-
   setRewardFuncs(...rewardFuncs: (() => RewardFunc)[]): TrainerConfig {
     this.rewardFuncs = rewardFuncs.map(func => () => {
       const rewardFunc = func();
       const reward = rewardFunc();
-      reward.withIdFromFunc(rewardFunc);
       return reward;
     });
     return this;
