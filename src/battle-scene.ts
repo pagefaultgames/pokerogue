@@ -148,6 +148,14 @@ import {
   randSeedInt,
   shiftCharCodes,
 } from "#utils/common";
+import { deepMergeSpriteData } from "#utils/data";
+import { getEnumValues } from "#utils/enums";
+import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import i18next from "i18next";
+import Phaser from "phaser";
+import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import type UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
 const DEBUG_RNG = false;
 
