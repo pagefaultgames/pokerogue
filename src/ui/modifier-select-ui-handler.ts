@@ -273,12 +273,23 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     // causing errors if reroll is selected
     this.awaitingActionInput = false;
 
-    // TODO: Replace with `Promise.withResolvers` when possible.
-    let tweenResolve: () => void;
-    const tweenPromise = new Promise<void>(resolve => (tweenResolve = resolve));
+    const { promise: tweenPromise, resolve: tweenResolve } = Promise.withResolvers<void>();
     let i = 0;
 
-    // TODO: Rework this bespoke logic for animating the modifier options.
+    // #region: animation
+    /** Holds promises that resolve once each reward's *upgrade animation* has finished playing */
+    const rewardAnimPromises: Promise<void>[] = [];
+    /** Holds promises that resolves once *all* animations for a reward have finished playing */
+    const rewardAnimAllSettledPromises: Promise<void>[] = [];
+
+    /*
+     * A counter here is used instead of a loop to "stagger" the apperance of each reward,
+     * using `sine.easeIn` to speed up the appearance of the rewards as each animation progresses.
+     *
+     * The `onComplete` callback for this tween is set to resolve once the upgrade animations
+     * for each reward has finished playing, allowing for the next set of animations to
+     * start to appear.
+     */
     globalScene.tweens.addCounter({
       ease: "Sine.easeIn",
       duration: 1250,
@@ -288,30 +299,35 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         const index = Math.floor(value * typeOptions.length);
         if (index > i && index <= typeOptions.length) {
           const option = this.options[i];
-          option?.show(
-            Math.floor((1 - value) * 1250) * 0.325 + 2000 * maxUpgradeCount,
-            -(maxUpgradeCount - typeOptions[i].upgradeCount),
-          );
+          if (option) {
+            rewardAnimPromises.push(
+              option.show(
+                Math.floor((1 - value) * 1250) * 0.325 + 2000 * maxUpgradeCount,
+                -(maxUpgradeCount - typeOptions[i].upgradeCount),
+                rewardAnimAllSettledPromises,
+              ),
+            );
+          }
           i++;
         }
       },
       onComplete: () => {
-        tweenResolve();
+        Promise.allSettled(rewardAnimPromises).then(() => tweenResolve());
       },
     });
 
-    let shopResolve: () => void;
-    const shopPromise = new Promise<void>(resolve => (shopResolve = resolve));
-    tweenPromise.then(() => {
-      globalScene.time.delayedCall(1000, () => {
-        for (const shopOption of this.shopOptionsRows.flat()) {
-          shopOption.show(0, 0);
-        }
-        shopResolve();
-      });
+    /** Holds promises that resolve once each shop item has finished animating */
+    const shopAnimPromises: Promise<void>[] = [];
+    globalScene.time.delayedCall(1000 + maxUpgradeCount * 2000, () => {
+      for (const shopOption of this.shopOptionsRows.flat()) {
+        // It is safe to skip awaiting the `show` method here,
+        // as the promise it returns is also part of the promise appended to `shopAnimPromises`,
+        // which is awaited later on.
+        shopOption.show(0, 0, shopAnimPromises);
+      }
     });
 
-    shopPromise.then(() => {
+    tweenPromise.then(() => {
       globalScene.time.delayedCall(500, () => {
         if (partyHasHeldItem) {
           this.transferButtonContainer.setAlpha(0);
@@ -344,30 +360,38 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
           duration: 250,
         });
 
-        const updateCursorTarget = () => {
-          if (globalScene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
-            this.setRowCursor(0);
-            this.setCursor(2);
-          } else if (globalScene.shopCursorTarget === ShopCursorTarget.SHOP && globalScene.gameMode.hasNoShop) {
-            this.setRowCursor(ShopCursorTarget.REWARDS);
-            this.setCursor(0);
-          } else {
-            this.setRowCursor(globalScene.shopCursorTarget);
-            this.setCursor(0);
-          }
-        };
+        // Ensure that the reward animations have completed before allowing input to proceed.
+        // Required to ensure that the user cannot interact with the UI before the animations
+        // have completed, (which, among other things, would allow the GameObjects to be destroyed
+        // before the animations have completed, causing errors).
+        Promise.allSettled([...shopAnimPromises, rewardAnimAllSettledPromises]).then(() => {
+          const updateCursorTarget = () => {
+            if (globalScene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
+              this.setRowCursor(0);
+              this.setCursor(2);
+            } else if (globalScene.shopCursorTarget === ShopCursorTarget.SHOP && globalScene.gameMode.hasNoShop) {
+              this.setRowCursor(ShopCursorTarget.REWARDS);
+              this.setCursor(0);
+            } else {
+              this.setRowCursor(globalScene.shopCursorTarget);
+              this.setCursor(0);
+            }
+          };
 
-        updateCursorTarget();
+          updateCursorTarget();
 
-        handleTutorial(Tutorial.Select_Item).then(res => {
-          if (res) {
-            updateCursorTarget();
-          }
-          this.awaitingActionInput = true;
-          this.onActionInput = args[2];
+          handleTutorial(Tutorial.Select_Item).then(res => {
+            if (res) {
+              updateCursorTarget();
+            }
+            this.awaitingActionInput = true;
+            this.onActionInput = args[2];
+          });
         });
       });
     });
+
+    // #endregion: animation
 
     return true;
   }
@@ -820,7 +844,27 @@ class ModifierOption extends Phaser.GameObjects.Container {
     }
   }
 
-  show(remainingDuration: number, upgradeCountOffset: number) {
+  /**
+   * Start the tweens responsible for animating the option's appearance
+   *
+   * @privateremarks
+   * This method is unusual. It "returns" (one via the actual return, one by via appending to the `promiseHolder`
+   * parameter) two promises. The promise returned by the method resolves once the option's appearance animations have
+   * completed, and is meant to allow callers to synchronize with the completion of the option's appearance animations.
+   * The promise appended to `promiseHolder` resolves once *all* animations started by this method have completed,
+   * ans should be used by callers to ensure that all animations have completed before proceeding.
+   *
+   * @param remainingDuration - The duration in milliseconds that the animation can play for
+   * @param upgradeCountOffset - The offset to apply to the upgrade count for options whose rarity is being upgraded
+   * @param promiseHolder - A promise that resolves once all tweens started by this method have completed will be pushed to this array.
+   * @returns A promise that resolves once the *option's apperance animations* have completed. This promise will resolve _before_ all
+   *   promises that are initiated in this method complete. Instead, the `promiseHolder` array will contain a new promise
+   *   that will resolve once all animations have completed.
+   *
+   */
+  async show(remainingDuration: number, upgradeCountOffset: number, promiseHolder: Promise<void>[]): Promise<void> {
+    /** Promises for the pokeball and upgrade animations */
+    const animPromises: Promise<void>[] = [];
     if (!this.modifierTypeOption.cost) {
       globalScene.tweens.add({
         targets: this.pb,
@@ -857,7 +901,9 @@ class ModifierOption extends Phaser.GameObjects.Container {
 
       // TODO: Figure out proper delay between chains and then convert this into a single tween chain
       // rather than starting multiple tween chains.
+
       for (let u = 0; u < this.modifierTypeOption.upgradeCount; u++) {
+        const { resolve, promise } = Promise.withResolvers<void>();
         globalScene.tweens.chain({
           tweens: [
             {
@@ -874,6 +920,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
               ease: "Sine.easeIn",
               onComplete: () => {
                 this.pb.setTexture("pb", this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount + (u + 1)));
+                resolve();
               },
             },
             {
@@ -882,22 +929,29 @@ class ModifierOption extends Phaser.GameObjects.Container {
               duration: 750,
               ease: "Sine.easeOut",
               onComplete: () => {
+                console.log("pbTint complete");
                 this.pbTint.setVisible(false);
               },
             },
           ],
         });
+        animPromises.push(promise);
       }
     }
 
-    globalScene.time.delayedCall(remainingDuration + 2000, () => {
-      if (!globalScene) {
-        return;
-      }
+    // await new Promise(resolve => globalScene.time.delayedCall(remainingDuration + 2000, resolve));
 
+    // Return a set of animations that should play
+
+    const finalPromises: Promise<void>[] = [];
+    globalScene.time.delayedCall(remainingDuration + 2000, () => {
       if (!this.modifierTypeOption.cost) {
         this.pb.setTexture("pb", `${this.getPbAtlasKey(0)}_open`);
         globalScene.playSound("se/pb_rel");
+
+        const { resolve: pbResolve, promise: pbPromise } = Promise.withResolvers<void>();
+
+        // Shallow copy the current set of promises
 
         globalScene.tweens.add({
           targets: this.pb,
@@ -905,43 +959,70 @@ class ModifierOption extends Phaser.GameObjects.Container {
           delay: 250,
           ease: "Sine.easeIn",
           alpha: 0,
-          onComplete: () => this.pb.destroy(),
+          onComplete: () => {
+            Promise.allSettled(animPromises).then(() => this.pb.destroy());
+            pbResolve();
+          },
         });
+        finalPromises.push(pbPromise);
       }
 
+      const { resolve: itemResolve, promise: itemPromise } = Promise.withResolvers<void>();
       globalScene.tweens.add({
         targets: this.itemContainer,
         duration: 500,
         ease: "Elastic.Out",
         scale: 2,
         alpha: 1,
+        onComplete: () => {
+          itemResolve();
+        },
       });
+      finalPromises.push(itemPromise);
+
       if (!this.modifierTypeOption.cost) {
+        const { resolve: itemTintResolve, promise: itemTintPromise } = Promise.withResolvers<void>();
         globalScene.tweens.add({
           targets: this.itemTint,
           alpha: 0,
           duration: 500,
           ease: "Sine.easeIn",
-          onComplete: () => this.itemTint.destroy(),
+          onComplete: () => {
+            this.itemTint.destroy();
+            itemTintResolve();
+          },
         });
+        finalPromises.push(itemTintPromise);
       }
+
+      const { resolve: itemTextResolve, promise: itemTextPromise } = Promise.withResolvers<void>();
       globalScene.tweens.add({
         targets: this.itemText,
         duration: 500,
         alpha: 1,
         y: 25,
         ease: "Cubic.easeInOut",
+        onComplete: () => itemTextResolve(),
       });
+      finalPromises.push(itemTextPromise);
+
       if (this.itemCostText) {
+        const { resolve: itemCostResolve, promise: itemCostPromise } = Promise.withResolvers<void>();
         globalScene.tweens.add({
           targets: this.itemCostText,
           duration: 500,
           alpha: 1,
           y: 35,
           ease: "Cubic.easeInOut",
+          onComplete: () => itemCostResolve(),
         });
+        finalPromises.push(itemCostPromise);
       }
     });
+    // The `.then` suppresses the return type for the Promise.allSettled so that it returns void.
+    promiseHolder.push(Promise.allSettled([...animPromises, ...finalPromises]).then());
+
+    await Promise.allSettled(animPromises);
   }
 
   getPbAtlasKey(tierOffset = 0) {
