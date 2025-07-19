@@ -8,7 +8,8 @@ import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { SpeciesId } from "#enums/species-id";
 import { PlayerPokemon } from "#field/pokemon";
 import type { Starter } from "#ui/starter-select-ui-handler";
-import { getEnumValues, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
+import { randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 export interface DailyRunConfig {
@@ -165,5 +166,6 @@ export function getDailyStartingBiome(): BiomeId {
   }
 
   // Fallback in case something went wrong
+  // TODO: should this use `randSeedItem`?
   return biomes[randSeedInt(biomes.length)];
 }
