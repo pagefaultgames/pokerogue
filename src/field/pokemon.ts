@@ -2520,41 +2520,50 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns A score value based on how favorable this Pokemon is when fighting the given Pokemon
    */
   getMatchupScore(opponent: Pokemon): number {
-    const types = this.getTypes(true);
-
-    const enemyTypes = opponent.getTypes(true, true, false, true);
+    const enemyTypes = opponent.getTypes(true, false, false, true);
     /** Is this Pokemon faster than the opponent? */
     const outspeed =
       (this.isActive(true) ? this.getEffectiveStat(Stat.SPD, opponent) : this.getStat(Stat.SPD, false)) >=
       opponent.getEffectiveStat(Stat.SPD, this);
-    /**
-     * Based on how effective this Pokemon's types are offensively against the opponent's types.
-     * This score is increased by 25 percent if this Pokemon is faster than the opponent.
-     */
-    let atkScore =
-      opponent.getAttackTypeEffectiveness(types[0], this, false, true, undefined, true) * (outspeed ? 1.25 : 1);
+
     /**
      * Based on how effectively this Pokemon defends against the opponent's types.
      * This score cannot be higher than 4.
      */
     let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0], opponent), 0.25);
-    if (types.length > 1) {
-      atkScore *= opponent.getAttackTypeEffectiveness(types[1], this);
-    }
     if (enemyTypes.length > 1) {
       defScore *=
         1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[1], opponent, false, false, undefined, true), 0.25);
     }
-    atkScore *= 1.25; //give more value for the pokemon's typing
+
     const moveset = this.moveset;
     let moveAtkScoreLength = 0;
+    let atkScore = 0;
+    // TODO: this calculation needs to consider more factors; it's currently very simplistic
     for (const move of moveset) {
-      if (move.getMove().category === MoveCategory.SPECIAL || move.getMove().category === MoveCategory.PHYSICAL) {
-        atkScore += opponent.getAttackTypeEffectiveness(move.getMove().type, this, false, true, undefined, true);
-        moveAtkScoreLength++;
+      const resolvedMove = move.getMove();
+      // NOTE: Counter and Mirror Coat are considered as attack moves here
+      if (resolvedMove.category === MoveCategory.STATUS || move.getPpRatio() <= 0) {
+        continue;
       }
+      const moveType = resolvedMove.type;
+      let thisScore = opponent.getAttackTypeEffectiveness(moveType, this, false, true, undefined, true);
+
+      // Add STAB multiplier for attack type effectiveness.
+      // For now, simply don't apply STAB to moves that may change type
+      if (this.getTypes(true).includes(moveType) && !move.getMove().hasAttr("VariableMoveTypeAttr")) {
+        thisScore *= 1.5;
+      }
+
+      atkScore += thisScore;
+      moveAtkScoreLength++;
     }
-    atkScore = atkScore / (moveAtkScoreLength + 1); //calculate the median for the attack score
+    // Get average attack score of all damaging moves (|| 1 prevents division by zero))
+    // TODO: Averaging the attack score is excessively simplistic, and doesn't reflect the AI's move selection logic
+    // e.g. if the mon has one 4x effective move and three 0.5x effective moves, this score would be ~1.375
+    // which does not seem fair, given that if the AI were to switch, in all likelihood it would use the 4x move.
+    // We could consider a weighted average...
+    atkScore /= moveAtkScoreLength || 1;
     /**
      * Based on this Pokemon's HP ratio compared to that of the opponent.
      * This ratio is multiplied by 1.5 if this Pokemon outspeeds the opponent;
@@ -2562,6 +2571,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
      */
     const hpRatio = this.getHpRatio();
     const oppHpRatio = opponent.getHpRatio();
+    // TODO: use better logic for predicting whether the pokemon "is dying"
+    // E.g., perhaps check if it would faint if the opponent were to use the same move it just used
+    // (twice if the user is slower)
     const isDying = hpRatio <= 0.2;
     let hpDiffRatio = hpRatio + (1 - oppHpRatio);
     if (isDying && this.isActive(true)) {
@@ -2571,15 +2583,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         //It might not be a worthy sacrifice if it doesn't outspeed or doesn't do enough damage
         hpDiffRatio *= 0.85;
       } else {
-        hpDiffRatio = Math.min(1 - hpRatio + (outspeed ? 0.2 : 0.1), 1);
+        hpDiffRatio = 1 - hpRatio + (outspeed ? 0.2 : 0.1);
       }
     } else if (outspeed) {
-      hpDiffRatio = Math.min(hpDiffRatio * 1.25, 1);
+      hpDiffRatio = hpDiffRatio * 1.25;
     } else if (hpRatio > 0.2 && hpRatio <= 0.4) {
-      //Might be considered to be switched because it's not in low enough health
-      hpDiffRatio = Math.min(hpDiffRatio * 0.5, 1);
+      // Might be considered to be switched because it's not in low enough health
+      hpDiffRatio = hpDiffRatio * 0.5;
     }
-    return (atkScore + defScore) * hpDiffRatio;
+    return (atkScore + defScore) * Math.min(hpDiffRatio, 1);
   }
 
   getEvolution(): SpeciesFormEvolution | null {
@@ -3370,10 +3382,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getOpponentDescriptor(): string {
-    const opponents = this.getOpponents();
-    if (opponents.length === 1) {
-      return opponents[0].name;
-    }
     return this.isPlayer() ? i18next.t("arenaTag:opposingTeam") : i18next.t("arenaTag:yourTeam");
   }
 

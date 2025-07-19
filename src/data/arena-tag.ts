@@ -1117,7 +1117,6 @@ export class TrickRoomTag extends ArenaTag {
     globalScene.phaseManager.queueMessage(
       i18next.t("arenaTag:trickRoomOnAdd", {
         moveName: this.getMoveName(),
-        opponentDesc: source.getOpponentDescriptor(),
       }),
     );
   }
