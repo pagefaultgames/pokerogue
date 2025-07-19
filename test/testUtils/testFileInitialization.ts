@@ -2,7 +2,6 @@ import { initAbilities } from "#abilities/ability";
 import { initLoggedInUser } from "#app/account";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { initBiomes } from "#balance/biomes";
-import { initEggMoves } from "#balance/egg-moves";
 import { initPokemonPrevolutions, initPokemonStarters } from "#balance/pokemon-evolutions";
 import { initPokemonForms } from "#data/pokemon-forms";
 import { initSpecies } from "#data/pokemon-species";
@@ -97,7 +96,6 @@ export function initTestFile() {
     initStatsKeys();
     initPokemonPrevolutions();
     initBiomes();
-    initEggMoves();
     initPokemonForms();
     initSpecies();
     initMoves();

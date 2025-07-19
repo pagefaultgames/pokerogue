@@ -3,7 +3,6 @@ import { timedEventManager } from "#app/global-event-manager";
 import { SceneBase } from "#app/scene-base";
 import { isMobile } from "#app/touch-controls";
 import { initBiomes } from "#balance/biomes";
-import { initEggMoves } from "#balance/egg-moves";
 import { initPokemonPrevolutions, initPokemonStarters } from "#balance/pokemon-evolutions";
 import { initChallenges } from "#data/challenge";
 import { initTrainerTypeDialogue } from "#data/dialogue";
@@ -375,7 +374,6 @@ export class LoadingScene extends SceneBase {
     initPokemonPrevolutions();
     initPokemonStarters();
     initBiomes();
-    initEggMoves();
     initPokemonForms();
     initTrainerTypeDialogue();
     initSpecies();
