@@ -1,35 +1,35 @@
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
+import type { BattleScene } from "#app/battle-scene";
+import * as BattleAnims from "#data/battle-anims";
+import { Gender } from "#data/gender";
+import { Status } from "#data/status-effect";
+import { AbilityId } from "#enums/ability-id";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
+import { MoveId } from "#enums/move-id";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { FieryFalloutEncounter } from "#app/data/mystery-encounters/encounters/fiery-fallout-encounter";
-import { Gender } from "#app/data/gender";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import * as BattleAnims from "#app/data/battle-anims";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { StatusEffect } from "#enums/status-effect";
+import { AttackTypeBoosterModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
+import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
+import { FieryFalloutEncounter } from "#mystery-encounters/fiery-fallout-encounter";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { CommandPhase } from "#phases/command-phase";
+import { MovePhase } from "#phases/move-phase";
+import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { MoveId } from "#enums/move-id";
-import type BattleScene from "#app/battle-scene";
-import { AttackTypeBoosterModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { PokemonType } from "#enums/pokemon-type";
-import { Status } from "#app/data/status-effect";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { GameManager } from "#test/testUtils/gameManager";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MovePhase } from "#app/phases/move-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { AbilityId } from "#enums/ability-id";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
-import { StatusEffect } from "#enums/status-effect";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/fieryFallout";
 /** Arcanine and Ninetails for 2 Fire types. Lapras, Gengar, Abra for burnable mon. */

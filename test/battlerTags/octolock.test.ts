@@ -1,10 +1,10 @@
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import type Pokemon from "#app/field/pokemon";
-import { OctolockTag, TrappedTag } from "#app/data/battler-tags";
+import { OctolockTag, TrappedTag } from "#data/battler-tags";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import type { Pokemon } from "#field/pokemon";
+import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 describe("BattlerTag - OctolockTag", () => {
   describe("lapse behavior", () => {

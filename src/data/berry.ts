@@ -1,14 +1,14 @@
-import { getPokemonNameWithAffix } from "../messages";
-import type Pokemon from "../field/pokemon";
-import { HitResult } from "#enums/hit-result";
-import { getStatusEffectHealText } from "./status-effect";
-import { NumberHolder, toDmgValue, randSeedInt } from "#app/utils/common";
-import { applyAbAttrs } from "./abilities/apply-ab-attrs";
-import i18next from "i18next";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { getStatusEffectHealText } from "#data/status-effect";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
-import { Stat, type BattleStat } from "#app/enums/stat";
-import { globalScene } from "#app/global-scene";
+import { HitResult } from "#enums/hit-result";
+import { type BattleStat, Stat } from "#enums/stat";
+import type { Pokemon } from "#field/pokemon";
+import { NumberHolder, randSeedInt, toDmgValue } from "#utils/common";
+import i18next from "i18next";
 
 export function getBerryName(berryType: BerryType): string {
   return i18next.t(`berry:${BerryType[berryType]}.name`);

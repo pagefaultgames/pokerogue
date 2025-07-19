@@ -1,21 +1,21 @@
 import { globalScene } from "#app/global-scene";
-import { Gender, getGenderSymbol } from "#app/data/gender";
-import { PokeballType } from "#enums/pokeball";
-import type Pokemon from "#app/field/pokemon";
-import { PokemonType } from "#enums/pokemon-type";
-import { coerceArray, isNullOrUndefined, randSeedInt } from "#app/utils/common";
-import { WeatherType } from "#enums/weather-type";
-import { Nature } from "#enums/nature";
+import { speciesStarterCosts } from "#balance/starters";
+import { allMoves } from "#data/data-lists";
+import { Gender, getGenderSymbol } from "#data/gender";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
+import { Nature } from "#enums/nature";
+import { PokeballType } from "#enums/pokeball";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
+import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
-import type { SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#app/modifier/modifier-type";
-import { speciesStarterCosts } from "./starters";
+import { WeatherType } from "#enums/weather-type";
+import type { Pokemon } from "#field/pokemon";
+import type { SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#modifiers/modifier-type";
+import { coerceArray, isNullOrUndefined, randSeedInt } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
-import { allMoves } from "#app/data/data-lists";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,
@@ -1630,7 +1630,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.TSAREENA, 28, null, {key: EvoCondKey.MOVE, move: MoveId.STOMP}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.POIPOLE]: [
-    new SpeciesEvolution(SpeciesId.NAGANADEL, 1, null, {key: EvoCondKey.MOVE, move: MoveId.DRAGON_PULSE}, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.NAGANADEL, 1, null, {key: EvoCondKey.MOVE, move: MoveId.DRAGON_PULSE}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.ALOLA_SANDSHREW]: [
     new SpeciesEvolution(SpeciesId.ALOLA_SANDSLASH, 1, EvolutionItem.ICE_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1845,7 +1845,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.LEAVANNY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 120}, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.TYPE_NULL]: [
-    new SpeciesEvolution(SpeciesId.SILVALLY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 100}, SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.SILVALLY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 100}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.ALOLA_MEOWTH]: [
     new SpeciesEvolution(SpeciesId.ALOLA_PERSIAN, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 120}, SpeciesWildEvolutionDelay.LONG)

@@ -1,45 +1,44 @@
-import { starterColors } from "#app/global-vars/starter-colors";
-import { globalScene } from "#app/global-scene";
-import { UiMode } from "#enums/ui-mode";
-import UiHandler from "#app/ui/ui-handler";
-import {
-  getLocalizedSpriteKey,
-  rgbHexToRgba,
-  padInt,
-  getEnumValues,
-  fixedInt,
-  isNullOrUndefined,
-  toReadableString,
-  formatStat,
-  getShinyDescriptor,
-} from "#app/utils/common";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
-import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
-import { argbFromRgba } from "@material/material-color-utilities";
-import { getTypeRgb } from "#app/data/type";
-import { PokemonType } from "#enums/pokemon-type";
-import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "#app/ui/text";
-import type Move from "#app/data/moves/move";
-import { MoveCategory } from "#enums/MoveCategory";
-import { getPokeballAtlasKey } from "#app/data/pokeball";
-import { getGenderColor, getGenderSymbol } from "#app/data/gender";
-import { getLevelRelExp, getLevelTotalExp } from "#app/data/exp";
-import { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { StatusEffect } from "#enums/status-effect";
-import { getBiomeName } from "#app/data/balance/biomes";
-import { getNatureName, getNatureStatMultiplier } from "#app/data/nature";
+import type { Ability } from "#abilities/ability";
 import { loggedInUser } from "#app/account";
-import type { Variant } from "#app/sprites/variant";
-import { getVariantTint } from "#app/sprites/variant";
+import { globalScene } from "#app/global-scene";
+import { starterColors } from "#app/global-vars/starter-colors";
+import { getBiomeName } from "#balance/biomes";
+import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
+import { getLevelRelExp, getLevelTotalExp } from "#data/exp";
+import { getGenderColor, getGenderSymbol } from "#data/gender";
+import { getNatureName, getNatureStatMultiplier } from "#data/nature";
+import { getPokeballAtlasKey } from "#data/pokeball";
+import { getTypeRgb } from "#data/type";
 import { Button } from "#enums/buttons";
-import type { Ability } from "#app/data/abilities/ability";
-import i18next from "i18next";
-import { modifierSortFunc } from "#app/modifier/modifier";
-import { PlayerGender } from "#enums/player-gender";
-import { Stat, PERMANENT_STATS, getStatKey } from "#enums/stat";
+import { MoveCategory } from "#enums/MoveCategory";
 import { Nature } from "#enums/nature";
-import { achvs } from "#app/system/achv";
+import { PlayerGender } from "#enums/player-gender";
+import { PokemonType } from "#enums/pokemon-type";
+import { getStatKey, PERMANENT_STATS, Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { UiMode } from "#enums/ui-mode";
+import type { PlayerPokemon } from "#field/pokemon";
+import { modifierSortFunc, PokemonHeldItemModifier } from "#modifiers/modifier";
+import type { Move } from "#moves/move";
+import type { PokemonMove } from "#moves/pokemon-move";
+import type { Variant } from "#sprites/variant";
+import { getVariantTint } from "#sprites/variant";
+import { achvs } from "#system/achv";
+import { addBBCodeTextObject, addTextObject, getBBCodeFrag, TextStyle } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import {
+  fixedInt,
+  formatStat,
+  getLocalizedSpriteKey,
+  getShinyDescriptor,
+  isNullOrUndefined,
+  padInt,
+  rgbHexToRgba,
+  toReadableString,
+} from "#utils/common";
+import { getEnumValues } from "#utils/enums";
+import { argbFromRgba } from "@material/material-color-utilities";
+import i18next from "i18next";
 
 enum Page {
   PROFILE,
@@ -64,7 +63,7 @@ interface abilityContainer {
   descriptionText: Phaser.GameObjects.Text | null;
 }
 
-export default class SummaryUiHandler extends UiHandler {
+export class SummaryUiHandler extends UiHandler {
   private summaryUiMode: SummaryUiMode;
 
   private summaryContainer: Phaser.GameObjects.Container;

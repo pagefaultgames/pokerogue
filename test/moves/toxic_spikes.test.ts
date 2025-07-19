@@ -1,14 +1,14 @@
-import type { ArenaTrapTag } from "#app/data/arena-tag";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import type { SessionSaveData } from "#app/system/game-data";
-import { GameData } from "#app/system/game-data";
-import { decrypt, encrypt } from "#app/utils/data";
+import type { ArenaTrapTag } from "#data/arena-tag";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import type { SessionSaveData } from "#system/game-data";
+import { GameData } from "#system/game-data";
+import { GameManager } from "#test/testUtils/gameManager";
+import { decrypt, encrypt } from "#utils/data";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 

@@ -234,7 +234,7 @@ export const speciesStarterCosts = {
   [SpeciesId.KYOGRE]: 9,
   [SpeciesId.GROUDON]: 9,
   [SpeciesId.RAYQUAZA]: 9,
-  [SpeciesId.JIRACHI]: 7,
+  [SpeciesId.JIRACHI]: 6,
   [SpeciesId.DEOXYS]: 7,
 
   [SpeciesId.TURTWIG]: 3,
@@ -319,7 +319,7 @@ export const speciesStarterCosts = {
   [SpeciesId.SANDILE]: 4,
   [SpeciesId.DARUMAKA]: 4,
   [SpeciesId.MARACTUS]: 2,
-  [SpeciesId.DWEBBLE]: 2,
+  [SpeciesId.DWEBBLE]: 3,
   [SpeciesId.SCRAGGY]: 3,
   [SpeciesId.SIGILYPH]: 4,
   [SpeciesId.YAMASK]: 3,

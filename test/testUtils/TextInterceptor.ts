@@ -1,7 +1,7 @@
 /**
  * Class will intercept any text or dialogue message calls and log them for test purposes
  */
-export default class TextInterceptor {
+export class TextInterceptor {
   private scene;
   public logs: string[] = [];
   constructor(scene) {

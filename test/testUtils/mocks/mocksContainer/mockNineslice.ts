@@ -1,6 +1,6 @@
-import MockContainer from "#test/testUtils/mocks/mocksContainer/mockContainer";
+import { MockContainer } from "#test/testUtils/mocks/mocksContainer/mockContainer";
 
-export default class MockNineslice extends MockContainer {
+export class MockNineslice extends MockContainer {
   private texture;
   private leftWidth;
   private rightWidth;
