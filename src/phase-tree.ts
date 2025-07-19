@@ -1,29 +1,33 @@
 import type { PhaseConditionFunc } from "#app/@types/phase-condition";
 import type { PhaseMap, PhaseString } from "#app/@types/phase-types";
 import type { Phase } from "#app/phase";
+import { isNullOrUndefined } from "#app/utils/common";
 
 export class PhaseTree {
   private levels: Phase[][];
   private currentLevel: number;
-  // may diverge from currentLevel if a deferred phase is unshifted
-  private addLevel: number;
 
   constructor() {
     this.currentLevel = 0;
-    this.addLevel = this.currentLevel;
     this.levels = [[]];
   }
 
   private add(phase: Phase, level: number) {
-    if (level >= this.levels.length - 1) {
-      this.levels.push([]);
+    const addLevel = this.levels[level];
+    if (isNullOrUndefined(addLevel)) {
+      throw new Error("Attempted to add a phase to a nonexistent level of the PhaseTree");
     }
     this.levels[level].push(phase);
   }
 
   public addPhase(phase: Phase, defer = false): void {
-    this.add(phase, this.addLevel + 1);
-    this.addLevel += +defer;
+    if (defer) {
+      // Move the highest level up and insert the deferred phase under it
+      this.levels.push(this.levels.at(-1) ?? []);
+      this.levels.splice(-2, 1, [phase]);
+      return;
+    }
+    this.add(phase, this.levels.length - 1);
   }
 
   public unshiftToCurrent(phase: Phase): void {
@@ -41,7 +45,7 @@ export class PhaseTree {
       this.currentLevel--;
     }
 
-    this.addLevel = this.currentLevel;
+    this.levels.push([]);
     return this.levels[this.currentLevel].shift();
   }
 
