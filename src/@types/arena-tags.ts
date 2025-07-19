@@ -23,30 +23,11 @@ export type TurnProtectArenaTagType =
   | ArenaTagType.MAT_BLOCK
   | ArenaTagType.CRAFTY_SHIELD;
 
-/** Subset of {@linkcode ArenaTagType}s that may persist across turns, and thus may be serialized in `SessionSaveData` */
-export type SerializableArenaTagType =
-  | ArenaDelayedAttackTagType
-  | ArenaScreenTagType
-  | ArenaTrapTagType
-  | ArenaTagType.MUD_SPORT
-  | ArenaTagType.WATER_SPORT
-  | ArenaTagType.MIST
-  | ArenaTagType.WISH
-  | ArenaTagType.GRAVITY
-  | ArenaTagType.TRICK_ROOM
-  | ArenaTagType.SAFEGUARD
-  | ArenaTagType.TAILWIND
-  | ArenaTagType.HAPPY_HOUR
-  | ArenaTagType.FIRE_GRASS_PLEDGE
-  | ArenaTagType.WATER_FIRE_PLEDGE
-  | ArenaTagType.GRASS_WATER_PLEDGE
-  | ArenaTagType.FAIRY_LOCK
-  | ArenaTagType.NEUTRALIZING_GAS
-  | ArenaTagType.NO_CRIT
-  | ArenaTagType.IMPRISON;
-
 /** Subset of {@linkcode ArenaTagType}s that cannot persist across turns, and thus should not be serialized in `SessionSaveData`. */
 export type NonSerializableArenaTagType = ArenaTagType.NONE | TurnProtectArenaTagType | ArenaTagType.ION_DELUGE;
+
+/** Subset of {@linkcode ArenaTagType}s that may persist across turns, and thus may be serialized in `SessionSaveData` */
+export type SerializableArenaTagType = Exclude<ArenaTagType, NonSerializableArenaTagType>;
 
 /**
  * Type-safe representation of the serializable data of an ArenaTag
@@ -59,6 +40,8 @@ export type ArenaTagTypeData = NonFunctionProperties<
 
 /** Dummy, typescript-only declaration to ensure that
  * {@linkcode ArenaTagTypeMap} has a map for all ArenaTagTypes.
+ *
+ * If an arena tag is missing from the map, typescript will throw an error on this statement.
  *
  * ⚠️ Does not actually exist at runtime, so it must not be used!
  */

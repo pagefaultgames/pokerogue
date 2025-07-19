@@ -50,8 +50,9 @@ A static property is also acceptable, though static properties are less ergonomi
 
 If the data is mutable (i.e. it can change over the course of the tag's lifetime), then it *must*
 be defined as a field, and it must be set in the `loadTag` method.
-Such fields cannot be marked as `private/protected`, as if they were, typescript would complain
-that the class does not properly implement the `SerializedTag` interface.
+Such fields cannot be marked as `private/protected`, as if they were, typescript would omit them from
+types that are based off of the class, namely, `ArenaTagTypeData`. It is preferrable to trade the
+type-safety of private/protected fields for the type safety when deserializing arena tags from save data.
 
 For data that is mutable only within a turn (e.g. SuppressAbilitiesTag's beingRemoved field),
 where it does not make sense to be serialized, the field should use ES2020's private field syntax (a `#` prepended to the field name).
@@ -596,9 +597,11 @@ export class NoCritTag extends SerializableArenaTag {
  * Heals the Pokémon in the user's position the turn after Wish is used.
  */
 class WishTag extends SerializableArenaTag {
+  // The following fields are meant to be inwardly mutable, but outwardly immutable.
   readonly battlerIndex: BattlerIndex;
   readonly healHp: number;
   readonly sourceName: string;
+  // End inwardly mutable fields
 
   public readonly tagType = ArenaTagType.WISH;
 
@@ -1548,6 +1551,7 @@ export class FairyLockTag extends SerializableArenaTag {
  * @sealed
  */
 export class SuppressAbilitiesTag extends SerializableArenaTag {
+  // Source count is allowed to be inwardly mutable, but outwardly immutable
   public readonly sourceCount: number;
   public readonly tagType = ArenaTagType.NEUTRALIZING_GAS;
   // Private field prevents field from appearing during serialization
