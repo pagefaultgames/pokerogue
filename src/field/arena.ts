@@ -935,6 +935,7 @@ export function getBiomeKey(biome: BiomeId): string {
 
 export function getBiomeHasProps(biomeType: BiomeId): boolean {
   switch (biomeType) {
+    case BiomeId.PLAINS:
     case BiomeId.METROPOLIS:
     case BiomeId.BEACH:
     case BiomeId.LAKE:
