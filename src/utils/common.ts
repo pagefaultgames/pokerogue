@@ -1,18 +1,26 @@
+import { pokerogueApi } from "#api/pokerogue-api";
 import { MoneyFormat } from "#enums/money-format";
 import { MoveId } from "#enums/move-id";
+import type { Variant } from "#sprites/variant";
 import i18next from "i18next";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import type { Variant } from "#app/sprites/variant";
 
 export type nil = null | undefined;
 
 export const MissingTextureKey = "__MISSING";
 
+// TODO: Draft tests for these utility functions
+// TODO: Break up this file
+/**
+ * Convert a `snake_case` string in any capitalization (such as one from an enum reverse mapping)
+ * into a readable `Title Case` version.
+ * @param str - The snake case string to be converted.
+ * @returns The result of converting `str` into title case.
+ */
 export function toReadableString(str: string): string {
   return str
     .replace(/_/g, " ")
     .split(" ")
-    .map(s => `${s.slice(0, 1)}${s.slice(1).toLowerCase()}`)
+    .map(s => capitalizeFirstLetter(s.toLowerCase()))
     .join(" ");
 }
 
@@ -273,18 +281,6 @@ export function formatStat(stat: number, forHp = false): string {
   return formatLargeNumber(stat, forHp ? 100000 : 1000000);
 }
 
-export function getEnumKeys(enumType: any): string[] {
-  return Object.values(enumType)
-    .filter(v => Number.isNaN(Number.parseInt(v!.toString())))
-    .map(v => v!.toString());
-}
-
-export function getEnumValues(enumType: any): number[] {
-  return Object.values(enumType)
-    .filter(v => !Number.isNaN(Number.parseInt(v!.toString())))
-    .map(v => Number.parseInt(v!.toString()));
-}
-
 export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null> {
   return condition ? promiseFunc() : new Promise<T | null>(resolve => resolve(null));
 }
@@ -341,6 +337,10 @@ export class NumberHolder {
   constructor(value: number) {
     this.value = value;
   }
+
+  valueOf(): number {
+    return this.value;
+  }
 }
 
 export class FixedInt {
@@ -348,6 +348,10 @@ export class FixedInt {
 
   constructor(value: number) {
     this.value = value;
+  }
+
+  [Symbol.toPrimitive](_hint: string): number {
+    return this.value;
   }
 }
 
@@ -635,26 +639,4 @@ export function getShinyDescriptor(variant: Variant): string {
 export function coerceArray<T>(input: T): T extends any[] ? T : [T];
 export function coerceArray<T>(input: T): T | [T] {
   return Array.isArray(input) ? input : [input];
-}
-
-/**
- * Returns the name of the key that matches the enum [object] value.
- * @param input - The enum [object] to check
- * @param val - The value to get the key of
- * @returns The name of the key with the specified value
- * @example
- * const thing = {
- *   one: 1,
- *   two: 2,
- * } as const;
- * console.log(enumValueToKey(thing, thing.two)); // output: "two"
- * @throws An `Error` if an invalid enum value is passed to the function
- */
-export function enumValueToKey<T extends Record<string, string | number>>(input: T, val: T[keyof T]): keyof T {
-  for (const [key, value] of Object.entries(input)) {
-    if (val === value) {
-      return key as keyof T;
-    }
-  }
-  throw new Error(`Invalid value passed to \`enumValueToKey\`! Value: ${val}`);
 }

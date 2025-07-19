@@ -1,35 +1,32 @@
-import { UiMode } from "#enums/ui-mode";
-import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import { hasTouchscreen } from "#app/touch-controls";
-import { updateWindowType } from "#app/ui/ui-theme";
-import { CandyUpgradeNotificationChangedEvent } from "#app/events/battle-scene";
-import type SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
-import { isLocal } from "#app/utils/common";
+import { UiMode } from "#enums/ui-mode";
+import { CandyUpgradeNotificationChangedEvent } from "#events/battle-scene";
+import type { SettingsUiHandler } from "#ui/settings-ui-handler";
+import { updateWindowType } from "#ui/ui-theme";
+import { isLocal } from "#utils/common";
+import i18next from "i18next";
 
-const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) =>
-  i
-    ? {
-        value: (i * 10).toString(),
-        label: (i * 10).toString(),
-      }
-    : {
-        value: "Mute",
-        label: i18next.t("settings:mute"),
-      },
-);
+const VOLUME_OPTIONS: SettingOption[] = [
+  {
+    value: "Mute",
+    label: i18next.t("settings:mute"),
+  },
+];
+for (let i = 1; i < 11; i++) {
+  const value = (i * 10).toString();
+  VOLUME_OPTIONS.push({ value, label: value });
+}
 
-const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(9).fill(null).map((_, i) => {
+const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = [];
+for (let i = 0; i < 9; i++) {
   const value = ((i + 1) * 10).toString();
-  return {
-    value,
-    label: value,
-  };
-});
+  SHOP_OVERLAY_OPACITY_OPTIONS.push({ value, label: value });
+}
 
 const OFF_ON: SettingOption[] = [
   {
@@ -181,6 +178,12 @@ export const SettingKeys = {
 export enum MusicPreference {
   GENFIVE,
   ALLGENS,
+}
+
+const windowTypeOptions: SettingOption[] = [];
+for (let i = 0; i < 5; i++) {
+  const value = (i + 1).toString();
+  windowTypeOptions.push({ value, label: value });
 }
 
 /**
@@ -432,13 +435,7 @@ export const Setting: Array<Setting> = [
   {
     key: SettingKeys.Window_Type,
     label: i18next.t("settings:windowType"),
-    options: new Array(5).fill(null).map((_, i) => {
-      const windowType = (i + 1).toString();
-      return {
-        value: windowType,
-        label: windowType,
-      };
-    }),
+    options: windowTypeOptions,
     default: 0,
     type: SettingType.DISPLAY,
   },

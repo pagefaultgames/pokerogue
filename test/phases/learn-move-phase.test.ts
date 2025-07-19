@@ -1,11 +1,11 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/testUtils/gameManager";
-import { SpeciesId } from "#enums/species-id";
+import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { Button } from "#app/enums/buttons";
+import { LearnMovePhase } from "#phases/learn-move-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Learn Move Phase", () => {
   let phaserGame: Phaser.Game;

@@ -1,10 +1,10 @@
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
-import { FieldPhase } from "#app/phases/field-phase";
-import { NumberHolder } from "#app/utils/common";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { FieldPhase } from "#phases/field-phase";
+import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 import { ArenaTagType } from "#enums/arena-tag-type";
 

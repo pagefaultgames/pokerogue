@@ -1,16 +1,16 @@
-import { Stat } from "#enums/stat";
-import { TerrainType } from "#app/data/terrain";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { allMoves } from "#data/data-lists";
+import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { RandomMoveAttr } from "#moves/move";
+import { MoveEndPhase } from "#phases/move-end-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { RandomMoveAttr } from "#app/data/moves/move";
-import { allMoves } from "#app/data/data-lists";
 
 // See also: TypeImmunityAbAttr
 describe("Abilities - Sap Sipper", () => {

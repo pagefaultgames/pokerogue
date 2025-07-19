@@ -1,26 +1,26 @@
+import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import type { Arena } from "#app/field/arena";
-import { PokemonType } from "#enums/pokemon-type";
-import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils/common";
-import { allMoves } from "./data-lists";
-import { MoveTarget } from "#enums/MoveTarget";
-import { MoveCategory } from "#enums/MoveCategory";
 import { getPokemonNameWithAffix } from "#app/messages";
-import type Pokemon from "#app/field/pokemon";
-import { HitResult } from "#enums/hit-result";
-import { StatusEffect } from "#enums/status-effect";
-import type { BattlerIndex } from "#enums/battler-index";
-import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "./abilities/apply-ab-attrs";
-import { Stat } from "#enums/stat";
-import { CommonBattleAnim } from "#app/data/battle-anims";
-import { CommonAnim } from "#enums/move-anims-common";
-import i18next from "i18next";
+import { CommonBattleAnim } from "#data/battle-anims";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { MoveId } from "#enums/move-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import type { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { HitResult } from "#enums/hit-result";
+import { MoveCategory } from "#enums/MoveCategory";
+import { MoveTarget } from "#enums/MoveTarget";
+import { CommonAnim } from "#enums/move-anims-common";
+import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
+import { PokemonType } from "#enums/pokemon-type";
+import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import type { Arena } from "#field/arena";
+import type { Pokemon } from "#field/pokemon";
+import { BooleanHolder, NumberHolder, toDmgValue } from "#utils/common";
+import i18next from "i18next";
 
 /** biome-ignore lint/correctness/noUnusedImports: Type-only import for doc comment */
 import type { BattlerTag } from "#app/data/battler-tags";
@@ -1205,7 +1205,6 @@ export class TrickRoomTag extends ArenaTag {
     globalScene.phaseManager.queueMessage(
       i18next.t("arenaTag:trickRoomOnAdd", {
         moveName: this.getMoveName(),
-        opponentDesc: source.getOpponentDescriptor(),
       }),
     );
   }

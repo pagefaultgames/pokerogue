@@ -1,16 +1,16 @@
 import type {
   AttackMove,
-  StatusMove,
-  SelfStatusMove,
   ChargingAttackMove,
   ChargingSelfStatusMove,
-  MoveAttrConstructorMap,
   MoveAttr,
-} from "#app/data/moves/move";
+  MoveAttrConstructorMap,
+  SelfStatusMove,
+  StatusMove,
+} from "#moves/move";
 
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
-export type * from "#app/data/moves/move";
+export type * from "#moves/move";
 
 /**
  * Map of move subclass names to their respective classes.

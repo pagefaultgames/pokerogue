@@ -1,4 +1,4 @@
-import type { PostDancingMoveAbAttr } from "#app/data/abilities/ability";
+import type { PostDancingMoveAbAttr } from "#abilities/ability";
 import type { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import type { DelayedAttackAttr } from "#app/@types/move-types";
 

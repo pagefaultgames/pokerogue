@@ -1,14 +1,14 @@
-import { SettingKeys } from "#app/system/settings/settings";
-import type { SystemSaveData, SessionSaveData } from "#app/system/game-data";
 import { defaultStarterSpecies } from "#app/constants";
+import { allSpecies } from "#data/data-lists";
+import { CustomPokemonData } from "#data/pokemon-data";
 import { AbilityAttr } from "#enums/ability-attr";
 import { DexAttr } from "#enums/dex-attr";
-import { allSpecies } from "#app/data/data-lists";
-import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
-import { isNullOrUndefined } from "#app/utils/common";
-import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
-import type { SettingsSaveMigrator } from "#app/@types/SettingsSaveMigrator";
-import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";
+import type { SessionSaveData, SystemSaveData } from "#system/game-data";
+import { SettingKeys } from "#system/settings";
+import type { SessionSaveMigrator } from "#types/SessionSaveMigrator";
+import type { SettingsSaveMigrator } from "#types/SettingsSaveMigrator";
+import type { SystemSaveMigrator } from "#types/SystemSaveMigrator";
+import { isNullOrUndefined } from "#utils/common";
 
 /**
  * Migrate ability starter data if empty for caught species.
@@ -95,7 +95,7 @@ const fixStarterData: SystemSaveMigrator = {
   },
 };
 
-export const systemMigrators: Readonly<SystemSaveMigrator[]> = [
+export const systemMigrators: readonly SystemSaveMigrator[] = [
   migrateAbilityData,
   fixLegendaryStats,
   fixStarterData,
@@ -118,7 +118,7 @@ const fixRerollTarget: SettingsSaveMigrator = {
   },
 };
 
-export const settingsMigrators: Readonly<SettingsSaveMigrator[]> = [fixRerollTarget] as const;
+export const settingsMigrators: readonly SettingsSaveMigrator[] = [fixRerollTarget] as const;
 
 /**
  *  Converts old lapsing modifiers (battle items, lures, and Dire Hit) and
@@ -206,4 +206,4 @@ const migrateCustomPokemonData: SessionSaveMigrator = {
   },
 };
 
-export const sessionMigrators: Readonly<SessionSaveMigrator[]> = [migrateModifiers, migrateCustomPokemonData] as const;
+export const sessionMigrators: readonly SessionSaveMigrator[] = [migrateModifiers, migrateCustomPokemonData] as const;
