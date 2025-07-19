@@ -1440,7 +1440,7 @@ export default class BattleScene extends SceneBase {
     }
 
     if (lastBattle?.double && !newDouble) {
-      this.phaseManager.tryRemovePhase((p: Phase) => p.is("SwitchPhase"));
+      this.phaseManager.tryRemovePhase("SwitchPhase", () => true);
       for (const p of this.getPlayerField()) {
         p.lapseTag(BattlerTagType.COMMANDED);
       }

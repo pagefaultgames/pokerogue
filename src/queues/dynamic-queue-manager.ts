@@ -13,7 +13,16 @@ import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
 // TODO might be easier to define which phases should be dynamic instead
-const nonDynamicPokemonPhases: PhaseString[] = ["SummonPhase", "CommandPhase", "LearnMovePhase"];
+const nonDynamicPokemonPhases: PhaseString[] = [
+  "SummonPhase",
+  "CommandPhase",
+  "LearnMovePhase",
+  "MoveEffectPhase",
+  "MoveEndPhase",
+  "FaintPhase",
+  "DamageAnimPhase",
+  "VictoryPhase",
+];
 
 export class DynamicQueueManager {
   private dynamicPhaseMap: Map<PhaseString, PhasePriorityQueue<Phase>>;

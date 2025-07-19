@@ -5,41 +5,44 @@ import type { Phase } from "#app/phase";
 export class PhaseTree {
   private levels: Phase[][];
   private currentLevel: number;
+  // may diverge from currentLevel if a deferred phase is unshifted
+  private addLevel: number;
 
   constructor() {
     this.currentLevel = 0;
+    this.addLevel = this.currentLevel;
     this.levels = [[]];
   }
 
   private add(phase: Phase, level: number) {
-    const addIndex = this.levels[level].findIndex(p => p.is("FaintPhase"));
-    this.levels[level].splice(addIndex, 0, phase);
-  }
-
-  public addPhase(phase: Phase, deepen = true): void {
-    const level = deepen ? this.currentLevel + 1 : this.currentLevel;
-    if (deepen && this.currentLevel >= this.levels.length - 1) {
+    if (level >= this.levels.length - 1) {
       this.levels.push([]);
     }
+    this.levels[level].push(phase);
+  }
 
-    this.add(phase, level);
+  public addPhase(phase: Phase, defer = false): void {
+    this.add(phase, this.addLevel + 1);
+    this.addLevel += +defer;
   }
 
   public unshiftToCurrent(phase: Phase): void {
-    this.levels[this.currentLevel - 1].unshift(phase);
+    this.levels[this.currentLevel].unshift(phase);
   }
 
   public pushPhase(phase: Phase): void {
-    this.add(phase, this.currentLevel);
+    this.add(phase, 0);
   }
 
   public getNextPhase(): Phase | undefined {
-    while (this.levels[this.currentLevel].length === 0) {
+    this.currentLevel = this.levels.length - 1;
+    while (this.currentLevel > 0 && this.levels[this.currentLevel].length === 0) {
+      this.levels.pop();
       this.currentLevel--;
     }
 
-    // We always increase the level in anticipation of the popped phase increasing the depth
-    return this.levels[this.currentLevel++].pop();
+    this.addLevel = this.currentLevel;
+    return this.levels[this.currentLevel].shift();
   }
 
   public find<P extends PhaseString>(phaseType: P, phaseFilter?: PhaseConditionFunc<P>): PhaseMap[P] | undefined {

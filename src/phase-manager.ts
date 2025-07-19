@@ -99,7 +99,6 @@ import { DynamicQueueManager } from "#app/queues/dynamic-queue-manager";
 import type { PhaseConditionFunc } from "#app/@types/phase-condition";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
-import { StaticSwitchSummonPhase } from "#app/phases/static-switch-summon-phase";
 import { DynamicPhaseMarker } from "#app/phases/dynamic-phase-marker";
 import { PhaseTree } from "#app/phase-tree";
 
@@ -193,7 +192,6 @@ const PHASES = Object.freeze({
   ShowAbilityPhase,
   ShowPartyExpBarPhase,
   ShowTrainerPhase,
-  StaticSwitchSummonPhase,
   StatStageChangePhase,
   SummonMissingPhase,
   SummonPhase,
@@ -232,8 +230,6 @@ export class PhaseManager {
   private currentPhase: Phase | null = null;
   private standbyPhase: Phase | null = null;
 
-  public turnEnded = false;
-
   /* Phase Functions */
   getCurrentPhase(): Phase | null {
     return this.currentPhase;
@@ -256,10 +252,8 @@ export class PhaseManager {
    * Adds Phase(s) to the end of phaseQueuePrepend, or at phaseQueuePrependSpliceIndex
    * @param phases {@linkcode Phase} the phase(s) to add
    */
-  unshiftPhase(...phases: Phase[]): void {
-    phases.forEach(p => {
-      this.phaseQueue.addPhase(this.checkDynamic(p));
-    });
+  unshiftPhase(phase: Phase, defer = false): void {
+    this.phaseQueue.addPhase(this.checkDynamic(phase), defer);
   }
 
   private checkDynamic(phase: Phase): Phase {
@@ -284,7 +278,6 @@ export class PhaseManager {
     this.dynamicQueueManager.clearQueues();
     this.currentPhase = null;
     this.standbyPhase = null;
-    this.turnEnded = false;
   }
 
   /**
@@ -402,9 +395,8 @@ export class PhaseManager {
    * Moves everything from nextCommandPhaseQueue to phaseQueue (keeping order)
    */
   private turnEndSequence(): void {
-    this.turnEnded = true;
     this.dynamicQueueManager.clearQueues();
-    this.phaseQueue.pushPhase(new TurnInitPhase());
+    this.currentPhase = new TurnInitPhase();
   }
 
   /**
