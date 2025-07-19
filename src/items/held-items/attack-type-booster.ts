@@ -66,10 +66,7 @@ export class AttackTypeBoosterHeldItem extends HeldItem {
     return `${HeldItemNames[this.type]?.toLowerCase()}`;
   }
 
-  apply(params: AttackTypeBoostParams): void {
-    const pokemon = params.pokemon;
-    const moveType = params.moveType;
-    const movePower = params.movePower;
+  apply({ pokemon, moveType, movePower }: AttackTypeBoostParams): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (moveType === this.moveType && movePower.value >= 1) {
       movePower.value = Math.floor(movePower.value * (1 + stackCount * this.powerBoost));

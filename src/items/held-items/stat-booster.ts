@@ -47,14 +47,11 @@ export class StatBoostHeldItem extends HeldItem {
   /**
    * Boosts the incoming stat by a {@linkcode multiplier} if the stat is listed
    * in {@linkcode stats}.
-   * @param _pokemon the {@linkcode Pokemon} that holds the item
-   * @param _stat the {@linkcode Stat} to be boosted
-   * @param statValue {@linkcode NumberHolder} that holds the resulting value of the stat
    * @returns `true` if the stat boost applies successfully, false otherwise
    * @see shouldApply
    */
-  apply(params: StatBoostParams): boolean {
-    params.statValue.value *= this.multiplier;
+  apply({ statValue }: StatBoostParams): boolean {
+    statValue.value *= this.multiplier;
     return true;
   }
 
@@ -88,9 +85,6 @@ export class EvolutionStatBoostHeldItem extends StatBoostHeldItem {
    * only half of the boost if either of the fused members are fully
    * evolved. However, if they are both unevolved, the full boost
    * will apply.
-   * @param pokemon {@linkcode Pokemon} that holds the item
-   * @param _stat {@linkcode Stat} The {@linkcode Stat} to be boosted
-   * @param statValue{@linkcode NumberHolder} that holds the resulting value of the stat
    * @returns `true` if the stat boost applies successfully, false otherwise
    * @see shouldApply
    */

@@ -7,6 +7,7 @@ import type { NumberHolder } from "#utils/common";
 export interface CritBoostParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
+  /** The critical hit stage */
   critStage: NumberHolder;
 }
 
@@ -34,8 +35,8 @@ export class CritBoostHeldItem extends HeldItem {
    * @param critStage {@linkcode NumberHolder} that holds the resulting critical-hit level
    * @returns always `true`
    */
-  apply(params: CritBoostParams): boolean {
-    params.critStage.value += this.stageIncrement;
+  apply({ critStage }: CritBoostParams): boolean {
+    critStage.value += this.stageIncrement;
     return true;
   }
 }

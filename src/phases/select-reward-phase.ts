@@ -176,7 +176,7 @@ export class SelectRewardPhase extends BattlePhase {
     } else {
       this.applyConsumable(reward);
     }
-    return !cost;
+    return cost === -1;
   }
 
   // Reroll allRewards

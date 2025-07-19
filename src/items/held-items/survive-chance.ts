@@ -32,13 +32,9 @@ export class SurviveChanceHeldItem extends HeldItem {
 
   /**
    * Applies {@linkcode SurviveDamageModifier}
-   * @param pokemon the {@linkcode Pokemon} that holds the item
-   * @param surviveDamage {@linkcode BooleanHolder} that holds the survive damage
    * @returns `true` if the survive damage has been applied
    */
-  apply(params: SurviveChanceParams): boolean {
-    const pokemon = params.pokemon;
-    const surviveDamage = params.surviveDamage;
+  apply({ pokemon, surviveDamage }: SurviveChanceParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (!surviveDamage.value && pokemon.randBattleSeedInt(10) < stackCount) {
       surviveDamage.value = true;

@@ -27,11 +27,10 @@ export class TurnEndStatusHeldItem extends HeldItem {
 
   /**
    * Tries to inflicts the holder with the associated {@linkcode StatusEffect}.
-   * @param pokemon {@linkcode Pokemon} that holds the held item
    * @returns `true` if the status effect was applied successfully
    */
-  apply(params: TurnEndStatusParams): boolean {
-    return params.pokemon.trySetStatus(this.effect, true, undefined, undefined, this.name);
+  apply({ pokemon }: TurnEndStatusParams): boolean {
+    return pokemon.trySetStatus(this.effect, true, undefined, undefined, this.name);
   }
 
   getStatusEffect(): StatusEffect {

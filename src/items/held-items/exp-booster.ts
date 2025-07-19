@@ -7,7 +7,7 @@ import i18next from "i18next";
 export interface ExpBoostParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
-  /** The amount of exp to gain */
+  /** Holds the amount of experience gained, which may be modified after item application */
   expAmount: NumberHolder;
 }
 
@@ -41,13 +41,9 @@ export class ExpBoosterHeldItem extends HeldItem {
 
   /**
    * Applies {@linkcode PokemonExpBoosterModifier}
-   * @param _pokemon The {@linkcode Pokemon} to apply the exp boost to
-   * @param boost {@linkcode NumberHolder} holding the exp boost value
    * @returns always `true`
    */
-  apply(params: ExpBoostParams): boolean {
-    const pokemon = params.pokemon;
-    const expAmount = params.expAmount;
+  apply({ pokemon, expAmount }: ExpBoostParams): true {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     expAmount.value = Math.floor(expAmount.value * (1 + stackCount * this.boostMultiplier));
 

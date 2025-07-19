@@ -33,13 +33,8 @@ export class BaseStatFlatHeldItem extends HeldItem {
 
   /**
    * Applies the {@linkcode PokemonBaseStatFlatModifier}
-   * @param _pokemon The {@linkcode Pokemon} that holds the item
-   * @param baseStats The base stats of the {@linkcode Pokemon}
-   * @returns always `true`
    */
-  apply(params: BaseStatFlatParams): boolean {
-    const pokemon = params.pokemon;
-    const baseStats = params.baseStats;
+  apply({ pokemon, baseStats }: BaseStatFlatParams): true {
     const stats = this.getStats(pokemon);
     const statModifier = 20;
     // Modifies the passed in baseStats[] array by a flat value, only if the stat is specified in this.stats
@@ -57,15 +52,12 @@ export class BaseStatFlatHeldItem extends HeldItem {
    * Get the lowest of HP/Spd, lowest of Atk/SpAtk, and lowest of Def/SpDef
    * @returns Array of 3 {@linkcode Stat}s to boost
    */
-  getStats(pokemon: Pokemon): Stat[] {
-    const stats: Stat[] = [];
+  getStats(pokemon: Pokemon): [HpOrSpeed: Stat, AtkOrSpAtk: Stat, DefOrSpDef: Stat] {
     const baseStats = pokemon.getSpeciesForm().baseStats.slice(0);
-    // HP or Speed
-    stats.push(baseStats[Stat.HP] < baseStats[Stat.SPD] ? Stat.HP : Stat.SPD);
-    // Attack or SpAtk
-    stats.push(baseStats[Stat.ATK] < baseStats[Stat.SPATK] ? Stat.ATK : Stat.SPATK);
-    // Def or SpDef
-    stats.push(baseStats[Stat.DEF] < baseStats[Stat.SPDEF] ? Stat.DEF : Stat.SPDEF);
-    return stats;
+    return [
+      baseStats[Stat.HP] < baseStats[Stat.SPD] ? Stat.HP : Stat.SPD,
+      baseStats[Stat.ATK] < baseStats[Stat.SPATK] ? Stat.ATK : Stat.SPATK,
+      baseStats[Stat.DEF] < baseStats[Stat.SPDEF] ? Stat.DEF : Stat.SPDEF,
+    ];
   }
 }

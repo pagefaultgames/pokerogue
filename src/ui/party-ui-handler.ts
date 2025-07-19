@@ -1257,15 +1257,24 @@ export class PartyUiHandler extends MessageUiHandler {
           const allowBatonItemSwitch = this.allowBatonItemSwitch();
           const isBatonPassMove = this.isBatonPassMove();
 
-          // isBatonPassMove and allowBatonItemSwitch shouldn't ever be true
-          // at the same time, because they both explicitly check for a mutually
-          // exclusive partyUiMode. But better safe than sorry.
-          this.options.push(isBatonPassMove && !allowBatonItemSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT);
-          if (allowBatonItemSwitch && !isBatonPassMove) {
-            // the BATON item gives an extra switch option for
+          if (allowBatonModifierSwitch && !isBatonPassMove) {
+            // the BATON modifier gives an extra switch option for
             // pokemon-command switches, allowing buffs to be optionally passed
             this.options.push(PartyOption.PASS_BATON);
           }
+
+          if (allowBatonItemSwitch && !isBatonPassMove) {
+            // the BATON modifier gives an extra switch option for
+            // pokemon-command switches, allowing buffs to be optionally passed
+            this.options.push(PartyOption.PASS_BATON);
+          }
+
+          // isBatonPassMove and allowBatonItemSwitch shouldn't ever be true
+          // at the same time, because they both explicitly check for a mutually
+          // exclusive partyUiMode. But better safe than sorry.
+          this.options.push(
+            isBatonPassMove && !allowBatonModifierSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT,
+          );
         }
         this.addCommonOptions(pokemon);
         if (this.partyUiMode === PartyUiMode.SWITCH) {
@@ -1305,13 +1314,13 @@ export class PartyUiHandler extends MessageUiHandler {
         this.addCommonOptions(pokemon);
         break;
       case PartyUiMode.CHECK:
+        this.addCommonOptions(pokemon);
         if (globalScene.phaseManager.getCurrentPhase()?.is("SelectRewardPhase")) {
           const formChangeItems = this.getFormChangeItems(pokemon);
           for (let i = 0; i < formChangeItems.length; i++) {
             this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
           }
         }
-        this.addCommonOptions(pokemon);
         break;
       case PartyUiMode.SELECT:
         this.options.push(PartyOption.SELECT);

@@ -6,6 +6,7 @@ import type { BooleanHolder } from "#utils/common";
 export interface FlinchChanceParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
+  /** Holds whether the attack will cause a flinch */
   flinched: BooleanHolder;
 }
 
@@ -37,13 +38,9 @@ export class FlinchChanceHeldItem extends HeldItem {
 
   /**
    * Applies {@linkcode FlinchChanceModifier} to randomly flinch targets hit.
-   * @param pokemon - The {@linkcode Pokemon} that holds the item
-   * @param flinched - A {@linkcode BooleanHolder} holding whether the pokemon has flinched
    * @returns `true` if {@linkcode FlinchChanceModifier} was applied successfully
    */
-  apply(params: FlinchChanceParams): boolean {
-    const pokemon = params.pokemon;
-    const flinched = params.flinched;
+  apply({ pokemon, flinched }: FlinchChanceParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     // The check for pokemon.summonData is to ensure that a crash doesn't occur when a Pokemon with King's Rock procs a flinch
     // TODO: Since summonData is always defined now, we can probably remove this

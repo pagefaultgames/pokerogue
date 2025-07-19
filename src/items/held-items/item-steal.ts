@@ -4,7 +4,7 @@ import { allHeldItems } from "#data/data-lists";
 import type { HeldItemId } from "#enums/held-item-id";
 import { Pokemon } from "#field/pokemon";
 import { HeldItem, HeldItemEffect } from "#items/held-item";
-import { randSeedFloat } from "#utils/common";
+import { coerceArray, randSeedFloat } from "#utils/common";
 import i18next from "i18next";
 
 export interface ItemStealParams {
@@ -148,20 +148,20 @@ export class ContactItemStealChanceHeldItem extends ItemTransferHeldItem {
    * @param targetPokemon The {@linkcode Pokemon} the holder is targeting with an attack
    * @returns The target {@linkcode Pokemon} as array for further use in `apply` implementations
    */
-  getTargets(params: ItemStealParams): Pokemon[] {
-    return params.target ? [params.target] : [];
+  getTargets({ target }: ItemStealParams): Pokemon[] {
+    return target ? coerceArray(target) : [];
   }
 
-  getTransferredItemCount(params: ItemStealParams): number {
-    const stackCount = params.pokemon.heldItemManager.getStack(this.type);
+  getTransferredItemCount({ pokemon }: ItemStealParams): number {
+    const stackCount = pokemon.heldItemManager.getStack(this.type);
     return randSeedFloat() <= this.chance * stackCount ? 1 : 0;
   }
 
-  getTransferMessage(params: ItemStealParams, itemId: HeldItemId): string {
+  getTransferMessage({ pokemon, target }: ItemStealParams, itemId: HeldItemId): string {
     return i18next.t("modifier:contactHeldItemTransferApply", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(params.target),
+      pokemonNameWithAffix: getPokemonNameWithAffix(target),
       itemName: allHeldItems[itemId].name,
-      pokemonName: params.pokemon.getNameToRender(),
+      pokemonName: pokemon.getNameToRender(),
       typeName: this.name,
     });
   }

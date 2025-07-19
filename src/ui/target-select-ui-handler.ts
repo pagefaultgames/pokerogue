@@ -157,8 +157,8 @@ export class TargetSelectUiHandler extends UiHandler {
       yoyo: true,
       onUpdate: t => {
         for (const target of this.targetsHighlighted) {
-          target.setAlpha(t.getValue());
-          this.highlightItems(target.id, t.getValue());
+          target.setAlpha(t.getValue() ?? 1);
+          this.highlightItems(target.id, t.getValue() ?? 1);
         }
       },
     });

@@ -1744,6 +1744,7 @@ export function getCharVariantFromDialogue(message: string): string {
 }
 
 export function initTrainerTypeDialogue(): void {
+  // TODO: this should not be using `Object.Keys`
   const trainerTypes = Object.keys(trainerTypeDialogue).map(t => Number.parseInt(t) as TrainerType);
   for (const trainerType of trainerTypes) {
     const messages = trainerTypeDialogue[trainerType];

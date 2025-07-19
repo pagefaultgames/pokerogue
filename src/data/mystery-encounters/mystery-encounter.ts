@@ -381,6 +381,7 @@ export class MysteryEncounter implements IMysteryEncounter {
       // If there are multiple overlapping pokemon, we're okay - just choose one and take it out of the primary pokemon pool
       if (overlap.length > 1 || this.secondaryPokemon.length - overlap.length >= 1) {
         // is this working?
+        // TODO: should this use `randSeedItem`?
         this.primaryPokemon = overlap[randSeedInt(overlap.length, 0)];
         this.secondaryPokemon = this.secondaryPokemon.filter(supp => supp !== this.primaryPokemon);
         return true;
@@ -391,6 +392,7 @@ export class MysteryEncounter implements IMysteryEncounter {
       return false;
     }
     // this means we CAN have the same pokemon be a primary and secondary pokemon, so just choose any qualifying one randomly.
+    // TODO: should this use `randSeedItem`?
     this.primaryPokemon = qualified[randSeedInt(qualified.length, 0)];
     return true;
   }

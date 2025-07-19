@@ -47,15 +47,8 @@ import type { RewardFunc, WeightedRewardWeightFunc } from "#types/rewards";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getRarityTierTextTint } from "#ui/text";
-import {
-  formatMoney,
-  getEnumKeys,
-  getEnumValues,
-  isNullOrUndefined,
-  NumberHolder,
-  padInt,
-  randSeedInt,
-} from "#utils/common";
+import { formatMoney, isNullOrUndefined, NumberHolder, padInt, randSeedInt, randSeedItem } from "#utils/common";
+import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { getRewardPoolForType } from "#utils/reward-utils";
 import i18next from "i18next";
 import { getRewardTierFromPool } from "./init-reward-pools";
@@ -1267,6 +1260,7 @@ class TmRewardGenerator extends RewardGenerator {
       if (!tierUniqueCompatibleTms.length) {
         return null;
       }
+      // TODO: should this use `randSeedItem`?
       const randTmIndex = randSeedInt(tierUniqueCompatibleTms.length);
       return new TmReward(tierUniqueCompatibleTms[randTmIndex]);
     });
@@ -1326,6 +1320,7 @@ class EvolutionItemRewardGenerator extends RewardGenerator {
         return null;
       }
 
+      // TODO: should this use `randSeedItem`?
       return new EvolutionItemReward(evolutionItemPool[randSeedInt(evolutionItemPool.length)]!); // TODO: is the bang correct?
     });
     this.id = id;
@@ -1403,6 +1398,7 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
         return null;
       }
 
+      // TODO: should this use `randSeedItem`?
       return new FormChangeItemReward(formChangeItemPool[randSeedInt(formChangeItemPool.length)]);
     });
     this.id = id;
@@ -1575,7 +1571,7 @@ const rewardInitObj = Object.freeze({
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in Nature) {
         return new PokemonNatureChangeReward(pregenArgs[0] as Nature);
       }
-      return new PokemonNatureChangeReward(randSeedInt(getEnumValues(Nature).length) as Nature);
+      return new PokemonNatureChangeReward(randSeedItem(getEnumValues(Nature)));
     }),
 
   TERA_SHARD: () =>

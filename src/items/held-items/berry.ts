@@ -66,12 +66,9 @@ export class BerryHeldItem extends ConsumableHeldItem {
 
   /**
    * Applies {@linkcode BerryHeldItem}
-   * @param pokemon The {@linkcode Pokemon} that holds the berry
    * @returns always `true`
    */
-  apply(params: BerryParams): boolean {
-    const pokemon = params.pokemon;
-
+  apply({ pokemon }: BerryParams): boolean {
     if (!this.shouldApply(pokemon)) {
       return false;
     }

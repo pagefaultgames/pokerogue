@@ -7,7 +7,7 @@ import { NumberHolder } from "#utils/common";
 export interface DamageMoneyRewardParams {
   /** The pokemon with the item */
   pokemon: Pokemon;
-  /** The amount of exp to gain */
+  /** The damage, used to calculate the money reward */
   damage: number;
 }
 
@@ -16,13 +16,9 @@ export class DamageMoneyRewardHeldItem extends HeldItem {
 
   /**
    * Applies {@linkcode DamageMoneyRewardModifier}
-   * @param pokemon The {@linkcode Pokemon} attacking
-   * @param multiplier {@linkcode NumberHolder} holding the multiplier value
    * @returns always `true`
    */
-  apply(params: DamageMoneyRewardParams): boolean {
-    const pokemon = params.pokemon;
-    const damage = params.damage;
+  apply({ pokemon, damage }: DamageMoneyRewardParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     const moneyAmount = new NumberHolder(Math.floor(damage * (0.5 * stackCount)));
     globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });

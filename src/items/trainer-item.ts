@@ -67,15 +67,15 @@ export class TrainerItem {
     this.maxStackCount = maxStackCount;
   }
 
-  get name(): string {
-    return i18next.t(`reward:ModifierType.${TrainerItemNames[this.type]}.name`);
+  public get name(): string {
+    return i18next.t(`modifierType:ModifierType.${TrainerItemNames[this.type]}.name`);
   }
 
-  get description(): string {
-    return i18next.t(`reward:ModifierType.${TrainerItemNames[this.type]}.description`);
+  public get description(): string {
+    return i18next.t(`modifierType:ModifierType.${TrainerItemNames[this.type]}.description`);
   }
 
-  get iconName(): string {
+  public get iconName(): string {
     return `${TrainerItemNames[this.type]?.toLowerCase()}`;
   }
 
@@ -84,10 +84,9 @@ export class TrainerItem {
   }
 
   createIcon(stackCount: number): Phaser.GameObjects.Container {
-    const container = globalScene.add.container(0, 0);
+    const container = globalScene.add.container();
 
-    const item = globalScene.add.sprite(0, 12, "items").setFrame(this.iconName).setOrigin(0, 0.5);
-    container.add(item);
+    container.add(globalScene.add.sprite(0, 12, "items").setFrame(this.iconName).setOrigin(0, 0.5));
 
     const stackText = this.getIconStackText(stackCount);
     if (stackText) {
@@ -102,12 +101,13 @@ export class TrainerItem {
       return null;
     }
 
-    const text = globalScene.add.bitmapText(10, 15, "item-count", stackCount.toString(), 11);
-    text.letterSpacing = -0.5;
+    const text = globalScene.add
+      .bitmapText(10, 15, "item-count", stackCount.toString(), 11)
+      .setLetterSpacing(-0.5)
+      .setOrigin(0);
     if (stackCount >= this.getMaxStackCount()) {
       text.setTint(0xf89890);
     }
-    text.setOrigin(0);
 
     return text;
   }
