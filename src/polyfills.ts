@@ -1,8 +1,10 @@
 /*
 Manual rolling of polyfills desired by the project.
 
-IMPORTANT: When adding / removing polyfills, make sure to edit `src/typings/polyfills.d.ts`
-accordingly, so that the TypeScript compiler is aware of the polyfills.
+IMPORTANT: When adding / removing polyfills, ensure that typescript becomes
+aware of their existence, either by creating `src/typings/polyfills.d.ts`
+and defining them there, or or by adding the appropriate field polyfill to the
+`lib` property in `tsconfig.json`.
 */
 
 if (typeof Promise.withResolvers === "undefined") {

@@ -1,5 +1,5 @@
-import "app/#polyfills";
-// Polyfills should always be imported first.
+import "#app/polyfills";
+// All polyfills MUST be loaded first for side effects
 
 import { InvertPostFX } from "#app/pipelines/invert";
 import { initI18n } from "#app/plugins/i18n";
