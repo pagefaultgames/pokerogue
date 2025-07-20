@@ -176,7 +176,7 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.phaseManager.unshiftNew("HideAbilityPhase");
     }
 
-    globalScene.phaseManager.pushNew(
+    globalScene.phaseManager.unshiftNew(
       "MovePhase",
       target,
       newTargets,

@@ -95,7 +95,7 @@ export class TurnStartPhase extends FieldPhase {
             pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp()) ??
             new PokemonMove(queuedMove.move);
           if (move.getMove().hasAttr("MoveHeaderAttr")) {
-            phaseManager.pushNew("MoveHeaderPhase", pokemon.getBattlerIndex(), move);
+            phaseManager.unshiftNew("MoveHeaderPhase", pokemon.getBattlerIndex(), move);
           }
 
           if (pokemon.isPlayer() && turnCommand.cursor === -1) {
@@ -123,7 +123,7 @@ export class TurnStartPhase extends FieldPhase {
         case Command.POKEMON:
           {
             const switchType = turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH;
-            phaseManager.pushNew(
+            phaseManager.unshiftNew(
               "SwitchSummonPhase",
               switchType,
               pokemon.getFieldIndex(),

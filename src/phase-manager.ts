@@ -246,7 +246,7 @@ export class PhaseManager {
    * @param defer boolean on which queue to add to, defaults to false, and adds to phaseQueue
    */
   pushPhase(phase: Phase, _defer = false): void {
-    this.phaseQueue.pushPhase(this.checkDynamic(phase));
+    this.phaseQueue.pushPhase(phase);
   }
 
   /**

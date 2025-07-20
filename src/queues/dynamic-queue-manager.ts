@@ -3,6 +3,7 @@ import type { PhaseString, DynamicPhase } from "#app/@types/phase-types";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
 import type { Phase } from "#app/phase";
+import type { MoveHeaderPhase } from "#app/phases/move-header-phase";
 import type { MovePhase } from "#app/phases/move-phase";
 import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
 import type { PhasePriorityQueue } from "#app/queues/phase-priority-queue";
@@ -26,12 +27,13 @@ const nonDynamicPokemonPhases: PhaseString[] = [
 
 export class DynamicQueueManager {
   private dynamicPhaseMap: Map<PhaseString, PhasePriorityQueue<Phase>>;
-  private alwaysDynamic: PhaseString[] = ["SwitchSummonPhase", "PostSummonPhase", "MovePhase"];
+  private alwaysDynamic: PhaseString[] = ["SwitchSummonPhase", "PostSummonPhase", "MoveHeaderPhase", "MovePhase"];
 
   constructor() {
     this.dynamicPhaseMap = new Map();
     this.dynamicPhaseMap.set("SwitchSummonPhase", new SwitchSummonPhasePriorityQueue());
     this.dynamicPhaseMap.set("PostSummonPhase", new PostSummonPhasePriorityQueue());
+    this.dynamicPhaseMap.set("MoveHeaderPhase", new PokemonPhasePriorityQueue<MoveHeaderPhase>());
     this.dynamicPhaseMap.set("MovePhase", new MovePhasePriorityQueue());
   }
 
