@@ -381,12 +381,12 @@ export class PhaseManager {
   }
 
   /**
-   * Adds a MessagePhase, either to PhaseQueuePrepend
+   * Adds a MessagePhase, either as if through {@linkcode unshiftPhase} or {@linkcode pushPhase}
    * @param message - string for MessagePhase
    * @param callbackDelay - optional param for MessagePhase constructor
    * @param prompt - optional param for MessagePhase constructor
    * @param promptDelay - optional param for MessagePhase constructor
-   * @param defer - Whether to allow the phase to be deferred
+   * @param defer - If `true`, push instead of unshift
    *
    * @see {@linkcode MessagePhase} for more details on the parameters
    */
@@ -399,7 +399,6 @@ export class PhaseManager {
   ) {
     const phase = new MessagePhase(message, callbackDelay, prompt, promptDelay);
     if (!defer) {
-      // adds to the end of PhaseQueuePrepend
       this.unshiftPhase(phase);
     } else {
       this.pushPhase(phase);
@@ -407,10 +406,10 @@ export class PhaseManager {
   }
 
   /**
-   * Queues an ability bar flyout phase
-   * @param pokemon The pokemon who has the ability
-   * @param passive Whether the ability is a passive
-   * @param show Whether to show or hide the bar
+   * Queues an ability bar flyout phase as if through {@linkcode unshiftPhase}
+   * @param pokemon - The pokemon who has the ability
+   * @param passive - Whether the ability is a passive
+   * @param show - If `true`, show the bar. Otherwise, hide it
    */
   public queueAbilityDisplay(pokemon: Pokemon, passive: boolean, show: boolean): void {
     this.unshiftPhase(show ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive) : new HideAbilityPhase());
@@ -471,7 +470,11 @@ export class PhaseManager {
     this.unshiftPhase(this.create(phase, ...args));
   }
 
-  // Not used yet
+  /**
+   * Adds a phase to be run after the current phase, but after any other phases queued by the current phase
+   * @param phase - The {@linkcode Phase} to add
+   * @param args - The arguments to pass to the phase constructor
+   */
   public unshiftNewDeferred<T extends PhaseString>(
     phase: T,
     ...args: ConstructorParameters<PhaseConstructorMap[T]>
@@ -479,6 +482,12 @@ export class PhaseManager {
     this.unshiftPhase(this.create(phase, ...args), true);
   }
 
+  /**
+   * Attempts to add {@linkcode PostSummonPhase}s for the enemy pokemon
+   *
+   * This is used to ensure that wild pokemon (which have no {@linkcode SummonPhase}) do not queue a {@linkcode PostSummonPhase}
+   * until all pokemon are on the field.
+   */
   public tryAddEnemyPostSummonPhases(): void {
     if (
       ![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType) &&
