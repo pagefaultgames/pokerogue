@@ -44,6 +44,19 @@ describe("Abilities - Normalize", () => {
     expect(powerSpy).toHaveLastReturnedWith(toDmgValue(allMoves[MoveId.TACKLE].power * 1.2));
   });
 
+  it("should boost variable power moves", async () => {
+    game.override.moveset([MoveId.RETURN]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    const magikarp = game.field.getPlayerPokemon();
+    magikarp.friendship = 255;
+
+    const powerSpy = vi.spyOn(allMoves[MoveId.RETURN], "calculateBattlePower");
+
+    game.move.select(MoveId.RETURN);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(powerSpy).toHaveLastReturnedWith(102 * 1.2);
+  });
+
   it("should not apply the old type boost item after changing a move's type", async () => {
     game.override
       .startingHeldItems([{ name: "ATTACK_TYPE_BOOSTER", count: 1, type: PokemonType.GRASS }])

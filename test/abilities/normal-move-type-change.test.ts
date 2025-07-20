@@ -48,7 +48,7 @@ describe.each([
       .startingLevel(100)
       .starterSpecies(SpeciesId.MAGIKARP)
       .ability(ab)
-      .moveset([MoveId.TACKLE, MoveId.REVELATION_DANCE, MoveId.FURY_SWIPES])
+      .moveset([MoveId.TACKLE, MoveId.REVELATION_DANCE, MoveId.FURY_SWIPES, MoveId.CRUSH_GRIP])
       .enemySpecies(SpeciesId.DUSCLOPS)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
@@ -72,6 +72,28 @@ describe.each([
     expect(typeSpy).toHaveLastReturnedWith(ty);
     expect(enemySpy).toHaveReturnedWith(1);
     expect(powerSpy).toHaveReturnedWith(48);
+    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+  });
+
+  // Regression test to ensure proper ordering of effects
+  it("should still boost variable-power moves", async () => {
+    game.override.moveset([MoveId.CRUSH_GRIP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+
+    const playerPokemon = game.field.getPlayerPokemon();
+    const typeSpy = vi.spyOn(playerPokemon, "getMoveType");
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemySpy = vi.spyOn(enemyPokemon, "getMoveEffectiveness");
+    const powerSpy = vi.spyOn(allMoves[MoveId.CRUSH_GRIP], "calculateBattlePower");
+
+    game.move.select(MoveId.CRUSH_GRIP);
+
+    await game.toEndOfTurn();
+
+    expect(typeSpy).toHaveLastReturnedWith(ty);
+    expect(enemySpy).toHaveReturnedWith(1);
+    expect(powerSpy).toHaveReturnedWith(144); // 120 * 1.2
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
   });
 
