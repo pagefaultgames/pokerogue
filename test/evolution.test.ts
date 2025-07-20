@@ -1,13 +1,9 @@
-import {
-  pokemonEvolutions,
-  SpeciesFormEvolution,
-  SpeciesWildEvolutionDelay,
-} from "#app/data/balance/pokemon-evolutions";
+import { pokemonEvolutions, SpeciesFormEvolution, SpeciesWildEvolutionDelay } from "#balance/pokemon-evolutions";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import * as Utils from "#app/utils/common";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
+import * as Utils from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

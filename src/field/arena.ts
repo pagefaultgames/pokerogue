@@ -1,40 +1,37 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import type { BiomeTierTrainerPools, PokemonPools } from "#app/data/balance/biomes";
-import { biomePokemonPools, BiomePoolTier, biomeTrainerPools } from "#app/data/balance/biomes";
-import { randSeedInt, NumberHolder, isNullOrUndefined, type Constructor } from "#app/utils/common";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
+import Overrides from "#app/overrides";
+import type { BiomeTierTrainerPools, PokemonPools } from "#balance/biomes";
+import { BiomePoolTier, biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
+import type { ArenaTag } from "#data/arena-tag";
+import { ArenaTrapTag, getArenaTag } from "#data/arena-tag";
+import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
+import type { PokemonSpecies } from "#data/pokemon-species";
+import { getTerrainClearMessage, getTerrainStartMessage, Terrain, TerrainType } from "#data/terrain";
 import {
+  getLegendaryWeatherContinuesMessage,
   getWeatherClearMessage,
   getWeatherStartMessage,
-  getLegendaryWeatherContinuesMessage,
   Weather,
-} from "#app/data/weather";
-import { CommonAnim } from "#enums/move-anims-common";
-import type { PokemonType } from "#enums/pokemon-type";
-import type Move from "#app/data/moves/move";
-import type { ArenaTag } from "#app/data/arena-tag";
-import { ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
+} from "#data/weather";
+import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
-import type { BattlerIndex } from "#enums/battler-index";
-import { Terrain, TerrainType, getTerrainClearMessage, getTerrainStartMessage } from "#app/data/terrain";
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import type Pokemon from "#app/field/pokemon";
-import Overrides from "#app/overrides";
-import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
 import type { ArenaTagType } from "#enums/arena-tag-type";
+import type { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
+import { CommonAnim } from "#enums/move-anims-common";
 import type { MoveId } from "#enums/move-id";
+import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
-import { AbilityId } from "#enums/ability-id";
-import {
-  SpeciesFormChangeRevertWeatherFormTrigger,
-  SpeciesFormChangeWeatherTrigger,
-} from "#app/data/pokemon-forms/form-change-triggers";
 import { WeatherType } from "#enums/weather-type";
-import { FieldEffectModifier } from "#app/modifier/modifier";
+import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
+import type { Pokemon } from "#field/pokemon";
+import { FieldEffectModifier } from "#modifiers/modifier";
+import type { Move } from "#moves/move";
+import { type Constructor, isNullOrUndefined, NumberHolder, randSeedInt } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 export class Arena {
   public biomeType: BiomeId;
@@ -146,6 +143,7 @@ export class Arena {
     if (!tierPool.length) {
       ret = globalScene.randomSpecies(waveIndex, level);
     } else {
+      // TODO: should this use `randSeedItem`?
       const entry = tierPool[randSeedInt(tierPool.length)];
       let species: SpeciesId;
       if (typeof entry === "number") {
@@ -157,6 +155,7 @@ export class Arena {
           if (level >= levelThreshold) {
             const speciesIds = entry[levelThreshold];
             if (speciesIds.length > 1) {
+              // TODO: should this use `randSeedItem`?
               species = speciesIds[randSeedInt(speciesIds.length)];
             } else {
               species = speciesIds[0];
@@ -169,19 +168,11 @@ export class Arena {
       ret = getPokemonSpecies(species!);
 
       if (ret.subLegendary || ret.legendary || ret.mythical) {
-        switch (true) {
-          case ret.baseTotal >= 720:
-            regen = level < 90;
-            break;
-          case ret.baseTotal >= 670:
-            regen = level < 70;
-            break;
-          case ret.baseTotal >= 580:
-            regen = level < 50;
-            break;
-          default:
-            regen = level < 30;
-            break;
+        const waveDifficulty = globalScene.gameMode.getWaveForDifficulty(waveIndex);
+        if (ret.baseTotal >= 660) {
+          regen = waveDifficulty < 80; // Wave 50+ in daily (however, max Daily wave is 50 currently so not possible)
+        } else {
+          regen = waveDifficulty < 55; // Wave 25+ in daily
         }
       }
     }
@@ -499,38 +490,37 @@ export class Arena {
   getTrainerChance(): number {
     switch (this.biomeType) {
       case BiomeId.METROPOLIS:
-        return 2;
-      case BiomeId.SLUM:
-      case BiomeId.BEACH:
       case BiomeId.DOJO:
-      case BiomeId.CONSTRUCTION_SITE:
         return 4;
       case BiomeId.PLAINS:
       case BiomeId.GRASS:
+      case BiomeId.BEACH:
       case BiomeId.LAKE:
       case BiomeId.CAVE:
+      case BiomeId.DESERT:
+      case BiomeId.CONSTRUCTION_SITE:
+      case BiomeId.SLUM:
         return 6;
       case BiomeId.TALL_GRASS:
       case BiomeId.FOREST:
-      case BiomeId.SEA:
       case BiomeId.SWAMP:
       case BiomeId.MOUNTAIN:
       case BiomeId.BADLANDS:
-      case BiomeId.DESERT:
       case BiomeId.MEADOW:
       case BiomeId.POWER_PLANT:
-      case BiomeId.GRAVEYARD:
       case BiomeId.FACTORY:
       case BiomeId.SNOWY_FOREST:
         return 8;
+      case BiomeId.SEA:
       case BiomeId.ICE_CAVE:
       case BiomeId.VOLCANO:
+      case BiomeId.GRAVEYARD:
       case BiomeId.RUINS:
       case BiomeId.WASTELAND:
       case BiomeId.JUNGLE:
       case BiomeId.FAIRY_CAVE:
+      case BiomeId.ISLAND:
         return 12;
-      case BiomeId.SEABED:
       case BiomeId.ABYSS:
       case BiomeId.SPACE:
       case BiomeId.TEMPLE:
@@ -897,7 +887,7 @@ export class Arena {
       case BiomeId.WASTELAND:
         return 6.336;
       case BiomeId.ABYSS:
-        return 5.13;
+        return 20.113;
       case BiomeId.SPACE:
         return 20.036;
       case BiomeId.CONSTRUCTION_SITE:
@@ -935,6 +925,7 @@ export function getBiomeKey(biome: BiomeId): string {
 
 export function getBiomeHasProps(biomeType: BiomeId): boolean {
   switch (biomeType) {
+    case BiomeId.PLAINS:
     case BiomeId.METROPOLIS:
     case BiomeId.BEACH:
     case BiomeId.LAKE:
@@ -981,14 +972,15 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     this.base = globalScene.addFieldSprite(0, 0, "plains_a", undefined, 1);
     this.base.setOrigin(0, 0);
 
-    this.props = !player
-      ? new Array(3).fill(null).map(() => {
-          const ret = globalScene.addFieldSprite(0, 0, "plains_b", undefined, 1);
-          ret.setOrigin(0, 0);
-          ret.setVisible(false);
-          return ret;
-        })
-      : [];
+    this.props = [];
+    if (!player) {
+      for (let i = 0; i < 3; i++) {
+        const ret = globalScene.addFieldSprite(0, 0, "plains_b", undefined, 1);
+        ret.setOrigin(0, 0);
+        ret.setVisible(false);
+        this.props.push(ret);
+      }
+    }
   }
 
   setBiome(biome: BiomeId, propValue?: number): void {

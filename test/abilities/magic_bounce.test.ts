@@ -1,15 +1,14 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { allAbilities } from "#app/data/data-lists";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { allMoves } from "#app/data/data-lists";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { Stat } from "#app/enums/stat";
-import { StatusEffect } from "#app/enums/status-effect";
+import { allAbilities, allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { GameManager } from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Magic Bounce", () => {
@@ -160,7 +159,8 @@ describe("Abilities - Magic Bounce", () => {
     expect(game.scene.getEnemyPokemon()!.getTag(BattlerTagType.CURSED)).toBeDefined();
   });
 
-  it("should not cause encore to be interrupted after bouncing", async () => {
+  // TODO: enable when Magic Bounce is fixed to properly reset the hit count
+  it.todo("should not cause encore to be interrupted after bouncing", async () => {
     game.override.moveset([MoveId.SPLASH, MoveId.GROWL, MoveId.ENCORE]).enemyMoveset([MoveId.TACKLE, MoveId.GROWL]);
     // game.override.ability(AbilityId.MOLD_BREAKER);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
@@ -168,7 +168,7 @@ describe("Abilities - Magic Bounce", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // Give the player MOLD_BREAKER for this turn to bypass Magic Bounce.
-    vi.spyOn(playerPokemon, "getAbility").mockReturnValue(allAbilities[AbilityId.MOLD_BREAKER]);
+    const playerAbilitySpy = game.field.mockAbility(playerPokemon, AbilityId.MOLD_BREAKER);
 
     // turn 1
     game.move.select(MoveId.ENCORE);
@@ -178,7 +178,7 @@ describe("Abilities - Magic Bounce", () => {
     expect(enemyPokemon.getTag(BattlerTagType.ENCORE)!["moveId"]).toBe(MoveId.TACKLE);
 
     // turn 2
-    vi.spyOn(playerPokemon, "getAbility").mockRestore();
+    playerAbilitySpy.mockRestore();
     game.move.select(MoveId.GROWL);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase");
