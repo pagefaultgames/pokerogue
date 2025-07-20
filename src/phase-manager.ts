@@ -246,7 +246,7 @@ export class PhaseManager {
    * @param defer boolean on which queue to add to, defaults to false, and adds to phaseQueue
    */
   pushPhase(phase: Phase, _defer = false): void {
-    this.phaseQueue.pushPhase(phase);
+    this.phaseQueue.pushPhase(this.checkDynamic(phase));
   }
 
   /**
@@ -449,7 +449,7 @@ export class PhaseManager {
   public tryAddEnemyPostSummonPhases(): void {
     if (
       ![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType) &&
-      !this.dynamicQueueManager.exists("MovePhase", p => p.getPokemon().isEnemy())
+      !this.phaseQueue.exists("SummonPhase")
     ) {
       globalScene.getEnemyField().map(p => this.unshiftPhase(new PostSummonPhase(p.getBattlerIndex())));
     }

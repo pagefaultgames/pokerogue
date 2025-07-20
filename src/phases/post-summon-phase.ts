@@ -5,9 +5,19 @@ import { PokemonPhase } from "./pokemon-phase";
 import { MysteryEncounterPostSummonTag } from "#app/data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import type { PhaseString } from "#app/@types/phase-types";
+import type { BattlerIndex } from "#enums/battler-index";
 
 export class PostSummonPhase extends PokemonPhase {
   public readonly phaseName = "PostSummonPhase";
+  /** Used to determine whether to push or unshift PostSummonActivateAbilityPhases  */
+  public readonly source: PhaseString;
+
+  constructor(battlerIndex?: BattlerIndex | number, source: PhaseString = "SwitchSummonPhase") {
+    super(battlerIndex);
+    this.source = source;
+  }
+
   start() {
     super.start();
 

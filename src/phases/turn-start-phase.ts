@@ -99,7 +99,7 @@ export class TurnStartPhase extends FieldPhase {
           }
 
           if (pokemon.isPlayer() && turnCommand.cursor === -1) {
-            phaseManager.unshiftNew(
+            phaseManager.pushNew(
               "MovePhase",
               pokemon,
               turnCommand.targets || turnCommand.move!.targets,
@@ -107,7 +107,7 @@ export class TurnStartPhase extends FieldPhase {
               turnCommand.move!.useMode,
             ); //TODO: is the bang correct here?
           } else {
-            phaseManager.unshiftNew(
+            phaseManager.pushNew(
               "MovePhase",
               pokemon,
               turnCommand.targets || turnCommand.move!.targets,
