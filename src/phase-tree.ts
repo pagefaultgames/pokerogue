@@ -61,9 +61,7 @@ export class PhaseTree {
   public addPhase(phase: Phase, defer = false): void {
     if (defer && !this.deferredActive) {
       this.deferredActive = true;
-      // Move the highest level up and insert the deferred phase under it
-      this.levels.push(this.levels[this.levels.length - 1]);
-      this.levels.splice(-2, 1, []);
+      this.levels.splice(-1, 0, []);
     }
     this.add(phase, this.levels.length - 1 - +defer);
   }
