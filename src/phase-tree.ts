@@ -6,9 +6,11 @@ import { isNullOrUndefined } from "#app/utils/common";
 export class PhaseTree {
   private levels: Phase[][];
   private currentLevel: number;
+  private deferredActive: boolean;
 
   constructor() {
     this.currentLevel = 0;
+    this.deferredActive = false;
     this.levels = [[]];
   }
 
@@ -21,13 +23,13 @@ export class PhaseTree {
   }
 
   public addPhase(phase: Phase, defer = false): void {
-    if (defer) {
+    if (defer && !this.deferredActive) {
+      this.deferredActive = true;
       // Move the highest level up and insert the deferred phase under it
-      this.levels.push(this.levels.at(-1) ?? []);
-      this.levels.splice(-2, 1, [phase]);
-      return;
+      this.levels.push(this.levels[this.levels.length - 1]);
+      this.levels.splice(-2, 1, []);
     }
-    this.add(phase, this.levels.length - 1);
+    this.add(phase, this.levels.length - 1 - +defer);
   }
 
   public addAfter(phase: Phase, type: PhaseString): void {
@@ -53,6 +55,7 @@ export class PhaseTree {
   public getNextPhase(): Phase | undefined {
     this.currentLevel = this.levels.length - 1;
     while (this.currentLevel > 0 && this.levels[this.currentLevel].length === 0) {
+      this.deferredActive = false;
       this.levels.pop();
       this.currentLevel--;
     }

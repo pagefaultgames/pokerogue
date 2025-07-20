@@ -4015,7 +4015,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     damage = Math.min(damage, this.hp);
     this.hp = this.hp - damage;
     if (this.isFainted() && !ignoreFaintPhase) {
-      globalScene.phaseManager.unshiftNew("FaintPhase", this.getBattlerIndex(), preventEndure);
+      globalScene.phaseManager.unshiftNewDeferred("FaintPhase", this.getBattlerIndex(), preventEndure);
       this.destroySubstitute();
       this.lapseTag(BattlerTagType.COMMANDED);
     }
