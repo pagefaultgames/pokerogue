@@ -1,4 +1,4 @@
-import type Pokemon from "#app/field/pokemon";
+import type { Pokemon } from "#app/field/pokemon";
 import { PriorityQueue } from "#app/queues/phase-priority-queue";
 import { sortInSpeedOrder } from "#app/utils/speed-order";
 

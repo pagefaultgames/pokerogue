@@ -1,8 +1,6 @@
-import Pokemon from "#app/field/pokemon";
+import { Pokemon } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import { PokemonPriorityQueue } from "#app/queues/pokemon-priority-queue";
 import { BooleanHolder, randSeedShuffle } from "#app/utils/common";
-import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Stat } from "#enums/stat";
 
@@ -14,29 +12,6 @@ export function applyInSpeedOrder<T extends Pokemon>(pokemonList: T[], callback:
   sortInSpeedOrder(pokemonList).forEach(pokemon => {
     callback(pokemon);
   });
-}
-
-export function* inSpeedOrder(side: ArenaTagSide = ArenaTagSide.BOTH): Generator<Pokemon> {
-  let pokemonList: Pokemon[];
-  switch (side) {
-    case ArenaTagSide.PLAYER:
-      pokemonList = globalScene.getPlayerField(true);
-      break;
-    case ArenaTagSide.ENEMY:
-      pokemonList = globalScene.getEnemyField(true);
-      break;
-    default:
-      pokemonList = globalScene.getField(true);
-  }
-
-  const queue = new PokemonPriorityQueue();
-  pokemonList.forEach(p => {
-    queue.push(p);
-  });
-  while (!queue.isEmpty()) {
-    // If the queue is not empty, this can never be undefined
-    yield queue.pop()!;
-  }
 }
 
 export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: T[], shuffleFirst = true): T[] {
