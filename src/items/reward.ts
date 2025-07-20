@@ -254,7 +254,7 @@ export class AddMoneyReward extends Reward {
     globalScene.addMoney(moneyAmount.value);
 
     for (const p of globalScene.getPlayerParty()) {
-      if (p.species?.speciesId === SpeciesId.GIMMIGHOUL || p.fusionSpecies?.speciesId === SpeciesId.GIMMIGHOUL) {
+      if (p.hasSpecies(SpeciesId.GIMMIGHOUL)) {
         const factor = Math.min(Math.floor(this.moneyMultiplier), 3);
         p.heldItemManager.add(HeldItemId.GIMMIGHOUL_EVO_TRACKER, factor);
       }
@@ -443,9 +443,8 @@ export class ChangeTeraTypeReward extends PokemonReward {
    */
   shouldApply({ pokemon }: PokemonRewardParams): boolean {
     return (
-      [pokemon?.species.speciesId, pokemon?.fusionSpecies?.speciesId].filter(
-        s => s === SpeciesId.TERAPAGOS || s === SpeciesId.OGERPON || s === SpeciesId.SHEDINJA,
-      ).length === 0
+      pokemon.teraType !== this.teraType &&
+      ![SpeciesId.SHEDINJA, SpeciesId.OGERPON, SpeciesId.TERAPAGOS].some(s => pokemon.hasSpecies(s))
     );
   }
 
