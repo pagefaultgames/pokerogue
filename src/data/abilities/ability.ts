@@ -5305,6 +5305,26 @@ export class PostFaintUnsuppressedWeatherFormChangeAbAttr extends PostFaintAbAtt
   }
 }
 
+export class PostFaintFormChangeAbAttr extends PostFaintAbAttr {
+  private formFunc: (p: Pokemon) => number;
+
+  constructor(formFunc: (p: Pokemon) => number) {
+    super(true);
+
+    this.formFunc = formFunc;
+  }
+
+  override canApply({ pokemon }: AbAttrBaseParams): boolean {
+    return this.formFunc(pokemon) !== pokemon.formIndex;
+  }
+
+  override apply({ pokemon, simulated }: AbAttrBaseParams): void {
+    if (!simulated) {
+      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
+    }
+  }
+}
+
 export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   private damageRatio: number;
 
@@ -7296,6 +7316,7 @@ export function initAbilities() {
         (pokemon, abilityName) => i18next.t("abilityTriggers:disguiseAvoidedDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }),
         (pokemon) => toDmgValue(pokemon.getMaxHp() / 8))
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
+      .attr(PostFaintFormChangeAbAttr, () => 0)
       .uncopiable()
       .unreplaceable()
       .unsuppressable()
@@ -7304,6 +7325,7 @@ export function initAbilities() {
     new Ability(AbilityId.BATTLE_BOND, 7)
       .attr(PostVictoryFormChangeAbAttr, () => 2)
       .attr(PostBattleInitFormChangeAbAttr, () => 1)
+      .attr(PostFaintFormChangeAbAttr, () => 1)
       .attr(NoFusionAbilityAbAttr)
       .uncopiable()
       .unreplaceable()
@@ -7315,6 +7337,7 @@ export function initAbilities() {
       .conditionalAttr(p => p.formIndex === 4 || p.formIndex === 5, PostBattleInitFormChangeAbAttr, p => p.formIndex - 2)
       .conditionalAttr(p => p.getHpRatio() <= 0.5 && (p.formIndex === 2 || p.formIndex === 3), PostSummonFormChangeAbAttr, p => p.formIndex + 2)
       .conditionalAttr(p => p.getHpRatio() <= 0.5 && (p.formIndex === 2 || p.formIndex === 3), PostTurnFormChangeAbAttr, p => p.formIndex + 2)
+      .conditionalAttr(p => p.formIndex === 4 || p.formIndex === 5, PostFaintFormChangeAbAttr, p => p.formIndex - 2)
       .attr(NoFusionAbilityAbAttr)
       .uncopiable()
       .unreplaceable()

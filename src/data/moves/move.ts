@@ -87,7 +87,8 @@ import type { AttackMoveResult } from "#types/attack-move-result";
 import type { Localizable } from "#types/locales";
 import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveClassMap, MoveKindString } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
-import { BooleanHolder, type Constructor, getEnumValues, isNullOrUndefined, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue, toReadableString } from "#utils/common";
+import { BooleanHolder, type Constructor, isNullOrUndefined, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue, toReadableString } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 
 /**
@@ -304,10 +305,11 @@ export abstract class Move implements Localizable {
 
   /**
    * Checks if the move is immune to certain types.
+   * 
    * Currently looks at cases of Grass types with powder moves and Dark types with moves affected by Prankster.
-   * @param {Pokemon} user the source of this move
-   * @param {Pokemon} target the target of this move
-   * @param {PokemonType} type the type of the move's target
+   * @param user - The source of this move
+   * @param target - The target of this move
+   * @param type - The type of the move's target
    * @returns boolean
    */
   isTypeImmune(user: Pokemon, target: Pokemon, type: PokemonType): boolean {

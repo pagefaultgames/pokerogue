@@ -110,20 +110,24 @@ export function getRandomPlayerPokemon(
     // If there is only 1 legal/unfainted mon left, select from fainted legal mons
     const faintedLegalMons = party.filter(p => (!isAllowed || p.isAllowedInChallenge()) && p.isFainted());
     if (faintedLegalMons.length > 0) {
+      // TODO: should this use `randSeedItem`?
       chosenIndex = randSeedInt(faintedLegalMons.length);
       chosenPokemon = faintedLegalMons[chosenIndex];
     }
   }
   if (!chosenPokemon && fullyLegalMons.length > 0) {
+    // TODO: should this use `randSeedItem`?
     chosenIndex = randSeedInt(fullyLegalMons.length);
     chosenPokemon = fullyLegalMons[chosenIndex];
   }
   if (!chosenPokemon && isAllowed && allowedOnlyMons.length > 0) {
+    // TODO: should this use `randSeedItem`?
     chosenIndex = randSeedInt(allowedOnlyMons.length);
     chosenPokemon = allowedOnlyMons[chosenIndex];
   }
   if (!chosenPokemon) {
     // If no other options worked, returns fully random
+    // TODO: should this use `randSeedItem`?
     chosenIndex = randSeedInt(party.length);
     chosenPokemon = party[chosenIndex];
   }
@@ -517,7 +521,7 @@ export function trainerThrowPokeball(
                   repeatDelay: 500,
                   onUpdate: t => {
                     if (shakeCount && shakeCount < 4) {
-                      const value = t.getValue();
+                      const value = t.getValue() ?? 0;
                       const directionMultiplier = shakeCount % 2 === 1 ? 1 : -1;
                       pokeball.setX(pbX + value * 4 * directionMultiplier);
                       pokeball.setAngle(value * 27.5 * directionMultiplier);
