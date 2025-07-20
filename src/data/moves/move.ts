@@ -310,10 +310,11 @@ export abstract class Move implements Localizable {
   /**
    * Checks if the target is immune to this Move's type.
    * Currently looks at cases of Grass types with powder moves and Dark types with moves affected by Prankster.
-   * @param user - The {@linkcode Pokemon} using the move
-   * @param target - The {@linkcode Pokemon} targeted by the move
-   * @param type - The {@linkcode PokemonType} of the move
-   * @returns Whether the move is blocked by the target's type
+   * @param user - The {@linkcode Pokemon} using this move
+   * @param target - The {@linkcode Pokemon} targeted by this move
+   * @param type - The {@linkcode PokemonType} of the target
+   * @returns Whether the move is blocked by the target's type.
+   * Self-targeted moves will return `false` regardless of circumstances.
    */
   isTypeImmune(user: Pokemon, target: Pokemon, type: PokemonType): boolean {
     if (this.moveTarget === MoveTarget.USER) {
@@ -327,7 +328,7 @@ export abstract class Move implements Localizable {
         }
         break;
       case PokemonType.DARK:
-        if (user.hasAbility(AbilityId.PRANKSTER) && this.category === MoveCategory.STATUS && (user.isPlayer() !== target.isPlayer())) {
+        if (user.hasAbility(AbilityId.PRANKSTER) && this.category === MoveCategory.STATUS && user.isOpponent(target)) {
           return true;
         }
         break;
@@ -339,7 +340,7 @@ export abstract class Move implements Localizable {
    * Checks if the move would hit its target's Substitute instead of the target itself.
    * @param user - The {@linkcode Pokemon} using this move
    * @param target - The {@linkcode Pokemon} targeted by this move
-   * @returns `true` if the move can bypass the target's Substitute; `false` otherwise.
+   * @returns Whether this Move will hit the target's Substitute (assuming one exists).
    */
   hitsSubstitute(user: Pokemon, target?: Pokemon): boolean {
     if ([ MoveTarget.USER, MoveTarget.USER_SIDE, MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES ].includes(this.moveTarget)
