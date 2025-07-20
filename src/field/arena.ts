@@ -143,6 +143,7 @@ export class Arena {
     if (!tierPool.length) {
       ret = globalScene.randomSpecies(waveIndex, level);
     } else {
+      // TODO: should this use `randSeedItem`?
       const entry = tierPool[randSeedInt(tierPool.length)];
       let species: SpeciesId;
       if (typeof entry === "number") {
@@ -154,6 +155,7 @@ export class Arena {
           if (level >= levelThreshold) {
             const speciesIds = entry[levelThreshold];
             if (speciesIds.length > 1) {
+              // TODO: should this use `randSeedItem`?
               species = speciesIds[randSeedInt(speciesIds.length)];
             } else {
               species = speciesIds[0];
@@ -166,19 +168,11 @@ export class Arena {
       ret = getPokemonSpecies(species!);
 
       if (ret.subLegendary || ret.legendary || ret.mythical) {
-        switch (true) {
-          case ret.baseTotal >= 720:
-            regen = level < 90;
-            break;
-          case ret.baseTotal >= 670:
-            regen = level < 70;
-            break;
-          case ret.baseTotal >= 580:
-            regen = level < 50;
-            break;
-          default:
-            regen = level < 30;
-            break;
+        const waveDifficulty = globalScene.gameMode.getWaveForDifficulty(waveIndex);
+        if (ret.baseTotal >= 660) {
+          regen = waveDifficulty < 80; // Wave 50+ in daily (however, max Daily wave is 50 currently so not possible)
+        } else {
+          regen = waveDifficulty < 55; // Wave 25+ in daily
         }
       }
     }
@@ -496,38 +490,37 @@ export class Arena {
   getTrainerChance(): number {
     switch (this.biomeType) {
       case BiomeId.METROPOLIS:
-        return 2;
-      case BiomeId.SLUM:
-      case BiomeId.BEACH:
       case BiomeId.DOJO:
-      case BiomeId.CONSTRUCTION_SITE:
         return 4;
       case BiomeId.PLAINS:
       case BiomeId.GRASS:
+      case BiomeId.BEACH:
       case BiomeId.LAKE:
       case BiomeId.CAVE:
+      case BiomeId.DESERT:
+      case BiomeId.CONSTRUCTION_SITE:
+      case BiomeId.SLUM:
         return 6;
       case BiomeId.TALL_GRASS:
       case BiomeId.FOREST:
-      case BiomeId.SEA:
       case BiomeId.SWAMP:
       case BiomeId.MOUNTAIN:
       case BiomeId.BADLANDS:
-      case BiomeId.DESERT:
       case BiomeId.MEADOW:
       case BiomeId.POWER_PLANT:
-      case BiomeId.GRAVEYARD:
       case BiomeId.FACTORY:
       case BiomeId.SNOWY_FOREST:
         return 8;
+      case BiomeId.SEA:
       case BiomeId.ICE_CAVE:
       case BiomeId.VOLCANO:
+      case BiomeId.GRAVEYARD:
       case BiomeId.RUINS:
       case BiomeId.WASTELAND:
       case BiomeId.JUNGLE:
       case BiomeId.FAIRY_CAVE:
+      case BiomeId.ISLAND:
         return 12;
-      case BiomeId.SEABED:
       case BiomeId.ABYSS:
       case BiomeId.SPACE:
       case BiomeId.TEMPLE:
@@ -932,6 +925,7 @@ export function getBiomeKey(biome: BiomeId): string {
 
 export function getBiomeHasProps(biomeType: BiomeId): boolean {
   switch (biomeType) {
+    case BiomeId.PLAINS:
     case BiomeId.METROPOLIS:
     case BiomeId.BEACH:
     case BiomeId.LAKE:

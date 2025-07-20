@@ -36,8 +36,8 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import i18next from "#plugins/i18n";
 import { achvs } from "#system/achv";
 import { PokemonData } from "#system/pokemon-data";
-import { TrainerPartyTemplate } from "#trainers/TrainerPartyTemplate";
 import { trainerConfigs } from "#trainers/trainer-config";
+import { TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import { isNullOrUndefined, NumberHolder, randSeedInt, randSeedShuffle } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -305,6 +305,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         // One random pokemon will get its passive unlocked
         const passiveDisabledPokemon = globalScene.getPlayerParty().filter(p => !p.passive);
         if (passiveDisabledPokemon?.length > 0) {
+          // TODO: should this use `randSeedItem`?
           const enablePassiveMon = passiveDisabledPokemon[randSeedInt(passiveDisabledPokemon.length)];
           enablePassiveMon.passive = true;
           enablePassiveMon.updateInfo(true);
@@ -466,6 +467,7 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
   // One random pokemon will get its passive unlocked
   const passiveDisabledPokemon = globalScene.getPlayerParty().filter(p => !p.passive);
   if (passiveDisabledPokemon?.length > 0) {
+    // TODO: should this use `randSeedItem`?
     const enablePassiveMon = passiveDisabledPokemon[randSeedInt(passiveDisabledPokemon.length)];
     enablePassiveMon.passive = true;
     await enablePassiveMon.updateInfo(true);
