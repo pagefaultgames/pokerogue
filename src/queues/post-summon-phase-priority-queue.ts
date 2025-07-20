@@ -1,3 +1,4 @@
+import { globalScene } from "#app/global-scene";
 import { PostSummonActivateAbilityPhase } from "#app/phases/post-summon-activate-ability-phase";
 import type { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
@@ -27,10 +28,16 @@ export class PostSummonPhasePriorityQueue extends PokemonPhasePriorityQueue<Post
    * @param phase The {@linkcode PostSummonPhase} that was pushed onto the queue
    */
   private queueAbilityPhase(phase: PostSummonPhase): void {
+    if (phase instanceof PostSummonActivateAbilityPhase) {
+      return;
+    }
+
     const phasePokemon = phase.getPokemon();
 
     phasePokemon.getAbilityPriorities().forEach((priority, idx) => {
-      this.queue.push(new PostSummonActivateAbilityPhase(phasePokemon.getBattlerIndex(), priority, !!idx));
+      globalScene.phaseManager.unshiftPhase(
+        new PostSummonActivateAbilityPhase(phasePokemon.getBattlerIndex(), priority, !!idx),
+      );
     });
   }
 }

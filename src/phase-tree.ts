@@ -66,9 +66,9 @@ export class PhaseTree {
   public remove<P extends PhaseString>(phaseType: P, phaseFilter?: PhaseConditionFunc<P>): boolean {
     for (let i = this.levels.length - 1; i >= 0; i--) {
       const level = this.levels[i];
-      const phase = level.find(p => p.is(phaseType) && (!phaseFilter || phaseFilter(p)));
-      if (phase) {
-        level.splice(i, 1);
+      const phaseIndex = level.findIndex(p => p.is(phaseType) && (!phaseFilter || phaseFilter(p)));
+      if (phaseIndex !== -1) {
+        level.splice(phaseIndex, 1);
         return true;
       }
     }

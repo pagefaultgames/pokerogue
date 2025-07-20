@@ -17,8 +17,6 @@ export abstract class Phase {
    */
   public abstract readonly phaseName: PhaseString;
 
-  public deferred: boolean;
-
   /**
    * Check if the phase is of the given type without requiring `instanceof`.
    *

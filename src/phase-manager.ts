@@ -101,6 +101,7 @@ import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import { DynamicPhaseMarker } from "#app/phases/dynamic-phase-marker";
 import { PhaseTree } from "#app/phase-tree";
+import { BattleType } from "#enums/battle-type";
 
 /*
  * Manager for phases used by battle scene.
@@ -435,6 +436,23 @@ export class PhaseManager {
    */
   public unshiftNew<T extends PhaseString>(phase: T, ...args: ConstructorParameters<PhaseConstructorMap[T]>): void {
     this.unshiftPhase(this.create(phase, ...args));
+  }
+
+  // Not used yet
+  public unshiftNewDeferred<T extends PhaseString>(
+    phase: T,
+    ...args: ConstructorParameters<PhaseConstructorMap[T]>
+  ): void {
+    this.unshiftPhase(this.create(phase, ...args), true);
+  }
+
+  public tryAddEnemyPostSummonPhases(): void {
+    if (
+      ![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType) &&
+      !this.dynamicQueueManager.exists("MovePhase", p => p.getPokemon().isEnemy())
+    ) {
+      globalScene.getEnemyField().map(p => this.unshiftPhase(new PostSummonPhase(p.getBattlerIndex())));
+    }
   }
 
   /**
