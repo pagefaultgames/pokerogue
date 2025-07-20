@@ -219,12 +219,16 @@ export class TurnStartPhase extends FieldPhase {
       }
     }
 
+    // TODO: Re-order these phases to be consistent with mainline turn order:
+    // https://www.smogon.com/forums/threads/sword-shield-battle-mechanics-research.3655528/page-64#post-9244179
+
     phaseManager.pushNew("WeatherEffectPhase");
     phaseManager.pushNew("BerryPhase");
 
     /** Add a new phase to check who should be taking status damage */
     phaseManager.pushNew("CheckStatusEffectPhase", moveOrder);
 
+    phaseManager.pushNew("PositionalTagPhase");
     phaseManager.pushNew("TurnEndPhase");
 
     /**

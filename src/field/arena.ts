@@ -7,6 +7,9 @@ import type { ArenaTag } from "#data/arena-tag";
 import { ArenaTrapTag, getArenaTag } from "#data/arena-tag";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import type { PokemonSpecies } from "#data/pokemon-species";
+// biome-ignore lint/correctness/noUnusedImports: TSDoc
+import type { PositionalTag } from "#data/positional-tags/positional-tag";
+import { PositionalTagManager } from "#data/positional-tags/positional-tag-manager";
 import { getTerrainClearMessage, getTerrainStartMessage, Terrain, TerrainType } from "#data/terrain";
 import {
   getLegendaryWeatherContinuesMessage,
@@ -37,11 +40,18 @@ export class Arena {
   public biomeType: BiomeId;
   public weather: Weather | null;
   public terrain: Terrain | null;
-  public tags: ArenaTag[];
+  /** All currently-active {@linkcode ArenaTag}s on both sides of the field. */
+  public tags: ArenaTag[] = [];
+  /**
+   * All currently-active {@linkcode PositionalTag}s on both sides of the field,
+   * sorted by tag type.
+   */
+  public positionalTagManager: PositionalTagManager = new PositionalTagManager();
+
   public bgm: string;
   public ignoreAbilities: boolean;
   public ignoringEffectSource: BattlerIndex | null;
-  public playerTerasUsed: number;
+  public playerTerasUsed = 0;
   /**
    * Saves the number of times a party pokemon faints during a arena encounter.
    * {@linkcode globalScene.currentBattle.enemyFaints} is the corresponding faint counter for the enemy (this resets every wave).
@@ -57,11 +67,9 @@ export class Arena {
 
   constructor(biome: BiomeId, bgm: string, playerFaints = 0) {
     this.biomeType = biome;
-    this.tags = [];
     this.bgm = bgm;
     this.trainerPool = biomeTrainerPools[biome];
     this.updatePoolsForTimeOfDay();
-    this.playerTerasUsed = 0;
     this.playerFaints = playerFaints;
   }
 

@@ -1,20 +1,19 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { allMoves } from "#app/data/data-lists";
-import { DelayedAttackTag } from "#app/data/arena-tag";
-import { allAbilities } from "#app/data/data-lists";
-import { RandomMoveAttr } from "#app/data/moves/move";
-import { MoveResult } from "#enums/move-result";
+import { DelayedAttackTag } from "#app/data/positional-tags/positional-tag";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
+import { allMoves } from "#data/data-lists";
+import { RandomMoveAttr } from "#data/moves/move";
 import { AbilityId } from "#enums/ability-id";
+import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { BattleType } from "#enums/battle-type";
 
 describe("Moves - Delayed Attacks", () => {
   let phaserGame: Phaser.Game;
@@ -41,35 +40,42 @@ describe("Moves - Delayed Attacks", () => {
   });
 
   /**
-   * Wait until a number of turns have passed.
+   * Wait until a number of turns have passed and a delayed attack has struck.
    * @param numTurns - Number of turns to pass.
-   * @returns: A Promise that resolves once the specified number of turns has elapsed.
+   * @param toEndOfTurn - Whether to advance to the `TurnEndPhase` (true) or the `PositionalTagPhase` (`false`);
+   * default `true`
+   * @returns: A Promise that resolves once the specified number of turns has elapsed
+   * and the specified phase has been reached.
    */
-  async function passTurns(numTurns: number): Promise<void> {
+  async function passTurns(numTurns: number, toEndOfTurn = true): Promise<void> {
     for (let i = 0; i < numTurns; i++) {
       game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
       if (game.scene.currentBattle.double && game.scene.getPlayerField()[1]) {
         game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
       }
-      await game.toNextTurn();
+    }
+    await game.phaseInterceptor.to("PositionalTagPhase");
+    if (toEndOfTurn) {
+      await game.toEndOfTurn();
     }
   }
 
   /**
    * Expect that future sight is active with the specified number of attacks.
    * @param numAttacks - The number of delayed attacks that should be queued; default `1`
+   * @returns The queued tags.
    */
-  function expectFutureSightActive(numAttacks = 1) {
-    const tag = game.scene.arena.getTag(DelayedAttackTag)!;
-    expect(tag).toBeDefined();
-    expect(tag["delayedAttacks"]).toHaveLength(numAttacks);
+  function expectFutureSightActive(numAttacks = 1): DelayedAttackTag[] {
+    const delayedAttacks = game.scene.arena.positionalTagManager["tags"].filter(t => t instanceof DelayedAttackTag)!;
+    expect(delayedAttacks).toHaveLength(numAttacks);
+    return delayedAttacks;
   }
 
   it.each<{ name: string; move: MoveId }>([
     { name: "Future Sight", move: MoveId.FUTURE_SIGHT },
     { name: "Doom Desire", move: MoveId.DOOM_DESIRE },
   ])("$name should show message and strike 2 turns after use, ignoring player/enemy switches", async ({ move }) => {
-    game.override.battleType(BattleType.TRAINER)
+    game.override.battleType(BattleType.TRAINER);
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
     game.move.use(move);
@@ -136,7 +142,7 @@ describe("Moves - Delayed Attacks", () => {
 
     game.move.use(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.use(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
-    await game.toEndOfTurn()
+    await game.toEndOfTurn();
 
     expectFutureSightActive(2);
     expect(enemy1.hp).toBe(enemy1.getMaxHp());
@@ -144,7 +150,12 @@ describe("Moves - Delayed Attacks", () => {
     expect(karp.getLastXMoves()[0].result).toBe(MoveResult.OTHER);
     expect(feebas.getLastXMoves()[0].result).toBe(MoveResult.OTHER);
 
-    await passTurns(2);
+    await passTurns(2, false);
+
+    // Both attacks have
+    expectFutureSightActive(0);
+
+    await game.toEndOfTurn();
 
     expect(enemy1.hp).toBeLessThan(enemy1.getMaxHp());
     expect(enemy2.hp).toBeLessThan(enemy2.getMaxHp());
@@ -274,7 +285,7 @@ describe("Moves - Delayed Attacks", () => {
   });
 
   // TODO: this is not implemented
-  it.todo("should not apply Shell Bell recovery, even if user is on field")
+  it.todo("should not apply Shell Bell recovery, even if user is on field");
 
   // TODO: Enable once code is added to MEP to do this
   it.todo("should not apply the user's abilities when dealing damage if the user is inactive", async () => {

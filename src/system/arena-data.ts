@@ -1,5 +1,10 @@
 import type { ArenaTag } from "#data/arena-tag";
 import { loadArenaTag } from "#data/arena-tag";
+import {
+  loadPositionalTag,
+  type PositionalTag,
+  type SerializedPositionalTag,
+} from "#data/positional-tags/positional-tag";
 import { Terrain } from "#data/terrain";
 import { Weather } from "#data/weather";
 import type { BiomeId } from "#enums/biome-id";
@@ -10,6 +15,7 @@ export class ArenaData {
   public weather: Weather | null;
   public terrain: Terrain | null;
   public tags: ArenaTag[];
+  public positionalTags: PositionalTag[] = [];
   public playerTerasUsed: number;
 
   constructor(source: Arena | any) {
@@ -31,5 +37,10 @@ export class ArenaData {
     if (source.tags) {
       this.tags = source.tags.map(t => loadArenaTag(t));
     }
+
+    this.positionalTags =
+      (sourceArena ? sourceArena.positionalTagManager.tags : source.positionalTags)?.map((t: SerializedPositionalTag) =>
+        loadPositionalTag(t),
+      ) ?? [];
   }
 }

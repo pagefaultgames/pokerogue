@@ -1096,6 +1096,8 @@ export class GameData {
             }
           }
 
+          globalScene.arena.positionalTagManager.tags = sessionData.arena.positionalTags;
+
           if (globalScene.modifiers.length) {
             console.warn("Existing modifiers not cleared on session load, deleting...");
             globalScene.modifiers = [];

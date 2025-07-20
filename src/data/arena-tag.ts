@@ -1,4 +1,6 @@
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
+/** biome-ignore lint/correctness/noUnusedImports: Type-only import for doc comment */
+import type { BattlerTag } from "#app/data/battler-tags";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonBattleAnim } from "#data/battle-anims";
@@ -13,7 +15,6 @@ import { MoveCategory } from "#enums/MoveCategory";
 import { MoveTarget } from "#enums/MoveTarget";
 import { CommonAnim } from "#enums/move-anims-common";
 import { MoveId } from "#enums/move-id";
-import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
@@ -21,9 +22,6 @@ import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import { BooleanHolder, NumberHolder, toDmgValue } from "#utils/common";
 import i18next from "i18next";
-
-/** biome-ignore lint/correctness/noUnusedImports: Type-only import for doc comment */
-import type { BattlerTag } from "#app/data/battler-tags";
 
 /**
  * An {@linkcode ArenaTag} represents a semi-persistent effect affecting a given side of the field.
@@ -887,127 +885,6 @@ class ToxicSpikesTag extends ArenaTrapTag {
 }
 
 /**
- * Interface representing a delayed attack command.
- * @see {@linkcode DelayedAttackTag}
- */
-interface DelayedAttack {
-  /** The {@linkcode PID | Pokemon.id} of the {@linkcode Pokemon} initiating the attack. */
-  sourceId: number;
-  /** The {@linkcode MoveId} that was used to trigger the delayed attack. */
-  move: MoveId;
-  /** The {@linkcode BattlerIndex} of the attack's target. */
-  targetIndex: BattlerIndex;
-  /** 
-   * The number of turns left until activation.
-   * The attack will trigger once its turn count reaches 0, at which point it is removed.
-   */
-  turnsLeft: number;
-}
-
-/**
- * Arena Tag to manage execution of delayed attacks, such as {@linkcode MoveId.FUTURE_SIGHT} or {@linkcode MoveId.DOOM_DESIRE}.
- * Delayed attacks do nothing for the first several turns after use (including the turn the move is used),
- * triggering against a certain slot after the turn count has elapsed.
- */
-export class DelayedAttackTag extends ArenaTag {
-  /** Contains all queued delayed attacks on the field */
-  private delayedAttacks: DelayedAttack[] = [];
-
-  constructor() {
-    super(ArenaTagType.DELAYED_ATTACK, 0);
-  }
-
-  override loadTag(source: ArenaTag | any): void {
-    super.loadTag(source);
-    this.delayedAttacks = source.delayedAttacks;
-  }
-
-  /**
-   * Queue a delayed attack to be used in some indeterminate number of turns.
-   * @param source - The {@linkcode Pokemon} using the move
-   * @param move - The {@linkcode MoveId} being used
-   * @param targetIndex - The {@linkcode BattlerIndex} being targeted
-   * @param turnCount - The number of turns to delay the attack (_including the turn the move is used_); default `3`
-   */
-  public queueAttack(source: Pokemon, move: MoveId, targetIndex: BattlerIndex, turnCount = 3): void {
-    this.delayedAttacks.push({ sourceId: source.id, move, targetIndex, turnsLeft: turnCount });
-  }
-
-  /**
-   * Check whether a delayed attack can be queued against the given target.
-   * @param targetIndex - The {@linkcode BattlerIndex} of the target Pokemon
-   * @returns Whether another delayed attack can be successfully added.
-   */
-  public canAddAttack(targetIndex: BattlerIndex): boolean {
-    return this.delayedAttacks.every(atk => atk.targetIndex !== targetIndex);
-  }
-
-  /**
-   * Tick down all existing delayed attacks, activating them if their timers have elapsed.
-   * @returns Whether this tag should remain (at least 1 delayed attack still active).
-   */
-  override lapse(_arena: Arena): boolean {
-    for (const attack of this.delayedAttacks) {
-      const source = globalScene.getPokemonById(attack.sourceId);
-      const target: Pokemon | undefined = globalScene.getField()[attack.targetIndex];
-
-      if (--attack.turnsLeft > 0) {
-        // attack still cooking
-        continue;
-      }
-
-      if (!source || !target || source === target || target.isFainted()) {
-        // source/target either nonexistent or the exact same pokemon; silently mark for deletion
-        // TODO: move into an overriddable method if wish is made into a delayed attack 
-        attack.turnsLeft = -1;
-        continue;
-      }
-
-      this.triggerAttack(attack);
-    }
-
-    return this.removeDoneAttacks();
-  }
-
-  /**
-   * Remove all finished attacks from the current queue.
-   * @returns Whether at least 1 attack has not finished triggering.
-   */
-  private removeDoneAttacks(): boolean {
-    this.delayedAttacks = this.delayedAttacks.filter(a => a.turnsLeft > 0);
-    return this.delayedAttacks.length > 0;
-  }
-
-  /** 
-   * Trigger a delayed attack's effects prior to being removed.
-   * @param attack - The {@linkcode DelayedAttack} being activated
-   */
-  protected triggerAttack(attack: DelayedAttack): void {
-    const source = globalScene.getPokemonById(attack.sourceId)!;
-    const target = globalScene.getField()[attack.targetIndex];
-
-    source.turnData.extraTurns++;
-    globalScene.phaseManager.queueMessage(
-      i18next.t("moveTriggers:tookMoveAttack", {
-        pokemonName: getPokemonNameWithAffix(target),
-        moveName: allMoves[attack.move].name,
-      }),
-    );
-
-    globalScene.phaseManager.unshiftNew(
-      "MoveEffectPhase",
-      attack.sourceId,
-      [attack.targetIndex],
-      allMoves[attack.move],
-      MoveUseMode.TRANSPARENT,
-    );
-  }
-
-  /** Override on remove func to do nothing. */
-  override onRemove(_arena: Arena): void {}
-}
-
-/**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Stealth_Rock_(move) Stealth Rock}.
  * Applies up to 1 layer of Stealth Rocks, dealing percentage-based damage to any Pokémon
  * who is summoned into the trap, based on the Rock type's type effectiveness.
@@ -1662,8 +1539,6 @@ export function getArenaTag(
       return new SpikesTag(sourceId, side);
     case ArenaTagType.TOXIC_SPIKES:
       return new ToxicSpikesTag(sourceId, side);
-    case ArenaTagType.DELAYED_ATTACK:
-      return new DelayedAttackTag();
     case ArenaTagType.WISH:
       return new WishTag(turnCount, sourceId, side);
     case ArenaTagType.STEALTH_ROCK:

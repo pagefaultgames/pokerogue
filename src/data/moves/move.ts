@@ -25,6 +25,7 @@ import { getBerryEffectFunc } from "#data/berry";
 import { applyChallenges } from "#data/challenge";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
+import { DelayedAttackTag } from "#data/positional-tags/positional-tag";
 import {
   getNonVolatileStatusEffects,
   getStatusEffectHealText,
@@ -54,6 +55,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MultiHitType } from "#enums/MultiHitType";
 import { PokemonType } from "#enums/pokemon-type";
+import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
 import {
   BATTLE_STATS,
@@ -3134,11 +3136,8 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (_user, target, _move) => {
-      // Check the arena if another delayed attack is active and hitting the same slot
-      const delayedTag = globalScene.arena.getTag(DelayedAttackTag);
-      return delayedTag?.canAddAttack(target.getBattlerIndex()) ?? true;
-    }
+    // Check the arena if another delayed attack is active and hitting the same slot
+    return (_user, target, move) => globalScene.arena.positionalTagManager.canAddTag(PositionalTagType.DELAYED_ATTACK, target.getBattlerIndex(), move.id)
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: [overridden: BooleanHolder, useMode: MoveUseMode]): boolean {
@@ -3159,18 +3158,13 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 
     user.pushMoveHistory({move: move.id, targets: [target.getBattlerIndex()], result: MoveResult.OTHER, useMode: useMode, turn: globalScene.currentBattle.turn})
 
-    // Add a Delayed Attack tag to the arena if it doesn't already exist and queue up an extra attack.
-    // TODO: Remove unused params once signature is tweaked to make more sense (none of these get used)
-    globalScene.arena.addTag(ArenaTagType.DELAYED_ATTACK, 123, 69, 420);
-
-    // Queue an attack on the added (or existing) tag
-    const delayedAttackTag = globalScene.arena.getTag(DelayedAttackTag)
-    if (!delayedAttackTag) {
-      console.warn("Delayed attack tag not present!")
-      return false;
-    }
-
-    delayedAttackTag.queueAttack(user, move.id, target.getBattlerIndex());
+    // Queue up an attack on the given slot.
+    globalScene.arena.positionalTagManager.addTag({
+      tagType: PositionalTagType.DELAYED_ATTACK,
+      sourceId: user.id,
+      targetIndex: target.getBattlerIndex(),
+      sourceMove: move.id,
+      turnCount: 3})
     return true;
   }
 }
@@ -9207,7 +9201,6 @@ export function initMoves() {
       .ignoresProtect()
       /*
        * Should not apply abilities or held items if user is off the field
-       * Triggered move phase occurs after Electrify tag is removed
       */
       .edgeCase(),
     new AttackMove(MoveId.ROCK_SMASH, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 15, 50, 0, 2)
@@ -9549,7 +9542,6 @@ export function initMoves() {
       .ignoresProtect()
       /*
        * Should not apply abilities or held items if user is off the field
-       * Triggered move phase occurs after Electrify tag is removed
       */
       .edgeCase(),
     new AttackMove(MoveId.PSYCHO_BOOST, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 140, 90, 5, -1, 0, 3)

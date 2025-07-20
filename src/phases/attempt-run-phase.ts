@@ -6,7 +6,6 @@ import { StatusEffect } from "#enums/status-effect";
 import { FieldPhase } from "#phases/field-phase";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
-import { ArenaTagType } from "#enums/arena-tag-type";
 
 export class AttemptRunPhase extends FieldPhase {
   public readonly phaseName = "AttemptRunPhase";
@@ -43,10 +42,6 @@ export class AttemptRunPhase extends FieldPhase {
 
       globalScene.clearEnemyHeldItemModifiers();
 
-      // clear all queued delayed attacks (e.g. from Future Sight)
-      // TODO: review if this is necessary
-      globalScene.arena.removeTag(ArenaTagType.DELAYED_ATTACK);
-      
       enemyField.forEach(enemyPokemon => {
         enemyPokemon.hideInfo().then(() => enemyPokemon.destroy());
         enemyPokemon.hp = 0;
