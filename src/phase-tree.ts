@@ -30,6 +30,18 @@ export class PhaseTree {
     this.add(phase, this.levels.length - 1);
   }
 
+  public addAfter(phase: Phase, type: PhaseString): void {
+    for (let i = this.levels.length - 1; i >= 0; i--) {
+      const insertIdx = this.levels[i].findIndex(p => p.is(type)) + 1;
+      if (insertIdx !== 0) {
+        this.levels[i].splice(insertIdx, 0, phase);
+        return;
+      }
+    }
+
+    this.addPhase(phase);
+  }
+
   public unshiftToCurrent(phase: Phase): void {
     this.levels[this.currentLevel].unshift(phase);
   }
