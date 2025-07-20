@@ -5,7 +5,7 @@ import type Pokemon from "#app/field/pokemon";
 import type { Phase } from "#app/phase";
 import type { MovePhase } from "#app/phases/move-phase";
 import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
-import type { PhasePriorityQueue } from "#app/queues/phase-priority-queue";
+import type { PriorityQueue } from "#app/queues/phase-priority-queue";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import { PostSummonPhasePriorityQueue } from "#app/queues/post-summon-phase-priority-queue";
 import type { BattlerIndex } from "#enums/battler-index";
@@ -24,7 +24,7 @@ const nonDynamicPokemonPhases: PhaseString[] = [
 ];
 
 export class DynamicQueueManager {
-  private dynamicPhaseMap: Map<PhaseString, PhasePriorityQueue<Phase>>;
+  private dynamicPhaseMap: Map<PhaseString, PriorityQueue<Phase>>;
 
   constructor() {
     this.dynamicPhaseMap = new Map();

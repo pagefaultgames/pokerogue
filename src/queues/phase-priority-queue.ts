@@ -1,18 +1,15 @@
-import type { GeneralPhaseConditionFunc } from "#app/@types/phase-condition";
-import type { Phase } from "#app/phase";
-
 /**
  * Stores a list of {@linkcode Phase}s
  *
  * Dynamically updates ordering to always pop the highest "priority", based on implementation of {@linkcode reorder}
  */
-export abstract class PhasePriorityQueue<T extends Phase> {
+export abstract class PriorityQueue<T> {
   protected queue: T[] = [];
 
   /**
    * Sorts the elements in the queue
    */
-  public abstract reorder(): void;
+  protected abstract reorder(): void;
 
   /**
    * Calls {@linkcode reorder} and shifts the queue
@@ -42,7 +39,7 @@ export abstract class PhasePriorityQueue<T extends Phase> {
     return !this.queue.length;
   }
 
-  public remove(condition?: GeneralPhaseConditionFunc): boolean {
+  public remove(condition?: (t: T) => boolean): boolean {
     const phaseIndex = this.queue.findIndex(condition ?? (() => true));
     if (phaseIndex > -1) {
       this.queue.splice(phaseIndex, 1);
@@ -51,11 +48,11 @@ export abstract class PhasePriorityQueue<T extends Phase> {
     return false;
   }
 
-  public findPhase(condition?: GeneralPhaseConditionFunc): T | undefined {
+  public findPhase(condition?: (t: T) => boolean): T | undefined {
     return this.queue.find(phase => !condition || condition(phase));
   }
 
-  public hasPhaseWithCondition(condition?: GeneralPhaseConditionFunc): boolean {
+  public hasPhaseWithCondition(condition?: (t: T) => boolean): boolean {
     return this.queue.find(phase => !condition || condition(phase)) !== undefined;
   }
 }

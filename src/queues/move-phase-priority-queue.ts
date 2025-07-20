@@ -11,7 +11,7 @@ import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier"
 export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase> {
   private lastTurnOrder: Pokemon[] = [];
 
-  public override reorder(): void {
+  protected override reorder(): void {
     super.reorder();
     this.sortPostSpeed();
     console.log(this.queue.map(p => p.getPokemon().name));
