@@ -1,7 +1,7 @@
 /**
- * Stores a list of {@linkcode Phase}s
+ * Stores a list of elements.
  *
- * Dynamically updates ordering to always pop the highest "priority", based on implementation of {@linkcode reorder}
+ * Dynamically updates ordering to always pop the highest "priority", based on implementation of {@linkcode reorder}.
  */
 export abstract class PriorityQueue<T> {
   protected queue: T[] = [];
@@ -39,6 +39,14 @@ export abstract class PriorityQueue<T> {
     return !this.queue.length;
   }
 
+  /**
+   * Removes the first element matching the condition
+   * @param condition - A condition function
+   * @returns `true` if a removal occurred, `false` otherwise
+   *
+   * @remarks
+   * {@linkcode reorder} is not called by this method, so the removal is not guaranteed to be the true "first" element.
+   */
   public remove(condition?: (t: T) => boolean): boolean {
     const phaseIndex = this.queue.findIndex(condition ?? (() => true));
     if (phaseIndex > -1) {
@@ -48,10 +56,12 @@ export abstract class PriorityQueue<T> {
     return false;
   }
 
+  /** Returns a phase matching the condition */
   public findPhase(condition?: (t: T) => boolean): T | undefined {
     return this.queue.find(phase => !condition || condition(phase));
   }
 
+  /** Returns if a phase matching the condition exists */
   public hasPhaseWithCondition(condition?: (t: T) => boolean): boolean {
     return this.queue.find(phase => !condition || condition(phase)) !== undefined;
   }

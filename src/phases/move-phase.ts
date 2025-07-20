@@ -37,7 +37,7 @@ export class MovePhase extends PokemonPhase {
   protected _move: PokemonMove;
   protected _targets: BattlerIndex[];
   public readonly useMode: MoveUseMode; // Made public for quash
-  /** Whether the current move is forced last (used for Quash). */
+  /** The timing modifier of the move (used by Quash and to force called moves to the front of their queue) */
   protected _timingModifier: MovePhaseTimingModifier;
   /** Whether the current move should fail but still use PP. */
   protected failed = false;
@@ -90,7 +90,7 @@ export class MovePhase extends PokemonPhase {
     targets: BattlerIndex[],
     move: PokemonMove,
     useMode: MoveUseMode,
-    timingModifier = MovePhaseTimingModifier.NORMAL,
+    timingModifier: MovePhaseTimingModifier = MovePhaseTimingModifier.NORMAL,
   ) {
     super(pokemon.getBattlerIndex());
 

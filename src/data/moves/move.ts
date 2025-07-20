@@ -865,6 +865,7 @@ export abstract class Move implements Localizable {
     return priority.value;
   }
 
+  // TODO doesn't work because fractional priorities differ
   getPriorityModifier(user: Pokemon, simulated = true): MovePriorityModifier {
     const modifierHolder = new NumberHolder(MovePriorityModifier.NORMAL);
     applyAbAttrs("ChangeMovePriorityModifierAbAttr", {pokemon: user, simulated: simulated, move: this, priority: modifierHolder});

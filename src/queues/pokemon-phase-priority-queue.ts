@@ -3,6 +3,7 @@ import { PriorityQueue } from "#app/queues/phase-priority-queue";
 import { sortInSpeedOrder } from "#app/utils/speed-order";
 import type { BattlerIndex } from "#enums/battler-index";
 
+/** A generic priority queue of {@linkcode DynamicPhase}s */
 export class PokemonPhasePriorityQueue<T extends DynamicPhase> extends PriorityQueue<T> {
   protected setOrder: BattlerIndex[] | undefined;
   protected override reorder(): void {

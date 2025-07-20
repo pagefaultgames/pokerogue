@@ -101,7 +101,7 @@ import { UnlockPhase } from "#phases/unlock-phase";
 import { VictoryPhase } from "#phases/victory-phase";
 import { WeatherEffectPhase } from "#phases/weather-effect-phase";
 import type { PhaseConditionFunc } from "#types/phase-condition";
-import type { PhaseMap, PhaseString, StaticPhaseString } from "#types/phase-types";
+import type { PhaseMap, PhaseString } from "#types/phase-types";
 
 /*
  * Manager for phases used by battle scene.
@@ -216,6 +216,7 @@ const PHASES = Object.freeze({
 /** Maps Phase strings to their constructors */
 export type PhaseConstructorMap = typeof PHASES;
 
+/** Phases pushed at the end of each {@linkcode TurnStartPhase} */
 const turnEndPhases: PhaseString[] = ["WeatherEffectPhase", "BerryPhase", "CheckStatusEffectPhase", "TurnEndPhase"];
 
 /**
@@ -226,9 +227,12 @@ export class PhaseManager {
   private phaseQueue: PhaseTree = new PhaseTree();
   private nextCommandPhaseQueue: Phase[] = [];
 
+  /** Holds priority queues for dynamically ordered phases */
   public dynamicQueueManager = new DynamicQueueManager();
 
+  /** The currently-running phase */
   private currentPhase: Phase | null = null;
+  /** The phase put on standby if {@linkcode overridePhase} is called */
   private standbyPhase: Phase | null = null;
 
   /* Phase Functions */
@@ -241,7 +245,7 @@ export class PhaseManager {
   }
 
   /**
-   * Adds a phase to nextCommandPhaseQueue, as long as boolean passed in is false
+   * Adds a phase to the end of the queue
    * @param phase {@linkcode Phase} the phase to add
    */
   pushPhase(phase: Phase): void {
@@ -249,14 +253,20 @@ export class PhaseManager {
   }
 
   /**
-   * Adds Phase(s) to the end of phaseQueuePrepend, or at phaseQueuePrependSpliceIndex
-   * @param phases {@linkcode Phase} the phase(s) to add
+   * Adds a phase to be run immediately after the current phase finishes. Unshifted phases are run in FIFO order if multiple are queued during a single phase's execution
+   * @param phase - {@linkcode Phase} the phase to add
+   * @param defer - If `true` allow subsequently unshifted phases to run before this one. Default `false`
    */
   unshiftPhase(phase: Phase, defer = false): void {
     const toAdd = this.checkDynamic(phase);
     phase.is("MovePhase") ? this.phaseQueue.addAfter(toAdd, "MoveEndPhase") : this.phaseQueue.addPhase(toAdd, defer);
   }
 
+  /**
+   * Helper method to queue a phase as dynamic if necessary
+   * @param phase - The phase to check
+   * @returns The {@linkcode phase} or a {@linkcode DynamicPhaseMarker} to be used in its place
+   */
   private checkDynamic(phase: Phase): Phase {
     if (this.dynamicQueueManager.queueDynamicPhase(phase)) {
       return new DynamicPhaseMarker(phase.phaseName);
@@ -266,6 +276,7 @@ export class PhaseManager {
 
   /**
    * Clears the phaseQueue
+   * @param leaveUnshifted - If `true`, leaves the top level of the tree intact
    */
   clearPhaseQueue(leaveUnshifted = false): void {
     this.phaseQueue.clear(leaveUnshifted);
@@ -282,9 +293,7 @@ export class PhaseManager {
   }
 
   /**
-   * Is called by each Phase implementations "end()" by default
-   * We dump everything from phaseQueuePrepend to the start of of phaseQueue
-   * then removes first Phase and starts it
+   * Is called by {@linkcode Phase.end} by default. Determines and starts the next phase to run
    */
   shiftPhase(): void {
     if (this.standbyPhase) {
@@ -300,7 +309,7 @@ export class PhaseManager {
     }
 
     if (this.currentPhase === null) {
-      this.turnEndSequence();
+      this.turnStart();
     }
 
     if (this.currentPhase) {
@@ -309,6 +318,13 @@ export class PhaseManager {
     }
   }
 
+  /**
+   * Overrides the currently running phase with another
+   * @param phase - The {@linkcode Phase} to override the current one with
+   * @returns If the override succeeded
+   *
+   * @todo This is antithetical to the phase structure and used a single time. Remove it.
+   */
   overridePhase(phase: Phase): boolean {
     if (this.standbyPhase) {
       return false;
@@ -322,10 +338,22 @@ export class PhaseManager {
     return true;
   }
 
-  public hasPhaseOfType<T extends PhaseString>(type: T, condition?: (phase: PhaseMap[T]) => boolean): boolean {
+  /**
+   * Determines if there is a queued {@linkcode Phase} meeting the conditions
+   * @param type - The {@linkcode PhaseString | type} of phase to search for
+   * @param condition - An optional {@linkcode PhaseConditionFunc} to add conditions to the search
+   * @returns `true` if a matching phase exists, `false` otherwise
+   */
+  public hasPhaseOfType<T extends PhaseString>(type: T, condition?: PhaseConditionFunc<T>): boolean {
     return this.dynamicQueueManager.exists(type, condition) || this.phaseQueue.exists(type, condition);
   }
 
+  /**
+   * Finds and removes a single queued {@linkcode Phase}
+   * @param type - The {@linkcode PhaseString | type} of phase to search for
+   * @param phaseFilter - A {@linkcode PhaseConditionFunc} to specify conditions for the phase
+   * @returns `true` if a removal occurred, `false` otherwise
+   */
   tryRemovePhase<T extends PhaseString>(type: T, phaseFilter?: PhaseConditionFunc<T>): boolean {
     if (this.dynamicQueueManager.removePhase(type, phaseFilter)) {
       return true;
@@ -333,17 +361,22 @@ export class PhaseManager {
     return this.phaseQueue.remove(type, phaseFilter);
   }
 
+  /**
+   * Removes all occurrences of {@linkcode Phase}s of the given type
+   * @param phaseType - The {@linkcode PhaseString | type} of phase to search for
+   *
+   * @remarks
+   * This is not intended to be used with dynamically ordered phases, and does not operate on the dynamic queue.
+   * However, it does remove {@linkcode DynamicPhaseMarker}s and so would prevent such phases from activating.
+   */
   public removeAllPhasesOfType(type: PhaseString): void {
     this.phaseQueue.removeAll(type);
   }
 
   /**
-   * Tries to add the input phase to index before target phase in the phaseQueue, else simply calls unshiftPhase()
-   * @param phase - The phase to be added
-   * @param targetPhase - The phase to search for in phaseQueue
-   * @returns boolean if a targetPhase was found and added
+   * TODO this is obviously not what this does anymore. Need to rename and ensure callsites behave as expected
    */
-  prependToPhase(phase: Phase, _targetPhase: StaticPhaseString): void {
+  prependToPhase(phase: Phase, _targetPhase: PhaseString): void {
     this.phaseQueue.unshiftToCurrent(phase);
   }
 
@@ -393,9 +426,9 @@ export class PhaseManager {
   }
 
   /**
-   * Moves everything from nextCommandPhaseQueue to phaseQueue (keeping order)
+   * Clears dynamic queues and begins a new {@linkcode TurnInitPhase}
    */
-  private turnEndSequence(): void {
+  private turnStart(): void {
     this.dynamicQueueManager.clearQueues();
     this.currentPhase = new TurnInitPhase();
   }
@@ -464,37 +497,65 @@ export class PhaseManager {
    * @returns `true` if a `targetPhase` was found to prepend to
    */
   public prependNewToPhase<T extends PhaseString>(
-    targetPhase: StaticPhaseString,
+    targetPhase: PhaseString,
     phase: T,
     ...args: ConstructorParameters<PhaseConstructorMap[T]>
   ): void {
     this.prependToPhase(this.create(phase, ...args), targetPhase);
   }
 
+  /**
+   * Finds the first {@linkcode MovePhase} meeting the condition
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
+   * @returns The MovePhase, or `undefined` if it does not exist
+   */
   public getMovePhase(phaseCondition: PhaseConditionFunc<"MovePhase">): MovePhase | undefined {
     return this.dynamicQueueManager.getMovePhase(phaseCondition);
   }
 
+  /**
+   * Finds and cancels the first {@linkcode MovePhase} meeting the condition
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
+   */
   public cancelMove(phaseCondition: PhaseConditionFunc<"MovePhase">): void {
     this.dynamicQueueManager.cancelMovePhase(phaseCondition);
   }
 
-  public forceMoveNext(phaseCondition: PhaseConditionFunc<"MovePhase">) {
+  /**
+   * Finds the first {@linkcode MovePhase} meeting the condition and forces it next
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
+   */
+  public forceMoveNext(phaseCondition: PhaseConditionFunc<"MovePhase">): void {
     this.dynamicQueueManager.setMoveTimingModifier(phaseCondition, MovePhaseTimingModifier.FIRST);
   }
 
-  public forceMoveLast(phaseCondition: PhaseConditionFunc<"MovePhase">) {
+  /**
+   * Finds the first {@linkcode MovePhase} meeting the condition and forces it last
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
+   */
+  public forceMoveLast(phaseCondition: PhaseConditionFunc<"MovePhase">): void {
     this.dynamicQueueManager.setMoveTimingModifier(phaseCondition, MovePhaseTimingModifier.LAST);
   }
 
-  public changePhaseMove(phaseCondition: PhaseConditionFunc<"MovePhase">, move: PokemonMove) {
+  /**
+   * Finds the first {@linkcode MovePhase} meeting the condition and changes its move
+   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
+   * @param move - The {@linkcode PokemonMove | move} to use in replacement
+   */
+  public changePhaseMove(phaseCondition: PhaseConditionFunc<"MovePhase">, move: PokemonMove): void {
     this.dynamicQueueManager.setMoveForPhase(phaseCondition, move);
   }
 
+  /**
+   * Redirects moves which were targeted at a {@linkcode Pokemon} that has been removed
+   * @param removedPokemon - The removed {@linkcode Pokemon}
+   * @param allyPokemon - The ally of the removed pokemon
+   */
   public redirectMoves(removedPokemon: Pokemon, allyPokemon: Pokemon): void {
     this.dynamicQueueManager.redirectMoves(removedPokemon, allyPokemon);
   }
 
+  /** Queues phases which run at the end of each turn */
   public queueTurnEndPhases(): void {
     turnEndPhases.forEach(p => {
       this.phaseQueue.pushPhase(this.create(p));

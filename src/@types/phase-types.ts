@@ -26,10 +26,9 @@ export type PhaseClass = PhaseConstructorMap[keyof PhaseConstructorMap];
  */
 export type PhaseString = keyof PhaseMap;
 
-export type DynamicPhaseString = "PostSummonPhase" | "SwitchSummonPhase" | "MovePhase" | "MoveHeaderPhase";
-
-export type StaticPhaseString = Exclude<PhaseString, DynamicPhaseString>;
-
+/**
+ * Interface type representing the assumption that all phases with pokemon associated are dynamic
+ */
 export interface DynamicPhase extends Phase {
   getPokemon(): Pokemon;
 }

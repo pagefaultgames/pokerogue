@@ -7,6 +7,7 @@ import { Phase } from "#app/phase";
 export class DynamicPhaseMarker extends Phase {
   public override readonly phaseName = "DynamicPhaseMarker";
 
+  /** The type of phase which this phase is a marker for */
   public phaseType: PhaseString;
 
   constructor(type: PhaseString) {

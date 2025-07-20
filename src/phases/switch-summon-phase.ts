@@ -14,7 +14,7 @@ import { SummonPhase } from "#phases/summon-phase";
 import i18next from "i18next";
 
 export class SwitchSummonPhase extends SummonPhase {
-  public readonly phaseName: "SwitchSummonPhase" | "ReturnPhase" | "SwitchSummonPhase" = "SwitchSummonPhase";
+  public readonly phaseName: "SwitchSummonPhase" | "ReturnPhase" = "SwitchSummonPhase";
   private readonly switchType: SwitchType;
   private readonly slotIndex: number;
   private readonly doReturn: boolean;

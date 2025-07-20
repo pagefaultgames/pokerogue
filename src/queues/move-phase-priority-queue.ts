@@ -8,6 +8,7 @@ import { isNullOrUndefined } from "#app/utils/common";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
+/** A priority queue responsible for the ordering of {@linkcode MovePhase}s */
 export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase> {
   private lastTurnOrder: Pokemon[] = [];
 

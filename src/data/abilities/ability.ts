@@ -3988,6 +3988,11 @@ export class ChangeMovePriorityAbAttr extends AbAttr {
   }
 }
 
+/**
+ * TODO haven't gotten around to fixing this, but it doesn't work because abilities have different levels of "priority", so fractionals have to be used
+ *
+ * fucking game freak dude
+ */
 export class ChangeMovePriorityModifierAbAttr extends AbAttr {
   private newModifier: MovePriorityModifier;
   private moveFunc: (pokemon: Pokemon, move: Move) => boolean;
