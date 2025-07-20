@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#enums/battler-index";
+import type { BattlerIndex } from "#enums/battler-index";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import type { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";

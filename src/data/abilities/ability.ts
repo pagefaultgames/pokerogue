@@ -33,6 +33,8 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { MoveTarget } from "#enums/MoveTarget";
 import { CommonAnim } from "#enums/move-anims-common";
 import { MoveId } from "#enums/move-id";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
+import { MovePriorityModifier } from "#enums/move-priority-modifier";
 import { MoveResult } from "#enums/move-result";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
@@ -74,8 +76,6 @@ import {
   toDmgValue,
 } from "#utils/common";
 import i18next from "i18next";
-import { MovePriorityModifier } from "#enums/move-priority-modifier";
-import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
 export class Ability implements Localizable {
   public id: AbilityId;

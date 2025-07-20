@@ -18,6 +18,7 @@ import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveId } from "#enums/move-id";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { MoveResult } from "#enums/move-result";
 import { isReflected, isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
@@ -42,7 +43,6 @@ import type { TurnMove } from "#types/turn-move";
 import type { nil } from "#utils/common";
 import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#utils/common";
 import i18next from "i18next";
-import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 

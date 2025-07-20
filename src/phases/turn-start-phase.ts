@@ -1,6 +1,6 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { BattlerIndex } from "#enums/battler-index";
+import type { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#enums/command";
 import { SwitchType } from "#enums/switch-type";
 import type { Pokemon } from "#field/pokemon";

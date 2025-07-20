@@ -2,6 +2,7 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
+import { PokemonPhase } from "#app/phases/pokemon-phase";
 import type { DelayedAttackTag } from "#data/arena-tag";
 import { CenterOfAttentionTag } from "#data/battler-tags";
 import { SpeciesFormChangePreMoveTrigger } from "#data/form-change-triggers";
@@ -16,6 +17,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveFlags } from "#enums/MoveFlags";
 import { CommonAnim } from "#enums/move-anims-common";
 import { MoveId } from "#enums/move-id";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { MoveResult } from "#enums/move-result";
 import { isIgnorePP, isIgnoreStatus, isReflected, isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
@@ -28,8 +30,6 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import { NumberHolder } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";
 import i18next from "i18next";
-import { PokemonPhase } from "#app/phases/pokemon-phase";
-import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
 export class MovePhase extends PokemonPhase {
   public readonly phaseName = "MovePhase";
@@ -85,7 +85,13 @@ export class MovePhase extends PokemonPhase {
    * Not marked optional to ensure callers correctly pass on `useModes`.
    * @param forcedLast - Whether to force this phase to occur last in order (for {@linkcode MoveId.QUASH}); default `false`
    */
-  constructor(pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, useMode: MoveUseMode, timingModifier = MovePhaseTimingModifier.NORMAL) {
+  constructor(
+    pokemon: Pokemon,
+    targets: BattlerIndex[],
+    move: PokemonMove,
+    useMode: MoveUseMode,
+    timingModifier = MovePhaseTimingModifier.NORMAL,
+  ) {
     super(pokemon.getBattlerIndex());
 
     this.pokemon = pokemon;

@@ -5,7 +5,7 @@ import { DynamicQueueManager } from "#app/queues/dynamic-queue-manager";
 import { BattleType } from "#enums/battle-type";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { Pokemon } from "#field/pokemon";
-import { PokemonMove } from "#moves/pokemon-move";
+import type { PokemonMove } from "#moves/pokemon-move";
 import { AddEnemyBuffModifierPhase } from "#phases/add-enemy-buff-modifier-phase";
 import { AttemptCapturePhase } from "#phases/attempt-capture-phase";
 import { AttemptRunPhase } from "#phases/attempt-run-phase";
@@ -100,7 +100,7 @@ import { UnavailablePhase } from "#phases/unavailable-phase";
 import { UnlockPhase } from "#phases/unlock-phase";
 import { VictoryPhase } from "#phases/victory-phase";
 import { WeatherEffectPhase } from "#phases/weather-effect-phase";
-import { PhaseConditionFunc } from "#types/phase-condition";
+import type { PhaseConditionFunc } from "#types/phase-condition";
 import type { PhaseMap, PhaseString, StaticPhaseString } from "#types/phase-types";
 
 /*
