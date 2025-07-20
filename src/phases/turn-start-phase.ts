@@ -1,13 +1,13 @@
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { Command } from "#enums/command";
-import { FieldPhase } from "./field-phase";
-import type { BattlerIndex } from "#enums/battler-index";
-import { SwitchType } from "#enums/switch-type";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { applyInSpeedOrder } from "#app/utils/speed-order";
-import type Pokemon from "#app/field/pokemon";
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { BypassSpeedChanceModifier } from "#app/modifier/modifier";
+import { BattlerIndex } from "#enums/battler-index";
+import { Command } from "#enums/command";
+import { SwitchType } from "#enums/switch-type";
+import type { Pokemon } from "#field/pokemon";
+import { BypassSpeedChanceModifier } from "#modifiers/modifier";
+import { PokemonMove } from "#moves/pokemon-move";
+import { FieldPhase } from "#phases/field-phase";
+import { applyInSpeedOrder } from "#utils/speed-order";
 
 export class TurnStartPhase extends FieldPhase {
   public readonly phaseName = "TurnStartPhase";

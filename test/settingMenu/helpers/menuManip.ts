@@ -9,8 +9,8 @@ import {
   getKeyWithKeycode,
   getKeyWithSettingName,
   getSettingNameWithKeycode,
-} from "#app/configs/inputs/configHandler";
-import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
+} from "#inputs/configHandler";
+import { SettingKeyboard } from "#system/settings-keyboard";
 import { expect } from "vitest";
 
 export class MenuManip {

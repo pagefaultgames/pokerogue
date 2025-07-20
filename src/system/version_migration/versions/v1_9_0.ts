@@ -1,8 +1,8 @@
-import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import type { SessionSaveData } from "#app/system/game-data";
-import type PokemonData from "#app/system/pokemon-data";
 import { MoveId } from "#enums/move-id";
+import { PokemonMove } from "#moves/pokemon-move";
+import type { SessionSaveData } from "#system/game-data";
+import type { PokemonData } from "#system/pokemon-data";
+import type { SessionSaveMigrator } from "#types/SessionSaveMigrator";
 
 /**
  * Migrate all lingering rage fist data inside `CustomPokemonData`,
@@ -38,4 +38,4 @@ const migratePartyData: SessionSaveMigrator = {
   },
 };
 
-export const sessionMigrators: Readonly<SessionSaveMigrator[]> = [migratePartyData] as const;
+export const sessionMigrators: readonly SessionSaveMigrator[] = [migratePartyData] as const;

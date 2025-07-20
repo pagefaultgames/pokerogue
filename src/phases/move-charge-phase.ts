@@ -1,15 +1,15 @@
 import { globalScene } from "#app/global-scene";
+import { MoveChargeAnim } from "#data/battle-anims";
 import type { BattlerIndex } from "#enums/battler-index";
-import { MoveChargeAnim } from "#app/data/battle-anims";
-import { applyMoveChargeAttrs } from "#app/data/moves/apply-attrs";
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
-import type Pokemon from "#app/field/pokemon";
-import { MoveResult } from "#enums/move-result";
-import { BooleanHolder } from "#app/utils/common";
-import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { MoveResult } from "#enums/move-result";
 import type { MoveUseMode } from "#enums/move-use-mode";
-import type { ChargingMove } from "#app/@types/move-types";
+import type { Pokemon } from "#field/pokemon";
+import { applyMoveChargeAttrs } from "#moves/apply-attrs";
+import type { PokemonMove } from "#moves/pokemon-move";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import type { ChargingMove } from "#types/move-types";
+import { BooleanHolder } from "#utils/common";
 
 /**
  * Phase for the "charging turn" of two-turn moves (e.g. Dig).

@@ -1,13 +1,12 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { Stat } from "#enums/stat";
-import type { TeraMoveCategoryAttr } from "#app/data/moves/move";
-import { allMoves } from "#app/data/data-lists";
-import type Move from "#app/data/moves/move";
-import { PokemonType } from "#enums/pokemon-type";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import type { Move, TeraMoveCategoryAttr } from "#moves/move";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

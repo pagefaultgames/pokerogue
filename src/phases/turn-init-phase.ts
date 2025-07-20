@@ -1,13 +1,13 @@
+import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#enums/battler-index";
+import { TurnInitEvent } from "#events/battle-scene";
+import type { PlayerPokemon } from "#field/pokemon";
 import {
   handleMysteryEncounterBattleStartEffects,
   handleMysteryEncounterTurnStartEffects,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { TurnInitEvent } from "#app/events/battle-scene";
-import type { PlayerPokemon } from "#app/field/pokemon";
+} from "#mystery-encounters/encounter-phase-utils";
+import { FieldPhase } from "#phases/field-phase";
 import i18next from "i18next";
-import { FieldPhase } from "./field-phase";
-import { globalScene } from "#app/global-scene";
 
 export class TurnInitPhase extends FieldPhase {
   public readonly phaseName = "TurnInitPhase";

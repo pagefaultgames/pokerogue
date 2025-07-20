@@ -1,28 +1,28 @@
 import { globalScene } from "#app/global-scene";
-import type { ModifierTypeOption } from "../modifier/modifier-type";
-import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "../modifier/modifier-type";
-import { getPokeballAtlasKey } from "#app/data/pokeball";
-import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
-import AwaitableUiHandler from "./awaitable-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { LockModifierTiersModifier, PokemonHeldItemModifier, HealShopCostModifier } from "../modifier/modifier";
-import { handleTutorial, Tutorial } from "../tutorial";
-import { Button } from "#enums/buttons";
-import MoveInfoOverlay from "./move-info-overlay";
-import { allMoves } from "#app/data/data-lists";
-import { formatMoney, NumberHolder } from "#app/utils/common";
 import Overrides from "#app/overrides";
-import i18next from "i18next";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
-import Phaser from "phaser";
+import { handleTutorial, Tutorial } from "#app/tutorial";
+import { allMoves } from "#data/data-lists";
+import { getPokeballAtlasKey } from "#data/pokeball";
+import { Button } from "#enums/buttons";
 import type { PokeballType } from "#enums/pokeball";
+import { ShopCursorTarget } from "#enums/shop-cursor-target";
+import { UiMode } from "#enums/ui-mode";
+import { HealShopCostModifier, LockModifierTiersModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
+import type { ModifierTypeOption } from "#modifiers/modifier-type";
+import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "#modifiers/modifier-type";
+import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
+import { MoveInfoOverlay } from "#ui/move-info-overlay";
+import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions, TextStyle } from "#ui/text";
+import { formatMoney, NumberHolder } from "#utils/common";
+import i18next from "i18next";
+import Phaser from "phaser";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 7;
 const SINGLE_SHOP_ROW_YOFFSET = 12;
 const DOUBLE_SHOP_ROW_YOFFSET = 24;
 const OPTION_BUTTON_YPOSITION = -62;
 
-export default class ModifierSelectUiHandler extends AwaitableUiHandler {
+export class ModifierSelectUiHandler extends AwaitableUiHandler {
   private modifierContainer: Phaser.GameObjects.Container;
   private rerollButtonContainer: Phaser.GameObjects.Container;
   private lockRarityButtonContainer: Phaser.GameObjects.Container;
@@ -269,13 +269,22 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     globalScene.updateBiomeWaveText();
     globalScene.updateMoneyText();
 
+    // DO NOT REMOVE: Fixes bug which allows action input to be processed before the UI is shown,
+    // causing errors if reroll is selected
+    this.awaitingActionInput = false;
+
+    // TODO: Replace with `Promise.withResolvers` when possible.
+    let tweenResolve: () => void;
+    const tweenPromise = new Promise<void>(resolve => (tweenResolve = resolve));
     let i = 0;
 
+    // TODO: Rework this bespoke logic for animating the modifier options.
     globalScene.tweens.addCounter({
       ease: "Sine.easeIn",
       duration: 1250,
       onUpdate: t => {
-        const value = t.getValue();
+        // The bang here is safe, as `getValue()` only returns null if the tween has been destroyed (which obviously isn't the case inside onUpdate)
+        const value = t.getValue()!;
         const index = Math.floor(value * typeOptions.length);
         if (index > i && index <= typeOptions.length) {
           const option = this.options[i];
@@ -286,67 +295,77 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
           i++;
         }
       },
+      onComplete: () => {
+        tweenResolve();
+      },
     });
 
-    globalScene.time.delayedCall(1000 + maxUpgradeCount * 2000, () => {
-      for (const shopOption of this.shopOptionsRows.flat()) {
-        shopOption.show(0, 0);
-      }
+    let shopResolve: () => void;
+    const shopPromise = new Promise<void>(resolve => (shopResolve = resolve));
+    tweenPromise.then(() => {
+      globalScene.time.delayedCall(1000, () => {
+        for (const shopOption of this.shopOptionsRows.flat()) {
+          shopOption.show(0, 0);
+        }
+        shopResolve();
+      });
     });
 
-    globalScene.time.delayedCall(4000 + maxUpgradeCount * 2000, () => {
-      if (partyHasHeldItem) {
-        this.transferButtonContainer.setAlpha(0);
-        this.transferButtonContainer.setVisible(true);
+    shopPromise.then(() => {
+      globalScene.time.delayedCall(500, () => {
+        if (partyHasHeldItem) {
+          this.transferButtonContainer.setAlpha(0);
+          this.transferButtonContainer.setVisible(true);
+          globalScene.tweens.add({
+            targets: this.transferButtonContainer,
+            alpha: 1,
+            duration: 250,
+          });
+        }
+
+        this.rerollButtonContainer.setAlpha(0);
+        this.checkButtonContainer.setAlpha(0);
+        this.lockRarityButtonContainer.setAlpha(0);
+        this.continueButtonContainer.setAlpha(0);
+        this.rerollButtonContainer.setVisible(true);
+        this.checkButtonContainer.setVisible(true);
+        this.continueButtonContainer.setVisible(this.rerollCost < 0);
+        this.lockRarityButtonContainer.setVisible(canLockRarities);
+
         globalScene.tweens.add({
-          targets: this.transferButtonContainer,
+          targets: [this.checkButtonContainer, this.continueButtonContainer],
           alpha: 1,
           duration: 250,
         });
-      }
 
-      this.rerollButtonContainer.setAlpha(0);
-      this.checkButtonContainer.setAlpha(0);
-      this.lockRarityButtonContainer.setAlpha(0);
-      this.continueButtonContainer.setAlpha(0);
-      this.rerollButtonContainer.setVisible(true);
-      this.checkButtonContainer.setVisible(true);
-      this.continueButtonContainer.setVisible(this.rerollCost < 0);
-      this.lockRarityButtonContainer.setVisible(canLockRarities);
+        globalScene.tweens.add({
+          targets: [this.rerollButtonContainer, this.lockRarityButtonContainer],
+          alpha: this.rerollCost < 0 ? 0.5 : 1,
+          duration: 250,
+        });
 
-      globalScene.tweens.add({
-        targets: [this.checkButtonContainer, this.continueButtonContainer],
-        alpha: 1,
-        duration: 250,
-      });
+        const updateCursorTarget = () => {
+          if (globalScene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
+            this.setRowCursor(0);
+            this.setCursor(2);
+          } else if (globalScene.shopCursorTarget === ShopCursorTarget.SHOP && globalScene.gameMode.hasNoShop) {
+            this.setRowCursor(ShopCursorTarget.REWARDS);
+            this.setCursor(0);
+          } else {
+            this.setRowCursor(globalScene.shopCursorTarget);
+            this.setCursor(0);
+          }
+        };
 
-      globalScene.tweens.add({
-        targets: [this.rerollButtonContainer, this.lockRarityButtonContainer],
-        alpha: this.rerollCost < 0 ? 0.5 : 1,
-        duration: 250,
-      });
+        updateCursorTarget();
 
-      const updateCursorTarget = () => {
-        if (globalScene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
-          this.setRowCursor(0);
-          this.setCursor(2);
-        } else if (globalScene.shopCursorTarget === ShopCursorTarget.SHOP && globalScene.gameMode.hasNoShop) {
-          this.setRowCursor(ShopCursorTarget.REWARDS);
-          this.setCursor(0);
-        } else {
-          this.setRowCursor(globalScene.shopCursorTarget);
-          this.setCursor(0);
-        }
-      };
-
-      updateCursorTarget();
-
-      handleTutorial(Tutorial.Select_Item).then(res => {
-        if (res) {
-          updateCursorTarget();
-        }
-        this.awaitingActionInput = true;
-        this.onActionInput = args[2];
+        handleTutorial(Tutorial.Select_Item).then(res => {
+          if (res) {
+            updateCursorTarget();
+          }
+          this.awaitingActionInput = true;
+          this.onActionInput = args[2];
+        });
       });
     });
 
@@ -687,7 +706,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       scale: 0.01,
       duration: 250,
       ease: "Cubic.easeIn",
-      onComplete: () => options.forEach(o => o.destroy()),
+      onComplete: () => {
+        options.forEach(o => {
+          o.destroy();
+        });
+      },
     });
 
     [
@@ -819,7 +842,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
           if (!globalScene) {
             return;
           }
-          const value = t.getValue();
+          const value = t.getValue()!;
           if (!bounce && value > lastValue) {
             globalScene.playSound("se/pb_bounce_1", {
               volume: 1 / ++bounceCount,
@@ -832,41 +855,38 @@ class ModifierOption extends Phaser.GameObjects.Container {
         },
       });
 
+      // TODO: Figure out proper delay between chains and then convert this into a single tween chain
+      // rather than starting multiple tween chains.
       for (let u = 0; u < this.modifierTypeOption.upgradeCount; u++) {
-        const upgradeIndex = u;
-        globalScene.time.delayedCall(
-          remainingDuration - 2000 * (this.modifierTypeOption.upgradeCount - (upgradeIndex + 1 + upgradeCountOffset)),
-          () => {
-            globalScene.playSound("se/upgrade", {
-              rate: 1 + 0.25 * upgradeIndex,
-            });
-            this.pbTint.setPosition(this.pb.x, this.pb.y);
-            this.pbTint.setTintFill(0xffffff);
-            this.pbTint.setAlpha(0);
-            this.pbTint.setVisible(true);
-            globalScene.tweens.add({
+        globalScene.tweens.chain({
+          tweens: [
+            {
+              delay: remainingDuration - 2000 * (this.modifierTypeOption.upgradeCount - (u + 1 + upgradeCountOffset)),
+              onStart: () => {
+                globalScene.playSound("se/upgrade", {
+                  rate: 1 + 0.25 * u,
+                });
+                this.pbTint.setPosition(this.pb.x, this.pb.y).setTintFill(0xffffff).setVisible(true).setAlpha(0);
+              },
               targets: this.pbTint,
               alpha: 1,
               duration: 1000,
               ease: "Sine.easeIn",
               onComplete: () => {
-                this.pb.setTexture(
-                  "pb",
-                  this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount + (upgradeIndex + 1)),
-                );
-                globalScene.tweens.add({
-                  targets: this.pbTint,
-                  alpha: 0,
-                  duration: 750,
-                  ease: "Sine.easeOut",
-                  onComplete: () => {
-                    this.pbTint.setVisible(false);
-                  },
-                });
+                this.pb.setTexture("pb", this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount + (u + 1)));
               },
-            });
-          },
-        );
+            },
+            {
+              targets: this.pbTint,
+              alpha: 0,
+              duration: 750,
+              ease: "Sine.easeOut",
+              onComplete: () => {
+                this.pbTint.setVisible(false);
+              },
+            },
+          ],
+        });
       }
     }
 

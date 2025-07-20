@@ -1,4 +1,4 @@
-import type { SessionSaveData } from "#app/system/game-data";
+import type { SessionSaveData } from "#system/game-data";
 
 export interface SessionSaveMigrator {
   version: string;

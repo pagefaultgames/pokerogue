@@ -1,11 +1,11 @@
-import { RandomMoveAttr } from "#app/data/moves/move";
-import { MoveResult } from "#enums/move-result";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import { AbilityId } from "#app/enums/ability-id";
 import { WeatherType } from "#enums/weather-type";
-import GameManager from "#test/testUtils/gameManager";
+import { RandomMoveAttr } from "#moves/move";
+import { GameManager } from "#test/testUtils/gameManager";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

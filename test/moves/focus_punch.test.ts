@@ -1,11 +1,11 @@
-import { BerryPhase } from "#app/phases/berry-phase";
-import { MessagePhase } from "#app/phases/message-phase";
-import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
-import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { BerryPhase } from "#phases/berry-phase";
+import { MessagePhase } from "#phases/message-phase";
+import { SwitchSummonPhase } from "#phases/switch-summon-phase";
+import { TurnStartPhase } from "#phases/turn-start-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

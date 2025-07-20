@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
-import type { EndCardPhase } from "./end-card-phase";
+import type { EndCardPhase } from "#phases/end-card-phase";
 
 export class PostGameOverPhase extends Phase {
   public readonly phaseName = "PostGameOverPhase";

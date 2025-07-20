@@ -1,7 +1,7 @@
-import { applyMoveAttrs } from "#app/data/moves/apply-attrs";
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
-import { PokemonPhase } from "#app/phases/pokemon-phase";
-import type { BattlerIndex } from "#enums/battler-index";
+import { BattlerIndex } from "#enums/battler-index";
+import { applyMoveAttrs } from "#moves/apply-attrs";
+import type { PokemonMove } from "#moves/pokemon-move";
+import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class MoveHeaderPhase extends PokemonPhase {
   public readonly phaseName = "MoveHeaderPhase";
