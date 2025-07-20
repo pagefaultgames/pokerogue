@@ -10,12 +10,6 @@ export interface hasPokemon {
   getPokemon(): Pokemon;
 }
 
-const sideToField = new Map<ArenaTagSide, (active: boolean) => Pokemon[]>([
-  [ArenaTagSide.BOTH, globalScene.getField],
-  [ArenaTagSide.PLAYER, globalScene.getPlayerField],
-  [ArenaTagSide.ENEMY, globalScene.getEnemyField],
-]);
-
 export function applyInSpeedOrder<T extends Pokemon>(pokemonList: T[], callback: (pokemon: Pokemon) => any): void {
   sortInSpeedOrder(pokemonList).forEach(pokemon => {
     callback(pokemon);
@@ -23,8 +17,20 @@ export function applyInSpeedOrder<T extends Pokemon>(pokemonList: T[], callback:
 }
 
 export function* inSpeedOrder(side: ArenaTagSide = ArenaTagSide.BOTH): Generator<Pokemon> {
+  let pokemonList: Pokemon[];
+  switch (side) {
+    case ArenaTagSide.PLAYER:
+      pokemonList = globalScene.getPlayerField(true);
+      break;
+    case ArenaTagSide.ENEMY:
+      pokemonList = globalScene.getEnemyField(true);
+      break;
+    default:
+      pokemonList = globalScene.getField(true);
+  }
+
   const queue = new PokemonPriorityQueue();
-  sideToField.get(side)!(true).forEach(p => {
+  pokemonList.forEach(p => {
     queue.push(p);
   });
   while (!queue.isEmpty()) {
