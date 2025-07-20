@@ -102,7 +102,7 @@ export class VictoryPhase extends PokemonPhase {
               "RewardPhase",
               !(globalScene.currentBattle.waveIndex % 250) ? allRewards.VOUCHER_PREMIUM : allRewards.VOUCHER_PLUS,
             );
-            globalScene.phaseManager.pushNew("AddEnemyBuffModifierPhase");
+            globalScene.phaseManager.pushNew("AddEnemyTokenPhase");
           }
         }
 

@@ -1140,7 +1140,7 @@ export class PartyUiHandler extends MessageUiHandler {
     this.setCursor(0);
   }
 
-  private allowBatonItemSwitch(): boolean {
+  private allowBatonSwitch(): boolean {
     return !!(
       this.partyUiMode !== PartyUiMode.FAINT_SWITCH &&
       globalScene.getPlayerField()[this.fieldIndex].heldItemManager.hasItem(HeldItemId.BATON)
@@ -1254,16 +1254,10 @@ export class PartyUiHandler extends MessageUiHandler {
       case PartyUiMode.FAINT_SWITCH:
       case PartyUiMode.POST_BATTLE_SWITCH:
         if (this.cursor >= globalScene.currentBattle.getBattlerCount()) {
-          const allowBatonItemSwitch = this.allowBatonItemSwitch();
+          const allowBatonSwitch = this.allowBatonSwitch();
           const isBatonPassMove = this.isBatonPassMove();
 
-          if (allowBatonModifierSwitch && !isBatonPassMove) {
-            // the BATON modifier gives an extra switch option for
-            // pokemon-command switches, allowing buffs to be optionally passed
-            this.options.push(PartyOption.PASS_BATON);
-          }
-
-          if (allowBatonItemSwitch && !isBatonPassMove) {
+          if (allowBatonSwitch && !isBatonPassMove) {
             // the BATON modifier gives an extra switch option for
             // pokemon-command switches, allowing buffs to be optionally passed
             this.options.push(PartyOption.PASS_BATON);
@@ -1272,9 +1266,7 @@ export class PartyUiHandler extends MessageUiHandler {
           // isBatonPassMove and allowBatonItemSwitch shouldn't ever be true
           // at the same time, because they both explicitly check for a mutually
           // exclusive partyUiMode. But better safe than sorry.
-          this.options.push(
-            isBatonPassMove && !allowBatonModifierSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT,
-          );
+          this.options.push(isBatonPassMove && !allowBatonSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT);
         }
         this.addCommonOptions(pokemon);
         if (this.partyUiMode === PartyUiMode.SWITCH) {

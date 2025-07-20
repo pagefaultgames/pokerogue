@@ -34,7 +34,7 @@ const namespace = "mysteryEncounters/delibirdy";
 /** Berries only */
 const OPTION_2_ALLOWED_HELD_ITEMS = [HeldItemCategoryId.BERRY, HeldItemId.REVIVER_SEED];
 
-/** Disallowed items are berries, Reviver Seeds, and Vitamins (form change items and fusion items are not PokemonHeldItemModifiers) */
+/** Disallowed items are berries, Reviver Seeds, and Vitamins */
 const OPTION_3_DISALLOWED_HELD_ITEMS = [HeldItemCategoryId.BERRY, HeldItemId.REVIVER_SEED];
 
 const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 2;

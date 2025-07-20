@@ -39,7 +39,7 @@ export class EggSummaryPhase extends Phase {
   }
 
   end() {
-    globalScene.time.delayedCall(250, () => globalScene.setModifiersVisible(true));
+    globalScene.time.delayedCall(250, () => globalScene.setItemsVisible(true));
     globalScene.ui.setModeForceTransition(UiMode.MESSAGE).then(() => {
       super.end();
     });

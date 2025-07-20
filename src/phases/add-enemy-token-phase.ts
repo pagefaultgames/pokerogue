@@ -3,8 +3,8 @@ import { Phase } from "#app/phase";
 import { RarityTier } from "#enums/reward-tier";
 import { assignEnemyBuffTokenForWave } from "#items/trainer-item-pool";
 
-export class AddEnemyBuffModifierPhase extends Phase {
-  public readonly phaseName = "AddEnemyBuffModifierPhase";
+export class AddEnemyTokenPhase extends Phase {
+  public readonly phaseName = "AddEnemyTokenPhase";
   start() {
     super.start();
 

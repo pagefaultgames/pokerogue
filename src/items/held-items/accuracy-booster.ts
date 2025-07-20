@@ -24,17 +24,17 @@ export class AccuracyBoosterHeldItem extends HeldItem {
   }
 
   /**
-   * Checks if {@linkcode PokemonMoveAccuracyBoosterModifier} should be applied
+   * Checks if {@linkcode PokemonMoveAccuracyBoosterHeldItem} should be applied
    * @param pokemon - The {@linkcode Pokemon} to apply the move accuracy boost to
    * @param moveAccuracy - {@linkcode NumberHolder} holding the move accuracy boost
-   * @returns `true` if {@linkcode PokemonMoveAccuracyBoosterModifier} should be applied
+   * @returns `true` if {@linkcode PokemonMoveAccuracyBoosterHeldItem} should be applied
    */
   //  override shouldApply(pokemon?: Pokemon, moveAccuracy?: NumberHolder): boolean {
   //    return super.shouldApply(pokemon, moveAccuracy) && !!moveAccuracy;
   //  }
 
   /**
-   * Applies {@linkcode PokemonMoveAccuracyBoosterModifier}
+   * Applies {@linkcode PokemonMoveAccuracyBoosterHeldItem}
    */
   apply({ pokemon, moveAccuracy }: AccuracyBoostParams): true {
     const stackCount = pokemon.heldItemManager.getStack(this.type);

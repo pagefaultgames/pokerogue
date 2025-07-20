@@ -43,8 +43,8 @@ describe("Items - Lock Capsule", () => {
     );
 
     game.onNextPrompt("SelectRewardPhase", UiMode.REWARD_SELECT, () => {
-      const selectModifierPhase = game.scene.phaseManager.getCurrentPhase() as SelectRewardPhase;
-      const rerollCost = selectModifierPhase.getRerollCost(true);
+      const selectRewardPhase = game.scene.phaseManager.getCurrentPhase() as SelectRewardPhase;
+      const rerollCost = selectRewardPhase.getRerollCost(true);
       expect(rerollCost).toBe(150);
     });
 

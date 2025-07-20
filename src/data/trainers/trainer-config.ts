@@ -113,7 +113,7 @@ export class TrainerConfig {
   public femaleEncounterBgm: string;
   public doubleEncounterBgm: string;
   public victoryBgm: string;
-  public genModifiersFunc: GenTrainerItemsFunc;
+  public genTrainerItemsFunc: GenTrainerItemsFunc;
   public genAIFuncs: GenAIFunc[] = [];
   public rewardFuncs: RewardFunc[] = [];
   public partyTemplates: TrainerPartyTemplate[];
@@ -465,8 +465,8 @@ export class TrainerConfig {
     return this;
   }
 
-  setGenModifiersFunc(genModifiersFunc: GenTrainerItemsFunc): TrainerConfig {
-    this.genModifiersFunc = genModifiersFunc;
+  setGenTrainerItemsFunc(genTrainerItemsFunc: GenTrainerItemsFunc): TrainerConfig {
+    this.genTrainerItemsFunc = genTrainerItemsFunc;
     return this;
   }
 
@@ -476,7 +476,7 @@ export class TrainerConfig {
    * @param slot Optional, a specified slot that should be terastallized. Wraps to match party size (-1 will get the last slot and so on).
    * @returns this
    */
-  setRandomTeraModifiers(count: () => number, slot?: number): TrainerConfig {
+  setRandomTeraType(count: () => number, slot?: number): TrainerConfig {
     this.genAIFuncs.push((party: EnemyPokemon[]) => {
       const shedinjaCanTera = !this.hasSpecialtyType() || this.specialtyType === PokemonType.BUG; // Better to check one time than 6
       const partyMemberIndexes = new Array(party.length)
@@ -677,7 +677,7 @@ export class TrainerConfig {
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_gym");
     this.setVictoryBgm("victory_gym");
-    this.setRandomTeraModifiers(
+    this.setRandomTeraType(
       () => (ignoreMinTeraWave || globalScene.currentBattle.waveIndex >= GYM_LEADER_TERA_WAVE ? 1 : 0),
       teraSlot,
     );
@@ -738,7 +738,7 @@ export class TrainerConfig {
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_elite");
     this.setVictoryBgm("victory_gym");
-    this.setRandomTeraModifiers(() => 1, teraSlot);
+    this.setRandomTeraType(() => 1, teraSlot);
 
     return this;
   }
@@ -915,7 +915,7 @@ export class TrainerConfig {
     clone = this.battleBgm ? clone.setBattleBgm(this.battleBgm) : clone;
     clone = this.encounterBgm ? clone.setEncounterBgm(this.encounterBgm) : clone;
     clone = this.victoryBgm ? clone.setVictoryBgm(this.victoryBgm) : clone;
-    clone = this.genModifiersFunc ? clone.setGenModifiersFunc(this.genModifiersFunc) : clone;
+    clone = this.genTrainerItemsFunc ? clone.setGenTrainerItemsFunc(this.genTrainerItemsFunc) : clone;
 
     if (this.rewardFuncs) {
       // Clones array instead of passing ref

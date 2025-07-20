@@ -866,9 +866,9 @@ export class BattleScene extends SceneBase {
   }
 
   /**
-   * Returns the ModifierBar of this scene, which is declared private and therefore not accessible elsewhere
+   * Returns the ItemBar of this scene, which is declared private and therefore not accessible elsewhere
    * @param isEnemy Whether to return the enemy's modifier bar
-   * @returns {ModifierBar}
+   * @returns {ItemBar}
    */
   getItemBar(isEnemy?: boolean): ItemBar {
     return isEnemy ? this.enemyItemBar : this.itemBar;
@@ -1997,11 +1997,11 @@ export class BattleScene extends SceneBase {
     });
   }
 
-  showEnemyModifierBar(): void {
+  showEnemyItemBar(): void {
     this.enemyItemBar.setVisible(true);
   }
 
-  hideEnemyModifierBar(): void {
+  hideEnemyItemBar(): void {
     this.enemyItemBar.setVisible(false);
   }
 
@@ -2095,11 +2095,11 @@ export class BattleScene extends SceneBase {
   }
 
   updateUIPositions(): void {
-    const enemyModifierCount = this.enemyItemBar.totalVisibleLength;
+    const enemyItemCount = this.enemyItemBar.totalVisibleLength;
     const biomeWaveTextHeight = this.biomeWaveText.getBottomLeft().y - this.biomeWaveText.getTopLeft().y;
     this.biomeWaveText.setY(
       -(this.game.canvas.height / 6) +
-        (enemyModifierCount ? (enemyModifierCount <= 12 ? 15 : 24) : 0) +
+        (enemyItemCount ? (enemyItemCount <= 12 ? 15 : 24) : 0) +
         biomeWaveTextHeight / 2,
     );
     this.moneyText.setY(this.biomeWaveText.y + 10);
@@ -2841,7 +2841,7 @@ export class BattleScene extends SceneBase {
           }
           let count = 0;
           for (let c = 0; c < chances; c++) {
-            if (!randSeedInt(this.gameMode.getEnemyModifierChance(isBoss))) {
+            if (!randSeedInt(this.gameMode.getEnemyItemChance(isBoss))) {
               count++;
             }
           }
@@ -2864,7 +2864,7 @@ export class BattleScene extends SceneBase {
   }
 
   /**
-   * Removes all modifiers from enemy pokemon of {@linkcode PersistentModifier} type
+   * Removes all items from enemy pokemon and trainers
    */
   clearEnemyItems(): void {
     this.enemyTrainerItems.clearItems();
@@ -2888,7 +2888,7 @@ export class BattleScene extends SceneBase {
     this.updateUIPositions();
   }
 
-  setModifiersVisible(visible: boolean) {
+  setItemsVisible(visible: boolean) {
     [this.itemBar, this.enemyItemBar].map(m => m.setVisible(visible));
   }
 

@@ -36,7 +36,7 @@ import { EvolutionStatBoostHeldItem, SpeciesStatBoostHeldItem, type StatBoostPar
 import { SurviveChanceHeldItem, type SurviveChanceParams } from "#items/survive-chance";
 import { TurnEndHealHeldItem, type TurnEndHealParams } from "#items/turn-end-heal";
 import { TurnEndStatusHeldItem, type TurnEndStatusParams } from "#items/turn-end-status";
-import { getEnumValues } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 
 export function initHeldItems() {
   for (const berry of getEnumValues(BerryType)) {

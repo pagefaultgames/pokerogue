@@ -1,5 +1,3 @@
-// Intentionally re-exports `ModifierConstructorMap` from `modifier.ts`
-
 import type { Pokemon } from "#field/pokemon";
 import type { Reward, WeightedReward } from "#items/reward";
 

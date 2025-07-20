@@ -47,8 +47,8 @@ describe("SelectRewardPhase", () => {
 
   it("should start a select modifier phase", async () => {
     initSceneWithoutEncounterPhase(scene, [SpeciesId.ABRA, SpeciesId.VOLCARONA]);
-    const selectModifierPhase = new SelectRewardPhase();
-    scene.phaseManager.unshiftPhase(selectModifierPhase);
+    const selectRewardPhase = new SelectRewardPhase();
+    scene.phaseManager.unshiftPhase(selectRewardPhase);
     await game.phaseInterceptor.to(SelectRewardPhase);
 
     expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
@@ -69,21 +69,21 @@ describe("SelectRewardPhase", () => {
   it("should modify reroll cost", async () => {
     initSceneWithoutEncounterPhase(scene, [SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     const options = [
-      new RewardOption(allRewards.POTION(), 0, 100),
-      new RewardOption(allRewards.ETHER(), 0, 400),
-      new RewardOption(allRewards.REVIVE(), 0, 1000),
+      new RewardOption(allRewards.POTION(), 0, RarityTier.COMMON, 100),
+      new RewardOption(allRewards.ETHER(), 0, RarityTier.COMMON, 400),
+      new RewardOption(allRewards.REVIVE(), 0, RarityTier.COMMON, 1000),
     ];
 
-    const selectModifierPhase1 = new SelectRewardPhase(0, undefined, {
+    const selectRewardPhase1 = new SelectRewardPhase(0, undefined, {
       guaranteedRewardOptions: options,
     });
-    const selectModifierPhase2 = new SelectRewardPhase(0, undefined, {
+    const selectRewardPhase2 = new SelectRewardPhase(0, undefined, {
       guaranteedRewardOptions: options,
       rerollMultiplier: 2,
     });
 
-    const cost1 = selectModifierPhase1.getRerollCost(false);
-    const cost2 = selectModifierPhase2.getRerollCost(false);
+    const cost1 = selectRewardPhase1.getRerollCost(false);
+    const cost2 = selectRewardPhase2.getRerollCost(false);
     expect(cost2).toEqual(cost1 * 2);
   });
 
@@ -160,8 +160,8 @@ describe("SelectRewardPhase", () => {
         allRewards.GOLDEN_PUNCH,
       ],
     };
-    const selectModifierPhase = new SelectRewardPhase(0, undefined, customRewards);
-    scene.phaseManager.unshiftPhase(selectModifierPhase);
+    const selectRewardPhase = new SelectRewardPhase(0, undefined, customRewards);
+    scene.phaseManager.unshiftPhase(selectRewardPhase);
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("SelectRewardPhase");
 
@@ -197,8 +197,8 @@ describe("SelectRewardPhase", () => {
     }
     scene.getPlayerParty().push(pokemon, pokemon, pokemon, pokemon, pokemon, pokemon);
 
-    const selectModifierPhase = new SelectRewardPhase(0, undefined, customRewards);
-    scene.phaseManager.unshiftPhase(selectModifierPhase);
+    const selectRewardPhase = new SelectRewardPhase(0, undefined, customRewards);
+    scene.phaseManager.unshiftPhase(selectRewardPhase);
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("SelectRewardPhase");
 
@@ -231,8 +231,8 @@ describe("SelectRewardPhase", () => {
       guaranteedRewardFuncs: [allRewards.MEMORY_MUSHROOM, allRewards.TM_COMMON],
       guaranteedRarityTiers: [RarityTier.MASTER, RarityTier.MASTER],
     };
-    const selectModifierPhase = new SelectRewardPhase(0, undefined, customRewards);
-    scene.phaseManager.unshiftPhase(selectModifierPhase);
+    const selectRewardPhase = new SelectRewardPhase(0, undefined, customRewards);
+    scene.phaseManager.unshiftPhase(selectRewardPhase);
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.run(SelectRewardPhase);
 
@@ -255,8 +255,8 @@ describe("SelectRewardPhase", () => {
       guaranteedRarityTiers: [RarityTier.MASTER],
       fillRemaining: true,
     };
-    const selectModifierPhase = new SelectRewardPhase(0, undefined, customRewards);
-    scene.phaseManager.unshiftPhase(selectModifierPhase);
+    const selectRewardPhase = new SelectRewardPhase(0, undefined, customRewards);
+    scene.phaseManager.unshiftPhase(selectRewardPhase);
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.run(SelectRewardPhase);
 

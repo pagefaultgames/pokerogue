@@ -69,7 +69,7 @@ export enum RewardClass {
   POKEMON_FUSION_REWARD,
 }
 
-export class Reward {
+export abstract class Reward {
   public id: RewardId;
   public rewardClass: RewardClass;
   public localeKey: string;
@@ -96,6 +96,14 @@ export class Reward {
 
   getIcon(): string {
     return this.iconImage;
+  }
+
+  shouldApply(..._args: any[]): boolean {
+    return true;
+  }
+
+  apply(..._args: any[]): boolean {
+    return true;
   }
 }
 
@@ -256,7 +264,7 @@ export class AddMoneyReward extends Reward {
   }
 }
 
-export class PokemonReward extends Reward {
+export abstract class PokemonReward extends Reward {
   public selectFilter: PokemonSelectFilter | undefined;
 
   constructor(
@@ -271,11 +279,11 @@ export class PokemonReward extends Reward {
     this.rewardClass = RewardClass.POKEMON_REWARD;
   }
 
-  apply(_params: PokemonRewardParams): boolean {
+  override apply(_params: PokemonRewardParams): boolean {
     return false;
   }
 
-  shouldApply(_params: PokemonRewardParams): boolean {
+  override shouldApply(_params: PokemonRewardParams): boolean {
     return false;
   }
 }
@@ -373,8 +381,8 @@ export class TrainerItemReward extends Reward {
     return allTrainerItems[this.itemId].iconName;
   }
 
-  apply() {
-    globalScene.trainerItems.add(this.itemId);
+  apply(): boolean {
+    return globalScene.trainerItems.add(this.itemId);
   }
 }
 
@@ -384,12 +392,12 @@ export class LapsingTrainerItemReward extends TrainerItemReward {
     this.id = id ?? RewardId.TRAINER_ITEM;
   }
 
-  apply() {
-    globalScene.trainerItems.add(this.itemId, allTrainerItems[this.itemId].getMaxStackCount());
+  apply(): boolean {
+    return globalScene.trainerItems.add(this.itemId, allTrainerItems[this.itemId].getMaxStackCount());
   }
 }
 
-export class TerastallizeReward extends PokemonReward {
+export class ChangeTeraTypeReward extends PokemonReward {
   private teraType: PokemonType;
 
   constructor(teraType: PokemonType) {
@@ -413,13 +421,13 @@ export class TerastallizeReward extends PokemonReward {
   }
 
   get name(): string {
-    return i18next.t("modifierType:ModifierType.TerastallizeReward.name", {
+    return i18next.t("modifierType:ModifierType.ChangeTeraTypeReward.name", {
       teraType: i18next.t(`pokemonInfo:Type.${PokemonType[this.teraType]}`),
     });
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.TerastallizeReward.description", {
+    return i18next.t("modifierType:ModifierType.ChangeTeraTypeReward.description", {
       teraType: i18next.t(`pokemonInfo:Type.${PokemonType[this.teraType]}`),
     });
   }
@@ -1622,7 +1630,7 @@ const rewardInitObj = Object.freeze({
   TERA_SHARD: () =>
     new RewardGenerator((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
-        return new TerastallizeReward(pregenArgs[0] as PokemonType);
+        return new ChangeTeraTypeReward(pregenArgs[0] as PokemonType);
       }
       if (!globalScene.trainerItems.hasItem(TrainerItemId.TERA_ORB)) {
         return null;
@@ -1643,7 +1651,7 @@ const rewardInitObj = Object.freeze({
       while (shardType === excludedType) {
         shardType = randSeedInt(64) ? (randSeedInt(18) as PokemonType) : PokemonType.STELLAR;
       }
-      return new TerastallizeReward(shardType);
+      return new ChangeTeraTypeReward(shardType);
     }),
 
   TM_COMMON: () => new TmRewardGenerator(RarityTier.COMMON),

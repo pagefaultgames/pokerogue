@@ -2760,7 +2760,7 @@ export class EatBerryAttr extends MoveEffectAttr {
     // check for berry pouch preservation
     globalScene.applyPlayerItems(TrainerItemEffect.PRESERVE_BERRY, {pokemon: pokemon, doPreserve: preserve});
     if (!preserve.value) {
-      this.reduceBerryModifier(pokemon);
+      this.reduceBerryItem(pokemon);
     }
 
     // Don't update harvest for berries preserved via Berry pouch (no item dupes lol)
@@ -2773,7 +2773,7 @@ export class EatBerryAttr extends MoveEffectAttr {
     return target.getHeldItems().filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY));
   }
 
-  reduceBerryModifier(target: Pokemon) {
+  reduceBerryItem(target: Pokemon) {
     if (this.chosenBerry) {
       target.loseHeldItem(this.chosenBerry);
     }
@@ -2835,7 +2835,7 @@ export class StealEatBerryAttr extends EatBerryAttr {
     applyAbAttrs("PostItemLostAbAttr", {pokemon: target});
     const message = i18next.t("battle:stealEatBerry", { pokemonName: user.name, targetName: target.name, berryName: allHeldItems[this.chosenBerry].name });
     globalScene.phaseManager.queueMessage(message);
-    this.reduceBerryModifier(target);
+    this.reduceBerryItem(target);
     this.eatBerry(user, target);
 
     return true;
