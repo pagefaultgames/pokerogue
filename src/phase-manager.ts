@@ -293,7 +293,8 @@ export class PhaseManager {
   }
 
   /**
-   * Is called by {@linkcode Phase.end} by default. Determines and starts the next phase to run
+   * Is called by {@linkcode Phase.end} by default. 
+   * Determines and starts the next phase to run
    */
   shiftPhase(): void {
     if (this.standbyPhase) {

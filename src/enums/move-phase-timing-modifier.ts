@@ -13,4 +13,4 @@ export const MovePhaseTimingModifier = Object.freeze({
   NORMAL: 1,
   FIRST: 2,
 });
-export type MovePhaseTimingModifier = typeof MovePhaseTimingModifier[keyof typeof MovePhaseTimingModifier];  
+export type MovePhaseTimingModifier = EnumValues<typeof MovePhaseTimingModifier>;

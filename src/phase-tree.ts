@@ -49,7 +49,7 @@ export class PhaseTree {
    * @param phase - The {@linkcode Phase} to be added
    * @param defer - Whether to defer the execution of this phase by allowing subsequently-added phases to run before it
    *
-   * @privateremarks
+   * @privateRemarks
    * Deferral is implemented by moving the queue at {@linkcode currentLevel} up one level and inserting {@linkcode phase} below it.
    * {@linkcode deferredActive} is set until the moved queue (and anything added to it) is exhausted.
    *
