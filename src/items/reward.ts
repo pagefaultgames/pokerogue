@@ -1903,7 +1903,7 @@ export function getPlayerRewardOptions(
         const guaranteedMod: Reward = rewardInitObj[rewardId]?.();
 
         // Populates item id and tier
-        const guaranteedModTier = getRewardTierFromPool(guaranteedMod, party);
+        const guaranteedModTier = getRewardTierFromPool(guaranteedMod);
 
         const modType = guaranteedMod instanceof RewardGenerator ? guaranteedMod.generateReward(party) : guaranteedMod;
         if (modType) {
@@ -1955,6 +1955,7 @@ function getRewardOptionWithRetry(
   while (
     existingOptions.length &&
     ++r < retryCount &&
+    //TODO: Improve this condition to refine what counts as a dupe
     existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group).length
   ) {
     console.log("Retry count:", r);

@@ -2,13 +2,15 @@ import type { BattleScene } from "#app/battle-scene";
 import { allRewards } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
+import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import { PlayerPokemon } from "#field/pokemon";
-import type { CustomRewardSettings } from "#items/reward";
+import type { CustomRewardSettings, HeldItemReward, TrainerItemReward } from "#items/reward";
 import { RewardOption } from "#items/reward";
 import { SelectRewardPhase } from "#phases/select-reward-phase";
 import { GameManager } from "#test/testUtils/gameManager";
@@ -130,7 +132,7 @@ describe("SelectRewardPhase", () => {
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
     expect(rewardSelectHandler.options.length).toEqual(3);
-    const firstRollTiers: RarityTier[] = rewardSelectHandler.options.map(o => o.rewardOption.type.tier);
+    const firstRollTiers: RarityTier[] = rewardSelectHandler.options.map(o => o.rewardOption.tier);
 
     // TODO: nagivate ui to reroll with lock capsule enabled
 
@@ -138,13 +140,13 @@ describe("SelectRewardPhase", () => {
     expect(rewardSelectHandler.options.length).toEqual(3);
     // Reroll with lock can still upgrade
     expect(
-      rewardSelectHandler.options[0].rewardOption.type.tier - rewardSelectHandler.options[0].rewardOption.upgradeCount,
+      rewardSelectHandler.options[0].rewardOption.tier - rewardSelectHandler.options[0].rewardOption.upgradeCount,
     ).toEqual(firstRollTiers[0]);
     expect(
-      rewardSelectHandler.options[1].rewardOption.type.tier - rewardSelectHandler.options[1].rewardOption.upgradeCount,
+      rewardSelectHandler.options[1].rewardOption.tier - rewardSelectHandler.options[1].rewardOption.upgradeCount,
     ).toEqual(firstRollTiers[1]);
     expect(
-      rewardSelectHandler.options[2].rewardOption.type.tier - rewardSelectHandler.options[2].rewardOption.upgradeCount,
+      rewardSelectHandler.options[2].rewardOption.tier - rewardSelectHandler.options[2].rewardOption.upgradeCount,
     ).toEqual(firstRollTiers[2]);
   });
 
@@ -170,11 +172,18 @@ describe("SelectRewardPhase", () => {
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
     expect(rewardSelectHandler.options.length).toEqual(5);
-    expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual("MEMORY_MUSHROOM");
-    expect(rewardSelectHandler.options[1].rewardOption.type.id).toEqual("TM_ULTRA");
-    expect(rewardSelectHandler.options[2].rewardOption.type.id).toEqual("LEFTOVERS");
-    expect(rewardSelectHandler.options[3].rewardOption.type.id).toEqual("AMULET_COIN");
-    expect(rewardSelectHandler.options[4].rewardOption.type.id).toEqual("GOLDEN_PUNCH");
+    expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual(RewardId.MEMORY_MUSHROOM);
+    expect(rewardSelectHandler.options[1].rewardOption.type.id).toEqual(RewardId.TM_ULTRA);
+    expect(rewardSelectHandler.options[2].rewardOption.type.id).toEqual(RewardId.HELD_ITEM);
+    expect((rewardSelectHandler.options[2].rewardOption.type as HeldItemReward).itemId).toEqual(HeldItemId.LEFTOVERS);
+    expect(rewardSelectHandler.options[3].rewardOption.type.id).toEqual(RewardId.TRAINER_ITEM);
+    expect((rewardSelectHandler.options[3].rewardOption.type as TrainerItemReward).itemId).toEqual(
+      TrainerItemId.AMULET_COIN,
+    );
+    expect(rewardSelectHandler.options[4].rewardOption.type.id).toEqual(RewardId.HELD_ITEM);
+    expect((rewardSelectHandler.options[4].rewardOption.type as HeldItemReward).itemId).toEqual(
+      HeldItemId.GOLDEN_PUNCH,
+    );
   });
 
   it("should generate custom modifier tiers that can upgrade from luck", async () => {
@@ -208,19 +217,19 @@ describe("SelectRewardPhase", () => {
     ) as RewardSelectUiHandler;
     expect(rewardSelectHandler.options.length).toEqual(5);
     expect(
-      rewardSelectHandler.options[0].rewardOption.type.tier - rewardSelectHandler.options[0].rewardOption.upgradeCount,
+      rewardSelectHandler.options[0].rewardOption.tier - rewardSelectHandler.options[0].rewardOption.upgradeCount,
     ).toEqual(RarityTier.COMMON);
     expect(
-      rewardSelectHandler.options[1].rewardOption.type.tier - rewardSelectHandler.options[1].rewardOption.upgradeCount,
+      rewardSelectHandler.options[1].rewardOption.tier - rewardSelectHandler.options[1].rewardOption.upgradeCount,
     ).toEqual(RarityTier.GREAT);
     expect(
-      rewardSelectHandler.options[2].rewardOption.type.tier - rewardSelectHandler.options[2].rewardOption.upgradeCount,
+      rewardSelectHandler.options[2].rewardOption.tier - rewardSelectHandler.options[2].rewardOption.upgradeCount,
     ).toEqual(RarityTier.ULTRA);
     expect(
-      rewardSelectHandler.options[3].rewardOption.type.tier - rewardSelectHandler.options[3].rewardOption.upgradeCount,
+      rewardSelectHandler.options[3].rewardOption.tier - rewardSelectHandler.options[3].rewardOption.upgradeCount,
     ).toEqual(RarityTier.ROGUE);
     expect(
-      rewardSelectHandler.options[4].rewardOption.type.tier - rewardSelectHandler.options[4].rewardOption.upgradeCount,
+      rewardSelectHandler.options[4].rewardOption.tier - rewardSelectHandler.options[4].rewardOption.upgradeCount,
     ).toEqual(RarityTier.MASTER);
   });
 
@@ -241,10 +250,10 @@ describe("SelectRewardPhase", () => {
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
     expect(rewardSelectHandler.options.length).toEqual(4);
-    expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual("MEMORY_MUSHROOM");
-    expect(rewardSelectHandler.options[1].rewardOption.type.id).toEqual("TM_COMMON");
-    expect(rewardSelectHandler.options[2].rewardOption.type.tier).toEqual(RarityTier.MASTER);
-    expect(rewardSelectHandler.options[3].rewardOption.type.tier).toEqual(RarityTier.MASTER);
+    expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual(RewardId.MEMORY_MUSHROOM);
+    expect(rewardSelectHandler.options[1].rewardOption.type.id).toEqual(RewardId.TM_COMMON);
+    expect(rewardSelectHandler.options[2].rewardOption.tier).toEqual(RarityTier.MASTER);
+    expect(rewardSelectHandler.options[3].rewardOption.tier).toEqual(RarityTier.MASTER);
   });
 
   it("should fill remaining modifiers if fillRemaining is true with custom modifiers", async () => {
@@ -265,7 +274,7 @@ describe("SelectRewardPhase", () => {
       h => h instanceof RewardSelectUiHandler,
     ) as RewardSelectUiHandler;
     expect(rewardSelectHandler.options.length).toEqual(3);
-    expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual("MEMORY_MUSHROOM");
-    expect(rewardSelectHandler.options[1].rewardOption.type.tier).toEqual(RarityTier.MASTER);
+    expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual(RewardId.MEMORY_MUSHROOM);
+    expect(rewardSelectHandler.options[1].rewardOption.tier).toEqual(RarityTier.MASTER);
   });
 });

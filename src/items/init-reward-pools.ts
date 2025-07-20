@@ -16,7 +16,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { Unlockables } from "#enums/unlockables";
-import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { Pokemon } from "#field/pokemon";
 import { matchingRewards, WeightedReward } from "#items/reward";
 import { rewardPool } from "#items/reward-pools";
 import type { TurnEndStatusHeldItem } from "#items/turn-end-status";
@@ -668,29 +668,13 @@ function hasMaximumBalls(ballType: PokeballType): boolean {
  *  if not provided or empty, the weight check will be ignored
  * @param rerollCount Default `0`. Used to check the weight of modifiers with conditional weight (see {@linkcode WeightedRewardWeightFunc})
  */
-export function getRewardTierFromPool(reward: Reward, party?: PlayerPokemon[], rerollCount = 0): RarityTier {
-  let defaultTier: undefined | RarityTier;
+export function getRewardTierFromPool(reward: Reward): RarityTier {
   for (const tier of Object.values(rewardPool)) {
     for (const weighted of tier) {
       if (matchingRewards(reward, weighted.reward)) {
-        //TODO: need to rework this to use id
-        let weight: number;
-        if (weighted.weight instanceof Function) {
-          weight = party ? weighted.weight(party, rerollCount) : 0;
-        } else {
-          weight = weighted.weight;
-        }
-        if (weight > 0) {
-          this.tier = weighted.reward.tier;
-          return this;
-        }
-        if (isNullOrUndefined(defaultTier)) {
-          // If weight is 0, keep track of the first tier where the item was found
-          defaultTier = weighted.reward.tier;
-        }
+        return weighted.reward.tier;
       }
     }
   }
-
-  return defaultTier ?? RarityTier.COMMON;
+  return RarityTier.COMMON;
 }
