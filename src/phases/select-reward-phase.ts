@@ -24,7 +24,6 @@ import {
   RememberMoveReward,
   RewardClass,
   TmReward,
-  TrainerItemReward,
 } from "#items/reward";
 import { TrainerItemEffect } from "#items/trainer-item";
 import { BattlePhase } from "#phases/battle-phase";
@@ -173,15 +172,13 @@ export class SelectRewardPhase extends BattlePhase {
       } else {
         this.openPokemonRewardMenu(reward, cost, rewardSelectCallback);
       }
-    } else if (reward instanceof TrainerItemReward) {
+    } else {
       console.log("WE GOT HERE");
       reward.apply();
       globalScene.updateItems(true);
       globalScene.ui.clearText();
       globalScene.ui.setMode(UiMode.MESSAGE);
       super.end();
-    } else {
-      this.applyConsumable(reward);
     }
     return cost === -1;
   }

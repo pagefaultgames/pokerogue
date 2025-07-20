@@ -14,7 +14,7 @@ export class FriendshipBoosterHeldItem extends HeldItem {
   public effects: HeldItemEffect[] = [HeldItemEffect.FRIENDSHIP_BOOSTER];
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.PokemonFriendshipBoosterReward.description");
+    return i18next.t("modifierType:ModifierType.PokemonFriendshipBoosterModifierType.description");
   }
 
   /**

@@ -26,7 +26,7 @@ export class MultiHitHeldItem extends HeldItem {
   public effects: HeldItemEffect[] = [HeldItemEffect.MULTI_HIT];
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.PokemonMultiHitReward.description");
+    return i18next.t("modifierType:ModifierType.PokemonMultiHitModifierType.description");
   }
 
   /**

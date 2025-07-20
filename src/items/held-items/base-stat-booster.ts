@@ -43,11 +43,11 @@ export class BaseStatBoosterHeldItem extends HeldItem {
   }
 
   get name(): string {
-    return i18next.t(`reward:BaseStatBoosterItem.${statBoostItems[this.stat]}`);
+    return i18next.t(`modifierType:BaseStatBoosterItem.${statBoostItems[this.stat]}`);
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.BaseStatBoosterReward.description", {
+    return i18next.t("modifierType:ModifierType.BaseStatBoosterModifierType.description", {
       stat: i18next.t(getStatKey(this.stat)),
     });
   }

@@ -141,14 +141,14 @@ export class AddPokeballReward extends Reward {
   }
 
   get name(): string {
-    return i18next.t("modifierType:ModifierType.AddPokeballConsumableType.name", {
+    return i18next.t("modifierType:ModifierType.AddPokeballModifierType.name", {
       modifierCount: this.count,
       pokeballName: getPokeballName(this.pokeballType),
     });
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.AddPokeballConsumableType.description", {
+    return i18next.t("modifierType:ModifierType.AddPokeballModifierType.description", {
       modifierCount: this.count,
       pokeballName: getPokeballName(this.pokeballType),
       catchRate:
@@ -236,7 +236,7 @@ export class AddMoneyReward extends Reward {
     globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyAmount });
     const formattedMoney = formatMoney(globalScene.moneyFormat, moneyAmount.value);
 
-    return i18next.t("modifierType:ModifierType.MoneyRewardReward.description", {
+    return i18next.t("modifierType:ModifierType.MoneyRewardModifierType.description", {
       moneyMultiplier: i18next.t(this.moneyMultiplierDescriptorKey as any),
       moneyAmount: formattedMoney,
     });
@@ -326,12 +326,12 @@ export class HeldItemReward extends PokemonReward {
         const hasItem = pokemon.heldItemManager.hasItem(this.itemId);
         const maxStackCount = allHeldItems[this.itemId].getMaxStackCount();
         if (!maxStackCount) {
-          return i18next.t("modifierType:ModifierType.PokemonHeldItemReward.extra.inoperable", {
+          return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.inoperable", {
             pokemonName: getPokemonNameWithAffix(pokemon),
           });
         }
         if (hasItem && pokemon.heldItemManager.getStack(this.itemId) === maxStackCount) {
-          return i18next.t("modifierType:ModifierType.PokemonHeldItemReward.extra.tooMany", {
+          return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.tooMany", {
             pokemonName: getPokemonNameWithAffix(pokemon),
           });
         }
@@ -421,13 +421,13 @@ export class ChangeTeraTypeReward extends PokemonReward {
   }
 
   get name(): string {
-    return i18next.t("modifierType:ModifierType.ChangeTeraTypeReward.name", {
+    return i18next.t("modifierType:ModifierType.ChangeTeraTypeModifierType.name", {
       teraType: i18next.t(`pokemonInfo:Type.${PokemonType[this.teraType]}`),
     });
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.ChangeTeraTypeReward.description", {
+    return i18next.t("modifierType:ModifierType.ChangeTeraTypeModifierType.description", {
       teraType: i18next.t(`pokemonInfo:Type.${PokemonType[this.teraType]}`),
     });
   }
@@ -525,13 +525,13 @@ export class PokemonHpRestoreReward extends PokemonReward {
 
   getDescription(): string {
     return this.restorePoints
-      ? i18next.t("modifierType:ModifierType.PokemonHpRestoreReward.description", {
+      ? i18next.t("modifierType:ModifierType.PokemonHpRestoreModifierType.description", {
           restorePoints: this.restorePoints,
           restorePercent: this.restorePercent,
         })
       : this.healStatus
-        ? i18next.t("modifierType:ModifierType.PokemonHpRestoreReward.extra.fullyWithStatus")
-        : i18next.t("modifierType:ModifierType.PokemonHpRestoreReward.extra.fully");
+        ? i18next.t("modifierType:ModifierType.PokemonHpRestoreModifierType.extra.fullyWithStatus")
+        : i18next.t("modifierType:ModifierType.PokemonHpRestoreModifierType.extra.fully");
   }
 
   apply({ pokemon }: PokemonRewardParams): boolean {
@@ -566,7 +566,7 @@ export class PokemonReviveReward extends PokemonHpRestoreReward {
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonReviveReward.description", {
+    return i18next.t("modifierType:ModifierType.PokemonReviveModifierType.description", {
       restorePercent: this.restorePercent,
     });
   }
@@ -578,7 +578,7 @@ export class PokemonReviveReward extends PokemonHpRestoreReward {
 
 class AllPokemonFullReviveReward extends Reward {
   constructor(localeKey: string, iconImage: string) {
-    super(localeKey, iconImage, "modifierType:ModifierType.AllPokemonFullReviveReward");
+    super(localeKey, iconImage, "modifierType:ModifierType.AllPokemonFullReviveModifierType");
     this.id = RewardId.SACRED_ASH;
   }
 
@@ -603,7 +603,7 @@ export class PokemonStatusHealReward extends PokemonReward {
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonStatusHealReward.description");
+    return i18next.t("modifierType:ModifierType.PokemonStatusHealModifierType.description");
   }
 
   apply({ pokemon }: PokemonRewardParams): boolean {
@@ -659,10 +659,10 @@ export class PokemonPpRestoreReward extends PokemonMoveReward {
 
   getDescription(): string {
     return this.restorePoints > -1
-      ? i18next.t("modifierType:ModifierType.PokemonPpRestoreReward.description", {
+      ? i18next.t("modifierType:ModifierType.PokemonPpRestoreModifierType.description", {
           restorePoints: this.restorePoints,
         })
-      : i18next.t("modifierType:ModifierType.PokemonPpRestoreReward.extra.fully");
+      : i18next.t("modifierType:ModifierType.PokemonPpRestoreModifierType.extra.fully");
   }
 
   /**
@@ -703,10 +703,10 @@ export class PokemonAllMovePpRestoreReward extends PokemonReward {
 
   getDescription(): string {
     return this.restorePoints > -1
-      ? i18next.t("modifierType:ModifierType.PokemonAllMovePpRestoreReward.description", {
+      ? i18next.t("modifierType:ModifierType.PokemonAllMovePpRestoreModifierType.description", {
           restorePoints: this.restorePoints,
         })
-      : i18next.t("modifierType:ModifierType.PokemonAllMovePpRestoreReward.extra.fully");
+      : i18next.t("modifierType:ModifierType.PokemonAllMovePpRestoreModifierType.extra.fully");
   }
 
   /**
@@ -749,7 +749,7 @@ export class PokemonPpUpReward extends PokemonMoveReward {
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonPpUpReward.description", { upPoints: this.upPoints });
+    return i18next.t("modifierType:ModifierType.PokemonPpUpModifierType.description", { upPoints: this.upPoints });
   }
 
   /**
@@ -793,13 +793,13 @@ export class PokemonNatureChangeReward extends PokemonReward {
   }
 
   get name(): string {
-    return i18next.t("modifierType:ModifierType.PokemonNatureChangeReward.name", {
+    return i18next.t("modifierType:ModifierType.PokemonNatureChangeModifierType.name", {
       natureName: getNatureName(this.nature),
     });
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonNatureChangeReward.description", {
+    return i18next.t("modifierType:ModifierType.PokemonNatureChangeModifierType.description", {
       natureName: getNatureName(this.nature, true, true, true),
     });
   }
@@ -914,7 +914,7 @@ export class PokemonLevelIncrementReward extends PokemonReward {
     let levels = 1;
     const candyJarStack = globalScene.trainerItems.getStack(TrainerItemId.CANDY_JAR);
     levels += candyJarStack;
-    return i18next.t("modifierType:ModifierType.PokemonLevelIncrementReward.description", { levels });
+    return i18next.t("modifierType:ModifierType.PokemonLevelIncrementModifierType.description", { levels });
   }
 
   /**
@@ -935,7 +935,7 @@ export class AllPokemonLevelIncrementReward extends Reward {
     let levels = 1;
     const candyJarStack = globalScene.trainerItems.getStack(TrainerItemId.CANDY_JAR);
     levels += candyJarStack;
-    return i18next.t("modifierType:ModifierType.AllPokemonLevelIncrementReward.description", { levels });
+    return i18next.t("modifierType:ModifierType.AllPokemonLevelIncrementModifierType.description", { levels });
   }
 
   apply(): boolean {
@@ -984,7 +984,7 @@ export class TmReward extends PokemonReward {
   }
 
   get name(): string {
-    return i18next.t("modifierType:ModifierType.TmReward.name", {
+    return i18next.t("modifierType:ModifierType.TmModifierType.name", {
       moveId: padInt(Object.keys(tmSpecies).indexOf(this.moveId.toString()) + 1, 3),
       moveName: allMoves[this.moveId].name,
     });
@@ -993,8 +993,8 @@ export class TmReward extends PokemonReward {
   getDescription(): string {
     return i18next.t(
       globalScene.enableMoveInfo
-        ? "modifierType:ModifierType.TmRewardWithInfo.description"
-        : "modifierType:ModifierType.TmReward.description",
+        ? "modifierType:ModifierType.TmModifierTypeWithInfo.description"
+        : "modifierType:ModifierType.TmModifierType.description",
       { moveName: allMoves[this.moveId].name },
     );
   }
@@ -1047,11 +1047,11 @@ export class EvolutionItemReward extends PokemonReward {
   }
 
   get name(): string {
-    return i18next.t(`reward:EvolutionItem.${EvolutionItem[this.evolutionItem]}`);
+    return i18next.t(`modifierType:EvolutionItem.${EvolutionItem[this.evolutionItem]}`);
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.EvolutionItemReward.description");
+    return i18next.t("modifierType:ModifierType.EvolutionItemModifierType.description");
   }
 
   getPregenArgs(): any[] {
@@ -1124,7 +1124,7 @@ export class FormChangeItemReward extends PokemonReward {
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.FormChangeItemReward.description");
+    return i18next.t("modifierType:ModifierType.FormChangeItemModifierType.description");
   }
 
   apply({ pokemon }: PokemonRewardParams): boolean {
@@ -1156,7 +1156,7 @@ export class FusePokemonReward extends PokemonReward {
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.FusePokemonReward.description");
+    return i18next.t("modifierType:ModifierType.FusePokemonModifierType.description");
   }
 
   /**
@@ -1545,7 +1545,7 @@ const rewardInitObj = Object.freeze({
       "modifierType:ModifierType.NUGGET",
       "nugget",
       1,
-      "modifierType:ModifierType.MoneyRewardReward.extra.small",
+      "modifierType:ModifierType.MoneyRewardModifierType.extra.small",
       RewardId.NUGGET,
     ),
   BIG_NUGGET: () =>
@@ -1553,7 +1553,7 @@ const rewardInitObj = Object.freeze({
       "modifierType:ModifierType.BIG_NUGGET",
       "big_nugget",
       2.5,
-      "modifierType:ModifierType.MoneyRewardReward.extra.moderate",
+      "modifierType:ModifierType.MoneyRewardModifierType.extra.moderate",
       RewardId.BIG_NUGGET,
     ),
   RELIC_GOLD: () =>
@@ -1561,7 +1561,7 @@ const rewardInitObj = Object.freeze({
       "modifierType:ModifierType.RELIC_GOLD",
       "relic_gold",
       10,
-      "modifierType:ModifierType.MoneyRewardReward.extra.large",
+      "modifierType:ModifierType.MoneyRewardModifierType.extra.large",
       RewardId.RELIC_GOLD,
     ),
 

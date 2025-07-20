@@ -434,7 +434,7 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       this.setVisible(true);
       this.shown = true;
-      globalScene.hideEnemyModifierBar();
+      globalScene.hideEnemyItemBar();
     });
   }
 

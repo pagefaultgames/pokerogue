@@ -87,7 +87,7 @@ export class TurnEndItemStealHeldItem extends ItemTransferHeldItem {
   isTransferable = true;
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.TurnHeldItemTransferReward.description");
+    return i18next.t("modifierType:ModifierType.TurnHeldItemTransferModifierType.description");
   }
 
   /**
@@ -137,7 +137,7 @@ export class ContactItemStealChanceHeldItem extends ItemTransferHeldItem {
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.ContactHeldItemTransferChanceReward.description", {
+    return i18next.t("modifierType:ModifierType.ContactHeldItemTransferChanceModifierType.description", {
       chancePercent: this.chancePercent,
     });
   }

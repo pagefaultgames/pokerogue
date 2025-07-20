@@ -23,7 +23,7 @@ export class ExpBoosterHeldItem extends HeldItem {
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.PokemonExpBoosterReward.description", {
+    return i18next.t("modifierType:ModifierType.PokemonExpBoosterModifierType.description", {
       boostPercent: this.boostPercent,
     });
   }

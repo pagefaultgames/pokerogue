@@ -59,11 +59,11 @@ export class HeldItem {
   }
 
   get name(): string {
-    return i18next.t(`reward:ModifierType.${HeldItemNames[this.type]}.name`);
+    return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.name`);
   }
 
   get description(): string {
-    return i18next.t(`reward:ModifierType.${HeldItemNames[this.type]}.description`);
+    return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.description`);
   }
 
   get iconName(): string {

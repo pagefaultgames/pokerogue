@@ -173,7 +173,7 @@ export class ExpBoosterTrainerItem extends TrainerItem {
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.ExpBoosterReward.description", {
+    return i18next.t("modifierType:ModifierType.ExpBoosterModifierType.description", {
       boostPercent: this.boostPercent,
     });
   }
@@ -284,7 +284,7 @@ export class DoubleBattleChanceBoosterTrainerItem extends LapsingTrainerItem {
   public effects: TrainerItemEffect[] = [TrainerItemEffect.DOUBLE_BATTLE_CHANCE_BOOSTER];
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.DoubleBattleChanceBoosterReward.description", {
+    return i18next.t("modifierType:ModifierType.DoubleBattleChanceBoosterModifierType.description", {
       battleCount: this.getMaxStackCount(),
     });
   }
@@ -321,14 +321,14 @@ export class TempStatStageBoosterTrainerItem extends LapsingTrainerItem {
   }
 
   get name(): string {
-    return i18next.t(`reward:TempStatStageBoosterItem.${TrainerItemNames[this.type]?.toLowerCase()}`);
+    return i18next.t(`modifierType:TempStatStageBoosterItem.${TrainerItemNames[this.type]?.toLowerCase()}`);
   }
 
   get description(): string {
     console.log();
-    return i18next.t("modifierType:ModifierType.TempStatStageBoosterReward.description", {
+    return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
       stat: i18next.t(getStatKey(this.stat)),
-      amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterReward.extra.percentage"),
+      amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.extra.percentage"),
     });
   }
 
@@ -343,14 +343,14 @@ export class TempAccuracyBoosterTrainerItem extends LapsingTrainerItem {
   public effects: TrainerItemEffect[] = [TrainerItemEffect.TEMP_ACCURACY_BOOSTER];
 
   get name(): string {
-    return i18next.t(`reward:TempStatStageBoosterItem.${TrainerItemNames[this.type]?.toLowerCase()}`);
+    return i18next.t(`modifierType:TempStatStageBoosterItem.${TrainerItemNames[this.type]?.toLowerCase()}`);
   }
 
   get description(): string {
     console.log();
-    return i18next.t("modifierType:ModifierType.TempStatStageBoosterReward.description", {
+    return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
       stat: i18next.t(getStatKey(Stat.ACC)),
-      amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterReward.extra.percentage"),
+      amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.extra.percentage"),
     });
   }
 
@@ -365,9 +365,9 @@ export class TempCritBoosterTrainerItem extends LapsingTrainerItem {
   public effects: TrainerItemEffect[] = [TrainerItemEffect.TEMP_CRIT_BOOSTER];
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.TempStatStageBoosterReward.description", {
+    return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
       stat: i18next.t("modifierType:ModifierType.DIRE_HIT.extra.raises"),
-      amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterReward.extra.stage"),
+      amount: i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.extra.stage"),
     });
   }
 
@@ -478,7 +478,7 @@ export class EnemyAttackStatusEffectChanceTrainerItem extends TrainerItem {
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.EnemyAttackStatusEffectChanceReward.description", {
+    return i18next.t("modifierType:ModifierType.EnemyAttackStatusEffectChanceModifierType.description", {
       chancePercent: this.getChance() * 100,
       statusEffect: getStatusEffectDescriptor(this.effect),
     });
@@ -535,7 +535,7 @@ export class EnemyEndureChanceTrainerItem extends TrainerItem {
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.EnemyEndureChanceReward.description", {
+    return i18next.t("modifierType:ModifierType.EnemyEndureChanceModifierType.description", {
       chancePercent: this.chance,
     });
   }

@@ -53,11 +53,11 @@ export class AttackTypeBoosterHeldItem extends HeldItem {
   }
 
   get name(): string {
-    return i18next.t(`reward:AttackTypeBoosterItem.${HeldItemNames[this.type]?.toLowerCase()}`);
+    return i18next.t(`modifierType:AttackTypeBoosterItem.${HeldItemNames[this.type]?.toLowerCase()}`);
   }
 
   get description(): string {
-    return i18next.t("modifierType:ModifierType.AttackTypeBoosterReward.description", {
+    return i18next.t("modifierType:ModifierType.AttackTypeBoosterModifierType.description", {
       moveType: i18next.t(`pokemonInfo:Type.${PokemonType[this.moveType]}`),
     });
   }
