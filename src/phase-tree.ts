@@ -71,8 +71,8 @@ export class PhaseTree {
     }
   }
 
-  public clear() {
-    this.levels = [[]];
+  public clear(leaveFirstLevel = false) {
+    this.levels = [leaveFirstLevel ? (this.levels.at(-1) ?? []) : []];
   }
 
   public remove<P extends PhaseString>(phaseType: P, phaseFilter?: PhaseConditionFunc<P>): boolean {

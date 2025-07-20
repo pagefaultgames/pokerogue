@@ -243,9 +243,8 @@ export class PhaseManager {
   /**
    * Adds a phase to nextCommandPhaseQueue, as long as boolean passed in is false
    * @param phase {@linkcode Phase} the phase to add
-   * @param defer boolean on which queue to add to, defaults to false, and adds to phaseQueue
    */
-  pushPhase(phase: Phase, _defer = false): void {
+  pushPhase(phase: Phase): void {
     this.phaseQueue.pushPhase(this.checkDynamic(phase));
   }
 
@@ -268,8 +267,8 @@ export class PhaseManager {
   /**
    * Clears the phaseQueue
    */
-  clearPhaseQueue(): void {
-    this.phaseQueue.clear();
+  clearPhaseQueue(leaveUnshifted = false): void {
+    this.phaseQueue.clear(leaveUnshifted);
   }
 
   /**

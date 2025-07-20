@@ -830,7 +830,7 @@ export function leaveEncounterWithoutBattle(
   encounterMode: MysteryEncounterMode = MysteryEncounterMode.NO_BATTLE,
 ) {
   globalScene.currentBattle.mysteryEncounter!.encounterMode = encounterMode;
-  globalScene.phaseManager.clearPhaseQueue();
+  globalScene.phaseManager.clearPhaseQueue(true);
   handleMysteryEncounterVictory(addHealPhase);
 }
 
@@ -843,7 +843,7 @@ export function handleMysteryEncounterVictory(addHealPhase = false, doNotContinu
   const allowedPkm = globalScene.getPlayerParty().filter(pkm => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
-    globalScene.phaseManager.clearPhaseQueue();
+    globalScene.phaseManager.clearPhaseQueue(true);
     globalScene.phaseManager.unshiftNew("GameOverPhase");
     return;
   }
@@ -886,7 +886,7 @@ export function handleMysteryEncounterBattleFailed(addHealPhase = false, doNotCo
   const allowedPkm = globalScene.getPlayerParty().filter(pkm => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
-    globalScene.phaseManager.clearPhaseQueue();
+    globalScene.phaseManager.clearPhaseQueue(true);
     globalScene.phaseManager.unshiftNew("GameOverPhase");
     return;
   }
@@ -973,7 +973,7 @@ export function handleMysteryEncounterBattleStartEffects() {
     const effects = encounter.startOfBattleEffects;
     effects.forEach(effect => {
       const source = effect.sourcePokemon ?? globalScene.getField()[effect.sourceBattlerIndex ?? 0];
-      globalScene.phaseManager.unshiftNew("MovePhase", source, effect.targets, effect.move, effect.useMode);
+      globalScene.phaseManager.pushNew("MovePhase", source, effect.targets, effect.move, effect.useMode);
     });
 
     // Pseudo turn end phase to reset flinch states, Endure, etc.
