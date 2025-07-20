@@ -254,7 +254,8 @@ export class PhaseManager {
    * @param phases {@linkcode Phase} the phase(s) to add
    */
   unshiftPhase(phase: Phase, defer = false): void {
-    this.phaseQueue.addPhase(this.checkDynamic(phase), defer);
+    const toAdd = this.checkDynamic(phase);
+    phase.is("MovePhase") ? this.phaseQueue.addAfter(toAdd, "MoveEndPhase") : this.phaseQueue.addPhase(toAdd, defer);
   }
 
   private checkDynamic(phase: Phase): Phase {
@@ -326,7 +327,7 @@ export class PhaseManager {
     return this.dynamicQueueManager.exists(type, condition) || this.phaseQueue.exists(type, condition);
   }
 
-  tryRemovePhase<T extends PhaseString>(type: T, phaseFilter: PhaseConditionFunc<T>): boolean {
+  tryRemovePhase<T extends PhaseString>(type: T, phaseFilter?: PhaseConditionFunc<T>): boolean {
     if (this.dynamicQueueManager.removePhase(type, phaseFilter)) {
       return true;
     }

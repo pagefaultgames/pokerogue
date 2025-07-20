@@ -63,7 +63,7 @@ export class DynamicQueueManager {
     return !!this.dynamicPhaseMap.get(type)?.hasPhaseWithCondition(condition);
   }
 
-  public removePhase<T extends PhaseString>(type: T, condition: PhaseConditionFunc<T>) {
+  public removePhase<T extends PhaseString>(type: T, condition?: PhaseConditionFunc<T>) {
     return this.dynamicPhaseMap.get(type)?.remove(condition);
   }
 
