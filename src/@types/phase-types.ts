@@ -1,4 +1,4 @@
-import type Pokemon from "#app/field/pokemon";
+import type { Pokemon } from "#app/field/pokemon";
 import type { Phase } from "#app/phase";
 import type { PhaseConstructorMap } from "#app/phase-manager";
 

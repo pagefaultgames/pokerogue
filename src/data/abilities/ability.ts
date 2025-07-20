@@ -5997,8 +5997,6 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
 export interface PreventBypassSpeedChanceAbAttrParams extends AbAttrBaseParams {
   /** Holds whether the speed check is bypassed after ability application */
   bypass: BooleanHolder;
-  /** Holds whether the Pokemon can check held items for Quick Claw's effects */
-  canCheckHeldItems: BooleanHolder;
 }
 
 /**

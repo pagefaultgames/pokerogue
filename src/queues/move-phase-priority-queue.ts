@@ -1,6 +1,6 @@
 import type { PhaseConditionFunc } from "#app/@types/phase-condition";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
-import type Pokemon from "#app/field/pokemon";
+import type { Pokemon } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import type { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";

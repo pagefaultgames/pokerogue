@@ -1,7 +1,7 @@
 import type { PhaseConditionFunc } from "#app/@types/phase-condition";
 import type { DynamicPhase, PhaseString } from "#app/@types/phase-types";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
-import type Pokemon from "#app/field/pokemon";
+import type { Pokemon } from "#app/field/pokemon";
 import type { Phase } from "#app/phase";
 import type { MovePhase } from "#app/phases/move-phase";
 import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";

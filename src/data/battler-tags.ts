@@ -3467,9 +3467,9 @@ export class BypassSpeedTag extends BattlerTag {
   }
 
   override canAdd(pokemon: Pokemon): boolean {
-    const cancelled = new BooleanHolder(false);
-    applyAbAttrs("PreventBypassSpeedChanceAbAttr", pokemon, null, false, cancelled);
-    return !cancelled.value;
+    const bypass = new BooleanHolder(true);
+    applyAbAttrs("PreventBypassSpeedChanceAbAttr", { pokemon: pokemon, bypass: bypass });
+    return bypass.value;
   }
 }
 
