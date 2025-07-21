@@ -2,7 +2,7 @@
  * This script accepts a CSV value or file path as input, parses the egg moves,
  * and writes the output to a TypeScript file.
  * It can be run interactively or with command line arguments.
- * Usage: `pnpm eggMove:parse`
+ * Usage: `pnpm eggMoves:parse`
  */
 
 import fs from "node:fs";
@@ -13,7 +13,7 @@ import { showHelpText } from "./help-message.js";
 import { runInteractive } from "./interactive.js";
 import { parseEggMoves } from "./parse.js";
 
-const version = "0.0.0"; // Replace with actual version if needed
+const version = "1.0.0";
 
 // Get the directory name of the current module file
 const __filename = fileURLToPath(import.meta.url);
@@ -24,7 +24,7 @@ const templatePath = path.join(__dirname, "egg-move-template.ts");
 const eggMoveTargetPath = path.join(projectRoot, "src/data/balance/egg-moves.ts");
 
 /**
- * Runs the interactive eggMove:parse CLI.
+ * Runs the interactive eggMoves:parse CLI.
  * @returns {Promise<void>}
  */
 async function start() {
@@ -41,7 +41,6 @@ async function start() {
     return;
   }
 
-  /** @type {string} */
   let csv = "";
   const inputType = await parseArguments();
   if (process.exitCode) {
@@ -93,7 +92,7 @@ async function parseArguments() {
     default:
       // If no arguments are found, check if it's a file path
       if (fs.existsSync(arg)) {
-        console.log(chalk.green(`Using file path: ${chalk.blue(arg)}`));
+        console.log(chalk.green(`Using file path from stdin: ${chalk.blue(arg)}`));
         return { type: "File", value: arg };
       }
       badArgs();

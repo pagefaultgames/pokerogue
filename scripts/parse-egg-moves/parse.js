@@ -44,7 +44,8 @@ export function parseEggMoves(csv) {
     }
   }
 
-  return output + "} satisfies Partial<Record<SpeciesId, [MoveId, MoveId, MoveId, MoveId]>>;";
+  // NB: We omit the semicolon as it is contained in the template string itself
+  return output + "} satisfies Partial<Record<SpeciesId, [MoveId, MoveId, MoveId, MoveId]>>";
 }
 
 /**

@@ -14,7 +14,7 @@
     "test:watch": "vitest watch --coverage --no-isolate",
     "test:silent": "vitest run --silent --no-isolate",
     "test:create": "node scripts/create-test/create-test.js",
-    "eggMove:parse": "node scripts/parse-egg-moves/main.js",
+    "eggMoves:parse": "node scripts/parse-egg-moves/main.js",
     "typecheck": "tsc --noEmit",
     "eslint": "eslint --fix .",
     "eslint-ci": "eslint .",
