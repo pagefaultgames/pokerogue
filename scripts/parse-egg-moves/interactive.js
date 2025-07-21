@@ -15,7 +15,7 @@ export async function runInteractive() {
         type: "list",
         name: "type",
         message: "Select the method to obtain egg moves.",
-        choices: ["Console", "File", "HELP MEEEEE", "Exit"],
+        choices: ["Console", "File", "Help", "Exit"],
       },
     ])
     .then(a => a.type);
