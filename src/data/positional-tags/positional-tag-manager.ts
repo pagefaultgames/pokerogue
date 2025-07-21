@@ -39,7 +39,7 @@ export class PositionalTagManager {
     const leftoverTags: PositionalTag[] = [];
     for (const tag of this.tags) {
       // Check for silent removal, immediately removing tags that.
-      if (!tag.shouldDisappear()) {
+      if (tag.shouldDisappear()) {
         continue;
       }
 

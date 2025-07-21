@@ -320,6 +320,7 @@ describe("Moves - Delayed Attacks", () => {
 
     game.doSwitchPokemon(1);
     const typeMock = vi.spyOn(game.field.getPlayerPokemon(), "getMoveType");
+    const powerMock = vi.spyOn(allMoves[MoveId.DOOM_DESIRE], "calculateBattlePower");
 
     await game.toNextTurn();
 
@@ -333,6 +334,7 @@ describe("Moves - Delayed Attacks", () => {
       }),
     );
     expect(typeMock).toHaveLastReturnedWith(PokemonType.STEEL);
+    expect(powerMock).toHaveLastReturnedWith(150);
   });
 
   it.todo("should not apply the user's held items when dealing damage if the user is inactive", async () => {
