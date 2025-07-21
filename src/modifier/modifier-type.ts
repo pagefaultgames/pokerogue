@@ -1,19 +1,32 @@
+import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { tmPoolTiers, tmSpecies } from "#app/data/balance/tms";
-import { getBerryEffectDescription, getBerryName } from "#app/data/berry";
-import { allMoves, modifierTypes } from "#app/data/data-lists";
-import { getNatureName, getNatureStatMultiplier } from "#app/data/nature";
-import { getPokeballCatchMultiplier, getPokeballName } from "#app/data/pokeball";
-import { pokemonFormChanges, SpeciesFormChangeCondition } from "#app/data/pokemon-forms";
-import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { FormChangeItem } from "#enums/form-change-item";
-import { getStatusEffectDescriptor } from "#app/data/status-effect";
-import { PokemonType } from "#enums/pokemon-type";
-import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
-import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
+import Overrides from "#app/overrides";
+import { EvolutionItem, pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { tmPoolTiers, tmSpecies } from "#balance/tms";
+import { getBerryEffectDescription, getBerryName } from "#data/berry";
+import { allMoves, modifierTypes } from "#data/data-lists";
+import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
+import { getNatureName, getNatureStatMultiplier } from "#data/nature";
+import { getPokeballCatchMultiplier, getPokeballName } from "#data/pokeball";
+import { pokemonFormChanges, SpeciesFormChangeCondition } from "#data/pokemon-forms";
+import { getStatusEffectDescriptor } from "#data/status-effect";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BerryType } from "#enums/berry-type";
+import { FormChangeItem } from "#enums/form-change-item";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
+import { ModifierTier } from "#enums/modifier-tier";
+import { MoveId } from "#enums/move-id";
+import { Nature } from "#enums/nature";
+import { PokeballType } from "#enums/pokeball";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesFormKey } from "#enums/species-form-key";
+import { SpeciesId } from "#enums/species-id";
+import type { PermanentStat, TempBattleStat } from "#enums/stat";
+import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import {
   AddPokeballModifier,
   AddVoucherModifier,
@@ -24,6 +37,7 @@ import {
   BypassSpeedChanceModifier,
   ContactHeldItemTransferChanceModifier,
   CritBoosterModifier,
+  CriticalCatchChanceBoosterModifier,
   DamageMoneyRewardModifier,
   DoubleBattleChanceBoosterModifier,
   EnemyAttackStatusEffectChanceModifier,
@@ -31,6 +45,7 @@ import {
   EnemyDamageReducerModifier,
   EnemyEndureChanceModifier,
   EnemyFusionChanceModifier,
+  type EnemyPersistentModifier,
   EnemyStatusEffectHealChanceModifier,
   EnemyTurnHealModifier,
   EvolutionItemModifier,
@@ -40,6 +55,7 @@ import {
   ExpBoosterModifier,
   ExpShareModifier,
   ExtraModifierModifier,
+  FieldEffectModifier,
   FlinchChanceModifier,
   FusePokemonModifier,
   GigantamaxAccessModifier,
@@ -52,10 +68,12 @@ import {
   LockModifierTiersModifier,
   MapModifier,
   MegaEvolutionAccessModifier,
+  type Modifier,
   MoneyInterestModifier,
   MoneyMultiplierModifier,
   MoneyRewardModifier,
   MultipleParticipantExpBonusModifier,
+  type PersistentModifier,
   PokemonAllMovePpRestoreModifier,
   PokemonBaseStatFlatModifier,
   PokemonBaseStatTotalModifier,
@@ -83,6 +101,7 @@ import {
   SurviveDamageModifier,
   SwitchEffectTransferModifier,
   TempCritBoosterModifier,
+  TempExtraModifierModifier,
   TempStatStageBoosterModifier,
   TerastallizeAccessModifier,
   TerrastalizeModifier,
@@ -90,44 +109,17 @@ import {
   TurnHealModifier,
   TurnHeldItemTransferModifier,
   TurnStatusEffectModifier,
-  type EnemyPersistentModifier,
-  type Modifier,
-  type PersistentModifier,
-  TempExtraModifierModifier,
-  CriticalCatchChanceBoosterModifier,
-  FieldEffectModifier,
-} from "#app/modifier/modifier";
-import { ModifierTier } from "#enums/modifier-tier";
-import Overrides from "#app/overrides";
-import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#app/system/voucher";
-import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#app/ui/party-ui-handler";
-import PartyUiHandler from "#app/ui/party-ui-handler";
-import { getModifierTierTextTint } from "#app/ui/text";
-import {
-  formatMoney,
-  getEnumKeys,
-  getEnumValues,
-  isNullOrUndefined,
-  NumberHolder,
-  padInt,
-  randSeedInt,
-} from "#app/utils/common";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { BerryType } from "#enums/berry-type";
-import { MoveId } from "#enums/move-id";
-import { Nature } from "#enums/nature";
-import { PokeballType } from "#enums/pokeball";
-import { SpeciesId } from "#enums/species-id";
-import { SpeciesFormKey } from "#enums/species-form-key";
-import type { PermanentStat, TempBattleStat } from "#enums/stat";
-import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
-import { StatusEffect } from "#enums/status-effect";
+} from "#modifiers/modifier";
+import type { PokemonMove } from "#moves/pokemon-move";
+import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#system/voucher";
+import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#types/modifier-types";
+import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
+import { PartyUiHandler } from "#ui/party-ui-handler";
+import { getModifierTierTextTint } from "#ui/text";
+import { formatMoney, isNullOrUndefined, NumberHolder, padInt, randSeedInt, randSeedItem } from "#utils/common";
+import { getEnumKeys, getEnumValues } from "#utils/enums";
+import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
 import i18next from "i18next";
-import { timedEventManager } from "#app/global-event-manager";
-import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
-import { getModifierPoolForType, getModifierType } from "#app/utils/modifier-utils";
-import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -1525,6 +1517,7 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
       if (!tierUniqueCompatibleTms.length) {
         return null;
       }
+      // TODO: should this use `randSeedItem`?
       const randTmIndex = randSeedInt(tierUniqueCompatibleTms.length);
       return new TmModifierType(tierUniqueCompatibleTms[randTmIndex]);
     });
@@ -1578,6 +1571,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
         return null;
       }
 
+      // TODO: should this use `randSeedItem`?
       return new EvolutionItemModifierType(evolutionItemPool[randSeedInt(evolutionItemPool.length)]!); // TODO: is the bang correct?
     });
   }
@@ -1663,6 +1657,7 @@ export class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
         return null;
       }
 
+      // TODO: should this use `randSeedItem`?
       return new FormChangeItemModifierType(formChangeItemPool[randSeedInt(formChangeItemPool.length)]);
     });
   }
@@ -1933,7 +1928,7 @@ const modifierTypeInitObj = Object.freeze({
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in Nature) {
         return new PokemonNatureChangeModifierType(pregenArgs[0] as Nature);
       }
-      return new PokemonNatureChangeModifierType(randSeedInt(getEnumValues(Nature).length) as Nature);
+      return new PokemonNatureChangeModifierType(randSeedItem(getEnumValues(Nature)));
     }),
 
   MYSTICAL_ROCK: () =>

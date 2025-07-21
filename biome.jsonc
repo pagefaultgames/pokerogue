@@ -38,14 +38,13 @@
     ]
   },
 
-  // TODO: Configure and enable import sorting
   "assist": {
     "actions": {
       "source": {
         "organizeImports": {
-          "level": "off",
+          "level": "on",
           "options": {
-            "groups": []
+            "groups": [":ALIAS:", ":NODE:", ":PACKAGE_WITH_PROTOCOL:", ":PACKAGE:", ":PATH:"]
           }
         }
       }
@@ -140,7 +139,7 @@
         "useAdjacentGetterSetter": "error",
         "noConstantBinaryExpression": "error",
         "noTsIgnore": "error",
-        "noAwaitInLoop": "warn",
+        "noAwaitInLoop": "off",
         "useJsonImportAttribute": "off", // "Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'. ts(2823)"
         "useIndexOf": "error",
         "useObjectSpread": "error",

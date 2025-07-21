@@ -1,15 +1,15 @@
-import { UiMode } from "#enums/ui-mode";
-import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import { hasTouchscreen } from "#app/touch-controls";
-import { updateWindowType } from "#app/ui/ui-theme";
-import { CandyUpgradeNotificationChangedEvent } from "#app/events/battle-scene";
-import type SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
-import { isLocal } from "#app/utils/common";
+import { UiMode } from "#enums/ui-mode";
+import { CandyUpgradeNotificationChangedEvent } from "#events/battle-scene";
+import type { SettingsUiHandler } from "#ui/settings-ui-handler";
+import { updateWindowType } from "#ui/ui-theme";
+import { isLocal } from "#utils/common";
+import i18next from "i18next";
 
 const VOLUME_OPTIONS: SettingOption[] = [
   {

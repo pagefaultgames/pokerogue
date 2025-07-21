@@ -1,6 +1,5 @@
-import type { AbAttrParamMap } from "#app/@types/ability-types";
-import type { AbAttrBaseParams, AbAttrString, CallableAbAttrString } from "#app/@types/ability-types";
 import { globalScene } from "#app/global-scene";
+import type { AbAttrBaseParams, AbAttrParamMap, AbAttrString, CallableAbAttrString } from "#types/ability-types";
 
 function applySingleAbAttrs<T extends AbAttrString>(
   attrType: T,

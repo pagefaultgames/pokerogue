@@ -1,53 +1,52 @@
-import type { Variant } from "#app/sprites/variant";
-import { getVariantTint, getVariantIcon } from "#app/sprites/variant";
-import { argbFromRgba } from "@material/material-color-utilities";
-import i18next from "i18next";
+import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
-import { speciesEggMoves } from "#app/data/balance/egg-moves";
-import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
-import type { PokemonForm } from "#app/data/pokemon-species";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpeciesForm, getPokerusStarters, normalForm } from "#app/data/pokemon-species";
-import { allSpecies } from "#app/data/data-lists";
-import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
-import { catchableSpecies } from "#app/data/balance/biomes";
-import { PokemonType } from "#enums/pokemon-type";
-import type { DexAttrProps, StarterAttributes } from "#app/system/game-data";
-import type { StarterPreferences } from "#app/utils/data";
-import type { DexEntry } from "#app/@types/dex-data";
-import { loadStarterPreferences } from "#app/utils/data";
-import { AbilityAttr } from "#enums/ability-attr";
-import { DexAttr } from "#enums/dex-attr";
-import MessageUiHandler from "#app/ui/message-ui-handler";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
-import { TextStyle, addTextObject } from "#app/ui/text";
-import { UiMode } from "#enums/ui-mode";
-import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
-import { Passive as PassiveAttr } from "#enums/passive";
-import type { SpeciesId } from "#enums/species-id";
-import { Button } from "#enums/buttons";
-import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#app/ui/dropdown";
-import { PokedexMonContainer } from "#app/ui/pokedex-mon-container";
-import { FilterBar } from "#app/ui/filter-bar";
-import { DropDownColumn } from "#enums/drop-down-column";
-import { ScrollBar } from "#app/ui/scroll-bar";
-import { AbilityId } from "#enums/ability-id";
+import { catchableSpecies } from "#balance/biomes";
+import { speciesEggMoves } from "#balance/egg-moves";
+import { pokemonStarters } from "#balance/pokemon-evolutions";
+import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
 import {
   getPassiveCandyCount,
-  getValueReductionCandyCounts,
   getSameSpeciesEggCandyCounts,
-} from "#app/data/balance/starters";
-import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#app/utils/common";
-import type { Nature } from "#enums/nature";
-import { addWindow } from "./ui-theme";
-import type { OptionSelectConfig } from "./abstact-option-select-ui-handler";
-import { FilterText, FilterTextRow } from "./filter-text";
-import { allAbilities } from "#app/data/data-lists";
-import { allMoves } from "#app/data/data-lists";
-import { speciesTmMoves } from "#app/data/balance/tms";
-import { pokemonStarters } from "#app/data/balance/pokemon-evolutions";
+  getStarterValueFriendshipCap,
+  getValueReductionCandyCounts,
+  POKERUS_STARTER_COUNT,
+  speciesStarterCosts,
+} from "#balance/starters";
+import { speciesTmMoves } from "#balance/tms";
+import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
+import type { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
+import { getPokemonSpeciesForm, getPokerusStarters, normalForm } from "#data/pokemon-species";
+import { AbilityAttr } from "#enums/ability-attr";
+import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
-import { globalScene } from "#app/global-scene";
+import { Button } from "#enums/buttons";
+import { DexAttr } from "#enums/dex-attr";
+import { DropDownColumn } from "#enums/drop-down-column";
+import type { Nature } from "#enums/nature";
+import { Passive as PassiveAttr } from "#enums/passive";
+import { PokemonType } from "#enums/pokemon-type";
+import type { SpeciesId } from "#enums/species-id";
+import { UiMode } from "#enums/ui-mode";
+import type { Variant } from "#sprites/variant";
+import { getVariantIcon, getVariantTint } from "#sprites/variant";
+import type { DexAttrProps, StarterAttributes } from "#system/game-data";
+import { SettingKeyboard } from "#system/settings-keyboard";
+import type { DexEntry } from "#types/dex-data";
+import type { OptionSelectConfig } from "#ui/abstact-option-select-ui-handler";
+import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
+import { FilterBar } from "#ui/filter-bar";
+import { FilterText, FilterTextRow } from "#ui/filter-text";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { PokedexMonContainer } from "#ui/pokedex-mon-container";
+import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-handler";
+import { ScrollBar } from "#ui/scroll-bar";
+import { addTextObject, TextStyle } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#utils/common";
+import type { StarterPreferences } from "#utils/data";
+import { loadStarterPreferences } from "#utils/data";
+import { argbFromRgba } from "@material/material-color-utilities";
+import i18next from "i18next";
 
 interface LanguageSetting {
   starterInfoTextSize: string;
@@ -157,7 +156,7 @@ interface SpeciesDetails {
   natureIndex?: number;
 }
 
-export default class PokedexUiHandler extends MessageUiHandler {
+export class PokedexUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private starterSelectScrollBar: ScrollBar;
   private filterBarContainer: Phaser.GameObjects.Container;

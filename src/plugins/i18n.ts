@@ -1,9 +1,9 @@
-import { camelCaseToKebabCase } from "#app/utils/common";
+import pkg from "#package.json";
+import { camelCaseToKebabCase } from "#utils/common";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
 import processor, { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
-import pkg from "../../package.json";
 
 //#region Interfaces/Types
 

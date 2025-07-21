@@ -1,18 +1,18 @@
+import { globalScene } from "#app/global-scene";
+import { SubstituteTag } from "#data/battler-tags";
 import { BattlerIndex } from "#enums/battler-index";
-import { UiMode } from "#enums/ui-mode";
-import UiHandler from "./ui-handler";
-import { isNullOrUndefined, fixedInt } from "#app/utils/common";
-import { getMoveTargets } from "#app/data/moves/move-utils";
 import { Button } from "#enums/buttons";
 import type { MoveId } from "#enums/move-id";
-import type Pokemon from "#app/field/pokemon";
-import type { ModifierBar } from "#app/modifier/modifier";
-import { SubstituteTag } from "#app/data/battler-tags";
-import { globalScene } from "#app/global-scene";
+import { UiMode } from "#enums/ui-mode";
+import type { Pokemon } from "#field/pokemon";
+import type { ModifierBar } from "#modifiers/modifier";
+import { getMoveTargets } from "#moves/move-utils";
+import { UiHandler } from "#ui/ui-handler";
+import { fixedInt, isNullOrUndefined } from "#utils/common";
 
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
-export default class TargetSelectUiHandler extends UiHandler {
+export class TargetSelectUiHandler extends UiHandler {
   private fieldIndex: number;
   private move: MoveId;
   private targetSelectCallback: TargetSelectCallback;
@@ -157,8 +157,8 @@ export default class TargetSelectUiHandler extends UiHandler {
       yoyo: true,
       onUpdate: t => {
         for (const target of this.targetsHighlighted) {
-          target.setAlpha(t.getValue());
-          this.highlightItems(target.id, t.getValue());
+          target.setAlpha(t.getValue() ?? 1);
+          this.highlightItems(target.id, t.getValue() ?? 1);
         }
       },
     });

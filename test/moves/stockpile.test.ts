@@ -1,12 +1,11 @@
-import { Stat } from "#enums/stat";
-import { StockpilingTag } from "#app/data/battler-tags";
-import { MoveResult } from "#enums/move-result";
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { StockpilingTag } from "#data/battler-tags";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -50,12 +49,8 @@ describe("Moves - Stockpile", () => {
 
       // use Stockpile four times
       for (let i = 0; i < 4; i++) {
-        if (i !== 0) {
-          await game.phaseInterceptor.to(CommandPhase);
-        }
-
         game.move.select(MoveId.STOCKPILE);
-        await game.phaseInterceptor.to(TurnInitPhase);
+        await game.toNextTurn();
 
         const stockpilingTag = user.getTag(StockpilingTag)!;
 
@@ -100,9 +95,6 @@ describe("Moves - Stockpile", () => {
       expect(stockpilingTag.stockpiledCount).toBe(1);
       expect(user.getStatStage(Stat.DEF)).toBe(6);
       expect(user.getStatStage(Stat.SPDEF)).toBe(6);
-
-      // do it again, just for good measure
-      await game.phaseInterceptor.to(CommandPhase);
 
       game.move.select(MoveId.STOCKPILE);
       await game.phaseInterceptor.to(TurnInitPhase);

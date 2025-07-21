@@ -1,12 +1,9 @@
 /** biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
-import type { NewArenaEvent } from "#app/events/battle-scene";
+import type { NewArenaEvent } from "#events/battle-scene";
 /** biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
-import type { ModifierOverride } from "#app/modifier/modifier-type";
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides, { defaultOverrides } from "#app/overrides";
-import type { Variant } from "#app/sprites/variant";
-import { coerceArray, shiftCharCodes } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import type { BattleType } from "#enums/battle-type";
 import { BiomeId } from "#enums/biome-id";
@@ -18,7 +15,10 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import type { Unlockables } from "#enums/unlockables";
 import { WeatherType } from "#enums/weather-type";
+import type { ModifierOverride } from "#modifiers/modifier-type";
+import type { Variant } from "#sprites/variant";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
+import { coerceArray, shiftCharCodes } from "#utils/common";
 import { expect, vi } from "vitest";
 
 /**
@@ -228,9 +228,9 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player pokemon's {@linkcode StatusEffect | status-effect}
+   * Override the player pokemon's initial {@linkcode StatusEffect | status-effect},
    * @param statusEffect - The {@linkcode StatusEffect | status-effect} to set
-   * @returns
+   * @returns `this`
    */
   public statusEffect(statusEffect: StatusEffect): this {
     vi.spyOn(Overrides, "STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);
@@ -494,9 +494,9 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy {@linkcode StatusEffect | status-effect} for enemy pokemon
+   * Override the enemy pokemon's initial {@linkcode StatusEffect | status-effect}.
    * @param statusEffect - The {@linkcode StatusEffect | status-effect} to set
-   * @returns
+   * @returns `this`
    */
   public enemyStatusEffect(statusEffect: StatusEffect): this {
     vi.spyOn(Overrides, "OPP_STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);

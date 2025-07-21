@@ -1,4 +1,4 @@
-import MockContainer from "#test/testUtils/mocks/mocksContainer/mockContainer";
+import { MockContainer } from "#test/testUtils/mocks/mocksContainer/mockContainer";
 
 export class MockImage extends MockContainer {
   // biome-ignore lint/correctness/noUnusedPrivateClassMembers: this is intentional (?)

@@ -1,18 +1,17 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { RechargingTag, SemiInvulnerableTag } from "#app/data/battler-tags";
-import type { RandomMoveAttr } from "#app/data/moves/move";
-import { allMoves } from "#app/data/data-lists";
+import { RechargingTag, SemiInvulnerableTag } from "#data/battler-tags";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { Stat } from "#app/enums/stat";
-import { MoveResult } from "#enums/move-result";
-import { CommandPhase } from "#app/phases/command-phase";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { MoveUseMode } from "#enums/move-use-mode";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import type { RandomMoveAttr } from "#moves/move";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Metronome", () => {
   let phaserGame: Phaser.Game;
@@ -125,7 +124,6 @@ describe("Moves - Metronome", () => {
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.AROMATIC_MIST);
 
     game.move.select(MoveId.METRONOME, 0);
-    await game.phaseInterceptor.to(CommandPhase);
     game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
@@ -148,6 +146,6 @@ describe("Moves - Metronome", () => {
     const hasFled = enemyPokemon.switchOutStatus;
     expect(!isVisible && hasFled).toBe(true);
 
-    await game.phaseInterceptor.to("CommandPhase");
+    await game.toNextTurn();
   });
 });
