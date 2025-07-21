@@ -1672,18 +1672,19 @@ export class BattleScene extends SceneBase {
       case SpeciesId.GOURGEIST:
       case SpeciesId.ORICORIO:
       case SpeciesId.MAGEARNA:
-      case SpeciesId.SINISTEA:
-      case SpeciesId.POLTEAGEIST:
       case SpeciesId.ZARUDE:
       case SpeciesId.SQUAWKABILLY:
       case SpeciesId.TATSUGIRI:
-      case SpeciesId.POLTCHAGEIST:
-      case SpeciesId.SINISTCHA:
       case SpeciesId.PALDEA_TAUROS:
         return randSeedInt(species.forms.length);
       case SpeciesId.MAUSHOLD:
       case SpeciesId.DUDUNSPARCE:
         return !randSeedInt(4) ? 1 : 0;
+      case SpeciesId.SINISTEA:
+      case SpeciesId.POLTEAGEIST:
+      case SpeciesId.POLTCHAGEIST:
+      case SpeciesId.SINISTCHA:
+        return !randSeedInt(16) ? 1 : 0;
       case SpeciesId.PIKACHU:
         if (this.currentBattle?.battleType === BattleType.TRAINER && this.currentBattle?.waveIndex < 30) {
           return 0; // Ban Cosplay and Partner Pika from Trainers before wave 30
