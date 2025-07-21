@@ -48,6 +48,7 @@
         "./system/version-migration/*.ts",
         "./system/*.ts"
       ],
+      "#schemas/*": ["./system/schemas/*.ts", "./system/schemas/v1.10/*.ts"],
       "#trainers/*": ["./data/trainers/*.ts"],
       "#types/*": ["./@types/helpers/*.ts", "./@types/*.ts", "./typings/phaser/*.ts"],
       "#ui/*": ["./ui/battle-info/*.ts", "./ui/settings/*.ts", "./ui/*.ts"],

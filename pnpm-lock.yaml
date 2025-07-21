@@ -11,6 +11,9 @@ importers:
       '@material/material-color-utilities':
         specifier: ^0.2.7
         version: 0.2.7
+      ajv:
+        specifier: ^8.17.1
+        version: 8.17.1
       compare-versions:
         specifier: ^6.1.1
         version: 6.1.1
@@ -41,6 +44,9 @@ importers:
       phaser3-rex-plugins:
         specifier: ^1.80.16
         version: 1.80.16(graphology-types@0.24.8)
+      zod:
+        specifier: ^4.0.5
+        version: 4.0.5
     devDependencies:
       '@biomejs/biome':
         specifier: 2.0.0
@@ -2002,6 +2008,9 @@ packages:
     resolution: {integrity: sha512-cYVsTjKl8b+FrnidjibDWskAv7UKOfcwaVZdp/it9n1s9fU3IkgDbhdIRKCW4JDsAlECJY0ytoVPT3sK6kideA==}
     engines: {node: '>=18'}
 
+  zod@4.0.5:
+    resolution: {integrity: sha512-/5UuuRPStvHXu7RS+gmvRf4NXrNxpSllGwDnCBcJZtQsKrviYXm54yDGV2KYNLT5kq0lHGcl7lqWJLgSaG+tgA==}
+
 snapshots:
 
   '@ampproject/remapping@2.3.0':
@@ -3828,3 +3837,5 @@ snapshots:
       yargs-parser: 21.1.1
 
   yoctocolors-cjs@2.1.2: {}
+
+  zod@4.0.5: {}

@@ -51,6 +51,22 @@ export class CustomPokemonData {
     this.types = data?.types ?? [];
     this.hitsRecCount = data?.hitsRecCount ?? null;
   }
+
+  /**
+   * Returns whether this CustomPokemonData has only the default properties.
+   * Primarily used to avoid serializing this data if it is not customized.
+   */
+  static isDefault(data: CustomPokemonData | Partial<CustomPokemonData>): boolean {
+    return (
+      data.spriteScale === -1 &&
+      data.ability === -1 &&
+      data.passive === -1 &&
+      data.nature === -1 &&
+      Array.isArray(data.types) &&
+      data.types.length === 0 &&
+      (data.hitsRecCount === null || data.hitsRecCount === 0)
+    );
+  }
 }
 
 /**
