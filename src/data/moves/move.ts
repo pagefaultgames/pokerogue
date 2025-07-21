@@ -305,10 +305,11 @@ export abstract class Move implements Localizable {
 
   /**
    * Checks if the move is immune to certain types.
+   * 
    * Currently looks at cases of Grass types with powder moves and Dark types with moves affected by Prankster.
-   * @param {Pokemon} user the source of this move
-   * @param {Pokemon} target the target of this move
-   * @param {PokemonType} type the type of the move's target
+   * @param user - The source of this move
+   * @param target - The target of this move
+   * @param type - The type of the move's target
    * @returns boolean
    */
   isTypeImmune(user: Pokemon, target: Pokemon, type: PokemonType): boolean {
