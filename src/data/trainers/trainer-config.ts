@@ -43,7 +43,7 @@ import type {
 } from "#types/trainer-funcs";
 import { coerceArray, isNullOrUndefined, randSeedInt, randSeedIntRange, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { toTitleCase } from "#utils/strings";
+import { toSnakeCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
@@ -728,7 +728,7 @@ export class TrainerConfig {
     }
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
-    const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
+    const nameForCall = toSnakeCase(this.name);
     this.name = i18next.t(`trainerNames:${nameForCall}`);
 
     // Set the title to "elite_four". (this is the key in the i18n file)

@@ -1,5 +1,6 @@
 import { getIconForLatestInput, getSettingNameWithKeycode } from "#inputs/configHandler";
 import { SettingKeyboard } from "#system/settings-keyboard";
+import { toPascalCase } from "#utils/strings";
 import { expect } from "vitest";
 
 export class InGameManip {
@@ -56,15 +57,8 @@ export class InGameManip {
     return this;
   }
 
-  normalizeSettingNameString(input) {
-    // Convert the input string to lower case
-    const lowerCasedInput = input.toLowerCase();
-
-    // Replace underscores with spaces, capitalize the first letter of each word, and join them back with underscores
-    const words = lowerCasedInput.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1));
-    const result = words.join("_");
-
-    return result;
+  normalizeSettingNameString(input: string) {
+    return toPascalCase(input);
   }
 
   weShouldTriggerTheButton(settingName) {

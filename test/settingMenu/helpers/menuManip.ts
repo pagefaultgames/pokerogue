@@ -29,6 +29,7 @@ export class MenuManip {
     this.specialCaseIcon = null;
   }
 
+  // TODO: Review this
   convertNameToButtonString(input) {
     // Check if the input starts with "Alt_Button"
     if (input.startsWith("Alt_Button")) {

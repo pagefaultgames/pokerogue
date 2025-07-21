@@ -4,7 +4,6 @@ import { SpeciesId } from "#enums/species-id";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
 
-
 export const speciesEggMoves = {
   [SpeciesId.BULBASAUR]: [ MoveId.SAPPY_SEED, MoveId.MALIGNANT_CHAIN, MoveId.EARTH_POWER, MoveId.MATCHA_GOTCHA ],
   [SpeciesId.CHARMANDER]: [ MoveId.DRAGON_DANCE, MoveId.BITTER_BLADE, MoveId.EARTH_POWER, MoveId.OBLIVION_WING ],

@@ -85,6 +85,7 @@ export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): Po
   return retSpecies;
 }
 
+// TODO: Clean this up and seriously review alternate means of fusion naming
 export function getFusedSpeciesName(speciesAName: string, speciesBName: string): string {
   const fragAPattern = /([a-z]{2}.*?[aeiou(?:y$)\-']+)(.*?)$/i;
   const fragBPattern = /([a-z]{2}.*?[aeiou(?:y$)\-'])(.*?)$/i;
