@@ -8,7 +8,7 @@ import { showHelpText } from "./help-message.js";
  * @returns {Promise<{type: "Console" | "File", value: string} | {type: "Exit"}>} The selected option with value
  */
 export async function runInteractive() {
-  /** @type {"Console" | "File" | "HELP MEEEEE" | "Exit"} */
+  /** @type {"Console" | "File" | "Help" | "Exit"} */
   const answer = await inquirer
     .prompt([
       {
