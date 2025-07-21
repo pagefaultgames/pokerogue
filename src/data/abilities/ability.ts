@@ -5265,14 +5265,15 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
 }
 
 /**
- * Shared parameters for ability attributes that are triggered after the user faints.
+ * Shared parameters for ability attributes that trigger after the user faints.
  */
 export interface PostFaintAbAttrParams extends AbAttrBaseParams {
-  /** The pokemon that caused the faint, or undefined if not caused by a pokemon */
+  /** The pokemon that caused the user to faint, or `undefined` if not caused by a Pokemon */
   readonly attacker?: Pokemon;
-  /** The move that caused the faint, or undefined if not caused by a move */
+  /** The move that caused the user to faint, or `undefined` if not caused by a move */
   readonly move?: Move;
-  /** The result of the hit that caused the faint */
+  /** The result of the hit that caused the user to faint */
+  // TODO: Do we need this? It's unused by all classes
   readonly hitResult?: HitResult;
 }
 
@@ -5335,28 +5336,35 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   }
 
   override canApply({ pokemon, attacker, move, simulated }: PostFaintAbAttrParams): boolean {
-    if (!move || !attacker) {
+    if (
+      move === undefined ||
+      attacker === undefined ||
+      !move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon })
+    ) {
       return false;
     }
-    const diedToDirectDamage =
-      attacker !== undefined &&
-      move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon });
+
     const cancelled = new BooleanHolder(false);
-    for (const otherPokemon of globalScene.getField(true)) {
-      applyAbAttrs("FieldPreventExplosiveMovesAbAttr", {
-        pokemon: otherPokemon,
-        simulated,
-        cancelled,
-      });
+    // TODO: This should be in speed order
+    globalScene
+      .getField(true)
+      .forEach(p => applyAbAttrs("FieldPreventExplosiveMovesAbAttr", { pokemon: p, cancelled, simulated }));
+
+    if (cancelled.value) {
+      return false;
     }
-    return !(!diedToDirectDamage || cancelled.value || attacker.hasAbilityWithAttr("BlockNonDirectDamageAbAttr"));
+
+    // Confirmed: Aftermath does not activate or show text vs Magic Guard killers
+    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: attacker, cancelled });
+    return !cancelled.value;
   }
 
   override apply({ simulated, attacker }: PostFaintAbAttrParams): void {
     if (!attacker || simulated) {
       return;
     }
-    attacker.damageAndUpdate(toDmgValue(attacker!.getMaxHp() * (1 / this.damageRatio)), {
+
+    attacker.damageAndUpdate(toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), {
       result: HitResult.INDIRECT,
     });
     attacker.turnData.damageTaken += toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio));
@@ -5371,20 +5379,33 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
 }
 
 /**
- * Attribute used for abilities (Innards Out) that damage the opponent based on how much HP the last attack used to knock out the owner of the ability.
+ * Attribute used for abilities that damage opponents causing the user to faint
+ * equal to the amount of damage the last attack inflicted.
+ *
+ * Used for {@linkcode Abilities.INNARDS_OUT}.
  * @sealed
  */
 export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
   override apply({ simulated, pokemon, move, attacker }: PostFaintAbAttrParams): void {
-    //If the mon didn't die to indirect damage
-    if (move !== undefined && attacker !== undefined && !simulated) {
-      const damage = pokemon.turnData.attacksReceived[0].damage;
-      attacker.damageAndUpdate(damage, { result: HitResult.INDIRECT });
-      attacker.turnData.damageTaken += damage;
+    // return early if the user died to indirect damage, target has magic guard or was KO'd by an ally
+    if (!move || !attacker || simulated || attacker.getAlly() === pokemon) {
+      return;
     }
+
+    const cancelled = new BooleanHolder(false);
+    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: attacker, cancelled });
+    if (cancelled.value) {
+      return;
+    }
+
+    const damage = pokemon.turnData.attacksReceived[0].damage;
+    attacker.damageAndUpdate(damage, { result: HitResult.INDIRECT });
+    attacker.turnData.damageTaken += damage;
   }
 
-  getTriggerMessage({ pokemon }: PostFaintAbAttrParams, abilityName: string): string {
+  // Oddly, Innards Out still shows a flyout if the effect was blocked due to Magic Guard...
+  // TODO: Verify on cart
+  override getTriggerMessage({ pokemon }: PostFaintAbAttrParams, abilityName: string): string {
     return i18next.t("abilityTriggers:postFaintHpDamage", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName,
