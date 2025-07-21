@@ -26,7 +26,7 @@ export async function runInteractive() {
     return { type: "Exit" };
   }
 
-  if (answer === "HELP MEEEEE") {
+  if (answer === "Help") {
     showHelpText();
     return { type: "Exit" };
   }
