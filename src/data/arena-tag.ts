@@ -8,7 +8,6 @@ import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { HitResult } from "#enums/hit-result";
 import { MoveCategory } from "#enums/MoveCategory";
@@ -533,45 +532,6 @@ export class NoCritTag extends ArenaTag {
         moveName: this.getMoveName(),
       }),
     );
-  }
-}
-
-/**
- * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Wish_(move) | Wish}.
- * Heals the Pokémon in the user's position the turn after Wish is used.
- */
-class WishTag extends ArenaTag {
-  private battlerIndex: BattlerIndex;
-  private triggerMessage: string;
-  private healHp: number;
-
-  constructor(turnCount: number, sourceId: number, side: ArenaTagSide) {
-    super(ArenaTagType.WISH, turnCount, MoveId.WISH, sourceId, side);
-  }
-
-  onAdd(_arena: Arena): void {
-    const source = this.getSourcePokemon();
-    if (!source) {
-      console.warn(`Failed to get source Pokemon for WishTag on add message; id: ${this.sourceId}`);
-      return;
-    }
-
-    super.onAdd(_arena);
-    this.healHp = toDmgValue(source.getMaxHp() / 2);
-
-    globalScene.phaseManager.queueMessage(
-      i18next.t("arenaTag:wishTagOnAdd", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(source),
-      }),
-    );
-  }
-
-  onRemove(_arena: Arena): void {
-    const target = globalScene.getField()[this.battlerIndex];
-    if (target?.isActive(true)) {
-      globalScene.phaseManager.queueMessage(this.triggerMessage);
-      globalScene.phaseManager.unshiftNew("PokemonHealPhase", target.getBattlerIndex(), this.healHp, null, true, false);
-    }
   }
 }
 
@@ -1539,8 +1499,6 @@ export function getArenaTag(
       return new SpikesTag(sourceId, side);
     case ArenaTagType.TOXIC_SPIKES:
       return new ToxicSpikesTag(sourceId, side);
-    case ArenaTagType.WISH:
-      return new WishTag(turnCount, sourceId, side);
     case ArenaTagType.STEALTH_ROCK:
       return new StealthRockTag(sourceId, side);
     case ArenaTagType.STICKY_WEB:

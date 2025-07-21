@@ -1,36 +1,31 @@
-// biome-ignore-start lint/correctness/noUnusedImports: TSDoc
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
+// biome-ignore-start lint/correctness/noUnusedImports: TSDoc
+import type { ArenaTag } from "#data/arena-tag";
+// biome-ignore-end lint/correctness/noUnusedImports: TSDoc
 import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
-import { PositionalTagLapseType } from "#enums/positional-tag-lapse-type";
 import { PositionalTagType } from "#enums/positional-tag-type";
-import type { Constructor } from "#utils/common";
+import type { Pokemon } from "#field/pokemon";
 import i18next from "i18next";
 
 /**
- * Serialized representation of a {@linkcode PositionalTag}.
+ * Baseline arguments used to construct all {@linkcode PositionalTag}s.
+ * Does not contain the `tagType` parameter (which is used to select the proper class constructor to use).
  */
-export interface SerializedPositionalTag {
-  /**
-   * This tag's {@linkcode PositionalTagType | type}.
-   * Tags with similar types are considered "the same" for the purposes of overlaps.
-   */
-  tagType: PositionalTagType;
+export interface PositionalTagBaseArgs {
   /**
    * The {@linkcode Pokemon.id | PID} of the {@linkcode Pokemon} having created the effect.
    */
   sourceId: number;
   /**
-   * The {@linkcode MoveId} that created this effect.
-   */
-  sourceMove: MoveId;
-  /**
-   * The number of turns remaining until activation.
+   * The number of turns remaining until activation. \
    * Decremented by 1 at the end of each turn until reaching 0, at which point it will {@linkcode trigger} and be removed.
-   * If set to any number `<0` manually, will be silently removed at the end of the next turn without activating.
+   * @remarks
+   * If this is set to any number `<0` manually (such as through the effects of {@linkcode PositionalTag.shouldDisappear | shouldDisappear}),
+   * this tag will be silently removed at the end of the next turn _without activating any effects_.
    */
   turnCount: number;
   /**
@@ -44,21 +39,18 @@ export interface SerializedPositionalTag {
  * Each tag can last one or more turns, triggering various effects on removal.
  * Multiple tags of the same kind can stack with one another, provided they are affecting different targets.
  */
-export abstract class PositionalTag implements SerializedPositionalTag {
-  /**
-   * This tag's {@linkcode PositionalTagType | type}.
-   */
-  public abstract tagType: PositionalTagType;
-  public abstract lapseType: PositionalTagLapseType;
-  public abstract sourceId: number;
+export abstract class PositionalTag implements PositionalTagBaseArgs {
+  public abstract readonly tagType: PositionalTagType;
+  // These arguments have to be public to implement the interface, but are functionally private.
+  public sourceId: number;
+  public turnCount: number;
+  public targetIndex: BattlerIndex;
 
-  // These have to be public to implement the interface, but are functionally private.
-  constructor(
-    public sourceId: number,
-    public sourceMove: MoveId,
-    public turnCount: number,
-    public targetIndex: BattlerIndex,
-  ) {}
+  constructor({ sourceId, turnCount, targetIndex }: PositionalTagBaseArgs) {
+    this.sourceId = sourceId;
+    this.turnCount = turnCount;
+    this.targetIndex = targetIndex;
+  }
 
   /** Trigger this tag's effects prior to removal. */
   public abstract trigger(): void;
@@ -66,7 +58,8 @@ export abstract class PositionalTag implements SerializedPositionalTag {
   /**
    * Check whether this tag should be removed without triggering.
    * @returns Whether this tag should disappear.
-   * By default, requires that the attack's turn count is less than or equal to 0.
+   * @privateRemarks
+   * Silent removal is accomplished by setting the attack's turn count to -1.
    */
   abstract shouldDisappear(): boolean;
 
@@ -79,20 +72,34 @@ export abstract class PositionalTag implements SerializedPositionalTag {
   public overlapsWith(targetIndex: BattlerIndex, _sourceMove: MoveId): boolean {
     return this.targetIndex === targetIndex;
   }
+
+  public getTarget(): Pokemon | undefined {
+    return globalScene.getField()[this.targetIndex];
+  }
+}
+
+interface DelayedAttackArgs extends PositionalTagBaseArgs {
+  /** The {@linkcode MoveId} that created this attack. */
+  sourceMove: MoveId;
 }
 
 /**
- * Tag to manage execution of delayed attacks, such as {@linkcode MoveId.FUTURE_SIGHT} or {@linkcode MoveId.DOOM_DESIRE}.
+ * Tag to manage execution of delayed attacks, such as {@linkcode MoveId.FUTURE_SIGHT} or {@linkcode MoveId.DOOM_DESIRE}. \
  * Delayed attacks do nothing for the first several turns after use (including the turn the move is used),
  * triggering against a certain slot after the turn count has elapsed.
  */
-export class DelayedAttackTag extends PositionalTag {
-  public override tagType = PositionalTagType.DELAYED_ATTACK;
-  public override lapseType = PositionalTagLapseType.TURN_END;
+export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs {
+  public override readonly tagType = PositionalTagType.DELAYED_ATTACK;
+  public sourceMove: MoveId;
+
+  constructor({ sourceId, turnCount, targetIndex, sourceMove }: DelayedAttackArgs) {
+    super({ sourceId, turnCount, targetIndex });
+    this.sourceMove = sourceMove;
+  }
 
   override trigger(): void {
     const source = globalScene.getPokemonById(this.sourceId)!;
-    const target = globalScene.getField()[this.targetIndex];
+    const target = this.getTarget()!;
 
     source.turnData.extraTurns++;
     globalScene.phaseManager.queueMessage(
@@ -113,72 +120,35 @@ export class DelayedAttackTag extends PositionalTag {
 
   override shouldDisappear(): boolean {
     const source = globalScene.getPokemonById(this.sourceId);
-    const target = globalScene.getField()[this.targetIndex];
+    const target = this.getTarget();
     // Silently disappear if either source or target are missing or happen to be the same pokemon
     // (i.e. targeting oneself)
     return !source || !target || source === target || target.isFainted();
   }
 }
 
-/**
- * Add a new {@linkcode PositionalTag} to the arena.
- * @param tag - The {@linkcode SerializedPositionalTag} corresponding to the tag being added
- * @remarks
- * This function does not perform any checking if the added tag is valid.
- */
-export function loadPositionalTag(
-  tag: SerializedPositionalTag,
-): InstanceType<(typeof positionalTagConstructorMap)[(typeof tag)["tagType"]]>;
-/**
- * Add a new {@linkcode PositionalTag} to the arena.
- * @param tagType - The {@linkcode PositionalTagType} to create
- * @param sourceId - The {@linkcode Pokemon.id | PID} of the Pokemon adding the tag
- * @param sourceMove - The {@linkcode MoveId} causing the attack
- * @param turnCount - The number of turns to delay the effect (_including the current turn_).
- * @param targetIndex - The {@linkcode BattlerIndex} being targeted
- * @remarks
- * This function does not perform any checking if the added tag is valid.
- */
-export function loadPositionalTag<T extends PositionalTagType>({
-  tagType,
-  sourceId,
-  sourceMove,
-  turnCount,
-  targetIndex,
-}: {
-  tagType: T;
-  sourceId: number;
-  sourceMove: MoveId;
-  turnCount: number;
-  targetIndex: BattlerIndex;
-}): tagInstanceMap[T];
-/**
- * Add a new {@linkcode SerializedPositionalTag} to the arena.
- * @param tagType - The {@linkcode PositionalTagType} to create
- * @param sourceId - The {@linkcode Pokemon.id | PID} of the Pokemon adding the tag
- * @param sourceMove - The {@linkcode MoveId} causing the attack
- * @param turnCount - The number of turns to delay the effect (_including the current turn_).
- * @param targetIndex - The {@linkcode BattlerIndex} being targeted
- * @remarks
- * This function does not perform any checking if the added tag is valid.
- */
-export function loadPositionalTag({
-  tagType,
-  sourceId,
-  sourceMove,
-  turnCount,
-  targetIndex,
-}: SerializedPositionalTag): PositionalTag {
-  const tagClass = positionalTagConstructorMap[tagType];
-  return new tagClass(sourceId, sourceMove, turnCount, targetIndex);
+interface WishArgs extends PositionalTagBaseArgs {
+  /** The amount of {@linkcode Stat.HP | HP} to heal; set to 50% of the user's max HP during move usage. */
+  healHp: number;
 }
 
-/** Const object mapping tag types to their constructors. */
-const positionalTagConstructorMap = {
-  [PositionalTagType.DELAYED_ATTACK]: DelayedAttackTag,
-} satisfies Record<PositionalTagType, Constructor<PositionalTag>>;
+/**
+ * Tag to implement {@linkcode MoveId.WISH | Wish}.
+ */
+export class WishTag extends PositionalTag implements WishArgs {
+  public override readonly tagType = PositionalTagType.WISH;
 
-/** Type mapping {@linkcode PositionalTagType}s to instances of their corresponding {@linkcode PositionalTag}s. */
-export type tagInstanceMap = {
-  [k in keyof typeof positionalTagConstructorMap]: InstanceType<(typeof positionalTagConstructorMap)[k]>;
-};
+  public healHp: number;
+  constructor({ sourceId, turnCount, targetIndex, healHp }: WishArgs) {
+    super({ sourceId, turnCount, targetIndex });
+    this.healHp = healHp;
+  }
+
+  public trigger(): void {
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", this.targetIndex, this.healHp, null, true, false);
+  }
+
+  public shouldDisappear(): boolean {
+    return !!this.getTarget();
+  }
+}

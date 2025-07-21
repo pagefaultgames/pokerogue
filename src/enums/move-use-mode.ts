@@ -1,6 +1,7 @@
 import type { PostDancingMoveAbAttr } from "#abilities/ability";
-import type { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import type { DelayedAttackAttr } from "#app/@types/move-types";
+import type { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
+import type { EnumValues } from "#types/enum-types";
 
 /**
  * Enum representing all the possible means through which a given move can be executed.
@@ -71,7 +72,7 @@ export const MoveUseMode = {
   TRANSPARENT: 6
 } as const;
 
-export type MoveUseMode = (typeof MoveUseMode)[keyof typeof MoveUseMode];
+export type MoveUseMode = EnumValues<typeof MoveUseMode>;
 
 // # HELPER FUNCTIONS
 // Please update the markdown tables if any new `MoveUseMode`s get added.

@@ -3105,12 +3105,22 @@ export class OverrideMoveEffectAttr extends MoveAttr {
    * @param target - The {@linkcode Pokemon} targeted by the move
    * @param move - The {@linkcode Move} being used
    * @param args -
-   * `[0]`: A {@linkcode BooleanHolder} containing whether move effects were successfully overridden; should be set to `true` on success
+   * `[0]`: A {@linkcode BooleanHolder} containing whether move effects were successfully overridden; should be set to `true` on success \
    * `[1]`: The {@linkcode MoveUseMode} dictating how this move was used.
    * @returns `true` if the move effect was successfully overridden.
    */
   override apply(_user: Pokemon, _target: Pokemon, _move: Move, _args: [overridden: BooleanHolder, useMode: MoveUseMode]): boolean {
     return true;
+  }
+}
+
+/** Abstract class for moves that add {@linkcode PositionalTag}s to the field. */
+abstract class AddPositionalTagAttr extends OverrideMoveEffectAttr {
+  protected abstract readonly tagType: PositionalTagType;
+
+  public override getCondition(): MoveConditionFunc {
+    // Check the arena if another similar positional tag is active and affecting the same slot
+    return (_user, target, move) => globalScene.arena.positionalTagManager.canAddTag(this.tagType, target.getBattlerIndex(), move.id)
   }
 }
 
@@ -3135,16 +3145,11 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
     this.chargeText = chargeKey;
   }
 
-  getCondition(): MoveConditionFunc {
-    // Check the arena if another delayed attack is active and hitting the same slot
-    return (_user, target, move) => globalScene.arena.positionalTagManager.canAddTag(PositionalTagType.DELAYED_ATTACK, target.getBattlerIndex(), move.id)
-  }
-
   apply(user: Pokemon, target: Pokemon, move: Move, args: [overridden: BooleanHolder, useMode: MoveUseMode]): boolean {
     const useMode = args[1];
     if (useMode === MoveUseMode.TRANSPARENT) {
       // don't trigger if already queueing an indirect attack
-      return true;
+      return false;
     }
 
     const overridden = args[0];
@@ -3159,13 +3164,33 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
     user.pushMoveHistory({move: move.id, targets: [target.getBattlerIndex()], result: MoveResult.OTHER, useMode: useMode, turn: globalScene.currentBattle.turn})
 
     // Queue up an attack on the given slot.
-    globalScene.arena.positionalTagManager.addTag({
+    globalScene.arena.positionalTagManager.addTag<PositionalTagType.DELAYED_ATTACK>({
       tagType: PositionalTagType.DELAYED_ATTACK,
       sourceId: user.id,
       targetIndex: target.getBattlerIndex(),
       sourceMove: move.id,
-      turnCount: 3})
+      turnCount: 3
+    })
     return true;
+  }
+
+  public override getCondition(): MoveConditionFunc {
+    // Check the arena if another similar attack is active and affecting the same slot
+    return (_user, target, move) => globalScene.arena.positionalTagManager.canAddTag(PositionalTagType.DELAYED_ATTACK, target.getBattlerIndex(), move.id)
+  }
+}
+
+export class WishAttr extends MoveEffectAttr {
+  apply(user: Pokemon, target: Pokemon, _move: Move): boolean {
+    globalScene.arena.positionalTagManager.addTag<PositionalTagType.WISH>({tagType: PositionalTagType.WISH, sourceId: user.id, healHp: toDmgValue(user.getMaxHp() / 2), targetIndex: target.getBattlerIndex(),
+      turnCount: 2,
+    });
+    return true;
+  }
+
+  public override getCondition(): MoveConditionFunc {
+    // Check the arena if another similar attack is active and affecting the same slot
+    return (_user, target, move) => globalScene.arena.positionalTagManager.canAddTag(PositionalTagType.WISH, target.getBattlerIndex(), move.id)
   }
 }
 
@@ -9288,8 +9313,8 @@ export function initMoves() {
       .ignoresSubstitute()
       .attr(AbilityCopyAttr),
     new SelfStatusMove(MoveId.WISH, PokemonType.NORMAL, -1, 10, -1, 0, 3)
-      .triageMove()
-      .attr(AddArenaTagAttr, ArenaTagType.WISH, 2, true),
+      .attr(WishAttr)
+      .triageMove(),
     new SelfStatusMove(MoveId.ASSIST, PokemonType.NORMAL, -1, 20, -1, 0, 3)
       .attr(RandomMovesetMoveAttr, invalidAssistMoves, true),
     new SelfStatusMove(MoveId.INGRAIN, PokemonType.GRASS, -1, 20, -1, 0, 3)

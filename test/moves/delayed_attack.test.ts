@@ -2,7 +2,6 @@ import { DelayedAttackTag } from "#app/data/positional-tags/positional-tag";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
 import { allMoves } from "#data/data-lists";
-import { RandomMoveAttr } from "#data/moves/move";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
@@ -50,8 +49,12 @@ describe("Moves - Delayed Attacks", () => {
   async function passTurns(numTurns: number, toEndOfTurn = true): Promise<void> {
     for (let i = 0; i < numTurns; i++) {
       game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
-      if (game.scene.currentBattle.double && game.scene.getPlayerField()[1]) {
+      if (game.scene.getPlayerField()[1]) {
         game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+      }
+      await game.move.forceEnemyMove(MoveId.SPLASH);
+      if (game.scene.getEnemyField()[1]) {
+        await game.move.forceEnemyMove(MoveId.SPLASH);
       }
     }
     await game.phaseInterceptor.to("PositionalTagPhase");
@@ -63,12 +66,10 @@ describe("Moves - Delayed Attacks", () => {
   /**
    * Expect that future sight is active with the specified number of attacks.
    * @param numAttacks - The number of delayed attacks that should be queued; default `1`
-   * @returns The queued tags.
    */
-  function expectFutureSightActive(numAttacks = 1): DelayedAttackTag[] {
+  function expectFutureSightActive(numAttacks = 1) {
     const delayedAttacks = game.scene.arena.positionalTagManager["tags"].filter(t => t instanceof DelayedAttackTag)!;
     expect(delayedAttacks).toHaveLength(numAttacks);
-    return delayedAttacks;
   }
 
   it.each<{ name: string; move: MoveId }>([
@@ -117,17 +118,16 @@ describe("Moves - Delayed Attacks", () => {
     expect(bronzong.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
-  it("should still be delayed when copied by other moves", async () => {
-    vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(MoveId.FUTURE_SIGHT);
+  it("should still be delayed when called by other moves", async () => {
     await game.classicMode.startBattle([SpeciesId.BRONZONG]);
 
     game.move.use(MoveId.METRONOME);
+    game.move.forceMetronomeMove(MoveId.FUTURE_SIGHT);
     await game.toNextTurn();
 
+    expectFutureSightActive();
     const enemy = game.field.getEnemyPokemon();
     expect(enemy.hp).toBe(enemy.getMaxHp());
-
-    expectFutureSightActive();
 
     await passTurns(2);
 
@@ -150,15 +150,39 @@ describe("Moves - Delayed Attacks", () => {
     expect(karp.getLastXMoves()[0].result).toBe(MoveResult.OTHER);
     expect(feebas.getLastXMoves()[0].result).toBe(MoveResult.OTHER);
 
-    await passTurns(2, false);
-
-    // Both attacks have
-    expectFutureSightActive(0);
+    await passTurns(2);
 
     await game.toEndOfTurn();
 
     expect(enemy1.hp).toBeLessThan(enemy1.getMaxHp());
     expect(enemy2.hp).toBeLessThan(enemy2.getMaxHp());
+  });
+
+  it("should trigger multiple pending attacks in order of creation, even if that order changes later on", async () => {
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
+
+    game.move.use(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.use(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
+    await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER_2);
+    const usageOrder = game.field.getSpeedOrder();
+    await game.toNextTurn();
+
+    expectFutureSightActive(4);
+
+    game.move.use(MoveId.TAILWIND);
+    game.move.use(MoveId.COTTON_SPORE);
+    await passTurns(1, false);
+
+    expect(game.field.getSpeedOrder()).not.toEqual(usageOrder);
+
+    // All attacks have concluded at this point, unshifting new `MoveEffectPhase`s to the queue.
+    expectFutureSightActive(0);
+
+    const MEPs = game.scene.phaseManager.phaseQueue.filter(p => p.is("MoveEffectPhase"));
+    expect(MEPs).toHaveLength(4);
+    expect(MEPs.map(mep => mep["battlerIndex"])).toEqual(usageOrder);
   });
 
   it("should vanish silently if it would otherwise hit the user", async () => {
@@ -242,18 +266,13 @@ describe("Moves - Delayed Attacks", () => {
     );
   });
 
-  // TODO: ArenaTags currently procs concurrently with battler tag removal in `TurnEndPhase`,
-  // meaning the queued `MoveEffectPhase` no longer has Electrify applied to it
-  it.todo("should consider type changes at moment of execution while ignoring redirection", async () => {
+  it("should consider type changes at moment of execution while ignoring redirection", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     // fake left enemy having lightning rod
     const [enemy1, enemy2] = game.scene.getEnemyField();
     game.field.mockAbility(enemy1, AbilityId.LIGHTNING_ROD);
-    // helps with logging
-    vi.spyOn(enemy1, "getNameToRender").mockReturnValue("Karp 1");
-    vi.spyOn(enemy2, "getNameToRender").mockReturnValue("Karp 2");
 
     game.move.use(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
     await game.toNextTurn();
@@ -264,14 +283,14 @@ describe("Moves - Delayed Attacks", () => {
 
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
     await game.move.forceEnemyMove(MoveId.ELECTRIFY, BattlerIndex.PLAYER);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to("PositionalTagPhase");
     await game.phaseInterceptor.to("MoveEffectPhase", false);
 
     // Wait until all normal attacks have triggered, then check pending MEP
     const karp = game.field.getPlayerPokemon();
     const typeMock = vi.spyOn(karp, "getMoveType");
 
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
     expect(enemy1.hp).toBe(enemy1.getMaxHp());
     expect(enemy2.hp).toBeLessThan(enemy2.getMaxHp());
@@ -337,4 +356,7 @@ describe("Moves - Delayed Attacks", () => {
     expect(powerMock).toHaveLastReturnedWith(120);
     expect(typeBoostSpy).not.toHaveBeenCalled();
   });
+
+  // TODO: Implement and move to a power spot's test file
+  it.todo("Should activate ally's power spot when switched in during single battles");
 });

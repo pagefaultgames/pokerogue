@@ -6,4 +6,5 @@
  */
 export enum PositionalTagType {
   DELAYED_ATTACK = "DELAYED_ATTACK",
+  WISH = "WISH",
 }

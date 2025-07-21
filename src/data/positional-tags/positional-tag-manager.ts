@@ -1,8 +1,5 @@
-import {
-  loadPositionalTag,
-  type PositionalTag,
-  type SerializedPositionalTag,
-} from "#data/positional-tags/positional-tag";
+import { loadPositionalTag } from "#data/positional-tags/load-positional-tag";
+import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { MoveId } from "#enums/move-id";
 import type { PositionalTagType } from "#enums/positional-tag-type";
@@ -10,19 +7,14 @@ import type { PositionalTagType } from "#enums/positional-tag-type";
 /** A manager for the {@linkcode PositionalTag}s in the arena. */
 export class PositionalTagManager {
   /** Array containing all pending unactivated {@linkcode PositionalTag}s, sorted by order of creation. */
-  private tags: PositionalTag[] = [];
+  public tags: PositionalTag[] = [];
 
   /**
-   * Add a new {@linkcode SerializedPositionalTag} to the arena.
-   * @param tagType - The {@linkcode PositionalTagType} to create
-   * @param sourceId - The {@linkcode Pokemon.id | PID} of the Pokemon adding the tag
-   * @param sourceMove - The {@linkcode MoveId} causing the attack
-   * @param turnCount - The number of turns to delay the effect (_including the current turn_).
-   * @param targetIndex - The {@linkcode BattlerIndex} being targeted
+   * Add a new {@linkcode PositionalTag} to the arena.
    * @remarks
    * This function does not perform any checking if the added tag is valid.
    */
-  public addTag(tag: SerializedPositionalTag): void {
+  public addTag<T extends PositionalTagType = never>(tag: Parameters<typeof loadPositionalTag<T>>[0]): void {
     this.tags.push(loadPositionalTag(tag));
   }
 
@@ -40,19 +32,21 @@ export class PositionalTagManager {
   /**
    * Decrement turn counts of and activate all pending {@linkcode PositionalTag}s on field.
    * @remarks
-   * If multiple tags trigger simultaneously, they will activate **in order of initial creation**.
-   * (source: [Smogon](<https://www.smogon.com/forums/threads/sword-shield-battle-mechanics-research.3655528/page-64#post-9244179>))
+   * If multiple tags trigger simultaneously, they will activate **in order of initial creation**, NOT speed order.
+   * (Source: [Smogon](<https://www.smogon.com/forums/threads/sword-shield-battle-mechanics-research.3655528/page-64#post-9244179>))
    */
-  triggerAllTags(): void {
+  public triggerAllTags(): void {
+    const leftoverTags: PositionalTag[] = [];
     for (const tag of this.tags) {
-      if (--tag.turnCount > 0) {
-        // tag still cooking
+      // Check for silent removal, immediately removing tags that.
+      if (!tag.shouldDisappear()) {
         continue;
       }
 
-      // Check for silent removal
-      if (tag.shouldDisappear()) {
-        tag.turnCount = -1;
+      if (--tag.turnCount > 0) {
+        // tag still cooking
+        leftoverTags.push(tag);
+        continue;
       }
 
       tag.trigger();
