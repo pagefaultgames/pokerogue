@@ -14,10 +14,10 @@ import { getBiomeKey } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
 import { getPartyLuckValue } from "#items/reward";
+import { generateRewardOption } from "#items/reward-utils";
 import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  generateRewardOption,
   initBattleWithEnemyConfig,
   setEncounterExp,
   setEncounterRewards,

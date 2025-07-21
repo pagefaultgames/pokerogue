@@ -7,9 +7,9 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Stat } from "#enums/stat";
 import type { PlayerPokemon } from "#field/pokemon";
+import { generateRewardOption } from "#items/reward-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
 import {
-  generateRewardOption,
   leaveEncounterWithoutBattle,
   selectPokemonForOption,
   setEncounterExp,

@@ -29,9 +29,8 @@ import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
-import { getRewardTierFromPool } from "#items/init-reward-pools";
-import type { CustomRewardSettings, Reward } from "#items/reward";
-import { getPartyLuckValue, RewardGenerator, RewardOption } from "#items/reward";
+import type { CustomRewardSettings } from "#items/reward";
+import { getPartyLuckValue } from "#items/reward";
 import { PokemonMove } from "#moves/pokemon-move";
 import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
@@ -471,30 +470,6 @@ export function updatePlayerMoney(changeValue: number, playSound = true, showMes
       );
     }
   }
-}
-
-/**
- * Converts modifier bullshit to an actual item
- * @param rewardFunc
- * @param pregenArgs Can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
- */
-export function generateReward(rewardFunc: () => Reward, pregenArgs?: any[]): Reward | null {
-  const reward = rewardFunc();
-  return reward instanceof RewardGenerator ? reward.generateReward(globalScene.getPlayerParty(), pregenArgs) : reward;
-}
-
-/**
- * Converts modifier bullshit to an actual item
- * @param rewardFunc
- * @param pregenArgs - can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
- */
-export function generateRewardOption(rewardFunc: () => Reward, pregenArgs?: any[]): RewardOption | null {
-  const reward = generateReward(rewardFunc, pregenArgs);
-  if (reward) {
-    const tier = getRewardTierFromPool(reward);
-    return new RewardOption(reward, 0, tier);
-  }
-  return null;
 }
 
 /**

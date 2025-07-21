@@ -133,7 +133,7 @@ export class SelectRewardPhase extends BattlePhase {
       return true;
     }
     const reward = this.typeOptions[cursor].type;
-    return this.applyChosenReward(reward, -1, rewardSelectCallback);
+    return this.applyReward(reward, -1, rewardSelectCallback);
   }
 
   // Pick a reward from the shop and apply it
@@ -157,11 +157,11 @@ export class SelectRewardPhase extends BattlePhase {
       return false;
     }
 
-    return this.applyChosenReward(reward, cost, rewardSelectCallback);
+    return this.applyReward(reward, cost, rewardSelectCallback);
   }
 
   // Apply a chosen reward: do an effect or open the party menu
-  private applyChosenReward(reward: Reward, cost: number, rewardSelectCallback: RewardSelectCallback): boolean {
+  private applyReward(reward: Reward, cost: number, rewardSelectCallback: RewardSelectCallback): boolean {
     if (reward instanceof PokemonReward) {
       if (reward instanceof FusePokemonReward) {
         this.openFusionMenu(reward, cost, rewardSelectCallback);
@@ -169,7 +169,6 @@ export class SelectRewardPhase extends BattlePhase {
         this.openPokemonRewardMenu(reward, cost, rewardSelectCallback);
       }
     } else {
-      console.log("WE GOT HERE");
       reward.apply();
       globalScene.updateItems(true);
       globalScene.ui.clearText();

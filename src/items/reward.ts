@@ -2041,7 +2041,7 @@ export function getPlayerShopRewardOptionsForWave(waveIndex: number, baseCost: n
  * Generates a Reward from the specified pool
  * @param party party of the trainer using the item
  * @param poolType PLAYER/WILD/TRAINER
- * @param tier If specified, will override the initial tier of an item (can still upgrade with luck)
+ * @param baseTier If specified, will override the initial tier of an item (can still upgrade with luck)
  * @param upgradeCount If defined, means that this is a new Reward being generated to override another via luck upgrade. Used for recursive logic
  * @param retryCount Max allowed tries before the next tier down is checked for a valid Reward
  * @param allowLuckUpgrades Default true. If false, will not allow Reward to randomly upgrade to next tier
@@ -2146,11 +2146,8 @@ function getUpgradeCount(
 
 export function getDefaultRewardForTier(tier: RarityTier): Reward {
   const rewardPool = getRewardPoolForType(RewardPoolType.PLAYER);
-  let reward: Reward | WeightedReward = rewardPool[tier || RarityTier.COMMON][0];
-  if (reward instanceof WeightedReward) {
-    reward = (reward as WeightedReward).reward;
-  }
-  return reward;
+  const weightedReward: WeightedReward = rewardPool[tier || RarityTier.COMMON][0];
+  return weightedReward.reward;
 }
 
 export class RewardOption {

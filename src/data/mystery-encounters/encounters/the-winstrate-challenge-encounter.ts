@@ -14,10 +14,10 @@ import { Nature } from "#enums/nature";
 import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
+import { generateRewardOption } from "#items/reward-utils";
 import { showEncounterDialogue, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  generateRewardOption,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterRewards,
@@ -157,7 +157,7 @@ async function spawnNextTrainerOrEndEncounter() {
 
     // Give 10x Voucher
     const reward = allRewards.VOUCHER_PREMIUM();
-    globalScene.applyReward(reward);
+    globalScene.applyReward(reward, {});
     globalScene.playSound("item_fanfare");
     await showEncounterText(i18next.t("battle:rewardGain", { modifierName: reward.name }));
 

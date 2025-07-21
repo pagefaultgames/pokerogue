@@ -13,10 +13,10 @@ import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { berryTypeToHeldItem } from "#items/berry";
 import type { RewardOption } from "#items/reward";
 import { generateRewardPoolWeights } from "#items/reward";
+import { generateRewardOption } from "#items/reward-utils";
 import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  generateRewardOption,
   getRandomEncounterSpecies,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,

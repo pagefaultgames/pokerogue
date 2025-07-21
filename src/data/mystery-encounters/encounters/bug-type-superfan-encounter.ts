@@ -15,11 +15,11 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { RewardOption } from "#items/reward";
+import { generateRewardOption } from "#items/reward-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { getEncounterText, showEncounterDialogue } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  generateRewardOption,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   selectOptionThenPokemon,
