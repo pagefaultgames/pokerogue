@@ -1,3 +1,5 @@
+import type { ObjectValues } from "#types/type-helpers";
+
 /** The result of a hit check calculation */
 export const HitCheckResult = {
   /** Hit checks haven't been evaluated yet in this pass */

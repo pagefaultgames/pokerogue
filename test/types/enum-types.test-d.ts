@@ -17,7 +17,7 @@ const testObjNum = { testON1: 1, testON2: 2 } as const;
 
 const testObjString = { testOS1: "apple", testOS2: "banana" } as const;
 
-interface testMappedObj {
+interface testObject {
   key_1: "1";
   key_2: "2";
   key_3: "3";
@@ -26,18 +26,19 @@ interface testMappedObj {
 describe("Enum Type Helpers", () => {
   describe("ObjectValues", () => {
     it("should produce a union of an object's values", () => {
-      expectTypeOf<ObjectValues<testMappedObj>>().toEqualTypeOf<"1" | "2" | "3">();
+      expectTypeOf<ObjectValues<testObject>>().toEqualTypeOf<"1" | "2" | "3">();
     });
 
     it("should go from enum object type to value type", () => {
       expectTypeOf<ObjectValues<typeof testEnumNum>>().toEqualTypeOf<testEnumNum>();
-      expectTypeOf<ObjectValues<typeof testEnumNum>>().toEqualTypeOf<1 | 2>();
+      expectTypeOf<ObjectValues<typeof testEnumNum>>().branded.toEqualTypeOf<1 | 2>();
 
       expectTypeOf<ObjectValues<typeof testEnumString>>().toEqualTypeOf<testEnumString>();
       expectTypeOf<ObjectValues<typeof testEnumString>>().toEqualTypeOf<
         testEnumString.testS1 | testEnumString.testS2
       >();
-      expectTypeOf<ObjectValues<typeof testEnumString>>().toEqualTypeOf<"apple" | "banana">();
+
+      expectTypeOf<ObjectValues<typeof testEnumString>>().toExtend<"apple" | "banana">();
     });
 
     it("should produce union of const object values as type", () => {

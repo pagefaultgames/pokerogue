@@ -39,11 +39,13 @@ export type Mutable<T> = {
  * @typeParam O - The type of the object
  * @typeParam V - The type of one of O's values
  */
-export type InferKeys<O extends Record<keyof any, unknown>, V extends ObjectValues<O>> = {
+export type InferKeys<O extends object, V extends ObjectValues<O>> = {
   [K in keyof O]: O[K] extends V ? K : never;
-}[keyof O]; /**
+}[keyof O];
+
+/**
  * Utility type to obtain the values of a given object.
- * This can be used to extract the enum values from a `const object`,
+ * This can be (among other things) used to extract the values from a `const object`,
  * or convert an `enum` interface produced by `typeof Enum` into the union type representing its values.
  */
-export type ObjectValues<E> = E[keyof E];
+export type ObjectValues<E extends object> = E[keyof E];
