@@ -48,7 +48,7 @@
         "./system/*.ts"
       ],
       "#trainers/*": ["./data/trainers/*.ts"],
-      "#types/*": ["./@types/*.ts", "./typings/phaser/*.ts"],
+      "#types/*": ["./@types/*.ts", "./@types/helpers/*.ts", "./typings/phaser/*.ts"],
       "#ui/*": ["./ui/battle-info/*.ts", "./ui/settings/*.ts", "./ui/*.ts"],
       "#utils/*": ["./utils/*.ts"],
       "#data/*": ["./data/pokemon-forms/*.ts", "./data/pokemon/*.ts", "./data/*.ts"],

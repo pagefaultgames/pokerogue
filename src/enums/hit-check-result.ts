@@ -20,4 +20,4 @@ export const HitCheckResult = {
   ERROR: 8,
 } as const;
 
-export type HitCheckResult = typeof HitCheckResult[keyof typeof HitCheckResult];
+export type HitCheckResult = ObjectValues<typeof HitCheckResult>;
