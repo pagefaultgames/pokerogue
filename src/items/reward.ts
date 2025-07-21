@@ -1830,6 +1830,12 @@ export function generateRewardPoolWeights(party: Pokemon[], poolType: RewardPool
 
   for (const tier of Object.keys(pool)) {
     const poolWeights = pool[tier].map(w => {
+      if (w.reward instanceof TrainerItemReward) {
+        const id = w.reward.itemId;
+        if (globalScene.trainerItems.isMaxStack(id)) {
+          return 0;
+        }
+      }
       if (typeof w.weight === "number") {
         return w.weight;
       }
