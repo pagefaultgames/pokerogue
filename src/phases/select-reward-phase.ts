@@ -13,12 +13,10 @@ import type {
   RewardOption,
 } from "#items/reward";
 import {
-  FormChangeItemReward,
   FusePokemonReward,
   generateRewardPoolWeights,
   getPlayerRewardOptions,
   getPlayerShopRewardOptionsForWave,
-  HeldItemReward,
   type PokemonMoveReward,
   PokemonReward,
   RememberMoveReward,
@@ -165,9 +163,7 @@ export class SelectRewardPhase extends BattlePhase {
   // Apply a chosen reward: do an effect or open the party menu
   private applyChosenReward(reward: Reward, cost: number, rewardSelectCallback: RewardSelectCallback): boolean {
     if (reward instanceof PokemonReward) {
-      if (reward instanceof HeldItemReward || reward instanceof FormChangeItemReward) {
-        this.openGiveHeldItemMenu(reward, rewardSelectCallback);
-      } else if (reward instanceof FusePokemonReward) {
+      if (reward instanceof FusePokemonReward) {
         this.openFusionMenu(reward, cost, rewardSelectCallback);
       } else {
         this.openPokemonRewardMenu(reward, cost, rewardSelectCallback);
@@ -283,7 +279,8 @@ export class SelectRewardPhase extends BattlePhase {
     );
   }
 
-  // Opens the party menu to apply one of various rewards
+  // Opens the party menu to apply one of various Pokemon rewards. We pass the reward's filter to decide which Pokemon can be selected.
+  // For MoveReward (e.g. PP UP or Ether) we also pass a filter to decide which moves can be selected.
   private openPokemonRewardMenu(reward: PokemonReward, cost: number, rewardSelectCallback: RewardSelectCallback): void {
     const party = globalScene.getPlayerParty();
     const pokemonReward = reward as PokemonReward;
@@ -292,6 +289,7 @@ export class SelectRewardPhase extends BattlePhase {
     const isRememberMoveReward = reward.rewardClass === RewardClass.POKEMON_MOVE_RECALL_REWARD;
     const isTmReward =
       reward.id === RewardId.TM_COMMON || reward.id === RewardId.TM_GREAT || reward.id === RewardId.TM_ULTRA;
+
     const partyUiMode = isMoveReward
       ? PartyUiMode.MOVE_REWARD
       : isTmReward
@@ -308,11 +306,14 @@ export class SelectRewardPhase extends BattlePhase {
       (slotIndex: number, option: PartyOption) => {
         if (slotIndex < 6) {
           globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
-            const params = !isMoveReward
-              ? !isRememberMoveReward
-                ? ({ pokemon: party[slotIndex] } as PokemonRewardParams)
-                : ({ pokemon: party[slotIndex], moveIndex: option, cost: cost } as PokemonMoveRecallRewardParams)
-              : ({ pokemon: party[slotIndex], moveIndex: option - PartyOption.MOVE_1 } as PokemonMoveRewardParams);
+            let params = {};
+            if (isMoveReward) {
+              params = { pokemon: party[slotIndex], moveIndex: option - PartyOption.MOVE_1 } as PokemonMoveRewardParams;
+            }
+            if (isRememberMoveReward) {
+              params = { pokemon: party[slotIndex], moveIndex: option, cost: cost } as PokemonMoveRecallRewardParams;
+            }
+            params = { pokemon: party[slotIndex] } as PokemonRewardParams;
             const result = globalScene.applyReward(reward, params, true);
             this.postApplyPokemonReward(reward, result, cost); // TODO: is the bang correct?
           });
@@ -359,29 +360,6 @@ export class SelectRewardPhase extends BattlePhase {
       globalScene.ui.setMode(UiMode.MESSAGE);
       super.end();
     }
-  }
-
-  private openGiveHeldItemMenu(reward, rewardSelectCallback) {
-    const party = globalScene.getPlayerParty();
-    const partyUiMode = PartyUiMode.REWARD;
-    globalScene.ui.setModeWithoutClear(
-      UiMode.PARTY,
-      partyUiMode,
-      -1,
-      (slotIndex: number, _option: PartyOption) => {
-        if (slotIndex < 6) {
-          globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
-            reward.apply({ pokemon: party[slotIndex] });
-            globalScene.ui.clearText();
-            globalScene.ui.setMode(UiMode.MESSAGE);
-            super.end();
-          });
-        } else {
-          this.resetRewardSelect(rewardSelectCallback);
-        }
-      },
-      reward.selectFilter,
-    );
   }
 
   // Function that determines how many reward slots are available
