@@ -1,4 +1,3 @@
-import { DelayedAttackTag } from "#app/data/positional-tags/positional-tag";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
 import { allMoves } from "#data/data-lists";
@@ -8,6 +7,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { PokemonType } from "#enums/pokemon-type";
+import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/testUtils/gameManager";
 import i18next from "i18next";
@@ -68,7 +68,9 @@ describe("Moves - Delayed Attacks", () => {
    * @param numAttacks - The number of delayed attacks that should be queued; default `1`
    */
   function expectFutureSightActive(numAttacks = 1) {
-    const delayedAttacks = game.scene.arena.positionalTagManager["tags"].filter(t => t instanceof DelayedAttackTag)!;
+    const delayedAttacks = game.scene.arena.positionalTagManager["tags"].filter(
+      t => t.tagType === PositionalTagType.DELAYED_ATTACK,
+    );
     expect(delayedAttacks).toHaveLength(numAttacks);
   }
 
@@ -171,8 +173,8 @@ describe("Moves - Delayed Attacks", () => {
 
     expectFutureSightActive(4);
 
-    game.move.use(MoveId.TAILWIND);
-    game.move.use(MoveId.COTTON_SPORE);
+    game.move.use(MoveId.TAILWIND, BattlerIndex.PLAYER);
+    game.move.use(MoveId.COTTON_SPORE, BattlerIndex.PLAYER_2);
     await passTurns(1, false);
 
     expect(game.field.getSpeedOrder()).not.toEqual(usageOrder);
@@ -251,12 +253,10 @@ describe("Moves - Delayed Attacks", () => {
 
     expectFutureSightActive(1);
 
-    await passTurns(1);
-
-    game.move.use(MoveId.SPLASH);
     await game.killPokemon(enemy2);
-    await game.toNextTurn();
+    await passTurns(2);
 
+    expectFutureSightActive(0);
     expect(enemy1.hp).toBe(enemy1.getMaxHp());
     expect(game.textInterceptor.logs).not.toContain(
       i18next.t("moveTriggers:tookMoveAttack", {
@@ -279,7 +279,8 @@ describe("Moves - Delayed Attacks", () => {
 
     expectFutureSightActive(1);
 
-    await passTurns(1);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+    await game.toNextTurn();
 
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
     await game.move.forceEnemyMove(MoveId.ELECTRIFY, BattlerIndex.PLAYER);

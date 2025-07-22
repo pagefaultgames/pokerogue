@@ -12,14 +12,11 @@ import type { Pokemon } from "#field/pokemon";
 import i18next from "i18next";
 
 /**
- * Baseline arguments used to construct all {@linkcode PositionalTag}s.
+ * Baseline arguments used to construct all {@linkcode PositionalTag}s,
+ * the contents of which are serialized and used to construct new tags. \
  * Does not contain the `tagType` parameter (which is used to select the proper class constructor to use).
  */
 export interface PositionalTagBaseArgs {
-  /**
-   * The {@linkcode Pokemon.id | PID} of the {@linkcode Pokemon} having created the effect.
-   */
-  sourceId: number;
   /**
    * The number of turns remaining until activation. \
    * Decremented by 1 at the end of each turn until reaching 0, at which point it will {@linkcode trigger} and be removed.
@@ -42,12 +39,10 @@ export interface PositionalTagBaseArgs {
 export abstract class PositionalTag implements PositionalTagBaseArgs {
   public abstract readonly tagType: PositionalTagType;
   // These arguments have to be public to implement the interface, but are functionally private.
-  public sourceId: number;
   public turnCount: number;
   public targetIndex: BattlerIndex;
 
-  constructor({ sourceId, turnCount, targetIndex }: PositionalTagBaseArgs) {
-    this.sourceId = sourceId;
+  constructor({ turnCount, targetIndex }: PositionalTagBaseArgs) {
     this.turnCount = turnCount;
     this.targetIndex = targetIndex;
   }
@@ -79,6 +74,10 @@ export abstract class PositionalTag implements PositionalTagBaseArgs {
 }
 
 interface DelayedAttackArgs extends PositionalTagBaseArgs {
+  /**
+   * The {@linkcode Pokemon.id | PID} of the {@linkcode Pokemon} having created this effect.
+   */
+  sourceId: number;
   /** The {@linkcode MoveId} that created this attack. */
   sourceMove: MoveId;
 }
@@ -91,9 +90,11 @@ interface DelayedAttackArgs extends PositionalTagBaseArgs {
 export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs {
   public override readonly tagType = PositionalTagType.DELAYED_ATTACK;
   public sourceMove: MoveId;
+  public sourceId: number;
 
   constructor({ sourceId, turnCount, targetIndex, sourceMove }: DelayedAttackArgs) {
-    super({ sourceId, turnCount, targetIndex });
+    super({ turnCount, targetIndex });
+    this.sourceId = sourceId;
     this.sourceMove = sourceMove;
   }
 
@@ -130,6 +131,10 @@ export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs
 interface WishArgs extends PositionalTagBaseArgs {
   /** The amount of {@linkcode Stat.HP | HP} to heal; set to 50% of the user's max HP during move usage. */
   healHp: number;
+  /**
+   * The name of the {@linkcode Pokemon} having created the tag..
+   */
+  pokemonName: string;
 }
 
 /**
@@ -138,17 +143,29 @@ interface WishArgs extends PositionalTagBaseArgs {
 export class WishTag extends PositionalTag implements WishArgs {
   public override readonly tagType = PositionalTagType.WISH;
 
+  readonly pokemonName: string;
+
   public healHp: number;
-  constructor({ sourceId, turnCount, targetIndex, healHp }: WishArgs) {
-    super({ sourceId, turnCount, targetIndex });
+  constructor({ turnCount, targetIndex, healHp, pokemonName }: WishArgs) {
+    super({ turnCount, targetIndex });
     this.healHp = healHp;
+    this.pokemonName = pokemonName;
   }
 
   public trigger(): void {
+    // TODO: Rename this locales key - wish shows a message on REMOVAL, dumbass
+    globalScene.phaseManager.queueMessage(
+      i18next.t("arenaTag:wishTagOnAdd", {
+        pokemonName: this.pokemonName,
+      }),
+    );
+
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", this.targetIndex, this.healHp, null, true, false);
   }
 
   public shouldDisappear(): boolean {
+    // Disappear if no target.
+    // The source need not exist at the time of activation (since all we need is a simple message)
     return !!this.getTarget();
   }
 }

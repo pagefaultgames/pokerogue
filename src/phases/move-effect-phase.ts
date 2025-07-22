@@ -19,7 +19,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
-import { isReflected, isVirtual, MoveUseMode } from "#enums/move-use-mode";
+import { isReflected, MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import {
@@ -244,22 +244,15 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.currentBattle.lastPlayerInvolved = this.fieldIndex;
     }
 
-    const isDelayedAttack = this.move.hasAttr("DelayedAttackAttr");
-    /** If the user was somehow removed from the field and it's not a delayed attack, end this phase */
-    if (!user.isOnField()) {
-      if (!isDelayedAttack) {
-        super.end();
-        return;
-      }
-      if (!user.scene) {
-        /*
-         * This happens if the Pokemon that used the delayed attack gets caught and released
-         * on the turn the attack would have triggered. Having access to the global scene
-         * in the future may solve this entirely, so for now we just cancel the hit
-         */
-        super.end();
-        return;
-      }
+    if (!user.scene) {
+      /*
+       * This happens if the Pokemon that used the delayed attack gets caught and released
+       * on the turn the attack would have triggered. Having access to the global scene
+       * in the future may solve this entirely, so for now we just cancel the hit
+       */
+      console.warn("User scene bye bye bye skibidi rizz");
+      super.end();
+      return;
     }
 
     const move = this.move;
@@ -270,18 +263,12 @@ export class MoveEffectPhase extends PokemonPhase {
      */
     const overridden = new BooleanHolder(false);
 
+    console.log(this.useMode);
     // Apply effects to override a move effect.
     // Assuming single target here works as this is (currently)
     // only used for Future Sight, calling and Pledge moves.
     // TODO: change if any other move effect overrides are introduced
-    applyMoveAttrs(
-      "OverrideMoveEffectAttr",
-      user,
-      this.getFirstTarget() ?? null,
-      move,
-      overridden,
-      isVirtual(this.useMode),
-    );
+    applyMoveAttrs("OverrideMoveEffectAttr", user, this.getFirstTarget() ?? null, move, overridden, this.useMode);
 
     // If other effects were overriden, stop this phase before they can be applied
     if (overridden.value) {

@@ -3157,9 +3157,13 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 
     // Display the move animation to foresee an attack
     globalScene.phaseManager.unshiftNew("MoveAnimPhase", new MoveChargeAnim(this.chargeAnim, move.id, user));
-    globalScene.phaseManager.queueMessage(i18next.t(this.chargeText,
-      // uncomment if any new delayed moves actually use target in the move text.
-      {pokemonName: getPokemonNameWithAffix(user)/*, targetName: getPokemonNameWithAffix(target) */}))
+    globalScene.phaseManager.queueMessage(
+      i18next.t(
+        this.chargeText,
+        // uncomment if any new delayed moves actually use target in the move text.
+        {pokemonName: getPokemonNameWithAffix(user)/*, targetName: getPokemonNameWithAffix(target) */}
+      )
+    )
 
     user.pushMoveHistory({move: move.id, targets: [target.getBattlerIndex()], result: MoveResult.OTHER, useMode: useMode, turn: globalScene.currentBattle.turn})
 
@@ -3180,10 +3184,15 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
   }
 }
 
+/** Attribute to queue a {@linkcode WishTag} to activate in 2 turns. */
 export class WishAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, _move: Move): boolean {
-    globalScene.arena.positionalTagManager.addTag<PositionalTagType.WISH>({tagType: PositionalTagType.WISH, sourceId: user.id, healHp: toDmgValue(user.getMaxHp() / 2), targetIndex: target.getBattlerIndex(),
+    globalScene.arena.positionalTagManager.addTag<PositionalTagType.WISH>({
+      tagType: PositionalTagType.WISH,
+      healHp: toDmgValue(user.getMaxHp() / 2),
+      targetIndex: target.getBattlerIndex(),
       turnCount: 2,
+      pokemonName: getPokemonNameWithAffix(user),
     });
     return true;
   }
