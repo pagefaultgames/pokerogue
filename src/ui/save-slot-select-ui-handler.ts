@@ -1,6 +1,8 @@
 import { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
+import type { OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handler";
 import { Button } from "#enums/buttons";
+import { GameModes } from "#enums/game-modes";
 import { UiMode } from "#enums/ui-mode";
 // biome-ignore lint/performance/noNamespaceImport: See `src/system/game-data.ts`
 import * as Modifier from "#modifiers/modifier";
@@ -582,7 +584,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
     let visibleModifierIndex = 0;
     for (const m of data.modifiers) {
       const modifier = m.toModifier(Modifier[m.className]);
-      if (modifier instanceof PokemonHeldItemModifier) {
+      if (modifier instanceof Modifier.PokemonHeldItemModifier) {
         continue;
       }
       const icon = modifier?.getIcon(false);
