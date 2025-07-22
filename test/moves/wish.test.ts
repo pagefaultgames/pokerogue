@@ -2,6 +2,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
@@ -65,11 +66,29 @@ describe("Move - Wish", () => {
     expectWishActive(0);
     expect(game.textInterceptor.logs).toContain(
       i18next.t("arenaTag:wishTagOnAdd", {
-        pokemonName: getPokemonNameWithAffix(blissey),
+        pokemonNameWithAffix: getPokemonNameWithAffix(alomomola),
       }),
     );
     expect(alomomola.hp).toBe(1);
     expect(blissey.hp).toBe(toDmgValue(alomomola.getMaxHp() / 2) + 1);
+  });
+
+  it("should work if the user has full HP, but not if it already has an active Wish", async () => {
+    await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
+
+    const alomomola = game.field.getPlayerPokemon();
+    alomomola.hp = 1;
+
+    game.move.use(MoveId.WISH);
+    await game.toNextTurn();
+
+    expectWishActive();
+
+    game.move.use(MoveId.WISH);
+    await game.toEndOfTurn();
+
+    expect(alomomola.hp).toBe(toDmgValue(alomomola.getMaxHp() / 2) + 1);
+    expect(alomomola.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
   it("should function independently of Future Sight", async () => {
@@ -81,13 +100,13 @@ describe("Move - Wish", () => {
 
     game.move.use(MoveId.WISH);
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expectWishActive(1);
   });
 
-  it("should work in double battles and triggerin order of creation", async () => {
+  it("should work in double battles and trigger in order of creation", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
 
@@ -125,5 +144,33 @@ describe("Move - Wish", () => {
 
     expect(alomomola.hp).toBe(toDmgValue(alomomola.getMaxHp() / 2) + 1);
     expect(blissey.hp).toBe(toDmgValue(blissey.getMaxHp() / 2) + 1);
+  });
+
+  it("should vanish if slot is empty", async () => {
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
+
+    const [alomomola, blissey] = game.scene.getPlayerParty();
+    alomomola.hp = 1;
+    blissey.hp = 1;
+
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+    game.move.use(MoveId.WISH, BattlerIndex.PLAYER_2);
+    await game.toNextTurn();
+
+    expectWishActive();
+
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+    game.move.use(MoveId.MEMENTO, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
+    await game.toEndOfTurn();
+
+    // Wish went away without doing anything
+    expectWishActive(0);
+    expect(game.textInterceptor.logs).not.toContain(
+      i18next.t("arenaTag:wishTagOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(blissey),
+      }),
+    );
+    expect(alomomola.hp).toBe(1);
   });
 });

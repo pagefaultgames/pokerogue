@@ -44,7 +44,9 @@ import { Variant } from "#sprites/variant";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<OverridesType>>;
+const overrides = {
+  MOVESET_OVERRIDE: [MoveId.FUTURE_SIGHT, MoveId.WISH, MoveId.DOOM_DESIRE, MoveId.AGILITY],
+} satisfies Partial<InstanceType<OverridesType>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}

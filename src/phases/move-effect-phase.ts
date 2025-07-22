@@ -263,7 +263,6 @@ export class MoveEffectPhase extends PokemonPhase {
      */
     const overridden = new BooleanHolder(false);
 
-    console.log(this.useMode);
     // Apply effects to override a move effect.
     // Assuming single target here works as this is (currently)
     // only used for Future Sight, calling and Pledge moves.

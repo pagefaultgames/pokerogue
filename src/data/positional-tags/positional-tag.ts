@@ -58,17 +58,7 @@ export abstract class PositionalTag implements PositionalTagBaseArgs {
    */
   abstract shouldDisappear(): boolean;
 
-  /**
-   * Check whether this {@linkcode PositionalTag} would overlap with another one.
-   * @param targetIndex - The {@linkcode BattlerIndex} being targeted
-   * @param sourceMove - The {@linkcode MoveId} causing the attack
-   * @returns Whether this tag would overlap with a newly created one.
-   */
-  public overlapsWith(targetIndex: BattlerIndex, _sourceMove: MoveId): boolean {
-    return this.targetIndex === targetIndex;
-  }
-
-  public getTarget(): Pokemon | undefined {
+  protected getTarget(): Pokemon | undefined {
     return globalScene.getField()[this.targetIndex];
   }
 }
@@ -131,9 +121,7 @@ export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs
 interface WishArgs extends PositionalTagBaseArgs {
   /** The amount of {@linkcode Stat.HP | HP} to heal; set to 50% of the user's max HP during move usage. */
   healHp: number;
-  /**
-   * The name of the {@linkcode Pokemon} having created the tag..
-   */
+  /** The name of the {@linkcode Pokemon} having created the tag. */
   pokemonName: string;
 }
 
@@ -153,10 +141,10 @@ export class WishTag extends PositionalTag implements WishArgs {
   }
 
   public trigger(): void {
-    // TODO: Rename this locales key - wish shows a message on REMOVAL, dumbass
+    // TODO: Rename this locales key - wish shows a message on REMOVAL, not addition
     globalScene.phaseManager.queueMessage(
       i18next.t("arenaTag:wishTagOnAdd", {
-        pokemonName: this.pokemonName,
+        pokemonNameWithAffix: this.pokemonName,
       }),
     );
 
@@ -166,6 +154,6 @@ export class WishTag extends PositionalTag implements WishArgs {
   public shouldDisappear(): boolean {
     // Disappear if no target.
     // The source need not exist at the time of activation (since all we need is a simple message)
-    return !!this.getTarget();
+    return !this.getTarget();
   }
 }
