@@ -182,7 +182,7 @@ export class Ability implements Localizable {
    * Make this ability trigger even if the user faints.
    * @returns `this`
    * @remarks
-   * This is required for abilities to trigger when revived via Reviver Seed.
+   * This is also required for abilities to trigger when revived via Reviver Seed.
    */
   bypassFaint(): this {
     this.isBypassFaint = true;
