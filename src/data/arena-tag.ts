@@ -59,7 +59,7 @@ where it does not make sense to be serialized, the field should use ES2020's pri
 If the field should be accessible outside of the class, then a public getter should be used.
 */
 
-/** Interface of the serializable fields of ArenaTagData */
+/** Interface containing the serializable fields of ArenaTagData. */
 interface BaseArenaTag {
   /** 
    * The tag's remaining duration. Setting to any number `<=0` will make the tag's duration effectively infinite.
@@ -69,18 +69,23 @@ interface BaseArenaTag {
    * The {@linkcode MoveId} that created this tag, or `undefined` if not set by a move.
    */
   sourceMove?: MoveId;
-  /** The source pokemon of the move, or undefined if not set by a pokemon */
+  /** 
+   * The {@linkcode Pokemon.id | PID} of the {@linkcode Pokemon} having created the tag, or `undefined` if not set by a Pokemon.
+   * @todo Implement handling for `ArenaTag`s created by non-pokemon sources (most tags will throw errors without a source)
+   */
   // Note: Intentionally not using `?`, as the property should always exist, but just be undefined if not present.
   sourceId: number | undefined;
   /**
-   * The side that the arena tag is on
+   * The {@linkcode ArenaTagSide | side of the field} that this arena tag affects.
    * @defaultValue `ArenaTagSide.BOTH`
    */
   side: ArenaTagSide;
 }
 
 /**
- * Abstract base class for `ArenaTag`s
+ * An {@linkcode ArenaTag} represents a semi-persistent effect affecting a given _side_ of the field.
+ * Unlike {@linkcode BattlerTag}s (which are tied to individual {@linkcode Pokemon}), `ArenaTag`s function independently of
+ * the Pokemon currently on-field, only cleared on arena reset or through their respective {@linkcode ArenaTag.lapse | lapse} methods.
  */
 export abstract class ArenaTag implements BaseArenaTag {
   /** The type of the arena tag */
@@ -90,11 +95,11 @@ export abstract class ArenaTag implements BaseArenaTag {
   public sourceId: number | undefined;
   public side: ArenaTagSide;
 
-  constructor(turnCount: number, sourceMove?: MoveId, sourceId?: number, side?: ArenaTagSide) {
+  constructor(turnCount: number, sourceMove?: MoveId, sourceId?: number, side: ArenaTagSide = ArenaTagSide.BOTH) {
     this.turnCount = turnCount;
     this.sourceMove = sourceMove;
     this.sourceId = sourceId;
-    this.side = side ?? ArenaTagSide.BOTH;
+    this.side = side;
   }
 
   apply(_arena: Arena, _simulated: boolean, ..._args: unknown[]): boolean {
@@ -136,7 +141,7 @@ export abstract class ArenaTag implements BaseArenaTag {
   /**
    * When given a arena tag or json representing one, load the data for it.
    * This is meant to be inherited from by any arena tag with custom attributes
-   * @param {ArenaTag | any} source An arena tag
+   * @param source - The {@linkcode BaseArenaTag} being loaded
    */
   loadTag(source: BaseArenaTag): void {
     this.turnCount = source.turnCount;
@@ -245,7 +250,7 @@ export class MistTag extends SerializableArenaTag {
  */
 export abstract class WeakenMoveScreenTag extends SerializableArenaTag {
   public abstract readonly tagType: ArenaScreenTagType;
-  // Getter, to avoid unnecessary serialization and prevent modification
+  // Getter to avoid unnecessary serialization and prevent modification
   protected abstract get weakenedCategories(): MoveCategory[];
 
   /**
