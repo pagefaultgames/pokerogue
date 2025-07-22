@@ -61,15 +61,15 @@ If the field should be accessible outside of the class, then a public getter sho
 
 /** Interface containing the serializable fields of ArenaTagData. */
 interface BaseArenaTag {
-  /** 
+  /**
    * The tag's remaining duration. Setting to any number `<=0` will make the tag's duration effectively infinite.
    */
   turnCount: number;
-  /** 
+  /**
    * The {@linkcode MoveId} that created this tag, or `undefined` if not set by a move.
    */
   sourceMove?: MoveId;
-  /** 
+  /**
    * The {@linkcode Pokemon.id | PID} of the {@linkcode Pokemon} having created the tag, or `undefined` if not set by a Pokemon.
    * @todo Implement handling for `ArenaTag`s created by non-pokemon sources (most tags will throw errors without a source)
    */
