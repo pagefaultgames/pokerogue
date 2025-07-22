@@ -670,6 +670,7 @@ export class BattleScene extends SceneBase {
       this.initStarterColors(),
     ]).then(() => {
       this.phaseManager.toTitleScreen(true);
+      this.phaseManager.shiftPhase();
     });
   }
 
