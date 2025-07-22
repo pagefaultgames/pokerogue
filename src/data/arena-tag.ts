@@ -61,9 +61,13 @@ If the field should be accessible outside of the class, then a public getter sho
 
 /** Interface of the serializable fields of ArenaTagData */
 interface BaseArenaTag {
-  /** The turns that have passed since the tag was added */
+  /** 
+   * The tag's remaining duration. Setting to any number `<=0` will make the tag's duration effectively infinite.
+   */
   turnCount: number;
-  /** The id of the move that set the tag, or undefined if not set by a move */
+  /** 
+   * The {@linkcode MoveId} that created this tag, or `undefined` if not set by a move.
+   */
   sourceMove?: MoveId;
   /** The source pokemon of the move, or undefined if not set by a pokemon */
   // Note: Intentionally not using `?`, as the property should always exist, but just be undefined if not present.
@@ -625,6 +629,7 @@ class WishTag extends SerializableArenaTag {
     const target = globalScene.getField()[this.battlerIndex];
     if (target?.isActive(true)) {
       globalScene.phaseManager.queueMessage(
+        // TODO: Rename key as it triggers on activation
         i18next.t("arenaTag:wishTagOnAdd", {
           pokemonNameWithAffix: this.sourceName,
         }),
@@ -671,7 +676,7 @@ export abstract class WeakenMoveTypeTag extends SerializableArenaTag {
  */
 class MudSportTag extends WeakenMoveTypeTag {
   public readonly tagType = ArenaTagType.MUD_SPORT;
-  override get weakenedType(): PokemonType {
+  override get weakenedType(): PokemonType.ELECTRIC {
     return PokemonType.ELECTRIC;
   }
   constructor(turnCount: number, sourceId?: number) {
@@ -693,7 +698,7 @@ class MudSportTag extends WeakenMoveTypeTag {
  */
 class WaterSportTag extends WeakenMoveTypeTag {
   public readonly tagType = ArenaTagType.WATER_SPORT;
-  override get weakenedType(): PokemonType {
+  override get weakenedType(): PokemonType.FIRE {
     return PokemonType.FIRE;
   }
   constructor(turnCount: number, sourceId?: number) {

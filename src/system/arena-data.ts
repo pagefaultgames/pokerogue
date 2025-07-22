@@ -24,6 +24,7 @@ export class ArenaData {
 
   constructor(source: Arena | SerializedArenaData) {
     if (source.tags) {
+      // Exclude any unserializable tags from the serialized data (such as ones only lasting 1 turn).
       // NOTE: The filter has to be done _after_ map, data loaded from `ArenaTagTypeData`
       // is not yet an instance of `ArenaTag`
       this.tags = source.tags

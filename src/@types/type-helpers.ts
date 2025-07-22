@@ -46,7 +46,7 @@ export type InferKeys<O extends Record<keyof any, unknown>, V extends EnumValues
 }[keyof O];
 
 /**
- * Type helper for `Function` types. Equivalent to `Function`, but will not raise a warning in TypeScript.
+ * Type helper that matches any `Function` type. Equivalent to `Function`, but will not raise a warning from Biome.
  */
 export type AnyFn = (...args: any[]) => any;
 

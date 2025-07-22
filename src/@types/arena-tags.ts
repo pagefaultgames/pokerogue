@@ -2,7 +2,7 @@ import type { ArenaTagTypeMap } from "#data/arena-tag";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { NonFunctionProperties } from "./type-helpers";
 
-/** Subset of {@linkcode ArenaTagType}s that are considered traps */
+/** Subset of {@linkcode ArenaTagType}s that apply some negative effect to pokemon that switch in ({@link https://bulbapedia.bulbagarden.net/wiki/List_of_moves_that_cause_entry_hazards#List_of_traps | entry hazards} and Imprison. */
 export type ArenaTrapTagType =
   | ArenaTagType.STICKY_WEB
   | ArenaTagType.SPIKES
@@ -13,7 +13,7 @@ export type ArenaTrapTagType =
 /** Subset of {@linkcode ArenaTagType}s that are considered delayed attacks */
 export type ArenaDelayedAttackTagType = ArenaTagType.FUTURE_SIGHT | ArenaTagType.DOOM_DESIRE;
 
-/** Subset of {@linkcode ArenaTagType}s that work like screens */
+/** Subset of {@linkcode ArenaTagType}s that create {@link https://bulbapedia.bulbagarden.net/wiki/Category:Screen-creating_moves | screens}. */
 export type ArenaScreenTagType = ArenaTagType.REFLECT | ArenaTagType.LIGHT_SCREEN | ArenaTagType.AURORA_VEIL;
 
 /** Subset of {@linkcode ArenaTagType}s for moves that add protection */
@@ -23,10 +23,10 @@ export type TurnProtectArenaTagType =
   | ArenaTagType.MAT_BLOCK
   | ArenaTagType.CRAFTY_SHIELD;
 
-/** Subset of {@linkcode ArenaTagType}s that cannot persist across turns, and thus should not be serialized in `SessionSaveData`. */
+/** Subset of {@linkcode ArenaTagType}s that cannot persist across turns, and thus should not be serialized in {@linkcode SessionSaveData}. */
 export type NonSerializableArenaTagType = ArenaTagType.NONE | TurnProtectArenaTagType | ArenaTagType.ION_DELUGE;
 
-/** Subset of {@linkcode ArenaTagType}s that may persist across turns, and thus may be serialized in `SessionSaveData` */
+/** Subset of {@linkcode ArenaTagType}s that may persist across turns, and thus must be serialized in {@linkcode SessionSaveData}. */
 export type SerializableArenaTagType = Exclude<ArenaTagType, NonSerializableArenaTagType>;
 
 /**
