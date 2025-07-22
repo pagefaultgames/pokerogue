@@ -1,8 +1,8 @@
 import { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
-import type { OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
+// biome-ignore lint/performance/noNamespaceImport: See `src/system/game-data.ts`
 import * as Modifier from "#modifiers/modifier";
 import type { SessionSaveData } from "#system/game-data";
 import type { PokemonData } from "#system/pokemon-data";
@@ -12,7 +12,6 @@ import { addTextObject, TextStyle } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, formatLargeNumber, getPlayTimeString, isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
-import { GameModes } from "#enums/game-modes";
 
 const SESSION_SLOTS_COUNT = 5;
 const SLOTS_ON_SCREEN = 2;
@@ -583,7 +582,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
     let visibleModifierIndex = 0;
     for (const m of data.modifiers) {
       const modifier = m.toModifier(Modifier[m.className]);
-      if (modifier instanceof Modifier.PokemonHeldItemModifier) {
+      if (modifier instanceof PokemonHeldItemModifier) {
         continue;
       }
       const icon = modifier?.getIcon(false);
