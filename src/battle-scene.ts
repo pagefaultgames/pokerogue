@@ -711,16 +711,16 @@ export class BattleScene extends SceneBase {
     if (expSpriteKeys.size > 0) {
       return;
     }
-    const res = await this.cachedFetch("./exp-sprites.json");
-    const keys = await res.json();
-    if (!Array.isArray(keys)) {
-      throw new Error("EXP Sprites were not array when fetched!");
-    }
-
-    // TODO: Optimize this
-    for (const k of keys) {
-      expSpriteKeys.add(k);
-    }
+    this.cachedFetch("./exp-sprites.json")
+      .then(res => res.json())
+      .then(keys => {
+        if (Array.isArray(keys)) {
+          for (const key of keys) {
+            expSpriteKeys.add(key);
+          }
+        }
+        Promise.resolve();
+      });
   }
 
   /**
