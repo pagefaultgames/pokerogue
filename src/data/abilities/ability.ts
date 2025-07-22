@@ -386,7 +386,7 @@ export abstract class AbAttr {
    * Return the additional condition associated with this particular AbAttr instance, if any.
    * @returns The extra condition for this {@linkcode AbAttr}, or `null` if none exist
    * @todo Make this use `undefined` instead of `null`
-   * @todo Prevent this from being overridden by super classes
+   * @todo Prevent this from being overridden by sub-classes
    */
   getCondition(): AbAttrCondition | null {
     return this.extraCondition || null;
