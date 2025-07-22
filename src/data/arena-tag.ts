@@ -22,6 +22,8 @@ import type { Pokemon } from "#field/pokemon";
 import { BooleanHolder, NumberHolder, toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
+// TODO: Add a class for tags that explicitly REQUIRE a source move (as currently we have a lot of bangs)
+
 export abstract class ArenaTag {
   constructor(
     public tagType: ArenaTagType,
@@ -50,8 +52,17 @@ export abstract class ArenaTag {
 
   onOverlap(_arena: Arena, _source: Pokemon | null): void {}
 
+  /**
+   * Trigger this {@linkcode ArenaTag}'s effect, reducing its duration as applicable.
+   * Will ignore durations of all tags with durations `<=0`.
+   * @param _arena - The {@linkcode Arena} at the moment the tag is being lapsed.
+   * Unused by default but can be used by sub-classes.
+   * @returns `true` if this tag should be kept; `false` if it should be removed.
+   */
   lapse(_arena: Arena): boolean {
-    return this.turnCount < 1 || !!--this.turnCount;
+    // TODO: Rather than treating negative duration tags as being indefinite,
+    // make all duration based classes inherit from their own sub-class
+    return this.turnCount < 1 || --this.turnCount > 0;
   }
 
   getMoveName(): string | null {
