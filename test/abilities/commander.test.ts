@@ -200,8 +200,6 @@ describe("Abilities - Commander", () => {
 
     game.move.select(MoveId.DIVE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
-
-    await game.phaseInterceptor.to("CommandPhase");
     await game.toNextTurn();
 
     expect(tatsugiri.getTag(BattlerTagType.UNDERWATER)).toBeDefined();
