@@ -1760,7 +1760,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return !this.isFusion(true) ? this.variant : (Math.max(this.variant, this.fusionVariant) as Variant);
   }
 
-  // TODO: Clarify how this differs from {@linkcode getVariant}
+  // TODO: Clarify how this differs from `getVariant`
   getBaseVariant(doubleShiny: boolean): Variant {
     if (doubleShiny) {
       return this.summonData.illusion?.basePokemon?.variant ?? this.variant;
