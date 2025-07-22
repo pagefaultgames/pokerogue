@@ -23,22 +23,20 @@ export class ArenaData {
   public playerTerasUsed: number;
 
   constructor(source: Arena | SerializedArenaData) {
-    if (source.tags) {
-      // Exclude any unserializable tags from the serialized data (such as ones only lasting 1 turn).
-      // NOTE: The filter has to be done _after_ map, data loaded from `ArenaTagTypeData`
-      // is not yet an instance of `ArenaTag`
-      this.tags = source.tags
-        .map((t: ArenaTag | ArenaTagTypeData) => loadArenaTag(t))
-        .filter((tag): tag is SerializableArenaTag => tag instanceof SerializableArenaTag);
-    } else {
-      this.tags = [];
-    }
+    // Exclude any unserializable tags from the serialized data (such as ones only lasting 1 turn).
+    // NOTE: The filter has to be done _after_ map, data loaded from `ArenaTagTypeData`
+    // is not yet an instance of `ArenaTag`
+    this.tags =
+      source.tags
+        ?.map((t: ArenaTag | ArenaTagTypeData) => loadArenaTag(t))
+        ?.filter((tag): tag is SerializableArenaTag => tag instanceof SerializableArenaTag) ?? [];
+
+    this.playerTerasUsed = source.playerTerasUsed ?? 0;
 
     if (source instanceof Arena) {
       this.biome = source.biomeType;
       this.weather = source.weather;
       this.terrain = source.terrain;
-      this.playerTerasUsed = source.playerTerasUsed ?? 0;
       return;
     }
 

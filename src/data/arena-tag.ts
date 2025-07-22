@@ -37,7 +37,7 @@ Examples include (but are not limited to)
 - Effects that are applied to a specific side of the field, such as Crafty Shield, Reflect, and Spikes
 - Field-Effects, like Gravity and Trick Room
 
-Any arena tag that persists across turns *must* extend from `SerializableArenaTag` to the class definition signature.
+Any arena tag that persists across turns *must* extend from `SerializableArenaTag` in the class definition signature.
 
 Serializable ArenaTags have strict rules for their fields.
 These rules ensure that only the data necessary to reconstruct the tag is serialized, and that the
