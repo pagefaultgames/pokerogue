@@ -244,17 +244,6 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.currentBattle.lastPlayerInvolved = this.fieldIndex;
     }
 
-    if (!user.scene) {
-      /*
-       * This happens if the Pokemon that used the delayed attack gets caught and released
-       * on the turn the attack would have triggered. Having access to the global scene
-       * in the future may solve this entirely, so for now we just cancel the hit
-       */
-      console.warn("User scene bye bye bye skibidi rizz");
-      super.end();
-      return;
-    }
-
     const move = this.move;
 
     /**
