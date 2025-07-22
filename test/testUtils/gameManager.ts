@@ -205,7 +205,6 @@ export class GameManager {
    * @param mode - The {@linkcode GameModes} to spawn the final boss encounter in.
    */
   async runToFinalBossEncounter(species: SpeciesId[], mode: GameModes) {
-    console.log("===to final boss encounter===");
     await this.runToTitle();
 
     this.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
@@ -223,8 +222,8 @@ export class GameManager {
       this.removeEnemyHeldItems();
     }
 
-    await this.phaseInterceptor.to(EncounterPhase);
-    console.log("===finished run to final boss encounter===");
+    await this.phaseInterceptor.to("CommandPhase", false);
+    console.log("==================[Final Boss Encounter]==================");
   }
 
   /**

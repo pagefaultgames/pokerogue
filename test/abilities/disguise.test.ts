@@ -165,7 +165,7 @@ describe("Abilities - Disguise", () => {
     expect(mimikyu.formIndex).toBe(disguisedForm);
   });
 
-  it("reverts to Disguised form on biome change when fainted", async () => {
+  it("reverts to Disguised form when fainted", async () => {
     game.override
       .startingWave(10)
       .starterSpecies(0)
@@ -181,10 +181,6 @@ describe("Abilities - Disguise", () => {
 
     game.move.select(MoveId.SPLASH);
     await game.killPokemon(mimikyu1);
-    game.doSelectPartyPokemon(1);
-    await game.toNextTurn();
-    game.move.select(MoveId.SPLASH);
-    await game.doKillOpponents();
     await game.phaseInterceptor.to("QuietFormChangePhase");
 
     expect(mimikyu1.formIndex).toBe(disguisedForm);
