@@ -27,7 +27,7 @@ import type {
   SerializableArenaTagType,
 } from "#types/arena-tags";
 import type { Mutable, NonFunctionProperties } from "#types/type-helpers";
-import { BooleanHolder, NumberHolder, toDmgValue } from "#utils/common";
+import { BooleanHolder, isNullOrUndefined, NumberHolder, toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
 /*
@@ -1691,7 +1691,7 @@ export function getArenaTag(
       return new ToxicSpikesTag(sourceId, side);
     case ArenaTagType.FUTURE_SIGHT:
     case ArenaTagType.DOOM_DESIRE:
-      if (!targetIndex) {
+      if (isNullOrUndefined(targetIndex)) {
         return null; // If missing target index, no tag is created
       }
       return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex, side);
