@@ -13,6 +13,11 @@ export enum TerrainType {
   PSYCHIC,
 }
 
+export interface SerializedTerrain {
+  terrainType: TerrainType;
+  turnsLeft: number;
+}
+
 export class Terrain {
   public terrainType: TerrainType;
   public turnsLeft: number;

@@ -42,7 +42,7 @@ import * as Modifier from "#modifiers/modifier";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import type { Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import { ArenaData } from "#system/arena-data";
+import { ArenaData, type SerializedArenaData } from "#system/arena-data";
 import { ChallengeData } from "#system/challenge-data";
 import { EggData } from "#system/egg-data";
 import { GameStats } from "#system/game-stats";
@@ -1286,7 +1286,7 @@ export class GameData {
         }
 
         case "arena":
-          return new ArenaData(v);
+          return new ArenaData(v as SerializedArenaData);
 
         case "challenges": {
           const ret: ChallengeData[] = [];
