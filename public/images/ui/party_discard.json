@@ -5,7 +5,7 @@
 			"format": "RGBA8888",
 			"size": {
 				"w": 75,
-				"h": 46
+				"h": 50
 			},
 			"scale": 1,
 			"frames": [
@@ -15,19 +15,19 @@
 					"trimmed": false,
 					"sourceSize": {
 						"w": 75,
-						"h": 23
+						"h": 25
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
 						"w": 75,
-						"h": 23
+						"h": 25
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
 						"w": 75,
-						"h": 23
+						"h": 25
 					}
 				},
 				{
@@ -36,19 +36,19 @@
 					"trimmed": false,
 					"sourceSize": {
 						"w": 75,
-						"h": 23
+						"h": 25
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
 						"w": 75,
-						"h": 23
+						"h": 25
 					},
 					"frame": {
 						"x": 0,
-						"y": 23,
+						"y": 25,
 						"w": 75,
-						"h": 23
+						"h": 25
 					}
 				}
 			]

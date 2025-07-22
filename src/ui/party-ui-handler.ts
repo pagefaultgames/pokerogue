@@ -2107,7 +2107,6 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
 
   private transferIcon: Phaser.GameObjects.Sprite;
   private discardIcon: Phaser.GameObjects.Sprite;
-  private partyDiscardPb: Phaser.GameObjects.Sprite;
   private textBox: Phaser.GameObjects.Text;
 
   constructor(x: number, y: number) {
@@ -2119,12 +2118,10 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
   setup() {
     this.transferIcon = globalScene.add.sprite(0, 0, "party_transfer");
     this.discardIcon = globalScene.add.sprite(0, 0, "party_discard");
-    this.partyDiscardPb = globalScene.add.sprite(-20, 0, "party_pb");
     this.textBox = addTextObject(-8, -7, i18next.t("partyUiHandler:TRANSFER"), TextStyle.PARTY);
 
     this.add(this.transferIcon);
     this.add(this.discardIcon);
-    this.add(this.partyDiscardPb);
     this.add(this.textBox);
 
     this.clear();
@@ -2139,7 +2136,6 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
 
     this.transferIcon.setFrame("selected");
     this.discardIcon.setFrame("selected");
-    this.partyDiscardPb.setFrame("party_pb_sel");
   }
 
   deselect() {
@@ -2151,7 +2147,6 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
 
     this.transferIcon.setFrame("normal");
     this.discardIcon.setFrame("normal");
-    this.partyDiscardPb.setFrame("party_pb");
   }
 
   toggleIcon(partyMode: number) {
@@ -2159,7 +2154,6 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
       case PartyUiMode.MODIFIER_TRANSFER:
         this.transferIcon.setVisible(true);
         this.discardIcon.setVisible(false);
-        this.partyDiscardPb.setVisible(true);
         this.textBox.setVisible(true);
         this.textBox.setText(i18next.t("partyUiHandler:TRANSFER"));
         this.setPosition(
@@ -2171,7 +2165,6 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
       case PartyUiMode.DISCARD:
         this.transferIcon.setVisible(false);
         this.discardIcon.setVisible(true);
-        this.partyDiscardPb.setVisible(true);
         this.textBox.setVisible(true);
         this.textBox.setText(i18next.t("partyUiHandler:DISCARD"));
         this.setPosition(
@@ -2189,6 +2182,5 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
     this.transferIcon.setVisible(false);
     this.discardIcon.setVisible(false);
     this.textBox.setVisible(false);
-    this.partyDiscardPb.setVisible(false);
   }
 }

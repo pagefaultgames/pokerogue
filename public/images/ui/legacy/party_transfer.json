@@ -4,8 +4,8 @@
 			"image": "party_transfer.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 52,
-				"h": 32
+				"w": 75,
+				"h": 50
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 52,
-						"h": 16
+						"w": 75,
+						"h": 25
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 52,
-						"h": 16
+						"w": 75,
+						"h": 25
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 52,
-						"h": 16
+						"w": 75,
+						"h": 25
 					}
 				},
 				{
@@ -35,20 +35,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 52,
-						"h": 16
+						"w": 75,
+						"h": 25
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 52,
-						"h": 16
+						"w": 75,
+						"h": 25
 					},
 					"frame": {
 						"x": 0,
-						"y": 16,
-						"w": 52,
-						"h": 16
+						"y": 25,
+						"w": 75,
+						"h": 25
 					}
 				}
 			]
