@@ -366,7 +366,10 @@ type ProtectConditionFunc = (arena: Arena, moveId: MoveId) => boolean;
 export abstract class ConditionalProtectTag extends ArenaTag {
   /** The condition function to determine which moves are negated */
   protected protectConditionFunc: ProtectConditionFunc;
-  /** Does this apply to all moves, including those that ignore other forms of protection? */
+  /**
+   * Whether this protection effect should apply to _all_ moves, including ones that ignore other forms of protection.
+   * @defaultValue `false`
+   */
   protected ignoresBypass: boolean;
 
   constructor(
