@@ -2837,13 +2837,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / `65536`
    * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
-   * @param applyModifiersToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}
+   * @param applyItemsToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}
    * @returns `true` if the Pokemon has been set as a shiny, `false` otherwise
    */
-  public trySetShinySeed(thresholdOverride?: number, applyModifiersToOverride?: boolean): boolean {
+  public trySetShinySeed(thresholdOverride?: number, applyItemsToOverride?: boolean): boolean {
     if (!this.shiny) {
       const shinyThreshold = new NumberHolder(thresholdOverride ?? BASE_SHINY_CHANCE);
-      if (applyModifiersToOverride) {
+      if (applyItemsToOverride) {
         if (timedEventManager.isEventActive()) {
           shinyThreshold.value *= timedEventManager.getShinyMultiplier();
         }
@@ -2909,15 +2909,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * The base hidden ability odds are {@linkcode BASE_HIDDEN_ABILITY_CHANCE} / `65536`
    * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the HA chance, overrides {@linkcode haThreshold} if set (bypassing HA rate modifiers such as Ability Charm)
-   * @param applyModifiersToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Ability Charm to {@linkcode thresholdOverride}
+   * @param applyItemsToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Ability Charm to {@linkcode thresholdOverride}
    * @returns `true` if the Pokemon has been set to have its hidden ability, `false` otherwise
    */
-  public tryRerollHiddenAbilitySeed(thresholdOverride?: number, applyModifiersToOverride?: boolean): boolean {
+  public tryRerollHiddenAbilitySeed(thresholdOverride?: number, applyItemsToOverride?: boolean): boolean {
     if (!this.species.abilityHidden) {
       return false;
     }
     const haThreshold = new NumberHolder(thresholdOverride ?? BASE_HIDDEN_ABILITY_CHANCE);
-    if (applyModifiersToOverride) {
+    if (applyItemsToOverride) {
       if (!this.hasTrainer()) {
         globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, { numberHolder: haThreshold });
       }

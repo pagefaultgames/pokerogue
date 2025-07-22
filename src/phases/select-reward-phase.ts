@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
-import { RewardId } from "#enums/reward-id";
+import type { MoveId } from "#enums/move-id";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import type { RarityTier } from "#enums/reward-tier";
 import { UiMode } from "#enums/ui-mode";
@@ -20,14 +20,14 @@ import {
   type PokemonMoveReward,
   PokemonReward,
   RememberMoveReward,
-  RewardClass,
   TmReward,
 } from "#items/reward";
 import { TrainerItemEffect } from "#items/trainer-item";
 import { BattlePhase } from "#phases/battle-phase";
-import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { PartyOption, PartyUiHandler, PartyUiMode, type PokemonMoveSelectFilter } from "#ui/party-ui-handler";
 import { type RewardSelectUiHandler, SHOP_OPTIONS_ROW_LIMIT } from "#ui/reward-select-ui-handler";
 import { isNullOrUndefined, NumberHolder } from "#utils/common";
+import { isMoveReward, isRememberMoveReward, isTmReward } from "#utils/reward-utils";
 import i18next from "i18next";
 
 export type RewardSelectCallback = (rowCursor: number, cursor: number) => boolean;
@@ -282,21 +282,35 @@ export class SelectRewardPhase extends BattlePhase {
   // For MoveReward (e.g. PP UP or Ether) we also pass a filter to decide which moves can be selected.
   private openPokemonRewardMenu(reward: PokemonReward, cost: number, rewardSelectCallback: RewardSelectCallback): void {
     const party = globalScene.getPlayerParty();
-    const pokemonReward = reward as PokemonReward;
 
-    const isMoveReward = reward.rewardClass === RewardClass.POKEMON_MOVE_REWARD;
-    const isRememberMoveReward = reward.rewardClass === RewardClass.POKEMON_MOVE_RECALL_REWARD;
-    const isTmReward =
-      reward.id === RewardId.TM_COMMON || reward.id === RewardId.TM_GREAT || reward.id === RewardId.TM_ULTRA;
+    let partyUiMode = PartyUiMode.REWARD;
+    let moveSelectFilter: PokemonMoveSelectFilter | undefined;
+    let tmMoveId: MoveId | undefined;
+    let isMove = false;
+    let getParams = (slotIndex: number, _option: PartyOption) => {
+      return { pokemon: party[slotIndex] } as PokemonRewardParams;
+    };
 
-    const partyUiMode = isMoveReward
-      ? PartyUiMode.MOVE_REWARD
-      : isTmReward
-        ? PartyUiMode.TM_REWARD
-        : isRememberMoveReward
-          ? PartyUiMode.REMEMBER_MOVE_REWARD
-          : PartyUiMode.REWARD;
-    const tmMoveId = isTmReward ? (reward as TmReward).moveId : undefined;
+    if (isMoveReward(reward)) {
+      partyUiMode = PartyUiMode.MOVE_REWARD;
+      moveSelectFilter = (reward as PokemonMoveReward).moveSelectFilter;
+      isMove = true;
+      getParams = (slotIndex: number, option: PartyOption) => {
+        return { pokemon: party[slotIndex], moveIndex: option - PartyOption.MOVE_1 } as PokemonMoveRewardParams;
+      };
+    }
+
+    if (isRememberMoveReward(reward)) {
+      partyUiMode = PartyUiMode.REMEMBER_MOVE_REWARD;
+      getParams = (slotIndex: number, option: PartyOption) => {
+        return { pokemon: party[slotIndex], moveIndex: option, cost: cost } as PokemonMoveRecallRewardParams;
+      };
+    }
+
+    if (isTmReward(reward)) {
+      partyUiMode = PartyUiMode.TM_REWARD;
+      tmMoveId = reward.moveId;
+    }
 
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
@@ -305,25 +319,18 @@ export class SelectRewardPhase extends BattlePhase {
       (slotIndex: number, option: PartyOption) => {
         if (slotIndex < 6) {
           globalScene.ui.setMode(UiMode.REWARD_SELECT, this.isPlayer()).then(() => {
-            let params = {};
-            if (isMoveReward) {
-              params = { pokemon: party[slotIndex], moveIndex: option - PartyOption.MOVE_1 } as PokemonMoveRewardParams;
-            }
-            if (isRememberMoveReward) {
-              params = { pokemon: party[slotIndex], moveIndex: option, cost: cost } as PokemonMoveRecallRewardParams;
-            }
-            params = { pokemon: party[slotIndex] } as PokemonRewardParams;
+            const params = getParams(slotIndex, option);
             const result = globalScene.applyReward(reward, params, true);
-            this.postApplyPokemonReward(reward, result, cost); // TODO: is the bang correct?
+            this.postApplyPokemonReward(reward, result, cost);
           });
         } else {
           this.resetRewardSelect(rewardSelectCallback);
         }
       },
-      pokemonReward.selectFilter,
-      isMoveReward ? (reward as PokemonMoveReward).moveSelectFilter : undefined,
+      reward.selectFilter,
+      moveSelectFilter,
       tmMoveId,
-      isMoveReward,
+      isMove,
     );
   }
 
