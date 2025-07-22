@@ -459,7 +459,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return this Pokemon's {@linkcode PokeballType}.
-   * @param useIllusion - Whether to consider this Pokemon's illusion if present; default `true`
+   * @param useIllusion - Whether to consider this Pokemon's illusion if present; default `false`
    * @returns The {@linkcode PokeballType} that will be shown when this Pokemon is sent out into battle.
    */
   getPokeball(useIllusion = false): PokeballType {
