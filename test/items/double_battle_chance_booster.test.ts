@@ -1,13 +1,13 @@
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
-import { DoubleBattleChanceBoosterModifier } from "#app/modifier/modifier";
-import GameManager from "#test/testUtils/gameManager";
+import { Button } from "#enums/buttons";
+import { MoveId } from "#enums/move-id";
+import { ShopCursorTarget } from "#enums/shop-cursor-target";
+import { SpeciesId } from "#enums/species-id";
+import { UiMode } from "#enums/ui-mode";
+import { DoubleBattleChanceBoosterModifier } from "#modifiers/modifier";
+import { GameManager } from "#test/testUtils/gameManager";
+import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
-import { UiMode } from "#enums/ui-mode";
-import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { Button } from "#app/enums/buttons";
 
 describe("Items - Double Battle Chance Boosters", () => {
   let phaserGame: Phaser.Game;
@@ -50,12 +50,12 @@ describe("Items - Double Battle Chance Boosters", () => {
     game.override
       .startingModifier([{ name: "LURE" }])
       .itemRewards([{ name: "LURE" }])
-      .moveset(Moves.SPLASH)
+      .moveset(MoveId.SPLASH)
       .startingLevel(200);
 
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.doKillOpponents();
 

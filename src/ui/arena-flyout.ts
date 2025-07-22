@@ -1,22 +1,23 @@
-import { addTextObject, TextStyle } from "./text";
 import { globalScene } from "#app/global-scene";
-import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import { ArenaTrapTag } from "#data/arena-tag";
+import { TerrainType } from "#data/terrain";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { WeatherType } from "#enums/weather-type";
-import { TerrainType } from "#app/data/terrain";
-import { addWindow, WindowVariant } from "./ui-theme";
-import type { ArenaEvent } from "#app/events/arena";
+import type { ArenaEvent } from "#events/arena";
 import {
   ArenaEventType,
   TagAddedEvent,
   TagRemovedEvent,
   TerrainChangedEvent,
   WeatherChangedEvent,
-} from "#app/events/arena";
-import type { TurnEndEvent } from "../events/battle-scene";
-import { BattleSceneEventType } from "../events/battle-scene";
-import { ArenaTagType } from "#enums/arena-tag-type";
-import TimeOfDayWidget from "./time-of-day-widget";
-import { toCamelCaseString, formatText, fixedInt } from "#app/utils/common";
+} from "#events/arena";
+import type { TurnEndEvent } from "#events/battle-scene";
+import { BattleSceneEventType } from "#events/battle-scene";
+import { addTextObject, TextStyle } from "#ui/text";
+import { TimeOfDayWidget } from "#ui/time-of-day-widget";
+import { addWindow, WindowVariant } from "#ui/ui-theme";
+import { fixedInt, formatText, toCamelCaseString } from "#utils/common";
 import type { ParseKeys } from "i18next";
 import i18next from "i18next";
 

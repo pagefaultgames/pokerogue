@@ -1,30 +1,32 @@
-import { globalScene } from "#app/global-scene";
 import type { TurnCommand } from "#app/battle";
-import { BattleType } from "#enums/battle-type";
-import type { EncoreTag } from "#app/data/battler-tags";
-import { TrappedTag } from "#app/data/battler-tags";
-import type { MoveTargetSet } from "#app/data/moves/move";
-import { getMoveTargets } from "#app/data/moves/move";
-import { speciesStarterCosts } from "#app/data/balance/starters";
-import { Abilities } from "#app/enums/abilities";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { Biome } from "#app/enums/biome";
-import { Moves } from "#app/enums/moves";
-import { PokeballType } from "#enums/pokeball";
-import type { PlayerPokemon, TurnMove } from "#app/field/pokemon";
-import { FieldPosition } from "#app/field/pokemon";
+import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { Command } from "#app/ui/command-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import i18next from "i18next";
-import { FieldPhase } from "./field-phase";
-import { SelectTargetPhase } from "./select-target-phase";
+import { speciesStarterCosts } from "#balance/starters";
+import type { EncoreTag } from "#data/battler-tags";
+import { TrappedTag } from "#data/battler-tags";
+import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattleType } from "#enums/battle-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BiomeId } from "#enums/biome-id";
+import { Command } from "#enums/command";
+import { FieldPosition } from "#enums/field-position";
+import { MoveId } from "#enums/move-id";
+import { isIgnorePP, isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { isNullOrUndefined } from "#app/utils/common";
-import { ArenaTagSide } from "#app/data/arena-tag";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
+import { PokeballType } from "#enums/pokeball";
+import { UiMode } from "#enums/ui-mode";
+import type { PlayerPokemon } from "#field/pokemon";
+import type { MoveTargetSet } from "#moves/move";
+import { getMoveTargets } from "#moves/move-utils";
+import { FieldPhase } from "#phases/field-phase";
+import type { TurnMove } from "#types/turn-move";
+import { isNullOrUndefined } from "#utils/common";
+import i18next from "i18next";
 
 export class CommandPhase extends FieldPhase {
+  public readonly phaseName = "CommandPhase";
   protected fieldIndex: number;
 
   constructor(fieldIndex: number) {
@@ -44,7 +46,7 @@ export class CommandPhase extends FieldPhase {
     const cursorResetEvent =
       globalScene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER ||
       globalScene.currentBattle.battleType === BattleType.TRAINER ||
-      globalScene.arena.biomeType === Biome.END;
+      globalScene.arena.biomeType === BiomeId.END;
 
     if (commandUiHandler) {
       if (
@@ -80,7 +82,7 @@ export class CommandPhase extends FieldPhase {
     ) {
       globalScene.currentBattle.turnCommands[this.fieldIndex] = {
         command: Command.FIGHT,
-        move: { move: Moves.NONE, targets: [] },
+        move: { move: MoveId.NONE, targets: [], useMode: MoveUseMode.NORMAL },
         skip: true,
       };
     }
@@ -103,29 +105,31 @@ export class CommandPhase extends FieldPhase {
       moveQueue.length &&
       moveQueue[0] &&
       moveQueue[0].move &&
-      !moveQueue[0].virtual &&
+      !isVirtual(moveQueue[0].useMode) &&
       (!playerPokemon.getMoveset().find(m => m.moveId === moveQueue[0].move) ||
         !playerPokemon
           .getMoveset()
           [playerPokemon.getMoveset().findIndex(m => m.moveId === moveQueue[0].move)].isUsable(
             playerPokemon,
-            moveQueue[0].ignorePP,
+            isIgnorePP(moveQueue[0].useMode),
           ))
     ) {
       moveQueue.shift();
     }
 
+    // TODO: Refactor this. I did a few simple find/replace matches but this is just ABHORRENTLY structured
     if (moveQueue.length > 0) {
       const queuedMove = moveQueue[0];
       if (!queuedMove.move) {
-        this.handleCommand(Command.FIGHT, -1);
+        this.handleCommand(Command.FIGHT, -1, MoveUseMode.NORMAL);
       } else {
         const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
         if (
-          (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, queuedMove.ignorePP)) ||
-          queuedMove.virtual
+          (moveIndex > -1 &&
+            playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, isIgnorePP(queuedMove.useMode))) ||
+          isVirtual(queuedMove.useMode)
         ) {
-          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, queuedMove);
+          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.useMode, queuedMove);
         } else {
           globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
         }
@@ -143,35 +147,40 @@ export class CommandPhase extends FieldPhase {
     }
   }
 
+  /**
+   * TODO: Remove `args` and clean this thing up
+   * Code will need to be copied over from pkty except replacing the `virtual` and `ignorePP` args with a corresponding `MoveUseMode`.
+   */
   handleCommand(command: Command, cursor: number, ...args: any[]): boolean {
     const playerPokemon = globalScene.getPlayerField()[this.fieldIndex];
     let success = false;
 
     switch (command) {
+      // TODO: We don't need 2 args for this - moveUseMode is carried over from queuedMove
       case Command.TERA:
-      case Command.FIGHT:
+      case Command.FIGHT: {
         let useStruggle = false;
         const turnMove: TurnMove | undefined = args.length === 2 ? (args[1] as TurnMove) : undefined;
         if (
           cursor === -1 ||
-          playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
+          playerPokemon.trySelectMove(cursor, isIgnorePP(args[0] as MoveUseMode)) ||
           (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)
         ) {
-          let moveId: Moves;
+          let moveId: MoveId;
           if (useStruggle) {
-            moveId = Moves.STRUGGLE;
+            moveId = MoveId.STRUGGLE;
           } else if (turnMove !== undefined) {
             moveId = turnMove.move;
           } else if (cursor > -1) {
             moveId = playerPokemon.getMoveset()[cursor].moveId;
           } else {
-            moveId = Moves.NONE;
+            moveId = MoveId.NONE;
           }
 
           const turnCommand: TurnCommand = {
             command: Command.FIGHT,
             cursor: cursor,
-            move: { move: moveId, targets: [], ignorePP: args[0] },
+            move: { move: moveId, targets: [], useMode: args[0] },
             args: args,
           };
           const preTurnCommand: TurnCommand = {
@@ -191,7 +200,7 @@ export class CommandPhase extends FieldPhase {
           }
           console.log(moveTargets, getPokemonNameWithAffix(playerPokemon));
           if (moveTargets.targets.length > 1 && moveTargets.multiple) {
-            globalScene.unshiftPhase(new SelectTargetPhase(this.fieldIndex));
+            globalScene.phaseManager.unshiftNew("SelectTargetPhase", this.fieldIndex);
           }
           if (turnCommand.move && (moveTargets.targets.length <= 1 || moveTargets.multiple)) {
             turnCommand.move.targets = moveTargets.targets;
@@ -202,7 +211,7 @@ export class CommandPhase extends FieldPhase {
           ) {
             turnCommand.move.targets = playerPokemon.getMoveQueue()[0].targets;
           } else {
-            globalScene.unshiftPhase(new SelectTargetPhase(this.fieldIndex));
+            globalScene.phaseManager.unshiftNew("SelectTargetPhase", this.fieldIndex);
           }
           globalScene.currentBattle.preTurnCommands[this.fieldIndex] = preTurnCommand;
           globalScene.currentBattle.turnCommands[this.fieldIndex] = turnCommand;
@@ -233,7 +242,8 @@ export class CommandPhase extends FieldPhase {
           );
         }
         break;
-      case Command.BALL:
+      }
+      case Command.BALL: {
         const notInDex =
           globalScene
             .getEnemyField()
@@ -241,7 +251,7 @@ export class CommandPhase extends FieldPhase {
             .some(p => !globalScene.gameData.dexData[p.species.speciesId].caughtAttr) &&
           globalScene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1;
         if (
-          globalScene.arena.biomeType === Biome.END &&
+          globalScene.arena.biomeType === BiomeId.END &&
           (!globalScene.gameMode.isClassic || globalScene.gameMode.isFreshStartChallenge() || notInDex)
         ) {
           globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
@@ -308,7 +318,7 @@ export class CommandPhase extends FieldPhase {
             if (
               targetPokemon?.isBoss() &&
               targetPokemon?.bossSegmentIndex >= 1 &&
-              !targetPokemon?.hasAbility(Abilities.WONDER_GUARD, false, true) &&
+              !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true) &&
               cursor < PokeballType.MASTER_BALL
             ) {
               globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
@@ -337,14 +347,15 @@ export class CommandPhase extends FieldPhase {
           }
         }
         break;
+      }
       case Command.POKEMON:
-      case Command.RUN:
+      case Command.RUN: {
         const isSwitch = command === Command.POKEMON;
         const { currentBattle, arena } = globalScene;
         const mysteryEncounterFleeAllowed = currentBattle.mysteryEncounter?.fleeAllowed;
         if (
           !isSwitch &&
-          (arena.biomeType === Biome.END ||
+          (arena.biomeType === BiomeId.END ||
             (!isNullOrUndefined(mysteryEncounterFleeAllowed) && !mysteryEncounterFleeAllowed))
         ) {
           globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
@@ -445,6 +456,7 @@ export class CommandPhase extends FieldPhase {
           }
         }
         break;
+      }
     }
 
     if (success) {
@@ -456,8 +468,8 @@ export class CommandPhase extends FieldPhase {
 
   cancel() {
     if (this.fieldIndex) {
-      globalScene.unshiftPhase(new CommandPhase(0));
-      globalScene.unshiftPhase(new CommandPhase(1));
+      globalScene.phaseManager.unshiftNew("CommandPhase", 0);
+      globalScene.phaseManager.unshiftNew("CommandPhase", 1);
       this.end();
     }
   }

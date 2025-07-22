@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
-import type Pokemon from "../field/pokemon";
-import { TextStyle, addTextObject } from "./text";
+import type { Pokemon } from "#field/pokemon";
+import { addTextObject, TextStyle } from "#ui/text";
 import i18next from "i18next";
 
-export default class PartyExpBar extends Phaser.GameObjects.Container {
+export class PartyExpBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.NineSlice;
   private pokemonIcon: Phaser.GameObjects.Container;
   private expText: Phaser.GameObjects.Text;

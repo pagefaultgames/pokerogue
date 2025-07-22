@@ -1,12 +1,12 @@
-import { GameManagerHelper } from "./gameManagerHelper";
-import { TitlePhase } from "#app/phases/title-phase";
+import { BattleStyle } from "#enums/battle-style";
 import { UiMode } from "#enums/ui-mode";
+import { CommandPhase } from "#phases/command-phase";
+import { TitlePhase } from "#phases/title-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import type { SessionSaveData } from "#system/game-data";
+import type { GameManager } from "#test/testUtils/gameManager";
+import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { vi } from "vitest";
-import { BattleStyle } from "#app/enums/battle-style";
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import type { SessionSaveData } from "#app/system/game-data";
-import type GameManager from "../gameManager";
 
 /**
  * Helper to allow reloading sessions in unit tests.
@@ -35,7 +35,7 @@ export class ReloadHelper extends GameManagerHelper {
     const scene = this.game.scene;
     const titlePhase = new TitlePhase();
 
-    scene.clearPhaseQueue();
+    scene.phaseManager.clearPhaseQueue();
 
     // Set the last saved session to the desired session data
     vi.spyOn(scene.gameData, "getSession").mockReturnValue(
@@ -43,7 +43,7 @@ export class ReloadHelper extends GameManagerHelper {
         resolve(this.sessionData);
       }),
     );
-    scene.unshiftPhase(titlePhase);
+    scene.phaseManager.unshiftPhase(titlePhase);
     this.game.endPhase(); // End the currently ongoing battle
 
     // remove all persistent mods before loading

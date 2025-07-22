@@ -1,11 +1,12 @@
-import AbstractBindingUiHandler from "./abstract-binding-ui-handler";
-import type { UiMode } from "#enums/ui-mode";
-import { Device } from "#enums/devices";
-import { getIconWithSettingName, getKeyWithKeycode } from "#app/configs/inputs/configHandler";
-import { addTextObject, TextStyle } from "#app/ui/text";
 import { globalScene } from "#app/global-scene";
+import { Device } from "#enums/devices";
+import type { UiMode } from "#enums/ui-mode";
+import { getIconWithSettingName, getKeyWithKeycode } from "#inputs/configHandler";
+import { AbstractBindingUiHandler } from "#ui/abstract-binding-ui-handler";
+import { addTextObject, TextStyle } from "#ui/text";
+import i18next from "i18next";
 
-export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
+export class GamepadBindingUiHandler extends AbstractBindingUiHandler {
   constructor(mode: UiMode | null = null) {
     super(mode);
     globalScene.input.gamepad?.on("down", this.gamepadButtonDown, this);
@@ -19,7 +20,7 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
     this.newButtonIcon.setOrigin(0.5);
     this.newButtonIcon.setVisible(false);
 
-    this.swapText = addTextObject(0, 0, "will swap with", TextStyle.WINDOW);
+    this.swapText = addTextObject(0, 0, i18next.t("settings:willSwapWith"), TextStyle.WINDOW);
     this.swapText.setOrigin(0.5);
     this.swapText.setPositionRelative(
       this.optionSelectBg,
@@ -33,7 +34,7 @@ export default class GamepadBindingUiHandler extends AbstractBindingUiHandler {
     this.targetButtonIcon.setOrigin(0.5);
     this.targetButtonIcon.setVisible(false);
 
-    this.actionLabel = addTextObject(0, 0, "Confirm swap", TextStyle.SETTINGS_LABEL);
+    this.actionLabel = addTextObject(0, 0, i18next.t("settings:confirmSwap"), TextStyle.SETTINGS_LABEL);
     this.actionLabel.setOrigin(0, 0.5);
     this.actionLabel.setPositionRelative(this.actionBg, this.actionBg.width - 75, this.actionBg.height / 2);
     this.actionsContainer.add(this.actionLabel);

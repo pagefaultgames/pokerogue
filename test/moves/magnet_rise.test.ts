@@ -1,15 +1,12 @@
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import GameManager from "#test/testUtils/gameManager";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Magnet Rise", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const moveToUse = Moves.MAGNET_RISE;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -23,39 +20,38 @@ describe("Moves - Magnet Rise", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.starterSpecies(Species.MAGNEZONE);
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyMoveset([Moves.DRILL_RUN, Moves.DRILL_RUN, Moves.DRILL_RUN, Moves.DRILL_RUN]);
-    game.override.disableCrits();
-    game.override.enemyLevel(1);
-    game.override.moveset([moveToUse, Moves.SPLASH, Moves.GRAVITY, Moves.BATON_PASS]);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.RATTATA)
+      .enemyMoveset(MoveId.EARTHQUAKE)
+      .criticalHits(false)
+      .enemyLevel(1);
   });
 
-  it("MAGNET RISE", async () => {
-    await game.startBattle();
+  it("should make the user immune to ground-type moves", async () => {
+    await game.classicMode.startBattle([SpeciesId.MAGNEZONE]);
 
-    const startingHp = game.scene.getPlayerParty()[0].hp;
-    game.move.select(moveToUse);
-    await game.phaseInterceptor.to(TurnEndPhase);
-    const finalHp = game.scene.getPlayerParty()[0].hp;
-    const hpLost = finalHp - startingHp;
-    expect(hpLost).toBe(0);
-  }, 20000);
+    game.move.use(MoveId.MAGNET_RISE);
+    await game.toEndOfTurn();
 
-  it("MAGNET RISE - Gravity", async () => {
-    await game.startBattle();
+    const magnezone = game.field.getPlayerPokemon();
+    expect(magnezone.hp).toBe(magnezone.getMaxHp());
+    expect(magnezone.isGrounded()).toBe(false);
+  });
 
-    const startingHp = game.scene.getPlayerParty()[0].hp;
-    game.move.select(moveToUse);
-    await game.phaseInterceptor.to(CommandPhase);
-    let finalHp = game.scene.getPlayerParty()[0].hp;
-    let hpLost = finalHp - startingHp;
-    expect(hpLost).toBe(0);
-    game.move.select(Moves.GRAVITY);
-    await game.phaseInterceptor.to(TurnEndPhase);
-    finalHp = game.scene.getPlayerParty()[0].hp;
-    hpLost = finalHp - startingHp;
-    expect(hpLost).not.toBe(0);
-  }, 20000);
+  it("should be removed by gravity", async () => {
+    await game.classicMode.startBattle([SpeciesId.MAGNEZONE]);
+
+    game.move.use(MoveId.MAGNET_RISE);
+    await game.toNextTurn();
+
+    const magnezone = game.field.getPlayerPokemon();
+    expect(magnezone.hp).toBe(magnezone.getMaxHp());
+
+    game.move.use(MoveId.GRAVITY);
+    await game.toEndOfTurn();
+
+    expect(magnezone.hp).toBeLessThan(magnezone.getMaxHp());
+    expect(magnezone.isGrounded()).toBe(true);
+  });
 });

@@ -1,17 +1,18 @@
-import type MockTextureManager from "#test/testUtils/mocks/mockTextureManager";
-import type { MockGameObject } from "../mockGameObject";
+import type { MockGameObject } from "#test/testUtils/mocks/mockGameObject";
+import type { MockTextureManager } from "#test/testUtils/mocks/mockTextureManager";
 
 /**
  * Stub for Phaser.Textures.Texture object
  * Just mocks the function calls and data required for use in tests
  */
-export default class MockTexture implements MockGameObject {
+export class MockTexture implements MockGameObject {
   public manager: MockTextureManager;
   public key: string;
   public source;
   public frames: object;
   public firstFrame: string;
   public name: string;
+  public active: boolean;
 
   constructor(manager, key: string, source) {
     this.manager = manager;
@@ -38,5 +39,15 @@ export default class MockTexture implements MockGameObject {
   /** Mocks the function call that gets an HTMLImageElement, see {@link Pokemon.updateFusionPalette} */
   getSourceImage() {
     return null;
+  }
+
+  setActive(active: boolean): this {
+    this.active = active;
+    return this;
+  }
+
+  setName(name: string): this {
+    this.name = name;
+    return this;
   }
 }

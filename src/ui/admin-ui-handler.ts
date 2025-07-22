@@ -1,17 +1,17 @@
-import { Button } from "#app/enums/buttons";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import { formatText } from "#app/utils/common";
-import type { InputFieldConfig } from "./form-modal-ui-handler";
-import { FormModalUiHandler } from "./form-modal-ui-handler";
-import type { ModalConfig } from "./modal-ui-handler";
-import { TextStyle } from "./text";
-import { UiMode } from "#enums/ui-mode";
+import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
+import { Button } from "#enums/buttons";
+import { UiMode } from "#enums/ui-mode";
+import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
+import type { ModalConfig } from "#ui/modal-ui-handler";
+import { TextStyle } from "#ui/text";
+import { formatText } from "#utils/common";
 
 type AdminUiHandlerService = "discord" | "google";
 type AdminUiHandlerServiceMode = "Link" | "Unlink";
 
-export default class AdminUiHandler extends FormModalUiHandler {
+export class AdminUiHandler extends FormModalUiHandler {
   private adminMode: AdminMode;
   private adminResult: AdminSearchInfo;
   private config: ModalConfig;
@@ -69,7 +69,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
       case AdminMode.SEARCH:
         inputFieldConfigs.push({ label: "Username" });
         break;
-      case AdminMode.ADMIN:
+      case AdminMode.ADMIN: {
         const adminResult = this.adminResult ?? {
           username: "",
           discordId: "",
@@ -90,6 +90,7 @@ export default class AdminUiHandler extends FormModalUiHandler {
         inputFieldConfigs.push({ label: "Last played", isReadOnly: true });
         inputFieldConfigs.push({ label: "Registered", isReadOnly: true });
         break;
+      }
     }
     return inputFieldConfigs;
   }

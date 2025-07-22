@@ -1,18 +1,20 @@
-import MockContainer from "#test/testUtils/mocks/mocksContainer/mockContainer";
+import type { MockGameObject } from "#test/testUtils/mocks/mockGameObject";
+import { MockBBCodeText } from "#test/testUtils/mocks/mocksContainer/mock-bbcode-text";
+import { MockInputText } from "#test/testUtils/mocks/mocksContainer/mock-input-text";
+import { MockContainer } from "#test/testUtils/mocks/mocksContainer/mockContainer";
 import { MockImage } from "#test/testUtils/mocks/mocksContainer/mockImage";
-import MockNineslice from "#test/testUtils/mocks/mocksContainer/mockNineslice";
-import MockPolygon from "#test/testUtils/mocks/mocksContainer/mockPolygon";
-import MockRectangle from "#test/testUtils/mocks/mocksContainer/mockRectangle";
-import MockSprite from "#test/testUtils/mocks/mocksContainer/mockSprite";
-import MockText from "#test/testUtils/mocks/mocksContainer/mockText";
-import MockTexture from "#test/testUtils/mocks/mocksContainer/mockTexture";
-import type { MockGameObject } from "./mockGameObject";
-import { MockVideoGameObject } from "./mockVideoGameObject";
+import { MockNineslice } from "#test/testUtils/mocks/mocksContainer/mockNineslice";
+import { MockPolygon } from "#test/testUtils/mocks/mocksContainer/mockPolygon";
+import { MockRectangle } from "#test/testUtils/mocks/mocksContainer/mockRectangle";
+import { MockSprite } from "#test/testUtils/mocks/mocksContainer/mockSprite";
+import { MockText } from "#test/testUtils/mocks/mocksContainer/mockText";
+import { MockTexture } from "#test/testUtils/mocks/mocksContainer/mockTexture";
+import { MockVideoGameObject } from "#test/testUtils/mocks/mockVideoGameObject";
 
 /**
  * Stub class for Phaser.Textures.TextureManager
  */
-export default class MockTextureManager {
+export class MockTextureManager {
   private textures: Map<string, any>;
   private scene;
   public add;
@@ -33,6 +35,8 @@ export default class MockTextureManager {
       image: this.image.bind(this),
       polygon: this.polygon.bind(this),
       text: this.text.bind(this),
+      rexBBCodeText: this.rexBBCodeText.bind(this),
+      rexInputText: this.rexInputText.bind(this),
       bitmapText: this.text.bind(this),
       displayList: this.displayList,
       video: () => new MockVideoGameObject(),
@@ -103,9 +107,25 @@ export default class MockTextureManager {
     return text;
   }
 
+  rexBBCodeText(x, y, content, styleOptions) {
+    const text = new MockBBCodeText(this, x, y, content, styleOptions);
+    this.list.push(text);
+    return text;
+  }
+
+  rexInputText(x, y, w, h, content, styleOptions) {
+    const text = new MockInputText(this, x, y, w, h, content, styleOptions);
+    this.list.push(text);
+    return text;
+  }
+
   polygon(x, y, content, fillColor, fillAlpha) {
     const polygon = new MockPolygon(this, x, y, content, fillColor, fillAlpha);
     this.list.push(polygon);
     return polygon;
+  }
+
+  exists(key: string): boolean {
+    return this.textures.has(key);
   }
 }

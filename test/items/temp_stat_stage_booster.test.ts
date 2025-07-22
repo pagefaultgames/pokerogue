@@ -1,23 +1,23 @@
+import { AbilityId } from "#enums/ability-id";
+import { Button } from "#enums/buttons";
+import { MoveId } from "#enums/move-id";
+import { ShopCursorTarget } from "#enums/shop-cursor-target";
+import { SpeciesId } from "#enums/species-id";
 import { BATTLE_STATS, Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
-import { Species } from "#enums/species";
-import Phase from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { Moves } from "#app/enums/moves";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#app/enums/abilities";
-import { TempStatStageBoosterModifier } from "#app/modifier/modifier";
 import { UiMode } from "#enums/ui-mode";
-import { Button } from "#app/enums/buttons";
-import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
+import { TempStatStageBoosterModifier } from "#modifiers/modifier";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
+import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Temporary Stat Stage Boosters", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });
@@ -31,68 +31,68 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.SHUCKLE)
-      .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .moveset([Moves.TACKLE, Moves.SPLASH, Moves.HONE_CLAWS, Moves.BELLY_DRUM])
+      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .moveset([MoveId.TACKLE, MoveId.SPLASH, MoveId.HONE_CLAWS, MoveId.BELLY_DRUM])
       .startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
   });
 
   it("should provide a x1.3 stat stage multiplier", async () => {
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
     const partyMember = game.scene.getPlayerPokemon()!;
 
     vi.spyOn(partyMember, "getStatStageMultiplier");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.runFrom("EnemyCommandPhase").to(TurnEndPhase);
 
     expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(1.3);
-  }, 20000);
+  });
 
   it("should increase existing ACC stat stage by 1 for X_ACCURACY only", async () => {
-    game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]).ability(Abilities.SIMPLE);
+    game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]).ability(AbilityId.SIMPLE);
 
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
     const partyMember = game.scene.getPlayerPokemon()!;
 
     vi.spyOn(partyMember, "getAccuracyMultiplier");
 
     // Raise ACC by +2 stat stages
-    game.move.select(Moves.HONE_CLAWS);
+    game.move.select(MoveId.HONE_CLAWS);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
     // ACC at +3 stat stages yields a x2 multiplier
     expect(partyMember.getAccuracyMultiplier).toHaveReturnedWith(2);
-  }, 20000);
+  });
 
   it("should increase existing stat stage multiplier by 3/10 for the rest of the boosters", async () => {
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
     const partyMember = game.scene.getPlayerPokemon()!;
 
     vi.spyOn(partyMember, "getStatStageMultiplier");
 
     // Raise ATK by +1 stat stage
-    game.move.select(Moves.HONE_CLAWS);
+    game.move.select(MoveId.HONE_CLAWS);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
     // ATK at +1 stat stage yields a x1.5 multiplier, add 0.3 from X_ATTACK
     expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(1.8);
-  }, 20000);
+  });
 
   it("should not increase past maximum stat stage multiplier", async () => {
     game.override.startingModifier([
@@ -100,7 +100,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
       { name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK },
     ]);
 
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
     const partyMember = game.scene.getPlayerPokemon()!;
 
@@ -110,20 +110,20 @@ describe("Items - Temporary Stat Stage Boosters", () => {
     // Set all stat stages to 6
     vi.spyOn(partyMember.summonData, "statStages", "get").mockReturnValue(new Array(BATTLE_STATS.length).fill(6));
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(partyMember.getAccuracyMultiplier).toHaveReturnedWith(3);
     expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(4);
-  }, 20000);
+  });
 
   it("should renew how many battles are left of existing booster when picking up new booster of same type", async () => {
     game.override.startingLevel(200).itemRewards([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
 
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.doKillOpponents();
 
@@ -161,5 +161,5 @@ describe("Items - Temporary Stat Stage Boosters", () => {
       }
     }
     expect(count).toBe(1);
-  }, 20000);
+  });
 });

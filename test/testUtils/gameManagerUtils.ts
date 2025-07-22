@@ -1,15 +1,17 @@
-import Battle from "#app/battle";
+import { Battle } from "#app/battle";
+import type { BattleScene } from "#app/battle-scene";
+import { getGameMode } from "#app/game-mode";
+import { getDailyRunStarters } from "#data/daily-run";
+import { Gender } from "#data/gender";
+import { getPokemonSpeciesForm } from "#data/pokemon-species";
 import { BattleType } from "#enums/battle-type";
-import type BattleScene from "#app/battle-scene";
-import { getDailyRunStarters } from "#app/data/daily-run";
-import { Gender } from "#app/data/gender";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
-import { PlayerPokemon } from "#app/field/pokemon";
-import { GameModes, getGameMode } from "#app/game-mode";
-import type { StarterMoveset } from "#app/system/game-data";
-import type { Starter } from "#app/ui/starter-select-ui-handler";
-import { Moves } from "#enums/moves";
-import type { Species } from "#enums/species";
+import { GameModes } from "#enums/game-modes";
+import type { MoveId } from "#enums/move-id";
+import type { SpeciesId } from "#enums/species-id";
+import { PlayerPokemon } from "#field/pokemon";
+import type { StarterMoveset } from "#system/game-data";
+import type { Starter } from "#ui/starter-select-ui-handler";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** Function to convert Blob to string */
 export function blobToString(blob) {
@@ -32,7 +34,7 @@ export function holdOn(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function generateStarter(scene: BattleScene, species?: Species[]): Starter[] {
+export function generateStarter(scene: BattleScene, species?: SpeciesId[]): Starter[] {
   const seed = "test";
   const starters = getTestRunStarters(seed, species);
   const startingLevel = scene.gameMode.getStartingLevel();
@@ -52,7 +54,7 @@ export function generateStarter(scene: BattleScene, species?: Species[]): Starte
       undefined,
       starter.nature,
     );
-    const moveset: Moves[] = [];
+    const moveset: MoveId[] = [];
     starterPokemon.moveset.forEach(move => {
       moveset.push(move!.getMove().id);
     });
@@ -61,7 +63,7 @@ export function generateStarter(scene: BattleScene, species?: Species[]): Starte
   return starters;
 }
 
-function getTestRunStarters(seed: string, species?: Species[]): Starter[] {
+function getTestRunStarters(seed: string, species?: SpeciesId[]): Starter[] {
   if (!species) {
     return getDailyRunStarters(seed);
   }
@@ -96,19 +98,10 @@ export function waitUntil(truth): Promise<unknown> {
   });
 }
 
-/** Get the index of `move` from the moveset of the pokemon on the player's field at location `pokemonIndex` */
-export function getMovePosition(scene: BattleScene, pokemonIndex: 0 | 1, move: Moves): number {
-  const playerPokemon = scene.getPlayerField()[pokemonIndex];
-  const moveSet = playerPokemon.getMoveset();
-  const index = moveSet.findIndex(m => m.moveId === move && m.ppUsed < m.getMovePp());
-  console.log(`Move position for ${Moves[move]} (=${move}):`, index);
-  return index;
-}
-
 /**
  * Useful for populating party, wave index, etc. without having to spin up and run through an entire EncounterPhase
  */
-export function initSceneWithoutEncounterPhase(scene: BattleScene, species?: Species[]): void {
+export function initSceneWithoutEncounterPhase(scene: BattleScene, species?: SpeciesId[]): void {
   const starters = generateStarter(scene, species);
   starters.forEach(starter => {
     const starterProps = scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);

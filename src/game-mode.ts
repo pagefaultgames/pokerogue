@@ -1,27 +1,21 @@
-import i18next from "i18next";
-import type { FixedBattleConfigs } from "./battle";
-import { classicFixedBattles, FixedBattleConfig } from "./battle";
-import type { Challenge } from "./data/challenge";
-import { allChallenges, applyChallenges, ChallengeType, copyChallenge } from "./data/challenge";
-import type PokemonSpecies from "./data/pokemon-species";
-import { allSpecies } from "./data/pokemon-species";
-import type { Arena } from "./field/arena";
-import Overrides from "#app/overrides";
-import { randSeedInt, randSeedItem } from "#app/utils/common";
-import { Biome } from "#enums/biome";
-import { Species } from "#enums/species";
-import { Challenges } from "./enums/challenges";
+import { FixedBattleConfig } from "#app/battle";
+import { CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { getDailyStartingBiome } from "./data/daily-run";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES, CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES } from "./constants";
-
-export enum GameModes {
-  CLASSIC,
-  ENDLESS,
-  SPLICED_ENDLESS,
-  DAILY,
-  CHALLENGE,
-}
+import Overrides from "#app/overrides";
+import type { Challenge } from "#data/challenge";
+import { allChallenges, applyChallenges, copyChallenge } from "#data/challenge";
+import { getDailyStartingBiome } from "#data/daily-run";
+import { allSpecies } from "#data/data-lists";
+import type { PokemonSpecies } from "#data/pokemon-species";
+import { BiomeId } from "#enums/biome-id";
+import { ChallengeType } from "#enums/challenge-type";
+import { Challenges } from "#enums/challenges";
+import { GameModes } from "#enums/game-modes";
+import { SpeciesId } from "#enums/species-id";
+import type { Arena } from "#field/arena";
+import { classicFixedBattles, type FixedBattleConfigs } from "#trainers/fixed-battle-configs";
+import { isNullOrUndefined, randSeedInt, randSeedItem } from "#utils/common";
+import i18next from "i18next";
 
 interface GameModeConfig {
   isClassic?: boolean;
@@ -96,13 +90,14 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
+   * Helper function to get starting level for game mode.
    * @returns either:
-   * - override from overrides.ts
+   * - starting level override from overrides.ts
    * - 20 for Daily Runs
    * - 5 for all other modes
    */
   getStartingLevel(): number {
-    if (Overrides.STARTING_LEVEL_OVERRIDE) {
+    if (Overrides.STARTING_LEVEL_OVERRIDE > 0) {
       return Overrides.STARTING_LEVEL_OVERRIDE;
     }
     switch (this.modeId) {
@@ -124,16 +119,20 @@ export class GameMode implements GameModeConfig {
 
   /**
    * @returns either:
-   * - random biome for Daily mode
    * - override from overrides.ts
+   * - random biome for Daily mode
    * - Town
    */
-  getStartingBiome(): Biome {
+  getStartingBiome(): BiomeId {
+    if (!isNullOrUndefined(Overrides.STARTING_BIOME_OVERRIDE)) {
+      return Overrides.STARTING_BIOME_OVERRIDE;
+    }
+
     switch (this.modeId) {
       case GameModes.DAILY:
         return getDailyStartingBiome();
       default:
-        return Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN;
+        return BiomeId.TOWN;
     }
   }
 
@@ -165,14 +164,14 @@ export class GameMode implements GameModeConfig {
     if (waveIndex % 10 !== 1 && waveIndex % 10) {
       /**
        * Do not check X1 floors since there's a bug that stops trainer sprites from appearing
-       * after a X0 full party heal
+       * after a X0 full party heal, this also allows for a smoother biome transition for general gameplay feel
        */
       const trainerChance = arena.getTrainerChance();
       let allowTrainerBattle = true;
       if (trainerChance) {
         const waveBase = Math.floor(waveIndex / 10) * 10;
-        // Stop generic trainers from spawning in within 3 waves of a trainer battle
-        for (let w = Math.max(waveIndex - 3, waveBase + 2); w <= Math.min(waveIndex + 3, waveBase + 9); w++) {
+        // Stop generic trainers from spawning in within 2 waves of a fixed trainer battle
+        for (let w = Math.max(waveIndex - 2, waveBase + 2); w <= Math.min(waveIndex + 2, waveBase + 9); w++) {
           if (w === waveIndex) {
             continue;
           }
@@ -198,14 +197,14 @@ export class GameMode implements GameModeConfig {
     return false;
   }
 
-  isTrainerBoss(waveIndex: number, biomeType: Biome, offsetGym: boolean): boolean {
+  isTrainerBoss(waveIndex: number, biomeType: BiomeId, offsetGym: boolean): boolean {
     switch (this.modeId) {
       case GameModes.DAILY:
         return waveIndex > 10 && waveIndex < 50 && !(waveIndex % 10);
       default:
         return (
           waveIndex % 30 === (offsetGym ? 0 : 20) &&
-          (biomeType !== Biome.END || this.isClassic || this.isWaveFinal(waveIndex))
+          (biomeType !== BiomeId.END || this.isClassic || this.isWaveFinal(waveIndex))
         );
     }
   }
@@ -216,8 +215,8 @@ export class GameMode implements GameModeConfig {
         s =>
           (s.subLegendary || s.legendary || s.mythical) &&
           s.baseTotal >= 600 &&
-          s.speciesId !== Species.ETERNATUS &&
-          s.speciesId !== Species.ARCEUS,
+          s.speciesId !== SpeciesId.ETERNATUS &&
+          s.speciesId !== SpeciesId.ARCEUS,
       );
       return randSeedItem(allFinalBossSpecies);
     }

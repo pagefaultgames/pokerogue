@@ -1,12 +1,12 @@
+import { pokerogueApi } from "#api/pokerogue-api";
+import * as account from "#app/account";
 import * as bypassLoginModule from "#app/global-vars/bypass-login";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import type { SessionSaveData } from "#app/system/game-data";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import GameManager from "#test/testUtils/gameManager";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import type { SessionSaveData } from "#system/game-data";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import * as account from "#app/account";
 
 describe("System - Game Data", () => {
   let phaserGame: Phaser.Game;
@@ -21,10 +21,10 @@ describe("System - Game Data", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset([MoveId.SPLASH])
       .battleStyle("single")
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   afterEach(() => {

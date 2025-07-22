@@ -1,27 +1,29 @@
-import { SESSION_ID_COOKIE_NAME } from "#app/constants";
+import { initAbilities } from "#abilities/ability";
 import { initLoggedInUser } from "#app/account";
-import { initAbilities } from "#app/data/abilities/ability";
-import { initBiomes } from "#app/data/balance/biomes";
-import { initEggMoves } from "#app/data/balance/egg-moves";
-import { initPokemonPrevolutions, initPokemonStarters } from "#app/data/balance/pokemon-evolutions";
-import { initMoves } from "#app/data/moves/move";
-import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
-import { initPokemonForms } from "#app/data/pokemon-forms";
-import { initSpecies } from "#app/data/pokemon-species";
-import { initAchievements } from "#app/system/achv";
-import { initVouchers } from "#app/system/voucher";
-import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
-import { setCookie } from "#app/utils/cookies";
+import { SESSION_ID_COOKIE_NAME } from "#app/constants";
+import { initBiomes } from "#balance/biomes";
+import { initEggMoves } from "#balance/egg-moves";
+import { initPokemonPrevolutions, initPokemonStarters } from "#balance/pokemon-evolutions";
+import { initPokemonForms } from "#data/pokemon-forms";
+import { initSpecies } from "#data/pokemon-species";
+import { initModifierPools } from "#modifiers/init-modifier-pools";
+import { initModifierTypes } from "#modifiers/modifier-type";
+import { initMoves } from "#moves/move";
+import { initMysteryEncounters } from "#mystery-encounters/mystery-encounters";
+import { initI18n } from "#plugins/i18n";
+import { initAchievements } from "#system/achv";
+import { initVouchers } from "#system/voucher";
 import { blobToString } from "#test/testUtils/gameManagerUtils";
+import { manageListeners } from "#test/testUtils/listenersManager";
 import { MockConsoleLog } from "#test/testUtils/mocks/mockConsoleLog";
 import { mockContext } from "#test/testUtils/mocks/mockContextCanvas";
 import { mockLocalStorage } from "#test/testUtils/mocks/mockLocalStorage";
 import { MockImage } from "#test/testUtils/mocks/mocksContainer/mockImage";
+import { initStatsKeys } from "#ui/game-stats-ui-handler";
+import { setCookie } from "#utils/cookies";
 import Phaser from "phaser";
-import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { manageListeners } from "./listenersManager";
-import { initI18n } from "#app/plugins/i18n";
+import InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 let wasInitialized = false;
 /**
@@ -45,7 +47,7 @@ export function initTestFile() {
   });
 
   BBCodeText.prototype.destroy = () => null;
-  // @ts-ignore
+  // @ts-expect-error
   BBCodeText.prototype.resize = () => null;
   InputText.prototype.setElement = () => null as any;
   InputText.prototype.resize = () => null as any;
@@ -70,10 +72,10 @@ export function initTestFile() {
    * @param x The relative x position
    * @param y The relative y position
    */
-  const setPositionRelative = function (guideObject: any, x: number, y: number) {
+  const setPositionRelative = function (guideObject: any, x: number, y: number): any {
     const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
     const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));
-    this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
+    return this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
   };
 
   Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
@@ -88,6 +90,8 @@ export function initTestFile() {
   if (!wasInitialized) {
     wasInitialized = true;
     initI18n();
+    initModifierTypes();
+    initModifierPools();
     initVouchers();
     initAchievements();
     initStatsKeys();

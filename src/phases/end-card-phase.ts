@@ -1,10 +1,11 @@
 import { globalScene } from "#app/global-scene";
-import { PlayerGender } from "#app/enums/player-gender";
 import { Phase } from "#app/phase";
-import { addTextObject, TextStyle } from "#app/ui/text";
+import { PlayerGender } from "#enums/player-gender";
+import { addTextObject, TextStyle } from "#ui/text";
 import i18next from "i18next";
 
 export class EndCardPhase extends Phase {
+  public readonly phaseName = "EndCardPhase";
   public endCard: Phaser.GameObjects.Image;
   public text: Phaser.GameObjects.Text;
   start(): void {

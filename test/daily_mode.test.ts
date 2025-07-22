@@ -1,14 +1,12 @@
-import { Biome } from "#app/enums/biome";
-import { Moves } from "#app/enums/moves";
-import { MapModifier } from "#app/modifier/modifier";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { Species } from "#enums/species";
+import { pokerogueApi } from "#api/pokerogue-api";
+import { BiomeId } from "#enums/biome-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
+import { MapModifier } from "#modifiers/modifier";
+import { GameManager } from "#test/testUtils/gameManager";
+import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
-
-//const TIMEOUT = 20 * 1000;
 
 describe("Daily Mode", () => {
   let phaserGame: Phaser.Game;
@@ -30,7 +28,7 @@ describe("Daily Mode", () => {
   });
 
   it("should initialize properly", async () => {
-    await game.dailyMode.runToSummon();
+    await game.dailyMode.startBattle();
 
     const party = game.scene.getPlayerParty();
     expect(party).toHaveLength(3);
@@ -56,12 +54,12 @@ describe("Shop modifications", async () => {
 
     game.override
       .startingWave(9)
-      .startingBiome(Biome.ICE_CAVE)
+      .startingBiome(BiomeId.ICE_CAVE)
       .battleStyle("single")
       .startingLevel(100) // Avoid levelling up
       .disableTrainerWaves()
-      .moveset([Moves.SPLASH])
-      .enemyMoveset(Moves.SPLASH);
+      .moveset([MoveId.SPLASH])
+      .enemyMoveset(MoveId.SPLASH);
     game.modifiers.addCheck("EVIOLITE").addCheck("MINI_BLACK_HOLE");
     vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("test-seed");
   });
@@ -72,8 +70,8 @@ describe("Shop modifications", async () => {
   });
 
   it("should not have Eviolite and Mini Black Hole available in Classic if not unlocked", async () => {
-    await game.classicMode.startBattle([Species.BULBASAUR]);
-    game.move.select(Moves.SPLASH);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("BattleEndPhase");
     game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
@@ -84,7 +82,7 @@ describe("Shop modifications", async () => {
 
   it("should have Eviolite and Mini Black Hole available in Daily", async () => {
     await game.dailyMode.startBattle();
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("BattleEndPhase");
     game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {

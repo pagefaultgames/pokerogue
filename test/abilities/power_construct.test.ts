@@ -1,11 +1,11 @@
-import { Status } from "#app/data/status-effect";
-import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { Status } from "#data/status-effect";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("Abilities - POWER CONSTRUCT", () => {
@@ -24,24 +24,24 @@ describe("Abilities - POWER CONSTRUCT", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const moveToUse = Moves.SPLASH;
-    game.override.battleStyle("single");
-    game.override.ability(Abilities.POWER_CONSTRUCT);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    const moveToUse = MoveId.SPLASH;
+    game.override
+      .battleStyle("single")
+      .ability(AbilityId.POWER_CONSTRUCT)
+      .moveset([moveToUse])
+      .enemyMoveset(MoveId.TACKLE);
   });
 
   test("check if fainted 50% Power Construct Pokemon switches to base form on arena reset", async () => {
     const baseForm = 2,
       completeForm = 4;
-    game.override.startingWave(4);
-    game.override.starterForms({
-      [Species.ZYGARDE]: completeForm,
+    game.override.startingWave(4).starterForms({
+      [SpeciesId.ZYGARDE]: completeForm,
     });
 
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.ZYGARDE]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.ZYGARDE]);
 
-    const zygarde = game.scene.getPlayerParty().find(p => p.species.speciesId === Species.ZYGARDE);
+    const zygarde = game.scene.getPlayerParty().find(p => p.species.speciesId === SpeciesId.ZYGARDE);
     expect(zygarde).not.toBe(undefined);
     expect(zygarde!.formIndex).toBe(completeForm);
 
@@ -49,7 +49,7 @@ describe("Abilities - POWER CONSTRUCT", () => {
     zygarde!.status = new Status(StatusEffect.FAINT);
     expect(zygarde!.isFainted()).toBe(true);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to(TurnEndPhase);
     game.doSelectModifier();
@@ -61,14 +61,13 @@ describe("Abilities - POWER CONSTRUCT", () => {
   test("check if fainted 10% Power Construct Pokemon switches to base form on arena reset", async () => {
     const baseForm = 3,
       completeForm = 5;
-    game.override.startingWave(4);
-    game.override.starterForms({
-      [Species.ZYGARDE]: completeForm,
+    game.override.startingWave(4).starterForms({
+      [SpeciesId.ZYGARDE]: completeForm,
     });
 
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.ZYGARDE]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.ZYGARDE]);
 
-    const zygarde = game.scene.getPlayerParty().find(p => p.species.speciesId === Species.ZYGARDE);
+    const zygarde = game.scene.getPlayerParty().find(p => p.species.speciesId === SpeciesId.ZYGARDE);
     expect(zygarde).not.toBe(undefined);
     expect(zygarde!.formIndex).toBe(completeForm);
 
@@ -76,7 +75,7 @@ describe("Abilities - POWER CONSTRUCT", () => {
     zygarde!.status = new Status(StatusEffect.FAINT);
     expect(zygarde!.isFainted()).toBe(true);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to(TurnEndPhase);
     game.doSelectModifier();

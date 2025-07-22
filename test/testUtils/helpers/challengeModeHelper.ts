@@ -1,15 +1,15 @@
-import { BattleStyle } from "#app/enums/battle-style";
-import type { Species } from "#app/enums/species";
 import overrides from "#app/overrides";
-import { EncounterPhase } from "#app/phases/encounter-phase";
-import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import { UiMode } from "#enums/ui-mode";
-import { generateStarter } from "../gameManagerUtils";
-import { GameManagerHelper } from "./gameManagerHelper";
-import type { Challenge } from "#app/data/challenge";
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import type { Challenge } from "#data/challenge";
+import { BattleStyle } from "#enums/battle-style";
 import type { Challenges } from "#enums/challenges";
+import type { SpeciesId } from "#enums/species-id";
+import { UiMode } from "#enums/ui-mode";
+import { CommandPhase } from "#phases/command-phase";
+import { EncounterPhase } from "#phases/encounter-phase";
+import { SelectStarterPhase } from "#phases/select-starter-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { generateStarter } from "#test/testUtils/gameManagerUtils";
+import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { copyChallenge } from "data/challenge";
 
 /**
@@ -34,7 +34,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * @param gameMode - Optional game mode to set.
    * @returns A promise that resolves when the summon phase is reached.
    */
-  async runToSummon(species?: Species[]) {
+  async runToSummon(species?: SpeciesId[]) {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -45,7 +45,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
       this.game.scene.gameMode.challenges = this.challenges;
       const starters = generateStarter(this.game.scene, species);
       const selectStarterPhase = new SelectStarterPhase();
-      this.game.scene.pushPhase(new EncounterPhase(false));
+      this.game.scene.phaseManager.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
     });
 
@@ -60,7 +60,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * @param species - Optional array of species to start the battle with.
    * @returns A promise that resolves when the battle is started.
    */
-  async startBattle(species?: Species[]) {
+  async startBattle(species?: SpeciesId[]) {
     await this.runToSummon(species);
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {

@@ -1,20 +1,20 @@
-import { TextStyle, addTextObject } from "#app/ui/text";
-import { UiMode } from "#enums/ui-mode";
-import MessageUiHandler from "#app/ui/message-ui-handler";
-import { addWindow } from "#app/ui/ui-theme";
-import { ScrollBar } from "#app/ui/scroll-bar";
-import { Button } from "#enums/buttons";
-import type { InputsIcons } from "#app/ui/settings/abstract-control-settings-ui-handler";
-import NavigationMenu, { NavigationManager } from "#app/ui/settings/navigationMenu";
-import type { SettingType } from "#app/system/settings/settings";
-import { Setting, SettingKeys } from "#app/system/settings/settings";
-import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
+import { Button } from "#enums/buttons";
+import { UiMode } from "#enums/ui-mode";
+import type { SettingType } from "#system/settings";
+import { Setting, SettingKeys } from "#system/settings";
+import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { NavigationManager, NavigationMenu } from "#ui/navigationMenu";
+import { ScrollBar } from "#ui/scroll-bar";
+import { addTextObject, TextStyle } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import i18next from "i18next";
 
 /**
  * Abstract class for handling UI elements related to settings.
  */
-export default class AbstractSettingsUiHandler extends MessageUiHandler {
+export class AbstractSettingsUiHandler extends MessageUiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
   private optionsContainer: Phaser.GameObjects.Container;
   private messageBoxContainer: Phaser.GameObjects.Container;
@@ -94,7 +94,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
     const iconCancel = globalScene.add.sprite(0, 0, "keyboard");
     iconCancel.setOrigin(0, -0.1);
-    iconCancel.setPositionRelative(actionsBg, this.navigationContainer.width - 100, 4);
+    iconCancel.setPositionRelative(actionsBg, actionText.x - 28, 4);
     this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
 
     const cancelText = addTextObject(0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
@@ -108,10 +108,12 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
     this.reloadSettings = this.settings.filter(s => s?.requireReload);
 
+    let anyReloadRequired = false;
     this.settings.forEach((setting, s) => {
       let settingName = setting.label;
       if (setting?.requireReload) {
-        settingName += ` (${i18next.t("settings:requireReload")})`;
+        settingName += "*";
+        anyReloadRequired = true;
       }
 
       this.settingLabels[s] = addTextObject(8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
@@ -187,6 +189,14 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
     this.settingsContainer.add(iconAction);
     this.settingsContainer.add(iconCancel);
     this.settingsContainer.add(actionText);
+    // Only add the ReloadRequired text on pages that have settings that require a reload.
+    if (anyReloadRequired) {
+      const reloadRequired = addTextObject(0, 0, `*${i18next.t("settings:requireReload")}`, TextStyle.SETTINGS_LABEL)
+        .setOrigin(0, 0.15)
+        .setPositionRelative(actionsBg, 6, 0)
+        .setY(actionText.y);
+      this.settingsContainer.add(reloadRequired);
+    }
     this.settingsContainer.add(cancelText);
     this.settingsContainer.add(this.messageBoxContainer);
 
@@ -322,12 +332,13 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
         case Button.CYCLE_SHINY:
           success = this.navigationContainer.navigate(button);
           break;
-        case Button.ACTION:
+        case Button.ACTION: {
           const setting: Setting = this.settings[cursor];
           if (setting?.activatable) {
             success = this.activateSetting(setting);
           }
           break;
+        }
       }
     }
 

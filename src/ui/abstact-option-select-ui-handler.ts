@@ -1,11 +1,11 @@
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addBBCodeTextObject, getTextColor, getTextStyleOptions } from "./text";
-import { UiMode } from "#enums/ui-mode";
-import UiHandler from "./ui-handler";
-import { addWindow } from "./ui-theme";
-import { rgbHexToRgba, fixedInt } from "#app/utils/common";
-import { argbFromRgba } from "@material/material-color-utilities";
 import { Button } from "#enums/buttons";
+import { UiMode } from "#enums/ui-mode";
+import { addBBCodeTextObject, getTextColor, getTextStyleOptions, TextStyle } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { addWindow } from "#ui/ui-theme";
+import { fixedInt, rgbHexToRgba } from "#utils/common";
+import { argbFromRgba } from "@material/material-color-utilities";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
 export interface OptionSelectConfig {
@@ -33,7 +33,7 @@ export interface OptionSelectItem {
 const scrollUpLabel = "↑";
 const scrollDownLabel = "↓";
 
-export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
+export abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected optionSelectContainer: Phaser.GameObjects.Container;
   protected optionSelectTextContainer: Phaser.GameObjects.Container;
   protected optionSelectBg: Phaser.GameObjects.NineSlice;
@@ -55,10 +55,6 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
   protected defaultTextStyle: TextStyle = TextStyle.WINDOW;
   protected textContent: string;
-
-  constructor(mode: UiMode | null) {
-    super(mode);
-  }
 
   abstract getWindowWidth(): number;
 

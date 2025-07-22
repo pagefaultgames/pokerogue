@@ -1,20 +1,20 @@
-import { BattlerIndex } from "../battle";
-import { UiMode } from "#enums/ui-mode";
-import UiHandler from "./ui-handler";
-import { isNullOrUndefined, fixedInt } from "#app/utils/common";
-import { getMoveTargets } from "../data/moves/move";
-import { Button } from "#enums/buttons";
-import type { Moves } from "#enums/moves";
-import type Pokemon from "#app/field/pokemon";
-import type { ModifierBar } from "#app/modifier/modifier";
-import { SubstituteTag } from "#app/data/battler-tags";
 import { globalScene } from "#app/global-scene";
+import { SubstituteTag } from "#data/battler-tags";
+import { BattlerIndex } from "#enums/battler-index";
+import { Button } from "#enums/buttons";
+import type { MoveId } from "#enums/move-id";
+import { UiMode } from "#enums/ui-mode";
+import type { Pokemon } from "#field/pokemon";
+import type { ModifierBar } from "#modifiers/modifier";
+import { getMoveTargets } from "#moves/move-utils";
+import { UiHandler } from "#ui/ui-handler";
+import { fixedInt, isNullOrUndefined } from "#utils/common";
 
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
-export default class TargetSelectUiHandler extends UiHandler {
+export class TargetSelectUiHandler extends UiHandler {
   private fieldIndex: number;
-  private move: Moves;
+  private move: MoveId;
   private targetSelectCallback: TargetSelectCallback;
   private cursor0: number; // associated with BattlerIndex.PLAYER
   private cursor1: number; // associated with BattlerIndex.PLAYER_2
@@ -42,7 +42,7 @@ export default class TargetSelectUiHandler extends UiHandler {
     super.show(args);
 
     this.fieldIndex = args[0] as number;
-    this.move = args[1] as Moves;
+    this.move = args[1] as MoveId;
     this.targetSelectCallback = args[2] as TargetSelectCallback;
     const user = globalScene.getPlayerField()[this.fieldIndex];
 
@@ -157,8 +157,8 @@ export default class TargetSelectUiHandler extends UiHandler {
       yoyo: true,
       onUpdate: t => {
         for (const target of this.targetsHighlighted) {
-          target.setAlpha(t.getValue());
-          this.highlightItems(target.id, t.getValue());
+          target.setAlpha(t.getValue() ?? 1);
+          this.highlightItems(target.id, t.getValue() ?? 1);
         }
       },
     });

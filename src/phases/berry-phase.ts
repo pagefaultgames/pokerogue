@@ -1,31 +1,26 @@
-import {
-  applyAbAttrs,
-  PreventBerryUseAbAttr,
-  HealFromBerryUseAbAttr,
-  RepeatBerryNextTurnAbAttr,
-} from "#app/data/abilities/ability";
-import { CommonAnim } from "#app/data/battle-anims";
-import { BerryUsedEvent } from "#app/events/battle-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { BerryModifier } from "#app/modifier/modifier";
-import i18next from "i18next";
-import { BooleanHolder } from "#app/utils/common";
-import { FieldPhase } from "./field-phase";
-import { CommonAnimPhase } from "./common-anim-phase";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import type Pokemon from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { CommonAnim } from "#enums/move-anims-common";
+import { BerryUsedEvent } from "#events/battle-scene";
+import type { Pokemon } from "#field/pokemon";
+import { BerryModifier } from "#modifiers/modifier";
+import { FieldPhase } from "#phases/field-phase";
+import { BooleanHolder } from "#utils/common";
+import i18next from "i18next";
 
 /**
  * The phase after attacks where the pokemon eat berries.
  * Also triggers Cud Chew's "repeat berry use" effects
  */
 export class BerryPhase extends FieldPhase {
+  public readonly phaseName = "BerryPhase";
   start() {
     super.start();
 
     this.executeForAll(pokemon => {
       this.eatBerries(pokemon);
-      applyAbAttrs(RepeatBerryNextTurnAbAttr, pokemon, null);
+      applyAbAttrs("CudChewConsumeBerryAbAttr", { pokemon });
     });
 
     this.end();
@@ -47,9 +42,9 @@ export class BerryPhase extends FieldPhase {
 
     // TODO: If both opponents on field have unnerve, which one displays its message?
     const cancelled = new BooleanHolder(false);
-    pokemon.getOpponents().forEach(opp => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
+    pokemon.getOpponents().forEach(opp => applyAbAttrs("PreventBerryUseAbAttr", { pokemon: opp, cancelled }));
     if (cancelled.value) {
-      globalScene.queueMessage(
+      globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:preventBerryUse", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         }),
@@ -57,8 +52,11 @@ export class BerryPhase extends FieldPhase {
       return;
     }
 
-    globalScene.unshiftPhase(
-      new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM),
+    globalScene.phaseManager.unshiftNew(
+      "CommonAnimPhase",
+      pokemon.getBattlerIndex(),
+      pokemon.getBattlerIndex(),
+      CommonAnim.USE_ITEM,
     );
 
     for (const berryModifier of globalScene.applyModifiers(BerryModifier, pokemon.isPlayer(), pokemon)) {
@@ -71,7 +69,7 @@ export class BerryPhase extends FieldPhase {
     }
     globalScene.updateModifiers(pokemon.isPlayer());
 
-    // Abilities.CHEEK_POUCH only works once per round of nom noms
-    applyAbAttrs(HealFromBerryUseAbAttr, pokemon, new BooleanHolder(false));
+    // AbilityId.CHEEK_POUCH only works once per round of nom noms
+    applyAbAttrs("HealFromBerryUseAbAttr", { pokemon });
   }
 }

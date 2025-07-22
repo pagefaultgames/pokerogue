@@ -1,35 +1,32 @@
-import { UiMode } from "#enums/ui-mode";
-import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import { hasTouchscreen } from "#app/touch-controls";
-import { updateWindowType } from "#app/ui/ui-theme";
-import { CandyUpgradeNotificationChangedEvent } from "#app/events/battle-scene";
-import type SettingsUiHandler from "#app/ui/settings/settings-ui-handler";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
-import { isLocal } from "#app/utils/common";
+import { UiMode } from "#enums/ui-mode";
+import { CandyUpgradeNotificationChangedEvent } from "#events/battle-scene";
+import type { SettingsUiHandler } from "#ui/settings-ui-handler";
+import { updateWindowType } from "#ui/ui-theme";
+import { isLocal } from "#utils/common";
+import i18next from "i18next";
 
-const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) =>
-  i
-    ? {
-        value: (i * 10).toString(),
-        label: (i * 10).toString(),
-      }
-    : {
-        value: "Mute",
-        label: i18next.t("settings:mute"),
-      },
-);
+const VOLUME_OPTIONS: SettingOption[] = [
+  {
+    value: "Mute",
+    label: i18next.t("settings:mute"),
+  },
+];
+for (let i = 1; i < 11; i++) {
+  const value = (i * 10).toString();
+  VOLUME_OPTIONS.push({ value, label: value });
+}
 
-const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = new Array(9).fill(null).map((_, i) => {
+const SHOP_OVERLAY_OPACITY_OPTIONS: SettingOption[] = [];
+for (let i = 0; i < 9; i++) {
   const value = ((i + 1) * 10).toString();
-  return {
-    value,
-    label: value,
-  };
-});
+  SHOP_OVERLAY_OPACITY_OPTIONS.push({ value, label: value });
+}
 
 const OFF_ON: SettingOption[] = [
   {
@@ -183,6 +180,12 @@ export enum MusicPreference {
   ALLGENS,
 }
 
+const windowTypeOptions: SettingOption[] = [];
+for (let i = 0; i < 5; i++) {
+  const value = (i + 1).toString();
+  windowTypeOptions.push({ value, label: value });
+}
+
 /**
  * All Settings not related to controls
  */
@@ -193,35 +196,35 @@ export const Setting: Array<Setting> = [
     options: [
       {
         value: "1",
-        label: "1x",
+        label: i18next.t("settings:gameSpeed1x"),
       },
       {
         value: "1.25",
-        label: "1.25x",
+        label: i18next.t("settings:gameSpeed1_25x"),
       },
       {
         value: "1.5",
-        label: "1.5x",
+        label: i18next.t("settings:gameSpeed1_5x"),
       },
       {
         value: "2",
-        label: "2x",
+        label: i18next.t("settings:gameSpeed2x"),
       },
       {
         value: "2.5",
-        label: "2.5x",
+        label: i18next.t("settings:gameSpeed2_5x"),
       },
       {
         value: "3",
-        label: "3x",
+        label: i18next.t("settings:gameSpeed3x"),
       },
       {
         value: "4",
-        label: "4x",
+        label: i18next.t("settings:gameSpeed4x"),
       },
       {
         value: "5",
-        label: "5x",
+        label: i18next.t("settings:gameSpeed5x"),
       },
     ],
     default: 3,
@@ -432,13 +435,7 @@ export const Setting: Array<Setting> = [
   {
     key: SettingKeys.Window_Type,
     label: i18next.t("settings:windowType"),
-    options: new Array(5).fill(null).map((_, i) => {
-      const windowType = (i + 1).toString();
-      return {
-        value: windowType,
-        label: windowType,
-      };
-    }),
+    options: windowTypeOptions,
     default: 0,
     type: SettingType.DISPLAY,
   },
@@ -922,10 +919,6 @@ export function setSetting(setting: string, value: number): boolean {
                 handler: () => changeLocaleHandler("es-MX"),
               },
               {
-                label: "Italiano",
-                handler: () => changeLocaleHandler("it"),
-              },
-              {
                 label: "Français",
                 handler: () => changeLocaleHandler("fr"),
               },
@@ -934,16 +927,12 @@ export function setSetting(setting: string, value: number): boolean {
                 handler: () => changeLocaleHandler("de"),
               },
               {
+                label: "Italiano",
+                handler: () => changeLocaleHandler("it"),
+              },
+              {
                 label: "Português (BR)",
                 handler: () => changeLocaleHandler("pt-BR"),
-              },
-              {
-                label: "简体中文",
-                handler: () => changeLocaleHandler("zh-CN"),
-              },
-              {
-                label: "繁體中文",
-                handler: () => changeLocaleHandler("zh-TW"),
               },
               {
                 label: "한국어",
@@ -954,8 +943,32 @@ export function setSetting(setting: string, value: number): boolean {
                 handler: () => changeLocaleHandler("ja"),
               },
               {
-                label: "Català",
-                handler: () => changeLocaleHandler("ca-ES"),
+                label: "简体中文",
+                handler: () => changeLocaleHandler("zh-CN"),
+              },
+              {
+                label: "繁體中文",
+                handler: () => changeLocaleHandler("zh-TW"),
+              },
+              {
+                label: "Català (Needs Help)",
+                handler: () => changeLocaleHandler("ca"),
+              },
+              {
+                label: "Türkçe (Needs Help)",
+                handler: () => changeLocaleHandler("tr"),
+              },
+              {
+                label: "Русский (Needs Help)",
+                handler: () => changeLocaleHandler("ru"),
+              },
+              {
+                label: "Dansk (Needs Help)",
+                handler: () => changeLocaleHandler("da"),
+              },
+              {
+                label: "Română (Needs Help)",
+                handler: () => changeLocaleHandler("ro"),
               },
               {
                 label: i18next.t("settings:back"),

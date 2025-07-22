@@ -1,4 +1,19 @@
-import type { EnemyPartyConfig, EnemyPokemonConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { modifierTypes } from "#data/data-lists";
+import { BattlerIndex } from "#enums/battler-index";
+import { ModifierTier } from "#enums/modifier-tier";
+import { MoveId } from "#enums/move-id";
+import { MoveUseMode } from "#enums/move-use-mode";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
+import { HitHealModifier, PokemonHeldItemModifier, TurnHealModifier } from "#modifiers/modifier";
+import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
+import { PokemonMove } from "#moves/pokemon-move";
+import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
+import type { EnemyPartyConfig, EnemyPokemonConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   generateModifierType,
   initBattleWithEnemyConfig,
@@ -6,28 +21,14 @@ import {
   loadCustomMovesForEncounter,
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { Species } from "#enums/species";
-import { HitHealModifier, PokemonHeldItemModifier, TurnHealModifier } from "#app/modifier/modifier";
-import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import i18next from "#app/plugins/i18n";
-import { ModifierTier } from "#app/modifier/modifier-tier";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Moves } from "#enums/moves";
-import { BattlerIndex } from "#app/battle";
-import { PokemonMove } from "#app/field/pokemon";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { randSeedInt } from "#app/utils/common";
+} from "#mystery-encounters/encounter-phase-utils";
+import { applyModifierTypeToPlayerPokemon } from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import i18next from "#plugins/i18n";
+import { randSeedInt } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/trashToTreasure";
@@ -51,7 +52,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
   .withFleeAllowed(false)
   .withIntroSpriteConfigs([
     {
-      spriteKey: Species.GARBODOR.toString() + "-gigantamax",
+      spriteKey: SpeciesId.GARBODOR.toString() + "-gigantamax",
       fileRoot: "pokemon",
       hasShadow: false,
       disableAnimation: true,
@@ -74,14 +75,14 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
     const encounter = globalScene.currentBattle.mysteryEncounter!;
 
     // Calculate boss mon (shiny locked)
-    const bossSpecies = getPokemonSpecies(Species.GARBODOR);
+    const bossSpecies = getPokemonSpecies(SpeciesId.GARBODOR);
     const pokemonConfig: EnemyPokemonConfig = {
       species: bossSpecies,
       isBoss: true,
       shiny: false, // Shiny lock because of custom intro sprite
       formIndex: 1, // Gmax
       bossSegmentModifier: 1, // +1 Segment from normal
-      moveSet: [Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.HAMMER_ARM, Moves.PAYBACK],
+      moveSet: [MoveId.GUNK_SHOT, MoveId.STOMPING_TANTRUM, MoveId.HAMMER_ARM, MoveId.PAYBACK],
       modifierConfigs: [
         {
           modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
@@ -127,7 +128,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
     encounter.enemyPartyConfigs = [config];
 
     // Load animations/sfx for Garbodor fight start moves
-    loadCustomMovesForEncounter([Moves.TOXIC, Moves.STOCKPILE]);
+    loadCustomMovesForEncounter([MoveId.TOXIC, MoveId.STOCKPILE]);
 
     globalScene.loadSe("PRSFX- Dig2", "battle_anims", "PRSFX- Dig2.wav");
     globalScene.loadSe("PRSFX- Venom Drench", "battle_anims", "PRSFX- Venom Drench.wav");
@@ -206,14 +207,14 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
             targets: [BattlerIndex.PLAYER],
-            move: new PokemonMove(Moves.TOXIC),
-            ignorePp: true,
+            move: new PokemonMove(MoveId.TOXIC),
+            useMode: MoveUseMode.IGNORE_PP,
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
             targets: [BattlerIndex.ENEMY],
-            move: new PokemonMove(Moves.STOCKPILE),
-            ignorePp: true,
+            move: new PokemonMove(MoveId.STOCKPILE),
+            useMode: MoveUseMode.IGNORE_PP,
           },
         );
         await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);

@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import { TrainerSlot } from "#enums/trainer-slot";
 import { Phase } from "#app/phase";
+import { TrainerSlot } from "#enums/trainer-slot";
 
-export class BattlePhase extends Phase {
+export abstract class BattlePhase extends Phase {
   showEnemyTrainer(trainerSlot: TrainerSlot = TrainerSlot.NONE): void {
     if (!globalScene.currentBattle.trainer) {
       console.warn("Enemy trainer is missing!");

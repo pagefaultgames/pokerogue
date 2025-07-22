@@ -1,16 +1,16 @@
-import Phaser from "phaser";
-import { TextStyle, addTextObject } from "#app/ui/text";
-import type { UiMode } from "#enums/ui-mode";
-import UiHandler from "#app/ui/ui-handler";
-import { addWindow } from "#app/ui/ui-theme";
-import { getPlayTimeString, formatFancyLargeNumber, toReadableString } from "#app/utils/common";
-import type { GameData } from "#app/system/game-data";
-import { DexAttr } from "#app/system/game-data";
-import { speciesStarterCosts } from "#app/data/balance/starters";
-import { Button } from "#enums/buttons";
-import i18next from "i18next";
-import { UiTheme } from "#enums/ui-theme";
 import { globalScene } from "#app/global-scene";
+import { speciesStarterCosts } from "#balance/starters";
+import { Button } from "#enums/buttons";
+import { DexAttr } from "#enums/dex-attr";
+import type { UiMode } from "#enums/ui-mode";
+import { UiTheme } from "#enums/ui-theme";
+import type { GameData } from "#system/game-data";
+import { addTextObject, TextStyle } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { addWindow } from "#ui/ui-theme";
+import { formatFancyLargeNumber, getPlayTimeString, toReadableString } from "#utils/common";
+import i18next from "i18next";
+import Phaser from "phaser";
 
 interface DisplayStat {
   label_key?: string;
@@ -213,7 +213,7 @@ const displayStats: DisplayStats = {
   },
 };
 
-export default class GameStatsUiHandler extends UiHandler {
+export class GameStatsUiHandler extends UiHandler {
   private gameStatsContainer: Phaser.GameObjects.Container;
   private statsContainer: Phaser.GameObjects.Container;
 
@@ -243,7 +243,7 @@ export default class GameStatsUiHandler extends UiHandler {
     const headerBg = addWindow(0, 0, globalScene.game.canvas.width / 6 - 2, 24);
     headerBg.setOrigin(0, 0);
 
-    const headerText = addTextObject(0, 0, i18next.t("gameStatsUiHandler:stats"), TextStyle.SETTINGS_LABEL);
+    const headerText = addTextObject(0, 0, i18next.t("gameStatsUiHandler:stats"), TextStyle.HEADER_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
@@ -267,10 +267,10 @@ export default class GameStatsUiHandler extends UiHandler {
 
     this.statsContainer = globalScene.add.container(0, 0);
 
-    new Array(18).fill(null).map((_, s) => {
+    for (let i = 0; i < 18; i++) {
       const statLabel = addTextObject(
-        8 + (s % 2 === 1 ? statsBgWidth : 0),
-        28 + Math.floor(s / 2) * 16,
+        8 + (i % 2 === 1 ? statsBgWidth : 0),
+        28 + Math.floor(i / 2) * 16,
         "",
         TextStyle.STATS_LABEL,
       );
@@ -278,11 +278,11 @@ export default class GameStatsUiHandler extends UiHandler {
       this.statsContainer.add(statLabel);
       this.statLabels.push(statLabel);
 
-      const statValue = addTextObject(statsBgWidth * ((s % 2) + 1) - 8, statLabel.y, "", TextStyle.STATS_VALUE);
+      const statValue = addTextObject(statsBgWidth * ((i % 2) + 1) - 8, statLabel.y, "", TextStyle.STATS_VALUE);
       statValue.setOrigin(1, 0);
       this.statsContainer.add(statValue);
       this.statValues.push(statValue);
-    });
+    }
 
     this.gameStatsContainer.add(headerBg);
     this.gameStatsContainer.add(headerText);

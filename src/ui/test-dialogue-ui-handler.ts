@@ -1,18 +1,14 @@
-import type { InputFieldConfig } from "./form-modal-ui-handler";
-import { FormModalUiHandler } from "./form-modal-ui-handler";
-import type { ModalConfig } from "./modal-ui-handler";
-import i18next from "i18next";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type { OptionSelectItem } from "./abstact-option-select-ui-handler";
-import { isNullOrUndefined } from "#app/utils/common";
 import { UiMode } from "#enums/ui-mode";
+import type { PlayerPokemon } from "#field/pokemon";
+import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
+import type { ModalConfig } from "#ui/modal-ui-handler";
+import { isNullOrUndefined } from "#utils/common";
+import i18next from "i18next";
 
-export default class TestDialogueUiHandler extends FormModalUiHandler {
+export class TestDialogueUiHandler extends FormModalUiHandler {
   keys: string[];
-
-  constructor(mode) {
-    super(mode);
-  }
 
   setup() {
     super.setup();
