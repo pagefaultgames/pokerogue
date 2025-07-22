@@ -691,7 +691,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
   private immuneType: PokemonType | null;
   private condition: AbAttrCondition | null;
 
-  // TODO: Change NonSuperEffectiveImmunityAbAttr` to not pass `null` as immune type
+  // TODO: Change `NonSuperEffectiveImmunityAbAttr` to not pass `null` as immune type
   constructor(immuneType: PokemonType | null, condition?: AbAttrCondition) {
     super(true);
 
