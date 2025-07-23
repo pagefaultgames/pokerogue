@@ -1545,16 +1545,16 @@ export class SuppressAbilitiesTag extends ArenaTag {
 }
 
 /**
- * Contains data related to a queued healing effect from
+ * Interface containing data related to a queued healing effect from
  * {@link https://bulbapedia.bulbagarden.net/wiki/Healing_Wish_(move) | Healing Wish}
  * or {@link https://bulbapedia.bulbagarden.net/wiki/Lunar_Dance_(move) | Lunar Dance}.
  */
 interface PendingHealEffect {
-  /** The id for the {@linkcode Pokemon} that created the effect */
+  /** The {@linkcode Pokemon.id | PID} of the {@linkcode Pokemon} that created the effect. */
   readonly sourceId: number;
-  /** The {@linkcode MoveId | id} for the move that created the effect */
+  /** The {@linkcode MoveId} of the move that created the effect. */
   readonly moveId: MoveId;
-  /** If `true`, also restores the target's PP when the effect activates */
+  /** If `true`, also restores the target's PP when the effect activates. */
   readonly restorePP: boolean;
   /** The `i18n` key for the message to display when the effect activates */
   readonly healMessageKey: string;

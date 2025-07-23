@@ -45,9 +45,9 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
 
       await game.toNextTurn();
 
-      expect(bulbasaur.isFullHp());
-      expect(charmander.isFainted()).toBeTruthy();
-      expect(squirtle.isFullHp());
+      expect(bulbasaur.isFullHp()).toBe(true);
+      expect(charmander.isFainted()).toBe(true);
+      expect(squirtle.isFullHp()).toBe(true);
     });
 
     it("should sacrifice the user to cure the switched in Pokemon's status", async () => {
@@ -62,8 +62,8 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
 
       await game.toNextTurn();
 
-      expect(bulbasaur.status?.effect).toEqual(StatusEffect.BURN);
-      expect(charmander.isFainted()).toBeTruthy();
+      expect(bulbasaur.status?.effect).toBe(StatusEffect.BURN);
+      expect(charmander.isFainted()).toBe(true);
       expect(squirtle.status?.effect).toBeUndefined();
     });
 
@@ -78,15 +78,15 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
 
       await game.toNextTurn();
 
-      expect(bulbasaur.isFainted()).toBeTruthy();
-      expect(charmander.isActive(true)).toBeTruthy();
+      expect(bulbasaur.isFainted()).toBe(true);
+      expect(charmander.isActive(true)).toBe(true);
 
       game.move.use(moveId);
 
       await game.toEndOfTurn();
 
       expect(charmander.isFullHp());
-      expect(charmander.getLastXMoves()[0].result).toEqual(MoveResult.FAIL);
+      expect(charmander.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     });
 
     it("should fail if the user has no challenge-eligible allies", async () => {
@@ -95,16 +95,16 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       game.challengeMode.addChallenge(Challenges.SINGLE_TYPE, PokemonType.NORMAL + 1, 0);
       await game.challengeMode.startBattle([SpeciesId.RATICATE, SpeciesId.ODDISH]);
 
-      const [raticate] = game.scene.getPlayerParty();
+      const raticate = game.field.getPlayerPokemon();
 
       game.move.use(moveId);
       await game.toNextTurn();
 
-      expect(raticate.isFullHp());
+      expect(raticate.isFullHp()).toBe(true);
       expect(raticate.getLastXMoves()[0].result).toEqual(MoveResult.FAIL);
     });
 
-    it("should store its effect if the switched-in Pokemon is perfectly healthy", async () => {
+    it("should store its effect if the switched-in Pokemon would be unaffected", async () => {
       game.override.battleStyle("single");
 
       await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
@@ -115,21 +115,20 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       game.move.use(moveId);
       game.doSelectPartyPokemon(1);
 
-      await game.toEndOfTurn();
+      await game.toNextTurn();
 
-      expect(bulbasaur.isFainted()).toBeTruthy();
-      expect(charmander.isFullHp());
+      // Bulbasaur fainted and stored a healing effect
+      expect(bulbasaur.isFainted()).toBe(true);
+      expect(charmander.isFullHp()).toBe(true);
       expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
       expect(game.scene.arena.getTag(ArenaTagType.PENDING_HEAL)).toBeDefined();
 
       await game.toNextTurn();
 
       // Switch to damaged Squirtle. HW/LD's effect should activate
-      game.doSwitchPokemon(2);
 
       await game.toEndOfTurn();
-
-      expect(squirtle.isFullHp());
+      expect(squirtle.isFullHp()).toBe(true);
       expect(game.scene.arena.getTag(ArenaTagType.PENDING_HEAL)).toBeUndefined();
 
       // Set Charmander's HP to 1, then switch back to Charmander.
@@ -159,7 +158,8 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       game.doSelectPartyPokemon(1);
 
       await game.toNextTurn();
-      expect(bulbasaur.isFainted()).toBeTruthy();
+      expect(bulbasaur.isFainted()).toBe(true);
+      expect(charmander.isFullHp()).toBe(true);
       expect(charmander.isFullHp());
       expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
       expect(game.scene.arena.getTag(ArenaTagType.PENDING_HEAL)).toBeDefined();
@@ -168,15 +168,14 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       game.move.use(moveId);
       game.doSelectPartyPokemon(2);
 
-      await game.toNextTurn();
-      expect(charmander.isFainted()).toBeTruthy();
+      expect(charmander.isFainted()).toBe(true);
+      expect(squirtle.isFullHp()).toBe(true);
       expect(squirtle.isFullHp());
 
       // Switch again to Pikachu. HW/LD's effect shouldn't be present
       game.doSwitchPokemon(3);
 
-      await game.toEndOfTurn();
-      expect(pikachu.isFullHp()).not.toBeTruthy();
+      expect(pikachu.isFullHp()).toBe(false);
     });
   });
 
@@ -184,16 +183,16 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
     game.override.battleStyle("single");
 
     await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER]);
-    const [bulbasaur, charmander] = game.scene.getPlayerParty();
-    [bulbasaur, charmander].forEach(p => game.move.changeMoveset(p, [MoveId.LUNAR_DANCE, MoveId.SPLASH]));
 
-    game.move.select(MoveId.SPLASH);
+    const [bulbasaur, charmander] = game.scene.getPlayerParty();
+
+    game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
-    game.move.select(MoveId.LUNAR_DANCE);
+    game.move.use(MoveId.LUNAR_DANCE);
     game.doSelectPartyPokemon(1);
 
     await game.toNextTurn();
@@ -221,8 +220,8 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
     game.doSelectPartyPokemon(1);
 
     await game.toNextTurn();
-    expect(bulbasaur.isFainted()).toBeTruthy();
-    expect(charmander.isFullHp());
+    expect(bulbasaur.isFainted()).toBe(true);
+    expect(charmander.isFullHp()).toBe(true);
     expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
     expect(game.scene.arena.getTag(ArenaTagType.PENDING_HEAL)).toBeDefined();
 
@@ -231,7 +230,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
 
     // Lunar Dance should apply first since it was used first, restoring Squirtle's HP and PP
     await game.toNextTurn();
-    expect(squirtle.isFullHp());
+    expect(squirtle.isFullHp()).toBe(true);
     squirtle.getMoveset().forEach(mv => expect(mv.ppUsed).toBe(0));
     expect(game.scene.arena.getTag(ArenaTagType.PENDING_HEAL)).toBeDefined();
 
@@ -239,7 +238,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
 
     // Healing Wish should apply on the next switch, restoring Pikachu's HP
     await game.toEndOfTurn();
-    expect(pikachu.isFullHp());
+    expect(pikachu.isFullHp()).toBe(true);
     pikachu.getMoveset().forEach(mv => expect(mv.ppUsed).toBe(1));
     expect(game.scene.arena.getTag(ArenaTagType.PENDING_HEAL)).toBeUndefined();
   });

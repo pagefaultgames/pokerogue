@@ -2076,16 +2076,15 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
       return false;
     }
 
-    globalScene.arena.addTag(ArenaTagType.PENDING_HEAL, 0, move.id, user.id);
+    // Add a tag to the field if it doesn't already exist, then queue a delayed healing effect in the user's current slot.
+    globalScene.arena.addTag(ArenaTagType.PENDING_HEAL, 0, move.id, user.id); // Arguments after first go completely unused
     const tag = globalScene.arena.getTag(ArenaTagType.PENDING_HEAL) as PendingHealTag;
-    if (tag) {
-      tag.queueHeal(user.getBattlerIndex(), {
-        sourceId: user.id,
-        moveId: move.id,
-        restorePP: this.restorePP,
-        healMessageKey: i18next.t(this.moveMessage, { pokemonName: getPokemonNameWithAffix(user) }),
-      });
-    }
+    tag.queueHeal(user.getBattlerIndex(), {
+      sourceId: user.id,
+      moveId: move.id,
+      restorePP: this.restorePP,
+      healMessageKey: i18next.t(this.moveMessage, { pokemonName: getPokemonNameWithAffix(user) }),
+    });
 
     return true;
   }
