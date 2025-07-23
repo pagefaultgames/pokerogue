@@ -9,6 +9,7 @@ import { MoveResult } from "#enums/move-result";
 import { PokemonType } from "#enums/pokemon-type";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
 import { GameManager } from "#test/testUtils/gameManager";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -43,7 +44,7 @@ describe("Moves - Delayed Attacks", () => {
    * @param numTurns - Number of turns to pass.
    * @param toEndOfTurn - Whether to advance to the `TurnEndPhase` (true) or the `PositionalTagPhase` (`false`);
    * default `true`
-   * @returns: A Promise that resolves once the specified number of turns has elapsed
+   * @returns A Promise that resolves once the specified number of turns has elapsed
    * and the specified phase has been reached.
    */
   async function passTurns(numTurns: number, toEndOfTurn = true): Promise<void> {
@@ -154,8 +155,6 @@ describe("Moves - Delayed Attacks", () => {
 
     await passTurns(2);
 
-    await game.toEndOfTurn();
-
     expect(enemy1.hp).toBeLessThan(enemy1.getMaxHp());
     expect(enemy2.hp).toBeLessThan(enemy2.getMaxHp());
   });
@@ -164,27 +163,37 @@ describe("Moves - Delayed Attacks", () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
+    const [alomomola, blissey, karp1, karp2] = game.scene.getField();
+
+    vi.spyOn(karp1, "getNameToRender").mockReturnValue("Karp 1");
+    vi.spyOn(karp2, "getNameToRender").mockReturnValue("Karp 2");
+
+    const oldOrder = game.field.getSpeedOrder();
+
     game.move.use(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.use(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER);
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER_2);
-    const usageOrder = game.field.getSpeedOrder();
+    // Ensure that the moves are used deterministically in speed order (for speed ties)
+    await game.setTurnOrder(oldOrder);
     await game.toNextTurn();
-
     expectFutureSightActive(4);
 
-    game.move.use(MoveId.TAILWIND, BattlerIndex.PLAYER);
-    game.move.use(MoveId.COTTON_SPORE, BattlerIndex.PLAYER_2);
-    await passTurns(1, false);
+    // Lower speed to change turn order
+    alomomola.setStatStage(Stat.SPD, 6);
+    blissey.setStatStage(Stat.SPD, -6);
 
-    expect(game.field.getSpeedOrder()).not.toEqual(usageOrder);
+    const newOrder = game.field.getSpeedOrder();
+    expect(newOrder).not.toEqual(oldOrder);
+
+    await passTurns(2, false);
 
     // All attacks have concluded at this point, unshifting new `MoveEffectPhase`s to the queue.
     expectFutureSightActive(0);
 
     const MEPs = game.scene.phaseManager.phaseQueue.filter(p => p.is("MoveEffectPhase"));
     expect(MEPs).toHaveLength(4);
-    expect(MEPs.map(mep => mep["battlerIndex"])).toEqual(usageOrder);
+    expect(MEPs.map(mep => mep["battlerIndex"])).toEqual(oldOrder);
   });
 
   it("should vanish silently if it would otherwise hit the user", async () => {
