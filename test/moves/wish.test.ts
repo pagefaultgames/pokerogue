@@ -118,6 +118,8 @@ describe("Move - Wish", () => {
 
     game.move.use(MoveId.WISH, BattlerIndex.PLAYER);
     game.move.use(MoveId.WISH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.WISH);
+    await game.move.forceEnemyMove(MoveId.WISH);
     await game.toNextTurn();
 
     expectWishActive(2);
@@ -146,7 +148,7 @@ describe("Move - Wish", () => {
     expect(blissey.hp).toBe(toDmgValue(blissey.getMaxHp() / 2) + 1);
   });
 
-  it("should vanish if slot is empty", async () => {
+  it("should vanish and not play message if slot is empty", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
 
