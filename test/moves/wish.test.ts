@@ -10,7 +10,7 @@ import { GameManager } from "#test/testUtils/gameManager";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Move - Wish", () => {
   let phaserGame: Phaser.Game;
@@ -110,9 +110,12 @@ describe("Move - Wish", () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
 
-    const [alomomola, blissey] = game.scene.getPlayerParty();
+    const [alomomola, blissey, karp1, karp2] = game.scene.getField();
     alomomola.hp = 1;
     blissey.hp = 1;
+
+    vi.spyOn(karp1, "getNameToRender").mockReturnValue("Karp 1");
+    vi.spyOn(karp2, "getNameToRender").mockReturnValue("Karp 2");
 
     const oldOrder = game.field.getSpeedOrder();
 
@@ -120,6 +123,8 @@ describe("Move - Wish", () => {
     game.move.use(MoveId.WISH, BattlerIndex.PLAYER_2);
     await game.move.forceEnemyMove(MoveId.WISH);
     await game.move.forceEnemyMove(MoveId.WISH);
+    // Ensure that the wishes are used deterministically in speed order (for speed ties)
+    await game.setTurnOrder(oldOrder);
     await game.toNextTurn();
 
     expectWishActive(4);
@@ -135,12 +140,12 @@ describe("Move - Wish", () => {
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("PositionalTagPhase");
 
-    // Both wishes have activated and added healing phases
+    // all wishes have activated and added healing phases
     expectWishActive(0);
 
     const healPhases = game.scene.phaseManager.phaseQueue.filter(p => p.is("PokemonHealPhase"));
     expect(healPhases).toHaveLength(4);
-    expect(healPhases.map(php => php["battlerIndex"])).toEqual(oldOrder);
+    expect.soft(healPhases.map(php => php["battlerIndex"])).toEqual(oldOrder);
 
     await game.toEndOfTurn();
 
