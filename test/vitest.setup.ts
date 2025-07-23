@@ -50,8 +50,9 @@ vi.mock("i18next", async importOriginal => {
 
 global.testFailed = false;
 
-beforeAll(() => {
-  initTestFile();
+beforeAll(async () => {
+  await initTestFile();
+  console.log("Test file initialized!");
 });
 
 afterAll(() => {

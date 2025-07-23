@@ -1,35 +1,21 @@
-import { initAbilities } from "#abilities/ability";
-import { initLoggedInUser } from "#app/account";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
-import { initBiomes } from "#balance/biomes";
-import { initEggMoves } from "#balance/egg-moves";
-import { initPokemonPrevolutions, initPokemonStarters } from "#balance/pokemon-evolutions";
-import { initPokemonForms } from "#data/pokemon-forms";
-import { initSpecies } from "#data/pokemon-species";
-import { initModifierPools } from "#modifiers/init-modifier-pools";
-import { initModifierTypes } from "#modifiers/modifier-type";
-import { initMoves } from "#moves/move";
-import { initMysteryEncounters } from "#mystery-encounters/mystery-encounters";
+import { initializeGame } from "#app/init/init";
 import { initI18n } from "#plugins/i18n";
-import { initAchievements } from "#system/achv";
-import { initVouchers } from "#system/voucher";
 import { blobToString } from "#test/test-utils/game-manager-utils";
 import { manageListeners } from "#test/test-utils/listeners-manager";
 import { MockConsoleLog } from "#test/test-utils/mocks/mock-console-log";
 import { mockContext } from "#test/test-utils/mocks/mock-context-canvas";
 import { mockLocalStorage } from "#test/test-utils/mocks/mock-local-storage";
 import { MockImage } from "#test/test-utils/mocks/mocks-container/mock-image";
-import { initStatsKeys } from "#ui/game-stats-ui-handler";
 import { setCookie } from "#utils/cookies";
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 
-let wasInitialized = false;
 /**
  * An initialization function that is run at the beginning of every test file (via `beforeAll()`).
  */
-export function initTestFile() {
+export async function initTestFile() {
   // Set the timezone to UTC for tests.
   process.env.TZ = "UTC";
 
@@ -87,26 +73,8 @@ export function initTestFile() {
   HTMLCanvasElement.prototype.getContext = () => mockContext;
 
   // Initialize all of these things if and only if they have not been initialized yet
-  if (!wasInitialized) {
-    wasInitialized = true;
-    initI18n();
-    initModifierTypes();
-    initModifierPools();
-    initVouchers();
-    initAchievements();
-    initStatsKeys();
-    initPokemonPrevolutions();
-    initBiomes();
-    initEggMoves();
-    initPokemonForms();
-    initSpecies();
-    initMoves();
-    initAbilities();
-    initLoggedInUser();
-    initMysteryEncounters();
-    // init the pokemon starters for the pokedex
-    initPokemonStarters();
-  }
+  await initI18n();
+  initializeGame();
 
   manageListeners();
 }
