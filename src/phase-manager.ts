@@ -575,14 +575,13 @@ export class PhaseManager {
   }
 
   /**
-   * Queues an ability bar flyout phase
-   * @param pokemon The pokemon who has the ability
-   * @param passive Whether the ability is a passive
-   * @param show Whether to show or hide the bar
+   * Queue a phase to show or hide the ability flyout bar.
+   * @param pokemon - The {@linkcode Pokemon} whose ability is being activated
+   * @param passive - Whether the ability is a passive
+   * @param show - Whether to show or hide the bar
    */
   public queueAbilityDisplay(pokemon: Pokemon, passive: boolean, show: boolean): void {
     this.unshiftPhase(show ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive) : new HideAbilityPhase());
-    this.clearPhaseQueueSplice();
   }
 
   /**
