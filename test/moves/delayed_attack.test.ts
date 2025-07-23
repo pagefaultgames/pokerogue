@@ -262,8 +262,10 @@ describe("Moves - Delayed Attacks", () => {
 
     expectFutureSightActive(1);
 
+    game.move.use(MoveId.SPLASH);
     await game.killPokemon(enemy2);
-    await passTurns(2);
+
+    await passTurns(1);
 
     expectFutureSightActive(0);
     expect(enemy1.hp).toBe(enemy1.getMaxHp());
