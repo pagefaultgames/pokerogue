@@ -181,7 +181,14 @@ export class PokemonTurnData {
    * - `0` = Move is finished
    */
   public hitsLeft = -1;
-  public totalDamageDealt = 0;
+  /**
+   * The final amount of damage dealt by this Pokemon's last attack against each of its targets,
+   * indexed by their respective `BattlerIndex`es. \
+   * Reset to an empty array upon attempting to use a move,
+   * and is used to calculate various damage-related effects (Shell Bell, U-Turn + Wimp Out interactions, etc.).
+   */
+  // TODO: move this or something like it to some sort of "move in flight" object
+  public lastMoveDamageDealt: number[] = [0, 0, 0, 0];
   public singleHitDamageDealt = 0;
   public damageTaken = 0;
   public attacksReceived: AttackMoveResult[] = [];

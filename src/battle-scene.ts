@@ -813,6 +813,58 @@ export class BattleScene extends SceneBase {
   }
 
   /**
+   * Return the party positions of all {@linkcode Pokemon} that are **not** currently {@linkcode Pokemon.isOnField | on field}
+   * but are still {@linkcode Pokemon.isAllowedInBattle | allowed in battle}.
+   *
+   * Used for switch out logic checks.
+   * @param pokemon - A {@linkcode Pokemon} on the desired side of the field, used to infer the side and trainer slot (as applicable)
+   * @returns An array containing the **INDICES** of all {@linkcode Pokemon} in reserve able to be switched into.
+   * @overload
+   */
+  public getBackupPartyMemberIndices(pokemon: Pokemon): number[];
+  /**
+   * Return the party positions of all {@linkcode Pokemon} that are **not** currently {@linkcode Pokemon.isOnField | on field}
+   * but are still {@linkcode Pokemon.isAllowedInBattle | allowed in battle}.
+   *
+   * Used for switch out logic checks.
+   * @param player - Whether to search the player (`true`) or enemy (`false`) party; default `true`
+   * @returns An array containing the **INDICES** of all {@linkcode Pokemon} in reserve able to be switched into.
+   * @overload
+   */
+  public getBackupPartyMemberIndices(player: true): number[];
+  /**
+   * Return the party positions of all {@linkcode Pokemon} that are **not** currently {@linkcode Pokemon.isOnField | on field}
+   * but are still {@linkcode Pokemon.isAllowedInBattle | allowed in battle}.
+   *
+   * Used for switch out logic checks.
+   * @param player - Whether to search the player (`true`) or enemy (`false`) party; default `true`
+   * @param trainerSlot - The {@linkcode TrainerSlot | trainer slot} to check against for enemy trainers;
+   * used to verify ownership in multi battles
+   * @returns An array containing the **INDICES** of all {@linkcode Pokemon} in reserve able to be switched into.
+   * @overload
+   */
+  public getBackupPartyMemberIndices(player: false, trainerSlot: TrainerSlot): number[];
+
+  public getBackupPartyMemberIndices(player: boolean | Pokemon, trainerSlot?: number): number[] {
+    // Note: We return the indices instead of the actual Pokemon because `SwitchSummonPhase` and co. take an index instead of a pokemon.
+    // If this is ever changed, this can be replaced with a simpler version involving `filter` and conditional type annotations.
+    if (typeof player === "object") {
+      // Marginally faster than using a ternary
+      trainerSlot = (player as unknown as EnemyPokemon)["trainerSlot"];
+      player = player.isPlayer();
+    }
+
+    const indices: number[] = [];
+    const party = player ? this.getPlayerParty() : this.getEnemyParty();
+    party.forEach((p: PlayerPokemon | EnemyPokemon, i: number) => {
+      if (p.isAllowedInBattle() && !p.isOnField() && (player || (p as EnemyPokemon).trainerSlot === trainerSlot)) {
+        indices.push(i);
+      }
+    });
+    return indices;
+  }
+
+  /**
    * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
    * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
    * @param activeOnly - Whether to consider only active pokemon (as described by {@linkcode Pokemon.isActive()}); default `false`.
@@ -838,6 +890,7 @@ export class BattleScene extends SceneBase {
     if (this.currentBattle.double === false) {
       return;
     }
+    // TODO: Remove while loop
     if (allyPokemon?.isActive(true)) {
       let targetingMovePhase: MovePhase;
       do {

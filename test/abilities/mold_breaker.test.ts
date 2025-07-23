@@ -1,4 +1,8 @@
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/testUtils/gameManager";
@@ -37,13 +41,40 @@ describe("Abilities - Mold Breaker", () => {
     const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.X_SCISSOR);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(game.scene.arena.ignoreAbilities).toBe(true);
     expect(game.scene.arena.ignoringEffectSource).toBe(player.getBattlerIndex());
 
-    await game.toEndOfTurn();
+    await game.phaseInterceptor.to("MoveEndPhase");
     expect(game.scene.arena.ignoreAbilities).toBe(false);
-    expect(enemy.isFainted()).toBe(true);
+
+    await game.phaseInterceptor.to("TurnEndPhase");
+    expect(enemy).toBe(true);
+  });
+
+  it("should keep Levitate opponents grounded when using force switch moves", async () => {
+    game.override.enemyAbility(AbilityId.LEVITATE).enemySpecies(SpeciesId.WEEZING).battleType(BattleType.TRAINER);
+
+    // Setup toxic spikes and spikes
+    game.scene.arena.addTag(ArenaTagType.TOXIC_SPIKES, -1, MoveId.TOXIC_SPIKES, 1, ArenaTagSide.ENEMY);
+    game.scene.arena.addTag(ArenaTagType.SPIKES, -1, MoveId.CEASELESS_EDGE, 1, ArenaTagSide.ENEMY);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+
+    const [weezing1, weezing2] = game.scene.getEnemyParty();
+
+    // Weezing's levitate prevented removal of Toxic Spikes, ignored Spikes damage
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.ENEMY)).toBeDefined();
+    expect(weezing1.hp).toBe(weezing1.getMaxHp());
+
+    game.move.use(MoveId.DRAGON_TAIL);
+    await game.toEndOfTurn();
+
+    // Levitate was ignored during the switch, causing Toxic Spikes to be removed and Spikes to deal damage
+    expect(weezing1.isOnField()).toBe(false);
+    expect(weezing2.isOnField()).toBe(true);
+    expect(weezing2.getHpRatio()).toBeCloseTo(0.75);
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.ENEMY)).toBeUndefined();
   });
 });

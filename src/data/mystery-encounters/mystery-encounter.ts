@@ -340,16 +340,14 @@ export class MysteryEncounter implements IMysteryEncounter {
    * can cause scenarios where there are not enough Pokemon that are sufficient for all requirements.
    */
   private meetsPrimaryRequirementAndPrimaryPokemonSelected(): boolean {
-    if (!this.primaryPokemonRequirements || this.primaryPokemonRequirements.length === 0) {
-      const activeMon = globalScene.getPlayerParty().filter(p => p.isActive(true));
-      if (activeMon.length > 0) {
-        this.primaryPokemon = activeMon[0];
-      } else {
-        this.primaryPokemon = globalScene.getPlayerParty().filter(p => p.isAllowedInBattle())[0];
-      }
+    let qualified: PlayerPokemon[] = globalScene.getPlayerParty();
+    if (!this.primaryPokemonRequirements?.length) {
+      // If we lack specified criterion, grab the first on-field pokemon, or else the first pokemon allowed in battle
+      const activeMons = qualified.filter(p => p.isAllowedInBattle());
+      this.primaryPokemon = activeMons.find(p => p.isOnField()) ?? activeMons[0];
       return true;
     }
-    let qualified: PlayerPokemon[] = globalScene.getPlayerParty();
+
     for (const req of this.primaryPokemonRequirements) {
       if (req.meetsRequirement()) {
         qualified = qualified.filter(pkmn => req.queryParty(globalScene.getPlayerParty()).includes(pkmn));

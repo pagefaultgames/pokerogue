@@ -64,7 +64,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
   /** Is this the first strike of a move? */
   private firstHit: boolean;
-  /** Is this the last strike of a move? */
+  /** Is this the last strike of a move (either due to running out of hits or all targets being fainted/immune)? */
   private lastHit: boolean;
 
   /**
@@ -329,7 +329,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const targets = this.conductHitChecks(user, fieldMove);
 
     this.firstHit = user.turnData.hitCount === user.turnData.hitsLeft;
-    this.lastHit = user.turnData.hitsLeft === 1 || !targets.some(t => t.isActive(true));
+    this.lastHit = user.turnData.hitsLeft === 1 || targets.every(t => !t.isActive(true));
 
     // Play the animation if the move was successful against any of its targets or it has a POST_TARGET effect (like self destruct)
     if (
@@ -793,15 +793,16 @@ export class MoveEffectPhase extends PokemonPhase {
     if (!this.move.hitsSubstitute(user, target)) {
       this.applyOnTargetEffects(user, target, hitResult, firstTarget, wasCritical);
     }
+
     if (this.lastHit) {
       globalScene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
-
-      // Multi-hit check for Wimp Out/Emergency Exit
-      if (user.turnData.hitCount > 1) {
-        // TODO: Investigate why 0 is being passed for damage amount here
-        // and then determing if refactoring `applyMove` to return the damage dealt is appropriate.
-        applyAbAttrs("PostDamageAbAttr", { pokemon: target, damage: 0, source: user });
-      }
+      // Trigger Form changes on the final hit, alongside Wimp Out.
+      applyAbAttrs("PostDamageAbAttr", {
+        pokemon: target,
+        damage: user.turnData.lastMoveDamageDealt[target.getBattlerIndex()],
+        simulated: false,
+        source: user,
+      });
     }
   }
 
@@ -834,6 +835,7 @@ export class MoveEffectPhase extends PokemonPhase {
       isCritical,
     });
 
+    // Apply and/or remove type boosting tags (Flash Fire, Charge, etc.)
     const typeBoost = user.findTag(
       t => t instanceof TypeBoostTag && t.boostedType === user.getMoveType(this.move),
     ) as TypeBoostTag;
@@ -841,18 +843,17 @@ export class MoveEffectPhase extends PokemonPhase {
       user.removeTag(typeBoost.tagType);
     }
 
-    const isOneHitKo = result === HitResult.ONE_HIT_KO;
-
-    if (!dmg) {
+    if (dmg === 0) {
       return [result, false];
     }
 
+    const isOneHitKo = result === HitResult.ONE_HIT_KO;
     target.lapseTags(BattlerTagLapseType.HIT);
 
-    const substitute = target.getTag(SubstituteTag);
-    const isBlockedBySubstitute = substitute && this.move.hitsSubstitute(user, target);
+    const substituteTag = target.getTag(SubstituteTag);
+    const isBlockedBySubstitute = substituteTag && this.move.hitsSubstitute(user, target);
     if (isBlockedBySubstitute) {
-      substitute.hp -= dmg;
+      substituteTag.hp -= dmg;
     } else if (!target.isPlayer() && dmg >= target.hp) {
       globalScene.applyModifiers(EnemyEndureChanceModifier, false, target);
     }
@@ -861,10 +862,9 @@ export class MoveEffectPhase extends PokemonPhase {
       ? 0
       : target.damageAndUpdate(dmg, {
           result: result as DamageResult,
-          ignoreFaintPhase: true,
+          ignoreFaintPhase: true, // ignore faint phase so we can handle it ourselves
           ignoreSegments: isOneHitKo,
           isCritical,
-          source: user,
         });
 
     if (isCritical) {
@@ -878,14 +878,13 @@ export class MoveEffectPhase extends PokemonPhase {
     if (user.isPlayer()) {
       globalScene.validateAchvs(DamageAchv, new NumberHolder(damage));
 
-      if (damage > globalScene.gameData.gameStats.highestDamage) {
-        globalScene.gameData.gameStats.highestDamage = damage;
-      }
+      globalScene.gameData.gameStats.highestDamage = Math.max(damage, globalScene.gameData.gameStats.highestDamage);
     }
 
-    user.turnData.totalDamageDealt += damage;
+    user.turnData.lastMoveDamageDealt[target.getBattlerIndex()] += damage;
     user.turnData.singleHitDamageDealt = damage;
     target.battleData.hitCount++;
+    // TODO: this might be incorrect for counter moves
     target.turnData.damageTaken += damage;
 
     target.turnData.attacksReceived.unshift({

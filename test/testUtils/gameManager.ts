@@ -166,6 +166,8 @@ export class GameManager {
    * @param mode - The mode to wait for.
    * @param callback - The callback function to execute on next prompt.
    * @param expireFn - Optional function to determine if the prompt has expired.
+   * @remarks
+   * If multiple callbacks are queued for the same phase, they will be executed in the order they were added.
    */
   onNextPrompt(
     phaseTarget: string,

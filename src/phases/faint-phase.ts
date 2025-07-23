@@ -49,8 +49,6 @@ export class FaintPhase extends PokemonPhase {
       faintPokemon.getTag(BattlerTagType.GRUDGE)?.lapse(faintPokemon, BattlerTagLapseType.CUSTOM, this.source);
     }
 
-    faintPokemon.resetSummonData();
-
     if (!this.preventInstantRevive) {
       const instantReviveModifier = globalScene.applyModifier(
         PokemonInstantReviveModifier,
@@ -59,6 +57,7 @@ export class FaintPhase extends PokemonPhase {
       ) as PokemonInstantReviveModifier;
 
       if (instantReviveModifier) {
+        faintPokemon.resetSummonData();
         faintPokemon.loseHeldItem(instantReviveModifier);
         globalScene.updateModifiers(this.player);
         return this.end();
@@ -146,41 +145,32 @@ export class FaintPhase extends PokemonPhase {
       }
     }
 
+    const legalBackupPokemon = globalScene.getBackupPartyMemberIndices(pokemon);
+
     if (this.player) {
-      /** The total number of Pokemon in the player's party that can legally fight */
+      /** An array of Pokemon in the player's party that can legally fight. */
       const legalPlayerPokemon = globalScene.getPokemonAllowedInBattle();
-      /** The total number of legal player Pokemon that aren't currently on the field */
-      const legalPlayerPartyPokemon = legalPlayerPokemon.filter(p => !p.isActive(true));
-      if (!legalPlayerPokemon.length) {
-        /** If the player doesn't have any legal Pokemon, end the game */
+      if (legalPlayerPokemon.length === 0) {
+        // If the player doesn't have any legal Pokemon left in their party, end the game.
         globalScene.phaseManager.unshiftNew("GameOverPhase");
-      } else if (
-        globalScene.currentBattle.double &&
-        legalPlayerPokemon.length === 1 &&
-        legalPlayerPartyPokemon.length === 0
-      ) {
-        /**
-         * If the player has exactly one Pokemon in total at this point in a double battle, and that Pokemon
-         * is already on the field, unshift a phase that moves that Pokemon to center position.
-         */
+      } else if (globalScene.currentBattle.double && legalBackupPokemon.length === 0) {
+        /*
+        Otherwise, if the player has no reserve members left to switch in,
+        unshift a phase to move the other on-field pokemon to center position.
+        */
         globalScene.phaseManager.unshiftNew("ToggleDoublePositionPhase", true);
-      } else if (legalPlayerPartyPokemon.length > 0) {
-        /**
-         * If previous conditions weren't met, and the player has at least 1 legal Pokemon off the field,
-         * push a phase that prompts the player to summon a Pokemon from their party.
-         */
+      } else {
+        // If previous conditions weren't met, push a phase to prompt the player to select a new pokemon from their party.
         globalScene.phaseManager.pushNew("SwitchPhase", SwitchType.SWITCH, this.fieldIndex, true, false);
       }
     } else {
+      // Unshift a phase for EXP gains and/or one to switch in a replacement party member.
       globalScene.phaseManager.unshiftNew("VictoryPhase", this.battlerIndex);
-      if ([BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)) {
-        const hasReservePartyMember = !!globalScene
-          .getEnemyParty()
-          .filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot)
-          .length;
-        if (hasReservePartyMember) {
-          globalScene.phaseManager.pushNew("SwitchSummonPhase", SwitchType.SWITCH, this.fieldIndex, -1, false, false);
-        }
+      if (
+        [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType) &&
+        legalBackupPokemon.length > 0
+      ) {
+        globalScene.phaseManager.pushNew("SwitchSummonPhase", SwitchType.SWITCH, this.fieldIndex, -1, false, false);
       }
     }
 

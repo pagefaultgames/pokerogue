@@ -1764,20 +1764,26 @@ export class HitHealModifier extends PokemonHeldItemModifier {
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
   override apply(pokemon: Pokemon): boolean {
-    if (pokemon.turnData.totalDamageDealt && !pokemon.isFullHp()) {
-      // TODO: this shouldn't be undefined AFAIK
-      globalScene.phaseManager.unshiftNew(
-        "PokemonHealPhase",
-        pokemon.getBattlerIndex(),
-        toDmgValue(pokemon.turnData.totalDamageDealt / 8) * this.stackCount,
-        i18next.t("modifier:hitHealApply", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          typeName: this.type.name,
-        }),
-        true,
-      );
+    if (pokemon.isFullHp()) {
+      return false;
     }
 
+    // Collate the amount of damage this attack did against all its targets.
+    const totalDmgDealt = pokemon.turnData.lastMoveDamageDealt.reduce((r, d) => r + d, 0);
+    if (totalDmgDealt === 0) {
+      return false;
+    }
+
+    globalScene.phaseManager.unshiftNew(
+      "PokemonHealPhase",
+      pokemon.getBattlerIndex(),
+      toDmgValue(totalDmgDealt / 8) * this.stackCount,
+      i18next.t("modifier:hitHealApply", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        typeName: this.type.name,
+      }),
+      true,
+    );
     return true;
   }
 

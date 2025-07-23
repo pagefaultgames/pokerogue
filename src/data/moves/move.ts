@@ -25,6 +25,7 @@ import { getBerryEffectFunc } from "#data/berry";
 import { applyChallenges } from "#data/challenge";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
+import { ForceSwitchOutHelper, ForceSwitchOutHelperArgs } from "#data/helpers/force-switch";
 import {
   getNonVolatileStatusEffects,
   getStatusEffectHealText,
@@ -1297,10 +1298,12 @@ export class MoveEffectAttr extends MoveAttr {
    * @param user {@linkcode Pokemon} using the move
    * @param target {@linkcode Pokemon} target of the move
    * @param move {@linkcode Move} with this attribute
-   * @param args Set of unique arguments needed by this attribute
-   * @returns true if basic application of the ability attribute should be possible
+   * @param args - Any unique arguments needed by this attribute
+   * @returns `true` if basic application of the ability attribute should be possible.
+   * By default, checks that the target is not fainted and (for non self-targeting moves) not protected by an effect.
    */
   canApply(user: Pokemon, target: Pokemon, move: Move, args?: any[]) {
+    // TODO: why do we check frenzy tag here?
     return !! (this.selfTarget ? user.hp && !user.getTag(BattlerTagType.FRENZY) : target.hp)
            && (this.selfTarget || !target.getTag(BattlerTagType.PROTECTED) ||
                 move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target }));
@@ -1622,6 +1625,7 @@ export class MatchHpAttr extends FixedDamageAttr {
 
 type MoveFilter = (move: Move) => boolean;
 
+// TODO: fix this to check the last direct damage instance taken
 export class CounterDamageAttr extends FixedDamageAttr {
   private moveFilter: MoveFilter;
   private multiplier: number;
@@ -1703,6 +1707,7 @@ export class CelebrateAttr extends MoveEffectAttr {
 }
 
 export class RecoilAttr extends MoveEffectAttr {
+  /** Whether the recoil damage should use the user's max HP (`true`) or damage dealt `false`. */
   private useHp: boolean;
   private damageRatio: number;
   private unblockable: boolean;
@@ -1736,8 +1741,8 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
-    const damageValue = (!this.useHp ? user.turnData.totalDamageDealt : user.getMaxHp()) * this.damageRatio;
-    const minValue = user.turnData.totalDamageDealt ? 1 : 0;
+    const damageValue = (!this.useHp ? user.turnData.singleHitDamageDealt : user.getMaxHp()) * this.damageRatio;
+    const minValue = user.turnData.singleHitDamageDealt ? 1 : 0;
     const recoilDamage = toDmgValue(damageValue, minValue);
     if (!recoilDamage) {
       return false;
@@ -1890,8 +1895,8 @@ export class AddSubstituteAttr extends MoveEffectAttr {
   }
 
   /**
-   * Removes 1/4 of the user's maximum HP (rounded down) to create a substitute for the user
-   * @param user - The {@linkcode Pokemon} that used the move.
+   * Removes a fraction of the user's maximum HP to create a substitute.
+   * @param user - The {@linkcode Pokemon} using the move.
    * @param target - n/a
    * @param move - The {@linkcode Move} with this attribute.
    * @param args - n/a
@@ -1902,7 +1907,7 @@ export class AddSubstituteAttr extends MoveEffectAttr {
       return false;
     }
 
-    const damageTaken = this.roundUp ? Math.ceil(user.getMaxHp() * this.hpCost) : Math.floor(user.getMaxHp() * this.hpCost);
+    const damageTaken = (this.roundUp ? Math.ceil : Math.floor)(user.getMaxHp() * this.hpCost);
     user.damageAndUpdate(damageTaken, { result: HitResult.INDIRECT, ignoreSegments: true, ignoreFaintPhase: true });
     user.addTag(BattlerTagType.SUBSTITUTE, 0, move.id, user.id);
     return true;
@@ -2072,6 +2077,13 @@ export class FlameBurstAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute to KO the user while fully restoring HP/status of the next switched in Pokemon.
+ *
+ * Used for {@linkcode Moves.HEALING_WISH} and {@linkcode Moves.LUNAR_DANCE}.
+ * TODO: Implement "heal storing" if switched in pokemon is at full HP (likely with an end-of-turn ArenaTag).
+ * Will likely be blocked by the need for a "slot dependent ArenaTag" similar to Future Sight
+ */
 export class SacrificialFullRestoreAttr extends SacrificialAttr {
   protected restorePP: boolean;
   protected moveMessage: string;
@@ -2089,8 +2101,8 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
     }
 
     // We don't know which party member will be chosen, so pick the highest max HP in the party
-    const party = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
-    const maxPartyMemberHp = party.map(p => p.getMaxHp()).reduce((maxHp: number, hp: number) => Math.max(hp, maxHp), 0);
+    const party: Pokemon[] = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
+    const maxPartyMemberHp = Math.max(...party.map(p => p.getMaxHp()));
 
     const pm = globalScene.phaseManager;
 
@@ -2115,7 +2127,10 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, _target, _move) => globalScene.getPlayerParty().filter(p => p.isActive()).length > globalScene.currentBattle.getBattlerCount();
+    return (user) => {
+      const otherPartyIndices = globalScene.getBackupPartyMemberIndices(user)
+      return otherPartyIndices.length > 0;
+    }
   }
 }
 
@@ -6278,168 +6293,61 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
   }
 }
 
-
+/**
+ * Attribute to forcibly switch out the user or target of a Move.
+ */
+// TODO: Add locales for forced recall moves
 export class ForceSwitchOutAttr extends MoveEffectAttr {
-  constructor(
-    private selfSwitch: boolean = false,
-    private switchType: SwitchType = SwitchType.SWITCH
-  ) {
-    super(false, { lastHitOnly: true });
+  private readonly helper: ForceSwitchOutHelper;
+
+  constructor(args: ForceSwitchOutHelperArgs) {
+    super(false, { lastHitOnly: true }); // procy to
+    this.helper = new ForceSwitchOutHelper(args);
   }
 
-  isBatonPass() {
-    return this.switchType === SwitchType.BATON_PASS;
+  apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
+    if (!super.apply(user, target, move, _args)) {
+      return false;
+    };
+
+    this.helper.doSwitch(this.helper.selfSwitch ? user : target)
+    return true;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    // Check if the move category is not STATUS or if the switch out condition is not met
-    if (!this.getSwitchOutCondition()(user, target, move)) {
+  /**
+   * Check whether the target can be switched out.
+   */
+  override canApply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]) {
+    if (!super.canApply(user, target, _move, _args)) {
       return false;
     }
 
-    /** The {@linkcode Pokemon} to be switched out with this effect */
-    const switchOutTarget = this.selfSwitch ? user : target;
+    const switchOutTarget = this.helper.selfSwitch ? user : target;
 
-    // If the switch-out target is a Dondozo with a Tatsugiri in its mouth
-    // (e.g. when it uses Flip Turn), make it spit out the Tatsugiri before switching out.
-    switchOutTarget.lapseTag(BattlerTagType.COMMANDED);
-
-    if (switchOutTarget.isPlayer()) {
-      /**
-      * Check if Wimp Out/Emergency Exit activates due to being hit by U-turn or Volt Switch
-      * If it did, the user of U-turn or Volt Switch will not be switched out.
-      */
-      if (target.getAbility().hasAttr("PostDamageForceSwitchAbAttr")
-        && [ MoveId.U_TURN, MoveId.VOLT_SWITCH, MoveId.FLIP_TURN ].includes(move.id)
+    // Check for Wimp Out edge case - self-switching moves cannot proc if the attack also triggers Wimp Out/EE
+    // TODO: This can be improved with a move in flight global object
+    const moveDmgDealt = user.turnData.lastMoveDamageDealt[target.getBattlerIndex()]
+    if (
+      this.helper.selfSwitch
+      && moveDmgDealt
+      && target.getAbilityAttrs("PostDamageForceSwitchAbAttr").some(
+        p => p.canApply({pokemon: target, damage: moveDmgDealt, simulated: false, source: user}))
       ) {
-        if (this.hpDroppedBelowHalf(target)) {
-          return false;
-        }
-      }
-
-      // Find indices of off-field Pokemon that are eligible to be switched into
-      const eligibleNewIndices: number[] = [];
-      globalScene.getPlayerParty().forEach((pokemon, index) => {
-        if (pokemon.isAllowedInBattle() && !pokemon.isOnField()) {
-          eligibleNewIndices.push(index);
-        }
-      });
-
-      if (eligibleNewIndices.length < 1) {
         return false;
       }
 
-      if (switchOutTarget.hp > 0) {
-        if (this.switchType === SwitchType.FORCE_SWITCH) {
-          switchOutTarget.leaveField(true);
-          const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
-          globalScene.phaseManager.prependNewToPhase(
-            "MoveEndPhase",
-            "SwitchSummonPhase",
-            this.switchType,
-            switchOutTarget.getFieldIndex(),
-            slotIndex,
-            false,
-            true
-          );
-        } else {
-          switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-          globalScene.phaseManager.prependNewToPhase("MoveEndPhase",
-            "SwitchPhase",
-              this.switchType,
-              switchOutTarget.getFieldIndex(),
-              true,
-              true
-          );
-          return true;
-        }
-      }
-      return false;
-    } else if (globalScene.currentBattle.battleType !== BattleType.WILD) { // Switch out logic for enemy trainers
-      // Find indices of off-field Pokemon that are eligible to be switched into
-      const isPartnerTrainer = globalScene.currentBattle.trainer?.isPartner();
-      const eligibleNewIndices: number[] = [];
-      globalScene.getEnemyParty().forEach((pokemon, index) => {
-        if (pokemon.isAllowedInBattle() && !pokemon.isOnField() && (!isPartnerTrainer || pokemon.trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)) {
-          eligibleNewIndices.push(index);
-        }
-      });
-
-      if (eligibleNewIndices.length < 1) {
-        return false;
-      }
-
-      if (switchOutTarget.hp > 0) {
-        if (this.switchType === SwitchType.FORCE_SWITCH) {
-          switchOutTarget.leaveField(true);
-          const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
-          globalScene.phaseManager.prependNewToPhase("MoveEndPhase",
-            "SwitchSummonPhase",
-              this.switchType,
-              switchOutTarget.getFieldIndex(),
-              slotIndex,
-              false,
-              false
-          );
-        } else {
-          switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-          globalScene.phaseManager.prependNewToPhase("MoveEndPhase",
-            "SwitchSummonPhase",
-            this.switchType,
-            switchOutTarget.getFieldIndex(),
-            (globalScene.currentBattle.trainer ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
-            false,
-            false
-          );
-        }
-      }
-    } else { // Switch out logic for wild pokemon
-      /**
-      * Check if Wimp Out/Emergency Exit activates due to being hit by U-turn or Volt Switch
-      * If it did, the user of U-turn or Volt Switch will not be switched out.
-      */
-      if (target.getAbility().hasAttr("PostDamageForceSwitchAbAttr")
-        && [ MoveId.U_TURN, MoveId.VOLT_SWITCH, MoveId.FLIP_TURN ].includes(move.id)
-      ) {
-        if (this.hpDroppedBelowHalf(target)) {
-          return false;
-        }
-      }
-
-      const allyPokemon = switchOutTarget.getAlly();
-
-      if (switchOutTarget.hp > 0) {
-        switchOutTarget.leaveField(false);
-        globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:fled", { pokemonName: getPokemonNameWithAffix(switchOutTarget) }), null, true, 500);
-
-        // in double battles redirect potential moves off fled pokemon
-        if (globalScene.currentBattle.double && !isNullOrUndefined(allyPokemon)) {
-          globalScene.redirectPokemonMoves(switchOutTarget, allyPokemon);
-        }
-      }
-
-      // clear out enemy held item modifiers of the switch out target
-      globalScene.clearEnemyHeldItemModifiers(switchOutTarget);
-
-      if (!allyPokemon?.isActive(true) && switchOutTarget.hp) {
-          globalScene.phaseManager.pushNew("BattleEndPhase", false);
-
-          if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
-            globalScene.phaseManager.pushNew("SelectBiomePhase");
-          }
-
-          globalScene.phaseManager.pushNew("NewBattlePhase");
-      }
-    }
-
-	  return true;
+    return this.helper.canSwitchOut(switchOutTarget)
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => (move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move));
+    // Damaging switch moves and ones w/o a secondary effect do not "fail"
+    // upon an unsuccessful switch - they still succeed and perform secondary effects
+    // (just without actually switching out).
+    // TODO: Remove attr check once move attribute application is cleaned up
+    return (user, target, move) => (move.category !== MoveCategory.STATUS || move.attrs.length > 1 || this.canApply(user, target));
   }
 
-  getFailedText(_user: Pokemon, target: Pokemon, _move: Move): string | undefined {
+  getFailedText(_user: Pokemon, target: Pokemon): string | undefined {
     const cancelled = new BooleanHolder(false);
     applyAbAttrs("ForceSwitchOutImmunityAbAttr", {pokemon: target, cancelled});
     if (cancelled.value) {
@@ -6447,86 +6355,24 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     }
   }
 
-
-  getSwitchOutCondition(): MoveConditionFunc {
-    return (user, target, move) => {
-      const switchOutTarget = (this.selfSwitch ? user : target);
-      const player = switchOutTarget.isPlayer();
-      const forceSwitchAttr = move.getAttrs("ForceSwitchOutAttr").find(attr => attr.switchType === SwitchType.FORCE_SWITCH);
-
-      if (!this.selfSwitch) {
-        if (move.hitsSubstitute(user, target)) {
-          return false;
-        }
-
-        // Check if the move is Roar or Whirlwind and if there is a trainer with only Pokémon left.
-        if (forceSwitchAttr && globalScene.currentBattle.trainer) {
-        const enemyParty = globalScene.getEnemyParty();
-        // Filter out any Pokémon that are not allowed in battle (e.g. fainted ones)
-        const remainingPokemon = enemyParty.filter(p => p.hp > 0 && p.isAllowedInBattle());
-          if (remainingPokemon.length <= 1) {
-            return false;
-          }
-        }
-
-        // Dondozo with an allied Tatsugiri in its mouth cannot be forced out
-        const commandedTag = switchOutTarget.getTag(BattlerTagType.COMMANDED);
-        if (commandedTag?.getSourcePokemon()?.isActive(true)) {
-          return false;
-        }
-
-        if (!player && globalScene.currentBattle.isBattleMysteryEncounter() && !globalScene.currentBattle.mysteryEncounter?.fleeAllowed) {
-          // Don't allow wild opponents to be force switched during MEs with flee disabled
-          return false;
-        }
-
-        const blockedByAbility = new BooleanHolder(false);
-        applyAbAttrs("ForceSwitchOutImmunityAbAttr", {pokemon: target, cancelled: blockedByAbility});
-        if (blockedByAbility.value) {
-          return false;
-        }
-      }
-
-
-      if (!player && globalScene.currentBattle.battleType === BattleType.WILD) {
-        // wild pokemon cannot switch out with baton pass.
-        return !this.isBatonPass()
-                && globalScene.currentBattle.waveIndex % 10 !== 0
-                // Don't allow wild mons to flee with U-turn et al.
-                && !(this.selfSwitch && MoveCategory.STATUS !== move.category);
-      }
-
-      const party = player ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
-      return party.filter(p => p.isAllowedInBattle() && !p.isOnField()
-          && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > 0;
-    };
-  }
-
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    if (!globalScene.getEnemyParty().find(p => p.isActive() && !p.isOnField())) {
+    const switchOutTarget = this.helper.selfSwitch ? user : target;
+    const reservePartyMembers = globalScene.getBackupPartyMemberIndices(switchOutTarget)
+    if (reservePartyMembers.length === 0) {
       return -20;
     }
-    let ret = this.selfSwitch ? Math.floor((1 - user.getHpRatio()) * 20) : super.getUserBenefitScore(user, target, move);
-    if (this.selfSwitch && this.isBatonPass()) {
-      const statStageTotal = user.getStatStages().reduce((s: number, total: number) => total += s, 0);
+
+    let ret = this.helper.selfSwitch ? Math.floor((1 - user.getHpRatio()) * 20) : super.getUserBenefitScore(user, target, move);
+    if (this.helper.selfSwitch && this.isBatonPass()) {
+      const statStageTotal = user.getStatStages().reduce((total, s) => total + s, 0);
+      // TODO: Why do we use a sine tween?
       ret = ret / 2 + (Phaser.Tweens.Builders.GetEaseFunction("Sine.easeOut")(Math.min(Math.abs(statStageTotal), 10) / 10) * (statStageTotal >= 0 ? 10 : -10));
     }
     return ret;
   }
 
-  /**
-  * Helper function to check if the Pokémon's health is below half after taking damage.
-  * Used for an edge case interaction with Wimp Out/Emergency Exit.
-  * If the Ability activates due to being hit by U-turn or Volt Switch, the user of that move will not be switched out.
-  */
-  hpDroppedBelowHalf(target: Pokemon): boolean {
-    const pokemonHealth = target.hp;
-    const maxPokemonHealth = target.getMaxHp();
-    const damageTaken = target.turnData.damageTaken;
-    const initialHealth = pokemonHealth + damageTaken;
-
-    // Check if the Pokémon's health has dropped below half after the damage
-    return initialHealth >= maxPokemonHealth / 2 && pokemonHealth < maxPokemonHealth / 2;
+  public isBatonPass(): boolean {
+    return this.helper.switchType === SwitchType.BATON_PASS;
   }
 }
 
@@ -6537,10 +6383,12 @@ export class ChillyReceptionAttr extends ForceSwitchOutAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    // chilly reception move will go through if the weather is change-able to snow, or the user can switch out, else move will fail
-    return (user, target, move) => globalScene.arena.weather?.weatherType !== WeatherType.SNOW || super.getSwitchOutCondition()(user, target, move);
+    // chilly reception will succeed if the weather is changeable to snow OR the user can be switched out,
+    // only failing if neither is the case.
+    return (user, target, move) => globalScene.arena.weather?.weatherType !== WeatherType.SNOW || super.getCondition()(user, target, move);
   }
 }
+
 export class RemoveTypeAttr extends MoveEffectAttr {
 
   private removedType: PokemonType;
@@ -8008,11 +7856,6 @@ const targetSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target
 
 const failIfLastCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => globalScene.phaseManager.phaseQueue.find(phase => phase.is("MovePhase")) !== undefined;
 
-const failIfLastInPartyCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => {
-  const party: Pokemon[] = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
-  return party.some(pokemon => pokemon.isActive() && !pokemon.isOnField());
-};
-
 const failIfGhostTypeCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => !target.isOfType(PokemonType.GHOST);
 
 const failIfNoTargetHeldItemsCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => target.getHeldItems().filter(i => i.isTransferable)?.length > 0;
@@ -8479,7 +8322,7 @@ export function initMoves() {
       .windMove(),
     new AttackMove(MoveId.WING_ATTACK, PokemonType.FLYING, MoveCategory.PHYSICAL, 60, 100, 35, -1, 0, 1),
     new StatusMove(MoveId.WHIRLWIND, PokemonType.NORMAL, -1, 20, -1, -6, 1)
-      .attr(ForceSwitchOutAttr, false, SwitchType.FORCE_SWITCH)
+      .attr(ForceSwitchOutAttr, {switchType: SwitchType.FORCE_SWITCH, allowFlee: true})
       .ignoresSubstitute()
       .hidesTarget()
       .windMove()
@@ -8562,7 +8405,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .reflectable(),
     new StatusMove(MoveId.ROAR, PokemonType.NORMAL, -1, 20, -1, -6, 1)
-      .attr(ForceSwitchOutAttr, false, SwitchType.FORCE_SWITCH)
+    .attr(ForceSwitchOutAttr, {selfSwitch: true, switchType: SwitchType.FORCE_SWITCH, allowFlee: true})
       .soundBased()
       .hidesTarget()
       .reflectable(),
@@ -8722,7 +8565,7 @@ export function initMoves() {
     new AttackMove(MoveId.RAGE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 20, 100, 20, -1, 0, 1)
       .partial(), // No effect implemented
     new SelfStatusMove(MoveId.TELEPORT, PokemonType.PSYCHIC, -1, 20, -1, -6, 1)
-      .attr(ForceSwitchOutAttr, true)
+      .attr(ForceSwitchOutAttr, {selfSwitch: true, switchType: SwitchType.SWITCH, allowFlee: true})
       .hidesUser(),
     new AttackMove(MoveId.NIGHT_SHADE, PokemonType.GHOST, MoveCategory.SPECIAL, -1, 100, 15, -1, 0, 1)
       .attr(LevelDamageAttr),
@@ -9122,8 +8965,7 @@ export function initMoves() {
     new AttackMove(MoveId.DRAGON_BREATH, PokemonType.DRAGON, MoveCategory.SPECIAL, 60, 100, 20, 30, 0, 2)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS),
     new SelfStatusMove(MoveId.BATON_PASS, PokemonType.NORMAL, -1, 40, -1, 0, 2)
-      .attr(ForceSwitchOutAttr, true, SwitchType.BATON_PASS)
-      .condition(failIfLastInPartyCondition)
+      .attr(ForceSwitchOutAttr, {selfSwitch: true, switchType: SwitchType.BATON_PASS})
       .hidesUser(),
     new StatusMove(MoveId.ENCORE, PokemonType.NORMAL, 100, 5, -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, true)
@@ -9566,8 +9408,7 @@ export function initMoves() {
       .ballBombMove(),
     new SelfStatusMove(MoveId.HEALING_WISH, PokemonType.PSYCHIC, -1, 10, -1, 0, 4)
       .attr(SacrificialFullRestoreAttr, false, "moveTriggers:sacrificialFullRestore")
-      .triageMove()
-      .condition(failIfLastInPartyCondition),
+      .triageMove(),
     new AttackMove(MoveId.BRINE, PokemonType.WATER, MoveCategory.SPECIAL, 65, 100, 10, -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHpRatio() < 0.5 ? 2 : 1),
     new AttackMove(MoveId.NATURAL_GIFT, PokemonType.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 4)
@@ -9598,7 +9439,7 @@ export function initMoves() {
       .makesContact(false)
       .target(MoveTarget.ATTACKER),
     new AttackMove(MoveId.U_TURN, PokemonType.BUG, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 4)
-      .attr(ForceSwitchOutAttr, true),
+      .attr(ForceSwitchOutAttr, {selfSwitch: true}),
     new AttackMove(MoveId.CLOSE_COMBAT, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 4)
       .attr(StatStageChangeAttr, [ Stat.DEF, Stat.SPDEF ], -1, true),
     new AttackMove(MoveId.PAYBACK, PokemonType.DARK, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 4)
@@ -9865,8 +9706,7 @@ export function initMoves() {
     new SelfStatusMove(MoveId.LUNAR_DANCE, PokemonType.PSYCHIC, -1, 10, -1, 0, 4)
       .attr(SacrificialFullRestoreAttr, true, "moveTriggers:lunarDanceRestore")
       .danceMove()
-      .triageMove()
-      .condition(failIfLastInPartyCondition),
+      .triageMove(),
     new AttackMove(MoveId.CRUSH_GRIP, PokemonType.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 4)
       .attr(OpponentHighHpPowerAttr, 120),
     new AttackMove(MoveId.MAGMA_STORM, PokemonType.FIRE, MoveCategory.SPECIAL, 100, 75, 5, -1, 0, 4)
@@ -10027,7 +9867,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.ATK ], 1, true)
       .attr(StatStageChangeAttr, [ Stat.SPD ], 2, true),
     new AttackMove(MoveId.CIRCLE_THROW, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 60, 90, 10, -1, -6, 5)
-      .attr(ForceSwitchOutAttr, false, SwitchType.FORCE_SWITCH)
+      .attr(ForceSwitchOutAttr, {switchType: SwitchType.FORCE_SWITCH, allowFlee: true})
       .hidesTarget(),
     new AttackMove(MoveId.INCINERATE, PokemonType.FIRE, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
@@ -10087,7 +9927,7 @@ export function initMoves() {
       .attr(AddPledgeEffectAttr, ArenaTagType.FIRE_GRASS_PLEDGE, MoveId.FIRE_PLEDGE)
       .attr(BypassRedirectAttr, true),
     new AttackMove(MoveId.VOLT_SWITCH, PokemonType.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 5)
-      .attr(ForceSwitchOutAttr, true),
+      .attr(ForceSwitchOutAttr, {selfSwitch: true}),
     new AttackMove(MoveId.STRUGGLE_BUG, PokemonType.BUG, MoveCategory.SPECIAL, 50, 100, 20, 100, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -10099,7 +9939,7 @@ export function initMoves() {
     new AttackMove(MoveId.FROST_BREATH, PokemonType.ICE, MoveCategory.SPECIAL, 60, 90, 10, -1, 0, 5)
       .attr(CritOnlyAttr),
     new AttackMove(MoveId.DRAGON_TAIL, PokemonType.DRAGON, MoveCategory.PHYSICAL, 60, 90, 10, -1, -6, 5)
-      .attr(ForceSwitchOutAttr, false, SwitchType.FORCE_SWITCH)
+      .attr(ForceSwitchOutAttr, {switchType: SwitchType.FORCE_SWITCH, allowFlee: true})
       .hidesTarget(),
     new SelfStatusMove(MoveId.WORK_UP, PokemonType.NORMAL, -1, 30, -1, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], 1, true),
@@ -10255,9 +10095,10 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(MoveId.PARTING_SHOT, PokemonType.DARK, 100, 20, -1, 0, 6)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], -1, false, { trigger: MoveEffectTrigger.PRE_APPLY })
-      .attr(ForceSwitchOutAttr, true)
+      .attr(ForceSwitchOutAttr, {selfSwitch: true})
       .soundBased()
-      .reflectable(),
+      .reflectable()
+      .edgeCase(), // should not fail if no target is switched out
     new StatusMove(MoveId.TOPSY_TURVY, PokemonType.DARK, -1, 20, -1, 0, 6)
       .attr(InvertStatsAttr)
       .reflectable(),
@@ -10987,7 +10828,7 @@ export function initMoves() {
       .target(MoveTarget.NEAR_ALLY)
       .condition(failIfSingleBattle),
     new AttackMove(MoveId.FLIP_TURN, PokemonType.WATER, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 8)
-      .attr(ForceSwitchOutAttr, true),
+      .attr(ForceSwitchOutAttr, {selfSwitch: true}),
     new AttackMove(MoveId.TRIPLE_AXEL, PokemonType.ICE, MoveCategory.PHYSICAL, 20, 90, 10, -1, 0, 8)
       .attr(MultiHitAttr, MultiHitType._3)
       .attr(MultiHitPowerIncrementAttr, 3)
@@ -11320,15 +11161,14 @@ export function initMoves() {
       .makesContact(),
     new SelfStatusMove(MoveId.SHED_TAIL, PokemonType.NORMAL, -1, 10, -1, 0, 9)
       .attr(AddSubstituteAttr, 0.5, true)
-      .attr(ForceSwitchOutAttr, true, SwitchType.SHED_TAIL)
-      .condition(failIfLastInPartyCondition),
+      .attr(ForceSwitchOutAttr,  {selfSwitch: true, switchType: SwitchType.SHED_TAIL}),
     new SelfStatusMove(MoveId.CHILLY_RECEPTION, PokemonType.ICE, -1, 10, -1, 0, 9)
       .attr(PreMoveMessageAttr, (user, _target, _move) =>
         // Don't display text if current move phase is follow up (ie move called indirectly)
         isVirtual((globalScene.phaseManager.getCurrentPhase() as MovePhase).useMode)
           ? ""
           : i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(user) }))
-      .attr(ChillyReceptionAttr, true),
+      .attr(ChillyReceptionAttr, {selfSwitch: true}),
     new SelfStatusMove(MoveId.TIDY_UP, PokemonType.NORMAL, -1, 10, -1, 0, 9)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPD ], 1, true)
       .attr(RemoveArenaTrapAttr, true)
