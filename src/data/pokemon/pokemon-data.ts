@@ -191,7 +191,7 @@ export class PokemonSummonData {
       if (key === "tags" && Array.isArray(value)) {
         // load battler tags, discarding any that are not serializable
         this.tags = value
-          .map((t: BattlerTag) => loadBattlerTag(t))
+          .map((t: SerializableBattlerTag) => loadBattlerTag(t))
           .filter((t): t is SerializableBattlerTag => t instanceof SerializableBattlerTag);
         continue;
       }
