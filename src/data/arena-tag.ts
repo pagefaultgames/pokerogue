@@ -20,7 +20,6 @@ import { StatusEffect } from "#enums/status-effect";
 import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import type {
-  ArenaDelayedAttackTagType,
   ArenaScreenTagType,
   ArenaTagTypeData,
   ArenaTrapTagType,
@@ -33,7 +32,7 @@ import i18next from "i18next";
 /*
 ArenaTags are are meant for effects that are tied to the arena (as opposed to a specific pokemon).
 Examples include (but are not limited to)
-- Cross-turn effects that persist even if the user/target switches out, such as Wish, Future Sight, and Happy Hour
+- Cross-turn effects that persist even if the user/target switches out, such as and Happy Hour
 - Effects that are applied to a specific side of the field, such as Crafty Shield, Reflect, and Spikes
 - Field-Effects, like Gravity and Trick Room
 
@@ -43,7 +42,7 @@ Serializable ArenaTags have strict rules for their fields.
 These rules ensure that only the data necessary to reconstruct the tag is serialized, and that the
 session loader is able to deserialize saved tags correctly.
 
-If the data is static (i.e. it is always the same for all instances of the class, such as the 
+If the data is static (i.e. it is always the same for all instances of the class, such as the
 type that is weakened by Mud Sport/Water Sport), then it must not be defined as a field, and must
 instead be defined as a getter.
 A static property is also acceptable, though static properties are less ergonomic with inheritance.
@@ -1077,48 +1076,6 @@ class StickyWebTag extends ArenaTrapTag {
 }
 
 /**
- * Arena Tag class for delayed attacks, such as {@linkcode MoveId.FUTURE_SIGHT} or {@linkcode MoveId.DOOM_DESIRE}.
- * Delays the attack's effect by a set amount of turns, usually 3 (including the turn the move is used),
- * and deals damage after the turn count is reached.
- */
-export class DelayedAttackTag extends SerializableArenaTag {
-  public targetIndex: BattlerIndex;
-  public readonly tagType: ArenaDelayedAttackTagType;
-
-  constructor(
-    tagType: ArenaTagType.DOOM_DESIRE | ArenaTagType.FUTURE_SIGHT,
-    sourceMove: MoveId | undefined,
-    sourceId: number | undefined,
-    targetIndex: BattlerIndex,
-    side: ArenaTagSide = ArenaTagSide.BOTH,
-  ) {
-    super(3, sourceMove, sourceId, side);
-    this.tagType = tagType;
-    this.targetIndex = targetIndex;
-    this.side = side;
-  }
-
-  lapse(arena: Arena): boolean {
-    const ret = super.lapse(arena);
-
-    if (!ret) {
-      // TODO: This should not add to move history (for Spite)
-      globalScene.phaseManager.unshiftNew(
-        "MoveEffectPhase",
-        this.sourceId!,
-        [this.targetIndex],
-        allMoves[this.sourceMove!],
-        MoveUseMode.FOLLOW_UP,
-      ); // TODO: are those bangs correct?
-    }
-
-    return ret;
-  }
-
-  onRemove(_arena: Arena): void {}
-}
-
-/**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Trick_Room_(move) Trick Room}.
  * Reverses the Speed stats for all Pokémon on the field as long as this arena tag is up,
  * also reversing the turn order for all Pokémon on the field as well.
@@ -1682,7 +1639,7 @@ export function getArenaTag(
  */
 export function loadArenaTag(source: ArenaTag | ArenaTagTypeData): ArenaTag {
   const tag =
-    getArenaTag(source.tagType, source.sourceId, source.sourceMove, source.turnCount, source.side) ?? new NoneTag();
+    getArenaTag(source.tagType, source.turnCount, source.sourceMove, source.sourceId, source.side) ?? new NoneTag();
   tag.loadTag(source);
   return tag;
 }

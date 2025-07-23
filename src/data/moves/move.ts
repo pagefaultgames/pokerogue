@@ -3141,7 +3141,7 @@ abstract class AddPositionalTagAttr extends OverrideMoveEffectAttr {
 
   public override getCondition(): MoveConditionFunc {
     // Check the arena if another similar positional tag is active and affecting the same slot
-    return (_user, target, move) => globalScene.arena.positionalTagManager.canAddTag(this.tagType, target.getBattlerIndex(), move.id)
+    return (_user, target, move) => globalScene.arena.positionalTagManager.canAddTag(this.tagType, target.getBattlerIndex())
   }
 }
 
@@ -3201,7 +3201,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 
   public override getCondition(): MoveConditionFunc {
     // Check the arena if another similar attack is active and affecting the same slot
-    return (_user, target, move) => globalScene.arena.positionalTagManager.canAddTag(PositionalTagType.DELAYED_ATTACK, target.getBattlerIndex(), move.id)
+    return (_user, target, move) => globalScene.arena.positionalTagManager.canAddTag(PositionalTagType.DELAYED_ATTACK, target.getBattlerIndex())
   }
 }
 
@@ -3219,8 +3219,8 @@ export class WishAttr extends MoveEffectAttr {
   }
 
   public override getCondition(): MoveConditionFunc {
-    // Check the arena if another similar attack is active and affecting the same slot
-    return (_user, target, move) => globalScene.arena.positionalTagManager.canAddTag(PositionalTagType.WISH, target.getBattlerIndex(), move.id)
+    // Check the arena if another wish is active and affecting the same slot
+    return (_user, target) => globalScene.arena.positionalTagManager.canAddTag(PositionalTagType.WISH, target.getBattlerIndex())
   }
 }
 

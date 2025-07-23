@@ -13,6 +13,7 @@ export interface SerializedArenaData {
   weather: NonFunctionProperties<Weather> | null;
   terrain: NonFunctionProperties<Terrain> | null;
   tags?: ArenaTagTypeData[];
+  positionalTags: SerializedPositionalTag[];
   playerTerasUsed?: number;
 }
 
@@ -34,17 +35,20 @@ export class ArenaData {
         ?.filter((tag): tag is SerializableArenaTag => tag instanceof SerializableArenaTag) ?? [];
 
     this.playerTerasUsed = source.playerTerasUsed ?? 0;
-    this.positionalTags = (sourceArena ? sourceArena.positionalTagManager.tags : source.positionalTags) ?? [];
 
     if (source instanceof Arena) {
       this.biome = source.biomeType;
       this.weather = source.weather;
       this.terrain = source.terrain;
+      // The assertion here is ok - we ensure that all tags are inside the `posTagConstructorMap` map,
+      // and that all `PositionalTags` will become their respective interfaces when serialized and de-serialized.
+      this.positionalTags = (source.positionalTagManager.tags as unknown as SerializedPositionalTag[]) ?? [];
       return;
     }
 
     this.biome = source.biome;
     this.weather = source.weather ? new Weather(source.weather.weatherType, source.weather.turnsLeft) : null;
     this.terrain = source.terrain ? new Terrain(source.terrain.terrainType, source.terrain.turnsLeft) : null;
+    this.positionalTags = source.positionalTags ?? [];
   }
 }
