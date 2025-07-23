@@ -12,6 +12,7 @@ import i18next from "i18next";
 export interface ForceSwitchOutHelperArgs {
   /**
    * Whether to switch out the user (`true`) or target (`false`).
+   * If `true`, will ignore certain effects that would otherwise block forced switches.
    * @defaultValue `false`
    */
   selfSwitch?: boolean;
@@ -21,7 +22,7 @@ export interface ForceSwitchOutHelperArgs {
    */
   switchType?: NormalSwitchType;
   /**
-   * Whether to allow non-boss wild Pokemon to flee when using the move.
+   * Whether to allow non-boss wild Pokemon to flee from this effect's activation.
    * @defaultValue `false`
    */
   allowFlee?: boolean;
@@ -47,8 +48,6 @@ export class ForceSwitchOutHelper implements ForceSwitchOutHelperArgs {
    * @returns Whether {@linkcode switchOutTarget} can be switched out by the current effect.
    */
   public canSwitchOut(switchOutTarget: Pokemon): boolean {
-    const isPlayer = switchOutTarget.isPlayer();
-
     if (switchOutTarget.isFainted()) {
       // Fainted Pokemon cannot be switched out by any means.
       // This is already checked in `MoveEffectAttr.canApply`, but better safe than sorry
@@ -60,8 +59,9 @@ export class ForceSwitchOutHelper implements ForceSwitchOutHelperArgs {
       return false;
     }
 
-    // Wild enemies should not be allowed to flee with fleeing moves, nor by any means on X0 waves (don't want easy boss wins)
+    // Wild enemies should not be allowed to flee with ineligible fleeing moves, nor by any means on X0 waves (don't want easy boss wins)
     // TODO: Do we want to show a message for wave X0 failures?
+    const isPlayer = switchOutTarget.isPlayer();
     if (!isPlayer && globalScene.currentBattle.battleType === BattleType.WILD) {
       return this.allowFlee && globalScene.currentBattle.waveIndex % 10 !== 0;
     }
@@ -126,7 +126,7 @@ export class ForceSwitchOutHelper implements ForceSwitchOutHelperArgs {
 
   /**
    * Method to handle switching out a player Pokemon.
-   * @param switchOutTarget - The {@linkcode PlayerPokemon} to be switched out.
+   * @param switchOutTarget - The {@linkcode PlayerPokemon} to be switched out
    */
   private trySwitchPlayerPokemon(switchOutTarget: PlayerPokemon): void {
     // If not forced to switch, add a SwitchPhase to allow picking the next switched in Pokemon.
@@ -160,7 +160,7 @@ export class ForceSwitchOutHelper implements ForceSwitchOutHelperArgs {
 
   /**
    * Method to handle switching out an opposing trainer's Pokemon.
-   * @param switchOutTarget - The {@linkcode EnemyPokemon} to be switched out.
+   * @param switchOutTarget - The {@linkcode EnemyPokemon} to be switched out
    */
   private trySwitchTrainerPokemon(switchOutTarget: EnemyPokemon): void {
     // fallback for no trainer
@@ -189,7 +189,7 @@ export class ForceSwitchOutHelper implements ForceSwitchOutHelperArgs {
 
   /**
    * Method to handle fleeing a wild enemy Pokemon, redirecting incoming moves to its ally as applicable.
-   * @param switchOutTarget - The {@linkcode EnemyPokemon} fleeing the battle.
+   * @param switchOutTarget - The {@linkcode EnemyPokemon} fleeing the battle
    */
   private tryFleeWildPokemon(switchOutTarget: EnemyPokemon): void {
     switchOutTarget.leaveField(true);

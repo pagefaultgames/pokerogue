@@ -6337,8 +6337,10 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
   /**
    * Applies the switch-out logic after the Pokémon takes damage.
    */
-  public override apply({ pokemon }: PostDamageAbAttrParams): void {
-    // TODO: Consider respecting the `simulated` flag here
+  public override apply({ pokemon, simulated }: PostDamageAbAttrParams): void {
+    if (simulated) {
+      return;
+    }
     this.helper.doSwitch(pokemon);
   }
 }

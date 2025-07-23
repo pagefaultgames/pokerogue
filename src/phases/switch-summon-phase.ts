@@ -36,7 +36,7 @@ export class SwitchSummonPhase extends SummonPhase {
     // -1 = "use trainer switch logic"
     this.slotIndex =
       slotIndex > -1
-        ? this.slotIndex
+        ? slotIndex
         : globalScene.currentBattle.trainer!.getNextSummonIndex(this.getTrainerSlotFromFieldIndex());
     this.doReturn = doReturn;
   }
@@ -65,7 +65,7 @@ export class SwitchSummonPhase extends SummonPhase {
       // If the target is still on-field, remove it and/or hide its info container.
       // Effects are kept to be transferred to the new Pokemon later on.
       if (switchOutPokemon.isOnField()) {
-        switchOutPokemon.leaveField(false, switchOutPokemon.getBattleInfo()?.visible);
+        switchOutPokemon.leaveField(false, switchOutPokemon.getBattleInfo().visible);
       }
 
       if (this.player) {
@@ -114,7 +114,7 @@ export class SwitchSummonPhase extends SummonPhase {
       scale: 0.5,
       onComplete: () => {
         globalScene.time.delayedCall(750, () => this.switchAndSummon());
-        switchOutPokemon.leaveField(this.switchType === SwitchType.SWITCH, false); // TODO: do we have to do this right here right now
+        switchOutPokemon.leaveField(this.switchType === SwitchType.SWITCH, false); // TODO: this reset effects call is dubious
       },
     });
   }
@@ -227,16 +227,14 @@ export class SwitchSummonPhase extends SummonPhase {
     // Baton Pass over any eligible effects or substitutes before resetting the last pokemon's temporary data.
     if (this.switchType === SwitchType.BATON_PASS) {
       activePokemon.transferSummon(this.lastPokemon);
-      this.lastPokemon.resetTurnData();
-      this.lastPokemon.resetSummonData();
     } else if (this.switchType === SwitchType.SHED_TAIL) {
       const subTag = this.lastPokemon.getTag(SubstituteTag);
       if (subTag) {
         activePokemon.summonData.tags.push(subTag);
       }
-      this.lastPokemon.resetTurnData();
-      this.lastPokemon.resetSummonData();
     }
+    this.lastPokemon.resetTurnData();
+    this.lastPokemon.resetSummonData();
 
     globalScene.triggerPokemonFormChange(activePokemon, SpeciesFormChangeActiveTrigger, true);
     // Reverts to weather-based forms when weather suppressors (Cloud Nine/Air Lock) are switched out

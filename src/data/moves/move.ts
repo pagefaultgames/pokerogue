@@ -6301,7 +6301,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   private readonly helper: ForceSwitchOutHelper;
 
   constructor(args: ForceSwitchOutHelperArgs) {
-    super(false, { lastHitOnly: true }); // procy to
+    super(false, { lastHitOnly: true });
     this.helper = new ForceSwitchOutHelper(args);
   }
 
@@ -6344,7 +6344,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     // upon an unsuccessful switch - they still succeed and perform secondary effects
     // (just without actually switching out).
     // TODO: Remove attr check once move attribute application is cleaned up
-    return (user, target, move) => (move.category !== MoveCategory.STATUS || move.attrs.length > 1 || this.canApply(user, target));
+    return (user, target, move) => (move.category !== MoveCategory.STATUS || move.attrs.length > 1 || this.canApply(user, target, move, []));
   }
 
   getFailedText(_user: Pokemon, target: Pokemon): string | undefined {
