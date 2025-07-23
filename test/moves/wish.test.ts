@@ -122,7 +122,7 @@ describe("Move - Wish", () => {
     await game.move.forceEnemyMove(MoveId.WISH);
     await game.toNextTurn();
 
-    expectWishActive(2);
+    expectWishActive(4);
 
     // Lower speed to change turn order
     alomomola.setStatStage(Stat.SPD, 6);
