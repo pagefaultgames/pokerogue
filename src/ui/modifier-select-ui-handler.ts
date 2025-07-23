@@ -934,7 +934,6 @@ class ModifierOption extends Phaser.GameObjects.Container {
               duration: 750,
               ease: "Sine.easeOut",
               onComplete: () => {
-                console.log("pbTint complete");
                 this.pbTint.setVisible(false);
                 resolve();
               },
