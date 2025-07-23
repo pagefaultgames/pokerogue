@@ -210,7 +210,7 @@ export abstract class MoveRestrictionBattlerTag extends SerializableBattlerTag {
   }
 
   /**
-   * Determine whether this a move's usage is restricted by this tag
+   * Determine whether a move's usage is restricted by this tag
    *
    * @param move - {@linkcode MoveId} ID to check restriction for.
    * @param user - The {@linkcode Pokemon} involved
@@ -2492,7 +2492,7 @@ export class FormBlockDamageTag extends SerializableBattlerTag {
   /**
    * Determines if the tag can be added to the Pokémon.
    * @param pokemon - The Pokémon to which the tag might be added.
-   * @returns True if the tag can be added, false otherwise.
+   * @returns `true` if the tag can be added, `false` otherwise.
    */
   canAdd(pokemon: Pokemon): boolean {
     return pokemon.formIndex === 0;
@@ -2529,7 +2529,7 @@ export class IceFaceBlockDamageTag extends FormBlockDamageTag {
   /**
    * Determines if the tag can be added to the Pokémon.
    * @param pokemon - The Pokémon to which the tag might be added.
-   * @returns True if the tag can be added, false otherwise.
+   * @returns `true` if the tag can be added, `false` otherwise.
    */
   canAdd(pokemon: Pokemon): boolean {
     const weatherType = globalScene.arena.weather?.weatherType;
