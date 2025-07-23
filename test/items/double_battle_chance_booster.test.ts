@@ -1,13 +1,13 @@
+import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
+import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
-import { DoubleBattleChanceBoosterModifier } from "#app/modifier/modifier";
-import GameManager from "#test/testUtils/gameManager";
+import { UiMode } from "#enums/ui-mode";
+import { DoubleBattleChanceBoosterModifier } from "#modifiers/modifier";
+import { GameManager } from "#test/testUtils/gameManager";
+import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
-import { UiMode } from "#enums/ui-mode";
-import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { Button } from "#app/enums/buttons";
 
 describe("Items - Double Battle Chance Boosters", () => {
   let phaserGame: Phaser.Game;

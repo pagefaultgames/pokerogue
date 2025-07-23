@@ -1,11 +1,11 @@
-import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";
-import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
-import { getPokemonSpeciesForm } from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { globalScene } from "#app/global-scene";
-import type { SessionSaveData, SystemSaveData } from "#app/system/game-data";
+import { getPokemonSpeciesForm } from "#data/pokemon-species";
 import { DexAttr } from "#enums/dex-attr";
-import { isNullOrUndefined } from "#app/utils/common";
+import type { SessionSaveData, SystemSaveData } from "#system/game-data";
+import type { SessionSaveMigrator } from "#types/SessionSaveMigrator";
+import type { SystemSaveMigrator } from "#types/SystemSaveMigrator";
+import { isNullOrUndefined } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /**
  * If a starter is caught, but the only forms registered as caught are not starterSelectable,
@@ -37,7 +37,7 @@ const migrateUnselectableForms: SystemSaveMigrator = {
   },
 };
 
-export const systemMigrators: Readonly<SystemSaveMigrator[]> = [migrateUnselectableForms] as const;
+export const systemMigrators: readonly SystemSaveMigrator[] = [migrateUnselectableForms] as const;
 
 const migrateTera: SessionSaveMigrator = {
   version: "1.7.0",
@@ -82,4 +82,4 @@ const migrateTera: SessionSaveMigrator = {
   },
 };
 
-export const sessionMigrators: Readonly<SessionSaveMigrator[]> = [migrateTera] as const;
+export const sessionMigrators: readonly SessionSaveMigrator[] = [migrateTera] as const;

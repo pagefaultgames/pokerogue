@@ -1,32 +1,32 @@
-import { GameModes } from "#enums/game-modes";
-import UiHandler from "./ui-handler";
-import type { SessionSaveData } from "../system/game-data";
-import { TextStyle, addTextObject, addBBCodeTextObject, getTextColor } from "./text";
-import { UiMode } from "#enums/ui-mode";
-import { addWindow } from "./ui-theme";
-import { getPokeballAtlasKey } from "#app/data/pokeball";
-import { formatLargeNumber, getPlayTimeString, formatMoney, formatFancyLargeNumber } from "#app/utils/common";
-import type PokemonData from "../system/pokemon-data";
-import i18next from "i18next";
-import { Button } from "../enums/buttons";
-import { BattleType } from "#enums/battle-type";
-import { TrainerVariant } from "#enums/trainer-variant";
-import { Challenges } from "#enums/challenges";
-import { getLuckString, getLuckTextTint } from "../modifier/modifier-type";
-import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
-import { getTypeRgb } from "#app/data/type";
-import { PokemonType } from "#enums/pokemon-type";
-import { TypeColor, TypeShadow } from "#app/enums/color";
-import { getNatureStatMultiplier, getNatureName } from "../data/nature";
-import { getVariantTint } from "#app/sprites/variant";
-// biome-ignore lint/style/noNamespaceImport: See `src/system/game-data.ts`
-import * as Modifier from "#app/modifier/modifier";
-import type { SpeciesId } from "#enums/species-id";
-import { PlayerGender } from "#enums/player-gender";
-import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
-import { getBiomeName } from "#app/data/balance/biomes";
-import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
+import { getBiomeName } from "#balance/biomes";
+import { getNatureName, getNatureStatMultiplier } from "#data/nature";
+import { getPokeballAtlasKey } from "#data/pokeball";
+import { getTypeRgb } from "#data/type";
+import { BattleType } from "#enums/battle-type";
+import { Button } from "#enums/buttons";
+import { Challenges } from "#enums/challenges";
+import { TypeColor, TypeShadow } from "#enums/color";
+import { GameModes } from "#enums/game-modes";
+import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PlayerGender } from "#enums/player-gender";
+import { PokemonType } from "#enums/pokemon-type";
+import type { SpeciesId } from "#enums/species-id";
+import { TrainerVariant } from "#enums/trainer-variant";
+import { UiMode } from "#enums/ui-mode";
+// biome-ignore lint/performance/noNamespaceImport: See `src/system/game-data.ts`
+import * as Modifier from "#modifiers/modifier";
+import { getLuckString, getLuckTextTint } from "#modifiers/modifier-type";
+import { getVariantTint } from "#sprites/variant";
+import type { SessionSaveData } from "#system/game-data";
+import type { PokemonData } from "#system/pokemon-data";
+import { SettingKeyboard } from "#system/settings-keyboard";
+import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { addWindow } from "#ui/ui-theme";
+import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getPlayTimeString } from "#utils/common";
+import i18next from "i18next";
+import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -50,7 +50,7 @@ export enum RunDisplayMode {
  * I believe that it is possible that the contents/methods of the first page will be placed in their own class that is an extension of RunInfoUiHandler as more pages are added.
  * For now, I leave as is.
  */
-export default class RunInfoUiHandler extends UiHandler {
+export class RunInfoUiHandler extends UiHandler {
   protected runDisplayMode: RunDisplayMode;
   protected runInfo: SessionSaveData;
   protected isVictory: boolean;
@@ -202,7 +202,7 @@ export default class RunInfoUiHandler extends UiHandler {
       );
       this.runContainer.add(abilityButtonContainer);
     }
-    const headerText = addTextObject(0, 0, i18next.t("runHistory:runInfo"), TextStyle.SETTINGS_LABEL);
+    const headerText = addTextObject(0, 0, i18next.t("runHistory:runInfo"), TextStyle.HEADER_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
     this.runContainer.add(headerText);
@@ -603,7 +603,7 @@ export default class RunInfoUiHandler extends UiHandler {
     // Duration + Money
     const runInfoTextContainer = globalScene.add.container(0, 0);
     // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
-    const lineSpacing = i18next.resolvedLanguage === "ja" ? 12 : 3;
+    const lineSpacing = i18next.resolvedLanguage === "ja" ? 3 : 3;
     const runInfoText = addBBCodeTextObject(7, 0, "", TextStyle.WINDOW, {
       fontSize: "50px",
       lineSpacing: lineSpacing,
@@ -768,7 +768,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const pPassiveInfo = pokemon.passive ? passiveLabel + ": " + pokemon.getPassiveAbility().name : "";
       const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
       // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
-      const lineSpacing = i18next.resolvedLanguage === "ja" ? 12 : 3;
+      const lineSpacing = i18next.resolvedLanguage === "ja" ? 3 : 3;
       const pokeInfoText = addBBCodeTextObject(0, 0, pName, TextStyle.SUMMARY, {
         fontSize: textContainerFontSize,
         lineSpacing: lineSpacing,
@@ -866,7 +866,7 @@ export default class RunInfoUiHandler extends UiHandler {
         moveContainer.setScale(0.5);
         const moveBg = globalScene.add.nineslice(0, 0, "type_bgs", "unknown", 85, 15, 2, 2, 2, 2);
         moveBg.setOrigin(1, 0);
-        const moveLabel = addTextObject(-moveBg.width / 2, 2, "-", TextStyle.PARTY);
+        const moveLabel = addTextObject(-moveBg.width / 2, 1, "-", TextStyle.MOVE_LABEL);
         moveLabel.setOrigin(0.5, 0);
         moveLabel.setName("text-move-label");
         pokemonMoveBgs.push(moveBg);

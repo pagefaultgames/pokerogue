@@ -1,8 +1,7 @@
 pre-commit:
-  parallel: true
   commands:
     biome-lint:
-      run: npx biome check --write --reporter=summary --staged --no-errors-on-unmatched
+      run: pnpm exec biome check --write --reporter=summary --staged --no-errors-on-unmatched
       stage_fixed: true
       skip:
         - merge
@@ -16,4 +15,6 @@ post-merge:
 post-checkout:
   commands:
     update-submodules:
-      run: git submodule update --init --recursive
+      # cf https://git-scm.com/docs/githooks#_post_checkout:
+      # The 3rd argument is 1 for branch checkouts and 0 for file checkouts.
+      run: if test {3} -eq "1"; then git submodule update --init --recursive; fi

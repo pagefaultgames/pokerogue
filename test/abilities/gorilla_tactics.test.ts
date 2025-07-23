@@ -1,14 +1,14 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { RandomMoveAttr } from "#app/data/moves/move";
-import { MoveId } from "#enums/move-id";
 import { AbilityId } from "#enums/ability-id";
-import { SpeciesId } from "#enums/species-id";
-import { Stat } from "#app/enums/stat";
-import GameManager from "#test/testUtils/gameManager";
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { BattlerIndex } from "#enums/battler-index";
+import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { MoveUseMode } from "#enums/move-use-mode";
+import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { RandomMoveAttr } from "#moves/move";
+import { GameManager } from "#test/testUtils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Gorilla Tactics", () => {
   let phaserGame: Phaser.Game;
@@ -28,8 +28,10 @@ describe("Abilities - Gorilla Tactics", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
+      .criticalHits(false)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(30)
       .moveset([MoveId.SPLASH, MoveId.TACKLE, MoveId.GROWL, MoveId.METRONOME])
       .ability(AbilityId.GORILLA_TACTICS);
@@ -42,7 +44,6 @@ describe("Abilities - Gorilla Tactics", () => {
     const initialAtkStat = darmanitan.getStat(Stat.ATK);
 
     game.move.select(MoveId.SPLASH);
-    await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toEndOfTurn();
 
     expect(darmanitan.getStat(Stat.ATK, false)).toBeCloseTo(initialAtkStat * 1.5);
@@ -59,7 +60,6 @@ describe("Abilities - Gorilla Tactics", () => {
 
     // First turn, lock move to Growl
     game.move.select(MoveId.GROWL);
-    await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
     // Second turn, Growl is interrupted by Disable
@@ -72,7 +72,7 @@ describe("Abilities - Gorilla Tactics", () => {
 
     // Third turn, Struggle is used
     game.move.select(MoveId.TACKLE);
-    await game.move.forceEnemyMove(MoveId.SPLASH); //prevent protect from being used by the enemy
+    await game.move.forceEnemyMove(MoveId.SPLASH); // prevent disable from being used by the enemy
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -91,7 +91,7 @@ describe("Abilities - Gorilla Tactics", () => {
     game.move.select(MoveId.METRONOME);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    // Gorilla Tactics should bypass dancer and instruct
+    // Gorilla Tactics should lock into Metronome, not tackle
     expect(darmanitan.isMoveRestricted(MoveId.TACKLE)).toBe(true);
     expect(darmanitan.isMoveRestricted(MoveId.METRONOME)).toBe(false);
     expect(darmanitan.getLastXMoves(-1)).toEqual([
@@ -106,11 +106,13 @@ describe("Abilities - Gorilla Tactics", () => {
     const darmanitan = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.TACKLE);
-    await game.move.selectEnemyMove(MoveId.PROTECT);
+    await game.move.forceEnemyMove(MoveId.PROTECT);
 
     await game.toEndOfTurn();
     expect(darmanitan.isMoveRestricted(MoveId.SPLASH)).toBe(true);
     expect(darmanitan.isMoveRestricted(MoveId.TACKLE)).toBe(false);
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy.hp).toBe(enemy.getMaxHp());
   });
 
   it("should activate when a move is succesfully executed but misses", async () => {
@@ -119,7 +121,6 @@ describe("Abilities - Gorilla Tactics", () => {
     const darmanitan = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.TACKLE);
-    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceMiss();
     await game.toEndOfTurn();

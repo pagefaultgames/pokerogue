@@ -1,19 +1,32 @@
+import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { tmPoolTiers, tmSpecies } from "#app/data/balance/tms";
-import { getBerryEffectDescription, getBerryName } from "#app/data/berry";
-import { allMoves, modifierTypes } from "#app/data/data-lists";
-import { getNatureName, getNatureStatMultiplier } from "#app/data/nature";
-import { getPokeballCatchMultiplier, getPokeballName } from "#app/data/pokeball";
-import { pokemonFormChanges, SpeciesFormChangeCondition } from "#app/data/pokemon-forms";
-import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { FormChangeItem } from "#enums/form-change-item";
-import { getStatusEffectDescriptor } from "#app/data/status-effect";
-import { PokemonType } from "#enums/pokemon-type";
-import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
-import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
+import Overrides from "#app/overrides";
+import { EvolutionItem, pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { tmPoolTiers, tmSpecies } from "#balance/tms";
+import { getBerryEffectDescription, getBerryName } from "#data/berry";
+import { allMoves, modifierTypes } from "#data/data-lists";
+import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
+import { getNatureName, getNatureStatMultiplier } from "#data/nature";
+import { getPokeballCatchMultiplier, getPokeballName } from "#data/pokeball";
+import { pokemonFormChanges, SpeciesFormChangeCondition } from "#data/pokemon-forms";
+import { getStatusEffectDescriptor } from "#data/status-effect";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BerryType } from "#enums/berry-type";
+import { FormChangeItem } from "#enums/form-change-item";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
+import { ModifierTier } from "#enums/modifier-tier";
+import { MoveId } from "#enums/move-id";
+import { Nature } from "#enums/nature";
+import { PokeballType } from "#enums/pokeball";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesFormKey } from "#enums/species-form-key";
+import { SpeciesId } from "#enums/species-id";
+import type { PermanentStat, TempBattleStat } from "#enums/stat";
+import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import {
   AddPokeballModifier,
   AddVoucherModifier,
@@ -24,6 +37,7 @@ import {
   BypassSpeedChanceModifier,
   ContactHeldItemTransferChanceModifier,
   CritBoosterModifier,
+  CriticalCatchChanceBoosterModifier,
   DamageMoneyRewardModifier,
   DoubleBattleChanceBoosterModifier,
   EnemyAttackStatusEffectChanceModifier,
@@ -31,6 +45,7 @@ import {
   EnemyDamageReducerModifier,
   EnemyEndureChanceModifier,
   EnemyFusionChanceModifier,
+  type EnemyPersistentModifier,
   EnemyStatusEffectHealChanceModifier,
   EnemyTurnHealModifier,
   EvolutionItemModifier,
@@ -40,6 +55,7 @@ import {
   ExpBoosterModifier,
   ExpShareModifier,
   ExtraModifierModifier,
+  FieldEffectModifier,
   FlinchChanceModifier,
   FusePokemonModifier,
   GigantamaxAccessModifier,
@@ -52,10 +68,12 @@ import {
   LockModifierTiersModifier,
   MapModifier,
   MegaEvolutionAccessModifier,
+  type Modifier,
   MoneyInterestModifier,
   MoneyMultiplierModifier,
   MoneyRewardModifier,
   MultipleParticipantExpBonusModifier,
+  type PersistentModifier,
   PokemonAllMovePpRestoreModifier,
   PokemonBaseStatFlatModifier,
   PokemonBaseStatTotalModifier,
@@ -83,6 +101,7 @@ import {
   SurviveDamageModifier,
   SwitchEffectTransferModifier,
   TempCritBoosterModifier,
+  TempExtraModifierModifier,
   TempStatStageBoosterModifier,
   TerastallizeAccessModifier,
   TerrastalizeModifier,
@@ -90,44 +109,17 @@ import {
   TurnHealModifier,
   TurnHeldItemTransferModifier,
   TurnStatusEffectModifier,
-  type EnemyPersistentModifier,
-  type Modifier,
-  type PersistentModifier,
-  TempExtraModifierModifier,
-  CriticalCatchChanceBoosterModifier,
-  FieldEffectModifier,
-} from "#app/modifier/modifier";
-import { ModifierTier } from "#enums/modifier-tier";
-import Overrides from "#app/overrides";
-import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#app/system/voucher";
-import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#app/ui/party-ui-handler";
-import PartyUiHandler from "#app/ui/party-ui-handler";
-import { getModifierTierTextTint } from "#app/ui/text";
-import {
-  formatMoney,
-  getEnumKeys,
-  getEnumValues,
-  isNullOrUndefined,
-  NumberHolder,
-  padInt,
-  randSeedInt,
-} from "#app/utils/common";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { BerryType } from "#enums/berry-type";
-import { MoveId } from "#enums/move-id";
-import { Nature } from "#enums/nature";
-import { PokeballType } from "#enums/pokeball";
-import { SpeciesId } from "#enums/species-id";
-import { SpeciesFormKey } from "#enums/species-form-key";
-import type { PermanentStat, TempBattleStat } from "#enums/stat";
-import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
-import { StatusEffect } from "#enums/status-effect";
+} from "#modifiers/modifier";
+import type { PokemonMove } from "#moves/pokemon-move";
+import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#system/voucher";
+import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#types/modifier-types";
+import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
+import { PartyUiHandler } from "#ui/party-ui-handler";
+import { getModifierTierTextTint } from "#ui/text";
+import { formatMoney, isNullOrUndefined, NumberHolder, padInt, randSeedInt, randSeedItem } from "#utils/common";
+import { getEnumKeys, getEnumValues } from "#utils/enums";
+import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
 import i18next from "i18next";
-import { timedEventManager } from "#app/global-event-manager";
-import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
-import { getModifierPoolForType, getModifierType } from "#app/utils/modifier-utils";
-import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -967,67 +959,27 @@ export class PokemonBaseStatTotalModifierType
   extends PokemonHeldItemModifierType
   implements GeneratedPersistentModifierType
 {
-  private readonly statModifier: number;
+  private readonly statModifier: 10 | -15;
 
-  constructor(statModifier: number) {
+  constructor(statModifier: 10 | -15) {
     super(
-      "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE",
-      "berry_juice",
-      (_type, args) => new PokemonBaseStatTotalModifier(this, (args[0] as Pokemon).id, this.statModifier),
+      statModifier > 0
+        ? "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD"
+        : "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD",
+      statModifier > 0 ? "berry_juice_good" : "berry_juice_bad",
+      (_type, args) => new PokemonBaseStatTotalModifier(this, (args[0] as Pokemon).id, statModifier),
     );
     this.statModifier = statModifier;
   }
 
   override getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonBaseStatTotalModifierType.description", {
-      increaseDecrease: i18next.t(
-        this.statModifier >= 0
-          ? "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.increase"
-          : "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.decrease",
-      ),
-      blessCurse: i18next.t(
-        this.statModifier >= 0
-          ? "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.blessed"
-          : "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.cursed",
-      ),
-      statValue: this.statModifier,
-    });
+    return this.statModifier > 0
+      ? i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.description")
+      : i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.description");
   }
 
   public getPregenArgs(): any[] {
     return [this.statModifier];
-  }
-}
-
-/**
- * Old Gateau item
- */
-export class PokemonBaseStatFlatModifierType
-  extends PokemonHeldItemModifierType
-  implements GeneratedPersistentModifierType
-{
-  private readonly statModifier: number;
-  private readonly stats: Stat[];
-
-  constructor(statModifier: number, stats: Stat[]) {
-    super(
-      "modifierType:ModifierType.MYSTERY_ENCOUNTER_OLD_GATEAU",
-      "old_gateau",
-      (_type, args) => new PokemonBaseStatFlatModifier(this, (args[0] as Pokemon).id, this.statModifier, this.stats),
-    );
-    this.statModifier = statModifier;
-    this.stats = stats;
-  }
-
-  override getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonBaseStatFlatModifierType.description", {
-      stats: this.stats.map(stat => i18next.t(getStatKey(stat))).join("/"),
-      statValue: this.statModifier,
-    });
-  }
-
-  public getPregenArgs(): any[] {
-    return [this.statModifier, this.stats];
   }
 }
 
@@ -1565,6 +1517,7 @@ class TmModifierTypeGenerator extends ModifierTypeGenerator {
       if (!tierUniqueCompatibleTms.length) {
         return null;
       }
+      // TODO: should this use `randSeedItem`?
       const randTmIndex = randSeedInt(tierUniqueCompatibleTms.length);
       return new TmModifierType(tierUniqueCompatibleTms[randTmIndex]);
     });
@@ -1585,7 +1538,9 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
               pokemonEvolutions.hasOwnProperty(p.species.speciesId) &&
               (!p.pauseEvolutions ||
                 p.species.speciesId === SpeciesId.SLOWPOKE ||
-                p.species.speciesId === SpeciesId.EEVEE),
+                p.species.speciesId === SpeciesId.EEVEE ||
+                p.species.speciesId === SpeciesId.KIRLIA ||
+                p.species.speciesId === SpeciesId.SNORUNT),
           )
           .flatMap(p => {
             const evolutions = pokemonEvolutions[p.species.speciesId];
@@ -1599,7 +1554,9 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
               pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId) &&
               (!p.pauseEvolutions ||
                 p.fusionSpecies.speciesId === SpeciesId.SLOWPOKE ||
-                p.fusionSpecies.speciesId === SpeciesId.EEVEE),
+                p.fusionSpecies.speciesId === SpeciesId.EEVEE ||
+                p.fusionSpecies.speciesId === SpeciesId.KIRLIA ||
+                p.fusionSpecies.speciesId === SpeciesId.SNORUNT),
           )
           .flatMap(p => {
             const evolutions = pokemonEvolutions[p.fusionSpecies!.speciesId];
@@ -1614,6 +1571,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
         return null;
       }
 
+      // TODO: should this use `randSeedItem`?
       return new EvolutionItemModifierType(evolutionItemPool[randSeedInt(evolutionItemPool.length)]!); // TODO: is the bang correct?
     });
   }
@@ -1699,6 +1657,7 @@ export class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
         return null;
       }
 
+      // TODO: should this use `randSeedItem`?
       return new FormChangeItemModifierType(formChangeItemPool[randSeedInt(formChangeItemPool.length)]);
     });
   }
@@ -1969,7 +1928,7 @@ const modifierTypeInitObj = Object.freeze({
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in Nature) {
         return new PokemonNatureChangeModifierType(pregenArgs[0] as Nature);
       }
-      return new PokemonNatureChangeModifierType(randSeedInt(getEnumValues(Nature).length) as Nature);
+      return new PokemonNatureChangeModifierType(randSeedItem(getEnumValues(Nature)));
     }),
 
   MYSTICAL_ROCK: () =>
@@ -2327,17 +2286,16 @@ const modifierTypeInitObj = Object.freeze({
   MYSTERY_ENCOUNTER_SHUCKLE_JUICE: () =>
     new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {
-        return new PokemonBaseStatTotalModifierType(pregenArgs[0] as number);
+        return new PokemonBaseStatTotalModifierType(pregenArgs[0] as 10 | -15);
       }
-      return new PokemonBaseStatTotalModifierType(randSeedInt(20, 1));
+      return new PokemonBaseStatTotalModifierType(10);
     }),
   MYSTERY_ENCOUNTER_OLD_GATEAU: () =>
-    new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs) {
-        return new PokemonBaseStatFlatModifierType(pregenArgs[0] as number, pregenArgs[1] as Stat[]);
-      }
-      return new PokemonBaseStatFlatModifierType(randSeedInt(20, 1), [Stat.HP, Stat.ATK, Stat.DEF]);
-    }),
+    new PokemonHeldItemModifierType(
+      "modifierType:ModifierType.MYSTERY_ENCOUNTER_OLD_GATEAU",
+      "old_gateau",
+      (type, args) => new PokemonBaseStatFlatModifier(type, (args[0] as Pokemon).id),
+    ),
   MYSTERY_ENCOUNTER_BLACK_SLUDGE: () =>
     new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {
@@ -2494,12 +2452,31 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
 }
 
 export interface CustomModifierSettings {
+  /** If specified, will override the next X items to be the specified tier. These can upgrade with luck. */
   guaranteedModifierTiers?: ModifierTier[];
+  /** If specified, will override the first X items to be specific modifier options (these should be pre-genned). */
   guaranteedModifierTypeOptions?: ModifierTypeOption[];
+  /** If specified, will override the next X items to be auto-generated from specific modifier functions (these don't have to be pre-genned). */
   guaranteedModifierTypeFuncs?: ModifierTypeFunc[];
+  /**
+   * If set to `true`, will fill the remainder of shop items that were not overridden by the 3 options above, up to the `count` param value.
+   * @example
+   * ```ts
+   * count = 4;
+   * customModifierSettings = { guaranteedModifierTiers: [ModifierTier.GREAT], fillRemaining: true };
+   * ```
+   * The first item in the shop will be `GREAT` tier, and the remaining `3` items will be generated normally.
+   *
+   * If `fillRemaining: false` in the same scenario, only 1 `GREAT` tier item will appear in the shop (regardless of the value of `count`).
+   * @defaultValue `false`
+   */
   fillRemaining?: boolean;
-  /** Set to negative value to disable rerolls completely in shop */
+  /** If specified, can adjust the amount of money required for a shop reroll. If set to a negative value, the shop will not allow rerolls at all. */
   rerollMultiplier?: number;
+  /**
+   * If `false`, will prevent set item tiers from upgrading via luck.
+   * @defaultValue `true`
+   */
   allowLuckUpgrades?: boolean;
 }
 
@@ -2509,19 +2486,10 @@ export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
 
 /**
  * Generates modifier options for a {@linkcode SelectModifierPhase}
- * @param count Determines the number of items to generate
- * @param party Party is required for generating proper modifier pools
- * @param modifierTiers (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
- * @param customModifierSettings (Optional) If specified, can customize the item shop rewards further.
- *  - `guaranteedModifierTypeOptions?: ModifierTypeOption[]` If specified, will override the first X items to be specific modifier options (these should be pre-genned).
- *  - `guaranteedModifierTypeFuncs?: ModifierTypeFunc[]` If specified, will override the next X items to be auto-generated from specific modifier functions (these don't have to be pre-genned).
- *  - `guaranteedModifierTiers?: ModifierTier[]` If specified, will override the next X items to be the specified tier. These can upgrade with luck.
- *  - `fillRemaining?: boolean` Default 'false'. If set to true, will fill the remainder of shop items that were not overridden by the 3 options above, up to the 'count' param value.
- *    - Example: `count = 4`, `customModifierSettings = { guaranteedModifierTiers: [ModifierTier.GREAT], fillRemaining: true }`,
- *    - The first item in the shop will be `GREAT` tier, and the remaining 3 items will be generated normally.
- *    - If `fillRemaining = false` in the same scenario, only 1 `GREAT` tier item will appear in the shop (regardless of `count` value).
- *  - `rerollMultiplier?: number` If specified, can adjust the amount of money required for a shop reroll. If set to a negative value, the shop will not allow rerolls at all.
- *  - `allowLuckUpgrades?: boolean` Default `true`, if `false` will prevent set item tiers from upgrading via luck
+ * @param count - Determines the number of items to generate
+ * @param party - Party is required for generating proper modifier pools
+ * @param modifierTiers - (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
+ * @param customModifierSettings - See {@linkcode CustomModifierSettings}
  */
 export function getPlayerModifierTypeOptions(
   count: number,
@@ -2532,16 +2500,10 @@ export function getPlayerModifierTypeOptions(
   const options: ModifierTypeOption[] = [];
   const retryCount = Math.min(count * 5, 50);
   if (!customModifierSettings) {
-    new Array(count).fill(0).map((_, i) => {
-      options.push(
-        getModifierTypeOptionWithRetry(
-          options,
-          retryCount,
-          party,
-          modifierTiers && modifierTiers.length > i ? modifierTiers[i] : undefined,
-        ),
-      );
-    });
+    for (let i = 0; i < count; i++) {
+      const tier = modifierTiers && modifierTiers.length > i ? modifierTiers[i] : undefined;
+      options.push(getModifierTypeOptionWithRetry(options, retryCount, party, tier));
+    }
   } else {
     // Guaranteed mod options first
     if (

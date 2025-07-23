@@ -1,9 +1,9 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
-import { PokemonPhase } from "./pokemon-phase";
 import type { BattlerIndex } from "#enums/battler-index";
-import { applyPostSummonAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import type Pokemon from "#app/field/pokemon";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
+import type { Pokemon } from "#field/pokemon";
+import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class MoveEndPhase extends PokemonPhase {
   public readonly phaseName = "MoveEndPhase";
@@ -30,7 +30,7 @@ export class MoveEndPhase extends PokemonPhase {
     globalScene.arena.setIgnoreAbilities(false);
     for (const target of this.targets) {
       if (target) {
-        applyPostSummonAbAttrs("PostSummonRemoveEffectAbAttr", target);
+        applyAbAttrs("PostSummonRemoveEffectAbAttr", { pokemon: target });
       }
     }
 

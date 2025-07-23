@@ -1,14 +1,14 @@
-/**
+/*
  * This script creates a test boilerplate file in the appropriate
  * directory based on the type selected.
- * @example npm run test:create
+ * Usage: `pnpm test:create`
  */
 
-import chalk from "chalk";
-import inquirer from "inquirer";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import chalk from "chalk";
+import inquirer from "inquirer";
 
 //#region Constants
 

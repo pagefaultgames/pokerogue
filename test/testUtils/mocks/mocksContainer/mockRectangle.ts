@@ -1,7 +1,7 @@
-import { coerceArray } from "#app/utils/common";
-import type { MockGameObject } from "../mockGameObject";
+import type { MockGameObject } from "#test/testUtils/mocks/mockGameObject";
+import { coerceArray } from "#utils/common";
 
-export default class MockRectangle implements MockGameObject {
+export class MockRectangle implements MockGameObject {
   private fillColor;
   private scene;
   public list: MockGameObject[] = [];

@@ -1,10 +1,10 @@
-import { coerceArray } from "#app/utils/common";
+import type { MockGameObject } from "#test/testUtils/mocks/mockGameObject";
+import { coerceArray } from "#utils/common";
 import Phaser from "phaser";
-import type { MockGameObject } from "../mockGameObject";
 
 type Frame = Phaser.Textures.Frame;
 
-export default class MockSprite implements MockGameObject {
+export class MockSprite implements MockGameObject {
   private phaserSprite;
   public pipelineData;
   public texture;
@@ -19,13 +19,13 @@ export default class MockSprite implements MockGameObject {
   constructor(textureManager, x, y, texture) {
     this.textureManager = textureManager;
     this.scene = textureManager.scene;
-    // @ts-ignore
+    // @ts-expect-error
     Phaser.GameObjects.Sprite.prototype.setInteractive = this.setInteractive;
-    // @ts-ignore
+    // @ts-expect-error
     Phaser.GameObjects.Sprite.prototype.setTexture = this.setTexture;
-    // @ts-ignore
+    // @ts-expect-error
     Phaser.GameObjects.Sprite.prototype.setSizeToFrame = this.setSizeToFrame;
-    // @ts-ignore
+    // @ts-expect-error
     Phaser.GameObjects.Sprite.prototype.setFrame = this.setFrame;
     // Phaser.GameObjects.Sprite.prototype.disable = this.disable;
 

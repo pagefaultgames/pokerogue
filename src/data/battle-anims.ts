@@ -1,22 +1,15 @@
 import { globalScene } from "#app/global-scene";
-import { allMoves } from "#app/data/data-lists";
-import { MoveFlags } from "#enums/MoveFlags";
-import type Pokemon from "#app/field/pokemon";
-import {
-  type nil,
-  getFrameMs,
-  getEnumKeys,
-  getEnumValues,
-  animationFileName,
-  coerceArray,
-  isNullOrUndefined,
-} from "#app/utils/common";
+import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
-import { MoveId } from "#enums/move-id";
-import Phaser from "phaser";
-import { EncounterAnim } from "#enums/encounter-anims";
-import { AnimBlendType, AnimFrameTarget, AnimFocus, ChargeAnim, CommonAnim } from "#enums/move-anims-common";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { EncounterAnim } from "#enums/encounter-anims";
+import { MoveFlags } from "#enums/MoveFlags";
+import { AnimBlendType, AnimFocus, AnimFrameTarget, ChargeAnim, CommonAnim } from "#enums/move-anims-common";
+import { MoveId } from "#enums/move-id";
+import type { Pokemon } from "#field/pokemon";
+import { animationFileName, coerceArray, getFrameMs, isNullOrUndefined, type nil } from "#utils/common";
+import { getEnumKeys, getEnumValues } from "#utils/enums";
+import Phaser from "phaser";
 
 export class AnimConfig {
   public id: number;
@@ -346,7 +339,7 @@ abstract class AnimTimedBgEvent extends AnimTimedEvent {
 }
 
 class AnimTimedUpdateBgEvent extends AnimTimedBgEvent {
-  // biome-ignore lint/correctness/noUnusedVariables: seems intentional
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: seems intentional
   execute(moveAnim: MoveAnim, priority?: number): number {
     const tweenProps = {};
     if (this.bgX !== undefined) {
@@ -359,15 +352,11 @@ class AnimTimedUpdateBgEvent extends AnimTimedBgEvent {
       tweenProps["alpha"] = (this.opacity || 0) / 255;
     }
     if (Object.keys(tweenProps).length) {
-      globalScene.tweens.add(
-        Object.assign(
-          {
-            targets: moveAnim.bgSprite,
-            duration: getFrameMs(this.duration * 3),
-          },
-          tweenProps,
-        ),
-      );
+      globalScene.tweens.add({
+        targets: moveAnim.bgSprite,
+        duration: getFrameMs(this.duration * 3),
+        ...tweenProps,
+      });
     }
     return this.duration * 2;
   }
@@ -423,7 +412,7 @@ export function initCommonAnims(): Promise<void> {
       const commonAnimId = commonAnimIds[ca];
       commonAnimFetches.push(
         globalScene
-          .cachedFetch(`./battle-anims/common-${commonAnimNames[ca].toLowerCase().replace(/\_/g, "-")}.json`)
+          .cachedFetch(`./battle-anims/common-${commonAnimNames[ca].toLowerCase().replace(/_/g, "-")}.json`)
           .then(response => response.json())
           .then(cas => commonAnims.set(commonAnimId, new AnimConfig(cas))),
       );
@@ -535,7 +524,7 @@ export async function initEncounterAnims(encounterAnim: EncounterAnim | Encounte
     }
     encounterAnimFetches.push(
       globalScene
-        .cachedFetch(`./battle-anims/encounter-${encounterAnimNames[anim].toLowerCase().replace(/\_/g, "-")}.json`)
+        .cachedFetch(`./battle-anims/encounter-${encounterAnimNames[anim].toLowerCase().replace(/_/g, "-")}.json`)
         .then(response => response.json())
         .then(cas => encounterAnims.set(anim, new AnimConfig(cas))),
     );
@@ -559,7 +548,7 @@ export function initMoveChargeAnim(chargeAnim: ChargeAnim): Promise<void> {
     } else {
       chargeAnims.set(chargeAnim, null);
       globalScene
-        .cachedFetch(`./battle-anims/${ChargeAnim[chargeAnim].toLowerCase().replace(/\_/g, "-")}.json`)
+        .cachedFetch(`./battle-anims/${ChargeAnim[chargeAnim].toLowerCase().replace(/_/g, "-")}.json`)
         .then(response => response.json())
         .then(ca => {
           if (Array.isArray(ca)) {
@@ -883,6 +872,10 @@ export abstract class BattleAnim {
       }
       targetSprite.pipelineData["tone"] = [0.0, 0.0, 0.0, 0.0];
       targetSprite.setAngle(0);
+
+      // Remove animation event listeners to enable sprites to be freed.
+      userSprite.off("animationupdate");
+      targetSprite.off("animationupdate");
 
       /**
        * This and `targetSpriteToShow` are used to restore context lost
@@ -1405,15 +1398,15 @@ export class EncounterBattleAnim extends BattleAnim {
 
 export async function populateAnims() {
   const commonAnimNames = getEnumKeys(CommonAnim).map(k => k.toLowerCase());
-  const commonAnimMatchNames = commonAnimNames.map(k => k.replace(/\_/g, ""));
-  const commonAnimIds = getEnumValues(CommonAnim) as CommonAnim[];
+  const commonAnimMatchNames = commonAnimNames.map(k => k.replace(/_/g, ""));
+  const commonAnimIds = getEnumValues(CommonAnim);
   const chargeAnimNames = getEnumKeys(ChargeAnim).map(k => k.toLowerCase());
-  const chargeAnimMatchNames = chargeAnimNames.map(k => k.replace(/\_/g, " "));
-  const chargeAnimIds = getEnumValues(ChargeAnim) as ChargeAnim[];
+  const chargeAnimMatchNames = chargeAnimNames.map(k => k.replace(/_/g, " "));
+  const chargeAnimIds = getEnumValues(ChargeAnim);
   const commonNamePattern = /name: (?:Common:)?(Opp )?(.*)/;
   const moveNameToId = {};
   for (const move of getEnumValues(MoveId).slice(1)) {
-    const moveName = MoveId[move].toUpperCase().replace(/\_/g, "");
+    const moveName = MoveId[move].toUpperCase().replace(/_/g, "");
     moveNameToId[moveName] = move;
   }
 
@@ -1469,7 +1462,7 @@ export async function populateAnims() {
             const frameData = framesData[fd];
             const focusFramesData = frameData.split("    - - ");
             for (let tf = 0; tf < focusFramesData.length; tf++) {
-              const values = focusFramesData[tf].replace(/ {6}\- /g, "").split("\n");
+              const values = focusFramesData[tf].replace(/ {6}- /g, "").split("\n");
               const targetFrame = new AnimFrame(
                 Number.parseFloat(values[0]),
                 Number.parseFloat(values[1]),
@@ -1516,7 +1509,7 @@ export async function populateAnims() {
               .replace(/[a-z]+: ! '', /gi, "")
               .replace(/name: (.*?),/, 'name: "$1",')
               .replace(
-                /flashColor: !ruby\/object:Color { alpha: ([\d\.]+), blue: ([\d\.]+), green: ([\d\.]+), red: ([\d\.]+)}/,
+                /flashColor: !ruby\/object:Color { alpha: ([\d.]+), blue: ([\d.]+), green: ([\d.]+), red: ([\d.]+)}/,
                 "flashRed: $4, flashGreen: $3, flashBlue: $2, flashAlpha: $1",
               );
             const frameIndex = Number.parseInt(/frame: (\d+)/.exec(timingData)![1]); // TODO: is the bang correct?
@@ -1641,12 +1634,12 @@ export async function populateAnims() {
     let props: string[];
     for (let p = 0; p < propSets.length; p++) {
       props = propSets[p];
-      // @ts-ignore TODO
+      // @ts-expect-error TODO
       const ai = props.indexOf(a.key);
       if (ai === -1) {
         continue;
       }
-      // @ts-ignore TODO
+      // @ts-expect-error TODO
       const bi = props.indexOf(b.key);
 
       return ai < bi ? -1 : ai > bi ? 1 : 0;

@@ -1,30 +1,29 @@
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { HUMAN_TRANSITABLE_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
+import type { BattleScene } from "#app/battle-scene";
 import { BiomeId } from "#enums/biome-id";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
+import { ModifierTier } from "#enums/modifier-tier";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { UiMode } from "#enums/ui-mode";
+import { MysteriousChallengersEncounter } from "#mystery-encounters/mysterious-challengers-encounter";
+import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters";
+import { CommandPhase } from "#phases/command-phase";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import type BattleScene from "#app/battle-scene";
-import { UiMode } from "#enums/ui-mode";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { GameManager } from "#test/testUtils/gameManager";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import { ModifierTier } from "#enums/modifier-tier";
-import { MysteriousChallengersEncounter } from "#app/data/mystery-encounters/encounters/mysterious-challengers-encounter";
-import { TrainerConfig } from "#app/data/trainers/trainer-config";
-import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { PartyMemberStrength } from "#enums/party-member-strength";
-import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { CommandPhase } from "#app/phases/command-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { TrainerConfig } from "#trainers/trainer-config";
+import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
+import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/mysteriousChallengers";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];

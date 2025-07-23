@@ -1,7 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -33,7 +33,7 @@ describe("Moves - Baddy Bad", () => {
     game.override.enemyMoveset(MoveId.PROTECT);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(MoveId.BADDY_BAD);
+    game.move.use(MoveId.BADDY_BAD);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.arena.tags.length).toBe(0);
