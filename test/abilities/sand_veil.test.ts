@@ -4,7 +4,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
-import { CommandPhase } from "#phases/command-phase";
 import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { MoveEndPhase } from "#phases/move-end-phase";
 import { GameManager } from "#test/testUtils/gameManager";
@@ -59,9 +58,6 @@ describe("Abilities - Sand Veil", () => {
     expect(leadPokemon[1].hasAbility(AbilityId.SAND_VEIL)).toBe(false);
 
     game.move.select(MoveId.SPLASH);
-
-    await game.phaseInterceptor.to(CommandPhase);
-
     game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);

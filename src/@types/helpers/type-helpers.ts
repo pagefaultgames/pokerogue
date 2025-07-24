@@ -49,3 +49,36 @@ export type InferKeys<O extends object, V extends ObjectValues<O>> = {
  * or convert an `enum` interface produced by `typeof Enum` into the union type representing its values.
  */
 export type ObjectValues<E extends object> = E[keyof E];
+
+/**
+ * Type helper that matches any `Function` type.
+ * Equivalent to `Function`, but will not raise a warning from Biome.
+ */
+export type AnyFn = (...args: any[]) => any;
+
+/**
+ * Type helper to extract non-function properties from a type.
+ *
+ * @remarks
+ * Useful to produce a type that is roughly the same as the type of `{... obj}`, where `obj` is an instance of `T`.
+ * A couple of differences:
+ * - Private and protected properties are not included.
+ * - Nested properties are not recursively extracted. For this, use {@linkcode NonFunctionPropertiesRecursive}
+ */
+export type NonFunctionProperties<T> = {
+  [K in keyof T as T[K] extends AnyFn ? never : K]: T[K];
+};
+
+/**
+ * Type helper to extract out non-function properties from a type, recursively applying to nested properties.
+ * This can be used to mimic the effects of JSON serialization and de-serialization on a given type.
+ */
+export type NonFunctionPropertiesRecursive<Class> = {
+  [K in keyof Class as Class[K] extends AnyFn ? never : K]: Class[K] extends Array<infer U>
+    ? NonFunctionPropertiesRecursive<U>[]
+    : Class[K] extends object
+      ? NonFunctionPropertiesRecursive<Class[K]>
+      : Class[K];
+};
+
+export type AbstractConstructor<T> = abstract new (...args: any[]) => T;
