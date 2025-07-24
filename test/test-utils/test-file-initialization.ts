@@ -18,6 +18,7 @@ let wasInitialized = false;
  * Run initialization code upon starting a new file, both per-suite and per-instance oncess.
  */
 export function initTests(): void {
+  setupStubs();
   if (!wasInitialized) {
     initTestFile();
     wasInitialized = true;
@@ -30,7 +31,6 @@ export function initTests(): void {
  * Initialize various values at the beginning of each testing instance.
  */
 export function initTestFile(): void {
-  setupStubs();
   initI18n();
   initializeGame();
 }
@@ -38,6 +38,7 @@ export function initTestFile(): void {
 /**
  * Setup various stubs for testing.
  * @todo Move this into a dedicated stub file instead of running it once per test instance
+ * @todo Investigate why this resets on new test suite start
  */
 function setupStubs(): void {
   Object.defineProperty(window, "localStorage", {
