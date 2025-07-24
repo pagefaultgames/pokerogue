@@ -852,7 +852,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
    * parameter) two promises. The promise returned by the method resolves once the option's appearance animations have
    * completed, and is meant to allow callers to synchronize with the completion of the option's appearance animations.
    * The promise appended to `promiseHolder` resolves once *all* animations started by this method have completed,
-   * ans should be used by callers to ensure that all animations have completed before proceeding.
+   * and should be used by callers to ensure that all animations have completed before proceeding.
    *
    * @param remainingDuration - The duration in milliseconds that the animation can play for
    * @param upgradeCountOffset - The offset to apply to the upgrade count for options whose rarity is being upgraded
