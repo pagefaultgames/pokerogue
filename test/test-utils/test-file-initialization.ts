@@ -30,7 +30,7 @@ export function initTests(): void {
 /**
  * Initialize various values at the beginning of each testing instance.
  */
-export function initTestFile(): void {
+function initTestFile(): void {
   initI18n();
   initializeGame();
 }
