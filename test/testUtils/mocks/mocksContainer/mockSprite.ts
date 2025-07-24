@@ -154,6 +154,17 @@ export class MockSprite implements MockGameObject {
     return this;
   }
 
+  setFlipY(flip: boolean): this {
+    // Sets the vertical flip state of this Game Object.
+    this.phaserSprite.setFlipY(flip);
+    return this;
+  }
+
+  setFlipX(flip: boolean): this {
+    this.phaserSprite.setFlipX(flip);
+    return this;
+  }
+
   setCrop(x: number, y: number, width: number, height: number): this {
     // Sets the crop size of this Game Object.
     this.phaserSprite.setCrop(x, y, width, height);
