@@ -1,4 +1,5 @@
 import "vitest-canvas-mock";
+import { manageListeners } from "#test/test-utils/listeners-manager";
 import { initTestFile } from "#test/test-utils/test-file-initialization";
 import { afterAll, beforeAll, vi } from "vitest";
 
@@ -50,9 +51,10 @@ vi.mock("i18next", async importOriginal => {
 
 global.testFailed = false;
 
-beforeAll(async () => {
-  await initTestFile();
-  console.log("Test file initialized!");
+initTestFile();
+
+beforeAll(() => {
+  manageListeners();
 });
 
 afterAll(() => {

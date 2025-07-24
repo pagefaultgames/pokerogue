@@ -2,7 +2,6 @@ import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { initializeGame } from "#app/init/init";
 import { initI18n } from "#plugins/i18n";
 import { blobToString } from "#test/test-utils/game-manager-utils";
-import { manageListeners } from "#test/test-utils/listeners-manager";
 import { MockConsoleLog } from "#test/test-utils/mocks/mock-console-log";
 import { mockContext } from "#test/test-utils/mocks/mock-context-canvas";
 import { mockLocalStorage } from "#test/test-utils/mocks/mock-local-storage";
@@ -13,12 +12,22 @@ import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 /**
- * An initialization function that is run at the beginning of every test file (via `beforeAll()`).
+ * An initialization function that is run at the beginning of every _test file_ (via `beforeAll()`).
  */
-export async function initTestFile() {
-  // Set the timezone to UTC for tests.
-  process.env.TZ = "UTC";
+export function initTestFile(): void {
+  setupStubs();
 
+  // Initialize all of these things if and only if they have not been initialized yet.
+  initI18n();
+  initializeGame();
+  console.log("Game initialized!");
+}
+
+/**
+ * Setup various stubs for testing.
+ * @todo Move this into a dedicated stub file instead of running it once per test file init
+ */
+function setupStubs(): void {
   Object.defineProperty(window, "localStorage", {
     value: mockLocalStorage(),
   });
@@ -54,9 +63,9 @@ export async function initTestFile() {
 
   /**
    * Sets this object's position relative to another object with a given offset
-   * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
-   * @param x The relative x position
-   * @param y The relative y position
+   * @param guideObject - The {@linkcode Phaser.GameObjects.GameObject} to base the position off of
+   * @param x - The relative x position
+   * @param y - The relative y position
    */
   const setPositionRelative = function (guideObject: any, x: number, y: number): any {
     const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
@@ -71,12 +80,6 @@ export async function initTestFile() {
   Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
   Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
   HTMLCanvasElement.prototype.getContext = () => mockContext;
-
-  // Initialize all of these things if and only if they have not been initialized yet
-  await initI18n();
-  initializeGame();
-
-  manageListeners();
 }
 
 /**
