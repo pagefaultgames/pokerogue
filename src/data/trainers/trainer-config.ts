@@ -5687,6 +5687,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
       }),
+    )
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.EEVEE], TrainerSlot.TRAINER, true, p => {
@@ -5725,7 +5726,7 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       2,
-      getRandomPartyMemberFunc([SpeciesId.UMBREON, Species.ESPEON]))
+      getRandomPartyMemberFunc([SpeciesId.UMBREON, SpeciesId.ESPEON]))
     .setPartyMemberFunc(
       3,
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
