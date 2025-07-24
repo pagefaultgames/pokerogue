@@ -8,7 +8,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { Challenges } from "#enums/challenges";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";

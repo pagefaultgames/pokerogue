@@ -3,7 +3,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { applyHeldItems } from "#items/all-held-items";
 import { HeldItemEffect } from "#items/held-item";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder, randItem } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

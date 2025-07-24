@@ -2,7 +2,7 @@ import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { TurnEndPhase } from "#phases/turn-end-phase";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import { randInt } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

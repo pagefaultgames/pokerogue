@@ -11,7 +11,7 @@ import { getNatureName, getNatureStatMultiplier } from "#data/nature";
 import { getPokeballAtlasKey } from "#data/pokeball";
 import { getTypeRgb } from "#data/type";
 import { Button } from "#enums/buttons";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveCategory } from "#enums/move-category";
 import { Nature } from "#enums/nature";
 import { PlayerGender } from "#enums/player-gender";
 import { PokemonType } from "#enums/pokemon-type";
