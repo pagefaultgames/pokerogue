@@ -5657,6 +5657,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.pokeball = PokeballType.ULTRA_BALL;
         p.gender = Gender.FEMALE;
       }),
+    )
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc(
