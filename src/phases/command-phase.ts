@@ -44,19 +44,21 @@ export class CommandPhase extends FieldPhase {
    * - This is the first turn of a mystery encounter, trainer battle, or the END biome
    * - The cursor is currently on the POKEMON command
    */
-  private resetCursorIfNeeded() {
+  private resetCursorIfNeeded(): void {
     const commandUiHandler = globalScene.ui.handlers[UiMode.COMMAND];
+    const { arena, commandCursorMemory, currentBattle } = globalScene;
+    const { battleType, turn } = currentBattle;
+    const { biomeType } = arena;
 
     // If one of these conditions is true, we always reset the cursor to Command.FIGHT
     const cursorResetEvent =
-      globalScene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER ||
-      globalScene.currentBattle.battleType === BattleType.TRAINER ||
-      globalScene.arena.biomeType === BiomeId.END;
+      battleType === BattleType.MYSTERY_ENCOUNTER || battleType === BattleType.TRAINER || biomeType === BiomeId.END;
 
+    if (!commandUiHandler) {
+      return;
+    }
     if (
-      (commandUiHandler &&
-        globalScene.currentBattle.turn === 1 &&
-        (!globalScene.commandCursorMemory || cursorResetEvent)) ||
+      (turn === 1 && (!commandCursorMemory || cursorResetEvent)) ||
       commandUiHandler.getCursor() === Command.POKEMON
     ) {
       commandUiHandler.setCursor(Command.FIGHT);
@@ -67,7 +69,7 @@ export class CommandPhase extends FieldPhase {
    * Submethod of {@linkcode start} that validates field index logic for nonzero field indices.
    * Must only be called if the field index is nonzero.
    */
-  private handleFieldIndexLogic() {
+  private handleFieldIndexLogic(): void {
     // If we somehow are attempting to check the right pokemon but there's only one pokemon out
     // Switch back to the center pokemon. This can happen rarely in double battles with mid turn switching
     // TODO: Prevent this from happening in the first place
@@ -85,10 +87,11 @@ export class CommandPhase extends FieldPhase {
     }
   }
 
-  /** Submethod of {@linkcode start} that sets the turn command to skip if this pokemon is commanding its ally
-   * via {@linkcode Abilities.COMMANDER}.
+  /**
+   * Submethod of {@linkcode start} that sets the turn command to skip if this pokemon
+   * is commanding its ally via {@linkcode AbilityId.COMMANDER}.
    */
-  private checkCommander() {
+  private checkCommander(): void {
     // If the Pokemon has applied Commander's effects to its ally, skip this command
     if (
       globalScene.currentBattle?.double &&
@@ -104,9 +107,10 @@ export class CommandPhase extends FieldPhase {
 
   /**
    * Clear out all unusable moves in front of the currently acting pokemon's move queue.
+   *
    * TODO: Refactor move queue handling to ensure that this method is not necessary.
    */
-  private clearUnusuableMoves() {
+  private clearUnusuableMoves(): void {
     const playerPokemon = this.getPokemon();
     const moveQueue = playerPokemon.getMoveQueue();
     if (moveQueue.length === 0) {
@@ -160,7 +164,7 @@ export class CommandPhase extends FieldPhase {
     return true;
   }
 
-  start() {
+  public override start(): void {
     super.start();
 
     globalScene.updateGameInfo();
@@ -178,7 +182,8 @@ export class CommandPhase extends FieldPhase {
     playerPokemon.lapseTag(BattlerTagType.ENCORE);
 
     if (globalScene.currentBattle.turnCommands[this.fieldIndex]?.skip) {
-      return this.end();
+      this.end();
+      return;
     }
 
     if (this.tryExecuteQueuedMove()) {
@@ -197,7 +202,8 @@ export class CommandPhase extends FieldPhase {
   }
 
   /**
-   *
+   * Submethod of {@linkcode handleFightCommand} responsible for queuing the appropriate
+   * error message when a move cannot be used.
    * @param user - The pokemon using the move
    * @param cursor - The index of the move in the moveset
    */
@@ -231,7 +237,7 @@ export class CommandPhase extends FieldPhase {
    *
    * Does not check if the move is usable or not, that should be handled by the caller.
    */
-  private computeMoveId(playerPokemon: PlayerPokemon, cursor: number, move?: TurnMove): MoveId {
+  private computeMoveId(playerPokemon: PlayerPokemon, cursor: number, move: TurnMove | undefined): MoveId {
     return move?.move ?? (cursor > -1 ? playerPokemon.getMoveset()[cursor]?.moveId : MoveId.NONE);
   }
 
@@ -274,12 +280,12 @@ export class CommandPhase extends FieldPhase {
 
     const turnCommand: TurnCommand = {
       command: Command.FIGHT,
-      cursor: cursor,
+      cursor,
       move: { move: moveId, targets: [], useMode },
       args: [useMode, move],
     };
     const preTurnCommand: TurnCommand = {
-      command: command,
+      command,
       targets: [this.fieldIndex],
       skip: command === Command.FIGHT,
     };
@@ -296,7 +302,14 @@ export class CommandPhase extends FieldPhase {
       turnCommand.targets = [this.fieldIndex];
     }
 
-    console.log(moveTargets, getPokemonNameWithAffix(playerPokemon));
+    console.log(
+      "Move:",
+      MoveId[moveId],
+      "Move targets:",
+      moveTargets,
+      "\nPlayer Pokemon:",
+      getPokemonNameWithAffix(playerPokemon),
+    );
 
     if (moveTargets.targets.length > 1 && moveTargets.multiple) {
       globalScene.phaseManager.unshiftNew("SelectTargetPhase", this.fieldIndex);
@@ -325,7 +338,7 @@ export class CommandPhase extends FieldPhase {
    * Only works for parameterless i18next keys.
    * @param key - The i18next key for the text to show
    */
-  private queueShowText(key: string) {
+  private queueShowText(key: string): void {
     globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
     globalScene.ui.setMode(UiMode.MESSAGE);
 
@@ -344,32 +357,35 @@ export class CommandPhase extends FieldPhase {
   /**
    * Helper method for {@linkcode handleBallCommand} that checks if the pokeball can be thrown.
    *
-   * The pokeball may not be thrown if:
+   * The pokeball may not be thrown if any of the following are true:
    * - It is a trainer battle
-   * - The biome is {@linkcode Biome.END} and it is not classic mode
-   * - The biome is {@linkcode Biome.END} and the fresh start challenge is active
-   * - The biome is {@linkcode Biome.END} and the player has not either caught the target before or caught all but one starter
+   * - The player is in the {@linkcode BiomeId.END | End} biome and
+   *   - it is not classic mode; or
+   *   - the fresh start challenge is active; or
+   *   - the player has not caught the target before and the player is still missing more than one starter
    * - The player is in a mystery encounter that disallows catching the pokemon
    * @returns Whether a pokeball can be thrown
-   *
    */
   private checkCanUseBall(): boolean {
+    const { arena, currentBattle, gameData, gameMode } = globalScene;
+    const { battleType } = currentBattle;
+    const { biomeType } = arena;
+    const { isClassic } = gameMode;
+    const { dexData } = gameData;
+
+    const someUncaughtSpeciesOnField = globalScene
+      .getEnemyField()
+      .some(p => p.isActive() && !dexData[p.species.speciesId].caughtAttr);
+    const missingMultipleStarters =
+      gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1;
     if (
-      globalScene.arena.biomeType === BiomeId.END &&
-      (!globalScene.gameMode.isClassic ||
-        globalScene.gameMode.isFreshStartChallenge() ||
-        (globalScene
-          .getEnemyField()
-          .some(p => p.isActive() && !globalScene.gameData.dexData[p.species.speciesId].caughtAttr) &&
-          globalScene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1))
+      biomeType === BiomeId.END &&
+      (!isClassic || gameMode.isFreshStartChallenge() || (someUncaughtSpeciesOnField && missingMultipleStarters))
     ) {
       this.queueShowText("battle:noPokeballForce");
-    } else if (globalScene.currentBattle.battleType === BattleType.TRAINER) {
+    } else if (battleType === BattleType.TRAINER) {
       this.queueShowText("battle:noPokeballTrainer");
-    } else if (
-      globalScene.currentBattle.isBattleMysteryEncounter() &&
-      !globalScene.currentBattle.mysteryEncounter!.catchAllowed
-    ) {
+    } else if (currentBattle.isBattleMysteryEncounter() && !currentBattle.mysteryEncounter!.catchAllowed) {
       this.queueShowText("battle:noPokeballMysteryEncounter");
     } else {
       return true;
@@ -398,7 +414,8 @@ export class CommandPhase extends FieldPhase {
       return false;
     }
 
-    if (cursor < 5) {
+    const numBallTypes = 5;
+    if (cursor < numBallTypes) {
       const targetPokemon = globalScene.getEnemyPokemon();
       if (
         targetPokemon?.isBoss() &&
@@ -489,7 +506,7 @@ export class CommandPhase extends FieldPhase {
       currentBattle.turnCommands[this.fieldIndex] = this.isSwitch
         ? {
             command: Command.POKEMON,
-            cursor: cursor,
+            cursor,
             args: [isBatonSwitch],
           }
         : {
@@ -550,12 +567,6 @@ export class CommandPhase extends FieldPhase {
   }
 
   // Overloads for handleCommand to provide a more specific signature for the different options
-  handleCommand(command: Command.FIGHT | Command.TERA, cursor: number, useMode?: MoveUseMode, move?: TurnMove): boolean;
-  handleCommand(command: Command.BALL, cursor: number): boolean;
-  handleCommand(command: Command.POKEMON, cursor: number, useBaton: boolean): boolean;
-  handleCommand(command: Command.RUN, cursor: number): boolean;
-  handleCommand(command: Command, cursor: number, useMode?: boolean | MoveUseMode, move?: TurnMove): boolean;
-
   /**
    * Process the command phase logic based on the selected command
    *
@@ -563,8 +574,20 @@ export class CommandPhase extends FieldPhase {
    * @param cursor - The index of option that the cursor is on, or -1 if no option is selected
    * @param useMode - The mode to use for the move, if applicable. For switches, a boolean that specifies whether the switch is a Baton switch.
    * @param move - For {@linkcode Command.FIGHT}, the move to use
+   * @returns Whether the command was successful
    */
-  handleCommand(command: Command, cursor: number, useMode: boolean | MoveUseMode = false, move?: TurnMove): boolean {
+  handleCommand(command: Command.FIGHT | Command.TERA, cursor: number, useMode?: MoveUseMode, move?: TurnMove): boolean;
+  handleCommand(command: Command.BALL, cursor: number): boolean;
+  handleCommand(command: Command.POKEMON, cursor: number, useBaton: boolean): boolean;
+  handleCommand(command: Command.RUN, cursor: number): boolean;
+  handleCommand(command: Command, cursor: number, useMode?: boolean | MoveUseMode, move?: TurnMove): boolean;
+
+  public handleCommand(
+    command: Command,
+    cursor: number,
+    useMode: boolean | MoveUseMode = false,
+    move?: TurnMove,
+  ): boolean {
     let success = false;
 
     switch (command) {
