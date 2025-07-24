@@ -10,7 +10,7 @@ const SPLIT_LOWER_UPPER_RE = /([\p{Ll}\d])(\p{Lu})/gu;
 /** Regex to split around single-letter uppercase words.*/
 const SPLIT_UPPER_UPPER_RE = /(\p{Lu})([\p{Lu}][\p{Ll}])/gu;
 /** Regexp involved with stripping non-word delimiters from the result. */
-const DEFAULT_STRIP_REGEXP = /[-_ ]+/giu;
+const DELIM_STRIP_REGEXP = /[-_ ]+/giu;
 // The replacement value for splits.
 const SPLIT_REPLACE_VALUE = "$1\0$2";
 
@@ -27,7 +27,7 @@ const SPLIT_REPLACE_VALUE = "$1\0$2";
 export function splitWords(value: string): string[] {
   let result = value.trim();
   result = result.replace(SPLIT_LOWER_UPPER_RE, SPLIT_REPLACE_VALUE).replace(SPLIT_UPPER_UPPER_RE, SPLIT_REPLACE_VALUE);
-  result = result.replace(DEFAULT_STRIP_REGEXP, "\0");
+  result = result.replace(DELIM_STRIP_REGEXP, "\0");
 
   // Trim the delimiter from around the output string
   return trimFromStartAndEnd(result, "\0").split(/\0/g);
