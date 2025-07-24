@@ -2,13 +2,13 @@ import re
 
 filenames = [['src/enums/moves.ts', 'move'], ['src/enums/abilities.ts', 'ability'], ['src/enums/species.ts', 'Pokémon']]
 
-commentBlockStart   = re.compile('\/\*[^\*].*')     # Regex for the start of a comment block
-commentBlockEnd     = re.compile('.*,\*\/')         # Regex for the end of a comment block 
+commentBlockStart   = re.compile(r'\/\*[^\*].*')     # Regex for the start of a comment block
+commentBlockEnd     = re.compile(r'.*,\*\/')         # Regex for the end of a comment block 
 
-commentExp  = re.compile('(?:\/\*\*.*\*\/)')    # Regex for a url comment that already existed in the file
+commentExp  = re.compile(r'(?:\/\*\*.*\*\/)')    # Regex for a url comment that already existed in the file
 enumExp     = re.compile('.*,')                 # Regex for a regular enum line
 
-numberExp = re.compile(' +\= +\d+,')
+numberExp = re.compile(r' +\= +\d+,')
 
 replaceList = ['ALOLA', 'ETERNAL', 'GALAR', 'HISUI', 'PALDEA', 'BLOODMOON']
 
