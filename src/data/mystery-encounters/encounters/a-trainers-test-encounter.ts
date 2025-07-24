@@ -63,12 +63,12 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
         break;
       case 3:
         trainerType = TrainerType.MIRA;
-        spriteKeys = getSpriteKeysFromSpecies(SpeciesId.ALAKAZAM, false, 1);
+        spriteKeys = getSpriteKeysFromSpecies(SpeciesId.ALAKAZAM);
         trainerNameKey = "mira";
         break;
       case 4:
         trainerType = TrainerType.RILEY;
-        spriteKeys = getSpriteKeysFromSpecies(SpeciesId.LUCARIO, false, 1);
+        spriteKeys = getSpriteKeysFromSpecies(SpeciesId.LUCARIO);
         trainerNameKey = "riley";
         break;
       default:
