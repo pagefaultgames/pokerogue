@@ -424,7 +424,7 @@ export class GameStatsUiHandler extends UiHandler {
 
     let success = false;
 
-    /** Move the cursor  */
+    /** The direction to move the cursor (up/down) */
     let dir: 1 | -1 = 1;
     switch (button) {
       case Button.CANCEL:
