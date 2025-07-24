@@ -2,6 +2,17 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "ES2020",
+    // Modifying this option requires all values to be set manually because the defaults get overridden
+    // Values other than "ES2024.Promise" taken from https://github.com/microsoft/TypeScript/blob/main/src/lib/es2020.full.d.ts
+    "lib": [
+      "ES2020",
+      "ES2024.Promise",
+      "DOM",
+      "DOM.AsyncIterable",
+      "DOM.Iterable",
+      "ScriptHost",
+      "WebWorker.ImportScripts"
+    ],
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "esModuleInterop": true,

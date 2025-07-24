@@ -228,9 +228,9 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player pokemon's {@linkcode StatusEffect | status-effect}
+   * Override the player pokemon's initial {@linkcode StatusEffect | status-effect},
    * @param statusEffect - The {@linkcode StatusEffect | status-effect} to set
-   * @returns
+   * @returns `this`
    */
   public statusEffect(statusEffect: StatusEffect): this {
     vi.spyOn(Overrides, "STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);
@@ -494,9 +494,9 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy {@linkcode StatusEffect | status-effect} for enemy pokemon
+   * Override the enemy pokemon's initial {@linkcode StatusEffect | status-effect}.
    * @param statusEffect - The {@linkcode StatusEffect | status-effect} to set
-   * @returns
+   * @returns `this`
    */
   public enemyStatusEffect(statusEffect: StatusEffect): this {
     vi.spyOn(Overrides, "OPP_STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);
