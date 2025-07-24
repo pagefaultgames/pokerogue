@@ -110,10 +110,10 @@ import type { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
 import { WeatherType } from "#enums/weather-type";
 import { doShinySparkleAnim } from "#field/anims";
-import { PokemonItemManager } from "#field/pokemon-held-item-manager";
 import { applyHeldItems } from "#items/all-held-items";
 import { HeldItemEffect } from "#items/held-item";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
+import { HeldItemManager } from "#items/held-item-manager";
 import { assignItemsFromConfiguration } from "#items/held-item-pool";
 import { TrainerItemEffect } from "#items/trainer-item";
 import { applyMoveAttrs } from "#moves/apply-attrs";
@@ -273,7 +273,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
-  public heldItemManager: PokemonItemManager;
+  public heldItemManager: HeldItemManager;
 
   // TODO: Rework this eventually
   constructor(
@@ -318,7 +318,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.exp = dataSource?.exp || getLevelTotalExp(this.level, species.growthRate);
     this.levelExp = dataSource?.levelExp || 0;
 
-    this.heldItemManager = new PokemonItemManager();
+    this.heldItemManager = new HeldItemManager();
     if (heldItemConfig) {
       assignItemsFromConfiguration(heldItemConfig, this);
     }
