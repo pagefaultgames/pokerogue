@@ -154,11 +154,11 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
       // Turn 1
       (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
-      await game.phaseInterceptor.to(CommandPhase);
+      await game.toNextTurn();
 
       // Turn 2
       (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
-      await game.phaseInterceptor.to(CommandPhase);
+      await game.toNextTurn();
 
       // Turn 3
       (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);

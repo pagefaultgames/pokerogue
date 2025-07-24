@@ -29,7 +29,6 @@ describe("Final Boss", () => {
       .startingBiome(BiomeId.END)
       .criticalHits(false)
       .enemyMoveset(MoveId.SPLASH)
-      .moveset([MoveId.SPLASH, MoveId.WILL_O_WISP, MoveId.DRAGON_PULSE])
       .startingLevel(10000);
   });
 
@@ -63,33 +62,31 @@ describe("Final Boss", () => {
     expect(game.scene.getEnemyPokemon()!.species.speciesId).not.toBe(SpeciesId.ETERNATUS);
   });
 
-  it("should not have passive enabled on Eternatus", async () => {
+  it("should initially spawn in regular form without passive & 4 boss segments", async () => {
     await game.runToFinalBossEncounter([SpeciesId.BIDOOF], GameModes.CLASSIC);
 
     const eternatus = game.scene.getEnemyPokemon()!;
+    expect(eternatus.formIndex).toBe(0);
+    expect(eternatus.bossSegments).toBe(4);
+    expect(eternatus.bossSegmentIndex).toBe(3);
     expect(eternatus.species.speciesId).toBe(SpeciesId.ETERNATUS);
     expect(eternatus.hasPassive()).toBe(false);
   });
 
   it("should change form on direct hit down to last boss fragment", async () => {
     await game.runToFinalBossEncounter([SpeciesId.KYUREM], GameModes.CLASSIC);
-    await game.phaseInterceptor.to("CommandPhase");
 
-    // Eternatus phase 1
+    // phase 1
     const eternatus = game.scene.getEnemyPokemon()!;
     const phase1Hp = eternatus.getMaxHp();
-    expect(eternatus.species.speciesId).toBe(SpeciesId.ETERNATUS);
-    expect(eternatus.formIndex).toBe(0);
-    expect(eternatus.bossSegments).toBe(4);
-    expect(eternatus.bossSegmentIndex).toBe(3);
 
-    game.move.select(MoveId.DRAGON_PULSE);
+    game.move.use(MoveId.DRAGON_PULSE);
     await game.toNextTurn();
 
-    // Eternatus phase 2: changed form, healed and restored its shields
+    // Eternatus phase 2: changed form, healed fully and restored its shields
     expect(eternatus.species.speciesId).toBe(SpeciesId.ETERNATUS);
-    expect(eternatus.hp).toBeGreaterThan(phase1Hp);
     expect(eternatus.hp).toBe(eternatus.getMaxHp());
+    expect(eternatus.getMaxHp()).toBeGreaterThan(phase1Hp);
     expect(eternatus.formIndex).toBe(1);
     expect(eternatus.bossSegments).toBe(5);
     expect(eternatus.bossSegmentIndex).toBe(4);
@@ -98,19 +95,13 @@ describe("Final Boss", () => {
 
   it("should change form on status damage down to last boss fragment", async () => {
     game.override.ability(AbilityId.NO_GUARD);
-
-    await game.runToFinalBossEncounter([SpeciesId.BIDOOF], GameModes.CLASSIC);
-    await game.phaseInterceptor.to("CommandPhase");
+    await game.runToFinalBossEncounter([SpeciesId.SALAZZLE], GameModes.CLASSIC);
 
     // Eternatus phase 1
     const eternatus = game.scene.getEnemyPokemon()!;
     const phase1Hp = eternatus.getMaxHp();
-    expect(eternatus.species.speciesId).toBe(SpeciesId.ETERNATUS);
-    expect(eternatus.formIndex).toBe(0);
-    expect(eternatus.bossSegments).toBe(4);
-    expect(eternatus.bossSegmentIndex).toBe(3);
 
-    game.move.select(MoveId.WILL_O_WISP);
+    game.move.use(MoveId.WILL_O_WISP);
     await game.toNextTurn();
     expect(eternatus.status?.effect).toBe(StatusEffect.BURN);
 
@@ -118,19 +109,19 @@ describe("Final Boss", () => {
     const lastShieldHp = Math.ceil(phase1Hp / eternatus.bossSegments);
     // Stall until the burn is one hit away from breaking the last shield
     while (eternatus.hp - tickDamage > lastShieldHp) {
-      game.move.select(MoveId.SPLASH);
+      game.move.use(MoveId.SPLASH);
       await game.toNextTurn();
     }
 
     expect(eternatus.bossSegmentIndex).toBe(1);
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
     // Eternatus phase 2: changed form, healed and restored its shields
     expect(eternatus.hp).toBeGreaterThan(phase1Hp);
     expect(eternatus.hp).toBe(eternatus.getMaxHp());
-    expect(eternatus.status).toBeFalsy();
+    expect(eternatus.status?.effect).toBeUndefined();
     expect(eternatus.formIndex).toBe(1);
     expect(eternatus.bossSegments).toBe(5);
     expect(eternatus.bossSegmentIndex).toBe(4);

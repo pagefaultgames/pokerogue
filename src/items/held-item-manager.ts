@@ -18,7 +18,7 @@ import {
 } from "#items/held-item-data-types";
 import { getTypedEntries, getTypedKeys } from "#utils/common";
 
-export class PokemonItemManager {
+export class HeldItemManager {
   public heldItems: HeldItemDataMap;
   public formChangeItems: FormChangeItemPropertyMap;
 
@@ -78,21 +78,15 @@ export class PokemonItemManager {
   }
 
   getTransferableHeldItems(): HeldItemId[] {
-    return getTypedKeys(this.heldItems)
-      .filter(k => allHeldItems[k].isTransferable)
-      .map(k => k);
+    return getTypedKeys(this.heldItems).filter(k => allHeldItems[k].isTransferable);
   }
 
   getStealableHeldItems(): HeldItemId[] {
-    return getTypedKeys(this.heldItems)
-      .filter(k => allHeldItems[k].isStealable)
-      .map(k => k);
+    return getTypedKeys(this.heldItems).filter(k => allHeldItems[k].isStealable);
   }
 
   getSuppressableHeldItems(): HeldItemId[] {
-    return getTypedKeys(this.heldItems)
-      .filter(k => allHeldItems[k].isSuppressable)
-      .map(k => k);
+    return getTypedKeys(this.heldItems).filter(k => allHeldItems[k].isSuppressable);
   }
 
   hasItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
