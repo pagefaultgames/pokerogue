@@ -6,7 +6,7 @@ export default defineProject(({ mode }) => ({
   ...defaultConfig,
   test: {
     testTimeout: 20000,
-    setupFiles: ["./test/fontFace.setup.ts", "./test/vitest.setup.ts"],
+    setupFiles: ["./test/font-face.setup.ts", "./test/vitest.setup.ts"],
     sequence: {
       sequencer: MySequencer,
     },

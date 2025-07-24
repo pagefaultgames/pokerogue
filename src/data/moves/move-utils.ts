@@ -1,8 +1,8 @@
 import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { MoveTarget } from "#enums/MoveTarget";
 import type { MoveId } from "#enums/move-id";
+import { MoveTarget } from "#enums/move-target";
 import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
