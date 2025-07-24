@@ -408,7 +408,7 @@ export class PhaseManager {
 
   /**
    * Queues an ability bar flyout phase as if through {@linkcode unshiftPhase}
-   * @param pokemon - The pokemon who has the ability
+   * @param pokemon - The {@linkcode Pokemon} whose ability is being activated
    * @param passive - Whether the ability is a passive
    * @param show - If `true`, show the bar. Otherwise, hide it
    */

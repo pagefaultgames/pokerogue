@@ -3,7 +3,6 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { CommandPhase } from "#phases/command-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -63,7 +62,6 @@ describe("Abilities - Pastel Veil", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(magikarp.status?.effect).toBe(StatusEffect.POISON);
 
-    await game.phaseInterceptor.to(CommandPhase);
     game.move.select(MoveId.SPLASH);
     game.doSwitchPokemon(2);
     await game.phaseInterceptor.to(TurnEndPhase);

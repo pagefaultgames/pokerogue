@@ -30,6 +30,7 @@ import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEven
 import type { Pokemon } from "#field/pokemon";
 import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
+import type { AbstractConstructor } from "#types/type-helpers";
 import { type Constructor, isNullOrUndefined, NumberHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 
@@ -650,7 +651,7 @@ export class Arena {
    * @param args array of parameters that the called upon tags may need
    */
   applyTagsForSide(
-    tagType: ArenaTagType | Constructor<ArenaTag>,
+    tagType: ArenaTagType | Constructor<ArenaTag> | AbstractConstructor<ArenaTag>,
     side: ArenaTagSide,
     simulated: boolean,
     ...args: unknown[]
@@ -672,7 +673,11 @@ export class Arena {
    * @param simulated if `true`, this applies arena tags without changing game state
    * @param args array of parameters that the called upon tags may need
    */
-  applyTags(tagType: ArenaTagType | Constructor<ArenaTag>, simulated: boolean, ...args: unknown[]): void {
+  applyTags(
+    tagType: ArenaTagType | Constructor<ArenaTag> | AbstractConstructor<ArenaTag>,
+    simulated: boolean,
+    ...args: unknown[]
+  ): void {
     this.applyTagsForSide(tagType, ArenaTagSide.BOTH, simulated, ...args);
   }
 
@@ -729,7 +734,7 @@ export class Arena {
    * @param tagType The {@linkcode ArenaTagType} or {@linkcode ArenaTag} to get
    * @returns either the {@linkcode ArenaTag}, or `undefined` if it isn't there
    */
-  getTag(tagType: ArenaTagType | Constructor<ArenaTag>): ArenaTag | undefined {
+  getTag(tagType: ArenaTagType | Constructor<ArenaTag> | AbstractConstructor<ArenaTag>): ArenaTag | undefined {
     return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
   }
 
@@ -745,7 +750,10 @@ export class Arena {
    * @param side The {@linkcode ArenaTagSide} to look at
    * @returns either the {@linkcode ArenaTag}, or `undefined` if it isn't there
    */
-  getTagOnSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide): ArenaTag | undefined {
+  getTagOnSide(
+    tagType: ArenaTagType | Constructor<ArenaTag> | AbstractConstructor<ArenaTag>,
+    side: ArenaTagSide,
+  ): ArenaTag | undefined {
     return typeof tagType === "string"
       ? this.tags.find(
           t => t.tagType === tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side),

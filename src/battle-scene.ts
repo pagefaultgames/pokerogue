@@ -50,7 +50,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { EaseType } from "#enums/ease-type";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
-import type { ExpNotification } from "#enums/exp-notification";
+import { ExpNotification } from "#enums/exp-notification";
 import { FormChangeItem } from "#enums/form-change-item";
 import { GameModes } from "#enums/game-modes";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
@@ -196,6 +196,7 @@ export class BattleScene extends SceneBase {
   public enableMoveInfo = true;
   public enableRetries = false;
   public hideIvs = false;
+  // TODO: Remove all plain numbers in place of enums or `const object` equivalents for clarity
   /**
    * Determines the condition for a notification should be shown for Candy Upgrades
    * - 0 = 'Off'
@@ -213,7 +214,7 @@ export class BattleScene extends SceneBase {
   public uiTheme: UiTheme = UiTheme.DEFAULT;
   public windowType = 0;
   public experimentalSprites = false;
-  public musicPreference: number = MusicPreference.ALLGENS;
+  public musicPreference: MusicPreference = MusicPreference.ALLGENS;
   public moveAnimations = true;
   public expGainsSpeed: ExpGainsSpeed = ExpGainsSpeed.DEFAULT;
   public skipSeenDialogues = false;
@@ -224,33 +225,18 @@ export class BattleScene extends SceneBase {
    * - 2 = Always (automatically skip animation when hatching 2 or more eggs)
    */
   public eggSkipPreference = 0;
-
   /**
-   * Defines the experience gain display mode.
-   *
-   * @remarks
-   * The `expParty` can have several modes:
-   * - `0` - Default: The normal experience gain display, nothing changed.
-   * - `1` - Level Up Notification: Displays the level up in the small frame instead of a message.
-   * - `2` - Skip: No level up frame nor message.
-   *
-   * Modes `1` and `2` are still compatible with stats display, level up, new move, etc.
-   * @default 0 - Uses the default normal experience gain display.
+   * Defines the {@linkcode ExpNotification | Experience gain display mode}.
+   * @defaultValue {@linkcode ExpNotification.DEFAULT}
    */
-  public expParty: ExpNotification = 0;
+  public expParty: ExpNotification = ExpNotification.DEFAULT;
   public hpBarSpeed = 0;
   public fusionPaletteSwaps = true;
   public enableTouchControls = false;
   public enableVibration = false;
   public showBgmBar = true;
-
-  /**
-   * Determines the selected battle style.
-   * - 0 = 'Switch'
-   * - 1 = 'Set' - The option to switch the active pokemon at the start of a battle will not display.
-   */
-  public battleStyle: number = BattleStyle.SWITCH;
-
+  /** Determines the selected battle style. */
+  public battleStyle: BattleStyle = BattleStyle.SWITCH;
   /**
    * Defines whether or not to show type effectiveness hints
    * - true: No hints
@@ -830,7 +816,8 @@ export class BattleScene extends SceneBase {
   /**
    * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
    * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
-   * @param activeOnly - Whether to consider only active pokemon; default `false`
+   * @param activeOnly - Whether to consider only active pokemon (as described by {@linkcode Pokemon.isActive()}); default `false`.
+   * If `true`, will also remove all `null` values from the array.
    * @returns An array of {@linkcode Pokemon}, as described above.
    */
   public getField(activeOnly = false): Pokemon[] {
@@ -843,9 +830,9 @@ export class BattleScene extends SceneBase {
   }
 
   /**
-   * Used in doubles battles to redirect moves from one pokemon to another when one faints or is removed from the field
-   * @param removedPokemon {@linkcode Pokemon} the pokemon that is being removed from the field (flee, faint), moves to be redirected FROM
-   * @param allyPokemon {@linkcode Pokemon} the pokemon that will have the moves be redirected TO
+   * Attempt to redirect a move in double battles from a fainted/removed Pokemon to its ally.
+   * @param removedPokemon - The {@linkcode Pokemon} having been removed from the field.
+   * @param allyPokemon - The {@linkcode Pokemon} allied with the removed Pokemon; will have moves redirected to it
    */
   redirectPokemonMoves(removedPokemon: Pokemon, allyPokemon: Pokemon): void {
     this.phaseManager.redirectMoves(removedPokemon, allyPokemon);
@@ -853,10 +840,10 @@ export class BattleScene extends SceneBase {
 
   /**
    * Returns the ModifierBar of this scene, which is declared private and therefore not accessible elsewhere
-   * @param isEnemy Whether to return the enemy's modifier bar
-   * @returns {ModifierBar}
+   * @param isEnemy - Whether to return the enemy modifier bar instead of the player bar; default `false`
+   * @returns The {@linkcode ModifierBar} for the given side of the field
    */
-  getModifierBar(isEnemy?: boolean): ModifierBar {
+  getModifierBar(isEnemy = false): ModifierBar {
     return isEnemy ? this.enemyModifierBar : this.modifierBar;
   }
 
@@ -1458,10 +1445,12 @@ export class BattleScene extends SceneBase {
 
     if (!waveIndex && lastBattle) {
       const isNewBiome = this.isNewBiome(lastBattle);
+      /** Whether to reset and recall pokemon */
       const resetArenaState =
         isNewBiome ||
         [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.currentBattle.battleType) ||
         this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
+
       for (const enemyPokemon of this.getEnemyParty()) {
         enemyPokemon.destroy();
       }
@@ -1836,7 +1825,7 @@ export class BattleScene extends SceneBase {
   }
 
   resetSeed(waveIndex?: number): void {
-    const wave = waveIndex || this.currentBattle?.waveIndex || 0;
+    const wave = waveIndex ?? this.currentBattle?.waveIndex ?? 0;
     this.waveSeed = shiftCharCodes(this.seed, wave);
     Phaser.Math.RND.sow([this.waveSeed]);
     console.log("Wave Seed:", this.waveSeed, wave);

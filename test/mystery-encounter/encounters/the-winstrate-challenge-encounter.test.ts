@@ -371,6 +371,6 @@ async function skipBattleToNextBattle(game: GameManager, isFinalBattle = false) 
   if (isFinalBattle) {
     await game.phaseInterceptor.to(MysteryEncounterRewardsPhase);
   } else {
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.toNextTurn();
   }
 }
