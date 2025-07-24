@@ -6,6 +6,8 @@ pre-commit:
       skip:
         - merge
         - rebase
+    ls-lint:
+      run: pnpm exec ls-lint
 
 post-merge:
   commands:
