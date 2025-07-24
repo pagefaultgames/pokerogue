@@ -83,7 +83,7 @@ describe.each([
     const playerPokemon = game.field.getPlayerPokemon();
     const typeSpy = vi.spyOn(playerPokemon, "getMoveType");
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const enemySpy = vi.spyOn(enemyPokemon, "getMoveEffectiveness");
     const powerSpy = vi.spyOn(allMoves[MoveId.CRUSH_GRIP], "calculateBattlePower");
 
