@@ -1,6 +1,7 @@
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
-import { HeldItem, HeldItemEffect } from "#items/held-item";
+import { HeldItem } from "#items/held-item";
 import i18next from "i18next";
 
 export interface BaseStatFlatParams {

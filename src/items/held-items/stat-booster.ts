@@ -1,9 +1,10 @@
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
-import { HeldItem, HeldItemEffect } from "#items/held-item";
+import { HeldItem } from "#items/held-item";
 import type { NumberHolder } from "#utils/common";
 
 export interface StatBoostParams {

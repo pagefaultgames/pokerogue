@@ -1,7 +1,8 @@
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
-import { HeldItem, HeldItemEffect } from "#items/held-item";
+import { HeldItem } from "#items/held-item";
 import type { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 

@@ -24,7 +24,6 @@ import { ExpBoosterHeldItem, type ExpBoostParams } from "#items/exp-booster";
 import { FieldEffectHeldItem, type FieldEffectParams } from "#items/field-effect";
 import { FlinchChanceHeldItem, type FlinchChanceParams } from "#items/flinch-chance";
 import { FriendshipBoosterHeldItem, type FriendshipBoostParams } from "#items/friendship-booster";
-import { HeldItemEffect } from "#items/held-item";
 import { HitHealHeldItem, type HitHealParams } from "#items/hit-heal";
 import { IncrementingStatHeldItem, type IncrementingStatParams } from "#items/incrementing-stat";
 import { InstantReviveHeldItem, type InstantReviveParams } from "#items/instant-revive";
@@ -37,6 +36,7 @@ import { SurviveChanceHeldItem, type SurviveChanceParams } from "#items/survive-
 import { TurnEndHealHeldItem, type TurnEndHealParams } from "#items/turn-end-heal";
 import { TurnEndStatusHeldItem, type TurnEndStatusParams } from "#items/turn-end-status";
 import { getEnumValues } from "#utils/enums";
+import { HeldItemEffect } from "./HeldItemEffect";
 
 export function initHeldItems() {
   for (const berry of getEnumValues(BerryType)) {

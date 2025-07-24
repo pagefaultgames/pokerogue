@@ -1,7 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import type { Pokemon } from "#field/pokemon";
-import { HeldItem, HeldItemEffect } from "#items/held-item";
+import { HeldItem } from "#items/held-item";
 import type { BooleanHolder } from "#utils/common";
 import i18next from "i18next";
 

@@ -1,4 +1,4 @@
-// TODO: move to `src/@types/`
+// TODO: move all types to `src/@types/` and all functions to a utility place
 
 import type { FormChangeItem } from "#enums/form-change-item";
 import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";

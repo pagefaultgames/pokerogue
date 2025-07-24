@@ -1,3 +1,5 @@
+import type { EnumValues } from "#types/enum-types";
+
 // TODO: make category the lower 2 bytes
 export const HeldItemId = {
   NONE: 0x0000,
@@ -92,19 +94,20 @@ export const HeldItemId = {
   GIMMIGHOUL_EVO_TRACKER: 0x0A01,
 } as const;
 
-export type HeldItemId = (typeof HeldItemId)[keyof typeof HeldItemId];
+export type HeldItemId = EnumValues<typeof HeldItemId>;
 
 type HeldItemName = keyof typeof HeldItemId;
-type HeldItemValue = typeof HeldItemId[HeldItemName]; // equivalent to `HeldItemId`
 
-// Use a type-safe reducer to force number keys and values
-export const HeldItemNames: Record<HeldItemValue, HeldItemName> = Object.entries(HeldItemId).reduce(
+/** `const object` mapping all held item IDs to their respective names. */
+// TODO: This stores names as UPPER_SNAKE_CASE, but the locales are in PascalCase...
+export const HeldItemNames = Object.entries(HeldItemId).reduce(
+  // Use a type-safe reducer to force number keys and values
   (acc, [key, value]) => {
-    acc[value as HeldItemValue] = key as HeldItemName;
+    acc[value as HeldItemId] = key as HeldItemName;
     return acc;
   },
-  {} as Record<HeldItemValue, HeldItemName>
-);
+  {} as Record<HeldItemId, HeldItemName>
+) satisfies Record<HeldItemId, HeldItemName>;
 
 export const HeldItemCategoryId = {
   NONE: 0x0000,
@@ -120,7 +123,7 @@ export const HeldItemCategoryId = {
   EVO_TRACKER: 0x0A00,
 } as const;
 
-export type HeldItemCategoryId = (typeof HeldItemCategoryId)[keyof typeof HeldItemCategoryId];
+export type HeldItemCategoryId = EnumValues<typeof HeldItemCategoryId>;
 
 const ITEM_CATEGORY_MASK = 0xFF00
 
