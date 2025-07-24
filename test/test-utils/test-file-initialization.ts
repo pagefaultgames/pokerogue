@@ -12,20 +12,17 @@ import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 /**
- * An initialization function that is run at the beginning of every _test file_ (via `beforeAll()`).
+ * A initialization function that is run at the beginning of every testing instance (via `beforeAll()`).
  */
 export function initTestFile(): void {
   setupStubs();
-
-  // Initialize all of these things if and only if they have not been initialized yet.
   initI18n();
   initializeGame();
-  console.log("Game initialized!");
 }
 
 /**
  * Setup various stubs for testing.
- * @todo Move this into a dedicated stub file instead of running it once per test file init
+ * @todo Move this into a dedicated stub file instead of running it once per test instance
  */
 function setupStubs(): void {
   Object.defineProperty(window, "localStorage", {

@@ -51,9 +51,15 @@ vi.mock("i18next", async importOriginal => {
 
 global.testFailed = false;
 
-initTestFile();
+let wasInitialized = false;
 
 beforeAll(() => {
+  // Run the init code once per thread, and manage listeners once per file
+  if (!wasInitialized) {
+    initTestFile();
+    wasInitialized = true;
+  }
+
   manageListeners();
 });
 
