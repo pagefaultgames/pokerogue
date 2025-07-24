@@ -1,6 +1,5 @@
 import "vitest-canvas-mock";
-import { manageListeners } from "#test/test-utils/listeners-manager";
-import { initTestFile } from "#test/test-utils/test-file-initialization";
+import { initTests } from "#test/test-utils/test-file-initialization";
 import { afterAll, beforeAll, vi } from "vitest";
 
 /** Set the timezone to UTC for tests. */
@@ -51,16 +50,8 @@ vi.mock("i18next", async importOriginal => {
 
 global.testFailed = false;
 
-let wasInitialized = false;
-
 beforeAll(() => {
-  // Run the init code once per thread, and manage listeners once per file
-  if (!wasInitialized) {
-    initTestFile();
-    wasInitialized = true;
-  }
-
-  manageListeners();
+  initTests();
 });
 
 afterAll(() => {
