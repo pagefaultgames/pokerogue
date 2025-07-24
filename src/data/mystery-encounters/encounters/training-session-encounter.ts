@@ -28,7 +28,8 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { PokemonData } from "#system/pokemon-data";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
-import { getEnumValues, isNullOrUndefined, randSeedShuffle } from "#utils/common";
+import { isNullOrUndefined, randSeedShuffle } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 
 /** The i18n namespace for the encounter */

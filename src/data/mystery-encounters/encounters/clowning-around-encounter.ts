@@ -8,9 +8,9 @@ import { BattlerIndex } from "#enums/battler-index";
 import { BerryType } from "#enums/berry-type";
 import { Challenges } from "#enums/challenges";
 import { EncounterAnim } from "#enums/encounter-anims";
-import { MoveCategory } from "#enums/MoveCategory";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { ModifierTier } from "#enums/modifier-tier";
+import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -43,8 +43,8 @@ import {
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
-import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/TrainerPartyTemplate";
 import { trainerConfigs } from "#trainers/trainer-config";
+import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import type { OptionSelectConfig } from "#ui/abstact-option-select-ui-handler";
 import { randSeedInt, randSeedShuffle } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -138,6 +138,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
     clownConfig.partyTemplateFunc = null; // Overrides party template func if it exists
 
     // Generate random ability for Blacephalon from pool
+    // TODO: should this use `randSeedItem`?
     const ability = RANDOM_ABILITY_POOL[randSeedInt(RANDOM_ABILITY_POOL.length)];
     encounter.setDialogueToken("ability", allAbilities[ability].name);
     encounter.misc = { ability };

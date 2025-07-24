@@ -13,8 +13,8 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { MoveFlags } from "#enums/MoveFlags";
 import { CommonAnim } from "#enums/move-anims-common";
+import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { isIgnorePP, isIgnoreStatus, isReflected, isVirtual, MoveUseMode } from "#enums/move-use-mode";
@@ -26,7 +26,8 @@ import { applyMoveAttrs } from "#moves/apply-attrs";
 import { frenzyMissFunc } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
 import { BattlePhase } from "#phases/battle-phase";
-import { enumValueToKey, NumberHolder } from "#utils/common";
+import { NumberHolder } from "#utils/common";
+import { enumValueToKey } from "#utils/enums";
 import i18next from "i18next";
 
 export class MovePhase extends BattlePhase {

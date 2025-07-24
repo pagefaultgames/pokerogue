@@ -1,11 +1,10 @@
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -28,7 +27,7 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
     game.override
       .ability(AbilityId.STURDY)
       .battleStyle("single")
-      .battleType(BattleType.TRAINER)
+      .startingWave(5)
       .criticalHits(false)
       .enemyLevel(100)
       .enemySpecies(SpeciesId.DRACOVISH)

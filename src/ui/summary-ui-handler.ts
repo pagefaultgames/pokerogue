@@ -10,7 +10,7 @@ import { getNatureName, getNatureStatMultiplier } from "#data/nature";
 import { getPokeballAtlasKey } from "#data/pokeball";
 import { getTypeRgb } from "#data/type";
 import { Button } from "#enums/buttons";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveCategory } from "#enums/move-category";
 import { Nature } from "#enums/nature";
 import { PlayerGender } from "#enums/player-gender";
 import { PokemonType } from "#enums/pokemon-type";
@@ -29,7 +29,6 @@ import { UiHandler } from "#ui/ui-handler";
 import {
   fixedInt,
   formatStat,
-  getEnumValues,
   getLocalizedSpriteKey,
   getShinyDescriptor,
   isNullOrUndefined,
@@ -37,6 +36,7 @@ import {
   rgbHexToRgba,
   toReadableString,
 } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 

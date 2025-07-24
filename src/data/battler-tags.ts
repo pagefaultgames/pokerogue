@@ -11,9 +11,9 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { HitResult } from "#enums/hit-result";
-import { MoveCategory } from "#enums/MoveCategory";
-import { MoveFlags } from "#enums/MoveFlags";
 import { ChargeAnim, CommonAnim } from "#enums/move-anims-common";
+import { MoveCategory } from "#enums/move-category";
+import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { MoveUseMode } from "#enums/move-use-mode";
@@ -74,10 +74,13 @@ export class BattlerTag {
 
   /**
    * Tick down this {@linkcode BattlerTag}'s duration.
-   * @returns `true` if the tag should be kept (`turnCount > 0`)
+   * @param _pokemon - The {@linkcode Pokemon} whom this tag belongs to.
+   * Unused by default but can be used by subclasses.
+   * @param _lapseType - The {@linkcode BattlerTagLapseType} being lapsed.
+   * Unused by default but can be used by subclasses.
+   * @returns `true` if the tag should be kept (`turnCount` > 0`)
    */
   lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
-    // TODO: Maybe flip this (return `true` if tag needs removal)
     return --this.turnCount > 0;
   }
 
@@ -123,7 +126,7 @@ export interface TerrainBattlerTag {
 
 /**
  * Base class for tags that restrict the usage of moves. This effect is generally referred to as "disabling" a move
- * in-game. This is not to be confused with {@linkcode MoveId.DISABLE}.
+ * in-game (not to be confused with {@linkcode MoveId.DISABLE}).
  *
  * Descendants can override {@linkcode isMoveRestricted} to restrict moves that
  * match a condition. A restricted move gets cancelled before it is used.
