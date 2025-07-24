@@ -194,14 +194,16 @@ export async function initI18n(): Promise<void> {
     ],
     backend: {
       loadPath(lng: string, [ns]: string[]) {
+        // Use namespace maps where required
         let fileName: string;
         if (namespaceMap[ns]) {
           fileName = namespaceMap[ns];
         } else if (ns.startsWith("mysteryEncounters/")) {
-          fileName = toKebabCase(ns + "Dialogue");
+          fileName = toKebabCase(ns) + "-dialogue"; // mysteryEncounters/a-trainers-test-dialogue
         } else {
           fileName = toKebabCase(ns);
         }
+        // ex: "./locales/en/move-anims"
         return `./locales/${lng}/${fileName}.json?v=${pkg.version}`;
       },
     },

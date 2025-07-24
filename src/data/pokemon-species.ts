@@ -899,7 +899,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
    * @returns the pokemon-form locale key for the single form name ("Alolan Form", "Eternal Flower" etc)
    */
   getFormNameToDisplay(formIndex = 0, append = false): string {
-    const formKey = this.forms?.[formIndex!]?.formKey;
+    const formKey = this.forms[formIndex]?.formKey ?? "";
     const formText = toPascalCase(formKey);
     const speciesName = toCamelCase(SpeciesId[this.speciesId]);
     let ret = "";

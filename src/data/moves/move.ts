@@ -90,7 +90,6 @@ import type { TurnMove } from "#types/turn-move";
 import { BooleanHolder, type Constructor, isNullOrUndefined, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
-
 import i18next from "i18next";
 
 /**

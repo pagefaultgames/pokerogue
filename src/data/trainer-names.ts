@@ -1,12 +1,12 @@
 import { TrainerType } from "#enums/trainer-type";
-import { toUpperSnakeCase } from "#utils/strings";
+import { toPascalSnakeCase } from "#utils/strings";
 
 class TrainerNameConfig {
   public urls: string[];
   public femaleUrls: string[] | null;
 
   constructor(type: TrainerType, ...urls: string[]) {
-    this.urls = urls.length ? urls : [toUpperSnakeCase(TrainerType[type])];
+    this.urls = urls.length ? urls : [toPascalSnakeCase(TrainerType[type])];
   }
 
   hasGenderVariant(...femaleUrls: string[]): TrainerNameConfig {

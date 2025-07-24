@@ -110,3 +110,63 @@ export function toPascalCase(str: string) {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join("");
 }
+
+/**
+ * Helper method to convert a string into `kebab-case` (such as one used for filenames).
+ * @param str - The string being converted
+ * @returns The result of converting `str` into kebab case.
+ * @example
+ * ```ts
+ * console.log(toKebabCase("not_kebab-caSe String")); // returns "non-kebab-case-string"
+ * ```
+ */
+export function toKebabCase(str: string): string {
+  return splitWords(str)
+    .map(word => word.toLowerCase())
+    .join("-");
+}
+
+/**
+ * Helper method to convert a string into `snake_case` (such as one used for filenames).
+ * @param str - The string being converted
+ * @returns The result of converting `str` into snake case.
+ * @example
+ * ```ts
+ * console.log(toSnakeCase("not-in snake_CaSe")); // returns "not_in_snake_case"
+ * ```
+ */
+export function toSnakeCase(str: string) {
+  return splitWords(str)
+    .map(word => word.toLowerCase())
+    .join("_");
+}
+
+/**
+ * Helper method to convert a string into `UPPER_SNAKE_CASE`.
+ * @param str - The string being converted
+ * @returns The result of converting `str` into upper snake case.
+ * @example
+ * ```ts
+ * console.log(toUpperSnakeCase("apples bananas_oranGes-PearS")); // returns "APPLES_BANANAS_ORANGES_PEARS"
+ * ```
+ */
+export function toUpperSnakeCase(str: string) {
+  return splitWords(str)
+    .map(word => word.toUpperCase())
+    .join("_");
+}
+
+/**
+ * Helper method to convert a string into `Pascal_Snake_Case`.
+ * @param str - The string being converted
+ * @returns The result of converting `str` into pascal snake case.
+ * @example
+ * ```ts
+ * console.log(toPascalSnakeCase("apples-bananas_oranGes Pears")); // returns "Apples_Bananas_Oranges_Pears"
+ * ```
+ */
+export function toPascalSnakeCase(str: string) {
+  return splitWords(str)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join("_");
+}
