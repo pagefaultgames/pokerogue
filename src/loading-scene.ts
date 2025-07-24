@@ -21,7 +21,8 @@ import { initAchievements } from "#system/achv";
 import { initVouchers } from "#system/voucher";
 import { initStatsKeys } from "#ui/game-stats-ui-handler";
 import { getWindowVariantSuffix, WindowVariant } from "#ui/ui-theme";
-import { getEnumValues, hasAllLocalizedSprites, localPing } from "#utils/common";
+import { hasAllLocalizedSprites, localPing } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 
 export class LoadingScene extends SceneBase {

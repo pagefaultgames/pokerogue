@@ -56,13 +56,13 @@ import { addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions }
 import { addWindow } from "#ui/ui-theme";
 import {
   BooleanHolder,
-  getEnumKeys,
   getLocalizedSpriteKey,
   isNullOrUndefined,
   padInt,
   rgbHexToRgba,
   toReadableString,
 } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -641,7 +641,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     this.menuContainer.setVisible(false);
 
-    this.menuOptions = getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
+    this.menuOptions = getEnumValues(MenuOptions);
 
     this.optionSelectText = addBBCodeTextObject(
       0,
@@ -745,7 +745,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     this.starterAttributes = this.initStarterPrefs();
 
-    this.menuOptions = getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
+    this.menuOptions = getEnumValues(MenuOptions);
 
     this.menuContainer.setVisible(true);
 

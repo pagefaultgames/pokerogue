@@ -12,7 +12,8 @@ import { getVoucherTypeIcon, VoucherType } from "#system/voucher";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getEggTierTextTint, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { fixedInt, getEnumValues, randSeedShuffle } from "#utils/common";
+import { fixedInt, randSeedShuffle } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 

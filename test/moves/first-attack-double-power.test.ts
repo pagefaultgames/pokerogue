@@ -1,18 +1,16 @@
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Fishious Rend & Bolt Beak", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  let powerSpy: MockInstance;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -29,21 +27,19 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
     game.override
       .ability(AbilityId.STURDY)
       .battleStyle("single")
-      .battleType(BattleType.TRAINER)
+      .startingWave(5)
       .criticalHits(false)
       .enemyLevel(100)
       .enemySpecies(SpeciesId.DRACOVISH)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
-
-    powerSpy = vi.spyOn(allMoves[MoveId.BOLT_BEAK], "calculateBattlePower");
   });
 
   it.each<{ name: string; move: MoveId }>([
     { name: "Bolt Beak", move: MoveId.BOLT_BEAK },
     { name: "Fishious Rend", move: MoveId.FISHIOUS_REND },
   ])("$name should double power if the user moves before the target", async ({ move }) => {
-    powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
+    const powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     // turn 1: enemy, then player (no boost)
@@ -63,6 +59,7 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
 
   it("should only consider the selected target in Double Battles", async () => {
     game.override.battleStyle("double");
+    const powerSpy = vi.spyOn(allMoves[MoveId.BOLT_BEAK], "calculateBattlePower");
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
     // Use move after everyone but P1 and enemy 1 have already moved
@@ -76,6 +73,7 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
 
   it("should double power on the turn the target switches in", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    const powerSpy = vi.spyOn(allMoves[MoveId.BOLT_BEAK], "calculateBattlePower");
 
     game.move.use(MoveId.BOLT_BEAK);
     game.forceEnemyToSwitch();
@@ -86,6 +84,7 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
 
   it("should double power on forced switch-induced sendouts", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    const powerSpy = vi.spyOn(allMoves[MoveId.BOLT_BEAK], "calculateBattlePower");
 
     game.move.use(MoveId.BOLT_BEAK);
     await game.move.forceEnemyMove(MoveId.U_TURN);
@@ -100,7 +99,7 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
     { type: "an Instructed", allyMove: MoveId.INSTRUCT },
   ])("should double power if $type move is used as the target's first action that turn", async ({ allyMove }) => {
     game.override.battleStyle("double").enemyAbility(AbilityId.DANCER);
-    powerSpy = vi.spyOn(allMoves[MoveId.FISHIOUS_REND], "calculateBattlePower");
+    const powerSpy = vi.spyOn(allMoves[MoveId.FISHIOUS_REND], "calculateBattlePower");
     await game.classicMode.startBattle([SpeciesId.DRACOVISH, SpeciesId.ARCTOZOLT]);
 
     // Simulate enemy having used splash last turn to allow Instruct to copy it

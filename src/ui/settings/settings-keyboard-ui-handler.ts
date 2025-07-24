@@ -3,8 +3,8 @@ import type { InterfaceConfig } from "#app/inputs-controller";
 import { Device } from "#enums/devices";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import cfg_keyboard_qwerty from "#inputs/cfg_keyboard_qwerty";
-import { deleteBind } from "#inputs/configHandler";
+import cfg_keyboard_qwerty from "#inputs/cfg-keyboard-qwerty";
+import { deleteBind } from "#inputs/config-handler";
 import {
   SettingKeyboard,
   setSettingKeyboard,
@@ -13,7 +13,7 @@ import {
   settingKeyboardOptions,
 } from "#system/settings-keyboard";
 import { AbstractControlSettingsUiHandler } from "#ui/abstract-control-settings-ui-handler";
-import { NavigationManager } from "#ui/navigationMenu";
+import { NavigationManager } from "#ui/navigation-menu";
 import { addTextObject } from "#ui/text";
 import { reverseValueToKeySetting, truncateString } from "#utils/common";
 import i18next from "i18next";

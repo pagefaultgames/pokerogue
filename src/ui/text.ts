@@ -7,7 +7,7 @@ import i18next from "#plugins/i18n";
 import type { TextStyleOptions } from "#types/ui";
 import type Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
-import InputText from "phaser3-rex-plugins/plugins/inputtext";
+import type InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 export function addTextObject(
   x: number,
@@ -86,8 +86,7 @@ export function addTextInputObject(
 ): InputText {
   const { scale, styleOptions } = getTextStyleOptions(style, globalScene.uiTheme, extraStyleOptions);
 
-  const ret = new InputText(globalScene, x, y, width, height, styleOptions as InputText.IConfig);
-  globalScene.add.existing(ret);
+  const ret = globalScene.add.rexInputText(x, y, width, height, styleOptions as InputText.IConfig);
   ret.setScale(scale);
 
   return ret;

@@ -4,7 +4,7 @@ import { getTypeDamageMultiplierColor } from "#data/type";
 import { BattleType } from "#enums/battle-type";
 import { Button } from "#enums/buttons";
 import { Command } from "#enums/command";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveCategory } from "#enums/move-category";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
@@ -135,6 +135,8 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
     const pokemon = (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getPokemon();
     if (pokemon.tempSummonData.turnCount <= 1) {
       this.setCursor(0);
+    } else {
+      this.setCursor(this.fieldIndex ? this.cursor2 : this.cursor);
     }
     this.displayMoves();
     this.toggleInfo(false); // in case cancel was pressed while info toggle is active
@@ -321,7 +323,6 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
 
   /**
    * Gets multiplier text for a pokemon's move against a specific opponent
-   * Returns undefined if it's a status move
    */
   private getEffectivenessText(pokemon: Pokemon, opponent: Pokemon, pokemonMove: PokemonMove): string | undefined {
     const effectiveness = opponent.getMoveEffectiveness(
@@ -332,8 +333,11 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
       undefined,
       true,
     );
-    if (effectiveness === undefined) {
-      return undefined;
+    if (pokemonMove.getMove().category === MoveCategory.STATUS) {
+      if (effectiveness === 0) {
+        return "0x";
+      }
+      return "1x";
     }
 
     return `${effectiveness}x`;
@@ -390,7 +394,12 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
         ),
       )
       .sort((a, b) => b - a)
-      .map(effectiveness => getTypeDamageMultiplierColor(effectiveness ?? 0, "offense"));
+      .map(effectiveness => {
+        if (pokemonMove.getMove().category === MoveCategory.STATUS && effectiveness !== 0) {
+          return undefined;
+        }
+        return getTypeDamageMultiplierColor(effectiveness ?? 0, "offense");
+      });
 
     return moveColors[0];
   }

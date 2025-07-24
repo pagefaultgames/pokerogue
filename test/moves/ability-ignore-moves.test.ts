@@ -2,10 +2,9 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { RandomMoveAttr } from "#moves/move";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Ability-Ignoring Moves", () => {
   let phaserGame: Phaser.Game;
@@ -55,10 +54,9 @@ describe("Moves - Ability-Ignoring Moves", () => {
     expect(enemy.isFainted()).toBe(true);
   });
 
-  // TODO: figure out why this test sometimes fails (cross-test game state pollution?)
-  it.todo("should not ignore enemy abilities when called by Metronome", async () => {
+  it("should not ignore enemy abilities when called by Metronome", async () => {
     await game.classicMode.startBattle([SpeciesId.MILOTIC]);
-    vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(MoveId.PHOTON_GEYSER);
+    game.move.forceMetronomeMove(MoveId.PHOTON_GEYSER, true);
 
     const enemy = game.field.getEnemyPokemon();
     game.move.select(MoveId.METRONOME);

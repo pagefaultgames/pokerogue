@@ -148,7 +148,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         duration: 1000,
         ease: "Cubic.easeOut",
         onUpdate: (tween: Phaser.Tweens.Tween) => {
-          const progress = tween.getValue();
+          const progress = tween.getValue() ?? 1;
           const interpolatedData = ivChartData.map(
             (v: number, i: number) => v * progress + lastIvChartData[i] * (1 - progress),
           );

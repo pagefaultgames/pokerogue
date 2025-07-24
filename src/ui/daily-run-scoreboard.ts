@@ -3,7 +3,8 @@ import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import { addTextObject } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-import { executeIf, getEnumKeys } from "#utils/common";
+import { executeIf } from "#utils/common";
+import { getEnumKeys } from "#utils/enums";
 import i18next from "i18next";
 
 export interface RankingEntry {

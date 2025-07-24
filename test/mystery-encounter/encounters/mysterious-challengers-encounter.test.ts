@@ -18,10 +18,10 @@ import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { GameManager } from "#test/testUtils/gameManager";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/TrainerPartyTemplate";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { TrainerConfig } from "#trainers/trainer-config";
+import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
