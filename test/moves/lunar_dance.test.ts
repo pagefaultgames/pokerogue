@@ -42,7 +42,7 @@ describe("Moves - Lunar Dance", () => {
 
       game.move.select(MoveId.SPLASH, 0);
       game.move.select(MoveId.SPLASH, 1);
-        await game.toNextTurn();
+      await game.toNextTurn();
 
       // Bulbasaur should still be burned and have used a PP for splash and not at max hp
       expect(bulbasaur.status?.effect).toBe(StatusEffect.BURN);
@@ -52,7 +52,7 @@ describe("Moves - Lunar Dance", () => {
       // Switch out Bulbasaur for Rattata so we can swtich bulbasaur back in with lunar dance
       game.doSwitchPokemon(2);
       game.move.select(MoveId.SPLASH, 1);
-        await game.toNextTurn();
+      await game.toNextTurn();
 
       game.move.select(MoveId.SPLASH, 0);
       game.move.select(MoveId.LUNAR_DANCE);
@@ -67,7 +67,7 @@ describe("Moves - Lunar Dance", () => {
 
       game.move.select(MoveId.SPLASH, 0);
       game.move.select(MoveId.LUNAR_DANCE);
-        await game.toNextTurn();
+      await game.toNextTurn();
 
       // Using Lunar dance again should fail because nothing in party and rattata should be alive
       expect(rattata.status?.effect).toBe(StatusEffect.BURN);
