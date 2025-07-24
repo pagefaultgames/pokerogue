@@ -44,4 +44,4 @@ jobs:
         run: pnpm i
 
       - name: Run tests
-        run: pnpm test:silent --project=${{ inputs.project }} --shard=${{ inputs.shard }}/${{ inputs.totalShards }}
+        run: pnpm test:silent --shard=${{ inputs.shard }}/${{ inputs.totalShards }}
