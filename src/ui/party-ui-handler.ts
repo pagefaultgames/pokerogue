@@ -369,7 +369,10 @@ export class PartyUiHandler extends MessageUiHandler {
     }
 
     this.populatePartySlots();
-    this.partyDiscardModeButton.toggleIcon(this.partyUiMode);
+    // If we are currently transferring items, set the icon to its proper state and reveal the button.
+    if (this.isItemManageMode()) {
+      this.partyDiscardModeButton.toggleIcon(this.partyUiMode as PartyUiMode.MODIFIER_TRANSFER | PartyUiMode.DISCARD);
+    }
     this.showPartyText();
     this.setCursor(0);
 
@@ -688,10 +691,12 @@ export class PartyUiHandler extends MessageUiHandler {
     this.clearOptions();
 
     if (option === PartyOption.ALL) {
+      // Discard all currently held items
       for (let i = 0; i < itemModifiers.length; i++) {
         globalScene.tryDiscardHeldItemModifier(itemModifiers[i], this.transferQuantities[i]);
       }
     } else {
+      // Discard the currently selected item
       globalScene.tryDiscardHeldItemModifier(itemModifiers[option], this.transferQuantities[option]);
     }
   }
@@ -1016,11 +1021,13 @@ export class PartyUiHandler extends MessageUiHandler {
           break;
         default:
           ui.playError();
-          break;
+          return false;
       }
       this.partyDiscardModeButton.toggleIcon(this.partyUiMode);
       ui.playSelect();
+      return true;
     }
+
     // Pressing return button
     if (this.cursor === 6) {
       if (!this.allowCancel()) {
@@ -1069,6 +1076,9 @@ export class PartyUiHandler extends MessageUiHandler {
 
     let success = false;
     switch (button) {
+      // Item manage mode adds an extra 8th "toggle mode" button to the UI, located *below* both active party members.
+      // The following logic serves to ensure its menu behaviour matches its in-game position,
+      // being selected when scrolling up from the first inactive party member or down from the last active one.
       case Button.UP:
         if (this.isItemManageMode()) {
           if (this.cursor === 1) {
@@ -1118,11 +1128,12 @@ export class PartyUiHandler extends MessageUiHandler {
         }
         break;
       case Button.RIGHT:
+        // Scrolling right from item transfer button or with no backup party members goes to cancel
         if (this.cursor === 7 || slotCount <= battlerCount) {
           success = this.setCursor(6);
           break;
         }
-        if (slotCount > battlerCount && this.cursor < battlerCount) {
+        if (this.cursor < battlerCount) {
           success = this.setCursor(this.lastRightPokemonCursor || battlerCount);
           break;
         }
@@ -2119,12 +2130,10 @@ class PartyCancelButton extends Phaser.GameObjects.Container {
 
 class PartyDiscardModeButton extends Phaser.GameObjects.Container {
   private selected: boolean;
-
   private transferIcon: Phaser.GameObjects.Sprite;
   private discardIcon: Phaser.GameObjects.Sprite;
   private textBox: Phaser.GameObjects.Text;
   private party: PartyUiHandler;
-  private currentMode: PartyUiMode;
 
   constructor(x: number, y: number, party: PartyUiHandler) {
     super(globalScene, x, y);
@@ -2136,7 +2145,6 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
     this.transferIcon = globalScene.add.sprite(0, 0, "party_transfer");
     this.discardIcon = globalScene.add.sprite(0, 0, "party_discard");
     this.textBox = addTextObject(-8, -7, i18next.t("partyUiHandler:TRANSFER"), TextStyle.PARTY);
-    this.currentMode = PartyUiMode.MODIFIER_TRANSFER;
     this.party = party;
 
     this.add(this.transferIcon);
@@ -2171,7 +2179,14 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
     this.discardIcon.setFrame("normal");
   }
 
-  toggleIcon(partyMode: number) {
+  /**
+   * If the current mode deals with transferring items, toggle the discard items button's name and assets.
+   * @param partyMode - The current {@linkcode PartyUiMode}
+   * @remarks
+   * This will also reveal the button if it is currently hidden.
+   */
+  public toggleIcon(partyMode: PartyUiMode.MODIFIER_TRANSFER | PartyUiMode.DISCARD): void {
+    this.setActive(true).setVisible(true);
     switch (partyMode) {
       case PartyUiMode.MODIFIER_TRANSFER:
         this.transferIcon.setVisible(true);
@@ -2195,13 +2210,11 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
         );
         this.discardIcon.displayWidth = this.textBox.text.length * 9 + 3;
         break;
-      default:
-        return;
     }
-    this.currentMode = partyMode;
   }
 
   clear() {
+    this.setActive(false).setVisible(false);
     this.transferIcon.setVisible(false);
     this.discardIcon.setVisible(false);
     this.textBox.setVisible(false);
