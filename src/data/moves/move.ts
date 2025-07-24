@@ -48,11 +48,11 @@ import { ChargeAnim } from "#enums/move-anims-common";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
-import { MoveCategory } from "#enums/MoveCategory";
-import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
-import { MoveFlags } from "#enums/MoveFlags";
-import { MoveTarget } from "#enums/MoveTarget";
-import { MultiHitType } from "#enums/MultiHitType";
+import { MoveCategory } from "#enums/move-category";
+import { MoveEffectTrigger } from "#enums/move-effect-trigger";
+import { MoveFlags } from "#enums/move-flags";
+import { MoveTarget } from "#enums/move-target";
+import { MultiHitType } from "#enums/multi-hit-type";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import {
