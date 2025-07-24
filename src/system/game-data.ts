@@ -40,7 +40,7 @@ import type { TrainerItemConfiguration, TrainerItemSaveData } from "#items/train
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import type { Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import { ArenaData } from "#system/arena-data";
+import { ArenaData, type SerializedArenaData } from "#system/arena-data";
 import { ChallengeData } from "#system/challenge-data";
 import { EggData } from "#system/egg-data";
 import { GameStats } from "#system/game-stats";
@@ -1233,7 +1233,8 @@ export class GameData {
     // (or prevent them from being null)
     // If the value is able to *not exist*, it should say so in the code
     const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
-      // TODO: Add pre-parse migrate scripts
+      // TODO: Move this to occur _after_ migrate scripts (and refactor all non-assignment duties into migrate scripts)
+      // This should ideally be just a giant assign block
       switch (k) {
         case "party":
         case "enemyParty": {
@@ -1258,7 +1259,7 @@ export class GameData {
         }
 
         case "arena":
-          return new ArenaData(v);
+          return new ArenaData(v as SerializedArenaData);
 
         case "challenges": {
           const ret: ChallengeData[] = [];
