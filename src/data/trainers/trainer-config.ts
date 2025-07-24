@@ -4969,7 +4969,6 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.NIDOKING, SpeciesId.NIDOQUEEN], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.abilityIndex = 2; // Sheer Force
-        }
       }),
     )
     .setPartyMemberFunc(
@@ -4992,7 +4991,7 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     )
     .setPartyMemberFunc(
-      3,
+      4,
       getRandomPartyMemberFunc([SpeciesId.ARTICUNO, SpeciesId.ZAPDOS, SpeciesId.MOLTRES], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
