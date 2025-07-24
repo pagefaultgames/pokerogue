@@ -107,9 +107,8 @@ export class CommandPhase extends FieldPhase {
 
   /**
    * Clear out all unusable moves in front of the currently acting pokemon's move queue.
-   *
-   * TODO: Refactor move queue handling to ensure that this method is not necessary.
    */
+  // TODO: Refactor move queue handling to ensure that this method is not necessary.
   private clearUnusuableMoves(): void {
     const playerPokemon = this.getPokemon();
     const moveQueue = playerPokemon.getMoveQueue();
@@ -355,8 +354,10 @@ export class CommandPhase extends FieldPhase {
   }
 
   /**
-   * Helper method for {@linkcode handleBallCommand} that checks if the pokeball can be thrown.
+   * Helper method for {@linkcode handleBallCommand} that checks if a pokeball can be thrown
+   * and displays the appropriate error message.
    *
+   * @remarks
    * The pokeball may not be thrown if any of the following are true:
    * - It is a trainer battle
    * - The player is in the {@linkcode BiomeId.END | End} biome and
@@ -443,10 +444,10 @@ export class CommandPhase extends FieldPhase {
   }
 
   /**
-   * Helper method to handle the logic for effects that prevent the pokemon from leaving the field
+   * Submethod of {@linkcode tryLeaveField} to handle the logic for effects that prevent the pokemon from leaving the field
    * due to trapping abilities or effects.
    *
-   * This method queues the proper messages in the case of trapping abilities or effects
+   * This method queues the proper messages in the case of trapping abilities or effects.
    *
    * @returns Whether the pokemon is currently trapped
    */
@@ -496,8 +497,7 @@ export class CommandPhase extends FieldPhase {
    * Checks for trapping abilities and effects.
    *
    * @param cursor - The index of the option that the cursor is on
-   * @param isBatonSwitch - Whether the switch command is switching via the Baton item
-   * @returns whether the pokemon is able to leave the field, indicating the command phase should end
+   * @returns Whether the pokemon is able to leave the field, indicating the command phase should end
    */
   private tryLeaveField(cursor?: number, isBatonSwitch = false): boolean {
     const currentBattle = globalScene.currentBattle;
@@ -521,6 +521,19 @@ export class CommandPhase extends FieldPhase {
     return false;
   }
 
+  /**
+   * Helper method for {@linkcode handleCommand} that handles the logic when the selected command is RUN.
+   *
+   * @remarks
+   * Checks if the player is allowed to flee, and if not, queues the appropriate message.
+   *
+   * The player cannot flee if:
+   * - The player is in the {@linkcode BiomeId.END | End} biome
+   * - The player is in a trainer battle
+   * - The player is in a mystery encounter that disallows fleeing
+   * - The player's pokemon is trapped by an ability or effect
+   * @returns Whether the pokemon is able to leave the field, indicating the command phase should end
+   */
   private handleRunCommand(): boolean {
     const { currentBattle, arena } = globalScene;
     const mysteryEncounterFleeAllowed = currentBattle.mysteryEncounter?.fleeAllowed ?? true;
