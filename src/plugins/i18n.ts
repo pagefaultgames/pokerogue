@@ -199,7 +199,7 @@ export async function initI18n(): Promise<void> {
         if (namespaceMap[ns]) {
           fileName = namespaceMap[ns];
         } else if (ns.startsWith("mysteryEncounters/")) {
-          fileName = toKebabCase(ns) + "-dialogue"; // mysteryEncounters/a-trainers-test-dialogue
+          fileName = toKebabCase(ns + "-dialogue"); // mystery-encounters/a-trainers-test-dialogue
         } else {
           fileName = toKebabCase(ns);
         }
