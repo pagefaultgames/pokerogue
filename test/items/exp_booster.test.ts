@@ -1,7 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { applyHeldItems } from "#items/all-held-items";
-import { HeldItemEffect } from "#items/held-item";
 import { GameManager } from "#test/testUtils/gameManager";
 import { NumberHolder } from "#utils/common";
 import Phaser from "phaser";

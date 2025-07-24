@@ -69,7 +69,7 @@ import { MoveUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { applyHeldItems } from "#items/all-held-items";
 import { BerryHeldItem, berryTypeToHeldItem } from "#items/berry";
-import { HeldItemEffect } from "#items/held-item";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { TrainerItemEffect } from "#items/trainer-item";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSketchMoves, invalidSleepTalkMoves } from "#moves/invalid-moves";
@@ -856,7 +856,7 @@ export abstract class Move implements Localizable {
     if (!this.hasAttr("TypelessAttr")) {
       globalScene.arena.applyTags(WeakenMoveTypeTag, simulated, typeChangeHolder.value, power);
       applyHeldItems(HeldItemEffect.ATTACK_TYPE_BOOST, {
-        pokemon: source, 
+        pokemon: source,
         moveType: typeChangeHolder.value,
         movePower: power,
       });
@@ -2636,14 +2636,14 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
     }
 
     const stolenItem = heldItems[user.randBattleSeedInt(heldItems.length)];
-  
+
     if (!globalScene.tryTransferHeldItem(stolenItem, target, user, false)) {
       return false;
     }
 
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:stoleItem", 
-      { pokemonName: getPokemonNameWithAffix(user), 
-        targetName: getPokemonNameWithAffix(target), 
+    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:stoleItem",
+      { pokemonName: getPokemonNameWithAffix(user),
+        targetName: getPokemonNameWithAffix(target),
         itemName: allHeldItems[stolenItem].name
       }
     ));
@@ -2719,16 +2719,16 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
     globalScene.updateItems(target.isPlayer());
 
     if (this.berriesOnly) {
-      globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:incineratedItem", 
+      globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:incineratedItem",
         { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: allHeldItems[removedItem].name }));
     } else {
-      globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:knockedOffItem", 
+      globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:knockedOffItem",
         { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: allHeldItems[removedItem].name }));
     }
 
     return true;
   }
-  
+
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     const heldItems = target.getHeldItems();
     return heldItems.length ? 5 : 0;
