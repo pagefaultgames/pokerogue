@@ -169,7 +169,7 @@ export class SelectRewardPhase extends BattlePhase {
         this.openPokemonRewardMenu(reward, cost, rewardSelectCallback);
       }
     } else {
-      reward.apply();
+      globalScene.applyReward(reward, {}, true);
       globalScene.updateItems(true);
       globalScene.ui.clearText();
       globalScene.ui.setMode(UiMode.MESSAGE);
@@ -299,14 +299,12 @@ export class SelectRewardPhase extends BattlePhase {
         return { pokemon: party[slotIndex], moveIndex: option - PartyOption.MOVE_1 } as PokemonMoveRewardParams;
       };
     }
-
     if (isRememberMoveReward(reward)) {
       partyUiMode = PartyUiMode.REMEMBER_MOVE_REWARD;
       getParams = (slotIndex: number, option: PartyOption) => {
         return { pokemon: party[slotIndex], moveIndex: option, cost: cost } as PokemonMoveRecallRewardParams;
       };
     }
-
     if (isTmReward(reward)) {
       partyUiMode = PartyUiMode.TM_REWARD;
       tmMoveId = reward.moveId;
