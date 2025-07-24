@@ -85,14 +85,7 @@ import { applyHeldItems } from "#items/all-held-items";
 import { type ApplyTrainerItemsParams, applyTrainerItems } from "#items/apply-trainer-items";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
-import {
-  type ApplyRewardParams,
-  getLuckString,
-  getLuckTextTint,
-  getPartyLuckValue,
-  type Reward,
-  type RewardClass,
-} from "#items/reward";
+import { getLuckString, getLuckTextTint, getPartyLuckValue, type Reward } from "#items/reward";
 import { type EnemyAttackStatusEffectChanceTrainerItem, TrainerItemEffect } from "#items/trainer-item";
 import {
   isTrainerItemPool,
@@ -2640,23 +2633,19 @@ export class BattleScene extends SceneBase {
     applyTrainerItems(effect, this.trainerItems, params);
   }
 
-  applyReward<T extends RewardClass>(reward: Reward, params: ApplyRewardParams[T], playSound?: boolean): boolean {
-    if (!reward) {
-      return false;
-    }
-    let success = false;
+  applyReward<T extends Reward>(reward: T, params: Parameters<T["apply"]>[0], playSound?: boolean): boolean {
     const soundName = reward.soundName;
 
     if (playSound && !this.sound.get(soundName)) {
       this.playSound(soundName);
     }
 
-    if (reward.shouldApply(params)) {
-      const result = reward.apply(params);
-      success ||= result;
+    if (!reward.shouldApply(params)) {
+      return false;
     }
 
-    return success;
+    reward.apply(params);
+    return true;
   }
 
   addHeldItem(heldItemId: HeldItemId, pokemon: Pokemon, amount = 1, playSound?: boolean, ignoreUpdate?: boolean) {

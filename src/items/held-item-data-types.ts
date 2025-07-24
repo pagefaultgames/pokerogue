@@ -7,7 +7,15 @@ import type { Pokemon } from "#field/pokemon";
 
 export type HeldItemData = {
   stack: number;
+  /**
+   * Whether this item is currently disabled.
+   * @defaultValue `false`
+   */
   disabled?: boolean;
+  /**
+   * The item's current cooldown.
+   * @defaultValue `0`
+   */
   cooldown?: number;
 };
 

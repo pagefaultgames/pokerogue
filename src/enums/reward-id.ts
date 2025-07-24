@@ -1,3 +1,5 @@
+import type { EnumValues } from "#types/enum-types";
+
 export const RewardId = {
   NONE: 0x0000,
 
@@ -62,13 +64,13 @@ export const RewardId = {
   LURE: 0x0E03,
   SUPER_LURE: 0x0E04,
   MAX_LURE: 0x0E05,
-  
+
   FORM_CHANGE_ITEM: 0x0F01,
   RARE_FORM_CHANGE_ITEM: 0x0F02,
 
 } as const;
 
-export type RewardId = (typeof RewardId)[keyof typeof RewardId];
+export type RewardId = EnumValues<typeof RewardId>;
 
 export const RewardCategoryId = {
   NONE: 0x0000,
@@ -89,7 +91,7 @@ export const RewardCategoryId = {
   FORM_CHANGE_ITEM: 0x0F00,
 } as const;
 
-export type RewardCategoryId = (typeof RewardCategoryId)[keyof typeof RewardCategoryId];
+export type RewardCategoryId = EnumValues<typeof RewardCategoryId>;
 
 const ITEM_CATEGORY_MASK = 0xFF00
 
