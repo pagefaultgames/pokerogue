@@ -685,6 +685,7 @@ export class PartyUiHandler extends MessageUiHandler {
 
   private doDiscard(option: PartyOption, pokemon: PlayerPokemon) {
     const itemModifiers = this.getTransferrableItemsFromPokemon(pokemon);
+    this.clearOptions();
 
     if (option === PartyOption.ALL) {
       for (let i = 0; i < itemModifiers.length; i++) {
@@ -693,7 +694,6 @@ export class PartyUiHandler extends MessageUiHandler {
     } else {
       globalScene.tryDiscardHeldItemModifier(itemModifiers[option], this.transferQuantities[option]);
     }
-    return;
   }
 
   private moveOptionCursor(button: Button.UP | Button.DOWN): boolean {

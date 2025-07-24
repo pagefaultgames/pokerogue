@@ -145,10 +145,19 @@ describe("UI - Transfer Items", () => {
         await new Promise(r => setTimeout(r, 100));
         const handler = game.scene.ui.getHandler() as PartyUiHandler;
         handler.processInput(Button.ACTION);
+        resolve();
+      });
+    });
+
+    await new Promise<void>(resolve => {
+      game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
+        await new Promise(r => setTimeout(r, 100));
+        const handler = game.scene.ui.getHandler() as PartyUiHandler;
+        handler.processInput(Button.ACTION);
+
         pokemon = game.field.getPlayerPokemon();
 
         handler.processInput(Button.CANCEL);
-
         resolve();
       });
     });
