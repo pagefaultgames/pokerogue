@@ -2,7 +2,7 @@ import type { BattlerTagTypeMap, SerializableBattlerTag } from "#data/battler-ta
 import type { BattlerTagType } from "#enums/battler-tag-type";
 
 /**
- * Subset of {@linkcode BattlerTagType}s that restricts the use of moves.
+ * Subset of {@linkcode BattlerTagType}s that restrict the use of moves.
  */
 export type MoveRestrictionBattlerTagType =
   | BattlerTagType.THROAT_CHOPPED
@@ -81,7 +81,7 @@ export type NonSerializableBattlerTagType = Exclude<BattlerTagType, Serializable
  * Dummy, typescript-only declaration to ensure that
  * {@linkcode BattlerTagTypeMap} has an entry for all `BattlerTagType`s.
  *
- * If battler tag is missing from the map, typescript will throw an error on this statement.
+ * If a battler tag is missing from the map, Typescript will throw an error on this statement.
  *
  * ⚠️ Does not actually exist at runtime, so it must not be used!
  */

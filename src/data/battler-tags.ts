@@ -212,7 +212,7 @@ export abstract class MoveRestrictionBattlerTag extends SerializableBattlerTag {
   /**
    * Determine whether a move's usage is restricted by this tag
    *
-   * @param move - {@linkcode MoveId} ID to check restriction for.
+   * @param move - The {@linkcode MoveId} being checked
    * @param user - The {@linkcode Pokemon} involved
    * @returns `true` if the move is restricted by this tag, otherwise `false`.
    */
@@ -234,7 +234,7 @@ export abstract class MoveRestrictionBattlerTag extends SerializableBattlerTag {
    * Get the text to display when the player attempts to select a move that is restricted by this tag.
    *
    * @param pokemon - The pokemon for which the player is attempting to select the restricted move
-   * @param move - {@linkcode MoveId | ID} of the move that is having its selection denied
+   * @param move - The {@linkcode MoveId | ID} of the Move that is having its selection denied
    * @returns The text to display when the player attempts to select the restricted move
    */
   abstract selectionDeniedText(pokemon: Pokemon, move: MoveId): string;
@@ -245,7 +245,7 @@ export abstract class MoveRestrictionBattlerTag extends SerializableBattlerTag {
    * pokemon first selects a move, then gets outsped by a pokemon using a move that restricts the selected move.
    *
    * @param _pokemon - The pokemon attempting to use the restricted move
-   * @param _move - {@linkcode MoveId | ID} of the move being interrupted
+   * @param _move - The {@linkcode MoveId | ID} of the move being interrupted
    * @returns The text to display when the move is interrupted
    */
   interruptedText(_pokemon: Pokemon, _move: MoveId): string {
@@ -696,8 +696,7 @@ export class FlinchedTag extends BattlerTag {
   }
 }
 
-// TODO: This might not need to be serialized
-export class InterruptedTag extends SerializableBattlerTag {
+export class InterruptedTag extends BattlerTag {
   public override readonly tagType = BattlerTagType.INTERRUPTED as const;
   constructor(sourceMove: MoveId) {
     super(BattlerTagType.INTERRUPTED, BattlerTagLapseType.PRE_MOVE, 0, sourceMove);
@@ -1054,7 +1053,7 @@ export class SeedTag extends SerializableBattlerTag {
 /**
  * BattlerTag representing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Powder_(move) | Powder}.
  * When the afflicted Pokemon uses a Fire-type move, the move is cancelled, and the
- * Pokemon takes damage equal to 1/4 of it's maximum HP (rounded down).
+ * Pokemon takes damage equal to 1/4 of its maximum HP (rounded down).
  */
 export class PowderTag extends BattlerTag {
   public override readonly tagType = BattlerTagType.POWDER as const;
@@ -1475,7 +1474,7 @@ export class DrowsyTag extends SerializableBattlerTag {
 
 export abstract class DamagingTrapTag extends TrappedTag {
   public override readonly tagType: TrappingBattlerTagType;
-  /** Animation to play when during the damage sequence */
+  /** The animation to play during the damage sequence */
   #commonAnim: CommonAnim;
 
   constructor(
@@ -1806,7 +1805,6 @@ export class ContactSetStatusProtectedTag extends DamageProtectedTag {
    */
   override onContact(attacker: Pokemon, user: Pokemon): void {
     attacker.trySetStatus(this.statusEffect, true, user);
-    this.statusEffect;
   }
 }
 
