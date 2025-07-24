@@ -293,7 +293,7 @@ export class PhaseManager {
   }
 
   /**
-   * Is called by {@linkcode Phase.end} by default. 
+   * Is called by {@linkcode Phase.end} by default.
    * Determines and starts the next phase to run
    */
   shiftPhase(): void {

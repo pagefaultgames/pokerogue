@@ -1,3 +1,5 @@
+import type { EnumValues } from "#types/enum-types";
+
 /**
  * Enum representing modifiers for the timing of MovePhases.
  * 
