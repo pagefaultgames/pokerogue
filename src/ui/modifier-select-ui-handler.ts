@@ -364,7 +364,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         // Required to ensure that the user cannot interact with the UI before the animations
         // have completed, (which, among other things, would allow the GameObjects to be destroyed
         // before the animations have completed, causing errors).
-        Promise.allSettled([...shopAnimPromises, rewardAnimAllSettledPromises]).then(() => {
+        Promise.allSettled([...shopAnimPromises, ...rewardAnimAllSettledPromises]).then(() => {
           const updateCursorTarget = () => {
             if (globalScene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
               this.setRowCursor(0);
@@ -872,12 +872,17 @@ class ModifierOption extends Phaser.GameObjects.Container {
     /** Promises for the pokeball and upgrade animations */
     const animPromises: Promise<void>[] = [];
     if (isReward) {
+      const { promise: bouncePromise, resolve: resolveBounce } = Promise.withResolvers<void>();
       globalScene.tweens.add({
         targets: this.pb,
         y: 0,
         duration: 1250,
         ease: "Bounce.Out",
+        onComplete: () => {
+          resolveBounce();
+        },
       });
+      animPromises.push(bouncePromise);
 
       let lastValue = 1;
       let bounceCount = 0;
