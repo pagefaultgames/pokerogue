@@ -104,7 +104,7 @@ Most non-trivial changes (*especially bug fixes*) should come along with new tes
     - Test edge cases. A good strategy is to think of edge cases beforehand and create tests for them using `it.todo`. Once the edge case has been handled, you can remove the `todo` marker.
 
 ## 😈 Development Save File
-> Some issues may require you to have unlocks on your save file which go beyond normal overrides. For this reason, the repository contains a [save file](../test/testUtils/saves/everything.psrv) with _everything_ unlocked (even ones not legitimately obtainable, like unimplemented variant shinies).
+> Some issues may require you to have unlocks on your save file which go beyond normal overrides. For this reason, the repository contains a [save file](../test/test-utils/saves/everything.psrv) with _everything_ unlocked (even ones not legitimately obtainable, like unimplemented variant shinies).
 
 1. Start the game up locally and navigate to `Menu -> Manage Data -> Import Data`
-2. Select [everything.prsv](test/testUtils/saves/everything.prsv) (`test/testUtils/saves/everything.prsv`) and confirm.
+2. Select [everything.prsv](test/test-utils/saves/everything.prsv) (`test/test-utils/saves/everything.prsv`) and confirm.
