@@ -5502,6 +5502,7 @@ export const trainerConfigs: TrainerConfigs = {
           // Check if First Impression is in the moveset, if not, replace the third move with First Impression.
           p.moveset[2] = new PokemonMove(MoveId.FIRST_IMPRESSION);
         p.gender = Gender.MALE;
+        }
       }),
     ),
   [TrainerType.GUZMA_2]: new TrainerConfig(++t)
@@ -5519,6 +5520,7 @@ export const trainerConfigs: TrainerConfigs = {
           p.moveset[2] = new PokemonMove(MoveId.FIRST_IMPRESSION);
         p.abilityIndex = 2; // Anticipation
         p.gender = Gender.MALE;
+        }
       }),
     )
     .setPartyMemberFunc(
@@ -5710,6 +5712,7 @@ export const trainerConfigs: TrainerConfigs = {
           // Check if Hyper Voice is in the moveset, if not, replace the second move with Hyper Voice.
           p.moveset[1] = new PokemonMove(MoveId.HYPER_VOICE);
         p.gender = Gender.FEMALE;
+        }
       }),
     )
     .setPartyMemberFunc(
