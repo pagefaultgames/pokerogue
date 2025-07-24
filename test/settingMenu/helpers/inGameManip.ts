@@ -1,6 +1,6 @@
 import { getIconForLatestInput, getSettingNameWithKeycode } from "#inputs/configHandler";
 import { SettingKeyboard } from "#system/settings-keyboard";
-import { toPascalCase } from "#utils/strings";
+import { toPascalSnakeCase } from "#utils/strings";
 import { expect } from "vitest";
 
 export class InGameManip {
@@ -57,15 +57,11 @@ export class InGameManip {
     return this;
   }
 
-  normalizeSettingNameString(input: string) {
-    return toPascalCase(input);
-  }
-
   weShouldTriggerTheButton(settingName) {
     if (!settingName.includes("Button_")) {
       settingName = "Button_" + settingName;
     }
-    this.settingName = SettingKeyboard[this.normalizeSettingNameString(settingName)];
+    this.settingName = SettingKeyboard[toPascalSnakeCase(settingName)];
     expect(getSettingNameWithKeycode(this.config, this.keycode)).toEqual(this.settingName);
     return this;
   }
