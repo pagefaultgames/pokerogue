@@ -4,8 +4,7 @@ import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { CommandPhase } from "#phases/command-phase";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -80,7 +79,6 @@ describe("Moves - Assist", () => {
     // Player uses Sketch to copy Swords Dance, Player_2 stalls a turn. Player will attempt Assist and should have no usable moves
     await game.toNextTurn();
     game.move.select(MoveId.ASSIST, 0);
-    await game.phaseInterceptor.to(CommandPhase);
     game.move.select(MoveId.PROTECT, 1);
     await game.toNextTurn();
 
@@ -88,15 +86,13 @@ describe("Moves - Assist", () => {
   });
 
   it("should apply secondary effects of a move", async () => {
-    game.override.moveset([MoveId.ASSIST, MoveId.WOOD_HAMMER, MoveId.WOOD_HAMMER, MoveId.WOOD_HAMMER]);
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.SHUCKLE]);
 
     const [feebas, shuckle] = game.scene.getPlayerField();
-    game.move.changeMoveset(feebas, [MoveId.ASSIST, MoveId.SKETCH, MoveId.PROTECT, MoveId.DRAGON_TAIL]);
-    game.move.changeMoveset(shuckle, [MoveId.ASSIST, MoveId.SKETCH, MoveId.PROTECT, MoveId.DRAGON_TAIL]);
+    game.move.changeMoveset(feebas, [MoveId.ASSIST, MoveId.WOOD_HAMMER]);
+    game.move.changeMoveset(shuckle, [MoveId.ASSIST, MoveId.WOOD_HAMMER]);
 
     game.move.select(MoveId.ASSIST, 0);
-    await game.phaseInterceptor.to(CommandPhase);
     game.move.select(MoveId.ASSIST, 1);
     await game.toNextTurn();
 
