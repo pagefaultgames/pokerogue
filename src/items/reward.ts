@@ -145,12 +145,14 @@ export abstract class Reward {
   /**
    * Check whether this reward should be applied.
    */
+  // TODO: This is erroring on stuff of typ
   shouldApply(_params: Exact<Parameters<this["apply"]>[0]>): boolean {
     return true;
   }
 
   /** Apply this Reward's effects. */
-  abstract apply(_params: unknown): void;
+  // TODO: Remove `boolean` return from all superclasses' type signatures
+  abstract apply(_params?: unknown): void;
 }
 
 // TODO: Can this return null?
