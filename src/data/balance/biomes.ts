@@ -86,7 +86,7 @@ export enum BiomePoolTier {
 
 export const uncatchableSpecies: SpeciesId[] = [];
 
-export interface SpeciesTree {
+interface SpeciesTree {
   [key: number]: SpeciesId[]
 }
 
@@ -94,11 +94,11 @@ export interface PokemonPools {
   [key: number]: (SpeciesId | SpeciesTree)[]
 }
 
-export interface BiomeTierPokemonPools {
+interface BiomeTierPokemonPools {
   [key: number]: PokemonPools
 }
 
-export interface BiomePokemonPools {
+interface BiomePokemonPools {
   [key: number]: BiomeTierPokemonPools
 }
 
@@ -2022,7 +2022,6 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   }
 };
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: init methods are expected to have many lines.
 export function initBiomes() {
   const pokemonBiomes = [
     [ SpeciesId.BULBASAUR, PokemonType.GRASS, PokemonType.POISON, [
