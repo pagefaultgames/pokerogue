@@ -334,7 +334,7 @@ export class MovePhase extends BattlePhase {
       // "commit" to using the move, deducting PP.
       const ppUsed = 1 + this.getPpIncreaseFromPressure(targets);
       this.move.usePp(ppUsed);
-      globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(this.pokemon.id, move.id, this.move.ppUsed));
+      globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(this.pokemon.id, this.move));
     }
 
     /**
@@ -637,7 +637,7 @@ export class MovePhase extends BattlePhase {
     }
 
     if (this.failed) {
-      // TODO: should this consider struggle?
+      // TODO: should this consider struggle and pressure?
       const ppUsed = isIgnorePP(this.useMode) ? 0 : 1;
       this.move.usePp(ppUsed);
       globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(this.pokemon.id, this.move));

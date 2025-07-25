@@ -1,33 +1,42 @@
+// biome-ignore lint/correctness/noUnusedImports: TSDoc
+import type { PokemonSummonData } from "#data/pokemon-data";
 import type { PokemonMove } from "#moves/pokemon-move";
 
-/** Alias for all {@linkcode BattleScene} events. */
+/** Enum comprising all {@linkcode BattleScene} events that can be emitted. */
 export enum BattleSceneEventType {
   /**
-   * Triggers when the corresponding setting is changed
+   * Emitted when the corresponding setting is changed
    * @see {@linkcode CandyUpgradeNotificationChangedEvent}
    */
   CANDY_UPGRADE_NOTIFICATION_CHANGED = "onCandyUpgradeNotificationChanged",
 
   /**
-   * Triggers whenever a Pokemon's moveset is changed or altered - whether from moveset-overridding effects,
+   * Emitted whenever a Pokemon's moveset is changed or altered - whether from moveset-overridding effects,
    * PP consumption or restoration.
    * @see {@linkcode MovesetChangedEvent}
    */
-  MOVESET_CHANGED = "onMovePPChanged",
+  MOVESET_CHANGED = "onMovesetChanged",
 
   /**
-   * Triggers at the start of each new encounter
+   * Emitted whenever the {@linkcode PokemonSummonData} of any {@linkcode Pokemon} is reset to its initial state
+   * (such as immediately before a switch-out).
+   * @see {@linkcode SummonDataResetEvent}
+   */
+  SUMMON_DATA_RESET = "onSummonDataReset",
+
+  /**
+   * Emitted at the start of each new encounter
    * @see {@linkcode EncounterPhaseEvent}
    */
   ENCOUNTER_PHASE = "onEncounterPhase",
   /**
-   * Triggers after a turn ends in battle
+   * Emitted after a turn ends in battle
    * @see {@linkcode TurnEndEvent}
    */
   TURN_END = "onTurnEnd",
 
   /**
-   * Triggers when a new {@linkcode Arena} is created during initialization
+   * Emitted when a new {@linkcode Arena} is created during initialization
    * @see {@linkcode NewArenaEvent}
    */
   NEW_ARENA = "onNewArena",
@@ -42,9 +51,12 @@ abstract class BattleSceneEvent extends Event {
   constructor(type: BattleSceneEventType) {
     super(type);
   }
-} /**
+}
+
+export type { BattleSceneEvent };
+
+/**
  * Container class for {@linkcode BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED} events
- * @extends Event
  */
 export class CandyUpgradeNotificationChangedEvent extends BattleSceneEvent {
   declare type: BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED;
@@ -59,7 +71,7 @@ export class CandyUpgradeNotificationChangedEvent extends BattleSceneEvent {
 
 /**
  * Container class for {@linkcode BattleSceneEventType.MOVESET_CHANGED} events. \
- * Emitted whenever the moveset of any on-field Pokemon is changed, or a move's PP is increased or decreased.
+ * Emitted whenever the moveset of any {@linkcode Pokemon} is changed, or a move's PP is increased or decreased.
  */
 export class MovesetChangedEvent extends BattleSceneEvent {
   declare type: BattleSceneEventType.MOVESET_CHANGED;
@@ -77,6 +89,24 @@ export class MovesetChangedEvent extends BattleSceneEvent {
 
     this.pokemonId = pokemonId;
     this.move = move;
+  }
+}
+
+/**
+ * Container class for {@linkcode BattleSceneEventType.SUMMON_DATA_RESET} events. \
+ * Emitted whenever the {@linkcode PokemonSummonData} of any {@linkcode Pokemon} is reset to its initial state
+ * (such as immediately before a switch-out).
+ */
+export class SummonDataResetEvent extends BattleSceneEvent {
+  declare type: BattleSceneEventType.SUMMON_DATA_RESET;
+
+  /** The {@linkcode Pokemon.ID | ID} of the {@linkcode Pokemon} whose data has been reset. */
+  public pokemonId: number;
+
+  constructor(pokemonId: number) {
+    super(BattleSceneEventType.SUMMON_DATA_RESET);
+
+    this.pokemonId = pokemonId;
   }
 }
 
@@ -106,9 +136,9 @@ export class TurnEndEvent extends BattleSceneEvent {
 }
 /**
  * Container class for {@linkcode BattleSceneEventType.NEW_ARENA} events
- * @extends Event
  */
-export class NewArenaEvent extends Event {
+export class NewArenaEvent extends BattleSceneEvent {
+  declare type: BattleSceneEventType.NEW_ARENA;
   constructor() {
     super(BattleSceneEventType.NEW_ARENA);
   }

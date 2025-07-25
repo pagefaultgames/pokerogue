@@ -108,6 +108,7 @@ import { SwitchType } from "#enums/switch-type";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
 import { WeatherType } from "#enums/weather-type";
+import { SummonDataResetEvent } from "#events/battle-scene";
 import { doShinySparkleAnim } from "#field/anims";
 import {
   BaseStatModifier,
@@ -1828,7 +1829,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Return all the {@linkcode PokemonMove}s that make up this Pokemon's moveset.
    * Takes into account player/enemy moveset overrides (which will also override PP count).
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
    * @returns An array of {@linkcode PokemonMove}, as described above.
    */
   getMoveset(ignoreOverride = false): PokemonMove[] {
@@ -5084,6 +5085,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.summonData.speciesForm = null;
       this.updateFusionPalette();
     }
+
+    // Emit an event to reset all temporary moveset overrides due to Mimic/Transform wearing off.
+    globalScene.eventTarget.dispatchEvent(new SummonDataResetEvent(this.id));
+
     this.summonData = new PokemonSummonData();
     this.tempSummonData = new PokemonTempSummonData();
     this.summonData.illusion = illusion;

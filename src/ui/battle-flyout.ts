@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { MoveId } from "#enums/move-id";
 import { UiTheme } from "#enums/ui-theme";
-import type { MovesetChangedEvent } from "#events/battle-scene";
+import type { MovesetChangedEvent, SummonDataResetEvent } from "#events/battle-scene";
 import { BattleSceneEventType } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
@@ -11,7 +11,7 @@ import type { BattleInfo } from "#ui/battle-info";
 import { addTextObject, TextStyle } from "#ui/text";
 import { fixedInt } from "#utils/common";
 
-/** Container for info about the {@linkcode PokemonMove}s having been */
+/** Container for info about a given {@linkcode PokemonMove} having been used */
 interface MoveInfo {
   /** The name of the {@linkcode Move} having been used. */
   name: string;
@@ -19,14 +19,22 @@ interface MoveInfo {
   move: PokemonMove;
 }
 
+/**
+ * A 4-length tuple consisting of all moves that each {@linkcode Pokemon} has used in the given battle.
+ * Entries that are `undefined` indicate moves which have not been used yet.
+ */
 type MoveInfoTuple = [MoveInfo?, MoveInfo?, MoveInfo?, MoveInfo?];
 
-/** A Flyout Menu attached to each {@linkcode BattleInfo} object on the field UI */
+/**
+ * A Flyout Menu attached to each Pokemon's {@linkcode BattleInfo} object,
+ * showing all revealed moves and their current PP counts.
+ * @todo Stop tracking player move usages
+ */
 export class BattleFlyout extends Phaser.GameObjects.Container {
   /** Is this object linked to a player's Pokemon? */
   private player: boolean;
 
-  /** The Pokemon this object is linked to */
+  /** The Pokemon this object is linked to. */
   private pokemon: Pokemon;
 
   /** The restricted width of the flyout which should be drawn to */
@@ -53,12 +61,20 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
   private flyoutText: Phaser.GameObjects.Text[] = new Array(4);
   /** An array of {@linkcode MoveInfo}s used to track moves for the {@linkcode Pokemon} linked to the flyout. */
   private moveInfo: MoveInfoTuple = [];
+  /**
+   * An array of {@linkcode MoveInfo}s used to track move slots
+   * temporarily overridden by {@linkcode MoveId.TRANSFORM} or {@linkcode MoveId.MIMIC}.
+   *
+   * Reset once {@linkcode pokemon} switches out via a {@linkcode SummonDataResetEvent}.
+   */
+  private tempMoveInfo: MoveInfoTuple = [];
 
   /** Current state of the flyout's visibility */
   public flyoutVisible = false;
 
   // Stores callbacks in a variable so they can be unsubscribed from when destroyed
   private readonly onMovesetChangedEvent = (event: MovesetChangedEvent) => this.onMovesetChanged(event);
+  private readonly onMovesetRestoredEvent = (event: SummonDataResetEvent) => this.onMovesetRestored(event);
 
   constructor(player: boolean) {
     super(globalScene, 0, 0);
@@ -138,13 +154,14 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
    * Set and formats the text property for all {@linkcode Phaser.GameObjects.Text} in the flyoutText array.
    * @param index - The 0-indexed position of the flyout text object to update
    */
-  private updateText(index: number) {
-    const flyoutText = this.flyoutText[index];
-    const moveInfo = this.moveInfo[index];
+  private updateText(index: number): void {
+    // Use temp move info if present, or else the regular move info.
+    const moveInfo = this.tempMoveInfo[index] ?? this.moveInfo[index];
     if (!moveInfo) {
       return;
     }
 
+    const flyoutText = this.flyoutText[index];
     const maxPP = moveInfo.move.getMovePp();
     const currentPp = -moveInfo.move.ppUsed;
     flyoutText.text = `${moveInfo.name}  ${currentPp}/${maxPP}`;
@@ -164,15 +181,20 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
       return;
     }
 
-    // If we already have a move in that slot, update the corresponding slot of the Pokemon's moveset.
-    const index = this.pokemon.getMoveset().indexOf(event.move);
+    // Push to either the temporary or permanent move arrays, depending on which array the move was found in.
+    const isPermanent = this.pokemon.getMoveset(true).includes(event.move);
+    const infoArray = isPermanent ? this.moveInfo : this.tempMoveInfo;
+
+    const index = this.pokemon.getMoveset(isPermanent).indexOf(event.move);
     if (index === -1) {
-      console.error("Updated move passed to move flyout was undefined!");
+      throw new Error("Updated move passed to move flyout was not found in moveset!");
     }
-    if (this.moveInfo[index]) {
-      this.moveInfo[index].move = event.move;
+
+    // Update the corresponding slot in the info array with either a new entry or an updated PP reading.
+    if (infoArray[index]) {
+      infoArray[index].move = event.move;
     } else {
-      this.moveInfo[index] = {
+      infoArray[index] = {
         name: event.move.getMove().name,
         move: event.move,
       };
@@ -181,7 +203,23 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
     this.updateText(index);
   }
 
-  /** Animates the flyout to either show or hide it by applying a fade and translation */
+  /**
+   * Reset the linked Pokemon's temporary moveset override when it is switched out.
+   * @param event - The {@linkcode SummonDataResetEvent} having been emitted
+   */
+  private onMovesetRestored(event: SummonDataResetEvent): void {
+    if (event.pokemonId !== this.pokemon.id) {
+      // Wrong pokemon
+      return;
+    }
+
+    this.tempMoveInfo = [];
+  }
+
+  /**
+   * Animate the flyout to either show or hide the modal.
+   * @param visible - Whether the the flyout should be shown
+   */
   public toggleFlyout(visible: boolean): void {
     this.flyoutVisible = visible;
 

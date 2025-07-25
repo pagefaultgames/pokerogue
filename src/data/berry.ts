@@ -6,7 +6,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { HitResult } from "#enums/hit-result";
 import { type BattleStat, Stat } from "#enums/stat";
-import { MovePPRestoredEvent } from "#events/battle-scene";
+import { MovesetChangedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { NumberHolder, randSeedInt, toDmgValue } from "#utils/common";
 import i18next from "i18next";
@@ -153,7 +153,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
                 berryName: getBerryName(berryType),
               }),
             );
-            globalScene.eventTarget.dispatchEvent(new MovePPRestoredEvent(m));
+            globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(consumer.id, ppRestoreMove));
           }
         }
         break;
