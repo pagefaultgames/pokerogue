@@ -7,9 +7,9 @@ import type PokemonSpecies from "./data/pokemon-species";
 import { allSpecies } from "./data/pokemon-species";
 import type { Arena } from "./field/arena";
 import Overrides from "#app/overrides";
-import { randSeedInt, randSeedItem } from "#app/utils/common";
-import { Biome } from "#enums/biome";
-import { Species } from "#enums/species";
+import { isNullOrUndefined, randSeedInt, randSeedItem } from "#app/utils/common";
+import { BiomeId } from "#enums/biome-id";
+import { SpeciesId } from "#enums/species-id";
 import { Challenges } from "./enums/challenges";
 import { globalScene } from "#app/global-scene";
 import { getDailyStartingBiome } from "./data/daily-run";
@@ -124,16 +124,20 @@ export class GameMode implements GameModeConfig {
 
   /**
    * @returns either:
-   * - random biome for Daily mode
    * - override from overrides.ts
+   * - random biome for Daily mode
    * - Town
    */
-  getStartingBiome(): Biome {
+  getStartingBiome(): BiomeId {
+    if (!isNullOrUndefined(Overrides.STARTING_BIOME_OVERRIDE)) {
+      return Overrides.STARTING_BIOME_OVERRIDE;
+    }
+
     switch (this.modeId) {
       case GameModes.DAILY:
         return getDailyStartingBiome();
       default:
-        return Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN;
+        return BiomeId.TOWN;
     }
   }
 
@@ -198,14 +202,14 @@ export class GameMode implements GameModeConfig {
     return false;
   }
 
-  isTrainerBoss(waveIndex: number, biomeType: Biome, offsetGym: boolean): boolean {
+  isTrainerBoss(waveIndex: number, biomeType: BiomeId, offsetGym: boolean): boolean {
     switch (this.modeId) {
       case GameModes.DAILY:
         return waveIndex > 10 && waveIndex < 50 && !(waveIndex % 10);
       default:
         return (
           waveIndex % 30 === (offsetGym ? 0 : 20) &&
-          (biomeType !== Biome.END || this.isClassic || this.isWaveFinal(waveIndex))
+          (biomeType !== BiomeId.END || this.isClassic || this.isWaveFinal(waveIndex))
         );
     }
   }
@@ -216,8 +220,8 @@ export class GameMode implements GameModeConfig {
         s =>
           (s.subLegendary || s.legendary || s.mythical) &&
           s.baseTotal >= 600 &&
-          s.speciesId !== Species.ETERNATUS &&
-          s.speciesId !== Species.ARCEUS,
+          s.speciesId !== SpeciesId.ETERNATUS &&
+          s.speciesId !== SpeciesId.ARCEUS,
       );
       return randSeedItem(allFinalBossSpecies);
     }
