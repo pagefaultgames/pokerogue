@@ -808,15 +808,13 @@ export abstract class Move implements Localizable {
     }
 
     const power = new NumberHolder(this.power);
+
+    applyMoveAttrs("VariablePowerAttr", source, target, this, power);
+
     const typeChangeMovePowerMultiplier = new NumberHolder(1);
     const typeChangeHolder = new NumberHolder(this.type);
 
     applyAbAttrs("MoveTypeChangeAbAttr", {pokemon: source, opponent: target, move: this, simulated: true, moveType: typeChangeHolder, power: typeChangeMovePowerMultiplier});
-
-    const sourceTeraType = source.getTeraType();
-    if (source.isTerastallized && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr("MultiHitAttr") && !globalScene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
-      power.value = 60;
-    }
 
     const abAttrParams: PreAttackModifyPowerAbAttrParams = {
       pokemon: source,
@@ -830,6 +828,13 @@ export abstract class Move implements Localizable {
     const ally = source.getAlly();
     if (!isNullOrUndefined(ally)) {
       applyAbAttrs("AllyMoveCategoryPowerBoostAbAttr", {...abAttrParams, pokemon: ally});
+    }
+
+    // Non-priority, single-hit moves of the user's Tera Type are always a bare minimum of 60 power
+
+    const sourceTeraType = source.getTeraType();
+    if (source.isTerastallized && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr("MultiHitAttr") && !globalScene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
+      power.value = 60;
     }
 
     const fieldAuras = new Set(
@@ -855,7 +860,6 @@ export abstract class Move implements Localizable {
       power.value *= typeBoost.boostValue;
     }
 
-    applyMoveAttrs("VariablePowerAttr", source, target, this, power);
 
     if (!this.hasAttr("TypelessAttr")) {
       globalScene.arena.applyTags(WeakenMoveTypeTag, simulated, typeChangeHolder.value, power);
