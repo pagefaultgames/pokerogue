@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import type { UiMode } from "#enums/ui-mode";
-import { NavigationManager } from "#ui/navigationMenu";
+import { NavigationManager } from "#ui/navigation-menu";
 import { addTextObject, TextStyle } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";

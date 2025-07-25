@@ -2,8 +2,7 @@ import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { CommandPhase } from "#phases/command-phase";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -57,8 +56,7 @@ describe("Moves - Rollout", () => {
 
     for (let i = 0; i < turns; i++) {
       game.move.select(MoveId.ROLLOUT);
-      await game.phaseInterceptor.to(CommandPhase);
-
+      await game.toNextTurn();
       dmgHistory.push(previousHp - enemyPkm.hp);
       previousHp = enemyPkm.hp;
     }
