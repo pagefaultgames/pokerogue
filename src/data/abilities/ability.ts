@@ -43,7 +43,7 @@ import { BATTLE_STATS, EFFECTIVE_STATS, getStatKey, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
 import { WeatherType } from "#enums/weather-type";
-import { BerryUsedEvent } from "#events/battle-scene";
+import { MovePPRestoredEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import { BerryModifierType } from "#modifiers/modifier-type";
@@ -4751,7 +4751,7 @@ export class CudChewConsumeBerryAbAttr extends AbAttr {
     for (const berryType of pokemon.summonData.berriesEatenLast) {
       getBerryEffectFunc(berryType)(pokemon);
       const bMod = new BerryModifier(new BerryModifierType(berryType), pokemon.id, berryType, 1);
-      globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(bMod)); // trigger message
+      globalScene.eventTarget.dispatchEvent(new MovePPRestoredEvent(bMod)); // trigger message
     }
 
     // uncomment to make cheek pouch work with cud chew

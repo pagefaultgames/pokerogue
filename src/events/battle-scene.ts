@@ -1,7 +1,6 @@
-import type { BerryModifier } from "#modifiers/modifier";
-import type { Move } from "#moves/move";
+import type { PokemonMove } from "#moves/pokemon-move";
 
-/** Alias for all {@linkcode BattleScene} events */
+/** Alias for all {@linkcode BattleScene} events. */
 export enum BattleSceneEventType {
   /**
    * Triggers when the corresponding setting is changed
@@ -10,15 +9,11 @@ export enum BattleSceneEventType {
   CANDY_UPGRADE_NOTIFICATION_CHANGED = "onCandyUpgradeNotificationChanged",
 
   /**
-   * Triggers when a move is successfully used
-   * @see {@linkcode MoveUsedEvent}
+   * Triggers whenever a Pokemon's moveset is changed or altered - whether from moveset-overridding effects,
+   * PP consumption or restoration.
+   * @see {@linkcode MovesetChangedEvent}
    */
-  MOVE_USED = "onMoveUsed",
-  /**
-   * Triggers when a berry gets successfully used
-   * @see {@linkcode BerryUsedEvent}
-   */
-  BERRY_USED = "onBerryUsed",
+  MOVESET_CHANGED = "onMovePPChanged",
 
   /**
    * Triggers at the start of each new encounter
@@ -44,10 +39,20 @@ export enum BattleSceneEventType {
 }
 
 /**
+ * Abstract container class for all {@linkcode BattleSceneEventType} events.
+ */
+abstract class BattleSceneEvent extends Event {
+  public declare abstract readonly type: BattleSceneEventType; // that's a mouthful!
+  // biome-ignore lint/complexity/noUselessConstructor: changes the type of the type field
+  constructor(type: BattleSceneEventType) {
+    super(type);
+  }
+} /**
  * Container class for {@linkcode BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED} events
  * @extends Event
  */
-export class CandyUpgradeNotificationChangedEvent extends Event {
+export class CandyUpgradeNotificationChangedEvent extends BattleSceneEvent {
+  declare type: BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED;
   /** The new value the setting was changed to */
   public newValue: number;
   constructor(newValue: number) {
@@ -58,61 +63,54 @@ export class CandyUpgradeNotificationChangedEvent extends Event {
 }
 
 /**
- * Container class for {@linkcode BattleSceneEventType.MOVE_USED} events
- * @extends Event
+ * Container class for {@linkcode BattleSceneEventType.MOVESET_CHANGED} events. \
+ * Emitted whenever the moveset of any on-field Pokemon is changed, or a move's PP is increased or decreased.
  */
-export class MoveUsedEvent extends Event {
-  /** The ID of the {@linkcode Pokemon} that used the {@linkcode Move} */
+export class MovesetChangedEvent extends BattleSceneEvent {
+  declare type: BattleSceneEventType.MOVESET_CHANGED;
+
+  /** The {@linkcode Pokemon.ID | ID} of the {@linkcode Pokemon} whose moveset has changed. */
   public pokemonId: number;
-  /** The {@linkcode Move} used */
-  public move: Move;
-  /** The amount of PP used on the {@linkcode Move} this turn */
-  public ppUsed: number;
-  constructor(userId: number, move: Move, ppUsed: number) {
-    super(BattleSceneEventType.MOVE_USED);
+  /**
+   * The {@linkcode PokemonMove} having been changed.
+   * Will override the corresponding slot of the moveset flyout for that Pokemon.
+   */
+  public move: PokemonMove;
 
-    this.pokemonId = userId;
+  constructor(pokemonId: number, move: PokemonMove) {
+    super(BattleSceneEventType.MOVESET_CHANGED);
+
+    this.pokemonId = pokemonId;
     this.move = move;
-    this.ppUsed = ppUsed;
-  }
-}
-/**
- * Container class for {@linkcode BattleSceneEventType.BERRY_USED} events
- * @extends Event
- */
-export class BerryUsedEvent extends Event {
-  /** The {@linkcode BerryModifier} being used */
-  public berryModifier: BerryModifier;
-  constructor(berry: BerryModifier) {
-    super(BattleSceneEventType.BERRY_USED);
-
-    this.berryModifier = berry;
   }
 }
 
 /**
- * Container class for {@linkcode BattleSceneEventType.ENCOUNTER_PHASE} events
- * @extends Event
+ * Container class for {@linkcode BattleSceneEventType.ENCOUNTER_PHASE} events.
  */
-export class EncounterPhaseEvent extends Event {
+export class EncounterPhaseEvent extends BattleSceneEvent {
+  declare type: BattleSceneEventType.ENCOUNTER_PHASE;
   constructor() {
     super(BattleSceneEventType.ENCOUNTER_PHASE);
   }
 }
+
 /**
- * Container class for {@linkcode BattleSceneEventType.TURN_INIT} events
- * @extends Event
+ * Container class for {@linkcode BattleSceneEventType.TURN_INIT} events.
  */
-export class TurnInitEvent extends Event {
+export class TurnInitEvent extends BattleSceneEvent {
+  declare type: BattleSceneEventType.TURN_INIT;
   constructor() {
     super(BattleSceneEventType.TURN_INIT);
   }
 }
+
 /**
  * Container class for {@linkcode BattleSceneEventType.TURN_END} events
  * @extends Event
  */
-export class TurnEndEvent extends Event {
+export class TurnEndEvent extends BattleSceneEvent {
+  declare type: BattleSceneEventType.TURN_END;
   /** The amount of turns in the current battle */
   public turnCount: number;
   constructor(turnCount: number) {
