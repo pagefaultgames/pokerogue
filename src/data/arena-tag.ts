@@ -926,6 +926,10 @@ class ToxicSpikesTag extends ArenaTrapTag {
       return false;
     }
 
+    if (simulated) {
+      return true;
+    }
+
     // poison types will neutralize toxic spikes
     if (pokemon.isOfType(PokemonType.POISON)) {
       this.#neutralized = true;
@@ -944,6 +948,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
       return false;
     }
 
+    // TODO: pass quiet to the function
     return pokemon.trySetStatus(
       this.layers === 1 ? StatusEffect.POISON : StatusEffect.TOXIC,
       null,
