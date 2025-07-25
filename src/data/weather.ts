@@ -11,6 +11,11 @@ import type { Move } from "#moves/move";
 import { randSeedInt } from "#utils/common";
 import i18next from "i18next";
 
+export interface SerializedWeather {
+  weatherType: WeatherType;
+  turnsLeft: number;
+}
+
 export class Weather {
   public weatherType: WeatherType;
   public turnsLeft: number;
