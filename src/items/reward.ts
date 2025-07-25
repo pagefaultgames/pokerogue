@@ -44,6 +44,7 @@ import { TrainerItemEffect, tempStatToTrainerItem } from "#items/trainer-item";
 import type { PokemonMove } from "#moves/pokemon-move";
 import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#system/voucher";
 import type { RewardFunc, WeightedRewardWeightFunc } from "#types/rewards";
+import type { Exact } from "#types/type-helpers";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getRarityTierTextTint } from "#ui/text";
@@ -61,17 +62,11 @@ import { getRewardPoolForType } from "#utils/reward-utils";
 import i18next from "i18next";
 import { getRewardTierFromPool } from "./init-reward-pools";
 
-export enum RewardClass {
-  REWARD,
-  POKEMON_REWARD,
-  POKEMON_MOVE_REWARD,
-  POKEMON_MOVE_RECALL_REWARD,
-  POKEMON_FUSION_REWARD,
-}
-
 /*
-Rewards are referring to every item the player can access in the post-battle screen (although
-they may be used in other places of the code as well). Examples include (but are not limited to)
+The term "Reward" refers to items the player can access in the post-battle screen (although
+they may be used in other places of the code as well).
+
+Examples include (but are not limited to):
 - Potions and other healing items
 - Held items and trainer items
 - Money items such as nugget and ancient relic
@@ -112,20 +107,18 @@ RewardGenerator, which creates Reward instances from a certain group (e.g. TMs, 
 WeightedReward, which is a Reward with an attached weight or weight function to be used in pools;
 and RewardOption, which is displayed during the select reward phase at the end of each encounter.
 
-RewardClass was introduced to differentiate between different types of Reward Parameters but is probably
-not necessary.
-
 This file still contains several functions to generate rewards from pools, which will need to be moved
 to their own file. Some of those also need to be modified so that they can take a whole RewardPool in input.
 This will allow more customization in creating pools for challenges, MEs etc.
 */
 
 export abstract class Reward {
+  // TODO: If all we care about for categorization is the reward's ID's _category_, why not do it there?
+  // TODO: Make abstract and readonly
   public id: RewardId;
-  public rewardClass: RewardClass;
   public localeKey: string;
   public iconImage: string;
-  public group: string;
+  public group: string; // TODO: Make a union type of all groups
   public soundName: string;
   public tier: RarityTier;
 
@@ -134,48 +127,47 @@ export abstract class Reward {
     this.iconImage = iconImage!; // TODO: is this bang correct?
     this.group = group!; // TODO: is this bang correct?
     this.soundName = soundName ?? "se/restore";
-    this.rewardClass = RewardClass.REWARD;
   }
 
   get name(): string {
-    return i18next.t(`${this.localeKey}.name` as any);
+    return i18next.t(`${this.localeKey}.name`);
   }
 
   getDescription(): string {
-    return i18next.t(`${this.localeKey}.description` as any);
+    return i18next.t(`${this.localeKey}.description`);
   }
 
   getIcon(): string {
     return this.iconImage;
   }
 
-  shouldApply(..._args: any[]): boolean {
+  // TODO: Should this be abstract?
+  /**
+   * Check whether this reward should be applied.
+   */
+  // TODO: This is erroring on stuff of typ
+  shouldApply(_params: Exact<Parameters<this["apply"]>[0]>): boolean {
     return true;
   }
 
-  apply(..._args: any[]): boolean {
-    return true;
-  }
+  /** Apply this Reward's effects. */
+  // TODO: Remove `boolean` return from all superclasses' type signatures
+  abstract apply(_params?: unknown): void;
 }
 
-type RewardGeneratorFunc = (party: Pokemon[], pregenArgs?: any[]) => Reward | null;
+// TODO: Can this return null?
+// TODO: Make this generic based on T
+type RewardGeneratorFunc<T extends Reward> = (party: Pokemon[], pregenArgs?: any[]) => T | null;
 
-export class RewardGenerator extends Reward {
-  private genRewardFunc: RewardGeneratorFunc;
+export abstract class RewardGenerator<T extends Reward = Reward> {
+  private genRewardFunc: RewardGeneratorFunc<T>;
 
-  constructor(genRewardFunc: RewardGeneratorFunc) {
-    super(null, null);
+  constructor(genRewardFunc: RewardGeneratorFunc<T>) {
     this.genRewardFunc = genRewardFunc;
   }
 
   generateReward(party: Pokemon[], pregenArgs?: any[]) {
     const ret = this.genRewardFunc(party, pregenArgs);
-    if (ret && this.id) {
-      ret.id = this.id;
-    }
-    if (ret && this.rewardClass) {
-      ret.rewardClass = this.rewardClass;
-    }
     return ret;
   }
 }
@@ -212,7 +204,6 @@ export class AddPokeballReward extends Reward {
 
   /**
    * Applies {@linkcode AddPokeballReward}
-   * @param battleScene {@linkcode BattleScene}
    * @returns always `true`
    */
   apply(): boolean {
@@ -315,6 +306,7 @@ export class AddMoneyReward extends Reward {
   }
 }
 
+/** Rewards that are applied to individual Pokemon. */
 export abstract class PokemonReward extends Reward {
   public selectFilter: PokemonSelectFilter | undefined;
 
@@ -327,16 +319,9 @@ export abstract class PokemonReward extends Reward {
   ) {
     super(localeKey, iconImage, group, soundName);
     this.selectFilter = selectFilter;
-    this.rewardClass = RewardClass.POKEMON_REWARD;
   }
 
-  override apply(_params: PokemonRewardParams): boolean {
-    return false;
-  }
-
-  override shouldApply(_params: PokemonRewardParams): boolean {
-    return false;
-  }
+  abstract override apply(_params: PokemonRewardParams): void;
 }
 
 export interface PokemonRewardParams {
@@ -358,14 +343,6 @@ export interface PokemonFusionRewardParams {
   pokemon: PlayerPokemon;
   pokemon2: PlayerPokemon;
 }
-
-export type ApplyRewardParams = {
-  [RewardClass.REWARD]: {};
-  [RewardClass.POKEMON_REWARD]: PokemonRewardParams;
-  [RewardClass.POKEMON_MOVE_REWARD]: PokemonMoveRewardParams;
-  [RewardClass.POKEMON_MOVE_RECALL_REWARD]: PokemonMoveRecallRewardParams;
-  [RewardClass.POKEMON_FUSION_REWARD]: PokemonFusionRewardParams;
-};
 
 export class HeldItemReward extends PokemonReward {
   public itemId: HeldItemId;
@@ -676,7 +653,6 @@ export abstract class PokemonMoveReward extends PokemonReward {
     super(localeKey, iconImage, selectFilter, group);
     this.moveSelectFilter = moveSelectFilter;
     this.id = id;
-    this.rewardClass = RewardClass.POKEMON_MOVE_REWARD;
   }
 
   apply(_params: PokemonMoveRewardParams): boolean {
@@ -1202,7 +1178,6 @@ export class FusePokemonReward extends PokemonReward {
       return null;
     });
     this.id = RewardId.DNA_SPLICERS;
-    this.rewardClass = RewardClass.POKEMON_FUSION_REWARD;
   }
 
   getDescription(): string {
@@ -1574,8 +1549,6 @@ export type GeneratorRewardOverride = {
 /** Type used to construct modifiers and held items for overriding purposes. */
 export type RewardOverride = GeneratorRewardOverride | BaseRewardOverride;
 
-export type RewardKeys = keyof typeof rewardInitObj;
-
 const rewardInitObj = Object.freeze({
   // Pokeball rewards
   POKEBALL: () => new AddPokeballReward("pb", PokeballType.POKEBALL, 5, RewardId.POKEBALL),
@@ -1838,6 +1811,7 @@ const rewardInitObj = Object.freeze({
  * The initial set of modifier types, used to generate the modifier pool.
  */
 export type Rewards = typeof rewardInitObj;
+export type RewardKeys = keyof typeof rewardInitObj;
 
 export interface RewardPool {
   [tier: string]: WeightedReward[];

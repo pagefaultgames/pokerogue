@@ -13,7 +13,7 @@ interface BerryTypeToHeldItemMap {
   [key: number]: HeldItemId;
 }
 
-export const berryTypeToHeldItem: BerryTypeToHeldItemMap = {
+export const berryTypeToHeldItem = {
   [BerryType.SITRUS]: HeldItemId.SITRUS_BERRY,
   [BerryType.LUM]: HeldItemId.LUM_BERRY,
   [BerryType.ENIGMA]: HeldItemId.ENIGMA_BERRY,
@@ -25,7 +25,7 @@ export const berryTypeToHeldItem: BerryTypeToHeldItemMap = {
   [BerryType.LANSAT]: HeldItemId.LANSAT_BERRY,
   [BerryType.STARF]: HeldItemId.STARF_BERRY,
   [BerryType.LEPPA]: HeldItemId.LEPPA_BERRY,
-};
+} satisfies BerryTypeToHeldItemMap;
 
 export interface BerryParams {
   /** The pokemon with the berry */

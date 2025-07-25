@@ -78,6 +78,7 @@ export class SelectRewardPhase extends BattlePhase {
 
     const rewardSelectCallback = (rowCursor: number, cursor: number) => {
       if (rowCursor < 0 || cursor < 0) {
+        // Attempt to skip the item pickup
         globalScene.ui.showText(i18next.t("battle:skipItemQuestion"), null, () => {
           globalScene.ui.setOverlayMode(
             UiMode.CONFIRM,
