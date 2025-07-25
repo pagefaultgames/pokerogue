@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
+import { RewardId } from "#enums/reward-id";
 import { getRewardTierFromPool } from "./init-reward-pools";
-import { type Reward, RewardGenerator, RewardOption } from "./reward";
+import { type HeldItemReward, type Reward, RewardGenerator, RewardOption, type TrainerItemReward } from "./reward";
 
 /**
  * Generates a Reward from a given function
@@ -24,4 +25,30 @@ export function generateRewardOption(rewardFunc: () => Reward, pregenArgs?: any[
     return new RewardOption(reward, 0, tier);
   }
   return null;
+}
+
+/**This matches rewards based on their id. For example, it returns true when matching
+ * rewards for two different types of berries, or two different TMs of the same rarity,
+ * but it returns false when matching rewards for two TMs of different rarities.
+ * For items that do not have a specific reward id, it directly compares their item ids.
+ */
+export function matchingRewards(a: Reward, b: Reward) {
+  if (a.id === b.id) {
+    return true;
+  }
+  if (a.id === RewardId.HELD_ITEM) {
+    const itemIdA = (a as HeldItemReward).itemId;
+    const itemIdB = (a as HeldItemReward).itemId;
+    if (itemIdA === itemIdB) {
+      return true;
+    }
+  }
+  if (a.id === RewardId.TRAINER_ITEM) {
+    const itemIdA = (a as TrainerItemReward).itemId;
+    const itemIdB = (a as TrainerItemReward).itemId;
+    if (itemIdA === itemIdB) {
+      return true;
+    }
+  }
+  return false;
 }

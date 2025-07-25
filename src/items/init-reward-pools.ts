@@ -17,11 +17,12 @@ import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { Unlockables } from "#enums/unlockables";
 import type { Pokemon } from "#field/pokemon";
-import { matchingRewards, WeightedReward } from "#items/reward";
+import { WeightedReward } from "#items/reward";
 import { rewardPool } from "#items/reward-pools";
 import type { TurnEndStatusHeldItem } from "#items/turn-end-status";
 import type { WeightedRewardWeightFunc } from "#types/rewards";
 import { isNullOrUndefined } from "#utils/common";
+import { matchingRewards } from "./reward-utils";
 
 /**
  * Initialize the common modifier pool

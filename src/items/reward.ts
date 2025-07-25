@@ -1839,29 +1839,6 @@ const rewardInitObj = Object.freeze({
  */
 export type Rewards = typeof rewardInitObj;
 
-export function matchingRewards(a: Reward, b: Reward) {
-  if (a.id !== b.id) {
-    return false;
-  }
-  if (a.id === RewardId.HELD_ITEM) {
-    const itemIdA = (a as HeldItemReward).itemId;
-    const itemIdB = (a as HeldItemReward).itemId;
-    if (itemIdA === itemIdB) {
-      return true;
-    }
-    return false;
-  }
-  if (a.id === RewardId.TRAINER_ITEM) {
-    const itemIdA = (a as TrainerItemReward).itemId;
-    const itemIdB = (a as TrainerItemReward).itemId;
-    if (itemIdA === itemIdB) {
-      return true;
-    }
-    return false;
-  }
-  return true;
-}
-
 export interface RewardPool {
   [tier: string]: WeightedReward[];
 }
