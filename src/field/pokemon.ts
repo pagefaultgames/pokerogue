@@ -1741,7 +1741,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return the base pokemon's variant. Equivalent to {@linkcode getVariant} if this pokemon is not a fusion.
-   * @returns
+   * @returns The shiny variant of this Pokemon's base species.
    */
   getBaseVariant(useIllusion = false): Variant {
     const illusion = this.summonData.illusion;
@@ -1750,9 +1750,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return the fused pokemon's variant.
+   *
    * @remarks
    * Always returns `0` if the pokemon is not a fusion.
-   *
+   * @returns The shiny variant of this pokemon's fusion species.
    */
   getFusionVariant(useIllusion = false): Variant {
     if (!this.isFusion(useIllusion)) {
