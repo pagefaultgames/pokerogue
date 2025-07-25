@@ -21,11 +21,6 @@ export enum BattleSceneEventType {
    */
   ENCOUNTER_PHASE = "onEncounterPhase",
   /**
-   * Triggers on the first turn of a new battle
-   * @see {@linkcode TurnInitEvent}
-   */
-  TURN_INIT = "onTurnInit",
-  /**
    * Triggers after a turn ends in battle
    * @see {@linkcode TurnEndEvent}
    */
@@ -92,16 +87,6 @@ export class EncounterPhaseEvent extends BattleSceneEvent {
   declare type: BattleSceneEventType.ENCOUNTER_PHASE;
   constructor() {
     super(BattleSceneEventType.ENCOUNTER_PHASE);
-  }
-}
-
-/**
- * Container class for {@linkcode BattleSceneEventType.TURN_INIT} events.
- */
-export class TurnInitEvent extends BattleSceneEvent {
-  declare type: BattleSceneEventType.TURN_INIT;
-  constructor() {
-    super(BattleSceneEventType.TURN_INIT);
   }
 }
 

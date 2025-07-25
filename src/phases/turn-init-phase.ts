@@ -1,6 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#enums/battler-index";
-import { TurnInitEvent } from "#events/battle-scene";
 import type { PlayerPokemon } from "#field/pokemon";
 import {
   handleMysteryEncounterBattleStartEffects,
@@ -45,8 +44,6 @@ export class TurnInitPhase extends FieldPhase {
         }
       }
     });
-
-    globalScene.eventTarget.dispatchEvent(new TurnInitEvent());
 
     handleMysteryEncounterBattleStartEffects();
 
