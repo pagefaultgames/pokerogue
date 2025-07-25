@@ -150,11 +150,12 @@ export abstract class Reward {
   }
 
   /** Apply this Reward's effects. */
-  abstract apply(_params: object): void;
+  abstract apply(_params: unknown): void;
 }
 
 // TODO: Can this return null?
-type RewardGeneratorFunc<T extends Reward = Reward> = (party: Pokemon[], pregenArgs?: any[]) => T | null;
+// TODO: Make this generic based on T
+type RewardGeneratorFunc<T extends Reward> = (party: Pokemon[], pregenArgs?: any[]) => T | null;
 
 export abstract class RewardGenerator<T extends Reward = Reward> {
   private genRewardFunc: RewardGeneratorFunc<T>;
