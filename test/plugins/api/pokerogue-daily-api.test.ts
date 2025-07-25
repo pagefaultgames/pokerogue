@@ -1,11 +1,11 @@
-import type { GetDailyRankingsPageCountRequest, GetDailyRankingsRequest } from "#app/@types/PokerogueDailyApi";
-import { PokerogueDailyApi } from "#app/plugins/api/pokerogue-daily-api";
-import { getApiBaseUrl } from "#test/testUtils/testUtils";
-import { ScoreboardCategory, type RankingEntry } from "#app/ui/daily-run-scoreboard";
-import { http, HttpResponse } from "msw";
-import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
+import { PokerogueDailyApi } from "#api/pokerogue-daily-api";
+import { initServerForApiTests } from "#test/test-utils/test-file-initialization";
+import { getApiBaseUrl } from "#test/test-utils/test-utils";
+import type { GetDailyRankingsPageCountRequest, GetDailyRankingsRequest } from "#types/api/pokerogue-daily-api";
+import { type RankingEntry, ScoreboardCategory } from "#ui/daily-run-scoreboard";
+import { HttpResponse, http } from "msw";
 import type { SetupServerApi } from "msw/node";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiBase = getApiBaseUrl();
 const dailyApi = new PokerogueDailyApi(apiBase);

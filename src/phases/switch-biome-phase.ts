@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { BiomeId } from "#enums/biome-id";
-import { getBiomeKey } from "#app/field/arena";
-import { BattlePhase } from "./battle-phase";
+import { getBiomeKey } from "#field/arena";
+import { BattlePhase } from "#phases/battle-phase";
 
 export class SwitchBiomePhase extends BattlePhase {
   public readonly phaseName = "SwitchBiomePhase";

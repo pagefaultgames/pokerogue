@@ -1,12 +1,12 @@
+import { timedEventManager } from "#app/global-event-manager";
+import { globalScene } from "#app/global-scene";
+import { modifierTypes } from "#data/data-lists";
+import { BattleType } from "#enums/battle-type";
 import type { BattlerIndex } from "#enums/battler-index";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
-import { BattleType } from "#enums/battle-type";
-import type { CustomModifierSettings } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/data/data-lists";
-import { PokemonPhase } from "./pokemon-phase";
-import { handleMysteryEncounterVictory } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { globalScene } from "#app/global-scene";
-import { timedEventManager } from "#app/global-event-manager";
+import type { CustomModifierSettings } from "#modifiers/modifier-type";
+import { handleMysteryEncounterVictory } from "#mystery-encounters/encounter-phase-utils";
+import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class VictoryPhase extends PokemonPhase {
   public readonly phaseName = "VictoryPhase";

@@ -1,22 +1,22 @@
-import { BattleType } from "#enums/battle-type";
 import { globalScene } from "#app/global-scene";
-import type { Gender } from "../data/gender";
-import { Nature } from "#enums/nature";
-import { PokeballType } from "#enums/pokeball";
-import { getPokemonSpeciesForm } from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { Status } from "../data/status-effect";
-import Pokemon, { EnemyPokemon, PokemonBattleData, PokemonSummonData } from "../field/pokemon";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { TrainerSlot } from "#enums/trainer-slot";
-import type { Variant } from "#app/sprites/variant";
+import type { Gender } from "#data/gender";
+import { CustomPokemonData, PokemonBattleData, PokemonSummonData } from "#data/pokemon-data";
+import { getPokemonSpeciesForm } from "#data/pokemon-species";
+import { Status } from "#data/status-effect";
+import { BattleType } from "#enums/battle-type";
 import type { BiomeId } from "#enums/biome-id";
 import type { MoveId } from "#enums/move-id";
-import type { SpeciesId } from "#enums/species-id";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { Nature } from "#enums/nature";
+import { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
+import type { SpeciesId } from "#enums/species-id";
+import { TrainerSlot } from "#enums/trainer-slot";
+import { EnemyPokemon, Pokemon } from "#field/pokemon";
+import { PokemonMove } from "#moves/pokemon-move";
+import type { Variant } from "#sprites/variant";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
-export default class PokemonData {
+export class PokemonData {
   public id: number;
   public player: boolean;
   public species: SpeciesId;
@@ -105,7 +105,7 @@ export default class PokemonData {
 
     // TODO: Can't we move some of this verification stuff to an upgrade script?
     this.nature = source.nature ?? Nature.HARDY;
-    this.moveset = source.moveset.map((m: any) => PokemonMove.loadMove(m));
+    this.moveset = source.moveset?.map((m: any) => PokemonMove.loadMove(m)) ?? [];
     this.status = source.status
       ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
       : null;

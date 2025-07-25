@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import PartyUiHandler, { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
-import { UiMode } from "#enums/ui-mode";
 import { SwitchType } from "#enums/switch-type";
-import { BattlePhase } from "./battle-phase";
+import { UiMode } from "#enums/ui-mode";
+import { BattlePhase } from "#phases/battle-phase";
+import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 
 /**
  * Opens the party selector UI and transitions into a {@linkcode SwitchSummonPhase}

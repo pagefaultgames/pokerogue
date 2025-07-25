@@ -1,17 +1,17 @@
-import { BattleType } from "#enums/battle-type";
-import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { TrainerSlot } from "#enums/trainer-slot";
-import { PlayerGender } from "#app/enums/player-gender";
-import { addPokeballOpenParticles } from "#app/field/anims";
-import type Pokemon from "#app/field/pokemon";
-import { FieldPosition } from "#enums/field-position";
-import { getPokemonNameWithAffix } from "#app/messages";
-import i18next from "i18next";
-import { PartyMemberPokemonPhase } from "./party-member-pokemon-phase";
-import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
+import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
+import { BattleType } from "#enums/battle-type";
+import { FieldPosition } from "#enums/field-position";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import { PlayerGender } from "#enums/player-gender";
+import { TrainerSlot } from "#enums/trainer-slot";
+import { addPokeballOpenParticles } from "#field/anims";
+import type { Pokemon } from "#field/pokemon";
+import { PartyMemberPokemonPhase } from "#phases/party-member-pokemon-phase";
+import i18next from "i18next";
 
 export class SummonPhase extends PartyMemberPokemonPhase {
   // The union type is needed to keep typescript happy as these phases extend from SummonPhase

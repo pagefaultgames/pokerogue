@@ -1,4 +1,4 @@
-import { expSpriteKeys } from "#app/sprites/sprite-keys";
+import { expSpriteKeys } from "#sprites/sprite-keys";
 
 const expKeyRegex = /^pkmn__?(back__)?(shiny__)?(female__)?(\d+)(-.*?)?(?:_[1-3])?$/;
 

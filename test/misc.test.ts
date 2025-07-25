@@ -1,6 +1,5 @@
-// import { apiFetch } from "#app/utils";
-import GameManager from "#test/testUtils/gameManager";
-import { waitUntil } from "#test/testUtils/gameManagerUtils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { waitUntil } from "#test/test-utils/game-manager-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

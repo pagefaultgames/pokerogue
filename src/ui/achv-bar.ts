@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import { Achv, getAchievementDescription } from "../system/achv";
-import { Voucher } from "../system/voucher";
-import { TextStyle, addTextObject } from "./text";
 import type { PlayerGender } from "#enums/player-gender";
+import { Achv, getAchievementDescription } from "#system/achv";
+import { Voucher } from "#system/voucher";
+import { addTextObject, TextStyle } from "#ui/text";
 
-export default class AchvBar extends Phaser.GameObjects.Container {
+export class AchvBar extends Phaser.GameObjects.Container {
   private defaultWidth: number;
   private defaultHeight: number;
 

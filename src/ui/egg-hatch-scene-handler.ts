@@ -1,9 +1,9 @@
-import { UiMode } from "#enums/ui-mode";
-import UiHandler from "./ui-handler";
-import { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
+import { Button } from "#enums/buttons";
+import { UiMode } from "#enums/ui-mode";
+import { UiHandler } from "#ui/ui-handler";
 
-export default class EggHatchSceneHandler extends UiHandler {
+export class EggHatchSceneHandler extends UiHandler {
   public eggHatchContainer: Phaser.GameObjects.Container;
 
   /**

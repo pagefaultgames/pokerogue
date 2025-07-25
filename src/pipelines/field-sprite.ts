@@ -1,10 +1,11 @@
 import { globalScene } from "#app/global-scene";
-import { TerrainType, getTerrainColor } from "../data/terrain";
-import { getCurrentTime } from "#app/utils/common";
-import fieldSpriteFragShader from "./glsl/fieldSpriteFragShader.frag?raw";
-import spriteVertShader from "./glsl/spriteShader.vert?raw";
+import { getTerrainColor, TerrainType } from "#data/terrain";
+import { getCurrentTime } from "#utils/common";
+import Phaser from "phaser";
+import fieldSpriteFragShader from "./glsl/field-sprite-frag-shader.frag?raw";
+import spriteVertShader from "./glsl/sprite-shader.vert?raw";
 
-export default class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines.MultiPipeline {
+export class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines.MultiPipeline {
   constructor(game: Phaser.Game, config?: Phaser.Types.Renderer.WebGL.WebGLPipelineConfig) {
     super(
       config || {

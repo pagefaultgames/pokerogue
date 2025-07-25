@@ -1,8 +1,8 @@
-import type { UpdateAllSavedataRequest } from "#app/@types/PokerogueSavedataApi";
+import { ApiBase } from "#api/api-base";
+import { PokerogueSessionSavedataApi } from "#api/pokerogue-session-savedata-api";
+import { PokerogueSystemSavedataApi } from "#api/pokerogue-system-savedata-api";
 import { MAX_INT_ATTR_VALUE } from "#app/constants";
-import { ApiBase } from "#app/plugins/api/api-base";
-import { PokerogueSessionSavedataApi } from "#app/plugins/api/pokerogue-session-savedata-api";
-import { PokerogueSystemSavedataApi } from "#app/plugins/api/pokerogue-system-savedata-api";
+import type { UpdateAllSavedataRequest } from "#types/api/pokerogue-save-data-api";
 
 /**
  * A wrapper for PokéRogue savedata API requests.

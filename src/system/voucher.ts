@@ -1,9 +1,9 @@
-import i18next from "i18next";
-import { AchvTier, achvs, getAchievementDescription } from "./achv";
 import type { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
-import type { ConditionFn } from "#app/@types/common";
-import { trainerConfigs } from "#app/data/trainers/trainer-config";
+import { AchvTier, achvs, getAchievementDescription } from "#system/achv";
+import { trainerConfigs } from "#trainers/trainer-config";
+import type { ConditionFn } from "#types/common";
+import i18next from "i18next";
 
 export enum VoucherType {
   REGULAR,

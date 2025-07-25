@@ -1,10 +1,10 @@
-import MessageUiHandler from "./message-ui-handler";
-import { TextStyle, addTextObject } from "./text";
-import { UiMode } from "#enums/ui-mode";
-import { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
+import { Button } from "#enums/buttons";
+import { UiMode } from "#enums/ui-mode";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { addTextObject, TextStyle } from "#ui/text";
 
-export default class EvolutionSceneHandler extends MessageUiHandler {
+export class EvolutionSceneHandler extends MessageUiHandler {
   public evolutionContainer: Phaser.GameObjects.Container;
   public messageBg: Phaser.GameObjects.Image;
   public messageContainer: Phaser.GameObjects.Container;

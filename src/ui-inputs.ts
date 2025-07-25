@@ -1,19 +1,19 @@
-import type Phaser from "phaser";
-import { UiMode } from "#enums/ui-mode";
-import type { InputsController } from "./inputs-controller";
-import type MessageUiHandler from "./ui/message-ui-handler";
-import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
-import { Setting, SettingKeys, settingIndex } from "./system/settings/settings";
-import SettingsUiHandler from "./ui/settings/settings-ui-handler";
-import { Button } from "#enums/buttons";
-import SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
-import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import { globalScene } from "#app/global-scene";
-import SettingsDisplayUiHandler from "./ui/settings/settings-display-ui-handler";
-import SettingsAudioUiHandler from "./ui/settings/settings-audio-ui-handler";
-import RunInfoUiHandler from "./ui/run-info-ui-handler";
-import PokedexUiHandler from "./ui/pokedex-ui-handler";
-import PokedexPageUiHandler from "./ui/pokedex-page-ui-handler";
+import type { InputsController } from "#app/inputs-controller";
+import { Button } from "#enums/buttons";
+import { UiMode } from "#enums/ui-mode";
+import { Setting, SettingKeys, settingIndex } from "#system/settings";
+import type { MessageUiHandler } from "#ui/message-ui-handler";
+import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
+import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
+import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
+import { SettingsAudioUiHandler } from "#ui/settings-audio-ui-handler";
+import { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
+import { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
+import { SettingsKeyboardUiHandler } from "#ui/settings-keyboard-ui-handler";
+import { SettingsUiHandler } from "#ui/settings-ui-handler";
+import { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
+import type Phaser from "phaser";
 
 type ActionKeys = Record<Button, () => void>;
 

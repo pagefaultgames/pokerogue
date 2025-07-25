@@ -1,13 +1,13 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { RandomMoveAttr } from "#app/data/moves/move";
-import { Stat } from "#app/enums/stat";
-import { MoveResult } from "#enums/move-result";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Copycat", () => {
   let phaserGame: Phaser.Game;
@@ -75,10 +75,10 @@ describe("Moves - Copycat", () => {
   });
 
   it("should copy the called move when the last move successfully calls another", async () => {
-    vi.spyOn(RandomMoveAttr.prototype, "getMove").mockReturnValue(MoveId.SWORDS_DANCE);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.use(MoveId.METRONOME);
+    game.move.forceMetronomeMove(MoveId.SWORDS_DANCE, true);
     await game.move.forceEnemyMove(MoveId.COPYCAT);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]); // Player moves first, so enemy can copy Swords Dance
     await game.toNextTurn();

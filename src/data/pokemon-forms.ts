@@ -1,14 +1,5 @@
-import type Pokemon from "../field/pokemon";
-import { allMoves } from "./data-lists";
-import { MoveCategory } from "#enums/MoveCategory";
-import type { Constructor, nil } from "#app/utils/common";
-import { AbilityId } from "#enums/ability-id";
-import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
-import { WeatherType } from "#enums/weather-type";
-import { SpeciesFormKey } from "#enums/species-form-key";
 import { globalScene } from "#app/global-scene";
-import { FormChangeItem } from "#enums/form-change-item";
+import { allMoves } from "#data/data-lists";
 import {
   MeloettaFormChangePostMoveTrigger,
   SpeciesDefaultFormMatchTrigger,
@@ -24,7 +15,16 @@ import {
   SpeciesFormChangeTeraTrigger,
   type SpeciesFormChangeTrigger,
   SpeciesFormChangeWeatherTrigger,
-} from "./pokemon-forms/form-change-triggers";
+} from "#data/form-change-triggers";
+import { AbilityId } from "#enums/ability-id";
+import { FormChangeItem } from "#enums/form-change-item";
+import { MoveCategory } from "#enums/move-category";
+import { MoveId } from "#enums/move-id";
+import { SpeciesFormKey } from "#enums/species-form-key";
+import { SpeciesId } from "#enums/species-id";
+import { WeatherType } from "#enums/weather-type";
+import type { Pokemon } from "#field/pokemon";
+import type { Constructor, nil } from "#utils/common";
 
 export type SpeciesFormChangeConditionPredicate = (p: Pokemon) => boolean;
 export type SpeciesFormChangeConditionEnforceFunc = (p: Pokemon) => void;

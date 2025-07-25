@@ -1,15 +1,15 @@
-import { getCharVariantFromDialogue } from "#app/data/dialogue";
-import { TrainerType } from "#app/enums/trainer-type";
-import { modifierTypes } from "#app/data/data-lists";
-import { vouchers } from "#app/system/voucher";
-import i18next from "i18next";
-import { randSeedItem } from "#app/utils/common";
-import { BattlePhase } from "./battle-phase";
-import { TrainerSlot } from "#enums/trainer-slot";
-import { globalScene } from "#app/global-scene";
-import { BiomeId } from "#enums/biome-id";
-import { achvs } from "#app/system/achv";
 import { timedEventManager } from "#app/global-event-manager";
+import { globalScene } from "#app/global-scene";
+import { modifierTypes } from "#data/data-lists";
+import { getCharVariantFromDialogue } from "#data/dialogue";
+import { BiomeId } from "#enums/biome-id";
+import { TrainerSlot } from "#enums/trainer-slot";
+import { TrainerType } from "#enums/trainer-type";
+import { BattlePhase } from "#phases/battle-phase";
+import { achvs } from "#system/achv";
+import { vouchers } from "#system/voucher";
+import { randSeedItem } from "#utils/common";
+import i18next from "i18next";
 
 export class TrainerVictoryPhase extends BattlePhase {
   public readonly phaseName = "TrainerVictoryPhase";

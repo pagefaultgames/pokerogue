@@ -1,13 +1,12 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { MoveResult } from "#enums/move-result";
 import { AbilityId } from "#enums/ability-id";
-import { MoveUseMode } from "#enums/move-use-mode";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { RandomMoveAttr } from "#app/data/moves/move";
+import { GameManager } from "#test/test-utils/game-manager";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Disable", () => {
   let phaserGame: Phaser.Game;
@@ -129,7 +128,7 @@ describe("Moves - Disable", () => {
     { name: "Copycat", moveId: MoveId.COPYCAT },
     { name: "Metronome", moveId: MoveId.METRONOME },
   ])("should ignore virtual moves called by $name", async ({ moveId }) => {
-    vi.spyOn(RandomMoveAttr.prototype, "getMove").mockReturnValue(MoveId.ABSORB);
+    game.move.forceMetronomeMove(MoveId.ABSORB);
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
     const playerMon = game.scene.getPlayerPokemon()!;

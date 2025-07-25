@@ -1,11 +1,11 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
-import EventEmitter = Phaser.Events.EventEmitter;
+import type Phaser from "phaser";
 
 const repeatInputDelayMillis = 250;
 
-export default class TouchControl {
-  events: EventEmitter;
+export class TouchControl {
+  events: Phaser.Events.EventEmitter;
   private buttonLock: string[] = [];
   private inputInterval: NodeJS.Timeout[] = [];
   /** Whether touch controls are disabled */

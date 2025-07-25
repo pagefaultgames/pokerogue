@@ -1,14 +1,14 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { CommonAnim } from "#enums/move-anims-common";
-import type { Weather } from "#app/data/weather";
-import { getWeatherDamageMessage, getWeatherLapseMessage } from "#app/data/weather";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { WeatherType } from "#app/enums/weather-type";
-import type Pokemon from "#app/field/pokemon";
+import type { Weather } from "#data/weather";
+import { getWeatherDamageMessage, getWeatherLapseMessage } from "#data/weather";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { HitResult } from "#enums/hit-result";
-import { BooleanHolder, toDmgValue } from "#app/utils/common";
-import { CommonAnimPhase } from "./common-anim-phase";
+import { CommonAnim } from "#enums/move-anims-common";
+import { WeatherType } from "#enums/weather-type";
+import type { Pokemon } from "#field/pokemon";
+import { CommonAnimPhase } from "#phases/common-anim-phase";
+import { BooleanHolder, toDmgValue } from "#utils/common";
 
 export class WeatherEffectPhase extends CommonAnimPhase {
   public readonly phaseName = "WeatherEffectPhase";

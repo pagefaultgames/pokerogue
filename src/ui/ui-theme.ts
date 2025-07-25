@@ -1,6 +1,6 @@
-import { UiTheme } from "#enums/ui-theme";
-import { legacyCompatibleImages } from "#app/scene-base";
 import { globalScene } from "#app/global-scene";
+import { legacyCompatibleImages } from "#app/scene-base";
+import { UiTheme } from "#enums/ui-theme";
 
 export enum WindowVariant {
   NORMAL,

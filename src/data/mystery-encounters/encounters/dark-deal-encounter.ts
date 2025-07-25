@@ -1,25 +1,22 @@
-import type { PokemonType } from "#enums/pokemon-type";
-import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { SpeciesId } from "#enums/species-id";
-import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#app/data/data-lists";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import type { EnemyPartyConfig, EnemyPokemonConfig } from "../utils/encounter-phase-utils";
-import { initBattleWithEnemyConfig, leaveEncounterWithoutBattle } from "../utils/encounter-phase-utils";
-import {
-  getRandomPlayerPokemon,
-  getRandomSpeciesByStarterCost,
-} from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { PokemonFormChangeItemModifier } from "#app/modifier/modifier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { modifierTypes } from "#data/data-lists";
 import { Challenges } from "#enums/challenges";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import type { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import type { PokemonHeldItemModifier } from "#modifiers/modifier";
+import { PokemonFormChangeItemModifier } from "#modifiers/modifier";
+import type { EnemyPartyConfig, EnemyPokemonConfig } from "#mystery-encounters/encounter-phase-utils";
+import { initBattleWithEnemyConfig, leaveEncounterWithoutBattle } from "#mystery-encounters/encounter-phase-utils";
+import { getRandomPlayerPokemon, getRandomSpeciesByStarterCost } from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { isNullOrUndefined, randSeedInt } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/darkDeal";

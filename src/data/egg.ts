@@ -1,43 +1,43 @@
-import type BattleScene from "#app/battle-scene";
+import type { BattleScene } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { speciesStarterCosts } from "#app/data/balance/starters";
-import { VariantTier } from "#enums/variant-tier";
-import { randInt, randomString, randSeedInt, getIvsFromId } from "#app/utils/common";
 import Overrides from "#app/overrides";
-import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import i18next from "i18next";
-import { EggTier } from "#enums/egg-type";
-import { SpeciesId } from "#enums/species-id";
-import { EggSourceType } from "#enums/egg-source-types";
+import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import {
-  MANAPHY_EGG_MANAPHY_RATE,
-  SAME_SPECIES_EGG_HA_RATE,
-  GACHA_EGG_HA_RATE,
-  GACHA_DEFAULT_RARE_EGGMOVE_RATE,
-  SAME_SPECIES_EGG_RARE_EGGMOVE_RATE,
-  GACHA_MOVE_UP_RARE_EGGMOVE_RATE,
-  GACHA_DEFAULT_SHINY_RATE,
-  GACHA_SHINY_UP_SHINY_RATE,
-  SAME_SPECIES_EGG_SHINY_RATE,
-  EGG_PITY_LEGENDARY_THRESHOLD,
   EGG_PITY_EPIC_THRESHOLD,
+  EGG_PITY_LEGENDARY_THRESHOLD,
   EGG_PITY_RARE_THRESHOLD,
-  SHINY_VARIANT_CHANCE,
-  SHINY_EPIC_CHANCE,
   GACHA_DEFAULT_COMMON_EGG_THRESHOLD,
-  GACHA_DEFAULT_RARE_EGG_THRESHOLD,
   GACHA_DEFAULT_EPIC_EGG_THRESHOLD,
+  GACHA_DEFAULT_RARE_EGG_THRESHOLD,
+  GACHA_DEFAULT_RARE_EGGMOVE_RATE,
+  GACHA_DEFAULT_SHINY_RATE,
+  GACHA_EGG_HA_RATE,
   GACHA_LEGENDARY_UP_THRESHOLD_OFFSET,
-  HATCH_WAVES_MANAPHY_EGG,
+  GACHA_MOVE_UP_RARE_EGGMOVE_RATE,
+  GACHA_SHINY_UP_SHINY_RATE,
   HATCH_WAVES_COMMON_EGG,
-  HATCH_WAVES_RARE_EGG,
   HATCH_WAVES_EPIC_EGG,
   HATCH_WAVES_LEGENDARY_EGG,
-} from "#app/data/balance/rates";
-import { speciesEggTiers } from "#app/data/balance/species-egg-tiers";
+  HATCH_WAVES_MANAPHY_EGG,
+  HATCH_WAVES_RARE_EGG,
+  MANAPHY_EGG_MANAPHY_RATE,
+  SAME_SPECIES_EGG_HA_RATE,
+  SAME_SPECIES_EGG_RARE_EGGMOVE_RATE,
+  SAME_SPECIES_EGG_SHINY_RATE,
+  SHINY_EPIC_CHANCE,
+  SHINY_VARIANT_CHANCE,
+} from "#balance/rates";
+import { speciesEggTiers } from "#balance/species-egg-tiers";
+import { speciesStarterCosts } from "#balance/starters";
+import type { PokemonSpecies } from "#data/pokemon-species";
+import { EggSourceType } from "#enums/egg-source-types";
+import { EggTier } from "#enums/egg-type";
+import { SpeciesId } from "#enums/species-id";
+import { VariantTier } from "#enums/variant-tier";
+import type { PlayerPokemon } from "#field/pokemon";
+import { getIvsFromId, randInt, randomString, randSeedInt } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import i18next from "i18next";
 
 export const EGG_SEED = 1073741824;
 
@@ -294,7 +294,7 @@ export class Egg {
 
   public getEggDescriptor(): string {
     if (this.isManaphyEgg()) {
-      return "Manaphy";
+      return i18next.t("egg:manaphyTier");
     }
     switch (this.tier) {
       case EggTier.RARE:

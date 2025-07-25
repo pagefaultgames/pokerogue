@@ -1,15 +1,15 @@
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addTextObject } from "#app/ui/text";
-import type { nil } from "#app/utils/common";
-import { isNullOrUndefined } from "#app/utils/common";
-import i18next from "i18next";
-import { SpeciesId } from "#enums/species-id";
-import type { WeatherPoolEntry } from "#app/data/weather";
-import { WeatherType } from "#enums/weather-type";
-import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "./data/balance/starters";
-import { MysteryEncounterType } from "./enums/mystery-encounter-type";
-import { MysteryEncounterTier } from "./enums/mystery-encounter-tier";
+import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "#balance/starters";
+import type { WeatherPoolEntry } from "#data/weather";
 import { Challenges } from "#enums/challenges";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
+import { WeatherType } from "#enums/weather-type";
+import { addTextObject, TextStyle } from "#ui/text";
+import type { nil } from "#utils/common";
+import { isNullOrUndefined } from "#utils/common";
+import i18next from "i18next";
 
 export enum EventType {
   SHINY,

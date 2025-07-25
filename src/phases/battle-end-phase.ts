@@ -1,7 +1,7 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier";
-import { BattlePhase } from "./battle-phase";
+import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#modifiers/modifier";
+import { BattlePhase } from "#phases/battle-phase";
 
 export class BattleEndPhase extends BattlePhase {
   public readonly phaseName = "BattleEndPhase";

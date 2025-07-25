@@ -1,37 +1,41 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { BattleType } from "#enums/battle-type";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { PLAYER_PARTY_MAX_SIZE, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { initEncounterAnims, loadEncounterAnimAssets } from "#app/data/battle-anims";
-import { getCharVariantFromDialogue } from "#app/data/dialogue";
-import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { doTrainerExclamation } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { getGoldenBugNetSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { TrainerSlot } from "#enums/trainer-slot";
-import { getRandomWeatherType } from "#app/data/weather";
-import { EncounterPhaseEvent } from "#app/events/battle-scene";
-import type Pokemon from "#app/field/pokemon";
-import { FieldPosition } from "#enums/field-position";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BoostBugSpawnModifier, IvScannerModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier";
-import { regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
 import Overrides from "#app/overrides";
-import { BattlePhase } from "#app/phases/battle-phase";
-import { achvs } from "#app/system/achv";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import { UiMode } from "#enums/ui-mode";
-import { randSeedInt, randSeedItem } from "#app/utils/common";
+import { initEncounterAnims, loadEncounterAnimAssets } from "#data/battle-anims";
+import { getCharVariantFromDialogue } from "#data/dialogue";
+import { getNatureName } from "#data/nature";
+import { getRandomWeatherType } from "#data/weather";
 import { BattleSpec } from "#enums/battle-spec";
+import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
+import { FieldPosition } from "#enums/field-position";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
-import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
+import { TrainerSlot } from "#enums/trainer-slot";
+import { UiMode } from "#enums/ui-mode";
+import { EncounterPhaseEvent } from "#events/battle-scene";
+import type { Pokemon } from "#field/pokemon";
+import {
+  BoostBugSpawnModifier,
+  IvScannerModifier,
+  overrideHeldItems,
+  overrideModifiers,
+  TurnHeldItemTransferModifier,
+} from "#modifiers/modifier";
+import { regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
+import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
+import { doTrainerExclamation } from "#mystery-encounters/encounter-phase-utils";
+import { getGoldenBugNetSpecies } from "#mystery-encounters/encounter-pokemon-utils";
+import { BattlePhase } from "#phases/battle-phase";
+import { achvs } from "#system/achv";
+import { randSeedInt, randSeedItem } from "#utils/common";
 import i18next from "i18next";
-import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
-import { getNatureName } from "#app/data/nature";
 
 export class EncounterPhase extends BattlePhase {
   // Union type is necessary as this is subclassed, and typescript will otherwise complain

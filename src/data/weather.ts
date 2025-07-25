@@ -1,16 +1,20 @@
-import { BiomeId } from "#enums/biome-id";
-import { WeatherType } from "#enums/weather-type";
-import { getPokemonNameWithAffix } from "../messages";
-import type Pokemon from "../field/pokemon";
-import { PokemonType } from "#enums/pokemon-type";
-import type Move from "./moves/move";
-import { randSeedInt } from "#app/utils/common";
-import { TerrainType, getTerrainName } from "./terrain";
-import i18next from "i18next";
-import { globalScene } from "#app/global-scene";
-import type { Arena } from "#app/field/arena";
+import type { SuppressWeatherEffectAbAttr } from "#abilities/ability";
 import { timedEventManager } from "#app/global-event-manager";
-import type { SuppressWeatherEffectAbAttr } from "./abilities/ability";
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { BiomeId } from "#enums/biome-id";
+import { PokemonType } from "#enums/pokemon-type";
+import { WeatherType } from "#enums/weather-type";
+import type { Arena } from "#field/arena";
+import type { Pokemon } from "#field/pokemon";
+import type { Move } from "#moves/move";
+import { randSeedInt } from "#utils/common";
+import i18next from "i18next";
+
+export interface SerializedWeather {
+  weatherType: WeatherType;
+  turnsLeft: number;
+}
 
 export class Weather {
   public weatherType: WeatherType;
@@ -233,50 +237,6 @@ export function getWeatherBlockMessage(weatherType: WeatherType): string {
       return i18next.t("weather:heavyRainEffectMessage");
   }
   return i18next.t("weather:defaultEffectMessage");
-}
-
-export function getTerrainStartMessage(terrainType: TerrainType): string | null {
-  switch (terrainType) {
-    case TerrainType.MISTY:
-      return i18next.t("terrain:mistyStartMessage");
-    case TerrainType.ELECTRIC:
-      return i18next.t("terrain:electricStartMessage");
-    case TerrainType.GRASSY:
-      return i18next.t("terrain:grassyStartMessage");
-    case TerrainType.PSYCHIC:
-      return i18next.t("terrain:psychicStartMessage");
-    default:
-      console.warn("getTerrainStartMessage not defined. Using default null");
-      return null;
-  }
-}
-
-export function getTerrainClearMessage(terrainType: TerrainType): string | null {
-  switch (terrainType) {
-    case TerrainType.MISTY:
-      return i18next.t("terrain:mistyClearMessage");
-    case TerrainType.ELECTRIC:
-      return i18next.t("terrain:electricClearMessage");
-    case TerrainType.GRASSY:
-      return i18next.t("terrain:grassyClearMessage");
-    case TerrainType.PSYCHIC:
-      return i18next.t("terrain:psychicClearMessage");
-    default:
-      console.warn("getTerrainClearMessage not defined. Using default null");
-      return null;
-  }
-}
-
-export function getTerrainBlockMessage(pokemon: Pokemon, terrainType: TerrainType): string {
-  if (terrainType === TerrainType.MISTY) {
-    return i18next.t("terrain:mistyBlockMessage", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-    });
-  }
-  return i18next.t("terrain:defaultBlockMessage", {
-    pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-    terrainName: getTerrainName(terrainType),
-  });
 }
 
 export interface WeatherPoolEntry {

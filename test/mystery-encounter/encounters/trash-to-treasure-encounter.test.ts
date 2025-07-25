@@ -1,37 +1,37 @@
-import type BattleScene from "#app/battle-scene";
-import * as BattleAnims from "#app/data/battle-anims";
-import { TrashToTreasureEncounter } from "#app/data/mystery-encounters/encounters/trash-to-treasure-encounter";
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import type { BattleScene } from "#app/battle-scene";
+import * as BattleAnims from "#data/battle-anims";
+import { modifierTypes } from "#data/data-lists";
+import { BiomeId } from "#enums/biome-id";
+import { ModifierTier } from "#enums/modifier-tier";
+import { MoveId } from "#enums/move-id";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
+import { UiMode } from "#enums/ui-mode";
+import { HealShopCostModifier, HitHealModifier, TurnHealModifier } from "#modifiers/modifier";
+import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
+import { PokemonMove } from "#moves/pokemon-move";
+import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import {
   type EnemyPartyConfig,
   type EnemyPokemonConfig,
   generateModifierType,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { BiomeId } from "#enums/biome-id";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { SpeciesId } from "#enums/species-id";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { HealShopCostModifier, HitHealModifier, TurnHealModifier } from "#app/modifier/modifier";
-import { ModifierTier } from "#enums/modifier-tier";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/data/data-lists";
-import { CommandPhase } from "#app/phases/command-phase";
-import { MovePhase } from "#app/phases/move-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import * as Utils from "#app/utils/common";
-import { MoveId } from "#enums/move-id";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+} from "#mystery-encounters/encounter-phase-utils";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { TrashToTreasureEncounter } from "#mystery-encounters/trash-to-treasure-encounter";
+import { CommandPhase } from "#phases/command-phase";
+import { MovePhase } from "#phases/move-phase";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import GameManager from "#test/testUtils/gameManager";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
+import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import * as Utils from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/trashToTreasure";

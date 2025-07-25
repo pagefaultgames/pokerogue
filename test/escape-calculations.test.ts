@@ -1,10 +1,9 @@
-import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
-import type { CommandPhase } from "#app/phases/command-phase";
-import { Command } from "#enums/command";
-import { NumberHolder } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
+import { Command } from "#enums/command";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { AttemptRunPhase } from "#phases/attempt-run-phase";
+import type { CommandPhase } from "#phases/command-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -45,8 +44,6 @@ describe("Escape chance calculations", () => {
 
     await game.phaseInterceptor.to(AttemptRunPhase, false);
     const phase = game.scene.phaseManager.getCurrentPhase() as AttemptRunPhase;
-    const escapePercentage = new NumberHolder(0);
-
     // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, the escapeAttempts are the number of escape attempts and the expectedEscapeChance is the chance it should be escaping
     const escapeChances: {
       pokemonSpeedRatio: number;
@@ -91,8 +88,8 @@ describe("Escape chance calculations", () => {
         20,
         escapeChances[i].pokemonSpeedRatio * enemySpeed,
       ]);
-      phase.attemptRunAway(playerPokemon, enemyField, escapePercentage);
-      expect(escapePercentage.value).toBe(escapeChances[i].expectedEscapeChance);
+      const chance = phase.calculateEscapeChance(game.scene.currentBattle.escapeAttempts);
+      expect(chance).toBe(escapeChances[i].expectedEscapeChance);
     }
   });
 
@@ -118,8 +115,6 @@ describe("Escape chance calculations", () => {
 
     await game.phaseInterceptor.to(AttemptRunPhase, false);
     const phase = game.scene.phaseManager.getCurrentPhase() as AttemptRunPhase;
-    const escapePercentage = new NumberHolder(0);
-
     // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, the escapeAttempts are the number of escape attempts and the expectedEscapeChance is the chance it should be escaping
     const escapeChances: {
       pokemonSpeedRatio: number;
@@ -172,9 +167,9 @@ describe("Escape chance calculations", () => {
         20,
         escapeChances[i].pokemonSpeedRatio * totalEnemySpeed - playerPokemon[0].stats[5],
       ]);
-      phase.attemptRunAway(playerPokemon, enemyField, escapePercentage);
+      const chance = phase.calculateEscapeChance(game.scene.currentBattle.escapeAttempts);
       // checks to make sure the escape values are the same
-      expect(escapePercentage.value).toBe(escapeChances[i].expectedEscapeChance);
+      expect(chance).toBe(escapeChances[i].expectedEscapeChance);
       // checks to make sure the sum of the player's speed for all pokemon is equal to the appropriate ratio of the total enemy speed
       expect(playerPokemon[0].stats[5] + playerPokemon[1].stats[5]).toBe(
         escapeChances[i].pokemonSpeedRatio * totalEnemySpeed,
@@ -197,7 +192,6 @@ describe("Escape chance calculations", () => {
 
     await game.phaseInterceptor.to(AttemptRunPhase, false);
     const phase = game.scene.phaseManager.getCurrentPhase() as AttemptRunPhase;
-    const escapePercentage = new NumberHolder(0);
 
     // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, the escapeAttempts are the number of escape attempts and the expectedEscapeChance is the chance it should be escaping
     const escapeChances: {
@@ -256,8 +250,8 @@ describe("Escape chance calculations", () => {
         20,
         escapeChances[i].pokemonSpeedRatio * enemySpeed,
       ]);
-      phase.attemptRunAway(playerPokemon, enemyField, escapePercentage);
-      expect(escapePercentage.value).toBe(escapeChances[i].expectedEscapeChance);
+      const chance = phase.calculateEscapeChance(game.scene.currentBattle.escapeAttempts);
+      expect(chance).toBe(escapeChances[i].expectedEscapeChance);
     }
   });
 
@@ -283,7 +277,6 @@ describe("Escape chance calculations", () => {
 
     await game.phaseInterceptor.to(AttemptRunPhase, false);
     const phase = game.scene.phaseManager.getCurrentPhase() as AttemptRunPhase;
-    const escapePercentage = new NumberHolder(0);
 
     // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, the escapeAttempts are the number of escape attempts and the expectedEscapeChance is the chance it should be escaping
     const escapeChances: {
@@ -349,9 +342,9 @@ describe("Escape chance calculations", () => {
         20,
         escapeChances[i].pokemonSpeedRatio * totalEnemySpeed - playerPokemon[0].stats[5],
       ]);
-      phase.attemptRunAway(playerPokemon, enemyField, escapePercentage);
+      const chance = phase.calculateEscapeChance(game.scene.currentBattle.escapeAttempts);
       // checks to make sure the escape values are the same
-      expect(escapePercentage.value).toBe(escapeChances[i].expectedEscapeChance);
+      expect(chance).toBe(escapeChances[i].expectedEscapeChance);
       // checks to make sure the sum of the player's speed for all pokemon is equal to the appropriate ratio of the total enemy speed
       expect(playerPokemon[0].stats[5] + playerPokemon[1].stats[5]).toBe(
         escapeChances[i].pokemonSpeedRatio * totalEnemySpeed,

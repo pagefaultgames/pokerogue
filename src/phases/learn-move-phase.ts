@@ -1,18 +1,18 @@
 import { globalScene } from "#app/global-scene";
-import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
-import type Move from "#app/data/moves/move";
-import { allMoves } from "#app/data/data-lists";
-import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { MoveId } from "#enums/move-id";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
-import EvolutionSceneHandler from "#app/ui/evolution-scene-handler";
-import { SummaryUiMode } from "#app/ui/summary-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import i18next from "i18next";
-import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-pokemon-phase";
-import type Pokemon from "#app/field/pokemon";
+import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
+import { allMoves } from "#data/data-lists";
+import { SpeciesFormChangeMoveLearnedTrigger } from "#data/form-change-triggers";
 import { LearnMoveType } from "#enums/learn-move-type";
+import { MoveId } from "#enums/move-id";
+import { UiMode } from "#enums/ui-mode";
+import type { Pokemon } from "#field/pokemon";
+import type { Move } from "#moves/move";
+import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
+import { EvolutionSceneHandler } from "#ui/evolution-scene-handler";
+import { SummaryUiMode } from "#ui/summary-ui-handler";
+import i18next from "i18next";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "LearnMovePhase";

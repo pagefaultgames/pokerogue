@@ -1,12 +1,12 @@
 import { updateUserInfo } from "#app/account";
-import { bypassLogin } from "#app/global-vars/bypass-login";
 import { globalScene } from "#app/global-scene";
+import { bypassLogin } from "#app/global-vars/bypass-login";
 import { Phase } from "#app/phase";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { UiMode } from "#enums/ui-mode";
+import { executeIf, sessionIdKey } from "#utils/common";
+import { getCookie, removeCookie } from "#utils/cookies";
 import i18next, { t } from "i18next";
-import { sessionIdKey, executeIf } from "#app/utils/common";
-import { getCookie, removeCookie } from "#app/utils/cookies";
 
 export class LoginPhase extends Phase {
   public readonly phaseName = "LoginPhase";

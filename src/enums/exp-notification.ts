@@ -1,11 +1,9 @@
-/**
- * Determines exp notification style.
- * - Default - the normal exp gain display, nothing changed
- * - Only level up - we display the level up in the small frame instead of a message
- * - Skip - no level up frame nor message
-*/
+/** Enum for party experience gain notification style. */
 export enum ExpNotification {
-    DEFAULT,
-    ONLY_LEVEL_UP,
-    SKIP
+  /** Display amount flyout for all off-field party members upon gaining any amount of EXP. */
+  DEFAULT,
+  /** Display smaller flyout showing level gained on gaining a new level. */
+  ONLY_LEVEL_UP,
+  /** Do not show any flyouts for EXP gains or levelups. */
+  SKIP
 }

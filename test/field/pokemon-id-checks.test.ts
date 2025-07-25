@@ -1,13 +1,13 @@
-import type Pokemon from "#app/field/pokemon";
-import { MoveId } from "#enums/move-id";
 import { AbilityId } from "#enums/ability-id";
-import { SpeciesId } from "#enums/species-id";
 import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import GameManager from "#test/testUtils/gameManager";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
+import type { Pokemon } from "#field/pokemon";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { BattlerIndex } from "#enums/battler-index";
 
 describe("Field - Pokemon ID Checks", () => {
   let phaserGame: Phaser.Game;

@@ -1,12 +1,12 @@
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
-import { ActivatePriorityQueuePhase } from "#app/phases/activate-priority-queue-phase";
-import type { PostSummonPhase } from "#app/phases/post-summon-phase";
-import { PostSummonActivateAbilityPhase } from "#app/phases/post-summon-activate-ability-phase";
-import { Stat } from "#enums/stat";
-import { BooleanHolder } from "#app/utils/common";
-import { TrickRoomTag } from "#app/data/arena-tag";
+import { TrickRoomTag } from "#data/arena-tag";
 import { DynamicPhaseType } from "#enums/dynamic-phase-type";
+import { Stat } from "#enums/stat";
+import { ActivatePriorityQueuePhase } from "#phases/activate-priority-queue-phase";
+import { PostSummonActivateAbilityPhase } from "#phases/post-summon-activate-ability-phase";
+import type { PostSummonPhase } from "#phases/post-summon-phase";
+import { BooleanHolder } from "#utils/common";
 
 /**
  * Stores a list of {@linkcode Phase}s

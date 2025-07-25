@@ -1,14 +1,13 @@
-import type Pokemon from "#app/field/pokemon";
+import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
-import type { MoveId } from "#enums/move-id";
-import type { MoveTargetSet, UserMoveConditionFunc } from "./move";
-import type Move from "./move";
-import { NumberHolder, isNullOrUndefined } from "#app/utils/common";
-import { MoveTarget } from "#enums/MoveTarget";
-import { PokemonType } from "#enums/pokemon-type";
-import { allMoves } from "#app/data/data-lists";
-import { applyMoveAttrs } from "./apply-attrs";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import type { MoveId } from "#enums/move-id";
+import { MoveTarget } from "#enums/move-target";
+import { PokemonType } from "#enums/pokemon-type";
+import type { Pokemon } from "#field/pokemon";
+import { applyMoveAttrs } from "#moves/apply-attrs";
+import type { Move, MoveTargetSet, UserMoveConditionFunc } from "#moves/move";
+import { isNullOrUndefined, NumberHolder } from "#utils/common";
 
 /**
  * Return whether the move targets the field
@@ -23,6 +22,28 @@ export function isFieldTargeted(move: Move): boolean {
     case MoveTarget.BOTH_SIDES:
     case MoveTarget.USER_SIDE:
     case MoveTarget.ENEMY_SIDE:
+      return true;
+  }
+  return false;
+}
+
+/**
+ * Determine whether a move is a spread move.
+ *
+ * @param move - The {@linkcode Move} to check
+ * @returns Whether {@linkcode move} is spread-targeted.
+ * @remarks
+ * Examples include:
+ * - Moves targeting all adjacent Pokemon (like Surf)
+ * - Moves targeting all adjacent enemies (like Air Cutter)
+ */
+
+export function isSpreadMove(move: Move): boolean {
+  switch (move.moveTarget) {
+    case MoveTarget.ALL_ENEMIES:
+    case MoveTarget.ALL_NEAR_ENEMIES:
+    case MoveTarget.ALL_OTHERS:
+    case MoveTarget.ALL_NEAR_OTHERS:
       return true;
   }
   return false;

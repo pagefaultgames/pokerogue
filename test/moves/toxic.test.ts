@@ -1,11 +1,11 @@
+import { allMoves } from "#data/data-lists";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { StatusEffect } from "#enums/status-effect";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { StatusEffect } from "#enums/status-effect";
-import { BattlerIndex } from "#enums/battler-index";
-import { allMoves } from "#app/data/data-lists";
 
 describe("Moves - Toxic", () => {
   let phaserGame: Phaser.Game;

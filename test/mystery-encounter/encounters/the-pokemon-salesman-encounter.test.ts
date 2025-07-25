@@ -1,25 +1,25 @@
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
+import type { BattleScene } from "#app/battle-scene";
+import { NON_LEGEND_PARADOX_POKEMON } from "#balance/special-species-groups";
 import { BiomeId } from "#enums/biome-id";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters";
+import {
+  getSalesmanSpeciesOffer,
+  ThePokemonSalesmanEncounter,
+} from "#mystery-encounters/the-pokemon-salesman-encounter";
+import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,
 } from "#test/mystery-encounter/encounter-test-utils";
-import type BattleScene from "#app/battle-scene";
-import { HUMAN_TRANSITABLE_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
-import {
-  getSalesmanSpeciesOffer,
-  ThePokemonSalesmanEncounter,
-} from "#app/data/mystery-encounters/encounters/the-pokemon-salesman-encounter";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/thePokemonSalesman";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];

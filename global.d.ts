@@ -8,7 +8,7 @@ declare global {
    * Can technically be undefined/null but for ease of use we are going to assume it is always defined.
    * Used to load i18n files exclusively.
    *
-   * To set up your own server in a test see `game_data.test.ts`
+   * To set up your own server in a test see `game-data.test.ts`
    */
   var server: SetupServerApi;
 }

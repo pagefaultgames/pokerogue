@@ -1,23 +1,20 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#enums/battler-index";
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { MistTag } from "#app/data/arena-tag";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import type { ArenaTag } from "#app/data/arena-tag";
-import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { ResetNegativeStatStageModifier } from "#app/modifier/modifier";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import { NumberHolder, BooleanHolder, isNullOrUndefined } from "#app/utils/common";
+import type { ArenaTag } from "#data/arena-tag";
+import { MistTag } from "#data/arena-tag";
+import { OctolockTag } from "#data/battler-tags";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import type { BattlerIndex } from "#enums/battler-index";
+import { type BattleStat, getStatKey, getStatStageChangeDescriptionKey, Stat } from "#enums/stat";
+import type { Pokemon } from "#field/pokemon";
+import { ResetNegativeStatStageModifier } from "#modifiers/modifier";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import type { ConditionalUserFieldProtectStatAbAttrParams, PreStatStageChangeAbAttrParams } from "#types/ability-types";
+import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#utils/common";
 import i18next from "i18next";
-import { PokemonPhase } from "./pokemon-phase";
-import { Stat, type BattleStat, getStatKey, getStatStageChangeDescriptionKey } from "#enums/stat";
-import { OctolockTag } from "#app/data/battler-tags";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import type {
-  ConditionalUserFieldProtectStatAbAttrParams,
-  PreStatStageChangeAbAttrParams,
-} from "#app/@types/ability-types";
 
 export type StatStageChangeCallback = (
   target: Pokemon | null,

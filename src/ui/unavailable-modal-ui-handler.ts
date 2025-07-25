@@ -1,14 +1,14 @@
-import type { ModalConfig } from "./modal-ui-handler";
-import { ModalUiHandler } from "./modal-ui-handler";
-import { addTextObject, TextStyle } from "./text";
-import type { UiMode } from "#enums/ui-mode";
 import { updateUserInfo } from "#app/account";
-import { sessionIdKey } from "#app/utils/common";
-import { removeCookie } from "#app/utils/cookies";
-import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
+import type { UiMode } from "#enums/ui-mode";
+import type { ModalConfig } from "#ui/modal-ui-handler";
+import { ModalUiHandler } from "#ui/modal-ui-handler";
+import { addTextObject, TextStyle } from "#ui/text";
+import { sessionIdKey } from "#utils/common";
+import { removeCookie } from "#utils/cookies";
+import i18next from "i18next";
 
-export default class UnavailableModalUiHandler extends ModalUiHandler {
+export class UnavailableModalUiHandler extends ModalUiHandler {
   private reconnectTimer: NodeJS.Timeout | null;
   private reconnectDuration: number;
   private reconnectCallback: () => void;

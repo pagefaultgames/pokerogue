@@ -40,6 +40,7 @@
 ## Backgrounds
 - Squip (Paid Commissions)
 - Contributions by Someonealive-QN
+- Contributions by redactedinlight
 
 ## UI
 - GAMEFREAK

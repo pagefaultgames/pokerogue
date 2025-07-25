@@ -1,14 +1,14 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#enums/battler-index";
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { CommonBattleAnim } from "#app/data/battle-anims";
-import { CommonAnim } from "#enums/move-anims-common";
-import { getStatusEffectActivationText } from "#app/data/status-effect";
-import { BattleSpec } from "#app/enums/battle-spec";
-import { StatusEffect } from "#app/enums/status-effect";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BooleanHolder, NumberHolder } from "#app/utils/common";
-import { PokemonPhase } from "./pokemon-phase";
+import { CommonBattleAnim } from "#data/battle-anims";
+import { getStatusEffectActivationText } from "#data/status-effect";
+import { BattleSpec } from "#enums/battle-spec";
+import type { BattlerIndex } from "#enums/battler-index";
+import { CommonAnim } from "#enums/move-anims-common";
+import { StatusEffect } from "#enums/status-effect";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import { BooleanHolder, NumberHolder } from "#utils/common";
 
 export class PostTurnStatusEffectPhase extends PokemonPhase {
   public readonly phaseName = "PostTurnStatusEffectPhase";

@@ -1,10 +1,10 @@
+import type { BattleScene } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import { variantColorCache, variantData } from "#app/sprites/variant";
-import { Gender } from "#app/data/gender";
-import { hasExpSprite } from "./sprite-utils";
-import type { Variant, VariantSet } from "#app/sprites/variant";
-import type Pokemon from "#app/field/pokemon";
-import type BattleScene from "#app/battle-scene";
+import { Gender } from "#data/gender";
+import type { Pokemon } from "#field/pokemon";
+import { hasExpSprite } from "#sprites/sprite-utils";
+import type { Variant, VariantSet } from "#sprites/variant";
+import { variantColorCache, variantData } from "#sprites/variant";
 
 // Regex patterns
 

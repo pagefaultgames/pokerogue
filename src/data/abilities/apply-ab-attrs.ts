@@ -1,6 +1,5 @@
-import type { AbAttrParamMap } from "#app/@types/ability-types";
-import type { AbAttrBaseParams, AbAttrString, CallableAbAttrString } from "#app/@types/ability-types";
 import { globalScene } from "#app/global-scene";
+import type { AbAttrBaseParams, AbAttrParamMap, AbAttrString, CallableAbAttrString } from "#types/ability-types";
 
 function applySingleAbAttrs<T extends AbAttrString>(
   attrType: T,
@@ -9,23 +8,18 @@ function applySingleAbAttrs<T extends AbAttrString>(
   messages: string[] = [],
 ) {
   const { simulated = false, passive = false, pokemon } = params;
-  if (!pokemon?.canApplyAbility(passive) || (passive && pokemon.getPassiveAbility().id === pokemon.getAbility().id)) {
+  if (!pokemon.canApplyAbility(passive) || (passive && pokemon.getPassiveAbility().id === pokemon.getAbility().id)) {
     return;
   }
 
   const ability = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
-  if (
-    gainedMidTurn &&
-    ability.getAttrs(attrType).some(attr => {
-      attr.is("PostSummonAbAttr") && !attr.shouldActivateOnGain();
-    })
-  ) {
+  const attrs = ability.getAttrs(attrType);
+  if (gainedMidTurn && attrs.some(attr => attr.is("PostSummonAbAttr") && !attr.shouldActivateOnGain())) {
     return;
   }
 
-  for (const attr of ability.getAttrs(attrType)) {
+  for (const attr of attrs) {
     const condition = attr.getCondition();
-    let abShown = false;
     // We require an `as any` cast to suppress an error about the `params` type not being assignable to
     // the type of the argument expected by `attr.canApply()`. This is OK, because we know that
     // `attr` is an instance of the `attrType` class provided to the method, and typescript _will_ check
@@ -34,7 +28,7 @@ function applySingleAbAttrs<T extends AbAttrString>(
       continue;
     }
 
-    globalScene.phaseManager.setPhaseQueueSplice();
+    let abShown = false;
 
     if (attr.showAbility && !simulated) {
       globalScene.phaseManager.queueAbilityDisplay(pokemon, passive, true);
@@ -46,6 +40,7 @@ function applySingleAbAttrs<T extends AbAttrString>(
       if (!simulated) {
         globalScene.phaseManager.queueMessage(message);
       }
+      // TODO: Should messages be added to the array if they aren't actually shown?
       messages.push(message);
     }
     // The `as any` cast here uses the same reasoning as above.
@@ -58,8 +53,6 @@ function applySingleAbAttrs<T extends AbAttrString>(
     if (!simulated) {
       pokemon.waveData.abilitiesApplied.add(ability.id);
     }
-
-    globalScene.phaseManager.clearPhaseQueueSplice();
   }
 }
 

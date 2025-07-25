@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import { MissingTextureKey } from "#app/utils/common";
+import { MissingTextureKey } from "#utils/common";
 
-export default class CharSprite extends Phaser.GameObjects.Container {
+export class CharSprite extends Phaser.GameObjects.Container {
   private sprite: Phaser.GameObjects.Sprite;
   private transitionSprite: Phaser.GameObjects.Sprite;
 

@@ -1,9 +1,7 @@
-/**
- * Determines the selected battle style.
- * - 'Switch' - The option to switch the active pokemon at the start of a battle will be displayed.
- * - 'Set' - The option to switch the active pokemon at the start of a battle will not display.
-*/
+/** Enum for selected battle style. */
 export enum BattleStyle {
-    SWITCH,
-    SET
+  /** Display option to switch active pokemon at battle start. */
+  SWITCH,
+  /** Hide option to switch active pokemon at battle start. */
+  SET
 }

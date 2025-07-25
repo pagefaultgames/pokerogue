@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { PokeballType } from "#enums/pokeball";
-import type { Variant } from "#app/sprites/variant";
-import { getFrameMs, randGauss } from "#app/utils/common";
+import type { Variant } from "#sprites/variant";
+import { getFrameMs, randGauss } from "#utils/common";
 
 export function addPokeballOpenParticles(x: number, y: number, pokeballType: PokeballType): void {
   switch (pokeballType) {
@@ -150,7 +150,7 @@ function doFanOutParticle(
 }
 
 export function addPokeballCaptureStars(pokeball: Phaser.GameObjects.Sprite): void {
-  const addParticle = () => {
+  const addParticle = (): void => {
     const particle = globalScene.add.sprite(pokeball.x, pokeball.y, "pb_particles", "4.png");
     particle.setOrigin(pokeball.originX, pokeball.originY);
     particle.setAlpha(0.5);
@@ -188,7 +188,9 @@ export function addPokeballCaptureStars(pokeball: Phaser.GameObjects.Sprite): vo
     });
   };
 
-  new Array(3).fill(null).map(() => addParticle());
+  for (let i = 0; i < 3; i++) {
+    addParticle();
+  }
 }
 
 export function sin(index: number, amplitude: number): number {

@@ -1,6 +1,6 @@
-import type { DynamicPhaseType } from "#enums/dynamic-phase-type";
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
+import type { DynamicPhaseType } from "#enums/dynamic-phase-type";
 
 export class ActivatePriorityQueuePhase extends Phase {
   public readonly phaseName = "ActivatePriorityQueuePhase";

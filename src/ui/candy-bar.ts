@@ -1,11 +1,11 @@
-import { starterColors } from "#app/global-vars/starter-colors";
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addTextObject } from "./text";
-import { argbFromRgba } from "@material/material-color-utilities";
-import { rgbHexToRgba } from "#app/utils/common";
+import { starterColors } from "#app/global-vars/starter-colors";
 import type { SpeciesId } from "#enums/species-id";
+import { addTextObject, TextStyle } from "#ui/text";
+import { rgbHexToRgba } from "#utils/common";
+import { argbFromRgba } from "@material/material-color-utilities";
 
-export default class CandyBar extends Phaser.GameObjects.Container {
+export class CandyBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.NineSlice;
   private candyIcon: Phaser.GameObjects.Sprite;
   private candyOverlayIcon: Phaser.GameObjects.Sprite;

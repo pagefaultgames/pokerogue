@@ -1,6 +1,6 @@
 import { BattleSpec } from "#enums/battle-spec";
 import { TrainerType } from "#enums/trainer-type";
-import { trainerConfigs } from "./trainers/trainer-config";
+import { trainerConfigs } from "#trainers/trainer-config";
 
 export interface TrainerTypeMessages {
   encounter?: string | string[];
@@ -1744,6 +1744,7 @@ export function getCharVariantFromDialogue(message: string): string {
 }
 
 export function initTrainerTypeDialogue(): void {
+  // TODO: this should not be using `Object.Keys`
   const trainerTypes = Object.keys(trainerTypeDialogue).map(t => Number.parseInt(t) as TrainerType);
   for (const trainerType of trainerTypes) {
     const messages = trainerTypeDialogue[trainerType];

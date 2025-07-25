@@ -1,4 +1,4 @@
-import type BattleScene from "#app/battle-scene";
+import type { BattleScene } from "#app/battle-scene";
 
 export let globalScene: BattleScene;
 

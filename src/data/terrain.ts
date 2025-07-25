@@ -1,7 +1,9 @@
-import type Pokemon from "../field/pokemon";
-import type Move from "./moves/move";
-import { PokemonType } from "#enums/pokemon-type";
+import { getPokemonNameWithAffix } from "#app/messages";
 import type { BattlerIndex } from "#enums/battler-index";
+import { PokemonType } from "#enums/pokemon-type";
+import type { Pokemon } from "#field/pokemon";
+import type { Move } from "#moves/move";
+import { isFieldTargeted, isSpreadMove } from "#moves/move-utils";
 import i18next from "i18next";
 
 export enum TerrainType {
@@ -10,6 +12,11 @@ export enum TerrainType {
   ELECTRIC,
   GRASSY,
   PSYCHIC,
+}
+
+export interface SerializedTerrain {
+  terrainType: TerrainType;
+  turnsLeft: number;
 }
 
 export class Terrain {
@@ -54,13 +61,19 @@ export class Terrain {
   isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move): boolean {
     switch (this.terrainType) {
       case TerrainType.PSYCHIC:
-        if (!move.hasAttr("ProtectAttr")) {
-          // Cancels move if the move has positive priority and targets a Pokemon grounded on the Psychic Terrain
-          return (
-            move.getPriority(user) > 0 &&
-            user.getOpponents(true).some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded())
-          );
-        }
+        // Cf https://bulbapedia.bulbagarden.net/wiki/Psychic_Terrain_(move)#Generation_VII
+        // Psychic terrain will only cancel a move if it:
+        return (
+          // ... is neither spread nor field-targeted,
+          !isFieldTargeted(move) &&
+          !isSpreadMove(move) &&
+          // .. has positive final priority,
+          move.getPriority(user) > 0 &&
+          // ...and is targeting at least 1 grounded opponent
+          user
+            .getOpponents(true)
+            .some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded())
+        );
     }
 
     return false;
@@ -95,4 +108,77 @@ export function getTerrainColor(terrainType: TerrainType): [number, number, numb
   }
 
   return [0, 0, 0];
+}
+
+/**
+ * Return the message associated with a terrain effect starting.
+ * @param terrainType - The {@linkcode TerrainType} starting.
+ * @returns A string containing the appropriate terrain start text.
+ */
+export function getTerrainStartMessage(terrainType: TerrainType): string {
+  switch (terrainType) {
+    case TerrainType.MISTY:
+      return i18next.t("terrain:mistyStartMessage");
+    case TerrainType.ELECTRIC:
+      return i18next.t("terrain:electricStartMessage");
+    case TerrainType.GRASSY:
+      return i18next.t("terrain:grassyStartMessage");
+    case TerrainType.PSYCHIC:
+      return i18next.t("terrain:psychicStartMessage");
+    case TerrainType.NONE:
+    default:
+      terrainType satisfies TerrainType.NONE;
+      console.warn(`${terrainType} unexpectedly provided as terrain type to getTerrainStartMessage!`);
+      return "";
+  }
+}
+
+/**
+ * Return the message associated with a terrain effect ceasing to exist.
+ * @param terrainType - The {@linkcode TerrainType} being cleared.
+ * @returns A string containing the appropriate terrain clear text.
+ */
+export function getTerrainClearMessage(terrainType: TerrainType): string {
+  switch (terrainType) {
+    case TerrainType.MISTY:
+      return i18next.t("terrain:mistyClearMessage");
+    case TerrainType.ELECTRIC:
+      return i18next.t("terrain:electricClearMessage");
+    case TerrainType.GRASSY:
+      return i18next.t("terrain:grassyClearMessage");
+    case TerrainType.PSYCHIC:
+      return i18next.t("terrain:psychicClearMessage");
+    case TerrainType.NONE:
+    default:
+      terrainType satisfies TerrainType.NONE;
+      console.warn(`${terrainType} unexpectedly provided as terrain type to getTerrainClearMessage!`);
+      return "";
+  }
+}
+
+/**
+ * Return the message associated with a terrain-induced move/effect blockage.
+ * @param pokemon - The {@linkcode Pokemon} being protected.
+ * @param terrainType - The {@linkcode TerrainType} in question
+ * @returns A string containing the appropriate terrain block text.
+ */
+export function getTerrainBlockMessage(pokemon: Pokemon, terrainType: TerrainType): string {
+  switch (terrainType) {
+    case TerrainType.MISTY:
+      return i18next.t("terrain:mistyBlockMessage", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      });
+    case TerrainType.ELECTRIC:
+    case TerrainType.GRASSY:
+    case TerrainType.PSYCHIC:
+      return i18next.t("terrain:defaultBlockMessage", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        terrainName: getTerrainName(terrainType),
+      });
+    case TerrainType.NONE:
+    default:
+      terrainType satisfies TerrainType.NONE;
+      console.warn(`${terrainType} unexpectedly provided as terrain type to getTerrainBlockMessage!`);
+      return "";
+  }
 }
