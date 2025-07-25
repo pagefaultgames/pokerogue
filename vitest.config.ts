@@ -5,6 +5,9 @@ import { defaultConfig } from "./vite.config";
 export default defineProject(({ mode }) => ({
   ...defaultConfig,
   test: {
+    env: {
+      TZ: "UTC",
+    },
     testTimeout: 20000,
     setupFiles: ["./test/font-face.setup.ts", "./test/vitest.setup.ts"],
     sequence: {
