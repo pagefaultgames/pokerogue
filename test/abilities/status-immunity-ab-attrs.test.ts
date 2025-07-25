@@ -6,7 +6,7 @@ import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -72,7 +72,7 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
     expect(feebas.status?.effect).toBe(status);
 
     game.move.use(MoveId.SPLASH);
-    await game.move.forceEnemyMove(MoveId.SKILL_SWAP); // need to force enemy to use it as
+    await game.move.forceEnemyMove(MoveId.SKILL_SWAP);
     await game.toEndOfTurn();
 
     expect(feebas.status?.effect).toBeUndefined();
