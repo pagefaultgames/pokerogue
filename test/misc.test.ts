@@ -37,14 +37,16 @@ describe("Test misc", () => {
 
   it.skip("test apifetch mock async", async () => {
     const spy = vi.fn();
-    await apiFetch("https://localhost:8080/account/info").then(response => {
-      expect(response.status).toBe(200);
-      expect(response.ok).toBe(true);
-      return response.json();
-    }).then(data => {
-      spy(); // Call the spy function
-      expect(data).toEqual({ "username": "greenlamp", "lastSessionSlot": 0 });
-    });
+    await apiFetch("https://localhost:8080/account/info")
+      .then(response => {
+        expect(response.status).toBe(200);
+        expect(response.ok).toBe(true);
+        return response.json();
+      })
+      .then(data => {
+        spy(); // Call the spy function
+        expect(data).toEqual({ username: "greenlamp", lastSessionSlot: 0 });
+      });
     expect(spy).toHaveBeenCalled();
   });
 
