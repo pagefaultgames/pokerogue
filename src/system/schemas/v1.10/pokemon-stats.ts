@@ -8,7 +8,7 @@ import { z } from "zod";
  * - Each IV is an integer between 0 and 31, inclusive.
  * - Malformed values parse to 15 by default.
  */
-export const IVSchema = z.int().min(0).max(31).catch(15);
+export const Z$IV = z.int().min(0).max(31).catch(15);
 
 /**
  * Schema for a set of 6 Pokémon IVs, as of version 1.10
@@ -16,9 +16,7 @@ export const IVSchema = z.int().min(0).max(31).catch(15);
  * @remarks
  * Malformed IV sets default to [15, 15, 15, 15, 15, 15].
  */
-export const IVSetSchema = z
-  .tuple([IVSchema, IVSchema, IVSchema, IVSchema, IVSchema, IVSchema])
-  .catch([15, 15, 15, 15, 15, 15]);
+export const Z$IVSet = z.tuple([Z$IV, Z$IV, Z$IV, Z$IV, Z$IV, Z$IV]).catch([15, 15, 15, 15, 15, 15]);
 
 /**
  * Schema for a Pokémon's stats, as of version 1.10
@@ -29,7 +27,7 @@ export const IVSetSchema = z
  * - [4]: Special Defense,
  * - [5]: Speed
  */
-export const statSetSchema = z.tuple([
+export const Z$StatSet = z.tuple([
   Z$PositiveInt, // HP
   Z$PositiveInt, // Attack
   Z$PositiveInt, // Defense

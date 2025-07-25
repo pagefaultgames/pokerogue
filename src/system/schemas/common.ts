@@ -19,6 +19,12 @@ export const Z$BoolCatchToFalse = /*@__PURE__*/ z
   .boolean()
   .catch(false);
 
+/** Reusable schema for a positive number, equivalent to `z.number().positive()`. */
+export const Z$PositiveNumber = /*@__PURE__*/ z
+  .number()
+  .positive()
+  .catch(0);
+
 /** Reusable schema for an optional non-negative integer that coerces invalid inputs to `undefined` */
 export const Z$OptionalNonNegativeIntCatchToUndef = /*@__PURE__*/ z
   .int()

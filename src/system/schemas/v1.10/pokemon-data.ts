@@ -4,7 +4,7 @@ import { Z$PokemonMove } from "#schemas/pokemon-move";
 import { Z$Gender } from "#system/schemas/v1.10/pokemon-gender";
 import z from "zod";
 import { NatureSchema } from "./pokemon-nature";
-import { IVSetSchema, statSetSchema } from "./pokemon-stats";
+import { Z$IVSet, Z$StatSet } from "./pokemon-stats";
 import { Z$PokemonType } from "./pokemon-type";
 import { StatusSchema } from "./status-effect";
 
@@ -37,8 +37,8 @@ const Z$PokemonData = z.looseObject({
   gender: Z$Gender.catch(-1),
   // hp can be 0 if fainted
   hp: Z$NonNegativeInt,
-  stats: statSetSchema,
-  ivs: IVSetSchema,
+  stats: Z$StatSet,
+  ivs: Z$IVSet,
   nature: NatureSchema,
   moveset: z.array(Z$PokemonMove).catch([]),
   status: z.union([z.null(), StatusSchema]).catch(null),
@@ -87,8 +87,6 @@ export const Z$EnemyPokemonData = z.object({
   boss: z.boolean().catch(false),
   bossSegments: z.int().nonnegative().default(0),
 });
-
-
 
 // TODO: Replace output assertion type with the type of pokemon data that has CustomPokemonData.
 export function PreCustomPokemonDataMigrator(
