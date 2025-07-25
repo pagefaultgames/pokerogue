@@ -74,7 +74,7 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
 
   // Stores callbacks in a variable so they can be unsubscribed from when destroyed
   private readonly onMovesetChangedEvent = (event: MovesetChangedEvent) => this.onMovesetChanged(event);
-  private readonly onMovesetRestoredEvent = (event: SummonDataResetEvent) => this.onMovesetRestored(event);
+  private readonly onSummonDataResetEvent = (event: SummonDataResetEvent) => this.onSummonDataReset(event);
 
   constructor(player: boolean) {
     super(globalScene, 0, 0);
@@ -148,6 +148,7 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
     this.flyoutParent.name = `Flyout Parent ${getPokemonNameWithAffix(this.pokemon)}`;
 
     globalScene.eventTarget.addEventListener(BattleSceneEventType.MOVESET_CHANGED, this.onMovesetChangedEvent);
+    globalScene.eventTarget.addEventListener(BattleSceneEventType.SUMMON_DATA_RESET, this.onSummonDataResetEvent);
   }
 
   /**
@@ -207,7 +208,7 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
    * Reset the linked Pokemon's temporary moveset override when it is switched out.
    * @param event - The {@linkcode SummonDataResetEvent} having been emitted
    */
-  private onMovesetRestored(event: SummonDataResetEvent): void {
+  private onSummonDataReset(event: SummonDataResetEvent): void {
     if (event.pokemonId !== this.pokemon.id) {
       // Wrong pokemon
       return;
@@ -235,6 +236,7 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
   /** Destroy this element and remove all associated listeners. */
   public destroy(fromScene?: boolean): void {
     globalScene.eventTarget.removeEventListener(BattleSceneEventType.MOVESET_CHANGED, this.onMovesetChangedEvent);
+    globalScene.eventTarget.removeEventListener(BattleSceneEventType.SUMMON_DATA_RESET, this.onSummonDataResetEvent);
 
     super.destroy(fromScene);
   }
