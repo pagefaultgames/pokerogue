@@ -77,7 +77,6 @@ describe.each([
 
   // Regression test to ensure proper ordering of effects
   it("should still boost variable-power moves", async () => {
-    game.override.moveset([MoveId.CRUSH_GRIP]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const playerPokemon = game.field.getPlayerPokemon();

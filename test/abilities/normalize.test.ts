@@ -45,15 +45,14 @@ describe("Abilities - Normalize", () => {
   });
 
   it("should boost variable power moves", async () => {
-    game.override.moveset([MoveId.RETURN]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     const magikarp = game.field.getPlayerPokemon();
     magikarp.friendship = 255;
 
     const powerSpy = vi.spyOn(allMoves[MoveId.RETURN], "calculateBattlePower");
 
-    game.move.select(MoveId.RETURN);
-    await game.phaseInterceptor.to("BerryPhase");
+    game.move.use(MoveId.RETURN);
+    await game.toEndOfTurn();
     expect(powerSpy).toHaveLastReturnedWith(102 * 1.2);
   });
 
