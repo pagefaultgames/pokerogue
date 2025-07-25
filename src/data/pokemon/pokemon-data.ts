@@ -75,7 +75,7 @@ function deserializePokemonSpeciesForm(value: SerializedSpeciesForm | PokemonSpe
 }
 
 interface SerializedIllusionData extends Omit<IllusionData, "fusionSpecies"> {
-  /** The id of the illusioned fusion species, or undefined if not a fusion */
+  /** The id of the illusioned fusion species, or `undefined` if not a fusion */
   fusionSpecies?: SpeciesId;
 }
 
@@ -168,7 +168,6 @@ export class PokemonSummonData {
           ...value,
         };
         if (!isNullOrUndefined(illusionData.fusionSpecies)) {
-          6;
           switch (typeof illusionData.fusionSpecies) {
             case "object":
               illusionData.fusionSpecies = allSpecies[illusionData.fusionSpecies.speciesId];
