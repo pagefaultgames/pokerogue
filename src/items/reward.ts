@@ -161,6 +161,7 @@ type RewardGeneratorFunc<T extends Reward> = (party: Pokemon[], pregenArgs?: any
 
 export abstract class RewardGenerator<T extends Reward = Reward> {
   private genRewardFunc: RewardGeneratorFunc<T>;
+  public id: RewardId;
 
   constructor(genRewardFunc: RewardGeneratorFunc<T>) {
     this.genRewardFunc = genRewardFunc;
@@ -168,6 +169,9 @@ export abstract class RewardGenerator<T extends Reward = Reward> {
 
   generateReward(party: Pokemon[], pregenArgs?: any[]) {
     const ret = this.genRewardFunc(party, pregenArgs);
+    if (ret && this.id) {
+      ret.id = this.id;
+    }
     return ret;
   }
 }
@@ -888,6 +892,49 @@ class BerryRewardGenerator extends RewardGenerator {
       return new HeldItemReward(item);
     });
     this.id = RewardId.BERRY;
+  }
+}
+
+class MintRewardGenerator extends RewardGenerator {
+  constructor() {
+    super((_party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in Nature) {
+        return new PokemonNatureChangeReward(pregenArgs[0] as Nature);
+      }
+      return new PokemonNatureChangeReward(randSeedItem(getEnumValues(Nature)));
+    });
+    this.id = RewardId.MINT;
+  }
+}
+
+class TeraTypeRewardGenerator extends RewardGenerator {
+  constructor() {
+    super((party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
+        return new ChangeTeraTypeReward(pregenArgs[0] as PokemonType);
+      }
+      if (!globalScene.trainerItems.hasItem(TrainerItemId.TERA_ORB)) {
+        return null;
+      }
+      const teraTypes: PokemonType[] = [];
+      for (const p of party) {
+        if (
+          !(p.hasSpecies(SpeciesId.TERAPAGOS) || p.hasSpecies(SpeciesId.OGERPON) || p.hasSpecies(SpeciesId.SHEDINJA))
+        ) {
+          teraTypes.push(p.teraType);
+        }
+      }
+      let excludedType = PokemonType.UNKNOWN;
+      if (teraTypes.length > 0 && teraTypes.filter(t => t === teraTypes[0]).length === teraTypes.length) {
+        excludedType = teraTypes[0];
+      }
+      let shardType = randSeedInt(64) ? (randSeedInt(18) as PokemonType) : PokemonType.STELLAR;
+      while (shardType === excludedType) {
+        shardType = randSeedInt(64) ? (randSeedInt(18) as PokemonType) : PokemonType.STELLAR;
+      }
+      return new ChangeTeraTypeReward(shardType);
+    });
+    this.id = RewardId.TERA_SHARD;
   }
 }
 
@@ -1642,40 +1689,9 @@ const rewardInitObj = Object.freeze({
   SUPER_REPEL: () => new DoubleBattleChanceBoosterReward('Super Repel', 10),
   MAX_REPEL: () => new DoubleBattleChanceBoosterReward('Max Repel', 25),*/
 
-  MINT: () =>
-    new RewardGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in Nature) {
-        return new PokemonNatureChangeReward(pregenArgs[0] as Nature);
-      }
-      return new PokemonNatureChangeReward(randSeedItem(getEnumValues(Nature)));
-    }),
+  MINT: () => new MintRewardGenerator(),
 
-  TERA_SHARD: () =>
-    new RewardGenerator((party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
-        return new ChangeTeraTypeReward(pregenArgs[0] as PokemonType);
-      }
-      if (!globalScene.trainerItems.hasItem(TrainerItemId.TERA_ORB)) {
-        return null;
-      }
-      const teraTypes: PokemonType[] = [];
-      for (const p of party) {
-        if (
-          !(p.hasSpecies(SpeciesId.TERAPAGOS) || p.hasSpecies(SpeciesId.OGERPON) || p.hasSpecies(SpeciesId.SHEDINJA))
-        ) {
-          teraTypes.push(p.teraType);
-        }
-      }
-      let excludedType = PokemonType.UNKNOWN;
-      if (teraTypes.length > 0 && teraTypes.filter(t => t === teraTypes[0]).length === teraTypes.length) {
-        excludedType = teraTypes[0];
-      }
-      let shardType = randSeedInt(64) ? (randSeedInt(18) as PokemonType) : PokemonType.STELLAR;
-      while (shardType === excludedType) {
-        shardType = randSeedInt(64) ? (randSeedInt(18) as PokemonType) : PokemonType.STELLAR;
-      }
-      return new ChangeTeraTypeReward(shardType);
-    }),
+  TERA_SHARD: () => new TeraTypeRewardGenerator(),
 
   TM_COMMON: () => new TmRewardGenerator(RarityTier.COMMON),
   TM_GREAT: () => new TmRewardGenerator(RarityTier.GREAT),
