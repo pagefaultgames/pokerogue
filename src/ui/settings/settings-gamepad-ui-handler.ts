@@ -2,9 +2,9 @@ import { globalScene } from "#app/global-scene";
 import type { InterfaceConfig } from "#app/inputs-controller";
 import { Device } from "#enums/devices";
 import type { UiMode } from "#enums/ui-mode";
-import pad_dualshock from "#inputs/pad_dualshock";
-import pad_unlicensedSNES from "#inputs/pad_unlicensedSNES";
-import pad_xbox360 from "#inputs/pad_xbox360";
+import pad_dualshock from "#inputs/pad-dualshock";
+import pad_unlicensedSNES from "#inputs/pad-unlicensed-snes";
+import pad_xbox360 from "#inputs/pad-xbox360";
 import {
   SettingGamepad,
   setSettingGamepad,

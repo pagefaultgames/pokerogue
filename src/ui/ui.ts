@@ -29,7 +29,7 @@ import { MenuUiHandler } from "#ui/menu-ui-handler";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
-import { NavigationManager } from "#ui/navigationMenu";
+import { NavigationManager } from "#ui/navigation-menu";
 import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";

@@ -9,7 +9,7 @@ import { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import type { ContactHeldItemTransferChanceModifier } from "#modifiers/modifier";
 import { StealHeldItemChanceAttr } from "#moves/move";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
