@@ -7257,8 +7257,8 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
     const lastPpUsed = movesetMove.ppUsed;
     movesetMove.ppUsed = Math.min(lastPpUsed + this.reduction, movesetMove.getMovePp());
 
-    globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(target.id, movesetMove));
     globalScene.phaseManager.queueMessage(i18next.t("battle:ppReduced", { targetName: getPokemonNameWithAffix(target), moveName: movesetMove.getName(), reduction: (movesetMove.ppUsed) - lastPpUsed }));
+    globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(target.id, movesetMove));
 
     return true;
   }
@@ -7368,7 +7368,7 @@ export class MovesetCopyMoveAttr extends OverrideMoveEffectAttr {
     user.summonData.moveset[thisMoveIndex] = newMove;
 
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:copiedMove", { pokemonName: getPokemonNameWithAffix(user), moveName: copiedMove.name }));
-    globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(target.id, newMove));
+    globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(user.id, newMove));
 
     return true;
   }
