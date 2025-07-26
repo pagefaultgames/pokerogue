@@ -3,5 +3,7 @@
   "entryPointStrategy": "expand",
   "exclude": ["**/*+.test.ts"],
   "out": "typedoc",
-  "highlightLanguages": ["javascript", "json", "jsonc", "json5", "tsx", "typescript", "markdown"]
+  "highlightLanguages": ["javascript", "json", "jsonc", "json5", "tsx", "typescript", "markdown"],
+  "customFooterHtml": "<p>Copyright <strong>Pagefault Games</strong> 2025</p>",
+  "customFooterHtmlDisableWrapper": true
 }
