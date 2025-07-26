@@ -3822,18 +3822,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.GYARADOS]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.AERODACTYL]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.CHARIZARD]))
-    .setPartyMemberFunc(
-      3,
-      getRandomPartyMemberFunc(
-        [SpeciesId.KINGDRA, SpeciesId.TYRANITAR, SpeciesId.FLYGON],
-        TrainerSlot.TRAINER,
-        true,
-        p => {
-          p.generateAndPopulateMoveset();
-          p.abilityIndex = p.species.speciesId === SpeciesId.KINGDRA ? 1 : 2; // Sniper Kingdra, Unnerve Tyranitar, Levitate Flygon
-        },
-      ),
-    )
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.KINGDRA, SpeciesId.TYRANITAR, SpeciesId.GARCHOMP]))
     .setPartyMemberFunc(
       4,
       getRandomPartyMemberFunc([SpeciesId.SALAMENCE], TrainerSlot.TRAINER, true, p => {
@@ -3899,14 +3888,26 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
       }),
     )
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.LUDICOLO]))
+    .setPartyMemberFunc(
+      1,
+      getRandomPartyMemberFunc([SpeciesId.LUDICOLO], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 1; // Rain Dish
+        p.generateAndPopulateMoveset();
+      }),
+    )
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.SWAMPERT, SpeciesId.GASTRODON]))
     .setPartyMemberFunc(
       3,
-      getRandomPartyMemberFunc([SpeciesId.REGIELEKI, SpeciesId.REGIDRAGO], TrainerSlot.TRAINER, true, p => {
-        p.generateAndPopulateMoveset();
-        p.pokeball = PokeballType.ULTRA_BALL;
-      }),
+      getRandomPartyMemberFunc(
+        [SpeciesId.KINGDRA, SpeciesId.OVERQWIL, SpeciesId.BASCULEGION],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.generateAndPopulateMoveset();
+          p.pokeball = PokeballType.ULTRA_BALL;
+          p.abilityIndex = p.species.speciesId === SpeciesId.OVERQWIL ? 1 : 0; // Swift Swim
+        },
+      ),
     )
     .setPartyMemberFunc(
       4,
@@ -3986,8 +3987,13 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       2,
       getRandomPartyMemberFunc([SpeciesId.KELDEO], TrainerSlot.TRAINER, true, p => {
-        p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
+        p.formIndex = 1; // Resolute Form
+        p.generateAndPopulateMoveset();
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.SECRET_SWORD)) {
+          // Check if Secret Sword is in the moveset, if not, replace the second move with Secret Sword.
+          p.moveset[1] = new PokemonMove(MoveId.SECRET_SWORD);
+        }
       }),
     )
     .setPartyMemberFunc(
@@ -4088,7 +4094,13 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = 2; // Dusk Lycanroc
       }),
     )
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.MAGNEZONE, SpeciesId.ALOLA_NINETALES]))
+    .setPartyMemberFunc(
+      1,
+      getRandomPartyMemberFunc([SpeciesId.MAGNEZONE, SpeciesId.ALOLA_NINETALES], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        p.abilityIndex = p.species.speciesId === SpeciesId.MAGNEZONE ? 1 : 2; // Sturdy Magnezone, Snow Warning Ninetales
+      }),
+    )
     .setPartyMemberFunc(
       2,
       getRandomPartyMemberFunc(
@@ -4104,16 +4116,16 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       3,
-      getRandomPartyMemberFunc([SpeciesId.SNORLAX], TrainerSlot.TRAINER, true, p => {
+      getRandomPartyMemberFunc([SpeciesId.TAPU_LELE, SpeciesId.TAPU_FINI], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
-        p.formIndex = 1; // G-Max Snorlax
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     )
     .setPartyMemberFunc(
       4,
-      getRandomPartyMemberFunc([SpeciesId.TAPU_KOKO, SpeciesId.TAPU_FINI], TrainerSlot.TRAINER, true, p => {
+      getRandomPartyMemberFunc([SpeciesId.SNORLAX], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
-        p.pokeball = PokeballType.ULTRA_BALL;
+        p.formIndex = 1; // G-Max Snorlax
       }),
     )
     .setPartyMemberFunc(
@@ -4140,7 +4152,7 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       3,
-      getRandomPartyMemberFunc([SpeciesId.TAPU_LELE, SpeciesId.TAPU_BULU], TrainerSlot.TRAINER, true, p => {
+      getRandomPartyMemberFunc([SpeciesId.TAPU_KOKO, SpeciesId.TAPU_BULU], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
       }),
@@ -4223,7 +4235,7 @@ export const trainerConfigs: TrainerConfigs = {
       4,
       getRandomPartyMemberFunc([SpeciesId.ZAMAZENTA], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
-        p.pokeball = PokeballType.MASTER_BALL;
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     )
     .setPartyMemberFunc(
@@ -4250,7 +4262,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
       }),
     )
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.ESPATHRA, SpeciesId.VELUZA]))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.ESPATHRA]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.BAXCALIBUR]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.CHESNAUGHT, SpeciesId.DELPHOX, SpeciesId.GRENINJA]))
     .setPartyMemberFunc(
@@ -4331,6 +4343,10 @@ export const trainerConfigs: TrainerConfigs = {
       4,
       getRandomPartyMemberFunc([SpeciesId.TERAPAGOS], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.TERA_STARSTORM)) {
+          // Check if Tera Starstorm is in the moveset, if not, replace the first move with Tera Starstorm.
+          p.moveset[0] = new PokemonMove(MoveId.TERA_STARSTORM);
+        }
         p.pokeball = PokeballType.MASTER_BALL;
       }),
     )
