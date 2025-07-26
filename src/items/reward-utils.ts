@@ -1,7 +1,11 @@
 import { globalScene } from "#app/global-scene";
 import { RewardId } from "#enums/reward-id";
+import type { RarityTier } from "#enums/reward-tier";
+import { getHeldItemTier } from "./held-item-default-tiers";
 import { getRewardTierFromPool } from "./init-reward-pools";
 import { type HeldItemReward, type Reward, RewardGenerator, RewardOption, type TrainerItemReward } from "./reward";
+import { getRewardTier } from "./reward-defaults-tiers";
+import { getTrainerItemTier } from "./trainer-item-default-tiers";
 
 /**
  * Generates a Reward from a given function
@@ -27,28 +31,17 @@ export function generateRewardOption(rewardFunc: () => Reward, pregenArgs?: any[
   return null;
 }
 
-/**This matches rewards based on their id. For example, it returns true when matching
- * rewards for two different types of berries, or two different TMs of the same rarity,
- * but it returns false when matching rewards for two TMs of different rarities.
- * For items that do not have a specific reward id, it directly compares their item ids.
+/**
+ * Finds the default rarity tier for a given reward. For unique held item or trainer item rewards,
+ * falls back to the default rarity tier for the item.
+ * @param reward The {@linkcode Reward} to determine the tier for.
  */
-export function matchingRewards(a: Reward, b: Reward) {
-  if (a.id === b.id) {
-    return true;
+export function getRewardDefaultTier(reward: Reward): RarityTier {
+  if (reward.id === RewardId.HELD_ITEM) {
+    return getHeldItemTier((reward as HeldItemReward).itemId);
   }
-  if (a.id === RewardId.HELD_ITEM) {
-    const itemIdA = (a as HeldItemReward).itemId;
-    const itemIdB = (a as HeldItemReward).itemId;
-    if (itemIdA === itemIdB) {
-      return true;
-    }
+  if (reward.id === RewardId.TRAINER_ITEM) {
+    return getTrainerItemTier((reward as TrainerItemReward).itemId);
   }
-  if (a.id === RewardId.TRAINER_ITEM) {
-    const itemIdA = (a as TrainerItemReward).itemId;
-    const itemIdB = (a as TrainerItemReward).itemId;
-    if (itemIdA === itemIdB) {
-      return true;
-    }
-  }
-  return false;
+  return getRewardTier(reward.id);
 }

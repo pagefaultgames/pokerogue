@@ -22,7 +22,6 @@ import { rewardPool } from "#items/reward-pools";
 import type { TurnEndStatusHeldItem } from "#items/turn-end-status";
 import type { WeightedRewardWeightFunc } from "#types/rewards";
 import { isNullOrUndefined } from "#utils/common";
-import { matchingRewards } from "./reward-utils";
 
 /**
  * Initialize the common modifier pool
@@ -655,27 +654,4 @@ function lureWeightFunc(lureId: TrainerItemId, weight: number): WeightedRewardWe
  */
 function hasMaximumBalls(ballType: PokeballType): boolean {
   return globalScene.gameMode.isClassic && globalScene.pokeballCounts[ballType] >= MAX_PER_TYPE_POKEBALLS;
-}
-
-/**
- * Populates item tier for Reward instance
- * Tier is a necessary field for items that appear in player shop (determines the Pokeball visual they use)
- * To find the tier, this function performs a reverse lookup of the item type in modifier pools
- * It checks the weight of the item and will use the first tier for which the weight is greater than 0
- * This is to allow items to be in multiple item pools depending on the conditions, for example for events
- * If all tiers have a weight of 0 for the item, the first tier where the item was found is used
- * @param poolType Default 'RewardPoolType.PLAYER'. Which pool to lookup item tier from
- * @param party optional. Needed to check the weight of modifiers with conditional weight (see {@linkcode WeightedRewardWeightFunc})
- *  if not provided or empty, the weight check will be ignored
- * @param rerollCount Default `0`. Used to check the weight of modifiers with conditional weight (see {@linkcode WeightedRewardWeightFunc})
- */
-export function getRewardTierFromPool(reward: Reward): RarityTier {
-  for (const tier of Object.values(rewardPool)) {
-    for (const weighted of tier) {
-      if (matchingRewards(reward, weighted.reward)) {
-        return weighted.reward.tier;
-      }
-    }
-  }
-  return RarityTier.COMMON;
 }

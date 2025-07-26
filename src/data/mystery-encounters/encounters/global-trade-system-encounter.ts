@@ -20,7 +20,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { doShinySparkleAnim } from "#field/anims";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
-import { getHeldItemTier } from "#items/held-item-tiers";
+import { getHeldItemTier } from "#items/held-item-default-tiers";
 import type { RewardOption } from "#items/reward";
 import { generateRewardPoolWeights, getPlayerRewardOptions } from "#items/reward";
 import { TrainerItemEffect } from "#items/trainer-item";

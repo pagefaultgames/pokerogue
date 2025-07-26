@@ -1,7 +1,7 @@
 import { getHeldItemCategory, HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import { RarityTier } from "#enums/reward-tier";
 
-export const heldItemTiers = {
+export const heldItemRarities = {
   [HeldItemCategoryId.BERRY]: RarityTier.COMMON,
 
   [HeldItemCategoryId.BASE_STAT_BOOST]: RarityTier.GREAT,
@@ -37,11 +37,11 @@ export const heldItemTiers = {
   [HeldItemId.MULTI_LENS]: RarityTier.MASTER,
 };
 
-export function getHeldItemTier(item: HeldItemId): RarityTier | undefined {
-  let tier = heldItemTiers[item];
+export function getHeldItemTier(item: HeldItemId): RarityTier {
+  let tier = heldItemRarities[item];
   if (!tier) {
     const category = getHeldItemCategory(item);
-    tier = heldItemTiers[category];
+    tier = heldItemRarities[category];
   }
-  return tier;
+  return tier ?? RarityTier.LUXURY;
 }

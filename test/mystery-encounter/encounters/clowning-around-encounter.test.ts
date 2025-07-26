@@ -13,7 +13,7 @@ import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
-import { getHeldItemTier } from "#items/held-item-tiers";
+import { getHeldItemTier } from "#items/held-item-default-tiers";
 import { PokemonMove } from "#moves/pokemon-move";
 import { ClowningAroundEncounter } from "#mystery-encounters/clowning-around-encounter";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
