@@ -27,6 +27,28 @@ export function isFieldTargeted(move: Move): boolean {
   return false;
 }
 
+/**
+ * Determine whether a move is a spread move.
+ *
+ * @param move - The {@linkcode Move} to check
+ * @returns Whether {@linkcode move} is spread-targeted.
+ * @remarks
+ * Examples include:
+ * - Moves targeting all adjacent Pokemon (like Surf)
+ * - Moves targeting all adjacent enemies (like Air Cutter)
+ */
+
+export function isSpreadMove(move: Move): boolean {
+  switch (move.moveTarget) {
+    case MoveTarget.ALL_ENEMIES:
+    case MoveTarget.ALL_NEAR_ENEMIES:
+    case MoveTarget.ALL_OTHERS:
+    case MoveTarget.ALL_NEAR_OTHERS:
+      return true;
+  }
+  return false;
+}
+
 export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: MoveTarget): MoveTargetSet {
   const variableTarget = new NumberHolder(0);
   user.getOpponents(false).forEach(p => applyMoveAttrs("VariableTargetAttr", user, p, allMoves[move], variableTarget));

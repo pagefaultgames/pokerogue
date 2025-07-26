@@ -12,7 +12,7 @@
     "test": "vitest run --no-isolate",
     "test:cov": "vitest run --coverage --no-isolate",
     "test:watch": "vitest watch --coverage --no-isolate",
-    "test:silent": "vitest run --silent --no-isolate",
+    "test:silent": "vitest run --silent='passed-only' --no-isolate",
     "test:create": "node scripts/create-test/create-test.js",
     "typecheck": "tsc --noEmit",
     "eslint": "eslint --fix .",
