@@ -828,19 +828,16 @@ export class SummaryUiHandler extends UiHandler {
             otColor,
           )}`,
           TextStyle.SUMMARY_ALT,
-        );
-        trainerText.setOrigin(0, 0);
+        ).setOrigin(0);
         profileContainer.add(trainerText);
 
+        const idToDisplay = globalScene.hideUsername ? "*****" : globalScene.gameData.trainerId.toString();
         const trainerIdText = addTextObject(
           141,
           12,
-          !globalScene.hideUsername
-            ? `${i18next.t("pokemonSummary:idNo")}${globalScene.gameData.trainerId.toString()}`
-            : "",
+          `${i18next.t("pokemonSummary:idNo")}${idToDisplay}`,
           TextStyle.SUMMARY_ALT,
-        );
-        trainerIdText.setOrigin(0, 0);
+        ).setOrigin(0);
         profileContainer.add(trainerIdText);
 
         const typeLabel = addTextObject(7, 28, `${i18next.t("pokemonSummary:type")}/`, TextStyle.WINDOW_ALT);
