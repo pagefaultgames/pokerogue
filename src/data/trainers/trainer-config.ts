@@ -3861,9 +3861,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setDoubleTitle("champion_double")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.SKARMORY]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.CRADILY, SpeciesId.ARMALDO]))
-    .setPartyMemberFunc(
-      2,
-      getRandomPartyMemberFunc([SpeciesId.AGGRON]))
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.AGGRON]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.GOLURK, SpeciesId.RUNERIGUS]))
     .setPartyMemberFunc(
       4,
@@ -3992,7 +3990,10 @@ export const trainerConfigs: TrainerConfigs = {
         p.pokeball = PokeballType.ULTRA_BALL;
       }),
     )
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.CHANDELURE, SpeciesId.KROOKODILE, SpeciesId.REUNICLUS, SpeciesId.CONKELDURR]))
+    .setPartyMemberFunc(
+      3,
+      getRandomPartyMemberFunc([SpeciesId.CHANDELURE, SpeciesId.KROOKODILE, SpeciesId.REUNICLUS, SpeciesId.CONKELDURR]),
+    )
     .setPartyMemberFunc(
       4,
       getRandomPartyMemberFunc([SpeciesId.ZEKROM], TrainerSlot.TRAINER, true, p => {
@@ -4048,9 +4049,7 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.DIANTHA]: new TrainerConfig(++t)
     .initForChampion(false)
     .setMixedBattleBgm("battle_kalos_champion")
-    .setPartyMemberFunc(
-      0,
-      getRandomPartyMemberFunc([SpeciesId.HAWLUCHA]))
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.HAWLUCHA]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.TREVENANT, SpeciesId.GOURGEIST]))
     .setPartyMemberFunc(
       2,
@@ -4349,7 +4348,6 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     )
     .setInstantTera(5), // Tera Fighting Hydrapple
-
 
   [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL))
     .setName("Finn")
