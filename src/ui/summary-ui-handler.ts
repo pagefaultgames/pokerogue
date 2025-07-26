@@ -354,18 +354,13 @@ export class SummaryUiHandler extends UiHandler {
     } catch (err: unknown) {
       console.error(`Failed to play animation for ${spriteKey}`, err);
     }
-    this.pokemonSprite.setPipelineData("teraColor", getTypeRgb(this.pokemon.getTeraType()));
-    this.pokemonSprite.setPipelineData("isTerastallized", this.pokemon.isTerastallized);
-    this.pokemonSprite.setPipelineData("ignoreTimeTint", true);
-    this.pokemonSprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
-    this.pokemonSprite.setPipelineData(
-      "shiny",
-      this.pokemon.summonData.illusion?.basePokemon.shiny ?? this.pokemon.shiny,
-    );
-    this.pokemonSprite.setPipelineData(
-      "variant",
-      this.pokemon.summonData.illusion?.basePokemon.variant ?? this.pokemon.variant,
-    );
+    this.pokemonSprite
+      .setPipelineData("teraColor", getTypeRgb(this.pokemon.getTeraType()))
+      .setPipelineData("isTerastallized", this.pokemon.isTerastallized)
+      .setPipelineData("ignoreTimeTint", true)
+      .setPipelineData("spriteKey", this.pokemon.getSpriteKey())
+      .setPipelineData("shiny", this.pokemon.shiny)
+      .setPipelineData("variant", this.pokemon.variant);
     ["spriteColors", "fusionSpriteColors"].map(k => {
       delete this.pokemonSprite.pipelineData[`${k}Base`];
       if (this.pokemon?.summonData.speciesForm) {
@@ -463,9 +458,7 @@ export class SummaryUiHandler extends UiHandler {
     this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
     this.fusionShinyIcon.setVisible(doubleShiny);
     if (isFusion) {
-      this.fusionShinyIcon.setTint(
-        getVariantTint(this.pokemon.summonData.illusion?.basePokemon.fusionVariant ?? this.pokemon.fusionVariant),
-      );
+      this.fusionShinyIcon.setTint(getVariantTint(this.pokemon.fusionVariant));
     }
 
     this.pokeball.setFrame(getPokeballAtlasKey(this.pokemon.pokeball));
