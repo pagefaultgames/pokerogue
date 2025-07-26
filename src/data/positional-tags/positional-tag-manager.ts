@@ -39,17 +39,15 @@ export class PositionalTagManager {
     const leftoverTags: PositionalTag[] = [];
     for (const tag of this.tags) {
       // Check for silent removal, immediately removing invalid tags.
-      if (tag.shouldDisappear()) {
-        continue;
-      }
-
       if (--tag.turnCount > 0) {
         // tag still cooking
         leftoverTags.push(tag);
         continue;
       }
 
-      tag.trigger();
+      if (!tag.shouldDisappear()) {
+        tag.trigger();
+      }
     }
     this.tags = leftoverTags;
   }

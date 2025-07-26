@@ -51,10 +51,8 @@ export abstract class PositionalTag implements PositionalTagBaseArgs {
   public abstract trigger(): void;
 
   /**
-   * Check whether this tag should be removed without triggering.
-   * @returns Whether this tag should disappear.
-   * @privateRemarks
-   * Silent removal is accomplished by setting the attack's turn count to -1.
+   * Check whether this tag should be removed without calling {@linkcode trigger} and triggering effects.
+   * @returns Whether this tag should disappear without triggering.
    */
   abstract shouldDisappear(): boolean;
 
@@ -89,6 +87,7 @@ export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs
   }
 
   override trigger(): void {
+    // Bangs are justified as the `shouldDisappear` method will queue the tag for removal if the source or target leave the field
     const source = globalScene.getPokemonById(this.sourceId)!;
     const target = this.getTarget()!;
 
@@ -102,7 +101,7 @@ export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs
 
     globalScene.phaseManager.unshiftNew(
       "MoveEffectPhase",
-      this.sourceId,
+      this.sourceId, // TODO: Find an alternate method of passing the source pokemon without a source ID
       [this.targetIndex],
       allMoves[this.sourceMove],
       MoveUseMode.TRANSPARENT,

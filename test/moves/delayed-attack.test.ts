@@ -10,7 +10,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -40,9 +40,9 @@ describe("Moves - Delayed Attacks", () => {
   });
 
   /**
-   * Wait until a number of turns have passed and a delayed attack has struck.
+   * Wait until a number of turns have passed.
    * @param numTurns - Number of turns to pass.
-   * @param toEndOfTurn - Whether to advance to the `TurnEndPhase` (true) or the `PositionalTagPhase` (`false`);
+   * @param toEndOfTurn - Whether to advance to the `TurnEndPhase` (`true`) or the `PositionalTagPhase` (`false`);
    * default `true`
    * @returns A Promise that resolves once the specified number of turns has elapsed
    * and the specified phase has been reached.
@@ -50,15 +50,15 @@ describe("Moves - Delayed Attacks", () => {
   async function passTurns(numTurns: number, toEndOfTurn = true): Promise<void> {
     for (let i = 0; i < numTurns; i++) {
       game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
-      if (game.scene.getPlayerField()[1]) {
+      if (game.scene.getPlayerField()[1]?.isActive()) {
         game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
       }
       await game.move.forceEnemyMove(MoveId.SPLASH);
-      if (game.scene.getEnemyField()[1]) {
+      if (game.scene.getEnemyField()[1]?.isActive()) {
         await game.move.forceEnemyMove(MoveId.SPLASH);
       }
+      await game.phaseInterceptor.to("PositionalTagPhase");
     }
-    await game.phaseInterceptor.to("PositionalTagPhase");
     if (toEndOfTurn) {
       await game.toEndOfTurn();
     }
@@ -91,9 +91,9 @@ describe("Moves - Delayed Attacks", () => {
     game.forceEnemyToSwitch();
     await game.toNextTurn();
 
-    game.move.use(MoveId.SPLASH);
-    await game.toEndOfTurn();
+    await passTurns(1);
 
+    expectFutureSightActive(0);
     const enemy = game.field.getEnemyPokemon();
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
     expect(game.textInterceptor.logs).toContain(
@@ -134,6 +134,7 @@ describe("Moves - Delayed Attacks", () => {
 
     await passTurns(2);
 
+    expectFutureSightActive(0);
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   });
 
@@ -163,10 +164,7 @@ describe("Moves - Delayed Attacks", () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
-    const [alomomola, blissey, karp1, karp2] = game.scene.getField();
-
-    vi.spyOn(karp1, "getNameToRender").mockReturnValue("Karp 1");
-    vi.spyOn(karp2, "getNameToRender").mockReturnValue("Karp 2");
+    const [alomomola, blissey] = game.scene.getField();
 
     const oldOrder = game.field.getSpeedOrder();
 
@@ -175,8 +173,9 @@ describe("Moves - Delayed Attacks", () => {
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER);
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER_2);
     // Ensure that the moves are used deterministically in speed order (for speed ties)
-    await game.setTurnOrder(oldOrder);
+    await game.setTurnOrder(oldOrder.map(p => p.getBattlerIndex()));
     await game.toNextTurn();
+
     expectFutureSightActive(4);
 
     // Lower speed to change turn order
@@ -193,29 +192,35 @@ describe("Moves - Delayed Attacks", () => {
 
     const MEPs = game.scene.phaseManager.phaseQueue.filter(p => p.is("MoveEffectPhase"));
     expect(MEPs).toHaveLength(4);
-    expect(MEPs.map(mep => mep["battlerIndex"])).toEqual(oldOrder);
+    expect(MEPs.map(mep => mep.getPokemon())).toEqual(oldOrder);
   });
 
   it("should vanish silently if it would otherwise hit the user", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.MIENFOO]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
-    const [karp, feebas] = game.scene.getPlayerField();
+    const [karp, feebas, milotic] = game.scene.getPlayerParty();
 
     game.move.use(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
-    // Karp / Feebas / Milotic
-    game.doSwitchPokemon(2);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.toNextTurn();
 
     expectFutureSightActive(1);
 
     // Milotic / Feebas // Karp
     game.doSwitchPokemon(2);
-    // Feebas / Karp // Milotic
-    game.doSwitchPokemon(2);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.toNextTurn();
 
+    expect(game.scene.getPlayerParty()).toEqual([milotic, feebas, karp]);
+
+    // Milotic / Karp // Feebas
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+    game.doSwitchPokemon(2);
+
     await passTurns(1);
+
+    expect(game.scene.getPlayerParty()).toEqual([milotic, karp, feebas]);
 
     expect(karp.hp).toBe(karp.getMaxHp());
     expect(feebas.hp).toBe(feebas.getMaxHp());
@@ -227,7 +232,7 @@ describe("Moves - Delayed Attacks", () => {
     );
   });
 
-  it("should redirect normally if target is fainted when attack is launched", async () => {
+  it("should redirect normally if target is fainted when move is used", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
@@ -238,7 +243,13 @@ describe("Moves - Delayed Attacks", () => {
     await game.toNextTurn();
 
     expect(enemy2.isFainted()).toBe(true);
-    expectFutureSightActive(1);
+    expectFutureSightActive();
+
+    const attack = game.scene.arena.positionalTagManager.tags.find(
+      t => t.tagType === PositionalTagType.DELAYED_ATTACK,
+    )!;
+    expect(attack).toBeDefined();
+    expect(attack.targetIndex).toBe(enemy1.getBattlerIndex());
 
     await passTurns(2);
 
@@ -251,7 +262,7 @@ describe("Moves - Delayed Attacks", () => {
     );
   });
 
-  it("should vanish silently if target is fainted when attack lands", async () => {
+  it("should vanish silently if slot is vacant when attack lands", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
@@ -264,8 +275,10 @@ describe("Moves - Delayed Attacks", () => {
 
     game.move.use(MoveId.SPLASH);
     await game.killPokemon(enemy2);
+    await game.toNextTurn();
 
-    await passTurns(1);
+    game.move.use(MoveId.SPLASH);
+    await game.toNextTurn();
 
     expectFutureSightActive(0);
     expect(enemy1.hp).toBe(enemy1.getMaxHp());

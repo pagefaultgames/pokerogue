@@ -6,7 +6,7 @@ import { MoveResult } from "#enums/move-result";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -124,7 +124,7 @@ describe("Move - Wish", () => {
     await game.move.forceEnemyMove(MoveId.WISH);
     await game.move.forceEnemyMove(MoveId.WISH);
     // Ensure that the wishes are used deterministically in speed order (for speed ties)
-    await game.setTurnOrder(oldOrder);
+    await game.setTurnOrder(oldOrder.map(p => p.getBattlerIndex()));
     await game.toNextTurn();
 
     expectWishActive(4);
@@ -145,7 +145,7 @@ describe("Move - Wish", () => {
 
     const healPhases = game.scene.phaseManager.phaseQueue.filter(p => p.is("PokemonHealPhase"));
     expect(healPhases).toHaveLength(4);
-    expect.soft(healPhases.map(php => php["battlerIndex"])).toEqual(oldOrder);
+    expect.soft(healPhases.map(php => php.getPokemon())).toEqual(oldOrder);
 
     await game.toEndOfTurn();
 

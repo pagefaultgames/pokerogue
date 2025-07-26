@@ -639,6 +639,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
   /** @returns The {@linkcode Pokemon} using this phase's invoked move */
   public getUserPokemon(): Pokemon | null {
+    // TODO: Make this purely a battler index
     if (this.battlerIndex > BattlerIndex.ENEMY_2) {
       return globalScene.getPokemonById(this.battlerIndex);
     }
