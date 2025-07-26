@@ -7,6 +7,7 @@ import { MockConsoleLog } from "#test/test-utils/mocks/mock-console-log";
 import { mockContext } from "#test/test-utils/mocks/mock-context-canvas";
 import { mockLocalStorage } from "#test/test-utils/mocks/mock-local-storage";
 import { MockImage } from "#test/test-utils/mocks/mocks-container/mock-image";
+import { manageTimeouts } from "#test/test-utils/timeout-manager";
 import { setCookie } from "#utils/cookies";
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
@@ -21,6 +22,7 @@ export function initTests(): void {
   setupStubs();
   if (!wasInitialized) {
     initTestFile();
+    manageTimeouts();
     wasInitialized = true;
   }
 

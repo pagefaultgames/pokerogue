@@ -83,6 +83,7 @@ export function manageTimeouts() {
 }
 
 beforeEach(() => {
+  console.log("Clearing prior timeouts on new test start");
   allTimeouts.splice(0);
   allImmediates.splice(0);
 });
