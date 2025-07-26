@@ -1517,7 +1517,7 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
 }
 
 export class WeightedReward {
-  public reward: Reward;
+  public reward: Reward | RewardGenerator;
   public weight: number | WeightedRewardWeightFunc;
   public maxWeight: number | WeightedRewardWeightFunc;
 

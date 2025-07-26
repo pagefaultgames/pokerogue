@@ -26,6 +26,9 @@ cases to assign modifiers. This usage is now deprecated, as we have separate poo
 However, `getNewRewardOption` is not called directly by `generatePlayerRewardOptions`. Instead, it is filtered
 by `getRewardOptionWithRetry`, which also checks existing rewards to minimize the chance of duplicates.
 
+Note that the pool contains `WeightedReward` instances, which contain either a `Reward` or a `RewardGenerator`.
+Once a pool entry is chosen, a specific `Reward` is generated accordingly and put in the returned `RewardOption`.
+
 This will allow more customization in creating pools for challenges, MEs etc.
 */
 
@@ -193,6 +196,7 @@ export function generatePlayerRewardOptions(
     }
   }
 
+  // Applies overrides for testing
   overridePlayerRewardOptions(options, party);
 
   return options;
@@ -281,7 +285,7 @@ function getNewRewardOption(
     return null;
   }
 
-  let reward: Reward | null = pool[tier][index].reward;
+  let reward: Reward | RewardGenerator | null = pool[tier][index].reward;
   if (reward instanceof RewardGenerator) {
     reward = (reward as RewardGenerator).generateReward(party);
     if (reward === null) {
@@ -295,12 +299,6 @@ function getNewRewardOption(
   return new RewardOption(reward as Reward, upgradeCount!, tier); // TODO: is this bang correct?
 }
 
-//TODO:
-//TODO:
-//TODO:
-//TODO:
-//TODO:
-/////// What is the point of this? See if we can do without.
 /**
  * Replaces the {@linkcode Reward} of the entries within {@linkcode options} with any
  * {@linkcode RewardOverride} entries listed in {@linkcode Overrides.REWARD_OVERRIDE}
