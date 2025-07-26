@@ -3,6 +3,7 @@
  * Can be safely imported without worrying about circular dependencies.
  */
 
-import type { RewardPool } from "#types/rewards";
+import type { RewardPool, RewardPoolWeights } from "#types/rewards";
 
 export const rewardPool: RewardPool = {};
+export const rewardPoolWeights: RewardPoolWeights = {};

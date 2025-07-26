@@ -22,7 +22,8 @@ import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
 import { getHeldItemTier } from "#items/held-item-default-tiers";
 import type { RewardOption } from "#items/reward";
-import { generateRewardPoolWeights, getPlayerRewardOptions } from "#items/reward";
+import { generatePlayerRewardOptions, generateRewardPoolWeights, getRewardPoolForType } from "#items/reward-pool-utils";
+import { isTmReward } from "#items/reward-utils";
 import { TrainerItemEffect } from "#items/trainer-item";
 import { PokemonMove } from "#moves/pokemon-move";
 import { getEncounterText, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
@@ -420,11 +421,11 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
           tier++;
         }
 
-        generateRewardPoolWeights(party, RewardPoolType.PLAYER, 0);
+        generateRewardPoolWeights(getRewardPoolForType(RewardPoolType.PLAYER), party, 0);
         let item: RewardOption | null = null;
         // TMs excluded from possible allRewards
-        while (!item || item.type.id.includes("TM_")) {
-          item = getPlayerRewardOptions(1, party, [], {
+        while (!item || isTmReward(item.type)) {
+          item = generatePlayerRewardOptions(1, party, [], {
             guaranteedRarityTiers: [tier],
             allowLuckUpgrades: false,
           })[0];

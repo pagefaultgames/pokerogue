@@ -9,13 +9,12 @@ import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import type { RewardOption } from "#items/reward";
-import { getPlayerShopRewardOptionsForWave } from "#items/reward";
+import { getPlayerShopRewardOptionsForWave, isTmReward } from "#items/reward-utils";
 import { TrainerItemEffect } from "#items/trainer-item";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getRarityTierTextTint, getTextColor, getTextStyleOptions, TextStyle } from "#ui/text";
 import { formatMoney, NumberHolder } from "#utils/common";
-import { isTmReward } from "#utils/reward-utils";
 import i18next from "i18next";
 import Phaser from "phaser";
 

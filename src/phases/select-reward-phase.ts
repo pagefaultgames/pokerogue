@@ -5,29 +5,25 @@ import { RewardPoolType } from "#enums/reward-pool-type";
 import type { RarityTier } from "#enums/reward-tier";
 import { UiMode } from "#enums/ui-mode";
 import type {
-  CustomRewardSettings,
   PokemonMoveRecallRewardParams,
   PokemonMoveRewardParams,
   PokemonRewardParams,
   Reward,
   RewardOption,
 } from "#items/reward";
+import { FusePokemonReward, type PokemonMoveReward, PokemonReward, RememberMoveReward, TmReward } from "#items/reward";
 import {
-  FusePokemonReward,
+  type CustomRewardSettings,
+  generatePlayerRewardOptions,
   generateRewardPoolWeights,
-  getPlayerRewardOptions,
-  getPlayerShopRewardOptionsForWave,
-  type PokemonMoveReward,
-  PokemonReward,
-  RememberMoveReward,
-  TmReward,
-} from "#items/reward";
+  getRewardPoolForType,
+} from "#items/reward-pool-utils";
+import { getPlayerShopRewardOptionsForWave, isMoveReward, isRememberMoveReward, isTmReward } from "#items/reward-utils";
 import { TrainerItemEffect } from "#items/trainer-item";
 import { BattlePhase } from "#phases/battle-phase";
 import { PartyOption, PartyUiHandler, PartyUiMode, type PokemonMoveSelectFilter } from "#ui/party-ui-handler";
 import { type RewardSelectUiHandler, SHOP_OPTIONS_ROW_LIMIT } from "#ui/reward-select-ui-handler";
 import { isNullOrUndefined, NumberHolder } from "#utils/common";
-import { isMoveReward, isRememberMoveReward, isTmReward } from "#utils/reward-utils";
 import i18next from "i18next";
 
 export type RewardSelectCallback = (rowCursor: number, cursor: number) => boolean;
@@ -70,7 +66,7 @@ export class SelectRewardPhase extends BattlePhase {
 
     const party = globalScene.getPlayerParty();
     if (!this.isCopy) {
-      generateRewardPoolWeights(party, this.getPoolType(), this.rerollCount);
+      generateRewardPoolWeights(getRewardPoolForType(this.getPoolType()), party, this.rerollCount);
     }
     const rewardCount = this.getRewardCount();
 
@@ -450,7 +446,7 @@ export class SelectRewardPhase extends BattlePhase {
   }
 
   getRewardOptions(rewardCount: number): RewardOption[] {
-    return getPlayerRewardOptions(
+    return generatePlayerRewardOptions(
       rewardCount,
       globalScene.getPlayerParty(),
       globalScene.lockRarityTiers ? this.rarityTiers : undefined,

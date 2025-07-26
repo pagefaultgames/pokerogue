@@ -284,14 +284,14 @@ class DefaultOverrides {
   readonly OPP_HELD_ITEMS_OVERRIDE: HeldItemConfiguration = [];
 
   /**
-   * Override array of {@linkcode RewardOverride}s used to replace the generated item rolls after a wave.
+   * Override array of {@linkcode RewardOverride}s used to replace the generated reward rolls after a wave.
    *
    * If less entries are listed than rolled, only those entries will be used to replace the corresponding items while the rest randomly generated.
    * If more entries are listed than rolled, only the first X entries will be used, where X is the number of items rolled.
    *
    * Note that, for all items in the array, `count` is not used.
    */
-  readonly ITEM_REWARD_OVERRIDE: RewardOverride[] = [];
+  readonly REWARD_OVERRIDE: RewardOverride[] = [];
 
   /**
    * If `true`, disable all non-scripted opponent trainer encounters.

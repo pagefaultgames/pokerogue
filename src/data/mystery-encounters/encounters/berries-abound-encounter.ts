@@ -12,7 +12,7 @@ import { PERMANENT_STATS, Stat } from "#enums/stat";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { berryTypeToHeldItem } from "#items/berry";
 import type { RewardOption } from "#items/reward";
-import { generateRewardPoolWeights } from "#items/reward";
+import { generateRewardPoolWeights, getRewardPoolForType } from "#items/reward-pool-utils";
 import { generateRewardOption } from "#items/reward-utils";
 import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
@@ -88,7 +88,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
           : globalScene.currentBattle.waveIndex > 40
             ? 4
             : 2;
-    generateRewardPoolWeights(globalScene.getPlayerParty(), RewardPoolType.PLAYER, 0);
+    generateRewardPoolWeights(getRewardPoolForType(RewardPoolType.PLAYER), globalScene.getPlayerParty(), 0);
     encounter.misc = { numBerries };
 
     const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(bossPokemon);

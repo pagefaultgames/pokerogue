@@ -7,3 +7,7 @@ export type WeightedRewardWeightFunc = (party: Pokemon[], rerollCount?: number) 
 export type RewardPool = {
   [tier: string]: WeightedReward[];
 };
+
+export interface RewardPoolWeights {
+  [tier: string]: number[];
+}

@@ -4,7 +4,7 @@ import { allRewards } from "#data/data-lists";
 import { BattleType } from "#enums/battle-type";
 import type { BattlerIndex } from "#enums/battler-index";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
-import type { CustomRewardSettings } from "#items/reward";
+import type { CustomRewardSettings } from "#items/reward-pool-utils";
 import { handleMysteryEncounterVictory } from "#mystery-encounters/encounter-phase-utils";
 import { PokemonPhase } from "#phases/pokemon-phase";
 

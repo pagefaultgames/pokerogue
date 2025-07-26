@@ -16,7 +16,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
-import type { CustomRewardSettings } from "#items/reward";
+import type { CustomRewardSettings } from "#items/reward-pool-utils";
 import { TrainerItemEffect } from "#items/trainer-item";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import i18next from "#plugins/i18n";
