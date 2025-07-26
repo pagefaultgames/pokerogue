@@ -81,8 +81,6 @@ describe("Moves - Heal Block", () => {
 
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
-    game.move.use(MoveId.SPLASH);
-    await game.toNextTurn();
 
     // wish triggered, but did NOT heal the player
     expect(game.scene.arena.positionalTagManager.tags.find(t => t.tagType === PositionalTagType.WISH)).toHaveLength(0);
