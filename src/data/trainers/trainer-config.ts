@@ -5193,7 +5193,13 @@ export const trainerConfigs: TrainerConfigs = {
     .setVictoryBgm("victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.GYARADOS]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.HONCHKROW, SpeciesId.CROBAT]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.MAGNEZONE, SpeciesId.PROBOPASS]))
+    .setPartyMemberFunc(
+      2,
+      getRandomPartyMemberFunc([SpeciesId.MAGNEZONE, SpeciesId.PROBOPASS], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        p.abilityIndex = p.species.speciesId === SpeciesId.MAGNEZONE ? 1 : 0; // Sturdy
+      }),
+    )
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.UXIE, SpeciesId.MESPRIT, SpeciesId.AZELF]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.HOUNDOOM]))
     .setPartyMemberFunc(
@@ -5217,7 +5223,13 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
       }),
     )
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.MAGNEZONE, SpeciesId.PROBOPASS]))
+    .setPartyMemberFunc(
+      1,
+      getRandomPartyMemberFunc([SpeciesId.MAGNEZONE, SpeciesId.PROBOPASS], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        p.abilityIndex = p.species.speciesId === SpeciesId.MAGNEZONE ? 1 : 0; // Sturdy
+      }),
+    )
     .setPartyMemberFunc(
       2,
       getRandomPartyMemberFunc([SpeciesId.UXIE, SpeciesId.MESPRIT, SpeciesId.AZELF], TrainerSlot.TRAINER, true, p => {
@@ -5486,7 +5498,7 @@ export const trainerConfigs: TrainerConfigs = {
         if (p.species.speciesId === SpeciesId.SCIZOR) {
           p.abilityIndex = 1; // Technician
         } else if (p.species.speciesId === SpeciesId.KLEAVOR) {
-          p.abilityIndex = 2; // Sharpnesss
+          p.abilityIndex = 2; // Sharpness
         }
       }),
     )
