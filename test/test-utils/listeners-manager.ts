@@ -19,8 +19,10 @@ let currentListener: NodeJS.MessageListener | null;
 
 export function manageListeners() {
   if (firstTime) {
+    console.log("First Time");
     initialListeners.push(...process.listeners("message"));
   } else {
+    console.log("Not first time");
     expect(process.listeners("message").length).toBeLessThan(7);
 
     // Remove the listener that was used during the previous test file

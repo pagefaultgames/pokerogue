@@ -32,6 +32,7 @@ export function manageTimeouts() {
   global.setInterval = ((...args: Parameters<typeof globalThis.setInterval>) => {
     const interval = origInterval(...args);
     allTimeouts.push(interval);
+    console.log("Interval added!!");
     return interval;
   }) as typeof global.setInterval;
 
@@ -83,13 +84,14 @@ export function manageTimeouts() {
 }
 
 beforeEach(() => {
-  console.log("Clearing prior timeouts on new test start");
+  console.log("Clearing prior timeouts on new test start", allTimeouts.length);
   allTimeouts.splice(0);
   allImmediates.splice(0);
 });
 
 // Clear all lingering timeouts on test end.
 afterEach(() => {
+  console.log("Clearing timeouts on test end", allTimeouts.length);
   // NB: The absolute WORST CASE SCENARIO for this is us clearing a timeout twice in a row
   // (behavior which MDN web docs has certified to be a no-op)
   for (const timeout of allTimeouts) {

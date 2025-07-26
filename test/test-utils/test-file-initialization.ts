@@ -20,9 +20,9 @@ let wasInitialized = false;
  */
 export function initTests(): void {
   setupStubs();
+  manageTimeouts();
   if (!wasInitialized) {
     initTestFile();
-    manageTimeouts();
     wasInitialized = true;
   }
 

@@ -19,6 +19,6 @@ describe("Timeout resets", () => {
     const initCounter = counter;
     await setTimeout(500);
     // Were the interval active, the counter would have increased by now
-    expect(counter).toBe(initCounter);
+    expect(counter, "Timeout was not reset between test runs!").toBe(initCounter);
   });
 });
