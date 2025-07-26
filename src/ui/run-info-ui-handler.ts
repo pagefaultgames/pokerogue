@@ -16,7 +16,6 @@ import type { SpeciesId } from "#enums/species-id";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 import { heldItemSortFunc } from "#items/item-utility";
-import { getLuckString, getLuckTextTint } from "#items/reward";
 import { getVariantTint } from "#sprites/variant";
 import type { SessionSaveData } from "#system/game-data";
 import type { PokemonData } from "#system/pokemon-data";
@@ -25,6 +24,7 @@ import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#ui
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getPlayTimeString } from "#utils/common";
+import { getLuckString, getLuckTextTint } from "#utils/party";
 import i18next from "i18next";
 import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 
