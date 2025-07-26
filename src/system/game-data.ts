@@ -58,7 +58,7 @@ import {
   applySessionVersionMigration,
   applySettingsVersionMigration,
   applySystemVersionMigration,
-} from "#system/version_converter";
+} from "#system/version-migration/version-converter";
 import { VoucherType, vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { DexData, DexEntry } from "#types/dex-data";
