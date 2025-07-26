@@ -1,6 +1,7 @@
 import "vitest-canvas-mock";
 import { initTests } from "#test/test-utils/test-file-initialization";
-import { afterAll, beforeAll, vi } from "vitest";
+import { clearIntervals } from "#test/test-utils/timeout-manager";
+import { afterAll, afterEach, beforeAll, vi } from "vitest";
 
 /** Set the timezone to UTC for tests. */
 
@@ -58,3 +59,5 @@ afterAll(() => {
   global.server.close();
   console.log("Closing i18n MSW server!");
 });
+
+afterEach(() => clearIntervals());

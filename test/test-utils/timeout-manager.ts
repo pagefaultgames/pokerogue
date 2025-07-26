@@ -1,5 +1,3 @@
-import { afterEach } from "vitest";
-
 /** An array of pending timeouts and intervals to clear on test end. */
 const allTimeouts: NodeJS.Timeout[] = [];
 /** An array of pending Immediates to clear on test end. */
@@ -17,7 +15,7 @@ const origClearImmediate = global.clearImmediate;
  * We add all timeouts to a global array on creation, remove them upon being cleared, and remove all stray intervals
  * on test end.
  */
-export function manageTimeouts() {
+export function manageTimeouts(): void {
   const origTimeout = global.setTimeout;
   global.setTimeout = Object.assign(
     (...args: Parameters<typeof globalThis.setTimeout>) => {
@@ -83,7 +81,7 @@ export function manageTimeouts() {
 }
 
 // Clear all lingering timeouts on test end.
-afterEach(() => {
+export function clearIntervals() {
   console.log("Clearing %d timeouts on test end", allTimeouts.length + allImmediates.length);
   // NB: The absolute WORST CASE SCENARIO for this is us clearing a timeout twice in a row
   // (behavior which MDN web docs has certified to be a no-op)
@@ -96,4 +94,4 @@ afterEach(() => {
   }
   allTimeouts.splice(0);
   allImmediates.splice(0);
-});
+}

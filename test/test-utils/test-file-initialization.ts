@@ -20,13 +20,13 @@ let wasInitialized = false;
  */
 export function initTests(): void {
   setupStubs();
-  manageTimeouts();
   if (!wasInitialized) {
     initTestFile();
     wasInitialized = true;
   }
 
   manageListeners();
+  manageTimeouts();
 }
 
 /**
