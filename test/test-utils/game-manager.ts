@@ -114,7 +114,6 @@ export class GameManager {
     this.modifiers = new ModifierHelper(this);
     this.field = new FieldHelper(this);
 
-    this.override.sanitizeOverrides();
     this.initDefaultOverrides();
 
     // TODO: remove `any` assertion

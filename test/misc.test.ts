@@ -35,21 +35,6 @@ describe("Test misc", () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it.skip("test apifetch mock async", async () => {
-    const spy = vi.fn();
-    await apiFetch("https://localhost:8080/account/info")
-      .then(response => {
-        expect(response.status).toBe(200);
-        expect(response.ok).toBe(true);
-        return response.json();
-      })
-      .then(data => {
-        spy(); // Call the spy function
-        expect(data).toEqual({ username: "greenlamp", lastSessionSlot: 0 });
-      });
-    expect(spy).toHaveBeenCalled();
-  });
-
   it("test fetch mock sync", async () => {
     const response = await fetch("https://localhost:8080/account/info");
     const data = await response.json();
