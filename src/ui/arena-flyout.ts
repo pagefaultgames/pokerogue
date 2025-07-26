@@ -86,14 +86,14 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   private flyoutTextHeaderPlayer: Phaser.GameObjects.Text;
   /** The {@linkcode Phaser.GameObjects.Text} header used to indicate the enemy's effects */
   private flyoutTextHeaderEnemy: Phaser.GameObjects.Text;
-  /** The {@linkcode Phaser.GameObjects.Text} header used to indicate neutral effects */
+  /** The {@linkcode Phaser.GameObjects.Text} header used to indicate field effects */
   private flyoutTextHeaderField: Phaser.GameObjects.Text;
 
   /** The {@linkcode Phaser.GameObjects.Text} used to indicate the player's effects */
   private flyoutTextPlayer: Phaser.GameObjects.Text;
   /** The {@linkcode Phaser.GameObjects.Text} used to indicate the enemy's effects */
   private flyoutTextEnemy: Phaser.GameObjects.Text;
-  /** The {@linkcode Phaser.GameObjects.Text} used to indicate neutral effects */
+  /** The {@linkcode Phaser.GameObjects.Text} used to indicate field effects */
   private flyoutTextField: Phaser.GameObjects.Text;
 
   /** Container for all field effects observed by this object */
@@ -163,7 +163,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextHeaderField = addTextObject(
       this.flyoutWidth / 2,
       5,
-      i18next.t("arenaFlyout:neutral"),
+      i18next.t("arenaFlyout:field"),
       TextStyle.SUMMARY_GREEN,
     );
     this.flyoutTextHeaderField.setFontSize(54);
