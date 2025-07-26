@@ -60,7 +60,7 @@ import {
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { getRewardPoolForType } from "#utils/reward-utils";
 import i18next from "i18next";
-import { getRewardTierFromPool } from "./init-reward-pools";
+import { getRewardDefaultTier } from "./reward-utils";
 
 /*
 The term "Reward" refers to items the player can access in the post-battle screen (although
@@ -1926,7 +1926,7 @@ export function getPlayerRewardOptions(
         const guaranteedMod: Reward = rewardInitObj[rewardId]?.();
 
         // Populates item id and tier
-        const guaranteedModTier = getRewardTierFromPool(guaranteedMod);
+        const guaranteedModTier = getRewardDefaultTier(guaranteedMod);
 
         const modType = guaranteedMod instanceof RewardGenerator ? guaranteedMod.generateReward(party) : guaranteedMod;
         if (modType) {
@@ -2010,7 +2010,7 @@ export function overridePlayerRewardOptions(options: RewardOption[], party: Play
   for (let i = 0; i < minLength; i++) {
     const override: RewardOverride = Overrides.ITEM_REWARD_OVERRIDE[i];
     const rewardFunc = rewardInitObj[override.name];
-    let reward: Reward | null = rewardFunc();
+    let reward: Reward | RewardGenerator | null = rewardFunc();
 
     if (reward instanceof RewardGenerator) {
       const pregenArgs = "type" in override && override.type !== null ? [override.type] : undefined;
@@ -2019,7 +2019,7 @@ export function overridePlayerRewardOptions(options: RewardOption[], party: Play
 
     if (reward) {
       options[i].type = reward;
-      options[i].tier = getRewardTierFromPool(reward);
+      options[i].tier = getRewardDefaultTier(reward);
     }
   }
 }
@@ -2031,26 +2031,26 @@ export function getPlayerShopRewardOptionsForWave(waveIndex: number, baseCost: n
 
   const options = [
     [
-      new RewardOption(rewardInitObj.POTION(), 0, baseCost * 0.2),
-      new RewardOption(rewardInitObj.ETHER(), 0, baseCost * 0.4),
-      new RewardOption(rewardInitObj.REVIVE(), 0, baseCost * 2),
+      new RewardOption(allRewards.POTION(), 0, baseCost * 0.2),
+      new RewardOption(allRewards.ETHER(), 0, baseCost * 0.4),
+      new RewardOption(allRewards.REVIVE(), 0, baseCost * 2),
     ],
     [
-      new RewardOption(rewardInitObj.SUPER_POTION(), 0, baseCost * 0.45),
-      new RewardOption(rewardInitObj.FULL_HEAL(), 0, baseCost),
+      new RewardOption(allRewards.SUPER_POTION(), 0, baseCost * 0.45),
+      new RewardOption(allRewards.FULL_HEAL(), 0, baseCost),
     ],
-    [new RewardOption(rewardInitObj.ELIXIR(), 0, baseCost), new RewardOption(rewardInitObj.MAX_ETHER(), 0, baseCost)],
+    [new RewardOption(allRewards.ELIXIR(), 0, baseCost), new RewardOption(rewardInitObj.MAX_ETHER(), 0, baseCost)],
     [
-      new RewardOption(rewardInitObj.HYPER_POTION(), 0, baseCost * 0.8),
-      new RewardOption(rewardInitObj.MAX_REVIVE(), 0, baseCost * 2.75),
-      new RewardOption(rewardInitObj.MEMORY_MUSHROOM(), 0, baseCost * 4),
+      new RewardOption(allRewards.HYPER_POTION(), 0, baseCost * 0.8),
+      new RewardOption(allRewards.MAX_REVIVE(), 0, baseCost * 2.75),
+      new RewardOption(allRewards.MEMORY_MUSHROOM(), 0, baseCost * 4),
     ],
     [
-      new RewardOption(rewardInitObj.MAX_POTION(), 0, baseCost * 1.5),
-      new RewardOption(rewardInitObj.MAX_ELIXIR(), 0, baseCost * 2.5),
+      new RewardOption(allRewards.MAX_POTION(), 0, baseCost * 1.5),
+      new RewardOption(allRewards.MAX_ELIXIR(), 0, baseCost * 2.5),
     ],
-    [new RewardOption(rewardInitObj.FULL_RESTORE(), 0, baseCost * 2.25)],
-    [new RewardOption(rewardInitObj.SACRED_ASH(), 0, baseCost * 10)],
+    [new RewardOption(allRewards.FULL_RESTORE(), 0, baseCost * 2.25)],
+    [new RewardOption(allRewards.SACRED_ASH(), 0, baseCost * 10)],
   ];
   return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
 }

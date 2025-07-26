@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { RewardId } from "#enums/reward-id";
 import type { RarityTier } from "#enums/reward-tier";
+import type { RewardFunc } from "#types/rewards";
 import { getHeldItemTier } from "./held-item-default-tiers";
-import { getRewardTierFromPool } from "./init-reward-pools";
 import { type HeldItemReward, type Reward, RewardGenerator, RewardOption, type TrainerItemReward } from "./reward";
 import { getRewardTier } from "./reward-defaults-tiers";
 import { getTrainerItemTier } from "./trainer-item-default-tiers";
@@ -12,7 +12,7 @@ import { getTrainerItemTier } from "./trainer-item-default-tiers";
  * @param rewardFunc
  * @param pregenArgs Can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
  */
-export function generateReward(rewardFunc: () => Reward, pregenArgs?: any[]): Reward | null {
+export function generateReward(rewardFunc: RewardFunc, pregenArgs?: any[]): Reward | null {
   const reward = rewardFunc();
   return reward instanceof RewardGenerator ? reward.generateReward(globalScene.getPlayerParty(), pregenArgs) : reward;
 }
@@ -22,10 +22,10 @@ export function generateReward(rewardFunc: () => Reward, pregenArgs?: any[]): Re
  * @param rewardFunc
  * @param pregenArgs - can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
  */
-export function generateRewardOption(rewardFunc: () => Reward, pregenArgs?: any[]): RewardOption | null {
+export function generateRewardOption(rewardFunc: RewardFunc, pregenArgs?: any[]): RewardOption | null {
   const reward = generateReward(rewardFunc, pregenArgs);
   if (reward) {
-    const tier = getRewardTierFromPool(reward);
+    const tier = getRewardDefaultTier(reward);
     return new RewardOption(reward, 0, tier);
   }
   return null;
