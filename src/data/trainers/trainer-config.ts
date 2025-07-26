@@ -4992,12 +4992,17 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       4,
-      getRandomPartyMemberFunc([SpeciesId.ARTICUNO, SpeciesId.ZAPDOS, SpeciesId.MOLTRES], TrainerSlot.TRAINER, true, p => {
-        p.generateAndPopulateMoveset();
-        p.pokeball = PokeballType.ULTRA_BALL;
-        p.abilityIndex = 2; // Snow Cloak Articuno, Static Zapdos, Flame Body Moltres
-        p.setBoss(true, 2);
-      }),
+      getRandomPartyMemberFunc(
+        [SpeciesId.ARTICUNO, SpeciesId.ZAPDOS, SpeciesId.MOLTRES],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.generateAndPopulateMoveset();
+          p.pokeball = PokeballType.ULTRA_BALL;
+          p.abilityIndex = 2; // Snow Cloak Articuno, Static Zapdos, Flame Body Moltres
+          p.setBoss(true, 2);
+        },
+      ),
     )
     .setPartyMemberFunc(
       5,
@@ -5019,7 +5024,9 @@ export const trainerConfigs: TrainerConfigs = {
         p.abilityIndex = 1; // Drought
       }),
     )
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.SCOVILLAIN], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(
+      1,
+      getRandomPartyMemberFunc([SpeciesId.SCOVILLAIN], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.abilityIndex = 0; // Chlorophyll
       }),
@@ -5479,7 +5486,7 @@ export const trainerConfigs: TrainerConfigs = {
         if (p.species.speciesId === SpeciesId.SCIZOR) {
           p.abilityIndex = 1; // Technician
         } else if (p.species.speciesId === SpeciesId.KLEAVOR) {
-          p.abilityIndex = 2; // Sharpness
+          p.abilityIndex = 2; // Sharpnesss
         }
       }),
     )
@@ -5501,7 +5508,7 @@ export const trainerConfigs: TrainerConfigs = {
         if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.FIRST_IMPRESSION)) {
           // Check if First Impression is in the moveset, if not, replace the third move with First Impression.
           p.moveset[2] = new PokemonMove(MoveId.FIRST_IMPRESSION);
-        p.gender = Gender.MALE;
+          p.gender = Gender.MALE;
         }
       }),
     ),
@@ -5518,8 +5525,8 @@ export const trainerConfigs: TrainerConfigs = {
         if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.FIRST_IMPRESSION)) {
           // Check if First Impression is in the moveset, if not, replace the third move with First Impression.
           p.moveset[2] = new PokemonMove(MoveId.FIRST_IMPRESSION);
-        p.abilityIndex = 2; // Anticipation
-        p.gender = Gender.MALE;
+          p.abilityIndex = 2; // Anticipation
+          p.gender = Gender.MALE;
         }
       }),
     )
@@ -5661,11 +5668,15 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc(
-        [SpeciesId.GALAR_ARTICUNO, SpeciesId.GALAR_ZAPDOS, SpeciesId.GALAR_MOLTRES], TrainerSlot.TRAINER, true, p => {
-        p.setBoss(true, 2);
-        p.generateAndPopulateMoveset();
-        p.pokeball = PokeballType.ROGUE_BALL
-      }),
+        [SpeciesId.GALAR_ARTICUNO, SpeciesId.GALAR_ZAPDOS, SpeciesId.GALAR_MOLTRES],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.setBoss(true, 2);
+          p.generateAndPopulateMoveset();
+          p.pokeball = PokeballType.ROGUE_BALL;
+        },
+      ),
     ),
   [TrainerType.PENNY]: new TrainerConfig(++t)
     .setName("Cassiopeia")
@@ -5683,10 +5694,17 @@ export const trainerConfigs: TrainerConfigs = {
         p.gender = Gender.FEMALE;
       }),
     )
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.VAPOREON, SpeciesId.FLAREON, SpeciesId.JOLTEON], TrainerSlot.TRAINER, true, p => {
-        p.setBoss(true, 2);
-        p.generateAndPopulateMoveset();
-      }),
+    .setPartyMemberFunc(
+      4,
+      getRandomPartyMemberFunc(
+        [SpeciesId.VAPOREON, SpeciesId.FLAREON, SpeciesId.JOLTEON],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.setBoss(true, 2);
+          p.generateAndPopulateMoveset();
+        },
+      ),
     )
     .setPartyMemberFunc(
       5,
@@ -5713,7 +5731,7 @@ export const trainerConfigs: TrainerConfigs = {
         if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.HYPER_VOICE)) {
           // Check if Hyper Voice is in the moveset, if not, replace the second move with Hyper Voice.
           p.moveset[1] = new PokemonMove(MoveId.HYPER_VOICE);
-        p.gender = Gender.FEMALE;
+          p.gender = Gender.FEMALE;
         }
       }),
     )
@@ -5724,9 +5742,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = randSeedInt(5, 1); // Heat, Wash, Frost, Fan, or Mow
       }),
     )
-    .setPartyMemberFunc(
-      2,
-      getRandomPartyMemberFunc([SpeciesId.UMBREON, SpeciesId.ESPEON]))
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.UMBREON, SpeciesId.ESPEON]))
     .setPartyMemberFunc(
       3,
       getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
@@ -5737,11 +5753,16 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       4,
-      getRandomPartyMemberFunc([SpeciesId.WALKING_WAKE, SpeciesId.GOUGING_FIRE, SpeciesId.RAGING_BOLT], TrainerSlot.TRAINER, true, p => {
-        p.generateAndPopulateMoveset();
-        p.pokeball = PokeballType.ROGUE_BALL;
-        p.setBoss(true, 2);
-      }),
+      getRandomPartyMemberFunc(
+        [SpeciesId.WALKING_WAKE, SpeciesId.GOUGING_FIRE, SpeciesId.RAGING_BOLT],
+        TrainerSlot.TRAINER,
+        true,
+        p => {
+          p.generateAndPopulateMoveset();
+          p.pokeball = PokeballType.ROGUE_BALL;
+          p.setBoss(true, 2);
+        },
+      ),
     )
     .setPartyMemberFunc(
       5,
