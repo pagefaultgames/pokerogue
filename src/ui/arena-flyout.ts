@@ -3,6 +3,7 @@ import { ArenaTrapTag } from "#data/arena-tag";
 import { TerrainType } from "#data/terrain";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
 import type { ArenaEvent } from "#events/arena";
 import {
@@ -14,7 +15,7 @@ import {
 } from "#events/arena";
 import type { TurnEndEvent } from "#events/battle-scene";
 import { BattleSceneEventType } from "#events/battle-scene";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { TimeOfDayWidget } from "#ui/time-of-day-widget";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt, formatText, toCamelCaseString } from "#utils/common";
