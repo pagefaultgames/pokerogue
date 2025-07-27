@@ -17,16 +17,18 @@ const version = "2.0.1";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.join(__dirname, "..", "..");
-const boilerplateFilePath = path.join(__dirname, "test-boilerplate.ts");
-const choices = [
+const choices = /** @type {const} */ ([
   { label: "Move", dir: "moves" },
   { label: "Ability", dir: "abilities" },
   { label: "Item", dir: "items" },
+  { label: "Reward", dir: "rewards" },
   { label: "Mystery Encounter", dir: "mystery-encounter/encounters" },
   { label: "Utils", dir: "utils" },
-  { label: "UI", dir: "ui" },
-];
+  // TODO: Uncomment once we can actually test UI code
+  //  { label: "UI", dir: "ui" },
+]);
 
+/** @typedef {choices[number]} choiceType */
 //#endregion
 //#region Functions
 
@@ -41,27 +43,27 @@ function getTestFolderPath(...folders) {
 
 /**
  * Prompts the user to select a type via list.
- * @returns {Promise<{selectedOption: {label: string, dir: string}}>} the selected type
+ * @returns {Promise<choiceType> the selected type
  */
 async function promptTestType() {
+  /** @type {choices[number] | {name: "EXIT"}} */
   const typeAnswer = await inquirer
     .prompt([
       {
         type: "list",
         name: "selectedOption",
         message: "What type of test would you like to create?",
-        choices: [...choices.map(choice => ({ name: choice.label, value: choice })), { name: "EXIT", value: "N/A" }],
+        choices: [
+          ...choices.map(choice => ({ name: choice.label, value: choice })),
+          { name: "EXIT", value: { label: "EXIT" } },
+        ],
       },
     ])
-    .then(ans => ans.selectedOption);
+    .then(ta => ta.selectedOption);
 
   if (typeAnswer.name === "EXIT") {
     console.log("Exiting...");
     return process.exit(0);
-  }
-  if (!choices.some(choice => choice.dir === typeAnswer.dir)) {
-    console.error(`Please provide a valid type: (${choices.map(choice => choice.label).join(", ")})!`);
-    return await promptTestType();
   }
 
   return typeAnswer;
@@ -70,24 +72,40 @@ async function promptTestType() {
 /**
  * Prompts the user to provide a file name.
  * @param {string} selectedType
- * @returns {Promise<{userInput: string}>} the selected file name
+ * @returns {Promise<string>} the selected file name
  */
 async function promptFileName(selectedType) {
-  /** @type {{userInput: string}} */
-  const fileNameAnswer = await inquirer.prompt([
-    {
-      type: "input",
-      name: "userInput",
-      message: `Please provide the name of the ${selectedType}:`,
-    },
-  ]);
+  /** @type {string} */
+  const fileNameAnswer = await inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "userInput",
+        message: `Please provide the name of the ${selectedType}.`,
+      },
+    ])
+    .then(fa => fa.userInput);
 
-  if (!fileNameAnswer.userInput || fileNameAnswer.userInput.trim().length === 0) {
+  if (fileNameAnswer.trim().length === 0) {
     console.error("Please provide a valid file name!");
     return await promptFileName(selectedType);
   }
 
   return fileNameAnswer;
+}
+
+/**
+ * Obtain the path to the boilerplate file based on the current option.
+ * @param {choiceType['label']} choiceType The choice selected
+ * @returns {string} The path to the boilerplate file
+ */
+function getBoilerplatePath(choiceType) {
+  switch (choiceType) {
+    // case "Reward":
+    //   return path.join(__dirname, "boilerplates/reward.ts");
+    default:
+      return path.join(__dirname, "boilerplates/default.ts");
+  }
 }
 
 /**
@@ -98,12 +116,11 @@ async function runInteractive() {
   console.group(chalk.grey(`Create Test - v${version}\n`));
 
   try {
-    const typeAnswer = await promptTestType();
-    const fileNameAnswer = await promptFileName(typeAnswer.selectedOption.label);
+    const type = await promptTestType();
+    const fileNameAnswer = await promptFileName(type.label);
 
-    const type = typeAnswer.selectedOption;
     // Convert fileName from snake_case or camelCase to kebab-case
-    const fileName = fileNameAnswer.userInput
+    const fileName = fileNameAnswer
       .replace(/_+/g, "-") // Convert snake_case (underscore) to kebab-case (dashes)
       .replace(/([a-z])([A-Z])/g, "$1-$2") // Convert camelCase to kebab-case
       .replace(/\s+/g, "-") // Replace spaces with dashes
@@ -116,7 +133,7 @@ async function runInteractive() {
     const description = `${type.label} - ${formattedName}`;
 
     // Define the content template
-    const content = fs.readFileSync(boilerplateFilePath, "utf8").replace("{{description}}", description);
+    const content = fs.readFileSync(getBoilerplatePath(type.label), "utf8").replace("{{description}}", description);
 
     // Ensure the directory exists
     if (!fs.existsSync(dir)) {
