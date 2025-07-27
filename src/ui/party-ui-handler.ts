@@ -13,6 +13,7 @@ import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
@@ -23,7 +24,7 @@ import type { TurnMove } from "#types/turn-move";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-handler";
-import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { BooleanHolder, getLocalizedSpriteKey, randInt } from "#utils/common";
 import { toTitleCase } from "#utils/strings";
@@ -1792,17 +1793,16 @@ class PartySlot extends Phaser.GameObjects.Container {
       const shinyStar = globalScene.add.image(0, 0, `shiny_star_small${doubleShiny ? "_1" : ""}`);
       shinyStar.setOrigin(0, 0);
       shinyStar.setPositionRelative(this.slotName, -9, 3);
-      shinyStar.setTint(getVariantTint(this.pokemon.getBaseVariant(doubleShiny)));
+      shinyStar.setTint(getVariantTint(this.pokemon.getBaseVariant()));
 
       slotInfoContainer.add(shinyStar);
 
       if (doubleShiny) {
-        const fusionShinyStar = globalScene.add.image(0, 0, "shiny_star_small_2");
-        fusionShinyStar.setOrigin(0, 0);
-        fusionShinyStar.setPosition(shinyStar.x, shinyStar.y);
-        fusionShinyStar.setTint(
-          getVariantTint(this.pokemon.summonData.illusion?.basePokemon.fusionVariant ?? this.pokemon.fusionVariant),
-        );
+        const fusionShinyStar = globalScene.add
+          .image(0, 0, "shiny_star_small_2")
+          .setOrigin(0)
+          .setPosition(shinyStar.x, shinyStar.y)
+          .setTint(getVariantTint(this.pokemon.fusionVariant));
 
         slotInfoContainer.add(fusionShinyStar);
       }

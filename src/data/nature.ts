@@ -1,7 +1,8 @@
 import { Nature } from "#enums/nature";
 import { EFFECTIVE_STATS, getShortenedStatKey, Stat } from "#enums/stat";
+import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
-import { getBBCodeFrag, TextStyle } from "#ui/text";
+import { getBBCodeFrag } from "#ui/text";
 import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 

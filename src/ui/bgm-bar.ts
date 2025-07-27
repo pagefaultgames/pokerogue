@@ -1,6 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import { addTextObject, TextStyle } from "#ui/text";
+import { TextStyle } from "#enums/text-style";
+import { addTextObject } from "#ui/text";
 import { toTitleCase } from "#utils/strings";
+
 import i18next from "i18next";
 
 const hiddenX = -150;

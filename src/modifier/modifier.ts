@@ -23,6 +23,7 @@ import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { BATTLE_STATS, type PermanentStat, Stat, TEMP_BATTLE_STATS, type TempBattleStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { TextStyle } from "#enums/text-style";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type {
   DoubleBattleChanceBoosterModifierType,
@@ -40,7 +41,7 @@ import type {
 } from "#modifiers/modifier-type";
 import type { VoucherType } from "#system/voucher";
 import type { ModifierInstanceMap, ModifierString } from "#types/modifier-types";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, randSeedFloat, toDmgValue } from "#utils/common";
 import { getModifierType } from "#utils/modifier-utils";
 import i18next from "i18next";
