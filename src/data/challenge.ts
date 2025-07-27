@@ -27,6 +27,7 @@ import type { DexAttrProps, GameData } from "#system/game-data";
 import { BooleanHolder, type NumberHolder, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { toCamelCase, toSnakeCase } from "#utils/strings";
 import i18next from "i18next";
 
 /** A constant for the default max cost of the starting party before a run */
@@ -67,14 +68,11 @@ export abstract class Challenge {
   }
 
   /**
-   * Gets the localisation key for the challenge
-   * @returns {@link string} The i18n key for this challenge
+   * Gets the localization key for the challenge
+   * @returns The i18n key for this challenge as camel case.
    */
   geti18nKey(): string {
-    return Challenges[this.id]
-      .split("_")
-      .map((f, i) => (i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
-      .join("");
+    return toCamelCase(Challenges[this.id]);
   }
 
   /**
@@ -105,23 +103,22 @@ export abstract class Challenge {
   }
 
   /**
-   * Returns the textual representation of a challenge's current value.
-   * @param overrideValue {@link number} The value to check for. If undefined, gets the current value.
-   * @returns {@link string} The localised name for the current value.
+   * Return the textual representation of a challenge's current value.
+   * @param overrideValue - The value to check for; default {@linkcode this.value}
+   * @returns The localised text for the current value.
    */
-  getValue(overrideValue?: number): string {
-    const value = overrideValue ?? this.value;
-    return i18next.t(`challenges:${this.geti18nKey()}.value.${value}`);
+  getValue(overrideValue: number = this.value): string {
+    return i18next.t(`challenges:${this.geti18nKey()}.value.${overrideValue}`);
   }
 
   /**
-   * Returns the description of a challenge's current value.
-   * @param overrideValue {@link number} The value to check for. If undefined, gets the current value.
-   * @returns {@link string} The localised description for the current value.
+   * Return the description of a challenge's current value.
+   * @param overrideValue - The value to check for; default {@linkcode this.value}
+   * @returns The localised description for the current value.
    */
-  getDescription(overrideValue?: number): string {
-    const value = overrideValue ?? this.value;
-    return `${i18next.t([`challenges:${this.geti18nKey()}.desc.${value}`, `challenges:${this.geti18nKey()}.desc`])}`;
+  // TODO: Do we need an override value here? it's currently unused
+  getDescription(overrideValue: number = this.value): string {
+    return `${i18next.t([`challenges:${this.geti18nKey()}.desc.${overrideValue}`, `challenges:${this.geti18nKey()}.desc`])}`;
   }
 
   /**
@@ -579,31 +576,19 @@ export class SingleGenerationChallenge extends Challenge {
     return this.value > 0 ? 1 : 0;
   }
 
-  /**
-   * Returns the textual representation of a challenge's current value.
-   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
-   * @returns {string} The localised name for the current value.
-   */
-  getValue(overrideValue?: number): string {
-    const value = overrideValue ?? this.value;
-    if (value === 0) {
+  getValue(overrideValue: number = this.value): string {
+    if (overrideValue === 0) {
       return i18next.t("settings:off");
     }
-    return i18next.t(`starterSelectUiHandler:gen${value}`);
+    return i18next.t(`starterSelectUiHandler:gen${overrideValue}`);
   }
 
-  /**
-   * Returns the description of a challenge's current value.
-   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
-   * @returns {string} The localised description for the current value.
-   */
-  getDescription(overrideValue?: number): string {
-    const value = overrideValue ?? this.value;
-    if (value === 0) {
+  getDescription(overrideValue: number = this.value): string {
+    if (overrideValue === 0) {
       return i18next.t("challenges:singleGeneration.desc_default");
     }
     return i18next.t("challenges:singleGeneration.desc", {
-      gen: i18next.t(`challenges:singleGeneration.gen_${value}`),
+      gen: i18next.t(`challenges:singleGeneration.gen_${overrideValue}`),
     });
   }
 
@@ -671,29 +656,13 @@ export class SingleTypeChallenge extends Challenge {
     return this.value > 0 ? 1 : 0;
   }
 
-  /**
-   * Returns the textual representation of a challenge's current value.
-   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
-   * @returns {string} The localised name for the current value.
-   */
-  getValue(overrideValue?: number): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    return PokemonType[this.value - 1].toLowerCase();
+  getValue(overrideValue: number = this.value): string {
+    return toSnakeCase(PokemonType[overrideValue - 1]);
   }
 
-  /**
-   * Returns the description of a challenge's current value.
-   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
-   * @returns {string} The localised description for the current value.
-   */
-  getDescription(overrideValue?: number): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
-    const type = i18next.t(`pokemonInfo:Type.${PokemonType[this.value - 1]}`);
-    const typeColor = `[color=${TypeColor[PokemonType[this.value - 1]]}][shadow=${TypeShadow[PokemonType[this.value - 1]]}]${type}[/shadow][/color]`;
+  getDescription(overrideValue: number = this.value): string {
+    const type = i18next.t(`pokemonInfo:Type.${PokemonType[overrideValue - 1]}`);
+    const typeColor = `[color=${TypeColor[PokemonType[overrideValue - 1]]}][shadow=${TypeShadow[PokemonType[this.value - 1]]}]${type}[/shadow][/color]`;
     const defaultDesc = i18next.t("challenges:singleType.desc_default");
     const typeDesc = i18next.t("challenges:singleType.desc", {
       type: typeColor,
@@ -832,13 +801,7 @@ export class LowerStarterMaxCostChallenge extends Challenge {
     super(Challenges.LOWER_MAX_STARTER_COST, 9);
   }
 
-  /**
-   * @override
-   */
-  getValue(overrideValue?: number): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
+  getValue(overrideValue: number = this.value): string {
     return (DEFAULT_PARTY_MAX_COST - overrideValue).toString();
   }
 
@@ -866,13 +829,7 @@ export class LowerStarterPointsChallenge extends Challenge {
     super(Challenges.LOWER_STARTER_POINTS, 9);
   }
 
-  /**
-   * @override
-   */
-  getValue(overrideValue?: number): string {
-    if (overrideValue === undefined) {
-      overrideValue = this.value;
-    }
+  getValue(overrideValue: number = this.value): string {
     return (DEFAULT_PARTY_MAX_COST - overrideValue).toString();
   }
 
