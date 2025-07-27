@@ -18,6 +18,10 @@ ls:
    src/system/version-migration/versions:
       .ts: snake_case
       <<: *cfg
+   test:
+      <<: *cfg
+      .dir: kebab-case | regex:@types
+      .js: exists:0
 
 ignore:
    - node_modules
