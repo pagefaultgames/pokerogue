@@ -1,4 +1,5 @@
-import { Z$OptionalNonNegativeIntCatchToUndef } from "#schemas/common";
+import { Z$OptionalNonNegativeIntCatchToUndef, Z$PositiveInt } from "#schemas/common";
+import { Z$PokemonType } from "#system/schemas/v1.10/pokemon-type";
 import { z } from "zod";
 
 /**
@@ -11,7 +12,9 @@ import { z } from "zod";
 export const Z$CustomPokemonData = z.object({
   // sprite scale of -1 is allowed, but it's the default meaning there is no override for it
   spriteScale: z.number().nonnegative().optional().catch(undefined),
-  ability: Z$OptionalNonNegativeIntCatchToUndef.catch(undefined),
-  passive: Z$OptionalNonNegativeIntCatchToUndef.catch(undefined),
-  nature: Z$OptionalNonNegativeIntCatchToUndef.catch(undefined),
+  ability: Z$OptionalNonNegativeIntCatchToUndef,
+  passive: Z$OptionalNonNegativeIntCatchToUndef,
+  nature: Z$OptionalNonNegativeIntCatchToUndef,
+  types: z.array(Z$PokemonType).optional().catch(undefined),
+  hitsRecCount: Z$PositiveInt.optional().catch(undefined),
 });
