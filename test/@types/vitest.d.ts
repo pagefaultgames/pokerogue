@@ -1,7 +1,7 @@
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { expect } from "vitest";
-import { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
+import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
 
 declare module "vitest" {
   interface Assertion {
