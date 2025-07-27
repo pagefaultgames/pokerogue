@@ -1476,7 +1476,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       loop: -1,
       // Make the initial bounce a little randomly delayed
       delay: randIntRange(0, 50) * 5,
-      loopDelay: 1000,
+      loopDelay: fixedInt(1000),
       tweens: [
         {
           targets: icon,
