@@ -97,10 +97,10 @@ interface SerializedIllusionData extends Omit<IllusionData, "fusionSpecies"> {
 }
 
 interface SerializedPokemonSummonData {
-  statStages: number[];
-  moveQueue: TurnMove[];
-  tags: BattlerTag[];
-  abilitySuppressed: boolean;
+  statStages?: number[];
+  moveQueue?: TurnMove[];
+  tags?: BattlerTag[];
+  abilitySuppressed?: boolean;
   speciesForm?: SerializedSpeciesForm;
   fusionSpeciesForm?: SerializedSpeciesForm;
   ability?: AbilityId;
@@ -109,12 +109,12 @@ interface SerializedPokemonSummonData {
   fusionGender?: Gender;
   stats: number[];
   moveset?: PokemonMove[];
-  types: PokemonType[];
+  types?: PokemonType[];
   addedType?: PokemonType;
   illusion?: SerializedIllusionData;
-  illusionBroken: boolean;
-  berriesEatenLast: BerryType[];
-  moveHistory: TurnMove[];
+  illusionBroken?: boolean;
+  berriesEatenLast?: BerryType[];
+  moveHistory?: TurnMove[];
 }
 
 /**
@@ -250,9 +250,12 @@ export class PokemonSummonData {
           },
     };
     // Replace `null` with `undefined`, as `undefined` never gets serialized
+    // Replace empty arrays with `[]`
     for (const [key, value] of Object.entries(t)) {
       if (value === null) {
         t[key] = undefined;
+      } else if (Array.isArray(value) && value.length === 0) {
+        t[key] = [];
       }
     }
     return t;

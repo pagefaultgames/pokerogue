@@ -1,6 +1,7 @@
 import { Z$BoolCatchToFalse, Z$NonNegativeInt, Z$PositiveInt } from "#schemas/common";
 import { Z$PokeballType } from "#schemas/pokeball-type";
 import { Z$PokemonMove } from "#schemas/pokemon-move";
+import { Z$PokemonBattleData } from "#system/schemas/v1.10/pokemon-battle-data";
 import { Z$Gender } from "#system/schemas/v1.10/pokemon-gender";
 import z from "zod";
 import { NatureSchema } from "./pokemon-nature";
@@ -14,7 +15,7 @@ import { StatusSchema } from "./status-effect";
  * `looseObject` used here to allow properties specific to player or enemy Pokémon
  * to be handled by their respective schemas.
  */
-const Z$PokemonData = z.looseObject({
+export const Z$PokemonData = z.looseObject({
   // malformed pokemon ids are _not_ supported.
   id: z.uint32(),
   species: z.uint32(),
@@ -65,6 +66,9 @@ const Z$PokemonData = z.looseObject({
   //#endregion "fusion" information
 
   pokerus: z.boolean().catch(false),
+  summonData: Z$PokemonSummonData,
+  battleData: Z$PokemonBattleData,
+  summonDataSpeciesFormIndex: Z$NonNegativeInt,
 });
 
 export const Z$PlayerPokemonData = z.object({
@@ -87,29 +91,6 @@ export const Z$EnemyPokemonData = z.object({
   boss: z.boolean().catch(false),
   bossSegments: z.int().nonnegative().default(0),
 });
-
-// TODO: Replace output assertion type with the type of pokemon data that has CustomPokemonData.
-export function PreCustomPokemonDataMigrator(
-  data: z.output<typeof Z$PokemonData>,
-): asserts data is z.output<typeof Z$PokemonData> {
-  // Value of `-1` indicated no override, so we can ignore it.
-  const nature = NatureSchema.safeParse(data.natureOverride);
-  if (nature.success) {
-    const customPokemonData = data.customPokemonData;
-    // If natureOverride is valid, use it
-    if (
-      customPokemonData &&
-      typeof customPokemonData === "object" &&
-      ((customPokemonData as { nature?: number }).nature ?? -1) === -1
-    ) {
-      customPokemonData;
-    } else {
-      data.customPokemonData = {
-        nature: nature.data,
-      };
-    }
-  }
-}
 
 export type PreParsedPokemonData = z.input<typeof Z$PokemonData>;
 export type ParsedPokemonData = z.output<typeof Z$PokemonData>;
