@@ -1,8 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import { allRewards } from "#data/data-lists";
+import type { HeldItemId } from "#enums/held-item-id";
 import { getRewardCategory, RewardCategoryId, RewardId } from "#enums/reward-id";
 import type { RarityTier } from "#enums/reward-tier";
-import type { RewardFunc } from "#types/rewards";
+import type { TrainerItemId } from "#enums/trainer-item-id";
+import type { RewardFunc, RewardPoolId } from "#types/rewards";
 import { getHeldItemTier } from "./held-item-default-tiers";
 import {
   type HeldItemReward,
@@ -98,4 +100,16 @@ export function getPlayerShopRewardOptionsForWave(waveIndex: number, baseCost: n
     [new RewardOption(allRewards.SACRED_ASH(), 0, baseCost * 10)],
   ];
   return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
+}
+
+export function isRewardId(id: RewardPoolId): id is RewardId {
+  return id > 0x2000;
+}
+
+export function isTrainerItemId(id: RewardPoolId): id is TrainerItemId {
+  return id > 0x1000 && id < 0x2000;
+}
+
+export function isHeldItemId(id: RewardPoolId): id is HeldItemId {
+  return id < 0x1000;
 }
