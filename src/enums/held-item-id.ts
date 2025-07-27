@@ -96,18 +96,22 @@ export const HeldItemId = {
 
 export type HeldItemId = EnumValues<typeof HeldItemId>;
 
+type HeldItemNameMap = {
+  [k in HeldItemName as (typeof HeldItemId)[k]]: k
+}
+
 type HeldItemName = keyof typeof HeldItemId;
 
 /** `const object` mapping all held item IDs to their respective names. */
 // TODO: This stores names as UPPER_SNAKE_CASE, but the locales are in PascalCase...
-export const HeldItemNames = Object.entries(HeldItemId).reduce(
+export const HeldItemNames = Object.freeze(Object.entries(HeldItemId).reduce(
   // Use a type-safe reducer to force number keys and values
   (acc, [key, value]) => {
-    acc[value as HeldItemId] = key as HeldItemName;
+    acc[value] = key;
     return acc;
   },
-  {} as Record<HeldItemId, HeldItemName>
-) satisfies Record<HeldItemId, HeldItemName>;
+  {}
+)) as HeldItemNameMap;
 
 export const HeldItemCategoryId = {
   NONE: 0x0000,
