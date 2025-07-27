@@ -38,6 +38,7 @@ import type { Nature } from "#enums/nature";
 import { Passive as PassiveAttr } from "#enums/passive";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
+import { TextStyle } from "#enums/text-style";
 import { TimeOfDay } from "#enums/time-of-day";
 import { UiMode } from "#enums/ui-mode";
 import type { Variant } from "#sprites/variant";
@@ -51,7 +52,7 @@ import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokedexInfoOverlay } from "#ui/pokedex-info-overlay";
 import { StatsContainer } from "#ui/stats-container";
-import { addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions, TextStyle } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import {
   BooleanHolder,
