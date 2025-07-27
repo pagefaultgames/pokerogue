@@ -11,18 +11,14 @@ _cfg: &cfg
 
 ls:
    <<: *cfg
-   src:
+   src: *src
       <<: *cfg
       .dir: kebab-case | regex:@types
       .js: exists:0
    src/system/version-migration/versions:
       .ts: snake_case
       <<: *cfg
-   test:
-      <<: *cfg
-      .dir: kebab-case | regex:@types
-      .js: exists:0
-
+   test: &src
 ignore:
    - node_modules
    - .vscode
