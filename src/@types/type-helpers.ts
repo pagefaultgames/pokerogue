@@ -41,7 +41,7 @@ export type Mutable<T> = {
  * @typeParam O - The type of the object
  * @typeParam V - The type of one of O's values
  */
-export type InferKeys<O extends Record<keyof any, unknown>, V extends EnumValues<O>> = {
+export type InferKeys<O, V extends EnumValues<O>> = {
   [K in keyof O]: O[K] extends V ? K : never;
 }[keyof O];
 

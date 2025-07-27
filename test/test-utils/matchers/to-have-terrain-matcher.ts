@@ -1,0 +1,58 @@
+import { TerrainType } from "#app/data/terrain";
+import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
+import { toReadableString } from "#utils/common";
+import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
+
+/**
+ * Matcher to check if the {@linkcode TerrainType} is as expected
+ * @param received - The object to check. Should be an instance of {@linkcode GameManager}.
+ * @param expectedTerrainType - The expected {@linkcode TerrainType}, or {@linkcode TerrainType.NONE} if no terrain should be active
+ * @returns Whether the matcher passed
+ */
+export function toHaveTerrainMatcher(
+  this: MatcherState,
+  received: unknown,
+  expectedTerrainType: TerrainType,
+): SyncExpectationResult {
+  if (!isGameManagerInstance(received)) {
+    return {
+      pass: false,
+      message: () => `Expected GameManager, but got ${receivedStr(received)}!`,
+    };
+  }
+
+  if (!received.scene?.arena) {
+    return {
+      pass: false,
+      message: () => `Expected GameManager.${received.scene ? "scene" : "scene.arena"} to be defined!`,
+    };
+  }
+
+  const actual = received.scene.arena.getTerrainType();
+  const pass = actual === expectedTerrainType;
+  const actualStr = toTerrainStr(actual);
+  const expectedStr = toTerrainStr(expectedTerrainType);
+
+  return {
+    pass,
+    message: () =>
+      pass
+        ? `Expected Arena to NOT have ${expectedStr} active, but it did!`
+        : `Expected Arena to have ${expectedStr} active, but got ${actualStr}!`,
+    actual: actualStr,
+    expected: expectedStr,
+  };
+}
+
+/**
+ * Get a human readable string of the current {@linkcode TerrainType}.
+ * @param terrainType - The {@linkcode TerrainType} to transform
+ * @returns A human readable string
+ */
+function toTerrainStr(terrainType: TerrainType) {
+  if (terrainType === TerrainType.NONE) {
+    return "no terrain";
+  }
+  // TODO: Change to use updated string utils
+  return toReadableString(TerrainType[terrainType] + " Terrain");
+}

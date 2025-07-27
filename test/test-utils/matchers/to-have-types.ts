@@ -1,6 +1,9 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonType } from "#enums/pokemon-type";
-import { Pokemon } from "#field/pokemon";
+import type { Pokemon } from "#field/pokemon";
+import { stringifyEnumArray } from "#test/test-utils/string-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
+import { isPokemonInstance, receivedStr } from "../test-utils";
 
 export interface toHaveTypesOptions {
   /**
@@ -26,39 +29,39 @@ export function toHaveTypes(
   expected: unknown,
   options: toHaveTypesOptions = {},
 ): SyncExpectationResult {
-  if (!(received instanceof Pokemon)) {
+  if (!isPokemonInstance(received)) {
     return {
-      pass: this.isNot,
-      message: () => `Expected a Pokemon, but got ${this.utils.stringify(received)}!`,
+      pass: false,
+      message: () => `Expected to recieve a Pokémon, but got ${receivedStr(received)}!`,
     };
   }
 
   if (!Array.isArray(expected) || expected.length === 0) {
     return {
-      pass: this.isNot,
-      message: () => `Expected to recieve an array with length >=1, but got ${this.utils.stringify(expected)}!`,
+      pass: false,
+      message: () => `Expected to receive an array with length >=1, but got ${this.utils.stringify(expected)}!`,
     };
   }
 
   if (!expected.every((t): t is PokemonType => t in PokemonType)) {
     return {
-      pass: this.isNot,
-      message: () => `Expected to recieve array of PokemonTypes but got ${this.utils.stringify(expected)}!`,
+      pass: false,
+      message: () => `Expected to receive array of PokemonTypes but got ${this.utils.stringify(expected)}!`,
     };
   }
 
-  const gotSorted = pkmnTypeToStr(received.getTypes(...(options.args ?? [])));
-  const wantSorted = pkmnTypeToStr(expected.slice());
-  const pass = this.equals(gotSorted, wantSorted, [...this.customTesters, this.utils.iterableEquality]);
+  const actualSorted = stringifyEnumArray(PokemonType, received.getTypes(...(options.args ?? [])).sort());
+  const expectedSorted = stringifyEnumArray(PokemonType, expected.slice().sort());
+  const matchers = options.exact
+    ? [...this.customTesters, this.utils.iterableEquality]
+    : [...this.customTesters, this.utils.subsetEquality, this.utils.iterableEquality];
+  const pass = this.equals(actualSorted, expectedSorted, matchers);
 
   return {
-    pass: this.isNot !== pass,
-    message: () => `Expected ${received.name} to have types ${this.utils.stringify(wantSorted)}, but got ${gotSorted}!`,
-    actual: gotSorted,
-    expected: wantSorted,
+    pass,
+    message: () =>
+      `Expected ${getPokemonNameWithAffix(received)} to have types ${this.utils.stringify(expectedSorted)}, but got ${actualSorted}!`,
+    actual: actualSorted,
+    expected: expectedSorted,
   };
-}
-
-function pkmnTypeToStr(p: PokemonType[]): string[] {
-  return p.sort().map(type => PokemonType[type]);
 }
