@@ -1,78 +1,13 @@
 import { globalScene } from "#app/global-scene";
 import { EggTier } from "#enums/egg-type";
 import { ModifierTier } from "#enums/modifier-tier";
+import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import i18next from "#plugins/i18n";
+import type { TextStyleOptions } from "#types/ui";
 import type Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
-
-export enum TextStyle {
-  MESSAGE,
-  WINDOW,
-  WINDOW_ALT,
-  WINDOW_BATTLE_COMMAND,
-  BATTLE_INFO,
-  PARTY,
-  PARTY_RED,
-  PARTY_CANCEL_BUTTON,
-  INSTRUCTIONS_TEXT,
-  MOVE_LABEL,
-  SUMMARY,
-  SUMMARY_DEX_NUM,
-  SUMMARY_DEX_NUM_GOLD,
-  SUMMARY_ALT,
-  SUMMARY_HEADER,
-  SUMMARY_RED,
-  SUMMARY_BLUE,
-  SUMMARY_PINK,
-  SUMMARY_GOLD,
-  SUMMARY_GRAY,
-  SUMMARY_GREEN,
-  SUMMARY_STATS,
-  SUMMARY_STATS_BLUE,
-  SUMMARY_STATS_PINK,
-  SUMMARY_STATS_GOLD,
-  LUCK_VALUE,
-  STATS_HEXAGON,
-  GROWTH_RATE_TYPE,
-  MONEY, // Money default styling (pale yellow)
-  MONEY_WINDOW, // Money displayed in Windows (needs different colors based on theme)
-  HEADER_LABEL,
-  STATS_LABEL,
-  STATS_VALUE,
-  SETTINGS_VALUE,
-  SETTINGS_LABEL,
-  SETTINGS_LABEL_NAVBAR,
-  SETTINGS_SELECTED,
-  SETTINGS_LOCKED,
-  EGG_LIST,
-  EGG_SUMMARY_NAME,
-  EGG_SUMMARY_DEX,
-  STARTER_VALUE_LIMIT,
-  TOOLTIP_TITLE,
-  TOOLTIP_CONTENT,
-  FILTER_BAR_MAIN,
-  MOVE_INFO_CONTENT,
-  MOVE_PP_FULL,
-  MOVE_PP_HALF_FULL,
-  MOVE_PP_NEAR_EMPTY,
-  MOVE_PP_EMPTY,
-  SMALLER_WINDOW_ALT,
-  BGM_BAR,
-  PERFECT_IV,
-  ME_OPTION_DEFAULT, // Default style for choices in ME
-  ME_OPTION_SPECIAL, // Style for choices with special requirements in ME
-  SHADOW_TEXT, // To obscure unavailable options
-}
-
-export interface TextStyleOptions {
-  scale: number;
-  styleOptions: Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig;
-  shadowColor: string;
-  shadowXpos: number;
-  shadowYpos: number;
-}
 
 export function addTextObject(
   x: number,
@@ -87,9 +22,10 @@ export function addTextObject(
     extraStyleOptions,
   );
 
-  const ret = globalScene.add.text(x, y, content, styleOptions);
-  ret.setScale(scale);
-  ret.setShadow(shadowXpos, shadowYpos, shadowColor);
+  const ret = globalScene.add
+    .text(x, y, content, styleOptions)
+    .setScale(scale)
+    .setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
     ret.setLineSpacing(scale * 30);
   }
@@ -107,8 +43,7 @@ export function setTextStyle(
     globalScene.uiTheme,
     extraStyleOptions,
   );
-  obj.setScale(scale);
-  obj.setShadow(shadowXpos, shadowYpos, shadowColor);
+  obj.setScale(scale).setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as Phaser.Types.GameObjects.Text.TextStyle).lineSpacing) {
     obj.setLineSpacing(scale * 30);
   }
@@ -133,8 +68,7 @@ export function addBBCodeTextObject(
 
   const ret = new BBCodeText(globalScene, x, y, content, styleOptions as BBCodeText.TextStyle);
   globalScene.add.existing(ret);
-  ret.setScale(scale);
-  ret.setShadow(shadowXpos, shadowYpos, shadowColor);
+  ret.setScale(scale).setShadow(shadowXpos, shadowYpos, shadowColor);
   if (!(styleOptions as BBCodeText.TextStyle).lineSpacing) {
     ret.setLineSpacing(scale * 60);
   }

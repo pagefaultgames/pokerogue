@@ -2,7 +2,9 @@
 
 // biome-ignore lint/performance/noNamespaceImport: This is how you import fs from node
 import * as fs from "node:fs";
-import { AES, enc } from "crypto-js";
+import crypto_js from "crypto-js";
+
+const { AES, enc } = crypto_js;
 
 const SAVE_KEY = "x0i2O7WRiANTqPmZ";
 
