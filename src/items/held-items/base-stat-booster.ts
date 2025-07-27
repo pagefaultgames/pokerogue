@@ -12,9 +12,9 @@ export interface BaseStatBoosterParams {
   baseStats: number[];
 }
 
-interface PermanentStatToHeldItemMap {
-  [key: number]: HeldItemId;
-}
+type PermanentStatToHeldItemMap = {
+  [key in PermanentStat]: HeldItemId;
+};
 
 export const permanentStatToHeldItem: PermanentStatToHeldItemMap = {
   [Stat.HP]: HeldItemId.HP_UP,

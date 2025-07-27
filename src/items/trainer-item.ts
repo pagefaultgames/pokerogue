@@ -297,9 +297,9 @@ export class DoubleBattleChanceBoosterTrainerItem extends LapsingTrainerItem {
   }
 }
 
-interface TempStatToTrainerItemMap {
-  [key: number]: TrainerItemId;
-}
+type TempStatToTrainerItemMap = {
+  [key in TempBattleStat]: TrainerItemId;
+};
 
 export const tempStatToTrainerItem: TempStatToTrainerItemMap = {
   [Stat.ATK]: TrainerItemId.X_ATTACK,
