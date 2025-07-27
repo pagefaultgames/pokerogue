@@ -17,18 +17,22 @@ const version = "2.0.1";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.join(__dirname, "..", "..");
-const choices = /** @type {const} */ ([
-  { label: "Move", dir: "moves" },
-  { label: "Ability", dir: "abilities" },
-  { label: "Item", dir: "items" },
-  { label: "Reward", dir: "rewards" },
-  { label: "Mystery Encounter", dir: "mystery-encounter/encounters" },
-  { label: "Utils", dir: "utils" },
-  // TODO: Uncomment once we can actually test UI code
-  //  { label: "UI", dir: "ui" },
-]);
 
+
+const choices = /** @type {const} */ (["Moves", "Ability", "Item", "Reward", "Mystery Encounter", "Utils", "UI"]);
 /** @typedef {choices[number]} choiceType */
+
+/** @satisfies {{[k in choiceType]: string}} */
+const choicesToDirs = /** @type {const} */ ({
+  Moves: "moves",
+  Ability: "abilities",
+  Item: "items",
+  Reward: "rewards",
+  "Mystery Encounter": "mystery-encounter/encounters",
+  Utils: "utils",
+  UI: "ui",
+});
+
 //#endregion
 //#region Functions
 
@@ -46,32 +50,29 @@ function getTestFolderPath(...folders) {
  * @returns {Promise<choiceType> the selected type
  */
 async function promptTestType() {
-  /** @type {choices[number] | {name: "EXIT"}} */
-  const typeAnswer = await inquirer
+  /** @type {choiceType | "EXIT"} */
+  const choice = await inquirer
     .prompt([
       {
         type: "list",
         name: "selectedOption",
         message: "What type of test would you like to create?",
-        choices: [
-          ...choices.map(choice => ({ name: choice.label, value: choice })),
-          { name: "EXIT", value: { label: "EXIT" } },
-        ],
+        choices: [...choices, "EXIT"],
       },
     ])
     .then(ta => ta.selectedOption);
 
-  if (typeAnswer.name === "EXIT") {
+  if (choice === "EXIT") {
     console.log("Exiting...");
     return process.exit(0);
   }
 
-  return typeAnswer;
+  return choice;
 }
 
 /**
  * Prompts the user to provide a file name.
- * @param {string} selectedType
+ * @param {choiceType} selectedType The chosen string (used to display console logs)
  * @returns {Promise<string>} the selected file name
  */
 async function promptFileName(selectedType) {
@@ -96,7 +97,7 @@ async function promptFileName(selectedType) {
 
 /**
  * Obtain the path to the boilerplate file based on the current option.
- * @param {choiceType['label']} choiceType The choice selected
+ * @param {choiceType} choiceType The choice selected
  * @returns {string} The path to the boilerplate file
  */
 function getBoilerplatePath(choiceType) {
@@ -113,11 +114,11 @@ function getBoilerplatePath(choiceType) {
  * @returns {Promise<void>}
  */
 async function runInteractive() {
-  console.group(chalk.grey(`Create Test - v${version}\n`));
+  console.group(chalk.grey(`🧪 Create Test - v${version}\n`));
 
   try {
-    const type = await promptTestType();
-    const fileNameAnswer = await promptFileName(type.label);
+    const choice = await promptTestType();
+    const fileNameAnswer = await promptFileName(choice);
 
     // Convert fileName from snake_case or camelCase to kebab-case
     const fileName = fileNameAnswer
@@ -125,33 +126,35 @@ async function runInteractive() {
       .replace(/([a-z])([A-Z])/g, "$1-$2") // Convert camelCase to kebab-case
       .replace(/\s+/g, "-") // Replace spaces with dashes
       .toLowerCase(); // Ensure all lowercase
-    // Format the description for the test case
 
+    // Format the description for the test case in Title Case
     const formattedName = fileName.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
+    const description = `${choice} - ${formattedName}`;
+
     // Determine the directory based on the type
-    const dir = getTestFolderPath(type.dir);
-    const description = `${type.label} - ${formattedName}`;
+    const localDir = choicesToDirs[choice];
+    const absoluteDir = getTestFolderPath(choicesToDirs[choice]);
 
     // Define the content template
-    const content = fs.readFileSync(getBoilerplatePath(type.label), "utf8").replace("{{description}}", description);
+    const content = fs.readFileSync(getBoilerplatePath(choice), "utf8").replace("{{description}}", description);
 
     // Ensure the directory exists
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+    if (!fs.existsSync(absoluteDir)) {
+      fs.mkdirSync(absoluteDir, { recursive: true });
     }
 
     // Create the file with the given name
-    const filePath = path.join(dir, `${fileName}.test.ts`);
+    const filePath = path.join(absoluteDir, `${fileName}.test.ts`);
 
     if (fs.existsSync(filePath)) {
-      console.error(chalk.red.bold(`\n✗ File "${fileName}.test.ts" already exists!\n`));
+      console.error(chalk.red.bold(`✗ File "${fileName}.test.ts" already exists!\n`));
       process.exit(1);
     }
 
     // Write the template content to the file
     fs.writeFileSync(filePath, content, "utf8");
 
-    console.log(chalk.green.bold(`\n✔ File created at: test/${type.dir}/${fileName}.test.ts\n`));
+    console.log(chalk.green.bold(`✔ File created at: test/${localDir}/${fileName}.test.ts\n`));
     console.groupEnd();
   } catch (err) {
     console.error(chalk.red("✗ Error: ", err.message));
