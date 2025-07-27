@@ -132,7 +132,7 @@ async function runInteractive() {
 
     // Determine the directory based on the type
     const localDir = choicesToDirs[choice];
-    const absoluteDir = getTestFolderPath(choicesToDirs[choice]);
+    const absoluteDir = getTestFolderPath(localDir);
 
     // Define the content template
     const content = fs.readFileSync(getBoilerplatePath(choice), "utf8").replace("{{description}}", description);
