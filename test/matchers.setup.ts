@@ -5,7 +5,6 @@ import { toHaveEffectiveStatMatcher } from "#test/test-utils/matchers/to-have-ef
 import { toHaveFaintedMatcher } from "#test/test-utils/matchers/to-have-fainted";
 import { toHaveFullHpMatcher } from "#test/test-utils/matchers/to-have-full-hp";
 import { toHaveHpMatcher } from "#test/test-utils/matchers/to-have-hp";
-import { toHaveMoveResultMatcher } from "#test/test-utils/matchers/to-have-move-result-matcher";
 import { toHaveStatStageMatcher } from "#test/test-utils/matchers/to-have-stat-stage-matcher";
 import { toHaveStatusEffectMatcher } from "#test/test-utils/matchers/to-have-status-effect-matcher";
 import { toHaveTakenDamageMatcher } from "#test/test-utils/matchers/to-have-taken-damage-matcher";
@@ -23,7 +22,6 @@ import { expect } from "vitest";
 expect.extend({
   toEqualArrayUnsorted,
   toHaveTypes,
-  toHaveMoveResult: toHaveMoveResultMatcher,
   toHaveUsedMove: toHaveUsedMoveMatcher,
   toHaveEffectiveStat: toHaveEffectiveStatMatcher,
   toHaveTakenDamage: toHaveTakenDamageMatcher,

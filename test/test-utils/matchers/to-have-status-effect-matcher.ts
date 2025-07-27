@@ -3,13 +3,12 @@ import type { Pokemon } from "#field/pokemon";
 /* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
 import { getPokemonNameWithAffix } from "#app/messages";
-import type { Status } from "#data/status-effect";
 import { StatusEffect } from "#enums/status-effect";
+import { getEnumStr } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
-import type { NonFunctionPropertiesRecursive } from "#types/type-helpers";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
-export type expectedType =
+export type expectedStatusType =
   | StatusEffect
   | { effect: StatusEffect.TOXIC; toxicTurnCount: number }
   | { effect: StatusEffect.SLEEP; sleepTurnsRemaining: number };
@@ -24,7 +23,7 @@ export type expectedType =
 export function toHaveStatusEffectMatcher(
   this: MatcherState,
   received: unknown,
-  expectedStatus: expectedType,
+  expectedStatus: expectedStatusType,
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
@@ -33,19 +32,28 @@ export function toHaveStatusEffectMatcher(
     };
   }
 
-  // Convert to Status
-  const expStatus: { effect: StatusEffect } & Partial<NonFunctionPropertiesRecursive<Status>> =
-    typeof expectedStatus === "number"
-      ? {
-          effect: expectedStatus,
-        }
-      : expectedStatus;
+  const pkmName = getPokemonNameWithAffix(received);
 
-  // If expected to have no status,
-  if (expStatus.effect === StatusEffect.NONE) {
-    k;
+  // Check exclusively effect equality
+  if (typeof expectedStatus === "number" || received.status?.effect !== expectedStatus.effect) {
+    const actualEffect = received.status?.effect ?? StatusEffect.NONE;
+    const pass = this.equals(actualEffect, expectedStatus, [...this.customTesters, this.utils.iterableEquality]);
+
+    const actualStr = getEnumStr(StatusEffect, actualEffect, { prefix: "StatusEffect." });
+    const expectedStr = getEnumStr(StatusEffect, actualEffect, { prefix: "StatusEffect." });
+
+    return {
+      pass,
+      message: () =>
+        pass
+          ? `Expected ${pkmName} NOT to have ${expectedStr}, but it did!`
+          : `Expected ${pkmName} to have status effect ${expectedStr}, but got ${actualStr} instead!`,
+      expected: expectedStatus,
+      actual: actualEffect,
+    };
   }
 
+  // Check for equality of all fields (for toxic turn count)
   const actualStatus = received.status;
   const pass = this.equals(received, expectedStatus, [
     ...this.customTesters,
@@ -53,13 +61,13 @@ export function toHaveStatusEffectMatcher(
     this.utils.iterableEquality,
   ]);
 
-  const pkmName = getPokemonNameWithAffix(received);
-
   return {
     pass,
     message: () =>
       pass
-        ? `Expected ${pkmName} NOT to have ${expectedStatusEffectStr}, but it did!`
-        : `Expected ${pkmName} to have status effect: ${expectedStatusEffectStr}, but got: ${actualStatusEffectStr}!`,
+        ? `Expected ${pkmName}'s status NOT to match ${this.utils.stringify(expectedStatus)}, but it did!`
+        : `Expected ${pkmName}'s status to match ${this.utils.stringify(expectedStatus)}, but got ${this.utils.stringify(actualStatus)} instead!`,
+    expected: expectedStatus,
+    actual: actualStatus,
   };
 }

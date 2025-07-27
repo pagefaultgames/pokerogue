@@ -25,7 +25,7 @@ interface getEnumStrOptions {
  * @param obj - The {@linkcode EnumOrObject} to source reverse mappings from
  * @param enums - One of {@linkcode obj}'s values
  * @param casing - A string denoting the casing method to use; default `Preserve`
- * @param suffix - An optional string to be prepended to the enum's string representation.
+ * @param prefix - An optional string to be prepended to the enum's string representation.
  * @param suffix - An optional string to be appended to the enum's string representation.
  * @returns The stringified representation of `val` as dictated by the options.
  * @example
@@ -38,7 +38,6 @@ interface getEnumStrOptions {
  * console.log(getEnumStr(fakeEnum, fakeEnum.ONE)); // Output: "ONE (=1)"
  * console.log(getEnumStr(fakeEnum, fakeEnum.TWO, {case: "Title", suffix: " Terrain"})); // Output: "Two Terrain (=2)"
  * ```
-
  */
 export function getEnumStr<E extends EnumOrObject>(
   obj: E,

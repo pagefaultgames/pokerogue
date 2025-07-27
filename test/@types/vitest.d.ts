@@ -11,6 +11,7 @@ import type { TerrainType } from "#app/data/terrain";
 import type { WeatherType } from "#enums/weather-type";
 import type { ToHaveEffectiveStatMatcherOptions } from "#test/test-utils/matchers/to-have-effective-stat";
 import { TurnMove } from "#types/turn-move";
+import { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect-matcher";
 
 declare module "vitest" {
   interface Assertion {
@@ -31,7 +32,7 @@ declare module "vitest" {
      * @param expected - The expected types (in any order).
      * @param options - The options passed to the matcher.
      */
-    toHaveTypes(expected: PokemonType[], options?: toHaveTypesOptions): void;
+    toHaveTypes(expected: [PokemonType, ...PokemonType[]], options?: toHaveTypesOptions): void;
 
     /**
      * Matcher to check the contents of a {@linkcode Pokemon}'s move history.
@@ -64,9 +65,10 @@ declare module "vitest" {
 
     /**
      * Matcher to check if a {@linkcode Pokemon} has a specific {@linkcode StatusEffect | non-volatile status effect}.
-     * @param expectedStatusEffect - The expected {@linkcode StatusEffect}
+     * @param expectedStatusEffect - The {@linkcode StatusEffect} the Pokemon is expected to have,
+     * or a partially filled {@linkcode Status} containing the desired properties
      */
-    toHaveStatusEffect(expectedStatusEffect: StatusEffect): void;
+    toHaveStatusEffect(expectedStatusEffect: expectedStatusType): void;
 
     /**
      * Matcher to check if the current {@linkcode WeatherType} is as expected.

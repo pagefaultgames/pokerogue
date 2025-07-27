@@ -26,7 +26,7 @@ export interface toHaveTypesOptions {
 export function toHaveTypes(
   this: MatcherState,
   received: unknown,
-  expected: unknown,
+  expected: [PokemonType, ...PokemonType[]],
   options: toHaveTypesOptions = {},
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
@@ -36,32 +36,21 @@ export function toHaveTypes(
     };
   }
 
-  if (!Array.isArray(expected) || expected.length === 0) {
-    return {
-      pass: false,
-      message: () => `Expected to receive an array with length >=1, but got ${this.utils.stringify(expected)}!`,
-    };
-  }
+  const actualTypes = received.getTypes(...(options.args ?? [])).sort();
+  const expectedTypes = expected.slice().sort();
 
-  if (!expected.every((t): t is PokemonType => t in PokemonType)) {
-    return {
-      pass: false,
-      message: () => `Expected to receive array of PokemonTypes but got ${this.utils.stringify(expected)}!`,
-    };
-  }
-
-  const actualSorted = stringifyEnumArray(PokemonType, received.getTypes(...(options.args ?? [])).sort());
-  const expectedSorted = stringifyEnumArray(PokemonType, expected.slice().sort());
+  const actualStr = stringifyEnumArray(PokemonType, actualTypes);
+  const expectedStr = stringifyEnumArray(PokemonType, expectedTypes);
+  // Exact matches do not care about subset equality
   const matchers = options.exact
     ? [...this.customTesters, this.utils.iterableEquality]
     : [...this.customTesters, this.utils.subsetEquality, this.utils.iterableEquality];
-  const pass = this.equals(actualSorted, expectedSorted, matchers);
+  const pass = this.equals(actualStr, expectedStr, matchers);
 
   return {
     pass,
-    message: () =>
-      `Expected ${getPokemonNameWithAffix(received)} to have types ${this.utils.stringify(expectedSorted)}, but got ${actualSorted}!`,
-    actual: actualSorted,
-    expected: expectedSorted,
+    message: () => `Expected ${getPokemonNameWithAffix(received)} to have types ${expectedStr}, but got ${actualStr}!`,
+    actual: actualTypes,
+    expected: expectedTypes,
   };
 }
