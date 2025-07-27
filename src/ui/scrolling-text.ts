@@ -2,6 +2,9 @@ import { globalScene } from "#app/global-scene";
 import { fixedInt } from "#app/utils/common";
 import { addTextObject, type TextStyle } from "./text";
 
+/*
+ */
+
 export default class ScrollingText extends Phaser.GameObjects.Container {
   public text: Phaser.GameObjects.Text;
   private descScroll: Phaser.Tweens.Tween | null = null;
@@ -31,6 +34,7 @@ export default class ScrollingText extends Phaser.GameObjects.Container {
     this.add(this.text);
 
     const maskGraphics = scene.make.graphics({ x: 0, y: 0 });
+    //TODO: Remove, this line is for testing
     maskGraphics.fillStyle(0xffffff);
     maskGraphics.fillRect(globalMaskX, globalMaskY, visibleWidth, visibleHeight);
 
