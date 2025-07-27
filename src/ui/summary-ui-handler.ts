@@ -355,18 +355,13 @@ export class SummaryUiHandler extends UiHandler {
     } catch (err: unknown) {
       console.error(`Failed to play animation for ${spriteKey}`, err);
     }
-    this.pokemonSprite.setPipelineData("teraColor", getTypeRgb(this.pokemon.getTeraType()));
-    this.pokemonSprite.setPipelineData("isTerastallized", this.pokemon.isTerastallized);
-    this.pokemonSprite.setPipelineData("ignoreTimeTint", true);
-    this.pokemonSprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
-    this.pokemonSprite.setPipelineData(
-      "shiny",
-      this.pokemon.summonData.illusion?.basePokemon.shiny ?? this.pokemon.shiny,
-    );
-    this.pokemonSprite.setPipelineData(
-      "variant",
-      this.pokemon.summonData.illusion?.basePokemon.variant ?? this.pokemon.variant,
-    );
+    this.pokemonSprite
+      .setPipelineData("teraColor", getTypeRgb(this.pokemon.getTeraType()))
+      .setPipelineData("isTerastallized", this.pokemon.isTerastallized)
+      .setPipelineData("ignoreTimeTint", true)
+      .setPipelineData("spriteKey", this.pokemon.getSpriteKey())
+      .setPipelineData("shiny", this.pokemon.shiny)
+      .setPipelineData("variant", this.pokemon.variant);
     ["spriteColors", "fusionSpriteColors"].map(k => {
       delete this.pokemonSprite.pipelineData[`${k}Base`];
       if (this.pokemon?.summonData.speciesForm) {
@@ -464,9 +459,7 @@ export class SummaryUiHandler extends UiHandler {
     this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
     this.fusionShinyIcon.setVisible(doubleShiny);
     if (isFusion) {
-      this.fusionShinyIcon.setTint(
-        getVariantTint(this.pokemon.summonData.illusion?.basePokemon.fusionVariant ?? this.pokemon.fusionVariant),
-      );
+      this.fusionShinyIcon.setTint(getVariantTint(this.pokemon.fusionVariant));
     }
 
     this.pokeball.setFrame(getPokeballAtlasKey(this.pokemon.pokeball));
@@ -811,24 +804,34 @@ export class SummaryUiHandler extends UiHandler {
       case Page.PROFILE: {
         const profileContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(profileContainer);
+        const otColor =
+          globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE;
+        const usernameReplacement =
+          globalScene.gameData.gender === PlayerGender.FEMALE
+            ? i18next.t("trainerNames:player_f")
+            : i18next.t("trainerNames:player_m");
 
         // TODO: should add field for original trainer name to Pokemon object, to support gift/traded Pokemon from MEs
         const trainerText = addBBCodeTextObject(
           7,
           12,
-          `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(loggedInUser?.username || i18next.t("pokemonSummary:unknown"), globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE)}`,
+          `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(
+            !globalScene.hideUsername
+              ? loggedInUser?.username || i18next.t("pokemonSummary:unknown")
+              : usernameReplacement,
+            otColor,
+          )}`,
           TextStyle.SUMMARY_ALT,
-        );
-        trainerText.setOrigin(0, 0);
+        ).setOrigin(0);
         profileContainer.add(trainerText);
 
+        const idToDisplay = globalScene.hideUsername ? "*****" : globalScene.gameData.trainerId.toString();
         const trainerIdText = addTextObject(
           141,
           12,
-          `${i18next.t("pokemonSummary:idNo")}${globalScene.gameData.trainerId.toString()}`,
+          `${i18next.t("pokemonSummary:idNo")}${idToDisplay}`,
           TextStyle.SUMMARY_ALT,
-        );
-        trainerIdText.setOrigin(0, 0);
+        ).setOrigin(0);
         profileContainer.add(trainerIdText);
 
         const typeLabel = addTextObject(7, 28, `${i18next.t("pokemonSummary:type")}/`, TextStyle.WINDOW_ALT);

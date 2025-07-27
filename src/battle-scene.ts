@@ -237,6 +237,7 @@ export class BattleScene extends SceneBase {
   public enableTouchControls = false;
   public enableVibration = false;
   public showBgmBar = true;
+  public hideUsername = false;
   /** Determines the selected battle style. */
   public battleStyle: BattleStyle = BattleStyle.SWITCH;
   /**
@@ -700,16 +701,16 @@ export class BattleScene extends SceneBase {
     if (expSpriteKeys.size > 0) {
       return;
     }
-    this.cachedFetch("./exp-sprites.json")
-      .then(res => res.json())
-      .then(keys => {
-        if (Array.isArray(keys)) {
-          for (const key of keys) {
-            expSpriteKeys.add(key);
-          }
-        }
-        Promise.resolve();
-      });
+    const res = await this.cachedFetch("./exp-sprites.json");
+    const keys = await res.json();
+    if (!Array.isArray(keys)) {
+      throw new Error("EXP Sprites were not array when fetched!");
+    }
+
+    // TODO: Optimize this
+    for (const k of keys) {
+      expSpriteKeys.add(k);
+    }
   }
 
   /**
@@ -1670,6 +1671,11 @@ export class BattleScene extends SceneBase {
       case SpeciesId.MAUSHOLD:
       case SpeciesId.DUDUNSPARCE:
         return !randSeedInt(4) ? 1 : 0;
+      case SpeciesId.SINISTEA:
+      case SpeciesId.POLTEAGEIST:
+      case SpeciesId.POLTCHAGEIST:
+      case SpeciesId.SINISTCHA:
+        return !randSeedInt(16) ? 1 : 0;
       case SpeciesId.PIKACHU:
         if (this.currentBattle?.battleType === BattleType.TRAINER && this.currentBattle?.waveIndex < 30) {
           return 0; // Ban Cosplay and Partner Pika from Trainers before wave 30
