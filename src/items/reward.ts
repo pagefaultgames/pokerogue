@@ -92,10 +92,6 @@ There are some more derived classes, in particular:
 RewardGenerator, which creates Reward instances from a certain group (e.g. TMs, nature mints, or berries);
 WeightedReward, which is a Reward with an attached weight or weight function to be used in pools;
 and RewardOption, which is displayed during the select reward phase at the end of each encounter.
-
-This file still contains several functions to generate rewards from pools, which will need to be moved
-to their own file. Some of those also need to be modified so that they can take a whole RewardPool in input.
-This will allow more customization in creating pools for challenges, MEs etc.
 */
 
 export abstract class Reward {
