@@ -39,6 +39,7 @@ import type { Nature } from "#enums/nature";
 import { Passive as PassiveAttr } from "#enums/passive";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { CandyUpgradeNotificationChangedEvent } from "#events/battle-scene";
 import { BattleSceneEventType } from "#events/battle-scene";
@@ -57,7 +58,7 @@ import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-an
 import { ScrollBar } from "#ui/scroll-bar";
 import { StarterContainer } from "#ui/starter-container";
 import { StatsContainer } from "#ui/stats-container";
-import { addBBCodeTextObject, addTextObject, TextStyle } from "#ui/text";
+import { addBBCodeTextObject, addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import {
   BooleanHolder,
