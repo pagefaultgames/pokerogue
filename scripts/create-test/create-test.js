@@ -18,7 +18,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.join(__dirname, "..", "..");
 
-
 const choices = /** @type {const} */ (["Moves", "Ability", "Item", "Reward", "Mystery Encounter", "Utils", "UI"]);
 /** @typedef {choices[number]} choiceType */
 
@@ -47,7 +46,7 @@ function getTestFolderPath(...folders) {
 
 /**
  * Prompts the user to select a type via list.
- * @returns {Promise<choiceType> the selected type
+ * @returns {Promise<choiceType>} the selected type
  */
 async function promptTestType() {
   /** @type {choiceType | "EXIT"} */
