@@ -12,7 +12,8 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * Matcher to check the amount of PP consumed by a {@linkcode Pokemon}.
  * @param received - The actual value received. Should be a {@linkcode Pokemon}
  * @param expectedValue - The {@linkcode MoveId} that should have consumed PP
- * @param ppUsed - The amount of PP that should have been consumed
+ * @param ppUsed - The numerical amount of PP that should have been consumed,
+ * or `all` to indicate the move should be _out_ of PP
  * @returns Whether the matcher passed
  * @remarks
  * If the same move appears in the Pokemon's moveset multiple times, this will fail the test!
@@ -21,7 +22,7 @@ export function toHaveUsedPP(
   this: MatcherState,
   received: unknown,
   expectedMove: MoveId,
-  ppUsed: number,
+  ppUsed: number | "all",
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
@@ -52,15 +53,21 @@ export function toHaveUsedPP(
     };
   }
 
-  const move = movesetMoves[0];
+  const move = movesetMoves[0]; // will be the only move in the array
+
+  let ppStr: string = ppUsed.toString();
+  if (typeof ppUsed === "string") {
+    ppStr = "all its";
+    ppUsed = move.getMovePp();
+  }
   const pass = move.ppUsed === ppUsed;
 
   return {
     pass,
     message: () =>
       pass
-        ? `Expected ${pkmName}'s ${moveStr} to NOT have used ${ppUsed} PP, but it did!`
-        : `Expected ${pkmName}'s ${moveStr} to have used ${ppUsed} PP, but got ${move.ppUsed} instead!`,
+        ? `Expected ${pkmName}'s ${moveStr} to NOT have used ${ppStr} PP, but it did!`
+        : `Expected ${pkmName}'s ${moveStr} to have used ${ppStr} PP, but got ${move.ppUsed} instead!`,
     expected: ppUsed,
     actual: move.ppUsed,
   };

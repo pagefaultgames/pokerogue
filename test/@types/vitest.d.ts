@@ -124,11 +124,12 @@ declare module "vitest" {
     /**
      * Check whether a {@linkcode Pokemon} has consumed the given amount of PP for one of its moves.
      * @param expectedValue - The {@linkcode MoveId} of the {@linkcode PokemonMove} that should have consumed PP
-     * @param ppUsed - The amount of PP that should have been consumed
+     * @param ppUsed - The numerical amount of PP that should have been consumed,
+     * or `all` to indicate the move should be _out_ of PP
      * @remarks
      * If the Pokemon's moveset has been set via {@linkcode Overrides.MOVESET_OVERRIDE}/{@linkcode Overrides.OPP_MOVESET_OVERRIDE}
      * or contains the desired move more than once, this will fail the test.
      */
-    toHaveUsedPP(expectedMove: MoveId, ppUsed?: number): void;
+    toHaveUsedPP(expectedMove: MoveId, ppUsed: number | "all"): void;
   }
 }
