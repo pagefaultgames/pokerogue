@@ -77,10 +77,21 @@ export type NonFunctionPropertiesRecursive<Class> = {
 export type AbstractConstructor<T> = abstract new (...args: any[]) => T;
 
 /**
+ * Type helper that iterates through the fields of the type and coerces any `null` properties to `undefined` (including in union types).
+ *
+ * @remarks
+ * This is primarily useful when an object with nullable properties wants to be serialized and have its `null`
+ * properties coerced to `undefined`.
+ */
+export type CoerceNullPropertiesToUndefined<T extends object> = {
+  [K in keyof T]: null extends T[K] ? Exclude<T[K], null> | undefined : T[K];
+};
+
+/**
  * Type helper to mark all properties in `T` optional, while still mandating that at least 1
  * of its properties be present.
  *
  * Distinct from {@linkcode Partial} as this requires at least 1 property to _not_ be undefined.
- * @typeParam T - The type to render partial.
+ * @typeParam T - The type to render partial
  */
 export type AtLeastOne<T> = Partial<T> & EnumValues<{ [K in keyof T]: Pick<T, K> }>;
