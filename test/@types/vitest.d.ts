@@ -8,7 +8,7 @@ import type { StatusEffect } from "#enums/status-effect";
 import type { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import type { ToHaveEffectiveStatMatcherOptions } from "#test/test-utils/matchers/to-have-effective-stat";
-import { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect-matcher";
+import { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect";
 import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
 import { TurnMove } from "#types/turn-move";
 import { AtLeastOne } from "#types/type-helpers";

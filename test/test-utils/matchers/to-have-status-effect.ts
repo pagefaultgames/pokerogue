@@ -20,7 +20,7 @@ export type expectedStatusType =
  * or a partially filled {@linkcode Status} containing the desired properties
  * @returns Whether the matcher passed
  */
-export function toHaveStatusEffectMatcher(
+export function toHaveStatusEffect(
   this: MatcherState,
   received: unknown,
   expectedStatus: expectedStatusType,

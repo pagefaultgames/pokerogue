@@ -9,7 +9,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param expectedTerrainType - The expected {@linkcode TerrainType}, or {@linkcode TerrainType.NONE} if no terrain should be active
  * @returns Whether the matcher passed
  */
-export function toHaveTerrainMatcher(
+export function toHaveTerrain(
   this: MatcherState,
   received: unknown,
   expectedTerrainType: TerrainType,

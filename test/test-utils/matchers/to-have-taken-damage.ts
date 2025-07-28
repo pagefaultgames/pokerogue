@@ -12,7 +12,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param roundDown - Whether to round down {@linkcode expectedDamageTaken} with {@linkcode toDmgValue}; default `true`
  * @returns Whether the matcher passed
  */
-export function toHaveTakenDamageMatcher(
+export function toHaveTakenDamage(
   this: MatcherState,
   received: unknown,
   expectedDamageTaken: number,

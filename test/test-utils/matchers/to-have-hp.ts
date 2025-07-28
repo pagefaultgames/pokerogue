@@ -10,7 +10,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param expectedHp - The expected amount of HP the {@linkcode Pokemon} has
  * @returns Whether the matcher passed
  */
-export function toHaveHpMatcher(this: MatcherState, received: unknown, expectedHp: number): SyncExpectationResult {
+export function toHaveHp(this: MatcherState, received: unknown, expectedHp: number): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
       pass: false,

@@ -17,7 +17,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * Default `0` (last used move)
  * @returns Whether the matcher passed
  */
-export function toHaveUsedMoveMatcher(
+export function toHaveUsedMove(
   this: MatcherState,
   received: unknown,
   expectedResult: MoveId | AtLeastOne<TurnMove>,

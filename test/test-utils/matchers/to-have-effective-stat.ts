@@ -33,7 +33,7 @@ export interface ToHaveEffectiveStatMatcherOptions {
  * @param options - The {@linkcode ToHaveEffectiveStatMatcherOptions}
  * @returns Whether the matcher passed
  */
-export function toHaveEffectiveStatMatcher(
+export function toHaveEffectiveStat(
   this: MatcherState,
   received: unknown,
   stat: EffectiveStat,

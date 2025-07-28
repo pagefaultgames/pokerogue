@@ -11,7 +11,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param expectedStage - The expected numerical value of {@linkcode stat}; should be within the range `[-6, 6]`
  * @returns Whether the matcher passed
  */
-export function toHaveStatStageMatcher(
+export function toHaveStatStage(
   this: MatcherState,
   received: unknown,
   stat: BattleStat,

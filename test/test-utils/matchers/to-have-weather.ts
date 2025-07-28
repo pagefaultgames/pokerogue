@@ -9,7 +9,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param expectedWeatherType - The expected {@linkcode WeatherType}
  * @returns Whether the matcher passed
  */
-export function toHaveWeatherMatcher(
+export function toHaveWeather(
   this: MatcherState,
   received: unknown,
   expectedWeatherType: WeatherType,
