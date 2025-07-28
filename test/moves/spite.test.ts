@@ -2,6 +2,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
@@ -29,12 +30,11 @@ describe("Moves - Spite", () => {
       .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(MoveId.SPLASH)
       .startingLevel(100)
       .enemyLevel(100);
   });
 
-  it("should reduce the PP of the target's last move by 4", async () => {
+  it("should reduce the PP of the target's last used move by 4", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const karp = game.field.getEnemyPokemon();
@@ -48,7 +48,7 @@ describe("Moves - Spite", () => {
     expect(karp).toHaveUsedPP(MoveId.TACKLE, 1);
 
     game.move.use(MoveId.SPITE);
-    await game.move.forceEnemyMove(MoveId.TACKLE);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
@@ -68,7 +68,39 @@ describe("Moves - Spite", () => {
 
     const feebas = game.field.getPlayerPokemon();
     expect(feebas).toHaveUsedMove({ move: MoveId.SPITE, result: MoveResult.FAIL });
-    expect(karp).toHaveUsedPP(MoveId.TACKLE, 1);
+  });
+
+  it("should fail if the target's last used move is out of PP", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+    const karp = game.field.getEnemyPokemon();
+    game.move.changeMoveset(karp, [MoveId.TACKLE]);
+    karp.moveset[0].ppUsed = 0;
+
+    game.move.use(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.TACKLE);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toEndOfTurn();
+
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveUsedMove({ move: MoveId.SPITE, result: MoveResult.FAIL });
+  });
+
+  it("should fail if the target's last used move is not in their moveset", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+    const karp = game.field.getEnemyPokemon();
+    game.move.changeMoveset(karp, [MoveId.TACKLE]);
+    // Fake magikarp having used Splash the turn prior
+    karp.pushMoveHistory({ move: MoveId.SPLASH, targets: [BattlerIndex.ENEMY], useMode: MoveUseMode.NORMAL });
+
+    game.move.use(MoveId.SPITE);
+    await game.move.selectEnemyMove(MoveId.TACKLE);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toEndOfTurn();
+
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveUsedMove({ move: MoveId.SPITE, result: MoveResult.FAIL });
   });
 
   it("should ignore virtual and Dancer-induced moves", async () => {
