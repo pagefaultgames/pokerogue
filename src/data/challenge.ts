@@ -11,6 +11,7 @@ import { BattleType } from "#enums/battle-type";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { TypeColor, TypeShadow } from "#enums/color";
+import { EggTier } from "#enums/egg-type";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { ModifierTier } from "#enums/modifier-tier";
 import type { MoveId } from "#enums/move-id";
@@ -29,6 +30,7 @@ import { deepCopy } from "#utils/data";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase, toSnakeCase } from "#utils/strings";
 import i18next from "i18next";
+import { getEggTierForSpecies } from "./egg";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
@@ -683,11 +685,14 @@ export class SingleTypeChallenge extends Challenge {
  */
 export class FreshStartChallenge extends Challenge {
   constructor() {
-    super(Challenges.FRESH_START, 1);
+    super(Challenges.FRESH_START, 3);
   }
 
   applyStarterChoice(pokemon: PokemonSpecies, valid: BooleanHolder): boolean {
-    if (!defaultStarterSpecies.includes(pokemon.speciesId)) {
+    if (
+      (this.value === 1 && !defaultStarterSpecies.includes(pokemon.speciesId)) ||
+      (this.value === 2 && getEggTierForSpecies(pokemon) >= EggTier.EPIC)
+    ) {
       valid.value = false;
       return true;
     }
@@ -695,15 +700,12 @@ export class FreshStartChallenge extends Challenge {
   }
 
   applyStarterCost(species: SpeciesId, cost: NumberHolder): boolean {
-    if (defaultStarterSpecies.includes(species)) {
-      cost.value = speciesStarterCosts[species];
-      return true;
-    }
-    return false;
+    cost.value = speciesStarterCosts[species];
+    return true;
   }
 
   applyStarterModify(pokemon: Pokemon): boolean {
-    pokemon.abilityIndex = 0; // Always base ability, not hidden ability
+    pokemon.abilityIndex = pokemon.abilityIndex % 2; // Always base ability, if you set it to hidden it wraps to first ability
     pokemon.passive = false; // Passive isn't unlocked
     pokemon.nature = Nature.HARDY; // Neutral nature
     pokemon.moveset = pokemon.species
@@ -715,7 +717,22 @@ export class FreshStartChallenge extends Challenge {
     pokemon.luck = 0; // No luck
     pokemon.shiny = false; // Not shiny
     pokemon.variant = 0; // Not shiny
-    pokemon.formIndex = 0; // Froakie should be base form
+    if (pokemon.species.speciesId === SpeciesId.ZYGARDE && pokemon.formIndex >= 2) {
+      pokemon.formIndex -= 2; // Sets 10%-PC to 10%-AB and 50%-PC to 50%-AB
+    } else if (
+      pokemon.formIndex > 0 &&
+      [
+        SpeciesId.PIKACHU,
+        SpeciesId.EEVEE,
+        SpeciesId.PICHU,
+        SpeciesId.ROTOM,
+        SpeciesId.MELOETTA,
+        SpeciesId.FROAKIE,
+        SpeciesId.ROCKRUFF,
+      ].includes(pokemon.species.speciesId)
+    ) {
+      pokemon.formIndex = 0; // These mons are set to form 0 because they're meant to be unlocks or mid-run form changes
+    }
     pokemon.ivs = [15, 15, 15, 15, 15, 15]; // Default IVs of 15 for all stats (Updated to 15 from 10 in 1.2.0)
     pokemon.teraType = pokemon.species.type1; // Always primary tera type
     return true;
