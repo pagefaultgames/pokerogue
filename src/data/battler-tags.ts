@@ -259,7 +259,7 @@ export abstract class MoveRestrictionBattlerTag extends SerializableBattlerTag {
  * @sealed
  */
 export class ThroatChoppedTag extends MoveRestrictionBattlerTag {
-  public override readonly tagType = BattlerTagType.THROAT_CHOPPED as const;
+  public override readonly tagType = BattlerTagType.THROAT_CHOPPED;
   constructor() {
     super(
       BattlerTagType.THROAT_CHOPPED,
@@ -310,7 +310,7 @@ export class ThroatChoppedTag extends MoveRestrictionBattlerTag {
  * @sealed
  */
 export class DisabledTag extends MoveRestrictionBattlerTag {
-  public override readonly tagType = BattlerTagType.DISABLED as const;
+  public override readonly tagType = BattlerTagType.DISABLED;
   /** The move being disabled. Gets set when {@linkcode onAdd} is called for this tag. */
   public readonly moveId: MoveId = MoveId.NONE;
 
@@ -390,7 +390,7 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
  * @sealed
  */
 export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
-  public override readonly tagType = BattlerTagType.GORILLA_TACTICS as const;
+  public override readonly tagType = BattlerTagType.GORILLA_TACTICS;
   /** ID of the move that the user is locked into using*/
   public readonly moveId: MoveId = MoveId.NONE;
 
@@ -451,7 +451,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
  * BattlerTag that represents the "recharge" effects of moves like Hyper Beam.
  */
 export class RechargingTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.RECHARGING as const;
+  public override readonly tagType = BattlerTagType.RECHARGING;
   constructor(sourceMove: MoveId) {
     super(BattlerTagType.RECHARGING, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END], 2, sourceMove);
   }
@@ -484,7 +484,7 @@ export class RechargingTag extends SerializableBattlerTag {
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Beak_Blast_(move) | Beak Blast}
  */
 export class BeakBlastChargingTag extends BattlerTag {
-  public override readonly tagType = BattlerTagType.BEAK_BLAST_CHARGING as const;
+  public override readonly tagType = BattlerTagType.BEAK_BLAST_CHARGING;
   override readonly sourceMove: MoveId.BEAK_BLAST;
   constructor() {
     super(
@@ -650,7 +650,7 @@ export class TrappedTag extends SerializableBattlerTag {
  * Ghost-type Pokemon from being able to reuse the move.
  */
 class NoRetreatTag extends TrappedTag {
-  public override readonly tagType = BattlerTagType.NO_RETREAT as const;
+  public override readonly tagType = BattlerTagType.NO_RETREAT;
   constructor(sourceId: number) {
     super(BattlerTagType.NO_RETREAT, BattlerTagLapseType.CUSTOM, 0, MoveId.NO_RETREAT, sourceId);
   }
@@ -665,7 +665,7 @@ class NoRetreatTag extends TrappedTag {
  * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Flinch Flinch} status condition
  */
 export class FlinchedTag extends BattlerTag {
-  public override readonly tagType = BattlerTagType.FLINCHED as const;
+  public override readonly tagType = BattlerTagType.FLINCHED;
   constructor(sourceMove: MoveId) {
     super(BattlerTagType.FLINCHED, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END], 1, sourceMove);
   }
@@ -697,7 +697,7 @@ export class FlinchedTag extends BattlerTag {
 }
 
 export class InterruptedTag extends BattlerTag {
-  public override readonly tagType = BattlerTagType.INTERRUPTED as const;
+  public override readonly tagType = BattlerTagType.INTERRUPTED;
   constructor(sourceMove: MoveId) {
     super(BattlerTagType.INTERRUPTED, BattlerTagLapseType.PRE_MOVE, 0, sourceMove);
   }
@@ -728,7 +728,7 @@ export class InterruptedTag extends BattlerTag {
  * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition) Confusion} status condition
  */
 export class ConfusedTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.CONFUSED as const;
+  public override readonly tagType = BattlerTagType.CONFUSED;
   constructor(turnCount: number, sourceMove: MoveId) {
     super(BattlerTagType.CONFUSED, BattlerTagLapseType.MOVE, turnCount, sourceMove, undefined, true);
   }
@@ -873,7 +873,7 @@ export class DestinyBondTag extends SerializableBattlerTag {
 
 // Technically serializable as in a double battle, a pokemon could be infatuated by its ally
 export class InfatuatedTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.INFATUATED as const;
+  public override readonly tagType = BattlerTagType.INFATUATED;
   constructor(sourceMove: number, sourceId: number) {
     super(BattlerTagType.INFATUATED, BattlerTagLapseType.MOVE, 1, sourceMove, sourceId);
   }
@@ -964,7 +964,7 @@ export class InfatuatedTag extends SerializableBattlerTag {
 }
 
 export class SeedTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.SEEDED as const;
+  public override readonly tagType = BattlerTagType.SEEDED;
   public readonly sourceIndex: BattlerIndex;
 
   constructor(sourceId: number) {
@@ -1056,7 +1056,7 @@ export class SeedTag extends SerializableBattlerTag {
  * Pokemon takes damage equal to 1/4 of its maximum HP (rounded down).
  */
 export class PowderTag extends BattlerTag {
-  public override readonly tagType = BattlerTagType.POWDER as const;
+  public override readonly tagType = BattlerTagType.POWDER;
   constructor() {
     super(BattlerTagType.POWDER, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END], 1);
   }
@@ -1188,7 +1188,7 @@ export class FrenzyTag extends SerializableBattlerTag {
  * Encore forces the target Pokemon to use its most-recent move for 3 turns.
  */
 export class EncoreTag extends MoveRestrictionBattlerTag {
-  public override readonly tagType = BattlerTagType.ENCORE as const;
+  public override readonly tagType = BattlerTagType.ENCORE;
   /** The ID of the move the user is locked into using */
   public moveId: MoveId;
 
@@ -1286,7 +1286,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
 }
 
 export class HelpingHandTag extends BattlerTag {
-  public override readonly tagType = BattlerTagType.HELPING_HAND as const;
+  public override readonly tagType = BattlerTagType.HELPING_HAND;
   constructor(sourceId: number) {
     super(BattlerTagType.HELPING_HAND, BattlerTagLapseType.TURN_END, 1, MoveId.HELPING_HAND, sourceId);
   }
@@ -1311,7 +1311,7 @@ export class HelpingHandTag extends BattlerTag {
  * Applies the Ingrain tag to a pokemon
  */
 export class IngrainTag extends TrappedTag {
-  public override readonly tagType = BattlerTagType.INGRAIN as const;
+  public override readonly tagType = BattlerTagType.INGRAIN;
   constructor(sourceId: number) {
     super(BattlerTagType.INGRAIN, BattlerTagLapseType.TURN_END, 1, MoveId.INGRAIN, sourceId);
   }
@@ -1359,7 +1359,7 @@ export class IngrainTag extends TrappedTag {
  * end of each turn.
  */
 export class OctolockTag extends TrappedTag {
-  public override readonly tagType = BattlerTagType.OCTOLOCK as const;
+  public override readonly tagType = BattlerTagType.OCTOLOCK;
   constructor(sourceId: number) {
     super(BattlerTagType.OCTOLOCK, BattlerTagLapseType.TURN_END, 1, MoveId.OCTOLOCK, sourceId);
   }
@@ -1383,7 +1383,7 @@ export class OctolockTag extends TrappedTag {
 }
 
 export class AquaRingTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.AQUA_RING as const;
+  public override readonly tagType = BattlerTagType.AQUA_RING;
   constructor() {
     super(BattlerTagType.AQUA_RING, BattlerTagLapseType.TURN_END, 1, MoveId.AQUA_RING, undefined, true);
   }
@@ -1420,7 +1420,7 @@ export class AquaRingTag extends SerializableBattlerTag {
 
 /** Tag used to allow moves that interact with {@link MoveId.MINIMIZE} to function */
 export class MinimizeTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.MINIMIZED as const;
+  public override readonly tagType = BattlerTagType.MINIMIZED;
   constructor() {
     super(BattlerTagType.MINIMIZED, BattlerTagLapseType.TURN_END, 1, MoveId.MINIMIZE);
   }
@@ -1439,7 +1439,7 @@ export class MinimizeTag extends SerializableBattlerTag {
 }
 
 export class DrowsyTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.DROWSY as const;
+  public override readonly tagType = BattlerTagType.DROWSY;
   constructor() {
     super(BattlerTagType.DROWSY, BattlerTagLapseType.TURN_END, 2, MoveId.YAWN);
   }
@@ -1520,7 +1520,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
 
 // TODO: Condense all these tags into 1 singular tag with a modified message func
 export class BindTag extends DamagingTrapTag {
-  public override readonly tagType = BattlerTagType.BIND as const;
+  public override readonly tagType = BattlerTagType.BIND;
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.BIND, CommonAnim.BIND, turnCount, MoveId.BIND, sourceId);
   }
@@ -1541,7 +1541,7 @@ export class BindTag extends DamagingTrapTag {
 }
 
 export class WrapTag extends DamagingTrapTag {
-  public override readonly tagType = BattlerTagType.WRAP as const;
+  public override readonly tagType = BattlerTagType.WRAP;
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.WRAP, CommonAnim.WRAP, turnCount, MoveId.WRAP, sourceId);
   }
@@ -1570,21 +1570,21 @@ export abstract class VortexTrapTag extends DamagingTrapTag {
 }
 
 export class FireSpinTag extends VortexTrapTag {
-  public override readonly tagType = BattlerTagType.FIRE_SPIN as const;
+  public override readonly tagType = BattlerTagType.FIRE_SPIN;
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.FIRE_SPIN, CommonAnim.FIRE_SPIN, turnCount, MoveId.FIRE_SPIN, sourceId);
   }
 }
 
 export class WhirlpoolTag extends VortexTrapTag {
-  public override readonly tagType = BattlerTagType.WHIRLPOOL as const;
+  public override readonly tagType = BattlerTagType.WHIRLPOOL;
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.WHIRLPOOL, CommonAnim.WHIRLPOOL, turnCount, MoveId.WHIRLPOOL, sourceId);
   }
 }
 
 export class ClampTag extends DamagingTrapTag {
-  public override readonly tagType = BattlerTagType.CLAMP as const;
+  public override readonly tagType = BattlerTagType.CLAMP;
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.CLAMP, CommonAnim.CLAMP, turnCount, MoveId.CLAMP, sourceId);
   }
@@ -1604,7 +1604,7 @@ export class ClampTag extends DamagingTrapTag {
 }
 
 export class SandTombTag extends DamagingTrapTag {
-  public override readonly tagType = BattlerTagType.SAND_TOMB as const;
+  public override readonly tagType = BattlerTagType.SAND_TOMB;
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.SAND_TOMB, CommonAnim.SAND_TOMB, turnCount, MoveId.SAND_TOMB, sourceId);
   }
@@ -1618,7 +1618,7 @@ export class SandTombTag extends DamagingTrapTag {
 }
 
 export class MagmaStormTag extends DamagingTrapTag {
-  public override readonly tagType = BattlerTagType.MAGMA_STORM as const;
+  public override readonly tagType = BattlerTagType.MAGMA_STORM;
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.MAGMA_STORM, CommonAnim.MAGMA_STORM, turnCount, MoveId.MAGMA_STORM, sourceId);
   }
@@ -1631,7 +1631,7 @@ export class MagmaStormTag extends DamagingTrapTag {
 }
 
 export class SnapTrapTag extends DamagingTrapTag {
-  public override readonly tagType = BattlerTagType.SNAP_TRAP as const;
+  public override readonly tagType = BattlerTagType.SNAP_TRAP;
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.SNAP_TRAP, CommonAnim.SNAP_TRAP, turnCount, MoveId.SNAP_TRAP, sourceId);
   }
@@ -1644,7 +1644,7 @@ export class SnapTrapTag extends DamagingTrapTag {
 }
 
 export class ThunderCageTag extends DamagingTrapTag {
-  public override readonly tagType = BattlerTagType.THUNDER_CAGE as const;
+  public override readonly tagType = BattlerTagType.THUNDER_CAGE;
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.THUNDER_CAGE, CommonAnim.THUNDER_CAGE, turnCount, MoveId.THUNDER_CAGE, sourceId);
   }
@@ -2523,7 +2523,7 @@ export class FormBlockDamageTag extends SerializableBattlerTag {
 
 /** Provides the additional weather-based effects of the Ice Face ability */
 export class IceFaceBlockDamageTag extends FormBlockDamageTag {
-  public override readonly tagType = BattlerTagType.ICE_FACE as const;
+  public override readonly tagType = BattlerTagType.ICE_FACE;
   /**
    * Determines if the tag can be added to the Pokémon.
    * @param pokemon - The Pokémon to which the tag might be added.
@@ -2542,7 +2542,7 @@ export class IceFaceBlockDamageTag extends FormBlockDamageTag {
  * has entered the tagged Pokemon's mouth.
  */
 export class CommandedTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.COMMANDED as const;
+  public override readonly tagType = BattlerTagType.COMMANDED;
   public readonly tatsugiriFormKey: string;
 
   constructor(sourceId: number) {
@@ -2585,7 +2585,7 @@ export class CommandedTag extends SerializableBattlerTag {
  *     the stat when added.
  */
 export class StockpilingTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.STOCKPILING as const;
+  public override readonly tagType = BattlerTagType.STOCKPILING;
   public stockpiledCount = 0;
   public statChangeCounts: { [Stat.DEF]: number; [Stat.SPDEF]: number } = {
     [Stat.DEF]: 0,
@@ -2799,7 +2799,7 @@ export class ExposedTag extends SerializableBattlerTag {
  * Applied by moves:  {@linkcode MoveId.HEAL_BLOCK | Heal Block (5 turns)}, {@linkcode MoveId.PSYCHIC_NOISE | Psychic Noise (2 turns)}
  */
 export class HealBlockTag extends MoveRestrictionBattlerTag {
-  public override readonly tagType = BattlerTagType.HEAL_BLOCK as const;
+  public override readonly tagType = BattlerTagType.HEAL_BLOCK;
   constructor(turnCount: number, sourceMove: MoveId) {
     super(
       BattlerTagType.HEAL_BLOCK,
@@ -2880,7 +2880,7 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
  * Tag that doubles the type effectiveness of Fire-type moves.
  */
 export class TarShotTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.TAR_SHOT as const;
+  public override readonly tagType = BattlerTagType.TAR_SHOT;
   constructor() {
     super(BattlerTagType.TAR_SHOT, BattlerTagLapseType.CUSTOM, 0);
   }
@@ -2908,7 +2908,7 @@ export class TarShotTag extends SerializableBattlerTag {
  * While this tag is in effect, the afflicted Pokemon's moves are changed to Electric type.
  */
 export class ElectrifiedTag extends BattlerTag {
-  public override readonly tagType = BattlerTagType.ELECTRIFIED as const;
+  public override readonly tagType = BattlerTagType.ELECTRIFIED;
   constructor() {
     super(BattlerTagType.ELECTRIFIED, BattlerTagLapseType.TURN_END, 1, MoveId.ELECTRIFY);
   }
@@ -2928,7 +2928,7 @@ export class ElectrifiedTag extends BattlerTag {
  * Each count of Autotomization reduces the weight by 100kg
  */
 export class AutotomizedTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.AUTOTOMIZED as const;
+  public override readonly tagType = BattlerTagType.AUTOTOMIZED;
   public autotomizeCount = 0;
   constructor(sourceMove: MoveId = MoveId.AUTOTOMIZE) {
     super(BattlerTagType.AUTOTOMIZED, BattlerTagLapseType.CUSTOM, 1, sourceMove);
@@ -2969,7 +2969,7 @@ export class AutotomizedTag extends SerializableBattlerTag {
  * @sealed
  */
 export class SubstituteTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.SUBSTITUTE as const;
+  public override readonly tagType = BattlerTagType.SUBSTITUTE;
   /** The substitute's remaining HP. If HP is depleted, the Substitute fades. */
   public hp: number;
 
@@ -3118,7 +3118,7 @@ export class SubstituteTag extends SerializableBattlerTag {
  * Currently used only in MysteryEncounters to provide start of fight stat buffs.
  */
 export class MysteryEncounterPostSummonTag extends BattlerTag {
-  public override readonly tagType = BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON as const;
+  public override readonly tagType = BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON;
   constructor() {
     super(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON, BattlerTagLapseType.CUSTOM, 1);
   }
@@ -3152,7 +3152,7 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
  * Torment does not interrupt the move if the move is performed consecutively in the same turn and right after Torment is applied
  */
 export class TormentTag extends MoveRestrictionBattlerTag {
-  public override readonly tagType = BattlerTagType.TORMENT as const;
+  public override readonly tagType = BattlerTagType.TORMENT;
   constructor(sourceId: number) {
     super(BattlerTagType.TORMENT, BattlerTagLapseType.AFTER_MOVE, 1, MoveId.TORMENT, sourceId);
   }
@@ -3211,7 +3211,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
  * The tag is removed after 4 turns.
  */
 export class TauntTag extends MoveRestrictionBattlerTag {
-  public override readonly tagType = BattlerTagType.TAUNT as const;
+  public override readonly tagType = BattlerTagType.TAUNT;
   constructor() {
     super(BattlerTagType.TAUNT, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE], 4, MoveId.TAUNT);
   }
@@ -3266,7 +3266,7 @@ export class TauntTag extends MoveRestrictionBattlerTag {
  * The tag is only removed when the source-user is removed from the field.
  */
 export class ImprisonTag extends MoveRestrictionBattlerTag {
-  public override readonly tagType = BattlerTagType.IMPRISON as const;
+  public override readonly tagType = BattlerTagType.IMPRISON;
   constructor(sourceId: number) {
     super(
       BattlerTagType.IMPRISON,
@@ -3329,7 +3329,7 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
  * The tag can also expire by taking the target Pokemon off the field, or the Pokemon that originally used the move.
  */
 export class SyrupBombTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.SYRUP_BOMB as const;
+  public override readonly tagType = BattlerTagType.SYRUP_BOMB;
   constructor(sourceId: number) {
     super(BattlerTagType.SYRUP_BOMB, BattlerTagLapseType.TURN_END, 3, MoveId.SYRUP_BOMB, sourceId);
   }
@@ -3392,7 +3392,7 @@ export class SyrupBombTag extends SerializableBattlerTag {
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | MoveId.TELEKINESIS}
  */
 export class TelekinesisTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.TELEKINESIS as const;
+  public override readonly tagType = BattlerTagType.TELEKINESIS;
   constructor(sourceMove: MoveId) {
     super(
       BattlerTagType.TELEKINESIS,
@@ -3417,7 +3417,7 @@ export class TelekinesisTag extends SerializableBattlerTag {
  * Tag that swaps the user's base ATK stat with its base DEF stat.
  */
 export class PowerTrickTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.POWER_TRICK as const;
+  public override readonly tagType = BattlerTagType.POWER_TRICK;
   constructor(sourceMove: MoveId, sourceId: number) {
     super(BattlerTagType.POWER_TRICK, BattlerTagLapseType.CUSTOM, 0, sourceMove, sourceId, true);
   }
@@ -3465,7 +3465,7 @@ export class PowerTrickTag extends SerializableBattlerTag {
  * Otherwise, it lapses when the bearer makes another move.
  */
 export class GrudgeTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.GRUDGE as const;
+  public override readonly tagType = BattlerTagType.GRUDGE;
   constructor() {
     super(BattlerTagType.GRUDGE, [BattlerTagLapseType.CUSTOM, BattlerTagLapseType.PRE_MOVE], 1, MoveId.GRUDGE);
   }
@@ -3511,7 +3511,7 @@ export class GrudgeTag extends SerializableBattlerTag {
  * Tag used to heal the user of Psycho Shift of its status effect if Psycho Shift succeeds in transferring its status effect to the target Pokemon
  */
 export class PsychoShiftTag extends BattlerTag {
-  public override readonly tagType = BattlerTagType.PSYCHO_SHIFT as const;
+  public override readonly tagType = BattlerTagType.PSYCHO_SHIFT;
   constructor() {
     super(BattlerTagType.PSYCHO_SHIFT, BattlerTagLapseType.AFTER_MOVE, 1, MoveId.PSYCHO_SHIFT);
   }
@@ -3536,7 +3536,7 @@ export class PsychoShiftTag extends BattlerTag {
  * Tag associated with the move Magic Coat.
  */
 export class MagicCoatTag extends BattlerTag {
-  public override readonly tagType = BattlerTagType.MAGIC_COAT as const;
+  public override readonly tagType = BattlerTagType.MAGIC_COAT;
   constructor() {
     super(BattlerTagType.MAGIC_COAT, BattlerTagLapseType.TURN_END, 1, MoveId.MAGIC_COAT);
   }
