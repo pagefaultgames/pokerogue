@@ -3,6 +3,7 @@ import { ArenaTrapTag } from "#data/arena-tag";
 import { TerrainType } from "#data/terrain";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
 import type { ArenaEvent } from "#events/arena";
 import {
@@ -14,10 +15,11 @@ import {
 } from "#events/arena";
 import type { TurnEndEvent } from "#events/battle-scene";
 import { BattleSceneEventType } from "#events/battle-scene";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { TimeOfDayWidget } from "#ui/time-of-day-widget";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-import { fixedInt, formatText, toCamelCaseString } from "#utils/common";
+import { fixedInt } from "#utils/common";
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import type { ParseKeys } from "i18next";
 import i18next from "i18next";
 
@@ -48,10 +50,10 @@ export function getFieldEffectText(arenaTagType: string): string {
   if (!arenaTagType || arenaTagType === ArenaTagType.NONE) {
     return arenaTagType;
   }
-  const effectName = toCamelCaseString(arenaTagType);
+  const effectName = toCamelCase(arenaTagType);
   const i18nKey = `arenaFlyout:${effectName}` as ParseKeys;
   const resultName = i18next.t(i18nKey);
-  return !resultName || resultName === i18nKey ? formatText(arenaTagType) : resultName;
+  return !resultName || resultName === i18nKey ? toTitleCase(arenaTagType) : resultName;
 }
 
 export class ArenaFlyout extends Phaser.GameObjects.Container {
