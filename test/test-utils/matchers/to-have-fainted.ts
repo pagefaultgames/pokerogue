@@ -3,8 +3,8 @@ import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Matcher to check if a Pokemon has fainted
- * @param received - The object to check. Should be a {@linkcode Pokemon}.
+ * Matcher to check if a Pokemon has fainted.
+ * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @returns Whether the matcher passed
  */
 export function toHaveFaintedMatcher(this: MatcherState, received: unknown): SyncExpectationResult {

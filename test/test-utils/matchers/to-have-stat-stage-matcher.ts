@@ -41,7 +41,7 @@ export function toHaveStatStageMatcher(
     message: () =>
       pass
         ? `Expected ${pkmName}'s ${statName} stat stage to NOT be ${expectedStage}, but it was!`
-        : `Expected ${pkmName}'s ${statName} stage to be ${expectedStage}, but got ${actualStage}!`,
+        : `Expected ${pkmName}'s ${statName} stat stage to be ${expectedStage}, but got ${actualStage} instead!`,
     actual: actualStage,
     expected: expectedStage,
   };

@@ -3,13 +3,6 @@ import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import { toDmgValue } from "#utils/common";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
-//#region Types
-
-export interface ToHaveTakenDamageMatcherOptions {
-  /** Whether to skip the internal {@linkcode toDmgValue} call. @defaultValue false */
-  skipToDmgValue?: boolean;
-} //#endregion
-
 /**
  * Matcher to check if a Pokemon has taken a specific amount of damage.
  * Unless specified, will run the expected damage value through {@linkcode toDmgValue}
@@ -42,7 +35,7 @@ export function toHaveTakenDamageMatcher(
     message: () =>
       pass
         ? `Expected ${pkmName} to NOT have taken ${expectedDmgValue} damage, but it did!`
-        : `Expected ${pkmName} to have taken ${expectedDmgValue} damage, but got ${actualDmgValue}!`,
+        : `Expected ${pkmName} to have taken ${expectedDmgValue} damage, but got ${actualDmgValue} instead!`,
     expected: expectedDmgValue,
     actual: actualDmgValue,
   };

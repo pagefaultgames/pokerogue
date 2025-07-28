@@ -47,6 +47,7 @@ export function toHaveEffectiveStatMatcher(
     };
   }
 
+  // TODO: Change once getEffectiveStat is refactored to take an object literal
   const actualValue = received.getEffectiveStat(stat, enemy, move, undefined, undefined, undefined, isCritical);
   const pass = actualValue === expectedValue;
 

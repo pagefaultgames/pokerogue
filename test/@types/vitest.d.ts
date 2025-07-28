@@ -1,17 +1,17 @@
-import type { Pokemon } from "#field/pokemon";
-import type { PokemonType } from "#enums/pokemon-type";
-import type { expect } from "vitest";
-import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
+import type { TerrainType } from "#app/data/terrain";
 import type { AbilityId } from "#enums/ability-id";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import type { MoveId } from "#enums/move-id";
+import type { PokemonType } from "#enums/pokemon-type";
 import type { BattleStat, EffectiveStat, Stat } from "#enums/stat";
 import type { StatusEffect } from "#enums/status-effect";
-import type { TerrainType } from "#app/data/terrain";
 import type { WeatherType } from "#enums/weather-type";
+import type { Pokemon } from "#field/pokemon";
 import type { ToHaveEffectiveStatMatcherOptions } from "#test/test-utils/matchers/to-have-effective-stat";
-import { TurnMove } from "#types/turn-move";
 import { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect-matcher";
+import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
+import { TurnMove } from "#types/turn-move";
+import type { expect } from "vitest";
 
 declare module "vitest" {
   interface Assertion {
