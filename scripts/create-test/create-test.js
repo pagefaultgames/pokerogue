@@ -18,12 +18,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.join(__dirname, "..", "..");
 
-const choices = /** @type {const} */ (["Moves", "Ability", "Item", "Reward", "Mystery Encounter", "Utils", "UI"]);
+const choices = /** @type {const} */ (["Move", "Ability", "Item", "Reward", "Mystery Encounter", "Utils", "UI"]);
 /** @typedef {choices[number]} choiceType */
 
 /** @satisfies {{[k in choiceType]: string}} */
 const choicesToDirs = /** @type {const} */ ({
-  Moves: "moves",
+  Move: "moves",
   Ability: "abilities",
   Item: "items",
   Reward: "rewards",
