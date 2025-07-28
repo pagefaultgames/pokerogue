@@ -219,10 +219,10 @@ export class PokemonSummonData {
       >),
       speciesForm: isNullOrUndefined(speciesForm)
         ? undefined
-        : { id: speciesForm?.speciesId, formIdx: speciesForm?.formIndex },
+        : { id: speciesForm.speciesId, formIdx: speciesForm.formIndex },
       fusionSpeciesForm: isNullOrUndefined(fusionSpeciesForm)
         ? undefined
-        : { id: fusionSpeciesForm?.speciesId, formIdx: fusionSpeciesForm?.formIndex },
+        : { id: fusionSpeciesForm.speciesId, formIdx: fusionSpeciesForm.formIndex },
       illusion: isNullOrUndefined(illusion)
         ? undefined
         : {
