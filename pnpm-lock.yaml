@@ -57,6 +57,9 @@ importers:
       '@vitest/coverage-istanbul':
         specifier: ^3.2.4
         version: 3.2.4(vitest@3.2.4(@types/node@22.16.3)(jsdom@26.1.0)(msw@2.10.4(@types/node@22.16.3)(typescript@5.8.3))(yaml@2.8.0))
+      '@vitest/expect':
+        specifier: ^3.2.4
+        version: 3.2.4
       chalk:
         specifier: ^5.4.1
         version: 5.4.1
