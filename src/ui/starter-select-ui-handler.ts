@@ -71,8 +71,8 @@ import {
 } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences, saveStarterPreferences } from "#utils/data";
-import { toTitleCase } from "#utils/strings";
 import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
+import { toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";

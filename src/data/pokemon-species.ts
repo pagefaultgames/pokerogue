@@ -28,7 +28,7 @@ import type { Variant, VariantSet } from "#sprites/variant";
 import { populateVariantColorCache, variantColorCache, variantData } from "#sprites/variant";
 import type { StarterMoveset } from "#system/game-data";
 import type { Localizable } from "#types/locales";
-import { isNullOrUndefined, randSeedFloat, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
+import { isNullOrUndefined, randSeedFloat, randSeedGauss, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase, toPascalCase } from "#utils/strings";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
