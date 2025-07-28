@@ -1,10 +1,10 @@
 import { getPokemonNameWithAffix } from "#app/messages";
-import { type EffectiveStat, getStatKey } from "#enums/stat";
+import type { EffectiveStat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
+import { getStatName } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
-import i18next from "i18next";
 
 export interface ToHaveEffectiveStatMatcherOptions {
   /**
@@ -52,7 +52,7 @@ export function toHaveEffectiveStatMatcher(
   const pass = actualValue === expectedValue;
 
   const pkmName = getPokemonNameWithAffix(received);
-  const statName = i18next.t(getStatKey(stat));
+  const statName = getStatName(stat);
 
   return {
     pass,

@@ -1,6 +1,8 @@
+import { getStatKey, type Stat } from "#enums/stat";
 import type { EnumOrObject, EnumValues, NormalEnum, TSNumericEnum } from "#types/enum-types";
-import { toReadableString } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";
+import { toTitleCase } from "#utils/strings";
+import i18next from "i18next";
 
 type Casing = "Preserve" | "Title";
 
@@ -11,7 +13,7 @@ interface getEnumStrOptions {
    */
   casing?: Casing;
   /**
-   * If present, will be added to the beginning of the enum string.
+   * If present, will be prepended to the beginning of the enum string.
    */
   prefix?: string;
   /**
@@ -36,7 +38,7 @@ interface getEnumStrOptions {
  *   THREE: 3,
  * }
  * console.log(getEnumStr(fakeEnum, fakeEnum.ONE)); // Output: "ONE (=1)"
- * console.log(getEnumStr(fakeEnum, fakeEnum.TWO, {case: "Title", suffix: " Terrain"})); // Output: "Two Terrain (=2)"
+ * console.log(getEnumStr(fakeEnum, fakeEnum.TWO, {case: "Title", prefix: "fakeEnum."})); // Output: "fakeEnum.Two (=2)"
  * ```
  */
 export function getEnumStr<E extends EnumOrObject>(
@@ -49,7 +51,7 @@ export function getEnumStr<E extends EnumOrObject>(
     case "Preserve":
       break;
     case "Title":
-      casingFunc = toReadableString;
+      casingFunc = toTitleCase;
       break;
   }
 
@@ -125,4 +127,8 @@ export function getOrdinal(num: number): string {
     return num + "rd";
   }
   return num + "th";
+}
+
+export function getStatName(s: Stat): string {
+  return i18next.t(getStatKey(s));
 }

@@ -1,6 +1,6 @@
 import { TerrainType } from "#app/data/terrain";
+import { getEnumStr } from "#test/test-utils/string-utils";
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
-import { toReadableString } from "#utils/common";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
@@ -39,8 +39,8 @@ export function toHaveTerrainMatcher(
       pass
         ? `Expected Arena to NOT have ${expectedStr} active, but it did!`
         : `Expected Arena to have ${expectedStr} active, but got ${actualStr}!`,
-    actual: actualStr,
-    expected: expectedStr,
+    actual,
+    expected: expectedTerrainType,
   };
 }
 
@@ -53,6 +53,5 @@ function toTerrainStr(terrainType: TerrainType) {
   if (terrainType === TerrainType.NONE) {
     return "no terrain";
   }
-  // TODO: Change to use updated string utils
-  return toReadableString(TerrainType[terrainType] + " Terrain");
+  return getEnumStr(TerrainType, terrainType, { casing: "Title", suffix: " Terrain" });
 }

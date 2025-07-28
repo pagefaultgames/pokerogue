@@ -4,7 +4,7 @@ import type { Pokemon } from "#field/pokemon";
 
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { getEnumStr, stringifyEnumArray } from "#test/test-utils/string-utils";
+import { getEnumStr } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
@@ -28,20 +28,16 @@ export function toHaveBattlerTag(
 
   const pass = !!received.getTag(expectedBattlerTagType);
   const pkmName = getPokemonNameWithAffix(received);
-  // "the SEEDED BattlerTag (=1)"
-  const expectedTagStr = getEnumStr(BattlerTagType, expectedBattlerTagType, { prefix: "the ", suffix: " BattlerTag" });
-  const actualTagStr = stringifyEnumArray(
-    BattlerTagType,
-    received.summonData.tags.map(t => t.tagType),
-  );
+  // "BattlerTagType.SEEDED (=1)"
+  const expectedTagStr = getEnumStr(BattlerTagType, expectedBattlerTagType);
 
   return {
     pass,
     message: () =>
       pass
-        ? `Expected ${pkmName} to NOT have ${expectedTagStr}, but it did!`
-        : `Expected ${pkmName} to have ${expectedTagStr}, but it did not!`,
-    actual: actualTagStr,
-    expected: getEnumStr(BattlerTagType, expectedBattlerTagType),
+        ? `Expected ${pkmName} to NOT have BattlerTagType.${expectedTagStr}, but it did!`
+        : `Expected ${pkmName} to have BattlerTagType.${expectedTagStr}, but it did not!`,
+    expected: expectedBattlerTagType,
+    actual: received.summonData.tags.map(t => t.tagType),
   };
 }

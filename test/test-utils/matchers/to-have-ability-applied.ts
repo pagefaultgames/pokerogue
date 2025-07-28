@@ -36,7 +36,7 @@ export function toHaveAbilityAppliedMatcher(
       pass
         ? `Expected ${pkmName} to NOT have applied ${expectedAbilityStr}, but it did!`
         : `Expected ${pkmName} to have applied ${expectedAbilityStr}, but it did not!`,
-    actual: received.waveData.abilitiesApplied,
     expected: expectedAbilityId,
+    actual: received.waveData.abilitiesApplied,
   };
 }
