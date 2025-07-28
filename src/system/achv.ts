@@ -890,7 +890,7 @@ export const achvs = {
     100,
     c =>
       c instanceof FreshStartChallenge &&
-      c.value > 0 &&
+      c.value === 1 &&
       !globalScene.gameMode.challenges.some(
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
