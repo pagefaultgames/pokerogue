@@ -1,12 +1,12 @@
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
-import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Utils - Fff", () => {
+describe("Moves - Spite", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -33,11 +33,15 @@ describe("Utils - Fff", () => {
       .enemyLevel(100);
   });
 
-  it("should do XYZ", async () => {
+  it("should reduce the PP of the target's last move by 4", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    expect(game.field.getPlayerPokemon()).toHaveTypes([PokemonType.WATER]);
-    expect.soft(game.field.getPlayerPokemon()).toHaveTypes([PokemonType.FLYING]);
-    expect.soft(game.field.getPlayerPokemon()).toHaveTypes([PokemonType.WATER]);
+    game.move.use(MoveId.SPITE);
+    await game.move.forceEnemyMove(MoveId.TACKLE);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toEndOfTurn();
+
+    const karp = game.field.getEnemyPokemon();
+    expect(karp.getMoveset()).toBe(true);
   });
 });
