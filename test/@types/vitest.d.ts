@@ -13,6 +13,7 @@ import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types
 import { TurnMove } from "#types/turn-move";
 import { AtLeastOne } from "#types/type-helpers";
 import type { expect } from "vitest";
+import type Overrides from "#app/overrides";
 
 declare module "vitest" {
   interface Assertion {
@@ -20,7 +21,7 @@ declare module "vitest" {
      * Matcher to check if an array contains EXACTLY the given items (in any order).
      *
      * Different from {@linkcode expect.arrayContaining} as the latter only checks for subset equality
-     * (as opposed to full equality)
+     * (as opposed to full equality).
      *
      * @param expected - The expected contents of the array, in any order
      * @see {@linkcode expect.arrayContaining}
@@ -28,10 +29,10 @@ declare module "vitest" {
     toEqualArrayUnsorted<E>(expected: E[]): void;
 
     /**
-     * Matcher to check if a {@linkcode Pokemon}'s current typing includes the given types.
+     * Matcher to check if a {@linkcode Pokemon}'s current typing includes the given types
      *
-     * @param expected - The expected types (in any order).
-     * @param options - The options passed to the matcher.
+     * @param expected - The expected types (in any order)
+     * @param options - The options passed to the matcher
      */
     toHaveTypes(expected: [PokemonType, ...PokemonType[]], options?: toHaveTypesOptions): void;
 
@@ -47,7 +48,7 @@ declare module "vitest" {
 
     /**
      * Matcher to check if a {@linkcode Pokemon Pokemon's} effective stat is as expected
-     * (checked after all mstat value modifications).
+     * (checked after all stat value modifications).
      *
      * @param stat - The {@linkcode EffectiveStat} to check
      * @param expectedValue - The expected value of {@linkcode stat}
@@ -65,13 +66,6 @@ declare module "vitest" {
     toHaveTakenDamage(expectedDamageTaken: number, roundDown?: boolean): void;
 
     /**
-     * Matcher to check if a {@linkcode Pokemon} has a specific {@linkcode StatusEffect | non-volatile status effect}.
-     * @param expectedStatusEffect - The {@linkcode StatusEffect} the Pokemon is expected to have,
-     * or a partially filled {@linkcode Status} containing the desired properties
-     */
-    toHaveStatusEffect(expectedStatusEffect: expectedStatusType): void;
-
-    /**
      * Matcher to check if the current {@linkcode WeatherType} is as expected.
      * @param expectedWeatherType - The expected {@linkcode WeatherType}
      */
@@ -84,9 +78,16 @@ declare module "vitest" {
     toHaveTerrain(expectedTerrainType: TerrainType): void;
 
     /**
-     * Matcher to check if a {@linkcode Pokemon} has full HP.
+     * Matcher to check if a {@linkcode Pokemon} is at full HP.
      */
     toHaveFullHp(): void;
+
+    /**
+     * Matcher to check if a {@linkcode Pokemon} has a specific {@linkcode StatusEffect | non-volatile status effect}.
+     * @param expectedStatusEffect - The {@linkcode StatusEffect} the Pokemon is expected to have,
+     * or a partially filled {@linkcode Status} containing the desired properties
+     */
+    toHaveStatusEffect(expectedStatusEffect: expectedStatusType): void;
 
     /**
      * Matcher to check if a {@linkcode Pokemon} has a specific {@linkcode Stat} stage.
@@ -102,7 +103,7 @@ declare module "vitest" {
     toHaveBattlerTag(expectedBattlerTagType: BattlerTagType): void;
 
     /**
-     * Matcher to check if a {@linkcode Pokemon} had a specific {@linkcode AbilityId} applied.
+     * Matcher to check if a {@linkcode Pokemon} has applied a specific {@linkcode AbilityId}.
      * @param expectedAbilityId - The expected {@linkcode AbilityId}
      */
     toHaveAbilityApplied(expectedAbilityId: AbilityId): void;
@@ -117,5 +118,15 @@ declare module "vitest" {
      * Matcher to check if a {@linkcode Pokemon} has fainted (as determined by {@linkcode Pokemon.isFainted}).
      */
     toHaveFainted(): void;
+
+    /**
+     * Matcher to check th
+     * @param expectedValue - The {@linkcode MoveId} that should have consumed PP
+     * @param ppUsed - The amount of PP that should have been consumed
+     * @remarks
+     * If the Pokemon's moveset has been set via {@linkcode Overrides.MOVESET_OVERRIDE} or {@linkcode OPP_MOVESET_OVERRIDE},
+     * or contains the desired move more than once, this will fail the test.
+     */
+    toHaveUsedPP(expectedMove: MoveId, ppUsed: number): void;
   }
 }

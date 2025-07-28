@@ -11,6 +11,7 @@ import { toHaveTakenDamage } from "#test/test-utils/matchers/to-have-taken-damag
 import { toHaveTerrain } from "#test/test-utils/matchers/to-have-terrain";
 import { toHaveTypes } from "#test/test-utils/matchers/to-have-types";
 import { toHaveUsedMove } from "#test/test-utils/matchers/to-have-used-move";
+import { toHaveUsedPP } from "#test/test-utils/matchers/to-have-used-pp";
 import { toHaveWeather } from "#test/test-utils/matchers/to-have-weather";
 import { expect } from "vitest";
 
@@ -34,4 +35,5 @@ expect.extend({
   toHaveAbilityApplied,
   toHaveHp,
   toHaveFainted,
+  toHaveUsedPP,
 });

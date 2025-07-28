@@ -42,6 +42,6 @@ describe("Moves - Spite", () => {
     await game.toEndOfTurn();
 
     const karp = game.field.getEnemyPokemon();
-    expect(karp.getMoveset()).toBe(true);
+    expect(karp.getMoveset()).toBe();
   });
 });
