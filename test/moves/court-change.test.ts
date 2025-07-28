@@ -1,4 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
