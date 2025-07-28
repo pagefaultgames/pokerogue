@@ -1,4 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { Challenges } from "#enums/challenges";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { allSpecies } from "#data/data-lists";
@@ -99,6 +100,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
   MysteryEncounterType.GLOBAL_TRADE_SYSTEM,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
+  .withDisallowedChallenges(Challenges.SINGLE_TYPE, Challenges.SINGLE_GENERATION)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
   .withAutoHideIntroVisuals(false)
   .withIntroSpriteConfigs([
