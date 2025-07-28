@@ -312,7 +312,7 @@ export class PartyUiHandler extends MessageUiHandler {
       top: true,
       x: 1,
       y: -MoveInfoOverlay.getHeight() - 1,
-      width: globalScene.game.canvas.width / 12 - 30,
+      width: globalScene.scaledCanvas.width / 2 - 30,
     });
     ui.add(this.moveInfoOverlay);
 

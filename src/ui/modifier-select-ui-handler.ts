@@ -126,8 +126,8 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.lockRarityButtonContainer.add(this.lockRarityButtonText);
 
     this.continueButtonContainer = globalScene.add.container(
-      globalScene.game.canvas.width / 12,
-      -(globalScene.game.canvas.height / 12),
+      globalScene.scaledCanvas.width / 2,
+      -(globalScene.scaledCanvas.height / 2),
     );
     this.continueButtonContainer.setVisible(false);
     ui.add(this.continueButtonContainer);
@@ -217,7 +217,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       const sliceWidth = globalScene.scaledCanvas.width / (typeOptions.length + 2);
       const option = new ModifierOption(
         sliceWidth * (m + 1) + sliceWidth * 0.5,
-        -globalScene.game.canvas.height / 12 + optionsYOffset,
+        -globalScene.scaledCanvas.height / 2 + optionsYOffset,
         typeOptions[m],
       );
       option.setScale(0.5);
@@ -241,7 +241,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       const sliceWidth = globalScene.scaledCanvas.width / (rowOptions.length + 2);
       const option = new ModifierOption(
         sliceWidth * (col + 1) + sliceWidth * 0.5,
-        -globalScene.game.canvas.height / 12 - globalScene.game.canvas.height / 32 - (42 - (28 * row - 1)),
+        -globalScene.scaledCanvas.height / 2 - globalScene.game.canvas.height / 32 - (42 - (28 * row - 1)),
         shopTypeOptions[m],
       );
       option.setScale(0.375);
@@ -554,7 +554,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         this.cursorObj.setScale(1.25);
         this.cursorObj.setPosition(
           globalScene.game.canvas.width / 18 + 23,
-          -globalScene.game.canvas.height / 12 -
+          -globalScene.scaledCanvas.height / 2 -
             (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2),
         );
         ui.showText(i18next.t("modifierSelectUiHandler:continueNextWaveDescription"));
@@ -566,14 +566,14 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         // Cursor on free items
         this.cursorObj.setPosition(
           sliceWidth * (cursor + 1) + sliceWidth * 0.5 - 20,
-          -globalScene.game.canvas.height / 12 -
+          -globalScene.scaledCanvas.height / 2 -
             (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2),
         );
       } else {
         // Cursor on paying items
         this.cursorObj.setPosition(
           sliceWidth * (cursor + 1) + sliceWidth * 0.5 - 16,
-          -globalScene.game.canvas.height / 12 -
+          -globalScene.scaledCanvas.height / 2 -
             globalScene.game.canvas.height / 32 -
             (-14 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))),
         );

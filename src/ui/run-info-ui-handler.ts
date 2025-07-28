@@ -971,7 +971,7 @@ export class RunInfoUiHandler extends UiHandler {
     endCard.setOrigin(0);
     endCard.setScale(0.5);
     const text = addTextObject(
-      globalScene.game.canvas.width / 12,
+      globalScene.scaledCanvas.width / 2,
       globalScene.scaledCanvas.height - 16,
       i18next.t("battle:congratulations"),
       TextStyle.SUMMARY,
