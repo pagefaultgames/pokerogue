@@ -1,3 +1,4 @@
+import { getOnelineDiffStr } from "#test/test-utils/string-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
@@ -28,17 +29,20 @@ export function toEqualArrayUnsorted(
   }
 
   // Create shallow copies of the arrays in case we have
-  const gotSorted = received.slice().sort();
-  const wantSorted = expected.slice().sort();
-  const pass = this.equals(gotSorted, wantSorted, [...this.customTesters, this.utils.iterableEquality]);
+  const actualSorted = received.slice().sort();
+  const expectedSorted = expected.slice().sort();
+  const pass = this.equals(actualSorted, expectedSorted, [...this.customTesters, this.utils.iterableEquality]);
+
+  const actualStr = getOnelineDiffStr.call(this, actualSorted);
+  const expectedStr = getOnelineDiffStr.call(this, expectedSorted);
 
   return {
     pass,
     message: () =>
       pass
-        ? `Expected ${this.utils.stringify(received)} to NOT exactly equal ${this.utils.stringify(expected)} without order!`
-        : `Expected ${this.utils.stringify(received)} to exactly equal ${this.utils.stringify(expected)} without order!`,
-    expected: wantSorted,
-    actual: gotSorted,
+        ? `Expected ${actualStr} to NOT exactly equal ${expectedStr} without order, but it did!`
+        : `Expected ${actualStr} to exactly equal ${expectedStr} without order, but it didn't!`,
+    expected: expectedSorted,
+    actual: actualSorted,
   };
 }

@@ -39,8 +39,8 @@ export function toHaveWeather(
       pass
         ? `Expected Arena to NOT have ${expectedStr} weather active, but it did!`
         : `Expected Arena to have ${expectedStr} weather active, but got ${actualStr} instead!`,
-    actual,
     expected: expectedWeatherType,
+    actual,
   };
 }
 

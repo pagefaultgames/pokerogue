@@ -2,6 +2,7 @@ import { getStatKey, type Stat } from "#enums/stat";
 import type { EnumOrObject, EnumValues, NormalEnum, TSNumericEnum } from "#types/enum-types";
 import { enumValueToKey } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
+import type { MatcherState } from "@vitest/expect";
 import i18next from "i18next";
 
 type Casing = "Preserve" | "Title";
@@ -23,12 +24,12 @@ interface getEnumStrOptions {
 }
 
 /**
- * Helper function to return the name of an enum member or const object value, alongside its corresponding value.
+ * Return the name of an enum member or const object value, alongside its corresponding value.
  * @param obj - The {@linkcode EnumOrObject} to source reverse mappings from
  * @param enums - One of {@linkcode obj}'s values
  * @param casing - A string denoting the casing method to use; default `Preserve`
- * @param prefix - An optional string to be prepended to the enum's string representation.
- * @param suffix - An optional string to be appended to the enum's string representation.
+ * @param prefix - An optional string to be prepended to the enum's string representation
+ * @param suffix - An optional string to be appended to the enum's string representation
  * @returns The stringified representation of `val` as dictated by the options.
  * @example
  * ```ts
@@ -37,8 +38,8 @@ interface getEnumStrOptions {
  *   TWO: 2,
  *   THREE: 3,
  * }
- * console.log(getEnumStr(fakeEnum, fakeEnum.ONE)); // Output: "ONE (=1)"
- * console.log(getEnumStr(fakeEnum, fakeEnum.TWO, {case: "Title", prefix: "fakeEnum."})); // Output: "fakeEnum.Two (=2)"
+ * getEnumStr(fakeEnum, fakeEnum.ONE); // Output: "ONE (=1)"
+ * getEnumStr(fakeEnum, fakeEnum.TWO, {casing: "Title", prefix: "fakeEnum.", suffix: "!!!"}); // Output: "fakeEnum.TWO!!! (=2)"
  * ```
  */
 export function getEnumStr<E extends EnumOrObject>(
@@ -73,7 +74,7 @@ export function getEnumStr<E extends EnumOrObject>(
  * Convert an array of enums or `const object`s into a readable string version.
  * @param obj - The {@linkcode EnumOrObject} to source reverse mappings from
  * @param enums - An array of {@linkcode obj}'s values
- * @returns The stringified representation of `enums`
+ * @returns The stringified representation of `enums`.
  * @example
  * ```ts
  * enum fakeEnum {
@@ -90,17 +91,47 @@ export function stringifyEnumArray<E extends EnumOrObject>(obj: E, enums: E[keyo
   }
 
   const vals = enums.slice();
+  /** An array of string names */
   let names: string[];
 
   if (obj[enums[0]] !== undefined) {
-    // Reverse mapping exists - `obj` is a `TSNumericEnum` and its reverse mapped counterparts
+    // Reverse mapping exists - `obj` is a `TSNumericEnum` and its reverse mapped counterparts are strings
     names = enums.map(e => (obj as TSNumericEnum<E>)[e] as string);
   } else {
-    // No reverse mapping exists means `obj` is a `NormalEnum`
-    names = enums.map(e => enumValueToKey(obj as NormalEnum<E>, e) as string);
+    // No reverse mapping exists means `obj` is a `NormalEnum`.
+    // NB: This (while ugly) should be more ergonomic than doing a repeated lookup for large `const object`s
+    // as the `enums` array should be significantly shorter than the corresponding enum type.
+    names = [];
+    for (const [k, v] of Object.entries(obj as NormalEnum<E>)) {
+      if (names.length === enums.length) {
+        // No more names to get
+        break;
+      }
+      // Find all matches for the given enum, assigning their keys to the names array
+      findIndices(enums, v).forEach(matchIndex => {
+        names[matchIndex] = k;
+      });
+    }
   }
-
   return `[${names.join(", ")}] (=[${vals.join(", ")}])`;
+}
+
+/**
+ * Return the indices of all occurrences of a value in an array.
+ * @param arr - The array to search
+ * @param searchElement - The value to locate in the array
+ * @param fromIndex - The array index at which to begin the search. If fromIndex is omitted, the
+ * search starts at index 0
+ */
+function findIndices<T>(arr: T[], searchElement: T, fromIndex = 0): number[] {
+  const indices: number[] = [];
+  const arrSliced = arr.slice(fromIndex);
+  for (const [index, value] of arrSliced.entries()) {
+    if (value === searchElement) {
+      indices.push(index);
+    }
+  }
+  return indices;
 }
 
 /**
@@ -136,4 +167,16 @@ export function getOrdinal(num: number): string {
  */
 export function getStatName(s: Stat): string {
   return i18next.t(getStatKey(s));
+}
+
+/**
+ * Convert an object into a oneline diff to be shown in an error message.
+ * @param obj - The object to return the oneline diff of
+ * @returns The updated diff
+ */
+export function getOnelineDiffStr(this: MatcherState, obj: unknown): string {
+  return this.utils
+    .stringify(obj, undefined, { maxLength: 35, indent: 0, printBasicPrototype: false })
+    .replace(/\n/g, " ") // Replace newlines with spaces
+    .replace(/,(\s*)}$/g, "$1}");
 }

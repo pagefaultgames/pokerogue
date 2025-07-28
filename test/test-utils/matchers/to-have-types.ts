@@ -55,7 +55,7 @@ export function toHaveTypes(
       pass
         ? `Expected ${pkmName} to NOT have types ${expectedStr}, but it did!`
         : `Expected ${pkmName} to have types ${expectedStr}, but got ${actualStr} instead!`,
-    actual: actualTypes,
     expected: expectedTypes,
+    actual: actualTypes,
   };
 }

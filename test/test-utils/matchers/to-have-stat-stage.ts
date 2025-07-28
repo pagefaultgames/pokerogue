@@ -43,7 +43,7 @@ export function toHaveStatStage(
       pass
         ? `Expected ${pkmName}'s ${statName} stat stage to NOT be ${expectedStage}, but it was!`
         : `Expected ${pkmName}'s ${statName} stat stage to be ${expectedStage}, but got ${actualStage} instead!`,
-    actual: actualStage,
     expected: expectedStage,
+    actual: actualStage,
   };
 }

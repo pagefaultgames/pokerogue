@@ -2,7 +2,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import type { MoveId } from "#enums/move-id";
 // biome-ignore lint/correctness/noUnusedImports: TSDocs
 import type { Pokemon } from "#field/pokemon";
-import { getOrdinal } from "#test/test-utils/string-utils";
+import { getOnelineDiffStr, getOrdinal } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
@@ -54,12 +54,14 @@ export function toHaveUsedMove(
     this.utils.iterableEquality,
   ]);
 
+  const expectedStr = getOnelineDiffStr.call(this, expectedResult);
   return {
     pass,
     message: () =>
       pass
-        ? `Expected ${pkmName}'s ${moveIndexStr} to NOT match ${this.utils.stringify(expectedResult)}, but it did!`
-        : `Expected ${pkmName}'s ${moveIndexStr} to match ${this.utils.stringify(expectedResult)}, but got ${this.utils.stringify(move)} instead!`,
+        ? `Expected ${pkmName}'s ${moveIndexStr} to NOT match ${expectedStr}, but it did!`
+        : // Replace newlines with spaces to preserve one-line ness
+          `Expected ${pkmName}'s ${moveIndexStr} to match ${expectedStr}, but it didn't!`,
     expected: expectedResult,
     actual: move,
   };

@@ -29,14 +29,14 @@ export function toHaveBattlerTag(
   const pass = !!received.getTag(expectedBattlerTagType);
   const pkmName = getPokemonNameWithAffix(received);
   // "BattlerTagType.SEEDED (=1)"
-  const expectedTagStr = getEnumStr(BattlerTagType, expectedBattlerTagType);
+  const expectedTagStr = getEnumStr(BattlerTagType, expectedBattlerTagType, { prefix: "BattlerTagType." });
 
   return {
     pass,
     message: () =>
       pass
-        ? `Expected ${pkmName} to NOT have BattlerTagType.${expectedTagStr}, but it did!`
-        : `Expected ${pkmName} to have BattlerTagType.${expectedTagStr}, but it didn't!`,
+        ? `Expected ${pkmName} to NOT have ${expectedTagStr}, but it did!`
+        : `Expected ${pkmName} to have ${expectedTagStr}, but it didn't!`,
     expected: expectedBattlerTagType,
     actual: received.summonData.tags.map(t => t.tagType),
   };

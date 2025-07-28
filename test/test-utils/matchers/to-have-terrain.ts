@@ -39,8 +39,8 @@ export function toHaveTerrain(
       pass
         ? `Expected Arena to NOT have ${expectedStr} active, but it did!`
         : `Expected Arena to have ${expectedStr} active, but got ${actualStr} instead!`,
-    actual,
     expected: expectedTerrainType,
+    actual,
   };
 }
 
@@ -53,5 +53,6 @@ function toTerrainStr(terrainType: TerrainType) {
   if (terrainType === TerrainType.NONE) {
     return "no terrain";
   }
+  // "Electric Terrain (=2)"
   return getEnumStr(TerrainType, terrainType, { casing: "Title", suffix: " Terrain" });
 }
