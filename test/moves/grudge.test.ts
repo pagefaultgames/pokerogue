@@ -35,20 +35,24 @@ describe("Moves - Grudge", () => {
   it("should reduce the PP of an attack that faints the user to 0", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
+    const feebas = game.field.getPlayerPokemon();
+    const ratatta = game.field.getEnemyPokemon();
+
     game.move.use(MoveId.GUILLOTINE);
     await game.move.forceEnemyMove(MoveId.GRUDGE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toEndOfTurn();
+    await game.phaseInterceptor.to("FaintPhase");
 
     // Ratatta should have fainted and consumed all of Guillotine's PP
-    const feebas = game.field.getPlayerPokemon();
-    const ratatta = game.field.getEnemyPokemon();
     expect(ratatta).toHaveFainted();
     expect(feebas).toHaveUsedPP(MoveId.GUILLOTINE, "all");
   });
 
   it("should remain in effect until the user's next move", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+    const feebas = game.field.getPlayerPokemon();
+    const ratatta = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.GRUDGE);
@@ -60,8 +64,6 @@ describe("Moves - Grudge", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
-    const feebas = game.field.getPlayerPokemon();
-    const ratatta = game.field.getEnemyPokemon();
     expect(ratatta).toHaveFainted();
     expect(feebas).toHaveUsedPP(MoveId.GUILLOTINE, "all");
   });
@@ -71,13 +73,14 @@ describe("Moves - Grudge", () => {
     game.override.weather(WeatherType.SANDSTORM);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
+    const feebas = game.field.getPlayerPokemon();
+    const ratatta = game.field.getEnemyPokemon();
+
     game.move.use(MoveId.FALSE_SWIPE);
     await game.move.forceEnemyMove(MoveId.GRUDGE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
-    const feebas = game.field.getPlayerPokemon();
-    const ratatta = game.field.getEnemyPokemon();
     expect(ratatta).toHaveFainted();
     expect(feebas).toHaveUsedPP(MoveId.FALSE_SWIPE, 1);
   });

@@ -117,7 +117,10 @@ declare module "vitest" {
     toHaveHp(expectedHp: number): void;
 
     /**
-     * Check whether a {@linkcode Pokemon} has fainted (as determined by {@linkcode Pokemon.isFainted}).
+     * Check whether a {@linkcode Pokemon} is currently fainted (as determined by {@linkcode Pokemon.isFainted}).
+     * @remarks
+     * When checking whether an enemy wild Pokemon is fainted, one must reference it in a variable _before_ the fainting effect occurs
+     * as otherwise the Pokemon will be GC'ed and rendered `undefined`.
      */
     toHaveFainted(): void;
 
@@ -127,7 +130,8 @@ declare module "vitest" {
      * @param ppUsed - The numerical amount of PP that should have been consumed,
      * or `all` to indicate the move should be _out_ of PP
      * @remarks
-     * If the Pokemon's moveset has been set via {@linkcode Overrides.MOVESET_OVERRIDE}/{@linkcode Overrides.OPP_MOVESET_OVERRIDE}
+     * If the Pokemon's moveset has been set via {@linkcode Overrides.MOVESET_OVERRIDE}/{@linkcode Overrides.OPP_MOVESET_OVERRIDE},
+     * does not contain {@linkcode expectedMove}
      * or contains the desired move more than once, this will fail the test.
      */
     toHaveUsedPP(expectedMove: MoveId, ppUsed: number | "all"): void;

@@ -29,5 +29,7 @@ export function toHaveFullHp(this: MatcherState, received: unknown): SyncExpecta
       pass
         ? `Expected ${pkmName} to NOT have full hp, but it did!`
         : `Expected ${pkmName} to have full hp, but it didn't! (${hp}/${maxHp} HP)`,
+    expected: maxHp,
+    actual: hp,
   };
 }

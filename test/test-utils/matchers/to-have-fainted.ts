@@ -29,5 +29,7 @@ export function toHaveFainted(this: MatcherState, received: unknown): SyncExpect
       pass
         ? `Expected ${pkmName} to NOT have fainted, but it did!`
         : `Expected ${pkmName} to have fainted, but it didn't! (${hp}/${maxHp} HP)`,
+    expected: 0,
+    actual: hp,
   };
 }

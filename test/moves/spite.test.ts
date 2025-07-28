@@ -40,7 +40,7 @@ describe("Moves - Spite", () => {
     const karp = game.field.getEnemyPokemon();
     game.move.changeMoveset(karp, [MoveId.SPLASH, MoveId.TACKLE]);
 
-    game.move.use(MoveId.SPLASH);
+    game.move.use(MoveId.SPITE);
     await game.move.selectEnemyMove(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
@@ -48,7 +48,7 @@ describe("Moves - Spite", () => {
     expect(karp).toHaveUsedPP(MoveId.TACKLE, 1);
 
     game.move.use(MoveId.SPITE);
-    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
@@ -61,7 +61,7 @@ describe("Moves - Spite", () => {
     const karp = game.field.getEnemyPokemon();
     game.move.changeMoveset(karp, [MoveId.SPLASH, MoveId.TACKLE]);
 
-    game.move.use(MoveId.SPLASH);
+    game.move.use(MoveId.SPITE);
     await game.move.selectEnemyMove(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
@@ -77,7 +77,7 @@ describe("Moves - Spite", () => {
     game.move.changeMoveset(karp, [MoveId.TACKLE]);
     karp.moveset[0].ppUsed = 0;
 
-    game.move.use(MoveId.SPLASH);
+    game.move.use(MoveId.SPITE);
     await game.move.selectEnemyMove(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();

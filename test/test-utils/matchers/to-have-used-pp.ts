@@ -49,6 +49,7 @@ export function toHaveUsedPP(
       pass: false,
       message: () =>
         `Expected MoveId.${moveStr} to appear in ${pkmName}'s moveset exactly once, but got ${movesetMoves.length} times!`,
+      expected: expectedMove,
       actual: received.getMoveset(),
     };
   }
