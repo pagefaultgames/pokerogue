@@ -4,7 +4,7 @@ import { toDmgValue } from "#utils/common";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Matcher to check if a Pokemon has taken a specific amount of damage.
+ * Matcher that checks if a Pokemon has taken a specific amount of damage.
  * Unless specified, will run the expected damage value through {@linkcode toDmgValue}
  * to round it down and make it a minimum of 1.
  * @param received - The object to check. Should be a {@linkcode Pokemon}.

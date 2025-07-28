@@ -18,7 +18,7 @@ export interface toHaveTypesOptions {
 }
 
 /**
- * Matcher to check if an array contains exactly the given items, disregarding order.
+ * Matcher that checks if an array contains exactly the given items, disregarding order.
  * @param received - The object to check. Should be an array of one or more {@linkcode PokemonType}s.
  * @param options - The {@linkcode toHaveTypesOptions | options} for this matcher
  * @returns The result of the matching

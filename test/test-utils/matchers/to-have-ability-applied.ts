@@ -9,7 +9,7 @@ import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Matcher to check if a {@linkcode Pokemon} has applied a specific {@linkcode AbilityId}.
+ * Matcher that checks if a {@linkcode Pokemon} has applied a specific {@linkcode AbilityId}.
  * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @param expectedAbility - The {@linkcode AbilityId} to check for
  * @returns Whether the matcher passed

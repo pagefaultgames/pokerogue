@@ -1,7 +1,7 @@
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Matcher to check if an array contains exactly the given items, disregarding order.
+ * Matcher that checks if an array contains exactly the given items, disregarding order.
  * @param received - The received value. Should be an array of elements
  * @param expected - The array to check equality with
  * @returns Whether the matcher passed

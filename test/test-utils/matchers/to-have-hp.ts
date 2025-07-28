@@ -5,7 +5,7 @@ import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Matcher to check if a Pokemon has a specific amount of HP
+ * Matcher that checks if a Pokemon has a specific amount of HP.
  * @param received - The object to check. Should be a {@linkcode Pokemon}.
  * @param expectedHp - The expected amount of HP the {@linkcode Pokemon} has
  * @returns Whether the matcher passed

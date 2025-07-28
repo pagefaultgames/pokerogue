@@ -14,7 +14,7 @@ export type expectedStatusType =
   | { effect: StatusEffect.SLEEP; sleepTurnsRemaining: number };
 
 /**
- * Matcher to check if a Pokemon's {@linkcode StatusEffect} is as expected
+ * Matcher that checks if a Pokemon's {@linkcode StatusEffect} is as expected
  * @param received - The actual value received. Should be a {@linkcode Pokemon}
  * @param expectedStatus - The {@linkcode StatusEffect} the Pokemon is expected to have,
  * or a partially filled {@linkcode Status} containing the desired properties

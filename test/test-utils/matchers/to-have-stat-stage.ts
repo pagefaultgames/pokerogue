@@ -5,7 +5,7 @@ import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Matcher to check if a Pokemon has a specific {@linkcode Stat} stage
+ * Matcher that checks if a Pokemon has a specific {@linkcode Stat} stage.
  * @param received - The object to check. Should be a {@linkcode Pokemon}.
  * @param stat - The {@linkcode Stat} to check
  * @param expectedStage - The expected numerical value of {@linkcode stat}; should be within the range `[-6, 6]`

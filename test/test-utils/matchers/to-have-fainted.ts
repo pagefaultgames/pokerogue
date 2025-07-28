@@ -1,9 +1,11 @@
 import { getPokemonNameWithAffix } from "#app/messages";
+// biome-ignore lint/correctness/noUnusedImports: TSDoc
+import type { Pokemon } from "#field/pokemon";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Matcher to check if a Pokemon has fainted.
+ * Matcher that checks if a {@linkcode Pokemon} has fainted.
  * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @returns Whether the matcher passed
  */
