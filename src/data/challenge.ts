@@ -4,6 +4,7 @@ import { defaultStarterSpecies } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
+import { getEggTierForSpecies } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getPokemonSpeciesForm } from "#data/pokemon-species";
@@ -30,7 +31,6 @@ import { deepCopy } from "#utils/data";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase, toSnakeCase } from "#utils/strings";
 import i18next from "i18next";
-import { getEggTierForSpecies } from "./egg";
 
 /** A constant for the default max cost of the starting party before a run */
 const DEFAULT_PARTY_MAX_COST = 10;
