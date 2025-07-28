@@ -1,6 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
@@ -62,27 +63,21 @@ describe("Moves - Spite", () => {
 
     game.move.use(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toEndOfTurn();
-
-    const feebas = game.field.getPlayerPokemon();
-    expect(feebas).toHaveUsedMove({});
-    expect(karp).toHaveUsedPP(MoveId.TACKLE, 1);
-
-    game.move.use(MoveId.SPITE);
-    await game.move.forceEnemyMove(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
-    expect(karp).toHaveUsedPP(MoveId.TACKLE, 4 + 1);
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveUsedMove({ move: MoveId.SPITE, result: MoveResult.FAIL });
+    expect(karp).toHaveUsedPP(MoveId.TACKLE, 1);
   });
 
-  it("should ignore virtual or Dancer-induced moves", async () => {
+  it("should ignore virtual and Dancer-induced moves", async () => {
     game.override.battleStyle("double").enemyAbility(AbilityId.DANCER);
+    game.move.forceMetronomeMove(MoveId.SPLASH);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const [karp1, karp2] = game.scene.getEnemyField();
-    game.move.changeMoveset(karp1, [MoveId.SPLASH, MoveId.METRONOME]);
+    game.move.changeMoveset(karp1, [MoveId.SPLASH, MoveId.METRONOME, MoveId.SWORDS_DANCE]);
     game.move.changeMoveset(karp2, [MoveId.SWORDS_DANCE, MoveId.TACKLE]);
 
     game.move.use(MoveId.SPITE);
@@ -91,13 +86,9 @@ describe("Moves - Spite", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
-    expect(karp).toHaveUsedPP(MoveId.TACKLE, 1);
-
-    game.move.use(MoveId.SPITE);
-    await game.move.forceEnemyMove(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.toEndOfTurn();
-
-    expect(karp).toHaveUsedPP(MoveId.TACKLE, 4 + 1);
+    // Spite ignored virtual splash and swords dance, instead only docking from metronome
+    expect(karp1).toHaveUsedPP(MoveId.SPLASH, 0);
+    expect(karp1).toHaveUsedPP(MoveId.SWORDS_DANCE, 0);
+    expect(karp1).toHaveUsedPP(MoveId.METRONOME, 5);
   });
 });

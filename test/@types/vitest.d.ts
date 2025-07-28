@@ -41,6 +41,7 @@ declare module "vitest" {
      * Matcher to check the contents of a {@linkcode Pokemon}'s move history.
      *
      * @param expectedValue - The expected value; can be a {@linkcode MoveId} or a partially filled {@linkcode TurnMove}
+     * containing the desired properties to check
      * @param index - The index of the move history entry to check, in order from most recent to least recent.
      * Default `0` (last used move)
      * @see {@linkcode Pokemon.getLastXMoves}
@@ -125,9 +126,9 @@ declare module "vitest" {
      * @param expectedValue - The {@linkcode MoveId} of the {@linkcode PokemonMove} that should have consumed PP
      * @param ppUsed - The amount of PP that should have been consumed
      * @remarks
-     * If the Pokemon's moveset has been set via {@linkcode Overrides.MOVESET_OVERRIDE} or {@linkcode OPP_MOVESET_OVERRIDE},
+     * If the Pokemon's moveset has been set via {@linkcode Overrides.MOVESET_OVERRIDE}/{@linkcode Overrides.OPP_MOVESET_OVERRIDE}
      * or contains the desired move more than once, this will fail the test.
      */
-    toHaveUsedPP(expectedMove: MoveId, ppUsed: number): void;
+    toHaveUsedPP(expectedMove: MoveId, ppUsed?: number): void;
   }
 }

@@ -12,7 +12,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * Matcher to check the contents of a {@linkcode Pokemon}'s move history.
  * @param received - The actual value received. Should be a {@linkcode Pokemon}
  * @param expectedValue - The {@linkcode MoveId} the Pokemon is expected to have used,
- * or a partially filled {@linkcode TurnMove} containing the desired properties to check.
+ * or a partially filled {@linkcode TurnMove} containing the desired properties to check
  * @param index - The index of the move history entry to check, in order from most recent to least recent.
  * Default `0` (last used move)
  * @returns Whether the matcher passed
