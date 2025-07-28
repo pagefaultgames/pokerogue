@@ -98,7 +98,7 @@ export function toTitleCase(str: string): string {
  */
 export function toCamelCase(str: string) {
   return splitWords(str)
-    .map((word, index) => (index === 0 ? word.toLowerCase() : capitalizeFirstLetter(word)))
+    .map((word, index) => (index === 0 ? word.toLowerCase() : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()))
     .join("");
 }
 
