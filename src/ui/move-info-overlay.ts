@@ -27,7 +27,7 @@ export interface MoveInfoOverlaySettings {
   y?: number;
   /** Width of the component, unaffected by scaling. Defaults to half the screen width. */
   width?: number;
-  /* Whether to display the small secondary box */
+  /** Whether to display the small secondary box */
   hideEffectBox?: boolean;
   hideBg?: boolean;
 }
