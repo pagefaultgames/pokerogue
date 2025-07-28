@@ -86,10 +86,10 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
       y: options?.y || 0,
     };
     if (maskPointOrigin.x < 0) {
-      maskPointOrigin.x += globalScene.game.canvas.width / GLOBAL_SCALE;
+      maskPointOrigin.x += globalScene.scaledCanvas.width;
     }
     if (maskPointOrigin.y < 0) {
-      maskPointOrigin.y += globalScene.game.canvas.height / GLOBAL_SCALE;
+      maskPointOrigin.y += globalScene.scaledCanvas.height;
     }
 
     const moveDescriptionTextMaskRect = globalScene.make.graphics();
@@ -232,7 +232,7 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
 
   // width of this element
   static getWidth(): number {
-    return globalScene.game.canvas.width / GLOBAL_SCALE / 2;
+    return globalScene.scaledCanvas.width / 2;
   }
 
   // height of this element
