@@ -1,12 +1,12 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
 import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
@@ -150,7 +150,7 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
     },
     async () => {
       const encounter = globalScene.currentBattle.mysteryEncounter!;
-      // Battle the stat trainer for an Egg and great rewards
+      // Battle the stat trainer for an Egg and great allRewards
       const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
       await transitionMysteryEncounterIntroVisuals();
@@ -164,8 +164,8 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
       encounter.setDialogueToken("eggType", i18next.t(`${namespace}:eggTypes.epic`));
       setEncounterRewards(
         {
-          guaranteedModifierTypeFuncs: [modifierTypes.SACRED_ASH],
-          guaranteedModifierTiers: [RewardTier.ROGUE, RewardTier.ULTRA],
+          guaranteedRewardFuncs: [allRewards.SACRED_ASH],
+          guaranteedRarityTiers: [RarityTier.ROGUE, RarityTier.ULTRA],
           fillRemaining: true,
         },
         [eggOptions],

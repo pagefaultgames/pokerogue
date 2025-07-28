@@ -4,7 +4,7 @@ import { HeldItemId } from "#enums/held-item-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
@@ -212,7 +212,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       });
     });
 
-    it("should decrease item stacks of chosen item and have a tiered up item in rewards", async () => {
+    it("should decrease item stacks of chosen item and have a tiered up item in allRewards", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, defaultParty);
 
       // Set 2 Soul Dew on party lead
@@ -223,12 +223,12 @@ describe("Global Trade System - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
       await game.phaseInterceptor.run(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(1);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.tier).toBe(RewardTier.MASTER);
+      expect(rewardSelectHandler.options.length).toEqual(1);
+      expect(rewardSelectHandler.options[0].rewardOption.type.tier).toBe(RarityTier.MASTER);
       const soulDewAfter = scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.SOUL_DEW);
       expect(soulDewAfter).toBe(1);
     });

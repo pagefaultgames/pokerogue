@@ -74,7 +74,7 @@ describe("Shop modifications", async () => {
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("BattleEndPhase");
-    game.onNextPrompt("SelectRewardPhase", UiMode.MODIFIER_SELECT, () => {
+    game.onNextPrompt("SelectRewardPhase", UiMode.REWARD_SELECT, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(RewardSelectUiHandler);
       game.modifiers.testCheck("EVIOLITE", false).testCheck("MINI_BLACK_HOLE", false);
     });
@@ -85,7 +85,7 @@ describe("Shop modifications", async () => {
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("BattleEndPhase");
-    game.onNextPrompt("SelectRewardPhase", UiMode.MODIFIER_SELECT, () => {
+    game.onNextPrompt("SelectRewardPhase", UiMode.REWARD_SELECT, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(RewardSelectUiHandler);
       game.modifiers.testCheck("EVIOLITE", true).testCheck("MINI_BLACK_HOLE", true);
     });

@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import type { Pokemon } from "#field/pokemon";
-import { HeldItem, HeldItemEffect } from "#items/held-item";
+import { HeldItem } from "#items/held-item";
 import { TrainerItemEffect } from "#items/trainer-item";
 import { NumberHolder } from "#utils/common";
 

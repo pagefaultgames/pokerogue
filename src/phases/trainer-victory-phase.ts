@@ -1,6 +1,6 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import { BiomeId } from "#enums/biome-id";
 import { TrainerSlot } from "#enums/trainer-slot";
@@ -20,9 +20,9 @@ export class TrainerVictoryPhase extends BattlePhase {
 
     globalScene.phaseManager.unshiftNew("MoneyRewardPhase", globalScene.currentBattle.trainer?.config.moneyMultiplier!); // TODO: is this bang correct?
 
-    const modifierRewardFuncs = globalScene.currentBattle.trainer?.config.modifierRewardFuncs!; // TODO: is this bang correct?
-    for (const modifierRewardFunc of modifierRewardFuncs) {
-      globalScene.phaseManager.unshiftNew("RewardPhase", modifierRewardFunc);
+    const rewardFuncs = globalScene.currentBattle.trainer?.config.rewardFuncs!; // TODO: is this bang correct?
+    for (const rewardFunc of rewardFuncs) {
+      globalScene.phaseManager.unshiftNew("RewardPhase", rewardFunc);
     }
 
     const trainerType = globalScene.currentBattle.trainer?.config.trainerType!; // TODO: is this bang correct?
@@ -35,17 +35,14 @@ export class TrainerVictoryPhase extends BattlePhase {
         if (timedEventManager.getUpgradeUnlockedVouchers()) {
           globalScene.phaseManager.unshiftNew(
             "RewardPhase",
-            [
-              modifierTypes.VOUCHER_PLUS,
-              modifierTypes.VOUCHER_PLUS,
-              modifierTypes.VOUCHER_PLUS,
-              modifierTypes.VOUCHER_PREMIUM,
-            ][vouchers[TrainerType[trainerType]].voucherType],
+            [allRewards.VOUCHER_PLUS, allRewards.VOUCHER_PLUS, allRewards.VOUCHER_PLUS, allRewards.VOUCHER_PREMIUM][
+              vouchers[TrainerType[trainerType]].voucherType
+            ],
           );
         } else {
           globalScene.phaseManager.unshiftNew(
             "RewardPhase",
-            [modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM][
+            [allRewards.VOUCHER, allRewards.VOUCHER, allRewards.VOUCHER_PLUS, allRewards.VOUCHER_PREMIUM][
               vouchers[TrainerType[trainerType]].voucherType
             ],
           );

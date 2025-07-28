@@ -1,7 +1,8 @@
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { getStatKey, type PermanentStat, Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
-import { HeldItem, HeldItemEffect } from "#items/held-item";
+import { HeldItem } from "#items/held-item";
 import i18next from "i18next";
 
 export interface BaseStatBoosterParams {
@@ -11,9 +12,9 @@ export interface BaseStatBoosterParams {
   baseStats: number[];
 }
 
-interface PermanentStatToHeldItemMap {
-  [key: number]: HeldItemId;
-}
+type PermanentStatToHeldItemMap = {
+  [key in PermanentStat]: HeldItemId;
+};
 
 export const permanentStatToHeldItem: PermanentStatToHeldItemMap = {
   [Stat.HP]: HeldItemId.HP_UP,

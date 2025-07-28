@@ -125,13 +125,13 @@ describe("Fight or Flight - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectRewardPhase, false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
       await game.phaseInterceptor.run(SelectRewardPhase);
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
 
-      const modifierSelectHandler = scene.ui.handlers.find(
+      const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(1);
-      expect(item.type.name).toBe(modifierSelectHandler.options[0].modifierTypeOption.type.name);
+      expect(rewardSelectHandler.options.length).toEqual(1);
+      expect(item.type.name).toBe(rewardSelectHandler.options[0].rewardOption.type.name);
     });
   });
 
@@ -185,13 +185,13 @@ describe("Fight or Flight - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectRewardPhase, false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
       await game.phaseInterceptor.run(SelectRewardPhase);
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
 
-      const modifierSelectHandler = scene.ui.handlers.find(
+      const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(1);
-      expect(item.type.name).toBe(modifierSelectHandler.options[0].modifierTypeOption.type.name);
+      expect(rewardSelectHandler.options.length).toEqual(1);
+      expect(item.type.name).toBe(rewardSelectHandler.options[0].rewardOption.type.name);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });

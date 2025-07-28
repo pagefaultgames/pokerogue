@@ -8,22 +8,23 @@ import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getTypeRgb } from "#data/type";
 import { HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/held-item-id";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { PokeballType } from "#enums/pokeball";
-import { RewardTier } from "#enums/reward-tier";
+import { RewardPoolType } from "#enums/reward-pool-type";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { doShinySparkleAnim } from "#field/anims";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
-import { getHeldItemTier } from "#items/held-item-tiers";
+import { getHeldItemTier } from "#items/held-item-default-tiers";
+import type { RewardOption } from "#items/reward";
+import { generatePlayerRewardOptions, generateRewardPoolWeights, getRewardPoolForType } from "#items/reward-pool-utils";
+import { isTmReward } from "#items/reward-utils";
 import { TrainerItemEffect } from "#items/trainer-item";
-import type { ModifierTypeOption } from "#modifiers/modifier-type";
-import { getPlayerModifierTypeOptions, regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
 import { getEncounterText, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
@@ -413,26 +414,26 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
         // Check tier of the traded item, the received item will be one tier up
-        let tier = getHeldItemTier(heldItemId) ?? RewardTier.GREAT;
+        let tier = getHeldItemTier(heldItemId) ?? RarityTier.GREAT;
 
         // Increment tier by 1
-        if (tier < RewardTier.MASTER) {
+        if (tier < RarityTier.MASTER) {
           tier++;
         }
 
-        regenerateModifierPoolThresholds(party, ModifierPoolType.PLAYER, 0);
-        let item: ModifierTypeOption | null = null;
-        // TMs excluded from possible rewards
-        while (!item || item.type.id.includes("TM_")) {
-          item = getPlayerModifierTypeOptions(1, party, [], {
-            guaranteedModifierTiers: [tier],
+        generateRewardPoolWeights(getRewardPoolForType(RewardPoolType.PLAYER), party, 0);
+        let item: RewardOption | null = null;
+        // TMs excluded from possible allRewards
+        while (!item || isTmReward(item.type)) {
+          item = generatePlayerRewardOptions(1, party, [], {
+            guaranteedRarityTiers: [tier],
             allowLuckUpgrades: false,
           })[0];
         }
 
         encounter.setDialogueToken("itemName", item.type.name);
         setEncounterRewards({
-          guaranteedModifierTypeOptions: [item],
+          guaranteedRewardOptions: [item],
           fillRemaining: false,
         });
 
@@ -458,7 +459,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
       ],
     },
     async () => {
-      // Leave encounter with no rewards or exp
+      // Leave encounter with no allRewards or exp
       leaveEncounterWithoutBattle(true);
       return true;
     },

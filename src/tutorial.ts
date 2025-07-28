@@ -98,7 +98,7 @@ const tutorialHandlers = {
           null,
           () =>
             globalScene.ui.showText("", null, () =>
-              globalScene.ui.setModeWithoutClear(UiMode.MODIFIER_SELECT).then(() => resolve()),
+              globalScene.ui.setModeWithoutClear(UiMode.REWARD_SELECT).then(() => resolve()),
             ),
           null,
           true,

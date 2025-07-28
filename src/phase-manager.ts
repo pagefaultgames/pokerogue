@@ -4,7 +4,7 @@ import { type PhasePriorityQueue, PostSummonPhasePriorityQueue } from "#data/pha
 import type { DynamicPhaseType } from "#enums/dynamic-phase-type";
 import type { Pokemon } from "#field/pokemon";
 import { ActivatePriorityQueuePhase } from "#phases/activate-priority-queue-phase";
-import { AddEnemyBuffModifierPhase } from "#phases/add-enemy-buff-modifier-phase";
+import { AddEnemyTokenPhase } from "#phases/add-enemy-token-phase";
 import { AttemptCapturePhase } from "#phases/attempt-capture-phase";
 import { AttemptRunPhase } from "#phases/attempt-run-phase";
 import { BattleEndPhase } from "#phases/battle-end-phase";
@@ -116,7 +116,7 @@ import { type Constructor, coerceArray } from "#utils/common";
  */
 const PHASES = Object.freeze({
   ActivatePriorityQueuePhase,
-  AddEnemyBuffModifierPhase,
+  AddEnemyTokenPhase,
   AttemptCapturePhase,
   AttemptRunPhase,
   BattleEndPhase,

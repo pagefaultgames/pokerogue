@@ -9,11 +9,11 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokemonType } from "#enums/pokemon-type";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
-import { getHeldItemTier } from "#items/held-item-tiers";
+import { getHeldItemTier } from "#items/held-item-default-tiers";
 import { PokemonMove } from "#moves/pokemon-move";
 import { ClowningAroundEncounter } from "#mystery-encounters/clowning-around-encounter";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
@@ -277,10 +277,10 @@ describe("Clowning Around - Mystery Encounter", () => {
 
       const leadItemsAfter = scene.getPlayerParty()[0].getHeldItems();
       const ultraCountAfter = leadItemsAfter
-        .filter(m => getHeldItemTier(m) === RewardTier.ULTRA)
+        .filter(m => getHeldItemTier(m) === RarityTier.ULTRA)
         .reduce((a, b) => a + scene.getPlayerParty()[0].heldItemManager.getStack(b), 0);
       const rogueCountAfter = leadItemsAfter
-        .filter(m => getHeldItemTier(m) === RewardTier.ROGUE)
+        .filter(m => getHeldItemTier(m) === RarityTier.ROGUE)
         .reduce((a, b) => a + scene.getPlayerParty()[0].heldItemManager.getStack(b), 0);
       expect(ultraCountAfter).toBe(13);
       expect(rogueCountAfter).toBe(7);

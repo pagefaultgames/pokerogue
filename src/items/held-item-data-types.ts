@@ -1,13 +1,21 @@
-// TODO: move to `src/@types/`
+// TODO: move all types to `src/@types/` and all functions to a utility place
 
 import type { FormChangeItem } from "#enums/form-change-item";
 import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
-import type { RewardTier } from "#enums/reward-tier";
+import type { RarityTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
 
 export type HeldItemData = {
   stack: number;
+  /**
+   * Whether this item is currently disabled.
+   * @defaultValue `false`
+   */
   disabled?: boolean;
+  /**
+   * The item's current cooldown.
+   * @defaultValue `0`
+   */
   cooldown?: number;
 };
 
@@ -67,7 +75,7 @@ export function isHeldItemPool(value: any): value is HeldItemPool {
 }
 
 export type HeldItemTieredPool = {
-  [key in RewardTier]?: HeldItemPool;
+  [key in RarityTier]?: HeldItemPool;
 };
 
 type HeldItemConfigurationEntry = {

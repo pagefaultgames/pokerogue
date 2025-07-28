@@ -65,7 +65,7 @@ interface TimedEvent extends EventBanner {
   mysteryEncounterTierChanges?: EventMysteryEncounterTier[];
   luckBoostedSpecies?: SpeciesId[];
   boostFusions?: boolean; //MODIFIER REWORK PLEASE
-  classicWaveRewards?: EventWaveReward[]; // Rival battle rewards
+  classicWaveRewards?: EventWaveReward[]; // Rival battle allRewards
   trainerShinyChance?: number; // Odds over 65536 of trainer mon generating as shiny
   music?: EventMusicReplacement[];
   dailyRunChallenges?: EventChallenge[];
@@ -466,7 +466,7 @@ export class TimedEventManager {
 
   /**
    * For events where Delibirdy gives extra items
-   * @returns list of ids of {@linkcode ModifierType}s that Delibirdy hands out as a bonus
+   * @returns list of ids of {@linkcode Reward}s that Delibirdy hands out as a bonus
    */
   getDelibirdyBuff(): TrainerItemId[] {
     const ret: TrainerItemId[] = [];
@@ -567,7 +567,7 @@ export class TimedEventManager {
   /**
    * Gets all the modifier types associated with a certain wave during an event
    * @see EventWaveReward
-   * @param wave the wave to check for associated rewards
+   * @param wave the wave to check for associated allRewards
    * @returns array of strings of the event modifier reward types
    */
   getFixedBattleEventRewards(wave: number): string[] {

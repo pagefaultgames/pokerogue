@@ -18,8 +18,8 @@ import { StatusEffect } from "#enums/status-effect";
 import type { Unlockables } from "#enums/unlockables";
 import { WeatherType } from "#enums/weather-type";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
+import type { RewardOverride } from "#items/reward";
 import type { TrainerItemConfiguration } from "#items/trainer-item-data-types";
-import type { ModifierOverride } from "#modifiers/modifier-type";
 import type { Variant } from "#sprites/variant";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import { coerceArray, shiftCharCodes } from "#utils/common";
@@ -557,9 +557,9 @@ export class OverridesHelper extends GameManagerHelper {
    * @param items - The items to be rolled
    * @returns `this`
    */
-  public itemRewards(items: ModifierOverride[]): this {
-    vi.spyOn(Overrides, "ITEM_REWARD_OVERRIDE", "get").mockReturnValue(items);
-    this.log("Item rewards set to:", items);
+  public itemRewards(items: RewardOverride[]): this {
+    vi.spyOn(Overrides, "REWARD_OVERRIDE", "get").mockReturnValue(items);
+    this.log("Item allRewards set to:", items);
     return this;
   }
 

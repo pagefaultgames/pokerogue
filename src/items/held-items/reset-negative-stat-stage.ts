@@ -1,8 +1,9 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { BATTLE_STATS } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
-import { ConsumableHeldItem, HeldItemEffect } from "#items/held-item";
+import { ConsumableHeldItem } from "#items/held-item";
 import i18next from "i18next";
 
 export interface ResetNegativeStatStageParams {

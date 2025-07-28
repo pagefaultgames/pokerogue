@@ -5,7 +5,6 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BiomePoolTier, biomeLinks } from "#balance/biomes";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
-import { modifierTypes } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
 import { Egg } from "#data/egg";
 import type { Gender } from "#data/gender";
@@ -17,7 +16,6 @@ import type { AiType } from "#enums/ai-type";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { FieldPosition } from "#enums/field-position";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import type { Nature } from "#enums/nature";
@@ -31,8 +29,7 @@ import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
-import type { CustomModifierSettings, ModifierType } from "#modifiers/modifier-type";
-import { getPartyLuckValue, ModifierTypeGenerator, ModifierTypeOption } from "#modifiers/modifier-type";
+import type { CustomRewardSettings } from "#items/reward-pool-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
@@ -44,6 +41,7 @@ import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstact-option-se
 import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { coerceArray, isNullOrUndefined, randomString, randSeedInt, randSeedItem } from "#utils/common";
+import { getPartyLuckValue } from "#utils/party";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -475,45 +473,6 @@ export function updatePlayerMoney(changeValue: number, playSound = true, showMes
 }
 
 /**
- * Converts modifier bullshit to an actual item
- * @param modifier
- * @param pregenArgs Can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
- */
-export function generateModifierType(modifier: () => ModifierType, pregenArgs?: any[]): ModifierType | null {
-  const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifier);
-  if (!modifierId) {
-    return null;
-  }
-
-  let result: ModifierType = modifierTypes[modifierId]();
-
-  // Populates item id and tier (order matters)
-  result = result
-    .withIdFromFunc(modifierTypes[modifierId])
-    .withTierFromPool(ModifierPoolType.PLAYER, globalScene.getPlayerParty());
-
-  return result instanceof ModifierTypeGenerator
-    ? result.generateType(globalScene.getPlayerParty(), pregenArgs)
-    : result;
-}
-
-/**
- * Converts modifier bullshit to an actual item
- * @param modifier
- * @param pregenArgs - can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
- */
-export function generateModifierTypeOption(
-  modifier: () => ModifierType,
-  pregenArgs?: any[],
-): ModifierTypeOption | null {
-  const result = generateModifierType(modifier, pregenArgs);
-  if (result) {
-    return new ModifierTypeOption(result, 0);
-  }
-  return result;
-}
-
-/**
  * This function is intended for use inside onPreOptionPhase() of an encounter option
  * @param onPokemonSelected - Any logic that needs to be performed when Pokemon is chosen
  * If a second option needs to be selected, onPokemonSelected should return a OptionSelectItem[] object
@@ -727,12 +686,12 @@ export function selectOptionThenPokemon(
 /**
  * Will initialize reward phases to follow the mystery encounter
  * Can have shop displayed or skipped
- * @param customShopRewards - adds a shop phase with the specified rewards / reward tiers
+ * @param customShopRewards - adds a shop phase with the specified allRewards / reward tiers
  * @param eggRewards
  * @param preRewardsCallback - can execute an arbitrary callback before the new phases if necessary (useful for updating items/party/injecting new phases before {@linkcode MysteryEncounterRewardsPhase})
  */
 export function setEncounterRewards(
-  customShopRewards?: CustomModifierSettings,
+  customShopRewards?: CustomRewardSettings,
   eggRewards?: IEggOptions[],
   preRewardsCallback?: Function,
 ) {
@@ -809,8 +768,8 @@ export function initSubsequentOptionSelect(optionSelectSettings: OptionSelectSet
 
 /**
  * Can be used to exit an encounter without any battles or followup
- * Will skip any shops and rewards, and queue the next encounter phase as normal
- * @param addHealPhase - when true, will add a shop phase to end of encounter with 0 rewards but healing items are available
+ * Will skip any shops and allRewards, and queue the next encounter phase as normal
+ * @param addHealPhase - when true, will add a shop phase to end of encounter with 0 allRewards but healing items are available
  * @param encounterMode - Can set custom encounter mode if necessary (may be required for forcing Pokemon to return before next phase)
  */
 export function leaveEncounterWithoutBattle(

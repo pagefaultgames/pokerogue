@@ -1,15 +1,15 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import { MoveCategory } from "#enums/move-category";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Stat } from "#enums/stat";
 import type { PlayerPokemon } from "#field/pokemon";
+import { generateRewardOption } from "#items/reward-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
 import {
-  generateModifierTypeOption,
   leaveEncounterWithoutBattle,
   selectPokemonForOption,
   setEncounterExp,
@@ -96,15 +96,15 @@ export const FieldTripEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         if (encounter.misc.correctMove) {
           const modifiers = [
-            generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.ATK])!,
-            generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.DEF])!,
-            generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
-            generateModifierTypeOption(modifierTypes.DIRE_HIT)!,
-            generateModifierTypeOption(modifierTypes.RARER_CANDY)!,
+            generateRewardOption(allRewards.TEMP_STAT_STAGE_BOOSTER, [Stat.ATK])!,
+            generateRewardOption(allRewards.TEMP_STAT_STAGE_BOOSTER, [Stat.DEF])!,
+            generateRewardOption(allRewards.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
+            generateRewardOption(allRewards.DIRE_HIT)!,
+            generateRewardOption(allRewards.RARER_CANDY)!,
           ];
 
           setEncounterRewards({
-            guaranteedModifierTypeOptions: modifiers,
+            guaranteedRewardOptions: modifiers,
             fillRemaining: false,
           });
         }
@@ -144,15 +144,15 @@ export const FieldTripEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         if (encounter.misc.correctMove) {
           const modifiers = [
-            generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPATK])!,
-            generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPDEF])!,
-            generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
-            generateModifierTypeOption(modifierTypes.DIRE_HIT)!,
-            generateModifierTypeOption(modifierTypes.RARER_CANDY)!,
+            generateRewardOption(allRewards.TEMP_STAT_STAGE_BOOSTER, [Stat.SPATK])!,
+            generateRewardOption(allRewards.TEMP_STAT_STAGE_BOOSTER, [Stat.SPDEF])!,
+            generateRewardOption(allRewards.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
+            generateRewardOption(allRewards.DIRE_HIT)!,
+            generateRewardOption(allRewards.RARER_CANDY)!,
           ];
 
           setEncounterRewards({
-            guaranteedModifierTypeOptions: modifiers,
+            guaranteedRewardOptions: modifiers,
             fillRemaining: false,
           });
         }
@@ -192,15 +192,15 @@ export const FieldTripEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         if (encounter.misc.correctMove) {
           const modifiers = [
-            generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.ACC])!,
-            generateModifierTypeOption(modifierTypes.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
-            generateModifierTypeOption(modifierTypes.GREAT_BALL)!,
-            generateModifierTypeOption(modifierTypes.IV_SCANNER)!,
-            generateModifierTypeOption(modifierTypes.RARER_CANDY)!,
+            generateRewardOption(allRewards.TEMP_STAT_STAGE_BOOSTER, [Stat.ACC])!,
+            generateRewardOption(allRewards.TEMP_STAT_STAGE_BOOSTER, [Stat.SPD])!,
+            generateRewardOption(allRewards.GREAT_BALL)!,
+            generateRewardOption(allRewards.IV_SCANNER)!,
+            generateRewardOption(allRewards.RARER_CANDY)!,
           ];
 
           setEncounterRewards({
-            guaranteedModifierTypeOptions: modifiers,
+            guaranteedRewardOptions: modifiers,
             fillRemaining: false,
           });
         }

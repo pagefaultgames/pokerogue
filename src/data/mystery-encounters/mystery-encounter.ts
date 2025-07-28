@@ -173,11 +173,11 @@ export class MysteryEncounter implements IMysteryEncounter {
   onVisualsStart?: () => boolean;
   /** Event triggered prior to {@linkcode CommandPhase}, during {@linkcode TurnInitPhase} */
   onTurnStart?: () => boolean;
-  /** Event prior to any rewards logic in {@linkcode MysteryEncounterRewardsPhase} */
+  /** Event prior to any allRewards logic in {@linkcode MysteryEncounterRewardsPhase} */
   onRewards?: () => Promise<void>;
-  /** Will provide the player party EXP before rewards are displayed for that wave */
+  /** Will provide the player party EXP before allRewards are displayed for that wave */
   doEncounterExp?: () => boolean;
-  /** Will provide the player a rewards shop for that wave */
+  /** Will provide the player a allRewards shop for that wave */
   doEncounterRewards?: () => boolean;
   /** Will execute callback during VictoryPhase of a continuousEncounter */
   doContinueEncounter?: () => Promise<void>;
@@ -237,10 +237,10 @@ export class MysteryEncounter implements IMysteryEncounter {
   encounterMode: MysteryEncounterMode;
   /**
    * Flag for checking if it's the first time a shop is being shown for an encounter.
-   * Defaults to true so that the first shop does not override the specified rewards.
+   * Defaults to true so that the first shop does not override the specified allRewards.
    * Will be set to false after a shop is shown (so can't reroll same rarity items for free)
    */
-  lockEncounterRewardTiers: boolean;
+  lockEncounterRarityTiers: boolean;
   /**
    * Will be set automatically, indicates special moves in startOfBattleEffects are complete (so will not repeat)
    */
@@ -295,7 +295,7 @@ export class MysteryEncounter implements IMysteryEncounter {
 
     // Reset any dirty flags or encounter data
     this.startOfBattleEffectsComplete = false;
-    this.lockEncounterRewardTiers = true;
+    this.lockEncounterRarityTiers = true;
     this.dialogueTokens = {};
     this.enemyPartyConfigs = [];
     this.startOfBattleEffects = [];
@@ -561,7 +561,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   continuousEncounter = false;
   catchAllowed = false;
   fleeAllowed = true;
-  lockEncounterRewardTiers = false;
+  lockEncounterRarityTiers = false;
   startOfBattleEffectsComplete = false;
   hasBattleAnimationsWithoutTargets = false;
   skipEnemyBattleTurns = false;
@@ -928,13 +928,13 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   }
 
   /**
-   * Can set custom encounter rewards via this callback function
-   * If rewards are always deterministic for an encounter, this is a good way to set them
+   * Can set custom encounter allRewards via this callback function
+   * If allRewards are always deterministic for an encounter, this is a good way to set them
    *
-   * NOTE: If rewards are dependent on options selected, runtime data, etc.,
+   * NOTE: If allRewards are dependent on options selected, runtime data, etc.,
    * It may be better to programmatically set doEncounterRewards elsewhere.
-   * There is a helper function in mystery-encounter utils, setEncounterRewards(), which can be called programmatically to set rewards
-   * @param doEncounterRewards Synchronous callback function to perform during rewards phase of the encounter
+   * There is a helper function in mystery-encounter utils, setEncounterRewards(), which can be called programmatically to set allRewards
+   * @param doEncounterRewards Synchronous callback function to perform during allRewards phase of the encounter
    * @returns
    */
   withRewards(doEncounterRewards: () => boolean): this & Required<Pick<IMysteryEncounter, "doEncounterRewards">> {
@@ -945,10 +945,10 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * Can set custom encounter exp via this callback function
    * If exp always deterministic for an encounter, this is a good way to set them
    *
-   * NOTE: If rewards are dependent on options selected, runtime data, etc.,
+   * NOTE: If allRewards are dependent on options selected, runtime data, etc.,
    * It may be better to programmatically set doEncounterExp elsewhere.
-   * There is a helper function in mystery-encounter utils, setEncounterExp(), which can be called programmatically to set rewards
-   * @param doEncounterExp Synchronous callback function to perform during rewards phase of the encounter
+   * There is a helper function in mystery-encounter utils, setEncounterExp(), which can be called programmatically to set allRewards
+   * @param doEncounterExp Synchronous callback function to perform during allRewards phase of the encounter
    * @returns
    */
   withExp(doEncounterExp: () => boolean): this & Required<Pick<IMysteryEncounter, "doEncounterExp">> {

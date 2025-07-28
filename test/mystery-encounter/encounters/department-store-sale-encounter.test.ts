@@ -96,13 +96,13 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
       await game.phaseInterceptor.run(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(5);
-      for (const option of modifierSelectHandler.options) {
-        expect(option.modifierTypeOption.type.id).toContain("TM_");
+      expect(rewardSelectHandler.options.length).toEqual(5);
+      for (const option of rewardSelectHandler.options) {
+        expect(option.rewardOption.type.id).toContain("TM_");
       }
     });
 
@@ -133,15 +133,14 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
       await game.phaseInterceptor.run(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(3);
-      for (const option of modifierSelectHandler.options) {
+      expect(rewardSelectHandler.options.length).toEqual(3);
+      for (const option of rewardSelectHandler.options) {
         expect(
-          option.modifierTypeOption.type.id.includes("PP_UP") ||
-            option.modifierTypeOption.type.id.includes("BASE_STAT_BOOSTER"),
+          option.rewardOption.type.id.includes("PP_UP") || option.rewardOption.type.id.includes("BASE_STAT_BOOSTER"),
         ).toBeTruthy();
       }
     });
@@ -173,15 +172,15 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
       await game.phaseInterceptor.run(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(5);
-      for (const option of modifierSelectHandler.options) {
+      expect(rewardSelectHandler.options.length).toEqual(5);
+      for (const option of rewardSelectHandler.options) {
         expect(
-          option.modifierTypeOption.type.id.includes("DIRE_HIT") ||
-            option.modifierTypeOption.type.id.includes("TEMP_STAT_STAGE_BOOSTER"),
+          option.rewardOption.type.id.includes("DIRE_HIT") ||
+            option.rewardOption.type.id.includes("TEMP_STAT_STAGE_BOOSTER"),
         ).toBeTruthy();
       }
     });
@@ -213,13 +212,13 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
       await game.phaseInterceptor.run(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(4);
-      for (const option of modifierSelectHandler.options) {
-        expect(option.modifierTypeOption.type.id).toContain("BALL");
+      expect(rewardSelectHandler.options.length).toEqual(4);
+      for (const option of rewardSelectHandler.options) {
+        expect(option.rewardOption.type.id).toContain("BALL");
       }
     });
 

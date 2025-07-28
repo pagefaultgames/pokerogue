@@ -1,20 +1,19 @@
 import { globalScene } from "#app/global-scene";
-import { type ModifierType, TrainerItemReward } from "#modifiers/modifier-type";
+import type { Reward } from "#items/reward";
 import { BattlePhase } from "#phases/battle-phase";
-import type { ModifierTypeFunc } from "#types/modifier-types";
-import { getModifierType } from "#utils/modifier-utils";
+import type { RewardFunc } from "#types/rewards";
 import i18next from "i18next";
 
 export class RewardPhase extends BattlePhase {
   // RibbonRewardPhase extends RewardPhase and to make typescript happy
   // we need to use a union type here
   public readonly phaseName: "RewardPhase" | "RibbonRewardPhase" | "GameOverRewardPhase" = "RewardPhase";
-  protected modifierType: ModifierType;
+  protected reward: Reward;
 
-  constructor(modifierTypeFunc: ModifierTypeFunc) {
+  constructor(rewardFunc: RewardFunc) {
     super();
 
-    this.modifierType = getModifierType(modifierTypeFunc);
+    this.reward = rewardFunc();
   }
 
   start() {
@@ -25,16 +24,11 @@ export class RewardPhase extends BattlePhase {
 
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
-      if (this.modifierType instanceof TrainerItemReward) {
-        this.modifierType.apply();
-      } else {
-        const newModifier = this.modifierType.newModifier();
-        globalScene.addModifier(newModifier);
-      }
+      globalScene.applyReward(this.reward);
       globalScene.playSound("item_fanfare");
       globalScene.ui.showText(
         i18next.t("battle:rewardGain", {
-          modifierName: this.modifierType.name,
+          modifierName: this.reward.name,
         }),
         null,
         () => resolve(),

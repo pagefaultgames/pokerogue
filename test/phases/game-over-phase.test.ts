@@ -36,7 +36,7 @@ describe("Game Over Phase", () => {
       .startingLevel(10000);
   });
 
-  it("winning a run should give rewards", async () => {
+  it("winning a run should give allRewards", async () => {
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
     vi.spyOn(game.scene, "validateAchv");
 
@@ -59,7 +59,7 @@ describe("Game Over Phase", () => {
     expect(game.scene.gameData.achvUnlocks[achvs.CLASSIC_VICTORY.id]).toBeTruthy();
   });
 
-  it("losing a run should not give rewards", async () => {
+  it("losing a run should not give allRewards", async () => {
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
     vi.spyOn(game.scene, "validateAchv");
 

@@ -53,8 +53,8 @@ import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
 import { FormChangeItem } from "#enums/form-change-item";
 import { GameModes } from "#enums/game-modes";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
-import { HeldItemPoolType, ModifierPoolType } from "#enums/modifier-pool-type";
 import { MoneyFormat } from "#enums/money-format";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -65,6 +65,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { PokeballType } from "#enums/pokeball";
 import type { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
+import { HeldItemPoolType, RewardPoolType } from "#enums/reward-pool-type";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -82,9 +83,10 @@ import { PokemonSpriteSparkleHandler } from "#field/pokemon-sprite-sparkle-handl
 import { Trainer } from "#field/trainer";
 import { applyHeldItems } from "#items/all-held-items";
 import { type ApplyTrainerItemsParams, applyTrainerItems } from "#items/apply-trainer-items";
-import { HeldItemEffect } from "#items/held-item";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
+import type { Reward } from "#items/reward";
+import { getRewardPoolForType } from "#items/reward-pool-utils";
 import { type EnemyAttackStatusEffectChanceTrainerItem, TrainerItemEffect } from "#items/trainer-item";
 import {
   isTrainerItemPool,
@@ -94,15 +96,6 @@ import {
 } from "#items/trainer-item-data-types";
 import { TrainerItemManager } from "#items/trainer-item-manager";
 import { getNewTrainerItemFromPool } from "#items/trainer-item-pool";
-import type { Modifier } from "#modifiers/modifier";
-import {
-  ConsumableModifier,
-  ConsumablePokemonModifier,
-  FusePokemonModifier,
-  PokemonHpRestoreModifier,
-  RememberMoveModifier,
-} from "#modifiers/modifier";
-import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#modifiers/modifier-type";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import { allMysteryEncounters, mysteryEncountersByBiome } from "#mystery-encounters/mystery-encounters";
@@ -112,7 +105,7 @@ import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant } from "#sprites/variant";
 import { clearVariantData, variantData } from "#sprites/variant";
 import type { Achv } from "#system/achv";
-import { achvs, HeldItemAchv, ModifierAchv, MoneyAchv } from "#system/achv";
+import { achvs, HeldItemAchv, MoneyAchv } from "#system/achv";
 import { GameData } from "#system/game-data";
 import { initGameSpeed } from "#system/game-speed";
 import type { PokemonData } from "#system/pokemon-data";
@@ -148,7 +141,7 @@ import {
 } from "#utils/common";
 import { deepMergeSpriteData } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
-import { getModifierPoolForType } from "#utils/modifier-utils";
+import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#utils/party";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -267,7 +260,7 @@ export class BattleScene extends SceneBase {
   public arena: Arena;
   public gameMode: GameMode;
   public score: number;
-  public lockModifierTiers: boolean;
+  public lockRarityTiers: boolean;
   public trainer: Phaser.GameObjects.Sprite;
   public lastEnemyTrainer: Trainer | null;
   public currentBattle: Battle;
@@ -480,12 +473,12 @@ export class BattleScene extends SceneBase {
     this.enemyTrainerItems = new TrainerItemManager();
 
     this.itemBar = new ItemBar();
-    this.itemBar.setName("modifier-bar");
+    this.itemBar.setName("item-bar");
     this.add.existing(this.itemBar);
     uiContainer.add(this.itemBar);
 
     this.enemyItemBar = new ItemBar(true);
-    this.enemyItemBar.setName("enemy-modifier-bar");
+    this.enemyItemBar.setName("enemy-item-bar");
     this.add.existing(this.enemyItemBar);
     uiContainer.add(this.enemyItemBar);
 
@@ -854,9 +847,9 @@ export class BattleScene extends SceneBase {
   }
 
   /**
-   * Returns the ModifierBar of this scene, which is declared private and therefore not accessible elsewhere
+   * Returns the ItemBar of this scene, which is declared private and therefore not accessible elsewhere
    * @param isEnemy - Whether to return the enemy modifier bar instead of the player bar; default `false`
-   * @returns The {@linkcode ModifierBar} for the given side of the field
+   * @returns The {@linkcode ItemBar} for the given side of the field
    */
   getItemBar(isEnemy = false): ItemBar {
     return isEnemy ? this.enemyItemBar : this.itemBar;
@@ -1167,7 +1160,7 @@ export class BattleScene extends SceneBase {
     this.score = 0;
     this.money = 0;
 
-    this.lockModifierTiers = false;
+    this.lockRarityTiers = false;
 
     this.pokeballCounts = Object.fromEntries(
       getEnumValues(PokeballType)
@@ -1243,12 +1236,12 @@ export class BattleScene extends SceneBase {
         ...allSpecies,
         ...allMoves,
         ...allAbilities,
-        ...getEnumValues(ModifierPoolType)
-          .map(mpt => getModifierPoolForType(mpt))
+        ...getEnumValues(RewardPoolType)
+          .map(mpt => getRewardPoolForType(mpt))
           .flatMap(mp =>
             Object.values(mp)
               .flat()
-              .map(mt => mt.modifierType)
+              .map(mt => mt.reward)
               .filter(mt => "localize" in mt)
               .map(lpb => lpb as unknown as Localizable),
           ),
@@ -1987,11 +1980,11 @@ export class BattleScene extends SceneBase {
     });
   }
 
-  showEnemyModifierBar(): void {
+  showEnemyItemBar(): void {
     this.enemyItemBar.setVisible(true);
   }
 
-  hideEnemyModifierBar(): void {
+  hideEnemyItemBar(): void {
     this.enemyItemBar.setVisible(false);
   }
 
@@ -2085,11 +2078,11 @@ export class BattleScene extends SceneBase {
   }
 
   updateUIPositions(): void {
-    const enemyModifierCount = this.enemyItemBar.totalVisibleLength;
+    const enemyItemCount = this.enemyItemBar.totalVisibleLength;
     const biomeWaveTextHeight = this.biomeWaveText.getBottomLeft().y - this.biomeWaveText.getTopLeft().y;
     this.biomeWaveText.setY(
       -(this.game.canvas.height / 6) +
-        (enemyModifierCount ? (enemyModifierCount <= 12 ? 15 : 24) : 0) +
+        (enemyItemCount ? (enemyItemCount <= 12 ? 15 : 24) : 0) +
         biomeWaveTextHeight / 2,
     );
     this.moneyText.setY(this.biomeWaveText.y + 10);
@@ -2641,56 +2634,19 @@ export class BattleScene extends SceneBase {
     applyTrainerItems(effect, this.trainerItems, params);
   }
 
-  addModifier(modifier: Modifier | null, playSound?: boolean, instant?: boolean, cost?: number): boolean {
-    // We check against modifier.type to stop a bug related to loading in a pokemon that has a form change item, which prior to some patch
-    // that changed form change modifiers worked, had previously set the `type` field to null.
-    // TODO: This is not the right place to check for this; it should ideally go in a session migrator.
-    if (!modifier || !modifier.type) {
+  applyReward<T extends Reward>(reward: T, params: Parameters<T["apply"]>[0], playSound?: boolean): boolean {
+    const soundName = reward.soundName;
+
+    if (playSound && !this.sound.get(soundName)) {
+      this.playSound(soundName);
+    }
+
+    if (!reward.shouldApply(params)) {
       return false;
     }
-    let success = false;
-    const soundName = modifier.type.soundName;
-    this.validateAchvs(ModifierAchv, modifier);
-    if (modifier instanceof ConsumableModifier) {
-      if (playSound && !this.sound.get(soundName)) {
-        this.playSound(soundName);
-      }
 
-      if (modifier instanceof ConsumablePokemonModifier) {
-        for (const p in this.party) {
-          const pokemon = this.party[p];
-
-          const args: unknown[] = [];
-          if (modifier instanceof PokemonHpRestoreModifier) {
-            if (!(modifier as PokemonHpRestoreModifier).fainted) {
-              const hpRestoreMultiplier = new NumberHolder(1);
-              this.applyPlayerItems(TrainerItemEffect.HEALING_BOOSTER, { numberHolder: hpRestoreMultiplier });
-              args.push(hpRestoreMultiplier.value);
-            } else {
-              args.push(1);
-            }
-          } else if (modifier instanceof FusePokemonModifier) {
-            args.push(this.getPokemonById(modifier.fusePokemonId) as PlayerPokemon);
-          } else if (modifier instanceof RememberMoveModifier && !isNullOrUndefined(cost)) {
-            args.push(cost);
-          }
-
-          if (modifier.shouldApply(pokemon, ...args)) {
-            const result = modifier.apply(pokemon, ...args);
-            success ||= result;
-          }
-        }
-
-        this.party.map(p => p.updateInfo(instant));
-      } else {
-        const args = [this];
-        if (modifier.shouldApply(...args)) {
-          const result = modifier.apply(...args);
-          success ||= result;
-        }
-      }
-    }
-    return success;
+    reward.apply(params);
+    return true;
   }
 
   addHeldItem(heldItemId: HeldItemId, pokemon: Pokemon, amount = 1, playSound?: boolean, ignoreUpdate?: boolean) {
@@ -2864,7 +2820,7 @@ export class BattleScene extends SceneBase {
           }
           let count = 0;
           for (let c = 0; c < chances; c++) {
-            if (!randSeedInt(this.gameMode.getEnemyModifierChance(isBoss))) {
+            if (!randSeedInt(this.gameMode.getEnemyItemChance(isBoss))) {
               count++;
             }
           }
@@ -2887,7 +2843,7 @@ export class BattleScene extends SceneBase {
   }
 
   /**
-   * Removes all modifiers from enemy pokemon of {@linkcode PersistentModifier} type
+   * Removes all items from enemy pokemon and trainers
    */
   clearEnemyItems(): void {
     this.enemyTrainerItems.clearItems();
@@ -2911,7 +2867,7 @@ export class BattleScene extends SceneBase {
     this.updateUIPositions();
   }
 
-  setModifiersVisible(visible: boolean) {
+  setItemsVisible(visible: boolean) {
     [this.itemBar, this.enemyItemBar].map(m => m.setVisible(visible));
   }
 

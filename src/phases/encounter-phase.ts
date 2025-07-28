@@ -21,7 +21,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
 import { EncounterPhaseEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
-import { overrideHeldItems, overrideTrainerItems } from "#modifiers/modifier";
+import { overrideHeldItems, overrideTrainerItems } from "#items/item-overrides";
 import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import { doTrainerExclamation } from "#mystery-encounters/encounter-phase-utils";
 import { getGoldenBugNetSpecies } from "#mystery-encounters/encounter-pokemon-utils";

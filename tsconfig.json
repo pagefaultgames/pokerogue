@@ -30,7 +30,6 @@
       "#field/*": ["./field/*.ts"],
       "#inputs/*": ["./configs/inputs/*.ts"],
       "#items/*": ["./items/held-items/*.ts", "./items/*.ts"],
-      "#modifiers/*": ["./modifier/*.ts"],
       "#moves/*": ["./data/moves/*.ts"],
       "#mystery-encounters/*": [
         "./data/mystery-encounters/utils/*.ts",

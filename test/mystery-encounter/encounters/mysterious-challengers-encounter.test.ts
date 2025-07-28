@@ -5,7 +5,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { MysteriousChallengersEncounter } from "#mystery-encounters/mysterious-challengers-encounter";
@@ -157,7 +157,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
     });
 
-    it("should have normal trainer rewards after battle", async () => {
+    it("should have normal trainer allRewards after battle", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
@@ -165,14 +165,14 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
       await game.phaseInterceptor.run(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(3);
-      expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toContain("TM_COMMON");
-      expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toContain("TM_GREAT");
-      expect(modifierSelectHandler.options[2].modifierTypeOption.type.id).toContain("MEMORY_MUSHROOM");
+      expect(rewardSelectHandler.options.length).toEqual(3);
+      expect(rewardSelectHandler.options[0].rewardOption.type.id).toContain("TM_COMMON");
+      expect(rewardSelectHandler.options[1].rewardOption.type.id).toContain("TM_GREAT");
+      expect(rewardSelectHandler.options[2].rewardOption.type.id).toContain("MEMORY_MUSHROOM");
     });
   });
 
@@ -201,7 +201,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
     });
 
-    it("should have hard trainer rewards after battle", async () => {
+    it("should have hard trainer allRewards after battle", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, defaultParty);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
@@ -209,27 +209,27 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
       await game.phaseInterceptor.run(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(4);
+      expect(rewardSelectHandler.options.length).toEqual(4);
       expect(
-        modifierSelectHandler.options[0].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
-      ).toBe(RewardTier.ULTRA);
+        rewardSelectHandler.options[0].rewardOption.type.tier -
+          rewardSelectHandler.options[0].rewardOption.upgradeCount,
+      ).toBe(RarityTier.ULTRA);
       expect(
-        modifierSelectHandler.options[1].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
-      ).toBe(RewardTier.ULTRA);
+        rewardSelectHandler.options[1].rewardOption.type.tier -
+          rewardSelectHandler.options[1].rewardOption.upgradeCount,
+      ).toBe(RarityTier.ULTRA);
       expect(
-        modifierSelectHandler.options[2].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
-      ).toBe(RewardTier.GREAT);
+        rewardSelectHandler.options[2].rewardOption.type.tier -
+          rewardSelectHandler.options[2].rewardOption.upgradeCount,
+      ).toBe(RarityTier.GREAT);
       expect(
-        modifierSelectHandler.options[3].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
-      ).toBe(RewardTier.GREAT);
+        rewardSelectHandler.options[3].rewardOption.type.tier -
+          rewardSelectHandler.options[3].rewardOption.upgradeCount,
+      ).toBe(RarityTier.GREAT);
     });
   });
 
@@ -258,7 +258,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
     });
 
-    it("should have brutal trainer rewards after battle", async () => {
+    it("should have brutal trainer allRewards after battle", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, defaultParty);
       await runMysteryEncounterToEnd(game, 3, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
@@ -266,27 +266,27 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
       await game.phaseInterceptor.run(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(4);
+      expect(rewardSelectHandler.options.length).toEqual(4);
       expect(
-        modifierSelectHandler.options[0].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
-      ).toBe(RewardTier.ROGUE);
+        rewardSelectHandler.options[0].rewardOption.type.tier -
+          rewardSelectHandler.options[0].rewardOption.upgradeCount,
+      ).toBe(RarityTier.ROGUE);
       expect(
-        modifierSelectHandler.options[1].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
-      ).toBe(RewardTier.ROGUE);
+        rewardSelectHandler.options[1].rewardOption.type.tier -
+          rewardSelectHandler.options[1].rewardOption.upgradeCount,
+      ).toBe(RarityTier.ROGUE);
       expect(
-        modifierSelectHandler.options[2].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
-      ).toBe(RewardTier.ULTRA);
+        rewardSelectHandler.options[2].rewardOption.type.tier -
+          rewardSelectHandler.options[2].rewardOption.upgradeCount,
+      ).toBe(RarityTier.ULTRA);
       expect(
-        modifierSelectHandler.options[3].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
-      ).toBe(RewardTier.GREAT);
+        rewardSelectHandler.options[3].rewardOption.type.tier -
+          rewardSelectHandler.options[3].rewardOption.upgradeCount,
+      ).toBe(RarityTier.GREAT);
     });
   });
 });

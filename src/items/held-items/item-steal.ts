@@ -1,9 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { allHeldItems } from "#data/data-lists";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 import { Pokemon } from "#field/pokemon";
-import { HeldItem, HeldItemEffect } from "#items/held-item";
+import { HeldItem } from "#items/held-item";
 import { coerceArray, randSeedFloat } from "#utils/common";
 import i18next from "i18next";
 
@@ -47,7 +48,7 @@ export abstract class ItemTransferHeldItem extends HeldItem {
     }
 
     // TODO: Change this logic to use held items
-    const transferredModifierTypes: HeldItemId[] = [];
+    const transferredRewards: HeldItemId[] = [];
     const heldItems = targetPokemon.heldItemManager.getTransferableHeldItems();
 
     for (let i = 0; i < transferredItemCount; i++) {
@@ -58,16 +59,16 @@ export abstract class ItemTransferHeldItem extends HeldItem {
       const randItem = heldItems[randItemIndex];
       // TODO: Fix this after updating the various methods in battle-scene.ts
       if (globalScene.tryTransferHeldItem(randItem, targetPokemon, pokemon, false)) {
-        transferredModifierTypes.push(randItem);
+        transferredRewards.push(randItem);
         heldItems.splice(randItemIndex, 1);
       }
     }
 
-    for (const mt of transferredModifierTypes) {
+    for (const mt of transferredRewards) {
       globalScene.phaseManager.queueMessage(this.getTransferMessage(params, mt));
     }
 
-    return !!transferredModifierTypes.length;
+    return !!transferredRewards.length;
   }
 
   abstract getTargets(params: ItemStealParams): Pokemon[];
@@ -80,7 +81,7 @@ export abstract class ItemTransferHeldItem extends HeldItem {
 /**
  * Modifier for held items that steal items from the enemy at the end of
  * each turn.
- * @see {@linkcode modifierTypes[MINI_BLACK_HOLE]}
+ * @see {@linkcode allRewards[MINI_BLACK_HOLE]}
  */
 export class TurnEndItemStealHeldItem extends ItemTransferHeldItem {
   public effects: HeldItemEffect[] = [HeldItemEffect.TURN_END_ITEM_STEAL];
@@ -121,7 +122,7 @@ export class TurnEndItemStealHeldItem extends ItemTransferHeldItem {
 /**
  * Modifier for held items that add a chance to steal items from the target of a
  * successful attack.
- * @see {@linkcode modifierTypes[GRIP_CLAW]}
+ * @see {@linkcode allRewards[GRIP_CLAW]}
  * @see {@linkcode HeldItemTransferModifier}
  */
 export class ContactItemStealChanceHeldItem extends ItemTransferHeldItem {

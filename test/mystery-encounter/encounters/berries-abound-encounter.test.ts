@@ -149,13 +149,13 @@ describe("Berries Abound - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
       await game.phaseInterceptor.run(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(5);
-      for (const option of modifierSelectHandler.options) {
-        expect(option.modifierTypeOption.type.id).toContain("BERRY");
+      expect(rewardSelectHandler.options.length).toEqual(5);
+      for (const option of rewardSelectHandler.options) {
+        expect(option.rewardOption.type.id).toContain("BERRY");
       }
     });
   });
@@ -234,13 +234,13 @@ describe("Berries Abound - Mystery Encounter", () => {
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
       await game.phaseInterceptor.run(SelectRewardPhase);
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
+      const rewardSelectHandler = scene.ui.handlers.find(
         h => h instanceof RewardSelectUiHandler,
       ) as RewardSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(5);
-      for (const option of modifierSelectHandler.options) {
-        expect(option.modifierTypeOption.type.id).toContain("BERRY");
+      expect(rewardSelectHandler.options.length).toEqual(5);
+      for (const option of rewardSelectHandler.options) {
+        expect(option.rewardOption.type.id).toContain("BERRY");
       }
 
       expect(EncounterDialogueUtils.showEncounterText).toHaveBeenCalledWith(`${namespace}:option.2.selected`);

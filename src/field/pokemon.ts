@@ -80,6 +80,7 @@ import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
 import { FieldPosition } from "#enums/field-position";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
@@ -92,7 +93,7 @@ import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import {
@@ -111,7 +112,6 @@ import { UiMode } from "#enums/ui-mode";
 import { WeatherType } from "#enums/weather-type";
 import { doShinySparkleAnim } from "#field/anims";
 import { applyHeldItems } from "#items/all-held-items";
-import { HeldItemEffect } from "#items/held-item";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { HeldItemManager } from "#items/held-item-manager";
 import { assignItemsFromConfiguration } from "#items/held-item-pool";
@@ -2882,13 +2882,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / `65536`
    * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
-   * @param applyModifiersToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}
+   * @param applyItemsToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}
    * @returns `true` if the Pokemon has been set as a shiny, `false` otherwise
    */
-  public trySetShinySeed(thresholdOverride?: number, applyModifiersToOverride?: boolean): boolean {
+  public trySetShinySeed(thresholdOverride?: number, applyItemsToOverride?: boolean): boolean {
     if (!this.shiny) {
       const shinyThreshold = new NumberHolder(thresholdOverride ?? BASE_SHINY_CHANCE);
-      if (applyModifiersToOverride) {
+      if (applyItemsToOverride) {
         if (timedEventManager.isEventActive()) {
           shinyThreshold.value *= timedEventManager.getShinyMultiplier();
         }
@@ -2954,15 +2954,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * The base hidden ability odds are {@linkcode BASE_HIDDEN_ABILITY_CHANCE} / `65536`
    * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the HA chance, overrides {@linkcode haThreshold} if set (bypassing HA rate modifiers such as Ability Charm)
-   * @param applyModifiersToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Ability Charm to {@linkcode thresholdOverride}
+   * @param applyItemsToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Ability Charm to {@linkcode thresholdOverride}
    * @returns `true` if the Pokemon has been set to have its hidden ability, `false` otherwise
    */
-  public tryRerollHiddenAbilitySeed(thresholdOverride?: number, applyModifiersToOverride?: boolean): boolean {
+  public tryRerollHiddenAbilitySeed(thresholdOverride?: number, applyItemsToOverride?: boolean): boolean {
     if (!this.species.abilityHidden) {
       return false;
     }
     const haThreshold = new NumberHolder(thresholdOverride ?? BASE_HIDDEN_ABILITY_CHANCE);
-    if (applyModifiersToOverride) {
+    if (applyItemsToOverride) {
       if (!this.hasTrainer()) {
         globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, { numberHolder: haThreshold });
       }
@@ -3108,11 +3108,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
           }
         }
         if (compatible && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
-          if (tmPoolTiers[moveId] === RewardTier.COMMON && this.level >= 15) {
+          if (tmPoolTiers[moveId] === RarityTier.COMMON && this.level >= 15) {
             movePool.push([moveId, 4]);
-          } else if (tmPoolTiers[moveId] === RewardTier.GREAT && this.level >= 30) {
+          } else if (tmPoolTiers[moveId] === RarityTier.GREAT && this.level >= 30) {
             movePool.push([moveId, 8]);
-          } else if (tmPoolTiers[moveId] === RewardTier.ULTRA && this.level >= 50) {
+          } else if (tmPoolTiers[moveId] === RarityTier.ULTRA && this.level >= 50) {
             movePool.push([moveId, 14]);
           }
         }

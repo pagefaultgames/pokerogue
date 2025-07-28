@@ -634,7 +634,7 @@ export class Trainer extends Phaser.GameObjects.Container {
     return maxScorePartyMemberIndexes[0];
   }
 
-  getPartyMemberModifierChanceMultiplier(index: number): number {
+  getPartyMemberItemChanceMultiplier(index: number): number {
     switch (this.getPartyTemplate().getStrength(index)) {
       case PartyMemberStrength.WEAKER:
         return 0.75;
@@ -647,14 +647,14 @@ export class Trainer extends Phaser.GameObjects.Container {
       case PartyMemberStrength.STRONGER:
         return 0.375;
       default:
-        console.warn("getPartyMemberModifierChanceMultiplier not defined. Using default 0");
+        console.warn("getPartyMemberItemChanceMultiplier not defined. Using default 0");
         return 0;
     }
   }
 
   genTrainerItems(party: EnemyPokemon[]): TrainerItemConfiguration {
-    if (this.config.genModifiersFunc) {
-      return this.config.genModifiersFunc(party);
+    if (this.config.genTrainerItemsFunc) {
+      return this.config.genTrainerItemsFunc(party);
     }
     return [];
   }

@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { allSpecies, modifierTypes } from "#data/data-lists";
+import { allRewards, allSpecies } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { Challenges } from "#enums/challenges";
@@ -11,7 +11,7 @@ import { Nature } from "#enums/nature";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { PlayerGender } from "#enums/player-gender";
 import { PokemonType } from "#enums/pokemon-type";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
@@ -218,12 +218,12 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
 
         await doNewTeamPostProcess(transformations);
         setEncounterRewards({
-          guaranteedModifierTypeFuncs: [
-            modifierTypes.MEMORY_MUSHROOM,
-            modifierTypes.ROGUE_BALL,
-            modifierTypes.MINT,
-            modifierTypes.MINT,
-            modifierTypes.MINT,
+          guaranteedRewardFuncs: [
+            allRewards.MEMORY_MUSHROOM,
+            allRewards.ROGUE_BALL,
+            allRewards.MINT,
+            allRewards.MINT,
+            allRewards.MINT,
           ],
           fillRemaining: false,
         });
@@ -242,7 +242,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       ],
     },
     async () => {
-      // Battle your "future" team for some item rewards
+      // Battle your "future" team for some item allRewards
       const transformations: PokemonTransformation[] =
         globalScene.currentBattle.mysteryEncounter!.misc.teamTransformations;
 
@@ -293,7 +293,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       };
 
       const onBeforeRewards = () => {
-        // Before battle rewards, unlock the passive on a pokemon in the player's team for the rest of the run (not permanently)
+        // Before battle allRewards, unlock the passive on a pokemon in the player's team for the rest of the run (not permanently)
         // One random pokemon will get its passive unlocked
         const passiveDisabledPokemon = globalScene.getPlayerParty().filter(p => !p.passive);
         if (passiveDisabledPokemon?.length > 0) {
@@ -306,13 +306,13 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
 
       setEncounterRewards(
         {
-          guaranteedModifierTiers: [
-            RewardTier.ROGUE,
-            RewardTier.ROGUE,
-            RewardTier.ULTRA,
-            RewardTier.ULTRA,
-            RewardTier.GREAT,
-            RewardTier.GREAT,
+          guaranteedRarityTiers: [
+            RarityTier.ROGUE,
+            RarityTier.ROGUE,
+            RarityTier.ULTRA,
+            RarityTier.ULTRA,
+            RarityTier.GREAT,
+            RarityTier.GREAT,
           ],
           fillRemaining: false,
         },

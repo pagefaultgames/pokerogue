@@ -1,7 +1,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger } from "#data/form-change-triggers";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -11,13 +11,13 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
-import { RewardTier } from "#enums/reward-tier";
+import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
+import { generateRewardOption } from "#items/reward-utils";
 import { showEncounterDialogue, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  generateModifierTypeOption,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterRewards,
@@ -117,7 +117,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
       ],
     },
     async () => {
-      // Spawn 5 trainer battles back to back with Macho Brace in rewards
+      // Spawn 5 trainer battles back to back with Macho Brace in allRewards
       globalScene.currentBattle.mysteryEncounter!.doContinueEncounter = async () => {
         await endTrainerBattleAndShowDialogue();
       };
@@ -140,7 +140,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
       // Refuse the challenge, they full heal the party and give the player a Rarer Candy
       globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
       setEncounterRewards({
-        guaranteedModifierTypeFuncs: [modifierTypes.RARER_CANDY],
+        guaranteedRewardFuncs: [allRewards.RARER_CANDY],
         fillRemaining: false,
       });
       leaveEncounterWithoutBattle();
@@ -156,17 +156,17 @@ async function spawnNextTrainerOrEndEncounter() {
     await showEncounterDialogue(`${namespace}:victory`, `${namespace}:speaker`);
 
     // Give 10x Voucher
-    const newModifier = modifierTypes.VOUCHER_PREMIUM().newModifier();
-    globalScene.addModifier(newModifier);
+    const reward = allRewards.VOUCHER_PREMIUM();
+    globalScene.applyReward(reward, {});
     globalScene.playSound("item_fanfare");
-    await showEncounterText(i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }));
+    await showEncounterText(i18next.t("battle:rewardGain", { modifierName: reward.name }));
 
     await showEncounterDialogue(`${namespace}:victory_2`, `${namespace}:speaker`);
-    globalScene.ui.clearText(); // Clears "Winstrate" title from screen as rewards get animated in
-    const machoBrace = generateModifierTypeOption(modifierTypes.MYSTERY_ENCOUNTER_MACHO_BRACE)!;
-    machoBrace.type.tier = RewardTier.MASTER;
+    globalScene.ui.clearText(); // Clears "Winstrate" title from screen as allRewards get animated in
+    const machoBrace = generateRewardOption(allRewards.MYSTERY_ENCOUNTER_MACHO_BRACE)!;
+    machoBrace.type.tier = RarityTier.MASTER;
     setEncounterRewards({
-      guaranteedModifierTypeOptions: [machoBrace],
+      guaranteedRewardOptions: [machoBrace],
       fillRemaining: false,
     });
     encounter.doContinueEncounter = undefined;

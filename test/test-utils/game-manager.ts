@@ -3,7 +3,7 @@ import { BattleScene } from "#app/battle-scene";
 import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import overrides from "#app/overrides";
-import { modifierTypes } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { Button } from "#enums/buttons";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
@@ -16,7 +16,6 @@ import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
-import { ModifierTypeOption } from "#modifiers/modifier-type";
 import { CheckSwitchPhase } from "#phases/check-switch-phase";
 import { CommandPhase } from "#phases/command-phase";
 import { EncounterPhase } from "#phases/encounter-phase";
@@ -315,7 +314,7 @@ export class GameManager {
   doSelectModifier() {
     this.onNextPrompt(
       "SelectRewardPhase",
-      UiMode.MODIFIER_SELECT,
+      UiMode.REWARD_SELECT,
       () => {
         const handler = this.scene.ui.getHandler() as RewardSelectUiHandler;
         handler.processInput(Button.CANCEL);
@@ -481,9 +480,8 @@ export class GameManager {
    */
   doRevivePokemon(pokemonIndex: number) {
     const party = this.scene.getPlayerParty();
-    const candidate = new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0);
-    const modifier = candidate.type!.newModifier(party[pokemonIndex]);
-    this.scene.addModifier(modifier, false);
+    const reward = allRewards.MAX_REVIVE();
+    reward.apply({ pokemon: party[pokemonIndex] });
   }
 
   /**

@@ -11,7 +11,6 @@ import {
   HealAchv,
   HeldItemAchv,
   LevelAchv,
-  ModifierAchv,
   MoneyAchv,
   RibbonAchv,
 } from "#system/achv";
@@ -260,7 +259,7 @@ describe("achvs", () => {
     expect(achvs.TERASTALLIZE).toBeInstanceOf(Achv);
     expect(achvs.STELLAR_TERASTALLIZE).toBeInstanceOf(Achv);
     expect(achvs.SPLICE).toBeInstanceOf(Achv);
-    expect(achvs.MINI_BLACK_HOLE).toBeInstanceOf(ModifierAchv);
+    expect(achvs.MINI_BLACK_HOLE).toBeInstanceOf(HeldItemAchv);
     expect(achvs.CATCH_MYTHICAL).toBeInstanceOf(Achv);
     expect(achvs.CATCH_SUB_LEGENDARY).toBeInstanceOf(Achv);
     expect(achvs.CATCH_LEGENDARY).toBeInstanceOf(Achv);

@@ -43,7 +43,7 @@ export function initTrainerItems() {
   allTrainerItems[TrainerItemId.CANDY_JAR] = new LevelIncrementBoosterTrainerItem(TrainerItemId.CANDY_JAR, 99);
   allTrainerItems[TrainerItemId.BERRY_POUCH] = new PreserveBerryTrainerItem(TrainerItemId.BERRY_POUCH, 3);
 
-  allTrainerItems[TrainerItemId.HEALING_CHARM] = new HealingBoosterTrainerItem(TrainerItemId.HEALING_CHARM, 1.1, 5);
+  allTrainerItems[TrainerItemId.HEALING_CHARM] = new HealingBoosterTrainerItem(TrainerItemId.HEALING_CHARM, 0.1, 5);
   allTrainerItems[TrainerItemId.EXP_CHARM] = new ExpBoosterTrainerItem(TrainerItemId.EXP_CHARM, 25, 99);
   allTrainerItems[TrainerItemId.SUPER_EXP_CHARM] = new ExpBoosterTrainerItem(TrainerItemId.SUPER_EXP_CHARM, 60, 30);
   allTrainerItems[TrainerItemId.GOLDEN_EXP_CHARM] = new ExpBoosterTrainerItem(TrainerItemId.GOLDEN_EXP_CHARM, 100, 10);

@@ -1,22 +1,22 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { modifierTypes } from "#data/data-lists";
+import { allRewards } from "#data/data-lists";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RewardPoolType } from "#enums/reward-pool-type";
 import { PERMANENT_STATS, Stat } from "#enums/stat";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { berryTypeToHeldItem } from "#items/berry";
-import type { ModifierTypeOption } from "#modifiers/modifier-type";
-import { regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
+import type { RewardOption } from "#items/reward";
+import { generateRewardPoolWeights, getRewardPoolForType } from "#items/reward-pool-utils";
+import { generateRewardOption } from "#items/reward-utils";
 import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  generateModifierTypeOption,
   getRandomEncounterSpecies,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
@@ -88,7 +88,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
           : globalScene.currentBattle.waveIndex > 40
             ? 4
             : 2;
-    regenerateModifierPoolThresholds(globalScene.getPlayerParty(), ModifierPoolType.PLAYER, 0);
+    generateRewardPoolWeights(getRewardPoolForType(RewardPoolType.PLAYER), globalScene.getPlayerParty(), 0);
     encounter.misc = { numBerries };
 
     const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(bossPokemon);
@@ -159,20 +159,16 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
         }
       };
 
-      const shopOptions: ModifierTypeOption[] = [];
+      const shopOptions: RewardOption[] = [];
       for (let i = 0; i < 5; i++) {
         // Generate shop berries
-        const mod = generateModifierTypeOption(modifierTypes.BERRY);
+        const mod = generateRewardOption(allRewards.BERRY);
         if (mod) {
           shopOptions.push(mod);
         }
       }
 
-      setEncounterRewards(
-        { guaranteedModifierTypeOptions: shopOptions, fillRemaining: false },
-        undefined,
-        doBerryRewards,
-      );
+      setEncounterRewards({ guaranteedRewardOptions: shopOptions, fillRemaining: false }, undefined, doBerryRewards);
       await initBattleWithEnemyConfig(globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
     },
   )
@@ -190,10 +186,10 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
         const speedDiff = fastestPokemon.getStat(Stat.SPD) / (enemySpeed * 1.1);
         const numBerries: number = encounter.misc.numBerries;
 
-        const shopOptions: ModifierTypeOption[] = [];
+        const shopOptions: RewardOption[] = [];
         for (let i = 0; i < 5; i++) {
           // Generate shop berries
-          const mod = generateModifierTypeOption(modifierTypes.BERRY);
+          const mod = generateRewardOption(allRewards.BERRY);
           if (mod) {
             shopOptions.push(mod);
           }
@@ -246,7 +242,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
           };
           setEncounterRewards(
             {
-              guaranteedModifierTypeOptions: shopOptions,
+              guaranteedRewardOptions: shopOptions,
               fillRemaining: false,
             },
             undefined,
@@ -279,7 +275,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
         setEncounterExp(fastestPokemon.id, encounter.enemyPartyConfigs[0].pokemonConfigs![0].species.baseExp);
         setEncounterRewards(
           {
-            guaranteedModifierTypeOptions: shopOptions,
+            guaranteedRewardOptions: shopOptions,
             fillRemaining: false,
           },
           undefined,
@@ -301,7 +297,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
       ],
     },
     async () => {
-      // Leave encounter with no rewards or exp
+      // Leave encounter with no allRewards or exp
       leaveEncounterWithoutBattle(true);
       return true;
     },

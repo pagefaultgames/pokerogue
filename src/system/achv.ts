@@ -16,7 +16,6 @@ import type { Pokemon } from "#field/pokemon";
 import type { ConditionFn } from "#types/common";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
-import type { Modifier } from "typescript";
 
 export enum AchvTier {
   COMMON,
@@ -174,19 +173,6 @@ export class LevelAchv extends Achv {
       (args: any[]) => (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.level,
     );
     this.level = level;
-  }
-}
-
-export class ModifierAchv extends Achv {
-  constructor(
-    localizationKey: string,
-    name: string,
-    description: string,
-    iconImage: string,
-    score: number,
-    modifierFunc: (modifier: Modifier) => boolean,
-  ) {
-    super(localizationKey, name, description, iconImage, score, (args: any[]) => modifierFunc(args[0] as Modifier));
   }
 }
 

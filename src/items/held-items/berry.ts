@@ -1,18 +1,21 @@
 import { globalScene } from "#app/global-scene";
 import { getBerryEffectDescription, getBerryEffectFunc, getBerryName, getBerryPredicate } from "#data/berry";
 import { BerryType } from "#enums/berry-type";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { BerryUsedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
-import { ConsumableHeldItem, HeldItemEffect } from "#items/held-item";
+import { ConsumableHeldItem } from "#items/held-item";
 import { TrainerItemEffect } from "#items/trainer-item";
+import type { EnumValues } from "#types/enum-types";
 import { BooleanHolder } from "#utils/common";
 
-interface BerryTypeToHeldItemMap {
-  [key: number]: HeldItemId;
-}
+type BerryTypeToHeldItemMap = {
+  [key in EnumValues<typeof BerryType>]: HeldItemId;
+};
 
-export const berryTypeToHeldItem: BerryTypeToHeldItemMap = {
+// TODO: Rework this to use a bitwise XOR
+export const berryTypeToHeldItem = {
   [BerryType.SITRUS]: HeldItemId.SITRUS_BERRY,
   [BerryType.LUM]: HeldItemId.LUM_BERRY,
   [BerryType.ENIGMA]: HeldItemId.ENIGMA_BERRY,
@@ -24,7 +27,7 @@ export const berryTypeToHeldItem: BerryTypeToHeldItemMap = {
   [BerryType.LANSAT]: HeldItemId.LANSAT_BERRY,
   [BerryType.STARF]: HeldItemId.STARF_BERRY,
   [BerryType.LEPPA]: HeldItemId.LEPPA_BERRY,
-};
+} satisfies BerryTypeToHeldItemMap;
 
 export interface BerryParams {
   /** The pokemon with the berry */
