@@ -7,6 +7,7 @@ import { getNatureName } from "#data/nature";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getTypeRgb } from "#data/type";
+import { Challenges } from "#enums/challenges";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -99,6 +100,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
   MysteryEncounterType.GLOBAL_TRADE_SYSTEM,
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
+  .withDisallowedChallenges(Challenges.SINGLE_TYPE, Challenges.SINGLE_GENERATION)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
   .withAutoHideIntroVisuals(false)
   .withIntroSpriteConfigs([
