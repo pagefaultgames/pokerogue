@@ -104,7 +104,7 @@ export function stringifyEnumArray<E extends EnumOrObject>(obj: E, enums: E[keyo
 }
 
 /**
- * Convert a number into an English ordinal.
+ * Convert a number into an English ordinal
  * @param num - The number to convert into an ordinal
  * @returns The ordinal representation of {@linkcode num}.
  * @example
@@ -129,6 +129,11 @@ export function getOrdinal(num: number): string {
   return num + "th";
 }
 
+/**
+ * Get the localized name of a {@linkcode Stat}.
+ * @param s - The {@linkcode Stat} to check
+ * @returns - The proper name for s, retrieved from the translations.
+ */
 export function getStatName(s: Stat): string {
   return i18next.t(getStatKey(s));
 }

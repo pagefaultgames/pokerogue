@@ -4,6 +4,7 @@ import type { Pokemon } from "#field/pokemon";
 
 import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
+import { getEnumStr } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
@@ -28,14 +29,14 @@ export function toHaveAbilityAppliedMatcher(
   const pass = received.waveData.abilitiesApplied.has(expectedAbilityId);
 
   const pkmName = getPokemonNameWithAffix(received);
-  const expectedAbilityStr = `${AbilityId[expectedAbilityId]} (=${expectedAbilityId})`;
+  const expectedAbilityStr = getEnumStr(AbilityId, expectedAbilityId);
 
   return {
     pass,
     message: () =>
       pass
         ? `Expected ${pkmName} to NOT have applied ${expectedAbilityStr}, but it did!`
-        : `Expected ${pkmName} to have applied ${expectedAbilityStr}, but it did not!`,
+        : `Expected ${pkmName} to have applied ${expectedAbilityStr}, but it didn't!`,
     expected: expectedAbilityId,
     actual: received.waveData.abilitiesApplied,
   };

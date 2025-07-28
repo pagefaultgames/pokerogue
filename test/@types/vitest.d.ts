@@ -11,6 +11,7 @@ import type { ToHaveEffectiveStatMatcherOptions } from "#test/test-utils/matcher
 import { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect-matcher";
 import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
 import { TurnMove } from "#types/turn-move";
+import { AtLeastOne } from "#types/type-helpers";
 import type { expect } from "vitest";
 
 declare module "vitest" {
@@ -42,7 +43,7 @@ declare module "vitest" {
      * Default `0` (last used move)
      * @see {@linkcode Pokemon.getLastXMoves}
      */
-    toHaveUsedMove(expected: MoveId | Partial<TurnMove>, index?: number): void;
+    toHaveUsedMove(expected: MoveId | AtLeastOne<TurnMove>, index?: number): void;
 
     /**
      * Matcher to check if a {@linkcode Pokemon Pokemon's} effective stat is as expected

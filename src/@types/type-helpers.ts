@@ -75,3 +75,12 @@ export type NonFunctionPropertiesRecursive<Class> = {
 };
 
 export type AbstractConstructor<T> = abstract new (...args: any[]) => T;
+
+/**
+ * Type helper to mark all properties in `T` optional, while still mandating that at least 1
+ * of its properties be present.
+ *
+ * Distinct from {@linkcode Partial} as this requires at least 1 property to _not_ be undefined.
+ * @typeParam T - The type to render partial.
+ */
+export type AtLeastOne<T> = Partial<T> & EnumValues<{ [K in keyof T]: Pick<T, K> }>;

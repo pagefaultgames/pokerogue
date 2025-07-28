@@ -36,7 +36,7 @@ export function toHaveBattlerTag(
     message: () =>
       pass
         ? `Expected ${pkmName} to NOT have BattlerTagType.${expectedTagStr}, but it did!`
-        : `Expected ${pkmName} to have BattlerTagType.${expectedTagStr}, but it did not!`,
+        : `Expected ${pkmName} to have BattlerTagType.${expectedTagStr}, but it didn't!`,
     expected: expectedBattlerTagType,
     actual: received.summonData.tags.map(t => t.tagType),
   };

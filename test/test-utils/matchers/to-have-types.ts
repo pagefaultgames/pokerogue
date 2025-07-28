@@ -39,17 +39,22 @@ export function toHaveTypes(
   const actualTypes = received.getTypes(...(options.args ?? [])).sort();
   const expectedTypes = expected.slice().sort();
 
-  const actualStr = stringifyEnumArray(PokemonType, actualTypes);
-  const expectedStr = stringifyEnumArray(PokemonType, expectedTypes);
   // Exact matches do not care about subset equality
   const matchers = options.exact
     ? [...this.customTesters, this.utils.iterableEquality]
     : [...this.customTesters, this.utils.subsetEquality, this.utils.iterableEquality];
-  const pass = this.equals(actualStr, expectedStr, matchers);
+  const pass = this.equals(actualTypes, expectedTypes, matchers);
+
+  const actualStr = stringifyEnumArray(PokemonType, actualTypes);
+  const expectedStr = stringifyEnumArray(PokemonType, expectedTypes);
+  const pkmName = getPokemonNameWithAffix(received);
 
   return {
     pass,
-    message: () => `Expected ${getPokemonNameWithAffix(received)} to have types ${expectedStr}, but got ${actualStr}!`,
+    message: () =>
+      pass
+        ? `Expected ${pkmName} to NOT have types ${expectedStr}, but it did!`
+        : `Expected ${pkmName} to have types ${expectedStr}, but got ${actualStr} instead!`,
     actual: actualTypes,
     expected: expectedTypes,
   };

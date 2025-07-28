@@ -5,12 +5,14 @@ import type { Pokemon } from "#field/pokemon";
 import { getOrdinal } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { TurnMove } from "#types/turn-move";
+import type { AtLeastOne } from "#types/type-helpers";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Matcher to check if a {@linkcode Pokemon} has used a specific {@linkcode MoveId} at the given .
+ * Matcher to check the contents of a {@linkcode Pokemon}'s move history.
  * @param received - The actual value received. Should be a {@linkcode Pokemon}
- * @param expectedValue - The expected value; can be a {@linkcode MoveId} or a partially filled {@linkcode TurnMove}
+ * @param expectedValue - The {@linkcode MoveId} the Pokemon is expected to have used,
+ * or a partially filled {@linkcode TurnMove} containing the desired properties to check.
  * @param index - The index of the move history entry to check, in order from most recent to least recent.
  * Default `0` (last used move)
  * @returns Whether the matcher passed
@@ -18,7 +20,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 export function toHaveUsedMoveMatcher(
   this: MatcherState,
   received: unknown,
-  expectedResult: MoveId | Partial<TurnMove>,
+  expectedResult: MoveId | AtLeastOne<TurnMove>,
   index = 0,
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
@@ -56,8 +58,8 @@ export function toHaveUsedMoveMatcher(
     pass,
     message: () =>
       pass
-        ? `Expected ${pkmName}'s ${moveIndexStr} NOT to match ${this.utils.stringify(expectedResult)}, but it did!`
-        : `Expected ${pkmName}'s ${moveIndexStr} to match ${this.utils.stringify(expectedResult)}, but got ${this.utils.stringify(move)}!`,
+        ? `Expected ${pkmName}'s ${moveIndexStr} to NOT match ${this.utils.stringify(expectedResult)}, but it did!`
+        : `Expected ${pkmName}'s ${moveIndexStr} to match ${this.utils.stringify(expectedResult)}, but got ${this.utils.stringify(move)} instead!`,
     expected: expectedResult,
     actual: move,
   };

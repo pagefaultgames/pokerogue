@@ -15,16 +15,17 @@ export function toHaveFullHpMatcher(this: MatcherState, received: unknown): Sync
     };
   }
 
-  const pass = received.isFullHp() === true;
+  const pass = received.isFullHp();
 
-  const ofHpStr = `${received.getInverseHp()}/${received.getMaxHp()} HP`;
+  const hp = received.hp;
+  const maxHp = received.getMaxHp();
   const pkmName = getPokemonNameWithAffix(received);
 
   return {
     pass,
     message: () =>
       pass
-        ? `Expected ${pkmName} to NOT have full hp (${ofHpStr}), but it did!`
-        : `Expected ${pkmName} to have full hp, but found ${ofHpStr}.`,
+        ? `Expected ${pkmName} to NOT have full hp, but it did!`
+        : `Expected ${pkmName} to have full hp, but it didn't! (${hp}/${maxHp} HP)`,
   };
 }

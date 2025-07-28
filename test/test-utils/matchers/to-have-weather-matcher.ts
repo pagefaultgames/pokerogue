@@ -1,6 +1,6 @@
 import { WeatherType } from "#enums/weather-type";
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
-import { toReadableString } from "#utils/common";
+import { toTitleCase } from "#utils/strings";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
@@ -38,9 +38,9 @@ export function toHaveWeatherMatcher(
     message: () =>
       pass
         ? `Expected Arena to NOT have ${expectedStr} weather active, but it did!`
-        : `Expected Arena to have ${expectedStr} weather active, but got ${actualStr}!`,
-    actual: actualStr,
-    expected: expectedStr,
+        : `Expected Arena to have ${expectedStr} weather active, but got ${actualStr} instead!`,
+    actual,
+    expected: expectedWeatherType,
   };
 }
 
@@ -54,6 +54,5 @@ function toWeatherStr(weatherType: WeatherType) {
     return "no weather";
   }
 
-  // TODO: Change to use updated string utils
-  return toReadableString(WeatherType[weatherType]);
+  return toTitleCase(WeatherType[weatherType]);
 }

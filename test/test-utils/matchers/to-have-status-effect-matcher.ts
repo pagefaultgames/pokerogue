@@ -46,7 +46,7 @@ export function toHaveStatusEffectMatcher(
       pass,
       message: () =>
         pass
-          ? `Expected ${pkmName} NOT to have ${expectedStr}, but it did!`
+          ? `Expected ${pkmName} to NOT have ${expectedStr}, but it did!`
           : `Expected ${pkmName} to have status effect ${expectedStr}, but got ${actualStr} instead!`,
       expected: expectedStatus,
       actual: actualEffect,
@@ -65,7 +65,7 @@ export function toHaveStatusEffectMatcher(
     pass,
     message: () =>
       pass
-        ? `Expected ${pkmName}'s status NOT to match ${this.utils.stringify(expectedStatus)}, but it did!`
+        ? `Expected ${pkmName}'s status to NOT match ${this.utils.stringify(expectedStatus)}, but it did!`
         : `Expected ${pkmName}'s status to match ${this.utils.stringify(expectedStatus)}, but got ${this.utils.stringify(actualStatus)} instead!`,
     expected: expectedStatus,
     actual: actualStatus,

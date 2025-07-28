@@ -15,17 +15,17 @@ export function toHaveFaintedMatcher(this: MatcherState, received: unknown): Syn
     };
   }
 
-  const { hp } = received;
-  const maxHp = received.getMaxHp();
   const pass = received.isFainted();
 
+  const hp = received.hp;
+  const maxHp = received.getMaxHp();
   const pkmName = getPokemonNameWithAffix(received);
 
   return {
     pass,
     message: () =>
       pass
-        ? `Expected ${pkmName} NOT to have fainted, but it did! (${hp}/${maxHp} HP)`
-        : `Expected ${pkmName} to have fainted, but it did not. (${hp}/${maxHp} HP)`,
+        ? `Expected ${pkmName} to NOT have fainted, but it did!`
+        : `Expected ${pkmName} to have fainted, but it didn't! (${hp}/${maxHp} HP)`,
   };
 }

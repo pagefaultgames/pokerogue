@@ -1,5 +1,6 @@
 import { getPokemonNameWithAffix } from "#app/messages";
-import { type BattleStat, Stat } from "#enums/stat";
+import type { BattleStat } from "#enums/stat";
+import { getStatName } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
@@ -34,7 +35,7 @@ export function toHaveStatStageMatcher(
   const pass = actualStage === expectedStage;
 
   const pkmName = getPokemonNameWithAffix(received);
-  const statName = Stat[stat];
+  const statName = getStatName(stat);
 
   return {
     pass,

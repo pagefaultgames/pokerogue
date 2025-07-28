@@ -38,7 +38,7 @@ export function toHaveTerrainMatcher(
     message: () =>
       pass
         ? `Expected Arena to NOT have ${expectedStr} active, but it did!`
-        : `Expected Arena to have ${expectedStr} active, but got ${actualStr}!`,
+        : `Expected Arena to have ${expectedStr} active, but got ${actualStr} instead!`,
     actual,
     expected: expectedTerrainType,
   };

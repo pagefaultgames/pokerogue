@@ -1,4 +1,6 @@
 import { getPokemonNameWithAffix } from "#app/messages";
+// biome-ignore lint/correctness/noUnusedImports: TSDoc
+import type { Pokemon } from "#field/pokemon";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
@@ -20,13 +22,14 @@ export function toHaveHpMatcher(this: MatcherState, received: unknown, expectedH
   const pass = actualHp === expectedHp;
 
   const pkmName = getPokemonNameWithAffix(received);
-  const maxHp = received.getMaxHp();
 
   return {
     pass,
     message: () =>
       pass
-        ? `Expected ${pkmName} to NOT have ${expectedHp}/${maxHp} HP, but it did!`
-        : `Expected ${pkmName} to have ${expectedHp}/${maxHp} HP, but found ${actualHp}/${maxHp} HP.`,
+        ? `Expected ${pkmName} to NOT have ${expectedHp} HP, but it did!`
+        : `Expected ${pkmName} to have ${expectedHp} HP, but got ${actualHp} HP instead!`,
+    expected: expectedHp,
+    actual: actualHp,
   };
 }
