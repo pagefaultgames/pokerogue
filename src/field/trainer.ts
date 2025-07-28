@@ -30,7 +30,6 @@ export class Trainer extends Phaser.GameObjects.Container {
   public config: TrainerConfig;
   public variant: TrainerVariant;
   public partyTemplateIndex: number;
-  public name: string;
   public partnerName: string;
   public nameKey: string;
   public partnerNameKey: string | undefined;
