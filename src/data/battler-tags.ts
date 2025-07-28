@@ -815,7 +815,7 @@ export class ConfusedTag extends SerializableBattlerTag {
  * @see {@linkcode apply}
  */
 export class DestinyBondTag extends SerializableBattlerTag {
-  public readonly tagType = BattlerTagType.DESTINY_BOND as const;
+  public readonly tagType = BattlerTagType.DESTINY_BOND;
   constructor(sourceMove: MoveId, sourceId: number) {
     super(BattlerTagType.DESTINY_BOND, BattlerTagLapseType.PRE_MOVE, 1, sourceMove, sourceId, true);
   }
