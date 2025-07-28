@@ -111,7 +111,7 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
       right: true,
       x: 0,
       y: -MoveInfoOverlay.getHeight(true),
-      width: globalScene.game.canvas.width / 6 + 4,
+      width: globalScene.scaledCanvas.width + 4,
       hideEffectBox: true,
       hideBg: true,
     });

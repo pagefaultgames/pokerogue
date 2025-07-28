@@ -59,11 +59,11 @@ export class EggSummaryUiHandler extends MessageUiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.summaryContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
+    this.summaryContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
     this.summaryContainer.setVisible(false);
     ui.add(this.summaryContainer);
 
-    this.eggHatchContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
+    this.eggHatchContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
     this.eggHatchContainer.setVisible(false);
     ui.add(this.eggHatchContainer);
 
@@ -92,7 +92,7 @@ export class EggSummaryUiHandler extends MessageUiHandler {
       iconContainerX + numCols * iconSize,
       iconContainerY + 3,
       4,
-      globalScene.game.canvas.height / 6 - 20,
+      globalScene.scaledCanvas.height - 20,
       numRows,
     );
     this.summaryContainer.add(scrollBar);

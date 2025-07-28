@@ -302,7 +302,7 @@ export class PartyUiHandler extends MessageUiHandler {
 
     this.partyCancelButton = partyCancelButton;
 
-    this.optionsContainer = globalScene.add.container(globalScene.game.canvas.width / 6 - 1, -1);
+    this.optionsContainer = globalScene.add.container(globalScene.scaledCanvas.width - 1, -1);
     partyContainer.add(this.optionsContainer);
 
     this.iconAnimHandler = new PokemonIconAnimHandler();

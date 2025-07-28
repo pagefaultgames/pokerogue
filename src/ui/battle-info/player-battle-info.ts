@@ -39,7 +39,7 @@ export class PlayerBattleInfo extends BattleInfo {
         statOverflow: 1,
       },
     };
-    super(Math.floor(globalScene.game.canvas.width / 6) - 10, -72, true, posParams);
+    super(Math.floor(globalScene.scaledCanvas.width) - 10, -72, true, posParams);
 
     this.hpNumbersContainer = globalScene.add.container(-15, 10).setName("container_hp");
 

@@ -121,7 +121,7 @@ export class UI extends Phaser.GameObjects.Container {
   private overlayActive: boolean;
 
   constructor() {
-    super(globalScene, 0, globalScene.game.canvas.height / 6);
+    super(globalScene, 0, globalScene.scaledCanvas.height);
 
     this.mode = UiMode.MESSAGE;
     this.modeChain = [];
@@ -180,13 +180,7 @@ export class UI extends Phaser.GameObjects.Container {
     for (const handler of this.handlers) {
       handler.setup();
     }
-    this.overlay = globalScene.add.rectangle(
-      0,
-      0,
-      globalScene.game.canvas.width / 6,
-      globalScene.game.canvas.height / 6,
-      0,
-    );
+    this.overlay = globalScene.add.rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height, 0);
     this.overlay.setName("rect-ui-overlay");
     this.overlay.setOrigin(0, 0);
     globalScene.uiContainer.add(this.overlay);
@@ -437,15 +431,15 @@ export class UI extends Phaser.GameObjects.Container {
       if (isTouch) {
         // If we are in the top left quadrant on mobile, move the tooltip to the top right corner
         if (pointerX <= globalScene.game.canvas.width / 2 && pointerY <= globalScene.game.canvas.height / 2) {
-          x = globalScene.game.canvas.width / 6 - tooltipWidth - padding;
+          x = globalScene.scaledCanvas.width - tooltipWidth - padding;
         }
       } else {
         // If the tooltip would go offscreen on the right, or is close to it, move to the left of the cursor
-        if (x + tooltipWidth + padding > globalScene.game.canvas.width / 6) {
+        if (x + tooltipWidth + padding > globalScene.scaledCanvas.width) {
           x = Math.max(padding, pointerX / 6 - tooltipWidth - padding);
         }
         // If the tooltip would go offscreen at the bottom, or is close to it, move above the cursor
-        if (y + tooltipHeight + padding > globalScene.game.canvas.height / 6) {
+        if (y + tooltipHeight + padding > globalScene.scaledCanvas.height) {
           y = Math.max(padding, pointerY / 6 - tooltipHeight - padding);
         }
       }

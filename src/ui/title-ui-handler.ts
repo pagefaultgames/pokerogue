@@ -36,12 +36,12 @@ export class TitleUiHandler extends OptionSelectUiHandler {
 
     const ui = this.getUi();
 
-    this.titleContainer = globalScene.add.container(0, -(globalScene.game.canvas.height / 6));
+    this.titleContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
     this.titleContainer.setName("title");
     this.titleContainer.setAlpha(0);
     ui.add(this.titleContainer);
 
-    const logo = globalScene.add.image(globalScene.game.canvas.width / 6 / 2, 8, "logo");
+    const logo = globalScene.add.image(globalScene.scaledCanvas.width / 2, 8, "logo");
     logo.setOrigin(0.5, 0);
     this.titleContainer.add(logo);
 
@@ -53,7 +53,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
 
     this.playerCountLabel = addTextObject(
       // Actual y position will be determined after the title menu has been populated with options
-      globalScene.game.canvas.width / 6 - 2,
+      globalScene.scaledCanvas.width - 2,
       0,
       `? ${i18next.t("menu:playersOnline")}`,
       TextStyle.MESSAGE,
@@ -131,7 +131,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
 
     if (ret) {
       // Moving player count to top of the menu
-      this.playerCountLabel.setY(globalScene.game.canvas.height / 6 - 13 - this.getWindowHeight());
+      this.playerCountLabel.setY(globalScene.scaledCanvas.height - 13 - this.getWindowHeight());
 
       this.splashMessage = randItem(getSplashMessages());
       this.splashMessageText.setText(

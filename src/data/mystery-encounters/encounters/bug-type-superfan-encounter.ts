@@ -721,7 +721,7 @@ function doBugTypeMoveTutor(): Promise<void> {
       right: true,
       x: 1,
       y: -MoveInfoOverlay.getHeight(true) - 1,
-      width: globalScene.game.canvas.width / 6 - 2,
+      width: globalScene.scaledCanvas.width - 2,
     });
     globalScene.ui.add(moveInfoOverlay);
 

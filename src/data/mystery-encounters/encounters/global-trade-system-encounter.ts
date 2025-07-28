@@ -561,14 +561,14 @@ function generateTradeOption(alreadyUsedSpecies: PokemonSpecies[], originalBst?:
 
 function showTradeBackground() {
   return new Promise<void>(resolve => {
-    const tradeContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
+    const tradeContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
     tradeContainer.setName("Trade Background");
 
     const flyByStaticBg = globalScene.add.rectangle(
       0,
       0,
-      globalScene.game.canvas.width / 6,
-      globalScene.game.canvas.height / 6,
+      globalScene.scaledCanvas.width,
+      globalScene.scaledCanvas.height,
       0,
     );
     flyByStaticBg.setName("Black Background");

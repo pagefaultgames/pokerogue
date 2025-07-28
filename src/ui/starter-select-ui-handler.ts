@@ -404,15 +404,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang)) ?? "en";
     const textSettings = languageSettings[langSettingKey];
 
-    this.starterSelectContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
+    this.starterSelectContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
     this.starterSelectContainer.setVisible(false);
     ui.add(this.starterSelectContainer);
 
     const bgColor = globalScene.add.rectangle(
       0,
       0,
-      globalScene.game.canvas.width / 6,
-      globalScene.game.canvas.height / 6,
+      globalScene.scaledCanvas.width,
+      globalScene.scaledCanvas.height,
       0x006860,
     );
     bgColor.setOrigin(0, 0);
@@ -1160,7 +1160,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.filterInstructionsContainer.setVisible(true);
     this.starterSelectContainer.add(this.filterInstructionsContainer);
 
-    this.starterSelectMessageBoxContainer = globalScene.add.container(0, globalScene.game.canvas.height / 6);
+    this.starterSelectMessageBoxContainer = globalScene.add.container(0, globalScene.scaledCanvas.height);
     this.starterSelectMessageBoxContainer.setVisible(false);
     this.starterSelectContainer.add(this.starterSelectMessageBoxContainer);
 
@@ -1187,7 +1187,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.moveInfoOverlay = new MoveInfoOverlay({
       top: true,
       x: 1,
-      y: globalScene.game.canvas.height / 6 - MoveInfoOverlay.getHeight() - 29,
+      y: globalScene.scaledCanvas.height - MoveInfoOverlay.getHeight() - 29,
     });
     this.starterSelectContainer.add(this.moveInfoOverlay);
 
@@ -1388,7 +1388,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.starterSelectMessageBoxContainer.setY(0);
       this.message.setY(4);
     } else {
-      this.starterSelectMessageBoxContainer.setY(globalScene.game.canvas.height / 6);
+      this.starterSelectMessageBoxContainer.setY(globalScene.scaledCanvas.height);
       this.starterSelectMessageBox.setOrigin(0, 1);
       this.message.setY(singleLine ? -22 : -37);
     }

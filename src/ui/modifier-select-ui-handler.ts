@@ -86,10 +86,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
 
-    this.checkButtonContainer = globalScene.add.container(
-      globalScene.game.canvas.width / 6 - 1,
-      OPTION_BUTTON_YPOSITION,
-    );
+    this.checkButtonContainer = globalScene.add.container(globalScene.scaledCanvas.width - 1, OPTION_BUTTON_YPOSITION);
     this.checkButtonContainer.setName("use-btn");
     this.checkButtonContainer.setVisible(false);
     ui.add(this.checkButtonContainer);
@@ -152,7 +149,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       right: true,
       x: 1,
       y: -MoveInfoOverlay.getHeight(true) - 1,
-      width: globalScene.game.canvas.width / 6 - 2,
+      width: globalScene.scaledCanvas.width - 2,
     });
     ui.add(this.moveInfoOverlay);
     // register the overlay to receive toggle events
@@ -217,7 +214,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       shopTypeOptions.length > SHOP_OPTIONS_ROW_LIMIT ? -SINGLE_SHOP_ROW_YOFFSET : -DOUBLE_SHOP_ROW_YOFFSET;
 
     for (let m = 0; m < typeOptions.length; m++) {
-      const sliceWidth = globalScene.game.canvas.width / 6 / (typeOptions.length + 2);
+      const sliceWidth = globalScene.scaledCanvas.width / (typeOptions.length + 2);
       const option = new ModifierOption(
         sliceWidth * (m + 1) + sliceWidth * 0.5,
         -globalScene.game.canvas.height / 12 + optionsYOffset,
@@ -241,7 +238,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         row ? SHOP_OPTIONS_ROW_LIMIT : 0,
         row ? undefined : SHOP_OPTIONS_ROW_LIMIT,
       );
-      const sliceWidth = globalScene.game.canvas.width / 6 / (rowOptions.length + 2);
+      const sliceWidth = globalScene.scaledCanvas.width / (rowOptions.length + 2);
       const option = new ModifierOption(
         sliceWidth * (col + 1) + sliceWidth * 0.5,
         -globalScene.game.canvas.height / 12 - globalScene.game.canvas.height / 32 - (42 - (28 * row - 1)),
@@ -564,7 +561,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         return ret;
       }
 
-      const sliceWidth = globalScene.game.canvas.width / 6 / (options.length + 2);
+      const sliceWidth = globalScene.scaledCanvas.width / (options.length + 2);
       if (this.rowCursor < 2) {
         // Cursor on free items
         this.cursorObj.setPosition(
