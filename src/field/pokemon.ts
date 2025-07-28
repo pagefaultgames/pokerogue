@@ -213,7 +213,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * TODO: Stop treating this like a unique ID and stop treating 0 as no pokemon
    */
   public id: number;
-  public name: string;
   public nickname: string;
   public species: PokemonSpecies;
   public formIndex: number;
@@ -5664,7 +5663,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 }
 
 export class PlayerPokemon extends Pokemon {
-  protected battleInfo: PlayerBattleInfo;
+  protected declare battleInfo: PlayerBattleInfo;
   public compatibleTms: MoveId[];
 
   constructor(
@@ -6193,7 +6192,7 @@ export class PlayerPokemon extends Pokemon {
 }
 
 export class EnemyPokemon extends Pokemon {
-  protected battleInfo: EnemyBattleInfo;
+  protected declare battleInfo: EnemyBattleInfo;
   public trainerSlot: TrainerSlot;
   public aiType: AiType;
   public bossSegments: number;
