@@ -8,7 +8,6 @@ import { MoveResult } from "#enums/move-result";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import type { RandomMoveAttr } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -132,7 +131,7 @@ describe("Moves - Metronome", () => {
     expect(solarBeamMove).toBeDefined();
 
     game.move.use(MoveId.METRONOME);
-    await game.move.forceEnemyMove(MoveId.SPITE)
+    await game.move.forceEnemyMove(MoveId.SPITE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
@@ -181,7 +180,7 @@ describe("Moves - Metronome", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.METRONOME);
-    await game.toEndOfTurn()
+    await game.toEndOfTurn();
 
     const isVisible = enemyPokemon.visible;
     const hasFled = enemyPokemon.switchOutStatus;

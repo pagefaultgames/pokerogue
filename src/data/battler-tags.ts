@@ -1129,6 +1129,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
   constructor(sourceId: number) {
     super(
       BattlerTagType.ENCORE,
+      // TODO: This should trigger on turn end
       [BattlerTagLapseType.CUSTOM, BattlerTagLapseType.AFTER_MOVE],
       3,
       MoveId.ENCORE,

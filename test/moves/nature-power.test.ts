@@ -1,12 +1,13 @@
 import { allMoves } from "#app/data/data-lists";
 import { TerrainType } from "#app/data/terrain";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { getEnumValues, toReadableString } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
+import { getEnumValues } from "#utils/enums";
+import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -43,7 +44,7 @@ describe("Move - Nature Power", () => {
   it.each(
     getEnumValues(BiomeId).map(biome => ({
       move: getNaturePowerType(TerrainType.NONE, biome),
-      moveName: toReadableString(MoveId[getNaturePowerType(TerrainType.NONE, biome)]),
+      moveName: toTitleCase(MoveId[getNaturePowerType(TerrainType.NONE, biome)]),
       biome,
       biomeName: BiomeId[biome],
     })),
@@ -68,11 +69,11 @@ describe("Move - Nature Power", () => {
   it.todo.each(
     getEnumValues(TerrainType).map(terrain => ({
       move: getNaturePowerType(terrain, BiomeId.TOWN),
-      moveName: toReadableString(MoveId[getNaturePowerType(terrain, BiomeId.TOWN)]),
+      moveName: toTitleCase(MoveId[getNaturePowerType(terrain, BiomeId.TOWN)]),
       terrain: terrain,
       terrainName: TerrainType[terrain],
     })),
-  )("should select $moveName if the current terrain is $terrainName", async ({ move /* terrain */ }) => {
+  )("should select $moveName if the current terrain is $terrainName", async ({ move /*, terrain */ }) => {
     //  game.override.terrain(terrainType);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 

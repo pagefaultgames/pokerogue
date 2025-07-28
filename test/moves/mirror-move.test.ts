@@ -39,13 +39,14 @@ describe("Moves - Mirror Move", () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
 
     game.move.use(MoveId.MIRROR_MOVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.use(MoveId.SWORDS_DANCE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
+    game.move.use(MoveId.MIRROR_MOVE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
     await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
     await game.move.forceEnemyMove(MoveId.SWORDS_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    // Feebas copied enemy tackle against it
+    // Feebas copied enemy tackle against it;
+    // player 2 copied enemy swords dance and used it on itself
     const [feebas, magikarp] = game.scene.getPlayerField();
     expect(feebas.getLastXMoves()[0]).toMatchObject({
       move: MoveId.TACKLE,

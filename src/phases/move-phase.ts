@@ -42,6 +42,12 @@ export class MovePhase extends BattlePhase {
   protected failed = false;
   /** Whether the current move should fail and retain PP. */
   protected cancelled = false;
+  /**
+   * Whether the move was interrupted prior to showing usage text.
+   * Used to set the "last move" pointer after move end.
+   * @defaultValue `true`
+   */
+  private wasPreInterrupted = true;
 
   public get pokemon(): Pokemon {
     return this._pokemon;
@@ -294,6 +300,10 @@ export class MovePhase extends BattlePhase {
     const moveQueue = this.pokemon.getMoveQueue();
     const move = this.move.getMove();
 
+    // Set flag to update Copycat's "last move" counter
+    // TODO: Verify interaction with a failed Focus Punch
+    this.wasPreInterrupted = false;
+
     // form changes happen even before we know that the move wll execute.
     globalScene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
 
@@ -366,11 +376,6 @@ export class MovePhase extends BattlePhase {
   private executeMove() {
     const move = this.move.getMove();
     const targets = this.getActiveTargetPokemon();
-
-    // Update the battle's "last move" pointer unless we're currently mimicking a move or triggering Dancer.
-    if (!move.hasAttr("CopyMoveAttr") && !isReflected(this.useMode)) {
-      globalScene.currentBattle.lastMove = move.id;
-    }
 
     // Trigger ability-based user type changes, display move text and then execute move effects.
     // TODO: Investigate whether PokemonTypeChangeAbAttr can drop the "opponent" parameter
@@ -459,6 +464,9 @@ export class MovePhase extends BattlePhase {
     const move = this.move.getMove();
     const targets = this.getActiveTargetPokemon();
 
+    // Set flag to update Copycat's "last move" counter
+    this.wasPreInterrupted = false;
+
     if (!move.applyConditions(this.pokemon, targets[0], move)) {
       this.failMove(true);
       return;
@@ -490,6 +498,7 @@ export class MovePhase extends BattlePhase {
       this.pokemon.getBattlerIndex(),
       this.getActiveTargetPokemon(),
       isVirtual(this.useMode),
+      this.wasPreInterrupted,
     );
 
     super.end();

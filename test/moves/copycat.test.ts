@@ -2,9 +2,9 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
-import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -26,7 +26,6 @@ describe("Moves - Copycat", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([MoveId.COPYCAT, MoveId.SPIKY_SHIELD, MoveId.SWORDS_DANCE, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .criticalHits(false)
@@ -35,22 +34,38 @@ describe("Moves - Copycat", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("should copy the last move successfully executed", async () => {
+  it("should copy the last move successfully executed by any Pokemon", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(MoveId.SWORDS_DANCE);
-    await game.move.forceEnemyMove(MoveId.SPLASH);
+    game.move.use(MoveId.COPYCAT);
+    await game.move.forceEnemyMove(MoveId.SWORDS_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toNextTurn();
-
-    game.move.select(MoveId.COPYCAT); // Last successful move should be Swords Dance
-    await game.move.forceEnemyMove(MoveId.SUCKER_PUNCH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
     const player = game.field.getPlayerPokemon();
-    expect(player.getStatStage(Stat.ATK)).toBe(4);
+    expect(player.getStatStage(Stat.ATK)).toBe(2);
     expect(player.getLastXMoves()[0].move).toBe(MoveId.SWORDS_DANCE);
+  });
+
+  it('should update "last move" tracker for moves failing conditions, but not pre-move interrupts', async () => {
+    game.override.enemyStatusEffect(StatusEffect.SLEEP);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+    game.move.use(MoveId.SUCKER_PUNCH);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("MoveEndPhase");
+
+    // Enemy is asleep and should not have updated tracker
+    expect(game.scene.currentBattle.lastMove).toBe(MoveId.NONE);
+
+    await game.phaseInterceptor.to("MoveEndPhase");
+
+    // Player sucker punch failed conditions, but still updated tracker
+    expect(game.scene.currentBattle.lastMove).toBe(MoveId.SUCKER_PUNCH);
+
+    const player = game.field.getPlayerPokemon();
+    expect(player.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
   it("should fail if no prior moves have been made", async () => {

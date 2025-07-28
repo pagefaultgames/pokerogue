@@ -70,6 +70,10 @@ export class Battle {
   public battleScore = 0;
   public postBattleLoot: PokemonHeldItemModifier[] = [];
   public escapeAttempts = 0;
+  /**
+   * A tracker of the last {@linkcode MoveId} successfully used this battle.
+   *
+   */
   public lastMove: MoveId = MoveId.NONE;
   public battleSeed: string = randomString(16, true);
   private battleSeedState: string | null = null;

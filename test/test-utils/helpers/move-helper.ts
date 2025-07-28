@@ -331,7 +331,7 @@ export class MoveHelper extends GameManagerHelper {
    * @returns The spy that for Metronome that was mocked (Usually unneeded).
    */
   public forceMetronomeMove(move: MoveId, once = false): MockInstance {
-    const spy = vi.spyOn(allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0], "getMoveOverride");
+    const spy = vi.spyOn(allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0], "getMove");
     if (once) {
       spy.mockReturnValueOnce(move);
     } else {
