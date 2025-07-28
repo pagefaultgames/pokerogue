@@ -1,4 +1,7 @@
-import type { BattlerTagTypeMap, SerializableBattlerTag } from "#data/battler-tags";
+// biome-ignore-start lint/correctness/noUnusedImports: Used in a TSDoc comment
+import type { AbilityBattlerTag, BattlerTagTypeMap, SerializableBattlerTag, TypeBoostTag } from "#data/battler-tags";
+import type { AbilityId } from "#enums/ability-id";
+// biome-ignore-end lint/correctness/noUnusedImports: end
 import type { BattlerTagType } from "#enums/battler-tag-type";
 
 /**
@@ -40,29 +43,57 @@ export type TrappingBattlerTagType =
 /**
  * Subset of {@linkcode BattlerTagType}s that are related to protection effects.
  */
-export type ProtectedBattlerTagType = BattlerTagType.PROTECTED;
+export type ProtectionBattlerTagType = BattlerTagType.PROTECTED | BattlerTagType.SPIKY_SHIELD | DamageProtectedTagType;
+/**
+ * Subset of {@linkcode BattlerTagType}s related to protection effects that block damage but not status moves.
+ */
+export type DamageProtectedTagType = ContactSetStatusProtectedTagType | ContactStatStageChangeProtectedTagType;
 
 /**
- * Subset of {@linkcode BattlerTagType}s that are related to protection effects.
+ * Subset of {@linkcode BattlerTagType}s related to protection effects that set a status effect on the attacker.
  */
-export type DamageProtectedBattlerTagType =
-  | BattlerTagType.PROTECTED
-  | BattlerTagType.SPIKY_SHIELD
+export type ContactSetStatusProtectedTagType = BattlerTagType.BANEFUL_BUNKER | BattlerTagType.BURNING_BULWARK;
+
+/**
+ * Subset of {@linkcode BattlerTagType}s related to protection effects that change stat stages of the attacker.
+ */
+export type ContactStatStageChangeProtectedTagType =
   | BattlerTagType.KINGS_SHIELD
-  | BattlerTagType.OBSTRUCT
   | BattlerTagType.SILK_TRAP
-  | BattlerTagType.BANEFUL_BUNKER
-  | BattlerTagType.BURNING_BULWARK;
+  | BattlerTagType.OBSTRUCT;
+
+/** Subset of {@linkcode BattlerTagType}s that provide the Endure effect */
+export type EndureTagType = BattlerTagType.ENDURE_TOKEN | BattlerTagType.ENDURING;
 
 /**
  * Subset of {@linkcode BattlerTagType}s that are related to semi-invulnerable states.
  */
-export type SemiInvulnerableBattlerTagType =
+export type SemiInvulnerableTagType =
   | BattlerTagType.FLYING
   | BattlerTagType.UNDERGROUND
   | BattlerTagType.UNDERWATER
   | BattlerTagType.HIDDEN;
 
+/**
+ * Subset of {@linkcode BattlerTagType}s corresponding to {@linkcode AbilityBattlerTag}s
+ *
+ * @remarks
+ * ⚠️ {@linkcode AbilityId.FLASH_FIRE | Flash Fire}'s {@linkcode BattlerTagType.FIRE_BOOST} is not included as it
+ * subclasses {@linkcode TypeBoostTag} and not `AbilityBattlerTag`.
+ */
+export type AbilityBattlerTagType =
+  | BattlerTagType.PROTOSYNTHESIS
+  | BattlerTagType.QUARK_DRIVE
+  | BattlerTagType.UNBURDEN
+  | BattlerTagType.SLOW_START
+  | BattlerTagType.TRUANT;
+
+/**
+ * Subset of {@linkcode BattlerTagType}s related to abilities that boost the highest stat.
+ */
+export type HighestStatBoostTagType =
+  | BattlerTagType.QUARK_DRIVE // formatting
+  | BattlerTagType.PROTOSYNTHESIS;
 /**
  * Subset of {@linkcode BattlerTagType}s that are able to persist between turns and should therefore be serialized
  */

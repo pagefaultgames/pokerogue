@@ -33,8 +33,15 @@ import type { MovePhase } from "#phases/move-phase";
 import type { StatStageChangeCallback } from "#phases/stat-stage-change-phase";
 import i18next from "#plugins/i18n";
 import type {
+  AbilityBattlerTagType,
+  ContactSetStatusProtectedTagType,
+  ContactStatStageChangeProtectedTagType,
+  DamageProtectedTagType,
+  EndureTagType,
+  HighestStatBoostTagType,
   MoveRestrictionBattlerTagType,
-  SemiInvulnerableBattlerTagType,
+  ProtectionBattlerTagType,
+  SemiInvulnerableTagType,
   TrappingBattlerTagType,
 } from "#types/battler-tags";
 import type { Mutable, NonFunctionProperties } from "#types/type-helpers";
@@ -189,7 +196,7 @@ export abstract class SerializableBattlerTag extends BattlerTag {
  * Players and enemies should not be allowed to select restricted moves.
  */
 export abstract class MoveRestrictionBattlerTag extends SerializableBattlerTag {
-  public override readonly tagType: MoveRestrictionBattlerTagType;
+  public declare readonly tagType: MoveRestrictionBattlerTagType;
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
       // Cancel the affected pokemon's selected move
@@ -485,7 +492,7 @@ export class RechargingTag extends SerializableBattlerTag {
  */
 export class BeakBlastChargingTag extends BattlerTag {
   public override readonly tagType = BattlerTagType.BEAK_BLAST_CHARGING;
-  override readonly sourceMove: MoveId.BEAK_BLAST;
+  public declare readonly sourceMove: MoveId.BEAK_BLAST;
   constructor() {
     super(
       BattlerTagType.BEAK_BLAST_CHARGING,
@@ -586,7 +593,7 @@ export class ShellTrapTag extends BattlerTag {
 }
 
 export class TrappedTag extends SerializableBattlerTag {
-  public override readonly tagType: TrappingBattlerTagType;
+  public declare readonly tagType: TrappingBattlerTagType;
   constructor(
     tagType: BattlerTagType,
     lapseType: BattlerTagLapseType,
@@ -1473,7 +1480,7 @@ export class DrowsyTag extends SerializableBattlerTag {
 }
 
 export abstract class DamagingTrapTag extends TrappedTag {
-  public override readonly tagType: TrappingBattlerTagType;
+  public declare readonly tagType: TrappingBattlerTagType;
   /** The animation to play during the damage sequence */
   #commonAnim: CommonAnim;
 
@@ -1664,6 +1671,7 @@ export class ThunderCageTag extends DamagingTrapTag {
 }
 
 export class InfestationTag extends DamagingTrapTag {
+  public override readonly tagType = BattlerTagType.INFESTATION;
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.INFESTATION, CommonAnim.INFESTATION, turnCount, MoveId.INFESTATION, sourceId);
   }
@@ -1683,7 +1691,8 @@ export class InfestationTag extends DamagingTrapTag {
 }
 
 export class ProtectedTag extends BattlerTag {
-  constructor(sourceMove: MoveId, tagType: BattlerTagType = BattlerTagType.PROTECTED) {
+  public declare readonly tagType: ProtectionBattlerTagType;
+  constructor(sourceMove: MoveId, tagType: ProtectionBattlerTagType = BattlerTagType.PROTECTED) {
     super(tagType, BattlerTagLapseType.TURN_END, 0, sourceMove);
   }
 
@@ -1724,9 +1733,8 @@ export abstract class ContactProtectedTag extends ProtectedTag {
    * Function to call when a contact move hits the pokemon with this tag.
    * @param _attacker - The pokemon using the contact move
    * @param _user - The pokemon that is being attacked and has the tag
-   * @param _move - The move used by the attacker
    */
-  abstract onContact(_attacker: Pokemon, _user: Pokemon);
+  abstract onContact(_attacker: Pokemon, _user: Pokemon): void;
 
   /**
    * Lapse the tag and apply `onContact` if the move makes contact and
@@ -1760,6 +1768,7 @@ export abstract class ContactProtectedTag extends ProtectedTag {
  * @sealed
  */
 export class ContactDamageProtectedTag extends ContactProtectedTag {
+  public override readonly tagType = BattlerTagType.SPIKY_SHIELD;
   #damageRatio: number;
 
   constructor(sourceMove: MoveId, damageRatio: number) {
@@ -1784,18 +1793,22 @@ export class ContactDamageProtectedTag extends ContactProtectedTag {
 }
 
 /** Base class for `BattlerTag`s that block damaging moves but not status moves */
-export abstract class DamageProtectedTag extends ContactProtectedTag {}
+export abstract class DamageProtectedTag extends ContactProtectedTag {
+  public declare readonly tagType: DamageProtectedTagType;
+}
 
 export class ContactSetStatusProtectedTag extends DamageProtectedTag {
-  private statusEffect: StatusEffect;
+  public declare readonly tagType: ContactSetStatusProtectedTagType;
+  /** The status effect applied to attackers */
+  #statusEffect: StatusEffect;
   /**
    * @param sourceMove - The move that caused the tag to be applied
    * @param tagType - The type of the tag
    * @param statusEffect - The status effect applied to attackers
    */
-  constructor(sourceMove: MoveId, tagType: BattlerTagType, statusEffect: StatusEffect) {
+  constructor(sourceMove: MoveId, tagType: ContactSetStatusProtectedTagType, statusEffect: StatusEffect) {
     super(sourceMove, tagType);
-    this.statusEffect = statusEffect;
+    this.#statusEffect = statusEffect;
   }
 
   /**
@@ -1804,7 +1817,7 @@ export class ContactSetStatusProtectedTag extends DamageProtectedTag {
    * @param user - The pokemon that is being attacked and has the tag
    */
   override onContact(attacker: Pokemon, user: Pokemon): void {
-    attacker.trySetStatus(this.statusEffect, true, user);
+    attacker.trySetStatus(this.#statusEffect, true, user);
   }
 }
 
@@ -1813,10 +1826,11 @@ export class ContactSetStatusProtectedTag extends DamageProtectedTag {
  * Used by {@linkcode MoveId.KINGS_SHIELD}, {@linkcode MoveId.OBSTRUCT}, {@linkcode MoveId.SILK_TRAP}
  */
 export class ContactStatStageChangeProtectedTag extends DamageProtectedTag {
+  public declare readonly tagType: ContactStatStageChangeProtectedTagType;
   #stat: BattleStat;
   #levels: number;
 
-  constructor(sourceMove: MoveId, tagType: BattlerTagType, stat: BattleStat, levels: number) {
+  constructor(sourceMove: MoveId, tagType: ContactStatStageChangeProtectedTagType, stat: BattleStat, levels: number) {
     super(sourceMove, tagType);
 
     this.#stat = stat;
@@ -1841,11 +1855,11 @@ export class ContactStatStageChangeProtectedTag extends DamageProtectedTag {
 
 /**
  * `BattlerTag` class for effects that cause the affected Pokemon to survive lethal attacks at 1 HP.
- * Used for {@link https://bulbapedia.bulbagarden.net/wiki/Endure_(move) | Endure} and
- * Endure Tokens.
+ * Used for {@link https://bulbapedia.bulbagarden.net/wiki/Endure_(move) | Endure} and endure tokens.
  */
 export class EnduringTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
+  public declare readonly tagType: EndureTagType;
+  constructor(tagType: EndureTagType, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
     super(tagType, lapseType, 0, sourceMove);
   }
 
@@ -1874,6 +1888,7 @@ export class EnduringTag extends BattlerTag {
 }
 
 export class SturdyTag extends BattlerTag {
+  public override readonly tagType = BattlerTagType.STURDY;
   constructor(sourceMove: MoveId) {
     super(BattlerTagType.STURDY, BattlerTagLapseType.TURN_END, 0, sourceMove);
   }
@@ -1893,6 +1908,7 @@ export class SturdyTag extends BattlerTag {
 }
 
 export class PerishSongTag extends SerializableBattlerTag {
+  public override readonly tagType = BattlerTagType.PERISH_SONG;
   constructor(turnCount: number) {
     super(BattlerTagType.PERISH_SONG, BattlerTagLapseType.TURN_END, turnCount, MoveId.PERISH_SONG, undefined, true);
   }
@@ -1924,6 +1940,7 @@ export class PerishSongTag extends SerializableBattlerTag {
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Center_of_attention | Center of Attention}
  */
 export class CenterOfAttentionTag extends BattlerTag {
+  public override readonly tagType = BattlerTagType.CENTER_OF_ATTENTION;
   public powder: boolean;
 
   constructor(sourceMove: MoveId) {
@@ -1951,13 +1968,14 @@ export class CenterOfAttentionTag extends BattlerTag {
 }
 
 export class AbilityBattlerTag extends SerializableBattlerTag {
+  public declare readonly tagType: AbilityBattlerTagType;
   #ability: AbilityId;
   /** The ability that the tag corresponds to */
   public get ability(): AbilityId {
     return this.#ability;
   }
 
-  constructor(tagType: BattlerTagType, ability: AbilityId, lapseType: BattlerTagLapseType, turnCount: number) {
+  constructor(tagType: AbilityBattlerTagType, ability: AbilityId, lapseType: BattlerTagLapseType, turnCount: number) {
     super(tagType, lapseType, turnCount);
 
     this.#ability = ability;
@@ -1968,6 +1986,7 @@ export class AbilityBattlerTag extends SerializableBattlerTag {
  * Tag used by Unburden to double speed
  */
 export class UnburdenTag extends AbilityBattlerTag {
+  public override readonly tagType = BattlerTagType.UNBURDEN;
   constructor() {
     super(BattlerTagType.UNBURDEN, AbilityId.UNBURDEN, BattlerTagLapseType.CUSTOM, 1);
   }
@@ -1980,6 +1999,7 @@ export class UnburdenTag extends AbilityBattlerTag {
 }
 
 export class TruantTag extends AbilityBattlerTag {
+  public override readonly tagType = BattlerTagType.TRUANT;
   constructor() {
     super(BattlerTagType.TRUANT, AbilityId.TRUANT, BattlerTagLapseType.MOVE, 1);
   }
@@ -2014,6 +2034,7 @@ export class TruantTag extends AbilityBattlerTag {
 }
 
 export class SlowStartTag extends AbilityBattlerTag {
+  public override readonly tagType = BattlerTagType.SLOW_START;
   constructor() {
     super(BattlerTagType.SLOW_START, AbilityId.SLOW_START, BattlerTagLapseType.TURN_END, 5);
   }
@@ -2051,10 +2072,11 @@ export class SlowStartTag extends AbilityBattlerTag {
 }
 
 export class HighestStatBoostTag extends AbilityBattlerTag {
+  public declare readonly tagType: HighestStatBoostTagType;
   public stat: Stat;
   public multiplier: number;
 
-  constructor(tagType: BattlerTagType, ability: AbilityId) {
+  constructor(tagType: HighestStatBoostTagType, ability: AbilityId) {
     super(tagType, ability, BattlerTagLapseType.CUSTOM, 1);
   }
 
@@ -2116,7 +2138,7 @@ export class WeatherHighestStatBoostTag extends HighestStatBoostTag {
     return this.#weatherTypes;
   }
 
-  constructor(tagType: BattlerTagType, ability: AbilityId, ...weatherTypes: WeatherType[]) {
+  constructor(tagType: HighestStatBoostTagType, ability: AbilityId, ...weatherTypes: WeatherType[]) {
     super(tagType, ability);
     this.#weatherTypes = weatherTypes;
   }
@@ -2128,14 +2150,14 @@ export class TerrainHighestStatBoostTag extends HighestStatBoostTag {
     return this.#terrainTypes;
   }
 
-  constructor(tagType: BattlerTagType, ability: AbilityId, ...terrainTypes: TerrainType[]) {
+  constructor(tagType: HighestStatBoostTagType, ability: AbilityId, ...terrainTypes: TerrainType[]) {
     super(tagType, ability);
     this.#terrainTypes = terrainTypes;
   }
 }
 
 export class SemiInvulnerableTag extends SerializableBattlerTag {
-  override tagType: SemiInvulnerableBattlerTagType;
+  public declare readonly tagType: SemiInvulnerableTagType;
   constructor(tagType: BattlerTagType, turnCount: number, sourceMove: MoveId) {
     super(tagType, BattlerTagLapseType.MOVE_EFFECT, turnCount, sourceMove);
   }
@@ -2300,6 +2322,7 @@ export class DragonCheerTag extends CritBoostTag {
 }
 
 export class SaltCuredTag extends SerializableBattlerTag {
+  public override readonly tagType = BattlerTagType.SALT_CURED;
   constructor(sourceId: number) {
     super(BattlerTagType.SALT_CURED, BattlerTagLapseType.TURN_END, 1, MoveId.SALT_CURE, sourceId);
   }
@@ -2482,7 +2505,7 @@ export class RoostedTag extends BattlerTag {
 
 /** Common attributes of form change abilities that block damage */
 export class FormBlockDamageTag extends SerializableBattlerTag {
-  public override readonly tagType: BattlerTagType.ICE_FACE | BattlerTagType.DISGUISE;
+  public declare readonly tagType: BattlerTagType.ICE_FACE | BattlerTagType.DISGUISE;
   constructor(tagType: BattlerTagType.ICE_FACE | BattlerTagType.DISGUISE) {
     super(tagType, BattlerTagLapseType.CUSTOM, 1);
   }
@@ -2693,7 +2716,7 @@ export class StockpilingTag extends SerializableBattlerTag {
  * Battler tag for Gulp Missile used by Cramorant.
  */
 export class GulpMissileTag extends SerializableBattlerTag {
-  public override readonly tagType: BattlerTagType.GULP_MISSILE_ARROKUDA | BattlerTagType.GULP_MISSILE_PIKACHU;
+  public declare readonly tagType: BattlerTagType.GULP_MISSILE_ARROKUDA | BattlerTagType.GULP_MISSILE_PIKACHU;
   constructor(tagType: BattlerTagType.GULP_MISSILE_ARROKUDA | BattlerTagType.GULP_MISSILE_PIKACHU, sourceMove: MoveId) {
     super(tagType, BattlerTagLapseType.HIT, 0, sourceMove);
   }
@@ -2769,9 +2792,9 @@ export class GulpMissileTag extends SerializableBattlerTag {
  * @see {@linkcode ignoreImmunity}
  */
 export class ExposedTag extends SerializableBattlerTag {
-  public override readonly tagType: BattlerTagType.IGNORE_DARK | BattlerTagType.IGNORE_GHOST;
-  private defenderType: PokemonType;
-  private allowedTypes: readonly PokemonType[];
+  public declare readonly tagType: BattlerTagType.IGNORE_DARK | BattlerTagType.IGNORE_GHOST;
+  #defenderType: PokemonType;
+  #allowedTypes: readonly PokemonType[];
 
   constructor(
     tagType: BattlerTagType.IGNORE_DARK | BattlerTagType.IGNORE_GHOST,
@@ -2780,8 +2803,8 @@ export class ExposedTag extends SerializableBattlerTag {
     allowedTypes: PokemonType[],
   ) {
     super(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove);
-    this.defenderType = defenderType;
-    this.allowedTypes = allowedTypes;
+    this.#defenderType = defenderType;
+    this.#allowedTypes = allowedTypes;
   }
 
   /**
@@ -2790,7 +2813,7 @@ export class ExposedTag extends SerializableBattlerTag {
    * @returns `true` if the move should be allowed to target the defender.
    */
   ignoreImmunity(type: PokemonType, moveType: PokemonType): boolean {
-    return type === this.defenderType && this.allowedTypes.includes(moveType);
+    return type === this.#defenderType && this.#allowedTypes.includes(moveType);
   }
 }
 
@@ -2817,7 +2840,7 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
 
   /**
    * Checks if a move is disabled under Heal Block
-   * @param {MoveId} move {@linkcode MoveId} the move ID
+   * @param move - {@linkcode MoveId | ID} of the move being used
    * @returns `true` if the move has a TRIAGE_MOVE flag and is a status move
    */
   override isMoveRestricted(move: MoveId): boolean {
