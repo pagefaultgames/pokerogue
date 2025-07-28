@@ -1,12 +1,12 @@
-import { allMoves } from "#app/data/data-lists";
-import { StatusEffectAttr } from "#app/data/moves/move";
-import { toReadableString } from "#app/utils/common";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
+import { StatusEffectAttr } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
+import { toTitleCase } from "#utils/strings";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -48,7 +48,7 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
     vi.spyOn(allMoves[MoveId.SPORE], "attrs", "get").mockReturnValue([new StatusEffectAttr(status, false)]);
   });
 
-  const statusStr = toReadableString(StatusEffect[status]);
+  const statusStr = toTitleCase(StatusEffect[status]);
 
   it(`should prevent application of ${statusStr} without failing damaging moves`, async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
