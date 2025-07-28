@@ -22,11 +22,11 @@ export function getPokemonSpecies(species: SpeciesId | SpeciesId[]): PokemonSpec
   }
   return allSpecies[species - 1];
 }
+
 /**
  * Method to get the daily list of starters with Pokerus.
  * @returns A list of starters with Pokerus
  */
-
 export function getPokerusStarters(): PokemonSpecies[] {
   const pokerusStarters: PokemonSpecies[] = [];
   const date = new Date();
@@ -46,6 +46,7 @@ export function getPokerusStarters(): PokemonSpecies[] {
   );
   return pokerusStarters;
 }
+
 export function getFusedSpeciesName(speciesAName: string, speciesBName: string): string {
   const fragAPattern = /([a-z]{2}.*?[aeiou(?:y$)\-']+)(.*?)$/i;
   const fragBPattern = /([a-z]{2}.*?[aeiou(?:y$)\-'])(.*?)$/i;
