@@ -1,7 +1,5 @@
 import type { SetupServerApi } from "msw/node";
 
-export {};
-
 declare global {
   /**
    * Only used in testing.
