@@ -1694,12 +1694,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns Whether this Pokemon is shiny
    */
   isShiny(useIllusion = false): boolean {
-    if (useIllusion) {
-      const illusion = this.summonData.illusion;
-      return illusion?.shiny || (!!illusion?.fusionSpecies && !!illusion.fusionShiny);
-    }
-
-    return this.shiny || (this.isFusion(useIllusion) && this.fusionShiny);
+    return this.isBaseShiny(useIllusion) || this.isFusionShiny(useIllusion);
   }
 
   isBaseShiny(useIllusion = false) {
