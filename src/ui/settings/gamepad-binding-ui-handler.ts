@@ -1,9 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import { Device } from "#enums/devices";
+import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import { getIconWithSettingName, getKeyWithKeycode } from "#inputs/configHandler";
+import { getIconWithSettingName, getKeyWithKeycode } from "#inputs/config-handler";
 import { AbstractBindingUiHandler } from "#ui/abstract-binding-ui-handler";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import i18next from "i18next";
 
 export class GamepadBindingUiHandler extends AbstractBindingUiHandler {
