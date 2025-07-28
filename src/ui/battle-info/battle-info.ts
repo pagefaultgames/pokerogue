@@ -4,9 +4,10 @@ import { getTypeRgb } from "#data/type";
 import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { TextStyle } from "#enums/text-style";
 import type { Pokemon } from "#field/pokemon";
 import { getVariantTint } from "#sprites/variant";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { fixedInt, getLocalizedSpriteKey, getShinyDescriptor } from "#utils/common";
 import i18next from "i18next";
 

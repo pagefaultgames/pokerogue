@@ -23,13 +23,13 @@ import {
 } from "#trainers/trainer-party-template";
 import { randSeedInt, randSeedItem, randSeedWeightedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { toSnakeCase } from "#utils/strings";
 import i18next from "i18next";
 
 export class Trainer extends Phaser.GameObjects.Container {
   public config: TrainerConfig;
   public variant: TrainerVariant;
   public partyTemplateIndex: number;
-  public name: string;
   public partnerName: string;
   public nameKey: string;
   public partnerNameKey: string | undefined;
@@ -170,7 +170,7 @@ export class Trainer extends Phaser.GameObjects.Container {
     const evilTeamTitles = ["grunt"];
     if (this.name === "" && evilTeamTitles.some(t => name.toLocaleLowerCase().includes(t))) {
       // This is a evil team grunt so we localize it by only using the "name" as the title
-      title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, "_")}`);
+      title = i18next.t(`trainerClasses:${toSnakeCase(name)}`);
       console.log("Localized grunt name: " + title);
       // Since grunts are not named we can just return the title
       return title;
@@ -187,7 +187,7 @@ export class Trainer extends Phaser.GameObjects.Container {
         }
         // Get the localized trainer class name from the i18n file and set it as the title.
         // This is used for trainer class names, not titles like "Elite Four, Champion, etc."
-        title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, "_")}`);
+        title = i18next.t(`trainerClasses:${toSnakeCase(name)}`);
       }
 
       // If no specific trainer slot is set.
@@ -208,7 +208,7 @@ export class Trainer extends Phaser.GameObjects.Container {
 
     if (this.config.titleDouble && this.variant === TrainerVariant.DOUBLE && !this.config.doubleOnly) {
       title = this.config.titleDouble;
-      name = i18next.t(`trainerNames:${this.config.nameDouble.toLowerCase().replace(/\s/g, "_")}`);
+      name = i18next.t(`trainerNames:${toSnakeCase(this.config.nameDouble)}`);
     }
 
     console.log(title ? `${title} ${name}` : name);

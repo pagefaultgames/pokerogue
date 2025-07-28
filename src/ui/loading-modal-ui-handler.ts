@@ -1,6 +1,7 @@
+import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import i18next from "i18next";
 
 export class LoadingModalUiHandler extends ModalUiHandler {

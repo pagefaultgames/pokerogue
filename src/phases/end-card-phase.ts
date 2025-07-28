@@ -1,7 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { PlayerGender } from "#enums/player-gender";
-import { addTextObject, TextStyle } from "#ui/text";
+import { TextStyle } from "#enums/text-style";
+import { addTextObject } from "#ui/text";
 import i18next from "i18next";
 
 export class EndCardPhase extends Phase {

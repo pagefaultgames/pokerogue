@@ -44,20 +44,22 @@ function getTestFolderPath(...folders) {
  * @returns {Promise<{selectedOption: {label: string, dir: string}}>} the selected type
  */
 async function promptTestType() {
-  const typeAnswer = await inquirer.prompt([
-    {
-      type: "list",
-      name: "selectedOption",
-      message: "What type of test would you like to create?",
-      choices: [...choices.map(choice => ({ name: choice.label, value: choice })), "EXIT"],
-    },
-  ]);
+  const typeAnswer = await inquirer
+    .prompt([
+      {
+        type: "list",
+        name: "selectedOption",
+        message: "What type of test would you like to create?",
+        choices: [...choices.map(choice => ({ name: choice.label, value: choice })), { name: "EXIT", value: "N/A" }],
+      },
+    ])
+    .then(ans => ans.selectedOption);
 
-  if (typeAnswer.selectedOption === "EXIT") {
+  if (typeAnswer.name === "EXIT") {
     console.log("Exiting...");
-    return process.exit();
+    return process.exit(0);
   }
-  if (!choices.some(choice => choice.dir === typeAnswer.selectedOption.dir)) {
+  if (!choices.some(choice => choice.dir === typeAnswer.dir)) {
     console.error(`Please provide a valid type: (${choices.map(choice => choice.label).join(", ")})!`);
     return await promptTestType();
   }
