@@ -715,14 +715,12 @@ function doBugTypeMoveTutor(): Promise<void> {
     const moveOptions = globalScene.currentBattle.mysteryEncounter!.misc.moveTutorOptions;
     await showEncounterDialogue(`${namespace}:battle_won`, `${namespace}:speaker`);
 
-    const overlayScale = 1;
     const moveInfoOverlay = new MoveInfoOverlay({
       delayVisibility: false,
-      scale: overlayScale,
       onSide: true,
       right: true,
       x: 1,
-      y: -MoveInfoOverlay.getHeight(overlayScale, true) - 1,
+      y: -MoveInfoOverlay.getHeight(true) - 1,
       width: globalScene.game.canvas.width / 6 - 2,
     });
     globalScene.ui.add(moveInfoOverlay);

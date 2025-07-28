@@ -682,19 +682,16 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.menuContainer.bringToTop(this.baseStatsOverlay);
 
     // add the info overlay last to be the top most ui element and prevent the IVs from overlaying this
-    const overlayScale = 1;
     this.moveInfoOverlay = new MoveInfoOverlay({
-      scale: overlayScale,
       top: true,
       x: 1,
-      y: globalScene.game.canvas.height / 6 - MoveInfoOverlay.getHeight(overlayScale) - 29,
+      y: globalScene.game.canvas.height / 6 - MoveInfoOverlay.getHeight() - 29,
     });
     this.starterSelectContainer.add(this.moveInfoOverlay);
 
     this.infoOverlay = new PokedexInfoOverlay({
-      scale: overlayScale,
       x: 1,
-      y: globalScene.game.canvas.height / 6 - PokedexInfoOverlay.getHeight(overlayScale) - 29,
+      y: globalScene.game.canvas.height / 6 - PokedexInfoOverlay.getHeight() - 29,
     });
     this.starterSelectContainer.add(this.infoOverlay);
 

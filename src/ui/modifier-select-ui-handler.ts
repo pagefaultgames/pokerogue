@@ -146,14 +146,12 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.continueButtonContainer.add(continueButtonText);
 
     // prepare move overlay
-    const overlayScale = 1;
     this.moveInfoOverlay = new MoveInfoOverlay({
       delayVisibility: true,
-      scale: overlayScale,
       onSide: true,
       right: true,
       x: 1,
-      y: -MoveInfoOverlay.getHeight(overlayScale, true) - 1,
+      y: -MoveInfoOverlay.getHeight(true) - 1,
       width: globalScene.game.canvas.width / 6 - 2,
     });
     ui.add(this.moveInfoOverlay);
