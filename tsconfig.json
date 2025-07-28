@@ -43,8 +43,8 @@
       "#sprites/*": ["./sprites/*.ts"],
       "#system/*": [
         "./system/settings/*.ts",
-        "./system/version_migration/versions/*.ts",
-        "./system/version_migration/*.ts",
+        "./system/version-migration/versions/*.ts",
+        "./system/version-migration/*.ts",
         "./system/*.ts"
       ],
       "#trainers/*": ["./data/trainers/*.ts"],

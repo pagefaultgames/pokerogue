@@ -4,7 +4,7 @@ import type {
   UpdateSystemSavedataRequest,
   VerifySystemSavedataRequest,
   VerifySystemSavedataResponse,
-} from "#types/PokerogueSystemSavedataApi";
+} from "#types/api/pokerogue-system-save-data-api";
 
 /**
  * A wrapper for PokéRogue system savedata API requests.

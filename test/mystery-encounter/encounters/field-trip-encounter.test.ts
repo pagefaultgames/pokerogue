@@ -11,7 +11,7 @@ import { FieldTripEncounter } from "#mystery-encounters/field-trip-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { SelectRewardPhase } from "#phases/select-reward-phase";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import i18next from "i18next";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

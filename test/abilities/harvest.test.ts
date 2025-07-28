@@ -10,7 +10,7 @@ import { TrainerItemId } from "#enums/trainer-item-id";
 import { WeatherType } from "#enums/weather-type";
 import type { PokemonItemMap } from "#items/held-item-data-types";
 import { getPartyBerries } from "#items/item-utility";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

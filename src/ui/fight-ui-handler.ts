@@ -4,7 +4,7 @@ import { getTypeDamageMultiplierColor } from "#data/type";
 import { BattleType } from "#enums/battle-type";
 import { Button } from "#enums/buttons";
 import { Command } from "#enums/command";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveCategory } from "#enums/move-category";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { UiMode } from "#enums/ui-mode";
