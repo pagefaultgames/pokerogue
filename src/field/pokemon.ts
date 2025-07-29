@@ -213,6 +213,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * TODO: Stop treating this like a unique ID and stop treating 0 as no pokemon
    */
   public id: number;
+  /**
+   * The Pokemon's current nickname, or `undefined` if it currently lacks one.
+   * If omitted, references to this should refer to the default name for this Pokemon's species.
+   */
   public nickname?: string;
   public species: PokemonSpecies;
   public formIndex: number;
