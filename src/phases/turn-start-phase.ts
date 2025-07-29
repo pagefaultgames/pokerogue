@@ -218,7 +218,7 @@ export class TurnStartPhase extends FieldPhase {
           break;
       }
     }
-    phaseManager.pushNew("CheckBiomeEndPhase");
+    phaseManager.pushNew("CheckInterludePhase");
 
     phaseManager.pushNew("WeatherEffectPhase");
     phaseManager.pushNew("BerryPhase");
