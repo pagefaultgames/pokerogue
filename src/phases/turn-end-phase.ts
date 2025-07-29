@@ -18,7 +18,7 @@ import i18next from "i18next";
 
 export class TurnEndPhase extends FieldPhase {
   public readonly phaseName = "TurnEndPhase";
-  public endOfBiome = false;
+  public upcomingInterlude = false;
 
   start() {
     super.start();
@@ -61,7 +61,7 @@ export class TurnEndPhase extends FieldPhase {
       pokemon.tempSummonData.waveTurnCount++;
     };
 
-    if (!this.endOfBiome) {
+    if (!this.upcomingInterlude) {
       this.executeForAll(handlePokemon);
 
       globalScene.arena.lapseTags();

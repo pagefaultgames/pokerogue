@@ -675,7 +675,7 @@ export class PhaseManager {
 
     const turnEndPhase = this.findPhase<TurnEndPhase>(p => p.phaseName === "TurnEndPhase");
     if (turnEndPhase) {
-      turnEndPhase.endOfBiome = true;
+      turnEndPhase.upcomingInterlude = true;
     }
   }
 }
