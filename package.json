@@ -6,6 +6,7 @@
   "scripts": {
     "start": "vite",
     "start:dev": "vite --mode development",
+    "start:podman": "vite --mode development --host 0.0.0.0 --port $PORT",
     "build": "vite build",
     "build:beta": "vite build --mode beta",
     "preview": "vite preview",
