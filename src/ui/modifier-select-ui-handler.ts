@@ -553,7 +553,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         // Continue button when no shop items
         this.cursorObj.setScale(1.25);
         this.cursorObj.setPosition(
-          globalScene.game.canvas.width / 18 + 23,
+          globalScene.scaledCanvas.width / 3 + 23,
           -globalScene.scaledCanvas.height / 2 -
             (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2),
         );

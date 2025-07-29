@@ -58,10 +58,10 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
     this.maskPointOriginY = options?.y || 0;
 
     if (this.maskPointOriginX < 0) {
-      this.maskPointOriginX += globalScene.game.canvas.width / GLOBAL_SCALE;
+      this.maskPointOriginX += globalScene.scaledCanvas.width;
     }
     if (this.maskPointOriginY < 0) {
-      this.maskPointOriginY += globalScene.game.canvas.height / GLOBAL_SCALE;
+      this.maskPointOriginY += globalScene.scaledCanvas.height;
     }
 
     this.textMaskRect = globalScene.make.graphics();
@@ -165,7 +165,7 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
 
   // width of this element
   static getWidth(): number {
-    return globalScene.game.canvas.width / GLOBAL_SCALE / 2;
+    return globalScene.scaledCanvas.width / 2;
   }
 
   // height of this element
