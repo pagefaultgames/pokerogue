@@ -1,6 +1,11 @@
-# Using with Podman
+# Using Podman
 
-1. `podman build -t pokerogue:1.0 -f Dockerfile .`
-2. `podman run --rm -p 8000:8000 localhost/pokerogue:1.0`
+## Requirements
+
+* `podman >=5.x`
+
+## Steps
+
+1. `podman build -t pokerogue -f Dockerfile .`
+2. `podman run --rm -p 8000:8000 localhost/pokerogue`
 3. Visit `http://localhost:8000/`
-
