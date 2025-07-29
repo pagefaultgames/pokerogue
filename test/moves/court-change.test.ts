@@ -7,6 +7,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import {ArenaTagSide} from "#enums/arena-tag-side";
 
 describe("Move - Court Change", () => {
   let phaserGame: Phaser.Game;
