@@ -47,29 +47,29 @@ import type {
 import type { Mutable, NonFunctionProperties } from "#types/type-helpers";
 import { BooleanHolder, coerceArray, getFrameMs, isNullOrUndefined, NumberHolder, toDmgValue } from "#utils/common";
 
-/*
-@module
-BattlerTags are used to represent semi-persistent effects that can be attached to a Pokemon.
-Note that before serialization, a new tag object is created, and then `loadTag` is called on the
-tag with the object that was serialized.
-
-This means it is straightforward to avoid serializing fields.
-Fields that are not set in the constructor and not set in `loadTag` will thus not be serialized.
-
-Any battler tag that can persist across sessions must extend SerializableBattlerTag in its class definition signature.
-Only tags that persist across waves (meaning their effect can last >1 turn) should be considered
-serializable.
-
-Serializable battler tags have strict requirements for their fields.
-Properties that are not necessary to reconstruct the tag must not be serialized. This can be avoided
-by using a private property. If access to the property is needed outside of the class, then
-a getter (and potentially, a setter) should be used instead.
-
-If a property that is intended to be private must be serialized, then it should instead
-be declared as a public readonly propety. Then, in the `loadTag` method (or any method inside the class that needs to adjust the property)
-use `(this as Mutable<this>).propertyName = value;`
-These rules ensure that Typescript is aware of the shape of the serialized version of the class.
-*/
+/**
+ * @module
+ * BattlerTags are used to represent semi-persistent effects that can be attached to a Pokemon.
+ * Note that before serialization, a new tag object is created, and then `loadTag` is called on the
+ * tag with the object that was serialized.
+ *
+ * This means it is straightforward to avoid serializing fields.
+ * Fields that are not set in the constructor and not set in `loadTag` will thus not be serialized.
+ *
+ * Any battler tag that can persist across sessions must extend SerializableBattlerTag in its class definition signature.
+ * Only tags that persist across waves (meaning their effect can last >1 turn) should be considered
+ * serializable.
+ *
+ * Serializable battler tags have strict requirements for their fields.
+ * Properties that are not necessary to reconstruct the tag must not be serialized. This can be avoided
+ * by using a private property. If access to the property is needed outside of the class, then
+ * a getter (and potentially, a setter) should be used instead.
+ *
+ * If a property that is intended to be private must be serialized, then it should instead
+ * be declared as a public readonly propety. Then, in the `loadTag` method (or any method inside the class that needs to adjust the property)
+ * use `(this as Mutable<this>).propertyName = value;`
+ * These rules ensure that Typescript is aware of the shape of the serialized version of the class.
+ */
 
 /** Interface containing the serializable fields of BattlerTag */
 interface BaseBattlerTag {
