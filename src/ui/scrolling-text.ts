@@ -10,7 +10,6 @@ export default class ScrollingText extends Phaser.GameObjects.Container {
   private descScroll: Phaser.Tweens.Tween | null = null;
   private maxLineCount: number;
   private scale_property: number;
-  private baseY: number;
 
   constructor(
     scene: Phaser.Scene,
@@ -30,7 +29,6 @@ export default class ScrollingText extends Phaser.GameObjects.Container {
     this.text = addTextObject(0, 0, content, style, extraStyleOptions);
     this.maxLineCount = maxLineCount;
     this.scale_property = scale_property;
-    this.baseY = 0;
     this.add(this.text);
 
     const maskGraphics = scene.make.graphics({ x: 0, y: 0 });
@@ -51,7 +49,7 @@ export default class ScrollingText extends Phaser.GameObjects.Container {
     if (this.descScroll) {
       this.descScroll.remove();
       this.descScroll = null;
-      this.text.y = this.baseY;
+      this.text.y = 0;
     }
 
     // determine if we need to add new scrolling effects
