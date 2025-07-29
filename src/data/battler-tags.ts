@@ -48,6 +48,7 @@ import type { Mutable, NonFunctionProperties } from "#types/type-helpers";
 import { BooleanHolder, coerceArray, getFrameMs, isNullOrUndefined, NumberHolder, toDmgValue } from "#utils/common";
 
 /*
+@module
 BattlerTags are used to represent semi-persistent effects that can be attached to a Pokemon.
 Note that before serialization, a new tag object is created, and then `loadTag` is called on the
 tag with the object that was serialized.
