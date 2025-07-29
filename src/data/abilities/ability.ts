@@ -15,6 +15,7 @@ import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeWeatherTrigger } from
 import { Gender } from "#data/gender";
 import { getPokeballName } from "#data/pokeball";
 import { pokemonFormChanges } from "#data/pokemon-forms";
+import type { PokemonSpecies } from "#data/pokemon-species";
 import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#data/status-effect";
 import { TerrainType } from "#data/terrain";
 import type { Weather } from "#data/weather";
@@ -28,12 +29,12 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import type { BerryType } from "#enums/berry-type";
 import { Command } from "#enums/command";
 import { HitResult } from "#enums/hit-result";
-import { MoveCategory } from "#enums/MoveCategory";
-import { MoveFlags } from "#enums/MoveFlags";
-import { MoveTarget } from "#enums/MoveTarget";
 import { CommonAnim } from "#enums/move-anims-common";
+import { MoveCategory } from "#enums/move-category";
+import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
+import { MoveTarget } from "#enums/move-target";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
@@ -6001,8 +6002,13 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
     const party: Pokemon[] = (pokemon.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(
       p => p.isAllowedInBattle(),
     );
-    const lastPokemon: Pokemon = party.filter(p => p !== pokemon).at(-1) || pokemon;
-    pokemon.setIllusion(lastPokemon);
+    let illusionPokemon: Pokemon | PokemonSpecies;
+    if (pokemon.hasTrainer()) {
+      illusionPokemon = party.filter(p => p !== pokemon).at(-1) || pokemon;
+    } else {
+      illusionPokemon = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, pokemon.level);
+    }
+    pokemon.setIllusion(illusionPokemon);
   }
 
   /** @returns Whether the illusion can be applied. */
