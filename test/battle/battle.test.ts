@@ -1,32 +1,32 @@
-import { allSpecies } from "#app/data/data-lists";
-import { Stat } from "#enums/stat";
 import { getGameMode } from "#app/game-mode";
-import { GameModes } from "#enums/game-modes";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
-import { CommandPhase } from "#app/phases/command-phase";
-import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
-import { EncounterPhase } from "#app/phases/encounter-phase";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
-import { LoginPhase } from "#app/phases/login-phase";
-import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
-import { SelectGenderPhase } from "#app/phases/select-gender-phase";
-import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import { SummonPhase } from "#app/phases/summon-phase";
-import { SwitchPhase } from "#app/phases/switch-phase";
-import { TitlePhase } from "#app/phases/title-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import GameManager from "#test/testUtils/gameManager";
-import { generateStarter } from "#test/testUtils/gameManagerUtils";
-import { UiMode } from "#enums/ui-mode";
+import { allSpecies } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BiomeId } from "#enums/biome-id";
+import { GameModes } from "#enums/game-modes";
 import { MoveId } from "#enums/move-id";
 import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { UiMode } from "#enums/ui-mode";
+import { BattleEndPhase } from "#phases/battle-end-phase";
+import { CommandPhase } from "#phases/command-phase";
+import { DamageAnimPhase } from "#phases/damage-anim-phase";
+import { EncounterPhase } from "#phases/encounter-phase";
+import { EnemyCommandPhase } from "#phases/enemy-command-phase";
+import { LoginPhase } from "#phases/login-phase";
+import { NextEncounterPhase } from "#phases/next-encounter-phase";
+import { SelectGenderPhase } from "#phases/select-gender-phase";
+import { SelectStarterPhase } from "#phases/select-starter-phase";
+import { SummonPhase } from "#phases/summon-phase";
+import { SwitchPhase } from "#phases/switch-phase";
+import { TitlePhase } from "#phases/title-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { GameManager } from "#test/test-utils/game-manager";
+import { generateStarter } from "#test/test-utils/game-manager-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { BiomeId } from "#enums/biome-id";
 
-describe("Test Battle Phase", () => {
+describe("Phase - Battle Phase", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -111,7 +111,7 @@ describe("Test Battle Phase", () => {
   });
 
   it("load 100% data file", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -197,47 +197,25 @@ describe("Test Battle Phase", () => {
     await game.phaseInterceptor.runFrom(SelectGenderPhase).to(SummonPhase);
   });
 
-  it("2vs1", async () => {
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.MIGHTYENA);
-    game.override.enemyAbility(AbilityId.HYDRATION);
-    game.override.ability(AbilityId.HYDRATION);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
-  }, 20000);
+  it.each([
+    { name: "1v1", double: false, qty: 1 },
+    { name: "2v1", double: false, qty: 2 },
+    { name: "2v2", double: true, qty: 2 },
+    { name: "4v2", double: true, qty: 4 },
+  ])("should not crash when starting $name battle", async ({ double, qty }) => {
+    game.override
+      .battleStyle(double ? "double" : "single")
+      .enemySpecies(SpeciesId.MIGHTYENA)
+      .enemyAbility(AbilityId.HYDRATION)
+      .ability(AbilityId.HYDRATION);
 
-  it("1vs1", async () => {
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.MIGHTYENA);
-    game.override.enemyAbility(AbilityId.HYDRATION);
-    game.override.ability(AbilityId.HYDRATION);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
-  }, 20000);
+    await game.classicMode.startBattle(
+      [SpeciesId.BLASTOISE, SpeciesId.CHARIZARD, SpeciesId.DARKRAI, SpeciesId.GABITE].slice(0, qty),
+    );
 
-  it("2vs2", async () => {
-    game.override.battleStyle("double");
-    game.override.enemySpecies(SpeciesId.MIGHTYENA);
-    game.override.enemyAbility(AbilityId.HYDRATION);
-    game.override.ability(AbilityId.HYDRATION);
-    game.override.startingWave(3);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
-  }, 20000);
-
-  it("4vs2", async () => {
-    game.override.battleStyle("double");
-    game.override.enemySpecies(SpeciesId.MIGHTYENA);
-    game.override.enemyAbility(AbilityId.HYDRATION);
-    game.override.ability(AbilityId.HYDRATION);
-    game.override.startingWave(3);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD, SpeciesId.DARKRAI, SpeciesId.GABITE]);
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
-  }, 20000);
+    expect(game.scene.phaseManager.getCurrentPhase()).toBeInstanceOf(CommandPhase);
+  });
 
   it("kill opponent pokemon", async () => {
     const moveToUse = MoveId.SPLASH;

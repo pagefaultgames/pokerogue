@@ -1,9 +1,9 @@
-import type { InfoToggle } from "../battle-scene";
-import { TextStyle, addTextObject } from "./text";
-import { addWindow } from "./ui-theme";
-import { fixedInt } from "#app/utils/common";
-import i18next from "i18next";
+import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
+import { TextStyle } from "#enums/text-style";
+import { addTextObject } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import { fixedInt } from "#utils/common";
 
 export interface PokedexInfoOverlaySettings {
   delayVisibility?: boolean; // if true, showing the overlay will only set it to active and populate the fields and the handler using this field has to manually call setVisible later.
@@ -22,7 +22,7 @@ const DESC_HEIGHT = 48;
 const BORDER = 8;
 const GLOBAL_SCALE = 6;
 
-export default class PokedexInfoOverlay extends Phaser.GameObjects.Container implements InfoToggle {
+export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements InfoToggle {
   public active = false;
 
   private desc: Phaser.GameObjects.Text;
@@ -55,7 +55,6 @@ export default class PokedexInfoOverlay extends Phaser.GameObjects.Container imp
     this.desc = addTextObject(BORDER, BORDER - 2, "", TextStyle.BATTLE_INFO, {
       wordWrap: { width: (this.width - (BORDER - 2) * 2) * GLOBAL_SCALE },
     });
-    this.desc.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
 
     // limit the text rendering, required for scrolling later on
     this.maskPointOriginX = options?.x || 0;

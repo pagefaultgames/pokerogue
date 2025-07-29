@@ -1,92 +1,81 @@
-import { MoveResult } from "#enums/move-result";
-import { HitResult } from "#enums/hit-result";
-import {
-  BooleanHolder,
-  NumberHolder,
-  toDmgValue,
-  isNullOrUndefined,
-  randSeedItem,
-  randSeedInt,
-  randSeedFloat,
-  coerceArray,
-} from "#app/utils/common";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { GroundedTag } from "#app/data/battler-tags";
-import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
-import {
-  getNonVolatileStatusEffects,
-  getStatusEffectDescriptor,
-  getStatusEffectHealText,
-} from "#app/data/status-effect";
-import { Gender } from "#app/data/gender";
-import { applyMoveAttrs } from "../moves/apply-attrs";
-import { allMoves } from "../data-lists";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { TerrainType } from "#app/data/terrain";
-import { pokemonFormChanges } from "../pokemon-forms";
-import {
-  SpeciesFormChangeWeatherTrigger,
-  SpeciesFormChangeAbilityTrigger,
-} from "../pokemon-forms/form-change-triggers";
-import i18next from "i18next";
-import { Command } from "#enums/command";
-import { BerryModifierType } from "#app/modifier/modifier-type";
-import { getPokeballName } from "#app/data/pokeball";
-import { BattleType } from "#enums/battle-type";
+/* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
+import type { BattleScene } from "#app/battle-scene";
+import type { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
+/* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
+
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { allAbilities } from "#app/data/data-lists";
-
-// Enum imports
-import { Stat, BATTLE_STATS, EFFECTIVE_STATS, getStatKey } from "#enums/stat";
-import { PokemonType } from "#enums/pokemon-type";
-import { PokemonAnimType } from "#enums/pokemon-anim-type";
-import { StatusEffect } from "#enums/status-effect";
-import { WeatherType } from "#enums/weather-type";
+import { getPokemonNameWithAffix } from "#app/messages";
+import type { ArenaTrapTag, SuppressAbilitiesTag } from "#data/arena-tag";
+import type { BattlerTag } from "#data/battler-tags";
+import { GroundedTag } from "#data/battler-tags";
+import { getBerryEffectFunc } from "#data/berry";
+import { allAbilities, allMoves } from "#data/data-lists";
+import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
+import { Gender } from "#data/gender";
+import { getPokeballName } from "#data/pokeball";
+import { pokemonFormChanges } from "#data/pokemon-forms";
+import type { PokemonSpecies } from "#data/pokemon-species";
+import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#data/status-effect";
+import { TerrainType } from "#data/terrain";
+import type { Weather } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
-import { SwitchType } from "#enums/switch-type";
-import { MoveFlags } from "#enums/MoveFlags";
-import { MoveTarget } from "#enums/MoveTarget";
-import { MoveCategory } from "#enums/MoveCategory";
-import { CommonAnim } from "#enums/move-anims-common";
-import { getBerryEffectFunc } from "#app/data/berry";
-import { BerryUsedEvent } from "#app/events/battle-scene";
-import { noAbilityTypeOverrideMoves } from "#app/data/moves/invalid-moves";
-import { MoveUseMode } from "#enums/move-use-mode";
-
-// Type imports
-import type { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import type { BattleStat, EffectiveStat } from "#enums/stat";
 import type { BerryType } from "#enums/berry-type";
-import type { EnemyPokemon } from "#app/field/pokemon";
-import type { PokemonMove } from "../moves/pokemon-move";
-import type Pokemon from "#app/field/pokemon";
-import type { Weather } from "#app/data/weather";
-import type { BattlerTag } from "#app/data/battler-tags";
+import { Command } from "#enums/command";
+import { HitResult } from "#enums/hit-result";
+import { CommonAnim } from "#enums/move-anims-common";
+import { MoveCategory } from "#enums/move-category";
+import { MoveFlags } from "#enums/move-flags";
+import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { MoveTarget } from "#enums/move-target";
+import { MoveUseMode } from "#enums/move-use-mode";
+import { PokemonAnimType } from "#enums/pokemon-anim-type";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import type { BattleStat, EffectiveStat } from "#enums/stat";
+import { BATTLE_STATS, EFFECTIVE_STATS, getStatKey, Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { SwitchType } from "#enums/switch-type";
+import { WeatherType } from "#enums/weather-type";
+import { BerryUsedEvent } from "#events/battle-scene";
+import type { EnemyPokemon, Pokemon } from "#field/pokemon";
+import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
+import { BerryModifierType } from "#modifiers/modifier-type";
+import { applyMoveAttrs } from "#moves/apply-attrs";
+import { noAbilityTypeOverrideMoves } from "#moves/invalid-moves";
+import type { Move } from "#moves/move";
+import type { PokemonMove } from "#moves/pokemon-move";
+import type { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import type {
   AbAttrCondition,
+  AbAttrMap,
+  AbAttrString,
+  PokemonAttackCondition,
   PokemonDefendCondition,
   PokemonStatStageChangeCondition,
-  PokemonAttackCondition,
-  AbAttrString,
-  AbAttrMap,
-} from "#app/@types/ability-types";
-import type { BattlerIndex } from "#enums/battler-index";
-import type Move from "#app/data/moves/move";
-import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
-import type { Constructor } from "#app/utils/common";
-import type { Localizable } from "#app/@types/locales";
-import { applyAbAttrs } from "./apply-ab-attrs";
-import type { Closed, Exact } from "#app/@types/type-helpers";
+} from "#types/ability-types";
+import type { Localizable } from "#types/locales";
+import type { Closed, Exact } from "#types/type-helpers";
+import type { Constructor } from "#utils/common";
+import {
+  BooleanHolder,
+  coerceArray,
+  isNullOrUndefined,
+  NumberHolder,
+  randSeedFloat,
+  randSeedInt,
+  randSeedItem,
+  toDmgValue,
+} from "#utils/common";
+import i18next from "i18next";
 
-// biome-ignore-start lint/correctness/noUnusedImports: Used in TSDoc
-import type BattleScene from "#app/battle-scene";
-import type { SpeciesFormChangeRevertWeatherFormTrigger } from "../pokemon-forms/form-change-triggers";
-// biome-ignore-end lint/correctness/noUnusedImports: Used in TSDoc
 export class Ability implements Localizable {
   public id: AbilityId;
 
@@ -157,76 +146,141 @@ export class Ability implements Localizable {
     return this.attrs.some(attr => attr instanceof targetAttr);
   }
 
-  attr<T extends Constructor<AbAttr>>(AttrType: T, ...args: ConstructorParameters<T>): Ability {
+  /**
+   * Create a new {@linkcode AbAttr} instance and add it to this {@linkcode Ability}.
+   * @param attrType - The constructor of the {@linkcode AbAttr} to create.
+   * @param args - The arguments needed to instantiate the given class.
+   * @returns `this`
+   */
+  attr<T extends Constructor<AbAttr>>(AttrType: T, ...args: ConstructorParameters<T>): this {
     const attr = new AttrType(...args);
     this.attrs.push(attr);
 
     return this;
   }
 
+  /**
+   * Create a new {@linkcode AbAttr} instance with the given condition and add it to this {@linkcode Ability}.
+   * Checked before all other conditions, and is unique to the individual {@linkcode AbAttr} being created.
+   * @param condition - The {@linkcode AbAttrCondition} to add.
+   * @param attrType - The constructor of the {@linkcode AbAttr} to create.
+   * @param args - The arguments needed to instantiate the given class.
+   * @returns `this`
+   */
   conditionalAttr<T extends Constructor<AbAttr>>(
     condition: AbAttrCondition,
-    AttrType: T,
+    attrType: T,
     ...args: ConstructorParameters<T>
-  ): Ability {
-    const attr = new AttrType(...args);
+  ): this {
+    const attr = new attrType(...args);
     attr.addCondition(condition);
     this.attrs.push(attr);
 
     return this;
   }
 
-  bypassFaint(): Ability {
+  /**
+   * Make this ability trigger even if the user faints.
+   * @returns `this`
+   * @remarks
+   * This is also required for abilities to trigger when revived via Reviver Seed.
+   */
+  bypassFaint(): this {
     this.isBypassFaint = true;
     return this;
   }
 
-  ignorable(): Ability {
+  /**
+   * Make this ability ignorable by effects like {@linkcode MoveId.SUNSTEEL_STRIKE | Sunsteel Strike} or {@linkcode AbilityId.MOLD_BREAKER | Mold Breaker}.
+   * @returns `this`
+   */
+  ignorable(): this {
     this.isIgnorable = true;
     return this;
   }
 
-  unsuppressable(): Ability {
+  /**
+   * Make this ability unsuppressable by effects like {@linkcode MoveId.GASTRO_ACID | Gastro Acid} or {@linkcode AbilityId.NEUTRALIZING_GAS | Neutralizing Gas}.
+   * @returns `this`
+   */
+  unsuppressable(): this {
     this.isSuppressable = false;
     return this;
   }
 
-  uncopiable(): Ability {
+  /**
+   * Make this ability uncopiable by effects like {@linkcode MoveId.ROLE_PLAY | Role Play} or {@linkcode AbilityId.TRACE | Trace}.
+   * @returns `this`
+   */
+  uncopiable(): this {
     this.isCopiable = false;
     return this;
   }
 
-  unreplaceable(): Ability {
+  /**
+   * Make this ability unreplaceable by effects like {@linkcode MoveId.SIMPLE_BEAM | Simple Beam} or {@linkcode MoveId.ENTRAINMENT | Entrainment}.
+   * @returns `this`
+   */
+  unreplaceable(): this {
     this.isReplaceable = false;
     return this;
   }
 
-  condition(condition: AbAttrCondition): Ability {
+  /**
+   * Add a condition for this ability to be applied.
+   * Applies to **all** attributes of the given ability.
+   * @param condition - The {@linkcode AbAttrCondition} to add
+   * @returns `this`
+   * @see {@linkcode AbAttr.canApply} for setting conditions per attribute type
+   * @see {@linkcode conditionalAttr} for setting individual conditions per attribute instance
+   * @todo Review if this is necessary anymore - this is used extremely sparingly
+   */
+  condition(condition: AbAttrCondition): this {
     this.conditions.push(condition);
 
     return this;
   }
 
+  /**
+   * Mark an ability as partially implemented.
+   * Partial abilities are expected to have some of their core functionality implemented, but may lack
+   * certain notable features or interactions with other moves or abilities.
+   * @returns `this`
+   */
   partial(): this {
     this.nameAppend += " (P)";
     return this;
   }
 
+  /**
+   * Mark an ability as unimplemented.
+   * Unimplemented abilities are ones which have _none_ of their basic functionality enabled.
+   * @returns `this`
+   */
   unimplemented(): this {
     this.nameAppend += " (N)";
     return this;
   }
 
   /**
-   * Internal flag used for developers to document edge cases. When using this, please be sure to document the edge case.
-   * @returns the ability
+   * Mark an ability as having one or more edge cases.
+   * It may lack certain niche interactions with other moves/abilities, but still functions
+   * as intended in most cases.
+   * Does not show up in game and is solely for internal dev use.
+   *
+   * When using this, make sure to **document the edge case** (or else this becomes pointless).
+   * @returns `this`
    */
   edgeCase(): this {
     return this;
   }
 }
 
-/** Base set of parameters passed to every ability attribute's apply method */
+/**
+ * Base set of parameters passed to every ability attribute's {@linkcode AbAttr.apply | apply} method.
+ *
+ * Extended by sub-classes to contain additional parameters pertaining to the ability type(s) being triggered.
+ */
 export interface AbAttrBaseParams {
   /** The pokemon that has the ability being applied */
   readonly pokemon: Pokemon;
@@ -257,9 +311,20 @@ export interface AbAttrParamsWithCancel extends AbAttrBaseParams {
   readonly cancelled: BooleanHolder;
 }
 
+/**
+ * Abstract class for all ability attributes.
+ *
+ * Each {@linkcode Ability} may have any number of individual attributes, each functioning independently from one another.
+ */
 export abstract class AbAttr {
-  public showAbility: boolean;
-  private extraCondition: AbAttrCondition;
+  /**
+   * Whether to show this ability as a flyout when applying its effects.
+   * Should be kept in parity with mainline where possible.
+   * @defaultValue `true`
+   */
+  public showAbility = true;
+  /** The additional condition associated with this AbAttr, if any. */
+  private extraCondition?: AbAttrCondition;
 
   /**
    * Return whether this attribute is of the given type.
@@ -287,21 +352,43 @@ export abstract class AbAttr {
   }
 
   /**
-   * Apply ability effects without checking conditions.
-   * **Never call this method directly, use {@linkcode applyAbAttrs} instead.**
+   * Apply this attribute's effects without checking conditions.
+   *
+   * @remarks
+   * **Never call this method directly!** \
+   * Use {@linkcode applyAbAttrs} instead.
    */
   apply(_params: AbAttrBaseParams): void {}
 
-  // The `Exact` in the next two signatures enforces that the type of the _params operand
-  // is always compatible with the type of apply. This allows fewer fields, but never a type with more.
+  /**
+   * Return the trigger message to show when this attribute is executed.
+   * @param _params - The parameters passed to this attribute's {@linkcode apply} function; must match type exactly
+   * @param _abilityName - The name of the current ability.
+   * @privateRemarks
+   * If more fields are provided than needed, any excess can be discarded using destructuring.
+   * @todo Remove `null` from signature in lieu of using an empty string
+   */
   getTriggerMessage(_params: Exact<Parameters<this["apply"]>[0]>, _abilityName: string): string | null {
     return null;
   }
 
+  /**
+   * Check whether this attribute can have its effects successfully applied.
+   * Applies to **all** instances of the given attribute.
+   * @param _params - The parameters passed to this attribute's {@linkcode apply} function; must match type exactly
+   * @privateRemarks
+   * If more fields are provided than needed, any excess can be discarded using destructuring.
+   */
   canApply(_params: Exact<Parameters<this["apply"]>[0]>): boolean {
     return true;
   }
 
+  /**
+   * Return the additional condition associated with this particular AbAttr instance, if any.
+   * @returns The extra condition for this {@linkcode AbAttr}, or `null` if none exist
+   * @todo Make this use `undefined` instead of `null`
+   * @todo Prevent this from being overridden by sub-classes
+   */
   getCondition(): AbAttrCondition | null {
     return this.extraCondition || null;
   }
@@ -605,7 +692,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
   private immuneType: PokemonType | null;
   private condition: AbAttrCondition | null;
 
-  // TODO: `immuneType` shouldn't be able to be `null`
+  // TODO: Change `NonSuperEffectiveImmunityAbAttr` to not pass `null` as immune type
   constructor(immuneType: PokemonType | null, condition?: AbAttrCondition) {
     super(true);
 
@@ -1194,7 +1281,16 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
   }
 }
 
-export class PostDefendCritStatStageChangeAbAttr extends PostDefendAbAttr {
+/**
+ * Set stat stages when the user gets hit by a critical hit
+ *
+ * @privateremarks
+ * It is the responsibility of the caller to ensure that this ability attribute is only applied
+ * when the user has been hit by a critical hit; such an event is not checked here.
+ *
+ * @sealed
+ */
+export class PostReceiveCritStatStageChangeAbAttr extends AbAttr {
   private stat: BattleStat;
   private stages: number;
 
@@ -1215,12 +1311,6 @@ export class PostDefendCritStatStageChangeAbAttr extends PostDefendAbAttr {
         this.stages,
       );
     }
-  }
-
-  override getCondition(): AbAttrCondition {
-    return (pokemon: Pokemon) =>
-      pokemon.turnData.attacksReceived.length !== 0 &&
-      pokemon.turnData.attacksReceived[pokemon.turnData.attacksReceived.length - 1].critical;
   }
 }
 
@@ -1535,6 +1625,11 @@ export interface FieldMultiplyStatAbAttrParams extends AbAttrBaseParams {
 export class FieldMultiplyStatAbAttr extends AbAttr {
   private stat: Stat;
   private multiplier: number;
+  /**
+   * Whether this ability can stack with others of the same type for this stat.
+   * @defaultValue `false`
+   * @todo Remove due to being literally useless - the ruin abilities are hardcoded to never stack in game
+   */
   private canStack: boolean;
 
   constructor(stat: Stat, multiplier: number, canStack = false) {
@@ -1555,7 +1650,7 @@ export class FieldMultiplyStatAbAttr extends AbAttr {
   }
 
   /**
-   * applyFieldStat: Tries to multiply a Pokemon's Stat
+   * Atttempt to multiply a Pokemon's Stat.
    */
   apply({ statVal, hasApplied }: FieldMultiplyStatAbAttrParams): void {
     statVal.value *= this.multiplier;
@@ -1581,23 +1676,25 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
   }
 
   /**
-   * Determine if the move type change attribute can be applied
+   * Determine if the move type change attribute can be applied.
    *
    * Can be applied if:
    * - The ability's condition is met, e.g. pixilate only boosts normal moves,
    * - The move is not forbidden from having its type changed by an ability, e.g. {@linkcode MoveId.MULTI_ATTACK}
-   * - The user is not terastallized and using tera blast
-   * - The user is not a terastallized terapagos with tera stellar using tera starstorm
+   * - The user is not Terastallized and using Tera Blast
+   * - The user is not a Terastallized Terapagos using Stellar-type Tera Starstorm
    */
   override canApply({ pokemon, opponent: target, move }: MoveTypeChangeAbAttrParams): boolean {
     return (
       (!this.condition || this.condition(pokemon, target, move)) &&
       !noAbilityTypeOverrideMoves.has(move.id) &&
-      (!pokemon.isTerastallized ||
-        (move.id !== MoveId.TERA_BLAST &&
-          (move.id !== MoveId.TERA_STARSTORM ||
-            pokemon.getTeraType() !== PokemonType.STELLAR ||
-            !pokemon.hasSpecies(SpeciesId.TERAPAGOS))))
+      !(
+        pokemon.isTerastallized &&
+        (move.id === MoveId.TERA_BLAST ||
+          (move.id === MoveId.TERA_STARSTORM &&
+            pokemon.getTeraType() === PokemonType.STELLAR &&
+            pokemon.hasSpecies(SpeciesId.TERAPAGOS)))
+      )
     );
   }
 
@@ -1607,37 +1704,38 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
   }
 }
 
-/** Ability attribute for changing a pokemon's type before using a move */
+/**
+ * Attribute to change the user's type to that of the move currently being executed.
+ * Used by {@linkcode AbilityId.PROTEAN} and {@linkcode AbilityId.LIBERO}.
+ */
 export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
-  private moveType: PokemonType;
-
+  private moveType: PokemonType = PokemonType.UNKNOWN;
   constructor() {
     super(true);
   }
 
   override canApply({ move, pokemon }: AugmentMoveInteractionAbAttrParams): boolean {
     if (
-      !pokemon.isTerastallized &&
-      move.id !== MoveId.STRUGGLE &&
-      /**
+      pokemon.isTerastallized ||
+      move.id === MoveId.STRUGGLE ||
+      /*
        * Skip moves that call other moves because these moves generate a following move that will trigger this ability attribute
-       * @see {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves}
+       * See: https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves
        */
-      !move.findAttr(
-        attr =>
-          attr.is("RandomMovesetMoveAttr") ||
-          attr.is("RandomMoveAttr") ||
-          attr.is("NaturePowerAttr") ||
-          attr.is("CopyMoveAttr"),
-      )
+      move.hasAttr("CallMoveAttr") ||
+      move.hasAttr("NaturePowerAttr") // TODO: remove this line when nature power is made to extend from `CallMoveAttr`
     ) {
-      const moveType = pokemon.getMoveType(move);
-      if (pokemon.getTypes().some(t => t !== moveType)) {
-        this.moveType = moveType;
-        return true;
-      }
+      return false;
     }
-    return false;
+
+    // Skip changing type if we're already of the given type as-is
+    const moveType = pokemon.getMoveType(move);
+    if (pokemon.getTypes().every(t => t === moveType)) {
+      return false;
+    }
+
+    this.moveType = moveType;
+    return true;
   }
 
   override apply({ simulated, pokemon, move }: AugmentMoveInteractionAbAttrParams): void {
@@ -1669,23 +1767,19 @@ export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteraction
 }
 
 /**
- * Class for abilities that convert single-strike moves to two-strike moves (i.e. Parental Bond).
- * @param damageMultiplier the damage multiplier for the second strike, relative to the first.
+ * Class for abilities that add additional strikes to single-target moves.
+ * Used by {@linkcode Moves.PARENTAL_BOND | Parental Bond}.
  */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
-  private damageMultiplier: number;
-
   /**
    * @param damageMultiplier - The damage multiplier for the second strike, relative to the first
    */
-  constructor(damageMultiplier: number) {
+  constructor(private damageMultiplier: number) {
     super(false);
-
-    this.damageMultiplier = damageMultiplier;
   }
 
   /**
-   * Return whether the move can be multi-strike enhanced
+   * Return whether the move can be multi-strike enhanced.
    */
   override canApply({ pokemon, move }: AddSecondStrikeAbAttrParams): boolean {
     return move.canBeMultiStrikeEnhanced(pokemon, true);
@@ -2029,9 +2123,10 @@ export abstract class PostAttackAbAttr extends AbAttr {
   }
 
   /**
-   * By default, this method checks that the move used is a damaging attack.
-   * This can be changed by providing a different {@link attackCondition} to the constructor.
-   * @see {@link ConfusionOnStatusEffectAbAttr} for an example of an effect that does not require a damaging move.
+   * By default, this method checks that the move used is a damaging attack before
+   * applying the effect of any inherited class.
+   * This can be changed by providing a different {@linkcode attackCondition} to the constructor.
+   * @see {@linkcode ConfusionOnStatusEffectAbAttr} for an example of an effect that does not require a damaging move.
    */
   override canApply({ pokemon, opponent, move }: Closed<PostMoveInteractionAbAttrParams>): boolean {
     return this.attackCondition(pokemon, opponent, move);
@@ -3047,61 +3142,40 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
  * Attribute used by {@linkcode AbilityId.IMPOSTER} to transform into a random opposing pokemon on entry.
  */
 export class PostSummonTransformAbAttr extends PostSummonAbAttr {
+  private targetIndex: BattlerIndex = BattlerIndex.ATTACKER;
   constructor() {
     super(true, false);
   }
 
-  private getTarget(targets: Pokemon[]): Pokemon {
-    let target: Pokemon = targets[0];
-    if (targets.length > 1) {
-      globalScene.executeWithSeedOffset(() => {
-        // in a double battle, if one of the opposing pokemon is fused the other one will be chosen
-        // if both are fused, then Imposter will fail below
-        if (targets[0].fusionSpecies) {
-          target = targets[1];
-          return;
-        }
-        if (targets[1].fusionSpecies) {
-          target = targets[0];
-          return;
-        }
-        target = randSeedItem(targets);
-      }, globalScene.currentBattle.waveIndex);
-    } else {
-      target = targets[0];
+  /**
+   * Return the correct opponent for Imposter to copy, barring enemies with fusions, substitutes and illusions.
+   * @param user - The {@linkcode Pokemon} with this ability.
+   * @returns The {@linkcode Pokemon} to transform into, or `undefined` if none are eligible.
+   * @remarks
+   * This sets the private `targetIndex` field to the target's {@linkcode BattlerIndex} on success.
+   */
+  private getTarget(user: Pokemon): Pokemon | undefined {
+    // As opposed to the mainline behavior of "always copy the opposite slot",
+    // PKR Imposter instead attempts to copy a random eligible opposing Pokemon meeting Transform's criteria.
+    // If none are eligible to copy, it will not activate.
+    const targets = user.getOpponents().filter(opp => user.canTransformInto(opp));
+    if (targets.length === 0) {
+      return undefined;
     }
 
-    target = target!;
-
-    return target;
+    const mon = targets[user.randBattleSeedInt(targets.length)];
+    this.targetIndex = mon.getBattlerIndex();
+    return mon;
   }
 
-  override canApply({ pokemon, simulated }: AbAttrBaseParams): boolean {
-    const targets = pokemon.getOpponents();
-    const target = this.getTarget(targets);
+  override canApply({ pokemon }: AbAttrBaseParams): boolean {
+    const target = this.getTarget(pokemon);
 
-    if (target.summonData.illusion) {
-      return false;
-    }
-
-    // TODO: Consider moving the simulated check to the apply method
-    if (simulated || !targets.length) {
-      return !!simulated;
-    }
-
-    // transforming from or into fusion pokemon causes various problems (including crashes and save corruption)
-    return !(this.getTarget(targets).fusionSpecies || pokemon.fusionSpecies);
+    return !!target;
   }
 
   override apply({ pokemon }: AbAttrBaseParams): void {
-    const target = this.getTarget(pokemon.getOpponents());
-
-    globalScene.phaseManager.unshiftNew(
-      "PokemonTransformPhase",
-      pokemon.getBattlerIndex(),
-      target.getBattlerIndex(),
-      true,
-    );
+    globalScene.phaseManager.unshiftNew("PokemonTransformPhase", pokemon.getBattlerIndex(), this.targetIndex, true);
   }
 }
 
@@ -3164,7 +3238,7 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
 /**
  * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Commander_(Ability) | Commander}.
  * When the source of an ability with this attribute detects a Dondozo as their active ally, the source "jumps
- * into the Dondozo's mouth," sharply boosting the Dondozo's stats, cancelling the source's moves, and
+ * into the Dondozo's mouth", sharply boosting the Dondozo's stats, cancelling the source's moves, and
  * causing attacks that target the source to always miss.
  */
 export class CommanderAbAttr extends AbAttr {
@@ -3540,18 +3614,18 @@ export interface ConfusionOnStatusEffectAbAttrParams extends AbAttrBaseParams {
  */
 export class ConfusionOnStatusEffectAbAttr extends AbAttr {
   /** List of effects to apply confusion after */
-  private effects: StatusEffect[];
+  private effects: ReadonlySet<StatusEffect>;
 
   constructor(...effects: StatusEffect[]) {
     super();
-    this.effects = effects;
+    this.effects = new Set(effects);
   }
 
   /**
    * @returns Whether the ability can apply confusion to the opponent
    */
   override canApply({ opponent, effect }: ConfusionOnStatusEffectAbAttrParams): boolean {
-    return this.effects.includes(effect) && !opponent.isFainted() && opponent.canAddTag(BattlerTagType.CONFUSED);
+    return this.effects.has(effect) && !opponent.isFainted() && opponent.canAddTag(BattlerTagType.CONFUSED);
   }
 
   /**
@@ -4529,8 +4603,8 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
 }
 
 /**
- * After the turn ends, resets the status of either the ability holder or their ally
- * @param allyTarget Whether to target ally, defaults to false (self-target)
+ * After the turn ends, resets the status of either the user or their ally.
+ * @param allyTarget Whether to target the user's ally; default `false` (self-target)
  *
  * @sealed
  */
@@ -4815,17 +4889,22 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
           !opp.switchOutStatus,
       );
   }
-  /** Deals damage to all sleeping opponents equal to 1/8 of their max hp (min 1) */
+
+  /** Deal damage to all sleeping, on-field opponents equal to 1/8 of their max hp (min 1). */
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
     if (simulated) {
       return;
     }
+
     for (const opp of pokemon.getOpponents()) {
-      if (
-        (opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(AbilityId.COMATOSE)) &&
-        !opp.hasAbilityWithAttr("BlockNonDirectDamageAbAttr") &&
-        !opp.switchOutStatus
-      ) {
+      if ((opp.status?.effect !== StatusEffect.SLEEP && !opp.hasAbility(AbilityId.COMATOSE)) || opp.switchOutStatus) {
+        continue;
+      }
+
+      const cancelled = new BooleanHolder(false);
+      applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, simulated, cancelled });
+
+      if (!cancelled.value) {
         opp.damageAndUpdate(toDmgValue(opp.getMaxHp() / 8), { result: HitResult.INDIRECT });
         globalScene.phaseManager.queueMessage(
           i18next.t("abilityTriggers:badDreams", { pokemonName: getPokemonNameWithAffix(opp) }),
@@ -4838,7 +4917,8 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
 /**
  * Grabs the last failed Pokeball used
  * @sealed
- * @see {@linkcode applyPostTurn} */
+ * @see {@linkcode applyPostTurn}
+ */
 export class FetchBallAbAttr extends PostTurnAbAttr {
   override canApply({ simulated, pokemon }: AbAttrBaseParams): boolean {
     return !simulated && !isNullOrUndefined(globalScene.currentBattle.lastUsedPokeball) && !!pokemon.isPlayer;
@@ -5294,14 +5374,15 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
 }
 
 /**
- * Shared parameters for ability attributes that are triggered after the user faints.
+ * Shared parameters for ability attributes that trigger after the user faints.
  */
 export interface PostFaintAbAttrParams extends AbAttrBaseParams {
-  /** The pokemon that caused the faint, or undefined if not caused by a pokemon */
+  /** The pokemon that caused the user to faint, or `undefined` if not caused by a Pokemon */
   readonly attacker?: Pokemon;
-  /** The move that caused the faint, or undefined if not caused by a move */
+  /** The move that caused the user to faint, or `undefined` if not caused by a move */
   readonly move?: Move;
-  /** The result of the hit that caused the faint */
+  /** The result of the hit that caused the user to faint */
+  // TODO: Do we need this? It's unused by all classes
   readonly hitResult?: HitResult;
 }
 
@@ -5334,6 +5415,26 @@ export class PostFaintUnsuppressedWeatherFormChangeAbAttr extends PostFaintAbAtt
   }
 }
 
+export class PostFaintFormChangeAbAttr extends PostFaintAbAttr {
+  private formFunc: (p: Pokemon) => number;
+
+  constructor(formFunc: (p: Pokemon) => number) {
+    super(true);
+
+    this.formFunc = formFunc;
+  }
+
+  override canApply({ pokemon }: AbAttrBaseParams): boolean {
+    return this.formFunc(pokemon) !== pokemon.formIndex;
+  }
+
+  override apply({ pokemon, simulated }: AbAttrBaseParams): void {
+    if (!simulated) {
+      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
+    }
+  }
+}
+
 export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   private damageRatio: number;
 
@@ -5344,28 +5445,35 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   }
 
   override canApply({ pokemon, attacker, move, simulated }: PostFaintAbAttrParams): boolean {
-    if (!move || !attacker) {
+    if (
+      move === undefined ||
+      attacker === undefined ||
+      !move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon })
+    ) {
       return false;
     }
-    const diedToDirectDamage =
-      attacker !== undefined &&
-      move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon });
+
     const cancelled = new BooleanHolder(false);
-    for (const otherPokemon of globalScene.getField(true)) {
-      applyAbAttrs("FieldPreventExplosiveMovesAbAttr", {
-        pokemon: otherPokemon,
-        simulated,
-        cancelled,
-      });
+    // TODO: This should be in speed order
+    globalScene
+      .getField(true)
+      .forEach(p => applyAbAttrs("FieldPreventExplosiveMovesAbAttr", { pokemon: p, cancelled, simulated }));
+
+    if (cancelled.value) {
+      return false;
     }
-    return !(!diedToDirectDamage || cancelled.value || attacker.hasAbilityWithAttr("BlockNonDirectDamageAbAttr"));
+
+    // Confirmed: Aftermath does not activate or show text vs Magic Guard killers
+    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: attacker, cancelled });
+    return !cancelled.value;
   }
 
   override apply({ simulated, attacker }: PostFaintAbAttrParams): void {
     if (!attacker || simulated) {
       return;
     }
-    attacker.damageAndUpdate(toDmgValue(attacker!.getMaxHp() * (1 / this.damageRatio)), {
+
+    attacker.damageAndUpdate(toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), {
       result: HitResult.INDIRECT,
     });
     attacker.turnData.damageTaken += toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio));
@@ -5380,20 +5488,33 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
 }
 
 /**
- * Attribute used for abilities (Innards Out) that damage the opponent based on how much HP the last attack used to knock out the owner of the ability.
+ * Attribute used for abilities that damage opponents causing the user to faint
+ * equal to the amount of damage the last attack inflicted.
+ *
+ * Used for {@linkcode Abilities.INNARDS_OUT}.
  * @sealed
  */
 export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
   override apply({ simulated, pokemon, move, attacker }: PostFaintAbAttrParams): void {
-    //If the mon didn't die to indirect damage
-    if (move !== undefined && attacker !== undefined && !simulated) {
-      const damage = pokemon.turnData.attacksReceived[0].damage;
-      attacker.damageAndUpdate(damage, { result: HitResult.INDIRECT });
-      attacker.turnData.damageTaken += damage;
+    // return early if the user died to indirect damage, target has magic guard or was KO'd by an ally
+    if (!move || !attacker || simulated || attacker.getAlly() === pokemon) {
+      return;
     }
+
+    const cancelled = new BooleanHolder(false);
+    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon: attacker, cancelled });
+    if (cancelled.value) {
+      return;
+    }
+
+    const damage = pokemon.turnData.attacksReceived[0].damage;
+    attacker.damageAndUpdate(damage, { result: HitResult.INDIRECT });
+    attacker.turnData.damageTaken += damage;
   }
 
-  getTriggerMessage({ pokemon }: PostFaintAbAttrParams, abilityName: string): string {
+  // Oddly, Innards Out still shows a flyout if the effect was blocked due to Magic Guard...
+  // TODO: Verify on cart
+  override getTriggerMessage({ pokemon }: PostFaintAbAttrParams, abilityName: string): string {
     return i18next.t("abilityTriggers:postFaintHpDamage", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName,
@@ -5669,11 +5790,13 @@ export class InfiltratorAbAttr extends AbAttr {
  * Allows the source to bounce back {@linkcode MoveFlags.REFLECTABLE | Reflectable}
  *  moves as if the user had used {@linkcode MoveId.MAGIC_COAT | Magic Coat}.
  * @sealed
+ * @todo Make reflection a part of this ability's effects
  */
 export class ReflectStatusMoveAbAttr extends AbAttr {
   private declare readonly _: never;
 }
 
+// TODO: Make these ability attributes be flags instead of dummy attributes
 /** @sealed */
 export class NoTransformAbilityAbAttr extends AbAttr {
   private declare readonly _: never;
@@ -5879,8 +6002,13 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
     const party: Pokemon[] = (pokemon.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(
       p => p.isAllowedInBattle(),
     );
-    const lastPokemon: Pokemon = party.filter(p => p !== pokemon).at(-1) || pokemon;
-    pokemon.setIllusion(lastPokemon);
+    let illusionPokemon: Pokemon | PokemonSpecies;
+    if (pokemon.hasTrainer()) {
+      illusionPokemon = party.filter(p => p !== pokemon).at(-1) || pokemon;
+    } else {
+      illusionPokemon = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, pokemon.level);
+    }
+    pokemon.setIllusion(illusionPokemon);
   }
 
   /** @returns Whether the illusion can be applied. */
@@ -6417,7 +6545,7 @@ const AbilityAttrs = Object.freeze({
   PostDefendContactApplyStatusEffectAbAttr,
   EffectSporeAbAttr,
   PostDefendContactApplyTagChanceAbAttr,
-  PostDefendCritStatStageChangeAbAttr,
+  PostReceiveCritStatStageChangeAbAttr,
   PostDefendContactDamageAbAttr,
   PostDefendPerishSongAbAttr,
   PostDefendWeatherChangeAbAttr,
@@ -6886,7 +7014,7 @@ export function initAbilities() {
     new Ability(AbilityId.GLUTTONY, 4)
       .attr(ReduceBerryUseThresholdAbAttr),
     new Ability(AbilityId.ANGER_POINT, 4)
-      .attr(PostDefendCritStatStageChangeAbAttr, Stat.ATK, 6),
+      .attr(PostReceiveCritStatStageChangeAbAttr, Stat.ATK, 12),
     new Ability(AbilityId.UNBURDEN, 4)
       .attr(PostItemLostApplyBattlerTagAbAttr, BattlerTagType.UNBURDEN)
       .bypassFaint() // Allows reviver seed to activate Unburden
@@ -7101,7 +7229,8 @@ export function initAbilities() {
       .bypassFaint(),
     new Ability(AbilityId.IMPOSTER, 5)
       .attr(PostSummonTransformAbAttr)
-      .uncopiable(),
+      .uncopiable()
+      .edgeCase(), // Should copy rage fist hit count, etc (see Transform edge case for full list)
     new Ability(AbilityId.INFILTRATOR, 5)
       .attr(InfiltratorAbAttr)
       .partial(), // does not bypass Mist
@@ -7177,8 +7306,10 @@ export function initAbilities() {
     new Ability(AbilityId.CHEEK_POUCH, 6)
       .attr(HealFromBerryUseAbAttr, 1 / 3),
     new Ability(AbilityId.PROTEAN, 6)
-      .attr(PokemonTypeChangeAbAttr),
-    //.condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.PROTEAN)), //Gen 9 Implementation
+      .attr(PokemonTypeChangeAbAttr)
+      // .condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.PROTEAN)) //Gen 9 Implementation
+      // TODO: needs testing on interaction with weather blockage
+      .edgeCase(),
     new Ability(AbilityId.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (_target, _user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
@@ -7322,6 +7453,7 @@ export function initAbilities() {
         (pokemon, abilityName) => i18next.t("abilityTriggers:disguiseAvoidedDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName: abilityName }),
         (pokemon) => toDmgValue(pokemon.getMaxHp() / 8))
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
+      .attr(PostFaintFormChangeAbAttr, () => 0)
       .uncopiable()
       .unreplaceable()
       .unsuppressable()
@@ -7330,6 +7462,7 @@ export function initAbilities() {
     new Ability(AbilityId.BATTLE_BOND, 7)
       .attr(PostVictoryFormChangeAbAttr, () => 2)
       .attr(PostBattleInitFormChangeAbAttr, () => 1)
+      .attr(PostFaintFormChangeAbAttr, () => 1)
       .attr(NoFusionAbilityAbAttr)
       .uncopiable()
       .unreplaceable()
@@ -7341,6 +7474,7 @@ export function initAbilities() {
       .conditionalAttr(p => p.formIndex === 4 || p.formIndex === 5, PostBattleInitFormChangeAbAttr, p => p.formIndex - 2)
       .conditionalAttr(p => p.getHpRatio() <= 0.5 && (p.formIndex === 2 || p.formIndex === 3), PostSummonFormChangeAbAttr, p => p.formIndex + 2)
       .conditionalAttr(p => p.getHpRatio() <= 0.5 && (p.formIndex === 2 || p.formIndex === 3), PostTurnFormChangeAbAttr, p => p.formIndex + 2)
+      .conditionalAttr(p => p.formIndex === 4 || p.formIndex === 5, PostFaintFormChangeAbAttr, p => p.formIndex - 2)
       .attr(NoFusionAbilityAbAttr)
       .uncopiable()
       .unreplaceable()
@@ -7431,8 +7565,10 @@ export function initAbilities() {
     new Ability(AbilityId.DAUNTLESS_SHIELD, 8)
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true),
     new Ability(AbilityId.LIBERO, 8)
-      .attr(PokemonTypeChangeAbAttr),
-    //.condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.LIBERO)), //Gen 9 Implementation
+      .attr(PokemonTypeChangeAbAttr)
+    //.condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.LIBERO)), //Gen 9 Implementation
+      // TODO: needs testing on interaction with weather blockage
+      .edgeCase(),
     new Ability(AbilityId.BALL_FETCH, 8)
       .attr(FetchBallAbAttr)
       .condition(getOncePerBattleCondition(AbilityId.BALL_FETCH)),

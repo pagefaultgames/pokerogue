@@ -1,14 +1,14 @@
-import { PokeballType } from "#app/enums/pokeball";
-import { WeatherType } from "#app/enums/weather-type";
-import type { CommandPhase } from "#app/phases/command-phase";
-import { Command } from "#enums/command";
-import { AbilityId } from "#enums/ability-id";
-import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
 import { globalScene } from "#app/global-scene";
+import { AbilityId } from "#enums/ability-id";
+import { Command } from "#enums/command";
+import { MoveId } from "#enums/move-id";
+import { PokeballType } from "#enums/pokeball";
+import { SpeciesId } from "#enums/species-id";
+import { WeatherType } from "#enums/weather-type";
+import type { CommandPhase } from "#phases/command-phase";
+import { GameManager } from "#test/test-utils/game-manager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Desolate Land", () => {
   let phaserGame: Phaser.Game;

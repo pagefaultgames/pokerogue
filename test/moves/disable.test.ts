@@ -1,13 +1,13 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { MoveResult } from "#enums/move-result";
 import { AbilityId } from "#enums/ability-id";
-import { MoveUseMode } from "#enums/move-use-mode";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import { RandomMoveAttr } from "#moves/move";
+import { GameManager } from "#test/test-utils/game-manager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { RandomMoveAttr } from "#app/data/moves/move";
 
 describe("Moves - Disable", () => {
   let phaserGame: Phaser.Game;

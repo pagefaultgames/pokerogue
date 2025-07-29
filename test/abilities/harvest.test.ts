@@ -1,16 +1,16 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { PostTurnRestoreBerryAbAttr } from "#app/data/abilities/ability";
-import type Pokemon from "#app/field/pokemon";
-import { BerryModifier, PreserveBerryModifier } from "#app/modifier/modifier";
-import type { ModifierOverride } from "#app/modifier/modifier-type";
-import type { BooleanHolder } from "#app/utils/common";
+import { PostTurnRestoreBerryAbAttr } from "#abilities/ability";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
-import GameManager from "#test/testUtils/gameManager";
+import type { Pokemon } from "#field/pokemon";
+import { BerryModifier, PreserveBerryModifier } from "#modifiers/modifier";
+import type { ModifierOverride } from "#modifiers/modifier-type";
+import { GameManager } from "#test/test-utils/game-manager";
+import type { BooleanHolder } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

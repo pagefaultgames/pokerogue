@@ -1,13 +1,13 @@
-import { speciesEggTiers } from "#app/data/balance/species-egg-tiers";
-import { Egg, getLegendaryGachaSpeciesForTimestamp, getValidLegendaryGachaSpecies } from "#app/data/egg";
-import { allSpecies } from "#app/data/data-lists";
-import { EggSourceType } from "#app/enums/egg-source-types";
-import { EggTier } from "#app/enums/egg-type";
-import { VariantTier } from "#app/enums/variant-tier";
-import EggData from "#app/system/egg-data";
-import * as Utils from "#app/utils/common";
+import { speciesEggTiers } from "#balance/species-egg-tiers";
+import { allSpecies } from "#data/data-lists";
+import { Egg, getLegendaryGachaSpeciesForTimestamp, getValidLegendaryGachaSpecies } from "#data/egg";
+import { EggSourceType } from "#enums/egg-source-types";
+import { EggTier } from "#enums/egg-type";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { VariantTier } from "#enums/variant-tier";
+import { EggData } from "#system/egg-data";
+import { GameManager } from "#test/test-utils/game-manager";
+import * as Utils from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -28,7 +28,7 @@ describe("Egg Generation Tests", () => {
   });
 
   beforeEach(async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
   });
 
   it("should return Kyogre for the 10th of June", () => {

@@ -1,20 +1,20 @@
-import { TurnHeldItemTransferModifier } from "#app/modifier/modifier";
+import type { BattleScene } from "#app/battle-scene";
+import { TurnHeldItemTransferModifier } from "#modifiers/modifier";
 import {
   Achv,
   AchvTier,
+  achvs,
   DamageAchv,
   HealAchv,
   LevelAchv,
   ModifierAchv,
   MoneyAchv,
   RibbonAchv,
-  achvs,
-} from "#app/system/achv";
-import { NumberHolder } from "#app/utils/common";
-import GameManager from "#test/testUtils/gameManager";
+} from "#system/achv";
+import { GameManager } from "#test/test-utils/game-manager";
+import { NumberHolder } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type BattleScene from "#app/battle-scene";
 
 describe("check some Achievement related stuff", () => {
   it("should check Achievement creation", () => {

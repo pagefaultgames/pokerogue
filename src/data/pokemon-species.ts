@@ -1,49 +1,39 @@
-import type { Localizable } from "#app/@types/locales";
-import { AbilityId } from "#enums/ability-id";
-import { PartyMemberStrength } from "#enums/party-member-strength";
-import { SpeciesId } from "#enums/species-id";
-import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
-import i18next from "i18next";
 import type { AnySound } from "#app/battle-scene";
-import { globalScene } from "#app/global-scene";
 import type { GameMode } from "#app/game-mode";
-import type { StarterMoveset } from "#app/system/game-data";
-import { DexAttr } from "#enums/dex-attr";
-import {
-  isNullOrUndefined,
-  capitalizeString,
-  randSeedInt,
-  randSeedGauss,
-  randSeedItem,
-  randSeedFloat,
-} from "#app/utils/common";
-import { uncatchableSpecies } from "#app/data/balance/biomes";
-import { speciesEggMoves } from "#app/data/balance/egg-moves";
-import { GrowthRate } from "#app/data/exp";
-import type { EvolutionLevel } from "#app/data/balance/pokemon-evolutions";
-import {
-  SpeciesWildEvolutionDelay,
-  pokemonEvolutions,
-  pokemonPrevolutions,
-} from "#app/data/balance/pokemon-evolutions";
-import { PokemonType } from "#enums/pokemon-type";
-import type { LevelMoves } from "#app/data/balance/pokemon-level-moves";
+import { globalScene } from "#app/global-scene";
+import { uncatchableSpecies } from "#balance/biomes";
+import { speciesEggMoves } from "#balance/egg-moves";
+import { starterPassiveAbilities } from "#balance/passives";
+import type { EvolutionLevel } from "#balance/pokemon-evolutions";
+import { pokemonEvolutions, pokemonPrevolutions, SpeciesWildEvolutionDelay } from "#balance/pokemon-evolutions";
+import type { LevelMoves } from "#balance/pokemon-level-moves";
 import {
   pokemonFormLevelMoves,
   pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves,
   pokemonSpeciesLevelMoves,
-} from "#app/data/balance/pokemon-level-moves";
-import type { Stat } from "#enums/stat";
-import type { Variant, VariantSet } from "#app/sprites/variant";
-import { populateVariantColorCache, variantColorCache, variantData } from "#app/sprites/variant";
-import { speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
+} from "#balance/pokemon-level-moves";
+import { POKERUS_STARTER_COUNT, speciesStarterCosts } from "#balance/starters";
+import { allSpecies } from "#data/data-lists";
+import { GrowthRate } from "#data/exp";
+import { Gender } from "#data/gender";
+import { AbilityId } from "#enums/ability-id";
+import { DexAttr } from "#enums/dex-attr";
+import { PartyMemberStrength } from "#enums/party-member-strength";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
-import { starterPassiveAbilities } from "#app/data/balance/passives";
-import { loadPokemonVariantAssets } from "#app/sprites/pokemon-sprite";
-import { hasExpSprite } from "#app/sprites/sprite-utils";
-import { Gender } from "./gender";
-import { allSpecies } from "#app/data/data-lists";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
+import { SpeciesId } from "#enums/species-id";
+import type { Stat } from "#enums/stat";
+import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
+import { hasExpSprite } from "#sprites/sprite-utils";
+import type { Variant, VariantSet } from "#sprites/variant";
+import { populateVariantColorCache, variantColorCache, variantData } from "#sprites/variant";
+import type { StarterMoveset } from "#system/game-data";
+import type { Localizable } from "#types/locales";
+import { isNullOrUndefined, randSeedFloat, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { toCamelCase, toPascalCase } from "#utils/strings";
+import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
+import i18next from "i18next";
 
 export enum Region {
   NORMAL,
@@ -95,6 +85,7 @@ export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): Po
   return retSpecies;
 }
 
+// TODO: Clean this up and seriously review alternate means of fusion naming
 export function getFusedSpeciesName(speciesAName: string, speciesBName: string): string {
   const fragAPattern = /([a-z]{2}.*?[aeiou(?:y$)\-']+)(.*?)$/i;
   const fragBPattern = /([a-z]{2}.*?[aeiou(?:y$)\-'])(.*?)$/i;
@@ -759,7 +750,7 @@ export abstract class PokemonSpeciesForm {
   }
 }
 
-export default class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
+export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   public name: string;
   readonly subLegendary: boolean;
   readonly legendary: boolean;
@@ -908,14 +899,14 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
    * @returns the pokemon-form locale key for the single form name ("Alolan Form", "Eternal Flower" etc)
    */
   getFormNameToDisplay(formIndex = 0, append = false): string {
-    const formKey = this.forms?.[formIndex!]?.formKey;
-    const formText = capitalizeString(formKey, "-", false, false) || "";
-    const speciesName = capitalizeString(SpeciesId[this.speciesId], "_", true, false);
+    const formKey = this.forms[formIndex]?.formKey ?? "";
+    const formText = toPascalCase(formKey);
+    const speciesName = toCamelCase(SpeciesId[this.speciesId]);
     let ret = "";
 
     const region = this.getRegion();
     if (this.speciesId === SpeciesId.ARCEUS) {
-      ret = i18next.t(`pokemonInfo:Type.${formText?.toUpperCase()}`);
+      ret = i18next.t(`pokemonInfo:Type.${formText.toUpperCase()}`);
     } else if (
       [
         SpeciesFormKey.MEGA,
@@ -941,7 +932,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       if (i18next.exists(i18key)) {
         ret = i18next.t(i18key);
       } else {
-        const rootSpeciesName = capitalizeString(SpeciesId[this.getRootSpeciesId()], "_", true, false);
+        const rootSpeciesName = toCamelCase(SpeciesId[this.getRootSpeciesId()]);
         const i18RootKey = `pokemonForm:${rootSpeciesName}${formText}`;
         ret = i18next.exists(i18RootKey) ? i18next.t(i18RootKey) : formText;
       }
@@ -2855,11 +2846,11 @@ export function initSpecies() {
     new PokemonSpecies(SpeciesId.GRAPPLOCT, 8, false, false, false, "Jujitsu Pokémon", PokemonType.FIGHTING, null, 1.6, 39, AbilityId.LIMBER, AbilityId.NONE, AbilityId.TECHNICIAN, 480, 80, 118, 90, 70, 80, 42, 45, 50, 168, GrowthRate.MEDIUM_SLOW, 50, false),
     new PokemonSpecies(SpeciesId.SINISTEA, 8, false, false, false, "Black Tea Pokémon", PokemonType.GHOST, null, 0.1, 0.2, AbilityId.WEAK_ARMOR, AbilityId.NONE, AbilityId.CURSED_BODY, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, GrowthRate.MEDIUM_FAST, null, false, false,
       new PokemonForm("Phony Form", "phony", PokemonType.GHOST, null, 0.1, 0.2, AbilityId.WEAK_ARMOR, AbilityId.NONE, AbilityId.CURSED_BODY, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, false, "", true),
-      new PokemonForm("Antique Form", "antique", PokemonType.GHOST, null, 0.1, 0.2, AbilityId.WEAK_ARMOR, AbilityId.NONE, AbilityId.CURSED_BODY, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, false, "", true, true),
+      new PokemonForm("Antique Form", "antique", PokemonType.GHOST, null, 0.1, 0.2, AbilityId.WEAK_ARMOR, AbilityId.NONE, AbilityId.CURSED_BODY, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, false, "", true),
     ),
     new PokemonSpecies(SpeciesId.POLTEAGEIST, 8, false, false, false, "Black Tea Pokémon", PokemonType.GHOST, null, 0.2, 0.4, AbilityId.WEAK_ARMOR, AbilityId.NONE, AbilityId.CURSED_BODY, 508, 60, 65, 65, 134, 114, 70, 60, 50, 178, GrowthRate.MEDIUM_FAST, null, false, false,
       new PokemonForm("Phony Form", "phony", PokemonType.GHOST, null, 0.2, 0.4, AbilityId.WEAK_ARMOR, AbilityId.NONE, AbilityId.CURSED_BODY, 508, 60, 65, 65, 134, 114, 70, 60, 50, 178, false, "", true),
-      new PokemonForm("Antique Form", "antique", PokemonType.GHOST, null, 0.2, 0.4, AbilityId.WEAK_ARMOR, AbilityId.NONE, AbilityId.CURSED_BODY, 508, 60, 65, 65, 134, 114, 70, 60, 50, 178, false, "", true, true),
+      new PokemonForm("Antique Form", "antique", PokemonType.GHOST, null, 0.2, 0.4, AbilityId.WEAK_ARMOR, AbilityId.NONE, AbilityId.CURSED_BODY, 508, 60, 65, 65, 134, 114, 70, 60, 50, 178, false, "", true),
     ),
     new PokemonSpecies(SpeciesId.HATENNA, 8, false, false, false, "Calm Pokémon", PokemonType.PSYCHIC, null, 0.4, 3.4, AbilityId.HEALER, AbilityId.ANTICIPATION, AbilityId.MAGIC_BOUNCE, 265, 42, 30, 45, 56, 53, 39, 235, 50, 53, GrowthRate.SLOW, 0, false),
     new PokemonSpecies(SpeciesId.HATTREM, 8, false, false, false, "Serene Pokémon", PokemonType.PSYCHIC, null, 0.6, 4.8, AbilityId.HEALER, AbilityId.ANTICIPATION, AbilityId.MAGIC_BOUNCE, 370, 57, 40, 65, 86, 73, 49, 120, 50, 130, GrowthRate.SLOW, 0, false),
@@ -3113,11 +3104,11 @@ export function initSpecies() {
     new PokemonSpecies(SpeciesId.DIPPLIN, 9, false, false, false, "Candy Apple Pokémon", PokemonType.GRASS, PokemonType.DRAGON, 0.4, 4.4, AbilityId.SUPERSWEET_SYRUP, AbilityId.GLUTTONY, AbilityId.STICKY_HOLD, 485, 80, 80, 110, 95, 80, 40, 45, 50, 170, GrowthRate.ERRATIC, 50, false),
     new PokemonSpecies(SpeciesId.POLTCHAGEIST, 9, false, false, false, "Matcha Pokémon", PokemonType.GRASS, PokemonType.GHOST, 0.1, 1.1, AbilityId.HOSPITALITY, AbilityId.NONE, AbilityId.HEATPROOF, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, GrowthRate.SLOW, null, false, false,
       new PokemonForm("Counterfeit Form", "counterfeit", PokemonType.GRASS, PokemonType.GHOST, 0.1, 1.1, AbilityId.HOSPITALITY, AbilityId.NONE, AbilityId.HEATPROOF, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, false, null, true),
-      new PokemonForm("Artisan Form", "artisan", PokemonType.GRASS, PokemonType.GHOST, 0.1, 1.1, AbilityId.HOSPITALITY, AbilityId.NONE, AbilityId.HEATPROOF, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, false, null, false, true),
+      new PokemonForm("Artisan Form", "artisan", PokemonType.GRASS, PokemonType.GHOST, 0.1, 1.1, AbilityId.HOSPITALITY, AbilityId.NONE, AbilityId.HEATPROOF, 308, 40, 45, 45, 74, 54, 50, 120, 50, 62, false, "counterfeit", true),
     ),
     new PokemonSpecies(SpeciesId.SINISTCHA, 9, false, false, false, "Matcha Pokémon", PokemonType.GRASS, PokemonType.GHOST, 0.2, 2.2, AbilityId.HOSPITALITY, AbilityId.NONE, AbilityId.HEATPROOF, 508, 71, 60, 106, 121, 80, 70, 60, 50, 178, GrowthRate.SLOW, null, false, false,
-      new PokemonForm("Unremarkable Form", "unremarkable", PokemonType.GRASS, PokemonType.GHOST, 0.2, 2.2, AbilityId.HOSPITALITY, AbilityId.NONE, AbilityId.HEATPROOF, 508, 71, 60, 106, 121, 80, 70, 60, 50, 178),
-      new PokemonForm("Masterpiece Form", "masterpiece", PokemonType.GRASS, PokemonType.GHOST, 0.2, 2.2, AbilityId.HOSPITALITY, AbilityId.NONE, AbilityId.HEATPROOF, 508, 71, 60, 106, 121, 80, 70, 60, 50, 178, false, null, false, true),
+      new PokemonForm("Unremarkable Form", "unremarkable", PokemonType.GRASS, PokemonType.GHOST, 0.2, 2.2, AbilityId.HOSPITALITY, AbilityId.NONE, AbilityId.HEATPROOF, 508, 71, 60, 106, 121, 80, 70, 60, 50, 178, false, null, true),
+      new PokemonForm("Masterpiece Form", "masterpiece", PokemonType.GRASS, PokemonType.GHOST, 0.2, 2.2, AbilityId.HOSPITALITY, AbilityId.NONE, AbilityId.HEATPROOF, 508, 71, 60, 106, 121, 80, 70, 60, 50, 178, false, "unremarkable", true),
     ),
     new PokemonSpecies(SpeciesId.OKIDOGI, 9, true, false, false, "Retainer Pokémon", PokemonType.POISON, PokemonType.FIGHTING, 1.8, 92.2, AbilityId.TOXIC_CHAIN, AbilityId.NONE, AbilityId.GUARD_DOG, 555, 88, 128, 115, 58, 86, 80, 3, 0, 276, GrowthRate.SLOW, 100, false),
     new PokemonSpecies(SpeciesId.MUNKIDORI, 9, true, false, false, "Retainer Pokémon", PokemonType.POISON, PokemonType.PSYCHIC, 1, 12.2, AbilityId.TOXIC_CHAIN, AbilityId.NONE, AbilityId.FRISK, 555, 88, 75, 66, 130, 90, 106, 3, 0, 276, GrowthRate.SLOW, 100, false),

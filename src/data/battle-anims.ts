@@ -1,22 +1,16 @@
 import { globalScene } from "#app/global-scene";
-import { allMoves } from "#app/data/data-lists";
-import { MoveFlags } from "#enums/MoveFlags";
-import type Pokemon from "#app/field/pokemon";
-import {
-  type nil,
-  getFrameMs,
-  getEnumKeys,
-  getEnumValues,
-  animationFileName,
-  coerceArray,
-  isNullOrUndefined,
-} from "#app/utils/common";
+import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
-import { MoveId } from "#enums/move-id";
-import Phaser from "phaser";
-import { EncounterAnim } from "#enums/encounter-anims";
-import { AnimBlendType, AnimFrameTarget, AnimFocus, ChargeAnim, CommonAnim } from "#enums/move-anims-common";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { EncounterAnim } from "#enums/encounter-anims";
+import { AnimBlendType, AnimFocus, AnimFrameTarget, ChargeAnim, CommonAnim } from "#enums/move-anims-common";
+import { MoveFlags } from "#enums/move-flags";
+import { MoveId } from "#enums/move-id";
+import type { Pokemon } from "#field/pokemon";
+import { coerceArray, getFrameMs, isNullOrUndefined, type nil } from "#utils/common";
+import { getEnumKeys, getEnumValues } from "#utils/enums";
+import { toKebabCase } from "#utils/strings";
+import Phaser from "phaser";
 
 export class AnimConfig {
   public id: number;
@@ -419,7 +413,7 @@ export function initCommonAnims(): Promise<void> {
       const commonAnimId = commonAnimIds[ca];
       commonAnimFetches.push(
         globalScene
-          .cachedFetch(`./battle-anims/common-${commonAnimNames[ca].toLowerCase().replace(/_/g, "-")}.json`)
+          .cachedFetch(`./battle-anims/common-${toKebabCase(commonAnimNames[ca])}.json`)
           .then(response => response.json())
           .then(cas => commonAnims.set(commonAnimId, new AnimConfig(cas))),
       );
@@ -457,7 +451,7 @@ export function initMoveAnim(move: MoveId): Promise<void> {
 
       const fetchAnimAndResolve = (move: MoveId) => {
         globalScene
-          .cachedFetch(`./battle-anims/${animationFileName(move)}.json`)
+          .cachedFetch(`./battle-anims/${toKebabCase(MoveId[move])}.json`)
           .then(response => {
             const contentType = response.headers.get("content-type");
             if (!response.ok || contentType?.indexOf("application/json") === -1) {
@@ -513,7 +507,7 @@ function useDefaultAnim(move: MoveId, defaultMoveAnim: MoveId) {
  * @remarks use {@linkcode useDefaultAnim} to use a default animation
  */
 function logMissingMoveAnim(move: MoveId, ...optionalParams: any[]) {
-  const moveName = animationFileName(move);
+  const moveName = toKebabCase(MoveId[move]);
   console.warn(`Could not load animation file for move '${moveName}'`, ...optionalParams);
 }
 
@@ -531,7 +525,7 @@ export async function initEncounterAnims(encounterAnim: EncounterAnim | Encounte
     }
     encounterAnimFetches.push(
       globalScene
-        .cachedFetch(`./battle-anims/encounter-${encounterAnimNames[anim].toLowerCase().replace(/_/g, "-")}.json`)
+        .cachedFetch(`./battle-anims/encounter-${toKebabCase(encounterAnimNames[anim])}.json`)
         .then(response => response.json())
         .then(cas => encounterAnims.set(anim, new AnimConfig(cas))),
     );
@@ -555,7 +549,7 @@ export function initMoveChargeAnim(chargeAnim: ChargeAnim): Promise<void> {
     } else {
       chargeAnims.set(chargeAnim, null);
       globalScene
-        .cachedFetch(`./battle-anims/${ChargeAnim[chargeAnim].toLowerCase().replace(/_/g, "-")}.json`)
+        .cachedFetch(`./battle-anims/${toKebabCase(ChargeAnim[chargeAnim])}.json`)
         .then(response => response.json())
         .then(ca => {
           if (Array.isArray(ca)) {
@@ -879,6 +873,10 @@ export abstract class BattleAnim {
       }
       targetSprite.pipelineData["tone"] = [0.0, 0.0, 0.0, 0.0];
       targetSprite.setAngle(0);
+
+      // Remove animation event listeners to enable sprites to be freed.
+      userSprite.off("animationupdate");
+      targetSprite.off("animationupdate");
 
       /**
        * This and `targetSpriteToShow` are used to restore context lost
@@ -1402,13 +1400,15 @@ export class EncounterBattleAnim extends BattleAnim {
 export async function populateAnims() {
   const commonAnimNames = getEnumKeys(CommonAnim).map(k => k.toLowerCase());
   const commonAnimMatchNames = commonAnimNames.map(k => k.replace(/_/g, ""));
-  const commonAnimIds = getEnumValues(CommonAnim) as CommonAnim[];
+  const commonAnimIds = getEnumValues(CommonAnim);
   const chargeAnimNames = getEnumKeys(ChargeAnim).map(k => k.toLowerCase());
   const chargeAnimMatchNames = chargeAnimNames.map(k => k.replace(/_/g, " "));
-  const chargeAnimIds = getEnumValues(ChargeAnim) as ChargeAnim[];
+  const chargeAnimIds = getEnumValues(ChargeAnim);
   const commonNamePattern = /name: (?:Common:)?(Opp )?(.*)/;
   const moveNameToId = {};
+  // Exclude MoveId.NONE;
   for (const move of getEnumValues(MoveId).slice(1)) {
+    // KARATE_CHOP => KARATECHOP
     const moveName = MoveId[move].toUpperCase().replace(/_/g, "");
     moveNameToId[moveName] = move;
   }

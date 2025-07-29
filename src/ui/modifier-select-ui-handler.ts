@@ -1,28 +1,29 @@
 import { globalScene } from "#app/global-scene";
-import type { ModifierTypeOption } from "../modifier/modifier-type";
-import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "../modifier/modifier-type";
-import { getPokeballAtlasKey } from "#app/data/pokeball";
-import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
-import AwaitableUiHandler from "./awaitable-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { LockModifierTiersModifier, PokemonHeldItemModifier, HealShopCostModifier } from "../modifier/modifier";
-import { handleTutorial, Tutorial } from "../tutorial";
-import { Button } from "#enums/buttons";
-import MoveInfoOverlay from "./move-info-overlay";
-import { allMoves } from "#app/data/data-lists";
-import { formatMoney, NumberHolder } from "#app/utils/common";
 import Overrides from "#app/overrides";
-import i18next from "i18next";
-import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
-import Phaser from "phaser";
+import { handleTutorial, Tutorial } from "#app/tutorial";
+import { allMoves } from "#data/data-lists";
+import { getPokeballAtlasKey } from "#data/pokeball";
+import { Button } from "#enums/buttons";
 import type { PokeballType } from "#enums/pokeball";
+import { ShopCursorTarget } from "#enums/shop-cursor-target";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import { HealShopCostModifier, LockModifierTiersModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
+import type { ModifierTypeOption } from "#modifiers/modifier-type";
+import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "#modifiers/modifier-type";
+import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
+import { MoveInfoOverlay } from "#ui/move-info-overlay";
+import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions } from "#ui/text";
+import { formatMoney, NumberHolder } from "#utils/common";
+import i18next from "i18next";
+import Phaser from "phaser";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 7;
 const SINGLE_SHOP_ROW_YOFFSET = 12;
 const DOUBLE_SHOP_ROW_YOFFSET = 24;
 const OPTION_BUTTON_YPOSITION = -62;
 
-export default class ModifierSelectUiHandler extends AwaitableUiHandler {
+export class ModifierSelectUiHandler extends AwaitableUiHandler {
   private modifierContainer: Phaser.GameObjects.Container;
   private rerollButtonContainer: Phaser.GameObjects.Container;
   private lockRarityButtonContainer: Phaser.GameObjects.Container;
@@ -269,86 +270,129 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     globalScene.updateBiomeWaveText();
     globalScene.updateMoneyText();
 
+    // DO NOT REMOVE: Fixes bug which allows action input to be processed before the UI is shown,
+    // causing errors if reroll is selected
+    this.awaitingActionInput = false;
+
+    const { promise: tweenPromise, resolve: tweenResolve } = Promise.withResolvers<void>();
     let i = 0;
 
+    // #region: animation
+    /** Holds promises that resolve once each reward's *upgrade animation* has finished playing */
+    const rewardAnimPromises: Promise<void>[] = [];
+    /** Holds promises that resolves once *all* animations for a reward have finished playing */
+    const rewardAnimAllSettledPromises: Promise<void>[] = [];
+
+    /*
+     * A counter here is used instead of a loop to "stagger" the apperance of each reward,
+     * using `sine.easeIn` to speed up the appearance of the rewards as each animation progresses.
+     *
+     * The `onComplete` callback for this tween is set to resolve once the upgrade animations
+     * for each reward has finished playing, allowing for the next set of animations to
+     * start to appear.
+     */
     globalScene.tweens.addCounter({
       ease: "Sine.easeIn",
       duration: 1250,
       onUpdate: t => {
-        const value = t.getValue();
+        // The bang here is safe, as `getValue()` only returns null if the tween has been destroyed (which obviously isn't the case inside onUpdate)
+        const value = t.getValue()!;
         const index = Math.floor(value * typeOptions.length);
         if (index > i && index <= typeOptions.length) {
           const option = this.options[i];
-          option?.show(
-            Math.floor((1 - value) * 1250) * 0.325 + 2000 * maxUpgradeCount,
-            -(maxUpgradeCount - typeOptions[i].upgradeCount),
-          );
+          if (option) {
+            rewardAnimPromises.push(
+              option.show(
+                Math.floor((1 - value) * 1250) * 0.325 + 2000 * maxUpgradeCount,
+                -(maxUpgradeCount - typeOptions[i].upgradeCount),
+                rewardAnimAllSettledPromises,
+              ),
+            );
+          }
           i++;
         }
       },
+      onComplete: () => {
+        Promise.allSettled(rewardAnimPromises).then(() => tweenResolve());
+      },
     });
 
+    /** Holds promises that resolve once each shop item has finished animating */
+    const shopAnimPromises: Promise<void>[] = [];
     globalScene.time.delayedCall(1000 + maxUpgradeCount * 2000, () => {
       for (const shopOption of this.shopOptionsRows.flat()) {
-        shopOption.show(0, 0);
+        // It is safe to skip awaiting the `show` method here,
+        // as the promise it returns is also part of the promise appended to `shopAnimPromises`,
+        // which is awaited later on.
+        shopOption.show(0, 0, shopAnimPromises, false);
       }
     });
 
-    globalScene.time.delayedCall(4000 + maxUpgradeCount * 2000, () => {
-      if (partyHasHeldItem) {
-        this.transferButtonContainer.setAlpha(0);
-        this.transferButtonContainer.setVisible(true);
+    tweenPromise.then(() => {
+      globalScene.time.delayedCall(500, () => {
+        if (partyHasHeldItem) {
+          this.transferButtonContainer.setAlpha(0);
+          this.transferButtonContainer.setVisible(true);
+          globalScene.tweens.add({
+            targets: this.transferButtonContainer,
+            alpha: 1,
+            duration: 250,
+          });
+        }
+
+        this.rerollButtonContainer.setAlpha(0);
+        this.checkButtonContainer.setAlpha(0);
+        this.lockRarityButtonContainer.setAlpha(0);
+        this.continueButtonContainer.setAlpha(0);
+        this.rerollButtonContainer.setVisible(true);
+        this.checkButtonContainer.setVisible(true);
+        this.continueButtonContainer.setVisible(this.rerollCost < 0);
+        this.lockRarityButtonContainer.setVisible(canLockRarities);
+
         globalScene.tweens.add({
-          targets: this.transferButtonContainer,
+          targets: [this.checkButtonContainer, this.continueButtonContainer],
           alpha: 1,
           duration: 250,
         });
-      }
 
-      this.rerollButtonContainer.setAlpha(0);
-      this.checkButtonContainer.setAlpha(0);
-      this.lockRarityButtonContainer.setAlpha(0);
-      this.continueButtonContainer.setAlpha(0);
-      this.rerollButtonContainer.setVisible(true);
-      this.checkButtonContainer.setVisible(true);
-      this.continueButtonContainer.setVisible(this.rerollCost < 0);
-      this.lockRarityButtonContainer.setVisible(canLockRarities);
+        globalScene.tweens.add({
+          targets: [this.rerollButtonContainer, this.lockRarityButtonContainer],
+          alpha: this.rerollCost < 0 ? 0.5 : 1,
+          duration: 250,
+        });
 
-      globalScene.tweens.add({
-        targets: [this.checkButtonContainer, this.continueButtonContainer],
-        alpha: 1,
-        duration: 250,
-      });
+        // Ensure that the reward animations have completed before allowing input to proceed.
+        // Required to ensure that the user cannot interact with the UI before the animations
+        // have completed, (which, among other things, would allow the GameObjects to be destroyed
+        // before the animations have completed, causing errors).
+        Promise.allSettled([...shopAnimPromises, ...rewardAnimAllSettledPromises]).then(() => {
+          const updateCursorTarget = () => {
+            if (globalScene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
+              this.setRowCursor(0);
+              this.setCursor(2);
+            } else if (globalScene.shopCursorTarget === ShopCursorTarget.SHOP && globalScene.gameMode.hasNoShop) {
+              this.setRowCursor(ShopCursorTarget.REWARDS);
+              this.setCursor(0);
+            } else {
+              this.setRowCursor(globalScene.shopCursorTarget);
+              this.setCursor(0);
+            }
+          };
 
-      globalScene.tweens.add({
-        targets: [this.rerollButtonContainer, this.lockRarityButtonContainer],
-        alpha: this.rerollCost < 0 ? 0.5 : 1,
-        duration: 250,
-      });
-
-      const updateCursorTarget = () => {
-        if (globalScene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
-          this.setRowCursor(0);
-          this.setCursor(2);
-        } else if (globalScene.shopCursorTarget === ShopCursorTarget.SHOP && globalScene.gameMode.hasNoShop) {
-          this.setRowCursor(ShopCursorTarget.REWARDS);
-          this.setCursor(0);
-        } else {
-          this.setRowCursor(globalScene.shopCursorTarget);
-          this.setCursor(0);
-        }
-      };
-
-      updateCursorTarget();
-
-      handleTutorial(Tutorial.Select_Item).then(res => {
-        if (res) {
           updateCursorTarget();
-        }
-        this.awaitingActionInput = true;
-        this.onActionInput = args[2];
+
+          handleTutorial(Tutorial.Select_Item).then(res => {
+            if (res) {
+              updateCursorTarget();
+            }
+            this.awaitingActionInput = true;
+            this.onActionInput = args[2];
+          });
+        });
       });
     });
+
+    // #endregion: animation
 
     return true;
   }
@@ -687,7 +731,11 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
       scale: 0.01,
       duration: 250,
       ease: "Cubic.easeIn",
-      onComplete: () => options.forEach(o => o.destroy()),
+      onComplete: () => {
+        options.forEach(o => {
+          o.destroy();
+        });
+      },
     });
 
     [
@@ -797,14 +845,45 @@ class ModifierOption extends Phaser.GameObjects.Container {
     }
   }
 
-  show(remainingDuration: number, upgradeCountOffset: number) {
-    if (!this.modifierTypeOption.cost) {
+  /**
+   * Start the tweens responsible for animating the option's appearance
+   *
+   * @privateremarks
+   * This method is unusual. It "returns" (one via the actual return, one by via appending to the `promiseHolder`
+   * parameter) two promises. The promise returned by the method resolves once the option's appearance animations have
+   * completed, and is meant to allow callers to synchronize with the completion of the option's appearance animations.
+   * The promise appended to `promiseHolder` resolves once *all* animations started by this method have completed,
+   * and should be used by callers to ensure that all animations have completed before proceeding.
+   *
+   * @param remainingDuration - The duration in milliseconds that the animation can play for
+   * @param upgradeCountOffset - The offset to apply to the upgrade count for options whose rarity is being upgraded
+   * @param promiseHolder - A promise that resolves once all tweens started by this method have completed will be pushed to this array.
+   * @param isReward - Whether the option being shown is a reward, meaning it should show pokeball and upgrade animations.
+   * @returns A promise that resolves once the *option's apperance animations* have completed. This promise will resolve _before_ all
+   *   promises that are initiated in this method complete. Instead, the `promiseHolder` array will contain a new promise
+   *   that will resolve once all animations have completed.
+   *
+   */
+  async show(
+    remainingDuration: number,
+    upgradeCountOffset: number,
+    promiseHolder: Promise<void>[],
+    isReward = true,
+  ): Promise<void> {
+    /** Promises for the pokeball and upgrade animations */
+    const animPromises: Promise<void>[] = [];
+    if (isReward) {
+      const { promise: bouncePromise, resolve: resolveBounce } = Promise.withResolvers<void>();
       globalScene.tweens.add({
         targets: this.pb,
         y: 0,
         duration: 1250,
         ease: "Bounce.Out",
+        onComplete: () => {
+          resolveBounce();
+        },
       });
+      animPromises.push(bouncePromise);
 
       let lastValue = 1;
       let bounceCount = 0;
@@ -819,7 +898,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
           if (!globalScene) {
             return;
           }
-          const value = t.getValue();
+          const value = t.getValue()!;
           if (!bounce && value > lastValue) {
             globalScene.playSound("se/pb_bounce_1", {
               volume: 1 / ++bounceCount,
@@ -832,96 +911,129 @@ class ModifierOption extends Phaser.GameObjects.Container {
         },
       });
 
+      // TODO: Figure out proper delay between chains and then convert this into a single tween chain
+      // rather than starting multiple tween chains.
+
       for (let u = 0; u < this.modifierTypeOption.upgradeCount; u++) {
-        const upgradeIndex = u;
-        globalScene.time.delayedCall(
-          remainingDuration - 2000 * (this.modifierTypeOption.upgradeCount - (upgradeIndex + 1 + upgradeCountOffset)),
-          () => {
-            globalScene.playSound("se/upgrade", {
-              rate: 1 + 0.25 * upgradeIndex,
-            });
-            this.pbTint.setPosition(this.pb.x, this.pb.y);
-            this.pbTint.setTintFill(0xffffff);
-            this.pbTint.setAlpha(0);
-            this.pbTint.setVisible(true);
-            globalScene.tweens.add({
+        const { resolve, promise } = Promise.withResolvers<void>();
+        globalScene.tweens.chain({
+          tweens: [
+            {
+              delay: remainingDuration - 2000 * (this.modifierTypeOption.upgradeCount - (u + 1 + upgradeCountOffset)),
+              onStart: () => {
+                globalScene.playSound("se/upgrade", {
+                  rate: 1 + 0.25 * u,
+                });
+                this.pbTint.setPosition(this.pb.x, this.pb.y).setTintFill(0xffffff).setVisible(true).setAlpha(0);
+              },
               targets: this.pbTint,
               alpha: 1,
               duration: 1000,
               ease: "Sine.easeIn",
               onComplete: () => {
-                this.pb.setTexture(
-                  "pb",
-                  this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount + (upgradeIndex + 1)),
-                );
-                globalScene.tweens.add({
-                  targets: this.pbTint,
-                  alpha: 0,
-                  duration: 750,
-                  ease: "Sine.easeOut",
-                  onComplete: () => {
-                    this.pbTint.setVisible(false);
-                  },
-                });
+                this.pb.setTexture("pb", this.getPbAtlasKey(-this.modifierTypeOption.upgradeCount + (u + 1)));
               },
-            });
-          },
-        );
+            },
+            {
+              targets: this.pbTint,
+              alpha: 0,
+              duration: 750,
+              ease: "Sine.easeOut",
+              onComplete: () => {
+                this.pbTint.setVisible(false);
+                resolve();
+              },
+            },
+          ],
+        });
+        animPromises.push(promise);
       }
     }
 
+    const finalPromises: Promise<void>[] = [];
     globalScene.time.delayedCall(remainingDuration + 2000, () => {
-      if (!globalScene) {
-        return;
-      }
-
-      if (!this.modifierTypeOption.cost) {
+      if (isReward) {
         this.pb.setTexture("pb", `${this.getPbAtlasKey(0)}_open`);
         globalScene.playSound("se/pb_rel");
+
+        const { resolve: pbResolve, promise: pbPromise } = Promise.withResolvers<void>();
 
         globalScene.tweens.add({
           targets: this.pb,
           duration: 500,
-          delay: 250,
           ease: "Sine.easeIn",
           alpha: 0,
-          onComplete: () => this.pb.destroy(),
+          onComplete: () => {
+            Promise.allSettled(animPromises).then(() => this.pb.destroy());
+            pbResolve();
+          },
         });
+        finalPromises.push(pbPromise);
       }
 
+      /** Delay for the rest of the tweens to ensure they show after the pokeball animation begins to appear */
+      const delay = isReward ? 250 : 0;
+
+      const { resolve: itemResolve, promise: itemPromise } = Promise.withResolvers<void>();
       globalScene.tweens.add({
         targets: this.itemContainer,
+        delay,
         duration: 500,
         ease: "Elastic.Out",
         scale: 2,
         alpha: 1,
+        onComplete: () => {
+          itemResolve();
+        },
       });
-      if (!this.modifierTypeOption.cost) {
+      finalPromises.push(itemPromise);
+
+      if (isReward) {
+        const { resolve: itemTintResolve, promise: itemTintPromise } = Promise.withResolvers<void>();
         globalScene.tweens.add({
           targets: this.itemTint,
           alpha: 0,
+          delay,
           duration: 500,
           ease: "Sine.easeIn",
-          onComplete: () => this.itemTint.destroy(),
+          onComplete: () => {
+            this.itemTint.destroy();
+            itemTintResolve();
+          },
         });
+        finalPromises.push(itemTintPromise);
       }
+
+      const { resolve: itemTextResolve, promise: itemTextPromise } = Promise.withResolvers<void>();
       globalScene.tweens.add({
         targets: this.itemText,
+        delay,
         duration: 500,
         alpha: 1,
         y: 25,
         ease: "Cubic.easeInOut",
+        onComplete: () => itemTextResolve(),
       });
+      finalPromises.push(itemTextPromise);
+
       if (this.itemCostText) {
+        const { resolve: itemCostResolve, promise: itemCostPromise } = Promise.withResolvers<void>();
         globalScene.tweens.add({
           targets: this.itemCostText,
+          delay,
           duration: 500,
           alpha: 1,
           y: 35,
           ease: "Cubic.easeInOut",
+          onComplete: () => itemCostResolve(),
         });
+        finalPromises.push(itemCostPromise);
       }
     });
+    // The `.then` suppresses the return type for the Promise.allSettled so that it returns void.
+    promiseHolder.push(Promise.allSettled([...animPromises, ...finalPromises]).then());
+
+    await Promise.allSettled(animPromises);
   }
 
   getPbAtlasKey(tierOffset = 0) {

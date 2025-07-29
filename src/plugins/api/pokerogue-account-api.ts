@@ -1,12 +1,12 @@
+import { ApiBase } from "#api/api-base";
+import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import type {
   AccountInfoResponse,
   AccountLoginRequest,
   AccountLoginResponse,
   AccountRegisterRequest,
-} from "#app/@types/PokerogueAccountApi";
-import { SESSION_ID_COOKIE_NAME } from "#app/constants";
-import { ApiBase } from "#app/plugins/api/api-base";
-import { removeCookie, setCookie } from "#app/utils/cookies";
+} from "#types/api/pokerogue-account-api";
+import { removeCookie, setCookie } from "#utils/cookies";
 
 /**
  * A wrapper for PokéRogue account API requests.

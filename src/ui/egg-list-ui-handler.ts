@@ -1,15 +1,16 @@
-import { UiMode } from "#enums/ui-mode";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
-import { TextStyle, addTextObject } from "#app/ui/text";
-import MessageUiHandler from "#app/ui/message-ui-handler";
-import { addWindow } from "#app/ui/ui-theme";
-import { Button } from "#enums/buttons";
-import i18next from "i18next";
-import ScrollableGridUiHandler from "#app/ui/scrollable-grid-handler";
-import { ScrollBar } from "#app/ui/scroll-bar";
 import { globalScene } from "#app/global-scene";
+import { Button } from "#enums/buttons";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-handler";
+import { ScrollBar } from "#ui/scroll-bar";
+import { ScrollableGridUiHandler } from "#ui/scrollable-grid-handler";
+import { addTextObject } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import i18next from "i18next";
 
-export default class EggListUiHandler extends MessageUiHandler {
+export class EggListUiHandler extends MessageUiHandler {
   private readonly ROWS = 9;
   private readonly COLUMNS = 11;
 
@@ -49,11 +50,11 @@ export default class EggListUiHandler extends MessageUiHandler {
 
     this.eggNameText = addTextObject(8, 68, "", TextStyle.SUMMARY).setOrigin(0);
 
-    this.eggDateText = addTextObject(8, 91, "", TextStyle.TOOLTIP_CONTENT);
+    this.eggDateText = addTextObject(8, 91, "", TextStyle.EGG_LIST);
 
-    this.eggHatchWavesText = addTextObject(8, 108, "", TextStyle.TOOLTIP_CONTENT).setWordWrapWidth(540);
+    this.eggHatchWavesText = addTextObject(8, 108, "", TextStyle.EGG_LIST).setWordWrapWidth(540);
 
-    this.eggGachaInfoText = addTextObject(8, 152, "", TextStyle.TOOLTIP_CONTENT).setWordWrapWidth(540);
+    this.eggGachaInfoText = addTextObject(8, 152, "", TextStyle.EGG_LIST).setWordWrapWidth(540);
 
     this.eggListIconContainer = globalScene.add.container(113, 5);
 

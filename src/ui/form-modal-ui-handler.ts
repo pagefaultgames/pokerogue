@@ -1,12 +1,13 @@
-import type { ModalConfig } from "./modal-ui-handler";
-import { ModalUiHandler } from "./modal-ui-handler";
-import type { UiMode } from "#enums/ui-mode";
-import { TextStyle, addTextInputObject, addTextObject } from "./text";
-import { WindowVariant, addWindow } from "./ui-theme";
-import type InputText from "phaser3-rex-plugins/plugins/inputtext";
-import { fixedInt } from "#app/utils/common";
-import { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
+import { Button } from "#enums/buttons";
+import { TextStyle } from "#enums/text-style";
+import type { UiMode } from "#enums/ui-mode";
+import type { ModalConfig } from "#ui/modal-ui-handler";
+import { ModalUiHandler } from "#ui/modal-ui-handler";
+import { addTextInputObject, addTextObject } from "#ui/text";
+import { addWindow, WindowVariant } from "#ui/ui-theme";
+import { fixedInt } from "#utils/common";
+import type InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 export interface FormModalConfig extends ModalConfig {
   errorMessage?: string;

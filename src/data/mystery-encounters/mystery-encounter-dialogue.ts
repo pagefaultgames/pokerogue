@@ -1,4 +1,4 @@
-import type { TextStyle } from "#app/ui/text";
+import type { TextStyle } from "#enums/text-style";
 
 export class TextDisplay {
   speaker?: string;
@@ -67,7 +67,7 @@ export class EncounterOptionsDialogue {
  }
  *
  */
-export default class MysteryEncounterDialogue {
+export class MysteryEncounterDialogue {
   intro?: TextDisplay[];
   encounterOptionsDialogue?: EncounterOptionsDialogue;
   outro?: TextDisplay[];

@@ -1,20 +1,14 @@
+import { pokerogueApi } from "#api/pokerogue-api";
 import { MoneyFormat } from "#enums/money-format";
-import { MoveId } from "#enums/move-id";
+import type { Variant } from "#sprites/variant";
 import i18next from "i18next";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import type { Variant } from "#app/sprites/variant";
 
 export type nil = null | undefined;
 
 export const MissingTextureKey = "__MISSING";
 
-export function toReadableString(str: string): string {
-  return str
-    .replace(/_/g, " ")
-    .split(" ")
-    .map(s => `${s.slice(0, 1)}${s.slice(1).toLowerCase()}`)
-    .join(" ");
-}
+// TODO: Draft tests for these utility functions
+// TODO: Break up this file
 
 export function randomString(length: number, seeded = false) {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -270,19 +264,7 @@ export function formatMoney(format: MoneyFormat, amount: number) {
 }
 
 export function formatStat(stat: number, forHp = false): string {
-  return formatLargeNumber(stat, forHp ? 100000 : 1000000);
-}
-
-export function getEnumKeys(enumType: any): string[] {
-  return Object.values(enumType)
-    .filter(v => Number.isNaN(Number.parseInt(v!.toString())))
-    .map(v => v!.toString());
-}
-
-export function getEnumValues(enumType: any): number[] {
-  return Object.values(enumType)
-    .filter(v => !Number.isNaN(Number.parseInt(v!.toString())))
-    .map(v => Number.parseInt(v!.toString()));
+  return formatLargeNumber(stat, forHp ? 100_000 : 1_000_000);
 }
 
 export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null> {
@@ -341,6 +323,10 @@ export class NumberHolder {
   constructor(value: number) {
     this.value = value;
   }
+
+  valueOf(): number {
+    return this.value;
+  }
 }
 
 export class FixedInt {
@@ -349,35 +335,14 @@ export class FixedInt {
   constructor(value: number) {
     this.value = value;
   }
+
+  [Symbol.toPrimitive](_hint: string): number {
+    return this.value;
+  }
 }
 
 export function fixedInt(value: number): number {
   return new FixedInt(value) as unknown as number;
-}
-
-/**
- * Formats a string to title case
- * @param unformattedText Text to be formatted
- * @returns the formatted string
- */
-export function formatText(unformattedText: string): string {
-  const text = unformattedText.split("_");
-  for (let i = 0; i < text.length; i++) {
-    text[i] = text[i].charAt(0).toUpperCase() + text[i].substring(1).toLowerCase();
-  }
-
-  return text.join(" ");
-}
-
-export function toCamelCaseString(unformattedText: string): string {
-  if (!unformattedText) {
-    return "";
-  }
-  return unformattedText
-    .split(/[_ ]/)
-    .filter(f => f)
-    .map((f, i) => (i ? `${f[0].toUpperCase()}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
-    .join("");
 }
 
 export function rgbToHsv(r: number, g: number, b: number) {
@@ -507,56 +472,12 @@ export function truncateString(str: string, maxLength = 10) {
 }
 
 /**
- * Convert a space-separated string into a capitalized and underscored string.
- * @param input - The string to be converted.
- * @returns The converted string with words capitalized and separated by underscores.
- */
-export function reverseValueToKeySetting(input: string) {
-  // Split the input string into an array of words
-  const words = input.split(" ");
-  // Capitalize the first letter of each word and convert the rest to lowercase
-  const capitalizedWords = words.map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
-  // Join the capitalized words with underscores and return the result
-  return capitalizedWords.join("_");
-}
-
-/**
- * Capitalize a string.
- * @param str - The string to be capitalized.
- * @param sep - The separator between the words of the string.
- * @param lowerFirstChar - Whether the first character of the string should be lowercase or not.
- * @param returnWithSpaces - Whether the returned string should have spaces between the words or not.
- * @returns The capitalized string.
- */
-export function capitalizeString(str: string, sep: string, lowerFirstChar = true, returnWithSpaces = false) {
-  if (str) {
-    const splitedStr = str.toLowerCase().split(sep);
-
-    for (let i = +lowerFirstChar; i < splitedStr?.length; i++) {
-      splitedStr[i] = splitedStr[i].charAt(0).toUpperCase() + splitedStr[i].substring(1);
-    }
-
-    return returnWithSpaces ? splitedStr.join(" ") : splitedStr.join("");
-  }
-  return null;
-}
-
-/**
  * Report whether a given value is nullish (`null`/`undefined`).
  * @param val - The value whose nullishness is being checked
  * @returns `true` if `val` is either `null` or `undefined`
  */
 export function isNullOrUndefined(val: any): val is null | undefined {
   return val === null || val === undefined;
-}
-
-/**
- * Capitalize the first letter of a string.
- * @param str - The string whose first letter is being capitalized
- * @return The original string with its first letter capitalized
- */
-export function capitalizeFirstLetter(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 /**
@@ -593,26 +514,6 @@ export function isBetween(num: number, min: number, max: number): boolean {
   return min <= num && num <= max;
 }
 
-/**
- * Helper method to return the animation filename for a given move
- *
- * @param move the move for which the animation filename is needed
- */
-export function animationFileName(move: MoveId): string {
-  return MoveId[move].toLowerCase().replace(/_/g, "-");
-}
-
-/**
- * Transforms a camelCase string into a kebab-case string
- * @param str The camelCase string
- * @returns A kebab-case string
- *
- * @source {@link https://stackoverflow.com/a/67243723/}
- */
-export function camelCaseToKebabCase(str: string): string {
-  return str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, (s, o) => (o ? "-" : "") + s.toLowerCase());
-}
-
 /** Get the localized shiny descriptor for the provided variant
  * @param variant - The variant to get the shiny descriptor for
  * @returns The localized shiny descriptor
@@ -635,26 +536,4 @@ export function getShinyDescriptor(variant: Variant): string {
 export function coerceArray<T>(input: T): T extends any[] ? T : [T];
 export function coerceArray<T>(input: T): T | [T] {
   return Array.isArray(input) ? input : [input];
-}
-
-/**
- * Returns the name of the key that matches the enum [object] value.
- * @param input - The enum [object] to check
- * @param val - The value to get the key of
- * @returns The name of the key with the specified value
- * @example
- * const thing = {
- *   one: 1,
- *   two: 2,
- * } as const;
- * console.log(enumValueToKey(thing, thing.two)); // output: "two"
- * @throws An `Error` if an invalid enum value is passed to the function
- */
-export function enumValueToKey<T extends Record<string, string | number>>(input: T, val: T[keyof T]): keyof T {
-  for (const [key, value] of Object.entries(input)) {
-    if (val === value) {
-      return key as keyof T;
-    }
-  }
-  throw new Error(`Invalid value passed to \`enumValueToKey\`! Value: ${val}`);
 }

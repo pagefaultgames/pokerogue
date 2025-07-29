@@ -1,14 +1,15 @@
-import { TextStyle, addTextObject } from "../ui/text";
-import type { DamageResult } from "../@types/damage-result";
-import type Pokemon from "./pokemon";
-import { HitResult } from "#enums/hit-result";
-import { formatStat, fixedInt } from "#app/utils/common";
-import type { BattlerIndex } from "#enums/battler-index";
 import { globalScene } from "#app/global-scene";
+import type { BattlerIndex } from "#enums/battler-index";
+import { HitResult } from "#enums/hit-result";
+import { TextStyle } from "#enums/text-style";
+import type { Pokemon } from "#field/pokemon";
+import type { DamageResult } from "#types/damage-result";
+import { addTextObject } from "#ui/text";
+import { fixedInt, formatStat } from "#utils/common";
 
 type TextAndShadowArr = [string | null, string | null];
 
-export default class DamageNumberHandler {
+export class DamageNumberHandler {
   private damageNumbers: Map<BattlerIndex, Phaser.GameObjects.Text[]>;
 
   constructor() {

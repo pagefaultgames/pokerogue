@@ -1,14 +1,15 @@
-import type { EnemyPokemon, default as Pokemon } from "../field/pokemon";
-import { addTextObject, TextStyle } from "./text";
-import { fixedInt } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
-import type Move from "#app/data/moves/move";
-import type { BerryUsedEvent, MoveUsedEvent } from "../events/battle-scene";
-import { BattleSceneEventType } from "../events/battle-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
 import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
+import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
-import { getPokemonNameWithAffix } from "#app/messages";
+import type { BerryUsedEvent, MoveUsedEvent } from "#events/battle-scene";
+import { BattleSceneEventType } from "#events/battle-scene";
+import type { EnemyPokemon, Pokemon } from "#field/pokemon";
+import type { Move } from "#moves/move";
+import { addTextObject } from "#ui/text";
+import { fixedInt } from "#utils/common";
 
 /** Container for info about a {@linkcode Move} */
 interface MoveInfo {
@@ -22,7 +23,7 @@ interface MoveInfo {
 }
 
 /** A Flyout Menu attached to each {@linkcode BattleInfo} object on the field UI */
-export default class BattleFlyout extends Phaser.GameObjects.Container {
+export class BattleFlyout extends Phaser.GameObjects.Container {
   /** Is this object linked to a player's Pokemon? */
   private player: boolean;
 

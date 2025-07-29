@@ -1,13 +1,14 @@
 import { globalScene } from "#app/global-scene";
-import BattleFlyout from "../battle-flyout";
-import { addTextObject, TextStyle } from "#app/ui/text";
-import { addWindow, WindowVariant } from "#app/ui/ui-theme";
 import { Stat } from "#enums/stat";
+import { TextStyle } from "#enums/text-style";
+import type { EnemyPokemon } from "#field/pokemon";
+import { BattleFlyout } from "#ui/battle-flyout";
+import type { BattleInfoParamList } from "#ui/battle-info";
+import { BattleInfo } from "#ui/battle-info";
+import { addTextObject } from "#ui/text";
+import { addWindow, WindowVariant } from "#ui/ui-theme";
 import i18next from "i18next";
-import type { EnemyPokemon } from "#app/field/pokemon";
 import type { GameObjects } from "phaser";
-import BattleInfo from "./battle-info";
-import type { BattleInfoParamList } from "./battle-info";
 
 export class EnemyBattleInfo extends BattleInfo {
   protected player: false = false;
