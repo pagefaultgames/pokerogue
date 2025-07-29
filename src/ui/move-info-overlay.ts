@@ -10,16 +10,24 @@ import { fixedInt, getLocalizedSpriteKey } from "#utils/common";
 import i18next from "i18next";
 
 export interface MoveInfoOverlaySettings {
-  delayVisibility?: boolean; // if true, showing the overlay will only set it to active and populate the fields and the handler using this field has to manually call setVisible later.
-  top?: boolean; // should the effect box be on top?
-  right?: boolean; // should the effect box be on the right?
-  onSide?: boolean; // should the effect be on the side? ignores top argument if true
-  //location and width of the component; unaffected by scaling
+  /**
+   * If true, showing the overlay will only set it to active and populate the fields
+   * and the handler using this field has to manually call `setVisible` later.
+   */
+  delayVisibility?: boolean;
+  /** Whether the effect box should be on top */
+  top?: boolean;
+  /** Whether the effect box should be on the right */
+  right?: boolean;
+  /** Whether the effect box should be on the side. Overrides the `top` param if `true`. */
+  onSide?: boolean;
+  /** `x` position of the component, unaffected by scaling */
   x?: number;
+  /** `y` position of the component, unaffected by scaling */
   y?: number;
-  // Default width is half the screen
+  /** Width of the component, unaffected by scaling. Defaults to half the screen width. */
   width?: number;
-  // Determines whether to display the small secondary box
+  /** Whether to display the small secondary box */
   hideEffectBox?: boolean;
   hideBg?: boolean;
 }
