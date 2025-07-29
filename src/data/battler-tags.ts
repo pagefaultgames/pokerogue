@@ -68,7 +68,7 @@ a getter (and potentially, a setter) should be used instead.
 If a property that is intended to be private must be serialized, then it should instead
 be declared as a public readonly propety. Then, in the `loadTag` method (or any method inside the class that needs to adjust the property)
 use `(this as Mutable<this>).propertyName = value;`
-These rules ensure that typescript is aware of the shape of the serialized version of the class.
+These rules ensure that Typescript is aware of the shape of the serialized version of the class.
 */
 
 /** Interface containing the serializable fields of BattlerTag */
