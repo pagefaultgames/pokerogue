@@ -667,4 +667,15 @@ export class PhaseManager {
   ): void {
     this.startDynamicPhase(this.create(phase, ...args));
   }
+
+  /** Prevents end of turn effects from triggering when transitioning to a new biome on a X0 wave */
+  public onBiomeEnd(): void {
+    const phasesToRemove = ["WeatherEffectPhase", "BerryPhase", "CheckStatusEffectPhase"];
+    this.phaseQueue = this.phaseQueue.filter(p => !phasesToRemove.includes(p.phaseName));
+
+    const turnEndPhase = this.findPhase<TurnEndPhase>(p => p.phaseName === "TurnEndPhase");
+    if (turnEndPhase) {
+      turnEndPhase.endOfBiome = true;
+    }
+  }
 }
