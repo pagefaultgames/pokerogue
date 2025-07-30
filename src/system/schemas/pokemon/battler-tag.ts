@@ -1,5 +1,5 @@
 import { Z$NonNegativeInt, Z$PositiveInt } from "#system/schemas/common";
-import { Z$BattlerIndex } from "#system/schemas/v1.10/battler-index";
+import { Z$BattlerIndex } from "#system/schemas/pokemon/battler-index";
 import { z } from "zod";
 
 /*
@@ -126,17 +126,17 @@ const Z$BattlerTagLapseType = z.literal([0, 1, 2, 3, 4, 5, 6, 7, 8]);
 
 // DamagingTrapTag may have a `commonAnim` field, though it's always instantiated.
 const Z$BattlerTag = z.object({
-    tagType: Z$BattlerTagType,
-    lapseTypes: z.array(Z$BattlerTagLapseType),
-    turnCount: Z$PositiveInt,
-    // Source move can be `none` for tags not applied by move, so allow `0` here.
-    sourceMove: Z$NonNegativeInt,
-    sourceId: z.int().optional().catch(undefined),
-    isBatonPassable: z.boolean(),
+  tagType: Z$BattlerTagType,
+  lapseTypes: z.array(Z$BattlerTagLapseType),
+  turnCount: Z$PositiveInt,
+  // Source move can be `none` for tags not applied by move, so allow `0` here.
+  sourceMove: Z$NonNegativeInt,
+  sourceId: z.int().optional().catch(undefined),
+  isBatonPassable: z.boolean(),
 });
 
 export const Z$SeedTag = z.object({
-    ...Z$BattlerTag.shape,
-    seedType: z.literal("SEEDED"),
-    sourceIndex: Z$BattlerIndex,
-})
+  ...Z$BattlerTag.shape,
+  seedType: z.literal("SEEDED"),
+  sourceIndex: Z$BattlerIndex,
+});

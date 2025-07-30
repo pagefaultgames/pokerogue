@@ -1,13 +1,13 @@
 import { Z$BoolCatchToFalse, Z$NonNegativeInt, Z$PositiveInt } from "#schemas/common";
 import { Z$PokeballType } from "#schemas/pokeball-type";
-import { Z$PokemonMove } from "#schemas/pokemon-move";
-import { Z$PokemonBattleData } from "#system/schemas/v1.10/pokemon-battle-data";
-import { Z$Gender } from "#system/schemas/v1.10/pokemon-gender";
+import { NatureSchema } from "#schemas/pokemon/pokemon-nature";
+import { Z$IVSet, Z$StatSet } from "#schemas/pokemon/pokemon-stats";
+import { StatusSchema } from "#schemas/status-effect";
+import { Z$PokemonMove } from "#system/schemas/moves/pokemon-move";
+import { Z$PokemonBattleData } from "#system/schemas/pokemon/pokemon-battle-data";
+import { Z$Gender } from "#system/schemas/pokemon/pokemon-gender";
 import z from "zod";
-import { NatureSchema } from "./pokemon-nature";
-import { Z$IVSet, Z$StatSet } from "./pokemon-stats";
 import { Z$PokemonType } from "./pokemon-type";
-import { StatusSchema } from "./status-effect";
 
 /**
  *  Not meant to actually be used itself.

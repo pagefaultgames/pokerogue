@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-
 /**
  * Zod schema for a Pokémon move, as of version 1.10.
  */
@@ -14,4 +13,3 @@ export const Z$PokemonMove = z.object({
 // If necessary, we can define `transforms` which implicitly create an instance of the class.
 
 export type ParsedPokemonMove = z.output<typeof Z$PokemonMove>;
-

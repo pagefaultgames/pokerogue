@@ -1,5 +1,5 @@
-import type { Z$PokemonData } from "#system/schemas/v1.10/pokemon-data";
-import { NatureSchema } from "#system/schemas/v1.10/pokemon-nature";
+import type { Z$PokemonData } from "#system/schemas/pokemon/pokemon-data";
+import { NatureSchema } from "#system/schemas/pokemon/pokemon-nature";
 import type z from "zod";
 
 /**

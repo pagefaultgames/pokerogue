@@ -1,5 +1,5 @@
 import { Z$NonNegativeInt, Z$PositiveInt, Z$PositiveNumber } from "#system/schemas/common";
-import { Z$PokemonType } from "#system/schemas/v1.10/pokemon-type";
+import { Z$PokemonType } from "#system/schemas/pokemon/pokemon-type";
 import { z } from "zod";
 
 export const Z$PokemonSpeciesForm = z.object({
