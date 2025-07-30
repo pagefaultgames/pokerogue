@@ -987,6 +987,11 @@ export class PartyUiHandler extends MessageUiHandler {
     return !(this.partyUiMode === PartyUiMode.FAINT_SWITCH || this.partyUiMode === PartyUiMode.REVIVAL_BLESSING);
   }
 
+  /** 
+   * Return whether this UI handler is responsible for managing items.
+   * Used to ensure proper placement of mode toggle buttons in the UI, etc.
+   * @returns Whether the current handler is responsible for managing items.
+   */
   private isItemManageMode(): boolean {
     return this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER || this.partyUiMode === PartyUiMode.DISCARD;
   }
