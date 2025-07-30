@@ -6,10 +6,11 @@ import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#data/egg";
 import { Button } from "#enums/buttons";
 import { EggTier } from "#enums/egg-type";
 import { GachaType } from "#enums/gacha-types";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { getVoucherTypeIcon, VoucherType } from "#system/voucher";
 import { MessageUiHandler } from "#ui/message-ui-handler";
-import { addTextObject, getEggTierTextTint, getTextStyleOptions, TextStyle } from "#ui/text";
+import { addTextObject, getEggTierTextTint, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, randSeedShuffle } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
@@ -74,7 +75,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     const gachaInfoContainer = globalScene.add.container(160, 46);
 
     const currentLanguage = i18next.resolvedLanguage ?? "en";
-    let gachaTextStyle = TextStyle.WINDOW_ALT;
+    let gachaTextStyle: TextStyle = TextStyle.WINDOW_ALT;
     let gachaX = 4;
     let gachaY = 0;
     let pokemonIconX = -20;

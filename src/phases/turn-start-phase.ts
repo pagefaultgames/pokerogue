@@ -171,6 +171,9 @@ export class TurnStartPhase extends FieldPhase {
       this.handleTurnCommand(turnCommand, pokemon);
     });
 
+    // Queue various effects for the end of the turn.
+    phaseManager.pushNew("CheckInterludePhase");
+
     phaseManager.pushNew("WeatherEffectPhase");
     phaseManager.pushNew("BerryPhase");
 
@@ -179,10 +182,10 @@ export class TurnStartPhase extends FieldPhase {
 
     phaseManager.pushNew("TurnEndPhase");
 
-    /**
-     * this.end() will call shiftPhase(), which dumps everything from PrependQueue (aka everything that is unshifted()) to the front
-     * of the queue and dequeues to start the next phase
-     * this is important since stuff like SwitchSummon, AttemptRun, AttemptCapture Phases break the "flow" and should take precedence
+    /*
+     * `this.end()` will call `PhaseManager#shiftPhase()`, which dumps everything from `phaseQueuePrepend`
+     * (aka everything that is queued via `unshift()`) to the front of the queue and dequeues to start the next phase.
+     * This is important since stuff like `SwitchSummonPhase`, `AttemptRunPhase`, and `AttemptCapturePhase` break the "flow" and should take precedence
      */
     this.end();
   }

@@ -9,6 +9,7 @@ import { AttemptCapturePhase } from "#phases/attempt-capture-phase";
 import { AttemptRunPhase } from "#phases/attempt-run-phase";
 import { BattleEndPhase } from "#phases/battle-end-phase";
 import { BerryPhase } from "#phases/berry-phase";
+import { CheckInterludePhase } from "#phases/check-interlude-phase";
 import { CheckStatusEffectPhase } from "#phases/check-status-effect-phase";
 import { CheckSwitchPhase } from "#phases/check-switch-phase";
 import { CommandPhase } from "#phases/command-phase";
@@ -121,6 +122,7 @@ const PHASES = Object.freeze({
   AttemptRunPhase,
   BattleEndPhase,
   BerryPhase,
+  CheckInterludePhase,
   CheckStatusEffectPhase,
   CheckSwitchPhase,
   CommandPhase,
@@ -664,5 +666,16 @@ export class PhaseManager {
     ...args: ConstructorParameters<PhaseConstructorMap[T]>
   ): void {
     this.startDynamicPhase(this.create(phase, ...args));
+  }
+
+  /** Prevents end of turn effects from triggering when transitioning to a new biome on a X0 wave */
+  public onInterlude(): void {
+    const phasesToRemove = ["WeatherEffectPhase", "BerryPhase", "CheckStatusEffectPhase"];
+    this.phaseQueue = this.phaseQueue.filter(p => !phasesToRemove.includes(p.phaseName));
+
+    const turnEndPhase = this.findPhase<TurnEndPhase>(p => p.phaseName === "TurnEndPhase");
+    if (turnEndPhase) {
+      turnEndPhase.upcomingInterlude = true;
+    }
   }
 }
