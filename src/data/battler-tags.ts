@@ -2013,7 +2013,7 @@ export class TruantTag extends AbilityBattlerTag {
 
     const lastMove = pokemon.getLastXMoves()[0];
 
-    if (!lastMove) {
+    if (!lastMove || lastMove.move === MoveId.NONE) {
       // Don't interrupt move if last move was `Moves.NONE` OR no prior move was found
       return true;
     }
