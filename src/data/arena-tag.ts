@@ -32,7 +32,7 @@ import i18next from "i18next";
 /*
 ArenaTags are are meant for effects that are tied to the arena (as opposed to a specific pokemon).
 Examples include (but are not limited to)
-- Cross-turn effects that persist even if the user/target switches out, such as and Happy Hour
+- Cross-turn effects that persist even if the user/target switches out, such as Happy Hour
 - Effects that are applied to a specific side of the field, such as Crafty Shield, Reflect, and Spikes
 - Field-Effects, like Gravity and Trick Room
 
