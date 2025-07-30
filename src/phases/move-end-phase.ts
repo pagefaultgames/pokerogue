@@ -2,6 +2,7 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
+import { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
 import { PokemonPhase } from "#phases/pokemon-phase";
 
@@ -40,7 +41,7 @@ export class MoveEndPhase extends PokemonPhase {
     // Update the "last move used" counter for Copycat and co.
     if (this.passedPreUsageChecks) {
       // TODO: Make this check a move in flight instead of a hackjob
-      globalScene.currentBattle.lastMove = pokemon.getLastXMoves()[0].move;
+      globalScene.currentBattle.lastMove = pokemon.getLastXMoves()[0]?.move ?? MoveId.NONE;
     }
 
     // Remove effects which were set on a Pokemon which removes them on summon (i.e. via Mold Breaker)
