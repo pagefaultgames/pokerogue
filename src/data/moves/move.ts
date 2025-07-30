@@ -3121,7 +3121,7 @@ export class OverrideMoveEffectAttr extends MoveAttr {
    */
   declare private _: never;
   /**
-   * Apply the move attribute to override a move effect.
+   * Apply the move attribute to override other effects of this move.
    * @param user - The {@linkcode Pokemon} using the move
    * @param target - The {@linkcode Pokemon} targeted by the move
    * @param move - The {@linkcode Move} being used
