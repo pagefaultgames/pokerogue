@@ -76,10 +76,10 @@ describe("Moves - Dragon Tail", () => {
     game.override.battleStyle("double").enemyMoveset(MoveId.SPLASH).enemyAbility(AbilityId.ROUGH_SKIN);
     await game.classicMode.startBattle([SpeciesId.DRATINI, SpeciesId.DRATINI, SpeciesId.WAILORD, SpeciesId.WAILORD]);
 
-    const leadPokemon = game.scene.getPlayerParty()[0]!;
+    const leadPokemon = game.scene.getPlayerParty()[0];
 
-    const enemyLeadPokemon = game.scene.getEnemyParty()[0]!;
-    const enemySecPokemon = game.scene.getEnemyParty()[1]!;
+    const enemyLeadPokemon = game.scene.getEnemyParty()[0];
+    const enemySecPokemon = game.scene.getEnemyParty()[1];
 
     game.move.select(MoveId.DRAGON_TAIL, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
@@ -105,11 +105,11 @@ describe("Moves - Dragon Tail", () => {
     game.override.battleStyle("double").enemyMoveset(MoveId.SPLASH).enemyAbility(AbilityId.ROUGH_SKIN);
     await game.classicMode.startBattle([SpeciesId.DRATINI, SpeciesId.DRATINI, SpeciesId.WAILORD, SpeciesId.WAILORD]);
 
-    const leadPokemon = game.scene.getPlayerParty()[0]!;
-    const secPokemon = game.scene.getPlayerParty()[1]!;
+    const leadPokemon = game.scene.getPlayerParty()[0];
+    const secPokemon = game.scene.getPlayerParty()[1];
 
-    const enemyLeadPokemon = game.scene.getEnemyParty()[0]!;
-    const enemySecPokemon = game.scene.getEnemyParty()[1]!;
+    const enemyLeadPokemon = game.scene.getEnemyParty()[0];
+    const enemySecPokemon = game.scene.getEnemyParty()[1];
 
     game.move.select(MoveId.DRAGON_TAIL, 0, BattlerIndex.ENEMY);
     // target the same pokemon, second move should be redirected after first flees
