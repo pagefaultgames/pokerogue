@@ -113,8 +113,7 @@ describe("Items - Light Ball", () => {
   it("LIGHT_BALL held by fused PIKACHU (base)", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.MAROWAK]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
-    const ally = game.scene.getPlayerParty()[1];
+    const [partyMember, ally] = game.scene.getPlayerParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -152,8 +151,7 @@ describe("Items - Light Ball", () => {
   it("LIGHT_BALL held by fused PIKACHU (part)", async () => {
     await game.classicMode.startBattle([SpeciesId.MAROWAK, SpeciesId.PIKACHU]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
-    const ally = game.scene.getPlayerParty()[1];
+    const [partyMember, ally] = game.scene.getPlayerParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;

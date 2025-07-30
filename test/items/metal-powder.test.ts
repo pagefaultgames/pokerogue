@@ -107,8 +107,7 @@ describe("Items - Metal Powder", () => {
   it("METAL_POWDER held by fused DITTO (base)", async () => {
     await game.classicMode.startBattle([SpeciesId.DITTO, SpeciesId.MAROWAK]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
-    const ally = game.scene.getPlayerParty()[1];
+    const [partyMember, ally] = game.scene.getPlayerParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -140,8 +139,7 @@ describe("Items - Metal Powder", () => {
   it("METAL_POWDER held by fused DITTO (part)", async () => {
     await game.classicMode.startBattle([SpeciesId.MAROWAK, SpeciesId.DITTO]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
-    const ally = game.scene.getPlayerParty()[1];
+    const [partyMember, ally] = game.scene.getPlayerParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;

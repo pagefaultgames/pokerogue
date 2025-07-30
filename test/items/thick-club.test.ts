@@ -157,8 +157,7 @@ describe("Items - Thick Club", () => {
 
     await game.classicMode.startBattle([species[randSpecies], SpeciesId.PIKACHU]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
-    const ally = game.scene.getPlayerParty()[1];
+    const [partyMember, ally] = game.scene.getPlayerParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -194,8 +193,7 @@ describe("Items - Thick Club", () => {
 
     await game.classicMode.startBattle([SpeciesId.PIKACHU, species[randSpecies]]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
-    const ally = game.scene.getPlayerParty()[1];
+    const [partyMember, ally] = game.scene.getPlayerParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
