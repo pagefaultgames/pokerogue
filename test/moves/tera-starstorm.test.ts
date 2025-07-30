@@ -72,7 +72,7 @@ describe("Moves - Tera Starstorm", () => {
   it("targets both opponents in a double battle when used by Terapagos immediately after terastallizing", async () => {
     await game.classicMode.startBattle([SpeciesId.TERAPAGOS]);
 
-    const terapagos = game.scene.getPlayerParty()[0];
+    const terapagos = game.field.getPlayerPokemon();
     terapagos.isTerastallized = false;
 
     game.move.selectWithTera(MoveId.TERA_STARSTORM, 0);
@@ -89,7 +89,7 @@ describe("Moves - Tera Starstorm", () => {
   it("targets only one opponent in a double battle when used by Terapagos without terastallizing", async () => {
     await game.classicMode.startBattle([SpeciesId.TERAPAGOS]);
 
-    const terapagos = game.scene.getPlayerParty()[0];
+    const terapagos = game.field.getPlayerPokemon();
     terapagos.isTerastallized = false;
 
     game.move.select(MoveId.TERA_STARSTORM, 0, BattlerIndex.ENEMY);

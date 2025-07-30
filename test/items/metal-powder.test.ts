@@ -33,7 +33,7 @@ describe("Items - Metal Powder", () => {
     const consoleSpy = vi.spyOn(console, "log");
     await game.classicMode.startBattle([SpeciesId.DITTO]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
+    const partyMember = game.field.getPlayerPokemon();
 
     // Checking console log to make sure Metal Powder is applied when getEffectiveStat (with the appropriate stat) is called
     partyMember.getEffectiveStat(Stat.DEF);
@@ -84,7 +84,7 @@ describe("Items - Metal Powder", () => {
   it("METAL_POWDER held by DITTO", async () => {
     await game.classicMode.startBattle([SpeciesId.DITTO]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
+    const partyMember = game.field.getPlayerPokemon();
 
     const defStat = partyMember.getStat(Stat.DEF);
 
@@ -171,7 +171,7 @@ describe("Items - Metal Powder", () => {
   it("METAL_POWDER not held by DITTO", async () => {
     await game.classicMode.startBattle([SpeciesId.MAROWAK]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
+    const partyMember = game.field.getPlayerPokemon();
 
     const defStat = partyMember.getStat(Stat.DEF);
 

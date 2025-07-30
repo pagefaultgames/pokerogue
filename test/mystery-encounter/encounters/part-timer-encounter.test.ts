@@ -110,7 +110,7 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(1), true, false);
       // Expect PP of mon's moves to have been reduced to 2
-      const moves = scene.getPlayerParty()[0].moveset;
+      const moves = field.getPlayerPokemon().moveset;
       for (const move of moves) {
         expect((move?.getMovePp() ?? 0) - (move?.ppUsed ?? 0)).toBe(2);
       }
@@ -257,12 +257,12 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.PART_TIMER, defaultParty);
       // Mock moveset
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(MoveId.ATTRACT)];
+      field.getPlayerPokemon().moveset = [new PokemonMove(MoveId.ATTRACT)];
       await runMysteryEncounterToEnd(game, 3);
 
       expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(2.5), true, false);
       // Expect PP of mon's moves to have been reduced to 2
-      const moves = scene.getPlayerParty()[0].moveset;
+      const moves = field.getPlayerPokemon().moveset;
       for (const move of moves) {
         expect((move?.getMovePp() ?? 0) - (move?.ppUsed ?? 0)).toBe(2);
       }

@@ -76,7 +76,7 @@ describe("Moves - Dragon Tail", () => {
     game.override.battleStyle("double").enemyMoveset(MoveId.SPLASH).enemyAbility(AbilityId.ROUGH_SKIN);
     await game.classicMode.startBattle([SpeciesId.DRATINI, SpeciesId.DRATINI, SpeciesId.WAILORD, SpeciesId.WAILORD]);
 
-    const leadPokemon = game.scene.getPlayerParty()[0];
+    const leadPokemon = game.field.getPlayerPokemon();
 
     const [enemyLeadPokemon, enemySecPokemon] = game.scene.getEnemyParty();
 

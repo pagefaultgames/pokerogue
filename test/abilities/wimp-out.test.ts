@@ -336,7 +336,7 @@ describe("Abilities - Wimp Out", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.getPlayerParty()[0].getHpRatio()).toEqual(0.51);
+    expect(game.field.getPlayerPokemon().getHpRatio()).toEqual(0.51);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(SpeciesId.WIMPOD);
   });

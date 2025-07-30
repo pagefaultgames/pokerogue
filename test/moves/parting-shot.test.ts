@@ -80,19 +80,19 @@ describe("Moves - Parting Shot", () => {
       // use Memento 3 times to debuff enemy
       game.move.select(MoveId.MEMENTO);
       await game.phaseInterceptor.to(FaintPhase);
-      expect(game.scene.getPlayerParty()[0].isFainted()).toBe(true);
+      expect(game.field.getPlayerPokemon().isFainted()).toBe(true);
       game.doSelectPartyPokemon(1);
 
       await game.phaseInterceptor.to(TurnInitPhase, false);
       game.move.select(MoveId.MEMENTO);
       await game.phaseInterceptor.to(FaintPhase);
-      expect(game.scene.getPlayerParty()[0].isFainted()).toBe(true);
+      expect(game.field.getPlayerPokemon().isFainted()).toBe(true);
       game.doSelectPartyPokemon(2);
 
       await game.phaseInterceptor.to(TurnInitPhase, false);
       game.move.select(MoveId.MEMENTO);
       await game.phaseInterceptor.to(FaintPhase);
-      expect(game.scene.getPlayerParty()[0].isFainted()).toBe(true);
+      expect(game.field.getPlayerPokemon().isFainted()).toBe(true);
       game.doSelectPartyPokemon(3);
 
       // set up done
@@ -177,8 +177,8 @@ describe("Moves - Parting Shot", () => {
       game.move.select(MoveId.SPLASH);
 
       // intentionally kill party pokemon, switch to second slot (now 1 party mon is fainted)
-      await game.killPokemon(game.scene.getPlayerParty()[0]);
-      expect(game.scene.getPlayerParty()[0].isFainted()).toBe(true);
+      await game.killPokemon(game.field.getPlayerPokemon());
+      expect(game.field.getPlayerPokemon().isFainted()).toBe(true);
       await game.phaseInterceptor.run(MessagePhase);
       game.doSelectPartyPokemon(1);
 
