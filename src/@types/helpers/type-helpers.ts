@@ -35,7 +35,7 @@ export type Mutable<T> = {
 };
 
 /**
- * Type helper to obtain the keys associated with a given value inside a `const object`.
+ * Type helper to obtain the keys associated with a given value inside an object.
  * @typeParam O - The type of the object
  * @typeParam V - The type of one of O's values
  */
@@ -44,9 +44,10 @@ export type InferKeys<O extends object, V extends ObjectValues<O>> = {
 }[keyof O];
 
 /**
- * Utility type to obtain the values of a given object.
- * This can be (among other things) used to extract the values from a `const object`,
- * or convert an `enum` interface produced by `typeof Enum` into the union type representing its values.
+ * Utility type to obtain the values of a given object. \
+ * Functions similar to `keyof E`, except producing the values instead of the keys.
+ * @remarks
+ * This can be used to convert an `enum` interface produced by `typeof Enum` into the union type representing its members.
  */
 export type ObjectValues<E extends object> = E[keyof E];
 
