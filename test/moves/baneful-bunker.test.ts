@@ -36,8 +36,8 @@ describe("Moves - Baneful Bunker", () => {
   test("should protect the user and poison attackers that make contact", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -48,8 +48,8 @@ describe("Moves - Baneful Bunker", () => {
   test("should protect the user and poison attackers that make contact, regardless of accuracy checks", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -65,8 +65,8 @@ describe("Moves - Baneful Bunker", () => {
     game.override.moveset(MoveId.FLASH_CANNON);
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.FLASH_CANNON);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);

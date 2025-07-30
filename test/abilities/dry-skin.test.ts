@@ -35,7 +35,7 @@ describe("Abilities - Dry Skin", () => {
   it("during sunlight, lose 1/8 of maximum health at the end of each turn", async () => {
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     // first turn
     game.move.select(MoveId.SUNNY_DAY);
@@ -52,7 +52,7 @@ describe("Abilities - Dry Skin", () => {
   it("during rain, gain 1/8 of maximum health at the end of each turn", async () => {
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     enemy.hp = 1;
 
@@ -72,7 +72,7 @@ describe("Abilities - Dry Skin", () => {
     game.override.moveset([MoveId.FLAMETHROWER]);
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     const initialHP = 1000;
     enemy.hp = initialHP;
 
@@ -95,7 +95,7 @@ describe("Abilities - Dry Skin", () => {
   it("opposing water attacks heal 1/4 of maximum health and deal no damage", async () => {
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     enemy.hp = 1;
 
@@ -109,7 +109,7 @@ describe("Abilities - Dry Skin", () => {
 
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     enemy.hp = 1;
 
@@ -123,7 +123,7 @@ describe("Abilities - Dry Skin", () => {
 
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     enemy.hp = 1;
 
@@ -145,7 +145,7 @@ describe("Abilities - Dry Skin", () => {
   it("opposing water moves still heal regardless of accuracy check", async () => {
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.WATER_GUN);
     enemy.hp = enemy.hp - 1;

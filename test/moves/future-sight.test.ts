@@ -40,6 +40,6 @@ describe("Moves - Future Sight", () => {
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.scene.getEnemyPokemon()!.isFullHp()).toBe(false);
+    expect(game.field.getEnemyPokemon().isFullHp()).toBe(false);
   });
 });

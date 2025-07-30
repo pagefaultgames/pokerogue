@@ -35,13 +35,13 @@ describe("Moves - Grudge", () => {
   it("should reduce the PP of the Pokemon's move to 0 when the user has fainted", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
+    const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.EMBER);
     await game.move.selectEnemyMove(MoveId.GRUDGE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    const playerMove = playerPokemon?.getMoveset().find(m => m.moveId === MoveId.EMBER);
+    const playerMove = playerPokemon.getMoveset().find(m => m.moveId === MoveId.EMBER);
 
     expect(playerMove?.getPpRatio()).toBe(0);
   });
@@ -49,7 +49,7 @@ describe("Moves - Grudge", () => {
   it("should remain in effect until the user's next move", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
+    const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.GRUDGE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -60,7 +60,7 @@ describe("Moves - Grudge", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    const playerMove = playerPokemon?.getMoveset().find(m => m.moveId === MoveId.EMBER);
+    const playerMove = playerPokemon.getMoveset().find(m => m.moveId === MoveId.EMBER);
 
     expect(playerMove?.getPpRatio()).toBe(0);
   });
@@ -74,17 +74,17 @@ describe("Moves - Grudge", () => {
       .enemySpecies(SpeciesId.RATTATA);
     await game.classicMode.startBattle([SpeciesId.GEODUDE]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
-    const playerPokemon = game.scene.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.FALSE_SWIPE);
     await game.move.selectEnemyMove(MoveId.GRUDGE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon?.isFainted()).toBe(true);
+    expect(enemyPokemon.isFainted()).toBe(true);
 
-    const playerMove = playerPokemon?.getMoveset().find(m => m.moveId === MoveId.FALSE_SWIPE);
+    const playerMove = playerPokemon.getMoveset().find(m => m.moveId === MoveId.FALSE_SWIPE);
     expect(playerMove?.getPpRatio()).toBeGreaterThan(0);
   });
 });
