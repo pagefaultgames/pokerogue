@@ -143,7 +143,7 @@ export class MoveHelper extends GameManagerHelper {
     }
   }
 
-  /** Helper function to get the index of the selected move in the selected part member's moveset. */
+  /** Helper function to get the index of the selected move in the selected party member's moveset. */
   private getMovePosition(pokemonIndex: BattlerIndex.PLAYER | BattlerIndex.PLAYER_2, move: MoveId): number {
     const playerPokemon = this.game.scene.getPlayerField()[pokemonIndex];
     const moveset = playerPokemon.getMoveset();
@@ -153,17 +153,18 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Modifies a player pokemon's moveset to contain only the selected move and then
+   * Modifies a player pokemon's moveset to contain only the selected move, and then
    * selects it to be used during the next {@linkcode CommandPhase}.
    *
-   * Warning: Will disable the player moveset override if it is enabled!
+   * **Warning**: Will disable the player moveset override if it is enabled, as well as any mid-battle moveset changes!
    *
-   * Note: If you need to check for changes in the player's moveset as part of the test, it may be
-   * best to use {@linkcode changeMoveset} and {@linkcode select} instead.
-   * @param moveId - the move to use
-   * @param pkmIndex - The {@linkcode BattlerIndex} of the player Pokemon using the move. Relevant for double battles only and defaults to {@linkcode BattlerIndex.PLAYER} if not specified.
-   * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves; should be omitted for multi-target moves.
-   * @param useTera - If `true`, the Pokemon will attempt to Terastallize even without a Tera Orb; default `false`.
+   * @param moveId - The {@linkcode MoveId} to use
+   * @param pkmIndex - The {@linkcode BattlerIndex} of the player Pokemon using the move. Relevant for double battles only and defaults to {@linkcode BattlerIndex.PLAYER} if not specified
+   * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves; should be omitted for multi-target moves
+   * @param useTera - If `true`, the Pokemon will attempt to Terastallize even without a Tera Orb; default `false`
+   * @remarks
+   * If you need to check for changes in the player's moveset as part of the test, it may be
+   * better to use {@linkcode changeMoveset} and {@linkcode select} instead.
    */
   public use(
     moveId: MoveId,
@@ -176,9 +177,12 @@ export class MoveHelper extends GameManagerHelper {
       console.warn("Warning: `MoveHelper.use` overwriting player pokemon moveset and disabling moveset override!");
     }
 
+    // Clear out both the normal and temporary movesets before setting the move.
     const pokemon = this.game.scene.getPlayerField()[pkmIndex];
-    pokemon.moveset = [new PokemonMove(moveId)];
-
+    pokemon.moveset.splice();
+    pokemon.summonData.moveset?.splice()
+    pokemon.setMove(0, moveId);
+    
     if (useTera) {
       this.selectWithTera(moveId, pkmIndex, targetIndex);
       return;
@@ -211,7 +215,7 @@ export class MoveHelper extends GameManagerHelper {
   /**
    * Changes a pokemon's moveset to the given move(s).
    *
-   * Used when the normal moveset override can't be used (such as when it's necessary to check or update properties of the moveset).
+   * Useful when normal moveset overrides can't be used (such as when it's necessary to check or update properties of the moveset).
    *
    * **Note**: Will disable the moveset override matching the pokemon's party.
    * @param pokemon - The {@linkcode Pokemon} being modified
@@ -232,8 +236,8 @@ export class MoveHelper extends GameManagerHelper {
     moveset = coerceArray(moveset);
     expect(moveset.length, "Cannot assign more than 4 moves to a moveset!").toBeLessThanOrEqual(4);
     pokemon.moveset = [];
-    moveset.forEach(move => {
-      pokemon.moveset.push(new PokemonMove(move));
+    moveset.forEach((move, i) => {
+      pokemon.setMove(i, move);
     });
     const movesetStr = moveset.map(moveId => MoveId[moveId]).join(", ");
     console.log(`Pokemon ${pokemon.species.name}'s moveset manually set to ${movesetStr} (=[${moveset.join(", ")}])!`);
