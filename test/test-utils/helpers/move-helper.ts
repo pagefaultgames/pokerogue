@@ -179,10 +179,10 @@ export class MoveHelper extends GameManagerHelper {
 
     // Clear out both the normal and temporary movesets before setting the move.
     const pokemon = this.game.scene.getPlayerField()[pkmIndex];
-    pokemon.moveset.splice();
-    pokemon.summonData.moveset?.splice()
+    pokemon.moveset.splice(0);
+    pokemon.summonData.moveset?.splice(0);
     pokemon.setMove(0, moveId);
-    
+
     if (useTera) {
       this.selectWithTera(moveId, pkmIndex, targetIndex);
       return;
