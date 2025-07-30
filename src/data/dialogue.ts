@@ -1,6 +1,7 @@
 import { BattleSpec } from "#enums/battle-spec";
 import { TrainerType } from "#enums/trainer-type";
 import { trainerConfigs } from "#trainers/trainer-config";
+import { capitalizeFirstLetter } from "#utils/strings";
 
 export interface TrainerTypeMessages {
   encounter?: string | string[];
@@ -1755,8 +1756,7 @@ export function initTrainerTypeDialogue(): void {
           trainerConfigs[trainerType][`${messageType}Messages`] = messages[0][messageType];
         }
         if (messages.length > 1) {
-          trainerConfigs[trainerType][`female${messageType.slice(0, 1).toUpperCase()}${messageType.slice(1)}Messages`] =
-            messages[1][messageType];
+          trainerConfigs[trainerType][`female${capitalizeFirstLetter(messageType)}Messages`] = messages[1][messageType];
         }
       } else {
         trainerConfigs[trainerType][`${messageType}Messages`] = messages[messageType];
