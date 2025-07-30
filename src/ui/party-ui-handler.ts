@@ -1312,10 +1312,10 @@ export class PartyUiHandler extends MessageUiHandler {
   showPartyText() {
     switch (this.partyUiMode) {
       case PartyUiMode.MODIFIER_TRANSFER:
-        this.showText(i18next.t("partyUiHandler:PartyTransfer"));
+        this.showText(i18next.t("partyUiHandler:partyTransfer"));
         break;
       case PartyUiMode.DISCARD:
-        this.showText(i18next.t("partyUiHandler:PartyDiscard"));
+        this.showText(i18next.t("partyUiHandler:partyDiscard"));
         break;
       default:
         this.showText("", 0);
