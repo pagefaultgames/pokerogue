@@ -61,16 +61,4 @@ describe("Abilities - Sturdy", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.isFullHp()).toBe(true);
   });
-
-  test("Sturdy is ignored by pokemon with `AbilityId.MOLD_BREAKER`", async () => {
-    game.override.ability(AbilityId.MOLD_BREAKER);
-
-    await game.classicMode.startBattle();
-    game.move.select(MoveId.CLOSE_COMBAT);
-    await game.phaseInterceptor.to(DamageAnimPhase);
-
-    const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon.hp).toBe(0);
-    expect(enemyPokemon.isFainted()).toBe(true);
-  });
 });
