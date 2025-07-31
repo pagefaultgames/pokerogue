@@ -1,9 +1,10 @@
 import { updateUserInfo } from "#app/account";
 import { globalScene } from "#app/global-scene";
+import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { sessionIdKey } from "#utils/common";
 import { removeCookie } from "#utils/cookies";
 import i18next from "i18next";

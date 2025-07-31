@@ -87,8 +87,9 @@ import type { AttackMoveResult } from "#types/attack-move-result";
 import type { Localizable } from "#types/locales";
 import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveClassMap, MoveKindString } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
-import { BooleanHolder, type Constructor, isNullOrUndefined, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue, toReadableString } from "#utils/common";
+import { BooleanHolder, type Constructor, isNullOrUndefined, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
+import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
 /**
@@ -8137,7 +8138,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
     }
     const type = validTypes[user.randBattleSeedInt(validTypes.length)];
     user.summonData.types = [ type ];
-    globalScene.phaseManager.queueMessage(i18next.t("battle:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), type: toReadableString(PokemonType[type]) }));
+    globalScene.phaseManager.queueMessage(i18next.t("battle:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), type: toTitleCase(PokemonType[type]) }));
     user.updateInfo();
 
     return true;
@@ -10799,7 +10800,7 @@ export function initMoves() {
     new SelfStatusMove(MoveId.NO_RETREAT, PokemonType.FIGHTING, -1, 5, -1, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.NO_RETREAT, true, false)
-      .condition((user, target, move) => user.getTag(TrappedTag)?.sourceMove !== MoveId.NO_RETREAT), // fails if the user is currently trapped by No Retreat
+      .condition((user, target, move) => user.getTag(TrappedTag)?.tagType !== BattlerTagType.NO_RETREAT), // fails if the user is currently trapped by No Retreat
     new StatusMove(MoveId.TAR_SHOT, PokemonType.ROCK, 100, 15, -1, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1)
       .attr(AddBattlerTagAttr, BattlerTagType.TAR_SHOT, false)

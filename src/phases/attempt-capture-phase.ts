@@ -279,6 +279,7 @@ export class AttemptCapturePhase extends PokemonPhase {
             globalScene.updateModifiers(true);
             removePokemon();
             if (newPokemon) {
+              newPokemon.leaveField(true, true, false);
               newPokemon.loadAssets().then(end);
             } else {
               end();
