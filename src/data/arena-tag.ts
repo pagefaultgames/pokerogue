@@ -51,7 +51,7 @@ import i18next from "i18next";
  *
  * If the data is mutable (i.e. it can change over the course of the tag's lifetime), then it *must*
  * be defined as a field, and it must be set in the `loadTag` method.
- * Such fields cannot be marked as `private/protected`, as if they were, typescript would omit them from
+ * Such fields cannot be marked as `private`/`protected`; if they were, Typescript would omit them from
  * types that are based off of the class, namely, `ArenaTagTypeData`. It is preferrable to trade the
  * type-safety of private/protected fields for the type safety when deserializing arena tags from save data.
  *
@@ -61,16 +61,16 @@ import i18next from "i18next";
  * If the field should be accessible outside of the class, then a public getter should be used.
  *
  *  If any new serializable fields *are* added, then the class *must* override the
- * `loadTag` method to set the new fields. It's signature *must* match the example below,
+ * `loadTag` method to set the new fields. Its signature *must* match the example below,
  * ```
- * class ClassName extends SerializableArenaTag {
+ * class ExampleTag extends SerializableArenaTag {
  *   // Example, if we add 2 new fields that should be serialized:
  *   public a: string;
  *   public b: number;
  *   // Then we must also define a loadTag method with one of the following signatures
- *   public override loadTag(source: BaseArenaTag & Pick<ClassName, "tagType" | "a" | "b"): void;
+ *   public override loadTag(source: BaseArenaTag & Pick<ExampleTag, "tagType" | "a" | "b"): void;
  *   public override loadTag<const T extends this>(source: BaseArenaTag & Pick<T, "tagType" | "a" | "b">): void;
- *   public override loadTag(source: NonFunctionProperties<ClassName>): void;
+ *   public override loadTag(source: NonFunctionProperties<ExampleTag>): void;
  * }
  * ```
  * Notes

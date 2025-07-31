@@ -71,16 +71,16 @@ import { BooleanHolder, coerceArray, getFrameMs, isNullOrUndefined, NumberHolder
  * These rules ensure that Typescript is aware of the shape of the serialized version of the class.
  *
  * If any new serializable fields *are* added, then the class *must* override the
- * `loadTag` method to set the new fields. It's signature *must* match the example below:
+ * `loadTag` method to set the new fields. Its signature *must* match the example below:
  * ```
- * class ClassName extends SerializableBattlerTag {
+ * class ExampleTag extends SerializableBattlerTag {
  *   // Example, if we add 2 new fields that should be serialized:
  *   public a: string;
  *   public b: number;
  *   // Then we must also define a loadTag method with one of the following signatures
- *   public override loadTag(source: BaseBattlerTag & Pick<ClassName, "tagType" | "a" | "b"): void;
+ *   public override loadTag(source: BaseBattlerTag & Pick<ExampleTag, "tagType" | "a" | "b"): void;
  *   public override loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "a" | "b">): void;
- *   public override loadTag(source: NonFunctionProperties<ClassName>): void;
+ *   public override loadTag(source: NonFunctionProperties<ExampleTag>): void;
  * }
  * ```
  * Notes
