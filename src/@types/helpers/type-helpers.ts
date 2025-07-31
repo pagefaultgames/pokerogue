@@ -6,8 +6,6 @@
 import type { AbAttr } from "#abilities/ability";
 // biome-ignore-end lint/correctness/noUnusedImports: Used in a tsdoc comment
 
-import type { EnumValues } from "#types/enum-types";
-
 /**
  * Exactly matches the type of the argument, preventing adding additional properties.
  *
@@ -37,16 +35,25 @@ export type Mutable<T> = {
 };
 
 /**
- * Type helper to obtain the keys associated with a given value inside a `const object`.
+ * Type helper to obtain the keys associated with a given value inside an object.
  * @typeParam O - The type of the object
  * @typeParam V - The type of one of O's values
  */
-export type InferKeys<O extends Record<keyof any, unknown>, V extends EnumValues<O>> = {
+export type InferKeys<O extends object, V extends ObjectValues<O>> = {
   [K in keyof O]: O[K] extends V ? K : never;
 }[keyof O];
 
 /**
- * Type helper that matches any `Function` type. Equivalent to `Function`, but will not raise a warning from Biome.
+ * Utility type to obtain the values of a given object. \
+ * Functions similar to `keyof E`, except producing the values instead of the keys.
+ * @remarks
+ * This can be used to convert an `enum` interface produced by `typeof Enum` into the union type representing its members.
+ */
+export type ObjectValues<E extends object> = E[keyof E];
+
+/**
+ * Type helper that matches any `Function` type.
+ * Equivalent to `Function`, but will not raise a warning from Biome.
  */
 export type AnyFn = (...args: any[]) => any;
 
@@ -65,6 +72,7 @@ export type NonFunctionProperties<T> = {
 
 /**
  * Type helper to extract out non-function properties from a type, recursively applying to nested properties.
+ * This can be used to mimic the effects of JSON serialization and de-serialization on a given type.
  */
 export type NonFunctionPropertiesRecursive<Class> = {
   [K in keyof Class as Class[K] extends AnyFn ? never : K]: Class[K] extends Array<infer U>
