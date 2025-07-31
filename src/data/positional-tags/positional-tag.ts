@@ -163,11 +163,11 @@ export class WishTag extends PositionalTag implements WishArgs {
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", this.targetIndex, this.healHp, null, true, false);
   }
 
-  public shouldTrigger(): boolean {
+  override shouldTrigger(): boolean {
     // Disappear if no target or target is fainted.
     // The source need not exist at the time of activation (since all we need is a simple message)
     // TODO: Verify whether Wish shows a message if the Pokemon it would affect is KO'd on the turn of activation
     const target = this.getTarget();
-    return !target || target.isFainted();
+    return !!target && !target.isFainted();
   }
 }
