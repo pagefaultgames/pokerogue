@@ -425,9 +425,8 @@ export abstract class Move implements Localizable {
 
   /**
    * Sets the {@linkcode MoveFlags.MAKES_CONTACT} flag for the calling Move
-   * @param setFlag Default `true`, set to `false` if the move doesn't make contact
-   * @see {@linkcode AbilityId.STATIC}
-   * @returns The {@linkcode Move} that called this function
+   * @param setFlag - Whether the move should make contact; default `true`
+   * @returns `this`
    */
   makesContact(setFlag: boolean = true): this {
     this.setFlag(MoveFlags.MAKES_CONTACT, setFlag);
@@ -3634,8 +3633,7 @@ export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
 /**
  * Attribute implementing the stat boosting effect of {@link https://bulbapedia.bulbagarden.net/wiki/Order_Up_(move) | Order Up}.
  * If the user has a Pokemon with {@link https://bulbapedia.bulbagarden.net/wiki/Commander_(Ability) | Commander} in their mouth,
- * one of the user's stats are increased by 1 stage, depending on the "commanding" Pokemon's form. This effect does not respect
- * effect chance, but Order Up itself may be boosted by Sheer Force.
+ * one of the user's stats are increased by 1 stage, depending on the "commanding" Pokemon's form.
  */
 export class OrderUpStatBoostAttr extends MoveEffectAttr {
   constructor() {
@@ -9289,7 +9287,7 @@ export function initMoves() {
     new SelfStatusMove(MoveId.STOCKPILE, PokemonType.NORMAL, -1, 20, -1, 0, 3)
       .condition(user => (user.getTag(StockpilingTag)?.stockpiledCount ?? 0) < 3)
       .attr(AddBattlerTagAttr, BattlerTagType.STOCKPILING, true),
-    new AttackMove(MoveId.SPIT_UP, PokemonType.NORMAL, MoveCategory.SPECIAL, -1, -1, 10, -1, 0, 3)
+    new AttackMove(MoveId.SPIT_UP, PokemonType.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
       .condition(hasStockpileStacksCondition)
       .attr(SpitUpPowerAttr, 100)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.STOCKPILING ], true),
@@ -9532,7 +9530,7 @@ export function initMoves() {
     new AttackMove(MoveId.SAND_TOMB, PokemonType.GROUND, MoveCategory.PHYSICAL, 35, 85, 15, -1, 0, 3)
       .attr(TrapAttr, BattlerTagType.SAND_TOMB)
       .makesContact(false),
-    new AttackMove(MoveId.SHEER_COLD, PokemonType.ICE, MoveCategory.SPECIAL, 200, 20, 5, -1, 0, 3)
+    new AttackMove(MoveId.SHEER_COLD, PokemonType.ICE, MoveCategory.SPECIAL, 200, 30, 5, -1, 0, 3)
       .attr(IceNoEffectTypeAttr)
       .attr(OneHitKOAttr)
       .attr(SheerColdAccuracyAttr),
@@ -10457,7 +10455,7 @@ export function initMoves() {
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.FLYING, BattlerTagType.FLOATING, BattlerTagType.TELEKINESIS ])
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new AttackMove(MoveId.THOUSAND_WAVES, PokemonType.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
+    new AttackMove(MoveId.THOUSAND_WAVES, PokemonType.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, 100, 0, 6)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1, 1, true)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -10992,7 +10990,8 @@ export function initMoves() {
     new StatusMove(MoveId.LIFE_DEW, PokemonType.WATER, -1, 10, -1, 0, 8)
       .attr(HealAttr, 0.25, true, false)
       .target(MoveTarget.USER_AND_ALLIES)
-      .ignoresProtect(),
+      .ignoresProtect()
+      .triageMove(),
     new SelfStatusMove(MoveId.OBSTRUCT, PokemonType.DARK, 100, 10, -1, 4, 8)
       .attr(ProtectAttr, BattlerTagType.OBSTRUCT)
       .condition(failIfLastCondition),
@@ -11070,7 +11069,8 @@ export function initMoves() {
     new StatusMove(MoveId.JUNGLE_HEALING, PokemonType.GRASS, -1, 10, -1, 0, 8)
       .attr(HealAttr, 0.25, true, false)
       .attr(HealStatusEffectAttr, false, getNonVolatileStatusEffects())
-      .target(MoveTarget.USER_AND_ALLIES),
+      .target(MoveTarget.USER_AND_ALLIES)
+      .triageMove(),
     new AttackMove(MoveId.WICKED_BLOW, PokemonType.DARK, MoveCategory.PHYSICAL, 75, 100, 5, -1, 0, 8)
       .attr(CritOnlyAttr)
       .punchingMove(),
@@ -11298,7 +11298,7 @@ export function initMoves() {
       .makesContact(false),
     new AttackMove(MoveId.LUMINA_CRASH, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, 100, 0, 9)
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], -2),
-    new AttackMove(MoveId.ORDER_UP, PokemonType.DRAGON, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 9)
+    new AttackMove(MoveId.ORDER_UP, PokemonType.DRAGON, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 9)
       .attr(OrderUpStatBoostAttr)
       .makesContact(false),
     new AttackMove(MoveId.JET_PUNCH, PokemonType.WATER, MoveCategory.PHYSICAL, 60, 100, 15, -1, 1, 9)
@@ -11481,7 +11481,7 @@ export function initMoves() {
       .attr(IvyCudgelTypeAttr)
       .attr(HighCritAttr)
       .makesContact(false),
-    new ChargingAttackMove(MoveId.ELECTRO_SHOT, PokemonType.ELECTRIC, MoveCategory.SPECIAL, 130, 100, 10, 100, 0, 9)
+    new ChargingAttackMove(MoveId.ELECTRO_SHOT, PokemonType.ELECTRIC, MoveCategory.SPECIAL, 130, 100, 10, -1, 0, 9)
       .chargeText(i18next.t("moveTriggers:absorbedElectricity", { pokemonName: "{USER}" }))
       .chargeAttr(StatStageChangeAttr, [ Stat.SPATK ], 1, true)
       .chargeAttr(WeatherInstantChargeAttr, [ WeatherType.RAIN, WeatherType.HEAVY_RAIN ]),

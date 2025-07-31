@@ -109,6 +109,15 @@ export type SerializableBattlerTagType = keyof {
 export type NonSerializableBattlerTagType = Exclude<BattlerTagType, SerializableBattlerTagType>;
 
 /**
+ * Type-safe representation of an arbitrary, serialized Battler Tag
+ */
+export type BattlerTagTypeData = Parameters<
+  BattlerTagTypeMap[keyof {
+    [K in keyof BattlerTagTypeMap as K extends SerializableBattlerTagType ? K : never]: BattlerTagTypeMap[K];
+  }]["loadTag"]
+>[0];
+
+/**
  * Dummy, typescript-only declaration to ensure that
  * {@linkcode BattlerTagTypeMap} has an entry for all `BattlerTagType`s.
  *
