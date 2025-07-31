@@ -26,38 +26,58 @@ import type {
   ArenaTrapTagType,
   SerializableArenaTagType,
 } from "#types/arena-tags";
-import type { Mutable, NonFunctionProperties } from "#types/type-helpers";
+import type { Mutable } from "#types/type-helpers";
 import { BooleanHolder, isNullOrUndefined, NumberHolder, toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
-/*
-ArenaTags are are meant for effects that are tied to the arena (as opposed to a specific pokemon).
-Examples include (but are not limited to)
-- Cross-turn effects that persist even if the user/target switches out, such as Wish, Future Sight, and Happy Hour
-- Effects that are applied to a specific side of the field, such as Crafty Shield, Reflect, and Spikes
-- Field-Effects, like Gravity and Trick Room
-
-Any arena tag that persists across turns *must* extend from `SerializableArenaTag` in the class definition signature.
-
-Serializable ArenaTags have strict rules for their fields.
-These rules ensure that only the data necessary to reconstruct the tag is serialized, and that the
-session loader is able to deserialize saved tags correctly.
-
-If the data is static (i.e. it is always the same for all instances of the class, such as the 
-type that is weakened by Mud Sport/Water Sport), then it must not be defined as a field, and must
-instead be defined as a getter.
-A static property is also acceptable, though static properties are less ergonomic with inheritance.
-
-If the data is mutable (i.e. it can change over the course of the tag's lifetime), then it *must*
-be defined as a field, and it must be set in the `loadTag` method.
-Such fields cannot be marked as `private/protected`, as if they were, typescript would omit them from
-types that are based off of the class, namely, `ArenaTagTypeData`. It is preferrable to trade the
-type-safety of private/protected fields for the type safety when deserializing arena tags from save data.
-
-For data that is mutable only within a turn (e.g. SuppressAbilitiesTag's beingRemoved field),
-where it does not make sense to be serialized, the field should use ES2020's private field syntax (a `#` prepended to the field name).
-If the field should be accessible outside of the class, then a public getter should be used.
-*/
+/**
+ * @module
+ * ArenaTags are are meant for effects that are tied to the arena (as opposed to a specific pokemon).
+ * Examples include (but are not limited to)
+ * - Cross-turn effects that persist even if the user/target switches out, such as Wish, Future Sight, and Happy Hour
+ * - Effects that are applied to a specific side of the field, such as Crafty Shield, Reflect, and Spikes
+ * - Field-Effects, like Gravity and Trick Room
+ *
+ * Any arena tag that persists across turns *must* extend from `SerializableArenaTag` in the class definition signature.
+ *
+ * Serializable ArenaTags have strict rules for their fields.
+ * These rules ensure that only the data necessary to reconstruct the tag is serialized, and that the
+ * session loader is able to deserialize saved tags correctly.
+ *
+ * If the data is static (i.e. it is always the same for all instances of the class, such as the
+ * type that is weakened by Mud Sport/Water Sport), then it must not be defined as a field, and must
+ * instead be defined as a getter.
+ * A static property is also acceptable, though static properties are less ergonomic with inheritance.
+ *
+ * If the data is mutable (i.e. it can change over the course of the tag's lifetime), then it *must*
+ * be defined as a field, and it must be set in the `loadTag` method.
+ * Such fields cannot be marked as `private`/`protected`; if they were, Typescript would omit them from
+ * types that are based off of the class, namely, `ArenaTagTypeData`. It is preferrable to trade the
+ * type-safety of private/protected fields for the type safety when deserializing arena tags from save data.
+ *
+ * For data that is mutable only within a turn (e.g. SuppressAbilitiesTag's beingRemoved field),
+ * where it does not make sense to be serialized, the field should use ES2020's
+ * [private field syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_elements#private_fields).
+ * If the field should be accessible outside of the class, then a public getter should be used.
+ *
+ *  If any new serializable fields *are* added, then the class *must* override the
+ * `loadTag` method to set the new fields. Its signature *must* match the example below,
+ * ```
+ * class ExampleTag extends SerializableArenaTag {
+ *   // Example, if we add 2 new fields that should be serialized:
+ *   public a: string;
+ *   public b: number;
+ *   // Then we must also define a loadTag method with one of the following signatures
+ *   public override loadTag(source: BaseArenaTag & Pick<ExampleTag, "tagType" | "a" | "b"): void;
+ *   public override loadTag<const T extends this>(source: BaseArenaTag & Pick<T, "tagType" | "a" | "b">): void;
+ *   public override loadTag(source: NonFunctionProperties<ExampleTag>): void;
+ * }
+ * ```
+ * Notes
+ * - If the class has any subclasses, then the second form of `loadTag` *must* be used.
+ * - The third form *must not* be used if the class has any getters, as typescript would expect such fields to be
+ *   present in `source`.
+ */
 
 /** Interface containing the serializable fields of ArenaTagData. */
 interface BaseArenaTag {
@@ -141,9 +161,9 @@ export abstract class ArenaTag implements BaseArenaTag {
   /**
    * When given a arena tag or json representing one, load the data for it.
    * This is meant to be inherited from by any arena tag with custom attributes
-   * @param source - The {@linkcode BaseArenaTag} being loaded
+   * @param source - The arena tag being loaded
    */
-  loadTag(source: BaseArenaTag): void {
+  loadTag<const T extends this>(source: BaseArenaTag & Pick<T, "tagType">): void {
     this.turnCount = source.turnCount;
     this.sourceMove = source.sourceMove;
     this.sourceId = source.sourceId;
@@ -646,7 +666,9 @@ class WishTag extends SerializableArenaTag {
     }
   }
 
-  override loadTag(source: NonFunctionProperties<WishTag>): void {
+  public override loadTag<const T extends this>(
+    source: BaseArenaTag & Pick<T, "tagType" | "healHp" | "sourceName" | "battlerIndex">,
+  ): void {
     super.loadTag(source);
     (this as Mutable<this>).battlerIndex = source.battlerIndex;
     (this as Mutable<this>).healHp = source.healHp;
@@ -813,7 +835,7 @@ export abstract class ArenaTrapTag extends SerializableArenaTag {
       : Phaser.Math.Linear(0, 1 / Math.pow(2, this.layers), Math.min(pokemon.getHpRatio(), 0.5) * 2);
   }
 
-  loadTag(source: NonFunctionProperties<ArenaTrapTag>): void {
+  public loadTag<T extends this>(source: BaseArenaTag & Pick<T, "tagType" | "layers" | "maxLayers">): void {
     super.loadTag(source);
     this.layers = source.layers;
     this.maxLayers = source.maxLayers;
@@ -1581,7 +1603,7 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
     this.#beingRemoved = false;
   }
 
-  public override loadTag(source: NonFunctionProperties<SuppressAbilitiesTag>): void {
+  public override loadTag(source: BaseArenaTag & Pick<SuppressAbilitiesTag, "tagType" | "sourceCount">): void {
     super.loadTag(source);
     (this as Mutable<this>).sourceCount = source.sourceCount;
   }
