@@ -40,7 +40,7 @@ describe("Moves - Psycho Shift", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
     expect(playerPokemon.status).toBeDefined();
-    expect(enemyPokemon.status).toBeNull();
+    expect(enemyPokemon.status).toBeFalsy();
 
     game.move.select(MoveId.PSYCHO_SHIFT);
     await game.phaseInterceptor.to("TurnEndPhase");

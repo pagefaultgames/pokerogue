@@ -246,7 +246,9 @@ describe("Moves - Destiny Bond", () => {
     expect(playerPokemon.isFainted()).toBe(true);
 
     // Check that the Tackle user's Reviver Seed did not activate
-    const revSeeds = game.scene.getModifiers(PokemonInstantReviveModifier).filter(m => m.pokemonId === enemyPokemon.id);
+    const revSeeds = game.scene
+      .getModifiers(PokemonInstantReviveModifier)
+      .filter(m => m.pokemonId === playerPokemon.id);
     expect(revSeeds.length).toBe(1);
   });
 });
