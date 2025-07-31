@@ -28,7 +28,8 @@ describe("Check Biome End Phase", () => {
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH)
       .ability(AbilityId.BALL_FETCH)
-      .startingLevel(100);
+      .startingLevel(100)
+      .battleStyle("single");
   });
 
   it("should not trigger end of turn effects when defeating the final pokemon of a biome in classic", async () => {
