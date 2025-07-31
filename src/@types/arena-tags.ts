@@ -1,6 +1,6 @@
 import type { ArenaTagTypeMap } from "#data/arena-tag";
 import type { ArenaTagType } from "#enums/arena-tag-type";
-import type { NonFunctionProperties } from "./type-helpers";
+import type { NonFunctionProperties } from "#types/type-helpers";
 
 /** Subset of {@linkcode ArenaTagType}s that apply some negative effect to pokemon that switch in ({@link https://bulbapedia.bulbagarden.net/wiki/List_of_moves_that_cause_entry_hazards#List_of_traps | entry hazards} and Imprison. */
 export type ArenaTrapTagType =

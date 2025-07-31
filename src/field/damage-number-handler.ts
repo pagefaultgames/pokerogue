@@ -1,9 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import type { BattlerIndex } from "#enums/battler-index";
 import { HitResult } from "#enums/hit-result";
+import { TextStyle } from "#enums/text-style";
 import type { Pokemon } from "#field/pokemon";
 import type { DamageResult } from "#types/damage-result";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { fixedInt, formatStat } from "#utils/common";
 
 type TextAndShadowArr = [string | null, string | null];

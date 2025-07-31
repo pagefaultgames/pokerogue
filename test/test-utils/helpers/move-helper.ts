@@ -12,7 +12,8 @@ import type { CommandPhase } from "#phases/command-phase";
 import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
 import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import { coerceArray, toReadableString } from "#utils/common";
+import { coerceArray } from "#utils/common";
+import { toTitleCase } from "#utils/strings";
 import type { MockInstance } from "vitest";
 import { expect, vi } from "vitest";
 
@@ -66,12 +67,12 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        `MoveHelper.select called with move '${toReadableString(MoveId[move])}' not in moveset!` +
-          `\nBattler Index: ${toReadableString(BattlerIndex[pkmIndex])}` +
+        `MoveHelper.select called with move '${toTitleCase(MoveId[move])}' not in moveset!` +
+          `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}` +
           `\nMoveset: [${this.game.scene
             .getPlayerParty()
             [pkmIndex].getMoveset()
-            .map(pm => toReadableString(MoveId[pm.moveId]))
+            .map(pm => toTitleCase(MoveId[pm.moveId]))
             .join(", ")}]`,
       );
     }
@@ -110,12 +111,12 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        `MoveHelper.selectWithTera called with move '${toReadableString(MoveId[move])}' not in moveset!` +
-          `\nBattler Index: ${toReadableString(BattlerIndex[pkmIndex])}` +
+        `MoveHelper.selectWithTera called with move '${toTitleCase(MoveId[move])}' not in moveset!` +
+          `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}` +
           `\nMoveset: [${this.game.scene
             .getPlayerParty()
             [pkmIndex].getMoveset()
-            .map(pm => toReadableString(MoveId[pm.moveId]))
+            .map(pm => toTitleCase(MoveId[pm.moveId]))
             .join(", ")}]`,
       );
     }
@@ -209,12 +210,27 @@ export class MoveHelper extends GameManagerHelper {
 
   /**
    * Changes a pokemon's moveset to the given move(s).
+   *
    * Used when the normal moveset override can't be used (such as when it's necessary to check or update properties of the moveset).
+   *
+   * **Note**: Will disable the moveset override matching the pokemon's party.
    * @param pokemon - The {@linkcode Pokemon} being modified
    * @param moveset - The {@linkcode MoveId} (single or array) to change the Pokemon's moveset to.
    */
   public changeMoveset(pokemon: Pokemon, moveset: MoveId | MoveId[]): void {
+    if (pokemon.isPlayer()) {
+      if (coerceArray(Overrides.MOVESET_OVERRIDE).length > 0) {
+        vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
+        console.warn("Player moveset override disabled due to use of `game.move.changeMoveset`!");
+      }
+    } else {
+      if (coerceArray(Overrides.OPP_MOVESET_OVERRIDE).length > 0) {
+        vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([]);
+        console.warn("Enemy moveset override disabled due to use of `game.move.changeMoveset`!");
+      }
+    }
     moveset = coerceArray(moveset);
+    expect(moveset.length, "Cannot assign more than 4 moves to a moveset!").toBeLessThanOrEqual(4);
     pokemon.moveset = [];
     moveset.forEach(move => {
       pokemon.moveset.push(new PokemonMove(move));

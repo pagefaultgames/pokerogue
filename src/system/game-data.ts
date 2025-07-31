@@ -1459,11 +1459,10 @@ export class GameData {
 
       reader.onload = (_ => {
         return e => {
-          let dataName: string;
+          let dataName = GameDataType[dataType].toLowerCase();
           let dataStr = AES.decrypt(e.target?.result?.toString()!, saveKey).toString(enc.Utf8); // TODO: is this bang correct?
           let valid = false;
           try {
-            dataName = GameDataType[dataType].toLowerCase();
             switch (dataType) {
               case GameDataType.SYSTEM: {
                 dataStr = this.convertSystemDataStr(dataStr);
@@ -1498,7 +1497,6 @@ export class GameData {
 
           const displayError = (error: string) =>
             globalScene.ui.showText(error, null, () => globalScene.ui.showText("", 0), fixedInt(1500));
-          dataName = dataName!; // tell TS compiler that dataName is defined!
 
           if (!valid) {
             return globalScene.ui.showText(
