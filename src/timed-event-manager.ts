@@ -397,6 +397,16 @@ export class TimedEventManager {
     return timedEvents.some((te: TimedEvent) => this.isActive(te));
   }
 
+  /**
+   * Check whether the current event is active and for April Fools.
+   * @returns Whether the April Fools event is currently active.
+   */
+  isAprilFoolsActive(): boolean {
+    return timedEvents.some(
+      te => this.isActive(te) && te.hasOwnProperty("bannerKey") && te.bannerKey!.startsWith("aprf"),
+    );
+  }
+
   activeEventHasBanner(): boolean {
     const activeEvents = timedEvents.filter(te => this.isActive(te) && te.hasOwnProperty("bannerKey"));
     return activeEvents.length > 0;

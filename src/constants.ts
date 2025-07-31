@@ -94,3 +94,10 @@ export const AVERAGE_ENCOUNTERS_PER_RUN_TARGET = 12;
  * So anti-variance adds -15/256 to the spawn weight check for ME spawn.
  */
 export const ANTI_VARIANCE_WEIGHT_MODIFIER = 15;
+
+/**
+ * The chance (out of 1) that a different title logo will show when the title screen is drawn.
+ * Inverted during April Fools (such that this becomes the chance for the _normal_ title logo is displayed).
+ * Default: `10000` (0.1%)
+ */
+export const FAKE_TITLE_LOGO_CHANCE = 10000;
