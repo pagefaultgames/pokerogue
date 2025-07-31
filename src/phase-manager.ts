@@ -244,6 +244,21 @@ export class PhaseManager {
     this.dynamicPhaseTypes = [PostSummonPhase];
   }
 
+  /**
+   * Clear all previously set phases, then add a new {@linkcode TitlePhase} to transition to the title screen.
+   * @param addLogin - Whether to add a new {@linkcode LoginPhase} before the {@linkcode TitlePhase}
+   * (but reset everything else).
+   * Default `false`
+   */
+  public toTitleScreen(addLogin = false): void {
+    this.clearAllPhases();
+
+    if (addLogin) {
+      this.unshiftNew("LoginPhase");
+    }
+    this.unshiftNew("TitlePhase");
+  }
+
   /* Phase Functions */
   getCurrentPhase(): Phase | null {
     return this.currentPhase;
