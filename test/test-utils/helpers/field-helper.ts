@@ -5,7 +5,6 @@ import type { globalScene } from "#app/global-scene";
 import type { Ability } from "#abilities/ability";
 import { allAbilities } from "#data/data-lists";
 import type { AbilityId } from "#enums/ability-id";
-import type { BattlerIndex } from "#enums/battler-index";
 import type { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
@@ -45,18 +44,21 @@ export class FieldHelper extends GameManagerHelper {
   }
 
   /**
-   * @returns The {@linkcode BattlerIndex | indexes} of Pokemon on the field in order of decreasing Speed.
+   * Helper function to return all on-field {@linkcode Pokemon} in speed order (fastest first).
+   * @returns An array containing all {@linkcode Pokemon} on the field in order of descending Speed.
    * Speed ties are returned in increasing order of index.
    *
    * @remarks
    * This does not account for Trick Room as it does not modify the _speed_ of Pokemon on the field,
    * only their turn order.
    */
-  public getSpeedOrder(): BattlerIndex[] {
+  public getSpeedOrder(): Pokemon[] {
     return this.game.scene
       .getField(true)
-      .sort((pA, pB) => pB.getEffectiveStat(Stat.SPD) - pA.getEffectiveStat(Stat.SPD))
-      .map(p => p.getBattlerIndex());
+      .sort(
+        (pA, pB) =>
+          pB.getEffectiveStat(Stat.SPD) - pA.getEffectiveStat(Stat.SPD) || pA.getBattlerIndex() - pB.getBattlerIndex(),
+      );
   }
 
   /**
