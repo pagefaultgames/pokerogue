@@ -44,12 +44,20 @@ export type InferKeys<O extends object, V extends ObjectValues<O>> = {
 }[keyof O];
 
 /**
- * Utility type to obtain the values of a given object. \
- * Functions similar to `keyof E`, except producing the values instead of the keys.
+ * Type helper to construct a union type of the type of each field in an object.
+ *
+ * @typeParam T - The type of the object to extract values from.
+ *
  * @remarks
- * This can be used to convert an `enum` interface produced by `typeof Enum` into the union type representing its members.
+ * Can be used to convert an `enum` interface produced by `typeof Enum` into the union type representing its members.
+ *
+ * @example
+ * ```ts
+ * type oneThruThree = ObjectValues<{ a: 1, b: 2, c: 3 }>
+ * //   ^?  1 | 2 | 3
+ * ```
  */
-export type ObjectValues<E extends object> = E[keyof E];
+export type ObjectValues<T extends object> = T[keyof T];
 
 /**
  * Type helper that matches any `Function` type.
@@ -64,6 +72,7 @@ export type AnyFn = (...args: any[]) => any;
  * Useful to produce a type that is roughly the same as the type of `{... obj}`, where `obj` is an instance of `T`.
  * A couple of differences:
  * - Private and protected properties are not included.
+ * - Accessors with getters *are* included
  * - Nested properties are not recursively extracted. For this, use {@linkcode NonFunctionPropertiesRecursive}
  */
 export type NonFunctionProperties<T> = {

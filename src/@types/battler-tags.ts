@@ -127,6 +127,11 @@ export type BattlerTagTypeData = Parameters<
 >[0];
 
 /**
+ * Subset of {@linkcode BattlerTagType}s whose associated `BattlerTag` adds a serializable `moveId` field
+ */
+export type BattlerTagTypeWithMoveId = BattlerTagType.DISABLED | BattlerTagType.GORILLA_TACTICS | BattlerTagType.ENCORE;
+
+/**
  * Dummy, typescript-only declaration to ensure that
  * {@linkcode BattlerTagTypeMap} has an entry for all `BattlerTagType`s.
  *
