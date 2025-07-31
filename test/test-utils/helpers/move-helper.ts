@@ -325,10 +325,16 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Force the move used by Metronome to be a specific move.
-   * @param move - The move to force metronome to use
-   * @param once - If `true`, uses {@linkcode MockInstance#mockReturnValueOnce} when mocking, else uses {@linkcode MockInstance#mockReturnValue}.
+   * Force the next move(s) used by Metronome to be a specific move. \
+   * Triggers during the next upcoming {@linkcode MoveEffectPhase} that Metronome is used.
+   * @param move - The move to force Metronome to call
+   * @param once - If `true`, mocks the return value exactly once; default `false`
    * @returns The spy that for Metronome that was mocked (Usually unneeded).
+   * @example
+   * ```ts
+   * game.move.use(MoveId.METRONOME);
+   * game.move.forceMetronomeMove(MoveId.FUTURE_SIGHT); // Can be in any order
+   * ```
    */
   public forceMetronomeMove(move: MoveId, once = false): MockInstance {
     const spy = vi.spyOn(allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0], "getMoveOverride");
