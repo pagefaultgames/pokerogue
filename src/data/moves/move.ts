@@ -3135,7 +3135,7 @@ export class OverrideMoveEffectAttr extends MoveAttr {
    * `[1]`: The {@linkcode MoveUseMode} dictating how this move was used.
    * @returns `true` if the move effect was successfully overridden.
    */
-  override apply(_user: Pokemon, _target: Pokemon, _move: Move, _args: [overridden: BooleanHolder, useMode: MoveUseMode]): boolean {
+  public override apply(_user: Pokemon, _target: Pokemon, _move: Move, _args: [overridden: BooleanHolder, useMode: MoveUseMode]): boolean {
     return true;
   }
 }
@@ -3171,7 +3171,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
     this.chargeText = chargeKey;
   }
 
-  override apply(user: Pokemon, target: Pokemon, move: Move, args: [overridden: BooleanHolder, useMode: MoveUseMode]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: [overridden: BooleanHolder, useMode: MoveUseMode]): boolean {
     const useMode = args[1];
     if (useMode === MoveUseMode.DELAYED_ATTACK) {
       // don't trigger if already queueing an indirect attack
@@ -3203,7 +3203,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
     return true;
   }
 
-  override getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     // Check the arena if another similar attack is active and affecting the same slot
     return (_user, target) => globalScene.arena.positionalTagManager.canAddTag(PositionalTagType.DELAYED_ATTACK, target.getBattlerIndex())
   }
@@ -3214,7 +3214,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
  * The tag whill heal
  */
 export class WishAttr extends MoveEffectAttr {
-  override apply(user: Pokemon, target: Pokemon, _move: Move): boolean {
+  public override apply(user: Pokemon, target: Pokemon, _move: Move): boolean {
     globalScene.arena.positionalTagManager.addTag<PositionalTagType.WISH>({
       tagType: PositionalTagType.WISH,
       healHp: toDmgValue(user.getMaxHp() / 2),
@@ -3225,7 +3225,7 @@ export class WishAttr extends MoveEffectAttr {
     return true;
   }
 
-  override getCondition(): MoveConditionFunc {
+  public override getCondition(): MoveConditionFunc {
     // Check the arena if another wish is active and affecting the same slot
     return (_user, target) => globalScene.arena.positionalTagManager.canAddTag(PositionalTagType.WISH, target.getBattlerIndex())
   }
