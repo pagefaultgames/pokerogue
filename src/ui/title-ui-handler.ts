@@ -42,7 +42,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     this.titleContainer.setAlpha(0);
     ui.add(this.titleContainer);
 
-    const logo = globalScene.add.image(globalScene.game.canvas.width / 6 / 2, 8, this.getLogo());
+    const logo = globalScene.add.image(globalScene.scaledCanvas.width / 2, 8, this.getLogo());
     logo.setOrigin(0.5, 0);
     this.titleContainer.add(logo);
 
