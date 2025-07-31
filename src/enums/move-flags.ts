@@ -4,15 +4,19 @@
  */
 export enum MoveFlags {
   NONE = 0,
+  /**
+   * Whether the move makes contact.
+   * Set by default on all contact moves, and unset by default on all special moves.
+   */
   MAKES_CONTACT = 1 << 0,
   IGNORE_PROTECT = 1 << 1,
   /**
    * Sound-based moves have the following effects:
-   * - Pokemon with the {@linkcode AbilityId.SOUNDPROOF Soundproof Ability} are unaffected by other Pokemon's sound-based moves.
-   * - Pokemon affected by {@linkcode MoveId.THROAT_CHOP Throat Chop} cannot use sound-based moves for two turns.
-   * - Sound-based moves used by a Pokemon with {@linkcode AbilityId.LIQUID_VOICE Liquid Voice} become Water-type moves.
-   * - Sound-based moves used by a Pokemon with {@linkcode AbilityId.PUNK_ROCK Punk Rock} are boosted by 30%. Pokemon with Punk Rock also take half damage from sound-based moves.
-   * - All sound-based moves (except Howl) can hit Pokemon behind an active {@linkcode MoveId.SUBSTITUTE Substitute}.
+   * - Pokemon with the {@linkcode AbilityId.SOUNDPROOF | Soundproof}  Ability are unaffected by other Pokemon's sound-based moves.
+   * - Pokemon affected by {@linkcode MoveId.THROAT_CHOP | Throat Chop} cannot use sound-based moves for two turns.
+   * - Sound-based moves used by a Pokemon with {@linkcode AbilityId.LIQUID_VOICE | Liquid Voice} become Water-type moves.
+   * - Sound-based moves used by a Pokemon with {@linkcode AbilityId.PUNK_ROCK | Punk Rock} are boosted by 30%. Pokemon with Punk Rock also take half damage from sound-based moves.
+   * - All sound-based moves (except Howl) can hit Pokemon behind an active {@linkcode MoveId.SUBSTITUTE | Substitute}.
    *
    * cf https://bulbapedia.bulbagarden.net/wiki/Sound-based_move
    */

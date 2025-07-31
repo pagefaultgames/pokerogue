@@ -382,8 +382,7 @@ export class GameChallengesUiHandler extends UiHandler {
         this.cursorObj?.setVisible(true);
         this.updateChallengeArrows(this.startCursor.visible);
       } else {
-        globalScene.phaseManager.clearPhaseQueue();
-        globalScene.phaseManager.pushNew("TitlePhase");
+        globalScene.phaseManager.toTitleScreen();
         globalScene.phaseManager.getCurrentPhase()?.end();
       }
       success = true;
