@@ -1659,7 +1659,10 @@ export function getArenaTag(
  * @param source - An arena tag
  * @returns The valid arena tag
  */
-export function loadArenaTag(source: ArenaTag | ArenaTagTypeData): ArenaTag {
+export function loadArenaTag(source: ArenaTag | ArenaTagTypeData | { tagType: ArenaTagType.NONE }): ArenaTag {
+  if (source.tagType === ArenaTagType.NONE) {
+    return new NoneTag();
+  }
   const tag =
     getArenaTag(source.tagType, source.turnCount, source.sourceMove, source.sourceId, source.side) ?? new NoneTag();
   tag.loadTag(source);

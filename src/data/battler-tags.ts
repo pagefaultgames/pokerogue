@@ -201,7 +201,7 @@ export class BattlerTag implements BaseBattlerTag {
   }
 }
 
-export abstract class SerializableBattlerTag extends BattlerTag {
+export class SerializableBattlerTag extends BattlerTag {
   /** Nonexistent, dummy field to allow typescript to distinguish this class from `BattlerTag` */
   private declare __SerializableBattlerTag: never;
 }
@@ -3641,7 +3641,7 @@ export function getBattlerTag(
     case BattlerTagType.FRENZY:
       return new FrenzyTag(turnCount, sourceMove, sourceId);
     case BattlerTagType.CHARGING:
-      return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
+      return new SerializableBattlerTag(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
     case BattlerTagType.ENCORE:
       return new EncoreTag(sourceId);
     case BattlerTagType.HELPING_HAND:
@@ -3726,10 +3726,10 @@ export function getBattlerTag(
       return new DragonCheerTag();
     case BattlerTagType.ALWAYS_CRIT:
     case BattlerTagType.IGNORE_ACCURACY:
-      return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, 2, sourceMove);
+      return new SerializableBattlerTag(tagType, BattlerTagLapseType.TURN_END, 2, sourceMove);
     case BattlerTagType.ALWAYS_GET_HIT:
     case BattlerTagType.RECEIVE_DOUBLE_DAMAGE:
-      return new BattlerTag(tagType, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
+      return new SerializableBattlerTag(tagType, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
     case BattlerTagType.BYPASS_SLEEP:
       return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
     case BattlerTagType.IGNORE_FLYING:
