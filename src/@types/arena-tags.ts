@@ -9,9 +9,6 @@ export type ArenaTrapTagType =
   | ArenaTagType.STEALTH_ROCK
   | ArenaTagType.IMPRISON;
 
-/** Subset of {@linkcode ArenaTagType}s that are considered delayed attacks */
-export type ArenaDelayedAttackTagType = ArenaTagType.FUTURE_SIGHT | ArenaTagType.DOOM_DESIRE;
-
 /** Subset of {@linkcode ArenaTagType}s that create {@link https://bulbapedia.bulbagarden.net/wiki/Category:Screen-creating_moves | screens}. */
 export type ArenaScreenTagType = ArenaTagType.REFLECT | ArenaTagType.LIGHT_SCREEN | ArenaTagType.AURORA_VEIL;
 
