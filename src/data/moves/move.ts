@@ -3162,7 +3162,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
   /**
    * @param chargeAnim - The {@linkcode ChargeAnim | charging animation} used for the move's charging phase.
    * @param chargeKey - The `i18next` locales **key** to show when the delayed attack is used.
-   * In the displayed text, `{{pokemonName}}` and `{{targetName}}` will be populated with the user's & target's names respectively.
+   * In the displayed text, `{{pokemonName}}` will be populated with the user's name.
    */
   constructor(chargeAnim: ChargeAnim, chargeKey: string) {
     super();
@@ -3171,7 +3171,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
     this.chargeText = chargeKey;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: [overridden: BooleanHolder, useMode: MoveUseMode]): boolean {
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: [overridden: BooleanHolder, useMode: MoveUseMode]): boolean {
     const useMode = args[1];
     if (useMode === MoveUseMode.DELAYED_ATTACK) {
       // don't trigger if already queueing an indirect attack
@@ -3186,13 +3186,12 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
     globalScene.phaseManager.queueMessage(
       i18next.t(
         this.chargeText,
-        // uncomment if any new delayed moves actually use target in the move text.
-        {pokemonName: getPokemonNameWithAffix(user)/*, targetName: getPokemonNameWithAffix(target) */}
+        { pokemonName: getPokemonNameWithAffix(user) }
       )
     )
 
-    user.pushMoveHistory({move: move.id, targets: [target.getBattlerIndex()], result: MoveResult.OTHER, useMode: useMode, turn: globalScene.currentBattle.turn})
-
+    user.pushMoveHistory({move: move.id, targets: [target.getBattlerIndex()], result: MoveResult.OTHER, useMode, turn: globalScene.currentBattle.turn})
+    user.pushMoveHistory({move: move.id, targets: [target.getBattlerIndex()], result: MoveResult.OTHER, useMode, turn: globalScene.currentBattle.turn})
     // Queue up an attack on the given slot.
     globalScene.arena.positionalTagManager.addTag<PositionalTagType.DELAYED_ATTACK>({
       tagType: PositionalTagType.DELAYED_ATTACK,
@@ -3204,15 +3203,18 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
     return true;
   }
 
-  public override getCondition(): MoveConditionFunc {
+  override getCondition(): MoveConditionFunc {
     // Check the arena if another similar attack is active and affecting the same slot
-    return (_user, target, move) => globalScene.arena.positionalTagManager.canAddTag(PositionalTagType.DELAYED_ATTACK, target.getBattlerIndex())
+    return (_user, target) => globalScene.arena.positionalTagManager.canAddTag(PositionalTagType.DELAYED_ATTACK, target.getBattlerIndex())
   }
 }
 
-/** Attribute to queue a {@linkcode WishTag} to activate in 2 turns. */
+/**
+ * Attribute to queue a {@linkcode WishTag} to activate in 2 turns.
+ * The tag whill heal
+ */
 export class WishAttr extends MoveEffectAttr {
-  apply(user: Pokemon, target: Pokemon, _move: Move): boolean {
+  override apply(user: Pokemon, target: Pokemon, _move: Move): boolean {
     globalScene.arena.positionalTagManager.addTag<PositionalTagType.WISH>({
       tagType: PositionalTagType.WISH,
       healHp: toDmgValue(user.getMaxHp() / 2),
@@ -3223,7 +3225,7 @@ export class WishAttr extends MoveEffectAttr {
     return true;
   }
 
-  public override getCondition(): MoveConditionFunc {
+  override getCondition(): MoveConditionFunc {
     // Check the arena if another wish is active and affecting the same slot
     return (_user, target) => globalScene.arena.positionalTagManager.canAddTag(PositionalTagType.WISH, target.getBattlerIndex())
   }
@@ -9265,7 +9267,7 @@ export function initMoves() {
       .ignoresProtect()
       /*
        * Should not apply abilities or held items if user is off the field
-      */
+       */
       .edgeCase(),
     new AttackMove(MoveId.ROCK_SMASH, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 15, 50, 0, 2)
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1),

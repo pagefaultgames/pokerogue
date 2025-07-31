@@ -41,10 +41,11 @@ export interface PositionalTagBaseArgs {
 export abstract class PositionalTag implements PositionalTagBaseArgs {
   /** This tag's {@linkcode PositionalTagType | type} */
   public abstract readonly tagType: PositionalTagType;
-  // These arguments have to be public to implement the interface, but are functionally private.
+  // These arguments have to be public to implement the interface, but are functionally private
+  // outside this and the tag manager.
   // Left undocumented to inherit doc comments from the interface
   public turnCount: number;
-  public targetIndex: BattlerIndex;
+  public readonly targetIndex: BattlerIndex;
 
   constructor({ turnCount, targetIndex }: PositionalTagBaseArgs) {
     this.turnCount = turnCount;
@@ -87,8 +88,8 @@ interface DelayedAttackArgs extends PositionalTagBaseArgs {
  */
 export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs {
   public override readonly tagType = PositionalTagType.DELAYED_ATTACK;
-  public sourceMove: MoveId;
-  public sourceId: number;
+  public readonly sourceMove: MoveId;
+  public readonly sourceId: number;
 
   constructor({ sourceId, turnCount, targetIndex, sourceMove }: DelayedAttackArgs) {
     super({ turnCount, targetIndex });
@@ -96,7 +97,7 @@ export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs
     this.sourceMove = sourceMove;
   }
 
-  override trigger(): void {
+  public override trigger(): void {
     // Bangs are justified as the `shouldTrigger` method will queue the tag for removal
     // if the source or target no longer exist
     const source = globalScene.getPokemonById(this.sourceId)!;
@@ -119,7 +120,7 @@ export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs
     );
   }
 
-  override shouldTrigger(): boolean {
+  public override shouldTrigger(): boolean {
     const source = globalScene.getPokemonById(this.sourceId);
     const target = this.getTarget();
     // Silently disappear if either source or target are missing or happen to be the same pokemon
@@ -143,16 +144,16 @@ interface WishArgs extends PositionalTagBaseArgs {
 export class WishTag extends PositionalTag implements WishArgs {
   public override readonly tagType = PositionalTagType.WISH;
 
-  readonly pokemonName: string;
+  public readonly pokemonName: string;
+  public readonly healHp: number;
 
-  public healHp: number;
   constructor({ turnCount, targetIndex, healHp, pokemonName }: WishArgs) {
     super({ turnCount, targetIndex });
     this.healHp = healHp;
     this.pokemonName = pokemonName;
   }
 
-  public trigger(): void {
+  public override trigger(): void {
     // TODO: Rename this locales key - wish shows a message on REMOVAL, not addition
     globalScene.phaseManager.queueMessage(
       i18next.t("arenaTag:wishTagOnAdd", {
@@ -163,7 +164,7 @@ export class WishTag extends PositionalTag implements WishArgs {
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", this.targetIndex, this.healHp, null, true, false);
   }
 
-  override shouldTrigger(): boolean {
+  public override shouldTrigger(): boolean {
     // Disappear if no target or target is fainted.
     // The source need not exist at the time of activation (since all we need is a simple message)
     // TODO: Verify whether Wish shows a message if the Pokemon it would affect is KO'd on the turn of activation
