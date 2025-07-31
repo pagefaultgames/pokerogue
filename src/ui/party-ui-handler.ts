@@ -33,8 +33,8 @@ import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 const DISCARD_BUTTON_X = 60;
 const DISCARD_BUTTON_X_DOUBLES = 64;
-const DISCARD_BUTTON_Y = -globalScene.game.canvas.height / 15 - 1;
-const DISCARD_BUTTON_Y_DOUBLES = -48;
+const DISCARD_BUTTON_Y = -73;
+const DISCARD_BUTTON_Y_DOUBLES = -58;
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 
