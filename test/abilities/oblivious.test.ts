@@ -46,7 +46,7 @@ describe("Abilities - Oblivious", () => {
     game.move.select(MoveId.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy?.getTag(BattlerTagType.TAUNT)).toBeDefined();
+    expect(enemy.getTag(BattlerTagType.TAUNT)).toBeUndefined();
   });
 
   it("should remove infatuation when gained", async () => {
