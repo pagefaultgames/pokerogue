@@ -152,7 +152,12 @@ export abstract class ModalUiHandler extends UiHandler {
   updateContainer(config?: ModalConfig): void {
     const [marginTop, marginRight, marginBottom, marginLeft] = this.getMargin(config);
 
-    const [width, height] = [this.getWidth(config), this.getHeight(config)];
+    /**
+     * If the total amount of characters for the 2 buttons exceeds ~30 characters,
+     * the width in `registration-form-ui-handler.ts` and `login-form-ui-handler.ts` needs to be increased.
+     */
+    const width = this.getWidth(config);
+    const height = this.getHeight(config);
     this.modalContainer.setPosition(
       (globalScene.scaledCanvas.width - (width + (marginRight - marginLeft))) / 2,
       (-globalScene.scaledCanvas.height - (height + (marginBottom - marginTop))) / 2,
@@ -166,10 +171,14 @@ export abstract class ModalUiHandler extends UiHandler {
     this.titleText.setX(width / 2);
     this.titleText.setVisible(!!title);
 
-    for (let b = 0; b < this.buttonContainers.length; b++) {
-      const sliceWidth = width / (this.buttonContainers.length + 1);
-
-      this.buttonContainers[b].setPosition(sliceWidth * (b + 1), this.modalBg.height - (this.buttonBgs[b].height + 8));
+    if (this.buttonContainers.length > 0) {
+      const spacing = 12;
+      const totalWidth = this.buttonBgs.reduce((sum, bg) => sum + bg.width, 0) + spacing * (this.buttonBgs.length - 1);
+      let x = (this.modalBg.width - totalWidth) / 2;
+      this.buttonContainers.forEach((container, i) => {
+        container.setPosition(x + this.buttonBgs[i].width / 2, this.modalBg.height - (this.buttonBgs[i].height + 8));
+        x += this.buttonBgs[i].width + spacing;
+      });
     }
   }
 

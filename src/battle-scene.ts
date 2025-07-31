@@ -649,9 +649,7 @@ export class BattleScene extends SceneBase {
       ).then(() => loadMoveAnimAssets(defaultMoves, true)),
       this.initStarterColors(),
     ]).then(() => {
-      this.phaseManager.pushNew("LoginPhase");
-      this.phaseManager.pushNew("TitlePhase");
-
+      this.phaseManager.toTitleScreen(true);
       this.phaseManager.shiftPhase();
     });
   }
@@ -1261,13 +1259,12 @@ export class BattleScene extends SceneBase {
         duration: 250,
         ease: "Sine.easeInOut",
         onComplete: () => {
-          this.phaseManager.clearPhaseQueue();
-
           this.ui.freeUIData();
           this.uiContainer.remove(this.ui, true);
           this.uiContainer.destroy();
           this.children.removeAll(true);
           this.game.domContainer.innerHTML = "";
+          // TODO: `launchBattle` calls `reset(false, false, true)`
           this.launchBattle();
         },
       });
