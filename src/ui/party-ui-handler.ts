@@ -31,6 +31,11 @@ import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
+const DISCARD_BUTTON_X = 60;
+const DISCARD_BUTTON_X_DOUBLES = 64;
+const DISCARD_BUTTON_Y = -globalScene.game.canvas.height / 15 - 1;
+const DISCARD_BUTTON_Y_DOUBLES = -48;
+
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 
 /**
@@ -317,10 +322,8 @@ export class PartyUiHandler extends MessageUiHandler {
     this.iconAnimHandler = new PokemonIconAnimHandler();
     this.iconAnimHandler.setup();
 
-    const partyDiscardModeButton = new PartyDiscardModeButton(60, -globalScene.game.canvas.height / 15 - 1, this);
-
+    const partyDiscardModeButton = new PartyDiscardModeButton(DISCARD_BUTTON_X, DISCARD_BUTTON_Y, this);
     partyContainer.add(partyDiscardModeButton);
-
     this.partyDiscardModeButton = partyDiscardModeButton;
 
     // prepare move overlay. in case it appears to be too big, set the overlayScale to .5
@@ -2199,10 +2202,6 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
         this.discardIcon.setVisible(false);
         this.textBox.setVisible(true);
         this.textBox.setText(i18next.t("partyUiHandler:TRANSFER"));
-        this.setPosition(
-          globalScene.currentBattle.double ? 64 : 60,
-          globalScene.currentBattle.double ? -48 : -globalScene.game.canvas.height / 15 - 1,
-        );
         this.transferIcon.displayWidth = this.textBox.text.length * 9 + 3;
         break;
       case PartyUiMode.DISCARD:
@@ -2210,13 +2209,13 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
         this.discardIcon.setVisible(true);
         this.textBox.setVisible(true);
         this.textBox.setText(i18next.t("partyUiHandler:DISCARD"));
-        this.setPosition(
-          globalScene.currentBattle.double ? 64 : 60,
-          globalScene.currentBattle.double ? -48 : -globalScene.game.canvas.height / 15 - 1,
-        );
         this.discardIcon.displayWidth = this.textBox.text.length * 9 + 3;
         break;
     }
+    this.setPosition(
+      globalScene.currentBattle.double ? DISCARD_BUTTON_X_DOUBLES : DISCARD_BUTTON_X,
+      globalScene.currentBattle.double ? DISCARD_BUTTON_Y_DOUBLES : DISCARD_BUTTON_Y,
+    );
   }
 
   clear() {
