@@ -98,6 +98,6 @@ export const ANTI_VARIANCE_WEIGHT_MODIFIER = 15;
 /**
  * The chance (out of 1) that a different title logo will show when the title screen is drawn.
  * Inverted during April Fools (such that this becomes the chance for the _normal_ title logo is displayed).
- * Default: `10000` (0.1%)
+ * Default: `10000` (0.01%)
  */
 export const FAKE_TITLE_LOGO_CHANCE = 10000;
