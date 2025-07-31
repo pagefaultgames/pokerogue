@@ -7,7 +7,8 @@ import type { PositionalTagType } from "#enums/positional-tag-type";
 export class PositionalTagManager {
   /**
    * Array containing all pending unactivated {@linkcode PositionalTag}s,
-   * sorted by order of creation (oldest first). */
+   * sorted by order of creation (oldest first).
+   */
   public tags: PositionalTag[] = [];
 
   /**
@@ -30,12 +31,12 @@ export class PositionalTagManager {
   }
 
   /**
-   * Decrement turn counts of and activate all pending {@linkcode PositionalTag}s on field.
+   * Decrement turn counts of and trigger all pending {@linkcode PositionalTag}s on field.
    * @remarks
-   * If multiple tags trigger simultaneously, they will activate **in order of initial creation**, regardless of speed order.
+   * If multiple tags trigger simultaneously, they will activate in order of **initial creation**, regardless of current speed order.
    * (Source: [Smogon](<https://www.smogon.com/forums/threads/sword-shield-battle-mechanics-research.3655528/page-64#post-9244179>))
    */
-  public triggerAllTags(): void {
+  public activateAllTags(): void {
     const leftoverTags: PositionalTag[] = [];
     for (const tag of this.tags) {
       // Check for silent removal, immediately removing invalid tags.
@@ -45,7 +46,7 @@ export class PositionalTagManager {
         continue;
       }
 
-      if (!tag.shouldDisappear()) {
+      if (tag.shouldTrigger()) {
         tag.trigger();
       }
     }

@@ -3173,7 +3173,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: [overridden: BooleanHolder, useMode: MoveUseMode]): boolean {
     const useMode = args[1];
-    if (useMode === MoveUseMode.TRANSPARENT) {
+    if (useMode === MoveUseMode.DELAYED_ATTACK) {
       // don't trigger if already queueing an indirect attack
       return false;
     }

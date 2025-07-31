@@ -13,7 +13,7 @@ export class PositionalTagPhase extends Phase {
   public readonly phaseName = "PositionalTagPhase";
 
   public override start(): void {
-    globalScene.arena.positionalTagManager.triggerAllTags();
+    globalScene.arena.positionalTagManager.activateAllTags();
     super.end();
     return;
   }

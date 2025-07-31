@@ -14,19 +14,21 @@ import i18next from "i18next";
 /**
  * Baseline arguments used to construct all {@linkcode PositionalTag}s,
  * the contents of which are serialized and used to construct new tags. \
- * Does not contain the `tagType` parameter (which is used to select the proper class constructor to use).
+ * Does not contain the `tagType` parameter (which is used to select the proper class constructor during tag loading).
+ * @privateRemarks
+ * All {@linkcode PositionalTag}s are intended to implement a sub-interface of this containing their respective parameters,
+ * and should refrain from adding extra serializable fields not contained in said interface.
+ * This ensures that all tags truly "become" their respective interfaces when converted to and from JSON.
  */
 export interface PositionalTagBaseArgs {
   /**
-   * The number of turns remaining until activation. \
-   * Decremented by 1 at the end of each turn until reaching 0, at which point it will {@linkcode trigger} and be removed.
-   * @remarks
-   * If this is set to any number `<0` manually (such as through the effects of {@linkcode PositionalTag.shouldDisappear | shouldDisappear}),
-   * this tag will be silently removed at the end of the next turn _without activating any effects_.
+   * The number of turns remaining until this tag's activation. \
+   * Decremented by 1 at the end of each turn until reaching 0, at which point it will
+   * {@linkcode PositionalTag.trigger | trigger} the tag's effects and be removed.
    */
   turnCount: number;
   /**
-   * The {@linkcode BattlerIndex} of the Pokemon targeted by the effect.
+   * The {@linkcode BattlerIndex} targeted by this effect.
    */
   targetIndex: BattlerIndex;
 }
@@ -37,8 +39,10 @@ export interface PositionalTagBaseArgs {
  * Multiple tags of the same kind can stack with one another, provided they are affecting different targets.
  */
 export abstract class PositionalTag implements PositionalTagBaseArgs {
+  /** This tag's {@linkcode PositionalTagType | type} */
   public abstract readonly tagType: PositionalTagType;
   // These arguments have to be public to implement the interface, but are functionally private.
+  // Left undocumented to inherit doc comments from the interface
   public turnCount: number;
   public targetIndex: BattlerIndex;
 
@@ -51,16 +55,22 @@ export abstract class PositionalTag implements PositionalTagBaseArgs {
   public abstract trigger(): void;
 
   /**
-   * Check whether this tag should be removed without calling {@linkcode trigger} and triggering effects.
-   * @returns Whether this tag should disappear without triggering.
+   * Check whether this tag should be allowed to {@linkcode trigger} and activate its effects
+   * upon its duration elapsing.
+   * @returns Whether this tag should be allowed to trigger prior to being removed.
    */
-  abstract shouldDisappear(): boolean;
+  public abstract shouldTrigger(): boolean;
 
+  /**
+   * Get the {@linkcode Pokemon} currently targeted by this tag.
+   * @returns The {@linkcode Pokemon} located in this tag's target position, or `undefined` if none exist in it.
+   */
   protected getTarget(): Pokemon | undefined {
     return globalScene.getField()[this.targetIndex];
   }
 }
 
+/** Interface containing additional properties used to construct a {@linkcode DelayedAttackTag}. */
 interface DelayedAttackArgs extends PositionalTagBaseArgs {
   /**
    * The {@linkcode Pokemon.id | PID} of the {@linkcode Pokemon} having created this effect.
@@ -87,7 +97,8 @@ export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs
   }
 
   override trigger(): void {
-    // Bangs are justified as the `shouldDisappear` method will queue the tag for removal if the source or target leave the field
+    // Bangs are justified as the `shouldTrigger` method will queue the tag for removal
+    // if the source or target no longer exist
     const source = globalScene.getPokemonById(this.sourceId)!;
     const target = this.getTarget()!;
 
@@ -104,19 +115,21 @@ export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs
       this.sourceId, // TODO: Find an alternate method of passing the source pokemon without a source ID
       [this.targetIndex],
       allMoves[this.sourceMove],
-      MoveUseMode.TRANSPARENT,
+      MoveUseMode.DELAYED_ATTACK,
     );
   }
 
-  override shouldDisappear(): boolean {
+  override shouldTrigger(): boolean {
     const source = globalScene.getPokemonById(this.sourceId);
     const target = this.getTarget();
     // Silently disappear if either source or target are missing or happen to be the same pokemon
     // (i.e. targeting oneself)
-    return !source || !target || source === target || target.isFainted();
+    // We also need to check for fainted targets as they don't technically leave the field until _after_ the turn ends
+    return !!source && !!target && source !== target && !target.isFainted();
   }
 }
 
+/** Interface containing arguments used to construct a {@linkcode WishTag}. */
 interface WishArgs extends PositionalTagBaseArgs {
   /** The amount of {@linkcode Stat.HP | HP} to heal; set to 50% of the user's max HP during move usage. */
   healHp: number;
@@ -150,7 +163,7 @@ export class WishTag extends PositionalTag implements WishArgs {
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", this.targetIndex, this.healHp, null, true, false);
   }
 
-  public shouldDisappear(): boolean {
+  public shouldTrigger(): boolean {
     // Disappear if no target or target is fainted.
     // The source need not exist at the time of activation (since all we need is a simple message)
     // TODO: Verify whether Wish shows a message if the Pokemon it would affect is KO'd on the turn of activation

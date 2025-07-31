@@ -1,10 +1,10 @@
 import { DelayedAttackTag, type PositionalTag, WishTag } from "#data/positional-tags/positional-tag";
 import { PositionalTagType } from "#enums/positional-tag-type";
-import type { EnumValues } from "#types/enum-types";
+import type { ObjectValues } from "#types/type-helpers";
 import type { Constructor } from "#utils/common";
 
 /**
- * Add a new {@linkcode PositionalTag} to the arena.
+ * Load the attributes of a {@linkcode PositionalTag}.
  * @param tagType - The {@linkcode PositionalTagType} to create
  * @param args - The arguments needed to instantize the given tag
  * @returns The newly created tag.
@@ -16,7 +16,7 @@ export function loadPositionalTag<T extends PositionalTagType>({
   ...args
 }: serializedPosTagMap[T]): posTagInstanceMap[T];
 /**
- * Add a new {@linkcode PositionalTag} to the arena.
+ * Load the attributes of a {@linkcode PositionalTag}.
  * @param tag - The {@linkcode SerializedPositionalTag} to instantiate
  * @returns The newly created tag.
  * @remarks
@@ -67,4 +67,4 @@ export type serializedPosTagMap = {
 };
 
 /** Union type containing all serialized {@linkcode PositionalTag}s. */
-export type SerializedPositionalTag = EnumValues<serializedPosTagMap>;
+export type SerializedPositionalTag = ObjectValues<serializedPosTagMap>;

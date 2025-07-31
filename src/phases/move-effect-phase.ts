@@ -331,7 +331,7 @@ export class MoveEffectPhase extends PokemonPhase {
    */
   private postAnimCallback(user: Pokemon, targets: Pokemon[]) {
     // Add to the move history entry
-    if (this.firstHit && this.useMode !== MoveUseMode.TRANSPARENT) {
+    if (this.firstHit && this.useMode !== MoveUseMode.DELAYED_ATTACK) {
       user.pushMoveHistory(this.moveHistoryEntry);
       applyAbAttrs("ExecutedMoveAbAttr", { pokemon: user });
     }
