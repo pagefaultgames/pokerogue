@@ -3856,7 +3856,7 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.POWDER]: PowderTag;
   [BattlerTagType.NIGHTMARE]: NightmareTag;
   [BattlerTagType.FRENZY]: FrenzyTag;
-  [BattlerTagType.CHARGING]: BattlerTag;
+  [BattlerTagType.CHARGING]: SerializableBattlerTag;
   [BattlerTagType.ENCORE]: EncoreTag;
   [BattlerTagType.HELPING_HAND]: HelpingHandTag;
   [BattlerTagType.INGRAIN]: IngrainTag;
@@ -3897,10 +3897,10 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.FIRE_BOOST]: TypeBoostTag;
   [BattlerTagType.CRIT_BOOST]: CritBoostTag;
   [BattlerTagType.DRAGON_CHEER]: DragonCheerTag;
-  [BattlerTagType.ALWAYS_CRIT]: BattlerTag;
-  [BattlerTagType.IGNORE_ACCURACY]: BattlerTag;
-  [BattlerTagType.ALWAYS_GET_HIT]: BattlerTag;
-  [BattlerTagType.RECEIVE_DOUBLE_DAMAGE]: BattlerTag;
+  [BattlerTagType.ALWAYS_CRIT]: SerializableBattlerTag;
+  [BattlerTagType.IGNORE_ACCURACY]: SerializableBattlerTag;
+  [BattlerTagType.ALWAYS_GET_HIT]: SerializableBattlerTag;
+  [BattlerTagType.RECEIVE_DOUBLE_DAMAGE]: SerializableBattlerTag;
   [BattlerTagType.BYPASS_SLEEP]: BattlerTag;
   [BattlerTagType.IGNORE_FLYING]: GroundedTag;
   [BattlerTagType.ROOSTED]: RoostedTag;
