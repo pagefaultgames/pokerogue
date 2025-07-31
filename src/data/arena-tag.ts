@@ -1,6 +1,8 @@
-import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
-/** biome-ignore lint/correctness/noUnusedImports: Type-only import for doc comment */
+/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
 import type { BattlerTag } from "#app/data/battler-tags";
+/** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
+
+import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonBattleAnim } from "#data/battle-anims";
