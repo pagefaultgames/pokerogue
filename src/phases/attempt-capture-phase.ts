@@ -2,7 +2,6 @@ import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { SubstituteTag } from "#data/battler-tags";
-import { applyChallenges } from "#data/challenge";
 import { Gender } from "#data/gender";
 import {
   doPokeballBounceAnim,
@@ -25,6 +24,7 @@ import { achvs } from "#system/achv";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
+import { applyChallenges } from "#utils/challenge-utils";
 import i18next from "i18next";
 
 // TODO: Refactor and split up to allow for overriding capture chance

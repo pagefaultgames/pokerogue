@@ -1,12 +1,12 @@
 import { globalScene } from "#app/global-scene";
 import { biomeLinks, getBiomeName } from "#balance/biomes";
-import { applyChallenges } from "#data/challenge";
 import { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { UiMode } from "#enums/ui-mode";
 import { MapModifier, MoneyInterestModifier } from "#modifiers/modifier";
 import { BattlePhase } from "#phases/battle-phase";
 import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import { applyChallenges } from "#utils/challenge-utils";
 import { randSeedInt } from "#utils/common";
 
 export class SelectBiomePhase extends BattlePhase {

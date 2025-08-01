@@ -16,7 +16,6 @@ import {
   POKERUS_STARTER_COUNT,
   speciesStarterCosts,
 } from "#balance/starters";
-import { applyChallenges, checkStarterValidForChallenge } from "#data/challenge";
 import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
 import { Egg, getEggTierForSpecies } from "#data/egg";
 import { GrowthRate, getGrowthRateColor } from "#data/exp";
@@ -60,6 +59,7 @@ import { StarterContainer } from "#ui/starter-container";
 import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
+import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
 import {
   BooleanHolder,
   fixedInt,

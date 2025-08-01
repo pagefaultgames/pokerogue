@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import { applyChallenges } from "#data/challenge";
 import { ChallengeType } from "#enums/challenge-type";
 import { BattlePhase } from "#phases/battle-phase";
+import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt } from "#utils/common";
 
 export class PartyHealPhase extends BattlePhase {

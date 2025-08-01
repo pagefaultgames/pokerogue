@@ -1,7 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { speciesStarterCosts } from "#balance/starters";
-import { applyChallenges } from "#data/challenge";
 import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import {
@@ -35,6 +34,7 @@ import { achvs } from "#system/achv";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
+import { applyChallenges } from "#utils/challenge-utils";
 import { isNullOrUndefined, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";

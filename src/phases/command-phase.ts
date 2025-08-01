@@ -3,7 +3,6 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { speciesStarterCosts } from "#balance/starters";
 import { TrappedTag } from "#data/battler-tags";
-import { applyChallenges } from "#data/challenge";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -23,6 +22,7 @@ import type { MoveTargetSet } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
 import { FieldPhase } from "#phases/field-phase";
 import type { TurnMove } from "#types/turn-move";
+import { applyChallenges } from "#utils/challenge-utils";
 import i18next from "i18next";
 
 export class CommandPhase extends FieldPhase {

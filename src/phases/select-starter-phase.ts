@@ -1,7 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
-import { applyChallenges } from "#data/challenge";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#data/form-change-triggers";
 import { Gender } from "#data/gender";
 import { ChallengeType } from "#enums/challenge-type";
@@ -10,6 +9,7 @@ import { UiMode } from "#enums/ui-mode";
 import { overrideHeldItems, overrideModifiers } from "#modifiers/modifier";
 import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
 import type { Starter } from "#ui/starter-select-ui-handler";
+import { applyChallenges } from "#utils/challenge-utils";
 import { isNullOrUndefined } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";

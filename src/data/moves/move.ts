@@ -22,7 +22,6 @@ import {
   TypeBoostTag,
 } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
-import { applyChallenges } from "#data/challenge";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
 import { DelayedAttackTag } from "#data/positional-tags/positional-tag";
@@ -93,6 +92,7 @@ import { BooleanHolder, type Constructor, isNullOrUndefined, NumberHolder, randS
 import { getEnumValues } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
+import { applyChallenges } from "#utils/challenge-utils";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -124,7 +124,7 @@ export abstract class Move implements Localizable {
   /**
    * Check if the move is of the given subclass without requiring `instanceof`.
    *
-   * ⚠️ Does _not_ work for {@linkcode ChargingAttackMove} and {@linkcode ChargingSelfStatusMove} subclasses. For those,
+   * ! Does _not_ work for {@linkcode ChargingAttackMove} and {@linkcode ChargingSelfStatusMove} subclasses. For those,
    * use {@linkcode isChargingMove} instead.
    *
    * @param moveKind - The string name of the move to check against

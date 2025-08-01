@@ -6,7 +6,6 @@ import Overrides from "#app/overrides";
 import { EvolutionItem, pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { tmPoolTiers, tmSpecies } from "#balance/tms";
 import { getBerryEffectDescription, getBerryName } from "#data/berry";
-import { applyChallenges } from "#data/challenge";
 import { allMoves, modifierTypes } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
@@ -118,6 +117,7 @@ import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#types/mo
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getModifierTierTextTint } from "#ui/text";
+import { applyChallenges } from "#utils/challenge-utils";
 import { formatMoney, isNullOrUndefined, NumberHolder, padInt, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";

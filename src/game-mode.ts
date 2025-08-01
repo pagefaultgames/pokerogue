@@ -2,7 +2,7 @@ import { FixedBattleConfig } from "#app/battle";
 import { CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
-import { allChallenges, applyChallenges, type Challenge, copyChallenge } from "#data/challenge";
+import { allChallenges, type Challenge, copyChallenge } from "#data/challenge";
 import { getDailyStartingBiome } from "#data/daily-run";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -13,6 +13,7 @@ import { GameModes } from "#enums/game-modes";
 import { SpeciesId } from "#enums/species-id";
 import type { Arena } from "#field/arena";
 import { classicFixedBattles, type FixedBattleConfigs } from "#trainers/fixed-battle-configs";
+import { applyChallenges } from "#utils/challenge-utils";
 import { isNullOrUndefined, randSeedInt, randSeedItem } from "#utils/common";
 import i18next from "i18next";
 
