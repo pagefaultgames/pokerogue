@@ -12,7 +12,8 @@ import type { CommandPhase } from "#phases/command-phase";
 import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
 import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import { coerceArray, toReadableString } from "#utils/common";
+import { coerceArray } from "#utils/common";
+import { toTitleCase } from "#utils/strings";
 import type { MockInstance } from "vitest";
 import { expect, vi } from "vitest";
 
@@ -66,12 +67,12 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        `MoveHelper.select called with move '${toReadableString(MoveId[move])}' not in moveset!` +
-          `\nBattler Index: ${toReadableString(BattlerIndex[pkmIndex])}` +
+        `MoveHelper.select called with move '${toTitleCase(MoveId[move])}' not in moveset!` +
+          `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}` +
           `\nMoveset: [${this.game.scene
             .getPlayerParty()
             [pkmIndex].getMoveset()
-            .map(pm => toReadableString(MoveId[pm.moveId]))
+            .map(pm => toTitleCase(MoveId[pm.moveId]))
             .join(", ")}]`,
       );
     }
@@ -110,12 +111,12 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        `MoveHelper.selectWithTera called with move '${toReadableString(MoveId[move])}' not in moveset!` +
-          `\nBattler Index: ${toReadableString(BattlerIndex[pkmIndex])}` +
+        `MoveHelper.selectWithTera called with move '${toTitleCase(MoveId[move])}' not in moveset!` +
+          `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}` +
           `\nMoveset: [${this.game.scene
             .getPlayerParty()
             [pkmIndex].getMoveset()
-            .map(pm => toReadableString(MoveId[pm.moveId]))
+            .map(pm => toTitleCase(MoveId[pm.moveId]))
             .join(", ")}]`,
       );
     }
@@ -324,10 +325,16 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Force the move used by Metronome to be a specific move.
-   * @param move - The move to force metronome to use
-   * @param once - If `true`, uses {@linkcode MockInstance#mockReturnValueOnce} when mocking, else uses {@linkcode MockInstance#mockReturnValue}.
+   * Force the next move(s) used by Metronome to be a specific move. \
+   * Triggers during the next upcoming {@linkcode MoveEffectPhase} that Metronome is used.
+   * @param move - The move to force Metronome to call
+   * @param once - If `true`, mocks the return value exactly once; default `false`
    * @returns The spy that for Metronome that was mocked (Usually unneeded).
+   * @example
+   * ```ts
+   * game.move.use(MoveId.METRONOME);
+   * game.move.forceMetronomeMove(MoveId.FUTURE_SIGHT); // Can be in any order
+   * ```
    */
   public forceMetronomeMove(move: MoveId, once = false): MockInstance {
     const spy = vi.spyOn(allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0], "getMoveOverride");
