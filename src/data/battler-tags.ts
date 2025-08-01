@@ -2320,7 +2320,7 @@ export class TypeBoostTag extends SerializableBattlerTag {
 export class CritBoostTag extends SerializableBattlerTag {
   public declare readonly tagType: CritStageBoostTagType;
   /** The number of stages boosted by this tag */
-  public readonly critStages: number;
+  public readonly critStages: number = 1;
 
   constructor(tagType: CritStageBoostTagType, sourceMove: MoveId) {
     super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove, undefined, true);
