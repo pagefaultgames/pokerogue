@@ -14,7 +14,7 @@ import { SpeciesId } from "#enums/species-id";
 import type { Arena } from "#field/arena";
 import { classicFixedBattles, type FixedBattleConfigs } from "#trainers/fixed-battle-configs";
 import { applyChallenges } from "#utils/challenge-utils";
-import { isNullOrUndefined, randSeedInt, randSeedItem } from "#utils/common";
+import { BooleanHolder, isNullOrUndefined, randSeedInt, randSeedItem } from "#utils/common";
 import i18next from "i18next";
 
 interface GameModeConfig {
@@ -315,8 +315,10 @@ export class GameMode implements GameModeConfig {
    * Checks if the game mode has the shop enabled or not
    * @returns Whether the shop is available or not
    */
-  getShopAvailability(): boolean {
-    return !this.hasNoShop && this.modeId === GameModes.CHALLENGE && applyChallenges(ChallengeType.SHOP);
+  getShopStatus(): boolean {
+    const status = new BooleanHolder(!this.hasNoShop);
+    applyChallenges(ChallengeType.SHOP, status);
+    return status.value;
   }
 
   getClearScoreBonus(): number {

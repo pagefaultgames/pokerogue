@@ -7,7 +7,7 @@ import { MapModifier, MoneyInterestModifier } from "#modifiers/modifier";
 import { BattlePhase } from "#phases/battle-phase";
 import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
-import { randSeedInt } from "#utils/common";
+import { BooleanHolder, randSeedInt } from "#utils/common";
 
 export class SelectBiomePhase extends BattlePhase {
   public readonly phaseName = "SelectBiomePhase";
@@ -22,7 +22,9 @@ export class SelectBiomePhase extends BattlePhase {
     const setNextBiome = (nextBiome: BiomeId) => {
       if (nextWaveIndex % 10 === 1) {
         globalScene.applyModifiers(MoneyInterestModifier, true);
-        if (applyChallenges(ChallengeType.PARTY_HEAL)) {
+        const healStatus = new BooleanHolder(false);
+        applyChallenges(ChallengeType.PARTY_HEAL, healStatus);
+        if (healStatus.value) {
           globalScene.phaseManager.unshiftNew("PartyHealPhase", false);
         }
       }

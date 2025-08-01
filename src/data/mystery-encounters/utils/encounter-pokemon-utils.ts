@@ -35,7 +35,7 @@ import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
-import { isNullOrUndefined, randSeedInt } from "#utils/common";
+import { BooleanHolder, isNullOrUndefined, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -709,7 +709,9 @@ export async function catchPokemon(
       };
       Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
         // TODO: Address ME edge cases (Safari Zone, etc.)
-        if (!applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon)) {
+        const addStatus = new BooleanHolder(true);
+        applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
+        if (!addStatus.value) {
           removePokemon();
           end();
           return;

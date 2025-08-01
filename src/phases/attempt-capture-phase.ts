@@ -25,6 +25,7 @@ import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
+import { BooleanHolder } from "#utils/common";
 import i18next from "i18next";
 
 // TODO: Refactor and split up to allow for overriding capture chance
@@ -289,7 +290,9 @@ export class AttemptCapturePhase extends PokemonPhase {
           });
         };
         Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
-          if (!applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon)) {
+          const addStatus = new BooleanHolder(true);
+          applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
+          if (!addStatus.value) {
             removePokemon();
             end();
             return;

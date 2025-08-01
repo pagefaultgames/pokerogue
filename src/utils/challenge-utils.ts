@@ -168,62 +168,91 @@ export function applyChallenges(challengeType: ChallengeType.FLIP_STAT, pokemon:
 /**
  * Apply all challenges that conditionally enable or disable automatic party healing during biome transitions
  * @param challengeType - {@linkcode ChallengeType.PARTY_HEAL}
- * @returns Whether party healing is enabled or not
+ * @param status - Whether party healing is enabled or not
+ * @returns `true` if any challenge was successfully applied, `false` otherwise
  */
-export function applyChallenges(challengeType: ChallengeType.PARTY_HEAL): boolean;
+export function applyChallenges(challengeType: ChallengeType.PARTY_HEAL, status: BooleanHolder): boolean;
 
 /**
  * Apply all challenges that conditionally enable or disable the shop
- * @returns Whether the shop is or is not available after a wave
+ * @param challengeType - {@linkcode ChallengeType.SHOP}
+ * @param status - Whether party healing is enabled or not
+ * @returns `true` if any challenge was successfully applied, `false` otherwise
  */
-export function applyChallenges(challengeType: ChallengeType.SHOP): boolean;
+export function applyChallenges(challengeType: ChallengeType.SHOP, status: BooleanHolder): boolean;
 
 /**
  * Apply all challenges that validate whether a pokemon can be added to the player's party or not
  * @param challengeType - {@linkcode ChallengeType.POKEMON_ADD_TO_PARTY}
  * @param pokemon - The pokemon being caught
- * @return Whether the pokemon can be added to the party or not
+ * @param status - Whether the pokemon can be added to the party or not
+ * @return `true` if any challenge was sucessfully applied, `false` otherwise
  */
-export function applyChallenges(challengeType: ChallengeType.POKEMON_ADD_TO_PARTY, pokemon: EnemyPokemon): boolean;
+export function applyChallenges(
+  challengeType: ChallengeType.POKEMON_ADD_TO_PARTY,
+  pokemon: EnemyPokemon,
+  status: BooleanHolder,
+): boolean;
 
 /**
  * Apply all challenges that validate whether a pokemon is allowed to fuse or not
  * @param challengeType - {@linkcode ChallengeType.POKEMON_FUSION}
  * @param pokemon - The pokemon being checked
- * @returns Whether the selected pokemon is allowed to fuse or not
+ * @param status - Whether the selected pokemon is allowed to fuse or not
+ * @return `true` if any challenge was sucessfully applied, `false` otherwise
  */
-export function applyChallenges(challengeType: ChallengeType.POKEMON_FUSION, pokemon: PlayerPokemon): boolean;
+export function applyChallenges(
+  challengeType: ChallengeType.POKEMON_FUSION,
+  pokemon: PlayerPokemon,
+  status: BooleanHolder,
+): boolean;
 
 /**
  * Apply all challenges that validate whether particular moves can or cannot be used
  * @param challengeType - {@linkcode ChallengeType.POKEMON_MOVE}
  * @param moveId - The move being checked
- * @returns Whether the move can be used or not
+ * @param status - Whether the move can be used or not
+ * @return `true` if any challenge was sucessfully applied, `false` otherwise
  */
-export function applyChallenges(challengeType: ChallengeType.POKEMON_MOVE, moveId: MoveId): boolean;
+export function applyChallenges(
+  challengeType: ChallengeType.POKEMON_MOVE,
+  moveId: MoveId,
+  status: BooleanHolder,
+): boolean;
 
 /**
  * Apply all challenges that validate whether particular items are or are not sold in the shop
  * @param challengeType - {@linkcode ChallengeType.SHOP_ITEM}
  * @param shopItem - The item being checked
- * @returns Whether the item should be added to the shop or not
+ * @param status - Whether the item should be added to the shop or not
+ * @return `true` if any challenge was sucessfully applied, `false` otherwise
  */
-export function applyChallenges(challengeType: ChallengeType.SHOP_ITEM, shopItem: ModifierTypeOption | null): boolean;
+export function applyChallenges(
+  challengeType: ChallengeType.SHOP_ITEM,
+  shopItem: ModifierTypeOption | null,
+  status: BooleanHolder,
+): boolean;
 
 /**
  * Apply all challenges that validate whether particular items will be given as a reward after a wave
  * @param challengeType - {@linkcode ChallengeType.WAVE_REWARD}
  * @param reward - The reward being checked
- * @returns Whether the reward should be added to the reward options or not
+ * @param status - Whether the reward should be added to the reward options or not
+ * @return `true` if any challenge was sucessfully applied, `false` otherwise
  */
-export function applyChallenges(challengeType: ChallengeType.WAVE_REWARD, reward: ModifierTypeOption | null): boolean;
+export function applyChallenges(
+  challengeType: ChallengeType.WAVE_REWARD,
+  reward: ModifierTypeOption | null,
+  status: BooleanHolder,
+): boolean;
 
 /**
  * Apply all challenges that prevent recovery from fainting
  * @param challengeType - {@linkcode ChallengeType.PREVENT_REVIVE}
- * @returns Whether fainting is a permanent status or not
+ * @param status - Whether fainting is a permanent status or not
+ * @return `true` if any challenge was sucessfully applied, `false` otherwise
  */
-export function applyChallenges(challengeType: ChallengeType.PREVENT_REVIVE): boolean;
+export function applyChallenges(challengeType: ChallengeType.PREVENT_REVIVE, status: BooleanHolder): boolean;
 
 export function applyChallenges(challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
@@ -273,28 +302,28 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
           ret ||= c.applyFlipStat(args[0], args[1]);
           break;
         case ChallengeType.PARTY_HEAL:
-          ret ||= c.applyPartyHeal();
+          ret ||= c.applyPartyHeal(args[0]);
           break;
         case ChallengeType.SHOP:
-          ret ||= c.applyShop();
+          ret ||= c.applyShop(args[0]);
           break;
         case ChallengeType.POKEMON_ADD_TO_PARTY:
-          ret ||= c.applyPokemonAddToParty(args[0]);
+          ret ||= c.applyPokemonAddToParty(args[0], args[1]);
           break;
         case ChallengeType.POKEMON_FUSION:
-          ret ||= c.applyPokemonFusion(args[0]);
+          ret ||= c.applyPokemonFusion(args[0], args[1]);
           break;
         case ChallengeType.POKEMON_MOVE:
-          ret ||= c.applyPokemonMove(args[0]);
+          ret ||= c.applyPokemonMove(args[0], args[1]);
           break;
         case ChallengeType.SHOP_ITEM:
-          ret ||= c.applyShopItem(args[0]);
+          ret ||= c.applyShopItem(args[0], args[1]);
           break;
         case ChallengeType.WAVE_REWARD:
-          ret ||= c.applyWaveReward(args[0]);
+          ret ||= c.applyWaveReward(args[0], args[1]);
           break;
         case ChallengeType.PREVENT_REVIVE:
-          ret ||= c.applyPreventRevive();
+          ret ||= c.applyPreventRevive(args[0]);
           break;
       }
     }

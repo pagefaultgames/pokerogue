@@ -9,6 +9,7 @@ import type { CustomModifierSettings } from "#modifiers/modifier-type";
 import { handleMysteryEncounterVictory } from "#mystery-encounters/encounter-phase-utils";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import { applyChallenges } from "#utils/challenge-utils";
+import { BooleanHolder } from "#utils/common";
 
 export class VictoryPhase extends PokemonPhase {
   public readonly phaseName = "VictoryPhase";
@@ -65,7 +66,9 @@ export class VictoryPhase extends PokemonPhase {
               break;
           }
         }
-        if (globalScene.currentBattle.waveIndex % 10 || !applyChallenges(ChallengeType.PARTY_HEAL)) {
+        const healStatus = new BooleanHolder(globalScene.currentBattle.waveIndex % 10 === 0);
+        applyChallenges(ChallengeType.PARTY_HEAL, healStatus);
+        if (!healStatus.value) {
           globalScene.phaseManager.pushNew(
             "SelectModifierPhase",
             undefined,

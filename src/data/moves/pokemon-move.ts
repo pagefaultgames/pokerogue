@@ -1,8 +1,10 @@
 import { allMoves } from "#data/data-lists";
+import { ChallengeType } from "#enums/challenge-type";
 import type { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
-import { toDmgValue } from "#utils/common";
+import { applyChallenges } from "#utils/challenge-utils";
+import { BooleanHolder, toDmgValue } from "#utils/common";
 
 /**
  * Wrapper class for the {@linkcode Move} class for Pokemon to interact with.
@@ -47,13 +49,15 @@ export class PokemonMove {
   isUsable(pokemon: Pokemon, ignorePp = false, ignoreRestrictionTags = false): boolean {
     const move = this.getMove();
     // TODO: Add Sky Drop's 1 turn stall
-    return (
-      !(this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)) &&
-      (ignorePp || this.ppUsed < this.getMovePp() || move.pp === -1) &&
-      // TODO: Fix apply calls
-      //(!pokemon.isPlayer() || applyChallenges(ChallengeType.POKEMON_MOVE, this.moveId)) &&
-      !move.name.endsWith(" (N)")
+    const usability = new BooleanHolder(
+      !move.name.endsWith(" (N)") &&
+        (ignorePp || this.ppUsed < this.getMovePp() || move.pp === -1) &&
+        !(this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)),
     );
+    if (usability.value && pokemon.isPlayer()) {
+      applyChallenges(ChallengeType.POKEMON_MOVE, move.id, usability);
+    }
+    return usability.value;
   }
 
   getMove(): Move {

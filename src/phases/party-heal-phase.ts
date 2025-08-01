@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { ChallengeType } from "#enums/challenge-type";
 import { BattlePhase } from "#phases/battle-phase";
 import { applyChallenges } from "#utils/challenge-utils";
-import { fixedInt } from "#utils/common";
+import { BooleanHolder, fixedInt } from "#utils/common";
 
 export class PartyHealPhase extends BattlePhase {
   public readonly phaseName = "PartyHealPhase";
@@ -22,9 +22,10 @@ export class PartyHealPhase extends BattlePhase {
       globalScene.fadeOutBgm(1000, false);
     }
     globalScene.ui.fadeOut(1000).then(() => {
-      const preventRevive = applyChallenges(ChallengeType.PREVENT_REVIVE);
+      const preventRevive = new BooleanHolder(false);
+      applyChallenges(ChallengeType.PREVENT_REVIVE, preventRevive);
       for (const pokemon of globalScene.getPlayerParty()) {
-        if (!(pokemon.isFainted() && preventRevive)) {
+        if (!(pokemon.isFainted() && preventRevive.value)) {
           pokemon.hp = pokemon.getMaxHp();
           pokemon.resetStatus(true, false, false, true);
           for (const move of pokemon.moveset) {

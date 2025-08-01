@@ -344,70 +344,78 @@ export abstract class Challenge {
 
   /**
    * An apply function for PARTY_HEAL. Derived classes should alter this.
-   * @returns Whether party healing is enabled or not
+   * @param _status - Whether party healing is enabled or not
+   * @returns Whether this function did anything
    */
-  applyPartyHeal(): boolean {
-    return true;
+  applyPartyHeal(_status: BooleanHolder): boolean {
+    return false;
   }
 
   /**
    * An apply function for SHOP. Derived classes should alter this.
-   * @returns Whether the shop is or is not available after a wave
+   * @param _status - Whether the shop is or is not available after a wave
+   * @returns Whether this function did anything
    */
-  applyShop() {
-    return true;
+  applyShop(_status: BooleanHolder) {
+    return false;
   }
 
   /**
    * An apply function for POKEMON_ADD_TO_PARTY. Derived classes should alter this.
    * @param _pokemon - The pokemon being caught
-   * @return Whether the pokemon can be added to the party or not
+   * @param _status - Whether the pokemon can be added to the party or not
+   * @return Whether this function did anything
    */
-  applyPokemonAddToParty(_pokemon: EnemyPokemon): boolean {
-    return true;
+  applyPokemonAddToParty(_pokemon: EnemyPokemon, _status: BooleanHolder): boolean {
+    return false;
   }
 
   /**
    * An apply function for POKEMON_FUSION. Derived classes should alter this.
    * @param _pokemon - The pokemon being checked
-   * @returns Whether the selected pokemon is allowed to fuse or not
+   * @param _status - Whether the selected pokemon is allowed to fuse or not
+   * @returns Whether this function did anything
    */
-  applyPokemonFusion(_pokemon: PlayerPokemon): boolean {
+  applyPokemonFusion(_pokemon: PlayerPokemon, _status: BooleanHolder): boolean {
     return false;
   }
 
   /**
    * An apply function for POKEMON_MOVE. Derived classes should alter this.
    * @param _moveId - The move being checked
-   * @returns Whether the move can be used or not
+   * @param _status - Whether the move can be used or not
+   * @returns Whether this function did anything
    */
-  applyPokemonMove(_moveId: MoveId): boolean {
-    return true;
+  applyPokemonMove(_moveId: MoveId, _status: BooleanHolder): boolean {
+    return false;
   }
 
   /**
    * An apply function for SHOP_ITEM. Derived classes should alter this.
    * @param _shopItem - The item being checked
-   * @returns Whether the item should be added to the shop or not
+   * @param _status - Whether the item should be added to the shop or not
+   * @returns Whether this function did anything
    */
-  applyShopItem(_shopItem: ModifierTypeOption | null): boolean {
-    return true;
+  applyShopItem(_shopItem: ModifierTypeOption | null, _status: BooleanHolder): boolean {
+    return false;
   }
 
   /**
    * An apply function for WAVE_REWARD. Derived classes should alter this.
    * @param _reward - The reward being checked
-   * @returns Whether the reward should be added to the reward options or not
+   * @param _status - Whether the reward should be added to the reward options or not
+   * @returns Whether this function did anything
    */
-  applyWaveReward(_reward: ModifierTypeOption | null): boolean {
-    return true;
+  applyWaveReward(_reward: ModifierTypeOption | null, _status: BooleanHolder): boolean {
+    return false;
   }
 
   /**
    * An apply function for PREVENT_REVIVE. Derived classes should alter this.
-   * @returns Whether fainting is a permanent status or not
+   * @param _status - Whether fainting is a permanent status or not
+   * @returns Whether this function did anything
    */
-  applyPreventRevive(): boolean {
+  applyPreventRevive(_status: BooleanHolder): boolean {
     return false;
   }
 }
@@ -933,19 +941,24 @@ export class LowerStarterPointsChallenge extends Challenge {
  * Implements a No Support challenge
  */
 export class NoSupportChallenge extends Challenge {
-  // 1 is no_heal
-  // 2 is no_shop
-  // 3 is both
   constructor() {
     super(Challenges.NO_SUPPORT, 3);
   }
 
-  override applyPartyHeal(): boolean {
-    return this.value === 2;
+  override applyPartyHeal(status: BooleanHolder): boolean {
+    if (status.value) {
+      status.value = this.value === 2;
+      return true;
+    }
+    return false;
   }
 
-  override applyShop(): boolean {
-    return this.value === 1;
+  override applyShop(status: BooleanHolder): boolean {
+    if (status.value) {
+      status.value = this.value === 1;
+      return true;
+    }
+    return false;
   }
 
   static override loadChallenge(source: NoSupportChallenge | any): NoSupportChallenge {
@@ -964,8 +977,12 @@ export class LimitedCatchChallenge extends Challenge {
     super(Challenges.LIMITED_CATCH, 1);
   }
 
-  override applyPokemonAddToParty(pokemon: EnemyPokemon): boolean {
-    return pokemon.metWave % 10 === 1;
+  override applyPokemonAddToParty(pokemon: EnemyPokemon, status: BooleanHolder): boolean {
+    if (status.value) {
+      status.value = pokemon.metWave % 10 === 1;
+      return true;
+    }
+    return false;
   }
 
   static override loadChallenge(source: LimitedCatchChallenge | any): LimitedCatchChallenge {
@@ -984,24 +1001,40 @@ export class PermanentFaintChallenge extends Challenge {
     super(Challenges.PERMANENT_FAINT, 1);
   }
 
-  override applyPokemonFusion(pokemon: PlayerPokemon): boolean {
-    return !pokemon.isFainted();
+  override applyPokemonFusion(pokemon: PlayerPokemon, status: BooleanHolder): boolean {
+    if (!status.value) {
+      status.value = pokemon.isFainted();
+      return true;
+    }
+    return false;
   }
 
-  override applyShopItem(shopItem: ModifierTypeOption | null): boolean {
-    return shopItem?.type.group !== "revive";
+  override applyShopItem(shopItem: ModifierTypeOption | null, status: BooleanHolder): boolean {
+    if (status.value) {
+      status.value = shopItem?.type.group !== "revive";
+      return true;
+    }
+    return false;
   }
 
-  override applyWaveReward(reward: ModifierTypeOption | null): boolean {
-    return this.applyShopItem(reward);
+  override applyWaveReward(reward: ModifierTypeOption | null, status: BooleanHolder): boolean {
+    return this.applyShopItem(reward, status);
   }
 
-  override applyPokemonMove(moveId: MoveId) {
-    return moveId !== MoveId.REVIVAL_BLESSING;
+  override applyPokemonMove(moveId: MoveId, status: BooleanHolder) {
+    if (status.value) {
+      status.value = moveId !== MoveId.REVIVAL_BLESSING;
+      return true;
+    }
+    return false;
   }
 
-  override applyPreventRevive(): boolean {
-    return true;
+  override applyPreventRevive(status: BooleanHolder): boolean {
+    if (!status.value) {
+      status.value = true;
+      return true;
+    }
+    return false;
   }
 
   static override loadChallenge(source: PermanentFaintChallenge | any): PermanentFaintChallenge {

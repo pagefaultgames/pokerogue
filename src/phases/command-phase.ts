@@ -23,6 +23,7 @@ import { getMoveTargets } from "#moves/move-utils";
 import { FieldPhase } from "#phases/field-phase";
 import type { TurnMove } from "#types/turn-move";
 import { applyChallenges } from "#utils/challenge-utils";
+import { BooleanHolder } from "#utils/common";
 import i18next from "i18next";
 
 export class CommandPhase extends FieldPhase {
@@ -214,14 +215,16 @@ export class CommandPhase extends FieldPhase {
 
     // Set the translation key for why the move cannot be selected
     let cannotSelectKey: string;
-    if (user.isMoveRestricted(move.moveId, user)) {
-      cannotSelectKey = user.getRestrictingTag(move.moveId, user)!.selectionDeniedText(user, move.moveId);
+    const moveStatus = new BooleanHolder(true);
+    applyChallenges(ChallengeType.POKEMON_MOVE, move.moveId, moveStatus);
+    if (!moveStatus.value) {
+      cannotSelectKey = "battle:moveCannotUseChallenge";
     } else if (move.getPpRatio() === 0) {
       cannotSelectKey = "battle:moveNoPP";
-    } else if (!applyChallenges(ChallengeType.POKEMON_MOVE, move.moveId)) {
-      cannotSelectKey = "battle:moveCannotUseChallenge";
     } else if (move.getName().endsWith(" (N)")) {
       cannotSelectKey = "battle:moveNotImplemented";
+    } else if (user.isMoveRestricted(move.moveId, user)) {
+      cannotSelectKey = user.getRestrictingTag(move.moveId, user)!.selectionDeniedText(user, move.moveId);
     } else {
       // TODO: Consider a message that signals a being unusable for an unknown reason
       cannotSelectKey = "";
