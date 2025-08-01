@@ -26,7 +26,6 @@
       "!**/public/**/*",
       "!**/.github/**/*",
       "!**/node_modules/**/*",
-      "!**/.vscode/**/*",
       "!**/typedoc/**/*",
       // TODO: lint css and html?
       "!**/*.css",
@@ -37,7 +36,6 @@
       "!**/src/data/balance/tms.ts"
     ]
   },
-
   "assist": {
     "actions": {
       "source": {
