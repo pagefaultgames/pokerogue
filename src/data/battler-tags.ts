@@ -2722,7 +2722,7 @@ export class StockpilingTag extends SerializableBattlerTag {
         true,
         false,
         true,
-        this.onStatStagesChanged,
+        this.onStatStagesChanged.bind(this),
       );
     }
   }
