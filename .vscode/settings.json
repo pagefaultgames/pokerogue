@@ -18,7 +18,6 @@
   "javascript.preferGoToSourceDefinition": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
 
-  "typescript.updateImportsOnFileMove.enabled": "always",
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "typescript.preferences.importModuleSpecifierEnding": "index",
   "typescript.preferGoToSourceDefinition": true,
