@@ -12,5 +12,6 @@
     "source.fixAll.eslint": "always",
     "source.fixAll.biome": "always",
     "source.organizeImports.biome": "always"
-},
+  },
+  "vitest.cliArguments": "--no-isolate",
 }
