@@ -71,13 +71,10 @@ import i18next from "i18next";
  *   // Then we must also define a loadTag method with one of the following signatures
  *   public override loadTag(source: BaseArenaTag & Pick<ExampleTag, "tagType" | "a" | "b"): void;
  *   public override loadTag<const T extends this>(source: BaseArenaTag & Pick<T, "tagType" | "a" | "b">): void;
- *   public override loadTag(source: NonFunctionProperties<ExampleTag>): void;
  * }
  * ```
  * Notes
  * - If the class has any subclasses, then the second form of `loadTag` *must* be used.
- * - The third form *must not* be used if the class has any getters, as typescript would expect such fields to be
- *   present in `source`.
  */
 
 /** Interface containing the serializable fields of ArenaTagData. */
