@@ -7,7 +7,6 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { ShinyRateBoosterModifier } from "#modifiers/modifier";
-import { PokemonMove } from "#moves/pokemon-move";
 import { AnOfferYouCantRefuseEncounter } from "#mystery-encounters/an-offer-you-cant-refuse-encounter";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
@@ -207,9 +206,8 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
     it("should award EXP to a pokemon with a move in EXTORTION_MOVES", async () => {
       game.override.ability(AbilityId.SYNCHRONIZE); // Not an extortion ability, so we can test extortion move
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, [SpeciesId.ABRA]);
-      const party = scene.getPlayerParty();
-      const abra = party.find(pkm => pkm.species.speciesId === SpeciesId.ABRA)!;
-      abra.moveset = [new PokemonMove(MoveId.BEAT_UP)];
+      const abra = game.field.getPlayerPokemon();
+      game.move.changeMoveset(abra, MoveId.BEAT_UP);
       const expBefore = abra.exp;
 
       await runMysteryEncounterToEnd(game, 2);
