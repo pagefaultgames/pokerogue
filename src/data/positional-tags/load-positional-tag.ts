@@ -1,5 +1,7 @@
+import { globalScene } from "#app/global-scene";
 import { DelayedAttackTag, type PositionalTag, WishTag } from "#data/positional-tags/positional-tag";
 import { PositionalTagType } from "#enums/positional-tag-type";
+import { PositionalTagAddedEvent } from "#events/arena";
 import type { ObjectValues } from "#types/type-helpers";
 import type { Constructor } from "#utils/common";
 
@@ -23,10 +25,12 @@ export function loadPositionalTag<T extends PositionalTagType>({
  * This function does not perform any checking if the added tag is valid.
  */
 export function loadPositionalTag(tag: SerializedPositionalTag): PositionalTag;
-export function loadPositionalTag<T extends PositionalTagType>({
-  tagType,
-  ...rest
-}: serializedPosTagMap[T]): posTagInstanceMap[T] {
+export function loadPositionalTag<T extends PositionalTagType>(tag: serializedPosTagMap[T]): posTagInstanceMap[T] {
+  // Update the global arena flyout
+
+  globalScene.arena.eventTarget.dispatchEvent(new PositionalTagAddedEvent(tag));
+
+  const { tagType, ...rest } = tag;
   // Note: We need 2 type assertions here:
   // 1 because TS doesn't narrow the type of TagClass correctly based on `T`.
   // It converts it into `new (DelayedAttackTag | WishTag) => DelayedAttackTag & WishTag`

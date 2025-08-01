@@ -1,7 +1,9 @@
+import { globalScene } from "#app/global-scene";
 import { loadPositionalTag } from "#data/positional-tags/load-positional-tag";
 import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { PositionalTagType } from "#enums/positional-tag-type";
+import { PositionalTagRemovedEvent } from "#events/arena";
 
 /** A manager for the {@linkcode PositionalTag}s in the arena. */
 export class PositionalTagManager {
@@ -49,7 +51,16 @@ export class PositionalTagManager {
       if (tag.shouldTrigger()) {
         tag.trigger();
       }
+      this.emitRemove(tag);
     }
     this.tags = leftoverTags;
+  }
+
+  /**
+   * Emit a {@linkcode PositionalTagRemovedEvent} whenever a tag is removed from the field.
+   * @param tag - The {@linkcode PositionalTag} being removed
+   */
+  private emitRemove(tag: PositionalTag): void {
+    globalScene.arena.eventTarget.dispatchEvent(new PositionalTagRemovedEvent(tag.tagType, tag.targetIndex));
   }
 }
