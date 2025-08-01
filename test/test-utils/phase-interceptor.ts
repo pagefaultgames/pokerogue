@@ -177,6 +177,7 @@ export class PhaseInterceptor {
     TitlePhase,
     SelectGenderPhase,
     CommandPhase,
+    SelectStarterPhase,
     SelectModifierPhase,
     MysteryEncounterPhase,
     PostMysteryEncounterPhase,
