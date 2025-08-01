@@ -6,7 +6,6 @@
   "editor.codeActionsOnSave": {
     "source.addMissingImports.ts": "always",
     "source.removeUnusedImports": "always",
-    "source.fixAll.eslint": "always",
     "source.fixAll.biome": "always",
     "source.organizeImports.biome": "always"
   },
@@ -24,8 +23,8 @@
   "typescript.updateImportsOnFileMove.enabled": "always",
 
   "typescript.tsserver.experimental.enableProjectDiagnostics": true,
-  // Note: You may want to adjust the max server memory if your PC supports it
-  "typescript.tsserver.maxTsServerMemory": 1536, // 1.5 GB by default
+  // Note: You may want to adjust the max server memory depending on your PC's specs:
+  // "typescript.tsserver.maxTsServerMemory": 1536, // 1.5 GB by default
   "typescript.autoClosingTags": false,
 
   // # Miscellaneous
