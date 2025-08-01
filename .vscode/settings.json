@@ -13,7 +13,6 @@
   "biome.suggestInstallingGlobally": false,
 
   // # JS/TS setting overrides
-  "javascript.updateImportsOnFileMove.enabled": "always",
   "javascript.preferences.importModuleSpecifier": "non-relative",
   "javascript.preferences.importModuleSpecifierEnding": "index",
   "javascript.preferGoToSourceDefinition": true,
