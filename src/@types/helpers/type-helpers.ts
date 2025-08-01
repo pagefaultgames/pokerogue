@@ -44,20 +44,12 @@ export type InferKeys<O extends object, V extends ObjectValues<O>> = {
 }[keyof O];
 
 /**
- * Type helper to construct a union type of the type of each field in an object.
- *
- * @typeParam T - The type of the object to extract values from.
- *
+ * Utility type to obtain the values of a given object. \
+ * Functions similar to `keyof E`, except producing the values instead of the keys.
  * @remarks
- * Can be used to convert an `enum` interface produced by `typeof Enum` into the union type representing its members.
- *
- * @example
- * ```ts
- * type oneThruThree = ObjectValues<{ a: 1, b: 2, c: 3 }>
- * //   ^?  1 | 2 | 3
- * ```
+ * This can be used to convert an `enum` interface produced by `typeof Enum` into the union type representing its members.
  */
-export type ObjectValues<T extends object> = T[keyof T];
+export type ObjectValues<E extends object> = E[keyof E];
 
 /**
  * Type helper that matches any `Function` type.
@@ -72,7 +64,6 @@ export type AnyFn = (...args: any[]) => any;
  * Useful to produce a type that is roughly the same as the type of `{... obj}`, where `obj` is an instance of `T`.
  * A couple of differences:
  * - Private and protected properties are not included.
- * - Accessors with getters *are* included
  * - Nested properties are not recursively extracted. For this, use {@linkcode NonFunctionPropertiesRecursive}
  */
 export type NonFunctionProperties<T> = {
@@ -103,3 +94,16 @@ export type AbstractConstructor<T> = abstract new (...args: any[]) => T;
 export type CoerceNullPropertiesToUndefined<T extends object> = {
   [K in keyof T]: null extends T[K] ? Exclude<T[K], null> | undefined : T[K];
 };
+
+/**
+ * Type helper that takes two types and ensures that their shapes match *exactly*.
+ * Resolves to T1 if T1 and T2 have the same shape, otherwise resolves to `never`.
+ *
+ * @remarks
+ * Meant to be used in the `as` clause of a mapped type
+ */
+export type MatchShape<T1 extends object, T2 extends object> = T1 extends T2
+  ? Exclude<keyof T1, keyof T2> extends never
+    ? T1
+    : never
+  : never;

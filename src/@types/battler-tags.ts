@@ -1,8 +1,16 @@
 // biome-ignore-start lint/correctness/noUnusedImports: Used in a TSDoc comment
-import type { AbilityBattlerTag, BattlerTagTypeMap, SerializableBattlerTag, TypeBoostTag } from "#data/battler-tags";
+import type {
+  AbilityBattlerTag,
+  BattlerTag,
+  BattlerTagTypeMap,
+  SerializableBattlerTag,
+  TypeBoostTag,
+} from "#data/battler-tags";
 import type { AbilityId } from "#enums/ability-id";
 // biome-ignore-end lint/correctness/noUnusedImports: end
 import type { BattlerTagType } from "#enums/battler-tag-type";
+import type { MoveId } from "#enums/move-id";
+import type { MatchShape } from "#types/type-helpers";
 
 /**
  * Subset of {@linkcode BattlerTagType}s that restrict the use of moves.
@@ -98,6 +106,17 @@ export type CritStageBoostTagType = BattlerTagType.CRIT_BOOST | BattlerTagType.D
 export type RemovedTypeTagType = BattlerTagType.DOUBLE_SHOCKED | BattlerTagType.BURNED_UP;
 
 /**
+ * Subset of {@linkcode BattlerTagType}s that provide type boosts
+ */
+export type TypeBoostTagType = BattlerTagType.FIRE_BOOST | BattlerTagType.CHARGED;
+
+/** Subset of {@linkcode BattlerTagType}s that boost the user's critical stage */
+export type CritStageBoostTagType = BattlerTagType.CRIT_BOOST | BattlerTagType.DRAGON_CHEER;
+
+/** Subset of {@linkcode BattlerTagType}s that remove one of the users' types */
+export type RemovedTypeTagType = BattlerTagType.DOUBLE_SHOCKED | BattlerTagType.BURNED_UP;
+
+/**
  * Subset of {@linkcode BattlerTagType}s related to abilities that boost the highest stat.
  */
 export type HighestStatBoostTagType =
@@ -122,14 +141,38 @@ export type NonSerializableBattlerTagType = Exclude<BattlerTagType, Serializable
  */
 export type BattlerTagTypeData = Parameters<
   BattlerTagTypeMap[keyof {
-    [K in keyof BattlerTagTypeMap as K extends SerializableBattlerTagType ? K : never]: BattlerTagTypeMap[K];
+    [K in SerializableBattlerTagType]: BattlerTagTypeMap[K];
   }]["loadTag"]
 >[0];
 
 /**
- * Subset of {@linkcode BattlerTagType}s whose associated `BattlerTag` adds a serializable `moveId` field
+ * Subset of {@linkcode BattlerTagType}s whose associated `BattlerTag`
+ * adds no additional fields that are serialized.
  */
-export type BattlerTagTypeWithMoveId = BattlerTagType.DISABLED | BattlerTagType.GORILLA_TACTICS | BattlerTagType.ENCORE;
+export type BasicBattlerTag = keyof {
+  [K in SerializableBattlerTagType as MatchShape<
+    Parameters<BattlerTagTypeMap[K]["loadTag"]>[0],
+    Parameters<BattlerTag["loadTag"]>[0]
+  > extends never
+    ? never
+    : K]: any;
+};
+
+/**
+ * Subset of {@linkcode BattlerTagType}s whose associated `BattlerTag` adds a serializable `moveId` field
+ * (and no other serialized fields).
+ *
+ * @remarks
+ * Intended to be used to simplify type safety in the zod schemas.
+ */
+export type BattlerTagTypeWithMoveId = keyof {
+  [K in SerializableBattlerTagType as MatchShape<
+    Parameters<BattlerTagTypeMap[K]["loadTag"]>[0],
+    Parameters<BattlerTag["loadTag"]>[0] & { moveId: MoveId }
+  > extends never
+    ? never
+    : K]: any;
+};
 
 /**
  * Dummy, typescript-only declaration to ensure that
