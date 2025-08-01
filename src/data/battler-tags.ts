@@ -44,7 +44,7 @@ import type {
   SemiInvulnerableTagType,
   TrappingBattlerTagType,
 } from "#types/battler-tags";
-import type { Mutable, NonFunctionProperties } from "#types/type-helpers";
+import type { Mutable } from "#types/type-helpers";
 import { BooleanHolder, coerceArray, getFrameMs, isNullOrUndefined, NumberHolder, toDmgValue } from "#utils/common";
 
 /**
@@ -80,13 +80,10 @@ import { BooleanHolder, coerceArray, getFrameMs, isNullOrUndefined, NumberHolder
  *   // Then we must also define a loadTag method with one of the following signatures
  *   public override loadTag(source: BaseBattlerTag & Pick<ExampleTag, "tagType" | "a" | "b"): void;
  *   public override loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "a" | "b">): void;
- *   public override loadTag(source: NonFunctionProperties<ExampleTag>): void;
  * }
  * ```
  * Notes
  * - If the class has any subclasses, then the second form of `loadTag` *must* be used.
- * - The third form *must not* be used if the class has any getters, as typescript would expect such fields to be
- *   present in `source`.
  */
 
 /** Interface containing the serializable fields of BattlerTag */
@@ -419,7 +416,6 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   public override readonly tagType = BattlerTagType.GORILLA_TACTICS;
   /** ID of the move that the user is locked into using*/
   public readonly moveId: MoveId = MoveId.NONE;
-
   constructor() {
     super(BattlerTagType.GORILLA_TACTICS, BattlerTagLapseType.CUSTOM, 0);
   }
@@ -1235,7 +1231,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
     );
   }
 
-  public override loadTag(source: NonFunctionProperties<EncoreTag>): void {
+  public override loadTag(source: BaseBattlerTag & Pick<EncoreTag, "tagType" | "moveId">): void {
     super.loadTag(source);
     this.moveId = source.moveId;
   }
@@ -2618,7 +2614,7 @@ export class CommandedTag extends SerializableBattlerTag {
     }
   }
 
-  override loadTag(source: NonFunctionProperties<CommandedTag>): void {
+  override loadTag(source: BaseBattlerTag & Pick<CommandedTag, "tagType" | "tatsugiriFormKey">): void {
     super.loadTag(source);
     (this as Mutable<this>).tatsugiriFormKey = source.tatsugiriFormKey;
   }
@@ -2659,7 +2655,9 @@ export class StockpilingTag extends SerializableBattlerTag {
     }
   };
 
-  public override loadTag(source: NonFunctionProperties<StockpilingTag>): void {
+  public override loadTag(
+    source: BaseBattlerTag & Pick<StockpilingTag, "tagType" | "stockpiledCount" | "statChangeCounts">,
+  ): void {
     super.loadTag(source);
     this.stockpiledCount = source.stockpiledCount || 0;
     this.statChangeCounts = {
@@ -3006,7 +3004,7 @@ export class AutotomizedTag extends SerializableBattlerTag {
     this.onAdd(pokemon);
   }
 
-  public override loadTag(source: NonFunctionProperties<AutotomizedTag>): void {
+  public override loadTag(source: BaseBattlerTag & Pick<AutotomizedTag, "tagType" | "autotomizeCount">): void {
     super.loadTag(source);
     this.autotomizeCount = source.autotomizeCount;
   }
