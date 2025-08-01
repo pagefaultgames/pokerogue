@@ -306,7 +306,7 @@ export class PartyUiHandler extends MessageUiHandler {
     const partyMessageText = addTextObject(10, 8, defaultMessage, TextStyle.WINDOW, { maxLines: 2 });
     partyMessageText.setName("text-party-msg");
 
-    partyMessageText.setOrigin(0, 0);
+    partyMessageText.setOrigin(0);
     partyMessageBoxContainer.add(partyMessageText);
 
     this.message = partyMessageText;
@@ -1237,7 +1237,7 @@ export class PartyUiHandler extends MessageUiHandler {
     }
     if (!this.optionsCursorObj) {
       this.optionsCursorObj = globalScene.add.image(0, 0, "cursor");
-      this.optionsCursorObj.setOrigin(0, 0);
+      this.optionsCursorObj.setOrigin(0);
       this.optionsContainer.add(this.optionsCursorObj);
     }
     this.optionsCursorObj.setPosition(
@@ -1609,7 +1609,7 @@ export class PartyUiHandler extends MessageUiHandler {
         optionText.setColor("#40c8f8");
         optionText.setShadowColor("#006090");
       }
-      optionText.setOrigin(0, 0);
+      optionText.setOrigin(0);
 
       /** For every item that has stack bigger than 1, display the current quantity selection */
       const itemModifiers = this.getItemModifiers(pokemon);
@@ -1900,7 +1900,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       this.slotIndex >= battlerCount ? 21 : 24,
       (this.slotIndex >= battlerCount ? 2 : 10) + (offsetJa ? 2 : 0),
     );
-    this.slotName.setOrigin(0, 0);
+    this.slotName.setOrigin(0);
 
     const slotLevelLabel = globalScene.add.image(0, 0, "party_slot_overlay_lv");
     slotLevelLabel.setPositionRelative(
@@ -1908,7 +1908,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       (this.slotIndex >= battlerCount ? 21 : 24) + 8,
       (this.slotIndex >= battlerCount ? 2 : 10) + 12,
     );
-    slotLevelLabel.setOrigin(0, 0);
+    slotLevelLabel.setOrigin(0);
 
     const slotLevelText = addTextObject(
       0,
@@ -1940,7 +1940,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     if (this.pokemon.fusionSpecies) {
       const splicedIcon = globalScene.add.image(0, 0, "icon_spliced");
       splicedIcon.setScale(0.5);
-      splicedIcon.setOrigin(0, 0);
+      splicedIcon.setOrigin(0);
       if (this.slotIndex >= battlerCount) {
         splicedIcon.setPositionRelative(slotLevelLabel, 36 + (genderSymbol ? 8 : 0), 0.5);
       } else {
@@ -1953,7 +1953,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     if (this.pokemon.status) {
       const statusIndicator = globalScene.add.sprite(0, 0, getLocalizedSpriteKey("statuses"));
       statusIndicator.setFrame(StatusEffect[this.pokemon.status?.effect].toLowerCase());
-      statusIndicator.setOrigin(0, 0);
+      statusIndicator.setOrigin(0);
       statusIndicator.setPositionRelative(slotLevelLabel, this.slotIndex >= battlerCount ? 43 : 55, 0);
 
       slotInfoContainer.add(statusIndicator);
@@ -1963,7 +1963,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       const doubleShiny = this.pokemon.isDoubleShiny(false);
 
       const shinyStar = globalScene.add.image(0, 0, `shiny_star_small${doubleShiny ? "_1" : ""}`);
-      shinyStar.setOrigin(0, 0);
+      shinyStar.setOrigin(0);
       shinyStar.setPositionRelative(this.slotName, -9, 3);
       shinyStar.setTint(getVariantTint(this.pokemon.getBaseVariant()));
 
@@ -1986,7 +1986,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       this.slotIndex >= battlerCount ? 72 : 8,
       this.slotIndex >= battlerCount ? 6 : 31,
     );
-    this.slotHpBar.setOrigin(0, 0);
+    this.slotHpBar.setOrigin(0);
     this.slotHpBar.setVisible(false);
 
     const hpRatio = this.pokemon.getHpRatio();
@@ -1998,7 +1998,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       hpRatio > 0.5 ? "high" : hpRatio > 0.25 ? "medium" : "low",
     );
     this.slotHpOverlay.setPositionRelative(this.slotHpBar, 16, 2);
-    this.slotHpOverlay.setOrigin(0, 0);
+    this.slotHpOverlay.setOrigin(0);
     this.slotHpOverlay.setScale(hpRatio, 1);
     this.slotHpOverlay.setVisible(false);
 
