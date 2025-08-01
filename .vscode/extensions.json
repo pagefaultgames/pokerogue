@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "biomejs.biome",
-    "dbaeumer.vscode-eslint",
     "YoavBls.pretty-ts-errors",
     "vitest.explorer",
 
