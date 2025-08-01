@@ -20,13 +20,11 @@ import { ModifierTypeOption } from "#modifiers/modifier-type";
 import { CheckSwitchPhase } from "#phases/check-switch-phase";
 import { CommandPhase } from "#phases/command-phase";
 import { EncounterPhase } from "#phases/encounter-phase";
-import { LoginPhase } from "#phases/login-phase";
 import { MovePhase } from "#phases/move-phase";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import { NewBattlePhase } from "#phases/new-battle-phase";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
 import type { SelectTargetPhase } from "#phases/select-target-phase";
-import { TitlePhase } from "#phases/title-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
 import { TurnStartPhase } from "#phases/turn-start-phase";
@@ -178,9 +176,10 @@ export class GameManager {
    * @returns A promise that resolves when the title phase is reached.
    */
   async runToTitle(): Promise<void> {
-    await this.phaseInterceptor.whenAboutToRun(LoginPhase);
-    this.phaseInterceptor.pop();
-    await this.phaseInterceptor.run(TitlePhase);
+    // Go to login phase and skip past it
+    await this.phaseInterceptor.to("LoginPhase", false);
+    this.phaseInterceptor.shiftPhase();
+    await this.phaseInterceptor.to("TitlePhase");
 
     this.scene.gameSpeed = 5;
     this.scene.moveAnimations = false;
@@ -260,7 +259,7 @@ export class GameManager {
       true,
     );
 
-    await this.phaseInterceptor.run(EncounterPhase);
+    await this.phaseInterceptor.to("EncounterPhase");
     if (!isNullOrUndefined(encounterType)) {
       expect(this.scene.currentBattle?.mysteryEncounter?.encounterType).toBe(encounterType);
     }
@@ -529,7 +528,7 @@ export class GameManager {
    * ```
    */
   async setTurnOrder(order: BattlerIndex[]): Promise<void> {
-    await this.phaseInterceptor.to(TurnStartPhase, false);
+    await this.phaseInterceptor.to("TurnStartPhase", false);
 
     vi.spyOn(this.scene.phaseManager.getCurrentPhase() as TurnStartPhase, "getSpeedOrder").mockReturnValue(order);
   }
