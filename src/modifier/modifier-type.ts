@@ -1013,6 +1013,7 @@ class AllPokemonFullReviveModifierType extends AllPokemonFullHpRestoreModifierTy
       "modifierType:ModifierType.AllPokemonFullReviveModifierType",
       (_type, _args) => new PokemonHpRestoreModifier(this, -1, 0, 100, false, true),
     );
+    this.group = "revive";
   }
 }
 
