@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "biomejs.biome",
+    "dbaeumer.vscode-eslint",
+    "YoavBls.pretty-ts-errors",
+    "vitest.explorer",
+
+    // This stuff isn't mandatory - it's just nice to have ;)
+    "adpyke.codesnap",
+    "aaron-bond.better-comments"
+  ]
+}

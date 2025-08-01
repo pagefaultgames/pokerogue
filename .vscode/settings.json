@@ -1,0 +1,16 @@
+{
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.preferences.importModuleSpecifierEnding": "index",
+  "typescript.preferences.importModuleSpecifierEnding": "index",
+  "editor.codeActionsOnSave": {
+    "source.addMissingImports.ts": "always",
+    "source.removeUnusedImports": "always",
+    "source.fixAll.eslint": "always",
+    "source.fixAll.biome": "always",
+    "source.organizeImports.biome": "always"
+},
+}

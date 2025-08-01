@@ -1,0 +1,70 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "presentation": {
+    "reveal": "never",
+    "focus": false
+  },
+  "tasks": [
+    {
+      "label": "Update Submodules",
+      "type": "shell",
+      "command": "git submodule update --init --recursive",
+      "icon": {
+        "color": "terminal.ansiRed",
+        "id": "git-branch"
+      },
+    },
+    {
+      "label": "Clear Submodules",
+      "type": "shell",
+      "command": "rm -rf public/locales; git checkout upstream/beta -- public/locales",
+      "icon": {
+        "color": "terminal.ansiRed",
+        "id": "trash"
+      },
+    },
+    {
+      "label": "Biome - Write All",
+      "type": "shell",
+      "command": {
+        "value": "pnpm",
+        "quoting": "weak"
+      },
+      "args": [
+        "run",
+        "biome",
+        "--diagnostic-level=${input:error-level}"
+      ],
+      "icon": {
+        "color": "terminal.ansiBlue",
+        "id": "json"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Start Local Dev",
+      "type": "npm",
+      "script": "start:dev",
+      "icon": {
+        "color": "terminal.ansiGreen",
+        "id": "debug-start"
+      },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "error-level",
+      "description": "Select the level of errors to report from Biome.",
+      "type": "pickString",
+      "options": [
+        "error",
+        "warning",
+        "info"
+      ],
+      "default": "error"
+    }
+  ]
+}
