@@ -17,7 +17,7 @@
     "typecheck": "tsc --noEmit",
     "eslint": "eslint --fix .",
     "eslint-ci": "eslint .",
-    "biome": "biome check --write --changed --no-errors-on-unmatched",
+    "biome": "biome check --write --changed --no-errors-on-unmatched --diagnostic-level=error",
     "biome-ci": "biome ci --diagnostic-level=error --reporter=github --no-errors-on-unmatched",
     "docs": "typedoc",
     "depcruise": "depcruise src test",
