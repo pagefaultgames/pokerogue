@@ -1080,13 +1080,13 @@ export const allChallenges: Challenge[] = [];
 
 export function initChallenges() {
   allChallenges.push(
-    new SingleGenerationChallenge(),
-    new SingleTypeChallenge(),
     new FreshStartChallenge(),
-    new InverseBattleChallenge(),
-    new FlipStatChallenge(),
+    new PermanentFaintChallenge(),
     new LimitedCatchChallenge(),
     new NoSupportChallenge(),
-    new PermanentFaintChallenge(),
+    new SingleGenerationChallenge(),
+    new SingleTypeChallenge(),
+    new InverseBattleChallenge(),
+    new FlipStatChallenge(),
   );
 }
