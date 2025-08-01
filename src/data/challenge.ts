@@ -13,15 +13,16 @@ import { Challenges } from "#enums/challenges";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { ModifierTier } from "#enums/modifier-tier";
-import type { MoveId } from "#enums/move-id";
+import { MoveId } from "#enums/move-id";
 import type { MoveSourceType } from "#enums/move-source-type";
 import { Nature } from "#enums/nature";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
-import type { Pokemon } from "#field/pokemon";
+import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
+import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { DexAttrProps, GameData } from "#system/game-data";
 import { BooleanHolder, type NumberHolder, randSeedItem } from "#utils/common";
@@ -343,6 +344,75 @@ export abstract class Challenge {
    * @returns {@link boolean} Whether this function did anything.
    */
   applyFlipStat(_pokemon: Pokemon, _baseStats: number[]) {
+    return false;
+  }
+
+  /**
+   * An apply function for PARTY_HEAL. Derived classes should alter this.
+   * @returns Whether party healing is enabled or not
+   */
+  applyPartyHeal(): boolean {
+    return true;
+  }
+
+  /**
+   * An apply function for SHOP. Derived classes should alter this.
+   * @returns Whether the shop is or is not available after a wave
+   */
+  applyShop() {
+    return true;
+  }
+
+  /**
+   * An apply function for POKEMON_ADD_TO_PARTY. Derived classes should alter this.
+   * @param _pokemon - The pokemon being caught
+   * @return Whether the pokemon can be added to the party or not
+   */
+  applyPokemonAddToParty(_pokemon: EnemyPokemon): boolean {
+    return true;
+  }
+
+  /**
+   * An apply function for POKEMON_FUSION. Derived classes should alter this.
+   * @param _pokemon - The pokemon being checked
+   * @returns Whether the selected pokemon is allowed to fuse or not
+   */
+  applyPokemonFusion(_pokemon: PlayerPokemon): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for POKEMON_MOVE. Derived classes should alter this.
+   * @param _moveId - The move being checked
+   * @returns Whether the move can be used or not
+   */
+  applyPokemonMove(_moveId: MoveId): boolean {
+    return true;
+  }
+
+  /**
+   * An apply function for SHOP_ITEM. Derived classes should alter this.
+   * @param _shopItem - The item being checked
+   * @returns Whether the item should be added to the shop or not
+   */
+  applyShopItem(_shopItem: ModifierTypeOption | null): boolean {
+    return true;
+  }
+
+  /**
+   * An apply function for WAVE_REWARD. Derived classes should alter this.
+   * @param _reward - The reward being checked
+   * @returns Whether the reward should be added to the reward options or not
+   */
+  applyWaveReward(_reward: ModifierTypeOption | null): boolean {
+    return true;
+  }
+
+  /**
+   * An apply function for PREVENT_REVIVE. Derived classes should alter this.
+   * @returns Whether fainting is a permanent status or not
+   */
+  applyPreventRevive(): boolean {
     return false;
   }
 }
@@ -890,6 +960,89 @@ export class LowerStarterPointsChallenge extends Challenge {
 }
 
 /**
+ * Implements a No Support challenge
+ */
+export class NoSupportChallenge extends Challenge {
+  // 1 is no_heal
+  // 2 is no_shop
+  // 3 is both
+  constructor() {
+    super(Challenges.NO_SUPPORT, 3);
+  }
+
+  override applyPartyHeal(): boolean {
+    return this.value === 2;
+  }
+
+  override applyShop(): boolean {
+    return this.value === 1;
+  }
+
+  static override loadChallenge(source: NoSupportChallenge | any): NoSupportChallenge {
+    const newChallenge = new NoSupportChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+/**
+ * Implements a Limited Catch challenge
+ */
+export class LimitedCatchChallenge extends Challenge {
+  constructor() {
+    super(Challenges.LIMITED_CATCH, 1);
+  }
+
+  override applyPokemonAddToParty(pokemon: EnemyPokemon): boolean {
+    return pokemon.metWave % 10 === 1;
+  }
+
+  static override loadChallenge(source: LimitedCatchChallenge | any): LimitedCatchChallenge {
+    const newChallenge = new LimitedCatchChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+/**
+ * Implements a Permanent Faint challenge
+ */
+export class PermanentFaintChallenge extends Challenge {
+  constructor() {
+    super(Challenges.PERMANENT_FAINT, 1);
+  }
+
+  override applyPokemonFusion(pokemon: PlayerPokemon): boolean {
+    return !pokemon.isFainted();
+  }
+
+  override applyShopItem(shopItem: ModifierTypeOption | null): boolean {
+    return shopItem?.type.group !== "revive";
+  }
+
+  override applyWaveReward(reward: ModifierTypeOption | null): boolean {
+    return this.applyShopItem(reward);
+  }
+
+  override applyPokemonMove(moveId: MoveId) {
+    return moveId !== MoveId.REVIVAL_BLESSING;
+  }
+
+  override applyPreventRevive(): boolean {
+    return true;
+  }
+
+  static override loadChallenge(source: PermanentFaintChallenge | any): PermanentFaintChallenge {
+    const newChallenge = new PermanentFaintChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+/**
  * Apply all challenges that modify starter choice.
  * @param challengeType {@link ChallengeType} ChallengeType.STARTER_CHOICE
  * @param pokemon {@link PokemonSpecies} The pokemon to check the validity of.
@@ -1041,6 +1194,66 @@ export function applyChallenges(
 
 export function applyChallenges(challengeType: ChallengeType.FLIP_STAT, pokemon: Pokemon, baseStats: number[]): boolean;
 
+/**
+ * Apply all challenges that conditionally enable or disable automatic party healing during biome transitions
+ * @param challengeType - {@linkcode ChallengeType.PARTY_HEAL}
+ * @returns Whether party healing is enabled or not
+ */
+export function applyChallenges(challengeType: ChallengeType.PARTY_HEAL): boolean;
+
+/**
+ * Apply all challenges that conditionally enable or disable the shop
+ * @returns Whether the shop is or is not available after a wave
+ */
+export function applyChallenges(challengeType: ChallengeType.SHOP): boolean;
+
+/**
+ * Apply all challenges that validate whether a pokemon can be added to the player's party or not
+ * @param challengeType - {@linkcode ChallengeType.POKEMON_ADD_TO_PARTY}
+ * @param pokemon - The pokemon being caught
+ * @return Whether the pokemon can be added to the party or not
+ */
+export function applyChallenges(challengeType: ChallengeType.POKEMON_ADD_TO_PARTY, pokemon: EnemyPokemon): boolean;
+
+/**
+ * Apply all challenges that validate whether a pokemon is allowed to fuse or not
+ * @param challengeType - {@linkcode ChallengeType.POKEMON_FUSION}
+ * @param pokemon - The pokemon being checked
+ * @returns Whether the selected pokemon is allowed to fuse or not
+ */
+export function applyChallenges(challengeType: ChallengeType.POKEMON_FUSION, pokemon: PlayerPokemon): boolean;
+
+/**
+ * Apply all challenges that validate whether particular moves can or cannot be used
+ * @param challengeType - {@linkcode ChallengeType.POKEMON_MOVE}
+ * @param moveId - The move being checked
+ * @returns Whether the move can be used or not
+ */
+export function applyChallenges(challengeType: ChallengeType.POKEMON_MOVE, moveId: MoveId): boolean;
+
+/**
+ * Apply all challenges that validate whether particular items are or are not sold in the shop
+ * @param challengeType - {@linkcode ChallengeType.SHOP_ITEM}
+ * @param shopItem - The item being checked
+ * @returns Whether the item should be added to the shop or not
+ */
+export function applyChallenges(challengeType: ChallengeType.SHOP_ITEM, shopItem: ModifierTypeOption | null): boolean;
+
+/**
+ * Apply all challenges that validate whether particular items will be given as a reward after a wave
+ * @param challengeType - {@linkcode ChallengeType.WAVE_REWARD}
+ * @param reward - The reward being checked
+ * @returns Whether the reward should be added to the reward options or not
+ */
+export function applyChallenges(challengeType: ChallengeType.WAVE_REWARD, reward: ModifierTypeOption | null): boolean;
+
+/**
+ * Apply all challenges that prevent recovery from fainting
+ * @param challengeType - {@linkcode ChallengeType.PREVENT_REVIVE}
+ * @returns Whether fainting is a permanent status or not
+ */
+export function applyChallenges(challengeType: ChallengeType.PREVENT_REVIVE): boolean;
+
 export function applyChallenges(challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   globalScene.gameMode.challenges.forEach(c => {
@@ -1088,6 +1301,30 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
         case ChallengeType.FLIP_STAT:
           ret ||= c.applyFlipStat(args[0], args[1]);
           break;
+        case ChallengeType.PARTY_HEAL:
+          ret ||= c.applyPartyHeal();
+          break;
+        case ChallengeType.SHOP:
+          ret ||= c.applyShop();
+          break;
+        case ChallengeType.POKEMON_ADD_TO_PARTY:
+          ret ||= c.applyPokemonAddToParty(args[0]);
+          break;
+        case ChallengeType.POKEMON_FUSION:
+          ret ||= c.applyPokemonFusion(args[0]);
+          break;
+        case ChallengeType.POKEMON_MOVE:
+          ret ||= c.applyPokemonMove(args[0]);
+          break;
+        case ChallengeType.SHOP_ITEM:
+          ret ||= c.applyShopItem(args[0]);
+          break;
+        case ChallengeType.WAVE_REWARD:
+          ret ||= c.applyWaveReward(args[0]);
+          break;
+        case ChallengeType.PREVENT_REVIVE:
+          ret ||= c.applyPreventRevive();
+          break;
       }
     }
   });
@@ -1115,6 +1352,12 @@ export function copyChallenge(source: Challenge | any): Challenge {
       return InverseBattleChallenge.loadChallenge(source);
     case Challenges.FLIP_STAT:
       return FlipStatChallenge.loadChallenge(source);
+    case Challenges.LIMITED_CATCH:
+      return LimitedCatchChallenge.loadChallenge(source);
+    case Challenges.NO_SUPPORT:
+      return NoSupportChallenge.loadChallenge(source);
+    case Challenges.PERMANENT_FAINT:
+      return PermanentFaintChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -1128,6 +1371,9 @@ export function initChallenges() {
     new FreshStartChallenge(),
     new InverseBattleChallenge(),
     new FlipStatChallenge(),
+    new LimitedCatchChallenge(),
+    new NoSupportChallenge(),
+    new PermanentFaintChallenge(),
   );
 }
 

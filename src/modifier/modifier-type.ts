@@ -6,6 +6,7 @@ import Overrides from "#app/overrides";
 import { EvolutionItem, pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { tmPoolTiers, tmSpecies } from "#balance/tms";
 import { getBerryEffectDescription, getBerryName } from "#data/berry";
+import { applyChallenges } from "#data/challenge";
 import { allMoves, modifierTypes } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
@@ -14,6 +15,7 @@ import { pokemonFormChanges, SpeciesFormChangeCondition } from "#data/pokemon-fo
 import { getStatusEffectDescriptor } from "#data/status-effect";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
+import { ChallengeType } from "#enums/challenge-type";
 import { FormChangeItem } from "#enums/form-change-item";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { ModifierTier } from "#enums/modifier-tier";
@@ -533,7 +535,7 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
     );
 
     this.selectFilter = (pokemon: PlayerPokemon) => {
-      if (pokemon.hp) {
+      if (pokemon.hp || applyChallenges(ChallengeType.PREVENT_REVIVE)) {
         return PartyUiHandler.NoEffectMessage;
       }
       return null;
@@ -1262,7 +1264,7 @@ export class FusePokemonModifierType extends PokemonModifierType {
       iconImage,
       (_type, args) => new FusePokemonModifier(this, (args[0] as PlayerPokemon).id, (args[1] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
-        if (pokemon.isFusion()) {
+        if (pokemon.isFusion() || !applyChallenges(ChallengeType.POKEMON_FUSION, pokemon)) {
           return PartyUiHandler.NoEffectMessage;
         }
         return null;
@@ -2574,11 +2576,14 @@ function getModifierTypeOptionWithRetry(
 ): ModifierTypeOption {
   allowLuckUpgrades = allowLuckUpgrades ?? true;
   let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, tier, undefined, 0, allowLuckUpgrades);
+  let candidateValidity = applyChallenges(ChallengeType.WAVE_REWARD, candidate);
   let r = 0;
   while (
-    existingOptions.length &&
-    ++r < retryCount &&
-    existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group).length
+    (existingOptions.length &&
+      ++r < retryCount &&
+      existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group)
+        .length) ||
+    !candidateValidity
   ) {
     candidate = getNewModifierTypeOption(
       party,
@@ -2588,6 +2593,7 @@ function getModifierTypeOptionWithRetry(
       0,
       allowLuckUpgrades,
     );
+    candidateValidity = applyChallenges(ChallengeType.WAVE_REWARD, candidate);
   }
   return candidate!;
 }
@@ -2648,7 +2654,11 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: number, baseC
     [new ModifierTypeOption(modifierTypeInitObj.FULL_RESTORE(), 0, baseCost * 2.25)],
     [new ModifierTypeOption(modifierTypeInitObj.SACRED_ASH(), 0, baseCost * 10)],
   ];
-  return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
+
+  return options
+    .slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30))
+    .flat()
+    .filter(shopItem => applyChallenges(ChallengeType.SHOP_ITEM, shopItem));
 }
 
 export function getEnemyBuffModifierForWave(

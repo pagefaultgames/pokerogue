@@ -1,4 +1,6 @@
 import { globalScene } from "#app/global-scene";
+import { applyChallenges } from "#data/challenge";
+import { ChallengeType } from "#enums/challenge-type";
 import { BattlePhase } from "#phases/battle-phase";
 import { fixedInt } from "#utils/common";
 
@@ -20,13 +22,16 @@ export class PartyHealPhase extends BattlePhase {
       globalScene.fadeOutBgm(1000, false);
     }
     globalScene.ui.fadeOut(1000).then(() => {
+      const preventRevive = applyChallenges(ChallengeType.PREVENT_REVIVE);
       for (const pokemon of globalScene.getPlayerParty()) {
-        pokemon.hp = pokemon.getMaxHp();
-        pokemon.resetStatus(true, false, false, true);
-        for (const move of pokemon.moveset) {
-          move.ppUsed = 0;
+        if (!(pokemon.isFainted() && preventRevive)) {
+          pokemon.hp = pokemon.getMaxHp();
+          pokemon.resetStatus(true, false, false, true);
+          for (const move of pokemon.moveset) {
+            move.ppUsed = 0;
+          }
+          pokemon.updateInfo(true);
         }
-        pokemon.updateInfo(true);
       }
       const healSong = globalScene.playSoundWithoutBgm("heal");
       globalScene.time.delayedCall(fixedInt(healSong.totalDuration * 1000), () => {

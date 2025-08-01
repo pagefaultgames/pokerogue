@@ -2,8 +2,7 @@ import { FixedBattleConfig } from "#app/battle";
 import { CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
-import type { Challenge } from "#data/challenge";
-import { allChallenges, applyChallenges, copyChallenge } from "#data/challenge";
+import { allChallenges, applyChallenges, type Challenge, copyChallenge } from "#data/challenge";
 import { getDailyStartingBiome } from "#data/daily-run";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -309,6 +308,14 @@ export class GameMode implements GameModeConfig {
       return challengeConfig;
     }
     return this.battleConfig[waveIndex];
+  }
+
+  /**
+   * Checks if the game mode has the shop enabled or not
+   * @returns Whether the shop is available or not
+   */
+  getShopAvailability(): boolean {
+    return !this.hasNoShop && this.modeId === GameModes.CHALLENGE && applyChallenges(ChallengeType.SHOP);
   }
 
   getClearScoreBonus(): number {

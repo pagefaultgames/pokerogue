@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { speciesStarterCosts } from "#balance/starters";
+import { applyChallenges } from "#data/challenge";
 import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import {
@@ -13,6 +14,7 @@ import { CustomPokemonData } from "#data/pokemon-data";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import type { AbilityId } from "#enums/ability-id";
+import { ChallengeType } from "#enums/challenge-type";
 import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -706,6 +708,12 @@ export async function catchPokemon(
         });
       };
       Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
+        // TODO: Address ME edge cases (Safari Zone, etc.)
+        if (!applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon)) {
+          removePokemon();
+          end();
+          return;
+        }
         if (globalScene.getPlayerParty().length === 6) {
           const promptRelease = () => {
             globalScene.ui.showText(

@@ -1,6 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { biomeLinks, getBiomeName } from "#balance/biomes";
+import { applyChallenges } from "#data/challenge";
 import { BiomeId } from "#enums/biome-id";
+import { ChallengeType } from "#enums/challenge-type";
 import { UiMode } from "#enums/ui-mode";
 import { MapModifier, MoneyInterestModifier } from "#modifiers/modifier";
 import { BattlePhase } from "#phases/battle-phase";
@@ -20,7 +22,9 @@ export class SelectBiomePhase extends BattlePhase {
     const setNextBiome = (nextBiome: BiomeId) => {
       if (nextWaveIndex % 10 === 1) {
         globalScene.applyModifiers(MoneyInterestModifier, true);
-        globalScene.phaseManager.unshiftNew("PartyHealPhase", false);
+        if (applyChallenges(ChallengeType.PARTY_HEAL)) {
+          globalScene.phaseManager.unshiftNew("PartyHealPhase", false);
+        }
       }
       globalScene.phaseManager.unshiftNew("SwitchBiomePhase", nextBiome);
       this.end();

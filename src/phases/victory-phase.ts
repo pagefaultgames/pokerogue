@@ -1,8 +1,10 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { applyChallenges } from "#data/challenge";
 import { modifierTypes } from "#data/data-lists";
 import { BattleType } from "#enums/battle-type";
 import type { BattlerIndex } from "#enums/battler-index";
+import { ChallengeType } from "#enums/challenge-type";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import type { CustomModifierSettings } from "#modifiers/modifier-type";
 import { handleMysteryEncounterVictory } from "#mystery-encounters/encounter-phase-utils";
@@ -63,7 +65,7 @@ export class VictoryPhase extends PokemonPhase {
               break;
           }
         }
-        if (globalScene.currentBattle.waveIndex % 10) {
+        if (globalScene.currentBattle.waveIndex % 10 !== 0 || !applyChallenges(ChallengeType.PARTY_HEAL)) {
           globalScene.phaseManager.pushNew(
             "SelectModifierPhase",
             undefined,

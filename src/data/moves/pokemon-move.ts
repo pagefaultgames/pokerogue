@@ -1,4 +1,6 @@
+import { applyChallenges } from "#data/challenge";
 import { allMoves } from "#data/data-lists";
+import { ChallengeType } from "#enums/challenge-type";
 import type { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
@@ -46,15 +48,12 @@ export class PokemonMove {
    */
   isUsable(pokemon: Pokemon, ignorePp = false, ignoreRestrictionTags = false): boolean {
     // TODO: Add Sky Drop's 1 turn stall
-    if (this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)) {
-      return false;
-    }
+    const isBattleRestricted = this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon);
+    const hasPp = ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1;
+    const isNotChallengeRestricted = !pokemon.isPlayer() || applyChallenges(ChallengeType.POKEMON_MOVE, this.moveId);
+    const isUnimplemented = this.getMove().name.endsWith(" (N)");
 
-    if (this.getMove().name.endsWith(" (N)")) {
-      return false;
-    }
-
-    return ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1;
+    return !isBattleRestricted && hasPp && isNotChallengeRestricted && !isUnimplemented;
   }
 
   getMove(): Move {

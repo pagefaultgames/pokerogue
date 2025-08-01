@@ -4,12 +4,14 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { speciesStarterCosts } from "#balance/starters";
 import type { EncoreTag } from "#data/battler-tags";
 import { TrappedTag } from "#data/battler-tags";
+import { applyChallenges } from "#data/challenge";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
+import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
 import { FieldPosition } from "#enums/field-position";
 import { MoveId } from "#enums/move-id";
@@ -220,18 +222,31 @@ export class CommandPhase extends FieldPhase {
           const move = playerPokemon.getMoveset()[cursor];
           globalScene.ui.setMode(UiMode.MESSAGE);
 
-          // Decides between a Disabled, Not Implemented, or No PP translation message
-          const errorMessage = playerPokemon.isMoveRestricted(move.moveId, playerPokemon)
-            ? playerPokemon
-                .getRestrictingTag(move.moveId, playerPokemon)!
-                .selectionDeniedText(playerPokemon, move.moveId)
-            : move.getName().endsWith(" (N)")
-              ? "battle:moveNotImplemented"
-              : "battle:moveNoPP";
+          // Set the translation key for why the move cannot be selected. The reasons can be:
+          // - If the move has been restricted in battle (e.g., Disable).
+          // - If the move has no more PP.
+          // - If the move is restricted by a challenge.
+          // - If the move is not implemented
+          let cannotUseKey: string;
+          if (playerPokemon.isMoveRestricted(move.moveId, playerPokemon)) {
+            cannotUseKey = playerPokemon
+              .getRestrictingTag(move.moveId, playerPokemon)!
+              .selectionDeniedText(playerPokemon, move.moveId);
+          } else if (move.getPpRatio() === 0) {
+            cannotUseKey = "battle:moveNoPP";
+          } else if (!applyChallenges(ChallengeType.POKEMON_MOVE, move.moveId)) {
+            cannotUseKey = "battle:moveCannotUseChallenge";
+          } else if (move.getName().endsWith(" (N)")) {
+            cannotUseKey = "battle:moveNotImplemented";
+          } else {
+            // TODO: Consider a message that signals a being unusable for an unknown reason
+            cannotUseKey = "";
+          }
+
           const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
 
           globalScene.ui.showText(
-            i18next.t(errorMessage, { moveName: moveName }),
+            i18next.t(cannotUseKey, { moveName: moveName }),
             null,
             () => {
               globalScene.ui.clearText();

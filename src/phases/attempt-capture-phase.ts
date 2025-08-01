@@ -2,6 +2,7 @@ import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { SubstituteTag } from "#data/battler-tags";
+import { applyChallenges } from "#data/challenge";
 import { Gender } from "#data/gender";
 import {
   doPokeballBounceAnim,
@@ -12,6 +13,7 @@ import {
 } from "#data/pokeball";
 import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import { BattlerIndex } from "#enums/battler-index";
+import { ChallengeType } from "#enums/challenge-type";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
@@ -287,6 +289,11 @@ export class AttemptCapturePhase extends PokemonPhase {
           });
         };
         Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
+          if (!applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon)) {
+            removePokemon();
+            end();
+            return;
+          }
           if (globalScene.getPlayerParty().length === PLAYER_PARTY_MAX_SIZE) {
             const promptRelease = () => {
               globalScene.ui.showText(
