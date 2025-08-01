@@ -2320,18 +2320,21 @@ export class TypeBoostTag extends SerializableBattlerTag {
 export class CritBoostTag extends SerializableBattlerTag {
   public declare readonly tagType: CritStageBoostTagType;
   /** The number of stages boosted by this tag */
-  #critStages: number;
-  /** The number of stages boosted by this tag */
-  public get critStages(): number {
-    return this.#critStages;
-  }
-  constructor(tagType: CritStageBoostTagType, sourceMove: MoveId, stages = 1) {
+  public readonly critStages: number;
+
+  constructor(tagType: CritStageBoostTagType, sourceMove: MoveId) {
     super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove, undefined, true);
-    this.#critStages = stages;
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
+
+    // Dragon cheer adds +2 crit stages if the pokemon is a Dragon type when the tag is added
+    if (this.tagType === BattlerTagType.DRAGON_CHEER && pokemon.getTypes(true).includes(PokemonType.DRAGON)) {
+      (this as Mutable<this>).critStages = 2;
+    } else {
+      (this as Mutable<this>).critStages = 1;
+    }
 
     globalScene.phaseManager.queueMessage(
       i18next.t("battlerTags:critBoostOnAdd", {
@@ -2352,6 +2355,13 @@ export class CritBoostTag extends SerializableBattlerTag {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
     );
+  }
+
+  public override loadTag(source: BaseBattlerTag & Pick<CritBoostTag, "tagType" | "critStages">): void {
+    super.loadTag(source);
+    // TODO: Remove the nullish coalescing once Zod Schemas come in
+    // For now, this is kept for backwards compatibility with older save files
+    (this as Mutable<this>).critStages = source.critStages ?? 1;
   }
 }
 
@@ -3734,9 +3744,8 @@ export function getBattlerTag(
     case BattlerTagType.FIRE_BOOST:
       return new TypeBoostTag(tagType, sourceMove, PokemonType.FIRE, 1.5, false);
     case BattlerTagType.CRIT_BOOST:
-      return new CritBoostTag(tagType, sourceMove);
     case BattlerTagType.DRAGON_CHEER:
-      return new CritBoostTag(tagType, sourceMove, 2);
+      return new CritBoostTag(tagType, sourceMove);
     case BattlerTagType.ALWAYS_CRIT:
     case BattlerTagType.IGNORE_ACCURACY:
       return new SerializableBattlerTag(tagType, BattlerTagLapseType.TURN_END, 2, sourceMove);
