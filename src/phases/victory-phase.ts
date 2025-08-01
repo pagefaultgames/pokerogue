@@ -65,7 +65,7 @@ export class VictoryPhase extends PokemonPhase {
               break;
           }
         }
-        if (globalScene.currentBattle.waveIndex % 10 !== 0 || !applyChallenges(ChallengeType.PARTY_HEAL)) {
+        if (globalScene.currentBattle.waveIndex % 10 || !applyChallenges(ChallengeType.PARTY_HEAL)) {
           globalScene.phaseManager.pushNew(
             "SelectModifierPhase",
             undefined,

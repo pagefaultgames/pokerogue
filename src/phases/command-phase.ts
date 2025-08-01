@@ -212,16 +212,25 @@ export class CommandPhase extends FieldPhase {
     const move = user.getMoveset()[cursor];
     globalScene.ui.setMode(UiMode.MESSAGE);
 
-    // Decides between a Disabled, Not Implemented, or No PP translation message
-    const errorMessage = user.isMoveRestricted(move.moveId, user)
-      ? user.getRestrictingTag(move.moveId, user)!.selectionDeniedText(user, move.moveId)
-      : move.getName().endsWith(" (N)")
-        ? "battle:moveNotImplemented"
-        : "battle:moveNoPP";
+    // Set the translation key for why the move cannot be selected
+    let cannotSelectKey: string;
+    if (user.isMoveRestricted(move.moveId, user)) {
+      cannotSelectKey = user.getRestrictingTag(move.moveId, user)!.selectionDeniedText(user, move.moveId);
+    } else if (move.getPpRatio() === 0) {
+      cannotSelectKey = "battle:moveNoPP";
+    } else if (!applyChallenges(ChallengeType.POKEMON_MOVE, move.moveId)) {
+      cannotSelectKey = "battle:moveCannotUseChallenge";
+    } else if (move.getName().endsWith(" (N)")) {
+      cannotSelectKey = "battle:moveNotImplemented";
+    } else {
+      // TODO: Consider a message that signals a being unusable for an unknown reason
+      cannotSelectKey = "";
+    }
+
     const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
 
     globalScene.ui.showText(
-      i18next.t(errorMessage, { moveName: moveName }),
+      i18next.t(cannotSelectKey, { moveName: moveName }),
       null,
       () => {
         globalScene.ui.clearText();

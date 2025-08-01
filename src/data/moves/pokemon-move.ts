@@ -1,9 +1,7 @@
 import { allMoves } from "#data/data-lists";
-import { ChallengeType } from "#enums/challenge-type";
 import type { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
-import { applyChallenges } from "#utils/challenge-utils";
 import { toDmgValue } from "#utils/common";
 
 /**
@@ -47,12 +45,14 @@ export class PokemonMove {
    * @returns Whether this {@linkcode PokemonMove} can be selected by this Pokemon.
    */
   isUsable(pokemon: Pokemon, ignorePp = false, ignoreRestrictionTags = false): boolean {
+    const move = this.getMove();
     // TODO: Add Sky Drop's 1 turn stall
     return (
       !(this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)) &&
-      (ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1) &&
-      (!pokemon.isPlayer() || applyChallenges(ChallengeType.POKEMON_MOVE, this.moveId)) &&
-      !this.getMove().name.endsWith(" (N)")
+      (ignorePp || this.ppUsed < this.getMovePp() || move.pp === -1) &&
+      // TODO: Fix apply calls
+      //(!pokemon.isPlayer() || applyChallenges(ChallengeType.POKEMON_MOVE, this.moveId)) &&
+      !move.name.endsWith(" (N)")
     );
   }
 
