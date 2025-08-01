@@ -1855,24 +1855,19 @@ class PartySlot extends Phaser.GameObjects.Container {
 
     const battlerCount = globalScene.currentBattle.getBattlerCount();
 
-    const slotKey = `party_slot${this.slotIndex >= battlerCount ? "" : "_main"}`;
+    const slotKey = this.slotIndex >= battlerCount ? "party_slot" : "party_slot_main";
+    const slotBgKey = this.pokemon.hp ? slotKey : `${slotKey}${"_fnt"}`;
+    this.slotBg = globalScene.add.sprite(0, 0, slotKey, slotBgKey);
+    this.add(this.slotBg);
 
-    const slotBg = globalScene.add.sprite(0, 0, slotKey, `${slotKey}${this.pokemon.hp ? "" : "_fnt"}`);
-    this.slotBg = slotBg;
-
-    this.add(slotBg);
-
-    const slotPb = globalScene.add.sprite(
+    this.slotPb = globalScene.add.sprite(
       this.slotIndex >= battlerCount ? -85.5 : -51,
       this.slotIndex >= battlerCount ? 0 : -20.5,
       "party_pb",
     );
-    this.slotPb = slotPb;
+    this.add(this.slotPb);
 
-    this.add(slotPb);
-
-    this.pokemonIcon = globalScene.addPokemonIcon(this.pokemon, slotPb.x, slotPb.y, 0.5, 0.5, true);
-
+    this.pokemonIcon = globalScene.addPokemonIcon(this.pokemon, this.slotPb.x, this.slotPb.y, 0.5, 0.5, true);
     this.add(this.pokemonIcon);
 
     this.iconAnimHandler.addOrUpdate(this.pokemonIcon, PokemonIconAnimMode.PASSIVE);
@@ -1896,28 +1891,29 @@ class PartySlot extends Phaser.GameObjects.Container {
 
     this.slotName = addTextObject(0, 0, displayName, TextStyle.PARTY);
     this.slotName.setPositionRelative(
-      slotBg,
+      this.slotBg,
       this.slotIndex >= battlerCount ? 21 : 24,
       (this.slotIndex >= battlerCount ? 2 : 10) + (offsetJa ? 2 : 0),
     );
     this.slotName.setOrigin(0);
 
-    const slotLevelLabel = globalScene.add.image(0, 0, "party_slot_overlay_lv");
-    slotLevelLabel.setPositionRelative(
-      slotBg,
-      (this.slotIndex >= battlerCount ? 21 : 24) + 8,
-      (this.slotIndex >= battlerCount ? 2 : 10) + 12,
-    );
-    slotLevelLabel.setOrigin(0);
+    const slotLevelLabel = globalScene.add
+      .image(0, 0, "party_slot_overlay_lv")
+      .setPositionRelative(
+        this.slotBg,
+        (this.slotIndex >= battlerCount ? 21 : 24) + 8,
+        (this.slotIndex >= battlerCount ? 2 : 10) + 12,
+      )
+      .setOrigin(0);
 
     const slotLevelText = addTextObject(
       0,
       0,
       this.pokemon.level.toString(),
       this.pokemon.level < globalScene.getMaxExpLevel() ? TextStyle.PARTY : TextStyle.PARTY_RED,
-    );
-    slotLevelText.setPositionRelative(slotLevelLabel, 9, offsetJa ? 1.5 : 0);
-    slotLevelText.setOrigin(0, 0.25);
+    )
+      .setPositionRelative(slotLevelLabel, 9, offsetJa ? 1.5 : 0)
+      .setOrigin(0, 0.25);
 
     slotInfoContainer.add([this.slotName, slotLevelLabel, slotLevelText]);
 
@@ -1946,27 +1942,26 @@ class PartySlot extends Phaser.GameObjects.Container {
       } else {
         splicedIcon.setPositionRelative(this.slotName, 76, 3.5);
       }
-
       slotInfoContainer.add(splicedIcon);
     }
 
     if (this.pokemon.status) {
-      const statusIndicator = globalScene.add.sprite(0, 0, getLocalizedSpriteKey("statuses"));
-      statusIndicator.setFrame(StatusEffect[this.pokemon.status?.effect].toLowerCase());
-      statusIndicator.setOrigin(0);
-      statusIndicator.setPositionRelative(slotLevelLabel, this.slotIndex >= battlerCount ? 43 : 55, 0);
-
+      const statusIndicator = globalScene.add
+        .sprite(0, 0, getLocalizedSpriteKey("statuses"))
+        .setFrame(StatusEffect[this.pokemon.status?.effect].toLowerCase())
+        .setOrigin(0)
+        .setPositionRelative(slotLevelLabel, this.slotIndex >= battlerCount ? 43 : 55, 0);
       slotInfoContainer.add(statusIndicator);
     }
 
     if (this.pokemon.isShiny()) {
       const doubleShiny = this.pokemon.isDoubleShiny(false);
 
-      const shinyStar = globalScene.add.image(0, 0, `shiny_star_small${doubleShiny ? "_1" : ""}`);
-      shinyStar.setOrigin(0);
-      shinyStar.setPositionRelative(this.slotName, -9, 3);
-      shinyStar.setTint(getVariantTint(this.pokemon.getBaseVariant()));
-
+      const shinyStar = globalScene.add
+        .image(0, 0, `shiny_star_small${doubleShiny ? "_1" : ""}`)
+        .setOrigin(0)
+        .setPositionRelative(this.slotName, -9, 3)
+        .setTint(getVariantTint(this.pokemon.getBaseVariant()));
       slotInfoContainer.add(shinyStar);
 
       if (doubleShiny) {
@@ -1975,52 +1970,44 @@ class PartySlot extends Phaser.GameObjects.Container {
           .setOrigin(0)
           .setPosition(shinyStar.x, shinyStar.y)
           .setTint(getVariantTint(this.pokemon.fusionVariant));
-
         slotInfoContainer.add(fusionShinyStar);
       }
     }
 
-    this.slotHpBar = globalScene.add.image(0, 0, "party_slot_hp_bar");
-    this.slotHpBar.setPositionRelative(
-      slotBg,
-      this.slotIndex >= battlerCount ? 72 : 8,
-      this.slotIndex >= battlerCount ? 6 : 31,
-    );
-    this.slotHpBar.setOrigin(0);
-    this.slotHpBar.setVisible(false);
+    this.slotHpBar = globalScene.add.image(0, 0, "party_slot_hp_bar").setOrigin(0).setVisible(false);
 
     const hpRatio = this.pokemon.getHpRatio();
 
-    this.slotHpOverlay = globalScene.add.sprite(
-      0,
-      0,
-      "party_slot_hp_overlay",
-      hpRatio > 0.5 ? "high" : hpRatio > 0.25 ? "medium" : "low",
+    this.slotHpOverlay = globalScene.add
+      .sprite(0, 0, "party_slot_hp_overlay", hpRatio > 0.5 ? "high" : hpRatio > 0.25 ? "medium" : "low")
+      .setOrigin(0)
+      .setScale(hpRatio, 1)
+      .setVisible(false);
+
+    this.slotHpText = addTextObject(0, 0, `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`, TextStyle.PARTY)
+      .setOrigin(1, 0)
+      .setVisible(false);
+
+    this.slotDescriptionLabel = addTextObject(0, 0, "", TextStyle.MESSAGE).setOrigin(0, 1).setVisible(false);
+
+    slotInfoContainer.add([this.slotHpBar, this.slotHpOverlay, this.slotHpText, this.slotDescriptionLabel]);
+
+    this.slotHpBar.setPositionRelative(
+      this.slotBg,
+      this.slotIndex >= battlerCount ? 72 : 8,
+      this.slotIndex >= battlerCount ? 6 : 31,
     );
     this.slotHpOverlay.setPositionRelative(this.slotHpBar, 16, 2);
-    this.slotHpOverlay.setOrigin(0);
-    this.slotHpOverlay.setScale(hpRatio, 1);
-    this.slotHpOverlay.setVisible(false);
-
-    this.slotHpText = addTextObject(0, 0, `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`, TextStyle.PARTY);
     this.slotHpText.setPositionRelative(
       this.slotHpBar,
       this.slotHpBar.width - 3,
       this.slotHpBar.height - 2 + (offsetJa ? 2 : 0),
     );
-    this.slotHpText.setOrigin(1, 0);
-    this.slotHpText.setVisible(false);
-
-    this.slotDescriptionLabel = addTextObject(0, 0, "", TextStyle.MESSAGE);
     this.slotDescriptionLabel.setPositionRelative(
-      slotBg,
+      this.slotBg,
       this.slotIndex >= battlerCount ? 94 : 32,
       this.slotIndex >= battlerCount ? 16 : 46,
     );
-    this.slotDescriptionLabel.setOrigin(0, 1);
-    this.slotDescriptionLabel.setVisible(false);
-
-    slotInfoContainer.add([this.slotHpBar, this.slotHpOverlay, this.slotHpText, this.slotDescriptionLabel]);
 
     if (partyUiMode !== PartyUiMode.TM_MODIFIER) {
       this.slotDescriptionLabel.setVisible(false);
