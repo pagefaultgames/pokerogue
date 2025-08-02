@@ -294,10 +294,14 @@ export class GameManager {
           .getMoveset()
           [movePosition].getMove();
 
-        if (move.isMultiTarget() && targetIndex !== undefined) {
-          expect.fail(`targetIndex was passed to selectMove() but move ("${move.name}") is not targetted`);
+        // Multi target attacks do not select a target
+        if (move.isMultiTarget()) {
+          if (targetIndex !== undefined) {
+            expect.fail(`targetIndex was passed to selectMove() but move ("${move.name}") is not targeted`);
+          }
+        } else {
+          handler.setCursor(targetIndex ?? BattlerIndex.ENEMY);
         }
-        handler.setCursor(targetIndex ?? BattlerIndex.ENEMY);
         handler.processInput(Button.ACTION);
       },
       () =>
