@@ -89,6 +89,11 @@ interface InProgressStub {
   onError(error: any): void;
 }
 
+interface onHoldStub {
+  name: string;
+  call(): void;
+}
+
 export class PhaseInterceptor {
   public scene: BattleScene;
   // @ts-expect-error: initialized in `initPhases`
@@ -98,7 +103,7 @@ export class PhaseInterceptor {
    * TODO: This should not be an array;
    * Our linear phase system means only 1 phase is ever started at once (if any)
    */
-  private onHold: PhaseClass[];
+  private onHold: onHoldStub[];
   private interval: NodeJS.Timeout;
   private promptInterval: NodeJS.Timeout;
   private intervalRun: NodeJS.Timeout;
@@ -279,7 +284,7 @@ export class PhaseInterceptor {
             },
             onError: error => reject(error),
           };
-          this.phases[currentPhase.name].start.call(this.scene.phaseManager.getCurrentPhase());
+          currentPhase.call();
         }
       });
     });
@@ -325,7 +330,13 @@ export class PhaseInterceptor {
    */
   startPhase(phase: PhaseClass) {
     this.log.push(phase.name as PhaseString);
-    this.onHold.push(phase);
+    const instance = this.scene.phaseManager.getCurrentPhase();
+    this.onHold.push({
+      name: phase.name,
+      call: () => {
+        this.phases[phase.name].start.apply(instance);
+      },
+    });
   }
 
   /**
