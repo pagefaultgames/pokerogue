@@ -8409,7 +8409,6 @@ const MoveAttrs = Object.freeze({
   GulpMissileTagAttr,
   JawLockAttr,
   CurseAttr,
-  LapseBattlerTagAttr,
   RemoveBattlerTagAttr,
   FlinchAttr,
   ConfuseAttr,
@@ -11310,7 +11309,7 @@ export function initMoves() {
     new AttackMove(MoveId.TRIPLE_DIVE, PokemonType.WATER, MoveCategory.PHYSICAL, 30, 95, 10, -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._3),
     new AttackMove(MoveId.MORTAL_SPIN, PokemonType.POISON, MoveCategory.PHYSICAL, 30, 100, 15, 100, 0, 9)
-      .attr(LapseBattlerTagAttr, [
+      .attr(RemoveBattlerTagAttr, [
         BattlerTagType.BIND,
         BattlerTagType.WRAP,
         BattlerTagType.FIRE_SPIN,
