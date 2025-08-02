@@ -734,7 +734,6 @@ export class FreshStartChallenge extends Challenge {
     }
     pokemon.ivs = [15, 15, 15, 15, 15, 15]; // Default IVs of 15 for all stats (Updated to 15 from 10 in 1.2.0)
     pokemon.teraType = pokemon.species.type1; // Always primary tera type
-    pokemon.updateInfo();
     return true;
   }
 
