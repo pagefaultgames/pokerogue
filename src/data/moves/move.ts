@@ -1,3 +1,4 @@
+import type { BattlerTag } from "#data/battler-tags";
 import { AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrParams } from "#abilities/ability";
 import {
   applyAbAttrs
@@ -5825,45 +5826,25 @@ export class CurseAttr extends MoveEffectAttr {
   }
 }
 
-export class LapseBattlerTagAttr extends MoveEffectAttr {
-  public tagTypes: BattlerTagType[];
-
-  constructor(tagTypes: BattlerTagType[], selfTarget: boolean = false) {
-    super(selfTarget);
-
-    this.tagTypes = tagTypes;
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
-    for (const tagType of this.tagTypes) {
-      (this.selfTarget ? user : target).lapseTag(tagType);
-    }
-
-    return true;
-  }
-}
-
+/**
+ * Attribute to remove all {@linkcode BattlerTag}s matching one or more tag types.
+ */
 export class RemoveBattlerTagAttr extends MoveEffectAttr {
-  public tagTypes: BattlerTagType[];
+/** An array of {@linkcode BattlerTagType}s to clear. */
+  public tagTypes: [BattlerTagType, ...BattlerTagType[]];
 
-  constructor(tagTypes: BattlerTagType[], selfTarget: boolean = false) {
+  constructor(tagTypes: [BattlerTagType, ...BattlerTagType[]], selfTarget = false) {
     super(selfTarget);
 
     this.tagTypes = tagTypes;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
+  apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
+    if (!super.apply(user, target, move, _args)) {
       return false;
     }
 
-    for (const tagType of this.tagTypes) {
-      (this.selfTarget ? user : target).removeTag(tagType);
-    }
+          (this.selfTarget ? user : target).findAndRemoveTags(t => this.tagTypes.includes(t.tagType));
 
     return true;
   }
