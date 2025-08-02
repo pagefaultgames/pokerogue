@@ -1,4 +1,5 @@
 /* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
+import type { Status } from "#data/status-effect";
 import type { Pokemon } from "#field/pokemon";
 /* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
