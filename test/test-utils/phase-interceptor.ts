@@ -91,8 +91,13 @@ interface InProgressStub {
 
 export class PhaseInterceptor {
   public scene: BattleScene;
-  public phases: Record<PhaseClass, PhaseStub> = {};
+  // @ts-expect-error: initialized in `initPhases`
+  public phases: Record<PhaseString, PhaseStub> = {};
   public log: PhaseString[];
+  /**
+   * TODO: This should not be an array;
+   * Our linear phase system means only 1 phase is ever started at once (if any)
+   */
   private onHold: PhaseClass[];
   private interval: NodeJS.Timeout;
   private promptInterval: NodeJS.Timeout;
@@ -225,11 +230,12 @@ export class PhaseInterceptor {
       this.intervalRun = setInterval(async () => {
         const currentPhase = this.onHold?.length && this.onHold[0];
         if (!currentPhase) {
-          // No current phase = interrupted by prompt; wait for phase to finish
+          // No current phase means the manager either hasn't started yet
+          // or we were interrupted by prompt; wait for phase to finish
           return;
         }
 
-        // If current phase is different, do nothing.
+        // If current phase is different, run it and wait for it to finish.
         if (currentPhase.name !== targetName) {
           await this.run().catch(e => {
             clearInterval(this.intervalRun);
@@ -319,13 +325,7 @@ export class PhaseInterceptor {
    */
   startPhase(phase: PhaseClass) {
     this.log.push(phase.name as PhaseString);
-    const instance = this.scene.phaseManager.getCurrentPhase();
-    this.onHold.push({
-      name: phase.name,
-      call: () => {
-        this.phases[phase.name].start.apply(instance);
-      },
-    });
+    this.onHold.push(phase);
   }
 
   /**

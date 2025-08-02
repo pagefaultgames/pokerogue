@@ -178,9 +178,10 @@ export class GameManager {
   async runToTitle(): Promise<void> {
     // Go to login phase and skip past it
     await this.phaseInterceptor.to("LoginPhase", false);
-    this.phaseInterceptor.shiftPhase();
+    this.phaseInterceptor.shiftPhase(true);
     await this.phaseInterceptor.to("TitlePhase");
 
+    // TODO: This should be moved to a separate initialization method
     this.scene.gameSpeed = 5;
     this.scene.moveAnimations = false;
     this.scene.showLevelUpStats = false;
