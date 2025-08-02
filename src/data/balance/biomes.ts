@@ -1295,7 +1295,7 @@ export const biomePokemonPools: BiomePokemonPools = {
     [BiomePoolTier.BOSS]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [ SpeciesId.SOLROCK ], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [ SpeciesId.LUNATONE ], [TimeOfDay.ALL]: [ SpeciesId.CLEFABLE, SpeciesId.BRONZONG, SpeciesId.MUSHARNA, SpeciesId.REUNICLUS, SpeciesId.MINIOR ] },
     [BiomePoolTier.BOSS_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ SpeciesId.METAGROSS, SpeciesId.PORYGON_Z ] },
     [BiomePoolTier.BOSS_SUPER_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [], [TimeOfDay.ALL]: [ SpeciesId.CELESTEELA ] },
-    [BiomePoolTier.BOSS_ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [ { 1: [ SpeciesId.COSMOG ], 50: [ SpeciesId.COSMOEM ], 70 [ SpeciesId.SOLGALEO ] } ], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [ { 1: [ SpeciesId.COSMOG ], 50: [ SpeciesId.COSMOEM ], 70 [ SpeciesId.LUNALA ] }, [TimeOfDay.ALL]: [ SpeciesId.RAYQUAZA, SpeciesId.NECROZMA ] }
+    [BiomePoolTier.BOSS_ULTRA_RARE]: { [TimeOfDay.DAWN]: [], [TimeOfDay.DAY]: [ { 1: [ SpeciesId.COSMOG ], 50: [ SpeciesId.COSMOEM ], 70 [ SpeciesId.SOLGALEO ] } ], [TimeOfDay.DUSK]: [], [TimeOfDay.NIGHT]: [ { 1: [ SpeciesId.COSMOG ], 50: [ SpeciesId.COSMOEM ], 70 [ SpeciesId.LUNALA ] } ], [TimeOfDay.ALL]: [ SpeciesId.RAYQUAZA, SpeciesId.NECROZMA ] }
   },
   [BiomeId.CONSTRUCTION_SITE]: {
     [BiomePoolTier.COMMON]: {
