@@ -40,7 +40,7 @@ describe("Items - Lock Capsule", () => {
     });
 
     game.doSelectModifier();
-    await game.phaseInterceptor.to("SelectModifierPhase");
+    await game.phaseInterceptor.to("SelectModifierPhase", false);
 
     const selectModifierPhase = game.scene.phaseManager.getCurrentPhase() as SelectModifierPhase;
     const rerollCost = selectModifierPhase.getRerollCost(true);
