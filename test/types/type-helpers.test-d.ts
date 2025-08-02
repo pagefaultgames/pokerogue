@@ -21,7 +21,7 @@ describe("AtLeastOne", () => {
     expectTypeOf<{ baz: number | string }>().toExtend<AtLeastOne<fakeObj>>();
   });
 
-  it("should convert to a partial intersected with the union of all individual single properties", () => {
+  it("should convert to a partial intersection with the union of all individual single properties", () => {
     expectTypeOf<AtLeastOne<fakeObj>>().branded.toEqualTypeOf<
       Partial<fakeObj> & ({ foo: number } | { bar: string } | { baz: number | string })
     >();
