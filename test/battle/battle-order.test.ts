@@ -39,7 +39,7 @@ describe("Battle order", () => {
     vi.spyOn(enemyPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set enemyPokemon's speed to 150
 
     game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to("TurnStartPhase");
+    await game.phaseInterceptor.to("TurnStartPhase", false);
 
     const playerPokemonIndex = playerPokemon.getBattlerIndex();
     const enemyPokemonIndex = enemyPokemon.getBattlerIndex();
@@ -58,7 +58,7 @@ describe("Battle order", () => {
     vi.spyOn(enemyPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50]); // set enemyPokemon's speed to 50
 
     game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to("TurnStartPhase");
+    await game.phaseInterceptor.to("TurnStartPhase", false);
 
     const playerPokemonIndex = playerPokemon.getBattlerIndex();
     const enemyPokemonIndex = enemyPokemon.getBattlerIndex();

@@ -76,6 +76,68 @@ describe("Phase - Battle Phase", () => {
     }
   });
 
+  it("wrong phase", async () => {
+    await game.phaseInterceptor.run(LoginPhase);
+    await game.phaseInterceptor.run(LoginPhase).catch(e => {
+      expect(e).toBe("Wrong phase: this is SelectGenderPhase and not LoginPhase");
+    });
+  });
+
+  it("wrong phase but skip", async () => {
+    await game.phaseInterceptor.run(LoginPhase);
+    await game.phaseInterceptor.run(LoginPhase, () => game.isCurrentPhase(SelectGenderPhase));
+  });
+
+  it("good run", async () => {
+    await game.phaseInterceptor.run(LoginPhase);
+    game.onNextPrompt(
+      "SelectGenderPhase",
+      UiMode.OPTION_SELECT,
+      () => {
+        game.scene.gameData.gender = PlayerGender.MALE;
+        game.endPhase();
+      },
+      () => game.isCurrentPhase(TitlePhase),
+    );
+    await game.phaseInterceptor.run(SelectGenderPhase, () => game.isCurrentPhase(TitlePhase));
+    await game.phaseInterceptor.run(TitlePhase);
+  });
+
+  it("good run from select gender to title", async () => {
+    await game.phaseInterceptor.run(LoginPhase);
+    game.onNextPrompt(
+      "SelectGenderPhase",
+      UiMode.OPTION_SELECT,
+      () => {
+        game.scene.gameData.gender = PlayerGender.MALE;
+        game.endPhase();
+      },
+      () => game.isCurrentPhase(TitlePhase),
+    );
+    await game.phaseInterceptor.runFrom(SelectGenderPhase).to(TitlePhase);
+  });
+
+  it("good run to SummonPhase phase", async () => {
+    await game.phaseInterceptor.run(LoginPhase);
+    game.onNextPrompt(
+      "SelectGenderPhase",
+      UiMode.OPTION_SELECT,
+      () => {
+        game.scene.gameData.gender = PlayerGender.MALE;
+        game.endPhase();
+      },
+      () => game.isCurrentPhase(TitlePhase),
+    );
+    game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
+      game.scene.gameMode = getGameMode(GameModes.CLASSIC);
+      const starters = generateStarter(game.scene);
+      const selectStarterPhase = new SelectStarterPhase();
+      game.scene.phaseManager.pushPhase(new EncounterPhase(false));
+      selectStarterPhase.initBattle(starters);
+    });
+    await game.phaseInterceptor.runFrom(SelectGenderPhase).to(SummonPhase);
+  });
+
   it.each([
     { name: "1v1", double: false, qty: 1 },
     { name: "2v1", double: false, qty: 2 },

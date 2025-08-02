@@ -146,6 +146,6 @@ describe("Moves - Metronome", () => {
     const hasFled = enemyPokemon.switchOutStatus;
     expect(!isVisible && hasFled).toBe(true);
 
-    await game.toNextWave();
+    await game.toNextTurn();
   });
 });
