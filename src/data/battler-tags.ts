@@ -911,6 +911,29 @@ export class DestinyBondTag extends SerializableBattlerTag {
   }
 }
 
+/**
+ * Tag added by {@linkcode MoveId.LASER_FOCUS} to cause the user's attacks to always critically strike
+ * until the end of the next turn.
+ */
+export class LaserFocusTag extends SerializableBattlerTag {
+  public override readonly tagType = BattlerTagType.ALWAYS_CRIT;
+
+  constructor() {
+    // TODO: Is this per attack or per turn?
+    super(BattlerTagType.ALWAYS_CRIT, BattlerTagLapseType.TURN_END, 2, MoveId.LASER_FOCUS);
+  }
+
+  override onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:laserFocusOnAdd", {
+        pokemonName: getPokemonNameWithAffix(pokemon),
+      }),
+    );
+  }
+}
+
 // Technically serializable as in a double battle, a pokemon could be infatuated by its ally
 export class InfatuatedTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.INFATUATED;
@@ -3747,6 +3770,7 @@ export function getBattlerTag(
     case BattlerTagType.DRAGON_CHEER:
       return new CritBoostTag(tagType, sourceMove);
     case BattlerTagType.ALWAYS_CRIT:
+      return new LaserFocusTag();
     case BattlerTagType.IGNORE_ACCURACY:
       return new SerializableBattlerTag(tagType, BattlerTagLapseType.TURN_END, 2, sourceMove);
     case BattlerTagType.ALWAYS_GET_HIT:
@@ -3919,7 +3943,7 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.FIRE_BOOST]: TypeBoostTag;
   [BattlerTagType.CRIT_BOOST]: CritBoostTag;
   [BattlerTagType.DRAGON_CHEER]: CritBoostTag;
-  [BattlerTagType.ALWAYS_CRIT]: GenericSerializableBattlerTag<BattlerTagType.ALWAYS_CRIT>;
+  [BattlerTagType.ALWAYS_CRIT]: LaserFocusTag;
   [BattlerTagType.IGNORE_ACCURACY]: GenericSerializableBattlerTag<BattlerTagType.IGNORE_ACCURACY>;
   [BattlerTagType.ALWAYS_GET_HIT]: GenericSerializableBattlerTag<BattlerTagType.ALWAYS_GET_HIT>;
   [BattlerTagType.RECEIVE_DOUBLE_DAMAGE]: GenericSerializableBattlerTag<BattlerTagType.RECEIVE_DOUBLE_DAMAGE>;
