@@ -57,7 +57,7 @@ describe("UI - Type Hints", () => {
       expect.soft(dragonClawText.color).toBe("#929292");
       ui.getHandler().processInput(Button.ACTION);
     });
-    await game.toNextTurn();
+    await game.phaseInterceptor.to("CommandPhase");
   });
 
   it("check status move color", async () => {
@@ -81,7 +81,7 @@ describe("UI - Type Hints", () => {
       expect.soft(growlText.color).toBe(undefined);
       ui.getHandler().processInput(Button.ACTION);
     });
-    await game.toNextTurn();
+    await game.phaseInterceptor.to("CommandPhase");
   });
 
   it("should show the proper hint for a move in doubles after one of the enemy pokemon flees", async () => {
@@ -117,6 +117,6 @@ describe("UI - Type Hints", () => {
       expect.soft(shadowBallText.color).toBe(undefined);
       ui.getHandler().processInput(Button.ACTION);
     });
-    await game.toNextTurn();
+    await game.phaseInterceptor.to("CommandPhase");
   });
 });
