@@ -9,7 +9,7 @@ export default defineProject(({ mode }) => ({
       TZ: "UTC",
     },
     testTimeout: 20000,
-    setupFiles: ["./test/font-face.setup.ts", "./test/vitest.setup.ts"],
+    setupFiles: ["./test/font-face.setup.ts", "./test/vitest.setup.ts", "./test/matchers.setup.ts"],
     sequence: {
       sequencer: MySequencer,
     },

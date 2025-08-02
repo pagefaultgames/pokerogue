@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { MoveId } from "#enums/move-id";
+import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import type { MovesetChangedEvent, SummonDataResetEvent } from "#events/battle-scene";
 import { BattleSceneEventType } from "#events/battle-scene";
@@ -8,7 +9,7 @@ import type { Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 // biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { BattleInfo } from "#ui/battle-info";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { fixedInt } from "#utils/common";
 
 /** Container for info about a given {@linkcode PokemonMove} having been used */

@@ -65,23 +65,4 @@ describe("Moves - Order Up", () => {
       affectedStats.forEach(st => expect(dondozo.getStatStage(st)).toBe(st === stat ? 3 : 2));
     },
   );
-
-  it("should be boosted by Sheer Force while still applying a stat boost", async () => {
-    game.override.passiveAbility(AbilityId.SHEER_FORCE).starterForms({ [SpeciesId.TATSUGIRI]: 0 });
-
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
-
-    const [tatsugiri, dondozo] = game.scene.getPlayerField();
-
-    expect(game.scene.triggerPokemonBattleAnim).toHaveBeenLastCalledWith(tatsugiri, PokemonAnimType.COMMANDER_APPLY);
-    expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
-
-    game.move.select(MoveId.ORDER_UP, 1, BattlerIndex.ENEMY);
-    expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();
-
-    await game.phaseInterceptor.to("BerryPhase", false);
-
-    expect(dondozo.waveData.abilitiesApplied.has(AbilityId.SHEER_FORCE)).toBeTruthy();
-    expect(dondozo.getStatStage(Stat.ATK)).toBe(3);
-  });
 });

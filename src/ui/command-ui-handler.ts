@@ -5,11 +5,12 @@ import { Button } from "#enums/buttons";
 import { Command } from "#enums/command";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { TerastallizeAccessModifier } from "#modifiers/modifier";
 import type { CommandPhase } from "#phases/command-phase";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import i18next from "i18next";
 

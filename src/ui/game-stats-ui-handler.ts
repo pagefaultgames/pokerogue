@@ -2,12 +2,14 @@ import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
 import { Button } from "#enums/buttons";
 import { DexAttr } from "#enums/dex-attr";
+import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import type { GameData } from "#system/game-data";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
-import { formatFancyLargeNumber, getPlayTimeString, toReadableString } from "#utils/common";
+import { formatFancyLargeNumber, getPlayTimeString } from "#utils/common";
+import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
 
@@ -501,11 +503,9 @@ export function initStatsKeys() {
         sourceFunc: gameData => gameData.gameStats[key].toString(),
       };
     }
-    if (!(displayStats[key] as DisplayStat).label_key) {
+    if (!displayStats[key].label_key) {
       const splittableKey = key.replace(/([a-z]{2,})([A-Z]{1}(?:[^A-Z]|$))/g, "$1_$2");
-      (displayStats[key] as DisplayStat).label_key = toReadableString(
-        `${splittableKey[0].toUpperCase()}${splittableKey.slice(1)}`,
-      );
+      displayStats[key].label_key = toTitleCase(splittableKey);
     }
   }
 }
