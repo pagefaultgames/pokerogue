@@ -1,7 +1,9 @@
+/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
+import type { Pokemon } from "#field/pokemon";
+/** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
+
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { MoveId } from "#enums/move-id";
-// biome-ignore lint/correctness/noUnusedImports: TSDocs
-import type { Pokemon } from "#field/pokemon";
 import { getOnelineDiffStr, getOrdinal } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { TurnMove } from "#types/turn-move";
