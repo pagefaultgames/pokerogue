@@ -24,7 +24,7 @@ import type { Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { DexAttrProps, GameData } from "#system/game-data";
-import { BooleanHolder, type NumberHolder, randSeedItem } from "#utils/common";
+import { BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase, toSnakeCase } from "#utils/strings";
@@ -705,11 +705,12 @@ export class FreshStartChallenge extends Challenge {
     pokemon.nature = Nature.HARDY; // Neutral nature
     let validMoves = pokemon.species
       .getLevelMoves()
-      .filter(m => m[0] <= 5)
+      .filter(m => isBetween(m[0], 1, 5))
       .map(lm => lm[1]);
-    // filter egg moves out of the moveset,
+    // Filter egg moves out of the moveset
     pokemon.moveset = pokemon.moveset.filter(pm => validMoves.includes(pm.moveId));
     if (pokemon.moveset.length < 4) {
+      // If there's empty slots fill with remaining valid moves
       validMoves = validMoves.filter(m => !pokemon.moveset.map(pm => pm.moveId).includes(m));
       pokemon.moveset = pokemon.moveset.concat(validMoves.map(m => new PokemonMove(m))).slice(0, 4);
     }
