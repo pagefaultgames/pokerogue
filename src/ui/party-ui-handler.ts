@@ -1827,18 +1827,30 @@ class PartySlot extends Phaser.GameObjects.Container {
     partyUiMode: PartyUiMode,
     tmMoveId: MoveId,
   ) {
-    super(
-      globalScene,
-      slotIndex >= globalScene.currentBattle.getBattlerCount() ? 143 : 9,
-      slotIndex >= globalScene.currentBattle.getBattlerCount()
-        ? -184 -
-            12 +
-            (globalScene.currentBattle.double ? -40 : 0) +
-            (28 + (globalScene.currentBattle.double ? 8 : 0)) * slotIndex
-        : partyUiMode === PartyUiMode.MODIFIER_TRANSFER
-          ? -124 - 49 / 2 + (globalScene.currentBattle.double ? -20 : 0) + slotIndex * 55
-          : -124 - 49 / 2 + (globalScene.currentBattle.double ? -8 : 0) + slotIndex * 64,
-    );
+    const isBenched = slotIndex >= globalScene.currentBattle.getBattlerCount();
+    const isDoubleBattle = globalScene.currentBattle.double;
+    const isItemManageMode = partyUiMode === PartyUiMode.MODIFIER_TRANSFER || partyUiMode === PartyUiMode.DISCARD;
+
+    /**
+    Here we determine the position of the slot.
+    The x coordinate depends on whether the pokemon is on the field or in the bench.
+    The y coordinate is more complex to determine
+     */
+    const slotPositionX = isBenched ? 143 : 9;
+
+    let slotPositionY = 0;
+    if (isBenched) {
+      slotPositionY = -196 + (isDoubleBattle ? -40 : 0);
+      slotPositionY += (28 + (isDoubleBattle ? 8 : 0)) * slotIndex;
+    } else {
+      slotPositionY = -148.5;
+      if (isDoubleBattle) {
+        slotPositionY += isItemManageMode ? -20 : -8;
+      }
+      slotPositionY += (isItemManageMode ? (isDoubleBattle ? 47 : 55) : 64) * slotIndex;
+    }
+
+    super(globalScene, slotPositionX, slotPositionY);
 
     this.slotIndex = slotIndex;
     const battlerCount = globalScene.currentBattle.getBattlerCount();
