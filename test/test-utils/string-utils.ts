@@ -1,5 +1,6 @@
 import { getStatKey, type Stat } from "#enums/stat";
-import type { EnumOrObject, EnumValues, NormalEnum, TSNumericEnum } from "#types/enum-types";
+import type { EnumOrObject, NormalEnum, TSNumericEnum } from "#types/enum-types";
+import type { ObjectValues } from "#types/type-helpers";
 import { enumValueToKey } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
 import type { MatcherState } from "@vitest/expect";
@@ -44,7 +45,7 @@ interface getEnumStrOptions {
  */
 export function getEnumStr<E extends EnumOrObject>(
   obj: E,
-  val: EnumValues<E>,
+  val: ObjectValues<E>,
   { casing = "Preserve", prefix = "", suffix = "" }: getEnumStrOptions = {},
 ): string {
   let casingFunc: ((s: string) => string) | undefined;
