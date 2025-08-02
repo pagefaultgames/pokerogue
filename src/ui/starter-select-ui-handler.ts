@@ -39,6 +39,7 @@ import type { Nature } from "#enums/nature";
 import { Passive as PassiveAttr } from "#enums/passive";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { CandyUpgradeNotificationChangedEvent } from "#events/battle-scene";
 import { BattleSceneEventType } from "#events/battle-scene";
@@ -57,7 +58,7 @@ import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-an
 import { ScrollBar } from "#ui/scroll-bar";
 import { StarterContainer } from "#ui/starter-container";
 import { StatsContainer } from "#ui/stats-container";
-import { addBBCodeTextObject, addTextObject, TextStyle } from "#ui/text";
+import { addBBCodeTextObject, addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import {
   BooleanHolder,
@@ -68,10 +69,10 @@ import {
   padInt,
   randIntRange,
   rgbHexToRgba,
-  toReadableString,
 } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences, saveStarterPreferences } from "#utils/data";
+import { toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
@@ -174,6 +175,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "38px",
     starterInfoYOffset: 0.5,
     starterInfoXPos: 26,
+  },
+  tl: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
   },
 };
 
@@ -1476,7 +1481,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       loop: -1,
       // Make the initial bounce a little randomly delayed
       delay: randIntRange(0, 50) * 5,
-      loopDelay: 1000,
+      loopDelay: fixedInt(1000),
       tweens: [
         {
           targets: icon,
@@ -3526,7 +3531,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
 
         //Growth translate
-        let growthReadable = toReadableString(GrowthRate[species.growthRate]);
+        let growthReadable = toTitleCase(GrowthRate[species.growthRate]);
         const growthAux = growthReadable.replace(" ", "_");
         if (i18next.exists("growth:" + growthAux)) {
           growthReadable = i18next.t(("growth:" + growthAux) as any);
@@ -4302,7 +4307,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return true;
   }
 
-  tryExit(): boolean {
+  /**
+   * Attempt to back out of the starter selection screen into the appropriate parent modal
+   */
+  tryExit(): void {
     this.blockInput = true;
     const ui = this.getUi();
 
@@ -4316,12 +4324,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         UiMode.CONFIRM,
         () => {
           ui.setMode(UiMode.STARTER_SELECT);
-          globalScene.phaseManager.clearPhaseQueue();
-          if (globalScene.gameMode.isChallenge) {
+          // Non-challenge modes go directly back to title, while challenge modes go to the selection screen.
+          if (!globalScene.gameMode.isChallenge) {
+            globalScene.phaseManager.toTitleScreen();
+          } else {
+            globalScene.phaseManager.clearPhaseQueue();
             globalScene.phaseManager.pushNew("SelectChallengePhase");
             globalScene.phaseManager.pushNew("EncounterPhase");
-          } else {
-            globalScene.phaseManager.pushNew("TitlePhase");
           }
           this.clearText();
           globalScene.phaseManager.getCurrentPhase()?.end();
@@ -4332,8 +4341,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         19,
       );
     });
-
-    return true;
   }
 
   tryStart(manualTrigger = false): boolean {

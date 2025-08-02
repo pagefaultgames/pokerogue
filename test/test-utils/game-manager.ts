@@ -127,9 +127,7 @@ export class GameManager {
 
     this.gameWrapper.scene = this.scene;
 
-    this.scene.phaseManager.clearAllPhases();
-    this.scene.phaseManager.unshiftNew("LoginPhase");
-    this.scene.phaseManager.unshiftNew("TitlePhase");
+    this.scene.phaseManager.toTitleScreen(true);
     this.scene.phaseManager.shiftPhase();
   }
 
