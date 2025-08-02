@@ -928,7 +928,7 @@ export class LaserFocusTag extends SerializableBattlerTag {
 
     globalScene.phaseManager.queueMessage(
       i18next.t("battlerTags:laserFocusOnAdd", {
-        pokemonName: getPokemonNameWithAffix(pokemon),
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
     );
   }
