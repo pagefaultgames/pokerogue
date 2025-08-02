@@ -25,7 +25,6 @@ import {
   AutotomizedTag,
   BattlerTag,
   CritBoostTag,
-  DragonCheerTag,
   EncoreTag,
   ExposedTag,
   GroundedTag,
@@ -1390,8 +1389,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const critBoostTag = source.getTag(CritBoostTag);
     if (critBoostTag) {
       // Dragon cheer only gives +1 crit stage to non-dragon types
-      critStage.value +=
-        critBoostTag instanceof DragonCheerTag && !critBoostTag.typesOnAdd.includes(PokemonType.DRAGON) ? 1 : 2;
+      critStage.value += critBoostTag.critStages;
     }
 
     console.log(`crit stage: +${critStage.value}`);

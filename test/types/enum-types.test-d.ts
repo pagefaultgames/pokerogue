@@ -1,5 +1,6 @@
-import type { EnumOrObject, EnumValues, NormalEnum, TSNumericEnum } from "#app/@types/enum-types";
 import type { enumValueToKey, getEnumKeys, getEnumValues } from "#app/utils/enums";
+import type { EnumOrObject, NormalEnum, TSNumericEnum } from "#types/enum-types";
+import type { ObjectValues } from "#types/type-helpers";
 import { describe, expectTypeOf, it } from "vitest";
 
 enum testEnumNum {
@@ -16,21 +17,33 @@ const testObjNum = { testON1: 1, testON2: 2 } as const;
 
 const testObjString = { testOS1: "apple", testOS2: "banana" } as const;
 
-describe("Enum Type Helpers", () => {
-  describe("EnumValues", () => {
-    it("should go from enum object type to value type", () => {
-      expectTypeOf<EnumValues<typeof testEnumNum>>().toEqualTypeOf<testEnumNum>();
-      expectTypeOf<EnumValues<typeof testEnumNum>>().branded.toEqualTypeOf<1 | 2>();
+interface testObject {
+  key_1: "1";
+  key_2: "2";
+  key_3: "3";
+}
 
-      expectTypeOf<EnumValues<typeof testEnumString>>().toEqualTypeOf<testEnumString>();
-      expectTypeOf<EnumValues<typeof testEnumString>>().toEqualTypeOf<testEnumString.testS1 | testEnumString.testS2>();
-      expectTypeOf<EnumValues<typeof testEnumString>>().toMatchTypeOf<"apple" | "banana">();
+describe("Enum Type Helpers", () => {
+  describe("ObjectValues", () => {
+    it("should produce a union of an object's values", () => {
+      expectTypeOf<ObjectValues<testObject>>().toEqualTypeOf<"1" | "2" | "3">();
+    });
+
+    it("should go from enum object type to value type", () => {
+      expectTypeOf<ObjectValues<typeof testEnumNum>>().toEqualTypeOf<testEnumNum>();
+      expectTypeOf<ObjectValues<typeof testEnumNum>>().branded.toEqualTypeOf<1 | 2>();
+
+      expectTypeOf<ObjectValues<typeof testEnumString>>().toEqualTypeOf<testEnumString>();
+      expectTypeOf<ObjectValues<typeof testEnumString>>().toEqualTypeOf<
+        testEnumString.testS1 | testEnumString.testS2
+      >();
+
+      expectTypeOf<ObjectValues<typeof testEnumString>>().toExtend<"apple" | "banana">();
     });
 
     it("should produce union of const object values as type", () => {
-      expectTypeOf<EnumValues<typeof testObjNum>>().toEqualTypeOf<1 | 2>();
-
-      expectTypeOf<EnumValues<typeof testObjString>>().toEqualTypeOf<"apple" | "banana">();
+      expectTypeOf<ObjectValues<typeof testObjNum>>().toEqualTypeOf<1 | 2>();
+      expectTypeOf<ObjectValues<typeof testObjString>>().toEqualTypeOf<"apple" | "banana">();
     });
   });
 
@@ -38,7 +51,6 @@ describe("Enum Type Helpers", () => {
     it("should match numeric enums", () => {
       expectTypeOf<TSNumericEnum<typeof testEnumNum>>().toEqualTypeOf<typeof testEnumNum>();
     });
-
     it("should not match string enums or const objects", () => {
       expectTypeOf<TSNumericEnum<typeof testEnumString>>().toBeNever();
       expectTypeOf<TSNumericEnum<typeof testObjNum>>().toBeNever();
@@ -59,19 +71,19 @@ describe("Enum Type Helpers", () => {
 
   describe("EnumOrObject", () => {
     it("should match any enum or const object", () => {
-      expectTypeOf<typeof testEnumNum>().toMatchTypeOf<EnumOrObject>();
-      expectTypeOf<typeof testEnumString>().toMatchTypeOf<EnumOrObject>();
-      expectTypeOf<typeof testObjNum>().toMatchTypeOf<EnumOrObject>();
-      expectTypeOf<typeof testObjString>().toMatchTypeOf<EnumOrObject>();
+      expectTypeOf<typeof testEnumNum>().toExtend<EnumOrObject>();
+      expectTypeOf<typeof testEnumString>().toExtend<EnumOrObject>();
+      expectTypeOf<typeof testObjNum>().toExtend<EnumOrObject>();
+      expectTypeOf<typeof testObjString>().toExtend<EnumOrObject>();
     });
 
     it("should not match an enum value union w/o typeof", () => {
-      expectTypeOf<testEnumNum>().not.toMatchTypeOf<EnumOrObject>();
-      expectTypeOf<testEnumString>().not.toMatchTypeOf<EnumOrObject>();
+      expectTypeOf<testEnumNum>().not.toExtend<EnumOrObject>();
+      expectTypeOf<testEnumString>().not.toExtend<EnumOrObject>();
     });
 
     it("should be equivalent to `TSNumericEnum | NormalEnum`", () => {
-      expectTypeOf<EnumOrObject>().branded.toEqualTypeOf<TSNumericEnum<EnumOrObject> | NormalEnum<EnumOrObject>>();
+      expectTypeOf<EnumOrObject>().toEqualTypeOf<TSNumericEnum<EnumOrObject> | NormalEnum<EnumOrObject>>();
     });
   });
 });
@@ -80,6 +92,7 @@ describe("Enum Functions", () => {
   describe("getEnumKeys", () => {
     it("should retrieve keys of numeric enum", () => {
       expectTypeOf<typeof getEnumKeys<typeof testEnumNum>>().returns.toEqualTypeOf<("testN1" | "testN2")[]>();
+      expectTypeOf<typeof getEnumKeys<typeof testObjNum>>().returns.toEqualTypeOf<("testON1" | "testON2")[]>();
     });
   });
 
