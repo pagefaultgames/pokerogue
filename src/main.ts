@@ -1,3 +1,6 @@
+import "#app/polyfills";
+// All polyfills MUST be loaded first for side effects
+
 import { InvertPostFX } from "#app/pipelines/invert";
 import { initI18n } from "#app/plugins/i18n";
 import { version } from "#package.json";
@@ -42,8 +45,10 @@ Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative
 document.fonts.load("16px emerald").then(() => document.fonts.load("10px pkmnems"));
 // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
 let game;
+// biome-ignore lint/suspicious/noImplicitAnyLet: TODO
+let manifest;
 
-const startGame = async (manifest?: any) => {
+const startGame = async () => {
   await initI18n();
   const LoadingScene = (await import("./loading-scene")).LoadingScene;
   const BattleScene = (await import("./battle-scene")).BattleScene;
@@ -107,10 +112,13 @@ const startGame = async (manifest?: any) => {
 fetch("/manifest.json")
   .then(res => res.json())
   .then(jsonResponse => {
-    startGame(jsonResponse.manifest);
+    manifest = jsonResponse.manifest;
   })
-  .catch(() => {
-    // Manifest not found (likely local build)
+  .catch(err => {
+    // Manifest not found (likely local build or path error on live)
+    console.log(`Manifest not found. ${err}`);
+  })
+  .finally(() => {
     startGame();
   });
 

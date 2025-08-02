@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { getStatKey, PERMANENT_STATS } from "#enums/stat";
-import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#ui/text";
+import { TextStyle } from "#enums/text-style";
+import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
@@ -147,7 +148,7 @@ export class StatsContainer extends Phaser.GameObjects.Container {
         duration: 1000,
         ease: "Cubic.easeOut",
         onUpdate: (tween: Phaser.Tweens.Tween) => {
-          const progress = tween.getValue();
+          const progress = tween.getValue() ?? 1;
           const interpolatedData = ivChartData.map(
             (v: number, i: number) => v * progress + lastIvChartData[i] * (1 - progress),
           );

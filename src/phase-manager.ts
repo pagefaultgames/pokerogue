@@ -9,6 +9,7 @@ import { AttemptCapturePhase } from "#phases/attempt-capture-phase";
 import { AttemptRunPhase } from "#phases/attempt-run-phase";
 import { BattleEndPhase } from "#phases/battle-end-phase";
 import { BerryPhase } from "#phases/berry-phase";
+import { CheckInterludePhase } from "#phases/check-interlude-phase";
 import { CheckStatusEffectPhase } from "#phases/check-status-effect-phase";
 import { CheckSwitchPhase } from "#phases/check-switch-phase";
 import { CommandPhase } from "#phases/command-phase";
@@ -60,6 +61,7 @@ import { PartyHealPhase } from "#phases/party-heal-phase";
 import { PokemonAnimPhase } from "#phases/pokemon-anim-phase";
 import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import { PokemonTransformPhase } from "#phases/pokemon-transform-phase";
+import { PositionalTagPhase } from "#phases/positional-tag-phase";
 import { PostGameOverPhase } from "#phases/post-game-over-phase";
 import { PostSummonPhase } from "#phases/post-summon-phase";
 import { PostTurnStatusEffectPhase } from "#phases/post-turn-status-effect-phase";
@@ -121,6 +123,7 @@ const PHASES = Object.freeze({
   AttemptRunPhase,
   BattleEndPhase,
   BerryPhase,
+  CheckInterludePhase,
   CheckStatusEffectPhase,
   CheckSwitchPhase,
   CommandPhase,
@@ -170,6 +173,7 @@ const PHASES = Object.freeze({
   PokemonAnimPhase,
   PokemonHealPhase,
   PokemonTransformPhase,
+  PositionalTagPhase,
   PostGameOverPhase,
   PostSummonPhase,
   PostTurnStatusEffectPhase,
@@ -239,6 +243,21 @@ export class PhaseManager {
     this.dynamicPhaseTypes = [PostSummonPhase];
   }
 
+  /**
+   * Clear all previously set phases, then add a new {@linkcode TitlePhase} to transition to the title screen.
+   * @param addLogin - Whether to add a new {@linkcode LoginPhase} before the {@linkcode TitlePhase}
+   * (but reset everything else).
+   * Default `false`
+   */
+  public toTitleScreen(addLogin = false): void {
+    this.clearAllPhases();
+
+    if (addLogin) {
+      this.unshiftNew("LoginPhase");
+    }
+    this.unshiftNew("TitlePhase");
+  }
+
   /* Phase Functions */
   getCurrentPhase(): Phase | null {
     return this.currentPhase;
@@ -301,7 +320,6 @@ export class PhaseManager {
       queue.splice(0, queue.length);
     }
     this.dynamicPhaseQueues.forEach(queue => queue.clear());
-    this.currentPhase = null;
     this.standbyPhase = null;
     this.clearPhaseQueueSplice();
   }
@@ -558,14 +576,13 @@ export class PhaseManager {
   }
 
   /**
-   * Queues an ability bar flyout phase
-   * @param pokemon The pokemon who has the ability
-   * @param passive Whether the ability is a passive
-   * @param show Whether to show or hide the bar
+   * Queue a phase to show or hide the ability flyout bar.
+   * @param pokemon - The {@linkcode Pokemon} whose ability is being activated
+   * @param passive - Whether the ability is a passive
+   * @param show - Whether to show or hide the bar
    */
   public queueAbilityDisplay(pokemon: Pokemon, passive: boolean, show: boolean): void {
     this.unshiftPhase(show ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive) : new HideAbilityPhase());
-    this.clearPhaseQueueSplice();
   }
 
   /**
@@ -659,5 +676,16 @@ export class PhaseManager {
     ...args: ConstructorParameters<PhaseConstructorMap[T]>
   ): void {
     this.startDynamicPhase(this.create(phase, ...args));
+  }
+
+  /** Prevents end of turn effects from triggering when transitioning to a new biome on a X0 wave */
+  public onInterlude(): void {
+    const phasesToRemove = ["WeatherEffectPhase", "BerryPhase", "CheckStatusEffectPhase"];
+    this.phaseQueue = this.phaseQueue.filter(p => !phasesToRemove.includes(p.phaseName));
+
+    const turnEndPhase = this.findPhase<TurnEndPhase>(p => p.phaseName === "TurnEndPhase");
+    if (turnEndPhase) {
+      turnEndPhase.upcomingInterlude = true;
+    }
   }
 }

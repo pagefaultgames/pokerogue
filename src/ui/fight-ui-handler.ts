@@ -4,15 +4,16 @@ import { getTypeDamageMultiplierColor } from "#data/type";
 import { BattleType } from "#enums/battle-type";
 import { Button } from "#enums/buttons";
 import { Command } from "#enums/command";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveCategory } from "#enums/move-category";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { fixedInt, getLocalizedSpriteKey, padInt } from "#utils/common";
 import i18next from "i18next";
@@ -284,7 +285,7 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
 
     const ppColorStyle = FightUiHandler.ppRatioToColor(pp / maxPP);
 
-    //** Changes the text color and shadow according to the determined TextStyle */
+    // Changes the text color and shadow according to the determined TextStyle
     this.ppText.setColor(this.getTextColor(ppColorStyle, false)).setShadowColor(this.getTextColor(ppColorStyle, true));
     this.moveInfoOverlay.show(pokemonMove.getMove());
 
@@ -322,7 +323,6 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
 
   /**
    * Gets multiplier text for a pokemon's move against a specific opponent
-   * Returns undefined if it's a status move
    */
   private getEffectivenessText(pokemon: Pokemon, opponent: Pokemon, pokemonMove: PokemonMove): string | undefined {
     const effectiveness = opponent.getMoveEffectiveness(
@@ -333,8 +333,11 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
       undefined,
       true,
     );
-    if (effectiveness === undefined) {
-      return undefined;
+    if (pokemonMove.getMove().category === MoveCategory.STATUS) {
+      if (effectiveness === 0) {
+        return "0x";
+      }
+      return "1x";
     }
 
     return `${effectiveness}x`;
@@ -391,7 +394,12 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
         ),
       )
       .sort((a, b) => b - a)
-      .map(effectiveness => getTypeDamageMultiplierColor(effectiveness ?? 0, "offense"));
+      .map(effectiveness => {
+        if (pokemonMove.getMove().category === MoveCategory.STATUS && effectiveness !== 0) {
+          return undefined;
+        }
+        return getTypeDamageMultiplierColor(effectiveness ?? 0, "offense");
+      });
 
     return moveColors[0];
   }

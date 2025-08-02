@@ -15,7 +15,7 @@ import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { CIVILIZATION_ENCOUNTER_BIOMES } from "#mystery-encounters/mystery-encounters";
 import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import * as Utils from "#utils/common";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -93,7 +93,7 @@ describe("Global Trade System - Mystery Encounter", () => {
   describe("Option 1 - Check Trade Offers", () => {
     it("should have the correct properties", () => {
       const option = GlobalTradeSystemEncounter.options[0];
-      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
+      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.1.label`,
@@ -154,7 +154,7 @@ describe("Global Trade System - Mystery Encounter", () => {
   describe("Option 2 - Wonder Trade", () => {
     it("should have the correct properties", () => {
       const option = GlobalTradeSystemEncounter.options[1];
-      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
+      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.2.label`,

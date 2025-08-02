@@ -120,7 +120,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                 repeatDelay: 500,
                 onUpdate: t => {
                   if (shakeCount && shakeCount < (isCritical ? 2 : 4)) {
-                    const value = t.getValue();
+                    const value = t.getValue() ?? 0;
                     const directionMultiplier = shakeCount % 2 === 1 ? 1 : -1;
                     this.pokeball.setX(pbX + value * 4 * directionMultiplier);
                     this.pokeball.setAngle(value * 27.5 * directionMultiplier);
@@ -279,6 +279,7 @@ export class AttemptCapturePhase extends PokemonPhase {
             globalScene.updateModifiers(true);
             removePokemon();
             if (newPokemon) {
+              newPokemon.leaveField(true, true, false);
               newPokemon.loadAssets().then(end);
             } else {
               end();

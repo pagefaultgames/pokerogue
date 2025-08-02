@@ -42,3 +42,6 @@ jobs:
 
       - name: Check dependencies with depcruise
         run: pnpm depcruise
+      
+      - name: Lint with ls-lint
+        run: pnpm ls-lint

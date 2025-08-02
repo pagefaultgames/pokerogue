@@ -24,10 +24,11 @@ export class SelectStarterPhase extends Phase {
     globalScene.ui.setMode(UiMode.STARTER_SELECT, (starters: Starter[]) => {
       globalScene.ui.clearText();
       globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
+        // If clicking cancel, back out to title screen
         if (slotId === -1) {
-          globalScene.phaseManager.clearPhaseQueue();
-          globalScene.phaseManager.pushNew("TitlePhase");
-          return this.end();
+          globalScene.phaseManager.toTitleScreen();
+          this.end();
+          return;
         }
         globalScene.sessionSlotId = slotId;
         this.initBattle(starters);
@@ -37,7 +38,7 @@ export class SelectStarterPhase extends Phase {
 
   /**
    * Initialize starters before starting the first battle
-   * @param starters {@linkcode Pokemon} with which to start the first battle
+   * @param starters - Array of {@linkcode Starter}s with which to start the battle
    */
   initBattle(starters: Starter[]) {
     const party = globalScene.getPlayerParty();
@@ -98,8 +99,12 @@ export class SelectStarterPhase extends Phase {
         starterPokemon.generateFusionSpecies(true);
       }
       starterPokemon.setVisible(false);
-      applyChallenges(ChallengeType.STARTER_MODIFY, starterPokemon);
+      const chalApplied = applyChallenges(ChallengeType.STARTER_MODIFY, starterPokemon);
       party.push(starterPokemon);
+      if (chalApplied) {
+        // If any challenges modified the starter, it should update
+        loadPokemonAssets.push(starterPokemon.updateInfo());
+      }
       loadPokemonAssets.push(starterPokemon.loadAssets());
     });
     overrideModifiers();

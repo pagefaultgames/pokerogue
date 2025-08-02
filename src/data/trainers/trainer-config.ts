@@ -30,7 +30,7 @@ import {
   TrainerPartyCompoundTemplate,
   TrainerPartyTemplate,
   trainerPartyTemplates,
-} from "#trainers/TrainerPartyTemplate";
+} from "#trainers/trainer-party-template";
 import type { ModifierTypeFunc } from "#types/modifier-types";
 import type {
   GenAIFunc,
@@ -41,15 +41,9 @@ import type {
   TrainerConfigs,
   TrainerTierPools,
 } from "#types/trainer-funcs";
-import {
-  coerceArray,
-  isNullOrUndefined,
-  randSeedInt,
-  randSeedIntRange,
-  randSeedItem,
-  toReadableString,
-} from "#utils/common";
+import { coerceArray, isNullOrUndefined, randSeedInt, randSeedIntRange, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { toSnakeCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
@@ -140,7 +134,7 @@ export class TrainerConfig {
   constructor(trainerType: TrainerType, allowLegendaries?: boolean) {
     this.trainerType = trainerType;
     this.trainerAI = new TrainerAI();
-    this.name = toReadableString(TrainerType[this.getDerivedType()]);
+    this.name = toTitleCase(TrainerType[this.getDerivedType()]);
     this.battleBgm = "battle_trainer";
     this.mixedBattleBgm = "battle_trainer";
     this.victoryBgm = "victory_trainer";
@@ -734,7 +728,7 @@ export class TrainerConfig {
     }
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
-    const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
+    const nameForCall = toSnakeCase(this.name);
     this.name = i18next.t(`trainerNames:${nameForCall}`);
 
     // Set the title to "elite_four". (this is the key in the i18n file)

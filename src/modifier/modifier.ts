@@ -23,6 +23,7 @@ import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { BATTLE_STATS, type PermanentStat, Stat, TEMP_BATTLE_STATS, type TempBattleStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { TextStyle } from "#enums/text-style";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type {
   DoubleBattleChanceBoosterModifierType,
@@ -40,7 +41,7 @@ import type {
 } from "#modifiers/modifier-type";
 import type { VoucherType } from "#system/voucher";
 import type { ModifierInstanceMap, ModifierString } from "#types/modifier-types";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, randSeedFloat, toDmgValue } from "#utils/common";
 import { getModifierType } from "#utils/modifier-utils";
 import i18next from "i18next";
@@ -52,25 +53,11 @@ const iconOverflowIndex = 24;
 export const modifierSortFunc = (a: Modifier, b: Modifier): number => {
   const itemNameMatch = a.type.name.localeCompare(b.type.name);
   const typeNameMatch = a.constructor.name.localeCompare(b.constructor.name);
-  const aId = a instanceof PokemonHeldItemModifier && a.pokemonId ? a.pokemonId : 4294967295;
-  const bId = b instanceof PokemonHeldItemModifier && b.pokemonId ? b.pokemonId : 4294967295;
+  const aId = a instanceof PokemonHeldItemModifier ? a.pokemonId : -1;
+  const bId = b instanceof PokemonHeldItemModifier ? b.pokemonId : -1;
 
-  //First sort by pokemonID
-  if (aId < bId) {
-    return 1;
-  }
-  if (aId > bId) {
-    return -1;
-  }
-  if (aId === bId) {
-    //Then sort by item type
-    if (typeNameMatch === 0) {
-      return itemNameMatch;
-      //Finally sort by item name
-    }
-    return typeNameMatch;
-  }
-  return 0;
+  // First sort by pokemon ID, then by item type and then name
+  return aId - bId || typeNameMatch || itemNameMatch;
 };
 
 export class ModifierBar extends Phaser.GameObjects.Container {
@@ -475,7 +462,7 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
  * @see {@linkcode apply}
  */
 export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier {
-  public override type: DoubleBattleChanceBoosterModifierType;
+  public declare type: DoubleBattleChanceBoosterModifierType;
 
   match(modifier: Modifier): boolean {
     return modifier instanceof DoubleBattleChanceBoosterModifier && modifier.getMaxBattles() === this.getMaxBattles();
@@ -757,7 +744,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return 1;
   }
 
-  getMaxStackCount(forThreshold?: boolean): number {
+  getMaxStackCount(forThreshold = false): number {
     const pokemon = this.getPokemon();
     if (!pokemon) {
       return 0;
@@ -949,7 +936,7 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
  * Currently used by Shuckle Juice item
  */
 export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
-  public override type: PokemonBaseStatTotalModifierType;
+  public declare type: PokemonBaseStatTotalModifierType;
   public isTransferable = false;
   public statModifier: 10 | -15;
 
@@ -2087,7 +2074,7 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
 }
 
 export class TerrastalizeModifier extends ConsumablePokemonModifier {
-  public override type: TerastallizeModifierType;
+  public declare type: TerastallizeModifierType;
   public teraType: PokemonType;
 
   constructor(type: TerastallizeModifierType, pokemonId: number, teraType: PokemonType) {
@@ -2331,7 +2318,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
 }
 
 export class TmModifier extends ConsumablePokemonModifier {
-  public override type: TmModifierType;
+  public declare type: TmModifierType;
 
   /**
    * Applies {@linkcode TmModifier}
@@ -2378,7 +2365,7 @@ export class RememberMoveModifier extends ConsumablePokemonModifier {
 }
 
 export class EvolutionItemModifier extends ConsumablePokemonModifier {
-  public override type: EvolutionItemModifierType;
+  public declare type: EvolutionItemModifierType;
   /**
    * Applies {@linkcode EvolutionItemModifier}
    * @param playerPokemon The {@linkcode PlayerPokemon} that should evolve via item
@@ -2543,7 +2530,7 @@ export class ExpBoosterModifier extends PersistentModifier {
 }
 
 export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
-  public override type: PokemonExpBoosterModifierType;
+  public declare type: PokemonExpBoosterModifierType;
 
   private boostMultiplier: number;
 
@@ -2640,7 +2627,7 @@ export class ExpBalanceModifier extends PersistentModifier {
 }
 
 export class PokemonFriendshipBoosterModifier extends PokemonHeldItemModifier {
-  public override type: PokemonFriendshipBoosterModifierType;
+  public declare type: PokemonFriendshipBoosterModifierType;
 
   matchType(modifier: Modifier): boolean {
     return modifier instanceof PokemonFriendshipBoosterModifier;
@@ -2697,7 +2684,7 @@ export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
 }
 
 export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier {
-  public override type: PokemonMoveAccuracyBoosterModifierType;
+  public declare type: PokemonMoveAccuracyBoosterModifierType;
   private accuracyAmount: number;
 
   constructor(type: PokemonMoveAccuracyBoosterModifierType, pokemonId: number, accuracy: number, stackCount?: number) {
@@ -2749,7 +2736,7 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
 }
 
 export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
-  public override type: PokemonMultiHitModifierType;
+  public declare type: PokemonMultiHitModifierType;
 
   matchType(modifier: Modifier): boolean {
     return modifier instanceof PokemonMultiHitModifier;
@@ -2814,6 +2801,7 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
       damageMultiplier.value *= 1 - 0.25 * this.getStackCount();
       return true;
     }
+
     if (pokemon.turnData.hitCount - pokemon.turnData.hitsLeft !== this.getStackCount() + 1) {
       // Deal 25% damage for each remaining Multi Lens hit
       damageMultiplier.value *= 0.25;
@@ -2829,7 +2817,7 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
 }
 
 export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
-  public override type: FormChangeItemModifierType;
+  public declare type: FormChangeItemModifierType;
   public formChangeItem: FormChangeItem;
   public active: boolean;
   public isTransferable = false;
