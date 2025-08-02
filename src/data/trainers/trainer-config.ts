@@ -1242,13 +1242,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.POKEFAN)
     .setHasGenders("Breeder Female")
     .setHasDouble("Breeders")
-    .setPartyTemplates(
-      trainerPartyTemplates.TWO_WEAK_ONE_AVG,
-      trainerPartyTemplates.TWO_AVG,
-      trainerPartyTemplates.FOUR_WEAKER,
-      trainerPartyTemplates.FOUR_WEAK,
-      trainerPartyTemplates.FIVE_WEAKER,
-    )
+    .setPartyTemplates(trainerPartyTemplates.FOUR_WEAK, trainerPartyTemplates.FIVE_WEAK)
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
         SpeciesId.PICHU,
