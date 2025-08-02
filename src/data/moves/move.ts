@@ -5599,7 +5599,6 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
   public tagType: BattlerTagType;
   public turnCountMin: number;
   public turnCountMax: number;
-  protected cancelOnFail: boolean;
   private failOnOverlap: boolean;
 
   constructor(tagType: BattlerTagType, selfTarget: boolean = false, failOnOverlap: boolean = false, turnCountMin: number = 0, turnCountMax?: number, lastHitOnly: boolean = false) {
