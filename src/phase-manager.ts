@@ -322,7 +322,6 @@ export class PhaseManager {
       queue.splice(0, queue.length);
     }
     this.dynamicPhaseQueues.forEach(queue => queue.clear());
-    this.currentPhase = null;
     this.standbyPhase = null;
     this.clearPhaseQueueSplice();
   }
