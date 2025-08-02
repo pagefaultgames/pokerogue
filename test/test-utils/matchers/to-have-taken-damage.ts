@@ -1,3 +1,7 @@
+/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
+import type { Pokemon } from "#field/pokemon";
+/** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
+
 import { getPokemonNameWithAffix } from "#app/messages";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import { toDmgValue } from "#utils/common";
