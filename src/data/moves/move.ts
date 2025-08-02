@@ -5601,13 +5601,13 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
   public turnCountMax: number;
   private failOnOverlap: boolean;
 
-  constructor(tagType: BattlerTagType, selfTarget: boolean = false, failOnOverlap: boolean = false, turnCountMin: number = 0, turnCountMax?: number, lastHitOnly: boolean = false) {
-    super(selfTarget, { lastHitOnly: lastHitOnly });
+  constructor(tagType: BattlerTagType, selfTarget: boolean = false, failOnOverlap = false, turnCountMin = 0, turnCountMax = turnCountMin, lastHitOnly = false) {
+    super(selfTarget, { lastHitOnly });
 
     this.tagType = tagType;
     this.turnCountMin = turnCountMin;
-    this.turnCountMax = turnCountMax !== undefined ? turnCountMax : turnCountMin;
-    this.failOnOverlap = !!failOnOverlap;
+    this.turnCountMax = turnCountMax;
+    this.failOnOverlap = failOnOverlap;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -6013,11 +6013,11 @@ export class AddArenaTagAttr extends MoveEffectAttr {
   private failOnOverlap: boolean;
   public selfSideTarget: boolean;
 
-  constructor(tagType: ArenaTagType, turnCount?: number | null, failOnOverlap: boolean = false, selfSideTarget: boolean = false) {
+  constructor(tagType: ArenaTagType, turnCount = 0, failOnOverlap = false, selfSideTarget: boolean = false) {
     super(true);
 
     this.tagType = tagType;
-    this.turnCount = turnCount!; // TODO: is the bang correct?
+    this.turnCount = turnCount;
     this.failOnOverlap = failOnOverlap;
     this.selfSideTarget = selfSideTarget;
   }
@@ -6027,6 +6027,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
       return false;
     }
 
+// TODO: Why does this check effect chance if nothing uses it?
     if ((move.chance < 0 || move.chance === 100 || user.randBattleSeedInt(100) < move.chance) && user.getLastXMoves(1)[0]?.result === MoveResult.SUCCESS) {
       const side = ((this.selfSideTarget ? user : target).isPlayer() !== (move.hasAttr("AddArenaTrapTagAttr") && target === user)) ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
       globalScene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, side);
@@ -6038,7 +6039,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
 
   getCondition(): MoveConditionFunc | null {
     return this.failOnOverlap
-      ? (user, target, move) => !globalScene.arena.getTagOnSide(this.tagType, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)
+      ? (_user, target, _move) => !globalScene.arena.getTagOnSide(this.tagType, target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)
       : null;
   }
 }
@@ -10397,7 +10398,7 @@ export function initMoves() {
       .target(MoveTarget.USER_AND_ALLIES)
       .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ AbilityId.PLUS, AbilityId.MINUS ].find(a => p?.hasAbility(a, false)))),
     new StatusMove(MoveId.HAPPY_HOUR, PokemonType.NORMAL, -1, 30, -1, 0, 6) // No animation
-      .attr(AddArenaTagAttr, ArenaTagType.HAPPY_HOUR, null, true)
+      .attr(AddArenaTagAttr, ArenaTagType.HAPPY_HOUR, 0, true)
       .target(MoveTarget.USER_SIDE),
     new StatusMove(MoveId.ELECTRIC_TERRAIN, PokemonType.ELECTRIC, -1, 10, -1, 0, 6)
       .attr(TerrainChangeAttr, TerrainType.ELECTRIC)
