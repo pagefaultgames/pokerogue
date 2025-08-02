@@ -1863,18 +1863,47 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.slotBg.setOrigin(0);
     this.add(this.slotBg);
 
+    const genderSymbol = getGenderSymbol(this.pokemon.getGender(true));
+    const isFusion = this.pokemon.fusionSpecies;
+
+    // Here we define positions and offsets
     const magicNumbers = {
       slotPb: { x: 4, y: 4 },
       namePosition: { x: 24, y: 10 + (offsetJa ? 2 : 0) },
-      nameTextWidth: 76 - (this.pokemon.fusionSpecies ? 8 : 0),
+      nameTextWidth: 76 - (isFusion ? 8 : 0),
       levelLabelPosition: { x: 24 + 8, y: 10 + 12 },
+      levelTextToLevelLabelOffset: { x: 9, y: offsetJa ? 1.5 : 0 },
+      genderTextToLevelLabelOffset: { x: 68 - (isFusion ? 8 : 0), y: -9 },
+      splicedIconToLevelLabelOffset: { x: 68, y: 3.5 - 12 },
+      statusIconToLevelLabelOffset: { x: 55, y: 0 },
+      shinyIconToNameOffset: { x: -9, y: 3 },
+      hpBarPosition: { x: 8, y: 31 },
+      hpOverlayToBarOffset: { x: 16, y: 2 }, // This should stay fixed
+      hpTextToBarOffset: { x: -3, y: -2 + (offsetJa ? 2 : 0) }, // This should stay fixed; relative to HP bar length
+      descriptionLabelPosition: { x: 32, y: 46 },
     };
+
+    if (
+      (partyUiMode === PartyUiMode.MODIFIER_TRANSFER || partyUiMode === PartyUiMode.DISCARD) &&
+      globalScene.currentBattle.double &&
+      !this.isBenched
+    ) {
+      magicNumbers.namePosition.y -= 8;
+      magicNumbers.levelLabelPosition.y -= 8;
+      magicNumbers.hpBarPosition.y -= 8;
+      magicNumbers.descriptionLabelPosition.y -= 8;
+    }
 
     if (this.isBenched) {
       magicNumbers.slotPb = { x: 2, y: 12 };
       magicNumbers.namePosition = { x: 21, y: 2 + (offsetJa ? 2 : 0) };
       magicNumbers.nameTextWidth = 52;
       magicNumbers.levelLabelPosition = { x: 21 + 8, y: 2 + 12 };
+      magicNumbers.genderTextToLevelLabelOffset = { x: 36, y: 0 };
+      magicNumbers.splicedIconToLevelLabelOffset = { x: 36 + (genderSymbol ? 8 : 0), y: 0.5 };
+      magicNumbers.statusIconToLevelLabelOffset = { x: 43, y: 0 };
+      magicNumbers.hpBarPosition = { x: 72, y: 6 };
+      magicNumbers.descriptionLabelPosition = { x: 94, y: 16 };
     }
 
     this.slotPb = globalScene.add.sprite(0, 0, "party_pb");
@@ -1919,36 +1948,37 @@ class PartySlot extends Phaser.GameObjects.Container {
       this.pokemon.level.toString(),
       this.pokemon.level < globalScene.getMaxExpLevel() ? TextStyle.PARTY : TextStyle.PARTY_RED,
     )
-      .setPositionRelative(slotLevelLabel, 9, offsetJa ? 1.5 : 0)
+      .setPositionRelative(
+        slotLevelLabel,
+        magicNumbers.levelTextToLevelLabelOffset.x,
+        magicNumbers.levelTextToLevelLabelOffset.y,
+      )
       .setOrigin(0, 0.25);
-
     slotInfoContainer.add([this.slotName, slotLevelLabel, slotLevelText]);
 
-    const genderSymbol = getGenderSymbol(this.pokemon.getGender(true));
-
     if (genderSymbol) {
-      const slotGenderText = addTextObject(0, 0, genderSymbol, TextStyle.PARTY);
-      slotGenderText.setColor(getGenderColor(this.pokemon.getGender(true)));
-      slotGenderText.setShadowColor(getGenderColor(this.pokemon.getGender(true), true));
-      if (this.isBenched) {
-        slotGenderText.setPositionRelative(slotLevelLabel, 36, 0);
-      } else {
-        slotGenderText.setPositionRelative(slotLevelLabel, 68 - (this.pokemon.fusionSpecies ? 8 : 0), -9);
-      }
-      slotGenderText.setOrigin(0, 0.25);
-
+      const slotGenderText = addTextObject(0, 0, genderSymbol, TextStyle.PARTY)
+        .setColor(getGenderColor(this.pokemon.getGender(true)))
+        .setShadowColor(getGenderColor(this.pokemon.getGender(true), true))
+        .setPositionRelative(
+          slotLevelLabel,
+          magicNumbers.genderTextToLevelLabelOffset.x,
+          magicNumbers.genderTextToLevelLabelOffset.y,
+        )
+        .setOrigin(0, 0.25);
       slotInfoContainer.add(slotGenderText);
     }
 
-    if (this.pokemon.fusionSpecies) {
-      const splicedIcon = globalScene.add.image(0, 0, "icon_spliced");
-      splicedIcon.setScale(0.5);
-      splicedIcon.setOrigin(0);
-      if (this.isBenched) {
-        splicedIcon.setPositionRelative(slotLevelLabel, 36 + (genderSymbol ? 8 : 0), 0.5);
-      } else {
-        splicedIcon.setPositionRelative(slotLevelLabel, 68, 3.5 - 12);
-      }
+    if (isFusion) {
+      const splicedIcon = globalScene.add
+        .image(0, 0, "icon_spliced")
+        .setScale(0.5)
+        .setOrigin(0)
+        .setPositionRelative(
+          slotLevelLabel,
+          magicNumbers.splicedIconToLevelLabelOffset.x,
+          magicNumbers.splicedIconToLevelLabelOffset.y,
+        );
       slotInfoContainer.add(splicedIcon);
     }
 
@@ -1957,7 +1987,11 @@ class PartySlot extends Phaser.GameObjects.Container {
         .sprite(0, 0, getLocalizedSpriteKey("statuses"))
         .setFrame(StatusEffect[this.pokemon.status?.effect].toLowerCase())
         .setOrigin(0)
-        .setPositionRelative(slotLevelLabel, this.isBenched ? 43 : 55, 0);
+        .setPositionRelative(
+          slotLevelLabel,
+          magicNumbers.statusIconToLevelLabelOffset.x,
+          magicNumbers.statusIconToLevelLabelOffset.y,
+        );
       slotInfoContainer.add(statusIndicator);
     }
 
@@ -1967,7 +2001,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       const shinyStar = globalScene.add
         .image(0, 0, `shiny_star_small${doubleShiny ? "_1" : ""}`)
         .setOrigin(0)
-        .setPositionRelative(this.slotName, -9, 3)
+        .setPositionRelative(this.slotName, magicNumbers.shinyIconToNameOffset.x, magicNumbers.shinyIconToNameOffset.y)
         .setTint(getVariantTint(this.pokemon.getBaseVariant()));
       slotInfoContainer.add(shinyStar);
 
@@ -1985,26 +2019,34 @@ class PartySlot extends Phaser.GameObjects.Container {
       .image(0, 0, "party_slot_hp_bar")
       .setOrigin(0)
       .setVisible(false)
-      .setPositionRelative(this.slotBg, this.isBenched ? 72 : 8, this.isBenched ? 6 : 31);
+      .setPositionRelative(this.slotBg, magicNumbers.hpBarPosition.x, magicNumbers.hpBarPosition.y);
 
     const hpRatio = this.pokemon.getHpRatio();
 
     this.slotHpOverlay = globalScene.add
       .sprite(0, 0, "party_slot_hp_overlay", hpRatio > 0.5 ? "high" : hpRatio > 0.25 ? "medium" : "low")
       .setOrigin(0)
-      .setPositionRelative(this.slotHpBar, 16, 2)
+      .setPositionRelative(this.slotHpBar, magicNumbers.hpOverlayToBarOffset.x, magicNumbers.hpOverlayToBarOffset.y)
       .setScale(hpRatio, 1)
       .setVisible(false);
 
     this.slotHpText = addTextObject(0, 0, `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`, TextStyle.PARTY)
       .setOrigin(1, 0)
-      .setPositionRelative(this.slotHpBar, this.slotHpBar.width - 3, this.slotHpBar.height - 2 + (offsetJa ? 2 : 0))
+      .setPositionRelative(
+        this.slotHpBar,
+        this.slotHpBar.width + magicNumbers.hpTextToBarOffset.x,
+        this.slotHpBar.height + magicNumbers.hpTextToBarOffset.y,
+      ) // TODO: annoying because it contains the width
       .setVisible(false);
 
     this.slotDescriptionLabel = addTextObject(0, 0, "", TextStyle.MESSAGE)
       .setOrigin(0, 1)
       .setVisible(false)
-      .setPositionRelative(this.slotBg, this.isBenched ? 94 : 32, this.isBenched ? 16 : 46);
+      .setPositionRelative(
+        this.slotBg,
+        magicNumbers.descriptionLabelPosition.x,
+        magicNumbers.descriptionLabelPosition.y,
+      );
 
     slotInfoContainer.add([this.slotHpBar, this.slotHpOverlay, this.slotHpText, this.slotDescriptionLabel]);
 
