@@ -711,7 +711,8 @@ export class FreshStartChallenge extends Challenge {
     pokemon.moveset = pokemon.moveset.filter(pm => validMoves.includes(pm.moveId));
     if (pokemon.moveset.length < 4) {
       // If there's empty slots fill with remaining valid moves
-      validMoves = validMoves.filter(m => !pokemon.moveset.map(pm => pm.moveId).includes(m));
+      const existingMoveIds = pokemon.moveset.map(pm => pm.moveId);
+      validMoves = validMoves.filter(m => !existingMoveIds.includes(m));
       pokemon.moveset = pokemon.moveset.concat(validMoves.map(m => new PokemonMove(m))).slice(0, 4);
     }
     pokemon.luck = 0; // No luck
