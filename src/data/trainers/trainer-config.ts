@@ -1242,14 +1242,54 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.POKEFAN)
     .setHasGenders("Breeder Female")
     .setHasDouble("Breeders")
-    .setPartyTemplateFunc(() =>
-      getWavePartyTemplate(
-        trainerPartyTemplates.FOUR_WEAKER,
-        trainerPartyTemplates.FIVE_WEAKER,
-        trainerPartyTemplates.SIX_WEAKER,
-      ),
+    .setPartyTemplates(
+      trainerPartyTemplates.TWO_WEAK_ONE_AVG,
+      trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.FOUR_WEAK,
+      trainerPartyTemplates.FIVE_WEAK,
     )
-    .setSpeciesFilter(s => s.baseTotal < 450),
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [
+        SpeciesId.PICHU,
+        SpeciesId.CLEFFA,
+        SpeciesId.IGGLYBUFF,
+        SpeciesId.TOGEPI,
+        SpeciesId.TYROGUE,
+        SpeciesId.SMOOCHUM,
+        SpeciesId.ELEKID,
+        SpeciesId.MAGBY,
+        SpeciesId.AZURILL,
+        SpeciesId.WYNAUT,
+        SpeciesId.BUDEW,
+        SpeciesId.CHINGLING,
+        SpeciesId.BONSLY,
+        SpeciesId.MIME_JR,
+        SpeciesId.HAPPINY,
+        SpeciesId.MANTYKE,
+        SpeciesId.TOXEL,
+      ],
+      [TrainerPoolTier.UNCOMMON]: [SpeciesId.DITTO, SpeciesId.MUNCHLAX, SpeciesId.RIOLU, SpeciesId.AUDINO],
+      [TrainerPoolTier.RARE]: [
+        SpeciesId.ALOLA_RATTATA,
+        SpeciesId.ALOLA_SANDSHREW,
+        SpeciesId.ALOLA_VULPIX,
+        SpeciesId.ALOLA_DIGLETT,
+        SpeciesId.ALOLA_MEOWTH,
+        SpeciesId.GALAR_PONYTA,
+      ],
+      [TrainerPoolTier.SUPER_RARE]: [
+        SpeciesId.ALOLA_GEODUDE,
+        SpeciesId.ALOLA_GRIMER,
+        SpeciesId.GALAR_MEOWTH,
+        SpeciesId.GALAR_SLOWPOKE,
+        SpeciesId.GALAR_FARFETCHD,
+        SpeciesId.HISUI_GROWLITHE,
+        SpeciesId.HISUI_VOLTORB,
+        SpeciesId.HISUI_QWILFISH,
+        SpeciesId.HISUI_SNEASEL,
+        SpeciesId.HISUI_ZORUA,
+      ],
+    }),
   [TrainerType.CLERK]: new TrainerConfig(++t)
     .setHasGenders("Clerk Female")
     .setHasDouble("Colleagues")
