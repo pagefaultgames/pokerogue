@@ -63,7 +63,7 @@ declare module "vitest" {
     /**
      * Check whether a {@linkcode Pokemon} has taken a specific amount of damage.
      * @param expectedDamageTaken - The expected amount of damage taken
-     * @param roundDown - Whether to round down @linkcode expectedDamageTaken} with {@linkcode toDmgValue}; default `true`
+     * @param roundDown - Whether to round down {@linkcode expectedDamageTaken} with {@linkcode toDmgValue}; default `true`
      */
     toHaveTakenDamage(expectedDamageTaken: number, roundDown?: boolean): void;
 
