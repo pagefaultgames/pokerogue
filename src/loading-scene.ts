@@ -121,6 +121,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("party_bg_double", "ui");
     this.loadImage("party_bg_double_manage", "ui");
     this.loadAtlas("party_slot_main", "ui");
+    this.loadAtlas("party_slot_main_short", "ui");
     this.loadAtlas("party_slot", "ui");
     this.loadImage("party_slot_overlay_lv", "ui");
     this.loadImage("party_slot_hp_bar", "ui");

@@ -1817,6 +1817,7 @@ class PartySlot extends Phaser.GameObjects.Container {
   public slotHpText: Phaser.GameObjects.Text;
   public slotDescriptionLabel: Phaser.GameObjects.Text; // this is used to show text instead of the HP bar i.e. for showing "Able"/"Not Able" for TMs when you try to learn them
 
+  private slotBgKey: string;
   private pokemonIcon: Phaser.GameObjects.Container;
   private iconAnimHandler: PokemonIconAnimHandler;
 
@@ -1868,10 +1869,15 @@ class PartySlot extends Phaser.GameObjects.Container {
   setup(partyUiMode: PartyUiMode, tmMoveId: MoveId) {
     const currentLanguage = i18next.resolvedLanguage ?? "en";
     const offsetJa = currentLanguage === "ja";
+    const isItemManageMode = partyUiMode === PartyUiMode.MODIFIER_TRANSFER || partyUiMode === PartyUiMode.DISCARD;
 
-    const slotKey = this.isBenched ? "party_slot" : "party_slot_main";
-    const slotBgKey = this.pokemon.hp ? slotKey : `${slotKey}${"_fnt"}`;
-    this.slotBg = globalScene.add.sprite(0, 0, slotKey, slotBgKey);
+    const slotKey = this.isBenched
+      ? "party_slot"
+      : isItemManageMode && globalScene.currentBattle.double
+        ? "party_slot_main_short"
+        : "party_slot_main";
+    this.slotBgKey = this.pokemon.hp ? slotKey : `${slotKey}${"_fnt"}`;
+    this.slotBg = globalScene.add.sprite(0, 0, slotKey, this.slotBgKey);
     this.slotBg.setOrigin(0);
     this.add(this.slotBg);
 
@@ -1895,11 +1901,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       descriptionLabelPosition: { x: 32, y: 46 },
     };
 
-    if (
-      (partyUiMode === PartyUiMode.MODIFIER_TRANSFER || partyUiMode === PartyUiMode.DISCARD) &&
-      globalScene.currentBattle.double &&
-      !this.isBenched
-    ) {
+    if (isItemManageMode && globalScene.currentBattle.double && !this.isBenched) {
       magicNumbers.namePosition.y -= 8;
       magicNumbers.levelLabelPosition.y -= 8;
       magicNumbers.hpBarPosition.y -= 8;
@@ -2121,8 +2123,8 @@ class PartySlot extends Phaser.GameObjects.Container {
 
   private updateSlotTexture(): void {
     this.slotBg.setTexture(
-      `party_slot${this.isBenched ? "" : "_main"}`,
-      `party_slot${this.isBenched ? "" : "_main"}${this.transfer ? "_swap" : this.pokemon.hp ? "" : "_fnt"}${this.selected ? "_sel" : ""}`,
+      this.slotBgKey,
+      `${this.slotBgKey}${this.transfer ? "_swap" : this.pokemon.hp ? "" : "_fnt"}${this.selected ? "_sel" : ""}`,
     );
   }
 }
