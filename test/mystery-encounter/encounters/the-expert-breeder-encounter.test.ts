@@ -186,7 +186,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(eggsAfter.filter(egg => egg.tier === EggTier.COMMON).length).toBe(commonEggs);
       expect(eggsAfter.filter(egg => egg.tier === EggTier.RARE).length).toBe(rareEggs);
 
-      game.phaseInterceptor.shiftPhase();
+      game.endPhase();
       await game.phaseInterceptor.to("PostMysteryEncounterPhase");
 
       const friendshipAfter = scene.currentBattle.mysteryEncounter!.misc.pokemon1.friendship;
@@ -271,7 +271,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(eggsAfter.filter(egg => egg.tier === EggTier.COMMON).length).toBe(commonEggs);
       expect(eggsAfter.filter(egg => egg.tier === EggTier.RARE).length).toBe(rareEggs);
 
-      game.phaseInterceptor.shiftPhase();
+      game.endPhase();
       await game.phaseInterceptor.to("PostMysteryEncounterPhase");
 
       const friendshipAfter = scene.currentBattle.mysteryEncounter!.misc.pokemon2.friendship;
@@ -353,7 +353,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(eggsAfter.filter(egg => egg.tier === EggTier.COMMON).length).toBe(commonEggs);
       expect(eggsAfter.filter(egg => egg.tier === EggTier.RARE).length).toBe(rareEggs);
 
-      game.phaseInterceptor.shiftPhase();
+      game.endPhase();
       await game.phaseInterceptor.to("PostMysteryEncounterPhase");
 
       const friendshipAfter = scene.currentBattle.mysteryEncounter!.misc.pokemon3.friendship;
