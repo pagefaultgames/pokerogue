@@ -28,7 +28,6 @@ export function toEqualArrayUnsorted(
     };
   }
 
-  // Create shallow copies of the arrays in case we have
   const actualSorted = received.slice().sort();
   const expectedSorted = expected.slice().sort();
   const pass = this.equals(actualSorted, expectedSorted, [...this.customTesters, this.utils.iterableEquality]);
