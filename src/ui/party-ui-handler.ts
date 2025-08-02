@@ -1860,12 +1860,25 @@ class PartySlot extends Phaser.GameObjects.Container {
     const slotKey = this.isBenched ? "party_slot" : "party_slot_main";
     const slotBgKey = this.pokemon.hp ? slotKey : `${slotKey}${"_fnt"}`;
     this.slotBg = globalScene.add.sprite(0, 0, slotKey, slotBgKey);
-    console.log("Real y of BG: ", this.slotBg.y, this.slotBg.height);
     this.slotBg.setOrigin(0);
     this.add(this.slotBg);
 
+    const magicNumbers = {
+      slotPb: { x: 4, y: 4 },
+      namePosition: { x: 24, y: 10 + (offsetJa ? 2 : 0) },
+      nameTextWidth: 76 - (this.pokemon.fusionSpecies ? 8 : 0),
+      levelLabelPosition: { x: 24 + 8, y: 10 + 12 },
+    };
+
+    if (this.isBenched) {
+      magicNumbers.slotPb = { x: 2, y: 12 };
+      magicNumbers.namePosition = { x: 21, y: 2 + (offsetJa ? 2 : 0) };
+      magicNumbers.nameTextWidth = 52;
+      magicNumbers.levelLabelPosition = { x: 21 + 8, y: 2 + 12 };
+    }
+
     this.slotPb = globalScene.add.sprite(0, 0, "party_pb");
-    this.slotPb.setPosition(this.isBenched ? 2 : 4, this.isBenched ? 12 : 4);
+    this.slotPb.setPosition(magicNumbers.slotPb.x, magicNumbers.slotPb.y);
     this.add(this.slotPb);
 
     this.pokemonIcon = globalScene.addPokemonIcon(this.pokemon, this.slotPb.x, this.slotPb.y, 0.5, 0.5, true);
@@ -1883,7 +1896,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     const nameSizeTest = addTextObject(0, 0, displayName, TextStyle.PARTY);
     nameTextWidth = nameSizeTest.displayWidth;
 
-    while (nameTextWidth > (this.isBenched ? 52 : 76 - (this.pokemon.fusionSpecies ? 8 : 0))) {
+    while (nameTextWidth > magicNumbers.nameTextWidth) {
       displayName = `${displayName.slice(0, displayName.endsWith(".") ? -2 : -1).trimEnd()}.`;
       nameSizeTest.setText(displayName);
       nameTextWidth = nameSizeTest.displayWidth;
@@ -1892,16 +1905,12 @@ class PartySlot extends Phaser.GameObjects.Container {
     nameSizeTest.destroy();
 
     this.slotName = addTextObject(0, 0, displayName, TextStyle.PARTY);
-    this.slotName.setPositionRelative(
-      this.slotBg,
-      this.isBenched ? 21 : 24,
-      (this.isBenched ? 2 : 10) + (offsetJa ? 2 : 0),
-    );
+    this.slotName.setPositionRelative(this.slotBg, magicNumbers.namePosition.x, magicNumbers.namePosition.y);
     this.slotName.setOrigin(0);
 
     const slotLevelLabel = globalScene.add
       .image(0, 0, "party_slot_overlay_lv")
-      .setPositionRelative(this.slotBg, (this.isBenched ? 21 : 24) + 8, (this.isBenched ? 2 : 10) + 12)
+      .setPositionRelative(this.slotBg, magicNumbers.levelLabelPosition.x, magicNumbers.levelLabelPosition.y)
       .setOrigin(0);
 
     const slotLevelText = addTextObject(
@@ -1972,32 +1981,32 @@ class PartySlot extends Phaser.GameObjects.Container {
       }
     }
 
-    this.slotHpBar = globalScene.add.image(0, 0, "party_slot_hp_bar").setOrigin(0).setVisible(false);
+    this.slotHpBar = globalScene.add
+      .image(0, 0, "party_slot_hp_bar")
+      .setOrigin(0)
+      .setVisible(false)
+      .setPositionRelative(this.slotBg, this.isBenched ? 72 : 8, this.isBenched ? 6 : 31);
 
     const hpRatio = this.pokemon.getHpRatio();
 
     this.slotHpOverlay = globalScene.add
       .sprite(0, 0, "party_slot_hp_overlay", hpRatio > 0.5 ? "high" : hpRatio > 0.25 ? "medium" : "low")
       .setOrigin(0)
+      .setPositionRelative(this.slotHpBar, 16, 2)
       .setScale(hpRatio, 1)
       .setVisible(false);
 
     this.slotHpText = addTextObject(0, 0, `${this.pokemon.hp}/${this.pokemon.getMaxHp()}`, TextStyle.PARTY)
       .setOrigin(1, 0)
+      .setPositionRelative(this.slotHpBar, this.slotHpBar.width - 3, this.slotHpBar.height - 2 + (offsetJa ? 2 : 0))
       .setVisible(false);
 
-    this.slotDescriptionLabel = addTextObject(0, 0, "", TextStyle.MESSAGE).setOrigin(0, 1).setVisible(false);
+    this.slotDescriptionLabel = addTextObject(0, 0, "", TextStyle.MESSAGE)
+      .setOrigin(0, 1)
+      .setVisible(false)
+      .setPositionRelative(this.slotBg, this.isBenched ? 94 : 32, this.isBenched ? 16 : 46);
 
     slotInfoContainer.add([this.slotHpBar, this.slotHpOverlay, this.slotHpText, this.slotDescriptionLabel]);
-
-    this.slotHpBar.setPositionRelative(this.slotBg, this.isBenched ? 72 : 8, this.isBenched ? 6 : 31);
-    this.slotHpOverlay.setPositionRelative(this.slotHpBar, 16, 2);
-    this.slotHpText.setPositionRelative(
-      this.slotHpBar,
-      this.slotHpBar.width - 3,
-      this.slotHpBar.height - 2 + (offsetJa ? 2 : 0),
-    );
-    this.slotDescriptionLabel.setPositionRelative(this.slotBg, this.isBenched ? 94 : 32, this.isBenched ? 16 : 46);
 
     if (partyUiMode !== PartyUiMode.TM_MODIFIER) {
       this.slotDescriptionLabel.setVisible(false);
