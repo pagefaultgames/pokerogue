@@ -6309,6 +6309,9 @@ class ForceSwitchOutHelper {
         if (globalScene.currentBattle.double && !isNullOrUndefined(allyPokemon)) {
           globalScene.redirectPokemonMoves(switchOutTarget, allyPokemon);
         }
+        else{
+          globalScene.phaseManager.pushNew("BattleEndPhase", true);
+        }
       }
 
       if (!allyPokemon?.isActive(true)) {
