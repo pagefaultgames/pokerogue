@@ -847,23 +847,21 @@ export class Arena {
     side: ArenaTagSide,
     quiet = false,
   ): void {
-    const indicesToRemove: number[] = [];
-    for (const [i, tag] of this.tags.entries()) {
+    const leftoverTags: ArenaTag[] = [];
+    for (const tag of this.tags) {
       // Skip tags of different types or on the wrong side of the field
-      if (!tagTypes.includes(tag.tagType)) {
-        continue;
-      }
-      if (!(side === ArenaTagSide.BOTH || tag.side === ArenaTagSide.BOTH || tag.side === side)) {
+      if (
+        !tagTypes.includes(tag.tagType) ||
+        !(side === ArenaTagSide.BOTH || tag.side === ArenaTagSide.BOTH || tag.side === side)
+      ) {
+        leftoverTags.push(tag);
         continue;
       }
 
-      indicesToRemove.push(i);
+      tag.onRemove(this, quiet);
     }
 
-    for (const index of indicesToRemove) {
-      this.tags[index].onRemove(this, quiet);
-      this.tags.splice(index, 1);
-    }
+    this.tags = leftoverTags;
   }
 
   removeAllTags(): void {

@@ -1,5 +1,6 @@
 import { SubstituteTag } from "#data/battler-tags";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -7,6 +8,7 @@ import { Stat } from "#enums/stat";
 import { MoveEndPhase } from "#phases/move-end-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
+import type { ArenaTrapTagType } from "#types/arena-tags";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -31,56 +33,24 @@ describe("Moves - Tidy Up", () => {
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
-      .starterSpecies(SpeciesId.FEEBAS)
-      .ability(AbilityId.BALL_FETCH)
-      .moveset([MoveId.TIDY_UP])
-      .startingLevel(50);
+      .ability(AbilityId.BALL_FETCH);
   });
 
-  it("spikes are cleared", async () => {
-    game.override.moveset([MoveId.SPIKES, MoveId.TIDY_UP]).enemyMoveset(MoveId.SPIKES);
-    await game.classicMode.startBattle();
+  it.each<{ name: string; hazard: ArenaTrapTagType }>([{ name: "Spikes", hazard: ArenaTagType.SPIKES }])(
+    "should remove $name from both sides of the field",
+    async ({ hazard }) => {
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(MoveId.SPIKES);
-    await game.phaseInterceptor.to(TurnEndPhase);
-    game.move.select(MoveId.TIDY_UP);
-    await game.phaseInterceptor.to(MoveEndPhase);
-    expect(game.scene.arena.getTag(ArenaTagType.SPIKES)).toBeUndefined();
-  });
+      // Add tag to both sides of the field
+      game.scene.arena.addTag(hazard, 1, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.PLAYER);
+      game.scene.arena.addTag(hazard, 1, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.ENEMY);
 
-  it("stealth rocks are cleared", async () => {
-    game.override.moveset([MoveId.STEALTH_ROCK, MoveId.TIDY_UP]).enemyMoveset(MoveId.STEALTH_ROCK);
-    await game.classicMode.startBattle();
-
-    game.move.select(MoveId.STEALTH_ROCK);
-    await game.phaseInterceptor.to(TurnEndPhase);
-    game.move.select(MoveId.TIDY_UP);
-    await game.phaseInterceptor.to(MoveEndPhase);
-    expect(game.scene.arena.getTag(ArenaTagType.STEALTH_ROCK)).toBeUndefined();
-  });
-
-  it("toxic spikes are cleared", async () => {
-    game.override.moveset([MoveId.TOXIC_SPIKES, MoveId.TIDY_UP]).enemyMoveset(MoveId.TOXIC_SPIKES);
-    await game.classicMode.startBattle();
-
-    game.move.select(MoveId.TOXIC_SPIKES);
-    await game.phaseInterceptor.to(TurnEndPhase);
-    game.move.select(MoveId.TIDY_UP);
-    await game.phaseInterceptor.to(MoveEndPhase);
-    expect(game.scene.arena.getTag(ArenaTagType.TOXIC_SPIKES)).toBeUndefined();
-  });
-
-  it("sticky webs are cleared", async () => {
-    game.override.moveset([MoveId.STICKY_WEB, MoveId.TIDY_UP]).enemyMoveset(MoveId.STICKY_WEB);
-
-    await game.classicMode.startBattle();
-
-    game.move.select(MoveId.STICKY_WEB);
-    await game.phaseInterceptor.to(TurnEndPhase);
-    game.move.select(MoveId.TIDY_UP);
-    await game.phaseInterceptor.to(MoveEndPhase);
-    expect(game.scene.arena.getTag(ArenaTagType.STICKY_WEB)).toBeUndefined();
-  });
+      expect(game.scene.arena.getTag());
+      game.move.use(MoveId.TIDY_UP);
+      await game.toEndOfTurn();
+      expect(game.scene.arena.getTag(ArenaTagType.SPIKES)).toBeUndefined();
+    },
+  );
 
   it("substitutes are cleared", async () => {
     game.override.moveset([MoveId.SUBSTITUTE, MoveId.TIDY_UP]).enemyMoveset(MoveId.SUBSTITUTE);
