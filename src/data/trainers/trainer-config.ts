@@ -1245,8 +1245,9 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyTemplates(
       trainerPartyTemplates.TWO_WEAK_ONE_AVG,
       trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.FOUR_WEAKER,
       trainerPartyTemplates.FOUR_WEAK,
-      trainerPartyTemplates.FIVE_WEAK,
+      trainerPartyTemplates.FIVE_WEAKER,
     )
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
