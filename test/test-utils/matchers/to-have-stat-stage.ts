@@ -1,3 +1,7 @@
+/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
+import type { Pokemon } from "#field/pokemon";
+/** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
+
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { BattleStat } from "#enums/stat";
 import { getStatName } from "#test/test-utils/string-utils";
@@ -5,9 +9,9 @@ import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Matcher that checks if a Pokemon has a specific {@linkcode Stat} stage.
+ * Matcher that checks if a Pokemon has a specific {@linkcode BattleStat | Stat} stage.
  * @param received - The object to check. Should be a {@linkcode Pokemon}.
- * @param stat - The {@linkcode Stat} to check
+ * @param stat - The {@linkcode BattleStat | Stat} to check
  * @param expectedStage - The expected numerical value of {@linkcode stat}; should be within the range `[-6, 6]`
  * @returns Whether the matcher passed
  */
