@@ -49,7 +49,7 @@ declare module "vitest" {
     toHaveUsedMove(expected: MoveId | AtLeastOne<TurnMove>, index?: number): void;
 
     /**
-     * Check whether a {@linkcode Pokemon Pokemon's} effective stat is as expected
+     * Check whether a {@linkcode Pokemon}'s effective stat is as expected
      * (checked after all stat value modifications).
      *
      * @param stat - The {@linkcode EffectiveStat} to check
