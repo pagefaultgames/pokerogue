@@ -4,7 +4,6 @@ import { defaultStarterSpecies } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
-import { getEggTierForSpecies } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getPokemonSpeciesForm } from "#data/pokemon-species";
@@ -12,7 +11,6 @@ import { BattleType } from "#enums/battle-type";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { TypeColor, TypeShadow } from "#enums/color";
-import { EggTier } from "#enums/egg-type";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { ModifierTier } from "#enums/modifier-tier";
 import type { MoveId } from "#enums/move-id";
@@ -685,14 +683,11 @@ export class SingleTypeChallenge extends Challenge {
  */
 export class FreshStartChallenge extends Challenge {
   constructor() {
-    super(Challenges.FRESH_START, 3);
+    super(Challenges.FRESH_START, 2);
   }
 
   applyStarterChoice(pokemon: PokemonSpecies, valid: BooleanHolder): boolean {
-    if (
-      (this.value === 1 && !defaultStarterSpecies.includes(pokemon.speciesId)) ||
-      (this.value === 2 && getEggTierForSpecies(pokemon) >= EggTier.EPIC)
-    ) {
+    if (this.value === 1 && !defaultStarterSpecies.includes(pokemon.speciesId)) {
       valid.value = false;
       return true;
     }
@@ -708,12 +703,16 @@ export class FreshStartChallenge extends Challenge {
     pokemon.abilityIndex = pokemon.abilityIndex % 2; // Always base ability, if you set it to hidden it wraps to first ability
     pokemon.passive = false; // Passive isn't unlocked
     pokemon.nature = Nature.HARDY; // Neutral nature
-    pokemon.moveset = pokemon.species
+    let validMoves = pokemon.species
       .getLevelMoves()
       .filter(m => m[0] <= 5)
-      .map(lm => lm[1])
-      .slice(0, 4)
-      .map(m => new PokemonMove(m)); // No egg moves
+      .map(lm => lm[1]);
+    // filter egg moves out of the moveset,
+    pokemon.moveset = pokemon.moveset.filter(pm => validMoves.includes(pm.moveId));
+    if (pokemon.moveset.length < 4) {
+      validMoves = validMoves.filter(m => !pokemon.moveset.map(pm => pm.moveId).includes(m));
+      pokemon.moveset = pokemon.moveset.concat(validMoves.map(m => new PokemonMove(m))).slice(0, 4);
+    }
     pokemon.luck = 0; // No luck
     pokemon.shiny = false; // Not shiny
     pokemon.variant = 0; // Not shiny
@@ -735,6 +734,7 @@ export class FreshStartChallenge extends Challenge {
     }
     pokemon.ivs = [15, 15, 15, 15, 15, 15]; // Default IVs of 15 for all stats (Updated to 15 from 10 in 1.2.0)
     pokemon.teraType = pokemon.species.type1; // Always primary tera type
+    pokemon.updateInfo();
     return true;
   }
 
