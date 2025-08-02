@@ -1556,8 +1556,8 @@ interface PendingHealEffect {
   readonly moveId: MoveId;
   /** If `true`, also restores the target's PP when the effect activates. */
   readonly restorePP: boolean;
-  /** The `i18n` key for the message to display when the effect activates */
-  readonly healMessageKey: string;
+  /** The message to display when the effect activates */
+  readonly healMessage: string;
 }
 
 /**
@@ -1627,7 +1627,7 @@ export class PendingHealTag extends ArenaTag {
 
     const healEffect = targetEffects?.find(effect => this.canApply(effect, pokemon));
     if (targetEffects && healEffect) {
-      const { sourceId, moveId, restorePP, healMessageKey } = healEffect;
+      const { sourceId, moveId, restorePP, healMessage } = healEffect;
       const sourcePokemon = globalScene.getPokemonById(sourceId);
       if (!sourcePokemon) {
         console.warn(`Source of pending ${allMoves[moveId].name} effect is undefined!`);
@@ -1640,7 +1640,7 @@ export class PendingHealTag extends ArenaTag {
         "PokemonHealPhase",
         targetIndex,
         pokemon.getMaxHp(),
-        i18next.t(healMessageKey, { pokemonName: getPokemonNameWithAffix(sourcePokemon) }),
+        healMessage,
         true,
         false,
         false,
