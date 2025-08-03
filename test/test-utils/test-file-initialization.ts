@@ -1,42 +1,46 @@
-import { initAbilities } from "#abilities/ability";
-import { initLoggedInUser } from "#app/account";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
-import { initBiomes } from "#balance/biomes";
-import { initEggMoves } from "#balance/egg-moves";
-import { initPokemonPrevolutions, initPokemonStarters } from "#balance/pokemon-evolutions";
-import { initPokemonForms } from "#data/pokemon-forms";
-import { initSpecies } from "#data/pokemon-species";
-import { initHeldItems } from "#items/all-held-items";
-import { initTrainerItems } from "#items/all-trainer-items";
-import { initHeldItemPools } from "#items/init-held-item-pools";
-import { initRewardPools } from "#items/init-reward-pools";
-import { initTrainerItemPools } from "#items/init-trainer-item-pools";
-import { initRewards } from "#items/reward";
-import { initMoves } from "#moves/move";
-import { initMysteryEncounters } from "#mystery-encounters/mystery-encounters";
+import { initializeGame } from "#app/init/init";
 import { initI18n } from "#plugins/i18n";
-import { initAchievements } from "#system/achv";
-import { initVouchers } from "#system/voucher";
 import { blobToString } from "#test/test-utils/game-manager-utils";
 import { manageListeners } from "#test/test-utils/listeners-manager";
 import { MockConsoleLog } from "#test/test-utils/mocks/mock-console-log";
 import { mockContext } from "#test/test-utils/mocks/mock-context-canvas";
 import { mockLocalStorage } from "#test/test-utils/mocks/mock-local-storage";
 import { MockImage } from "#test/test-utils/mocks/mocks-container/mock-image";
-import { initStatsKeys } from "#ui/game-stats-ui-handler";
 import { setCookie } from "#utils/cookies";
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 let wasInitialized = false;
-/**
- * An initialization function that is run at the beginning of every test file (via `beforeAll()`).
- */
-export function initTestFile() {
-  // Set the timezone to UTC for tests.
-  process.env.TZ = "UTC";
 
+/**
+ * Run initialization code upon starting a new file, both per-suite and per-instance oncess.
+ */
+export function initTests(): void {
+  setupStubs();
+  if (!wasInitialized) {
+    initTestFile();
+    wasInitialized = true;
+  }
+
+  manageListeners();
+}
+
+/**
+ * Initialize various values at the beginning of each testing instance.
+ */
+function initTestFile(): void {
+  initI18n();
+  initializeGame();
+}
+
+/**
+ * Setup various stubs for testing.
+ * @todo Move this into a dedicated stub file instead of running it once per test instance
+ * @todo Investigate why this resets on new test suite start
+ */
+function setupStubs(): void {
   Object.defineProperty(window, "localStorage", {
     value: mockLocalStorage(),
   });
@@ -72,9 +76,9 @@ export function initTestFile() {
 
   /**
    * Sets this object's position relative to another object with a given offset
-   * @param guideObject {@linkcode Phaser.GameObjects.GameObject} to base the position off of
-   * @param x The relative x position
-   * @param y The relative y position
+   * @param guideObject - The {@linkcode Phaser.GameObjects.GameObject} to base the position off of
+   * @param x - The relative x position
+   * @param y - The relative y position
    */
   const setPositionRelative = function (guideObject: any, x: number, y: number): any {
     const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
@@ -89,34 +93,6 @@ export function initTestFile() {
   Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
   Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
   HTMLCanvasElement.prototype.getContext = () => mockContext;
-
-  // Initialize all of these things if and only if they have not been initialized yet
-  if (!wasInitialized) {
-    wasInitialized = true;
-    initI18n();
-    initHeldItems();
-    initHeldItemPools();
-    initTrainerItems();
-    initTrainerItemPools();
-    initRewards();
-    initRewardPools();
-    initVouchers();
-    initAchievements();
-    initStatsKeys();
-    initPokemonPrevolutions();
-    initBiomes();
-    initEggMoves();
-    initPokemonForms();
-    initSpecies();
-    initMoves();
-    initAbilities();
-    initLoggedInUser();
-    initMysteryEncounters();
-    // init the pokemon starters for the pokedex
-    initPokemonStarters();
-  }
-
-  manageListeners();
 }
 
 /**

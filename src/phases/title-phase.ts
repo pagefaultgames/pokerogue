@@ -112,11 +112,11 @@ export class TitlePhase extends Phase {
               });
             }
           }
+          // Cancel button = back to title
           options.push({
             label: i18next.t("menu:cancel"),
             handler: () => {
-              globalScene.phaseManager.clearPhaseQueue();
-              globalScene.phaseManager.pushNew("TitlePhase");
+              globalScene.phaseManager.toTitleScreen();
               super.end();
               return true;
             },
@@ -189,11 +189,12 @@ export class TitlePhase extends Phase {
   initDailyRun(): void {
     globalScene.ui.clearText();
     globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
-      globalScene.phaseManager.clearPhaseQueue();
       if (slotId === -1) {
-        globalScene.phaseManager.pushNew("TitlePhase");
-        return super.end();
+        globalScene.phaseManager.toTitleScreen();
+        super.end();
+        return;
       }
+      globalScene.phaseManager.clearPhaseQueue();
       globalScene.sessionSlotId = slotId;
 
       const generateDaily = (seed: string) => {
