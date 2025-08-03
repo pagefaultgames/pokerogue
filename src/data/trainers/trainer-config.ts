@@ -1242,7 +1242,13 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.POKEFAN)
     .setHasGenders("Breeder Female")
     .setHasDouble("Breeders")
-    .setPartyTemplates(trainerPartyTemplates.FOUR_WEAK, trainerPartyTemplates.FIVE_WEAK)
+    .setPartyTemplateFunc(() =>
+      getWavePartyTemplate(
+        trainerPartyTemplates.FOUR_WEAK,
+        trainerPartyTemplates.FIVE_WEAK,
+        trainerPartyTemplates.SIX_WEAK,
+      ),
+    )
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
         SpeciesId.PICHU,
@@ -1252,7 +1258,6 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.TYROGUE,
         SpeciesId.SMOOCHUM,
         SpeciesId.AZURILL,
-        SpeciesId.WYNAUT,
         SpeciesId.BUDEW,
         SpeciesId.CHINGLING,
         SpeciesId.BONSLY,
@@ -1265,6 +1270,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.DITTO,
         SpeciesId.ELEKID,
         SpeciesId.MAGBY,
+        SpeciesId.WYNAUT,
         SpeciesId.MUNCHLAX,
         SpeciesId.RIOLU,
         SpeciesId.AUDINO,
