@@ -112,7 +112,7 @@ describe("Global Trade System - Mystery Encounter", () => {
 
       expect(speciesAfter).toBeDefined();
       expect(speciesBefore).not.toBe(speciesAfter);
-      expect(defaultParty).toContain(speciesAfter);
+      expect(defaultParty).not.toContain(speciesAfter);
     });
 
     it("Should trade a Pokemon from the player's party for the second of 3 Pokemon options", async () => {
