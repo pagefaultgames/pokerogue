@@ -2,22 +2,21 @@ import { globalScene } from "#app/global-scene";
 import { allRewards } from "#data/data-lists";
 import type { HeldItemId } from "#enums/held-item-id";
 import { getRewardCategory, RewardCategoryId, RewardId } from "#enums/reward-id";
-import type { RarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { RewardFunc, RewardPoolId } from "#types/rewards";
-import { getHeldItemTier } from "./held-item-default-tiers";
+import { heldItemRarities } from "./held-item-default-tiers";
 import {
-  type HeldItemReward,
+  HeldItemReward,
   type PokemonMoveReward,
   type RememberMoveReward,
   type Reward,
   RewardGenerator,
   RewardOption,
   type TmReward,
-  type TrainerItemReward,
+  TrainerItemReward,
 } from "./reward";
-import { getRewardTier } from "./reward-defaults-tiers";
-import { getTrainerItemTier } from "./trainer-item-default-tiers";
+import { rewardRarities } from "./reward-defaults-tiers";
+import { trainerItemRarities } from "./trainer-item-default-tiers";
 
 export function isTmReward(reward: Reward): reward is TmReward {
   return getRewardCategory(reward.id) === RewardCategoryId.TM;
@@ -56,19 +55,26 @@ export function generateRewardOption(rewardFunc: RewardFunc, pregenArgs?: any[])
   return null;
 }
 
-/**
- * Finds the default rarity tier for a given reward. For unique held item or trainer item rewards,
- * falls back to the default rarity tier for the item.
- * @param reward The {@linkcode Reward} to determine the tier for.
- */
-export function getRewardDefaultTier(reward: Reward): RarityTier {
-  if (reward.id === RewardId.HELD_ITEM) {
-    return getHeldItemTier((reward as HeldItemReward).itemId);
+export function generateRewardOptionFromId(id: RewardPoolId, pregenArgs?: any[]): RewardOption | null {
+  if (isHeldItemId(id)) {
+    const reward = new HeldItemReward(id);
+    const tier = heldItemRarities[id];
+    return new RewardOption(reward, 0, tier);
   }
-  if (reward.id === RewardId.TRAINER_ITEM) {
-    return getTrainerItemTier((reward as TrainerItemReward).itemId);
+
+  if (isTrainerItemId(id)) {
+    const reward = new TrainerItemReward(id);
+    const tier = trainerItemRarities[id];
+    return new RewardOption(reward, 0, tier);
   }
-  return getRewardTier(reward.id);
+
+  const rewardFunc = allRewards[id];
+  const reward = generateReward(rewardFunc, pregenArgs);
+  if (reward) {
+    const tier = rewardRarities[id];
+    return new RewardOption(reward, 0, tier);
+  }
+  return null;
 }
 
 export function getPlayerShopRewardOptionsForWave(waveIndex: number, baseCost: number): RewardOption[] {

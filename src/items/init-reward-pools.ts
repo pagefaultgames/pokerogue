@@ -1,23 +1,23 @@
 /* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
-import type { initRewards, Reward } from "#items/reward";
+import { initRewards, Reward } from "#items/reward";
 /* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
-import { allHeldItems, allRewards, allTrainerItems } from "#data/data-lists";
+import { allHeldItems, allTrainerItems } from "#data/data-lists";
 import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
 import { AbilityId } from "#enums/ability-id";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
+import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { Unlockables } from "#enums/unlockables";
 import type { Pokemon } from "#field/pokemon";
-import { WeightedReward } from "#items/reward";
 import { rewardPool } from "#items/reward-pools";
 import type { TurnEndStatusHeldItem } from "#items/turn-end-status";
 import type { WeightedRewardWeightFunc } from "#types/rewards";
@@ -28,33 +28,33 @@ import { isNullOrUndefined } from "#utils/common";
  */
 function initCommonRewardPool() {
   rewardPool[RarityTier.COMMON] = [
-    new WeightedReward(allRewards.POKEBALL, () => (hasMaximumBalls(PokeballType.POKEBALL) ? 0 : 6), 6),
-    new WeightedReward(allRewards.RARE_CANDY, 2),
-    new WeightedReward(
-      allRewards.POTION,
-      (party: Pokemon[]) => {
+    { id: RewardId.POKEBALL, weight: () => (hasMaximumBalls(PokeballType.POKEBALL) ? 0 : 6), maxWeight: 6 },
+    { id: RewardId.RARE_CANDY, weight: 2 },
+    {
+      id: RewardId.POTION,
+      weight: (party: Pokemon[]) => {
         const thresholdPartyMemberCount = Math.min(
           party.filter(p => p.getInverseHp() >= 10 && p.getHpRatio() <= 0.875 && !p.isFainted()).length,
           3,
         );
         return thresholdPartyMemberCount * 3;
       },
-      9,
-    ),
-    new WeightedReward(
-      allRewards.SUPER_POTION,
-      (party: Pokemon[]) => {
+      maxWeight: 9,
+    },
+    {
+      id: RewardId.SUPER_POTION,
+      weight: (party: Pokemon[]) => {
         const thresholdPartyMemberCount = Math.min(
           party.filter(p => p.getInverseHp() >= 25 && p.getHpRatio() <= 0.75 && !p.isFainted()).length,
           3,
         );
         return thresholdPartyMemberCount;
       },
-      3,
-    ),
-    new WeightedReward(
-      allRewards.ETHER,
-      (party: Pokemon[]) => {
+      maxWeight: 3,
+    },
+    {
+      id: RewardId.ETHER,
+      weight: (party: Pokemon[]) => {
         const thresholdPartyMemberCount = Math.min(
           party.filter(
             p =>
@@ -69,11 +69,11 @@ function initCommonRewardPool() {
         );
         return thresholdPartyMemberCount * 3;
       },
-      9,
-    ),
-    new WeightedReward(
-      allRewards.MAX_ETHER,
-      (party: Pokemon[]) => {
+      maxWeight: 9,
+    },
+    {
+      id: RewardId.MAX_ETHER,
+      weight: (party: Pokemon[]) => {
         const thresholdPartyMemberCount = Math.min(
           party.filter(
             p =>
@@ -88,12 +88,12 @@ function initCommonRewardPool() {
         );
         return thresholdPartyMemberCount;
       },
-      3,
-    ),
-    new WeightedReward(allRewards.LURE, lureWeightFunc(TrainerItemId.LURE, 2)),
-    new WeightedReward(allRewards.TEMP_STAT_STAGE_BOOSTER, 4),
-    new WeightedReward(allRewards.BERRY, 2),
-    new WeightedReward(allRewards.TM_COMMON, 2),
+      maxWeight: 3,
+    },
+    { id: RewardId.LURE, weight: lureWeightFunc(TrainerItemId.LURE, 2) },
+    { id: RewardId.TEMP_STAT_STAGE_BOOSTER, weight: 4 },
+    { id: RewardId.BERRY, weight: 2 },
+    { id: RewardId.TM_COMMON, weight: 2 },
   ];
 }
 
@@ -102,11 +102,11 @@ function initCommonRewardPool() {
  */
 function initGreatRewardPool() {
   rewardPool[RarityTier.GREAT] = [
-    new WeightedReward(allRewards.GREAT_BALL, () => (hasMaximumBalls(PokeballType.GREAT_BALL) ? 0 : 6), 6),
-    new WeightedReward(allRewards.PP_UP, 2),
-    new WeightedReward(
-      allRewards.FULL_HEAL,
-      (party: Pokemon[]) => {
+    { id: RewardId.GREAT_BALL, weight: () => (hasMaximumBalls(PokeballType.GREAT_BALL) ? 0 : 6), maxWeight: 6 },
+    { id: RewardId.PP_UP, weight: 2 },
+    {
+      id: RewardId.FULL_HEAL,
+      weight: (party: Pokemon[]) => {
         const statusEffectPartyMemberCount = Math.min(
           party.filter(
             p =>
@@ -121,56 +121,56 @@ function initGreatRewardPool() {
         );
         return statusEffectPartyMemberCount * 6;
       },
-      18,
-    ),
-    new WeightedReward(
-      allRewards.REVIVE,
-      (party: Pokemon[]) => {
+      maxWeight: 18,
+    },
+    {
+      id: RewardId.REVIVE,
+      weight: (party: Pokemon[]) => {
         const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
         return faintedPartyMemberCount * 9;
       },
-      27,
-    ),
-    new WeightedReward(
-      allRewards.MAX_REVIVE,
-      (party: Pokemon[]) => {
+      maxWeight: 27,
+    },
+    {
+      id: RewardId.MAX_REVIVE,
+      weight: (party: Pokemon[]) => {
         const faintedPartyMemberCount = Math.min(party.filter(p => p.isFainted()).length, 3);
         return faintedPartyMemberCount * 3;
       },
-      9,
-    ),
-    new WeightedReward(
-      allRewards.SACRED_ASH,
-      (party: Pokemon[]) => {
+      maxWeight: 9,
+    },
+    {
+      id: RewardId.SACRED_ASH,
+      weight: (party: Pokemon[]) => {
         return party.filter(p => p.isFainted()).length >= Math.ceil(party.length / 2) ? 1 : 0;
       },
-      1,
-    ),
-    new WeightedReward(
-      allRewards.HYPER_POTION,
-      (party: Pokemon[]) => {
+      maxWeight: 1,
+    },
+    {
+      id: RewardId.HYPER_POTION,
+      weight: (party: Pokemon[]) => {
         const thresholdPartyMemberCount = Math.min(
           party.filter(p => p.getInverseHp() >= 100 && p.getHpRatio() <= 0.625 && !p.isFainted()).length,
           3,
         );
         return thresholdPartyMemberCount * 3;
       },
-      9,
-    ),
-    new WeightedReward(
-      allRewards.MAX_POTION,
-      (party: Pokemon[]) => {
+      maxWeight: 9,
+    },
+    {
+      id: RewardId.MAX_POTION,
+      weight: (party: Pokemon[]) => {
         const thresholdPartyMemberCount = Math.min(
           party.filter(p => p.getInverseHp() >= 100 && p.getHpRatio() <= 0.5 && !p.isFainted()).length,
           3,
         );
         return thresholdPartyMemberCount;
       },
-      3,
-    ),
-    new WeightedReward(
-      allRewards.FULL_RESTORE,
-      (party: Pokemon[]) => {
+      maxWeight: 3,
+    },
+    {
+      id: RewardId.FULL_RESTORE,
+      weight: (party: Pokemon[]) => {
         const statusEffectPartyMemberCount = Math.min(
           party.filter(
             p =>
@@ -190,11 +190,11 @@ function initGreatRewardPool() {
         );
         return thresholdPartyMemberCount;
       },
-      3,
-    ),
-    new WeightedReward(
-      allRewards.ELIXIR,
-      (party: Pokemon[]) => {
+      maxWeight: 3,
+    },
+    {
+      id: RewardId.ELIXIR,
+      weight: (party: Pokemon[]) => {
         const thresholdPartyMemberCount = Math.min(
           party.filter(
             p =>
@@ -209,11 +209,11 @@ function initGreatRewardPool() {
         );
         return thresholdPartyMemberCount * 3;
       },
-      9,
-    ),
-    new WeightedReward(
-      allRewards.MAX_ELIXIR,
-      (party: Pokemon[]) => {
+      maxWeight: 9,
+    },
+    {
+      id: RewardId.MAX_ELIXIR,
+      weight: (party: Pokemon[]) => {
         const thresholdPartyMemberCount = Math.min(
           party.filter(
             p =>
@@ -228,29 +228,29 @@ function initGreatRewardPool() {
         );
         return thresholdPartyMemberCount;
       },
-      3,
-    ),
-    new WeightedReward(allRewards.DIRE_HIT, 4),
-    new WeightedReward(allRewards.SUPER_LURE, lureWeightFunc(TrainerItemId.SUPER_LURE, 4)),
-    new WeightedReward(allRewards.NUGGET, skipInLastClassicWaveOrDefault(5)),
-    new WeightedReward(allRewards.SPECIES_STAT_BOOSTER, 4),
-    new WeightedReward(
-      allRewards.EVOLUTION_ITEM,
-      () => {
+      maxWeight: 3,
+    },
+    { id: RewardId.DIRE_HIT, weight: 4 },
+    { id: RewardId.SUPER_LURE, weight: lureWeightFunc(TrainerItemId.SUPER_LURE, 4) },
+    { id: RewardId.NUGGET, weight: skipInLastClassicWaveOrDefault(5) },
+    { id: RewardId.SPECIES_STAT_BOOSTER, weight: 4 },
+    {
+      id: RewardId.EVOLUTION_ITEM,
+      weight: () => {
         return Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 15), 8);
       },
-      8,
-    ),
-    new WeightedReward(
-      allRewards.MAP,
-      () => (globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex < 180 ? 2 : 0),
-      2,
-    ),
-    new WeightedReward(allRewards.SOOTHE_BELL, 2),
-    new WeightedReward(allRewards.TM_GREAT, 3),
-    new WeightedReward(
-      allRewards.MEMORY_MUSHROOM,
-      (party: Pokemon[]) => {
+      maxWeight: 8,
+    },
+    {
+      id: TrainerItemId.MAP,
+      weight: () => (globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex < 180 ? 2 : 0),
+      maxWeight: 2,
+    },
+    { id: HeldItemId.SOOTHE_BELL, weight: 2 },
+    { id: RewardId.TM_GREAT, weight: 3 },
+    {
+      id: RewardId.MEMORY_MUSHROOM,
+      weight: (party: Pokemon[]) => {
         if (!party.find(p => p.getLearnableLevelMoves().length)) {
           return 0;
         }
@@ -259,20 +259,22 @@ function initGreatRewardPool() {
           .reduce((highestLevel: number, level: number) => Math.max(highestLevel, level), 1);
         return Math.min(Math.ceil(highestPartyLevel / 20), 4);
       },
-      4,
-    ),
-    new WeightedReward(allRewards.BASE_STAT_BOOSTER, 3),
-    new WeightedReward(allRewards.TERA_SHARD, (party: Pokemon[]) =>
-      party.filter(
-        p =>
-          !(p.hasSpecies(SpeciesId.TERAPAGOS) || p.hasSpecies(SpeciesId.OGERPON) || p.hasSpecies(SpeciesId.SHEDINJA)),
-      ).length > 0
-        ? 1
-        : 0,
-    ),
-    new WeightedReward(
-      allRewards.DNA_SPLICERS,
-      (party: Pokemon[]) => {
+      maxWeight: 4,
+    },
+    { id: RewardId.BASE_STAT_BOOSTER, weight: 3 },
+    {
+      id: RewardId.TERA_SHARD,
+      weight: (party: Pokemon[]) =>
+        party.filter(
+          p =>
+            !(p.hasSpecies(SpeciesId.TERAPAGOS) || p.hasSpecies(SpeciesId.OGERPON) || p.hasSpecies(SpeciesId.SHEDINJA)),
+        ).length > 0
+          ? 1
+          : 0,
+    },
+    {
+      id: RewardId.DNA_SPLICERS,
+      weight: (party: Pokemon[]) => {
         if (party.filter(p => !p.fusionSpecies).length > 1) {
           if (globalScene.gameMode.isSplicedOnly) {
             return 4;
@@ -283,13 +285,14 @@ function initGreatRewardPool() {
         }
         return 0;
       },
-      4,
-    ),
-    new WeightedReward(
-      allRewards.VOUCHER,
-      (_party: Pokemon[], rerollCount: number) => (!globalScene.gameMode.isDaily ? Math.max(1 - rerollCount, 0) : 0),
-      1,
-    ),
+      maxWeight: 4,
+    },
+    {
+      id: RewardId.VOUCHER,
+      weight: (_party: Pokemon[], rerollCount: number) =>
+        !globalScene.gameMode.isDaily ? Math.max(1 - rerollCount, 0) : 0,
+      maxWeight: 1,
+    },
   ];
 }
 
@@ -298,46 +301,49 @@ function initGreatRewardPool() {
  */
 function initUltraRewardPool() {
   rewardPool[RarityTier.ULTRA] = [
-    new WeightedReward(allRewards.ULTRA_BALL, () => (hasMaximumBalls(PokeballType.ULTRA_BALL) ? 0 : 15), 15),
-    new WeightedReward(allRewards.MAX_LURE, lureWeightFunc(TrainerItemId.MAX_LURE, 4)),
-    new WeightedReward(allRewards.BIG_NUGGET, skipInLastClassicWaveOrDefault(12)),
-    new WeightedReward(allRewards.PP_MAX, 3),
-    new WeightedReward(allRewards.MINT, 4),
-    new WeightedReward(
-      allRewards.RARE_EVOLUTION_ITEM,
-      () => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 15) * 4, 32),
-      32,
-    ),
-    new WeightedReward(
-      allRewards.FORM_CHANGE_ITEM,
-      () => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 50), 4) * 6,
-      24,
-    ),
-    new WeightedReward(allRewards.AMULET_COIN, skipInLastClassicWaveOrDefault(3)),
-    new WeightedReward(allRewards.EVIOLITE, (party: Pokemon[]) => {
-      const { gameMode, gameData } = globalScene;
-      if (gameMode.isDaily || (!gameMode.isFreshStartChallenge() && gameData.isUnlocked(Unlockables.EVIOLITE))) {
-        return party.some(p => {
-          // Check if Pokemon's species (or fusion species, if applicable) can evolve or if they're G-Max'd
-          if (
-            !p.isMax() &&
-            (p.getSpeciesForm(true).speciesId in pokemonEvolutions ||
-              (p.isFusion() && p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))
-          ) {
-            // Check if Pokemon is already holding an Eviolite
-            return !p.heldItemManager.hasItem(HeldItemId.EVIOLITE);
-          }
-          return false;
-        })
-          ? 10
-          : 0;
-      }
-      return 0;
-    }),
-    new WeightedReward(allRewards.RARE_SPECIES_STAT_BOOSTER, 12),
-    new WeightedReward(
-      allRewards.LEEK,
-      (party: Pokemon[]) => {
+    { id: RewardId.ULTRA_BALL, weight: () => (hasMaximumBalls(PokeballType.ULTRA_BALL) ? 0 : 15), maxWeight: 15 },
+    { id: RewardId.MAX_LURE, weight: lureWeightFunc(TrainerItemId.MAX_LURE, 4) },
+    { id: RewardId.BIG_NUGGET, weight: skipInLastClassicWaveOrDefault(12) },
+    { id: RewardId.PP_MAX, weight: 3 },
+    { id: RewardId.MINT, weight: 4 },
+    {
+      id: RewardId.RARE_EVOLUTION_ITEM,
+      weight: () => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 15) * 4, 32),
+      maxWeight: 32,
+    },
+    {
+      id: RewardId.FORM_CHANGE_ITEM,
+      weight: () => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 50), 4) * 6,
+      maxWeight: 24,
+    },
+    { id: TrainerItemId.AMULET_COIN, weight: skipInLastClassicWaveOrDefault(3) },
+    {
+      id: HeldItemId.EVIOLITE,
+      weight: (party: Pokemon[]) => {
+        const { gameMode, gameData } = globalScene;
+        if (gameMode.isDaily || (!gameMode.isFreshStartChallenge() && gameData.isUnlocked(Unlockables.EVIOLITE))) {
+          return party.some(p => {
+            // Check if Pokemon's species (or fusion species, if applicable) can evolve or if they're G-Max'd
+            if (
+              !p.isMax() &&
+              (p.getSpeciesForm(true).speciesId in pokemonEvolutions ||
+                (p.isFusion() && p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))
+            ) {
+              // Check if Pokemon is already holding an Eviolite
+              return !p.heldItemManager.hasItem(HeldItemId.EVIOLITE);
+            }
+            return false;
+          })
+            ? 10
+            : 0;
+        }
+        return 0;
+      },
+    },
+    { id: RewardId.RARE_SPECIES_STAT_BOOSTER, weight: 12 },
+    {
+      id: HeldItemId.LEEK,
+      weight: (party: Pokemon[]) => {
         const checkedSpecies = [SpeciesId.FARFETCHD, SpeciesId.GALAR_FARFETCHD, SpeciesId.SIRFETCHD];
         // If a party member doesn't already have a Leek and is one of the relevant species, Leek can appear
         return party.some(
@@ -349,11 +355,11 @@ function initUltraRewardPool() {
           ? 12
           : 0;
       },
-      12,
-    ),
-    new WeightedReward(
-      allRewards.TOXIC_ORB,
-      (party: Pokemon[]) => {
+      maxWeight: 12,
+    },
+    {
+      id: HeldItemId.TOXIC_ORB,
+      weight: (party: Pokemon[]) => {
         return party.some(p => {
           const isHoldingOrb = p.getHeldItems().some(i => i in [HeldItemId.FLAME_ORB, HeldItemId.TOXIC_ORB]);
 
@@ -395,11 +401,11 @@ function initUltraRewardPool() {
           ? 10
           : 0;
       },
-      10,
-    ),
-    new WeightedReward(
-      allRewards.FLAME_ORB,
-      (party: Pokemon[]) => {
+      maxWeight: 10,
+    },
+    {
+      id: HeldItemId.FLAME_ORB,
+      weight: (party: Pokemon[]) => {
         return party.some(p => {
           const isHoldingOrb = p.getHeldItems().some(i => i in [HeldItemId.FLAME_ORB, HeldItemId.TOXIC_ORB]);
 
@@ -441,11 +447,11 @@ function initUltraRewardPool() {
           ? 10
           : 0;
       },
-      10,
-    ),
-    new WeightedReward(
-      allRewards.MYSTICAL_ROCK,
-      (party: Pokemon[]) => {
+      maxWeight: 10,
+    },
+    {
+      id: HeldItemId.MYSTICAL_ROCK,
+      weight: (party: Pokemon[]) => {
         return party.some(p => {
           const stack = p.heldItemManager.getStack(HeldItemId.MYSTICAL_ROCK);
           const isHoldingMax = stack === allHeldItems[HeldItemId.MYSTICAL_ROCK].maxStackCount;
@@ -488,68 +494,68 @@ function initUltraRewardPool() {
           ? 10
           : 0;
       },
-      10,
-    ),
-    new WeightedReward(allRewards.REVIVER_SEED, 4),
-    new WeightedReward(allRewards.CANDY_JAR, skipInLastClassicWaveOrDefault(5)),
-    new WeightedReward(allRewards.ATTACK_TYPE_BOOSTER, 9),
-    new WeightedReward(allRewards.TM_ULTRA, 11),
-    new WeightedReward(allRewards.RARER_CANDY, 4),
-    new WeightedReward(allRewards.GOLDEN_PUNCH, skipInLastClassicWaveOrDefault(2)),
-    new WeightedReward(allRewards.IV_SCANNER, skipInLastClassicWaveOrDefault(4)),
-    new WeightedReward(allRewards.EXP_CHARM, skipInLastClassicWaveOrDefault(8)),
-    new WeightedReward(allRewards.EXP_SHARE, skipInLastClassicWaveOrDefault(10)),
-    new WeightedReward(
-      allRewards.TERA_ORB,
-      () =>
+      maxWeight: 10,
+    },
+    { id: HeldItemId.REVIVER_SEED, weight: 4 },
+    { id: TrainerItemId.CANDY_JAR, weight: skipInLastClassicWaveOrDefault(5) },
+    { id: RewardId.ATTACK_TYPE_BOOSTER, weight: 9 },
+    { id: RewardId.TM_ULTRA, weight: 11 },
+    { id: RewardId.RARER_CANDY, weight: 4 },
+    { id: HeldItemId.GOLDEN_PUNCH, weight: skipInLastClassicWaveOrDefault(2) },
+    { id: TrainerItemId.IV_SCANNER, weight: skipInLastClassicWaveOrDefault(4) },
+    { id: TrainerItemId.EXP_CHARM, weight: skipInLastClassicWaveOrDefault(8) },
+    { id: TrainerItemId.EXP_SHARE, weight: skipInLastClassicWaveOrDefault(10) },
+    {
+      id: TrainerItemId.TERA_ORB,
+      weight: () =>
         !globalScene.gameMode.isClassic
           ? Math.min(Math.max(Math.floor(globalScene.currentBattle.waveIndex / 50) * 2, 1), 4)
           : 0,
-      4,
-    ),
-    new WeightedReward(allRewards.QUICK_CLAW, 3),
-    new WeightedReward(allRewards.WIDE_LENS, 7),
+      maxWeight: 4,
+    },
+    { id: HeldItemId.QUICK_CLAW, weight: 3 },
+    { id: HeldItemId.WIDE_LENS, weight: 7 },
   ];
 }
 
 function initRogueRewardPool() {
   rewardPool[RarityTier.ROGUE] = [
-    new WeightedReward(allRewards.ROGUE_BALL, () => (hasMaximumBalls(PokeballType.ROGUE_BALL) ? 0 : 16), 16),
-    new WeightedReward(allRewards.RELIC_GOLD, skipInLastClassicWaveOrDefault(2)),
-    new WeightedReward(allRewards.LEFTOVERS, 3),
-    new WeightedReward(allRewards.SHELL_BELL, 3),
-    new WeightedReward(allRewards.BERRY_POUCH, 4),
-    new WeightedReward(allRewards.GRIP_CLAW, 5),
-    new WeightedReward(allRewards.SCOPE_LENS, 4),
-    new WeightedReward(allRewards.BATON, 2),
-    new WeightedReward(allRewards.SOUL_DEW, 7),
-    new WeightedReward(allRewards.CATCHING_CHARM, () => (!globalScene.gameMode.isClassic ? 4 : 0), 4),
-    new WeightedReward(allRewards.ABILITY_CHARM, skipInClassicAfterWave(189, 6)),
-    new WeightedReward(allRewards.FOCUS_BAND, 5),
-    new WeightedReward(allRewards.KINGS_ROCK, 3),
-    new WeightedReward(allRewards.LOCK_CAPSULE, () => (globalScene.gameMode.isClassic ? 0 : 3)),
-    new WeightedReward(allRewards.SUPER_EXP_CHARM, skipInLastClassicWaveOrDefault(8)),
-    new WeightedReward(
-      allRewards.RARE_FORM_CHANGE_ITEM,
-      () => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 50), 4) * 6,
-      24,
-    ),
-    new WeightedReward(
-      allRewards.MEGA_BRACELET,
-      () => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 50), 4) * 9,
-      36,
-    ),
-    new WeightedReward(
-      allRewards.DYNAMAX_BAND,
-      () => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 50), 4) * 9,
-      36,
-    ),
-    new WeightedReward(
-      allRewards.VOUCHER_PLUS,
-      (_party: Pokemon[], rerollCount: number) =>
+    { id: RewardId.ROGUE_BALL, weight: () => (hasMaximumBalls(PokeballType.ROGUE_BALL) ? 0 : 16), maxWeight: 16 },
+    { id: RewardId.RELIC_GOLD, weight: skipInLastClassicWaveOrDefault(2) },
+    { id: HeldItemId.LEFTOVERS, weight: 3 },
+    { id: HeldItemId.SHELL_BELL, weight: 3 },
+    { id: TrainerItemId.BERRY_POUCH, weight: 4 },
+    { id: HeldItemId.GRIP_CLAW, weight: 5 },
+    { id: HeldItemId.SCOPE_LENS, weight: 4 },
+    { id: HeldItemId.BATON, weight: 2 },
+    { id: HeldItemId.SOUL_DEW, weight: 7 },
+    { id: TrainerItemId.CATCHING_CHARM, weight: () => (!globalScene.gameMode.isClassic ? 4 : 0), maxWeight: 4 },
+    { id: TrainerItemId.ABILITY_CHARM, weight: skipInClassicAfterWave(189, 6) },
+    { id: HeldItemId.FOCUS_BAND, weight: 5 },
+    { id: HeldItemId.KINGS_ROCK, weight: 3 },
+    { id: TrainerItemId.LOCK_CAPSULE, weight: () => (globalScene.gameMode.isClassic ? 0 : 3) },
+    { id: TrainerItemId.SUPER_EXP_CHARM, weight: skipInLastClassicWaveOrDefault(8) },
+    {
+      id: RewardId.RARE_FORM_CHANGE_ITEM,
+      weight: () => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 50), 4) * 6,
+      maxWeight: 24,
+    },
+    {
+      id: TrainerItemId.MEGA_BRACELET,
+      weight: () => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 50), 4) * 9,
+      maxWeight: 36,
+    },
+    {
+      id: TrainerItemId.DYNAMAX_BAND,
+      weight: () => Math.min(Math.ceil(globalScene.currentBattle.waveIndex / 50), 4) * 9,
+      maxWeight: 36,
+    },
+    {
+      id: RewardId.VOUCHER_PLUS,
+      weight: (_party: Pokemon[], rerollCount: number) =>
         !globalScene.gameMode.isDaily ? Math.max(3 - rerollCount * 1, 0) : 0,
-      3,
-    ),
+      maxWeight: 3,
+    },
   ];
 }
 
@@ -558,37 +564,37 @@ function initRogueRewardPool() {
  */
 function initMasterRewardPool() {
   rewardPool[RarityTier.MASTER] = [
-    new WeightedReward(allRewards.MASTER_BALL, () => (hasMaximumBalls(PokeballType.MASTER_BALL) ? 0 : 24), 24),
-    new WeightedReward(allRewards.SHINY_CHARM, 14),
-    new WeightedReward(allRewards.HEALING_CHARM, 18),
-    new WeightedReward(allRewards.MULTI_LENS, 18),
-    new WeightedReward(
-      allRewards.VOUCHER_PREMIUM,
-      (_party: Pokemon[], rerollCount: number) =>
+    { id: RewardId.MASTER_BALL, weight: () => (hasMaximumBalls(PokeballType.MASTER_BALL) ? 0 : 24), maxWeight: 24 },
+    { id: TrainerItemId.SHINY_CHARM, weight: 14 },
+    { id: TrainerItemId.HEALING_CHARM, weight: 18 },
+    { id: HeldItemId.MULTI_LENS, weight: 18 },
+    {
+      id: RewardId.VOUCHER_PREMIUM,
+      weight: (_party: Pokemon[], rerollCount: number) =>
         !globalScene.gameMode.isDaily && !globalScene.gameMode.isEndless && !globalScene.gameMode.isSplicedOnly
           ? Math.max(5 - rerollCount * 2, 0)
           : 0,
-      5,
-    ),
-    new WeightedReward(
-      allRewards.DNA_SPLICERS,
-      (party: Pokemon[]) =>
+      maxWeight: 5,
+    },
+    {
+      id: RewardId.DNA_SPLICERS,
+      weight: (party: Pokemon[]) =>
         !(globalScene.gameMode.isClassic && timedEventManager.areFusionsBoosted()) &&
         !globalScene.gameMode.isSplicedOnly &&
         party.filter(p => !p.fusionSpecies).length > 1
           ? 24
           : 0,
-      24,
-    ),
-    new WeightedReward(
-      allRewards.MINI_BLACK_HOLE,
-      () =>
+      maxWeight: 24,
+    },
+    {
+      id: HeldItemId.MINI_BLACK_HOLE,
+      weight: () =>
         globalScene.gameMode.isDaily ||
         (!globalScene.gameMode.isFreshStartChallenge() && globalScene.gameData.isUnlocked(Unlockables.MINI_BLACK_HOLE))
           ? 1
           : 0,
-      1,
-    ),
+      maxWeight: 1,
+    },
   ];
 }
 

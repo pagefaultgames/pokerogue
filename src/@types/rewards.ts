@@ -12,6 +12,7 @@ export type RewardPoolId = RewardId | HeldItemId | TrainerItemId;
 export type RewardPoolEntry = {
   id: RewardPoolId;
   weight: number | WeightedRewardWeightFunc;
+  maxWeight?: number;
 };
 
 export type RewardPool = {
