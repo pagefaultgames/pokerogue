@@ -3528,6 +3528,7 @@ export class BattleScene extends SceneBase {
       this.gameMode.hasMysteryEncounters &&
       battleType === BattleType.WILD &&
       !this.gameMode.isBoss(waveIndex) &&
+      waveIndex % 10 !== 1 &&
       waveIndex < highestMysteryEncounterWave &&
       waveIndex > lowestMysteryEncounterWave
     );
