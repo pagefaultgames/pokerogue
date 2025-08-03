@@ -112,6 +112,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
 
   return `${speciesAPrefix || speciesBPrefix}${fragA}${fragB}${speciesBSuffix || speciesASuffix}`;
 }
+
 export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): PokemonSpeciesForm {
   const retSpecies: PokemonSpecies =
     species >= 2000

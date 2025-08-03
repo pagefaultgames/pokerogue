@@ -6,9 +6,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 
-
 // biome-ignore format: manually formatted
-
 export function initSpecies() {
   allSpecies.push(
     new PokemonSpecies(SpeciesId.BULBASAUR, 1, false, false, false, "Seed Pokémon", PokemonType.GRASS, PokemonType.POISON, 0.7, 6.9, AbilityId.OVERGROW, AbilityId.NONE, AbilityId.CHLOROPHYLL, 318, 45, 49, 49, 65, 65, 45, 45, 50, 64, GrowthRate.MEDIUM_SLOW, 87.5, false),
