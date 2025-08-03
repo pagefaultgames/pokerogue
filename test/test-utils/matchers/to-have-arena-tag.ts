@@ -9,7 +9,10 @@ import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils"
 import type { NonFunctionPropertiesRecursive } from "#types/type-helpers";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
-export type toHaveArenaTagOptions<T extends ArenaTagType> = OneOther<ArenaTagTypeMap[T], "tagType">;
+// intersection required to preserve T for inferences
+export type toHaveArenaTagOptions<T extends ArenaTagType> = OneOther<ArenaTagTypeMap[T], "tagType" | "side"> & {
+  tagType: T;
+};
 
 /**
  * Matcher to check if the {@linkcode Arena} has a given {@linkcode ArenaTag} active.

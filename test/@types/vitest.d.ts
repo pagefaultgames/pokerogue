@@ -1,5 +1,5 @@
 import type { TerrainType } from "#app/data/terrain";
-import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
+import type { ArenaTag } from "#data/arena-tag";
 import type { AbilityId } from "#enums/ability-id";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerTagType } from "#enums/battler-tag-type";
@@ -21,7 +21,7 @@ import "vitest";
 import type Overrides from "#app/overrides";
 import type { ArenaTagSide } from "#enums/arena-tag-side";
 import type { PokemonMove } from "#moves/pokemon-move";
-import type { OneOther } from "#test/@types/test-helpers";
+import { toHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
 
 declare module "vitest" {
   interface Assertion<T> {
@@ -35,6 +35,38 @@ declare module "vitest" {
      * @see {@linkcode expect.arrayContaining}
      */
     toEqualArrayUnsorted(expected: T[]): void;
+
+    // #region Arena Matchers
+
+    /**
+     * Check whether the current {@linkcode WeatherType} is as expected.
+     * @param expectedWeatherType - The expected {@linkcode WeatherType}
+     */
+    toHaveWeather(expectedWeatherType: WeatherType): void;
+
+    /**
+     * Check whether the current {@linkcode TerrainType} is as expected.
+     * @param expectedTerrainType - The expected {@linkcode TerrainType}
+     */
+    toHaveTerrain(expectedTerrainType: TerrainType): void;
+
+    /**
+     * Check whether the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
+     * @param expectedTag - A partially-filled {@linkcode ArenaTag} containing the desired properties
+     */
+    toHaveArenaTag<A extends ArenaTagType>(expectedTag: toHaveArenaTagOptions<A>): void;
+    /**
+     * Check whether the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
+     * @param expectedType - The {@linkcode ArenaTagType} of the desired tag
+     * @param side - The {@linkcode ArenaTagSide | side of the field} the tag should affect, or
+     * {@linkcode ArenaTagSide.BOTH} to check both sides;
+     * default `ArenaTagSide.BOTH`
+     */
+    toHaveArenaTag(expectedType: ArenaTagType, side?: ArenaTagSide): void;
+
+    // #endregion Arena Matchers
+
+    // #region Pokemon Matchers
 
     /**
      * Check whether a {@linkcode Pokemon}'s current typing includes the given types.
@@ -63,46 +95,6 @@ declare module "vitest" {
      * If you want to check the stat **before** modifiers are applied, use {@linkcode Pokemon.getStat} instead.
      */
     toHaveEffectiveStat(stat: EffectiveStat, expectedValue: number, options?: toHaveEffectiveStatOptions): void;
-
-    /**
-     * Check whether a {@linkcode Pokemon} has taken a specific amount of damage.
-     * @param expectedDamageTaken - The expected amount of damage taken
-     * @param roundDown - Whether to round down {@linkcode expectedDamageTaken} with {@linkcode toDmgValue}; default `true`
-     */
-    toHaveTakenDamage(expectedDamageTaken: number, roundDown?: boolean): void;
-
-    /**
-     * Check whether the current {@linkcode WeatherType} is as expected.
-     * @param expectedWeatherType - The expected {@linkcode WeatherType}
-     */
-    toHaveWeather(expectedWeatherType: WeatherType): void;
-
-    /**
-     * Check whether the current {@linkcode TerrainType} is as expected.
-     * @param expectedTerrainType - The expected {@linkcode TerrainType}
-     */
-    toHaveTerrain(expectedTerrainType: TerrainType): void;
-
-    /**
-     * Check whether the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
-     * @param expectedTag - A partially-filled {@linkcode ArenaTag} containing the desired properties
-     */
-    toHaveArenaTag<T extends ArenaTagType>(
-      expectedTag: OneOther<ArenaTagTypeMap[T], "tagType" | "side"> & { tagType: T }, // intersection required to preserve T
-    ): void;
-    /**
-     * Check whether the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
-     * @param expectedType - The {@linkcode ArenaTagType} of the desired tag
-     * @param side - The {@linkcode ArenaTagSide | side of the field} the tag should affect, or
-     * {@linkcode ArenaTagSide.BOTH} to check both sides;
-     * default `ArenaTagSide.BOTH`
-     */
-    toHaveArenaTag(expectedType: ArenaTagType, side?: ArenaTagSide): void;
-
-    /**
-     * Check whether a {@linkcode Pokemon} is at full HP.
-     */
-    toHaveFullHp(): void;
 
     /**
      * Check whether a {@linkcode Pokemon} has a specific {@linkcode StatusEffect | non-volatile status effect}.
@@ -137,6 +129,13 @@ declare module "vitest" {
     toHaveHp(expectedHp: number): void;
 
     /**
+     * Check whether a {@linkcode Pokemon} has taken a specific amount of damage.
+     * @param expectedDamageTaken - The expected amount of damage taken
+     * @param roundDown - Whether to round down {@linkcode expectedDamageTaken} with {@linkcode toDmgValue}; default `true`
+     */
+    toHaveTakenDamage(expectedDamageTaken: number, roundDown?: boolean): void;
+
+    /**
      * Check whether a {@linkcode Pokemon} is currently fainted (as determined by {@linkcode Pokemon.isFainted}).
      * @remarks
      * When checking whether an enemy wild Pokemon is fainted, one must store a reference to it in a variable _before_ the fainting effect occurs,
@@ -144,6 +143,10 @@ declare module "vitest" {
      */
     toHaveFainted(): void;
 
+    /**
+     * Check whether a {@linkcode Pokemon} is at full HP.
+     */
+    toHaveFullHp(): void;
     /**
      * Check whether a {@linkcode Pokemon} has consumed the given amount of PP for one of its moves.
      * @param moveId - The {@linkcode MoveId} of the {@linkcode PokemonMove} that should have consumed PP
@@ -154,5 +157,7 @@ declare module "vitest" {
      * or does not contain exactly 1 copy of {@linkcode moveId}, this will fail the test.
      */
     toHaveUsedPP(moveId: MoveId, ppUsed: number | "all"): void;
+
+    // #region Pokemon Matchers
   }
 }
