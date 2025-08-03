@@ -1,4 +1,4 @@
-import type { EnumValues } from "#types/enum-types";
+import type { ObjectValues } from "#types/type-helpers";
 
 export const RewardId = {
   NONE: 0x0000,
@@ -69,7 +69,7 @@ export const RewardId = {
   RARE_FORM_CHANGE_ITEM: 0x2E02,
 } as const;
 
-export type RewardId = EnumValues<typeof RewardId>;
+export type RewardId = ObjectValues<typeof RewardId>;
 
 export const RewardCategoryId = {
   NONE: 0x0000,
@@ -90,7 +90,7 @@ export const RewardCategoryId = {
   FORM_CHANGE_ITEM: 0x0F00,
 } as const;
 
-export type RewardCategoryId = EnumValues<typeof RewardCategoryId>;
+export type RewardCategoryId = ObjectValues<typeof RewardCategoryId>;
 
 const ITEM_CATEGORY_MASK = 0xFF00
 

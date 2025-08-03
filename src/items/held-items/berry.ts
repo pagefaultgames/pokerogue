@@ -7,11 +7,11 @@ import { BerryUsedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { ConsumableHeldItem } from "#items/held-item";
 import { TrainerItemEffect } from "#items/trainer-item";
-import type { EnumValues } from "#types/enum-types";
+import type { ObjectValues } from "#types/type-helpers";
 import { BooleanHolder } from "#utils/common";
 
 type BerryTypeToHeldItemMap = {
-  [key in EnumValues<typeof BerryType>]: HeldItemId;
+  [key in ObjectValues<typeof BerryType>]: HeldItemId;
 };
 
 // TODO: Rework this to use a bitwise XOR
