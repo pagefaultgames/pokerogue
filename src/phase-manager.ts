@@ -61,6 +61,7 @@ import { PartyHealPhase } from "#phases/party-heal-phase";
 import { PokemonAnimPhase } from "#phases/pokemon-anim-phase";
 import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import { PokemonTransformPhase } from "#phases/pokemon-transform-phase";
+import { PositionalTagPhase } from "#phases/positional-tag-phase";
 import { PostGameOverPhase } from "#phases/post-game-over-phase";
 import { PostSummonPhase } from "#phases/post-summon-phase";
 import { PostTurnStatusEffectPhase } from "#phases/post-turn-status-effect-phase";
@@ -172,6 +173,7 @@ const PHASES = Object.freeze({
   PokemonAnimPhase,
   PokemonHealPhase,
   PokemonTransformPhase,
+  PositionalTagPhase,
   PostGameOverPhase,
   PostSummonPhase,
   PostTurnStatusEffectPhase,
@@ -242,6 +244,21 @@ export class PhaseManager {
     this.dynamicPhaseTypes = [PostSummonPhase];
   }
 
+  /**
+   * Clear all previously set phases, then add a new {@linkcode TitlePhase} to transition to the title screen.
+   * @param addLogin - Whether to add a new {@linkcode LoginPhase} before the {@linkcode TitlePhase}
+   * (but reset everything else).
+   * Default `false`
+   */
+  public toTitleScreen(addLogin = false): void {
+    this.clearAllPhases();
+
+    if (addLogin) {
+      this.unshiftNew("LoginPhase");
+    }
+    this.unshiftNew("TitlePhase");
+  }
+
   /* Phase Functions */
   getCurrentPhase(): Phase | null {
     return this.currentPhase;
@@ -305,7 +322,6 @@ export class PhaseManager {
       queue.splice(0, queue.length);
     }
     this.dynamicPhaseQueues.forEach(queue => queue.clear());
-    this.currentPhase = null;
     this.standbyPhase = null;
     this.clearPhaseQueueSplice();
   }

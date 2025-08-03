@@ -88,6 +88,15 @@ export type AbilityBattlerTagType =
   | BattlerTagType.SLOW_START
   | BattlerTagType.TRUANT;
 
+/** Subset of {@linkcode BattlerTagType}s that provide type boosts */
+export type TypeBoostTagType = BattlerTagType.FIRE_BOOST | BattlerTagType.CHARGED;
+
+/** Subset of {@linkcode BattlerTagType}s that boost the user's critical stage */
+export type CritStageBoostTagType = BattlerTagType.CRIT_BOOST | BattlerTagType.DRAGON_CHEER;
+
+/** Subset of {@linkcode BattlerTagType}s that remove one of the users' types */
+export type RemovedTypeTagType = BattlerTagType.DOUBLE_SHOCKED | BattlerTagType.BURNED_UP;
+
 /**
  * Subset of {@linkcode BattlerTagType}s related to abilities that boost the highest stat.
  */
@@ -107,6 +116,15 @@ export type SerializableBattlerTagType = keyof {
  * Subset of {@linkcode BattlerTagType}s that are not able to persist across waves and should therefore not be serialized
  */
 export type NonSerializableBattlerTagType = Exclude<BattlerTagType, SerializableBattlerTagType>;
+
+/**
+ * Type-safe representation of an arbitrary, serialized Battler Tag
+ */
+export type BattlerTagTypeData = Parameters<
+  BattlerTagTypeMap[keyof {
+    [K in keyof BattlerTagTypeMap as K extends SerializableBattlerTagType ? K : never]: BattlerTagTypeMap[K];
+  }]["loadTag"]
+>[0];
 
 /**
  * Dummy, typescript-only declaration to ensure that
