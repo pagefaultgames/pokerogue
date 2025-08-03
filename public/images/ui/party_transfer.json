@@ -1,0 +1,62 @@
+{
+	"textures": [
+		{
+			"image": "party_transfer.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 75,
+				"h": 50
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "normal",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 75,
+						"h": 25
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 75,
+						"h": 25
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 75,
+						"h": 25
+					}
+				},
+				{
+					"filename": "selected",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 75,
+						"h": 25
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 75,
+						"h": 25
+					},
+					"frame": {
+						"x": 0,
+						"y": 25,
+						"w": 75,
+						"h": 25
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:17219773dfffd6b1204d988fea3f9462:1127ad21d64bc7ebb9df4fc28f3d2d39:7ad46e8fb4648c3d3d84a746ecb371ea$"
+	}
+}
