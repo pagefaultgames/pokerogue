@@ -589,7 +589,7 @@ export class PokemonReviveReward extends PokemonHpRestoreReward {
   }
 }
 
-class AllPokemonFullReviveReward extends Reward {
+export class AllPokemonFullReviveReward extends Reward {
   constructor(localeKey: string, iconImage: string) {
     super(localeKey, iconImage, "modifierType:ModifierType.AllPokemonFullReviveModifierType");
     this.id = RewardId.SACRED_ASH;
@@ -863,7 +863,7 @@ export class RememberMoveReward extends PokemonReward {
   }
 }
 
-class BerryRewardGenerator extends RewardGenerator {
+export class BerryRewardGenerator extends RewardGenerator {
   constructor() {
     super((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in BerryType) {
@@ -877,7 +877,7 @@ class BerryRewardGenerator extends RewardGenerator {
   }
 }
 
-class MintRewardGenerator extends RewardGenerator {
+export class MintRewardGenerator extends RewardGenerator {
   constructor() {
     super((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in Nature) {
@@ -889,7 +889,7 @@ class MintRewardGenerator extends RewardGenerator {
   }
 }
 
-class TeraTypeRewardGenerator extends RewardGenerator {
+export class TeraTypeRewardGenerator extends RewardGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
@@ -1225,7 +1225,7 @@ export class FusePokemonReward extends PokemonReward {
   }
 }
 
-class AttackTypeBoosterRewardGenerator extends RewardGenerator {
+export class AttackTypeBoosterRewardGenerator extends RewardGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
@@ -1240,7 +1240,7 @@ class AttackTypeBoosterRewardGenerator extends RewardGenerator {
   }
 }
 
-class BaseStatBoosterRewardGenerator extends RewardGenerator {
+export class BaseStatBoosterRewardGenerator extends RewardGenerator {
   constructor() {
     super((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {
@@ -1252,7 +1252,7 @@ class BaseStatBoosterRewardGenerator extends RewardGenerator {
   }
 }
 
-class TempStatStageBoosterRewardGenerator extends RewardGenerator {
+export class TempStatStageBoosterRewardGenerator extends RewardGenerator {
   public static readonly items: Record<TempBattleStat, string> = {
     [Stat.ATK]: "x_attack",
     [Stat.DEF]: "x_defense",
@@ -1280,7 +1280,7 @@ class TempStatStageBoosterRewardGenerator extends RewardGenerator {
  * the current list of {@linkcode items}.
  * @extends RewardGenerator
  */
-class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
+export class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
   /** Object comprised of the currently available species-based stat boosting held items */
 
   constructor(rare: boolean) {
@@ -1347,7 +1347,7 @@ class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
   }
 }
 
-class TmRewardGenerator extends RewardGenerator {
+export class TmRewardGenerator extends RewardGenerator {
   constructor(tier: RarityTier) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in MoveId) {
@@ -1380,7 +1380,7 @@ class TmRewardGenerator extends RewardGenerator {
   }
 }
 
-class EvolutionItemRewardGenerator extends RewardGenerator {
+export class EvolutionItemRewardGenerator extends RewardGenerator {
   constructor(rare: boolean, id: RewardId) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in EvolutionItem) {
