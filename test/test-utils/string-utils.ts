@@ -34,10 +34,10 @@ interface getEnumStrOptions {
  * @returns The stringified representation of `val` as dictated by the options.
  * @example
  * ```ts
- * enum fakeEnum {
- *   ONE: 1,
- *   TWO: 2,
- *   THREE: 3,
+ * enum testEnum {
+ *   ONE = 1,
+ *   TWO = 2,
+ *   THREE = 3,
  * }
  * getEnumStr(fakeEnum, fakeEnum.ONE); // Output: "ONE (=1)"
  * getEnumStr(fakeEnum, fakeEnum.TWO, {casing: "Title", prefix: "fakeEnum.", suffix: "!!!"}); // Output: "fakeEnum.TWO!!! (=2)"
