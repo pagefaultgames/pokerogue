@@ -1,27 +1,27 @@
 import type { TerrainType } from "#app/data/terrain";
+import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
 import type { AbilityId } from "#enums/ability-id";
+import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
-import type { expect } from "vitest";
-import type { Arena } from "#field/arena";
-import type { toDmgValue } from "utils/common";
-import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
-import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
-import { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattleStat, EffectiveStat, Stat } from "#enums/stat";
 import type { StatusEffect } from "#enums/status-effect";
 import type { WeatherType } from "#enums/weather-type";
+import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import type { ToHaveEffectiveStatMatcherOptions } from "#test/test-utils/matchers/to-have-effective-stat";
 import type { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect";
+import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
 import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
+import type { toDmgValue } from "utils/common";
+import type { expect } from "vitest";
 import "vitest";
 import type Overrides from "#app/overrides";
+import type { ArenaTagSide } from "#enums/arena-tag-side";
 import type { PokemonMove } from "#moves/pokemon-move";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { OneOther } from "#test/@types/test-helpers";
+import type { OneOther } from "#test/@types/test-helpers";
 
 declare module "vitest" {
   interface Assertion {
