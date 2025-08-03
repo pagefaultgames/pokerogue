@@ -219,6 +219,10 @@ export class TurnStartPhase extends FieldPhase {
           break;
       }
     }
+    phaseManager.pushNew("CheckInterludePhase");
+
+    // TODO: Re-order these phases to be consistent with mainline turn order:
+    // https://www.smogon.com/forums/threads/sword-shield-battle-mechanics-research.3655528/page-64#post-9244179
 
     phaseManager.pushNew("WeatherEffectPhase");
     phaseManager.pushNew("BerryPhase");
@@ -226,12 +230,13 @@ export class TurnStartPhase extends FieldPhase {
     /** Add a new phase to check who should be taking status damage */
     phaseManager.pushNew("CheckStatusEffectPhase", moveOrder);
 
+    phaseManager.pushNew("PositionalTagPhase");
     phaseManager.pushNew("TurnEndPhase");
 
-    /**
-     * this.end() will call shiftPhase(), which dumps everything from PrependQueue (aka everything that is unshifted()) to the front
-     * of the queue and dequeues to start the next phase
-     * this is important since stuff like SwitchSummon, AttemptRun, AttemptCapture Phases break the "flow" and should take precedence
+    /*
+     * `this.end()` will call `PhaseManager#shiftPhase()`, which dumps everything from `phaseQueuePrepend`
+     * (aka everything that is queued via `unshift()`) to the front of the queue and dequeues to start the next phase.
+     * This is important since stuff like `SwitchSummonPhase`, `AttemptRunPhase`, and `AttemptCapturePhase` break the "flow" and should take precedence
      */
     this.end();
   }

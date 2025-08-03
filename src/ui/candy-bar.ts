@@ -1,7 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import type { SpeciesId } from "#enums/species-id";
-import { addTextObject, TextStyle } from "#ui/text";
+import { TextStyle } from "#enums/text-style";
+import { addTextObject } from "#ui/text";
 import { rgbHexToRgba } from "#utils/common";
 import { argbFromRgba } from "@material/material-color-utilities";
 

@@ -1,7 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { Gender } from "#data/gender";
 import { CustomPokemonData, PokemonBattleData, PokemonSummonData } from "#data/pokemon-data";
-import { getPokemonSpeciesForm } from "#data/pokemon-species";
 import { Status } from "#data/status-effect";
 import { BattleType } from "#enums/battle-type";
 import type { BiomeId } from "#enums/biome-id";
@@ -16,7 +15,7 @@ import type { HeldItemSaveData } from "#items/held-item-data-types";
 import { saveDataToConfig } from "#items/held-item-pool";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 export class PokemonData {
   public id: number;
@@ -91,12 +90,12 @@ export class PokemonData {
     this.id = source.id;
     this.player = sourcePokemon?.isPlayer() ?? source.player;
     this.species = sourcePokemon?.species.speciesId ?? source.species;
-    this.nickname = sourcePokemon?.summonData.illusion?.basePokemon.nickname ?? source.nickname;
+    this.nickname = source.nickname;
     this.formIndex = Math.max(Math.min(source.formIndex, getPokemonSpecies(this.species).forms.length - 1), 0);
     this.abilityIndex = source.abilityIndex;
     this.passive = source.passive;
-    this.shiny = sourcePokemon?.summonData.illusion?.basePokemon.shiny ?? source.shiny;
-    this.variant = sourcePokemon?.summonData.illusion?.basePokemon.variant ?? source.variant;
+    this.shiny = source.shiny;
+    this.variant = source.variant;
     this.pokeball = source.pokeball ?? PokeballType.POKEBALL;
     this.level = source.level;
     this.exp = source.exp;
@@ -140,8 +139,8 @@ export class PokemonData {
     this.fusionSpecies = sourcePokemon?.fusionSpecies?.speciesId ?? source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;
     this.fusionAbilityIndex = source.fusionAbilityIndex;
-    this.fusionShiny = sourcePokemon?.summonData.illusion?.basePokemon.fusionShiny ?? source.fusionShiny;
-    this.fusionVariant = sourcePokemon?.summonData.illusion?.basePokemon.fusionVariant ?? source.fusionVariant;
+    this.fusionShiny = source.fusionShiny;
+    this.fusionVariant = source.fusionVariant;
     this.fusionGender = source.fusionGender;
     this.fusionLuck = source.fusionLuck ?? (source.fusionShiny ? source.fusionVariant + 1 : 0);
     this.fusionTeraType = (source.fusionTeraType ?? 0) as PokemonType;
