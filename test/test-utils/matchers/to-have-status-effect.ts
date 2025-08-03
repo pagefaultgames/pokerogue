@@ -37,10 +37,8 @@ export function toHaveStatusEffect(
   const actualEffect = received.status?.effect ?? StatusEffect.NONE;
 
   // Check exclusively effect equality first, coercing non-matching status effects to numbers.
-  if (actualEffect !== (expectedStatus as Exclude<typeof expectedStatus, StatusEffect>)?.effect) {
-    // This is actually 100% safe as `expectedStatus?.effect` will evaluate to `undefined` if a StatusEffect was passed,
-    // which will never match actualEffect by definition
-    expectedStatus = (expectedStatus as Exclude<typeof expectedStatus, StatusEffect>).effect;
+  if (typeof expectedStatus === "object" && actualEffect !== expectedStatus.effect) {
+    expectedStatus = expectedStatus.effect;
   }
 
   if (typeof expectedStatus === "number") {
