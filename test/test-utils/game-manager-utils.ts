@@ -87,17 +87,6 @@ function getTestRunStarters(seed: string, species?: SpeciesId[]): Starter[] {
   return starters;
 }
 
-export function waitUntil(truth): Promise<unknown> {
-  return new Promise(resolve => {
-    const interval = setInterval(() => {
-      if (truth()) {
-        clearInterval(interval);
-        resolve(true);
-      }
-    }, 1000);
-  });
-}
-
 /**
  * Useful for populating party, wave index, etc. without having to spin up and run through an entire EncounterPhase
  */

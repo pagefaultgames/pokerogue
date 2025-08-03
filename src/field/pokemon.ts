@@ -25,7 +25,6 @@ import {
   AutotomizedTag,
   BattlerTag,
   CritBoostTag,
-  DragonCheerTag,
   EncoreTag,
   ExposedTag,
   GroundedTag,
@@ -213,7 +212,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * TODO: Stop treating this like a unique ID and stop treating 0 as no pokemon
    */
   public id: number;
-  public nickname: string;
+  /**
+   * The Pokemon's current nickname, or `undefined` if it currently lacks one.
+   * If omitted, references to this should refer to the default name for this Pokemon's species.
+   */
+  public nickname?: string;
   public species: PokemonSpecies;
   public formIndex: number;
   public abilityIndex: number;
@@ -443,7 +446,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   getNameToRender(useIllusion = true) {
     const illusion = this.summonData.illusion;
     const name = useIllusion ? (illusion?.name ?? this.name) : this.name;
-    const nickname: string = useIllusion ? (illusion?.nickname ?? this.nickname) : this.nickname;
+    const nickname: string | undefined = useIllusion ? illusion?.nickname : this.nickname;
     try {
       if (nickname) {
         return decodeURIComponent(escape(atob(nickname))); // TODO: Remove `atob` and `escape`... eventually...
@@ -1386,8 +1389,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const critBoostTag = source.getTag(CritBoostTag);
     if (critBoostTag) {
       // Dragon cheer only gives +1 crit stage to non-dragon types
-      critStage.value +=
-        critBoostTag instanceof DragonCheerTag && !critBoostTag.typesOnAdd.includes(PokemonType.DRAGON) ? 1 : 2;
+      critStage.value += critBoostTag.critStages;
     }
 
     console.log(`crit stage: +${critStage.value}`);
