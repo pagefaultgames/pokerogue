@@ -24,7 +24,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { OneOther } from "#test/@types/test-helpers";
 
 declare module "vitest" {
-  interface Assertion {
+  interface Assertion<T> {
     /**
      * Check whether an array contains EXACTLY the given items (in any order).
      *
@@ -34,38 +34,28 @@ declare module "vitest" {
      * @param expected - The expected contents of the array, in any order
      * @see {@linkcode expect.arrayContaining}
      */
-    toEqualArrayUnsorted<E>(expected: E[]): void;
+    toEqualArrayUnsorted(expected: T[]): void;
 
     /**
      * Check whether a {@linkcode Pokemon}'s current typing includes the given types.
-     *
-     * @param expected - The expected types (in any order)
+     * @param expectedTypes - The expected {@linkcode PokemonType}s to check against; must have length `>0`
      * @param options - The {@linkcode toHaveTypesOptions | options} passed to the matcher
      */
-    toHaveTypes(expected: [PokemonType, ...PokemonType[]], options?: toHaveTypesOptions): void;
-    /**
-     * Check whether a {@linkcode Pokemon}'s current typing includes the given types.
-     *
-     * @param expected - The expected types (in any order)
-     * @param options - The {@linkcode toHaveTypesOptions | options} passed to the matcher
-     */
-    toHaveTypes(expected: PokemonType[], options?: toHaveTypesOptions): void;
+    toHaveTypes(expectedTypes: PokemonType[], options?: toHaveTypesOptions): void;
 
     /**
-     * Matcher to check the contents of a {@linkcode Pokemon}'s move history.
-     *
-     * @param expectedValue - The expected value; can be a {@linkcode MoveId} or a partially filled {@linkcode TurnMove}
-     * containing the desired properties to check
+     * Check whether a {@linkcode Pokemon} has used a move matching the given criteria.
+     * @param expectedMove - The {@linkcode MoveId} the Pokemon is expected to have used,
+     * or a partially filled {@linkcode TurnMove} containing the desired properties to check
      * @param index - The index of the move history entry to check, in order from most recent to least recent.
      * Default `0` (last used move)
      * @see {@linkcode Pokemon.getLastXMoves}
      */
-    toHaveUsedMove(expected: MoveId | AtLeastOne<TurnMove>, index?: number): void;
+    toHaveUsedMove(expectedMove: MoveId | AtLeastOne<TurnMove>, index?: number): void;
 
     /**
      * Check whether a {@linkcode Pokemon}'s effective stat is as expected
      * (checked after all stat value modifications).
-     *
      * @param stat - The {@linkcode EffectiveStat} to check
      * @param expectedValue - The expected value of {@linkcode stat}
      * @param options - The {@linkcode toHaveEffectiveStatOptions | options} passed to the matcher
@@ -95,15 +85,13 @@ declare module "vitest" {
 
     /**
      * Check whether the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
-     *
-     * @param expectedType - A partially-filled {@linkcode ArenaTag} containing the desired properties
+     * @param expectedTag - A partially-filled {@linkcode ArenaTag} containing the desired properties
      */
     toHaveArenaTag<T extends ArenaTagType>(
-      expectedType: OneOther<ArenaTagTypeMap[T], "tagType" | "side"> & { tagType: T }, // intersection required to preserve T
+      expectedTag: OneOther<ArenaTagTypeMap[T], "tagType" | "side"> & { tagType: T }, // intersection required to preserve T
     ): void;
     /**
      * Check whether the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
-     *
      * @param expectedType - The {@linkcode ArenaTagType} of the desired tag
      * @param side - The {@linkcode ArenaTagSide | side of the field} the tag should affect, or
      * {@linkcode ArenaTagSide.BOTH} to check both sides;
@@ -138,7 +126,7 @@ declare module "vitest" {
 
     /**
      * Check whether a {@linkcode Pokemon} has applied a specific {@linkcode AbilityId}.
-     * @param expectedAbilityId - The expected {@linkcode AbilityId}
+     * @param expectedAbilityId - The expected {@linkcode AbilityId} to
      */
     toHaveAbilityApplied(expectedAbilityId: AbilityId): void;
 
@@ -151,21 +139,20 @@ declare module "vitest" {
     /**
      * Check whether a {@linkcode Pokemon} is currently fainted (as determined by {@linkcode Pokemon.isFainted}).
      * @remarks
-     * When checking whether an enemy wild Pokemon is fainted, one must reference it in a variable _before_ the fainting effect occurs
-     * as otherwise the Pokemon will be GC'ed and rendered `undefined`.
+     * When checking whether an enemy wild Pokemon is fainted, one must store a reference to it in a variable _before_ the fainting effect occurs,
+     * as otherwise the Pokemon will be removed from the field and garbage collected.
      */
     toHaveFainted(): void;
 
     /**
      * Check whether a {@linkcode Pokemon} has consumed the given amount of PP for one of its moves.
-     * @param expectedValue - The {@linkcode MoveId} of the {@linkcode PokemonMove} that should have consumed PP
+     * @param moveId - The {@linkcode MoveId} of the {@linkcode PokemonMove} that should have consumed PP
      * @param ppUsed - The numerical amount of PP that should have been consumed,
      * or `all` to indicate the move should be _out_ of PP
      * @remarks
-     * If the Pokemon's moveset has been set via {@linkcode Overrides.MOVESET_OVERRIDE}/{@linkcode Overrides.OPP_MOVESET_OVERRIDE},
-     * does not contain {@linkcode expectedMove}
-     * or contains the desired move more than once, this will fail the test.
+     * If the Pokemon's moveset has been set via {@linkcode Overrides.MOVESET_OVERRIDE}/{@linkcode Overrides.OPP_MOVESET_OVERRIDE}
+     * or does not contain exactly 1 copy of {@linkcode moveId}, this will fail the test.
      */
-    toHaveUsedPP(expectedMove: MoveId, ppUsed: number | "all"): void;
+    toHaveUsedPP(moveId: MoveId, ppUsed: number | "all"): void;
   }
 }

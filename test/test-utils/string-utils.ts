@@ -174,10 +174,14 @@ export function getStatName(s: Stat): string {
  * Convert an object into a oneline diff to be shown in an error message.
  * @param obj - The object to return the oneline diff of
  * @returns The updated diff
+ * @example
+ * ```ts
+ * const diff = getOnelineDiffStr.call(this, obj)
+ * ```
  */
 export function getOnelineDiffStr(this: MatcherState, obj: unknown): string {
   return this.utils
     .stringify(obj, undefined, { maxLength: 35, indent: 0, printBasicPrototype: false })
     .replace(/\n/g, " ") // Replace newlines with spaces
-    .replace(/,(\s*)}$/g, "$1}");
+    .replace(/,(\s*)}$/g, "$1}"); // Trim trailing commas
 }

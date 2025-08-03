@@ -36,8 +36,8 @@ export function toHaveArenaTag<T extends ArenaTagType>(
 
   if (!received.scene?.arena) {
     return {
-      pass: false,
-      message: () => `Expected GameManager.${!received.scene ? "scene" : "scene.arena"} to be defined!`,
+      pass: this.isNot,
+      message: () => `Expected GameManager.${received.scene ? "scene.arena" : "scene"} to be defined!`,
     };
   }
 

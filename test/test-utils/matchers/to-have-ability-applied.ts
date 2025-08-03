@@ -21,7 +21,7 @@ export function toHaveAbilityApplied(
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
-      pass: false,
+      pass: this.isNot,
       message: () => `Expected to recieve a Pokemon, but got ${receivedStr(received)}!`,
     };
   }

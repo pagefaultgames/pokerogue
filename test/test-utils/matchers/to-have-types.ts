@@ -26,14 +26,14 @@ export interface toHaveTypesOptions {
 /**
  * Matcher that checks if a {@linkcode Pokemon}'s typing is as expected.
  * @param received - The object to check. Should be a {@linkcode Pokemon}
- * @param expected - An array of one or more {@linkcode PokemonType}s to compare against.
+ * @param expectedTypes - An array of one or more {@linkcode PokemonType}s to compare against.
  * @param mode - The mode to perform the matching;
  * @returns The result of the matching
  */
 export function toHaveTypes(
   this: MatcherState,
   received: unknown,
-  expected: [PokemonType, ...PokemonType[]],
+  expectedTypes: [PokemonType, ...PokemonType[]],
   { mode = "unordered", args = [] }: toHaveTypesOptions = {},
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
@@ -43,19 +43,27 @@ export function toHaveTypes(
     };
   }
 
+  // Return early if no types were passed in
+  if (expectedTypes.length === 0) {
+    return {
+      pass: this.isNot,
+      message: () => "Expected to recieve a non-empty array of PokemonTypes, but got one!",
+    };
+  }
+
   // Avoid sorting the types if strict ordering is desired
-  const actualTypes = mode === "ordered" ? received.getTypes(...args) : received.getTypes(...args).toSorted();
-  const expectedTypes = mode === "ordered" ? expected : expected.toSorted();
+  const actualSorted = mode === "ordered" ? received.getTypes(...args) : received.getTypes(...args).toSorted();
+  const expectedSorted = mode === "ordered" ? expectedTypes : expectedTypes.toSorted();
 
   // Exact matches do not care about subset equality
   const matchers =
     mode === "superset"
       ? [...this.customTesters, this.utils.iterableEquality]
       : [...this.customTesters, this.utils.subsetEquality, this.utils.iterableEquality];
-  const pass = this.equals(actualTypes, expectedTypes, matchers);
+  const pass = this.equals(actualSorted, expectedSorted, matchers);
 
-  const actualStr = stringifyEnumArray(PokemonType, actualTypes);
-  const expectedStr = stringifyEnumArray(PokemonType, expectedTypes);
+  const actualStr = stringifyEnumArray(PokemonType, actualSorted);
+  const expectedStr = stringifyEnumArray(PokemonType, expectedSorted);
   const pkmName = getPokemonNameWithAffix(received);
 
   return {
@@ -64,7 +72,7 @@ export function toHaveTypes(
       pass
         ? `Expected ${pkmName} to NOT have types ${expectedStr}, but it did!`
         : `Expected ${pkmName} to have types ${expectedStr}, but got ${actualStr} instead!`,
-    expected: expectedTypes,
-    actual: actualTypes,
+    expected: expectedSorted,
+    actual: actualSorted,
   };
 }
