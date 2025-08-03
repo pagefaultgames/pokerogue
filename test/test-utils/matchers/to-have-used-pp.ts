@@ -28,7 +28,7 @@ export function toHaveUsedPP(
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
-      pass: false,
+      pass: this.isNot,
       message: () => `Expected to receive a Pokémon, but got ${receivedStr(received)}!`,
     };
   }
@@ -36,7 +36,7 @@ export function toHaveUsedPP(
   const override = received.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.OPP_MOVESET_OVERRIDE;
   if (coerceArray(override).length > 0) {
     return {
-      pass: false,
+      pass: this.isNot,
       message: () =>
         `Cannot test for PP consumption with ${received.isPlayer() ? "player" : "enemy"} moveset overrides active!`,
     };
@@ -48,7 +48,7 @@ export function toHaveUsedPP(
   const movesetMoves = received.getMoveset().filter(pm => pm.moveId === expectedMove);
   if (movesetMoves.length !== 1) {
     return {
-      pass: false,
+      pass: this.isNot,
       message: () =>
         `Expected MoveId.${moveStr} to appear in ${pkmName}'s moveset exactly once, but got ${movesetMoves.length} times!`,
       expected: expectedMove,

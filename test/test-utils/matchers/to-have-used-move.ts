@@ -27,7 +27,7 @@ export function toHaveUsedMove(
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
-      pass: false,
+      pass: this.isNot,
       message: () => `Expected to receive a Pokémon, but got ${receivedStr(received)}!`,
     };
   }
@@ -37,7 +37,7 @@ export function toHaveUsedMove(
 
   if (move === undefined) {
     return {
-      pass: false,
+      pass: this.isNot,
       message: () => `Expected ${pkmName} to have used ${index + 1} moves, but it didn't!`,
       actual: received.getLastXMoves(-1),
     };
@@ -62,8 +62,7 @@ export function toHaveUsedMove(
     message: () =>
       pass
         ? `Expected ${pkmName}'s ${moveIndexStr} to NOT match ${expectedStr}, but it did!`
-        : // Replace newlines with spaces to preserve one-line ness
-          `Expected ${pkmName}'s ${moveIndexStr} to match ${expectedStr}, but it didn't!`,
+        : `Expected ${pkmName}'s ${moveIndexStr} to match ${expectedStr}, but it didn't!`,
     expected: expectedResult,
     actual: move,
   };

@@ -21,14 +21,14 @@ export function toHaveTerrain(
   if (!isGameManagerInstance(received)) {
     return {
       pass: false,
-      message: () => `Expected GameManager, but got ${receivedStr(received)}!`,
+      message: () => `Expected to receive a GameManager, but got ${receivedStr(received)}!`,
     };
   }
 
   if (!received.scene?.arena) {
     return {
       pass: false,
-      message: () => `Expected GameManager.${received.scene ? "scene" : "scene.arena"} to be defined!`,
+      message: () => `Expected GameManager.${received.scene ? "scene.arena" : "scene"} to be defined!`,
     };
   }
 

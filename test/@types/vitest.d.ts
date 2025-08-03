@@ -10,7 +10,7 @@ import type { StatusEffect } from "#enums/status-effect";
 import type { WeatherType } from "#enums/weather-type";
 import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
-import type { ToHaveEffectiveStatMatcherOptions } from "#test/test-utils/matchers/to-have-effective-stat";
+import type { toHaveEffectiveStatOptions } from "#test/test-utils/matchers/to-have-effective-stat";
 import type { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect";
 import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
 import type { TurnMove } from "#types/turn-move";
@@ -40,10 +40,16 @@ declare module "vitest" {
      * Check whether a {@linkcode Pokemon}'s current typing includes the given types.
      *
      * @param expected - The expected types (in any order)
-     * @param options - The options passed to the matcher
+     * @param options - The {@linkcode toHaveTypesOptions | options} passed to the matcher
+     */
+    toHaveTypes(expected: [PokemonType, ...PokemonType[]], options?: toHaveTypesOptions): void;
+    /**
+     * Check whether a {@linkcode Pokemon}'s current typing includes the given types.
+     *
+     * @param expected - The expected types (in any order)
+     * @param options - The {@linkcode toHaveTypesOptions | options} passed to the matcher
      */
     toHaveTypes(expected: PokemonType[], options?: toHaveTypesOptions): void;
-    toHaveTypes(expected: [PokemonType, ...PokemonType[]], options?: toHaveTypesOptions): void;
 
     /**
      * Matcher to check the contents of a {@linkcode Pokemon}'s move history.
@@ -62,11 +68,11 @@ declare module "vitest" {
      *
      * @param stat - The {@linkcode EffectiveStat} to check
      * @param expectedValue - The expected value of {@linkcode stat}
-     * @param options - (Optional) The {@linkcode ToHaveEffectiveStatMatcherOptions}
+     * @param options - The {@linkcode toHaveEffectiveStatOptions | options} passed to the matcher
      * @remarks
      * If you want to check the stat **before** modifiers are applied, use {@linkcode Pokemon.getStat} instead.
      */
-    toHaveEffectiveStat(stat: EffectiveStat, expectedValue: number, options?: ToHaveEffectiveStatMatcherOptions): void;
+    toHaveEffectiveStat(stat: EffectiveStat, expectedValue: number, options?: toHaveEffectiveStatOptions): void;
 
     /**
      * Check whether a {@linkcode Pokemon} has taken a specific amount of damage.
@@ -93,7 +99,7 @@ declare module "vitest" {
      * @param expectedType - A partially-filled {@linkcode ArenaTag} containing the desired properties
      */
     toHaveArenaTag<T extends ArenaTagType>(
-      expectedType: OneOther<ArenaTagTypeMap[T], "tagType" | "side"> & { tagType: T }, // intersection required bc this doesn't preserve T
+      expectedType: OneOther<ArenaTagTypeMap[T], "tagType" | "side"> & { tagType: T }, // intersection required to preserve T
     ): void;
     /**
      * Check whether the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
