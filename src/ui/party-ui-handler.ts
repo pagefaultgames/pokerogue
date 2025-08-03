@@ -1832,14 +1832,14 @@ class PartySlot extends Phaser.GameObjects.Container {
     const isDoubleBattle = globalScene.currentBattle.double;
     const isItemManageMode = partyUiMode === PartyUiMode.MODIFIER_TRANSFER || partyUiMode === PartyUiMode.DISCARD;
 
-    /**
-    Here we determine the position of the slot.
-    The x coordinate depends on whether the pokemon is on the field or in the bench.
-    The y coordinate is more complex to determine
+    /*
+     * Here we determine the position of the slot.
+     * The x coordinate depends on whether the pokemon is on the field or in the bench.
+     * The y coordinate depends on various factors, such as
      */
     const slotPositionX = isBenched ? 143 : 9;
 
-    let slotPositionY = 0;
+    let slotPositionY: number;
     if (isBenched) {
       slotPositionY = -196 + (isDoubleBattle ? -40 : 0);
       slotPositionY += (28 + (isDoubleBattle ? 8 : 0)) * slotIndex;
@@ -1854,8 +1854,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     super(globalScene, slotPositionX, slotPositionY);
 
     this.slotIndex = slotIndex;
-    const battlerCount = globalScene.currentBattle.getBattlerCount();
-    this.isBenched = this.slotIndex >= battlerCount;
+    this.isBenched = isBenched;
     this.pokemon = pokemon;
     this.iconAnimHandler = iconAnimHandler;
 
@@ -1925,7 +1924,6 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.add(this.slotPb);
 
     this.pokemonIcon = globalScene.addPokemonIcon(this.pokemon, this.slotPb.x, this.slotPb.y, 0.5, 0.5, true);
-    //    this.pokemonIcon.setPosition();
     this.add(this.pokemonIcon);
 
     this.iconAnimHandler.addOrUpdate(this.pokemonIcon, PokemonIconAnimMode.PASSIVE);
