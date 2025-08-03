@@ -3560,6 +3560,7 @@ export class GrudgeTag extends SerializableBattlerTag {
    * @param sourcePokemon - The source of the move that fainted the tag's bearer
    * @returns `false` if Grudge activates its effect or lapses
    */
+  // TODO: Confirm whether this should interact with copying moves
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType, sourcePokemon?: Pokemon): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM && sourcePokemon) {
       if (sourcePokemon.isActive() && pokemon.isOpponent(sourcePokemon)) {
