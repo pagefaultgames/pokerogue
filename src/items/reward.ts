@@ -36,7 +36,6 @@ import { SPECIES_STAT_BOOSTER_ITEMS, type SpeciesStatBoostHeldItem } from "#item
 import { TrainerItemEffect, tempStatToTrainerItem } from "#items/trainer-item";
 import type { PokemonMove } from "#moves/pokemon-move";
 import { getVoucherTypeIcon, getVoucherTypeName, type VoucherType } from "#system/voucher";
-import type { RewardFunc, WeightedRewardWeightFunc } from "#types/rewards";
 import type { Exact } from "#types/type-helpers";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
@@ -86,7 +85,6 @@ for example. The entries of rewardInitObj are used in the RewardPool.
 
 There are some more derived classes, in particular:
 RewardGenerator, which creates Reward instances from a certain group (e.g. TMs, nature mints, or berries);
-WeightedReward, which is a Reward with an attached weight or weight function to be used in pools;
 and RewardOption, which is displayed during the select reward phase at the end of each encounter.
 */
 
@@ -1505,22 +1503,6 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
       return new FormChangeItemReward(formChangeItemPool[randSeedInt(formChangeItemPool.length)]);
     });
     this.id = id;
-  }
-}
-
-export class WeightedReward {
-  public reward: Reward | RewardGenerator;
-  public weight: number | WeightedRewardWeightFunc;
-  public maxWeight: number | WeightedRewardWeightFunc;
-
-  constructor(
-    rewardFunc: RewardFunc,
-    weight: number | WeightedRewardWeightFunc,
-    maxWeight?: number | WeightedRewardWeightFunc,
-  ) {
-    this.reward = rewardFunc();
-    this.weight = weight;
-    this.maxWeight = maxWeight || (!(weight instanceof Function) ? weight : 0);
   }
 }
 

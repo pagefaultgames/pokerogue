@@ -25,9 +25,6 @@ cases to assign modifiers. This usage is now deprecated, as we have separate poo
 However, `getNewRewardOption` is not called directly by `generatePlayerRewardOptions`. Instead, it is filtered
 by `getRewardOptionWithRetry`, which also checks existing rewards to minimize the chance of duplicates.
 
-Note that the pool contains `WeightedReward` instances, which contain either a `Reward` or a `RewardGenerator`.
-Once a pool entry is chosen, a specific `Reward` is generated accordingly and put in the returned `RewardOption`.
-
 This will allow more customization in creating pools for challenges, MEs etc.
 */
 
