@@ -1,12 +1,11 @@
-import { SubstituteTag } from "#data/battler-tags";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { MoveEndPhase } from "#phases/move-end-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { ArenaTrapTagType } from "#types/arena-tags";
 import Phaser from "phaser";
@@ -36,51 +35,62 @@ describe("Moves - Tidy Up", () => {
       .ability(AbilityId.BALL_FETCH);
   });
 
-  it.each<{ name: string; hazard: ArenaTrapTagType }>([{ name: "Spikes", hazard: ArenaTagType.SPIKES }])(
-    "should remove $name from both sides of the field",
-    async ({ hazard }) => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+  it.each<{ name: string; tagType: ArenaTrapTagType }>([
+    { name: "Spikes", tagType: ArenaTagType.SPIKES },
+    { name: "Toxic Spikes", tagType: ArenaTagType.TOXIC_SPIKES },
+    { name: "Stealth Rock", tagType: ArenaTagType.STEALTH_ROCK },
+    { name: "Sticky Web", tagType: ArenaTagType.STICKY_WEB },
+  ])("should remove $name from both sides of the field", async ({ tagType }) => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      // Add tag to both sides of the field
-      game.scene.arena.addTag(hazard, 1, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.PLAYER);
-      game.scene.arena.addTag(hazard, 1, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.ENEMY);
+    // Add tag to both sides of the field
+    game.scene.arena.addTag(tagType, 1, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.PLAYER);
+    game.scene.arena.addTag(tagType, 1, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.ENEMY);
 
-      expect(game.scene.arena.getTag());
-      game.move.use(MoveId.TIDY_UP);
-      await game.toEndOfTurn();
-      expect(game.scene.arena.getTag(ArenaTagType.SPIKES)).toBeUndefined();
-    },
-  );
+    expect(game.scene.arena.getTag(tagType)).toBeDefined();
 
-  it("substitutes are cleared", async () => {
-    game.override.moveset([MoveId.SUBSTITUTE, MoveId.TIDY_UP]).enemyMoveset(MoveId.SUBSTITUTE);
+    game.move.use(MoveId.TIDY_UP);
+    await game.toEndOfTurn();
 
-    await game.classicMode.startBattle();
+    expect(game.scene.arena.getTag(tagType)).toBeUndefined();
+  });
 
-    game.move.select(MoveId.SUBSTITUTE);
-    await game.phaseInterceptor.to(TurnEndPhase);
-    game.move.select(MoveId.TIDY_UP);
-    await game.phaseInterceptor.to(MoveEndPhase);
+  it("should clear substitutes from all pokemon", async () => {
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.CINCCINO, SpeciesId.FEEBAS]);
 
-    const pokemon = [game.scene.getPlayerPokemon()!, game.scene.getEnemyPokemon()!];
-    pokemon.forEach(p => {
-      expect(p).toBeDefined();
-      expect(p!.getTag(SubstituteTag)).toBeUndefined();
+    game.move.use(MoveId.SUBSTITUTE, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SUBSTITUTE, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.SUBSTITUTE);
+    await game.move.forceEnemyMove(MoveId.SUBSTITUTE);
+    await game.toNextTurn();
+
+    game.scene.getField(true).forEach(p => {
+      expect(p).toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
+    });
+
+    game.move.use(MoveId.TIDY_UP, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.toEndOfTurn();
+
+    game.scene.getField(true).forEach(p => {
+      expect(p).not.toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
     });
   });
 
-  it("user's stats are raised with no traps set", async () => {
-    await game.classicMode.startBattle();
+  it("should raise the user's stats even if a tag cannot be removed", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveStatStage(Stat.ATK, 0);
+    expect(feebas).toHaveStatStage(Stat.SPD, 0);
 
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
+    game.move.use(MoveId.TIDY_UP);
+    await game.toEndOfTurn();
 
-    game.move.select(MoveId.TIDY_UP);
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
-    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
+    expect(feebas).toHaveStatStage(Stat.ATK, 1);
+    expect(feebas).toHaveStatStage(Stat.SPD, 1);
   });
 });

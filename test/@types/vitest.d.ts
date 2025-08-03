@@ -87,14 +87,6 @@ declare module "vitest" {
     toHaveTerrain(expectedTerrainType: TerrainType): void;
 
     /**
-     * Matcher to check if the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
-     *
-     * @param expected - The expected {@linkcode ArenaTagType}
-     * @param options - The options passed to the matcher
-     */
-    toHaveArenaTag<T extends ArenaTagType>(expected: T, options?: toHaveArenaTagOptions<T>): void;v
-
-    /**
      * Check whether a {@linkcode Pokemon} is at full HP.
      */
     toHaveFullHp(): void;

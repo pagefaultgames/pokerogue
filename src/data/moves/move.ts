@@ -6096,6 +6096,7 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
  * @extends AddArenaTagAttr
  * @see {@linkcode apply}
  */
+// TODO: This has exactly 1 line of code difference from the base attribute wrt. effect chances...
 export class AddArenaTrapTagHitAttr extends AddArenaTagAttr {
   /**
    * @param user {@linkcode Pokemon} using this move
