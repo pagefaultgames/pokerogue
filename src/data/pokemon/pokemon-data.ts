@@ -1,4 +1,5 @@
-import { type BattlerTag, loadBattlerTag } from "#data/battler-tags";
+import type { BattlerTag } from "#data/battler-tags";
+import { loadBattlerTag, SerializableBattlerTag } from "#data/battler-tags";
 import { allSpecies } from "#data/data-lists";
 import type { Gender } from "#data/gender";
 import { PokemonMove } from "#data/moves/pokemon-move";
@@ -188,9 +189,11 @@ export class PokemonSummonData {
         continue;
       }
 
-      if (key === "tags") {
-        // load battler tags
-        this.tags = value.map((t: BattlerTag) => loadBattlerTag(t));
+      if (key === "tags" && Array.isArray(value)) {
+        // load battler tags, discarding any that are not serializable
+        this.tags = value
+          .map((t: SerializableBattlerTag) => loadBattlerTag(t))
+          .filter((t): t is SerializableBattlerTag => t instanceof SerializableBattlerTag);
         continue;
       }
       this[key] = value;
