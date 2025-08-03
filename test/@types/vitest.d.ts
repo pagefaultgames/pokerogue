@@ -3,12 +3,6 @@ import type { AbilityId } from "#enums/ability-id";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
-import type { expect } from "vitest";
-import type { Arena } from "#field/arena";
-import type { ArenaTag } from "#data/arena-tag";
-import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
-import { ArenaTagType } from "#enums/arena-tag-type";
-import { toHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
 import type { BattleStat, EffectiveStat, Stat } from "#enums/stat";
 import type { StatusEffect } from "#enums/status-effect";
 import type { WeatherType } from "#enums/weather-type";
@@ -41,7 +35,6 @@ declare module "vitest" {
      * @param expected - The expected types (in any order)
      * @param options - The options passed to the matcher
      */
-    toHaveTypes(expected: PokemonType[], options?: toHaveTypesOptions): void;
     toHaveTypes(expected: [PokemonType, ...PokemonType[]], options?: toHaveTypesOptions): void;
 
     /**
