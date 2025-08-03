@@ -34,17 +34,21 @@ import type { StatStageChangeCallback } from "#phases/stat-stage-change-phase";
 import i18next from "#plugins/i18n";
 import type {
   AbilityBattlerTagType,
+  BattlerTagTypeData,
   ContactSetStatusProtectedTagType,
   ContactStatStageChangeProtectedTagType,
+  CritStageBoostTagType,
   DamageProtectedTagType,
   EndureTagType,
   HighestStatBoostTagType,
   MoveRestrictionBattlerTagType,
   ProtectionBattlerTagType,
+  RemovedTypeTagType,
   SemiInvulnerableTagType,
   TrappingBattlerTagType,
+  TypeBoostTagType,
 } from "#types/battler-tags";
-import type { Mutable, NonFunctionProperties } from "#types/type-helpers";
+import type { Mutable } from "#types/type-helpers";
 import { BooleanHolder, coerceArray, getFrameMs, isNullOrUndefined, NumberHolder, toDmgValue } from "#utils/common";
 
 /**
@@ -80,13 +84,10 @@ import { BooleanHolder, coerceArray, getFrameMs, isNullOrUndefined, NumberHolder
  *   // Then we must also define a loadTag method with one of the following signatures
  *   public override loadTag(source: BaseBattlerTag & Pick<ExampleTag, "tagType" | "a" | "b"): void;
  *   public override loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "a" | "b">): void;
- *   public override loadTag(source: NonFunctionProperties<ExampleTag>): void;
  * }
  * ```
  * Notes
  * - If the class has any subclasses, then the second form of `loadTag` *must* be used.
- * - The third form *must not* be used if the class has any getters, as typescript would expect such fields to be
- *   present in `source`.
  */
 
 /** Interface containing the serializable fields of BattlerTag */
@@ -201,9 +202,22 @@ export class BattlerTag implements BaseBattlerTag {
   }
 }
 
-export abstract class SerializableBattlerTag extends BattlerTag {
+export class SerializableBattlerTag extends BattlerTag {
   /** Nonexistent, dummy field to allow typescript to distinguish this class from `BattlerTag` */
   private declare __SerializableBattlerTag: never;
+}
+
+/**
+ * Interface for a generic serializable battler tag, i.e. one that does not have a
+ * dedicated subclass.
+ *
+ * @remarks
+ * Used to ensure type safety when serializing battler tags,
+ * allowing typescript to properly infer the type of the tag.
+ * @see BattlerTagTypeMap
+ */
+interface GenericSerializableBattlerTag<T extends BattlerTagType> extends SerializableBattlerTag {
+  tagType: T;
 }
 
 /**
@@ -419,7 +433,6 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   public override readonly tagType = BattlerTagType.GORILLA_TACTICS;
   /** ID of the move that the user is locked into using*/
   public readonly moveId: MoveId = MoveId.NONE;
-
   constructor() {
     super(BattlerTagType.GORILLA_TACTICS, BattlerTagLapseType.CUSTOM, 0);
   }
@@ -564,6 +577,7 @@ export class BeakBlastChargingTag extends BattlerTag {
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Shell_Trap_(move) | Shell Trap}
  */
 export class ShellTrapTag extends BattlerTag {
+  public override readonly tagType = BattlerTagType.SHELL_TRAP;
   public activated = false;
 
   constructor() {
@@ -1148,6 +1162,7 @@ export class PowderTag extends BattlerTag {
 }
 
 export class NightmareTag extends SerializableBattlerTag {
+  public override readonly tagType = BattlerTagType.NIGHTMARE;
   constructor() {
     super(BattlerTagType.NIGHTMARE, BattlerTagLapseType.TURN_END, 1, MoveId.NIGHTMARE);
   }
@@ -1201,6 +1216,7 @@ export class NightmareTag extends SerializableBattlerTag {
 }
 
 export class FrenzyTag extends SerializableBattlerTag {
+  public override readonly tagType = BattlerTagType.FRENZY;
   constructor(turnCount: number, sourceMove: MoveId, sourceId: number) {
     super(BattlerTagType.FRENZY, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
   }
@@ -1235,7 +1251,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
     );
   }
 
-  public override loadTag(source: NonFunctionProperties<EncoreTag>): void {
+  public override loadTag(source: BaseBattlerTag & Pick<EncoreTag, "tagType" | "moveId">): void {
     super.loadTag(source);
     this.moveId = source.moveId;
   }
@@ -2038,7 +2054,7 @@ export class TruantTag extends AbilityBattlerTag {
 
     const lastMove = pokemon.getLastXMoves()[0];
 
-    if (!lastMove) {
+    if (!lastMove || lastMove.move === MoveId.NONE) {
       // Don't interrupt move if last move was `Moves.NONE` OR no prior move was found
       return true;
     }
@@ -2203,7 +2219,7 @@ export class SemiInvulnerableTag extends SerializableBattlerTag {
   }
 }
 
-export class TypeImmuneTag extends SerializableBattlerTag {
+export abstract class TypeImmuneTag extends SerializableBattlerTag {
   #immuneType: PokemonType;
   public get immuneType(): PokemonType {
     return this.#immuneType;
@@ -2222,6 +2238,7 @@ export class TypeImmuneTag extends SerializableBattlerTag {
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | MoveId.TELEKINESIS}
  */
 export class FloatingTag extends TypeImmuneTag {
+  public override readonly tagType = BattlerTagType.FLOATING;
   constructor(tagType: BattlerTagType, sourceMove: MoveId, turnCount: number) {
     super(tagType, sourceMove, PokemonType.GROUND, turnCount);
   }
@@ -2251,6 +2268,7 @@ export class FloatingTag extends TypeImmuneTag {
 }
 
 export class TypeBoostTag extends SerializableBattlerTag {
+  public declare readonly tagType: TypeBoostTagType;
   #boostedType: PokemonType;
   #boostValue: number;
   #oneUse: boolean;
@@ -2300,12 +2318,23 @@ export class TypeBoostTag extends SerializableBattlerTag {
 }
 
 export class CritBoostTag extends SerializableBattlerTag {
-  constructor(tagType: BattlerTagType, sourceMove: MoveId) {
+  public declare readonly tagType: CritStageBoostTagType;
+  /** The number of stages boosted by this tag */
+  public readonly critStages: number = 1;
+
+  constructor(tagType: CritStageBoostTagType, sourceMove: MoveId) {
     super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove, undefined, true);
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
+
+    // Dragon cheer adds +2 crit stages if the pokemon is a Dragon type when the tag is added
+    if (this.tagType === BattlerTagType.DRAGON_CHEER && pokemon.getTypes(true).includes(PokemonType.DRAGON)) {
+      (this as Mutable<this>).critStages = 2;
+    } else {
+      (this as Mutable<this>).critStages = 1;
+    }
 
     globalScene.phaseManager.queueMessage(
       i18next.t("battlerTags:critBoostOnAdd", {
@@ -2327,23 +2356,12 @@ export class CritBoostTag extends SerializableBattlerTag {
       }),
     );
   }
-}
 
-/**
- * Tag for the effects of Dragon Cheer, which boosts the critical hit ratio of the user's allies.
- */
-export class DragonCheerTag extends CritBoostTag {
-  /** The types of the user's ally when the tag is added */
-  public typesOnAdd: PokemonType[];
-
-  constructor() {
-    super(BattlerTagType.CRIT_BOOST, MoveId.DRAGON_CHEER);
-  }
-
-  onAdd(pokemon: Pokemon): void {
-    super.onAdd(pokemon);
-
-    this.typesOnAdd = pokemon.getTypes(true);
+  public override loadTag(source: BaseBattlerTag & Pick<CritBoostTag, "tagType" | "critStages">): void {
+    super.loadTag(source);
+    // TODO: Remove the nullish coalescing once Zod Schemas come in
+    // For now, this is kept for backwards compatibility with older save files
+    (this as Mutable<this>).critStages = source.critStages ?? 1;
   }
 }
 
@@ -2402,6 +2420,7 @@ export class SaltCuredTag extends SerializableBattlerTag {
 }
 
 export class CursedTag extends SerializableBattlerTag {
+  public override readonly tagType = BattlerTagType.CURSED;
   constructor(sourceId: number) {
     super(BattlerTagType.CURSED, BattlerTagLapseType.TURN_END, 1, MoveId.CURSE, sourceId, true);
   }
@@ -2448,7 +2467,8 @@ export class CursedTag extends SerializableBattlerTag {
  * Battler tag for attacks that remove a type post use.
  */
 export class RemovedTypeTag extends SerializableBattlerTag {
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
+  public declare readonly tagType: RemovedTypeTagType;
+  constructor(tagType: RemovedTypeTagType, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
     super(tagType, lapseType, 1, sourceMove);
   }
 }
@@ -2458,7 +2478,8 @@ export class RemovedTypeTag extends SerializableBattlerTag {
  * @description `IGNORE_FLYING`: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
  */
 export class GroundedTag extends SerializableBattlerTag {
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
+  public override readonly tagType = BattlerTagType.IGNORE_FLYING;
+  constructor(tagType: BattlerTagType.IGNORE_FLYING, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
     super(tagType, lapseType, 1, sourceMove);
   }
 }
@@ -2618,7 +2639,7 @@ export class CommandedTag extends SerializableBattlerTag {
     }
   }
 
-  override loadTag(source: NonFunctionProperties<CommandedTag>): void {
+  override loadTag(source: BaseBattlerTag & Pick<CommandedTag, "tagType" | "tatsugiriFormKey">): void {
     super.loadTag(source);
     (this as Mutable<this>).tatsugiriFormKey = source.tatsugiriFormKey;
   }
@@ -2659,7 +2680,9 @@ export class StockpilingTag extends SerializableBattlerTag {
     }
   };
 
-  public override loadTag(source: NonFunctionProperties<StockpilingTag>): void {
+  public override loadTag(
+    source: BaseBattlerTag & Pick<StockpilingTag, "tagType" | "stockpiledCount" | "statChangeCounts">,
+  ): void {
     super.loadTag(source);
     this.stockpiledCount = source.stockpiledCount || 0;
     this.statChangeCounts = {
@@ -3006,7 +3029,7 @@ export class AutotomizedTag extends SerializableBattlerTag {
     this.onAdd(pokemon);
   }
 
-  public override loadTag(source: NonFunctionProperties<AutotomizedTag>): void {
+  public override loadTag(source: BaseBattlerTag & Pick<AutotomizedTag, "tagType" | "autotomizeCount">): void {
     super.loadTag(source);
     this.autotomizeCount = source.autotomizeCount;
   }
@@ -3537,6 +3560,7 @@ export class GrudgeTag extends SerializableBattlerTag {
    * @param sourcePokemon - The source of the move that fainted the tag's bearer
    * @returns `false` if Grudge activates its effect or lapses
    */
+  // TODO: Confirm whether this should interact with copying moves
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType, sourcePokemon?: Pokemon): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM && sourcePokemon) {
       if (sourcePokemon.isActive() && pokemon.isOpponent(sourcePokemon)) {
@@ -3641,7 +3665,7 @@ export function getBattlerTag(
     case BattlerTagType.FRENZY:
       return new FrenzyTag(turnCount, sourceMove, sourceId);
     case BattlerTagType.CHARGING:
-      return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
+      return new SerializableBattlerTag(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove, sourceId);
     case BattlerTagType.ENCORE:
       return new EncoreTag(sourceId);
     case BattlerTagType.HELPING_HAND:
@@ -3721,15 +3745,14 @@ export function getBattlerTag(
     case BattlerTagType.FIRE_BOOST:
       return new TypeBoostTag(tagType, sourceMove, PokemonType.FIRE, 1.5, false);
     case BattlerTagType.CRIT_BOOST:
-      return new CritBoostTag(tagType, sourceMove);
     case BattlerTagType.DRAGON_CHEER:
-      return new DragonCheerTag();
+      return new CritBoostTag(tagType, sourceMove);
     case BattlerTagType.ALWAYS_CRIT:
     case BattlerTagType.IGNORE_ACCURACY:
-      return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, 2, sourceMove);
+      return new SerializableBattlerTag(tagType, BattlerTagLapseType.TURN_END, 2, sourceMove);
     case BattlerTagType.ALWAYS_GET_HIT:
     case BattlerTagType.RECEIVE_DOUBLE_DAMAGE:
-      return new BattlerTag(tagType, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
+      return new SerializableBattlerTag(tagType, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
     case BattlerTagType.BYPASS_SLEEP:
       return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
     case BattlerTagType.IGNORE_FLYING:
@@ -3815,7 +3838,7 @@ export function getBattlerTag(
  * @param source - An object containing the data necessary to reconstruct the BattlerTag.
  * @returns The valid battler tag
  */
-export function loadBattlerTag(source: SerializableBattlerTag): BattlerTag {
+export function loadBattlerTag(source: BattlerTag | BattlerTagTypeData): BattlerTag {
   // TODO: Remove this bang by fixing the signature of `getBattlerTag`
   // to allow undefined sourceIds and sourceMoves (with appropriate fallback for tags that require it)
   const tag = getBattlerTag(source.tagType, source.turnCount, source.sourceMove!, source.sourceId!);
@@ -3856,7 +3879,7 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.POWDER]: PowderTag;
   [BattlerTagType.NIGHTMARE]: NightmareTag;
   [BattlerTagType.FRENZY]: FrenzyTag;
-  [BattlerTagType.CHARGING]: BattlerTag;
+  [BattlerTagType.CHARGING]: GenericSerializableBattlerTag<BattlerTagType.CHARGING>;
   [BattlerTagType.ENCORE]: EncoreTag;
   [BattlerTagType.HELPING_HAND]: HelpingHandTag;
   [BattlerTagType.INGRAIN]: IngrainTag;
@@ -3896,11 +3919,11 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.HIDDEN]: SemiInvulnerableTag;
   [BattlerTagType.FIRE_BOOST]: TypeBoostTag;
   [BattlerTagType.CRIT_BOOST]: CritBoostTag;
-  [BattlerTagType.DRAGON_CHEER]: DragonCheerTag;
-  [BattlerTagType.ALWAYS_CRIT]: BattlerTag;
-  [BattlerTagType.IGNORE_ACCURACY]: BattlerTag;
-  [BattlerTagType.ALWAYS_GET_HIT]: BattlerTag;
-  [BattlerTagType.RECEIVE_DOUBLE_DAMAGE]: BattlerTag;
+  [BattlerTagType.DRAGON_CHEER]: CritBoostTag;
+  [BattlerTagType.ALWAYS_CRIT]: GenericSerializableBattlerTag<BattlerTagType.ALWAYS_CRIT>;
+  [BattlerTagType.IGNORE_ACCURACY]: GenericSerializableBattlerTag<BattlerTagType.IGNORE_ACCURACY>;
+  [BattlerTagType.ALWAYS_GET_HIT]: GenericSerializableBattlerTag<BattlerTagType.ALWAYS_GET_HIT>;
+  [BattlerTagType.RECEIVE_DOUBLE_DAMAGE]: GenericSerializableBattlerTag<BattlerTagType.RECEIVE_DOUBLE_DAMAGE>;
   [BattlerTagType.BYPASS_SLEEP]: BattlerTag;
   [BattlerTagType.IGNORE_FLYING]: GroundedTag;
   [BattlerTagType.ROOSTED]: RoostedTag;

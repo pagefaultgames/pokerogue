@@ -69,7 +69,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     if (context) {
       context.font = styleOptions.fontSize + "px " + styleOptions.fontFamily;
-      this.transferButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:transfer")).width;
+      this.transferButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:manageItems")).width;
       this.checkButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:checkTeam")).width;
     }
 
@@ -81,7 +81,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.transferButtonContainer.setVisible(false);
     ui.add(this.transferButtonContainer);
 
-    const transferButtonText = addTextObject(-4, -2, i18next.t("modifierSelectUiHandler:transfer"), TextStyle.PARTY);
+    const transferButtonText = addTextObject(-4, -2, i18next.t("modifierSelectUiHandler:manageItems"), TextStyle.PARTY);
     transferButtonText.setName("text-transfer-btn");
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
@@ -596,7 +596,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         (globalScene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth) / 6 - 30,
         OPTION_BUTTON_YPOSITION + 4,
       );
-      ui.showText(i18next.t("modifierSelectUiHandler:transferDesc"));
+      ui.showText(i18next.t("modifierSelectUiHandler:manageItemsDesc"));
     } else if (cursor === 2) {
       this.cursorObj.setPosition(
         (globalScene.game.canvas.width - this.checkButtonWidth) / 6 - 10,
