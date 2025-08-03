@@ -323,9 +323,7 @@ export class PartyUiHandler extends MessageUiHandler {
 
     this.partyDiscardModeButton = partyDiscardModeButton;
 
-    // prepare move overlay. in case it appears to be too big, set the overlayScale to .5
-    const overlayScale = 1;
-
+    // prepare move overlay
     this.moveInfoOverlay = new MoveInfoOverlay({
       top: true,
       x: 1,
