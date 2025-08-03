@@ -10,6 +10,7 @@ import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { HitResult } from "#enums/hit-result";
 import { CommonAnim } from "#enums/move-anims-common";
@@ -1608,12 +1609,13 @@ interface PendingHealEffect {
  * If the effect is from Lunar Dance, their PP is also restored.
  * @extends ArenaTag
  */
-export class PendingHealTag extends ArenaTag {
+export class PendingHealTag extends SerializableArenaTag {
+  public readonly tagType = ArenaTagType.PENDING_HEAL;
   /** All pending healing effects, organized by {@linkcode BattlerIndex} */
-  private pendingHeals: Partial<Record<BattlerIndex, PendingHealEffect[]>> = {};
+  public readonly pendingHeals: Partial<Record<BattlerIndex, PendingHealEffect[]>> = {};
 
   constructor() {
-    super(ArenaTagType.PENDING_HEAL, 0);
+    super(0);
   }
 
   /**
@@ -1709,9 +1711,9 @@ export class PendingHealTag extends ArenaTag {
     );
   }
 
-  override loadTag(source: ArenaTag | any): void {
+  override loadTag(source: BaseArenaTag & Pick<PendingHealTag, "tagType" | "pendingHeals">): void {
     super.loadTag(source);
-    this.pendingHeals = source.pendingHeals;
+    (this as Mutable<this>).pendingHeals = source.pendingHeals;
   }
 }
 
@@ -1828,5 +1830,6 @@ export type ArenaTagTypeMap = {
   [ArenaTagType.GRASS_WATER_PLEDGE]: GrassWaterPledgeTag;
   [ArenaTagType.FAIRY_LOCK]: FairyLockTag;
   [ArenaTagType.NEUTRALIZING_GAS]: SuppressAbilitiesTag;
+  [ArenaTagType.PENDING_HEAL]: PendingHealTag;
   [ArenaTagType.NONE]: NoneTag;
 };

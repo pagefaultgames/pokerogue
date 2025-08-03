@@ -2101,7 +2101,7 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
       sourceId: user.id,
       moveId: move.id,
       restorePP: this.restorePP,
-      healMessageKey: i18next.t(this.moveMessage, { pokemonName: getPokemonNameWithAffix(user) }),
+      healMessage: i18next.t(this.moveMessage, { pokemonName: getPokemonNameWithAffix(user) }),
     });
 
     return true;
