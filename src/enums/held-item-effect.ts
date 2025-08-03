@@ -1,4 +1,4 @@
-import type { EnumValues } from "#types/enum-types";
+import type { ObjectValues } from "#types/type-helpers";
 
 /**
  * Enum representing the various "classes" of item effects that can be applied.
@@ -34,4 +34,4 @@ export const HeldItemEffect = {
   INCREMENTING_STAT: 52,
 } as const;
 
-export type HeldItemEffect = EnumValues<typeof HeldItemEffect>;
+export type HeldItemEffect = ObjectValues<typeof HeldItemEffect>;

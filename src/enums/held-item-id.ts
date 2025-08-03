@@ -1,4 +1,4 @@
-import type { EnumValues } from "#types/enum-types";
+import type { ObjectValues } from "#types/type-helpers";
 
 // TODO: make category the lower 2 bytes
 export const HeldItemId = {
@@ -94,7 +94,7 @@ export const HeldItemId = {
   GIMMIGHOUL_EVO_TRACKER: 0x0A01,
 } as const;
 
-export type HeldItemId = EnumValues<typeof HeldItemId>;
+export type HeldItemId = ObjectValues<typeof HeldItemId>;
 
 type HeldItemNameMap = {
   [k in HeldItemName as (typeof HeldItemId)[k]]: k
@@ -127,7 +127,7 @@ export const HeldItemCategoryId = {
   EVO_TRACKER: 0x0A00,
 } as const;
 
-export type HeldItemCategoryId = EnumValues<typeof HeldItemCategoryId>;
+export type HeldItemCategoryId = ObjectValues<typeof HeldItemCategoryId>;
 
 const ITEM_CATEGORY_MASK = 0xFF00
 

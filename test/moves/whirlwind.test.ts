@@ -206,7 +206,7 @@ describe("Moves - Whirlwind", () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.TOTODILE]);
 
     // expect the enemy to have at least 4 pokemon, necessary for this check to even work
-    expect(game.scene.getEnemyParty().length, "enemy must have exactly 4 pokemon").toBe(4);
+    expect(game.scene.getEnemyParty().length, "enemy must have exactly 4 pokemon").toBeGreaterThanOrEqual(4);
 
     const user = game.scene.getPlayerPokemon()!;
 

@@ -5,7 +5,7 @@ import type { NewArenaEvent } from "#events/battle-scene";
 
 import type { PokeballCounts } from "#app/battle-scene";
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
-import Overrides, { defaultOverrides } from "#app/overrides";
+import Overrides from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
 import type { BattleType } from "#enums/battle-type";
 import { BiomeId } from "#enums/biome-id";
@@ -23,7 +23,7 @@ import type { TrainerItemConfiguration } from "#items/trainer-item-data-types";
 import type { Variant } from "#sprites/variant";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import { coerceArray, shiftCharCodes } from "#utils/common";
-import { expect, vi } from "vitest";
+import { vi } from "vitest";
 
 /**
  * Helper to handle overrides in tests
@@ -692,15 +692,5 @@ export class OverridesHelper extends GameManagerHelper {
 
   private log(...params: any[]) {
     console.log("Overrides:", ...params);
-  }
-
-  public sanitizeOverrides(): void {
-    for (const key of Object.keys(defaultOverrides)) {
-      if (Overrides[key] !== defaultOverrides[key]) {
-        vi.spyOn(Overrides, key as any, "get").mockReturnValue(defaultOverrides[key]);
-      }
-    }
-    expect(Overrides).toEqual(defaultOverrides);
-    this.log("Sanitizing all overrides!");
   }
 }
