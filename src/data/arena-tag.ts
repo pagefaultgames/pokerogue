@@ -930,31 +930,23 @@ class ToxicSpikesTag extends ArenaTrapTag {
       return true;
     }
 
-    // poison types will neutralize toxic spikes
     if (pokemon.isOfType(PokemonType.POISON)) {
+      // Neutralize the tag and remove it from the field.
+      // Message cannot be moved to `onRemove` as that requires a reference to the neutralizing pokemon
       this.#neutralized = true;
-      if (globalScene.arena.removeTag(this.tagType)) {
-        globalScene.phaseManager.queueMessage(
-          i18next.t("arenaTag:toxicSpikesActivateTrapPoison", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-            moveName: this.getMoveName(),
-          }),
-        );
-      }
+      globalScene.arena.removeTagOnSide(this.tagType, this.side)
+      globalScene.phaseManager.queueMessage(
+        i18next.t("arenaTag:toxicSpikesActivateTrapPoison", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          moveName: this.getMoveName(),
+        }),
+      );
       return true;
     }
 
-    if (pokemon.status) {
-      return false;
-    }
-
-    // TODO: pass quiet to the function
-    return pokemon.trySetStatus(
-      this.layers === 1 ? StatusEffect.POISON : StatusEffect.TOXIC,
-      null,
-      undefined,
-      this.getMoveName(),
-    );
+    // Attempt to poison the target, suppressing any immunity messages that arise.
+    const effect = this.layers === 1 ? StatusEffect.POISON : StatusEffect.TOXIC;
+    return pokemon.trySetStatus(effect, null, undefined, this.getMoveName(), false, true)
   }
 
   getMatchupScoreMultiplier(pokemon: Pokemon): number {
