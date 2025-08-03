@@ -17,11 +17,13 @@ import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
 import type { toDmgValue } from "utils/common";
 import type { expect } from "vitest";
-import "vitest";
+import type { PositionalTag } from "#data/positional-tags/positional-tag";
+import { PositionalTagType } from "#enums/positional-tag-type";
 import type Overrides from "#app/overrides";
 import type { ArenaTagSide } from "#enums/arena-tag-side";
 import type { PokemonMove } from "#moves/pokemon-move";
 import { toHaveArenaTagOptions } from "#test/test-utils/matchers/to-have-arena-tag";
+import { toHavePositionalTagOptions } from "#test/test-utils/matchers/to-have-positional-tag";
 
 declare module "vitest" {
   interface Assertion<T> {
@@ -64,16 +66,29 @@ declare module "vitest" {
      */
     toHaveArenaTag(expectedType: ArenaTagType, side?: ArenaTagSide): void;
 
+    /**
+     * Check whether the current {@linkcode Arena} contains the given {@linkcode PositionalTag}.
+     * @param expectedTag - A partially-filled {@linkcode PositionalTag} containing the desired properties
+     */
+    toHavePositionalTag<P extends PositionalTagType>(expectedTag: toHavePositionalTagOptions<P>): void;
+    /**
+     * Check whether the current {@linkcode Arena} contains the given number of {@linkcode PositionalTag}s.
+     * @param expectedType - The {@linkcode PositionalTagType} of the desired tag
+     * @param count - The number of instances of {@linkcode expectedType} that should be active;
+     * defaults to `1` and must be within the range `[0, 4]`
+     */
+    toHavePositionalTag(expectedType: PositionalTagType, count?: number): void;
+
     // #endregion Arena Matchers
 
     // #region Pokemon Matchers
 
     /**
      * Check whether a {@linkcode Pokemon}'s current typing includes the given types.
-     * @param expectedTypes - The expected {@linkcode PokemonType}s to check against; must have length `>0`
+     * @param expectedTags - The expected {@linkcode PokemonType}s to check against; must have length `>0`
      * @param options - The {@linkcode toHaveTypesOptions | options} passed to the matcher
      */
-    toHaveTypes(expectedTypes: PokemonType[], options?: toHaveTypesOptions): void;
+    toHaveTypes(expectedTags: PokemonType[], options?: toHaveTypesOptions): void;
 
     /**
      * Check whether a {@linkcode Pokemon} has used a move matching the given criteria.
