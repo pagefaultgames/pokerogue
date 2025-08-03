@@ -9,7 +9,7 @@ import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import { BerryModifier, PreserveBerryModifier } from "#modifiers/modifier";
 import type { ModifierOverride } from "#modifiers/modifier-type";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import type { BooleanHolder } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

@@ -171,6 +171,7 @@ export const SettingKeys = {
   UI_Volume: "UI_SOUND_EFFECTS",
   Battle_Music: "BATTLE_MUSIC",
   Show_BGM_Bar: "SHOW_BGM_BAR",
+  Hide_Username: "HIDE_USERNAME",
   Move_Touch_Controls: "MOVE_TOUCH_CONTROLS",
   Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY",
 };
@@ -626,6 +627,13 @@ export const Setting: Array<Setting> = [
     type: SettingType.DISPLAY,
   },
   {
+    key: SettingKeys.Hide_Username,
+    label: i18next.t("settings:hideUsername"),
+    options: OFF_ON,
+    default: 0,
+    type: SettingType.DISPLAY,
+  },
+  {
     key: SettingKeys.Master_Volume,
     label: i18next.t("settings:masterVolume"),
     options: VOLUME_OPTIONS,
@@ -791,6 +799,9 @@ export function setSetting(setting: string, value: number): boolean {
       break;
     case SettingKeys.Show_BGM_Bar:
       globalScene.showBgmBar = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Hide_Username:
+      globalScene.hideUsername = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Candy_Upgrade_Notification:
       if (globalScene.candyUpgradeNotification === value) {
@@ -969,6 +980,10 @@ export function setSetting(setting: string, value: number): boolean {
               {
                 label: "Română (Needs Help)",
                 handler: () => changeLocaleHandler("ro"),
+              },
+              {
+                label: "Tagalog (Needs Help)",
+                handler: () => changeLocaleHandler("tl"),
               },
               {
                 label: i18next.t("settings:back"),

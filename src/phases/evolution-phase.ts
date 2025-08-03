@@ -135,7 +135,7 @@ export class EvolutionPhase extends Phase {
 
     sprite
       .setPipelineData("ignoreTimeTint", true)
-      .setPipelineData("spriteKey", pokemon.getSpriteKey())
+      .setPipelineData("spriteKey", spriteKey)
       .setPipelineData("shiny", pokemon.shiny)
       .setPipelineData("variant", pokemon.variant);
 

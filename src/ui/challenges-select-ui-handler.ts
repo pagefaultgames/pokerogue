@@ -3,8 +3,9 @@ import type { Challenge } from "#data/challenge";
 import { Button } from "#enums/buttons";
 import { Challenges } from "#enums/challenges";
 import { Color, ShadowColor } from "#enums/color";
+import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { getLocalizedSpriteKey } from "#utils/common";
@@ -381,8 +382,7 @@ export class GameChallengesUiHandler extends UiHandler {
         this.cursorObj?.setVisible(true);
         this.updateChallengeArrows(this.startCursor.visible);
       } else {
-        globalScene.phaseManager.clearPhaseQueue();
-        globalScene.phaseManager.pushNew("TitlePhase");
+        globalScene.phaseManager.toTitleScreen();
         globalScene.phaseManager.getCurrentPhase()?.end();
       }
       success = true;

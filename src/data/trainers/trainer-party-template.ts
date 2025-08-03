@@ -144,6 +144,7 @@ export const trainerPartyTemplates = {
   FIVE_WEAK_BALANCED: new TrainerPartyTemplate(5, PartyMemberStrength.WEAK, false, true),
   SIX_WEAKER: new TrainerPartyTemplate(6, PartyMemberStrength.WEAKER),
   SIX_WEAKER_SAME: new TrainerPartyTemplate(6, PartyMemberStrength.WEAKER, true),
+  SIX_WEAK: new TrainerPartyTemplate(6, PartyMemberStrength.WEAK),
   SIX_WEAK_SAME: new TrainerPartyTemplate(6, PartyMemberStrength.WEAK, true),
   SIX_WEAK_BALANCED: new TrainerPartyTemplate(6, PartyMemberStrength.WEAK, false, true),
 

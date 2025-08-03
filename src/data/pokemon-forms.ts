@@ -18,7 +18,7 @@ import {
 } from "#data/form-change-triggers";
 import { AbilityId } from "#enums/ability-id";
 import { FormChangeItem } from "#enums/form-change-item";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";

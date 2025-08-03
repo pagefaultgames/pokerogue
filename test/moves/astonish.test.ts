@@ -7,7 +7,7 @@ import { BerryPhase } from "#phases/berry-phase";
 import { CommandPhase } from "#phases/command-phase";
 import { MoveEndPhase } from "#phases/move-end-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 

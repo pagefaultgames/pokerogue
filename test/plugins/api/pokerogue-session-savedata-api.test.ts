@@ -1,7 +1,7 @@
 import { PokerogueSessionSavedataApi } from "#api/pokerogue-session-savedata-api";
 import type { SessionSaveData } from "#system/game-data";
-import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
-import { getApiBaseUrl } from "#test/testUtils/testUtils";
+import { initServerForApiTests } from "#test/test-utils/test-file-initialization";
+import { getApiBaseUrl } from "#test/test-utils/test-utils";
 import type {
   ClearSessionSavedataRequest,
   ClearSessionSavedataResponse,
@@ -9,7 +9,7 @@ import type {
   GetSessionSavedataRequest,
   NewClearSessionSavedataRequest,
   UpdateSessionSavedataRequest,
-} from "#types/PokerogueSessionSavedataApi";
+} from "#types/api/pokerogue-session-save-data-api";
 import { HttpResponse, http } from "msw";
 import type { SetupServerApi } from "msw/node";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

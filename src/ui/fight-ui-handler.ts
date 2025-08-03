@@ -4,15 +4,16 @@ import { getTypeDamageMultiplierColor } from "#data/type";
 import { BattleType } from "#enums/battle-type";
 import { Button } from "#enums/buttons";
 import { Command } from "#enums/command";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveCategory } from "#enums/move-category";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { fixedInt, getLocalizedSpriteKey, padInt } from "#utils/common";
 import i18next from "i18next";
@@ -284,7 +285,7 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
 
     const ppColorStyle = FightUiHandler.ppRatioToColor(pp / maxPP);
 
-    //** Changes the text color and shadow according to the determined TextStyle */
+    // Changes the text color and shadow according to the determined TextStyle
     this.ppText.setColor(this.getTextColor(ppColorStyle, false)).setShadowColor(this.getTextColor(ppColorStyle, true));
     this.moveInfoOverlay.show(pokemonMove.getMove());
 

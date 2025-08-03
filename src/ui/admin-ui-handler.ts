@@ -1,12 +1,12 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
-import { TextStyle } from "#ui/text";
-import { formatText } from "#utils/common";
+import { toTitleCase } from "#utils/strings";
 
 type AdminUiHandlerService = "discord" | "google";
 type AdminUiHandlerServiceMode = "Link" | "Unlink";
@@ -21,9 +21,9 @@ export class AdminUiHandler extends FormModalUiHandler {
   private readonly httpUserNotFoundErrorCode: number = 404;
   private readonly ERR_REQUIRED_FIELD = (field: string) => {
     if (field === "username") {
-      return `${formatText(field)} is required`;
+      return `${toTitleCase(field)} is required`;
     }
-    return `${formatText(field)} Id is required`;
+    return `${toTitleCase(field)} Id is required`;
   };
   // returns a string saying whether a username has been successfully linked/unlinked to discord/google
   private readonly SUCCESS_SERVICE_MODE = (service: string, mode: string) => {

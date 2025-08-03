@@ -1,11 +1,13 @@
 pre-commit:
+  skip: 
+    - merge
+    - rebase
   commands:
     biome-lint:
       run: pnpm exec biome check --write --reporter=summary --staged --no-errors-on-unmatched
       stage_fixed: true
-      skip:
-        - merge
-        - rebase
+    ls-lint:
+      run: pnpm exec ls-lint
 
 post-merge:
   commands:

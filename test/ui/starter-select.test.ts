@@ -9,7 +9,7 @@ import { UiMode } from "#enums/ui-mode";
 import { EncounterPhase } from "#phases/encounter-phase";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
 import type { TitlePhase } from "#phases/title-phase";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import type { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
@@ -37,7 +37,7 @@ describe("UI - Starter select", () => {
   });
 
   it("Bulbasaur - shiny - variant 2 male", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -97,7 +97,7 @@ describe("UI - Starter select", () => {
   });
 
   it("Bulbasaur - shiny - variant 2 female hardy overgrow", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -159,7 +159,7 @@ describe("UI - Starter select", () => {
   });
 
   it("Bulbasaur - shiny - variant 2 female lonely chlorophyl", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -224,7 +224,7 @@ describe("UI - Starter select", () => {
   });
 
   it("Bulbasaur - shiny - variant 2 female", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -285,7 +285,7 @@ describe("UI - Starter select", () => {
   });
 
   it("Bulbasaur - not shiny", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -345,7 +345,7 @@ describe("UI - Starter select", () => {
   });
 
   it("Bulbasaur - shiny - variant 1", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -407,7 +407,7 @@ describe("UI - Starter select", () => {
   });
 
   it("Bulbasaur - shiny - variant 0", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -468,7 +468,7 @@ describe("UI - Starter select", () => {
   });
 
   it("Check if first pokemon in party is caterpie from gen 1 and 1rd row, 3rd column", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -532,7 +532,7 @@ describe("UI - Starter select", () => {
   });
 
   it("Check if first pokemon in party is nidoran_m from gen 1 and 2nd row, 4th column (cursor (9+4)-1)", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
