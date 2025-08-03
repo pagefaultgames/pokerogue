@@ -42,7 +42,7 @@ describe("Mystery Encounters", () => {
 
     await game.runToMysteryEncounter();
 
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
+    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
   });
 
   it("Encounters should not run below wave 10", async () => {
@@ -50,7 +50,7 @@ describe("Mystery Encounters", () => {
 
     await game.runToMysteryEncounter();
 
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
+    expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
   });
 
   it("Encounters should not run above wave 180", async () => {
