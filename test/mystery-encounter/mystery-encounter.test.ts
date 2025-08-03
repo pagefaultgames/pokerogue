@@ -24,7 +24,7 @@ describe("Mystery Encounters", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.startingWave(11).mysteryEncounterChance(100);
+    game.override.startingWave(12).mysteryEncounterChance(100);
   });
 
   it("Spawns a mystery encounter", async () => {
@@ -35,6 +35,14 @@ describe("Mystery Encounters", () => {
 
     await game.phaseInterceptor.to(MysteryEncounterPhase, false);
     expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(MysteryEncounterPhase.name);
+  });
+
+  it("Encounters should not run on X1 waves", async () => {
+    game.override.startingWave(11);
+
+    await game.runToMysteryEncounter();
+
+    expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
   });
 
   it("Encounters should not run below wave 10", async () => {
