@@ -1,5 +1,6 @@
 import { toEqualArrayUnsorted } from "#test/test-utils/matchers/to-equal-array-unsorted";
 import { toHaveAbilityApplied } from "#test/test-utils/matchers/to-have-ability-applied";
+import { toHaveArenaTag } from "#test/test-utils/matchers/to-have-arena-tag";
 import { toHaveBattlerTag } from "#test/test-utils/matchers/to-have-battler-tag";
 import { toHaveEffectiveStat } from "#test/test-utils/matchers/to-have-effective-stat";
 import { toHaveFainted } from "#test/test-utils/matchers/to-have-fainted";
@@ -28,6 +29,7 @@ expect.extend({
   toHaveTakenDamage,
   toHaveWeather,
   toHaveTerrain,
+  toHaveArenaTag,
   toHaveFullHp,
   toHaveStatusEffect,
   toHaveStatStage,

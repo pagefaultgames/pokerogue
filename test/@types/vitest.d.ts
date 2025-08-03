@@ -1,20 +1,27 @@
 import type { TerrainType } from "#app/data/terrain";
+import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
 import type { AbilityId } from "#enums/ability-id";
+import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { BattleStat, EffectiveStat, Stat } from "#enums/stat";
 import type { StatusEffect } from "#enums/status-effect";
 import type { WeatherType } from "#enums/weather-type";
+import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import type { ToHaveEffectiveStatMatcherOptions } from "#test/test-utils/matchers/to-have-effective-stat";
 import type { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect";
 import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
 import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
+import type { toDmgValue } from "utils/common";
 import type { expect } from "vitest";
+import "vitest";
 import type Overrides from "#app/overrides";
+import type { ArenaTagSide } from "#enums/arena-tag-side";
 import type { PokemonMove } from "#moves/pokemon-move";
+import type { OneOther } from "#test/@types/test-helpers";
 
 declare module "vitest" {
   interface Assertion {
@@ -35,6 +42,7 @@ declare module "vitest" {
      * @param expected - The expected types (in any order)
      * @param options - The options passed to the matcher
      */
+    toHaveTypes(expected: PokemonType[], options?: toHaveTypesOptions): void;
     toHaveTypes(expected: [PokemonType, ...PokemonType[]], options?: toHaveTypesOptions): void;
 
     /**
@@ -78,6 +86,24 @@ declare module "vitest" {
      * @param expectedTerrainType - The expected {@linkcode TerrainType}
      */
     toHaveTerrain(expectedTerrainType: TerrainType): void;
+
+    /**
+     * Check whether the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
+     *
+     * @param expectedType - A partially-filled {@linkcode ArenaTag} containing the desired properties
+     */
+    toHaveArenaTag<T extends ArenaTagType>(
+      expectedType: OneOther<ArenaTagTypeMap[T], "tagType" | "side"> & { tagType: T }, // intersection required bc this doesn't preserve T
+    ): void;
+    /**
+     * Check whether the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
+     *
+     * @param expectedType - The {@linkcode ArenaTagType} of the desired tag
+     * @param side - The {@linkcode ArenaTagSide | side of the field} the tag should affect, or
+     * {@linkcode ArenaTagSide.BOTH} to check both sides;
+     * default `ArenaTagSide.BOTH`
+     */
+    toHaveArenaTag(expectedType: ArenaTagType, side?: ArenaTagSide): void;
 
     /**
      * Check whether a {@linkcode Pokemon} is at full HP.
