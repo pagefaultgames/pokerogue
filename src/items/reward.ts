@@ -4,7 +4,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { EvolutionItem, FusionSpeciesFormEvolution, pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#balance/starters";
 import { tmPoolTiers, tmSpecies } from "#balance/tms";
-import { allHeldItems, allMoves, allRewards, allTrainerItems } from "#data/data-lists";
+import { allHeldItems, allMoves, allTrainerItems } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
@@ -1517,12 +1517,6 @@ export class RewardOption {
     this.upgradeCount = upgradeCount;
     this.tier = tier;
     this.cost = Math.min(Math.round(cost), Number.MAX_SAFE_INTEGER);
-  }
-}
-
-export function initRewards() {
-  for (const [key, value] of Object.entries(rewardInitObj)) {
-    allRewards[key] = value;
   }
 }
 
