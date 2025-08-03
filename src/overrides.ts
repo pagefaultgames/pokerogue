@@ -22,7 +22,6 @@ import { Unlockables } from "#enums/unlockables";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 import { HeldItemConfiguration } from "#items/held-item-data-types";
-import { type RewardOverride } from "#items/reward";
 import { TrainerItemConfiguration } from "#items/trainer-item-data-types";
 import { Variant } from "#sprites/variant";
 import { RewardSpecs } from "#types/rewards";
@@ -274,19 +273,12 @@ class DefaultOverrides {
    * STARTING_HELD_ITEM_OVERRIDE = [{name: "BERRY"}]
    * ```
    */
-  /** Override array of {@linkcode RewardOverride}s used to provide held items to first party member when starting a new game. */
   readonly STARTING_TRAINER_ITEMS_OVERRIDE: TrainerItemConfiguration = [];
-  /** Override array of {@linkcode RewardOverride}s used to provide held items to enemies on spawn. */
   readonly OPP_TRAINER_ITEMS_OVERRIDE: TrainerItemConfiguration = [];
-
-  /** Override array of {@linkcode RewardOverride}s used to provide held items to first party member when starting a new game. */
   readonly STARTING_HELD_ITEMS_OVERRIDE: HeldItemConfiguration = [];
-  /** Override array of {@linkcode RewardOverride}s used to provide held items to enemies on spawn. */
   readonly OPP_HELD_ITEMS_OVERRIDE: HeldItemConfiguration = [];
 
   /**
-   * Override array of {@linkcode RewardOverride}s used to replace the generated reward rolls after a wave.
-   *
    * If less entries are listed than rolled, only those entries will be used to replace the corresponding items while the rest randomly generated.
    * If more entries are listed than rolled, only the first X entries will be used, where X is the number of items rolled.
    *

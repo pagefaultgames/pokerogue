@@ -288,7 +288,6 @@ function getNewRewardOption(
 
 /**
  * Replaces the {@linkcode Reward} of the entries within {@linkcode options} with any
- * {@linkcode RewardOverride} entries listed in {@linkcode Overrides.REWARD_OVERRIDE}
  * up to the smallest amount of entries between {@linkcode options} and the override array.
  * @param options Array of naturally rolled {@linkcode RewardOption}s
  * @param party Array of the player's current party
