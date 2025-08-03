@@ -2,7 +2,7 @@ import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
-import { getPokemonSpeciesForm, PokemonSpecies } from "#data/pokemon-species";
+import { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { SpeciesId } from "#enums/species-id";
@@ -10,7 +10,7 @@ import { PlayerPokemon } from "#field/pokemon";
 import type { Starter } from "#ui/starter-select-ui-handler";
 import { randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 export interface DailyRunConfig {
   seed: number;

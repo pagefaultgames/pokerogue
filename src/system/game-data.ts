@@ -16,6 +16,7 @@ import { allMoves, allSpecies } from "#data/data-lists";
 import type { Egg } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import { loadPositionalTag } from "#data/positional-tags/load-positional-tag";
 import { TerrainType } from "#data/terrain";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
@@ -1095,6 +1096,10 @@ export class GameData {
               }
             }
           }
+
+          globalScene.arena.positionalTagManager.tags = sessionData.arena.positionalTags.map(tag =>
+            loadPositionalTag(tag),
+          );
 
           if (globalScene.modifiers.length) {
             console.warn("Existing modifiers not cleared on session load, deleting...");
