@@ -2,8 +2,9 @@ import { globalScene } from "#app/global-scene";
 import { allRewards } from "#data/data-lists";
 import type { HeldItemId } from "#enums/held-item-id";
 import { getRewardCategory, RewardCategoryId, RewardId } from "#enums/reward-id";
+import type { RarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
-import type { RewardFunc, RewardPoolId } from "#types/rewards";
+import type { RewardFunc, RewardPoolId, RewardSpecs } from "#types/rewards";
 import { heldItemRarities } from "./held-item-default-tiers";
 import {
   HeldItemReward,
@@ -41,31 +42,43 @@ export function generateReward(rewardFunc: RewardFunc, pregenArgs?: any[]): Rewa
   return reward instanceof RewardGenerator ? reward.generateReward(globalScene.getPlayerParty(), pregenArgs) : reward;
 }
 
-/**
- * Generates a Reward Option from a given id
- * @param rewardFunc
- * @param pregenArgs - can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
- */
-export function generateRewardOptionFromId(id: RewardPoolId, cost = 0, pregenArgs?: any[]): RewardOption | null {
+export function generateRewardOptionFromId(
+  id: RewardPoolId,
+  cost = 0,
+  tierOverride?: RarityTier,
+  upgradeCount = 0,
+  pregenArgs?: any[],
+): RewardOption | null {
   if (isHeldItemId(id)) {
     const reward = new HeldItemReward(id);
-    const tier = heldItemRarities[id];
-    return new RewardOption(reward, 0, tier, cost);
+    const tier = tierOverride ?? heldItemRarities[id];
+    return new RewardOption(reward, upgradeCount, tier, cost);
   }
 
   if (isTrainerItemId(id)) {
     const reward = new TrainerItemReward(id);
-    const tier = trainerItemRarities[id];
-    return new RewardOption(reward, 0, tier, cost);
+    const tier = tierOverride ?? trainerItemRarities[id];
+    return new RewardOption(reward, upgradeCount, tier, cost);
   }
 
   const rewardFunc = allRewards[id];
   const reward = generateReward(rewardFunc, pregenArgs);
   if (reward) {
-    const tier = rewardRarities[id];
-    return new RewardOption(reward, 0, tier, cost);
+    const tier = tierOverride ?? rewardRarities[id];
+    return new RewardOption(reward, upgradeCount, tier, cost);
   }
   return null;
+}
+
+export function generateRewardOptionFromSpecs(
+  specs: RewardSpecs,
+  cost = 0,
+  overrideTier?: RarityTier,
+): RewardOption | null {
+  if (typeof specs === "number") {
+    return generateRewardOptionFromId(specs, cost, overrideTier);
+  }
+  return generateRewardOptionFromId(specs.id, cost, overrideTier, 0, specs.args);
 }
 
 export function getPlayerShopRewardOptionsForWave(waveIndex: number, baseCost: number): RewardOption[] {

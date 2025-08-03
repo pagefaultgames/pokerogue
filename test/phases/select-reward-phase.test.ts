@@ -155,7 +155,7 @@ describe("SelectRewardPhase", () => {
     await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     scene.money = 1000000;
     const customRewards: CustomRewardSettings = {
-      guaranteedRewardFuncs: [
+      guaranteedRewardSpecs: [
         allRewards.MEMORY_MUSHROOM,
         allRewards.TM_ULTRA,
         allRewards.LEFTOVERS,
@@ -238,7 +238,7 @@ describe("SelectRewardPhase", () => {
     await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     scene.money = 1000000;
     const customRewards: CustomRewardSettings = {
-      guaranteedRewardFuncs: [allRewards.MEMORY_MUSHROOM, allRewards.TM_COMMON],
+      guaranteedRewardSpecs: [allRewards.MEMORY_MUSHROOM, allRewards.TM_COMMON],
       guaranteedRarityTiers: [RarityTier.MASTER, RarityTier.MASTER],
     };
     const selectRewardPhase = new SelectRewardPhase(0, undefined, customRewards);
@@ -261,7 +261,7 @@ describe("SelectRewardPhase", () => {
     await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     scene.money = 1000000;
     const customRewards: CustomRewardSettings = {
-      guaranteedRewardFuncs: [allRewards.MEMORY_MUSHROOM],
+      guaranteedRewardSpecs: [allRewards.MEMORY_MUSHROOM],
       guaranteedRarityTiers: [RarityTier.MASTER],
       fillRemaining: true,
     };

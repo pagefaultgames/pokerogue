@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { allRewards, allSpecies } from "#data/data-lists";
+import { allSpecies } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { Challenges } from "#enums/challenges";
@@ -11,6 +11,7 @@ import { Nature } from "#enums/nature";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { PlayerGender } from "#enums/player-gender";
 import { PokemonType } from "#enums/pokemon-type";
+import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
@@ -218,12 +219,12 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
 
         await doNewTeamPostProcess(transformations);
         setEncounterRewards({
-          guaranteedRewardFuncs: [
-            allRewards.MEMORY_MUSHROOM,
-            allRewards.ROGUE_BALL,
-            allRewards.MINT,
-            allRewards.MINT,
-            allRewards.MINT,
+          guaranteedRewardSpecs: [
+            RewardId.MEMORY_MUSHROOM,
+            RewardId.ROGUE_BALL,
+            RewardId.MINT,
+            RewardId.MINT,
+            RewardId.MINT,
           ],
           fillRemaining: false,
         });
@@ -242,7 +243,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       ],
     },
     async () => {
-      // Battle your "future" team for some item allRewards
+      // Battle your "future" team for some item RewardId
       const transformations: PokemonTransformation[] =
         globalScene.currentBattle.mysteryEncounter!.misc.teamTransformations;
 
@@ -293,7 +294,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       };
 
       const onBeforeRewards = () => {
-        // Before battle allRewards, unlock the passive on a pokemon in the player's team for the rest of the run (not permanently)
+        // Before battle RewardId, unlock the passive on a pokemon in the player's team for the rest of the run (not permanently)
         // One random pokemon will get its passive unlocked
         const passiveDisabledPokemon = globalScene.getPlayerParty().filter(p => !p.passive);
         if (passiveDisabledPokemon?.length > 0) {

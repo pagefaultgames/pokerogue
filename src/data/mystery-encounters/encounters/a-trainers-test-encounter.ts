@@ -1,11 +1,11 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { allRewards } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
 import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
@@ -164,7 +164,7 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
       encounter.setDialogueToken("eggType", i18next.t(`${namespace}:eggTypes.epic`));
       setEncounterRewards(
         {
-          guaranteedRewardFuncs: [allRewards.SACRED_ASH],
+          guaranteedRewardSpecs: [RewardId.SACRED_ASH],
           guaranteedRarityTiers: [RarityTier.ROGUE, RarityTier.ULTRA],
           fillRemaining: true,
         },

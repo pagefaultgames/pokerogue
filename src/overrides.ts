@@ -25,6 +25,7 @@ import { HeldItemConfiguration } from "#items/held-item-data-types";
 import { type RewardOverride } from "#items/reward";
 import { TrainerItemConfiguration } from "#items/trainer-item-data-types";
 import { Variant } from "#sprites/variant";
+import { RewardSpecs } from "#types/rewards";
 
 /**
  * This comment block exists to prevent IDEs from automatically removing unused imports
@@ -291,7 +292,7 @@ class DefaultOverrides {
    *
    * Note that, for all items in the array, `count` is not used.
    */
-  readonly REWARD_OVERRIDE: RewardOverride[] = [];
+  readonly REWARD_OVERRIDE: RewardSpecs[] = [];
 
   /**
    * If `true`, disable all non-scripted opponent trainer encounters.

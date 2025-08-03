@@ -1,15 +1,14 @@
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
-import { allRewards } from "#data/data-lists";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
-import type { RewardFunc, RewardPool, RewardPoolWeights } from "#types/rewards";
+import type { RewardPool, RewardPoolWeights, RewardSpecs } from "#types/rewards";
 import { isNullOrUndefined, pickWeightedIndex, randSeedInt } from "#utils/common";
 import { getPartyLuckValue } from "#utils/party";
-import { type Reward, RewardGenerator, RewardOption, type RewardOverride, TrainerItemReward } from "./reward";
+import type { RewardOption } from "./reward";
 import { rewardPool, rewardPoolWeights } from "./reward-pools";
-import { getRewardDefaultTier } from "./reward-utils";
+import { generateRewardOptionFromId, generateRewardOptionFromSpecs, isTrainerItemId } from "./reward-utils";
 
 /*
 This file still contains several functions to generate rewards from pools. The hierarchy of these functions is explained here.
@@ -36,7 +35,7 @@ export interface CustomRewardSettings {
   guaranteedRarityTiers?: RarityTier[];
   guaranteedRewardOptions?: RewardOption[];
   /** If specified, will override the next X items to be auto-generated from specific reward functions (these don't have to be pre-genned). */
-  guaranteedRewardFuncs?: RewardFunc[];
+  guaranteedRewardSpecs?: RewardSpecs[];
   /**
    * If set to `true`, will fill the remainder of shop items that were not overridden by the 3 options above, up to the `count` param value.
    * @example
@@ -68,9 +67,8 @@ export interface CustomRewardSettings {
 export function generateRewardPoolWeights(pool: RewardPool, party: Pokemon[], rerollCount = 0) {
   for (const tier of Object.keys(pool)) {
     const poolWeights = pool[tier].map(w => {
-      if (w.reward instanceof TrainerItemReward) {
-        const id = w.reward.itemId;
-        if (globalScene.trainerItems.isMaxStack(id)) {
+      if (isTrainerItemId(w.id)) {
+        if (globalScene.trainerItems.isMaxStack(w.id)) {
           return 0;
         }
       }
@@ -158,26 +156,18 @@ export function generatePlayerRewardOptions(
       options.push(getRewardOptionWithRetry(pool, weights, options, retryCount, party, tier));
     }
   } else {
-    // Guaranteed mod options first
+    // Guaranteed reward options first
     if (customRewardSettings?.guaranteedRewardOptions && customRewardSettings.guaranteedRewardOptions.length > 0) {
       options.push(...customRewardSettings.guaranteedRewardOptions!);
     }
 
-    // Guaranteed mod functions second
-    if (customRewardSettings.guaranteedRewardFuncs && customRewardSettings.guaranteedRewardFuncs.length > 0) {
-      customRewardSettings.guaranteedRewardFuncs!.forEach((mod, _i) => {
-        const rewardId = Object.keys(allRewards).find(k => allRewards[k] === mod) as string;
-        const guaranteedMod: Reward = allRewards[rewardId]?.();
-
-        // Populates item id and tier
-        const guaranteedModTier = getRewardDefaultTier(guaranteedMod);
-
-        const modType = guaranteedMod instanceof RewardGenerator ? guaranteedMod.generateReward(party) : guaranteedMod;
-        if (modType) {
-          const option = new RewardOption(modType, 0, guaranteedModTier);
-          options.push(option);
+    if (customRewardSettings?.guaranteedRewardSpecs && customRewardSettings.guaranteedRewardSpecs.length > 0) {
+      for (const specs of customRewardSettings.guaranteedRewardSpecs) {
+        const rewardOption = generateRewardOptionFromSpecs(specs);
+        if (rewardOption) {
+          options.push(rewardOption);
         }
-      });
+      }
     }
 
     // Guaranteed tiers third
@@ -285,18 +275,15 @@ function getNewRewardOption(
     return null;
   }
 
-  let reward: Reward | RewardGenerator | null = pool[tier][index].reward;
-  if (reward instanceof RewardGenerator) {
-    reward = (reward as RewardGenerator).generateReward(party);
-    if (reward === null) {
-      console.log(RarityTier[tier], upgradeCount);
-      return getNewRewardOption(pool, weights, party, tier, upgradeCount, ++retryCount);
-    }
+  const rewardOption = generateRewardOptionFromId(pool[tier][index].id, 0, tier, upgradeCount);
+  if (rewardOption === null) {
+    console.log(RarityTier[tier], upgradeCount);
+    return getNewRewardOption(pool, weights, party, tier, upgradeCount, ++retryCount);
   }
 
-  console.log(reward);
+  console.log(rewardOption);
 
-  return new RewardOption(reward as Reward, upgradeCount!, tier); // TODO: is this bang correct?
+  return rewardOption;
 }
 
 /**
@@ -306,21 +293,13 @@ function getNewRewardOption(
  * @param options Array of naturally rolled {@linkcode RewardOption}s
  * @param party Array of the player's current party
  */
-export function overridePlayerRewardOptions(options: RewardOption[], party: PlayerPokemon[]) {
+export function overridePlayerRewardOptions(options: RewardOption[]) {
   const minLength = Math.min(options.length, Overrides.REWARD_OVERRIDE.length);
   for (let i = 0; i < minLength; i++) {
-    const override: RewardOverride = Overrides.REWARD_OVERRIDE[i];
-    const rewardFunc = allRewards[override.name];
-    let reward: Reward | RewardGenerator | null = rewardFunc();
-
-    if (reward instanceof RewardGenerator) {
-      const pregenArgs = "type" in override && override.type !== null ? [override.type] : undefined;
-      reward = reward.generateReward(party, pregenArgs);
-    }
-
-    if (reward) {
-      options[i].type = reward;
-      options[i].tier = getRewardDefaultTier(reward);
+    const specs: RewardSpecs = Overrides.REWARD_OVERRIDE[i];
+    const rewardOption = generateRewardOptionFromSpecs(specs);
+    if (rewardOption) {
+      options[i] = rewardOption;
     }
   }
 }
