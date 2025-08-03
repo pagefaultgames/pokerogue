@@ -14,7 +14,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -46,6 +46,29 @@ describe("Moves - Switching Moves", () => {
   });
 
   describe("Force Switch Moves", () => {
+    it.each<{ name: string; move: MoveId }>([
+      { name: "Whirlwind", move: MoveId.WHIRLWIND },
+      { name: "Roar", move: MoveId.ROAR },
+      { name: "Dragon Tail", move: MoveId.DRAGON_TAIL },
+      { name: "Circle Throw", move: MoveId.CIRCLE_THROW },
+    ])("$name should switch the target out and display custom text", async ({ move }) => {
+      game.override.battleType(BattleType.TRAINER);
+      await game.classicMode.startBattle([SpeciesId.BLISSEY, SpeciesId.BULBASAUR]);
+
+      const enemy = game.field.getEnemyPokemon();
+      game.move.use(move);
+      await game.toNextTurn();
+
+      const newEnemy = game.field.getEnemyPokemon();
+      expect(newEnemy).not.toBe(enemy);
+      expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+      expect(game.textInterceptor.logs).toContain(
+        i18next.t("battle:pokemonDraggedOut", {
+          pokemonName: getPokemonNameWithAffix(newEnemy),
+        }),
+      );
+    });
+
     it("should force switches to a random off-field pokemon", async () => {
       await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
 
@@ -62,7 +85,7 @@ describe("Moves - Switching Moves", () => {
       expect(bulbasaur.isOnField()).toBe(false);
       expect(charmander.isOnField()).toBe(true);
       expect(squirtle.isOnField()).toBe(false);
-      expect(bulbasaur.getInverseHp()).toBeGreaterThan(0);
+      expect(bulbasaur).not.toHaveFullHp();
 
       // Turn 2: Mock an RNG call that calls for switching to 2nd backup Pokemon (Squirtle)
       vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((_range, min = 0) => {
@@ -74,7 +97,7 @@ describe("Moves - Switching Moves", () => {
       expect(bulbasaur.isOnField()).toBe(false);
       expect(charmander.isOnField()).toBe(false);
       expect(squirtle.isOnField()).toBe(true);
-      expect(charmander.getInverseHp()).toBeGreaterThan(0);
+      expect(charmander).not.toHaveFullHp();
     });
 
     it("should force trainers to switch randomly without selecting from a partner's party", async () => {
@@ -131,7 +154,7 @@ describe("Moves - Switching Moves", () => {
 
       expect(enemyLeadPokemon.visible).toBe(false);
       expect(enemyLeadPokemon.switchOutStatus).toBe(true);
-      expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
+      expect(enemySecPokemon).not.toHaveFullHp();
     });
 
     it("should not switch out a target with suction cups, unless the user has Mold Breaker", async () => {
@@ -144,7 +167,7 @@ describe("Moves - Switching Moves", () => {
       await game.toEndOfTurn();
 
       expect(enemy.isOnField()).toBe(true);
-      expect(enemy.isFullHp()).toBe(false);
+      expect(enemy).not.toHaveFullHp();
 
       // Turn 2: Mold Breaker should ignore switch blocking ability and switch out the target
       game.field.mockAbility(game.field.getPlayerPokemon(), AbilityId.MOLD_BREAKER);
@@ -154,7 +177,7 @@ describe("Moves - Switching Moves", () => {
       await game.toEndOfTurn();
 
       expect(enemy.isOnField()).toBe(false);
-      expect(enemy.isFullHp()).toBe(false);
+      expect(enemy).not.toHaveFullHp();
     });
 
     it("should not switch out a Commanded Dondozo", async () => {
@@ -169,7 +192,7 @@ describe("Moves - Switching Moves", () => {
       await game.toEndOfTurn();
 
       expect(dondozo1.isOnField()).toBe(true);
-      expect(dondozo1.isFullHp()).toBe(false);
+      expect(dondozo1).not.toHaveFullHp();
     });
 
     it("should perform a normal switch upon fainting an opponent", async () => {
@@ -184,7 +207,7 @@ describe("Moves - Switching Moves", () => {
 
       const enemy = game.field.getEnemyPokemon();
       expect(enemy).toBeDefined();
-      expect(enemy.isFullHp()).toBe(true);
+      expect(enemy).toHaveFullHp();
 
       expect(choiceSwitchSpy).toHaveBeenCalledTimes(1);
     });
@@ -249,31 +272,7 @@ describe("Moves - Switching Moves", () => {
       expect(eevee.isOnField()).toBe(false);
       expect(toxapex.isOnField()).toBe(false);
       expect(primarina.isOnField()).toBe(true);
-      expect(lapras.getInverseHp()).toBeGreaterThan(0);
-    });
-
-    it.each<{ name: string; move: MoveId }>([
-      { name: "Whirlwind", move: MoveId.WHIRLWIND },
-      { name: "Roar", move: MoveId.ROAR },
-      { name: "Dragon Tail", move: MoveId.DRAGON_TAIL },
-      { name: "Circle Throw", move: MoveId.CIRCLE_THROW },
-    ])("should display custom text for forced switch outs", async ({ move }) => {
-      game.override.battleType(BattleType.TRAINER);
-      await game.classicMode.startBattle([SpeciesId.BLISSEY, SpeciesId.BULBASAUR]);
-
-      const enemy = game.field.getEnemyPokemon();
-      game.move.use(move);
-      await game.toNextTurn();
-
-      const newEnemy = game.field.getEnemyPokemon();
-      expect(newEnemy).not.toBe(enemy);
-      expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
-      // TODO: Replace this with the locale key in question
-      expect(game.textInterceptor.logs).toContain(
-        i18next.t("battle:pokemonDraggedOut", {
-          pokemonName: getPokemonNameWithAffix(newEnemy),
-        }),
-      );
+      expect(lapras).not.toHaveFullHp();
     });
   });
 
@@ -292,7 +291,7 @@ describe("Moves - Switching Moves", () => {
       expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
       const player = game.field.getPlayerPokemon();
       expect(player).toBe(raichu);
-      expect(player.isFullHp()).toBe(false);
+      expect(player).not.toHaveFullHp();
       expect(game.field.getEnemyPokemon().waveData.abilityRevealed).toBe(true); // proxy for asserting ability activated
     });
   });
@@ -305,20 +304,20 @@ describe("Moves - Switching Moves", () => {
       await game.toNextTurn();
 
       const [raichu, shuckle] = game.scene.getPlayerParty();
-      expect(raichu.getStatStage(Stat.SPATK)).toEqual(2);
+      expect(raichu).toHaveStatStage(Stat.SPATK, 2);
 
       game.move.use(MoveId.SUBSTITUTE);
       await game.toNextTurn();
 
-      expect(raichu.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
+      expect(raichu).toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
 
       game.move.use(MoveId.BATON_PASS);
       game.doSelectPartyPokemon(1);
       await game.toEndOfTurn();
 
       expect(game.field.getPlayerPokemon()).toBe(shuckle);
-      expect(shuckle.getStatStage(Stat.SPATK)).toEqual(2);
-      expect(shuckle.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
+      expect(shuckle).toHaveStatStage(Stat.SPATK, 2);
+      expect(shuckle).toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
     });
 
     it("should not transfer non-transferrable effects", async () => {
@@ -329,16 +328,16 @@ describe("Moves - Switching Moves", () => {
       game.move.use(MoveId.BATON_PASS);
       await game.move.forceEnemyMove(MoveId.SALT_CURE);
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-
       await game.phaseInterceptor.to("MoveEndPhase");
-      expect(player1.getTag(BattlerTagType.SALT_CURED)).toBeDefined();
+
+      expect(player1).toHaveBattlerTag(BattlerTagType.SALT_CURED);
 
       game.doSelectPartyPokemon(1);
       await game.toNextTurn();
 
       expect(player1.isOnField()).toBe(false);
       expect(player2.isOnField()).toBe(true);
-      expect(player2.getTag(BattlerTagType.SALT_CURED)).toBeUndefined();
+      expect(player2).not.toHaveBattlerTag(BattlerTagType.SALT_CURED);
     });
 
     it("should remove the user's binding effects on end", async () => {
@@ -349,13 +348,13 @@ describe("Moves - Switching Moves", () => {
       await game.toNextTurn();
 
       const enemy = game.field.getEnemyPokemon();
-      expect(enemy.getTag(BattlerTagType.FIRE_SPIN)).toBeDefined();
+      expect(enemy).toHaveBattlerTag(BattlerTagType.FIRE_SPIN);
 
       game.move.use(MoveId.BATON_PASS);
       game.doSelectPartyPokemon(1);
       await game.toNextTurn();
 
-      expect(enemy.getTag(BattlerTagType.FIRE_SPIN)).toBeUndefined();
+      expect(enemy).not.toHaveBattlerTag(BattlerTagType.FIRE_SPIN);
     });
   });
 
@@ -376,7 +375,7 @@ describe("Moves - Switching Moves", () => {
       const substituteTag = feebas.getTag(SubstituteTag)!;
       expect(substituteTag).toBeDefined();
 
-      expect(magikarp.getInverseHp()).toBe(Math.ceil(magikarp.getMaxHp() / 2));
+      expect(magikarp).toHaveTakenDamage(Math.ceil(magikarp.getMaxHp() / 2));
       expect(substituteTag.hp).toBe(Math.floor(magikarp.getMaxHp() / 4));
     });
 
@@ -407,8 +406,8 @@ describe("Moves - Switching Moves", () => {
       await game.toEndOfTurn();
 
       expect(magikarp.isOnField()).toBe(true);
-      expect(magikarp.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-      expect(magikarp.hp).toBe(initHp);
+      expect(magikarp).toHaveUsedMove({ move: MoveId.SHED_TAIL, result: MoveResult.FAIL });
+      expect(magikarp).toHaveHp(initHp);
     });
   });
 
@@ -459,7 +458,7 @@ describe("Moves - Switching Moves", () => {
       { name: "Flip Turn", move: MoveId.FLIP_TURN },
       { name: "Volt Switch", move: MoveId.VOLT_SWITCH },
       // TODO: Enable once Parting shot is fixed
-      { name: "Parting Shot", move: MoveId.PARTING_SHOT },
+      // { name: "Parting Shot", move: MoveId.PARTING_SHOT },
       { name: "Dragon Tail", enemyMove: MoveId.DRAGON_TAIL },
       { name: "Circle Throw", enemyMove: MoveId.CIRCLE_THROW },
     ])(

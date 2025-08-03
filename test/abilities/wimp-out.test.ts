@@ -59,7 +59,7 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
     expect(pokemon2.species.speciesId).not.toBe(SpeciesId.WIMPOD);
 
     expect(pokemon1.species.speciesId).toBe(SpeciesId.WIMPOD);
-    expect(pokemon1).toBeFainted();
+    expect(pokemon1).toHaveFainted();
     expect(pokemon1.getHpRatio()).toBeLessThan(0.5);
   }
 
@@ -79,7 +79,7 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
 
     // Wimpod switched out after taking a hit, canceling its upcoming MoveEffectPhase before it could attack
     confirmSwitch();
-    expect(game.field.getEnemyPokemon().).toHaveFullHp();
+    expect(game.field.getEnemyPokemon()).toHaveFullHp();
     expect(game.phaseInterceptor.log.filter(phase => phase === "MoveEffectPhase")).toHaveLength(1);
   });
 
