@@ -8,7 +8,7 @@ import { isNullOrUndefined, pickWeightedIndex, randSeedInt } from "#utils/common
 import { getPartyLuckValue } from "#utils/party";
 import type { RewardOption } from "./reward";
 import { rewardPool, rewardPoolWeights } from "./reward-pools";
-import { generateRewardOptionFromId, generateRewardOptionFromSpecs, isTrainerItemId } from "./reward-utils";
+import { generateRewardOptionFromId, isTrainerItemId } from "./reward-utils";
 
 /*
 This file still contains several functions to generate rewards from pools. The hierarchy of these functions is explained here.
@@ -160,7 +160,7 @@ export function generatePlayerRewardOptions(
 
     if (customRewardSettings?.guaranteedRewardSpecs && customRewardSettings.guaranteedRewardSpecs.length > 0) {
       for (const specs of customRewardSettings.guaranteedRewardSpecs) {
-        const rewardOption = generateRewardOptionFromSpecs(specs);
+        const rewardOption = generateRewardOptionFromId(specs);
         if (rewardOption) {
           options.push(rewardOption);
         }
@@ -287,13 +287,12 @@ function getNewRewardOption(
  * Replaces the {@linkcode Reward} of the entries within {@linkcode options} with any
  * up to the smallest amount of entries between {@linkcode options} and the override array.
  * @param options Array of naturally rolled {@linkcode RewardOption}s
- * @param party Array of the player's current party
  */
 export function overridePlayerRewardOptions(options: RewardOption[]) {
   const minLength = Math.min(options.length, Overrides.REWARD_OVERRIDE.length);
   for (let i = 0; i < minLength; i++) {
     const specs: RewardSpecs = Overrides.REWARD_OVERRIDE[i];
-    const rewardOption = generateRewardOptionFromSpecs(specs);
+    const rewardOption = generateRewardOptionFromId(specs);
     if (rewardOption) {
       options[i] = rewardOption;
     }
