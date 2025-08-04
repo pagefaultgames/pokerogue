@@ -1312,8 +1312,8 @@ export class MoveEffectAttr extends MoveAttr {
   }
 
   /** Applies move effects so long as they are able based on {@linkcode canApply} */
-  apply(user: Pokemon, target: Pokemon, move: Move, _args?: any[]): boolean {
-    return this.canApply(user, target, move, _args);
+  apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
+    return this.canApply(user, target, move, args);
   }
 
   /**
