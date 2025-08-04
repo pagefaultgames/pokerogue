@@ -18,7 +18,7 @@ import type { LevelMoves } from "#balance/pokemon-level-moves";
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#balance/pokemon-level-moves";
 import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
-import { reverseCompatibleTms, tmPoolTiers, tmSpecies } from "#balance/tms";
+import { tmSpecies } from "#balance/tms";
 import type { SuppressAbilitiesTag } from "#data/arena-tag";
 import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import {
@@ -63,6 +63,7 @@ import type { PokemonSpeciesForm } from "#data/pokemon-species";
 import { PokemonSpecies } from "#data/pokemon-species";
 import { getRandomStatus, getStatusEffectOverlapText, Status } from "#data/status-effect";
 import { getTerrainBlockMessage, TerrainType } from "#data/terrain";
+import { tmPoolTiers } from "#data/tms";
 import type { TypeDamageMultiplier } from "#data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#data/type";
 import { AbilityId } from "#enums/ability-id";
@@ -5707,6 +5708,11 @@ export class PlayerPokemon extends Pokemon {
     this.generateCompatibleTms();
   }
 
+  public override destroy(): void {
+    // TODO: put code here to delete data from `speciesTmList` if last player pokemon of this species was just destroyed
+    super.destroy();
+  }
+
   initBattleInfo(): void {
     this.battleInfo = new PlayerBattleInfo();
     this.battleInfo.initInfo(this);
@@ -5736,6 +5742,7 @@ export class PlayerPokemon extends Pokemon {
     return this.getFieldIndex();
   }
 
+  // TODO: change this
   generateCompatibleTms(): void {
     this.compatibleTms = [];
 
@@ -5757,9 +5764,6 @@ export class PlayerPokemon extends Pokemon {
           compatible = true;
           break;
         }
-      }
-      if (reverseCompatibleTms.indexOf(moveId) > -1) {
-        compatible = !compatible;
       }
       if (compatible) {
         this.compatibleTms.push(moveId);
