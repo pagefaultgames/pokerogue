@@ -4,7 +4,7 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { EvolutionItem, pokemonEvolutions } from "#balance/pokemon-evolutions";
-import { tmPoolTiers, tmSpecies } from "#balance/tms";
+import { tmPoolTiers } from "#balance/tms";
 import { getBerryEffectDescription, getBerryName } from "#data/berry";
 import { allMoves, modifierTypes } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
@@ -1144,7 +1144,7 @@ export class TmModifierType extends PokemonModifierType {
 
   get name(): string {
     return i18next.t("modifierType:ModifierType.TmModifierType.name", {
-      moveId: padInt(Object.keys(tmSpecies).indexOf(this.moveId.toString()) + 1, 3),
+      moveId: padInt(Object.keys(tmPoolTiers).indexOf(this.moveId.toString()) + 1, 3),
       moveName: allMoves[this.moveId].name,
     });
   }

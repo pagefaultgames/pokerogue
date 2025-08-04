@@ -13,10 +13,12 @@ import {
   pokemonSpeciesLevelMoves,
 } from "#balance/pokemon-level-moves";
 import { speciesStarterCosts } from "#balance/starters";
+import { speciesFormTmList, speciesTmList } from "#balance/tms";
 import type { GrowthRate } from "#data/exp";
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
 import { DexAttr } from "#enums/dex-attr";
+import type { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
@@ -349,6 +351,17 @@ export abstract class PokemonSpeciesForm {
     const isVariant =
       shiny && variantData[variantDataIndex] && variant !== undefined && variantData[variantDataIndex][variant];
     return `pokemon_icons_${this.generation}${isVariant ? "v" : ""}`;
+  }
+
+  getCompatibleTms(formIndex?: number): MoveId[] {
+    const tms: MoveId[] = [];
+    tms.push(...speciesTmList[this.speciesId]);
+    if (speciesFormTmList.hasOwnProperty(this.speciesId)) {
+      formIndex = this.formIndex ?? formIndex ?? -1;
+      const formKey = getPokemonSpecies(this.speciesId).forms[formIndex].formKey;
+      tms.push(...(speciesFormTmList[this.speciesId][formKey] ?? []));
+    }
+    return tms;
   }
 
   getIconId(female: boolean, formIndex?: number, shiny?: boolean, variant?: number): string {

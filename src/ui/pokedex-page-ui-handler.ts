@@ -16,7 +16,6 @@ import {
   getValueReductionCandyCounts,
   speciesStarterCosts,
 } from "#balance/starters";
-import { speciesTmMoves } from "#balance/tms";
 import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
 import { Egg, getEggTierForSpecies } from "#data/egg";
 import { GrowthRate, getGrowthRateColor } from "#data/exp";
@@ -841,10 +840,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     );
 
     this.tmMoves =
-      speciesTmMoves[species.speciesId]
-        ?.filter(m => (Array.isArray(m) ? m[0] === formKey : true))
-        .map(m => (Array.isArray(m) ? m[1] : m))
-        .sort((a, b) => (allMoves[a].name > allMoves[b].name ? 1 : -1)) ?? [];
+      species.getCompatibleTms(formIndex).sort((a, b) => (allMoves[a].name > allMoves[b].name ? 1 : -1)) ?? [];
 
     const passiveId = starterPassiveAbilities.hasOwnProperty(species.speciesId)
       ? species.speciesId

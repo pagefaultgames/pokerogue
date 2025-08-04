@@ -18,7 +18,7 @@ import type { LevelMoves } from "#balance/pokemon-level-moves";
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#balance/pokemon-level-moves";
 import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
-import { reverseCompatibleTms, tmPoolTiers, tmSpecies } from "#balance/tms";
+import { tmPoolTiers } from "#balance/tms";
 import type { SuppressAbilitiesTag } from "#data/arena-tag";
 import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import {
@@ -3084,27 +3084,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (this.hasTrainer()) {
-      const tms = Object.keys(tmSpecies);
-      for (const tm of tms) {
-        const moveId = Number.parseInt(tm) as MoveId;
-        let compatible = false;
-        for (const p of tmSpecies[tm]) {
-          if (Array.isArray(p)) {
-            if (
-              p[0] === this.species.speciesId ||
-              (this.fusionSpecies &&
-                p[0] === this.fusionSpecies.speciesId &&
-                p.slice(1).indexOf(this.species.forms[this.formIndex]) > -1)
-            ) {
-              compatible = true;
-              break;
-            }
-          } else if (p === this.species.speciesId || (this.fusionSpecies && p === this.fusionSpecies.speciesId)) {
-            compatible = true;
-            break;
-          }
-        }
-        if (compatible && !movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
+      const tmset = new Set(this.species.getCompatibleTms(this.formIndex));
+      if (this.fusionSpecies) {
+        this.fusionSpecies.getCompatibleTms(this.fusionFormIndex).forEach(m => tmset.add(m));
+      }
+      const tms = Array.from(tmset);
+      for (const moveId of tms) {
+        if (!movePool.some(m => m[0] === moveId) && !allMoves[moveId].name.endsWith(" (N)")) {
           if (tmPoolTiers[moveId] === ModifierTier.COMMON && this.level >= 15) {
             movePool.push([moveId, 4]);
           } else if (tmPoolTiers[moveId] === ModifierTier.GREAT && this.level >= 30) {
@@ -5737,34 +5723,11 @@ export class PlayerPokemon extends Pokemon {
   }
 
   generateCompatibleTms(): void {
-    this.compatibleTms = [];
-
-    const tms = Object.keys(tmSpecies);
-    for (const tm of tms) {
-      const moveId = Number.parseInt(tm) as MoveId;
-      let compatible = false;
-      for (const p of tmSpecies[tm]) {
-        if (Array.isArray(p)) {
-          const [pkm, form] = p;
-          if (
-            (pkm === this.species.speciesId || (this.fusionSpecies && pkm === this.fusionSpecies.speciesId)) &&
-            form === this.getFormKey()
-          ) {
-            compatible = true;
-            break;
-          }
-        } else if (p === this.species.speciesId || (this.fusionSpecies && p === this.fusionSpecies.speciesId)) {
-          compatible = true;
-          break;
-        }
-      }
-      if (reverseCompatibleTms.indexOf(moveId) > -1) {
-        compatible = !compatible;
-      }
-      if (compatible) {
-        this.compatibleTms.push(moveId);
-      }
+    const tms = new Set(this.species.getCompatibleTms(this.formIndex));
+    if (this.fusionSpecies) {
+      this.fusionSpecies.getCompatibleTms(this.fusionFormIndex).forEach(m => tms.add(m));
     }
+    this.compatibleTms = Array.from(tms);
   }
 
   tryPopulateMoveset(moveset: StarterMoveset): boolean {
