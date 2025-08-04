@@ -111,7 +111,7 @@ export class ClassicModeHelper extends GameManagerHelper {
    * @example
    * ```ts
    * await game.classicMode.runToSummon([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA])
-   * await game.queueStartOfBattleSwitch(1);
+   * await game.startBattleWithSwitch(1);
    * ```
    */
   public async startBattleWithSwitch(pokemonIndex: number): Promise<void> {
