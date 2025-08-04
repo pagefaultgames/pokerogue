@@ -262,12 +262,6 @@ export class PokemonTempSummonData {
    * {@linkcode MoveId.FAKE_OUT | Fake Out} and {@linkcode MoveId.FIRST_IMPRESSION | First Impression}).
    */
   waveTurnCount = 1;
-  /**
-   * An array containing all moves this Pokemon has used since the start of the wave without switching out.
-   * Reset on switch and new wave.
-   * Used to calculate {@link https://bulbapedia.bulbagarden.net/wiki/Protection | Protecting moves}' fail chances.
-   */
-  waveMoveHistory: TurnMove[] = [];
 }
 
 /**

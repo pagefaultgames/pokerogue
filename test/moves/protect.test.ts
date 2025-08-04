@@ -85,7 +85,7 @@ describe("Moves - Protect", () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const charizard = game.scene.getPlayerPokemon()!;
-    charizard.tempSummonData.waveMoveHistory = [
+    charizard.summonData.moveHistory = [
       { move: MoveId.ENDURE, result: MoveResult.SUCCESS, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL },
       {
         move: MoveId.SPIKY_SHIELD,

@@ -4443,7 +4443,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     turnMove.turn = globalScene.currentBattle?.turn;
     this.getMoveHistory().push(turnMove);
-    this.tempSummonData.waveMoveHistory.push(turnMove);
   }
 
   /**
@@ -5096,7 +5095,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   resetWaveData(): void {
     this.waveData = new PokemonWaveData();
     this.tempSummonData.waveTurnCount = 1;
-    this.tempSummonData.waveMoveHistory = [];
   }
 
   resetTera(): void {
