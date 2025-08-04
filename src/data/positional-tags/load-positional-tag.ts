@@ -25,19 +25,15 @@ export function loadPositionalTag<T extends PositionalTagType>({
  * This function does not perform any checking if the added tag is valid.
  */
 export function loadPositionalTag(tag: SerializedPositionalTag): PositionalTag;
-export function loadPositionalTag<T extends PositionalTagType>(tag: serializedPosTagMap[T]): posTagInstanceMap[T] {
+export function loadPositionalTag(tag: SerializedPositionalTag): PositionalTag {
   // Update the global arena flyout
-
   globalScene.arena.eventTarget.dispatchEvent(new PositionalTagAddedEvent(tag));
 
+  // Create the new tag
+  // TODO: review how many type assertions we need here
   const { tagType, ...rest } = tag;
-  // Note: We need 2 type assertions here:
-  // 1 because TS doesn't narrow the type of TagClass correctly based on `T`.
-  // It converts it into `new (DelayedAttackTag | WishTag) => DelayedAttackTag & WishTag`
-  const tagClass = posTagConstructorMap[tagType] as new (args: posTagParamMap[T]) => posTagInstanceMap[T];
-  // 2 because TS doesn't narrow the type of `rest` correctly
-  // (from `Omit<serializedPosTagParamMap[T], "tagType"> into `posTagParamMap[T]`)
-  return new tagClass(rest as unknown as posTagParamMap[T]);
+  const tagClass = posTagConstructorMap[tagType];
+  return new tagClass(rest);
 }
 
 /** Const object mapping tag types to their constructors. */
