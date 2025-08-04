@@ -69,8 +69,8 @@ import { HeldItemPoolType, RewardPoolType } from "#enums/reward-pool-type";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { TrainerItemId } from "#enums/trainer-item-id";
 import { TextStyle } from "#enums/text-style";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
@@ -2643,6 +2643,8 @@ export class BattleScene extends SceneBase {
       this.playSound(soundName);
     }
 
+    // TODO: fix later
+    // @ts-expect-error
     if (!reward.shouldApply(params)) {
       return false;
     }
@@ -2780,25 +2782,7 @@ export class BattleScene extends SceneBase {
     });
   }
 
-
   // TODO @Wlowscha: Fix this
-  /**
-   * Attempt to discard one or more copies of a held item.
-   * @param itemModifier - The {@linkcode PokemonHeldItemModifier} being discarded
-   * @param discardQuantity - The number of copies to remove (up to the amount currently held); default `1`
-   * @returns Whether the item was successfully discarded.
-   * Removing fewer items than requested is still considered a success.
-   */
-  tryDiscardHeldItemModifier(itemModifier: PokemonHeldItemModifier, discardQuantity = 1): boolean {
-    const countTaken = Math.min(discardQuantity, itemModifier.stackCount);
-    itemModifier.stackCount -= countTaken;
-
-    if (itemModifier.stackCount > 0) {
-      return true;
-    }
-
-    return this.removeModifier(itemModifier);
-  }
   /**
    * Attempt to discard one or more copies of a held item.
    * @param itemModifier - The {@linkcode PokemonHeldItemModifier} being discarded

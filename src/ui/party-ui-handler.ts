@@ -2160,6 +2160,7 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
    * @remarks
    * This will also reveal the button if it is currently hidden.
    */
+  // TODO: Reminder to fix
   public toggleIcon(partyMode: PartyUiMode.MODIFIER_TRANSFER | PartyUiMode.DISCARD): void {
     this.setActive(true).setVisible(true);
     switch (partyMode) {
