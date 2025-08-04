@@ -1308,7 +1308,7 @@ export class MoveEffectAttr extends MoveAttr {
    * @returns true if basic application of the ability attribute should be possible
    */
   canApply(user: Pokemon, target: Pokemon, move: Move, _args?: any[]) {
-    return (this.selfTarget ? user : target).hp > 0
+    return !(this.selfTarget ? user : target).isFainted();
   }
 
   /** Applies move effects so long as they are able based on {@linkcode canApply} */
