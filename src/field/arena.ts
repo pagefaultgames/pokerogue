@@ -1,52 +1,56 @@
+// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
+import type { PositionalTag } from "#data/positional-tags/positional-tag";
+// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
+
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import type { BiomeTierTrainerPools, PokemonPools } from "#app/data/balance/biomes";
-import { biomePokemonPools, BiomePoolTier, biomeTrainerPools } from "#app/data/balance/biomes";
-import { randSeedInt, NumberHolder, isNullOrUndefined, type Constructor } from "#app/utils/common";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import Overrides from "#app/overrides";
+import type { BiomeTierTrainerPools, PokemonPools } from "#balance/biomes";
+import { BiomePoolTier, biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
+import type { ArenaTag } from "#data/arena-tag";
+import { ArenaTrapTag, getArenaTag } from "#data/arena-tag";
+import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
+import type { PokemonSpecies } from "#data/pokemon-species";
+import { PositionalTagManager } from "#data/positional-tags/positional-tag-manager";
+import { getTerrainClearMessage, getTerrainStartMessage, Terrain, TerrainType } from "#data/terrain";
 import {
-  getTerrainClearMessage,
-  getTerrainStartMessage,
+  getLegendaryWeatherContinuesMessage,
   getWeatherClearMessage,
   getWeatherStartMessage,
-  getLegendaryWeatherContinuesMessage,
   Weather,
-} from "#app/data/weather";
-import { CommonAnim } from "#app/data/battle-anims";
-import type { PokemonType } from "#enums/pokemon-type";
-import type Move from "#app/data/moves/move";
-import type { ArenaTag } from "#app/data/arena-tag";
-import { ArenaTagSide, ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
-import type { BattlerIndex } from "#app/battle";
-import { Terrain, TerrainType } from "#app/data/terrain";
-import {
-  applyAbAttrs,
-  applyPostTerrainChangeAbAttrs,
-  applyPostWeatherChangeAbAttrs,
-  PostTerrainChangeAbAttr,
-  PostWeatherChangeAbAttr,
-  TerrainEventTypeChangeAbAttr,
-} from "#app/data/abilities/ability";
-import type Pokemon from "#app/field/pokemon";
-import Overrides from "#app/overrides";
-import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
+} from "#data/weather";
+import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
+import type { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
+import { CommonAnim } from "#enums/move-anims-common";
 import type { MoveId } from "#enums/move-id";
+import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
-import { AbilityId } from "#enums/ability-id";
-import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
-import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { WeatherType } from "#enums/weather-type";
-import { FieldEffectModifier } from "#app/modifier/modifier";
+import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
+import type { Pokemon } from "#field/pokemon";
+import { FieldEffectModifier } from "#modifiers/modifier";
+import type { Move } from "#moves/move";
+import type { AbstractConstructor } from "#types/type-helpers";
+import { type Constructor, isNullOrUndefined, NumberHolder, randSeedInt } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 export class Arena {
   public biomeType: BiomeId;
   public weather: Weather | null;
   public terrain: Terrain | null;
-  public tags: ArenaTag[];
+  /** All currently-active {@linkcode ArenaTag}s on both sides of the field. */
+  public tags: ArenaTag[] = [];
+  /**
+   * All currently-active {@linkcode PositionalTag}s on both sides of the field,
+   * sorted by tag type.
+   */
+  public positionalTagManager: PositionalTagManager = new PositionalTagManager();
+
   public bgm: string;
   public ignoreAbilities: boolean;
   public ignoringEffectSource: BattlerIndex | null;
@@ -66,7 +70,6 @@ export class Arena {
 
   constructor(biome: BiomeId, bgm: string, playerFaints = 0) {
     this.biomeType = biome;
-    this.tags = [];
     this.bgm = bgm;
     this.trainerPool = biomeTrainerPools[biome];
     this.updatePoolsForTimeOfDay();
@@ -152,6 +155,7 @@ export class Arena {
     if (!tierPool.length) {
       ret = globalScene.randomSpecies(waveIndex, level);
     } else {
+      // TODO: should this use `randSeedItem`?
       const entry = tierPool[randSeedInt(tierPool.length)];
       let species: SpeciesId;
       if (typeof entry === "number") {
@@ -163,6 +167,7 @@ export class Arena {
           if (level >= levelThreshold) {
             const speciesIds = entry[levelThreshold];
             if (speciesIds.length > 1) {
+              // TODO: should this use `randSeedItem`?
               species = speciesIds[randSeedInt(speciesIds.length)];
             } else {
               species = speciesIds[0];
@@ -175,19 +180,11 @@ export class Arena {
       ret = getPokemonSpecies(species!);
 
       if (ret.subLegendary || ret.legendary || ret.mythical) {
-        switch (true) {
-          case ret.baseTotal >= 720:
-            regen = level < 90;
-            break;
-          case ret.baseTotal >= 670:
-            regen = level < 70;
-            break;
-          case ret.baseTotal >= 580:
-            regen = level < 50;
-            break;
-          default:
-            regen = level < 30;
-            break;
+        const waveDifficulty = globalScene.gameMode.getWaveForDifficulty(waveIndex);
+        if (ret.baseTotal >= 660) {
+          regen = waveDifficulty < 80; // Wave 50+ in daily (however, max Daily wave is 50 currently so not possible)
+        } else {
+          regen = waveDifficulty < 55; // Wave 25+ in daily
         }
       }
     }
@@ -262,7 +259,7 @@ export class Arena {
             return 5;
         }
         break;
-      case SpeciesId.LYCANROC:
+      case SpeciesId.LYCANROC: {
         const timeOfDay = this.getTimeOfDay();
         switch (timeOfDay) {
           case TimeOfDay.DAY:
@@ -274,6 +271,7 @@ export class Arena {
             return 1;
         }
         break;
+      }
     }
 
     return 0;
@@ -297,8 +295,8 @@ export class Arena {
    */
   trySetWeatherOverride(weather: WeatherType): boolean {
     this.weather = new Weather(weather, 0);
-    globalScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
-    globalScene.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
+    globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, CommonAnim.SUNNY + (weather - 1));
+    globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
     return true;
   }
 
@@ -328,10 +326,14 @@ export class Arena {
       this.weather?.isImmutable() &&
       ![WeatherType.HARSH_SUN, WeatherType.HEAVY_RAIN, WeatherType.STRONG_WINDS, WeatherType.NONE].includes(weather)
     ) {
-      globalScene.unshiftPhase(
-        new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (oldWeatherType - 1), true),
+      globalScene.phaseManager.unshiftNew(
+        "CommonAnimPhase",
+        undefined,
+        undefined,
+        CommonAnim.SUNNY + (oldWeatherType - 1),
+        true,
       );
-      globalScene.queueMessage(getLegendaryWeatherContinuesMessage(oldWeatherType)!);
+      globalScene.phaseManager.queueMessage(getLegendaryWeatherContinuesMessage(oldWeatherType)!);
       return false;
     }
 
@@ -348,10 +350,16 @@ export class Arena {
     ); // TODO: is this bang correct?
 
     if (this.weather) {
-      globalScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (weather - 1), true));
-      globalScene.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
+      globalScene.phaseManager.unshiftNew(
+        "CommonAnimPhase",
+        undefined,
+        undefined,
+        CommonAnim.SUNNY + (weather - 1),
+        true,
+      );
+      globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
     } else {
-      globalScene.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
+      globalScene.phaseManager.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
     }
 
     globalScene
@@ -361,7 +369,7 @@ export class Arena {
         pokemon.findAndRemoveTags(
           t => "weatherTypes" in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather),
         );
-        applyPostWeatherChangeAbAttrs(PostWeatherChangeAbAttr, pokemon, weather);
+        applyAbAttrs("PostWeatherChangeAbAttr", { pokemon, weather });
       });
 
     return true;
@@ -431,11 +439,16 @@ export class Arena {
 
     if (this.terrain) {
       if (!ignoreAnim) {
-        globalScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.MISTY_TERRAIN + (terrain - 1)));
+        globalScene.phaseManager.unshiftNew(
+          "CommonAnimPhase",
+          undefined,
+          undefined,
+          CommonAnim.MISTY_TERRAIN + (terrain - 1),
+        );
       }
-      globalScene.queueMessage(getTerrainStartMessage(terrain)!); // TODO: is this bang correct?
+      globalScene.phaseManager.queueMessage(getTerrainStartMessage(terrain));
     } else {
-      globalScene.queueMessage(getTerrainClearMessage(oldTerrainType)!); // TODO: is this bang correct?
+      globalScene.phaseManager.queueMessage(getTerrainClearMessage(oldTerrainType));
     }
 
     globalScene
@@ -445,8 +458,8 @@ export class Arena {
         pokemon.findAndRemoveTags(
           t => "terrainTypes" in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain),
         );
-        applyPostTerrainChangeAbAttrs(PostTerrainChangeAbAttr, pokemon, terrain);
-        applyAbAttrs(TerrainEventTypeChangeAbAttr, pokemon, null, false);
+        applyAbAttrs("PostTerrainChangeAbAttr", { pokemon, terrain });
+        applyAbAttrs("TerrainEventTypeChangeAbAttr", { pokemon });
       });
 
     return true;
@@ -489,38 +502,37 @@ export class Arena {
   getTrainerChance(): number {
     switch (this.biomeType) {
       case BiomeId.METROPOLIS:
-        return 2;
-      case BiomeId.SLUM:
-      case BiomeId.BEACH:
       case BiomeId.DOJO:
-      case BiomeId.CONSTRUCTION_SITE:
         return 4;
       case BiomeId.PLAINS:
       case BiomeId.GRASS:
+      case BiomeId.BEACH:
       case BiomeId.LAKE:
       case BiomeId.CAVE:
+      case BiomeId.DESERT:
+      case BiomeId.CONSTRUCTION_SITE:
+      case BiomeId.SLUM:
         return 6;
       case BiomeId.TALL_GRASS:
       case BiomeId.FOREST:
-      case BiomeId.SEA:
       case BiomeId.SWAMP:
       case BiomeId.MOUNTAIN:
       case BiomeId.BADLANDS:
-      case BiomeId.DESERT:
       case BiomeId.MEADOW:
       case BiomeId.POWER_PLANT:
-      case BiomeId.GRAVEYARD:
       case BiomeId.FACTORY:
       case BiomeId.SNOWY_FOREST:
         return 8;
+      case BiomeId.SEA:
       case BiomeId.ICE_CAVE:
       case BiomeId.VOLCANO:
+      case BiomeId.GRAVEYARD:
       case BiomeId.RUINS:
       case BiomeId.WASTELAND:
       case BiomeId.JUNGLE:
       case BiomeId.FAIRY_CAVE:
+      case BiomeId.ISLAND:
         return 12;
-      case BiomeId.SEABED:
       case BiomeId.ABYSS:
       case BiomeId.SPACE:
       case BiomeId.TEMPLE:
@@ -644,7 +656,7 @@ export class Arena {
    * @param args array of parameters that the called upon tags may need
    */
   applyTagsForSide(
-    tagType: ArenaTagType | Constructor<ArenaTag>,
+    tagType: ArenaTagType | Constructor<ArenaTag> | AbstractConstructor<ArenaTag>,
     side: ArenaTagSide,
     simulated: boolean,
     ...args: unknown[]
@@ -666,20 +678,24 @@ export class Arena {
    * @param simulated if `true`, this applies arena tags without changing game state
    * @param args array of parameters that the called upon tags may need
    */
-  applyTags(tagType: ArenaTagType | Constructor<ArenaTag>, simulated: boolean, ...args: unknown[]): void {
+  applyTags(
+    tagType: ArenaTagType | Constructor<ArenaTag> | AbstractConstructor<ArenaTag>,
+    simulated: boolean,
+    ...args: unknown[]
+  ): void {
     this.applyTagsForSide(tagType, ArenaTagSide.BOTH, simulated, ...args);
   }
 
   /**
-   * Adds a new tag to the arena
-   * @param tagType {@linkcode ArenaTagType} the tag being added
-   * @param turnCount How many turns the tag lasts
-   * @param sourceMove {@linkcode MoveId} the move the tag came from, or `undefined` if not from a move
-   * @param sourceId The ID of the pokemon in play the tag came from (see {@linkcode BattleScene.getPokemonById})
-   * @param side {@linkcode ArenaTagSide} which side(s) the tag applies to
-   * @param quiet If a message should be queued on screen to announce the tag being added
-   * @param targetIndex The {@linkcode BattlerIndex} of the target pokemon
-   * @returns `false` if there already exists a tag of this type in the Arena
+   * Add a new {@linkcode ArenaTag} to the arena, triggering overlap effects on existing tags as applicable.
+   * @param tagType - The {@linkcode ArenaTagType} of the tag to add.
+   * @param turnCount - The number of turns the newly-added tag should last.
+   * @param sourceId - The {@linkcode Pokemon.id | PID} of the Pokemon creating the tag.
+   * @param sourceMove - The {@linkcode MoveId} of the move creating the tag, or `undefined` if not from a move.
+   * @param side - The {@linkcode ArenaTagSide}(s) to which the tag should apply; default `ArenaTagSide.BOTH`.
+   * @param quiet - Whether to suppress messages produced by tag addition; default `false`.
+   * @returns `true` if the tag was successfully added without overlapping.
+  // TODO: Do we need the return value here? literally nothing uses it
    */
   addTag(
     tagType: ArenaTagType,
@@ -688,7 +704,6 @@ export class Arena {
     sourceId: number,
     side: ArenaTagSide = ArenaTagSide.BOTH,
     quiet = false,
-    targetIndex?: BattlerIndex,
   ): boolean {
     const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
@@ -703,7 +718,7 @@ export class Arena {
     }
 
     // creates a new tag object
-    const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex, side);
+    const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, side);
     if (newTag) {
       newTag.onAdd(this, quiet);
       this.tags.push(newTag);
@@ -719,11 +734,20 @@ export class Arena {
   }
 
   /**
-   * Attempts to get a tag from the Arena via {@linkcode getTagOnSide} that applies to both sides
-   * @param tagType The {@linkcode ArenaTagType} or {@linkcode ArenaTag} to get
-   * @returns either the {@linkcode ArenaTag}, or `undefined` if it isn't there
+   * Attempt to get a tag from the Arena via {@linkcode getTagOnSide} that applies to both sides
+   * @param tagType - The {@linkcode ArenaTagType} to retrieve
+   * @returns The existing {@linkcode ArenaTag}, or `undefined` if not present.
+   * @overload
    */
-  getTag(tagType: ArenaTagType | Constructor<ArenaTag>): ArenaTag | undefined {
+  getTag(tagType: ArenaTagType): ArenaTag | undefined;
+  /**
+   * Attempt to get a tag from the Arena via {@linkcode getTagOnSide} that applies to both sides
+   * @param tagType - The constructor of the {@linkcode ArenaTag} to retrieve
+   * @returns The existing {@linkcode ArenaTag}, or `undefined` if not present.
+   * @overload
+   */
+  getTag<T extends ArenaTag>(tagType: Constructor<T> | AbstractConstructor<T>): T | undefined;
+  getTag(tagType: ArenaTagType | Constructor<ArenaTag> | AbstractConstructor<ArenaTag>): ArenaTag | undefined {
     return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
   }
 
@@ -739,7 +763,10 @@ export class Arena {
    * @param side The {@linkcode ArenaTagSide} to look at
    * @returns either the {@linkcode ArenaTag}, or `undefined` if it isn't there
    */
-  getTagOnSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide): ArenaTag | undefined {
+  getTagOnSide(
+    tagType: ArenaTagType | Constructor<ArenaTag> | AbstractConstructor<ArenaTag>,
+    side: ArenaTagSide,
+  ): ArenaTag | undefined {
     return typeof tagType === "string"
       ? this.tags.find(
           t => t.tagType === tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side),
@@ -748,6 +775,9 @@ export class Arena {
           t => t instanceof tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side),
         );
   }
+
+  // TODO: Add an overload similar to `Array.prototype.find` if the predicate func is of the form
+  // `(x): x is T`
 
   /**
    * Uses {@linkcode findTagsOnSide} to filter (using the parameter function) for specific tags that apply to both sides
@@ -884,7 +914,7 @@ export class Arena {
       case BiomeId.WASTELAND:
         return 6.336;
       case BiomeId.ABYSS:
-        return 5.13;
+        return 20.113;
       case BiomeId.SPACE:
         return 20.036;
       case BiomeId.CONSTRUCTION_SITE:
@@ -922,6 +952,7 @@ export function getBiomeKey(biome: BiomeId): string {
 
 export function getBiomeHasProps(biomeType: BiomeId): boolean {
   switch (biomeType) {
+    case BiomeId.PLAINS:
     case BiomeId.METROPOLIS:
     case BiomeId.BEACH:
     case BiomeId.LAKE:
@@ -968,14 +999,15 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     this.base = globalScene.addFieldSprite(0, 0, "plains_a", undefined, 1);
     this.base.setOrigin(0, 0);
 
-    this.props = !player
-      ? new Array(3).fill(null).map(() => {
-          const ret = globalScene.addFieldSprite(0, 0, "plains_b", undefined, 1);
-          ret.setOrigin(0, 0);
-          ret.setVisible(false);
-          return ret;
-        })
-      : [];
+    this.props = [];
+    if (!player) {
+      for (let i = 0; i < 3; i++) {
+        const ret = globalScene.addFieldSprite(0, 0, "plains_b", undefined, 1);
+        ret.setOrigin(0, 0);
+        ret.setVisible(false);
+        this.props.push(ret);
+      }
+    }
   }
 
   setBiome(biome: BiomeId, propValue?: number): void {

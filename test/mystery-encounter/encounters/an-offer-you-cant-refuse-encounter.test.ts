@@ -1,24 +1,24 @@
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { HUMAN_TRANSITABLE_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
+import type { BattleScene } from "#app/battle-scene";
+import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
-import type BattleScene from "#app/battle-scene";
-import { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
-import { AnOfferYouCantRefuseEncounter } from "#app/data/mystery-encounters/encounters/an-offer-you-cant-refuse-encounter";
+import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { MoveId } from "#enums/move-id";
-import { ShinyRateBoosterModifier } from "#app/modifier/modifier";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
+import { ShinyRateBoosterModifier } from "#modifiers/modifier";
+import { PokemonMove } from "#moves/pokemon-move";
+import { AnOfferYouCantRefuseEncounter } from "#mystery-encounters/an-offer-you-cant-refuse-encounter";
+import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
+import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
-import { AbilityId } from "#enums/ability-id";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/anOfferYouCantRefuse";
 /** Gyarados for Indimidate */
@@ -56,8 +56,6 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -79,8 +77,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingBiome(BiomeId.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT).startingBiome(BiomeId.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(
@@ -105,7 +102,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       i18next.t("ability:intimidate.name"),
     );
     expect(AnOfferYouCantRefuseEncounter.dialogueTokens?.moveOrAbility).toBe(i18next.t("ability:intimidate.name"));
-    expect(AnOfferYouCantRefuseEncounter.misc.pokemon instanceof PlayerPokemon).toBeTruthy();
+    expect(AnOfferYouCantRefuseEncounter.misc.pokemon.isPlayer()).toBeTruthy();
     expect(AnOfferYouCantRefuseEncounter.misc?.price?.toString()).toBe(
       AnOfferYouCantRefuseEncounter.dialogueTokens?.price,
     );

@@ -1,14 +1,16 @@
+import { pokerogueApi } from "#api/pokerogue-api";
+import { globalScene } from "#app/global-scene";
+import { speciesStarterCosts } from "#balance/starters";
+import type { PokemonSpeciesForm } from "#data/pokemon-species";
+import { PokemonSpecies } from "#data/pokemon-species";
+import { BiomeId } from "#enums/biome-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { SpeciesId } from "#enums/species-id";
-import { globalScene } from "#app/global-scene";
-import { PlayerPokemon } from "#app/field/pokemon";
-import type { Starter } from "#app/ui/starter-select-ui-handler";
-import { randSeedGauss, randSeedInt, randSeedItem, getEnumValues } from "#app/utils/common";
-import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
-import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
-import { speciesStarterCosts } from "#app/data/balance/starters";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import { BiomeId } from "#enums/biome-id";
+import { PlayerPokemon } from "#field/pokemon";
+import type { Starter } from "#ui/starter-select-ui-handler";
+import { randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 export interface DailyRunConfig {
   seed: number;
@@ -164,5 +166,6 @@ export function getDailyStartingBiome(): BiomeId {
   }
 
   // Fallback in case something went wrong
+  // TODO: should this use `randSeedItem`?
   return biomes[randSeedInt(biomes.length)];
 }

@@ -1,10 +1,10 @@
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
-import { SelectTargetPhase } from "#app/phases/select-target-phase";
-import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { EnemyCommandPhase } from "#phases/enemy-command-phase";
+import { SelectTargetPhase } from "#phases/select-target-phase";
+import { TurnStartPhase } from "#phases/turn-start-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -24,11 +24,12 @@ describe("Battle order", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.MEWTWO);
-    game.override.enemyAbility(AbilityId.INSOMNIA);
-    game.override.ability(AbilityId.INSOMNIA);
-    game.override.moveset([MoveId.TACKLE]);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.MEWTWO)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .ability(AbilityId.INSOMNIA)
+      .moveset([MoveId.TACKLE]);
   });
 
   it("opponent faster than player 50 vs 150", async () => {
@@ -44,11 +45,11 @@ describe("Battle order", () => {
 
     const playerPokemonIndex = playerPokemon.getBattlerIndex();
     const enemyPokemonIndex = enemyPokemon.getBattlerIndex();
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
     expect(order[0]).toBe(enemyPokemonIndex);
     expect(order[1]).toBe(playerPokemonIndex);
-  }, 20000);
+  });
 
   it("Player faster than opponent 150 vs 50", async () => {
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
@@ -63,11 +64,11 @@ describe("Battle order", () => {
 
     const playerPokemonIndex = playerPokemon.getBattlerIndex();
     const enemyPokemonIndex = enemyPokemon.getBattlerIndex();
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
     expect(order[0]).toBe(playerPokemonIndex);
     expect(order[1]).toBe(enemyPokemonIndex);
-  }, 20000);
+  });
 
   it("double - both opponents faster than player 50/50 vs 150/150", async () => {
     game.override.battleStyle("double");
@@ -85,13 +86,13 @@ describe("Battle order", () => {
     game.move.select(MoveId.TACKLE, 1);
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
 
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
     expect(order.slice(0, 2).includes(enemyIndices[0])).toBe(true);
     expect(order.slice(0, 2).includes(enemyIndices[1])).toBe(true);
     expect(order.slice(2, 4).includes(playerIndices[0])).toBe(true);
     expect(order.slice(2, 4).includes(playerIndices[1])).toBe(true);
-  }, 20000);
+  });
 
   it("double - speed tie except 1 - 100/100 vs 100/150", async () => {
     game.override.battleStyle("double");
@@ -109,13 +110,12 @@ describe("Battle order", () => {
     game.move.select(MoveId.TACKLE, 1);
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
 
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
+    // enemy 2 should be first, followed by some other assortment of the other 3 pokemon
     expect(order[0]).toBe(enemyIndices[1]);
-    expect(order.slice(1, 4).includes(enemyIndices[0])).toBe(true);
-    expect(order.slice(1, 4).includes(playerIndices[0])).toBe(true);
-    expect(order.slice(1, 4).includes(playerIndices[1])).toBe(true);
-  }, 20000);
+    expect(order.slice(1, 4)).toEqual(expect.arrayContaining([enemyIndices[0], ...playerIndices]));
+  });
 
   it("double - speed tie 100/150 vs 100/150", async () => {
     game.override.battleStyle("double");
@@ -134,11 +134,10 @@ describe("Battle order", () => {
     game.move.select(MoveId.TACKLE, 1);
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
 
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
-    expect(order.slice(0, 2).includes(playerIndices[1])).toBe(true);
-    expect(order.slice(0, 2).includes(enemyIndices[1])).toBe(true);
-    expect(order.slice(2, 4).includes(playerIndices[0])).toBe(true);
-    expect(order.slice(2, 4).includes(enemyIndices[0])).toBe(true);
-  }, 20000);
+    // P2/E2 should be randomly first/second, then P1/E1 randomly 3rd/4th
+    expect(order.slice(0, 2)).toStrictEqual(expect.arrayContaining([playerIndices[1], enemyIndices[1]]));
+    expect(order.slice(2, 4)).toStrictEqual(expect.arrayContaining([playerIndices[0], enemyIndices[0]]));
+  });
 });

@@ -1,13 +1,11 @@
-import { Stat } from "#enums/stat";
-import { StockpilingTag } from "#app/data/battler-tags";
-import type { TurnMove } from "#app/field/pokemon";
-import { MoveResult } from "#app/field/pokemon";
-import { CommandPhase } from "#app/phases/command-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { StockpilingTag } from "#data/battler-tags";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -27,15 +25,14 @@ describe("Moves - Stockpile", () => {
     beforeEach(() => {
       game = new GameManager(phaserGame);
 
-      game.override.battleStyle("single");
-
-      game.override.enemySpecies(SpeciesId.RATTATA);
-      game.override.enemyMoveset(MoveId.SPLASH);
-      game.override.enemyAbility(AbilityId.NONE);
-
-      game.override.startingLevel(2000);
-      game.override.moveset([MoveId.STOCKPILE, MoveId.SPLASH]);
-      game.override.ability(AbilityId.NONE);
+      game.override
+        .battleStyle("single")
+        .enemySpecies(SpeciesId.RATTATA)
+        .enemyMoveset(MoveId.SPLASH)
+        .enemyAbility(AbilityId.NONE)
+        .startingLevel(2000)
+        .moveset([MoveId.STOCKPILE, MoveId.SPLASH])
+        .ability(AbilityId.NONE);
     });
 
     it("gains a stockpile stack and raises user's DEF and SPDEF stat stages by 1 on each use, fails at max stacks (3)", async () => {
@@ -52,12 +49,8 @@ describe("Moves - Stockpile", () => {
 
       // use Stockpile four times
       for (let i = 0; i < 4; i++) {
-        if (i !== 0) {
-          await game.phaseInterceptor.to(CommandPhase);
-        }
-
         game.move.select(MoveId.STOCKPILE);
-        await game.phaseInterceptor.to(TurnInitPhase);
+        await game.toNextTurn();
 
         const stockpilingTag = user.getTag(StockpilingTag)!;
 
@@ -73,7 +66,7 @@ describe("Moves - Stockpile", () => {
           expect(user.getStatStage(Stat.SPDEF)).toBe(3);
           expect(stockpilingTag).toBeDefined();
           expect(stockpilingTag.stockpiledCount).toBe(3);
-          expect(user.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+          expect(user.getMoveHistory().at(-1)).toMatchObject({
             result: MoveResult.FAIL,
             move: MoveId.STOCKPILE,
             targets: [user.getBattlerIndex()],
@@ -102,9 +95,6 @@ describe("Moves - Stockpile", () => {
       expect(stockpilingTag.stockpiledCount).toBe(1);
       expect(user.getStatStage(Stat.DEF)).toBe(6);
       expect(user.getStatStage(Stat.SPDEF)).toBe(6);
-
-      // do it again, just for good measure
-      await game.phaseInterceptor.to(CommandPhase);
 
       game.move.select(MoveId.STOCKPILE);
       await game.phaseInterceptor.to(TurnInitPhase);

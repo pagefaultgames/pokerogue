@@ -1,14 +1,15 @@
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import { MoveResult, PokemonMove } from "#app/field/pokemon";
-import GameManager from "#test/testUtils/gameManager";
+import { StatusEffect } from "#enums/status-effect";
+import { RandomMoveAttr } from "#moves/move";
+import { PokemonMove } from "#moves/pokemon-move";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { StatusEffect } from "#app/enums/status-effect";
-import { BattlerIndex } from "#app/battle";
-import { RandomMoveAttr } from "#app/data/moves/move";
-import { allMoves } from "#app/data/data-lists";
 
 describe("Moves - Sketch", () => {
   let phaserGame: Phaser.Game;
@@ -29,7 +30,7 @@ describe("Moves - Sketch", () => {
     game.override
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);

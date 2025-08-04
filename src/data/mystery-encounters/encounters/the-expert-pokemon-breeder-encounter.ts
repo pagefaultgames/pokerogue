@@ -1,34 +1,34 @@
-import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { globalScene } from "#app/global-scene";
+import { speciesStarterCosts } from "#balance/starters";
+import { modifierTypes } from "#data/data-lists";
+import type { IEggOptions } from "#data/egg";
+import { getPokeballTintColor } from "#data/pokeball";
+import { BiomeId } from "#enums/biome-id";
+import { EggSourceType } from "#enums/egg-source-types";
+import { EggTier } from "#enums/egg-type";
+import { MoveId } from "#enums/move-id";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Nature } from "#enums/nature";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import { TrainerType } from "#enums/trainer-type";
+import type { PlayerPokemon } from "#field/pokemon";
+import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
+import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   handleMysteryEncounterBattleFailed,
   initBattleWithEnemyConfig,
   setEncounterRewards,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { trainerConfigs } from "#app/data/trainers/trainer-config";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { globalScene } from "#app/global-scene";
-import { randSeedShuffle } from "#app/utils/common";
-import type MysteryEncounter from "../mystery-encounter";
-import { MysteryEncounterBuilder } from "../mystery-encounter";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { BiomeId } from "#enums/biome-id";
-import { TrainerType } from "#enums/trainer-type";
+} from "#mystery-encounters/encounter-phase-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { trainerConfigs } from "#trainers/trainer-config";
+import { randSeedShuffle } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
-import { SpeciesId } from "#enums/species-id";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { speciesStarterCosts } from "#app/data/balance/starters";
-import { Nature } from "#enums/nature";
-import { MoveId } from "#enums/move-id";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import type { IEggOptions } from "#app/data/egg";
-import { EggSourceType } from "#enums/egg-source-types";
-import { EggTier } from "#enums/egg-type";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { PokemonType } from "#enums/pokemon-type";
-import { getPokeballTintColor } from "#app/data/pokeball";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theExpertPokemonBreeder";
@@ -658,8 +658,8 @@ function onGameOver() {
   globalScene.playBgm(globalScene.arena.bgm);
 
   // Clear any leftover battle phases
-  globalScene.clearPhaseQueue();
-  globalScene.clearPhaseQueueSplice();
+  globalScene.phaseManager.clearPhaseQueue();
+  globalScene.phaseManager.clearPhaseQueueSplice();
 
   // Return enemy Pokemon
   const pokemon = globalScene.getEnemyPokemon();

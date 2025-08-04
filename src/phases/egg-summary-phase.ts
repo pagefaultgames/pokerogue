@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
+import type { EggHatchData } from "#data/egg-hatch-data";
 import { UiMode } from "#enums/ui-mode";
-import type { EggHatchData } from "#app/data/egg-hatch-data";
 
 /**
  * Class that represents the egg summary phase
@@ -9,6 +9,7 @@ import type { EggHatchData } from "#app/data/egg-hatch-data";
  * Phase is handled mostly by the egg-hatch-scene-handler UI
  */
 export class EggSummaryPhase extends Phase {
+  public readonly phaseName = "EggSummaryPhase";
   private eggHatchData: EggHatchData[];
 
   constructor(eggHatchData: EggHatchData[]) {

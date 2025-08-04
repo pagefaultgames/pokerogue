@@ -1,33 +1,33 @@
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
+import type { BattleScene } from "#app/battle-scene";
+import { speciesEggMoves } from "#balance/egg-moves";
+import { modifierTypes } from "#data/data-lists";
+import { AbilityId } from "#enums/ability-id";
+import { BerryType } from "#enums/berry-type";
 import { BiomeId } from "#enums/biome-id";
-import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
+import { MoveId } from "#enums/move-id";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { Stat } from "#enums/stat";
+import type { BerryModifier } from "#modifiers/modifier";
+import { PokemonMove } from "#moves/pokemon-move";
+import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
+import { generateModifierType } from "#mystery-encounters/encounter-phase-utils";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { UncommonBreedEncounter } from "#mystery-encounters/uncommon-breed-encounter";
+import { CommandPhase } from "#phases/command-phase";
+import { MovePhase } from "#phases/move-phase";
+import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { MoveId } from "#enums/move-id";
-import type BattleScene from "#app/battle-scene";
-import { PokemonMove } from "#app/field/pokemon";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { CommandPhase } from "#app/phases/command-phase";
-import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/uncommon-breed-encounter";
-import { MovePhase } from "#app/phases/move-phase";
-import { speciesEggMoves } from "#app/data/balance/egg-moves";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { BerryType } from "#enums/berry-type";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { Stat } from "#enums/stat";
-import type { BerryModifier } from "#app/modifier/modifier";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { AbilityId } from "#enums/ability-id";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/uncommonBreed";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
@@ -62,8 +62,6 @@ describe("Uncommon Breed - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -113,8 +111,8 @@ describe("Uncommon Breed - Mystery Encounter", () => {
     });
 
     it.skip("should start a fight against the boss below wave 50", async () => {
-      const phaseSpy = vi.spyOn(scene, "pushPhase");
-      const unshiftPhaseSpy = vi.spyOn(scene, "unshiftPhase");
+      const phaseSpy = vi.spyOn(scene.phaseManager, "pushPhase");
+      const unshiftPhaseSpy = vi.spyOn(scene.phaseManager, "unshiftPhase");
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
 
       const config = game.scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
@@ -123,7 +121,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
 
@@ -140,8 +138,8 @@ describe("Uncommon Breed - Mystery Encounter", () => {
 
     it.skip("should start a fight against the boss above wave 50", async () => {
       game.override.startingWave(57);
-      const phaseSpy = vi.spyOn(scene, "pushPhase");
-      const unshiftPhaseSpy = vi.spyOn(scene, "unshiftPhase");
+      const phaseSpy = vi.spyOn(scene.phaseManager, "pushPhase");
+      const unshiftPhaseSpy = vi.spyOn(scene.phaseManager, "unshiftPhase");
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
 
       const config = game.scene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0];
@@ -150,7 +148,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
 
@@ -193,7 +191,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       await scene.updateModifiers(true);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
@@ -202,7 +200,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 2);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -253,7 +251,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       scene.getPlayerParty().forEach(p => (p.moveset = []));
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
@@ -262,7 +260,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 3);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();

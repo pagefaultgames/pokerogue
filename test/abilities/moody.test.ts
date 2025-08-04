@@ -1,8 +1,8 @@
-import { BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -68,7 +68,7 @@ describe("Abilities - Moody", () => {
   });
 
   it("should only decrease one stat stage by 1 stage if all stat stages are at 6", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 

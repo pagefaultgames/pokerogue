@@ -1,9 +1,9 @@
-import type { MoveId } from "#enums/move-id";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
-import { isNullOrUndefined } from "#app/utils/common";
-import { EncounterPokemonRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { globalScene } from "#app/global-scene";
+import type { MoveId } from "#enums/move-id";
+import type { PlayerPokemon } from "#field/pokemon";
+import { PokemonMove } from "#moves/pokemon-move";
+import { EncounterPokemonRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import { coerceArray, isNullOrUndefined } from "#utils/common";
 
 /**
  * {@linkcode CanLearnMoveRequirement} options
@@ -29,7 +29,7 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
 
   constructor(requiredMoves: MoveId | MoveId[], options: CanLearnMoveRequirementOptions = {}) {
     super();
-    this.requiredMoves = Array.isArray(requiredMoves) ? requiredMoves : [requiredMoves];
+    this.requiredMoves = coerceArray(requiredMoves);
 
     this.excludeLevelMoves = options.excludeLevelMoves ?? false;
     this.excludeTmMoves = options.excludeTmMoves ?? false;

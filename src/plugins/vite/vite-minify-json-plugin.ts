@@ -1,5 +1,5 @@
-import path from "path";
 import fs from "fs";
+import path from "path";
 import type { Plugin as VitePlugin } from "vite";
 
 /**
@@ -41,9 +41,9 @@ export function minifyJsonPlugin(basePath: string | string[], recursive?: boolea
     },
     async closeBundle() {
       console.log("Minifying JSON files...");
-      const basePathes = Array.isArray(basePath) ? basePath : [basePath];
+      const basePaths = Array.isArray(basePath) ? basePath : [basePath];
 
-      basePathes.forEach(basePath => {
+      basePaths.forEach(basePath => {
         const baseDir = path.resolve(buildDir, basePath);
         if (fs.existsSync(baseDir)) {
           applyToDir(baseDir, recursive);

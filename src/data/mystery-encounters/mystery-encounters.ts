@@ -1,74 +1,38 @@
+import { getBiomeName } from "#balance/biomes";
 import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { DarkDealEncounter } from "./encounters/dark-deal-encounter";
-import { DepartmentStoreSaleEncounter } from "./encounters/department-store-sale-encounter";
-import { FieldTripEncounter } from "./encounters/field-trip-encounter";
-import { FightOrFlightEncounter } from "./encounters/fight-or-flight-encounter";
-import { LostAtSeaEncounter } from "./encounters/lost-at-sea-encounter";
-import { MysteriousChallengersEncounter } from "./encounters/mysterious-challengers-encounter";
-import { MysteriousChestEncounter } from "./encounters/mysterious-chest-encounter";
-import { ShadyVitaminDealerEncounter } from "./encounters/shady-vitamin-dealer-encounter";
-import { SlumberingSnorlaxEncounter } from "./encounters/slumbering-snorlax-encounter";
-import { TrainingSessionEncounter } from "./encounters/training-session-encounter";
-import type MysteryEncounter from "./mystery-encounter";
-import { SafariZoneEncounter } from "#app/data/mystery-encounters/encounters/safari-zone-encounter";
-import { FieryFalloutEncounter } from "#app/data/mystery-encounters/encounters/fiery-fallout-encounter";
-import { TheStrongStuffEncounter } from "#app/data/mystery-encounters/encounters/the-strong-stuff-encounter";
-import { ThePokemonSalesmanEncounter } from "#app/data/mystery-encounters/encounters/the-pokemon-salesman-encounter";
-import { AnOfferYouCantRefuseEncounter } from "#app/data/mystery-encounters/encounters/an-offer-you-cant-refuse-encounter";
-import { DelibirdyEncounter } from "#app/data/mystery-encounters/encounters/delibirdy-encounter";
-import { AbsoluteAvariceEncounter } from "#app/data/mystery-encounters/encounters/absolute-avarice-encounter";
-import { ATrainersTestEncounter } from "#app/data/mystery-encounters/encounters/a-trainers-test-encounter";
-import { TrashToTreasureEncounter } from "#app/data/mystery-encounters/encounters/trash-to-treasure-encounter";
-import { BerriesAboundEncounter } from "#app/data/mystery-encounters/encounters/berries-abound-encounter";
-import { ClowningAroundEncounter } from "#app/data/mystery-encounters/encounters/clowning-around-encounter";
-import { PartTimerEncounter } from "#app/data/mystery-encounters/encounters/part-timer-encounter";
-import { DancingLessonsEncounter } from "#app/data/mystery-encounters/encounters/dancing-lessons-encounter";
-import { WeirdDreamEncounter } from "#app/data/mystery-encounters/encounters/weird-dream-encounter";
-import { TheWinstrateChallengeEncounter } from "#app/data/mystery-encounters/encounters/the-winstrate-challenge-encounter";
-import { TeleportingHijinksEncounter } from "#app/data/mystery-encounters/encounters/teleporting-hijinks-encounter";
-import { BugTypeSuperfanEncounter } from "#app/data/mystery-encounters/encounters/bug-type-superfan-encounter";
-import { FunAndGamesEncounter } from "#app/data/mystery-encounters/encounters/fun-and-games-encounter";
-import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/uncommon-breed-encounter";
-import { GlobalTradeSystemEncounter } from "#app/data/mystery-encounters/encounters/global-trade-system-encounter";
-import { TheExpertPokemonBreederEncounter } from "#app/data/mystery-encounters/encounters/the-expert-pokemon-breeder-encounter";
-import { getBiomeName } from "#app/data/balance/biomes";
-
-/**
- * Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT
- */
-export const BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT = 3;
-/**
- * The divisor for determining ME spawns, defines the "maximum" weight required for a spawn
- * If spawn_weight === MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT, 100% chance to spawn a ME
- */
-export const MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT = 256;
-/**
- * When an ME spawn roll fails, WEIGHT_INCREMENT_ON_SPAWN_MISS is added to future rolls for ME spawn checks.
- * These values are cleared whenever the next ME spawns, and spawn weight returns to BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT
- */
-export const WEIGHT_INCREMENT_ON_SPAWN_MISS = 3;
-/**
- * Specifies the target average for total ME spawns in a single Classic run.
- * Used by anti-variance mechanic to check whether a run is above or below the target on a given wave.
- */
-export const AVERAGE_ENCOUNTERS_PER_RUN_TARGET = 12;
-/**
- * Will increase/decrease the chance of spawning a ME based on the current run's total MEs encountered vs AVERAGE_ENCOUNTERS_PER_RUN_TARGET
- * Example:
- * AVERAGE_ENCOUNTERS_PER_RUN_TARGET = 17 (expects avg 1 ME every 10 floors)
- * ANTI_VARIANCE_WEIGHT_MODIFIER = 15
- *
- * On wave 20, if 1 ME has been encountered, the difference from expected average is 0 MEs.
- * So anti-variance adds 0/256 to the spawn weight check for ME spawn.
- *
- * On wave 20, if 0 MEs have been encountered, the difference from expected average is 1 ME.
- * So anti-variance adds 15/256 to the spawn weight check for ME spawn.
- *
- * On wave 20, if 2 MEs have been encountered, the difference from expected average is -1 ME.
- * So anti-variance adds -15/256 to the spawn weight check for ME spawn.
- */
-export const ANTI_VARIANCE_WEIGHT_MODIFIER = 15;
+import { ATrainersTestEncounter } from "#mystery-encounters/a-trainers-test-encounter";
+import { AbsoluteAvariceEncounter } from "#mystery-encounters/absolute-avarice-encounter";
+import { AnOfferYouCantRefuseEncounter } from "#mystery-encounters/an-offer-you-cant-refuse-encounter";
+import { BerriesAboundEncounter } from "#mystery-encounters/berries-abound-encounter";
+import { BugTypeSuperfanEncounter } from "#mystery-encounters/bug-type-superfan-encounter";
+import { ClowningAroundEncounter } from "#mystery-encounters/clowning-around-encounter";
+import { DancingLessonsEncounter } from "#mystery-encounters/dancing-lessons-encounter";
+import { DarkDealEncounter } from "#mystery-encounters/dark-deal-encounter";
+import { DelibirdyEncounter } from "#mystery-encounters/delibirdy-encounter";
+import { DepartmentStoreSaleEncounter } from "#mystery-encounters/department-store-sale-encounter";
+import { FieldTripEncounter } from "#mystery-encounters/field-trip-encounter";
+import { FieryFalloutEncounter } from "#mystery-encounters/fiery-fallout-encounter";
+import { FightOrFlightEncounter } from "#mystery-encounters/fight-or-flight-encounter";
+import { FunAndGamesEncounter } from "#mystery-encounters/fun-and-games-encounter";
+import { GlobalTradeSystemEncounter } from "#mystery-encounters/global-trade-system-encounter";
+import { LostAtSeaEncounter } from "#mystery-encounters/lost-at-sea-encounter";
+import { MysteriousChallengersEncounter } from "#mystery-encounters/mysterious-challengers-encounter";
+import { MysteriousChestEncounter } from "#mystery-encounters/mysterious-chest-encounter";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { PartTimerEncounter } from "#mystery-encounters/part-timer-encounter";
+import { SafariZoneEncounter } from "#mystery-encounters/safari-zone-encounter";
+import { ShadyVitaminDealerEncounter } from "#mystery-encounters/shady-vitamin-dealer-encounter";
+import { SlumberingSnorlaxEncounter } from "#mystery-encounters/slumbering-snorlax-encounter";
+import { TeleportingHijinksEncounter } from "#mystery-encounters/teleporting-hijinks-encounter";
+import { TheExpertPokemonBreederEncounter } from "#mystery-encounters/the-expert-pokemon-breeder-encounter";
+import { ThePokemonSalesmanEncounter } from "#mystery-encounters/the-pokemon-salesman-encounter";
+import { TheStrongStuffEncounter } from "#mystery-encounters/the-strong-stuff-encounter";
+import { TheWinstrateChallengeEncounter } from "#mystery-encounters/the-winstrate-challenge-encounter";
+import { TrainingSessionEncounter } from "#mystery-encounters/training-session-encounter";
+import { TrashToTreasureEncounter } from "#mystery-encounters/trash-to-treasure-encounter";
+import { UncommonBreedEncounter } from "#mystery-encounters/uncommon-breed-encounter";
+import { WeirdDreamEncounter } from "#mystery-encounters/weird-dream-encounter";
 
 export const EXTREME_ENCOUNTER_BIOMES = [
   BiomeId.SEA,

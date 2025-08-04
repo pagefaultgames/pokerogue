@@ -1,14 +1,10 @@
 # Linting & Formatting
 
-> "Any fool can write code that a computer can understand. Good programmers write code that humans can understand."
->
-> — Martin Fowler
-
 Writing clean, readable code is important, and linters and formatters are an integral part of ensuring code quality and readability.
 It is for this reason we are using [Biome](https://biomejs.dev), an opinionated linter/formatter (akin to Prettier) with a heavy focus on speed and performance.
 
 ### Installation
-You probably installed Biome already without noticing it - it's included inside `package.json` and should've been downloaded when you ran `npm install` after cloning the repo (assuming you followed proper instructions, that is). If you haven't done that yet, go do it.
+You probably installed Biome already without noticing it - it's included inside `package.json` and should've been downloaded when you ran `pnpm install` after cloning the repo. If you haven't done that yet, go do it.
 
 # Using Biome
 
@@ -24,17 +20,11 @@ You will **not** be able to push code with `error`-level linting problems - fix 
 
 We also have a [Github Action](../.github/workflows/quality.yml) to verify code quality each time a PR is updated, preventing bad code from inadvertently making its way upstream.
 
-### Why am I getting errors for code I didn't write?
-<!-- TODO: Remove this if/when we perform a project wide linting spree -->
-To save time and minimize friction with existing code, both the pre-commit hook and workflow run will only check files **directly changed** by a given PR or commit.
-As a result, changes to files not updated since Biome's introduction can cause any _prior_ linting errors in them to resurface and get flagged.
-This should occur less and less often as time passes and more files are updated to the new standard.
-
 ## Running Biome via CLI
 If you want Biome to check your files manually, you can run it from the command line like so:
 
 ```sh
-npx biome check --[flags]
+pnpm exec biome check --[flags]
 ```
 
 A full list of flags and options can be found on [their website](https://biomejs.dev/reference/cli/), but here's a few useful ones to keep in mind:
@@ -56,10 +46,3 @@ Some things to consider:
 Any questions about linting rules should be brought up in the `#dev-corner` channel in the discord.
 
 [^1]: A complete list of rules can be found in the `biome.jsonc` file in the project root.
-
-## What about ESLint?
-
-<!-- Remove if/when we finally ditch eslint for good -->
-Our project migrated away from ESLint around March 2025 due to it simply not scaling well enough with the codebase's ever-growing size. The [existing eslint rules](../eslint.config.js) are considered _deprecated_, only kept due to Biome lacking the corresponding rules in its current ruleset.
-
-No additional ESLint rules should be added under any circumstances - even the few currently in circulation take longer to run than the entire Biome formatting/linting suite combined.

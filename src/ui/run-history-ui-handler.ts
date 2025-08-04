@@ -1,18 +1,19 @@
 import { globalScene } from "#app/global-scene";
-import { GameModes } from "../game-mode";
-import { TextStyle, addTextObject } from "./text";
-import { UiMode } from "#enums/ui-mode";
-import { addWindow } from "./ui-theme";
-import { fixedInt, formatLargeNumber } from "#app/utils/common";
-import type PokemonData from "../system/pokemon-data";
-import MessageUiHandler from "./message-ui-handler";
-import i18next from "i18next";
-import { Button } from "../enums/buttons";
 import { BattleType } from "#enums/battle-type";
-import type { RunEntry } from "../system/game-data";
+import { Button } from "#enums/buttons";
+import { GameModes } from "#enums/game-modes";
 import { PlayerGender } from "#enums/player-gender";
-import { TrainerVariant } from "../field/trainer";
-import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
+import { TextStyle } from "#enums/text-style";
+import { TrainerVariant } from "#enums/trainer-variant";
+import { UiMode } from "#enums/ui-mode";
+import type { RunEntry } from "#system/game-data";
+import type { PokemonData } from "#system/pokemon-data";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { RunDisplayMode } from "#ui/run-info-ui-handler";
+import { addTextObject } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import { fixedInt, formatLargeNumber } from "#utils/common";
+import i18next from "i18next";
 
 export type RunSelectCallback = (cursor: number) => void;
 
@@ -24,7 +25,7 @@ export const RUN_HISTORY_LIMIT: number = 25;
  * It navigates similarly to the UI of the save slot select menu.
  * The only valid input buttons are Button.ACTION and Button.CANCEL.
  */
-export default class RunHistoryUiHandler extends MessageUiHandler {
+export class RunHistoryUiHandler extends MessageUiHandler {
   private readonly maxRows = 3;
 
   private runSelectContainer: Phaser.GameObjects.Container;

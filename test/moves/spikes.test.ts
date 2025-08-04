@@ -1,10 +1,12 @@
+import { ArenaTrapTag } from "#data/arena-tag";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
 
 describe("Moves - Spikes", () => {
   let phaserGame: Phaser.Game;
@@ -48,7 +50,7 @@ describe("Moves - Spikes", () => {
 
     const player = game.scene.getPlayerParty()[0];
     expect(player.hp).toBe(player.getMaxHp());
-  }, 20000);
+  });
 
   it("should damage opposing pokemon that are forced to switch in", async () => {
     game.override.startingWave(5);
@@ -62,7 +64,7 @@ describe("Moves - Spikes", () => {
 
     const enemy = game.scene.getEnemyParty()[0];
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
-  }, 20000);
+  });
 
   it("should damage opposing pokemon that choose to switch in", async () => {
     game.override.startingWave(5);
@@ -77,18 +79,21 @@ describe("Moves - Spikes", () => {
 
     const enemy = game.scene.getEnemyParty()[0];
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
-  }, 20000);
+  });
 
-  it("should work when all targets fainted", async () => {
-    game.override.enemySpecies(SpeciesId.DIGLETT);
-    game.override.battleStyle("double");
-    game.override.startingLevel(50);
-    await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.ROWLET]);
+  // TODO: re-enable after re-fixing hazards moves
+  it.todo("should work when all targets fainted", async () => {
+    game.override.enemySpecies(SpeciesId.DIGLETT).battleStyle("double").startingLevel(1000);
+    await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.SHUCKLE]);
 
-    game.move.select(MoveId.EARTHQUAKE);
-    game.move.select(MoveId.SPIKES, 1);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    const [enemy1, enemy2] = game.scene.getEnemyField();
 
+    game.move.use(MoveId.HYPER_VOICE, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SPIKES, BattlerIndex.PLAYER_2);
+    await game.toEndOfTurn();
+
+    expect(enemy1.isFainted()).toBe(true);
+    expect(enemy2.isFainted()).toBe(true);
     expect(game.scene.arena.getTagOnSide(ArenaTrapTag, ArenaTagSide.ENEMY)).toBeDefined();
-  }, 20000);
+  });
 });

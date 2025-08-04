@@ -1,15 +1,14 @@
 import { globalScene } from "#app/global-scene";
-import { biomeLinks, getBiomeName } from "#app/data/balance/biomes";
+import { biomeLinks, getBiomeName } from "#balance/biomes";
 import { BiomeId } from "#enums/biome-id";
-import { MoneyInterestModifier, MapModifier } from "#app/modifier/modifier";
-import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { BattlePhase } from "./battle-phase";
-import { randSeedInt } from "#app/utils/common";
-import { PartyHealPhase } from "./party-heal-phase";
-import { SwitchBiomePhase } from "./switch-biome-phase";
+import { MapModifier, MoneyInterestModifier } from "#modifiers/modifier";
+import { BattlePhase } from "#phases/battle-phase";
+import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import { randSeedInt } from "#utils/common";
 
 export class SelectBiomePhase extends BattlePhase {
+  public readonly phaseName = "SelectBiomePhase";
   start() {
     super.start();
 
@@ -21,9 +20,9 @@ export class SelectBiomePhase extends BattlePhase {
     const setNextBiome = (nextBiome: BiomeId) => {
       if (nextWaveIndex % 10 === 1) {
         globalScene.applyModifiers(MoneyInterestModifier, true);
-        globalScene.unshiftPhase(new PartyHealPhase(false));
+        globalScene.phaseManager.unshiftNew("PartyHealPhase", false);
       }
-      globalScene.unshiftPhase(new SwitchBiomePhase(nextBiome));
+      globalScene.phaseManager.unshiftNew("SwitchBiomePhase", nextBiome);
       this.end();
     };
 
@@ -57,6 +56,7 @@ export class SelectBiomePhase extends BattlePhase {
           delay: 1000,
         });
       } else {
+        // TODO: should this use `randSeedItem`?
         setNextBiome(biomes[randSeedInt(biomes.length)]);
       }
     } else if (biomeLinks.hasOwnProperty(currentBiome)) {

@@ -1,11 +1,11 @@
-import { BattlerIndex } from "#app/battle";
-import { Status } from "#app/data/status-effect";
-import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { Status } from "#data/status-effect";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
+import { MoveEndPhase } from "#phases/move-end-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -25,15 +25,14 @@ describe("Moves - Purify", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-
-    game.override.starterSpecies(SpeciesId.PYUKUMUKU);
-    game.override.startingLevel(10);
-    game.override.moveset([MoveId.PURIFY, MoveId.SIZZLY_SLIDE]);
-
-    game.override.enemySpecies(SpeciesId.MAGIKARP);
-    game.override.enemyLevel(10);
-    game.override.enemyMoveset([MoveId.SPLASH, MoveId.NONE, MoveId.NONE, MoveId.NONE]);
+    game.override
+      .battleStyle("single")
+      .starterSpecies(SpeciesId.PYUKUMUKU)
+      .startingLevel(10)
+      .moveset([MoveId.PURIFY, MoveId.SIZZLY_SLIDE])
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyLevel(10)
+      .enemyMoveset([MoveId.SPLASH]);
   });
 
   test("Purify heals opponent status effect and restores user hp", async () => {

@@ -1,15 +1,15 @@
-import { afterEach, beforeAll, beforeEach, expect, describe, it, vi } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
-import Phaser from "phaser";
-import { SpeciesId } from "#enums/species-id";
-import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { UiMode } from "#enums/ui-mode";
 import { Button } from "#enums/buttons";
-import type MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import type MessageUiHandler from "#app/ui/message-ui-handler";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
+import { UiMode } from "#enums/ui-mode";
+import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { GameManager } from "#test/test-utils/game-manager";
+import type { MessageUiHandler } from "#ui/message-ui-handler";
+import type { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
 import i18next from "i18next";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Mystery Encounter Phases", () => {
   let phaserGame: Phaser.Game;
@@ -27,10 +27,7 @@ describe("Mystery Encounter Phases", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.startingWave(11);
-    game.override.mysteryEncounterChance(100);
-    // Seed guarantees wild encounter to be replaced by ME
-    game.override.seed("test");
+    game.override.startingWave(12).mysteryEncounterChance(100).seed("test"); // Seed guarantees wild encounter to be replaced by ME
   });
 
   describe("MysteryEncounterPhase", () => {
@@ -41,7 +38,7 @@ describe("Mystery Encounter Phases", () => {
       ]);
 
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
-      expect(game.scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
     });
 
     it("Runs MysteryEncounterPhase", async () => {
@@ -87,7 +84,9 @@ describe("Mystery Encounter Phases", () => {
 
       // Waitfor required so that option select messages and preOptionPhase logic are handled
       await vi.waitFor(() =>
-        expect(game.scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterOptionSelectedPhase.name),
+        expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(
+          MysteryEncounterOptionSelectedPhase.name,
+        ),
       );
       expect(ui.getMode()).toBe(UiMode.MESSAGE);
       expect(ui.showDialogue).toHaveBeenCalledTimes(1);

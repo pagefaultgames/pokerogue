@@ -1,71 +1,57 @@
-import type Battle from "#app/battle";
-import { BattlerIndex } from "#app/battle";
+import type { Battle } from "#app/battle";
+import { AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
+import { timedEventManager } from "#app/global-event-manager";
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { BiomePoolTier, biomeLinks } from "#balance/biomes";
+import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
+import { modifierTypes } from "#data/data-lists";
+import type { IEggOptions } from "#data/egg";
+import { Egg } from "#data/egg";
+import type { Gender } from "#data/gender";
+import { getNatureName } from "#data/nature";
+import type { CustomPokemonData } from "#data/pokemon-data";
+import type { PokemonSpecies } from "#data/pokemon-species";
+import { Status } from "#data/status-effect";
+import type { AiType } from "#enums/ai-type";
 import { BattleType } from "#enums/battle-type";
-import { biomeLinks, BiomePoolTier } from "#app/data/balance/biomes";
-import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
-import {
-  AVERAGE_ENCOUNTERS_PER_RUN_TARGET,
-  WEIGHT_INCREMENT_ON_SPAWN_MISS,
-} from "#app/data/mystery-encounters/mystery-encounters";
-import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import type { AiType, PlayerPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon, FieldPosition, PokemonMove } from "#app/field/pokemon";
-import type { CustomModifierSettings, ModifierType } from "#app/modifier/modifier-type";
-import {
-  getPartyLuckValue,
-  ModifierPoolType,
-  ModifierTypeGenerator,
-  ModifierTypeOption,
-  modifierTypes,
-  regenerateModifierPoolThresholds,
-} from "#app/modifier/modifier-type";
-import {
-  MysteryEncounterBattlePhase,
-  MysteryEncounterBattleStartCleanupPhase,
-  MysteryEncounterPhase,
-  MysteryEncounterRewardsPhase,
-} from "#app/phases/mystery-encounter-phases";
-import type PokemonData from "#app/system/pokemon-data";
-import type { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import type { PartyOption, PokemonSelectFilter } from "#app/ui/party-ui-handler";
-import { PartyUiMode } from "#app/ui/party-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { isNullOrUndefined, randSeedInt, randomString, randSeedItem } from "#app/utils/common";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
-import type { TrainerType } from "#enums/trainer-type";
-import i18next from "i18next";
-import Trainer, { TrainerVariant } from "#app/field/trainer";
-import type { Gender } from "#app/data/gender";
-import type { Nature } from "#enums/nature";
+import { FieldPosition } from "#enums/field-position";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { MoveId } from "#enums/move-id";
-import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { Status } from "#app/data/status-effect";
-import type { TrainerConfig } from "#app/data/trainers/trainer-config";
-import { trainerConfigs } from "#app/data/trainers/trainer-config";
-import { TrainerSlot } from "#enums/trainer-slot";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import type { IEggOptions } from "#app/data/egg";
-import { Egg } from "#app/data/egg";
-import type { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import type HeldModifierConfig from "#app/interfaces/held-modifier-config";
-import { MovePhase } from "#app/phases/move-phase";
-import { EggLapsePhase } from "#app/phases/egg-lapse-phase";
-import { TrainerVictoryPhase } from "#app/phases/trainer-victory-phase";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
-import { GameOverPhase } from "#app/phases/game-over-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import { PartyExpPhase } from "#app/phases/party-exp-phase";
-import type { Variant } from "#app/sprites/variant";
-import { StatusEffect } from "#enums/status-effect";
-import { globalScene } from "#app/global-scene";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
+import type { Nature } from "#enums/nature";
 import { PokemonType } from "#enums/pokemon-type";
-import { getNatureName } from "#app/data/nature";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { timedEventManager } from "#app/global-event-manager";
+import { StatusEffect } from "#enums/status-effect";
+import { TrainerSlot } from "#enums/trainer-slot";
+import type { TrainerType } from "#enums/trainer-type";
+import { TrainerVariant } from "#enums/trainer-variant";
+import { UiMode } from "#enums/ui-mode";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import { EnemyPokemon } from "#field/pokemon";
+import { Trainer } from "#field/trainer";
+import type { CustomModifierSettings, ModifierType } from "#modifiers/modifier-type";
+import {
+  getPartyLuckValue,
+  ModifierTypeGenerator,
+  ModifierTypeOption,
+  regenerateModifierPoolThresholds,
+} from "#modifiers/modifier-type";
+import { PokemonMove } from "#moves/pokemon-move";
+import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
+import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
+import type { Variant } from "#sprites/variant";
+import type { PokemonData } from "#system/pokemon-data";
+import type { TrainerConfig } from "#trainers/trainer-config";
+import { trainerConfigs } from "#trainers/trainer-config";
+import type { HeldModifierConfig } from "#types/held-modifier-config";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
+import { PartyUiMode } from "#ui/party-ui-handler";
+import { coerceArray, isNullOrUndefined, randomString, randSeedInt, randSeedItem } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import i18next from "i18next";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -428,7 +414,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
     console.log("Moveset:", moveset);
   });
 
-  globalScene.pushPhase(new MysteryEncounterBattlePhase(partyConfig.disableSwitch));
+  globalScene.phaseManager.pushNew("MysteryEncounterBattlePhase", partyConfig.disableSwitch);
 
   await Promise.all(loadEnemyAssets);
   battle.enemyParty.forEach((enemyPokemon_2, e_1) => {
@@ -461,7 +447,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
  * @param moves
  */
 export function loadCustomMovesForEncounter(moves: MoveId | MoveId[]) {
-  moves = Array.isArray(moves) ? moves : [moves];
+  moves = coerceArray(moves);
   return Promise.all(moves.map(move => initMoveAnim(move))).then(() => loadMoveAnimAssets(moves));
 }
 
@@ -480,7 +466,7 @@ export function updatePlayerMoney(changeValue: number, playSound = true, showMes
   }
   if (showMessage) {
     if (changeValue < 0) {
-      globalScene.queueMessage(
+      globalScene.phaseManager.queueMessage(
         i18next.t("mysteryEncounterMessages:paid_money", {
           amount: -changeValue,
         }),
@@ -488,7 +474,7 @@ export function updatePlayerMoney(changeValue: number, playSound = true, showMes
         true,
       );
     } else {
-      globalScene.queueMessage(
+      globalScene.phaseManager.queueMessage(
         i18next.t("mysteryEncounterMessages:receive_money", {
           amount: changeValue,
         }),
@@ -767,9 +753,9 @@ export function setEncounterRewards(
     }
 
     if (customShopRewards) {
-      globalScene.unshiftPhase(new SelectModifierPhase(0, undefined, customShopRewards));
+      globalScene.phaseManager.unshiftNew("SelectModifierPhase", 0, undefined, customShopRewards);
     } else {
-      globalScene.tryRemovePhase(p => p instanceof SelectModifierPhase);
+      globalScene.phaseManager.tryRemovePhase(p => p.is("MysteryEncounterRewardsPhase"));
     }
 
     if (eggRewards) {
@@ -804,10 +790,10 @@ export function setEncounterRewards(
  * @param useWaveIndex - set to false when directly passing the the full exp value instead of baseExpValue
  */
 export function setEncounterExp(participantId: number | number[], baseExpValue: number, useWaveIndex = true) {
-  const participantIds = Array.isArray(participantId) ? participantId : [participantId];
+  const participantIds = coerceArray(participantId);
 
   globalScene.currentBattle.mysteryEncounter!.doEncounterExp = () => {
-    globalScene.unshiftPhase(new PartyExpPhase(baseExpValue, useWaveIndex, new Set(participantIds)));
+    globalScene.phaseManager.unshiftNew("PartyExpPhase", baseExpValue, useWaveIndex, new Set(participantIds));
 
     return true;
   };
@@ -829,7 +815,7 @@ export class OptionSelectSettings {
  * @param optionSelectSettings
  */
 export function initSubsequentOptionSelect(optionSelectSettings: OptionSelectSettings) {
-  globalScene.pushPhase(new MysteryEncounterPhase(optionSelectSettings));
+  globalScene.phaseManager.pushNew("MysteryEncounterPhase", optionSelectSettings);
 }
 
 /**
@@ -843,8 +829,8 @@ export function leaveEncounterWithoutBattle(
   encounterMode: MysteryEncounterMode = MysteryEncounterMode.NO_BATTLE,
 ) {
   globalScene.currentBattle.mysteryEncounter!.encounterMode = encounterMode;
-  globalScene.clearPhaseQueue();
-  globalScene.clearPhaseQueueSplice();
+  globalScene.phaseManager.clearPhaseQueue();
+  globalScene.phaseManager.clearPhaseQueueSplice();
   handleMysteryEncounterVictory(addHealPhase);
 }
 
@@ -857,8 +843,8 @@ export function handleMysteryEncounterVictory(addHealPhase = false, doNotContinu
   const allowedPkm = globalScene.getPlayerParty().filter(pkm => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
-    globalScene.clearPhaseQueue();
-    globalScene.unshiftPhase(new GameOverPhase());
+    globalScene.phaseManager.clearPhaseQueue();
+    globalScene.phaseManager.unshiftNew("GameOverPhase");
     return;
   }
 
@@ -869,8 +855,8 @@ export function handleMysteryEncounterVictory(addHealPhase = false, doNotContinu
     return;
   }
   if (encounter.encounterMode === MysteryEncounterMode.NO_BATTLE) {
-    globalScene.pushPhase(new MysteryEncounterRewardsPhase(addHealPhase));
-    globalScene.pushPhase(new EggLapsePhase());
+    globalScene.phaseManager.pushNew("MysteryEncounterRewardsPhase", addHealPhase);
+    globalScene.phaseManager.pushNew("EggLapsePhase");
   } else if (
     !globalScene
       .getEnemyParty()
@@ -878,15 +864,15 @@ export function handleMysteryEncounterVictory(addHealPhase = false, doNotContinu
         encounter.encounterMode !== MysteryEncounterMode.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true),
       )
   ) {
-    globalScene.pushPhase(new BattleEndPhase(true));
+    globalScene.phaseManager.pushNew("BattleEndPhase", true);
     if (encounter.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
-      globalScene.pushPhase(new TrainerVictoryPhase());
+      globalScene.phaseManager.pushNew("TrainerVictoryPhase");
     }
     if (globalScene.gameMode.isEndless || !globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
-      globalScene.pushPhase(new MysteryEncounterRewardsPhase(addHealPhase));
+      globalScene.phaseManager.pushNew("MysteryEncounterRewardsPhase", addHealPhase);
       if (!encounter.doContinueEncounter) {
         // Only lapse eggs once for multi-battle encounters
-        globalScene.pushPhase(new EggLapsePhase());
+        globalScene.phaseManager.pushNew("EggLapsePhase");
       }
     }
   }
@@ -900,8 +886,8 @@ export function handleMysteryEncounterBattleFailed(addHealPhase = false, doNotCo
   const allowedPkm = globalScene.getPlayerParty().filter(pkm => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
-    globalScene.clearPhaseQueue();
-    globalScene.unshiftPhase(new GameOverPhase());
+    globalScene.phaseManager.clearPhaseQueue();
+    globalScene.phaseManager.unshiftNew("GameOverPhase");
     return;
   }
 
@@ -912,14 +898,14 @@ export function handleMysteryEncounterBattleFailed(addHealPhase = false, doNotCo
     return;
   }
   if (encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE) {
-    globalScene.pushPhase(new BattleEndPhase(false));
+    globalScene.phaseManager.pushNew("BattleEndPhase", false);
   }
 
-  globalScene.pushPhase(new MysteryEncounterRewardsPhase(addHealPhase));
+  globalScene.phaseManager.pushNew("MysteryEncounterRewardsPhase", addHealPhase);
 
   if (!encounter.doContinueEncounter) {
     // Only lapse eggs once for multi-battle encounters
-    globalScene.pushPhase(new EggLapsePhase());
+    globalScene.phaseManager.pushNew("EggLapsePhase");
   }
 }
 
@@ -986,30 +972,12 @@ export function handleMysteryEncounterBattleStartEffects() {
   ) {
     const effects = encounter.startOfBattleEffects;
     effects.forEach(effect => {
-      let source: EnemyPokemon | Pokemon;
-      if (effect.sourcePokemon) {
-        source = effect.sourcePokemon;
-      } else if (!isNullOrUndefined(effect.sourceBattlerIndex)) {
-        if (effect.sourceBattlerIndex === BattlerIndex.ATTACKER) {
-          source = globalScene.getEnemyField()[0];
-        } else if (effect.sourceBattlerIndex === BattlerIndex.ENEMY) {
-          source = globalScene.getEnemyField()[0];
-        } else if (effect.sourceBattlerIndex === BattlerIndex.ENEMY_2) {
-          source = globalScene.getEnemyField()[1];
-        } else if (effect.sourceBattlerIndex === BattlerIndex.PLAYER) {
-          source = globalScene.getPlayerField()[0];
-        } else if (effect.sourceBattlerIndex === BattlerIndex.PLAYER_2) {
-          source = globalScene.getPlayerField()[1];
-        }
-      } else {
-        source = globalScene.getEnemyField()[0];
-      }
-      // @ts-ignore: source cannot be undefined
-      globalScene.pushPhase(new MovePhase(source, effect.targets, effect.move, effect.followUp, effect.ignorePp));
+      const source = effect.sourcePokemon ?? globalScene.getField()[effect.sourceBattlerIndex ?? 0];
+      globalScene.phaseManager.pushNew("MovePhase", source, effect.targets, effect.move, effect.useMode);
     });
 
     // Pseudo turn end phase to reset flinch states, Endure, etc.
-    globalScene.pushPhase(new MysteryEncounterBattleStartCleanupPhase());
+    globalScene.phaseManager.pushNew("MysteryEncounterBattleStartCleanupPhase");
 
     encounter.startOfBattleEffectsComplete = true;
   }
@@ -1130,8 +1098,10 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
           if (biomes! && biomes.length > 0) {
             const specialBiomes = biomes.filter(b => alwaysPickTheseBiomes.includes(b));
             if (specialBiomes.length > 0) {
+              // TODO: should this use `randSeedItem`?
               currentBiome = specialBiomes[randSeedInt(specialBiomes.length)];
             } else {
+              // TODO: should this use `randSeedItem`?
               currentBiome = biomes[randSeedInt(biomes.length)];
             }
           }
@@ -1257,7 +1227,7 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
   );
 
   for (const value of meanEncountersPerRunPerBiomeSorted) {
-    stats += value[0] + "avg valid floors " + meanMEFloorsPerRunPerBiome.get(value[0]) + ", avg MEs ${value[1]},\n";
+    stats += value[0] + "avg valid floors " + meanMEFloorsPerRunPerBiome.get(value[0]) + `, avg MEs ${value[1]},\n`;
   }
 
   console.log(stats);

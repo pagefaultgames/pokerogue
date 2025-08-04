@@ -1,37 +1,34 @@
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { modifierTypes } from "#data/data-lists";
+import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
+import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
+import { FieldPosition } from "#enums/field-position";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Nature } from "#enums/nature";
+import { PlayerGender } from "#enums/player-gender";
+import { SpeciesId } from "#enums/species-id";
+import { TrainerSlot } from "#enums/trainer-slot";
+import { addPokeballOpenParticles } from "#field/anims";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
   leaveEncounterWithoutBattle,
   selectPokemonForOption,
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
   updatePlayerMoney,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { TrainerSlot } from "#enums/trainer-slot";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import { FieldPosition } from "#app/field/pokemon";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { SpeciesId } from "#enums/species-id";
+} from "#mystery-encounters/encounter-phase-utils";
+import { isPokemonValidForEncounterOptionSelection } from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { PlayerGender } from "#enums/player-gender";
-import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
-import { addPokeballOpenParticles } from "#app/field/anims";
-import { ShinySparklePhase } from "#app/phases/shiny-sparkle-phase";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
-import { PostSummonPhase } from "#app/phases/post-summon-phase";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { Nature } from "#enums/nature";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/funAndGames";
@@ -408,16 +405,16 @@ function summonPlayerPokemonAnimation(pokemon: PlayerPokemon): Promise<void> {
               onComplete: () => {
                 pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
                 pokemon.getSprite().clearTint();
-                pokemon.resetSummonData();
+                pokemon.fieldSetup(true);
                 globalScene.time.delayedCall(1000, () => {
                   if (pokemon.isShiny()) {
-                    globalScene.unshiftPhase(new ShinySparklePhase(pokemon.getBattlerIndex()));
+                    globalScene.phaseManager.unshiftNew("ShinySparklePhase", pokemon.getBattlerIndex());
                   }
 
                   pokemon.resetTurnData();
 
                   globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
-                  globalScene.pushPhase(new PostSummonPhase(pokemon.getBattlerIndex()));
+                  globalScene.phaseManager.pushNew("PostSummonPhase", pokemon.getBattlerIndex());
                   resolve();
                 });
               },

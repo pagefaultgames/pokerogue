@@ -1,8 +1,9 @@
 import { globalScene } from "#app/global-scene";
-import { fixedInt } from "#app/utils/common";
-import { BattlePhase } from "./battle-phase";
+import { BattlePhase } from "#phases/battle-phase";
+import { fixedInt } from "#utils/common";
 
 export class PartyHealPhase extends BattlePhase {
+  public readonly phaseName = "PartyHealPhase";
   private resumeBgm: boolean;
 
   constructor(resumeBgm: boolean) {

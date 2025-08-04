@@ -1,53 +1,52 @@
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { EncounterBattleAnim } from "#data/battle-anims";
+import { allAbilities, modifierTypes } from "#data/data-lists";
+import { Gender } from "#data/gender";
+import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { EncounterAnim } from "#enums/encounter-anims";
+import { MoveId } from "#enums/move-id";
+import { MoveUseMode } from "#enums/move-use-mode";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { WeatherType } from "#enums/weather-type";
+import type { Pokemon } from "#field/pokemon";
+import type { AttackTypeBoosterModifierType } from "#modifiers/modifier-type";
+import { PokemonMove } from "#moves/pokemon-move";
+import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
+import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
+  generateModifierType,
   initBattleWithEnemyConfig,
-  loadCustomMovesForEncounter,
   leaveEncounterWithoutBattle,
+  loadCustomMovesForEncounter,
   setEncounterExp,
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
-  generateModifierType,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import type { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import {
-  AbilityRequirement,
-  CombinationPokemonRequirement,
-  TypeRequirement,
-} from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { SpeciesId } from "#enums/species-id";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Gender } from "#app/data/gender";
-import { PokemonType } from "#enums/pokemon-type";
-import { BattlerIndex } from "#app/battle";
-import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
-import { MoveId } from "#enums/move-id";
-import { EncounterBattleAnim } from "#app/data/battle-anims";
-import { WeatherType } from "#enums/weather-type";
-import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
-import { StatusEffect } from "#enums/status-effect";
-import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+} from "#mystery-encounters/encounter-phase-utils";
 import {
   applyAbilityOverrideToPokemon,
   applyDamageToPokemon,
   applyModifierTypeToPlayerPokemon,
-} from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { EncounterAnim } from "#enums/encounter-anims";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { AbilityId } from "#enums/ability-id";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { Stat } from "#enums/stat";
-import { Ability } from "#app/data/abilities/ability-class";
-import { FIRE_RESISTANT_ABILITIES } from "#app/data/mystery-encounters/requirements/requirement-groups";
+} from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import {
+  AbilityRequirement,
+  CombinationPokemonRequirement,
+  TypeRequirement,
+} from "#mystery-encounters/mystery-encounter-requirements";
+import { FIRE_RESISTANT_ABILITIES } from "#mystery-encounters/requirement-groups";
+import { isNullOrUndefined, randSeedInt } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/fieryFallout";
@@ -92,8 +91,12 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
           gender: Gender.MALE,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            globalScene.unshiftPhase(
-              new StatStageChangePhase(pokemon.getBattlerIndex(), true, [Stat.SPDEF, Stat.SPD], 1),
+            globalScene.phaseManager.unshiftNew(
+              "StatStageChangePhase",
+              pokemon.getBattlerIndex(),
+              true,
+              [Stat.SPDEF, Stat.SPD],
+              1,
             );
           },
         },
@@ -103,8 +106,12 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
           gender: Gender.FEMALE,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            globalScene.unshiftPhase(
-              new StatStageChangePhase(pokemon.getBattlerIndex(), true, [Stat.SPDEF, Stat.SPD], 1),
+            globalScene.phaseManager.unshiftNew(
+              "StatStageChangePhase",
+              pokemon.getBattlerIndex(),
+              true,
+              [Stat.SPDEF, Stat.SPD],
+              1,
             );
           },
         },
@@ -194,13 +201,13 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.PLAYER],
           move: new PokemonMove(MoveId.FIRE_SPIN),
-          ignorePp: true,
+          useMode: MoveUseMode.IGNORE_PP,
         },
         {
           sourceBattlerIndex: BattlerIndex.ENEMY_2,
           targets: [BattlerIndex.PLAYER_2],
           move: new PokemonMove(MoveId.FIRE_SPIN),
-          ignorePp: true,
+          useMode: MoveUseMode.IGNORE_PP,
         },
       );
       await initBattleWithEnemyConfig(globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);
@@ -239,7 +246,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
         if (chosenPokemon.trySetStatus(StatusEffect.BURN)) {
           // Burn applied
           encounter.setDialogueToken("burnedPokemon", chosenPokemon.getNameToRender());
-          encounter.setDialogueToken("abilityName", new Ability(AbilityId.HEATPROOF, 3).name);
+          encounter.setDialogueToken("abilityName", allAbilities[AbilityId.HEATPROOF].name);
           queueEncounterMessage(`${namespace}:option.2.target_burned`);
 
           // Also permanently change the burned Pokemon's ability to Heatproof

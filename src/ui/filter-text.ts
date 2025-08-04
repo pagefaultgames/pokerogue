@@ -1,12 +1,13 @@
-import type { StarterContainer } from "./starter-container";
-import { addTextObject, getTextColor, TextStyle } from "./text";
-import type { UiTheme } from "#enums/ui-theme";
-import { addWindow, WindowVariant } from "./ui-theme";
-import i18next from "i18next";
-import type AwaitableUiHandler from "./awaitable-ui-handler";
-import type UI from "./ui";
-import { UiMode } from "#enums/ui-mode";
 import { globalScene } from "#app/global-scene";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import type { UiTheme } from "#enums/ui-theme";
+import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
+import type { StarterContainer } from "#ui/starter-container";
+import { addTextObject, getTextColor } from "#ui/text";
+import type { UI } from "#ui/ui";
+import { addWindow, WindowVariant } from "#ui/ui-theme";
+import i18next from "i18next";
 
 export enum FilterTextRow {
   NAME,

@@ -1,28 +1,27 @@
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { modifierTypes } from "#data/data-lists";
+import type { IEggOptions } from "#data/egg";
+import { EggSourceType } from "#enums/egg-source-types";
+import { EggTier } from "#enums/egg-type";
+import { ModifierTier } from "#enums/modifier-tier";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
+import { TrainerType } from "#enums/trainer-type";
+import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { trainerConfigs } from "#app/data/trainers/trainer-config";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { TrainerType } from "#enums/trainer-type";
-import { SpeciesId } from "#enums/species-id";
-import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { randSeedInt } from "#app/utils/common";
+} from "#mystery-encounters/encounter-phase-utils";
+import { getSpriteKeysFromSpecies } from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { trainerConfigs } from "#trainers/trainer-config";
+import { randSeedInt } from "#utils/common";
 import i18next from "i18next";
-import type { IEggOptions } from "#app/data/egg";
-import { EggSourceType } from "#enums/egg-source-types";
-import { EggTier } from "#enums/egg-type";
-import { PartyHealPhase } from "#app/phases/party-heal-phase";
-import { ModifierTier } from "#app/modifier/modifier-tier";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/aTrainersTest";
@@ -182,7 +181,7 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
     async () => {
       const encounter = globalScene.currentBattle.mysteryEncounter!;
       // Full heal party
-      globalScene.unshiftPhase(new PartyHealPhase(true));
+      globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
 
       const eggOptions: IEggOptions = {
         pulled: false,

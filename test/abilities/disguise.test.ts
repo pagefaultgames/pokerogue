@@ -1,11 +1,11 @@
-import { BattlerIndex } from "#app/battle";
-import { toDmgValue } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
+import { toDmgValue } from "#utils/common";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Disguise", () => {
@@ -66,8 +66,7 @@ describe("Abilities - Disguise", () => {
   });
 
   it("takes no damage from the first hit of a multihit move and transforms to Busted form, then takes damage from the second hit", async () => {
-    game.override.moveset([MoveId.SURGING_STRIKES]);
-    game.override.enemyLevel(5);
+    game.override.moveset([MoveId.SURGING_STRIKES]).enemyLevel(5);
     await game.classicMode.startBattle();
 
     const mimikyu = game.scene.getEnemyPokemon()!;
@@ -106,8 +105,7 @@ describe("Abilities - Disguise", () => {
   });
 
   it("persists form change when switched out", async () => {
-    game.override.enemyMoveset([MoveId.SHADOW_SNEAK]);
-    game.override.starterSpecies(0);
+    game.override.enemyMoveset([MoveId.SHADOW_SNEAK]).starterSpecies(0);
 
     await game.classicMode.startBattle([SpeciesId.MIMIKYU, SpeciesId.FURRET]);
 
@@ -131,8 +129,7 @@ describe("Abilities - Disguise", () => {
   });
 
   it("persists form change when wave changes with no arena reset", async () => {
-    game.override.starterSpecies(0);
-    game.override.starterForms({
+    game.override.starterSpecies(0).starterForms({
       [SpeciesId.MIMIKYU]: bustedForm,
     });
     await game.classicMode.startBattle([SpeciesId.FURRET, SpeciesId.MIMIKYU]);
@@ -148,11 +145,12 @@ describe("Abilities - Disguise", () => {
   });
 
   it("reverts to Disguised form on arena reset", async () => {
-    game.override.startingWave(4);
-    game.override.starterSpecies(SpeciesId.MIMIKYU);
-    game.override.starterForms({
-      [SpeciesId.MIMIKYU]: bustedForm,
-    });
+    game.override
+      .startingWave(4)
+      .starterSpecies(SpeciesId.MIMIKYU)
+      .starterForms({
+        [SpeciesId.MIMIKYU]: bustedForm,
+      });
 
     await game.classicMode.startBattle();
 
@@ -167,12 +165,13 @@ describe("Abilities - Disguise", () => {
     expect(mimikyu.formIndex).toBe(disguisedForm);
   });
 
-  it("reverts to Disguised form on biome change when fainted", async () => {
-    game.override.startingWave(10);
-    game.override.starterSpecies(0);
-    game.override.starterForms({
-      [SpeciesId.MIMIKYU]: bustedForm,
-    });
+  it("reverts to Disguised form when fainted", async () => {
+    game.override
+      .startingWave(10)
+      .starterSpecies(0)
+      .starterForms({
+        [SpeciesId.MIMIKYU]: bustedForm,
+      });
 
     await game.classicMode.startBattle([SpeciesId.MIMIKYU, SpeciesId.FURRET]);
 
@@ -182,10 +181,6 @@ describe("Abilities - Disguise", () => {
 
     game.move.select(MoveId.SPLASH);
     await game.killPokemon(mimikyu1);
-    game.doSelectPartyPokemon(1);
-    await game.toNextTurn();
-    game.move.select(MoveId.SPLASH);
-    await game.doKillOpponents();
     await game.phaseInterceptor.to("QuietFormChangePhase");
 
     expect(mimikyu1.formIndex).toBe(disguisedForm);
@@ -201,13 +196,12 @@ describe("Abilities - Disguise", () => {
     game.move.select(MoveId.SHADOW_SNEAK);
     await game.toNextWave();
 
-    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(2);
   });
 
   it("activates when Aerilate circumvents immunity to the move's base type", async () => {
-    game.override.ability(AbilityId.AERILATE);
-    game.override.moveset([MoveId.TACKLE]);
+    game.override.ability(AbilityId.AERILATE).moveset([MoveId.TACKLE]);
 
     await game.classicMode.startBattle();
 

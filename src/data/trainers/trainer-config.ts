@@ -1,16 +1,28 @@
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { PokemonMove } from "#app/field/pokemon";
-import { toReadableString, isNullOrUndefined, randSeedItem, randSeedInt, randSeedIntRange } from "#app/utils/common";
-import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { tmSpecies } from "#app/data/balance/tms";
-import { doubleBattleDialogue } from "#app/data/dialogue";
-import { TrainerVariant } from "#app/field/trainer";
-import { getIsInitialized, initI18n } from "#app/plugins/i18n";
-import i18next from "i18next";
-import { Gender } from "#app/data/gender";
-import { signatureSpecies } from "../balance/signature-species";
+import { pokemonEvolutions, pokemonPrevolutions } from "#balance/pokemon-evolutions";
+import { signatureSpecies } from "#balance/signature-species";
+import { tmSpecies } from "#balance/tms";
+import { modifierTypes } from "#data/data-lists";
+import { doubleBattleDialogue } from "#data/double-battle-dialogue";
+import { Gender } from "#data/gender";
+import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { PartyMemberStrength } from "#enums/party-member-strength";
+import { PokeballType } from "#enums/pokeball";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import { TeraAIMode } from "#enums/tera-ai-mode";
+import { TrainerPoolTier } from "#enums/trainer-pool-tier";
+import { TrainerSlot } from "#enums/trainer-slot";
+import { TrainerType } from "#enums/trainer-type";
+import { TrainerVariant } from "#enums/trainer-variant";
+import type { EnemyPokemon } from "#field/pokemon";
+import { PokemonMove } from "#moves/pokemon-move";
+import { getIsInitialized, initI18n } from "#plugins/i18n";
+import type { EvilTeam } from "#trainers/evil-admin-trainer-pools";
+import { evilAdminTrainerPools } from "#trainers/evil-admin-trainer-pools";
 import {
   getEvilGruntPartyTemplate,
   getGymLeaderPartyTemplate,
@@ -18,37 +30,21 @@ import {
   TrainerPartyCompoundTemplate,
   TrainerPartyTemplate,
   trainerPartyTemplates,
-} from "./TrainerPartyTemplate";
-import { evilAdminTrainerPools } from "./evil-admin-trainer-pools";
-
-// Enum imports
-import { PartyMemberStrength } from "#enums/party-member-strength";
-import { SpeciesId } from "#enums/species-id";
-import { PokeballType } from "#enums/pokeball";
-import { PokemonType } from "#enums/pokemon-type";
-import { MoveId } from "#enums/move-id";
-import { AbilityId } from "#enums/ability-id";
-import { TeraAIMode } from "#enums/tera-ai-mode";
-import { TrainerPoolTier } from "#enums/trainer-pool-tier";
-import { TrainerSlot } from "#enums/trainer-slot";
-import { TrainerType } from "#enums/trainer-type";
-import { timedEventManager } from "#app/global-event-manager";
-
-// Type imports
-import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import type { ModifierTypeFunc } from "#app/modifier/modifier-type";
-import type { EnemyPokemon } from "#app/field/pokemon";
-import type { EvilTeam } from "./evil-admin-trainer-pools";
+} from "#trainers/trainer-party-template";
+import type { ModifierTypeFunc } from "#types/modifier-types";
 import type {
-  PartyMemberFunc,
-  GenModifiersFunc,
   GenAIFunc,
-  PartyTemplateFunc,
-  TrainerTierPools,
-  TrainerConfigs,
+  GenModifiersFunc,
+  PartyMemberFunc,
   PartyMemberFuncs,
-} from "./typedefs";
+  PartyTemplateFunc,
+  TrainerConfigs,
+  TrainerTierPools,
+} from "#types/trainer-funcs";
+import { coerceArray, isNullOrUndefined, randSeedInt, randSeedIntRange, randSeedItem } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { toSnakeCase, toTitleCase } from "#utils/strings";
+import i18next from "i18next";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
 const ELITE_FOUR_MINIMUM_BST = 460;
@@ -138,7 +134,7 @@ export class TrainerConfig {
   constructor(trainerType: TrainerType, allowLegendaries?: boolean) {
     this.trainerType = trainerType;
     this.trainerAI = new TrainerAI();
-    this.name = toReadableString(TrainerType[this.getDerivedType()]);
+    this.name = toTitleCase(TrainerType[this.getDerivedType()]);
     this.battleBgm = "battle_trainer";
     this.mixedBattleBgm = "battle_trainer";
     this.victoryBgm = "victory_trainer";
@@ -283,7 +279,7 @@ export class TrainerConfig {
    * @param {string} [nameFemale] The name of the female trainer. If 'Ivy', a localized name will be assigned.
    * @param {TrainerType | string} [femaleEncounterBgm] The encounter BGM for the female trainer, which can be a TrainerType or a string.
    * @returns {TrainerConfig} The updated TrainerConfig instance.
-   **/
+   */
   setHasGenders(nameFemale?: string, femaleEncounterBgm?: TrainerType | string): TrainerConfig {
     // If the female name is 'Ivy' (the rival), assign a localized name.
     if (nameFemale === "Ivy") {
@@ -328,7 +324,7 @@ export class TrainerConfig {
     if (doubleEncounterBgm) {
       this.doubleEncounterBgm =
         typeof doubleEncounterBgm === "number"
-          ? TrainerType[doubleEncounterBgm].toString().replace(/\_/g, " ").toLowerCase()
+          ? TrainerType[doubleEncounterBgm].toString().replace(/_/g, " ").toLowerCase()
           : doubleEncounterBgm;
     }
     return this;
@@ -533,7 +529,7 @@ export class TrainerConfig {
    * @param {SpeciesId | SpeciesId[]} signatureSpecies The signature species for the evil team leader.
    * @param specialtyType The specialty Type of the admin, if they have one
    * @returns {TrainerConfig} The updated TrainerConfig instance.
-   * **/
+   */
   initForEvilTeamAdmin(
     title: string,
     poolName: EvilTeam,
@@ -554,10 +550,7 @@ export class TrainerConfig {
     this.speciesPools = evilAdminTrainerPools[poolName];
 
     signatureSpecies.forEach((speciesPool, s) => {
-      if (!Array.isArray(speciesPool)) {
-        speciesPool = [speciesPool];
-      }
-      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
+      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(coerceArray(speciesPool)));
     });
 
     const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
@@ -577,7 +570,7 @@ export class TrainerConfig {
    * Initializes the trainer configuration for a Stat Trainer, as part of the Trainer's Test Mystery Encounter.
    * @param _isMale Whether the stat trainer is Male or Female (for localization of the title).
    * @returns {TrainerConfig} The updated TrainerConfig instance.
-   **/
+   */
   initForStatTrainer(_isMale = false): TrainerConfig {
     if (!getIsInitialized()) {
       initI18n();
@@ -604,7 +597,7 @@ export class TrainerConfig {
    * @param {PokemonType} specialtyType The specialty type for the evil team Leader.
    * @param boolean Whether or not this is the rematch fight
    * @returns {TrainerConfig} The updated TrainerConfig instance.
-   * **/
+   */
   initForEvilTeamLeader(
     title: string,
     signatureSpecies: (SpeciesId | SpeciesId[])[],
@@ -620,10 +613,7 @@ export class TrainerConfig {
       this.setPartyTemplates(trainerPartyTemplates.RIVAL_5);
     }
     signatureSpecies.forEach((speciesPool, s) => {
-      if (!Array.isArray(speciesPool)) {
-        speciesPool = [speciesPool];
-      }
-      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
+      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(coerceArray(speciesPool)));
     });
     if (!isNullOrUndefined(specialtyType)) {
       this.setSpeciesFilter(p => p.isOfType(specialtyType));
@@ -650,7 +640,7 @@ export class TrainerConfig {
    * @param ignoreMinTeraWave Whether the Gym Leader always uses Tera (true), or only Teras after {@linkcode GYM_LEADER_TERA_WAVE} (false). Defaults to false.
    * @param teraSlot Optional, sets the party member in this slot to Terastallize. Wraps based on party size.
    * @returns {TrainerConfig} The updated TrainerConfig instance.
-   * **/
+   */
   initForGymLeader(
     signatureSpecies: (SpeciesId | SpeciesId[])[],
     isMale: boolean,
@@ -668,12 +658,8 @@ export class TrainerConfig {
 
     // Set up party members with their corresponding species.
     signatureSpecies.forEach((speciesPool, s) => {
-      // Ensure speciesPool is an array.
-      if (!Array.isArray(speciesPool)) {
-        speciesPool = [speciesPool];
-      }
       // Set a function to get a random party member from the species pool.
-      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
+      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(coerceArray(speciesPool)));
     });
 
     // If specialty type is provided, set species filter and specialty type.
@@ -712,7 +698,7 @@ export class TrainerConfig {
    * @param specialtyType - The specialty type for the Elite Four member.
    * @param teraSlot - Optional, sets the party member in this slot to Terastallize.
    * @returns The updated TrainerConfig instance.
-   **/
+   */
   initForEliteFour(
     signatureSpecies: (SpeciesId | SpeciesId[])[],
     isMale: boolean,
@@ -729,12 +715,8 @@ export class TrainerConfig {
 
     // Set up party members with their corresponding species.
     signatureSpecies.forEach((speciesPool, s) => {
-      // Ensure speciesPool is an array.
-      if (!Array.isArray(speciesPool)) {
-        speciesPool = [speciesPool];
-      }
       // Set a function to get a random party member from the species pool.
-      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
+      this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(coerceArray(speciesPool)));
     });
 
     // Set species filter and specialty type if provided, otherwise filter by base total.
@@ -746,7 +728,7 @@ export class TrainerConfig {
     }
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
-    const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
+    const nameForCall = toSnakeCase(this.name);
     this.name = i18next.t(`trainerNames:${nameForCall}`);
 
     // Set the title to "elite_four". (this is the key in the i18n file)
@@ -772,7 +754,7 @@ export class TrainerConfig {
    * @param {SpeciesId | SpeciesId[]} signatureSpecies The signature species for the Champion.
    * @param isMale Whether the Champion is Male or Female (for localization of the title).
    * @returns {TrainerConfig} The updated TrainerConfig instance.
-   **/
+   */
   initForChampion(isMale: boolean): TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
     if (!getIsInitialized()) {
@@ -822,7 +804,7 @@ export class TrainerConfig {
    * @param {TrainerSlot} trainerSlot - The slot to determine which title to use. Defaults to TrainerSlot.NONE.
    * @param {TrainerVariant} variant - The variant of the trainer to determine the specific title.
    * @returns {string} - The title of the trainer.
-   **/
+   */
   getTitle(trainerSlot: TrainerSlot = TrainerSlot.NONE, variant: TrainerVariant): string {
     const ret = this.name;
 
@@ -1262,12 +1244,58 @@ export const trainerConfigs: TrainerConfigs = {
     .setHasDouble("Breeders")
     .setPartyTemplateFunc(() =>
       getWavePartyTemplate(
-        trainerPartyTemplates.FOUR_WEAKER,
-        trainerPartyTemplates.FIVE_WEAKER,
-        trainerPartyTemplates.SIX_WEAKER,
+        trainerPartyTemplates.FOUR_WEAK,
+        trainerPartyTemplates.FIVE_WEAK,
+        trainerPartyTemplates.SIX_WEAK,
       ),
     )
-    .setSpeciesFilter(s => s.baseTotal < 450),
+    .setSpeciesPools({
+      [TrainerPoolTier.COMMON]: [
+        SpeciesId.PICHU,
+        SpeciesId.CLEFFA,
+        SpeciesId.IGGLYBUFF,
+        SpeciesId.TOGEPI,
+        SpeciesId.TYROGUE,
+        SpeciesId.SMOOCHUM,
+        SpeciesId.AZURILL,
+        SpeciesId.BUDEW,
+        SpeciesId.CHINGLING,
+        SpeciesId.BONSLY,
+        SpeciesId.MIME_JR,
+        SpeciesId.HAPPINY,
+        SpeciesId.MANTYKE,
+        SpeciesId.TOXEL,
+      ],
+      [TrainerPoolTier.UNCOMMON]: [
+        SpeciesId.DITTO,
+        SpeciesId.ELEKID,
+        SpeciesId.MAGBY,
+        SpeciesId.WYNAUT,
+        SpeciesId.MUNCHLAX,
+        SpeciesId.RIOLU,
+        SpeciesId.AUDINO,
+      ],
+      [TrainerPoolTier.RARE]: [
+        SpeciesId.ALOLA_RATTATA,
+        SpeciesId.ALOLA_SANDSHREW,
+        SpeciesId.ALOLA_VULPIX,
+        SpeciesId.ALOLA_DIGLETT,
+        SpeciesId.ALOLA_MEOWTH,
+        SpeciesId.GALAR_PONYTA,
+      ],
+      [TrainerPoolTier.SUPER_RARE]: [
+        SpeciesId.ALOLA_GEODUDE,
+        SpeciesId.ALOLA_GRIMER,
+        SpeciesId.GALAR_MEOWTH,
+        SpeciesId.GALAR_SLOWPOKE,
+        SpeciesId.GALAR_FARFETCHD,
+        SpeciesId.HISUI_GROWLITHE,
+        SpeciesId.HISUI_VOLTORB,
+        SpeciesId.HISUI_QWILFISH,
+        SpeciesId.HISUI_SNEASEL,
+        SpeciesId.HISUI_ZORUA,
+      ],
+    }),
   [TrainerType.CLERK]: new TrainerConfig(++t)
     .setHasGenders("Clerk Female")
     .setHasDouble("Colleagues")

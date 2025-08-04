@@ -1,11 +1,12 @@
 import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addTextObject } from "./text";
-import { addWindow } from "./ui-theme";
-import { getLocalizedSpriteKey, fixedInt } from "#app/utils/common";
-import type Move from "../data/moves/move";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveCategory } from "#enums/move-category";
 import { PokemonType } from "#enums/pokemon-type";
+import { TextStyle } from "#enums/text-style";
+import type { Move } from "#moves/move";
+import { addTextObject } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import { fixedInt, getLocalizedSpriteKey } from "#utils/common";
 import i18next from "i18next";
 
 export interface MoveInfoOverlaySettings {
@@ -30,7 +31,7 @@ const DESC_HEIGHT = 48;
 const BORDER = 8;
 const GLOBAL_SCALE = 6;
 
-export default class MoveInfoOverlay extends Phaser.GameObjects.Container implements InfoToggle {
+export class MoveInfoOverlay extends Phaser.GameObjects.Container implements InfoToggle {
   public active = false;
 
   private move: Move;
@@ -80,7 +81,6 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
         },
       },
     );
-    this.desc.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
 
     // limit the text rendering, required for scrolling later on
     const maskPointOrigin = {

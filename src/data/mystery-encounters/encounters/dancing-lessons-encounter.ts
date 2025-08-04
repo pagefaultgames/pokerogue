@@ -1,45 +1,44 @@
-import { BattlerIndex } from "#app/battle";
-import { globalScene } from "#app/global-scene";
-import { EncounterBattleAnim } from "#app/data/battle-anims";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { DANCING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import {
-  initBattleWithEnemyConfig,
-  leaveEncounterWithoutBattle,
-  selectPokemonForOption,
-  setEncounterRewards,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import {
-  catchPokemon,
-  getEncounterPokemonLevelForWave,
-  STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER,
-} from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { TrainerSlot } from "#enums/trainer-slot";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import PokemonData from "#app/system/pokemon-data";
-import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
+import { globalScene } from "#app/global-scene";
+import { EncounterBattleAnim } from "#data/battle-anims";
+import { modifierTypes } from "#data/data-lists";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { MoveId } from "#enums/move-id";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { TrainerSlot } from "#enums/trainer-slot";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import { EnemyPokemon } from "#field/pokemon";
+import { PokemonMove } from "#moves/pokemon-move";
+import { getEncounterText, queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
+import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
+import {
+  initBattleWithEnemyConfig,
+  leaveEncounterWithoutBattle,
+  selectPokemonForOption,
+  setEncounterRewards,
+} from "#mystery-encounters/encounter-phase-utils";
+import {
+  catchPokemon,
+  getEncounterPokemonLevelForWave,
+  STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER,
+} from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import { DANCING_MOVES } from "#mystery-encounters/requirement-groups";
+import { PokemonData } from "#system/pokemon-data";
+import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
@@ -176,13 +175,12 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.1.boss_enraged`);
-            globalScene.unshiftPhase(
-              new StatStageChangePhase(
-                pokemon.getBattlerIndex(),
-                true,
-                [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF],
-                1,
-              ),
+            globalScene.phaseManager.unshiftNew(
+              "StatStageChangePhase",
+              pokemon.getBattlerIndex(),
+              true,
+              [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF],
+              1,
             );
           },
         },
@@ -216,7 +214,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.PLAYER],
           move: new PokemonMove(MoveId.REVELATION_DANCE),
-          ignorePp: true,
+          useMode: MoveUseMode.IGNORE_PP,
         });
 
         await hideOricorioPokemon();
@@ -245,8 +243,10 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
 
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
-          globalScene.unshiftPhase(
-            new LearnMovePhase(globalScene.getPlayerParty().indexOf(pokemon), MoveId.REVELATION_DANCE),
+          globalScene.phaseManager.unshiftNew(
+            "LearnMovePhase",
+            globalScene.getPlayerParty().indexOf(pokemon),
+            MoveId.REVELATION_DANCE,
           );
 
           // Play animation again to "learn" the dance
@@ -327,7 +327,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
       .withOptionPhase(async () => {
         // Show the Oricorio a dance, and recruit it
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const oricorio = encounter.misc.oricorioData.toPokemon();
+        const oricorio = encounter.misc.oricorioData.toPokemon() as EnemyPokemon;
         oricorio.passive = true;
 
         // Ensure the Oricorio's moveset gains the Dance move the player used

@@ -1,32 +1,31 @@
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { modifierTypes } from "#data/data-lists";
+import { getNatureName } from "#data/nature";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import type { Nature } from "#enums/nature";
+import { SpeciesId } from "#enums/species-id";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import { getEncounterText, queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import {
   generateModifierType,
   leaveEncounterWithoutBattle,
   selectPokemonForOption,
   setEncounterExp,
   updatePlayerMoney,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { randSeedInt } from "#app/utils/common";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { SpeciesId } from "#enums/species-id";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+} from "#mystery-encounters/encounter-phase-utils";
 import {
   applyDamageToPokemon,
   applyModifierTypeToPlayerPokemon,
   isPokemonValidForEncounterOptionSelection,
-} from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import type { Nature } from "#enums/nature";
-import { getNatureName } from "#app/data/nature";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+} from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import { randSeedInt } from "#utils/common";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
