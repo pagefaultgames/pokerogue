@@ -4,20 +4,20 @@ import type { HeldItemId } from "#enums/held-item-id";
 import { getRewardCategory, RewardCategoryId, RewardId } from "#enums/reward-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
-import type { RewardFunc, RewardPoolId } from "#types/rewards";
-import { getHeldItemTier } from "./held-item-default-tiers";
+import type { RewardFunc, RewardPoolId, RewardSpecs } from "#types/rewards";
+import { heldItemRarities } from "./held-item-default-tiers";
 import {
-  type HeldItemReward,
+  HeldItemReward,
   type PokemonMoveReward,
   type RememberMoveReward,
   type Reward,
   RewardGenerator,
   RewardOption,
   type TmReward,
-  type TrainerItemReward,
+  TrainerItemReward,
 } from "./reward";
-import { getRewardTier } from "./reward-defaults-tiers";
-import { getTrainerItemTier } from "./trainer-item-default-tiers";
+import { rewardRarities } from "./reward-defaults-tiers";
+import { trainerItemRarities } from "./trainer-item-default-tiers";
 
 export function isTmReward(reward: Reward): reward is TmReward {
   return getRewardCategory(reward.id) === RewardCategoryId.TM;
@@ -42,33 +42,43 @@ export function generateReward(rewardFunc: RewardFunc, pregenArgs?: any[]): Rewa
   return reward instanceof RewardGenerator ? reward.generateReward(globalScene.getPlayerParty(), pregenArgs) : reward;
 }
 
-/**
- * Generates a Reward Option from a given function
- * @param rewardFunc
- * @param pregenArgs - can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
- */
-export function generateRewardOption(rewardFunc: RewardFunc, pregenArgs?: any[]): RewardOption | null {
+export function generateRewardOptionFromId(
+  id: RewardPoolId,
+  cost = 0,
+  tierOverride?: RarityTier,
+  upgradeCount = 0,
+  pregenArgs?: any[],
+): RewardOption | null {
+  if (isHeldItemId(id)) {
+    const reward = new HeldItemReward(id);
+    const tier = tierOverride ?? heldItemRarities[id];
+    return new RewardOption(reward, upgradeCount, tier, cost);
+  }
+
+  if (isTrainerItemId(id)) {
+    const reward = new TrainerItemReward(id);
+    const tier = tierOverride ?? trainerItemRarities[id];
+    return new RewardOption(reward, upgradeCount, tier, cost);
+  }
+
+  const rewardFunc = allRewards[id];
   const reward = generateReward(rewardFunc, pregenArgs);
   if (reward) {
-    const tier = getRewardDefaultTier(reward);
-    return new RewardOption(reward, 0, tier);
+    const tier = tierOverride ?? rewardRarities[id];
+    return new RewardOption(reward, upgradeCount, tier, cost);
   }
   return null;
 }
 
-/**
- * Finds the default rarity tier for a given reward. For unique held item or trainer item rewards,
- * falls back to the default rarity tier for the item.
- * @param reward The {@linkcode Reward} to determine the tier for.
- */
-export function getRewardDefaultTier(reward: Reward): RarityTier {
-  if (reward.id === RewardId.HELD_ITEM) {
-    return getHeldItemTier((reward as HeldItemReward).itemId);
+export function generateRewardOptionFromSpecs(
+  specs: RewardSpecs,
+  cost = 0,
+  overrideTier?: RarityTier,
+): RewardOption | null {
+  if (typeof specs === "number") {
+    return generateRewardOptionFromId(specs, cost, overrideTier);
   }
-  if (reward.id === RewardId.TRAINER_ITEM) {
-    return getTrainerItemTier((reward as TrainerItemReward).itemId);
-  }
-  return getRewardTier(reward.id);
+  return generateRewardOptionFromId(specs.id, cost, overrideTier, 0, specs.args);
 }
 
 export function getPlayerShopRewardOptionsForWave(waveIndex: number, baseCost: number): RewardOption[] {
@@ -78,26 +88,26 @@ export function getPlayerShopRewardOptionsForWave(waveIndex: number, baseCost: n
 
   const options = [
     [
-      new RewardOption(allRewards.POTION(), 0, baseCost * 0.2),
-      new RewardOption(allRewards.ETHER(), 0, baseCost * 0.4),
-      new RewardOption(allRewards.REVIVE(), 0, baseCost * 2),
+      generateRewardOptionFromId(RewardId.POTION, baseCost * 0.2),
+      generateRewardOptionFromId(RewardId.ETHER, baseCost * 0.4),
+      generateRewardOptionFromId(RewardId.REVIVE, baseCost * 2),
     ],
     [
-      new RewardOption(allRewards.SUPER_POTION(), 0, baseCost * 0.45),
-      new RewardOption(allRewards.FULL_HEAL(), 0, baseCost),
+      generateRewardOptionFromId(RewardId.SUPER_POTION, baseCost * 0.45),
+      generateRewardOptionFromId(RewardId.FULL_HEAL, baseCost),
     ],
-    [new RewardOption(allRewards.ELIXIR(), 0, baseCost), new RewardOption(allRewards.MAX_ETHER(), 0, baseCost)],
+    [generateRewardOptionFromId(RewardId.ELIXIR, baseCost), generateRewardOptionFromId(RewardId.MAX_ETHER, baseCost)],
     [
-      new RewardOption(allRewards.HYPER_POTION(), 0, baseCost * 0.8),
-      new RewardOption(allRewards.MAX_REVIVE(), 0, baseCost * 2.75),
-      new RewardOption(allRewards.MEMORY_MUSHROOM(), 0, baseCost * 4),
+      generateRewardOptionFromId(RewardId.HYPER_POTION, baseCost * 0.8),
+      generateRewardOptionFromId(RewardId.MAX_REVIVE, baseCost * 2.75),
+      generateRewardOptionFromId(RewardId.MEMORY_MUSHROOM, baseCost * 4),
     ],
     [
-      new RewardOption(allRewards.MAX_POTION(), 0, baseCost * 1.5),
-      new RewardOption(allRewards.MAX_ELIXIR(), 0, baseCost * 2.5),
+      generateRewardOptionFromId(RewardId.MAX_POTION, baseCost * 1.5),
+      generateRewardOptionFromId(RewardId.MAX_ELIXIR, baseCost * 2.5),
     ],
-    [new RewardOption(allRewards.FULL_RESTORE(), 0, baseCost * 2.25)],
-    [new RewardOption(allRewards.SACRED_ASH(), 0, baseCost * 10)],
+    [generateRewardOptionFromId(RewardId.FULL_RESTORE, baseCost * 2.25)],
+    [generateRewardOptionFromId(RewardId.SACRED_ASH, baseCost * 10)],
   ];
   return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
 }

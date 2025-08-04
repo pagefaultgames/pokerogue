@@ -1,5 +1,6 @@
 import { allHeldItems } from "#data/data-lists";
 import { BerryType } from "#enums/berry-type";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -36,7 +37,6 @@ import { SurviveChanceHeldItem, type SurviveChanceParams } from "#items/survive-
 import { TurnEndHealHeldItem, type TurnEndHealParams } from "#items/turn-end-heal";
 import { TurnEndStatusHeldItem, type TurnEndStatusParams } from "#items/turn-end-status";
 import { getEnumValues } from "#utils/enums";
-import { HeldItemEffect } from "./HeldItemEffect";
 
 export function initHeldItems() {
   for (const berry of getEnumValues(BerryType)) {

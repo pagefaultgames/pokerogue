@@ -1,6 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { allRewards } from "#data/data-lists";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -193,7 +192,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
       // Pick battle
       const encounter = globalScene.currentBattle.mysteryEncounter!;
       setEncounterRewards({
-        guaranteedRewardFuncs: [allRewards.SOUL_DEW],
+        guaranteedRewardSpecs: [HeldItemId.SOUL_DEW],
         fillRemaining: true,
       });
       encounter.startOfBattleEffects.push(

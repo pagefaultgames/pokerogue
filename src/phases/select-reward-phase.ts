@@ -373,7 +373,7 @@ export class SelectRewardPhase extends BattlePhase {
       const newItemCount =
         (this.customRewardSettings.guaranteedRarityTiers?.length ?? 0) +
         (this.customRewardSettings.guaranteedRewardOptions?.length ?? 0) +
-        (this.customRewardSettings.guaranteedRewardFuncs?.length ?? 0);
+        (this.customRewardSettings.guaranteedRewardSpecs?.length ?? 0);
       if (this.customRewardSettings.fillRemaining) {
         const originalCount = rewardCountHolder.value;
         rewardCountHolder.value = originalCount > newItemCount ? originalCount : newItemCount;

@@ -1,19 +1,19 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { allRewards } from "#data/data-lists";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RewardId } from "#enums/reward-id";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import { PERMANENT_STATS, Stat } from "#enums/stat";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { berryTypeToHeldItem } from "#items/berry";
 import type { RewardOption } from "#items/reward";
 import { generateRewardPoolWeights, getRewardPoolForType } from "#items/reward-pool-utils";
-import { generateRewardOption } from "#items/reward-utils";
+import { generateRewardOptionFromId } from "#items/reward-utils";
 import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
@@ -162,7 +162,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
       const shopOptions: RewardOption[] = [];
       for (let i = 0; i < 5; i++) {
         // Generate shop berries
-        const mod = generateRewardOption(allRewards.BERRY);
+        const mod = generateRewardOptionFromId(RewardId.BERRY);
         if (mod) {
           shopOptions.push(mod);
         }
@@ -189,7 +189,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
         const shopOptions: RewardOption[] = [];
         for (let i = 0; i < 5; i++) {
           // Generate shop berries
-          const mod = generateRewardOption(allRewards.BERRY);
+          const mod = generateRewardOptionFromId(RewardId.BERRY);
           if (mod) {
             shopOptions.push(mod);
           }

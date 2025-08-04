@@ -11,10 +11,12 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
+import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
-import { generateRewardOption } from "#items/reward-utils";
+import type { Reward } from "#items/reward";
+import { generateRewardOptionFromId } from "#items/reward-utils";
 import { showEncounterDialogue, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
@@ -140,7 +142,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
       // Refuse the challenge, they full heal the party and give the player a Rarer Candy
       globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
       setEncounterRewards({
-        guaranteedRewardFuncs: [allRewards.RARER_CANDY],
+        guaranteedRewardSpecs: [RewardId.RARER_CANDY],
         fillRemaining: false,
       });
       leaveEncounterWithoutBattle();
@@ -156,14 +158,14 @@ async function spawnNextTrainerOrEndEncounter() {
     await showEncounterDialogue(`${namespace}:victory`, `${namespace}:speaker`);
 
     // Give 10x Voucher
-    const reward = allRewards.VOUCHER_PREMIUM();
-    globalScene.applyReward(reward, {});
+    const reward = allRewards[RewardId.VOUCHER_PREMIUM]();
+    globalScene.applyReward(reward as Reward, {});
     globalScene.playSound("item_fanfare");
-    await showEncounterText(i18next.t("battle:rewardGain", { modifierName: reward.name }));
+    await showEncounterText(i18next.t("battle:rewardGain", { modifierName: (reward as Reward).name }));
 
     await showEncounterDialogue(`${namespace}:victory_2`, `${namespace}:speaker`);
     globalScene.ui.clearText(); // Clears "Winstrate" title from screen as allRewards get animated in
-    const machoBrace = generateRewardOption(allRewards.MYSTERY_ENCOUNTER_MACHO_BRACE)!;
+    const machoBrace = generateRewardOptionFromId(HeldItemId.MACHO_BRACE)!;
     machoBrace.type.tier = RarityTier.MASTER;
     setEncounterRewards({
       guaranteedRewardOptions: [machoBrace],

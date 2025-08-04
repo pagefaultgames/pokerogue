@@ -4,7 +4,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { EvolutionItem, FusionSpeciesFormEvolution, pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#balance/starters";
 import { tmPoolTiers, tmSpecies } from "#balance/tms";
-import { allHeldItems, allMoves, allRewards, allTrainerItems } from "#data/data-lists";
+import { allHeldItems, allMoves, allTrainerItems } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
@@ -17,7 +17,7 @@ import { HeldItemId } from "#enums/held-item-id";
 import { LearnMoveType } from "#enums/learn-move-type";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
-import { PokeballType } from "#enums/pokeball";
+import type { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
 import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
@@ -32,15 +32,10 @@ import { permanentStatToHeldItem, statBoostItems } from "#items/base-stat-booste
 import { berryTypeToHeldItem } from "#items/berry";
 import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeldItem } from "#items/held-item-pool";
 import { formChangeItemName } from "#items/item-utility";
-import {
-  SPECIES_STAT_BOOSTER_ITEMS,
-  type SpeciesStatBoosterItemId,
-  type SpeciesStatBoostHeldItem,
-} from "#items/stat-booster";
+import { SPECIES_STAT_BOOSTER_ITEMS, type SpeciesStatBoostHeldItem } from "#items/stat-booster";
 import { TrainerItemEffect, tempStatToTrainerItem } from "#items/trainer-item";
 import type { PokemonMove } from "#moves/pokemon-move";
-import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#system/voucher";
-import type { RewardFunc, WeightedRewardWeightFunc } from "#types/rewards";
+import { getVoucherTypeIcon, getVoucherTypeName, type VoucherType } from "#system/voucher";
 import type { Exact } from "#types/type-helpers";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
@@ -90,7 +85,6 @@ for example. The entries of rewardInitObj are used in the RewardPool.
 
 There are some more derived classes, in particular:
 RewardGenerator, which creates Reward instances from a certain group (e.g. TMs, nature mints, or berries);
-WeightedReward, which is a Reward with an attached weight or weight function to be used in pools;
 and RewardOption, which is displayed during the select reward phase at the end of each encounter.
 */
 
@@ -589,7 +583,7 @@ export class PokemonReviveReward extends PokemonHpRestoreReward {
   }
 }
 
-class AllPokemonFullReviveReward extends Reward {
+export class AllPokemonFullReviveReward extends Reward {
   constructor(localeKey: string, iconImage: string) {
     super(localeKey, iconImage, "modifierType:ModifierType.AllPokemonFullReviveModifierType");
     this.id = RewardId.SACRED_ASH;
@@ -863,7 +857,7 @@ export class RememberMoveReward extends PokemonReward {
   }
 }
 
-class BerryRewardGenerator extends RewardGenerator {
+export class BerryRewardGenerator extends RewardGenerator {
   constructor() {
     super((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in BerryType) {
@@ -877,7 +871,7 @@ class BerryRewardGenerator extends RewardGenerator {
   }
 }
 
-class MintRewardGenerator extends RewardGenerator {
+export class MintRewardGenerator extends RewardGenerator {
   constructor() {
     super((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in Nature) {
@@ -889,7 +883,7 @@ class MintRewardGenerator extends RewardGenerator {
   }
 }
 
-class TeraTypeRewardGenerator extends RewardGenerator {
+export class TeraTypeRewardGenerator extends RewardGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
@@ -1225,7 +1219,7 @@ export class FusePokemonReward extends PokemonReward {
   }
 }
 
-class AttackTypeBoosterRewardGenerator extends RewardGenerator {
+export class AttackTypeBoosterRewardGenerator extends RewardGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
@@ -1240,7 +1234,7 @@ class AttackTypeBoosterRewardGenerator extends RewardGenerator {
   }
 }
 
-class BaseStatBoosterRewardGenerator extends RewardGenerator {
+export class BaseStatBoosterRewardGenerator extends RewardGenerator {
   constructor() {
     super((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {
@@ -1252,7 +1246,7 @@ class BaseStatBoosterRewardGenerator extends RewardGenerator {
   }
 }
 
-class TempStatStageBoosterRewardGenerator extends RewardGenerator {
+export class TempStatStageBoosterRewardGenerator extends RewardGenerator {
   public static readonly items: Record<TempBattleStat, string> = {
     [Stat.ATK]: "x_attack",
     [Stat.DEF]: "x_defense",
@@ -1280,7 +1274,7 @@ class TempStatStageBoosterRewardGenerator extends RewardGenerator {
  * the current list of {@linkcode items}.
  * @extends RewardGenerator
  */
-class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
+export class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
   /** Object comprised of the currently available species-based stat boosting held items */
 
   constructor(rare: boolean) {
@@ -1347,7 +1341,7 @@ class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
   }
 }
 
-class TmRewardGenerator extends RewardGenerator {
+export class TmRewardGenerator extends RewardGenerator {
   constructor(tier: RarityTier) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in MoveId) {
@@ -1380,7 +1374,7 @@ class TmRewardGenerator extends RewardGenerator {
   }
 }
 
-class EvolutionItemRewardGenerator extends RewardGenerator {
+export class EvolutionItemRewardGenerator extends RewardGenerator {
   constructor(rare: boolean, id: RewardId) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in EvolutionItem) {
@@ -1512,305 +1506,6 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
   }
 }
 
-export class WeightedReward {
-  public reward: Reward | RewardGenerator;
-  public weight: number | WeightedRewardWeightFunc;
-  public maxWeight: number | WeightedRewardWeightFunc;
-
-  constructor(
-    rewardFunc: RewardFunc,
-    weight: number | WeightedRewardWeightFunc,
-    maxWeight?: number | WeightedRewardWeightFunc,
-  ) {
-    this.reward = rewardFunc();
-    this.weight = weight;
-    this.maxWeight = maxWeight || (!(weight instanceof Function) ? weight : 0);
-  }
-}
-
-type BaseRewardOverride = {
-  name: Exclude<RewardKeys, GeneratorRewardOverride["name"]>;
-  count?: number;
-};
-
-/** Type for modifiers and held items that are constructed via {@linkcode RewardGenerator}. */
-export type GeneratorRewardOverride = {
-  count?: number;
-} & (
-  | {
-      name: keyof Pick<typeof rewardInitObj, "SPECIES_STAT_BOOSTER" | "RARE_SPECIES_STAT_BOOSTER">;
-      type?: SpeciesStatBoosterItemId;
-    }
-  | {
-      name: keyof Pick<typeof rewardInitObj, "TEMP_STAT_STAGE_BOOSTER">;
-      type?: TempBattleStat;
-    }
-  | {
-      name: keyof Pick<typeof rewardInitObj, "BASE_STAT_BOOSTER">;
-      type?: Stat;
-    }
-  | {
-      name: keyof Pick<typeof rewardInitObj, "MINT">;
-      type?: Nature;
-    }
-  | {
-      name: keyof Pick<typeof rewardInitObj, "ATTACK_TYPE_BOOSTER" | "TERA_SHARD">;
-      type?: PokemonType;
-    }
-  | {
-      name: keyof Pick<typeof rewardInitObj, "BERRY">;
-      type?: BerryType;
-    }
-  | {
-      name: keyof Pick<typeof rewardInitObj, "EVOLUTION_ITEM" | "RARE_EVOLUTION_ITEM">;
-      type?: EvolutionItem;
-    }
-  | {
-      name: keyof Pick<typeof rewardInitObj, "FORM_CHANGE_ITEM" | "RARE_FORM_CHANGE_ITEM">;
-      type?: FormChangeItem;
-    }
-  | {
-      name: keyof Pick<typeof rewardInitObj, "TM_COMMON" | "TM_GREAT" | "TM_ULTRA">;
-      type?: MoveId;
-    }
-);
-
-/** Type used to construct modifiers and held items for overriding purposes. */
-export type RewardOverride = GeneratorRewardOverride | BaseRewardOverride;
-
-const rewardInitObj = Object.freeze({
-  // Pokeball rewards
-  POKEBALL: () => new AddPokeballReward("pb", PokeballType.POKEBALL, 5, RewardId.POKEBALL),
-  GREAT_BALL: () => new AddPokeballReward("gb", PokeballType.GREAT_BALL, 5, RewardId.GREAT_BALL),
-  ULTRA_BALL: () => new AddPokeballReward("ub", PokeballType.ULTRA_BALL, 5, RewardId.ULTRA_BALL),
-  ROGUE_BALL: () => new AddPokeballReward("rb", PokeballType.ROGUE_BALL, 5, RewardId.ROGUE_BALL),
-  MASTER_BALL: () => new AddPokeballReward("mb", PokeballType.MASTER_BALL, 1, RewardId.MASTER_BALL),
-
-  // Voucher rewards
-  VOUCHER: () => new AddVoucherReward(VoucherType.REGULAR, 1, RewardId.VOUCHER),
-  VOUCHER_PLUS: () => new AddVoucherReward(VoucherType.PLUS, 1, RewardId.VOUCHER_PLUS),
-  VOUCHER_PREMIUM: () => new AddVoucherReward(VoucherType.PREMIUM, 1, RewardId.VOUCHER_PREMIUM),
-
-  // Money rewards
-  NUGGET: () =>
-    new AddMoneyReward(
-      "modifierType:ModifierType.NUGGET",
-      "nugget",
-      1,
-      "modifierType:ModifierType.MoneyRewardModifierType.extra.small",
-      RewardId.NUGGET,
-    ),
-  BIG_NUGGET: () =>
-    new AddMoneyReward(
-      "modifierType:ModifierType.BIG_NUGGET",
-      "big_nugget",
-      2.5,
-      "modifierType:ModifierType.MoneyRewardModifierType.extra.moderate",
-      RewardId.BIG_NUGGET,
-    ),
-  RELIC_GOLD: () =>
-    new AddMoneyReward(
-      "modifierType:ModifierType.RELIC_GOLD",
-      "relic_gold",
-      10,
-      "modifierType:ModifierType.MoneyRewardModifierType.extra.large",
-      RewardId.RELIC_GOLD,
-    ),
-
-  // Party-wide consumables
-  RARER_CANDY: () => new AllPokemonLevelIncrementReward("modifierType:ModifierType.RARER_CANDY", "rarer_candy"),
-  SACRED_ASH: () => new AllPokemonFullReviveReward("modifierType:ModifierType.SACRED_ASH", "sacred_ash"),
-
-  // Pokemon consumables
-  RARE_CANDY: () => new PokemonLevelIncrementReward("modifierType:ModifierType.RARE_CANDY", "rare_candy"),
-
-  EVOLUTION_ITEM: () => new EvolutionItemRewardGenerator(false, RewardId.EVOLUTION_ITEM),
-  RARE_EVOLUTION_ITEM: () => new EvolutionItemRewardGenerator(true, RewardId.RARE_EVOLUTION_ITEM),
-
-  POTION: () => new PokemonHpRestoreReward("modifierType:ModifierType.POTION", "potion", RewardId.POTION, 20, 10),
-  SUPER_POTION: () =>
-    new PokemonHpRestoreReward("modifierType:ModifierType.SUPER_POTION", "super_potion", RewardId.SUPER_POTION, 50, 25),
-  HYPER_POTION: () =>
-    new PokemonHpRestoreReward(
-      "modifierType:ModifierType.HYPER_POTION",
-      "hyper_potion",
-      RewardId.HYPER_POTION,
-      200,
-      50,
-    ),
-  MAX_POTION: () =>
-    new PokemonHpRestoreReward("modifierType:ModifierType.MAX_POTION", "max_potion", RewardId.MAX_POTION, 0, 100),
-  FULL_RESTORE: () =>
-    new PokemonHpRestoreReward(
-      "modifierType:ModifierType.FULL_RESTORE",
-      "full_restore",
-      RewardId.FULL_RESTORE,
-      0,
-      100,
-      true,
-    ),
-
-  REVIVE: () => new PokemonReviveReward("modifierType:ModifierType.REVIVE", "revive", RewardId.REVIVE, 50),
-  MAX_REVIVE: () =>
-    new PokemonReviveReward("modifierType:ModifierType.MAX_REVIVE", "max_revive", RewardId.MAX_REVIVE, 100),
-
-  FULL_HEAL: () => new PokemonStatusHealReward("modifierType:ModifierType.FULL_HEAL", "full_heal"),
-
-  ETHER: () => new PokemonPpRestoreReward("modifierType:ModifierType.ETHER", "ether", RewardId.ETHER, 10),
-  MAX_ETHER: () =>
-    new PokemonPpRestoreReward("modifierType:ModifierType.MAX_ETHER", "max_ether", RewardId.MAX_ETHER, -1),
-
-  ELIXIR: () => new PokemonAllMovePpRestoreReward("modifierType:ModifierType.ELIXIR", "elixir", RewardId.ELIXIR, 10),
-  MAX_ELIXIR: () =>
-    new PokemonAllMovePpRestoreReward("modifierType:ModifierType.MAX_ELIXIR", "max_elixir", RewardId.MAX_ELIXIR, -1),
-
-  PP_UP: () => new PokemonPpUpReward("modifierType:ModifierType.PP_UP", "pp_up", RewardId.PP_UP, 1),
-  PP_MAX: () => new PokemonPpUpReward("modifierType:ModifierType.PP_MAX", "pp_max", RewardId.PP_MAX, 3),
-
-  /*REPEL: () => new DoubleBattleChanceBoosterReward('Repel', 5),
-  SUPER_REPEL: () => new DoubleBattleChanceBoosterReward('Super Repel', 10),
-  MAX_REPEL: () => new DoubleBattleChanceBoosterReward('Max Repel', 25),*/
-
-  MINT: () => new MintRewardGenerator(),
-
-  TERA_SHARD: () => new TeraTypeRewardGenerator(),
-
-  TM_COMMON: () => new TmRewardGenerator(RarityTier.COMMON),
-  TM_GREAT: () => new TmRewardGenerator(RarityTier.GREAT),
-  TM_ULTRA: () => new TmRewardGenerator(RarityTier.ULTRA),
-
-  MEMORY_MUSHROOM: () => new RememberMoveReward("modifierType:ModifierType.MEMORY_MUSHROOM", "big_mushroom"),
-
-  DNA_SPLICERS: () => new FusePokemonReward("modifierType:ModifierType.DNA_SPLICERS", "dna_splicers"),
-
-  // Form change items
-  FORM_CHANGE_ITEM: () => new FormChangeItemRewardGenerator(false, RewardId.FORM_CHANGE_ITEM),
-  RARE_FORM_CHANGE_ITEM: () => new FormChangeItemRewardGenerator(true, RewardId.RARE_FORM_CHANGE_ITEM),
-
-  // Held items
-  REVIVER_SEED: () => new HeldItemReward(HeldItemId.REVIVER_SEED),
-
-  WHITE_HERB: () => new HeldItemReward(HeldItemId.WHITE_HERB),
-
-  SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterRewardGenerator(false),
-  RARE_SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterRewardGenerator(true),
-
-  BASE_STAT_BOOSTER: () => new BaseStatBoosterRewardGenerator(),
-
-  ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterRewardGenerator(),
-
-  MYSTICAL_ROCK: () => new HeldItemReward(HeldItemId.MYSTICAL_ROCK),
-
-  BERRY: () => new BerryRewardGenerator(),
-
-  LUCKY_EGG: () => new HeldItemReward(HeldItemId.LUCKY_EGG),
-  GOLDEN_EGG: () => new HeldItemReward(HeldItemId.GOLDEN_EGG),
-
-  SOOTHE_BELL: () => new HeldItemReward(HeldItemId.SOOTHE_BELL),
-
-  SCOPE_LENS: () => new HeldItemReward(HeldItemId.SCOPE_LENS),
-  LEEK: () => new HeldItemReward(HeldItemId.LEEK),
-
-  EVIOLITE: () => new HeldItemReward(HeldItemId.EVIOLITE),
-
-  SOUL_DEW: () => new HeldItemReward(HeldItemId.SOUL_DEW),
-
-  GOLDEN_PUNCH: () => new HeldItemReward(HeldItemId.GOLDEN_PUNCH),
-
-  GRIP_CLAW: () => new HeldItemReward(HeldItemId.GRIP_CLAW),
-  WIDE_LENS: () => new HeldItemReward(HeldItemId.WIDE_LENS),
-
-  MULTI_LENS: () => new HeldItemReward(HeldItemId.MULTI_LENS),
-
-  FOCUS_BAND: () => new HeldItemReward(HeldItemId.FOCUS_BAND),
-
-  QUICK_CLAW: () => new HeldItemReward(HeldItemId.QUICK_CLAW),
-
-  KINGS_ROCK: () => new HeldItemReward(HeldItemId.KINGS_ROCK),
-
-  LEFTOVERS: () => new HeldItemReward(HeldItemId.LEFTOVERS),
-
-  SHELL_BELL: () => new HeldItemReward(HeldItemId.SHELL_BELL),
-
-  TOXIC_ORB: () => new HeldItemReward(HeldItemId.TOXIC_ORB),
-
-  FLAME_ORB: () => new HeldItemReward(HeldItemId.FLAME_ORB),
-
-  BATON: () => new HeldItemReward(HeldItemId.BATON),
-
-  MINI_BLACK_HOLE: () => new HeldItemReward(HeldItemId.MINI_BLACK_HOLE),
-
-  // Trainer items
-  MEGA_BRACELET: () => new TrainerItemReward(TrainerItemId.MEGA_BRACELET),
-  DYNAMAX_BAND: () => new TrainerItemReward(TrainerItemId.DYNAMAX_BAND),
-  TERA_ORB: () => new TrainerItemReward(TrainerItemId.TERA_ORB),
-
-  MAP: () => new TrainerItemReward(TrainerItemId.MAP),
-
-  LURE: () => new LapsingTrainerItemReward(TrainerItemId.LURE, RewardId.LURE),
-  SUPER_LURE: () => new LapsingTrainerItemReward(TrainerItemId.SUPER_LURE, RewardId.SUPER_LURE),
-  MAX_LURE: () => new LapsingTrainerItemReward(TrainerItemId.MAX_LURE, RewardId.MAX_LURE),
-
-  TEMP_STAT_STAGE_BOOSTER: () => new TempStatStageBoosterRewardGenerator(),
-
-  DIRE_HIT: () => new LapsingTrainerItemReward(TrainerItemId.DIRE_HIT, RewardId.TEMP_STAT_STAGE_BOOSTER),
-
-  EXP_SHARE: () => new TrainerItemReward(TrainerItemId.EXP_SHARE),
-  EXP_BALANCE: () => new TrainerItemReward(TrainerItemId.EXP_BALANCE),
-
-  OVAL_CHARM: () => new TrainerItemReward(TrainerItemId.OVAL_CHARM),
-
-  EXP_CHARM: () => new TrainerItemReward(TrainerItemId.EXP_CHARM),
-  SUPER_EXP_CHARM: () => new TrainerItemReward(TrainerItemId.SUPER_EXP_CHARM),
-
-  AMULET_COIN: () => new TrainerItemReward(TrainerItemId.AMULET_COIN),
-
-  LOCK_CAPSULE: () => new TrainerItemReward(TrainerItemId.LOCK_CAPSULE),
-
-  HEALING_CHARM: () => new TrainerItemReward(TrainerItemId.HEALING_CHARM),
-  CANDY_JAR: () => new TrainerItemReward(TrainerItemId.CANDY_JAR),
-
-  BERRY_POUCH: () => new TrainerItemReward(TrainerItemId.BERRY_POUCH),
-
-  SHINY_CHARM: () => new TrainerItemReward(TrainerItemId.SHINY_CHARM),
-  ABILITY_CHARM: () => new TrainerItemReward(TrainerItemId.ABILITY_CHARM),
-  CATCHING_CHARM: () => new TrainerItemReward(TrainerItemId.CATCHING_CHARM),
-
-  IV_SCANNER: () => new TrainerItemReward(TrainerItemId.IV_SCANNER),
-
-  GOLDEN_POKEBALL: () => new TrainerItemReward(TrainerItemId.GOLDEN_POKEBALL),
-
-  // Tokens //TODO: do we even need them here?
-  ENEMY_DAMAGE_BOOSTER: () => new TrainerItemReward(TrainerItemId.ENEMY_DAMAGE_BOOSTER),
-  ENEMY_DAMAGE_REDUCTION: () => new TrainerItemReward(TrainerItemId.ENEMY_DAMAGE_REDUCTION),
-  //ENEMY_SUPER_EFFECT_BOOSTER: () => new Reward('Type Advantage Token', 'Increases damage of super effective attacks by 30%', (type, _args) => new EnemySuperEffectiveDamageBoosterModifier(type, 30), 'wl_custom_super_effective'),
-  ENEMY_HEAL: () => new TrainerItemReward(TrainerItemId.ENEMY_HEAL),
-  ENEMY_ATTACK_POISON_CHANCE: () => new TrainerItemReward(TrainerItemId.ENEMY_ATTACK_POISON_CHANCE),
-  ENEMY_ATTACK_PARALYZE_CHANCE: () => new TrainerItemReward(TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE),
-  ENEMY_ATTACK_BURN_CHANCE: () => new TrainerItemReward(TrainerItemId.ENEMY_ATTACK_BURN_CHANCE),
-  ENEMY_STATUS_EFFECT_HEAL_CHANCE: () => new TrainerItemReward(TrainerItemId.ENEMY_STATUS_EFFECT_HEAL_CHANCE),
-  ENEMY_ENDURE_CHANCE: () => new TrainerItemReward(TrainerItemId.ENEMY_ENDURE_CHANCE),
-  ENEMY_FUSED_CHANCE: () => new TrainerItemReward(TrainerItemId.ENEMY_FUSED_CHANCE),
-
-  // Items from mystery encounters
-  MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD: () => new HeldItemReward(HeldItemId.SHUCKLE_JUICE_GOOD),
-  MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD: () => new HeldItemReward(HeldItemId.SHUCKLE_JUICE_BAD),
-
-  MYSTERY_ENCOUNTER_OLD_GATEAU: () => new HeldItemReward(HeldItemId.OLD_GATEAU),
-
-  MYSTERY_ENCOUNTER_BLACK_SLUDGE: () => new TrainerItemReward(TrainerItemId.BLACK_SLUDGE),
-
-  MYSTERY_ENCOUNTER_MACHO_BRACE: () => new HeldItemReward(HeldItemId.MACHO_BRACE),
-
-  MYSTERY_ENCOUNTER_GOLDEN_BUG_NET: () => new TrainerItemReward(TrainerItemId.GOLDEN_BUG_NET),
-});
-
-/**
- * The initial set of modifier types, used to generate the modifier pool.
- */
-export type Rewards = typeof rewardInitObj;
-export type RewardKeys = keyof typeof rewardInitObj;
-
 export class RewardOption {
   public type: Reward;
   public upgradeCount: number;
@@ -1822,12 +1517,6 @@ export class RewardOption {
     this.upgradeCount = upgradeCount;
     this.tier = tier;
     this.cost = Math.min(Math.round(cost), Number.MAX_SAFE_INTEGER);
-  }
-}
-
-export function initRewards() {
-  for (const [key, value] of Object.entries(rewardInitObj)) {
-    allRewards[key] = value;
   }
 }
 

@@ -9,9 +9,18 @@ export type WeightedRewardWeightFunc = (party: Pokemon[], rerollCount?: number) 
 
 export type RewardPoolId = RewardId | HeldItemId | TrainerItemId;
 
+export type RewardGeneratorSpecs = {
+  id: RewardId;
+  args: RewardGeneratorArgs;
+};
+// TODO: fix this with correctly typed args for different RewardIds
+
+export type RewardSpecs = RewardPoolId | RewardGeneratorSpecs;
+
 export type RewardPoolEntry = {
   id: RewardPoolId;
   weight: number | WeightedRewardWeightFunc;
+  maxWeight?: number;
 };
 
 export type RewardPool = {

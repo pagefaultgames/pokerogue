@@ -1,11 +1,11 @@
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
-import { allRewards } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
 import { getPokeballTintColor } from "#data/pokeball";
 import { BiomeId } from "#enums/biome-id";
 import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -294,7 +294,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         const eggOptions = getEggOptions(pokemon1CommonEggs, pokemon1RareEggs);
         setEncounterRewards(
           {
-            guaranteedRewardFuncs: [allRewards.SOOTHE_BELL],
+            guaranteedRewardSpecs: [HeldItemId.SOOTHE_BELL],
             fillRemaining: true,
           },
           eggOptions,
@@ -353,7 +353,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         const eggOptions = getEggOptions(pokemon2CommonEggs, pokemon2RareEggs);
         setEncounterRewards(
           {
-            guaranteedRewardFuncs: [allRewards.SOOTHE_BELL],
+            guaranteedRewardSpecs: [HeldItemId.SOOTHE_BELL],
             fillRemaining: true,
           },
           eggOptions,
@@ -412,7 +412,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         const eggOptions = getEggOptions(pokemon3CommonEggs, pokemon3RareEggs);
         setEncounterRewards(
           {
-            guaranteedRewardFuncs: [allRewards.SOOTHE_BELL],
+            guaranteedRewardSpecs: [HeldItemId.SOOTHE_BELL],
             fillRemaining: true,
           },
           eggOptions,
