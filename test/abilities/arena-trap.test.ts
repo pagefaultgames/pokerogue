@@ -29,8 +29,8 @@ describe("Abilities - Arena Trap", () => {
     game = new GameManager(phaserGame);
     game.override
       .ability(AbilityId.ARENA_TRAP)
+      .enemyAbility(AbilityId.ARENA_TRAP)
       .enemySpecies(SpeciesId.RALTS)
-      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
   });
 
@@ -63,7 +63,7 @@ describe("Abilities - Arena Trap", () => {
   });
 
   it("should interrupt player switch attempt and display message", async () => {
-    game.override.battleStyle("single").enemyAbility(AbilityId.ARENA_TRAP);
+    game.override.battleStyle("single");
     await game.classicMode.startBattle([SpeciesId.DUGTRIO, SpeciesId.GOTHITELLE]);
 
     const enemy = game.field.getEnemyPokemon();
@@ -74,6 +74,7 @@ describe("Abilities - Arena Trap", () => {
       expect(game.scene.currentBattle.turnCommands[0]).toBeNull();
 
       // back out and cancel the switch to avoid timeout
+      (game.scene.ui.getHandler() as CommandUiHandler).processInput(Button.ACTION);
       (game.scene.ui.getHandler() as CommandUiHandler).processInput(Button.CANCEL);
       game.move.use(MoveId.SPLASH);
     });
