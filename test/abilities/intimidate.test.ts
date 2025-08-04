@@ -44,6 +44,22 @@ describe("Abilities - Intimidate", () => {
     expect(enemy.getStatStage(Stat.ATK)).toBe(-2);
   });
 
+  // TODO: This fails due to a limitation in our switching logic - the animations and field entry occur concurrently
+  // inside `SummonPhase`, unshifting 2 `PostSummmonPhase`s and proccing intimidate twice
+  it.todo("should lower all opponents' ATK by 1 stage on initial switch prompt", async () => {
+    await game.classicMode.runToSummon([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
+    await game.classicMode.startBattleWithSwitch(1);
+
+    const [poochyena, mightyena] = game.scene.getPlayerField();
+    expect(poochyena.species.speciesId).toBe(SpeciesId.POOCHYENA);
+
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy).toHaveStatStage(Stat.ATK, -1);
+
+    expect(poochyena).toHaveAbilityApplied(AbilityId.INTIMIDATE);
+    expect(mightyena).not.toHaveAbilityApplied(AbilityId.INTIMIDATE);
+  });
+
   it("should lower ATK of all opponents in a double battle", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
