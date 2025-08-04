@@ -1010,11 +1010,8 @@ export class PermanentFaintChallenge extends Challenge {
   }
 
   override applyShopItem(shopItem: ModifierTypeOption | null, status: BooleanHolder): boolean {
-    if (status.value) {
-      status.value = shopItem?.type.group !== "revive";
-      return true;
-    }
-    return false;
+    status.value = shopItem?.type.group !== "revive";
+    return true;
   }
 
   override applyWaveReward(reward: ModifierTypeOption | null, status: BooleanHolder): boolean {
