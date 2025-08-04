@@ -1,5 +1,5 @@
 import pkg from "#package.json";
-import { camelCaseToKebabCase } from "#utils/common";
+import { toKebabCase } from "#utils/strings";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
@@ -79,13 +79,13 @@ const fonts: Array<LoadingFontFaceProperty> = [
     face: new FontFace("emerald", "url(./fonts/pokemon-bw.ttf)", {
       unicodeRange: rangesByLanguage.japanese,
     }),
-    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru"],
+    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "tl"],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/pokemon-bw.ttf)", {
       unicodeRange: rangesByLanguage.japanese,
     }),
-    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru"],
+    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "tl"],
   },
 ];
 
@@ -191,17 +191,20 @@ export async function initI18n(): Promise<void> {
       "tr",
       "ro",
       "ru",
+      "tl",
     ],
     backend: {
       loadPath(lng: string, [ns]: string[]) {
+        // Use namespace maps where required
         let fileName: string;
         if (namespaceMap[ns]) {
           fileName = namespaceMap[ns];
         } else if (ns.startsWith("mysteryEncounters/")) {
-          fileName = camelCaseToKebabCase(ns + "Dialogue");
+          fileName = toKebabCase(ns + "-dialogue"); // mystery-encounters/a-trainers-test-dialogue
         } else {
-          fileName = camelCaseToKebabCase(ns);
+          fileName = toKebabCase(ns);
         }
+        // ex: "./locales/en/move-anims"
         return `./locales/${lng}/${fileName}.json?v=${pkg.version}`;
       },
     },

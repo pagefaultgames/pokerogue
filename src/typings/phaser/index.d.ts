@@ -1,7 +1,7 @@
 import "phaser";
 
 declare module "phaser" {
-	namespace GameObjects {
+  namespace GameObjects {
     interface GameObject {
       width: number;
 
@@ -16,45 +16,45 @@ declare module "phaser" {
       y: number;
     }
 
-		interface Container {
+    interface Container {
       /**
        * Sets this object's position relative to another object with a given offset
        */
-			setPositionRelative(guideObject: any, x: number, y: number): this;
-		}
-		interface Sprite {
+      setPositionRelative(guideObject: any, x: number, y: number): this;
+    }
+    interface Sprite {
       /**
        * Sets this object's position relative to another object with a given offset
        */
-			setPositionRelative(guideObject: any, x: number, y: number): this;
-		}
-		interface Image {
+      setPositionRelative(guideObject: any, x: number, y: number): this;
+    }
+    interface Image {
       /**
        * Sets this object's position relative to another object with a given offset
        */
-			setPositionRelative(guideObject: any, x: number, y: number): this;
-		}
-		interface NineSlice {
+      setPositionRelative(guideObject: any, x: number, y: number): this;
+    }
+    interface NineSlice {
       /**
        * Sets this object's position relative to another object with a given offset
        */
-			setPositionRelative(guideObject: any, x: number, y: number): this;
-		}
-		interface Text {
+      setPositionRelative(guideObject: any, x: number, y: number): this;
+    }
+    interface Text {
       /**
        * Sets this object's position relative to another object with a given offset
        */
-			setPositionRelative(guideObject: any, x: number, y: number): this;
-		}
-		interface Rectangle {
+      setPositionRelative(guideObject: any, x: number, y: number): this;
+    }
+    interface Rectangle {
       /**
        * Sets this object's position relative to another object with a given offset
        */
-			setPositionRelative(guideObject: any, x: number, y: number): this;
-		}
-	}
+      setPositionRelative(guideObject: any, x: number, y: number): this;
+    }
+  }
 
-   namespace Input {
+  namespace Input {
     namespace Gamepad {
       interface GamepadPlugin {
         /**

@@ -119,6 +119,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("party_bg", "ui");
     this.loadImage("party_bg_double", "ui");
+    this.loadImage("party_bg_double_manage", "ui");
     this.loadAtlas("party_slot_main", "ui");
     this.loadAtlas("party_slot", "ui");
     this.loadImage("party_slot_overlay_lv", "ui");
@@ -126,6 +127,8 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("party_slot_hp_overlay", "ui");
     this.loadAtlas("party_pb", "ui");
     this.loadAtlas("party_cancel", "ui");
+    this.loadAtlas("party_discard", "ui");
+    this.loadAtlas("party_transfer", "ui");
 
     this.loadImage("summary_bg", "ui");
     this.loadImage("summary_overlay_shiny", "ui");

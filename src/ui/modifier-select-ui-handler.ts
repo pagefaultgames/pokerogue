@@ -6,13 +6,14 @@ import { getPokeballAtlasKey } from "#data/pokeball";
 import { Button } from "#enums/buttons";
 import type { PokeballType } from "#enums/pokeball";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { HealShopCostModifier, LockModifierTiersModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "#modifiers/modifier-type";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
-import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions, TextStyle } from "#ui/text";
+import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions } from "#ui/text";
 import { formatMoney, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -68,7 +69,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     if (context) {
       context.font = styleOptions.fontSize + "px " + styleOptions.fontFamily;
-      this.transferButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:transfer")).width;
+      this.transferButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:manageItems")).width;
       this.checkButtonWidth = context.measureText(i18next.t("modifierSelectUiHandler:checkTeam")).width;
     }
 
@@ -80,7 +81,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.transferButtonContainer.setVisible(false);
     ui.add(this.transferButtonContainer);
 
-    const transferButtonText = addTextObject(-4, -2, i18next.t("modifierSelectUiHandler:transfer"), TextStyle.PARTY);
+    const transferButtonText = addTextObject(-4, -2, i18next.t("modifierSelectUiHandler:manageItems"), TextStyle.PARTY);
     transferButtonText.setName("text-transfer-btn");
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
@@ -600,7 +601,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         (globalScene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth) / 6 - 30,
         OPTION_BUTTON_YPOSITION + 4,
       );
-      ui.showText(i18next.t("modifierSelectUiHandler:transferDesc"));
+      ui.showText(i18next.t("modifierSelectUiHandler:manageItemsDesc"));
     } else if (cursor === 2) {
       this.cursorObj.setPosition(
         (globalScene.game.canvas.width - this.checkButtonWidth) / 6 - 10,
