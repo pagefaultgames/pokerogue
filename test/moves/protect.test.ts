@@ -3,11 +3,12 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Protect", () => {
   let phaserGame: Phaser.Game;
@@ -85,8 +86,13 @@ describe("Moves - Protect", () => {
 
     const charizard = game.scene.getPlayerPokemon()!;
     charizard.tempSummonData.waveMoveHistory = [
-      { move: MoveId.ENDURE, result: MoveResult.SUCCESS, targets: [BattlerIndex.PLAYER] },
-      { move: MoveId.SPIKY_SHIELD, result: MoveResult.SUCCESS, targets: [BattlerIndex.PLAYER] },
+      { move: MoveId.ENDURE, result: MoveResult.SUCCESS, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL },
+      {
+        move: MoveId.SPIKY_SHIELD,
+        result: MoveResult.SUCCESS,
+        targets: [BattlerIndex.PLAYER],
+        useMode: MoveUseMode.NORMAL,
+      },
     ];
     // force protect to fail on anything >=2 uses (1/9 chance)
     vi.spyOn(charizard, "randBattleSeedInt").mockImplementation(range => (range >= 9 ? 1 : 0));

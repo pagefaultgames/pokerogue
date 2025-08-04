@@ -1,5 +1,5 @@
-import { HitResult } from "#app/field/pokemon";
 import { AbilityId } from "#enums/ability-id";
+import { HitResult } from "#enums/hit-result";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
