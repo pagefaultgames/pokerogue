@@ -162,6 +162,7 @@ export class PokemonSummonData {
 
       if (key === "speciesForm" || key === "fusionSpeciesForm") {
         this[key] = deserializePokemonSpeciesForm(value);
+        continue;
       }
 
       if (key === "illusion" && typeof value === "object") {
@@ -182,6 +183,7 @@ export class PokemonSummonData {
           }
         }
         this[key] = illusionData as IllusionData;
+        continue;
       }
 
       if (key === "moveset") {
