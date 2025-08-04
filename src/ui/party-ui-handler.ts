@@ -827,6 +827,10 @@ export class PartyUiHandler extends MessageUiHandler {
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
     }
 
+    if (option === PartyOption.RELEASE) {
+      return this.processReleaseOption(pokemon);
+    }
+
     // If the pokemon is filtered out for this option, we cannot continue
     const filterResult = this.getFilterResult(option, pokemon);
     if (filterResult) {
@@ -837,7 +841,6 @@ export class PartyUiHandler extends MessageUiHandler {
 
     // For what modes is a selectCallback needed?
     // PartyUiMode.SELECT (SELECT)
-    // PartyUiMode.RELEASE (RELEASE)
     // PartyUiMode.FAINT_SWITCH (SEND_OUT or PASS_BATON (?))
     // PartyUiMode.REVIVAL_BLESSING (REVIVE)
     // PartyUiMode.MODIFIER_TRANSFER (held items, and ALL)
@@ -850,10 +853,6 @@ export class PartyUiHandler extends MessageUiHandler {
     // PartyUiMode.POST_BATTLE_SWITCH (SEND_OUT)
 
     // These are the options that need a callback
-    if (option === PartyOption.RELEASE) {
-      return this.processReleaseOption(pokemon);
-    }
-
     if (this.partyUiMode === PartyUiMode.SPLICE) {
       if (option === PartyOption.SPLICE) {
         (this.selectCallback as PartyModifierSpliceSelectCallback)(this.transferCursor, this.cursor);
