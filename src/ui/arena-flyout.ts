@@ -12,6 +12,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { battlerIndexToFieldPosition, FieldPosition } from "#enums/field-position";
 import { MoveId } from "#enums/move-id";
 import { PositionalTagType } from "#enums/positional-tag-type";
+import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
 import {
   ArenaEventType,
@@ -23,7 +24,7 @@ import {
   type WeatherChangedEvent,
 } from "#events/arena";
 import { BattleSceneEventType } from "#events/battle-scene";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { TimeOfDayWidget } from "#ui/time-of-day-widget";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
