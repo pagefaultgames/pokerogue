@@ -54,7 +54,7 @@ export class PokemonMove {
         (ignorePp || this.ppUsed < this.getMovePp() || move.pp === -1) &&
         !(this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)),
     );
-    if (usability.value && pokemon.isPlayer()) {
+    if (pokemon.isPlayer()) {
       applyChallenges(ChallengeType.POKEMON_MOVE, move.id, usability);
     }
     return usability.value;
