@@ -99,8 +99,12 @@ export class SelectStarterPhase extends Phase {
         starterPokemon.generateFusionSpecies(true);
       }
       starterPokemon.setVisible(false);
-      applyChallenges(ChallengeType.STARTER_MODIFY, starterPokemon);
+      const chalApplied = applyChallenges(ChallengeType.STARTER_MODIFY, starterPokemon);
       party.push(starterPokemon);
+      if (chalApplied) {
+        // If any challenges modified the starter, it should update
+        loadPokemonAssets.push(starterPokemon.updateInfo());
+      }
       loadPokemonAssets.push(starterPokemon.loadAssets());
     });
     overrideModifiers();

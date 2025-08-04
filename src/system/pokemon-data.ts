@@ -1,7 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { Gender } from "#data/gender";
 import { CustomPokemonData, PokemonBattleData, PokemonSummonData } from "#data/pokemon-data";
-import { getPokemonSpeciesForm } from "#data/pokemon-species";
 import { Status } from "#data/status-effect";
 import { BattleType } from "#enums/battle-type";
 import type { BiomeId } from "#enums/biome-id";
@@ -14,7 +13,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 export class PokemonData {
   public id: number;

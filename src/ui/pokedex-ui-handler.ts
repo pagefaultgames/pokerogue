@@ -15,7 +15,7 @@ import {
 import { speciesTmMoves } from "#balance/tms";
 import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
 import type { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
-import { getPokemonSpeciesForm, getPokerusStarters, normalForm } from "#data/pokemon-species";
+import { normalForm } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
@@ -46,6 +46,7 @@ import { addWindow } from "#ui/ui-theme";
 import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences } from "#utils/data";
+import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 

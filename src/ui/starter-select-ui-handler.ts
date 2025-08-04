@@ -24,7 +24,6 @@ import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { getNatureName } from "#data/nature";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
-import { getPokemonSpeciesForm, getPokerusStarters } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
@@ -72,6 +71,7 @@ import {
 } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences, saveStarterPreferences } from "#utils/data";
+import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";

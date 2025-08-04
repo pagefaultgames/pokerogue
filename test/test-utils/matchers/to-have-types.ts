@@ -1,6 +1,9 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonType } from "#enums/pokemon-type";
-import { Pokemon } from "#field/pokemon";
+import type { Pokemon } from "#field/pokemon";
+import { stringifyEnumArray } from "#test/test-utils/string-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
+import { isPokemonInstance, receivedStr } from "../test-utils";
 
 export interface toHaveTypesOptions {
   /**
@@ -15,7 +18,7 @@ export interface toHaveTypesOptions {
 }
 
 /**
- * Matcher to check if an array contains exactly the given items, disregarding order.
+ * Matcher that checks if an array contains exactly the given items, disregarding order.
  * @param received - The object to check. Should be an array of one or more {@linkcode PokemonType}s.
  * @param options - The {@linkcode toHaveTypesOptions | options} for this matcher
  * @returns The result of the matching
@@ -23,42 +26,36 @@ export interface toHaveTypesOptions {
 export function toHaveTypes(
   this: MatcherState,
   received: unknown,
-  expected: unknown,
+  expected: [PokemonType, ...PokemonType[]],
   options: toHaveTypesOptions = {},
 ): SyncExpectationResult {
-  if (!(received instanceof Pokemon)) {
+  if (!isPokemonInstance(received)) {
     return {
-      pass: this.isNot,
-      message: () => `Expected a Pokemon, but got ${this.utils.stringify(received)}!`,
+      pass: false,
+      message: () => `Expected to recieve a Pokémon, but got ${receivedStr(received)}!`,
     };
   }
 
-  if (!Array.isArray(expected) || expected.length === 0) {
-    return {
-      pass: this.isNot,
-      message: () => `Expected to recieve an array with length >=1, but got ${this.utils.stringify(expected)}!`,
-    };
-  }
+  const actualTypes = received.getTypes(...(options.args ?? [])).sort();
+  const expectedTypes = expected.slice().sort();
 
-  if (!expected.every((t): t is PokemonType => t in PokemonType)) {
-    return {
-      pass: this.isNot,
-      message: () => `Expected to recieve array of PokemonTypes but got ${this.utils.stringify(expected)}!`,
-    };
-  }
+  // Exact matches do not care about subset equality
+  const matchers = options.exact
+    ? [...this.customTesters, this.utils.iterableEquality]
+    : [...this.customTesters, this.utils.subsetEquality, this.utils.iterableEquality];
+  const pass = this.equals(actualTypes, expectedTypes, matchers);
 
-  const gotSorted = pkmnTypeToStr(received.getTypes(...(options.args ?? [])));
-  const wantSorted = pkmnTypeToStr(expected.slice());
-  const pass = this.equals(gotSorted, wantSorted, [...this.customTesters, this.utils.iterableEquality]);
+  const actualStr = stringifyEnumArray(PokemonType, actualTypes);
+  const expectedStr = stringifyEnumArray(PokemonType, expectedTypes);
+  const pkmName = getPokemonNameWithAffix(received);
 
   return {
-    pass: this.isNot !== pass,
-    message: () => `Expected ${received.name} to have types ${this.utils.stringify(wantSorted)}, but got ${gotSorted}!`,
-    actual: gotSorted,
-    expected: wantSorted,
+    pass,
+    message: () =>
+      pass
+        ? `Expected ${pkmName} to NOT have types ${expectedStr}, but it did!`
+        : `Expected ${pkmName} to have types ${expectedStr}, but got ${actualStr} instead!`,
+    expected: expectedTypes,
+    actual: actualTypes,
   };
-}
-
-function pkmnTypeToStr(p: PokemonType[]): string[] {
-  return p.sort().map(type => PokemonType[type]);
 }

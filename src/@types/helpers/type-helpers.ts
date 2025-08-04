@@ -94,3 +94,12 @@ export type AbstractConstructor<T> = abstract new (...args: any[]) => T;
 export type CoerceNullPropertiesToUndefined<T extends object> = {
   [K in keyof T]: null extends T[K] ? Exclude<T[K], null> | undefined : T[K];
 };
+
+/**
+ * Type helper to mark all properties in `T` as optional, while still mandating that at least 1
+ * of its properties be present.
+ *
+ * Distinct from {@linkcode Partial} as this requires at least 1 property to _not_ be undefined.
+ * @typeParam T - The type to render partial
+ */
+export type AtLeastOne<T extends object> = Partial<T> & ObjectValues<{ [K in keyof T]: Pick<Required<T>, K> }>;
