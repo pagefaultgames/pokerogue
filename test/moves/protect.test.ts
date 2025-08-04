@@ -1,7 +1,5 @@
-import { ArenaTrapTag } from "#data/arena-tag";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
@@ -9,7 +7,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, vi } from "vitest";
 
 describe("Moves - Protect", () => {
   let phaserGame: Phaser.Game;
