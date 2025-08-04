@@ -1,4 +1,5 @@
 import type { MockGameObject } from "#test/test-utils/mocks/mock-game-object";
+import type { TextInterceptor } from "#test/test-utils/text-interceptor";
 import { UI } from "#ui/ui";
 
 export class MockText implements MockGameObject {
@@ -82,13 +83,14 @@ export class MockText implements MockGameObject {
 
   showText(
     text: string,
-    delay?: number | null,
+    _delay?: number | null,
     callback?: Function | null,
-    callbackDelay?: number | null,
-    prompt?: boolean | null,
-    promptDelay?: number | null,
+    _callbackDelay?: number | null,
+    _prompt?: boolean | null,
+    _promptDelay?: number | null,
   ) {
-    this.scene.messageWrapper.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+    // TODO: this is a very bad way to pass calls around
+    (this.scene.messageWrapper as TextInterceptor).showText(text);
     if (callback) {
       callback();
     }
@@ -96,13 +98,13 @@ export class MockText implements MockGameObject {
 
   showDialogue(
     keyOrText: string,
-    name: string | undefined,
-    delay: number | null = 0,
+    name: string,
+    _delay: number | null,
     callback: Function,
-    callbackDelay?: number,
-    promptDelay?: number,
+    _callbackDelay?: number,
+    _promptDelay?: number,
   ) {
-    this.scene.messageWrapper.showDialogue(keyOrText, name, delay, callback, callbackDelay, promptDelay);
+    (this.scene.messageWrapper as TextInterceptor).showDialogue(keyOrText, name);
     if (callback) {
       callback();
     }

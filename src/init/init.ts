@@ -4,6 +4,7 @@ import { initEggMoves } from "#balance/egg-moves";
 import { initPokemonPrevolutions, initPokemonStarters } from "#balance/pokemon-evolutions";
 import { initSpecies } from "#balance/pokemon-species";
 import { initChallenges } from "#data/challenge";
+import { allMoves } from "#data/data-lists";
 import { initTrainerTypeDialogue } from "#data/dialogue";
 import { initPokemonForms } from "#data/pokemon-forms";
 import { initModifierPools } from "#modifiers/init-modifier-pools";
@@ -16,6 +17,10 @@ import { initStatsKeys } from "#ui/game-stats-ui-handler";
 
 /** Initialize the game. */
 export function initializeGame() {
+  if (allMoves.length > 0) {
+    console.warn("Game initialization ran twice during same session!");
+    return;
+  }
   initModifierTypes();
   initModifierPools();
   initAchievements();
