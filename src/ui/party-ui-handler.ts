@@ -827,6 +827,7 @@ export class PartyUiHandler extends MessageUiHandler {
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
     }
 
+    // This is processed before the filter result since releasing does not depend on status.
     if (option === PartyOption.RELEASE) {
       return this.processReleaseOption(pokemon);
     }
@@ -841,6 +842,7 @@ export class PartyUiHandler extends MessageUiHandler {
 
     // For what modes is a selectCallback needed?
     // PartyUiMode.SELECT (SELECT)
+    // PartyUiMode.RELEASE (RELEASE)
     // PartyUiMode.FAINT_SWITCH (SEND_OUT or PASS_BATON (?))
     // PartyUiMode.REVIVAL_BLESSING (REVIVE)
     // PartyUiMode.MODIFIER_TRANSFER (held items, and ALL)
