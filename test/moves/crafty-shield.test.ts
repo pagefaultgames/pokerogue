@@ -29,7 +29,6 @@ describe("Moves - Crafty Shield", () => {
 
     game.override
       .battleStyle("double")
-      .moveset([MoveId.CRAFTY_SHIELD, MoveId.SPLASH, MoveId.SWORDS_DANCE, MoveId.HOWL])
       .enemySpecies(SpeciesId.DUSKNOIR)
       .enemyMoveset(MoveId.GROWL)
       .enemyAbility(AbilityId.INSOMNIA)
@@ -41,8 +40,8 @@ describe("Moves - Crafty Shield", () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     const [charizard, blastoise] = game.scene.getPlayerField();
-    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
-    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.use(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.move.forceEnemyMove(MoveId.GROWL);
     await game.move.forceEnemyMove(MoveId.GROWL);
 
@@ -58,8 +57,8 @@ describe("Moves - Crafty Shield", () => {
 
     const [charizard, blastoise] = game.scene.getPlayerField();
 
-    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
-    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.use(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER);
     await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -74,8 +73,8 @@ describe("Moves - Crafty Shield", () => {
 
     const [charizard, blastoise] = game.scene.getPlayerField();
 
-    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
-    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.use(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.move.forceEnemyMove(MoveId.PERISH_SONG);
     await game.move.forceEnemyMove(MoveId.TOXIC_SPIKES);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -92,19 +91,19 @@ describe("Moves - Crafty Shield", () => {
 
     const [charizard, blastoise] = game.scene.getPlayerField();
 
-    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
-    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.use(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.move.forceEnemyMove(MoveId.CURSE, BattlerIndex.PLAYER);
     await game.move.forceEnemyMove(MoveId.CURSE, BattlerIndex.PLAYER_2);
 
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.toEndOfTurn();
 
-    expect(charizard.getTag(BattlerTagType.CURSED)).toBeDefined();
-    expect(blastoise.getTag(BattlerTagType.CURSED)).toBeDefined();
+    expect(charizard.getTag(BattlerTagType.CURSED)).toBeUndefined();
+    expect(blastoise.getTag(BattlerTagType.CURSED)).toBeUndefined();
 
     const [dusknoir1, dusknoir2] = game.scene.getEnemyField();
-    expect(dusknoir1.isFullHp()).toBe(false);
-    expect(dusknoir2.isFullHp()).toBe(false);
+    expect(dusknoir1).toHaveFullHp();
+    expect(dusknoir2).toHaveFullHp();
   });
 
   it("should not block allies' self or ally-targeted moves", async () => {
@@ -112,15 +111,15 @@ describe("Moves - Crafty Shield", () => {
 
     const [charizard, blastoise] = game.scene.getPlayerField();
 
-    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
-    game.move.select(MoveId.SWORDS_DANCE, BattlerIndex.PLAYER_2);
+    game.move.use(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SWORDS_DANCE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(charizard.getStatStage(Stat.ATK)).toBe(0);
     expect(blastoise.getStatStage(Stat.ATK)).toBe(2);
 
-    game.move.select(MoveId.HOWL, BattlerIndex.PLAYER);
-    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER_2);
+    game.move.use(MoveId.HOWL, BattlerIndex.PLAYER);
+    game.move.use(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(charizard.getStatStage(Stat.ATK)).toBe(1);
