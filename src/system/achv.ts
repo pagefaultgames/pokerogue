@@ -923,7 +923,7 @@ export const achvs = {
       c.value > 0 &&
       globalScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0),
   ).setSecret(),
-  // TODO: Decide on icon, description, etc.
+  // TODO: Decide on icon
   NUZLOCKE: new ChallengeAchv(
     "NUZLOCKE",
     "",

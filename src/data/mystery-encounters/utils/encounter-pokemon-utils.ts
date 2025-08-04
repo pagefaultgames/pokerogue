@@ -708,7 +708,6 @@ export async function catchPokemon(
         });
       };
       Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
-        // TODO: Address ME edge cases (Safari Zone, etc.)
         const addStatus = new BooleanHolder(true);
         applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
         if (!addStatus.value) {
