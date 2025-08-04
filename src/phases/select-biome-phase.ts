@@ -22,7 +22,7 @@ export class SelectBiomePhase extends BattlePhase {
     const setNextBiome = (nextBiome: BiomeId) => {
       if (nextWaveIndex % 10 === 1) {
         globalScene.applyModifiers(MoneyInterestModifier, true);
-        const healStatus = new BooleanHolder(false);
+        const healStatus = new BooleanHolder(true);
         applyChallenges(ChallengeType.PARTY_HEAL, healStatus);
         if (healStatus.value) {
           globalScene.phaseManager.unshiftNew("PartyHealPhase", false);
