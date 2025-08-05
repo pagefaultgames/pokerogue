@@ -37,8 +37,8 @@ describe("Moves - Obstruct", () => {
     game.move.select(MoveId.OBSTRUCT);
     await game.phaseInterceptor.to("BerryPhase");
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     expect(player.isFullHp()).toBe(true);
     expect(enemy.getStatStage(Stat.DEF)).toBe(-2);
@@ -51,8 +51,8 @@ describe("Moves - Obstruct", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
     await game.move.forceMiss();
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(player.isFullHp()).toBe(true);
@@ -66,8 +66,8 @@ describe("Moves - Obstruct", () => {
     game.move.select(MoveId.OBSTRUCT);
     await game.phaseInterceptor.to("BerryPhase");
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     expect(player.isFullHp()).toBe(true);
     expect(enemy.getStatStage(Stat.DEF)).toBe(0);
@@ -80,7 +80,7 @@ describe("Moves - Obstruct", () => {
     game.move.select(MoveId.OBSTRUCT);
     await game.phaseInterceptor.to("BerryPhase");
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
     expect(player.getStatStage(Stat.ATK)).toBe(-1);
   });
@@ -92,6 +92,6 @@ describe("Moves - Obstruct", () => {
     game.move.select(MoveId.OBSTRUCT);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.DEF)).toBe(0);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.DEF)).toBe(0);
   });
 });

@@ -38,7 +38,7 @@ describe("Moves - Endure", () => {
     game.move.select(MoveId.THUNDER);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()!.hp).toBe(1);
+    expect(game.field.getEnemyPokemon().hp).toBe(1);
   });
 
   it("should let the pokemon survive with 1 HP when hit with a multihit move", async () => {
@@ -47,12 +47,12 @@ describe("Moves - Endure", () => {
     game.move.select(MoveId.BULLET_SEED);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()!.hp).toBe(1);
+    expect(game.field.getEnemyPokemon().hp).toBe(1);
   });
 
   it("should let the pokemon survive against OHKO moves", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SHEER_COLD);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -75,7 +75,7 @@ describe("Moves - Endure", () => {
       .moveset(move)
       .enemyMoveset(MoveId.ENDURE);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     enemy.damageAndUpdate(enemy.hp - 1);
 
     game.move.select(move);

@@ -41,7 +41,7 @@ describe("Moves - Protect", () => {
   test("should protect the user from attacks", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.PROTECT);
 
@@ -56,7 +56,7 @@ describe("Moves - Protect", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.PROTECT);
 
@@ -71,7 +71,7 @@ describe("Moves - Protect", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.PROTECT);
 
@@ -85,8 +85,8 @@ describe("Moves - Protect", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.PROTECT);
 
@@ -101,8 +101,8 @@ describe("Moves - Protect", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.PROTECT);
 
