@@ -1940,9 +1940,8 @@ export class AddSubstituteAttr extends MoveEffectAttr {
 }
 
 /**
- * Heals the user or target by {@linkcode healRatio} depending on the value of {@linkcode selfTarget}
- * @extends MoveEffectAttr
- * @see {@linkcode apply}
+ * Attribute to implement healing moves, such as {@linkcode MoveId.RECOVER} or {@linkcode MoveId.HEAL_PULSE}.
+ * Heals the user or target of the move by a fixed amount relative to their maximum HP.
  */
 export class HealAttr extends MoveEffectAttr {
   /** The percentage of {@linkcode Stat.HP} to heal; default `1` */
@@ -1952,7 +1951,8 @@ export class HealAttr extends MoveEffectAttr {
 
   /**
    * Whether the move should fail if the target is at full HP.
-   * @todo Remove post move failure rework
+   * @defaultValue `true`
+   * @todo Remove post move failure rework - this solely exists to prevent Lunar Blessing and co. from failing
    */
   private failOnFullHp = true;
 
@@ -1964,8 +1964,8 @@ export class HealAttr extends MoveEffectAttr {
   ) {
     super(selfTarget);
     this.healRatio = healRatio;
-    this.showAnim = showAnim
-    this.failOnFullHp = failOnFullHp
+    this.showAnim = showAnim;
+    this.failOnFullHp = failOnFullHp;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -1973,7 +1973,7 @@ export class HealAttr extends MoveEffectAttr {
       return false;
     }
 
-    this.addHealPhase(this.selfTarget ? user : target, this.healRatio);
+    this.addHealPhase(this.selfTarget ? user : target);
     return true;
   }
 
@@ -1981,11 +1981,12 @@ export class HealAttr extends MoveEffectAttr {
    * Creates a new {@linkcode PokemonHealPhase}.
    * This heals the target and shows the appropriate message.
    */
-  protected addHealPhase(target: Pokemon, healRatio: number) {
-    globalScene.phaseManager.unshiftNew("PokemonHealPhase", target.getBattlerIndex(),
-      toDmgValue(target.getMaxHp() * healRatio),
+  protected addHealPhase(healedPokemon: Pokemon) {
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", healedPokemon.getBattlerIndex(),
+      // Healing moves round half UP hp healed
+      Math.round(healedPokemon.getMaxHp() * this.healRatio),
       {
-        message: i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(target) }),
+        message: i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(healedPokemon) }),
         showFullHpMessage: true,
         skipAnim: !this.showAnim,
       }
@@ -2002,12 +2003,10 @@ export class HealAttr extends MoveEffectAttr {
   }
 
   override getFailedText(user: Pokemon, target: Pokemon): string | undefined {
-    const healedPokemon = (this.selfTarget ? user : target);
-    if (healedPokemon.isFullHp()) {
-      return i18next.t("battle:hpIsFull", {
-        pokemonName: getPokemonNameWithAffix(healedPokemon),
-      })
-    }
+    const healedPokemon = this.selfTarget ? user : target;
+    return i18next.t("battle:hpIsFull", {
+      pokemonName: getPokemonNameWithAffix(healedPokemon),
+    })
   }
 }
 
