@@ -26,7 +26,6 @@ function findColorPrefix(args: string[]): string {
   for (const arg of args) {
     const match = /color:\s*(.+?)(?:;|$)/g.exec(arg);
     if (match === null) {
-      // no match
       continue;
     }
 
