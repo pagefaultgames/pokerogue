@@ -36,7 +36,7 @@ describe("Moves - Tar Shot", () => {
   it("lowers the target's Speed stat by one stage and doubles the effectiveness of Fire-type moves used on the target", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     vi.spyOn(enemy, "getMoveEffectiveness");
 
@@ -57,7 +57,7 @@ describe("Moves - Tar Shot", () => {
   it("will not double the effectiveness of Fire-type moves used on a target that is already under the effect of Tar Shot (but may still lower its Speed)", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     vi.spyOn(enemy, "getMoveEffectiveness");
 
@@ -86,7 +86,7 @@ describe("Moves - Tar Shot", () => {
     game.override.enemySpecies(SpeciesId.SPRIGATITO);
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     enemy.teraType = PokemonType.GRASS;
     enemy.isTerastallized = true;
 
@@ -110,7 +110,7 @@ describe("Moves - Tar Shot", () => {
     game.override.enemySpecies(SpeciesId.SPRIGATITO);
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     vi.spyOn(enemy, "getMoveEffectiveness");
 

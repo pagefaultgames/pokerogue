@@ -10,6 +10,7 @@ import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export interface InputsIcons {
@@ -86,12 +87,6 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
       ? JSON.parse(localStorage.getItem(this.localStoragePropertyName)!)
       : {}; // TODO: is this bang correct?
     return settings;
-  }
-
-  private camelize(string: string): string {
-    return string
-      .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => (index === 0 ? word.toLowerCase() : word.toUpperCase()))
-      .replace(/\s+/g, "");
   }
 
   /**
@@ -210,14 +205,15 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
 
       settingFiltered.forEach((setting, s) => {
         // Convert the setting key from format 'Key_Name' to 'Key name' for display.
-        const settingName = setting.replace(/_/g, " ");
+        // TODO: IDK if this can be followed by both an underscore and a space, so leaving it as a regex matching both for now
+        const i18nKey = toCamelCase(setting.replace(/Alt(_| )/, ""));
 
         // Create and add a text object for the setting name to the scene.
         const isLock = this.settingBlacklisted.includes(this.setting[setting]);
         const labelStyle = isLock ? TextStyle.SETTINGS_LOCKED : TextStyle.SETTINGS_LABEL;
+        const isAlt = setting.includes("Alt");
         let labelText: string;
-        const i18nKey = this.camelize(settingName.replace("Alt ", ""));
-        if (settingName.toLowerCase().includes("alt")) {
+        if (isAlt) {
           labelText = `${i18next.t(`settings:${i18nKey}`)}${i18next.t("settings:alt")}`;
         } else {
           labelText = i18next.t(`settings:${i18nKey}`);

@@ -81,8 +81,8 @@ describe("Moves - Tailwind", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const ally = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const ally = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     const allySpd = ally.getStat(Stat.SPD);
     const enemySpd = enemy.getStat(Stat.SPD);

@@ -53,8 +53,8 @@ describe("Moves - Light Screen", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
 
@@ -72,8 +72,8 @@ describe("Moves - Light Screen", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
 
@@ -88,8 +88,8 @@ describe("Moves - Light Screen", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
 
@@ -106,8 +106,8 @@ describe("Moves - Light Screen", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
     expect(mockedDmg).toBe(allMoves[moveToUse].power);

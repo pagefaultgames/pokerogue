@@ -25,7 +25,7 @@ import { getNatureName } from "#data/nature";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
-import { getPokemonSpeciesForm, normalForm } from "#data/pokemon-species";
+import { normalForm } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
 import type { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
@@ -54,16 +54,10 @@ import { PokedexInfoOverlay } from "#ui/pokedex-info-overlay";
 import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import {
-  BooleanHolder,
-  getLocalizedSpriteKey,
-  isNullOrUndefined,
-  padInt,
-  rgbHexToRgba,
-  toReadableString,
-} from "#utils/common";
+import { BooleanHolder, getLocalizedSpriteKey, isNullOrUndefined, padInt, rgbHexToRgba } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
@@ -2620,7 +2614,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
       // Setting growth rate text
       if (isFormCaught) {
-        let growthReadable = toReadableString(GrowthRate[species.growthRate]);
+        let growthReadable = toTitleCase(GrowthRate[species.growthRate]);
         const growthAux = growthReadable.replace(" ", "_");
         if (i18next.exists("growth:" + growthAux)) {
           growthReadable = i18next.t(("growth:" + growthAux) as any);

@@ -1,5 +1,4 @@
 export enum BattlerTagType {
-  NONE = "NONE",
   RECHARGING = "RECHARGING",
   FLINCHED = "FLINCHED",
   INTERRUPTED = "INTERRUPTED",
