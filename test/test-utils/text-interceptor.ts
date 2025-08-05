@@ -20,6 +20,7 @@ export class TextInterceptor {
   }
 
   showText(text: string): void {
+    // NB: We do not format the raw _logs_ themselves as tests will be actively checking it.
     console.log(this.formatText(text));
     this.logs.push(text);
   }
