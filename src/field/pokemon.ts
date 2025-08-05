@@ -60,7 +60,7 @@ import {
 } from "#data/pokemon-data";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
-import { getFusedSpeciesName, getPokemonSpeciesForm, PokemonSpecies } from "#data/pokemon-species";
+import { PokemonSpecies } from "#data/pokemon-species";
 import { getRandomStatus, getStatusEffectOverlapText, Status } from "#data/status-effect";
 import { getTerrainBlockMessage, TerrainType } from "#data/terrain";
 import type { TypeDamageMultiplier } from "#data/type";
@@ -168,7 +168,7 @@ import {
   toDmgValue,
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -1821,8 +1821,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns An array of {@linkcode PokemonMove}, as described above.
    */
   getMoveset(ignoreOverride = false): PokemonMove[] {
-    const ret = !ignoreOverride && this.summonData.moveset ? this.summonData.moveset : this.moveset;
-
     // Overrides moveset based on arrays specified in overrides.ts
     let overrideArray: MoveId | Array<MoveId> = this.isPlayer()
       ? Overrides.MOVESET_OVERRIDE
@@ -1838,7 +1836,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       });
     }
 
-    return ret;
+    return !ignoreOverride && this.summonData.moveset ? this.summonData.moveset : this.moveset;
   }
 
   /**
