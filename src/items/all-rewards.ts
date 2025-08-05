@@ -132,11 +132,6 @@ export function initRewards() {
   allRewards[RewardId.PP_MAX] = () =>
     new PokemonPpUpReward("modifierType:ModifierType.PP_MAX", "pp_max", RewardId.PP_MAX, 3);
 
-  /*
-  REPEL] = () => new DoubleBattleChanceBoosterReward('Repel', 5),
-  SUPER_REPEL] = () => new DoubleBattleChanceBoosterReward('Super Repel', 10),
-  MAX_REPEL] = () => new DoubleBattleChanceBoosterReward('Max Repel', 25),*/
-
   allRewards[RewardId.MINT] = () => new MintRewardGenerator();
 
   allRewards[RewardId.TERA_SHARD] = () => new TeraTypeRewardGenerator();
