@@ -1,3 +1,7 @@
+/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
+import type { BattlerTag } from "#app/data/battler-tags";
+/** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
+
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -6,58 +10,72 @@ import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { HitResult } from "#enums/hit-result";
-import { MoveCategory } from "#enums/MoveCategory";
-import { MoveTarget } from "#enums/MoveTarget";
 import { CommonAnim } from "#enums/move-anims-common";
+import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
-import { MoveUseMode } from "#enums/move-use-mode";
+import { MoveTarget } from "#enums/move-target";
 import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import type {
-  ArenaDelayedAttackTagType,
   ArenaScreenTagType,
   ArenaTagTypeData,
   ArenaTrapTagType,
   SerializableArenaTagType,
 } from "#types/arena-tags";
-import type { Mutable, NonFunctionProperties } from "#types/type-helpers";
+import type { Mutable } from "#types/type-helpers";
 import { BooleanHolder, NumberHolder, toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
-/*
-ArenaTags are are meant for effects that are tied to the arena (as opposed to a specific pokemon).
-Examples include (but are not limited to)
-- Cross-turn effects that persist even if the user/target switches out, such as Wish, Future Sight, and Happy Hour
-- Effects that are applied to a specific side of the field, such as Crafty Shield, Reflect, and Spikes
-- Field-Effects, like Gravity and Trick Room
-
-Any arena tag that persists across turns *must* extend from `SerializableArenaTag` in the class definition signature.
-
-Serializable ArenaTags have strict rules for their fields.
-These rules ensure that only the data necessary to reconstruct the tag is serialized, and that the
-session loader is able to deserialize saved tags correctly.
-
-If the data is static (i.e. it is always the same for all instances of the class, such as the 
-type that is weakened by Mud Sport/Water Sport), then it must not be defined as a field, and must
-instead be defined as a getter.
-A static property is also acceptable, though static properties are less ergonomic with inheritance.
-
-If the data is mutable (i.e. it can change over the course of the tag's lifetime), then it *must*
-be defined as a field, and it must be set in the `loadTag` method.
-Such fields cannot be marked as `private/protected`, as if they were, typescript would omit them from
-types that are based off of the class, namely, `ArenaTagTypeData`. It is preferrable to trade the
-type-safety of private/protected fields for the type safety when deserializing arena tags from save data.
-
-For data that is mutable only within a turn (e.g. SuppressAbilitiesTag's beingRemoved field),
-where it does not make sense to be serialized, the field should use ES2020's private field syntax (a `#` prepended to the field name).
-If the field should be accessible outside of the class, then a public getter should be used.
-*/
+/**
+ * @module
+ * ArenaTags are are meant for effects that are tied to the arena (as opposed to a specific pokemon).
+ * Examples include (but are not limited to)
+ * - Cross-turn effects that persist even if the user/target switches out, such as Happy Hour
+ * - Effects that are applied to a specific side of the field, such as Crafty Shield, Reflect, and Spikes
+ * - Field-Effects, like Gravity and Trick Room
+ *
+ * Any arena tag that persists across turns *must* extend from `SerializableArenaTag` in the class definition signature.
+ *
+ * Serializable ArenaTags have strict rules for their fields.
+ * These rules ensure that only the data necessary to reconstruct the tag is serialized, and that the
+ * session loader is able to deserialize saved tags correctly.
+ *
+ * If the data is static (i.e. it is always the same for all instances of the class, such as the
+ * type that is weakened by Mud Sport/Water Sport), then it must not be defined as a field, and must
+ * instead be defined as a getter.
+ * A static property is also acceptable, though static properties are less ergonomic with inheritance.
+ *
+ * If the data is mutable (i.e. it can change over the course of the tag's lifetime), then it *must*
+ * be defined as a field, and it must be set in the `loadTag` method.
+ * Such fields cannot be marked as `private`/`protected`; if they were, Typescript would omit them from
+ * types that are based off of the class, namely, `ArenaTagTypeData`. It is preferrable to trade the
+ * type-safety of private/protected fields for the type safety when deserializing arena tags from save data.
+ *
+ * For data that is mutable only within a turn (e.g. SuppressAbilitiesTag's beingRemoved field),
+ * where it does not make sense to be serialized, the field should use ES2020's
+ * [private field syntax](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_elements#private_fields).
+ * If the field should be accessible outside of the class, then a public getter should be used.
+ *
+ *  If any new serializable fields *are* added, then the class *must* override the
+ * `loadTag` method to set the new fields. Its signature *must* match the example below,
+ * ```
+ * class ExampleTag extends SerializableArenaTag {
+ *   // Example, if we add 2 new fields that should be serialized:
+ *   public a: string;
+ *   public b: number;
+ *   // Then we must also define a loadTag method with one of the following signatures
+ *   public override loadTag(source: BaseArenaTag & Pick<ExampleTag, "tagType" | "a" | "b"): void;
+ *   public override loadTag<const T extends this>(source: BaseArenaTag & Pick<T, "tagType" | "a" | "b">): void;
+ * }
+ * ```
+ * Notes
+ * - If the class has any subclasses, then the second form of `loadTag` *must* be used.
+ */
 
 /** Interface containing the serializable fields of ArenaTagData. */
 interface BaseArenaTag {
@@ -141,9 +159,9 @@ export abstract class ArenaTag implements BaseArenaTag {
   /**
    * When given a arena tag or json representing one, load the data for it.
    * This is meant to be inherited from by any arena tag with custom attributes
-   * @param source - The {@linkcode BaseArenaTag} being loaded
+   * @param source - The arena tag being loaded
    */
-  loadTag(source: BaseArenaTag): void {
+  loadTag<const T extends this>(source: BaseArenaTag & Pick<T, "tagType">): void {
     this.turnCount = source.turnCount;
     this.sourceMove = source.sourceMove;
     this.sourceId = source.sourceId;
@@ -605,56 +623,6 @@ export class NoCritTag extends SerializableArenaTag {
 }
 
 /**
- * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Wish_(move) | Wish}.
- * Heals the Pokémon in the user's position the turn after Wish is used.
- */
-class WishTag extends SerializableArenaTag {
-  // The following fields are meant to be inwardly mutable, but outwardly immutable.
-  readonly battlerIndex: BattlerIndex;
-  readonly healHp: number;
-  readonly sourceName: string;
-  // End inwardly mutable fields
-
-  public readonly tagType = ArenaTagType.WISH;
-
-  constructor(turnCount: number, sourceId: number | undefined, side: ArenaTagSide) {
-    super(turnCount, MoveId.WISH, sourceId, side);
-  }
-
-  onAdd(_arena: Arena): void {
-    const source = this.getSourcePokemon();
-    if (!source) {
-      console.warn(`Failed to get source Pokemon for WishTag on add message; id: ${this.sourceId}`);
-      return;
-    }
-
-    (this as Mutable<this>).sourceName = getPokemonNameWithAffix(source);
-    (this as Mutable<this>).healHp = toDmgValue(source.getMaxHp() / 2);
-    (this as Mutable<this>).battlerIndex = source.getBattlerIndex();
-  }
-
-  onRemove(_arena: Arena): void {
-    const target = globalScene.getField()[this.battlerIndex];
-    if (target?.isActive(true)) {
-      globalScene.phaseManager.queueMessage(
-        // TODO: Rename key as it triggers on activation
-        i18next.t("arenaTag:wishTagOnAdd", {
-          pokemonNameWithAffix: this.sourceName,
-        }),
-      );
-      globalScene.phaseManager.unshiftNew("PokemonHealPhase", target.getBattlerIndex(), this.healHp, null, true, false);
-    }
-  }
-
-  override loadTag(source: NonFunctionProperties<WishTag>): void {
-    super.loadTag(source);
-    (this as Mutable<this>).battlerIndex = source.battlerIndex;
-    (this as Mutable<this>).healHp = source.healHp;
-    (this as Mutable<this>).sourceName = source.sourceName;
-  }
-}
-
-/**
  * Abstract class to implement weakened moves of a specific type.
  */
 export abstract class WeakenMoveTypeTag extends SerializableArenaTag {
@@ -813,7 +781,7 @@ export abstract class ArenaTrapTag extends SerializableArenaTag {
       : Phaser.Math.Linear(0, 1 / Math.pow(2, this.layers), Math.min(pokemon.getHpRatio(), 0.5) * 2);
   }
 
-  loadTag(source: NonFunctionProperties<ArenaTrapTag>): void {
+  public loadTag<T extends this>(source: BaseArenaTag & Pick<T, "tagType" | "layers" | "maxLayers">): void {
     super.loadTag(source);
     this.layers = source.layers;
     this.maxLayers = source.maxLayers;
@@ -1124,48 +1092,6 @@ class StickyWebTag extends ArenaTrapTag {
 
     return false;
   }
-}
-
-/**
- * Arena Tag class for delayed attacks, such as {@linkcode MoveId.FUTURE_SIGHT} or {@linkcode MoveId.DOOM_DESIRE}.
- * Delays the attack's effect by a set amount of turns, usually 3 (including the turn the move is used),
- * and deals damage after the turn count is reached.
- */
-export class DelayedAttackTag extends SerializableArenaTag {
-  public targetIndex: BattlerIndex;
-  public readonly tagType: ArenaDelayedAttackTagType;
-
-  constructor(
-    tagType: ArenaTagType.DOOM_DESIRE | ArenaTagType.FUTURE_SIGHT,
-    sourceMove: MoveId | undefined,
-    sourceId: number | undefined,
-    targetIndex: BattlerIndex,
-    side: ArenaTagSide = ArenaTagSide.BOTH,
-  ) {
-    super(3, sourceMove, sourceId, side);
-    this.tagType = tagType;
-    this.targetIndex = targetIndex;
-    this.side = side;
-  }
-
-  lapse(arena: Arena): boolean {
-    const ret = super.lapse(arena);
-
-    if (!ret) {
-      // TODO: This should not add to move history (for Spite)
-      globalScene.phaseManager.unshiftNew(
-        "MoveEffectPhase",
-        this.sourceId!,
-        [this.targetIndex],
-        allMoves[this.sourceMove!],
-        MoveUseMode.FOLLOW_UP,
-      ); // TODO: are those bangs correct?
-    }
-
-    return ret;
-  }
-
-  onRemove(_arena: Arena): void {}
 }
 
 /**
@@ -1581,7 +1507,7 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
     this.#beingRemoved = false;
   }
 
-  public override loadTag(source: NonFunctionProperties<SuppressAbilitiesTag>): void {
+  public override loadTag(source: BaseArenaTag & Pick<SuppressAbilitiesTag, "tagType" | "sourceCount">): void {
     super.loadTag(source);
     (this as Mutable<this>).sourceCount = source.sourceCount;
   }
@@ -1663,7 +1589,6 @@ export function getArenaTag(
   turnCount: number,
   sourceMove: MoveId | undefined,
   sourceId: number | undefined,
-  targetIndex?: BattlerIndex,
   side: ArenaTagSide = ArenaTagSide.BOTH,
 ): ArenaTag | null {
   switch (tagType) {
@@ -1689,14 +1614,6 @@ export function getArenaTag(
       return new SpikesTag(sourceId, side);
     case ArenaTagType.TOXIC_SPIKES:
       return new ToxicSpikesTag(sourceId, side);
-    case ArenaTagType.FUTURE_SIGHT:
-    case ArenaTagType.DOOM_DESIRE:
-      if (!targetIndex) {
-        return null; // If missing target index, no tag is created
-      }
-      return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex, side);
-    case ArenaTagType.WISH:
-      return new WishTag(turnCount, sourceId, side);
     case ArenaTagType.STEALTH_ROCK:
       return new StealthRockTag(sourceId, side);
     case ArenaTagType.STICKY_WEB:
@@ -1739,16 +1656,12 @@ export function getArenaTag(
  * @param source - An arena tag
  * @returns The valid arena tag
  */
-export function loadArenaTag(source: (ArenaTag | ArenaTagTypeData) & { targetIndex?: BattlerIndex }): ArenaTag {
+export function loadArenaTag(source: ArenaTag | ArenaTagTypeData | { tagType: ArenaTagType.NONE }): ArenaTag {
+  if (source.tagType === ArenaTagType.NONE) {
+    return new NoneTag();
+  }
   const tag =
-    getArenaTag(
-      source.tagType,
-      source.turnCount,
-      source.sourceMove,
-      source.sourceId,
-      source.targetIndex,
-      source.side,
-    ) ?? new NoneTag();
+    getArenaTag(source.tagType, source.turnCount, source.sourceMove, source.sourceId, source.side) ?? new NoneTag();
   tag.loadTag(source);
   return tag;
 }
@@ -1765,9 +1678,6 @@ export type ArenaTagTypeMap = {
   [ArenaTagType.CRAFTY_SHIELD]: CraftyShieldTag;
   [ArenaTagType.NO_CRIT]: NoCritTag;
   [ArenaTagType.TOXIC_SPIKES]: ToxicSpikesTag;
-  [ArenaTagType.FUTURE_SIGHT]: DelayedAttackTag;
-  [ArenaTagType.DOOM_DESIRE]: DelayedAttackTag;
-  [ArenaTagType.WISH]: WishTag;
   [ArenaTagType.STEALTH_ROCK]: StealthRockTag;
   [ArenaTagType.STICKY_WEB]: StickyWebTag;
   [ArenaTagType.TRICK_ROOM]: TrickRoomTag;

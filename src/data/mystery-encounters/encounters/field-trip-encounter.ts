@@ -1,7 +1,7 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { modifierTypes } from "#data/data-lists";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveCategory } from "#enums/move-category";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";

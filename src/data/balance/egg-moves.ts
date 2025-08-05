@@ -1,8 +1,8 @@
 import { allMoves } from "#data/data-lists";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { toReadableString } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
+import { toTitleCase } from "#utils/strings";
 
 export const speciesEggMoves = {
   [SpeciesId.BULBASAUR]: [ MoveId.SAPPY_SEED, MoveId.MALIGNANT_CHAIN, MoveId.EARTH_POWER, MoveId.MATCHA_GOTCHA ],
@@ -617,7 +617,7 @@ function parseEggMoves(content: string): void {
     }
 
     if (eggMoves.every(m => m === MoveId.NONE)) {
-      console.warn(`Species ${toReadableString(SpeciesId[species])} could not be parsed, excluding from output...`)
+      console.warn(`Species ${toTitleCase(SpeciesId[species])} could not be parsed, excluding from output...`)
     } else {
       output += `[SpeciesId.${SpeciesId[species]}]: [ ${eggMoves.map(m => `MoveId.${MoveId[m]}`).join(", ")} ],\n`;
     }

@@ -3,6 +3,7 @@ import { globalScene } from "#app/global-scene";
 import type { OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handler";
 import { Button } from "#enums/buttons";
 import { GameModes } from "#enums/game-modes";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 // biome-ignore lint/performance/noNamespaceImport: See `src/system/game-data.ts`
 import * as Modifier from "#modifiers/modifier";
@@ -10,7 +11,7 @@ import type { SessionSaveData } from "#system/game-data";
 import type { PokemonData } from "#system/pokemon-data";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { RunDisplayMode } from "#ui/run-info-ui-handler";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, formatLargeNumber, getPlayTimeString, isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";

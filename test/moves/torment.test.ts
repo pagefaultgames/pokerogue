@@ -4,7 +4,7 @@ import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { TurnEndPhase } from "#phases/turn-end-phase";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -36,7 +36,7 @@ describe("Moves - Torment", () => {
   it("Pokemon should not be able to use the same move consecutively", async () => {
     await game.classicMode.startBattle([SpeciesId.CHANSEY]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     // First turn, Player Pokemon uses Tackle successfully
     game.move.select(MoveId.TACKLE);

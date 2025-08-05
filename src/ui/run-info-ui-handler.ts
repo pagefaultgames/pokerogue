@@ -12,6 +12,7 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
 import { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
+import { TextStyle } from "#enums/text-style";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 // biome-ignore lint/performance/noNamespaceImport: See `src/system/game-data.ts`
@@ -21,7 +22,7 @@ import { getVariantTint } from "#sprites/variant";
 import type { SessionSaveData } from "#system/game-data";
 import type { PokemonData } from "#system/pokemon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
-import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getPlayTimeString } from "#utils/common";

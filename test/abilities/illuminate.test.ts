@@ -1,7 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { Stat } from "#enums/stat";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -33,7 +33,7 @@ describe("Abilities - Illuminate", () => {
 
     await game.classicMode.startBattle();
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
     expect(player.getStatStage(Stat.ACC)).toBe(0);
 

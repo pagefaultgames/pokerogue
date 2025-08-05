@@ -5,10 +5,11 @@ import { coerceArray, fixedInt, randInt } from "#utils/common";
 export class PokemonSpriteSparkleHandler {
   private sprites: Set<Phaser.GameObjects.Sprite>;
 
+  private counterTween?: Phaser.Tweens.Tween;
+
   setup(): void {
     this.sprites = new Set();
-
-    globalScene.tweens.addCounter({
+    this.counterTween = globalScene.tweens.addCounter({
       duration: fixedInt(200),
       from: 0,
       to: 1,
@@ -76,6 +77,14 @@ export class PokemonSpriteSparkleHandler {
   removeAll(): void {
     for (const s of this.sprites.values()) {
       this.sprites.delete(s);
+    }
+  }
+
+  destroy(): void {
+    this.removeAll();
+    if (this.counterTween) {
+      this.counterTween.destroy();
+      this.counterTween = undefined;
     }
   }
 }

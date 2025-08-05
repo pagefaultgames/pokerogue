@@ -3,7 +3,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -33,7 +33,7 @@ describe("Moves - Taunt", () => {
   it("Pokemon should not be able to use Status Moves", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     // First turn, Player Pokemon succeeds using Growl without Taunt
     game.move.select(MoveId.GROWL);
