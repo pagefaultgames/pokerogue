@@ -1,9 +1,10 @@
-import type { SerializedPositionalTag, serializedPosTagMap } from "#data/positional-tags/load-positional-tag";
-import type { PositionalTagType } from "#enums/positional-tag-type";
-import type { OneOther } from "#test/@types/test-helpers";
 // biome-ignore-start lint/correctness/noUnusedImports: TSDoc
 import type { GameManager } from "#test/test-utils/game-manager";
 // biome-ignore-end lint/correctness/noUnusedImports: TSDoc
+
+import type { SerializedPositionalTag, serializedPosTagMap } from "#data/positional-tags/load-positional-tag";
+import type { PositionalTagType } from "#enums/positional-tag-type";
+import type { OneOther } from "#test/@types/test-helpers";
 import { getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
 import { toTitleCase } from "#utils/strings";
