@@ -1768,7 +1768,7 @@ export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteraction
 
 /**
  * Class for abilities that add additional strikes to single-target moves.
- * Used by {@linkcode Moves.PARENTAL_BOND | Parental Bond}.
+ * Used by {@linkcode MoveId.PARENTAL_BOND | Parental Bond}.
  */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
   /**

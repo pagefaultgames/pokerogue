@@ -58,10 +58,10 @@ describe.each([
   it(`should change Normal-type attacks to ${tyName} type and boost their power`, async () => {
     await game.classicMode.startBattle();
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     const typeSpy = vi.spyOn(playerPokemon, "getMoveType");
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const enemySpy = vi.spyOn(enemyPokemon, "getMoveEffectiveness");
     const powerSpy = vi.spyOn(allMoves[MoveId.TACKLE], "calculateBattlePower");
 
@@ -103,10 +103,10 @@ describe.each([
 
       await game.classicMode.startBattle();
 
-      const playerPokemon = game.scene.getPlayerPokemon()!;
+      const playerPokemon = game.field.getPlayerPokemon();
       const tySpy = vi.spyOn(playerPokemon, "getMoveType");
 
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const enemyPokemon = game.field.getEnemyPokemon();
       const enemyEffectivenessSpy = vi.spyOn(enemyPokemon, "getMoveEffectiveness");
 
       enemyPokemon.hp = Math.floor(enemyPokemon.getMaxHp() * 0.8);
@@ -137,7 +137,7 @@ describe.each([
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     const tySpy = vi.spyOn(playerPokemon, "getMoveType");
 
     game.move.select(move);
@@ -149,10 +149,10 @@ describe.each([
   it("should affect all hits of a Normal-type multi-hit move", async () => {
     await game.classicMode.startBattle();
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     const tySpy = vi.spyOn(playerPokemon, "getMoveType");
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.FURY_SWIPES);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -183,7 +183,7 @@ describe.each([
     expect(boost, "power boost should be defined").toBeDefined();
 
     const powerSpy = vi.spyOn(testMoveInstance, "calculateBattlePower");
-    const typeSpy = vi.spyOn(game.scene.getPlayerPokemon()!, "getMoveType");
+    const typeSpy = vi.spyOn(game.field.getPlayerPokemon(), "getMoveType");
     game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(typeSpy, "type was not changed").toHaveLastReturnedWith(ty);
