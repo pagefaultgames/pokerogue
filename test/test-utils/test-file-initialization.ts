@@ -1,7 +1,7 @@
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { blobToString } from "#test/test-utils/game-manager-utils";
 import { manageListeners } from "#test/test-utils/listeners-manager";
-import { MockConsole } from "#test/test-utils/mocks/mock-console";
+import { MockConsole } from "#test/test-utils/mocks/mock-console/mock-console";
 import { mockContext } from "#test/test-utils/mocks/mock-context-canvas";
 import { mockLocalStorage } from "#test/test-utils/mocks/mock-local-storage";
 import { MockImage } from "#test/test-utils/mocks/mocks-container/mock-image";
@@ -27,7 +27,7 @@ export function initTests(): void {
 function setupStubs(): void {
   console.log(console instanceof MockConsole);
   console.log(Phaser.GameObjects.Image instanceof MockImage);
-  Object.defineProperties(window, {
+  Object.defineProperties(global, {
     localStorage: {
       value: mockLocalStorage(),
     },

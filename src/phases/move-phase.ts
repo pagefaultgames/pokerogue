@@ -118,7 +118,10 @@ export class MovePhase extends BattlePhase {
   public start(): void {
     super.start();
 
-    console.log(MoveId[this.move.moveId], enumValueToKey(MoveUseMode, this.useMode));
+    console.log(
+      `%cMove: ${MoveId[this.move.moveId]}; Use Mode: ${enumValueToKey(MoveUseMode, this.useMode)}`,
+      "color:RebeccaPurple",
+    );
 
     // Check if move is unusable (e.g. running out of PP due to a mid-turn Spite
     // or the user no longer being on field), ending the phase early if not.

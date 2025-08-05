@@ -1,6 +1,12 @@
+import { inferColorFormat } from "#test/test-utils/mocks/mock-console/infer-color";
+import { coerceArray } from "#utils/common";
+import { Console } from "node:console";
 import { stderr, stdout } from "node:process";
 import util from "node:util";
 import chalk, { type ChalkInstance } from "chalk";
+
+// Tell chalk we support truecolor
+chalk.level = 3;
 
 // TODO: Review this
 const blacklist = [
@@ -8,6 +14,9 @@ const blacklist = [
   'Texture "%s" not found', // Repetitive warnings about textures not found
   "type: 'Pokemon',", // Large Pokemon objects
   "gameVersion: ", // Large session-data and system-data objects
+  "Phaser v", // Phaser version text
+  "Seed:", // Stuff about wave seed (we should really stop logging this shit)
+  "Wave Seed:", // Stuff about wave seed (we should really stop logging this shit)
 ];
 const whitelist = ["Start Phase"];
 
@@ -15,7 +24,7 @@ const whitelist = ["Start Phase"];
  * The {@linkcode MockConsole} is a wrapper around the global {@linkcode console} object.
  * It automatically colors text and such.
  */
-export class MockConsole extends console.Console {
+export class MockConsole extends Console {
   /**
    * A list of warnings that are queued to be displayed after all tests in the same file are finished.
    */
@@ -59,7 +68,7 @@ export class MockConsole extends console.Console {
     }
 
     // TODO: Figure out how to add color to the full trace text
-    super.trace(this.addColor(chalk.hex("#b700ff"), ...data));
+    super.trace(...this.format(chalk.hex("#b700ff"), data));
   }
 
   public debug(...data: unknown[]) {
@@ -67,7 +76,7 @@ export class MockConsole extends console.Console {
       return;
     }
 
-    super.debug(this.addColor(chalk.hex("#874600ff"), ...data));
+    super.debug(...this.format(chalk.hex("#874600ff"), data));
   }
 
   public log(...data: unknown[]): void {
@@ -75,17 +84,21 @@ export class MockConsole extends console.Console {
       return;
     }
 
-    if (typeof data[0] === "string" && data[0].includes("%c")) {
-      // Strip all CSS from console logs in place of green format
-      // (such as for "Start Phase" messages)
-      data[0] = data[0].replace("%c", "");
-      super.log(this.addColor(chalk.green, data[0]));
+    let formatter: ChalkInstance | undefined;
+
+    if (data.some(d => typeof d === "string" && d.includes("color:"))) {
+      // Infer the color format from the arguments, then remove everything but the message.
+      formatter = inferColorFormat(data as [string, ...unknown[]]);
+      data.splice(1);
     } else if (data[0] === "[UI]") {
-      // Orange for UI debug messages
-      super.log(this.addColor(chalk.hex("#ffa500"), ...data));
-    } else {
-      super.log(...data);
+      // Cyan for UI debug messages
+      formatter = chalk.hex("#009dffff");
+    } else if (typeof data[0] === "string" && data[0].startsWith("=====")) {
+      // Orange logging for "New Turn"/etc messages
+      formatter = chalk.hex("#ffad00ff");
     }
+
+    super.log(...this.format(formatter, data));
   }
 
   public warn(...data: unknown[]) {
@@ -93,7 +106,7 @@ export class MockConsole extends console.Console {
       return;
     }
 
-    super.warn(this.addColor(chalk.yellow, ...data));
+    super.warn(...this.format(chalk.yellow, data));
   }
 
   public error(...data: unknown[]) {
@@ -101,7 +114,7 @@ export class MockConsole extends console.Console {
       return;
     }
 
-    super.error(this.addColor(chalk.redBright, ...data));
+    super.error(...this.format(chalk.redBright, data));
   }
 
   /**
@@ -112,14 +125,16 @@ export class MockConsole extends console.Console {
   }
 
   /**
-   * Prepends the given color to every argument in the given data.
-   * Also appends the white ANSI code as an extra argument, so that the added color does not leak to future messages.
-   * @param color - A Chalk instance used to color the output.
-   * @param data - The data that the color should be applied to.
-   * @returns A stringified copy of `data` with the color prepended to every argument.
-   * @todo Do we need to prepend it?
+   * Stringify the given data in a manner fit for logging.
+   * @param color - A Chalk instance or other transformation function used to transform the output,
+   * or `undefined` to not transform it at all.
+   * @param data - The data that the format should be applied to.
+   * @returns A stringified copy of `data` with {@linkcode color} applied to each individual argument.
+   * @todo Do we need to apply color to each entry or just run it through `util.format`?
    */
-  private addColor(color: ChalkInstance, ...data: unknown[]): string[] {
-    return data.map(a => `${color(typeof a === "string" ? a : this.getStr(a))}`);
+  private format(color: ((s: unknown) => unknown) | undefined, data: unknown | unknown[]): unknown[] {
+    data = coerceArray(data);
+    color ??= a => a;
+    return (data as unknown[]).map(a => color(typeof a === "function" || typeof a === "object" ? this.getStr(a) : a));
   }
 }

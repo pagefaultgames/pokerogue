@@ -25,7 +25,7 @@ export class TextInterceptor {
   }
 
   showDialogue(text: string, name: string): void {
-    console.log(this.formatText(`${name}: \n${text}`));
+    console.log(`${name}: \n${this.formatText(text)}`);
     this.logs.push(name, text);
   }
 
@@ -40,7 +40,7 @@ export class TextInterceptor {
   private formatText(text: string): string {
     return chalk.blue(
       text
-        .replace(/\n/g, "\n  ")
+        .replace(/\n/g, " ")
         .replace(/\$/g, "\n  ")
         .replace(/@\w{.*?}/g, ""),
     );

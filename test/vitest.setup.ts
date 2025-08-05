@@ -1,7 +1,8 @@
 import "vitest-canvas-mock";
 import { initializeGame } from "#app/init/init";
-import { MockConsole } from "#test/test-utils/mocks/mock-console";
+import { MockConsole } from "#test/test-utils/mocks/mock-console/mock-console";
 import { initTests } from "#test/test-utils/test-file-initialization";
+import chalk from "chalk";
 import { afterAll, beforeAll, vi } from "vitest";
 
 /** Set the timezone to UTC for tests. */
@@ -88,5 +89,5 @@ beforeAll(() => {
 afterAll(() => {
   global.server.close();
   MockConsole.printPostTestWarnings();
-  console.log("Closing i18n MSW server!");
+  console.log(chalk.hex("#dfb8d8")("Closing i18n MSW server!"));
 });
