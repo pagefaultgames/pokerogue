@@ -133,7 +133,7 @@ declare module "vitest" {
 
     /**
      * Check whether a {@linkcode Pokemon} has applied a specific {@linkcode AbilityId}.
-     * @param expectedAbilityId - The expected {@linkcode AbilityId} to
+     * @param expectedAbilityId - The expected {@linkcode AbilityId} to check for
      */
     toHaveAbilityApplied(expectedAbilityId: AbilityId): void;
 
