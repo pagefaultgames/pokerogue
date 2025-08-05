@@ -178,10 +178,10 @@ export class PokemonHealPhase extends CommonAnimPhase {
 
   /**
    * Calculate the amount of HP to be healed during this Phase.
-   * @returns The updated healing amount, rounded down and capped at the Pokemon's maximum HP.
+   * @returns The updated healing amount post-modifications, capped at the Pokemon's maximum HP.
    * @remarks
    * The effect of Healing Charms are rounded down for parity with the closest mainline counterpart
-   * (Big Root).
+   * (i.e. Big Root).
    */
   private getHealAmount(): number {
     if (this.revive) {

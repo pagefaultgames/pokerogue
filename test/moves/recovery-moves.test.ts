@@ -51,32 +51,30 @@ describe("Moves - ", () => {
       { name: "Shore Up", move: MoveId.SHORE_UP },
     ])("$name", ({ move }) => {
       it("should heal 50% of the user's maximum HP, rounded half up", async () => {
-        // NB: Shore Up and co. round down in mainline, but we keep them the same as others for consistency's sake
         await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
-        const chansey = game.field.getEnemyPokemon();
-        chansey.hp = 1;
-        chansey.setStat(Stat.HP, 501); // half is 250.5, rounded half up to 251
+        const blissey = game.field.getPlayerPokemon();
+        blissey.hp = 1;
+        blissey.setStat(Stat.HP, 501); // half is 250.5, rounded half up to 251
 
         game.move.use(move);
         await game.toEndOfTurn();
 
         expect(game.phaseInterceptor.log).toContain("PokemonHealPhase");
         expect(game.textInterceptor.logs).toContain(
-          i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(chansey) }),
+          i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(blissey) }),
         );
-        expect(chansey).toHaveHp(252); // 251 + 1
+        expect(blissey).toHaveHp(252); // 251 + 1
       });
 
-      it("should fail if user is at full HP", async () => {
+      it("should fail if the user is at full HP", async () => {
         await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
         game.move.use(move);
         await game.toEndOfTurn();
 
         const blissey = game.field.getPlayerPokemon();
-        const chansey = game.field.getEnemyPokemon();
-        expect(chansey).toHaveFullHp();
+        expect(blissey).toHaveFullHp();
         expect(game.textInterceptor.logs).toContain(
           i18next.t("battle:hpIsFull", {
             pokemonName: getPokemonNameWithAffix(blissey),
@@ -160,53 +158,55 @@ describe("Moves - ", () => {
     {
       name: "Heal Pulse",
       move: MoveId.HEAL_PULSE,
-      percent: 75,
+      percent: 3 / 4,
       ability: AbilityId.MEGA_LAUNCHER,
       condText: "user has Mega Launcher",
     },
     {
       name: "Floral Healing",
       move: MoveId.FLORAL_HEALING,
-      percent: 66,
+      percent: 2 / 3,
       ability: AbilityId.GRASSY_SURGE,
       condText: "Grassy Terrain is active",
     },
-  ])("Target-Healing Moves - $name", ({ move, percent, ability }) => {
+  ])("Target-Healing Moves - $name", ({ move, percent, ability, condText }) => {
     it("should heal 50% of the target's maximum HP, rounded half up", async () => {
+      // NB: Shore Up and co. round down in mainline, but we keep them the same as others for consistency's sake
       await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
-      const blissey = game.field.getPlayerPokemon();
-      blissey.hp = 1;
-      blissey.setStat(Stat.HP, 501); // half is 250.5, rounded half up to 251
+      const chansey = game.field.getEnemyPokemon();
+      chansey.hp = 1;
+      chansey.setStat(Stat.HP, 501); // half is 250.5, rounded half up to 251
 
       game.move.use(move);
       await game.toEndOfTurn();
 
       expect(game.phaseInterceptor.log).toContain("PokemonHealPhase");
       expect(game.textInterceptor.logs).toContain(
-        i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(blissey) }),
+        i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(chansey) }),
       );
-      expect(blissey).toHaveHp(252); // 251 + 1
+      expect(chansey).toHaveHp(252); // 251 + 1
     });
 
-    it("should fail if target is at full HP", async () => {
+    it("should fail if the target is at full HP", async () => {
       await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
       game.move.use(move);
       await game.toEndOfTurn();
 
       const blissey = game.field.getPlayerPokemon();
-      expect(blissey).toHaveFullHp();
+      const chansey = game.field.getEnemyPokemon();
+      expect(chansey).toHaveFullHp();
       expect(game.textInterceptor.logs).toContain(
         i18next.t("battle:hpIsFull", {
-          pokemonName: getPokemonNameWithAffix(blissey),
+          pokemonName: getPokemonNameWithAffix(chansey),
         }),
       );
       expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
       expect(blissey).toHaveUsedMove({ move, result: MoveResult.FAIL });
     });
 
-    it("should heal $percent% of the target's maximum HP if $condText", async () => {
+    it(`should heal ${(percent * 100).toPrecision(2)}% of the target's maximum HP if ${condText}`, async () => {
       // prevents passive turn heal from grassy terrain
       game.override.ability(ability).enemyAbility(AbilityId.LEVITATE);
       await game.classicMode.startBattle([SpeciesId.BLISSEY]);
@@ -217,7 +217,7 @@ describe("Moves - ", () => {
       game.move.use(move);
       await game.toEndOfTurn();
 
-      expect(chansey).toHaveHp(Math.round((percent * chansey.getMaxHp()) / 100) + 1);
+      expect(chansey).toHaveHp(Math.round(percent * chansey.getMaxHp()) + 1);
     });
   });
 });

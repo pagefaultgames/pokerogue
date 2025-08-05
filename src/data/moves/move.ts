@@ -1940,7 +1940,7 @@ export class AddSubstituteAttr extends MoveEffectAttr {
 }
 
 /**
- * Attribute to implement healing moves, such as {@linkcode MoveId.RECOVER} or {@linkcode MoveId.HEAL_PULSE}.
+ * Attribute to implement healing moves, such as {@linkcode MoveId.RECOVER} or {@linkcode MoveId.SOFT_BOILED}.
  * Heals the user or target of the move by a fixed amount relative to their maximum HP.
  */
 export class HealAttr extends MoveEffectAttr {
@@ -1968,10 +1968,21 @@ export class HealAttr extends MoveEffectAttr {
     this.failOnFullHp = failOnFullHp;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
     }
+
+    // Apply any boosts to healing amounts (i.e. Heal Pulse + Mega Launcher).
+    const hp = new NumberHolder(this.healRatio)
+    applyAbAttrs("MoveHealBoostAbAttr", {
+      pokemon: user,
+      opponent: target,
+      move,
+      healRatio: hp
+    })
+    this.healRatio = hp.value;
+
 
     this.addHealPhase(this.selfTarget ? user : target);
     return true;
@@ -1983,7 +1994,8 @@ export class HealAttr extends MoveEffectAttr {
    */
   protected addHealPhase(healedPokemon: Pokemon) {
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", healedPokemon.getBattlerIndex(),
-      // Healing moves round half UP hp healed
+      // Healing moves round half UP the hp healed
+      // (unlike most other sources which round down)
       Math.round(healedPokemon.getMaxHp() * this.healRatio),
       {
         message: i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(healedPokemon) }),
@@ -2012,7 +2024,7 @@ export class HealAttr extends MoveEffectAttr {
 
 /**
  * Attribute for moves with variable healing amounts.
- * Heals the target by an amount depending on the return value of {@linkcode healFunc}.
+ * Heals the user/target by an amount depending on the return value of {@linkcode healFunc}.
  *
  * Used for:
  *  - {@linkcode MoveId.MOONLIGHT} and variants
@@ -2023,7 +2035,7 @@ export class HealAttr extends MoveEffectAttr {
 export class VariableHealAttr extends HealAttr {
   constructor(
     /** A function yielding the amount of HP to heal. */
-    private healFunc: (user: Pokemon, target: Pokemon, _move: Move) => number,
+    private healFunc: (user: Pokemon, target: Pokemon, move: Move) => number,
     showAnim = false,
     selfTarget = true,
   ) {
@@ -10571,7 +10583,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1, true)
       .punchingMove(),
     new StatusMove(MoveId.FLORAL_HEALING, PokemonType.FAIRY, -1, 10, -1, 0, 7)
-      .attr(VariableHealAttr, () => globalScene.arena.terrain?.terrainType === TerrainType.GRASSY ? 2 / 3 : 1 / 2, true, false)
+      .attr(VariableHealAttr, () => globalScene.arena.getTerrainType() === TerrainType.GRASSY ? 2 / 3 : 1 / 2, true, false)
       .triageMove()
       .reflectable(),
     new AttackMove(MoveId.HIGH_HORSEPOWER, PokemonType.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, 0, 7),
