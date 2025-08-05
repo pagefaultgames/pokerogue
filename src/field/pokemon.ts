@@ -24,11 +24,11 @@ import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import {
   AutotomizedTag,
   BattlerTag,
+  type BattlerTagTypeMap,
   CritBoostTag,
   EncoreTag,
   ExposedTag,
   GroundedTag,
-  type GrudgeTag,
   getBattlerTag,
   HighestStatBoostTag,
   MoveRestrictionBattlerTag,
@@ -1640,6 +1640,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getMaxHp() - this.hp;
   }
 
+  // TODO: Why does this default to `false`?
   getHpRatio(precise = false): number {
     return precise ? this.hp / this.getMaxHp() : Math.round((this.hp / this.getMaxHp()) * 100) / 100;
   }
@@ -4237,14 +4238,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
-  /**@overload */
-  getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | undefined;
-
   /** @overload */
-  getTag(tagType: BattlerTagType.SUBSTITUTE): SubstituteTag | undefined;
-
-  /** @overload */
-  getTag(tagType: BattlerTagType): BattlerTag | undefined;
+  getTag<T extends BattlerTagType>(tagType: T): BattlerTagTypeMap[T] | undefined;
 
   /** @overload */
   getTag<T extends BattlerTag>(tagType: Constructor<T>): T | undefined;
