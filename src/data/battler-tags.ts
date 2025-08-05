@@ -2698,29 +2698,30 @@ export class StockpilingTag extends SerializableBattlerTag {
    * For each stat, an internal counter is incremented (by 1) if the stat was successfully changed.
    */
   onAdd(pokemon: Pokemon): void {
-    if (this.stockpiledCount < 3) {
-      this.stockpiledCount++;
-
-      globalScene.phaseManager.queueMessage(
-        i18next.t("battlerTags:stockpilingOnAdd", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          stockpiledCount: this.stockpiledCount,
-        }),
-      );
-
-      // Attempt to increase DEF and SPDEF by one stage, keeping track of successful changes.
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        [Stat.SPDEF, Stat.DEF],
-        1,
-        true,
-        false,
-        true,
-        this.onStatStagesChanged,
-      );
+    if (this.stockpiledCount >= 3) {
+      return;
     }
+    this.stockpiledCount++;
+
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:stockpilingOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        stockpiledCount: this.stockpiledCount,
+      }),
+    );
+
+    // Attempt to increase DEF and SPDEF by one stage, keeping track of successful changes.
+    globalScene.phaseManager.unshiftNew(
+      "StatStageChangePhase",
+      pokemon.getBattlerIndex(),
+      true,
+      [Stat.SPDEF, Stat.DEF],
+      1,
+      true,
+      false,
+      true,
+      this.onStatStagesChanged,
+    );
   }
 
   onOverlap(pokemon: Pokemon): void {

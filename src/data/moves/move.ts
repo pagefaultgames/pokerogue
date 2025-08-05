@@ -2038,8 +2038,9 @@ export class VariableHealAttr extends HealAttr {
     private healFunc: (user: Pokemon, target: Pokemon, move: Move) => number,
     showAnim = false,
     selfTarget = true,
+    failOnFullHp = true,
   ) {
-    super(1, showAnim, selfTarget);
+    super(1, showAnim, selfTarget, selfTarget);
     this.healFunc = healFunc;
   }
 
@@ -9293,14 +9294,14 @@ export function initMoves() {
       .partial(), // Does not lock the user, does not stop Pokemon from sleeping
       // Likely can make use of FrenzyAttr and an ArenaTag (just without the FrenzyMissFunc)
     new SelfStatusMove(MoveId.STOCKPILE, PokemonType.NORMAL, -1, 20, -1, 0, 3)
-      .condition(user => (user.getTag(StockpilingTag)?.stockpiledCount ?? 0) < 3)
+      .condition(user => (user.getTag(BattlerTagType.STOCKPILING)?.stockpiledCount ?? 0) < 3)
       .attr(AddBattlerTagAttr, BattlerTagType.STOCKPILING, true),
     new AttackMove(MoveId.SPIT_UP, PokemonType.NORMAL, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 3)
       .attr(SpitUpPowerAttr, 100)
       .condition(hasStockpileStacksCondition)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.STOCKPILING ], true),
     new SelfStatusMove(MoveId.SWALLOW, PokemonType.NORMAL, -1, 10, -1, 0, 3)
-      .attr(VariableHealAttr, swallowHealFunc)
+      .attr(VariableHealAttr, swallowHealFunc, false, true, true)
       .condition(hasStockpileStacksCondition)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.STOCKPILING ], true)
       .triageMove(),

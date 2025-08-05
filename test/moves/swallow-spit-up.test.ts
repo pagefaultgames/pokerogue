@@ -63,8 +63,8 @@ describe("Moves - Swallow & Spit Up - ", () => {
         game.move.use(MoveId.SWALLOW);
         await game.toEndOfTurn();
 
-        expect(swalot.getHpRatio()).toBeCloseTo(healPercent / 100, 1);
-        expect(swalot.getTag(StockpilingTag)).toBeUndefined();
+        expect(swalot).toHaveHp((swalot.getMaxHp() * healPercent) / 100 + 1);
+        expect(swalot).not.toHaveBattlerTag(BattlerTagType.STOCKPILING);
       },
     );
 
@@ -74,40 +74,38 @@ describe("Moves - Swallow & Spit Up - ", () => {
       const player = game.field.getPlayerPokemon();
       player.hp = 1;
 
-      const stockpilingTag = player.getTag(StockpilingTag)!;
-      expect(stockpilingTag).toBeUndefined();
+      expect(player).not.toHaveBattlerTag(BattlerTagType.STOCKPILING);
 
       game.move.use(MoveId.SWALLOW);
       await game.toEndOfTurn();
 
-      expect(player.getLastXMoves()[0]).toMatchObject({
+      expect(player).toHaveUsedMove({
         move: MoveId.SWALLOW,
         result: MoveResult.FAIL,
       });
     });
 
-    // TODO: Does this consume stacks or not?
-    it.todo("should fail and display message at full HP, consuming stacks", async () => {
+    it("should count as a success and consume stacks despite displaying message at full HP", async () => {
       await game.classicMode.startBattle([SpeciesId.SWALOT]);
 
       const swalot = game.field.getPlayerPokemon();
       swalot.addTag(BattlerTagType.STOCKPILING);
-      const stockpilingTag = swalot.getTag(StockpilingTag)!;
-      expect(stockpilingTag).toBeDefined();
+      expect(swalot).toHaveBattlerTag(BattlerTagType.STOCKPILING);
 
       game.move.use(MoveId.SWALLOW);
       await game.toEndOfTurn();
 
-      expect(swalot.getLastXMoves()[0]).toMatchObject({
+      // Swallow counted as a "success" as its other effect (removing Stockpile) _did_ work
+      expect(swalot).toHaveUsedMove({
         move: MoveId.SWALLOW,
-        result: MoveResult.FAIL,
+        result: MoveResult.SUCCESS,
       });
       expect(game.textInterceptor.logs).toContain(
         i18next.t("battle:hpIsFull", {
           pokemonName: getPokemonNameWithAffix(swalot),
         }),
       );
-      expect(stockpilingTag).toBeDefined();
+      expect(swalot).not.toHaveBattlerTag(BattlerTagType.STOCKPILING);
     });
   });
 
@@ -147,13 +145,12 @@ describe("Moves - Swallow & Spit Up - ", () => {
 
       const player = game.field.getPlayerPokemon();
 
-      const stockpilingTag = player.getTag(StockpilingTag)!;
-      expect(stockpilingTag).toBeUndefined();
+      expect(player).not.toHaveBattlerTag(BattlerTagType.STOCKPILING);
 
       game.move.use(MoveId.SPIT_UP);
       await game.toEndOfTurn();
 
-      expect(player.getLastXMoves()[0]).toMatchObject({
+      expect(player).toHaveUsedMove({
         move: MoveId.SPIT_UP,
         result: MoveResult.FAIL,
       });
@@ -162,28 +159,27 @@ describe("Moves - Swallow & Spit Up - ", () => {
 
   describe("Stockpile stack removal", () => {
     it("should undo stat boosts when losing stacks", async () => {
-      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+      await game.classicMode.startBattle([SpeciesId.SWALOT]);
 
       const player = game.field.getPlayerPokemon();
-      player.hp = 1;
 
       game.move.use(MoveId.STOCKPILE);
       await game.toNextTurn();
 
-      const stockpilingTag = player.getTag(StockpilingTag)!;
-      expect(stockpilingTag).toBeDefined();
-      expect(player.getStatStage(Stat.DEF)).toBe(1);
-      expect(player.getStatStage(Stat.SPDEF)).toBe(1);
+      expect(player).toHaveBattlerTag(BattlerTagType.STOCKPILING);
+      expect(player).toHaveStatStage(Stat.DEF, 1);
+      expect(player).toHaveStatStage(Stat.SPDEF, 1);
 
-      // remove the prior stat boosts from the log
+      // remove the prior stat boost phases from the log
       game.phaseInterceptor.clearLogs();
+
       game.move.use(MoveId.SWALLOW);
       await game.move.forceEnemyMove(MoveId.ACID_SPRAY);
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
 
-      expect(player.getStatStage(Stat.DEF)).toBe(0);
-      expect(player.getStatStage(Stat.SPDEF)).toBe(-2); // +1 --> -1 --> -2
+      expect(player).toHaveStatStage(Stat.DEF, 0);
+      expect(player).toHaveStatStage(Stat.SPDEF, -2); // +1 --> -1 --> -2
       expect(game.phaseInterceptor.log.filter(l => l === "StatStageChangePhase")).toHaveLength(3);
     });
 
@@ -197,21 +193,20 @@ describe("Moves - Swallow & Spit Up - ", () => {
       await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toNextTurn();
 
-      expect(player.getStatStage(Stat.DEF)).toBe(1);
-      expect(player.getStatStage(Stat.SPDEF)).toBe(1);
+      expect(player).toHaveStatStage(Stat.DEF, 1);
+      expect(player).toHaveStatStage(Stat.SPDEF, 1);
       expect(player.hasAbility(AbilityId.SIMPLE)).toBe(true);
 
-      game.move.use(MoveId.SPIT_UP);
+      game.move.use(MoveId.SWALLOW);
       await game.move.forceEnemyMove(MoveId.SPLASH);
       await game.toEndOfTurn();
 
       // should have fallen by 2 stages from Simple
-      expect(player.getStatStage(Stat.DEF)).toBe(-1);
-      expect(player.getStatStage(Stat.SPDEF)).toBe(-1);
+      expect(player).toHaveStatStage(Stat.DEF, -1);
+      expect(player).toHaveStatStage(Stat.SPDEF, -1);
     });
 
     it("should invert stat drops when gaining Contrary", async () => {
-      game.override.enemyAbility(AbilityId.CONTRARY);
       await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
       const player = game.field.getPlayerPokemon();
@@ -221,17 +216,17 @@ describe("Moves - Swallow & Spit Up - ", () => {
       await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
       await game.toEndOfTurn();
 
-      expect(player.getStatStage(Stat.DEF)).toBe(1);
-      expect(player.getStatStage(Stat.SPDEF)).toBe(1);
-      expect(player.hasAbility(AbilityId.CONTRARY)).toBe(true);
+      expect(player).toHaveStatStage(Stat.DEF, 1);
+      expect(player).toHaveStatStage(Stat.SPDEF, 1);
+      expect(player).toHaveAbilityApplied(AbilityId.CONTRARY);
 
       game.move.use(MoveId.SPIT_UP);
       await game.move.forceEnemyMove(MoveId.SPLASH);
       await game.toEndOfTurn();
 
       // should have risen 1 stage from Contrary
-      expect(player.getStatStage(Stat.DEF)).toBe(2);
-      expect(player.getStatStage(Stat.SPDEF)).toBe(2);
+      expect(player).toHaveStatStage(Stat.DEF, 2);
+      expect(player).toHaveStatStage(Stat.SPDEF, 2);
     });
   });
 });
