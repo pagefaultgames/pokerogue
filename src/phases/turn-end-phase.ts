@@ -35,15 +35,11 @@ export class TurnEndPhase extends FieldPhase {
         globalScene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
 
         if (globalScene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
-          globalScene.phaseManager.unshiftNew(
-            "PokemonHealPhase",
-            pokemon.getBattlerIndex(),
-            Math.max(pokemon.getMaxHp() >> 4, 1),
-            i18next.t("battle:turnEndHpRestore", {
+          globalScene.phaseManager.unshiftNew("PokemonHealPhase", pokemon.getBattlerIndex(), pokemon.getMaxHp() / 16, {
+            message: i18next.t("battle:turnEndHpRestore", {
               pokemonName: getPokemonNameWithAffix(pokemon),
             }),
-            true,
-          );
+          });
         }
 
         if (!pokemon.isPlayer()) {

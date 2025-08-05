@@ -1983,7 +1983,13 @@ export class HealAttr extends MoveEffectAttr {
    */
   protected addHealPhase(target: Pokemon, healRatio: number) {
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", target.getBattlerIndex(),
-      toDmgValue(target.getMaxHp() * healRatio), i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(target) }), true, !this.showAnim);
+      toDmgValue(target.getMaxHp() * healRatio),
+      {
+        message: i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(target) }),
+        showFullHpMessage: true,
+        skipAnim: !this.showAnim,
+      }
+    );
   }
 
   override getTargetBenefitScore(user: Pokemon, target: Pokemon, _move: Move): number {
@@ -2175,16 +2181,19 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
     const pm = globalScene.phaseManager;
 
     pm.pushPhase(
-      pm.create("PokemonHealPhase",
+      pm.create(
+        "PokemonHealPhase",
         user.getBattlerIndex(),
         maxPartyMemberHp,
-        i18next.t(this.moveMessage, { pokemonName: getPokemonNameWithAffix(user) }),
-        true,
-        false,
-        false,
-        true,
-        this.restorePP),
-      true);
+        {
+          message: i18next.t(this.moveMessage, { pokemonName: getPokemonNameWithAffix(user) }),
+        showFullHpMessage: false,
+        skipAnim: true,
+        healStatus: true,
+        fullRestorePP: this.restorePP,
+      }
+    ),
+    true);
 
     return true;
   }
@@ -2280,7 +2289,9 @@ export class HitHealAttr extends MoveEffectAttr {
         message = "";
       }
     }
-    globalScene.phaseManager.unshiftNew("PokemonHealPhase", user.getBattlerIndex(), healAmount, message, false, true);
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", user.getBattlerIndex(), healAmount,
+      {message, showFullHpMessage: false, skipAnim: true}
+    );
     return true;
   }
 
@@ -4313,7 +4324,8 @@ export class PunishmentPowerAttr extends VariablePowerAttr {
 }
 
 export class PresentPowerAttr extends VariablePowerAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
+    const power = args[0]
     /**
      * If this move is multi-hit, and this attribute is applied to any hit
      * other than the first, this move cannot result in a heal.
@@ -4322,17 +4334,21 @@ export class PresentPowerAttr extends VariablePowerAttr {
 
     const powerSeed = randSeedInt(firstHit ? 100 : 80);
     if (powerSeed <= 40) {
-      (args[0] as NumberHolder).value = 40;
-    } else if (40 < powerSeed && powerSeed <= 70) {
-      (args[0] as NumberHolder).value = 80;
-    } else if (70 < powerSeed && powerSeed <= 80) {
-      (args[0] as NumberHolder).value = 120;
-    } else if (80 < powerSeed && powerSeed <= 100) {
-      // If this move is multi-hit, disable all other hits
+      power.value = 40;
+    } else if (powerSeed <= 70) {
+      power.value = 80;
+    } else if (powerSeed <= 80) {
+      power.value = 120;
+    } else if (powerSeed <= 100) {
+      // Disable all other hits and heal the target for 25% max HP
       user.turnData.hitCount = 1;
       user.turnData.hitsLeft = 1;
-      globalScene.phaseManager.unshiftNew("PokemonHealPhase", target.getBattlerIndex(),
-        toDmgValue(target.getMaxHp() / 4), i18next.t("moveTriggers:regainedHealth", { pokemonName: getPokemonNameWithAffix(target) }), true);
+      globalScene.phaseManager.unshiftNew(
+        "PokemonHealPhase",
+        target.getBattlerIndex(),
+        toDmgValue(target.getMaxHp() / 4),
+        {message: i18next.t("moveTriggers:regainedHealth", { pokemonName: getPokemonNameWithAffix(target) })}
+      )
     }
 
     return true;
@@ -5853,8 +5869,8 @@ export class ProtectAttr extends AddBattlerTagAttr {
       for (const turnMove of user.getLastXMoves(-1).slice()) {
         if (
           // Quick & Wide guard increment the Protect counter without using it for fail chance
-          !(allMoves[turnMove.move].hasAttr("ProtectAttr") || 
-          [MoveId.QUICK_GUARD, MoveId.WIDE_GUARD].includes(turnMove.move)) || 
+          !(allMoves[turnMove.move].hasAttr("ProtectAttr") ||
+          [MoveId.QUICK_GUARD, MoveId.WIDE_GUARD].includes(turnMove.move)) ||
           turnMove.result !== MoveResult.SUCCESS
         ) {
           break;
