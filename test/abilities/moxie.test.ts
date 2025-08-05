@@ -6,7 +6,7 @@ import { Stat } from "#enums/stat";
 import { EnemyCommandPhase } from "#phases/enemy-command-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { VictoryPhase } from "#phases/victory-phase";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -41,7 +41,7 @@ describe("Abilities - Moxie", () => {
     const moveToUse = MoveId.AERIAL_ACE;
     await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
 

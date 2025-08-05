@@ -16,6 +16,7 @@ import { allMoves, allSpecies } from "#data/data-lists";
 import type { Egg } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import { loadPositionalTag } from "#data/positional-tags/load-positional-tag";
 import { TerrainType } from "#data/terrain";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
@@ -42,7 +43,7 @@ import * as Modifier from "#modifiers/modifier";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import type { Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import { ArenaData } from "#system/arena-data";
+import { ArenaData, type SerializedArenaData } from "#system/arena-data";
 import { ChallengeData } from "#system/challenge-data";
 import { EggData } from "#system/egg-data";
 import { GameStats } from "#system/game-stats";
@@ -57,7 +58,7 @@ import {
   applySessionVersionMigration,
   applySettingsVersionMigration,
   applySystemVersionMigration,
-} from "#system/version_converter";
+} from "#system/version-migration/version-converter";
 import { VoucherType, vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { DexData, DexEntry } from "#types/dex-data";
@@ -1096,6 +1097,10 @@ export class GameData {
             }
           }
 
+          globalScene.arena.positionalTagManager.tags = sessionData.arena.positionalTags.map(tag =>
+            loadPositionalTag(tag),
+          );
+
           if (globalScene.modifiers.length) {
             console.warn("Existing modifiers not cleared on session load, deleting...");
             globalScene.modifiers = [];
@@ -1247,7 +1252,8 @@ export class GameData {
     // (or prevent them from being null)
     // If the value is able to *not exist*, it should say so in the code
     const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
-      // TODO: Add pre-parse migrate scripts
+      // TODO: Move this to occur _after_ migrate scripts (and refactor all non-assignment duties into migrate scripts)
+      // This should ideally be just a giant assign block
       switch (k) {
         case "party":
         case "enemyParty": {
@@ -1285,7 +1291,7 @@ export class GameData {
         }
 
         case "arena":
-          return new ArenaData(v);
+          return new ArenaData(v as SerializedArenaData);
 
         case "challenges": {
           const ret: ChallengeData[] = [];
@@ -1453,11 +1459,10 @@ export class GameData {
 
       reader.onload = (_ => {
         return e => {
-          let dataName: string;
+          let dataName = GameDataType[dataType].toLowerCase();
           let dataStr = AES.decrypt(e.target?.result?.toString()!, saveKey).toString(enc.Utf8); // TODO: is this bang correct?
           let valid = false;
           try {
-            dataName = GameDataType[dataType].toLowerCase();
             switch (dataType) {
               case GameDataType.SYSTEM: {
                 dataStr = this.convertSystemDataStr(dataStr);
@@ -1492,7 +1497,6 @@ export class GameData {
 
           const displayError = (error: string) =>
             globalScene.ui.showText(error, null, () => globalScene.ui.showText("", 0), fixedInt(1500));
-          dataName = dataName!; // tell TS compiler that dataName is defined!
 
           if (!valid) {
             return globalScene.ui.showText(

@@ -114,11 +114,11 @@ export class TitlePhase extends Phase {
               });
             }
           }
+          // Cancel button = back to title
           options.push({
             label: i18next.t("menu:cancel"),
             handler: () => {
-              globalScene.phaseManager.clearPhaseQueue();
-              globalScene.phaseManager.pushNew("TitlePhase");
+              globalScene.phaseManager.toTitleScreen();
               super.end();
               return true;
             },
@@ -191,11 +191,12 @@ export class TitlePhase extends Phase {
   initDailyRun(): void {
     globalScene.ui.clearText();
     globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
-      globalScene.phaseManager.clearPhaseQueue();
       if (slotId === -1) {
-        globalScene.phaseManager.pushNew("TitlePhase");
-        return super.end();
+        globalScene.phaseManager.toTitleScreen();
+        super.end();
+        return;
       }
+      globalScene.phaseManager.clearPhaseQueue();
       globalScene.sessionSlotId = slotId;
 
       const generateDaily = (seed: string) => {
@@ -204,7 +205,7 @@ export class TitlePhase extends Phase {
         globalScene.eventManager.startEventChallenges();
 
         globalScene.setSeed(seed);
-        globalScene.resetSeed(0);
+        globalScene.resetSeed();
 
         globalScene.money = globalScene.gameMode.getStartingMoney();
 
@@ -283,6 +284,7 @@ export class TitlePhase extends Phase {
             console.error("Failed to load daily run:\n", err);
           });
       } else {
+        // Grab first 10 chars of ISO date format (YYYY-MM-DD) and convert to base64
         let seed: string = btoa(new Date().toISOString().substring(0, 10));
         if (!isNullOrUndefined(Overrides.DAILY_RUN_SEED_OVERRIDE)) {
           seed = Overrides.DAILY_RUN_SEED_OVERRIDE;

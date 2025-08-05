@@ -20,8 +20,8 @@ import {
   runSelectMysteryEncounterOption,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { GameManager } from "#test/testUtils/gameManager";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -253,7 +253,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 70 party template", async () => {
-      game.override.startingWave(61);
+      game.override.startingWave(63);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -268,7 +268,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 100 party template", async () => {
-      game.override.startingWave(81);
+      game.override.startingWave(83);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -284,7 +284,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 120 party template", async () => {
-      game.override.startingWave(111);
+      game.override.startingWave(113);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -302,7 +302,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 140 party template", async () => {
-      game.override.startingWave(131);
+      game.override.startingWave(133);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -320,7 +320,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 160 party template", async () => {
-      game.override.startingWave(151);
+      game.override.startingWave(153);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -338,7 +338,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 180 party template", async () => {
-      game.override.startingWave(171);
+      game.override.startingWave(173);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 

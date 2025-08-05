@@ -1,9 +1,10 @@
 import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveCategory } from "#enums/move-category";
 import { PokemonType } from "#enums/pokemon-type";
+import { TextStyle } from "#enums/text-style";
 import type { Move } from "#moves/move";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, getLocalizedSpriteKey } from "#utils/common";
 import i18next from "i18next";

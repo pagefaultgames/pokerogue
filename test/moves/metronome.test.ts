@@ -9,7 +9,7 @@ import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import type { RandomMoveAttr } from "#moves/move";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -44,8 +44,8 @@ describe("Moves - Metronome", () => {
 
   it("should have one semi-invulnerable turn and deal damage on the second turn when a semi-invulnerable move is called", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.DIVE);
 
     game.move.select(MoveId.METRONOME);
@@ -60,7 +60,7 @@ describe("Moves - Metronome", () => {
 
   it("should apply secondary effects of a move", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.WOOD_HAMMER);
 
     game.move.select(MoveId.METRONOME);
@@ -71,7 +71,7 @@ describe("Moves - Metronome", () => {
 
   it("should recharge after using recharge move", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.HYPER_BEAM);
     vi.spyOn(allMoves[MoveId.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
 
@@ -137,7 +137,7 @@ describe("Moves - Metronome", () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.ROAR);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.METRONOME);
     await game.phaseInterceptor.to("BerryPhase");
