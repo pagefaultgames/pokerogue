@@ -1533,6 +1533,7 @@ export class CritOnlyAttr extends MoveAttr {
   }
 }
 
+// TODO: Fix subclasses to actually extend from `getDamage`
 export class FixedDamageAttr extends MoveAttr {
   private damage: number;
 
@@ -5935,8 +5936,8 @@ export class ProtectAttr extends AddBattlerTagAttr {
       for (const turnMove of user.getLastXMoves(-1).slice()) {
         if (
           // Quick & Wide guard increment the Protect counter without using it for fail chance
-          !(allMoves[turnMove.move].hasAttr("ProtectAttr") || 
-          [MoveId.QUICK_GUARD, MoveId.WIDE_GUARD].includes(turnMove.move)) || 
+          !(allMoves[turnMove.move].hasAttr("ProtectAttr") ||
+          [MoveId.QUICK_GUARD, MoveId.WIDE_GUARD].includes(turnMove.move)) ||
           turnMove.result !== MoveResult.SUCCESS
         ) {
           break;

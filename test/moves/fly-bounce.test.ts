@@ -48,14 +48,14 @@ describe("Moves - Fly and Bounce", () => {
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
 
-    expect(player.getTag(BattlerTagType.FLYING)).toBeDefined();
+    expect(player).toHaveBattlerTag(BattlerTagType.FLYING);
     expect(enemy.getLastXMoves(1)[0].result).toBe(MoveResult.MISS);
     expect(player.hp).toBe(player.getMaxHp());
     expect(enemy.hp).toBe(enemy.getMaxHp());
     expect(player.getMoveQueue()[0].move).toBe(MoveId.FLY);
 
     await game.toEndOfTurn();
-    expect(player.getTag(BattlerTagType.FLYING)).toBeUndefined();
+    expect(player).not.toHaveBattlerTag(BattlerTagType.FLYING);
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
     expect(player.getMoveHistory()).toHaveLength(2);
 
@@ -63,6 +63,7 @@ describe("Moves - Fly and Bounce", () => {
     expect(playerFly?.ppUsed).toBe(1);
   });
 
+  // TODO: Move to a No Guard test file
   it("should not allow the user to evade attacks from Pokemon with No Guard", async () => {
     game.override.enemyAbility(AbilityId.NO_GUARD);
 
@@ -71,7 +72,7 @@ describe("Moves - Fly and Bounce", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.FLY);
+    game.move.use(MoveId.FLY);
 
     await game.toEndOfTurn();
     expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
@@ -85,10 +86,10 @@ describe("Moves - Fly and Bounce", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
 
-    game.move.select(MoveId.FLY);
+    game.move.use(MoveId.FLY);
 
     await game.toEndOfTurn();
-    expect(playerPokemon.getTag(BattlerTagType.FLYING)).toBeUndefined();
+    expect(playerPokemon).not.toHaveBattlerTag(BattlerTagType.FLYING);
     expect(playerPokemon.status?.effect).toBe(StatusEffect.SLEEP);
 
     const playerFly = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.FLY);
@@ -110,13 +111,13 @@ describe("Moves - Fly and Bounce", () => {
 
     // Bounce should've worked until hit
     const azurill = game.field.getPlayerPokemon();
-    expect(azurill.getTag(BattlerTagType.FLYING)).toBeDefined();
-    expect(azurill.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
+    expect(azurill).toHaveBattlerTag(BattlerTagType.FLYING);
+    expect(azurill).not.toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(azurill.getTag(BattlerTagType.FLYING)).toBeUndefined();
-    expect(azurill.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
+    expect(azurill).not.toHaveBattlerTag(BattlerTagType.FLYING);
+    expect(azurill).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
     expect(azurill.getMoveQueue()).toHaveLength(0);
     expect(azurill.visible).toBe(true);
     if (move !== MoveId.GRAVITY) {

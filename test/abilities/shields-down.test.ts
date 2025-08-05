@@ -1,5 +1,6 @@
 import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -104,27 +105,26 @@ describe("Abilities - SHIELDS DOWN", () => {
     expect(game.field.getPlayerPokemon().status).toBe(undefined);
   });
 
-  // toxic spikes currently does not poison flying types when gravity is in effect
-  test.todo("should become poisoned by toxic spikes when grounded", async () => {
-    game.override
-      .enemyMoveset([MoveId.GRAVITY, MoveId.TOXIC_SPIKES, MoveId.SPLASH])
-      .moveset([MoveId.GRAVITY, MoveId.SPLASH]);
-
+  it("should be poisoned by toxic spikes when Gravity is active before changing forms", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MINIOR]);
 
-    // turn 1
-    game.move.select(MoveId.GRAVITY);
-    await game.move.selectEnemyMove(MoveId.TOXIC_SPIKES);
+    // Change minior to core form in a state where it would revert on switch
+    const minior = game.scene.getPlayerParty()[1];
+    minior.formIndex = redCoreForm;
+
+    game.move.use(MoveId.GRAVITY);
+    await game.move.forceEnemyMove(MoveId.TOXIC_SPIKES);
     await game.toNextTurn();
 
-    // turn 2
+    expect(game).toHaveArenaTag(ArenaTagType.GRAVITY);
+
     game.doSwitchPokemon(1);
-    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.MINIOR);
-    expect(game.field.getPlayerPokemon().species.formIndex).toBe(0);
-    expect(game.field.getPlayerPokemon().status?.effect).toBe(StatusEffect.POISON);
+    expect(minior.species.speciesId).toBe(SpeciesId.MINIOR);
+    expect(minior.formIndex).toBe(0);
+    expect(minior.isGrounded()).toBe(true);
+    expect(minior).toHaveStatusEffect(StatusEffect.POISON);
   });
 
   test("should ignore yawn", async () => {

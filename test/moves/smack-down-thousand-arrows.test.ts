@@ -46,10 +46,9 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     expect(enemy.isGrounded()).toBe(false);
 
     game.move.use(move);
-    await game.phaseInterceptor.to("MoveEffectPhase", false);
     await game.toEndOfTurn();
 
-    expect(enemy.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
+    expect(enemy).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
     expect(enemy.isGrounded()).toBe(true);
   });
 
@@ -61,45 +60,33 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     expect(eelektross.isGrounded()).toBe(false);
 
     game.move.use(MoveId.THOUSAND_ARROWS);
-    await game.phaseInterceptor.to("MoveEffectPhase", false);
     await game.toEndOfTurn();
 
-    expect(eelektross.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
+    expect(eelektross).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
     expect(eelektross.hp).toBeLessThan(eelektross.getMaxHp());
     expect(eelektross.isGrounded()).toBe(true);
   });
 
   it.each([
-    { name: "Telekinesis", move: MoveId.TELEKINESIS, tags: [BattlerTagType.TELEKINESIS, BattlerTagType.FLOATING] },
-    { name: "Magnet Rise", move: MoveId.MAGNET_RISE, tags: [BattlerTagType.FLOATING] },
-  ])("should cancel the ungrounding effects of $name", async ({ move, tags }) => {
+    { name: "TELEKINESIS", tag: BattlerTagType.TELEKINESIS },
+    { name: "FLOATING", tag: BattlerTagType.FLOATING },
+  ])("should cancel the effects of BattlerTagType.$name", async ({ tag }) => {
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
-    game.move.use(MoveId.SMACK_DOWN);
-    await game.move.forceEnemyMove(move);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("MoveEndPhase");
-
-    // ensure move suceeeded before getting knocked down
     const eelektross = game.field.getEnemyPokemon();
-    tags.forEach(t => {
-      expect(eelektross.getTag(t)).toBeDefined();
-    });
-    expect(eelektross.isGrounded()).toBe(false);
+    eelektross.addTag(tag);
 
+    game.move.use(MoveId.SMACK_DOWN);
     await game.toEndOfTurn();
 
-    tags.forEach(t => {
-      expect(eelektross.getTag(t)).toBeUndefined();
-    });
-    expect(eelektross.hp).toBeLessThan(eelektross.getMaxHp());
-    expect(eelektross.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
-    expect(eelektross.isGrounded()).toBe(false);
+    expect(eelektross).not.toHaveBattlerTag(tag);
+    expect(eelektross).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
   });
 
   // NB: This test might sound useless, but semi-invulnerable pokemon are technically considered "ungrounded"
   // by most things
-  it("should not ground semi-invulnerable targets unless already ungrounded", async () => {
+  it("should not ground semi-invulnerable targets hit via No Guard unless already ungrounded", async () => {
+    game.override.ability(AbilityId.NO_GUARD);
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
     game.move.use(MoveId.THOUSAND_ARROWS);
@@ -110,7 +97,7 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     // Eelektross took damage but was not forcibly grounded
     const eelektross = game.field.getEnemyPokemon();
     expect(eelektross.isGrounded()).toBe(true);
-    expect(eelektross.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
+    expect(eelektross).not.toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
     expect(eelektross.hp).toBeLessThan(eelektross.getMaxHp());
   });
 
@@ -129,7 +116,7 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
       await game.toEndOfTurn();
 
       expect(hitSpy).toHaveReturnedWith([expect.anything(), 1]);
-      expect(archeops.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
+      expect(archeops).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
       expect(archeops.isGrounded()).toBe(true);
       expect(archeops.hp).toBeLessThan(archeops.getMaxHp());
     });
