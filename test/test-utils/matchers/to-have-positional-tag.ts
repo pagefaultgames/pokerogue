@@ -56,7 +56,7 @@ export function toHavePositionalTag<P extends PositionalTagType>(
   const tagType = typeof expectedTag === "string" ? expectedTag : expectedTag.tagType;
   const matchingTags = allTags.filter(t => t.tagType === tagType);
 
-  // If checking exclusively tag type, check solely the number of ,atching  tags on field
+  // If checking exclusively tag type, check solely the number of matching tags on field
   if (typeof expectedTag === "string") {
     const pass = matchingTags.length === count;
     const expectedStr = getPosTagStr(expectedTag);
