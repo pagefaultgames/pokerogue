@@ -40,8 +40,8 @@ describe("Abilities - Stall", () => {
   it("Pokemon with Stall should move last in its priority bracket regardless of speed", async () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
-    const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
+    const playerIndex = game.field.getPlayerPokemon().getBattlerIndex();
+    const enemyIndex = game.field.getEnemyPokemon().getBattlerIndex();
 
     game.move.select(MoveId.QUICK_ATTACK);
 
@@ -58,8 +58,8 @@ describe("Abilities - Stall", () => {
   it("Pokemon with Stall will go first if a move that is in a higher priority bracket than the opponent's move is used", async () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
-    const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
+    const playerIndex = game.field.getPlayerPokemon().getBattlerIndex();
+    const enemyIndex = game.field.getEnemyPokemon().getBattlerIndex();
 
     game.move.select(MoveId.TACKLE);
 
@@ -77,8 +77,8 @@ describe("Abilities - Stall", () => {
     game.override.ability(AbilityId.STALL);
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
-    const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
+    const playerIndex = game.field.getPlayerPokemon().getBattlerIndex();
+    const enemyIndex = game.field.getEnemyPokemon().getBattlerIndex();
 
     game.move.select(MoveId.TACKLE);
 

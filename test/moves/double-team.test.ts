@@ -36,8 +36,8 @@ describe("Moves - Double Team", () => {
   it("raises the user's EVA stat stage by 1", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const ally = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const ally = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     vi.spyOn(enemy, "getAccuracyMultiplier");
     expect(ally.getStatStage(Stat.EVA)).toBe(0);

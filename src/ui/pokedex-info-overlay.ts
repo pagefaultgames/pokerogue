@@ -1,6 +1,7 @@
 import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import { addTextObject, TextStyle } from "#ui/text";
+import { TextStyle } from "#enums/text-style";
+import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
 

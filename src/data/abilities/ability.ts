@@ -15,6 +15,7 @@ import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeWeatherTrigger } from
 import { Gender } from "#data/gender";
 import { getPokeballName } from "#data/pokeball";
 import { pokemonFormChanges } from "#data/pokemon-forms";
+import type { PokemonSpecies } from "#data/pokemon-species";
 import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#data/status-effect";
 import { TerrainType } from "#data/terrain";
 import type { Weather } from "#data/weather";
@@ -1767,7 +1768,7 @@ export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteraction
 
 /**
  * Class for abilities that add additional strikes to single-target moves.
- * Used by {@linkcode Moves.PARENTAL_BOND | Parental Bond}.
+ * Used by {@linkcode MoveId.PARENTAL_BOND | Parental Bond}.
  */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
   /**
@@ -6001,8 +6002,13 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
     const party: Pokemon[] = (pokemon.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(
       p => p.isAllowedInBattle(),
     );
-    const lastPokemon: Pokemon = party.filter(p => p !== pokemon).at(-1) || pokemon;
-    pokemon.setIllusion(lastPokemon);
+    let illusionPokemon: Pokemon | PokemonSpecies;
+    if (pokemon.hasTrainer()) {
+      illusionPokemon = party.filter(p => p !== pokemon).at(-1) || pokemon;
+    } else {
+      illusionPokemon = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, pokemon.level);
+    }
+    pokemon.setIllusion(illusionPokemon);
   }
 
   /** @returns Whether the illusion can be applied. */

@@ -38,7 +38,7 @@ describe("Moves - Entrainment", () => {
     game.move.select(MoveId.ENTRAINMENT);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.ADAPTABILITY);
+    expect(game.field.getEnemyPokemon().getAbility().id).toBe(AbilityId.ADAPTABILITY);
   });
 
   it("should activate post-summon abilities", async () => {
@@ -48,6 +48,6 @@ describe("Moves - Entrainment", () => {
     game.move.select(MoveId.ENTRAINMENT);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(-1);
   });
 });

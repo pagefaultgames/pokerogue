@@ -67,6 +67,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
+import { TextStyle } from "#enums/text-style";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
@@ -132,7 +133,7 @@ import { CharSprite } from "#ui/char-sprite";
 import { PartyExpBar } from "#ui/party-exp-bar";
 import { PokeballTray } from "#ui/pokeball-tray";
 import { PokemonInfoContainer } from "#ui/pokemon-info-container";
-import { addTextObject, getTextColor, TextStyle } from "#ui/text";
+import { addTextObject, getTextColor } from "#ui/text";
 import { UI } from "#ui/ui";
 import { addUiThemeOverrides } from "#ui/ui-theme";
 import {
@@ -236,6 +237,7 @@ export class BattleScene extends SceneBase {
   public enableTouchControls = false;
   public enableVibration = false;
   public showBgmBar = true;
+  public hideUsername = false;
   /** Determines the selected battle style. */
   public battleStyle: BattleStyle = BattleStyle.SWITCH;
   /**
@@ -378,9 +380,21 @@ export class BattleScene extends SceneBase {
       };
     }
 
-    populateAnims();
+    /**
+     * These moves serve as fallback animations for other moves without loaded animations, and
+     * must be loaded prior to game start.
+     */
+    const defaultMoves = [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE];
 
-    await this.initVariantData();
+    await Promise.all([
+      populateAnims(),
+      this.initVariantData(),
+      initCommonAnims().then(() => loadCommonAnimAssets(true)),
+      Promise.all(defaultMoves.map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(defaultMoves, true)),
+      this.initStarterColors(),
+    ]).catch(reason => {
+      throw new Error(`Unexpected error during BattleScene preLoad!\nReason: ${reason}`);
+    });
   }
 
   create() {
@@ -582,8 +596,6 @@ export class BattleScene extends SceneBase {
 
     this.party = [];
 
-    const loadPokemonAssets = [];
-
     this.arenaPlayer = new ArenaBase(true);
     this.arenaPlayer.setName("arena-player");
     this.arenaPlayerTransition = new ArenaBase(true);
@@ -638,28 +650,14 @@ export class BattleScene extends SceneBase {
 
     this.reset(false, false, true);
 
+    // Initialize UI-related aspects and then start the login phase.
     const ui = new UI();
     this.uiContainer.add(ui);
-
     this.ui = ui;
-
     ui.setup();
 
-    const defaultMoves = [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE];
-
-    Promise.all([
-      Promise.all(loadPokemonAssets),
-      initCommonAnims().then(() => loadCommonAnimAssets(true)),
-      Promise.all(
-        [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE].map(m => initMoveAnim(m)),
-      ).then(() => loadMoveAnimAssets(defaultMoves, true)),
-      this.initStarterColors(),
-    ]).then(() => {
-      this.phaseManager.pushNew("LoginPhase");
-      this.phaseManager.pushNew("TitlePhase");
-
-      this.phaseManager.shiftPhase();
-    });
+    this.phaseManager.toTitleScreen(true);
+    this.phaseManager.shiftPhase();
   }
 
   initSession(): void {
@@ -699,16 +697,16 @@ export class BattleScene extends SceneBase {
     if (expSpriteKeys.size > 0) {
       return;
     }
-    this.cachedFetch("./exp-sprites.json")
-      .then(res => res.json())
-      .then(keys => {
-        if (Array.isArray(keys)) {
-          for (const key of keys) {
-            expSpriteKeys.add(key);
-          }
-        }
-        Promise.resolve();
-      });
+    const res = await this.cachedFetch("./exp-sprites.json");
+    const keys = await res.json();
+    if (!Array.isArray(keys)) {
+      throw new Error("EXP Sprites were not array when fetched!");
+    }
+
+    // TODO: Optimize this
+    for (const k of keys) {
+      expSpriteKeys.add(k);
+    }
   }
 
   /**
@@ -1267,13 +1265,12 @@ export class BattleScene extends SceneBase {
         duration: 250,
         ease: "Sine.easeInOut",
         onComplete: () => {
-          this.phaseManager.clearPhaseQueue();
-
           this.ui.freeUIData();
           this.uiContainer.remove(this.ui, true);
           this.uiContainer.destroy();
           this.children.removeAll(true);
           this.game.domContainer.innerHTML = "";
+          // TODO: `launchBattle` calls `reset(false, false, true)`
           this.launchBattle();
         },
       });
@@ -1669,6 +1666,11 @@ export class BattleScene extends SceneBase {
       case SpeciesId.MAUSHOLD:
       case SpeciesId.DUDUNSPARCE:
         return !randSeedInt(4) ? 1 : 0;
+      case SpeciesId.SINISTEA:
+      case SpeciesId.POLTEAGEIST:
+      case SpeciesId.POLTCHAGEIST:
+      case SpeciesId.SINISTCHA:
+        return !randSeedInt(16) ? 1 : 0;
       case SpeciesId.PIKACHU:
         if (this.currentBattle?.battleType === BattleType.TRAINER && this.currentBattle?.waveIndex < 30) {
           return 0; // Ban Cosplay and Partner Pika from Trainers before wave 30
@@ -2841,6 +2843,23 @@ export class BattleScene extends SceneBase {
     }
     return false;
   }
+  /**
+   * Attempt to discard one or more copies of a held item.
+   * @param itemModifier - The {@linkcode PokemonHeldItemModifier} being discarded
+   * @param discardQuantity - The number of copies to remove (up to the amount currently held); default `1`
+   * @returns Whether the item was successfully discarded.
+   * Removing fewer items than requested is still considered a success.
+   */
+  tryDiscardHeldItemModifier(itemModifier: PokemonHeldItemModifier, discardQuantity = 1): boolean {
+    const countTaken = Math.min(discardQuantity, itemModifier.stackCount);
+    itemModifier.stackCount -= countTaken;
+
+    if (itemModifier.stackCount > 0) {
+      return true;
+    }
+
+    return this.removeModifier(itemModifier);
+  }
 
   canTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferQuantity = 1): boolean {
     const mod = itemModifier.clone() as PokemonHeldItemModifier;
@@ -3509,6 +3528,7 @@ export class BattleScene extends SceneBase {
       this.gameMode.hasMysteryEncounters &&
       battleType === BattleType.WILD &&
       !this.gameMode.isBoss(waveIndex) &&
+      waveIndex % 10 !== 1 &&
       waveIndex < highestMysteryEncounterWave &&
       waveIndex > lowestMysteryEncounterWave
     );

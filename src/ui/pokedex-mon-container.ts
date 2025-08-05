@@ -1,7 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import { TextStyle } from "#enums/text-style";
 import type { Variant } from "#sprites/variant";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { isNullOrUndefined } from "#utils/common";
 
 interface SpeciesDetails {
