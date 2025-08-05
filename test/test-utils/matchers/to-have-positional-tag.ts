@@ -73,7 +73,6 @@ export function toHavePositionalTag<P extends PositionalTagType>(
   }
 
   // Check for equality with the provided object
-
   if (matchingTags.length === 0) {
     return {
       pass: false,
