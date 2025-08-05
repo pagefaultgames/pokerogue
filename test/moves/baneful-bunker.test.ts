@@ -42,9 +42,6 @@ describe("Moves - Baneful Bunker", () => {
   it("should protect the user and poison attackers that make contact", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.field.getPlayerPokemon();
-    const enemyPokemon = game.field.getEnemyPokemon();
-
     game.move.select(MoveId.SLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase", false);
@@ -54,9 +51,6 @@ describe("Moves - Baneful Bunker", () => {
 
   it("should ignore accuracy checks", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
-
-    const leadPokemon = game.field.getPlayerPokemon();
-    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SLASH);
     await game.phaseInterceptor.to("MoveEndPhase"); // baneful bunker
