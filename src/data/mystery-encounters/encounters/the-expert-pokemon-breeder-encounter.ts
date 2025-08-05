@@ -550,7 +550,7 @@ function getPartyConfig(): EnemyPartyConfig {
         shiny: true,
         variant: 1,
         nature: Nature.MODEST,
-        moveSet: [MoveId.MOONBLAST, MoveId.MYSTICAL_FIRE, MoveId.ICE_BEAM, MoveId.THUNDERBOLT],
+        moveSet: [MoveId.DAZZLING_GLEAM, MoveId.MYSTICAL_FIRE, MoveId.ICE_BEAM, MoveId.THUNDERBOLT], // Make this one have an item gimmick when we have more items/finish implementations
         ivs: [31, 31, 31, 31, 31, 31],
       },
       {
@@ -563,7 +563,7 @@ function getPartyConfig(): EnemyPartyConfig {
         shiny: true,
         variant: 2,
         nature: Nature.BOLD,
-        moveSet: [MoveId.TRI_ATTACK, MoveId.STORED_POWER, MoveId.TAKE_HEART, MoveId.MOONLIGHT],
+        moveSet: [MoveId.TRI_ATTACK, MoveId.STORED_POWER, MoveId.CALM_MIND, MoveId.MOONLIGHT],
         ivs: [31, 31, 31, 31, 31, 31],
       },
     );
