@@ -1152,13 +1152,16 @@ export class GravityTag extends SerializableArenaTag {
 
   onAdd(_arena: Arena): void {
     globalScene.phaseManager.queueMessage(i18next.t("arenaTag:gravityOnAdd"));
+
+    // Remove all flying-related effects from all on-field Pokemon.
     globalScene.getField(true).forEach(pokemon => {
-      if (pokemon !== null) {
-        pokemon.removeTag(BattlerTagType.FLOATING);
-        pokemon.removeTag(BattlerTagType.TELEKINESIS);
-        if (pokemon.getTag(BattlerTagType.FLYING)) {
-          pokemon.addTag(BattlerTagType.INTERRUPTED);
-        }
+      pokemon.removeTag(BattlerTagType.FLOATING);
+      pokemon.removeTag(BattlerTagType.TELEKINESIS);
+      if (pokemon.getTag(BattlerTagType.FLYING)) {
+        pokemon.removeTag(BattlerTagType.FLYING);
+        // TODO: This is an extremely poor way of handling move interruption
+
+        pokemon.addTag(BattlerTagType.INTERRUPTED);
       }
     });
   }

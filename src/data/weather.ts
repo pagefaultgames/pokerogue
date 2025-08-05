@@ -20,20 +20,25 @@ export class Weather {
   public weatherType: WeatherType;
   public turnsLeft: number;
 
-  constructor(weatherType: WeatherType, turnsLeft?: number) {
+  constructor(weatherType: WeatherType, turnsLeft = 0) {
     this.weatherType = weatherType;
-    this.turnsLeft = !this.isImmutable() ? turnsLeft || 0 : 0;
+    this.turnsLeft = this.isImmutable() ? 0 : turnsLeft;
   }
 
+  /**
+   * Tick down this weather's duration.
+   * @returns Whether the current weather should remain active (`turnsLeft > 0`)
+   */
   lapse(): boolean {
     if (this.isImmutable()) {
       return true;
     }
-    if (this.turnsLeft) {
-      return !!--this.turnsLeft;
+
+    if (this.turnsLeft <= 0) {
+      return true;
     }
 
-    return true;
+    return --this.turnsLeft > 0;
   }
 
   isImmutable(): boolean {
@@ -127,6 +132,7 @@ export class Weather {
   }
 }
 
+// TODO: These functions should return empty strings instead of `null` - requires bangs
 export function getWeatherStartMessage(weatherType: WeatherType): string | null {
   switch (weatherType) {
     case WeatherType.SUNNY:

@@ -12,7 +12,7 @@ import { BooleanHolder, toDmgValue } from "#utils/common";
 
 export class WeatherEffectPhase extends CommonAnimPhase {
   public readonly phaseName = "WeatherEffectPhase";
-  public weather: Weather | null;
+  public weather: Weather | null; // TODO: This should not be `null`
 
   constructor() {
     super(
