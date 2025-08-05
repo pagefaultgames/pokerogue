@@ -53,7 +53,7 @@ export class MockConsole extends Console {
   }
 
   /**
-   * Check whether a given ste of data is in the blacklist to be barred from logging.
+   * Check whether a given set of data is in the blacklist to be barred from logging.
    * @param data - The data being logged
    * @returns Whether `data` is blacklisted from console logging
    */
