@@ -39,8 +39,7 @@ describe("Moves - Endure", () => {
     game.move.select(MoveId.THUNDER);
     await game.phaseInterceptor.to("BerryPhase");
 
-    const enemy = game.scene.getEnemyPokemon()!;
-    expect(enemy.hp).toBe(1);
+    expect(game.field.getEnemyPokemon().hp).toBe(1);
   });
 
   it("should let the pokemon survive with 1 HP from multi-strike moves", async () => {
@@ -49,17 +48,16 @@ describe("Moves - Endure", () => {
     game.move.select(MoveId.BULLET_SEED);
     await game.phaseInterceptor.to("BerryPhase");
 
-    const enemy = game.scene.getEnemyPokemon()!;
-    expect(enemy.hp).toBe(1);
+    expect(game.field.getEnemyPokemon().hp).toBe(1);
   });
 
   it("should let the pokemon survive against OHKO moves", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SHEER_COLD);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy.hp).toBe(1);
   });
 
@@ -73,8 +71,7 @@ describe("Moves - Endure", () => {
   ])("should not prevent fainting from $moveType Damage", async ({ move }) => {
     game.override.moveset(move).enemyLevel(100);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
-
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     enemy.hp = 2;
     // force attack to do 1 dmg (for salt cure)
     vi.spyOn(enemy, "getAttackDamage").mockReturnValue({ cancelled: false, result: HitResult.EFFECTIVE, damage: 1 });

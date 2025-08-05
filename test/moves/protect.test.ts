@@ -39,7 +39,7 @@ describe("Moves - Protect", () => {
   it("should protect the user from attacks and their secondary effects", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.PROTECT);
     await game.phaseInterceptor.to("BerryPhase", false);
@@ -84,7 +84,7 @@ describe("Moves - Protect", () => {
   it("should share fail chance with all move variants", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
     charizard.summonData.moveHistory = [
       { move: MoveId.ENDURE, result: MoveResult.SUCCESS, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL },
       {
@@ -145,7 +145,7 @@ describe("Moves - Protect", () => {
   it("should reset fail chance on starting a new wave", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
     // force protect to always fail if RNG roll attempt is made
     vi.spyOn(charizard, "randBattleSeedInt").mockReturnValue(1);
 
@@ -175,8 +175,8 @@ describe("Moves - Protect", () => {
     game.override.enemyMoveset([MoveId.TACHYON_CUTTER]);
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.PROTECT);
     await game.phaseInterceptor.to("BerryPhase", false);
@@ -189,8 +189,8 @@ describe("Moves - Protect", () => {
     game.override.enemyMoveset(MoveId.PROTECT);
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.PROTECT);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);

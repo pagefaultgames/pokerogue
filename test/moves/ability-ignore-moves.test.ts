@@ -77,7 +77,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
     await game.toEndOfTurn();
 
     expect(enemy.isFainted()).toBe(false);
-    expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0].move).toBe(MoveId.SUNSTEEL_STRIKE);
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0].move).toBe(MoveId.SUNSTEEL_STRIKE);
   });
 
   // TODO: Verify this behavior on cart

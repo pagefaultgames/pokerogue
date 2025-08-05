@@ -34,55 +34,55 @@ describe("Abilities - Perish Song", () => {
 
   it("should trigger when hit with damaging move", async () => {
     await game.classicMode.startBattle();
-    const cursola = game.scene.getPlayerPokemon();
-    const magikarp = game.scene.getEnemyPokemon();
+    const cursola = game.field.getPlayerPokemon();
+    const magikarp = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(cursola?.summonData.tags[0].turnCount).toBe(3);
-    expect(magikarp?.summonData.tags[0].turnCount).toBe(3);
+    expect(cursola.summonData.tags[0].turnCount).toBe(3);
+    expect(magikarp.summonData.tags[0].turnCount).toBe(3);
   });
 
   it("should trigger even when fainting", async () => {
     game.override.enemyLevel(100).startingLevel(1);
     await game.classicMode.startBattle([SpeciesId.CURSOLA, SpeciesId.FEEBAS]);
-    const magikarp = game.scene.getEnemyPokemon();
+    const magikarp = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SPLASH);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    expect(magikarp?.summonData.tags[0].turnCount).toBe(3);
+    expect(magikarp.summonData.tags[0].turnCount).toBe(3);
   });
 
   it("should not activate if attacker already has perish song", async () => {
     game.override.enemyMoveset([MoveId.PERISH_SONG, MoveId.AQUA_JET, MoveId.SPLASH]);
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.CURSOLA]);
-    const feebas = game.scene.getPlayerPokemon();
-    const magikarp = game.scene.getEnemyPokemon();
+    const feebas = game.field.getPlayerPokemon();
+    const magikarp = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.PERISH_SONG);
     await game.toNextTurn();
 
-    expect(feebas?.summonData.tags[0].turnCount).toBe(3);
-    expect(magikarp?.summonData.tags[0].turnCount).toBe(3);
+    expect(feebas.summonData.tags[0].turnCount).toBe(3);
+    expect(magikarp.summonData.tags[0].turnCount).toBe(3);
 
     game.doSwitchPokemon(1);
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
-    const cursola = game.scene.getPlayerPokemon();
-    expect(cursola?.summonData.tags.length).toBe(0);
-    expect(magikarp?.summonData.tags[0].turnCount).toBe(2);
+    const cursola = game.field.getPlayerPokemon();
+    expect(cursola.summonData.tags.length).toBe(0);
+    expect(magikarp.summonData.tags[0].turnCount).toBe(2);
 
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.AQUA_JET);
     await game.toNextTurn();
 
-    expect(cursola?.summonData.tags.length).toBe(0);
-    expect(magikarp?.summonData.tags[0].turnCount).toBe(1);
+    expect(cursola.summonData.tags.length).toBe(0);
+    expect(magikarp.summonData.tags[0].turnCount).toBe(1);
   });
 
   it("should activate if cursola already has perish song, but not reset its counter", async () => {
@@ -91,22 +91,22 @@ describe("Abilities - Perish Song", () => {
       .moveset([MoveId.WHIRLWIND, MoveId.SPLASH])
       .startingWave(5);
     await game.classicMode.startBattle([SpeciesId.CURSOLA]);
-    const cursola = game.scene.getPlayerPokemon();
+    const cursola = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.WHIRLWIND);
     await game.move.selectEnemyMove(MoveId.PERISH_SONG);
     await game.toNextTurn();
 
-    const magikarp = game.scene.getEnemyPokemon();
-    expect(cursola?.summonData.tags[0].turnCount).toBe(3);
-    expect(magikarp?.summonData.tags.length).toBe(0);
+    const magikarp = game.field.getEnemyPokemon();
+    expect(cursola.summonData.tags[0].turnCount).toBe(3);
+    expect(magikarp.summonData.tags.length).toBe(0);
 
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.AQUA_JET);
     await game.toNextTurn();
 
-    expect(cursola?.summonData.tags[0].turnCount).toBe(2);
-    expect(magikarp?.summonData.tags.length).toBe(1);
-    expect(magikarp?.summonData.tags[0].turnCount).toBe(3);
+    expect(cursola.summonData.tags[0].turnCount).toBe(2);
+    expect(magikarp.summonData.tags.length).toBe(1);
+    expect(magikarp.summonData.tags[0].turnCount).toBe(3);
   });
 });

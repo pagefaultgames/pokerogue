@@ -42,7 +42,7 @@ describe("Moves - Ceaseless Edge", () => {
   test("move should hit and apply spikes", async () => {
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     const enemyStartingHp = enemyPokemon.hp;
 
@@ -64,7 +64,7 @@ describe("Moves - Ceaseless Edge", () => {
     game.override.startingHeldItems([{ name: "MULTI_LENS" }]);
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     const enemyStartingHp = enemyPokemon.hp;
 
