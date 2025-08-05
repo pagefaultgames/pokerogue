@@ -47,7 +47,7 @@ export function toHaveTypes(
   if (expectedTypes.length === 0) {
     return {
       pass: this.isNot,
-      message: () => "Expected to recieve a non-empty array of PokemonTypes, but got one!",
+      message: () => "Expected to receive a non-empty array of PokemonTypes!",
     };
   }
 
