@@ -79,12 +79,6 @@ export type allRewardsType = {
   [RewardId.PP_UP]: () => PokemonPpUpReward;
   [RewardId.PP_MAX]: () => PokemonPpUpReward;
 
-  /*
-  [RewardId.REPEL]: () => DoubleBattleChanceBoosterReward,
-  [RewardId.SUPER_REPEL]: () => DoubleBattleChanceBoosterReward,
-  [RewardId.MAX_REPEL]: () => DoubleBattleChanceBoosterReward,
-  */
-
   [RewardId.MINT]: () => MintRewardGenerator;
 
   [RewardId.TERA_SHARD]: () => TeraTypeRewardGenerator;
