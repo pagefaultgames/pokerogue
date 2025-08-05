@@ -43,8 +43,8 @@ describe("Moves - Beat Up", () => {
       SpeciesId.EEVEE,
     ]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
     let enemyStartingHp = enemyPokemon.hp;
 
     game.move.select(MoveId.BEAT_UP);
@@ -71,7 +71,7 @@ describe("Moves - Beat Up", () => {
       SpeciesId.EEVEE,
     ]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.scene.getPlayerParty()[1].doSetStatus(StatusEffect.BURN);
 

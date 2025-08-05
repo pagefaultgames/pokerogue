@@ -35,7 +35,7 @@ describe("Moves - Struggle", () => {
     game.override.moveset([MoveId.STRUGGLE]).ability(AbilityId.ADAPTABILITY);
     await game.classicMode.startBattle([SpeciesId.RATTATA]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     game.move.select(MoveId.STRUGGLE);
 
     const stabSpy = vi.spyOn(enemy, "calculateStabMultiplier");
@@ -49,7 +49,7 @@ describe("Moves - Struggle", () => {
     game.override.moveset([MoveId.STRUGGLE]);
     await game.classicMode.startBattle([SpeciesId.GASTLY]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     game.move.select(MoveId.STRUGGLE);
 
     const moveEffectivenessSpy = vi.spyOn(enemy, "getMoveEffectiveness");

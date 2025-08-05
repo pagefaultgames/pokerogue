@@ -730,7 +730,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Load all assets needed for this Pokemon's use in battle
-   * @param ignoreOverride - Whether to ignore overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `true`
+   * @param ignoreOverride - Whether to ignore overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `true`
    * @param useIllusion - Whether to consider this pokemon's active illusion; default `false`
    * @returns A promise that resolves once all the corresponding assets have been loaded.
    */
@@ -1037,7 +1037,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return this Pokemon's {@linkcode PokemonSpeciesForm | SpeciesForm}.
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
    * and overrides `useIllusion`.
    * @param useIllusion - Whether to consider this Pokemon's illusion if present; default `false`.
    * @returns This Pokemon's {@linkcode PokemonSpeciesForm}.
@@ -1093,7 +1093,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return the {@linkcode PokemonSpeciesForm | SpeciesForm} of this Pokemon's fusion counterpart.
-   * @param ignoreOverride - Whether to ignore species overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @param ignoreOverride - Whether to ignore species overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
    * @param useIllusion - Whether to consider the species of this Pokemon's illusion; default `false`
    * @returns The {@linkcode PokemonSpeciesForm} of this Pokemon's fusion counterpart.
    */
@@ -1664,7 +1664,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return this Pokemon's {@linkcode Gender}.
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
    * @param useIllusion - Whether to consider this pokemon's illusion if present; default `false`
    * @returns the {@linkcode Gender} of this {@linkcode Pokemon}.
    */
@@ -1680,7 +1680,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return this Pokemon's fusion's {@linkcode Gender}.
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
    * @param useIllusion - Whether to consider this pokemon's illusion if present; default `false`
    * @returns The {@linkcode Gender} of this {@linkcode Pokemon}'s fusion.
    */
@@ -1822,12 +1822,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Return all the {@linkcode PokemonMove}s that make up this Pokemon's moveset.
    * Takes into account player/enemy moveset overrides (which will also override PP count).
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
    * @returns An array of {@linkcode PokemonMove}, as described above.
    */
   getMoveset(ignoreOverride = false): PokemonMove[] {
-    const ret = !ignoreOverride && this.summonData.moveset ? this.summonData.moveset : this.moveset;
-
     // Overrides moveset based on arrays specified in overrides.ts
     let overrideArray: MoveId | Array<MoveId> = this.isPlayer()
       ? Overrides.MOVESET_OVERRIDE
@@ -1843,7 +1841,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       });
     }
 
-    return ret;
+    return !ignoreOverride && this.summonData.moveset ? this.summonData.moveset : this.moveset;
   }
 
   /**
@@ -1890,7 +1888,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Evaluate and return this Pokemon's typing.
    * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `false`
    * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
    * @param useIllusion - Whether to consider this Pokemon's illusion if present; default `false`
    * @returns An array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or percieved).
    */
@@ -2013,7 +2011,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param type - The {@linkcode PokemonType} to check
    * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `true`
    * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
    * @returns Whether this Pokemon is of the specified type.
    */
   public isOfType(type: PokemonType, includeTeraType = true, forDefend = false, ignoreOverride = false): boolean {
@@ -2026,7 +2024,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Should rarely be called directly in favor of {@linkcode hasAbility} or {@linkcode hasAbilityWithAttr},
    * both of which check both ability slots and account for suppression.
    * @see {@linkcode hasAbility} and {@linkcode hasAbilityWithAttr} are the intended ways to check abilities in most cases
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
    * @returns The non-passive {@linkcode Ability} of this Pokemon.
    */
   public getAbility(ignoreOverride = false): Ability {
@@ -2208,7 +2206,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Accounts for all the various effects which can disable or modify abilities.
    * @param ability - The {@linkcode Abilities | Ability} to check for
    * @param canApply - Whether to check if the ability is currently active; default `true`
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
    * @returns Whether this {@linkcode Pokemon} has the given ability
    */
   public hasAbility(ability: AbilityId, canApply = true, ignoreOverride = false): boolean {
@@ -2223,7 +2221,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Accounts for all the various effects which can disable or modify abilities.
    * @param attrType - The {@linkcode AbAttr | attribute} to check for
    * @param canApply - Whether to check if the ability is currently active; default `true`
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
    * @returns Whether this Pokemon has an ability with the given {@linkcode AbAttr}.
    */
   public hasAbilityWithAttr(attrType: AbAttrString, canApply = true, ignoreOverride = false): boolean {
@@ -4473,7 +4471,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Return the most recently executed {@linkcode TurnMove} this {@linkcode Pokemon} has used that is:
    * - Not {@linkcode MoveId.NONE}
    * - Non-virtual ({@linkcode MoveUseMode | useMode} < {@linkcode MoveUseMode.INDIRECT})
-   * @param ignoreStruggle - Whether to additionally ignore {@linkcode Moves.STRUGGLE}; default `false`
+   * @param ignoreStruggle - Whether to additionally ignore {@linkcode MoveId.STRUGGLE}; default `false`
    * @param ignoreFollowUp - Whether to ignore moves with a use type of {@linkcode MoveUseMode.FOLLOW_UP}
    * (e.g. ones called by Copycat/Mirror Move); default `true`.
    * @returns The last move this Pokemon has used satisfying the aforementioned conditions,
@@ -5143,6 +5141,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   resetWaveData(): void {
     this.waveData = new PokemonWaveData();
+    this.tempSummonData.waveTurnCount = 1;
   }
 
   resetTera(): void {

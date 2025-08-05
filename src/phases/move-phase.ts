@@ -649,7 +649,6 @@ export class MovePhase extends BattlePhase {
    * Displays the move's usage text to the player as applicable for the move being used.
    */
   public showMoveText(): void {
-    // No text for Moves.NONE, recharging/2-turn moves or interrupted moves
     if (
       this.move.moveId === MoveId.NONE ||
       this.pokemon.getTag(BattlerTagType.RECHARGING) ||
@@ -658,7 +657,6 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    // Play message for magic coat reflection
     // TODO: This should be done by the move...
     globalScene.phaseManager.queueMessage(
       i18next.t(isReflected(this.useMode) ? "battle:magicCoatActivated" : "battle:useMove", {
