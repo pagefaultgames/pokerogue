@@ -49,7 +49,6 @@ vi.mock("i18next", async importOriginal => {
       try {
         const localeFiles = import.meta.glob("../public/locales/en/**/*.json", { eager: true });
         const json = localeFiles[`../public/locales/en/${filename}`] || {};
-        //
         if (import.meta.env.VITE_I18N_DEBUG === "1") {
           console.log("Loaded locale", filename);
         }
