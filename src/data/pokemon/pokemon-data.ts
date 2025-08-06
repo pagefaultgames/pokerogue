@@ -162,6 +162,7 @@ export class PokemonSummonData {
 
       if (key === "speciesForm" || key === "fusionSpeciesForm") {
         this[key] = deserializePokemonSpeciesForm(value);
+        continue;
       }
 
       if (key === "illusion" && typeof value === "object") {
@@ -182,6 +183,7 @@ export class PokemonSummonData {
           }
         }
         this[key] = illusionData as IllusionData;
+        continue;
       }
 
       if (key === "moveset") {
@@ -251,7 +253,6 @@ export class PokemonTempSummonData {
    * Only currently used for positioning the battle cursor.
    */
   turnCount = 1;
-
   /**
    * The number of turns this pokemon has spent in the active position since the start of the wave
    * without switching out.
