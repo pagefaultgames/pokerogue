@@ -79,7 +79,7 @@ export class PokemonMove {
   }
 
   public isOutOfPp(): boolean {
-    return this.ppUsed < this.getMovePp();
+    return this.ppUsed >= this.getMovePp();
   }
 
   getName(): string {
