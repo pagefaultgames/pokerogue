@@ -234,14 +234,14 @@ describe("Moves - Reflecting effects", () => {
 
   describe("Magic Bounce", () => {
     beforeEach(() => {
-      game.override.enemyAbility(AbilityId.MAGIC_BOUNCE);
+      game.override.enemyAbility(AbilityId.MAGIC_BOUNCE).enemyMoveset(MoveId.SPLASH);
     });
 
     // TODO: Change post speed order rework to check the FASTER pokemon's ability
     it("should only apply the leftmost available target's magic bounce when bouncing field-targeted moves in doubles", async () => {
       game.override.battleStyle("double");
-
       await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
+
       const [enemy1, enemy2] = game.scene.getEnemyField();
       // set speed to different values just in case logic erroneously checks for speed order
       enemy1.setStat(Stat.SPD, enemy2.getStat(Stat.SPD) + 1);
@@ -295,17 +295,17 @@ describe("Moves - Reflecting effects", () => {
       expect(enemy).toHaveStatStage(Stat.ATK, -2);
     });
 
-    it("should not stack with magic coat on the same Pokemon", async () => {
+    it("should be overridden by Magic Coat without stacking", async () => {
       await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-      game.field.mockAbility(game.field.getPlayerPokemon(), AbilityId.MAGIC_BOUNCE);
+      const karp = game.field.getPlayerPokemon();
 
-      game.move.use(MoveId.GROWL, BattlerIndex.PLAYER);
+      game.move.use(MoveId.GROWL);
       await game.move.forceEnemyMove(MoveId.MAGIC_COAT);
       await game.toEndOfTurn();
 
-      const karp = game.field.getPlayerPokemon();
       expect(karp).toHaveStatStage(Stat.ATK, -1);
+      expect(game.field.getEnemyPokemon()).not.toHaveAbilityApplied(AbilityId.MAGIC_BOUNCE);
     });
 
     it("should bounce spikes even when the target is protected", async () => {
@@ -317,6 +317,18 @@ describe("Moves - Reflecting effects", () => {
 
       // TODO: Replace this with `expect(game).toHaveArenaTag({tagType: ArenaTagType.SPIKES, side: ArenaTagSide.PLAYER, layers: 1})
       expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)!["layers"]).toBe(1);
+    });
+
+    it("should not break subsequent multi-strike moves", async () => {
+      await game.classicMode.startBattle([SpeciesId.PALKIA]);
+
+      game.move.use(MoveId.GROWL);
+      await game.move.forceEnemyMove(MoveId.SURGING_STRIKES);
+      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.toEndOfTurn();
+
+      const enemy = game.field.getEnemyPokemon();
+      expect(enemy.turnData.hitCount).toBe(3);
     });
   });
 
