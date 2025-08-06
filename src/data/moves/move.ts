@@ -5711,7 +5711,10 @@ export class YawnAttr extends AddBattlerTagAttr {
         return false;
       }
 
-
+      // TODO: This displays a message for the cause and another "but it failed" message,
+      // but fixing it would require a rework of the move failure system
+      return target.canSetStatus(StatusEffect.SLEEP, false, false, user)
+    }
   }
 }
 
@@ -8008,7 +8011,7 @@ export class AfterYouAttr extends MoveEffectAttr {
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:afterYou", { targetName: getPokemonNameWithAffix(target) }));
 
     // Will find next acting phase of the targeted pokémon, delete it and queue it right after us.
-    const targetNextPhase = globalScene.phaseManager.findPhase<MovePhase>(phase => phase.pokemon === target);
+    const targetNextPhase = globalScene.phaseManager.findPhase((phase): phase is MovePhase => phase.is("MovePhase") && phase.pokemon === target);
     if (targetNextPhase && globalScene.phaseManager.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
       globalScene.phaseManager.prependToPhase(targetNextPhase, "MovePhase");
     }
@@ -8036,7 +8039,7 @@ export class ForceLastAttr extends MoveEffectAttr {
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:forceLast", { targetPokemonName: getPokemonNameWithAffix(target) }));
 
     // TODO: Refactor this to be more readable and less janky
-    const targetMovePhase = globalScene.phaseManager.findPhase<MovePhase>((phase) => phase.pokemon === target);
+    const targetMovePhase = globalScene.phaseManager.findPhase((phase): phase is MovePhase => phase.is("MovePhase") && phase.pokemon === target);
     if (targetMovePhase && !targetMovePhase.isForcedLast() && globalScene.phaseManager.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
       // Finding the phase to insert the move in front of -
       // Either the end of the turn or in front of another, slower move which has also been forced last
