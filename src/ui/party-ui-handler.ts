@@ -1835,7 +1835,8 @@ class PartySlot extends Phaser.GameObjects.Container {
     /*
      * Here we determine the position of the slot.
      * The x coordinate depends on whether the pokemon is on the field or in the bench.
-     * The y coordinate depends on various factors, such as
+     * The y coordinate depends on various factors, such as the number of pokémon on the field,
+     * and whether the transfer/discard button is also on the screen.
      */
     const slotPositionX = isBenched ? 143 : 9;
 
