@@ -7,7 +7,7 @@ import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 
 export interface ModalConfig {
-  buttonActions: Function[];
+  buttonActions: ((...args: any[]) => any)[];
 }
 
 export abstract class ModalUiHandler extends UiHandler {

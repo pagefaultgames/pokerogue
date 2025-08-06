@@ -13,6 +13,7 @@ import { BallUiHandler } from "#ui/ball-ui-handler";
 import { BattleMessageUiHandler } from "#ui/battle-message-ui-handler";
 import type { BgmBar } from "#ui/bgm-bar";
 import { GameChallengesUiHandler } from "#ui/challenges-select-ui-handler";
+import { ChangePasswordFormUiHandler } from "#ui/change-password-form-ui-handler";
 import { CommandUiHandler } from "#ui/command-ui-handler";
 import { ConfirmUiHandler } from "#ui/confirm-ui-handler";
 import { EggGachaUiHandler } from "#ui/egg-gacha-ui-handler";
@@ -102,6 +103,7 @@ const noTransitionModes = [
   UiMode.ADMIN,
   UiMode.MYSTERY_ENCOUNTER,
   UiMode.RUN_INFO,
+  UiMode.CHANGE_PASSWORD_FORM,
 ];
 
 export class UI extends Phaser.GameObjects.Container {
@@ -172,6 +174,7 @@ export class UI extends Phaser.GameObjects.Container {
       new AutoCompleteUiHandler(),
       new AdminUiHandler(),
       new MysteryEncounterUiHandler(),
+      new ChangePasswordFormUiHandler(),
     ];
   }
 
