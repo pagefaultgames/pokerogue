@@ -79,7 +79,7 @@ describe("Moves - Encore", () => {
     const enemy = game.field.getEnemyPokemon();
     game.move.changeMoveset(enemy, [MoveId.SPLASH, MoveId.TACKLE]);
     enemy.pushMoveHistory({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
-    enemy.moveset[1].ppUsed = 2;
+    enemy.moveset[1].ppUsed = enemy.moveset[1].getMovePp() - 2;
 
     game.move.use(MoveId.ENCORE);
     await game.move.selectEnemyMove(MoveId.SPLASH);
@@ -87,7 +87,7 @@ describe("Moves - Encore", () => {
     await game.toNextTurn();
 
     expect(enemy).toHaveUsedMove({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
-    expect(enemy).toHaveUsedPP(MoveId.TACKLE, 39);
+    expect(enemy).toHaveUsedPP(MoveId.TACKLE, enemy.moveset[1].getMovePp() - 1);
     expect(enemy).toHaveBattlerTag(BattlerTagType.ENCORE);
 
     game.move.use(MoveId.SPLASH);
