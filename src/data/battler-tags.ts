@@ -1288,7 +1288,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
     // TODO: Investigate this...
     const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId) ?? new PokemonMove(this.moveId);
 
-    const moveTargets = getMoveTargets(pokemon, movePhase.move.moveId);
+    const moveTargets = getMoveTargets(pokemon, this.moveId);
     // Spread moves and ones with only 1 valid target will use their normal targeting.
     // If not, target a random enemy in our target list
     const targets =

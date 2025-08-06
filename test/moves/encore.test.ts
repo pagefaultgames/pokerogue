@@ -44,7 +44,7 @@ describe("Moves - Encore", () => {
 
     game.move.use(MoveId.ENCORE);
     await game.move.forceEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(enemyPokemon).toHaveBattlerTag(BattlerTagType.ENCORE);
@@ -69,6 +69,7 @@ describe("Moves - Encore", () => {
     expect(enemy.isMoveRestricted(MoveId.SPLASH)).toBe(false);
   });
 
+  // TODO: Make test using `changeMoveset`
   it.todo("should end at turn end if the user forgets the Encored move");
 
   // TODO: Make test (presumably involving Spite)
