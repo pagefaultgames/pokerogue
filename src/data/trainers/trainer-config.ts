@@ -3787,10 +3787,14 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.PIKACHU], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = 8; // G-Max Pikachu
-        p.generateAndPopulateMoveset();
+        p.formIndex = 1; // Partner Pikachu
         p.generateName();
         p.gender = Gender.MALE;
+        p.generateAndPopulateMoveset();
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.VOLT_TACKLE)) {
+          // Check if Volt Tackle is in the moveset, if not, replace the first move with Volt Tackle.
+          p.moveset[0] = new PokemonMove(MoveId.VOLT_TACKLE);
+        }
       }),
     )
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.MEGANIUM, SpeciesId.TYPHLOSION, SpeciesId.FERALIGATR]))
@@ -3818,7 +3822,7 @@ export const trainerConfigs: TrainerConfigs = {
         },
       ),
     )
-    .setInstantTera(1), // Tera Grass Meganium / Fire Typhlosion / Water Feraligatr
+    .setInstantTera(0), // Tera Electric Pikachu
   [TrainerType.LANCE_CHAMPION]: new TrainerConfig(++t)
     .setName("Lance")
     .initForChampion(true)
