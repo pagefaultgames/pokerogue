@@ -5711,9 +5711,9 @@ export class YawnAttr extends AddBattlerTagAttr {
         return false;
       }
 
-      // TODO: This displays a message for the cause and another "but it failed" message,
+      // TODO: This does not display the cause of the "but it failed" message,
       // but fixing it would require a rework of the move failure system
-      return target.canSetStatus(StatusEffect.SLEEP, false, false, user)
+      return target.canSetStatus(StatusEffect.SLEEP, true, false, user)
     }
   }
 }

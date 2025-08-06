@@ -69,12 +69,17 @@ export class PokemonMove {
     this.ppUsed = Math.min(this.ppUsed + count, this.getMovePp());
   }
 
+  // TODO: Rename to `getMaxPP`
   getMovePp(): number {
     return this.maxPpOverride || this.getMove().pp + this.ppUp * toDmgValue(this.getMove().pp / 5);
   }
 
   getPpRatio(): number {
     return 1 - this.ppUsed / this.getMovePp();
+  }
+
+  public isOutOfPp(): boolean {
+    return this.ppUsed < this.getMovePp();
   }
 
   getName(): string {

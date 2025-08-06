@@ -1261,7 +1261,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
       return false;
     }
 
-    if (!pokemon.getMoveset().some(m => m.moveId === this.moveId && m.ppUsed > 0)) {
+    if (!pokemon.getMoveset().some(m => m.moveId === this.moveId && !m.isOutOfPp())) {
       return false;
     }
 
@@ -1318,7 +1318,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
    */
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const encoredMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
-    if (isNullOrUndefined(encoredMove) || encoredMove.getPpRatio() <= 0) {
+    if (isNullOrUndefined(encoredMove) || encoredMove.isOutOfPp()) {
       return false;
     }
     return super.lapse(pokemon, lapseType);
