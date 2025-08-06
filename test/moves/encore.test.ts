@@ -52,28 +52,50 @@ describe("Moves - Encore", () => {
     expect(enemyPokemon.isMoveRestricted(MoveId.SPLASH)).toBe(false);
   });
 
-  it("should override any pending move phases with the Encored move, while still consuming PP", async () => {
+  it("should override any upcoming moves with the Encored move, while still consuming PP", async () => {
     await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
     // Fake enemy having used tackle the turn prior
     const enemy = game.field.getEnemyPokemon();
+    game.move.changeMoveset(enemy, [MoveId.SPLASH, MoveId.TACKLE]);
     enemy.pushMoveHistory({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
 
     game.move.use(MoveId.ENCORE);
-    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     expect(enemy).toHaveUsedMove({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
-    expect(enemy.isMoveRestricted(MoveId.TACKLE)).toBe(true);
-    expect(enemy.isMoveRestricted(MoveId.SPLASH)).toBe(false);
+    expect(enemy).toHaveUsedPP(MoveId.TACKLE, 1);
   });
 
   // TODO: Make test using `changeMoveset`
   it.todo("should end at turn end if the user forgets the Encored move");
 
-  // TODO: Make test (presumably involving Spite)
-  it.todo("should end immediately if the move runs out of PP");
+  it("should end immediately if the move runs out of PP", async () => {
+    await game.classicMode.startBattle([SpeciesId.SNORLAX]);
+
+    // Fake enemy having used tackle the turn prior
+    const enemy = game.field.getEnemyPokemon();
+    game.move.changeMoveset(enemy, [MoveId.SPLASH, MoveId.TACKLE]);
+    enemy.pushMoveHistory({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
+    enemy.moveset[1].ppUsed = 2;
+
+    game.move.use(MoveId.ENCORE);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toNextTurn();
+
+    expect(enemy).toHaveUsedMove({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
+    expect(enemy).toHaveUsedPP(MoveId.TACKLE, 39);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.ENCORE);
+
+    game.move.use(MoveId.SPLASH);
+    await game.toEndOfTurn();
+
+    expect(enemy).toHaveUsedPP(MoveId.TACKLE, "all");
+    expect(enemy).not.toHaveBattlerTag(BattlerTagType.ENCORE);
+  });
 
   const invalidMoves = [...invalidEncoreMoves].map(m => ({
     name: MoveId[m],

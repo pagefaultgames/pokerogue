@@ -29,7 +29,6 @@ import { applyMoveAttrs } from "#moves/apply-attrs";
 import { invalidEncoreMoves } from "#moves/invalid-moves";
 import type { Move } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
-import { PokemonMove } from "#moves/pokemon-move";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import type { MovePhase } from "#phases/move-phase";
 import type { StatStageChangeCallback } from "#phases/stat-stage-change-phase";
@@ -1262,6 +1261,10 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
       return false;
     }
 
+    if (!pokemon.getMoveset().some(m => m.moveId === this.moveId && m.ppUsed > 0)) {
+      return false;
+    }
+
     this.moveId = lastMove.move;
 
     return true;
@@ -1283,10 +1286,9 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
       return;
     }
 
-    // Use the prior move in the moveset. If it isn't there (presumably due to move forgetting),
-    // just make a new one for time being as the tag will be removed on turn end.
-    // TODO: Investigate this...
-    const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId) ?? new PokemonMove(this.moveId);
+    // Use the prior move in the moveset.
+    // Bang is justified as `canAdd` returns false if not possible
+    const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId)!;
 
     const moveTargets = getMoveTargets(pokemon, this.moveId);
     // Spread moves and ones with only 1 valid target will use their normal targeting.
