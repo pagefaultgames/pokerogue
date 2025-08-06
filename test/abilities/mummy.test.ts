@@ -37,7 +37,7 @@ describe("Abilities - Mummy", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.MUMMY);
+    expect(game.field.getEnemyPokemon().getAbility().id).toBe(AbilityId.MUMMY);
   });
 
   it("should not change the enemy's ability hit by a non-contact move", async () => {
@@ -47,6 +47,6 @@ describe("Abilities - Mummy", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.BALL_FETCH);
+    expect(game.field.getEnemyPokemon().getAbility().id).toBe(AbilityId.BALL_FETCH);
   });
 });

@@ -60,8 +60,8 @@ describe("Moves - Plasma Fists", () => {
 
     await game.classicMode.startBattle([SpeciesId.ONIX]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
     vi.spyOn(enemyPokemon, "getMoveType");
 
     game.move.select(MoveId.PLASMA_FISTS);
@@ -78,8 +78,8 @@ describe("Moves - Plasma Fists", () => {
 
     await game.classicMode.startBattle([SpeciesId.DUSCLOPS]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
     vi.spyOn(enemyPokemon, "getMoveType");
 
     game.move.select(MoveId.PLASMA_FISTS);

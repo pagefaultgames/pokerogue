@@ -1,5 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
@@ -58,6 +59,8 @@ describe("Moves - Grudge", () => {
     await game.move.forceEnemyMove(MoveId.GRUDGE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
+
+    expect(ratatta).toHaveBattlerTag(BattlerTagType.GRUDGE);
 
     game.move.use(MoveId.GUILLOTINE);
     await game.move.forceEnemyMove(MoveId.SPLASH);
