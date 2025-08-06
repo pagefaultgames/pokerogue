@@ -35,19 +35,22 @@ describe("Challenges - Permanent Faint", () => {
       .enemySpecies(SpeciesId.VOLTORB)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
-      .moveset(MoveId.RAZOR_LEAF);
   });
 
-  it("disables REVIVAL_BLESSING for the player only", async () => {
+  it("should render Revival Blessing unusable by players only", async () => {
     game.override.enemyMoveset(MoveId.REVIVAL_BLESSING).moveset(MoveId.REVIVAL_BLESSING);
     await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
 
+    const player = game.field.getPlayerPokemon();
+    const revBlessing = player.getMoveset()[0];
+    expect(revBlessing.isUsable()).toBe(false);
+    
     game.move.select(MoveId.REVIVAL_BLESSING);
+    await game.toEndOfTurn();
 
-    await game.phaseInterceptor.to("TurnEndPhase");
-
+    // Player struggled due to only move being the unusable Revival Blessing
+    expect(player).toHaveUsedMove(MoveId.STRUGGLE);
     expect(game.field.getEnemyPokemon()).toHaveUsedMove(MoveId.REVIVAL_BLESSING);
-    expect(game.field.getPlayerPokemon()).toHaveUsedMove(MoveId.STRUGGLE);
   });
 
   it("prevents REVIVE items in shop and in wave rewards", async () => {

@@ -312,10 +312,10 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
-   * Checks if the game mode has the shop enabled or not
-   * @returns Whether the shop is available or not
+   * Check if the current game mode has the shop enabled or not
+   * @returns Whether the shop is available in the current mode
    */
-  getShopStatus(): boolean {
+  public getShopStatus(): boolean {
     const status = new BooleanHolder(!this.hasNoShop);
     applyChallenges(ChallengeType.SHOP, status);
     return status.value;

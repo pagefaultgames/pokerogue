@@ -31,26 +31,25 @@ describe("Challenges - Limited Catch", () => {
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
       .startingModifier([{ name: "MASTER_BALL", count: 1 }])
-      .moveset(MoveId.RAZOR_LEAF);
   });
 
-  it("allows Pokémon to be caught on X1 waves", async () => {
+  it("should allow wild Pokémon to be caught on X1 waves", async () => {
     game.override.startingWave(31);
     await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
 
     game.doThrowPokeball(PokeballType.MASTER_BALL);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.toEndOfTurn();
 
-    expect(game.scene.getPlayerParty().length).toBe(2);
+    expect(game.scene.getPlayerParty()).toHaveLength(2);
   });
 
-  it("prevents Pokémon from being caught on waves that aren't X1 waves", async () => {
+  it("should prevent Pokémon from being caught on non-X1 waves", async () => {
     game.override.startingWave(53);
     await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
 
     game.doThrowPokeball(PokeballType.MASTER_BALL);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.toEndOfTurn();
 
-    expect(game.scene.getPlayerParty().length).toBe(1);
+    expect(game.scene.getPlayerParty()).toHaveLength(1);
   });
 });

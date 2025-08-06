@@ -52,7 +52,8 @@ export class PokemonMove {
     const usability = new BooleanHolder(
       !move.name.endsWith(" (N)") &&
         (ignorePp || this.ppUsed < this.getMovePp() || move.pp === -1) &&
-        !(this.moveId && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)),
+        // TODO: Review if the `MoveId.NONE` check is even necessary anymore
+        !(this.moveId !== MoveId.NONE && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)),
     );
     if (pokemon.isPlayer()) {
       applyChallenges(ChallengeType.POKEMON_MOVE, move.id, usability);

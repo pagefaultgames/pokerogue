@@ -30,70 +30,61 @@ describe("Challenges - No Support", () => {
       .enemySpecies(SpeciesId.VOLTORB)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
-      .moveset(MoveId.RAZOR_LEAF);
   });
 
-  it('disables the shop in "No Shop"', async () => {
+  it('should disable the shop in "No Shop"', async () => {
     game.override.startingWave(181);
     game.challengeMode.addChallenge(Challenges.NO_SUPPORT, 2, 1);
     await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
 
-    game.move.select(MoveId.RAZOR_LEAF);
+    game.move.use(MoveId.SPLASH);
     await game.doKillOpponents();
-
     await game.phaseInterceptor.to("SelectModifierPhase");
-    expect(game.scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
+
+    expect(game.scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = game.scene.ui.handlers.find(
       h => h instanceof ModifierSelectUiHandler,
     ) as ModifierSelectUiHandler;
-    expect(modifierSelectHandler.shopOptionsRows.length).toBe(0);
+    expect(modifierSelectHandler.shopOptionsRows).toHaveLength(0);
   });
 
-  it('disables the automatic party heal in "No Heal"', async () => {
+  it('should disable the automatic party heal in "No Heal"', async () => {
     game.override.startingWave(10);
     game.challengeMode.addChallenge(Challenges.NO_SUPPORT, 1, 1);
     await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
-    playerPokemon!.damageAndUpdate(playerPokemon!.hp / 2);
+    const playerPokemon = game.field.getPlayerPokemon();
+    playerPokemon.hp /= 2;
 
-    game.move.select(MoveId.RAZOR_LEAF);
+    game.move.use(MoveId.SPLASH);
     await game.doKillOpponents();
+    await game.toNextWave();
 
-    await game.phaseInterceptor.to("SelectModifierPhase");
-    game.doSelectModifier();
-
-    // Next wave
-    await game.phaseInterceptor.to("TurnInitPhase");
-    expect(playerPokemon!.isFullHp()).toBe(false);
+    expect(playerPokemon).not.toHaveFullHp();
   });
 
-  it('disables the automatic party heal and the shop in "Both"', async () => {
+  it('should disable both automatic party healing and shop in "Both"', async () => {
     game.override.startingWave(10);
     game.challengeMode.addChallenge(Challenges.NO_SUPPORT, 3, 1);
     await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
-    playerPokemon!.damageAndUpdate(playerPokemon!.hp / 2);
+    const playerPokemon = game.field.getPlayerPokemon();
+    playerPokemon.hp /= 2;
 
-    game.move.select(MoveId.RAZOR_LEAF);
+    game.move.use(MoveId.SPLASH);
     await game.doKillOpponents();
+    await game.toNextWave();
+ 
+    expect(playerPokemon).not.toHaveFullHp();
 
-    await game.phaseInterceptor.to("SelectModifierPhase");
-    game.doSelectModifier();
-
-    // Next wave
-    await game.phaseInterceptor.to("TurnInitPhase");
-    expect(playerPokemon!.isFullHp()).toBe(false);
-
-    game.move.select(MoveId.RAZOR_LEAF);
+    game.move.use(MoveId.SPLASH);
     await game.doKillOpponents();
-
     await game.phaseInterceptor.to("SelectModifierPhase");
-    expect(game.scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
+
+    expect(game.scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = game.scene.ui.handlers.find(
       h => h instanceof ModifierSelectUiHandler,
     ) as ModifierSelectUiHandler;
-    expect(modifierSelectHandler.shopOptionsRows.length).toBe(0);
+    expect(modifierSelectHandler.shopOptionsRows).toHaveLength(0);
   });
 });
