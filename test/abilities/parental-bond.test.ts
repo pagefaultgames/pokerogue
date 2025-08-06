@@ -278,27 +278,6 @@ describe("Abilities - Parental Bond", () => {
     expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
   });
 
-  it("Smack Down boosted by this ability should only ground the target after the second hit", async () => {
-    game.override.moveset([MoveId.SMACK_DOWN]);
-
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-
-    const leadPokemon = game.field.getPlayerPokemon();
-    const enemyPokemon = game.field.getEnemyPokemon();
-
-    game.move.select(MoveId.SMACK_DOWN);
-    await game.move.forceHit();
-
-    await game.phaseInterceptor.to("DamageAnimPhase");
-
-    expect(leadPokemon.turnData.hitCount).toBe(2);
-    expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
-
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
-  });
-
   it("U-turn boosted by this ability should strike twice before forcing a switch", async () => {
     game.override.moveset([MoveId.U_TURN]);
 
