@@ -1261,7 +1261,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
       return false;
     }
 
-    if (!pokemon.getMoveset().some(m => m.moveId === this.moveId && !m.isOutOfPp())) {
+    if (!pokemon.getMoveset().some(m => m.moveId === lastMove.move && !m.isOutOfPp())) {
       return false;
     }
 
