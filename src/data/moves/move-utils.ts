@@ -1,8 +1,13 @@
+import { SemiInvulnerableTag } from "#data/battler-tags";
 import { allMoves } from "#data/data-lists";
+// biome-ignore lint/correctness/noUnusedImports: <explanation>
+import type { AbilityId } from "#enums/ability-id";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { MoveFlags } from "#enums/move-flags";
 import type { MoveId } from "#enums/move-id";
 import { MoveTarget } from "#enums/move-target";
+import { isReflected, type MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
@@ -133,3 +138,24 @@ export const frenzyMissFunc: UserMoveConditionFunc = (user: Pokemon, move: Move)
 
   return true;
 };
+
+/**
+ * Check whether a given Move is able to be reflected by either
+ * {@linkcode MoveId.MAGIC_COAT | Magic Coat} or {@linkcode AbilityId.MAGIC_BOUNCE | Magic Bounce}.
+ * @param move - The {@linkcode Move} being used
+ * @param target - The targeted {@linkcode Pokemon} attempting to reflect the move
+ * @param useMode - The {@linkcode MoveUseMode} dictating how the move was used
+ * @returns Whether {@linkcode target} can reflect {@linkcode move}.
+ */
+export function isMoveReflectableBy(move: Move, target: Pokemon, useMode: MoveUseMode): boolean {
+  return (
+    // The move must not have just been reflected
+    !isReflected(useMode) &&
+    // Reflections cannot occur while semi invulnerable
+    !target.getTag(SemiInvulnerableTag) &&
+    // Move must be reflectable
+    move.hasFlag(MoveFlags.REFLECTABLE) &&
+    // target must have a reflection effect active
+    (!!target.getTag(BattlerTagType.MAGIC_COAT) || target.hasAbilityWithAttr("ReflectStatusMoveAbAttr"))
+  );
+}

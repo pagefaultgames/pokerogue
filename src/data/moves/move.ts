@@ -674,20 +674,9 @@ export abstract class Move implements Localizable {
           return true;
         }
         break;
-      case MoveFlags.REFLECTABLE:
-        // If the target is not semi-invulnerable and either has magic coat active or an unignored magic bounce ability
-        if (
-          target?.getTag(SemiInvulnerableTag) ||
-          !(target?.getTag(BattlerTagType.MAGIC_COAT) ||
-            (!this.doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user, target }) &&
-              target?.hasAbilityWithAttr("ReflectStatusMoveAbAttr")))
-        ) {
-          return false;
-        }
-        break;
     }
 
-    return !!(this.flags & flag);
+    return this.hasFlag(flag)
   }
 
   /**

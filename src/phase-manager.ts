@@ -44,6 +44,7 @@ import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { MoveEndPhase } from "#phases/move-end-phase";
 import { MoveHeaderPhase } from "#phases/move-header-phase";
 import { MovePhase } from "#phases/move-phase";
+import { MoveReflectPhase } from "#phases/move-reflect-phase";
 import {
   MysteryEncounterBattlePhase,
   MysteryEncounterBattleStartCleanupPhase,
@@ -157,6 +158,7 @@ const PHASES = Object.freeze({
   MoveEffectPhase,
   MoveEndPhase,
   MoveHeaderPhase,
+  MoveReflectPhase,
   MovePhase,
   MysteryEncounterPhase,
   MysteryEncounterOptionSelectedPhase,

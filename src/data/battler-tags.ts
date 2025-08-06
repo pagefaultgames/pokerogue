@@ -29,6 +29,7 @@ import { applyMoveAttrs } from "#moves/apply-attrs";
 import { invalidEncoreMoves } from "#moves/invalid-moves";
 import type { Move } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
+import { PokemonMove } from "#moves/pokemon-move";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import type { MovePhase } from "#phases/move-phase";
 import type { StatStageChangeCallback } from "#phases/stat-stage-change-phase";
@@ -175,6 +176,7 @@ export class BattlerTag implements BaseBattlerTag {
     return "";
   }
 
+  // TODO: Make this a getter
   isSourceLinked(): boolean {
     return false;
   }
@@ -3638,6 +3640,23 @@ export class MagicCoatTag extends BattlerTag {
       i18next.t("battlerTags:magicCoatOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
+    );
+  }
+
+  /**
+   * Apply the tag to reflect a move.
+   * @param pokemon - The {@linkcode Pokemon} to whom this tag belongs
+   * @param opponent - The {@linkcode Pokemon} having originally used the move
+   * @param move - The {@linkcode Move} being used
+   */
+  public apply(pokemon: Pokemon, opponent: Pokemon, move: Move): void {
+    const newTargets = move.isMultiTarget() ? getMoveTargets(pokemon, move.id).targets : [opponent.getBattlerIndex()];
+    globalScene.phaseManager.unshiftNew(
+      "MovePhase",
+      pokemon,
+      newTargets,
+      new PokemonMove(move.id),
+      MoveUseMode.REFLECTED,
     );
   }
 }

@@ -1,7 +1,6 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import type { Phase } from "#app/phase";
 import { ConditionalProtectTag } from "#data/arena-tag";
 import { MoveAnim } from "#data/battle-anims";
 import { DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag, TypeBoostTag } from "#data/battler-tags";
@@ -19,7 +18,7 @@ import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
-import { isReflected, MoveUseMode } from "#enums/move-use-mode";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import {
@@ -33,8 +32,7 @@ import {
 } from "#modifiers/modifier";
 import { applyFilteredMoveAttrs, applyMoveAttrs } from "#moves/apply-attrs";
 import type { Move, MoveAttr } from "#moves/move";
-import { getMoveTargets, isFieldTargeted } from "#moves/move-utils";
-import { PokemonMove } from "#moves/pokemon-move";
+import { isFieldTargeted, isMoveReflectableBy } from "#moves/move-utils";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import { DamageAchv } from "#system/achv";
 import type { DamageResult } from "#types/damage-result";
@@ -66,12 +64,6 @@ export class MoveEffectPhase extends PokemonPhase {
   private firstHit: boolean;
   /** Is this the last strike of a move? */
   private lastHit: boolean;
-
-  /**
-   * Phases queued during moves; used to add a new MovePhase for reflected moves after triggering.
-   * TODO: Remove this and move the reflection logic to ability-side
-   */
-  private queuedPhases: Phase[] = [];
 
   /**
    * @param useMode - The {@linkcode MoveUseMode} corresponding to how this move was used.
@@ -148,39 +140,6 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   /**
-   * Queue the phaes that should occur when the target reflects the move back to the user
-   * @param user - The {@linkcode Pokemon} using this phase's invoked move
-   * @param target - The {@linkcode Pokemon} that is reflecting the move
-   * TODO: Rework this to use `onApply` of Magic Coat
-   */
-  private queueReflectedMove(user: Pokemon, target: Pokemon): void {
-    const newTargets = this.move.isMultiTarget()
-      ? getMoveTargets(target, this.move.id).targets
-      : [user.getBattlerIndex()];
-    // TODO: ability displays should be handled by the ability
-    if (!target.getTag(BattlerTagType.MAGIC_COAT)) {
-      this.queuedPhases.push(
-        globalScene.phaseManager.create(
-          "ShowAbilityPhase",
-          target.getBattlerIndex(),
-          target.getPassiveAbility().hasAttr("ReflectStatusMoveAbAttr"),
-        ),
-      );
-      this.queuedPhases.push(globalScene.phaseManager.create("HideAbilityPhase"));
-    }
-
-    this.queuedPhases.push(
-      globalScene.phaseManager.create(
-        "MovePhase",
-        target,
-        newTargets,
-        new PokemonMove(this.move.id),
-        MoveUseMode.REFLECTED,
-      ),
-    );
-  }
-
-  /**
    * Apply the move to each of the resolved targets.
    * @param targets - The resolved set of targets of the move
    * @throws Error if there was an unexpected hit check result
@@ -217,7 +176,7 @@ export class MoveEffectPhase extends PokemonPhase {
           applyMoveAttrs("MissEffectAttr", user, target, this.move);
           break;
         case HitCheckResult.REFLECTED:
-          this.queueReflectedMove(user, target);
+          globalScene.phaseManager.appendNewToPhase("MoveEndPhase", "MoveReflectPhase", target, user, this.move);
           break;
         case HitCheckResult.PENDING:
         case HitCheckResult.ERROR:
@@ -344,9 +303,6 @@ export class MoveEffectPhase extends PokemonPhase {
       return;
     }
 
-    if (this.queuedPhases.length) {
-      globalScene.phaseManager.appendToPhase(this.queuedPhases, "MoveEndPhase");
-    }
     const moveType = user.getMoveType(this.move, true);
     if (this.move.category !== MoveCategory.STATUS && !user.stellarTypesBoosted.includes(moveType)) {
       user.stellarTypesBoosted.push(moveType);
@@ -531,8 +487,8 @@ export class MoveEffectPhase extends PokemonPhase {
       return [HitCheckResult.PROTECTED, 0];
     }
 
-    // Reflected moves cannot be reflected again
-    if (!isReflected(this.useMode) && move.doesFlagEffectApply({ flag: MoveFlags.REFLECTABLE, user, target })) {
+    // Check for magic bounce
+    if (isMoveReflectableBy(move, target, this.useMode)) {
       return [HitCheckResult.REFLECTED, 0];
     }
 

@@ -10,7 +10,6 @@ import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import type { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -70,7 +69,7 @@ describe("Moves - Reflecting effects", () => {
       expect(karp2).toHaveStatStage(Stat.ATK, -2);
     });
 
-    // TODO: This is broken...
+    // TODO: This is broken - failed moves never make it to a MEP
     it.todo("should still bounce back a move that would otherwise fail", async () => {
       game.override.enemyAbility(AbilityId.INSOMNIA);
       await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
@@ -144,12 +143,13 @@ describe("Moves - Reflecting effects", () => {
     });
 
     it("should not cause the bounced move to count for encore", async () => {
-      game.override.battleStyle("double").enemyAbility(AbilityId.MAGIC_BOUNCE);
+      game.override.battleStyle("double");
       await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.ABRA]);
 
       // Fake abra having mold breaker and the enemy having used Tackle
-      const [, abra, enemy1, enemy2] = game.scene.getField();
+      const [, abra, enemy1] = game.scene.getField();
       game.field.mockAbility(abra, AbilityId.MOLD_BREAKER);
+      game.field.mockAbility(enemy1, AbilityId.MAGIC_BOUNCE);
       game.move.changeMoveset(enemy1, [MoveId.TACKLE, MoveId.SPLASH]);
       enemy1.pushMoveHistory({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
 
@@ -157,17 +157,18 @@ describe("Moves - Reflecting effects", () => {
       game.move.use(MoveId.GROWL, BattlerIndex.PLAYER);
       game.move.use(MoveId.ENCORE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
       await game.move.selectEnemyMove(MoveId.SPLASH);
-      await game.killPokemon(enemy2 as EnemyPokemon);
+      await game.move.forceEnemyMove(MoveId.SPLASH);
       await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
-      await game.toEndOfTurn();
+      await game.toNextTurn();
 
+      console.log(enemy1.getLastXMoves(-1));
       // Encore locked into Tackle, replacing the enemy's Growl with another Tackle
-      expect(enemy1.getTag(BattlerTagType.ENCORE)!["moveId"]).toBe(MoveId.TACKLE);
+      expect(enemy1.getTag(BattlerTagType.ENCORE)?.["moveId"]).toBe(MoveId.TACKLE);
       expect(enemy1).toHaveUsedMove({ move: MoveId.TACKLE, useMode: MoveUseMode.NORMAL });
     });
 
     it("should boost stomping tantrum after a failed bounce", async () => {
-      await game.override.ability(AbilityId.INSOMNIA);
+      game.override.ability(AbilityId.INSOMNIA);
       await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
       const enemy = game.field.getEnemyPokemon();
