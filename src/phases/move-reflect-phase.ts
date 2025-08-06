@@ -28,6 +28,7 @@ export class MoveReflectPhase extends Phase {
   }
 
   override start(): void {
+    this.pokemon.turnData.extraTurns++;
     // Magic Coat takes precedeence over Magic Bounce if both apply at once
     const magicCoatTag = this.pokemon.getTag(BattlerTagType.MAGIC_COAT) as MagicCoatTag | undefined;
     if (magicCoatTag) {
