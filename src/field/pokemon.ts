@@ -4429,14 +4429,19 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return this Pokemon's move history.
-   * Entries are sorted in order of OLDEST to NEWEST
-   * @returns An array of {@linkcode TurnMove}, as described above.
+   * Entries are sorted in order of OLDEST to NEWEST.
+   * @returns An array of {@linkcode TurnMove}s, as described above.
    * @see {@linkcode getLastXMoves}
    */
   public getMoveHistory(): TurnMove[] {
     return this.summonData.moveHistory;
   }
 
+  /**
+   * Add a move to the end of this {@linkcode Pokemon}'s move history,
+   * used to record its most recently executed actions.
+   * @param turnMove - The {@linkcode TurnMove} to add
+   */
   public pushMoveHistory(turnMove: TurnMove): void {
     if (!this.isOnField()) {
       return;

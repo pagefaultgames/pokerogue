@@ -414,6 +414,8 @@ export class PhaseManager {
    * @param phaseFilter filter function to use to find the wanted phase
    * @returns the found phase or undefined if none found
    */
+  findPhase<P extends Phase = Phase>(phaseFilter: (phase: Phase) => phase is P): P | undefined;
+  findPhase<P extends Phase = Phase>(phaseFilter: (phase: P) => boolean): P | undefined;
   findPhase<P extends Phase = Phase>(phaseFilter: (phase: P) => boolean): P | undefined {
     return this.phaseQueue.find(phaseFilter) as P | undefined;
   }

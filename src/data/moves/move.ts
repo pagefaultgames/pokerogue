@@ -11,6 +11,7 @@ import { WeakenMoveTypeTag } from "#data/arena-tag";
 import { MoveChargeAnim } from "#data/battle-anims";
 import {
   CommandedTag,
+  DrowsyTag,
   EncoreTag,
   GulpMissileTag,
   HelpingHandTag,
@@ -5690,6 +5691,31 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
 }
 
 /**
+ * Attribute to implement {@linkcode MoveId.YAWN}.
+ * Yawn adds a BattlerTag to its target that puts them to sleep at the end
+ * of the next turn, retaining many of the same checks as normal status setting moves.
+ */
+export class YawnAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.DROWSY, false, true)
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => {
+      if (!super.getCondition()!(user, target, move)) {
+        return false;
+      }
+
+      // Statused opponents or ones with safeguard active use a generic failure message
+      if (target.status || target.isSafeguarded(user)) {
+        return false;
+      }
+
+
+  }
+}
+
+/**
  * Adds a {@link https://bulbapedia.bulbagarden.net/wiki/Seeding | Seeding} effect to the target
  * as seen with Leech Seed and Sappy Seed.
  * @extends AddBattlerTagAttr
@@ -5916,8 +5942,8 @@ export class ProtectAttr extends AddBattlerTagAttr {
       for (const turnMove of user.getLastXMoves(-1).slice()) {
         if (
           // Quick & Wide guard increment the Protect counter without using it for fail chance
-          !(allMoves[turnMove.move].hasAttr("ProtectAttr") || 
-          [MoveId.QUICK_GUARD, MoveId.WIDE_GUARD].includes(turnMove.move)) || 
+          !(allMoves[turnMove.move].hasAttr("ProtectAttr") ||
+          [MoveId.QUICK_GUARD, MoveId.WIDE_GUARD].includes(turnMove.move)) ||
           turnMove.result !== MoveResult.SUCCESS
         ) {
           break;
@@ -9377,9 +9403,9 @@ export function initMoves() {
     new AttackMove(MoveId.BRICK_BREAK, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 75, 100, 15, -1, 0, 3)
       .attr(RemoveScreensAttr),
     new StatusMove(MoveId.YAWN, PokemonType.NORMAL, -1, 10, -1, 0, 3)
-      .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
-      .condition((user, target, move) => !target.status && !target.isSafeguarded(user))
-      .reflectable(),
+      .attr(YawnAttr)
+      .reflectable()
+      .edgeCase(), // Should not be blocked by safeguard on turn of use
     new AttackMove(MoveId.KNOCK_OFF, PokemonType.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHeldItems().filter(i => i.isTransferable).length > 0 ? 1.5 : 1)
       .attr(RemoveHeldItemAttr, false)

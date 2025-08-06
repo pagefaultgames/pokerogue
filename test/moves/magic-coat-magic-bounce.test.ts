@@ -10,6 +10,7 @@ import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import type { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -93,23 +94,25 @@ describe("Moves - Reflecting effects", () => {
       expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, 0);
     });
 
-    it("should receive the stat change after reflecting a move back to a mirror armor user", async () => {
+    it("should take precedence over Mirror Armor", async () => {
       game.override.enemyAbility(AbilityId.MIRROR_ARMOR);
       await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
       game.move.use(MoveId.GROWL);
       await game.toEndOfTurn();
 
-      expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
+      const enemy = game.field.getPlayerPokemon();
+      expect(enemy).toHaveStatStage(Stat.ATK, -1);
+      expect(enemy).not.toHaveAbilityApplied(AbilityId.MIRROR_ARMOR);
     });
 
-    it("should not bounce back curse", async () => {
+    it("should not bounce back non-reflectable effects", async () => {
       await game.classicMode.startBattle([SpeciesId.GASTLY]);
 
       game.move.use(MoveId.CURSE);
       await game.toEndOfTurn();
 
-      expect(game.field.getEnemyPokemon().getTag(BattlerTagType.CURSED)).toBeDefined();
+      expect(game.field.getEnemyPokemon()).toHaveBattlerTag(BattlerTagType.CURSED);
     });
 
     it("should not cause encore to be interrupted after bouncing", async () => {
@@ -141,23 +144,25 @@ describe("Moves - Reflecting effects", () => {
     });
 
     it("should not cause the bounced move to count for encore", async () => {
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+      game.override.battleStyle("double").enemyAbility(AbilityId.MAGIC_BOUNCE);
+      await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.ABRA]);
 
-      const enemyPokemon = game.field.getEnemyPokemon();
+      // Fake abra having mold breaker and the enemy having used Tackle
+      const [abra, enemy1, enemy2] = game.scene.getField();
+      game.field.mockAbility(abra, AbilityId.MOLD_BREAKER);
+      enemy1.pushMoveHistory({ move: MoveId.TACKLE, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
 
-      // turn 1
-      game.move.use(MoveId.GROWL);
-      await game.move.forceEnemyMove(MoveId.MAGIC_COAT);
+      // turn 1: Magikarp uses growl as Abra attempts to encore
+      game.move.use(MoveId.GROWL, BattlerIndex.PLAYER);
+      game.move.use(MoveId.ENCORE, BattlerIndex.PLAYER_2);
+      await game.move.forceEnemyMove(MoveId.SPLASH);
+      await game.killPokemon(enemy2 as EnemyPokemon);
+      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
       await game.toNextTurn();
 
-      // turn 2
-      game.move.use(MoveId.ENCORE);
-      await game.move.forceEnemyMove(MoveId.TACKLE);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-      await game.toEndOfTurn();
-
-      expect(enemyPokemon.getTag(BattlerTagType.ENCORE)!["moveId"]).toBe(MoveId.TACKLE);
-      expect(enemyPokemon.getLastXMoves()[0].move).toBe(MoveId.TACKLE);
+      // Encore locked into Tackle, replacing the enemy's Growl with another Tackle
+      expect(enemy1.getTag(BattlerTagType.ENCORE)!["moveId"]).toBe(MoveId.TACKLE);
+      expect(enemy1).toHaveUsedMove({ move: MoveId.TACKLE, useMode: MoveUseMode.NORMAL });
     });
 
     it("should boost stomping tantrum after a failed bounce", async () => {
@@ -171,6 +176,7 @@ describe("Moves - Reflecting effects", () => {
       game.move.use(MoveId.YAWN);
       await game.move.forceEnemyMove(MoveId.MAGIC_COAT);
       await game.toNextTurn();
+
       expect(enemy).toHaveUsedMove({ move: MoveId.YAWN, result: MoveResult.FAIL, useMode: MoveUseMode.REFLECTED });
 
       game.move.use(MoveId.SPLASH);
@@ -302,6 +308,17 @@ describe("Moves - Reflecting effects", () => {
       const [karp1, karp2] = game.scene.getPlayerField();
       expect(karp1).toHaveStatStage(Stat.ATK, -1);
       expect(karp2).toHaveStatStage(Stat.ATK, -1);
+    });
+
+    it("should bounce spikes even when the target is protected", async () => {
+      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+
+      game.move.use(MoveId.SPIKES);
+      await game.move.forceEnemyMove(MoveId.PROTECT);
+      await game.toEndOfTurn();
+
+      // TODO: Replace this with `expect(game).toHaveArenaTag({tagType: ArenaTagType.SPIKES, side: ArenaTagSide.PLAYER, layers: 1})
+      expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)!["layers"]).toBe(1);
     });
   });
 
