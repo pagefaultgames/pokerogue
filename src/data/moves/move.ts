@@ -9221,8 +9221,8 @@ export function initMoves() {
       .ignoresSubstitute()
       .condition((user, target, move) => new EncoreTag(user.id).canAdd(target))
       .reflectable()
-      // Can lock infinitely into struggle; has incorrect interactions with Blood Moon/Gigaton Hammer
-      // Also may or may not incorrectly select targets for replacement move (needs verification)
+      // has incorrect interactions with Blood Moon/Gigaton Hammer
+      // TODO: How does Encore interact when locking
       .edgeCase(),
     new AttackMove(MoveId.PURSUIT, PokemonType.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, 0, 2)
       .partial(), // No effect implemented
