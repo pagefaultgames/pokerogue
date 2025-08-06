@@ -4,15 +4,12 @@ import { defaultStarterSpecies } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
-import { getEggTierForSpecies } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
-import { getPokemonSpeciesForm } from "#data/pokemon-species";
 import { BattleType } from "#enums/battle-type";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { TypeColor, TypeShadow } from "#enums/color";
-import { EggTier } from "#enums/egg-type";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { ModifierTier } from "#enums/modifier-tier";
 import type { MoveId } from "#enums/move-id";
@@ -26,9 +23,9 @@ import type { Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { DexAttrProps, GameData } from "#system/game-data";
-import { BooleanHolder, type NumberHolder, randSeedItem } from "#utils/common";
+import { BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toSnakeCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -685,14 +682,11 @@ export class SingleTypeChallenge extends Challenge {
  */
 export class FreshStartChallenge extends Challenge {
   constructor() {
-    super(Challenges.FRESH_START, 3);
+    super(Challenges.FRESH_START, 2);
   }
 
   applyStarterChoice(pokemon: PokemonSpecies, valid: BooleanHolder): boolean {
-    if (
-      (this.value === 1 && !defaultStarterSpecies.includes(pokemon.speciesId)) ||
-      (this.value === 2 && getEggTierForSpecies(pokemon) >= EggTier.EPIC)
-    ) {
+    if (this.value === 1 && !defaultStarterSpecies.includes(pokemon.speciesId)) {
       valid.value = false;
       return true;
     }
@@ -708,12 +702,18 @@ export class FreshStartChallenge extends Challenge {
     pokemon.abilityIndex = pokemon.abilityIndex % 2; // Always base ability, if you set it to hidden it wraps to first ability
     pokemon.passive = false; // Passive isn't unlocked
     pokemon.nature = Nature.HARDY; // Neutral nature
-    pokemon.moveset = pokemon.species
+    let validMoves = pokemon.species
       .getLevelMoves()
-      .filter(m => m[0] <= 5)
-      .map(lm => lm[1])
-      .slice(0, 4)
-      .map(m => new PokemonMove(m)); // No egg moves
+      .filter(m => isBetween(m[0], 1, 5))
+      .map(lm => lm[1]);
+    // Filter egg moves out of the moveset
+    pokemon.moveset = pokemon.moveset.filter(pm => validMoves.includes(pm.moveId));
+    if (pokemon.moveset.length < 4) {
+      // If there's empty slots fill with remaining valid moves
+      const existingMoveIds = pokemon.moveset.map(pm => pm.moveId);
+      validMoves = validMoves.filter(m => !existingMoveIds.includes(m));
+      pokemon.moveset = pokemon.moveset.concat(validMoves.map(m => new PokemonMove(m))).slice(0, 4);
+    }
     pokemon.luck = 0; // No luck
     pokemon.shiny = false; // Not shiny
     pokemon.variant = 0; // Not shiny

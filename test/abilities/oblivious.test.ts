@@ -39,14 +39,14 @@ describe("Abilities - Oblivious", () => {
       .moveset(MoveId.SKILL_SWAP)
       .enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-    const enemy = game.scene.getEnemyPokemon();
-    enemy?.addTag(BattlerTagType.TAUNT);
-    expect(enemy?.getTag(BattlerTagType.TAUNT)).toBeTruthy();
+    const enemy = game.field.getEnemyPokemon();
+    enemy.addTag(BattlerTagType.TAUNT);
+    expect(enemy.getTag(BattlerTagType.TAUNT)).toBeDefined();
 
     game.move.select(MoveId.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy?.getTag(BattlerTagType.TAUNT)).toBeFalsy();
+    expect(enemy.getTag(BattlerTagType.TAUNT)).toBeUndefined();
   });
 
   it("should remove infatuation when gained", async () => {
@@ -56,14 +56,15 @@ describe("Abilities - Oblivious", () => {
       .moveset(MoveId.SKILL_SWAP)
       .enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-    const enemy = game.scene.getEnemyPokemon();
-    vi.spyOn(enemy!, "isOppositeGender").mockReturnValue(true);
-    enemy?.addTag(BattlerTagType.INFATUATED, 5, MoveId.JUDGMENT, game.scene.getPlayerPokemon()?.id); // sourceID needs to be defined
-    expect(enemy?.getTag(BattlerTagType.INFATUATED)).toBeTruthy();
+
+    const enemy = game.field.getEnemyPokemon();
+    vi.spyOn(enemy, "isOppositeGender").mockReturnValue(true);
+    enemy.addTag(BattlerTagType.INFATUATED, 5, MoveId.JUDGMENT, game.field.getPlayerPokemon().id); // sourceID needs to be defined
+    expect(enemy.getTag(BattlerTagType.INFATUATED)).toBeTruthy();
 
     game.move.select(MoveId.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemy?.getTag(BattlerTagType.INFATUATED)).toBeFalsy();
+    expect(enemy.getTag(BattlerTagType.INFATUATED)).toBeFalsy();
   });
 });
