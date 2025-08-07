@@ -18,6 +18,6 @@
       "extensions": ["aaron-bond.better-comments", ""]
     }
   },
-  "postCreateCommand": "pnpm install && pnpm postinstall",
+  "postCreateCommand": "pnpm install",
   "forwardPorts": [8000]
 }
