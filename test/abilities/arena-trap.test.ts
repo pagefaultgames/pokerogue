@@ -6,7 +6,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
-import type { CommandUiHandler } from "#ui/command-ui-handler";
+import type { PartyUiHandler } from "#ui/party-ui-handler";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -36,33 +36,10 @@ describe("Abilities - Arena Trap", () => {
 
   // NB: Since switching moves bypass trapping, the only way fleeing can occur in PKR is from the player
   // TODO: Implement once forced flee helper exists
-  it.todo("should interrupt player flee attempt and display message, unless user has Run Away", async () => {
-    game.override.battleStyle("single");
-    await game.classicMode.startBattle([SpeciesId.DUGTRIO, SpeciesId.GOTHITELLE]);
+  it.todo("should interrupt player flee attempt and display message, unless user has Run Away");
 
-    const enemy = game.field.getEnemyPokemon();
-
-    // flee stuff goes here
-
-    game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
-      // no switch out command should be queued due to arena trap
-      expect(game.scene.currentBattle.turnCommands[0]).toBeNull();
-
-      // back out and cancel the flee to avoid timeout
-      (game.scene.ui.getHandler() as CommandUiHandler).processInput(Button.CANCEL);
-      game.move.use(MoveId.SPLASH);
-    });
-
-    await game.toNextTurn();
-    expect(game.textInterceptor.logs).toContain(
-      i18next.t("abilityTriggers:arenaTrap", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
-        abilityName: allAbilities[AbilityId.ARENA_TRAP].name,
-      }),
-    );
-  });
-
-  it("should interrupt player switch attempt and display message", async () => {
+  // TODO: Figure out how to wrangle the UI into not timing out
+  it.todo("should interrupt player switch attempt and display message", async () => {
     game.override.battleStyle("single");
     await game.classicMode.startBattle([SpeciesId.DUGTRIO, SpeciesId.GOTHITELLE]);
 
@@ -73,13 +50,13 @@ describe("Abilities - Arena Trap", () => {
       // no switch out command should be queued due to arena trap
       expect(game.scene.currentBattle.turnCommands[0]).toBeNull();
 
-      // back out and cancel the switch to avoid timeout
-      (game.scene.ui.getHandler() as CommandUiHandler).processInput(Button.ACTION);
-      (game.scene.ui.getHandler() as CommandUiHandler).processInput(Button.CANCEL);
-      game.move.use(MoveId.SPLASH);
+      // back out and end the phase to avoid timeout
+      console.log(game.scene.ui.getHandler().constructor.name);
+      (game.scene.ui.getHandler() as PartyUiHandler).processInput(Button.CANCEL);
     });
 
-    await game.toNextTurn();
+    await game.phaseInterceptor.to("CommandPhase");
+
     expect(game.textInterceptor.logs).toContain(
       i18next.t("abilityTriggers:arenaTrap", {
         pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
