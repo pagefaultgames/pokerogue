@@ -38,10 +38,10 @@ describe("Battle Mechanics - Damage Calculation", () => {
   it("Tackle deals expected base damage", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     vi.spyOn(playerPokemon, "getEffectiveStat").mockReturnValue(80);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     vi.spyOn(enemyPokemon, "getEffectiveStat").mockReturnValue(90);
 
     // expected base damage = [(2*level/5 + 2) * power * playerATK / enemyDEF / 50] + 2
@@ -56,7 +56,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const aggron = game.scene.getEnemyPokemon()!;
+    const aggron = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.TACKLE);
 
@@ -75,7 +75,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
     dmg_redux_modifier.stackCount = 1000;
     await game.scene.addEnemyModifier(modifierTypes.ENEMY_DAMAGE_REDUCTION().newModifier() as EnemyPersistentModifier);
 
-    const aggron = game.scene.getEnemyPokemon()!;
+    const aggron = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.TACKLE);
 
@@ -89,8 +89,8 @@ describe("Battle Mechanics - Damage Calculation", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const magikarp = game.scene.getPlayerPokemon()!;
-    const dragonite = game.scene.getEnemyPokemon()!;
+    const magikarp = game.field.getPlayerPokemon();
+    const dragonite = game.field.getEnemyPokemon();
 
     expect(dragonite.getAttackDamage({ source: magikarp, move: allMoves[MoveId.DRAGON_RAGE] }).damage).toBe(40);
   });
@@ -100,8 +100,8 @@ describe("Battle Mechanics - Damage Calculation", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const magikarp = game.scene.getPlayerPokemon()!;
-    const aggron = game.scene.getEnemyPokemon()!;
+    const magikarp = game.field.getPlayerPokemon();
+    const aggron = game.field.getEnemyPokemon();
 
     expect(aggron.getAttackDamage({ source: magikarp, move: allMoves[MoveId.FISSURE] }).damage).toBe(aggron.hp);
   });
@@ -111,7 +111,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
 
     await game.classicMode.startBattle([SpeciesId.SHEDINJA]);
 
-    const shedinja = game.scene.getPlayerPokemon()!;
+    const shedinja = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.JUMP_KICK);
 
@@ -126,7 +126,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
 
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    const charizard = game.scene.getEnemyPokemon()!;
+    const charizard = game.field.getEnemyPokemon();
 
     if (charizard.getMaxHp() % 2 === 1) {
       expect(charizard.hp).toBeGreaterThan(charizard.getMaxHp() / 2);

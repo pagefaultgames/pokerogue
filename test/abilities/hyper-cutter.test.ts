@@ -36,7 +36,7 @@ describe("Abilities - Hyper Cutter", () => {
   it("only prevents ATK drops", async () => {
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.OCTOLOCK);
     await game.toNextTurn();
