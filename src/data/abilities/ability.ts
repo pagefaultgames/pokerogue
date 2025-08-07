@@ -1284,7 +1284,7 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
 /**
  * Set stat stages when the user gets hit by a critical hit
  *
- * @privateremarks
+ * @privateRemarks
  * It is the responsibility of the caller to ensure that this ability attribute is only applied
  * when the user has been hit by a critical hit; such an event is not checked here.
  *
