@@ -2043,7 +2043,7 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
 
   /**
    * @param stat - The stat being modified
-   * @param multipler - The multiplier to apply to the stat
+   * @param multiplier - The multiplier to apply to the stat
    * @param ignorable - Whether the multiplier can be ignored by mold breaker-like moves and abilities
    */
   constructor(stat: BattleStat, multiplier: number, ignorable = true) {

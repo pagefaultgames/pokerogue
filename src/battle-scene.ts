@@ -242,8 +242,8 @@ export class BattleScene extends SceneBase {
   public battleStyle: BattleStyle = BattleStyle.SWITCH;
   /**
    * Defines whether or not to show type effectiveness hints
-   * - true: No hints
-   * - false: Show hints for moves
+   * - true: Show hints for moves
+   * - false: No hints
    */
   public typeHints = false;
 

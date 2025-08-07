@@ -4045,7 +4045,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param damage integer
    * @param ignoreSegments boolean, not currently used
    * @param preventEndure used to update damage if endure or sturdy
-   * @param ignoreFaintPhas  flag on whether to add FaintPhase if pokemon after applying damage faints
+   * @param ignoreFaintPhase  flag on whether to add FaintPhase if pokemon after applying damage faints
    * @returns integer representing damage dealt
    */
   damage(damage: number, _ignoreSegments = false, preventEndure = false, ignoreFaintPhase = false): number {
