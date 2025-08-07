@@ -1,15 +1,15 @@
 import { globalScene } from "#app/global-scene";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { UiMode } from "#enums/ui-mode";
+import type { Reward, RewardGenerator } from "#items/reward";
 import { RewardPhase } from "#phases/reward-phase";
-import type { RewardFunc } from "#types/rewards";
 import i18next from "i18next";
 
 export class RibbonRewardPhase extends RewardPhase {
   public readonly phaseName = "RibbonRewardPhase";
   private species: PokemonSpecies;
 
-  constructor(rewardFunc: RewardFunc, species: PokemonSpecies) {
+  constructor(rewardFunc: Reward | RewardGenerator, species: PokemonSpecies) {
     super(rewardFunc);
 
     this.species = species;

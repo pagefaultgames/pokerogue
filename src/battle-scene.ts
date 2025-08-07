@@ -69,8 +69,8 @@ import { HeldItemPoolType, RewardPoolType } from "#enums/reward-pool-type";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { TrainerItemId } from "#enums/trainer-item-id";
 import { TextStyle } from "#enums/text-style";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
@@ -86,7 +86,7 @@ import { applyHeldItems } from "#items/all-held-items";
 import { type ApplyTrainerItemsParams, applyTrainerItems } from "#items/apply-trainer-items";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
-import type { Reward } from "#items/reward";
+import type { MatchExact, Reward } from "#items/reward";
 import { getRewardPoolForType } from "#items/reward-pool-utils";
 import { type EnemyAttackStatusEffectChanceTrainerItem, TrainerItemEffect } from "#items/trainer-item";
 import {
@@ -2636,7 +2636,11 @@ export class BattleScene extends SceneBase {
     applyTrainerItems(effect, this.trainerItems, params);
   }
 
-  applyReward<T extends Reward>(reward: T, params: Parameters<T["apply"]>[0], playSound?: boolean): boolean {
+  applyReward<T extends Reward>(
+    reward: T,
+    params: MatchExact<Parameters<T["apply"]>[0]>,
+    playSound?: boolean,
+  ): boolean {
     const soundName = reward.soundName;
 
     if (playSound && !this.sound.get(soundName)) {
@@ -2780,25 +2784,7 @@ export class BattleScene extends SceneBase {
     });
   }
 
-
   // TODO @Wlowscha: Fix this
-  /**
-   * Attempt to discard one or more copies of a held item.
-   * @param itemModifier - The {@linkcode PokemonHeldItemModifier} being discarded
-   * @param discardQuantity - The number of copies to remove (up to the amount currently held); default `1`
-   * @returns Whether the item was successfully discarded.
-   * Removing fewer items than requested is still considered a success.
-   */
-  tryDiscardHeldItemModifier(itemModifier: PokemonHeldItemModifier, discardQuantity = 1): boolean {
-    const countTaken = Math.min(discardQuantity, itemModifier.stackCount);
-    itemModifier.stackCount -= countTaken;
-
-    if (itemModifier.stackCount > 0) {
-      return true;
-    }
-
-    return this.removeModifier(itemModifier);
-  }
   /**
    * Attempt to discard one or more copies of a held item.
    * @param itemModifier - The {@linkcode PokemonHeldItemModifier} being discarded

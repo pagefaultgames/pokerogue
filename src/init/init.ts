@@ -7,7 +7,6 @@ import { initChallenges } from "#data/challenge";
 import { initTrainerTypeDialogue } from "#data/dialogue";
 import { initPokemonForms } from "#data/pokemon-forms";
 import { initHeldItems } from "#items/all-held-items";
-import { initRewards } from "#items/all-rewards";
 import { initTrainerItems } from "#items/all-trainer-items";
 import { initHeldItemPools } from "#items/init-held-item-pools";
 import { initRewardPools } from "#items/init-reward-pools";
@@ -45,6 +44,5 @@ function initItems() {
   initHeldItemPools();
   initTrainerItems();
   initTrainerItemPools();
-  initRewards();
   initRewardPools();
 }

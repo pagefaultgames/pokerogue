@@ -3,13 +3,12 @@ import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions, pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { signatureSpecies } from "#balance/signature-species";
 import { tmSpecies } from "#balance/tms";
-import { allRewards } from "#data/data-lists";
 import { doubleBattleDialogue } from "#data/double-battle-dialogue";
 import { Gender } from "#data/gender";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { PartyMemberStrength } from "#enums/party-member-strength";
+import type { PartyMemberStrength } from "#enums/party-member-strength";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -19,6 +18,8 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon } from "#field/pokemon";
+import { allRewards } from "#items/all-rewards";
+import type { Reward, RewardGenerator } from "#items/reward";
 import { PokemonMove } from "#moves/pokemon-move";
 import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { EvilTeam } from "#trainers/evil-admin-trainer-pools";
@@ -28,10 +29,9 @@ import {
   getGymLeaderPartyTemplate,
   getWavePartyTemplate,
   TrainerPartyCompoundTemplate,
-  TrainerPartyTemplate,
+  type TrainerPartyTemplate,
   trainerPartyTemplates,
 } from "#trainers/trainer-party-template";
-import type { RewardFunc } from "#types/rewards";
 import type {
   GenAIFunc,
   GenTrainerItemsFunc,
@@ -109,7 +109,7 @@ export class TrainerConfig {
   public victoryBgm: string;
   public genTrainerItemsFunc: GenTrainerItemsFunc;
   public genAIFuncs: GenAIFunc[] = [];
-  public rewardFuncs: RewardFunc[] = [];
+  public rewardFuncs: (Reward | RewardGenerator)[] = [];
   public partyTemplates: TrainerPartyTemplate[];
   public partyTemplateFunc: PartyTemplateFunc;
   public partyMemberFuncs: PartyMemberFuncs = {};
@@ -501,7 +501,7 @@ export class TrainerConfig {
     return this;
   }
 
-  setRewardFuncs(...rewardFuncs: (() => RewardFunc)[]): TrainerConfig {
+  setRewardFuncs(...rewardFuncs: (Reward | RewardGenerator)[]): TrainerConfig {
     this.rewardFuncs = rewardFuncs.map(func => () => {
       const rewardFunc = func();
       const reward = rewardFunc();

@@ -125,8 +125,8 @@ export function randItem<T>(items: T[]): T {
   return items.length === 1 ? items[0] : items[randInt(items.length)];
 }
 
-export function randSeedItem<T>(items: T[]): T {
-  return items.length === 1 ? items[0] : Phaser.Math.RND.pick(items);
+export function randSeedItem<T>(items: T[] | readonly T[]): T {
+  return items.length === 1 ? items[0] : Phaser.Math.RND.pick(items as T[]);
 }
 
 export function randSeedWeightedItem<T>(items: T[]): T {
