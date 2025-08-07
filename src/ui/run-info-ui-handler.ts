@@ -702,11 +702,11 @@ export class RunInfoUiHandler extends UiHandler {
             rules.push(i18next.t("challenges:inverseBattle.shortName"));
             break;
           default: {
-            const localisationKey = Challenges[this.runInfo.challenges[i].id]
+            const localizationKey = Challenges[this.runInfo.challenges[i].id]
               .split("_")
               .map((f, i) => (i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
               .join("");
-            rules.push(i18next.t(`challenges:${localisationKey}.name`));
+            rules.push(i18next.t(`challenges:${localizationKey}.name`));
             break;
           }
         }
