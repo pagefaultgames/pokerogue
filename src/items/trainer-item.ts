@@ -4,10 +4,11 @@ import { getStatusEffectDescriptor, getStatusEffectHealText } from "#data/status
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { getStatKey, Stat, type TempBattleStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { TextStyle } from "#enums/text-style";
 import { TrainerItemId, TrainerItemNames } from "#enums/trainer-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { type BooleanHolder, hslToHex, type NumberHolder, randSeedFloat, toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
