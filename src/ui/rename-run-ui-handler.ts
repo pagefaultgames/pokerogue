@@ -3,7 +3,7 @@ import type { InputFieldConfig } from "./form-modal-ui-handler";
 import { FormModalUiHandler } from "./form-modal-ui-handler";
 import type { ModalConfig } from "./modal-ui-handler";
 
-export default class RenameRunFormUiHandler extends FormModalUiHandler {
+export class RenameRunFormUiHandler extends FormModalUiHandler {
   getModalTitle(_config?: ModalConfig): string {
     return i18next.t("menu:renamerun");
   }
