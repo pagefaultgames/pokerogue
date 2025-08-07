@@ -3963,12 +3963,18 @@ export const trainerConfigs: TrainerConfigs = {
     .setDoubleTitle("champion_double")
     .setPartyMemberFunc(
       0,
-      getRandomPartyMemberFunc([SpeciesId.POLITOED, SpeciesId.PELIPPER], TrainerSlot.TRAINER, true, p => {
-        p.abilityIndex = p.species.speciesId === SpeciesId.POLITOED ? 2 : 1; // Drizzle
+      getRandomPartyMemberFunc([SpeciesId.PELIPPER], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 1; // Drizzle
         p.generateAndPopulateMoveset();
       }),
     )
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.LUDICOLO]))
+    .setPartyMemberFunc(
+      1,
+      getRandomPartyMemberFunc([SpeciesId.LUDICOLO], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 0; // Swift Swim
+        p.generateAndPopulateMoveset();
+      }),
+    )
     .setPartyMemberFunc(
       2,
       getRandomPartyMemberFunc([SpeciesId.TENTACRUEL, SpeciesId.WALREIN], TrainerSlot.TRAINER, true, p => {
@@ -4067,12 +4073,12 @@ export const trainerConfigs: TrainerConfigs = {
       3,
       getRandomPartyMemberFunc([SpeciesId.KELDEO], TrainerSlot.TRAINER, true, p => {
         p.pokeball = PokeballType.ROGUE_BALL;
-        p.formIndex = 1; // Resolute Form
         p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.SECRET_SWORD)) {
           // Check if Secret Sword is in the moveset, if not, replace the third move with Secret Sword.
           p.moveset[2] = new PokemonMove(MoveId.SECRET_SWORD);
         }
+        p.formIndex = 1; // Resolute Form
       }),
     )
     .setPartyMemberFunc(
