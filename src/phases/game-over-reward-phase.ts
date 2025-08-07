@@ -7,15 +7,14 @@ export class GameOverRewardPhase extends RewardPhase {
   public readonly phaseName = "GameOverRewardPhase";
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
-      const newModifier = this.reward.newModifier();
-      globalScene.addModifier(newModifier);
+      globalScene.applyReward(this.reward, {});
       // Sound loaded into game as is
       globalScene.playSound("level_up_fanfare");
       globalScene.ui.setMode(UiMode.MESSAGE);
       globalScene.ui.fadeIn(250).then(() => {
         globalScene.ui.showText(
           i18next.t("battle:rewardGain", {
-            modifierName: newModifier?.type.name,
+            modifierName: this.reward.name,
           }),
           null,
           () => {

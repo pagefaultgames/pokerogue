@@ -1,6 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import type { Reward, RewardGenerator } from "#items/reward";
+import type { Reward } from "#items/reward";
+import { generateRewardOptionFromId } from "#items/reward-utils";
 import { BattlePhase } from "#phases/battle-phase";
+import type { SilentReward } from "#types/rewards";
 import i18next from "i18next";
 
 export class RewardPhase extends BattlePhase {
@@ -9,10 +11,10 @@ export class RewardPhase extends BattlePhase {
   public readonly phaseName: "RewardPhase" | "RibbonRewardPhase" | "GameOverRewardPhase" = "RewardPhase";
   protected reward: Reward;
 
-  constructor(rewardFunc: Reward | RewardGenerator) {
+  constructor(rewardId: SilentReward) {
     super();
 
-    this.reward = rewardFunc();
+    this.reward = generateRewardOptionFromId(rewardId)?.type;
   }
 
   start() {
@@ -23,7 +25,7 @@ export class RewardPhase extends BattlePhase {
 
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
-      globalScene.applyReward(this.reward);
+      globalScene.applyReward(this.reward, {});
       globalScene.playSound("item_fanfare");
       globalScene.ui.showText(
         i18next.t("battle:rewardGain", {

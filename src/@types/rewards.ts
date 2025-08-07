@@ -44,3 +44,9 @@ export type RewardPool = {
 export interface RewardPoolWeights {
   [tier: string]: number[];
 }
+
+export type SilentReward =
+  | TrainerItemId
+  | typeof RewardId.VOUCHER
+  | typeof RewardId.VOUCHER_PLUS
+  | typeof RewardId.VOUCHER_PREMIUM;

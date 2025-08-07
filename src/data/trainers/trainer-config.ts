@@ -8,18 +8,17 @@ import { Gender } from "#data/gender";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import type { PartyMemberStrength } from "#enums/party-member-strength";
+import { PartyMemberStrength } from "#enums/party-member-strength";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TeraAIMode } from "#enums/tera-ai-mode";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { TrainerPoolTier } from "#enums/trainer-pool-tier";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon } from "#field/pokemon";
-import { allRewards } from "#items/all-rewards";
-import type { Reward, RewardGenerator } from "#items/reward";
 import { PokemonMove } from "#moves/pokemon-move";
 import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { EvilTeam } from "#trainers/evil-admin-trainer-pools";
@@ -29,9 +28,10 @@ import {
   getGymLeaderPartyTemplate,
   getWavePartyTemplate,
   TrainerPartyCompoundTemplate,
-  type TrainerPartyTemplate,
+  TrainerPartyTemplate,
   trainerPartyTemplates,
 } from "#trainers/trainer-party-template";
+import type { SilentReward } from "#types/rewards";
 import type {
   GenAIFunc,
   GenTrainerItemsFunc,
@@ -109,7 +109,7 @@ export class TrainerConfig {
   public victoryBgm: string;
   public genTrainerItemsFunc: GenTrainerItemsFunc;
   public genAIFuncs: GenAIFunc[] = [];
-  public rewardFuncs: (Reward | RewardGenerator)[] = [];
+  public silentRewards: SilentReward[] = [];
   public partyTemplates: TrainerPartyTemplate[];
   public partyTemplateFunc: PartyTemplateFunc;
   public partyMemberFuncs: PartyMemberFuncs = {};
@@ -501,12 +501,8 @@ export class TrainerConfig {
     return this;
   }
 
-  setRewardFuncs(...rewardFuncs: (Reward | RewardGenerator)[]): TrainerConfig {
-    this.rewardFuncs = rewardFuncs.map(func => () => {
-      const rewardFunc = func();
-      const reward = rewardFunc();
-      return reward;
-    });
+  setSilentReward(...silentRewards: SilentReward[]): TrainerConfig {
+    this.silentRewards = silentRewards;
     return this;
   }
 
@@ -911,9 +907,9 @@ export class TrainerConfig {
     clone = this.victoryBgm ? clone.setVictoryBgm(this.victoryBgm) : clone;
     clone = this.genTrainerItemsFunc ? clone.setGenTrainerItemsFunc(this.genTrainerItemsFunc) : clone;
 
-    if (this.rewardFuncs) {
+    if (this.silentRewards) {
       // Clones array instead of passing ref
-      clone.rewardFuncs = this.rewardFuncs.slice(0);
+      clone.silentRewards = this.silentRewards.slice(0);
     }
 
     if (this.partyTemplates) {
@@ -4471,10 +4467,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival")
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL)
-    .setRewardFuncs(
-      () => allRewards.SUPER_EXP_CHARM,
-      () => allRewards.EXP_SHARE,
-    )
+    .setSilentReward(TrainerItemId.SUPER_EXP_CHARM, TrainerItemId.EXP_SHARE)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -4541,7 +4534,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival")
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_2)
-    .setRewardFuncs(() => allRewards.EXP_SHARE)
+    .setSilentReward(TrainerItemId.EXP_SHARE)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -4694,7 +4687,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_rival_2")
     .setMixedBattleBgm("battle_rival_2")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_4)
-    .setRewardFuncs(() => allRewards.TERA_ORB)
+    .setSilentReward(TrainerItemId.TERA_ORB)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(

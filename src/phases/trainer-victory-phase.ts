@@ -1,8 +1,8 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { allRewards } from "#data/data-lists";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import { BiomeId } from "#enums/biome-id";
+import { RewardId } from "#enums/reward-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { BattlePhase } from "#phases/battle-phase";
@@ -20,9 +20,11 @@ export class TrainerVictoryPhase extends BattlePhase {
 
     globalScene.phaseManager.unshiftNew("MoneyRewardPhase", globalScene.currentBattle.trainer?.config.moneyMultiplier!); // TODO: is this bang correct?
 
-    const rewardFuncs = globalScene.currentBattle.trainer?.config.rewardFuncs!; // TODO: is this bang correct?
-    for (const rewardFunc of rewardFuncs) {
-      globalScene.phaseManager.unshiftNew("RewardPhase", rewardFunc);
+    const silentRewards = globalScene.currentBattle.trainer?.config.silentRewards; // TODO: is this bang correct?
+    if (silentRewards) {
+      for (const id of silentRewards) {
+        globalScene.phaseManager.unshiftNew("RewardPhase", id);
+      }
     }
 
     const trainerType = globalScene.currentBattle.trainer?.config.trainerType!; // TODO: is this bang correct?
@@ -35,14 +37,14 @@ export class TrainerVictoryPhase extends BattlePhase {
         if (timedEventManager.getUpgradeUnlockedVouchers()) {
           globalScene.phaseManager.unshiftNew(
             "RewardPhase",
-            [allRewards.VOUCHER_PLUS, allRewards.VOUCHER_PLUS, allRewards.VOUCHER_PLUS, allRewards.VOUCHER_PREMIUM][
+            [RewardId.VOUCHER_PLUS, RewardId.VOUCHER_PLUS, RewardId.VOUCHER_PLUS, RewardId.VOUCHER_PREMIUM][
               vouchers[TrainerType[trainerType]].voucherType
             ],
           );
         } else {
           globalScene.phaseManager.unshiftNew(
             "RewardPhase",
-            [allRewards.VOUCHER, allRewards.VOUCHER, allRewards.VOUCHER_PLUS, allRewards.VOUCHER_PREMIUM][
+            [RewardId.VOUCHER, RewardId.VOUCHER, RewardId.VOUCHER_PLUS, RewardId.VOUCHER_PREMIUM][
               vouchers[TrainerType[trainerType]].voucherType
             ],
           );
