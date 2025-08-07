@@ -4307,14 +4307,14 @@ export const trainerConfigs: TrainerConfigs = {
     .setMixedBattleBgm("battle_mustard")
     .setPartyMemberFunc(
       0,
-      getRandomPartyMemberFunc([SpeciesId.CORVIKNIGHT], TrainerSlot.TRAINER, true, p => {
+      getRandomPartyMemberFunc([SpeciesId.MIENSHAO], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
       }),
     )
     .setPartyMemberFunc(
       1,
-      getRandomPartyMemberFunc([SpeciesId.KOMMO_O], TrainerSlot.TRAINER, true, p => {
+      getRandomPartyMemberFunc([SpeciesId.CORVIKNIGHT], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
       }),
@@ -4329,15 +4329,19 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       3,
-      getRandomPartyMemberFunc([SpeciesId.BLASTOISE, SpeciesId.VENUSAUR], TrainerSlot.TRAINER, true, p => {
-        p.generateAndPopulateMoveset();
+      getRandomPartyMemberFunc([SpeciesId.VENUSAUR, SpeciesId.BLASTOISE], TrainerSlot.TRAINER, true, p => {
         p.pokeball = PokeballType.ULTRA_BALL;
-        p.formIndex = 2; // G-Max Blastoise, G-Max Venusaur
+        p.teraType = PokemonType.FIGHTING;
+        p.generateAndPopulateMoveset();
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.TERA_BLAST)) {
+          // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
+          p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
+        }
       }),
     )
     .setPartyMemberFunc(
       4,
-      getRandomPartyMemberFunc([SpeciesId.ZAMAZENTA], TrainerSlot.TRAINER, true, p => {
+      getRandomPartyMemberFunc([SpeciesId.KOMMO_O], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
       }),
@@ -4345,16 +4349,26 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.URSHIFU], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = randSeedIntRange(0, 1); // Random Urshifu form
-        p.generateAndPopulateMoveset();
+        p.formIndex = randSeedIntRange(2, 3); // Random G-Max Urshifu form
         p.generateName();
         p.gender = Gender.MALE;
         p.pokeball = PokeballType.ULTRA_BALL;
         p.setBoss(true, 2);
-        p.teraType = p.formIndex === 0 ? PokemonType.DARK : PokemonType.WATER;
+        if (p.formIndex === 2) {
+          p.moveset[0] = new PokemonMove(MoveId.WICKED_BLOW);	  
+          p.moveset[1] = new PokemonMove(MoveId.BRICK_BREAK);
+          p.moveset[2] = new PokemonMove(randSeedItem([MoveId.FIRE_PUNCH, MoveId.THUNDER_PUNCH, MoveId.ICE_PUNCH]));
+          p.moveset[3] = new PokemonMove(MoveId.FOCUS_ENERGY);
+        } 
+		else if (p.formIndex === 3) {
+          p.moveset[0] = new PokemonMove(MoveId.SURGING_STRIKES);
+          p.moveset[1] = new PokemonMove(MoveId.BRICK_BREAK);
+          p.moveset[2] = new PokemonMove(randSeedItem([MoveId.FIRE_PUNCH, MoveId.THUNDER_PUNCH, MoveId.ICE_PUNCH]));
+          p.moveset[3] = new PokemonMove(MoveId.FOCUS_ENERGY);
+        }
       }),
     )
-    .setInstantTera(5), // Tera Dark Urshifu Single / Tera Water Urshifu Rapid
+    .setInstantTera(3), // Tera Fighting Venusaur / Blastoise
   [TrainerType.GEETA]: new TrainerConfig(++t)
     .initForChampion(false)
     .setMixedBattleBgm("battle_champion_geeta")
@@ -4431,11 +4445,11 @@ export const trainerConfigs: TrainerConfigs = {
           p.generateAndPopulateMoveset();
           p.gender = Gender.MALE;
           p.setBoss(true, 2);
-          p.teraType = p.species.type1!;
+          p.teraType = p.species.type2!;
         },
       ),
     )
-    .setInstantTera(5), // Tera Grass Meowscarada, Fire Skeledirge, Water Quaquaval
+    .setInstantTera(5), // Tera Dark Meowscarada, Ghost Skeledirge, Fighting Quaquaval
   [TrainerType.KIERAN]: new TrainerConfig(++t)
     .initForChampion(true)
     .setMixedBattleBgm("battle_champion_kieran")
