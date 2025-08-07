@@ -86,7 +86,7 @@ import { applyHeldItems } from "#items/all-held-items";
 import { type ApplyTrainerItemsParams, applyTrainerItems } from "#items/apply-trainer-items";
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
-import type { Reward } from "#items/reward";
+import type { MatchExact, Reward } from "#items/reward";
 import { getRewardPoolForType } from "#items/reward-pool-utils";
 import { type EnemyAttackStatusEffectChanceTrainerItem, TrainerItemEffect } from "#items/trainer-item";
 import {
@@ -2636,15 +2636,17 @@ export class BattleScene extends SceneBase {
     applyTrainerItems(effect, this.trainerItems, params);
   }
 
-  applyReward<T extends Reward>(reward: T, params: Parameters<T["apply"]>[0], playSound?: boolean): boolean {
+  applyReward<T extends Reward>(
+    reward: T,
+    params: MatchExact<Parameters<T["apply"]>[0]>,
+    playSound?: boolean,
+  ): boolean {
     const soundName = reward.soundName;
 
     if (playSound && !this.sound.get(soundName)) {
       this.playSound(soundName);
     }
 
-    // TODO: fix later
-    // @ts-expect-error
     if (!reward.shouldApply(params)) {
       return false;
     }

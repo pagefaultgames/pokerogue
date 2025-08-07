@@ -93,7 +93,7 @@ import i18next from "i18next";
  * Type helper to exactly match objects and nothing else.
  * @todo merge with `Exact` later on
  */
-type MatchExact<T> = T extends object ? Exact<T> : T;
+export type MatchExact<T> = T extends object ? Exact<T> : T;
 
 export abstract class Reward {
   // TODO: If all we care about for categorization is the reward's ID's _category_, why not do it there?
@@ -369,6 +369,7 @@ export class HeldItemReward extends PokemonReward {
 }
 
 export class TrainerItemReward extends Reward {
+  // TODO: This should not be public
   public itemId: TrainerItemId;
   constructor(itemId: TrainerItemId, group?: string, soundName?: string) {
     super("", "", group, soundName);
@@ -1527,4 +1528,8 @@ export class RewardOption {
     this.tier = tier;
     this.cost = Math.min(Math.round(cost), Number.MAX_SAFE_INTEGER);
   }
+}
+
+export class NoneReward extends Reward {
+  override apply(): void {}
 }

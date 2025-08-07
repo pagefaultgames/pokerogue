@@ -12,16 +12,16 @@ export type WeightedRewardWeightFunc = (party: Pokemon[], rerollCount?: number) 
 
 export type RewardPoolId = RewardId | HeldItemId | TrainerItemId;
 
-type allRewardsInstanceMap = {
+type allRewardGenerators = {
   [k in keyof allRewardsType as allRewardsType[k] extends RewardGenerator ? k : never]: allRewardsType[k];
 };
 
 type RewardGeneratorArgMap = {
-  [k in keyof allRewardsInstanceMap]: Exclude<Parameters<allRewardsInstanceMap[k]["generateReward"]>[0], undefined>;
+  [k in keyof allRewardGenerators]: Exclude<Parameters<allRewardGenerators[k]["generateReward"]>[0], undefined>;
 };
 
 /** Union type containing all {@linkcode RewardId}s corresponding to valid {@linkcode RewardGenerator}s. */
-type RewardGeneratorId = keyof allRewardsInstanceMap;
+type RewardGeneratorId = keyof allRewardGenerators;
 
 type RewardGeneratorSpecs<T extends RewardGeneratorId = RewardGeneratorId> = {
   id: T;

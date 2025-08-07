@@ -18,6 +18,7 @@ import {
   FusePokemonReward,
   LapsingTrainerItemReward,
   MintRewardGenerator,
+  NoneReward,
   PokemonAllMovePpRestoreReward,
   PokemonHpRestoreReward,
   PokemonLevelIncrementReward,
@@ -34,6 +35,8 @@ import {
 
 // TODO: Move to `reward-utils.ts` and un-exportt
 export const allRewards = {
+  [RewardId.NONE]: new NoneReward(),
+
   // Pokeball rewards
   [RewardId.POKEBALL]: new AddPokeballReward("pb", PokeballType.POKEBALL, 5, RewardId.POKEBALL),
   [RewardId.GREAT_BALL]: new AddPokeballReward("gb", PokeballType.GREAT_BALL, 5, RewardId.GREAT_BALL),
@@ -171,8 +174,6 @@ export const allRewards = {
 
   [RewardId.BERRY]: new BerryRewardGenerator(),
 
-  // [RewardId.MINI_BLACK_HOLE] = new HeldItemReward(HeldItemId.MINI_BLACK_HOLE),
-
   // Trainer items
 
   [RewardId.LURE]: new LapsingTrainerItemReward(TrainerItemId.LURE, RewardId.LURE),
@@ -182,7 +183,6 @@ export const allRewards = {
   [RewardId.TEMP_STAT_STAGE_BOOSTER]: new TempStatStageBoosterRewardGenerator(),
 
   [RewardId.DIRE_HIT]: new LapsingTrainerItemReward(TrainerItemId.DIRE_HIT, RewardId.TEMP_STAT_STAGE_BOOSTER),
-  //  [RewardId.GOLDEN_POKEBALL]: new TrainerItemReward(TrainerItemId.GOLDEN_POKEBALL),
 } as const satisfies {
   [k in RewardId]: RewardFunc;
 };
