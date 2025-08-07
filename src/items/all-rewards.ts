@@ -36,7 +36,7 @@ import {
 
 // TODO: Move to `reward-utils.ts` and un-exportt
 export const allRewards = {
-  [RewardId.NONE]: new NoneReward(),
+  [RewardId.NONE]: new NoneReward("", ""),
 
   // Pokeball rewards
   [RewardId.POKEBALL]: new AddPokeballReward("pb", PokeballType.POKEBALL, 5, RewardId.POKEBALL),
@@ -80,8 +80,8 @@ export const allRewards = {
   // Pokemon consumables
   [RewardId.RARE_CANDY]: new PokemonLevelIncrementReward("modifierType:ModifierType.RARE_CANDY", "rare_candy"),
 
-  [RewardId.EVOLUTION_ITEM]: new EvolutionItemRewardGenerator(false, RewardId.EVOLUTION_ITEM),
-  [RewardId.RARE_EVOLUTION_ITEM]: new EvolutionItemRewardGenerator(true, RewardId.RARE_EVOLUTION_ITEM),
+  [RewardId.EVOLUTION_ITEM]: new EvolutionItemRewardGenerator(false),
+  [RewardId.RARE_EVOLUTION_ITEM]: new EvolutionItemRewardGenerator(true),
 
   [RewardId.POTION]: new PokemonHpRestoreReward("modifierType:ModifierType.POTION", "potion", RewardId.POTION, 20, 10),
   [RewardId.SUPER_POTION]: new PokemonHpRestoreReward(
@@ -161,8 +161,8 @@ export const allRewards = {
   [RewardId.DNA_SPLICERS]: new FusePokemonReward("modifierType:ModifierType.DNA_SPLICERS", "dna_splicers"),
 
   // Form change items
-  [RewardId.FORM_CHANGE_ITEM]: new FormChangeItemRewardGenerator(false, RewardId.FORM_CHANGE_ITEM),
-  [RewardId.RARE_FORM_CHANGE_ITEM]: new FormChangeItemRewardGenerator(true, RewardId.RARE_FORM_CHANGE_ITEM),
+  [RewardId.FORM_CHANGE_ITEM]: new FormChangeItemRewardGenerator(false),
+  [RewardId.RARE_FORM_CHANGE_ITEM]: new FormChangeItemRewardGenerator(true),
 
   // Held items
 
