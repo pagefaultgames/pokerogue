@@ -1,3 +1,4 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -7,6 +8,7 @@ import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { invalidEncoreMoves } from "#moves/invalid-moves";
 import { GameManager } from "#test/test-utils/game-manager";
+import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -40,16 +42,52 @@ describe("Moves - Encore", () => {
   it("should prevent the target from using any move except the last used move", async () => {
     await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
-    const enemyPokemon = game.field.getEnemyPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.ENCORE);
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(enemyPokemon).toHaveBattlerTag(BattlerTagType.ENCORE);
-    expect(enemyPokemon.isMoveRestricted(MoveId.TACKLE)).toBe(true);
-    expect(enemyPokemon.isMoveRestricted(MoveId.SPLASH)).toBe(false);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.ENCORE);
+    expect(enemy.isMoveRestricted(MoveId.TACKLE)).toBe(true);
+    expect(enemy.isMoveRestricted(MoveId.SPLASH)).toBe(false);
+  });
+
+  it("should be removed on turn end after triggering thrice, ignoring Instruct", async () => {
+    await game.classicMode.startBattle([SpeciesId.SNORLAX]);
+
+    const enemy = game.field.getEnemyPokemon();
+    enemy.pushMoveHistory({ move: MoveId.SPLASH, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
+
+    game.move.use(MoveId.ENCORE);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toNextTurn();
+
+    // Should have ticked down once
+    expect(enemy).toHaveBattlerTag(BattlerTagType.ENCORE);
+    expect(enemy.getTag(BattlerTagType.ENCORE)!.turnCount).toBe(2);
+
+    game.move.use(MoveId.INSTRUCT);
+    await game.toNextTurn();
+
+    expect(enemy.getTag(BattlerTagType.ENCORE)!.turnCount).toBe(1);
+
+    game.move.use(MoveId.INSTRUCT);
+    await game.toEndOfTurn(false);
+
+    // Tag should still be present until the `TurnEndPhase` ticks it down
+    expect(enemy).toHaveBattlerTag(BattlerTagType.ENCORE);
+
+    await game.toEndOfTurn();
+
+    expect(enemy).not.toHaveBattlerTag(BattlerTagType.ENCORE);
+    expect(game.textInterceptor.logs).toContain(
+      i18next.t("battlerTags:encoreOnRemove", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
+      }),
+    );
   });
 
   it("should override any upcoming moves with the Encored move, while still consuming PP", async () => {
@@ -72,7 +110,7 @@ describe("Moves - Encore", () => {
   // TODO: Make test using `changeMoveset`
   it.todo("should end at turn end if the user forgets the Encored move");
 
-  it("should end immediately if the move runs out of PP", async () => {
+  it("should be removed at turn end if the Encored move runs out of PP", async () => {
     await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
     // Fake enemy having used tackle the turn prior

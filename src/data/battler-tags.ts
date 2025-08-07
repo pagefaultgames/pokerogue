@@ -1241,11 +1241,20 @@ export class FrenzyTag extends SerializableBattlerTag {
  */
 export class EncoreTag extends MoveRestrictionBattlerTag {
   public override readonly tagType = BattlerTagType.ENCORE;
-  /** The ID of the move the user is locked into using */
+  /** The {@linkcode MoveID} the tag holder is locked into */
   public moveId: MoveId;
 
   constructor(sourceId: number) {
-    super(BattlerTagType.ENCORE, BattlerTagLapseType.TURN_END, 3, MoveId.ENCORE, sourceId);
+    // Encore ends at the end of the 3rd turn it procs.
+    // If used on turn X when faster, it ends at the end of turn X+2.
+    // If used on turn X when slower, it ends at the end of turn X+3.
+    super(
+      BattlerTagType.ENCORE,
+      [BattlerTagLapseType.AFTER_MOVE, BattlerTagLapseType.TURN_END],
+      3,
+      MoveId.ENCORE,
+      sourceId,
+    );
   }
 
   public override loadTag(source: BaseBattlerTag & Pick<EncoreTag, "tagType" | "moveId">): void {
@@ -1264,6 +1273,10 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
     }
 
     if (!pokemon.getMoveset().some(m => m.moveId === lastMove.move && !m.isOutOfPp())) {
+      return false;
+    }
+
+    if (pokemon.getTag(BattlerTagType.SHELL_TRAP)) {
       return false;
     }
 
@@ -1314,16 +1327,22 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
   }
 
   /**
-   * If the encored move has run out of PP, Encore ends early.
-   * Otherwise, Encore's duration reduces at the end of the turn.
-   * @returns `true` to persist | `false` to end and be removed
+   * If the encored move has run out of PP or the tag's turn count has elapsed,
+   * Encore ends at the END of the turn.
+   * Otherwise, Encore's duration reduces when the target attempts to use a move.
+   * @returns Whether the tag should remain active.
    */
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType === BattlerTagLapseType.AFTER_MOVE) {
+      this.turnCount--;
+      return true;
+    }
+
     const encoredMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
     if (isNullOrUndefined(encoredMove) || encoredMove.isOutOfPp()) {
       return false;
     }
-    return super.lapse(pokemon, lapseType);
+    return this.turnCount > 0;
   }
 
   /**
