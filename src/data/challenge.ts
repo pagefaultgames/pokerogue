@@ -379,8 +379,8 @@ export abstract class Challenge {
 
   /**
    * An apply function for POKEMON_MOVE. Derived classes should alter this.
-   * @param _moveId - The move being checked
-   * @param _status - Whether the move can be used or not
+   * @param _moveId - The {@linkcode MoveId} being checked
+   * @param _status - A {@linkcode BooleanHolder} containing the move's usability status
    * @returns Whether this function did anything
    */
   applyPokemonMove(_moveId: MoveId, _status: BooleanHolder): boolean {

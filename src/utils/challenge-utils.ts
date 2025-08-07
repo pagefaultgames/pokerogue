@@ -14,12 +14,12 @@ import { BooleanHolder, type NumberHolder } from "./common";
 import { getPokemonSpecies } from "./pokemon-utils";
 
 /**
- * Apply all challenges that modify starter choice.
- * @param challengeType {@link ChallengeType} ChallengeType.STARTER_CHOICE
- * @param pokemon {@link PokemonSpecies} The pokemon to check the validity of.
- * @param valid {@link BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
- * @param dexAttr {@link DexAttrProps} The dex attributes of the pokemon.
- * @returns True if any challenge was successfully applied.
+ * @param challengeType - {@linkcode ChallengeType.STARTER_CHOICE}
+ * @param pokemon - The {@linkcode PokemonSpecies} to check the validity of
+ * @param valid - A {@linkcode BooleanHolder} holding the checked species' validity;
+ * will be set to `false` if the species is disallowed
+ * @param dexAttr - The {@linkcode DexAttrProps | Dex attributes} of the species
+ * @returns `true` if any challenge was successfully applied
  */
 export function applyChallenges(
   challengeType: ChallengeType.STARTER_CHOICE,
