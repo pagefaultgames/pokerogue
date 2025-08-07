@@ -80,7 +80,7 @@ describe("Moves - Encore", () => {
     // Tag should still be present until the `TurnEndPhase` ticks it down
     expect(enemy).toHaveBattlerTag(BattlerTagType.ENCORE);
 
-    await game.toEndOfTurn();
+    await game.toNextTurn();
 
     expect(enemy).not.toHaveBattlerTag(BattlerTagType.ENCORE);
     expect(game.textInterceptor.logs).toContain(
