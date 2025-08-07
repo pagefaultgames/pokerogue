@@ -401,7 +401,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
     const gameModeLabel = addTextObject(
       8,
       5,
-      `${GameMode.getModeName(data.gameMode) || i18next.t("gameMode:unkown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`,
+      `${GameMode.getModeName(data.gameMode) || i18next.t("gameMode:unknown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`,
       TextStyle.WINDOW,
     );
     this.add(gameModeLabel);
