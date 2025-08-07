@@ -10,5 +10,7 @@ export const allAbilities: Ability[] = [];
 export const allMoves: Move[] = [];
 export const allSpecies: PokemonSpecies[] = [];
 
+//@ts-expect-error
 export const allHeldItems: Record<HeldItemId, HeldItem> = {};
+//@ts-expect-error
 export const allTrainerItems: Record<TrainerItemId, TrainerItem> = {};
