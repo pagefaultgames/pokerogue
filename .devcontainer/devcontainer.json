@@ -15,7 +15,45 @@
   },
   "customizations": {
     "vscode": {
-      "extensions": ["aaron-bond.better-comments", ""]
+      "settings": {
+        // # Formatter configs
+        "editor.defaultFormatter": "biomejs.biome",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.codeActionsOnSave": {
+          "source.addMissingImports.ts": "always",
+          "source.removeUnusedImports": "always",
+          "source.fixAll.biome": "always",
+          "source.organizeImports.biome": "always"
+        },
+        "biome.suggestInstallingGlobally": false,
+
+        // # JS/TS setting overrides
+        "javascript.preferences.importModuleSpecifier": "non-relative",
+        "javascript.preferences.importModuleSpecifierEnding": "index",
+        "javascript.preferGoToSourceDefinition": true,
+        "javascript.updateImportsOnFileMove.enabled": "always",
+
+        "typescript.preferences.importModuleSpecifier": "non-relative",
+        "typescript.preferences.importModuleSpecifierEnding": "index",
+        "typescript.preferGoToSourceDefinition": true,
+        "typescript.updateImportsOnFileMove.enabled": "always",
+
+        "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+
+        // # Miscellaneous
+        "npm.packageManager": "pnpm",
+        "npm.scriptRunner": "pnpm",
+        "vitest.cliArguments": "--no-isolate"
+      },
+      "extensions": [
+        "biomejs.biome",
+        "YoavBls.pretty-ts-errors",
+        "vitest.explorer",
+        "adpyke.codesnap", // Bind to a hotkey (ctrl+\, etc) for best results
+        "aaron-bond.better-comments",
+        "MuTsunTsai.jsdoc-link"
+      ]
     }
   },
   "postCreateCommand": "pnpm install",
