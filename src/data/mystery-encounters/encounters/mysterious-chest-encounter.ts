@@ -143,7 +143,7 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
           setEncounterRewards({
             guaranteedRarityTiers: [RarityTier.COMMON, RarityTier.COMMON, RarityTier.GREAT, RarityTier.GREAT],
           });
-          // Display result message then proceed to allRewards
+          // Display result message then proceed to rewards
           queueEncounterMessage(`${namespace}:option.1.normal`);
           leaveEncounterWithoutBattle();
         } else if (roll >= RAND_LENGTH - COMMON_REWARDS_PERCENT - ULTRA_REWARDS_PERCENT) {
@@ -151,7 +151,7 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
           setEncounterRewards({
             guaranteedRarityTiers: [RarityTier.ULTRA, RarityTier.ULTRA, RarityTier.ULTRA],
           });
-          // Display result message then proceed to allRewards
+          // Display result message then proceed to rewards
           queueEncounterMessage(`${namespace}:option.1.good`);
           leaveEncounterWithoutBattle();
         } else if (roll >= RAND_LENGTH - COMMON_REWARDS_PERCENT - ULTRA_REWARDS_PERCENT - ROGUE_REWARDS_PERCENT) {
@@ -159,7 +159,7 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
           setEncounterRewards({
             guaranteedRarityTiers: [RarityTier.ROGUE, RarityTier.ROGUE],
           });
-          // Display result message then proceed to allRewards
+          // Display result message then proceed to rewards
           queueEncounterMessage(`${namespace}:option.1.great`);
           leaveEncounterWithoutBattle();
         } else if (
@@ -170,7 +170,7 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
           setEncounterRewards({
             guaranteedRarityTiers: [RarityTier.MASTER],
           });
-          // Display result message then proceed to allRewards
+          // Display result message then proceed to rewards
           queueEncounterMessage(`${namespace}:option.1.amazing`);
           leaveEncounterWithoutBattle();
         } else {
@@ -208,7 +208,7 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
       ],
     },
     async () => {
-      // Leave encounter with no allRewards or exp
+      // Leave encounter with no rewards or exp
       leaveEncounterWithoutBattle(true);
       return true;
     },

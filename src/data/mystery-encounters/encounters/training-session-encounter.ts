@@ -346,7 +346,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
       ],
     },
     async () => {
-      // Leave encounter with no allRewards or exp
+      // Leave encounter with no rewards or exp
       leaveEncounterWithoutBattle(true);
       return true;
     },
