@@ -3,7 +3,7 @@ import { getRewardCategory, RewardCategoryId, RewardId } from "#enums/reward-id"
 import type { RarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import { allRewards } from "#items/all-rewards";
-import type { RewardFunc, RewardPoolId, RewardSpecs } from "#types/rewards";
+import type { RewardPoolId, RewardSpecs } from "#types/rewards";
 import { heldItemRarities } from "./held-item-default-tiers";
 import {
   HeldItemReward,
@@ -62,7 +62,7 @@ export function generateRewardOptionFromId<T extends RewardPoolId>(
     return new RewardOption(reward, upgradeCount, tier, cost);
   }
 
-  const rewardFunc = allRewards[id] as RewardFunc;
+  const rewardFunc = allRewards[id] as Reward | RewardGenerator;
   const reward = rewardFunc instanceof RewardGenerator ? rewardFunc.generateReward(pregenArgs) : rewardFunc;
   if (reward) {
     const tier = tierOverride ?? rewardRarities[id];

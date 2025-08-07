@@ -3,7 +3,6 @@ import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { VoucherType } from "#system/voucher";
-import type { RewardFunc } from "#types/rewards";
 import {
   AddMoneyReward,
   AddPokeballReward,
@@ -27,6 +26,8 @@ import {
   PokemonReviveReward,
   PokemonStatusHealReward,
   RememberMoveReward,
+  type Reward,
+  type RewardGenerator,
   SpeciesStatBoosterRewardGenerator,
   TempStatStageBoosterRewardGenerator,
   TeraTypeRewardGenerator,
@@ -184,7 +185,7 @@ export const allRewards = {
 
   [RewardId.DIRE_HIT]: new LapsingTrainerItemReward(TrainerItemId.DIRE_HIT, RewardId.TEMP_STAT_STAGE_BOOSTER),
 } as const satisfies {
-  [k in RewardId]: RewardFunc;
+  [k in RewardId]: Reward | RewardGenerator;
 };
 
 export type allRewardsType = typeof allRewards;
