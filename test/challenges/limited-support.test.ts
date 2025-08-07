@@ -8,7 +8,7 @@ import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Challenges - No Support", () => {
+describe("Challenges - Limited Support", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -34,7 +34,7 @@ describe("Challenges - No Support", () => {
 
   it('should disable the shop in "No Shop"', async () => {
     game.override.startingWave(181);
-    game.challengeMode.addChallenge(Challenges.NO_SUPPORT, 2, 1);
+    game.challengeMode.addChallenge(Challenges.LIMITED_SUPPORT, 2, 1);
     await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
 
     game.move.use(MoveId.SPLASH);
@@ -50,7 +50,7 @@ describe("Challenges - No Support", () => {
 
   it('should disable the automatic party heal in "No Heal"', async () => {
     game.override.startingWave(10);
-    game.challengeMode.addChallenge(Challenges.NO_SUPPORT, 1, 1);
+    game.challengeMode.addChallenge(Challenges.LIMITED_SUPPORT, 1, 1);
     await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
 
     const playerPokemon = game.field.getPlayerPokemon();
@@ -65,7 +65,7 @@ describe("Challenges - No Support", () => {
 
   it('should disable both automatic party healing and shop in "Both"', async () => {
     game.override.startingWave(10);
-    game.challengeMode.addChallenge(Challenges.NO_SUPPORT, 3, 1);
+    game.challengeMode.addChallenge(Challenges.LIMITED_SUPPORT, 3, 1);
     await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
 
     const playerPokemon = game.field.getPlayerPokemon();

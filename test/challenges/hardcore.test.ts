@@ -12,7 +12,7 @@ import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Challenges - Permanent Faint", () => {
+describe("Challenges - Hardcore", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -29,7 +29,7 @@ describe("Challenges - Permanent Faint", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.challengeMode.addChallenge(Challenges.PERMANENT_FAINT, 1, 1);
+    game.challengeMode.addChallenge(Challenges.HARDCORE, 1, 1);
     game.override
       .battleStyle("single")
       .enemySpecies(SpeciesId.VOLTORB)

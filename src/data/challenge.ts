@@ -940,9 +940,9 @@ export class LowerStarterPointsChallenge extends Challenge {
 /**
  * Implements a No Support challenge
  */
-export class NoSupportChallenge extends Challenge {
+export class LimitedSupportChallenge extends Challenge {
   constructor() {
-    super(Challenges.NO_SUPPORT, 3);
+    super(Challenges.LIMITED_SUPPORT, 3);
   }
 
   override applyPartyHeal(status: BooleanHolder): boolean {
@@ -961,8 +961,8 @@ export class NoSupportChallenge extends Challenge {
     return false;
   }
 
-  static override loadChallenge(source: NoSupportChallenge | any): NoSupportChallenge {
-    const newChallenge = new NoSupportChallenge();
+  static override loadChallenge(source: LimitedSupportChallenge | any): LimitedSupportChallenge {
+    const newChallenge = new LimitedSupportChallenge();
     newChallenge.value = source.value;
     newChallenge.severity = source.severity;
     return newChallenge;
@@ -996,9 +996,9 @@ export class LimitedCatchChallenge extends Challenge {
 /**
  * Implements a Permanent Faint challenge
  */
-export class PermanentFaintChallenge extends Challenge {
+export class HardcoreChallenge extends Challenge {
   constructor() {
-    super(Challenges.PERMANENT_FAINT, 1);
+    super(Challenges.HARDCORE, 1);
   }
 
   override applyPokemonFusion(pokemon: PlayerPokemon, status: BooleanHolder): boolean {
@@ -1034,8 +1034,8 @@ export class PermanentFaintChallenge extends Challenge {
     return false;
   }
 
-  static override loadChallenge(source: PermanentFaintChallenge | any): PermanentFaintChallenge {
-    const newChallenge = new PermanentFaintChallenge();
+  static override loadChallenge(source: HardcoreChallenge | any): HardcoreChallenge {
+    const newChallenge = new HardcoreChallenge();
     newChallenge.value = source.value;
     newChallenge.severity = source.severity;
     return newChallenge;
@@ -1065,10 +1065,10 @@ export function copyChallenge(source: Challenge | any): Challenge {
       return FlipStatChallenge.loadChallenge(source);
     case Challenges.LIMITED_CATCH:
       return LimitedCatchChallenge.loadChallenge(source);
-    case Challenges.NO_SUPPORT:
-      return NoSupportChallenge.loadChallenge(source);
-    case Challenges.PERMANENT_FAINT:
-      return PermanentFaintChallenge.loadChallenge(source);
+    case Challenges.LIMITED_SUPPORT:
+      return LimitedSupportChallenge.loadChallenge(source);
+    case Challenges.HARDCORE:
+      return HardcoreChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -1078,9 +1078,9 @@ export const allChallenges: Challenge[] = [];
 export function initChallenges() {
   allChallenges.push(
     new FreshStartChallenge(),
-    new PermanentFaintChallenge(),
+    new HardcoreChallenge(),
     new LimitedCatchChallenge(),
-    new NoSupportChallenge(),
+    new LimitedSupportChallenge(),
     new SingleGenerationChallenge(),
     new SingleTypeChallenge(),
     new InverseBattleChallenge(),

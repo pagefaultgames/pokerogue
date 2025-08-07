@@ -933,7 +933,7 @@ export const achvs = {
     c =>
       c instanceof LimitedCatchChallenge &&
       c.value > 0 &&
-      globalScene.gameMode.challenges.some(c => c.id === Challenges.PERMANENT_FAINT && c.value > 0) &&
+      globalScene.gameMode.challenges.some(c => c.id === Challenges.HARDCORE && c.value > 0) &&
       globalScene.gameMode.challenges.some(c => c.id === Challenges.FRESH_START && c.value > 0),
   ),
   BREEDERS_IN_SPACE: new Achv("BREEDERS_IN_SPACE", "", "BREEDERS_IN_SPACE.description", "moon_stone", 50).setSecret(),

@@ -7,6 +7,6 @@ export enum Challenges {
     INVERSE_BATTLE,
     FLIP_STAT,
     LIMITED_CATCH,
-    NO_SUPPORT,
-    PERMANENT_FAINT,
+    LIMITED_SUPPORT,
+    HARDCORE,
 }
