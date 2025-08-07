@@ -54,6 +54,7 @@
       "#utils/*": ["./utils/*.ts"],
       "#data/*": ["./data/pokemon-forms/*.ts", "./data/pokemon/*.ts", "./data/*.ts"],
       "#test/*": ["../test/*.ts"],
+      "#test/test-utils/*": ["../test/test-utils/utils/*.ts", "../test/test-utils/*.ts"],
       "#app/*": ["*.ts"]
     },
     "outDir": "./build",

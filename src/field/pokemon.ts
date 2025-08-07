@@ -275,7 +275,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
-  public heldItemManager: HeldItemManager;
+  public readonly heldItemManager: HeldItemManager = new HeldItemManager();
 
   // TODO: Rework this eventually
   constructor(

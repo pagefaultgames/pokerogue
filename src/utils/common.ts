@@ -267,6 +267,7 @@ export function formatStat(stat: number, forHp = false): string {
   return formatLargeNumber(stat, forHp ? 100_000 : 1_000_000);
 }
 
+// TODO: Remove in place of enum utils
 export function getTypedKeys<T extends Record<number, any>, K extends number = Extract<keyof T, number>>(obj: T): K[] {
   return Object.keys(obj).map(k => Number(k) as K);
 }
