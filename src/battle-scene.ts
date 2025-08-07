@@ -65,7 +65,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { PokeballType } from "#enums/pokeball";
 import type { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
-import { HeldItemPoolType, RewardPoolType } from "#enums/reward-pool-type";
+import { HeldItemPoolType } from "#enums/reward-pool-type";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -87,7 +87,6 @@ import { type ApplyTrainerItemsParams, applyTrainerItems } from "#items/apply-tr
 import type { HeldItemConfiguration } from "#items/held-item-data-types";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
 import type { MatchExact, Reward } from "#items/reward";
-import { getRewardPoolForType } from "#items/reward-pool-utils";
 import { type EnemyAttackStatusEffectChanceTrainerItem, TrainerItemEffect } from "#items/trainer-item";
 import {
   isTrainerItemPool,
@@ -1234,15 +1233,7 @@ export class BattleScene extends SceneBase {
         ...allSpecies,
         ...allMoves,
         ...allAbilities,
-        ...getEnumValues(RewardPoolType)
-          .map(mpt => getRewardPoolForType(mpt))
-          .flatMap(mp =>
-            Object.values(mp)
-              .flat()
-              .map(mt => mt.reward)
-              .filter(mt => "localize" in mt)
-              .map(lpb => lpb as unknown as Localizable),
-          ),
+        //TODO: do we need to add items and rewards here?
       ];
       for (const item of localizable) {
         item.localize();
@@ -2781,74 +2772,6 @@ export class BattleScene extends SceneBase {
           }
         }
       }
-    });
-  }
-
-  // TODO @Wlowscha: Fix this
-  /**
-   * Attempt to discard one or more copies of a held item.
-   * @param itemModifier - The {@linkcode PokemonHeldItemModifier} being discarded
-   * @param discardQuantity - The number of copies to remove (up to the amount currently held); default `1`
-   * @returns Whether the item was successfully discarded.
-   * Removing fewer items than requested is still considered a success.
-   */
-  tryDiscardHeldItemModifier(itemModifier: PokemonHeldItemModifier, discardQuantity = 1): boolean {
-    const countTaken = Math.min(discardQuantity, itemModifier.stackCount);
-    itemModifier.stackCount -= countTaken;
-
-    if (itemModifier.stackCount > 0) {
-      return true;
-    }
-
-    return this.removeModifier(itemModifier);
-  }
-
-  canTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferQuantity = 1): boolean {
-    const mod = itemModifier.clone() as PokemonHeldItemModifier;
-    const source = mod.pokemonId ? mod.getPokemon() : null;
-    const cancelled = new BooleanHolder(false);
-
-    if (source && source.isPlayer() !== target.isPlayer()) {
-      applyAbAttrs("BlockItemTheftAbAttr", { pokemon: source, cancelled });
-    }
-
-    if (cancelled.value) {
-      return false;
-    }
-
-    const matchingModifier = this.findModifier(
-      m => m instanceof PokemonHeldItemModifier && m.matchType(mod) && m.pokemonId === target.id,
-      target.isPlayer(),
-    ) as PokemonHeldItemModifier;
-
-    if (matchingModifier) {
-      const maxStackCount = matchingModifier.getMaxStackCount();
-      if (matchingModifier.stackCount >= maxStackCount) {
-        return false;
-      }
-      const countTaken = Math.min(transferQuantity, mod.stackCount, maxStackCount - matchingModifier.stackCount);
-      mod.stackCount -= countTaken;
-    } else {
-      const countTaken = Math.min(transferQuantity, mod.stackCount);
-      mod.stackCount -= countTaken;
-    }
-
-    const removeOld = mod.stackCount === 0;
-
-    return !removeOld || !source || this.hasModifier(itemModifier, !source.isPlayer());
-  }
-
-  removePartyMemberModifiers(partyMemberIndex: number): Promise<void> {
-    return new Promise(resolve => {
-      const pokemonId = this.getPlayerParty()[partyMemberIndex].id;
-      const modifiersToRemove = this.modifiers.filter(
-        m => m instanceof PokemonHeldItemModifier && (m as PokemonHeldItemModifier).pokemonId === pokemonId,
-      );
-      for (const m of modifiersToRemove) {
-        this.modifiers.splice(this.modifiers.indexOf(m), 1);
-      }
-      this.updateModifiers();
-      resolve();
     });
   }
 

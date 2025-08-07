@@ -60,13 +60,13 @@ export enum PartyUiMode {
    */
   REVIVAL_BLESSING,
   /**
-   * Indicates that the party UI is open to select a mon to apply a modifier to.
+   * Indicates that the party UI is open to select a mon to apply a reward to.
    * This type of selection can be cancelled.
    */
   REWARD,
   /**
    * Indicates that the party UI is open to select a mon to apply a move
-   * modifier to (such as an Ether or PP Up).  This type of selection can be cancelled.
+   * reward to (such as an Ether or PP Up).  This type of selection can be cancelled.
    */
   MOVE_REWARD,
   /**
@@ -368,7 +368,7 @@ export class PartyUiHandler extends MessageUiHandler {
     this.populatePartySlots();
     // If we are currently transferring items, set the icon to its proper state and reveal the button.
     if (this.isItemManageMode()) {
-      this.partyDiscardModeButton.toggleIcon(this.partyUiMode as PartyUiMode.MODIFIER_TRANSFER | PartyUiMode.DISCARD);
+      this.partyDiscardModeButton.toggleIcon(this.partyUiMode as PartyUiMode.ITEM_TRANSFER | PartyUiMode.DISCARD);
     }
     this.showPartyText();
     this.setCursor(0);
@@ -552,7 +552,6 @@ export class PartyUiHandler extends MessageUiHandler {
     return true;
   }
 
-  // TODO: This will be largely changed with the modifier rework
   private processItemTransferModeInput(pokemon: PlayerPokemon) {
     const ui = this.getUi();
     const option = this.options[this.optionsCursor];
@@ -570,7 +569,6 @@ export class PartyUiHandler extends MessageUiHandler {
         // this for look goes through each of the party pokemon
         const newPokemon = globalScene.getPlayerParty()[p];
         // this next bit checks to see if the the selected item from the original transfer pokemon exists on the new pokemon `p`
-        // this returns `undefined` if the new pokemon doesn't have the item at all, otherwise it returns the `pokemonHeldItemModifier` for that item
         const transferItem = pokemon.heldItemManager.getTransferableHeldItems()[this.transferOptionCursor];
         const matchingItem = newPokemon.heldItemManager.hasItem(transferItem);
 
@@ -578,7 +576,7 @@ export class PartyUiHandler extends MessageUiHandler {
         if (p !== this.transferCursor) {
           // this skips adding the able/not able labels on the pokemon doing the transfer
           if (matchingItem) {
-            // if matchingModifier exists then the item exists on the new pokemon
+            // if matchingItem exists then the item exists on the new pokemon
             if (newPokemon.heldItemManager.isMaxStack(transferItem)) {
               // checks to see if the stack of items is at max stack; if so, set the description label to "Not able"
               ableToTransferText = i18next.t("partyUiHandler:notAble");
@@ -587,7 +585,7 @@ export class PartyUiHandler extends MessageUiHandler {
               ableToTransferText = i18next.t("partyUiHandler:able");
             }
           } else {
-            // if matchingModifier doesn't exist, that means the pokemon doesn't have any of the item, and we need to show "Able"
+            // if matchingItem doesn't exist, that means the pokemon doesn't have any of the item, and we need to show "Able"
             ableToTransferText = i18next.t("partyUiHandler:able");
           }
         } else {
@@ -682,17 +680,17 @@ export class PartyUiHandler extends MessageUiHandler {
   }
 
   private doDiscard(option: PartyOption, pokemon: PlayerPokemon) {
-    const itemModifiers = this.getTransferrableItemsFromPokemon(pokemon);
+    const items = pokemon.heldItemManager.getTransferableHeldItems();
     this.clearOptions();
 
     if (option === PartyOption.ALL) {
       // Discard all currently held items
-      for (let i = 0; i < itemModifiers.length; i++) {
-        globalScene.tryDiscardHeldItemModifier(itemModifiers[i], this.transferQuantities[i]);
+      for (let i = 0; i < items.length; i++) {
+        pokemon.heldItemManager.remove(items[i], this.transferQuantities[i]);
       }
     } else {
       // Discard the currently selected item
-      globalScene.tryDiscardHeldItemModifier(itemModifiers[option], this.transferQuantities[option]);
+      pokemon.heldItemManager.remove(items[option], this.transferQuantities[option]);
     }
   }
 
@@ -981,7 +979,7 @@ export class PartyUiHandler extends MessageUiHandler {
    * @returns Whether the current handler is responsible for managing items.
    */
   private isItemManageMode(): boolean {
-    return this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER || this.partyUiMode === PartyUiMode.DISCARD;
+    return this.partyUiMode === PartyUiMode.ITEM_TRANSFER || this.partyUiMode === PartyUiMode.DISCARD;
   }
 
   private processPartyActionInput(): boolean {
@@ -1005,9 +1003,9 @@ export class PartyUiHandler extends MessageUiHandler {
     if (this.cursor === 7) {
       switch (this.partyUiMode) {
         case PartyUiMode.DISCARD:
-          this.partyUiMode = PartyUiMode.MODIFIER_TRANSFER;
+          this.partyUiMode = PartyUiMode.ITEM_TRANSFER;
           break;
-        case PartyUiMode.MODIFIER_TRANSFER:
+        case PartyUiMode.ITEM_TRANSFER:
           this.partyUiMode = PartyUiMode.DISCARD;
           break;
         default:
@@ -1415,7 +1413,7 @@ export class PartyUiHandler extends MessageUiHandler {
         }
         break;
       case PartyUiMode.DISCARD:
-        this.updateOptionsWithModifierTransferMode(pokemon);
+        this.updateOptionsWithItemTransferMode(pokemon);
         break;
       // TODO: This still needs to be broken up.
       // It could use a rework differentiating different kind of switches
@@ -1428,7 +1426,7 @@ export class PartyUiHandler extends MessageUiHandler {
           const isBatonPassMove = this.isBatonPassMove();
 
           if (allowBatonSwitch && !isBatonPassMove) {
-            // the BATON modifier gives an extra switch option for
+            // the BATON item gives an extra switch option for
             // pokemon-command switches, allowing buffs to be optionally passed
             this.options.push(PartyOption.PASS_BATON);
           }
@@ -1796,7 +1794,7 @@ class PartySlot extends Phaser.GameObjects.Container {
         ? -184 +
             (globalScene.currentBattle.double ? -40 : 0) +
             (28 + (globalScene.currentBattle.double ? 8 : 0)) * slotIndex
-        : partyUiMode === PartyUiMode.MODIFIER_TRANSFER
+        : partyUiMode === PartyUiMode.ITEM_TRANSFER
           ? -124 + (globalScene.currentBattle.double ? -20 : 0) + slotIndex * 55
           : -124 + (globalScene.currentBattle.double ? -8 : 0) + slotIndex * 64,
     );
@@ -2158,10 +2156,10 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
    * This will also reveal the button if it is currently hidden.
    */
   // TODO: Reminder to fix
-  public toggleIcon(partyMode: PartyUiMode.MODIFIER_TRANSFER | PartyUiMode.DISCARD): void {
+  public toggleIcon(partyMode: PartyUiMode.ITEM_TRANSFER | PartyUiMode.DISCARD): void {
     this.setActive(true).setVisible(true);
     switch (partyMode) {
-      case PartyUiMode.MODIFIER_TRANSFER:
+      case PartyUiMode.ITEM_TRANSFER:
         this.transferIcon.setVisible(true);
         this.discardIcon.setVisible(false);
         this.textBox.setVisible(true);
