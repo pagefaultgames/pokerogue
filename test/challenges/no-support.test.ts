@@ -29,7 +29,7 @@ describe("Challenges - No Support", () => {
       .battleStyle("single")
       .enemySpecies(SpeciesId.VOLTORB)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(MoveId.SPLASH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it('should disable the shop in "No Shop"', async () => {
@@ -74,7 +74,7 @@ describe("Challenges - No Support", () => {
     game.move.use(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.toNextWave();
- 
+
     expect(playerPokemon).not.toHaveFullHp();
 
     game.move.use(MoveId.SPLASH);

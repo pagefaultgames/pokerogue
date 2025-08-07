@@ -34,7 +34,7 @@ describe("Challenges - Permanent Faint", () => {
       .battleStyle("single")
       .enemySpecies(SpeciesId.VOLTORB)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(MoveId.SPLASH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should render Revival Blessing unusable by players only", async () => {
@@ -44,7 +44,7 @@ describe("Challenges - Permanent Faint", () => {
     const player = game.field.getPlayerPokemon();
     const revBlessing = player.getMoveset()[0];
     expect(revBlessing.isUsable()).toBe(false);
-    
+
     game.move.select(MoveId.REVIVAL_BLESSING);
     await game.toEndOfTurn();
 
