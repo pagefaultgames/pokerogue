@@ -1,9 +1,10 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { allRewards } from "#data/data-lists";
 import { BattleType } from "#enums/battle-type";
 import type { BattlerIndex } from "#enums/battler-index";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
+import { RewardId } from "#enums/reward-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import type { CustomRewardSettings } from "#items/reward-pool-utils";
 import { handleMysteryEncounterVictory } from "#mystery-encounters/encounter-phase-utils";
 import { PokemonPhase } from "#phases/pokemon-phase";
@@ -55,11 +56,11 @@ export class VictoryPhase extends PokemonPhase {
               // Get event modifiers for this wave
               timedEventManager
                 .getFixedBattleEventRewards(globalScene.currentBattle.waveIndex)
-                .map(r => globalScene.phaseManager.pushNew("RewardPhase", allRewards[r]));
+                .map(r => globalScene.phaseManager.pushNew("RewardPhase", r));
               break;
             case ClassicFixedBossWaves.EVIL_BOSS_2:
               // Should get Lock Capsule on 165 before shop phase so it can be used in the allRewards shop
-              globalScene.phaseManager.pushNew("RewardPhase", allRewards.LOCK_CAPSULE);
+              globalScene.phaseManager.pushNew("RewardPhase", TrainerItemId.LOCK_CAPSULE);
               break;
           }
         }
@@ -71,17 +72,17 @@ export class VictoryPhase extends PokemonPhase {
             this.getFixedBattleCustomRewards(),
           );
         } else if (globalScene.gameMode.isDaily) {
-          globalScene.phaseManager.pushNew("RewardPhase", allRewards.EXP_CHARM);
+          globalScene.phaseManager.pushNew("RewardPhase", TrainerItemId.EXP_CHARM);
           if (
             globalScene.currentBattle.waveIndex > 10 &&
             !globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)
           ) {
-            globalScene.phaseManager.pushNew("RewardPhase", allRewards.GOLDEN_POKEBALL);
+            globalScene.phaseManager.pushNew("RewardPhase", TrainerItemId.GOLDEN_POKEBALL);
           }
         } else {
           const superExpWave = !globalScene.gameMode.isEndless ? (globalScene.offsetGym ? 0 : 20) : 10;
           if (globalScene.gameMode.isEndless && globalScene.currentBattle.waveIndex === 10) {
-            globalScene.phaseManager.pushNew("RewardPhase", allRewards.EXP_SHARE);
+            globalScene.phaseManager.pushNew("RewardPhase", TrainerItemId.EXP_SHARE);
           }
           if (
             globalScene.currentBattle.waveIndex <= 750 &&
@@ -90,17 +91,17 @@ export class VictoryPhase extends PokemonPhase {
             globalScene.phaseManager.pushNew(
               "RewardPhase",
               globalScene.currentBattle.waveIndex % 30 !== superExpWave || globalScene.currentBattle.waveIndex > 250
-                ? allRewards.EXP_CHARM
-                : allRewards.SUPER_EXP_CHARM,
+                ? TrainerItemId.EXP_CHARM
+                : TrainerItemId.SUPER_EXP_CHARM,
             );
           }
           if (globalScene.currentBattle.waveIndex <= 150 && !(globalScene.currentBattle.waveIndex % 50)) {
-            globalScene.phaseManager.pushNew("RewardPhase", allRewards.GOLDEN_POKEBALL);
+            globalScene.phaseManager.pushNew("RewardPhase", TrainerItemId.GOLDEN_POKEBALL);
           }
           if (globalScene.gameMode.isEndless && !(globalScene.currentBattle.waveIndex % 50)) {
             globalScene.phaseManager.pushNew(
               "RewardPhase",
-              !(globalScene.currentBattle.waveIndex % 250) ? allRewards.VOUCHER_PREMIUM : allRewards.VOUCHER_PLUS,
+              !(globalScene.currentBattle.waveIndex % 250) ? RewardId.VOUCHER_PREMIUM : RewardId.VOUCHER_PLUS,
             );
             globalScene.phaseManager.pushNew("AddEnemyTokenPhase");
           }
