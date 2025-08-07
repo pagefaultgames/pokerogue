@@ -1885,43 +1885,56 @@ class PartySlot extends Phaser.GameObjects.Container {
     const isFusion = this.pokemon.fusionSpecies;
 
     // Here we define positions and offsets
-    const magicNumbers = {
-      slotPb: { x: 4, y: 4 },
-      namePosition: { x: 24, y: 10 + (offsetJa ? 2 : 0) },
-      nameTextWidth: 76 - (isFusion ? 8 : 0),
-      levelLabelPosition: { x: 24 + 8, y: 10 + 12 },
-      levelTextToLevelLabelOffset: { x: 9, y: offsetJa ? 1.5 : 0 },
-      genderTextToLevelLabelOffset: { x: 68 - (isFusion ? 8 : 0), y: -9 },
-      splicedIconToLevelLabelOffset: { x: 68, y: 3.5 - 12 },
-      statusIconToLevelLabelOffset: { x: 55, y: 0 },
-      shinyIconToNameOffset: { x: -9, y: 3 },
-      hpBarPosition: { x: 8, y: 31 },
-      hpOverlayToBarOffset: { x: 16, y: 2 }, // This should stay fixed
-      hpTextToBarOffset: { x: -3, y: -2 + (offsetJa ? 2 : 0) }, // This should stay fixed; relative to HP bar length
-      descriptionLabelPosition: { x: 32, y: 46 },
-    };
+    // Base values are for the active pokemon; they are changed for benched pokemon,
+    // or for active pokemon if in a double battle in item management mode.
 
+    // icon position relative to slot background
+    let slotPb = { x: 4, y: 4 };
+    // name position relative to slot background
+    let namePosition = { x: 24, y: 10 + (offsetJa ? 2 : 0) };
+    // maximum allowed length of name; must accomodate fusion symbol
+    let maxNameTextWidth = 76 - (isFusion ? 8 : 0);
+    // "Lv." label position relative to slot background
+    let levelLabelPosition = { x: 24 + 8, y: 10 + 12 };
+    // offset from "Lv." to the level number; should not be changed.
+    const levelTextToLevelLabelOffset = { x: 9, y: offsetJa ? 1.5 : 0 };
+    // offests from "Lv." to gender, spliced and status icons, these depend on the type of slot.
+    let genderTextToLevelLabelOffset = { x: 68 - (isFusion ? 8 : 0), y: -9 };
+    let splicedIconToLevelLabelOffset = { x: 68, y: 3.5 - 12 };
+    let statusIconToLevelLabelOffset = { x: 55, y: 0 };
+    // offset from the name to the shiny icon (on the left); should not be changed.
+    const shinyIconToNameOffset = { x: -9, y: 3 };
+    // hp bar position relative to slot background
+    let hpBarPosition = { x: 8, y: 31 };
+    // offsets of hp bar overlay (showing the remaining hp) and number; should not be changed.
+    const hpOverlayToBarOffset = { x: 16, y: 2 };
+    const hpTextToBarOffset = { x: -3, y: -2 + (offsetJa ? 2 : 0) };
+    // description position relative to slot background
+    let descriptionLabelPosition = { x: 32, y: 46 };
+
+    // If in item management mode, the active slots are shorter
     if (isItemManageMode && globalScene.currentBattle.double && !this.isBenched) {
-      magicNumbers.namePosition.y -= 8;
-      magicNumbers.levelLabelPosition.y -= 8;
-      magicNumbers.hpBarPosition.y -= 8;
-      magicNumbers.descriptionLabelPosition.y -= 8;
+      namePosition.y -= 8;
+      levelLabelPosition.y -= 8;
+      hpBarPosition.y -= 8;
+      descriptionLabelPosition.y -= 8;
     }
 
+    // Benched slots have significantly different parameters
     if (this.isBenched) {
-      magicNumbers.slotPb = { x: 2, y: 12 };
-      magicNumbers.namePosition = { x: 21, y: 2 + (offsetJa ? 2 : 0) };
-      magicNumbers.nameTextWidth = 52;
-      magicNumbers.levelLabelPosition = { x: 21 + 8, y: 2 + 12 };
-      magicNumbers.genderTextToLevelLabelOffset = { x: 36, y: 0 };
-      magicNumbers.splicedIconToLevelLabelOffset = { x: 36 + (genderSymbol ? 8 : 0), y: 0.5 };
-      magicNumbers.statusIconToLevelLabelOffset = { x: 43, y: 0 };
-      magicNumbers.hpBarPosition = { x: 72, y: 6 };
-      magicNumbers.descriptionLabelPosition = { x: 94, y: 16 };
+      slotPb = { x: 2, y: 12 };
+      namePosition = { x: 21, y: 2 + (offsetJa ? 2 : 0) };
+      maxNameTextWidth = 52;
+      levelLabelPosition = { x: 21 + 8, y: 2 + 12 };
+      genderTextToLevelLabelOffset = { x: 36, y: 0 };
+      splicedIconToLevelLabelOffset = { x: 36 + (genderSymbol ? 8 : 0), y: 0.5 };
+      statusIconToLevelLabelOffset = { x: 43, y: 0 };
+      hpBarPosition = { x: 72, y: 6 };
+      descriptionLabelPosition = { x: 94, y: 16 };
     }
 
     this.slotPb = globalScene.add.sprite(0, 0, "party_pb");
-    this.slotPb.setPosition(magicNumbers.slotPb.x, magicNumbers.slotPb.y);
+    this.slotPb.setPosition(slotPb.x, slotPb.y);
     this.add(this.slotPb);
 
     this.pokemonIcon = globalScene.addPokemonIcon(this.pokemon, this.slotPb.x, this.slotPb.y, 0.5, 0.5, true);
@@ -1938,7 +1951,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     const nameSizeTest = addTextObject(0, 0, displayName, TextStyle.PARTY);
     nameTextWidth = nameSizeTest.displayWidth;
 
-    while (nameTextWidth > magicNumbers.nameTextWidth) {
+    while (nameTextWidth > maxNameTextWidth) {
       displayName = `${displayName.slice(0, displayName.endsWith(".") ? -2 : -1).trimEnd()}.`;
       nameSizeTest.setText(displayName);
       nameTextWidth = nameSizeTest.displayWidth;
@@ -1947,12 +1960,12 @@ class PartySlot extends Phaser.GameObjects.Container {
     nameSizeTest.destroy();
 
     this.slotName = addTextObject(0, 0, displayName, TextStyle.PARTY);
-    this.slotName.setPositionRelative(this.slotBg, magicNumbers.namePosition.x, magicNumbers.namePosition.y);
+    this.slotName.setPositionRelative(this.slotBg, namePosition.x, namePosition.y);
     this.slotName.setOrigin(0);
 
     const slotLevelLabel = globalScene.add
       .image(0, 0, "party_slot_overlay_lv")
-      .setPositionRelative(this.slotBg, magicNumbers.levelLabelPosition.x, magicNumbers.levelLabelPosition.y)
+      .setPositionRelative(this.slotBg, levelLabelPosition.x, levelLabelPosition.y)
       .setOrigin(0);
 
     const slotLevelText = addTextObject(
@@ -1961,11 +1974,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       this.pokemon.level.toString(),
       this.pokemon.level < globalScene.getMaxExpLevel() ? TextStyle.PARTY : TextStyle.PARTY_RED,
     )
-      .setPositionRelative(
-        slotLevelLabel,
-        magicNumbers.levelTextToLevelLabelOffset.x,
-        magicNumbers.levelTextToLevelLabelOffset.y,
-      )
+      .setPositionRelative(slotLevelLabel, levelTextToLevelLabelOffset.x, levelTextToLevelLabelOffset.y)
       .setOrigin(0, 0.25);
     slotInfoContainer.add([this.slotName, slotLevelLabel, slotLevelText]);
 
@@ -1973,11 +1982,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       const slotGenderText = addTextObject(0, 0, genderSymbol, TextStyle.PARTY)
         .setColor(getGenderColor(this.pokemon.getGender(true)))
         .setShadowColor(getGenderColor(this.pokemon.getGender(true), true))
-        .setPositionRelative(
-          slotLevelLabel,
-          magicNumbers.genderTextToLevelLabelOffset.x,
-          magicNumbers.genderTextToLevelLabelOffset.y,
-        )
+        .setPositionRelative(slotLevelLabel, genderTextToLevelLabelOffset.x, genderTextToLevelLabelOffset.y)
         .setOrigin(0, 0.25);
       slotInfoContainer.add(slotGenderText);
     }
@@ -1987,11 +1992,7 @@ class PartySlot extends Phaser.GameObjects.Container {
         .image(0, 0, "icon_spliced")
         .setScale(0.5)
         .setOrigin(0)
-        .setPositionRelative(
-          slotLevelLabel,
-          magicNumbers.splicedIconToLevelLabelOffset.x,
-          magicNumbers.splicedIconToLevelLabelOffset.y,
-        );
+        .setPositionRelative(slotLevelLabel, splicedIconToLevelLabelOffset.x, splicedIconToLevelLabelOffset.y);
       slotInfoContainer.add(splicedIcon);
     }
 
@@ -2000,11 +2001,7 @@ class PartySlot extends Phaser.GameObjects.Container {
         .sprite(0, 0, getLocalizedSpriteKey("statuses"))
         .setFrame(StatusEffect[this.pokemon.status?.effect].toLowerCase())
         .setOrigin(0)
-        .setPositionRelative(
-          slotLevelLabel,
-          magicNumbers.statusIconToLevelLabelOffset.x,
-          magicNumbers.statusIconToLevelLabelOffset.y,
-        );
+        .setPositionRelative(slotLevelLabel, statusIconToLevelLabelOffset.x, statusIconToLevelLabelOffset.y);
       slotInfoContainer.add(statusIndicator);
     }
 
@@ -2014,7 +2011,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       const shinyStar = globalScene.add
         .image(0, 0, `shiny_star_small${doubleShiny ? "_1" : ""}`)
         .setOrigin(0)
-        .setPositionRelative(this.slotName, magicNumbers.shinyIconToNameOffset.x, magicNumbers.shinyIconToNameOffset.y)
+        .setPositionRelative(this.slotName, shinyIconToNameOffset.x, shinyIconToNameOffset.y)
         .setTint(getVariantTint(this.pokemon.getBaseVariant()));
       slotInfoContainer.add(shinyStar);
 
@@ -2032,14 +2029,14 @@ class PartySlot extends Phaser.GameObjects.Container {
       .image(0, 0, "party_slot_hp_bar")
       .setOrigin(0)
       .setVisible(false)
-      .setPositionRelative(this.slotBg, magicNumbers.hpBarPosition.x, magicNumbers.hpBarPosition.y);
+      .setPositionRelative(this.slotBg, hpBarPosition.x, hpBarPosition.y);
 
     const hpRatio = this.pokemon.getHpRatio();
 
     this.slotHpOverlay = globalScene.add
       .sprite(0, 0, "party_slot_hp_overlay", hpRatio > 0.5 ? "high" : hpRatio > 0.25 ? "medium" : "low")
       .setOrigin(0)
-      .setPositionRelative(this.slotHpBar, magicNumbers.hpOverlayToBarOffset.x, magicNumbers.hpOverlayToBarOffset.y)
+      .setPositionRelative(this.slotHpBar, hpOverlayToBarOffset.x, hpOverlayToBarOffset.y)
       .setScale(hpRatio, 1)
       .setVisible(false);
 
@@ -2047,19 +2044,15 @@ class PartySlot extends Phaser.GameObjects.Container {
       .setOrigin(1, 0)
       .setPositionRelative(
         this.slotHpBar,
-        this.slotHpBar.width + magicNumbers.hpTextToBarOffset.x,
-        this.slotHpBar.height + magicNumbers.hpTextToBarOffset.y,
+        this.slotHpBar.width + hpTextToBarOffset.x,
+        this.slotHpBar.height + hpTextToBarOffset.y,
       ) // TODO: annoying because it contains the width
       .setVisible(false);
 
     this.slotDescriptionLabel = addTextObject(0, 0, "", TextStyle.MESSAGE)
       .setOrigin(0, 1)
       .setVisible(false)
-      .setPositionRelative(
-        this.slotBg,
-        magicNumbers.descriptionLabelPosition.x,
-        magicNumbers.descriptionLabelPosition.y,
-      );
+      .setPositionRelative(this.slotBg, descriptionLabelPosition.x, descriptionLabelPosition.y);
 
     slotInfoContainer.add([this.slotHpBar, this.slotHpOverlay, this.slotHpText, this.slotDescriptionLabel]);
 
