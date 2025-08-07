@@ -349,7 +349,6 @@ export class HeldItemReward extends PokemonReward {
       soundName,
     );
     this.itemId = itemId;
-    this.id = RewardId.HELD_ITEM;
   }
 
   get name(): string {
@@ -375,7 +374,6 @@ export class TrainerItemReward extends Reward {
   constructor(itemId: TrainerItemId, group?: string, soundName?: string) {
     super("", "", group, soundName);
     this.itemId = itemId;
-    this.id = RewardId.TRAINER_ITEM;
   }
 
   get name(): string {
@@ -396,11 +394,6 @@ export class TrainerItemReward extends Reward {
 }
 
 export class LapsingTrainerItemReward extends TrainerItemReward {
-  constructor(itemId: TrainerItemId, id?: RewardId) {
-    super(itemId);
-    this.id = id ?? RewardId.TRAINER_ITEM;
-  }
-
   apply(): boolean {
     return globalScene.trainerItems.add(this.itemId, allTrainerItems[this.itemId].getMaxStackCount());
   }
@@ -554,7 +547,10 @@ export class PokemonHpRestoreReward extends PokemonReward {
   }
 
   apply({ pokemon }: PokemonRewardParams): boolean {
-    return restorePokemonHp(pokemon, this.restorePercent, this.restorePoints, this.healStatus, false);
+    return restorePokemonHp(pokemon, this.restorePercent, {
+      pointsToRestore: this.restorePoints,
+      healStatus: this.healStatus,
+    });
   }
 }
 
@@ -591,7 +587,7 @@ export class PokemonReviveReward extends PokemonHpRestoreReward {
   }
 
   apply({ pokemon }: PokemonRewardParams): boolean {
-    return restorePokemonHp(pokemon, this.restorePercent, 0, false, true);
+    return restorePokemonHp(pokemon, this.restorePercent, { fainted: true });
   }
 }
 
@@ -603,7 +599,7 @@ export class AllPokemonFullReviveReward extends Reward {
 
   apply(): boolean {
     for (const pokemon of globalScene.getPlayerParty()) {
-      restorePokemonHp(pokemon, 100, 0, false, true);
+      restorePokemonHp(pokemon, 100, { fainted: true });
     }
 
     return true;
