@@ -115,6 +115,7 @@ export abstract class Reward {
     return i18next.t(`${this.localeKey}.name`);
   }
 
+  // TODO: These should be getters
   getDescription(): string {
     return i18next.t(`${this.localeKey}.description`);
   }
@@ -438,11 +439,6 @@ export class ChangeTeraTypeReward extends PokemonReward {
     return i18next.t("modifierType:ModifierType.ChangeTeraTypeModifierType.description", {
       teraType: i18next.t(`pokemonInfo:Type.${PokemonType[this.teraType]}`),
     });
-  }
-
-  // TODO: What is this for?
-  getPregenArgs(): any[] {
-    return [this.teraType];
   }
 
   /**
@@ -936,10 +932,6 @@ export class AttackTypeBoosterReward extends HeldItemReward {
     this.moveType = moveType;
     this.boostPercent = boostPercent;
   }
-
-  getPregenArgs(): any[] {
-    return [this.moveType];
-  }
 }
 
 function incrementLevelWithCandy(pokemon: Pokemon): boolean {
@@ -1113,10 +1105,6 @@ export class EvolutionItemReward extends PokemonReward {
 
   getDescription(): string {
     return i18next.t("modifierType:ModifierType.EvolutionItemModifierType.description");
-  }
-
-  getPregenArgs(): any[] {
-    return [this.evolutionItem];
   }
 
   /**
