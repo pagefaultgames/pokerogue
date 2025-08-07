@@ -4,7 +4,7 @@ import type { HeldItemId } from "#enums/held-item-id";
 import { getRewardCategory, RewardCategoryId, RewardId } from "#enums/reward-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
-import type { RewardFunc, RewardPoolId, RewardSpecs } from "#types/rewards";
+import type { RewardPoolId, RewardSpecs } from "#types/rewards";
 import { heldItemRarities } from "./held-item-default-tiers";
 import {
   HeldItemReward,
@@ -32,16 +32,6 @@ export function isRememberMoveReward(reward: Reward): reward is RememberMoveRewa
   return reward.id === RewardId.MEMORY_MUSHROOM;
 }
 
-/**
- * Generates a Reward from a given function
- * @param rewardFunc
- * @param pregenArgs Can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
- */
-export function generateReward(rewardFunc: RewardFunc, pregenArgs?: any[]): Reward | null {
-  const reward = rewardFunc();
-  return reward instanceof RewardGenerator ? reward.generateReward(globalScene.getPlayerParty(), pregenArgs) : reward;
-}
-
 export function generateRewardOptionFromId(
   id: RewardPoolId,
   cost = 0,
@@ -61,8 +51,10 @@ export function generateRewardOptionFromId(
     return new RewardOption(reward, upgradeCount, tier, cost);
   }
 
-  const rewardFunc = allRewards[id];
-  const reward = generateReward(rewardFunc, pregenArgs);
+  const reward =
+    allRewards[id] instanceof RewardGenerator
+      ? allRewards[id].generateReward(globalScene.getPlayerParty(), pregenArgs)
+      : allRewards[id];
   if (reward) {
     const tier = tierOverride ?? rewardRarities[id];
     return new RewardOption(reward, upgradeCount, tier, cost);

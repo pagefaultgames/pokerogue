@@ -1,7 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { Reward } from "#items/reward";
 import { BattlePhase } from "#phases/battle-phase";
-import type { RewardFunc } from "#types/rewards";
 import i18next from "i18next";
 
 export class RewardPhase extends BattlePhase {
@@ -10,10 +9,10 @@ export class RewardPhase extends BattlePhase {
   public readonly phaseName: "RewardPhase" | "RibbonRewardPhase" | "GameOverRewardPhase" = "RewardPhase";
   protected reward: Reward;
 
-  constructor(rewardFunc: RewardFunc) {
+  constructor(reward: Reward) {
     super();
 
-    this.reward = rewardFunc();
+    this.reward = reward;
   }
 
   start() {
