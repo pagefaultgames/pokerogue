@@ -105,12 +105,14 @@ export class HeldItemManager {
     return itemType in this.heldItems && allHeldItems[itemType].isTransferable;
   }
 
+  // TODO: Consider renaming?
   getStack(itemType: HeldItemId): number {
     const item = this.heldItems[itemType];
-    return item ? item.stack : 0;
+    return item?.stack ?? 0;
   }
 
   // Use for tests if necessary to go over stack limit
+  // TODO: Do we need this? We can just use overrides
   setStack(itemType: HeldItemId, stack: number): void {
     const item = this.heldItems[itemType];
     if (item) {
