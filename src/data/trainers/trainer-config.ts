@@ -2561,9 +2561,9 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = 1; // Segin Starmobile
         p.moveset = [
           new PokemonMove(MoveId.WICKED_TORQUE),
-          new PokemonMove(MoveId.SPIN_OUT),
-          new PokemonMove(MoveId.SHIFT_GEAR),
-          new PokemonMove(MoveId.HIGH_HORSEPOWER),
+          new PokemonMove(MoveId.SNARL),
+          new PokemonMove(MoveId.METAL_SOUND),
+          new PokemonMove(MoveId.SWIFT),
         ];
       }),
     ),
@@ -2581,9 +2581,9 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = 2; // Schedar Starmobile
         p.moveset = [
           new PokemonMove(MoveId.BLAZING_TORQUE),
-          new PokemonMove(MoveId.SPIN_OUT),
-          new PokemonMove(MoveId.SHIFT_GEAR),
-          new PokemonMove(MoveId.HIGH_HORSEPOWER),
+          new PokemonMove(MoveId.OVERHEAT),
+          new PokemonMove(MoveId.SCREECH),
+          new PokemonMove(MoveId.SWIFT),
         ];
       }),
     ),
@@ -2602,8 +2602,8 @@ export const trainerConfigs: TrainerConfigs = {
         p.moveset = [
           new PokemonMove(MoveId.NOXIOUS_TORQUE),
           new PokemonMove(MoveId.SPIN_OUT),
-          new PokemonMove(MoveId.SHIFT_GEAR),
-          new PokemonMove(MoveId.HIGH_HORSEPOWER),
+          new PokemonMove(MoveId.FLAME_CHARGE),
+          new PokemonMove(MoveId.SMOG),
         ];
       }),
     ),
@@ -2622,8 +2622,8 @@ export const trainerConfigs: TrainerConfigs = {
         p.moveset = [
           new PokemonMove(MoveId.MAGICAL_TORQUE),
           new PokemonMove(MoveId.SPIN_OUT),
-          new PokemonMove(MoveId.SHIFT_GEAR),
-          new PokemonMove(MoveId.HIGH_HORSEPOWER),
+          new PokemonMove(MoveId.CONFUSE_RAY),
+          new PokemonMove(MoveId.STEEL_ROLLER),
         ];
       }),
     ),
