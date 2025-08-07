@@ -1882,7 +1882,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     this.add(this.slotBg);
 
     const genderSymbol = getGenderSymbol(this.pokemon.getGender(true));
-    const isFusion = this.pokemon.fusionSpecies;
+    const isFusion = this.pokemon.isFusion();
 
     // Here we define positions and offsets
     // Base values are for the active pokemon; they are changed for benched pokemon,
