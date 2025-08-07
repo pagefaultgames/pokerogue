@@ -293,7 +293,7 @@ describe("Phase - Battle Phase", () => {
       .startingTrainerItems([{ entry: TrainerItemId.X_ACCURACY }]);
 
     await game.classicMode.startBattle();
-    game.scene.getPlayerPokemon()!.hp = 1;
+    game.field.getPlayerPokemon().hp = 1;
     game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(BattleEndPhase);

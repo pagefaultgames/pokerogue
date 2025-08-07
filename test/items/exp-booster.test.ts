@@ -31,7 +31,7 @@ describe("EXP Modifier Items", () => {
     game.override.startingHeldItems([{ entry: HeldItemId.LUCKY_EGG, count: 3 }, { entry: HeldItemId.GOLDEN_EGG }]);
     await game.classicMode.startBattle();
 
-    const partyMember = game.scene.getPlayerPokemon()!;
+    const partyMember = game.field.getPlayerPokemon();
     partyMember.exp = 100;
     const expHolder = new NumberHolder(partyMember.exp);
     applyHeldItems(HeldItemEffect.EXP_BOOSTER, { pokemon: partyMember, expAmount: expHolder });

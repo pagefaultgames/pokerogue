@@ -47,7 +47,7 @@ describe("Items - Multi Lens", () => {
 
       await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const enemyPokemon = game.field.getEnemyPokemon();
       const spy = vi.spyOn(enemyPokemon, "getAttackDamage");
       vi.spyOn(enemyPokemon, "getBaseDamage").mockReturnValue(100);
 
@@ -68,7 +68,7 @@ describe("Items - Multi Lens", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -80,7 +80,7 @@ describe("Items - Multi Lens", () => {
   it("should apply secondary effects on each hit", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.TRAILBLAZE);
 
@@ -91,7 +91,7 @@ describe("Items - Multi Lens", () => {
   it("should not enhance multi-hit moves", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.TACHYON_CUTTER);
 
@@ -121,8 +121,8 @@ describe("Items - Multi Lens", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
     const spy = vi.spyOn(enemyPokemon, "getAttackDamage");
 
     game.move.select(MoveId.SEISMIC_TOSS);
@@ -146,7 +146,7 @@ describe("Items - Multi Lens", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SUPER_FANG);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -165,7 +165,7 @@ describe("Items - Multi Lens", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SUPER_FANG);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -185,7 +185,7 @@ describe("Items - Multi Lens", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SUPER_FANG);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -197,7 +197,7 @@ describe("Items - Multi Lens", () => {
     game.override.enemyLevel(1000);
     await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     vi.spyOn(enemyPokemon, "damageAndUpdate");
 
     game.move.select(MoveId.FUTURE_SIGHT);

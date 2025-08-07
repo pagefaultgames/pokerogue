@@ -39,8 +39,8 @@ describe("Moves - Heal Block", () => {
   it("shouldn't stop damage from HP-drain attacks, just HP restoration", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     player.damageAndUpdate(player.getMaxHp() - 1);
 
@@ -57,8 +57,8 @@ describe("Moves - Heal Block", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.ABSORB);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -71,7 +71,7 @@ describe("Moves - Heal Block", () => {
   it("should prevent Wish from restoring HP", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const player = game.field.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
     player.hp = 1;
 
@@ -95,7 +95,7 @@ describe("Moves - Heal Block", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
     player.damageAndUpdate(player.getMaxHp() - 1);
 
@@ -108,7 +108,7 @@ describe("Moves - Heal Block", () => {
   it("should prevent healing from heal-over-time moves", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
     player.damageAndUpdate(player.getMaxHp() - 1);
 
@@ -124,7 +124,7 @@ describe("Moves - Heal Block", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
     player.damageAndUpdate(player.getMaxHp() - 1);
 
@@ -139,7 +139,7 @@ describe("Moves - Heal Block", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     player.damageAndUpdate(player.getMaxHp() - 1);
 
     game.move.select(MoveId.SPLASH);

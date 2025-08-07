@@ -44,7 +44,7 @@ describe("Abilities - Cud Chew", () => {
     it("stores inside summonData at end of turn", async () => {
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
-      const farigiraf = game.scene.getPlayerPokemon()!;
+      const farigiraf = game.field.getPlayerPokemon();
       farigiraf.hp = 1; // needed to allow sitrus procs
 
       game.move.select(MoveId.SPLASH);
@@ -72,7 +72,7 @@ describe("Abilities - Cud Chew", () => {
       game.override.enemyMoveset([MoveId.SPLASH, MoveId.HEAL_PULSE]);
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
-      const farigiraf = game.scene.getPlayerPokemon()!;
+      const farigiraf = game.field.getPlayerPokemon();
       // Dip below half to eat berry
       farigiraf.hp = farigiraf.getMaxHp() / 2 - 1;
 
@@ -121,7 +121,7 @@ describe("Abilities - Cud Chew", () => {
         .enemyMoveset(MoveId.TEATIME);
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
-      const farigiraf = game.scene.getPlayerPokemon()!;
+      const farigiraf = game.field.getPlayerPokemon();
       farigiraf.hp = 1; // needed to allow berry procs
 
       game.move.select(MoveId.STUFF_CHEEKS);
@@ -149,7 +149,7 @@ describe("Abilities - Cud Chew", () => {
     it("should reset both arrays on switch", async () => {
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF, SpeciesId.GIRAFARIG]);
 
-      const farigiraf = game.scene.getPlayerPokemon()!;
+      const farigiraf = game.field.getPlayerPokemon();
       farigiraf.hp = 1;
 
       // eat berry turn 1, switch out turn 2
@@ -178,7 +178,7 @@ describe("Abilities - Cud Chew", () => {
       game.override.enemyAbility(AbilityId.NEUTRALIZING_GAS);
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
-      const farigiraf = game.scene.getPlayerPokemon()!;
+      const farigiraf = game.field.getPlayerPokemon();
       farigiraf.hp = 1;
 
       game.move.select(MoveId.SPLASH);
@@ -200,7 +200,7 @@ describe("Abilities - Cud Chew", () => {
       const apply = vi.spyOn(CudChewConsumeBerryAbAttr.prototype, "apply");
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
-      const farigiraf = game.scene.getPlayerPokemon()!;
+      const farigiraf = game.field.getPlayerPokemon();
       farigiraf.hp = 1;
 
       game.move.select(MoveId.SPLASH);
@@ -226,7 +226,7 @@ describe("Abilities - Cud Chew", () => {
       game.override.enemyAbility(AbilityId.UNNERVE);
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
-      const farigiraf = game.scene.getPlayerPokemon()!;
+      const farigiraf = game.field.getPlayerPokemon();
       farigiraf.hp = 1;
 
       game.move.select(MoveId.SPLASH);
@@ -244,7 +244,7 @@ describe("Abilities - Cud Chew", () => {
       game.override.enemyMoveset(MoveId.INCINERATE);
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
-      const farigiraf = game.scene.getPlayerPokemon()!;
+      const farigiraf = game.field.getPlayerPokemon();
       farigiraf.hp = farigiraf.getMaxHp() / 4;
 
       game.move.select(MoveId.SPLASH);
@@ -263,7 +263,7 @@ describe("Abilities - Cud Chew", () => {
         .startingHeldItems([]);
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
-      const farigiraf = game.scene.getPlayerPokemon()!;
+      const farigiraf = game.field.getPlayerPokemon();
 
       game.move.select(MoveId.BUG_BITE);
       await game.toNextTurn();
@@ -279,7 +279,7 @@ describe("Abilities - Cud Chew", () => {
       game.override.passiveAbility(AbilityId.RIPEN);
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
-      const farigiraf = game.scene.getPlayerPokemon()!;
+      const farigiraf = game.field.getPlayerPokemon();
       farigiraf.hp = 1;
 
       game.move.select(MoveId.SPLASH);
@@ -295,7 +295,7 @@ describe("Abilities - Cud Chew", () => {
       game.override.enemyLevel(1);
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
-      const farigiraf = game.scene.getPlayerPokemon()!;
+      const farigiraf = game.field.getPlayerPokemon();
       farigiraf.hp = 1;
 
       game.move.select(MoveId.HYPER_VOICE);
@@ -308,7 +308,7 @@ describe("Abilities - Cud Chew", () => {
       // reload and the berry should still be there
       await game.reload.reloadSession();
 
-      const farigirafReloaded = game.scene.getPlayerPokemon()!;
+      const farigirafReloaded = game.field.getPlayerPokemon();
       expect(farigirafReloaded.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
 
       const wave1Hp = farigirafReloaded.hp;

@@ -41,8 +41,8 @@ describe("Moves - Beak Blast", () => {
   it("should add a charge effect that burns attackers on contact", async () => {
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.BEAK_BLAST);
 
@@ -58,8 +58,8 @@ describe("Moves - Beak Blast", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.BEAK_BLAST);
 
@@ -75,8 +75,8 @@ describe("Moves - Beak Blast", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.BEAK_BLAST);
 
@@ -92,7 +92,7 @@ describe("Moves - Beak Blast", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.BEAK_BLAST);
 
@@ -105,8 +105,8 @@ describe("Moves - Beak Blast", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.BEAK_BLAST);
 
@@ -121,8 +121,8 @@ describe("Moves - Beak Blast", () => {
   it("should still burn the enemy if the user is knocked out", async () => {
     game.override.ability(AbilityId.BALL_FETCH);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
-    const user = game.scene.getPlayerPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
+    const user = game.field.getPlayerPokemon();
     user.hp = 1;
     game.move.select(MoveId.BEAK_BLAST);
     await game.phaseInterceptor.to("BerryPhase", false);
@@ -134,7 +134,7 @@ describe("Moves - Beak Blast", () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     game.move.select(MoveId.BEAK_BLAST);
     await game.phaseInterceptor.to("BerryPhase", false);
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.BURN);
   });
 });

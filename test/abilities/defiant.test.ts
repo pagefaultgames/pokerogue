@@ -37,7 +37,7 @@ describe("Abilities - Defiant", () => {
   it("lower atk and def by 1 via tickle, then increase atk by 4 via defiant", async () => {
     await game.classicMode.startBattle([SpeciesId.FLYGON]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnInitPhase);
 
@@ -49,7 +49,7 @@ describe("Abilities - Defiant", () => {
     game.override.enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([SpeciesId.FLYGON]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.CLOSE_COMBAT);
     await game.phaseInterceptor.to(TurnInitPhase);
 
@@ -62,7 +62,7 @@ describe("Abilities - Defiant", () => {
     game.override.startingHeldItems([{ entry: HeldItemId.WHITE_HERB }]);
     await game.classicMode.startBattle([SpeciesId.FLYGON]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnInitPhase);
 

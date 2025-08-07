@@ -50,10 +50,10 @@ describe("Moves - Tera Blast", () => {
   it("changes type to match user's tera type", async () => {
     game.override.enemySpecies(SpeciesId.FURRET);
     await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const spy = vi.spyOn(enemyPokemon, "getMoveEffectiveness");
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     playerPokemon.teraType = PokemonType.FIGHTING;
     playerPokemon.isTerastallized = true;
 
@@ -67,7 +67,7 @@ describe("Moves - Tera Blast", () => {
   it("increases power if user is Stellar tera type", async () => {
     await game.classicMode.startBattle();
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     playerPokemon.teraType = PokemonType.STELLAR;
     playerPokemon.isTerastallized = true;
 
@@ -81,11 +81,11 @@ describe("Moves - Tera Blast", () => {
   it("is super effective against terastallized targets if user is Stellar tera type", async () => {
     await game.classicMode.startBattle();
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     playerPokemon.teraType = PokemonType.STELLAR;
     playerPokemon.isTerastallized = true;
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const spy = vi.spyOn(enemyPokemon, "getMoveEffectiveness");
     enemyPokemon.isTerastallized = true;
 
@@ -99,7 +99,7 @@ describe("Moves - Tera Blast", () => {
   it("uses the higher ATK for damage calculation", async () => {
     await game.classicMode.startBattle();
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     playerPokemon.stats[Stat.ATK] = 100;
     playerPokemon.stats[Stat.SPATK] = 1;
     playerPokemon.isTerastallized = true;
@@ -114,7 +114,7 @@ describe("Moves - Tera Blast", () => {
   it("uses the higher SPATK for damage calculation", async () => {
     await game.classicMode.startBattle();
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     playerPokemon.stats[Stat.ATK] = 1;
     playerPokemon.stats[Stat.SPATK] = 100;
 
@@ -129,7 +129,7 @@ describe("Moves - Tera Blast", () => {
     game.override.enemyMoveset([MoveId.CHARM]);
     await game.classicMode.startBattle();
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     playerPokemon.stats[Stat.ATK] = 51;
     playerPokemon.stats[Stat.SPATK] = 50;
 
@@ -145,7 +145,7 @@ describe("Moves - Tera Blast", () => {
     game.override.startingHeldItems([{ entry: HeldItemId.THICK_CLUB }]).starterSpecies(SpeciesId.CUBONE);
     await game.classicMode.startBattle();
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     playerPokemon.stats[Stat.ATK] = 50;
     playerPokemon.stats[Stat.SPATK] = 51;
@@ -163,7 +163,7 @@ describe("Moves - Tera Blast", () => {
     game.override.ability(AbilityId.HUGE_POWER);
     await game.classicMode.startBattle();
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     playerPokemon.stats[Stat.ATK] = 50;
     playerPokemon.stats[Stat.SPATK] = 51;
 
@@ -178,7 +178,7 @@ describe("Moves - Tera Blast", () => {
   it("causes stat drops if user is Stellar tera type", async () => {
     await game.classicMode.startBattle();
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     playerPokemon.teraType = PokemonType.STELLAR;
     playerPokemon.isTerastallized = true;
 
@@ -198,14 +198,14 @@ describe("Moves - Tera Blast", () => {
   ])("should be $ty type if the user has $ab", async ({ ab_id, ty_id }) => {
     game.override.ability(ab_id).moveset([MoveId.TERA_BLAST]).enemyAbility(AbilityId.BALL_FETCH);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     expect(playerPokemon.getMoveType(allMoves[MoveId.TERA_BLAST])).toBe(ty_id);
   });
 
   it("should not be affected by normalize when the user is terastallized with tera normal", async () => {
     game.override.moveset([MoveId.TERA_BLAST]).ability(AbilityId.NORMALIZE);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     // override the tera state for the pokemon
     playerPokemon.isTerastallized = true;
     playerPokemon.teraType = PokemonType.NORMAL;

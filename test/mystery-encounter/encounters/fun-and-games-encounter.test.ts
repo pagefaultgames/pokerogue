@@ -144,9 +144,9 @@ describe("Fun And Games! - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(scene.getEnemyPokemon()?.species.speciesId).toBe(SpeciesId.WOBBUFFET);
-      expect(scene.getEnemyPokemon()?.ivs).toEqual([0, 0, 0, 0, 0, 0]);
-      expect(scene.getEnemyPokemon()?.nature).toBe(Nature.MILD);
+      expect(game.field.getEnemyPokemon().species.speciesId).toBe(SpeciesId.WOBBUFFET);
+      expect(game.field.getEnemyPokemon().ivs).toEqual([0, 0, 0, 0, 0, 0]);
+      expect(game.field.getEnemyPokemon().nature).toBe(Nature.MILD);
 
       game.onNextPrompt("MessagePhase", UiMode.MESSAGE, () => {
         game.endPhase();
@@ -206,7 +206,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
       });
 
       // Skip minigame
-      const wobbuffet = scene.getEnemyPokemon()!;
+      const wobbuffet = game.field.getEnemyPokemon();
       wobbuffet.hp = Math.floor(0.2 * wobbuffet.getMaxHp());
       scene.currentBattle.mysteryEncounter!.misc.turnsRemaining = 0;
       (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
@@ -236,7 +236,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
       });
 
       // Skip minigame
-      const wobbuffet = scene.getEnemyPokemon()!;
+      const wobbuffet = game.field.getEnemyPokemon();
       wobbuffet.hp = Math.floor(0.1 * wobbuffet.getMaxHp());
       scene.currentBattle.mysteryEncounter!.misc.turnsRemaining = 0;
       (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
@@ -266,7 +266,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
       });
 
       // Skip minigame
-      const wobbuffet = scene.getEnemyPokemon()!;
+      const wobbuffet = game.field.getEnemyPokemon();
       wobbuffet.hp = 1;
       scene.currentBattle.mysteryEncounter!.misc.turnsRemaining = 0;
       (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);

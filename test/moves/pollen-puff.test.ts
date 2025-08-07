@@ -53,7 +53,7 @@ describe("Moves - Pollen Puff", () => {
     game.override.moveset([MoveId.POLLEN_PUFF]).ability(AbilityId.PARENTAL_BOND).enemyLevel(100);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const target = game.scene.getEnemyPokemon()!;
+    const target = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POLLEN_PUFF);
 

@@ -35,7 +35,7 @@ describe("Moves - Gigaton Hammer", () => {
   it("can't be used two turns in a row", async () => {
     await game.classicMode.startBattle();
 
-    const enemy1 = game.scene.getEnemyPokemon()!;
+    const enemy1 = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.GIGATON_HAMMER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -49,7 +49,7 @@ describe("Moves - Gigaton Hammer", () => {
     game.move.select(MoveId.GIGATON_HAMMER);
     await game.toNextTurn();
 
-    const enemy2 = game.scene.getEnemyPokemon()!;
+    const enemy2 = game.field.getEnemyPokemon();
 
     expect(enemy2.hp).toBe(enemy2.getMaxHp());
   });
@@ -58,7 +58,7 @@ describe("Moves - Gigaton Hammer", () => {
     game.override.startingWave(4);
     await game.classicMode.startBattle();
 
-    const enemy1 = game.scene.getEnemyPokemon()!;
+    const enemy1 = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.GIGATON_HAMMER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -72,7 +72,7 @@ describe("Moves - Gigaton Hammer", () => {
     game.move.select(MoveId.GIGATON_HAMMER);
     await game.toNextTurn();
 
-    const enemy2 = game.scene.getEnemyPokemon()!;
+    const enemy2 = game.field.getEnemyPokemon();
 
     expect(enemy2.hp).toBeLessThan(enemy2.getMaxHp());
   });

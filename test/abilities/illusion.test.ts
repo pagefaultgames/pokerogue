@@ -36,8 +36,8 @@ describe("Abilities - Illusion", () => {
 
   it("creates illusion at the start", async () => {
     await game.classicMode.startBattle([SpeciesId.ZOROARK, SpeciesId.FEEBAS]);
-    const zoroark = game.scene.getPlayerPokemon()!;
-    const zorua = game.scene.getEnemyPokemon()!;
+    const zoroark = game.field.getPlayerPokemon();
+    const zorua = game.field.getEnemyPokemon();
 
     expect(!!zoroark.summonData.illusion).equals(true);
     expect(!!zorua.summonData.illusion).equals(true);
@@ -49,7 +49,7 @@ describe("Abilities - Illusion", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    const zorua = game.scene.getEnemyPokemon()!;
+    const zorua = game.field.getEnemyPokemon();
 
     expect(!!zorua.summonData.illusion).equals(false);
     expect(zorua.name).equals("Zorua");
@@ -61,7 +61,7 @@ describe("Abilities - Illusion", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    const zorua = game.scene.getEnemyPokemon()!;
+    const zorua = game.field.getEnemyPokemon();
 
     expect(!!zorua.summonData.illusion).equals(false);
   });
@@ -70,7 +70,7 @@ describe("Abilities - Illusion", () => {
     game.override.enemyAbility(AbilityId.NEUTRALIZING_GAS);
     await game.classicMode.startBattle([SpeciesId.KOFFING]);
 
-    const zorua = game.scene.getEnemyPokemon()!;
+    const zorua = game.field.getEnemyPokemon();
 
     expect(!!zorua.summonData.illusion).equals(false);
   });
@@ -86,15 +86,15 @@ describe("Abilities - Illusion", () => {
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerPokemon()!.summonData.illusion).toBeFalsy();
+    expect(game.field.getPlayerPokemon().summonData.illusion).toBeFalsy();
   });
 
   it("causes enemy AI to consider the illusion's type instead of the actual type when considering move effectiveness", async () => {
     game.override.enemyMoveset([MoveId.FLAMETHROWER, MoveId.PSYCHIC, MoveId.TACKLE]);
     await game.classicMode.startBattle([SpeciesId.ZOROARK, SpeciesId.FEEBAS]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
-    const zoroark = game.scene.getPlayerPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
+    const zoroark = game.field.getPlayerPokemon();
 
     const flameThrower = enemy.getMoveset()[0]!.getMove();
     const psychic = enemy.getMoveset()[1]!.getMove();
@@ -126,7 +126,7 @@ describe("Abilities - Illusion", () => {
     await game.move.forceEnemyMove(MoveId.WILL_O_WISP);
     await game.toEndOfTurn();
 
-    const zoroark = game.scene.getPlayerPokemon()!;
+    const zoroark = game.field.getPlayerPokemon();
     expect(!!zoroark.summonData.illusion).equals(true);
   });
 
@@ -144,7 +144,7 @@ describe("Abilities - Illusion", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    const zoroark = game.scene.getPlayerPokemon()!;
+    const zoroark = game.field.getPlayerPokemon();
 
     expect(zoroark.summonData.illusion?.name).equals("Axew");
     expect(zoroark.getNameToRender(true)).equals("axew nickname");
@@ -156,7 +156,7 @@ describe("Abilities - Illusion", () => {
   it("breaks when suppressed", async () => {
     game.override.moveset(MoveId.GASTRO_ACID);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    const zorua = game.scene.getEnemyPokemon()!;
+    const zorua = game.field.getEnemyPokemon();
 
     expect(!!zorua.summonData?.illusion).toBe(true);
 

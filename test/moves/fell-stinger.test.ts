@@ -42,7 +42,7 @@ describe("Moves - Fell Stinger", () => {
     game.override.enemyMoveset([MoveId.DOUBLE_EDGE]);
 
     await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.FELL_STINGER);
 
     await game.phaseInterceptor.to("VictoryPhase");
@@ -54,7 +54,7 @@ describe("Moves - Fell Stinger", () => {
     game.override.enemyMoveset(MoveId.SPLASH).enemyStatusEffect(StatusEffect.BURN);
 
     await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.FELL_STINGER);
 
     await game.phaseInterceptor.to("VictoryPhase");
@@ -66,7 +66,7 @@ describe("Moves - Fell Stinger", () => {
     game.override.weather(WeatherType.HAIL);
 
     await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.FELL_STINGER);
 
@@ -79,7 +79,7 @@ describe("Moves - Fell Stinger", () => {
     game.override.enemyPassiveAbility(AbilityId.STURDY).enemyAbility(AbilityId.DRY_SKIN).weather(WeatherType.HARSH_SUN);
 
     await game.challengeMode.startBattle([SpeciesId.LEAVANNY]);
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.FELL_STINGER);
 
@@ -92,7 +92,7 @@ describe("Moves - Fell Stinger", () => {
     game.override.enemyAbility(AbilityId.BALL_FETCH).enemyHeldItems([{ entry: HeldItemId.REVIVER_SEED }]);
 
     await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.FELL_STINGER);
 
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -107,7 +107,7 @@ describe("Moves - Fell Stinger", () => {
     vi.spyOn(fellStinger, "power", "get").mockReturnValue(50000);
 
     await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
     const leftEnemy = game.scene.getEnemyField()[0]!;
 
     //  Turn 1: set Salt Cure, enemy splashes and does nothing
@@ -130,7 +130,7 @@ describe("Moves - Fell Stinger", () => {
     vi.spyOn(allMoves[MoveId.FELL_STINGER], "power", "get").mockReturnValue(50000);
 
     await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
     const leftEnemy = game.scene.getEnemyField()[0]!;
 
     // Turn 1: set Bind, enemy splashes and does nothing
@@ -153,7 +153,7 @@ describe("Moves - Fell Stinger", () => {
     vi.spyOn(allMoves[MoveId.FELL_STINGER], "power", "get").mockReturnValue(50000);
 
     await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
     const leftEnemy = game.scene.getEnemyField()[0]!;
 
     // Turn 1: set Leech Seed, enemy splashes and does nothing
@@ -174,11 +174,11 @@ describe("Moves - Fell Stinger", () => {
     game.override.enemyAbility(AbilityId.KLUTZ);
 
     await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
-    const leadPokemon = game.scene.getPlayerPokemon();
+    const leadPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.FELL_STINGER);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(leadPokemon?.getStatStage(Stat.ATK)).toBe(3);
+    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(3);
   });
 });

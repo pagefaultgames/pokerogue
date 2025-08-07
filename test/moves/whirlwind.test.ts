@@ -48,7 +48,7 @@ describe("Moves - Whirlwind", () => {
     // Must have a pokemon in the back so that the move misses instead of fails.
     await game.classicMode.startBattle([SpeciesId.STARAPTOR, SpeciesId.MAGIKARP]);
 
-    const staraptor = game.scene.getPlayerPokemon()!;
+    const staraptor = game.field.getPlayerPokemon();
 
     game.move.select(move);
     await game.move.selectEnemyMove(MoveId.WHIRLWIND);
@@ -56,7 +56,7 @@ describe("Moves - Whirlwind", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(staraptor.findTag(t => t.tagType === BattlerTagType.FLYING)).toBeDefined();
-    expect(game.scene.getEnemyPokemon()!.getLastXMoves(1)[0].result).toBe(MoveResult.MISS);
+    expect(game.field.getEnemyPokemon().getLastXMoves(1)[0].result).toBe(MoveResult.MISS);
   });
 
   it("should force switches randomly", async () => {
@@ -208,7 +208,7 @@ describe("Moves - Whirlwind", () => {
     // expect the enemy to have at least 4 pokemon, necessary for this check to even work
     expect(game.scene.getEnemyParty().length, "enemy must have exactly 4 pokemon").toBeGreaterThanOrEqual(4);
 
-    const user = game.scene.getPlayerPokemon()!;
+    const user = game.field.getPlayerPokemon();
 
     console.log(user.getMoveset(false));
 
@@ -219,7 +219,7 @@ describe("Moves - Whirlwind", () => {
     await game.toNextTurn();
 
     // Get the enemy pokemon id so we can check if is the same after switch.
-    const enemy_id = game.scene.getEnemyPokemon()!.id;
+    const enemy_id = game.field.getEnemyPokemon().id;
 
     // Hit the enemy that fainted with whirlwind.
     game.move.select(MoveId.WHIRLWIND, 0, BattlerIndex.ENEMY);
@@ -231,7 +231,7 @@ describe("Moves - Whirlwind", () => {
     await game.toNextTurn();
 
     // Expect the enemy pokemon to not have switched out.
-    expect(game.scene.getEnemyPokemon()!.id).toBe(enemy_id);
+    expect(game.field.getEnemyPokemon().id).toBe(enemy_id);
   });
 
   it("should force a wild pokemon to flee", async () => {
@@ -242,7 +242,7 @@ describe("Moves - Whirlwind", () => {
       .ability(AbilityId.BALL_FETCH);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const user = game.scene.getPlayerPokemon()!;
+    const user = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.WHIRLWIND);
     await game.phaseInterceptor.to("BerryPhase");

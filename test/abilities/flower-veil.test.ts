@@ -47,7 +47,7 @@ describe("Abilities - Flower Veil", () => {
       .moveset([MoveId.REST, MoveId.SPLASH])
       .startingHeldItems([{ entry: HeldItemId.FLAME_ORB }]);
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
-    const user = game.scene.getPlayerPokemon()!;
+    const user = game.field.getPlayerPokemon();
     game.move.select(MoveId.REST);
     await game.move.selectEnemyMove(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -75,7 +75,7 @@ describe("Abilities - Flower Veil", () => {
     await game.move.selectEnemyMove(MoveId.YAWN, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to("BerryPhase");
-    const user = game.scene.getPlayerPokemon()!;
+    const user = game.field.getPlayerPokemon();
     expect(user.getTag(BattlerTagType.DROWSY)).toBeFalsy();
     expect(ally.getTag(BattlerTagType.DROWSY)).toBeFalsy();
   });
@@ -88,7 +88,7 @@ describe("Abilities - Flower Veil", () => {
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.THUNDER_WAVE);
     await game.toNextTurn();
-    expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
+    expect(game.field.getPlayerPokemon().status).toBeUndefined();
   });
 
   it("should not prevent status conditions for a non-grass user and its non-grass allies", async () => {
@@ -156,7 +156,7 @@ describe("Abilities - Flower Veil", () => {
   it("should prevent the drops while retaining the boosts from spicy extract", async () => {
     game.override.enemyMoveset([MoveId.SPICY_EXTRACT]).moveset([MoveId.SPLASH]);
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
-    const user = game.scene.getPlayerPokemon()!;
+    const user = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
     expect(user.getStatStage(Stat.ATK)).toBe(2);

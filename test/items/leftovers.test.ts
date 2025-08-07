@@ -38,7 +38,7 @@ describe("Items - Leftovers", () => {
   it("leftovers works", async () => {
     await game.classicMode.startBattle([SpeciesId.ARCANINE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     // Make sure leftovers are there
     expect(leadPokemon.heldItemManager.hasItem(HeldItemId.LEFTOVERS)).toBe(true);

@@ -39,8 +39,8 @@ describe("Moves - Electro Shot", () => {
   it("should increase the user's Sp. Atk on the first turn, then attack on the second turn", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.ELECTRO_SHOT);
 
@@ -69,8 +69,8 @@ describe("Moves - Electro Shot", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.ELECTRO_SHOT);
 
@@ -92,7 +92,7 @@ describe("Moves - Electro Shot", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.ELECTRO_SHOT);
 
