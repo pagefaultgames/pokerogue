@@ -72,22 +72,10 @@ const POOL_1_POKEMON: (SpeciesId | BreederSpeciesEvolution)[][] = [
     new BreederSpeciesEvolution(SpeciesId.TOGETIC, SECOND_STAGE_EVOLUTION_WAVE),
     new BreederSpeciesEvolution(SpeciesId.TOGEKISS, FINAL_STAGE_EVOLUTION_WAVE),
   ],
-  [
-    SpeciesId.TYROGUE,
-    new BreederSpeciesEvolution(SpeciesId.HITMONLEE, SECOND_STAGE_EVOLUTION_WAVE)
-  ],
-  [
-    SpeciesId.TYROGUE,
-    new BreederSpeciesEvolution(SpeciesId.HITMONCHAN, SECOND_STAGE_EVOLUTION_WAVE)
-  ],
-  [
-    SpeciesId.TYROGUE,
-    new BreederSpeciesEvolution(SpeciesId.HITMONTOP, SECOND_STAGE_EVOLUTION_WAVE)
-  ],
-  [
-    SpeciesId.SMOOCHUM,
-    new BreederSpeciesEvolution(SpeciesId.JYNX, SECOND_STAGE_EVOLUTION_WAVE)
-  ],
+  [SpeciesId.TYROGUE, new BreederSpeciesEvolution(SpeciesId.HITMONLEE, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.TYROGUE, new BreederSpeciesEvolution(SpeciesId.HITMONCHAN, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.TYROGUE, new BreederSpeciesEvolution(SpeciesId.HITMONTOP, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.SMOOCHUM, new BreederSpeciesEvolution(SpeciesId.JYNX, SECOND_STAGE_EVOLUTION_WAVE)],
   [
     SpeciesId.AZURILL,
     new BreederSpeciesEvolution(SpeciesId.MARILL, FIRST_STAGE_EVOLUTION_WAVE),
@@ -98,18 +86,9 @@ const POOL_1_POKEMON: (SpeciesId | BreederSpeciesEvolution)[][] = [
     new BreederSpeciesEvolution(SpeciesId.ROSELIA, FIRST_STAGE_EVOLUTION_WAVE),
     new BreederSpeciesEvolution(SpeciesId.ROSERADE, FINAL_STAGE_EVOLUTION_WAVE),
   ],
-  [
-    SpeciesId.CHINGLING,
-    new BreederSpeciesEvolution(SpeciesId.CHIMECHO, SECOND_STAGE_EVOLUTION_WAVE)
-  ],
-  [
-    SpeciesId.BONSLY,
-    new BreederSpeciesEvolution(SpeciesId.SUDOWOODO, SECOND_STAGE_EVOLUTION_WAVE)
-  ],
-  [
-    SpeciesId.MIME_JR,
-    new BreederSpeciesEvolution(SpeciesId.MR_MIME, SECOND_STAGE_EVOLUTION_WAVE),
-  ],
+  [SpeciesId.CHINGLING, new BreederSpeciesEvolution(SpeciesId.CHIMECHO, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.BONSLY, new BreederSpeciesEvolution(SpeciesId.SUDOWOODO, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.MIME_JR, new BreederSpeciesEvolution(SpeciesId.MR_MIME, SECOND_STAGE_EVOLUTION_WAVE)],
   [
     SpeciesId.MIME_JR,
     new BreederSpeciesEvolution(SpeciesId.GALAR_MR_MIME, SECOND_STAGE_EVOLUTION_WAVE),
@@ -120,20 +99,12 @@ const POOL_1_POKEMON: (SpeciesId | BreederSpeciesEvolution)[][] = [
     new BreederSpeciesEvolution(SpeciesId.CHANSEY, FIRST_STAGE_EVOLUTION_WAVE),
     new BreederSpeciesEvolution(SpeciesId.BLISSEY, FINAL_STAGE_EVOLUTION_WAVE),
   ],
-  [
-    SpeciesId.MANTYKE,
-    new BreederSpeciesEvolution(SpeciesId.MANTINE, SECOND_STAGE_EVOLUTION_WAVE)
-  ],
-  [
-    SpeciesId.TOXEL,
-    new BreederSpeciesEvolution(SpeciesId.TOXTRICITY, SECOND_STAGE_EVOLUTION_WAVE)
-  ],
+  [SpeciesId.MANTYKE, new BreederSpeciesEvolution(SpeciesId.MANTINE, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.TOXEL, new BreederSpeciesEvolution(SpeciesId.TOXTRICITY, SECOND_STAGE_EVOLUTION_WAVE)],
 ];
 
 const POOL_2_POKEMON: (SpeciesId | BreederSpeciesEvolution)[][] = [
-  [
-    SpeciesId.DITTO
-  ],
+  [SpeciesId.DITTO],
   [
     SpeciesId.ELEKID,
     new BreederSpeciesEvolution(SpeciesId.ELECTABUZZ, FIRST_STAGE_EVOLUTION_WAVE),
@@ -144,21 +115,10 @@ const POOL_2_POKEMON: (SpeciesId | BreederSpeciesEvolution)[][] = [
     new BreederSpeciesEvolution(SpeciesId.MAGMAR, FIRST_STAGE_EVOLUTION_WAVE),
     new BreederSpeciesEvolution(SpeciesId.MAGMORTAR, FINAL_STAGE_EVOLUTION_WAVE),
   ],
-  [
-    SpeciesId.WYNAUT, 
-    new BreederSpeciesEvolution(SpeciesId.WOBBUFFET, SECOND_STAGE_EVOLUTION_WAVE)
-  ],
-  [
-    SpeciesId.MUNCHLAX,
-    new BreederSpeciesEvolution(SpeciesId.SNORLAX, SECOND_STAGE_EVOLUTION_WAVE)
-  ],
-  [
-    SpeciesId.RIOLU, 
-    new BreederSpeciesEvolution(SpeciesId.LUCARIO, SECOND_STAGE_EVOLUTION_WAVE)
-  ],
-  [
-    SpeciesId.AUDINO
-  ],
+  [SpeciesId.WYNAUT, new BreederSpeciesEvolution(SpeciesId.WOBBUFFET, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.MUNCHLAX, new BreederSpeciesEvolution(SpeciesId.SNORLAX, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.RIOLU, new BreederSpeciesEvolution(SpeciesId.LUCARIO, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.AUDINO],
 ];
 
 /**
