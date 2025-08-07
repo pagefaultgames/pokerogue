@@ -4355,12 +4355,11 @@ export const trainerConfigs: TrainerConfigs = {
         p.pokeball = PokeballType.ULTRA_BALL;
         p.setBoss(true, 2);
         if (p.formIndex === 2) {
-          p.moveset[0] = new PokemonMove(MoveId.WICKED_BLOW);	  
+          p.moveset[0] = new PokemonMove(MoveId.WICKED_BLOW);
           p.moveset[1] = new PokemonMove(MoveId.BRICK_BREAK);
           p.moveset[2] = new PokemonMove(randSeedItem([MoveId.FIRE_PUNCH, MoveId.THUNDER_PUNCH, MoveId.ICE_PUNCH]));
           p.moveset[3] = new PokemonMove(MoveId.FOCUS_ENERGY);
-        } 
-		else if (p.formIndex === 3) {
+        } else if (p.formIndex === 3) {
           p.moveset[0] = new PokemonMove(MoveId.SURGING_STRIKES);
           p.moveset[1] = new PokemonMove(MoveId.BRICK_BREAK);
           p.moveset[2] = new PokemonMove(randSeedItem([MoveId.FIRE_PUNCH, MoveId.THUNDER_PUNCH, MoveId.ICE_PUNCH]));
