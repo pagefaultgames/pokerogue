@@ -2561,9 +2561,9 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = 1; // Segin Starmobile
         p.moveset = [
           new PokemonMove(MoveId.WICKED_TORQUE),
-          new PokemonMove(MoveId.SNARL),
-          new PokemonMove(MoveId.METAL_SOUND),
-          new PokemonMove(MoveId.SWIFT),
+          new PokemonMove(MoveId.SPIN_OUT),
+          new PokemonMove(MoveId.PARTING_SHOT),
+          new PokemonMove(MoveId.HIGH_HORSEPOWER),
         ];
       }),
     ),
@@ -2581,9 +2581,9 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = 2; // Schedar Starmobile
         p.moveset = [
           new PokemonMove(MoveId.BLAZING_TORQUE),
-          new PokemonMove(MoveId.OVERHEAT),
-          new PokemonMove(MoveId.SCREECH),
-          new PokemonMove(MoveId.SWIFT),
+          new PokemonMove(MoveId.SPIN_OUT),
+          new PokemonMove(MoveId.FLAME_CHARGE),
+          new PokemonMove(MoveId.HIGH_HORSEPOWER),
         ];
       }),
     ),
@@ -2602,8 +2602,8 @@ export const trainerConfigs: TrainerConfigs = {
         p.moveset = [
           new PokemonMove(MoveId.NOXIOUS_TORQUE),
           new PokemonMove(MoveId.SPIN_OUT),
-          new PokemonMove(MoveId.FLAME_CHARGE),
-          new PokemonMove(MoveId.SMOG),
+          new PokemonMove(MoveId.TOXIC_SPIKES),
+          new PokemonMove(MoveId.HIGH_HORSEPOWER),
         ];
       }),
     ),
@@ -2622,8 +2622,8 @@ export const trainerConfigs: TrainerConfigs = {
         p.moveset = [
           new PokemonMove(MoveId.MAGICAL_TORQUE),
           new PokemonMove(MoveId.SPIN_OUT),
-          new PokemonMove(MoveId.CONFUSE_RAY),
-          new PokemonMove(MoveId.STEEL_ROLLER),
+          new PokemonMove(MoveId.MISTY_TERRAIN),
+          new PokemonMove(MoveId.HIGH_HORSEPOWER),
         ];
       }),
     ),
@@ -2642,7 +2642,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.moveset = [
           new PokemonMove(MoveId.COMBAT_TORQUE),
           new PokemonMove(MoveId.SPIN_OUT),
-          new PokemonMove(MoveId.SHIFT_GEAR),
+          new PokemonMove(MoveId.IRON_DEFENSE),
           new PokemonMove(MoveId.HIGH_HORSEPOWER),
         ];
       }),
@@ -5064,15 +5064,15 @@ export const trainerConfigs: TrainerConfigs = {
         p.abilityIndex = 1; // Drought
       }),
     )
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.SOLROCK]))
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.WEEZING, SpeciesId.GALAR_WEEZING]))
     .setPartyMemberFunc(
-      1,
+      3,
       getRandomPartyMemberFunc([SpeciesId.SCOVILLAIN], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.abilityIndex = 0; // Chlorophyll
       }),
     )
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.WEEZING, SpeciesId.GALAR_WEEZING]))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.SOLROCK]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.DONPHAN]))
     .setPartyMemberFunc(
       5,
@@ -5154,9 +5154,9 @@ export const trainerConfigs: TrainerConfigs = {
         p.abilityIndex = 1; // Drizzle
       }),
     )
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.LUDICOLO]))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.WAILORD]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.MUK, SpeciesId.ALOLA_MUK]))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.WAILORD]))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.LUDICOLO]))
     .setPartyMemberFunc(
       4,
       getRandomPartyMemberFunc([SpeciesId.QWILFISH], TrainerSlot.TRAINER, true, p => {
@@ -5596,7 +5596,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.GENESECT], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
-        p.pokeball = PokeballType.ULTRA_BALL;
+        p.pokeball = PokeballType.ROGUE_BALL;
         p.formIndex = randSeedInt(4, 1); // Shock, Burn, Chill, or Douse Drive
         if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.TECHNO_BLAST)) {
           // Check if Techno Blast is in the moveset, if not, replace the third move with Techno Blast.
@@ -5776,17 +5776,15 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = randSeedInt(5, 1); // Heat, Wash, Frost, Fan, or Mow
       }),
     )
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.UMBREON, SpeciesId.ESPEON]))
     .setPartyMemberFunc(
-      3,
-      getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = randSeedInt(5, 1); // Random Starmobile form
+      2,
+      getRandomPartyMemberFunc([SpeciesId.ESPEON, SpeciesId.UMBREON], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
-        p.pokeball = PokeballType.ROGUE_BALL;
+        p.abilityIndex = p.species.speciesId === SpeciesId.UMBREON ? 0 : 2; // Synchronize Umbreon, Magic Bounce Espeon
       }),
     )
     .setPartyMemberFunc(
-      4,
+      3,
       getRandomPartyMemberFunc(
         [SpeciesId.WALKING_WAKE, SpeciesId.GOUGING_FIRE, SpeciesId.RAGING_BOLT],
         TrainerSlot.TRAINER,
@@ -5794,9 +5792,17 @@ export const trainerConfigs: TrainerConfigs = {
         p => {
           p.generateAndPopulateMoveset();
           p.pokeball = PokeballType.ROGUE_BALL;
-          p.setBoss(true, 2);
         },
       ),
+    )
+    .setPartyMemberFunc(
+      4,
+      getRandomPartyMemberFunc([SpeciesId.REVAVROOM], TrainerSlot.TRAINER, true, p => {
+        p.formIndex = randSeedInt(5, 1); // Random Starmobile form
+        p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ROGUE_BALL;
+        p.setBoss(true, 2);
+      }),
     )
     .setPartyMemberFunc(
       5,
