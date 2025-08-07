@@ -1519,5 +1519,9 @@ export class RewardOption {
 }
 
 export class NoneReward extends Reward {
+  constructor() {
+    super("", "");
+  }
+
   override apply(): void {}
 }

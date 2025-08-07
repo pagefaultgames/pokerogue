@@ -7,6 +7,7 @@ import type { RewardPoolId, RewardSpecs } from "#types/rewards";
 import { heldItemRarities } from "./held-item-default-tiers";
 import {
   HeldItemReward,
+  NoneReward,
   type PokemonMoveReward,
   type RememberMoveReward,
   type Reward,
@@ -45,7 +46,7 @@ export function generateRewardOptionFromId<T extends RewardPoolId>(
   cost = 0,
   tierOverride?: RarityTier,
   upgradeCount = 0,
-): RewardOption | null {
+): RewardOption {
   // Destructure specs into individual parameters
   const pregenArgs = typeof specs === "object" ? specs.args : undefined;
   const id: RewardPoolId = typeof specs === "object" ? specs.id : specs;
@@ -62,13 +63,13 @@ export function generateRewardOptionFromId<T extends RewardPoolId>(
     return new RewardOption(reward, upgradeCount, tier, cost);
   }
 
-  const rewardFunc = allRewards[id] as Reward | RewardGenerator;
-  const reward = rewardFunc instanceof RewardGenerator ? rewardFunc.generateReward(pregenArgs) : rewardFunc;
-  if (reward) {
-    const tier = tierOverride ?? rewardRarities[id];
-    return new RewardOption(reward, upgradeCount, tier, cost);
+  const tempReward = allRewards[id] as Reward | RewardGenerator;
+  let reward = tempReward instanceof RewardGenerator ? tempReward.generateReward(pregenArgs) : tempReward;
+  if (!reward) {
+    reward = new NoneReward();
   }
-  return null;
+  const tier = tierOverride ?? rewardRarities[id];
+  return new RewardOption(reward, upgradeCount, tier, cost);
 }
 
 export function getPlayerShopRewardOptionsForWave(waveIndex: number, baseCost: number): RewardOption[] {

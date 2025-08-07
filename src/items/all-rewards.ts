@@ -36,7 +36,7 @@ import {
 
 // TODO: Move to `reward-utils.ts` and un-exportt
 export const allRewards = {
-  [RewardId.NONE]: new NoneReward("", ""),
+  [RewardId.NONE]: new NoneReward(),
 
   // Pokeball rewards
   [RewardId.POKEBALL]: new AddPokeballReward("pb", PokeballType.POKEBALL, 5, RewardId.POKEBALL),
