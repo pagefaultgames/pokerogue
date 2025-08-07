@@ -1302,7 +1302,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
     }
 
     // Use the prior move in the moveset.
-    // Bang is justified as `canAdd` returns false if not possible
+    // Bang is justified as `canAdd` returns false if not found
     const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId)!;
 
     const moveTargets = getMoveTargets(pokemon, this.moveId);
