@@ -1,6 +1,6 @@
 import { allMoves } from "#data/data-lists";
 import { ChallengeType } from "#enums/challenge-type";
-import type { MoveId } from "#enums/move-id";
+import { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
 import { applyChallenges } from "#utils/challenge-utils";

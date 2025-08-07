@@ -26,7 +26,7 @@ export class PartyHealPhase extends BattlePhase {
       applyChallenges(ChallengeType.PREVENT_REVIVE, preventRevive);
       for (const pokemon of globalScene.getPlayerParty()) {
         // Prevent reviving fainted pokemon during certain challenges
-        if (!(pokemon.isFainted() && preventRevive.value)) {
+        if (pokemon.isFainted() && preventRevive.value) {
           continue;
         }
 

@@ -34,7 +34,8 @@ describe("Challenges - Permanent Faint", () => {
       .battleStyle("single")
       .enemySpecies(SpeciesId.VOLTORB)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(MoveId.SPLASH);
+      .enemyMoveset(MoveId.SPLASH)
+      .moveset(MoveId.SPLASH);
   });
 
   it("should render Revival Blessing unusable by players only", async () => {
@@ -43,7 +44,7 @@ describe("Challenges - Permanent Faint", () => {
 
     const player = game.field.getPlayerPokemon();
     const revBlessing = player.getMoveset()[0];
-    expect(revBlessing.isUsable()).toBe(false);
+    expect(revBlessing.isUsable(player)).toBe(false);
 
     game.move.select(MoveId.REVIVAL_BLESSING);
     await game.toEndOfTurn();
@@ -57,7 +58,7 @@ describe("Challenges - Permanent Faint", () => {
     game.override.startingWave(181).startingLevel(200);
     await game.challengeMode.startBattle();
 
-    game.move.select(MoveId.RAZOR_LEAF);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
 
     await game.phaseInterceptor.to("SelectModifierPhase");
@@ -84,7 +85,7 @@ describe("Challenges - Permanent Faint", () => {
     faintedPokemon.status = new Status(StatusEffect.FAINT);
     expect(faintedPokemon.isFainted()).toBe(true);
 
-    game.move.select(MoveId.RAZOR_LEAF);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
 
     await game.toNextWave();
