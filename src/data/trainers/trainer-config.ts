@@ -3810,6 +3810,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.HO_OH], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
+        p.abilityIndex = 2; // Regenerator
       }),
     )
     .setPartyMemberFunc(
@@ -3834,7 +3835,6 @@ export const trainerConfigs: TrainerConfigs = {
       0,
       getRandomPartyMemberFunc([SpeciesId.PIKACHU], TrainerSlot.TRAINER, true, p => {
         p.formIndex = 1; // Partner Pikachu
-        p.generateName();
         p.gender = Gender.MALE;
         p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.VOLT_TACKLE)) {
@@ -3851,6 +3851,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.LUGIA], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
+        p.abilityIndex = 2; // Multiscale
       }),
     )
     .setPartyMemberFunc(
@@ -4060,8 +4061,12 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(
       2,
+      getRandomPartyMemberFunc([SpeciesId.CHANDELURE, SpeciesId.KROOKODILE, SpeciesId.REUNICLUS, SpeciesId.CONKELDURR]),
+    )
+    .setPartyMemberFunc(
+      3,
       getRandomPartyMemberFunc([SpeciesId.KELDEO], TrainerSlot.TRAINER, true, p => {
-        p.pokeball = PokeballType.ULTRA_BALL;
+        p.pokeball = PokeballType.ROGUE_BALL;
         p.formIndex = 1; // Resolute Form
         p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.SECRET_SWORD)) {
@@ -4069,10 +4074,6 @@ export const trainerConfigs: TrainerConfigs = {
           p.moveset[2] = new PokemonMove(MoveId.SECRET_SWORD);
         }
       }),
-    )
-    .setPartyMemberFunc(
-      3,
-      getRandomPartyMemberFunc([SpeciesId.CHANDELURE, SpeciesId.KROOKODILE, SpeciesId.REUNICLUS, SpeciesId.CONKELDURR]),
     )
     .setPartyMemberFunc(
       4,
@@ -4196,7 +4197,7 @@ export const trainerConfigs: TrainerConfigs = {
         p => {
           p.formIndex = 1; // Therian Formes
           p.generateAndPopulateMoveset();
-          p.pokeball = PokeballType.ULTRA_BALL;
+          p.pokeball = PokeballType.ROGUE_BALL;
         },
       ),
     )
@@ -4205,6 +4206,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.TAPU_LELE, SpeciesId.TAPU_FINI], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
+        p.abilityIndex = 0; // Psychic / Misty Surge
       }),
     )
     .setPartyMemberFunc(
@@ -4247,6 +4249,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.TAPU_KOKO, SpeciesId.TAPU_BULU], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
+        p.abilityIndex = 0; // Electric / Grassy Surge
       }),
     )
     .setPartyMemberFunc(
@@ -4426,7 +4429,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
       }),
     )
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.CERULEDGE, SpeciesId.ARMAROUGE]))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.ARMAROUGE, SpeciesId.CERULEDGE]))
     .setPartyMemberFunc(
       4,
       getRandomPartyMemberFunc([SpeciesId.KORAIDON], TrainerSlot.TRAINER, true, p => {
