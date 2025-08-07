@@ -39,7 +39,7 @@ import { getVoucherTypeIcon, getVoucherTypeName, type VoucherType } from "#syste
 import type { Exact } from "#types/type-helpers";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
-import { formatMoney, NumberHolder, padInt, randSeedInt, randSeedItem } from "#utils/common";
+import { formatMoney, NumberHolder, padInt, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 
@@ -97,7 +97,6 @@ type MatchExact<T> = T extends object ? Exact<T> : T;
 
 export abstract class Reward {
   // TODO: If all we care about for categorization is the reward's ID's _category_, why not do it there?
-  // TODO: Make abstract and readonly
   public id: RewardId;
   public localeKey: string;
   public iconImage: string;
@@ -466,35 +465,47 @@ export class ChangeTeraTypeReward extends PokemonReward {
     pokemon.teraType = this.teraType;
     return true;
   }
-}
-
-// todo: denest
+} // todo: denest
 // TODO: Consider removing `revive` from the signature of PokemonHealPhase in the wake of this
 // (was only used for revives)
+/**
+ * Helper function to instantly restore a Pokemon's hp.
+ * @param pokemon - The {@linkcode Pokemon} being healed
+ * @param percentToRestore - The percentage of the Pokemon's {@linkcode Stat.HP | maximum HP} to heal
+ * @param pointsToRestore - A minimum amount of HP points to restore; default `0`
+ * @param healStatus - Whether to also heal status ailments; default `false`
+ * @param fainted - Whether to allow reviving fainted Pokemon; default `false`.
+ * If `true`, will also disable the effect of {@linkcode TrainerItemEffect.HEALING_BOOSTER | Healing Charms}.
+ * @returns Whether the healing succeeded
+ */
 function restorePokemonHp(
   pokemon: Pokemon,
   percentToRestore: number,
-  pointsToRestore = 0,
-  healStatus = false,
-  fainted = false,
+  {
+    pointsToRestore = 0,
+    healStatus = false,
+    fainted = false,
+  }: {
+    pointsToRestore?: number;
+    healStatus?: boolean;
+    fainted?: boolean;
+  } = {},
 ): boolean {
-  if (!pokemon.hp === fainted) {
-    if (fainted || healStatus) {
-      pokemon.resetStatus(true, true, false, false);
-    }
-    // Apply HealingCharm
-    let multiplier = 1;
-    if (!fainted) {
-      const hpRestoreMultiplier = new NumberHolder(1);
-      this.applyPlayerItems(TrainerItemEffect.HEALING_BOOSTER, { numberHolder: hpRestoreMultiplier });
-      multiplier = hpRestoreMultiplier.value;
-    }
-    const restorePoints = Math.floor(pointsToRestore * multiplier);
-    const restorePercent = Math.floor(percentToRestore * 0.01 * multiplier * pokemon.getMaxHp());
-    pokemon.heal(Math.max(restorePercent, restorePoints, 1));
-    return true;
+  if (pokemon.isFainted() !== fainted) {
+    return false;
   }
-  return false;
+  if (fainted || healStatus) {
+    pokemon.resetStatus(true, true, false, false);
+  }
+  // Apply HealingCharm
+  const hpRestoreMultiplier = new NumberHolder(1);
+  if (!fainted) {
+    this.applyPlayerItems(TrainerItemEffect.HEALING_BOOSTER, { numberHolder: hpRestoreMultiplier });
+  }
+  const restorePoints = toDmgValue(pointsToRestore * hpRestoreMultiplier.value);
+  const restorePercent = toDmgValue((percentToRestore / 100) * hpRestoreMultiplier.value * pokemon.getMaxHp());
+  pokemon.heal(Math.max(restorePercent, restorePoints));
+  return true;
 }
 
 export class PokemonHpRestoreReward extends PokemonReward {
@@ -1517,23 +1528,3 @@ export class RewardOption {
     this.cost = Math.min(Math.round(cost), Number.MAX_SAFE_INTEGER);
   }
 }
-
-// TODO: If necessary, add the rest of the modifier types here.
-// For now, doing the minimal work until the modifier rework lands.
-const RewardConstructorMap = Object.freeze({
-  RewardGenerator,
-});
-
-/**
- * Map of of modifier type strings to their constructor type
- */
-export type RewardConstructorMap = typeof RewardConstructorMap;
-
-/**
- * Map of modifier type strings to their instance type
- */
-export type RewardInstanceMap = {
-  [K in keyof RewardConstructorMap]: InstanceType<RewardConstructorMap[K]>;
-};
-
-export type RewardString = keyof RewardConstructorMap;

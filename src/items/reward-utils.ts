@@ -1,15 +1,9 @@
-import { allRewards } from "#data/data-lists";
 import type { HeldItemId } from "#enums/held-item-id";
 import { getRewardCategory, RewardCategoryId, RewardId } from "#enums/reward-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
-import type {
-  RewardFunc,
-  RewardGeneratorArgMap,
-  RewardGeneratorId,
-  RewardGeneratorSpecs,
-  RewardPoolId,
-} from "#types/rewards";
+import { allRewards } from "#items/all-rewards";
+import type { RewardFunc, RewardPoolId, RewardSpecs } from "#types/rewards";
 import { heldItemRarities } from "./held-item-default-tiers";
 import {
   HeldItemReward,
@@ -38,72 +32,23 @@ export function isRememberMoveReward(reward: Reward): reward is RememberMoveRewa
 }
 
 /**
- * Generates a Reward from a given function.
- * @param rewardFunc
- */
-function generateReward(rewardFunc: () => Reward): Reward | null;
-/**
- * Generates a Reward from a given function
- * @param generator
- * @param pregenArgs Can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
- */
-function generateReward<T extends RewardGenerator>(
-  generator: () => T,
-  pregenArgs?: Parameters<T["generateReward"]>[0],
-): Reward | null;
-function generateReward(rewardFunc: RewardFunc, pregenArgs?: any[]): Reward | null {
-  const reward = rewardFunc();
-  return reward instanceof RewardGenerator ? reward.generateReward(pregenArgs) : reward;
-}
-
-/**
- * Dynamically generate a {@linkcode RewardOption} from a given ID.
- * @param specs - The {@linkcode RewardGeneratorSpecs} used to generate the reward
+ * Dynamically generate a {@linkcode RewardOption} from a given RewardSpecs.
+ * @param specs - The {@linkcode RewardSpecs} used to generate the reward
  * @param cost - The monetary cost of selecting the option; default `0`
  * @param tierOverride - An optional {@linkcode RarityTier} to override the option's rarity
  * @param upgradeCount - The number of tier upgrades having occurred; default `0`
  * @returns The generated {@linkcode RewardOption}, or `null` if no reward could be generated
  * @todo Remove `null` from signature eventually
  */
-export function generateRewardOptionFromId<T extends RewardGeneratorId>(
-  specs: RewardGeneratorSpecs<T>,
-  cost?: number,
-  tierOverride?: RarityTier,
-  upgradeCount?: number,
-): RewardOption | null;
-/**
- * Dynamically generate a {@linkcode RewardOption} from a given ID.
- * @param id - The {@linkcode GeneratorRewardId} to generate a reward for
- * @param cost - The monetary cost of selecting the option; default `0`
- * @param tierOverride - An optional {@linkcode RarityTier} to override the option's rarity
- * @param upgradeCount - The number of tier upgrades having occurred; default `0`
- * @param pregenArgs - Optional arguments used to seed the generator.
- * @returns The generated {@linkcode RewardOption}, or `null` if no reward could be generated
- */
-export function generateRewardOptionFromId<T extends RewardGeneratorId>(
-  id: T,
-  cost?: number,
-  tierOverride?: RarityTier,
-  upgradeCount?: number,
-  pregenArgs?: RewardGeneratorArgMap[T],
-): RewardOption | null;
-export function generateRewardOptionFromId(
-  id: Exclude<RewardPoolId, RewardGeneratorId>,
-  cost?: number,
-  tierOverride?: RarityTier,
-  upgradeCount?: number,
-): RewardOption | null;
-export function generateRewardOptionFromId(
-  id: RewardGeneratorSpecs | RewardPoolId,
+export function generateRewardOptionFromId<T extends RewardPoolId>(
+  specs: RewardSpecs<T>,
   cost = 0,
   tierOverride?: RarityTier,
   upgradeCount = 0,
-  pregenArgs?: unknown,
 ): RewardOption | null {
-  // Destructure specs into objects
-  if (typeof id === "object") {
-    ({ id, args: pregenArgs } = id);
-  }
+  // Destructure specs into individual parameters
+  const pregenArgs = typeof specs === "object" ? specs.args : undefined;
+  const id: RewardPoolId = typeof specs === "object" ? specs.id : specs;
 
   if (isHeldItemId(id)) {
     const reward = new HeldItemReward(id);
@@ -117,9 +62,8 @@ export function generateRewardOptionFromId(
     return new RewardOption(reward, upgradeCount, tier, cost);
   }
 
-  // TODO: This narrows to `any`
-  const rewardFunc = allRewards[id];
-  const reward = generateReward(rewardFunc, pregenArgs);
+  const rewardFunc = allRewards[id] as RewardFunc;
+  const reward = rewardFunc instanceof RewardGenerator ? rewardFunc.generateReward(pregenArgs) : rewardFunc;
   if (reward) {
     const tier = tierOverride ?? rewardRarities[id];
     return new RewardOption(reward, upgradeCount, tier, cost);
