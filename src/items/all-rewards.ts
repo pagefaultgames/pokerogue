@@ -177,13 +177,13 @@ export const allRewards = {
 
   // Trainer items
 
-  [RewardId.LURE]: new LapsingTrainerItemReward(TrainerItemId.LURE, RewardId.LURE),
-  [RewardId.SUPER_LURE]: new LapsingTrainerItemReward(TrainerItemId.SUPER_LURE, RewardId.SUPER_LURE),
-  [RewardId.MAX_LURE]: new LapsingTrainerItemReward(TrainerItemId.MAX_LURE, RewardId.MAX_LURE),
+  [RewardId.LURE]: new LapsingTrainerItemReward(TrainerItemId.LURE),
+  [RewardId.SUPER_LURE]: new LapsingTrainerItemReward(TrainerItemId.SUPER_LURE),
+  [RewardId.MAX_LURE]: new LapsingTrainerItemReward(TrainerItemId.MAX_LURE),
 
   [RewardId.TEMP_STAT_STAGE_BOOSTER]: new TempStatStageBoosterRewardGenerator(),
 
-  [RewardId.DIRE_HIT]: new LapsingTrainerItemReward(TrainerItemId.DIRE_HIT, RewardId.TEMP_STAT_STAGE_BOOSTER),
+  [RewardId.DIRE_HIT]: new LapsingTrainerItemReward(TrainerItemId.DIRE_HIT),
 } as const satisfies {
   [k in RewardId]: Reward | RewardGenerator;
 };

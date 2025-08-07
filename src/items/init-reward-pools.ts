@@ -1,7 +1,3 @@
-/* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
-import { initRewards, Reward } from "#items/reward";
-/* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
-
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";

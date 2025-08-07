@@ -780,10 +780,6 @@ export class PartyUiHandler extends MessageUiHandler {
       return this.processDiscardMenuInput(pokemon);
     }
 
-    if (this.partyUiMode === PartyUiMode.DISCARD) {
-      return this.processDiscardMenuInput(pokemon);
-    }
-
     // options specific to the mode (moves)
     if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_REWARD) {
       return this.processRememberMoveModeInput(pokemon);

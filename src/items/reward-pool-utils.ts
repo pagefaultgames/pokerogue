@@ -184,7 +184,7 @@ export function generatePlayerRewardOptions(
   }
 
   // Applies overrides for testing
-  overridePlayerRewardOptions(options, party);
+  overridePlayerRewardOptions(options);
 
   return options;
 }
