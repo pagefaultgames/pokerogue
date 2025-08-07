@@ -440,10 +440,6 @@ export class ChangeTeraTypeReward extends PokemonReward {
     });
   }
 
-  getPregenArgs(): any[] {
-    return [this.teraType];
-  }
-
   /**
    * Checks if {@linkcode TerrastalizeConsumable} should be applied
    * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
@@ -924,10 +920,6 @@ export class AttackTypeBoosterReward extends HeldItemReward {
     this.moveType = moveType;
     this.boostPercent = boostPercent;
   }
-
-  getPregenArgs(): any[] {
-    return [this.moveType];
-  }
 }
 
 function incrementLevelWithCandy(pokemon: Pokemon): boolean {
@@ -1101,10 +1093,6 @@ export class EvolutionItemReward extends PokemonReward {
 
   getDescription(): string {
     return i18next.t("modifierType:ModifierType.EvolutionItemModifierType.description");
-  }
-
-  getPregenArgs(): any[] {
-    return [this.evolutionItem];
   }
 
   /**
