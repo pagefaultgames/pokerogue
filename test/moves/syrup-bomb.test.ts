@@ -40,7 +40,7 @@ describe("Moves - SYRUP BOMB", () => {
   it("decreases the target Pokemon's speed stat once per turn for 3 turns", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const targetPokemon = game.scene.getEnemyPokemon()!;
+    const targetPokemon = game.field.getEnemyPokemon();
     expect(targetPokemon.getStatStage(Stat.SPD)).toBe(0);
 
     game.move.select(MoveId.SYRUP_BOMB);
@@ -65,7 +65,7 @@ describe("Moves - SYRUP BOMB", () => {
     game.override.enemyAbility(AbilityId.BULLETPROOF);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const targetPokemon = game.scene.getEnemyPokemon()!;
+    const targetPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SYRUP_BOMB);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -87,6 +87,6 @@ describe("Moves - SYRUP BOMB", () => {
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
-    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.SPD)).toBe(-1);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.SPD)).toBe(-1);
   });
 });
