@@ -5652,7 +5652,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
 export class PlayerPokemon extends Pokemon {
   protected declare battleInfo: PlayerBattleInfo;
-  public compatibleTms: MoveId[];
 
   constructor(
     species: PokemonSpecies,
@@ -5690,7 +5689,6 @@ export class PlayerPokemon extends Pokemon {
         this.moveset = [];
       }
     }
-    this.generateCompatibleTms();
   }
 
   initBattleInfo(): void {
@@ -5722,12 +5720,48 @@ export class PlayerPokemon extends Pokemon {
     return this.getFieldIndex();
   }
 
-  generateCompatibleTms(): void {
+  /**
+   * Compiles a list of all TMs compatible with this PlayerPokemon, including its fusion
+   * @param excludeKnown Whether to exclude moves in its current moveset
+   * @param excludeLevelUp Whether to exclude moves learnable at a previous level (incl. relearn-only & evo moves)
+   * @param excludeUsed Whether to exclude TMs which were used before on the mon, contained in its "usedTMs" array
+   * @returns An array of all compatible MoveId[]
+   */
+  getCompatibleTms(excludeKnown = false, excludeLevelUp = false, excludeUsed = false): MoveId[] {
     const tms = new Set(this.species.getCompatibleTms(this.formIndex));
     if (this.fusionSpecies) {
       this.fusionSpecies.getCompatibleTms(this.fusionFormIndex).forEach(m => tms.add(m));
     }
-    this.compatibleTms = Array.from(tms);
+    if (excludeKnown && excludeLevelUp && excludeUsed) {
+      // All these cases are covered at once by getLearnableLevelMoves
+      this.getLearnableLevelMoves().forEach(m => tms.delete(m));
+    } else {
+      // If any of these are true, but not all three, they need to be individually filtered
+      if (excludeKnown) {
+        this.moveset.forEach(pm => tms.delete(pm.moveId));
+      }
+      if (excludeLevelUp) {
+        this.getLevelMoves(undefined, true, false, true).forEach(lm => tms.delete(lm[1]));
+      }
+      if (excludeUsed) {
+        this.usedTMs.forEach(tm => tms.delete(tm));
+      }
+    }
+    return Array.from(tms);
+  }
+
+  /**
+   * Determines if a TM is compatible with this PlayerPokemon
+   * @param tm The TM move to check for
+   * @param excludeKnown Whether to exclude moves in its current moveset
+   * @returns Whether it's compatible
+   */
+  isTmCompatible(tm: MoveId, excludeKnown = false): boolean {
+    return (
+      !(excludeKnown && this.moveset.some(pm => pm.moveId === tm)) &&
+      (this.species.isTmCompatible(tm, this.formIndex) ||
+        (!!this.fusionSpecies && this.fusionSpecies.isTmCompatible(tm, this.fusionFormIndex)))
+    );
   }
 
   tryPopulateMoveset(moveset: StarterMoveset): boolean {
@@ -5932,8 +5966,6 @@ export class PlayerPokemon extends Pokemon {
           this.fusionAbilityIndex = 0;
         }
       }
-      this.compatibleTms.splice(0, this.compatibleTms.length);
-      this.generateCompatibleTms();
       const updateAndResolve = () => {
         this.loadAssets().then(() => {
           this.calculateStats();
@@ -6045,8 +6077,6 @@ export class PlayerPokemon extends Pokemon {
         this.abilityIndex = abilityCount - 1;
       }
 
-      this.compatibleTms.splice(0, this.compatibleTms.length);
-      this.generateCompatibleTms();
       const updateAndResolve = () => {
         this.loadAssets().then(() => {
           this.calculateStats();
@@ -6061,11 +6091,6 @@ export class PlayerPokemon extends Pokemon {
         updateAndResolve();
       }
     });
-  }
-
-  clearFusionSpecies(): void {
-    super.clearFusionSpecies();
-    this.generateCompatibleTms();
   }
 
   /**
@@ -6107,7 +6132,6 @@ export class PlayerPokemon extends Pokemon {
       this.status = pokemon.status; // Inherit the other Pokemon's status
     }
 
-    this.generateCompatibleTms();
     this.updateInfo(true);
     const fusedPartyMemberIndex = globalScene.getPlayerParty().indexOf(pokemon);
     let partyMemberIndex = globalScene.getPlayerParty().indexOf(this);

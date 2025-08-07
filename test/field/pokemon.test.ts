@@ -80,8 +80,8 @@ describe("Spec - Pokemon", () => {
 
     const fanRotom = game.scene.getPlayerPokemon()!;
 
-    expect(fanRotom.compatibleTms).not.toContain(MoveId.BLIZZARD);
-    expect(fanRotom.compatibleTms).toContain(MoveId.AIR_SLASH);
+    expect(fanRotom.isTmCompatible(MoveId.BLIZZARD)).toBe(false);
+    expect(fanRotom.isTmCompatible(MoveId.AIR_SLASH)).toBe(true);
   });
 
   describe("Get correct fusion type", () => {
