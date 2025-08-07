@@ -304,7 +304,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         // Remove all Pokemon from the party except the chosen Pokemon
         removePokemonFromPartyAndStoreHeldItems(encounter, pokemon1);
 
-        // Configure outro dialogue for egg allRewards
+        // Configure outro dialogue for egg rewards
         encounter.dialogue.outro = [
           {
             speaker: trainerNameKey,
@@ -363,7 +363,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         // Remove all Pokemon from the party except the chosen Pokemon
         removePokemonFromPartyAndStoreHeldItems(encounter, pokemon2);
 
-        // Configure outro dialogue for egg allRewards
+        // Configure outro dialogue for egg rewards
         encounter.dialogue.outro = [
           {
             speaker: trainerNameKey,
@@ -422,7 +422,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         // Remove all Pokemon from the party except the chosen Pokemon
         removePokemonFromPartyAndStoreHeldItems(encounter, pokemon3);
 
-        // Configure outro dialogue for egg allRewards
+        // Configure outro dialogue for egg rewards
         encounter.dialogue.outro = [
           {
             speaker: trainerNameKey,
@@ -640,7 +640,7 @@ function onGameOver() {
   const chosenPokemon = encounter.misc.chosenPokemon;
   chosenPokemon.friendship = 0;
 
-  // Clear all allRewards that would have been earned
+  // Clear all rewards that would have been earned
   encounter.doEncounterRewards = undefined;
 
   // Set flag that encounter was failed

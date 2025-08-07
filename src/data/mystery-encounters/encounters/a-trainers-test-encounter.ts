@@ -150,7 +150,7 @@ export const ATrainersTestEncounter: MysteryEncounter = MysteryEncounterBuilder.
     },
     async () => {
       const encounter = globalScene.currentBattle.mysteryEncounter!;
-      // Battle the stat trainer for an Egg and great allRewards
+      // Battle the stat trainer for an Egg and great rewards
       const config: EnemyPartyConfig = encounter.enemyPartyConfigs[0];
 
       await transitionMysteryEncounterIntroVisuals();

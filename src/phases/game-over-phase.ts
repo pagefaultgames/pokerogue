@@ -2,11 +2,11 @@ import { pokerogueApi } from "#api/pokerogue-api";
 import { clientSessionId } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
-import { allRewards } from "#data/data-lists";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BattleType } from "#enums/battle-type";
 import { PlayerGender } from "#enums/player-gender";
+import { RewardId } from "#enums/reward-id";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
 import { Unlockables } from "#enums/unlockables";
@@ -151,10 +151,10 @@ export class GameOverPhase extends BattlePhase {
               this.handleUnlocks();
 
               for (const species of this.firstRibbons) {
-                globalScene.phaseManager.unshiftNew("RibbonRewardPhase", allRewards.VOUCHER_PLUS, species);
+                globalScene.phaseManager.unshiftNew("RibbonRewardPhase", RewardId.VOUCHER_PLUS, species);
               }
               if (!firstClear) {
-                globalScene.phaseManager.unshiftNew("GameOverRewardPhase", allRewards.VOUCHER_PREMIUM);
+                globalScene.phaseManager.unshiftNew("GameOverRewardPhase", RewardId.VOUCHER_PREMIUM);
               }
             }
             this.getRunHistoryEntry().then(runHistoryEntry => {

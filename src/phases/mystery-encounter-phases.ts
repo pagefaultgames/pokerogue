@@ -532,13 +532,13 @@ export class MysteryEncounterRewardsPhase extends Phase {
         } else {
           this.doEncounterRewardsAndContinue();
         }
-        // Do not use ME's seedOffset for allRewards, these should always be consistent with waveIndex (once per wave)
+        // Do not use ME's seedOffset for rewards, these should always be consistent with waveIndex (once per wave)
       }, globalScene.currentBattle.waveIndex * 1000);
     }
   }
 
   /**
-   * Queues encounter EXP and allRewards phases, {@linkcode PostMysteryEncounterPhase}, and ends phase
+   * Queues encounter EXP and reward phases, {@linkcode PostMysteryEncounterPhase}, and ends phase
    */
   doEncounterRewardsAndContinue() {
     const encounter = globalScene.currentBattle.mysteryEncounter!;

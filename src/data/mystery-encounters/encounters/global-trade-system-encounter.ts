@@ -426,7 +426,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
 
         generateRewardPoolWeights(getRewardPoolForType(RewardPoolType.PLAYER), party, 0);
         let item: RewardOption | null = null;
-        // TMs excluded from possible allRewards
+        // TMs excluded from possible rewards
         while (!item || isTmReward(item.type)) {
           item = generatePlayerRewardOptions(1, party, [], {
             guaranteedRarityTiers: [tier],

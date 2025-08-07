@@ -59,7 +59,7 @@ export class VictoryPhase extends PokemonPhase {
                 .map(r => globalScene.phaseManager.pushNew("RewardPhase", r));
               break;
             case ClassicFixedBossWaves.EVIL_BOSS_2:
-              // Should get Lock Capsule on 165 before shop phase so it can be used in the allRewards shop
+              // Should get Lock Capsule on 165 before shop phase so it can be used in the reward shop
               globalScene.phaseManager.pushNew("RewardPhase", TrainerItemId.LOCK_CAPSULE);
               break;
           }
@@ -124,7 +124,7 @@ export class VictoryPhase extends PokemonPhase {
   }
 
   /**
-   * If this wave is a fixed battle with special custom modifier allRewards,
+   * If this wave is a fixed battle with special custom rewards,
    * will pass those settings to the upcoming {@linkcode SelectRewardPhase}`.
    */
   getFixedBattleCustomRewards(): CustomRewardSettings | undefined {

@@ -686,7 +686,7 @@ export function selectOptionThenPokemon(
 /**
  * Will initialize reward phases to follow the mystery encounter
  * Can have shop displayed or skipped
- * @param customShopRewards - adds a shop phase with the specified allRewards / reward tiers
+ * @param customShopRewards - adds a shop phase with the specified reward tiers
  * @param eggRewards
  * @param preRewardsCallback - can execute an arbitrary callback before the new phases if necessary (useful for updating items/party/injecting new phases before {@linkcode MysteryEncounterRewardsPhase})
  */
@@ -768,8 +768,8 @@ export function initSubsequentOptionSelect(optionSelectSettings: OptionSelectSet
 
 /**
  * Can be used to exit an encounter without any battles or followup
- * Will skip any shops and allRewards, and queue the next encounter phase as normal
- * @param addHealPhase - when true, will add a shop phase to end of encounter with 0 allRewards but healing items are available
+ * Will skip any shops and rewards, and queue the next encounter phase as normal
+ * @param addHealPhase - when true, will add a shop phase to end of encounter with 0 rewards but healing items are available
  * @param encounterMode - Can set custom encounter mode if necessary (may be required for forcing Pokemon to return before next phase)
  */
 export function leaveEncounterWithoutBattle(

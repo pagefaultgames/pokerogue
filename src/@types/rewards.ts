@@ -49,4 +49,5 @@ export type SilentReward =
   | TrainerItemId
   | typeof RewardId.VOUCHER
   | typeof RewardId.VOUCHER_PLUS
-  | typeof RewardId.VOUCHER_PREMIUM;
+  | typeof RewardId.VOUCHER_PREMIUM
+  | typeof RewardId.ROGUE_BALL;

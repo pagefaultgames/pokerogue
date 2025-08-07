@@ -79,9 +79,8 @@ export abstract class ItemTransferHeldItem extends HeldItem {
 }
 
 /**
- * Modifier for held items that steal items from the enemy at the end of
+ * Held item that steal items from the enemy at the end of
  * each turn.
- * @see {@linkcode allRewards[MINI_BLACK_HOLE]}
  */
 export class TurnEndItemStealHeldItem extends ItemTransferHeldItem {
   public effects: HeldItemEffect[] = [HeldItemEffect.TURN_END_ITEM_STEAL];
@@ -120,10 +119,8 @@ export class TurnEndItemStealHeldItem extends ItemTransferHeldItem {
 }
 
 /**
- * Modifier for held items that add a chance to steal items from the target of a
+ * Held item that adds a chance to steal items from the target of a
  * successful attack.
- * @see {@linkcode allRewards[GRIP_CLAW]}
- * @see {@linkcode HeldItemTransferModifier}
  */
 export class ContactItemStealChanceHeldItem extends ItemTransferHeldItem {
   public effects: HeldItemEffect[] = [HeldItemEffect.CONTACT_ITEM_STEAL_CHANCE];

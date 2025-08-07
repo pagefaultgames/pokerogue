@@ -1,11 +1,12 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { allHeldItems, allRewards } from "#data/data-lists";
+import { allHeldItems } from "#data/data-lists";
 import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
@@ -61,10 +62,10 @@ const doEventReward = () => {
       return !fullStack;
     });
     if (candidates.length > 0) {
-      globalScene.phaseManager.unshiftNew("RewardPhase", allRewards[randSeedItem(candidates)]);
+      globalScene.phaseManager.unshiftNew("RewardPhase", randSeedItem(candidates));
     } else {
       // At max stacks, give a Voucher instead
-      globalScene.phaseManager.unshiftNew("RewardPhase", allRewards.VOUCHER);
+      globalScene.phaseManager.unshiftNew("RewardPhase", RewardId.VOUCHER);
     }
   }
 };
@@ -168,7 +169,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           // At max stacks, give the first party pokemon a Shell Bell instead
           backupOption();
         } else {
-          globalScene.phaseManager.unshiftNew("RewardPhase", allRewards.AMULET_COIN);
+          globalScene.phaseManager.unshiftNew("RewardPhase", TrainerItemId.AMULET_COIN);
           doEventReward();
         }
 
@@ -238,7 +239,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
             // At max stacks, give the first party pokemon a Shell Bell instead
             backupOption();
           } else {
-            globalScene.phaseManager.unshiftNew("RewardPhase", allRewards.CANDY_JAR);
+            globalScene.phaseManager.unshiftNew("RewardPhase", TrainerItemId.CANDY_JAR);
             doEventReward();
           }
         } else {
@@ -249,7 +250,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
             // At max stacks, give the first party pokemon a Shell Bell instead
             backupOption();
           } else {
-            globalScene.phaseManager.unshiftNew("RewardPhase", allRewards.BERRY_POUCH);
+            globalScene.phaseManager.unshiftNew("RewardPhase", TrainerItemId.BERRY_POUCH);
             doEventReward();
           }
         }
@@ -321,7 +322,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           // At max stacks, give the first party pokemon a Shell Bell instead
           backupOption();
         } else {
-          globalScene.phaseManager.unshiftNew("RewardPhase", allRewards.HEALING_CHARM);
+          globalScene.phaseManager.unshiftNew("RewardPhase", TrainerItemId.HEALING_CHARM);
           doEventReward();
         }
 

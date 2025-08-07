@@ -250,7 +250,6 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
         }
       }
 
-      // No allRewards
       leaveEncounterWithoutBattle(true);
     },
   )

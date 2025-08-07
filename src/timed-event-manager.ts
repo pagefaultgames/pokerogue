@@ -67,7 +67,7 @@ interface TimedEvent extends EventBanner {
   mysteryEncounterTierChanges?: EventMysteryEncounterTier[];
   luckBoostedSpecies?: SpeciesId[];
   boostFusions?: boolean; //MODIFIER REWORK PLEASE
-  classicWaveRewards?: EventWaveReward[]; // Rival battle allRewards
+  classicWaveRewards?: EventWaveReward[]; // Rival battle rewards
   trainerShinyChance?: number; // Odds over 65536 of trainer mon generating as shiny
   music?: EventMusicReplacement[];
   dailyRunChallenges?: EventChallenge[];
@@ -569,8 +569,8 @@ export class TimedEventManager {
   /**
    * Gets all the modifier types associated with a certain wave during an event
    * @see EventWaveReward
-   * @param wave the wave to check for associated allRewards
-   * @returns array of strings of the event modifier reward types
+   * @param wave the wave to check for associated rewards
+   * @returns array of strings of the event reward types
    */
   getFixedBattleEventRewards(wave: number): SilentReward[] {
     const ret: SilentReward[] = [];

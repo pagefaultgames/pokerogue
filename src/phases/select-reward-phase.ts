@@ -108,7 +108,7 @@ export class SelectRewardPhase extends BattlePhase {
             default:
               return false;
           }
-        // Pick an option from the allRewards
+        // Pick an option from the rewards
         case 1:
           return this.selectRewardOption(cursor, rewardSelectCallback);
         // Pick an option from the shop
@@ -121,7 +121,7 @@ export class SelectRewardPhase extends BattlePhase {
     this.resetRewardSelect(rewardSelectCallback);
   }
 
-  // Pick a reward from among the allRewards and apply it
+  // Pick a reward from among the rewards and apply it
   private selectRewardOption(cursor: number, rewardSelectCallback: RewardSelectCallback): boolean {
     if (this.typeOptions.length === 0) {
       globalScene.ui.clearText();
@@ -175,7 +175,6 @@ export class SelectRewardPhase extends BattlePhase {
     return cost === -1;
   }
 
-  // Reroll allRewards
   private rerollRewards() {
     const rerollCost = this.getRerollCost(globalScene.lockRarityTiers);
     if (rerollCost < 0 || globalScene.money < rerollCost) {
