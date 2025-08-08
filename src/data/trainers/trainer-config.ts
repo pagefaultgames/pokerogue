@@ -3996,7 +3996,6 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = 1; // Mega Swampert
         p.generateAndPopulateMoveset();
         p.generateName();
-        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     )
     .setPartyMemberFunc(
@@ -4113,15 +4112,15 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
       }),
     )
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.AGGRON, SpeciesId.HYDREIGON, SpeciesId.ARCHALUDON]))
     .setPartyMemberFunc(
-      3,
+      2,
       getRandomPartyMemberFunc([SpeciesId.LAPRAS], TrainerSlot.TRAINER, true, p => {
         p.formIndex = 1; // G-Max Lapras
         p.generateAndPopulateMoveset();
         p.generateName();
       }),
     )
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.AGGRON, SpeciesId.HYDREIGON, SpeciesId.ARCHALUDON]))
     .setPartyMemberFunc(
       4,
       getRandomPartyMemberFunc([SpeciesId.RESHIRAM], TrainerSlot.TRAINER, true, p => {
@@ -4341,7 +4340,6 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.VENUSAUR, SpeciesId.BLASTOISE], TrainerSlot.TRAINER, true, p => {
         p.pokeball = PokeballType.ULTRA_BALL;
         p.teraType = PokemonType.FIGHTING;
-        p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
           p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
@@ -4353,6 +4351,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.KOMMO_O], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
+        p.generateAndPopulateMoveset();
       }),
     )
     .setPartyMemberFunc(
@@ -4376,7 +4375,7 @@ export const trainerConfigs: TrainerConfigs = {
         }
       }),
     )
-    .setInstantTera(3), // Tera Fighting Venusaur / Blastoise
+    .setInstantTera(4), // Tera Fighting Kommo-o
   [TrainerType.GEETA]: new TrainerConfig(++t)
     .initForChampion(false)
     .setMixedBattleBgm("battle_champion_geeta")
