@@ -76,11 +76,7 @@ describe("Moves - Recoil Moves", () => {
     game.move.use(MoveId.DOUBLE_EDGE, 0);
     game.move.use(MoveId.DOUBLE_EDGE, 1);
 
-    await game.phaseInterceptor.to("TurnEndPhase", false);
     await game.toNextTurn();
-
-    console.log(playerPokemon1.hp);
-    console.log(playerPokemon2.hp);
 
     expect(playerPokemon1.hp).toBeLessThan(playerPokemon1.getMaxHp());
     expect(playerPokemon2.hp).toBeLessThan(playerPokemon2.getMaxHp());
