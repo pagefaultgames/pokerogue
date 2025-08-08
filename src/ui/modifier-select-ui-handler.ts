@@ -843,7 +843,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
   /**
    * Start the tweens responsible for animating the option's appearance
    *
-   * @privateremarks
+   * @privateRemarks
    * This method is unusual. It "returns" (one via the actual return, one by via appending to the `promiseHolder`
    * parameter) two promises. The promise returned by the method resolves once the option's appearance animations have
    * completed, and is meant to allow callers to synchronize with the completion of the option's appearance animations.

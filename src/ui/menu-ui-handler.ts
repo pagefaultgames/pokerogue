@@ -7,7 +7,7 @@ import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { AdminMode, getAdminModeName } from "#ui/admin-ui-handler";
 import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { BgmBar } from "#ui/bgm-bar";
