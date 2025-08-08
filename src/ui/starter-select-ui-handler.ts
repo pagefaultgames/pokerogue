@@ -16,7 +16,6 @@ import {
   POKERUS_STARTER_COUNT,
   speciesStarterCosts,
 } from "#balance/starters";
-import { applyChallenges, checkStarterValidForChallenge } from "#data/challenge";
 import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
 import { Egg, getEggTierForSpecies } from "#data/egg";
 import { GrowthRate, getGrowthRateColor } from "#data/exp";
@@ -48,7 +47,7 @@ import { achvs } from "#system/achv";
 import type { DexAttrProps, StarterAttributes, StarterMoveset } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
-import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
@@ -59,6 +58,7 @@ import { StarterContainer } from "#ui/starter-container";
 import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
+import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
 import {
   BooleanHolder,
   fixedInt,
@@ -901,7 +901,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonEggMovesContainer.add(eggMoveContainer);
     }
 
-    this.teraIcon = globalScene.add.sprite(85, 63, "button_tera").setName("terrastallize-icon").setFrame("fire");
+    this.teraIcon = globalScene.add.sprite(85, 63, "button_tera").setName("terastallize-icon").setFrame("fire");
 
     // The font size should be set per language
     const instructionTextSize = textSettings.instructionTextSize;
@@ -1050,12 +1050,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     globalScene.add.existing(this.statsContainer);
 
     // add the info overlay last to be the top most ui element and prevent the IVs from overlaying this
-    const overlayScale = 1;
     this.moveInfoOverlay = new MoveInfoOverlay({
-      scale: overlayScale,
       top: true,
       x: 1,
-      y: globalScene.game.canvas.height / 6 - MoveInfoOverlay.getHeight(overlayScale) - 29,
+      y: globalScene.scaledCanvas.height / 6 - MoveInfoOverlay.getHeight() - 29,
     });
 
     this.starterSelectContainer.add([
@@ -1311,7 +1309,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.starterSelectMessageBoxContainer.setY(0);
       this.message.setY(4);
     } else {
-      this.starterSelectMessageBoxContainer.setY(globalScene.game.canvas.height / 6);
+      this.starterSelectMessageBoxContainer.setY(globalScene.scaledCanvas.height);
       this.starterSelectMessageBox.setOrigin(0, 1);
       this.message.setY(singleLine ? -22 : -37);
     }

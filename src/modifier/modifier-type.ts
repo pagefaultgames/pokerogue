@@ -14,6 +14,7 @@ import { pokemonFormChanges, SpeciesFormChangeCondition } from "#data/pokemon-fo
 import { getStatusEffectDescriptor } from "#data/status-effect";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
+import { ChallengeType } from "#enums/challenge-type";
 import { FormChangeItem } from "#enums/form-change-item";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { ModifierTier } from "#enums/modifier-tier";
@@ -104,7 +105,7 @@ import {
   TempExtraModifierModifier,
   TempStatStageBoosterModifier,
   TerastallizeAccessModifier,
-  TerrastalizeModifier,
+  TerastallizeModifier,
   TmModifier,
   TurnHealModifier,
   TurnHeldItemTransferModifier,
@@ -116,7 +117,16 @@ import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#types/mo
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getModifierTierTextTint } from "#ui/text";
-import { formatMoney, isNullOrUndefined, NumberHolder, padInt, randSeedInt, randSeedItem } from "#utils/common";
+import { applyChallenges } from "#utils/challenge-utils";
+import {
+  BooleanHolder,
+  formatMoney,
+  isNullOrUndefined,
+  NumberHolder,
+  padInt,
+  randSeedInt,
+  randSeedItem,
+} from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
 import i18next from "i18next";
@@ -421,7 +431,7 @@ export class TerastallizeModifierType extends PokemonModifierType {
     super(
       "",
       `${PokemonType[teraType].toLowerCase()}_tera_shard`,
-      (type, args) => new TerrastalizeModifier(type as TerastallizeModifierType, (args[0] as Pokemon).id, teraType),
+      (type, args) => new TerastallizeModifier(type as TerastallizeModifierType, (args[0] as Pokemon).id, teraType),
       (pokemon: PlayerPokemon) => {
         if (
           [pokemon.species.speciesId, pokemon.fusionSpecies?.speciesId].filter(
@@ -533,7 +543,9 @@ export class PokemonReviveModifierType extends PokemonHpRestoreModifierType {
     );
 
     this.selectFilter = (pokemon: PlayerPokemon) => {
-      if (pokemon.hp) {
+      const selectStatus = new BooleanHolder(pokemon.hp !== 0);
+      applyChallenges(ChallengeType.PREVENT_REVIVE, selectStatus);
+      if (selectStatus.value) {
         return PartyUiHandler.NoEffectMessage;
       }
       return null;
@@ -1011,6 +1023,7 @@ class AllPokemonFullReviveModifierType extends AllPokemonFullHpRestoreModifierTy
       "modifierType:ModifierType.AllPokemonFullReviveModifierType",
       (_type, _args) => new PokemonHpRestoreModifier(this, -1, 0, 100, false, true),
     );
+    this.group = "revive";
   }
 }
 
@@ -1262,7 +1275,9 @@ export class FusePokemonModifierType extends PokemonModifierType {
       iconImage,
       (_type, args) => new FusePokemonModifier(this, (args[0] as PlayerPokemon).id, (args[1] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
-        if (pokemon.isFusion()) {
+        const selectStatus = new BooleanHolder(pokemon.isFusion());
+        applyChallenges(ChallengeType.POKEMON_FUSION, pokemon, selectStatus);
+        if (selectStatus.value) {
           return PartyUiHandler.NoEffectMessage;
         }
         return null;
@@ -2574,11 +2589,15 @@ function getModifierTypeOptionWithRetry(
 ): ModifierTypeOption {
   allowLuckUpgrades = allowLuckUpgrades ?? true;
   let candidate = getNewModifierTypeOption(party, ModifierPoolType.PLAYER, tier, undefined, 0, allowLuckUpgrades);
+  const candidateValidity = new BooleanHolder(true);
+  applyChallenges(ChallengeType.WAVE_REWARD, candidate, candidateValidity);
   let r = 0;
   while (
-    existingOptions.length &&
-    ++r < retryCount &&
-    existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group).length
+    (existingOptions.length &&
+      ++r < retryCount &&
+      existingOptions.filter(o => o.type.name === candidate?.type.name || o.type.group === candidate?.type.group)
+        .length) ||
+    !candidateValidity.value
   ) {
     candidate = getNewModifierTypeOption(
       party,
@@ -2588,6 +2607,7 @@ function getModifierTypeOptionWithRetry(
       0,
       allowLuckUpgrades,
     );
+    applyChallenges(ChallengeType.WAVE_REWARD, candidate, candidateValidity);
   }
   return candidate!;
 }
@@ -2648,7 +2668,15 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: number, baseC
     [new ModifierTypeOption(modifierTypeInitObj.FULL_RESTORE(), 0, baseCost * 2.25)],
     [new ModifierTypeOption(modifierTypeInitObj.SACRED_ASH(), 0, baseCost * 10)],
   ];
-  return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
+
+  return options
+    .slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30))
+    .flat()
+    .filter(shopItem => {
+      const status = new BooleanHolder(true);
+      applyChallenges(ChallengeType.SHOP_ITEM, shopItem, status);
+      return status.value;
+    });
 }
 
 export function getEnemyBuffModifierForWave(
