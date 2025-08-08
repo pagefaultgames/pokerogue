@@ -24,7 +24,7 @@ export interface toHaveTypesOptions {
 }
 
 /**
- * Matcher that checks if a {@linkcode Pokemon}'s typing is as expected.
+ * Matcher that checks if a Pokemon's typing is as expected.
  * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @param expectedTypes - An array of one or more {@linkcode PokemonType}s to compare against.
  * @param mode - The mode to perform the matching;

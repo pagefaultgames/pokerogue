@@ -82,7 +82,7 @@ export function toHavePositionalTag<P extends PositionalTagType>(
     };
   }
 
-  // Pass if any of the matching tags meet our criteria
+  // Pass if any of the matching tags meet the criteria
   const pass = matchingTags.some(tag =>
     this.equals(tag, expectedTag, [...this.customTesters, this.utils.subsetEquality, this.utils.iterableEquality]),
   );
