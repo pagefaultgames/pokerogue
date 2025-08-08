@@ -4339,11 +4339,6 @@ export const trainerConfigs: TrainerConfigs = {
       3,
       getRandomPartyMemberFunc([SpeciesId.VENUSAUR, SpeciesId.BLASTOISE], TrainerSlot.TRAINER, true, p => {
         p.pokeball = PokeballType.ULTRA_BALL;
-        p.teraType = PokemonType.FIGHTING;
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.TERA_BLAST)) {
-          // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
-          p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
-        }
       }),
     )
     .setPartyMemberFunc(
