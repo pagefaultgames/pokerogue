@@ -58,7 +58,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
     },
     {
       speaker: `${namespace}:speaker`,
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
     },
   ])
   .withOnInit(() => {

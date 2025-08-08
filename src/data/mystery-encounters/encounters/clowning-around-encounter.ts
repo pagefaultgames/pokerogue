@@ -119,7 +119,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
       text: `${namespace}:intro`,
     },
     {
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
       speaker: `${namespace}:speaker`,
     },
   ])

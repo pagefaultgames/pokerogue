@@ -56,7 +56,7 @@ export const FieldTripEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       text: `${namespace}:intro`,
     },
     {
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
       speaker: `${namespace}:speaker`,
     },
   ])

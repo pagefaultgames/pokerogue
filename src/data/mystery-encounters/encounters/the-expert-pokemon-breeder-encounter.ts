@@ -139,7 +139,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
     },
     {
       speaker: trainerNameKey,
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
     },
   ])
   .withOnInit(() => {
