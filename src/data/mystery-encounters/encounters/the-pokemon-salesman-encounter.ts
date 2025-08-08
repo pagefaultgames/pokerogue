@@ -215,7 +215,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
         updatePlayerMoney(-price, true, false);
 
         // Show dialogue
-        await showEncounterDialogue(`${namespace}:option.1.selected_dialogue`, `${namespace}:speaker`);
+        await showEncounterDialogue(`${namespace}:option.1.selectedDialogue`, `${namespace}:speaker`);
         await transitionMysteryEncounterIntroVisuals();
 
         // "Catch" purchased pokemon

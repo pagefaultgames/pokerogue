@@ -119,7 +119,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
             );
           }
           if (!encounter.pokemonMeetsPrimaryRequirements(pokemon)) {
-            return getEncounterText(`${namespace}:invalid_selection`) ?? null;
+            return getEncounterText(`${namespace}:invalidSelection`) ?? null;
           }
 
           return null;
@@ -193,7 +193,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
 
         // Only Pokemon that can gain benefits are unfainted
         const selectableFilter = (pokemon: Pokemon) => {
-          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalid_selection`);
+          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalidSelection`);
         };
 
         return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);

@@ -65,7 +65,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         buttonLabel: `${namespace}:option.1.label`,
         disabledButtonLabel: `${namespace}:option.1.label_disabled`,
         buttonTooltip: `${namespace}:option.1.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.1.tooltip_disabled`,
+        disabledButtonTooltip: `${namespace}:option.1.tooltipDisabled`,
         selected: [
           {
             text: `${namespace}:option.1.selected`,
@@ -83,7 +83,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         buttonLabel: `${namespace}:option.2.label`,
         disabledButtonLabel: `${namespace}:option.2.label_disabled`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.tooltip_disabled`,
+        disabledButtonTooltip: `${namespace}:option.2.tooltipDisabled`,
         selected: [
           {
             text: `${namespace}:option.2.selected`,

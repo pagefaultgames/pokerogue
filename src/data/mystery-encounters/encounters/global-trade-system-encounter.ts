@@ -416,7 +416,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
               return it.isTransferable;
             }).length > 0;
           if (!meetsReqs) {
-            return getEncounterText(`${namespace}:option.3.invalid_selection`) ?? null;
+            return getEncounterText(`${namespace}:option.3.invalidSelection`) ?? null;
           }
 
           return null;

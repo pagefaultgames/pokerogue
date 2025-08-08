@@ -118,7 +118,7 @@ export const FunAndGamesEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
 
         // Only Pokemon that are not KOed/legal can be selected
         const selectableFilter = (pokemon: Pokemon) => {
-          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalid_selection`);
+          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalidSelection`);
         };
 
         return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
