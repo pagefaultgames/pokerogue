@@ -3,7 +3,7 @@ import { CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES, CLASSIC_MODE_MYSTERY_ENCOUNTER_
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { allChallenges, type Challenge, copyChallenge } from "#data/challenge";
-import { getDailyStartingBiome } from "#data/daily-run";
+import { getDailyEventSeedBoss, getDailyStartingBiome } from "#data/daily-run";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
@@ -211,6 +211,11 @@ export class GameMode implements GameModeConfig {
 
   getOverrideSpecies(waveIndex: number): PokemonSpecies | null {
     if (this.isDaily && this.isWaveFinal(waveIndex)) {
+      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
+      if (!isNullOrUndefined(eventBoss)) {
+        return eventBoss;
+      }
+
       const allFinalBossSpecies = allSpecies.filter(
         s =>
           (s.subLegendary || s.legendary || s.mythical) &&

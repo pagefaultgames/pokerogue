@@ -5,10 +5,10 @@ import type { PokemonSpeciesForm } from "#data/pokemon-species";
 import { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import type { SpeciesId } from "#enums/species-id";
+import { SpeciesId } from "#enums/species-id";
 import { PlayerPokemon } from "#field/pokemon";
 import type { Starter } from "#ui/starter-select-ui-handler";
-import { randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
+import { isNullOrUndefined, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
@@ -26,21 +26,15 @@ export function fetchDailyRunSeed(): Promise<string | null> {
 }
 
 export function getDailyRunStarters(seed: string): Starter[] {
-  const starters: Starter[] = [];
+  let starters: Starter[] = [];
 
   globalScene.executeWithSeedOffset(
     () => {
       const startingLevel = globalScene.gameMode.getStartingLevel();
 
-      if (/\d{18}$/.test(seed)) {
-        for (let s = 0; s < 3; s++) {
-          const offset = 6 + s * 6;
-          const starterSpeciesForm = getPokemonSpeciesForm(
-            Number.parseInt(seed.slice(offset, offset + 4)) as SpeciesId,
-            Number.parseInt(seed.slice(offset + 4, offset + 6)),
-          );
-          starters.push(getDailyRunStarter(starterSpeciesForm, startingLevel));
-        }
+      const eventStarters = getDailyEventSeedStarters(seed);
+      if (!isNullOrUndefined(eventStarters)) {
+        starters = eventStarters;
         return;
       }
 
@@ -145,6 +139,11 @@ const dailyBiomeWeights: BiomeWeights = {
 };
 
 export function getDailyStartingBiome(): BiomeId {
+  const eventBiome = getDailyEventSeedBiome(globalScene.seed);
+  if (!isNullOrUndefined(eventBiome)) {
+    return eventBiome;
+  }
+
   const biomes = getEnumValues(BiomeId).filter(b => b !== BiomeId.TOWN && b !== BiomeId.END);
 
   let totalWeight = 0;
@@ -168,4 +167,124 @@ export function getDailyStartingBiome(): BiomeId {
   // Fallback in case something went wrong
   // TODO: should this use `randSeedItem`?
   return biomes[randSeedInt(biomes.length)];
+}
+
+/**
+ * If this is Daily Mode and the seed is longer than a default seed then it has been modified and could contain a custom event seed.
+ * Default seeds are always 24 characters.
+ * @returns True if it is a Daily Event Seed.
+ */
+export function isDailyEventSeed(seed: string): boolean {
+  return globalScene.gameMode.isDaily && seed.length > 24;
+}
+
+/**
+ * Expects the seed to contain: /starters\d{18}/
+ * Where each Starter is 4 digits for the SpeciesId and 2 digits for the FormIndex
+ * @returns An {@linkcode Starter[]} containing the starters or null if no valid match.
+ */
+export function getDailyEventSeedStarters(seed: string): Starter[] | null {
+  if (!isDailyEventSeed(seed)) {
+    return null;
+  }
+
+  const starters: Starter[] = [];
+  const match = /starters(\d{4})(\d{2})(\d{4})(\d{2})(\d{4})(\d{2})/g.exec(seed);
+  if (match && match.length === 7) {
+    for (let i = 1; i < match.length; i += 2) {
+      const speciesId = Number.parseInt(match[i]) as SpeciesId;
+      const formIndex = Number.parseInt(match[i + 1]);
+
+      if (!Object.values(SpeciesId).includes(speciesId)) {
+        // Incorrect event seed, abort.
+        return null;
+      }
+
+      const starterForm = getPokemonSpeciesForm(speciesId, formIndex);
+      const startingLevel = globalScene.gameMode.getStartingLevel();
+      const starter = getDailyRunStarter(starterForm, startingLevel);
+      starters.push(starter);
+    }
+
+    return starters;
+  }
+
+  return null;
+}
+
+/**
+ * Expects the seed to contain: /boss\d{4}/
+ * Where the boss is 4 digits for the SpeciesId.
+ * Currently does not support form index.
+ * @returns A {@linkcode PokemonSpecies} containing the boss species or null if no valid match.
+ */
+export function getDailyEventSeedBoss(seed: string): PokemonSpecies | null {
+  if (!isDailyEventSeed(seed)) {
+    return null;
+  }
+
+  const match = /boss(\d{4})/g.exec(seed);
+  if (match && match.length === 2) {
+    const speciesId = Number.parseInt(match[1]) as SpeciesId;
+
+    if (!Object.values(SpeciesId).includes(speciesId)) {
+      // Incorrect event seed, abort.
+      return null;
+    }
+
+    const species = getPokemonSpecies(speciesId);
+    return species;
+  }
+
+  return null;
+}
+
+/**
+ * Expects the seed to contain: /biome\d{2}/ or /biome\d{2}/
+ * Where the biome is 2 digits for the BiomeId.
+ * @returns A {@linkcode DailyEventSeedBiome} containing the Biome or null if no valid match.
+ */
+export function getDailyEventSeedBiome(seed: string): BiomeId | null {
+  if (!isDailyEventSeed(seed)) {
+    return null;
+  }
+
+  const match = /biome(\d{2})/g.exec(seed);
+  if (match && match.length === 2) {
+    const startingBiome = Number.parseInt(match[1]) as BiomeId;
+
+    if (!Object.values(BiomeId).includes(startingBiome)) {
+      // Incorrect event seed, abort.
+      return null;
+    }
+
+    return startingBiome;
+  }
+
+  return null;
+}
+
+/**
+ * Expects the seed to contain: /luck\d{2}/
+ * Where the Luck has 2 digits for the number.
+ * @returns A {@linkcode number} representing the Daily Luck value or null if no valid match.
+ */
+export function getDailyEventSeedLuck(seed: string): number | null {
+  if (!isDailyEventSeed(seed)) {
+    return null;
+  }
+
+  const match = /luck(\d{2})/g.exec(seed);
+  if (match && match.length === 2) {
+    const luck = Number.parseInt(match[1]);
+
+    if (luck < 0 || luck > 14) {
+      // Incorrect event seed, abort.
+      return null;
+    }
+
+    return luck;
+  }
+
+  return null;
 }
