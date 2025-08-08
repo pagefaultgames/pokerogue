@@ -574,7 +574,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    */
 
   /**
-   * @statif Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
+   * @static Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
    * NOTE: if new functions are added to {@linkcode MysteryEncounter} class
    * @param encounterType
    * @returns this
@@ -603,7 +603,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   }
 
   /**
-   * Defines an option + phasefor the encounter.
+   * Defines an option + phase for the encounter.
    * Use for easy/streamlined options.
    * There should be at least 2 options defined and no more than 4.
    * If complex use {@linkcode MysteryEncounterBuilder.withOption}
@@ -625,7 +625,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   }
 
   /**
-   * Defines an option + phasefor the encounter.
+   * Defines an option + phase for the encounter.
    * Use for easy/streamlined options.
    * There should be at least 2 options defined and no more than 4.
    * If complex use {@linkcode MysteryEncounterBuilder.withOption}

@@ -46,7 +46,7 @@ describe("Abilities - Neutralizing Gas", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // Intimidate is suppressed, so the attack stat should not be lowered
-    expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.ATK)).toBe(0);
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(0);
   });
 
   it("should allow the user's passive to activate", async () => {
@@ -56,7 +56,7 @@ describe("Abilities - Neutralizing Gas", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.ATK)).toBe(1);
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(1);
   });
 
   it.todo("should activate before other abilities", async () => {
@@ -68,7 +68,7 @@ describe("Abilities - Neutralizing Gas", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // Intimidate is suppressed even when the user's speed is lower
-    expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.ATK)).toBe(0);
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(0);
   });
 
   it("should activate other abilities when removed", async () => {
@@ -79,15 +79,15 @@ describe("Abilities - Neutralizing Gas", () => {
 
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
-    expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(0);
-    expect(enemyPokemon?.getStatStage(Stat.DEF)).toBe(0);
+    const enemyPokemon = game.field.getEnemyPokemon();
+    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
+    expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
     // Enemy removes user's ability, so both abilities are activated
-    expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(1);
-    expect(enemyPokemon?.getStatStage(Stat.DEF)).toBe(1);
+    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+    expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(1);
   });
 
   it("should not activate the user's other ability when removed", async () => {
@@ -95,13 +95,13 @@ describe("Abilities - Neutralizing Gas", () => {
 
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
     // Neutralising gas user's passive is still active
-    const enemyPokemon = game.scene.getEnemyPokemon();
-    expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
+    const enemyPokemon = game.field.getEnemyPokemon();
+    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
     // Intimidate did not reactivate after neutralizing gas was removed
-    expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
+    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should only deactivate when all setters are off the field", async () => {
@@ -164,7 +164,7 @@ describe("Abilities - Neutralizing Gas", () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
 
-    vi.spyOn(game.scene.getPlayerPokemon()!, "randBattleSeedInt").mockReturnValue(0);
+    vi.spyOn(game.field.getPlayerPokemon(), "randBattleSeedInt").mockReturnValue(0);
     vi.spyOn(globalScene, "randBattleSeedInt").mockReturnValue(0);
 
     const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
@@ -178,7 +178,7 @@ describe("Abilities - Neutralizing Gas", () => {
     game.override.battleStyle("single").ability(AbilityId.NEUTRALIZING_GAS).enemyAbility(AbilityId.DELTA_STREAM);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     const weatherChangeAttr = enemy.getAbilityAttrs("PostSummonWeatherChangeAbAttr", false)[0];
     const weatherChangeSpy = vi.spyOn(weatherChangeAttr, "apply");
 
@@ -186,7 +186,7 @@ describe("Abilities - Neutralizing Gas", () => {
 
     game.move.select(MoveId.SPLASH);
     await game.killPokemon(enemy);
-    await game.killPokemon(game.scene.getPlayerPokemon()!);
+    await game.killPokemon(game.field.getPlayerPokemon());
 
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
     expect(weatherChangeSpy).not.toHaveBeenCalled();

@@ -36,7 +36,7 @@ describe("Moves - Nightmare", () => {
   it("lowers enemy hp by 1/4 each turn while asleep", async () => {
     await game.classicMode.startBattle([SpeciesId.HYPNO]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const enemyMaxHP = enemyPokemon.hp;
 
     game.move.select(MoveId.NIGHTMARE);

@@ -145,7 +145,7 @@ describe("Abilities - Desolate Land", () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 
-    vi.spyOn(game.scene.getPlayerPokemon()!, "randBattleSeedInt").mockReturnValue(0);
+    vi.spyOn(game.field.getPlayerPokemon(), "randBattleSeedInt").mockReturnValue(0);
     vi.spyOn(globalScene, "randBattleSeedInt").mockReturnValue(0);
 
     const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;

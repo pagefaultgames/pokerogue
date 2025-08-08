@@ -1044,7 +1044,7 @@ export const starterPassiveAbilities: StarterPassiveAbilities = {
   [SpeciesId.FINIZEN]: { 0: AbilityId.FRIEND_GUARD },
   [SpeciesId.PALAFIN]: { 0: AbilityId.EMERGENCY_EXIT, 1: AbilityId.IRON_FIST },
   [SpeciesId.VAROOM]: { 0: AbilityId.LEVITATE },
-  [SpeciesId.REVAVROOM]: { 0: AbilityId.LEVITATE, 1: AbilityId.DARK_AURA, 2: AbilityId.FLASH_FIRE, 3: AbilityId.MERCILESS, 4: AbilityId.FILTER, 5: AbilityId.SCRAPPY },
+  [SpeciesId.REVAVROOM]: { 0: AbilityId.LEVITATE, 1: AbilityId.INTIMIDATE, 2: AbilityId.SPEED_BOOST, 3: AbilityId.TOXIC_DEBRIS, 4: AbilityId.MISTY_SURGE, 5: AbilityId.STAMINA },
   [SpeciesId.CYCLIZAR]: { 0: AbilityId.PROTEAN },
   [SpeciesId.ORTHWORM]: { 0: AbilityId.REGENERATOR },
   [SpeciesId.GLIMMET]: { 0: AbilityId.STURDY },

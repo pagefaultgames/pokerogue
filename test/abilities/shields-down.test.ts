@@ -66,7 +66,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(game.scene.getPlayerPokemon()!.status).toBe(undefined);
+    expect(game.field.getPlayerPokemon().status).toBe(undefined);
   });
 
   test("should still ignore non-volatile status moves used by a pokemon with mold breaker", async () => {
@@ -78,7 +78,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     await game.move.selectEnemyMove(MoveId.SPORE);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(game.scene.getPlayerPokemon()!.status).toBe(undefined);
+    expect(game.field.getPlayerPokemon().status).toBe(undefined);
   });
 
   test("should ignore non-volatile secondary status effects", async () => {
@@ -89,7 +89,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(game.scene.getPlayerPokemon()!.status).toBe(undefined);
+    expect(game.field.getPlayerPokemon().status).toBe(undefined);
   });
 
   test("should ignore status moves even through mold breaker", async () => {
@@ -101,7 +101,7 @@ describe("Abilities - SHIELDS DOWN", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(game.scene.getPlayerPokemon()!.status).toBe(undefined);
+    expect(game.field.getPlayerPokemon().status).toBe(undefined);
   });
 
   // toxic spikes currently does not poison flying types when gravity is in effect
@@ -122,9 +122,9 @@ describe("Abilities - SHIELDS DOWN", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(SpeciesId.MINIOR);
-    expect(game.scene.getPlayerPokemon()!.species.formIndex).toBe(0);
-    expect(game.scene.getPlayerPokemon()!.status?.effect).toBe(StatusEffect.POISON);
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.MINIOR);
+    expect(game.field.getPlayerPokemon().species.formIndex).toBe(0);
+    expect(game.field.getPlayerPokemon().status?.effect).toBe(StatusEffect.POISON);
   });
 
   test("should ignore yawn", async () => {
@@ -136,7 +136,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     await game.move.selectEnemyMove(MoveId.YAWN);
 
     await game.phaseInterceptor.to(TurnEndPhase);
-    expect(game.scene.getPlayerPokemon()!.findTag(tag => tag.tagType === BattlerTagType.DROWSY)).toBe(undefined);
+    expect(game.field.getPlayerPokemon().findTag(tag => tag.tagType === BattlerTagType.DROWSY)).toBe(undefined);
   });
 
   test("should not ignore volatile status effects", async () => {
@@ -149,7 +149,7 @@ describe("Abilities - SHIELDS DOWN", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(game.scene.getPlayerPokemon()!.findTag(tag => tag.tagType === BattlerTagType.CONFUSED)).not.toBe(undefined);
+    expect(game.field.getPlayerPokemon().findTag(tag => tag.tagType === BattlerTagType.CONFUSED)).not.toBe(undefined);
   });
 
   // the `NoTransformAbilityAbAttr` attribute is not checked anywhere, so this test cannot pass.
@@ -162,7 +162,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH);
 
     await game.phaseInterceptor.to(TurnEndPhase);
-    expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(game.field.getEnemyPokemon().status?.effect).toBe(StatusEffect.SLEEP);
   });
 
   test("should not prevent minior from receiving the fainted status effect in trainer battles", async () => {
@@ -173,7 +173,7 @@ describe("Abilities - SHIELDS DOWN", () => {
       .startingWave(5)
       .enemySpecies(SpeciesId.MINIOR);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    const minior = game.scene.getEnemyPokemon()!;
+    const minior = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THUNDERBOLT);
     await game.toNextTurn();

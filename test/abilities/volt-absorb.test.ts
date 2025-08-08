@@ -42,7 +42,7 @@ describe("Abilities - Volt Absorb", () => {
 
     await game.classicMode.startBattle();
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(moveToUse);
 
@@ -62,7 +62,7 @@ describe("Abilities - Volt Absorb", () => {
 
     await game.classicMode.startBattle();
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THUNDERBOLT);
     enemyPokemon.hp = enemyPokemon.hp - 1;
@@ -83,7 +83,7 @@ describe("Abilities - Volt Absorb", () => {
 
     await game.classicMode.startBattle();
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THUNDERBOLT);
     enemyPokemon.hp = enemyPokemon.hp - 1;

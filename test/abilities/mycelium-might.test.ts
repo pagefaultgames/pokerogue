@@ -42,12 +42,12 @@ describe("Abilities - Mycelium Might", () => {
    * https://www.smogon.com/forums/threads/scarlet-violet-battle-mechanics-research.3709545/page-24
    */
 
-  it("will move last in its priority bracket and ignore protective abilities", async () => {
+  it("should move last in its priority bracket and ignore protective abilities", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
-    const playerIndex = game.scene.getPlayerPokemon()?.getBattlerIndex();
-    const enemyIndex = enemyPokemon?.getBattlerIndex();
+    const enemyPokemon = game.field.getEnemyPokemon();
+    const playerIndex = game.field.getPlayerPokemon().getBattlerIndex();
+    const enemyIndex = enemyPokemon.getBattlerIndex();
 
     game.move.select(MoveId.BABY_DOLL_EYES);
 
@@ -62,16 +62,16 @@ describe("Abilities - Mycelium Might", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
-    expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
+    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
   });
 
-  it("will still go first if a status move that is in a higher priority bracket than the opponent's move is used", async () => {
+  it("should still go first if a status move that is in a higher priority bracket than the opponent's move is used", async () => {
     game.override.enemyMoveset(MoveId.TACKLE);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
-    const playerIndex = game.scene.getPlayerPokemon()?.getBattlerIndex();
-    const enemyIndex = enemyPokemon?.getBattlerIndex();
+    const enemyPokemon = game.field.getEnemyPokemon();
+    const playerIndex = game.field.getPlayerPokemon().getBattlerIndex();
+    const enemyIndex = enemyPokemon.getBattlerIndex();
 
     game.move.select(MoveId.BABY_DOLL_EYES);
 
@@ -85,14 +85,14 @@ describe("Abilities - Mycelium Might", () => {
     expect(commandOrder).toEqual([playerIndex, enemyIndex]);
     await game.phaseInterceptor.to(TurnEndPhase);
     // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
-    expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
+    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
   });
 
-  it("will not affect non-status moves", async () => {
+  it("should not affect non-status moves", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
-    const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
-    const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
+    const playerIndex = game.field.getPlayerPokemon().getBattlerIndex();
+    const enemyIndex = game.field.getEnemyPokemon().getBattlerIndex();
 
     game.move.select(MoveId.QUICK_ATTACK);
 

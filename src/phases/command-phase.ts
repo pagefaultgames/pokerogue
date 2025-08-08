@@ -9,6 +9,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
+import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
 import { FieldPosition } from "#enums/field-position";
 import { MoveId } from "#enums/move-id";
@@ -21,6 +22,8 @@ import type { MoveTargetSet } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
 import { FieldPhase } from "#phases/field-phase";
 import type { TurnMove } from "#types/turn-move";
+import { applyChallenges } from "#utils/challenge-utils";
+import { BooleanHolder } from "#utils/common";
 import i18next from "i18next";
 
 export class CommandPhase extends FieldPhase {
@@ -109,7 +112,7 @@ export class CommandPhase extends FieldPhase {
    * Clear out all unusable moves in front of the currently acting pokemon's move queue.
    */
   // TODO: Refactor move queue handling to ensure that this method is not necessary.
-  private clearUnusuableMoves(): void {
+  private clearUnusableMoves(): void {
     const playerPokemon = this.getPokemon();
     const moveQueue = playerPokemon.getMoveQueue();
     if (moveQueue.length === 0) {
@@ -140,7 +143,7 @@ export class CommandPhase extends FieldPhase {
    * @returns Whether a queued move was successfully set to be executed.
    */
   private tryExecuteQueuedMove(): boolean {
-    this.clearUnusuableMoves();
+    this.clearUnusableMoves();
     const playerPokemon = globalScene.getPlayerField()[this.fieldIndex];
     const moveQueue = playerPokemon.getMoveQueue();
 
@@ -210,16 +213,27 @@ export class CommandPhase extends FieldPhase {
     const move = user.getMoveset()[cursor];
     globalScene.ui.setMode(UiMode.MESSAGE);
 
-    // Decides between a Disabled, Not Implemented, or No PP translation message
-    const errorMessage = user.isMoveRestricted(move.moveId, user)
-      ? user.getRestrictingTag(move.moveId, user)!.selectionDeniedText(user, move.moveId)
-      : move.getName().endsWith(" (N)")
-        ? "battle:moveNotImplemented"
-        : "battle:moveNoPP";
+    // Set the translation key for why the move cannot be selected
+    let cannotSelectKey: string;
+    const moveStatus = new BooleanHolder(true);
+    applyChallenges(ChallengeType.POKEMON_MOVE, move.moveId, moveStatus);
+    if (!moveStatus.value) {
+      cannotSelectKey = "battle:moveCannotUseChallenge";
+    } else if (move.getPpRatio() === 0) {
+      cannotSelectKey = "battle:moveNoPP";
+    } else if (move.getName().endsWith(" (N)")) {
+      cannotSelectKey = "battle:moveNotImplemented";
+    } else if (user.isMoveRestricted(move.moveId, user)) {
+      cannotSelectKey = user.getRestrictingTag(move.moveId, user)!.selectionDeniedText(user, move.moveId);
+    } else {
+      // TODO: Consider a message that signals a being unusable for an unknown reason
+      cannotSelectKey = "";
+    }
+
     const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
 
     globalScene.ui.showText(
-      i18next.t(errorMessage, { moveName: moveName }),
+      i18next.t(cannotSelectKey, { moveName: moveName }),
       null,
       () => {
         globalScene.ui.clearText();

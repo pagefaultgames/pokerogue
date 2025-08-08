@@ -38,7 +38,7 @@ describe("Moves - Alluring Voice", () => {
   it("should confuse the opponent if their stat stages were raised", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.ALLURING_VOICE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);

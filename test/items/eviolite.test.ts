@@ -28,7 +28,7 @@ describe("Items - Eviolite", () => {
   it("should provide 50% boost to DEF and SPDEF for unevolved, unfused pokemon", async () => {
     await game.classicMode.startBattle([SpeciesId.PICHU]);
 
-    const partyMember = game.scene.getPlayerPokemon()!;
+    const partyMember = game.field.getPlayerPokemon();
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));
@@ -49,7 +49,7 @@ describe("Items - Eviolite", () => {
   it("should not provide a boost for fully evolved, unfused pokemon", async () => {
     await game.classicMode.startBattle([SpeciesId.RAICHU]);
 
-    const partyMember = game.scene.getPlayerPokemon()!;
+    const partyMember = game.field.getPlayerPokemon();
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));
@@ -199,7 +199,7 @@ describe("Items - Eviolite", () => {
 
     await game.classicMode.startBattle([randItem(gMaxablePokemon)]);
 
-    const partyMember = game.scene.getPlayerPokemon()!;
+    const partyMember = game.field.getPlayerPokemon();
 
     vi.spyOn(partyMember, "getEffectiveStat").mockImplementation((stat, _opponent?, _move?, _isCritical?) => {
       const statValue = new NumberHolder(partyMember.getStat(stat, false));

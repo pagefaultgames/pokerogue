@@ -35,7 +35,7 @@ describe("Moves - Growth", () => {
   it("should raise SPATK stat stage by 1", async () => {
     await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
 

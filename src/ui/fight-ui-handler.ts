@@ -105,15 +105,13 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
     ]);
 
     // prepare move overlay
-    const overlayScale = 1;
     this.moveInfoOverlay = new MoveInfoOverlay({
       delayVisibility: true,
-      scale: overlayScale,
       onSide: true,
       right: true,
       x: 0,
-      y: -MoveInfoOverlay.getHeight(overlayScale, true),
-      width: globalScene.game.canvas.width / 6 + 4,
+      y: -MoveInfoOverlay.getHeight(true),
+      width: globalScene.scaledCanvas.width + 4,
       hideEffectBox: true,
       hideBg: true,
     });

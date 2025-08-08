@@ -22,7 +22,7 @@ export class EvolutionSceneHandler extends MessageUiHandler {
 
     const ui = this.getUi();
 
-    this.evolutionContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
+    this.evolutionContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
 
     const messageBg = globalScene.add.sprite(0, 0, "bg", globalScene.windowType).setOrigin(0, 1).setVisible(false);
 

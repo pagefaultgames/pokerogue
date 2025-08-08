@@ -33,7 +33,7 @@ describe("Moves - Fake Out", () => {
   it("should only work the first turn a pokemon is sent out in a battle", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const corv = game.scene.getEnemyPokemon()!;
+    const corv = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.FAKE_OUT);
     await game.toNextTurn();
@@ -52,14 +52,14 @@ describe("Moves - Fake Out", () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     // set hp to 1 for easy knockout
-    game.scene.getEnemyPokemon()!.hp = 1;
+    game.field.getEnemyPokemon().hp = 1;
     game.move.select(MoveId.FAKE_OUT);
     await game.toNextWave();
 
     game.move.select(MoveId.FAKE_OUT);
     await game.toNextTurn();
 
-    const corv = game.scene.getEnemyPokemon()!;
+    const corv = game.field.getEnemyPokemon();
     expect(corv).toBeDefined();
     expect(corv?.hp).toBeLessThan(corv?.getMaxHp());
   });
@@ -69,14 +69,14 @@ describe("Moves - Fake Out", () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     // set hp to 1 for easy knockout
-    game.scene.getEnemyPokemon()!.hp = 1;
+    game.field.getEnemyPokemon().hp = 1;
     game.move.select(MoveId.FAKE_OUT);
     await game.toNextWave();
 
     game.move.select(MoveId.FAKE_OUT);
     await game.toNextTurn();
 
-    const corv = game.scene.getEnemyPokemon()!;
+    const corv = game.field.getEnemyPokemon();
     expect(corv).toBeDefined();
     expect(corv.hp).toBeLessThan(corv.getMaxHp());
   });
@@ -87,7 +87,7 @@ describe("Moves - Fake Out", () => {
     game.move.select(MoveId.FAKE_OUT);
     await game.toNextTurn();
 
-    const corv = game.scene.getEnemyPokemon()!;
+    const corv = game.field.getEnemyPokemon();
 
     expect(corv.hp).toBeLessThan(corv.getMaxHp());
     corv.hp = corv.getMaxHp();

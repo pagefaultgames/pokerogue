@@ -80,7 +80,7 @@ describe("Boss Pokemon / Shields", () => {
 
     await game.classicMode.startBattle([SpeciesId.MEWTWO]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const segmentHp = enemyPokemon.getMaxHp() / enemyPokemon.bossSegments;
     expect(enemyPokemon.isBoss()).toBe(true);
     expect(enemyPokemon.bossSegments).toBe(3);
@@ -191,7 +191,7 @@ describe("Boss Pokemon / Shields", () => {
 
     await game.classicMode.startBattle([SpeciesId.MEWTWO]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.isBoss()).toBe(true);
     expect(enemyPokemon.bossSegments).toBe(2);
     expect(getTotalStatStageBoosts(enemyPokemon)).toBe(0);

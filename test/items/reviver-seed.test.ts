@@ -51,7 +51,7 @@ describe("Items - Reviver Seed", () => {
   ])("should activate the holder's reviver seed from a $moveType", async ({ move }) => {
     game.override.enemyLevel(100).startingLevel(1).enemyMoveset(move);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     player.damageAndUpdate(player.hp - 1);
 
     const reviverSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
@@ -66,7 +66,7 @@ describe("Items - Reviver Seed", () => {
   it("should activate the holder's reviver seed from confusion self-hit", async () => {
     game.override.enemyLevel(1).startingLevel(100).enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     player.damageAndUpdate(player.hp - 1);
     player.addTag(BattlerTagType.CONFUSED, 3);
 
@@ -95,7 +95,7 @@ describe("Items - Reviver Seed", () => {
       .moveset(move)
       .enemyMoveset(MoveId.ENDURE);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     enemy.damageAndUpdate(enemy.hp - 1);
 
     game.move.select(move);
@@ -119,7 +119,7 @@ describe("Items - Reviver Seed", () => {
       .enemyAbility(AbilityId.LIQUID_OOZE)
       .enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([SpeciesId.GASTLY, SpeciesId.FEEBAS]);
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     player.damageAndUpdate(player.hp - 1);
 
     const playerSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
@@ -140,9 +140,9 @@ describe("Items - Reviver Seed", () => {
       .startingHeldItems([]) // reset held items to nothing so user doesn't revive and not trigger Destiny Bond
       .enemyMoveset(MoveId.TACKLE);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     player.damageAndUpdate(player.hp - 1);
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.DESTINY_BOND);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);

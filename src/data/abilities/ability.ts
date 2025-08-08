@@ -1285,7 +1285,7 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
 /**
  * Set stat stages when the user gets hit by a critical hit
  *
- * @privateremarks
+ * @privateRemarks
  * It is the responsibility of the caller to ensure that this ability attribute is only applied
  * when the user has been hit by a critical hit; such an event is not checked here.
  *
@@ -1769,7 +1769,7 @@ export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteraction
 
 /**
  * Class for abilities that add additional strikes to single-target moves.
- * Used by {@linkcode Moves.PARENTAL_BOND | Parental Bond}.
+ * Used by {@linkcode MoveId.PARENTAL_BOND | Parental Bond}.
  */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
   /**
@@ -2044,7 +2044,7 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
 
   /**
    * @param stat - The stat being modified
-   * @param multipler - The multiplier to apply to the stat
+   * @param multiplier - The multiplier to apply to the stat
    * @param ignorable - Whether the multiplier can be ignored by mold breaker-like moves and abilities
    */
   constructor(stat: BattleStat, multiplier: number, ignorable = true) {
@@ -6300,7 +6300,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
     const currentMove = currentPhase.move;
 
     // will not activate from self-induced HP cutting,
-    // TODO: Verify that Fillet Away and Clangorous Soul do not proc wimp out
+    // TODO: Verify that Fillet Away and Clangorous Soul do not proc wimp out on cart
     const hpCutMoves = new Set<MoveId>([
       MoveId.CURSE,
       MoveId.BELLY_DRUM,
