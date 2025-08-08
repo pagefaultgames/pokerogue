@@ -284,25 +284,25 @@ function handleNextTurn() {
         guaranteedModifierTypeFuncs: [modifierTypes.MULTI_LENS],
         fillRemaining: false,
       });
-      resultMessageKey = `${namespace}:best_result`;
+      resultMessageKey = `${namespace}:bestResult`;
     } else if (healthRatio < 0.15) {
       // 2nd prize
       setEncounterRewards({
         guaranteedModifierTypeFuncs: [modifierTypes.SCOPE_LENS],
         fillRemaining: false,
       });
-      resultMessageKey = `${namespace}:great_result`;
+      resultMessageKey = `${namespace}:greatResult`;
     } else if (healthRatio < 0.33) {
       // 3rd prize
       setEncounterRewards({
         guaranteedModifierTypeFuncs: [modifierTypes.WIDE_LENS],
         fillRemaining: false,
       });
-      resultMessageKey = `${namespace}:good_result`;
+      resultMessageKey = `${namespace}:goodResult`;
     } else {
       // No prize
       isHealPhase = true;
-      resultMessageKey = `${namespace}:bad_result`;
+      resultMessageKey = `${namespace}:badResult`;
     }
 
     // End the battle
@@ -312,7 +312,7 @@ function handleNextTurn() {
     globalScene.currentBattle.mysteryEncounter!.doContinueEncounter = undefined;
     leaveEncounterWithoutBattle(isHealPhase);
     // Must end the TurnInit phase prematurely so battle phases aren't added to queue
-    queueEncounterMessage(`${namespace}:end_game`);
+    queueEncounterMessage(`${namespace}:endGame`);
     queueEncounterMessage(resultMessageKey);
 
     // Skip remainder of TurnInitPhase
@@ -320,9 +320,9 @@ function handleNextTurn() {
   }
   if (encounter.misc.turnsRemaining < 3) {
     // Display charging messages on turns that aren't the initial turn
-    queueEncounterMessage(`${namespace}:charging_continue`);
+    queueEncounterMessage(`${namespace}:chargingContinue`);
   }
-  queueEncounterMessage(`${namespace}:turn_remaining_${encounter.misc.turnsRemaining}`);
+  queueEncounterMessage(`${namespace}:turnRemaining${encounter.misc.turnsRemaining}`);
   encounter.misc.turnsRemaining--;
 
   // Don't skip remainder of TurnInitPhase

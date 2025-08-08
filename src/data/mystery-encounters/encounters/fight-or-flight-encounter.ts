@@ -69,7 +69,7 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
           isBoss: true,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            queueEncounterMessage(`${namespace}:option.1.stat_boost`);
+            queueEncounterMessage(`${namespace}:option.1.statBoost`);
             // Randomly boost 1 stat 2 stages
             // Cannot boost Spd, Acc, or Evasion
             globalScene.phaseManager.unshiftNew(

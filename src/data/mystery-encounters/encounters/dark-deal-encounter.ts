@@ -139,7 +139,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
             text: `${namespace}:option.1.selectedDialogue`,
           },
           {
-            text: `${namespace}:option.1.selected_message`,
+            text: `${namespace}:option.1.selectedMessage`,
           },
         ],
       })
