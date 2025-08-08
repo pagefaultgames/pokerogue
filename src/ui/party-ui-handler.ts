@@ -311,7 +311,7 @@ export class PartyUiHandler extends MessageUiHandler {
 
     this.partyCancelButton = partyCancelButton;
 
-    this.optionsContainer = globalScene.add.container(globalScene.game.canvas.width / 6 - 1, -1);
+    this.optionsContainer = globalScene.add.container(globalScene.scaledCanvas.width - 1, -1);
     partyContainer.add(this.optionsContainer);
 
     this.iconAnimHandler = new PokemonIconAnimHandler();
@@ -323,14 +323,12 @@ export class PartyUiHandler extends MessageUiHandler {
 
     this.partyDiscardModeButton = partyDiscardModeButton;
 
-    // prepare move overlay. in case it appears to be too big, set the overlayScale to .5
-    const overlayScale = 1;
+    // prepare move overlay
     this.moveInfoOverlay = new MoveInfoOverlay({
-      scale: overlayScale,
       top: true,
       x: 1,
-      y: -MoveInfoOverlay.getHeight(overlayScale) - 1,
-      width: globalScene.game.canvas.width / 12 - 30,
+      y: -MoveInfoOverlay.getHeight() - 1,
+      width: globalScene.scaledCanvas.width / 2 - 30,
     });
     ui.add(this.moveInfoOverlay);
 

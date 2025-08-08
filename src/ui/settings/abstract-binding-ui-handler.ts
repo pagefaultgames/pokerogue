@@ -73,8 +73,8 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
 
     // Setup backgrounds and text objects for UI.
     this.titleBg = addWindow(
-      globalScene.game.canvas.width / 6 - this.getWindowWidth(),
-      -(globalScene.game.canvas.height / 6) + 28 + 21,
+      globalScene.scaledCanvas.width - this.getWindowWidth(),
+      -globalScene.scaledCanvas.height + 28 + 21,
       this.getWindowWidth(),
       24,
     );
@@ -82,8 +82,8 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
     this.optionSelectContainer.add(this.titleBg);
 
     this.actionBg = addWindow(
-      globalScene.game.canvas.width / 6 - this.getWindowWidth(),
-      -(globalScene.game.canvas.height / 6) + this.getWindowHeight() + 28 + 21 + 21,
+      globalScene.scaledCanvas.width - this.getWindowWidth(),
+      -globalScene.scaledCanvas.height + this.getWindowHeight() + 28 + 21 + 21,
       this.getWindowWidth(),
       24,
     );
@@ -102,8 +102,8 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
     this.optionSelectContainer.add(this.timerText);
 
     this.optionSelectBg = addWindow(
-      globalScene.game.canvas.width / 6 - this.getWindowWidth(),
-      -(globalScene.game.canvas.height / 6) + this.getWindowHeight() + 28,
+      globalScene.scaledCanvas.width - this.getWindowWidth(),
+      -globalScene.scaledCanvas.height + this.getWindowHeight() + 28,
       this.getWindowWidth(),
       this.getWindowHeight(),
     );
