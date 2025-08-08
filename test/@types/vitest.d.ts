@@ -60,9 +60,7 @@ declare module "vitest" {
     /**
      * Check whether the current {@linkcode Arena} contains the given {@linkcode ArenaTag}.
      * @param expectedType - The {@linkcode ArenaTagType} of the desired tag
-     * @param side - The {@linkcode ArenaTagSide | side of the field} the tag should affect, or
-     * {@linkcode ArenaTagSide.BOTH} to check both sides;
-     * default `ArenaTagSide.BOTH`
+     * @param side - The {@linkcode ArenaTagSide | side(s) of the field} the tag should affect; default {@linkcode ArenaTagSide.BOTH}
      */
     toHaveArenaTag(expectedType: ArenaTagType, side?: ArenaTagSide): void;
 
