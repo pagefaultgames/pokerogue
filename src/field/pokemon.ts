@@ -39,7 +39,6 @@ import {
   TrappedTag,
   TypeImmuneTag,
 } from "#data/battler-tags";
-import { applyChallenges } from "#data/challenge";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
@@ -148,6 +147,7 @@ import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
+import { applyChallenges } from "#utils/challenge-utils";
 import {
   BooleanHolder,
   type Constructor,
@@ -4558,8 +4558,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const key = this.species.getCryKey(this.formIndex);
-    let rate = 0.85;
-    const cry = globalScene.playSound(key, { rate: rate }) as AnySound;
+    const crySoundConfig = { rate: 0.85, detune: 0 };
+    if (this.isPlayer()) {
+      // If fainting is permanent, emphasize impact
+      const preventRevive = new BooleanHolder(false);
+      applyChallenges(ChallengeType.PREVENT_REVIVE, preventRevive);
+      if (preventRevive.value) {
+        crySoundConfig.detune = -100;
+        crySoundConfig.rate = 0.7;
+      }
+    }
+    const cry = globalScene.playSound(key, crySoundConfig) as AnySound;
     if (!cry || globalScene.fieldVolume === 0) {
       callback();
       return;
@@ -4578,7 +4587,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       delay: fixedInt(delay),
       repeat: -1,
       callback: () => {
-        frameThreshold = sprite.anims.msPerFrame / rate;
+        frameThreshold = sprite.anims.msPerFrame / crySoundConfig.rate;
         frameProgress += delay;
         while (frameProgress > frameThreshold) {
           if (sprite.anims.duration) {
@@ -4588,8 +4597,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
           frameProgress -= frameThreshold;
         }
         if (cry && !cry.pendingRemove) {
-          rate *= 0.99;
-          cry.setRate(rate);
+          cry.setRate(crySoundConfig.rate * 0.99);
         } else {
           faintCryTimer?.destroy();
           faintCryTimer = null;

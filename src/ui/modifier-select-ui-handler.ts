@@ -209,10 +209,10 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.updateRerollCostText();
 
     const typeOptions = args[1] as ModifierTypeOption[];
-    const removeHealShop = globalScene.gameMode.hasNoShop;
+    const hasShop = globalScene.gameMode.getShopStatus();
     const baseShopCost = new NumberHolder(globalScene.getWaveMoneyAmount(1));
     globalScene.applyModifier(HealShopCostModifier, true, baseShopCost);
-    const shopTypeOptions = !removeHealShop
+    const shopTypeOptions = hasShop
       ? getPlayerShopModifierTypeOptionsForWave(globalScene.currentBattle.waveIndex, baseShopCost.value)
       : [];
     const optionsYOffset =
@@ -370,7 +370,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
             if (globalScene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
               this.setRowCursor(0);
               this.setCursor(2);
-            } else if (globalScene.shopCursorTarget === ShopCursorTarget.SHOP && globalScene.gameMode.hasNoShop) {
+            } else if (globalScene.shopCursorTarget === ShopCursorTarget.SHOP && !hasShop) {
               this.setRowCursor(ShopCursorTarget.REWARDS);
               this.setCursor(0);
             } else {
