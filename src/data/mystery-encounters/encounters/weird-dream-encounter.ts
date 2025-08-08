@@ -649,15 +649,15 @@ function getTransformedSpecies(
 }
 
 function doShowDreamBackground() {
-  const transformationContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
+  const transformationContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
   transformationContainer.name = "Dream Background";
 
   // In case it takes a bit for video to load
   const transformationStaticBg = globalScene.add.rectangle(
     0,
     0,
-    globalScene.game.canvas.width / 6,
-    globalScene.game.canvas.height / 6,
+    globalScene.scaledCanvas.width,
+    globalScene.scaledCanvas.height,
     0,
   );
   transformationStaticBg.setName("Black Background");
