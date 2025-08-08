@@ -5235,7 +5235,13 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.CROBAT, SpeciesId.HONCHKROW]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.MAGNEZONE]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.UXIE, SpeciesId.MESPRIT, SpeciesId.AZELF]))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.HOUNDOOM]))
+    .setPartyMemberFunc(
+      4,
+      getRandomPartyMemberFunc([SpeciesId.HOUNDOOM], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
+      }),
+    )
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.WEAVILE], TrainerSlot.TRAINER, true, p => {
@@ -5714,7 +5720,7 @@ export const trainerConfigs: TrainerConfigs = {
         p => {
           p.setBoss(true, 2);
           p.generateAndPopulateMoveset();
-          p.pokeball = PokeballType.ROGUE_BALL;
+          p.pokeball = PokeballType.ULTRA_BALL;
         },
       ),
     ),
