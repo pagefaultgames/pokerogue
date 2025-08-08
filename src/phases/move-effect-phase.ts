@@ -827,8 +827,8 @@ export class MoveEffectPhase extends PokemonPhase {
     const isOneHitKo = result === HitResult.ONE_HIT_KO;
     target.lapseTags(BattlerTagLapseType.HIT);
 
-    const substituteTag = target.getTag(SubstituteTag);
-    const isBlockedBySubstitute = substituteTag && this.move.hitsSubstitute(user, target);
+    const substitute = target.getTag(SubstituteTag);
+    const isBlockedBySubstitute = !!substitute && this.move.hitsSubstitute(user, target);
     if (isBlockedBySubstitute) {
       user.turnData.lastMoveDamageDealt[target.getBattlerIndex()] += Math.min(dmg, substitute.hp);
       substitute.hp -= dmg;

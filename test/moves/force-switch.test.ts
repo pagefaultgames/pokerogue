@@ -112,7 +112,7 @@ describe("Moves - Switching Moves", () => {
       expect(game.scene.currentBattle.trainer).not.toBeNull();
       const choiceSwitchSpy = vi.spyOn(game.scene.currentBattle.trainer!, "getNextSummonIndex");
 
-      // Grab each trainer's pokemon based on species name
+      // Grab each trainer's pokemon based on trainer slot
       const [tateParty, lizaParty] = splitArray(
         game.scene.getEnemyParty(),
         pkmn => pkmn.trainerSlot === TrainerSlot.TRAINER,
@@ -293,7 +293,7 @@ describe("Moves - Switching Moves", () => {
       const player = game.field.getPlayerPokemon();
       expect(player).toBe(raichu);
       expect(player).not.toHaveFullHp();
-      expect(game.field.getEnemyPokemon().waveData.abilityRevealed).toBe(true); // proxy for asserting ability activated
+      expect(game.field.getEnemyPokemon()).toHaveAbilityApplied(AbilityId.ROUGH_SKIN);
     });
   });
 
