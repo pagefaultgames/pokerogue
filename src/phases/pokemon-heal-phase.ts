@@ -93,18 +93,25 @@ export class PokemonHealPhase extends CommonAnimPhase {
     // Only play animation if not skipped and target is not at full HP
     if (!this.skipAnim && !this.getPokemon().isFullHp()) {
       super.start();
+    } else {
+      this.end();
     }
-
-    this.heal();
   }
 
-  private heal() {
+  // This is required as `commonAnimPhase` calls `this.end` once the animation finishes
+  // TODO: This is a really shitty process and i hate it
+  override end() {
+    this.heal().then(() => {
+      super.end();
+    });
+  }
+
+  private async heal() {
     const pokemon = this.getPokemon();
 
     // Prevent healing off-field pokemon unless via revives
     // TODO: Revival effects shouldn't use this phase
     if (!this.revive && !pokemon.isActive(true)) {
-      super.end();
       return;
     }
 
@@ -112,7 +119,6 @@ export class PokemonHealPhase extends CommonAnimPhase {
     const healBlock = pokemon.getTag(BattlerTagType.HEAL_BLOCK);
     if (healBlock && this.hpHealed > 0) {
       globalScene.phaseManager.queueMessage(healBlock.onActivation(pokemon));
-      super.end();
       return;
     }
 
@@ -137,7 +143,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     if (this.message) {
       globalScene.phaseManager.queueMessage(this.message);
     }
-    pokemon.updateInfo().then(() => super.end());
+    await pokemon.updateInfo();
   }
 
   /**
