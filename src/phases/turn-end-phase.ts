@@ -14,6 +14,7 @@ import {
   TurnStatusEffectModifier,
 } from "#modifiers/modifier";
 import { FieldPhase } from "#phases/field-phase";
+import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
 export class TurnEndPhase extends FieldPhase {
@@ -35,11 +36,16 @@ export class TurnEndPhase extends FieldPhase {
         globalScene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
 
         if (globalScene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
-          globalScene.phaseManager.unshiftNew("PokemonHealPhase", pokemon.getBattlerIndex(), pokemon.getMaxHp() / 16, {
-            message: i18next.t("battle:turnEndHpRestore", {
-              pokemonName: getPokemonNameWithAffix(pokemon),
-            }),
-          });
+          globalScene.phaseManager.unshiftNew(
+            "PokemonHealPhase",
+            pokemon.getBattlerIndex(),
+            toDmgValue(pokemon.getMaxHp() / 16),
+            {
+              message: i18next.t("battle:turnEndHpRestore", {
+                pokemonName: getPokemonNameWithAffix(pokemon),
+              }),
+            },
+          );
         }
 
         if (!pokemon.isPlayer()) {

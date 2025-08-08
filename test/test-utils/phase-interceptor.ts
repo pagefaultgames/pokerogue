@@ -101,6 +101,7 @@ export class PhaseInterceptor {
    * `initPhases()` so that its subclasses can use `super.start()` properly.
    */
   private PHASES = [
+    [PokemonHealPhase, this.startPhase],
     [LoginPhase, this.startPhase],
     [TitlePhase, this.startPhase],
     [SelectGenderPhase, this.startPhase],
@@ -147,7 +148,6 @@ export class PhaseInterceptor {
     [PositionalTagPhase, this.startPhase],
     [PokemonTransformPhase, this.startPhase],
     [MysteryEncounterPhase, this.startPhase],
-    [PokemonHealPhase, this.startPhase],
     [MysteryEncounterOptionSelectedPhase, this.startPhase],
     [MysteryEncounterBattlePhase, this.startPhase],
     [MysteryEncounterRewardsPhase, this.startPhase],

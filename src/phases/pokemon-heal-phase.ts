@@ -90,14 +90,12 @@ export class PokemonHealPhase extends CommonAnimPhase {
   }
 
   override start() {
-    // Only play animation if not skipped and target is at full HP
+    // Only play animation if not skipped and target is not at full HP
     if (!this.skipAnim && !this.getPokemon().isFullHp()) {
       super.start();
     }
 
     this.heal();
-
-    super.end();
   }
 
   private heal() {

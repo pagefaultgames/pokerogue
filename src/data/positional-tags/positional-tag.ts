@@ -160,6 +160,7 @@ export class WishTag extends PositionalTag implements WishArgs {
       message: i18next.t("arenaTag:wishTagOnAdd", {
         pokemonNameWithAffix: this.pokemonName,
       }),
+      showFullHpMessage: false,
     });
   }
 
