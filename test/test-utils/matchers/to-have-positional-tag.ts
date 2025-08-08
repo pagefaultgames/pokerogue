@@ -2,7 +2,7 @@
 import type { GameManager } from "#test/test-utils/game-manager";
 // biome-ignore-end lint/correctness/noUnusedImports: TSDoc
 
-import type { SerializedPositionalTag, serializedPosTagMap } from "#data/positional-tags/load-positional-tag";
+import type { serializedPosTagMap } from "#data/positional-tags/load-positional-tag";
 import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { OneOther } from "#test/@types/test-helpers";
 import { getOnelineDiffStr } from "#test/test-utils/string-utils";
@@ -25,14 +25,13 @@ export type toHavePositionalTagOptions<P extends PositionalTagType> = OneOther<s
 export function toHavePositionalTag<P extends PositionalTagType>(
   this: MatcherState,
   received: unknown,
-  // simplified types used for brevity; full overloads are in `vitest.d.ts`
-  expectedTag: P | (Partial<SerializedPositionalTag> & { tagType: P }),
+  expectedTag: P | toHavePositionalTagOptions<P>,
   count = 1,
 ): SyncExpectationResult {
   if (!isGameManagerInstance(received)) {
     return {
       pass: this.isNot,
-      message: () => `Expected to recieve a GameManager, but got ${receivedStr(received)}!`,
+      message: () => `Expected to receive a GameManager, but got ${receivedStr(received)}!`,
     };
   }
 

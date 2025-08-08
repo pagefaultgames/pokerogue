@@ -22,7 +22,7 @@ export function toHaveAbilityApplied(
   if (!isPokemonInstance(received)) {
     return {
       pass: this.isNot,
-      message: () => `Expected to recieve a Pokemon, but got ${receivedStr(received)}!`,
+      message: () => `Expected to receive a Pokemon, but got ${receivedStr(received)}!`,
     };
   }
 

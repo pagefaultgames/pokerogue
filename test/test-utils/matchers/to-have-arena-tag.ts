@@ -6,7 +6,6 @@ import type { OneOther } from "#test/@types/test-helpers";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
-import type { NonFunctionPropertiesRecursive } from "#types/type-helpers";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 // intersection required to preserve T for inferences
@@ -26,14 +25,13 @@ export type toHaveArenaTagOptions<T extends ArenaTagType> = OneOther<ArenaTagTyp
 export function toHaveArenaTag<T extends ArenaTagType>(
   this: MatcherState,
   received: unknown,
-  // simplified types used for brevity; full overloads are in `vitest.d.ts`
-  expectedTag: T | (Partial<NonFunctionPropertiesRecursive<ArenaTag>> & { tagType: T; side: ArenaTagSide }),
+  expectedTag: T | toHaveArenaTagOptions<T>,
   side?: ArenaTagSide,
 ): SyncExpectationResult {
   if (!isGameManagerInstance(received)) {
     return {
       pass: this.isNot,
-      message: () => `Expected to recieve a GameManager, but got ${receivedStr(received)}!`,
+      message: () => `Expected to receive a GameManager, but got ${receivedStr(received)}!`,
     };
   }
 
@@ -44,19 +42,19 @@ export function toHaveArenaTag<T extends ArenaTagType>(
     };
   }
 
-  if (typeof expectedTag === "string") {
-    // Coerce lone `tagType`s into objects
-    // Bangs are ok as we enforce safety via overloads
-    expectedTag = { tagType: expectedTag, side: side! };
-  }
+  // Coerce lone `tagType`s into objects
+  // Bangs are ok as we enforce safety via overloads
+  // @ts-expect-error - Typescript is being stupid as tag type and side will always exist
+  const etag: Partial<ArenaTag> & { tagType: T; side: ArenaTagSide } =
+    typeof expectedTag === "object" ? expectedTag : { tagType: expectedTag, side: side! };
 
   // We need to get all tags for the case of checking properties of a tag present on both sides of the arena
-  const tags = received.scene.arena.findTagsOnSide(t => t.tagType === expectedTag.tagType, expectedTag.side);
+  const tags = received.scene.arena.findTagsOnSide(t => t.tagType === etag.tagType, etag.side);
   if (tags.length === 0) {
     return {
       pass: false,
-      message: () => `Expected the Arena to have a tag of type ${expectedTag.tagType}, but it didn't!`,
-      expected: expectedTag.tagType,
+      message: () => `Expected the Arena to have a tag of type ${etag.tagType}, but it didn't!`,
+      expected: etag.tagType,
       actual: received.scene.arena.tags.map(t => t.tagType),
     };
   }

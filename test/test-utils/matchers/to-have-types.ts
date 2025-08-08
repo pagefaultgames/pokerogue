@@ -27,7 +27,15 @@ export interface toHaveTypesOptions {
  * Matcher that checks if a Pokemon's typing is as expected.
  * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @param expectedTypes - An array of one or more {@linkcode PokemonType}s to compare against.
- * @param mode - The mode to perform the matching;
+ * @param mode - The mode to perform the matching in.
+ * Possible values (in ascending order of strength) are:
+ * - `"ordered"`: Enforce that the {@linkcode Pokemon}'s types are identical **and in the same order**
+ * - `"unordered"`: Enforce that the {@linkcode Pokemon}'s types are identical **without checking order**
+ * - `"superset"`: Enforce that the {@linkcode Pokemon}'s types are **a superset of** the expected types
+ * (all must be present, but extras can be there)
+ *
+ * Default `unordered`
+ * @param args - Extra arguments passed to {@linkcode Pokemon.getTypes}
  * @returns The result of the matching
  */
 export function toHaveTypes(
@@ -39,7 +47,7 @@ export function toHaveTypes(
   if (!isPokemonInstance(received)) {
     return {
       pass: this.isNot,
-      message: () => `Expected to recieve a Pokémon, but got ${receivedStr(received)}!`,
+      message: () => `Expected to receive a Pokémon, but got ${receivedStr(received)}!`,
     };
   }
 
