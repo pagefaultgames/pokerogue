@@ -47,6 +47,7 @@ const namespace = "mysteryEncounters/weirdDream";
 
 /** Exclude Ultra Beasts, Paradox, Eternatus, and all legendary/mythical/trio pokemon that are below 570 BST */
 const EXCLUDED_TRANSFORMATION_SPECIES = [
+  SpeciesId.ARCEUS,
   SpeciesId.ETERNATUS,
   /** UBs */
   SpeciesId.NIHILEGO,
@@ -82,20 +83,19 @@ const EXCLUDED_TRANSFORMATION_SPECIES = [
   SpeciesId.IRON_BOULDER,
   SpeciesId.IRON_CROWN,
   /** These are banned so they don't appear in the < 570 BST pool */
+  SpeciesId.PHIONE,
+  SpeciesId.TYPE_NULL,
   SpeciesId.COSMOG,
+  SpeciesId.COSMOEM,
   SpeciesId.MELTAN,
   SpeciesId.KUBFU,
-  SpeciesId.COSMOEM,
-  SpeciesId.POIPOLE,
-  SpeciesId.TERAPAGOS,
-  SpeciesId.TYPE_NULL,
-  SpeciesId.CALYREX,
-  SpeciesId.NAGANADEL,
   SpeciesId.URSHIFU,
+  SpeciesId.CALYREX,
   SpeciesId.OGERPON,
   SpeciesId.OKIDOGI,
   SpeciesId.MUNKIDORI,
   SpeciesId.FEZANDIPITI,
+  SpeciesId.TERAPAGOS,
 ];
 
 const SUPER_LEGENDARY_BST_THRESHOLD = 600;
@@ -223,6 +223,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
           guaranteedModifierTypeFuncs: [
             modifierTypes.MEMORY_MUSHROOM,
             modifierTypes.ROGUE_BALL,
+            modifierTypes.MINT,
             modifierTypes.MINT,
             modifierTypes.MINT,
             modifierTypes.MINT,
@@ -648,15 +649,15 @@ function getTransformedSpecies(
 }
 
 function doShowDreamBackground() {
-  const transformationContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
+  const transformationContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
   transformationContainer.name = "Dream Background";
 
   // In case it takes a bit for video to load
   const transformationStaticBg = globalScene.add.rectangle(
     0,
     0,
-    globalScene.game.canvas.width / 6,
-    globalScene.game.canvas.height / 6,
+    globalScene.scaledCanvas.width,
+    globalScene.scaledCanvas.height,
     0,
   );
   transformationStaticBg.setName("Black Background");

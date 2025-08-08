@@ -8,7 +8,7 @@ export class SavingIconHandler extends Phaser.GameObjects.Container {
   private shown: boolean;
 
   constructor() {
-    super(globalScene, globalScene.game.canvas.width / 6 - 4, globalScene.game.canvas.height / 6 - 4);
+    super(globalScene, globalScene.scaledCanvas.width - 4, globalScene.scaledCanvas.height - 4);
   }
 
   setup(): void {
