@@ -197,6 +197,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     // Liquid Ooze damage (being negative) remains uncapped as normal.
     const healMulti = new NumberHolder(1);
     globalScene.applyModifiers(HealingBoosterModifier, this.player, healMulti);
+    // TODO: we need to round liquid ooze dmg towards 0, not down
     return Math.min(Math.floor(this.hpHealed * healMulti.value), this.getPokemon().getMaxHp() - +this.preventFullHeal);
   }
 }
