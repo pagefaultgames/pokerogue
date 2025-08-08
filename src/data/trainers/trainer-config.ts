@@ -1593,9 +1593,9 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesFilter(s => tmSpecies[MoveId.FLY].indexOf(s.speciesId) > -1),
   [TrainerType.POKEFAN]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
-    .setName("PokéFan")
-    .setHasGenders("PokéFan Female")
-    .setHasDouble("PokéFan Family")
+    .setName("Pokéfan")
+    .setHasGenders("Pokéfan Female")
+    .setHasDouble("Pokéfan Family")
     .setEncounterBgm(TrainerType.POKEFAN)
     .setPartyTemplates(
       trainerPartyTemplates.SIX_WEAKER,
