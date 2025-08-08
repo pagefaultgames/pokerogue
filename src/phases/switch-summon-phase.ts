@@ -33,11 +33,7 @@ export class SwitchSummonPhase extends SummonPhase {
     super(fieldIndex, player);
 
     this.switchType = switchType;
-    // -1 = "use trainer switch logic"
-    this.slotIndex =
-      slotIndex > -1
-        ? slotIndex
-        : globalScene.currentBattle.trainer!.getNextSummonIndex(this.getTrainerSlotFromFieldIndex());
+    this.slotIndex = slotIndex;
     this.doReturn = doReturn;
   }
 
@@ -48,12 +44,19 @@ export class SwitchSummonPhase extends SummonPhase {
     super.start();
   }
 
-  override preSummon(): void {
+  preSummon(): void {
     const switchOutPokemon = this.getPokemon();
 
-    if (!this.player && globalScene.currentBattle.trainer) {
-      this.showEnemyTrainer(this.getTrainerSlotFromFieldIndex());
-      globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
+    if (!this.player) {
+      if (this.slotIndex === -1) {
+        //@ts-expect-error
+        this.slotIndex = globalScene.currentBattle.trainer?.getNextSummonIndex(this.getTrainerSlotFromFieldIndex()); // TODO: what would be the default trainer-slot fallback?
+      }
+      // TODO: This should always be -1
+      if (this.slotIndex > -1) {
+        this.showEnemyTrainer(this.getTrainerSlotFromFieldIndex());
+        globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
+      }
     }
 
     if (
@@ -120,7 +123,7 @@ export class SwitchSummonPhase extends SummonPhase {
   }
 
   switchAndSummon() {
-    const party = this.player ? this.getParty() : globalScene.getEnemyParty();
+    const party = this.getParty();
     const switchedInPokemon: Pokemon | undefined = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
 

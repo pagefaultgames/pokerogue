@@ -510,6 +510,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract initBattleInfo(): void;
 
+  /**
+   * Return whether this Pokemon is currently partaking in battle on field.
+   * @returns Whether this Pokemon is on field.
+   */
   isOnField(): boolean {
     if (!globalScene) {
       return false;

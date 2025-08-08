@@ -183,7 +183,7 @@ export class ForceSwitchOutHelper implements ForceSwitchOutHelperArgs {
       switchOutTarget.getFieldIndex(),
       summonIndex,
       false,
-      true,
+      false,
     );
   }
 

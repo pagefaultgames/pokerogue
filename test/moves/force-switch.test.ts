@@ -1,6 +1,5 @@
 import { SubstituteTag } from "#app/data/battler-tags";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { splitArray } from "#app/utils/array";
 import { toDmgValue } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
@@ -14,6 +13,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
+import { splitArray } from "#test/test-utils/array-utils";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -42,7 +42,8 @@ describe("Moves - Switching Moves", () => {
       .enemySpecies(SpeciesId.WAILORD)
       .enemyAbility(AbilityId.STURDY)
       .enemyMoveset(MoveId.SPLASH)
-      .criticalHits(false);
+      .criticalHits(false)
+      .randomTrainer({ trainerType: TrainerType.ACEROLA, alwaysDouble: false });
   });
 
   describe("Force Switch Moves", () => {
@@ -57,7 +58,7 @@ describe("Moves - Switching Moves", () => {
 
       const enemy = game.field.getEnemyPokemon();
       game.move.use(move);
-      await game.toNextTurn();
+      await game.toEndOfTurn();
 
       const newEnemy = game.field.getEnemyPokemon();
       expect(newEnemy).not.toBe(enemy);

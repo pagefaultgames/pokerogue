@@ -24,7 +24,6 @@ export function splitArray<T>(
   predicate: (value: T, index: number, array: T[]) => unknown,
   thisArg?: unknown,
 ): [matches: T[], nonMatches: T[]];
-
 export function splitArray<T>(
   arr: T[],
   predicate: (value: T, index: number, array: T[]) => unknown,

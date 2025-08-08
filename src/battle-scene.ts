@@ -809,7 +809,6 @@ export class BattleScene extends SceneBase {
    * Used for switch out logic checks.
    * @param pokemon - A {@linkcode Pokemon} on the desired side of the field, used to infer the side and trainer slot (as applicable)
    * @returns An array containing the **INDICES** of all {@linkcode Pokemon} in reserve able to be switched into.
-   * @overload
    */
   public getBackupPartyMemberIndices(pokemon: Pokemon): number[];
   /**
@@ -819,7 +818,6 @@ export class BattleScene extends SceneBase {
    * Used for switch out logic checks.
    * @param player - Whether to search the player (`true`) or enemy (`false`) party; default `true`
    * @returns An array containing the **INDICES** of all {@linkcode Pokemon} in reserve able to be switched into.
-   * @overload
    */
   public getBackupPartyMemberIndices(player: true): number[];
   /**
@@ -831,10 +829,8 @@ export class BattleScene extends SceneBase {
    * @param trainerSlot - The {@linkcode TrainerSlot | trainer slot} to check against for enemy trainers;
    * used to verify ownership in multi battles
    * @returns An array containing the **INDICES** of all {@linkcode Pokemon} in reserve able to be switched into.
-   * @overload
    */
   public getBackupPartyMemberIndices(player: false, trainerSlot: TrainerSlot): number[];
-
   public getBackupPartyMemberIndices(player: boolean | Pokemon, trainerSlot?: number): number[] {
     // Note: We return the indices instead of the actual Pokemon because `SwitchSummonPhase` and co. take an index instead of a pokemon.
     // If this is ever changed, this can be replaced with a simpler version involving `filter` and conditional type annotations.
