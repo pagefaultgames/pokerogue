@@ -5491,7 +5491,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
  * Attribute used for abilities that damage opponents causing the user to faint
  * equal to the amount of damage the last attack inflicted.
  *
- * Used for {@linkcode Abilities.INNARDS_OUT}.
+ * Used for {@linkcode AbilityId.INNARDS_OUT | Innards Out}.
  * @sealed
  */
 export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
@@ -7307,7 +7307,7 @@ export function initAbilities() {
       .attr(HealFromBerryUseAbAttr, 1 / 3),
     new Ability(AbilityId.PROTEAN, 6)
       .attr(PokemonTypeChangeAbAttr)
-      // .condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.PROTEAN)) //Gen 9 Implementation
+      // .condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.PROTEAN)) //Gen 9 Implementation
       // TODO: needs testing on interaction with weather blockage
       .edgeCase(),
     new Ability(AbilityId.FUR_COAT, 6)
@@ -7566,7 +7566,7 @@ export function initAbilities() {
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true),
     new Ability(AbilityId.LIBERO, 8)
       .attr(PokemonTypeChangeAbAttr)
-    //.condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.LIBERO)), //Gen 9 Implementation
+    //.condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.LIBERO)), //Gen 9 Implementation
       // TODO: needs testing on interaction with weather blockage
       .edgeCase(),
     new Ability(AbilityId.BALL_FETCH, 8)
