@@ -20,42 +20,52 @@ import {
     TypeBoostTag,
 } from "#data/battler-tags";
 import {getBerryEffectFunc} from "#data/berry";
-import {allAbilities, allMoves} from "#data/data-lists";
-import {SpeciesFormChangeRevertWeatherFormTrigger} from "#data/form-change-triggers";
-import {DelayedAttackTag} from "#data/positional-tags/positional-tag";
-import {getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect,} from "#data/status-effect";
-import {TerrainType} from "#data/terrain";
-import {getTypeDamageMultiplier} from "#data/type";
-import {AbilityId} from "#enums/ability-id";
-import {ArenaTagSide} from "#enums/arena-tag-side";
-import {ArenaTagType} from "#enums/arena-tag-type";
-import {BattleType} from "#enums/battle-type";
-import type {BattlerIndex} from "#enums/battler-index";
-import {BattlerTagType} from "#enums/battler-tag-type";
-import {BiomeId} from "#enums/biome-id";
-import {ChallengeType} from "#enums/challenge-type";
-import {Command} from "#enums/command";
-import {FieldPosition} from "#enums/field-position";
-import {HitResult} from "#enums/hit-result";
-import {ModifierPoolType} from "#enums/modifier-pool-type";
-import {ChargeAnim} from "#enums/move-anims-common";
-import {MoveId} from "#enums/move-id";
-import {MoveResult} from "#enums/move-result";
-import {isVirtual, MoveUseMode} from "#enums/move-use-mode";
-import {MoveCategory} from "#enums/move-category";
-import {MoveEffectTrigger} from "#enums/move-effect-trigger";
-import {MoveFlags} from "#enums/move-flags";
-import {MoveTarget} from "#enums/move-target";
-import {MultiHitType} from "#enums/multi-hit-type";
-import {PokemonType} from "#enums/pokemon-type";
-import {PositionalTagType} from "#enums/positional-tag-type";
-import {SpeciesId} from "#enums/species-id";
-import {BATTLE_STATS, type BattleStat, type EffectiveStat, getStatKey, Stat,} from "#enums/stat";
-import {StatusEffect} from "#enums/status-effect";
-import {SwitchType} from "#enums/switch-type";
-import {WeatherType} from "#enums/weather-type";
-import {MoveUsedEvent} from "#events/battle-scene";
-import type {EnemyPokemon, Pokemon} from "#field/pokemon";
+import {allAbilities, allMoves } from "#data/data-lists";
+import { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
+import { DelayedAttackTag } from "#data/positional-tags/positional-tag";
+import {
+  getNonVolatileStatusEffects,
+  getStatusEffectHealText,
+  isNonVolatileStatusEffect,
+} from "#data/status-effect";
+import { TerrainType } from "#data/terrain";
+import { getTypeDamageMultiplier } from "#data/type";
+import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattleType } from "#enums/battle-type";
+import type { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BiomeId } from "#enums/biome-id";
+import { ChallengeType } from "#enums/challenge-type";
+import { Command } from "#enums/command";
+import { FieldPosition } from "#enums/field-position";
+import { HitResult } from "#enums/hit-result";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
+import { ChargeAnim } from "#enums/move-anims-common";
+import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
+import { MoveCategory } from "#enums/move-category";
+import { MoveEffectTrigger } from "#enums/move-effect-trigger";
+import { MoveFlags } from "#enums/move-flags";
+import { MoveTarget } from "#enums/move-target";
+import { MultiHitType } from "#enums/multi-hit-type";
+import { PokemonType } from "#enums/pokemon-type";
+import { PositionalTagType } from "#enums/positional-tag-type";
+import { SpeciesId } from "#enums/species-id";
+import {
+  BATTLE_STATS,
+  type BattleStat,
+  type EffectiveStat,
+  getStatKey,
+  Stat,
+} from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { SwitchType } from "#enums/switch-type";
+import { WeatherType } from "#enums/weather-type";
+import { MoveUsedEvent } from "#events/battle-scene";
+import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import {
     AttackTypeBoosterModifier,
     BerryModifier,
