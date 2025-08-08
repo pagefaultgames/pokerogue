@@ -41,7 +41,7 @@ describe("Abilities - Moxie", () => {
     const moveToUse = MoveId.AERIAL_ACE;
     await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
 

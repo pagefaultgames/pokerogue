@@ -1,29 +1,26 @@
 import type { FixedBattleConfig } from "#app/battle";
 import { getRandomTrainerFunc } from "#app/battle";
 import { defaultStarterSpecies } from "#app/constants";
-import { globalScene } from "#app/global-scene";
-import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
-import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BattleType } from "#enums/battle-type";
-import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { ModifierTier } from "#enums/modifier-tier";
-import type { MoveId } from "#enums/move-id";
+import { MoveId } from "#enums/move-id";
 import type { MoveSourceType } from "#enums/move-source-type";
 import { Nature } from "#enums/nature";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
-import type { Pokemon } from "#field/pokemon";
+import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
+import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { DexAttrProps, GameData } from "#system/game-data";
-import { BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
+import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toSnakeCase } from "#utils/strings";
@@ -339,6 +336,83 @@ export abstract class Challenge {
    * @returns {@link boolean} Whether this function did anything.
    */
   applyFlipStat(_pokemon: Pokemon, _baseStats: number[]) {
+    return false;
+  }
+
+  /**
+   * An apply function for PARTY_HEAL. Derived classes should alter this.
+   * @param _status - Whether party healing is enabled or not
+   * @returns Whether this function did anything
+   */
+  applyPartyHeal(_status: BooleanHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for SHOP. Derived classes should alter this.
+   * @param _status - Whether the shop is or is not available after a wave
+   * @returns Whether this function did anything
+   */
+  applyShop(_status: BooleanHolder) {
+    return false;
+  }
+
+  /**
+   * An apply function for POKEMON_ADD_TO_PARTY. Derived classes should alter this.
+   * @param _pokemon - The pokemon being caught
+   * @param _status - Whether the pokemon can be added to the party or not
+   * @return Whether this function did anything
+   */
+  applyPokemonAddToParty(_pokemon: EnemyPokemon, _status: BooleanHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for POKEMON_FUSION. Derived classes should alter this.
+   * @param _pokemon - The pokemon being checked
+   * @param _status - Whether the selected pokemon is allowed to fuse or not
+   * @returns Whether this function did anything
+   */
+  applyPokemonFusion(_pokemon: PlayerPokemon, _status: BooleanHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for POKEMON_MOVE. Derived classes should alter this.
+   * @param _moveId - The {@linkcode MoveId} being checked
+   * @param _status - A {@linkcode BooleanHolder} containing the move's usability status
+   * @returns Whether this function did anything
+   */
+  applyPokemonMove(_moveId: MoveId, _status: BooleanHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for SHOP_ITEM. Derived classes should alter this.
+   * @param _shopItem - The item being checked
+   * @param _status - Whether the item should be added to the shop or not
+   * @returns Whether this function did anything
+   */
+  applyShopItem(_shopItem: ModifierTypeOption | null, _status: BooleanHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for WAVE_REWARD. Derived classes should alter this.
+   * @param _reward - The reward being checked
+   * @param _status - Whether the reward should be added to the reward options or not
+   * @returns Whether this function did anything
+   */
+  applyWaveReward(_reward: ModifierTypeOption | null, _status: BooleanHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for PREVENT_REVIVE. Derived classes should alter this.
+   * @param _status - Whether fainting is a permanent status or not
+   * @returns Whether this function did anything
+   */
+  applyPreventRevive(_status: BooleanHolder): boolean {
     return false;
   }
 }
@@ -864,208 +938,108 @@ export class LowerStarterPointsChallenge extends Challenge {
 }
 
 /**
- * Apply all challenges that modify starter choice.
- * @param challengeType {@link ChallengeType} ChallengeType.STARTER_CHOICE
- * @param pokemon {@link PokemonSpecies} The pokemon to check the validity of.
- * @param valid {@link BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
- * @param dexAttr {@link DexAttrProps} The dex attributes of the pokemon.
- * @returns True if any challenge was successfully applied.
+ * Implements a No Support challenge
  */
-export function applyChallenges(
-  challengeType: ChallengeType.STARTER_CHOICE,
-  pokemon: PokemonSpecies,
-  valid: BooleanHolder,
-  dexAttr: DexAttrProps,
-): boolean;
-/**
- * Apply all challenges that modify available total starter points.
- * @param challengeType {@link ChallengeType} ChallengeType.STARTER_POINTS
- * @param points {@link NumberHolder} The amount of points you have available.
- * @returns True if any challenge was successfully applied.
- */
-export function applyChallenges(challengeType: ChallengeType.STARTER_POINTS, points: NumberHolder): boolean;
-/**
- * Apply all challenges that modify the cost of a starter.
- * @param challengeType {@link ChallengeType} ChallengeType.STARTER_COST
- * @param species {@link SpeciesId} The pokemon to change the cost of.
- * @param points {@link NumberHolder} The cost of the pokemon.
- * @returns True if any challenge was successfully applied.
- */
-export function applyChallenges(
-  challengeType: ChallengeType.STARTER_COST,
-  species: SpeciesId,
-  cost: NumberHolder,
-): boolean;
-/**
- * Apply all challenges that modify a starter after selection.
- * @param challengeType {@link ChallengeType} ChallengeType.STARTER_MODIFY
- * @param pokemon {@link Pokemon} The starter pokemon to modify.
- * @returns True if any challenge was successfully applied.
- */
-export function applyChallenges(challengeType: ChallengeType.STARTER_MODIFY, pokemon: Pokemon): boolean;
-/**
- * Apply all challenges that what pokemon you can have in battle.
- * @param challengeType {@link ChallengeType} ChallengeType.POKEMON_IN_BATTLE
- * @param pokemon {@link Pokemon} The pokemon to check the validity of.
- * @param valid {@link BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
- * @returns True if any challenge was successfully applied.
- */
-export function applyChallenges(
-  challengeType: ChallengeType.POKEMON_IN_BATTLE,
-  pokemon: Pokemon,
-  valid: BooleanHolder,
-): boolean;
-/**
- * Apply all challenges that modify what fixed battles there are.
- * @param challengeType {@link ChallengeType} ChallengeType.FIXED_BATTLES
- * @param waveIndex {@link Number} The current wave index.
- * @param battleConfig {@link FixedBattleConfig} The battle config to modify.
- * @returns True if any challenge was successfully applied.
- */
-export function applyChallenges(
-  challengeType: ChallengeType.FIXED_BATTLES,
-  waveIndex: number,
-  battleConfig: FixedBattleConfig,
-): boolean;
-/**
- * Apply all challenges that modify type effectiveness.
- * @param challengeType {@linkcode ChallengeType} ChallengeType.TYPE_EFFECTIVENESS
- * @param effectiveness {@linkcode NumberHolder} The current effectiveness of the move.
- * @returns True if any challenge was successfully applied.
- */
-export function applyChallenges(challengeType: ChallengeType.TYPE_EFFECTIVENESS, effectiveness: NumberHolder): boolean;
-/**
- * Apply all challenges that modify what level AI are.
- * @param challengeType {@link ChallengeType} ChallengeType.AI_LEVEL
- * @param level {@link NumberHolder} The generated level of the pokemon.
- * @param levelCap {@link Number} The maximum level cap for the current wave.
- * @param isTrainer {@link Boolean} Whether this is a trainer pokemon.
- * @param isBoss {@link Boolean} Whether this is a non-trainer boss pokemon.
- * @returns True if any challenge was successfully applied.
- */
-export function applyChallenges(
-  challengeType: ChallengeType.AI_LEVEL,
-  level: NumberHolder,
-  levelCap: number,
-  isTrainer: boolean,
-  isBoss: boolean,
-): boolean;
-/**
- * Apply all challenges that modify how many move slots the AI has.
- * @param challengeType {@link ChallengeType} ChallengeType.AI_MOVE_SLOTS
- * @param pokemon {@link Pokemon} The pokemon being considered.
- * @param moveSlots {@link NumberHolder} The amount of move slots.
- * @returns True if any challenge was successfully applied.
- */
-export function applyChallenges(
-  challengeType: ChallengeType.AI_MOVE_SLOTS,
-  pokemon: Pokemon,
-  moveSlots: NumberHolder,
-): boolean;
-/**
- * Apply all challenges that modify whether a pokemon has its passive.
- * @param challengeType {@link ChallengeType} ChallengeType.PASSIVE_ACCESS
- * @param pokemon {@link Pokemon} The pokemon to modify.
- * @param hasPassive {@link BooleanHolder} Whether it has its passive.
- * @returns True if any challenge was successfully applied.
- */
-export function applyChallenges(
-  challengeType: ChallengeType.PASSIVE_ACCESS,
-  pokemon: Pokemon,
-  hasPassive: BooleanHolder,
-): boolean;
-/**
- * Apply all challenges that modify the game modes settings.
- * @param challengeType {@link ChallengeType} ChallengeType.GAME_MODE_MODIFY
- * @returns True if any challenge was successfully applied.
- */
-export function applyChallenges(challengeType: ChallengeType.GAME_MODE_MODIFY): boolean;
-/**
- * Apply all challenges that modify what level a pokemon can access a move.
- * @param challengeType {@link ChallengeType} ChallengeType.MOVE_ACCESS
- * @param pokemon {@link Pokemon} What pokemon would learn the move.
- * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
- * @param move {@link MoveId} The move in question.
- * @param level {@link NumberHolder} The level threshold for access.
- * @returns True if any challenge was successfully applied.
- */
-export function applyChallenges(
-  challengeType: ChallengeType.MOVE_ACCESS,
-  pokemon: Pokemon,
-  moveSource: MoveSourceType,
-  move: MoveId,
-  level: NumberHolder,
-): boolean;
-/**
- * Apply all challenges that modify what weight a pokemon gives to move generation
- * @param challengeType {@link ChallengeType} ChallengeType.MOVE_WEIGHT
- * @param pokemon {@link Pokemon} What pokemon would learn the move.
- * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
- * @param move {@link MoveId} The move in question.
- * @param weight {@link NumberHolder} The weight of the move.
- * @returns True if any challenge was successfully applied.
- */
-export function applyChallenges(
-  challengeType: ChallengeType.MOVE_WEIGHT,
-  pokemon: Pokemon,
-  moveSource: MoveSourceType,
-  move: MoveId,
-  weight: NumberHolder,
-): boolean;
+export class LimitedSupportChallenge extends Challenge {
+  constructor() {
+    super(Challenges.LIMITED_SUPPORT, 3);
+  }
 
-export function applyChallenges(challengeType: ChallengeType.FLIP_STAT, pokemon: Pokemon, baseStats: number[]): boolean;
-
-export function applyChallenges(challengeType: ChallengeType, ...args: any[]): boolean {
-  let ret = false;
-  globalScene.gameMode.challenges.forEach(c => {
-    if (c.value !== 0) {
-      switch (challengeType) {
-        case ChallengeType.STARTER_CHOICE:
-          ret ||= c.applyStarterChoice(args[0], args[1], args[2]);
-          break;
-        case ChallengeType.STARTER_POINTS:
-          ret ||= c.applyStarterPoints(args[0]);
-          break;
-        case ChallengeType.STARTER_COST:
-          ret ||= c.applyStarterCost(args[0], args[1]);
-          break;
-        case ChallengeType.STARTER_MODIFY:
-          ret ||= c.applyStarterModify(args[0]);
-          break;
-        case ChallengeType.POKEMON_IN_BATTLE:
-          ret ||= c.applyPokemonInBattle(args[0], args[1]);
-          break;
-        case ChallengeType.FIXED_BATTLES:
-          ret ||= c.applyFixedBattle(args[0], args[1]);
-          break;
-        case ChallengeType.TYPE_EFFECTIVENESS:
-          ret ||= c.applyTypeEffectiveness(args[0]);
-          break;
-        case ChallengeType.AI_LEVEL:
-          ret ||= c.applyLevelChange(args[0], args[1], args[2], args[3]);
-          break;
-        case ChallengeType.AI_MOVE_SLOTS:
-          ret ||= c.applyMoveSlot(args[0], args[1]);
-          break;
-        case ChallengeType.PASSIVE_ACCESS:
-          ret ||= c.applyPassiveAccess(args[0], args[1]);
-          break;
-        case ChallengeType.GAME_MODE_MODIFY:
-          ret ||= c.applyGameModeModify();
-          break;
-        case ChallengeType.MOVE_ACCESS:
-          ret ||= c.applyMoveAccessLevel(args[0], args[1], args[2], args[3]);
-          break;
-        case ChallengeType.MOVE_WEIGHT:
-          ret ||= c.applyMoveWeight(args[0], args[1], args[2], args[3]);
-          break;
-        case ChallengeType.FLIP_STAT:
-          ret ||= c.applyFlipStat(args[0], args[1]);
-          break;
-      }
+  override applyPartyHeal(status: BooleanHolder): boolean {
+    if (status.value) {
+      status.value = this.value === 2;
+      return true;
     }
-  });
-  return ret;
+    return false;
+  }
+
+  override applyShop(status: BooleanHolder): boolean {
+    if (status.value) {
+      status.value = this.value === 1;
+      return true;
+    }
+    return false;
+  }
+
+  static override loadChallenge(source: LimitedSupportChallenge | any): LimitedSupportChallenge {
+    const newChallenge = new LimitedSupportChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+/**
+ * Implements a Limited Catch challenge
+ */
+export class LimitedCatchChallenge extends Challenge {
+  constructor() {
+    super(Challenges.LIMITED_CATCH, 1);
+  }
+
+  override applyPokemonAddToParty(pokemon: EnemyPokemon, status: BooleanHolder): boolean {
+    if (status.value) {
+      status.value = pokemon.metWave % 10 === 1;
+      return true;
+    }
+    return false;
+  }
+
+  static override loadChallenge(source: LimitedCatchChallenge | any): LimitedCatchChallenge {
+    const newChallenge = new LimitedCatchChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+/**
+ * Implements a Permanent Faint challenge
+ */
+export class HardcoreChallenge extends Challenge {
+  constructor() {
+    super(Challenges.HARDCORE, 1);
+  }
+
+  override applyPokemonFusion(pokemon: PlayerPokemon, status: BooleanHolder): boolean {
+    if (!status.value) {
+      status.value = pokemon.isFainted();
+      return true;
+    }
+    return false;
+  }
+
+  override applyShopItem(shopItem: ModifierTypeOption | null, status: BooleanHolder): boolean {
+    status.value = shopItem?.type.group !== "revive";
+    return true;
+  }
+
+  override applyWaveReward(reward: ModifierTypeOption | null, status: BooleanHolder): boolean {
+    return this.applyShopItem(reward, status);
+  }
+
+  override applyPokemonMove(moveId: MoveId, status: BooleanHolder) {
+    if (status.value) {
+      status.value = moveId !== MoveId.REVIVAL_BLESSING;
+      return true;
+    }
+    return false;
+  }
+
+  override applyPreventRevive(status: BooleanHolder): boolean {
+    if (!status.value) {
+      status.value = true;
+      return true;
+    }
+    return false;
+  }
+
+  static override loadChallenge(source: HardcoreChallenge | any): HardcoreChallenge {
+    const newChallenge = new HardcoreChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
 }
 
 /**
@@ -1089,6 +1063,12 @@ export function copyChallenge(source: Challenge | any): Challenge {
       return InverseBattleChallenge.loadChallenge(source);
     case Challenges.FLIP_STAT:
       return FlipStatChallenge.loadChallenge(source);
+    case Challenges.LIMITED_CATCH:
+      return LimitedCatchChallenge.loadChallenge(source);
+    case Challenges.LIMITED_SUPPORT:
+      return LimitedSupportChallenge.loadChallenge(source);
+    case Challenges.HARDCORE:
+      return HardcoreChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -1097,87 +1077,13 @@ export const allChallenges: Challenge[] = [];
 
 export function initChallenges() {
   allChallenges.push(
+    new FreshStartChallenge(),
+    new HardcoreChallenge(),
+    new LimitedCatchChallenge(),
+    new LimitedSupportChallenge(),
     new SingleGenerationChallenge(),
     new SingleTypeChallenge(),
-    new FreshStartChallenge(),
     new InverseBattleChallenge(),
     new FlipStatChallenge(),
   );
-}
-
-/**
- * Apply all challenges to the given starter (and form) to check its validity.
- * Differs from {@linkcode checkSpeciesValidForChallenge} which only checks form changes.
- * @param species - The {@linkcode PokemonSpecies} to check the validity of.
- * @param dexAttr - The {@linkcode DexAttrProps | dex attributes} of the species, including its form index.
- * @param soft - If `true`, allow it if it could become valid through evolution or form change.
- * @returns `true` if the species is considered valid.
- */
-export function checkStarterValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
-  if (!soft) {
-    const isValidForChallenge = new BooleanHolder(true);
-    applyChallenges(ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
-    return isValidForChallenge.value;
-  }
-  // We check the validity of every evolution and form change, and require that at least one is valid
-  const speciesToCheck = [species.speciesId];
-  while (speciesToCheck.length) {
-    const checking = speciesToCheck.pop();
-    // Linter complains if we don't handle this
-    if (!checking) {
-      return false;
-    }
-    const checkingSpecies = getPokemonSpecies(checking);
-    if (checkSpeciesValidForChallenge(checkingSpecies, props, true)) {
-      return true;
-    }
-    if (checking && pokemonEvolutions.hasOwnProperty(checking)) {
-      pokemonEvolutions[checking].forEach(e => {
-        // Form check to deal with cases such as Basculin -> Basculegion
-        // TODO: does this miss anything if checking forms of a stage 2 Pokémon?
-        if (!e?.preFormKey || e.preFormKey === species.forms[props.formIndex].formKey) {
-          speciesToCheck.push(e.speciesId);
-        }
-      });
-    }
-  }
-  return false;
-}
-
-/**
- * Apply all challenges to the given species (and form) to check its validity.
- * Differs from {@linkcode checkStarterValidForChallenge} which also checks evolutions.
- * @param species - The {@linkcode PokemonSpecies} to check the validity of.
- * @param dexAttr - The {@linkcode DexAttrProps | dex attributes} of the species, including its form index.
- * @param soft - If `true`, allow it if it could become valid through a form change.
- * @returns `true` if the species is considered valid.
- */
-function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
-  const isValidForChallenge = new BooleanHolder(true);
-  applyChallenges(ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
-  if (!soft || !pokemonFormChanges.hasOwnProperty(species.speciesId)) {
-    return isValidForChallenge.value;
-  }
-  // If the form in props is valid, return true before checking other form changes
-  if (soft && isValidForChallenge.value) {
-    return true;
-  }
-
-  const result = pokemonFormChanges[species.speciesId].some(f1 => {
-    // Exclude form changes that require the mon to be on the field to begin with
-    if (!("item" in f1.trigger)) {
-      return false;
-    }
-
-    return species.forms.some((f2, formIndex) => {
-      if (f1.formKey === f2.formKey) {
-        const formProps = { ...props, formIndex };
-        const isFormValidForChallenge = new BooleanHolder(true);
-        applyChallenges(ChallengeType.STARTER_CHOICE, species, isFormValidForChallenge, formProps);
-        return isFormValidForChallenge.value;
-      }
-      return false;
-    });
-  });
-  return result;
 }

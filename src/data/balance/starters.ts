@@ -566,7 +566,7 @@ export const speciesStarterCosts = {
   [SpeciesId.FLITTLE]: 3,
   [SpeciesId.TINKATINK]: 4,
   [SpeciesId.WIGLETT]: 2,
-  [SpeciesId.BOMBIRDIER]: 3,
+  [SpeciesId.BOMBIRDIER]: 4,
   [SpeciesId.FINIZEN]: 3,
   [SpeciesId.VAROOM]: 4,
   [SpeciesId.CYCLIZAR]: 4,
