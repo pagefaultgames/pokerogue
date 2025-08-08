@@ -6300,7 +6300,6 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
     const currentMove = currentPhase.move;
 
     // will not activate from self-induced HP cutting,
-    // TODO: Verify that Fillet Away and Clangorous Soul do not proc wimp out on cart
     const hpCutMoves = new Set<MoveId>([
       MoveId.CURSE,
       MoveId.BELLY_DRUM,
