@@ -1,14 +1,15 @@
-import type { default as Pokemon } from "../field/pokemon";
-import { addTextObject, TextStyle } from "./text";
-import { fixedInt } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
-import type Move from "#app/data/moves/move";
-import type { BerryUsedEvent, MoveUsedEvent } from "../events/battle-scene";
-import { BattleSceneEventType } from "../events/battle-scene";
-import { BerryType } from "#enums/berry-type";
-import { Moves } from "#enums/moves";
-import { UiTheme } from "#enums/ui-theme";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { BerryType } from "#enums/berry-type";
+import { MoveId } from "#enums/move-id";
+import { TextStyle } from "#enums/text-style";
+import { UiTheme } from "#enums/ui-theme";
+import type { BerryUsedEvent, MoveUsedEvent } from "#events/battle-scene";
+import { BattleSceneEventType } from "#events/battle-scene";
+import type { EnemyPokemon, Pokemon } from "#field/pokemon";
+import type { Move } from "#moves/move";
+import { addTextObject } from "#ui/text";
+import { fixedInt } from "#utils/common";
 
 /** Container for info about a {@linkcode Move} */
 interface MoveInfo {
@@ -22,7 +23,7 @@ interface MoveInfo {
 }
 
 /** A Flyout Menu attached to each {@linkcode BattleInfo} object on the field UI */
-export default class BattleFlyout extends Phaser.GameObjects.Container {
+export class BattleFlyout extends Phaser.GameObjects.Container {
   /** Is this object linked to a player's Pokemon? */
   private player: boolean;
 
@@ -52,7 +53,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   /** The array of {@linkcode Phaser.GameObjects.Text} objects which are drawn on the flyout */
   private flyoutText: Phaser.GameObjects.Text[] = new Array(4);
   /** The array of {@linkcode MoveInfo} used to track moves for the {@linkcode Pokemon} linked to the flyout */
-  private moveInfo: MoveInfo[] = new Array();
+  private moveInfo: MoveInfo[] = [];
 
   /** Current state of the flyout's visibility */
   public flyoutVisible = false;
@@ -126,7 +127,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
    * Links the given {@linkcode Pokemon} and subscribes to the {@linkcode BattleSceneEventType.MOVE_USED} event
    * @param pokemon {@linkcode Pokemon} to link to this flyout
    */
-  initInfo(pokemon: Pokemon) {
+  initInfo(pokemon: EnemyPokemon) {
     this.pokemon = pokemon;
 
     this.name = `Flyout ${getPokemonNameWithAffix(this.pokemon)}`;
@@ -154,7 +155,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   /** Updates all of the {@linkcode MoveInfo} objects in the moveInfo array */
   private onMoveUsed(event: Event) {
     const moveUsedEvent = event as MoveUsedEvent;
-    if (!moveUsedEvent || moveUsedEvent.pokemonId !== this.pokemon?.id || moveUsedEvent.move.id === Moves.STRUGGLE) {
+    if (!moveUsedEvent || moveUsedEvent.pokemonId !== this.pokemon?.id || moveUsedEvent.move.id === MoveId.STRUGGLE) {
       // Ignore Struggle
       return;
     }

@@ -1,17 +1,15 @@
-import type { InputFieldConfig } from "./form-modal-ui-handler";
-import { FormModalUiHandler } from "./form-modal-ui-handler";
-import type { ModalConfig } from "./modal-ui-handler";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type { OptionSelectItem } from "./abstact-option-select-ui-handler";
-import { isNullOrUndefined } from "#app/utils/common";
+import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
 import { UiMode } from "#enums/ui-mode";
-import { FilterTextRow } from "./filter-text";
-import { allAbilities } from "#app/data/data-lists";
-import { allMoves } from "#app/data/moves/move";
-import { allSpecies } from "#app/data/pokemon-species";
+import type { PlayerPokemon } from "#field/pokemon";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { FilterTextRow } from "#ui/filter-text";
+import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
+import type { ModalConfig } from "#ui/modal-ui-handler";
+import { isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
 
-export default class PokedexScanUiHandler extends FormModalUiHandler {
+export class PokedexScanUiHandler extends FormModalUiHandler {
   keys: string[];
   reducedKeys: string[];
   parallelKeys: string[];
@@ -160,8 +158,11 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
 
     if (super.show(args)) {
       const config = args[0] as ModalConfig;
-      this.inputs[0].resize(1150, 116);
-      this.inputContainers[0].list[0].width = 200;
+      const label = this.formLabels[0];
+
+      const inputWidth = label.width < 420 ? 200 : 200 - (label.width - 420) / 5.75;
+      this.inputs[0].resize(inputWidth * 5.75, 116);
+      this.inputContainers[0].list[0].width = inputWidth;
       if (args[1] && typeof (args[1] as PlayerPokemon).getNameToRender === "function") {
         this.inputs[0].text = (args[1] as PlayerPokemon).getNameToRender();
       } else {

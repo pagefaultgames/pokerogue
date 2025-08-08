@@ -1,12 +1,12 @@
 import { globalScene } from "#app/global-scene";
-import type { TextStyle } from "#app/ui/text";
-import { getTextWithColors } from "#app/ui/text";
+import type { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
-import { isNullOrUndefined } from "#app/utils/common";
+import { getTextWithColors } from "#ui/text";
+import { isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
 
 /**
- * Will inject all relevant dialogue tokens that exist in the {@linkcode BattlegScene.currentBattle.mysteryEncounter.dialogueTokens}, into i18n text.
+ * Will inject all relevant dialogue tokens that exist in the {@linkcode globalScene.currentBattle.mysteryEncounter.dialogueTokens}, into i18n text.
  * Also adds BBCodeText fragments for colored text, if applicable
  * @param keyOrString
  * @param primaryStyle Can define a text style to be applied to the entire string. Must be defined for BBCodeText styles to be applied correctly
@@ -51,7 +51,7 @@ function getTextWithDialogueTokens(keyOrString: string): string | null {
  */
 export function queueEncounterMessage(contentKey: string): void {
   const text: string | null = getEncounterText(contentKey);
-  globalScene.queueMessage(text ?? "", null, true);
+  globalScene.phaseManager.queueMessage(text ?? "", null, true);
 }
 
 /**

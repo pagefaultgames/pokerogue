@@ -1,10 +1,10 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { allMoves } from "#data/data-lists";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
+import type { Move } from "#moves/move";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import GameManager from "#test/testUtils/gameManager";
-import { Species } from "#enums/species";
-import { Moves } from "#enums/moves";
-import { allMoves } from "#app/data/moves/move";
-import type Move from "#app/data/moves/move";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Retaliate", () => {
   let phaserGame: Phaser.Game;
@@ -23,28 +23,28 @@ describe("Moves - Retaliate", () => {
   });
 
   beforeEach(() => {
-    retaliate = allMoves[Moves.RETALIATE];
+    retaliate = allMoves[MoveId.RETALIATE];
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.SNORLAX)
-      .enemyMoveset([Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE])
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyMoveset(MoveId.RETALIATE)
       .enemyLevel(100)
-      .moveset([Moves.RETALIATE, Moves.SPLASH])
+      .moveset([MoveId.RETALIATE, MoveId.SPLASH])
       .startingLevel(80)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("increases power if ally died previous turn", async () => {
     vi.spyOn(retaliate, "calculateBattlePower");
-    await game.startBattle([Species.ABRA, Species.COBALION]);
-    game.move.select(Moves.RETALIATE);
+    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.COBALION]);
+    game.move.select(MoveId.RETALIATE);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(retaliate.calculateBattlePower).toHaveLastReturnedWith(70);
     game.doSelectPartyPokemon(1);
 
     await game.toNextTurn();
-    game.move.select(Moves.RETALIATE);
+    game.move.select(MoveId.RETALIATE);
     await game.phaseInterceptor.to("MoveEffectPhase");
     expect(retaliate.calculateBattlePower).toHaveReturnedWith(140);
   });

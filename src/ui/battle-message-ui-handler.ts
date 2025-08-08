@@ -1,14 +1,15 @@
 import { globalScene } from "#app/global-scene";
-import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "./text";
-import { UiMode } from "#enums/ui-mode";
-import MessageUiHandler from "./message-ui-handler";
-import { addWindow } from "./ui-theme";
-import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Button } from "#enums/buttons";
+import { getStatKey, PERMANENT_STATS } from "#enums/stat";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
-import { PERMANENT_STATS, getStatKey } from "#app/enums/stat";
+import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
-export default class BattleMessageUiHandler extends MessageUiHandler {
+export class BattleMessageUiHandler extends MessageUiHandler {
   private levelUpStatsContainer: Phaser.GameObjects.Container;
   private levelUpStatsIncrContent: Phaser.GameObjects.Text;
   private levelUpStatsValuesContent: BBCodeText;
@@ -93,10 +94,9 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
 
     this.levelUpStatsContainer = levelUpStatsContainer;
 
-    const levelUpStatsLabelsContent = addTextObject(globalScene.game.canvas.width / 6 - 73, -94, "", TextStyle.WINDOW, {
+    const levelUpStatsLabelsContent = addTextObject(globalScene.scaledCanvas.width - 73, -94, "", TextStyle.WINDOW, {
       maxLines: 6,
     });
-    levelUpStatsLabelsContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     let levelUpStatsLabelText = "";
 
     for (const s of PERMANENT_STATS) {
@@ -106,7 +106,7 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     levelUpStatsLabelsContent.x -= levelUpStatsLabelsContent.displayWidth;
 
     const levelUpStatsBg = addWindow(
-      globalScene.game.canvas.width / 6,
+      globalScene.scaledCanvas.width,
       -100,
       80 + levelUpStatsLabelsContent.displayWidth,
       100,
@@ -117,25 +117,23 @@ export default class BattleMessageUiHandler extends MessageUiHandler {
     levelUpStatsContainer.add(levelUpStatsLabelsContent);
 
     const levelUpStatsIncrContent = addTextObject(
-      globalScene.game.canvas.width / 6 - 50,
+      globalScene.scaledCanvas.width - 50,
       -94,
       "+\n+\n+\n+\n+\n+",
       TextStyle.WINDOW,
       { maxLines: 6 },
     );
-    levelUpStatsIncrContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     levelUpStatsContainer.add(levelUpStatsIncrContent);
 
     this.levelUpStatsIncrContent = levelUpStatsIncrContent;
 
     const levelUpStatsValuesContent = addBBCodeTextObject(
-      globalScene.game.canvas.width / 6 - 7,
+      globalScene.scaledCanvas.width - 7,
       -94,
       "",
       TextStyle.WINDOW,
       { maxLines: 6, lineSpacing: 5 },
     );
-    levelUpStatsValuesContent.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     levelUpStatsValuesContent.setOrigin(1, 0);
     levelUpStatsValuesContent.setAlign("right");
     levelUpStatsContainer.add(levelUpStatsValuesContent);

@@ -1,10 +1,15 @@
 import { globalScene } from "#app/global-scene";
-import type { ModifierType, ModifierTypeFunc } from "#app/modifier/modifier-type";
-import { getModifierType } from "#app/modifier/modifier-type";
+import type { ModifierType } from "#modifiers/modifier-type";
+import { BattlePhase } from "#phases/battle-phase";
+import type { ModifierTypeFunc } from "#types/modifier-types";
+import { getModifierType } from "#utils/modifier-utils";
 import i18next from "i18next";
-import { BattlePhase } from "./battle-phase";
 
 export class ModifierRewardPhase extends BattlePhase {
+  // RibbonModifierRewardPhase extends ModifierRewardPhase and to make typescript happy
+  // we need to use a union type here
+  public readonly phaseName: "ModifierRewardPhase" | "RibbonModifierRewardPhase" | "GameOverModifierRewardPhase" =
+    "ModifierRewardPhase";
   protected modifierType: ModifierType;
 
   constructor(modifierTypeFunc: ModifierTypeFunc) {

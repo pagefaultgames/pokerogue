@@ -1,17 +1,22 @@
-import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import { capitalizeFirstLetter, isNullOrUndefined } from "#app/utils/common";
+import { globalScene } from "#app/global-scene";
+import type { BattlerIndex } from "#enums/battler-index";
+import type { Challenges } from "#enums/challenges";
+import type { EncounterAnim } from "#enums/encounter-anims";
+import type { GameModes } from "#enums/game-modes";
+import type { MoveUseMode } from "#enums/move-use-mode";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import type { MysteryEncounterSpriteConfig } from "#app/field/mystery-encounter-intro";
-import MysteryEncounterIntroVisuals from "#app/field/mystery-encounter-intro";
-import { randSeedInt } from "#app/utils/common";
 import type { StatusEffect } from "#enums/status-effect";
-import type { OptionTextDisplay } from "./mystery-encounter-dialogue";
-import type MysteryEncounterDialogue from "./mystery-encounter-dialogue";
-import type { OptionPhaseCallback } from "./mystery-encounter-option";
-import type MysteryEncounterOption from "./mystery-encounter-option";
-import { MysteryEncounterOptionBuilder } from "./mystery-encounter-option";
+import type { MysteryEncounterSpriteConfig } from "#field/mystery-encounter-intro";
+import { MysteryEncounterIntroVisuals } from "#field/mystery-encounter-intro";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { PokemonMove } from "#moves/pokemon-move";
+import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
+import type { MysteryEncounterDialogue, OptionTextDisplay } from "#mystery-encounters/mystery-encounter-dialogue";
+import type { MysteryEncounterOption, OptionPhaseCallback } from "#mystery-encounters/mystery-encounter-option";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import {
   EncounterPokemonRequirement,
   EncounterSceneRequirement,
@@ -19,23 +24,16 @@ import {
   PartySizeRequirement,
   StatusEffectRequirement,
   WaveRangeRequirement,
-} from "./mystery-encounter-requirements";
-import type { BattlerIndex } from "#app/battle";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import type { GameModes } from "#app/game-mode";
-import type { EncounterAnim } from "#enums/encounter-anims";
-import type { Challenges } from "#enums/challenges";
-import { globalScene } from "#app/global-scene";
+} from "#mystery-encounters/mystery-encounter-requirements";
+import { coerceArray, isNullOrUndefined, randSeedInt } from "#utils/common";
+import { capitalizeFirstLetter } from "#utils/strings";
 
 export interface EncounterStartOfBattleEffect {
   sourcePokemon?: Pokemon;
   sourceBattlerIndex?: BattlerIndex;
   targets: BattlerIndex[];
   move: PokemonMove;
-  ignorePp: boolean;
-  followUp?: boolean;
+  useMode: MoveUseMode; // TODO: This should always be ignore PP...
 }
 
 const DEFAULT_MAX_ALLOWED_ENCOUNTERS = 2;
@@ -90,7 +88,7 @@ export interface IMysteryEncounter {
  * These objects will be saved as part of session data any time the player is on a floor with an encounter
  * Unless you know what you're doing, you should use MysteryEncounterBuilder to create an instance for this class
  */
-export default class MysteryEncounter implements IMysteryEncounter {
+export class MysteryEncounter implements IMysteryEncounter {
   // #region Required params
 
   encounterType: MysteryEncounterType;
@@ -253,7 +251,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
    */
   selectedOption?: MysteryEncounterOption;
   /**
-   * Will be set by option select handlers automatically, and can be used to refer to which option was chosen by later phases
+   * Array containing data pertaining to free moves used at the start of a battle mystery envounter.
    */
   startOfBattleEffects: EncounterStartOfBattleEffect[] = [];
   /**
@@ -384,6 +382,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
       // If there are multiple overlapping pokemon, we're okay - just choose one and take it out of the primary pokemon pool
       if (overlap.length > 1 || this.secondaryPokemon.length - overlap.length >= 1) {
         // is this working?
+        // TODO: should this use `randSeedItem`?
         this.primaryPokemon = overlap[randSeedInt(overlap.length, 0)];
         this.secondaryPokemon = this.secondaryPokemon.filter(supp => supp !== this.primaryPokemon);
         return true;
@@ -394,6 +393,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
       return false;
     }
     // this means we CAN have the same pokemon be a primary and secondary pokemon, so just choose any qualifying one randomly.
+    // TODO: should this use `randSeedItem`?
     this.primaryPokemon = qualified[randSeedInt(qualified.length, 0)];
     return true;
   }
@@ -576,7 +576,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    */
 
   /**
-   * @statif Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
+   * @static Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
    * NOTE: if new functions are added to {@linkcode MysteryEncounter} class
    * @param encounterType
    * @returns this
@@ -605,7 +605,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   }
 
   /**
-   * Defines an option + phasefor the encounter.
+   * Defines an option + phase for the encounter.
    * Use for easy/streamlined options.
    * There should be at least 2 options defined and no more than 4.
    * If complex use {@linkcode MysteryEncounterBuilder.withOption}
@@ -627,7 +627,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   }
 
   /**
-   * Defines an option + phasefor the encounter.
+   * Defines an option + phase for the encounter.
    * Use for easy/streamlined options.
    * There should be at least 2 options defined and no more than 4.
    * If complex use {@linkcode MysteryEncounterBuilder.withOption}
@@ -716,7 +716,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withAnimations(
     ...encounterAnimations: EncounterAnim[]
   ): this & Required<Pick<IMysteryEncounter, "encounterAnimations">> {
-    const animations = Array.isArray(encounterAnimations) ? encounterAnimations : [encounterAnimations];
+    const animations = coerceArray(encounterAnimations);
     return Object.assign(this, { encounterAnimations: animations });
   }
 
@@ -728,7 +728,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withDisallowedGameModes(
     ...disallowedGameModes: GameModes[]
   ): this & Required<Pick<IMysteryEncounter, "disallowedGameModes">> {
-    const gameModes = Array.isArray(disallowedGameModes) ? disallowedGameModes : [disallowedGameModes];
+    const gameModes = coerceArray(disallowedGameModes);
     return Object.assign(this, { disallowedGameModes: gameModes });
   }
 
@@ -740,7 +740,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withDisallowedChallenges(
     ...disallowedChallenges: Challenges[]
   ): this & Required<Pick<IMysteryEncounter, "disallowedChallenges">> {
-    const challenges = Array.isArray(disallowedChallenges) ? disallowedChallenges : [disallowedChallenges];
+    const challenges = coerceArray(disallowedChallenges);
     return Object.assign(this, { disallowedChallenges: challenges });
   }
 

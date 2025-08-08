@@ -1,18 +1,20 @@
-import { getVariantTint } from "#app/sprites/variant";
-import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { globalScene } from "#app/global-scene";
-import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";
-import { getNatureName } from "../data/nature";
+import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
+import { getNatureName } from "#data/nature";
+import { DexAttr } from "#enums/dex-attr";
 import { PokemonType } from "#enums/pokemon-type";
-import type Pokemon from "../field/pokemon";
+import { TextStyle } from "#enums/text-style";
+import type { Pokemon } from "#field/pokemon";
+import { getVariantTint } from "#sprites/variant";
+import type { StarterDataEntry } from "#system/game-data";
+import type { DexEntry } from "#types/dex-data";
+import { ConfirmUiHandler } from "#ui/confirm-ui-handler";
+import { StatsContainer } from "#ui/stats-container";
+import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import { fixedInt, getShinyDescriptor } from "#utils/common";
 import i18next from "i18next";
-import type { DexEntry, StarterDataEntry } from "../system/game-data";
-import { DexAttr } from "../system/game-data";
-import { fixedInt } from "#app/utils/common";
-import ConfirmUiHandler from "./confirm-ui-handler";
-import { StatsContainer } from "./stats-container";
-import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
-import { addWindow } from "./ui-theme";
+import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 interface LanguageSetting {
   infoContainerTextSize: string;
@@ -21,14 +23,24 @@ interface LanguageSetting {
 }
 
 const languageSettings: { [key: string]: LanguageSetting } = {
+  en: {
+    infoContainerTextSize: "64px",
+    infoContainerLabelXPos: -20,
+    infoContainerTextXPos: -17,
+  },
   pt: {
     infoContainerTextSize: "60px",
     infoContainerLabelXPos: -15,
     infoContainerTextXPos: -12,
   },
+  ja: {
+    infoContainerTextSize: "64px",
+    infoContainerLabelXPos: -27,
+    infoContainerTextXPos: -25,
+  },
 };
 
-export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
+export class PokemonInfoContainer extends Phaser.GameObjects.Container {
   private readonly infoWindowWidth = 104;
 
   private pokemonFormLabelText: Phaser.GameObjects.Text;
@@ -105,7 +117,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       moveBg.setOrigin(1, 0);
       moveBg.setName("nineslice-move-bg");
 
-      const moveLabel = addTextObject(-moveBg.width / 2, 0, "-", TextStyle.PARTY);
+      const moveLabel = addTextObject(-moveBg.width / 2, 0, "-", TextStyle.MOVE_LABEL);
       moveLabel.setOrigin(0.5, 0);
       moveLabel.setName("text-move-label");
 
@@ -343,18 +355,19 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.pokemonShinyIcon.setVisible(pokemon.isShiny());
       this.pokemonShinyIcon.setTint(getVariantTint(baseVariant));
       if (this.pokemonShinyIcon.visible) {
-        const shinyDescriptor =
-          doubleShiny || baseVariant
-            ? `${baseVariant === 2 ? i18next.t("common:epicShiny") : baseVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? i18next.t("common:epicShiny") : pokemon.fusionVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}` : ""}`
-            : "";
-        this.pokemonShinyIcon.on("pointerover", () =>
-          globalScene.ui.showTooltip(
-            "",
-            `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`,
-            true,
-          ),
-        );
-        this.pokemonShinyIcon.on("pointerout", () => globalScene.ui.hideTooltip());
+        let shinyDescriptor = "";
+        if (doubleShiny || baseVariant) {
+          shinyDescriptor = " (" + getShinyDescriptor(baseVariant);
+          if (doubleShiny) {
+            shinyDescriptor += "/" + getShinyDescriptor(pokemon.fusionVariant);
+          }
+          shinyDescriptor += ")";
+        }
+        this.pokemonShinyIcon
+          .on("pointerover", () =>
+            globalScene.ui.showTooltip("", i18next.t("common:shinyOnHover") + shinyDescriptor, true),
+          )
+          .on("pointerout", () => globalScene.ui.hideTooltip());
 
         const newShiny = BigInt(1 << (pokemon.shiny ? 1 : 0));
         const newVariant = BigInt(1 << (pokemon.variant + 4));
@@ -443,12 +456,12 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.pokemonShinyIcon.setPosition(82, 87);
     this.pokemonShinyNewIcon.setPosition(72, 87);
 
-    this.pokemonFormLabelText.setPosition(infoContainerLabelXPos, 152);
-    this.pokemonFormText.setPosition(infoContainerTextXPos, 152);
-    this.pokemonAbilityLabelText.setPosition(infoContainerLabelXPos, 110);
-    this.pokemonAbilityText.setPosition(infoContainerTextXPos, 110);
-    this.pokemonNatureLabelText.setPosition(infoContainerLabelXPos, 125);
-    this.pokemonNatureText.setPosition(infoContainerTextXPos, 125);
+    this.pokemonFormLabelText.setPosition(infoContainerLabelXPos, 153);
+    this.pokemonFormText.setPosition(infoContainerTextXPos, 153);
+    this.pokemonAbilityLabelText.setPosition(infoContainerLabelXPos, 111);
+    this.pokemonAbilityText.setPosition(infoContainerTextXPos, 111);
+    this.pokemonNatureLabelText.setPosition(infoContainerLabelXPos, 126);
+    this.pokemonNatureText.setPosition(infoContainerTextXPos, 126);
 
     this.statsContainer.setScale(0.7);
     this.statsContainer.setPosition(30, -3);

@@ -1,9 +1,9 @@
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { randInt } from "#app/utils/common";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import GameManager from "#test/testUtils/gameManager";
-import Phase from "phaser";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/test-utils/game-manager";
+import { randInt } from "#utils/common";
+import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Leek", () => {
@@ -11,7 +11,7 @@ describe("Items - Leek", () => {
   let game: GameManager;
 
   beforeAll(() => {
-    phaserGame = new Phase.Game({
+    phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
   });
@@ -24,60 +24,60 @@ describe("Items - Leek", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH])
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyMoveset(MoveId.SPLASH)
       .startingHeldItems([{ name: "LEEK" }])
-      .moveset([Moves.TACKLE])
+      .moveset([MoveId.TACKLE])
       .battleStyle("single");
   });
 
   it("should raise CRIT stage by 2 when held by FARFETCHD", async () => {
-    await game.startBattle([Species.FARFETCHD]);
+    await game.classicMode.startBattle([SpeciesId.FARFETCHD]);
 
-    const enemyMember = game.scene.getEnemyPokemon()!;
+    const enemyMember = game.field.getEnemyPokemon();
 
     vi.spyOn(enemyMember, "getCritStage");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyMember.getCritStage).toHaveReturnedWith(2);
-  }, 20000);
+  });
 
   it("should raise CRIT stage by 2 when held by GALAR_FARFETCHD", async () => {
-    await game.startBattle([Species.GALAR_FARFETCHD]);
+    await game.classicMode.startBattle([SpeciesId.GALAR_FARFETCHD]);
 
-    const enemyMember = game.scene.getEnemyPokemon()!;
+    const enemyMember = game.field.getEnemyPokemon();
 
     vi.spyOn(enemyMember, "getCritStage");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyMember.getCritStage).toHaveReturnedWith(2);
-  }, 20000);
+  });
 
   it("should raise CRIT stage by 2 when held by SIRFETCHD", async () => {
-    await game.startBattle([Species.SIRFETCHD]);
+    await game.classicMode.startBattle([SpeciesId.SIRFETCHD]);
 
-    const enemyMember = game.scene.getEnemyPokemon()!;
+    const enemyMember = game.field.getEnemyPokemon();
 
     vi.spyOn(enemyMember, "getCritStage");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyMember.getCritStage).toHaveReturnedWith(2);
-  }, 20000);
+  });
 
   it("should raise CRIT stage by 2 when held by FARFETCHD line fused with Pokemon", async () => {
     // Randomly choose from the Farfetch'd line
-    const species = [Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD];
+    const species = [SpeciesId.FARFETCHD, SpeciesId.GALAR_FARFETCHD, SpeciesId.SIRFETCHD];
 
-    await game.startBattle([species[randInt(species.length)], Species.PIKACHU]);
+    await game.classicMode.startBattle([species[randInt(species.length)], SpeciesId.PIKACHU]);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
@@ -90,22 +90,22 @@ describe("Items - Leek", () => {
     partyMember.fusionGender = ally.gender;
     partyMember.fusionLuck = ally.luck;
 
-    const enemyMember = game.scene.getEnemyPokemon()!;
+    const enemyMember = game.field.getEnemyPokemon();
 
     vi.spyOn(enemyMember, "getCritStage");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyMember.getCritStage).toHaveReturnedWith(2);
-  }, 20000);
+  });
 
   it("should raise CRIT stage by 2 when held by Pokemon fused with FARFETCHD line", async () => {
     // Randomly choose from the Farfetch'd line
-    const species = [Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD];
+    const species = [SpeciesId.FARFETCHD, SpeciesId.GALAR_FARFETCHD, SpeciesId.SIRFETCHD];
 
-    await game.startBattle([Species.PIKACHU, species[randInt(species.length)]]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU, species[randInt(species.length)]]);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
@@ -118,28 +118,28 @@ describe("Items - Leek", () => {
     partyMember.fusionGender = ally.gender;
     partyMember.fusionLuck = ally.luck;
 
-    const enemyMember = game.scene.getEnemyPokemon()!;
+    const enemyMember = game.field.getEnemyPokemon();
 
     vi.spyOn(enemyMember, "getCritStage");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyMember.getCritStage).toHaveReturnedWith(2);
-  }, 20000);
+  });
 
   it("should not raise CRIT stage when held by a Pokemon outside of FARFETCHD line", async () => {
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    const enemyMember = game.scene.getEnemyPokemon()!;
+    const enemyMember = game.field.getEnemyPokemon();
 
     vi.spyOn(enemyMember, "getCritStage");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyMember.getCritStage).toHaveReturnedWith(0);
-  }, 20000);
+  });
 });

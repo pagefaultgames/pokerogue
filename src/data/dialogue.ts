@@ -1,6 +1,7 @@
 import { BattleSpec } from "#enums/battle-spec";
 import { TrainerType } from "#enums/trainer-type";
-import { trainerConfigs } from "./trainers/trainer-config";
+import { trainerConfigs } from "#trainers/trainer-config";
+import { capitalizeFirstLetter } from "#utils/strings";
 
 export interface TrainerTypeMessages {
   encounter?: string | string[];
@@ -1723,49 +1724,6 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
   ],
 };
 
-export const doubleBattleDialogue = {
-  blue_red_double: {
-    encounter: ["doubleBattleDialogue:blue_red_double.encounter.1"],
-    victory: ["doubleBattleDialogue:blue_red_double.victory.1"],
-  },
-  red_blue_double: {
-    encounter: ["doubleBattleDialogue:red_blue_double.encounter.1"],
-    victory: ["doubleBattleDialogue:red_blue_double.victory.1"],
-  },
-  tate_liza_double: {
-    encounter: ["doubleBattleDialogue:tate_liza_double.encounter.1"],
-    victory: ["doubleBattleDialogue:tate_liza_double.victory.1"],
-  },
-  liza_tate_double: {
-    encounter: ["doubleBattleDialogue:liza_tate_double.encounter.1"],
-    victory: ["doubleBattleDialogue:liza_tate_double.victory.1"],
-  },
-  wallace_steven_double: {
-    encounter: ["doubleBattleDialogue:wallace_steven_double.encounter.1"],
-    victory: ["doubleBattleDialogue:wallace_steven_double.victory.1"],
-  },
-  steven_wallace_double: {
-    encounter: ["doubleBattleDialogue:steven_wallace_double.encounter.1"],
-    victory: ["doubleBattleDialogue:steven_wallace_double.victory.1"],
-  },
-  alder_iris_double: {
-    encounter: ["doubleBattleDialogue:alder_iris_double.encounter.1"],
-    victory: ["doubleBattleDialogue:alder_iris_double.victory.1"],
-  },
-  iris_alder_double: {
-    encounter: ["doubleBattleDialogue:iris_alder_double.encounter.1"],
-    victory: ["doubleBattleDialogue:iris_alder_double.victory.1"],
-  },
-  marnie_piers_double: {
-    encounter: ["doubleBattleDialogue:marnie_piers_double.encounter.1"],
-    victory: ["doubleBattleDialogue:marnie_piers_double.victory.1"],
-  },
-  piers_marnie_double: {
-    encounter: ["doubleBattleDialogue:piers_marnie_double.encounter.1"],
-    victory: ["doubleBattleDialogue:piers_marnie_double.victory.1"],
-  },
-};
-
 export const battleSpecDialogue = {
   [BattleSpec.FINAL_BOSS]: {
     encounter: "battleSpecDialogue:encounter",
@@ -1787,6 +1745,7 @@ export function getCharVariantFromDialogue(message: string): string {
 }
 
 export function initTrainerTypeDialogue(): void {
+  // TODO: this should not be using `Object.Keys`
   const trainerTypes = Object.keys(trainerTypeDialogue).map(t => Number.parseInt(t) as TrainerType);
   for (const trainerType of trainerTypes) {
     const messages = trainerTypeDialogue[trainerType];
@@ -1797,8 +1756,7 @@ export function initTrainerTypeDialogue(): void {
           trainerConfigs[trainerType][`${messageType}Messages`] = messages[0][messageType];
         }
         if (messages.length > 1) {
-          trainerConfigs[trainerType][`female${messageType.slice(0, 1).toUpperCase()}${messageType.slice(1)}Messages`] =
-            messages[1][messageType];
+          trainerConfigs[trainerType][`female${capitalizeFirstLetter(messageType)}Messages`] = messages[1][messageType];
         }
       } else {
         trainerConfigs[trainerType][`${messageType}Messages`] = messages[messageType];

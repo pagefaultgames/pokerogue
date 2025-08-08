@@ -1,8 +1,8 @@
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -26,72 +26,69 @@ describe("Abilities - Synchronize", () => {
     game.override
       .battleStyle("single")
       .startingLevel(100)
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.SYNCHRONIZE)
-      .moveset([Moves.SPLASH, Moves.THUNDER_WAVE, Moves.SPORE, Moves.PSYCHO_SHIFT])
-      .ability(Abilities.NO_GUARD);
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.SYNCHRONIZE)
+      .moveset([MoveId.SPLASH, MoveId.THUNDER_WAVE, MoveId.SPORE, MoveId.PSYCHO_SHIFT])
+      .ability(AbilityId.NO_GUARD);
   });
 
   it("does not trigger when no status is applied by opponent Pokemon", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
+    expect(game.field.getPlayerPokemon().status).toBeUndefined();
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
 
   it("sets the status of the source pokemon to Paralysis when paralyzed by it", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(Moves.THUNDER_WAVE);
+    game.move.select(MoveId.THUNDER_WAVE);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()!.status?.effect).toBe(StatusEffect.PARALYSIS);
-    expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(game.field.getPlayerPokemon().status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(game.field.getEnemyPokemon().status?.effect).toBe(StatusEffect.PARALYSIS);
     expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
   });
 
   it("does not trigger on Sleep", async () => {
     await game.classicMode.startBattle();
 
-    game.move.select(Moves.SPORE);
+    game.move.select(MoveId.SPORE);
 
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()!.status?.effect).toBeUndefined();
-    expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(game.field.getPlayerPokemon().status?.effect).toBeUndefined();
+    expect(game.field.getEnemyPokemon().status?.effect).toBe(StatusEffect.SLEEP);
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
 
   it("does not trigger when Pokemon is statused by Toxic Spikes", async () => {
-    game.override
-      .ability(Abilities.SYNCHRONIZE)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Array(4).fill(Moves.TOXIC_SPIKES));
+    game.override.ability(AbilityId.SYNCHRONIZE).enemyAbility(AbilityId.BALL_FETCH).enemyMoveset(MoveId.TOXIC_SPIKES);
 
-    await game.classicMode.startBattle([Species.FEEBAS, Species.MILOTIC]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()!.status?.effect).toBe(StatusEffect.POISON);
-    expect(game.scene.getEnemyPokemon()!.status?.effect).toBeUndefined();
+    expect(game.field.getPlayerPokemon().status?.effect).toBe(StatusEffect.POISON);
+    expect(game.field.getEnemyPokemon().status?.effect).toBeUndefined();
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
 
   it("shows ability even if it fails to set the status of the opponent Pokemon", async () => {
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    game.move.select(Moves.THUNDER_WAVE);
+    game.move.select(MoveId.THUNDER_WAVE);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()!.status?.effect).toBeUndefined();
-    expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(game.field.getPlayerPokemon().status?.effect).toBeUndefined();
+    expect(game.field.getEnemyPokemon().status?.effect).toBe(StatusEffect.PARALYSIS);
     expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
   });
 });

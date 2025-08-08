@@ -1,19 +1,19 @@
-import { Gender } from "#app/data/gender";
-import { Nature } from "#enums/nature";
-import { allSpecies } from "#app/data/pokemon-species";
-import { GameModes } from "#app/game-mode";
-import { EncounterPhase } from "#app/phases/encounter-phase";
-import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import type { TitlePhase } from "#app/phases/title-phase";
-import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import type SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
-import type OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
-import type StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { Abilities } from "#enums/abilities";
+import { allSpecies } from "#data/data-lists";
+import { Gender } from "#data/gender";
+import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
-import { Species } from "#enums/species";
-import GameManager from "#test/testUtils/gameManager";
+import { GameModes } from "#enums/game-modes";
+import { Nature } from "#enums/nature";
+import { SpeciesId } from "#enums/species-id";
+import { UiMode } from "#enums/ui-mode";
+import { EncounterPhase } from "#phases/encounter-phase";
+import { SelectStarterPhase } from "#phases/select-starter-phase";
+import type { TitlePhase } from "#phases/title-phase";
+import { GameManager } from "#test/test-utils/game-manager";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
+import type { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
+import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -37,7 +37,7 @@ describe("UI - Starter select", () => {
   });
 
   it("Bulbasaur - shiny - variant 2 male", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -45,7 +45,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -90,14 +90,14 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
     expect(game.scene.getPlayerParty()[0].variant).toBe(2);
     expect(game.scene.getPlayerParty()[0].gender).toBe(Gender.MALE);
-  }, 20000);
+  });
 
   it("Bulbasaur - shiny - variant 2 female hardy overgrow", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -105,7 +105,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -151,15 +151,15 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
     expect(game.scene.getPlayerParty()[0].variant).toBe(2);
     expect(game.scene.getPlayerParty()[0].nature).toBe(Nature.HARDY);
-    expect(game.scene.getPlayerParty()[0].getAbility().id).toBe(Abilities.OVERGROW);
-  }, 20000);
+    expect(game.scene.getPlayerParty()[0].getAbility().id).toBe(AbilityId.OVERGROW);
+  });
 
   it("Bulbasaur - shiny - variant 2 female lonely chlorophyl", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -167,7 +167,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -215,16 +215,16 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
     expect(game.scene.getPlayerParty()[0].variant).toBe(2);
     expect(game.scene.getPlayerParty()[0].gender).toBe(Gender.FEMALE);
     expect(game.scene.getPlayerParty()[0].nature).toBe(Nature.LONELY);
-    expect(game.scene.getPlayerParty()[0].getAbility().id).toBe(Abilities.CHLOROPHYLL);
-  }, 20000);
+    expect(game.scene.getPlayerParty()[0].getAbility().id).toBe(AbilityId.CHLOROPHYLL);
+  });
 
   it("Bulbasaur - shiny - variant 2 female", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -232,7 +232,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -278,14 +278,14 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
     expect(game.scene.getPlayerParty()[0].variant).toBe(2);
     expect(game.scene.getPlayerParty()[0].gender).toBe(Gender.FEMALE);
-  }, 20000);
+  });
 
   it("Bulbasaur - not shiny", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -293,7 +293,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -339,13 +339,13 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(false);
     expect(game.scene.getPlayerParty()[0].variant).toBe(0);
-  }, 20000);
+  });
 
   it("Bulbasaur - shiny - variant 1", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -353,7 +353,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -401,13 +401,13 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
     expect(game.scene.getPlayerParty()[0].variant).toBe(1);
-  }, 20000);
+  });
 
   it("Bulbasaur - shiny - variant 0", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -415,7 +415,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -462,13 +462,13 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.BULBASAUR);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
     expect(game.scene.getPlayerParty()[0].variant).toBe(0);
-  }, 20000);
+  });
 
   it("Check if first pokemon in party is caterpie from gen 1 and 1rd row, 3rd column", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -476,7 +476,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -528,11 +528,11 @@ describe("UI - Starter select", () => {
       saveSlotSelectUiHandler.processInput(Button.ACTION);
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.CATERPIE);
-  }, 20000);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.CATERPIE);
+  });
 
   it("Check if first pokemon in party is nidoran_m from gen 1 and 2nd row, 4th column (cursor (9+4)-1)", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -540,7 +540,7 @@ describe("UI - Starter select", () => {
     expect(caughtCount).toBe(Object.keys(allSpecies).length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      const currentPhase = game.scene.getCurrentPhase() as TitlePhase;
+      const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
       currentPhase.gameMode = GameModes.CLASSIC;
       currentPhase.end();
     });
@@ -594,6 +594,6 @@ describe("UI - Starter select", () => {
       saveSlotSelectUiHandler.processInput(Button.ACTION);
     });
     await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.NIDORAN_M);
-  }, 20000);
+    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.NIDORAN_M);
+  });
 });
