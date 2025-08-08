@@ -1747,8 +1747,9 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
-    const damageValue = (!this.useHp ? user.turnData.singleHitDamageDealt : user.getMaxHp()) * this.damageRatio;
-    const minValue = user.turnData.singleHitDamageDealt ? 1 : 0;
+    const prevDmgDealt = user.turnData.lastMoveDamageDealt.reduce((acc, dmg) => acc+dmg, 0)
+    const damageValue = (!this.useHp ? prevDmgDealt : user.getMaxHp()) * this.damageRatio;
+    const minValue = prevDmgDealt ? 1 : 0;
     const recoilDamage = toDmgValue(damageValue, minValue);
     if (!recoilDamage) {
       return false;
@@ -2083,13 +2084,6 @@ export class FlameBurstAttr extends MoveEffectAttr {
   }
 }
 
-/**
- * Attribute to KO the user while fully restoring HP/status of the next switched in Pokemon.
- *
- * Used for {@linkcode Moves.HEALING_WISH} and {@linkcode Moves.LUNAR_DANCE}.
- * TODO: Implement "heal storing" if switched in pokemon is at full HP (likely with an end-of-turn ArenaTag).
- * Will likely be blocked by the need for a "slot dependent ArenaTag" similar to Future Sight
- */
 export class SacrificialFullRestoreAttr extends SacrificialAttr {
   protected restorePP: boolean;
   protected moveMessage: string;
@@ -5931,8 +5925,8 @@ export class ProtectAttr extends AddBattlerTagAttr {
       for (const turnMove of user.getLastXMoves(-1).slice()) {
         if (
           // Quick & Wide guard increment the Protect counter without using it for fail chance
-          !(allMoves[turnMove.move].hasAttr("ProtectAttr") || 
-          [MoveId.QUICK_GUARD, MoveId.WIDE_GUARD].includes(turnMove.move)) || 
+          !(allMoves[turnMove.move].hasAttr("ProtectAttr") ||
+          [MoveId.QUICK_GUARD, MoveId.WIDE_GUARD].includes(turnMove.move)) ||
           turnMove.result !== MoveResult.SUCCESS
         ) {
           break;
@@ -6402,11 +6396,11 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    // Damaging switch moves and ones w/o a secondary effect do not "fail"
+    // Damaging switch moves do not "fail"
     // upon an unsuccessful switch - they still succeed and perform secondary effects
     // (just without actually switching out).
-    // TODO: Remove attr check once move attribute application is cleaned up
-    return (user, target, move) => (move.category !== MoveCategory.STATUS || move.attrs.length > 1 || this.canApply(user, target, move, []));
+    // TODO: Remove condition check once move attribute application is cleaned up
+    return (user, target, move) => (move.category !== MoveCategory.STATUS || this.canApply(user, target, move, []));
   }
 
   getFailedText(_user: Pokemon, target: Pokemon): string | undefined {
@@ -8633,7 +8627,7 @@ export function initMoves() {
     new AttackMove(MoveId.RAGE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 20, 100, 20, -1, 0, 1)
       .partial(), // No effect implemented
     new SelfStatusMove(MoveId.TELEPORT, PokemonType.PSYCHIC, -1, 20, -1, -6, 1)
-      .attr(ForceSwitchOutAttr, {selfSwitch: true, switchType: SwitchType.SWITCH, allowFlee: true})
+      .attr(ForceSwitchOutAttr, {selfSwitch: true, allowFlee: true})
       .hidesUser(),
     new AttackMove(MoveId.NIGHT_SHADE, PokemonType.GHOST, MoveCategory.SPECIAL, -1, 100, 15, -1, 0, 1)
       .attr(LevelDamageAttr),
@@ -9216,7 +9210,7 @@ export function initMoves() {
       .condition(failIfLastCondition)
       // Interactions with stomping tantrum, instruct, and other moves that
       // rely on move history
-      // Also will not reflect roar / whirlwind if the target has ForceSwitchOutImmunityAbAttr
+      // Will not reflect moves failing conditions
       .edgeCase(),
     new SelfStatusMove(MoveId.RECYCLE, PokemonType.NORMAL, -1, 10, -1, 0, 3)
       .unimplemented(),
@@ -10172,7 +10166,9 @@ export function initMoves() {
       .attr(ForceSwitchOutAttr, {selfSwitch: true})
       .soundBased()
       .reflectable()
-      .edgeCase(), // should not fail if no target is switched out
+      // should not fail if no target is switched out
+      // Should not switch out if target cannot be stat dropped
+      .edgeCase(),
     new StatusMove(MoveId.TOPSY_TURVY, PokemonType.DARK, -1, 20, -1, 0, 6)
       .attr(InvertStatsAttr)
       .reflectable(),

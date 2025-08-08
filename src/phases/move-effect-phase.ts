@@ -772,8 +772,8 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     if (this.lastHit) {
+      // Trigger form changes on the final hit, alongside Wimp Out/Emergency Exit
       globalScene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
-      // Trigger Form changes on the final hit, alongside Wimp Out.
       applyAbAttrs("PostDamageAbAttr", {
         pokemon: target,
         damage: user.turnData.lastMoveDamageDealt[target.getBattlerIndex()],
@@ -830,6 +830,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const substitute = target.getTag(SubstituteTag);
     const isBlockedBySubstitute = !!substitute && this.move.hitsSubstitute(user, target);
     if (isBlockedBySubstitute) {
+      // NB: This cannot possibly cause issues with wimp out as the latter breaks if nothing works
       user.turnData.lastMoveDamageDealt[target.getBattlerIndex()] += Math.min(dmg, substitute.hp);
       substitute.hp -= dmg;
     } else if (!target.isPlayer() && dmg >= target.hp) {
