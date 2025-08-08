@@ -4175,7 +4175,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
       }),
     )
-    .setInstantTera(3), // Tera Dragon Tyrantrum / Ice Aurorus
+    .setInstantTera(2), // Tera Dragon Tyrantrum / Ice Aurorus
   [TrainerType.KUKUI]: new TrainerConfig(++t)
     .initForChampion(true)
     .setMixedBattleBgm("battle_champion_kukui")
