@@ -8,7 +8,7 @@ import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 
-type CancelFn = (succes?: boolean) => boolean;
+type CancelFn = (success?: boolean) => boolean;
 
 /**
  * Abstract class for handling UI elements related to button bindings.

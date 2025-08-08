@@ -112,7 +112,7 @@ export class CommandPhase extends FieldPhase {
    * Clear out all unusable moves in front of the currently acting pokemon's move queue.
    */
   // TODO: Refactor move queue handling to ensure that this method is not necessary.
-  private clearUnusuableMoves(): void {
+  private clearUnusableMoves(): void {
     const playerPokemon = this.getPokemon();
     const moveQueue = playerPokemon.getMoveQueue();
     if (moveQueue.length === 0) {
@@ -143,7 +143,7 @@ export class CommandPhase extends FieldPhase {
    * @returns Whether a queued move was successfully set to be executed.
    */
   private tryExecuteQueuedMove(): boolean {
-    this.clearUnusuableMoves();
+    this.clearUnusableMoves();
     const playerPokemon = globalScene.getPlayerField()[this.fieldIndex];
     const moveQueue = playerPokemon.getMoveQueue();
 

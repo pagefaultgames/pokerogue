@@ -105,7 +105,7 @@ import {
   TempExtraModifierModifier,
   TempStatStageBoosterModifier,
   TerastallizeAccessModifier,
-  TerrastalizeModifier,
+  TerastallizeModifier,
   TmModifier,
   TurnHealModifier,
   TurnHeldItemTransferModifier,
@@ -431,7 +431,7 @@ export class TerastallizeModifierType extends PokemonModifierType {
     super(
       "",
       `${PokemonType[teraType].toLowerCase()}_tera_shard`,
-      (type, args) => new TerrastalizeModifier(type as TerastallizeModifierType, (args[0] as Pokemon).id, teraType),
+      (type, args) => new TerastallizeModifier(type as TerastallizeModifierType, (args[0] as Pokemon).id, teraType),
       (pokemon: PlayerPokemon) => {
         if (
           [pokemon.species.speciesId, pokemon.fusionSpecies?.speciesId].filter(
