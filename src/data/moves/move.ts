@@ -67,7 +67,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
 import { WeatherType } from "#enums/weather-type";
 import { MoveUsedEvent } from "#events/battle-scene";
-import type { EnemyPokemon, Pokemon } from "#field/pokemon";
+import { EnemyPokemon, Pokemon } from "#field/pokemon";
 import {
   AttackTypeBoosterModifier,
   BerryModifier,
@@ -5349,48 +5349,60 @@ export class CombinedPledgeTypeAttr extends VariableMoveTypeAttr {
   }
 }
 
-export class VariableMoveTypeMultiplierAttr extends MoveAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    return false;
-  }
-}
-
-export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!target.getTag(BattlerTagType.IGNORE_FLYING)) {
-      const multiplier = args[0] as NumberHolder;
-      //When a flying type is hit, the first hit is always 1x multiplier.
-      if (target.isOfType(PokemonType.FLYING)) {
-        multiplier.value = 1;
-      }
-      return true;
-    }
-
-    return false;
-  }
-}
-
-export class IceNoEffectTypeAttr extends VariableMoveTypeMultiplierAttr {
+/**
+ * Attribute for moves which have a custom type chart interaction.
+ */
+export class VariableMoveTypeChartAttr extends MoveAttr {
   /**
-   * Checks to see if the Target is Ice-Type or not. If so, the move will have no effect.
-   * @param user n/a
-   * @param target The {@linkcode Pokemon} targeted by the move
-   * @param move n/a
-   * @param args `[0]` a {@linkcode NumberHolder | NumberHolder} containing a type effectiveness multiplier
-   * @returns `true` if this Ice-type immunity applies; `false` otherwise
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param move - The {@linkcode Move} with this attribute
+   * @param args -
+   * `[0]`: A {@linkcode NumberHolder} holding the type effectiveness
+   * `[1]`: The target's entire defensive type profile.
+   * @returns `true` if application of the attribute succeeds
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const multiplier = args[0] as NumberHolder;
-    if (target.isOfType(PokemonType.ICE)) {
-      multiplier.value = 0;
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[]]): boolean {
+    return false;
+  }
+}
+
+/**
+ * Attribute to implement {@linkcode MoveId.FREEZE_DRY}'s guaranteed water type super effectiveness.
+ */
+export class FreezeDryAttr extends VariableMoveTypeChartAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder, PokemonType[]]): boolean {
+    const [multiplier, types] = args;
+
+    if (types.includes(PokemonType.WATER)) {
+      multiplier.value = Math.max(multiplier.value, 2);
       return true;
     }
     return false;
   }
 }
 
-export class FlyingTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+/**
+ * Attribute used by {@linkcode MoveId.THOUSAND_ARROWS} to cause it to deal a fixed 1x damage
+ * against all ungrounded flying types.
+ */
+export class NeutralDamageAgainstFlyingTypeAttr extends VariableMoveTypeChartAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[]]): boolean {
+    const [multiplier, types] = args;
+    if (target.isGrounded() || !types.includes(PokemonType.FLYING)) {
+      return false;
+    }
+    multiplier.value = 1;
+
+    return true;
+  }
+}
+
+/**
+ * Attribute used by {@linkcode MoveId.FLYING_PRESS} to add the Flying Type to its type effectiveness.
+ */
+export class FlyingTypeMultiplierAttr extends VariableMoveTypeChartAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[]]): boolean {
     const multiplier = args[0] as NumberHolder;
     multiplier.value *= target.getAttackTypeEffectiveness(PokemonType.FLYING, user);
     return true;
@@ -5398,39 +5410,19 @@ export class FlyingTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
 }
 
 /**
- * Attribute for moves which have a custom type chart interaction.
+ * Attribute used by {@linkcode MoveId.SHEER_COLD} to implement its Gen VII+ ice ineffectiveness.
  */
-export class VariableMoveTypeChartAttr extends MoveAttr {
-  /**
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args [0] {@linkcode NumberHolder} holding the type effectiveness
-   * @param args [1] A single defensive type of the target
-   *
-   * @returns true if application of the attribute succeeds
-   */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+export class IceNoEffectTypeAttr extends VariableMoveTypeChartAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[]]): boolean {
+    const [multiplier, types] = args;
+    if (types.includes(PokemonType.ICE)) {
+      multiplier.value = 0;
+      return true;
+    }
     return false;
   }
 }
 
-/**
- * This class forces Freeze-Dry to be super effective against Water Type.
- */
-export class FreezeDryAttr extends VariableMoveTypeChartAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const multiplier = args[0] as NumberHolder;
-    const defType = args[1] as PokemonType;
-
-    if (defType === PokemonType.WATER) {
-      multiplier.value = 2;
-      return true;
-    } else {
-      return false;
-    }
-  }
-}
 
 export class OneHitKOAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -5916,8 +5908,8 @@ export class ProtectAttr extends AddBattlerTagAttr {
       for (const turnMove of user.getLastXMoves(-1).slice()) {
         if (
           // Quick & Wide guard increment the Protect counter without using it for fail chance
-          !(allMoves[turnMove.move].hasAttr("ProtectAttr") || 
-          [MoveId.QUICK_GUARD, MoveId.WIDE_GUARD].includes(turnMove.move)) || 
+          !(allMoves[turnMove.move].hasAttr("ProtectAttr") ||
+          [MoveId.QUICK_GUARD, MoveId.WIDE_GUARD].includes(turnMove.move)) ||
           turnMove.result !== MoveResult.SUCCESS
         ) {
           break;
@@ -8146,7 +8138,9 @@ export class UpperHandCondition extends MoveCondition {
   }
 }
 
-export class HitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
+// TODO: Does this need to extend from this?
+// The only reason it might is to show ineffectiveness text but w/e
+export class HitsSameTypeAttr extends VariableMoveTypeChartAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as NumberHolder;
     if (!user.getTypes(true).some(type => target.getTypes(true).includes(type))) {
@@ -8417,8 +8411,7 @@ const MoveAttrs = Object.freeze({
   TeraStarstormTypeAttr,
   MatchUserTypeAttr,
   CombinedPledgeTypeAttr,
-  VariableMoveTypeMultiplierAttr,
-  NeutralDamageAgainstFlyingTypeMultiplierAttr,
+  NeutralDamageAgainstFlyingTypeAttr,
   IceNoEffectTypeAttr,
   FlyingTypeMultiplierAttr,
   VariableMoveTypeChartAttr,
@@ -10454,7 +10447,7 @@ export function initMoves() {
       .attr(HitHealAttr, 0.75)
       .triageMove(),
     new AttackMove(MoveId.THOUSAND_ARROWS, PokemonType.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
-      .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
+      .attr(NeutralDamageAgainstFlyingTypeAttr)
       .attr(FallDownAttr)
       .attr(HitsTagAttr, BattlerTagType.FLYING)
       .attr(HitsTagAttr, BattlerTagType.FLOATING)

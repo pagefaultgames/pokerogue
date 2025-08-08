@@ -2400,7 +2400,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         : 1,
     );
 
-    applyMoveAttrs("VariableMoveTypeMultiplierAttr", source, this, move, typeMultiplier);
     if (this.getTypes(true, true).find(t => move.isTypeImmune(source, this, t))) {
       typeMultiplier.value = 0;
     }

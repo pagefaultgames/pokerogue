@@ -730,9 +730,7 @@ export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
   override canApply(params: TypeMultiplierAbAttrParams): boolean {
     const { move } = params;
     return (
-      move.category !== MoveCategory.STATUS &&
-      !move.hasAttr("NeutralDamageAgainstFlyingTypeMultiplierAttr") &&
-      super.canApply(params)
+      move.category !== MoveCategory.STATUS && !move.hasAttr("VariableMoveTypeChartAttr") && super.canApply(params)
     );
   }
 }
