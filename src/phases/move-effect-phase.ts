@@ -830,7 +830,8 @@ export class MoveEffectPhase extends PokemonPhase {
     const substituteTag = target.getTag(SubstituteTag);
     const isBlockedBySubstitute = substituteTag && this.move.hitsSubstitute(user, target);
     if (isBlockedBySubstitute) {
-      substituteTag.hp -= dmg;
+      user.turnData.lastMoveDamageDealt[target.getBattlerIndex()] += Math.min(dmg, substitute.hp);
+      substitute.hp -= dmg;
     } else if (!target.isPlayer() && dmg >= target.hp) {
       globalScene.applyModifiers(EnemyEndureChanceModifier, false, target);
     }
