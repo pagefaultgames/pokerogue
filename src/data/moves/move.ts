@@ -2040,7 +2040,7 @@ export class VariableHealAttr extends HealAttr {
     selfTarget = true,
     failOnFullHp = true,
   ) {
-    super(1, showAnim, selfTarget, selfTarget);
+    super(1, showAnim, selfTarget, failOnFullHp);
     this.healFunc = healFunc;
   }
 
@@ -8091,16 +8091,16 @@ const shoreUpHealRatioFunc = (): number => {
 }
 
 const swallowHealFunc = (user: Pokemon): number => {
-  const tag = user.getTag(StockpilingTag);
+  const tag = user.getTag(BattlerTagType.STOCKPILING);
   if (!tag || tag.stockpiledCount <= 0) {
     return 0;
   }
 
   switch (tag.stockpiledCount) {
     case 1:
-      return 0.25
+      return 0.25;
     case 2:
-      return 0.5
+      return 0.5;
     case 3:
     default: // in case we ever get more stacks
       return 1;
@@ -9307,7 +9307,7 @@ export function initMoves() {
       .condition(hasStockpileStacksCondition)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.STOCKPILING ], true),
     new SelfStatusMove(MoveId.SWALLOW, PokemonType.NORMAL, -1, 10, -1, 0, 3)
-      .attr(VariableHealAttr, swallowHealFunc, false, true, true)
+      .attr(VariableHealAttr, swallowHealFunc, false, true, false)
       .condition(hasStockpileStacksCondition)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.STOCKPILING ], true)
       .triageMove(),

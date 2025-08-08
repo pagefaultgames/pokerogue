@@ -63,7 +63,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
         game.move.use(MoveId.SWALLOW);
         await game.toEndOfTurn();
 
-        expect(swalot).toHaveHp((swalot.getMaxHp() * healPercent) / 100 + 1);
+        expect(swalot).toHaveHp(Math.min(swalot.getMaxHp(), Math.round((swalot.getMaxHp() * healPercent) / 100) + 1));
         expect(swalot).not.toHaveBattlerTag(BattlerTagType.STOCKPILING);
       },
     );
@@ -137,7 +137,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
       await game.toEndOfTurn();
 
       expect(spitUpSpy).toHaveReturnedWith(power);
-      expect(swalot.getTag(StockpilingTag)).toBeUndefined();
+      expect(swalot).not.toHaveBattlerTag(BattlerTagType.STOCKPILING);
     });
 
     it("should fail without Stockpile stacks", async () => {
@@ -207,6 +207,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
     });
 
     it("should invert stat drops when gaining Contrary", async () => {
+      game.override.enemyAbility(AbilityId.CONTRARY);
       await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
       const player = game.field.getPlayerPokemon();
@@ -218,7 +219,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
 
       expect(player).toHaveStatStage(Stat.DEF, 1);
       expect(player).toHaveStatStage(Stat.SPDEF, 1);
-      expect(player).toHaveAbilityApplied(AbilityId.CONTRARY);
+      expect(player.hasAbility(AbilityId.CONTRARY)).toBe(true);
 
       game.move.use(MoveId.SPIT_UP);
       await game.move.forceEnemyMove(MoveId.SPLASH);

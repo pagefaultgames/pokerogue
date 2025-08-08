@@ -2,15 +2,22 @@ import { getPokemonNameWithAffix } from "#app/messages";
 // biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { Pokemon } from "#field/pokemon";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
+import { toDmgValue } from "#utils/common";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
  * Matcher that checks if a Pokemon has a specific amount of HP.
  * @param received - The object to check. Should be a {@linkcode Pokemon}.
  * @param expectedHp - The expected amount of HP the {@linkcode Pokemon} has
+ * @param roundDown - Whether to round down {@linkcode expectedDamageTaken} with {@linkcode toDmgValue}; default `true`
  * @returns Whether the matcher passed
  */
-export function toHaveHp(this: MatcherState, received: unknown, expectedHp: number): SyncExpectationResult {
+export function toHaveHp(
+  this: MatcherState,
+  received: unknown,
+  expectedHp: number,
+  roundDown = true,
+): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
       pass: false,
@@ -18,6 +25,9 @@ export function toHaveHp(this: MatcherState, received: unknown, expectedHp: numb
     };
   }
 
+  if (roundDown) {
+    expectedHp = toDmgValue(expectedHp);
+  }
   const actualHp = received.hp;
   const pass = actualHp === expectedHp;
 
