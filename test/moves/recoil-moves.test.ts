@@ -1,4 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
@@ -47,25 +48,33 @@ describe("Moves - Recoil Moves", () => {
     { moveName: "Wild Charge", moveId: MoveId.WILD_CHARGE },
     { moveName: "Wood Hammer", moveId: MoveId.WOOD_HAMMER },
   ])("$moveName causes recoil damage when hitting a substitute", async ({ moveId }) => {
-    game.override.moveset([moveId]);
     await game.classicMode.startBattle([SpeciesId.TOGEPI]);
 
-    game.move.select(moveId);
-    await game.toNextTurn();
+    game.move.use(moveId);
+    await game.phaseInterceptor.to("MoveEndPhase"); // Pidove substitute
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const pidove = game.field.getEnemyPokemon();
+    const subTag = pidove.getTag(BattlerTagType.SUBSTITUTE)!;
+    expect(subTag).toBeDefined();
+    const subInitialHp = subTag.hp;
+
+    await game.phaseInterceptor.to("MoveEndPhase"); // player attack
+
+    expect(subTag.hp).toBeLessThan(subInitialHp);
+
+    const playerPokemon = game.field.getPlayerPokemon();
     expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
   });
 
   it("causes recoil damage when hitting a substitute in a double battle", async () => {
-    game.override.battleStyle("double").moveset([MoveId.DOUBLE_EDGE]);
+    game.override.battleStyle("double");
 
     await game.classicMode.startBattle([SpeciesId.TOGEPI, SpeciesId.TOGEPI]);
 
     const [playerPokemon1, playerPokemon2] = game.scene.getPlayerField();
 
-    game.move.select(MoveId.DOUBLE_EDGE, 0);
-    game.move.select(MoveId.DOUBLE_EDGE, 1);
+    game.move.use(MoveId.DOUBLE_EDGE, 0);
+    game.move.use(MoveId.DOUBLE_EDGE, 1);
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
     await game.toNextTurn();
