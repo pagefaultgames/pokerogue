@@ -1867,6 +1867,7 @@ export const trainerConfigs: TrainerConfigs = {
       0,
       getRandomPartyMemberFunc([
         SpeciesId.METAPOD,
+        SpeciesId.LEDYBA,
         SpeciesId.CLEFFA,
         SpeciesId.WOOPER,
         SpeciesId.SILCOON,
@@ -1886,6 +1887,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc(
         [
           SpeciesId.KAKUNA,
+          SpeciesId.SPINARAK,
           SpeciesId.IGGLYBUFF,
           SpeciesId.PALDEA_WOOPER,
           SpeciesId.CASCOON,
