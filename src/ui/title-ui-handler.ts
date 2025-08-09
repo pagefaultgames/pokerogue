@@ -1,4 +1,5 @@
 import { pokerogueApi } from "#api/pokerogue-api";
+import { FAKE_TITLE_LOGO_CHANCE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { TimedEventDisplay } from "#app/timed-event-manager";
@@ -41,7 +42,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     this.titleContainer.setAlpha(0);
     ui.add(this.titleContainer);
 
-    const logo = globalScene.add.image(globalScene.scaledCanvas.width / 2, 8, "logo");
+    const logo = globalScene.add.image(globalScene.scaledCanvas.width / 2, 8, this.getLogo());
     logo.setOrigin(0.5, 0);
     this.titleContainer.add(logo);
 
@@ -185,5 +186,15 @@ export class TitleUiHandler extends OptionSelectUiHandler {
       alpha: (target: any) => (target === this.titleContainer ? 0 : 1),
       ease: "Sine.easeInOut",
     });
+  }
+
+  /**
+   * Get the logo file path to load, with a 0.1% chance to use the fake logo instead.
+   * @returns The path to the image.
+   */
+  private getLogo(): string {
+    // Invert spawn chances on april fools
+    const aprilFools = timedEventManager.isAprilFoolsActive();
+    return aprilFools === !!randInt(FAKE_TITLE_LOGO_CHANCE) ? "logo_fake" : "logo";
   }
 }
