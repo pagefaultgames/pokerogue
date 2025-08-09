@@ -2,6 +2,13 @@ import { PokemonType } from "#enums/pokemon-type";
 
 export type TypeDamageMultiplier = 0 | 0.125 | 0.25 | 0.5 | 1 | 2 | 4 | 8;
 
+/**
+ * Get the type effectiveness multiplier of one PokemonType against another.
+ * @param attackType - The {@linkcode PokemonType} of the attacker
+ * @param defType - The {@linkcode PokemonType} of the defender
+ * @returns The type damage multiplier between the two types;
+ * will be either `0`, `0.5`, `1` or `2`.
+ */
 export function getTypeDamageMultiplier(attackType: PokemonType, defType: PokemonType): TypeDamageMultiplier {
   if (attackType === PokemonType.UNKNOWN || defType === PokemonType.UNKNOWN) {
     return 1;

@@ -129,7 +129,8 @@ import {
   TempStatStageBoosterModifier,
 } from "#modifiers/modifier";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-import type { Move } from "#moves/move";
+// biome-ignore lint/correctness/noUnusedImports: TSDoc
+import type { Move, VariableMoveTypeChartAttr } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { loadMoveAnimations } from "#sprites/pokemon-asset-loader";
@@ -203,6 +204,38 @@ type getBaseDamageParams = Omit<damageParams, "effectiveness">;
 
 /** Type for the parameters of {@linkcode Pokemon#getAttackDamage | getAttackDamage} */
 type getAttackDamageParams = Omit<damageParams, "moveCategory">;
+
+/**
+ * Type for the parameters of {@linkcode Pokemon.getAttackTypeEffectiveness | getAttackTypeEffectiveness}
+ * and associated helper functions.
+ */
+type getAttackTypeEffectivenessParams = {
+  /**
+   * The {@linkcode Pokemon} using the move, used to check the user's Scrappy and Mind's Eye abilities
+   * and the effects of Foresight/Odor Sleuth.
+   */
+  source?: Pokemon;
+  /**
+   * If `true`, ignores the effect of strong winds (used by anticipation, forewarn, stealth rocks)
+   * @defaultValue `false`
+   */
+  ignoreStrongWinds?: boolean;
+  /**
+   * If `true`, will prevent changes to game state during calculations.
+   * @defaultValue `false`
+   */
+  simulated?: boolean;
+  /**
+   * The {@linkcode Move} whose type effectiveness is being checked.
+   * Used for applying {@linkcode VariableMoveTypeChartAttr}
+   */
+  move?: Move;
+  /**
+   * Whether to consider this Pokemon's {@linkcode IllusionData | illusion} when determining types.
+   * @defaultValue `false`
+   */
+  useIllusion?: boolean;
+};
 
 export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
@@ -2396,7 +2429,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const typeMultiplier = new NumberHolder(
       move.category !== MoveCategory.STATUS || move.hasAttr("RespectAttackTypeImmunityAttr")
-        ? this.getAttackTypeEffectiveness(moveType, source, false, simulated, move, useIllusion)
+        ? this.getAttackTypeEffectiveness(moveType, { source, simulated, move, useIllusion })
         : 1,
     );
 
@@ -2459,26 +2492,31 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Calculates the move's type effectiveness multiplier based on the target's type/s.
-   * @param moveType {@linkcode PokemonType} the type of the move being used
-   * @param source {@linkcode Pokemon} the Pokemon using the move
-   * @param ignoreStrongWinds whether or not this ignores strong winds (anticipation, forewarn, stealth rocks)
-   * @param simulated tag to only apply the strong winds effect message when the move is used
-   * @param move (optional) the move whose type effectiveness is to be checked. Used for applying {@linkcode VariableMoveTypeChartAttr}
-   * @param useIllusion - Whether we want the attack type effectiveness on the illusion or not
-   * @returns a multiplier for the type effectiveness
+   * Calculate the type effectiveness multiplier of a Move used **against** this Pokemon.
+   * @param moveType - The {@linkcode PokemonType} of the move being used
+   * @param source - The {@linkcode Pokemon} using the move, used to check the user's Scrappy and Mind's Eye abilities
+   * and the effects of Foresight/Odor Sleuth
+   * @param ignoreStrongWinds - If `true`, ignores the effect of strong winds (used by anticipation, forewarn, stealth rocks);
+   * default `false`
+   * @param simulated - If `true`, will prevent changes to game state during calculations; default `false`
+   * @param move - The {@linkcode Move} whose type effectiveness is being checked. Used for applying {@linkcode VariableMoveTypeChartAttr}
+   * @param useIllusion - Whether to consider this Pokemon's {@linkcode IllusionData | illusion} when determining types; default `false`
+   * @returns The computed type effectiveness multiplier.
    */
   getAttackTypeEffectiveness(
     moveType: PokemonType,
-    source?: Pokemon,
-    ignoreStrongWinds = false,
-    simulated = true,
-    move?: Move,
-    useIllusion = false,
+    {
+      source,
+      ignoreStrongWinds = false,
+      simulated = true,
+      move,
+      useIllusion = false,
+    }: getAttackTypeEffectivenessParams = {},
   ): TypeDamageMultiplier {
     if (moveType === PokemonType.STELLAR) {
       return this.isTerastallized ? 2 : 1;
     }
+
     const types = this.getTypes(true, true, undefined, useIllusion);
     const arena = globalScene.arena;
 
@@ -2491,57 +2529,79 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    let multiplier = types
-      .map(defenderType => {
-        const multiplier = new NumberHolder(getTypeDamageMultiplier(moveType, defenderType));
-        applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, multiplier);
-        if (move) {
-          applyMoveAttrs("VariableMoveTypeChartAttr", null, this, move, multiplier, defenderType);
-        }
-        if (source) {
-          const ignoreImmunity = new BooleanHolder(false);
-          if (source.isActive(true) && source.hasAbilityWithAttr("IgnoreTypeImmunityAbAttr")) {
-            applyAbAttrs("IgnoreTypeImmunityAbAttr", {
-              pokemon: source,
-              cancelled: ignoreImmunity,
-              simulated,
-              moveType,
-              defenderType,
-            });
-          }
-          if (ignoreImmunity.value) {
-            if (multiplier.value === 0) {
-              return 1;
-            }
-          }
+    const multi = new NumberHolder(1);
+    for (const defenderType of types) {
+      const typeMulti = new NumberHolder(getTypeDamageMultiplier(moveType, defenderType));
+      applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, typeMulti);
+      // If the target is immune to the type in question, check for any effects that would ignore said effect
+      // TODO: Review if the `isActive` check is needed anymore
+      if (
+        source?.isActive(true) &&
+        typeMulti.value === 0 &&
+        this.checkIgnoreTypeImmunity({ source, simulated, moveType, defenderType })
+      ) {
+        typeMulti.value = 1;
+      }
+      multi.value *= typeMulti.value;
+    }
 
-          const exposedTags = this.findTags(tag => tag instanceof ExposedTag) as ExposedTag[];
-          if (exposedTags.some(t => t.ignoreImmunity(defenderType, moveType))) {
-            if (multiplier.value === 0) {
-              return 1;
-            }
-          }
-        }
-        return multiplier.value;
-      })
-      .reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
+    // Apply any typing changes from Freeze-Dry, etc.
+    if (move) {
+      applyMoveAttrs("VariableMoveTypeChartAttr", null, this, move, multi, types);
+    }
 
+    // Handle strong winds lowering effectiveness of types super effective against pure flying
     const typeMultiplierAgainstFlying = new NumberHolder(getTypeDamageMultiplier(moveType, PokemonType.FLYING));
     applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, typeMultiplierAgainstFlying);
-    // Handle strong winds lowering effectiveness of types super effective against pure flying
     if (
       !ignoreStrongWinds &&
-      arena.weather?.weatherType === WeatherType.STRONG_WINDS &&
-      !arena.weather.isEffectSuppressed() &&
-      this.isOfType(PokemonType.FLYING) &&
+      arena.getWeatherType() === WeatherType.STRONG_WINDS &&
+      !arena.weather?.isEffectSuppressed() &&
+      types.includes(PokemonType.FLYING) &&
       typeMultiplierAgainstFlying.value === 2
     ) {
-      multiplier /= 2;
+      multi.value /= 2;
       if (!simulated) {
         globalScene.phaseManager.queueMessage(i18next.t("weather:strongWindsEffectMessage"));
       }
     }
-    return multiplier as TypeDamageMultiplier;
+    return multi.value as TypeDamageMultiplier;
+  }
+
+  /**
+   * Sub-method of {@linkcode getAttackTypeEffectiveness} that handles nullifying type immunities.
+   * @param source - The {@linkcode Pokemon} from whom the attack is sourced
+   * @param simulated - If `true`, will prevent displaying messages upon activation
+   * @param moveType - The {@linkcode PokemonType} whose offensive typing is being checked
+   * @param defenderType - The defender's {@linkcode PokemonType} being checked
+   * @returns Whether the type immunity was bypassed
+   */
+  private checkIgnoreTypeImmunity({
+    source,
+    simulated,
+    moveType,
+    defenderType,
+  }: {
+    source: Pokemon;
+    simulated: boolean;
+    moveType: PokemonType;
+    defenderType: PokemonType;
+  }): boolean {
+    const exposedTags = this.findTags(tag => tag instanceof ExposedTag) as ExposedTag[];
+    const hasExposed = exposedTags.some(t => t.ignoreImmunity(defenderType, moveType));
+    if (hasExposed) {
+      return true;
+    }
+
+    const ignoreImmunity = new BooleanHolder(false);
+    applyAbAttrs("IgnoreTypeImmunityAbAttr", {
+      pokemon: source,
+      cancelled: ignoreImmunity,
+      simulated,
+      moveType,
+      defenderType,
+    });
+    return ignoreImmunity.value;
   }
 
   /**
@@ -2561,10 +2621,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
      * Based on how effectively this Pokemon defends against the opponent's types.
      * This score cannot be higher than 4.
      */
-    let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0], opponent), 0.25);
+    let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0], { source: opponent }), 0.25);
     if (enemyTypes.length > 1) {
       defScore *=
-        1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[1], opponent, false, false, undefined, true), 0.25);
+        // TODO: Shouldn't this pass `simulated=true` here?
+        1 /
+        Math.max(
+          this.getAttackTypeEffectiveness(enemyTypes[1], { source: opponent, simulated: false, useIllusion: true }),
+          0.25,
+        );
     }
 
     const moveset = this.moveset;
@@ -2578,7 +2643,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         continue;
       }
       const moveType = resolvedMove.type;
-      let thisScore = opponent.getAttackTypeEffectiveness(moveType, this, false, true, undefined, true);
+      let thisScore = opponent.getAttackTypeEffectiveness(moveType, {
+        source: this,
+        simulated: true,
+        useIllusion: true,
+      });
 
       // Add STAB multiplier for attack type effectiveness.
       // For now, simply don't apply STAB to moves that may change type

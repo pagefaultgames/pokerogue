@@ -999,7 +999,7 @@ export class AttackMove extends Move {
     const ret = super.getTargetBenefitScore(user, target, move);
     let attackScore = 0;
 
-    const effectiveness = target.getAttackTypeEffectiveness(this.type, user, undefined, undefined, this);
+    const effectiveness = target.getAttackTypeEffectiveness(this.type, {source: user, move: this});
     attackScore = Math.pow(effectiveness - 1, 2) * (effectiveness < 1 ? -2 : 2);
     const [ thisStat, offStat ]: EffectiveStat[] = this.category === MoveCategory.PHYSICAL ? [ Stat.ATK, Stat.SPATK ] : [ Stat.SPATK, Stat.ATK ];
     const statHolder = new NumberHolder(user.getEffectiveStat(thisStat, target));
@@ -1795,7 +1795,7 @@ export class SacrificialAttr extends MoveEffectAttr {
     if (user.isBoss()) {
       return -20;
     }
-    return Math.ceil(((1 - user.getHpRatio()) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type, user) - 0.5));
+    return Math.ceil(((1 - user.getHpRatio()) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type, {source: user}) - 0.5));
   }
 }
 
@@ -1833,7 +1833,7 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
     if (user.isBoss()) {
       return -20;
     }
-    return Math.ceil(((1 - user.getHpRatio()) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type, user) - 0.5));
+    return Math.ceil(((1 - user.getHpRatio()) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type, {source: user}) - 0.5));
   }
 }
 
@@ -1875,7 +1875,7 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
     if (user.isBoss()) {
       return -10;
     }
-    return Math.ceil(((1 - user.getHpRatio() / 2) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type, user) - 0.5));
+    return Math.ceil(((1 - user.getHpRatio() / 2) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type, {source: user}) - 0.5));
   }
 }
 
@@ -5402,9 +5402,9 @@ export class NeutralDamageAgainstFlyingTypeAttr extends VariableMoveTypeChartAtt
  * Attribute used by {@linkcode MoveId.FLYING_PRESS} to add the Flying Type to its type effectiveness.
  */
 export class FlyingTypeMultiplierAttr extends VariableMoveTypeChartAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[]]): boolean {
-    const multiplier = args[0] as NumberHolder;
-    multiplier.value *= target.getAttackTypeEffectiveness(PokemonType.FLYING, user);
+  apply(user: Pokemon, target: Pokemon, _move: Move, args: [multiplier: NumberHolder, types: PokemonType[]]): boolean {
+    const multiplier = args[0];
+    multiplier.value *= target.getAttackTypeEffectiveness(PokemonType.FLYING, {source: user});
     return true;
   }
 }
@@ -11383,9 +11383,10 @@ export function initMoves() {
     new AttackMove(MoveId.RUINATION, PokemonType.DARK, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 9)
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(MoveId.COLLISION_COURSE, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type, user) >= 2 ? 5461 / 4096 : 1),
+      // TODO: Do we want to change this to 4/3?
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type, {source: user}) >= 2 ? 5461 / 4096 : 1),
     new AttackMove(MoveId.ELECTRO_DRIFT, PokemonType.ELECTRIC, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 9)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type, user) >= 2 ? 5461 / 4096 : 1)
+      .attr(MovePowerMultiplierAttr, (user, target, move) => target.getAttackTypeEffectiveness(move.type, {source: user}) >= 2 ? 5461 / 4096 : 1)
       .makesContact(),
     new SelfStatusMove(MoveId.SHED_TAIL, PokemonType.NORMAL, -1, 10, -1, 0, 9)
       .attr(AddSubstituteAttr, 0.5, true)

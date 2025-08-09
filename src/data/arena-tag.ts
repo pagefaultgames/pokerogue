@@ -958,7 +958,7 @@ class StealthRockTag extends ArenaTrapTag {
   }
 
   getDamageHpRatio(pokemon: Pokemon): number {
-    const effectiveness = pokemon.getAttackTypeEffectiveness(PokemonType.ROCK, undefined, true);
+    const effectiveness = pokemon.getAttackTypeEffectiveness(PokemonType.ROCK, { ignoreStrongWinds: true });
 
     let damageHpRatio = 0;
 
