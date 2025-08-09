@@ -236,7 +236,7 @@ export class PhaseManager {
   /** Parallel array to {@linkcode dynamicPhaseQueues} - matches phase types to their queues */
   private dynamicPhaseTypes: Constructor<Phase>[];
 
-  private currentPhase: Phase | null = null;
+  private currentPhase: Phase;
   private standbyPhase: Phase | null = null;
 
   constructor() {
@@ -260,7 +260,12 @@ export class PhaseManager {
   }
 
   /* Phase Functions */
-  getCurrentPhase(): Phase | null {
+
+  /**
+   * Return the currently running {@linkcode Phase}.
+   * @returns The Phase currently in the process of running.
+   */
+  getCurrentPhase(): Phase {
     return this.currentPhase;
   }
 
@@ -363,13 +368,20 @@ export class PhaseManager {
         }
       }
     }
+
+    // If no phases are left to run, add phases to start a new turn.
     if (!this.phaseQueue.length) {
       this.populatePhaseQueue();
       // Clear the conditionalQueue if there are no phases left in the phaseQueue
       this.conditionalQueue = [];
     }
 
-    this.currentPhase = this.phaseQueue.shift() ?? null;
+    // Bang is justified as `populatePhaseQueue` ensures we always have _something_ in the queue at all times
+    this.currentPhase = this.phaseQueue.shift()!;
+    // TODO: Remove proof-of-concept error throw after test suite passes
+    if (!this.currentPhase) {
+      throw new Error("currentPhase was null after being started!");
+    }
 
     const unactivatedConditionalPhases: [() => boolean, Phase][] = [];
     // Check if there are any conditional phases queued
@@ -389,10 +401,15 @@ export class PhaseManager {
     }
     this.conditionalQueue.push(...unactivatedConditionalPhases);
 
-    if (this.currentPhase) {
-      console.log(`%cStart Phase ${this.currentPhase.constructor.name}`, "color:green;");
-      this.currentPhase.start();
-    }
+    this.startCurrentPhase();
+  }
+
+  /**
+   * Helper method to start and log the current phase.
+   */
+  private startCurrentPhase(): void {
+    console.log(`%cStart Phase ${this.currentPhase.phaseName}`, "color:green;");
+    this.currentPhase.start();
   }
 
   overridePhase(phase: Phase): boolean {
@@ -402,8 +419,7 @@ export class PhaseManager {
 
     this.standbyPhase = this.currentPhase;
     this.currentPhase = phase;
-    console.log(`%cStart Phase ${phase.constructor.name}`, "color:green;");
-    phase.start();
+    this.startCurrentPhase();
 
     return true;
   }

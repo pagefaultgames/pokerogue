@@ -15,6 +15,8 @@ import type { AtLeastOne } from "#types/type-helpers";
 import type { expect } from "vitest";
 import type Overrides from "#app/overrides";
 import type { PokemonMove } from "#moves/pokemon-move";
+import type { PhaseString } from "#types/phase-types";
+import type { Phase } from "#app/phase";
 
 declare module "vitest" {
   interface Assertion {
@@ -28,6 +30,12 @@ declare module "vitest" {
      * @see {@linkcode expect.arrayContaining}
      */
     toEqualArrayUnsorted<E>(expected: E[]): void;
+
+    /**
+     * Check if the currently running {@linkcode Phase} is of the given type.
+     * @param expectedPhase - The expected {@linkcode PhaseString}
+     */
+    toBeAtPhase(expectedPhase: PhaseString): void;
 
     /**
      * Check whether a {@linkcode Pokemon}'s current typing includes the given types.

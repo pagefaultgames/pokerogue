@@ -46,6 +46,7 @@ import type { InputsHandler } from "#test/test-utils/inputs-handler";
 import { MockFetch } from "#test/test-utils/mocks/mock-fetch";
 import { PhaseInterceptor } from "#test/test-utils/phase-interceptor";
 import { TextInterceptor } from "#test/test-utils/text-interceptor";
+import type { PhaseClass, PhaseString } from "#types/phase-types";
 import type { BallUiHandler } from "#ui/ball-ui-handler";
 import type { BattleMessageUiHandler } from "#ui/battle-message-ui-handler";
 import type { CommandUiHandler } from "#ui/command-ui-handler";
@@ -412,10 +413,11 @@ export class GameManager {
    * Checks if the current phase matches the target phase.
    * @param phaseTarget - The target phase.
    * @returns Whether the current phase matches the target phase
+   * @todo Remove `phaseClass` from signature
    */
-  isCurrentPhase(phaseTarget) {
+  isCurrentPhase(phaseTarget: PhaseClass | PhaseString) {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
-    return this.scene.phaseManager.getCurrentPhase()?.constructor.name === targetName;
+    return this.scene.phaseManager.getCurrentPhase().phaseName === targetName;
   }
 
   /**
