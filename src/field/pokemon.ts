@@ -2547,7 +2547,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // Apply any typing changes from Freeze-Dry, etc.
     if (move) {
-      applyMoveAttrs("VariableMoveTypeChartAttr", null, this, move, multi, types);
+      applyMoveAttrs("VariableMoveTypeChartAttr", null, this, move, multi, types, moveType);
     }
 
     // Handle strong winds lowering effectiveness of types super effective against pure flying

@@ -5359,10 +5359,11 @@ export class VariableMoveTypeChartAttr extends MoveAttr {
    * @param move - The {@linkcode Move} with this attribute
    * @param args -
    * `[0]`: A {@linkcode NumberHolder} holding the type effectiveness
-   * `[1]`: The target's entire defensive type profile.
+   * `[1]`: The target's entire defensive type profile
+   * `[2]`: The current {@linkcode PokemonType} of the move
    * @returns `true` if application of the attribute succeeds
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[]]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[], moveType: PokemonType]): boolean {
     return false;
   }
 }
@@ -5371,14 +5372,16 @@ export class VariableMoveTypeChartAttr extends MoveAttr {
  * Attribute to implement {@linkcode MoveId.FREEZE_DRY}'s guaranteed water type super effectiveness.
  */
 export class FreezeDryAttr extends VariableMoveTypeChartAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder, PokemonType[]]): boolean {
-    const [multiplier, types] = args;
-
-    if (types.includes(PokemonType.WATER)) {
-      multiplier.value = Math.max(multiplier.value, 2);
-      return true;
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[], moveType: PokemonType]): boolean {
+    const [multiplier, types, moveType] = args;
+    if (!types.includes(PokemonType.WATER)) {
+      return false;
     }
-    return false;
+
+    // Replace whatever the prior "normal" water effectiveness was with a guaranteed 2x multi
+    const normalEff = getTypeDamageMultiplier(moveType, PokemonType.WATER)
+    multiplier.value = 2 * multiplier.value / normalEff;
+    return true;
   }
 }
 
@@ -5387,7 +5390,7 @@ export class FreezeDryAttr extends VariableMoveTypeChartAttr {
  * against all ungrounded flying types.
  */
 export class NeutralDamageAgainstFlyingTypeAttr extends VariableMoveTypeChartAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[]]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[], moveType: PokemonType]): boolean {
     const [multiplier, types] = args;
     if (target.isGrounded() || !types.includes(PokemonType.FLYING)) {
       return false;
@@ -5402,7 +5405,7 @@ export class NeutralDamageAgainstFlyingTypeAttr extends VariableMoveTypeChartAtt
  * Attribute used by {@linkcode MoveId.FLYING_PRESS} to add the Flying Type to its type effectiveness.
  */
 export class FlyingTypeMultiplierAttr extends VariableMoveTypeChartAttr {
-  apply(user: Pokemon, target: Pokemon, _move: Move, args: [multiplier: NumberHolder, types: PokemonType[]]): boolean {
+  apply(user: Pokemon, target: Pokemon, _move: Move, args: [multiplier: NumberHolder, types: PokemonType[], moveType: PokemonType]): boolean {
     const multiplier = args[0];
     multiplier.value *= target.getAttackTypeEffectiveness(PokemonType.FLYING, {source: user});
     return true;
@@ -5413,7 +5416,7 @@ export class FlyingTypeMultiplierAttr extends VariableMoveTypeChartAttr {
  * Attribute used by {@linkcode MoveId.SHEER_COLD} to implement its Gen VII+ ice ineffectiveness.
  */
 export class IceNoEffectTypeAttr extends VariableMoveTypeChartAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[]]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[], moveType: PokemonType]): boolean {
     const [multiplier, types] = args;
     if (types.includes(PokemonType.ICE)) {
       multiplier.value = 0;
@@ -5422,7 +5425,6 @@ export class IceNoEffectTypeAttr extends VariableMoveTypeChartAttr {
     return false;
   }
 }
-
 
 export class OneHitKOAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
