@@ -43,7 +43,6 @@ describe.sequential("Move - Flying Press", () => {
 
   // Reset temporary summon data overrides to reset effects
   afterEach(() => {
-    console.log("Apple");
     hawlucha.resetSummonData();
     expect(hawlucha).not.toHaveBattlerTag(BattlerTagType.ELECTRIFIED);
     expect(hawlucha.hasAbility(AbilityId.NORMALIZE)).toBe(false);
@@ -105,5 +104,19 @@ describe.sequential("Move - Flying Press", () => {
       hawlucha.setTempAbility(allAbilities[AbilityId.NORMALIZE]);
       checkEffForAllTypes(PokemonType.NORMAL);
     });
+  });
+
+  it("should deal 2x to Wonder Guard Shedinja under Electrify", () => {
+    const enemy = game.field.getEnemyPokemon();
+    game.field.mockAbility(enemy, AbilityId.WONDER_GUARD);
+    enemy.resetSummonData();
+
+    hawlucha.addTag(BattlerTagType.ELECTRIFIED);
+
+    const flyingPressEff = enemy.getAttackTypeEffectiveness(hawlucha.getMoveType(allMoves[MoveId.FLYING_PRESS]), {
+      source: hawlucha,
+      move: allMoves[MoveId.FLYING_PRESS],
+    });
+    expect(flyingPressEff).toBe(2);
   });
 });
