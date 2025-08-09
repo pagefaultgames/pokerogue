@@ -3,8 +3,10 @@
 # everything (whole code-base) - Junior Devs
 * @pagefaultgames/junior-dev-team
 
-# github actions/templates etc. - Dev Leads
+# github actions/templates etc. - Senior Devs
 /.github @pagefaultgames/senior-dev-team
+package.json @pagefaultgames/senior-dev-team
+pnpm-lock.yaml @pagefaultgames/senior-dev-team
 
 # Art Team
 /public/**/*.png @pagefaultgames/art-team
@@ -20,3 +22,4 @@
 
 # Balance Files; contain actual code logic and must also be owned by dev team
 /src/data/balance @pagefaultgames/balance-team @pagefaultgames/junior-dev-team
+/src/data/trainers @pagefaultgames/balance-team @pagefaultgames/junior-dev-team
