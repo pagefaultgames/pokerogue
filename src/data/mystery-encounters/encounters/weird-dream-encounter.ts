@@ -216,7 +216,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         await cutsceneDialoguePromise;
 
         doHideDreamBackground();
-        await showEncounterText(`${namespace}:option.1.dream_complete`);
+        await showEncounterText(`${namespace}:option.1.dreamComplete`);
 
         await doNewTeamPostProcess(transformations);
         setEncounterRewards({

@@ -178,8 +178,8 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
       // Always max price for shiny (flip HA back to normal), and add special messaging
       priceMultiplier = MAX_POKEMON_PRICE_MULTIPLIER;
       pokemon.abilityIndex = 0;
-      encounter.dialogue.encounterOptionsDialogue!.description = `${namespace}:description_shiny`;
-      encounter.options[0].dialogue!.buttonTooltip = `${namespace}:option.1.tooltip_shiny`;
+      encounter.dialogue.encounterOptionsDialogue!.description = `${namespace}:descriptionShiny`;
+      encounter.options[0].dialogue!.buttonTooltip = `${namespace}:option.1.tooltipShiny`;
     }
     const price = globalScene.getWaveMoneyAmount(priceMultiplier);
     encounter.setDialogueToken("purchasePokemon", pokemon.getNameToRender());
