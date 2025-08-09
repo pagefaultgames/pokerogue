@@ -99,7 +99,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       expect(option1.dialogue).toBeDefined();
       expect(option1.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.1.label`,
-        disabledButtonLabel: `${namespace}:option.1.label_disabled`,
+        disabledButtonLabel: `${namespace}:option.1.labelDisabled`,
         buttonTooltip: `${namespace}:option.1.tooltip`,
         disabledButtonTooltip: `${namespace}:option.1.tooltipDisabled`,
         selected: [
@@ -162,7 +162,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       expect(option2.dialogue).toBeDefined();
       expect(option2.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.2.label`,
-        disabledButtonLabel: `${namespace}:option.2.label_disabled`,
+        disabledButtonLabel: `${namespace}:option.2.labelDisabled`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
         disabledButtonTooltip: `${namespace}:option.2.tooltipDisabled`,
         selected: [

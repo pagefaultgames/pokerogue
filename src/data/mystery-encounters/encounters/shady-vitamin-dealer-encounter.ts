@@ -155,7 +155,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
 
         chosenPokemon.setCustomNature(newNature);
         encounter.setDialogueToken("newNature", getNatureName(newNature));
-        queueEncounterMessage(`${namespace}:cheap_side_effects`);
+        queueEncounterMessage(`${namespace}:cheapSideEffects`);
         setEncounterExp([chosenPokemon.id], 100);
         await chosenPokemon.updateInfo();
       })
@@ -215,7 +215,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const chosenPokemon = encounter.misc.chosenPokemon;
 
-        queueEncounterMessage(`${namespace}:no_bad_effects`);
+        queueEncounterMessage(`${namespace}:noBadEffects`);
         setEncounterExp([chosenPokemon.id], 100);
 
         await chosenPokemon.updateInfo();

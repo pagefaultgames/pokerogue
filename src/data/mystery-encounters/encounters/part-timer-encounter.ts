@@ -142,9 +142,9 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
         // Give money and do dialogue
         if (moneyMultiplier > 2.5) {
-          await showEncounterDialogue(`${namespace}:job_complete_good`, `${namespace}:speaker`);
+          await showEncounterDialogue(`${namespace}:jobCompleteGood`, `${namespace}:speaker`);
         } else {
-          await showEncounterDialogue(`${namespace}:job_complete_bad`, `${namespace}:speaker`);
+          await showEncounterDialogue(`${namespace}:jobCompleteBad`, `${namespace}:speaker`);
         }
         const moneyChange = globalScene.getWaveMoneyAmount(moneyMultiplier);
         updatePlayerMoney(moneyChange, true, false);
@@ -153,7 +153,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
             amount: moneyChange,
           }),
         );
-        await showEncounterText(`${namespace}:pokemon_tired`);
+        await showEncounterText(`${namespace}:pokemonTired`);
 
         setEncounterRewards({ fillRemaining: true });
         leaveEncounterWithoutBattle();
@@ -224,9 +224,9 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
         // Give money and do dialogue
         if (moneyMultiplier > 2.5) {
-          await showEncounterDialogue(`${namespace}:job_complete_good`, `${namespace}:speaker`);
+          await showEncounterDialogue(`${namespace}:jobCompleteGood`, `${namespace}:speaker`);
         } else {
-          await showEncounterDialogue(`${namespace}:job_complete_bad`, `${namespace}:speaker`);
+          await showEncounterDialogue(`${namespace}:jobCompleteBad`, `${namespace}:speaker`);
         }
         const moneyChange = globalScene.getWaveMoneyAmount(moneyMultiplier);
         updatePlayerMoney(moneyChange, true, false);
@@ -235,7 +235,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
             amount: moneyChange,
           }),
         );
-        await showEncounterText(`${namespace}:pokemon_tired`);
+        await showEncounterText(`${namespace}:pokemonTired`);
 
         setEncounterRewards({ fillRemaining: true });
         leaveEncounterWithoutBattle();
@@ -282,7 +282,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         await transitionMysteryEncounterIntroVisuals(false, false);
 
         // Give money and do dialogue
-        await showEncounterDialogue(`${namespace}:job_complete_good`, `${namespace}:speaker`);
+        await showEncounterDialogue(`${namespace}:jobCompleteGood`, `${namespace}:speaker`);
         const moneyChange = globalScene.getWaveMoneyAmount(2.5);
         updatePlayerMoney(moneyChange, true, false);
         await showEncounterText(
@@ -290,7 +290,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
             amount: moneyChange,
           }),
         );
-        await showEncounterText(`${namespace}:pokemon_tired`);
+        await showEncounterText(`${namespace}:pokemonTired`);
 
         setEncounterRewards({ fillRemaining: true });
         leaveEncounterWithoutBattle();
