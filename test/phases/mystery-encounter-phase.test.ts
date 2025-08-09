@@ -38,7 +38,7 @@ describe("Mystery Encounter Phases", () => {
       ]);
 
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
-      expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(game).toBeAtPhase("MysteryEncounterPhase");
     });
 
     it("Runs MysteryEncounterPhase", async () => {

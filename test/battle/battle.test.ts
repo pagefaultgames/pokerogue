@@ -86,7 +86,7 @@ describe("Phase - Battle Phase", () => {
   it("newGame one-liner", async () => {
     await game.classicMode.startBattle();
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.phaseManager.getCurrentPhase()?.phaseName).toBe("CommandPhase");
+    expect(game).toBeAtPhase("CommandPhase");
   });
 
   it("do attack wave 3 - single battle - regular - OHKO", async () => {

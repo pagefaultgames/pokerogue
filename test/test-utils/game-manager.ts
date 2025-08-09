@@ -163,7 +163,7 @@ export class GameManager {
    * End the currently running phase immediately.
    */
   endPhase() {
-    this.scene.phaseManager.getCurrentPhase()?.end();
+    this.scene.phaseManager.getCurrentPhase().end();
   }
 
   /**
