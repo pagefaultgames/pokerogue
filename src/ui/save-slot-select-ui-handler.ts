@@ -53,14 +53,14 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
     const loadSessionBg = globalScene.add.rectangle(
       0,
       0,
-      globalScene.game.canvas.width / 6,
-      -globalScene.game.canvas.height / 6,
+      globalScene.scaledCanvas.width,
+      -globalScene.scaledCanvas.height,
       0x006860,
     );
     loadSessionBg.setOrigin(0, 0);
     this.saveSlotSelectContainer.add(loadSessionBg);
 
-    this.sessionSlotsContainerInitialY = -globalScene.game.canvas.height / 6 + 8;
+    this.sessionSlotsContainerInitialY = -globalScene.scaledCanvas.height + 8;
 
     this.sessionSlotsContainer = globalScene.add.container(8, this.sessionSlotsContainerInitialY);
     this.saveSlotSelectContainer.add(this.sessionSlotsContainer);
@@ -400,7 +400,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
     const gameModeLabel = addTextObject(
       8,
       5,
-      `${GameMode.getModeName(data.gameMode) || i18next.t("gameMode:unkown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`,
+      `${GameMode.getModeName(data.gameMode) || i18next.t("gameMode:unknown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`,
       TextStyle.WINDOW,
     );
     this.add(gameModeLabel);

@@ -14,16 +14,16 @@ import { TrainerItemId } from "#enums/trainer-item-id";
 import { assignItemToFirstFreePokemon } from "#items/item-utility";
 import { PokemonMove } from "#moves/pokemon-move";
 import { showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
-import type { EnemyPartyConfig, EnemyPokemonConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
+  type EnemyPartyConfig,
+  type EnemyPokemonConfig,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   loadCustomMovesForEncounter,
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
 } from "#mystery-encounters/encounter-phase-utils";
-import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { type MysteryEncounter, MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import i18next from "#plugins/i18n";
 import { randSeedInt } from "#utils/common";
@@ -167,7 +167,8 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
         const encounter = globalScene.currentBattle.mysteryEncounter!;
 
         setEncounterRewards({
-          guaranteedRarityTiers: [RarityTier.ROGUE, RarityTier.ROGUE, RarityTier.ULTRA, RarityTier.GREAT],
+          guaranteedRewardSpecs: [HeldItemId.LEFTOVERS],
+          guaranteedRarityTiers: [RarityTier.ROGUE, RarityTier.ULTRA, RarityTier.GREAT],
           fillRemaining: true,
         });
         encounter.startOfBattleEffects.push(

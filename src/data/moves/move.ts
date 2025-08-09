@@ -22,7 +22,6 @@ import {
   TypeBoostTag,
 } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
-import { applyChallenges } from "#data/challenge";
 import { allAbilities, allHeldItems, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
 import { DelayedAttackTag } from "#data/positional-tags/positional-tag";
@@ -89,6 +88,7 @@ import { BooleanHolder, type Constructor, isNullOrUndefined, NumberHolder, randS
 import { getEnumValues } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
+import { applyChallenges } from "#utils/challenge-utils";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -120,7 +120,7 @@ export abstract class Move implements Localizable {
   /**
    * Check if the move is of the given subclass without requiring `instanceof`.
    *
-   * ⚠️ Does _not_ work for {@linkcode ChargingAttackMove} and {@linkcode ChargingSelfStatusMove} subclasses. For those,
+   * ! Does _not_ work for {@linkcode ChargingAttackMove} and {@linkcode ChargingSelfStatusMove} subclasses. For those,
    * use {@linkcode isChargingMove} instead.
    *
    * @param moveKind - The string name of the move to check against
@@ -6903,13 +6903,19 @@ export class RandomMoveAttr extends CallMoveAttr {
    * @param move Move being used
    * @param args Unused
    */
-  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  override apply(user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
+    // TODO: Move this into the constructor to avoid constructing this every call
     const moveIds = getEnumValues(MoveId).map(m => !this.invalidMoves.has(m) && !allMoves[m].name.endsWith(" (N)") ? m : MoveId.NONE);
     let moveId: MoveId = MoveId.NONE;
+    const moveStatus = new BooleanHolder(true);
     do {
       moveId = this.getMoveOverride() ?? moveIds[user.randBattleSeedInt(moveIds.length)];
+      moveStatus.value = moveId !== MoveId.NONE;
+      if (user.isPlayer()) {
+          applyChallenges(ChallengeType.POKEMON_MOVE, moveId, moveStatus);
+      }
     }
-    while (moveId === MoveId.NONE);
+    while (!moveStatus.value);
     return super.apply(user, target, allMoves[moveId], args);
   }
 }

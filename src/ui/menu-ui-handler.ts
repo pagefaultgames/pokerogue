@@ -7,7 +7,7 @@ import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { AdminMode, getAdminModeName } from "#ui/admin-ui-handler";
 import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { BgmBar } from "#ui/bgm-bar";
@@ -96,10 +96,10 @@ export class MenuUiHandler extends MessageUiHandler {
 
     ui.bgmBar = this.bgmBar;
 
-    this.menuContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
+    this.menuContainer = globalScene.add.container(1, -globalScene.scaledCanvas.height + 1);
     this.menuContainer.setName("menu");
     this.menuContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6),
+      new Phaser.Geom.Rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height),
       Phaser.Geom.Rectangle.Contains,
     );
 
@@ -146,10 +146,10 @@ export class MenuUiHandler extends MessageUiHandler {
 
     this.scale = getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale;
     this.menuBg = addWindow(
-      globalScene.game.canvas.width / 6 - (this.optionSelectText.displayWidth + 25),
+      globalScene.scaledCanvas.width - (this.optionSelectText.displayWidth + 25),
       0,
       this.optionSelectText.displayWidth + 19 + 24 * this.scale,
-      globalScene.game.canvas.height / 6 - 2,
+      globalScene.scaledCanvas.height - 2,
     );
     this.menuBg.setOrigin(0, 0);
 
@@ -174,7 +174,7 @@ export class MenuUiHandler extends MessageUiHandler {
     this.dialogueMessageBox = addWindow(
       -this.textPadding,
       0,
-      globalScene.game.canvas.width / 6 + this.textPadding * 2,
+      globalScene.scaledCanvas.width + this.textPadding * 2,
       49,
       false,
       false,

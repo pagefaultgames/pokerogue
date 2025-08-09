@@ -39,7 +39,7 @@ import {
 } from "#mystery-encounters/mystery-encounter-requirements";
 import { getRandomPartyMemberFunc, trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#utils/common";
 import i18next from "i18next";
@@ -689,15 +689,13 @@ function doBugTypeMoveTutor(): Promise<void> {
     const moveOptions = globalScene.currentBattle.mysteryEncounter!.misc.moveTutorOptions;
     await showEncounterDialogue(`${namespace}:battle_won`, `${namespace}:speaker`);
 
-    const overlayScale = 1;
     const moveInfoOverlay = new MoveInfoOverlay({
       delayVisibility: false,
-      scale: overlayScale,
       onSide: true,
       right: true,
       x: 1,
-      y: -MoveInfoOverlay.getHeight(overlayScale, true) - 1,
-      width: globalScene.game.canvas.width / 6 - 2,
+      y: -MoveInfoOverlay.getHeight(true) - 1,
+      width: globalScene.scaledCanvas.width - 2,
     });
     globalScene.ui.add(moveInfoOverlay);
 

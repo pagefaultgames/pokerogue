@@ -1,7 +1,7 @@
 import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
-import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { FilterTextRow } from "#ui/filter-text";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";

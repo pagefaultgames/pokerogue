@@ -537,6 +537,7 @@ export class Arena {
       case BiomeId.ABYSS:
       case BiomeId.SPACE:
       case BiomeId.TEMPLE:
+      case BiomeId.LABORATORY:
         return 16;
       default:
         return 0;

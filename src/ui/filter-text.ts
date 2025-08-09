@@ -62,7 +62,7 @@ export class FilterText extends Phaser.GameObjects.Container {
     this.dialogueMessageBox = addWindow(
       -this.textPadding,
       0,
-      globalScene.game.canvas.width / 6 + this.textPadding * 2,
+      globalScene.scaledCanvas.width + this.textPadding * 2,
       49,
       false,
       false,

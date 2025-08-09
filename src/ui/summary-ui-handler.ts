@@ -880,7 +880,7 @@ export class SummaryUiHandler extends UiHandler {
           !isNullOrUndefined(this.pokemon)
         ) {
           const teraIcon = globalScene.add.sprite(123, 26, "button_tera");
-          teraIcon.setName("terrastallize-icon");
+          teraIcon.setName("terastallize-icon");
           teraIcon.setFrame(PokemonType[this.pokemon.getTeraType()].toLowerCase());
           profileContainer.add(teraIcon);
         }

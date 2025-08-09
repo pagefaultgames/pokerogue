@@ -13,6 +13,7 @@ import type { PokemonSpecies } from "#data/pokemon-species";
 import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import type { AbilityId } from "#enums/ability-id";
 import type { HeldItemId } from "#enums/held-item-id";
+import { ChallengeType } from "#enums/challenge-type";
 import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -31,7 +32,8 @@ import { achvs } from "#system/achv";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
-import { isNullOrUndefined, randSeedInt } from "#utils/common";
+import { applyChallenges } from "#utils/challenge-utils";
+import { BooleanHolder, isNullOrUndefined, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -647,6 +649,25 @@ export async function catchPokemon(
         }
       };
       Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
+        const addStatus = new BooleanHolder(true);
+        applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
+        if (!addStatus.value) {
+          removePokemon();
+          if (newPokemon) {
+            newPokemon.loadAssets().then(end);
+          } else {
+            end();
+          }
+        });
+      };
+      Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
+        const addStatus = new BooleanHolder(true);
+        applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
+        if (!addStatus.value) {
+          removePokemon();
+          end();
+          return;
+        }
         if (globalScene.getPlayerParty().length === 6) {
           const promptRelease = () => {
             globalScene.ui.showText(
