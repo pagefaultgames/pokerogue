@@ -20,6 +20,7 @@ import { Trainer } from "#field/trainer";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { DexAttrProps, GameData } from "#system/game-data";
+import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
 import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
@@ -41,6 +42,15 @@ export abstract class Challenge {
   public maxSeverity: number; // The maximum severity of the challenge.
 
   public conditions: ChallengeCondition[];
+
+  /**
+   * The Ribbon awarded on challenge completion, or 0 if the challenge has no ribbon.
+   *
+   * @defaultValue 0
+   */
+  public get ribbonAwarded(): RibbonFlag {
+    return 0 as RibbonFlag;
+  }
 
   /**
    * @param id {@link Challenges} The enum value for the challenge
@@ -423,6 +433,9 @@ type ChallengeCondition = (data: GameData) => boolean;
  * Implements a mono generation challenge.
  */
 export class SingleGenerationChallenge extends Challenge {
+  public override get ribbonAwarded(): RibbonFlag {
+    return RibbonData.MONO_GEN;
+  }
   constructor() {
     super(Challenges.SINGLE_GENERATION, 9);
   }
@@ -686,6 +699,12 @@ interface monotypeOverride {
  * Implements a mono type challenge.
  */
 export class SingleTypeChallenge extends Challenge {
+  public override get ribbonAwarded(): RibbonFlag {
+    // `this.value` represents the 1-based index of pokemon type
+    // `RibbonData.MONO_NORMAL` starts the flag position for the types,
+    // and we shift it by 1 for the specific type.
+    return (RibbonData.MONO_NORMAL << (this.value - 1)) as RibbonFlag;
+  }
   private static TYPE_OVERRIDES: monotypeOverride[] = [
     { species: SpeciesId.CASTFORM, type: PokemonType.NORMAL, fusion: false },
   ];

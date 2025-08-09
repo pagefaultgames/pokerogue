@@ -3226,6 +3226,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       onScreenFirstIndex + maxRows * maxColumns - 1,
     );
 
+    const gameData = globalScene.gameData;
+
     this.starterSelectScrollBar.setScrollCursor(this.scrollCursor);
 
     let pokerusCursorIndex = 0;
@@ -3265,9 +3267,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       container.label.setVisible(true);
       const speciesVariants =
-        speciesId && globalScene.gameData.dexData[speciesId].caughtAttr & DexAttr.SHINY
+        speciesId && gameData.dexData[speciesId].caughtAttr & DexAttr.SHINY
           ? [DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(
-              v => !!(globalScene.gameData.dexData[speciesId].caughtAttr & v),
+              v => !!(gameData.dexData[speciesId].caughtAttr & v),
             )
           : [];
       for (let v = 0; v < 3; v++) {
@@ -3282,12 +3284,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
       }
 
-      container.starterPassiveBgs.setVisible(!!globalScene.gameData.starterData[speciesId].passiveAttr);
+      container.starterPassiveBgs.setVisible(!!gameData.starterData[speciesId].passiveAttr);
       container.hiddenAbilityIcon.setVisible(
-        !!globalScene.gameData.dexData[speciesId].caughtAttr &&
-          !!(globalScene.gameData.starterData[speciesId].abilityAttr & 4),
+        !!gameData.dexData[speciesId].caughtAttr && !!(gameData.starterData[speciesId].abilityAttr & 4),
       );
-      container.classicWinIcon.setVisible(globalScene.gameData.starterData[speciesId].classicWinCount > 0);
+      container.classicWinIcon
+        .setVisible(gameData.starterData[speciesId].classicWinCount > 0)
+        .setTexture(gameData.dexData[speciesId].ribbons.nuzlocke ? "champion_ribbon_emerald" : "champion_ribbon");
       container.favoriteIcon.setVisible(this.starterPreferences[speciesId]?.favorite ?? false);
 
       // 'Candy Icon' mode

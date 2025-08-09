@@ -90,6 +90,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("shiny_icons", "ui");
     this.loadImage("ha_capsule", "ui", "ha_capsule.png");
     this.loadImage("champion_ribbon", "ui", "champion_ribbon.png");
+    this.loadImage("champion_ribbon_emerald", "ui", "champion_ribbon_emerald.png");
     this.loadImage("icon_spliced", "ui");
     this.loadImage("icon_lock", "ui", "icon_lock.png");
     this.loadImage("icon_stop", "ui", "icon_stop.png");

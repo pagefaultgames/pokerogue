@@ -48,6 +48,7 @@ import { EggData } from "#system/egg-data";
 import { GameStats } from "#system/game-stats";
 import { ModifierData as PersistentModifierData } from "#system/modifier-data";
 import { PokemonData } from "#system/pokemon-data";
+import { RibbonData } from "#system/ribbon-data";
 import { resetSettings, SettingKeys, setSetting } from "#system/settings";
 import { SettingGamepad, setSettingGamepad, settingGamepadDefaults } from "#system/settings-gamepad";
 import type { SettingKeyboard } from "#system/settings-keyboard";
@@ -402,121 +403,121 @@ export class GameData {
   }
 
   public initSystem(systemDataStr: string, cachedSystemDataStr?: string): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
-      try {
-        let systemData = this.parseSystemData(systemDataStr);
+    const { promise, resolve } = Promise.withResolvers<boolean>();
+    try {
+      let systemData = this.parseSystemData(systemDataStr);
 
-        if (cachedSystemDataStr) {
-          const cachedSystemData = this.parseSystemData(cachedSystemDataStr);
-          if (cachedSystemData.timestamp > systemData.timestamp) {
-            console.debug("Use cached system");
-            systemData = cachedSystemData;
-            systemDataStr = cachedSystemDataStr;
-          } else {
-            this.clearLocalData();
-          }
-        }
-
-        console.debug(systemData);
-
-        localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemDataStr, bypassLogin));
-
-        const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
-        const lsItem = localStorage.getItem(lsItemKey);
-        if (!lsItem) {
-          localStorage.setItem(lsItemKey, "");
-        }
-
-        applySystemVersionMigration(systemData);
-
-        this.trainerId = systemData.trainerId;
-        this.secretId = systemData.secretId;
-
-        this.gender = systemData.gender;
-
-        this.saveSetting(SettingKeys.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
-
-        if (!systemData.starterData) {
-          this.initStarterData();
-
-          if (systemData["starterMoveData"]) {
-            const starterMoveData = systemData["starterMoveData"];
-            for (const s of Object.keys(starterMoveData)) {
-              this.starterData[s].moveset = starterMoveData[s];
-            }
-          }
-
-          if (systemData["starterEggMoveData"]) {
-            const starterEggMoveData = systemData["starterEggMoveData"];
-            for (const s of Object.keys(starterEggMoveData)) {
-              this.starterData[s].eggMoves = starterEggMoveData[s];
-            }
-          }
-
-          this.migrateStarterAbilities(systemData, this.starterData);
-
-          const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
-          for (const s of starterIds) {
-            this.starterData[s].candyCount += systemData.dexData[s].caughtCount;
-            this.starterData[s].candyCount += systemData.dexData[s].hatchedCount * 2;
-            if (systemData.dexData[s].caughtAttr & DexAttr.SHINY) {
-              this.starterData[s].candyCount += 4;
-            }
-          }
+      if (cachedSystemDataStr) {
+        const cachedSystemData = this.parseSystemData(cachedSystemDataStr);
+        if (cachedSystemData.timestamp > systemData.timestamp) {
+          console.debug("Use cached system");
+          systemData = cachedSystemData;
+          systemDataStr = cachedSystemDataStr;
         } else {
-          this.starterData = systemData.starterData;
+          this.clearLocalData();
         }
-
-        if (systemData.gameStats) {
-          this.gameStats = systemData.gameStats;
-        }
-
-        if (systemData.unlocks) {
-          for (const key of Object.keys(systemData.unlocks)) {
-            if (this.unlocks.hasOwnProperty(key)) {
-              this.unlocks[key] = systemData.unlocks[key];
-            }
-          }
-        }
-
-        if (systemData.achvUnlocks) {
-          for (const a of Object.keys(systemData.achvUnlocks)) {
-            if (achvs.hasOwnProperty(a)) {
-              this.achvUnlocks[a] = systemData.achvUnlocks[a];
-            }
-          }
-        }
-
-        if (systemData.voucherUnlocks) {
-          for (const v of Object.keys(systemData.voucherUnlocks)) {
-            if (vouchers.hasOwnProperty(v)) {
-              this.voucherUnlocks[v] = systemData.voucherUnlocks[v];
-            }
-          }
-        }
-
-        if (systemData.voucherCounts) {
-          getEnumKeys(VoucherType).forEach(key => {
-            const index = VoucherType[key];
-            this.voucherCounts[index] = systemData.voucherCounts[index] || 0;
-          });
-        }
-
-        this.eggs = systemData.eggs ? systemData.eggs.map(e => e.toEgg()) : [];
-
-        this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
-        this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
-
-        this.dexData = Object.assign(this.dexData, systemData.dexData);
-        this.consolidateDexData(this.dexData);
-        this.defaultDexData = null;
-
-        resolve(true);
-      } catch (err) {
-        console.error(err);
-        resolve(false);
       }
-    });
+
+      console.debug(systemData);
+
+      localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemDataStr, bypassLogin));
+
+      const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
+      const lsItem = localStorage.getItem(lsItemKey);
+      if (!lsItem) {
+        localStorage.setItem(lsItemKey, "");
+      }
+
+      applySystemVersionMigration(systemData);
+
+      this.trainerId = systemData.trainerId;
+      this.secretId = systemData.secretId;
+
+      this.gender = systemData.gender;
+
+      this.saveSetting(SettingKeys.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
+
+      if (!systemData.starterData) {
+        this.initStarterData();
+
+        if (systemData["starterMoveData"]) {
+          const starterMoveData = systemData["starterMoveData"];
+          for (const s of Object.keys(starterMoveData)) {
+            this.starterData[s].moveset = starterMoveData[s];
+          }
+        }
+
+        if (systemData["starterEggMoveData"]) {
+          const starterEggMoveData = systemData["starterEggMoveData"];
+          for (const s of Object.keys(starterEggMoveData)) {
+            this.starterData[s].eggMoves = starterEggMoveData[s];
+          }
+        }
+
+        this.migrateStarterAbilities(systemData, this.starterData);
+
+        const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
+        for (const s of starterIds) {
+          this.starterData[s].candyCount += systemData.dexData[s].caughtCount;
+          this.starterData[s].candyCount += systemData.dexData[s].hatchedCount * 2;
+          if (systemData.dexData[s].caughtAttr & DexAttr.SHINY) {
+            this.starterData[s].candyCount += 4;
+          }
+        }
+      } else {
+        this.starterData = systemData.starterData;
+      }
+
+      if (systemData.gameStats) {
+        this.gameStats = systemData.gameStats;
+      }
+
+      if (systemData.unlocks) {
+        for (const key of Object.keys(systemData.unlocks)) {
+          if (this.unlocks.hasOwnProperty(key)) {
+            this.unlocks[key] = systemData.unlocks[key];
+          }
+        }
+      }
+
+      if (systemData.achvUnlocks) {
+        for (const a of Object.keys(systemData.achvUnlocks)) {
+          if (achvs.hasOwnProperty(a)) {
+            this.achvUnlocks[a] = systemData.achvUnlocks[a];
+          }
+        }
+      }
+
+      if (systemData.voucherUnlocks) {
+        for (const v of Object.keys(systemData.voucherUnlocks)) {
+          if (vouchers.hasOwnProperty(v)) {
+            this.voucherUnlocks[v] = systemData.voucherUnlocks[v];
+          }
+        }
+      }
+
+      if (systemData.voucherCounts) {
+        getEnumKeys(VoucherType).forEach(key => {
+          const index = VoucherType[key];
+          this.voucherCounts[index] = systemData.voucherCounts[index] || 0;
+        });
+      }
+
+      this.eggs = systemData.eggs ? systemData.eggs.map(e => e.toEgg()) : [];
+
+      this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
+      this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
+
+      this.dexData = Object.assign(this.dexData, systemData.dexData);
+      this.consolidateDexData(this.dexData);
+      this.defaultDexData = null;
+
+      resolve(true);
+    } catch (err) {
+      console.error(err);
+      resolve(false);
+    }
+    return promise;
   }
 
   /**
@@ -626,6 +627,9 @@ export class GameData {
           ret.push(new EggData(e));
         }
         return ret;
+      }
+      if (k === "ribbons") {
+        return RibbonData.fromJSON(v);
       }
 
       return k.endsWith("Attr") && !["natureAttr", "abilityAttr", "passiveAttr"].includes(k) ? BigInt(v ?? 0) : v;
@@ -1634,6 +1638,7 @@ export class GameData {
         caughtCount: 0,
         hatchedCount: 0,
         ivs: [0, 0, 0, 0, 0, 0],
+        ribbons: new RibbonData(0),
       };
     }
 
@@ -1878,6 +1883,12 @@ export class GameData {
     });
   }
 
+  /**
+   * Increase the number of classic ribbons won with this species.
+   * @param species - The species to increment the ribbon count for
+   * @param forStarter - If true, will increment the ribbon count for the root species of the given species
+   * @returns The number of classic wins after incrementing.
+   */
   incrementRibbonCount(species: PokemonSpecies, forStarter = false): number {
     const speciesIdToIncrement: SpeciesId = species.getRootSpeciesId(forStarter);
 
@@ -2176,6 +2187,9 @@ export class GameData {
       }
       if (!entry.hasOwnProperty("natureAttr") || (entry.caughtAttr && !entry.natureAttr)) {
         entry.natureAttr = this.defaultDexData?.[k].natureAttr || 1 << randInt(25, 1);
+      }
+      if (!entry.hasOwnProperty("ribbons")) {
+        entry.ribbons = new RibbonData(0);
       }
     }
   }
