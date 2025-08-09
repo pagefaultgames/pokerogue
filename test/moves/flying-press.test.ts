@@ -5,7 +5,7 @@ import { Challenges } from "#enums/challenges";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import type { PlayerPokemon } from "#field/pokemon";
+import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import { getEnumValues } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
@@ -16,6 +16,7 @@ describe.sequential("Move - Flying Press", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   let hawlucha: PlayerPokemon;
+  let enemy: EnemyPokemon;
 
   beforeAll(async () => {
     phaserGame = new Phaser.Game({
@@ -26,32 +27,29 @@ describe.sequential("Move - Flying Press", () => {
     game.override
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(MoveId.SPLASH)
-      .startingLevel(100)
-      .enemyLevel(100);
+      .enemyMoveset(MoveId.SPLASH);
 
     await game.classicMode.startBattle([SpeciesId.HAWLUCHA]);
+
     hawlucha = game.field.getPlayerPokemon();
+    enemy = game.field.getEnemyPokemon();
   });
 
   afterAll(() => {
     game.phaseInterceptor.restoreOg();
   });
 
-  // Reset temporary summon data overrides to reset effects
+  // Reset temp data after each test
   afterEach(() => {
     hawlucha.resetSummonData();
-    expect(hawlucha).not.toHaveBattlerTag(BattlerTagType.ELECTRIFIED);
-    expect(hawlucha.hasAbility(AbilityId.NORMALIZE)).toBe(false);
+    enemy.resetSummonData();
   });
 
   const pokemonTypes = getEnumValues(PokemonType);
 
   function checkEffForAllTypes(primaryType: PokemonType) {
-    const enemy = game.field.getEnemyPokemon();
     for (const type of pokemonTypes) {
       enemy.summonData.types = [type];
       const primaryEff = enemy.getAttackTypeEffectiveness(primaryType, { source: hawlucha });
@@ -71,7 +69,7 @@ describe.sequential("Move - Flying Press", () => {
     }
   }
 
-  describe("Normal", () => {
+  describe("Normal -", () => {
     it("should deal damage as a Fighting/Flying type move by default", async () => {
       checkEffForAllTypes(PokemonType.FIGHTING);
     });
@@ -85,12 +83,25 @@ describe.sequential("Move - Flying Press", () => {
       hawlucha.setTempAbility(allAbilities[AbilityId.NORMALIZE]);
       checkEffForAllTypes(PokemonType.NORMAL);
     });
+
+    it("should deal 8x damage against a Normal/Ice type with Grass added", () => {
+      enemy.summonData.types = [PokemonType.NORMAL, PokemonType.ICE];
+      enemy.summonData.addedType = PokemonType.GRASS;
+
+      const moveType = hawlucha.getMoveType(allMoves[MoveId.FLYING_PRESS]);
+      const flyingPressEff = enemy.getAttackTypeEffectiveness(moveType, {
+        source: hawlucha,
+        move: allMoves[MoveId.FLYING_PRESS],
+      });
+      expect(flyingPressEff).toBe(8);
+    });
   });
 
-  describe("Inverse", () => {
+  describe("Inverse Battle -", () => {
     beforeAll(() => {
-      game.challengeMode.addChallenge(Challenges.INVERSE_BATTLE, 1, 1);
+      game.challengeMode.overrideGameWithChallenges(Challenges.INVERSE_BATTLE, 1, 1);
     });
+
     it("should deal damage as a Fighting/Flying type move by default", async () => {
       checkEffForAllTypes(PokemonType.FIGHTING);
     });
@@ -107,10 +118,7 @@ describe.sequential("Move - Flying Press", () => {
   });
 
   it("should deal 2x to Wonder Guard Shedinja under Electrify", () => {
-    const enemy = game.field.getEnemyPokemon();
     game.field.mockAbility(enemy, AbilityId.WONDER_GUARD);
-    enemy.resetSummonData();
-
     hawlucha.addTag(BattlerTagType.ELECTRIFIED);
 
     const flyingPressEff = enemy.getAttackTypeEffectiveness(hawlucha.getMoveType(allMoves[MoveId.FLYING_PRESS]), {

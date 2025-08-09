@@ -32,16 +32,25 @@ describe("Moves - Synchronoise", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("should consider the user's tera type if it is terastallized", async () => {
+  // TODO: Write test
+  it.todo("should affect all opponents that share a type with the user");
+
+  it("should consider the user's Tera Type if it is Terastallized", async () => {
     await game.classicMode.startBattle([SpeciesId.BIDOOF]);
+
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    // force the player to be terastallized
     playerPokemon.teraType = PokemonType.WATER;
-    playerPokemon.isTerastallized = true;
-    game.move.select(MoveId.SYNCHRONOISE);
-    await game.phaseInterceptor.to("BerryPhase");
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    game.move.selectWithTera(MoveId.SYNCHRONOISE);
+    await game.toEndOfTurn();
+
+    expect(enemyPokemon).not.toHaveFullHp();
   });
+
+  // TODO: Write test
+  it.todo("should fail if no opponents share a type with the user");
+
+  // TODO: Write test
+  it.todo("should fail if the user is typeless");
 });
