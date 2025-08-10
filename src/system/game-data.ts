@@ -48,7 +48,7 @@ import { EggData } from "#system/egg-data";
 import { GameStats } from "#system/game-stats";
 import { ModifierData as PersistentModifierData } from "#system/modifier-data";
 import { PokemonData } from "#system/pokemon-data";
-import { RibbonData } from "#system/ribbon-data";
+import { RibbonData } from "#system/ribbons/ribbon-data";
 import { resetSettings, SettingKeys, setSetting } from "#system/settings";
 import { SettingGamepad, setSettingGamepad, settingGamepadDefaults } from "#system/settings-gamepad";
 import type { SettingKeyboard } from "#system/settings-keyboard";

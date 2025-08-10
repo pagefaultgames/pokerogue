@@ -20,7 +20,7 @@ import { Trainer } from "#field/trainer";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { DexAttrProps, GameData } from "#system/game-data";
-import { RibbonData, type RibbonFlag } from "#system/ribbon-data";
+import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
 import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";

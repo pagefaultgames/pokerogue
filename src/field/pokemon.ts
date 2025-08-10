@@ -1,7 +1,7 @@
 import type { Ability, PreAttackModifyDamageAbAttrParams } from "#abilities/ability";
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import type { AnySound, BattleScene } from "#app/battle-scene";
-import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
+import { PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -139,6 +139,8 @@ import { populateVariantColors, variantColorCache, variantData } from "#sprites/
 import { achvs } from "#system/achv";
 import type { StarterDataEntry, StarterMoveset } from "#system/game-data";
 import type { PokemonData } from "#system/pokemon-data";
+import { RibbonData } from "#system/ribbons/ribbon-data";
+import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
 import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types/ability-types";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
 import type { IllusionData } from "#types/illusion-data";
@@ -5822,45 +5824,59 @@ export class PlayerPokemon extends Pokemon {
       );
     });
   }
-
-  addFriendship(friendship: number): void {
-    if (friendship > 0) {
-      const starterSpeciesId = this.species.getRootSpeciesId();
-      const fusionStarterSpeciesId = this.isFusion() && this.fusionSpecies ? this.fusionSpecies.getRootSpeciesId() : 0;
-      const starterData = [
-        globalScene.gameData.starterData[starterSpeciesId],
-        fusionStarterSpeciesId ? globalScene.gameData.starterData[fusionStarterSpeciesId] : null,
-      ].filter(d => !!d);
-      const amount = new NumberHolder(friendship);
-      globalScene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
-      const candyFriendshipMultiplier = globalScene.gameMode.isClassic
-        ? timedEventManager.getClassicFriendshipMultiplier()
-        : 1;
-      const fusionReduction = fusionStarterSpeciesId
-        ? timedEventManager.areFusionsBoosted()
-          ? 1.5 // Divide candy gain for fusions by 1.5 during events
-          : 2 // 2 for fusions outside events
-        : 1; // 1 for non-fused mons
-      const starterAmount = new NumberHolder(Math.floor((amount.value * candyFriendshipMultiplier) / fusionReduction));
-
-      // Add friendship to this PlayerPokemon
-      this.friendship = Math.min(this.friendship + amount.value, 255);
-      if (this.friendship === 255) {
-        globalScene.validateAchv(achvs.MAX_FRIENDSHIP);
-      }
-      // Add to candy progress for this mon's starter species and its fused species (if it has one)
-      starterData.forEach((sd: StarterDataEntry, i: number) => {
-        const speciesId = !i ? starterSpeciesId : (fusionStarterSpeciesId as SpeciesId);
-        sd.friendship = (sd.friendship || 0) + starterAmount.value;
-        if (sd.friendship >= getStarterValueFriendshipCap(speciesStarterCosts[speciesId])) {
-          globalScene.gameData.addStarterCandy(getPokemonSpecies(speciesId), 1);
-          sd.friendship = 0;
-        }
-      });
-    } else {
-      // Lose friendship upon fainting
+  /**
+   * Add friendship to this Pokemon
+   *
+   * @remarks
+   * This adds friendship to the pokemon's friendship stat (used for evolution, return, etc.) and candy progress.
+   * For fusions, candy progress for each species in the fusion is halved.
+   *
+   * @param friendship - The amount of friendship to add. Negative values will reduce friendship, though not below 0.
+   * @param capped - If true, don't allow the friendship gain to exceed 200. Used to cap friendship gains from rare candies.
+   */
+  addFriendship(friendship: number, capped = false): void {
+    // Short-circuit friendship loss, which doesn't impact candy friendship
+    if (friendship <= 0) {
       this.friendship = Math.max(this.friendship + friendship, 0);
+      return;
     }
+
+    const starterSpeciesId = this.species.getRootSpeciesId();
+    const fusionStarterSpeciesId = this.isFusion() && this.fusionSpecies ? this.fusionSpecies.getRootSpeciesId() : 0;
+    const starterGameData = globalScene.gameData.starterData;
+    const starterData: [StarterDataEntry, SpeciesId][] = [[starterGameData[starterSpeciesId], starterSpeciesId]];
+    if (fusionStarterSpeciesId) {
+      starterData.push([starterGameData[fusionStarterSpeciesId], fusionStarterSpeciesId]);
+    }
+    const amount = new NumberHolder(friendship);
+    globalScene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
+    friendship = amount.value;
+
+    const newFriendship = this.friendship + friendship;
+    // If capped is true, only adjust friendship if the new friendship is less than or equal to 200.
+    if (!capped || newFriendship <= RARE_CANDY_FRIENDSHIP_CAP) {
+      this.friendship = Math.min(newFriendship, 255);
+      if (newFriendship >= 255) {
+        globalScene.validateAchv(achvs.MAX_FRIENDSHIP);
+        awardRibbonsToSpeciesLine(this.species.speciesId, RibbonData.FRIENDSHIP);
+      }
+    }
+
+    let candyFriendshipMultiplier = globalScene.gameMode.isClassic
+      ? timedEventManager.getClassicFriendshipMultiplier()
+      : 1;
+    if (fusionStarterSpeciesId) {
+      candyFriendshipMultiplier /= timedEventManager.areFusionsBoosted() ? 1.5 : 2;
+    }
+    const candyFriendshipAmount = Math.floor(friendship * candyFriendshipMultiplier);
+    // Add to candy progress for this mon's starter species and its fused species (if it has one)
+    starterData.forEach(([sd, id]: [StarterDataEntry, SpeciesId]) => {
+      sd.friendship = (sd.friendship || 0) + candyFriendshipAmount;
+      if (sd.friendship >= getStarterValueFriendshipCap(speciesStarterCosts[id])) {
+        globalScene.gameData.addStarterCandy(getPokemonSpecies(id), 1);
+        sd.friendship = 0;
+      }
+    });
   }
 
   getPossibleEvolution(evolution: SpeciesFormEvolution | null): Promise<Pokemon> {
