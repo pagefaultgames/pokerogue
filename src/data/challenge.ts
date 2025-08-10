@@ -17,7 +17,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
-import type { ModifierTypeOption } from "#modifiers/modifier-type";
+import type { RewardOption } from "#items/reward";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { DexAttrProps, GameData } from "#system/game-data";
 import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
@@ -393,7 +393,7 @@ export abstract class Challenge {
    * @param _status - Whether the item should be added to the shop or not
    * @returns Whether this function did anything
    */
-  applyShopItem(_shopItem: ModifierTypeOption | null, _status: BooleanHolder): boolean {
+  applyShopItem(_shopItem: RewardOption | null, _status: BooleanHolder): boolean {
     return false;
   }
 
@@ -403,7 +403,7 @@ export abstract class Challenge {
    * @param _status - Whether the reward should be added to the reward options or not
    * @returns Whether this function did anything
    */
-  applyWaveReward(_reward: ModifierTypeOption | null, _status: BooleanHolder): boolean {
+  applyWaveReward(_reward: RewardOption | null, _status: BooleanHolder): boolean {
     return false;
   }
 
@@ -1009,12 +1009,12 @@ export class HardcoreChallenge extends Challenge {
     return false;
   }
 
-  override applyShopItem(shopItem: ModifierTypeOption | null, status: BooleanHolder): boolean {
+  override applyShopItem(shopItem: RewardOption | null, status: BooleanHolder): boolean {
     status.value = shopItem?.type.group !== "revive";
     return true;
   }
 
-  override applyWaveReward(reward: ModifierTypeOption | null, status: BooleanHolder): boolean {
+  override applyWaveReward(reward: RewardOption | null, status: BooleanHolder): boolean {
     return this.applyShopItem(reward, status);
   }
 
