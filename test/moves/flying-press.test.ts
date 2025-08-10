@@ -115,16 +115,16 @@ describe.sequential("Move - Flying Press", () => {
       hawlucha.setTempAbility(allAbilities[AbilityId.NORMALIZE]);
       checkEffForAllTypes(PokemonType.NORMAL);
     });
-  });
 
-  it("should deal 2x to Wonder Guard Shedinja under Electrify", () => {
-    game.field.mockAbility(enemy, AbilityId.WONDER_GUARD);
-    hawlucha.addTag(BattlerTagType.ELECTRIFIED);
+    it("should deal 0.125x damage against a Normal/Ice type with Grass added", () => {
+      enemy.summonData.types = [PokemonType.NORMAL, PokemonType.ICE];
+      enemy.summonData.addedType = PokemonType.GRASS;
 
-    const flyingPressEff = enemy.getAttackTypeEffectiveness(hawlucha.getMoveType(allMoves[MoveId.FLYING_PRESS]), {
-      source: hawlucha,
-      move: allMoves[MoveId.FLYING_PRESS],
+      const moveType = hawlucha.getMoveType(allMoves[MoveId.FLYING_PRESS]);
+      const flyingPressEff = enemy.getAttackTypeEffectiveness(moveType, {
+        source: hawlucha,
+        move: allMoves[MoveId.FLYING_PRESS],
+      });
+      expect(flyingPressEff).toBe(0.125);
     });
-    expect(flyingPressEff).toBe(2);
-  });
 });
