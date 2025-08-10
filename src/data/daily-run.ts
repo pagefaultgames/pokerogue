@@ -25,7 +25,7 @@ export function fetchDailyRunSeed(): Promise<string | null> {
 }
 
 export function getDailyRunStarters(seed: string): Starter[] {
-  let starters: Starter[] = [];
+  const starters: Starter[] = [];
 
   globalScene.executeWithSeedOffset(
     () => {
@@ -33,7 +33,7 @@ export function getDailyRunStarters(seed: string): Starter[] {
 
       const eventStarters = getDailyEventSeedStarters(seed);
       if (!isNullOrUndefined(eventStarters)) {
-        starters = eventStarters;
+        starters.push(...eventStarters);
         return;
       }
 
@@ -158,18 +158,20 @@ export function getDailyStartingBiome(): BiomeId {
 }
 
 /**
- * If this is Daily Mode and the seed is longer than a default seed then it has been modified and could contain a custom event seed.
- * Default seeds are always 24 characters.
- * @returns True if it is a Daily Event Seed.
+ * If this is Daily Mode and the seed is longer than a default seed
+ * then it has been modified and could contain a custom event seed. \
+ * Default seeds are always exactly 24 characters.
+ * @returns `true` if it is a Daily Event Seed.
  */
 export function isDailyEventSeed(seed: string): boolean {
   return globalScene.gameMode.isDaily && seed.length > 24;
 }
 
 /**
- * Expects the seed to contain: /starters\d{18}/
- * Where each Starter is 4 digits for the SpeciesId and 2 digits for the FormIndex
- * @returns An {@linkcode Starter[]} containing the starters or null if no valid match.
+ * Expects the seed to contain `/starters\d{18}/`
+ * where the digits alternate between 4 digits for the species ID and 2 digits for the form index
+ * (left padded with `0`s as necessary).
+ * @returns An array of {@linkcode Starter}s, or `null` if no valid match.
  */
 export function getDailyEventSeedStarters(seed: string): Starter[] | null {
   if (!isDailyEventSeed(seed)) {
@@ -178,32 +180,34 @@ export function getDailyEventSeedStarters(seed: string): Starter[] | null {
 
   const starters: Starter[] = [];
   const match = /starters(\d{4})(\d{2})(\d{4})(\d{2})(\d{4})(\d{2})/g.exec(seed);
-  if (match && match.length === 7) {
-    for (let i = 1; i < match.length; i += 2) {
-      const speciesId = Number.parseInt(match[i]) as SpeciesId;
-      const formIndex = Number.parseInt(match[i + 1]);
 
-      if (!Object.values(SpeciesId).includes(speciesId)) {
-        // Incorrect event seed, abort.
-        return null;
-      }
-
-      const starterForm = getPokemonSpeciesForm(speciesId, formIndex);
-      const startingLevel = globalScene.gameMode.getStartingLevel();
-      const starter = getDailyRunStarter(starterForm, startingLevel);
-      starters.push(starter);
-    }
-
-    return starters;
+  if (!match || match.length !== 7) {
+    return null;
   }
 
-  return null;
+  for (let i = 1; i < match.length; i += 2) {
+    const speciesId = Number.parseInt(match[i]) as SpeciesId;
+    const formIndex = Number.parseInt(match[i + 1]);
+
+    if (!getEnumValues(SpeciesId).includes(speciesId)) {
+      console.warn("Invalid species ID used for custom daily run seed starter:", speciesId);
+      return null;
+    }
+
+    const starterForm = getPokemonSpeciesForm(speciesId, formIndex);
+    const startingLevel = globalScene.gameMode.getStartingLevel();
+    const starter = getDailyRunStarter(starterForm, startingLevel);
+    starters.push(starter);
+  }
+
+  return starters;
 }
 
 /**
- * Expects the seed to contain: /boss\d{4}\d{2}/
- * Where the boss is 4 digits for the SpeciesId and 2 digits for the form index
- * @returns A {@linkcode PokemonSpeciesForm} containing the boss or null if no valid match.
+ * Expects the seed to contain `/boss\d{4}\d{2}/`
+ * where the first 4 digits are the species ID and the next 2 digits are the form index
+ * (left padded with `0`s as necessary).
+ * @returns A {@linkcode PokemonSpeciesForm} to be used for the boss, or `null` if no valid match.
  */
 export function getDailyEventSeedBoss(seed: string): PokemonSpeciesForm | null {
   if (!isDailyEventSeed(seed)) {
@@ -211,26 +215,25 @@ export function getDailyEventSeedBoss(seed: string): PokemonSpeciesForm | null {
   }
 
   const match = /boss(\d{4})(\d{2})/g.exec(seed);
-  if (match && match.length === 3) {
-    const speciesId = Number.parseInt(match[1]) as SpeciesId;
-    const formIndex = Number.parseInt(match[2]);
-
-    if (!Object.values(SpeciesId).includes(speciesId)) {
-      // Incorrect event seed, abort.
-      return null;
-    }
-
-    const starterForm = getPokemonSpeciesForm(speciesId, formIndex);
-    return starterForm;
+  if (!match || match.length !== 3) {
+    return null;
   }
 
-  return null;
+  const speciesId = Number.parseInt(match[1]) as SpeciesId;
+  const formIndex = Number.parseInt(match[2]);
+
+  if (!getEnumValues(SpeciesId).includes(speciesId)) {
+    console.warn("Invalid species ID used for custom daily run seed boss:", speciesId);
+    return null;
+  }
+
+  const starterForm = getPokemonSpeciesForm(speciesId, formIndex);
+  return starterForm;
 }
 
 /**
- * Expects the seed to contain: /biome\d{2}/ or /biome\d{2}/
- * Where the biome is 2 digits for the BiomeId.
- * @returns A {@linkcode DailyEventSeedBiome} containing the Biome or null if no valid match.
+ * Expects the seed to contain `/biome\d{2}/` where the 2 digits are a biome ID (left padded with `0` if necessary).
+ * @returns The biome to use or `null` if no valid match.
  */
 export function getDailyEventSeedBiome(seed: string): BiomeId | null {
   if (!isDailyEventSeed(seed)) {
@@ -238,24 +241,24 @@ export function getDailyEventSeedBiome(seed: string): BiomeId | null {
   }
 
   const match = /biome(\d{2})/g.exec(seed);
-  if (match && match.length === 2) {
-    const startingBiome = Number.parseInt(match[1]) as BiomeId;
-
-    if (!Object.values(BiomeId).includes(startingBiome)) {
-      // Incorrect event seed, abort.
-      return null;
-    }
-
-    return startingBiome;
+  if (!match || match.length !== 2) {
+    return null;
   }
 
-  return null;
+  const startingBiome = Number.parseInt(match[1]) as BiomeId;
+
+  if (!getEnumValues(BiomeId).includes(startingBiome)) {
+    console.warn("Invalid biome ID used for custom daily run seed:", startingBiome);
+    return null;
+  }
+
+  return startingBiome;
 }
 
 /**
- * Expects the seed to contain: /luck\d{2}/
- * Where the Luck has 2 digits for the number.
- * @returns A {@linkcode number} representing the Daily Luck value or null if no valid match.
+ * Expects the seed to contain `/luck\d{2}/` where the 2 digits are a number between `0` and `14`
+ * (left padded with `0` if necessary).
+ * @returns The custom luck value or `null` if no valid match.
  */
 export function getDailyEventSeedLuck(seed: string): number | null {
   if (!isDailyEventSeed(seed)) {
@@ -263,16 +266,16 @@ export function getDailyEventSeedLuck(seed: string): number | null {
   }
 
   const match = /luck(\d{2})/g.exec(seed);
-  if (match && match.length === 2) {
-    const luck = Number.parseInt(match[1]);
-
-    if (luck < 0 || luck > 14) {
-      // Incorrect event seed, abort.
-      return null;
-    }
-
-    return luck;
+  if (!match || match.length !== 2) {
+    return null;
   }
 
-  return null;
+  const luck = Number.parseInt(match[1]);
+
+  if (luck < 0 || luck > 14) {
+    console.warn("Invalid luck value used for custom daily run seed:", luck);
+    return null;
+  }
+
+  return luck;
 }
