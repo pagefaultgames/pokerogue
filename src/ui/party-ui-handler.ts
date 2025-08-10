@@ -187,7 +187,7 @@ export class PartyUiHandler extends MessageUiHandler {
   private lastCursor = 0;
   private lastLeftPokemonCursor = 0;
   private lastRightPokemonCursor = 0;
-  private selectCallback: PartySelectCallback | PokemonItemTransferSelectFilter | null;
+  private selectCallback: PartySelectCallback | PartyItemTransferSelectCallback | null;
   private selectFilter: PokemonSelectFilter | PokemonItemTransferSelectFilter;
   private moveSelectFilter: PokemonMoveSelectFilter;
   private tmMoveId: MoveId;

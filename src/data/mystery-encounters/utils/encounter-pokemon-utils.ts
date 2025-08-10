@@ -12,8 +12,8 @@ import { CustomPokemonData } from "#data/pokemon-data";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import type { AbilityId } from "#enums/ability-id";
-import type { HeldItemId } from "#enums/held-item-id";
 import { ChallengeType } from "#enums/challenge-type";
+import type { HeldItemId } from "#enums/held-item-id";
 import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -643,22 +643,17 @@ export async function catchPokemon(
         }
       };
       const addToParty = (slotIndex?: number) => {
-        pokemon.addToParty(pokeballType, slotIndex);
+        const newPokemon = pokemon.addToParty(pokeballType, slotIndex);
         if (globalScene.getPlayerParty().filter(p => p.isShiny()).length === 6) {
           globalScene.validateAchv(achvs.SHINY_PARTY);
         }
-      };
-      Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
-        const addStatus = new BooleanHolder(true);
-        applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
-        if (!addStatus.value) {
-          removePokemon();
-          if (newPokemon) {
-            newPokemon.loadAssets().then(end);
-          } else {
-            end();
-          }
-        });
+        globalScene.updateItems(true);
+        removePokemon();
+        if (newPokemon) {
+          newPokemon.loadAssets().then(end);
+        } else {
+          end();
+        }
       };
       Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
         const addStatus = new BooleanHolder(true);
