@@ -38,8 +38,8 @@ describe("Moves - Upper Hand", () => {
   it("should flinch the opponent before they use a priority attack", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const feebas = game.scene.getPlayerPokemon()!;
-    const magikarp = game.scene.getEnemyPokemon()!;
+    const feebas = game.field.getPlayerPokemon();
+    const magikarp = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.UPPER_HAND);
     await game.phaseInterceptor.to("BerryPhase");
@@ -57,7 +57,7 @@ describe("Moves - Upper Hand", () => {
 
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const feebas = game.scene.getPlayerPokemon()!;
+    const feebas = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.UPPER_HAND);
     await game.phaseInterceptor.to("BerryPhase");
@@ -70,8 +70,8 @@ describe("Moves - Upper Hand", () => {
 
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const feebas = game.scene.getPlayerPokemon()!;
-    const magikarp = game.scene.getEnemyPokemon()!;
+    const feebas = game.field.getPlayerPokemon();
+    const magikarp = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.UPPER_HAND);
     await game.phaseInterceptor.to("BerryPhase");
@@ -86,7 +86,7 @@ describe("Moves - Upper Hand", () => {
 
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const feebas = game.scene.getPlayerPokemon()!;
+    const feebas = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.UPPER_HAND);
 

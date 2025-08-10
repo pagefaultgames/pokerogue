@@ -268,7 +268,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       await game.phaseInterceptor.to(SelectModifierPhase, false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
-      const leadPokemonItems = scene.getPlayerParty()?.[0].getHeldItems() as PokemonHeldItemModifier[];
+      const leadPokemonItems = scene.getPlayerParty()[0].getHeldItems() as PokemonHeldItemModifier[];
       const item = leadPokemonItems.find(i => i instanceof AttackTypeBoosterModifier);
       expect(item).toBeDefined;
     });

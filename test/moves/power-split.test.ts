@@ -36,8 +36,8 @@ describe("Moves - Power Split", () => {
     game.override.enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([SpeciesId.INDEEDEE]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     const avgAtk = Math.floor((player.getStat(Stat.ATK, false) + enemy.getStat(Stat.ATK, false)) / 2);
     const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
@@ -56,8 +56,8 @@ describe("Moves - Power Split", () => {
     game.override.enemyMoveset([MoveId.POWER_SPLIT]);
     await game.classicMode.startBattle([SpeciesId.INDEEDEE]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     const avgAtk = Math.floor((player.getStat(Stat.ATK, false) + enemy.getStat(Stat.ATK, false)) / 2);
     const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);

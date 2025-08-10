@@ -28,7 +28,7 @@ describe("Spec - Pokemon", () => {
   it("should not crash when trying to set status of undefined", async () => {
     await game.classicMode.runToSummon([SpeciesId.ABRA]);
 
-    const pkm = game.scene.getPlayerPokemon()!;
+    const pkm = game.field.getPlayerPokemon();
     expect(pkm).toBeDefined();
 
     expect(pkm.trySetStatus(undefined)).toBe(false);
@@ -50,7 +50,7 @@ describe("Spec - Pokemon", () => {
     });
 
     it("should append a new pokemon by default", async () => {
-      const zubat = scene.getEnemyPokemon()!;
+      const zubat = game.field.getEnemyPokemon();
       zubat.addToParty(PokeballType.LUXURY_BALL);
 
       const party = scene.getPlayerParty();
@@ -62,7 +62,7 @@ describe("Spec - Pokemon", () => {
 
     it("should put a new pokemon into the passed slotIndex", async () => {
       const slotIndex = 1;
-      const zubat = scene.getEnemyPokemon()!;
+      const zubat = game.field.getEnemyPokemon();
       zubat.addToParty(PokeballType.LUXURY_BALL, slotIndex);
 
       const party = scene.getPlayerParty();
@@ -78,7 +78,7 @@ describe("Spec - Pokemon", () => {
 
     await game.classicMode.startBattle([SpeciesId.ROTOM]);
 
-    const fanRotom = game.scene.getPlayerPokemon()!;
+    const fanRotom = game.field.getPlayerPokemon();
 
     expect(fanRotom.isTmCompatible(MoveId.BLIZZARD)).toBe(false);
     expect(fanRotom.isTmCompatible(MoveId.AIR_SLASH)).toBe(true);
