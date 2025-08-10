@@ -5837,8 +5837,8 @@ export class RemoveBattlerTagAttr extends MoveEffectAttr {
     this.tagTypes = tagTypes;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
-    if (!super.apply(user, target, move, _args)) {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (!super.apply(user, target, move, args)) {
       return false;
     }
 
@@ -6142,7 +6142,7 @@ const screenTags = [
 export class RemoveScreensAttr extends RemoveArenaTagsAttr {
   constructor(targetBothSides = false) {
     // TODO: This triggers at a different time than {@linkcode RemoveArenaTagsAbAttr}...
-    super(arenaTrapTags, targetBothSides, { trigger: MoveEffectTrigger.PRE_APPLY });
+    super(screenTags, targetBothSides, { trigger: MoveEffectTrigger.PRE_APPLY });
   }
 }
 
