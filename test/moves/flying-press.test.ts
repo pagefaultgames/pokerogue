@@ -127,4 +127,5 @@ describe.sequential("Move - Flying Press", () => {
       });
       expect(flyingPressEff).toBe(0.125);
     });
+  });
 });
