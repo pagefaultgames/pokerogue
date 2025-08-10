@@ -223,9 +223,8 @@ export class TrainerConfig {
       case TrainerType.LARRY_ELITE:
         trainerType = TrainerType.LARRY;
         break;
-      case TrainerType.ROCKET_BOSS_GIOVANNI_1:
       case TrainerType.ROCKET_BOSS_GIOVANNI_2:
-        trainerType = TrainerType.GIOVANNI;
+        trainerType = TrainerType.ROCKET_BOSS_GIOVANNI_1;
         break;
       case TrainerType.MAXIE_2:
         trainerType = TrainerType.MAXIE;
@@ -895,7 +894,7 @@ export class TrainerConfig {
 
   /**
    * Helper function to check if a specialty type is set
-   * @returns true if specialtyType is defined and not Type.UNKNOWN
+   * @returns `true` if `specialtyType` is defined and not {@link PokemonType.UNKNOWN}
    */
   hasSpecialtyType(): boolean {
     return !isNullOrUndefined(this.specialtyType) && this.specialtyType !== PokemonType.UNKNOWN;
