@@ -213,27 +213,27 @@ export function getDailyEventSeedStarters(seed: string): Starter[] | null {
 }
 
 /**
- * Expects the seed to contain: /boss\d{4}/
- * Where the boss is 4 digits for the SpeciesId.
- * Currently does not support form index.
- * @returns A {@linkcode PokemonSpecies} containing the boss species or null if no valid match.
+ * Expects the seed to contain: /boss\d{4}\d{2}/
+ * Where the boss is 4 digits for the SpeciesId and 2 digits for the form index
+ * @returns A {@linkcode PokemonSpeciesForm} containing the boss or null if no valid match.
  */
-export function getDailyEventSeedBoss(seed: string): PokemonSpecies | null {
+export function getDailyEventSeedBoss(seed: string): PokemonSpeciesForm | null {
   if (!isDailyEventSeed(seed)) {
     return null;
   }
 
-  const match = /boss(\d{4})/g.exec(seed);
-  if (match && match.length === 2) {
+  const match = /boss(\d{4})(\d{2})/g.exec(seed);
+  if (match && match.length === 3) {
     const speciesId = Number.parseInt(match[1]) as SpeciesId;
+    const formIndex = Number.parseInt(match[2]);
 
     if (!Object.values(SpeciesId).includes(speciesId)) {
       // Incorrect event seed, abort.
       return null;
     }
 
-    const species = getPokemonSpecies(speciesId);
-    return species;
+    const starterForm = getPokemonSpeciesForm(speciesId, formIndex);
+    return starterForm;
   }
 
   return null;

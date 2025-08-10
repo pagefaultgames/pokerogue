@@ -15,6 +15,7 @@ import type { Arena } from "#field/arena";
 import { classicFixedBattles, type FixedBattleConfigs } from "#trainers/fixed-battle-configs";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, isNullOrUndefined, randSeedInt, randSeedItem } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 interface GameModeConfig {
@@ -213,7 +214,8 @@ export class GameMode implements GameModeConfig {
     if (this.isDaily && this.isWaveFinal(waveIndex)) {
       const eventBoss = getDailyEventSeedBoss(globalScene.seed);
       if (!isNullOrUndefined(eventBoss)) {
-        return eventBoss;
+        // Cannot set form index here, it will be overriden when adding it as enemy pokemon.
+        return getPokemonSpecies(eventBoss.speciesId);
       }
 
       const allFinalBossSpecies = allSpecies.filter(

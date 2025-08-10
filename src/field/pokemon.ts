@@ -39,6 +39,7 @@ import {
   TrappedTag,
   TypeImmuneTag,
 } from "#data/battler-tags";
+import { getDailyEventSeedBoss } from "#data/daily-run";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
@@ -6256,6 +6257,11 @@ export class EnemyPokemon extends Pokemon {
       this.species.forms[Overrides.OPP_FORM_OVERRIDES[speciesId]]
     ) {
       this.formIndex = Overrides.OPP_FORM_OVERRIDES[speciesId];
+    } else if (globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
+      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
+      if (!isNullOrUndefined(eventBoss)) {
+        this.formIndex = eventBoss.formIndex;
+      }
     }
 
     if (!dataSource) {
