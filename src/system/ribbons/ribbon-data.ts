@@ -57,9 +57,9 @@ export class RibbonData {
   /** Flag for winning classic */
   public static readonly CLASSIC = 0x80000 as RibbonFlag;
   /** Flag for winning the nuzzlocke challenge */
-  public static readonly NUZLOCKE = 0x80000 as RibbonFlag;
+  public static readonly NUZLOCKE = 0x100000 as RibbonFlag;
   /** Flag for reaching max friendship */
-  public static readonly FRIENDSHIP = 0x100000 as RibbonFlag;
+  public static readonly FRIENDSHIP = 0x200000 as RibbonFlag;
   //#endregion Ribbons
 
   constructor(value: number) {
