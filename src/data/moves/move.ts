@@ -20,7 +20,6 @@ import {
     TypeBoostTag,
 } from "#data/battler-tags";
 import {getBerryEffectFunc} from "#data/berry";
-import {applyChallenges} from "#data/challenge";
 import {allAbilities, allMoves} from "#data/data-lists";
 import {SpeciesFormChangeRevertWeatherFormTrigger} from "#data/form-change-triggers";
 import {DelayedAttackTag} from "#data/positional-tags/positional-tag";
