@@ -19,7 +19,7 @@ export class EggHatchSceneHandler extends UiHandler {
   }
 
   setup() {
-    this.eggHatchContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
+    this.eggHatchContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
     globalScene.fieldUI.add(this.eggHatchContainer);
 
     const eggLightraysAnimFrames = globalScene.anims.generateFrameNames("egg_lightrays", { start: 0, end: 3 });

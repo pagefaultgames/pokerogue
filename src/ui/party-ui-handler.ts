@@ -1,7 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
-import { applyChallenges } from "#data/challenge";
 import { allMoves } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
@@ -26,6 +25,7 @@ import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-handler";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
+import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, getLocalizedSpriteKey, randInt } from "#utils/common";
 import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
@@ -316,7 +316,7 @@ export class PartyUiHandler extends MessageUiHandler {
 
     this.partyCancelButton = partyCancelButton;
 
-    this.optionsContainer = globalScene.add.container(globalScene.game.canvas.width / 6 - 1, -1);
+    this.optionsContainer = globalScene.add.container(globalScene.scaledCanvas.width - 1, -1);
     partyContainer.add(this.optionsContainer);
 
     this.iconAnimHandler = new PokemonIconAnimHandler();
@@ -326,14 +326,12 @@ export class PartyUiHandler extends MessageUiHandler {
     partyContainer.add(partyDiscardModeButton);
     this.partyDiscardModeButton = partyDiscardModeButton;
 
-    // prepare move overlay. in case it appears to be too big, set the overlayScale to .5
-    const overlayScale = 1;
+    // prepare move overlay
     this.moveInfoOverlay = new MoveInfoOverlay({
-      scale: overlayScale,
       top: true,
       x: 1,
-      y: -MoveInfoOverlay.getHeight(overlayScale) - 1,
-      width: globalScene.game.canvas.width / 12 - 30,
+      y: -MoveInfoOverlay.getHeight() - 1,
+      width: globalScene.scaledCanvas.width / 2 - 30,
     });
     ui.add(this.moveInfoOverlay);
 
@@ -830,6 +828,11 @@ export class PartyUiHandler extends MessageUiHandler {
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
     }
 
+    // This is processed before the filter result since releasing does not depend on status.
+    if (option === PartyOption.RELEASE) {
+      return this.processReleaseOption(pokemon);
+    }
+
     // If the pokemon is filtered out for this option, we cannot continue
     const filterResult = this.getFilterResult(option, pokemon);
     if (filterResult) {
@@ -853,10 +856,6 @@ export class PartyUiHandler extends MessageUiHandler {
     // PartyUiMode.POST_BATTLE_SWITCH (SEND_OUT)
 
     // These are the options that need a callback
-    if (option === PartyOption.RELEASE) {
-      return this.processReleaseOption(pokemon);
-    }
-
     if (this.partyUiMode === PartyUiMode.SPLICE) {
       if (option === PartyOption.SPLICE) {
         (this.selectCallback as PartyModifierSpliceSelectCallback)(this.transferCursor, this.cursor);
