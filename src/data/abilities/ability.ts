@@ -2119,7 +2119,7 @@ export abstract class PostAttackAbAttr extends AbAttr {
   /** The default `attackCondition` requires that the selected move is a damaging move */
   constructor(
     attackCondition: PokemonAttackCondition = (_user, _target, move) => {
-      if (!_user) {
+      if (isNullOrUndefined(user)) {
         return false;
       }
 
