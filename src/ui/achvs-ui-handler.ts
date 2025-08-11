@@ -30,7 +30,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
 
 export class AchvsUiHandler extends MessageUiHandler {
   private readonly ROWS = 4;
-  private readonly COLS = 17;
+  private readonly COLS = 18;
 
   private mainContainer: Phaser.GameObjects.Container;
   private iconsContainer: Phaser.GameObjects.Container;
@@ -115,8 +115,8 @@ export class AchvsUiHandler extends MessageUiHandler {
     this.icons = [];
 
     for (let a = 0; a < this.ROWS * this.COLS; a++) {
-      const x = (a % this.COLS) * 18;
-      const y = Math.floor(a / this.COLS) * 18;
+      const x = (a % this.COLS) * 17;
+      const y = Math.floor(a / this.COLS) * 19;
 
       const icon = globalScene.add.sprite(x, y, "items", "unknown").setOrigin(0).setScale(0.5);
 

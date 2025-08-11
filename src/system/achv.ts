@@ -458,6 +458,19 @@ export function getAchievementDescription(localizationKey: string): string {
 }
 
 export const achvs = {
+  CLASSIC_VICTORY: new Achv(
+    "CLASSIC_VICTORY",
+    "",
+    "CLASSIC_VICTORY.description",
+    "relic_crown",
+    150,
+    _ => globalScene.gameData.gameStats.sessionsWon === 0,
+  ),
+  _10_RIBBONS: new RibbonAchv("10_RIBBONS", "", 10, "bronze_ribbon", 10),
+  _25_RIBBONS: new RibbonAchv("25_RIBBONS", "", 25, "great_ribbon", 25),
+  _50_RIBBONS: new RibbonAchv("50_RIBBONS", "", 50, "ultra_ribbon", 50),
+  _75_RIBBONS: new RibbonAchv("75_RIBBONS", "", 75, "rogue_ribbon", 75),
+  _100_RIBBONS: new RibbonAchv("100_RIBBONS", "", 100, "master_ribbon", 100),
   _10K_MONEY: new MoneyAchv("10K_MONEY", "", 10000, "nugget", 10),
   _100K_MONEY: new MoneyAchv("100K_MONEY", "", 100000, "big_nugget", 25).setSecret(true),
   _1M_MONEY: new MoneyAchv("1M_MONEY", "", 1000000, "relic_gold", 50).setSecret(true),
@@ -473,11 +486,6 @@ export const achvs = {
   LV_100: new LevelAchv("LV_100", "", 100, "rare_candy", 25).setSecret(),
   LV_250: new LevelAchv("LV_250", "", 250, "rarer_candy", 50).setSecret(true),
   LV_1000: new LevelAchv("LV_1000", "", 1000, "candy_jar", 100).setSecret(true),
-  _10_RIBBONS: new RibbonAchv("10_RIBBONS", "", 10, "bronze_ribbon", 10),
-  _25_RIBBONS: new RibbonAchv("25_RIBBONS", "", 25, "great_ribbon", 25).setSecret(true),
-  _50_RIBBONS: new RibbonAchv("50_RIBBONS", "", 50, "ultra_ribbon", 50).setSecret(true),
-  _75_RIBBONS: new RibbonAchv("75_RIBBONS", "", 75, "rogue_ribbon", 75).setSecret(true),
-  _100_RIBBONS: new RibbonAchv("100_RIBBONS", "", 100, "master_ribbon", 100).setSecret(true),
   TRANSFER_MAX_STAT_STAGE: new Achv("TRANSFER_MAX_STAT_STAGE", "", "TRANSFER_MAX_STAT_STAGE.description", "baton", 20),
   MAX_FRIENDSHIP: new Achv("MAX_FRIENDSHIP", "", "MAX_FRIENDSHIP.description", "soothe_bell", 25),
   MEGA_EVOLVE: new Achv("MEGA_EVOLVE", "", "MEGA_EVOLVE.description", "mega_bracelet", 50),
@@ -516,14 +524,6 @@ export const achvs = {
   HATCH_SHINY: new Achv("HATCH_SHINY", "", "HATCH_SHINY.description", "golden_egg", 100).setSecret(),
   HIDDEN_ABILITY: new Achv("HIDDEN_ABILITY", "", "HIDDEN_ABILITY.description", "ability_charm", 75),
   PERFECT_IVS: new Achv("PERFECT_IVS", "", "PERFECT_IVS.description", "blunder_policy", 100),
-  CLASSIC_VICTORY: new Achv(
-    "CLASSIC_VICTORY",
-    "",
-    "CLASSIC_VICTORY.description",
-    "relic_crown",
-    150,
-    _ => globalScene.gameData.gameStats.sessionsWon === 0,
-  ),
   UNEVOLVED_CLASSIC_VICTORY: new Achv(
     "UNEVOLVED_CLASSIC_VICTORY",
     "",
@@ -531,6 +531,47 @@ export const achvs = {
     "eviolite",
     175,
     _ => globalScene.getPlayerParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions),
+  ),
+  FRESH_START: new ChallengeAchv(
+    "FRESH_START",
+    "",
+    "FRESH_START.description",
+    "reviver_seed",
+    100,
+    c =>
+      c instanceof FreshStartChallenge &&
+      c.value === 1 &&
+      !globalScene.gameMode.challenges.some(
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+      ),
+  ),
+  NUZLOCKE: new ChallengeAchv(
+    "NUZLOCKE",
+    "",
+    "NUZLOCKE.description",
+    "leaf_stone",
+    100,
+    c =>
+      c instanceof LimitedCatchChallenge &&
+      c.value > 0 &&
+      globalScene.gameMode.challenges.some(c => c.id === Challenges.HARDCORE && c.value > 0) &&
+      globalScene.gameMode.challenges.some(c => c.id === Challenges.FRESH_START && c.value > 0),
+  ),
+  INVERSE_BATTLE: new ChallengeAchv(
+    "INVERSE_BATTLE",
+    "",
+    "INVERSE_BATTLE.description",
+    "inverse",
+    100,
+    c => c instanceof InverseBattleChallenge && c.value > 0,
+  ),
+  FLIP_STATS: new ChallengeAchv(
+    "FLIP_STATS",
+    "",
+    "FLIP_STATS.description",
+    "dubious_disc",
+    100,
+    c => c instanceof FlipStatChallenge && c.value > 0,
   ),
   MONO_GEN_ONE_VICTORY: new ChallengeAchv(
     "MONO_GEN_ONE",
@@ -883,35 +924,6 @@ export const achvs = {
         c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
       ),
   ),
-  FRESH_START: new ChallengeAchv(
-    "FRESH_START",
-    "",
-    "FRESH_START.description",
-    "reviver_seed",
-    100,
-    c =>
-      c instanceof FreshStartChallenge &&
-      c.value === 1 &&
-      !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
-  ),
-  INVERSE_BATTLE: new ChallengeAchv(
-    "INVERSE_BATTLE",
-    "",
-    "INVERSE_BATTLE.description",
-    "inverse",
-    100,
-    c => c instanceof InverseBattleChallenge && c.value > 0,
-  ),
-  FLIP_STATS: new ChallengeAchv(
-    "FLIP_STATS",
-    "",
-    "FLIP_STATS.description",
-    "dubious_disc",
-    100,
-    c => c instanceof FlipStatChallenge && c.value > 0,
-  ),
   FLIP_INVERSE: new ChallengeAchv(
     "FLIP_INVERSE",
     "",
@@ -923,19 +935,6 @@ export const achvs = {
       c.value > 0 &&
       globalScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0),
   ).setSecret(),
-  // TODO: Decide on icon
-  NUZLOCKE: new ChallengeAchv(
-    "NUZLOCKE",
-    "",
-    "NUZLOCKE.description",
-    "leaf_stone",
-    100,
-    c =>
-      c instanceof LimitedCatchChallenge &&
-      c.value > 0 &&
-      globalScene.gameMode.challenges.some(c => c.id === Challenges.HARDCORE && c.value > 0) &&
-      globalScene.gameMode.challenges.some(c => c.id === Challenges.FRESH_START && c.value > 0),
-  ),
   BREEDERS_IN_SPACE: new Achv("BREEDERS_IN_SPACE", "", "BREEDERS_IN_SPACE.description", "moon_stone", 50).setSecret(),
 };
 
