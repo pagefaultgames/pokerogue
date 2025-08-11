@@ -2073,7 +2073,7 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
   }
 }
 
-export class TerrastalizeModifier extends ConsumablePokemonModifier {
+export class TerastallizeModifier extends ConsumablePokemonModifier {
   public declare type: TerastallizeModifierType;
   public teraType: PokemonType;
 
@@ -2084,9 +2084,9 @@ export class TerrastalizeModifier extends ConsumablePokemonModifier {
   }
 
   /**
-   * Checks if {@linkcode TerrastalizeModifier} should be applied
+   * Checks if {@linkcode TerastallizeModifier} should be applied
    * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
-   * @returns `true` if the {@linkcode TerrastalizeModifier} should be applied
+   * @returns `true` if the {@linkcode TerastallizeModifier} should be applied
    */
   override shouldApply(playerPokemon?: PlayerPokemon): boolean {
     return (
@@ -2098,7 +2098,7 @@ export class TerrastalizeModifier extends ConsumablePokemonModifier {
   }
 
   /**
-   * Applies {@linkcode TerrastalizeModifier}
+   * Applies {@linkcode TerastallizeModifier}
    * @param pokemon The {@linkcode PlayerPokemon} that consumes the item
    * @returns `true` if hp was restored
    */
@@ -3875,7 +3875,7 @@ const ModifierClassMap = Object.freeze({
   ResetNegativeStatStageModifier,
   FieldEffectModifier,
   ConsumablePokemonModifier,
-  TerrastalizeModifier,
+  TerastallizeModifier,
   PokemonHpRestoreModifier,
   PokemonStatusHealModifier,
   ConsumablePokemonMoveModifier,

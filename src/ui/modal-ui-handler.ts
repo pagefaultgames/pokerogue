@@ -46,7 +46,7 @@ export abstract class ModalUiHandler extends UiHandler {
     this.modalContainer = globalScene.add.container(0, 0);
 
     this.modalContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6),
+      new Phaser.Geom.Rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height),
       Phaser.Geom.Rectangle.Contains,
     );
 
@@ -105,8 +105,8 @@ export abstract class ModalUiHandler extends UiHandler {
         const overlay = globalScene.add.rectangle(
           (this.getWidth() + marginLeft + marginRight) / 2,
           (this.getHeight() + marginTop + marginBottom) / 2,
-          globalScene.game.canvas.width / 6,
-          globalScene.game.canvas.height / 6,
+          globalScene.scaledCanvas.width,
+          globalScene.scaledCanvas.height,
           0,
         );
         overlay.setOrigin(0.5, 0.5);
@@ -159,8 +159,8 @@ export abstract class ModalUiHandler extends UiHandler {
     const width = this.getWidth(config);
     const height = this.getHeight(config);
     this.modalContainer.setPosition(
-      (globalScene.game.canvas.width / 6 - (width + (marginRight - marginLeft))) / 2,
-      (-globalScene.game.canvas.height / 6 - (height + (marginBottom - marginTop))) / 2,
+      (globalScene.scaledCanvas.width - (width + (marginRight - marginLeft))) / 2,
+      (-globalScene.scaledCanvas.height - (height + (marginBottom - marginTop))) / 2,
     );
 
     this.modalBg.setSize(width, height);

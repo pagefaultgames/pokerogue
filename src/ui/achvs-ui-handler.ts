@@ -72,9 +72,9 @@ export class AchvsUiHandler extends MessageUiHandler {
     const ui = this.getUi();
 
     /** Width of the global canvas / 6 */
-    const WIDTH = globalScene.game.canvas.width / 6;
+    const WIDTH = globalScene.scaledCanvas.width;
     /** Height of the global canvas / 6 */
-    const HEIGHT = globalScene.game.canvas.height / 6;
+    const HEIGHT = globalScene.scaledCanvas.height;
 
     this.mainContainer = globalScene.add.container(1, -HEIGHT + 1);
 
