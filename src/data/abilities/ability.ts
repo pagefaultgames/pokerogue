@@ -1982,7 +1982,7 @@ export class AllyMoveCategoryPowerBoostAbAttr extends FieldMovePowerBoostAbAttr 
    */
   constructor(boostedCategories: MoveCategory[], powerMultiplier: number) {
     super((_pokemon, _defender, move) => {
-      if (_pokemon === null) {
+      if (isNullOrUndefined(pokemon)) {
         return false;
       }
       return boostedCategories.includes(_pokemon.getMoveCategory(_defender, move));
