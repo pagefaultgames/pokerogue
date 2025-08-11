@@ -112,7 +112,7 @@ describe("Weird Dream - Mystery Encounter", () => {
     it("should transform the new party into new species, 2 at +90/+110, the rest at +40/50 BST", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
 
-      const pokemonPrior = scene.getPlayerParty().map(pokemon => pokemon);
+      const pokemonPrior = scene.getPlayerParty();
       const bstsPrior = pokemonPrior.map(species => species.getSpeciesForm().getBaseStatTotal());
 
       await runMysteryEncounterToEnd(game, 1);
