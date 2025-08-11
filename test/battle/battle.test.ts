@@ -172,7 +172,7 @@ describe("Phase - Battle Phase", () => {
       .startingHeldItems([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]);
 
     await game.classicMode.startBattle();
-    game.scene.getPlayerPokemon()!.hp = 1;
+    game.field.getPlayerPokemon().hp = 1;
     game.move.select(moveToUse);
 
     await game.phaseInterceptor.to("BattleEndPhase");

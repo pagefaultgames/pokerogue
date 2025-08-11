@@ -40,7 +40,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
   it("should provide a x1.3 stat stage multiplier", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    const partyMember = game.scene.getPlayerPokemon()!;
+    const partyMember = game.field.getPlayerPokemon();
 
     vi.spyOn(partyMember, "getStatStageMultiplier");
 
@@ -56,7 +56,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    const partyMember = game.scene.getPlayerPokemon()!;
+    const partyMember = game.field.getPlayerPokemon();
 
     vi.spyOn(partyMember, "getAccuracyMultiplier");
 
@@ -76,7 +76,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
   it("should increase existing stat stage multiplier by 3/10 for the rest of the boosters", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    const partyMember = game.scene.getPlayerPokemon()!;
+    const partyMember = game.field.getPlayerPokemon();
 
     vi.spyOn(partyMember, "getStatStageMultiplier");
 
@@ -101,7 +101,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    const partyMember = game.scene.getPlayerPokemon()!;
+    const partyMember = game.field.getPlayerPokemon();
 
     vi.spyOn(partyMember, "getStatStageMultiplier");
     vi.spyOn(partyMember, "getAccuracyMultiplier");

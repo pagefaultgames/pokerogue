@@ -145,7 +145,7 @@ export class Arena {
             ? BiomePoolTier.BOSS_SUPER_RARE
             : BiomePoolTier.BOSS_ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
-    while (!this.pokemonPool[tier].length) {
+    while (!this.pokemonPool[tier]?.length) {
       console.log(`Downgraded rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
       tier--;
     }
@@ -536,6 +536,7 @@ export class Arena {
       case BiomeId.ABYSS:
       case BiomeId.SPACE:
       case BiomeId.TEMPLE:
+      case BiomeId.LABORATORY:
         return 16;
       default:
         return 0;

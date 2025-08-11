@@ -172,7 +172,7 @@ describe("Berries Abound - Mystery Encounter", () => {
     });
 
     it("should start battle if fastest pokemon is slower than boss below wave 50", async () => {
-      game.override.startingWave(41);
+      game.override.startingWave(42);
       const encounterTextSpy = vi.spyOn(EncounterDialogueUtils, "showEncounterText");
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
 

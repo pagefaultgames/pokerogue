@@ -37,7 +37,7 @@ describe("Moves - Tail whip", () => {
     const moveToUse = MoveId.TAIL_WHIP;
     await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
 
     game.move.select(moveToUse);

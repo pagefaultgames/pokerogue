@@ -41,7 +41,7 @@ describe("Moves - Clangorous Soul", () => {
   it("raises the user's ATK, DEF, SPATK, SPDEF, and SPD stat stages by 1 each at the cost of 1/3 of its maximum HP", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
     const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
     game.move.select(MoveId.CLANGOROUS_SOUL);
@@ -58,7 +58,7 @@ describe("Moves - Clangorous Soul", () => {
   it("will still take effect if one or more of the involved stat stages are not at max", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
     const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
 
     //Here - Stat.SPD -> 0 and Stat.SPDEF -> 4
@@ -81,7 +81,7 @@ describe("Moves - Clangorous Soul", () => {
   it("fails if all stat stages involved are at max", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     leadPokemon.setStatStage(Stat.ATK, 6);
     leadPokemon.setStatStage(Stat.DEF, 6);
@@ -103,7 +103,7 @@ describe("Moves - Clangorous Soul", () => {
   it("fails if the user's health is less than 1/3", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
     const hpLost = Math.floor(leadPokemon.getMaxHp() / RATIO);
     leadPokemon.hp = hpLost - PREDAMAGE;
 
