@@ -54,8 +54,10 @@ export abstract class PhasePriorityQueue {
    * @todo Remove this eventually once the patchwork bug this is used for is fixed
    */
   public tryRemovePhase(phaseFilter: (phase: Phase) => boolean, removeCount: number | "all" = 1): number {
-    if (typeof removeCount === "string") {
-      removeCount = Number.MAX_SAFE_INTEGER; // For the lulz
+    if (removeCount === "all") {
+      removeCount = Number.MAX_SAFE_INTEGER;
+    } else if (removeCount < 1) {
+      return 0;
     }
     let numRemoved = 0;
     let phaseIndex = this.queue.findIndex(phaseFilter);
