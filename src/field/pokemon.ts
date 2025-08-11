@@ -1825,7 +1825,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // Overrides moveset based on arrays specified in overrides.ts
     let overrideArray: MoveId | Array<MoveId> = this.isPlayer()
       ? Overrides.MOVESET_OVERRIDE
-      : Overrides.OPP_MOVESET_OVERRIDE;
+      : Overrides.ENEMY_MOVESET_OVERRIDE;
     overrideArray = coerceArray(overrideArray);
     if (overrideArray.length > 0) {
       if (!this.isPlayer()) {
@@ -2030,8 +2030,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.ABILITY_OVERRIDE && this.isPlayer()) {
       return allAbilities[Overrides.ABILITY_OVERRIDE];
     }
-    if (Overrides.OPP_ABILITY_OVERRIDE && this.isEnemy()) {
-      return allAbilities[Overrides.OPP_ABILITY_OVERRIDE];
+    if (Overrides.ENEMY_ABILITY_OVERRIDE && this.isEnemy()) {
+      return allAbilities[Overrides.ENEMY_ABILITY_OVERRIDE];
     }
     if (this.isFusion()) {
       if (!isNullOrUndefined(this.fusionCustomPokemonData?.ability) && this.fusionCustomPokemonData.ability !== -1) {
@@ -2060,8 +2060,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.PASSIVE_ABILITY_OVERRIDE && this.isPlayer()) {
       return allAbilities[Overrides.PASSIVE_ABILITY_OVERRIDE];
     }
-    if (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE && this.isEnemy()) {
-      return allAbilities[Overrides.OPP_PASSIVE_ABILITY_OVERRIDE];
+    if (Overrides.ENEMY_PASSIVE_ABILITY_OVERRIDE && this.isEnemy()) {
+      return allAbilities[Overrides.ENEMY_PASSIVE_ABILITY_OVERRIDE];
     }
     if (!isNullOrUndefined(this.customPokemonData.passive) && this.customPokemonData.passive !== -1) {
       return allAbilities[this.customPokemonData.passive];
@@ -2128,14 +2128,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // returns override if valid for current case
     if (
       (Overrides.HAS_PASSIVE_ABILITY_OVERRIDE === false && this.isPlayer()) ||
-      (Overrides.OPP_HAS_PASSIVE_ABILITY_OVERRIDE === false && this.isEnemy())
+      (Overrides.ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE === false && this.isEnemy())
     ) {
       return false;
     }
     if (
       ((Overrides.PASSIVE_ABILITY_OVERRIDE !== AbilityId.NONE || Overrides.HAS_PASSIVE_ABILITY_OVERRIDE) &&
         this.isPlayer()) ||
-      ((Overrides.OPP_PASSIVE_ABILITY_OVERRIDE !== AbilityId.NONE || Overrides.OPP_HAS_PASSIVE_ABILITY_OVERRIDE) &&
+      ((Overrides.ENEMY_PASSIVE_ABILITY_OVERRIDE !== AbilityId.NONE || Overrides.ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE) &&
         this.isEnemy())
     ) {
       return true;
@@ -3001,8 +3001,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (forStarter && this.isPlayer() && Overrides.STARTER_FUSION_SPECIES_OVERRIDE) {
       fusionOverride = getPokemonSpecies(Overrides.STARTER_FUSION_SPECIES_OVERRIDE);
-    } else if (this.isEnemy() && Overrides.OPP_FUSION_SPECIES_OVERRIDE) {
-      fusionOverride = getPokemonSpecies(Overrides.OPP_FUSION_SPECIES_OVERRIDE);
+    } else if (this.isEnemy() && Overrides.ENEMY_FUSION_SPECIES_OVERRIDE) {
+      fusionOverride = getPokemonSpecies(Overrides.ENEMY_FUSION_SPECIES_OVERRIDE);
     }
 
     this.fusionSpecies =
@@ -6241,22 +6241,22 @@ export class EnemyPokemon extends Pokemon {
       this.setBoss(boss, dataSource?.bossSegments);
     }
 
-    if (Overrides.OPP_STATUS_OVERRIDE) {
-      this.status = new Status(Overrides.OPP_STATUS_OVERRIDE, 0, 4);
+    if (Overrides.ENEMY_STATUS_OVERRIDE) {
+      this.status = new Status(Overrides.ENEMY_STATUS_OVERRIDE, 0, 4);
     }
 
-    if (Overrides.OPP_GENDER_OVERRIDE !== null) {
-      this.gender = Overrides.OPP_GENDER_OVERRIDE;
+    if (Overrides.ENEMY_GENDER_OVERRIDE !== null) {
+      this.gender = Overrides.ENEMY_GENDER_OVERRIDE;
     }
 
     const speciesId = this.species.speciesId;
 
     if (
-      speciesId in Overrides.OPP_FORM_OVERRIDES &&
-      !isNullOrUndefined(Overrides.OPP_FORM_OVERRIDES[speciesId]) &&
-      this.species.forms[Overrides.OPP_FORM_OVERRIDES[speciesId]]
+      speciesId in Overrides.ENEMY_FORM_OVERRIDES &&
+      !isNullOrUndefined(Overrides.ENEMY_FORM_OVERRIDES[speciesId]) &&
+      this.species.forms[Overrides.ENEMY_FORM_OVERRIDES[speciesId]]
     ) {
-      this.formIndex = Overrides.OPP_FORM_OVERRIDES[speciesId];
+      this.formIndex = Overrides.ENEMY_FORM_OVERRIDES[speciesId];
     } else if (globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
       const eventBoss = getDailyEventSeedBoss(globalScene.seed);
       if (!isNullOrUndefined(eventBoss)) {
@@ -6266,21 +6266,21 @@ export class EnemyPokemon extends Pokemon {
 
     if (!dataSource) {
       this.generateAndPopulateMoveset();
-      if (shinyLock || Overrides.OPP_SHINY_OVERRIDE === false) {
+      if (shinyLock || Overrides.ENEMY_SHINY_OVERRIDE === false) {
         this.shiny = false;
       } else {
         this.trySetShiny();
       }
 
-      if (!this.shiny && Overrides.OPP_SHINY_OVERRIDE) {
+      if (!this.shiny && Overrides.ENEMY_SHINY_OVERRIDE) {
         this.shiny = true;
         this.initShinySparkle();
       }
 
       if (this.shiny) {
         this.variant = this.generateShinyVariant();
-        if (Overrides.OPP_VARIANT_OVERRIDE !== null) {
-          this.variant = Overrides.OPP_VARIANT_OVERRIDE;
+        if (Overrides.ENEMY_VARIANT_OVERRIDE !== null) {
+          this.variant = Overrides.ENEMY_VARIANT_OVERRIDE;
         }
       }
 
