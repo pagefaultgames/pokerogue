@@ -227,8 +227,7 @@ export class HeldItemManager {
   }
 
   getFormChangeItems(): FormChangeItem[] {
-    // TODO: Please stop using `map(k => k)`
-    return getTypedKeys(this.formChangeItems).map(k => k);
+    return getTypedKeys(this.formChangeItems);
   }
 
   private getFormChangeItemEntries(): [FormChangeItem, FormChangeItemData | undefined][] {
