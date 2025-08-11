@@ -1,8 +1,9 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
-import { addTextObject, setTextStyle, TextStyle } from "#ui/text";
+import { addTextObject, setTextStyle } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 
@@ -123,7 +124,7 @@ export class NavigationMenu extends Phaser.GameObjects.Container {
    */
   setup() {
     const navigationManager = NavigationManager.getInstance();
-    const headerBg = addWindow(0, 0, globalScene.game.canvas.width / 6 - 2, 24);
+    const headerBg = addWindow(0, 0, globalScene.scaledCanvas.width - 2, 24);
     headerBg.setOrigin(0, 0);
     this.add(headerBg);
     this.width = headerBg.width;

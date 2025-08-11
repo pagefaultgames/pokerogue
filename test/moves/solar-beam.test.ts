@@ -38,8 +38,8 @@ describe("Moves - Solar Beam", () => {
   it("should deal damage in two turns if no weather is active", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SOLAR_BEAM);
 
@@ -66,8 +66,8 @@ describe("Moves - Solar Beam", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SOLAR_BEAM);
 

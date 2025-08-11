@@ -39,9 +39,10 @@ import { addPokemonDataToDexAndValidateAchievements } from "#mystery-encounters/
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { PartySizeRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { PokemonData } from "#system/pokemon-data";
 import { MusicPreference } from "#system/settings";
-import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { isNullOrUndefined, NumberHolder, randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
@@ -151,7 +152,8 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
     return true;
   })
   .withOption(
-    MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
+    MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
+      .withSceneRequirement(new PartySizeRequirement([2, 6], true)) // Requires 2 valid party members
       .withHasDexProgress(true)
       .withDialogue({
         buttonLabel: `${namespace}:option.1.label`,
@@ -257,7 +259,8 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
       .build(),
   )
   .withOption(
-    MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DEFAULT)
+    MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
+      .withSceneRequirement(new PartySizeRequirement([2, 6], true)) // Requires 2 valid party members
       .withHasDexProgress(true)
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
@@ -561,14 +564,14 @@ function generateTradeOption(alreadyUsedSpecies: PokemonSpecies[], originalBst?:
 
 function showTradeBackground() {
   return new Promise<void>(resolve => {
-    const tradeContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
+    const tradeContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
     tradeContainer.setName("Trade Background");
 
     const flyByStaticBg = globalScene.add.rectangle(
       0,
       0,
-      globalScene.game.canvas.width / 6,
-      globalScene.game.canvas.height / 6,
+      globalScene.scaledCanvas.width,
+      globalScene.scaledCanvas.height,
       0,
     );
     flyByStaticBg.setName("Black Background");

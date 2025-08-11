@@ -19,7 +19,7 @@ import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
-import { isReflected, isVirtual, MoveUseMode } from "#enums/move-use-mode";
+import { isReflected, MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import {
@@ -244,43 +244,19 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.currentBattle.lastPlayerInvolved = this.fieldIndex;
     }
 
-    const isDelayedAttack = this.move.hasAttr("DelayedAttackAttr");
-    /** If the user was somehow removed from the field and it's not a delayed attack, end this phase */
-    if (!user.isOnField()) {
-      if (!isDelayedAttack) {
-        super.end();
-        return;
-      }
-      if (!user.scene) {
-        /*
-         * This happens if the Pokemon that used the delayed attack gets caught and released
-         * on the turn the attack would have triggered. Having access to the global scene
-         * in the future may solve this entirely, so for now we just cancel the hit
-         */
-        super.end();
-        return;
-      }
-    }
+    const move = this.move;
 
     /**
      * Does an effect from this move override other effects on this turn?
      * e.g. Charging moves (Fly, etc.) on their first turn of use.
      */
     const overridden = new BooleanHolder(false);
-    const move = this.move;
 
     // Apply effects to override a move effect.
     // Assuming single target here works as this is (currently)
     // only used for Future Sight, calling and Pledge moves.
     // TODO: change if any other move effect overrides are introduced
-    applyMoveAttrs(
-      "OverrideMoveEffectAttr",
-      user,
-      this.getFirstTarget() ?? null,
-      move,
-      overridden,
-      isVirtual(this.useMode),
-    );
+    applyMoveAttrs("OverrideMoveEffectAttr", user, this.getFirstTarget() ?? null, move, overridden, this.useMode);
 
     // If other effects were overriden, stop this phase before they can be applied
     if (overridden.value) {
@@ -355,7 +331,7 @@ export class MoveEffectPhase extends PokemonPhase {
    */
   private postAnimCallback(user: Pokemon, targets: Pokemon[]) {
     // Add to the move history entry
-    if (this.firstHit) {
+    if (this.firstHit && this.useMode !== MoveUseMode.DELAYED_ATTACK) {
       user.pushMoveHistory(this.moveHistoryEntry);
       applyAbAttrs("ExecutedMoveAbAttr", { pokemon: user });
     }
@@ -663,6 +639,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
   /** @returns The {@linkcode Pokemon} using this phase's invoked move */
   public getUserPokemon(): Pokemon | null {
+    // TODO: Make this purely a battler index
     if (this.battlerIndex > BattlerIndex.ENEMY_2) {
       return globalScene.getPokemonById(this.battlerIndex);
     }
@@ -852,6 +829,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const substitute = target.getTag(SubstituteTag);
     const isBlockedBySubstitute = substitute && this.move.hitsSubstitute(user, target);
     if (isBlockedBySubstitute) {
+      user.turnData.totalDamageDealt += Math.min(dmg, substitute.hp);
       substitute.hp -= dmg;
     } else if (!target.isPlayer() && dmg >= target.hp) {
       globalScene.applyModifiers(EnemyEndureChanceModifier, false, target);
