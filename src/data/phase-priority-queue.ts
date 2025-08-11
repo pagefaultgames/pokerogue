@@ -44,6 +44,30 @@ export abstract class PhasePriorityQueue {
   public clear(): void {
     this.queue.splice(0, this.queue.length);
   }
+
+  /**
+   * Attempt to remove one or more Phases from the current queue.
+   * @param phaseFilter - The function to select phases for removal
+   * @param removeCount - The maximum number of phases to remove, or `all` to remove all matching phases;
+   * default `1`
+   * @returns The number of successfully removed phases
+   * @todo Remove this eventually once the patchwork bug this is used for is fixed
+   */
+  public tryRemovePhase(phaseFilter: (phase: Phase) => boolean, removeCount: number | "all" = 1): number {
+    if (typeof removeCount === "string") {
+      removeCount = Number.MAX_SAFE_INTEGER; // For the lulz
+    }
+    let numRemoved = 0;
+    let phaseIndex = this.queue.findIndex(phaseFilter);
+    if (phaseIndex === -1) {
+      return 0;
+    }
+    do {
+      this.queue.splice(phaseIndex, 1);
+      numRemoved++;
+    } while (numRemoved < removeCount || (phaseIndex = this.queue.findIndex(phaseFilter)) !== -1);
+    return removeCount;
+  }
 }
 
 /**
@@ -79,6 +103,7 @@ export class PostSummonPhasePriorityQueue extends PhasePriorityQueue {
   private queueAbilityPhase(phase: PostSummonPhase): void {
     const phasePokemon = phase.getPokemon();
 
+    console.log(phasePokemon.getNameToRender());
     phasePokemon.getAbilityPriorities().forEach((priority, idx) => {
       this.queue.push(new PostSummonActivateAbilityPhase(phasePokemon.getBattlerIndex(), priority, !!idx));
       globalScene.phaseManager.appendToPhase(

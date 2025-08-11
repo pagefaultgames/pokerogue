@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattleStyle } from "#enums/battle-style";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { DynamicPhaseType } from "#enums/dynamic-phase-type";
 import { SwitchType } from "#enums/switch-type";
 import { UiMode } from "#enums/ui-mode";
 import { BattlePhase } from "#phases/battle-phase";
@@ -66,6 +67,17 @@ export class CheckSwitchPhase extends BattlePhase {
           UiMode.CONFIRM,
           () => {
             globalScene.ui.setMode(UiMode.MESSAGE);
+            /*
+            Remove any pending `ActivatePriorityQueuePhase`s for the currently leaving Pokemon produced by the prior `SwitchSummonPhase`.
+            This is required to avoid triggering on-switch abilities twice on initial entrance.
+            TODO: Separate the animations from `SwitchSummonPhase` to another phase and call that on initial switch - this is a band-aid fix
+            TODO: Confirm with @emdeann what the maximum number of these things that gets unshifted can be
+            */
+            globalScene.phaseManager.tryRemoveDynamicPhase(
+              DynamicPhaseType.POST_SUMMON,
+              p => p.is("PostSummonPhase") && p.getPokemon() === pokemon,
+              4,
+            );
             globalScene.phaseManager.unshiftNew("SwitchPhase", SwitchType.INITIAL_SWITCH, this.fieldIndex, false, true);
             this.end();
           },
