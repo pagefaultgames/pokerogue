@@ -30,7 +30,7 @@ export class DamageNumberHandler {
     const baseScale = target.getSpriteScale() / 6;
     const damageNumber = addTextObject(
       target.x,
-      -(globalScene.game.canvas.height / 6) + target.y - target.getSprite().height / 2,
+      -globalScene.scaledCanvas.height + target.y - target.getSprite().height / 2,
       formatStat(amount, true),
       TextStyle.SUMMARY,
     );

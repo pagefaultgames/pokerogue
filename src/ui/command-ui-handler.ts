@@ -42,7 +42,7 @@ export class CommandUiHandler extends UiHandler {
     ui.add(this.commandsContainer);
 
     this.teraButton = globalScene.add.sprite(-32, 15, "button_tera");
-    this.teraButton.setName("terrastallize-button");
+    this.teraButton.setName("terastallize-button");
     this.teraButton.setScale(1.3);
     this.teraButton.setFrame("fire");
     this.teraButton.setPipeline(globalScene.spritePipeline, {

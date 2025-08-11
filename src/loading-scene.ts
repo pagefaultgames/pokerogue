@@ -29,6 +29,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
+    this.loadImage("logo_fake", "");
 
     // Load menu images
     this.loadAtlas("bg", "ui");

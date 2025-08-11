@@ -96,11 +96,11 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     const ui = this.getUi();
     this.navigationIcons = {};
 
-    this.settingsContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
+    this.settingsContainer = globalScene.add.container(1, -globalScene.scaledCanvas.height + 1);
     this.settingsContainer.setName(`settings-${this.titleSelected}`);
 
     this.settingsContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6),
+      new Phaser.Geom.Rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height),
       Phaser.Geom.Rectangle.Contains,
     );
 
@@ -109,15 +109,15 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     this.optionsBg = addWindow(
       0,
       this.navigationContainer.height,
-      globalScene.game.canvas.width / 6 - 2,
-      globalScene.game.canvas.height / 6 - 16 - this.navigationContainer.height - 2,
+      globalScene.scaledCanvas.width - 2,
+      globalScene.scaledCanvas.height - 16 - this.navigationContainer.height - 2,
     );
     this.optionsBg.setOrigin(0, 0);
 
     this.actionsBg = addWindow(
       0,
-      globalScene.game.canvas.height / 6 - this.navigationContainer.height,
-      globalScene.game.canvas.width / 6 - 2,
+      globalScene.scaledCanvas.height - this.navigationContainer.height,
+      globalScene.scaledCanvas.width - 2,
       22,
     );
     this.actionsBg.setOrigin(0, 0);
@@ -597,7 +597,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
 
     // Check if the cursor object exists, if not, create it.
     if (!this.cursorObj) {
-      const cursorWidth = globalScene.game.canvas.width / 6 - (this.scrollBar.visible ? 16 : 10);
+      const cursorWidth = globalScene.scaledCanvas.width - (this.scrollBar.visible ? 16 : 10);
       this.cursorObj = globalScene.add.nineslice(0, 0, "summary_moves_cursor", undefined, cursorWidth, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0); // Set the origin to the top-left corner.
       this.optionsContainer.add(this.cursorObj); // Add the cursor to the options container.

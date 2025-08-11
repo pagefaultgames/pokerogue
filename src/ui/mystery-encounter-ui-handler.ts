@@ -471,7 +471,7 @@ export class MysteryEncounterUiHandler extends UiHandler {
 
     // View Party Button
     const viewPartyText = addBBCodeTextObject(
-      globalScene.game.canvas.width / 6,
+      globalScene.scaledCanvas.width,
       -24,
       getBBCodeFrag(i18next.t("mysteryEncounterMessages:view_party_button"), TextStyle.PARTY),
       TextStyle.PARTY,
