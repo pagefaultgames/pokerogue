@@ -96,115 +96,12 @@ export class RibbonData {
     }
   }
 
-  //#region getters
-  /** Ribbon for completing the game in classic mode */
-  public get classic(): boolean {
-    return !!(this.payload & RibbonData.CLASSIC);
+  /**
+   * Check if a specific ribbon has been awarded
+   * @param flag - The ribbon to check
+   * @returns Whether the specified flag has been awarded
+   */
+  public has(flag: RibbonFlag): boolean {
+    return !!(this.payload & flag);
   }
-
-  /** Ribbon for completing a Nuzlocke challenge */
-  public get nuzlocke(): boolean {
-    return !!(this.payload & RibbonData.NUZLOCKE);
-  }
-
-  /** Ribbon for reaching max friendship with a Pokémon */
-  public get maxFriendship(): boolean {
-    return !!(this.payload & RibbonData.FRIENDSHIP);
-  }
-
-  /** Ribbon for completing the normal monotype challenge */
-  public get monoNormal(): boolean {
-    return !!(this.payload & RibbonData.MONO_NORMAL);
-  }
-
-  /** Ribbon for completing the flying monotype challenge */
-  public get monoFlying(): boolean {
-    return !!(this.payload & RibbonData.MONO_FLYING);
-  }
-
-  /** Ribbon for completing the poison monotype challenge */
-  public get monoPoison(): boolean {
-    return !!(this.payload & RibbonData.MONO_POISON);
-  }
-
-  /** Ribbon for completing the ground monotype challenge */
-  public get monoGround(): boolean {
-    return !!(this.payload & RibbonData.MONO_GROUND);
-  }
-
-  /** Ribbon for completing the rock monotype challenge */
-  public get monoRock(): boolean {
-    return !!(this.payload & RibbonData.MONO_ROCK);
-  }
-
-  /** Ribbon for completing the bug monotype challenge */
-  public get monoBug(): boolean {
-    return !!(this.payload & RibbonData.MONO_BUG);
-  }
-
-  /** Ribbon for completing the ghost monotype challenge */
-  public get monoGhost(): boolean {
-    return !!(this.payload & RibbonData.MONO_GHOST);
-  }
-
-  /** Ribbon for completing the steel monotype challenge */
-  public get monoSteel(): boolean {
-    return !!(this.payload & RibbonData.MONO_STEEL);
-  }
-
-  /** Ribbon for completing the fire monotype challenge */
-  public get monoFire(): boolean {
-    return !!(this.payload & RibbonData.MONO_FIRE);
-  }
-
-  /** Ribbon for completing the water monotype challenge */
-  public get monoWater(): boolean {
-    return !!(this.payload & RibbonData.MONO_WATER);
-  }
-
-  /** Ribbon for completing the grass monotype challenge */
-  public get monoGrass(): boolean {
-    return !!(this.payload & RibbonData.MONO_GRASS);
-  }
-
-  /** Ribbon for completing the electric monotype challenge */
-  public get monoElectric(): boolean {
-    return !!(this.payload & RibbonData.MONO_ELECTRIC);
-  }
-
-  /** Ribbon for completing the psychic monotype challenge */
-  public get monoPsychic(): boolean {
-    return !!(this.payload & RibbonData.MONO_PSYCHIC);
-  }
-
-  /** Ribbon for completing the ice monotype challenge */
-  public get monoIce(): boolean {
-    return !!(this.payload & RibbonData.MONO_ICE);
-  }
-
-  /** Ribbon for completing the dragon monotype challenge */
-  public get monoDragon(): boolean {
-    return !!(this.payload & RibbonData.MONO_DRAGON);
-  }
-
-  /** Ribbon for completing the dark monotype challenge */
-  public get monoDark(): boolean {
-    return !!(this.payload & RibbonData.MONO_DARK);
-  }
-
-  /** Ribbon for completing the fairy monotype challenge */
-  public get monoFairy(): boolean {
-    return !!(this.payload & RibbonData.MONO_FAIRY);
-  }
-
-  /** Ribbon for completing fighting the monotype challenge */
-  public get monoFighting(): boolean {
-    return !!(this.payload & RibbonData.MONO_FIGHTING);
-  }
-
-  /** Ribbon for completing any monogen challenge */
-  public get monoGen(): boolean {
-    return !!(this.payload & RibbonData.MONO_GEN);
-  }
-  //#endregion getters
 }

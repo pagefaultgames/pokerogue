@@ -45,6 +45,7 @@ import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import type { DexAttrProps, StarterAttributes, StarterMoveset } from "#system/game-data";
+import { RibbonData } from "#system/ribbons/ribbon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
@@ -3290,7 +3291,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       );
       container.classicWinIcon
         .setVisible(gameData.starterData[speciesId].classicWinCount > 0)
-        .setTexture(gameData.dexData[speciesId].ribbons.nuzlocke ? "champion_ribbon_emerald" : "champion_ribbon");
+        .setTexture(
+          gameData.dexData[speciesId].ribbons.has(RibbonData.NUZLOCKE) ? "champion_ribbon_emerald" : "champion_ribbon",
+        );
       container.favoriteIcon.setVisible(this.starterPreferences[speciesId]?.favorite ?? false);
 
       // 'Candy Icon' mode
