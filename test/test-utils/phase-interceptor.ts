@@ -356,7 +356,8 @@ export class PhaseInterceptor {
    * @param args - Additional arguments to pass to the original method.
    */
   setMode(mode: UiMode, ...args: unknown[]): Promise<void> {
-    const currentPhase = this.scene.phaseManager.getCurrentPhase()!;
+    // @ts-expect-error: `getCurrentPhase()` won't return `null` here
+    const currentPhase = this.scene.phaseManager.getCurrentPhase();
     const instance = this.scene.ui;
     console.log("setMode", `${UiMode[mode]} (=${mode})`, args);
     const ret = this.originalSetMode.apply(instance, [mode, ...args]);
