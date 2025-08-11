@@ -64,11 +64,12 @@ export abstract class PhasePriorityQueue {
     if (phaseIndex === -1) {
       return 0;
     }
-    do {
+    while (numRemoved < removeCount && phaseIndex !== -1) {
       this.queue.splice(phaseIndex, 1);
       numRemoved++;
-    } while (numRemoved < removeCount || (phaseIndex = this.queue.findIndex(phaseFilter)) !== -1);
-    return removeCount;
+      phaseIndex = this.queue.findIndex(phaseFilter);
+    }
+    return numRemoved;
   }
 }
 
