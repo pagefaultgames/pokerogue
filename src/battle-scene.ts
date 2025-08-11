@@ -1514,7 +1514,7 @@ export class BattleScene extends SceneBase {
   }
 
   newArena(biome: BiomeId, playerFaints?: number): Arena {
-    this.arena = new Arena(biome, BiomeId[biome].toLowerCase(), playerFaints);
+    this.arena = new Arena(biome, playerFaints);
     this.eventTarget.dispatchEvent(new NewArenaEvent());
 
     this.arenaBg.pipelineData = {

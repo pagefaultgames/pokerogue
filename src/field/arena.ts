@@ -68,9 +68,9 @@ export class Arena {
 
   public readonly eventTarget: EventTarget = new EventTarget();
 
-  constructor(biome: BiomeId, bgm: string, playerFaints = 0) {
+  constructor(biome: BiomeId, playerFaints = 0) {
     this.biomeType = biome;
-    this.bgm = bgm;
+    this.bgm = BiomeId[biome].toLowerCase();
     this.trainerPool = biomeTrainerPools[biome];
     this.updatePoolsForTimeOfDay();
     this.playerTerasUsed = 0;
