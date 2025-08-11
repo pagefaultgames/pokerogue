@@ -1284,7 +1284,7 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
 /**
  * Set stat stages when the user gets hit by a critical hit
  *
- * @privateremarks
+ * @privateRemarks
  * It is the responsibility of the caller to ensure that this ability attribute is only applied
  * when the user has been hit by a critical hit; such an event is not checked here.
  *
@@ -2043,7 +2043,7 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
 
   /**
    * @param stat - The stat being modified
-   * @param multipler - The multiplier to apply to the stat
+   * @param multiplier - The multiplier to apply to the stat
    * @param ignorable - Whether the multiplier can be ignored by mold breaker-like moves and abilities
    */
   constructor(stat: BattleStat, multiplier: number, ignorable = true) {
@@ -5491,7 +5491,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
  * Attribute used for abilities that damage opponents causing the user to faint
  * equal to the amount of damage the last attack inflicted.
  *
- * Used for {@linkcode Abilities.INNARDS_OUT}.
+ * Used for {@linkcode AbilityId.INNARDS_OUT | Innards Out}.
  * @sealed
  */
 export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
@@ -6444,23 +6444,23 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
   public override canApply({ pokemon, source, damage }: PostDamageAbAttrParams): boolean {
     const moveHistory = pokemon.getMoveHistory();
     // Will not activate when the Pokémon's HP is lowered by cutting its own HP
-    const fordbiddenAttackingMoves = [MoveId.BELLY_DRUM, MoveId.SUBSTITUTE, MoveId.CURSE, MoveId.PAIN_SPLIT];
+    const forbiddenAttackingMoves = [MoveId.BELLY_DRUM, MoveId.SUBSTITUTE, MoveId.CURSE, MoveId.PAIN_SPLIT];
     if (moveHistory.length > 0) {
       const lastMoveUsed = moveHistory[moveHistory.length - 1];
-      if (fordbiddenAttackingMoves.includes(lastMoveUsed.move)) {
+      if (forbiddenAttackingMoves.includes(lastMoveUsed.move)) {
         return false;
       }
     }
 
     // Dragon Tail and Circle Throw switch out Pokémon before the Ability activates.
-    const fordbiddenDefendingMoves = [MoveId.DRAGON_TAIL, MoveId.CIRCLE_THROW];
+    const forbiddenDefendingMoves = [MoveId.DRAGON_TAIL, MoveId.CIRCLE_THROW];
     if (source) {
       const enemyMoveHistory = source.getMoveHistory();
       if (enemyMoveHistory.length > 0) {
         const enemyLastMoveUsed = enemyMoveHistory[enemyMoveHistory.length - 1];
         // Will not activate if the Pokémon's HP falls below half while it is in the air during Sky Drop.
         if (
-          fordbiddenDefendingMoves.includes(enemyLastMoveUsed.move) ||
+          forbiddenDefendingMoves.includes(enemyLastMoveUsed.move) ||
           (enemyLastMoveUsed.move === MoveId.SKY_DROP && enemyLastMoveUsed.result === MoveResult.OTHER)
         ) {
           return false;
@@ -7307,7 +7307,7 @@ export function initAbilities() {
       .attr(HealFromBerryUseAbAttr, 1 / 3),
     new Ability(AbilityId.PROTEAN, 6)
       .attr(PokemonTypeChangeAbAttr)
-      // .condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.PROTEAN)) //Gen 9 Implementation
+      // .condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.PROTEAN)) //Gen 9 Implementation
       // TODO: needs testing on interaction with weather blockage
       .edgeCase(),
     new Ability(AbilityId.FUR_COAT, 6)
@@ -7566,7 +7566,7 @@ export function initAbilities() {
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true),
     new Ability(AbilityId.LIBERO, 8)
       .attr(PokemonTypeChangeAbAttr)
-    //.condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.LIBERO)), //Gen 9 Implementation
+    //.condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.LIBERO)), //Gen 9 Implementation
       // TODO: needs testing on interaction with weather blockage
       .edgeCase(),
     new Ability(AbilityId.BALL_FETCH, 8)
