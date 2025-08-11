@@ -1871,13 +1871,13 @@ class PartySlot extends Phaser.GameObjects.Container {
     const offsetJa = currentLanguage === "ja";
     const isItemManageMode = partyUiMode === PartyUiMode.MODIFIER_TRANSFER || partyUiMode === PartyUiMode.DISCARD;
 
-    const slotKey = this.isBenched
+    this.slotBgKey = this.isBenched
       ? "party_slot"
       : isItemManageMode && globalScene.currentBattle.double
         ? "party_slot_main_short"
         : "party_slot_main";
-    this.slotBgKey = this.pokemon.hp ? slotKey : `${slotKey}${"_fnt"}`;
-    this.slotBg = globalScene.add.sprite(0, 0, slotKey, this.slotBgKey);
+    const fullSlotBgKey = this.pokemon.hp ? this.slotBgKey : `${this.slotBgKey}${"_fnt"}`;
+    this.slotBg = globalScene.add.sprite(0, 0, this.slotBgKey, fullSlotBgKey);
     this.slotBg.setOrigin(0);
     this.add(this.slotBg);
 
