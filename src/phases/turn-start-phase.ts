@@ -17,9 +17,9 @@ export class TurnStartPhase extends FieldPhase {
   public readonly phaseName = "TurnStartPhase";
 
   /**
-   * This orders the active Pokemon on the field by speed into an BattlerIndex array and returns that array.
+   * Helper method to retrieve the current speed order of the combattants.
    * It also checks for Trick Room and reverses the array if it is present.
-   * @returns An array of {@linkcode BattlerIndex}es containing all on-field Pokemon sorted in speed order.
+   * @returns The {@linkcode BattlerIndex}es of all on-field Pokemon, sorted in speed order.
    */
   getSpeedOrder(): BattlerIndex[] {
     const playerField = globalScene.getPlayerField().filter(p => p.isActive());
@@ -53,7 +53,7 @@ export class TurnStartPhase extends FieldPhase {
   }
 
   /**
-   * This takes the result of getSpeedOrder and applies priority / bypass speed attributes to it.
+   * This takes the result of {@linkcode getSpeedOrder} and applies priority / bypass speed attributes to it.
    * This also considers the priority levels of various commands and changes the result of `getSpeedOrder` based on such.
    * @returns The `BattlerIndex`es of all on-field Pokemon sorted in action order.
    */
@@ -164,7 +164,7 @@ export class TurnStartPhase extends FieldPhase {
 
       // TODO: Remove `turnData.order` -
       // it is used exclusively for Fusion Flare/Bolt
-      // and uses a really jank implementation
+      // and uses a really jank (and incorrect) implementation
       if (turnCommand.command === Command.FIGHT) {
         pokemon.turnData.order = index;
       }
