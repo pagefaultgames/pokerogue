@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig",
+  "include": ["**/*.{js,jsx}"],
+  "compilerOptions": {
+    "checkJs": true,
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "erasableSyntaxOnly": true,
+    "strict": true
+  }
+}

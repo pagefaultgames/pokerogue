@@ -19,6 +19,7 @@
     // and having to verify whether each individual file is ignored
     "includes": [
       "**",
+      "!**/*.d.ts",
       "!**/dist/**/*",
       "!**/build/**/*",
       "!**/coverage/**/*",
@@ -176,10 +177,9 @@
       }
     },
 
-    // Overrides to prevent unused import removal inside `overrides.ts` and enums files (for TSDoc linkcodes),
-    // as well as in all boilerplate files
+    // Overrides to prevent unused import removal inside `overrides.ts` and enums files (for TSDoc linkcodes)
     {
-      "includes": ["**/src/overrides.ts", "**/src/enums/**/*", "**/*.boilerplate.ts", "**/*.d.ts"],
+      "includes": ["**/src/overrides.ts", "**/src/enums/**/*"],
       "linter": {
         "rules": {
           "correctness": {
@@ -189,7 +189,7 @@
       }
     },
     {
-      "includes": ["**/src/overrides.ts", "**/scripts/**/*.ts"],
+      "includes": ["**/src/overrides.ts"],
       "linter": {
         "rules": {
           "style": {

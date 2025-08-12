@@ -1,0 +1,38 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
+  // extend from base config in root dir
+  "extends": "//",
+  "files": {
+    "includes": ["**/*.{js,ts,jsx,tsx}"]
+  },
+  "linter": {
+    "rules": {
+      "style": {
+        // Unfortunately, TS does not support multiple configs, so we need to have Biome pull the slack
+        // and effectively enforce `noErasableSyntax`
+        "noEnum": "error",
+        "noNamespace": "error",
+        "noNonNullAssertion": "error", // TODO: Remove once added to main config
+        "useForOf": "error" // TODO: Move to main config
+      },
+      "suspicious": {
+        "noImplicitAnyLet": "error"
+      }
+    }
+  },
+  "overrides": [
+    // Prevent unused import removal inside boilerplate files.
+    // These are unused in the file themselves, but will become used once copied and converted to actual TS files.
+    // (If not, the generated files will themselves produce errors.)
+    {
+      "includes": ["**/*.boilerplate.ts", "**/boilerplates/*.ts"], // TODO: Rename existing boilerplates in the folder and remove this 2nd alias
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedImports": "off"
+          }
+        }
+      }
+    }
+  ]
+}
