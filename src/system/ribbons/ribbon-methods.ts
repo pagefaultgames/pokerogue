@@ -8,7 +8,7 @@ import { isNullOrUndefined } from "#utils/common";
  * Award one or more ribbons to a species and its pre-evolutions
  *
  * @param id - The ID of the species to award ribbons to
- * @param ribbons The ribbon(s) to award (use bitwise OR to combine multiple)
+ * @param ribbons - The ribbon(s) to award (use bitwise OR to combine multiple)
  */
 export function awardRibbonsToSpeciesLine(id: SpeciesId, ribbons: RibbonFlag): void {
   const dexData = globalScene.gameData.dexData;

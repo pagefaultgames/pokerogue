@@ -1,4 +1,5 @@
 import type { Brander } from "#types/type-helpers";
+
 export type RibbonFlag = (number & Brander<"RibbonFlag">) | 0;
 
 /**
