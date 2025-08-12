@@ -13,55 +13,74 @@ export class RibbonData {
 
   //#region Ribbons
   //#region Monotype challenge ribbons
-  /** Flag for winning the normal monotype challenge */
+  /** Ribbon for winning the normal monotype challenge */
   public static readonly MONO_NORMAL = 0x1 as RibbonFlag;
-  /** Flag for winning the fighting monotype challenge */
+  /** Ribbon for winning the fighting monotype challenge */
   public static readonly MONO_FIGHTING = 0x2 as RibbonFlag;
-  /** Flag for winning the flying monotype challenge */
+  /** Ribbon for winning the flying monotype challenge */
   public static readonly MONO_FLYING = 0x4 as RibbonFlag;
-  /** Flag for winning the poision monotype challenge */
+  /** Ribbon for winning the poision monotype challenge */
   public static readonly MONO_POISON = 0x8 as RibbonFlag;
-  /** Flag for winning the ground monotype challenge */
+  /** Ribbon for winning the ground monotype challenge */
   public static readonly MONO_GROUND = 0x10 as RibbonFlag;
-  /** Flag for winning the rock monotype challenge */
+  /** Ribbon for winning the rock monotype challenge */
   public static readonly MONO_ROCK = 0x20 as RibbonFlag;
-  /** Flag for winning the bug monotype challenge */
+  /** Ribbon for winning the bug monotype challenge */
   public static readonly MONO_BUG = 0x40 as RibbonFlag;
-  /** Flag for winning the ghost monotype challenge */
+  /** Ribbon for winning the ghost monotype challenge */
   public static readonly MONO_GHOST = 0x80 as RibbonFlag;
-  /** Flag for winning the steel monotype challenge */
+  /** Ribbon for winning the steel monotype challenge */
   public static readonly MONO_STEEL = 0x100 as RibbonFlag;
-  /** Flag for winning the fire monotype challenge */
+  /** Ribbon for winning the fire monotype challenge */
   public static readonly MONO_FIRE = 0x200 as RibbonFlag;
-  /** Flag for winning the water monotype challenge */
+  /** Ribbon for winning the water monotype challenge */
   public static readonly MONO_WATER = 0x400 as RibbonFlag;
-  /** Flag for winning the grass monotype challenge */
+  /** Ribbon for winning the grass monotype challenge */
   public static readonly MONO_GRASS = 0x800 as RibbonFlag;
-  /** Flag for winning the electric monotype challenge */
+  /** Ribbon for winning the electric monotype challenge */
   public static readonly MONO_ELECTRIC = 0x1000 as RibbonFlag;
-  /** Flag for winning the psychic monotype challenge */
+  /** Ribbon for winning the psychic monotype challenge */
   public static readonly MONO_PSYCHIC = 0x2000 as RibbonFlag;
-  /** Flag for winning the ice monotype challenge */
+  /** Ribbon for winning the ice monotype challenge */
   public static readonly MONO_ICE = 0x4000 as RibbonFlag;
-  /** Flag for winning the dragon monotype challenge */
+  /** Ribbon for winning the dragon monotype challenge */
   public static readonly MONO_DRAGON = 0x8000 as RibbonFlag;
-  /** Flag for winning the dark monotype challenge */
+  /** Ribbon for winning the dark monotype challenge */
   public static readonly MONO_DARK = 0x10000 as RibbonFlag;
-  /** Flag for winning the fairy monotype challenge */
+  /** Ribbon for winning the fairy monotype challenge */
   public static readonly MONO_FAIRY = 0x20000 as RibbonFlag;
   //#endregion Monotype ribbons
 
-  /** Flag for winning a mono generation challenge */
-  public static readonly MONO_GEN = 0x40000 as RibbonFlag;
+  //#region Monogen ribbons
+  /** Ribbon for winning the the mono gen 1 challenge */
+  public static readonly MONO_GEN_1 = 0x40000 as RibbonFlag;
+  /** Ribbon for winning the the mono gen 2 challenge */
+  public static readonly MONO_GEN_2 = 0x80000 as RibbonFlag;
+  /** Ribbon for winning the mono gen 3 challenge */
+  public static readonly MONO_GEN_3 = 0x100000 as RibbonFlag;
+  /** Ribbon for winning the mono gen 4 challenge */
+  public static readonly MONO_GEN_4 = 0x200000 as RibbonFlag;
+  /** Ribbon for winning the mono gen 5 challenge */
+  public static readonly MONO_GEN_5 = 0x400000 as RibbonFlag;
+  /** Ribbon for winning the mono gen 6 challenge */
+  public static readonly MONO_GEN_6 = 0x800000 as RibbonFlag;
+  /** Ribbon for winning the mono gen 7 challenge */
+  public static readonly MONO_GEN_7 = 0x1000000 as RibbonFlag;
+  /** Ribbon for winning the mono gen 8 challenge */
+  public static readonly MONO_GEN_8 = 0x2000000 as RibbonFlag;
+  /** Ribbon for winning the mono gen 9 challenge */
+  public static readonly MONO_GEN_9 = 0x4000000 as RibbonFlag;
+  //#endregion Monogen ribbons
 
-  /** Flag for winning classic */
-  public static readonly CLASSIC = 0x80000 as RibbonFlag;
-  /** Flag for winning the nuzzlocke challenge */
-  public static readonly NUZLOCKE = 0x100000 as RibbonFlag;
-  /** Flag for reaching max friendship */
-  public static readonly FRIENDSHIP = 0x200000 as RibbonFlag;
+  /** Ribbon for winning classic */
+  public static readonly CLASSIC = 0x8000000 as RibbonFlag;
+  /** Ribbon for winning the nuzzlocke challenge */
+  public static readonly NUZLOCKE = 0x10000000 as RibbonFlag;
+  /** Ribbon for reaching max friendship */
+  public static readonly FRIENDSHIP = 0x20000000 as RibbonFlag;
   //#endregion Ribbons
 
+  /** Create a new instance of RibbonData. Generally, {@linkcode fromJSON} is used instead. */
   constructor(value: number) {
     this.payload = value;
   }
