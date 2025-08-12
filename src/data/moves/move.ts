@@ -1,96 +1,100 @@
-import { AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrParams } from "#abilities/ability";
+import {AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrParams} from "#abilities/ability";
+import {applyAbAttrs} from "#abilities/apply-ab-attrs";
+import {loggedInUser} from "#app/account";
+import type {GameMode} from "#app/game-mode";
+import {globalScene} from "#app/global-scene";
+import {getPokemonNameWithAffix} from "#app/messages";
+import type {ArenaTrapTag} from "#data/arena-tag";
+import {WeakenMoveTypeTag} from "#data/arena-tag";
+import {MoveChargeAnim} from "#data/battle-anims";
 import {
-  applyAbAttrs
-} from "#abilities/apply-ab-attrs";
-import { loggedInUser } from "#app/account";
-import type { GameMode } from "#app/game-mode";
-import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
-import type { ArenaTrapTag } from "#data/arena-tag";
-import { WeakenMoveTypeTag } from "#data/arena-tag";
-import { MoveChargeAnim } from "#data/battle-anims";
-import {
-  CommandedTag,
-  EncoreTag,
-  GulpMissileTag,
-  HelpingHandTag,
-  SemiInvulnerableTag,
-  ShellTrapTag,
-  StockpilingTag,
-  SubstituteTag,
-  TrappedTag,
-  TypeBoostTag,
+    CommandedTag,
+    EncoreTag,
+    GulpMissileTag,
+    HelpingHandTag,
+    SemiInvulnerableTag,
+    ShellTrapTag,
+    StockpilingTag,
+    SubstituteTag,
+    TrappedTag,
+    TypeBoostTag,
 } from "#data/battler-tags";
-import { getBerryEffectFunc } from "#data/berry";
-import { allAbilities, allMoves } from "#data/data-lists";
-import { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-triggers";
-import { DelayedAttackTag } from "#data/positional-tags/positional-tag";
+import {getBerryEffectFunc} from "#data/berry";
+import {allAbilities, allMoves} from "#data/data-lists";
+import {SpeciesFormChangeRevertWeatherFormTrigger} from "#data/form-change-triggers";
+import {DelayedAttackTag} from "#data/positional-tags/positional-tag";
+import {getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect,} from "#data/status-effect";
+import {TerrainType} from "#data/terrain";
+import {getTypeDamageMultiplier} from "#data/type";
+import {AbilityId} from "#enums/ability-id";
+import {ArenaTagSide} from "#enums/arena-tag-side";
+import {ArenaTagType} from "#enums/arena-tag-type";
+import {BattleType} from "#enums/battle-type";
+import type {BattlerIndex} from "#enums/battler-index";
+import {BattlerTagType} from "#enums/battler-tag-type";
+import {BiomeId} from "#enums/biome-id";
+import {ChallengeType} from "#enums/challenge-type";
+import {Command} from "#enums/command";
+import {FieldPosition} from "#enums/field-position";
+import {HitResult} from "#enums/hit-result";
+import {ModifierPoolType} from "#enums/modifier-pool-type";
+import {ChargeAnim} from "#enums/move-anims-common";
+import {MoveId} from "#enums/move-id";
+import {MoveResult} from "#enums/move-result";
+import {isVirtual, MoveUseMode} from "#enums/move-use-mode";
+import {MoveCategory} from "#enums/move-category";
+import {MoveEffectTrigger} from "#enums/move-effect-trigger";
+import {MoveFlags} from "#enums/move-flags";
+import {MoveTarget} from "#enums/move-target";
+import {MultiHitType} from "#enums/multi-hit-type";
+import {PokemonType} from "#enums/pokemon-type";
+import {PositionalTagType} from "#enums/positional-tag-type";
+import {SpeciesId} from "#enums/species-id";
+import {BATTLE_STATS, type BattleStat, type EffectiveStat, getStatKey, Stat,} from "#enums/stat";
+import {StatusEffect} from "#enums/status-effect";
+import {SwitchType} from "#enums/switch-type";
+import {WeatherType} from "#enums/weather-type";
+import {MoveUsedEvent} from "#events/battle-scene";
+import type {EnemyPokemon, Pokemon} from "#field/pokemon";
 import {
-  getNonVolatileStatusEffects,
-  getStatusEffectHealText,
-  isNonVolatileStatusEffect,
-} from "#data/status-effect";
-import { TerrainType } from "#data/terrain";
-import { getTypeDamageMultiplier } from "#data/type";
-import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattleType } from "#enums/battle-type";
-import type { BattlerIndex } from "#enums/battler-index";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { BiomeId } from "#enums/biome-id";
-import { ChallengeType } from "#enums/challenge-type";
-import { Command } from "#enums/command";
-import { FieldPosition } from "#enums/field-position";
-import { HitResult } from "#enums/hit-result";
-import { ModifierPoolType } from "#enums/modifier-pool-type";
-import { ChargeAnim } from "#enums/move-anims-common";
-import { MoveId } from "#enums/move-id";
-import { MoveResult } from "#enums/move-result";
-import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
-import { MoveCategory } from "#enums/move-category";
-import { MoveEffectTrigger } from "#enums/move-effect-trigger";
-import { MoveFlags } from "#enums/move-flags";
-import { MoveTarget } from "#enums/move-target";
-import { MultiHitType } from "#enums/multi-hit-type";
-import { PokemonType } from "#enums/pokemon-type";
-import { PositionalTagType } from "#enums/positional-tag-type";
-import { SpeciesId } from "#enums/species-id";
-import {
-  BATTLE_STATS,
-  type BattleStat,
-  type EffectiveStat,
-  getStatKey,
-  Stat,
-} from "#enums/stat";
-import { StatusEffect } from "#enums/status-effect";
-import { SwitchType } from "#enums/switch-type";
-import { WeatherType } from "#enums/weather-type";
-import { MoveUsedEvent } from "#events/battle-scene";
-import type { EnemyPokemon, Pokemon } from "#field/pokemon";
-import {
-  AttackTypeBoosterModifier,
-  BerryModifier,
-  PokemonHeldItemModifier,
-  PokemonMoveAccuracyBoosterModifier,
-  PokemonMultiHitModifier,
-  PreserveBerryModifier,
+    AttackTypeBoosterModifier,
+    BerryModifier,
+    PokemonHeldItemModifier,
+    PokemonMoveAccuracyBoosterModifier,
+    PokemonMultiHitModifier,
+    PreserveBerryModifier,
 } from "#modifiers/modifier";
-import { applyMoveAttrs } from "#moves/apply-attrs";
-import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSketchMoves, invalidSleepTalkMoves } from "#moves/invalid-moves";
-import { frenzyMissFunc, getMoveTargets } from "#moves/move-utils";
-import { PokemonMove } from "#moves/pokemon-move";
-import { MoveEndPhase } from "#phases/move-end-phase";
-import { MovePhase } from "#phases/move-phase";
-import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
-import { SwitchSummonPhase } from "#phases/switch-summon-phase";
-import type { AttackMoveResult } from "#types/attack-move-result";
-import type { Localizable } from "#types/locales";
-import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveClassMap, MoveKindString } from "#types/move-types";
-import type { TurnMove } from "#types/turn-move";
-import { BooleanHolder, type Constructor, isNullOrUndefined, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
-import { getEnumValues } from "#utils/enums";
-import { toTitleCase } from "#utils/strings";
+import {applyMoveAttrs} from "#moves/apply-attrs";
+import {
+    invalidAssistMoves,
+    invalidCopycatMoves,
+    invalidMetronomeMoves,
+    invalidMirrorMoveMoves,
+    invalidSketchMoves,
+    invalidSleepTalkMoves
+} from "#moves/invalid-moves";
+import {frenzyMissFunc, getMoveTargets} from "#moves/move-utils";
+import {PokemonMove} from "#moves/pokemon-move";
+import {MoveEndPhase} from "#phases/move-end-phase";
+import {MovePhase} from "#phases/move-phase";
+import {PokemonHealPhase} from "#phases/pokemon-heal-phase";
+import {SwitchSummonPhase} from "#phases/switch-summon-phase";
+import type {AttackMoveResult} from "#types/attack-move-result";
+import type {Localizable} from "#types/locales";
+import type {ChargingMove, MoveAttrMap, MoveAttrString, MoveClassMap, MoveKindString} from "#types/move-types";
+import type {TurnMove} from "#types/turn-move";
+import {
+    BooleanHolder,
+    type Constructor,
+    isNullOrUndefined,
+    NumberHolder,
+    randSeedFloat,
+    randSeedInt,
+    randSeedItem,
+    toDmgValue
+} from "#utils/common";
+import {getEnumValues} from "#utils/enums";
+import {toTitleCase} from "#utils/strings";
 import i18next from "i18next";
 import { applyChallenges } from "#utils/challenge-utils";
 
@@ -1626,7 +1630,7 @@ export class MatchHpAttr extends FixedDamageAttr {
   }*/
 }
 
-type MoveFilter = (move: Move) => boolean;
+type MoveFilter = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 
 export class CounterDamageAttr extends FixedDamageAttr {
   private moveFilter: MoveFilter;
@@ -1640,14 +1644,14 @@ export class CounterDamageAttr extends FixedDamageAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const damage = user.turnData.attacksReceived.filter(ar => this.moveFilter(allMoves[ar.move])).reduce((total: number, ar: AttackMoveResult) => total + ar.damage, 0);
+    const damage = user.turnData.attacksReceived.filter(ar => this.moveFilter(user, target, allMoves[ar.move])).reduce((total: number, ar: AttackMoveResult) => total + ar.damage, 0);
     (args[0] as NumberHolder).value = toDmgValue(damage * this.multiplier);
 
     return true;
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !!user.turnData.attacksReceived.filter(ar => this.moveFilter(allMoves[ar.move])).length;
+    return (user, target, move) => !!user.turnData.attacksReceived.filter(ar => this.moveFilter(user, target, allMoves[ar.move])).length;
   }
 }
 
@@ -2534,10 +2538,10 @@ export class StatusEffectAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     const statusCheck = moveChance < 0 || moveChance === 100 || user.randBattleSeedInt(100) < moveChance;
-    const quiet = move.category !== MoveCategory.STATUS;
+    const quiet = user.getMoveCategory(target, move) !== MoveCategory.STATUS;
     if (statusCheck) {
       const pokemon = this.selfTarget ? user : target;
-      if (user !== target && move.category === MoveCategory.STATUS && !target.canSetStatus(this.effect, quiet, false, user, true)) {
+      if (user !== target && user.getMoveCategory(target, move) === MoveCategory.STATUS && !target.canSetStatus(this.effect, quiet, false, user, true)) {
         return false;
       }
       if (((!pokemon.status || this.overrideStatus) || (pokemon.status.effect === this.effect && moveChance < 0))
@@ -5882,7 +5886,7 @@ export class ConfuseAttr extends AddBattlerTagAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!this.selfTarget && target.isSafeguarded(user)) {
-      if (move.category === MoveCategory.STATUS) {
+      if (user.getMoveCategory(target, move) === MoveCategory.STATUS) {
         globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(target) }));
       }
       return false;
@@ -5916,8 +5920,8 @@ export class ProtectAttr extends AddBattlerTagAttr {
       for (const turnMove of user.getLastXMoves(-1).slice()) {
         if (
           // Quick & Wide guard increment the Protect counter without using it for fail chance
-          !(allMoves[turnMove.move].hasAttr("ProtectAttr") || 
-          [MoveId.QUICK_GUARD, MoveId.WIDE_GUARD].includes(turnMove.move)) || 
+          !(allMoves[turnMove.move].hasAttr("ProtectAttr") ||
+          [MoveId.QUICK_GUARD, MoveId.WIDE_GUARD].includes(turnMove.move)) ||
           turnMove.result !== MoveResult.SUCCESS
         ) {
           break;
@@ -6498,7 +6502,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => (move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move));
+    return (user, target, move) => (user.getMoveCategory(target, move) !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move));
   }
 
   getFailedText(_user: Pokemon, target: Pokemon, _move: Move): string | undefined {
@@ -6555,7 +6559,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         return !this.isBatonPass()
                 && globalScene.currentBattle.waveIndex % 10 !== 0
                 // Don't allow wild mons to flee with U-turn et al.
-                && !(this.selfSwitch && MoveCategory.STATUS !== move.category);
+                && !(this.selfSwitch && MoveCategory.STATUS !== user.getMoveCategory(target, move));
       }
 
       const party = player ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
@@ -8691,7 +8695,7 @@ export function initMoves() {
     new AttackMove(MoveId.LOW_KICK, PokemonType.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, 0, 1)
       .attr(WeightPowerAttr),
     new AttackMove(MoveId.COUNTER, PokemonType.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, -5, 1)
-      .attr(CounterDamageAttr, (move: Move) => move.category === MoveCategory.PHYSICAL, 2)
+      .attr(CounterDamageAttr, (user: Pokemon, target: Pokemon, move: Move) => user.getMoveCategory(target, move) === MoveCategory.PHYSICAL, 2)
       .target(MoveTarget.ATTACKER),
     new AttackMove(MoveId.SEISMIC_TOSS, PokemonType.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, 0, 1)
       .attr(LevelDamageAttr),
@@ -9256,7 +9260,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1)
       .bitingMove(),
     new AttackMove(MoveId.MIRROR_COAT, PokemonType.PSYCHIC, MoveCategory.SPECIAL, -1, 100, 20, -1, -5, 2)
-      .attr(CounterDamageAttr, (move: Move) => move.category === MoveCategory.SPECIAL, 2)
+      .attr(CounterDamageAttr, (user: Pokemon, target: Pokemon, move: Move) => user.getMoveCategory(target, move) === MoveCategory.SPECIAL, 2)
       .target(MoveTarget.ATTACKER),
     new StatusMove(MoveId.PSYCH_UP, PokemonType.NORMAL, -1, 10, -1, 0, 2)
       .ignoresSubstitute()
@@ -9667,7 +9671,7 @@ export function initMoves() {
       .attr(AcupressureStatStageChangeAttr)
       .target(MoveTarget.USER_OR_NEAR_ALLY),
     new AttackMove(MoveId.METAL_BURST, PokemonType.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
-      .attr(CounterDamageAttr, (move: Move) => (move.category === MoveCategory.PHYSICAL || move.category === MoveCategory.SPECIAL), 1.5)
+      .attr(CounterDamageAttr, (user: Pokemon, target: Pokemon, move: Move) => (user.getMoveCategory(target, move) === MoveCategory.PHYSICAL || user.getMoveCategory(target, move) === MoveCategory.SPECIAL), 1.5)
       .redirectCounter()
       .makesContact(false)
       .target(MoveTarget.ATTACKER),
@@ -11447,7 +11451,7 @@ export function initMoves() {
         return !turnMove.length || turnMove[0].move !== move.id || turnMove[0].result !== MoveResult.SUCCESS;
       }), // TODO Add Instruct/Encore interaction
     new AttackMove(MoveId.COMEUPPANCE, PokemonType.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 9)
-      .attr(CounterDamageAttr, (move: Move) => (move.category === MoveCategory.PHYSICAL || move.category === MoveCategory.SPECIAL), 1.5)
+      .attr(CounterDamageAttr, (user: Pokemon, target: Pokemon, move: Move) => (user.getMoveCategory(target, move) === MoveCategory.PHYSICAL || user.getMoveCategory(target, move) === MoveCategory.SPECIAL), 1.5)
       .redirectCounter()
       .target(MoveTarget.ATTACKER),
     new AttackMove(MoveId.AQUA_CUTTER, PokemonType.WATER, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 9)
