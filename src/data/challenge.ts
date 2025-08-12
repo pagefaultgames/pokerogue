@@ -44,7 +44,7 @@ export abstract class Challenge {
   public conditions: ChallengeCondition[];
 
   /**
-   * The Ribbon awarded on challenge completion, or 0 if the challenge has no ribbon.
+   * The Ribbon awarded on challenge completion, or 0 if the challenge has no ribbon or is not enabled
    *
    * @defaultValue 0
    */
@@ -434,8 +434,11 @@ type ChallengeCondition = (data: GameData) => boolean;
  */
 export class SingleGenerationChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return RibbonData.MONO_GEN;
+    // NOTE: This logic will not work for the eventual mono gen 10 ribbon, as
+    // as its flag will not be in sequence with the other mono gen ribbons.
+    return this.value ? ((RibbonData.MONO_GEN_1 << (this.value - 1)) as RibbonFlag) : 0;
   }
+
   constructor() {
     super(Challenges.SINGLE_GENERATION, 9);
   }
@@ -703,7 +706,7 @@ export class SingleTypeChallenge extends Challenge {
     // `this.value` represents the 1-based index of pokemon type
     // `RibbonData.MONO_NORMAL` starts the flag position for the types,
     // and we shift it by 1 for the specific type.
-    return (RibbonData.MONO_NORMAL << (this.value - 1)) as RibbonFlag;
+    return this.value ? ((RibbonData.MONO_NORMAL << (this.value - 1)) as RibbonFlag) : 0;
   }
   private static TYPE_OVERRIDES: monotypeOverride[] = [
     { species: SpeciesId.CASTFORM, type: PokemonType.NORMAL, fusion: false },
@@ -774,6 +777,9 @@ export class SingleTypeChallenge extends Challenge {
  * Implements a fresh start challenge.
  */
 export class FreshStartChallenge extends Challenge {
+  public override get ribbonAwarded(): RibbonFlag {
+    return this.value ? RibbonData.FRESH_START : 0;
+  }
   constructor() {
     super(Challenges.FRESH_START, 2);
   }
@@ -847,6 +853,9 @@ export class FreshStartChallenge extends Challenge {
  * Implements an inverse battle challenge.
  */
 export class InverseBattleChallenge extends Challenge {
+  public override get ribbonAwarded(): RibbonFlag {
+    return this.value ? RibbonData.INVERSE : 0;
+  }
   constructor() {
     super(Challenges.INVERSE_BATTLE, 1);
   }
@@ -880,6 +889,9 @@ export class InverseBattleChallenge extends Challenge {
  * Implements a flip stat challenge.
  */
 export class FlipStatChallenge extends Challenge {
+  public override get ribbonAwarded(): RibbonFlag {
+    return this.value ? RibbonData.FLIP_STATS : 0;
+  }
   constructor() {
     super(Challenges.FLIP_STAT, 1);
   }
@@ -960,6 +972,9 @@ export class LowerStarterPointsChallenge extends Challenge {
  * Implements a No Support challenge
  */
 export class LimitedSupportChallenge extends Challenge {
+  public override get ribbonAwarded(): RibbonFlag {
+    return this.value ? ((RibbonData.NO_HEAL << (this.value - 1)) as RibbonFlag) : 0;
+  }
   constructor() {
     super(Challenges.LIMITED_SUPPORT, 3);
   }
@@ -992,6 +1007,9 @@ export class LimitedSupportChallenge extends Challenge {
  * Implements a Limited Catch challenge
  */
 export class LimitedCatchChallenge extends Challenge {
+  public override get ribbonAwarded(): RibbonFlag {
+    return this.value ? RibbonData.LIMITED_CATCH : 0;
+  }
   constructor() {
     super(Challenges.LIMITED_CATCH, 1);
   }
@@ -1016,6 +1034,9 @@ export class LimitedCatchChallenge extends Challenge {
  * Implements a Permanent Faint challenge
  */
 export class HardcoreChallenge extends Challenge {
+  public override get ribbonAwarded(): RibbonFlag {
+    return this.value ? RibbonData.HARDCORE : 0;
+  }
   constructor() {
     super(Challenges.HARDCORE, 1);
   }

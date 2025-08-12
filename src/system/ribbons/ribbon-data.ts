@@ -1,5 +1,5 @@
 import type { Brander } from "#types/type-helpers";
-export type RibbonFlag = number & Brander<"RibbonFlag">;
+export type RibbonFlag = (number & Brander<"RibbonFlag">) | 0;
 
 /**
  * Class for ribbon data management. Usually constructed via the {@linkcode fromJSON} method.
@@ -78,6 +78,27 @@ export class RibbonData {
   public static readonly NUZLOCKE = 0x10000000 as RibbonFlag;
   /** Ribbon for reaching max friendship */
   public static readonly FRIENDSHIP = 0x20000000 as RibbonFlag;
+  /** Ribbon for winning the flip stats challenge */
+  public static readonly FLIP_STATS = 0x40000000 as RibbonFlag;
+  /** Ribbon for winning the inverse challenge */
+  public static readonly INVERSE = 0x80000000 as RibbonFlag;
+  /** Ribbon for winning the fresh start challenge */
+  public static readonly FRESH_START = 0x100000000 as RibbonFlag;
+  /** Ribbon for winning the hardcore challenge */
+  public static readonly HARDCORE = 0x200000000 as RibbonFlag;
+  /** Ribbon for winning the limited catch challenge */
+  public static readonly LIMITED_CATCH = 0x400000000 as RibbonFlag;
+  /** Ribbon for winning the limited support challenge set to no heal */
+  public static readonly NO_HEAL = 0x800000000 as RibbonFlag;
+  /** Ribbon for winning the limited uspport challenge set to no shop */
+  public static readonly NO_SHOP = 0x1000000000 as RibbonFlag;
+  /** Ribbon for winning the limited support challenge set to both*/
+  public static readonly NO_SUPPORT = 0x2000000000 as RibbonFlag;
+
+  // NOTE: max possible ribbon flag is 0x20000000000000 (53 total ribbons)
+  // Once this is exceeded, bitfield needs to be changed to a bigint or even a uint array
+  // Note that this has no impact on serialization as it is stored in hex.
+
   //#endregion Ribbons
 
   /** Create a new instance of RibbonData. Generally, {@linkcode fromJSON} is used instead. */
