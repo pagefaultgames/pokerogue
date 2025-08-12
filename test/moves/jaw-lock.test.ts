@@ -42,8 +42,8 @@ describe("Moves - Jaw Lock", () => {
   it("should trap the move's user and target", async () => {
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.JAW_LOCK);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -63,8 +63,8 @@ describe("Moves - Jaw Lock", () => {
     game.override.enemyLevel(1);
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.JAW_LOCK);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -88,8 +88,8 @@ describe("Moves - Jaw Lock", () => {
   it("should only trap the user until the target faints", async () => {
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.JAW_LOCK);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -140,8 +140,8 @@ describe("Moves - Jaw Lock", () => {
 
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.JAW_LOCK);
 

@@ -37,7 +37,7 @@ describe("Moves - Sketch", () => {
 
   it("Sketch should not fail even if a previous Sketch failed to retrieve a valid move and ran out of PP", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     // can't use normal moveset override because we need to check moveset changes
     game.move.changeMoveset(playerPokemon, [MoveId.SKETCH, MoveId.SKETCH]);
 
@@ -59,8 +59,8 @@ describe("Moves - Sketch", () => {
   it("Sketch should retrieve the most recent valid move from its target history", async () => {
     game.override.enemyStatusEffect(StatusEffect.PARALYSIS);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
     game.move.changeMoveset(playerPokemon, [MoveId.SKETCH, MoveId.GROWL]);
 
     game.move.select(MoveId.GROWL);
@@ -87,7 +87,8 @@ describe("Moves - Sketch", () => {
 
     game.override.enemyMoveset([MoveId.METRONOME]);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+
+    const playerPokemon = game.field.getPlayerPokemon();
     game.move.changeMoveset(playerPokemon, MoveId.SKETCH);
 
     // Opponent uses Metronome -> False Swipe, then player uses Sketch, which should sketch Metronome

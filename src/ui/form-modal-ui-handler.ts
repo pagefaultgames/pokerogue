@@ -19,6 +19,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   protected inputs: InputText[];
   protected errorMessage: Phaser.GameObjects.Text;
   protected submitAction: Function | null;
+  protected cancelAction: (() => void) | null;
   protected tween: Phaser.Tweens.Tween;
   protected formLabels: Phaser.GameObjects.Text[];
 
@@ -126,22 +127,37 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     });
   }
 
-  show(args: any[]): boolean {
+  override show(args: any[]): boolean {
     if (super.show(args)) {
       this.inputContainers.map(ic => ic.setVisible(true));
 
       const config = args[0] as FormModalConfig;
 
       this.submitAction = config.buttonActions.length ? config.buttonActions[0] : null;
+      this.cancelAction = config.buttonActions[1] ?? null;
 
-      if (this.buttonBgs.length) {
-        this.buttonBgs[0].off("pointerdown");
-        this.buttonBgs[0].on("pointerdown", () => {
-          if (this.submitAction && globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
-            this.submitAction();
+      // #region: Override button pointerDown
+      // Override the pointerDown event for the buttonBgs to call the `submitAction` and `cancelAction`
+      // properties that we set above, allowing their behavior to change after this method terminates
+      // Some subclasses use this to add behavior to the submit and cancel action
+
+      this.buttonBgs[0].off("pointerdown");
+      this.buttonBgs[0].on("pointerdown", () => {
+        if (this.submitAction && globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
+          this.submitAction();
+        }
+      });
+      const cancelBg = this.buttonBgs[1];
+      if (cancelBg) {
+        cancelBg.off("pointerdown");
+        cancelBg.on("pointerdown", () => {
+          // The seemingly redundant cancelAction check is intentionally left in as a defensive programming measure
+          if (this.cancelAction && globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
+            this.cancelAction();
           }
         });
       }
+      //#endregion: Override pointerDown events
 
       this.modalContainer.y += 24;
       this.modalContainer.setAlpha(0);
