@@ -55,7 +55,7 @@ export class TurnStartPhase extends FieldPhase {
   /**
    * This takes the result of getSpeedOrder and applies priority / bypass speed attributes to it.
    * This also considers the priority levels of various commands and changes the result of `getSpeedOrder` based on such.
-   * @returns An array of {@linkcode BattlerIndex}es containing all on-field Pokemon sorted in action order.
+   * @returns The `BattlerIndex`es of all on-field Pokemon sorted in action order.
    */
   getCommandOrder(): BattlerIndex[] {
     let moveOrder = this.getSpeedOrder();
