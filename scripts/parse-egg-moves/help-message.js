@@ -1,5 +1,6 @@
 import chalk from "chalk";
 
+/** Show help/usage text for the `eggMoves:parse` CLI. */
 export function showHelpText() {
   console.log(`
 Usage: ${chalk.cyan("pnpm eggMoves:parse [options]")}

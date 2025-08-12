@@ -1,12 +1,29 @@
 import chalk from "chalk";
 
 /**
+ * A single line of the inputted CSV.
+ * @typedef {[speciesName: string, move1: string, move2: string, move3: string, move4: string]}
+ * CSVLine
+ */
+
+/**
+ * Regex to determine if a string follows the required CSV format.
+ */
+const csvRegex = /^((?:[^,]+?,){4}(?:\w|\s)+?,?\n?)+$/g;
+
+/**
  * Given a CSV string, parse it and return a structured table ready to be inputted into code.
  * @param {string} csv - The formatted CSV string.
  * @returns {string} The fully formatted table.
  */
 export function parseEggMoves(csv) {
   console.log(chalk.grey("⚙️ Parsing egg moves..."));
+  if (!csvRegex.test(csv)) {
+    console.error(chalk.redBright("! Input was not proper CSV!"));
+    process.exitCode = 1;
+    return "";
+  }
+
   let output = "{\n";
 
   const lines = csv.split(/\n/g);
@@ -16,16 +33,17 @@ export function parseEggMoves(csv) {
      * The individual CSV column for this species.
      */
     const cols =
-      /** @type {[speciesName: string, move1: string, move2: string, move3: string, move4: string]} */
+      /** @type {CSVLine} */
       (line.split(",").slice(0, 5));
     const speciesName = toUpperSnakeCase(cols[0]);
 
-    /** @type {string[]} */
-    const eggMoves = [];
+    const eggMoves =
+      /** @type {string[]} */
+      ([]);
 
     for (let m = 1; m < 5; m++) {
       const moveName = cols[m].trim();
-      if (moveName === "N/A") {
+      if (!moveName || moveName === "N/A") {
         console.warn(`Species ${speciesName} missing ${m}th egg move!`);
         eggMoves.push("MoveId.NONE");
         continue;

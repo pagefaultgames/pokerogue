@@ -62,7 +62,14 @@ jobs:
         working-directory: ${{env.api-dir}}
         run: |
           cd pokerogue_docs
+          pnpm typedoc
           pnpm exec typedoc --out /tmp/docs --githubPages false --entryPoints ./src/
+
+      - name: Typecheck Node.js Scripts
+        working-directory: ${{env.api-dir}}
+        run: |
+          cd pokerogue_docs
+          pnpm typecheck:scripts
 
       - name: Commit & Push docs
         if: github.event_name == 'push'

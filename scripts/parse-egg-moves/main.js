@@ -24,6 +24,12 @@ const templatePath = path.join(__dirname, "egg-move-template.ts");
 const eggMoveTargetPath = path.join(projectRoot, "src/data/balance/egg-moves.ts");
 
 /**
+ * @typedef {{type: "Console" | "File", value: string} | {type: "Exit"}}
+ * Option
+ * An option selected by the user.
+ */
+
+/**
  * Runs the interactive eggMoves:parse CLI.
  * @returns {Promise<void>}
  */
@@ -144,7 +150,7 @@ export async function writeToFile(moves) {
     console.log(chalk.green.bold(`\n✔ Egg Moves written to ${eggMoveTargetPath}`));
     console.groupEnd();
   } catch (err) {
-    console.error(chalk.red("✗ Error while writing egg moves!", err.message));
+    console.error(chalk.red(`✗ Error while writing egg moves: ${err}`));
     process.exitCode = 1;
   }
 }
