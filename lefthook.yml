@@ -1,10 +1,11 @@
 pre-commit:
-  skip: 
+  skip:
     - merge
     - rebase
   commands:
     biome-lint:
-      run: pnpm exec biome check --write --reporter=summary --staged --no-errors-on-unmatched
+      # Disable colors as certain IDEs don't allow it
+      run: pnpm exec biome check --write --colors="off" --staged --no-errors-on-unmatched
       stage_fixed: true
     ls-lint:
       run: pnpm exec ls-lint
@@ -12,11 +13,11 @@ pre-commit:
 post-merge:
   commands:
     update-submodules:
-      run: git submodule update --init --recursive
+      run: pnpm update-locales
 
 post-checkout:
   commands:
     update-submodules:
       # cf https://git-scm.com/docs/githooks#_post_checkout:
       # The 3rd argument is 1 for branch checkouts and 0 for file checkouts.
-      run: if test {3} -eq "1"; then git submodule update --init --recursive; fi
+      run: if test {3} -eq "1"; then pnpm update-locales; fi
