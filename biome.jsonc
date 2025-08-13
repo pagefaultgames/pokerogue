@@ -69,7 +69,7 @@
         "useCollapsedIf": "warn", // TODO: promote to "error" eventually
         "noDoneCallback": "error",
         "noSubstr": "error",
-        "noYoda": "warn", // TODO: Fix and promote to "error"
+        "noYodaExpression": "warn", // TODO: Fix and promote to "error"
         "useForOf": "warn", // TODO: Fix and promote to "error"
         "useEnumInitializers": "off", // large enums like Moves/Species would make this cumbersome
         "useBlockStatements": {
