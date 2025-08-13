@@ -53,7 +53,7 @@
     "rules": {
       "recommended": true,
       "correctness": {
-        "noUndeclaredVariables": "off",
+        "noUndeclaredVariables": "error",
         "noUnusedVariables": "error",
         "noSwitchDeclarations": "error",
         "noVoidTypeReturn": "error",
@@ -66,6 +66,8 @@
         "noPrivateImports": "error"
       },
       "style": {
+        "noDoneCallback": "error",
+        "useForOf": "error',
         "useEnumInitializers": "off", // large enums like Moves/Species would make this cumbersome
         "useBlockStatements": {
           "level": "error",
@@ -82,7 +84,7 @@
           "level": "warn",
           "fix": "none"
         },
-        "useSingleVarDeclarator": "off",
+        "useSingleVarDeclarator": "warn", // TODO: upgrade to "error"
         "useNodejsImportProtocol": "off",
         "useTemplate": "off", // string concatenation is faster: https://stackoverflow.com/questions/29055518/are-es6-template-literals-faster-than-string-concatenation
         "useAsConstAssertion": "error",
@@ -109,18 +111,19 @@
         // This can likely be enabled for all non-utils files once these are eventually reworked, but until then we leave it off.
         "noExplicitAny": "off",
         "noAssignInExpressions": "off",
-        "noPrototypeBuiltins": "off",
+        "noPrototypeBuiltins": "off", // TOZO: consider enabling?
         "noFallthroughSwitchClause": "error", // Prevents accidental automatic fallthroughs in switch cases (use disable comment if needed)
         "noImplicitAnyLet": "warn", // TODO: Refactor and make this an error
         "noRedeclare": "info", // TODO: Refactor and make this an error
-        "noGlobalIsNan": "off",
+        "noGlobalIsNan": "error",
         "noAsyncPromiseExecutor": "warn", // TODO: Refactor and make this an error
         "noVar": "error",
         "noDocumentCookie": "off" // Firefox has minimal support for the "Cookie Store API"
       },
       "complexity": {
+        "noUselessStringConcat": "error",
         "noExcessiveCognitiveComplexity": "info", // TODO: Refactor and make this an error
-        "useLiteralKeys": "off",
+        "useLiteralKeys": "off", // TODO: enable?
         "noForEach": "off", // Foreach vs for of is not that simple.
         "noUselessSwitchCase": "off", // Explicit > Implicit
         "noUselessConstructor": "error",
@@ -131,13 +134,16 @@
       },
       "performance": {
         "noNamespaceImport": "error",
-        "noDelete": "error"
+        "noDelete": "error",
+        "noBarrelFile": "error",
       },
       "nursery": {
+        "useSingleJsDocAsterisk": "error",
+        "useUnifiedTypeSignature": "info", // TODO: promote to "error" at some pt
         "useAdjacentGetterSetter": "error",
         "noConstantBinaryExpression": "error",
         "noTsIgnore": "error",
-        "noAwaitInLoop": "off",
+        "noAwaitInLoop": "off", // we do this a lot
         "useJsonImportAttribute": "off", // "Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'. ts(2823)"
         "useIndexOf": "error",
         "useObjectSpread": "error",
