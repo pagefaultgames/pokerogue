@@ -11540,5 +11540,5 @@ export function initMoves() {
       .condition(new UpperHandCondition()),
     new AttackMove(MoveId.MALIGNANT_CHAIN, PokemonType.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
-  )
+  );
 }
