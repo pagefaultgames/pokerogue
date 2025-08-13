@@ -1790,10 +1790,8 @@ export class BattleScene extends SceneBase {
     if (level >= 100) {
       ret++;
     }
-    if (species) {
-      if (species.baseTotal >= 670) {
-        ret++;
-      }
+    if (species && species.baseTotal >= 670) {
+      ret++;
     }
     ret += Math.floor(waveIndex / 250);
 
@@ -1837,12 +1835,7 @@ export class BattleScene extends SceneBase {
     this.rngCounter = 0;
   }
 
-  executeWithSeedOffset(
-    // biome-ignore lint/complexity/noBannedTypes: Refactor to not use Function
-    func: Function,
-    offset: number,
-    seedOverride?: string,
-  ): void {
+  executeWithSeedOffset(func: () => void, offset: number, seedOverride?: string): void {
     if (!func) {
       return;
     }
