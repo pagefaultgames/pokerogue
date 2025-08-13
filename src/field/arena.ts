@@ -536,6 +536,7 @@ export class Arena {
       case BiomeId.ABYSS:
       case BiomeId.SPACE:
       case BiomeId.TEMPLE:
+      case BiomeId.LABORATORY:
         return 16;
       default:
         return 0;
@@ -894,7 +895,7 @@ export class Arena {
       case BiomeId.CAVE:
         return 14.24;
       case BiomeId.DESERT:
-        return 1.143;
+        return 9.02;
       case BiomeId.ICE_CAVE:
         return 0.0;
       case BiomeId.MEADOW:
@@ -922,7 +923,7 @@ export class Arena {
       case BiomeId.JUNGLE:
         return 0.0;
       case BiomeId.FAIRY_CAVE:
-        return 4.542;
+        return 0.0;
       case BiomeId.TEMPLE:
         return 2.547;
       case BiomeId.ISLAND:

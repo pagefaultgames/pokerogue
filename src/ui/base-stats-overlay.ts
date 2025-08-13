@@ -16,7 +16,6 @@ interface BaseStatsOverlaySettings {
 
 const HEIGHT = 120;
 const BORDER = 8;
-const GLOBAL_SCALE = 6;
 const shortStats = ["HP", "ATK", "DEF", "SPATK", "SPDEF", "SPD"];
 
 export class BaseStatsOverlay extends Phaser.GameObjects.Container implements InfoToggle {
@@ -109,7 +108,7 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
 
   // width of this element
   static getWidth(_scale: number): number {
-    return globalScene.game.canvas.width / GLOBAL_SCALE / 2;
+    return globalScene.scaledCanvas.width / 2;
   }
 
   // height of this element
