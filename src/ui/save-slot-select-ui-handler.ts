@@ -113,55 +113,58 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
       const originalCallback = this.saveSlotSelectCallback;
       if (button === Button.ACTION) {
         const cursor = this.cursor + this.scrollCursor;
-        if (this.uiMode === SaveSlotUiMode.LOAD && !this.sessionSlots[cursor].hasData) {
+        const sessionSlot = this.sessionSlots[cursor];
+        if (this.uiMode === SaveSlotUiMode.LOAD && !sessionSlot.hasData) {
           error = true;
         } else {
           switch (this.uiMode) {
             case SaveSlotUiMode.LOAD:
-              manageDataOptions.push({
-                label: i18next.t("menu:loadGame"),
-                handler: () => {
-                  globalScene.ui.revertMode();
-                  originalCallback?.(cursor);
-                  return true;
-                },
-                keepOpen: false,
-              });
+              if (!sessionSlot.malformed) {
+                manageDataOptions.push({
+                  label: i18next.t("menu:loadGame"),
+                  handler: () => {
+                    globalScene.ui.revertMode();
+                    originalCallback?.(cursor);
+                    return true;
+                  },
+                  keepOpen: false,
+                });
 
-              manageDataOptions.push({
-                label: i18next.t("saveSlotSelectUiHandler:renameRun"),
-                handler: () => {
-                  globalScene.ui.revertMode();
-                  ui.setOverlayMode(
-                    UiMode.RENAME_RUN,
-                    {
-                      buttonActions: [
-                        (sanitizedName: string) => {
-                          const name = decodeURIComponent(atob(sanitizedName));
-                          globalScene.gameData.renameSession(cursor, name).then(response => {
-                            if (response[0] === false) {
-                              globalScene.reset(true);
-                            } else {
-                              this.clearSessionSlots();
-                              this.cursorObj = null;
-                              this.populateSessionSlots();
-                              this.setScrollCursor(0);
-                              this.setCursor(0);
-                              ui.revertMode();
-                              ui.showText("", 0);
-                            }
-                          });
-                        },
-                        () => {
-                          ui.revertMode();
-                        },
-                      ],
-                    },
-                    "",
-                  );
-                  return true;
-                },
-              });
+                manageDataOptions.push({
+                  label: i18next.t("saveSlotSelectUiHandler:renameRun"),
+                  handler: () => {
+                    globalScene.ui.revertMode();
+                    ui.setOverlayMode(
+                      UiMode.RENAME_RUN,
+                      {
+                        buttonActions: [
+                          (sanitizedName: string) => {
+                            const name = decodeURIComponent(atob(sanitizedName));
+                            globalScene.gameData.renameSession(cursor, name).then(response => {
+                              if (response[0] === false) {
+                                globalScene.reset(true);
+                              } else {
+                                this.clearSessionSlots();
+                                this.cursorObj = null;
+                                this.populateSessionSlots();
+                                this.setScrollCursor(0);
+                                this.setCursor(0);
+                                ui.revertMode();
+                                ui.showText("", 0);
+                              }
+                            });
+                          },
+                          () => {
+                            ui.revertMode();
+                          },
+                        ],
+                      },
+                      "",
+                    );
+                    return true;
+                  },
+                });
+              }
 
               this.manageDataConfig = {
                 xOffset: 0,
@@ -389,7 +392,8 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
     const cursorPosition = cursor + this.scrollCursor;
     const cursorIncrement = cursorPosition * 76;
     if (this.sessionSlots[cursorPosition] && this.cursorObj) {
-      const hasData = this.sessionSlots[cursorPosition].hasData;
+      const session = this.sessionSlots[cursorPosition];
+      const hasData = session.hasData && !session.malformed;
       // If the session slot lacks session data, it does not move from its default, central position.
       // Only session slots with session data will move leftwards and have a visible arrow.
       if (!hasData) {
@@ -478,6 +482,8 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
 class SessionSlot extends Phaser.GameObjects.Container {
   public slotId: number;
   public hasData: boolean;
+  /** Indicates the save slot ran into an error while being loaded */
+  public malformed: boolean;
   private slotWindow: Phaser.GameObjects.NineSlice;
   private loadingLabel: Phaser.GameObjects.Text;
   public saveData: SessionSaveData;
@@ -625,22 +631,32 @@ class SessionSlot extends Phaser.GameObjects.Container {
 
   load(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      globalScene.gameData.getSession(this.slotId).then(async sessionData => {
-        // Ignore the results if the view was exited
-        if (!this.active) {
-          return;
-        }
-        if (!sessionData) {
-          this.hasData = false;
-          this.loadingLabel.setText(i18next.t("saveSlotSelectUiHandler:empty"));
-          resolve(false);
-          return;
-        }
-        this.hasData = true;
-        this.saveData = sessionData;
-        await this.setupWithData(sessionData);
-        resolve(true);
-      });
+      globalScene.gameData
+        .getSession(this.slotId)
+        .then(async sessionData => {
+          // Ignore the results if the view was exited
+          if (!this.active) {
+            return;
+          }
+          this.hasData = !!sessionData;
+          if (!sessionData) {
+            this.loadingLabel.setText(i18next.t("saveSlotSelectUiHandler:empty"));
+            resolve(false);
+            return;
+          }
+          this.saveData = sessionData;
+          resolve(true);
+        })
+        .catch(e => {
+          if (!this.active) {
+            return;
+          }
+          console.warn(`Failed to load session slot #${this.slotId}:`, e);
+          this.loadingLabel.setText(i18next.t("menu:failedToLoadSession"));
+          this.hasData = true;
+          this.malformed = true;
+          resolve(true);
+        });
     });
   }
 }
