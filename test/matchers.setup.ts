@@ -4,6 +4,7 @@ import { toHaveBattlerTag } from "#test/test-utils/matchers/to-have-battler-tag"
 import { toHaveEffectiveStat } from "#test/test-utils/matchers/to-have-effective-stat";
 import { toHaveFainted } from "#test/test-utils/matchers/to-have-fainted";
 import { toHaveFullHp } from "#test/test-utils/matchers/to-have-full-hp";
+import { toHaveHeldItem } from "#test/test-utils/matchers/to-have-held-item";
 import { toHaveHp } from "#test/test-utils/matchers/to-have-hp";
 import { toHaveStatStage } from "#test/test-utils/matchers/to-have-stat-stage";
 import { toHaveStatusEffect } from "#test/test-utils/matchers/to-have-status-effect";
@@ -36,4 +37,5 @@ expect.extend({
   toHaveHp,
   toHaveFainted,
   toHaveUsedPP,
+  toHaveHeldItem,
 });

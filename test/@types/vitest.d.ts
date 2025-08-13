@@ -15,6 +15,7 @@ import type { AtLeastOne } from "#types/type-helpers";
 import type { expect } from "vitest";
 import type Overrides from "#app/overrides";
 import type { PokemonMove } from "#moves/pokemon-move";
+import { expectedHeldItemType } from "#test/test-utils/matchers/to-have-held-item";
 
 declare module "vitest" {
   interface Assertion {
@@ -135,5 +136,13 @@ declare module "vitest" {
      * or contains the desired move more than once, this will fail the test.
      */
     toHaveUsedPP(expectedMove: MoveId, ppUsed: number | "all"): void;
+
+    /**
+     * Check whether a {@linkcode Pokemon} has a given held item.
+     * @param received - The object to check. Should be a {@linkcode Pokemon}.
+     * @param expectedItem - A {@linkcode HeldItemId} or {@linkcode HeldItemCategoryId} to check, or a partially filled
+     * {@linkcode HeldItemSpecs} containing the desired values
+     */
+    toHaveHeldItem(expected: expectedHeldItemType): void;
   }
 }

@@ -32,7 +32,7 @@ export function isHeldItemSpecs(entry: any): entry is HeldItemSpecs {
 }
 
 // Types used for form change items
-interface FormChangeItemData {
+export interface FormChangeItemData {
   active: boolean;
 }
 

@@ -8,6 +8,7 @@ import {
   isItemInRequested,
 } from "#enums/held-item-id";
 import {
+  type FormChangeItemData,
   type FormChangeItemPropertyMap,
   type FormChangeItemSpecs,
   type HeldItemConfiguration,
@@ -16,9 +17,10 @@ import {
   type HeldItemSpecs,
   isHeldItemSpecs,
 } from "#items/held-item-data-types";
-import { getTypedEntries, getTypedKeys } from "#utils/common";
+import { getTypedKeys } from "#utils/common";
 
 export class HeldItemManager {
+  // TODO: There should be a way of making these private...
   public heldItems: HeldItemDataMap;
   public formChangeItems: FormChangeItemPropertyMap;
 
@@ -41,13 +43,14 @@ export class HeldItemManager {
 
   generateHeldItemConfiguration(restrictedIds?: HeldItemId[]): HeldItemConfiguration {
     const config: HeldItemConfiguration = [];
-    for (const [id, item] of getTypedEntries(this.heldItems)) {
+    for (const [id, item] of this.getHeldItemEntries()) {
+      // TODO: `in` breaks with arrays
       if (item && (!restrictedIds || id in restrictedIds)) {
         const specs: HeldItemSpecs = { ...item, id };
         config.push({ entry: specs, count: 1 });
       }
     }
-    for (const [id, item] of getTypedEntries(this.formChangeItems)) {
+    for (const [id, item] of this.getFormChangeItemEntries()) {
       if (item) {
         const specs: FormChangeItemSpecs = { ...item, id };
         config.push({ entry: specs, count: 1 });
@@ -58,13 +61,13 @@ export class HeldItemManager {
 
   generateSaveData(): HeldItemSaveData {
     const saveData: HeldItemSaveData = [];
-    for (const [id, item] of getTypedEntries(this.heldItems)) {
+    for (const [id, item] of this.getHeldItemEntries()) {
       if (item) {
         const specs: HeldItemSpecs = { ...item, id };
         saveData.push(specs);
       }
     }
-    for (const [id, item] of getTypedEntries(this.formChangeItems)) {
+    for (const [id, item] of this.getFormChangeItemEntries()) {
       if (item) {
         const specs: FormChangeItemSpecs = { ...item, id };
         saveData.push(specs);
@@ -77,28 +80,32 @@ export class HeldItemManager {
     return getTypedKeys(this.heldItems);
   }
 
+  private getHeldItemEntries(): [HeldItemId, HeldItemSpecs][] {
+    return Object.entries(this.heldItems) as unknown as [HeldItemId, HeldItemSpecs][];
+  }
+
   getTransferableHeldItems(): HeldItemId[] {
-    return getTypedKeys(this.heldItems).filter(k => allHeldItems[k].isTransferable);
+    return this.getHeldItems().filter(k => allHeldItems[k].isTransferable);
   }
 
   getStealableHeldItems(): HeldItemId[] {
-    return getTypedKeys(this.heldItems).filter(k => allHeldItems[k].isStealable);
+    return this.getHeldItems().filter(k => allHeldItems[k].isStealable);
   }
 
   getSuppressableHeldItems(): HeldItemId[] {
-    return getTypedKeys(this.heldItems).filter(k => allHeldItems[k].isSuppressable);
+    return this.getHeldItems().filter(k => allHeldItems[k].isSuppressable);
   }
 
   hasItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
     if (isCategoryId(itemType)) {
-      return getTypedKeys(this.heldItems).some(id => isItemInCategory(id, itemType as HeldItemCategoryId));
+      return this.getHeldItems().some(id => isItemInCategory(id, itemType as HeldItemCategoryId));
     }
     return itemType in this.heldItems;
   }
 
   hasTransferableItem(itemType: HeldItemId | HeldItemCategoryId): boolean {
     if (isCategoryId(itemType)) {
-      return getTypedKeys(this.heldItems).some(
+      return this.getHeldItems().some(
         id => isItemInCategory(id, itemType as HeldItemCategoryId) && allHeldItems[id].isTransferable,
       );
     }
@@ -128,7 +135,7 @@ export class HeldItemManager {
   overrideItems(newItems: HeldItemDataMap) {
     this.heldItems = newItems;
     // The following is to allow randomly generated item configs to have stack 0
-    for (const [item, properties] of getTypedEntries(this.heldItems)) {
+    for (const [item, properties] of this.getHeldItemEntries()) {
       if (!properties || properties.stack <= 0) {
         delete this.heldItems[item];
       }
@@ -176,6 +183,7 @@ export class HeldItemManager {
       item.stack -= removeStack;
 
       if (all || item.stack <= 0) {
+        // TODO: Delete is bad for performance
         delete this.heldItems[itemType];
       }
     }
@@ -219,7 +227,11 @@ export class HeldItemManager {
   }
 
   getFormChangeItems(): FormChangeItem[] {
-    return getTypedKeys(this.formChangeItems).map(k => k);
+    return getTypedKeys(this.formChangeItems);
+  }
+
+  private getFormChangeItemEntries(): [FormChangeItem, FormChangeItemData | undefined][] {
+    return Object.entries(this.formChangeItems) as unknown as [FormChangeItem, FormChangeItemData | undefined][];
   }
 
   getActiveFormChangeItems(): FormChangeItem[] {

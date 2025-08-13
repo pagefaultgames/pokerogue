@@ -101,8 +101,8 @@ async function promptFileName(selectedType) {
  */
 function getBoilerplatePath(choiceType) {
   switch (choiceType) {
-    // case "Reward":
-    //   return path.join(__dirname, "boilerplates/reward.ts");
+    case "Reward":
+      return path.join(__dirname, "boilerplates/rewards/reward.ts");
     default:
       return path.join(__dirname, "boilerplates/default.ts");
   }
