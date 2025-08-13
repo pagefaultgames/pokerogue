@@ -2263,7 +2263,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             });
           };
           options.push({
-            label: i18next.t("menuUiHandler:POKEDEX"),
+            label: i18next.t("menuUiHandler:pokedex"),
             handler: () => {
               ui.setMode(UiMode.STARTER_SELECT).then(() => {
                 const attributes = {
