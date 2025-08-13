@@ -93,7 +93,7 @@ If this feature requires new text, the text should be integrated into the code w
 3. Your locales should use the following format:
   - File names should be in `kebab-case`. Example: `trainer-names.json`
   - Key names should be in `camelCase`. Example: `aceTrainer`
-    - If you make use of i18next's inbuilt [context support](https://www.i18next.com/translation-function/context), you should use `snake_case` for the context key. Example: `aceTrainer_male`
+    - If you make use of i18next's inbuilt [context support](https://www.i18next.com/translation-function/context), you need to use `snake_case` for the context key. Example: `aceTrainer_male`
 4. At this point, you may begin [testing locales integration in your main PR](#documenting-locales-changes).
 5. The Translation Team will approve the locale PR (after corrections, if necessary), then merge it into `pokerogue-locales`.
 6. The Dev Team will approve your main PR for your feature, then merge it into PokéRogue's beta environment.
