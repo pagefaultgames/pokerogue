@@ -1718,7 +1718,6 @@ export class MessageAttr extends MoveEffectAttr {
   }
 }
 
-
 export class RecoilAttr extends MoveEffectAttr {
   private useHp: boolean;
   private damageRatio: number;
