@@ -206,10 +206,12 @@ export interface StarterData {
   [key: number]: StarterDataEntry;
 }
 
+// TODO: Rework into a bitmask
 export type TutorialFlags = {
-  [key in Tutorials]: boolean;
+  [key in Tutorial]: boolean;
 };
 
+// TODO: Rework into a bitmask
 export interface SeenDialogues {
   [key: string]: boolean;
 }
