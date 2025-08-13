@@ -161,6 +161,7 @@
       "quoteStyle": "double",
       "arrowParentheses": "asNeeded"
     },
+    "globals": ["Phaser"],
     "parser": {
       "jsxEverywhere": false
     }
