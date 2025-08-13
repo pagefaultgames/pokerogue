@@ -331,8 +331,8 @@ describe("Status Effects", () => {
       await game.move.forceStatusActivation(true);
       await game.toNextTurn();
 
-      expect(game.scene.getEnemyPokemon()!.isFullHp()).toBe(true);
-      expect(game.scene.getPlayerPokemon()!.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+      expect(game.field.getEnemyPokemon().isFullHp()).toBe(true);
+      expect(game.field.getPlayerPokemon().getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
     });
   });
 
@@ -365,7 +365,7 @@ describe("Status Effects", () => {
     it("should last the appropriate number of turns", async () => {
       await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      const player = game.scene.getPlayerPokemon()!;
+      const player = game.field.getPlayerPokemon();
       player.status = new Status(StatusEffect.SLEEP, 0, 4);
 
       game.move.select(MoveId.SPLASH);
@@ -422,7 +422,7 @@ describe("Status Effects", () => {
     it("should not inflict a 0 HP mon with a status", async () => {
       await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
-      const player = game.scene.getPlayerPokemon()!;
+      const player = game.field.getPlayerPokemon();
       player.hp = 0;
 
       expect(player.trySetStatus(StatusEffect.BURN)).toBe(false);

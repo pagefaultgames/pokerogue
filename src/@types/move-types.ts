@@ -27,7 +27,7 @@ export type * from "#moves/move";
  * Map of move subclass names to their respective classes.
  * Does not include the ChargeMove subclasses. For that, use `ChargingMoveClassMap`.
  *
- * @privateremarks
+ * @privateRemarks
  * The `never` field (`declare private _: never`) in some classes is necessary
  * to ensure typescript does not improperly narrow a failed `is` guard to `never`.
  *
