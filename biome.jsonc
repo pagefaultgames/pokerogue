@@ -67,7 +67,7 @@
       },
       "style": {
         "noDoneCallback": "error",
-        "useForOf": "error',
+        "useForOf": "error",
         "useEnumInitializers": "off", // large enums like Moves/Species would make this cumbersome
         "useBlockStatements": {
           "level": "error",
@@ -139,7 +139,7 @@
       },
       "nursery": {
         "useSingleJsDocAsterisk": "error",
-        "useUnifiedTypeSignature": "info", // TODO: promote to "error" at some pt
+        // "useUnifiedTypeSignature": "error", TODO: upgrade to biome 2.1 and enable
         "useAdjacentGetterSetter": "error",
         "noConstantBinaryExpression": "error",
         "noTsIgnore": "error",
