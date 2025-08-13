@@ -2612,7 +2612,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       // Setting growth rate text
       if (isFormCaught) {
         let growthReadable = toTitleCase(GrowthRate[species.growthRate]);
-        const growthAux = growthReadable.replace(" ", "_");
+        const growthAux = toCamelCase(growthReadable);
         if (i18next.exists("growth:" + growthAux)) {
           growthReadable = i18next.t(("growth:" + growthAux) as any);
         }
