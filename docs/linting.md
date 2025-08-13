@@ -19,8 +19,8 @@ Generally speaking, most users shouldn't need to run Biome directly; in addition
 
 > ![WARNING]
 > You will **not** be able to commit code if any staged files contain `error`-level linting problems. \
-> If you, for whatever reason, _absolutely need_ to bypass Lefthook when committing,
-> `LEFTHOOK=0 git commit` will disable Lefthook temporarily for the given commit onl.
+> If you, for whatever reason, _absolutely need_ to bypass Lefthook while committing,
+> `LEFTHOOK=0 git commit` will skip all pre-commit hooks for the given operation.
 
 We also have a [Github Action](../.github/workflows/quality.yml) to verify code quality each time a PR is updated, preventing bad code from inadvertently making its way upstream. \
 These are effectively the same commands as run by Lefthook, merely on a project-wide scale.
