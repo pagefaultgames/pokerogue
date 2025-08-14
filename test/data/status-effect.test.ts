@@ -395,28 +395,23 @@ describe("Status Effects", () => {
       await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
       const player = game.field.getPlayerPokemon();
-      player.status = new Status(StatusEffect.SLEEP, 0, 4);
+      // Set sleep turns to 2 for brevity
+      player.status = new Status(StatusEffect.SLEEP, 0, 2);
+      game.move.changeMoveset(player, MoveId.DRAGON_CHEER);
 
       game.move.select(MoveId.DRAGON_CHEER);
       await game.toNextTurn();
 
       expect(player.status.effect).toBe(StatusEffect.SLEEP);
-
-      game.move.select(MoveId.DRAGON_CHEER);
-      await game.toNextTurn();
-
-      expect(player.status.effect).toBe(StatusEffect.SLEEP);
-
-      game.move.select(MoveId.DRAGON_CHEER);
-      await game.toNextTurn();
-
-      expect(player.status.effect).toBe(StatusEffect.SLEEP);
+      expect(player.getMoveset()[0].ppUsed).toBe(0);
       expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
 
       game.move.select(MoveId.DRAGON_CHEER);
       await game.toNextTurn();
 
+      // Sleep was cured, move failed as normal and consumed PP
       expect(player.status).toBeFalsy();
+      expect(player.getMoveset()[0].ppUsed).toBe(1);
       expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
     });
   });

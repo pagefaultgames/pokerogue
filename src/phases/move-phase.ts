@@ -98,15 +98,16 @@ export class MovePhase extends PokemonPhase {
   }
 
   /**
-   * Checks if the pokemon is active, if the move is usable, and that the move is targeting something.
+   * Check if the current Move is usable and targeting at least 1 active pokemon.
    * @param ignoreDisableTags `true` to not check if the move is disabled
    * @returns `true` if all the checks pass
    */
   public canMove(ignoreDisableTags = false): boolean {
+    const targets = this.getActiveTargetPokemon();
     return (
       this.pokemon.isActive(true)
       && this.move.isUsable(this.pokemon, isIgnorePP(this.useMode), ignoreDisableTags)
-      && this.targets.length > 0
+      && (targets.length > 0 || this.move.getMove().hasAttr("AddArenaTrapTagAttr"))
     );
   }
 
@@ -128,9 +129,9 @@ export class MovePhase extends PokemonPhase {
       `color:${MOVE_COLOR}`,
     );
 
+    // If the target isn't on field (such as due to leaving the field from Whirlwind/etc), do nothing.
     if (!this.pokemon.isActive(true)) {
-      this.cancel();
-      this.end();
+      super.end();
       return;
     }
 
@@ -178,9 +179,8 @@ export class MovePhase extends PokemonPhase {
     this.end();
   }
 
-  /** Check for cancellation edge cases - no targets remaining, or {@linkcode MoveId.NONE} is in the queue */
+  /** Check for cancellation edge cases - no targets remaining, out of PP, or {@linkcode MoveId.NONE} is in the queue */
   protected resolveFinalPreMoveCancellationChecks(): void {
-    const targets = this.getActiveTargetPokemon();
     const moveQueue = this.pokemon.getMoveQueue();
 
     // Check if move is unusable (e.g. running out of PP due to a mid-turn Spite
@@ -196,12 +196,12 @@ export class MovePhase extends PokemonPhase {
     }
 
     if (
-      (targets.length === 0 && !this.move.getMove().hasAttr("AddArenaTrapTagAttr"))
+      (this.targets.length === 0 && !this.move.getMove().hasAttr("AddArenaTrapTagAttr"))
       || (moveQueue.length > 0 && moveQueue[0].move === MoveId.NONE)
     ) {
       this.showMoveText();
       this.showFailedText();
-      this.cancel();
+      this.fail();
     }
   }
 
