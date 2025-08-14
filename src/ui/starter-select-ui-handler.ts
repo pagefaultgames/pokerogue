@@ -1053,7 +1053,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.moveInfoOverlay = new MoveInfoOverlay({
       top: true,
       x: 1,
-      y: globalScene.scaledCanvas.height / 6 - MoveInfoOverlay.getHeight() - 29,
+      y: globalScene.scaledCanvas.height - MoveInfoOverlay.getHeight() - 29,
     });
 
     this.starterSelectContainer.add([
