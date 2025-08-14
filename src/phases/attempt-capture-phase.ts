@@ -257,7 +257,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
 
     globalScene.ui.showText(
-      i18next.t(addStatus.value ? "battle:pokemonCaught" : "battle:pokemonCaughtChallenge", {
+      i18next.t(addStatus.value ? "battle:pokemonCaught" : "battle:pokemonCaughtButChallenge", {
         pokemonName: getPokemonNameWithAffix(pokemon),
       }),
       null,
