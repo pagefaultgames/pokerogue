@@ -127,6 +127,7 @@ export interface SessionSaveData {
   battleType: BattleType;
   trainer: TrainerData;
   gameVersion: string;
+  runNameText: string;
   timestamp: number;
   challenges: ChallengeData[];
   mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
@@ -206,10 +207,12 @@ export interface StarterData {
   [key: number]: StarterDataEntry;
 }
 
-export interface TutorialFlags {
-  [key: string]: boolean;
-}
+// TODO: Rework into a bitmask
+export type TutorialFlags = {
+  [key in Tutorial]: boolean;
+};
 
+// TODO: Rework into a bitmask
 export interface SeenDialogues {
   [key: string]: boolean;
 }
@@ -822,52 +825,51 @@ export class GameData {
     return true; // TODO: is `true` the correct return value?
   }
 
-  private loadGamepadSettings(): boolean {
-    Object.values(SettingGamepad)
-      .map(setting => setting as SettingGamepad)
-      .forEach(setting => setSettingGamepad(setting, settingGamepadDefaults[setting]));
+  private loadGamepadSettings(): void {
+    Object.values(SettingGamepad).forEach(setting => {
+      setSettingGamepad(setting, settingGamepadDefaults[setting]);
+    });
 
     if (!localStorage.hasOwnProperty("settingsGamepad")) {
-      return false;
+      return;
     }
     const settingsGamepad = JSON.parse(localStorage.getItem("settingsGamepad")!); // TODO: is this bang correct?
 
     for (const setting of Object.keys(settingsGamepad)) {
       setSettingGamepad(setting as SettingGamepad, settingsGamepad[setting]);
     }
-
-    return true; // TODO: is `true` the correct return value?
   }
 
-  public saveTutorialFlag(tutorial: Tutorial, flag: boolean): boolean {
-    const key = getDataTypeKey(GameDataType.TUTORIALS);
-    let tutorials: object = {};
-    if (localStorage.hasOwnProperty(key)) {
-      tutorials = JSON.parse(localStorage.getItem(key)!); // TODO: is this bang correct?
+  /**
+   * Save the specified tutorial as having the specified completion status.
+   * @param tutorial - The {@linkcode Tutorial} whose completion status is being saved
+   * @param status - The completion status to set
+   */
+  public saveTutorialFlag(tutorial: Tutorial, status: boolean): void {
+    // Grab the prior save data tutorial
+    const saveDataKey = getDataTypeKey(GameDataType.TUTORIALS);
+    const tutorials: TutorialFlags = localStorage.hasOwnProperty(saveDataKey)
+      ? JSON.parse(localStorage.getItem(saveDataKey)!)
+      : {};
+
+    // TODO: We shouldn't be storing this like that
+    for (const key of Object.values(Tutorial)) {
+      if (key === tutorial) {
+        tutorials[key] = status;
+      } else {
+        tutorials[key] ??= false;
+      }
     }
 
-    Object.keys(Tutorial)
-      .map(t => t as Tutorial)
-      .forEach(t => {
-        const key = Tutorial[t];
-        if (key === tutorial) {
-          tutorials[key] = flag;
-        } else {
-          tutorials[key] ??= false;
-        }
-      });
-
-    localStorage.setItem(key, JSON.stringify(tutorials));
-
-    return true;
+    localStorage.setItem(saveDataKey, JSON.stringify(tutorials));
   }
 
   public getTutorialFlags(): TutorialFlags {
     const key = getDataTypeKey(GameDataType.TUTORIALS);
-    const ret: TutorialFlags = {};
-    Object.values(Tutorial)
-      .map(tutorial => tutorial as Tutorial)
-      .forEach(tutorial => (ret[Tutorial[tutorial]] = false));
+    const ret: TutorialFlags = Object.values(Tutorial).reduce((acc, tutorial) => {
+      acc[Tutorial[tutorial]] = false;
+      return acc;
+    }, {} as TutorialFlags);
 
     if (!localStorage.hasOwnProperty(key)) {
       return ret;
@@ -976,6 +978,54 @@ export class GameData {
           return resolve(null);
         }
       }
+    });
+  }
+
+  async renameSession(slotId: number, newName: string): Promise<boolean> {
+    return new Promise(async resolve => {
+      if (slotId < 0) {
+        return resolve(false);
+      }
+      const sessionData: SessionSaveData | null = await this.getSession(slotId);
+
+      if (!sessionData) {
+        return resolve(false);
+      }
+
+      if (newName === "") {
+        return resolve(true);
+      }
+
+      sessionData.runNameText = newName;
+      const updatedDataStr = JSON.stringify(sessionData);
+      const encrypted = encrypt(updatedDataStr, bypassLogin);
+      const secretId = this.secretId;
+      const trainerId = this.trainerId;
+
+      if (bypassLogin) {
+        localStorage.setItem(
+          `sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`,
+          encrypt(updatedDataStr, bypassLogin),
+        );
+        resolve(true);
+        return;
+      }
+      pokerogueApi.savedata.session
+        .update({ slot: slotId, trainerId, secretId, clientSessionId }, encrypted)
+        .then(error => {
+          if (error) {
+            console.error("Failed to update session name:", error);
+            resolve(false);
+          } else {
+            localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`, encrypted);
+            updateUserInfo().then(success => {
+              if (success !== null && !success) {
+                return resolve(false);
+              }
+            });
+            resolve(true);
+          }
+        });
     });
   }
 

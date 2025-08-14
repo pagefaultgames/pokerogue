@@ -104,6 +104,7 @@ import {
   getLuckString,
   getLuckTextTint,
   getPartyLuckValue,
+  type ModifierType,
   PokemonHeldItemModifierType,
 } from "#modifiers/modifier-type";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
@@ -1203,7 +1204,9 @@ export class BattleScene extends SceneBase {
     this.updateScoreText();
     this.scoreText.setVisible(false);
 
-    [this.luckLabelText, this.luckText].map(t => t.setVisible(false));
+    [this.luckLabelText, this.luckText].forEach(t => {
+      t.setVisible(false);
+    });
 
     this.newArena(Overrides.STARTING_BIOME_OVERRIDE || BiomeId.TOWN);
 
@@ -1237,8 +1240,7 @@ export class BattleScene extends SceneBase {
             Object.values(mp)
               .flat()
               .map(mt => mt.modifierType)
-              .filter(mt => "localize" in mt)
-              .map(lpb => lpb as unknown as Localizable),
+              .filter((mt): mt is ModifierType & Localizable => "localize" in mt && typeof mt.localize === "function"),
           ),
       ];
       for (const item of localizable) {
@@ -1513,8 +1515,8 @@ export class BattleScene extends SceneBase {
     return this.currentBattle;
   }
 
-  newArena(biome: BiomeId, playerFaints?: number): Arena {
-    this.arena = new Arena(biome, BiomeId[biome].toLowerCase(), playerFaints);
+  newArena(biome: BiomeId, playerFaints = 0): Arena {
+    this.arena = new Arena(biome, playerFaints);
     this.eventTarget.dispatchEvent(new NewArenaEvent());
 
     this.arenaBg.pipelineData = {
@@ -2711,7 +2713,9 @@ export class BattleScene extends SceneBase {
           }
         }
 
-        this.party.map(p => p.updateInfo(instant));
+        this.party.forEach(p => {
+          p.updateInfo(instant);
+        });
       } else {
         const args = [this];
         if (modifier.shouldApply(...args)) {
