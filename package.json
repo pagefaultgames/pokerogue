@@ -18,6 +18,7 @@
     "eslint": "eslint --fix .",
     "eslint-ci": "eslint .",
     "biome": "biome check --write --changed --no-errors-on-unmatched --diagnostic-level=error",
+    "biome:all": "biome check --write --no-errors-on-unmatched --diagnostic-level=error",
     "biome-ci": "biome ci --diagnostic-level=error --reporter=github --no-errors-on-unmatched",
     "docs": "typedoc",
     "depcruise": "depcruise src test",

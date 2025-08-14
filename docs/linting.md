@@ -19,23 +19,22 @@ Generally speaking, most users shouldn't need to run Biome directly; in addition
 
 > ![WARNING]
 > You will **not** be able to commit code if any staged files contain `error`-level linting problems. \
-> If you, for whatever reason, _absolutely need_ to bypass Lefthook while committing,
-> `LEFTHOOK=0 git commit` will skip all pre-commit hooks for the given operation.
+> If you, for whatever reason, _absolutely need_ to bypass Lefthook for a given commit,
+> `LEFTHOOK=0 git commit` will skip running all pre-commit hooks during the commit process.
 
-We also have a [Github Action](../.github/workflows/quality.yml) to verify code quality each time a PR is updated, preventing bad code from inadvertently making its way upstream. \
+We also have a [Github Action](../.github/workflows/linting.yml) to verify code quality each time a PR is updated, preventing bad code from inadvertently making its way upstream. \
 These are effectively the same commands as run by Lefthook, merely on a project-wide scale.
 
 ## Running Biome via CLI
-If you want Biome to check your files manually, you have 2 options:
-1. Run the `biome` script included in `package.json` (`pnpm biome`).
-
-    This has sensible defaults for command-line options, but does not allow altering certain flags (as some cannot be specified twice in the same command)
+To run you Biome on your files manually, you have 2 main options:
+1. Run the scripts included in `package.json` (`pnpm biome` and `pnpm biome:all`). \
+    These have sensible defaults for command-line options, but do not allow altering certain flags (as some cannot be specified twice in the same command)
 
 2. Execute the Biome executable manually from the command line like so:
     ```sh
     pnpm exec biome check --[flags]
     ```
-    This allows customizing flags non-overridable flags like `--diagnostic-level` on a more granular level, but requires slightly more verbosity.
+    This allows customizing non-overridable flags like `--diagnostic-level` on a more granular level, but requires slightly more verbosity and specifying more options.
 
 A full list of flags and options can be found on [their website](https://biomejs.dev/reference/cli/), but here's a few useful ones to keep in mind:
 
