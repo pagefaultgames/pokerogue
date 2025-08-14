@@ -30,9 +30,9 @@ export function loadPositionalTag(tag: SerializedPositionalTag): PositionalTag {
   globalScene.arena.eventTarget.dispatchEvent(new PositionalTagAddedEvent(tag));
 
   // Create the new tag
-  // TODO: review how many type assertions we need here
   const { tagType, ...rest } = tag;
   const tagClass = posTagConstructorMap[tagType];
+  // @ts-expect-error - tagType always corresponds to the proper constructor for `rest`
   return new tagClass(rest);
 }
 

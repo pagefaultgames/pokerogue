@@ -5,23 +5,23 @@ import type { SerializedPositionalTag } from "#data/positional-tags/load-positio
 import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import { type Terrain, TerrainType } from "#data/terrain";
 import type { Weather } from "#data/weather";
+import { ArenaEventType } from "#enums/arena-event-type";
 // biome-ignore-end lint/correctness/noUnusedImports: TSDocs
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
-import { battlerIndexToFieldPosition, FieldPosition } from "#enums/field-position";
+import { FieldPosition } from "#enums/field-position";
 import { MoveId } from "#enums/move-id";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
-import {
-  ArenaEventType,
-  type ArenaTagAddedEvent,
-  type ArenaTagRemovedEvent,
-  type PositionalTagAddedEvent,
-  type PositionalTagRemovedEvent,
-  type TerrainChangedEvent,
-  type WeatherChangedEvent,
+import type {
+  ArenaTagAddedEvent,
+  ArenaTagRemovedEvent,
+  PositionalTagAddedEvent,
+  PositionalTagRemovedEvent,
+  TerrainChangedEvent,
+  WeatherChangedEvent,
 } from "#events/arena";
 import { BattleSceneEventType } from "#events/battle-scene";
 import { addTextObject } from "#ui/text";
@@ -92,7 +92,7 @@ interface PositionalTagInfo {
  * @param text - The raw text of the effect; assumed to be in `UPPER_SNAKE_CASE` from a reverse mapping.
  * @returns The localized text for the effect.
  */
-function localizeEffectName(text: string): string {
+export function localizeEffectName(text: string): string {
   const effectName = toCamelCase(text);
   const i18nKey = `arenaFlyout:${effectName}`;
   const resultName = i18next.t(i18nKey);
@@ -103,11 +103,12 @@ function localizeEffectName(text: string): string {
  * Return the localized name of a given {@linkcode PositionalTag}.
  * @param tag - The raw serialized data for the given tag
  * @returns The localized text to be displayed on-screen.
+ * @package
  */
-function getPositionalTagDisplayName(tag: SerializedPositionalTag): string {
+export function getPositionalTagDisplayName(tag: SerializedPositionalTag): string {
   let tagName: string;
   if ("sourceMove" in tag) {
-    // Delayed attacks will use the source move's name
+    // Delayed attacks will use the source move's name; other effects rely on type
     tagName = MoveId[tag.sourceMove];
   } else {
     tagName = PositionalTagType[tag.tagType];
@@ -317,7 +318,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   private onTurnEnd() {
     // Remove all objects with positive max durations and whose durations have expired.
     this.arenaTags = this.arenaTags.filter(info => info.maxDuration === 0 || --info.duration >= 0);
-    this.positionalTags = this.positionalTags.filter(info => --info.duration >= 0);
+    this.positionalTags = this.positionalTags.filter(info => --info.duration > 0);
 
     this.updateFieldText();
   }
@@ -354,9 +355,9 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
   /**
    * Update an existing trap tag with an updated layer count whenever one is overlapped.
-   * @param existingTag - The existing {@linkcode ArenaTagInfo} to update text for
+   * @param existingTag - The existing {@linkcode ArenaTagInfo} being updated
    * @param layers - The base number of layers of the new tag
-   * @param maxLayers - The maximum number of layers of the new tag; will not show layer count if <=0
+   * @param maxLayers - The maximum number of layers of the new tag; will not show layer count if `<=0`
    * @param name - The name of the tag.
    */
   private updateTrapLayers(existingTag: ArenaTagInfo, [layers, maxLayers]: [number, number], name: string): void {
@@ -370,6 +371,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    */
   private onArenaTagRemoved(event: ArenaTagRemovedEvent): void {
     const foundIndex = this.arenaTags.findIndex(info => info.tagType === event.tagType && info.side === event.side);
+    console.log(this.positionalTags, event);
 
     if (foundIndex > -1) {
       // If the tag was being tracked, remove it
@@ -513,10 +515,10 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
     // Weather and terrain go first
     if (this.weatherInfo) {
-      this.updateTagText(this.weatherInfo);
+      this.flyoutTextField.text += this.getTagText(this.weatherInfo);
     }
     if (this.terrainInfo) {
-      this.updateTagText(this.terrainInfo);
+      this.flyoutTextField.text += this.getTagText(this.terrainInfo);
     }
 
     // Sort and add all positional tags
@@ -525,45 +527,48 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       (infoA, infoB) => infoA.name.localeCompare(infoB.name) || infoA.targetIndex - infoB.targetIndex,
     );
     for (const tag of this.positionalTags) {
-      this.updatePosTagText(tag);
+      this.getPositionalTagTextObj(tag).text += this.getPosTagText(tag);
     }
 
     // Sort and update all arena tag text
     this.arenaTags.sort((infoA, infoB) => infoA.duration - infoB.duration);
     for (const tag of this.arenaTags) {
-      this.updateTagText(tag);
+      this.getArenaTagTargetObj(tag.side).text += this.getTagText(tag);
     }
   }
 
   /**
-   * Helper method to update the flyout box's text with a {@linkcode PositionalTag}'s info.
+   * Helper method to retrieve the flyout text for a given {@linkcode PositionalTag}.
    * @param info - The {@linkcode PositionalTagInfo} whose text is being updated
+   * @returns The text to be added to the container
    */
-  private updatePosTagText(info: PositionalTagInfo): void {
-    const textObj = this.getPositionalTagTextObj(info);
+  private getPosTagText(info: PositionalTagInfo): string {
+    // Avoud showing slot target for single battles
+    if (!globalScene.currentBattle.double) {
+      return `${info.name}  (${info.duration})\n`;
+    }
 
     const targetPos = battlerIndexToFieldPosition(info.targetIndex);
     const posText = localizeEffectName(FieldPosition[targetPos]);
 
     // Ex: "Future Sight  (Center, 2)"
-    textObj.text += `${info.name}  (${posText}, ${info.duration}\n`;
+    return `${info.name}  (${posText}, ${info.duration})\n`;
   }
 
   /**
-   * Helper method to update the flyout box's text with an effect's info.
+   * Helper method to retrieve the flyout text for a given effect's info.
    * @param info - The {@linkcode ArenaTagInfo}, {@linkcode TerrainInfo} or {@linkcode WeatherInfo} being updated
+   * @returns The text to be added to the container
    */
-  private updateTagText(info: ArenaTagInfo | WeatherInfo | TerrainInfo): void {
-    // Weathers and terrains use the "field" box by default
-    const textObject = "tagType" in info ? this.getArenaTagTargetObj(info.side) : this.flyoutTextField;
-
-    textObject.text += info.name;
+  private getTagText(info: ArenaTagInfo | WeatherInfo | TerrainInfo): string {
+    let text = info.name;
 
     if (info.maxDuration > 0) {
-      textObject.text += `  ${info.duration}/ + ${info.maxDuration}`;
+      text += `  ${info.duration}/${info.maxDuration}`;
     }
 
-    textObject.text += "\n";
+    text += "\n";
+    return text;
   }
 
   /**
@@ -600,7 +605,31 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     }
   }
 
-  private;
-
   // # endregion Text display functions
+}
+
+/**
+ * Convert a {@linkcode BattlerIndex} into a field position.
+ * @param index - The {@linkcode BattlerIndex} to convert
+ * @returns The resultant field position.
+ */
+function battlerIndexToFieldPosition(index: BattlerIndex): FieldPosition {
+  let pos: FieldPosition;
+  switch (index) {
+    case BattlerIndex.ATTACKER:
+      throw new Error("Cannot convert BattlerIndex.ATTACKER to a field position!");
+    case BattlerIndex.PLAYER:
+    case BattlerIndex.ENEMY:
+      pos = FieldPosition.LEFT;
+      break;
+    case BattlerIndex.PLAYER_2:
+    case BattlerIndex.ENEMY_2:
+      pos = FieldPosition.RIGHT;
+      break;
+  }
+  // In single battles, left positions become center
+  if (!globalScene.currentBattle.double && pos === FieldPosition.LEFT) {
+    pos = FieldPosition.CENTER;
+  }
+  return pos;
 }
