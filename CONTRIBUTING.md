@@ -125,5 +125,3 @@ Most non-trivial changes (*especially bug fixes*) should come along with new tes
 
 1. Start the game up locally and navigate to `Menu -> Manage Data -> Import Data`
 2. Select [everything.prsv](test/test-utils/saves/everything.prsv) (`test/test-utils/saves/everything.prsv`) and confirm.
-
-[]
