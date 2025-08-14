@@ -315,8 +315,8 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     const optionStartIndex = this.scrollCursor;
     const optionEndIndex = Math.min(
       optionsScrollTotal,
-      optionStartIndex +
-        (!optionStartIndex || this.scrollCursor + (this.config.maxOptions - 1) >= optionsScrollTotal
+      optionStartIndex
+        + (!optionStartIndex || this.scrollCursor + (this.config.maxOptions - 1) >= optionsScrollTotal
           ? this.config.maxOptions - 1
           : this.config.maxOptions - 2),
     );

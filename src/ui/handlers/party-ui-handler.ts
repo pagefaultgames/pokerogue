@@ -441,7 +441,7 @@ export class PartyUiHandler extends MessageUiHandler {
               ui.setMode(UiMode.PARTY);
               this.showText(
                 i18next.t("partyUiHandler:wasReverted", {
-                  fusionName: fusionName,
+                  fusionName,
                   pokemonName: pokemon.getName(false),
                 }),
                 undefined,
@@ -1766,42 +1766,42 @@ export class PartyUiHandler extends MessageUiHandler {
   getReleaseMessage(pokemonName: string): string {
     const rand = randInt(128);
     if (rand < 20) {
-      return i18next.t("partyUiHandler:goodbye", { pokemonName: pokemonName });
+      return i18next.t("partyUiHandler:goodbye", { pokemonName });
     }
     if (rand < 40) {
-      return i18next.t("partyUiHandler:byebye", { pokemonName: pokemonName });
+      return i18next.t("partyUiHandler:byebye", { pokemonName });
     }
     if (rand < 60) {
-      return i18next.t("partyUiHandler:farewell", { pokemonName: pokemonName });
+      return i18next.t("partyUiHandler:farewell", { pokemonName });
     }
     if (rand < 80) {
-      return i18next.t("partyUiHandler:soLong", { pokemonName: pokemonName });
+      return i18next.t("partyUiHandler:soLong", { pokemonName });
     }
     if (rand < 100) {
       return i18next.t("partyUiHandler:thisIsWhereWePart", {
-        pokemonName: pokemonName,
+        pokemonName,
       });
     }
     if (rand < 108) {
       return i18next.t("partyUiHandler:illMissYou", {
-        pokemonName: pokemonName,
+        pokemonName,
       });
     }
     if (rand < 116) {
       return i18next.t("partyUiHandler:illNeverForgetYou", {
-        pokemonName: pokemonName,
+        pokemonName,
       });
     }
     if (rand < 124) {
       return i18next.t("partyUiHandler:untilWeMeetAgain", {
-        pokemonName: pokemonName,
+        pokemonName,
       });
     }
     if (rand < 127) {
-      return i18next.t("partyUiHandler:sayonara", { pokemonName: pokemonName });
+      return i18next.t("partyUiHandler:sayonara", { pokemonName });
     }
     return i18next.t("partyUiHandler:smellYaLater", {
-      pokemonName: pokemonName,
+      pokemonName,
     });
   }
 

@@ -25,5 +25,5 @@ export enum MoveTarget {
   ENEMY_SIDE,
   BOTH_SIDES,
   PARTY,
-  CURSE
+  CURSE,
 }

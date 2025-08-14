@@ -195,10 +195,10 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
                     : ""
                 }`;
                 const line2 =
-                  i18next.t("pokemonInfoContainer:nature") +
-                  " " +
-                  getNatureName(tradePokemon.getNature()) +
-                  (formName ? `     |     ${i18next.t("pokemonInfoContainer:form")} ${formName}` : "");
+                  i18next.t("pokemonInfoContainer:nature")
+                  + " "
+                  + getNatureName(tradePokemon.getNature())
+                  + (formName ? `     |     ${i18next.t("pokemonInfoContainer:form")} ${formName}` : "");
                 showEncounterText(`${line1}\n${line2}`, 0, 0, false);
               },
             };

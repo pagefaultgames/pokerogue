@@ -125,7 +125,7 @@ export class TitlePhase extends Phase {
           });
           globalScene.ui.showText(i18next.t("menu:selectGameMode"), null, () =>
             globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-              options: options,
+              options,
             }),
           );
           return true;
@@ -161,7 +161,7 @@ export class TitlePhase extends Phase {
       },
     );
     const config: OptionSelectConfig = {
-      options: options,
+      options,
       noCancel: true,
       yOffset: 47,
     };
@@ -322,8 +322,8 @@ export class TitlePhase extends Phase {
       }
 
       if (
-        globalScene.currentBattle.battleType !== BattleType.TRAINER &&
-        (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
+        globalScene.currentBattle.battleType !== BattleType.TRAINER
+        && (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
       ) {
         const minPartySize = globalScene.currentBattle.double ? 2 : 1;
         if (availablePartyMembers > minPartySize) {

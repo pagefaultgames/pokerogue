@@ -32,7 +32,7 @@ export class ClassicModeHelper extends GameManagerHelper {
    * @returns A promise that resolves when the summon phase is reached.
    * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
    */
-  // biome-ignore lint/nursery/useUnifiedTypeSignature: Marks the overload for deprecation
+  // biome-ignore lint/style/useUnifiedTypeSignatures: Marks the overload for deprecation
   async runToSummon(): Promise<void>;
   async runToSummon(species: SpeciesId[] | undefined): Promise<void>;
   async runToSummon(species?: SpeciesId[]): Promise<void> {
@@ -75,7 +75,7 @@ export class ClassicModeHelper extends GameManagerHelper {
    * @returns A promise that resolves when the battle is started.
    * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
    */
-  // biome-ignore lint/nursery/useUnifiedTypeSignature: Marks the overload for deprecation
+  // biome-ignore lint/style/useUnifiedTypeSignatures: Marks the overload for deprecation
   async startBattle(): Promise<void>;
   async startBattle(species?: SpeciesId[]): Promise<void> {
     await this.runToSummon(species);

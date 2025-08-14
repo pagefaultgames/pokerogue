@@ -185,10 +185,10 @@ export class GameChallengesUiHandler extends UiHandler {
       this.valuesContainer.add(value);
 
       this.challengeLabels[i] = {
-        label: label,
-        value: value,
-        leftArrow: leftArrow,
-        rightArrow: rightArrow,
+        label,
+        value,
+        leftArrow,
+        rightArrow,
       };
     }
 
@@ -272,17 +272,17 @@ export class GameChallengesUiHandler extends UiHandler {
       challengeLabel.leftArrow.setVisible(challenge.value !== 0);
       challengeLabel.rightArrow.setPositionRelative(
         challengeLabel.leftArrow,
-        Math.max(this.monoTypeValue.width, this.widestTextBox) +
-          challengeLabel.leftArrow.displayWidth +
-          2 * this.arrowSpacing,
+        Math.max(this.monoTypeValue.width, this.widestTextBox)
+          + challengeLabel.leftArrow.displayWidth
+          + 2 * this.arrowSpacing,
         0,
       );
       challengeLabel.rightArrow.setVisible(challenge.value !== challenge.maxValue);
 
       // this check looks to make sure that the arrows and value textbox don't take up too much space that they'll clip the right edge of the options background
       if (
-        challengeLabel.rightArrow.x + challengeLabel.rightArrow.width + this.optionsBg.rightWidth + this.arrowSpacing >
-        this.optionsWidth
+        challengeLabel.rightArrow.x + challengeLabel.rightArrow.width + this.optionsBg.rightWidth + this.arrowSpacing
+        > this.optionsWidth
       ) {
         // if we go out of bounds of the box, set the x position as far right as we can without going past the box, with this.arrowSpacing to allow a small gap between the arrow and border
         challengeLabel.rightArrow.setX(this.optionsWidth - this.arrowSpacing - this.optionsBg.rightWidth);
@@ -441,8 +441,8 @@ export class GameChallengesUiHandler extends UiHandler {
               success = successA && successB; // success is just there to play the little validation sound effect
             }
           } else if (
-            globalScene.gameMode.challenges.length < rowsToDisplay &&
-            this.cursor === globalScene.gameMode.challenges.length - 1
+            globalScene.gameMode.challenges.length < rowsToDisplay
+            && this.cursor === globalScene.gameMode.challenges.length - 1
           ) {
             // When at the bottom of a non-scrolling menu and pressing DOWN, move to the topmost item.
             success = this.setCursor(0);

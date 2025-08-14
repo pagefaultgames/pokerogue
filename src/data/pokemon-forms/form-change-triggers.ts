@@ -82,10 +82,10 @@ export class SpeciesFormChangeItemTrigger extends SpeciesFormChangeTrigger {
       // Assume that if m has the `formChangeItem` property, then it is a PokemonFormChangeItemModifier
       const m = r as PokemonFormChangeItemModifier;
       return (
-        "formChangeItem" in m &&
-        m.pokemonId === pokemon.id &&
-        m.formChangeItem === this.item &&
-        m.active === this.active
+        "formChangeItem" in m
+        && m.pokemonId === pokemon.id
+        && m.formChangeItem === this.item
+        && m.active === this.active
       );
     });
   }
@@ -211,9 +211,10 @@ export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
 
   canChange(pokemon: Pokemon): boolean {
     return (
-      this.formKey ===
-      pokemon.species.forms[globalScene.getSpeciesFormIndex(pokemon.species, pokemon.gender, pokemon.getNature(), true)]
-        .formKey
+      this.formKey
+      === pokemon.species.forms[
+        globalScene.getSpeciesFormIndex(pokemon.species, pokemon.gender, pokemon.getNature(), true)
+      ].formKey
     );
   }
 }
@@ -259,10 +260,10 @@ export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
     const isAbilitySuppressed = pokemon.summonData.abilitySuppressed;
 
     return (
-      !isAbilitySuppressed &&
-      !isWeatherSuppressed &&
-      pokemon.hasAbility(this.ability) &&
-      this.weathers.includes(currentWeather)
+      !isAbilitySuppressed
+      && !isWeatherSuppressed
+      && pokemon.hasAbility(this.ability)
+      && this.weathers.includes(currentWeather)
     );
   }
 }

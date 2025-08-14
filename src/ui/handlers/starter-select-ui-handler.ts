@@ -214,7 +214,7 @@ function calcStarterPosition(index: number, scrollCursor = 0): { x: number; y: n
   const x = (index % 9) * 18;
   const y = yOffset + (Math.floor(index / 9) - scrollCursor) * height;
 
-  return { x: x, y: y };
+  return { x, y };
 }
 
 /**
@@ -1259,9 +1259,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         hasShiny && caughtAttr & DexAttr.VARIANT_3,
       ];
       if (
-        Number.isNaN(starterAttributes.variant) ||
-        starterAttributes.variant < 0 ||
-        !unlockedVariants[starterAttributes.variant]
+        Number.isNaN(starterAttributes.variant)
+        || starterAttributes.variant < 0
+        || !unlockedVariants[starterAttributes.variant]
       ) {
         // variant value is invalid or requested variant wasn't unlocked, purging setting
         starterAttributes.variant = undefined;
@@ -1269,8 +1269,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     if (
-      starterAttributes.female !== undefined &&
-      !(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)
+      starterAttributes.female !== undefined
+      && !(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)
     ) {
       // requested gender wasn't unlocked, purging setting
       starterAttributes.female = undefined;
@@ -1297,9 +1297,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     const selectedForm = starterAttributes.form;
     if (
-      selectedForm !== undefined &&
-      (!species.forms[selectedForm]?.isStarterSelectable ||
-        !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))
+      selectedForm !== undefined
+      && (!species.forms[selectedForm]?.isStarterSelectable
+        || !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))
     ) {
       // requested form wasn't unlocked/isn't a starter form, purging setting
       starterAttributes.form = undefined;
@@ -1405,8 +1405,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const starterData = globalScene.gameData.starterData[speciesId];
 
     return (
-      starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[speciesId]) &&
-      !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
+      starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[speciesId])
+      && !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
     );
   }
 
@@ -1420,9 +1420,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const starterData = globalScene.gameData.starterData[speciesId];
 
     return (
-      starterData.candyCount >=
-        getValueReductionCandyCounts(speciesStarterCosts[speciesId])[starterData.valueReduction] &&
-      starterData.valueReduction < valueReductionMax
+      starterData.candyCount >= getValueReductionCandyCounts(speciesStarterCosts[speciesId])[starterData.valueReduction]
+      && starterData.valueReduction < valueReductionMax
     );
   }
 
@@ -1479,9 +1478,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     };
 
     if (
-      this.isPassiveAvailable(species.speciesId) ||
-      (globalScene.candyUpgradeNotification === 2 &&
-        (this.isValueReductionAvailable(species.speciesId) || this.isSameSpeciesEggAvailable(species.speciesId)))
+      this.isPassiveAvailable(species.speciesId)
+      || (globalScene.candyUpgradeNotification === 2
+        && (this.isValueReductionAvailable(species.speciesId) || this.isSameSpeciesEggAvailable(species.speciesId)))
     ) {
       const chain = globalScene.tweens.chain(tweenChain);
       if (!startPaused) {
@@ -1498,9 +1497,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const slotVisible = !!species?.speciesId;
 
     if (
-      !species ||
-      globalScene.candyUpgradeNotification === 0 ||
-      species.speciesId !== species.getRootSpeciesId(false)
+      !species
+      || globalScene.candyUpgradeNotification === 0
+      || species.speciesId !== species.getRootSpeciesId(false)
     ) {
       starter.candyUpgradeIcon.setVisible(false);
       starter.candyUpgradeOverlayIcon.setVisible(false);
@@ -1601,8 +1600,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.filterBar.toggleDropDown(this.filterBarCursor);
         success = true;
       } else if (
-        this.filterMode &&
-        !this.filterBar.getFilter(this.filterBar.getColumn(this.filterBarCursor)).hasDefaultValues()
+        this.filterMode
+        && !this.filterBar.getFilter(this.filterBar.getColumn(this.filterBarCursor)).hasDefaultValues()
       ) {
         if (this.filterBar.getColumn(this.filterBarCursor) === DropDownColumn.CAUGHT) {
           this.resetCaughtDropdown();
@@ -1899,10 +1898,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             );
           const newCost = globalScene.gameData.getSpeciesStarterValue(this.lastSpecies.speciesId);
           if (
-            !isDupe &&
-            isValidForChallenge &&
-            currentPartyValue + newCost <= this.getValueLimit() &&
-            this.starterSpecies.length < PLAYER_PARTY_MAX_SIZE
+            !isDupe
+            && isValidForChallenge
+            && currentPartyValue + newCost <= this.getValueLimit()
+            && this.starterSpecies.length < PLAYER_PARTY_MAX_SIZE
           ) {
             options = [
               {
@@ -2339,7 +2338,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               },
             });
             ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-              options: options,
+              options,
               yOffset: 47,
             });
           };
@@ -2386,7 +2385,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             },
           });
           ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-            options: options,
+            options,
             yOffset: 47,
           });
           success = true;
@@ -2473,8 +2472,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               do {
                 newFormIndex = (newFormIndex + 1) % formCount;
                 if (
-                  this.lastSpecies.forms[newFormIndex].isStarterSelectable &&
-                  this.speciesStarterDexEntry!.caughtAttr! & globalScene.gameData.getFormAttr(newFormIndex)
+                  this.lastSpecies.forms[newFormIndex].isStarterSelectable
+                  && this.speciesStarterDexEntry!.caughtAttr! & globalScene.gameData.getFormAttr(newFormIndex)
                 ) {
                   // TODO: are those bangs correct?
                   break;
@@ -3016,15 +3015,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return valueLimit.value;
   }
 
-  updateStarters = () => {
+  updateStarters(): void {
     this.scrollCursor = 0;
     this.filteredStarterContainers = [];
     this.validStarterContainers = [];
-
-    // biome-ignore-start lint/nursery/useIterableCallbackReturn: benign
-    this.pokerusCursorObjs.forEach(cursor => cursor.setVisible(false));
-    this.starterCursorObjs.forEach(cursor => cursor.setVisible(false));
-    // biome-ignore-end lint/nursery/useIterableCallbackReturn: benign
+    for (const obj of [...this.pokerusCursorObjs, ...this.starterCursorObjs]) {
+      obj.setVisible(false);
+    }
 
     this.filterBar.updateFilterLabels();
 
@@ -3203,8 +3200,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       // HA Filter
       const speciesHasHiddenAbility =
-        container.species.abilityHidden !== container.species.ability1 &&
-        container.species.abilityHidden !== AbilityId.NONE;
+        container.species.abilityHidden !== container.species.ability1
+        && container.species.abilityHidden !== AbilityId.NONE;
       const hasHA = starterData.abilityAttr & AbilityAttr.ABILITY_HIDDEN;
       const fitsHA = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.ON) {
@@ -3246,16 +3243,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       });
 
       if (
-        fitsGen &&
-        fitsType &&
-        fitsCaught &&
-        fitsPassive &&
-        fitsCostReduction &&
-        fitsFavorite &&
-        fitsWin &&
-        fitsHA &&
-        fitsEgg &&
-        fitsPokerus
+        fitsGen
+        && fitsType
+        && fitsCaught
+        && fitsPassive
+        && fitsCostReduction
+        && fitsFavorite
+        && fitsWin
+        && fitsHA
+        && fitsEgg
+        && fitsPokerus
       ) {
         this.filteredStarterContainers.push(container);
       }
@@ -3279,33 +3276,33 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
         case SortCriteria.IV: {
           const avgIVsA =
-            globalScene.gameData.dexData[a.species.speciesId].ivs.reduce((a, b) => a + b, 0) /
-            globalScene.gameData.dexData[a.species.speciesId].ivs.length;
+            globalScene.gameData.dexData[a.species.speciesId].ivs.reduce((a, b) => a + b, 0)
+            / globalScene.gameData.dexData[a.species.speciesId].ivs.length;
           const avgIVsB =
-            globalScene.gameData.dexData[b.species.speciesId].ivs.reduce((a, b) => a + b, 0) /
-            globalScene.gameData.dexData[b.species.speciesId].ivs.length;
+            globalScene.gameData.dexData[b.species.speciesId].ivs.reduce((a, b) => a + b, 0)
+            / globalScene.gameData.dexData[b.species.speciesId].ivs.length;
           return (avgIVsA - avgIVsB) * -sort.dir;
         }
         case SortCriteria.NAME:
           return a.species.name.localeCompare(b.species.name) * -sort.dir;
         case SortCriteria.CAUGHT:
           return (
-            (globalScene.gameData.dexData[a.species.speciesId].caughtCount -
-              globalScene.gameData.dexData[b.species.speciesId].caughtCount) *
-            -sort.dir
+            (globalScene.gameData.dexData[a.species.speciesId].caughtCount
+              - globalScene.gameData.dexData[b.species.speciesId].caughtCount)
+            * -sort.dir
           );
         case SortCriteria.HATCHED:
           return (
-            (globalScene.gameData.dexData[a.species.speciesId].hatchedCount -
-              globalScene.gameData.dexData[b.species.speciesId].hatchedCount) *
-            -sort.dir
+            (globalScene.gameData.dexData[a.species.speciesId].hatchedCount
+              - globalScene.gameData.dexData[b.species.speciesId].hatchedCount)
+            * -sort.dir
           );
       }
       return 0;
     });
 
     this.updateScroll();
-  };
+  }
 
   override destroy(): void {
     // Without this the reference gets hung up and no startercontainers get GCd
@@ -3817,10 +3814,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite =
-      (species?.genderDiffs && !isNullOrUndefined(female)) ||
-      !isNullOrUndefined(formIndex) ||
-      !isNullOrUndefined(shiny) ||
-      !isNullOrUndefined(variant);
+      (species?.genderDiffs && !isNullOrUndefined(female))
+      || !isNullOrUndefined(formIndex)
+      || !isNullOrUndefined(shiny)
+      || !isNullOrUndefined(variant);
 
     const isFreshStartChallenge = globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
 
@@ -3997,10 +3994,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             .filter(f => f).length > 1;
         this.canCycleNature = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
         this.canCycleTera =
-          !this.statsMode &&
-          this.allowTera &&
-          !isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2) &&
-          !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+          !this.statsMode
+          && this.allowTera
+          && !isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2)
+          && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
       }
 
       if (dexEntry.caughtAttr && species.malePercent !== null) {
@@ -4097,9 +4094,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         let levelMoves: LevelMoves;
         if (
-          pokemonFormLevelMoves.hasOwnProperty(species.speciesId) &&
-          formIndex &&
-          pokemonFormLevelMoves[species.speciesId].hasOwnProperty(formIndex)
+          pokemonFormLevelMoves.hasOwnProperty(species.speciesId)
+          && formIndex
+          && pokemonFormLevelMoves[species.speciesId].hasOwnProperty(formIndex)
         ) {
           levelMoves = pokemonFormLevelMoves[species.speciesId][formIndex];
         } else {
@@ -4532,8 +4529,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
      *  If neither of these pass, we add DexAttr.MALE to our temp props
      */
     if (
-      this.starterPreferences[speciesId]?.female ||
-      ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)
+      this.starterPreferences[speciesId]?.female
+      || ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)
     ) {
       props += DexAttr.FEMALE;
     } else {
@@ -4543,8 +4540,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
      * If they're not there, it enables shiny state by default if any shiny was caught
      */
     if (
-      this.starterPreferences[speciesId]?.shiny ||
-      ((caughtAttr & DexAttr.SHINY) > 0n && this.starterPreferences[speciesId]?.shiny !== false)
+      this.starterPreferences[speciesId]?.shiny
+      || ((caughtAttr & DexAttr.SHINY) > 0n && this.starterPreferences[speciesId]?.shiny !== false)
     ) {
       props += DexAttr.SHINY;
       if (this.starterPreferences[speciesId]?.variant !== undefined) {
@@ -4598,10 +4595,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       );
       const formIndex = props.formIndex;
       this.canCycleTera =
-        !this.statsMode &&
-        this.allowTera &&
-        !isNullOrUndefined(getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2) &&
-        !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+        !this.statsMode
+        && this.allowTera
+        && !isNullOrUndefined(getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2)
+        && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
       this.updateInstructions();
     }
   }

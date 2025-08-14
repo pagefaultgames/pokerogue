@@ -245,7 +245,7 @@ export class LoginFormUiHandler extends FormModalUiHandler {
             });
           }
           globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-            options: options,
+            options,
             delay: 1000,
           });
           this.infoContainer.setInteractive(

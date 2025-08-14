@@ -155,7 +155,7 @@ function calcStarterPosition(index: number): { x: number; y: number } {
   const x = (index % 9) * 18;
   const y = yOffset + Math.floor(index / 9) * height;
 
-  return { x: x, y: y };
+  return { x, y };
 }
 
 interface SpeciesDetails {
@@ -1382,9 +1382,9 @@ export class PokedexUiHandler extends MessageUiHandler {
       const props = this.getSanitizedProps(globalScene.gameData.getSpeciesDexAttrProps(species, currentDexAttr));
 
       const data: ContainerData = {
-        species: species,
+        species,
         cost: globalScene.gameData.getSpeciesStarterValue(starterId),
-        props: props,
+        props,
       };
 
       // First, ensure you have the caught attributes for the species else default to bigint 0
@@ -1698,23 +1698,23 @@ export class PokedexUiHandler extends MessageUiHandler {
       });
 
       if (
-        fitsName &&
-        fitsAbilities &&
-        fitsMoves &&
-        fitsGen &&
-        fitsBiome &&
-        fitsType &&
-        fitsCaught &&
-        fitsPassive &&
-        fitsCostReduction &&
-        fitsStarter &&
-        fitsFavorite &&
-        fitsWin &&
-        fitsHA &&
-        fitsSeen &&
-        fitsEncountered &&
-        fitsEgg &&
-        fitsPokerus
+        fitsName
+        && fitsAbilities
+        && fitsMoves
+        && fitsGen
+        && fitsBiome
+        && fitsType
+        && fitsCaught
+        && fitsPassive
+        && fitsCostReduction
+        && fitsStarter
+        && fitsFavorite
+        && fitsWin
+        && fitsHA
+        && fitsSeen
+        && fitsEncountered
+        && fitsEgg
+        && fitsPokerus
       ) {
         this.filteredPokemonData.push(data);
       }
@@ -2067,7 +2067,7 @@ export class PokedexUiHandler extends MessageUiHandler {
     const species = this.lastSpecies;
     const formIndex = this.trayForms[cursor].formIndex;
 
-    this.setSpeciesDetails(species, { formIndex: formIndex });
+    this.setSpeciesDetails(species, { formIndex });
 
     return changed;
   }

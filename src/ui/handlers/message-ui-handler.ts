@@ -151,7 +151,7 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
         this.pendingPrompt = true;
       }
       this.textTimer = globalScene.time.addEvent({
-        delay: delay,
+        delay,
         callback: () => {
           const charIndex = text.length - this.textTimer?.repeatCount!; // TODO: is this bang correct?
           const charVar = charVarMap.get(charIndex);

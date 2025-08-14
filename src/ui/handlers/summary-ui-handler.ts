@@ -405,8 +405,8 @@ export class SummaryUiHandler extends UiHandler {
     }
 
     if (
-      globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].classicWinCount > 0 &&
-      globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId(true)].classicWinCount > 0
+      globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].classicWinCount > 0
+      && globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId(true)].classicWinCount > 0
     ) {
       this.championRibbon.setVisible(true);
     } else {
@@ -896,8 +896,8 @@ export class SummaryUiHandler extends UiHandler {
         }
 
         if (
-          globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) &&
-          !isNullOrUndefined(this.pokemon)
+          globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id)
+          && !isNullOrUndefined(this.pokemon)
         ) {
           const teraIcon = globalScene.add.sprite(123, 26, "button_tera");
           teraIcon.setName("terastallize-icon");
@@ -1003,7 +1003,7 @@ export class SummaryUiHandler extends UiHandler {
               wave: `${getBBCodeFrag(this.pokemon?.metWave ? this.pokemon.metWave.toString()! : i18next.t("pokemonSummary:unknownTrainer"), TextStyle.SUMMARY_RED)}${closeFragment}`,
             },
           ),
-          natureFragment: i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature: nature }),
+          natureFragment: i18next.t(`pokemonSummary:natureFragment.${rawNature}`, { nature }),
         });
 
         const memoText = addBBCodeTextObject(7, 113, String(memoString), TextStyle.WINDOW_ALT);

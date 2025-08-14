@@ -175,7 +175,7 @@ export function setSettingKeyboard(setting: SettingKeyboard, value: number): boo
         };
         globalScene.ui.setOverlayMode(UiMode.KEYBOARD_BINDING, {
           target: setting,
-          cancelHandler: cancelHandler,
+          cancelHandler,
         });
       }
       break;

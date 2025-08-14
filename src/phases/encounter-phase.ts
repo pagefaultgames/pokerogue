@@ -111,10 +111,10 @@ export class EncounterPhase extends BattlePhase {
           let enemySpecies = globalScene.randomSpecies(battle.waveIndex, level, true);
           // If player has golden bug net, rolls 10% chance to replace non-boss wave wild species from the golden bug net bug pool
           if (
-            globalScene.findModifier(m => m instanceof BoostBugSpawnModifier) &&
-            !globalScene.gameMode.isBoss(battle.waveIndex) &&
-            globalScene.arena.biomeType !== BiomeId.END &&
-            randSeedInt(10) === 0
+            globalScene.findModifier(m => m instanceof BoostBugSpawnModifier)
+            && !globalScene.gameMode.isBoss(battle.waveIndex)
+            && globalScene.arena.biomeType !== BiomeId.END
+            && randSeedInt(10) === 0
           ) {
             enemySpecies = getGoldenBugNetSpecies(level);
           }
@@ -146,15 +146,15 @@ export class EncounterPhase extends BattlePhase {
         globalScene.gameData.setPokemonSeen(
           enemyPokemon,
           true,
-          battle.battleType === BattleType.TRAINER ||
-            battle?.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE,
+          battle.battleType === BattleType.TRAINER
+            || battle?.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE,
         );
       }
 
       if (enemyPokemon.species.speciesId === SpeciesId.ETERNATUS) {
         if (
-          globalScene.gameMode.isClassic &&
-          (battle.battleSpec === BattleSpec.FINAL_BOSS || globalScene.gameMode.isWaveFinal(battle.waveIndex))
+          globalScene.gameMode.isClassic
+          && (battle.battleSpec === BattleSpec.FINAL_BOSS || globalScene.gameMode.isWaveFinal(battle.waveIndex))
         ) {
           if (battle.battleSpec !== BattleSpec.FINAL_BOSS) {
             enemyPokemon.formIndex = 1;
@@ -320,8 +320,8 @@ export class EncounterPhase extends BattlePhase {
 
     const { battleType, waveIndex } = globalScene.currentBattle;
     if (
-      globalScene.isMysteryEncounterValidForWave(battleType, waveIndex) &&
-      !globalScene.currentBattle.isBattleMysteryEncounter()
+      globalScene.isMysteryEncounterValidForWave(battleType, waveIndex)
+      && !globalScene.currentBattle.isBattleMysteryEncounter()
     ) {
       // Increment ME spawn chance if an ME could have spawned but did not
       // Only do this AFTER session has been saved to avoid duplicating increments
@@ -549,9 +549,9 @@ export class EncounterPhase extends BattlePhase {
       }
       /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen */
       if (
-        enemyPokemon.species.speciesId === SpeciesId.ETERNATUS &&
-        (globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex) ||
-          globalScene.gameMode.isEndlessMajorBoss(globalScene.currentBattle.waveIndex))
+        enemyPokemon.species.speciesId === SpeciesId.ETERNATUS
+        && (globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex)
+          || globalScene.gameMode.isEndlessMajorBoss(globalScene.currentBattle.waveIndex))
       ) {
         const enemyMBH = globalScene.findModifier(
           m => m instanceof TurnHeldItemTransferModifier,
@@ -617,8 +617,8 @@ export class EncounterPhase extends BattlePhase {
       }
 
       if (
-        globalScene.currentBattle.battleType !== BattleType.TRAINER &&
-        (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
+        globalScene.currentBattle.battleType !== BattleType.TRAINER
+        && (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
       ) {
         const minPartySize = globalScene.currentBattle.double ? 2 : 1;
         if (availablePartyMembers.length > minPartySize) {
@@ -651,7 +651,7 @@ export class EncounterPhase extends BattlePhase {
               const ordinalUsed =
                 !i18next.exists(localizationKey, { fallbackLng: [] }) || i18next.resolvedLanguage === "en"
                   ? i18next.t("battleSpecDialogue:key", {
-                      count: count,
+                      count,
                       ordinal: true,
                     })
                   : "";
@@ -660,7 +660,7 @@ export class EncounterPhase extends BattlePhase {
               const genderStr = PlayerGender[genderIndex].toLowerCase();
               const encounterDialogue = i18next.t(localizationKey, {
                 context: genderStr,
-                cycleCount: cycleCount,
+                cycleCount,
               });
               if (!globalScene.gameData.getSeenDialogues()[localizationKey]) {
                 globalScene.gameData.saveSeenDialogue(localizationKey);

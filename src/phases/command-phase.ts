@@ -62,8 +62,8 @@ export class CommandPhase extends FieldPhase {
       return;
     }
     if (
-      (turn === 1 && (!commandCursorMemory || cursorResetEvent)) ||
-      commandUiHandler.getCursor() === Command.POKEMON
+      (turn === 1 && (!commandCursorMemory || cursorResetEvent))
+      || commandUiHandler.getCursor() === Command.POKEMON
     ) {
       commandUiHandler.setCursor(Command.FIGHT);
     }
@@ -98,8 +98,8 @@ export class CommandPhase extends FieldPhase {
   private checkCommander(): void {
     // If the Pokemon has applied Commander's effects to its ally, skip this command
     if (
-      globalScene.currentBattle?.double &&
-      this.getPokemon().getAlly()?.getTag(BattlerTagType.COMMANDED)?.getSourcePokemon() === this.getPokemon()
+      globalScene.currentBattle?.double
+      && this.getPokemon().getAlly()?.getTag(BattlerTagType.COMMANDED)?.getSourcePokemon() === this.getPokemon()
     ) {
       globalScene.currentBattle.turnCommands[this.fieldIndex] = {
         command: Command.FIGHT,
@@ -125,9 +125,9 @@ export class CommandPhase extends FieldPhase {
     for (const queuedMove of moveQueue) {
       const movesetQueuedMove = moveset.find(m => m.moveId === queuedMove.move);
       if (
-        queuedMove.move !== MoveId.NONE &&
-        !isVirtual(queuedMove.useMode) &&
-        !movesetQueuedMove?.isUsable(playerPokemon, isIgnorePP(queuedMove.useMode))
+        queuedMove.move !== MoveId.NONE
+        && !isVirtual(queuedMove.useMode)
+        && !movesetQueuedMove?.isUsable(playerPokemon, isIgnorePP(queuedMove.useMode))
       ) {
         entriesToDelete++;
       } else {
@@ -194,8 +194,8 @@ export class CommandPhase extends FieldPhase {
     }
 
     if (
-      globalScene.currentBattle.isBattleMysteryEncounter() &&
-      globalScene.currentBattle.mysteryEncounter?.skipToFightInput
+      globalScene.currentBattle.isBattleMysteryEncounter()
+      && globalScene.currentBattle.mysteryEncounter?.skipToFightInput
     ) {
       globalScene.ui.clearText();
       globalScene.ui.setMode(UiMode.FIGHT, this.fieldIndex);
@@ -233,7 +233,7 @@ export class CommandPhase extends FieldPhase {
     const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
 
     globalScene.ui.showText(
-      i18next.t(cannotSelectKey, { moveName: moveName }),
+      i18next.t(cannotSelectKey, { moveName }),
       null,
       () => {
         globalScene.ui.clearText();
@@ -335,9 +335,9 @@ export class CommandPhase extends FieldPhase {
     if (turnCommand.move && (moveTargets.targets.length <= 1 || moveTargets.multiple)) {
       turnCommand.move.targets = moveTargets.targets;
     } else if (
-      turnCommand.move &&
-      playerPokemon.getTag(BattlerTagType.CHARGING) &&
-      playerPokemon.getMoveQueue().length >= 1
+      turnCommand.move
+      && playerPokemon.getTag(BattlerTagType.CHARGING)
+      && playerPokemon.getMoveQueue().length >= 1
     ) {
       turnCommand.move.targets = playerPokemon.getMoveQueue()[0].targets;
     } else {
@@ -402,17 +402,17 @@ export class CommandPhase extends FieldPhase {
 
     if (biomeType === BiomeId.END && battleType === BattleType.WILD) {
       if (
-        (isClassic && !isClassicFinalBoss && someUncaughtSpeciesOnField) ||
-        (isFullFreshStart && !isClassicFinalBoss) ||
-        (isEndless && !isEndlessMinorBoss)
+        (isClassic && !isClassicFinalBoss && someUncaughtSpeciesOnField)
+        || (isFullFreshStart && !isClassicFinalBoss)
+        || (isEndless && !isEndlessMinorBoss)
       ) {
         // Uncatchable paradox mons in classic and endless
         this.queueShowText("battle:noPokeballForce");
       } else if (
-        (isClassic && isClassicFinalBoss && missingMultipleStarters) ||
-        (isFullFreshStart && isClassicFinalBoss) ||
-        (isEndless && isEndlessMinorBoss) ||
-        isDaily
+        (isClassic && isClassicFinalBoss && missingMultipleStarters)
+        || (isFullFreshStart && isClassicFinalBoss)
+        || (isEndless && isEndlessMinorBoss)
+        || isDaily
       ) {
         // Uncatchable final boss in classic, endless and daily
         this.queueShowText("battle:noPokeballForceFinalBoss");
@@ -466,8 +466,8 @@ export class CommandPhase extends FieldPhase {
         // When facing the final boss, it must be weakened unless a Master Ball is used AND no challenges are active.
         // The message is customized for the final boss.
         if (
-          isFinalBoss &&
-          (cursor < PokeballType.MASTER_BALL || (cursor === PokeballType.MASTER_BALL && isChallengeActive))
+          isFinalBoss
+          && (cursor < PokeballType.MASTER_BALL || (cursor === PokeballType.MASTER_BALL && isChallengeActive))
         ) {
           this.queueShowText("battle:noPokeballForceFinalBossCatchable");
           return false;
@@ -481,7 +481,7 @@ export class CommandPhase extends FieldPhase {
 
       globalScene.currentBattle.turnCommands[this.fieldIndex] = {
         command: Command.BALL,
-        cursor: cursor,
+        cursor,
       };
       globalScene.currentBattle.turnCommands[this.fieldIndex]!.targets = targets;
       if (this.fieldIndex) {
@@ -593,8 +593,8 @@ export class CommandPhase extends FieldPhase {
       return false;
     }
     if (
-      currentBattle.battleType === BattleType.TRAINER ||
-      currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
+      currentBattle.battleType === BattleType.TRAINER
+      || currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
     ) {
       this.queueShowText("battle:noEscapeTrainer");
       return false;

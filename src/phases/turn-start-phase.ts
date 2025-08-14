@@ -72,7 +72,7 @@ export class TurnStartPhase extends FieldPhase {
       applyAbAttrs("PreventBypassSpeedChanceAbAttr", {
         pokemon: p,
         bypass: bypassSpeed,
-        canCheckHeldItems: canCheckHeldItems,
+        canCheckHeldItems,
       });
       if (canCheckHeldItems.value) {
         globalScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);

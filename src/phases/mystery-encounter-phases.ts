@@ -225,9 +225,9 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
       tags
         .filter(
           t =>
-            includedLapseTags.includes(t.tagType) &&
-            t.lapseTypes.includes(BattlerTagLapseType.TURN_END) &&
-            !t.lapse(pokemon, BattlerTagLapseType.TURN_END),
+            includedLapseTags.includes(t.tagType)
+            && t.lapseTypes.includes(BattlerTagLapseType.TURN_END)
+            && !t.lapse(pokemon, BattlerTagLapseType.TURN_END),
         )
         .forEach(t => {
           t.onRemove(pokemon);

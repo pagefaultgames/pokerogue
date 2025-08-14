@@ -880,15 +880,11 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       this.prevolutions = preEvolutions.filter(
         e =>
           e.speciesId === species.speciesId &&
-          (((e.evoFormKey === "" || e.evoFormKey === null) &&
-            // This takes care of Cosplay Pikachu (Pichu is not shown)
-            (preSpecies.forms.some(form => form.formKey === species.forms[formIndex]?.formKey) ||
-              // This takes care of Gholdengo
-              (preSpecies.forms.length > 0 && species.forms.length === 0) ||
-              // This takes care of everything else
+          (((e.evoFormKey === "" || e.evoFormKey === null) && // This takes care of Cosplay Pikachu (Pichu is not shown)
+            (preSpecies.forms.some(form => form.formKey === species.forms[formIndex]?.formKey) || // This takes care of Gholdengo
+              (preSpecies.forms.length > 0 && species.forms.length === 0) || // This takes care of everything else
               (preSpecies.forms.length === 0 &&
-                (species.forms.length === 0 || species.forms[formIndex]?.formKey === "")))) ||
-            // This takes care of Burmy, Shellos etc
+                (species.forms.length === 0 || species.forms[formIndex]?.formKey === "")))) || // This takes care of Burmy, Shellos etc
             e.evoFormKey === species.forms[formIndex]?.formKey),
       );
     }
@@ -1477,7 +1473,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   });
 
                   ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-                    options: options,
+                    options,
                     supportHover: true,
                     maxOptions: 8,
                     yOffset: 19,
@@ -1556,7 +1552,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   });
 
                   ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-                    options: options,
+                    options,
                     supportHover: true,
                     maxOptions: 8,
                     yOffset: 19,
@@ -1703,7 +1699,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
                       if (conditionText) {
                         options.push({
-                          label: label,
+                          label,
                           style: isFormCaught ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                           handler: () => {
                             this.previousSpecies.push(this.species);
@@ -1740,7 +1736,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   });
 
                   ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-                    options: options,
+                    options,
                     supportHover: true,
                     maxOptions: 8,
                     yOffset: 19,
@@ -2034,7 +2030,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 },
               });
               ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-                options: options,
+                options,
                 yOffset: 47,
               });
               success = true;

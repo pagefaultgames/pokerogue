@@ -68,8 +68,8 @@ describe("Moves - Friend Guard", () => {
     // With the ally's Friend Guard, damage should have been reduced from base damage by 25%
     expect(turn2Damage).toBe(
       Math.floor(
-        player1.getBaseDamage({ source: enemy1, move: allMoves[MoveId.TACKLE], moveCategory: MoveCategory.PHYSICAL }) *
-          0.75,
+        player1.getBaseDamage({ source: enemy1, move: allMoves[MoveId.TACKLE], moveCategory: MoveCategory.PHYSICAL })
+          * 0.75,
       ),
     );
   });
