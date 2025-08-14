@@ -2,7 +2,7 @@ import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions, pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { signatureSpecies } from "#balance/signature-species";
-import { tmSpecies } from "#balance/tms";
+import { speciesTmList } from "#balance/tms";
 import { modifierTypes } from "#data/data-lists";
 import { doubleBattleDialogue } from "#data/double-battle-dialogue";
 import { Gender } from "#data/gender";
@@ -1445,7 +1445,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesFilter(s => s.isOfType(PokemonType.ELECTRIC)),
   [TrainerType.HARLEQUIN]: new TrainerConfig(++t)
     .setEncounterBgm(TrainerType.PSYCHIC)
-    .setSpeciesFilter(s => tmSpecies[MoveId.TRICK_ROOM].indexOf(s.speciesId) > -1),
+    .setSpeciesFilter(s => speciesTmList[s.speciesId].includes(MoveId.TRICK_ROOM)),
   [TrainerType.HIKER]: new TrainerConfig(++t)
     .setEncounterBgm(TrainerType.BACKPACKER)
     .setPartyTemplates(
@@ -1589,7 +1589,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.TWO_AVG,
       trainerPartyTemplates.THREE_AVG,
     )
-    .setSpeciesFilter(s => tmSpecies[MoveId.FLY].indexOf(s.speciesId) > -1),
+    .setSpeciesFilter(s => speciesTmList[s.speciesId].includes(MoveId.FLY)),
   [TrainerType.POKEFAN]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
     .setName("Pokéfan")
@@ -1605,7 +1605,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.FIVE_WEAK,
       trainerPartyTemplates.SIX_WEAKER_SAME,
     )
-    .setSpeciesFilter(s => tmSpecies[MoveId.HELPING_HAND].indexOf(s.speciesId) > -1),
+    .setSpeciesFilter(s => speciesTmList[s.speciesId].includes(MoveId.HELPING_HAND)),
   [TrainerType.PRESCHOOLER]: new TrainerConfig(++t)
     .setMoneyMultiplier(0.2)
     .setEncounterBgm(TrainerType.YOUNGSTER)

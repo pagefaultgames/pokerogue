@@ -81,7 +81,7 @@ export class CanLearnMoveRequirement extends EncounterPokemonRequirement {
     }
 
     if (!this.excludeTmMoves) {
-      allPokemonMoves.push(...(pkm.compatibleTms ?? []));
+      allPokemonMoves.push(...(pkm.getCompatibleTms() ?? []));
     }
 
     if (!this.excludeEggMoves) {

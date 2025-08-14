@@ -13,10 +13,12 @@ import {
   pokemonSpeciesLevelMoves,
 } from "#balance/pokemon-level-moves";
 import { speciesStarterCosts } from "#balance/starters";
+import { speciesFormTmList, speciesTmList } from "#balance/tms";
 import type { GrowthRate } from "#data/exp";
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
 import { DexAttr } from "#enums/dex-attr";
+import type { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
@@ -349,6 +351,41 @@ export abstract class PokemonSpeciesForm {
     const isVariant =
       shiny && variantData[variantDataIndex] && variant !== undefined && variantData[variantDataIndex][variant];
     return `pokemon_icons_${this.generation}${isVariant ? "v" : ""}`;
+  }
+
+  /**
+   * Compiles a list of all TMs compatible with this SpeciesForm
+   * @param formIndex formIndex to check
+   * @returns
+   */
+  getCompatibleTms(formIndex?: number): MoveId[] {
+    const tms: MoveId[] = [];
+    tms.push(...speciesTmList[this.speciesId]);
+    if (speciesFormTmList.hasOwnProperty(this.speciesId)) {
+      formIndex = this.formIndex ?? formIndex ?? -1;
+      const formKey = getPokemonSpecies(this.speciesId).forms[formIndex].formKey;
+      tms.push(...(speciesFormTmList[this.speciesId][formKey] ?? []));
+    }
+    return tms;
+  }
+
+  /**
+   * Gets the actual formKey associated with a given formIndex
+   * @param formIndex The formIndex to check
+   */
+  abstract getFormKey(formIndex?: number): string;
+
+  /**
+   * Checks whether a TM is compatible with a SpeciesForm
+   * @param tm The move to check for
+   * @param formIndex If provided, looks specifically for this form
+   * @returns Whether the TM is compatible with this SpeciesForm
+   */
+  isTmCompatible(tm: MoveId, formIndex?: number): boolean {
+    return (
+      speciesTmList[this.speciesId].includes(tm) ||
+      speciesFormTmList[this.speciesId][this.getFormKey(formIndex)].includes(tm)
+    );
   }
 
   getIconId(female: boolean, formIndex?: number, shiny?: boolean, variant?: number): string {
@@ -878,6 +915,15 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       : ret;
   }
 
+  /**
+   * Returns the actual formKey associated with the form at the specified index
+   * @param formIndex the formIndex to check
+   * @returns
+   */
+  getFormKey(formIndex?: number): string {
+    return this.forms[formIndex ?? this.formIndex].formKey ?? "";
+  }
+
   localize(): void {
     this.name = i18next.t(`pokemon:${SpeciesId[this.speciesId].toLowerCase()}`);
     this.category = i18next.t(`pokemonCategory:${SpeciesId[this.speciesId].toLowerCase()}_category`);
@@ -1315,6 +1361,13 @@ export class PokemonForm extends PokemonSpeciesForm {
     this.formKey = formKey;
     this.formSpriteKey = formSpriteKey;
     this.isUnobtainable = isUnobtainable;
+  }
+
+  /**
+   * Returns the actual formKey for this PokemonForm
+   */
+  getFormKey(_formIndex?: number): string {
+    return this.formKey;
   }
 
   getFormSpriteKey(_formIndex?: number) {
