@@ -2511,17 +2511,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
               defenderType,
             });
           }
-          if (ignoreImmunity.value) {
-            if (multiplier.value === 0) {
-              return 1;
-            }
+          if (ignoreImmunity.value && multiplier.value === 0) {
+            return 1;
           }
 
           const exposedTags = this.findTags(tag => tag instanceof ExposedTag) as ExposedTag[];
-          if (exposedTags.some(t => t.ignoreImmunity(defenderType, moveType))) {
-            if (multiplier.value === 0) {
-              return 1;
-            }
+          if (exposedTags.some(t => t.ignoreImmunity(defenderType, moveType)) && multiplier.value === 0) {
+            return 1;
           }
         }
         return multiplier.value;
@@ -2960,10 +2956,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
     const haThreshold = new NumberHolder(thresholdOverride ?? BASE_HIDDEN_ABILITY_CHANCE);
-    if (applyModifiersToOverride) {
-      if (!this.hasTrainer()) {
-        globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, haThreshold);
-      }
+    if (applyModifiersToOverride && !this.hasTrainer()) {
+      globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, haThreshold);
     }
 
     if (randSeedInt(65536) < haThreshold.value) {
@@ -3063,8 +3057,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return;
     }
 
-    for (let m = 0; m < allLevelMoves.length; m++) {
-      const levelMove = allLevelMoves[m];
+    for (const levelMove of allLevelMoves) {
       if (this.level < levelMove[0]) {
         break;
       }
@@ -4829,11 +4822,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
           return true;
         });
 
-        if (this.isOfType(PokemonType.POISON) || this.isOfType(PokemonType.STEEL)) {
-          if (poisonImmunity.includes(true)) {
-            this.queueStatusImmuneMessage(quiet);
-            return false;
-          }
+        if ((this.isOfType(PokemonType.POISON) || this.isOfType(PokemonType.STEEL)) && poisonImmunity.includes(true)) {
+          this.queueStatusImmuneMessage(quiet);
+          return false;
         }
         break;
       }
@@ -5013,10 +5004,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         this.lapseTag(BattlerTagType.NIGHTMARE);
       }
     }
-    if (confusion) {
-      if (this.getTag(BattlerTagType.CONFUSED)) {
-        this.lapseTag(BattlerTagType.CONFUSED);
-      }
+    if (confusion && this.getTag(BattlerTagType.CONFUSED)) {
+      this.lapseTag(BattlerTagType.CONFUSED);
     }
     if (reloadAssets) {
       this.loadAssets(false).then(() => this.playAnim());
@@ -5500,8 +5489,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     spriteColors.forEach((sc: number[], i: number) => {
       paletteDeltas.push([]);
-      for (let p = 0; p < palette.length; p++) {
-        paletteDeltas[i].push(deltaRgb(sc, palette[p]));
+      for (const p of palette) {
+        paletteDeltas[i].push(deltaRgb(sc, p));
       }
     });
 
@@ -6774,10 +6763,12 @@ export class EnemyPokemon extends Pokemon {
   }
 
   canBypassBossSegments(segmentCount = 1): boolean {
-    if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-      if (!this.formIndex && this.bossSegmentIndex - segmentCount < 1) {
-        return false;
-      }
+    if (
+      globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS &&
+      !this.formIndex &&
+      this.bossSegmentIndex - segmentCount < 1
+    ) {
+      return false;
     }
 
     return true;

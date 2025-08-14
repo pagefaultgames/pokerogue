@@ -117,10 +117,8 @@ export function updateWindowType(windowTypeIndex: number): void {
       } else if (object.texture?.key === "namebox") {
         themedObjects.push(object);
       }
-    } else if (object instanceof Phaser.GameObjects.Sprite) {
-      if (object.texture?.key === "bg") {
-        themedObjects.push(object);
-      }
+    } else if (object instanceof Phaser.GameObjects.Sprite && object.texture?.key === "bg") {
+      themedObjects.push(object);
     }
   };
 

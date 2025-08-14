@@ -419,10 +419,8 @@ export class Egg {
       const rand = randSeedInt(MANAPHY_EGG_MANAPHY_RATE) !== 1;
       return rand ? SpeciesId.PHIONE : SpeciesId.MANAPHY;
     }
-    if (this.tier === EggTier.LEGENDARY && this._sourceType === EggSourceType.GACHA_LEGENDARY) {
-      if (!randSeedInt(2)) {
-        return getLegendaryGachaSpeciesForTimestamp(this.timestamp);
-      }
+    if (this.tier === EggTier.LEGENDARY && this._sourceType === EggSourceType.GACHA_LEGENDARY && !randSeedInt(2)) {
+      return getLegendaryGachaSpeciesForTimestamp(this.timestamp);
     }
 
     let minStarterValue: number;

@@ -6,6 +6,7 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
 import type { Variant } from "#sprites/variant";
 import { isNullOrUndefined } from "#utils/common";
+import console from "node:console";
 import type { GameObjects } from "phaser";
 
 type PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
@@ -87,6 +88,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
     variant: Variant;
   }[];
 
+  // TODO: Refactor
   constructor(encounter: MysteryEncounter) {
     super(globalScene, -72, 76);
     this.encounter = encounter;
@@ -193,17 +195,15 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
           sprite.setPosition(sprite.x, sprite.y + y);
           tintSprite.setPosition(tintSprite.x, tintSprite.y + y);
         }
-      } else {
         // Single sprite
-        if (this.spriteConfigs.length === 1) {
-          sprite.x = origin;
-          tintSprite.x = origin;
-        } else {
-          // Do standard sprite spacing (not including offset sprites)
-          sprite.x = minX + (n + 0.5) * spacingValue + origin;
-          tintSprite.x = minX + (n + 0.5) * spacingValue + origin;
-          n++;
-        }
+      } else if (this.spriteConfigs.length === 1) {
+        sprite.x = origin;
+        tintSprite.x = origin;
+      } else {
+        // Do standard sprite spacing (not including offset sprites)
+        sprite.x = minX + (n + 0.5) * spacingValue + origin;
+        tintSprite.x = minX + (n + 0.5) * spacingValue + origin;
+        n++;
       }
 
       if (!isNullOrUndefined(pokemonShinySparkle)) {

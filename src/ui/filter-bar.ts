@@ -130,22 +130,20 @@ export class FilterBar extends Phaser.GameObjects.Container {
    * Move the leftmost dropdown to the left of the FilterBar instead of below it
    */
   offsetHybridFilters(): void {
-    for (let i = 0; i < this.dropDowns.length; i++) {
-      if (this.dropDowns[i].dropDownType === DropDownType.HYBRID) {
-        this.dropDowns[i].autoSize();
-        this.dropDowns[i].x = -this.dropDowns[i].getWidth();
-        this.dropDowns[i].y = 0;
+    for (const dropDown of this.dropDowns) {
+      if (dropDown.dropDownType === DropDownType.HYBRID) {
+        dropDown.autoSize();
+        dropDown.x = -dropDown.getWidth();
+        dropDown.y = 0;
       }
     }
   }
 
   setCursor(cursor: number): void {
-    if (this.lastCursor > -1) {
-      if (this.dropDowns[this.lastCursor].visible) {
-        this.dropDowns[this.lastCursor].setVisible(false);
-        this.dropDowns[cursor].setVisible(true);
-        this.dropDowns[cursor].resetCursor();
-      }
+    if (this.lastCursor > -1 && this.dropDowns[this.lastCursor].visible) {
+      this.dropDowns[this.lastCursor].setVisible(false);
+      this.dropDowns[cursor].setVisible(true);
+      this.dropDowns[cursor].resetCursor();
     }
 
     this.cursorObj.setPosition(this.labels[cursor].x - this.cursorOffset + 2, 6);

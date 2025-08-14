@@ -167,18 +167,16 @@ export function setSettingKeyboard(setting: SettingKeyboard, value: number): boo
     case SettingKeyboard.Alt_Button_Speed_Up:
     case SettingKeyboard.Alt_Button_Slow_Down:
     case SettingKeyboard.Alt_Button_Submit:
-      if (value) {
-        if (globalScene.ui) {
-          const cancelHandler = (success = false): boolean => {
-            globalScene.ui.revertMode();
-            (globalScene.ui.getHandler() as SettingsKeyboardUiHandler).updateBindings();
-            return success;
-          };
-          globalScene.ui.setOverlayMode(UiMode.KEYBOARD_BINDING, {
-            target: setting,
-            cancelHandler: cancelHandler,
-          });
-        }
+      if (value && globalScene.ui) {
+        const cancelHandler = (success = false): boolean => {
+          globalScene.ui.revertMode();
+          (globalScene.ui.getHandler() as SettingsKeyboardUiHandler).updateBindings();
+          return success;
+        };
+        globalScene.ui.setOverlayMode(UiMode.KEYBOARD_BINDING, {
+          target: setting,
+          cancelHandler: cancelHandler,
+        });
       }
       break;
   }

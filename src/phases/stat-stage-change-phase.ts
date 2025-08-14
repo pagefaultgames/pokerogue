@@ -22,6 +22,7 @@ export type StatStageChangeCallback = (
   relativeChanges: number[],
 ) => void;
 
+// TODO: Refactor this mess of a phase
 export class StatStageChangePhase extends PokemonPhase {
   public readonly phaseName = "StatStageChangePhase";
   private stats: BattleStat[];
@@ -62,13 +63,12 @@ export class StatStageChangePhase extends PokemonPhase {
   start() {
     // Check if multiple stats are being changed at the same time, then run SSCPhase for each of them
     if (this.stats.length > 1) {
-      for (let i = 0; i < this.stats.length; i++) {
-        const stat = [this.stats[i]];
+      for (const stat of this.stats) {
         globalScene.phaseManager.unshiftNew(
           "StatStageChangePhase",
           this.battlerIndex,
           this.selfTarget,
-          stat,
+          [stat],
           this.stages,
           this.showMessage,
           this.ignoreAbilities,
@@ -100,20 +100,18 @@ export class StatStageChangePhase extends PokemonPhase {
           }
         });
       }
+    } else if (!this.comingFromStickyWeb) {
+      opponentPokemon = globalScene.getPlayerField()[globalScene.currentBattle.lastPlayerInvolved];
     } else {
-      if (!this.comingFromStickyWeb) {
-        opponentPokemon = globalScene.getPlayerField()[globalScene.currentBattle.lastPlayerInvolved];
-      } else {
-        const stickyTagID = globalScene.arena.findTagsOnSide(
-          (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
-          ArenaTagSide.ENEMY,
-        )[0].sourceId;
-        globalScene.getPlayerField().forEach(e => {
-          if (e.id === stickyTagID) {
-            opponentPokemon = e;
-          }
-        });
-      }
+      const stickyTagID = globalScene.arena.findTagsOnSide(
+        (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
+        ArenaTagSide.ENEMY,
+      )[0].sourceId;
+      globalScene.getPlayerField().forEach(e => {
+        if (e.id === stickyTagID) {
+          opponentPokemon = e;
+        }
+      });
     }
 
     if (!pokemon.isActive(true)) {

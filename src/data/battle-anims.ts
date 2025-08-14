@@ -1397,6 +1397,7 @@ export class EncounterBattleAnim extends BattleAnim {
   }
 }
 
+// biome-ignore-start lint/style/useForOf: This is being removed
 export async function populateAnims() {
   const commonAnimNames = getEnumKeys(CommonAnim).map(k => k.toLowerCase());
   const commonAnimMatchNames = commonAnimNames.map(k => k.replace(/_/g, ""));
@@ -1672,3 +1673,5 @@ export async function populateAnims() {
         })();
     }*/
 }
+
+// biome-ignore-end lint/style/useForOf: This is being removed
