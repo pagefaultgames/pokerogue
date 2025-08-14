@@ -116,20 +116,20 @@ describe("Abilities - Shields Down", () => {
   });
 
   it("should not ignore non-volatile status effects & Yawn in Core Form", async () => {
-    game.override.starterForms({
-      // Note: we specifically check orange core due to a bug where only Red Core Minior was immune to status
-      [SpeciesId.MINIOR]: orangeCoreForm,
-    });
     await game.classicMode.startBattle([SpeciesId.MINIOR]);
+
+    // Drop minior to below half to prevent reverting to Core Form
+    const minior = game.field.getPlayerPokemon();
+    minior.hp *= 0.49;
+    minior.formIndex = orangeCoreForm;
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.NUZZLE);
     await game.toEndOfTurn();
 
-    const minior = game.field.getPlayerPokemon();
     expect(minior).toHaveStatusEffect(StatusEffect.PARALYSIS);
 
-    minior.resetStatus();
+    minior.clearStatus();
     expect(minior).toHaveStatusEffect(StatusEffect.NONE);
 
     game.move.use(MoveId.SPLASH);
@@ -143,7 +143,7 @@ describe("Abilities - Shields Down", () => {
   it.todo("should be poisoned by toxic spikes when Gravity is active before changing forms", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MINIOR]);
 
-    // Change minior to core form in a state where it would revert on switch
+    // Change minior to Core form in a state where it would revert to Meteor form on switch
     const minior = game.scene.getPlayerParty()[1];
     minior.formIndex = redCoreForm;
 
@@ -154,8 +154,8 @@ describe("Abilities - Shields Down", () => {
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
-    expect(minior.species.speciesId).toBe(SpeciesId.MINIOR);
-    expect(minior.formIndex).toBe(0);
+    expect(minior.isOnField()).toBe(true);
+    expect(minior.formIndex).toBe(redMeteorForm);
     expect(minior.isGrounded()).toBe(true);
     expect(minior).toHaveStatusEffect(StatusEffect.POISON);
   });
@@ -170,7 +170,7 @@ describe("Abilities - Shields Down", () => {
 
     await game.toEndOfTurn();
 
-    expect(game.field.getPlayerPokemon().findTag(tag => tag.tagType === BattlerTagType.CONFUSED)).not.toBe(undefined);
+    expect(game.field.getPlayerPokemon()).toHaveBattlerTag(BattlerTagType.CONFUSED);
   });
 
   // TODO: The `NoTransformAbilityAbAttr` attribute is not checked anywhere, so this test cannot pass.
