@@ -378,10 +378,6 @@ export class PhaseManager {
 
     // Bang is justified as `populatePhaseQueue` ensures we always have _something_ in the queue at all times
     this.currentPhase = this.phaseQueue.shift()!;
-    // TODO: Remove proof-of-concept error throw after test suite passes
-    if (!this.currentPhase) {
-      throw new Error("currentPhase was null after being started!");
-    }
 
     const unactivatedConditionalPhases: [() => boolean, Phase][] = [];
     // Check if there are any conditional phases queued
