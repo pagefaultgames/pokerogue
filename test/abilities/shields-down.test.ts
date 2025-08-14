@@ -129,7 +129,7 @@ describe("Abilities - Shields Down", () => {
 
     expect(minior).toHaveStatusEffect(StatusEffect.PARALYSIS);
 
-    minior.clearStatus();
+    minior.clearStatus(false, false);
     expect(minior).toHaveStatusEffect(StatusEffect.NONE);
 
     game.move.use(MoveId.SPLASH);
