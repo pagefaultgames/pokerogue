@@ -813,7 +813,7 @@ export async function catchPokemon(
       } else if (addStatus.value) {
         catchMessage = "battle:pokemonCaught";
       } else {
-        catchMessage = "battle:pokemonCaughtChallenge";
+        catchMessage = "battle:pokemonCaughtButChallenge";
       }
       globalScene.ui.showText(
         i18next.t(catchMessage, { pokemonName: pokemon.getNameToRender() }),
