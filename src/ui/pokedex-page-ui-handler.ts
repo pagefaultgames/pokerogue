@@ -259,8 +259,6 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   private instructionRowX = 0;
   private instructionRowY = 0;
   private instructionRowTextOffset = 9;
-  private filterInstructionRowX = 0;
-  private filterInstructionRowY = 0;
 
   private starterAttributes: StarterAttributes;
   private savedStarterAttributes: StarterAttributes;
@@ -2200,8 +2198,6 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   updateInstructions(): void {
     this.instructionRowX = 0;
     this.instructionRowY = 0;
-    this.filterInstructionRowX = 0;
-    this.filterInstructionRowY = 0;
     this.hideInstructions();
     this.instructionsContainer.removeAll();
     this.filterInstructionsContainer.removeAll();

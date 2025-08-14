@@ -24,14 +24,12 @@ export class FilterText extends Phaser.GameObjects.Container {
   private rows: FilterTextRow[] = [];
   public cursorObj: Phaser.GameObjects.Image;
   public numFilters = 0;
-  private lastCursor = -1;
   private uiTheme: UiTheme;
 
   private menuMessageBoxContainer: Phaser.GameObjects.Container;
   private dialogueMessageBox: Phaser.GameObjects.NineSlice;
   message: any;
   private readonly textPadding = 8;
-  private readonly defaultWordWrapWidth = 1224;
 
   private onChange: () => void;
 
@@ -158,7 +156,6 @@ export class FilterText extends Phaser.GameObjects.Container {
     const cursorOffset = 8;
 
     this.cursorObj.setPosition(cursorOffset, this.labels[cursor].y + 3);
-    this.lastCursor = cursor;
   }
 
   /**
