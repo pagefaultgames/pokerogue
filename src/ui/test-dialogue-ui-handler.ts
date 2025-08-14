@@ -31,7 +31,7 @@ export class TestDialogueUiHandler extends FormModalUiHandler {
             // we check for null or undefined here as per above - the typeof is still an object but the value is null so we need to exit out of this and pass the null key
 
             // Return in the format expected by i18next
-            return middleKey ? `${topKey}:${middleKey.map(m => m).join(".")}.${t}` : `${topKey}:${t}`;
+            return middleKey ? `${topKey}:${middleKey.join(".")}.${t}` : `${topKey}:${t}`;
           }
         })
         .filter(t => t);
