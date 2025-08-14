@@ -5966,7 +5966,7 @@ export class HitsTagAttr extends MoveAttr {
   /** The {@linkcode BattlerTagType} this move hits */
   public tagType: BattlerTagType;
   /** Should this move deal double damage against {@linkcode tagType}? */
-  public doubleDamage: boolean;
+  public doubleDamage = false;
 
   constructor(tagType: BattlerTagType) {
     super();
