@@ -1667,6 +1667,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
   constructor(
     private newType: PokemonType,
     private powerMultiplier: number,
+    // TODO: all moves with this attr solely check the move being used...
     private condition?: PokemonAttackCondition,
   ) {
     super(false);
