@@ -6,7 +6,7 @@ pre-commit:
     biome-lint:
       # Disable colors as certain IDEs don't support it in the output pane.
       # Summary mode looks decent in plain ASCII anyhow
-      run: pnpm exec biome check --write --colors=off --reporter=summary --staged --no-errors-on-unmatched
+      run: pnpm exec biome check --write --colors=off --reporter=summary --staged --no-errors-on-unmatched --diagnostic-level=error
       stage_fixed: true
     ls-lint:
       run: pnpm exec ls-lint
