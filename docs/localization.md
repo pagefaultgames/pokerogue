@@ -1,6 +1,6 @@
 # Localization 101
 
-PokéRogue's localization team puts immense effort into making the game accessible around the world, supporting over 12 different languages at the time of writing this document.
+PokéRogue's localization team puts immense effort into making the game accessible around the world, supporting over 12 different languages at the time of writing this document. \
 As a developer, it's important to help maintain global accessibility by effectively coordinating with the Translation Team on any new features or enhancements.
 
 This document aims to cover everything you need to know to help keep the integration process for localization smooth and simple.
@@ -33,14 +33,14 @@ The parent repo (the "superproject") houses a cloned version of the 2nd reposito
 
 The following command will initialize your branch's locales repository and update its HEAD:
 ```bash
-pnpm update:locales
+pnpm update-locales
 ```
 
 > [!TIP]
 > This command is run _automatically_ after cloning, merging or changing branches, so you should rarely have to run it manually.
 
 > [!IMPORTANT]
-> If you EVER run into issues with the `locales` submodule, try deleting the `.git/modules/public` and `public/locales` folders before re-initializing the repository.
+> If you EVER run into issues with the `locales` submodule, try deleting the `.git/modules/public` and `public/locales` folders before re-initializing it again.
 
 ## How Are Translations Integrated?
 
@@ -80,7 +80,7 @@ Given `pokerogue-locales` is a full-fledged `git` repository _inside_ `pokerogue
 
 > [!WARNING]
 > Make sure to checkout or rebase onto `upstream/main` (`pnpm update-locales:remote`) **BEFORE** creating a locales PR!
-> The checked-out commit is based on the superproject's SHA-1 by default, so hastily making changes may see you basing your commits on last week 's `HEAD`.
+> The checked-out commit is based on the superproject's SHA-1 by default, so hastily making changes may see you basing your commits on last week's `HEAD`.
 
 ## Requirements for Adding Translated Text
 When a new feature or enhancement requires adding a new locales key **without changing text in existing keys**, we have the following workflow with regards to localization:
@@ -139,7 +139,7 @@ The easiest way to do this is by **pinging the current Head of Translation** in 
 
 <!-- Remember to update this everytime the head of translation changes! -->
 > [!IMPORTANT]
-> The current Head of Translation is:
+> The current Head of Translation is: \
 > ** @lugiadrien **
 
 # Closing Remarks

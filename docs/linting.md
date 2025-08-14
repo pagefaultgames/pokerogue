@@ -15,12 +15,12 @@ On the other hand, if Biome complains about a piece of code, **there's probably 
 Biome has integration with many popular code editors. See [these](https://biomejs.dev/guides/editors/first-party-extensions/) [pages](https://biomejs.dev/guides/editors/third-party-extensions/) for information about enabling Biome in your editor of choice.
 
 ## Automated Runs
-Generally speaking, most users shouldn't need to run Biome directly; in addition to editor integration, a [pre-commit hook](../lefthook.yml) will periodically run Biome before each commit on any changed files.
+Generally speaking, most users shouldn't need to run Biome directly; in addition to editor integration, a [pre-commit hook](../lefthook.yml) will automatically format and lint all staged files before each commit.
 
 > ![WARNING]
 > You will **not** be able to commit code if any staged files contain `error`-level linting problems. \
 > If you, for whatever reason, _absolutely need_ to bypass Lefthook for a given commit,
-> `LEFTHOOK=0 git commit` will skip running all pre-commit hooks during the commit process.
+> pass the `--no-verify` flag to `git commit`.
 
 We also have a [Github Action](../.github/workflows/linting.yml) to verify code quality each time a PR is updated, preventing bad code from inadvertently making its way upstream. \
 These are effectively the same commands as run by Lefthook, merely on a project-wide scale.
@@ -52,6 +52,6 @@ Some things to consider:
 - Some rules are currently marked as warnings (`warn`) to allow for gradual refactoring without blocking development. **Do not write new code that triggers these rules!**
 - The linter is configured to ignore specific files and folders (such as excessively large files or ones in need of refactoring) to improve performance and focus on actionable areas.
 
-Any questions about linting rules can be brought up in the `#dev-corner` channel in the communityDiscord.
+Any questions about linting rules can be brought up in the `#dev-corner` channel in the community Discord.
 
 [^1]: A complete list of rules can be found in the [`biome.jsonc`](../biome.jsonc) file in the project root. Many rules are accompanied by comments explaining the reasons for their inclusion (or lack thereof).
