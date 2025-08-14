@@ -1469,7 +1469,6 @@ export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
 export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
   private chance: number;
   private attacker: Pokemon;
-  private move: Move;
 
   constructor(chance: number) {
     super();
@@ -1485,11 +1484,9 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
     );
   }
 
-  override apply({ simulated, opponent: attacker, move, pokemon }: PostMoveInteractionAbAttrParams): void {
-    // TODO: investigate why this is setting properties
+  override apply({ simulated, opponent: attacker, pokemon }: PostMoveInteractionAbAttrParams): void {
     if (!simulated) {
       this.attacker = attacker;
-      this.move = move;
       this.attacker.addTag(BattlerTagType.DISABLED, 4, 0, pokemon.id);
     }
   }
@@ -6324,10 +6321,13 @@ class ForceSwitchOutHelper {
       return !blockedByAbility.value;
     }
 
-    if (!player && globalScene.currentBattle.battleType === BattleType.WILD) {
-      if (!globalScene.currentBattle.waveIndex && globalScene.currentBattle.waveIndex % 10 === 0) {
-        return false;
-      }
+    if (
+      !player &&
+      globalScene.currentBattle.battleType === BattleType.WILD &&
+      !globalScene.currentBattle.waveIndex &&
+      globalScene.currentBattle.waveIndex % 10 === 0
+    ) {
+      return false;
     }
 
     if (

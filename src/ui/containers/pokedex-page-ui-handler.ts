@@ -1066,12 +1066,10 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       ) {
         starterAttributes.female = !starterAttributes.female;
       }
-    } else {
-      if (caughtAttr & DexAttr.FEMALE) {
-        starterAttributes.female = true;
-      } else if (caughtAttr & DexAttr.MALE) {
-        starterAttributes.female = false;
-      }
+    } else if (caughtAttr & DexAttr.FEMALE) {
+      starterAttributes.female = true;
+    } else if (caughtAttr & DexAttr.MALE) {
+      starterAttributes.female = false;
     }
 
     return starterAttributes;
@@ -1838,10 +1836,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     if (this.isCaught() & DexAttr.VARIANT_2) {
                       break;
                     }
-                  } else {
-                    if (this.isCaught() & DexAttr.VARIANT_3) {
-                      break;
-                    }
+                  } else if (this.isCaught() & DexAttr.VARIANT_3) {
+                    break;
                   }
                 } while (newVariant !== props.variant);
 
@@ -2361,10 +2357,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
         // Set default attributes if for some reason starterAttributes does not exist or attributes missing
         const props: StarterAttributes = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-        if (starterAttributes?.variant && !Number.isNaN(starterAttributes.variant)) {
-          if (props.shiny) {
-            props.variant = starterAttributes.variant as Variant;
-          }
+        if (starterAttributes?.variant && !Number.isNaN(starterAttributes.variant) && props.shiny) {
+          props.variant = starterAttributes.variant as Variant;
         }
         props.form = starterAttributes?.form ?? props.form;
         props.female = starterAttributes?.female ?? props.female;
@@ -2777,17 +2771,15 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       props += DexAttr.SHINY;
       if (this.starterAttributes?.variant !== undefined) {
         props += BigInt(Math.pow(2, this.starterAttributes?.variant)) * DexAttr.DEFAULT_VARIANT;
-      } else {
-        /*  This calculates the correct variant if there's no starter preferences for it.
+        /*  This chunk calculates the correct variant if there's no starter preferences for it.
          *  This gets the highest tier variant that you've caught and adds it to the temp props
          */
-        if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
-          props += DexAttr.VARIANT_3;
-        } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
-          props += DexAttr.VARIANT_2;
-        } else {
-          props += DexAttr.DEFAULT_VARIANT;
-        }
+      } else if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
+        props += DexAttr.VARIANT_3;
+      } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
+        props += DexAttr.VARIANT_2;
+      } else {
+        props += DexAttr.DEFAULT_VARIANT;
       }
     } else {
       props += DexAttr.NON_SHINY;

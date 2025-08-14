@@ -292,16 +292,14 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
 
           // Extra HA roll at base 1/64 odds (boosted by events and charms)
           const hiddenIndex = tradePokemon.species.ability2 ? 2 : 1;
-          if (tradePokemon.species.abilityHidden) {
-            if (tradePokemon.abilityIndex < hiddenIndex) {
-              const hiddenAbilityChance = new NumberHolder(64);
-              globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+          if (tradePokemon.species.abilityHidden && tradePokemon.abilityIndex < hiddenIndex) {
+            const hiddenAbilityChance = new NumberHolder(64);
+            globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
 
-              const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
+            const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
 
-              if (hasHiddenAbility) {
-                tradePokemon.abilityIndex = hiddenIndex;
-              }
+            if (hasHiddenAbility) {
+              tradePokemon.abilityIndex = hiddenIndex;
             }
           }
 

@@ -641,9 +641,8 @@ export class CommandPhase extends FieldPhase {
    * @returns Whether the command was successful
    */
   handleCommand(command: Command.FIGHT | Command.TERA, cursor: number, useMode?: MoveUseMode, move?: TurnMove): boolean;
-  handleCommand(command: Command.BALL, cursor: number): boolean;
   handleCommand(command: Command.POKEMON, cursor: number, useBaton: boolean): boolean;
-  handleCommand(command: Command.RUN, cursor: number): boolean;
+  handleCommand(command: Command.BALL | Command.RUN, cursor: number): boolean;
   handleCommand(command: Command, cursor: number, useMode?: boolean | MoveUseMode, move?: TurnMove): boolean;
 
   public handleCommand(

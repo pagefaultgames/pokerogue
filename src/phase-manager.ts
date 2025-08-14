@@ -103,10 +103,13 @@ import { WeatherEffectPhase } from "#phases/weather-effect-phase";
 import type { PhaseMap, PhaseString } from "#types/phase-types";
 import { type Constructor, coerceArray } from "#utils/common";
 
-/*
+/**
+ * @module
  * Manager for phases used by battle scene.
  *
- * *This file must not be imported or used directly. The manager is exclusively used by the battle scene and is not intended for external use.*
+ * @remarks
+ * **This file must not be imported or used directly.**
+ * The manager is exclusively used by the Battle Scene and is NOT intended for external use.
  */
 
 /**

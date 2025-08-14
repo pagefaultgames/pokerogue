@@ -661,34 +661,32 @@ export class PartyUiHandler extends MessageUiHandler {
 
   // TODO: Might need to check here for when this.transferMode is active.
   private processModifierTransferModeLeftRightInput(button: Button) {
+    if (!this.isItemManageMode()) {
+      return false;
+    }
     let success = false;
     const option = this.options[this.optionsCursor];
     if (button === Button.LEFT) {
       /** Decrease quantity for the current item and update UI */
-      if (this.isItemManageMode()) {
-        this.transferQuantities[option] =
-          this.transferQuantities[option] === 1
-            ? this.transferQuantitiesMax[option]
-            : this.transferQuantities[option] - 1;
-        this.updateOptions();
-        success = this.setCursor(
-          this.optionsCursor,
-        ); /** Place again the cursor at the same position. Necessary, otherwise the cursor disappears */
-      }
+      this.transferQuantities[option] =
+        this.transferQuantities[option] === 1
+          ? this.transferQuantitiesMax[option]
+          : this.transferQuantities[option] - 1;
+      this.updateOptions();
+      success = this.setCursor(
+        this.optionsCursor,
+      ); /** Place again the cursor at the same position. Necessary, otherwise the cursor disappears */
     }
-
     if (button === Button.RIGHT) {
       /** Increase quantity for the current item and update UI */
-      if (this.isItemManageMode()) {
-        this.transferQuantities[option] =
-          this.transferQuantities[option] === this.transferQuantitiesMax[option]
-            ? 1
-            : this.transferQuantities[option] + 1;
-        this.updateOptions();
-        success = this.setCursor(
-          this.optionsCursor,
-        ); /** Place again the cursor at the same position. Necessary, otherwise the cursor disappears */
-      }
+      this.transferQuantities[option] =
+        this.transferQuantities[option] === this.transferQuantitiesMax[option]
+          ? 1
+          : this.transferQuantities[option] + 1;
+      this.updateOptions();
+      success = this.setCursor(
+        this.optionsCursor,
+      ); /** Place again the cursor at the same position. Necessary, otherwise the cursor disappears */
     }
     return success;
   }
@@ -977,10 +975,8 @@ export class PartyUiHandler extends MessageUiHandler {
       return this.moveOptionCursor(button);
     }
 
-    if (button === Button.LEFT || button === Button.RIGHT) {
-      if (this.isItemManageMode()) {
-        return this.processModifierTransferModeLeftRightInput(button);
-      }
+    if ((button === Button.LEFT || button === Button.RIGHT) && this.isItemManageMode()) {
+      return this.processModifierTransferModeLeftRightInput(button);
     }
 
     return false;
@@ -1263,11 +1259,9 @@ export class PartyUiHandler extends MessageUiHandler {
             isScroll = true;
             this.optionsScrollCursor++;
           }
-        } else {
-          if (!cursor && this.optionsScrollCursor) {
-            isScroll = true;
-            this.optionsScrollCursor--;
-          }
+        } else if (!cursor && this.optionsScrollCursor) {
+          isScroll = true;
+          this.optionsScrollCursor--;
         }
         if (isScroll && this.optionsScrollCursor === 1) {
           this.optionsScrollCursor += isDown ? 1 : -1;
@@ -1654,12 +1648,10 @@ export class PartyUiHandler extends MessageUiHandler {
               optionName = `${modifier.active ? i18next.t("partyUiHandler:deactivate") : i18next.t("partyUiHandler:activate")} ${modifier.type.name}`;
             } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
               optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:unpauseEvolution") : i18next.t("partyUiHandler:pauseEvolution")}`;
+            } else if (this.localizedOptions.includes(option)) {
+              optionName = i18next.t(`partyUiHandler:${toCamelCase(PartyOption[option])}`);
             } else {
-              if (this.localizedOptions.includes(option)) {
-                optionName = i18next.t(`partyUiHandler:${toCamelCase(PartyOption[option])}`);
-              } else {
-                optionName = toTitleCase(PartyOption[option]);
-              }
+              optionName = toTitleCase(PartyOption[option]);
             }
             break;
           }
@@ -1737,12 +1729,12 @@ export class PartyUiHandler extends MessageUiHandler {
     this.transferMode = false;
     this.transferAll = false;
     this.partySlots[this.transferCursor].setTransfer(false);
-    for (let i = 0; i < this.partySlots.length; i++) {
-      this.partySlots[i].slotDescriptionLabel.setVisible(false);
-      this.partySlots[i].slotHpLabel.setVisible(true);
-      this.partySlots[i].slotHpBar.setVisible(true);
-      this.partySlots[i].slotHpOverlay.setVisible(true);
-      this.partySlots[i].slotHpText.setVisible(true);
+    for (const partySlot of this.partySlots) {
+      partySlot.slotDescriptionLabel.setVisible(false);
+      partySlot.slotHpLabel.setVisible(true);
+      partySlot.slotHpBar.setVisible(true);
+      partySlot.slotHpOverlay.setVisible(true);
+      partySlot.slotHpText.setVisible(true);
     }
   }
 

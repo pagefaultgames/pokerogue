@@ -988,41 +988,39 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
 
       if (!forTrainer && isRegionalEvolution) {
         evolutionChance = 0;
-      } else {
-        if (ev.wildDelay === SpeciesWildEvolutionDelay.NONE) {
-          if (strength === PartyMemberStrength.STRONGER) {
-            evolutionChance = 1;
-          } else {
-            const maxLevelDiff = this.getStrengthLevelDiff(strength); //The maximum distance from the evolution level tolerated for the mon to not evolve
-            const minChance: number = 0.875 - 0.125 * strength;
-
-            evolutionChance = Math.min(
-              minChance + easeInFunc(Math.min(level - ev.level, maxLevelDiff) / maxLevelDiff) * (1 - minChance),
-              1,
-            );
-          }
+      } else if (ev.wildDelay === SpeciesWildEvolutionDelay.NONE) {
+        if (strength === PartyMemberStrength.STRONGER) {
+          evolutionChance = 1;
         } else {
-          const preferredMinLevel = Math.max(ev.level - 1 + ev.wildDelay! * this.getStrengthLevelDiff(strength), 1); // TODO: is the bang correct?
-          let evolutionLevel = Math.max(ev.level > 1 ? ev.level : Math.floor(preferredMinLevel / 2), 1);
-
-          if (ev.level <= 1 && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
-            const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(
-              ev => ev.speciesId === this.speciesId,
-            )!.level; // TODO: is the bang correct?
-            if (prevolutionLevel > 1) {
-              evolutionLevel = prevolutionLevel;
-            }
-          }
+          const maxLevelDiff = this.getStrengthLevelDiff(strength); //The maximum distance from the evolution level tolerated for the mon to not evolve
+          const minChance: number = 0.875 - 0.125 * strength;
 
           evolutionChance = Math.min(
-            0.65 * easeInFunc(Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel) / preferredMinLevel) +
-              0.35 *
-                easeOutFunc(
-                  Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel * 2.5) / (preferredMinLevel * 2.5),
-                ),
+            minChance + easeInFunc(Math.min(level - ev.level, maxLevelDiff) / maxLevelDiff) * (1 - minChance),
             1,
           );
         }
+      } else {
+        const preferredMinLevel = Math.max(ev.level - 1 + ev.wildDelay! * this.getStrengthLevelDiff(strength), 1); // TODO: is the bang correct?
+        let evolutionLevel = Math.max(ev.level > 1 ? ev.level : Math.floor(preferredMinLevel / 2), 1);
+
+        if (ev.level <= 1 && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
+          const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(
+            ev => ev.speciesId === this.speciesId,
+          )!.level; // TODO: is the bang correct?
+          if (prevolutionLevel > 1) {
+            evolutionLevel = prevolutionLevel;
+          }
+        }
+
+        evolutionChance = Math.min(
+          0.65 * easeInFunc(Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel) / preferredMinLevel) +
+            0.35 *
+              easeOutFunc(
+                Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel * 2.5) / (preferredMinLevel * 2.5),
+              ),
+          1,
+        );
       }
 
       //TODO: Adjust templates and delays so we don't have to hardcode it
@@ -1212,9 +1210,9 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   }
 
   /**
-   * Generates a {@linkcode bigint} corresponding to the maximum unlocks possible for this species,
+   * Generates a {@linkcode BigInt} corresponding to the maximum unlocks possible for this species,
    * taking into account if the species has a male/female gender, and which variants are implemented.
-   * @returns {@linkcode bigint} Maximum unlocks, can be compared with {@linkcode DexEntry.caughtAttr}.
+   * @returns The maximum unlocks for the species as a `BigInt`; can be compared with {@linkcode DexEntry.caughtAttr}.
    */
   getFullUnlocksData(): bigint {
     let caughtAttr = 0n;

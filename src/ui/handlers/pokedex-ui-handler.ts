@@ -730,11 +730,12 @@ export class PokedexUiHandler extends MessageUiHandler {
       }
     }
 
-    if (starterAttributes.female !== undefined) {
-      if (!(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)) {
-        // requested gender wasn't unlocked, purging setting
-        starterAttributes.female = undefined;
-      }
+    if (
+      starterAttributes.female !== undefined &&
+      !(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)
+    ) {
+      // requested gender wasn't unlocked, purging setting
+      starterAttributes.female = undefined;
     }
 
     if (starterAttributes.ability !== undefined) {
@@ -1214,78 +1215,76 @@ export class PokedexUiHandler extends MessageUiHandler {
             break;
         }
       }
+    } else if (button === Button.ACTION) {
+      ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, null, this.filteredIndices);
+      success = true;
     } else {
-      if (button === Button.ACTION) {
-        ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, null, this.filteredIndices);
-        success = true;
-      } else {
-        switch (button) {
-          case Button.UP:
-            if (currentRow > 0) {
-              if (this.scrollCursor > 0 && currentRow - this.scrollCursor === 0) {
-                this.scrollCursor--;
-                this.updateScroll();
-                success = this.setCursor(this.cursor);
-              } else {
-                success = this.setCursor(this.cursor - 9);
-              }
-            } else {
-              this.filterBarCursor = this.filterBar.getNearestFilter(this.pokemonContainers[this.cursor]);
-              this.setFilterMode(true);
-              success = true;
-            }
-            break;
-          case Button.DOWN:
-            if (currentRow < numOfRows - 1 && this.cursor + 9 < this.filteredPokemonData.length) {
-              // not last row
-              if (currentRow - this.scrollCursor === 8) {
-                // last row of visible pokemon
-                this.scrollCursor++;
-                this.updateScroll();
-                success = this.setCursor(this.cursor);
-              } else {
-                success = this.setCursor(this.cursor + 9);
-              }
-            } else if (numOfRows > 1) {
-              // DOWN from last row of pokemon > Wrap around to first row
-              this.scrollCursor = 0;
+      switch (button) {
+        case Button.UP:
+          if (currentRow > 0) {
+            if (this.scrollCursor > 0 && currentRow - this.scrollCursor === 0) {
+              this.scrollCursor--;
               this.updateScroll();
-              success = this.setCursor(this.cursor % 9);
+              success = this.setCursor(this.cursor);
             } else {
-              // DOWN from single row of pokemon > Go to filters
-              this.filterBarCursor = this.filterBar.getNearestFilter(this.pokemonContainers[this.cursor]);
-              this.setFilterMode(true);
-              success = true;
+              success = this.setCursor(this.cursor - 9);
             }
-            break;
-          case Button.LEFT:
-            if (this.cursor % 9 !== 0) {
-              success = this.setCursor(this.cursor - 1);
-            } else {
-              // LEFT from filtered pokemon, on the left edge
-              this.filterTextCursor = this.filterText.getNearestFilter(this.pokemonContainers[this.cursor]);
-              this.setFilterTextMode(true);
-              success = true;
-            }
-            break;
-          case Button.RIGHT:
-            // is not right edge
-            if (this.cursor % 9 < (currentRow < numOfRows - 1 ? 8 : (numberOfStarters - 1) % 9)) {
-              success = this.setCursor(this.cursor + 1);
-            } else {
-              // RIGHT from filtered pokemon, on the right edge
-              this.filterTextCursor = this.filterText.getNearestFilter(this.pokemonContainers[this.cursor]);
-              this.setFilterTextMode(true);
-              success = true;
-            }
-            break;
-          case Button.CYCLE_FORM: {
-            const species = this.pokemonContainers[this.cursor].species;
-            if (this.canShowFormTray) {
-              success = this.openFormTray(species);
-            }
-            break;
+          } else {
+            this.filterBarCursor = this.filterBar.getNearestFilter(this.pokemonContainers[this.cursor]);
+            this.setFilterMode(true);
+            success = true;
           }
+          break;
+        case Button.DOWN:
+          if (currentRow < numOfRows - 1 && this.cursor + 9 < this.filteredPokemonData.length) {
+            // not last row
+            if (currentRow - this.scrollCursor === 8) {
+              // last row of visible pokemon
+              this.scrollCursor++;
+              this.updateScroll();
+              success = this.setCursor(this.cursor);
+            } else {
+              success = this.setCursor(this.cursor + 9);
+            }
+          } else if (numOfRows > 1) {
+            // DOWN from last row of pokemon > Wrap around to first row
+            this.scrollCursor = 0;
+            this.updateScroll();
+            success = this.setCursor(this.cursor % 9);
+          } else {
+            // DOWN from single row of pokemon > Go to filters
+            this.filterBarCursor = this.filterBar.getNearestFilter(this.pokemonContainers[this.cursor]);
+            this.setFilterMode(true);
+            success = true;
+          }
+          break;
+        case Button.LEFT:
+          if (this.cursor % 9 !== 0) {
+            success = this.setCursor(this.cursor - 1);
+          } else {
+            // LEFT from filtered pokemon, on the left edge
+            this.filterTextCursor = this.filterText.getNearestFilter(this.pokemonContainers[this.cursor]);
+            this.setFilterTextMode(true);
+            success = true;
+          }
+          break;
+        case Button.RIGHT:
+          // is not right edge
+          if (this.cursor % 9 < (currentRow < numOfRows - 1 ? 8 : (numberOfStarters - 1) % 9)) {
+            success = this.setCursor(this.cursor + 1);
+          } else {
+            // RIGHT from filtered pokemon, on the right edge
+            this.filterTextCursor = this.filterText.getNearestFilter(this.pokemonContainers[this.cursor]);
+            this.setFilterTextMode(true);
+            success = true;
+          }
+          break;
+        case Button.CYCLE_FORM: {
+          const species = this.pokemonContainers[this.cursor].species;
+          if (this.canShowFormTray) {
+            success = this.openFormTray(species);
+          }
+          break;
         }
       }
     }
@@ -1480,12 +1479,10 @@ export class PokedexUiHandler extends MessageUiHandler {
           } else {
             data.passive1 = false;
           }
+        } else if (starterData.passiveAttr > 0) {
+          data.passive2 = true;
         } else {
-          if (starterData.passiveAttr > 0) {
-            data.passive2 = true;
-          } else {
-            data.passive2 = false;
-          }
+          data.passive2 = false;
         }
       }
 
@@ -2392,17 +2389,15 @@ export class PokedexUiHandler extends MessageUiHandler {
       props += DexAttr.SHINY;
       if (this.starterPreferences[speciesId]?.variant !== undefined) {
         props += BigInt(Math.pow(2, this.starterPreferences[speciesId]?.variant)) * DexAttr.DEFAULT_VARIANT;
-      } else {
+      } else if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
         /*  This calculates the correct variant if there's no starter preferences for it.
          *  This gets the highest tier variant that you've caught and adds it to the temp props
          */
-        if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
-          props += DexAttr.VARIANT_3;
-        } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
-          props += DexAttr.VARIANT_2;
-        } else {
-          props += DexAttr.DEFAULT_VARIANT;
-        }
+        props += DexAttr.VARIANT_3;
+      } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
+        props += DexAttr.VARIANT_2;
+      } else {
+        props += DexAttr.DEFAULT_VARIANT;
       }
     } else {
       props += DexAttr.NON_SHINY;

@@ -156,14 +156,12 @@ export class MysteryEncounterUiHandler extends UiHandler {
               selected.optionMode === MysteryEncounterOptionMode.DISABLED_OR_SPECIAL))
         ) {
           success = false;
+        } else if (
+          (globalScene.phaseManager.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected, cursor)
+        ) {
+          success = true;
         } else {
-          if (
-            (globalScene.phaseManager.getCurrentPhase() as MysteryEncounterPhase).handleOptionSelect(selected, cursor)
-          ) {
-            success = true;
-          } else {
-            ui.playError();
-          }
+          ui.playError();
         }
       } else {
         // TODO: If we need to handle cancel option? Maybe default logic to leave/run from encounter idk

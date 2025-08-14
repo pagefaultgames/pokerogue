@@ -234,9 +234,9 @@ export class LoginFormUiHandler extends FormModalUiHandler {
         const dataKeys = localStorageKeys.filter(ls => ls.indexOf(keyToFind) >= 0);
         if (dataKeys.length > 0 && dataKeys.length <= 2) {
           const options: OptionSelectItem[] = [];
-          for (let i = 0; i < dataKeys.length; i++) {
+          for (const key of dataKeys) {
             options.push({
-              label: dataKeys[i].replace(keyToFind, ""),
+              label: key.replace(keyToFind, ""),
               handler: () => {
                 globalScene.ui.revertMode();
                 this.infoContainer.disableInteractive();
@@ -261,7 +261,7 @@ export class LoginFormUiHandler extends FormModalUiHandler {
       }
     });
 
-    this.saveDownloadImage.on("pointerdown", () => {
+    this.saveDownloadImage.on("pointerdown", async () => {
       // find all data_ and sessionData keys, put them in a .txt file and download everything in a single zip
       const localStorageKeys = Object.keys(localStorage); // this gets the keys for localStorage
       const keyToFind = "data_";
@@ -270,20 +270,19 @@ export class LoginFormUiHandler extends FormModalUiHandler {
       const sessionKeys = localStorageKeys.filter(ls => ls.indexOf(sessionKeyToFind) >= 0);
       if (dataKeys.length > 0 || sessionKeys.length > 0) {
         const zip = new JSZip();
-        for (let i = 0; i < dataKeys.length; i++) {
-          zip.file(dataKeys[i] + ".prsv", localStorage.getItem(dataKeys[i])!);
+        for (const dataKey of dataKeys) {
+          zip.file(dataKey + ".prsv", localStorage.getItem(dataKey)!);
         }
-        for (let i = 0; i < sessionKeys.length; i++) {
-          zip.file(sessionKeys[i] + ".prsv", localStorage.getItem(sessionKeys[i])!);
+        for (const sessionKey of sessionKeys) {
+          zip.file(sessionKey + ".prsv", localStorage.getItem(sessionKey)!);
         }
-        zip.generateAsync({ type: "blob" }).then(content => {
-          const url = URL.createObjectURL(content);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "pokerogue_saves.zip";
-          a.click();
-          URL.revokeObjectURL(url);
-        });
+        const content = await zip.generateAsync({ type: "blob" });
+        const url = URL.createObjectURL(content);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "pokerogue_saves.zip";
+        a.click();
+        URL.revokeObjectURL(url);
       } else {
         return onFail(this.ERR_NO_SAVES);
       }

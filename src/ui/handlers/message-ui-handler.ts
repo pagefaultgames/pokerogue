@@ -108,17 +108,17 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
       const textWords = text.split(" ");
       let lastLineCount = 1;
       let newText = "";
-      for (let w = 0; w < textWords.length; w++) {
-        const nextWordText = newText ? `${newText} ${textWords[w]}` : textWords[w];
+      for (const textWord of textWords) {
+        const nextWordText = newText ? `${newText} ${textWord}` : textWord;
 
-        if (textWords[w].includes("\n")) {
+        if (textWord.includes("\n")) {
           newText = nextWordText;
           lastLineCount++;
         } else {
           const lineCount = this.message.runWordWrap(nextWordText).split(/\n/g).length;
           if (lineCount > lastLineCount) {
             lastLineCount = lineCount;
-            newText = `${newText}\n${textWords[w]}`;
+            newText = `${newText}\n${textWord}`;
           } else {
             newText = nextWordText;
           }

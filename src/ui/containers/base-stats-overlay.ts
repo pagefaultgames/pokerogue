@@ -78,7 +78,7 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
       this.statsRectangles[i].setSize(values[i] / 2, 5);
     }
 
-    this.statsTotalLabel.setText(i18next.t("pokedexUiHandler:baseTotal") + ": " + `${total}`);
+    this.statsTotalLabel.setText(`${i18next.t("pokedexUiHandler:baseTotal")}: ${total}`);
 
     this.setVisible(true);
     this.active = true;

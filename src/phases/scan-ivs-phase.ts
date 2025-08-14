@@ -23,24 +23,23 @@ export class ScanIvsPhase extends PokemonPhase {
     let enemyIvs: number[] = [];
     let statsContainer: Phaser.GameObjects.Sprite[] = [];
     let statsContainerLabels: Phaser.GameObjects.Sprite[] = [];
-    const enemyField = globalScene.getEnemyField();
-    for (let e = 0; e < enemyField.length; e++) {
-      enemyIvs = enemyField[e].ivs;
+    for (const enemy of globalScene.getEnemyField()) {
+      enemyIvs = enemy.ivs;
       // we are using getRootSpeciesId() here because we want to check against the baby form, not the mid form if it exists
-      const currentIvs = globalScene.gameData.dexData[enemyField[e].species.getRootSpeciesId()].ivs;
-      statsContainer = enemyField[e].getBattleInfo().getStatsValueContainer().list as Phaser.GameObjects.Sprite[];
+      const currentIvs = globalScene.gameData.dexData[enemy.species.getRootSpeciesId()].ivs;
+      statsContainer = enemy.getBattleInfo().getStatsValueContainer().list as Phaser.GameObjects.Sprite[];
       statsContainerLabels = statsContainer.filter(m => m.name.indexOf("icon_stat_label") >= 0);
-      for (let s = 0; s < statsContainerLabels.length; s++) {
-        const ivStat = Stat[statsContainerLabels[s].frame.name];
+      for (const statContainer of statsContainerLabels) {
+        const ivStat = Stat[statContainer.frame.name];
         if (enemyIvs[ivStat] > currentIvs[ivStat] && PERMANENT_STATS.indexOf(Number(ivStat)) >= 0) {
           const hexColour =
             enemyIvs[ivStat] === 31
               ? getTextColor(TextStyle.PERFECT_IV, false)
               : getTextColor(TextStyle.SUMMARY_GREEN, false);
           const hexTextColour = Phaser.Display.Color.HexStringToColor(hexColour).color;
-          statsContainerLabels[s].setTint(hexTextColour);
+          statContainer.setTint(hexTextColour);
         }
-        statsContainerLabels[s].setVisible(true);
+        statContainer.setVisible(true);
       }
     }
 

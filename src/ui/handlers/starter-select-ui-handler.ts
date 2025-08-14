@@ -1268,11 +1268,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
     }
 
-    if (starterAttributes.female !== undefined) {
-      if (!(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)) {
-        // requested gender wasn't unlocked, purging setting
-        starterAttributes.female = undefined;
-      }
+    if (
+      starterAttributes.female !== undefined &&
+      !(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)
+    ) {
+      // requested gender wasn't unlocked, purging setting
+      starterAttributes.female = undefined;
     }
 
     if (starterAttributes.ability !== undefined) {
@@ -2435,11 +2436,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                       // TODO: is this bang correct?
                       break;
                     }
-                  } else {
-                    if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_3) {
-                      // TODO: is this bang correct?
-                      break;
-                    }
+                  } else if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_3) {
+                    // TODO: is this bang correct?
+                    break;
                   }
                 } while (newVariant !== props.variant);
                 starterAttributes.variant = newVariant; // store the selected variant
@@ -2520,10 +2519,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
                   }
                   break;
-                } else {
-                  if (abilityAttr & AbilityAttr.ABILITY_HIDDEN) {
-                    break;
-                  }
+                } else if (abilityAttr & AbilityAttr.ABILITY_HIDDEN) {
+                  break;
                 }
               } while (newAbilityIndex !== this.abilityCursor);
               starterAttributes.ability = newAbilityIndex; // store the selected ability
@@ -3074,8 +3071,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     // this updates icons for previously saved pokemon
-    for (let i = 0; i < this.validStarterContainers.length; i++) {
-      const currentFilteredContainer = this.validStarterContainers[i];
+    for (const currentFilteredContainer of this.validStarterContainers) {
       const starterSprite = currentFilteredContainer.icon as Phaser.GameObjects.Sprite;
 
       const currentDexAttr = this.getCurrentDexProps(currentFilteredContainer.species.speciesId);
@@ -3678,10 +3674,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           const defaultNature =
             starterAttributes?.nature || globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
           props = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-          if (starterAttributes?.variant && !Number.isNaN(starterAttributes.variant)) {
-            if (props.shiny) {
-              props.variant = starterAttributes.variant as Variant;
-            }
+          if (starterAttributes?.variant && !Number.isNaN(starterAttributes.variant) && props.shiny) {
+            props.variant = starterAttributes.variant as Variant;
           }
           props.formIndex = starterAttributes?.form ?? props.formIndex;
           props.female = starterAttributes?.female ?? props.female;
@@ -4504,13 +4498,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return true;
   }
 
-  /* This block checks to see if your party is valid
+  /**
+   *  This block checks to see if your party is valid
    * It checks each pokemon against the challenge - noting that due to monotype challenges it needs to check the pokemon while ignoring their evolutions/form change items
    */
   isPartyValid(): boolean {
     let canStart = false;
-    for (let s = 0; s < this.starterSpecies.length; s++) {
-      const species = this.starterSpecies[s];
+    for (const species of this.starterSpecies) {
       const isValidForChallenge = checkStarterValidForChallenge(
         species,
         globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)),
@@ -4555,17 +4549,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       props += DexAttr.SHINY;
       if (this.starterPreferences[speciesId]?.variant !== undefined) {
         props += BigInt(Math.pow(2, this.starterPreferences[speciesId]?.variant)) * DexAttr.DEFAULT_VARIANT;
-      } else {
+      } else if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
         /*  This calculates the correct variant if there's no starter preferences for it.
          *  This gets the highest tier variant that you've caught and adds it to the temp props
          */
-        if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
-          props += DexAttr.VARIANT_3;
-        } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
-          props += DexAttr.VARIANT_2;
-        } else {
-          props += DexAttr.DEFAULT_VARIANT;
-        }
+        props += DexAttr.VARIANT_3;
+      } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
+        props += DexAttr.VARIANT_2;
+      } else {
+        props += DexAttr.DEFAULT_VARIANT;
       }
     } else {
       props += DexAttr.NON_SHINY;
