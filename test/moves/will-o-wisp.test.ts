@@ -36,7 +36,7 @@ describe("Moves - Will-O-Wisp", () => {
   it("should burn the opponent", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.WILL_O_WISP);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);

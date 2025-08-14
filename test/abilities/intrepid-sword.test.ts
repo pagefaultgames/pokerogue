@@ -32,8 +32,8 @@ describe("Abilities - Intrepid Sword", () => {
   it("should raise ATK stat stage by 1 on entry", async () => {
     await game.classicMode.runToSummon([SpeciesId.ZACIAN]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     await game.phaseInterceptor.to(CommandPhase, false);
 

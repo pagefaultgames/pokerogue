@@ -11,7 +11,6 @@ import { speciesEggMoves } from "#balance/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
 import { ArenaTrapTag } from "#data/arena-tag";
-import { applyChallenges } from "#data/challenge";
 import { allMoves, allSpecies } from "#data/data-lists";
 import type { Egg } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
@@ -63,6 +62,7 @@ import { VoucherType, vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { DexData, DexEntry } from "#types/dex-data";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
+import { applyChallenges } from "#utils/challenge-utils";
 import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
@@ -127,6 +127,7 @@ export interface SessionSaveData {
   battleType: BattleType;
   trainer: TrainerData;
   gameVersion: string;
+  runNameText: string;
   timestamp: number;
   challenges: ChallengeData[];
   mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
@@ -976,6 +977,54 @@ export class GameData {
           return resolve(null);
         }
       }
+    });
+  }
+
+  async renameSession(slotId: number, newName: string): Promise<boolean> {
+    return new Promise(async resolve => {
+      if (slotId < 0) {
+        return resolve(false);
+      }
+      const sessionData: SessionSaveData | null = await this.getSession(slotId);
+
+      if (!sessionData) {
+        return resolve(false);
+      }
+
+      if (newName === "") {
+        return resolve(true);
+      }
+
+      sessionData.runNameText = newName;
+      const updatedDataStr = JSON.stringify(sessionData);
+      const encrypted = encrypt(updatedDataStr, bypassLogin);
+      const secretId = this.secretId;
+      const trainerId = this.trainerId;
+
+      if (bypassLogin) {
+        localStorage.setItem(
+          `sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`,
+          encrypt(updatedDataStr, bypassLogin),
+        );
+        resolve(true);
+        return;
+      }
+      pokerogueApi.savedata.session
+        .update({ slot: slotId, trainerId, secretId, clientSessionId }, encrypted)
+        .then(error => {
+          if (error) {
+            console.error("Failed to update session name:", error);
+            resolve(false);
+          } else {
+            localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`, encrypted);
+            updateUserInfo().then(success => {
+              if (success !== null && !success) {
+                return resolve(false);
+              }
+            });
+            resolve(true);
+          }
+        });
     });
   }
 
