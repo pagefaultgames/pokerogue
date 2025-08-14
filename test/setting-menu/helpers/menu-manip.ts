@@ -17,16 +17,12 @@ export class MenuManip {
   private config;
   private settingName;
   private keycode;
-  private icon;
   private iconDisplayed;
-  private specialCaseIcon;
 
   constructor(config) {
     this.config = config;
     this.settingName = null;
-    this.icon = null;
     this.iconDisplayed = null;
-    this.specialCaseIcon = null;
   }
 
   // TODO: Review this

@@ -18,8 +18,6 @@ export class AdminUiHandler extends FormModalUiHandler {
   private config: ModalConfig;
 
   private readonly buttonGap = 10;
-  // http response from the server when a username isn't found in the server
-  private readonly httpUserNotFoundErrorCode: number = 404;
   private readonly ERR_REQUIRED_FIELD = (field: string) => {
     if (field === "username") {
       return `${toTitleCase(field)} is required`;
