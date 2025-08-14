@@ -33,7 +33,7 @@ export function toHaveUsedPP(
     };
   }
 
-  const override = received.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.OPP_MOVESET_OVERRIDE;
+  const override = received.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.ENEMY_MOVESET_OVERRIDE;
   if (coerceArray(override).length > 0) {
     return {
       pass: false,
