@@ -1,12 +1,23 @@
+import type { Pokemon } from "#field/pokemon";
 import type {
   AttackMove,
   ChargingAttackMove,
   ChargingSelfStatusMove,
+  Move,
   MoveAttr,
   MoveAttrConstructorMap,
   SelfStatusMove,
   StatusMove,
 } from "#moves/move";
+
+/**
+ * A generic function producing a message during a Move's execution.
+ * @param user - The {@linkcode Pokemon} using the move
+ * @param target - The {@linkcode Pokemon} targeted by the move
+ * @param move - The {@linkcode Move} being used
+ * @returns a string
+ */
+export type MoveMessageFunc = (user: Pokemon, target: Pokemon, move: Move) => string;
 
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 

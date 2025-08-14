@@ -12,6 +12,7 @@ import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonFormChangeItemModifier } from "#modifiers/modifier";
 import { type Constructor, coerceArray } from "#utils/common";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export abstract class SpeciesFormChangeTrigger {
@@ -143,11 +144,7 @@ export class SpeciesFormChangeMoveLearnedTrigger extends SpeciesFormChangeTrigge
     super();
     this.move = move;
     this.known = known;
-    const moveKey = MoveId[this.move]
-      .split("_")
-      .filter(f => f)
-      .map((f, i) => (i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
-      .join("") as unknown as string;
+    const moveKey = toCamelCase(MoveId[this.move]);
     this.description = known
       ? i18next.t("pokemonEvolutions:Forms.moveLearned", {
           move: i18next.t(`move:${moveKey}.name`),

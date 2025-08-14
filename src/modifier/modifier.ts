@@ -121,8 +121,8 @@ export class ModifierBar extends Phaser.GameObjects.Container {
   }
 
   updateModifierOverflowVisibility(ignoreLimit: boolean) {
-    const modifierIcons = this.getAll().reverse();
-    for (const modifier of modifierIcons.map(m => m as Phaser.GameObjects.Container).slice(iconOverflowIndex)) {
+    const modifierIcons = this.getAll().reverse() as Phaser.GameObjects.Container[];
+    for (const modifier of modifierIcons.slice(iconOverflowIndex)) {
       modifier.setVisible(ignoreLimit);
     }
   }

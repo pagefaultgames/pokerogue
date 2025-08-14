@@ -82,6 +82,13 @@ Given `pokerogue-locales` is a full-fledged `git` repository _inside_ `pokerogue
 > Make sure to checkout or rebase onto `upstream/main` (`pnpm update-locales:remote`) **BEFORE** creating a locales PR!
 > The checked-out commit is based on the superproject's SHA-1 by default, so hastily making changes may see you basing your commits on last week's `HEAD`.
 
+### Locale Key Formatting Standards
+
+Newly added locale keys should adhere to the following format:
+- File names should be in `kebab-case`. Example: `trainer-names.json`
+- Key names should be in `camelCase`. Example: `aceTrainer`
+- If you make use of i18next's inbuilt [context support](https://www.i18next.com/translation-function/context), you will need to use `snake_case` for the context key part. Example: `aceTrainer_male`
+
 ## Requirements for Adding Translated Text
 When a new feature or enhancement requires adding a new locales key **without changing text in existing keys**, we have the following workflow with regards to localization:
 1. You (the developer) make a pull request to the main repository for your new feature.

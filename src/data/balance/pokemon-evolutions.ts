@@ -2041,19 +2041,15 @@ interface PokemonPrevolutions {
 export const pokemonPrevolutions: PokemonPrevolutions = {};
 
 export function initPokemonPrevolutions(): void {
-  const megaFormKeys = [SpeciesFormKey.MEGA, "", SpeciesFormKey.MEGA_X, "", SpeciesFormKey.MEGA_Y].map(
-    sfk => sfk as string,
-  );
-  const prevolutionKeys = Object.keys(pokemonEvolutions);
-  prevolutionKeys.forEach(pk => {
-    const evolutions = pokemonEvolutions[pk];
+  const megaFormKeys: string[] = [SpeciesFormKey.MEGA, SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y];
+  for (const [pk, evolutions] of Object.entries(pokemonEvolutions)) {
     for (const ev of evolutions) {
       if (ev.evoFormKey && megaFormKeys.indexOf(ev.evoFormKey) > -1) {
         continue;
       }
       pokemonPrevolutions[ev.speciesId] = Number.parseInt(pk) as SpeciesId;
     }
-  });
+  }
 }
 
 // TODO: This may cause funny business for double starters such as Pichu/Pikachu

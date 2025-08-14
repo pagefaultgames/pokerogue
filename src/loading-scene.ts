@@ -447,7 +447,9 @@ export class LoadingScene extends SceneBase {
     );
 
     if (!mobile) {
-      loadingGraphics.map(g => g.setVisible(false));
+      loadingGraphics.forEach(g => {
+        g.setVisible(false);
+      });
     }
 
     const intro = this.add.video(0, 0);
