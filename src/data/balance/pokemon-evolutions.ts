@@ -1875,7 +1875,7 @@ export function initPokemonPrevolutions(): void {
       }
       pokemonPrevolutions[ev.speciesId] = Number.parseInt(pk) as SpeciesId;
     }
-  };
+  }
 }
 
 
