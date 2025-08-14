@@ -26,6 +26,7 @@ import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getPlayTimeString } from "#utils/common";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 
@@ -706,10 +707,7 @@ export class RunInfoUiHandler extends UiHandler {
             rules.push(i18next.t("challenges:inverseBattle.shortName"));
             break;
           default: {
-            const localizationKey = Challenges[this.runInfo.challenges[i].id]
-              .split("_")
-              .map((f, i) => (i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
-              .join("");
+            const localizationKey = toCamelCase(Challenges[this.runInfo.challenges[i].id]);
             rules.push(i18next.t(`challenges:${localizationKey}.name`));
             break;
           }
