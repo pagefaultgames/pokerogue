@@ -594,13 +594,9 @@ class SessionSlot extends Phaser.GameObjects.Container {
         TextStyle.PARTY,
         { fontSize: "54px", color: "#f8f8f8" },
       );
-      text.setShadow(0, 0, undefined);
-      text.setStroke("#424242", 14);
-      text.setOrigin(1, 0);
+      text.setShadow(0, 0, undefined).setStroke("#424242", 14).setOrigin(1, 0);
 
-      iconContainer.add(icon);
-      iconContainer.add(text);
-
+      iconContainer.add([icon, text]);
       pokemonIconsContainer.add(iconContainer);
 
       pokemon.destroy();
@@ -645,6 +641,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
             return;
           }
           this.saveData = sessionData;
+          this.setupWithData(sessionData);
           resolve(true);
         })
         .catch(e => {
