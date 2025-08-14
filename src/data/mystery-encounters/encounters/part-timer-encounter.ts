@@ -149,7 +149,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const moneyChange = globalScene.getWaveMoneyAmount(moneyMultiplier);
         updatePlayerMoney(moneyChange, true, false);
         await showEncounterText(
-          i18next.t("mysteryEncounterMessages:receive_money", {
+          i18next.t("mysteryEncounterMessages:receiveMoney", {
             amount: moneyChange,
           }),
         );
@@ -231,7 +231,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const moneyChange = globalScene.getWaveMoneyAmount(moneyMultiplier);
         updatePlayerMoney(moneyChange, true, false);
         await showEncounterText(
-          i18next.t("mysteryEncounterMessages:receive_money", {
+          i18next.t("mysteryEncounterMessages:receiveMoney", {
             amount: moneyChange,
           }),
         );
@@ -286,7 +286,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const moneyChange = globalScene.getWaveMoneyAmount(2.5);
         updatePlayerMoney(moneyChange, true, false);
         await showEncounterText(
-          i18next.t("mysteryEncounterMessages:receive_money", {
+          i18next.t("mysteryEncounterMessages:receiveMoney", {
             amount: moneyChange,
           }),
         );
