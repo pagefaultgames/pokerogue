@@ -2055,7 +2055,7 @@ export class TruantTag extends AbilityBattlerTag {
     const lastMove = pokemon.getLastXMoves()[0];
 
     if (!lastMove || lastMove.move === MoveId.NONE) {
-      // Don't interrupt move if last move was `Moves.NONE` OR no prior move was found
+      // Don't interrupt move if last move was `MoveId.NONE` OR no prior move was found
       return true;
     }
 
@@ -2115,8 +2115,8 @@ export class SlowStartTag extends AbilityBattlerTag {
 
 export class HighestStatBoostTag extends AbilityBattlerTag {
   public declare readonly tagType: HighestStatBoostTagType;
-  public stat: Stat;
-  public multiplier: number;
+  public stat: EffectiveStat = Stat.ATK;
+  public multiplier = 1.3;
 
   constructor(tagType: HighestStatBoostTagType, ability: AbilityId) {
     super(tagType, ability, BattlerTagLapseType.CUSTOM, 1);
@@ -2128,28 +2128,28 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
    */
   public override loadTag<T extends this>(source: BaseBattlerTag & Pick<T, "tagType" | "stat" | "multiplier">): void {
     super.loadTag(source);
-    this.stat = source.stat as Stat;
+    this.stat = source.stat;
     this.multiplier = source.multiplier;
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    let highestStat: EffectiveStat;
-    EFFECTIVE_STATS.map(s =>
-      pokemon.getEffectiveStat(s, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true),
-    ).reduce((highestValue: number, value: number, i: number) => {
-      if (value > highestValue) {
-        highestStat = EFFECTIVE_STATS[i];
-        return value;
-      }
-      return highestValue;
-    }, 0);
+    const highestStat = EFFECTIVE_STATS.reduce(
+      (curr: [EffectiveStat, number], stat: EffectiveStat) => {
+        const value = pokemon.getEffectiveStat(stat, undefined, undefined, true, true, true, false, true, true);
+        if (value > curr[1]) {
+          curr[0] = stat;
+          curr[1] = value;
+        }
+        return curr;
+      },
+      [Stat.ATK, 0],
+    )[0];
 
-    highestStat = highestStat!; // tell TS compiler it's defined!
     this.stat = highestStat;
 
-    this.multiplier = this.stat === Stat.SPD ? 1.5 : 1.3;
+    this.multiplier = highestStat === Stat.SPD ? 1.5 : 1.3;
     globalScene.phaseManager.queueMessage(
       i18next.t("battlerTags:highestStatBoostOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -2614,7 +2614,7 @@ export class IceFaceBlockDamageTag extends FormBlockDamageTag {
  */
 export class CommandedTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.COMMANDED;
-  public readonly tatsugiriFormKey: string;
+  public readonly tatsugiriFormKey: string = "curly";
 
   constructor(sourceId: number) {
     super(BattlerTagType.COMMANDED, BattlerTagLapseType.CUSTOM, 0, MoveId.NONE, sourceId);
@@ -2668,7 +2668,7 @@ export class StockpilingTag extends SerializableBattlerTag {
     super(BattlerTagType.STOCKPILING, BattlerTagLapseType.CUSTOM, 1, sourceMove);
   }
 
-  private onStatStagesChanged: StatStageChangeCallback = (_, statsChanged, statChanges) => {
+  private onStatStagesChanged(_: Pokemon | null, statsChanged: BattleStat[], statChanges: number[]) {
     const defChange = statChanges[statsChanged.indexOf(Stat.DEF)] ?? 0;
     const spDefChange = statChanges[statsChanged.indexOf(Stat.SPDEF)] ?? 0;
 
@@ -2678,7 +2678,11 @@ export class StockpilingTag extends SerializableBattlerTag {
     if (spDefChange) {
       this.statChangeCounts[Stat.SPDEF]++;
     }
-  };
+
+    // Removed during bundling; used to ensure this method's signature retains parity
+    // with the `StatStageChangeCallback` type.
+    this.onStatStagesChanged satisfies StatStageChangeCallback;
+  }
 
   public override loadTag(
     source: BaseBattlerTag & Pick<StockpilingTag, "tagType" | "stockpiledCount" | "statChangeCounts">,
@@ -2718,7 +2722,7 @@ export class StockpilingTag extends SerializableBattlerTag {
         true,
         false,
         true,
-        this.onStatStagesChanged,
+        this.onStatStagesChanged.bind(this),
       );
     }
   }

@@ -74,7 +74,7 @@ export class RunInfoUiHandler extends UiHandler {
   }
 
   override async setup() {
-    this.runContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
+    this.runContainer = globalScene.add.container(1, -globalScene.scaledCanvas.height + 1);
     // The import of the modifiersModule is loaded here to sidestep async/await issues.
     this.modifiersModule = Modifier;
     this.runContainer.setVisible(false);
@@ -120,7 +120,7 @@ export class RunInfoUiHandler extends UiHandler {
     // Creates Header and adds to this.runContainer
     this.addHeader();
 
-    this.statsBgWidth = (globalScene.game.canvas.width / 6 - 2) / 3;
+    this.statsBgWidth = (globalScene.scaledCanvas.width - 2) / 3;
 
     // Creates Run Result Container
     this.runResultContainer = globalScene.add.container(0, 24);
@@ -147,7 +147,7 @@ export class RunInfoUiHandler extends UiHandler {
     this.showParty(true);
 
     this.runContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6),
+      new Phaser.Geom.Rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height),
       Phaser.Geom.Rectangle.Contains,
     );
     this.getUi().bringToTop(this.runContainer);
@@ -174,7 +174,7 @@ export class RunInfoUiHandler extends UiHandler {
    * It does not check if the run has any PokemonHeldItemModifiers though.
    */
   private addHeader() {
-    const headerBg = addWindow(0, 0, globalScene.game.canvas.width / 6 - 2, 24);
+    const headerBg = addWindow(0, 0, globalScene.scaledCanvas.width - 2, 24);
     headerBg.setOrigin(0, 0);
     this.runContainer.add(headerBg);
     if (this.runInfo.modifiers.length !== 0) {
@@ -207,6 +207,10 @@ export class RunInfoUiHandler extends UiHandler {
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
     this.runContainer.add(headerText);
+    const runName = addTextObject(0, 0, this.runInfo.runNameText, TextStyle.WINDOW);
+    runName.setOrigin(0, 0);
+    runName.setPositionRelative(headerBg, 60, 4);
+    this.runContainer.add(runName);
   }
 
   /**
@@ -702,11 +706,11 @@ export class RunInfoUiHandler extends UiHandler {
             rules.push(i18next.t("challenges:inverseBattle.shortName"));
             break;
           default: {
-            const localisationKey = Challenges[this.runInfo.challenges[i].id]
+            const localizationKey = Challenges[this.runInfo.challenges[i].id]
               .split("_")
               .map((f, i) => (i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
               .join("");
-            rules.push(i18next.t(`challenges:${localisationKey}.name`));
+            rules.push(i18next.t(`challenges:${localizationKey}.name`));
             break;
           }
         }
@@ -723,7 +727,7 @@ export class RunInfoUiHandler extends UiHandler {
   private parsePartyInfo(): void {
     const party = this.runInfo.party;
     const currentLanguage = i18next.resolvedLanguage ?? "en";
-    const windowHeight = (globalScene.game.canvas.height / 6 - 23) / 6;
+    const windowHeight = (globalScene.scaledCanvas.height - 23) / 6;
 
     party.forEach((p: PokemonData, i: number) => {
       const pokemonInfoWindow = new RoundRectangle(globalScene, 0, 14, this.statsBgWidth * 2 + 10, windowHeight - 2, 3);
@@ -971,8 +975,8 @@ export class RunInfoUiHandler extends UiHandler {
     endCard.setOrigin(0);
     endCard.setScale(0.5);
     const text = addTextObject(
-      globalScene.game.canvas.width / 12,
-      globalScene.game.canvas.height / 6 - 16,
+      globalScene.scaledCanvas.width / 2,
+      globalScene.scaledCanvas.height - 16,
       i18next.t("battle:congratulations"),
       TextStyle.SUMMARY,
       { fontSize: "128px" },

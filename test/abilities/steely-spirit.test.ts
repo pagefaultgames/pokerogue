@@ -39,7 +39,7 @@ describe("Abilities - Steely Spirit", () => {
   it("increases Steel-type moves' power used by the user and its allies by 50%", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.SHUCKLE]);
     const boostSource = game.scene.getPlayerField()[1];
-    const enemyToCheck = game.scene.getEnemyPokemon()!;
+    const enemyToCheck = game.field.getEnemyPokemon();
 
     vi.spyOn(boostSource, "getAbility").mockReturnValue(allAbilities[AbilityId.STEELY_SPIRIT]);
 
@@ -54,7 +54,7 @@ describe("Abilities - Steely Spirit", () => {
 
   it("stacks if multiple users with this ability are on the field.", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.PIKACHU]);
-    const enemyToCheck = game.scene.getEnemyPokemon()!;
+    const enemyToCheck = game.field.getEnemyPokemon();
 
     game.scene.getPlayerField().forEach(p => {
       vi.spyOn(p, "getAbility").mockReturnValue(allAbilities[AbilityId.STEELY_SPIRIT]);
@@ -74,7 +74,7 @@ describe("Abilities - Steely Spirit", () => {
   it("does not take effect when suppressed", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.SHUCKLE]);
     const boostSource = game.scene.getPlayerField()[1];
-    const enemyToCheck = game.scene.getEnemyPokemon()!;
+    const enemyToCheck = game.field.getEnemyPokemon();
 
     vi.spyOn(boostSource, "getAbility").mockReturnValue(allAbilities[AbilityId.STEELY_SPIRIT]);
     expect(boostSource.hasAbility(AbilityId.STEELY_SPIRIT)).toBe(true);

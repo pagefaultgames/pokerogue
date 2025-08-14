@@ -41,7 +41,7 @@ describe("Moves - Revival Blessing", () => {
     game.doSelectPartyPokemon(1, "SwitchPhase");
     await game.toNextTurn();
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
     expect(player.species.speciesId).toBe(SpeciesId.MAGIKARP);
     game.move.select(MoveId.REVIVAL_BLESSING);
@@ -82,7 +82,7 @@ describe("Moves - Revival Blessing", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     expect(player.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
