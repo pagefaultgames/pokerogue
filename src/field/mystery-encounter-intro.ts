@@ -457,7 +457,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
       globalScene.tweens.add({
         targets: sprite,
         alpha: alpha || 1,
-        duration: duration,
+        duration,
         ease: ease || "Linear",
       });
     } else {
@@ -490,7 +490,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
       globalScene.tweens.add({
         targets: sprite,
         alpha: 0,
-        duration: duration,
+        duration,
         ease: ease || "Linear",
         onComplete: () => {
           sprite.setVisible(false);

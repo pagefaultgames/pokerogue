@@ -76,8 +76,8 @@ export class FormChangePhase extends EvolutionPhase {
           globalScene.validateAchv(achvs.MEGA_EVOLVE);
           playEvolutionFanfare = true;
         } else if (
-          this.formChange.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1 ||
-          this.formChange.formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1
+          this.formChange.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1
+          || this.formChange.formKey.indexOf(SpeciesFormKey.ETERNAMAX) > -1
         ) {
           globalScene.validateAchv(achvs.GIGANTAMAX);
           playEvolutionFanfare = true;

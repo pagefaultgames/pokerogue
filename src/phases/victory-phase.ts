@@ -78,8 +78,8 @@ export class VictoryPhase extends PokemonPhase {
         } else if (globalScene.gameMode.isDaily) {
           globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.EXP_CHARM);
           if (
-            globalScene.currentBattle.waveIndex > 10 &&
-            !globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)
+            globalScene.currentBattle.waveIndex > 10
+            && !globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)
           ) {
             globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.GOLDEN_POKEBALL);
           }
@@ -89,8 +89,8 @@ export class VictoryPhase extends PokemonPhase {
             globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.EXP_SHARE);
           }
           if (
-            globalScene.currentBattle.waveIndex <= 750 &&
-            (globalScene.currentBattle.waveIndex <= 500 || globalScene.currentBattle.waveIndex % 30 === superExpWave)
+            globalScene.currentBattle.waveIndex <= 750
+            && (globalScene.currentBattle.waveIndex <= 500 || globalScene.currentBattle.waveIndex % 30 === superExpWave)
           ) {
             globalScene.phaseManager.pushNew(
               "ModifierRewardPhase",

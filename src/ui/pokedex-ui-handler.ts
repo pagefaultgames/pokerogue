@@ -146,7 +146,7 @@ function calcStarterPosition(index: number): { x: number; y: number } {
   const x = (index % 9) * 18;
   const y = yOffset + Math.floor(index / 9) * height;
 
-  return { x: x, y: y };
+  return { x, y };
 }
 
 interface SpeciesDetails {
@@ -700,9 +700,9 @@ export class PokedexUiHandler extends MessageUiHandler {
         hasShiny && caughtAttr & DexAttr.VARIANT_3,
       ];
       if (
-        Number.isNaN(starterAttributes.variant) ||
-        starterAttributes.variant < 0 ||
-        !unlockedVariants[starterAttributes.variant]
+        Number.isNaN(starterAttributes.variant)
+        || starterAttributes.variant < 0
+        || !unlockedVariants[starterAttributes.variant]
       ) {
         // variant value is invalid or requested variant wasn't unlocked, purging setting
         starterAttributes.variant = undefined;
@@ -710,8 +710,8 @@ export class PokedexUiHandler extends MessageUiHandler {
     }
 
     if (
-      starterAttributes.female !== undefined &&
-      !(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)
+      starterAttributes.female !== undefined
+      && !(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)
     ) {
       // requested gender wasn't unlocked, purging setting
       starterAttributes.female = undefined;
@@ -738,9 +738,9 @@ export class PokedexUiHandler extends MessageUiHandler {
 
     const selectedForm = starterAttributes.form;
     if (
-      selectedForm !== undefined &&
-      (!species.forms[selectedForm]?.isStarterSelectable ||
-        !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))
+      selectedForm !== undefined
+      && (!species.forms[selectedForm]?.isStarterSelectable
+        || !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))
     ) {
       // requested form wasn't unlocked/isn't a starter form, purging setting
       starterAttributes.form = undefined;
@@ -834,8 +834,8 @@ export class PokedexUiHandler extends MessageUiHandler {
     const starterData = globalScene.gameData.starterData[this.getStarterSpeciesId(speciesId)];
 
     return (
-      starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[this.getStarterSpeciesId(speciesId)]) &&
-      !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
+      starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[this.getStarterSpeciesId(speciesId)])
+      && !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
     );
   }
 
@@ -849,8 +849,8 @@ export class PokedexUiHandler extends MessageUiHandler {
     const starterData = globalScene.gameData.starterData[this.getStarterSpeciesId(speciesId)];
 
     return (
-      starterData.candyCount >=
-        getValueReductionCandyCounts(speciesStarterCosts[this.getStarterSpeciesId(speciesId)])[
+      starterData.candyCount
+        >= getValueReductionCandyCounts(speciesStarterCosts[this.getStarterSpeciesId(speciesId)])[
           starterData.valueReduction
         ] && starterData.valueReduction < valueReductionMax
     );
@@ -911,9 +911,9 @@ export class PokedexUiHandler extends MessageUiHandler {
     };
 
     if (
-      this.isPassiveAvailable(species.speciesId) ||
-      (globalScene.candyUpgradeNotification === 2 &&
-        (this.isValueReductionAvailable(species.speciesId) || this.isSameSpeciesEggAvailable(species.speciesId)))
+      this.isPassiveAvailable(species.speciesId)
+      || (globalScene.candyUpgradeNotification === 2
+        && (this.isValueReductionAvailable(species.speciesId) || this.isSameSpeciesEggAvailable(species.speciesId)))
     ) {
       const chain = globalScene.tweens.chain(tweenChain);
       if (!startPaused) {
@@ -930,9 +930,9 @@ export class PokedexUiHandler extends MessageUiHandler {
     const slotVisible = !!species?.speciesId;
 
     if (
-      !species ||
-      globalScene.candyUpgradeNotification === 0 ||
-      species.speciesId !== species.getRootSpeciesId(false)
+      !species
+      || globalScene.candyUpgradeNotification === 0
+      || species.speciesId !== species.getRootSpeciesId(false)
     ) {
       starter.candyUpgradeIcon.setVisible(false);
       starter.candyUpgradeOverlayIcon.setVisible(false);
@@ -999,8 +999,8 @@ export class PokedexUiHandler extends MessageUiHandler {
         this.updateStarters();
         success = true;
       } else if (
-        this.filterTextMode &&
-        !(this.filterText.getValue(this.filterTextCursor) === this.filterText.defaultText)
+        this.filterTextMode
+        && !(this.filterText.getValue(this.filterTextCursor) === this.filterText.defaultText)
       ) {
         this.filterText.resetSelection(this.filterTextCursor);
         success = true;
@@ -1328,8 +1328,8 @@ export class PokedexUiHandler extends MessageUiHandler {
   // Returns true if one of the forms has the requested move
   hasFormLevelMove(form: PokemonForm, selectedMove: string): boolean {
     if (
-      !pokemonFormLevelMoves.hasOwnProperty(form.speciesId) ||
-      !pokemonFormLevelMoves[form.speciesId].hasOwnProperty(form.formIndex)
+      !pokemonFormLevelMoves.hasOwnProperty(form.speciesId)
+      || !pokemonFormLevelMoves[form.speciesId].hasOwnProperty(form.formIndex)
     ) {
       return false;
     }
@@ -1355,17 +1355,17 @@ export class PokedexUiHandler extends MessageUiHandler {
       const props = this.getSanitizedProps(globalScene.gameData.getSpeciesDexAttrProps(species, currentDexAttr));
 
       const data: ContainerData = {
-        species: species,
+        species,
         cost: globalScene.gameData.getSpeciesStarterValue(starterId),
-        props: props,
+        props,
       };
 
       // First, ensure you have the caught attributes for the species else default to bigint 0
       // TODO: This might be removed depending on how accessible we want the pokedex function to be
       const caughtAttr =
-        (globalScene.gameData.dexData[species.speciesId]?.caughtAttr || BigInt(0)) &
-        (globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)]?.caughtAttr || BigInt(0)) &
-        species.getFullUnlocksData();
+        (globalScene.gameData.dexData[species.speciesId]?.caughtAttr || BigInt(0))
+        & (globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)]?.caughtAttr || BigInt(0))
+        & species.getFullUnlocksData();
       const starterData = globalScene.gameData.starterData[starterId];
       const isStarterProgressable = speciesEggMoves.hasOwnProperty(starterId);
 
@@ -1442,8 +1442,8 @@ export class PokedexUiHandler extends MessageUiHandler {
 
       // If both fields have been set to the same ability, show both ability and passive
       const fitsAbilities =
-        (fitsAbility1 && (fitsPassive2 || selectedAbility2 === this.filterText.defaultText)) ||
-        (fitsAbility2 && (fitsPassive1 || selectedAbility1 === this.filterText.defaultText));
+        (fitsAbility1 && (fitsPassive2 || selectedAbility2 === this.filterText.defaultText))
+        || (fitsAbility2 && (fitsPassive1 || selectedAbility1 === this.filterText.defaultText));
 
       if (fitsPassive1 || fitsPassive2) {
         if (fitsPassive1) {
@@ -1483,8 +1483,8 @@ export class PokedexUiHandler extends MessageUiHandler {
       }
       const showNoBiome = !!(biomes.length === 0 && this.filterBar.getVals(DropDownColumn.BIOME).length === 36);
       const fitsBiome =
-        this.filterBar.getVals(DropDownColumn.BIOME).some(item => biomes.includes(indexToBiome.get(item) ?? "")) ||
-        showNoBiome;
+        this.filterBar.getVals(DropDownColumn.BIOME).some(item => biomes.includes(indexToBiome.get(item) ?? ""))
+        || showNoBiome;
 
       // Caught / Shiny filter
       const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
@@ -1642,21 +1642,21 @@ export class PokedexUiHandler extends MessageUiHandler {
       });
 
       if (
-        fitsName &&
-        fitsAbilities &&
-        fitsMoves &&
-        fitsGen &&
-        fitsBiome &&
-        fitsType &&
-        fitsCaught &&
-        fitsPassive &&
-        fitsCostReduction &&
-        fitsStarter &&
-        fitsFavorite &&
-        fitsWin &&
-        fitsHA &&
-        fitsEgg &&
-        fitsPokerus
+        fitsName
+        && fitsAbilities
+        && fitsMoves
+        && fitsGen
+        && fitsBiome
+        && fitsType
+        && fitsCaught
+        && fitsPassive
+        && fitsCostReduction
+        && fitsStarter
+        && fitsFavorite
+        && fitsWin
+        && fitsHA
+        && fitsEgg
+        && fitsPokerus
       ) {
         this.filteredPokemonData.push(data);
       }
@@ -1682,26 +1682,26 @@ export class PokedexUiHandler extends MessageUiHandler {
         }
         case SortCriteria.IV: {
           const avgIVsA =
-            globalScene.gameData.dexData[a.species.speciesId].ivs.reduce((a, b) => a + b, 0) /
-            globalScene.gameData.dexData[a.species.speciesId].ivs.length;
+            globalScene.gameData.dexData[a.species.speciesId].ivs.reduce((a, b) => a + b, 0)
+            / globalScene.gameData.dexData[a.species.speciesId].ivs.length;
           const avgIVsB =
-            globalScene.gameData.dexData[b.species.speciesId].ivs.reduce((a, b) => a + b, 0) /
-            globalScene.gameData.dexData[b.species.speciesId].ivs.length;
+            globalScene.gameData.dexData[b.species.speciesId].ivs.reduce((a, b) => a + b, 0)
+            / globalScene.gameData.dexData[b.species.speciesId].ivs.length;
           return (avgIVsA - avgIVsB) * -sort.dir;
         }
         case SortCriteria.NAME:
           return a.species.name.localeCompare(b.species.name) * -sort.dir;
         case SortCriteria.CAUGHT:
           return (
-            (globalScene.gameData.dexData[a.species.speciesId].caughtCount -
-              globalScene.gameData.dexData[b.species.speciesId].caughtCount) *
-            -sort.dir
+            (globalScene.gameData.dexData[a.species.speciesId].caughtCount
+              - globalScene.gameData.dexData[b.species.speciesId].caughtCount)
+            * -sort.dir
           );
         case SortCriteria.HATCHED:
           return (
-            (globalScene.gameData.dexData[this.getStarterSpeciesId(a.species.speciesId)].hatchedCount -
-              globalScene.gameData.dexData[this.getStarterSpeciesId(b.species.speciesId)].hatchedCount) *
-            -sort.dir
+            (globalScene.gameData.dexData[this.getStarterSpeciesId(a.species.speciesId)].hatchedCount
+              - globalScene.gameData.dexData[this.getStarterSpeciesId(b.species.speciesId)].hatchedCount)
+            * -sort.dir
           );
         default:
           break;
@@ -1746,9 +1746,9 @@ export class PokedexUiHandler extends MessageUiHandler {
         const speciesId = data.species.speciesId;
         const dexEntry = globalScene.gameData.dexData[speciesId];
         const caughtAttr =
-          dexEntry.caughtAttr &
-          globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr &
-          data.species.getFullUnlocksData();
+          dexEntry.caughtAttr
+          & globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr
+          & data.species.getFullUnlocksData();
 
         if (caughtAttr & data.species.getFullUnlocksData() || globalScene.dexForDevs) {
           container.icon.clearTint();
@@ -2009,7 +2009,7 @@ export class PokedexUiHandler extends MessageUiHandler {
     const species = this.lastSpecies;
     const formIndex = this.trayForms[cursor].formIndex;
 
-    this.setSpeciesDetails(species, { formIndex: formIndex });
+    this.setSpeciesDetails(species, { formIndex });
 
     return changed;
   }
@@ -2067,8 +2067,8 @@ export class PokedexUiHandler extends MessageUiHandler {
     }
 
     if (
-      species &&
-      (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr || globalScene.dexForDevs)
+      species
+      && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr || globalScene.dexForDevs)
     ) {
       this.pokemonNumberText.setText(i18next.t("pokedexUiHandler:pokemonNumber") + padInt(species.speciesId, 4));
 
@@ -2133,9 +2133,9 @@ export class PokedexUiHandler extends MessageUiHandler {
     if (species) {
       const dexEntry = globalScene.gameData.dexData[species.speciesId];
       const caughtAttr =
-        dexEntry.caughtAttr &
-        globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)].caughtAttr &
-        species.getFullUnlocksData();
+        dexEntry.caughtAttr
+        & globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)].caughtAttr
+        & species.getFullUnlocksData();
 
       if (caughtAttr) {
         const props = this.getSanitizedProps(
@@ -2305,17 +2305,17 @@ export class PokedexUiHandler extends MessageUiHandler {
     let props = 0n;
     const species = allSpecies.find(sp => sp.speciesId === speciesId);
     const caughtAttr =
-      globalScene.gameData.dexData[speciesId].caughtAttr &
-      globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr &
-      (species?.getFullUnlocksData() ?? 0n);
+      globalScene.gameData.dexData[speciesId].caughtAttr
+      & globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr
+      & (species?.getFullUnlocksData() ?? 0n);
 
     /*  this checks the gender of the pokemon; this works by checking a) that the starter preferences for the species exist, and if so, is it female. If so, it'll add DexAttr.FEMALE to our temp props
      *  It then checks b) if the caughtAttr for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female, and we need to add DexAttr.FEMALE to our temp props
      *  If neither of these pass, we add DexAttr.MALE to our temp props
      */
     if (
-      this.starterPreferences[speciesId]?.female ||
-      ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)
+      this.starterPreferences[speciesId]?.female
+      || ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)
     ) {
       props += DexAttr.FEMALE;
     } else {
@@ -2325,8 +2325,8 @@ export class PokedexUiHandler extends MessageUiHandler {
      * If they're not there, it enables shiny state by default if any shiny was caught
      */
     if (
-      this.starterPreferences[speciesId]?.shiny ||
-      ((caughtAttr & DexAttr.SHINY) > 0n && this.starterPreferences[speciesId]?.shiny !== false)
+      this.starterPreferences[speciesId]?.shiny
+      || ((caughtAttr & DexAttr.SHINY) > 0n && this.starterPreferences[speciesId]?.shiny !== false)
     ) {
       props += DexAttr.SHINY;
       if (this.starterPreferences[speciesId]?.variant !== undefined) {

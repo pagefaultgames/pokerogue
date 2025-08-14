@@ -67,9 +67,10 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        `MoveHelper.select called with move '${toTitleCase(MoveId[move])}' not in moveset!` +
-          `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}` +
-          `\nMoveset: [${this.game.scene
+        // biome-ignore lint/complexity/noUselessStringConcat: Biome does not currently detect this as multiline (BUG)
+        `MoveHelper.select called with move '${toTitleCase(MoveId[move])}' not in moveset!`
+          + `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}`
+          + `\nMoveset: [${this.game.scene
             .getPlayerParty()
             [pkmIndex].getMoveset()
             .map(pm => toTitleCase(MoveId[pm.moveId]))
@@ -111,9 +112,10 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        `MoveHelper.selectWithTera called with move '${toTitleCase(MoveId[move])}' not in moveset!` +
-          `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}` +
-          `\nMoveset: [${this.game.scene
+        // biome-ignore lint/complexity/noUselessStringConcat: Biome does not currently detect this as multiline (BUG)
+        `MoveHelper.selectWithTera called with move '${toTitleCase(MoveId[move])}' not in moveset!`
+          + `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}`
+          + `\nMoveset: [${this.game.scene
             .getPlayerParty()
             [pkmIndex].getMoveset()
             .map(pm => toTitleCase(MoveId[pm.moveId]))

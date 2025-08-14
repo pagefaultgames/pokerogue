@@ -7,5 +7,5 @@ export enum EncounterAnim {
   MAGMA_BG,
   MAGMA_SPOUT,
   SMOKESCREEN,
-  DANCE
+  DANCE,
 }

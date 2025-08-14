@@ -71,7 +71,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
     const config: EnemyPartyConfig = {
       pokemonConfigs: [
         {
-          level: level,
+          level,
           species: bossPokemon.species,
           dataSource: new PokemonData(bossPokemon),
           isBoss: true,
@@ -105,8 +105,8 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
         hasShadow: true,
       },
       {
-        spriteKey: spriteKey,
-        fileRoot: fileRoot,
+        spriteKey,
+        fileRoot,
         hasShadow: true,
         tint: 0.25,
         x: -5,
@@ -320,9 +320,9 @@ function tryGiveBerry(prioritizedPokemon?: PlayerPokemon) {
   if (prioritizedPokemon) {
     const heldBerriesOfType = globalScene.findModifier(
       m =>
-        m instanceof BerryModifier &&
-        m.pokemonId === prioritizedPokemon.id &&
-        (m as BerryModifier).berryType === berryType,
+        m instanceof BerryModifier
+        && m.pokemonId === prioritizedPokemon.id
+        && (m as BerryModifier).berryType === berryType,
       true,
     ) as BerryModifier;
 

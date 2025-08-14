@@ -76,9 +76,9 @@ export class MysteryEncounterOption implements IMysteryEncounterOption {
    */
   hasRequirements(): boolean {
     return (
-      this.requirements.length > 0 ||
-      this.primaryPokemonRequirements.length > 0 ||
-      this.secondaryPokemonRequirements.length > 0
+      this.requirements.length > 0
+      || this.primaryPokemonRequirements.length > 0
+      || this.secondaryPokemonRequirements.length > 0
     );
   }
 
@@ -87,9 +87,9 @@ export class MysteryEncounterOption implements IMysteryEncounterOption {
    */
   meetsRequirements(): boolean {
     return (
-      !this.requirements.some(requirement => !requirement.meetsRequirement()) &&
-      this.meetsSupportingRequirementAndSupportingPokemonSelected() &&
-      this.meetsPrimaryRequirementAndPrimaryPokemonSelected()
+      !this.requirements.some(requirement => !requirement.meetsRequirement())
+      && this.meetsSupportingRequirementAndSupportingPokemonSelected()
+      && this.meetsPrimaryRequirementAndPrimaryPokemonSelected()
     );
   }
 
@@ -209,7 +209,7 @@ export class MysteryEncounterOptionBuilder implements Partial<IMysteryEncounterO
   }
 
   withHasDexProgress(hasDexProgress: boolean): this & Required<Pick<IMysteryEncounterOption, "hasDexProgress">> {
-    return Object.assign(this, { hasDexProgress: hasDexProgress });
+    return Object.assign(this, { hasDexProgress });
   }
 
   /**
@@ -240,7 +240,7 @@ export class MysteryEncounterOptionBuilder implements Partial<IMysteryEncounterO
   withPreOptionPhase(
     onPreOptionPhase: OptionPhaseCallback,
   ): this & Required<Pick<IMysteryEncounterOption, "onPreOptionPhase">> {
-    return Object.assign(this, { onPreOptionPhase: onPreOptionPhase });
+    return Object.assign(this, { onPreOptionPhase });
   }
 
   /**
@@ -248,13 +248,13 @@ export class MysteryEncounterOptionBuilder implements Partial<IMysteryEncounterO
    * @param onOptionPhase
    */
   withOptionPhase(onOptionPhase: OptionPhaseCallback): this & Required<Pick<IMysteryEncounterOption, "onOptionPhase">> {
-    return Object.assign(this, { onOptionPhase: onOptionPhase });
+    return Object.assign(this, { onOptionPhase });
   }
 
   withPostOptionPhase(
     onPostOptionPhase: OptionPhaseCallback,
   ): this & Required<Pick<IMysteryEncounterOption, "onPostOptionPhase">> {
-    return Object.assign(this, { onPostOptionPhase: onPostOptionPhase });
+    return Object.assign(this, { onPostOptionPhase });
   }
 
   /**

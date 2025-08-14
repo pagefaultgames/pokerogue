@@ -9,7 +9,7 @@ export class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines.MultiPi
   constructor(game: Phaser.Game, config?: Phaser.Types.Renderer.WebGL.WebGLPipelineConfig) {
     super(
       config || {
-        game: game,
+        game,
         name: "field-sprite",
         fragShader: fieldSpriteFragShader,
         vertShader: spriteVertShader,

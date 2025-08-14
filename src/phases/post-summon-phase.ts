@@ -20,8 +20,8 @@ export class PostSummonPhase extends PokemonPhase {
 
     // If this is mystery encounter and has post summon phase tag, apply post summon effects
     if (
-      globalScene.currentBattle.isBattleMysteryEncounter() &&
-      pokemon.findTags(t => t instanceof MysteryEncounterPostSummonTag).length > 0
+      globalScene.currentBattle.isBattleMysteryEncounter()
+      && pokemon.findTags(t => t instanceof MysteryEncounterPostSummonTag).length > 0
     ) {
       pokemon.lapseTag(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON);
     }

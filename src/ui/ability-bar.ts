@@ -67,7 +67,7 @@ export class AbilityBar extends Phaser.GameObjects.Container {
   }
 
   public async showAbility(pokemonName: string, abilityName: string, passive = false, player = true): Promise<void> {
-    const text = `${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: pokemonName, passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: abilityName })}`;
+    const text = `${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName, passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName })}`;
     this.screenRight = globalScene.scaledCanvas.width;
     if (player !== this.player) {
       // Move the bar if it has changed from the player to enemy side (or vice versa)

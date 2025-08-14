@@ -3,5 +3,5 @@ export enum TimeOfDay {
   DAWN,
   DAY,
   DUSK,
-  NIGHT
+  NIGHT,
 }

@@ -33,9 +33,9 @@ export class SelectBiomePhase extends BattlePhase {
     };
 
     if (
-      (globalScene.gameMode.isClassic && globalScene.gameMode.isWaveFinal(nextWaveIndex + 9)) ||
-      (globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(nextWaveIndex)) ||
-      (globalScene.gameMode.hasShortBiomes && !(nextWaveIndex % 50))
+      (globalScene.gameMode.isClassic && globalScene.gameMode.isWaveFinal(nextWaveIndex + 9))
+      || (globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(nextWaveIndex))
+      || (globalScene.gameMode.hasShortBiomes && !(nextWaveIndex % 50))
     ) {
       setNextBiome(BiomeId.END);
     } else if (globalScene.gameMode.hasRandomBiomes) {

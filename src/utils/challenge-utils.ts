@@ -1,4 +1,4 @@
-// biome-ignore-all lint/nursery/useUnifiedTypeSignature: Rule does not allow stuff with JSDoc comments
+// biome-ignore-all lint/style/useUnifiedTypeSignatures: Rule does not allow stuff with JSDoc comments
 
 import type { FixedBattleConfig } from "#app/battle";
 import { globalScene } from "#app/global-scene";

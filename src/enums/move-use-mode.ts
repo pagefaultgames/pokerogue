@@ -1,6 +1,3 @@
-import type { PostDancingMoveAbAttr } from "#abilities/ability";
-import type { DelayedAttackAttr } from "#app/@types/move-types";
-import type { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import type { ObjectValues } from "#types/type-helpers";
 
 /**
@@ -15,9 +12,9 @@ import type { ObjectValues } from "#types/type-helpers";
  */
 export const MoveUseMode = {
   /**
-  * This move was used normally (i.e. clicking on the button) or called via Instruct.
-  * It deducts PP from the user's moveset (failing if out of PP), and interacts normally with other moves and abilities.
-  */
+   * This move was used normally (i.e. clicking on the button) or called via Instruct.
+   * It deducts PP from the user's moveset (failing if out of PP), and interacts normally with other moves and abilities.
+   */
   NORMAL: 1,
 
   /**
@@ -71,7 +68,7 @@ export const MoveUseMode = {
    * @todo Consider other means of implementing FS/DD than this - we currently only use it
    * to prevent pushing to move history and avoid re-delaying the attack portion
    */
-  DELAYED_ATTACK: 6
+  DELAYED_ATTACK: 6,
 } as const;
 
 export type MoveUseMode = ObjectValues<typeof MoveUseMode>;
@@ -96,7 +93,7 @@ export type MoveUseMode = ObjectValues<typeof MoveUseMode>;
  * | {@linkcode MoveUseMode.DELAYED_ATTACK} | `true`  |
  */
 export function isVirtual(useMode: MoveUseMode): boolean {
-  return useMode >= MoveUseMode.INDIRECT
+  return useMode >= MoveUseMode.INDIRECT;
 }
 
 /**

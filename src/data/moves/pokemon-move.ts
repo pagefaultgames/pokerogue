@@ -50,10 +50,9 @@ export class PokemonMove {
     const move = this.getMove();
     // TODO: Add Sky Drop's 1 turn stall
     const usability = new BooleanHolder(
-      !move.name.endsWith(" (N)") &&
-        (ignorePp || this.ppUsed < this.getMovePp() || move.pp === -1) &&
-        // TODO: Review if the `MoveId.NONE` check is even necessary anymore
-        !(this.moveId !== MoveId.NONE && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)),
+      !move.name.endsWith(" (N)")
+        && (ignorePp || this.ppUsed < this.getMovePp() || move.pp === -1) // TODO: Review if the `MoveId.NONE` check is even necessary anymore
+        && !(this.moveId !== MoveId.NONE && !ignoreRestrictionTags && pokemon.isMoveRestricted(this.moveId, pokemon)),
     );
     if (pokemon.isPlayer()) {
       applyChallenges(ChallengeType.POKEMON_MOVE, move.id, usability);

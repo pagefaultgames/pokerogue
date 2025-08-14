@@ -3,5 +3,5 @@
  */
 // TODO: We currently assume these are in order
 export enum DynamicPhaseType {
-  POST_SUMMON
+  POST_SUMMON,
 }

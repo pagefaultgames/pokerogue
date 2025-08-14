@@ -1,5 +1,5 @@
 export enum FieldPosition {
   CENTER,
   LEFT,
-  RIGHT
+  RIGHT,
 }

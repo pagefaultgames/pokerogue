@@ -116,8 +116,8 @@ export function getIconForLatestInput(configs, source, devices, settingName) {
 export function assign(config, settingNameTarget, keycode): boolean {
   // first, we need to check if this keycode is already used on another settingName
   if (
-    !canIAssignThisKey(config, getKeyWithKeycode(config, keycode)) ||
-    !canIOverrideThisSetting(config, settingNameTarget)
+    !canIAssignThisKey(config, getKeyWithKeycode(config, keycode))
+    || !canIOverrideThisSetting(config, settingNameTarget)
   ) {
     return false;
   }

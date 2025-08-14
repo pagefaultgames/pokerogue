@@ -159,11 +159,9 @@ export class StatStageChangePhase extends PokemonPhase {
 
         /** Potential stat reflection due to Mirror Armor, does not apply to Octolock end of turn effect */
         if (
-          opponentPokemon !== undefined &&
-          // TODO: investigate whether this is stoping mirror armor from applying to non-octolock
-          // reasons for stat drops if the user has the Octolock tag
-          !pokemon.findTag(t => t instanceof OctolockTag) &&
-          !this.comingFromMirrorArmorUser
+          opponentPokemon !== undefined // TODO: investigate whether this is stoping mirror armor from applying to non-octolock // reasons for stat drops if the user has the Octolock tag
+          && !pokemon.findTag(t => t instanceof OctolockTag)
+          && !this.comingFromMirrorArmorUser
         ) {
           applyAbAttrs("ReflectStatStageChangeAbAttr", {
             pokemon,
@@ -307,13 +305,13 @@ export class StatStageChangePhase extends PokemonPhase {
       while (
         (existingPhase = globalScene.phaseManager.findPhase(
           p =>
-            p.is("StatStageChangePhase") &&
-            p.battlerIndex === this.battlerIndex &&
-            p.stats.length === 1 &&
-            p.stats[0] === this.stats[0] &&
-            p.selfTarget === this.selfTarget &&
-            p.showMessage === this.showMessage &&
-            p.ignoreAbilities === this.ignoreAbilities,
+            p.is("StatStageChangePhase")
+            && p.battlerIndex === this.battlerIndex
+            && p.stats.length === 1
+            && p.stats[0] === this.stats[0]
+            && p.selfTarget === this.selfTarget
+            && p.showMessage === this.showMessage
+            && p.ignoreAbilities === this.ignoreAbilities,
         ) as StatStageChangePhase)
       ) {
         this.stages += existingPhase.stages;
@@ -326,13 +324,13 @@ export class StatStageChangePhase extends PokemonPhase {
     while (
       (existingPhase = globalScene.phaseManager.findPhase(
         p =>
-          p.is("StatStageChangePhase") &&
-          p.battlerIndex === this.battlerIndex &&
-          p.selfTarget === this.selfTarget &&
-          accEva.some(s => p.stats.includes(s)) === isAccEva &&
-          p.stages === this.stages &&
-          p.showMessage === this.showMessage &&
-          p.ignoreAbilities === this.ignoreAbilities,
+          p.is("StatStageChangePhase")
+          && p.battlerIndex === this.battlerIndex
+          && p.selfTarget === this.selfTarget
+          && accEva.some(s => p.stats.includes(s)) === isAccEva
+          && p.stages === this.stages
+          && p.showMessage === this.showMessage
+          && p.ignoreAbilities === this.ignoreAbilities,
       ) as StatStageChangePhase)
     ) {
       this.stats.push(...existingPhase.stats);

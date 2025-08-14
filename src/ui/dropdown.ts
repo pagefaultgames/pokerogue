@@ -610,8 +610,8 @@ export class DropDown extends Phaser.GameObjects.Container {
 
     const compareValues = (keys: string[]): boolean => {
       return (
-        currentValues.length === this.defaultSettings.length &&
-        currentValues.every((value, index) => keys.every(key => value[key] === this.defaultSettings[index][key]))
+        currentValues.length === this.defaultSettings.length
+        && currentValues.every((value, index) => keys.every(key => value[key] === this.defaultSettings[index][key]))
       );
     };
 

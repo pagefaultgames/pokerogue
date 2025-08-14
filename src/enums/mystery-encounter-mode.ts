@@ -8,5 +8,5 @@ export enum MysteryEncounterMode {
   /** Enables special boss music during encounter */
   BOSS_BATTLE,
   /** If there is no battle in the {@linkcode MysteryEncounter} or option selected */
-  NO_BATTLE
+  NO_BATTLE,
 }

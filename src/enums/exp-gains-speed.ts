@@ -7,5 +7,5 @@ export enum ExpGainsSpeed {
   /** Faster speed. */
   FASTER,
   /** Skip gaining exp animation. */
-  SKIP
+  SKIP,
 }

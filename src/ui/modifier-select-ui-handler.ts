@@ -550,8 +550,8 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         this.cursorObj.setScale(1.25);
         this.cursorObj.setPosition(
           globalScene.scaledCanvas.width / 3 + 23,
-          -globalScene.scaledCanvas.height / 2 -
-            (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2),
+          -globalScene.scaledCanvas.height / 2
+            - (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2),
         );
         ui.showText(i18next.t("modifierSelectUiHandler:continueNextWaveDescription"));
         return ret;
@@ -562,16 +562,16 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         // Cursor on free items
         this.cursorObj.setPosition(
           sliceWidth * (cursor + 1) + sliceWidth * 0.5 - 20,
-          -globalScene.scaledCanvas.height / 2 -
-            (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2),
+          -globalScene.scaledCanvas.height / 2
+            - (this.shopOptionsRows.length > 1 ? SINGLE_SHOP_ROW_YOFFSET - 2 : DOUBLE_SHOP_ROW_YOFFSET - 2),
         );
       } else {
         // Cursor on paying items
         this.cursorObj.setPosition(
           sliceWidth * (cursor + 1) + sliceWidth * 0.5 - 16,
-          -globalScene.scaledCanvas.height / 2 -
-            globalScene.game.canvas.height / 32 -
-            (-14 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))),
+          -globalScene.scaledCanvas.height / 2
+            - globalScene.game.canvas.height / 32
+            - (-14 + 28 * (this.rowCursor - (this.shopOptionsRows.length - 1))),
         );
       }
 

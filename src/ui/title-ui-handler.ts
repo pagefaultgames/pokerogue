@@ -109,10 +109,10 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     const rand = randInt(1025, 1);
     const pokemon = getPokemonSpecies(rand as SpeciesId);
     if (
-      this.splashMessage === "splashMessages:underratedPokemon" ||
-      this.splashMessage === "splashMessages:dontTalkAboutThePokemonIncident" ||
-      this.splashMessage === "splashMessages:aWildPokemonAppeared" ||
-      this.splashMessage === "splashMessages:aprilFools.removedPokemon"
+      this.splashMessage === "splashMessages:underratedPokemon"
+      || this.splashMessage === "splashMessages:dontTalkAboutThePokemonIncident"
+      || this.splashMessage === "splashMessages:aWildPokemonAppeared"
+      || this.splashMessage === "splashMessages:aprilFools.removedPokemon"
     ) {
       this.splashMessageText.setText(i18next.t(this.splashMessage, { pokemonName: pokemon.name }));
     }

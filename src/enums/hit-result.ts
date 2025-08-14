@@ -11,5 +11,5 @@ export enum HitResult {
   INDIRECT,
   IMMUNE,
   CONFUSION,
-  INDIRECT_KO
+  INDIRECT_KO,
 }

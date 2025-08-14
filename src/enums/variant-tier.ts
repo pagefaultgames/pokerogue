@@ -1,5 +1,5 @@
 export enum VariantTier {
-    STANDARD,
-    RARE,
-    EPIC
+  STANDARD,
+  RARE,
+  EPIC,
 }

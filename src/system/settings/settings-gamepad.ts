@@ -112,7 +112,7 @@ export function setSettingGamepad(setting: SettingGamepad, value: number): boole
         };
         globalScene.ui.setOverlayMode(UiMode.GAMEPAD_BINDING, {
           target: setting,
-          cancelHandler: cancelHandler,
+          cancelHandler,
         });
       }
       break;

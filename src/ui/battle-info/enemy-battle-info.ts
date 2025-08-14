@@ -111,9 +111,9 @@ export class EnemyBattleInfo extends BattleInfo {
     this.ownedIcon.setVisible(!!dexEntry.caughtAttr);
     const opponentPokemonDexAttr = pokemon.getDexAttr();
     if (
-      globalScene.gameMode.isClassic &&
-      globalScene.gameData.starterData[pokemon.species.getRootSpeciesId()].classicWinCount > 0 &&
-      globalScene.gameData.starterData[pokemon.species.getRootSpeciesId(true)].classicWinCount > 0
+      globalScene.gameMode.isClassic
+      && globalScene.gameData.starterData[pokemon.species.getRootSpeciesId()].classicWinCount > 0
+      && globalScene.gameData.starterData[pokemon.species.getRootSpeciesId(true)].classicWinCount > 0
     ) {
       this.championRibbon.setVisible(true);
     }

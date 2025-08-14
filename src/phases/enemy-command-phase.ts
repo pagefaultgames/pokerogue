@@ -38,9 +38,9 @@ export class EnemyCommandPhase extends FieldPhase {
     const trainer = battle.trainer;
 
     if (
-      battle.double &&
-      enemyPokemon.hasAbility(AbilityId.COMMANDER) &&
-      enemyPokemon.getAlly()?.getTag(BattlerTagType.COMMANDED)
+      battle.double
+      && enemyPokemon.hasAbility(AbilityId.COMMANDER)
+      && enemyPokemon.getAlly()?.getTag(BattlerTagType.COMMANDED)
     ) {
       this.skipTurn = true;
     }

@@ -239,8 +239,8 @@ export class Trainer extends Phaser.GameObjects.Container {
   getEncounterBgm(): string {
     return !this.variant
       ? this.config.encounterBgm
-      : (this.variant === TrainerVariant.DOUBLE ? this.config.doubleEncounterBgm : this.config.femaleEncounterBgm) ||
-          this.config.encounterBgm;
+      : (this.variant === TrainerVariant.DOUBLE ? this.config.doubleEncounterBgm : this.config.femaleEncounterBgm)
+          || this.config.encounterBgm;
   }
 
   getEncounterMessages(): string[] {
@@ -254,17 +254,15 @@ export class Trainer extends Phaser.GameObjects.Container {
   getVictoryMessages(): string[] {
     return !this.variant
       ? this.config.victoryMessages
-      : (this.variant === TrainerVariant.DOUBLE
-          ? this.config.doubleVictoryMessages
-          : this.config.femaleVictoryMessages) || this.config.victoryMessages;
+      : (this.variant === TrainerVariant.DOUBLE ? this.config.doubleVictoryMessages : this.config.femaleVictoryMessages)
+          || this.config.victoryMessages;
   }
 
   getDefeatMessages(): string[] {
     return !this.variant
       ? this.config.defeatMessages
-      : (this.variant === TrainerVariant.DOUBLE
-          ? this.config.doubleDefeatMessages
-          : this.config.femaleDefeatMessages) || this.config.defeatMessages;
+      : (this.variant === TrainerVariant.DOUBLE ? this.config.doubleDefeatMessages : this.config.femaleDefeatMessages)
+          || this.config.defeatMessages;
   }
 
   getPartyTemplate(): TrainerPartyTemplate {
@@ -449,9 +447,9 @@ export class Trainer extends Phaser.GameObjects.Container {
       },
       this.config.hasStaticParty
         ? this.config.getDerivedType() + ((index + 1) << 8)
-        : globalScene.currentBattle.waveIndex +
-            (this.config.getDerivedType() << 10) +
-            (((!this.config.useSameSeedForAllMembers ? index : 0) + 1) << 8),
+        : globalScene.currentBattle.waveIndex
+            + (this.config.getDerivedType() << 10)
+            + (((!this.config.useSameSeedForAllMembers ? index : 0) + 1) << 8),
     );
 
     return ret!; // TODO: is this bang correct?
@@ -499,8 +497,8 @@ export class Trainer extends Phaser.GameObjects.Container {
     } else if (template.isBalanced(battle.enemyParty.length)) {
       const partyMemberTypes = battle.enemyParty.flatMap(p => p.getTypes(true));
       if (
-        partyMemberTypes.indexOf(ret.type1) > -1 ||
-        (ret.type2 !== null && partyMemberTypes.indexOf(ret.type2) > -1)
+        partyMemberTypes.indexOf(ret.type1) > -1
+        || (ret.type2 !== null && partyMemberTypes.indexOf(ret.type2) > -1)
       ) {
         retry = true;
       }
@@ -756,7 +754,7 @@ export class Trainer extends Phaser.GameObjects.Container {
         globalScene.tweens.add({
           targets: tintSprite,
           alpha: alpha || 1,
-          duration: duration,
+          duration,
           ease: ease || "Linear",
         });
       } else {
@@ -772,7 +770,7 @@ export class Trainer extends Phaser.GameObjects.Container {
         globalScene.tweens.add({
           targets: tintSprite,
           alpha: 0,
-          duration: duration,
+          duration,
           ease: ease || "Linear",
           onComplete: () => {
             tintSprite.setVisible(false);
@@ -793,9 +791,9 @@ export class Trainer extends Phaser.GameObjects.Container {
    */
   shouldTera(pokemon: EnemyPokemon): boolean {
     if (
-      this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA &&
-      !pokemon.isTerastallized &&
-      this.config.trainerAI.instantTeras.includes(pokemon.initialTeamIndex)
+      this.config.trainerAI.teraMode === TeraAIMode.INSTANT_TERA
+      && !pokemon.isTerastallized
+      && this.config.trainerAI.instantTeras.includes(pokemon.initialTeamIndex)
     ) {
       return true;
     }

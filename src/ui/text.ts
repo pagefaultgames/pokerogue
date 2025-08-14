@@ -461,8 +461,8 @@ export function getTextStyleOptions(
   if (extraStyleOptions) {
     if (extraStyleOptions.fontSize) {
       const sizeRatio =
-        Number.parseInt(extraStyleOptions.fontSize.toString().slice(0, -2)) /
-        Number.parseInt(styleOptions.fontSize?.toString().slice(0, -2) ?? "1");
+        Number.parseInt(extraStyleOptions.fontSize.toString().slice(0, -2))
+        / Number.parseInt(styleOptions.fontSize?.toString().slice(0, -2) ?? "1");
       shadowXpos *= sizeRatio;
     }
     styleOptions = Object.assign(styleOptions, extraStyleOptions);
@@ -511,10 +511,10 @@ export function getTextWithColors(
   // Set custom colors
   text = text.replace(/@\[([^{]*)\]{([^}]*)}/gi, (_substring, textStyle: string, textToColor: string) => {
     return (
-      "[/color][/shadow]" +
-      getBBCodeFrag(textToColor, TextStyle[textStyle], uiTheme) +
-      "[/color][/shadow]" +
-      primaryStyleString
+      "[/color][/shadow]"
+      + getBBCodeFrag(textToColor, TextStyle[textStyle], uiTheme)
+      + "[/color][/shadow]"
+      + primaryStyleString
     );
   });
 

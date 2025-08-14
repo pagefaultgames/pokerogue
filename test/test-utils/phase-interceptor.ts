@@ -421,11 +421,11 @@ export class PhaseInterceptor {
         if (expireFn) {
           this.prompts.shift();
         } else if (
-          currentMode === actionForNextPrompt.mode &&
-          currentPhase === actionForNextPrompt.phaseTarget &&
-          currentHandler.active &&
-          (!actionForNextPrompt.awaitingActionInput ||
-            (actionForNextPrompt.awaitingActionInput && currentHandler.awaitingActionInput))
+          currentMode === actionForNextPrompt.mode
+          && currentPhase === actionForNextPrompt.phaseTarget
+          && currentHandler.active
+          && (!actionForNextPrompt.awaitingActionInput
+            || (actionForNextPrompt.awaitingActionInput && currentHandler.awaitingActionInput))
         ) {
           const prompt = this.prompts.shift();
           if (prompt?.callback) {

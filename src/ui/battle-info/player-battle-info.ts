@@ -138,10 +138,10 @@ export class PlayerBattleInfo extends BattleInfo {
     );
     let duration =
       this.visible && !instant
-        ? ((levelExp - this.lastLevelExp) / relLevelExp) *
-          BattleInfo.EXP_GAINS_DURATION_BASE *
-          durationMultiplier *
-          levelDurationMultiplier
+        ? ((levelExp - this.lastLevelExp) / relLevelExp)
+          * BattleInfo.EXP_GAINS_DURATION_BASE
+          * durationMultiplier
+          * levelDurationMultiplier
         : 0;
     const speed = globalScene.expGainsSpeed;
     if (speed && speed >= ExpGainsSpeed.DEFAULT) {
@@ -162,7 +162,7 @@ export class PlayerBattleInfo extends BattleInfo {
         targets: this.expMaskRect,
         ease: "Sine.easeIn",
         x: ratio * 510,
-        duration: duration,
+        duration,
         onComplete: () => {
           if (!globalScene) {
             return resolve();

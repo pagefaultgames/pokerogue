@@ -30,8 +30,8 @@ export class TurnInitPhase extends FieldPhase {
           globalScene.phaseManager.clearPhaseQueue();
           globalScene.phaseManager.unshiftNew("GameOverPhase");
         } else if (
-          allowedPokemon.length >= globalScene.currentBattle.getBattlerCount() ||
-          (globalScene.currentBattle.double && !allowedPokemon[0].isActive(true))
+          allowedPokemon.length >= globalScene.currentBattle.getBattlerCount()
+          || (globalScene.currentBattle.double && !allowedPokemon[0].isActive(true))
         ) {
           // If there is at least one pokemon in the back that is legal to switch in, force a switch.
           p.switchOut();

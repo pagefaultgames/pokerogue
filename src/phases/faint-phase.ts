@@ -89,13 +89,13 @@ export class FaintPhase extends PokemonPhase {
     if (pokemon.isPlayer()) {
       globalScene.arena.playerFaints += 1;
       globalScene.currentBattle.playerFaintsHistory.push({
-        pokemon: pokemon,
+        pokemon,
         turn: globalScene.currentBattle.turn,
       });
     } else {
       globalScene.currentBattle.enemyFaints += 1;
       globalScene.currentBattle.enemyFaintsHistory.push({
-        pokemon: pokemon,
+        pokemon,
         turn: globalScene.currentBattle.turn,
       });
     }
@@ -115,7 +115,7 @@ export class FaintPhase extends PokemonPhase {
     if (pokemon.turnData.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
       applyAbAttrs("PostFaintAbAttr", {
-        pokemon: pokemon,
+        pokemon,
         // TODO: We should refactor lastAttack's sourceId to forbid null and just use undefined
         attacker: globalScene.getPokemonById(lastAttack.sourceId) ?? undefined,
         // TODO: improve the way that we provide the move that knocked out the pokemon...
@@ -155,9 +155,9 @@ export class FaintPhase extends PokemonPhase {
         /** If the player doesn't have any legal Pokemon, end the game */
         globalScene.phaseManager.unshiftNew("GameOverPhase");
       } else if (
-        globalScene.currentBattle.double &&
-        legalPlayerPokemon.length === 1 &&
-        legalPlayerPartyPokemon.length === 0
+        globalScene.currentBattle.double
+        && legalPlayerPokemon.length === 1
+        && legalPlayerPartyPokemon.length === 0
       ) {
         /**
          * If the player has exactly one Pokemon in total at this point in a double battle, and that Pokemon

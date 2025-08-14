@@ -93,8 +93,8 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
 
     // Store pokemon and price
     encounter.misc = {
-      pokemon: pokemon,
-      price: price,
+      pokemon,
+      price,
     };
 
     // If player meets the combo OR requirements for option 2, populate the token

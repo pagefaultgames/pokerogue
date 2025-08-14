@@ -812,8 +812,8 @@ export abstract class BattleAnim {
             x = point[0];
             y = point[1];
             if (
-              frame.target === AnimFrameTarget.GRAPHIC &&
-              isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2])
+              frame.target === AnimFrameTarget.GRAPHIC
+              && isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2])
             ) {
               scaleX = scaleX * -1;
             }
@@ -822,7 +822,7 @@ export abstract class BattleAnim {
       }
       const angle = -frame.angle;
       const key = frame.target === AnimFrameTarget.GRAPHIC ? g++ : frame.target === AnimFrameTarget.USER ? u++ : t++;
-      ret.get(frame.target)!.set(key, { x: x, y: y, scaleX: scaleX, scaleY: scaleY, angle: angle }); // TODO: is the bang correct?
+      ret.get(frame.target)!.set(key, { x, y, scaleX, scaleY, angle }); // TODO: is the bang correct?
     }
 
     return ret;
@@ -1145,11 +1145,11 @@ export abstract class BattleAnim {
       const angle = -frame.angle;
       const key = frame.target === AnimFrameTarget.GRAPHIC ? g++ : frame.target === AnimFrameTarget.USER ? u++ : t++;
       ret.get(frame.target)?.set(key, {
-        x: x,
-        y: y,
-        scaleX: scaleX,
-        scaleY: scaleY,
-        angle: angle,
+        x,
+        y,
+        scaleX,
+        scaleY,
+        angle,
       });
     }
 

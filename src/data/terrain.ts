@@ -65,14 +65,10 @@ export class Terrain {
         // Psychic terrain will only cancel a move if it:
         return (
           // ... is neither spread nor field-targeted,
-          !isFieldTargeted(move) &&
-          !isSpreadMove(move) &&
-          // .. has positive final priority,
-          move.getPriority(user) > 0 &&
-          // ...and is targeting at least 1 grounded opponent
-          user
-            .getOpponents(true)
-            .some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded())
+          !isFieldTargeted(move)
+          && !isSpreadMove(move) // .. has positive final priority,
+          && move.getPriority(user) > 0 // ...and is targeting at least 1 grounded opponent
+          && user.getOpponents(true).some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded())
         );
     }
 

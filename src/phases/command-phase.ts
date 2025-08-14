@@ -61,8 +61,8 @@ export class CommandPhase extends FieldPhase {
       return;
     }
     if (
-      (turn === 1 && (!commandCursorMemory || cursorResetEvent)) ||
-      commandUiHandler.getCursor() === Command.POKEMON
+      (turn === 1 && (!commandCursorMemory || cursorResetEvent))
+      || commandUiHandler.getCursor() === Command.POKEMON
     ) {
       commandUiHandler.setCursor(Command.FIGHT);
     }
@@ -97,8 +97,8 @@ export class CommandPhase extends FieldPhase {
   private checkCommander(): void {
     // If the Pokemon has applied Commander's effects to its ally, skip this command
     if (
-      globalScene.currentBattle?.double &&
-      this.getPokemon().getAlly()?.getTag(BattlerTagType.COMMANDED)?.getSourcePokemon() === this.getPokemon()
+      globalScene.currentBattle?.double
+      && this.getPokemon().getAlly()?.getTag(BattlerTagType.COMMANDED)?.getSourcePokemon() === this.getPokemon()
     ) {
       globalScene.currentBattle.turnCommands[this.fieldIndex] = {
         command: Command.FIGHT,
@@ -124,9 +124,9 @@ export class CommandPhase extends FieldPhase {
     for (const queuedMove of moveQueue) {
       const movesetQueuedMove = moveset.find(m => m.moveId === queuedMove.move);
       if (
-        queuedMove.move !== MoveId.NONE &&
-        !isVirtual(queuedMove.useMode) &&
-        !movesetQueuedMove?.isUsable(playerPokemon, isIgnorePP(queuedMove.useMode))
+        queuedMove.move !== MoveId.NONE
+        && !isVirtual(queuedMove.useMode)
+        && !movesetQueuedMove?.isUsable(playerPokemon, isIgnorePP(queuedMove.useMode))
       ) {
         entriesToDelete++;
       } else {
@@ -193,8 +193,8 @@ export class CommandPhase extends FieldPhase {
     }
 
     if (
-      globalScene.currentBattle.isBattleMysteryEncounter() &&
-      globalScene.currentBattle.mysteryEncounter?.skipToFightInput
+      globalScene.currentBattle.isBattleMysteryEncounter()
+      && globalScene.currentBattle.mysteryEncounter?.skipToFightInput
     ) {
       globalScene.ui.clearText();
       globalScene.ui.setMode(UiMode.FIGHT, this.fieldIndex);
@@ -233,7 +233,7 @@ export class CommandPhase extends FieldPhase {
     const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
 
     globalScene.ui.showText(
-      i18next.t(cannotSelectKey, { moveName: moveName }),
+      i18next.t(cannotSelectKey, { moveName }),
       null,
       () => {
         globalScene.ui.clearText();
@@ -331,9 +331,9 @@ export class CommandPhase extends FieldPhase {
     if (turnCommand.move && (moveTargets.targets.length <= 1 || moveTargets.multiple)) {
       turnCommand.move.targets = moveTargets.targets;
     } else if (
-      turnCommand.move &&
-      playerPokemon.getTag(BattlerTagType.CHARGING) &&
-      playerPokemon.getMoveQueue().length >= 1
+      turnCommand.move
+      && playerPokemon.getTag(BattlerTagType.CHARGING)
+      && playerPokemon.getMoveQueue().length >= 1
     ) {
       turnCommand.move.targets = playerPokemon.getMoveQueue()[0].targets;
     } else {
@@ -394,8 +394,8 @@ export class CommandPhase extends FieldPhase {
     const missingMultipleStarters =
       gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1;
     if (
-      biomeType === BiomeId.END &&
-      (!isClassic || gameMode.isFreshStartChallenge() || (someUncaughtSpeciesOnField && missingMultipleStarters))
+      biomeType === BiomeId.END
+      && (!isClassic || gameMode.isFreshStartChallenge() || (someUncaughtSpeciesOnField && missingMultipleStarters))
     ) {
       this.queueShowText("battle:noPokeballForce");
     } else if (battleType === BattleType.TRAINER) {
@@ -433,11 +433,10 @@ export class CommandPhase extends FieldPhase {
     if (cursor < numBallTypes) {
       const targetPokemon = globalScene.getEnemyPokemon();
       if (
-        targetPokemon?.isBoss() &&
-        targetPokemon?.bossSegmentIndex >= 1 &&
-        // TODO: Decouple this hardcoded exception for wonder guard and just check the target...
-        !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true) &&
-        cursor < PokeballType.MASTER_BALL
+        targetPokemon?.isBoss()
+        && targetPokemon?.bossSegmentIndex >= 1 // TODO: Decouple this hardcoded exception for wonder guard and just check the target...
+        && !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true)
+        && cursor < PokeballType.MASTER_BALL
       ) {
         this.queueShowText("battle:noPokeballStrong");
         return false;
@@ -445,7 +444,7 @@ export class CommandPhase extends FieldPhase {
 
       globalScene.currentBattle.turnCommands[this.fieldIndex] = {
         command: Command.BALL,
-        cursor: cursor,
+        cursor,
       };
       globalScene.currentBattle.turnCommands[this.fieldIndex]!.targets = targets;
       if (this.fieldIndex) {
@@ -556,8 +555,8 @@ export class CommandPhase extends FieldPhase {
       return false;
     }
     if (
-      currentBattle.battleType === BattleType.TRAINER ||
-      currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
+      currentBattle.battleType === BattleType.TRAINER
+      || currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
     ) {
       this.queueShowText("battle:noEscapeTrainer");
       return false;
