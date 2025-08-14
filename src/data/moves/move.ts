@@ -5965,7 +5965,7 @@ export class RemoveAllSubstitutesAttr extends MoveEffectAttr {
 export class HitsTagAttr extends MoveAttr {
   /** The {@linkcode BattlerTagType} this move hits */
   public tagType: BattlerTagType;
-  /** Should this move deal double damage against {@linkcode this.tagType}? */
+  /** Should this move deal double damage against {@linkcode tagType}? */
   public doubleDamage: boolean;
 
   constructor(tagType: BattlerTagType) {
