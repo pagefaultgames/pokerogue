@@ -223,9 +223,8 @@ export class TrainerConfig {
       case TrainerType.LARRY_ELITE:
         trainerType = TrainerType.LARRY;
         break;
-      case TrainerType.ROCKET_BOSS_GIOVANNI_1:
       case TrainerType.ROCKET_BOSS_GIOVANNI_2:
-        trainerType = TrainerType.GIOVANNI;
+        trainerType = TrainerType.ROCKET_BOSS_GIOVANNI_1;
         break;
       case TrainerType.MAXIE_2:
         trainerType = TrainerType.MAXIE;
@@ -895,7 +894,7 @@ export class TrainerConfig {
 
   /**
    * Helper function to check if a specialty type is set
-   * @returns true if specialtyType is defined and not Type.UNKNOWN
+   * @returns `true` if `specialtyType` is defined and not {@link PokemonType.UNKNOWN}
    */
   hasSpecialtyType(): boolean {
     return !isNullOrUndefined(this.specialtyType) && this.specialtyType !== PokemonType.UNKNOWN;
@@ -1866,27 +1865,43 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([
+        SpeciesId.METAPOD,
+        SpeciesId.LEDYBA,
+        SpeciesId.CLEFFA,
+        SpeciesId.WOOPER,
+        SpeciesId.TEDDIURSA,
+        SpeciesId.REMORAID,
+        SpeciesId.HOUNDOUR,
+        SpeciesId.SILCOON,
         SpeciesId.PLUSLE,
         SpeciesId.VOLBEAT,
-        SpeciesId.PACHIRISU,
-        SpeciesId.SILCOON,
-        SpeciesId.METAPOD,
-        SpeciesId.IGGLYBUFF,
+        SpeciesId.SPINDA,
+        SpeciesId.BONSLY,
         SpeciesId.PETILIL,
-        SpeciesId.EEVEE,
+        SpeciesId.SPRITZEE,
+        SpeciesId.MILCERY,
+        SpeciesId.PICHU,
       ]),
     )
     .setPartyMemberFunc(
       1,
       getRandomPartyMemberFunc(
         [
+          SpeciesId.KAKUNA,
+          SpeciesId.SPINARAK,
+          SpeciesId.IGGLYBUFF,
+          SpeciesId.PALDEA_WOOPER,
+          SpeciesId.PHANPY,
+          SpeciesId.MANTYKE,
+          SpeciesId.ELECTRIKE,
+          SpeciesId.CASCOON,
           SpeciesId.MINUN,
           SpeciesId.ILLUMISE,
-          SpeciesId.EMOLGA,
-          SpeciesId.CASCOON,
-          SpeciesId.KAKUNA,
-          SpeciesId.CLEFFA,
+          SpeciesId.SPINDA,
+          SpeciesId.MIME_JR,
           SpeciesId.COTTONEE,
+          SpeciesId.SWIRLIX,
+          SpeciesId.FIDOUGH,
           SpeciesId.EEVEE,
         ],
         TrainerSlot.TRAINER_PARTNER,

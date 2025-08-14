@@ -6,6 +6,7 @@ import Overrides from "#app/overrides";
 import { EvolutionItem, pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { tmPoolTiers, tmSpecies } from "#balance/tms";
 import { getBerryEffectDescription, getBerryName } from "#data/berry";
+import { getDailyEventSeedLuck } from "#data/daily-run";
 import { allMoves, modifierTypes } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
@@ -2921,6 +2922,12 @@ export function getPartyLuckValue(party: Pokemon[]): number {
     const DailyLuck = new NumberHolder(0);
     globalScene.executeWithSeedOffset(
       () => {
+        const eventLuck = getDailyEventSeedLuck(globalScene.seed);
+        if (!isNullOrUndefined(eventLuck)) {
+          DailyLuck.value = eventLuck;
+          return;
+        }
+
         DailyLuck.value = randSeedInt(15); // Random number between 0 and 14
       },
       0,
@@ -2928,6 +2935,7 @@ export function getPartyLuckValue(party: Pokemon[]): number {
     );
     return DailyLuck.value;
   }
+
   const eventSpecies = timedEventManager.getEventLuckBoostedSpecies();
   const luck = Phaser.Math.Clamp(
     party
