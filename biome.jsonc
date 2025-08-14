@@ -1,6 +1,5 @@
 {
-  // ! Just ignore the errors for now guys.
-  "$schema": "https://biomejs.dev/schemas/2.1.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -11,7 +10,7 @@
     "enabled": true,
     "useEditorconfig": true,
     "indentStyle": "space",
-    "includes": ["**", "!**/src/enums/**/*", "!**/src/data/balance/**/*"],
+    "includes": ["**", "!**/src/enums", "!**/src/data/balance"],
     "lineWidth": 120
   },
   "files": {
@@ -20,12 +19,12 @@
     // and having to verify whether each individual file is ignored
     "includes": [
       "**",
-      "!**/dist/**/*",
-      "!**/coverage/**/*",
-      "!**/public/**/*",
-      "!**/.github/**/*",
-      "!**/node_modules/**/*",
-      "!**/typedoc/**/*",
+      "!**/dist",
+      "!**/coverage",
+      "!**/public",
+      "!**/.github",
+      "!**/node_modules",
+      "!**/typedoc",
       // TODO: lint css and html?
       "!**/*.css",
       "!**/*.html",
@@ -58,23 +57,35 @@
         "noVoidTypeReturn": "error",
         "noUnusedImports": {
           "level": "error",
-          "fix": "safe"
+          "fix": "safe",
+          "options": {}
         },
         "noUnusedFunctionParameters": "error",
         "noUnusedLabels": "error",
-        "noPrivateImports": "error"
+        "noPrivateImports": "error",
+        "useSingleJsDocAsterisk": "error",
+        "useJsonImportAttributes": "off" // "Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'. ts(2823)"
       },
       "style": {
+        "useReadonlyClassProperties": {
+          "level": "info", // TODO: Graduate to error eventually
+          "options": { "checkAllProperties": true }
+        },
+        "useConsistentObjectDefinitions": {
+          "level": "error",
+          "options": { "syntax": "shorthand" }
+        },
         "useCollapsedIf": "error",
         "useCollapsedElseIf": "error",
         "noDoneCallback": "error",
         "noSubstr": "error",
         "noYodaExpression": "error",
         "useForOf": "error",
-        "useEnumInitializers": "off", // large enums like Moves/Species would make this cumbersome
+        "useEnumInitializers": "off", // large enums like MoveId/SpeciesId would make this cumbersome
         "useBlockStatements": {
           "level": "error",
-          "fix": "safe"
+          "fix": "safe",
+          "options": {}
         },
         "useConst": "error",
         "useImportType": "error",
@@ -85,11 +96,13 @@
           // TODO: Fix spots in the codebase where this flag would be triggered
           // and then set to "error" and re-enable the fixer
           "level": "warn",
-          "fix": "none"
+          "fix": "none",
+          "options": {}
         },
         "useSingleVarDeclarator": {
           "level": "error",
-          "fix": "safe"
+          "fix": "safe",
+          "options": {}
         },
         "useNodejsImportProtocol": "off",
         "useTemplate": "off", // string concatenation is faster: https://stackoverflow.com/questions/29055518/are-es6-template-literals-faster-than-string-concatenation
@@ -108,7 +121,11 @@
               }
             }
           }
-        }
+        },
+        "useUnifiedTypeSignatures": "error",
+        "useGroupedAccessorPairs": "error",
+        "useObjectSpread": "error",
+        "useNumericSeparators": "off" // TODO: Consider enabling?
       },
       "suspicious": {
         "noDoubleEquals": "error",
@@ -124,7 +141,10 @@
         "noGlobalIsNan": "error",
         "noAsyncPromiseExecutor": "warn", // TODO: Refactor and make this an error
         "noVar": "error",
-        "noDocumentCookie": "off" // Firefox has minimal support for the "Cookie Store API"
+        "noDocumentCookie": "off", // Firefox has minimal support for the "Cookie Store API"
+        "noConstantBinaryExpressions": "error",
+        "noTsIgnore": "error",
+        "useIterableCallbackReturn": "warn" // TODO: Refactor and change to error
       },
       "complexity": {
         "noUselessStringConcat": "error",
@@ -136,7 +156,8 @@
         "noBannedTypes": "warn", // TODO: Refactor and make this an error
         "noThisInStatic": "error",
         "noUselessThisAlias": "error",
-        "noUselessTernary": "error"
+        "noUselessTernary": "error",
+        "useIndexOf": "error"
       },
       "performance": {
         "noNamespaceImport": "error",
@@ -144,17 +165,10 @@
         "noBarrelFile": "error"
       },
       "nursery": {
-        "useSingleJsDocAsterisk": "error",
-        "useUnifiedTypeSignature": "error",
-        "useAdjacentGetterSetter": "error",
-        "noConstantBinaryExpression": "error",
-        "noTsIgnore": "error",
-        "noAwaitInLoop": "off", // we do this a lot
-        "useJsonImportAttribute": "off", // "Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'. ts(2823)"
-        "useIndexOf": "error",
-        "useObjectSpread": "error",
-        "useNumericSeparators": "off", // TODO: enable?
-        "useIterableCallbackReturn": "warn", // TODO: refactor and make "error"
+        "useMaxParams": {
+          "level": "warn", // TODO: Change to "error" eventually
+          "options": { "max": 4 } // TODO: is this ok?
+        },
         "noShadow": "warn" // TODO: refactor and make "error"
       }
     }
@@ -162,7 +176,8 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "double",
-      "arrowParentheses": "asNeeded"
+      "arrowParentheses": "asNeeded",
+      "operatorLinebreak": "before"
     },
     "globals": ["Phaser"],
     "parser": {
@@ -179,7 +194,7 @@
             "noNamespaceImport": "off" // this is required for `vi.spyOn` to work in some tests
           },
           "style": {
-            "noNonNullAssertion": "off"
+            "noNonNullAssertion": "off" // tedious in some tests
           },
           "nursery": {
             "noFloatingPromises": "error"
