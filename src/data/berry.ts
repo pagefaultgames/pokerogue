@@ -73,16 +73,12 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         {
           const hpHealed = new NumberHolder(toDmgValue(consumer.getMaxHp() / 4));
           applyAbAttrs("DoubleBerryEffectAbAttr", { pokemon: consumer, effectValue: hpHealed });
-          globalScene.phaseManager.unshiftNew(
-            "PokemonHealPhase",
-            consumer.getBattlerIndex(),
-            hpHealed.value,
-            i18next.t("battle:hpHealBerry", {
+          globalScene.phaseManager.unshiftNew("PokemonHealPhase", consumer.getBattlerIndex(), hpHealed.value, {
+            message: i18next.t("battle:hpHealBerry", {
               pokemonNameWithAffix: getPokemonNameWithAffix(consumer),
               berryName: getBerryName(berryType),
             }),
-            true,
-          );
+          });
         }
         break;
       case BerryType.LUM:

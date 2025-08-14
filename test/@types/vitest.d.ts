@@ -1,4 +1,5 @@
 import type { TerrainType } from "#app/data/terrain";
+import type Overrides from "#app/overrides";
 import type { AbilityId } from "#enums/ability-id";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import type { MoveId } from "#enums/move-id";
@@ -7,14 +8,14 @@ import type { BattleStat, EffectiveStat, Stat } from "#enums/stat";
 import type { StatusEffect } from "#enums/status-effect";
 import type { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
+import type { PokemonMove } from "#moves/pokemon-move";
 import type { ToHaveEffectiveStatMatcherOptions } from "#test/test-utils/matchers/to-have-effective-stat";
 import type { expectedStatusType } from "#test/test-utils/matchers/to-have-status-effect";
 import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
 import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
+import type { toDmgValue } from "#utils/common";
 import type { expect } from "vitest";
-import type Overrides from "#app/overrides";
-import type { PokemonMove } from "#moves/pokemon-move";
 
 declare module "vitest" {
   interface Assertion {
@@ -113,8 +114,9 @@ declare module "vitest" {
     /**
      * Check whether a {@linkcode Pokemon} has a specific amount of {@linkcode Stat.HP | HP}.
      * @param expectedHp - The expected amount of {@linkcode Stat.HP | HP} to have
+     * @param roundDown - Whether to round down {@linkcode expectedDamageTaken} with {@linkcode toDmgValue}; default `true`
      */
-    toHaveHp(expectedHp: number): void;
+    toHaveHp(expectedHp: number, roundDown?: boolean): void;
 
     /**
      * Check whether a {@linkcode Pokemon} is currently fainted (as determined by {@linkcode Pokemon.isFainted}).
