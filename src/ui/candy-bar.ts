@@ -1,7 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import type { SpeciesId } from "#enums/species-id";
-import { addTextObject, TextStyle } from "#ui/text";
+import { TextStyle } from "#enums/text-style";
+import { addTextObject } from "#ui/text";
 import { rgbHexToRgba } from "#utils/common";
 import { argbFromRgba } from "@material/material-color-utilities";
 
@@ -18,7 +19,7 @@ export class CandyBar extends Phaser.GameObjects.Container {
   public shown: boolean;
 
   constructor() {
-    super(globalScene, globalScene.game.canvas.width / 6, -(globalScene.game.canvas.height / 6) + 15);
+    super(globalScene, globalScene.scaledCanvas.width, -globalScene.scaledCanvas.height + 15);
   }
 
   setup(): void {
@@ -79,7 +80,7 @@ export class CandyBar extends Phaser.GameObjects.Container {
 
       this.tween = globalScene.tweens.add({
         targets: this,
-        x: globalScene.game.canvas.width / 6 - (this.bg.width - 5),
+        x: globalScene.scaledCanvas.width - (this.bg.width - 5),
         duration: 500,
         ease: "Sine.easeOut",
         onComplete: () => {
@@ -110,7 +111,7 @@ export class CandyBar extends Phaser.GameObjects.Container {
 
       this.tween = globalScene.tweens.add({
         targets: this,
-        x: globalScene.game.canvas.width / 6,
+        x: globalScene.scaledCanvas.width,
         duration: 500,
         ease: "Sine.easeIn",
         onComplete: () => {

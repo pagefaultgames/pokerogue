@@ -11,11 +11,11 @@ import { speciesEggMoves } from "#balance/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
 import { ArenaTrapTag } from "#data/arena-tag";
-import { applyChallenges } from "#data/challenge";
 import { allMoves, allSpecies } from "#data/data-lists";
 import type { Egg } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import { loadPositionalTag } from "#data/positional-tags/load-positional-tag";
 import { TerrainType } from "#data/terrain";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
@@ -42,7 +42,7 @@ import * as Modifier from "#modifiers/modifier";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
 import type { Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import { ArenaData } from "#system/arena-data";
+import { ArenaData, type SerializedArenaData } from "#system/arena-data";
 import { ChallengeData } from "#system/challenge-data";
 import { EggData } from "#system/egg-data";
 import { GameStats } from "#system/game-stats";
@@ -57,11 +57,12 @@ import {
   applySessionVersionMigration,
   applySettingsVersionMigration,
   applySystemVersionMigration,
-} from "#system/version_converter";
+} from "#system/version-migration/version-converter";
 import { VoucherType, vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { DexData, DexEntry } from "#types/dex-data";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
+import { applyChallenges } from "#utils/challenge-utils";
 import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
@@ -126,6 +127,7 @@ export interface SessionSaveData {
   battleType: BattleType;
   trainer: TrainerData;
   gameVersion: string;
+  runNameText: string;
   timestamp: number;
   challenges: ChallengeData[];
   mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
@@ -978,6 +980,54 @@ export class GameData {
     });
   }
 
+  async renameSession(slotId: number, newName: string): Promise<boolean> {
+    return new Promise(async resolve => {
+      if (slotId < 0) {
+        return resolve(false);
+      }
+      const sessionData: SessionSaveData | null = await this.getSession(slotId);
+
+      if (!sessionData) {
+        return resolve(false);
+      }
+
+      if (newName === "") {
+        return resolve(true);
+      }
+
+      sessionData.runNameText = newName;
+      const updatedDataStr = JSON.stringify(sessionData);
+      const encrypted = encrypt(updatedDataStr, bypassLogin);
+      const secretId = this.secretId;
+      const trainerId = this.trainerId;
+
+      if (bypassLogin) {
+        localStorage.setItem(
+          `sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`,
+          encrypt(updatedDataStr, bypassLogin),
+        );
+        resolve(true);
+        return;
+      }
+      pokerogueApi.savedata.session
+        .update({ slot: slotId, trainerId, secretId, clientSessionId }, encrypted)
+        .then(error => {
+          if (error) {
+            console.error("Failed to update session name:", error);
+            resolve(false);
+          } else {
+            localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`, encrypted);
+            updateUserInfo().then(success => {
+              if (success !== null && !success) {
+                return resolve(false);
+              }
+            });
+            resolve(true);
+          }
+        });
+    });
+  }
+
   loadSession(slotId: number, sessionData?: SessionSaveData): Promise<boolean> {
     // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO: fix this
     return new Promise(async (resolve, reject) => {
@@ -1095,6 +1145,10 @@ export class GameData {
               }
             }
           }
+
+          globalScene.arena.positionalTagManager.tags = sessionData.arena.positionalTags.map(tag =>
+            loadPositionalTag(tag),
+          );
 
           if (globalScene.modifiers.length) {
             console.warn("Existing modifiers not cleared on session load, deleting...");
@@ -1247,7 +1301,8 @@ export class GameData {
     // (or prevent them from being null)
     // If the value is able to *not exist*, it should say so in the code
     const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
-      // TODO: Add pre-parse migrate scripts
+      // TODO: Move this to occur _after_ migrate scripts (and refactor all non-assignment duties into migrate scripts)
+      // This should ideally be just a giant assign block
       switch (k) {
         case "party":
         case "enemyParty": {
@@ -1285,7 +1340,7 @@ export class GameData {
         }
 
         case "arena":
-          return new ArenaData(v);
+          return new ArenaData(v as SerializedArenaData);
 
         case "challenges": {
           const ret: ChallengeData[] = [];
@@ -1453,11 +1508,10 @@ export class GameData {
 
       reader.onload = (_ => {
         return e => {
-          let dataName: string;
+          let dataName = GameDataType[dataType].toLowerCase();
           let dataStr = AES.decrypt(e.target?.result?.toString()!, saveKey).toString(enc.Utf8); // TODO: is this bang correct?
           let valid = false;
           try {
-            dataName = GameDataType[dataType].toLowerCase();
             switch (dataType) {
               case GameDataType.SYSTEM: {
                 dataStr = this.convertSystemDataStr(dataStr);
@@ -1492,7 +1546,6 @@ export class GameData {
 
           const displayError = (error: string) =>
             globalScene.ui.showText(error, null, () => globalScene.ui.showText("", 0), fixedInt(1500));
-          dataName = dataName!; // tell TS compiler that dataName is defined!
 
           if (!valid) {
             return globalScene.ui.showText(

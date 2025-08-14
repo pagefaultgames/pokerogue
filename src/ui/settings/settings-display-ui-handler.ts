@@ -117,6 +117,11 @@ export class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
             label: "Română (Needs Help)",
           };
           break;
+        case "tl":
+          this.settings[languageIndex].options[0] = {
+            value: "Tagalog",
+            label: "Tagalog (Needs Help)",
+          };
         case "he":
           this.settings[languageIndex].options[0] = {
             value: "עברית",

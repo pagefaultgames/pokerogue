@@ -16,8 +16,8 @@ import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { GameManager } from "#test/testUtils/gameManager";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -147,12 +147,13 @@ describe("Weird Dream - Mystery Encounter", () => {
       const modifierSelectHandler = scene.ui.handlers.find(
         h => h instanceof ModifierSelectUiHandler,
       ) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(5);
+      expect(modifierSelectHandler.options.length).toEqual(6);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("MEMORY_MUSHROOM");
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toEqual("ROGUE_BALL");
       expect(modifierSelectHandler.options[2].modifierTypeOption.type.id).toEqual("MINT");
       expect(modifierSelectHandler.options[3].modifierTypeOption.type.id).toEqual("MINT");
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.id).toEqual("MINT");
+      expect(modifierSelectHandler.options[4].modifierTypeOption.type.id).toEqual("MINT");
+      expect(modifierSelectHandler.options[5].modifierTypeOption.type.id).toEqual("MINT");
     });
 
     it("should leave encounter without battle", async () => {

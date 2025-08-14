@@ -16,8 +16,8 @@ import {
   runSelectMysteryEncounterOption,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { GameManager } from "#test/testUtils/gameManager";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import i18next from "i18next";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -79,14 +79,6 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
     expect(TeleportingHijinksEncounter.options.length).toBe(3);
   });
 
-  it("should run in waves that are X1", async () => {
-    game.override.startingWave(11).mysteryEncounterTier(MysteryEncounterTier.COMMON);
-
-    await game.runToMysteryEncounter();
-
-    expect(scene.currentBattle?.mysteryEncounter?.encounterType).toBe(MysteryEncounterType.TELEPORTING_HIJINKS);
-  });
-
   it("should run in waves that are X2", async () => {
     game.override.startingWave(32).mysteryEncounterTier(MysteryEncounterTier.COMMON);
 
@@ -103,8 +95,16 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).toBe(MysteryEncounterType.TELEPORTING_HIJINKS);
   });
 
-  it("should NOT run in waves that are not X1, X2, or X3", async () => {
-    game.override.startingWave(54);
+  it("should run in waves that are X4", async () => {
+    game.override.startingWave(54).mysteryEncounterTier(MysteryEncounterTier.COMMON);
+
+    await game.runToMysteryEncounter();
+
+    expect(scene.currentBattle?.mysteryEncounter?.encounterType).toBe(MysteryEncounterType.TELEPORTING_HIJINKS);
+  });
+
+  it("should NOT run in waves that are not X2, X3, or X4", async () => {
+    game.override.startingWave(67);
 
     await game.runToMysteryEncounter();
 

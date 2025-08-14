@@ -3,7 +3,7 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -36,7 +36,7 @@ describe("Ability - Anger Point", () => {
   it("should set the user's attack stage to +6 when hit by a critical hit", async () => {
     game.override.enemyAbility(AbilityId.ANGER_POINT).moveset(MoveId.FALSE_SWIPE);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     // minimize the enemy's attack stage to ensure it is always set to +6
     enemy.setStatStage(Stat.ATK, -6);
@@ -53,7 +53,7 @@ describe("Ability - Anger Point", () => {
       .enemyAbility(AbilityId.ANGER_POINT)
       .ability(AbilityId.SKILL_LINK);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getCriticalHitResult").mockReturnValueOnce(true);
     const angerPointSpy = vi.spyOn(PostReceiveCritStatStageChangeAbAttr.prototype, "apply");
     game.move.select(MoveId.BULLET_SEED);
@@ -68,7 +68,7 @@ describe("Ability - Anger Point", () => {
       .enemyHasPassiveAbility(true)
       .moveset(MoveId.FALSE_SWIPE);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getCriticalHitResult").mockReturnValueOnce(true);
     enemy.setStatStage(Stat.ATK, 6);
     game.move.select(MoveId.FALSE_SWIPE);

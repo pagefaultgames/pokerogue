@@ -15,6 +15,7 @@ import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeWeatherTrigger } from
 import { Gender } from "#data/gender";
 import { getPokeballName } from "#data/pokeball";
 import { pokemonFormChanges } from "#data/pokemon-forms";
+import type { PokemonSpecies } from "#data/pokemon-species";
 import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#data/status-effect";
 import { TerrainType } from "#data/terrain";
 import type { Weather } from "#data/weather";
@@ -28,12 +29,12 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import type { BerryType } from "#enums/berry-type";
 import { Command } from "#enums/command";
 import { HitResult } from "#enums/hit-result";
-import { MoveCategory } from "#enums/MoveCategory";
-import { MoveFlags } from "#enums/MoveFlags";
-import { MoveTarget } from "#enums/MoveTarget";
 import { CommonAnim } from "#enums/move-anims-common";
+import { MoveCategory } from "#enums/move-category";
+import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
+import { MoveTarget } from "#enums/move-target";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
@@ -145,76 +146,141 @@ export class Ability implements Localizable {
     return this.attrs.some(attr => attr instanceof targetAttr);
   }
 
-  attr<T extends Constructor<AbAttr>>(AttrType: T, ...args: ConstructorParameters<T>): Ability {
+  /**
+   * Create a new {@linkcode AbAttr} instance and add it to this {@linkcode Ability}.
+   * @param attrType - The constructor of the {@linkcode AbAttr} to create.
+   * @param args - The arguments needed to instantiate the given class.
+   * @returns `this`
+   */
+  attr<T extends Constructor<AbAttr>>(AttrType: T, ...args: ConstructorParameters<T>): this {
     const attr = new AttrType(...args);
     this.attrs.push(attr);
 
     return this;
   }
 
+  /**
+   * Create a new {@linkcode AbAttr} instance with the given condition and add it to this {@linkcode Ability}.
+   * Checked before all other conditions, and is unique to the individual {@linkcode AbAttr} being created.
+   * @param condition - The {@linkcode AbAttrCondition} to add.
+   * @param attrType - The constructor of the {@linkcode AbAttr} to create.
+   * @param args - The arguments needed to instantiate the given class.
+   * @returns `this`
+   */
   conditionalAttr<T extends Constructor<AbAttr>>(
     condition: AbAttrCondition,
-    AttrType: T,
+    attrType: T,
     ...args: ConstructorParameters<T>
-  ): Ability {
-    const attr = new AttrType(...args);
+  ): this {
+    const attr = new attrType(...args);
     attr.addCondition(condition);
     this.attrs.push(attr);
 
     return this;
   }
 
-  bypassFaint(): Ability {
+  /**
+   * Make this ability trigger even if the user faints.
+   * @returns `this`
+   * @remarks
+   * This is also required for abilities to trigger when revived via Reviver Seed.
+   */
+  bypassFaint(): this {
     this.isBypassFaint = true;
     return this;
   }
 
-  ignorable(): Ability {
+  /**
+   * Make this ability ignorable by effects like {@linkcode MoveId.SUNSTEEL_STRIKE | Sunsteel Strike} or {@linkcode AbilityId.MOLD_BREAKER | Mold Breaker}.
+   * @returns `this`
+   */
+  ignorable(): this {
     this.isIgnorable = true;
     return this;
   }
 
-  unsuppressable(): Ability {
+  /**
+   * Make this ability unsuppressable by effects like {@linkcode MoveId.GASTRO_ACID | Gastro Acid} or {@linkcode AbilityId.NEUTRALIZING_GAS | Neutralizing Gas}.
+   * @returns `this`
+   */
+  unsuppressable(): this {
     this.isSuppressable = false;
     return this;
   }
 
-  uncopiable(): Ability {
+  /**
+   * Make this ability uncopiable by effects like {@linkcode MoveId.ROLE_PLAY | Role Play} or {@linkcode AbilityId.TRACE | Trace}.
+   * @returns `this`
+   */
+  uncopiable(): this {
     this.isCopiable = false;
     return this;
   }
 
-  unreplaceable(): Ability {
+  /**
+   * Make this ability unreplaceable by effects like {@linkcode MoveId.SIMPLE_BEAM | Simple Beam} or {@linkcode MoveId.ENTRAINMENT | Entrainment}.
+   * @returns `this`
+   */
+  unreplaceable(): this {
     this.isReplaceable = false;
     return this;
   }
 
-  condition(condition: AbAttrCondition): Ability {
+  /**
+   * Add a condition for this ability to be applied.
+   * Applies to **all** attributes of the given ability.
+   * @param condition - The {@linkcode AbAttrCondition} to add
+   * @returns `this`
+   * @see {@linkcode AbAttr.canApply} for setting conditions per attribute type
+   * @see {@linkcode conditionalAttr} for setting individual conditions per attribute instance
+   * @todo Review if this is necessary anymore - this is used extremely sparingly
+   */
+  condition(condition: AbAttrCondition): this {
     this.conditions.push(condition);
 
     return this;
   }
 
+  /**
+   * Mark an ability as partially implemented.
+   * Partial abilities are expected to have some of their core functionality implemented, but may lack
+   * certain notable features or interactions with other moves or abilities.
+   * @returns `this`
+   */
   partial(): this {
     this.nameAppend += " (P)";
     return this;
   }
 
+  /**
+   * Mark an ability as unimplemented.
+   * Unimplemented abilities are ones which have _none_ of their basic functionality enabled.
+   * @returns `this`
+   */
   unimplemented(): this {
     this.nameAppend += " (N)";
     return this;
   }
 
   /**
-   * Internal flag used for developers to document edge cases. When using this, please be sure to document the edge case.
-   * @returns the ability
+   * Mark an ability as having one or more edge cases.
+   * It may lack certain niche interactions with other moves/abilities, but still functions
+   * as intended in most cases.
+   * Does not show up in game and is solely for internal dev use.
+   *
+   * When using this, make sure to **document the edge case** (or else this becomes pointless).
+   * @returns `this`
    */
   edgeCase(): this {
     return this;
   }
 }
 
-/** Base set of parameters passed to every ability attribute's apply method */
+/**
+ * Base set of parameters passed to every ability attribute's {@linkcode AbAttr.apply | apply} method.
+ *
+ * Extended by sub-classes to contain additional parameters pertaining to the ability type(s) being triggered.
+ */
 export interface AbAttrBaseParams {
   /** The pokemon that has the ability being applied */
   readonly pokemon: Pokemon;
@@ -245,9 +311,20 @@ export interface AbAttrParamsWithCancel extends AbAttrBaseParams {
   readonly cancelled: BooleanHolder;
 }
 
+/**
+ * Abstract class for all ability attributes.
+ *
+ * Each {@linkcode Ability} may have any number of individual attributes, each functioning independently from one another.
+ */
 export abstract class AbAttr {
-  public showAbility: boolean;
-  private extraCondition: AbAttrCondition;
+  /**
+   * Whether to show this ability as a flyout when applying its effects.
+   * Should be kept in parity with mainline where possible.
+   * @defaultValue `true`
+   */
+  public showAbility = true;
+  /** The additional condition associated with this AbAttr, if any. */
+  private extraCondition?: AbAttrCondition;
 
   /**
    * Return whether this attribute is of the given type.
@@ -275,21 +352,43 @@ export abstract class AbAttr {
   }
 
   /**
-   * Apply ability effects without checking conditions.
-   * **Never call this method directly, use {@linkcode applyAbAttrs} instead.**
+   * Apply this attribute's effects without checking conditions.
+   *
+   * @remarks
+   * **Never call this method directly!** \
+   * Use {@linkcode applyAbAttrs} instead.
    */
   apply(_params: AbAttrBaseParams): void {}
 
-  // The `Exact` in the next two signatures enforces that the type of the _params operand
-  // is always compatible with the type of apply. This allows fewer fields, but never a type with more.
+  /**
+   * Return the trigger message to show when this attribute is executed.
+   * @param _params - The parameters passed to this attribute's {@linkcode apply} function; must match type exactly
+   * @param _abilityName - The name of the current ability.
+   * @privateRemarks
+   * If more fields are provided than needed, any excess can be discarded using destructuring.
+   * @todo Remove `null` from signature in lieu of using an empty string
+   */
   getTriggerMessage(_params: Exact<Parameters<this["apply"]>[0]>, _abilityName: string): string | null {
     return null;
   }
 
+  /**
+   * Check whether this attribute can have its effects successfully applied.
+   * Applies to **all** instances of the given attribute.
+   * @param _params - The parameters passed to this attribute's {@linkcode apply} function; must match type exactly
+   * @privateRemarks
+   * If more fields are provided than needed, any excess can be discarded using destructuring.
+   */
   canApply(_params: Exact<Parameters<this["apply"]>[0]>): boolean {
     return true;
   }
 
+  /**
+   * Return the additional condition associated with this particular AbAttr instance, if any.
+   * @returns The extra condition for this {@linkcode AbAttr}, or `null` if none exist
+   * @todo Make this use `undefined` instead of `null`
+   * @todo Prevent this from being overridden by sub-classes
+   */
   getCondition(): AbAttrCondition | null {
     return this.extraCondition || null;
   }
@@ -593,7 +692,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
   private immuneType: PokemonType | null;
   private condition: AbAttrCondition | null;
 
-  // TODO: `immuneType` shouldn't be able to be `null`
+  // TODO: Change `NonSuperEffectiveImmunityAbAttr` to not pass `null` as immune type
   constructor(immuneType: PokemonType | null, condition?: AbAttrCondition) {
     super(true);
 
@@ -1185,7 +1284,7 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
 /**
  * Set stat stages when the user gets hit by a critical hit
  *
- * @privateremarks
+ * @privateRemarks
  * It is the responsibility of the caller to ensure that this ability attribute is only applied
  * when the user has been hit by a critical hit; such an event is not checked here.
  *
@@ -1526,6 +1625,11 @@ export interface FieldMultiplyStatAbAttrParams extends AbAttrBaseParams {
 export class FieldMultiplyStatAbAttr extends AbAttr {
   private stat: Stat;
   private multiplier: number;
+  /**
+   * Whether this ability can stack with others of the same type for this stat.
+   * @defaultValue `false`
+   * @todo Remove due to being literally useless - the ruin abilities are hardcoded to never stack in game
+   */
   private canStack: boolean;
 
   constructor(stat: Stat, multiplier: number, canStack = false) {
@@ -1546,7 +1650,7 @@ export class FieldMultiplyStatAbAttr extends AbAttr {
   }
 
   /**
-   * applyFieldStat: Tries to multiply a Pokemon's Stat
+   * Atttempt to multiply a Pokemon's Stat.
    */
   apply({ statVal, hasApplied }: FieldMultiplyStatAbAttrParams): void {
     statVal.value *= this.multiplier;
@@ -1566,29 +1670,32 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
   constructor(
     private newType: PokemonType,
     private powerMultiplier: number,
+    // TODO: all moves with this attr solely check the move being used...
     private condition?: PokemonAttackCondition,
   ) {
     super(false);
   }
 
   /**
-   * Determine if the move type change attribute can be applied
+   * Determine if the move type change attribute can be applied.
    *
    * Can be applied if:
    * - The ability's condition is met, e.g. pixilate only boosts normal moves,
    * - The move is not forbidden from having its type changed by an ability, e.g. {@linkcode MoveId.MULTI_ATTACK}
-   * - The user is not terastallized and using tera blast
-   * - The user is not a terastallized terapagos with tera stellar using tera starstorm
+   * - The user is not Terastallized and using Tera Blast
+   * - The user is not a Terastallized Terapagos using Stellar-type Tera Starstorm
    */
   override canApply({ pokemon, opponent: target, move }: MoveTypeChangeAbAttrParams): boolean {
     return (
       (!this.condition || this.condition(pokemon, target, move)) &&
       !noAbilityTypeOverrideMoves.has(move.id) &&
-      (!pokemon.isTerastallized ||
-        (move.id !== MoveId.TERA_BLAST &&
-          (move.id !== MoveId.TERA_STARSTORM ||
-            pokemon.getTeraType() !== PokemonType.STELLAR ||
-            !pokemon.hasSpecies(SpeciesId.TERAPAGOS))))
+      !(
+        pokemon.isTerastallized &&
+        (move.id === MoveId.TERA_BLAST ||
+          (move.id === MoveId.TERA_STARSTORM &&
+            pokemon.getTeraType() === PokemonType.STELLAR &&
+            pokemon.hasSpecies(SpeciesId.TERAPAGOS)))
+      )
     );
   }
 
@@ -1661,23 +1768,19 @@ export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteraction
 }
 
 /**
- * Class for abilities that convert single-strike moves to two-strike moves (i.e. Parental Bond).
- * @param damageMultiplier the damage multiplier for the second strike, relative to the first.
+ * Class for abilities that add additional strikes to single-target moves.
+ * Used by {@linkcode MoveId.PARENTAL_BOND | Parental Bond}.
  */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
-  private damageMultiplier: number;
-
   /**
    * @param damageMultiplier - The damage multiplier for the second strike, relative to the first
    */
-  constructor(damageMultiplier: number) {
+  constructor(private damageMultiplier: number) {
     super(false);
-
-    this.damageMultiplier = damageMultiplier;
   }
 
   /**
-   * Return whether the move can be multi-strike enhanced
+   * Return whether the move can be multi-strike enhanced.
    */
   override canApply({ pokemon, move }: AddSecondStrikeAbAttrParams): boolean {
     return move.canBeMultiStrikeEnhanced(pokemon, true);
@@ -1941,7 +2044,7 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
 
   /**
    * @param stat - The stat being modified
-   * @param multipler - The multiplier to apply to the stat
+   * @param multiplier - The multiplier to apply to the stat
    * @param ignorable - Whether the multiplier can be ignored by mold breaker-like moves and abilities
    */
   constructor(stat: BattleStat, multiplier: number, ignorable = true) {
@@ -2021,9 +2124,10 @@ export abstract class PostAttackAbAttr extends AbAttr {
   }
 
   /**
-   * By default, this method checks that the move used is a damaging attack.
-   * This can be changed by providing a different {@link attackCondition} to the constructor.
-   * @see {@link ConfusionOnStatusEffectAbAttr} for an example of an effect that does not require a damaging move.
+   * By default, this method checks that the move used is a damaging attack before
+   * applying the effect of any inherited class.
+   * This can be changed by providing a different {@linkcode attackCondition} to the constructor.
+   * @see {@linkcode ConfusionOnStatusEffectAbAttr} for an example of an effect that does not require a damaging move.
    */
   override canApply({ pokemon, opponent, move }: Closed<PostMoveInteractionAbAttrParams>): boolean {
     return this.attackCondition(pokemon, opponent, move);
@@ -3511,18 +3615,18 @@ export interface ConfusionOnStatusEffectAbAttrParams extends AbAttrBaseParams {
  */
 export class ConfusionOnStatusEffectAbAttr extends AbAttr {
   /** List of effects to apply confusion after */
-  private effects: StatusEffect[];
+  private effects: ReadonlySet<StatusEffect>;
 
   constructor(...effects: StatusEffect[]) {
     super();
-    this.effects = effects;
+    this.effects = new Set(effects);
   }
 
   /**
    * @returns Whether the ability can apply confusion to the opponent
    */
   override canApply({ opponent, effect }: ConfusionOnStatusEffectAbAttrParams): boolean {
-    return this.effects.includes(effect) && !opponent.isFainted() && opponent.canAddTag(BattlerTagType.CONFUSED);
+    return this.effects.has(effect) && !opponent.isFainted() && opponent.canAddTag(BattlerTagType.CONFUSED);
   }
 
   /**
@@ -4500,8 +4604,8 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
 }
 
 /**
- * After the turn ends, resets the status of either the ability holder or their ally
- * @param allyTarget Whether to target ally, defaults to false (self-target)
+ * After the turn ends, resets the status of either the user or their ally.
+ * @param allyTarget Whether to target the user's ally; default `false` (self-target)
  *
  * @sealed
  */
@@ -4786,17 +4890,22 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
           !opp.switchOutStatus,
       );
   }
-  /** Deals damage to all sleeping opponents equal to 1/8 of their max hp (min 1) */
+
+  /** Deal damage to all sleeping, on-field opponents equal to 1/8 of their max hp (min 1). */
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
     if (simulated) {
       return;
     }
+
     for (const opp of pokemon.getOpponents()) {
-      if (
-        (opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(AbilityId.COMATOSE)) &&
-        !opp.hasAbilityWithAttr("BlockNonDirectDamageAbAttr") &&
-        !opp.switchOutStatus
-      ) {
+      if ((opp.status?.effect !== StatusEffect.SLEEP && !opp.hasAbility(AbilityId.COMATOSE)) || opp.switchOutStatus) {
+        continue;
+      }
+
+      const cancelled = new BooleanHolder(false);
+      applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, simulated, cancelled });
+
+      if (!cancelled.value) {
         opp.damageAndUpdate(toDmgValue(opp.getMaxHp() / 8), { result: HitResult.INDIRECT });
         globalScene.phaseManager.queueMessage(
           i18next.t("abilityTriggers:badDreams", { pokemonName: getPokemonNameWithAffix(opp) }),
@@ -4809,7 +4918,8 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
 /**
  * Grabs the last failed Pokeball used
  * @sealed
- * @see {@linkcode applyPostTurn} */
+ * @see {@linkcode applyPostTurn}
+ */
 export class FetchBallAbAttr extends PostTurnAbAttr {
   override canApply({ simulated, pokemon }: AbAttrBaseParams): boolean {
     return !simulated && !isNullOrUndefined(globalScene.currentBattle.lastUsedPokeball) && !!pokemon.isPlayer;
@@ -5382,7 +5492,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
  * Attribute used for abilities that damage opponents causing the user to faint
  * equal to the amount of damage the last attack inflicted.
  *
- * Used for {@linkcode Abilities.INNARDS_OUT}.
+ * Used for {@linkcode AbilityId.INNARDS_OUT | Innards Out}.
  * @sealed
  */
 export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
@@ -5681,11 +5791,13 @@ export class InfiltratorAbAttr extends AbAttr {
  * Allows the source to bounce back {@linkcode MoveFlags.REFLECTABLE | Reflectable}
  *  moves as if the user had used {@linkcode MoveId.MAGIC_COAT | Magic Coat}.
  * @sealed
+ * @todo Make reflection a part of this ability's effects
  */
 export class ReflectStatusMoveAbAttr extends AbAttr {
   private declare readonly _: never;
 }
 
+// TODO: Make these ability attributes be flags instead of dummy attributes
 /** @sealed */
 export class NoTransformAbilityAbAttr extends AbAttr {
   private declare readonly _: never;
@@ -5891,8 +6003,13 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
     const party: Pokemon[] = (pokemon.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(
       p => p.isAllowedInBattle(),
     );
-    const lastPokemon: Pokemon = party.filter(p => p !== pokemon).at(-1) || pokemon;
-    pokemon.setIllusion(lastPokemon);
+    let illusionPokemon: Pokemon | PokemonSpecies;
+    if (pokemon.hasTrainer()) {
+      illusionPokemon = party.filter(p => p !== pokemon).at(-1) || pokemon;
+    } else {
+      illusionPokemon = globalScene.arena.randomSpecies(globalScene.currentBattle.waveIndex, pokemon.level);
+    }
+    pokemon.setIllusion(illusionPokemon);
   }
 
   /** @returns Whether the illusion can be applied. */
@@ -6328,23 +6445,23 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
   public override canApply({ pokemon, source, damage }: PostDamageAbAttrParams): boolean {
     const moveHistory = pokemon.getMoveHistory();
     // Will not activate when the Pokémon's HP is lowered by cutting its own HP
-    const fordbiddenAttackingMoves = [MoveId.BELLY_DRUM, MoveId.SUBSTITUTE, MoveId.CURSE, MoveId.PAIN_SPLIT];
+    const forbiddenAttackingMoves = [MoveId.BELLY_DRUM, MoveId.SUBSTITUTE, MoveId.CURSE, MoveId.PAIN_SPLIT];
     if (moveHistory.length > 0) {
       const lastMoveUsed = moveHistory[moveHistory.length - 1];
-      if (fordbiddenAttackingMoves.includes(lastMoveUsed.move)) {
+      if (forbiddenAttackingMoves.includes(lastMoveUsed.move)) {
         return false;
       }
     }
 
     // Dragon Tail and Circle Throw switch out Pokémon before the Ability activates.
-    const fordbiddenDefendingMoves = [MoveId.DRAGON_TAIL, MoveId.CIRCLE_THROW];
+    const forbiddenDefendingMoves = [MoveId.DRAGON_TAIL, MoveId.CIRCLE_THROW];
     if (source) {
       const enemyMoveHistory = source.getMoveHistory();
       if (enemyMoveHistory.length > 0) {
         const enemyLastMoveUsed = enemyMoveHistory[enemyMoveHistory.length - 1];
         // Will not activate if the Pokémon's HP falls below half while it is in the air during Sky Drop.
         if (
-          fordbiddenDefendingMoves.includes(enemyLastMoveUsed.move) ||
+          forbiddenDefendingMoves.includes(enemyLastMoveUsed.move) ||
           (enemyLastMoveUsed.move === MoveId.SKY_DROP && enemyLastMoveUsed.result === MoveResult.OTHER)
         ) {
           return false;
@@ -7191,7 +7308,7 @@ export function initAbilities() {
       .attr(HealFromBerryUseAbAttr, 1 / 3),
     new Ability(AbilityId.PROTEAN, 6)
       .attr(PokemonTypeChangeAbAttr)
-      // .condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.PROTEAN)) //Gen 9 Implementation
+      // .condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.PROTEAN)) //Gen 9 Implementation
       // TODO: needs testing on interaction with weather blockage
       .edgeCase(),
     new Ability(AbilityId.FUR_COAT, 6)
@@ -7450,7 +7567,7 @@ export function initAbilities() {
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true),
     new Ability(AbilityId.LIBERO, 8)
       .attr(PokemonTypeChangeAbAttr)
-    //.condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.LIBERO)), //Gen 9 Implementation
+    //.condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.LIBERO)), //Gen 9 Implementation
       // TODO: needs testing on interaction with weather blockage
       .edgeCase(),
     new Ability(AbilityId.BALL_FETCH, 8)

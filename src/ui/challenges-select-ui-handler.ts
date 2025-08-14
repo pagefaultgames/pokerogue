@@ -3,8 +3,9 @@ import type { Challenge } from "#data/challenge";
 import { Button } from "#enums/buttons";
 import { Challenges } from "#enums/challenges";
 import { Color, ShadowColor } from "#enums/color";
+import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { getLocalizedSpriteKey } from "#utils/common";
@@ -57,11 +58,11 @@ export class GameChallengesUiHandler extends UiHandler {
 
     this.widestTextBox = 0;
 
-    this.challengesContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
+    this.challengesContainer = globalScene.add.container(1, -globalScene.scaledCanvas.height + 1);
     this.challengesContainer.setName("challenges");
 
     this.challengesContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6),
+      new Phaser.Geom.Rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height),
       Phaser.Geom.Rectangle.Contains,
     );
 
@@ -78,7 +79,7 @@ export class GameChallengesUiHandler extends UiHandler {
     this.challengesContainer.add(bgOverlay);
 
     // TODO: Change this back to /9 when adding in difficulty
-    const headerBg = addWindow(0, 0, globalScene.game.canvas.width / 6, 24);
+    const headerBg = addWindow(0, 0, globalScene.scaledCanvas.width, 24);
     headerBg.setName("window-header-bg");
     headerBg.setOrigin(0, 0);
 
@@ -381,8 +382,7 @@ export class GameChallengesUiHandler extends UiHandler {
         this.cursorObj?.setVisible(true);
         this.updateChallengeArrows(this.startCursor.visible);
       } else {
-        globalScene.phaseManager.clearPhaseQueue();
-        globalScene.phaseManager.pushNew("TitlePhase");
+        globalScene.phaseManager.toTitleScreen();
         globalScene.phaseManager.getCurrentPhase()?.end();
       }
       success = true;

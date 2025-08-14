@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon } from "#field/pokemon";
 import { DamageAnimPhase } from "#phases/damage-anim-phase";
 import { MoveEndPhase } from "#phases/move-end-phase";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 

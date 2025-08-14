@@ -21,8 +21,8 @@ import { SummonPhase } from "#phases/summon-phase";
 import { SwitchPhase } from "#phases/switch-phase";
 import { TitlePhase } from "#phases/title-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
-import { GameManager } from "#test/testUtils/gameManager";
-import { generateStarter } from "#test/testUtils/gameManagerUtils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { generateStarter } from "#test/test-utils/game-manager-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -111,7 +111,7 @@ describe("Phase - Battle Phase", () => {
   });
 
   it("load 100% data file", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
@@ -293,7 +293,7 @@ describe("Phase - Battle Phase", () => {
       .startingHeldItems([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]);
 
     await game.classicMode.startBattle();
-    game.scene.getPlayerPokemon()!.hp = 1;
+    game.field.getPlayerPokemon().hp = 1;
     game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(BattleEndPhase);

@@ -13,6 +13,7 @@ import { CustomPokemonData } from "#data/pokemon-data";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import type { AbilityId } from "#enums/ability-id";
+import { ChallengeType } from "#enums/challenge-type";
 import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -33,7 +34,8 @@ import { achvs } from "#system/achv";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
-import { isNullOrUndefined, randSeedInt } from "#utils/common";
+import { applyChallenges } from "#utils/challenge-utils";
+import { BooleanHolder, isNullOrUndefined, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -406,12 +408,12 @@ export async function applyModifierTypeToPlayerPokemon(
   // Check if the Pokemon has max stacks of that item already
   const modifier = modType.newModifier(pokemon);
   const existing = globalScene.findModifier(
-    m =>
+    (m): m is PokemonHeldItemModifier =>
       m instanceof PokemonHeldItemModifier &&
       m.type.id === modType.id &&
       m.pokemonId === pokemon.id &&
       m.matchType(modifier),
-  ) as PokemonHeldItemModifier;
+  ) as PokemonHeldItemModifier | undefined;
 
   // At max stacks
   if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
@@ -706,6 +708,13 @@ export async function catchPokemon(
         });
       };
       Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
+        const addStatus = new BooleanHolder(true);
+        applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
+        if (!addStatus.value) {
+          removePokemon();
+          end();
+          return;
+        }
         if (globalScene.getPlayerParty().length === 6) {
           const promptRelease = () => {
             globalScene.ui.showText(

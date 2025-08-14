@@ -1,29 +1,16 @@
-import { initAbilities } from "#abilities/ability";
 import { timedEventManager } from "#app/global-event-manager";
+import { initializeGame } from "#app/init/init";
 import { SceneBase } from "#app/scene-base";
 import { isMobile } from "#app/touch-controls";
-import { initBiomes } from "#balance/biomes";
-import { initEggMoves } from "#balance/egg-moves";
-import { initPokemonPrevolutions, initPokemonStarters } from "#balance/pokemon-evolutions";
-import { initChallenges } from "#data/challenge";
-import { initTrainerTypeDialogue } from "#data/dialogue";
-import { initPokemonForms } from "#data/pokemon-forms";
-import { initSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import { GachaType } from "#enums/gacha-types";
 import { getBiomeHasProps } from "#field/arena";
-import { initModifierPools } from "#modifiers/init-modifier-pools";
-import { initModifierTypes } from "#modifiers/modifier-type";
-import { initMoves } from "#moves/move";
-import { initMysteryEncounters } from "#mystery-encounters/mystery-encounters";
 import { CacheBustedLoaderPlugin } from "#plugins/cache-busted-loader-plugin";
-import { initAchievements } from "#system/achv";
-import { initVouchers } from "#system/voucher";
-import { initStatsKeys } from "#ui/game-stats-ui-handler";
 import { getWindowVariantSuffix, WindowVariant } from "#ui/ui-theme";
 import { hasAllLocalizedSprites, localPing } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import i18next from "i18next";
+import type { GameObjects } from "phaser";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -42,6 +29,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
+    this.loadImage("logo_fake", "");
 
     // Load menu images
     this.loadAtlas("bg", "ui");
@@ -132,6 +120,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("party_bg", "ui");
     this.loadImage("party_bg_double", "ui");
+    this.loadImage("party_bg_double_manage", "ui");
     this.loadAtlas("party_slot_main", "ui");
     this.loadAtlas("party_slot", "ui");
     this.loadImage("party_slot_overlay_lv", "ui");
@@ -139,6 +128,8 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("party_slot_hp_overlay", "ui");
     this.loadAtlas("party_pb", "ui");
     this.loadAtlas("party_cancel", "ui");
+    this.loadAtlas("party_discard", "ui");
+    this.loadAtlas("party_transfer", "ui");
 
     this.loadImage("summary_bg", "ui");
     this.loadImage("summary_overlay_shiny", "ui");
@@ -366,29 +357,11 @@ export class LoadingScene extends SceneBase {
 
     this.loadLoadingScreen();
 
-    initModifierTypes();
-    initModifierPools();
-
-    initAchievements();
-    initVouchers();
-    initStatsKeys();
-    initPokemonPrevolutions();
-    initPokemonStarters();
-    initBiomes();
-    initEggMoves();
-    initPokemonForms();
-    initTrainerTypeDialogue();
-    initSpecies();
-    initMoves();
-    initAbilities();
-    initChallenges();
-    initMysteryEncounters();
+    initializeGame();
   }
 
   loadLoadingScreen() {
     const mobile = isMobile();
-
-    const loadingGraphics: any[] = [];
 
     const bg = this.add.image(0, 0, "");
     bg.setOrigin(0, 0);
@@ -460,6 +433,7 @@ export class LoadingScene extends SceneBase {
     });
     disclaimerDescriptionText.setOrigin(0.5, 0.5);
 
+    const loadingGraphics: (GameObjects.Image | GameObjects.Graphics | GameObjects.Text)[] = [];
     loadingGraphics.push(
       bg,
       graphics,

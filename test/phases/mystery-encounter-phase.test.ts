@@ -4,7 +4,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
-import { GameManager } from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import type { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
 import i18next from "i18next";
@@ -27,7 +27,7 @@ describe("Mystery Encounter Phases", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.startingWave(11).mysteryEncounterChance(100).seed("test"); // Seed guarantees wild encounter to be replaced by ME
+    game.override.startingWave(12).mysteryEncounterChance(100).seed("test"); // Seed guarantees wild encounter to be replaced by ME
   });
 
   describe("MysteryEncounterPhase", () => {
