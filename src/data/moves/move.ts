@@ -6112,7 +6112,7 @@ const arenaTrapTags = [
 
 export class RemoveArenaTrapAttr extends RemoveArenaTagsAttr {
   constructor(targetBothSides = false) {
-    // TODO: This triggers at a different time than {@linkcode RemoveArenaTagsAbAttr}...
+    // TODO: This triggers at a different time than `RemoveArenaTagsAbAttr`...
     super(arenaTrapTags, targetBothSides, { trigger: MoveEffectTrigger.PRE_APPLY });
   }
 }
