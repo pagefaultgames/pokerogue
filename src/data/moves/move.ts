@@ -91,7 +91,7 @@ import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveClassMap, MoveKindS
 import type { TurnMove } from "#types/turn-move";
 import { BooleanHolder, type Constructor, isNullOrUndefined, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { toTitleCase } from "#utils/strings";
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import { applyChallenges } from "#utils/challenge-utils";
 
@@ -163,10 +163,16 @@ export abstract class Move implements Localizable {
   }
 
   localize(): void {
-    const i18nKey = MoveId[this.id].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("") as unknown as string;
+    const i18nKey = toCamelCase(MoveId[this.id])
 
-    this.name = this.id ? `${i18next.t(`move:${i18nKey}.name`)}${this.nameAppend}` : "";
-    this.effect = this.id ? `${i18next.t(`move:${i18nKey}.effect`)}${this.nameAppend}` : "";
+    if (this.id === MoveId.NONE) {
+      this.name = "";
+      this.effect = ""
+      return;
+    }
+
+    this.name = `${i18next.t(`move:${i18nKey}.name`)}${this.nameAppend}`;
+    this.effect = `${i18next.t(`move:${i18nKey}.effect`)}${this.nameAppend}`;
   }
 
   /**
@@ -5905,8 +5911,8 @@ export class ProtectAttr extends AddBattlerTagAttr {
       for (const turnMove of user.getLastXMoves(-1).slice()) {
         if (
           // Quick & Wide guard increment the Protect counter without using it for fail chance
-          !(allMoves[turnMove.move].hasAttr("ProtectAttr") || 
-          [MoveId.QUICK_GUARD, MoveId.WIDE_GUARD].includes(turnMove.move)) || 
+          !(allMoves[turnMove.move].hasAttr("ProtectAttr") ||
+          [MoveId.QUICK_GUARD, MoveId.WIDE_GUARD].includes(turnMove.move)) ||
           turnMove.result !== MoveResult.SUCCESS
         ) {
           break;
