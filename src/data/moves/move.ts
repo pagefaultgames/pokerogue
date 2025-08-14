@@ -6036,7 +6036,8 @@ export class RemoveArenaTagsAttr extends MoveEffectAttr {
   private readonly tagTypes: readonly [ArenaTagType, ...ArenaTagType[]];
   /**
    * Whether to remove tags from both sides of the field (`true`) or
-   * the target's side of the field (`false`); default `false`
+   * the target's side of the field (`false`)
+   * @defaultValue `false`
    */
   private removeAllTags: boolean
 
