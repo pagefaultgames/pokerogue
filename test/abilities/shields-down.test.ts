@@ -63,7 +63,7 @@ describe("Abilities - Shields Down", () => {
     },
   );
 
-  it("check if fainted pokemon switched to base form on arena reset", async () => {
+  it("should revert to base form on arena reset, even when fainted", async () => {
     game.override.startingWave(4).starterForms({
       [SpeciesId.MINIOR]: redCoreForm,
     });
@@ -129,7 +129,8 @@ describe("Abilities - Shields Down", () => {
     const minior = game.field.getPlayerPokemon();
     expect(minior).toHaveStatusEffect(StatusEffect.PARALYSIS);
 
-    minior.status = null;
+    minior.resetStatus();
+    expect(minior).toHaveStatusEffect(StatusEffect.NONE);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.YAWN);
@@ -169,7 +170,7 @@ describe("Abilities - Shields Down", () => {
 
     await game.toEndOfTurn();
 
-    expect(game.scene.getPlayerPokemon()!.findTag(tag => tag.tagType === BattlerTagType.CONFUSED)).not.toBe(undefined);
+    expect(game.field.getPlayerPokemon().findTag(tag => tag.tagType === BattlerTagType.CONFUSED)).not.toBe(undefined);
   });
 
   // TODO: The `NoTransformAbilityAbAttr` attribute is not checked anywhere, so this test cannot pass.

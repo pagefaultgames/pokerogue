@@ -11,7 +11,7 @@ export abstract class Phase {
   /**
    * The string name of the phase, used to identify the phase type for {@linkcode is}
    *
-   * @privateremarks
+   * @privateRemarks
    *
    * When implementing a phase, you must set the `phaseName` property to the name of the phase.
    */
