@@ -112,7 +112,7 @@ describe("Weird Dream - Mystery Encounter", () => {
     it("should transform the new party into new species, 2 at +90/+110, the rest at +40/50 BST", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
 
-      const pokemonPrior = scene.getPlayerParty().map(pokemon => pokemon);
+      const pokemonPrior = scene.getPlayerParty().slice();
       const bstsPrior = pokemonPrior.map(species => species.getSpeciesForm().getBaseStatTotal());
 
       await runMysteryEncounterToEnd(game, 1);
@@ -147,12 +147,13 @@ describe("Weird Dream - Mystery Encounter", () => {
       const modifierSelectHandler = scene.ui.handlers.find(
         h => h instanceof ModifierSelectUiHandler,
       ) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(5);
+      expect(modifierSelectHandler.options.length).toEqual(6);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("MEMORY_MUSHROOM");
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toEqual("ROGUE_BALL");
       expect(modifierSelectHandler.options[2].modifierTypeOption.type.id).toEqual("MINT");
       expect(modifierSelectHandler.options[3].modifierTypeOption.type.id).toEqual("MINT");
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.id).toEqual("MINT");
+      expect(modifierSelectHandler.options[4].modifierTypeOption.type.id).toEqual("MINT");
+      expect(modifierSelectHandler.options[5].modifierTypeOption.type.id).toEqual("MINT");
     });
 
     it("should leave encounter without battle", async () => {
