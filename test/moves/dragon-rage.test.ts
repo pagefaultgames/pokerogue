@@ -47,7 +47,7 @@ describe("Moves - Dragon Rage", () => {
     await game.classicMode.startBattle();
 
     partyPokemon = game.scene.getPlayerParty()[0];
-    enemyPokemon = game.scene.getEnemyPokemon()!;
+    enemyPokemon = game.field.getEnemyPokemon();
   });
 
   it("ignores weaknesses", async () => {

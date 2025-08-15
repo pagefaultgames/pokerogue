@@ -37,7 +37,7 @@ describe("Moves - Safeguard", () => {
 
   it("protects from damaging moves with additional effects", async () => {
     await game.classicMode.startBattle();
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.NUZZLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -48,7 +48,7 @@ describe("Moves - Safeguard", () => {
 
   it("protects from status moves", async () => {
     await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SPORE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -60,7 +60,7 @@ describe("Moves - Safeguard", () => {
   it("protects from confusion", async () => {
     game.override.moveset([MoveId.CONFUSE_RAY]);
     await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.CONFUSE_RAY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -89,7 +89,7 @@ describe("Moves - Safeguard", () => {
 
   it("protects from Yawn", async () => {
     await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.YAWN);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -100,7 +100,7 @@ describe("Moves - Safeguard", () => {
 
   it("doesn't protect from already existing Yawn", async () => {
     await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.YAWN);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -115,7 +115,7 @@ describe("Moves - Safeguard", () => {
   it("doesn't protect from self-inflicted status from Rest or Flame Orb", async () => {
     game.override.enemyHeldItems([{ name: "FLAME_ORB" }]);
     await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     enemyPokemon.hp = 1;
 
     game.move.select(MoveId.SPLASH);

@@ -98,7 +98,7 @@ For example, here is how you could test a scenario where the player Pokemon has 
 ```typescript
 const overrides = {
   ABILITY_OVERRIDE: AbilityId.DROUGHT,
-  OPP_MOVESET_OVERRIDE: MoveId.WATER_GUN,
+  ENEMY_MOVESET_OVERRIDE: MoveId.WATER_GUN,
 } satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 ```
 
