@@ -14,7 +14,7 @@ RUN apk add --no-cache git
 WORKDIR /app
 
 # Enable and prepare pnpm
-RUN corepack enable && corepack prepare pnpm@10 --activate
+RUN corepack enable && corepack prepare pnpm@10.14.0 --activate
 
 COPY . .
 
