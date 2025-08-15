@@ -235,7 +235,6 @@ export class PokedexUiHandler extends MessageUiHandler {
   private canShowFormTray: boolean;
   private filteredIndices: SpeciesId[];
 
-
   constructor() {
     super(UiMode.POKEDEX);
   }
