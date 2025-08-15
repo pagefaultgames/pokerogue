@@ -323,7 +323,7 @@ export class GameStatsUiHandler extends UiHandler {
         ? i18next.t("trainerNames:player_f")
         : i18next.t("trainerNames:player_m");
 
-    const displayName = !globalScene.hideUsername ? (loggedInUser?.username ?? "") : usernameReplacement;
+    const displayName = !globalScene.hideUsername ? (loggedInUser?.username ?? "Guest") : usernameReplacement;
 
     const headerText = addTextObject(
       0,
