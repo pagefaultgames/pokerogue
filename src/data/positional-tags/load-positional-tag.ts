@@ -1,7 +1,5 @@
-import { globalScene } from "#app/global-scene";
 import { DelayedAttackTag, type PositionalTag, WishTag } from "#data/positional-tags/positional-tag";
 import { PositionalTagType } from "#enums/positional-tag-type";
-import { PositionalTagAddedEvent } from "#events/arena";
 import type { ObjectValues } from "#types/type-helpers";
 import type { Constructor } from "#utils/common";
 
@@ -22,12 +20,7 @@ export function loadPositionalTag<T extends PositionalTagType>(data: serializedP
  * This function does not perform any checking if the added tag is valid.
  */
 export function loadPositionalTag(tag: SerializedPositionalTag): PositionalTag;
-export function loadPositionalTag(tag: SerializedPositionalTag): PositionalTag {
-  // Update the global arena flyout
-  globalScene.arena.eventTarget.dispatchEvent(new PositionalTagAddedEvent(tag));
-
-  // Create the new tag
-  const { tagType, ...rest } = tag;
+export function loadPositionalTag({ tagType, ...rest }: SerializedPositionalTag): PositionalTag {
   const tagClass = posTagConstructorMap[tagType];
   // @ts-expect-error - tagType always corresponds to the proper constructor for `rest`
   return new tagClass(rest);

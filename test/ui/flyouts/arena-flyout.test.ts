@@ -1,15 +1,12 @@
-import type { SerializedPositionalTag } from "#data/positional-tags/load-positional-tag";
 import { AbilityId } from "#enums/ability-id";
-import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
-import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import { mockI18next } from "#test/test-utils/test-utils";
 import type { ArenaFlyout } from "#ui/arena-flyout";
 import type i18next from "i18next";
 import Phaser from "phaser";
-import { afterAll, beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, type MockInstance } from "vitest";
 
 describe("UI - Arena Flyout", () => {
   let phaserGame: Phaser.Game;
@@ -57,7 +54,6 @@ describe("UI - Arena Flyout", () => {
 
   // Helper type to get around unexportedness
   type infoType = Parameters<(typeof flyout)["getTagText"]>[0];
-  type posTagInfo = (typeof flyout)["positionalTags"][number];
 
   describe("getTagText", () => {
     it.each<{ info: Pick<infoType, "name" | "duration" | "maxDuration">; text: string }>([
@@ -66,38 +62,6 @@ describe("UI - Arena Flyout", () => {
     ])("should get the name of an arena effect", ({ info, text }) => {
       const got = flyout["getTagText"](info as infoType);
       expect(got).toBe(text);
-    });
-  });
-
-  describe("getPositionalTagDisplayName", () => {
-    it.each([
-      { tag: { tagType: PositionalTagType.WISH }, name: "arenaFlyout:wish" },
-      {
-        tag: { sourceMove: MoveId.FUTURE_SIGHT, tagType: PositionalTagType.DELAYED_ATTACK },
-        name: "arenaFlyout:futureSight",
-      },
-      {
-        tag: { sourceMove: MoveId.DOOM_DESIRE, tagType: PositionalTagType.DELAYED_ATTACK },
-        name: "arenaFlyout:doomDesire",
-      },
-    ])("should get the name of a Positional Tag", ({ tag, name }) => {
-      const got = flyout["getPositionalTagDisplayName"](tag as SerializedPositionalTag);
-      expect(got).toBe(name);
-    });
-  });
-
-  describe("getPosTagText", () => {
-    it.each<{ tag: Pick<posTagInfo, "duration" | "name" | "targetIndex">; output: string; double?: boolean }>([
-      { tag: { duration: 2, name: "Wish", targetIndex: BattlerIndex.PLAYER }, output: "Wish  (2)" },
-      {
-        tag: { duration: 1, name: "Future Sight", targetIndex: BattlerIndex.ENEMY_2 },
-        double: true,
-        output: "Future Sight  (arenaFlyout:right, 1)",
-      },
-    ])("should produce the correct text", ({ tag, output, double = false }) => {
-      vi.spyOn(game.scene.currentBattle, "double", "get").mockReturnValue(double);
-      const text = flyout["getPosTagText"](tag as posTagInfo);
-      expect(text).toBe(output + "\n");
     });
   });
 });

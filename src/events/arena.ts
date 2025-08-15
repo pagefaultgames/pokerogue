@@ -1,12 +1,7 @@
-import type { SerializedPositionalTag } from "#data/positional-tags/load-positional-tag";
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
-import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { TerrainType } from "#data/terrain";
 import { ArenaEventType } from "#enums/arena-event-type";
 import type { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
-import type { BattlerIndex } from "#enums/battler-index";
-import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { WeatherType } from "#enums/weather-type";
 
 /**
@@ -126,52 +121,5 @@ export class ArenaTagRemovedEvent extends ArenaEvent {
 
     this.tagType = tagType;
     this.side = side;
-  }
-}
-
-/**
- * Container class for {@linkcode ArenaEventType.POSITIONAL_TAG_ADDED} events. \
- * Emitted whenever a new {@linkcode PositionalTag} is spawned and added to the arena.
- * @eventProperty
- */
-export class PositionalTagAddedEvent extends ArenaEvent {
-  declare type: typeof ArenaEventType.POSITIONAL_TAG_ADDED;
-
-  /** The {@linkcode SerializedPositionalTag} being added to the arena. */
-  public tag: SerializedPositionalTag;
-
-  /** The {@linkcode PositionalTagType} of the tag being added. */
-  public tagType: PositionalTagType;
-  /** The {@linkcode BattlerIndex} targeted by the newly created tag. */
-  public targetIndex: BattlerIndex;
-  /** The tag's current duration. */
-  public duration: number;
-
-  constructor(tag: SerializedPositionalTag) {
-    super(ArenaEventType.POSITIONAL_TAG_ADDED);
-
-    this.tag = tag;
-  }
-}
-
-/**
- * Container class for {@linkcode ArenaEventType.POSITIONAL_TAG_REMOVED} events. \
- * Emitted whenever a currently-active {@linkcode PositionalTag} triggers (or disappears)
- * and is removed from the arena.
- * @eventProperty
- */
-export class PositionalTagRemovedEvent extends ArenaEvent {
-  declare type: typeof ArenaEventType.POSITIONAL_TAG_REMOVED;
-
-  /** The {@linkcode PositionalTagType} of the tag being deleted. */
-  public tagType: PositionalTagType;
-  /** The {@linkcode BattlerIndex} targeted by the newly removed tag. */
-  public targetIndex: BattlerIndex;
-
-  constructor(tagType: PositionalTagType, targetIndex: BattlerIndex) {
-    super(ArenaEventType.POSITIONAL_TAG_ADDED);
-
-    this.tagType = tagType;
-    this.targetIndex = targetIndex;
   }
 }

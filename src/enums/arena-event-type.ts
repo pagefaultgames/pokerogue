@@ -20,11 +20,6 @@ export const ArenaEventType = {
   ARENA_TAG_ADDED: "onArenaTagAdded",
   /** Emitted when an existing {@linkcode ArenaTag} is removed */
   ARENA_TAG_REMOVED: "onArenaTagRemoved",
-
-  /** Emitted when a new {@linkcode PositionalTag} is added */
-  POSITIONAL_TAG_ADDED: "onPositionalTagAdded",
-  /** Emitted when an existing {@linkcode PositionalTag} is removed */
-  POSITIONAL_TAG_REMOVED: "onPositionalTagRemoved",
 } as const;
 
 export type ArenaEventType = ObjectValues<typeof ArenaEventType>;

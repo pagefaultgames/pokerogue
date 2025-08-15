@@ -1,28 +1,15 @@
 import { globalScene } from "#app/global-scene";
 // biome-ignore-start lint/correctness/noUnusedImports: TSDocs
 import type { ArenaTag } from "#data/arena-tag";
-import type { SerializedPositionalTag } from "#data/positional-tags/load-positional-tag";
-import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import { type Terrain, TerrainType } from "#data/terrain";
 import type { Weather } from "#data/weather";
 import { ArenaEventType } from "#enums/arena-event-type";
 // biome-ignore-end lint/correctness/noUnusedImports: TSDocs
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattlerIndex } from "#enums/battler-index";
-import { FieldPosition } from "#enums/field-position";
-import { MoveId } from "#enums/move-id";
-import type { PositionalTagType } from "#enums/positional-tag-type";
 import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
-import type {
-  ArenaTagAddedEvent,
-  ArenaTagRemovedEvent,
-  PositionalTagAddedEvent,
-  PositionalTagRemovedEvent,
-  TerrainChangedEvent,
-  WeatherChangedEvent,
-} from "#events/arena";
+import type { ArenaTagAddedEvent, ArenaTagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
 import { BattleSceneEventType } from "#events/battle-scene";
 import { addTextObject } from "#ui/text";
 import { TimeOfDayWidget } from "#ui/time-of-day-widget";
@@ -69,18 +56,6 @@ interface ArenaTagInfo {
   duration: number;
   /** The tag's {@linkcode ArenaTagType}. */
   tagType?: ArenaTagType;
-}
-
-/** Container for info about pending {@linkcode PositionalTag}s. */
-interface PositionalTagInfo {
-  /** The localized name of the effect. */
-  name: string;
-  /** The {@linkcode BattlerIndex} that the effect is slated to affect. */
-  targetIndex: BattlerIndex;
-  /** The current duration of the effect. */
-  duration: number;
-  /** The tag's {@linkcode PositionalTagType}. */
-  tagType: PositionalTagType;
 }
 
 // #endregion interfaces
@@ -137,19 +112,13 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
   /** Container for all {@linkcode ArenaTag}s observed by this object. */
   private arenaTags: ArenaTagInfo[] = [];
-  /** Container for all {@linkcode PositionalTag}s observed by this object. */
-  private positionalTags: PositionalTagInfo[] = [];
 
-  // Store callbacks in variables so they can be unsubscribed from when destroyed
   private readonly onNewArenaEvent = () => this.onNewArena();
   private readonly onTurnEndEvent = () => this.onTurnEnd();
   private readonly onWeatherChangedEvent = (event: WeatherChangedEvent) => this.onWeatherChanged(event);
   private readonly onTerrainChangedEvent = (event: TerrainChangedEvent) => this.onTerrainChanged(event);
   private readonly onArenaTagAddedEvent = (event: ArenaTagAddedEvent) => this.onArenaTagAdded(event);
   private readonly onArenaTagRemovedEvent = (event: ArenaTagRemovedEvent) => this.onArenaTagRemoved(event);
-  private readonly onPositionalTagAddedEvent = (event: PositionalTagAddedEvent) => this.onPositionalTagAdded(event);
-  // biome-ignore format: Keeps lines in 1 piece
-  private readonly onPositionalTagRemovedEvent = (event: PositionalTagRemovedEvent) => this.onPositionalTagRemoved(event);
 
   constructor() {
     super(globalScene, 0, 0);
@@ -267,26 +236,20 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    */
   private onNewArena() {
     this.arenaTags = [];
-    this.positionalTags = [];
 
     // Subscribe to required events available on battle start
-    // biome-ignore-start format: Keeps lines in 1 piece
     globalScene.arena.eventTarget.addEventListener(ArenaEventType.WEATHER_CHANGED, this.onWeatherChangedEvent);
     globalScene.arena.eventTarget.addEventListener(ArenaEventType.TERRAIN_CHANGED, this.onTerrainChangedEvent);
     globalScene.arena.eventTarget.addEventListener(ArenaEventType.ARENA_TAG_ADDED, this.onArenaTagAddedEvent);
     globalScene.arena.eventTarget.addEventListener(ArenaEventType.ARENA_TAG_REMOVED, this.onArenaTagRemovedEvent);
-    globalScene.arena.eventTarget.addEventListener(ArenaEventType.POSITIONAL_TAG_ADDED, this.onPositionalTagAddedEvent);
-    globalScene.arena.eventTarget.addEventListener(ArenaEventType.POSITIONAL_TAG_REMOVED, this.onPositionalTagRemovedEvent);
-    // biome-ignore-end format: Keeps lines in 1 piece
   }
 
   /**
-   * Iterate through all currently present field effects and decrement their durations.
+   * Iterate through all currently present tags effects and decrement their durations.
    */
   private onTurnEnd() {
     // Remove all objects with positive max durations and whose durations have expired.
     this.arenaTags = this.arenaTags.filter(info => info.maxDuration === 0 || --info.duration >= 0);
-    this.positionalTags = this.positionalTags.filter(info => --info.duration > 0);
 
     this.updateFieldText();
   }
@@ -339,7 +302,6 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    */
   private onArenaTagRemoved(event: ArenaTagRemovedEvent): void {
     const foundIndex = this.arenaTags.findIndex(info => info.tagType === event.tagType && info.side === event.side);
-    console.log(this.positionalTags, event);
 
     if (foundIndex > -1) {
       // If the tag was being tracked, remove it
@@ -349,42 +311,6 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   }
 
   // #endregion ArenaTags
-
-  // #region PositionalTags
-
-  /**
-   * Add a recently-created {@linkcode PositionalTag} to the flyout.
-   * @param event - The {@linkcode PositionalTagAddedEvent} having been emitted
-   */
-  private onPositionalTagAdded(event: PositionalTagAddedEvent): void {
-    const name = this.getPositionalTagDisplayName(event.tag);
-
-    this.positionalTags.push({
-      name,
-      targetIndex: event.tag.targetIndex,
-      duration: event.tag.turnCount,
-      tagType: event.tag.tagType,
-    });
-    this.updateFieldText();
-  }
-
-  /**
-   * Remove a recently-activated {@linkcode PositionalTag} from the flyout.
-   * @param event - The {@linkcode PositionalTagRemovedEvent} having been emitted
-   */
-  private onPositionalTagRemoved(event: PositionalTagRemovedEvent): void {
-    const foundIndex = this.positionalTags.findIndex(
-      info => info.tagType === event.tagType && info.targetIndex === event.targetIndex,
-    );
-
-    if (foundIndex > -1) {
-      // If the tag was being tracked, remove it
-      this.positionalTags.splice(foundIndex, 1);
-      this.updateFieldText();
-    }
-  }
-
-  // #endregion PositionalTags
 
   // #region Weather/Terrain
 
@@ -458,10 +384,6 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     globalScene.arena.eventTarget.removeEventListener(ArenaEventType.TERRAIN_CHANGED, this.onTerrainChanged);
     globalScene.arena.eventTarget.removeEventListener(ArenaEventType.ARENA_TAG_ADDED, this.onArenaTagAddedEvent);
     globalScene.arena.eventTarget.removeEventListener(ArenaEventType.ARENA_TAG_REMOVED, this.onArenaTagRemovedEvent);
-    // biome-ignore format: Keeps lines in 1 piece
-    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.POSITIONAL_TAG_ADDED, this.onPositionalTagAddedEvent);
-    // biome-ignore format: Keeps lines in 1 piece
-    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.POSITIONAL_TAG_REMOVED, this.onPositionalTagRemovedEvent);
 
     super.destroy(fromScene);
   }
@@ -489,38 +411,11 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       this.flyoutTextField.text += this.getTagText(this.terrainInfo);
     }
 
-    // Sort and add all positional tags
-    this.positionalTags.sort(
-      // Sort based on tag name, breaking ties by ascending target index.
-      (infoA, infoB) => infoA.name.localeCompare(infoB.name) || infoA.targetIndex - infoB.targetIndex,
-    );
-    for (const tag of this.positionalTags) {
-      this.getPositionalTagTextObj(tag).text += this.getPosTagText(tag);
-    }
-
     // Sort and update all arena tag text
     this.arenaTags.sort((infoA, infoB) => infoA.duration - infoB.duration);
     for (const tag of this.arenaTags) {
       this.getArenaTagTargetObj(tag.side).text += this.getTagText(tag);
     }
-  }
-
-  /**
-   * Helper method to retrieve the flyout text for a given {@linkcode PositionalTag}.
-   * @param info - The {@linkcode PositionalTagInfo} whose text is being updated
-   * @returns The text to be added to the container
-   */
-  private getPosTagText(info: PositionalTagInfo): string {
-    // Avoud showing slot target for single battles
-    if (!globalScene.currentBattle.double) {
-      return `${info.name}  (${info.duration})\n`;
-    }
-
-    const targetPos = battlerIndexToFieldPosition(info.targetIndex);
-    const posText = this.localizeEffectName(FieldPosition[targetPos]);
-
-    // Ex: "Future Sight  (Center, 2)"
-    return `${info.name}  (${posText}, ${info.duration})\n`;
   }
 
   /**
@@ -555,24 +450,6 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     }
   }
 
-  /**
-   * Choose which text object needs to be updated depending on the current tag's target.
-   * @param info - The {@linkcode PositionalTagInfo} being displayed
-   * @returns The {@linkcode Phaser.GameObjects.Text} to be updated.
-   */
-  private getPositionalTagTextObj(info: PositionalTagInfo): Phaser.GameObjects.Text {
-    switch (info.targetIndex) {
-      case BattlerIndex.PLAYER:
-      case BattlerIndex.PLAYER_2:
-        return this.flyoutTextPlayer;
-      case BattlerIndex.ENEMY:
-      case BattlerIndex.ENEMY_2:
-        return this.flyoutTextEnemy;
-      case BattlerIndex.ATTACKER:
-        throw new Error("BattlerIndex.ATTACKER used as tag target index for arena flyout!");
-    }
-  }
-
   // # endregion Text display functions
 
   // #region Utilities
@@ -589,32 +466,5 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     return resultName;
   }
 
-  /**
-   * Return the localized name of a given {@linkcode PositionalTag}.
-   * @param tag - The raw serialized data for the given tag
-   * @returns The localized text to be displayed on-screen.
-   */
-  private getPositionalTagDisplayName(tag: SerializedPositionalTag): string {
-    let tagName: string;
-    if ("sourceMove" in tag) {
-      // Delayed attacks will use the source move's name; other effects use type directly
-      tagName = MoveId[tag.sourceMove];
-    } else {
-      tagName = tag.tagType;
-    }
-
-    return this.localizeEffectName(tagName);
-  }
-
   // #endregion Utility emthods
-}
-
-/**
- * Convert a {@linkcode BattlerIndex} into a field position.
- * @param index - The {@linkcode BattlerIndex} to convert
- * @returns The resultant field position.
- */
-function battlerIndexToFieldPosition(index: BattlerIndex): FieldPosition {
-  const pos = globalScene.getField()[index]?.fieldPosition;
-  return pos;
 }
