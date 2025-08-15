@@ -1,18 +1,17 @@
 name: Tests
 
 on:
-  # Trigger the workflow on push or pull request,
-  # but only for the main branch
   push:
     branches:
-      - main # Trigger on push events to the main branch
-      - beta # Trigger on push events to the beta branch
+      - main
+      - beta
   pull_request:
     branches:
-      - main # Trigger on pull request events targeting the main branch
-      - beta # Trigger on pull request events targeting the beta branch
+      - main
+      - beta
   merge_group:
     types: [checks_requested]
+  workflow_dispatch:
 
 jobs:
   check-path-change-filter:
@@ -24,6 +23,7 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v4
+
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
         id: filter
         with:

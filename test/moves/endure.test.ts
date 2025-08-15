@@ -1,9 +1,10 @@
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import GameManager from "#test/testUtils/gameManager";
+import { AbilityId } from "#enums/ability-id";
+import { HitResult } from "#enums/hit-result";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Endure", () => {
   let phaserGame: Phaser.Game;
@@ -22,65 +23,62 @@ describe("Moves - Endure", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.THUNDER, Moves.BULLET_SEED, Moves.TOXIC, Moves.SHEER_COLD])
-      .ability(Abilities.SKILL_LINK)
+      .moveset([MoveId.THUNDER, MoveId.BULLET_SEED, MoveId.SHEER_COLD])
+      .ability(AbilityId.SKILL_LINK)
       .startingLevel(100)
       .battleStyle("single")
-      .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.NO_GUARD)
-      .enemyMoveset(Moves.ENDURE);
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.NO_GUARD)
+      .enemyMoveset(MoveId.ENDURE);
   });
 
-  it("should let the pokemon survive with 1 HP", async () => {
-    await game.classicMode.startBattle([Species.ARCEUS]);
+  it("should let the pokemon survive with 1 HP from attacks", async () => {
+    await game.classicMode.startBattle([SpeciesId.ARCEUS]);
 
-    game.move.select(Moves.THUNDER);
+    game.move.select(MoveId.THUNDER);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()!.hp).toBe(1);
+    expect(game.field.getEnemyPokemon().hp).toBe(1);
   });
 
-  it("should let the pokemon survive with 1 HP when hit with a multihit move", async () => {
-    await game.classicMode.startBattle([Species.ARCEUS]);
+  it("should let the pokemon survive with 1 HP from multi-strike moves", async () => {
+    await game.classicMode.startBattle([SpeciesId.ARCEUS]);
 
-    game.move.select(Moves.BULLET_SEED);
+    game.move.select(MoveId.BULLET_SEED);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()!.hp).toBe(1);
+    expect(game.field.getEnemyPokemon().hp).toBe(1);
   });
 
   it("should let the pokemon survive against OHKO moves", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
-    const enemy = game.scene.getEnemyPokemon()!;
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    const enemy = game.field.getEnemyPokemon();
 
-    game.move.select(Moves.SHEER_COLD);
+    game.move.select(MoveId.SHEER_COLD);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemy.isFainted()).toBeFalsy();
+    expect(enemy.hp).toBe(1);
   });
 
   // comprehensive indirect damage test copied from Reviver Seed test
   it.each([
-    { moveType: "Damaging Move Chip Damage", move: Moves.SALT_CURE },
-    { moveType: "Chip Damage", move: Moves.LEECH_SEED },
-    { moveType: "Trapping Chip Damage", move: Moves.WHIRLPOOL },
-    { moveType: "Status Effect Damage", move: Moves.TOXIC },
-    { moveType: "Weather", move: Moves.SANDSTORM },
-  ])("should not prevent fainting from $moveType", async ({ move }) => {
-    game.override
-      .enemyLevel(1)
-      .startingLevel(100)
-      .enemySpecies(Species.MAGIKARP)
-      .moveset(move)
-      .enemyMoveset(Moves.ENDURE);
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
-    const enemy = game.scene.getEnemyPokemon()!;
-    enemy.damageAndUpdate(enemy.hp - 1);
+    { moveType: "Damaging Move Chip", move: MoveId.SALT_CURE },
+    { moveType: "Status Move Chip", move: MoveId.LEECH_SEED },
+    { moveType: "Partial Trapping move", move: MoveId.WHIRLPOOL },
+    { moveType: "Status Effect", move: MoveId.TOXIC },
+    { moveType: "Weather", move: MoveId.SANDSTORM },
+  ])("should not prevent fainting from $moveType Damage", async ({ move }) => {
+    game.override.moveset(move).enemyLevel(100);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
+    const enemy = game.field.getEnemyPokemon();
+    enemy.hp = 2;
+    // force attack to do 1 dmg (for salt cure)
+    vi.spyOn(enemy, "getAttackDamage").mockReturnValue({ cancelled: false, result: HitResult.EFFECTIVE, damage: 1 });
 
     game.move.select(move);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemy.isFainted()).toBeTruthy();
+    expect(enemy.isFainted()).toBe(true);
   });
 });

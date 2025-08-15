@@ -1,57 +1,27 @@
-import { BattlerIndex } from "#app/battle";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import {
-  AddSecondStrikeAbAttr,
-  AlwaysHitAbAttr,
-  applyPostAttackAbAttrs,
-  applyPostDamageAbAttrs,
-  applyPostDefendAbAttrs,
-  applyPreAttackAbAttrs,
-  IgnoreMoveEffectsAbAttr,
-  MaxMultiHitAbAttr,
-  PostAttackAbAttr,
-  PostDamageAbAttr,
-  PostDefendAbAttr,
-  ReflectStatusMoveAbAttr,
-} from "#app/data/abilities/ability";
-import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
-import { MoveAnim } from "#app/data/battle-anims";
-import {
-  BattlerTagLapseType,
-  DamageProtectedTag,
-  ProtectedTag,
-  SemiInvulnerableTag,
-  SubstituteTag,
-  TypeBoostTag,
-} from "#app/data/battler-tags";
-import type { MoveAttr } from "#app/data/moves/move";
-import {
-  applyFilteredMoveAttrs,
-  applyMoveAttrs,
-  AttackMove,
-  DelayedAttackAttr,
-  FlinchAttr,
-  getMoveTargets,
-  HitsTagAttr,
-  MissEffectAttr,
-  MoveEffectAttr,
-  MultiHitAttr,
-  NoEffectAttr,
-  OneHitKOAttr,
-  OverrideMoveEffectAttr,
-  StatChangeBeforeDmgCalcAttr,
-  ToxicAccuracyAttr,
-} from "#app/data/moves/move";
-import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
-import { MoveFlags } from "#enums/MoveFlags";
-import { MoveTarget } from "#enums/MoveTarget";
-import { MoveCategory } from "#enums/MoveCategory";
-import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
-import { PokemonType } from "#enums/pokemon-type";
-import { DamageResult, PokemonMove, type TurnMove } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
+import type { Phase } from "#app/phase";
+import { ConditionalProtectTag } from "#data/arena-tag";
+import { MoveAnim } from "#data/battle-anims";
+import { DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag, TypeBoostTag } from "#data/battler-tags";
+import { SpeciesFormChangePostMoveTrigger } from "#data/form-change-triggers";
+import type { TypeDamageMultiplier } from "#data/type";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { HitCheckResult } from "#enums/hit-check-result";
+import { HitResult } from "#enums/hit-result";
+import { MoveCategory } from "#enums/move-category";
+import { MoveEffectTrigger } from "#enums/move-effect-trigger";
+import { MoveFlags } from "#enums/move-flags";
+import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { MoveTarget } from "#enums/move-target";
+import { isReflected, MoveUseMode } from "#enums/move-use-mode";
+import { PokemonType } from "#enums/pokemon-type";
+import type { Pokemon } from "#field/pokemon";
 import {
   ContactHeldItemTransferChanceModifier,
   DamageMoneyRewardModifier,
@@ -60,37 +30,36 @@ import {
   FlinchChanceModifier,
   HitHealModifier,
   PokemonMultiHitModifier,
-} from "#app/modifier/modifier";
-import { PokemonPhase } from "#app/phases/pokemon-phase";
-import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#app/utils/common";
-import type { nil } from "#app/utils/common";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
+} from "#modifiers/modifier";
+import { applyFilteredMoveAttrs, applyMoveAttrs } from "#moves/apply-attrs";
+import type { Move, MoveAttr } from "#moves/move";
+import { getMoveTargets, isFieldTargeted } from "#moves/move-utils";
+import { PokemonMove } from "#moves/pokemon-move";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import { DamageAchv } from "#system/achv";
+import type { DamageResult } from "#types/damage-result";
+import type { TurnMove } from "#types/turn-move";
+import type { nil } from "#utils/common";
+import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#utils/common";
 import i18next from "i18next";
-import type { Phase } from "#app/phase";
-import { ShowAbilityPhase } from "./show-ability-phase";
-import { MovePhase } from "./move-phase";
-import { MoveEndPhase } from "./move-end-phase";
-import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
-import { TypeDamageMultiplier } from "#app/data/type";
-import { HitCheckResult } from "#enums/hit-check-result";
-import type Move from "#app/data/moves/move";
-import { isFieldTargeted } from "#app/data/moves/move-utils";
-import { FaintPhase } from "./faint-phase";
-import { DamageAchv } from "#app/system/achv";
 
-type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
+export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
 export class MoveEffectPhase extends PokemonPhase {
+  public readonly phaseName = "MoveEffectPhase";
   public move: Move;
-  private virtual = false;
   protected targets: BattlerIndex[];
-  protected reflected = false;
+  protected useMode: MoveUseMode;
 
   /** The result of the hit check against each target */
   private hitChecks: HitCheckEntry[];
 
-  /** The move history entry for the move */
+  /**
+   * Log to be entered into the user's move history once the move result is resolved.
+
+   * Note that `result` logs whether the move was successfully
+   * used in the sense of "Does it have an effect on the user?".
+   */
   private moveHistoryEntry: TurnMove;
 
   /** Is this the first strike of a move? */
@@ -98,19 +67,20 @@ export class MoveEffectPhase extends PokemonPhase {
   /** Is this the last strike of a move? */
   private lastHit: boolean;
 
-  /** Phases queued during moves */
+  /**
+   * Phases queued during moves; used to add a new MovePhase for reflected moves after triggering.
+   * TODO: Remove this and move the reflection logic to ability-side
+   */
   private queuedPhases: Phase[] = [];
 
   /**
-   * @param reflected Indicates that the move was reflected by the user due to magic coat or magic bounce
-   * @param virtual Indicates that the move is a virtual move (i.e. called by metronome)
+   * @param useMode - The {@linkcode MoveUseMode} corresponding to how this move was used.
    */
-  constructor(battlerIndex: BattlerIndex, targets: BattlerIndex[], move: Move, reflected = false, virtual = false) {
+  constructor(battlerIndex: BattlerIndex, targets: BattlerIndex[], move: Move, useMode: MoveUseMode) {
     super(battlerIndex);
     this.move = move;
-    this.virtual = virtual;
+    this.useMode = useMode;
 
-    this.reflected = reflected;
     /**
      * In double battles, if the right Pokemon selects a spread move and the left Pokemon dies
      * with no party members available to switch in, then the right Pokemon takes the index
@@ -181,7 +151,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * Queue the phaes that should occur when the target reflects the move back to the user
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} that is reflecting the move
-   *
+   * TODO: Rework this to use `onApply` of Magic Coat
    */
   private queueReflectedMove(user: Pokemon, target: Pokemon): void {
     const newTargets = this.move.isMultiTarget()
@@ -190,13 +160,23 @@ export class MoveEffectPhase extends PokemonPhase {
     // TODO: ability displays should be handled by the ability
     if (!target.getTag(BattlerTagType.MAGIC_COAT)) {
       this.queuedPhases.push(
-        new ShowAbilityPhase(target.getBattlerIndex(), target.getPassiveAbility().hasAttr(ReflectStatusMoveAbAttr)),
+        globalScene.phaseManager.create(
+          "ShowAbilityPhase",
+          target.getBattlerIndex(),
+          target.getPassiveAbility().hasAttr("ReflectStatusMoveAbAttr"),
+        ),
       );
-      this.queuedPhases.push(new HideAbilityPhase());
+      this.queuedPhases.push(globalScene.phaseManager.create("HideAbilityPhase"));
     }
 
     this.queuedPhases.push(
-      new MovePhase(target, newTargets, new PokemonMove(this.move.id, 0, 0, true), true, true, true),
+      globalScene.phaseManager.create(
+        "MovePhase",
+        target,
+        newTargets,
+        new PokemonMove(this.move.id),
+        MoveUseMode.REFLECTED,
+      ),
     );
   }
 
@@ -218,22 +198,23 @@ export class MoveEffectPhase extends PokemonPhase {
             return;
           }
           break;
+        // biome-ignore lint/suspicious/noFallthroughSwitchClause: The fallthrough is intentional
         case HitCheckResult.NO_EFFECT:
-          globalScene.queueMessage(
-            i18next.t(this.move.id === Moves.SHEER_COLD ? "battle:hitResultImmune" : "battle:hitResultNoEffect", {
+          globalScene.phaseManager.queueMessage(
+            i18next.t(this.move.id === MoveId.SHEER_COLD ? "battle:hitResultImmune" : "battle:hitResultNoEffect", {
               pokemonName: getPokemonNameWithAffix(target),
             }),
           );
         case HitCheckResult.NO_EFFECT_NO_MESSAGE:
         case HitCheckResult.PROTECTED:
         case HitCheckResult.TARGET_NOT_ON_FIELD:
-          applyMoveAttrs(NoEffectAttr, user, target, this.move);
+          applyMoveAttrs("NoEffectAttr", user, target, this.move);
           break;
         case HitCheckResult.MISS:
-          globalScene.queueMessage(
+          globalScene.phaseManager.queueMessage(
             i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }),
           );
-          applyMoveAttrs(MissEffectAttr, user, target, this.move);
+          applyMoveAttrs("MissEffectAttr", user, target, this.move);
           break;
         case HitCheckResult.REFLECTED:
           this.queueReflectedMove(user, target);
@@ -263,44 +244,31 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.currentBattle.lastPlayerInvolved = this.fieldIndex;
     }
 
-    const isDelayedAttack = this.move.hasAttr(DelayedAttackAttr);
-    /** If the user was somehow removed from the field and it's not a delayed attack, end this phase */
-    if (!user.isOnField()) {
-      if (!isDelayedAttack) {
-        super.end();
-        return;
-      }
-      if (!user.scene) {
-        /*
-         * This happens if the Pokemon that used the delayed attack gets caught and released
-         * on the turn the attack would have triggered. Having access to the global scene
-         * in the future may solve this entirely, so for now we just cancel the hit
-         */
-        super.end();
-        return;
-      }
-    }
+    const move = this.move;
 
     /**
      * Does an effect from this move override other effects on this turn?
      * e.g. Charging moves (Fly, etc.) on their first turn of use.
      */
     const overridden = new BooleanHolder(false);
-    const move = this.move;
 
-    // Assume single target for override
-    applyMoveAttrs(OverrideMoveEffectAttr, user, this.getFirstTarget() ?? null, move, overridden, this.virtual);
+    // Apply effects to override a move effect.
+    // Assuming single target here works as this is (currently)
+    // only used for Future Sight, calling and Pledge moves.
+    // TODO: change if any other move effect overrides are introduced
+    applyMoveAttrs("OverrideMoveEffectAttr", user, this.getFirstTarget() ?? null, move, overridden, this.useMode);
 
     // If other effects were overriden, stop this phase before they can be applied
     if (overridden.value) {
-      return this.end();
+      this.end();
+      return;
     }
 
     // Lapse `MOVE_EFFECT` effects (i.e. semi-invulnerability) when applicable
     user.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
 
-    // If the user is acting again (such as due to Instruct), reset hitsLeft/hitCount so that
-    // the move executes correctly (ensures all hits of a multi-hit are properly calculated)
+    // If the user is acting again (such as due to Instruct or Dancer), reset hitsLeft/hitCount and
+    // recalculate hit count for multi-hit moves.
     if (user.turnData.hitsLeft === 0 && user.turnData.hitCount > 0 && user.turnData.extraTurns > 0) {
       user.turnData.hitsLeft = -1;
       user.turnData.hitCount = 0;
@@ -315,9 +283,9 @@ export class MoveEffectPhase extends PokemonPhase {
     if (user.turnData.hitsLeft === -1) {
       const hitCount = new NumberHolder(1);
       // Assume single target for multi hit
-      applyMoveAttrs(MultiHitAttr, user, this.getFirstTarget() ?? null, move, hitCount);
+      applyMoveAttrs("MultiHitAttr", user, this.getFirstTarget() ?? null, move, hitCount);
       // If Parental Bond is applicable, add another hit
-      applyPreAttackAbAttrs(AddSecondStrikeAbAttr, user, null, move, false, hitCount, null);
+      applyAbAttrs("AddSecondStrikeAbAttr", { pokemon: user, move, hitCount });
       // If Multi-Lens is applicable, add hits equal to the number of held Multi-Lenses
       globalScene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, move.id, hitCount);
       // Set the user's relevant turnData fields to reflect the final hit count
@@ -325,16 +293,11 @@ export class MoveEffectPhase extends PokemonPhase {
       user.turnData.hitsLeft = hitCount.value;
     }
 
-    /*
-     * Log to be entered into the user's move history once the move result is resolved.
-     * Note that `result` logs whether the move was successfully
-     * used in the sense of "Does it have an effect on the user?".
-     */
     this.moveHistoryEntry = {
       move: this.move.id,
       targets: this.targets,
       result: MoveResult.PENDING,
-      virtual: this.virtual,
+      useMode: this.useMode,
     };
 
     const fieldMove = isFieldTargeted(move);
@@ -347,11 +310,11 @@ export class MoveEffectPhase extends PokemonPhase {
     // Play the animation if the move was successful against any of its targets or it has a POST_TARGET effect (like self destruct)
     if (
       this.moveHistoryEntry.result === MoveResult.SUCCESS ||
-      move.getAttrs(MoveEffectAttr).some(attr => attr.trigger === MoveEffectTrigger.POST_TARGET)
+      move.getAttrs("MoveEffectAttr").some(attr => attr.trigger === MoveEffectTrigger.POST_TARGET)
     ) {
       const firstTarget = this.getFirstTarget();
       new MoveAnim(
-        move.id as Moves,
+        move.id as MoveId,
         user,
         firstTarget?.getBattlerIndex() ?? BattlerIndex.ATTACKER,
         // Some moves used in mystery encounters should be played even on an empty field
@@ -368,8 +331,9 @@ export class MoveEffectPhase extends PokemonPhase {
    */
   private postAnimCallback(user: Pokemon, targets: Pokemon[]) {
     // Add to the move history entry
-    if (this.firstHit) {
+    if (this.firstHit && this.useMode !== MoveUseMode.DELAYED_ATTACK) {
       user.pushMoveHistory(this.moveHistoryEntry);
+      applyAbAttrs("ExecutedMoveAbAttr", { pokemon: user });
     }
 
     try {
@@ -381,7 +345,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     if (this.queuedPhases.length) {
-      globalScene.appendToPhase(this.queuedPhases, MoveEndPhase);
+      globalScene.phaseManager.appendToPhase(this.queuedPhases, "MoveEndPhase");
     }
     const moveType = user.getMoveType(this.move, true);
     if (this.move.category !== MoveCategory.STATUS && !user.stellarTypesBoosted.includes(moveType)) {
@@ -398,29 +362,35 @@ export class MoveEffectPhase extends PokemonPhase {
 
   public override end(): void {
     const user = this.getUserPokemon();
-    /**
-     * If this phase isn't for the invoked move's last strike,
-     * unshift another MoveEffectPhase for the next strike.
-     * Otherwise, queue a message indicating the number of times the move has struck
-     * (if the move has struck more than once), then apply the heal from Shell Bell
-     * to the user.
-     */
-    if (user) {
-      if (user.turnData.hitsLeft && --user.turnData.hitsLeft >= 1 && this.getFirstTarget()?.isActive()) {
-        globalScene.unshiftPhase(this.getNewHitPhase());
-      } else {
-        // Queue message for number of hits made by multi-move
-        // If multi-hit attack only hits once, still want to render a message
-        const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
-        if (hitsTotal > 1 || (user.turnData.hitsLeft && user.turnData.hitsLeft > 0)) {
-          // If there are multiple hits, or if there are hits of the multi-hit move left
-          globalScene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
-        }
-        globalScene.applyModifiers(HitHealModifier, this.player, user);
-        this.getTargets().forEach(target => (target.turnData.moveEffectiveness = null));
-      }
+    if (!user) {
+      super.end();
+      return;
     }
 
+    /**
+     * If this phase isn't for the invoked move's last strike (and we still have something to hit),
+     * unshift another MoveEffectPhase for the next strike before ending this phase.
+     */
+    if (--user.turnData.hitsLeft >= 1 && this.getFirstTarget()) {
+      this.addNextHitPhase();
+      super.end();
+      return;
+    }
+
+    /**
+     * All hits of the move have resolved by now.
+     * Queue message for multi-strike moves before applying Shell Bell heals & proccing Dancer-like effects.
+     */
+    const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
+    if (hitsTotal > 1 || user.turnData.hitsLeft > 0) {
+      // Queue message if multiple hits occurred or were slated to occur (such as a Triple Axel miss)
+      globalScene.phaseManager.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
+    }
+
+    globalScene.applyModifiers(HitHealModifier, this.player, user);
+    this.getTargets().forEach(target => {
+      target.turnData.moveEffectiveness = null;
+    });
     super.end();
   }
 
@@ -430,10 +400,15 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - {@linkcode Pokemon} the current target of this phase's invoked move
    * @param hitResult - The {@linkcode HitResult} of the attempted move
-   * @returns a `Promise` intended to be passed into a `then()` call.
+   * @param wasCritical - `true` if the move was a critical hit
    */
-  protected applyOnGetHitAbEffects(user: Pokemon, target: Pokemon, hitResult: HitResult): void {
-    applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult);
+  protected applyOnGetHitAbEffects(user: Pokemon, target: Pokemon, hitResult: HitResult, wasCritical = false): void {
+    const params = { pokemon: target, opponent: user, move: this.move, hitResult };
+    applyAbAttrs("PostDefendAbAttr", params);
+
+    if (wasCritical) {
+      applyAbAttrs("PostReceiveCritStatStageChangeAbAttr", params);
+    }
     target.lapseTags(BattlerTagLapseType.AFTER_HIT);
   }
 
@@ -442,14 +417,17 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - {@linkcode Pokemon} the current target of this phase's invoked move
    * @param dealsDamage - `true` if the attempted move successfully dealt damage
-   * @returns a function intended to be passed into a `then()` call.
    */
   protected applyHeldItemFlinchCheck(user: Pokemon, target: Pokemon, dealsDamage: boolean): void {
-    if (this.move.hasAttr(FlinchAttr)) {
+    if (this.move.hasAttr("FlinchAttr")) {
       return;
     }
 
-    if (dealsDamage && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && !this.move.hitsSubstitute(user, target)) {
+    if (
+      dealsDamage &&
+      !target.hasAbilityWithAttr("IgnoreMoveEffectsAbAttr") &&
+      !this.move.hitsSubstitute(user, target)
+    ) {
       const flinched = new BooleanHolder(false);
       globalScene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
       if (flinched.value) {
@@ -462,8 +440,9 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - {@linkcode Pokemon} the target to check for protection
    * @param move - The {@linkcode Move} being used
+   * @returns Whether the pokemon was protected
    */
-  private protectedCheck(user: Pokemon, target: Pokemon) {
+  private protectedCheck(user: Pokemon, target: Pokemon): boolean {
     /** The {@linkcode ArenaTagSide} to which the target belongs */
     const targetSide = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
     /** Has the invoked move been cancelled by conditional protection (e.g Quick Guard)? */
@@ -484,14 +463,15 @@ export class MoveEffectPhase extends PokemonPhase {
       );
     }
 
+    // TODO: Break up this chunky boolean to make it more palatable
     return (
       ![MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES].includes(this.move.moveTarget) &&
       (bypassIgnoreProtect.value || !this.move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target })) &&
       (hasConditionalProtectApplied.value ||
         (!target.findTags(t => t instanceof DamageProtectedTag).length &&
-          target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType))) ||
+          target.findTags(t => t instanceof ProtectedTag).some(t => target.lapseTag(t.tagType))) ||
         (this.move.category !== MoveCategory.STATUS &&
-          target.findTags(t => t instanceof DamageProtectedTag).find(t => target.lapseTag(t.tagType))))
+          target.findTags(t => t instanceof DamageProtectedTag).some(t => target.lapseTag(t.tagType))))
     );
   }
 
@@ -551,7 +531,8 @@ export class MoveEffectPhase extends PokemonPhase {
       return [HitCheckResult.PROTECTED, 0];
     }
 
-    if (!this.reflected && move.doesFlagEffectApply({ flag: MoveFlags.REFLECTABLE, user, target })) {
+    // Reflected moves cannot be reflected again
+    if (!isReflected(this.useMode) && move.doesFlagEffectApply({ flag: MoveFlags.REFLECTABLE, user, target })) {
       return [HitCheckResult.REFLECTED, 0];
     }
 
@@ -579,7 +560,7 @@ export class MoveEffectPhase extends PokemonPhase {
     // Strikes after the first in a multi-strike move are guaranteed to hit,
     // unless the move is flagged to check all hits and the user does not have Skill Link.
     if (user.turnData.hitsLeft < user.turnData.hitCount) {
-      if (!move.hasFlag(MoveFlags.CHECK_ALL_HITS) || user.hasAbilityWithAttr(MaxMultiHitAbAttr)) {
+      if (!move.hasFlag(MoveFlags.CHECK_ALL_HITS) || user.hasAbilityWithAttr("MaxMultiHitAbAttr")) {
         return [HitCheckResult.HIT, effectiveness];
       }
     }
@@ -587,7 +568,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const bypassAccuracy =
       bypassAccAndInvuln ||
       target.getTag(BattlerTagType.ALWAYS_GET_HIT) ||
-      (target.getTag(BattlerTagType.TELEKINESIS) && !this.move.hasAttr(OneHitKOAttr));
+      (target.getTag(BattlerTagType.TELEKINESIS) && !this.move.hasAttr("OneHitKOAttr"));
 
     if (moveAccuracy === -1 || bypassAccuracy) {
       return [HitCheckResult.HIT, effectiveness];
@@ -609,12 +590,12 @@ export class MoveEffectPhase extends PokemonPhase {
    * @returns `true` if the move should bypass accuracy and semi-invulnerability
    *
    * Accuracy and semi-invulnerability can be bypassed by:
-   * - An ability like {@linkcode Abilities.NO_GUARD | No Guard}
-   * - A poison type using {@linkcode Moves.TOXIC | Toxic}
-   * - A move like {@linkcode Moves.LOCK_ON | Lock-On} or {@linkcode Moves.MIND_READER | Mind Reader}.
+   * - An ability like {@linkcode AbilityId.NO_GUARD | No Guard}
+   * - A poison type using {@linkcode MoveId.TOXIC | Toxic}
+   * - A move like {@linkcode MoveId.LOCK_ON | Lock-On} or {@linkcode MoveId.MIND_READER | Mind Reader}.
    * - A field-targeted move like spikes
    *
-   * Does *not* check against effects {@linkcode Moves.GLAIVE_RUSH | Glaive Rush} status (which
+   * Does *not* check against effects {@linkcode MoveId.GLAIVE_RUSH | Glaive Rush} status (which
    * should not bypass semi-invulnerability), or interactions like Earthquake hitting against Dig,
    * (which should not bypass the accuracy check).
    *
@@ -625,10 +606,10 @@ export class MoveEffectPhase extends PokemonPhase {
     if (!user) {
       return false;
     }
-    if (user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr)) {
+    if (user.hasAbilityWithAttr("AlwaysHitAbAttr") || target.hasAbilityWithAttr("AlwaysHitAbAttr")) {
       return true;
     }
-    if (this.move.hasAttr(ToxicAccuracyAttr) && user.isOfType(PokemonType.POISON)) {
+    if (this.move.hasAttr("ToxicAccuracyAttr") && user.isOfType(PokemonType.POISON)) {
       return true;
     }
     // TODO: Fix lock on / mind reader check.
@@ -653,23 +634,29 @@ export class MoveEffectPhase extends PokemonPhase {
       return false;
     }
     const move = this.move;
-    return move.getAttrs(HitsTagAttr).some(hta => hta.tagType === semiInvulnerableTag.tagType);
+    return move.getAttrs("HitsTagAttr").some(hta => hta.tagType === semiInvulnerableTag.tagType);
   }
 
   /** @returns The {@linkcode Pokemon} using this phase's invoked move */
   public getUserPokemon(): Pokemon | null {
+    // TODO: Make this purely a battler index
     if (this.battlerIndex > BattlerIndex.ENEMY_2) {
       return globalScene.getPokemonById(this.battlerIndex);
     }
     return (this.player ? globalScene.getPlayerField() : globalScene.getEnemyField())[this.fieldIndex];
   }
 
-  /** @returns An array of all {@linkcode Pokemon} targeted by this phase's invoked move */
+  /**
+   * @returns An array of {@linkcode Pokemon} that are:
+   * - On-field and active
+   * - Non-fainted
+   * - Targeted by this phase's invoked move
+   */
   public getTargets(): Pokemon[] {
     return globalScene.getField(true).filter(p => this.targets.indexOf(p.getBattlerIndex()) > -1);
   }
 
-  /** @returns The first target of this phase's invoked move */
+  /** @returns The first active, non-fainted target of this phase's invoked move. */
   public getFirstTarget(): Pokemon | undefined {
     return this.getTargets()[0];
   }
@@ -679,12 +666,9 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param target - The {@linkcode Pokemon} to be removed
    */
   protected removeTarget(target: Pokemon): void {
-    const targetIndex = this.targets.findIndex(ind => ind === target.getBattlerIndex());
+    const targetIndex = this.targets.indexOf(target.getBattlerIndex());
     if (targetIndex !== -1) {
-      this.targets.splice(
-        this.targets.findIndex(ind => ind === target.getBattlerIndex()),
-        1,
-      );
+      this.targets.splice(this.targets.indexOf(target.getBattlerIndex()), 1);
     }
   }
 
@@ -709,9 +693,12 @@ export class MoveEffectPhase extends PokemonPhase {
     }
   }
 
-  /** @returns A new `MoveEffectPhase` with the same properties as this phase */
-  protected getNewHitPhase(): MoveEffectPhase {
-    return new MoveEffectPhase(this.battlerIndex, this.targets, this.move, this.reflected, this.virtual);
+  /**
+   * Unshifts a new `MoveEffectPhase` with the same properties as this phase.
+   * Used to queue the next hit of multi-strike moves.
+   */
+  protected addNextHitPhase(): void {
+    globalScene.phaseManager.unshiftNew("MoveEffectPhase", this.battlerIndex, this.targets, this.move, this.useMode);
   }
 
   /** Removes all substitutes that were broken by this phase's invoked move */
@@ -733,7 +720,6 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param firstTarget Whether the target is the first to be hit by the current strike
    * @param selfTarget If defined, limits the effects triggered to either self-targeted
    *  effects (if set to `true`) or targeted effects (if set to `false`).
-   * @returns a `Promise` applying the relevant move effects.
    */
   protected triggerMoveEffects(
     triggerType: MoveEffectTrigger,
@@ -742,9 +728,9 @@ export class MoveEffectPhase extends PokemonPhase {
     firstTarget?: boolean | null,
     selfTarget?: boolean,
   ): void {
-    return applyFilteredMoveAttrs(
+    applyFilteredMoveAttrs(
       (attr: MoveAttr) =>
-        attr instanceof MoveEffectAttr &&
+        attr.is("MoveEffectAttr") &&
         attr.trigger === triggerType &&
         (isNullOrUndefined(selfTarget) || attr.selfTarget === selfTarget) &&
         (!attr.firstHitOnly || this.firstHit) &&
@@ -777,18 +763,21 @@ export class MoveEffectPhase extends PokemonPhase {
 
     this.triggerMoveEffects(MoveEffectTrigger.PRE_APPLY, user, target);
 
-    const hitResult = this.applyMove(user, target, effectiveness);
+    const [hitResult, wasCritical] = this.applyMove(user, target, effectiveness);
 
+    // Apply effects to the user (always) and the target (if not blocked by substitute).
     this.triggerMoveEffects(MoveEffectTrigger.POST_APPLY, user, target, firstTarget, true);
     if (!this.move.hitsSubstitute(user, target)) {
-      this.applyOnTargetEffects(user, target, hitResult, firstTarget);
+      this.applyOnTargetEffects(user, target, hitResult, firstTarget, wasCritical);
     }
     if (this.lastHit) {
       globalScene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
 
       // Multi-hit check for Wimp Out/Emergency Exit
       if (user.turnData.hitCount > 1) {
-        applyPostDamageAbAttrs(PostDamageAbAttr, target, 0, target.hasPassive(), false, [], user);
+        // TODO: Investigate why 0 is being passed for damage amount here
+        // and then determing if refactoring `applyMove` to return the damage dealt is appropriate.
+        applyAbAttrs("PostDamageAbAttr", { pokemon: target, damage: 0, source: user });
       }
     }
   }
@@ -799,17 +788,18 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} targeted by the move
    * @param effectiveness - The effectiveness of the move against the target
+   * @returns The {@linkcode HitResult} of the move against the target and a boolean indicating whether the target was crit
    */
-  protected applyMoveDamage(user: Pokemon, target: Pokemon, effectiveness: TypeDamageMultiplier): HitResult {
-    const isCritical = target.getCriticalHitResult(user, this.move, false);
+  protected applyMoveDamage(user: Pokemon, target: Pokemon, effectiveness: TypeDamageMultiplier): [HitResult, boolean] {
+    const isCritical = target.getCriticalHitResult(user, this.move);
 
     /*
      * Apply stat changes from {@linkcode move} and gives it to {@linkcode source}
      * before damage calculation
      */
-    applyMoveAttrs(StatChangeBeforeDmgCalcAttr, user, target, this.move);
+    applyMoveAttrs("StatChangeBeforeDmgCalcAttr", user, target, this.move);
 
-    const { result: result, damage: dmg } = target.getAttackDamage({
+    const { result, damage: dmg } = target.getAttackDamage({
       source: user,
       move: this.move,
       ignoreAbility: false,
@@ -831,7 +821,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const isOneHitKo = result === HitResult.ONE_HIT_KO;
 
     if (!dmg) {
-      return result;
+      return [result, false];
     }
 
     target.lapseTags(BattlerTagLapseType.HIT);
@@ -839,6 +829,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const substitute = target.getTag(SubstituteTag);
     const isBlockedBySubstitute = substitute && this.move.hitsSubstitute(user, target);
     if (isBlockedBySubstitute) {
+      user.turnData.totalDamageDealt += Math.min(dmg, substitute.hp);
       substitute.hp -= dmg;
     } else if (!target.isPlayer() && dmg >= target.hp) {
       globalScene.applyModifiers(EnemyEndureChanceModifier, false, target);
@@ -855,11 +846,11 @@ export class MoveEffectPhase extends PokemonPhase {
         });
 
     if (isCritical) {
-      globalScene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
+      globalScene.phaseManager.queueMessage(i18next.t("battle:hitResultCriticalHit"));
     }
 
     if (damage <= 0) {
-      return result;
+      return [result, isCritical];
     }
 
     if (user.isPlayer()) {
@@ -884,11 +875,11 @@ export class MoveEffectPhase extends PokemonPhase {
       sourceBattlerIndex: user.getBattlerIndex(),
     });
 
-    if (user.isPlayer() && !target.isPlayer()) {
+    if (user.isPlayer() && target.isEnemy()) {
       globalScene.applyModifiers(DamageMoneyRewardModifier, true, user, new NumberHolder(damage));
     }
 
-    return result;
+    return [result, isCritical];
   }
 
   /**
@@ -898,9 +889,9 @@ export class MoveEffectPhase extends PokemonPhase {
    */
   protected onFaintTarget(user: Pokemon, target: Pokemon): void {
     // set splice index here, so future scene queues happen before FaintedPhase
-    globalScene.setPhaseQueueSplice();
+    globalScene.phaseManager.setPhaseQueueSplice();
 
-    globalScene.unshiftPhase(new FaintPhase(target.getBattlerIndex(), false, user));
+    globalScene.phaseManager.unshiftNew("FaintPhase", target.getBattlerIndex(), false, user);
 
     target.destroySubstitute();
     target.lapseTag(BattlerTagType.COMMANDED);
@@ -933,7 +924,7 @@ export class MoveEffectPhase extends PokemonPhase {
         break;
     }
     if (msg) {
-      globalScene.queueMessage(msg);
+      globalScene.phaseManager.queueMessage(msg);
     }
   }
 
@@ -942,17 +933,17 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param target - The {@linkcode Pokemon} struck by the move
    * @param effectiveness - The effectiveness of the move against the target
    */
-  protected applyMove(user: Pokemon, target: Pokemon, effectiveness: TypeDamageMultiplier): HitResult {
+  protected applyMove(user: Pokemon, target: Pokemon, effectiveness: TypeDamageMultiplier): [HitResult, boolean] {
     const moveCategory = user.getMoveCategory(target, this.move);
 
     if (moveCategory === MoveCategory.STATUS) {
-      return HitResult.STATUS;
+      return [HitResult.STATUS, false];
     }
 
     const result = this.applyMoveDamage(user, target, effectiveness);
 
     if (user.turnData.hitsLeft === 1 || target.isFainted()) {
-      this.queueHitResultMessage(result);
+      this.queueHitResultMessage(result[0]);
     }
 
     if (target.isFainted()) {
@@ -969,8 +960,15 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param target - The {@linkcode Pokemon} targeted by the move
    * @param hitResult - The {@linkcode HitResult} obtained from applying the move
    * @param firstTarget - `true` if the target is the first Pokemon hit by the attack
+   * @param wasCritical - `true` if the move was a critical hit
    */
-  protected applyOnTargetEffects(user: Pokemon, target: Pokemon, hitResult: HitResult, firstTarget: boolean): void {
+  protected applyOnTargetEffects(
+    user: Pokemon,
+    target: Pokemon,
+    hitResult: HitResult,
+    firstTarget: boolean,
+    wasCritical = false,
+  ): void {
     /** Does {@linkcode hitResult} indicate that damage was dealt to the target? */
     const dealsDamage = [
       HitResult.EFFECTIVE,
@@ -981,16 +979,16 @@ export class MoveEffectPhase extends PokemonPhase {
 
     this.triggerMoveEffects(MoveEffectTrigger.POST_APPLY, user, target, firstTarget, false);
     this.applyHeldItemFlinchCheck(user, target, dealsDamage);
-    this.applyOnGetHitAbEffects(user, target, hitResult);
-    applyPostAttackAbAttrs(PostAttackAbAttr, user, target, this.move, hitResult);
+    this.applyOnGetHitAbEffects(user, target, hitResult, wasCritical);
+    applyAbAttrs("PostAttackAbAttr", { pokemon: user, opponent: target, move: this.move, hitResult });
 
     // We assume only enemy Pokemon are able to have the EnemyAttackStatusEffectChanceModifier from tokens
-    if (!user.isPlayer() && this.move instanceof AttackMove) {
+    if (!user.isPlayer() && this.move.is("AttackMove")) {
       globalScene.applyShuffledModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
     }
 
     // Apply Grip Claw's chance to steal an item from the target
-    if (this.move instanceof AttackMove) {
+    if (this.move.is("AttackMove")) {
       globalScene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target);
     }
   }

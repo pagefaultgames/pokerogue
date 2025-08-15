@@ -1,34 +1,28 @@
 import { loggedInUser } from "#app/account";
-import { BattleType } from "#enums/battle-type";
-import { fetchDailyRunSeed, getDailyRunStarters } from "#app/data/daily-run";
-import { Gender } from "#app/data/gender";
-import { getBiomeKey } from "#app/field/arena";
-import { GameMode, GameModes, getGameMode } from "#app/game-mode";
-import type { Modifier } from "#app/modifier/modifier";
-import {
-  getDailyRunStarterModifiers,
-  ModifierPoolType,
-  modifierTypes,
-  regenerateModifierPoolThresholds,
-} from "#app/modifier/modifier-type";
-import { Phase } from "#app/phase";
-import type { SessionSaveData } from "#app/system/game-data";
-import { Unlockables } from "#app/system/unlockables";
-import { vouchers } from "#app/system/voucher";
-import type { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { isLocal, isLocalServerConnected, isNullOrUndefined } from "#app/utils/common";
-import i18next from "i18next";
-import { CheckSwitchPhase } from "./check-switch-phase";
-import { EncounterPhase } from "./encounter-phase";
-import { SelectChallengePhase } from "./select-challenge-phase";
-import { SelectStarterPhase } from "./select-starter-phase";
-import { SummonPhase } from "./summon-phase";
+import { GameMode, getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
+import { Phase } from "#app/phase";
+import { fetchDailyRunSeed, getDailyRunStarters } from "#data/daily-run";
+import { modifierTypes } from "#data/data-lists";
+import { Gender } from "#data/gender";
+import { BattleType } from "#enums/battle-type";
+import { GameModes } from "#enums/game-modes";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
+import { UiMode } from "#enums/ui-mode";
+import { Unlockables } from "#enums/unlockables";
+import { getBiomeKey } from "#field/arena";
+import type { Modifier } from "#modifiers/modifier";
+import { getDailyRunStarterModifiers, regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
+import type { SessionSaveData } from "#system/game-data";
+import { vouchers } from "#system/voucher";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
+import { isLocal, isLocalServerConnected, isNullOrUndefined } from "#utils/common";
+import i18next from "i18next";
 
 export class TitlePhase extends Phase {
+  public readonly phaseName = "TitlePhase";
   private loaded = false;
   private lastSessionData: SessionSaveData;
   public gameMode: GameModes;
@@ -120,11 +114,11 @@ export class TitlePhase extends Phase {
               });
             }
           }
+          // Cancel button = back to title
           options.push({
             label: i18next.t("menu:cancel"),
             handler: () => {
-              globalScene.clearPhaseQueue();
-              globalScene.pushPhase(new TitlePhase());
+              globalScene.phaseManager.toTitleScreen();
               super.end();
               return true;
             },
@@ -197,11 +191,12 @@ export class TitlePhase extends Phase {
   initDailyRun(): void {
     globalScene.ui.clearText();
     globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
-      globalScene.clearPhaseQueue();
       if (slotId === -1) {
-        globalScene.pushPhase(new TitlePhase());
-        return super.end();
+        globalScene.phaseManager.toTitleScreen();
+        super.end();
+        return;
       }
+      globalScene.phaseManager.clearPhaseQueue();
       globalScene.sessionSlotId = slotId;
 
       const generateDaily = (seed: string) => {
@@ -210,7 +205,7 @@ export class TitlePhase extends Phase {
         globalScene.eventManager.startEventChallenges();
 
         globalScene.setSeed(seed);
-        globalScene.resetSeed(0);
+        globalScene.resetSeed();
 
         globalScene.money = globalScene.gameMode.getStartingMoney();
 
@@ -289,6 +284,7 @@ export class TitlePhase extends Phase {
             console.error("Failed to load daily run:\n", err);
           });
       } else {
+        // Grab first 10 chars of ISO date format (YYYY-MM-DD) and convert to base64
         let seed: string = btoa(new Date().toISOString().substring(0, 10));
         if (!isNullOrUndefined(Overrides.DAILY_RUN_SEED_OVERRIDE)) {
           seed = Overrides.DAILY_RUN_SEED_OVERRIDE;
@@ -303,23 +299,23 @@ export class TitlePhase extends Phase {
       globalScene.arena.preloadBgm();
       globalScene.gameMode = getGameMode(this.gameMode);
       if (this.gameMode === GameModes.CHALLENGE) {
-        globalScene.pushPhase(new SelectChallengePhase());
+        globalScene.phaseManager.pushNew("SelectChallengePhase");
       } else {
-        globalScene.pushPhase(new SelectStarterPhase());
+        globalScene.phaseManager.pushNew("SelectStarterPhase");
       }
       globalScene.newArena(globalScene.gameMode.getStartingBiome());
     } else {
       globalScene.playBgm();
     }
 
-    globalScene.pushPhase(new EncounterPhase(this.loaded));
+    globalScene.phaseManager.pushNew("EncounterPhase", this.loaded);
 
     if (this.loaded) {
       const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
 
-      globalScene.pushPhase(new SummonPhase(0, true, true));
+      globalScene.phaseManager.pushNew("SummonPhase", 0, true, true);
       if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-        globalScene.pushPhase(new SummonPhase(1, true, true));
+        globalScene.phaseManager.pushNew("SummonPhase", 1, true, true);
       }
 
       if (
@@ -328,9 +324,9 @@ export class TitlePhase extends Phase {
       ) {
         const minPartySize = globalScene.currentBattle.double ? 2 : 1;
         if (availablePartyMembers > minPartySize) {
-          globalScene.pushPhase(new CheckSwitchPhase(0, globalScene.currentBattle.double));
+          globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
           if (globalScene.currentBattle.double) {
-            globalScene.pushPhase(new CheckSwitchPhase(1, globalScene.currentBattle.double));
+            globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
           }
         }
       }

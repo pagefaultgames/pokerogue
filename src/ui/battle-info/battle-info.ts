@@ -1,13 +1,14 @@
-import type { default as Pokemon } from "../../field/pokemon";
-import { getLocalizedSpriteKey, fixedInt, getShinyDescriptor } from "#app/utils/common";
-import { addTextObject, TextStyle } from "../text";
-import { getGenderSymbol, getGenderColor, Gender } from "../../data/gender";
-import { StatusEffect } from "#enums/status-effect";
 import { globalScene } from "#app/global-scene";
-import { getTypeRgb } from "#app/data/type";
+import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
+import { getTypeRgb } from "#data/type";
 import { PokemonType } from "#enums/pokemon-type";
-import { getVariantTint } from "#app/sprites/variant";
 import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { TextStyle } from "#enums/text-style";
+import type { Pokemon } from "#field/pokemon";
+import { getVariantTint } from "#sprites/variant";
+import { addTextObject } from "#ui/text";
+import { fixedInt, getLocalizedSpriteKey, getShinyDescriptor } from "#utils/common";
 import i18next from "i18next";
 
 /**
@@ -37,7 +38,7 @@ export type BattleInfoParamList = {
   };
 };
 
-export default abstract class BattleInfo extends Phaser.GameObjects.Container {
+export abstract class BattleInfo extends Phaser.GameObjects.Container {
   public static readonly EXP_GAINS_DURATION_BASE = 1650;
 
   protected baseY: number;
@@ -447,12 +448,14 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   /** Update the pokemon name inside the container */
-  protected updateName(name: string): boolean {
+  protected updateName(pokemon: Pokemon): boolean {
+    const name = pokemon.getNameToRender();
     if (this.lastName === name) {
       return false;
     }
-    this.nameText.setText(name).setPositionRelative(this.box, -this.nameText.displayWidth, 0);
-    this.lastName = name;
+
+    this.updateNameText(pokemon);
+    this.genderText.setPositionRelative(this.nameText, this.nameText.displayWidth, 0);
 
     return true;
   }
@@ -572,7 +575,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
 
     this.genderText.setText(getGenderSymbol(gender)).setColor(getGenderColor(gender));
 
-    const nameUpdated = this.updateName(pokemon.getNameToRender());
+    const nameUpdated = this.updateName(pokemon);
 
     const teraTypeUpdated = this.updateTeraType(pokemon.isTerastallized ? pokemon.getTeraType() : PokemonType.UNKNOWN);
 
@@ -583,6 +586,8 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     }
 
     this.updateStatusIcon(pokemon);
+
+    this.setTypes(pokemon.getTypes(true, false, undefined, true));
 
     if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
       return this.updatePokemonHp(pokemon, resolve, instant);

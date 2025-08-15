@@ -1,13 +1,14 @@
-import type { GameObjects } from "phaser";
 import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import type { Species } from "#enums/species";
-import { isNullOrUndefined } from "#app/utils/common";
-import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import type { Variant } from "#app/sprites/variant";
-import { doShinySparkleAnim } from "#app/field/anims";
-import PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
-import { loadPokemonVariantAssets } from "#app/sprites/pokemon-sprite";
+import type { SpeciesId } from "#enums/species-id";
+import { doShinySparkleAnim } from "#field/anims";
+import { getSpriteKeysFromSpecies } from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
+import type { Variant } from "#sprites/variant";
+import { isNullOrUndefined } from "#utils/common";
+import type { GameObjects } from "phaser";
+
+type PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
 
 type KnownFileRoot =
   | "arenas"
@@ -39,7 +40,7 @@ export class MysteryEncounterSpriteConfig {
   /** Refer to [/public/images](../../public/images) directorty for all folder names */
   fileRoot: (KnownFileRoot & string) | string;
   /** Optional replacement for `spriteKey`/`fileRoot`. Just know this defaults to male/genderless, form 0, no shiny */
-  species?: Species;
+  species?: SpeciesId;
   /** Enable shadow. Defaults to `false` */
   hasShadow?: boolean = false;
   /** Disable animation. Defaults to `false` */
@@ -77,7 +78,7 @@ export class MysteryEncounterSpriteConfig {
  * These slide in with the field as part of standard field change cycle, and will typically be hidden after the player has selected an option for the encounter
  * Note: intro visuals are not "Trainers" or any other specific game object, though they may contain trainer sprites
  */
-export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
+export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
   public encounter: MysteryEncounter;
   public spriteConfigs: MysteryEncounterSpriteConfig[];
   public enterFromRight: boolean;

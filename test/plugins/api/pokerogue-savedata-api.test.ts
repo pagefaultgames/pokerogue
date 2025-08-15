@@ -1,10 +1,10 @@
-import type { UpdateAllSavedataRequest } from "#app/@types/PokerogueSavedataApi";
-import { PokerogueSavedataApi } from "#app/plugins/api/pokerogue-savedata-api";
-import { getApiBaseUrl } from "#test/testUtils/testUtils";
-import { http, HttpResponse } from "msw";
-import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
+import { PokerogueSavedataApi } from "#api/pokerogue-savedata-api";
+import { initServerForApiTests } from "#test/test-utils/test-file-initialization";
+import { getApiBaseUrl } from "#test/test-utils/test-utils";
+import type { UpdateAllSavedataRequest } from "#types/api/pokerogue-save-data-api";
+import { HttpResponse, http } from "msw";
 import type { SetupServerApi } from "msw/node";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiBase = getApiBaseUrl();
 const savedataApi = new PokerogueSavedataApi(apiBase);

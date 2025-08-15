@@ -1,14 +1,15 @@
-import type { InputFieldConfig } from "./form-modal-ui-handler";
-import { FormModalUiHandler } from "./form-modal-ui-handler";
-import type { ModalConfig } from "./modal-ui-handler";
-import { fixedInt } from "#app/utils/common";
-import { UiMode } from "#enums/ui-mode";
-import i18next from "i18next";
-import { addTextObject, TextStyle } from "./text";
-import { addWindow } from "./ui-theme";
-import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
+import type { ModalConfig } from "#ui/modal-ui-handler";
+import { addTextObject } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import { fixedInt } from "#utils/common";
+import i18next from "i18next";
 import JSZip from "jszip";
 
 interface BuildInteractableImageOpts {
@@ -18,7 +19,7 @@ interface BuildInteractableImageOpts {
   origin?: { x: number; y: number };
 }
 
-export default class LoginFormUiHandler extends FormModalUiHandler {
+export class LoginFormUiHandler extends FormModalUiHandler {
   private readonly ERR_USERNAME: string = "invalid username";
   private readonly ERR_PASSWORD: string = "invalid password";
   private readonly ERR_ACCOUNT_EXIST: string = "account doesn't exist";
@@ -48,7 +49,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   private buildExternalPartyContainer() {
     this.externalPartyContainer = globalScene.add.container(0, 0);
     this.externalPartyContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 12, globalScene.game.canvas.height / 12),
+      new Phaser.Geom.Rectangle(0, 0, globalScene.scaledCanvas.width / 2, globalScene.scaledCanvas.height / 2),
       Phaser.Geom.Rectangle.Contains,
     );
     this.externalPartyTitle = addTextObject(0, 4, "", TextStyle.SETTINGS_LABEL);

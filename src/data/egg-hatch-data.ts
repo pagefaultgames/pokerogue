@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type { DexEntry, StarterDataEntry } from "#app/system/game-data";
+import type { PlayerPokemon } from "#field/pokemon";
+import type { StarterDataEntry } from "#system/game-data";
+import type { DexEntry } from "#types/dex-data";
 
 /**
  * Stores data associated with a specific egg and the hatched pokemon
@@ -46,6 +47,7 @@ export class EggHatchData {
       caughtCount: currDexEntry.caughtCount,
       hatchedCount: currDexEntry.hatchedCount,
       ivs: [...currDexEntry.ivs],
+      ribbons: currDexEntry.ribbons,
     };
     this.starterDataEntryBeforeUpdate = {
       moveset: currStarterDataEntry.moveset,

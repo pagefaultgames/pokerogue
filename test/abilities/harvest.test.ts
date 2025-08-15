@@ -1,16 +1,16 @@
-import { BattlerIndex } from "#app/battle";
-import { PostTurnRestoreBerryAbAttr } from "#app/data/abilities/ability";
-import type Pokemon from "#app/field/pokemon";
-import { BerryModifier, PreserveBerryModifier } from "#app/modifier/modifier";
-import type { ModifierOverride } from "#app/modifier/modifier-type";
-import type { BooleanHolder } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
+import { PostTurnRestoreBerryAbAttr } from "#abilities/ability";
+import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BerryType } from "#enums/berry-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
-import GameManager from "#test/testUtils/gameManager";
+import type { Pokemon } from "#field/pokemon";
+import { BerryModifier, PreserveBerryModifier } from "#modifiers/modifier";
+import type { ModifierOverride } from "#modifiers/modifier-type";
+import { GameManager } from "#test/test-utils/game-manager";
+import type { BooleanHolder } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -19,7 +19,7 @@ describe("Abilities - Harvest", () => {
   let game: GameManager;
 
   const getPlayerBerries = () =>
-    game.scene.getModifiers(BerryModifier, true).filter(b => b.pokemonId === game.scene.getPlayerPokemon()?.id);
+    game.scene.getModifiers(BerryModifier, true).filter(b => b.pokemonId === game.field.getPlayerPokemon().id);
 
   /** Check whether the player's Modifiers contains the specified berries and nothing else. */
   function expectBerriesContaining(...berries: ModifierOverride[]): void {
@@ -43,32 +43,32 @@ describe("Abilities - Harvest", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH, Moves.NATURAL_GIFT, Moves.FALSE_SWIPE, Moves.GASTRO_ACID])
-      .ability(Abilities.HARVEST)
+      .moveset([MoveId.SPLASH, MoveId.NATURAL_GIFT, MoveId.FALSE_SWIPE, MoveId.GASTRO_ACID])
+      .ability(AbilityId.HARVEST)
       .startingLevel(100)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .statusActivation(false) // Since we're using nuzzle to proc both enigma and sitrus berries
       .weather(WeatherType.SUNNY) // guaranteed recovery
       .enemyLevel(1)
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.SPLASH, Moves.NUZZLE, Moves.KNOCK_OFF, Moves.INCINERATE]);
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset([MoveId.SPLASH, MoveId.NUZZLE, MoveId.KNOCK_OFF, MoveId.INCINERATE]);
   });
 
   it("replenishes eaten berries", async () => {
     game.override.startingHeldItems([{ name: "BERRY", type: BerryType.LUM, count: 1 }]);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.NUZZLE);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.NUZZLE);
     await game.phaseInterceptor.to("BerryPhase");
     expect(getPlayerBerries()).toHaveLength(0);
-    expect(game.scene.getPlayerPokemon()?.battleData.berriesEaten).toHaveLength(1);
+    expect(game.field.getPlayerPokemon().battleData.berriesEaten).toHaveLength(1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expectBerriesContaining({ name: "BERRY", type: BerryType.LUM, count: 1 });
-    expect(game.scene.getPlayerPokemon()?.battleData.berriesEaten).toEqual([]);
+    expect(game.field.getPlayerPokemon().battleData.berriesEaten).toEqual([]);
   });
 
   it("tracks berries eaten while disabled/not present", async () => {
@@ -79,15 +79,15 @@ describe("Abilities - Harvest", () => {
         { name: "BERRY", type: BerryType.ENIGMA, count: 2 },
         { name: "BERRY", type: BerryType.LUM, count: 2 },
       ])
-      .enemyAbility(Abilities.NEUTRALIZING_GAS);
-    await game.classicMode.startBattle([Species.MILOTIC]);
+      .enemyAbility(AbilityId.NEUTRALIZING_GAS);
+    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
 
-    const milotic = game.scene.getPlayerPokemon()!;
+    const milotic = game.field.getPlayerPokemon();
     expect(milotic).toBeDefined();
 
     // Chug a few berries without harvest (should get tracked)
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.NUZZLE);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.NUZZLE);
     await game.toNextTurn();
 
     expect(milotic.battleData.berriesEaten).toEqual(expect.arrayContaining([BerryType.ENIGMA, BerryType.LUM]));
@@ -95,10 +95,10 @@ describe("Abilities - Harvest", () => {
 
     // Give ourselves harvest and disable enemy neut gas,
     // but force our roll to fail so we don't accidentally recover anything
-    vi.spyOn(PostTurnRestoreBerryAbAttr.prototype, "canApplyPostTurn").mockReturnValueOnce(false);
-    game.override.ability(Abilities.HARVEST);
-    game.move.select(Moves.GASTRO_ACID);
-    await game.forceEnemyMove(Moves.NUZZLE);
+    vi.spyOn(PostTurnRestoreBerryAbAttr.prototype, "canApply").mockReturnValueOnce(false);
+    game.override.ability(AbilityId.HARVEST);
+    game.move.select(MoveId.GASTRO_ACID);
+    await game.move.selectEnemyMove(MoveId.NUZZLE);
 
     await game.toNextTurn();
 
@@ -108,8 +108,8 @@ describe("Abilities - Harvest", () => {
     expect(getPlayerBerries()).toHaveLength(0);
 
     // proc a high roll and we _should_ get a berry back!
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(milotic.battleData.berriesEaten).toHaveLength(3);
@@ -119,14 +119,14 @@ describe("Abilities - Harvest", () => {
   it("remembers berries eaten array across waves", async () => {
     game.override
       .startingHeldItems([{ name: "BERRY", type: BerryType.PETAYA, count: 2 }])
-      .ability(Abilities.BALL_FETCH); // don't actually need harvest for this test
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+      .ability(AbilityId.BALL_FETCH); // don't actually need harvest for this test
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
-    const regieleki = game.scene.getPlayerPokemon()!;
+    const regieleki = game.field.getPlayerPokemon();
     regieleki.hp = 1;
 
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -145,38 +145,38 @@ describe("Abilities - Harvest", () => {
   it("keeps harvested berries across reloads", async () => {
     game.override
       .startingHeldItems([{ name: "BERRY", type: BerryType.PETAYA, count: 1 }])
-      .moveset([Moves.SPLASH, Moves.EARTHQUAKE])
-      .enemyMoveset([Moves.SUPER_FANG, Moves.HEAL_PULSE])
-      .enemyAbility(Abilities.COMPOUND_EYES);
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+      .moveset([MoveId.SPLASH, MoveId.EARTHQUAKE])
+      .enemyMoveset([MoveId.SUPER_FANG, MoveId.HEAL_PULSE])
+      .enemyAbility(AbilityId.COMPOUND_EYES);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
-    const regieleki = game.scene.getPlayerPokemon()!;
+    const regieleki = game.field.getPlayerPokemon();
     regieleki.hp = regieleki.getMaxHp() / 4 + 1;
 
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SUPER_FANG);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SUPER_FANG);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     // ate 1 berry and recovered it
     expect(regieleki.battleData.berriesEaten).toEqual([]);
     expect(getPlayerBerries()).toEqual([expect.objectContaining({ berryType: BerryType.PETAYA, stackCount: 1 })]);
-    expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.SPATK)).toBe(1);
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.SPATK)).toBe(1);
 
     // heal up so harvest doesn't proc and kill enemy
-    game.move.select(Moves.EARTHQUAKE);
-    await game.forceEnemyMove(Moves.HEAL_PULSE);
+    game.move.select(MoveId.EARTHQUAKE);
+    await game.move.selectEnemyMove(MoveId.HEAL_PULSE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
     expectBerriesContaining({ name: "BERRY", count: 1, type: BerryType.PETAYA });
-    expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.SPATK)).toBe(1);
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.SPATK)).toBe(1);
 
     await game.reload.reloadSession();
 
     expect(regieleki.battleData.berriesEaten).toEqual([]);
     expectBerriesContaining({ name: "BERRY", count: 1, type: BerryType.PETAYA });
-    expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.SPATK)).toBe(1);
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.SPATK)).toBe(1);
   });
 
   it("cannot restore capped berries", async () => {
@@ -185,13 +185,13 @@ describe("Abilities - Harvest", () => {
       { name: "BERRY", type: BerryType.STARF, count: 2 },
     ];
     game.override.startingHeldItems(initBerries);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const feebas = game.scene.getPlayerPokemon()!;
+    const feebas = game.field.getPlayerPokemon();
     feebas.battleData.berriesEaten = [BerryType.LUM, BerryType.STARF];
 
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
     // Force RNG roll to hit the first berry we find that matches.
@@ -213,13 +213,13 @@ describe("Abilities - Harvest", () => {
       { name: "BERRY", type: BerryType.STARF, count: 3 },
     ];
     game.override.startingHeldItems(initBerries);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     player.battleData.berriesEaten = [BerryType.LUM, BerryType.STARF];
 
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expectBerriesContaining(...initBerries);
@@ -228,51 +228,51 @@ describe("Abilities - Harvest", () => {
   describe("move/ability interactions", () => {
     it("cannot restore incinerated berries", async () => {
       game.override.startingHeldItems([{ name: "BERRY", type: BerryType.STARF, count: 3 }]);
-      await game.classicMode.startBattle([Species.FEEBAS]);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      game.move.select(Moves.SPLASH);
-      await game.forceEnemyMove(Moves.INCINERATE);
+      game.move.select(MoveId.SPLASH);
+      await game.move.selectEnemyMove(MoveId.INCINERATE);
       await game.phaseInterceptor.to("TurnEndPhase");
 
-      expect(game.scene.getPlayerPokemon()?.battleData.berriesEaten).toEqual([]);
+      expect(game.field.getPlayerPokemon().battleData.berriesEaten).toEqual([]);
     });
 
     it("cannot restore knocked off berries", async () => {
       game.override.startingHeldItems([{ name: "BERRY", type: BerryType.STARF, count: 3 }]);
-      await game.classicMode.startBattle([Species.FEEBAS]);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      game.move.select(Moves.SPLASH);
-      await game.forceEnemyMove(Moves.KNOCK_OFF);
+      game.move.select(MoveId.SPLASH);
+      await game.move.selectEnemyMove(MoveId.KNOCK_OFF);
       await game.phaseInterceptor.to("TurnEndPhase");
 
-      expect(game.scene.getPlayerPokemon()?.battleData.berriesEaten).toEqual([]);
+      expect(game.field.getPlayerPokemon().battleData.berriesEaten).toEqual([]);
     });
 
     it("can restore berries eaten by Teatime", async () => {
       const initBerries: ModifierOverride[] = [{ name: "BERRY", type: BerryType.STARF, count: 1 }];
-      game.override.startingHeldItems(initBerries).enemyMoveset(Moves.TEATIME);
-      await game.classicMode.startBattle([Species.FEEBAS]);
+      game.override.startingHeldItems(initBerries).enemyMoveset(MoveId.TEATIME);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
       // nom nom the berr berr yay yay
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.phaseInterceptor.to("TurnEndPhase");
 
-      expect(game.scene.getPlayerPokemon()?.battleData.berriesEaten).toEqual([]);
+      expect(game.field.getPlayerPokemon().battleData.berriesEaten).toEqual([]);
       expectBerriesContaining(...initBerries);
     });
 
     it("cannot restore Plucked berries for either side", async () => {
       const initBerries: ModifierOverride[] = [{ name: "BERRY", type: BerryType.PETAYA, count: 1 }];
-      game.override.startingHeldItems(initBerries).enemyAbility(Abilities.HARVEST).enemyMoveset(Moves.PLUCK);
-      await game.classicMode.startBattle([Species.FEEBAS]);
+      game.override.startingHeldItems(initBerries).enemyAbility(AbilityId.HARVEST).enemyMoveset(MoveId.PLUCK);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
       // gobble gobble gobble
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.phaseInterceptor.to("BerryPhase");
 
       // pluck triggers harvest for neither side
-      expect(game.scene.getPlayerPokemon()?.battleData.berriesEaten).toEqual([]);
-      expect(game.scene.getEnemyPokemon()?.battleData.berriesEaten).toEqual([]);
+      expect(game.field.getPlayerPokemon().battleData.berriesEaten).toEqual([]);
+      expect(game.field.getEnemyPokemon().battleData.berriesEaten).toEqual([]);
       expect(getPlayerBerries()).toEqual([]);
     });
 
@@ -287,28 +287,28 @@ describe("Abilities - Harvest", () => {
 
       const initBerries: ModifierOverride[] = [{ name: "BERRY", type: BerryType.PETAYA, count: 1 }];
       game.override.startingHeldItems(initBerries).startingModifier([{ name: "BERRY_POUCH", count: 1 }]);
-      await game.classicMode.startBattle([Species.FEEBAS]);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.phaseInterceptor.to("TurnEndPhase", false);
 
       // won't trigger harvest since we didn't lose the berry (it just doesn't ever add it to the array)
-      expect(game.scene.getPlayerPokemon()?.battleData.berriesEaten).toEqual([]);
+      expect(game.field.getPlayerPokemon().battleData.berriesEaten).toEqual([]);
       expectBerriesContaining(...initBerries);
     });
 
     it("can restore stolen berries", async () => {
       const initBerries: ModifierOverride[] = [{ name: "BERRY", type: BerryType.SITRUS, count: 1 }];
-      game.override.enemyHeldItems(initBerries).passiveAbility(Abilities.MAGICIAN).hasPassiveAbility(true);
-      await game.classicMode.startBattle([Species.MEOWSCARADA]);
+      game.override.enemyHeldItems(initBerries).passiveAbility(AbilityId.MAGICIAN).hasPassiveAbility(true);
+      await game.classicMode.startBattle([SpeciesId.MEOWSCARADA]);
 
       // pre damage
-      const player = game.scene.getPlayerPokemon()!;
+      const player = game.field.getPlayerPokemon();
       player.hp = 1;
 
       // steal a sitrus and immediately consume it
-      game.move.select(Moves.FALSE_SWIPE);
-      await game.forceEnemyMove(Moves.SPLASH);
+      game.move.select(MoveId.FALSE_SWIPE);
+      await game.move.selectEnemyMove(MoveId.SPLASH);
       await game.phaseInterceptor.to("BerryPhase");
       expect(player.battleData.berriesEaten).toEqual([BerryType.SITRUS]);
 
@@ -320,13 +320,13 @@ describe("Abilities - Harvest", () => {
 
     // TODO: Enable once fling actually works...???
     it.todo("can restore berries flung at user", async () => {
-      game.override.enemyHeldItems([{ name: "BERRY", type: BerryType.STARF, count: 1 }]).enemyMoveset(Moves.FLING);
-      await game.classicMode.startBattle([Species.FEEBAS]);
+      game.override.enemyHeldItems([{ name: "BERRY", type: BerryType.STARF, count: 1 }]).enemyMoveset(MoveId.FLING);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.phaseInterceptor.to("TurnEndPhase");
 
-      expect(game.scene.getPlayerPokemon()?.battleData.berriesEaten).toBe([]);
+      expect(game.field.getPlayerPokemon().battleData.berriesEaten).toBe([]);
       expect(getPlayerBerries()).toEqual([]);
     });
 
@@ -334,12 +334,12 @@ describe("Abilities - Harvest", () => {
     it.todo("can restore berries consumed via Natural Gift", async () => {
       const initBerries: ModifierOverride[] = [{ name: "BERRY", type: BerryType.STARF, count: 1 }];
       game.override.startingHeldItems(initBerries);
-      await game.classicMode.startBattle([Species.FEEBAS]);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-      game.move.select(Moves.NATURAL_GIFT);
+      game.move.select(MoveId.NATURAL_GIFT);
       await game.phaseInterceptor.to("TurnEndPhase");
 
-      expect(game.scene.getPlayerPokemon()?.battleData.berriesEaten).toHaveLength(0);
+      expect(game.field.getPlayerPokemon().battleData.berriesEaten).toHaveLength(0);
       expectBerriesContaining(...initBerries);
     });
   });

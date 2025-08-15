@@ -1,3 +1,13 @@
+import type { ArenaTagTypeMap } from "#data/arena-tag";
+import type { NonSerializableArenaTagType, SerializableArenaTagType } from "#types/arena-tags";
+
+/**
+ * Enum representing all different types of {@linkcode ArenaTag}s.
+ * @privateRemarks
+ * ⚠️ When modifying the fields in this enum, ensure that:
+ * - The entry is added to / removed from {@linkcode ArenaTagTypeMap} 
+ * - The tag is added to / removed from {@linkcode NonSerializableArenaTagType} or {@linkcode SerializableArenaTagType}
+*/
 export enum ArenaTagType {
   NONE = "NONE",
   MUD_SPORT = "MUD_SPORT",
@@ -5,9 +15,6 @@ export enum ArenaTagType {
   SPIKES = "SPIKES",
   TOXIC_SPIKES = "TOXIC_SPIKES",
   MIST = "MIST",
-  FUTURE_SIGHT = "FUTURE_SIGHT",
-  DOOM_DESIRE = "DOOM_DESIRE",
-  WISH = "WISH",
   STEALTH_ROCK = "STEALTH_ROCK",
   STICKY_WEB = "STICKY_WEB",
   TRICK_ROOM = "TRICK_ROOM",

@@ -1,14 +1,14 @@
-import { Button } from "#app/enums/buttons";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
-import { CommandPhase } from "#app/phases/command-phase";
-import FightUiHandler from "#app/ui/fight-ui-handler";
+import { Button } from "#enums/buttons";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import GameManager from "#test/testUtils/gameManager";
+import { CommandPhase } from "#phases/command-phase";
+import { GameManager } from "#test/test-utils/game-manager";
+import type { MockText } from "#test/test-utils/mocks/mocks-container/mock-text";
+import { FightUiHandler } from "#ui/fight-ui-handler";
+import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import type MockText from "#test/testUtils/mocks/mocksContainer/mockText";
-import i18next from "i18next";
 
 describe("UI - Type Hints", () => {
   let phaserGame: Phaser.Game;
@@ -27,7 +27,7 @@ describe("UI - Type Hints", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     game.settings.typeHints(true); //activate type hints
-    game.override.battleStyle("single").startingLevel(100).startingWave(1).enemyMoveset(Moves.SPLASH);
+    game.override.battleStyle("single").startingLevel(100).startingWave(1).enemyMoveset(MoveId.SPLASH);
   });
 
   it("check immunity color", async () => {
@@ -35,12 +35,12 @@ describe("UI - Type Hints", () => {
       .battleStyle("single")
       .startingLevel(100)
       .startingWave(1)
-      .enemySpecies(Species.FLORGES)
-      .enemyMoveset(Moves.SPLASH)
-      .moveset([Moves.DRAGON_CLAW]);
+      .enemySpecies(SpeciesId.FLORGES)
+      .enemyMoveset(MoveId.SPLASH)
+      .moveset([MoveId.DRAGON_CLAW]);
     game.settings.typeHints(true); //activate type hints
 
-    await game.classicMode.startBattle([Species.RAYQUAZA]);
+    await game.classicMode.startBattle([SpeciesId.RAYQUAZA]);
 
     game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       const { ui } = game.scene;
@@ -63,9 +63,9 @@ describe("UI - Type Hints", () => {
   });
 
   it("check status move color", async () => {
-    game.override.enemySpecies(Species.FLORGES).moveset([Moves.GROWL]);
+    game.override.enemySpecies(SpeciesId.FLORGES).moveset([MoveId.GROWL]);
 
-    await game.classicMode.startBattle([Species.RAYQUAZA]);
+    await game.classicMode.startBattle([SpeciesId.RAYQUAZA]);
 
     game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       const { ui } = game.scene;
@@ -89,18 +89,18 @@ describe("UI - Type Hints", () => {
 
   it("should show the proper hint for a move in doubles after one of the enemy pokemon flees", async () => {
     game.override
-      .enemySpecies(Species.ABRA)
-      .moveset([Moves.SPLASH, Moves.SHADOW_BALL, Moves.SOAK])
-      .enemyMoveset([Moves.SPLASH, Moves.TELEPORT])
+      .enemySpecies(SpeciesId.ABRA)
+      .moveset([MoveId.SPLASH, MoveId.SHADOW_BALL, MoveId.SOAK])
+      .enemyMoveset([MoveId.SPLASH, MoveId.TELEPORT])
       .battleStyle("double");
 
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
-    game.move.select(Moves.SPLASH);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
+    game.move.select(MoveId.SPLASH);
     // Use soak to change type of remaining abra to water
-    game.move.select(Moves.SOAK, 1);
+    game.move.select(MoveId.SOAK, 1);
 
-    await game.forceEnemyMove(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.TELEPORT);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.TELEPORT);
     await game.toNextTurn();
 
     game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {

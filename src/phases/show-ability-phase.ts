@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
-import { PokemonPhase } from "./pokemon-phase";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
+import type { BattlerIndex } from "#enums/battler-index";
+import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class ShowAbilityPhase extends PokemonPhase {
+  public readonly phaseName = "ShowAbilityPhase";
   private passive: boolean;
   private pokemonName: string;
   private abilityName: string;
@@ -35,8 +35,8 @@ export class ShowAbilityPhase extends PokemonPhase {
 
     // If the bar is already out, hide it before showing the new one
     if (globalScene.abilityBar.isVisible()) {
-      globalScene.unshiftPhase(new HideAbilityPhase());
-      globalScene.unshiftPhase(new ShowAbilityPhase(this.battlerIndex, this.passive));
+      globalScene.phaseManager.unshiftNew("HideAbilityPhase");
+      globalScene.phaseManager.unshiftNew("ShowAbilityPhase", this.battlerIndex, this.passive);
       return this.end();
     }
 

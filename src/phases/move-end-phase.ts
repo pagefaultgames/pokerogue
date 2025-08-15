@@ -1,11 +1,12 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { BattlerTagLapseType } from "#app/data/battler-tags";
-import { PokemonPhase } from "./pokemon-phase";
-import type { BattlerIndex } from "#app/battle";
-import { applyPostSummonAbAttrs, PostSummonRemoveEffectAbAttr } from "#app/data/abilities/ability";
-import type Pokemon from "#app/field/pokemon";
+import type { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
+import type { Pokemon } from "#field/pokemon";
+import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class MoveEndPhase extends PokemonPhase {
+  public readonly phaseName = "MoveEndPhase";
   private wasFollowUp: boolean;
 
   /** Targets from the preceding MovePhase */
@@ -24,12 +25,12 @@ export class MoveEndPhase extends PokemonPhase {
     if (!this.wasFollowUp && pokemon?.isActive(true)) {
       pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
     }
-    globalScene.arena.setIgnoreAbilities(false);
 
     // Remove effects which were set on a Pokemon which removes them on summon (i.e. via Mold Breaker)
+    globalScene.arena.setIgnoreAbilities(false);
     for (const target of this.targets) {
       if (target) {
-        applyPostSummonAbAttrs(PostSummonRemoveEffectAbAttr, target);
+        applyAbAttrs("PostSummonRemoveEffectAbAttr", { pokemon: target });
       }
     }
 
