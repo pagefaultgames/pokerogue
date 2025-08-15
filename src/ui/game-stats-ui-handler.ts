@@ -1,7 +1,9 @@
+import { loggedInUser } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
 import { Button } from "#enums/buttons";
 import { DexAttr } from "#enums/dex-attr";
+import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import type { GameData } from "#system/game-data";
@@ -316,7 +318,19 @@ export class GameStatsUiHandler extends UiHandler {
 
     const headerBg = addWindow(0, 0, sWidth - 2, 24).setOrigin(0);
 
-    const headerText = addTextObject(0, 0, i18next.t("gameStatsUiHandler:stats"), TextStyle.HEADER_LABEL)
+    const usernameReplacement =
+      globalScene.gameData.gender === PlayerGender.FEMALE
+        ? i18next.t("trainerNames:player_f")
+        : i18next.t("trainerNames:player_m");
+
+    const displayName = !globalScene.hideUsername ? (loggedInUser?.username ?? "") : usernameReplacement;
+
+    const headerText = addTextObject(
+      0,
+      0,
+      `${i18next.t("gameStatsUiHandler:statsFor", { username: displayName })}`,
+      TextStyle.HEADER_LABEL,
+    )
       .setOrigin(0)
       .setPositionRelative(headerBg, 8, 4);
 
