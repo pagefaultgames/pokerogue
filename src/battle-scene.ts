@@ -104,6 +104,7 @@ import {
   getLuckString,
   getLuckTextTint,
   getPartyLuckValue,
+  type ModifierType,
   PokemonHeldItemModifierType,
 } from "#modifiers/modifier-type";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
@@ -242,8 +243,8 @@ export class BattleScene extends SceneBase {
   public battleStyle: BattleStyle = BattleStyle.SWITCH;
   /**
    * Defines whether or not to show type effectiveness hints
-   * - true: No hints
-   * - false: Show hints for moves
+   * - true: Show hints for moves
+   * - false: No hints
    */
   public typeHints = false;
 
@@ -380,9 +381,21 @@ export class BattleScene extends SceneBase {
       };
     }
 
-    populateAnims();
+    /**
+     * These moves serve as fallback animations for other moves without loaded animations, and
+     * must be loaded prior to game start.
+     */
+    const defaultMoves = [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE];
 
-    await this.initVariantData();
+    await Promise.all([
+      populateAnims(),
+      this.initVariantData(),
+      initCommonAnims().then(() => loadCommonAnimAssets(true)),
+      Promise.all(defaultMoves.map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(defaultMoves, true)),
+      this.initStarterColors(),
+    ]).catch(reason => {
+      throw new Error(`Unexpected error during BattleScene preLoad!\nReason: ${reason}`);
+    });
   }
 
   create() {
@@ -466,8 +479,8 @@ export class BattleScene extends SceneBase {
 
     this.uiContainer = uiContainer;
 
-    const overlayWidth = this.game.canvas.width / 6;
-    const overlayHeight = this.game.canvas.height / 6 - 48;
+    const overlayWidth = this.scaledCanvas.width;
+    const overlayHeight = this.scaledCanvas.height - 48;
     this.fieldOverlay = this.add.rectangle(0, overlayHeight * -1 - 48, overlayWidth, overlayHeight, 0x424242);
     this.fieldOverlay.setName("rect-field-overlay");
     this.fieldOverlay.setOrigin(0, 0);
@@ -525,34 +538,29 @@ export class BattleScene extends SceneBase {
     this.candyBar.setup();
     this.fieldUI.add(this.candyBar);
 
-    this.biomeWaveText = addTextObject(
-      this.game.canvas.width / 6 - 2,
-      0,
-      startingWave.toString(),
-      TextStyle.BATTLE_INFO,
-    );
+    this.biomeWaveText = addTextObject(this.scaledCanvas.width - 2, 0, startingWave.toString(), TextStyle.BATTLE_INFO);
     this.biomeWaveText.setName("text-biome-wave");
     this.biomeWaveText.setOrigin(1, 0.5);
     this.fieldUI.add(this.biomeWaveText);
 
-    this.moneyText = addTextObject(this.game.canvas.width / 6 - 2, 0, "", TextStyle.MONEY);
+    this.moneyText = addTextObject(this.scaledCanvas.width - 2, 0, "", TextStyle.MONEY);
     this.moneyText.setName("text-money");
     this.moneyText.setOrigin(1, 0.5);
     this.fieldUI.add(this.moneyText);
 
-    this.scoreText = addTextObject(this.game.canvas.width / 6 - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
+    this.scoreText = addTextObject(this.scaledCanvas.width - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
     this.scoreText.setName("text-score");
     this.scoreText.setOrigin(1, 0.5);
     this.fieldUI.add(this.scoreText);
 
-    this.luckText = addTextObject(this.game.canvas.width / 6 - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
+    this.luckText = addTextObject(this.scaledCanvas.width - 2, 0, "", TextStyle.PARTY, { fontSize: "54px" });
     this.luckText.setName("text-luck");
     this.luckText.setOrigin(1, 0.5);
     this.luckText.setVisible(false);
     this.fieldUI.add(this.luckText);
 
     this.luckLabelText = addTextObject(
-      this.game.canvas.width / 6 - 2,
+      this.scaledCanvas.width - 2,
       0,
       i18next.t("common:luckIndicator"),
       TextStyle.PARTY,
@@ -574,17 +582,12 @@ export class BattleScene extends SceneBase {
     this.spriteSparkleHandler = new PokemonSpriteSparkleHandler();
     this.spriteSparkleHandler.setup();
 
-    this.pokemonInfoContainer = new PokemonInfoContainer(
-      this.game.canvas.width / 6 + 52,
-      -(this.game.canvas.height / 6) + 66,
-    );
+    this.pokemonInfoContainer = new PokemonInfoContainer(this.scaledCanvas.width + 52, -this.scaledCanvas.height + 66);
     this.pokemonInfoContainer.setup();
 
     this.fieldUI.add(this.pokemonInfoContainer);
 
     this.party = [];
-
-    const loadPokemonAssets = [];
 
     this.arenaPlayer = new ArenaBase(true);
     this.arenaPlayer.setName("arena-player");
@@ -640,26 +643,14 @@ export class BattleScene extends SceneBase {
 
     this.reset(false, false, true);
 
+    // Initialize UI-related aspects and then start the login phase.
     const ui = new UI();
     this.uiContainer.add(ui);
-
     this.ui = ui;
-
     ui.setup();
 
-    const defaultMoves = [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE];
-
-    Promise.all([
-      Promise.all(loadPokemonAssets),
-      initCommonAnims().then(() => loadCommonAnimAssets(true)),
-      Promise.all(
-        [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE].map(m => initMoveAnim(m)),
-      ).then(() => loadMoveAnimAssets(defaultMoves, true)),
-      this.initStarterColors(),
-    ]).then(() => {
-      this.phaseManager.toTitleScreen(true);
-      this.phaseManager.shiftPhase();
-    });
+    this.phaseManager.toTitleScreen(true);
+    this.phaseManager.shiftPhase();
   }
 
   initSession(): void {
@@ -953,17 +944,17 @@ export class BattleScene extends SceneBase {
     dataSource?: PokemonData,
     postProcess?: (enemyPokemon: EnemyPokemon) => void,
   ): EnemyPokemon {
-    if (Overrides.OPP_LEVEL_OVERRIDE > 0) {
-      level = Overrides.OPP_LEVEL_OVERRIDE;
+    if (Overrides.ENEMY_LEVEL_OVERRIDE > 0) {
+      level = Overrides.ENEMY_LEVEL_OVERRIDE;
     }
-    if (Overrides.OPP_SPECIES_OVERRIDE) {
-      species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
+    if (Overrides.ENEMY_SPECIES_OVERRIDE) {
+      species = getPokemonSpecies(Overrides.ENEMY_SPECIES_OVERRIDE);
       // The fact that a Pokemon is a boss or not can change based on its Species and level
       boss = this.getEncounterBossSegments(this.currentBattle.waveIndex, level, species) > 1;
     }
 
     const pokemon = new EnemyPokemon(species, level, trainerSlot, boss, shinyLock, dataSource);
-    if (Overrides.OPP_FUSION_OVERRIDE) {
+    if (Overrides.ENEMY_FUSION_OVERRIDE) {
       pokemon.generateFusionSpecies();
     }
 
@@ -1213,7 +1204,9 @@ export class BattleScene extends SceneBase {
     this.updateScoreText();
     this.scoreText.setVisible(false);
 
-    [this.luckLabelText, this.luckText].map(t => t.setVisible(false));
+    [this.luckLabelText, this.luckText].forEach(t => {
+      t.setVisible(false);
+    });
 
     this.newArena(Overrides.STARTING_BIOME_OVERRIDE || BiomeId.TOWN);
 
@@ -1247,8 +1240,7 @@ export class BattleScene extends SceneBase {
             Object.values(mp)
               .flat()
               .map(mt => mt.modifierType)
-              .filter(mt => "localize" in mt)
-              .map(lpb => lpb as unknown as Localizable),
+              .filter((mt): mt is ModifierType & Localizable => "localize" in mt && typeof mt.localize === "function"),
           ),
       ];
       for (const item of localizable) {
@@ -1523,8 +1515,8 @@ export class BattleScene extends SceneBase {
     return this.currentBattle;
   }
 
-  newArena(biome: BiomeId, playerFaints?: number): Arena {
-    this.arena = new Arena(biome, BiomeId[biome].toLowerCase(), playerFaints);
+  newArena(biome: BiomeId, playerFaints = 0): Arena {
+    this.arena = new Arena(biome, playerFaints);
     this.eventTarget.dispatchEvent(new NewArenaEvent());
 
     this.arenaBg.pipelineData = {
@@ -1774,10 +1766,10 @@ export class BattleScene extends SceneBase {
   }
 
   getEncounterBossSegments(waveIndex: number, level: number, species?: PokemonSpecies, forceBoss = false): number {
-    if (Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE > 1) {
-      return Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE;
+    if (Overrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE > 1) {
+      return Overrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE;
     }
-    if (Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE === 1) {
+    if (Overrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE === 1) {
       // The rest of the code expects to be returned 0 and not 1 if the enemy is not a boss
       return 0;
     }
@@ -2056,7 +2048,7 @@ export class BattleScene extends SceneBase {
     } else {
       this.luckText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
     }
-    this.luckLabelText.setX(this.game.canvas.width / 6 - 2 - (this.luckText.displayWidth + 2));
+    this.luckLabelText.setX(this.scaledCanvas.width - 2 - (this.luckText.displayWidth + 2));
     this.tweens.add({
       targets: labels,
       duration: duration,
@@ -2090,7 +2082,7 @@ export class BattleScene extends SceneBase {
     const enemyModifierCount = this.enemyModifiers.filter(m => m.isIconVisible()).length;
     const biomeWaveTextHeight = this.biomeWaveText.getBottomLeft().y - this.biomeWaveText.getTopLeft().y;
     this.biomeWaveText.setY(
-      -(this.game.canvas.height / 6) +
+      -this.scaledCanvas.height +
         (enemyModifierCount ? (enemyModifierCount <= 12 ? 15 : 24) : 0) +
         biomeWaveTextHeight / 2,
     );
@@ -2102,7 +2094,7 @@ export class BattleScene extends SceneBase {
     const offsetY = (this.scoreText.visible ? this.scoreText : this.moneyText).y + 15;
     this.partyExpBar.setY(offsetY);
     this.candyBar.setY(offsetY + 15);
-    this.ui?.achvBar.setY(this.game.canvas.height / 6 + offsetY);
+    this.ui?.achvBar.setY(this.scaledCanvas.height + offsetY);
   }
 
   /**
@@ -2721,7 +2713,9 @@ export class BattleScene extends SceneBase {
           }
         }
 
-        this.party.map(p => p.updateInfo(instant));
+        this.party.forEach(p => {
+          p.updateInfo(instant);
+        });
       } else {
         const args = [this];
         if (modifier.shouldApply(...args)) {
@@ -3530,6 +3524,7 @@ export class BattleScene extends SceneBase {
       this.gameMode.hasMysteryEncounters &&
       battleType === BattleType.WILD &&
       !this.gameMode.isBoss(waveIndex) &&
+      waveIndex % 10 !== 1 &&
       waveIndex < highestMysteryEncounterWave &&
       waveIndex > lowestMysteryEncounterWave
     );

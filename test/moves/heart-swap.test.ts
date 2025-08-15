@@ -36,8 +36,8 @@ describe("Moves - Heart Swap", () => {
   it("should swap all of the user's stat stages with the target's", async () => {
     await game.classicMode.startBattle([SpeciesId.MANAPHY]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     vi.spyOn(enemy.summonData, "statStages", "get").mockReturnValue(new Array(BATTLE_STATS.length).fill(1));
 
