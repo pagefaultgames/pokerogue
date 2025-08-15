@@ -27,13 +27,7 @@ import { UiInputs } from "#app/ui-inputs";
 import { biomeDepths, getBiomeName } from "#balance/biomes";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
-import {
-  initCommonAnims,
-  initMoveAnim,
-  loadCommonAnimAssets,
-  loadMoveAnimAssets,
-  populateAnims,
-} from "#data/battle-anims";
+import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets } from "#data/battle-anims";
 import { allAbilities, allMoves, allSpecies, modifierTypes } from "#data/data-lists";
 import { battleSpecDialogue } from "#data/dialogue";
 import type { SpeciesFormChangeTrigger } from "#data/form-change-triggers";
@@ -388,7 +382,6 @@ export class BattleScene extends SceneBase {
     const defaultMoves = [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE];
 
     await Promise.all([
-      populateAnims(),
       this.initVariantData(),
       initCommonAnims().then(() => loadCommonAnimAssets(true)),
       Promise.all(defaultMoves.map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(defaultMoves, true)),
