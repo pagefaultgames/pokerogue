@@ -376,7 +376,6 @@ export class CommandPhase extends FieldPhase {
    * - It is a trainer battle
    * - The player is in the {@linkcode BiomeId.END | End} biome and
    *   - it is not classic mode; or
-   *   - the fresh start challenge is active; or
    *   - the player has not caught the target before and the player is still missing more than one starter
    * - The player is in a mystery encounter that disallows catching the pokemon
    * @returns Whether a pokeball can be thrown
@@ -385,19 +384,25 @@ export class CommandPhase extends FieldPhase {
     const { arena, currentBattle, gameData, gameMode } = globalScene;
     const { battleType } = currentBattle;
     const { biomeType } = arena;
-    const { isClassic } = gameMode;
+    const { isClassic, isEndless, isDaily } = gameMode;
     const { dexData } = gameData;
+
+    const isClassicFinalBoss = globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex);
+    const isEndlessMinorBoss = globalScene.gameMode.isEndlessMinorBoss(globalScene.currentBattle.waveIndex);
 
     const someUncaughtSpeciesOnField = globalScene
       .getEnemyField()
       .some(p => p.isActive() && !dexData[p.species.speciesId].caughtAttr);
     const missingMultipleStarters =
       gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1;
-    if (
-      biomeType === BiomeId.END &&
-      (!isClassic || gameMode.isFreshStartChallenge() || (someUncaughtSpeciesOnField && missingMultipleStarters))
-    ) {
-      this.queueShowText("battle:noPokeballForce");
+    if (biomeType === BiomeId.END) {
+      if ((isClassic && !isClassicFinalBoss && someUncaughtSpeciesOnField) || (isEndless && !isEndlessMinorBoss)) {
+        // Uncatchable paradox mons in classic and endless
+        this.queueShowText("battle:noPokeballForce");
+      } else if ((isClassic && missingMultipleStarters) || (isEndless && isEndlessMinorBoss) || isDaily) {
+        // Uncatchable final boss in classic and endless
+        this.queueShowText("battle:noPokeballForceFinalBoss");
+      }
     } else if (battleType === BattleType.TRAINER) {
       this.queueShowText("battle:noPokeballTrainer");
     } else if (currentBattle.isBattleMysteryEncounter() && !currentBattle.mysteryEncounter!.catchAllowed) {
@@ -441,10 +446,13 @@ export class CommandPhase extends FieldPhase {
         targetPokemon?.isBoss() &&
         targetPokemon?.bossSegmentIndex >= 1 &&
         // TODO: Decouple this hardcoded exception for wonder guard and just check the target...
-        !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true) &&
-        (cursor < PokeballType.MASTER_BALL || restrictMasterBall)
+        !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true)
       ) {
-        this.queueShowText("battle:noPokeballStrong");
+        if (restrictMasterBall) {
+          this.queueShowText("battle:noPokeballStrongFinalBossCatchable");
+        } else if (cursor < PokeballType.MASTER_BALL) {
+          this.queueShowText("battle:noPokeballStrong");
+        }
         return false;
       }
 
