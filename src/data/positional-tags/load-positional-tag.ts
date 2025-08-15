@@ -42,7 +42,7 @@ const posTagConstructorMap = Object.freeze({
   [PositionalTagType.WISH]: WishTag,
 }) satisfies {
   // NB: This `satisfies` block ensures that all tag types have corresponding entries in the map.
-  [k in PositionalTagType]: Constructor<PositionalTag & { tagType: k }>;
+  [k in PositionalTagType]: Constructor<PositionalTag & { readonly tagType: k }>;
 };
 
 /** Type mapping positional tag types to their constructors. */
@@ -59,11 +59,12 @@ type posTagParamMap = {
 };
 
 /**
- * Type mapping all positional tag types to their constructors' parameters, alongside the `tagType` selector.
+ * Type mapping all positional tag types to their constructors' parameters, alongside the `tagType` selector. \
  * Equivalent to their serialized representations.
+ * @interface
  */
 export type serializedPosTagMap = {
-  [k in PositionalTagType]: posTagParamMap[k] & { tagType: k };
+  [k in PositionalTagType]: posTagParamMap[k] & Pick<posTagInstanceMap[k], "tagType">;
 };
 
 /** Union type containing all serialized {@linkcode PositionalTag}s. */

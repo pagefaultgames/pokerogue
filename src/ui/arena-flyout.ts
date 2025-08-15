@@ -12,7 +12,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { FieldPosition } from "#enums/field-position";
 import { MoveId } from "#enums/move-id";
-import { PositionalTagType } from "#enums/positional-tag-type";
+import type { PositionalTagType } from "#enums/positional-tag-type";
 import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
 import type {
@@ -84,38 +84,6 @@ interface PositionalTagInfo {
 }
 
 // #endregion interfaces
-
-// #region String functions
-
-/**
- * Return the localized text for a given effect.
- * @param text - The raw text of the effect; assumed to be in `UPPER_SNAKE_CASE` from a reverse mapping.
- * @returns The localized text for the effect.
- */
-export function localizeEffectName(text: string): string {
-  const effectName = toCamelCase(text);
-  const i18nKey = `arenaFlyout:${effectName}`;
-  const resultName = i18next.t(i18nKey);
-  return resultName;
-}
-
-/**
- * Return the localized name of a given {@linkcode PositionalTag}.
- * @param tag - The raw serialized data for the given tag
- * @returns The localized text to be displayed on-screen.
- * @package
- */
-export function getPositionalTagDisplayName(tag: SerializedPositionalTag): string {
-  let tagName: string;
-  if ("sourceMove" in tag) {
-    // Delayed attacks will use the source move's name; other effects rely on type
-    tagName = MoveId[tag.sourceMove];
-  } else {
-    tagName = PositionalTagType[tag.tagType];
-  }
-
-  return localizeEffectName(tagName);
-}
 
 /**
  * Class to display and update the on-screen arena flyout.
@@ -330,7 +298,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    * @param event - The {@linkcode ArenaTagAddedEvent} having been emitted
    */
   private onArenaTagAdded(event: ArenaTagAddedEvent): void {
-    const name = localizeEffectName(ArenaTagType[event.tagType]);
+    const name = this.localizeEffectName(ArenaTagType[event.tagType]);
     // Ternary used to avoid unneeded find
     const existingTrapTag =
       event.trapLayers !== undefined
@@ -389,7 +357,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    * @param event - The {@linkcode PositionalTagAddedEvent} having been emitted
    */
   private onPositionalTagAdded(event: PositionalTagAddedEvent): void {
-    const name = getPositionalTagDisplayName(event.tag);
+    const name = this.getPositionalTagDisplayName(event.tag);
 
     this.positionalTags.push({
       name,
@@ -433,7 +401,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     }
 
     this.weatherInfo = {
-      name: localizeEffectName(WeatherType[event.weatherType]),
+      name: this.localizeEffectName(WeatherType[event.weatherType]),
       maxDuration: event.duration,
       duration: event.duration,
       weatherType: event.weatherType,
@@ -455,7 +423,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     }
 
     this.terrainInfo = {
-      name: localizeEffectName(TerrainType[event.terrainType]),
+      name: this.localizeEffectName(TerrainType[event.terrainType]),
       maxDuration: event.duration,
       duration: event.duration,
       terrainType: event.terrainType,
@@ -549,7 +517,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     }
 
     const targetPos = battlerIndexToFieldPosition(info.targetIndex);
-    const posText = localizeEffectName(FieldPosition[targetPos]);
+    const posText = this.localizeEffectName(FieldPosition[targetPos]);
 
     // Ex: "Future Sight  (Center, 2)"
     return `${info.name}  (${posText}, ${info.duration})\n`;
@@ -606,6 +574,39 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   }
 
   // # endregion Text display functions
+
+  // #region Utilities
+
+  /**
+   * Return the localized text for a given effect.
+   * @param text - The raw text of the effect; assumed to be in `UPPER_SNAKE_CASE` from a reverse mapping.
+   * @returns The localized text for the effect.
+   */
+  private localizeEffectName(text: string): string {
+    const effectName = toCamelCase(text);
+    const i18nKey = `arenaFlyout:${effectName}`;
+    const resultName = i18next.t(i18nKey);
+    return resultName;
+  }
+
+  /**
+   * Return the localized name of a given {@linkcode PositionalTag}.
+   * @param tag - The raw serialized data for the given tag
+   * @returns The localized text to be displayed on-screen.
+   */
+  private getPositionalTagDisplayName(tag: SerializedPositionalTag): string {
+    let tagName: string;
+    if ("sourceMove" in tag) {
+      // Delayed attacks will use the source move's name; other effects use type directly
+      tagName = MoveId[tag.sourceMove];
+    } else {
+      tagName = tag.tagType;
+    }
+
+    return this.localizeEffectName(tagName);
+  }
+
+  // #endregion Utility emthods
 }
 
 /**
@@ -614,22 +615,6 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
  * @returns The resultant field position.
  */
 function battlerIndexToFieldPosition(index: BattlerIndex): FieldPosition {
-  let pos: FieldPosition;
-  switch (index) {
-    case BattlerIndex.ATTACKER:
-      throw new Error("Cannot convert BattlerIndex.ATTACKER to a field position!");
-    case BattlerIndex.PLAYER:
-    case BattlerIndex.ENEMY:
-      pos = FieldPosition.LEFT;
-      break;
-    case BattlerIndex.PLAYER_2:
-    case BattlerIndex.ENEMY_2:
-      pos = FieldPosition.RIGHT;
-      break;
-  }
-  // In single battles, left positions become center
-  if (!globalScene.currentBattle.double && pos === FieldPosition.LEFT) {
-    pos = FieldPosition.CENTER;
-  }
+  const pos = globalScene.getField()[index]?.fieldPosition;
   return pos;
 }

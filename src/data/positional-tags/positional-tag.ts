@@ -7,7 +7,7 @@ import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
-import { PositionalTagType } from "#enums/positional-tag-type";
+import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { Pokemon } from "#field/pokemon";
 import i18next from "i18next";
 
@@ -30,7 +30,7 @@ export interface PositionalTagBaseArgs {
   /**
    * The {@linkcode BattlerIndex} targeted by this effect.
    */
-  targetIndex: BattlerIndex;
+  readonly targetIndex: BattlerIndex;
 }
 
 /**
@@ -39,7 +39,7 @@ export interface PositionalTagBaseArgs {
  * Multiple tags of the same kind can stack with one another, provided they are affecting different targets.
  */
 export abstract class PositionalTag implements PositionalTagBaseArgs {
-  /** This tag's {@linkcode PositionalTagType | type} */
+  /** This tag's {@linkcode PositionalTagType | type}. */
   public abstract readonly tagType: PositionalTagType;
   // These arguments have to be public to implement the interface, but are functionally private
   // outside this and the tag manager.
@@ -76,9 +76,9 @@ interface DelayedAttackArgs extends PositionalTagBaseArgs {
   /**
    * The {@linkcode Pokemon.id | PID} of the {@linkcode Pokemon} having created this effect.
    */
-  sourceId: number;
+  readonly sourceId: number;
   /** The {@linkcode MoveId} that created this attack. */
-  sourceMove: MoveId;
+  readonly sourceMove: MoveId;
 }
 
 /**
@@ -87,7 +87,7 @@ interface DelayedAttackArgs extends PositionalTagBaseArgs {
  * triggering against a certain slot after the turn count has elapsed.
  */
 export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs {
-  public override readonly tagType = PositionalTagType.DELAYED_ATTACK;
+  public declare readonly tagType: PositionalTagType.DELAYED_ATTACK;
   public readonly sourceMove: MoveId;
   public readonly sourceId: number;
 
@@ -133,16 +133,16 @@ export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs
 /** Interface containing arguments used to construct a {@linkcode WishTag}. */
 interface WishArgs extends PositionalTagBaseArgs {
   /** The amount of {@linkcode Stat.HP | HP} to heal; set to 50% of the user's max HP during move usage. */
-  healHp: number;
+  readonly healHp: number;
   /** The name of the {@linkcode Pokemon} having created the tag. */
-  pokemonName: string;
+  readonly pokemonName: string;
 }
 
 /**
  * Tag to implement {@linkcode MoveId.WISH | Wish}.
  */
 export class WishTag extends PositionalTag implements WishArgs {
-  public override readonly tagType = PositionalTagType.WISH;
+  public declare readonly tagType: PositionalTagType.WISH;
 
   public readonly pokemonName: string;
   public readonly healHp: number;
