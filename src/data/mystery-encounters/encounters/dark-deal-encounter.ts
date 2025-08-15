@@ -98,6 +98,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
   MysteryEncounterType.DARK_DEAL,
 )
   .withEncounterTier(MysteryEncounterTier.ROGUE)
+  .withDisallowedChallenges(Challenges.HARDCORE)
   .withIntroSpriteConfigs([
     {
       spriteKey: "dark_deal_scientist",

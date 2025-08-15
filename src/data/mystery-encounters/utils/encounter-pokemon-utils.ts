@@ -624,6 +624,8 @@ export async function catchPokemon(
   globalScene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
 
   return new Promise(resolve => {
+    const addStatus = new BooleanHolder(true);
+    applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
     const doPokemonCatchMenu = () => {
       const end = () => {
         // Ensure the pokemon is in the enemy party in all situations
@@ -656,9 +658,7 @@ export async function catchPokemon(
         }
       };
       Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
-        const addStatus = new BooleanHolder(true);
-        applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
-        if (!addStatus.value) {
+        if (!(isObtain || addStatus.value)) {
           removePokemon();
           end();
           return;
@@ -756,10 +756,16 @@ export async function catchPokemon(
     };
 
     if (showCatchObtainMessage) {
+      let catchMessage: string;
+      if (isObtain) {
+        catchMessage = "battle:pokemonObtained";
+      } else if (addStatus.value) {
+        catchMessage = "battle:pokemonCaught";
+      } else {
+        catchMessage = "battle:pokemonCaughtButChallenge";
+      }
       globalScene.ui.showText(
-        i18next.t(isObtain ? "battle:pokemonObtained" : "battle:pokemonCaught", {
-          pokemonName: pokemon.getNameToRender(),
-        }),
+        i18next.t(catchMessage, { pokemonName: pokemon.getNameToRender() }),
         null,
         doPokemonCatchMenu,
         0,
