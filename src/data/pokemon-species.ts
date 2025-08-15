@@ -880,7 +880,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
 
   localize(): void {
     this.name = i18next.t(`pokemon:${SpeciesId[this.speciesId].toLowerCase()}`);
-    this.category = i18next.t(`pokemonCategory:${SpeciesId[this.speciesId].toLowerCase()}_category`);
+    this.category = i18next.t(`pokemonCategory:${toCamelCase(SpeciesId[this.speciesId])}Category`);
   }
 
   getWildSpeciesForLevel(level: number, allowEvolving: boolean, isBoss: boolean, gameMode: GameMode): SpeciesId {
