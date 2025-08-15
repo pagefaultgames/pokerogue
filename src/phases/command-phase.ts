@@ -22,7 +22,7 @@ import type { MoveTargetSet } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
 import { FieldPhase } from "#phases/field-phase";
 import type { TurnMove } from "#types/turn-move";
-import { applyChallenges, isNuzlockeChallenge } from "#utils/challenge-utils";
+import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder } from "#utils/common";
 import i18next from "i18next";
 
@@ -429,7 +429,10 @@ export class CommandPhase extends FieldPhase {
       return false;
     }
 
-    const restrictMasterBall = isNuzlockeChallenge();
+    // Restricts use of Master Ball against final boss in challenges
+    const restrictMasterBall =
+      globalScene.gameMode.isChallenge &&
+      globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex);
 
     const numBallTypes = 5;
     if (cursor < numBallTypes) {
