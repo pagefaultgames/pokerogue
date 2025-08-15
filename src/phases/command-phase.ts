@@ -22,7 +22,7 @@ import type { MoveTargetSet } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
 import { FieldPhase } from "#phases/field-phase";
 import type { TurnMove } from "#types/turn-move";
-import { applyChallenges } from "#utils/challenge-utils";
+import { applyChallenges, isNuzlockeChallenge } from "#utils/challenge-utils";
 import { BooleanHolder } from "#utils/common";
 import i18next from "i18next";
 
@@ -429,6 +429,8 @@ export class CommandPhase extends FieldPhase {
       return false;
     }
 
+    const restrictMasterBall = isNuzlockeChallenge();
+
     const numBallTypes = 5;
     if (cursor < numBallTypes) {
       const targetPokemon = globalScene.getEnemyPokemon();
@@ -437,7 +439,7 @@ export class CommandPhase extends FieldPhase {
         targetPokemon?.bossSegmentIndex >= 1 &&
         // TODO: Decouple this hardcoded exception for wonder guard and just check the target...
         !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true) &&
-        cursor < PokeballType.MASTER_BALL
+        (cursor < PokeballType.MASTER_BALL || restrictMasterBall)
       ) {
         this.queueShowText("battle:noPokeballStrong");
         return false;
