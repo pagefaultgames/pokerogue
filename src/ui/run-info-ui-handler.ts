@@ -208,7 +208,7 @@ export class RunInfoUiHandler extends UiHandler {
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
     this.runContainer.add(headerText);
-    const runName = addTextObject(0, 0, this.runInfo.runNameText, TextStyle.WINDOW);
+    const runName = addTextObject(0, 0, this.runInfo.name, TextStyle.WINDOW);
     runName.setOrigin(0, 0);
     const runNameX = headerText.width / 6 + headerText.x + 4;
     runName.setPositionRelative(headerBg, runNameX, 4);
