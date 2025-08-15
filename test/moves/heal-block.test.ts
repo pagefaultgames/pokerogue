@@ -77,15 +77,13 @@ describe("Moves - Heal Block", () => {
     game.move.use(MoveId.WISH);
     await game.toNextTurn();
 
-    expect(game.scene.arena.positionalTagManager.tags.filter(t => t.tagType === PositionalTagType.WISH)) //
-      .toHaveLength(1);
+    expect(game).toHavePositionalTag(PositionalTagType.WISH);
 
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
     // wish triggered, but did NOT heal the player
-    expect(game.scene.arena.positionalTagManager.tags.filter(t => t.tagType === PositionalTagType.WISH)) //
-      .toHaveLength(0);
+    expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
     expect(player.hp).toBe(1);
   });
 

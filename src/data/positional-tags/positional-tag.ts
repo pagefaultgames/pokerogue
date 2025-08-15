@@ -2,12 +2,14 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 // biome-ignore-start lint/correctness/noUnusedImports: TSDoc
 import type { ArenaTag } from "#data/arena-tag";
+import type { Stat } from "#enums/stat";
 // biome-ignore-end lint/correctness/noUnusedImports: TSDoc
+
 import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { MoveId } from "#enums/move-id";
 import { MoveUseMode } from "#enums/move-use-mode";
-import type { PositionalTagType } from "#enums/positional-tag-type";
+import { PositionalTagType } from "#enums/positional-tag-type";
 import type { Pokemon } from "#field/pokemon";
 import i18next from "i18next";
 
@@ -87,7 +89,7 @@ interface DelayedAttackArgs extends PositionalTagBaseArgs {
  * triggering against a certain slot after the turn count has elapsed.
  */
 export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs {
-  public declare readonly tagType: PositionalTagType.DELAYED_ATTACK;
+  public override readonly tagType = PositionalTagType.DELAYED_ATTACK;
   public readonly sourceMove: MoveId;
   public readonly sourceId: number;
 
@@ -142,7 +144,7 @@ interface WishArgs extends PositionalTagBaseArgs {
  * Tag to implement {@linkcode MoveId.WISH | Wish}.
  */
 export class WishTag extends PositionalTag implements WishArgs {
-  public declare readonly tagType: PositionalTagType.WISH;
+  public override readonly tagType = PositionalTagType.WISH;
 
   public readonly pokemonName: string;
   public readonly healHp: number;
