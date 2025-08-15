@@ -7,16 +7,13 @@ import type { Constructor } from "#utils/common";
 
 /**
  * Load the attributes of a {@linkcode PositionalTag}.
- * @param tagType - The {@linkcode PositionalTagType} to create
- * @param args - The arguments needed to instantize the given tag
+ * @param data - An object containing the {@linkcode PositionalTagType} to create,
+ * as well as the arguments needed to instantize the given tag
  * @returns The newly created tag.
  * @remarks
  * This function does not perform any checking if the added tag is valid.
  */
-export function loadPositionalTag<T extends PositionalTagType>({
-  tagType,
-  ...args
-}: serializedPosTagMap[T]): posTagInstanceMap[T];
+export function loadPositionalTag<T extends PositionalTagType>(data: serializedPosTagMap[T]): posTagInstanceMap[T];
 /**
  * Load the attributes of a {@linkcode PositionalTag}.
  * @param tag - The {@linkcode SerializedPositionalTag} to instantiate
