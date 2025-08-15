@@ -181,25 +181,24 @@ class DefaultOverrides {
   // --------------------------
   // OPPONENT / ENEMY OVERRIDES
   // --------------------------
-  // TODO: rename `OPP_` to `ENEMY_`
-  readonly OPP_SPECIES_OVERRIDE: SpeciesId | number = 0;
+  readonly ENEMY_SPECIES_OVERRIDE: SpeciesId | number = 0;
   /**
    * This will make all opponents fused Pokemon
    */
-  readonly OPP_FUSION_OVERRIDE: boolean = false;
+  readonly ENEMY_FUSION_OVERRIDE: boolean = false;
   /**
    * This will override the species of the fusion only when the opponent is already a fusion
    */
-  readonly OPP_FUSION_SPECIES_OVERRIDE: SpeciesId | number = 0;
-  readonly OPP_LEVEL_OVERRIDE: number = 0;
-  readonly OPP_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
-  readonly OPP_PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
-  readonly OPP_HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
-  readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
-  readonly OPP_GENDER_OVERRIDE: Gender | null = null;
-  readonly OPP_MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
-  readonly OPP_SHINY_OVERRIDE: boolean | null = null;
-  readonly OPP_VARIANT_OVERRIDE: Variant | null = null;
+  readonly ENEMY_FUSION_SPECIES_OVERRIDE: SpeciesId | number = 0;
+  readonly ENEMY_LEVEL_OVERRIDE: number = 0;
+  readonly ENEMY_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
+  readonly ENEMY_PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
+  readonly ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
+  readonly ENEMY_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
+  readonly ENEMY_GENDER_OVERRIDE: Gender | null = null;
+  readonly ENEMY_MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
+  readonly ENEMY_SHINY_OVERRIDE: boolean | null = null;
+  readonly ENEMY_VARIANT_OVERRIDE: Variant | null = null;
   /**
    * Overrides the IVs of enemy pokemon. Values must never be outside the range `0` to `31`!
    * - If set to a number between `0` and `31`, set all IVs of all enemy pokemon to that number.
@@ -209,7 +208,7 @@ class DefaultOverrides {
   readonly ENEMY_IVS_OVERRIDE: number | number[] | null = null;
   /** Override the nature of all enemy pokemon to the specified nature. Disabled if `null`. */
   readonly ENEMY_NATURE_OVERRIDE: Nature | null = null;
-  readonly OPP_FORM_OVERRIDES: Partial<Record<SpeciesId, number>> = {};
+  readonly ENEMY_FORM_OVERRIDES: Partial<Record<SpeciesId, number>> = {};
   /**
    * Override to give the enemy Pokemon a given amount of health segments
    *
@@ -217,7 +216,7 @@ class DefaultOverrides {
    * 1: the Pokemon will have a single health segment and therefore will not be a boss
    * 2+: the Pokemon will be a boss with the given number of health segments
    */
-  readonly OPP_HEALTH_SEGMENTS_OVERRIDE: number = 0;
+  readonly ENEMY_HEALTH_SEGMENTS_OVERRIDE: number = 0;
 
   // -------------
   // EGG OVERRIDES
@@ -274,9 +273,9 @@ class DefaultOverrides {
    * ```
    */
   readonly STARTING_TRAINER_ITEMS_OVERRIDE: TrainerItemConfiguration = [];
-  readonly OPP_TRAINER_ITEMS_OVERRIDE: TrainerItemConfiguration = [];
+  readonly ENEMY_TRAINER_ITEMS_OVERRIDE: TrainerItemConfiguration = [];
   readonly STARTING_HELD_ITEMS_OVERRIDE: HeldItemConfiguration = [];
-  readonly OPP_HELD_ITEMS_OVERRIDE: HeldItemConfiguration = [];
+  readonly ENEMY_HELD_ITEMS_OVERRIDE: HeldItemConfiguration = [];
 
   /**
    * If less entries are listed than rolled, only those entries will be used to replace the corresponding items while the rest randomly generated.

@@ -2,7 +2,7 @@ import type { AtLeastOne, NonFunctionPropertiesRecursive as nonFunc } from "#typ
 
 /**
  * Helper type to admit an object containing the given properties
- * _and at least 1 other non-function property_.
+ * _and_ at least 1 other non-function property.
  * @example
  * ```ts
  * type foo = {

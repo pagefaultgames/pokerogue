@@ -74,6 +74,7 @@ import {
   randSeedItem,
   toDmgValue,
 } from "#utils/common";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export class Ability implements Localizable {
@@ -109,13 +110,9 @@ export class Ability implements Localizable {
   }
 
   localize(): void {
-    const i18nKey = AbilityId[this.id]
-      .split("_")
-      .filter(f => f)
-      .map((f, i) => (i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
-      .join("") as string;
+    const i18nKey = toCamelCase(AbilityId[this.id]);
 
-    this.name = this.id ? `${i18next.t(`ability:${i18nKey}.name`) as string}${this.nameAppend}` : "";
+    this.name = this.id ? `${i18next.t(`ability:${i18nKey}.name`)}${this.nameAppend}` : "";
     this.description = this.id ? (i18next.t(`ability:${i18nKey}.description`) as string) : "";
   }
 
@@ -1670,6 +1667,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
   constructor(
     private newType: PokemonType,
     private powerMultiplier: number,
+    // TODO: all moves with this attr solely check the move being used...
     private condition?: PokemonAttackCondition,
   ) {
     super(false);
