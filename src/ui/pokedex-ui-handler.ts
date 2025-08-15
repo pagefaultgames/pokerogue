@@ -235,8 +235,6 @@ export class PokedexUiHandler extends MessageUiHandler {
   private canShowFormTray: boolean;
   private filteredIndices: SpeciesId[];
 
-  // Custom tint for unseen species filter
-  private customTintSeenFilter = false;
 
   constructor() {
     super(UiMode.POKEDEX);
@@ -1636,11 +1634,9 @@ export class PokedexUiHandler extends MessageUiHandler {
           return isItSeen;
         }
         if (misc.val === "SEEN_SPECIES" && misc.state === DropDownState.EXCLUDE) {
-          this.customTintSeenFilter = true;
           return !isItSeen;
         }
         if (misc.val === "SEEN_SPECIES" && misc.state === DropDownState.OFF) {
-          this.customTintSeenFilter = false;
           return true;
         }
       });
@@ -1782,9 +1778,9 @@ export class PokedexUiHandler extends MessageUiHandler {
           globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr &
           data.species.getFullUnlocksData();
 
-        if ((caughtAttr & data.species.getFullUnlocksData() && !this.customTintSeenFilter) || globalScene.dexForDevs) {
+        if (caughtAttr & data.species.getFullUnlocksData() || globalScene.dexForDevs) {
           container.icon.clearTint();
-        } else if (this.isSeen(data.species, dexEntry) || this.customTintSeenFilter) {
+        } else if (this.isSeen(data.species, dexEntry)) {
           container.icon.setTint(0x808080);
         } else {
           container.icon.setTint(0);
