@@ -810,7 +810,9 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       return this.name; // Other special cases could be put here too
     }
     // Everything beyond this point essentially follows the pattern of FORMNAME_SPECIES
-    return i18next.t(`pokemonForm:appendForm.${SpeciesId[this.speciesId].split("_")[0]}`, { pokemonName: this.name });
+    return i18next.t(`pokemonForm:appendForm.${toCamelCase(SpeciesId[this.speciesId].split("_")[0])}`, {
+      pokemonName: this.name,
+    });
   }
 
   /**
@@ -842,7 +844,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
     ) {
       return append
         ? i18next.t(`battlePokemonForm:${toCamelCase(formKey)}`, { pokemonName: this.name })
-        : i18next.t(`pokemonForm:battleForm.${formKey}`);
+        : i18next.t(`pokemonForm:battleForm.${toCamelCase(formKey)}`);
     } else if (
       region === Region.NORMAL ||
       (this.speciesId === SpeciesId.GALAR_DARMANITAN && formIndex > 0) ||
@@ -868,10 +870,10 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       return i18next.t("pokemonForm:ursalunaBloodmoon");
     } else {
       // Only regional forms should be left at this point
-      return i18next.t(`pokemonForm:regionalForm.${Region[region]}`);
+      return i18next.t(`pokemonForm:regionalForm.${toCamelCase(Region[region])}`);
     }
     return append
-      ? i18next.t("pokemonForm:appendForm.GENERIC", {
+      ? i18next.t("pokemonForm:appendForm.generic", {
           pokemonName: this.name,
           formName: ret,
         })
