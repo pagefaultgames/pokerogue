@@ -4217,9 +4217,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         textStyle = TextStyle.SUMMARY_GOLD;
         break;
     }
-    if (baseStarterValue - starterValue > 0) {
-      starter.label.setColor(this.getTextColor(textStyle)).setShadowColor(this.getTextColor(textStyle, true));
-    }
+    starter.label.setColor(this.getTextColor(textStyle)).setShadowColor(this.getTextColor(textStyle, true));
   }
 
   tryUpdateValue(add?: number, addingToParty?: boolean): boolean {
