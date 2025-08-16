@@ -778,7 +778,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       }
 
       if (key) {
-        return i18next.t(`battlePokemonForm:${key}`, {
+        return i18next.t(`battlePokemonForm:${toCamelCase(key)}`, {
           pokemonName: this.name,
         });
       }
@@ -841,7 +841,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       ].includes(formKey as SpeciesFormKey)
     ) {
       return append
-        ? i18next.t(`battlePokemonForm:${formKey}`, { pokemonName: this.name })
+        ? i18next.t(`battlePokemonForm:${toCamelCase(formKey)}`, { pokemonName: this.name })
         : i18next.t(`pokemonForm:battleForm.${formKey}`);
     } else if (
       region === Region.NORMAL ||
