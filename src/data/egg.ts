@@ -3,17 +3,16 @@ import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import {
+  BOOSTED_RARE_EGGMOVE_RATES,
   EGG_PITY_EPIC_THRESHOLD,
   EGG_PITY_LEGENDARY_THRESHOLD,
   EGG_PITY_RARE_THRESHOLD,
   GACHA_DEFAULT_COMMON_EGG_THRESHOLD,
   GACHA_DEFAULT_EPIC_EGG_THRESHOLD,
   GACHA_DEFAULT_RARE_EGG_THRESHOLD,
-  GACHA_DEFAULT_RARE_EGGMOVE_RATE,
   GACHA_DEFAULT_SHINY_RATE,
   GACHA_EGG_HA_RATE,
   GACHA_LEGENDARY_UP_THRESHOLD_OFFSET,
-  GACHA_MOVE_UP_RARE_EGGMOVE_RATE,
   GACHA_SHINY_UP_SHINY_RATE,
   HATCH_WAVES_COMMON_EGG,
   HATCH_WAVES_EPIC_EGG,
@@ -21,8 +20,8 @@ import {
   HATCH_WAVES_MANAPHY_EGG,
   HATCH_WAVES_RARE_EGG,
   MANAPHY_EGG_MANAPHY_RATE,
+  RARE_EGGMOVE_RATES,
   SAME_SPECIES_EGG_HA_RATE,
-  SAME_SPECIES_EGG_RARE_EGGMOVE_RATE,
   SAME_SPECIES_EGG_SHINY_RATE,
   SHINY_EPIC_CHANCE,
   SHINY_VARIANT_CHANCE,
@@ -355,21 +354,22 @@ export class Egg {
   // #region Private methods
   ////
 
+  /**
+   * Rolls which egg move slot the egg will have.
+   * 1/x chance for rare, (x-1)/3 chance for each common move.
+   * x is determined by Egg Tier. Boosted rates used for eggs obtained through Move Up Gacha and Candy.
+   * @returns the slot for the egg move
+   */
   private rollEggMoveIndex() {
-    let baseChance = GACHA_DEFAULT_RARE_EGGMOVE_RATE;
-    switch (this._sourceType) {
-      case EggSourceType.SAME_SPECIES_EGG:
-        baseChance = SAME_SPECIES_EGG_RARE_EGGMOVE_RATE;
-        break;
-      case EggSourceType.GACHA_MOVE:
-        baseChance = GACHA_MOVE_UP_RARE_EGGMOVE_RATE;
-        break;
-      default:
-        break;
+    const tierNum = this.isManaphyEgg() ? 2 : this.tier;
+    let baseChance: number;
+    if (this._sourceType === EggSourceType.SAME_SPECIES_EGG || this._sourceType === EggSourceType.GACHA_MOVE) {
+      baseChance = BOOSTED_RARE_EGGMOVE_RATES[tierNum];
+    } else {
+      baseChance = RARE_EGGMOVE_RATES[tierNum];
     }
 
-    const tierMultiplier = this.isManaphyEgg() ? 2 : Math.pow(2, 3 - this.tier);
-    return randSeedInt(baseChance * tierMultiplier) ? randSeedInt(3) : 3;
+    return randSeedInt(baseChance) ? randSeedInt(3) : 3;
   }
 
   private getEggTierDefaultHatchWaves(eggTier?: EggTier): number {
