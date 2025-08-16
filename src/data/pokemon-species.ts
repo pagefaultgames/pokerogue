@@ -829,7 +829,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
 
     const region = this.getRegion();
     if (this.speciesId === SpeciesId.ARCEUS) {
-      ret = i18next.t(`pokemonInfo:Type.${formText.toUpperCase()}`);
+      ret = i18next.t(`pokemonInfo:type.${toCamelCase(formText)}`);
     } else if (
       [
         SpeciesFormKey.MEGA,
