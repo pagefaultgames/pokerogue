@@ -27,6 +27,7 @@ import { AbilityAttr } from "#enums/ability-attr";
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
 import { ChallengeType } from "#enums/challenge-type";
+import { Challenges } from "#enums/challenges";
 import { Device } from "#enums/devices";
 import { DexAttr } from "#enums/dex-attr";
 import { DropDownColumn } from "#enums/drop-down-column";
@@ -403,6 +404,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private originalStarterPreferences: StarterPreferences;
 
   protected blockInput = false;
+  private allowTera: boolean;
 
   constructor() {
     super(UiMode.STARTER_SELECT);
@@ -1130,6 +1132,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
     this.pokerusSpecies = getPokerusStarters();
 
+    this.allowTera = globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id);
+
     if (args.length >= 1 && args[0] instanceof Function) {
       super.show(args);
       this.starterSelectCallback = args[0] as StarterSelectCallback;
@@ -1268,6 +1272,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       if (unlockedNatures.indexOf(starterAttributes.nature as unknown as Nature) < 0) {
         // requested nature wasn't unlocked, purging setting
         starterAttributes.nature = undefined;
+      }
+    }
+
+    if (starterAttributes.tera !== undefined) {
+      if (globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
+        starterAttributes.tera = species.type1;
       }
     }
 
@@ -3903,8 +3913,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.canCycleNature = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
         this.canCycleTera =
           !this.statsMode &&
-          globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) &&
-          !isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2);
+          this.allowTera &&
+          !isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2) &&
+          !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
       }
 
       if (dexEntry.caughtAttr && species.malePercent !== null) {
@@ -4053,9 +4064,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
 
         this.teraIcon.setFrame(PokemonType[this.teraCursor].toLowerCase());
-        this.teraIcon.setVisible(
-          !this.statsMode && globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id),
-        );
+        this.teraIcon.setVisible(!this.statsMode && this.allowTera);
       } else {
         this.pokemonAbilityText.setText("");
         this.pokemonPassiveText.setText("");
@@ -4497,7 +4506,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonSprite.setVisible(!!this.speciesStarterDexEntry?.caughtAttr);
       //@ts-expect-error
       this.statsContainer.updateIvs(null); // TODO: resolve ts-ignore. !?!?
-      this.teraIcon.setVisible(globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id));
+      this.teraIcon.setVisible(this.allowTera);
       const props = globalScene.gameData.getSpeciesDexAttrProps(
         this.lastSpecies,
         this.getCurrentDexProps(this.lastSpecies.speciesId),
@@ -4505,8 +4514,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       const formIndex = props.formIndex;
       this.canCycleTera =
         !this.statsMode &&
-        globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) &&
-        !isNullOrUndefined(getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2);
+        this.allowTera &&
+        !isNullOrUndefined(getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2) &&
+        !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
       this.updateInstructions();
     }
   }
