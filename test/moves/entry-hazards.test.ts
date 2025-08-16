@@ -1,5 +1,4 @@
 import { getPokemonNameWithAffix } from "#app/messages";
-import { ArenaTrapTag } from "#data/arena-tag";
 import { allMoves } from "#data/data-lists";
 import type { TypeDamageMultiplier } from "#data/type";
 import { AbilityId } from "#enums/ability-id";
@@ -14,7 +13,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
-import type { ArenaTrapTagType } from "#types/arena-tags";
+import type { EntryHazardTagType } from "#types/arena-tags";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -46,7 +45,7 @@ describe("Moves - Entry Hazards", () => {
       .battleType(BattleType.TRAINER);
   });
 
-  describe.each<{ name: string; move: MoveId; tagType: ArenaTrapTagType }>([
+  describe.each<{ name: string; move: MoveId; tagType: EntryHazardTagType }>([
     { name: "Spikes", move: MoveId.SPIKES, tagType: ArenaTagType.SPIKES },
     {
       name: "Toxic Spikes",
@@ -79,18 +78,19 @@ describe("Moves - Entry Hazards", () => {
 
     // TODO: re-enable after re-fixing hazards moves
     it.todo("should work when all targets fainted", async () => {
-      game.override.enemySpecies(SpeciesId.DIGLETT).battleStyle("double").startingLevel(1000);
+      game.override.battleStyle("double");
       await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.SHUCKLE]);
 
       const [enemy1, enemy2] = game.scene.getEnemyField();
 
-      game.move.use(MoveId.HYPER_VOICE, BattlerIndex.PLAYER);
-      game.move.use(MoveId.SPIKES, BattlerIndex.PLAYER_2);
+      game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+      game.move.use(move, BattlerIndex.PLAYER_2);
+      await game.doKillOpponents();
       await game.toEndOfTurn();
 
       expect(enemy1.isFainted()).toBe(true);
       expect(enemy2.isFainted()).toBe(true);
-      expect(game.scene.arena.getTagOnSide(ArenaTrapTag, ArenaTagSide.ENEMY)).toBeDefined();
+      expect(game).toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
     });
 
     const maxLayers = tagType === ArenaTagType.SPIKES ? 3 : tagType === ArenaTagType.TOXIC_SPIKES ? 2 : 1;

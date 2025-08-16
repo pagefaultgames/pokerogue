@@ -24,7 +24,7 @@ import type { Pokemon } from "#field/pokemon";
 import type {
   ArenaScreenTagType,
   ArenaTagTypeData,
-  ArenaTrapTagType,
+  EntryHazardTagType,
   SerializableArenaTagType,
 } from "#types/arena-tags";
 import type { Mutable } from "#types/type-helpers";
@@ -725,12 +725,12 @@ export class IonDelugeTag extends ArenaTag {
 }
 
 /**
- * Abstract class to implement [arena traps (AKA entry hazards)](https://bulbapedia.bulbagarden.net/wiki/List_of_moves_that_cause_entry_hazards).
+ * Abstract class to implement [entry hazards](https://bulbapedia.bulbagarden.net/wiki/List_of_moves_that_cause_entry_hazards).
  * These persistent tags remain on-field across turns and apply effects to any {@linkcode Pokemon} switching in. \
- * Uniquely, adding a tag multiple times will stack multiple "layers" of the effect, increasing its severity.
+ * Uniquely, adding a tag multiple times may stack multiple "layers" of the effect, increasing its severity.
  */
-export abstract class ArenaTrapTag extends SerializableArenaTag {
-  abstract readonly tagType: ArenaTrapTagType;
+export abstract class EntryHazardTag extends SerializableArenaTag {
+  public declare abstract readonly tagType: EntryHazardTagType;
   /**
    * The current number of layers this tag has.
    * Starts at 1 and increases each time the trap is laid.
@@ -837,7 +837,7 @@ export abstract class ArenaTrapTag extends SerializableArenaTag {
  * Abstract class to implement damaging entry hazards.
  * Currently used for {@linkcode SpikesTag} and {@linkcode StealthRockTag}.
  */
-abstract class DamagingTrapTag extends ArenaTrapTag {
+abstract class DamagingTrapTag extends EntryHazardTag {
   override activateTrap(pokemon: Pokemon, simulated: boolean): boolean {
     // Check for magic guard immunity
     const cancelled = new BooleanHolder(false);
@@ -956,7 +956,7 @@ class StealthRockTag extends DamagingTrapTag {
  * based on the current layer count. \
  * Poison-type Pokémon will remove it entirely upon switch-in.
  */
-class ToxicSpikesTag extends ArenaTrapTag {
+class ToxicSpikesTag extends EntryHazardTag {
   /**
    * Whether the tag is currently in the process of being neutralized by a Poison-type.
    * @defaultValue `false`
@@ -1024,7 +1024,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Sticky_Web_(move) | Sticky Web}.
  * Applies a single-layer trap that lowers the Speed of all grounded Pokémon switching in.
  */
-class StickyWebTag extends ArenaTrapTag {
+class StickyWebTag extends EntryHazardTag {
   public readonly tagType = ArenaTagType.STICKY_WEB;
   public override get maxLayers() {
     return 1 as const;
@@ -1087,7 +1087,7 @@ class StickyWebTag extends ArenaTrapTag {
  * Imprison remains in effect as long as the source Pokemon is active and present on the field.
  * Imprison will apply to any opposing Pokemon that switch onto the field as well.
  */
-class ImprisonTag extends ArenaTrapTag {
+class ImprisonTag extends EntryHazardTag {
   public readonly tagType = ArenaTagType.IMPRISON;
   public override get maxLayers() {
     return 1 as const;
