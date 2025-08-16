@@ -57,7 +57,7 @@
       "#app/*": ["./src/*.ts"]
     }
   },
-  // Exclude checking for script JS files as those are covered by the folder's `jsconfig/json`
+  // Exclude checking for script JS files as those are covered by the folder's `jsconfig.json`
   "include": ["**/*.ts", "**/*.d.ts"],
   "exclude": ["node_modules", "dist", "vite.config.ts", "vitest.config.ts", "vitest.workspace.ts"]
 }
