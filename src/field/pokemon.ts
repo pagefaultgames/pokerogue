@@ -3346,9 +3346,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  public trySelectMove(moveIndex: number, ignorePp?: boolean): boolean {
+  /**
+   * Attempt to select the move at the move index.
+   * @param moveIndex
+   * @param ignorePp
+   * @returns
+   */
+  public trySelectMove(moveIndex: number, ignorePp?: boolean): [boolean, string] {
     const move = this.getMoveset().length > moveIndex ? this.getMoveset()[moveIndex] : null;
-    return move?.isUsable(this, ignorePp) ?? false;
+    return move?.isUsable(this, ignorePp) ?? [false, ""];
   }
 
   showInfo(): void {
@@ -4310,19 +4316,28 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Tick down the first {@linkcode BattlerTag} found matching the given {@linkcode BattlerTagType},
-   * removing it if its duration goes below 0.
-   * @param tagType the {@linkcode BattlerTagType} to check against
-   * @returns `true` if the tag was present
+   * Lapse the first {@linkcode BattlerTag} matching `tagType`
+   *
+   * @remarks
+   * Also responsible for removing the tag when the lapse method returns `false`.
+   *
+   *
+   * ⚠️ Lapse types other than `CUSTOM` are generally lapsed automatically. However, some tags
+   * support manually lapsing
+   *
+   * @param tagType - The {@linkcode BattlerTagType} to search for
+   * @param lapseType - The lapse type to use for the lapse method; defaults to {@linkcode BattlerTagLapseType.CUSTOM}
+   * @returns Whether a tag matching the given type was found
+   * @see {@linkcode BattlerTag.lapse}
    */
-  lapseTag(tagType: BattlerTagType): boolean {
+  lapseTag(tagType: BattlerTagType, lapseType = BattlerTagLapseType.CUSTOM): boolean {
     const tags = this.summonData.tags;
     const tag = tags.find(t => t.tagType === tagType);
     if (!tag) {
       return false;
     }
 
-    if (!tag.lapse(this, BattlerTagLapseType.CUSTOM)) {
+    if (!tag.lapse(this, lapseType)) {
       tag.onRemove(this);
       tags.splice(tags.indexOf(tag), 1);
     }
@@ -4334,7 +4349,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * removing any whose durations fall below 0.
    * @param tagType the {@linkcode BattlerTagLapseType} to tick down
    */
-  lapseTags(lapseType: BattlerTagLapseType): void {
+  lapseTags(lapseType: Exclude<BattlerTagLapseType, BattlerTagLapseType.CUSTOM>): void {
     const tags = this.summonData.tags;
     tags
       .filter(
@@ -4424,13 +4439,37 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Gets whether the given move is currently disabled for this Pokemon.
    *
+   * @remarks
+   * ⚠️ Only checks for restrictions due to a battler tag, not due to the move's own attributes.
+   * (for that behavior, see {@linkcode isMoveSelectable}).
+   *
    * @param moveId - The {@linkcode MoveId} ID of the move to check
    * @returns `true` if the move is disabled for this Pokemon, otherwise `false`
    *
    * @see {@linkcode MoveRestrictionBattlerTag}
    */
-  public isMoveRestricted(moveId: MoveId, pokemon?: Pokemon): boolean {
-    return this.getRestrictingTag(moveId, pokemon) !== null;
+  // TODO: rename this method as it can be easily confused with a move being restricted
+  public isMoveRestricted(moveId: MoveId): boolean {
+    return this.getRestrictingTag(moveId, this) !== null;
+  }
+
+  /**
+   * Determine whether the given move is selectable by this Pokemon and the message to display if it is not.
+   *
+   * @remarks
+   * Checks both the move's own restrictions and any restrictions imposed by battler tags like disable or throat chop.
+   *
+   * @param moveId - The move ID to check
+   * @returns A tuple of the form [response, msg], where msg contains the text to display if `response` is false.
+   *
+   * @see {@linkcode isMoveRestricted}
+   */
+  public isMoveSelectable(moveId: MoveId): [boolean, string] {
+    const restrictedTag = this.getRestrictingTag(moveId, this);
+    if (restrictedTag) {
+      return [false, restrictedTag.selectionDeniedText(this, moveId)];
+    }
+    return allMoves[moveId].checkRestrictions(this);
   }
 
   /**
@@ -6522,7 +6561,7 @@ export class EnemyPokemon extends Pokemon {
       // If the queued move was called indirectly, ignore all PP and usability checks.
       // Otherwise, ensure that the move being used is actually usable & in our moveset.
       // TODO: What should happen if a pokemon forgets a charging move mid-use?
-      if (isVirtual(queuedMove.useMode) || movesetMove?.isUsable(this, isIgnorePP(queuedMove.useMode))) {
+      if (isVirtual(queuedMove.useMode) || movesetMove?.isUsable(this, isIgnorePP(queuedMove.useMode), true)) {
         moveQueue.splice(0, i); // TODO: This should not be done here
         return queuedMove;
       }
@@ -6532,7 +6571,7 @@ export class EnemyPokemon extends Pokemon {
     this.summonData.moveQueue = [];
 
     // Filter out any moves this Pokemon cannot use
-    let movePool = this.getMoveset().filter(m => m.isUsable(this));
+    let movePool = this.getMoveset().filter(m => m.isUsable(this, false, true)[0]);
     // If no moves are left, use Struggle. Otherwise, continue with move selection
     if (movePool.length > 0) {
       // If there's only 1 move in the move pool, use it.
@@ -6590,8 +6629,8 @@ export class EnemyPokemon extends Pokemon {
               move.category !== MoveCategory.STATUS
               && moveTargets.some(p => {
                 const doesNotFail =
-                  move.applyConditions(this, p, move)
-                  || [MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id);
+                  move.applyConditions(this, p) ||
+                  [MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id);
                 return (
                   doesNotFail
                   && p.getAttackDamage({
@@ -6651,8 +6690,8 @@ export class EnemyPokemon extends Pokemon {
                * target score to -20
                */
               if (
-                (move.name.endsWith(" (N)") || !move.applyConditions(this, target, move))
-                && ![MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id)
+                (move.name.endsWith(" (N)") || !move.applyConditions(this, target)) &&
+                ![MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id)
               ) {
                 targetScore = -20;
               } else if (move.is("AttackMove")) {
