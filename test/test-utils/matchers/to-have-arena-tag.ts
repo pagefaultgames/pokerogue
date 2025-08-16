@@ -48,20 +48,25 @@ export function toHaveArenaTag<T extends ArenaTagType>(
   const etag: Partial<ArenaTag> & { tagType: T; side: ArenaTagSide } =
     typeof expectedTag === "object" ? expectedTag : { tagType: expectedTag, side };
 
+  // If checking only tag type/side OR no tags were found, break out early.
   // We need to get all tags for the case of checking properties of a tag present on both sides of the arena
   const tags = received.scene.arena.findTagsOnSide(t => t.tagType === etag.tagType, etag.side);
-  if (tags.length === 0) {
+  if (typeof expectedTag !== "object" || tags.length === 0) {
+    const pass = tags.length > 0;
     return {
-      pass: false,
-      message: () => `Expected the Arena to have a tag of type ${etag.tagType}, but it didn't!`,
-      expected: etag.tagType,
-      actual: received.scene.arena.tags.map(t => t.tagType),
+      pass,
+      message: () =>
+        pass
+          ? `Expected the Arena to NOT have a tag of type ${etag.tagType}, but it did!`
+          : `Expected the Arena to have a tag of type ${etag.tagType}, but it didn't!`,
+      expected: etag,
+      actual: received.scene.arena.tags.map(t => ({ tagType: t.tagType, side: t.side })),
     };
   }
 
   // Pass if any of the matching tags meet our criteria
   const pass = tags.some(tag =>
-    this.equals(tag, expectedTag, [...this.customTesters, this.utils.subsetEquality, this.utils.iterableEquality]),
+    this.equals(tag, etag, [...this.customTesters, this.utils.subsetEquality, this.utils.iterableEquality]),
   );
 
   const expectedStr = getOnelineDiffStr.call(this, expectedTag);
