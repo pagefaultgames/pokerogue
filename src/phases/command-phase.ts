@@ -9,7 +9,6 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
-import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
 import { FieldPosition } from "#enums/field-position";
 import { MoveId } from "#enums/move-id";
@@ -22,8 +21,6 @@ import type { MoveTargetSet } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
 import { FieldPhase } from "#phases/field-phase";
 import type { TurnMove } from "#types/turn-move";
-import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder } from "#utils/common";
 import i18next from "i18next";
 
 export class CommandPhase extends FieldPhase {
@@ -126,7 +123,7 @@ export class CommandPhase extends FieldPhase {
       if (
         queuedMove.move !== MoveId.NONE &&
         !isVirtual(queuedMove.useMode) &&
-        !movesetQueuedMove?.isUsable(playerPokemon, isIgnorePP(queuedMove.useMode))
+        !movesetQueuedMove?.isUsable(playerPokemon, isIgnorePP(queuedMove.useMode), true)
       ) {
         entriesToDelete++;
       } else {
@@ -204,40 +201,18 @@ export class CommandPhase extends FieldPhase {
   }
 
   /**
-   * Submethod of {@linkcode handleFightCommand} responsible for queuing the appropriate
-   * error message when a move cannot be used.
-   * @param user - The pokemon using the move
-   * @param cursor - The index of the move in the moveset
+   * Submethod of {@linkcode handleFightCommand} responsible for queuing the provided error message when the move cannot be used
+   * @param msg - The reason why the move cannot be used
    */
-  private queueFightErrorMessage(user: PlayerPokemon, cursor: number) {
-    const move = user.getMoveset()[cursor];
-    globalScene.ui.setMode(UiMode.MESSAGE);
-
-    // Set the translation key for why the move cannot be selected
-    let cannotSelectKey: string;
-    const moveStatus = new BooleanHolder(true);
-    applyChallenges(ChallengeType.POKEMON_MOVE, move.moveId, moveStatus);
-    if (!moveStatus.value) {
-      cannotSelectKey = "battle:moveCannotUseChallenge";
-    } else if (move.getPpRatio() === 0) {
-      cannotSelectKey = "battle:moveNoPP";
-    } else if (move.getName().endsWith(" (N)")) {
-      cannotSelectKey = "battle:moveNotImplemented";
-    } else if (user.isMoveRestricted(move.moveId, user)) {
-      cannotSelectKey = user.getRestrictingTag(move.moveId, user)!.selectionDeniedText(user, move.moveId);
-    } else {
-      // TODO: Consider a message that signals a being unusable for an unknown reason
-      cannotSelectKey = "";
-    }
-
-    const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
-
-    globalScene.ui.showText(
-      i18next.t(cannotSelectKey, { moveName: moveName }),
+  private queueFightErrorMessage(msg: string) {
+    const ui = globalScene.ui;
+    ui.setMode(UiMode.MESSAGE);
+    ui.showText(
+      msg,
       null,
       () => {
-        globalScene.ui.clearText();
-        globalScene.ui.setMode(UiMode.FIGHT, this.fieldIndex);
+        ui.clearText();
+        ui.setMode(UiMode.FIGHT, this.fieldIndex);
       },
       null,
       true,
@@ -274,18 +249,15 @@ export class CommandPhase extends FieldPhase {
   ): boolean {
     const playerPokemon = this.getPokemon();
     const ignorePP = isIgnorePP(useMode);
-
-    let canUse = cursor === -1 || playerPokemon.trySelectMove(cursor, ignorePP);
+    const [canUse, reason] = cursor === -1 ? [true, ""] : playerPokemon.trySelectMove(cursor, ignorePP);
 
     // Ternary here ensures we don't compute struggle conditions unless necessary
     const useStruggle = canUse
       ? false
-      : cursor > -1 && !playerPokemon.getMoveset().some(m => m.isUsable(playerPokemon));
+      : cursor > -1 && !playerPokemon.getMoveset().some(m => m.isUsable(playerPokemon)[0]);
 
-    canUse ||= useStruggle;
-
-    if (!canUse) {
-      this.queueFightErrorMessage(playerPokemon, cursor);
+    if (!canUse && !useStruggle) {
+      this.queueFightErrorMessage(reason);
       return false;
     }
 
