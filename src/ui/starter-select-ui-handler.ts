@@ -3254,12 +3254,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       onScreenFirstIndex + maxRows * maxColumns - 1,
     );
 
-    const gameData = globalScene.gameData;
-
     this.starterSelectScrollBar.setScrollCursor(this.scrollCursor);
 
     let pokerusCursorIndex = 0;
     this.filteredStarterContainers.forEach((container, i) => {
+      const { dexEntry, starterDataEntry } = this.getSpeciesData(container.species.speciesId);
+
       const pos = calcStarterPosition(i, this.scrollCursor);
       container.setPosition(pos.x, pos.y);
       if (i < onScreenFirstIndex || i > onScreenLastIndex) {
@@ -3295,10 +3295,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       container.label.setVisible(true);
       const speciesVariants =
-        speciesId && gameData.dexData[speciesId].caughtAttr & DexAttr.SHINY
-          ? [DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(
-              v => !!(gameData.dexData[speciesId].caughtAttr & v),
-            )
+        speciesId && dexEntry.caughtAttr & DexAttr.SHINY
+          ? [DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => !!(dexEntry.caughtAttr & v))
           : [];
       for (let v = 0; v < 3; v++) {
         const hasVariant = speciesVariants.length > v;
@@ -3312,15 +3310,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
       }
 
-      container.starterPassiveBgs.setVisible(!!gameData.starterData[speciesId].passiveAttr);
-      container.hiddenAbilityIcon.setVisible(
-        !!gameData.dexData[speciesId].caughtAttr && !!(gameData.starterData[speciesId].abilityAttr & 4),
-      );
+      container.starterPassiveBgs.setVisible(!!starterDataEntry.passiveAttr);
+      container.hiddenAbilityIcon.setVisible(!!dexEntry.caughtAttr && !!(starterDataEntry.abilityAttr & 4));
       container.classicWinIcon
-        .setVisible(gameData.starterData[speciesId].classicWinCount > 0)
-        .setTexture(
-          gameData.dexData[speciesId].ribbons.has(RibbonData.NUZLOCKE) ? "champion_ribbon_emerald" : "champion_ribbon",
-        );
+        .setVisible(starterDataEntry.classicWinCount > 0)
+        .setTexture(dexEntry.ribbons.has(RibbonData.NUZLOCKE) ? "champion_ribbon_emerald" : "champion_ribbon");
       container.favoriteIcon.setVisible(this.starterPreferences[speciesId]?.favorite ?? false);
 
       // 'Candy Icon' mode
@@ -3421,14 +3415,19 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   setSpecies(species: PokemonSpecies | null) {
     this.speciesStarterDexEntry = null;
+    this.dexAttrCursor = 0n;
+    this.abilityCursor = 0;
+    this.natureCursor = 0;
+    this.teraCursor = PokemonType.UNKNOWN;
+
     if (species) {
       const { dexEntry } = this.getSpeciesData(species.speciesId);
       this.speciesStarterDexEntry = dexEntry;
+      this.dexAttrCursor = this.getCurrentDexProps(species.speciesId);
+      this.abilityCursor = globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
+      this.natureCursor = globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
+      this.teraCursor = species.type1;
     }
-    this.dexAttrCursor = species ? this.getCurrentDexProps(species.speciesId) : 0n;
-    this.abilityCursor = species ? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
-    this.natureCursor = species ? globalScene.gameData.getSpeciesDefaultNature(species) : 0;
-    this.teraCursor = species ? species.type1 : PokemonType.UNKNOWN;
 
     if (!species && globalScene.ui.getTooltip().visible) {
       globalScene.ui.hideTooltip();
@@ -3593,11 +3592,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             teraType: this.starterTeras[starterIndex],
           });
         } else {
-          const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
           const defaultAbilityIndex =
             starterAttributes?.ability ?? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
           // load default nature from stater save data, if set
-          const defaultNature = starterAttributes?.nature || globalScene.gameData.getSpeciesDefaultNature(species);
+          const { dexEntry } = this.getSpeciesData(species.speciesId);
+          const defaultNature =
+            starterAttributes?.nature || globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
           props = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
           if (starterAttributes?.variant && !Number.isNaN(starterAttributes.variant)) {
             if (props.shiny) {
@@ -3711,12 +3711,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
     let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
+    const { dexEntry, starterDataEntry } = this.getSpeciesData(species.speciesId);
     const forSeen: boolean = options.forSeen ?? false;
     const oldProps = species ? globalScene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor) : null;
     const oldAbilityIndex =
       this.abilityCursor > -1 ? this.abilityCursor : globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
     const oldNatureIndex =
-      this.natureCursor > -1 ? this.natureCursor : globalScene.gameData.getSpeciesDefaultNature(species);
+      this.natureCursor > -1 ? this.natureCursor : globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
     this.dexAttrCursor = 0n;
     this.abilityCursor = -1;
     this.natureCursor = -1;
@@ -3786,14 +3787,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.speciesStarterMoves = [];
 
     if (species) {
-      const { dexEntry, starterDataEntry } = this.getSpeciesData(species.speciesId);
       const caughtAttr = dexEntry.caughtAttr || BigInt(0);
       const abilityAttr = starterDataEntry.abilityAttr;
 
       if (!caughtAttr) {
         const props = globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
         const defaultAbilityIndex = globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-        const defaultNature = globalScene.gameData.getSpeciesDefaultNature(species);
+        const defaultNature = globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
 
         if (shiny === undefined || shiny !== props.shiny) {
           shiny = props.shiny;

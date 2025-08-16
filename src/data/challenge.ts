@@ -829,7 +829,7 @@ export class FreshStartChallenge extends Challenge {
       (1 << (Nature.SERIOUS + 1)) |
       (1 << (Nature.BASHFUL + 1)) |
       (1 << (Nature.QUIRKY + 1));
-    dexEntry.natureAttr &= neutralNaturesAttr;
+    dexEntry.natureAttr = neutralNaturesAttr;
 
     // Set all ivs to 15
     dexEntry.ivs = [15, 15, 15, 15, 15, 15];

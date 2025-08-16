@@ -2110,8 +2110,10 @@ export class GameData {
     return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
   }
 
-  getSpeciesDefaultNature(species: PokemonSpecies): Nature {
-    const dexEntry = this.dexData[species.speciesId];
+  getSpeciesDefaultNature(species: PokemonSpecies, dexEntry?: DexEntry): Nature {
+    if (isNullOrUndefined(dexEntry)) {
+      dexEntry = this.dexData[species.speciesId];
+    }
     for (let n = 0; n < 25; n++) {
       if (dexEntry.natureAttr & (1 << (n + 1))) {
         return n as Nature;
