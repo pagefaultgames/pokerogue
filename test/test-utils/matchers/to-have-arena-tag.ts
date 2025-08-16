@@ -1,5 +1,5 @@
 import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
-import type { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { OneOther } from "#test/@types/test-helpers";
 // biome-ignore lint/correctness/noUnusedImports: TSDoc
@@ -26,7 +26,7 @@ export function toHaveArenaTag<T extends ArenaTagType>(
   this: MatcherState,
   received: unknown,
   expectedTag: T | toHaveArenaTagOptions<T>,
-  side?: ArenaTagSide,
+  side: ArenaTagSide = ArenaTagSide.BOTH,
 ): SyncExpectationResult {
   if (!isGameManagerInstance(received)) {
     return {
@@ -46,7 +46,7 @@ export function toHaveArenaTag<T extends ArenaTagType>(
   // Bangs are ok as we enforce safety via overloads
   // @ts-expect-error - Typescript is being stupid as tag type and side will always exist
   const etag: Partial<ArenaTag> & { tagType: T; side: ArenaTagSide } =
-    typeof expectedTag === "object" ? expectedTag : { tagType: expectedTag, side: side! };
+    typeof expectedTag === "object" ? expectedTag : { tagType: expectedTag, side };
 
   // We need to get all tags for the case of checking properties of a tag present on both sides of the arena
   const tags = received.scene.arena.findTagsOnSide(t => t.tagType === etag.tagType, etag.side);
