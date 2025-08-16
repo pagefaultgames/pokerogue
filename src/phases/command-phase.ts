@@ -389,6 +389,7 @@ export class CommandPhase extends FieldPhase {
 
     const isClassicFinalBoss = globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex);
     const isEndlessMinorBoss = globalScene.gameMode.isEndlessMinorBoss(globalScene.currentBattle.waveIndex);
+    const isFullFreshStart = globalScene.gameMode.isFullFreshStartChallenge();
 
     const someUncaughtSpeciesOnField = globalScene
       .getEnemyField()
@@ -396,10 +397,19 @@ export class CommandPhase extends FieldPhase {
     const missingMultipleStarters =
       gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1;
     if (biomeType === BiomeId.END) {
-      if ((isClassic && !isClassicFinalBoss && someUncaughtSpeciesOnField) || (isEndless && !isEndlessMinorBoss)) {
+      if (
+        (isClassic && !isClassicFinalBoss && someUncaughtSpeciesOnField) ||
+        (isFullFreshStart && !isClassicFinalBoss) ||
+        (isEndless && !isEndlessMinorBoss)
+      ) {
         // Uncatchable paradox mons in classic and endless
         this.queueShowText("battle:noPokeballForce");
-      } else if ((isClassic && missingMultipleStarters) || (isEndless && isEndlessMinorBoss) || isDaily) {
+      } else if (
+        (isClassic && isClassicFinalBoss && missingMultipleStarters) ||
+        (isFullFreshStart && isClassicFinalBoss) ||
+        (isEndless && isEndlessMinorBoss) ||
+        isDaily
+      ) {
         // Uncatchable final boss in classic and endless
         this.queueShowText("battle:noPokeballForceFinalBoss");
       } else {

@@ -91,6 +91,19 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
+   * Helper function to see if the game mode is using fresh start
+   * @returns true if a fresh start challenge is being applied
+   */
+  isFullFreshStartChallenge(): boolean {
+    for (const challenge of this.challenges) {
+      if (challenge.id === Challenges.FRESH_START && challenge.value === 1) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * Helper function to get starting level for game mode.
    * @returns either:
    * - starting level override from overrides.ts
