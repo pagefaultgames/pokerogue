@@ -51,12 +51,14 @@ export function applyChallenges(
 /**
  * Apply all challenges that modify selectable starter data.
  * @param challengeType {@link ChallengeType} ChallengeType.STARTER_SELECT_MODIFY
+ * @param speciesId {@link SpeciesId} The speciesId of the pokemon
  * @param dexEntry {@link DexEntry} The pokedex data associated to the pokemon.
  * @param starterDataEntry {@link StarterDataEntry} The starter data associated to the pokemon.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
   challengeType: ChallengeType.STARTER_SELECT_MODIFY,
+  speciesId: SpeciesId,
   dexEntry: DexEntry,
   starterDataEntry: StarterDataEntry,
 ): boolean;
@@ -283,7 +285,7 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
           ret ||= c.applyStarterCost(args[0], args[1]);
           break;
         case ChallengeType.STARTER_SELECT_MODIFY:
-          ret ||= c.applyStarterSelectModify(args[0], args[1]);
+          ret ||= c.applyStarterSelectModify(args[0], args[1], args[2]);
           break;
         case ChallengeType.STARTER_MODIFY:
           ret ||= c.applyStarterModify(args[0]);

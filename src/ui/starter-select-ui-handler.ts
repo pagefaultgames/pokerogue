@@ -3717,20 +3717,23 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const copiedDexEntry = { ...dexEntry };
     const copiedStarterDataEntry = { ...starterDataEntry };
     if (applyChallenge) {
-      applyChallenges(ChallengeType.STARTER_SELECT_MODIFY, copiedDexEntry, copiedStarterDataEntry);
+      applyChallenges(ChallengeType.STARTER_SELECT_MODIFY, speciesId, copiedDexEntry, copiedStarterDataEntry);
     }
     return { dexEntry: { ...copiedDexEntry }, starterDataEntry: { ...copiedStarterDataEntry } };
   }
 
   setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
     let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
-    const { dexEntry, starterDataEntry } = this.getSpeciesData(species.speciesId);
     const forSeen: boolean = options.forSeen ?? false;
     const oldProps = species ? globalScene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor) : null;
     const oldAbilityIndex =
       this.abilityCursor > -1 ? this.abilityCursor : globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-    const oldNatureIndex =
-      this.natureCursor > -1 ? this.natureCursor : globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
+    let oldNatureIndex = -1;
+    if (species) {
+      const { dexEntry } = this.getSpeciesData(species.speciesId);
+      oldNatureIndex =
+        this.natureCursor > -1 ? this.natureCursor : globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
+    }
     this.dexAttrCursor = 0n;
     this.abilityCursor = -1;
     this.natureCursor = -1;
@@ -3800,6 +3803,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.speciesStarterMoves = [];
 
     if (species) {
+      const { dexEntry, starterDataEntry } = this.getSpeciesData(species.speciesId);
       const caughtAttr = dexEntry.caughtAttr || BigInt(0);
       const abilityAttr = starterDataEntry.abilityAttr;
 

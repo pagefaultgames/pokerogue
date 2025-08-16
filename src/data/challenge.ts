@@ -245,7 +245,7 @@ export abstract class Challenge {
    * @param _pokemon {@link Pokemon} The starter pokemon to modify.
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyStarterSelectModify(_dexEntry: DexEntry, _starterDataEntry: StarterDataEntry): boolean {
+  applyStarterSelectModify(_speciesId: SpeciesId, _dexEntry: DexEntry, _starterDataEntry: StarterDataEntry): boolean {
     return false;
   }
 
@@ -809,7 +809,7 @@ export class FreshStartChallenge extends Challenge {
     return true;
   }
 
-  applyStarterSelectModify(dexEntry: DexEntry, starterDataEntry: StarterDataEntry): boolean {
+  applyStarterSelectModify(speciesId: SpeciesId, dexEntry: DexEntry, starterDataEntry: StarterDataEntry): boolean {
     // Remove all egg moves
     starterDataEntry.eggMoves = 0;
     console.log("I AM APPLYING, ", starterDataEntry.eggMoves);
@@ -834,9 +834,29 @@ export class FreshStartChallenge extends Challenge {
     // Set all ivs to 15
     dexEntry.ivs = [15, 15, 15, 15, 15, 15];
 
-    // Removes shiny, variants, and any unlocked forms
-    const defaultDexEntry = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.FEMALE | DexAttr.DEFAULT_FORM;
-    dexEntry.caughtAttr &= defaultDexEntry;
+    // Removes shiny and variants
+    dexEntry.caughtAttr &= ~DexAttr.SHINY;
+    dexEntry.caughtAttr &= ~(DexAttr.VARIANT_2 | DexAttr.VARIANT_3);
+
+    // Remove unlocked forms for specific species
+    if (speciesId === SpeciesId.ZYGARDE) {
+      const formMask = (DexAttr.DEFAULT_FORM << 2n) - 1n; // Sets 10%-PC to 10%-AB and 50%-PC to 50%-AB
+      dexEntry.caughtAttr &= formMask;
+    }
+    if (
+      [
+        SpeciesId.PIKACHU,
+        SpeciesId.EEVEE,
+        SpeciesId.PICHU,
+        SpeciesId.ROTOM,
+        SpeciesId.MELOETTA,
+        SpeciesId.FROAKIE,
+        SpeciesId.ROCKRUFF,
+      ].includes(speciesId)
+    ) {
+      const formMask = (DexAttr.DEFAULT_FORM << 1n) - 1n; // These mons are set to form 0 because they're meant to be unlocks or mid-run form changes
+      dexEntry.caughtAttr &= formMask;
+    }
 
     return true;
   }
