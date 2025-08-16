@@ -51,4 +51,6 @@ export enum MoveFlags {
   REDIRECT_COUNTER = 1 << 18,
   /** Indicates a move is able to be reflected by {@linkcode AbilityId.MAGIC_BOUNCE} and {@linkcode MoveId.MAGIC_COAT} */
   REFLECTABLE = 1 << 19,
+  /** Indicates a move that fails when {@link https://bulbapedia.bulbagarden.net/wiki/Gravity_(move) | Gravity} is in effect */
+  GRAVITY = 1 << 20,
 }
