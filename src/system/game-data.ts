@@ -64,7 +64,7 @@ import { trainerConfigs } from "#trainers/trainer-config";
 import type { DexData, DexEntry } from "#types/dex-data";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
-import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } from "#utils/common";
+import { executeIf, fixedInt, isLocal, isNullOrUndefined, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -2103,8 +2103,10 @@ export class GameData {
     };
   }
 
-  getStarterSpeciesDefaultAbilityIndex(species: PokemonSpecies): number {
-    const abilityAttr = this.starterData[species.speciesId].abilityAttr;
+  getStarterSpeciesDefaultAbilityIndex(species: PokemonSpecies, abilityAttr?: number): number {
+    if (isNullOrUndefined(abilityAttr)) {
+      abilityAttr = this.starterData[species.speciesId].abilityAttr;
+    }
     return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
   }
 

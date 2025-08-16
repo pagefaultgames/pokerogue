@@ -3,9 +3,11 @@ import { getRandomTrainerFunc } from "#app/battle";
 import { defaultStarterSpecies } from "#app/constants";
 import { speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
 import { Challenges } from "#enums/challenges";
 import { TypeColor, TypeShadow } from "#enums/color";
+import { DexAttr } from "#enums/dex-attr";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
@@ -19,8 +21,9 @@ import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
-import type { DexAttrProps, GameData } from "#system/game-data";
+import type { DexAttrProps, GameData, StarterDataEntry } from "#system/game-data";
 import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
+import type { DexEntry } from "#types/dex-data";
 import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
@@ -234,6 +237,15 @@ export abstract class Challenge {
    * @returns {@link boolean} Whether this function did anything.
    */
   applyStarterCost(_species: SpeciesId, _cost: NumberHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for STARTER_SELECT_MODIFY challenges. Derived classes should alter this.
+   * @param _pokemon {@link Pokemon} The starter pokemon to modify.
+   * @returns {@link boolean} Whether this function did anything.
+   */
+  applyStarterSelectModify(_dexEntry: DexEntry, _starterDataEntry: StarterDataEntry): boolean {
     return false;
   }
 
@@ -794,6 +806,53 @@ export class FreshStartChallenge extends Challenge {
 
   applyStarterCost(species: SpeciesId, cost: NumberHolder): boolean {
     cost.value = speciesStarterCosts[species];
+    return true;
+  }
+
+  applyStarterSelectModify(dexEntry: DexEntry, starterDataEntry: StarterDataEntry): boolean {
+    // Remove all egg moves
+    starterDataEntry.eggMoves = 0;
+    console.log("I AM APPLYING, ", starterDataEntry.eggMoves);
+
+    // Remove hidden and passive ability
+    const defaultAbilities = AbilityAttr.ABILITY_1 | AbilityAttr.ABILITY_2;
+    starterDataEntry.abilityAttr &= defaultAbilities;
+    starterDataEntry.passiveAttr = 0;
+
+    // Remove cost reduction
+    starterDataEntry.valueReduction = 0;
+
+    // Remove natures except for the default ones
+    const neutralNaturesAttr =
+      (1 << (Nature.HARDY + 1)) |
+      (1 << (Nature.DOCILE + 1)) |
+      (1 << (Nature.SERIOUS + 1)) |
+      (1 << (Nature.BASHFUL + 1)) |
+      (1 << (Nature.QUIRKY + 1));
+    dexEntry.natureAttr &= neutralNaturesAttr;
+
+    // Set all ivs to 15
+    dexEntry.ivs = [15, 15, 15, 15, 15, 15];
+
+    // Removes shiny, variants, and any unlocked forms
+    const defaultDexEntry = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.FEMALE | DexAttr.DEFAULT_FORM;
+    dexEntry.caughtAttr &= defaultDexEntry;
+
+    /**   
+    let validMoves = pokemon.species
+      .getLevelMoves()
+      .filter(m => isBetween(m[0], 1, 5))
+      .map(lm => lm[1]);
+    // Filter egg moves out of the moveset
+    pokemon.moveset = pokemon.moveset.filter(pm => validMoves.includes(pm.moveId));
+    if (pokemon.moveset.length < 4) {
+      // If there's empty slots fill with remaining valid moves
+      const existingMoveIds = pokemon.moveset.map(pm => pm.moveId);
+      validMoves = validMoves.filter(m => !existingMoveIds.includes(m));
+      pokemon.moveset = pokemon.moveset.concat(validMoves.map(m => new PokemonMove(m))).slice(0, 4);
+    }
+    pokemon.teraType = pokemon.species.type1; // Always primary tera type
+  */
     return true;
   }
 

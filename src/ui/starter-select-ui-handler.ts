@@ -44,7 +44,7 @@ import { BattleSceneEventType } from "#events/battle-scene";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import type { DexAttrProps, StarterAttributes, StarterMoveset } from "#system/game-data";
+import type { DexAttrProps, StarterAttributes, StarterDataEntry, StarterMoveset } from "#system/game-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
@@ -1141,7 +1141,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       this.allSpecies.forEach((species, s) => {
         const icon = this.starterContainers[s].icon;
-        const dexEntry = globalScene.gameData.dexData[species.speciesId];
+        const { dexEntry } = this.getSpeciesData(species.speciesId);
 
         // Initialize the StarterAttributes for this species
         this.starterPreferences[species.speciesId] = this.initStarterPrefs(species);
@@ -1714,7 +1714,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)),
               this.isPartyValid(),
             );
-            const isCaught = globalScene.gameData.dexData[species.speciesId].caughtAttr;
+            const { dexEntry } = this.getSpeciesData(species.speciesId);
+            const isCaught = dexEntry.caughtAttr;
             return (
               !isDupe && isValidForChallenge && currentPartyValue + starterCost <= this.getValueLimit() && isCaught
             );
@@ -2994,8 +2995,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       container.cost = globalScene.gameData.getSpeciesStarterValue(container.species.speciesId);
 
       // First, ensure you have the caught attributes for the species else default to bigint 0
-      const caughtAttr = globalScene.gameData.dexData[container.species.speciesId]?.caughtAttr || BigInt(0);
-      const starterData = globalScene.gameData.starterData[container.species.speciesId];
+      const { dexEntry, starterDataEntry } = this.getSpeciesData(container.species.speciesId);
+      const caughtAttr = dexEntry?.caughtAttr || BigInt(0);
+      const starterData = starterDataEntry;
       const isStarterProgressable = speciesEggMoves.hasOwnProperty(container.species.speciesId);
 
       // Gen filter
@@ -3393,7 +3395,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   setSpecies(species: PokemonSpecies | null) {
-    this.speciesStarterDexEntry = species ? globalScene.gameData.dexData[species.speciesId] : null;
+    this.speciesStarterDexEntry = null;
+    if (species) {
+      const { dexEntry } = this.getSpeciesData(species.speciesId);
+      this.speciesStarterDexEntry = dexEntry;
+    }
     this.dexAttrCursor = species ? this.getCurrentDexProps(species.speciesId) : 0n;
     this.abilityCursor = species ? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species) : 0;
     this.natureCursor = species ? globalScene.gameData.getSpeciesDefaultNature(species) : 0;
@@ -3663,6 +3669,17 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
+  getSpeciesData(speciesId: SpeciesId): { dexEntry: DexEntry; starterDataEntry: StarterDataEntry } {
+    const dexEntry = globalScene.gameData.dexData[speciesId];
+    const starterDataEntry = globalScene.gameData.starterData[speciesId];
+
+    const copiedDexEntry = { ...dexEntry };
+    const copiedStarterDataEntry = { ...starterDataEntry };
+    applyChallenges(ChallengeType.STARTER_SELECT_MODIFY, copiedDexEntry, copiedStarterDataEntry);
+
+    return { dexEntry: { ...copiedDexEntry }, starterDataEntry: { ...copiedStarterDataEntry } };
+  }
+
   setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
     let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
     const forSeen: boolean = options.forSeen ?? false;
@@ -3740,12 +3757,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.speciesStarterMoves = [];
 
     if (species) {
-      const dexEntry = globalScene.gameData.dexData[species.speciesId];
-      const abilityAttr = globalScene.gameData.starterData[species.speciesId].abilityAttr;
+      const { dexEntry, starterDataEntry } = this.getSpeciesData(species.speciesId);
+      const caughtAttr = dexEntry.caughtAttr || BigInt(0);
+      const abilityAttr = starterDataEntry.abilityAttr;
+      console.log("I HAVE APPLIED, ", starterDataEntry.eggMoves);
 
-      const caughtAttr = globalScene.gameData.dexData[species.speciesId]?.caughtAttr || BigInt(0);
-
-      if (!dexEntry.caughtAttr) {
+      if (!caughtAttr) {
         const props = globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
         const defaultAbilityIndex = globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
         const defaultNature = globalScene.gameData.getSpeciesDefaultNature(species);
@@ -4382,7 +4399,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    */
   getCurrentDexProps(speciesId: number): bigint {
     let props = 0n;
-    const caughtAttr = globalScene.gameData.dexData[speciesId].caughtAttr;
+    const { dexEntry } = this.getSpeciesData(speciesId);
+    const caughtAttr = dexEntry.caughtAttr;
 
     /*  this checks the gender of the pokemon; this works by checking a) that the starter preferences for the species exist, and if so, is it female. If so, it'll add DexAttr.FEMALE to our temp props
      *  It then checks b) if the caughtAttr for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female, and we need to add DexAttr.FEMALE to our temp props
