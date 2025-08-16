@@ -1142,6 +1142,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       this.starterPreferences = loadStarterPreferences();
       this.originalStarterPreferences = loadStarterPreferences();
+      console.log("Loaded", this.originalStarterPreferences);
 
       this.allSpecies.forEach((species, s) => {
         const icon = this.starterContainers[s].icon;
@@ -1163,6 +1164,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         this.setUpgradeAnimation(icon, species);
       });
+      console.log("Initiated", this.originalStarterPreferences);
 
       this.resetFilters();
       this.updateStarters();
@@ -2495,14 +2497,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             if (this.canCycleTera) {
               const speciesForm = getPokemonSpeciesForm(this.lastSpecies.speciesId, starterAttributes.form ?? 0);
               if (speciesForm.type1 === this.teraCursor && !isNullOrUndefined(speciesForm.type2)) {
-                starterAttributes.tera = speciesForm.type2!;
-                originalStarterAttributes.form = starterAttributes.tera;
+                starterAttributes.tera = speciesForm.type2;
+                originalStarterAttributes.tera = starterAttributes.tera;
                 this.setSpeciesDetails(this.lastSpecies, {
-                  teraType: speciesForm.type2!,
+                  teraType: speciesForm.type2,
                 });
               } else {
                 starterAttributes.tera = speciesForm.type1;
-                originalStarterAttributes.form = starterAttributes.tera;
+                originalStarterAttributes.tera = starterAttributes.tera;
                 this.setSpeciesDetails(this.lastSpecies, {
                   teraType: speciesForm.type1,
                 });
@@ -3624,6 +3626,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             variant: props.variant,
             abilityIndex: defaultAbilityIndex,
             natureIndex: defaultNature,
+            teraType: starterAttributes?.tera,
           });
         }
 
