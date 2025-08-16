@@ -851,7 +851,6 @@ export class FreshStartChallenge extends Challenge {
         SpeciesId.ROTOM,
         SpeciesId.MELOETTA,
         SpeciesId.FROAKIE,
-        SpeciesId.ROCKRUFF,
       ].includes(speciesId)
     ) {
       const formMask = (DexAttr.DEFAULT_FORM << 1n) - 1n; // These mons are set to form 0 because they're meant to be unlocks or mid-run form changes
@@ -890,7 +889,6 @@ export class FreshStartChallenge extends Challenge {
         SpeciesId.ROTOM,
         SpeciesId.MELOETTA,
         SpeciesId.FROAKIE,
-        SpeciesId.ROCKRUFF,
       ].includes(pokemon.species.speciesId)
     ) {
       pokemon.formIndex = 0; // These mons are set to form 0 because they're meant to be unlocks or mid-run form changes
