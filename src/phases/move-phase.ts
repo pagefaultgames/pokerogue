@@ -3,6 +3,8 @@ import { MOVE_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
+// biome-ignore lint/correctness/noUnusedImports: Used in a tsdoc comment
+import type { TauntTag, TruantTag } from "#data/battler-tags";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { CenterOfAttentionTag } from "#data/battler-tags";
 import { SpeciesFormChangePreMoveTrigger } from "#data/form-change-triggers";
@@ -10,9 +12,11 @@ import { getStatusEffectActivationText, getStatusEffectHealText } from "#data/st
 import { getTerrainBlockMessage } from "#data/terrain";
 import { getWeatherBlockMessage } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { ChallengeType } from "#enums/challenge-type";
 import { CommonAnim } from "#enums/move-anims-common";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
@@ -26,8 +30,10 @@ import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { frenzyMissFunc } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
-import type { TurnMove } from "#types/turn-move";
-import { NumberHolder } from "#utils/common";
+// biome-ignore lint/correctness/noUnusedImports: Used in a tsdoc comment
+import type { PreUseInterruptAttr } from "#types/move-types";
+import { applyChallenges } from "#utils/challenge-utils";
+import { BooleanHolder, NumberHolder } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";
 import i18next from "i18next";
 
@@ -44,12 +50,8 @@ export class MovePhase extends PokemonPhase {
   /** Whether the current move should fail and retain PP. */
   protected cancelled = false;
 
-  /** The move history entry object that is pushed to the pokemon's move history
-   *
-   * @remarks
-   * Can be edited _after_ being pushed to the history to adjust the result, targets, etc, for this move phase.
-   */
-  protected moveHistoryEntry: TurnMove;
+  /** Flag set to `true` during {@linkcode checkFreeze} that indicates that the pokemon will thaw if it passes the failure conditions */
+  private declare thaw?: boolean;
 
   public get pokemon(): Pokemon {
     return this._pokemon;
@@ -97,19 +99,6 @@ export class MovePhase extends PokemonPhase {
     };
   }
 
-  /**
-   * Checks if the pokemon is active, if the move is usable, and that the move is targeting something.
-   * @param ignoreDisableTags `true` to not check if the move is disabled
-   * @returns `true` if all the checks pass
-   */
-  public canMove(ignoreDisableTags = false): boolean {
-    return (
-      this.pokemon.isActive(true)
-      && this.move.isUsable(this.pokemon, isIgnorePP(this.useMode), ignoreDisableTags)
-      && this.targets.length > 0
-    );
-  }
-
   /** Signifies the current move should fail but still use PP */
   public fail(): void {
     this.failed = true;
@@ -120,27 +109,78 @@ export class MovePhase extends PokemonPhase {
     this.cancelled = true;
   }
 
+  /**
+   * Check the first round of failure checks.
+   *
+   * @remarks
+   * Based on battle mechanics research conducted primarily by Smogon, checks happen in the following order (as of Gen 9):
+   * 1. Sleep/Freeze
+   * 2. Disobedience due to overleveled (not implemented in Pokerogue)
+   * 3. Insufficient PP after being selected
+   * 4. (Pokerogue specific) Moves disabled because they are not implemented / prevented from a challenge / somehow have no targets
+   * 5. Sky battle (not implemented in Pokerogue)
+   * 6. Truant
+   * 7. Loss of focus
+   * 8. Flinch
+   * 9. Move was disabled after being selected
+   * 10. Healing move with heal block
+   * 11. Sound move with throat chop
+   * 12. Failure due to gravity
+   * 13. Move lock from choice items (not implemented in Pokerogue, can't occur here from gorilla tactics)
+   * 14. Failure from taunt
+   * 15. Failure from imprison
+   * 16. Failure from confusion
+   * 17. Failure from paralysis
+   * 18. Failure from infatuation
+   */
+  protected firstFailureCheck(): boolean {
+    // A big if statement will handle the checks (that each have side effects!) in the correct order
+    if (
+      this.checkSleep() ||
+      this.checkFreeze() ||
+      this.checkPP() ||
+      this.checkValidity() ||
+      this.checkTagCancel(BattlerTagType.TRUANT, true) ||
+      this.checkPreUseInterrupt() ||
+      this.checkTagCancel(BattlerTagType.FLINCHED) ||
+      this.checkTagCancel(BattlerTagType.DISABLED, true) ||
+      this.checkGravity() ||
+      this.checkTagCancel(BattlerTagType.TAUNT, true) ||
+      this.checkTagCancel(BattlerTagType.IMPRISON) ||
+      this.checkTagCancel(BattlerTagType.CONFUSED) ||
+      this.checkPara() ||
+      this.checkTagCancel(BattlerTagType.INFATUATED)
+    ) {
+      this.handlePreMoveFailures();
+      return true;
+    }
+    return false;
+  }
+
   public start(): void {
     super.start();
 
-    console.log(
-      `%cMove: ${MoveId[this.move.moveId]}\nUse Mode: ${enumValueToKey(MoveUseMode, this.useMode)}`,
-      `color:${MOVE_COLOR}`,
-    );
-
-    // Check if move is unusable (e.g. running out of PP due to a mid-turn Spite
-    // or the user no longer being on field), ending the phase early if not.
-    if (!this.canMove(true)) {
-      if (this.pokemon.isActive(true)) {
-        this.fail();
-        this.showMoveText();
-        this.showFailedText();
-      }
+    if (!this.pokemon.isActive(true)) {
       this.end();
       return;
     }
 
+    // Removing gigaton hammer always happens first
+    this.pokemon.removeTag(BattlerTagType.ALWAYS_GET_HIT);
+    console.log(MoveId[this.move.moveId], enumValueToKey(MoveUseMode, this.useMode));
+
+    // For the purposes of payback and kin, the pokemon is considered to have acted
+    // if it attempted to move at all.
     this.pokemon.turnData.acted = true;
+    // TODO: skip this check for moves like metronome.
+    if (this.firstFailureCheck()) {
+      // Lapse all other pre-move tags
+      this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
+      this.end();
+      return;
+    }
+
+    // Begin second failure checks..
 
     // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
     if (isVirtual(this.useMode)) {
@@ -162,10 +202,6 @@ export class MovePhase extends PokemonPhase {
     this.resolveRedirectTarget();
 
     this.resolveCounterAttackTarget();
-
-    this.resolvePreMoveStatusEffects();
-
-    this.lapsePreMoveAndMoveTags();
 
     if (!(this.failed || this.cancelled)) {
       this.resolveFinalPreMoveCancellationChecks();
@@ -195,6 +231,8 @@ export class MovePhase extends PokemonPhase {
       this.showMoveText();
       this.showFailedText();
       this.cancel();
+    } else {
+      this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
     }
   }
 
@@ -203,96 +241,220 @@ export class MovePhase extends PokemonPhase {
   }
 
   /**
-   * Handles {@link StatusEffect.SLEEP | Sleep}/{@link StatusEffect.PARALYSIS | Paralysis}/{@link StatusEffect.FREEZE | Freeze} rolls and side effects.
+   * Queue the status cure message, reset the status, and update the Pokemon info display
+   * @param effect - The effect being cured
    */
-  protected resolvePreMoveStatusEffects(): void {
-    // Skip for follow ups/reflected moves, no status condition or post turn statuses (e.g. Poison/Toxic)
-    if (!this.pokemon.status?.effect || this.pokemon.status.isPostTurn() || isIgnoreStatus(this.useMode)) {
-      return;
-    }
-
-    if (
-      this.useMode === MoveUseMode.INDIRECT
-      && [StatusEffect.SLEEP, StatusEffect.FREEZE].includes(this.pokemon.status.effect)
-    ) {
-      // Dancer thaws out or wakes up a frozen/sleeping user prior to use
-      this.pokemon.resetStatus(false);
-      return;
-    }
-
-    this.pokemon.status.incrementTurn();
-
-    /** Whether to prevent us from using the move */
-    let activated = false;
-    /** Whether to cure the status */
-    let healed = false;
-
-    switch (this.pokemon.status.effect) {
-      case StatusEffect.PARALYSIS:
-        activated =
-          (this.pokemon.randBattleSeedInt(4) === 0 || Overrides.STATUS_ACTIVATION_OVERRIDE === true)
-          && Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
-        break;
-      case StatusEffect.SLEEP: {
-        applyMoveAttrs("BypassSleepAttr", this.pokemon, null, this.move.getMove());
-        const turnsRemaining = new NumberHolder(this.pokemon.status.sleepTurnsRemaining ?? 0);
-        applyAbAttrs("ReduceStatusEffectDurationAbAttr", {
-          pokemon: this.pokemon,
-          statusEffect: this.pokemon.status.effect,
-          duration: turnsRemaining,
-        });
-        this.pokemon.status.sleepTurnsRemaining = turnsRemaining.value;
-        healed = this.pokemon.status.sleepTurnsRemaining <= 0;
-        activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
-        break;
-      }
-      case StatusEffect.FREEZE:
-        healed =
-          !!this.move
-            .getMove()
-            .findAttr(
-              attr => attr.is("HealStatusEffectAttr") && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE),
-            )
-          || (!this.pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true)
-          || Overrides.STATUS_ACTIVATION_OVERRIDE === false;
-
-        activated = !healed;
-        break;
-    }
-
-    if (activated) {
-      // Cancel move activation and play effect
-      this.cancel();
-      globalScene.phaseManager.queueMessage(
-        getStatusEffectActivationText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
-      );
-      globalScene.phaseManager.unshiftNew(
-        "CommonAnimPhase",
-        this.pokemon.getBattlerIndex(),
-        undefined,
-        CommonAnim.POISON + (this.pokemon.status.effect - 1), // offset anim # by effect #
-      );
-    } else if (healed) {
-      // cure status and play effect
-      globalScene.phaseManager.queueMessage(
-        getStatusEffectHealText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
-      );
-      // cannot use `asPhase=true` as it will cause status to be reset _after_ move condition checks fire
-      this.pokemon.resetStatus(false, false, false, false);
-    }
+  private cureStatus(effect: StatusEffect): void {
+    const pokemon = this.pokemon;
+    globalScene.phaseManager.queueMessage(getStatusEffectHealText(effect, getPokemonNameWithAffix(pokemon)));
+    pokemon.resetStatus(undefined, undefined, undefined, false);
+    pokemon.updateInfo();
   }
 
   /**
-   * Lapse {@linkcode BattlerTagLapseType.PRE_MOVE | PRE_MOVE} tags that trigger before a move is used, regardless of whether or not it failed.
-   * Also lapse {@linkcode BattlerTagLapseType.MOVE | MOVE} tags if the move is successful and not called indirectly.
+   * Queue the status activation message, play its animation, and cancel the move
+   * @param effect - The effect being triggered
    */
-  protected lapsePreMoveAndMoveTags(): void {
-    this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
+  private triggerStatus(effect: StatusEffect): void {
+    const pokemon = this.pokemon;
+    this.showFailedText(getStatusEffectActivationText(effect, getPokemonNameWithAffix(pokemon)));
+    globalScene.phaseManager.unshiftNew(
+      "CommonAnimPhase",
+      pokemon.getBattlerIndex(),
+      undefined,
+      CommonAnim.POISON + (effect - 1), // offset anim # by effect #
+    );
+    this.cancelled = true;
+  }
 
-    // This intentionally happens before moves without targets are cancelled (Truant takes priority over lack of targets)
-    if (!isIgnoreStatus(this.useMode) && this.canMove() && !this.cancelled) {
-      this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
+  /**
+   * Handle the sleep check
+   * @returns Whether the move was cancelled due to sleep
+   */
+  protected checkSleep(): boolean {
+    if (this.pokemon.status?.effect !== StatusEffect.SLEEP) {
+      return false;
     }
+
+    if (this.useMode === MoveUseMode.INDIRECT) {
+      this.pokemon.resetStatus(false);
+      return false;
+    }
+
+    this.pokemon.status.incrementTurn();
+    applyMoveAttrs("BypassSleepAttr", this.pokemon, null, this.move.getMove());
+    const turnsRemaining = new NumberHolder(this.pokemon.status.sleepTurnsRemaining ?? 0);
+    applyAbAttrs("ReduceStatusEffectDurationAbAttr", {
+      pokemon: this.pokemon,
+      statusEffect: this.pokemon.status.effect,
+      duration: turnsRemaining,
+    });
+    this.pokemon.status.sleepTurnsRemaining = turnsRemaining.value;
+    if (this.pokemon.status.sleepTurnsRemaining <= 0) {
+      this.cureStatus(StatusEffect.SLEEP);
+      return false;
+    }
+
+    this.triggerStatus(StatusEffect.SLEEP);
+    return true;
+  }
+
+  /**
+   * Handle the freeze status effect check
+   *
+   * @remarks
+   * Responsible for the following
+   * - Checking if the pokemon is frozen
+   * - Checking if the pokemon will thaw from random chance, OR from a thawing move.
+   *    Thawing from a freeze move is not applied until AFTER all other failure checks.
+   * - Activating the freeze status effect (cancelling the move, playing the message, and displaying the animation)
+   */
+  protected checkFreeze(): boolean {
+    if (this.pokemon.status?.effect !== StatusEffect.FREEZE) {
+      return false;
+    }
+
+    // Heal the user if it thaws from the move or random chance
+    // Check if the user will thaw due to a move
+
+    if (
+      Overrides.STATUS_ACTIVATION_OVERRIDE === false ||
+      this.move
+        .getMove()
+        .findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE)) ||
+      (!this.pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true)
+    ) {
+      this.cureStatus(StatusEffect.FREEZE);
+      return false;
+    }
+
+    // Otherwise, trigger the freeze status effect
+    this.triggerStatus(StatusEffect.FREEZE);
+    return true;
+  }
+
+  /**
+   * Check if the move is usable based on PP
+   * @returns Whether the move was cancelled due to insufficient PP
+   */
+  protected checkPP(): boolean {
+    const move = this.move;
+    if (move.getMove().pp !== -1 && !isIgnorePP(this.useMode) && move.ppUsed >= move.getMovePp()) {
+      this.cancel();
+      this.showFailedText();
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Check if the move is valid and not in an error state
+   *
+   * @remarks
+   * Checks occur in the following order
+   * 1. Move is not implemented
+   * 2. Move is somehow invalid (it is {@linkcode MoveId.NONE} or {@linkcode targets} is somehow empty)
+   * 3. Move cannot be used by the player due to a challenge
+   *
+   * @returns Whether the move was cancelled due to being invalid
+   */
+  protected checkValidity(): boolean {
+    const move = this.move;
+    const moveId = move.moveId;
+    const moveName = move.getName();
+    let failedText: string | undefined;
+    const usability = new BooleanHolder(false);
+    if (moveName.endsWith(" (N)")) {
+      failedText = i18next.t("battle:moveNotImplemented", { moveName: moveName.replace(" (N)", "") });
+    } else if (moveId === MoveId.NONE || this.targets.length === 0) {
+      // TODO: Create a locale key with some failure text
+    } else if (
+      this.pokemon.isPlayer() &&
+      applyChallenges(ChallengeType.POKEMON_MOVE, moveId, usability) &&
+      // check the value inside of usability after calling applyChallenges
+      !usability.value
+    ) {
+      failedText = i18next.t("battle:moveCannotUseChallenge", { moveName });
+    } else {
+      return false;
+    }
+
+    this.cancel();
+    this.showFailedText(failedText);
+    return true;
+  }
+
+  /**
+   * Cancel the move if its pre use condition fails
+   *
+   * @remarks
+   * The only official move with a pre-use condition is Focus Punch
+   *
+   * @returns Whether the move was cancelled due to a pre-use interruption
+   * @see {@linkcode PreUseInterruptAttr}
+   */
+  private checkPreUseInterrupt(): boolean {
+    const move = this.move.getMove();
+    const user = this.pokemon;
+    const target = this.getActiveTargetPokemon()[0];
+    return !!move.getAttrs("PreUseInterruptAttr").some(attr => {
+      attr.apply(user, target, move);
+      if (this.cancelled) {
+        return true;
+      }
+      return false;
+    });
+  }
+
+  /**
+   * Lapse the tag type and check if the move is cancelled from it. Meant to be used during the first failure check
+   * @param tag - The tag type whose lapse method will be called with {@linkcode BattlerTagLapseType.PRE_MOVE}
+   * @param checkIgnoreStatus - Whether to check {@link isIgnoreStatus} for the current {@linkcode MoveUseMode} to skip this check
+   */
+  private checkTagCancel(tag: BattlerTagType, checkIgnoreStatus = false): boolean {
+    if (checkIgnoreStatus && isIgnoreStatus(this.useMode)) {
+      return false;
+    }
+    this.pokemon.lapseTag(tag, BattlerTagLapseType.PRE_MOVE);
+    return this.cancelled;
+  }
+
+  /**
+   * Handle move failures due to Gravity, cancelling the move and showing the failure text
+   * @returns - Whether the move was cancelled due to Gravity
+   */
+  private checkGravity(): boolean {
+    const move = this.move.getMove();
+    if (globalScene.arena.hasTag(ArenaTagType.GRAVITY) && move.hasFlag(MoveFlags.GRAVITY)) {
+      // Play the failure message
+      this.showFailedText(
+        i18next.t("battle:moveDisabledGravity", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
+          moveName: move.name,
+        }),
+      );
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Handle the paralysis status effect check, cancelling the move and queueing the activation message and animation
+   *
+   * @returns Whether the move was cancelled due to paralysis
+   */
+  private checkPara(): boolean {
+    if (this.pokemon.status?.effect !== StatusEffect.PARALYSIS) {
+      return false;
+    }
+    const proc =
+      (this.pokemon.randBattleSeedInt(4) === 0 || Overrides.STATUS_ACTIVATION_OVERRIDE === true) &&
+      Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
+    if (!proc) {
+      return false;
+    }
+    this.triggerStatus(StatusEffect.PARALYSIS);
+    return true;
   }
 
   protected useMove(): void {
@@ -302,14 +464,6 @@ export class MovePhase extends PokemonPhase {
 
     // form changes happen even before we know that the move wll execute.
     globalScene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
-
-    // Check if the move has any attributes that can interrupt its own use **before** displaying text.
-    // TODO: This should not rely on direct return values
-    let failed = move.getAttrs("PreUseInterruptAttr").some(attr => attr.apply(this.pokemon, targets[0], move));
-    if (failed) {
-      this.failMove(false);
-      return;
-    }
 
     // Clear out any two turn moves once they've been used.
     // TODO: Refactor move queues and remove this assignment;
@@ -340,10 +494,10 @@ export class MovePhase extends PokemonPhase {
      * Move conditions assume the move has a single target
      * TODO: is this sustainable?
      */
-    const failsConditions = !move.applyConditions(this.pokemon, targets[0], move);
+    const failsConditions = !move.applyConditions(this.pokemon, targets[0]);
     const failedDueToWeather = globalScene.arena.isMoveWeatherCancelled(this.pokemon, move);
     const failedDueToTerrain = globalScene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
-    failed ||= failsConditions || failedDueToWeather || failedDueToTerrain;
+    const failed = failsConditions || failedDueToWeather || failedDueToTerrain;
 
     if (failed) {
       this.failMove(true, failedDueToWeather, failedDueToTerrain);
@@ -446,7 +600,7 @@ export class MovePhase extends PokemonPhase {
     const move = this.move.getMove();
     const targets = this.getActiveTargetPokemon();
 
-    if (!move.applyConditions(this.pokemon, targets[0], move)) {
+    if (!move.applyConditions(this.pokemon, targets[0])) {
       this.failMove(true);
       return;
     }

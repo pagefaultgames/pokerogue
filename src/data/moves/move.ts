@@ -46,13 +46,13 @@ import { FieldPosition } from "#enums/field-position";
 import { HitResult } from "#enums/hit-result";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { ChargeAnim } from "#enums/move-anims-common";
-import { MoveId } from "#enums/move-id";
-import { MoveResult } from "#enums/move-result";
-import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { MoveCategory } from "#enums/move-category";
 import { MoveEffectTrigger } from "#enums/move-effect-trigger";
 import { MoveFlags } from "#enums/move-flags";
+import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
+import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { MultiHitType } from "#enums/multi-hit-type";
 import { PokemonType } from "#enums/pokemon-type";
 import { PositionalTagType } from "#enums/positional-tag-type";
@@ -79,6 +79,7 @@ import {
 } from "#modifiers/modifier";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSketchMoves, invalidSleepTalkMoves } from "#moves/invalid-moves";
+import { ConsecutiveUseRestriction, FirstMoveCondition, GravityUseRestriction, MoveCondition, MoveRestriction, UpperHandCondition } from "#moves/move-condition";
 import { frenzyMissFunc, getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { MovePhase } from "#phases/move-phase";
@@ -87,19 +88,19 @@ import type { AttackMoveResult } from "#types/attack-move-result";
 import type { Localizable } from "#types/locales";
 import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveClassMap, MoveKindString, MoveMessageFunc } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
+import type { AbstractConstructor } from "#types/type-helpers";
+import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, coerceArray, type Constructor, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
-import { applyChallenges } from "#utils/challenge-utils";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
-import type { AbstractConstructor } from "#types/type-helpers";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
  * Conventionally returns `true` for success and `false` for failure.
 */
-type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
+export type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 export type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
 
 export abstract class Move implements Localizable {
@@ -117,7 +118,16 @@ export abstract class Move implements Localizable {
   public priority: number;
   public generation: number;
   public attrs: MoveAttr[] = [];
+  /** Conditions that must be met for the move to succeed when it is used.
+   *
+   * @remarks Different from {@linkcode restrictions}, which is checked when the move is selected
+   */
   private conditions: MoveCondition[] = [];
+  /** Conditions that must be false for a move to be able to be selected.
+   *
+   * @remarks Different from {@linkcode conditions}, which is checked when the move is invoked
+   */
+  private restrictions: MoveRestriction[] = [];
   /** The move's {@linkcode MoveFlags} */
   private flags: number = 0;
   private nameAppend: string = "";
@@ -371,13 +381,55 @@ export abstract class Move implements Localizable {
    * Adds a condition to this move (in addition to any provided by its prior {@linkcode MoveAttr}s).
    * The move will fail upon use if at least 1 of its conditions is not met.
    * @param condition - The {@linkcode MoveCondition} or {@linkcode MoveConditionFunc} to add to the conditions array.
-   * @returns `this`
+   * @returns `this` for method chaining
    */
   condition(condition: MoveCondition | MoveConditionFunc): this {
     if (typeof condition === "function") {
       condition = new MoveCondition(condition);
     }
     this.conditions.push(condition);
+
+    return this;
+  }
+
+  /**
+   * Adds a restriction condition to this move.
+   * The move will not be selectable if at least 1 of its restrictions is met.
+   * @param restriction - A function that evaluates to `true` if the move is restricted from being selected
+   * @returns `this` for method chaining
+   */
+  public restriction(restriction: MoveRestriction): this;
+    /**
+   * Adds a restriction condition to this move.
+   * The move will not be selectable if at least 1 of its restrictions is met.
+   * @param restriction - The function or `MoveRestriction` that evaluates to `true` if the move is restricted from
+   *    being selected
+   * @param i18nkey - The i18n key for the restriction text
+   * @param alsoCondition - If `true`, also adds a {@linkcode MoveCondition} that checks the same condition when the
+   *    move is used; default `false`
+   * @returns `this` for method chaining
+   */
+
+  public restriction(restriction: UserMoveConditionFunc, i18nkey: string, alsoCondition?: boolean): this;
+  /**
+   * Adds a restriction condition to this move.
+   * The move will not be selectable if at least 1 of its restrictions is met.
+   * @param restriction - The function or `MoveRestriction` that evaluates to `true` if the move is restricted from
+   *    being selected
+   * @param i18nkey - The i18n key for the restriction text, ignored if `restriction` is a `MoveRestriction`
+   * @param alsoCondition - If `true`, also adds a {@linkcode MoveCondition} that checks the same condition when the
+   *    move is used; default `false`. Ignored if `restriction` is a `MoveRestriction`.
+   * @returns `this` for method chaining
+   */
+  public restriction<T extends UserMoveConditionFunc | MoveRestriction>(restriction: T, i18nkey?: string, alsoCondition: typeof restriction extends MoveRestriction ? false : boolean = false): this {
+    if (typeof restriction === "function") {
+      this.restrictions.push(new MoveRestriction(restriction));
+      if (alsoCondition) {
+        this.conditions.push(new MoveCondition((user, _, move) => restriction(user, move)));
+      }
+    } else {
+      this.restrictions.push(restriction);
+    }
 
     return this;
   }
@@ -581,6 +633,19 @@ export abstract class Move implements Localizable {
   }
 
   /**
+   * Sets the {@linkcode MoveFlags.GRAVITY} flag for the calling Move and adds {@linkcode GravityUseRestriction} to the
+   * move's restrictions.
+   *
+   * @see {@linkcode MoveId.GRAVITY}
+   * @returns The {@linkcode Move} that called this function
+   */
+  affectedByGravity(): this {
+    this.setFlag(MoveFlags.GRAVITY, true);
+    this.restrictions.push(GravityUseRestriction);
+    return this;
+  }
+
+  /**
    * Sets the {@linkcode MoveFlags.IGNORE_ABILITIES} flag for the calling Move
    * @see {@linkcode MoveId.SUNSTEEL_STRIKE}
    * @returns The {@linkcode Move} that called this function
@@ -703,8 +768,29 @@ export abstract class Move implements Localizable {
    * @param move {@linkcode Move} to apply conditions to
    * @returns boolean: false if any of the apply()'s return false, else true
    */
-  applyConditions(user: Pokemon, target: Pokemon, move: Move): boolean {
-    return this.conditions.every(cond => cond.apply(user, target, move));
+  applyConditions(user: Pokemon, target: Pokemon): boolean {
+    return this.conditions.every(cond => cond.apply(user, target, this));
+  }
+
+
+  /**
+   * Determine whether the move is restricted from being selected due to its own requirements.
+   *
+   * @remarks
+   * Does not check for external factors that prohibit move selection, such as disable
+   *
+   * @param user - The Pokemon using the move
+   * @returns - An array whose first element is `false` if the move is restricted, and the second element is a string
+   *    with the reason for the restriction, otherwise, `false` and the empty string.
+   */
+  public checkRestrictions(user: Pokemon): [boolean, string] {
+    for (const restriction of this.restrictions) {
+      if (restriction.apply(user, this)) {
+        return [false, restriction.getSelectionDeniedText(user, this)];
+      }
+    }
+
+    return [true, ""];
   }
 
   /**
@@ -1476,13 +1562,21 @@ export class PreUseInterruptAttr extends MoveAttr {
   }
 
   /**
-   * Message to display when a move is interrupted.
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
+   * Cancel the current MovePhase and queue the interrupt message if the condition is met
+   * @param user - {@linkcode Pokemon} using the move
+   * @param target - {@linkcode Pokemon} target of the move
+   * @param move - {@linkcode Move} with this attribute
    */
   override apply(user: Pokemon, target: Pokemon, move: Move): boolean {
-    return this.conditionFunc(user, target, move);
+    const currentPhase = globalScene.phaseManager.getCurrentPhase();
+    if (!currentPhase?.is("MovePhase") || !this.conditionFunc(user, target, move)) {
+      return false;
+    }
+    currentPhase.cancel();
+    globalScene.phaseManager.queueMessage(
+      typeof this.message === "string" ? this.message : this.message(user, target, move)
+    )
+    return true;
   }
 
   /**
@@ -7944,8 +8038,6 @@ export class ForceLastAttr extends MoveEffectAttr {
   }
 }
 
-const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !globalScene.arena.getTag(ArenaTagType.GRAVITY);
-
 const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.isBossImmune();
 
 const failIfSingleBattle: MoveConditionFunc = (user, target, move) => globalScene.currentBattle.double;
@@ -7990,57 +8082,6 @@ const attackedByItemMessageFunc = (user: Pokemon, target: Pokemon, move: Move) =
   const message: string = i18next.t("moveTriggers:attackedByItem", { pokemonName: getPokemonNameWithAffix(target), itemName: itemName });
   return message;
 };
-
-export class MoveCondition {
-  protected func: MoveConditionFunc;
-
-  constructor(func: MoveConditionFunc) {
-    this.func = func;
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move): boolean {
-    return this.func(user, target, move);
-  }
-
-  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return 0;
-  }
-}
-
-/**
- * Condition to allow a move's use only on the first turn this Pokemon is sent into battle
- * (or the start of a new wave, whichever comes first).
- */
-
-export class FirstMoveCondition extends MoveCondition {
-  constructor() {
-    super((user, _target, _move) => user.tempSummonData.waveTurnCount === 1);
-  }
-
-  getUserBenefitScore(user: Pokemon, _target: Pokemon, _move: Move): number {
-    return this.apply(user, _target, _move) ? 10 : -20;
-  }
-}
-
-/**
- * Condition used by the move {@link https://bulbapedia.bulbagarden.net/wiki/Upper_Hand_(move) | Upper Hand}.
- * Moves with this condition are only successful when the target has selected
- * a high-priority attack (after factoring in priority-boosting effects) and
- * hasn't moved yet this turn.
- */
-export class UpperHandCondition extends MoveCondition {
-  constructor() {
-    super((user, target, move) => {
-      const targetCommand = globalScene.currentBattle.turnCommands[target.getBattlerIndex()];
-
-      return targetCommand?.command === Command.FIGHT
-        && !target.turnData.acted
-        && !!targetCommand.move?.move
-        && allMoves[targetCommand.move.move].category !== MoveCategory.STATUS
-        && allMoves[targetCommand.move.move].getPriority(target) > 0;
-    });
-  }
-}
 
 export class HitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -8443,7 +8484,7 @@ export function initMoves() {
     new ChargingAttackMove(MoveId.FLY, PokemonType.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, -1, 0, 1)
       .chargeText(i18next.t("moveTriggers:flewUpHigh", { pokemonName: "{USER}" }))
       .chargeAttr(SemiInvulnerableAttr, BattlerTagType.FLYING)
-      .condition(failOnGravityCondition),
+      .affectedByGravity(),
     new AttackMove(MoveId.BIND, PokemonType.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, 0, 1)
       .attr(TrapAttr, BattlerTagType.BIND),
     new AttackMove(MoveId.SLAM, PokemonType.NORMAL, MoveCategory.PHYSICAL, 80, 75, 20, -1, 0, 1),
@@ -8458,7 +8499,7 @@ export function initMoves() {
     new AttackMove(MoveId.JUMP_KICK, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 100, 95, 10, -1, 0, 1)
       .attr(MissEffectAttr, crashDamageFunc)
       .attr(NoEffectAttr, crashDamageFunc)
-      .condition(failOnGravityCondition)
+      .affectedByGravity()
       .recklessMove(),
     new AttackMove(MoveId.ROLLING_KICK, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 60, 85, 15, 30, 0, 1)
       .attr(FlinchAttr),
@@ -8775,7 +8816,7 @@ export function initMoves() {
     new AttackMove(MoveId.HIGH_JUMP_KICK, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 130, 90, 10, -1, 0, 1)
       .attr(MissEffectAttr, crashDamageFunc)
       .attr(NoEffectAttr, crashDamageFunc)
-      .condition(failOnGravityCondition)
+      .affectedByGravity()
       .recklessMove(),
     new StatusMove(MoveId.GLARE, PokemonType.NORMAL, 100, 30, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
@@ -8829,7 +8870,7 @@ export function initMoves() {
       .attr(RandomLevelDamageAttr),
     new SelfStatusMove(MoveId.SPLASH, PokemonType.NORMAL, -1, 40, -1, 0, 1)
       .attr(MessageAttr, i18next.t("moveTriggers:splash"))
-      .condition(failOnGravityCondition),
+      .affectedByGravity(),
     new SelfStatusMove(MoveId.ACID_ARMOR, PokemonType.POISON, -1, 20, -1, 0, 1)
       .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true),
     new AttackMove(MoveId.CRABHAMMER, PokemonType.WATER, MoveCategory.PHYSICAL, 100, 90, 10, -1, 0, 1)
@@ -9472,7 +9513,7 @@ export function initMoves() {
       .chargeText(i18next.t("moveTriggers:sprangUp", { pokemonName: "{USER}" }))
       .chargeAttr(SemiInvulnerableAttr, BattlerTagType.FLYING)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
-      .condition(failOnGravityCondition),
+      .affectedByGravity(),
     new AttackMove(MoveId.MUD_SHOT, PokemonType.GROUND, MoveCategory.SPECIAL, 55, 95, 15, 100, 0, 3)
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1),
     new AttackMove(MoveId.POISON_TAIL, PokemonType.POISON, MoveCategory.PHYSICAL, 50, 100, 25, 10, 0, 3)
@@ -9524,6 +9565,7 @@ export function initMoves() {
     new StatusMove(MoveId.GRAVITY, PokemonType.PSYCHIC, -1, 5, -1, 0, 4)
       .ignoresProtect()
       .attr(AddArenaTagAttr, ArenaTagType.GRAVITY, 5)
+      .condition(() => !globalScene.arena.hasTag(ArenaTagType.GRAVITY))
       .target(MoveTarget.BOTH_SIDES),
     new StatusMove(MoveId.MIRACLE_EYE, PokemonType.PSYCHIC, -1, 40, -1, 0, 4)
       .attr(ExposedMoveAttr, BattlerTagType.IGNORE_DARK)
@@ -9648,7 +9690,8 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.AQUA_RING, true, true),
     new SelfStatusMove(MoveId.MAGNET_RISE, PokemonType.ELECTRIC, -1, 10, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.FLOATING, true, true, 5)
-      .condition((user, target, move) => !globalScene.arena.getTag(ArenaTagType.GRAVITY) && [ BattlerTagType.FLOATING, BattlerTagType.IGNORE_FLYING, BattlerTagType.INGRAIN ].every((tag) => !user.getTag(tag))),
+      .condition(user => [ BattlerTagType.FLOATING, BattlerTagType.IGNORE_FLYING, BattlerTagType.INGRAIN ].every((tag) => !user.getTag(tag)))
+      .affectedByGravity(),
     new AttackMove(MoveId.FLARE_BLITZ, PokemonType.FIRE, MoveCategory.PHYSICAL, 120, 100, 15, 10, 0, 4)
       .attr(RecoilAttr, false, 0.33)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
@@ -9877,7 +9920,7 @@ export function initMoves() {
       .powderMove()
       .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true),
     new StatusMove(MoveId.TELEKINESIS, PokemonType.PSYCHIC, -1, 15, -1, 0, 5)
-      .condition(failOnGravityCondition)
+      .affectedByGravity()
       .condition((_user, target, _move) => ![ SpeciesId.DIGLETT, SpeciesId.DUGTRIO, SpeciesId.ALOLA_DIGLETT, SpeciesId.ALOLA_DUGTRIO, SpeciesId.SANDYGAST, SpeciesId.PALOSSAND, SpeciesId.WIGLETT, SpeciesId.WUGTRIO ].includes(target.species.speciesId))
       .condition((_user, target, _move) => !(target.species.speciesId === SpeciesId.GENGAR && target.getFormKey() === "mega"))
       .condition((_user, target, _move) => target.getTag(BattlerTagType.INGRAIN) == null && target.getTag(BattlerTagType.IGNORE_FLYING) == null)
@@ -9981,7 +10024,7 @@ export function initMoves() {
     new ChargingAttackMove(MoveId.SKY_DROP, PokemonType.FLYING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
       .chargeText(i18next.t("moveTriggers:tookTargetIntoSky", { pokemonName: "{USER}", targetName: "{TARGET}" }))
       .chargeAttr(SemiInvulnerableAttr, BattlerTagType.FLYING)
-      .condition(failOnGravityCondition)
+      .affectedByGravity()
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
       /*
        * Cf https://bulbapedia.bulbagarden.net/wiki/Sky_Drop_(move) and https://www.smogon.com/dex/sv/moves/sky-drop/:
@@ -10169,14 +10212,14 @@ export function initMoves() {
       .attr(AlwaysHitMinimizeAttr)
       .attr(FlyingTypeMultiplierAttr)
       .attr(HitsTagForDoubleDamageAttr, BattlerTagType.MINIMIZED)
-      .condition(failOnGravityCondition),
+      .affectedByGravity(),
     new StatusMove(MoveId.MAT_BLOCK, PokemonType.FIGHTING, -1, 10, -1, 0, 6)
       .target(MoveTarget.USER_SIDE)
       .attr(AddArenaTagAttr, ArenaTagType.MAT_BLOCK, 1, true, true)
       .condition(new FirstMoveCondition())
       .condition(failIfLastCondition),
     new AttackMove(MoveId.BELCH, PokemonType.POISON, MoveCategory.SPECIAL, 120, 90, 10, -1, 0, 6)
-      .condition((user, target, move) => user.battleData.hasEatenBerry),
+      .restriction(user => !user.battleData.hasEatenBerry, "battle:moveDisabledBelch", true),
     new StatusMove(MoveId.ROTOTILLER, PokemonType.GROUND, -1, 10, -1, 0, 6)
       .target(MoveTarget.ALL)
       .condition((user, target, move) => {
@@ -10707,7 +10750,8 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(MoveId.FLOATY_FALL, PokemonType.FLYING, MoveCategory.PHYSICAL, 90, 95, 15, 30, 0, 7)
-      .attr(FlinchAttr),
+      .attr(FlinchAttr)
+      .affectedByGravity(),
     new AttackMove(MoveId.PIKA_PAPOW, PokemonType.ELECTRIC, MoveCategory.SPECIAL, -1, -1, 20, -1, 0, 7)
       .attr(FriendshipPowerAttr),
     new AttackMove(MoveId.BOUNCY_BUBBLE, PokemonType.WATER, MoveCategory.SPECIAL, 60, 100, 20, -1, 0, 7)
@@ -10761,11 +10805,10 @@ export function initMoves() {
     new SelfStatusMove(MoveId.STUFF_CHEEKS, PokemonType.NORMAL, -1, 10, -1, 0, 8)
       .attr(EatBerryAttr, true)
       .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true)
-      .condition((user) => {
-        const userBerries = globalScene.findModifiers(m => m instanceof BerryModifier, user.isPlayer());
-        return userBerries.length > 0;
-      })
-      .edgeCase(), // Stuff Cheeks should not be selectable when the user does not have a berry, see wiki
+      .restriction(
+        user => globalScene.findModifiers(m => m instanceof BerryModifier, user.isPlayer()).length > 0,
+        "battle:moveDisabledNoBerry",
+        true),
     new SelfStatusMove(MoveId.NO_RETREAT, PokemonType.FIGHTING, -1, 5, -1, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.NO_RETREAT, true, false)
@@ -11342,10 +11385,7 @@ export function initMoves() {
       }),
     new AttackMove(MoveId.GIGATON_HAMMER, PokemonType.STEEL, MoveCategory.PHYSICAL, 160, 100, 5, -1, 0, 9)
       .makesContact(false)
-      .condition((user, target, move) => {
-        const turnMove = user.getLastXMoves(1);
-        return !turnMove.length || turnMove[0].move !== move.id || turnMove[0].result !== MoveResult.SUCCESS;
-      }), // TODO Add Instruct/Encore interaction
+      .restriction(ConsecutiveUseRestriction),
     new AttackMove(MoveId.COMEUPPANCE, PokemonType.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 9)
       .attr(CounterDamageAttr, (move: Move) => (move.category === MoveCategory.PHYSICAL || move.category === MoveCategory.SPECIAL), 1.5)
       .redirectCounter()
@@ -11370,10 +11410,7 @@ export function initMoves() {
       .attr(ConfuseAttr)
       .makesContact(false),
     new AttackMove(MoveId.BLOOD_MOON, PokemonType.NORMAL, MoveCategory.SPECIAL, 140, 100, 5, -1, 0, 9)
-      .condition((user, target, move) => {
-        const turnMove = user.getLastXMoves(1);
-        return !turnMove.length || turnMove[0].move !== move.id || turnMove[0].result !== MoveResult.SUCCESS;
-      }), // TODO Add Instruct/Encore interaction
+      .restriction(ConsecutiveUseRestriction),
     new AttackMove(MoveId.MATCHA_GOTCHA, PokemonType.GRASS, MoveCategory.SPECIAL, 80, 90, 15, 20, 0, 9)
       .attr(HitHealAttr)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
