@@ -1,5 +1,3 @@
-import { toCamelCase } from "#utils/strings";
-
 /** Enum that comprises all possible stat-related attributes, in-battle and permanent, of a Pokemon. */
 export enum Stat {
   /** Hit Points */
@@ -66,7 +64,7 @@ export function getStatStageChangeDescriptionKey(stages: number, isIncrease: boo
  * @returns the translation key corresponding to the given {@linkcode Stat}
  */
 export function getStatKey(stat: Stat) {
-  return `pokemonInfo:stat.${toCamelCase(Stat[stat])}`;
+  return `pokemonInfo:stat.${Stat[stat].toLowerCase()}`;
 }
 
 /**
@@ -75,5 +73,5 @@ export function getStatKey(stat: Stat) {
  * @returns the translation key corresponding to the given {@linkcode Stat}
  */
 export function getShortenedStatKey(stat: PermanentStat) {
-  return `pokemonInfo:stat.${toCamelCase(Stat[stat])}Shortened`;
+  return `pokemonInfo:stat.${Stat[stat].toLowerCase()}Shortened`;
 }
