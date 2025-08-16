@@ -838,28 +838,12 @@ export class FreshStartChallenge extends Challenge {
     const defaultDexEntry = DexAttr.NON_SHINY | DexAttr.MALE | DexAttr.FEMALE | DexAttr.DEFAULT_FORM;
     dexEntry.caughtAttr &= defaultDexEntry;
 
-    /**   
-    let validMoves = pokemon.species
-      .getLevelMoves()
-      .filter(m => isBetween(m[0], 1, 5))
-      .map(lm => lm[1]);
-    // Filter egg moves out of the moveset
-    pokemon.moveset = pokemon.moveset.filter(pm => validMoves.includes(pm.moveId));
-    if (pokemon.moveset.length < 4) {
-      // If there's empty slots fill with remaining valid moves
-      const existingMoveIds = pokemon.moveset.map(pm => pm.moveId);
-      validMoves = validMoves.filter(m => !existingMoveIds.includes(m));
-      pokemon.moveset = pokemon.moveset.concat(validMoves.map(m => new PokemonMove(m))).slice(0, 4);
-    }
-    pokemon.teraType = pokemon.species.type1; // Always primary tera type
-  */
     return true;
   }
 
   applyStarterModify(pokemon: Pokemon): boolean {
     pokemon.abilityIndex = pokemon.abilityIndex % 2; // Always base ability, if you set it to hidden it wraps to first ability
     pokemon.passive = false; // Passive isn't unlocked
-    pokemon.nature = Nature.HARDY; // Neutral nature
     let validMoves = pokemon.species
       .getLevelMoves()
       .filter(m => isBetween(m[0], 1, 5))
