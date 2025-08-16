@@ -49,7 +49,7 @@ importers:
         specifier: 2.3.1
         version: 2.3.1
       '@types/crypto-js':
-        specifier: ^4.2.2
+        specifier: ^4.2.0
         version: 4.2.2
       '@types/jsdom':
         specifier: ^21.1.7

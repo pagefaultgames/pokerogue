@@ -6,7 +6,7 @@ import { getStatName } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
-export interface ToHaveEffectiveStatMatcherOptions {
+export interface toHaveEffectiveStatOptions {
   /**
    * The target {@linkcode Pokemon}
    * @see {@linkcode Pokemon.getEffectiveStat}
@@ -30,7 +30,7 @@ export interface ToHaveEffectiveStatMatcherOptions {
  * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @param stat - The {@linkcode EffectiveStat} to check
  * @param expectedValue - The expected value of the {@linkcode stat}
- * @param options - The {@linkcode ToHaveEffectiveStatMatcherOptions}
+ * @param options - The {@linkcode toHaveEffectiveStatOptions}
  * @returns Whether the matcher passed
  */
 export function toHaveEffectiveStat(
@@ -38,11 +38,11 @@ export function toHaveEffectiveStat(
   received: unknown,
   stat: EffectiveStat,
   expectedValue: number,
-  { enemy, move, isCritical = false }: ToHaveEffectiveStatMatcherOptions = {},
+  { enemy, move, isCritical = false }: toHaveEffectiveStatOptions = {},
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
-      pass: false,
+      pass: this.isNot,
       message: () => `Expected to receive a Pokémon, but got ${receivedStr(received)}!`,
     };
   }

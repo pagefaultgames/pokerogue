@@ -1,3 +1,5 @@
+import type { RibbonData } from "#system/ribbons/ribbon-data";
+
 export interface DexData {
   [key: number]: DexEntry;
 }
@@ -10,4 +12,5 @@ export interface DexEntry {
   caughtCount: number;
   hatchedCount: number;
   ivs: number[];
+  ribbons: RibbonData;
 }

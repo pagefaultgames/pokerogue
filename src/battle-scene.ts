@@ -27,13 +27,7 @@ import { UiInputs } from "#app/ui-inputs";
 import { biomeDepths, getBiomeName } from "#balance/biomes";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
-import {
-  initCommonAnims,
-  initMoveAnim,
-  loadCommonAnimAssets,
-  loadMoveAnimAssets,
-  populateAnims,
-} from "#data/battle-anims";
+import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets } from "#data/battle-anims";
 import { allAbilities, allMoves, allSpecies, modifierTypes } from "#data/data-lists";
 import { battleSpecDialogue } from "#data/dialogue";
 import type { SpeciesFormChangeTrigger } from "#data/form-change-triggers";
@@ -104,6 +98,7 @@ import {
   getLuckString,
   getLuckTextTint,
   getPartyLuckValue,
+  type ModifierType,
   PokemonHeldItemModifierType,
 } from "#modifiers/modifier-type";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
@@ -387,7 +382,6 @@ export class BattleScene extends SceneBase {
     const defaultMoves = [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE];
 
     await Promise.all([
-      populateAnims(),
       this.initVariantData(),
       initCommonAnims().then(() => loadCommonAnimAssets(true)),
       Promise.all(defaultMoves.map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(defaultMoves, true)),
@@ -943,17 +937,17 @@ export class BattleScene extends SceneBase {
     dataSource?: PokemonData,
     postProcess?: (enemyPokemon: EnemyPokemon) => void,
   ): EnemyPokemon {
-    if (Overrides.OPP_LEVEL_OVERRIDE > 0) {
-      level = Overrides.OPP_LEVEL_OVERRIDE;
+    if (Overrides.ENEMY_LEVEL_OVERRIDE > 0) {
+      level = Overrides.ENEMY_LEVEL_OVERRIDE;
     }
-    if (Overrides.OPP_SPECIES_OVERRIDE) {
-      species = getPokemonSpecies(Overrides.OPP_SPECIES_OVERRIDE);
+    if (Overrides.ENEMY_SPECIES_OVERRIDE) {
+      species = getPokemonSpecies(Overrides.ENEMY_SPECIES_OVERRIDE);
       // The fact that a Pokemon is a boss or not can change based on its Species and level
       boss = this.getEncounterBossSegments(this.currentBattle.waveIndex, level, species) > 1;
     }
 
     const pokemon = new EnemyPokemon(species, level, trainerSlot, boss, shinyLock, dataSource);
-    if (Overrides.OPP_FUSION_OVERRIDE) {
+    if (Overrides.ENEMY_FUSION_OVERRIDE) {
       pokemon.generateFusionSpecies();
     }
 
@@ -1203,7 +1197,9 @@ export class BattleScene extends SceneBase {
     this.updateScoreText();
     this.scoreText.setVisible(false);
 
-    [this.luckLabelText, this.luckText].map(t => t.setVisible(false));
+    [this.luckLabelText, this.luckText].forEach(t => {
+      t.setVisible(false);
+    });
 
     this.newArena(Overrides.STARTING_BIOME_OVERRIDE || BiomeId.TOWN);
 
@@ -1237,8 +1233,7 @@ export class BattleScene extends SceneBase {
             Object.values(mp)
               .flat()
               .map(mt => mt.modifierType)
-              .filter(mt => "localize" in mt)
-              .map(lpb => lpb as unknown as Localizable),
+              .filter((mt): mt is ModifierType & Localizable => "localize" in mt && typeof mt.localize === "function"),
           ),
       ];
       for (const item of localizable) {
@@ -1513,8 +1508,8 @@ export class BattleScene extends SceneBase {
     return this.currentBattle;
   }
 
-  newArena(biome: BiomeId, playerFaints?: number): Arena {
-    this.arena = new Arena(biome, BiomeId[biome].toLowerCase(), playerFaints);
+  newArena(biome: BiomeId, playerFaints = 0): Arena {
+    this.arena = new Arena(biome, playerFaints);
     this.eventTarget.dispatchEvent(new NewArenaEvent());
 
     this.arenaBg.pipelineData = {
@@ -1764,10 +1759,10 @@ export class BattleScene extends SceneBase {
   }
 
   getEncounterBossSegments(waveIndex: number, level: number, species?: PokemonSpecies, forceBoss = false): number {
-    if (Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE > 1) {
-      return Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE;
+    if (Overrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE > 1) {
+      return Overrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE;
     }
-    if (Overrides.OPP_HEALTH_SEGMENTS_OVERRIDE === 1) {
+    if (Overrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE === 1) {
       // The rest of the code expects to be returned 0 and not 1 if the enemy is not a boss
       return 0;
     }
@@ -2711,7 +2706,9 @@ export class BattleScene extends SceneBase {
           }
         }
 
-        this.party.map(p => p.updateInfo(instant));
+        this.party.forEach(p => {
+          p.updateInfo(instant);
+        });
       } else {
         const args = [this];
         if (modifier.shouldApply(...args)) {
