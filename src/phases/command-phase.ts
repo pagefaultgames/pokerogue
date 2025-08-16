@@ -402,6 +402,8 @@ export class CommandPhase extends FieldPhase {
       } else if ((isClassic && missingMultipleStarters) || (isEndless && isEndlessMinorBoss) || isDaily) {
         // Uncatchable final boss in classic and endless
         this.queueShowText("battle:noPokeballForceFinalBoss");
+      } else {
+        return true;
       }
     } else if (battleType === BattleType.TRAINER) {
       this.queueShowText("battle:noPokeballTrainer");
@@ -450,10 +452,12 @@ export class CommandPhase extends FieldPhase {
       ) {
         if (restrictMasterBall) {
           this.queueShowText("battle:noPokeballStrongFinalBossCatchable");
-        } else if (cursor < PokeballType.MASTER_BALL) {
-          this.queueShowText("battle:noPokeballStrong");
+          return false;
         }
-        return false;
+        if (cursor < PokeballType.MASTER_BALL) {
+          this.queueShowText("battle:noPokeballStrong");
+          return false;
+        }
       }
 
       globalScene.currentBattle.turnCommands[this.fieldIndex] = {
