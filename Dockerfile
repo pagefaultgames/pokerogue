@@ -21,7 +21,7 @@ COPY . .
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
 
-# Install all dependencies, skipping postinstall
+# Install all dependencies
 RUN --mount=type=cache,target=/home/appuser/.pnpm-store \
     pnpm install --frozen-lockfile && \
     rm -rf /home/appuser/.pnpm-store/*
