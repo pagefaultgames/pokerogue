@@ -390,12 +390,12 @@ export class CommandPhase extends FieldPhase {
     const isClassicFinalBoss = globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex);
     const isEndlessMinorBoss = globalScene.gameMode.isEndlessMinorBoss(globalScene.currentBattle.waveIndex);
     const isFullFreshStart = globalScene.gameMode.isFullFreshStartChallenge();
-
     const someUncaughtSpeciesOnField = globalScene
       .getEnemyField()
       .some(p => p.isActive() && !dexData[p.species.speciesId].caughtAttr);
     const missingMultipleStarters =
       gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1;
+
     if (biomeType === BiomeId.END) {
       if (
         (isClassic && !isClassicFinalBoss && someUncaughtSpeciesOnField) ||
@@ -410,7 +410,7 @@ export class CommandPhase extends FieldPhase {
         (isEndless && isEndlessMinorBoss) ||
         isDaily
       ) {
-        // Uncatchable final boss in classic and endless
+        // Uncatchable final boss in classic, endless and daily
         this.queueShowText("battle:noPokeballForceFinalBoss");
       } else {
         return true;
@@ -446,10 +446,8 @@ export class CommandPhase extends FieldPhase {
       return false;
     }
 
-    // Restricts use of Master Ball against final boss in challenges
-    const restrictMasterBall =
-      globalScene.gameMode.isChallenge &&
-      globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex);
+    const isChallengeActive = globalScene.gameMode.hasAnyChallenges();
+    const isFinalBoss = globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex);
 
     const numBallTypes = 5;
     if (cursor < numBallTypes) {
@@ -460,10 +458,16 @@ export class CommandPhase extends FieldPhase {
         // TODO: Decouple this hardcoded exception for wonder guard and just check the target...
         !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true)
       ) {
-        if (restrictMasterBall) {
+        // When facing the final boss, it must be weakened unless a Master Ball is used AND no challenges are active.
+        // The message is customized for the final boss.
+        if (
+          isFinalBoss &&
+          (cursor < PokeballType.MASTER_BALL || (cursor === PokeballType.MASTER_BALL && isChallengeActive))
+        ) {
           this.queueShowText("battle:noPokeballForceFinalBossCatchable");
           return false;
         }
+        // When facing any other boss, Master Ball can always be used, and we use the standard message.
         if (cursor < PokeballType.MASTER_BALL) {
           this.queueShowText("battle:noPokeballStrong");
           return false;
