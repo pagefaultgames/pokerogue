@@ -755,7 +755,7 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
    * @param quiet - Whether to suppress messages during tag creation; default `false`
    */
   override onAdd(_arena: Arena, quiet = false): void {
-    // We assume `quiet=true` means "just add the bloody tag no questions asked"
+    // Here, `quiet=true` means "just add the tag, no questions asked"
     if (quiet) {
       return;
     }
