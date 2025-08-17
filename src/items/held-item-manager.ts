@@ -1,16 +1,13 @@
 import { allHeldItems } from "#data/data-lists";
-import type { FormChangeItem } from "#enums/form-change-item";
 import {
-  type HeldItemCategoryId,
+  type FormChangeItem,
+  HeldItemCategoryId,
   type HeldItemId,
   isCategoryId,
   isItemInCategory,
   isItemInRequested,
 } from "#enums/held-item-id";
 import {
-  type FormChangeItemData,
-  type FormChangeItemPropertyMap,
-  type FormChangeItemSpecs,
   type HeldItemConfiguration,
   type HeldItemDataMap,
   type HeldItemSaveData,
@@ -22,11 +19,9 @@ import { getTypedKeys } from "#utils/common";
 export class HeldItemManager {
   // TODO: There should be a way of making these private...
   public heldItems: HeldItemDataMap;
-  public formChangeItems: FormChangeItemPropertyMap;
 
   constructor() {
     this.heldItems = {};
-    this.formChangeItems = {};
   }
 
   getItemSpecs(id: HeldItemId): HeldItemSpecs | undefined {
@@ -50,12 +45,6 @@ export class HeldItemManager {
         config.push({ entry: specs, count: 1 });
       }
     }
-    for (const [id, item] of this.getFormChangeItemEntries()) {
-      if (item) {
-        const specs: FormChangeItemSpecs = { ...item, id };
-        config.push({ entry: specs, count: 1 });
-      }
-    }
     return config;
   }
 
@@ -64,12 +53,6 @@ export class HeldItemManager {
     for (const [id, item] of this.getHeldItemEntries()) {
       if (item) {
         const specs: HeldItemSpecs = { ...item, id };
-        saveData.push(specs);
-      }
-    }
-    for (const [id, item] of this.getFormChangeItemEntries()) {
-      if (item) {
-        const specs: FormChangeItemSpecs = { ...item, id };
         saveData.push(specs);
       }
     }
@@ -202,51 +185,26 @@ export class HeldItemManager {
     return total;
   }
 
-  addFormChangeItem(id: FormChangeItem) {
-    if (!(id in this.formChangeItems)) {
-      this.formChangeItems[id] = { active: false };
-    }
-  }
-
-  addFormChangeItemWithSpecs(item: FormChangeItemSpecs) {
-    if (!(item.id in this.formChangeItems)) {
-      this.formChangeItems[item.id] = { active: item.active };
-    }
-  }
-
-  hasFormChangeItem(id: FormChangeItem): boolean {
-    return id in this.formChangeItems;
-  }
-
   hasActiveFormChangeItem(id: FormChangeItem): boolean {
-    const item = this.formChangeItems[id];
+    const item = this.heldItems[id];
     if (item) {
-      return item.active;
+      return !!item.active;
     }
     return false;
   }
 
   getFormChangeItems(): FormChangeItem[] {
-    return getTypedKeys(this.formChangeItems);
-  }
-
-  private getFormChangeItemEntries(): [FormChangeItem, FormChangeItemData | undefined][] {
-    return Object.entries(this.formChangeItems) as unknown as [FormChangeItem, FormChangeItemData | undefined][];
-  }
-
-  getActiveFormChangeItems(): FormChangeItem[] {
-    return this.getFormChangeItems().filter(m => this.formChangeItems[m]?.active);
+    return this.filterRequestedItems([HeldItemCategoryId.FORM_CHANGE, HeldItemCategoryId.RARE_FORM_CHANGE], false);
   }
 
   toggleActive(id: FormChangeItem) {
-    const item = this.formChangeItems[id];
+    const item = this.heldItems[id];
     if (item) {
-      item.active = !item.active;
+      item.active = !item?.active;
     }
   }
 
   clearItems() {
     this.heldItems = {};
-    this.formChangeItems = {};
   }
 }

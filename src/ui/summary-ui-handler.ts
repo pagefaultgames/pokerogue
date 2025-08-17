@@ -1053,22 +1053,7 @@ export class SummaryUiHandler extends UiHandler {
             icon.on("pointerout", () => globalScene.ui.hideTooltip());
           }
         });
-        /*
-        const formChangeItems = this.pokemon?.heldItemManager.getFormChangeItems().sort(formChangeItemSortFunc);
-        
-        //TODO: Make an equivalent function for form change items
-        formChangeItems?.forEach((itemKey, i) => {
-          const icon = heldItem.createSummaryIcon(stack);
 
-          console.log(icon);
-          icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);
-          this.statsContainer.add(icon);
-
-          icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
-          icon.on("pointerover", () => globalScene.ui.showTooltip(heldItem.getName(), heldItem.getDescription(), true));
-          icon.on("pointerout", () => globalScene.ui.hideTooltip());
-        });
-*/
         const pkmLvl = this.pokemon?.level!; // TODO: is this bang correct?
         const pkmLvlExp = this.pokemon?.levelExp!; // TODO: is this bang correct?
         const pkmExp = this.pokemon?.exp!; // TODO: is this bang correct?

@@ -1,7 +1,7 @@
 import { allHeldItems } from "#data/data-lists";
 import { BerryType } from "#enums/berry-type";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItemId } from "#enums/held-item-id";
+import { FormChangeItem, HeldItemId } from "#enums/held-item-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { type PermanentStat, Stat } from "#enums/stat";
@@ -24,6 +24,7 @@ import { type EvoTrackerParams, GimmighoulEvoTrackerHeldItem } from "#items/evo-
 import { ExpBoosterHeldItem, type ExpBoostParams } from "#items/exp-booster";
 import { FieldEffectHeldItem, type FieldEffectParams } from "#items/field-effect";
 import { FlinchChanceHeldItem, type FlinchChanceParams } from "#items/flinch-chance";
+import { FormChangeHeldItem } from "#items/form-change-item";
 import { FriendshipBoosterHeldItem, type FriendshipBoostParams } from "#items/friendship-booster";
 import { HitHealHeldItem, type HitHealParams } from "#items/hit-heal";
 import { IncrementingStatHeldItem, type IncrementingStatParams } from "#items/incrementing-stat";
@@ -150,6 +151,10 @@ export function initHeldItems() {
     SpeciesId.GIMMIGHOUL,
     10,
   );
+
+  for (const value of Object.values(FormChangeItem) as HeldItemId[]) {
+    allHeldItems[value] = new FormChangeHeldItem(value, 1).unstealable().untransferable().unsuppressable();
+  }
 }
 
 type ApplyHeldItemsParams = {

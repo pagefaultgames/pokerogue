@@ -1,9 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { allHeldItems } from "#data/data-lists";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { AbilityId } from "#enums/ability-id";
 import { Challenges } from "#enums/challenges";
-import { FormChangeItem } from "#enums/form-change-item";
+import type { FormChangeItem } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { StatusEffect } from "#enums/status-effect";
@@ -69,15 +70,15 @@ export class SpeciesFormChangeItemTrigger extends SpeciesFormChangeTrigger {
     this.active = active;
     this.description = this.active
       ? i18next.t("pokemonEvolutions:Forms.item", {
-          item: i18next.t(`modifierType:FormChangeItem.${FormChangeItem[this.item]}`),
+          item: allHeldItems[item].name,
         })
       : i18next.t("pokemonEvolutions:Forms.deactivateItem", {
-          item: i18next.t(`modifierType:FormChangeItem.${FormChangeItem[this.item]}`),
+          item: allHeldItems[item].name,
         });
   }
 
   canChange(pokemon: Pokemon): boolean {
-    const matchItem = pokemon.heldItemManager.formChangeItems[this.item];
+    const matchItem = pokemon.heldItemManager.heldItems[this.item];
     if (!matchItem) {
       return false;
     }

@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { biomeLinks, getBiomeName } from "#balance/biomes";
 import { BiomeId } from "#enums/biome-id";
-import { TrainerItemId } from "#enums/trainer-item-id";
 import { ChallengeType } from "#enums/challenge-type";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import { BattlePhase } from "#phases/battle-phase";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
@@ -29,11 +29,11 @@ export class SelectBiomePhase extends BattlePhase {
           globalScene.phaseManager.unshiftNew("PartyHealPhase", false);
         } else {
           globalScene.phaseManager.unshiftNew(
-            "SelectModifierPhase",
+            "SelectRewardPhase",
             undefined,
             undefined,
             gameMode.isFixedBattle(currentWaveIndex)
-              ? gameMode.getFixedBattle(currentWaveIndex).customModifierRewardSettings
+              ? gameMode.getFixedBattle(currentWaveIndex).customRewardSettings
               : undefined,
           );
         }
