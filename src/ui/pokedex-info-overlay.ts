@@ -53,6 +53,7 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
       3, // maxLineCount
       "", // initial content
       TextStyle.BATTLE_INFO,
+      true,
     );
     this.desc.createMask(globalScene, this.x, this.y);
     this.add(this.desc);

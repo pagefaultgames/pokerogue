@@ -75,6 +75,7 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
       3, // maxLineCount
       "", // initial content
       TextStyle.BATTLE_INFO,
+      !options?.hideBg,
     );
     this.desc.createMask(globalScene, this.x, this.y);
     this.add(this.desc);
@@ -127,10 +128,6 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
 
     if (options?.hideEffectBox) {
       this.val.setVisible(false);
-    }
-
-    if (options?.hideBg) {
-      this.desc.hideBg();
     }
 
     // hide this component for now

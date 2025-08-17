@@ -14,8 +14,6 @@ which takes as input the _global_ coordinates of the parent. This is necessary t
  */
 
 const BORDER = 8;
-const DESC_X = BORDER;
-const DESC_Y = BORDER - 2;
 const SCALE_PROPERTY = 96 / 72 / 14.83;
 
 export default class ScrollingText extends Phaser.GameObjects.Container {
@@ -23,6 +21,9 @@ export default class ScrollingText extends Phaser.GameObjects.Container {
   public text: Phaser.GameObjects.Text;
   private descScroll: Phaser.Tweens.Tween | null = null;
   private maxLineCount: number;
+
+  private offsetX: number;
+  private offsetY: number;
 
   constructor(
     scene: Phaser.Scene,
@@ -33,24 +34,29 @@ export default class ScrollingText extends Phaser.GameObjects.Container {
     maxLineCount: number,
     content: string,
     style: TextStyle,
+    hasBackground = false,
   ) {
     super(scene, x, y);
+
+    this.offsetX = hasBackground ? BORDER : 0;
+    this.offsetY = hasBackground ? BORDER - 2 : 0;
 
     // Adding the background
     this.descBg = addWindow(0, 0, width, height);
     this.descBg.setOrigin(0, 0);
-    this.descBg.setVisible(true);
+    this.descBg.setVisible(hasBackground);
     this.add(this.descBg);
 
     // Adding the text element
-    const wrapWidth = (width - (DESC_X - 2) * 2) * 6;
+    const wrapWidth = (width - (this.offsetX - 2) * 2) * 6;
 
-    this.text = addTextObject(DESC_X, DESC_Y, content, style, {
+    this.text = addTextObject(this.offsetX, this.offsetY, content, style, {
       wordWrap: {
         width: wrapWidth,
       },
     });
     this.maxLineCount = maxLineCount;
+    // TODO: change this based on which text is being used, etc
     this.text.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
     this.add(this.text);
   }
@@ -59,11 +65,11 @@ export default class ScrollingText extends Phaser.GameObjects.Container {
     // Adding the mask for the scrolling effect
     const visibleX = parentX < 0 ? parentX + globalScene.scaledCanvas.width : parentX;
     const visibleY = parentY < 0 ? parentY + globalScene.scaledCanvas.height : parentY;
-    const globalMaskX = visibleX + this.x + DESC_X;
-    const globalMaskY = visibleY + this.y + DESC_Y;
+    const globalMaskX = visibleX + this.x + this.offsetX;
+    const globalMaskY = visibleY + this.y + this.offsetY;
 
-    const visibleWidth = this.descBg.width - (BORDER - 2) * 2;
-    const visibleHeight = this.descBg.height - (BORDER - 2) * 2;
+    const visibleWidth = this.descBg.width - (this.offsetX - 2) * 2;
+    const visibleHeight = this.descBg.height - this.offsetY * 2;
 
     const maskGraphics = scene.make.graphics({ x: 0, y: 0 });
     maskGraphics.fillRect(globalMaskX, globalMaskY, visibleWidth, visibleHeight);
@@ -79,10 +85,11 @@ export default class ScrollingText extends Phaser.GameObjects.Container {
     if (this.descScroll) {
       this.descScroll.remove();
       this.descScroll = null;
-      this.text.y = BORDER - 2;
+      this.text.y = this.offsetY;
     }
 
     // determine if we need to add new scrolling effects
+    // TODO: The scale property may need to be adjusted based on the height of the font
     const lineCount = Math.floor(this.text.displayHeight * SCALE_PROPERTY);
 
     if (lineCount > this.maxLineCount) {
@@ -96,9 +103,5 @@ export default class ScrollingText extends Phaser.GameObjects.Container {
         y: `-=${(lineCount - this.maxLineCount) / SCALE_PROPERTY}`,
       });
     }
-  }
-
-  hideBg() {
-    this.descBg.setVisible(false);
   }
 }
