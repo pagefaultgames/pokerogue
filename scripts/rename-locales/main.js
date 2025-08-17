@@ -86,19 +86,20 @@ function getArgsValue(args) {
  * @returns {Promise<boolean>} whether yes or no was selected
  */
 async function confirmInput(files) {
-  return await inquirer
-    .prompt([
+  return (
+    await inquirer.prompt([
       {
         type: "confirm",
         name: "continue",
         message:
-          `You are currently attempting to parse a total of ${files.length} files.` +
+          `You are currently attempting to rename a total of ${files.length} files.` +
           "\nContinue?" +
           `\nFiles: \n${chalk.blue(files.length <= 50 ? files.join(", \n") : files.slice(0, 50).join(", \n") + chalk.grey(`...and ${files.length - 50} more`))}` +
           "\n",
+        default: false,
       },
     ])
-    .then(ta => ta.continue);
+  ).continue;
 }
 
 /**

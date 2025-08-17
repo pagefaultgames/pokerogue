@@ -38,7 +38,7 @@ function splitWords(value) {
  * Helper function to remove one or more sequences of characters from either end of a string.
  * @param {string} str - The string to replace
  * @param {string} charToTrim - The string to remove
- * @returns {string} [object Object],[object Object],[object Object],[object Object],[object Object]
+ * @returns {string} The string having been trimmed
  */
 function trimFromStartAndEnd(str, charToTrim) {
   let start = 0;
@@ -109,7 +109,6 @@ export function toCamelCase(str) {
  * ```ts
  * console.log(toPascalCase("hi how was your day")); // returns "HiHowWasYourDay"
  * ```
- * @remarks
  * @param {string} str - The string being converted
  * @returns {string} The result of converting `str` into pascal case.
  */
