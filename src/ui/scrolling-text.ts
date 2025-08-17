@@ -10,7 +10,7 @@ This takes various coordinates:
 - The x and y coordinates relative to the parent container, this is typical behavior for Phaser.GameObjects.Container.
 - The width and height of the box; these are needed to create the background.
 The mask is not created right away (although this is possible in principle). Instead, we have a separate function,
-which takes as input the _global_ coordinates of the parent. This is necessary to correctly position the mask in the scene.
+which takes as input the _global_ coordinates of scrolling text object. This is necessary to correctly position the mask in the scene.
  */
 
 const BORDER = 8;
@@ -61,12 +61,10 @@ export default class ScrollingText extends Phaser.GameObjects.Container {
     this.add(this.text);
   }
 
-  createMask(scene: Phaser.Scene, parentX: number, parentY: number) {
+  createMask(scene: Phaser.Scene, globalX: number, globalY: number) {
     // Adding the mask for the scrolling effect
-    const visibleX = parentX < 0 ? parentX + globalScene.scaledCanvas.width : parentX;
-    const visibleY = parentY < 0 ? parentY + globalScene.scaledCanvas.height : parentY;
-    const globalMaskX = visibleX + this.x + this.offsetX;
-    const globalMaskY = visibleY + this.y + this.offsetY;
+    const globalMaskX = globalX + this.offsetX;
+    const globalMaskY = globalY + this.offsetY;
 
     const visibleWidth = this.descBg.width - (this.offsetX - 2) * 2;
     const visibleHeight = this.descBg.height - this.offsetY * 2;

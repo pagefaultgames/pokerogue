@@ -919,7 +919,7 @@ export class SummaryUiHandler extends UiHandler {
             abilityInfo.ability?.description!, // initial content
             TextStyle.WINDOW_ALT,
           );
-          abilityInfo.description.createMask(globalScene, 110 - 7, 90.5 - 71);
+          abilityInfo.description.createMask(globalScene, 110, 90.5);
           profileContainer.add(abilityInfo.description);
 
           abilityInfo.description.activate();
@@ -1161,7 +1161,7 @@ export class SummaryUiHandler extends UiHandler {
           "", // initial content
           TextStyle.WINDOW_ALT,
         );
-        this.moveDescription.createMask(globalScene, 112 - 2, 130 - 84);
+        this.moveDescription.createMask(globalScene, 112, 130);
         this.movesContainer.add(this.moveDescription);
         break;
       }

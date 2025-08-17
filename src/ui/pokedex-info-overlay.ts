@@ -55,7 +55,7 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
       TextStyle.BATTLE_INFO,
       true,
     );
-    this.desc.createMask(globalScene, this.x, this.y);
+    this.desc.createMask(globalScene, this.x + this.desc.x, this.y + this.desc.y);
     this.add(this.desc);
 
     // hide this component for now
