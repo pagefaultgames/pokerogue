@@ -186,8 +186,8 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
-        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
+        disabledButtonTooltip: `${namespace}:option.3.disabledTooltip`,
+        secondOptionPrompt: `${namespace}:option.3.selectPrompt`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,
