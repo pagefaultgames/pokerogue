@@ -15,6 +15,7 @@ import { TurnHeldItemTransferModifier } from "#modifiers/modifier";
 import type { ConditionFn } from "#types/common";
 import { isNuzlockeChallenge } from "#utils/challenge-utils";
 import { NumberHolder } from "#utils/common";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 import type { Modifier } from "typescript";
 
@@ -436,8 +437,7 @@ export function getAchievementDescription(localizationKey: string): string {
     case "monoFairy":
       return i18next.t("achv:monoType.description", {
         context: genderStr,
-        // Todo: Remove the `toUpperCase()` again after changing the `pokemonInfo.json` locales
-        type: i18next.t(`pokemonInfo:Type.${localizationKey.slice(4).toUpperCase()}`),
+        type: i18next.t(`pokemonInfo:type.${toCamelCase(localizationKey.slice(4))}`),
       });
     case "freshStart":
       return i18next.t("achv:freshStart.description", { context: genderStr });
