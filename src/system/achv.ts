@@ -336,8 +336,8 @@ export function getAchievementDescription(localizationKey: string): string {
       return i18next.t("achv:stellarTerastallize.description", {
         context: genderStr,
       });
-    case "Splice":
-      return i18next.t("achv:Splice.description", { context: genderStr });
+    case "splice":
+      return i18next.t("achv:splice.description", { context: genderStr });
     case "miniBlackHole":
       return i18next.t("achv:miniBlackHole.description", {
         context: genderStr,
@@ -493,7 +493,7 @@ export const achvs = {
     "stellar_tera_shard",
     25,
   ).setSecret(true),
-  SPLICE: new Achv("Splice", "", "Splice.description", "dna_splicers", 10),
+  SPLICE: new Achv("splice", "", "splice.description", "dna_splicers", 10),
   MINI_BLACK_HOLE: new ModifierAchv(
     "miniBlackHole",
     "",

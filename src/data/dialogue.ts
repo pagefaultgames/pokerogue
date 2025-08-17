@@ -1656,8 +1656,8 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       victory: ["dialogue:rival.victory.1"],
     },
     {
-      encounter: ["dialogue:rival_female.encounter.1"],
-      victory: ["dialogue:rival_female.victory.1"],
+      encounter: ["dialogue:rivalFemale.encounter.1"],
+      victory: ["dialogue:rivalFemale.victory.1"],
     },
   ],
   [TrainerType.RIVAL_2]: [
