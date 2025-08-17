@@ -27,6 +27,7 @@ export default class ScrollingText extends Phaser.GameObjects.Container {
     extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle,
   ) {
     super(scene, x, y);
+
     this.text = addTextObject(0, 0, content, style, extraStyleOptions);
     this.maxLineCount = maxLineCount;
     this.scale_property = scale_property;

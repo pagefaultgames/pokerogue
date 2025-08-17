@@ -37,7 +37,6 @@ const EFF_HEIGHT = 48;
 const EFF_WIDTH = 82;
 const DESC_HEIGHT = 48;
 const BORDER = 8;
-const GLOBAL_SCALE = 6;
 
 export class MoveInfoOverlay extends Phaser.GameObjects.Container implements InfoToggle {
   public active = false;
@@ -65,14 +64,15 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
     this.setScale(1);
     this.options = options || {};
 
+    const descBoxX = options?.onSide && !options?.right ? EFF_WIDTH : 0;
+    const descBoxY = options?.top ? EFF_HEIGHT : 0;
+    // we always want this to be half a window wide
+    const width = options?.width || MoveInfoOverlay.getWidth();
+    const descBoxWidth = width - (options?.onSide ? EFF_WIDTH : 0);
+    const descBoxHeight = DESC_HEIGHT;
+
     // prepare the description box
-    const width = options?.width || MoveInfoOverlay.getWidth(); // we always want this to be half a window wide
-    this.descBg = addWindow(
-      options?.onSide && !options?.right ? EFF_WIDTH : 0,
-      options?.top ? EFF_HEIGHT : 0,
-      width - (options?.onSide ? EFF_WIDTH : 0),
-      DESC_HEIGHT,
-    );
+    this.descBg = addWindow(descBoxX, descBoxY, descBoxWidth, descBoxHeight);
     this.descBg.setOrigin(0, 0);
     this.add(this.descBg);
 
@@ -81,14 +81,13 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
     const descX = (options?.onSide && !options?.right ? EFF_WIDTH : 0) + BORDER;
     const descY = (options?.top ? EFF_HEIGHT : 0) + BORDER - 2;
 
-    const visibleX = x < 0 ? x + globalScene.game.canvas.width / GLOBAL_SCALE : x;
-
-    const visibleY = y < 0 ? y + globalScene.game.canvas.height / GLOBAL_SCALE : y;
+    const visibleX = x < 0 ? x + globalScene.scaledCanvas.width : x;
+    const visibleY = y < 0 ? y + globalScene.scaledCanvas.height : y;
 
     const globalMaskX = visibleX + descX;
     const globalMaskY = visibleY + descY;
-    const wrapWidth = (width - (BORDER - 2) * 2 - (options?.onSide ? EFF_WIDTH : 0)) * GLOBAL_SCALE;
-    const visibleWidth = width - (BORDER - 2) * 2 - (options?.onSide ? EFF_WIDTH : 0);
+    const wrapWidth = (descBoxWidth - (BORDER - 2) * 2) * 6;
+    const visibleWidth = descBoxWidth - (BORDER - 2) * 2;
     const visibleHeight = DESC_HEIGHT - (BORDER - 2) * 2;
 
     // set up the description; wordWrap uses true pixels, unaffected by any scaling, while other values are affected
