@@ -1,22 +1,24 @@
-import { bypassLogin } from "#app/global-vars/bypass-login";
+import { pokerogueApi } from "#api/pokerogue-api";
+import { loggedInUser, updateUserInfo } from "#app/account";
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
-import { UiMode } from "#enums/ui-mode";
-import { getEnumKeys, isLocal, fixedInt, sessionIdKey } from "#app/utils/common";
-import { isBeta } from "#app/utils/utility-vars";
-import { getCookie } from "#app/utils/cookies";
-import { addWindow, WindowVariant } from "./ui-theme";
-import MessageUiHandler from "./message-ui-handler";
-import type { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui-handler";
-import { Tutorial, handleTutorial } from "../tutorial";
-import { loggedInUser, updateUserInfo } from "../account";
-import i18next from "i18next";
+import { bypassLogin } from "#app/global-vars/bypass-login";
+import { handleTutorial, Tutorial } from "#app/tutorial";
 import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
-import BgmBar from "#app/ui/bgm-bar";
-import type AwaitableUiHandler from "./awaitable-ui-handler";
-import { AdminMode, getAdminModeName } from "./admin-ui-handler";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { AdminMode, getAdminModeName } from "#ui/admin-ui-handler";
+import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
+import { BgmBar } from "#ui/bgm-bar";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { addTextObject, getTextStyleOptions } from "#ui/text";
+import { addWindow, WindowVariant } from "#ui/ui-theme";
+import { fixedInt, isLocal, sessionIdKey } from "#utils/common";
+import { getCookie } from "#utils/cookies";
+import { getEnumValues } from "#utils/enums";
+import { isBeta } from "#utils/utility-vars";
+import i18next from "i18next";
 
 enum MenuOptions {
   GAME_SETTINGS,
@@ -37,7 +39,7 @@ const githubUrl = "https://github.com/pagefaultgames/pokerogue";
 const redditUrl = "https://www.reddit.com/r/pokerogue";
 const donateUrl = "https://github.com/sponsors/pagefaultgames";
 
-export default class MenuUiHandler extends MessageUiHandler {
+export class MenuUiHandler extends MessageUiHandler {
   private readonly textPadding = 8;
   private readonly defaultMessageBoxWidth = 220;
   private readonly defaultWordWrapWidth = 1224;
@@ -76,11 +78,9 @@ export default class MenuUiHandler extends MessageUiHandler {
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
     ];
 
-    this.menuOptions = getEnumKeys(MenuOptions)
-      .map(m => Number.parseInt(MenuOptions[m]) as MenuOptions)
-      .filter(m => {
-        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
-      });
+    this.menuOptions = getEnumValues(MenuOptions).filter(m => {
+      return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
+    });
   }
 
   setup(): void {
@@ -96,10 +96,10 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     ui.bgmBar = this.bgmBar;
 
-    this.menuContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
+    this.menuContainer = globalScene.add.container(1, -globalScene.scaledCanvas.height + 1);
     this.menuContainer.setName("menu");
     this.menuContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6),
+      new Phaser.Geom.Rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height),
       Phaser.Geom.Rectangle.Contains,
     );
 
@@ -131,11 +131,9 @@ export default class MenuUiHandler extends MessageUiHandler {
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
     ];
 
-    this.menuOptions = getEnumKeys(MenuOptions)
-      .map(m => Number.parseInt(MenuOptions[m]) as MenuOptions)
-      .filter(m => {
-        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
-      });
+    this.menuOptions = getEnumValues(MenuOptions).filter(m => {
+      return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
+    });
 
     this.optionSelectText = addTextObject(
       0,
@@ -148,10 +146,10 @@ export default class MenuUiHandler extends MessageUiHandler {
 
     this.scale = getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale;
     this.menuBg = addWindow(
-      globalScene.game.canvas.width / 6 - (this.optionSelectText.displayWidth + 25),
+      globalScene.scaledCanvas.width - (this.optionSelectText.displayWidth + 25),
       0,
       this.optionSelectText.displayWidth + 19 + 24 * this.scale,
-      globalScene.game.canvas.height / 6 - 2,
+      globalScene.scaledCanvas.height - 2,
     );
     this.menuBg.setOrigin(0, 0);
 
@@ -176,7 +174,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.dialogueMessageBox = addWindow(
       -this.textPadding,
       0,
-      globalScene.game.canvas.width / 6 + this.textPadding * 2,
+      globalScene.scaledCanvas.width + this.textPadding * 2,
       49,
       false,
       false,
@@ -309,6 +307,17 @@ export default class MenuUiHandler extends MessageUiHandler {
         label: i18next.t("menuUiHandler:exportData"),
         handler: () => {
           globalScene.gameData.tryExportData(GameDataType.SYSTEM);
+          return true;
+        },
+        keepOpen: true,
+      },
+      {
+        // Note: i18n key is under `menu`, not `menuUiHandler` to avoid duplication
+        label: i18next.t("menu:changePassword"),
+        handler: () => {
+          ui.setOverlayMode(UiMode.CHANGE_PASSWORD_FORM, {
+            buttonActions: [() => ui.revertMode(), () => ui.revertMode()],
+          });
           return true;
         },
         keepOpen: true,
@@ -511,11 +520,9 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.render();
     super.show(args);
 
-    this.menuOptions = getEnumKeys(MenuOptions)
-      .map(m => Number.parseInt(MenuOptions[m]) as MenuOptions)
-      .filter(m => {
-        return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
-      });
+    this.menuOptions = getEnumValues(MenuOptions).filter(m => {
+      return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
+    });
 
     this.menuContainer.setVisible(true);
     this.setCursor(0);

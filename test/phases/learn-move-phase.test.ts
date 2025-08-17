@@ -1,11 +1,11 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/testUtils/gameManager";
-import { SpeciesId } from "#enums/species-id";
+import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { Button } from "#app/enums/buttons";
+import { LearnMovePhase } from "#phases/learn-move-phase";
+import { GameManager } from "#test/test-utils/game-manager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Learn Move Phase", () => {
   let phaserGame: Phaser.Game;
@@ -29,7 +29,7 @@ describe("Learn Move Phase", () => {
   it("If Pokemon has less than 4 moves, its newest move will be added to the lowest empty index", async () => {
     game.override.moveset([MoveId.SPLASH]);
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
-    const pokemon = game.scene.getPlayerPokemon()!;
+    const pokemon = game.field.getPlayerPokemon();
     const newMovePos = pokemon?.getMoveset().length;
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
@@ -43,7 +43,7 @@ describe("Learn Move Phase", () => {
 
   it("If a pokemon has 4 move slots filled, the chosen move will be deleted and replaced", async () => {
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
-    const bulbasaur = game.scene.getPlayerPokemon()!;
+    const bulbasaur = game.field.getPlayerPokemon();
     const prevMoveset = [MoveId.SPLASH, MoveId.ABSORB, MoveId.ACID, MoveId.VINE_WHIP];
     const moveSlotNum = 3;
 
@@ -74,7 +74,7 @@ describe("Learn Move Phase", () => {
 
   it("selecting the newly deleted move will reject it and keep old moveset", async () => {
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
-    const bulbasaur = game.scene.getPlayerPokemon()!;
+    const bulbasaur = game.field.getPlayerPokemon();
     const prevMoveset = [MoveId.SPLASH, MoveId.ABSORB, MoveId.ACID, MoveId.VINE_WHIP];
 
     game.move.changeMoveset(bulbasaur, [MoveId.SPLASH, MoveId.ABSORB, MoveId.ACID, MoveId.VINE_WHIP]);

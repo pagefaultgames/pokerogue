@@ -1,10 +1,10 @@
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -81,8 +81,8 @@ describe("Moves - Tailwind", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const ally = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const ally = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     const allySpd = ally.getStat(Stat.SPD);
     const enemySpd = enemy.getStat(Stat.SPD);

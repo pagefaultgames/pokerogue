@@ -1,8 +1,9 @@
-import type { Variant } from "#app/sprites/variant";
 import { globalScene } from "#app/global-scene";
-import { isNullOrUndefined } from "#app/utils/common";
-import type PokemonSpecies from "../data/pokemon-species";
-import { addTextObject, TextStyle } from "./text";
+import type { PokemonSpecies } from "#data/pokemon-species";
+import { TextStyle } from "#enums/text-style";
+import type { Variant } from "#sprites/variant";
+import { addTextObject } from "#ui/text";
+import { isNullOrUndefined } from "#utils/common";
 
 interface SpeciesDetails {
   shiny?: boolean;
@@ -207,6 +208,26 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
     );
     this.checkIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant);
     this.add(this.icon);
+
+    [
+      this.hiddenAbilityIcon,
+      this.favoriteIcon,
+      this.classicWinIcon,
+      this.candyUpgradeIcon,
+      this.candyUpgradeOverlayIcon,
+      this.eggMove1Icon,
+      this.tmMove1Icon,
+      this.eggMove2Icon,
+      this.tmMove2Icon,
+      this.passive1Icon,
+      this.passive2Icon,
+      this.passive1OverlayIcon,
+      this.passive2OverlayIcon,
+    ].forEach(icon => {
+      if (icon) {
+        this.bringToTop(icon);
+      }
+    });
   }
 
   checkIconId(female, formIndex, shiny, variant) {

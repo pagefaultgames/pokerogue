@@ -1,7 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import { addTextObject, TextStyle } from "./text";
-import { addWindow, WindowVariant } from "./ui-theme";
-import { ScrollBar } from "#app/ui/scroll-bar";
+import { TextStyle } from "#enums/text-style";
+import { ScrollBar } from "#ui/scroll-bar";
+import { addTextObject } from "#ui/text";
+import { addWindow, WindowVariant } from "#ui/ui-theme";
 import i18next from "i18next";
 
 export enum DropDownState {

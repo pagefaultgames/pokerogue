@@ -1,15 +1,16 @@
 import { globalScene } from "#app/global-scene";
-import { addWindow } from "./ui-theme";
-import { addTextObject, TextStyle } from "./text";
-import type { EggCountChangedEvent } from "#app/events/egg";
-import { EggEventType } from "#app/events/egg";
-import type EggHatchSceneHandler from "./egg-hatch-scene-handler";
+import { TextStyle } from "#enums/text-style";
+import type { EggCountChangedEvent } from "#events/egg";
+import { EggEventType } from "#events/egg";
+import type { EggHatchSceneHandler } from "#ui/egg-hatch-scene-handler";
+import { addTextObject } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
 
 /**
  * A container that displays the count of hatching eggs.
  * @extends Phaser.GameObjects.Container
  */
-export default class EggCounterContainer extends Phaser.GameObjects.Container {
+export class EggCounterContainer extends Phaser.GameObjects.Container {
   private readonly WINDOW_DEFAULT_WIDTH = 37;
   private readonly WINDOW_MEDIUM_WIDTH = 42;
   private readonly WINDOW_HEIGHT = 26;

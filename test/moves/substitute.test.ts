@@ -1,21 +1,21 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { SubstituteTag, TrappedTag } from "#app/data/battler-tags";
-import { StealHeldItemChanceAttr } from "#app/data/moves/move";
-import { allMoves } from "#app/data/data-lists";
-import { MoveResult } from "#enums/move-result";
-import type { CommandPhase } from "#app/phases/command-phase";
-import GameManager from "#test/testUtils/gameManager";
-import { Command } from "#enums/command";
-import { UiMode } from "#enums/ui-mode";
+import { SubstituteTag, TrappedTag } from "#data/battler-tags";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
+import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { UiMode } from "#enums/ui-mode";
+import { StealHeldItemChanceAttr } from "#moves/move";
+import type { CommandPhase } from "#phases/command-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -49,7 +49,7 @@ describe("Moves - Substitute", () => {
   it("should cause the user to take damage", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SUBSTITUTE);
 
@@ -63,7 +63,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.SKARMORY]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SUBSTITUTE);
 
@@ -86,7 +86,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SUBSTITUTE);
 
@@ -107,7 +107,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SUBSTITUTE);
 
@@ -122,7 +122,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SUBSTITUTE);
 
@@ -142,7 +142,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SUBSTITUTE);
 
@@ -160,7 +160,7 @@ describe("Moves - Substitute", () => {
   it("shouldn't block the user's own status moves", async () => {
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SUBSTITUTE);
 
@@ -179,7 +179,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
     vi.spyOn(leadPokemon, "getMoveEffectiveness");
 
     leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
@@ -197,7 +197,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
     vi.spyOn(leadPokemon, "getMoveEffectiveness");
 
     game.move.select(MoveId.SUBSTITUTE);
@@ -233,8 +233,8 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
@@ -251,7 +251,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
@@ -268,7 +268,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
@@ -284,7 +284,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
@@ -301,7 +301,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
@@ -317,7 +317,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     enemyPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, enemyPokemon.id);
     const enemyNumItems = enemyPokemon.getHeldItems().length;
@@ -334,8 +334,8 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
@@ -355,7 +355,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
@@ -372,7 +372,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
@@ -389,7 +389,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
@@ -400,7 +400,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("MovePhase", false);
 
-    const switchedPokemon = game.scene.getPlayerPokemon()!;
+    const switchedPokemon = game.field.getPlayerPokemon();
     const subTag = switchedPokemon.getTag(SubstituteTag)!;
     expect(subTag).toBeDefined();
     expect(subTag.hp).toBe(Math.floor((leadPokemon.getMaxHp() * 1) / 4));
@@ -411,7 +411,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SUBSTITUTE);
 
@@ -428,8 +428,8 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, playerPokemon.id);
 
@@ -446,7 +446,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, playerPokemon.id);
 
@@ -462,8 +462,8 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, playerPokemon.id);
 
@@ -479,8 +479,8 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, playerPokemon.id);
 
@@ -497,7 +497,7 @@ describe("Moves - Substitute", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, playerPokemon.id);
 

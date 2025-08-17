@@ -1,15 +1,15 @@
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { MoveResult } from "#enums/move-result";
-import GameManager from "#test/testUtils/gameManager";
+import { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
+import { RandomMoveAttr } from "#moves/move";
+import { PokemonMove } from "#moves/pokemon-move";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { StatusEffect } from "#app/enums/status-effect";
-import { BattlerIndex } from "#enums/battler-index";
-import { RandomMoveAttr } from "#app/data/moves/move";
-import { allMoves } from "#app/data/data-lists";
 
 describe("Moves - Sketch", () => {
   let phaserGame: Phaser.Game;
@@ -38,7 +38,7 @@ describe("Moves - Sketch", () => {
 
   it("Sketch should not fail even if a previous Sketch failed to retrieve a valid move and ran out of PP", async () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     // can't use normal moveset override because we need to check moveset changes
     playerPokemon.moveset = [new PokemonMove(MoveId.SKETCH), new PokemonMove(MoveId.SKETCH)];
 
@@ -60,8 +60,8 @@ describe("Moves - Sketch", () => {
   it("Sketch should retrieve the most recent valid move from its target history", async () => {
     game.override.enemyStatusEffect(StatusEffect.PARALYSIS);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
     playerPokemon.moveset = [new PokemonMove(MoveId.SKETCH), new PokemonMove(MoveId.GROWL)];
 
     game.move.select(MoveId.GROWL);
@@ -88,7 +88,7 @@ describe("Moves - Sketch", () => {
 
     game.override.enemyMoveset([MoveId.METRONOME]);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     playerPokemon.moveset = [new PokemonMove(MoveId.SKETCH)];
 
     // Opponent uses Metronome -> False Swipe, then player uses Sketch, which should sketch Metronome

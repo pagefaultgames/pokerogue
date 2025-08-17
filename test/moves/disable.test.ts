@@ -1,13 +1,13 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { MoveResult } from "#enums/move-result";
 import { AbilityId } from "#enums/ability-id";
-import { MoveUseMode } from "#enums/move-use-mode";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import { RandomMoveAttr } from "#moves/move";
+import { GameManager } from "#test/test-utils/game-manager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { RandomMoveAttr } from "#app/data/moves/move";
 
 describe("Moves - Disable", () => {
   let phaserGame: Phaser.Game;
@@ -132,7 +132,7 @@ describe("Moves - Disable", () => {
     vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(MoveId.ABSORB);
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    const playerMon = game.scene.getPlayerPokemon()!;
+    const playerMon = game.field.getPlayerPokemon();
     playerMon.pushMoveHistory({ move: MoveId.SPLASH, targets: [BattlerIndex.ENEMY], useMode: MoveUseMode.NORMAL });
     game.scene.currentBattle.lastMove = MoveId.SPLASH;
 
@@ -141,7 +141,7 @@ describe("Moves - Disable", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    const enemyMon = game.scene.getEnemyPokemon()!;
+    const enemyMon = game.field.getEnemyPokemon();
     expect(enemyMon.isMoveRestricted(moveId), `calling move ${MoveId[moveId]} was not disabled`).toBe(true);
     expect(enemyMon.getLastXMoves(-1)).toHaveLength(2);
     const calledMove = enemyMon.getLastXMoves()[0].move;

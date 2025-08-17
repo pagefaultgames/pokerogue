@@ -1,19 +1,19 @@
-import type { InputFieldConfig } from "./form-modal-ui-handler";
-import { FormModalUiHandler } from "./form-modal-ui-handler";
-import type { ModalConfig } from "./modal-ui-handler";
-import i18next from "i18next";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type { OptionSelectItem } from "./abstact-option-select-ui-handler";
-import { isNullOrUndefined } from "#app/utils/common";
 import { UiMode } from "#enums/ui-mode";
+import type { PlayerPokemon } from "#field/pokemon";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
+import type { ModalConfig } from "#ui/modal-ui-handler";
+import { isNullOrUndefined } from "#utils/common";
+import i18next from "i18next";
 
-export default class TestDialogueUiHandler extends FormModalUiHandler {
+export class TestDialogueUiHandler extends FormModalUiHandler {
   keys: string[];
 
   setup() {
     super.setup();
 
-    const flattenKeys = (object?: any, topKey?: string, midleKey?: string[]): Array<any> => {
+    const flattenKeys = (object?: any, topKey?: string, middleKey?: string[]): Array<any> => {
       return Object.keys(object ?? {})
         .map((t, i) => {
           const value = Object.values(object)[i];
@@ -23,7 +23,7 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
             // If the value is an object, execute the same process
             // si el valor es un objeto ejecuta el mismo proceso
 
-            return flattenKeys(value, topKey ?? t, topKey ? (midleKey ? [...midleKey, t] : [t]) : undefined).filter(
+            return flattenKeys(value, topKey ?? t, topKey ? (middleKey ? [...middleKey, t] : [t]) : undefined).filter(
               t => t.length > 0,
             );
           }
@@ -31,7 +31,7 @@ export default class TestDialogueUiHandler extends FormModalUiHandler {
             // we check for null or undefined here as per above - the typeof is still an object but the value is null so we need to exit out of this and pass the null key
 
             // Return in the format expected by i18next
-            return midleKey ? `${topKey}:${midleKey.map(m => m).join(".")}.${t}` : `${topKey}:${t}`;
+            return middleKey ? `${topKey}:${middleKey.join(".")}.${t}` : `${topKey}:${t}`;
           }
         })
         .filter(t => t);

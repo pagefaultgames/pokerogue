@@ -1,15 +1,15 @@
+import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
+import { SpeciesId } from "#enums/species-id";
 import type { EffectiveStat } from "#enums/stat";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
-import { MoveResult } from "#enums/move-result";
-import { AbilityId } from "#enums/ability-id";
-import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -200,8 +200,6 @@ describe("Abilities - Commander", () => {
 
     game.move.select(MoveId.DIVE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
-
-    await game.phaseInterceptor.to("CommandPhase");
     await game.toNextTurn();
 
     expect(tatsugiri.getTag(BattlerTagType.UNDERWATER)).toBeDefined();

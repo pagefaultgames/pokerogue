@@ -1,12 +1,12 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { MoveResult } from "#enums/move-result";
-import { BerryPhase } from "#app/phases/berry-phase";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
+import { MoveResult } from "#enums/move-result";
 import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import { BerryPhase } from "#phases/berry-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -41,7 +41,7 @@ describe("Moves - Powder", () => {
     game.override.enemyMoveset([]);
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     game.move.changeMoveset(enemyPokemon, MoveId.EMBER);
 
     game.move.select(MoveId.POWDER);
@@ -66,7 +66,7 @@ describe("Moves - Powder", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
@@ -80,7 +80,7 @@ describe("Moves - Powder", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
@@ -94,7 +94,7 @@ describe("Moves - Powder", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
@@ -108,7 +108,7 @@ describe("Moves - Powder", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
@@ -122,7 +122,7 @@ describe("Moves - Powder", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
@@ -137,7 +137,7 @@ describe("Moves - Powder", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
@@ -152,8 +152,8 @@ describe("Moves - Powder", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.CHARIZARD]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     // Turn 1: Roar away 1 opponent
     game.move.select(MoveId.ROAR, 0, BattlerIndex.ENEMY_2);
@@ -184,8 +184,8 @@ describe("Moves - Powder", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
@@ -200,7 +200,7 @@ describe("Moves - Powder", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
@@ -214,7 +214,7 @@ describe("Moves - Powder", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
@@ -227,7 +227,7 @@ describe("Moves - Powder", () => {
     game.override.enemyMoveset([MoveId.FIRE_PLEDGE, MoveId.GRASS_PLEDGE]).battleStyle("double");
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.CHARIZARD]);
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
@@ -244,7 +244,7 @@ describe("Moves - Powder", () => {
     game.override.enemyMoveset([MoveId.FIRE_PLEDGE, MoveId.WATER_PLEDGE]).battleStyle("double");
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.CHARIZARD]);
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
@@ -261,7 +261,7 @@ describe("Moves - Powder", () => {
     game.override.enemyMoveset([MoveId.FIRE_PLEDGE, MoveId.WATER_PLEDGE]).battleStyle("double");
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.CHARIZARD]);
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);

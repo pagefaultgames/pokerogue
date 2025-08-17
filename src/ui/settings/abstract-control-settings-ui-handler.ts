@@ -1,15 +1,17 @@
-import UiHandler from "#app/ui/ui-handler";
-import type { UiMode } from "#enums/ui-mode";
-import type { InterfaceConfig } from "#app/inputs-controller";
-import { addWindow } from "#app/ui/ui-theme";
-import { addTextObject, TextStyle } from "#app/ui/text";
-import { ScrollBar } from "#app/ui/scroll-bar";
-import { getIconWithSettingName } from "#app/configs/inputs/configHandler";
-import NavigationMenu, { NavigationManager } from "#app/ui/settings/navigationMenu";
-import type { Device } from "#enums/devices";
-import { Button } from "#enums/buttons";
-import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
+import type { InterfaceConfig } from "#app/inputs-controller";
+import { Button } from "#enums/buttons";
+import type { Device } from "#enums/devices";
+import { TextStyle } from "#enums/text-style";
+import type { UiMode } from "#enums/ui-mode";
+import { getIconWithSettingName } from "#inputs/config-handler";
+import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
+import { ScrollBar } from "#ui/scroll-bar";
+import { addTextObject } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { addWindow } from "#ui/ui-theme";
+import { toCamelCase } from "#utils/strings";
+import i18next from "i18next";
 
 export interface InputsIcons {
   [key: string]: Phaser.GameObjects.Sprite;
@@ -27,7 +29,7 @@ export interface LayoutConfig {
 /**
  * Abstract class for handling UI elements related to control settings.
  */
-export default abstract class AbstractControlSettingsUiHandler extends UiHandler {
+export abstract class AbstractControlSettingsUiHandler extends UiHandler {
   protected settingsContainer: Phaser.GameObjects.Container;
   protected optionsContainer: Phaser.GameObjects.Container;
   protected navigationContainer: NavigationMenu;
@@ -87,12 +89,6 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     return settings;
   }
 
-  private camelize(string: string): string {
-    return string
-      .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => (index === 0 ? word.toLowerCase() : word.toUpperCase()))
-      .replace(/\s+/g, "");
-  }
-
   /**
    * Setup UI elements.
    */
@@ -100,11 +96,11 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     const ui = this.getUi();
     this.navigationIcons = {};
 
-    this.settingsContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
+    this.settingsContainer = globalScene.add.container(1, -globalScene.scaledCanvas.height + 1);
     this.settingsContainer.setName(`settings-${this.titleSelected}`);
 
     this.settingsContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6),
+      new Phaser.Geom.Rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height),
       Phaser.Geom.Rectangle.Contains,
     );
 
@@ -113,15 +109,15 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     this.optionsBg = addWindow(
       0,
       this.navigationContainer.height,
-      globalScene.game.canvas.width / 6 - 2,
-      globalScene.game.canvas.height / 6 - 16 - this.navigationContainer.height - 2,
+      globalScene.scaledCanvas.width - 2,
+      globalScene.scaledCanvas.height - 16 - this.navigationContainer.height - 2,
     );
     this.optionsBg.setOrigin(0, 0);
 
     this.actionsBg = addWindow(
       0,
-      globalScene.game.canvas.height / 6 - this.navigationContainer.height,
-      globalScene.game.canvas.width / 6 - 2,
+      globalScene.scaledCanvas.height - this.navigationContainer.height,
+      globalScene.scaledCanvas.width - 2,
       22,
     );
     this.actionsBg.setOrigin(0, 0);
@@ -209,14 +205,15 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
 
       settingFiltered.forEach((setting, s) => {
         // Convert the setting key from format 'Key_Name' to 'Key name' for display.
-        const settingName = setting.replace(/_/g, " ");
+        // TODO: IDK if this can be followed by both an underscore and a space, so leaving it as a regex matching both for now
+        const i18nKey = toCamelCase(setting.replace(/Alt(_| )/, ""));
 
         // Create and add a text object for the setting name to the scene.
         const isLock = this.settingBlacklisted.includes(this.setting[setting]);
         const labelStyle = isLock ? TextStyle.SETTINGS_LOCKED : TextStyle.SETTINGS_LABEL;
+        const isAlt = setting.includes("Alt");
         let labelText: string;
-        const i18nKey = this.camelize(settingName.replace("Alt ", ""));
-        if (settingName.toLowerCase().includes("alt")) {
+        if (isAlt) {
           labelText = `${i18next.t(`settings:${i18nKey}`)}${i18next.t("settings:alt")}`;
         } else {
           labelText = i18next.t(`settings:${i18nKey}`);
@@ -600,7 +597,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
 
     // Check if the cursor object exists, if not, create it.
     if (!this.cursorObj) {
-      const cursorWidth = globalScene.game.canvas.width / 6 - (this.scrollBar.visible ? 16 : 10);
+      const cursorWidth = globalScene.scaledCanvas.width - (this.scrollBar.visible ? 16 : 10);
       this.cursorObj = globalScene.add.nineslice(0, 0, "summary_moves_cursor", undefined, cursorWidth, 16, 1, 1, 1, 1);
       this.cursorObj.setOrigin(0, 0); // Set the origin to the top-left corner.
       this.optionsContainer.add(this.cursorObj); // Add the cursor to the options container.

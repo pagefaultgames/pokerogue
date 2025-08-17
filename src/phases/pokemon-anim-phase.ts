@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import { SubstituteTag } from "#app/data/battler-tags";
-import type Pokemon from "#app/field/pokemon";
-import { BattlePhase } from "#app/phases/battle-phase";
-import { isNullOrUndefined } from "#app/utils/common";
+import { SubstituteTag } from "#data/battler-tags";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { SpeciesId } from "#enums/species-id";
+import type { Pokemon } from "#field/pokemon";
+import { BattlePhase } from "#phases/battle-phase";
+import { isNullOrUndefined } from "#utils/common";
 
 export class PokemonAnimPhase extends BattlePhase {
   public readonly phaseName = "PokemonAnimPhase";

@@ -1,22 +1,23 @@
-import { addBBCodeTextObject, getBBCodeFrag, TextStyle } from "./text";
-import { UiMode } from "#enums/ui-mode";
-import UiHandler from "./ui-handler";
+import { globalScene } from "#app/global-scene";
+import { getPokeballAtlasKey } from "#data/pokeball";
 import { Button } from "#enums/buttons";
-import { addWindow, WindowVariant } from "./ui-theme";
-import type { MysteryEncounterPhase } from "../phases/mystery-encounter-phases";
-import { PartyUiMode } from "./party-ui-handler";
-import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
-import { fixedInt, isNullOrUndefined } from "#app/utils/common";
-import { getPokeballAtlasKey } from "../data/pokeball";
-import type { OptionSelectSettings } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import i18next from "i18next";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
+import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-utils";
+import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
+import type { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { PartyUiMode } from "#ui/party-ui-handler";
+import { addBBCodeTextObject, getBBCodeFrag } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { addWindow, WindowVariant } from "#ui/ui-theme";
+import { fixedInt, isNullOrUndefined } from "#utils/common";
+import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { globalScene } from "#app/global-scene";
 
-export default class MysteryEncounterUiHandler extends UiHandler {
+export class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
   private cursorObj?: Phaser.GameObjects.Image;
 
@@ -470,7 +471,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     // View Party Button
     const viewPartyText = addBBCodeTextObject(
-      globalScene.game.canvas.width / 6,
+      globalScene.scaledCanvas.width,
       -24,
       getBBCodeFrag(i18next.t("mysteryEncounterMessages:view_party_button"), TextStyle.PARTY),
       TextStyle.PARTY,
@@ -517,7 +518,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
 
     descriptionTextObject.setMask(abilityDescriptionTextMask);
 
-    const descriptionLineCount = Math.floor(descriptionTextObject.displayHeight / 10);
+    const descriptionLineCount = Math.floor(descriptionTextObject.displayHeight / 9.2);
 
     if (this.descriptionScrollTween) {
       this.descriptionScrollTween.remove();
@@ -614,6 +615,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       const tooltipTextObject = addBBCodeTextObject(6, 7, text, TextStyle.TOOLTIP_CONTENT, {
         wordWrap: { width: 600 },
         fontSize: "72px",
+        padding: { top: 8 },
+        lineSpacing: 1.25,
       });
       this.tooltipContainer.add(tooltipTextObject);
 
@@ -627,7 +630,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       const textMask = tooltipTextMaskRect.createGeometryMask();
       tooltipTextObject.setMask(textMask);
 
-      const tooltipLineCount = Math.floor(tooltipTextObject.displayHeight / 11.2);
+      const tooltipLineCount = Math.floor(tooltipTextObject.displayHeight / 10.2);
 
       if (this.tooltipScrollTween) {
         this.tooltipScrollTween.remove();

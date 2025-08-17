@@ -1,13 +1,13 @@
-import { Stat } from "#enums/stat";
-import { StockpilingTag } from "#app/data/battler-tags";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { MoveResult } from "#enums/move-result";
-import { MovePhase } from "#app/phases/move-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { StockpilingTag } from "#data/battler-tags";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { Stat } from "#enums/stat";
+import { MovePhase } from "#phases/move-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -43,7 +43,7 @@ describe("Moves - Swallow", () => {
 
       await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon()!;
+      const pokemon = game.field.getPlayerPokemon();
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
       pokemon["hp"] = 1;
 
@@ -70,7 +70,7 @@ describe("Moves - Swallow", () => {
 
       await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon()!;
+      const pokemon = game.field.getPlayerPokemon();
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
       pokemon["hp"] = 1;
 
@@ -98,7 +98,7 @@ describe("Moves - Swallow", () => {
 
       await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon()!;
+      const pokemon = game.field.getPlayerPokemon();
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
       pokemon["hp"] = 0.0001;
 
@@ -125,7 +125,7 @@ describe("Moves - Swallow", () => {
   it("fails without stacks", async () => {
     await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
-    const pokemon = game.scene.getPlayerPokemon()!;
+    const pokemon = game.field.getPlayerPokemon();
 
     const stockpilingTag = pokemon.getTag(StockpilingTag)!;
     expect(stockpilingTag).toBeUndefined();
@@ -144,7 +144,7 @@ describe("Moves - Swallow", () => {
     it("decreases stats based on stored values (both boosts equal)", async () => {
       await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon()!;
+      const pokemon = game.field.getPlayerPokemon();
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
       const stockpilingTag = pokemon.getTag(StockpilingTag)!;
@@ -173,7 +173,7 @@ describe("Moves - Swallow", () => {
     it("lower stat stages based on stored values (different boosts)", async () => {
       await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon()!;
+      const pokemon = game.field.getPlayerPokemon();
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
       const stockpilingTag = pokemon.getTag(StockpilingTag)!;

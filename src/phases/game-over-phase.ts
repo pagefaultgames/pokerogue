@@ -1,29 +1,32 @@
+import { pokerogueApi } from "#api/pokerogue-api";
 import { clientSessionId } from "#app/account";
-import { BattleType } from "#enums/battle-type";
 import { globalScene } from "#app/global-scene";
-import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { getCharVariantFromDialogue } from "#app/data/dialogue";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { trainerConfigs } from "#app/data/trainers/trainer-config";
-import type Pokemon from "#app/field/pokemon";
-import { modifierTypes } from "#app/data/data-lists";
-import { BattlePhase } from "#app/phases/battle-phase";
-import type { EndCardPhase } from "#app/phases/end-card-phase";
-import { achvs, ChallengeAchv } from "#app/system/achv";
-import { Unlockables } from "#enums/unlockables";
-import { UiMode } from "#enums/ui-mode";
-import { isLocal, isLocalServerConnected } from "#app/utils/common";
+import { pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { modifierTypes } from "#data/data-lists";
+import { getCharVariantFromDialogue } from "#data/dialogue";
+import type { PokemonSpecies } from "#data/pokemon-species";
+import { BattleType } from "#enums/battle-type";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
+import { UiMode } from "#enums/ui-mode";
+import { Unlockables } from "#enums/unlockables";
+import type { Pokemon } from "#field/pokemon";
+import { BattlePhase } from "#phases/battle-phase";
+import type { EndCardPhase } from "#phases/end-card-phase";
+import { achvs, ChallengeAchv } from "#system/achv";
+import { ArenaData } from "#system/arena-data";
+import { ChallengeData } from "#system/challenge-data";
+import type { SessionSaveData } from "#system/game-data";
+import { ModifierData as PersistentModifierData } from "#system/modifier-data";
+import { PokemonData } from "#system/pokemon-data";
+import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
+import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
+import { TrainerData } from "#system/trainer-data";
+import { trainerConfigs } from "#trainers/trainer-config";
+import { checkSpeciesValidForChallenge, isNuzlockeChallenge } from "#utils/challenge-utils";
+import { isLocal, isLocalServerConnected } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
-import type { SessionSaveData } from "#app/system/game-data";
-import PersistentModifierData from "#app/system/modifier-data";
-import PokemonData from "#app/system/pokemon-data";
-import ChallengeData from "#app/system/challenge-data";
-import TrainerData from "#app/system/trainer-data";
-import ArenaData from "#app/system/arena-data";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
 export class GameOverPhase extends BattlePhase {
   public readonly phaseName = "GameOverPhase";
@@ -111,6 +114,40 @@ export class GameOverPhase extends BattlePhase {
     }
   }
 
+  /**
+   * Submethod of {@linkcode handleGameOver} that awards ribbons to Pokémon in the player's party based on the current
+   * game mode and challenges.
+   */
+  private awardRibbons(): void {
+    let ribbonFlags = 0;
+    if (globalScene.gameMode.isClassic) {
+      ribbonFlags |= RibbonData.CLASSIC;
+    }
+    if (isNuzlockeChallenge()) {
+      ribbonFlags |= RibbonData.NUZLOCKE;
+    }
+    for (const challenge of globalScene.gameMode.challenges) {
+      const ribbon = challenge.ribbonAwarded;
+      if (challenge.value && ribbon) {
+        ribbonFlags |= ribbon;
+      }
+    }
+    // Award ribbons to all Pokémon in the player's party that are considered valid
+    // for the current game mode and challenges.
+    for (const pokemon of globalScene.getPlayerParty()) {
+      const species = pokemon.species;
+      if (
+        checkSpeciesValidForChallenge(
+          species,
+          globalScene.gameData.getSpeciesDexAttrProps(species, pokemon.getDexAttr()),
+          false,
+        )
+      ) {
+        awardRibbonsToSpeciesLine(species.speciesId, ribbonFlags as RibbonFlag);
+      }
+    }
+  }
+
   handleGameOver(): void {
     const doGameOver = (newClear: boolean) => {
       globalScene.disableMenu = true;
@@ -122,12 +159,12 @@ export class GameOverPhase extends BattlePhase {
             globalScene.validateAchv(achvs.UNEVOLVED_CLASSIC_VICTORY);
             globalScene.gameData.gameStats.sessionsWon++;
             for (const pokemon of globalScene.getPlayerParty()) {
-              this.awardRibbon(pokemon);
-
+              this.awardFirstClassicCompletion(pokemon);
               if (pokemon.species.getRootSpeciesId() !== pokemon.species.getRootSpeciesId(true)) {
-                this.awardRibbon(pokemon, true);
+                this.awardFirstClassicCompletion(pokemon, true);
               }
             }
+            this.awardRibbons();
           } else if (globalScene.gameMode.isDaily && newClear) {
             globalScene.gameData.gameStats.dailyRunSessionsWon++;
           }
@@ -263,7 +300,7 @@ export class GameOverPhase extends BattlePhase {
     }
   }
 
-  awardRibbon(pokemon: Pokemon, forStarter = false): void {
+  awardFirstClassicCompletion(pokemon: Pokemon, forStarter = false): void {
     const speciesId = getPokemonSpecies(pokemon.species.speciesId);
     const speciesRibbonCount = globalScene.gameData.incrementRibbonCount(speciesId, forStarter);
     // first time classic win, award voucher

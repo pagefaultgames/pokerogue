@@ -1,18 +1,18 @@
 import { globalScene } from "#app/global-scene";
-import { applyChallenges } from "#app/data/challenge";
-import { ChallengeType } from "#enums/challenge-type";
-import { Gender } from "#app/data/gender";
-import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
-import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
-import type { Starter } from "#app/ui/starter-select-ui-handler";
-import { UiMode } from "#enums/ui-mode";
+import { SpeciesFormChangeMoveLearnedTrigger } from "#data/form-change-triggers";
+import { Gender } from "#data/gender";
+import { ChallengeType } from "#enums/challenge-type";
 import type { SpeciesId } from "#enums/species-id";
+import { UiMode } from "#enums/ui-mode";
+import { overrideHeldItems, overrideModifiers } from "#modifiers/modifier";
+import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
+import type { Starter } from "#ui/starter-select-ui-handler";
+import { applyChallenges } from "#utils/challenge-utils";
+import { isNullOrUndefined } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { isNullOrUndefined } from "#app/utils/common";
 
 export class SelectStarterPhase extends Phase {
   public readonly phaseName = "SelectStarterPhase";
@@ -24,10 +24,11 @@ export class SelectStarterPhase extends Phase {
     globalScene.ui.setMode(UiMode.STARTER_SELECT, (starters: Starter[]) => {
       globalScene.ui.clearText();
       globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
+        // If clicking cancel, back out to title screen
         if (slotId === -1) {
-          globalScene.phaseManager.clearPhaseQueue();
-          globalScene.phaseManager.pushNew("TitlePhase");
-          return this.end();
+          globalScene.phaseManager.toTitleScreen();
+          this.end();
+          return;
         }
         globalScene.sessionSlotId = slotId;
         this.initBattle(starters);
@@ -37,7 +38,7 @@ export class SelectStarterPhase extends Phase {
 
   /**
    * Initialize starters before starting the first battle
-   * @param starters {@linkcode Pokemon} with which to start the first battle
+   * @param starters - Array of {@linkcode Starter}s with which to start the battle
    */
   initBattle(starters: Starter[]) {
     const party = globalScene.getPlayerParty();
@@ -98,8 +99,12 @@ export class SelectStarterPhase extends Phase {
         starterPokemon.generateFusionSpecies(true);
       }
       starterPokemon.setVisible(false);
-      applyChallenges(ChallengeType.STARTER_MODIFY, starterPokemon);
+      const chalApplied = applyChallenges(ChallengeType.STARTER_MODIFY, starterPokemon);
       party.push(starterPokemon);
+      if (chalApplied) {
+        // If any challenges modified the starter, it should update
+        loadPokemonAssets.push(starterPokemon.updateInfo());
+      }
       loadPokemonAssets.push(starterPokemon.loadAssets());
     });
     overrideModifiers();

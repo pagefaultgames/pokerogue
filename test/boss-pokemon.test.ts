@@ -1,12 +1,12 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
-import { SpeciesId } from "#enums/species-id";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { EFFECTIVE_STATS } from "#app/enums/stat";
-import type { EnemyPokemon } from "#app/field/pokemon";
-import { toDmgValue } from "#app/utils/common";
+import { SpeciesId } from "#enums/species-id";
+import { EFFECTIVE_STATS } from "#enums/stat";
+import type { EnemyPokemon } from "#field/pokemon";
+import { GameManager } from "#test/test-utils/game-manager";
+import { toDmgValue } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Boss Pokemon / Shields", () => {
   let phaserGame: Phaser.Game;
@@ -80,7 +80,7 @@ describe("Boss Pokemon / Shields", () => {
 
     await game.classicMode.startBattle([SpeciesId.MEWTWO]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const segmentHp = enemyPokemon.getMaxHp() / enemyPokemon.bossSegments;
     expect(enemyPokemon.isBoss()).toBe(true);
     expect(enemyPokemon.bossSegments).toBe(3);
@@ -191,7 +191,7 @@ describe("Boss Pokemon / Shields", () => {
 
     await game.classicMode.startBattle([SpeciesId.MEWTWO]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.isBoss()).toBe(true);
     expect(enemyPokemon.bossSegments).toBe(2);
     expect(getTotalStatStageBoosts(enemyPokemon)).toBe(0);
