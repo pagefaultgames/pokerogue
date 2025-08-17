@@ -881,7 +881,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   }
 
   localize(): void {
-    this.name = i18next.t(`pokemon:${SpeciesId[this.speciesId].toLowerCase()}`);
+    this.name = i18next.t(`pokemon:${toCamelCase(SpeciesId[this.speciesId])}`);
     this.category = i18next.t(`pokemonCategory:${toCamelCase(SpeciesId[this.speciesId])}Category`);
   }
 
