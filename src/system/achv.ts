@@ -15,7 +15,6 @@ import { TurnHeldItemTransferModifier } from "#modifiers/modifier";
 import type { ConditionFn } from "#types/common";
 import { isNuzlockeChallenge } from "#utils/challenge-utils";
 import { NumberHolder } from "#utils/common";
-import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 import type { Modifier } from "typescript";
 
@@ -437,7 +436,7 @@ export function getAchievementDescription(localizationKey: string): string {
     case "MONO_FAIRY":
       return i18next.t("achv:MonoType.description", {
         context: genderStr,
-        type: i18next.t(`pokemonInfo:type.${toCamelCase(localizationKey.slice(5))}`),
+        type: i18next.t(`pokemonInfo:Type.${localizationKey.slice(5)}`),
       });
     case "FRESH_START":
       return i18next.t("achv:FRESH_START.description", { context: genderStr });
