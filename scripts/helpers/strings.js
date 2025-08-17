@@ -26,7 +26,7 @@ const SPLIT_REPLACE_VALUE = "$1\0$2";
  * @returns {string[]} The new string, delimited at each instance of one or more spaces, underscores, hyphens
  * or lower-to-upper boundaries.
  */
-export function splitWords(value) {
+function splitWords(value) {
   let result = value.trim();
   result = result.replace(SPLIT_LOWER_UPPER_RE, SPLIT_REPLACE_VALUE).replace(SPLIT_UPPER_UPPER_RE, SPLIT_REPLACE_VALUE);
   result = result.replace(DELIM_STRIP_REGEXP, "\0");
