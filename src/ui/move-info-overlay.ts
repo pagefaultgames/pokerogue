@@ -85,11 +85,11 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
 
     const visibleY = y < 0 ? y + globalScene.game.canvas.height / GLOBAL_SCALE : y;
 
-    const globalMaskX = (visibleX + descX) * scale;
-    const globalMaskY = (visibleY + descY) * scale;
+    const globalMaskX = visibleX + descX;
+    const globalMaskY = visibleY + descY;
     const wrapWidth = (width - (BORDER - 2) * 2 - (options?.onSide ? EFF_WIDTH : 0)) * GLOBAL_SCALE;
-    const visibleWidth = (width - (BORDER - 2) * 2 - (options?.onSide ? EFF_WIDTH : 0)) * scale;
-    const visibleHeight = (DESC_HEIGHT - (BORDER - 2) * 2) * scale;
+    const visibleWidth = width - (BORDER - 2) * 2 - (options?.onSide ? EFF_WIDTH : 0);
+    const visibleHeight = DESC_HEIGHT - (BORDER - 2) * 2;
 
     // set up the description; wordWrap uses true pixels, unaffected by any scaling, while other values are affected
     this.desc = new ScrollingText(

@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { fixedInt } from "#app/utils/common";
-import { addTextObject, type TextStyle } from "./text";
+import type { TextStyle } from "#enums/text-style";
+import { addTextObject } from "./text";
 
 /*
  */
