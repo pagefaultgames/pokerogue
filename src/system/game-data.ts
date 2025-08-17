@@ -128,7 +128,8 @@ export interface SessionSaveData {
   battleType: BattleType;
   trainer: TrainerData;
   gameVersion: string;
-  runNameText: string;
+  /** The player-chosen name of the run */
+  name: string;
   timestamp: number;
   challenges: ChallengeData[];
   mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
@@ -986,51 +987,45 @@ export class GameData {
   }
 
   async renameSession(slotId: number, newName: string): Promise<boolean> {
-    return new Promise(async resolve => {
-      if (slotId < 0) {
-        return resolve(false);
-      }
-      const sessionData: SessionSaveData | null = await this.getSession(slotId);
+    if (slotId < 0) {
+      return false;
+    }
+    if (newName === "") {
+      return true;
+    }
+    const sessionData: SessionSaveData | null = await this.getSession(slotId);
 
-      if (!sessionData) {
-        return resolve(false);
-      }
+    if (!sessionData) {
+      return false;
+    }
 
-      if (newName === "") {
-        return resolve(true);
-      }
+    sessionData.name = newName;
+    // update timestamp by 1 to ensure the session is saved
+    sessionData.timestamp += 1;
+    const updatedDataStr = JSON.stringify(sessionData);
+    const encrypted = encrypt(updatedDataStr, bypassLogin);
+    const secretId = this.secretId;
+    const trainerId = this.trainerId;
 
-      sessionData.runNameText = newName;
-      const updatedDataStr = JSON.stringify(sessionData);
-      const encrypted = encrypt(updatedDataStr, bypassLogin);
-      const secretId = this.secretId;
-      const trainerId = this.trainerId;
+    if (bypassLogin) {
+      localStorage.setItem(
+        `sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`,
+        encrypt(updatedDataStr, bypassLogin),
+      );
+      return true;
+    }
 
-      if (bypassLogin) {
-        localStorage.setItem(
-          `sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`,
-          encrypt(updatedDataStr, bypassLogin),
-        );
-        resolve(true);
-        return;
-      }
-      pokerogueApi.savedata.session
-        .update({ slot: slotId, trainerId, secretId, clientSessionId }, encrypted)
-        .then(error => {
-          if (error) {
-            console.error("Failed to update session name:", error);
-            resolve(false);
-          } else {
-            localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`, encrypted);
-            updateUserInfo().then(success => {
-              if (success !== null && !success) {
-                return resolve(false);
-              }
-            });
-            resolve(true);
-          }
-        });
-    });
+    const response = await pokerogueApi.savedata.session.update(
+      { slot: slotId, trainerId, secretId, clientSessionId },
+      updatedDataStr,
+    );
+
+    if (response) {
+      return false;
+    }
+    localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`, encrypted);
+    const success = await updateUserInfo();
+    return !(success !== null && !success);
   }
 
   loadSession(slotId: number, sessionData?: SessionSaveData): Promise<boolean> {
