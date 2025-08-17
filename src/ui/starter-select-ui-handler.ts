@@ -2751,7 +2751,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
     const updatedMoveset = starterMoveset.slice() as StarterMoveset;
     const formIndex = globalScene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor).formIndex;
-    const { starterDataEntry } = this.getSpeciesData(this.lastSpecies.speciesId);
+    const starterDataEntry = globalScene.gameData.starterData[speciesId];
     // species has different forms
     if (pokemonFormLevelMoves.hasOwnProperty(speciesId)) {
       // Species has forms with different movesets
