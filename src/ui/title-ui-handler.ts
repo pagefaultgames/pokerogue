@@ -1,19 +1,21 @@
-import OptionSelectUiHandler from "./settings/option-select-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { fixedInt, randInt, randItem } from "#app/utils/common";
-import { TextStyle, addTextObject } from "./text";
-import { getSplashMessages } from "../data/splash-messages";
-import i18next from "i18next";
-import { TimedEventDisplay } from "#app/timed-event-manager";
-import { version } from "../../package.json";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import { globalScene } from "#app/global-scene";
-import type { SpeciesId } from "#enums/species-id";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { PlayerGender } from "#enums/player-gender";
+import { pokerogueApi } from "#api/pokerogue-api";
+import { FAKE_TITLE_LOGO_CHANCE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
+import { globalScene } from "#app/global-scene";
+import { TimedEventDisplay } from "#app/timed-event-manager";
+import { getSplashMessages } from "#data/splash-messages";
+import { PlayerGender } from "#enums/player-gender";
+import type { SpeciesId } from "#enums/species-id";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import { version } from "#package.json";
+import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
+import { addTextObject } from "#ui/text";
+import { fixedInt, randInt, randItem } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import i18next from "i18next";
 
-export default class TitleUiHandler extends OptionSelectUiHandler {
+export class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
   private static readonly BATTLES_WON_FALLBACK: number = -1;
 
@@ -35,12 +37,12 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     const ui = this.getUi();
 
-    this.titleContainer = globalScene.add.container(0, -(globalScene.game.canvas.height / 6));
+    this.titleContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
     this.titleContainer.setName("title");
     this.titleContainer.setAlpha(0);
     ui.add(this.titleContainer);
 
-    const logo = globalScene.add.image(globalScene.game.canvas.width / 6 / 2, 8, "logo");
+    const logo = globalScene.add.image(globalScene.scaledCanvas.width / 2, 8, this.getLogo());
     logo.setOrigin(0.5, 0);
     this.titleContainer.add(logo);
 
@@ -52,7 +54,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     this.playerCountLabel = addTextObject(
       // Actual y position will be determined after the title menu has been populated with options
-      globalScene.game.canvas.width / 6 - 2,
+      globalScene.scaledCanvas.width - 2,
       0,
       `? ${i18next.t("menu:playersOnline")}`,
       TextStyle.MESSAGE,
@@ -130,7 +132,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     if (ret) {
       // Moving player count to top of the menu
-      this.playerCountLabel.setY(globalScene.game.canvas.height / 6 - 13 - this.getWindowHeight());
+      this.playerCountLabel.setY(globalScene.scaledCanvas.height - 13 - this.getWindowHeight());
 
       this.splashMessage = randItem(getSplashMessages());
       this.splashMessageText.setText(
@@ -184,5 +186,15 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       alpha: (target: any) => (target === this.titleContainer ? 0 : 1),
       ease: "Sine.easeInOut",
     });
+  }
+
+  /**
+   * Get the logo file path to load, with a 0.1% chance to use the fake logo instead.
+   * @returns The path to the image.
+   */
+  private getLogo(): string {
+    // Invert spawn chances on april fools
+    const aprilFools = timedEventManager.isAprilFoolsActive();
+    return aprilFools === !!randInt(FAKE_TITLE_LOGO_CHANCE) ? "logo_fake" : "logo";
   }
 }

@@ -1,63 +1,66 @@
 import { globalScene } from "#app/global-scene";
-import type UiHandler from "./ui-handler";
-import BattleMessageUiHandler from "./battle-message-ui-handler";
-import CommandUiHandler from "./command-ui-handler";
-import PartyUiHandler from "./party-ui-handler";
-import FightUiHandler from "./fight-ui-handler";
-import MessageUiHandler from "./message-ui-handler";
-import ConfirmUiHandler from "./confirm-ui-handler";
-import ModifierSelectUiHandler from "./modifier-select-ui-handler";
-import BallUiHandler from "./ball-ui-handler";
-import SummaryUiHandler from "./summary-ui-handler";
-import StarterSelectUiHandler from "./starter-select-ui-handler";
-import EvolutionSceneHandler from "./evolution-scene-handler";
-import TargetSelectUiHandler from "./target-select-ui-handler";
-import SettingsUiHandler from "./settings/settings-ui-handler";
-import SettingsGamepadUiHandler from "./settings/settings-gamepad-ui-handler";
-import GameChallengesUiHandler from "./challenges-select-ui-handler";
-import { TextStyle, addTextObject } from "./text";
-import AchvBar from "./achv-bar";
-import MenuUiHandler from "./menu-ui-handler";
-import AchvsUiHandler from "./achvs-ui-handler";
-import OptionSelectUiHandler from "./settings/option-select-ui-handler";
-import EggHatchSceneHandler from "./egg-hatch-scene-handler";
-import EggListUiHandler from "./egg-list-ui-handler";
-import EggGachaUiHandler from "./egg-gacha-ui-handler";
-import PokedexUiHandler from "./pokedex-ui-handler";
-import { addWindow } from "./ui-theme";
-import LoginFormUiHandler from "./login-form-ui-handler";
-import RegistrationFormUiHandler from "./registration-form-ui-handler";
-import LoadingModalUiHandler from "./loading-modal-ui-handler";
-import { executeIf } from "#app/utils/common";
-import GameStatsUiHandler from "./game-stats-ui-handler";
-import AwaitableUiHandler from "./awaitable-ui-handler";
-import SaveSlotSelectUiHandler from "./save-slot-select-ui-handler";
-import TitleUiHandler from "./title-ui-handler";
-import SavingIconHandler from "./saving-icon-handler";
-import UnavailableModalUiHandler from "./unavailable-modal-ui-handler";
-import SessionReloadModalUiHandler from "./session-reload-modal-ui-handler";
 import type { Button } from "#enums/buttons";
-import i18next from "i18next";
-import GamepadBindingUiHandler from "./settings/gamepad-binding-ui-handler";
-import SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
-import KeyboardBindingUiHandler from "#app/ui/settings/keyboard-binding-ui-handler";
-import SettingsDisplayUiHandler from "./settings/settings-display-ui-handler";
-import SettingsAudioUiHandler from "./settings/settings-audio-ui-handler";
-import { PlayerGender } from "#enums/player-gender";
-import type BgmBar from "#app/ui/bgm-bar";
-import RenameFormUiHandler from "./rename-form-ui-handler";
-import AdminUiHandler from "./admin-ui-handler";
-import RunHistoryUiHandler from "./run-history-ui-handler";
-import RunInfoUiHandler from "./run-info-ui-handler";
-import EggSummaryUiHandler from "./egg-summary-ui-handler";
-import TestDialogueUiHandler from "#app/ui/test-dialogue-ui-handler";
-import AutoCompleteUiHandler from "./autocomplete-ui-handler";
 import { Device } from "#enums/devices";
-import MysteryEncounterUiHandler from "./mystery-encounter-ui-handler";
-import PokedexScanUiHandler from "./pokedex-scan-ui-handler";
-import PokedexPageUiHandler from "./pokedex-page-ui-handler";
-import { NavigationManager } from "./settings/navigationMenu";
+import { PlayerGender } from "#enums/player-gender";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import { AchvBar } from "#ui/achv-bar";
+import { AchvsUiHandler } from "#ui/achvs-ui-handler";
+import { AdminUiHandler } from "#ui/admin-ui-handler";
+import { AutoCompleteUiHandler } from "#ui/autocomplete-ui-handler";
+import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
+import { BallUiHandler } from "#ui/ball-ui-handler";
+import { BattleMessageUiHandler } from "#ui/battle-message-ui-handler";
+import type { BgmBar } from "#ui/bgm-bar";
+import { GameChallengesUiHandler } from "#ui/challenges-select-ui-handler";
+import { ChangePasswordFormUiHandler } from "#ui/change-password-form-ui-handler";
+import { CommandUiHandler } from "#ui/command-ui-handler";
+import { ConfirmUiHandler } from "#ui/confirm-ui-handler";
+import { EggGachaUiHandler } from "#ui/egg-gacha-ui-handler";
+import { EggHatchSceneHandler } from "#ui/egg-hatch-scene-handler";
+import { EggListUiHandler } from "#ui/egg-list-ui-handler";
+import { EggSummaryUiHandler } from "#ui/egg-summary-ui-handler";
+import { EvolutionSceneHandler } from "#ui/evolution-scene-handler";
+import { FightUiHandler } from "#ui/fight-ui-handler";
+import { GameStatsUiHandler } from "#ui/game-stats-ui-handler";
+import { GamepadBindingUiHandler } from "#ui/gamepad-binding-ui-handler";
+import { KeyboardBindingUiHandler } from "#ui/keyboard-binding-ui-handler";
+import { LoadingModalUiHandler } from "#ui/loading-modal-ui-handler";
+import { LoginFormUiHandler } from "#ui/login-form-ui-handler";
+import { MenuUiHandler } from "#ui/menu-ui-handler";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
+import { NavigationManager } from "#ui/navigation-menu";
+import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
+import { PartyUiHandler } from "#ui/party-ui-handler";
+import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
+import { PokedexScanUiHandler } from "#ui/pokedex-scan-ui-handler";
+import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
+import { RegistrationFormUiHandler } from "#ui/registration-form-ui-handler";
+import { RenameFormUiHandler } from "#ui/rename-form-ui-handler";
+import { RunHistoryUiHandler } from "#ui/run-history-ui-handler";
+import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
+import { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
+import { SavingIconHandler } from "#ui/saving-icon-handler";
+import { SessionReloadModalUiHandler } from "#ui/session-reload-modal-ui-handler";
+import { SettingsAudioUiHandler } from "#ui/settings-audio-ui-handler";
+import { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
+import { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
+import { SettingsKeyboardUiHandler } from "#ui/settings-keyboard-ui-handler";
+import { SettingsUiHandler } from "#ui/settings-ui-handler";
+import { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
+import { SummaryUiHandler } from "#ui/summary-ui-handler";
+import { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
+import { TestDialogueUiHandler } from "#ui/test-dialogue-ui-handler";
+import { addTextObject } from "#ui/text";
+import { TitleUiHandler } from "#ui/title-ui-handler";
+import type { UiHandler } from "#ui/ui-handler";
+import { addWindow } from "#ui/ui-theme";
+import { UnavailableModalUiHandler } from "#ui/unavailable-modal-ui-handler";
+import { executeIf } from "#utils/common";
+import i18next from "i18next";
+import { RenameRunFormUiHandler } from "./rename-run-ui-handler";
 
 const transitionModes = [
   UiMode.SAVE_SLOT,
@@ -96,14 +99,16 @@ const noTransitionModes = [
   UiMode.SESSION_RELOAD,
   UiMode.UNAVAILABLE,
   UiMode.RENAME_POKEMON,
+  UiMode.RENAME_RUN,
   UiMode.TEST_DIALOGUE,
   UiMode.AUTO_COMPLETE,
   UiMode.ADMIN,
   UiMode.MYSTERY_ENCOUNTER,
   UiMode.RUN_INFO,
+  UiMode.CHANGE_PASSWORD_FORM,
 ];
 
-export default class UI extends Phaser.GameObjects.Container {
+export class UI extends Phaser.GameObjects.Container {
   private mode: UiMode;
   private modeChain: UiMode[];
   public handlers: UiHandler[];
@@ -120,7 +125,7 @@ export default class UI extends Phaser.GameObjects.Container {
   private overlayActive: boolean;
 
   constructor() {
-    super(globalScene, 0, globalScene.game.canvas.height / 6);
+    super(globalScene, 0, globalScene.scaledCanvas.height);
 
     this.mode = UiMode.MESSAGE;
     this.modeChain = [];
@@ -165,12 +170,14 @@ export default class UI extends Phaser.GameObjects.Container {
       new UnavailableModalUiHandler(),
       new GameChallengesUiHandler(),
       new RenameFormUiHandler(),
+      new RenameRunFormUiHandler(),
       new RunHistoryUiHandler(),
       new RunInfoUiHandler(),
       new TestDialogueUiHandler(UiMode.TEST_DIALOGUE),
       new AutoCompleteUiHandler(),
       new AdminUiHandler(),
       new MysteryEncounterUiHandler(),
+      new ChangePasswordFormUiHandler(),
     ];
   }
 
@@ -179,13 +186,7 @@ export default class UI extends Phaser.GameObjects.Container {
     for (const handler of this.handlers) {
       handler.setup();
     }
-    this.overlay = globalScene.add.rectangle(
-      0,
-      0,
-      globalScene.game.canvas.width / 6,
-      globalScene.game.canvas.height / 6,
-      0,
-    );
+    this.overlay = globalScene.add.rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height, 0);
     this.overlay.setName("rect-ui-overlay");
     this.overlay.setOrigin(0, 0);
     globalScene.uiContainer.add(this.overlay);
@@ -436,15 +437,15 @@ export default class UI extends Phaser.GameObjects.Container {
       if (isTouch) {
         // If we are in the top left quadrant on mobile, move the tooltip to the top right corner
         if (pointerX <= globalScene.game.canvas.width / 2 && pointerY <= globalScene.game.canvas.height / 2) {
-          x = globalScene.game.canvas.width / 6 - tooltipWidth - padding;
+          x = globalScene.scaledCanvas.width - tooltipWidth - padding;
         }
       } else {
         // If the tooltip would go offscreen on the right, or is close to it, move to the left of the cursor
-        if (x + tooltipWidth + padding > globalScene.game.canvas.width / 6) {
+        if (x + tooltipWidth + padding > globalScene.scaledCanvas.width) {
           x = Math.max(padding, pointerX / 6 - tooltipWidth - padding);
         }
         // If the tooltip would go offscreen at the bottom, or is close to it, move above the cursor
-        if (y + tooltipHeight + padding > globalScene.game.canvas.height / 6) {
+        if (y + tooltipHeight + padding > globalScene.scaledCanvas.height) {
           y = Math.max(padding, pointerY / 6 - tooltipHeight - padding);
         }
       }

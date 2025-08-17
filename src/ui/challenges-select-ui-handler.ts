@@ -1,20 +1,21 @@
-import { TextStyle, addTextObject } from "./text";
-import type { UiMode } from "#enums/ui-mode";
-import UiHandler from "./ui-handler";
-import { addWindow } from "./ui-theme";
-import { Button } from "#enums/buttons";
-import i18next from "i18next";
-import type { Challenge } from "#app/data/challenge";
-import { getLocalizedSpriteKey } from "#app/utils/common";
-import { Challenges } from "#app/enums/challenges";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { Color, ShadowColor } from "#app/enums/color";
 import { globalScene } from "#app/global-scene";
+import type { Challenge } from "#data/challenge";
+import { Button } from "#enums/buttons";
+import { Challenges } from "#enums/challenges";
+import { Color, ShadowColor } from "#enums/color";
+import { TextStyle } from "#enums/text-style";
+import type { UiMode } from "#enums/ui-mode";
+import { addTextObject } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { addWindow } from "#ui/ui-theme";
+import { getLocalizedSpriteKey } from "#utils/common";
+import i18next from "i18next";
+import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 /**
  * Handles all the UI for choosing optional challenges.
  */
-export default class GameChallengesUiHandler extends UiHandler {
+export class GameChallengesUiHandler extends UiHandler {
   private challengesContainer: Phaser.GameObjects.Container;
   private valuesContainer: Phaser.GameObjects.Container;
 
@@ -57,11 +58,11 @@ export default class GameChallengesUiHandler extends UiHandler {
 
     this.widestTextBox = 0;
 
-    this.challengesContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
+    this.challengesContainer = globalScene.add.container(1, -globalScene.scaledCanvas.height + 1);
     this.challengesContainer.setName("challenges");
 
     this.challengesContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6),
+      new Phaser.Geom.Rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height),
       Phaser.Geom.Rectangle.Contains,
     );
 
@@ -78,11 +79,11 @@ export default class GameChallengesUiHandler extends UiHandler {
     this.challengesContainer.add(bgOverlay);
 
     // TODO: Change this back to /9 when adding in difficulty
-    const headerBg = addWindow(0, 0, globalScene.game.canvas.width / 6, 24);
+    const headerBg = addWindow(0, 0, globalScene.scaledCanvas.width, 24);
     headerBg.setName("window-header-bg");
     headerBg.setOrigin(0, 0);
 
-    const headerText = addTextObject(0, 0, i18next.t("challenges:title"), TextStyle.SETTINGS_LABEL);
+    const headerText = addTextObject(0, 0, i18next.t("challenges:title"), TextStyle.HEADER_LABEL);
     headerText.setName("text-header");
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
@@ -381,8 +382,7 @@ export default class GameChallengesUiHandler extends UiHandler {
         this.cursorObj?.setVisible(true);
         this.updateChallengeArrows(this.startCursor.visible);
       } else {
-        globalScene.phaseManager.clearPhaseQueue();
-        globalScene.phaseManager.pushNew("TitlePhase");
+        globalScene.phaseManager.toTitleScreen();
         globalScene.phaseManager.getCurrentPhase()?.end();
       }
       success = true;

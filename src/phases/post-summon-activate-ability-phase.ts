@@ -1,6 +1,6 @@
-import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { PostSummonPhase } from "#app/phases/post-summon-phase";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import type { BattlerIndex } from "#enums/battler-index";
+import { PostSummonPhase } from "#phases/post-summon-phase";
 
 /**
  * Helper to {@linkcode PostSummonPhase} which applies abilities

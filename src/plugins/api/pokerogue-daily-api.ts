@@ -1,6 +1,6 @@
-import type { GetDailyRankingsPageCountRequest, GetDailyRankingsRequest } from "#app/@types/PokerogueDailyApi";
-import { ApiBase } from "#app/plugins/api/api-base";
-import type { RankingEntry } from "#app/ui/daily-run-scoreboard";
+import { ApiBase } from "#api/api-base";
+import type { GetDailyRankingsPageCountRequest, GetDailyRankingsRequest } from "#types/api/pokerogue-daily-api";
+import type { RankingEntry } from "#ui/daily-run-scoreboard";
 
 /**
  * A wrapper for daily-run PokéRogue API requests.

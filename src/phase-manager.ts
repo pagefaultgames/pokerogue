@@ -1,104 +1,106 @@
-import type { Phase } from "#app/phase";
-import type { default as Pokemon } from "#app/field/pokemon";
-import type { PhaseMap, PhaseString } from "./@types/phase-types";
 import { globalScene } from "#app/global-scene";
-import { ActivatePriorityQueuePhase } from "#app/phases/activate-priority-queue-phase";
-import { AddEnemyBuffModifierPhase } from "#app/phases/add-enemy-buff-modifier-phase";
-import { AttemptCapturePhase } from "#app/phases/attempt-capture-phase";
-import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { CheckStatusEffectPhase } from "#app/phases/check-status-effect-phase";
-import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
-import { CommandPhase } from "#app/phases/command-phase";
-import { CommonAnimPhase } from "#app/phases/common-anim-phase";
-import { coerceArray, type Constructor } from "#app/utils/common";
-import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
+import type { Phase } from "#app/phase";
+import { type PhasePriorityQueue, PostSummonPhasePriorityQueue } from "#data/phase-priority-queue";
 import type { DynamicPhaseType } from "#enums/dynamic-phase-type";
-import { EggHatchPhase } from "#app/phases/egg-hatch-phase";
-import { EggLapsePhase } from "#app/phases/egg-lapse-phase";
-import { EggSummaryPhase } from "#app/phases/egg-summary-phase";
-import { EncounterPhase } from "#app/phases/encounter-phase";
-import { EndCardPhase } from "#app/phases/end-card-phase";
-import { EndEvolutionPhase } from "#app/phases/end-evolution-phase";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
-import { EvolutionPhase } from "#app/phases/evolution-phase";
-import { ExpPhase } from "#app/phases/exp-phase";
-import { FaintPhase } from "#app/phases/faint-phase";
-import { FormChangePhase } from "#app/phases/form-change-phase";
-import { GameOverModifierRewardPhase } from "#app/phases/game-over-modifier-reward-phase";
-import { GameOverPhase } from "#app/phases/game-over-phase";
-import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
-import { HidePartyExpBarPhase } from "#app/phases/hide-party-exp-bar-phase";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
-import { LevelCapPhase } from "#app/phases/level-cap-phase";
-import { LevelUpPhase } from "#app/phases/level-up-phase";
-import { LoadMoveAnimPhase } from "#app/phases/load-move-anim-phase";
-import { LoginPhase } from "#app/phases/login-phase";
-import { MessagePhase } from "#app/phases/message-phase";
-import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
-import { MoneyRewardPhase } from "#app/phases/money-reward-phase";
-import { MoveAnimPhase } from "#app/phases/move-anim-phase";
-import { MoveChargePhase } from "#app/phases/move-charge-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { MoveHeaderPhase } from "#app/phases/move-header-phase";
-import { MovePhase } from "#app/phases/move-phase";
+import type { Pokemon } from "#field/pokemon";
+import { ActivatePriorityQueuePhase } from "#phases/activate-priority-queue-phase";
+import { AddEnemyBuffModifierPhase } from "#phases/add-enemy-buff-modifier-phase";
+import { AttemptCapturePhase } from "#phases/attempt-capture-phase";
+import { AttemptRunPhase } from "#phases/attempt-run-phase";
+import { BattleEndPhase } from "#phases/battle-end-phase";
+import { BerryPhase } from "#phases/berry-phase";
+import { CheckInterludePhase } from "#phases/check-interlude-phase";
+import { CheckStatusEffectPhase } from "#phases/check-status-effect-phase";
+import { CheckSwitchPhase } from "#phases/check-switch-phase";
+import { CommandPhase } from "#phases/command-phase";
+import { CommonAnimPhase } from "#phases/common-anim-phase";
+import { DamageAnimPhase } from "#phases/damage-anim-phase";
+import { EggHatchPhase } from "#phases/egg-hatch-phase";
+import { EggLapsePhase } from "#phases/egg-lapse-phase";
+import { EggSummaryPhase } from "#phases/egg-summary-phase";
+import { EncounterPhase } from "#phases/encounter-phase";
+import { EndCardPhase } from "#phases/end-card-phase";
+import { EndEvolutionPhase } from "#phases/end-evolution-phase";
+import { EnemyCommandPhase } from "#phases/enemy-command-phase";
+import { EvolutionPhase } from "#phases/evolution-phase";
+import { ExpPhase } from "#phases/exp-phase";
+import { FaintPhase } from "#phases/faint-phase";
+import { FormChangePhase } from "#phases/form-change-phase";
+import { GameOverModifierRewardPhase } from "#phases/game-over-modifier-reward-phase";
+import { GameOverPhase } from "#phases/game-over-phase";
+import { HideAbilityPhase } from "#phases/hide-ability-phase";
+import { HidePartyExpBarPhase } from "#phases/hide-party-exp-bar-phase";
+import { LearnMovePhase } from "#phases/learn-move-phase";
+import { LevelCapPhase } from "#phases/level-cap-phase";
+import { LevelUpPhase } from "#phases/level-up-phase";
+import { LoadMoveAnimPhase } from "#phases/load-move-anim-phase";
+import { LoginPhase } from "#phases/login-phase";
+import { MessagePhase } from "#phases/message-phase";
+import { ModifierRewardPhase } from "#phases/modifier-reward-phase";
+import { MoneyRewardPhase } from "#phases/money-reward-phase";
+import { MoveAnimPhase } from "#phases/move-anim-phase";
+import { MoveChargePhase } from "#phases/move-charge-phase";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { MoveEndPhase } from "#phases/move-end-phase";
+import { MoveHeaderPhase } from "#phases/move-header-phase";
+import { MovePhase } from "#phases/move-phase";
 import {
-  MysteryEncounterPhase,
-  MysteryEncounterOptionSelectedPhase,
   MysteryEncounterBattlePhase,
+  MysteryEncounterBattleStartCleanupPhase,
+  MysteryEncounterOptionSelectedPhase,
+  MysteryEncounterPhase,
   MysteryEncounterRewardsPhase,
   PostMysteryEncounterPhase,
-  MysteryEncounterBattleStartCleanupPhase,
-} from "#app/phases/mystery-encounter-phases";
-import { NewBattlePhase } from "#app/phases/new-battle-phase";
-import { NewBiomeEncounterPhase } from "#app/phases/new-biome-encounter-phase";
-import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
-import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase";
-import { PartyExpPhase } from "#app/phases/party-exp-phase";
-import { PartyHealPhase } from "#app/phases/party-heal-phase";
-import { type PhasePriorityQueue, PostSummonPhasePriorityQueue } from "#app/data/phase-priority-queue";
-import { PokemonAnimPhase } from "#app/phases/pokemon-anim-phase";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
-import { PostGameOverPhase } from "#app/phases/post-game-over-phase";
-import { PostSummonPhase } from "#app/phases/post-summon-phase";
-import { PostTurnStatusEffectPhase } from "#app/phases/post-turn-status-effect-phase";
-import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
-import { ReloadSessionPhase } from "#app/phases/reload-session-phase";
-import { ResetStatusPhase } from "#app/phases/reset-status-phase";
-import { ReturnPhase } from "#app/phases/return-phase";
-import { RevivalBlessingPhase } from "#app/phases/revival-blessing-phase";
-import { RibbonModifierRewardPhase } from "#app/phases/ribbon-modifier-reward-phase";
-import { ScanIvsPhase } from "#app/phases/scan-ivs-phase";
-import { SelectBiomePhase } from "#app/phases/select-biome-phase";
-import { SelectChallengePhase } from "#app/phases/select-challenge-phase";
-import { SelectGenderPhase } from "#app/phases/select-gender-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import { SelectTargetPhase } from "#app/phases/select-target-phase";
-import { ShinySparklePhase } from "#app/phases/shiny-sparkle-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
-import { ShowPartyExpBarPhase } from "#app/phases/show-party-exp-bar-phase";
-import { ShowTrainerPhase } from "#app/phases/show-trainer-phase";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { SummonMissingPhase } from "#app/phases/summon-missing-phase";
-import { SummonPhase } from "#app/phases/summon-phase";
-import { SwitchBiomePhase } from "#app/phases/switch-biome-phase";
-import { SwitchPhase } from "#app/phases/switch-phase";
-import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
-import { TeraPhase } from "#app/phases/tera-phase";
-import { TitlePhase } from "#app/phases/title-phase";
-import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
-import { TrainerVictoryPhase } from "#app/phases/trainer-victory-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { TurnStartPhase } from "#app/phases/turn-start-phase";
-import { UnavailablePhase } from "#app/phases/unavailable-phase";
-import { UnlockPhase } from "#app/phases/unlock-phase";
-import { VictoryPhase } from "#app/phases/victory-phase";
-import { WeatherEffectPhase } from "#app/phases/weather-effect-phase";
+} from "#phases/mystery-encounter-phases";
+import { NewBattlePhase } from "#phases/new-battle-phase";
+import { NewBiomeEncounterPhase } from "#phases/new-biome-encounter-phase";
+import { NextEncounterPhase } from "#phases/next-encounter-phase";
+import { ObtainStatusEffectPhase } from "#phases/obtain-status-effect-phase";
+import { PartyExpPhase } from "#phases/party-exp-phase";
+import { PartyHealPhase } from "#phases/party-heal-phase";
+import { PokemonAnimPhase } from "#phases/pokemon-anim-phase";
+import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
+import { PokemonTransformPhase } from "#phases/pokemon-transform-phase";
+import { PositionalTagPhase } from "#phases/positional-tag-phase";
+import { PostGameOverPhase } from "#phases/post-game-over-phase";
+import { PostSummonPhase } from "#phases/post-summon-phase";
+import { PostTurnStatusEffectPhase } from "#phases/post-turn-status-effect-phase";
+import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
+import { ReloadSessionPhase } from "#phases/reload-session-phase";
+import { ResetStatusPhase } from "#phases/reset-status-phase";
+import { ReturnPhase } from "#phases/return-phase";
+import { RevivalBlessingPhase } from "#phases/revival-blessing-phase";
+import { RibbonModifierRewardPhase } from "#phases/ribbon-modifier-reward-phase";
+import { ScanIvsPhase } from "#phases/scan-ivs-phase";
+import { SelectBiomePhase } from "#phases/select-biome-phase";
+import { SelectChallengePhase } from "#phases/select-challenge-phase";
+import { SelectGenderPhase } from "#phases/select-gender-phase";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
+import { SelectStarterPhase } from "#phases/select-starter-phase";
+import { SelectTargetPhase } from "#phases/select-target-phase";
+import { ShinySparklePhase } from "#phases/shiny-sparkle-phase";
+import { ShowAbilityPhase } from "#phases/show-ability-phase";
+import { ShowPartyExpBarPhase } from "#phases/show-party-exp-bar-phase";
+import { ShowTrainerPhase } from "#phases/show-trainer-phase";
+import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
+import { SummonMissingPhase } from "#phases/summon-missing-phase";
+import { SummonPhase } from "#phases/summon-phase";
+import { SwitchBiomePhase } from "#phases/switch-biome-phase";
+import { SwitchPhase } from "#phases/switch-phase";
+import { SwitchSummonPhase } from "#phases/switch-summon-phase";
+import { TeraPhase } from "#phases/tera-phase";
+import { TitlePhase } from "#phases/title-phase";
+import { ToggleDoublePositionPhase } from "#phases/toggle-double-position-phase";
+import { TrainerVictoryPhase } from "#phases/trainer-victory-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { TurnStartPhase } from "#phases/turn-start-phase";
+import { UnavailablePhase } from "#phases/unavailable-phase";
+import { UnlockPhase } from "#phases/unlock-phase";
+import { VictoryPhase } from "#phases/victory-phase";
+import { WeatherEffectPhase } from "#phases/weather-effect-phase";
+import type { PhaseMap, PhaseString } from "#types/phase-types";
+import { type Constructor, coerceArray } from "#utils/common";
 
 /*
  * Manager for phases used by battle scene.
@@ -121,6 +123,7 @@ const PHASES = Object.freeze({
   AttemptRunPhase,
   BattleEndPhase,
   BerryPhase,
+  CheckInterludePhase,
   CheckStatusEffectPhase,
   CheckSwitchPhase,
   CommandPhase,
@@ -170,6 +173,7 @@ const PHASES = Object.freeze({
   PokemonAnimPhase,
   PokemonHealPhase,
   PokemonTransformPhase,
+  PositionalTagPhase,
   PostGameOverPhase,
   PostSummonPhase,
   PostTurnStatusEffectPhase,
@@ -240,6 +244,21 @@ export class PhaseManager {
     this.dynamicPhaseTypes = [PostSummonPhase];
   }
 
+  /**
+   * Clear all previously set phases, then add a new {@linkcode TitlePhase} to transition to the title screen.
+   * @param addLogin - Whether to add a new {@linkcode LoginPhase} before the {@linkcode TitlePhase}
+   * (but reset everything else).
+   * Default `false`
+   */
+  public toTitleScreen(addLogin = false): void {
+    this.clearAllPhases();
+
+    if (addLogin) {
+      this.unshiftNew("LoginPhase");
+    }
+    this.unshiftNew("TitlePhase");
+  }
+
   /* Phase Functions */
   getCurrentPhase(): Phase | null {
     return this.currentPhase;
@@ -303,7 +322,6 @@ export class PhaseManager {
       queue.splice(0, queue.length);
     }
     this.dynamicPhaseQueues.forEach(queue => queue.clear());
-    this.currentPhase = null;
     this.standbyPhase = null;
     this.clearPhaseQueueSplice();
   }
@@ -560,14 +578,13 @@ export class PhaseManager {
   }
 
   /**
-   * Queues an ability bar flyout phase
-   * @param pokemon The pokemon who has the ability
-   * @param passive Whether the ability is a passive
-   * @param show Whether to show or hide the bar
+   * Queue a phase to show or hide the ability flyout bar.
+   * @param pokemon - The {@linkcode Pokemon} whose ability is being activated
+   * @param passive - Whether the ability is a passive
+   * @param show - Whether to show or hide the bar
    */
   public queueAbilityDisplay(pokemon: Pokemon, passive: boolean, show: boolean): void {
     this.unshiftPhase(show ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive) : new HideAbilityPhase());
-    this.clearPhaseQueueSplice();
   }
 
   /**
@@ -665,5 +682,16 @@ export class PhaseManager {
     ...args: ConstructorParameters<PhaseConstructorMap[T]>
   ): void {
     this.startDynamicPhase(this.create(phase, ...args));
+  }
+
+  /** Prevents end of turn effects from triggering when transitioning to a new biome on a X0 wave */
+  public onInterlude(): void {
+    const phasesToRemove = ["WeatherEffectPhase", "BerryPhase", "CheckStatusEffectPhase"];
+    this.phaseQueue = this.phaseQueue.filter(p => !phasesToRemove.includes(p.phaseName));
+
+    const turnEndPhase = this.findPhase<TurnEndPhase>(p => p.phaseName === "TurnEndPhase");
+    if (turnEndPhase) {
+      turnEndPhase.upcomingInterlude = true;
+    }
   }
 }

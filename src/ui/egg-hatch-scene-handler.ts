@@ -1,9 +1,9 @@
-import { UiMode } from "#enums/ui-mode";
-import UiHandler from "./ui-handler";
-import { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
+import { Button } from "#enums/buttons";
+import { UiMode } from "#enums/ui-mode";
+import { UiHandler } from "#ui/ui-handler";
 
-export default class EggHatchSceneHandler extends UiHandler {
+export class EggHatchSceneHandler extends UiHandler {
   public eggHatchContainer: Phaser.GameObjects.Container;
 
   /**
@@ -19,7 +19,7 @@ export default class EggHatchSceneHandler extends UiHandler {
   }
 
   setup() {
-    this.eggHatchContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
+    this.eggHatchContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
     globalScene.fieldUI.add(this.eggHatchContainer);
 
     const eggLightraysAnimFrames = globalScene.anims.generateFrameNames("egg_lightrays", { start: 0, end: 3 });

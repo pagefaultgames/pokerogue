@@ -1,8 +1,7 @@
-import { expect, describe, it, beforeAll } from "vitest";
-import { randomString, padInt } from "#app/utils/common";
-import { deepMergeSpriteData } from "#app/utils/data";
-
+import { padInt, randomString } from "#utils/common";
+import { deepMergeSpriteData } from "#utils/data";
 import Phaser from "phaser";
+import { beforeAll, describe, expect, it } from "vitest";
 
 describe("utils", () => {
   beforeAll(() => {

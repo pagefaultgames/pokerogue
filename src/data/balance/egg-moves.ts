@@ -1,8 +1,8 @@
-import { allMoves } from "../data-lists";
-import { getEnumKeys, getEnumValues } from "#app/utils/common";
+import { allMoves } from "#data/data-lists";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-
+import { getEnumKeys, getEnumValues } from "#utils/enums";
+import { toTitleCase } from "#utils/strings";
 
 export const speciesEggMoves = {
   [SpeciesId.BULBASAUR]: [ MoveId.SAPPY_SEED, MoveId.MALIGNANT_CHAIN, MoveId.EARTH_POWER, MoveId.MATCHA_GOTCHA ],
@@ -15,7 +15,7 @@ export const speciesEggMoves = {
   [SpeciesId.SPEAROW]: [ MoveId.FLOATY_FALL, MoveId.EXTREME_SPEED, MoveId.KNOCK_OFF, MoveId.TRIPLE_ARROWS ],
   [SpeciesId.EKANS]: [ MoveId.NOXIOUS_TORQUE, MoveId.DRAGON_DANCE, MoveId.SLACK_OFF, MoveId.SHED_TAIL ],
   [SpeciesId.SANDSHREW]: [ MoveId.HIGH_HORSEPOWER, MoveId.DIRE_CLAW, MoveId.SHORE_UP, MoveId.MIGHTY_CLEAVE ],
-  [SpeciesId.NIDORAN_F]: [ MoveId.CALM_MIND, MoveId.MOONLIGHT, MoveId.MALIGNANT_CHAIN, MoveId.SANDSEAR_STORM ],
+  [SpeciesId.NIDORAN_F]: [ MoveId.BANEFUL_BUNKER, MoveId.MOONLIGHT, MoveId.BARB_BARRAGE, MoveId.THOUSAND_WAVES ],
   [SpeciesId.NIDORAN_M]: [ MoveId.DRAGON_DANCE, MoveId.MOUNTAIN_GALE, MoveId.NOXIOUS_TORQUE, MoveId.PRECIPICE_BLADES ],
   [SpeciesId.VULPIX]: [ MoveId.MOONBLAST, MoveId.INFERNAL_PARADE, MoveId.MORNING_SUN, MoveId.TAIL_GLOW ],
   [SpeciesId.ZUBAT]: [ MoveId.FLOATY_FALL, MoveId.DIRE_CLAW, MoveId.SWORDS_DANCE, MoveId.COLLISION_COURSE ],
@@ -26,14 +26,14 @@ export const speciesEggMoves = {
   [SpeciesId.MEOWTH]: [ MoveId.HEART_STAMP, MoveId.SWORDS_DANCE, MoveId.SIZZLY_SLIDE, MoveId.TAIL_SLAP ],
   [SpeciesId.PSYDUCK]: [ MoveId.FROST_BREATH, MoveId.AQUA_STEP, MoveId.MYSTICAL_POWER, MoveId.BOUNCY_BUBBLE ],
   [SpeciesId.MANKEY]: [ MoveId.DRAIN_PUNCH, MoveId.SLACK_OFF, MoveId.METEOR_MASH, MoveId.NO_RETREAT ],
-  [SpeciesId.GROWLITHE]: [ MoveId.ZING_ZAP, MoveId.PARTING_SHOT, MoveId.MORNING_SUN, MoveId.SACRED_FIRE ],
+  [SpeciesId.GROWLITHE]: [ MoveId.ZING_ZAP, MoveId.DRAGON_DANCE, MoveId.MORNING_SUN, MoveId.SACRED_FIRE ],
   [SpeciesId.POLIWAG]: [ MoveId.SLACK_OFF, MoveId.WILDBOLT_STORM, MoveId.DRAIN_PUNCH, MoveId.SURGING_STRIKES ],
   [SpeciesId.ABRA]: [ MoveId.AURA_SPHERE, MoveId.BADDY_BAD, MoveId.ICE_BEAM, MoveId.PSYSTRIKE ],
   [SpeciesId.MACHOP]: [ MoveId.COMBAT_TORQUE, MoveId.METEOR_MASH, MoveId.MOUNTAIN_GALE, MoveId.FISSURE ],
   [SpeciesId.BELLSPROUT]: [ MoveId.SOLAR_BLADE, MoveId.STRENGTH_SAP, MoveId.FIRE_LASH, MoveId.VICTORY_DANCE ],
   [SpeciesId.TENTACOOL]: [ MoveId.BANEFUL_BUNKER, MoveId.MALIGNANT_CHAIN, MoveId.BOUNCY_BUBBLE, MoveId.STRENGTH_SAP ],
   [SpeciesId.GEODUDE]: [ MoveId.FLARE_BLITZ, MoveId.HEAD_SMASH, MoveId.SHORE_UP, MoveId.SHELL_SMASH ],
-  [SpeciesId.PONYTA]: [ MoveId.HEADLONG_RUSH, MoveId.FIRE_LASH, MoveId.SWORDS_DANCE, MoveId.VOLT_TACKLE ],
+  [SpeciesId.PONYTA]: [ MoveId.HEADLONG_RUSH, MoveId.HIGH_JUMP_KICK, MoveId.SWORDS_DANCE, MoveId.VOLT_TACKLE ],
   [SpeciesId.SLOWPOKE]: [ MoveId.SPLISHY_SPLASH, MoveId.FROST_BREATH, MoveId.SHED_TAIL, MoveId.MYSTICAL_POWER ],
   [SpeciesId.MAGNEMITE]: [ MoveId.PARABOLIC_CHARGE, MoveId.FLAMETHROWER, MoveId.ICE_BEAM, MoveId.THUNDERCLAP ],
   [SpeciesId.FARFETCHD]: [ MoveId.IVY_CUDGEL, MoveId.TRIPLE_ARROWS, MoveId.DRILL_RUN, MoveId.VICTORY_DANCE ],
@@ -63,9 +63,9 @@ export const speciesEggMoves = {
   [SpeciesId.LAPRAS]: [ MoveId.RECOVER, MoveId.FREEZE_DRY, MoveId.SCALD, MoveId.SHELL_SMASH ],
   [SpeciesId.DITTO]: [ MoveId.MIMIC, MoveId.SKETCH, MoveId.METRONOME, MoveId.IMPRISON ],
   [SpeciesId.EEVEE]: [ MoveId.WISH, MoveId.NO_RETREAT, MoveId.ZIPPY_ZAP, MoveId.BOOMBURST ],
-  [SpeciesId.PORYGON]: [ MoveId.THUNDERCLAP, MoveId.AURA_SPHERE, MoveId.FLAMETHROWER, MoveId.TECHNO_BLAST ],
+  [SpeciesId.PORYGON]: [ MoveId.THUNDERCLAP, MoveId.DAZZLING_GLEAM, MoveId.FLAMETHROWER, MoveId.TECHNO_BLAST ],
   [SpeciesId.OMANYTE]: [ MoveId.FREEZE_DRY, MoveId.GIGA_DRAIN, MoveId.POWER_GEM, MoveId.STEAM_ERUPTION ],
-  [SpeciesId.KABUTO]: [ MoveId.CEASELESS_EDGE, MoveId.HIGH_HORSEPOWER, MoveId.CRABHAMMER, MoveId.MIGHTY_CLEAVE ],
+  [SpeciesId.KABUTO]: [ MoveId.CEASELESS_EDGE, MoveId.HIGH_HORSEPOWER, MoveId.MIGHTY_CLEAVE, MoveId.CRABHAMMER ],
   [SpeciesId.AERODACTYL]: [ MoveId.FLOATY_FALL, MoveId.HIGH_HORSEPOWER, MoveId.STONE_AXE, MoveId.SWORDS_DANCE ],
   [SpeciesId.ARTICUNO]: [ MoveId.EARTH_POWER, MoveId.CALM_MIND, MoveId.AURORA_VEIL, MoveId.AEROBLAST ],
   [SpeciesId.ZAPDOS]: [ MoveId.BLEAKWIND_STORM, MoveId.CALM_MIND, MoveId.SANDSEAR_STORM, MoveId.ELECTRO_SHOT ],
@@ -75,8 +75,8 @@ export const speciesEggMoves = {
   [SpeciesId.MEW]: [ MoveId.PHOTON_GEYSER, MoveId.MOONBLAST, MoveId.ASTRAL_BARRAGE, MoveId.SHELL_SMASH ],
 
   [SpeciesId.CHIKORITA]: [ MoveId.SAPPY_SEED, MoveId.STONE_AXE, MoveId.DRAGON_DANCE, MoveId.SPORE ],
-  [SpeciesId.CYNDAQUIL]: [ MoveId.NASTY_PLOT, MoveId.EARTH_POWER, MoveId.FIERY_DANCE, MoveId.ELECTRO_DRIFT ],
-  [SpeciesId.TOTODILE]: [ MoveId.THUNDER_PUNCH, MoveId.DRAGON_DANCE, MoveId.PLAY_ROUGH, MoveId.SURGING_STRIKES ],
+  [SpeciesId.CYNDAQUIL]: [ MoveId.BURNING_BULWARK, MoveId.EARTH_POWER, MoveId.FIERY_DANCE, MoveId.ELECTRO_DRIFT ],
+  [SpeciesId.TOTODILE]: [ MoveId.THUNDER_FANG, MoveId.DRAGON_DANCE, MoveId.DRAIN_PUNCH, MoveId.SURGING_STRIKES ],
   [SpeciesId.SENTRET]: [ MoveId.TIDY_UP, MoveId.FAKE_OUT, MoveId.NUZZLE, MoveId.EXTREME_SPEED ],
   [SpeciesId.HOOTHOOT]: [ MoveId.TAKE_HEART, MoveId.ESPER_WING, MoveId.AEROBLAST, MoveId.BOOMBURST ],
   [SpeciesId.LEDYBA]: [ MoveId.POLLEN_PUFF, MoveId.MAT_BLOCK, MoveId.PARTING_SHOT, MoveId.SPORE ],
@@ -97,7 +97,7 @@ export const speciesEggMoves = {
   [SpeciesId.MISDREAVUS]: [ MoveId.TAKE_HEART, MoveId.MOONBLAST, MoveId.AURA_SPHERE, MoveId.MOONGEIST_BEAM ],
   [SpeciesId.UNOWN]: [ MoveId.NATURE_POWER, MoveId.COSMIC_POWER, MoveId.ANCIENT_POWER, MoveId.MYSTICAL_POWER ],
   [SpeciesId.GIRAFARIG]: [ MoveId.MYSTICAL_POWER, MoveId.NIGHT_DAZE, MoveId.RECOVER, MoveId.BOOMBURST ],
-  [SpeciesId.PINECO]: [ MoveId.METAL_BURST, MoveId.SHORE_UP, MoveId.BODY_PRESS, MoveId.DIAMOND_STORM ],
+  [SpeciesId.PINECO]: [ MoveId.METAL_BURST, MoveId.RECOVER, MoveId.LEECH_LIFE, MoveId.SPIN_OUT ],
   [SpeciesId.DUNSPARCE]: [ MoveId.WICKED_TORQUE, MoveId.MAGICAL_TORQUE, MoveId.BLAZING_TORQUE, MoveId.EXTREME_SPEED ],
   [SpeciesId.GLIGAR]: [ MoveId.FLOATY_FALL, MoveId.THOUSAND_WAVES, MoveId.SPIKY_SHIELD, MoveId.MIGHTY_CLEAVE ],
   [SpeciesId.SNUBBULL]: [ MoveId.FACADE, MoveId.HIGH_HORSEPOWER, MoveId.SWORDS_DANCE, MoveId.EXTREME_SPEED ],
@@ -111,12 +111,12 @@ export const speciesEggMoves = {
   [SpeciesId.CORSOLA]: [ MoveId.SCALD, MoveId.FREEZE_DRY, MoveId.STRENGTH_SAP, MoveId.SALT_CURE ],
   [SpeciesId.REMORAID]: [ MoveId.WATER_SHURIKEN, MoveId.TAKE_HEART, MoveId.SHELL_SIDE_ARM, MoveId.BOUNCY_BUBBLE ],
   [SpeciesId.DELIBIRD]: [ MoveId.BONEMERANG, MoveId.FLOATY_FALL, MoveId.VICTORY_DANCE, MoveId.GLACIAL_LANCE ],
-  [SpeciesId.SKARMORY]: [ MoveId.ROOST, MoveId.BODY_PRESS, MoveId.SPIKY_SHIELD, MoveId.BEAK_BLAST ],
+  [SpeciesId.SKARMORY]: [ MoveId.ROOST, MoveId.BODY_PRESS, MoveId.CEASELESS_EDGE, MoveId.BEAK_BLAST ],
   [SpeciesId.HOUNDOUR]: [ MoveId.FIERY_WRATH, MoveId.THUNDERBOLT, MoveId.MOONBLAST, MoveId.ARMOR_CANNON ],
   [SpeciesId.PHANPY]: [ MoveId.SHORE_UP, MoveId.SWORDS_DANCE, MoveId.MOUNTAIN_GALE, MoveId.COLLISION_COURSE ],
   [SpeciesId.STANTLER]: [ MoveId.THUNDEROUS_KICK, MoveId.PHOTON_GEYSER, MoveId.SWORDS_DANCE, MoveId.BOOMBURST ],
   [SpeciesId.SMEARGLE]: [ MoveId.CONVERSION, MoveId.BURNING_BULWARK, MoveId.SALT_CURE, MoveId.DARK_VOID ],
-  [SpeciesId.TYROGUE]: [ MoveId.VICTORY_DANCE, MoveId.THUNDEROUS_KICK, MoveId.METEOR_MASH, MoveId.WICKED_BLOW ],
+  [SpeciesId.TYROGUE]: [ MoveId.DARKEST_LARIAT, MoveId.THUNDEROUS_KICK, MoveId.METEOR_MASH, MoveId.VICTORY_DANCE ],
   [SpeciesId.SMOOCHUM]: [ MoveId.LUSTER_PURGE, MoveId.AURA_SPHERE, MoveId.FREEZE_DRY, MoveId.QUIVER_DANCE ],
   [SpeciesId.ELEKID]: [ MoveId.FIRE_LASH, MoveId.ZING_ZAP, MoveId.MOUNTAIN_GALE, MoveId.SHIFT_GEAR ],
   [SpeciesId.MAGBY]: [ MoveId.THUNDERCLAP, MoveId.EARTH_POWER, MoveId.ENERGY_BALL, MoveId.BLUE_FLARE ],
@@ -142,7 +142,7 @@ export const speciesEggMoves = {
   [SpeciesId.RALTS]: [ MoveId.PSYBLADE, MoveId.BITTER_BLADE, MoveId.NO_RETREAT, MoveId.BOOMBURST ],
   [SpeciesId.SURSKIT]: [ MoveId.POLLEN_PUFF, MoveId.FIERY_DANCE, MoveId.BOUNCY_BUBBLE, MoveId.AEROBLAST ],
   [SpeciesId.SHROOMISH]: [ MoveId.ACCELEROCK, MoveId.TRAILBLAZE, MoveId.STORM_THROW, MoveId.SAPPY_SEED ],
-  [SpeciesId.SLAKOTH]: [ MoveId.FACADE, MoveId.DRAIN_PUNCH, MoveId.KNOCK_OFF, MoveId.SKILL_SWAP ],
+  [SpeciesId.SLAKOTH]: [ MoveId.CRUSH_GRIP, MoveId.DRAIN_PUNCH, MoveId.PARTING_SHOT, MoveId.SKILL_SWAP ],
   [SpeciesId.NINCADA]: [ MoveId.BULLDOZE, MoveId.STICKY_WEB, MoveId.SHADOW_BONE, MoveId.SHELL_SMASH ],
   [SpeciesId.WHISMUR]: [ MoveId.ALLURING_VOICE, MoveId.SHIFT_GEAR, MoveId.SPARKLING_ARIA, MoveId.TORCH_SONG ],
   [SpeciesId.MAKUHITA]: [ MoveId.COMBAT_TORQUE, MoveId.SLACK_OFF, MoveId.HEAT_CRASH, MoveId.DOUBLE_IRON_BASH ],
@@ -167,7 +167,7 @@ export const speciesEggMoves = {
   [SpeciesId.SPINDA]: [ MoveId.SUPERPOWER, MoveId.SLACK_OFF, MoveId.FLEUR_CANNON, MoveId.V_CREATE ],
   [SpeciesId.TRAPINCH]: [ MoveId.FIRE_LASH, MoveId.DRAGON_DARTS, MoveId.THOUSAND_ARROWS, MoveId.DRAGON_ENERGY ],
   [SpeciesId.CACNEA]: [ MoveId.EARTH_POWER, MoveId.CEASELESS_EDGE, MoveId.NIGHT_DAZE, MoveId.IVY_CUDGEL ],
-  [SpeciesId.SWABLU]: [ MoveId.ROOST, MoveId.NASTY_PLOT, MoveId.FLOATY_FALL, MoveId.BOOMBURST ],
+  [SpeciesId.SWABLU]: [ MoveId.ROOST, MoveId.TAKE_HEART, MoveId.AEROBLAST, MoveId.BOOMBURST ],
   [SpeciesId.ZANGOOSE]: [ MoveId.FACADE, MoveId.HIGH_HORSEPOWER, MoveId.EXTREME_SPEED, MoveId.TIDY_UP ],
   [SpeciesId.SEVIPER]: [ MoveId.ICE_BEAM, MoveId.BITTER_BLADE, MoveId.SUCKER_PUNCH, MoveId.NO_RETREAT ],
   [SpeciesId.LUNATONE]: [ MoveId.REVELATION_DANCE, MoveId.MOONGEIST_BEAM, MoveId.SHELL_SMASH, MoveId.LUMINA_CRASH ],
@@ -203,13 +203,13 @@ export const speciesEggMoves = {
   [SpeciesId.JIRACHI]: [ MoveId.TACHYON_CUTTER, MoveId.TRIPLE_ARROWS, MoveId.ROCK_SLIDE, MoveId.SHELL_SMASH ],
   [SpeciesId.DEOXYS]: [ MoveId.COLLISION_COURSE, MoveId.FUSION_FLARE, MoveId.PARTING_SHOT, MoveId.LUMINA_CRASH ],
 
-  [SpeciesId.TURTWIG]: [ MoveId.SHELL_SMASH, MoveId.MIGHTY_CLEAVE, MoveId.ICE_SPINNER, MoveId.SAPPY_SEED ],
+  [SpeciesId.TURTWIG]: [ MoveId.SHELL_SMASH, MoveId.STONE_AXE, MoveId.ICE_SPINNER, MoveId.SAPPY_SEED ],
   [SpeciesId.CHIMCHAR]: [ MoveId.THUNDERBOLT, MoveId.SECRET_SWORD, MoveId.TRIPLE_AXEL, MoveId.SACRED_FIRE ],
   [SpeciesId.PIPLUP]: [ MoveId.KINGS_SHIELD, MoveId.TACHYON_CUTTER, MoveId.FREEZE_DRY, MoveId.STEAM_ERUPTION ],
   [SpeciesId.STARLY]: [ MoveId.SWORDS_DANCE, MoveId.HEAD_CHARGE, MoveId.FLARE_BLITZ, MoveId.EXTREME_SPEED ],
   [SpeciesId.BIDOOF]: [ MoveId.EXTREME_SPEED, MoveId.COSMIC_POWER, MoveId.POWER_TRIP, MoveId.AQUA_STEP ],
   [SpeciesId.KRICKETOT]: [ MoveId.BONEMERANG, MoveId.VICTORY_DANCE, MoveId.STONE_AXE, MoveId.POPULATION_BOMB ],
-  [SpeciesId.SHINX]: [ MoveId.FIRE_LASH, MoveId.TRIPLE_AXEL, MoveId.ZIPPY_ZAP, MoveId.BOLT_STRIKE ],
+  [SpeciesId.SHINX]: [ MoveId.THUNDEROUS_KICK, MoveId.TRIPLE_AXEL, MoveId.ZIPPY_ZAP, MoveId.BOLT_STRIKE ],
   [SpeciesId.BUDEW]: [ MoveId.FIERY_DANCE, MoveId.ACID_SPRAY, MoveId.BOUNCY_BUBBLE, MoveId.QUIVER_DANCE ],
   [SpeciesId.CRANIDOS]: [ MoveId.VOLT_TACKLE, MoveId.ACCELEROCK, MoveId.FLARE_BLITZ, MoveId.SHIFT_GEAR ],
   [SpeciesId.SHIELDON]: [ MoveId.SHORE_UP, MoveId.BODY_PRESS, MoveId.KINGS_SHIELD, MoveId.DIAMOND_STORM ],
@@ -253,14 +253,14 @@ export const speciesEggMoves = {
   [SpeciesId.PHIONE]: [ MoveId.BOUNCY_BUBBLE, MoveId.FREEZE_DRY, MoveId.STORED_POWER, MoveId.ORIGIN_PULSE ],
   [SpeciesId.MANAPHY]: [ MoveId.BOUNCY_BUBBLE, MoveId.FROST_BREATH, MoveId.WILDBOLT_STORM, MoveId.ORIGIN_PULSE ],
   [SpeciesId.DARKRAI]: [ MoveId.FIERY_WRATH, MoveId.MOONBLAST, MoveId.FIERY_DANCE, MoveId.MAKE_IT_RAIN ],
-  [SpeciesId.SHAYMIN]: [ MoveId.MATCHA_GOTCHA, MoveId.FIERY_DANCE, MoveId.AEROBLAST, MoveId.QUIVER_DANCE ],
+  [SpeciesId.SHAYMIN]: [ MoveId.MATCHA_GOTCHA, MoveId.HEAT_WAVE, MoveId.AEROBLAST, MoveId.QUIVER_DANCE ],
   [SpeciesId.ARCEUS]: [ MoveId.NO_RETREAT, MoveId.COLLISION_COURSE, MoveId.ASTRAL_BARRAGE, MoveId.MULTI_ATTACK ],
 
   [SpeciesId.VICTINI]: [ MoveId.BLUE_FLARE, MoveId.BOLT_STRIKE, MoveId.LUSTER_PURGE, MoveId.VICTORY_DANCE ],
   [SpeciesId.SNIVY]: [ MoveId.FLAMETHROWER, MoveId.CLANGING_SCALES, MoveId.MAKE_IT_RAIN, MoveId.FLEUR_CANNON ],
   [SpeciesId.TEPIG]: [ MoveId.WAVE_CRASH, MoveId.VOLT_TACKLE, MoveId.AXE_KICK, MoveId.VICTORY_DANCE ],
   [SpeciesId.OSHAWOTT]: [ MoveId.FREEZE_DRY, MoveId.SHELL_SIDE_ARM, MoveId.SACRED_SWORD, MoveId.SHELL_SMASH ],
-  [SpeciesId.PATRAT]: [ MoveId.FAKE_OUT, MoveId.SWORDS_DANCE, MoveId.DYNAMIC_PUNCH, MoveId.EXTREME_SPEED ],
+  [SpeciesId.PATRAT]: [ MoveId.FAKE_OUT, MoveId.INSTRUCT, MoveId.DYNAMIC_PUNCH, MoveId.EXTREME_SPEED ],
   [SpeciesId.LILLIPUP]: [ MoveId.CLOSE_COMBAT, MoveId.BODY_SLAM, MoveId.HIGH_HORSEPOWER, MoveId.LAST_RESPECTS ],
   [SpeciesId.PURRLOIN]: [ MoveId.ENCORE, MoveId.OBSTRUCT, MoveId.PARTING_SHOT, MoveId.WICKED_BLOW ],
   [SpeciesId.PANSAGE]: [ MoveId.SWORDS_DANCE, MoveId.FIRE_LASH, MoveId.EARTHQUAKE, MoveId.IVY_CUDGEL ],
@@ -269,7 +269,7 @@ export const speciesEggMoves = {
   [SpeciesId.MUNNA]: [ MoveId.COSMIC_POWER, MoveId.AURA_SPHERE, MoveId.LUNAR_BLESSING, MoveId.MYSTICAL_POWER ],
   [SpeciesId.PIDOVE]: [ MoveId.SLASH, MoveId.TIDY_UP, MoveId.FLOATY_FALL, MoveId.TRIPLE_ARROWS ],
   [SpeciesId.BLITZLE]: [ MoveId.HORN_LEECH, MoveId.SWORDS_DANCE, MoveId.FLARE_BLITZ, MoveId.BOLT_STRIKE ],
-  [SpeciesId.ROGGENROLA]: [ MoveId.BODY_PRESS, MoveId.CURSE, MoveId.SHORE_UP, MoveId.DIAMOND_STORM ],
+  [SpeciesId.ROGGENROLA]: [ MoveId.BODY_PRESS, MoveId.SPIKY_SHIELD, MoveId.SHORE_UP, MoveId.DIAMOND_STORM ],
   [SpeciesId.WOOBAT]: [ MoveId.ESPER_WING, MoveId.STORED_POWER, MoveId.MYSTICAL_FIRE, MoveId.OBLIVION_WING ],
   [SpeciesId.DRILBUR]: [ MoveId.METEOR_MASH, MoveId.ICE_SPINNER, MoveId.SHIFT_GEAR, MoveId.THOUSAND_ARROWS ],
   [SpeciesId.AUDINO]: [ MoveId.TAKE_HEART, MoveId.MOONBLAST, MoveId.WISH, MoveId.MATCHA_GOTCHA ],
@@ -293,12 +293,12 @@ export const speciesEggMoves = {
   [SpeciesId.ARCHEN]: [ MoveId.ROOST, MoveId.EARTHQUAKE, MoveId.FLOATY_FALL, MoveId.MIGHTY_CLEAVE ],
   [SpeciesId.TRUBBISH]: [ MoveId.COIL, MoveId.RECOVER, MoveId.DIRE_CLAW, MoveId.GIGATON_HAMMER ],
   [SpeciesId.ZORUA]: [ MoveId.MALIGNANT_CHAIN, MoveId.MOONBLAST, MoveId.SECRET_SWORD, MoveId.FIERY_WRATH ],
-  [SpeciesId.MINCCINO]: [ MoveId.ICICLE_SPEAR, MoveId.TIDY_UP, MoveId.KNOCK_OFF, MoveId.POPULATION_BOMB ],
+  [SpeciesId.MINCCINO]: [ MoveId.ICICLE_SPEAR, MoveId.TIDY_UP, MoveId.LOW_KICK, MoveId.POPULATION_BOMB ],
   [SpeciesId.GOTHITA]: [ MoveId.RECOVER, MoveId.MOONBLAST, MoveId.AURA_SPHERE, MoveId.LUMINA_CRASH ],
   [SpeciesId.SOLOSIS]: [ MoveId.MIST_BALL, MoveId.SPEED_SWAP, MoveId.FLAMETHROWER, MoveId.LIGHT_OF_RUIN ],
   [SpeciesId.DUCKLETT]: [ MoveId.SPLISHY_SPLASH, MoveId.SANDSEAR_STORM, MoveId.WILDBOLT_STORM, MoveId.QUIVER_DANCE ],
   [SpeciesId.VANILLITE]: [ MoveId.EARTH_POWER, MoveId.AURORA_VEIL, MoveId.CALM_MIND, MoveId.SPARKLY_SWIRL ],
-  [SpeciesId.DEERLING]: [ MoveId.TIDY_UP, MoveId.HEADBUTT, MoveId.COMBAT_TORQUE, MoveId.FLOWER_TRICK ],
+  [SpeciesId.DEERLING]: [ MoveId.TIDY_UP, MoveId.HEADBUTT, MoveId.AXE_KICK, MoveId.FLOWER_TRICK ],
   [SpeciesId.EMOLGA]: [ MoveId.ICICLE_CRASH, MoveId.ZING_ZAP, MoveId.FLOATY_FALL, MoveId.ELECTRIFY ],
   [SpeciesId.KARRABLAST]: [ MoveId.LEECH_LIFE, MoveId.BITTER_BLADE, MoveId.OBSTRUCT, MoveId.DOUBLE_IRON_BASH ],
   [SpeciesId.FOONGUS]: [ MoveId.POLLEN_PUFF, MoveId.PARTING_SHOT, MoveId.FOUL_PLAY, MoveId.SAPPY_SEED ],
@@ -310,7 +310,7 @@ export const speciesEggMoves = {
   [SpeciesId.TYNAMO]: [ MoveId.SCALD, MoveId.STRENGTH_SAP, MoveId.FIRE_LASH, MoveId.AURA_WHEEL ],
   [SpeciesId.ELGYEM]: [ MoveId.THUNDERCLAP, MoveId.BADDY_BAD, MoveId.AURA_SPHERE, MoveId.PHOTON_GEYSER ],
   [SpeciesId.LITWICK]: [ MoveId.GIGA_DRAIN, MoveId.EARTH_POWER, MoveId.MOONBLAST, MoveId.TORCH_SONG ],
-  [SpeciesId.AXEW]: [ MoveId.STONE_AXE, MoveId.DIRE_CLAW, MoveId.BITTER_BLADE, MoveId.GLAIVE_RUSH ],
+  [SpeciesId.AXEW]: [ MoveId.STONE_AXE, MoveId.DIRE_CLAW, MoveId.RAGING_FURY, MoveId.BITTER_BLADE ],
   [SpeciesId.CUBCHOO]: [ MoveId.MOUNTAIN_GALE, MoveId.AQUA_STEP, MoveId.ICE_SHARD, MoveId.COLLISION_COURSE ],
   [SpeciesId.CRYOGONAL]: [ MoveId.FREEZING_GLARE, MoveId.AURORA_VEIL, MoveId.NASTY_PLOT, MoveId.ORIGIN_PULSE ],
   [SpeciesId.SHELMET]: [ MoveId.POWER_GEM, MoveId.NASTY_PLOT, MoveId.EARTH_POWER, MoveId.STEAM_ERUPTION ],
@@ -322,8 +322,8 @@ export const speciesEggMoves = {
   [SpeciesId.BOUFFALANT]: [ MoveId.HORN_LEECH, MoveId.HIGH_JUMP_KICK, MoveId.HEAD_SMASH, MoveId.FLARE_BLITZ ],
   [SpeciesId.RUFFLET]: [ MoveId.FLOATY_FALL, MoveId.AURA_SPHERE, MoveId.NO_RETREAT, MoveId.BOLT_BEAK ],
   [SpeciesId.VULLABY]: [ MoveId.FOUL_PLAY, MoveId.BODY_PRESS, MoveId.ROOST, MoveId.RUINATION ],
-  [SpeciesId.HEATMOR]: [ MoveId.EARTH_POWER, MoveId.OVERHEAT, MoveId.THUNDERBOLT, MoveId.V_CREATE ],
-  [SpeciesId.DURANT]: [ MoveId.HIGH_HORSEPOWER, MoveId.FIRST_IMPRESSION, MoveId.SWORDS_DANCE, MoveId.BEHEMOTH_BASH ],
+  [SpeciesId.HEATMOR]: [ MoveId.EARTH_POWER, MoveId.OVERHEAT, MoveId.SUPERCELL_SLAM, MoveId.V_CREATE ],
+  [SpeciesId.DURANT]: [ MoveId.HIGH_HORSEPOWER, MoveId.FIRST_IMPRESSION, MoveId.U_TURN, MoveId.BEHEMOTH_BASH ],
   [SpeciesId.DEINO]: [ MoveId.FIERY_WRATH, MoveId.ESPER_WING, MoveId.SLUDGE_BOMB, MoveId.FICKLE_BEAM ],
   [SpeciesId.LARVESTA]: [ MoveId.THUNDERBOLT, MoveId.DAZZLING_GLEAM, MoveId.EARTH_POWER, MoveId.HYDRO_STEAM ],
   [SpeciesId.COBALION]: [ MoveId.BEHEMOTH_BLADE, MoveId.MIGHTY_CLEAVE, MoveId.CEASELESS_EDGE, MoveId.VICTORY_DANCE ],
@@ -381,8 +381,8 @@ export const speciesEggMoves = {
   [SpeciesId.ROWLET]: [ MoveId.THOUSAND_ARROWS, MoveId.SHADOW_BONE, MoveId.FIRST_IMPRESSION, MoveId.VICTORY_DANCE ],
   [SpeciesId.LITTEN]: [ MoveId.SUCKER_PUNCH, MoveId.PARTING_SHOT, MoveId.SLACK_OFF, MoveId.SACRED_FIRE ],
   [SpeciesId.POPPLIO]: [ MoveId.PSYCHIC_NOISE, MoveId.MOONLIGHT, MoveId.OVERDRIVE, MoveId.TORCH_SONG ],
-  [SpeciesId.PIKIPEK]: [ MoveId.DUAL_WINGBEAT, MoveId.BONE_RUSH, MoveId.BURNING_BULWARK, MoveId.POPULATION_BOMB ],
-  [SpeciesId.YUNGOOS]: [ MoveId.EXTREME_SPEED, MoveId.KNOCK_OFF, MoveId.TIDY_UP, MoveId.MULTI_ATTACK ],
+  [SpeciesId.PIKIPEK]: [ MoveId.TRAILBLAZE, MoveId.BONE_RUSH, MoveId.BURNING_BULWARK, MoveId.POPULATION_BOMB ],
+  [SpeciesId.YUNGOOS]: [ MoveId.FAKE_OUT, MoveId.HIGH_HORSEPOWER, MoveId.TIDY_UP, MoveId.EXTREME_SPEED ],
   [SpeciesId.GRUBBIN]: [ MoveId.ICE_BEAM, MoveId.EARTH_POWER, MoveId.CALM_MIND, MoveId.THUNDERCLAP ],
   [SpeciesId.CRABRAWLER]: [ MoveId.JET_PUNCH, MoveId.SHORE_UP, MoveId.MACH_PUNCH, MoveId.SURGING_STRIKES ],
   [SpeciesId.ORICORIO]: [ MoveId.QUIVER_DANCE, MoveId.FIERY_DANCE, MoveId.THUNDERCLAP, MoveId.OBLIVION_WING ],
@@ -396,7 +396,7 @@ export const speciesEggMoves = {
   [SpeciesId.MORELULL]: [ MoveId.CALM_MIND, MoveId.SAPPY_SEED, MoveId.DRAINING_KISS, MoveId.MATCHA_GOTCHA ],
   [SpeciesId.SALANDIT]: [ MoveId.SCALD, MoveId.MALIGNANT_CHAIN, MoveId.CORE_ENFORCER, MoveId.ERUPTION ],
   [SpeciesId.STUFFUL]: [ MoveId.DRAIN_PUNCH, MoveId.METEOR_MASH, MoveId.TRIPLE_AXEL, MoveId.RAGE_FIST ],
-  [SpeciesId.BOUNSWEET]: [ MoveId.TRIPLE_AXEL, MoveId.AQUA_STEP, MoveId.THUNDEROUS_KICK, MoveId.SAPPY_SEED ],
+  [SpeciesId.BOUNSWEET]: [ MoveId.TRIPLE_AXEL, MoveId.AQUA_STEP, MoveId.THUNDEROUS_KICK, MoveId.FLOWER_TRICK ],
   [SpeciesId.COMFEY]: [ MoveId.REVIVAL_BLESSING, MoveId.TAKE_HEART, MoveId.STRENGTH_SAP, MoveId.MATCHA_GOTCHA ],
   [SpeciesId.ORANGURU]: [ MoveId.JUNGLE_HEALING, MoveId.YAWN, MoveId.FOLLOW_ME, MoveId.LUMINA_CRASH ],
   [SpeciesId.PASSIMIAN]: [ MoveId.PYRO_BALL, MoveId.SUCKER_PUNCH, MoveId.ZING_ZAP, MoveId.VICTORY_DANCE ],
@@ -423,7 +423,7 @@ export const speciesEggMoves = {
   [SpeciesId.PHEROMOSA]: [ MoveId.SECRET_SWORD, MoveId.MAKE_IT_RAIN, MoveId.ATTACK_ORDER, MoveId.DIAMOND_STORM ],
   [SpeciesId.XURKITREE]: [ MoveId.FLAMETHROWER, MoveId.GIGA_DRAIN, MoveId.TAIL_GLOW, MoveId.THUNDERCLAP ],
   [SpeciesId.CELESTEELA]: [ MoveId.RECOVER, MoveId.BUZZY_BUZZ, MoveId.EARTH_POWER, MoveId.OBLIVION_WING ],
-  [SpeciesId.KARTANA]: [ MoveId.MIGHTY_CLEAVE, MoveId.DUAL_CHOP, MoveId.BITTER_BLADE, MoveId.BEHEMOTH_BLADE ],
+  [SpeciesId.KARTANA]: [ MoveId.MIGHTY_CLEAVE, MoveId.DUAL_CHOP, MoveId.BEHEMOTH_BLADE, MoveId.BITTER_BLADE ],
   [SpeciesId.GUZZLORD]: [ MoveId.SUCKER_PUNCH, MoveId.COMEUPPANCE, MoveId.SLACK_OFF, MoveId.SHED_TAIL ],
   [SpeciesId.NECROZMA]: [ MoveId.DYNAMAX_CANNON, MoveId.SACRED_FIRE, MoveId.ASTRAL_BARRAGE, MoveId.CLANGOROUS_SOUL ],
   [SpeciesId.MAGEARNA]: [ MoveId.STRENGTH_SAP, MoveId.EARTH_POWER, MoveId.MOONBLAST, MoveId.MAKE_IT_RAIN ],
@@ -431,24 +431,24 @@ export const speciesEggMoves = {
   [SpeciesId.POIPOLE]: [ MoveId.MALIGNANT_CHAIN, MoveId.ICE_BEAM, MoveId.ARMOR_CANNON, MoveId.CLANGING_SCALES ],
   [SpeciesId.STAKATAKA]: [ MoveId.HEAVY_SLAM, MoveId.SHORE_UP, MoveId.CURSE, MoveId.SALT_CURE ],
   [SpeciesId.BLACEPHALON]: [ MoveId.STEEL_BEAM, MoveId.MOONBLAST, MoveId.CHLOROBLAST, MoveId.MOONGEIST_BEAM ],
-  [SpeciesId.ZERAORA]: [ MoveId.SWORDS_DANCE, MoveId.U_TURN, MoveId.COLLISION_COURSE, MoveId.TRIPLE_AXEL ],
+  [SpeciesId.ZERAORA]: [ MoveId.SWORDS_DANCE, MoveId.FIRE_LASH, MoveId.COLLISION_COURSE, MoveId.TRIPLE_AXEL ],
   [SpeciesId.MELTAN]: [ MoveId.BULLET_PUNCH, MoveId.DRAIN_PUNCH, MoveId.BULK_UP, MoveId.PLASMA_FISTS ],
   [SpeciesId.ALOLA_RATTATA]: [ MoveId.FALSE_SURRENDER, MoveId.PSYCHIC_FANGS, MoveId.COIL, MoveId.EXTREME_SPEED ],
   [SpeciesId.ALOLA_SANDSHREW]: [ MoveId.SPIKY_SHIELD, MoveId.LIQUIDATION, MoveId.SHIFT_GEAR, MoveId.GLACIAL_LANCE ],
-  [SpeciesId.ALOLA_VULPIX]: [ MoveId.MOONBLAST, MoveId.GLARE, MoveId.MYSTICAL_FIRE, MoveId.REVIVAL_BLESSING ],
+  [SpeciesId.ALOLA_VULPIX]: [ MoveId.MOONBLAST, MoveId.GLARE, MoveId.MYSTICAL_FIRE, MoveId.LUNAR_BLESSING ],
   [SpeciesId.ALOLA_DIGLETT]: [ MoveId.THOUSAND_WAVES, MoveId.SWORDS_DANCE, MoveId.TRIPLE_DIVE, MoveId.PYRO_BALL ],
   [SpeciesId.ALOLA_MEOWTH]: [ MoveId.BADDY_BAD, MoveId.BUZZY_BUZZ, MoveId.PARTING_SHOT, MoveId.MAKE_IT_RAIN ],
-  [SpeciesId.ALOLA_GEODUDE]: [ MoveId.THOUSAND_WAVES, MoveId.BULK_UP, MoveId.STONE_AXE, MoveId.EXTREME_SPEED ],
+  [SpeciesId.ALOLA_GEODUDE]: [ MoveId.LANDS_WRATH, MoveId.FUSION_BOLT, MoveId.STONE_AXE, MoveId.EXTREME_SPEED ],
   [SpeciesId.ALOLA_GRIMER]: [ MoveId.SUCKER_PUNCH, MoveId.BARB_BARRAGE, MoveId.RECOVER, MoveId.SURGING_STRIKES ],
 
   [SpeciesId.GROOKEY]: [ MoveId.ROCK_SLIDE, MoveId.PLAY_ROUGH, MoveId.GRASSY_GLIDE, MoveId.CLANGOROUS_SOUL ],
-  [SpeciesId.SCORBUNNY]: [ MoveId.EXTREME_SPEED, MoveId.HIGH_JUMP_KICK, MoveId.TRIPLE_AXEL, MoveId.BOLT_STRIKE ],
+  [SpeciesId.SCORBUNNY]: [ MoveId.EXTREME_SPEED, MoveId.HIGH_JUMP_KICK, MoveId.SUPERCELL_SLAM, MoveId.TRIPLE_AXEL ],
   [SpeciesId.SOBBLE]: [ MoveId.AEROBLAST, MoveId.FROST_BREATH, MoveId.ENERGY_BALL, MoveId.NASTY_PLOT ],
   [SpeciesId.SKWOVET]: [ MoveId.SUCKER_PUNCH, MoveId.SLACK_OFF, MoveId.COIL, MoveId.POPULATION_BOMB ],
   [SpeciesId.ROOKIDEE]: [ MoveId.ROOST, MoveId.BODY_PRESS, MoveId.KINGS_SHIELD, MoveId.BEHEMOTH_BASH ],
   [SpeciesId.BLIPBUG]: [ MoveId.HEAL_ORDER, MoveId.LUSTER_PURGE, MoveId.SLEEP_POWDER, MoveId.TAIL_GLOW ],
-  [SpeciesId.NICKIT]: [ MoveId.BADDY_BAD, MoveId.FLAMETHROWER, MoveId.SPARKLY_SWIRL, MoveId.MAKE_IT_RAIN ],
-  [SpeciesId.GOSSIFLEUR]: [ MoveId.PARTING_SHOT, MoveId.STRENGTH_SAP, MoveId.SAPPY_SEED, MoveId.SEED_FLARE ],
+  [SpeciesId.NICKIT]: [ MoveId.BADDY_BAD, MoveId.MYSTICAL_FIRE, MoveId.SPARKLY_SWIRL, MoveId.MAKE_IT_RAIN ],
+  [SpeciesId.GOSSIFLEUR]: [ MoveId.BATON_PASS, MoveId.TAILWIND, MoveId.SAPPY_SEED, MoveId.SPORE ],
   [SpeciesId.WOOLOO]: [ MoveId.NUZZLE, MoveId.MILK_DRINK, MoveId.BODY_PRESS, MoveId.MULTI_ATTACK ],
   [SpeciesId.CHEWTLE]: [ MoveId.ICE_FANG, MoveId.PSYCHIC_FANGS, MoveId.SHELL_SMASH, MoveId.MIGHTY_CLEAVE ],
   [SpeciesId.YAMPER]: [ MoveId.ICE_FANG, MoveId.SWORDS_DANCE, MoveId.THUNDER_FANG, MoveId.BOLT_STRIKE ],
@@ -467,7 +467,7 @@ export const speciesEggMoves = {
   [SpeciesId.FALINKS]: [ MoveId.BATON_PASS, MoveId.POWER_TRIP, MoveId.COMBAT_TORQUE, MoveId.HEAL_ORDER ],
   [SpeciesId.PINCURCHIN]: [ MoveId.TRICK_ROOM, MoveId.VOLT_SWITCH, MoveId.STRENGTH_SAP, MoveId.THUNDERCLAP ],
   [SpeciesId.SNOM]: [ MoveId.FROST_BREATH, MoveId.HEAL_ORDER, MoveId.EARTH_POWER, MoveId.SPORE ],
-  [SpeciesId.STONJOURNER]: [ MoveId.BODY_PRESS, MoveId.HELPING_HAND, MoveId.ACCELEROCK, MoveId.DIAMOND_STORM ],
+  [SpeciesId.STONJOURNER]: [ MoveId.AXE_KICK, MoveId.HELPING_HAND, MoveId.ACCELEROCK, MoveId.DIAMOND_STORM ],
   [SpeciesId.EISCUE]: [ MoveId.TRIPLE_AXEL, MoveId.AQUA_STEP, MoveId.AXE_KICK, MoveId.SHELL_SMASH ],
   [SpeciesId.INDEEDEE]: [ MoveId.MATCHA_GOTCHA, MoveId.EXPANDING_FORCE, MoveId.MOONBLAST, MoveId.REVIVAL_BLESSING ],
   [SpeciesId.MORPEKO]: [ MoveId.TRIPLE_AXEL, MoveId.OBSTRUCT, MoveId.SWORDS_DANCE, MoveId.COLLISION_COURSE ],
@@ -478,8 +478,8 @@ export const speciesEggMoves = {
   [SpeciesId.ARCTOVISH]: [ MoveId.ICE_FANG, MoveId.THUNDER_FANG, MoveId.HIGH_HORSEPOWER, MoveId.SHIFT_GEAR ],
   [SpeciesId.DURALUDON]: [ MoveId.CORE_ENFORCER, MoveId.BODY_PRESS, MoveId.RECOVER, MoveId.TACHYON_CUTTER ],
   [SpeciesId.DREEPY]: [ MoveId.SHADOW_BONE, MoveId.POWER_UP_PUNCH, MoveId.FIRE_LASH, MoveId.DIRE_CLAW ],
-  [SpeciesId.ZACIAN]: [ MoveId.MAGICAL_TORQUE, MoveId.MIGHTY_CLEAVE, MoveId.BITTER_BLADE, MoveId.PRECIPICE_BLADES ],
-  [SpeciesId.ZAMAZENTA]: [ MoveId.BULK_UP, MoveId.BODY_PRESS, MoveId.SLACK_OFF, MoveId.DIAMOND_STORM ],
+  [SpeciesId.ZACIAN]: [ MoveId.MAGICAL_TORQUE, MoveId.MIGHTY_CLEAVE, MoveId.EARTHQUAKE, MoveId.BITTER_BLADE ],
+  [SpeciesId.ZAMAZENTA]: [ MoveId.BULK_UP, MoveId.BODY_PRESS, MoveId.POWER_TRIP, MoveId.SLACK_OFF ],
   [SpeciesId.ETERNATUS]: [ MoveId.BODY_PRESS, MoveId.NASTY_PLOT, MoveId.MALIGNANT_CHAIN, MoveId.DRAGON_ENERGY ],
   [SpeciesId.KUBFU]: [ MoveId.METEOR_MASH, MoveId.DRAIN_PUNCH, MoveId.JET_PUNCH, MoveId.DRAGON_DANCE ],
   [SpeciesId.ZARUDE]: [ MoveId.SAPPY_SEED, MoveId.MIGHTY_CLEAVE, MoveId.WICKED_BLOW, MoveId.VICTORY_DANCE ],
@@ -511,18 +511,18 @@ export const speciesEggMoves = {
   [SpeciesId.FUECOCO]: [ MoveId.ALLURING_VOICE, MoveId.SLACK_OFF, MoveId.OVERDRIVE, MoveId.MOONGEIST_BEAM ],
   [SpeciesId.QUAXLY]: [ MoveId.DRAGON_DANCE, MoveId.TRIPLE_AXEL, MoveId.POWER_TRIP, MoveId.THUNDEROUS_KICK ],
   [SpeciesId.LECHONK]: [ MoveId.MILK_DRINK, MoveId.PSYSHIELD_BASH, MoveId.BLAZING_TORQUE, MoveId.FILLET_AWAY ],
-  [SpeciesId.TAROUNTULA]: [ MoveId.STONE_AXE, MoveId.LEECH_LIFE, MoveId.THIEF, MoveId.SPORE ],
+  [SpeciesId.TAROUNTULA]: [ MoveId.STONE_AXE, MoveId.LEECH_LIFE, MoveId.FAKE_OUT, MoveId.SPORE ],
   [SpeciesId.NYMBLE]: [ MoveId.KNOCK_OFF, MoveId.FELL_STINGER, MoveId.ATTACK_ORDER, MoveId.WICKED_BLOW ],
   [SpeciesId.PAWMI]: [ MoveId.DRAIN_PUNCH, MoveId.METEOR_MASH, MoveId.JET_PUNCH, MoveId.PLASMA_FISTS ],
-  [SpeciesId.TANDEMAUS]: [ MoveId.BATON_PASS, MoveId.COVET, MoveId.SIZZLY_SLIDE, MoveId.REVIVAL_BLESSING ],
+  [SpeciesId.TANDEMAUS]: [ MoveId.BATON_PASS, MoveId.FAKE_OUT, MoveId.POWER_UP_PUNCH, MoveId.REVIVAL_BLESSING ],
   [SpeciesId.FIDOUGH]: [ MoveId.SOFT_BOILED, MoveId.HIGH_HORSEPOWER, MoveId.SIZZLY_SLIDE, MoveId.TIDY_UP ],
   [SpeciesId.SMOLIV]: [ MoveId.STRENGTH_SAP, MoveId.EARTH_POWER, MoveId.CALM_MIND, MoveId.BOOMBURST ],
   [SpeciesId.SQUAWKABILLY]: [ MoveId.PARTING_SHOT, MoveId.EARTHQUAKE, MoveId.FLARE_BLITZ, MoveId.EXTREME_SPEED ],
-  [SpeciesId.NACLI]: [ MoveId.BODY_PRESS, MoveId.TOXIC, MoveId.CURSE, MoveId.DIAMOND_STORM ],
+  [SpeciesId.NACLI]: [ MoveId.KNOCK_OFF, MoveId.TOXIC, MoveId.SAND_TOMB, MoveId.DIAMOND_STORM ],
   [SpeciesId.CHARCADET]: [ MoveId.SACRED_SWORD, MoveId.PHOTON_GEYSER, MoveId.MOONBLAST, MoveId.SPECTRAL_THIEF ],
   [SpeciesId.TADBULB]: [ MoveId.PARABOLIC_CHARGE, MoveId.SCALD, MoveId.EARTH_POWER, MoveId.ELECTRO_SHOT ],
   [SpeciesId.WATTREL]: [ MoveId.NASTY_PLOT, MoveId.SPLISHY_SPLASH, MoveId.SANDSEAR_STORM, MoveId.WILDBOLT_STORM ],
-  [SpeciesId.MASCHIFF]: [ MoveId.PARTING_SHOT, MoveId.COMBAT_TORQUE, MoveId.PSYCHIC_FANGS, MoveId.NO_RETREAT ],
+  [SpeciesId.MASCHIFF]: [ MoveId.PARTING_SHOT, MoveId.LEECH_LIFE, MoveId.PSYCHIC_FANGS, MoveId.NO_RETREAT ],
   [SpeciesId.SHROODLE]: [ MoveId.GASTRO_ACID, MoveId.PARTING_SHOT, MoveId.TOXIC, MoveId.SKETCH ],
   [SpeciesId.BRAMBLIN]: [ MoveId.TAILWIND, MoveId.STRENGTH_SAP, MoveId.FLOWER_TRICK, MoveId.LAST_RESPECTS ],
   [SpeciesId.TOEDSCOOL]: [ MoveId.STRENGTH_SAP, MoveId.TOPSY_TURVY, MoveId.SAPPY_SEED, MoveId.TAIL_GLOW ],
@@ -535,7 +535,7 @@ export const speciesEggMoves = {
   [SpeciesId.BOMBIRDIER]: [ MoveId.FLOATY_FALL, MoveId.SWORDS_DANCE, MoveId.SUCKER_PUNCH, MoveId.MIGHTY_CLEAVE ],
   [SpeciesId.FINIZEN]: [ MoveId.TRIPLE_AXEL, MoveId.DRAIN_PUNCH, MoveId.HEADLONG_RUSH, MoveId.SURGING_STRIKES ],
   [SpeciesId.VAROOM]: [ MoveId.COMBAT_TORQUE, MoveId.U_TURN, MoveId.BLAZING_TORQUE, MoveId.NOXIOUS_TORQUE ],
-  [SpeciesId.CYCLIZAR]: [ MoveId.PARTING_SHOT, MoveId.FIRE_LASH, MoveId.MAGICAL_TORQUE, MoveId.GLAIVE_RUSH ],
+  [SpeciesId.CYCLIZAR]: [ MoveId.PARTING_SHOT, MoveId.FIRE_LASH, MoveId.HIGH_HORSEPOWER, MoveId.MAGICAL_TORQUE ],
   [SpeciesId.ORTHWORM]: [ MoveId.SIZZLY_SLIDE, MoveId.COIL, MoveId.BODY_PRESS, MoveId.SHORE_UP ],
   [SpeciesId.GLIMMET]: [ MoveId.CALM_MIND, MoveId.GIGA_DRAIN, MoveId.FIERY_DANCE, MoveId.MALIGNANT_CHAIN ],
   [SpeciesId.GREAVARD]: [ MoveId.SHADOW_BONE, MoveId.SIZZLY_SLIDE, MoveId.SHORE_UP, MoveId.COLLISION_COURSE ],
@@ -548,7 +548,7 @@ export const speciesEggMoves = {
   [SpeciesId.SCREAM_TAIL]: [ MoveId.TORCH_SONG, MoveId.GLITZY_GLOW, MoveId.MOONLIGHT, MoveId.SPARKLY_SWIRL ],
   [SpeciesId.BRUTE_BONNET]: [ MoveId.SAPPY_SEED, MoveId.STRENGTH_SAP, MoveId.EARTHQUAKE, MoveId.WICKED_BLOW ],
   [SpeciesId.FLUTTER_MANE]: [ MoveId.MOONLIGHT, MoveId.NASTY_PLOT, MoveId.EARTH_POWER, MoveId.MOONGEIST_BEAM ],
-  [SpeciesId.SLITHER_WING]: [ MoveId.MIGHTY_CLEAVE, MoveId.THUNDEROUS_KICK, MoveId.FIRE_LASH, MoveId.VICTORY_DANCE ],
+  [SpeciesId.SLITHER_WING]: [ MoveId.ROCK_SLIDE, MoveId.THUNDEROUS_KICK, MoveId.SUNSTEEL_STRIKE, MoveId.VICTORY_DANCE ],
   [SpeciesId.SANDY_SHOCKS]: [ MoveId.MORNING_SUN, MoveId.ICE_BEAM, MoveId.NASTY_PLOT, MoveId.THUNDERCLAP ],
   [SpeciesId.IRON_TREADS]: [ MoveId.FUSION_BOLT, MoveId.SHIFT_GEAR, MoveId.SHORE_UP, MoveId.SUNSTEEL_STRIKE ],
   [SpeciesId.IRON_BUNDLE]: [ MoveId.EARTH_POWER, MoveId.SPLISHY_SPLASH, MoveId.VOLT_SWITCH, MoveId.NASTY_PLOT ],
@@ -563,7 +563,7 @@ export const speciesEggMoves = {
   [SpeciesId.TING_LU]: [ MoveId.SHORE_UP, MoveId.CEASELESS_EDGE, MoveId.SAPPY_SEED, MoveId.PRECIPICE_BLADES ],
   [SpeciesId.CHI_YU]: [ MoveId.FIERY_WRATH, MoveId.HYDRO_STEAM, MoveId.MORNING_SUN, MoveId.BLUE_FLARE ],
   [SpeciesId.ROARING_MOON]: [ MoveId.FIRE_LASH, MoveId.DRAGON_HAMMER, MoveId.METEOR_MASH, MoveId.DRAGON_ASCENT ],
-  [SpeciesId.IRON_VALIANT]: [ MoveId.PLASMA_FISTS, MoveId.NO_RETREAT, MoveId.SECRET_SWORD, MoveId.MAGICAL_TORQUE ],
+  [SpeciesId.IRON_VALIANT]: [ MoveId.PHOTON_GEYSER, MoveId.NO_RETREAT, MoveId.SECRET_SWORD, MoveId.MAGICAL_TORQUE ],
   [SpeciesId.KORAIDON]: [ MoveId.SUNSTEEL_STRIKE, MoveId.SOLAR_BLADE, MoveId.DRAGON_DARTS, MoveId.BITTER_BLADE ],
   [SpeciesId.MIRAIDON]: [ MoveId.FROST_BREATH, MoveId.WILDBOLT_STORM, MoveId.SPACIAL_REND, MoveId.RISING_VOLTAGE ],
   [SpeciesId.WALKING_WAKE]: [ MoveId.BOUNCY_BUBBLE, MoveId.FUSION_FLARE, MoveId.SLUDGE_WAVE, MoveId.CORE_ENFORCER ],
@@ -573,7 +573,7 @@ export const speciesEggMoves = {
   [SpeciesId.MUNKIDORI]: [ MoveId.TWIN_BEAM, MoveId.HEAT_WAVE, MoveId.EARTH_POWER, MoveId.MALIGNANT_CHAIN ],
   [SpeciesId.FEZANDIPITI]: [ MoveId.BARB_BARRAGE, MoveId.BONEMERANG, MoveId.TRIPLE_AXEL, MoveId.VICTORY_DANCE ],
   [SpeciesId.OGERPON]: [ MoveId.SLEEP_POWDER, MoveId.BONEMERANG, MoveId.TRIPLE_AXEL, MoveId.FLOWER_TRICK ],
-  [SpeciesId.GOUGING_FIRE]: [ MoveId.EXTREME_SPEED, MoveId.BULK_UP, MoveId.SACRED_FIRE, MoveId.GLAIVE_RUSH ],
+  [SpeciesId.GOUGING_FIRE]: [ MoveId.EXTREME_SPEED, MoveId.DRAGON_DANCE, MoveId.ZING_ZAP, MoveId.SACRED_FIRE ],
   [SpeciesId.RAGING_BOLT]: [ MoveId.NASTY_PLOT, MoveId.FLAMETHROWER, MoveId.MORNING_SUN, MoveId.ELECTRO_DRIFT ],
   [SpeciesId.IRON_BOULDER]: [ MoveId.PSYBLADE, MoveId.KOWTOW_CLEAVE, MoveId.STONE_AXE, MoveId.BITTER_BLADE ],
   [SpeciesId.IRON_CROWN]: [ MoveId.NASTY_PLOT, MoveId.SECRET_SWORD, MoveId.PSYSTRIKE, MoveId.ELECTRO_DRIFT ],
@@ -584,17 +584,24 @@ export const speciesEggMoves = {
   [SpeciesId.BLOODMOON_URSALUNA]: [ MoveId.NASTY_PLOT, MoveId.ROCK_POLISH, MoveId.SANDSEAR_STORM, MoveId.BOOMBURST ]
 };
 
+/**
+ * Parse a CSV-separated list of Egg Moves (such as one sourced from a Google Sheets)
+ * into code able to form the `speciesEggMoves` const object as above.
+ * @param content - The CSV-formatted string to convert into code.
+ */
+// TODO: Move this into the scripts folder and stop running it on initialization
 function parseEggMoves(content: string): void {
   let output = "";
 
   const speciesNames = getEnumKeys(SpeciesId);
   const speciesValues = getEnumValues(SpeciesId);
+  const moveNames = allMoves.map(m => m.name.replace(/ \([A-Z]\)$/, "").toLowerCase());
   const lines = content.split(/\n/g);
 
   for (const line of lines) {
     const cols = line.split(",").slice(0, 5);
-    const moveNames = allMoves.map(m => m.name.replace(/ \([A-Z]\)$/, "").toLowerCase());
-    const enumSpeciesName = cols[0].toUpperCase().replace(/[ -]/g, "_");
+    const enumSpeciesName = cols[0].toUpperCase().replace(/[ -]/g, "_") as keyof typeof SpeciesId;
+    // TODO: This should use reverse mapping instead of `indexOf`
     const species = speciesValues[speciesNames.indexOf(enumSpeciesName)];
 
     const eggMoves: MoveId[] = [];
@@ -602,14 +609,16 @@ function parseEggMoves(content: string): void {
     for (let m = 0; m < 4; m++) {
       const moveName = cols[m + 1].trim();
       const moveIndex = moveName !== "N/A" ? moveNames.indexOf(moveName.toLowerCase()) : -1;
-      eggMoves.push(moveIndex > -1 ? moveIndex as MoveId : MoveId.NONE);
-
       if (moveIndex === -1) {
         console.warn(moveName, "could not be parsed");
       }
+
+      eggMoves.push(moveIndex > -1 ? moveIndex as MoveId : MoveId.NONE);
     }
 
-    if (eggMoves.find(m => m !== MoveId.NONE)) {
+    if (eggMoves.every(m => m === MoveId.NONE)) {
+      console.warn(`Species ${toTitleCase(SpeciesId[species])} could not be parsed, excluding from output...`)
+    } else {
       output += `[SpeciesId.${SpeciesId[species]}]: [ ${eggMoves.map(m => `MoveId.${MoveId[m]}`).join(", ")} ],\n`;
     }
   }

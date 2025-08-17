@@ -1,15 +1,15 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { StealHeldItemChanceAttr } from "#app/data/moves/move";
-import { allMoves } from "#app/data/data-lists";
-import type Pokemon from "#app/field/pokemon";
-import type { ContactHeldItemTransferChanceModifier } from "#app/modifier/modifier";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import type { Pokemon } from "#field/pokemon";
+import type { ContactHeldItemTransferChanceModifier } from "#modifiers/modifier";
+import { StealHeldItemChanceAttr } from "#moves/move";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -64,7 +64,7 @@ describe("Abilities - Unburden", () => {
     game.override.enemyMoveset(MoveId.FALSE_SWIPE);
     await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     const playerHeldItems = getHeldItemCount(playerPokemon);
     const initialPlayerSpeed = playerPokemon.getStat(Stat.SPD);
 
@@ -80,7 +80,7 @@ describe("Abilities - Unburden", () => {
     game.override.enemyMoveset(MoveId.FALSE_SWIPE).startingModifier([{ name: "BERRY_POUCH", count: 5850 }]);
     await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     const playerHeldItems = getHeldItemCount(playerPokemon);
     const initialPlayerSpeed = playerPokemon.getStat(Stat.SPD);
 
@@ -95,9 +95,9 @@ describe("Abilities - Unburden", () => {
   it("should activate for the target, and not the stealer, when a berry is stolen", async () => {
     await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     const initialPlayerSpeed = playerPokemon.getStat(Stat.SPD);
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const enemyHeldItemCt = getHeldItemCount(enemyPokemon);
     const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
 
@@ -113,7 +113,7 @@ describe("Abilities - Unburden", () => {
   it("should activate when an item is knocked off", async () => {
     await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const enemyHeldItemCt = getHeldItemCount(enemyPokemon);
     const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
 
@@ -129,7 +129,7 @@ describe("Abilities - Unburden", () => {
     game.override.ability(AbilityId.MAGICIAN).startingHeldItems([]); // Remove player's full stacks of held items so it can steal opponent's held items
     await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const enemyHeldItemCt = getHeldItemCount(enemyPokemon);
     const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
 
@@ -145,7 +145,7 @@ describe("Abilities - Unburden", () => {
     game.override.enemyAbility(AbilityId.PICKPOCKET).enemyHeldItems([]); // Remove opponent's full stacks of held items so it can steal player's held items
     await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     const playerHeldItems = getHeldItemCount(playerPokemon);
     const initialPlayerSpeed = playerPokemon.getStat(Stat.SPD);
 
@@ -161,7 +161,7 @@ describe("Abilities - Unburden", () => {
     game.override.moveset(MoveId.THIEF).startingHeldItems([]); // Remove player's full stacks of held items so it can steal opponent's held items
     await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const enemyHeldItemCt = getHeldItemCount(enemyPokemon);
     const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
 
@@ -177,11 +177,11 @@ describe("Abilities - Unburden", () => {
     game.override.startingHeldItems([{ name: "GRIP_CLAW", count: 1 }]);
     await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     const gripClaw = playerPokemon.getHeldItems()[0] as ContactHeldItemTransferChanceModifier;
     vi.spyOn(gripClaw, "chance", "get").mockReturnValue(100);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const enemyHeldItemCt = getHeldItemCount(enemyPokemon);
     const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
 
@@ -197,7 +197,7 @@ describe("Abilities - Unburden", () => {
     game.override.enemyAbility(AbilityId.NEUTRALIZING_GAS).enemyMoveset(MoveId.FALSE_SWIPE);
     await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     const playerHeldItems = getHeldItemCount(playerPokemon);
     const initialPlayerSpeed = playerPokemon.getStat(Stat.SPD);
 
@@ -214,7 +214,7 @@ describe("Abilities - Unburden", () => {
     game.override.moveset(MoveId.STUFF_CHEEKS);
     await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     const playerHeldItemCt = getHeldItemCount(playerPokemon);
     const initialPlayerSpeed = playerPokemon.getStat(Stat.SPD);
 
@@ -292,7 +292,7 @@ describe("Abilities - Unburden", () => {
     game.override.enemyMoveset([MoveId.FALSE_SWIPE, MoveId.WORRY_SEED]);
     await game.classicMode.startBattle([SpeciesId.PURRLOIN]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     const playerHeldItems = getHeldItemCount(playerPokemon);
     const initialPlayerSpeed = playerPokemon.getStat(Stat.SPD);
 
@@ -317,7 +317,7 @@ describe("Abilities - Unburden", () => {
     game.override.startingHeldItems([{ name: "REVIVER_SEED" }]).enemyMoveset([MoveId.WING_ATTACK]);
     await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     const playerHeldItems = getHeldItemCount(playerPokemon);
     const initialPlayerSpeed = playerPokemon.getStat(Stat.SPD);
 
@@ -334,7 +334,7 @@ describe("Abilities - Unburden", () => {
     game.override.enemyMoveset([MoveId.SPLASH, MoveId.THIEF]);
     await game.classicMode.startBattle([SpeciesId.TREECKO, SpeciesId.FEEBAS]);
 
-    const treecko = game.scene.getPlayerPokemon()!;
+    const treecko = game.field.getPlayerPokemon();
     const treeckoInitialHeldItems = getHeldItemCount(treecko);
     const initialSpeed = treecko.getStat(Stat.SPD);
 
@@ -348,7 +348,7 @@ describe("Abilities - Unburden", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerPokemon()!).toBe(treecko);
+    expect(game.field.getPlayerPokemon()).toBe(treecko);
     expect(getHeldItemCount(treecko)).toBeLessThan(treeckoInitialHeldItems);
     expect(treecko.getEffectiveStat(Stat.SPD)).toBe(initialSpeed);
   });

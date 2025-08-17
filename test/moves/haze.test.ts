@@ -1,11 +1,11 @@
-import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 
 describe("Moves - Haze", () => {
   describe("integration tests", () => {
@@ -36,8 +36,8 @@ describe("Moves - Haze", () => {
 
     it("should reset all stat changes of all Pokemon on field", async () => {
       await game.classicMode.startBattle([SpeciesId.RATTATA]);
-      const user = game.scene.getPlayerPokemon()!;
-      const enemy = game.scene.getEnemyPokemon()!;
+      const user = game.field.getPlayerPokemon();
+      const enemy = game.field.getEnemyPokemon();
 
       expect(user.getStatStage(Stat.ATK)).toBe(0);
       expect(enemy.getStatStage(Stat.ATK)).toBe(0);

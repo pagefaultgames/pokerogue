@@ -1,15 +1,16 @@
-import { UiMode } from "#enums/ui-mode";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
-import { TextStyle, addTextObject } from "#app/ui/text";
-import MessageUiHandler from "#app/ui/message-ui-handler";
-import { addWindow } from "#app/ui/ui-theme";
-import { Button } from "#enums/buttons";
-import i18next from "i18next";
-import ScrollableGridUiHandler from "#app/ui/scrollable-grid-handler";
-import { ScrollBar } from "#app/ui/scroll-bar";
 import { globalScene } from "#app/global-scene";
+import { Button } from "#enums/buttons";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-handler";
+import { ScrollBar } from "#ui/scroll-bar";
+import { ScrollableGridUiHandler } from "#ui/scrollable-grid-handler";
+import { addTextObject } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import i18next from "i18next";
 
-export default class EggListUiHandler extends MessageUiHandler {
+export class EggListUiHandler extends MessageUiHandler {
   private readonly ROWS = 9;
   private readonly COLUMNS = 11;
 
@@ -35,11 +36,11 @@ export default class EggListUiHandler extends MessageUiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.eggListContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6).setVisible(false);
+    this.eggListContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height).setVisible(false);
     ui.add(this.eggListContainer);
 
     const bgColor = globalScene.add
-      .rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6, 0x006860)
+      .rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height, 0x006860)
       .setOrigin(0);
 
     const eggListBg = globalScene.add.image(0, 0, "egg_list_bg").setOrigin(0);
@@ -49,11 +50,11 @@ export default class EggListUiHandler extends MessageUiHandler {
 
     this.eggNameText = addTextObject(8, 68, "", TextStyle.SUMMARY).setOrigin(0);
 
-    this.eggDateText = addTextObject(8, 91, "", TextStyle.TOOLTIP_CONTENT);
+    this.eggDateText = addTextObject(8, 91, "", TextStyle.EGG_LIST);
 
-    this.eggHatchWavesText = addTextObject(8, 108, "", TextStyle.TOOLTIP_CONTENT).setWordWrapWidth(540);
+    this.eggHatchWavesText = addTextObject(8, 108, "", TextStyle.EGG_LIST).setWordWrapWidth(540);
 
-    this.eggGachaInfoText = addTextObject(8, 152, "", TextStyle.TOOLTIP_CONTENT).setWordWrapWidth(540);
+    this.eggGachaInfoText = addTextObject(8, 152, "", TextStyle.EGG_LIST).setWordWrapWidth(540);
 
     this.eggListIconContainer = globalScene.add.container(113, 5);
 
@@ -68,9 +69,7 @@ export default class EggListUiHandler extends MessageUiHandler {
       .withUpdateGridCallBack(() => this.updateEggIcons())
       .withUpdateSingleElementCallback((i: number) => this.setEggDetails(i));
 
-    this.eggListMessageBoxContainer = globalScene.add
-      .container(0, globalScene.game.canvas.height / 6)
-      .setVisible(false);
+    this.eggListMessageBoxContainer = globalScene.add.container(0, globalScene.scaledCanvas.height).setVisible(false);
 
     const eggListMessageBox = addWindow(1, -1, 318, 28).setOrigin(0, 1);
     this.eggListMessageBoxContainer.add(eggListMessageBox);

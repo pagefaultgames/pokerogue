@@ -1,34 +1,34 @@
-import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { globalScene } from "#app/global-scene";
+import { speciesStarterCosts } from "#balance/starters";
+import { modifierTypes } from "#data/data-lists";
+import type { IEggOptions } from "#data/egg";
+import { getPokeballTintColor } from "#data/pokeball";
+import { BiomeId } from "#enums/biome-id";
+import { EggSourceType } from "#enums/egg-source-types";
+import { EggTier } from "#enums/egg-type";
+import { MoveId } from "#enums/move-id";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Nature } from "#enums/nature";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import { TrainerType } from "#enums/trainer-type";
+import type { PlayerPokemon } from "#field/pokemon";
+import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
+import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   handleMysteryEncounterBattleFailed,
   initBattleWithEnemyConfig,
   setEncounterRewards,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { trainerConfigs } from "#app/data/trainers/trainer-config";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { globalScene } from "#app/global-scene";
-import { randSeedShuffle } from "#app/utils/common";
-import type MysteryEncounter from "../mystery-encounter";
-import { MysteryEncounterBuilder } from "../mystery-encounter";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { BiomeId } from "#enums/biome-id";
-import { TrainerType } from "#enums/trainer-type";
+} from "#mystery-encounters/encounter-phase-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { trainerConfigs } from "#trainers/trainer-config";
+import { randSeedShuffle } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
-import { SpeciesId } from "#enums/species-id";
-import { getPokemonSpecies } from "#app/utils/pokemon-utils";
-import { speciesStarterCosts } from "#app/data/balance/starters";
-import { Nature } from "#enums/nature";
-import { MoveId } from "#enums/move-id";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import type { IEggOptions } from "#app/data/egg";
-import { EggSourceType } from "#enums/egg-source-types";
-import { EggTier } from "#enums/egg-type";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { modifierTypes } from "#app/data/data-lists";
-import { PokemonType } from "#enums/pokemon-type";
-import { getPokeballTintColor } from "#app/data/pokeball";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theExpertPokemonBreeder";
@@ -52,37 +52,6 @@ class BreederSpeciesEvolution {
 }
 
 const POOL_1_POKEMON: (SpeciesId | BreederSpeciesEvolution)[][] = [
-  [SpeciesId.MUNCHLAX, new BreederSpeciesEvolution(SpeciesId.SNORLAX, SECOND_STAGE_EVOLUTION_WAVE)],
-  [
-    SpeciesId.HAPPINY,
-    new BreederSpeciesEvolution(SpeciesId.CHANSEY, FIRST_STAGE_EVOLUTION_WAVE),
-    new BreederSpeciesEvolution(SpeciesId.BLISSEY, FINAL_STAGE_EVOLUTION_WAVE),
-  ],
-  [
-    SpeciesId.MAGBY,
-    new BreederSpeciesEvolution(SpeciesId.MAGMAR, FIRST_STAGE_EVOLUTION_WAVE),
-    new BreederSpeciesEvolution(SpeciesId.MAGMORTAR, FINAL_STAGE_EVOLUTION_WAVE),
-  ],
-  [
-    SpeciesId.ELEKID,
-    new BreederSpeciesEvolution(SpeciesId.ELECTABUZZ, FIRST_STAGE_EVOLUTION_WAVE),
-    new BreederSpeciesEvolution(SpeciesId.ELECTIVIRE, FINAL_STAGE_EVOLUTION_WAVE),
-  ],
-  [SpeciesId.RIOLU, new BreederSpeciesEvolution(SpeciesId.LUCARIO, SECOND_STAGE_EVOLUTION_WAVE)],
-  [
-    SpeciesId.BUDEW,
-    new BreederSpeciesEvolution(SpeciesId.ROSELIA, FIRST_STAGE_EVOLUTION_WAVE),
-    new BreederSpeciesEvolution(SpeciesId.ROSERADE, FINAL_STAGE_EVOLUTION_WAVE),
-  ],
-  [SpeciesId.TOXEL, new BreederSpeciesEvolution(SpeciesId.TOXTRICITY, SECOND_STAGE_EVOLUTION_WAVE)],
-  [
-    SpeciesId.MIME_JR,
-    new BreederSpeciesEvolution(SpeciesId.GALAR_MR_MIME, FIRST_STAGE_EVOLUTION_WAVE),
-    new BreederSpeciesEvolution(SpeciesId.MR_RIME, FINAL_STAGE_EVOLUTION_WAVE),
-  ],
-];
-
-const POOL_2_POKEMON: (SpeciesId | BreederSpeciesEvolution)[][] = [
   [
     SpeciesId.PICHU,
     new BreederSpeciesEvolution(SpeciesId.PIKACHU, FIRST_STAGE_EVOLUTION_WAVE),
@@ -93,24 +62,63 @@ const POOL_2_POKEMON: (SpeciesId | BreederSpeciesEvolution)[][] = [
     new BreederSpeciesEvolution(SpeciesId.PIKACHU, FIRST_STAGE_EVOLUTION_WAVE),
     new BreederSpeciesEvolution(SpeciesId.ALOLA_RAICHU, FINAL_STAGE_EVOLUTION_WAVE),
   ],
-  [SpeciesId.SMOOCHUM, new BreederSpeciesEvolution(SpeciesId.JYNX, SECOND_STAGE_EVOLUTION_WAVE)],
-  [SpeciesId.TYROGUE, new BreederSpeciesEvolution(SpeciesId.HITMONLEE, SECOND_STAGE_EVOLUTION_WAVE)],
-  [SpeciesId.TYROGUE, new BreederSpeciesEvolution(SpeciesId.HITMONCHAN, SECOND_STAGE_EVOLUTION_WAVE)],
-  [SpeciesId.TYROGUE, new BreederSpeciesEvolution(SpeciesId.HITMONTOP, SECOND_STAGE_EVOLUTION_WAVE)],
   [
     SpeciesId.IGGLYBUFF,
     new BreederSpeciesEvolution(SpeciesId.JIGGLYPUFF, FIRST_STAGE_EVOLUTION_WAVE),
     new BreederSpeciesEvolution(SpeciesId.WIGGLYTUFF, FINAL_STAGE_EVOLUTION_WAVE),
   ],
   [
+    SpeciesId.TOGEPI,
+    new BreederSpeciesEvolution(SpeciesId.TOGETIC, FIRST_STAGE_EVOLUTION_WAVE),
+    new BreederSpeciesEvolution(SpeciesId.TOGEKISS, FINAL_STAGE_EVOLUTION_WAVE),
+  ],
+  [SpeciesId.TYROGUE, new BreederSpeciesEvolution(SpeciesId.HITMONLEE, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.TYROGUE, new BreederSpeciesEvolution(SpeciesId.HITMONCHAN, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.TYROGUE, new BreederSpeciesEvolution(SpeciesId.HITMONTOP, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.SMOOCHUM, new BreederSpeciesEvolution(SpeciesId.JYNX, FIRST_STAGE_EVOLUTION_WAVE)],
+  [
     SpeciesId.AZURILL,
     new BreederSpeciesEvolution(SpeciesId.MARILL, FIRST_STAGE_EVOLUTION_WAVE),
     new BreederSpeciesEvolution(SpeciesId.AZUMARILL, FINAL_STAGE_EVOLUTION_WAVE),
   ],
-  [SpeciesId.WYNAUT, new BreederSpeciesEvolution(SpeciesId.WOBBUFFET, SECOND_STAGE_EVOLUTION_WAVE)],
+  [
+    SpeciesId.BUDEW,
+    new BreederSpeciesEvolution(SpeciesId.ROSELIA, FIRST_STAGE_EVOLUTION_WAVE),
+    new BreederSpeciesEvolution(SpeciesId.ROSERADE, FINAL_STAGE_EVOLUTION_WAVE),
+  ],
   [SpeciesId.CHINGLING, new BreederSpeciesEvolution(SpeciesId.CHIMECHO, SECOND_STAGE_EVOLUTION_WAVE)],
   [SpeciesId.BONSLY, new BreederSpeciesEvolution(SpeciesId.SUDOWOODO, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.MIME_JR, new BreederSpeciesEvolution(SpeciesId.MR_MIME, SECOND_STAGE_EVOLUTION_WAVE)],
+  [
+    SpeciesId.MIME_JR,
+    new BreederSpeciesEvolution(SpeciesId.GALAR_MR_MIME, SECOND_STAGE_EVOLUTION_WAVE),
+    new BreederSpeciesEvolution(SpeciesId.MR_RIME, FINAL_STAGE_EVOLUTION_WAVE),
+  ],
+  [
+    SpeciesId.HAPPINY,
+    new BreederSpeciesEvolution(SpeciesId.CHANSEY, FIRST_STAGE_EVOLUTION_WAVE),
+    new BreederSpeciesEvolution(SpeciesId.BLISSEY, FINAL_STAGE_EVOLUTION_WAVE),
+  ],
   [SpeciesId.MANTYKE, new BreederSpeciesEvolution(SpeciesId.MANTINE, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.TOXEL, new BreederSpeciesEvolution(SpeciesId.TOXTRICITY, SECOND_STAGE_EVOLUTION_WAVE)],
+];
+
+const POOL_2_POKEMON: (SpeciesId | BreederSpeciesEvolution)[][] = [
+  [SpeciesId.DITTO],
+  [
+    SpeciesId.ELEKID,
+    new BreederSpeciesEvolution(SpeciesId.ELECTABUZZ, FIRST_STAGE_EVOLUTION_WAVE),
+    new BreederSpeciesEvolution(SpeciesId.ELECTIVIRE, FINAL_STAGE_EVOLUTION_WAVE),
+  ],
+  [
+    SpeciesId.MAGBY,
+    new BreederSpeciesEvolution(SpeciesId.MAGMAR, FIRST_STAGE_EVOLUTION_WAVE),
+    new BreederSpeciesEvolution(SpeciesId.MAGMORTAR, FINAL_STAGE_EVOLUTION_WAVE),
+  ],
+  [SpeciesId.WYNAUT, new BreederSpeciesEvolution(SpeciesId.WOBBUFFET, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.MUNCHLAX, new BreederSpeciesEvolution(SpeciesId.SNORLAX, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.RIOLU, new BreederSpeciesEvolution(SpeciesId.LUCARIO, SECOND_STAGE_EVOLUTION_WAVE)],
+  [SpeciesId.AUDINO],
 ];
 
 /**
@@ -502,7 +510,7 @@ function getPartyConfig(): EnemyPartyConfig {
         shiny: true,
         variant: 1,
         nature: Nature.MODEST,
-        moveSet: [MoveId.MOONBLAST, MoveId.MYSTICAL_FIRE, MoveId.ICE_BEAM, MoveId.THUNDERBOLT],
+        moveSet: [MoveId.DAZZLING_GLEAM, MoveId.MYSTICAL_FIRE, MoveId.ICE_BEAM, MoveId.THUNDERBOLT], // Make this one have an item gimmick when we have more items/finish implementations
         ivs: [31, 31, 31, 31, 31, 31],
       },
       {
@@ -515,7 +523,7 @@ function getPartyConfig(): EnemyPartyConfig {
         shiny: true,
         variant: 2,
         nature: Nature.BOLD,
-        moveSet: [MoveId.TRI_ATTACK, MoveId.STORED_POWER, MoveId.TAKE_HEART, MoveId.MOONLIGHT],
+        moveSet: [MoveId.TRI_ATTACK, MoveId.STORED_POWER, MoveId.CALM_MIND, MoveId.MOONLIGHT],
         ivs: [31, 31, 31, 31, 31, 31],
       },
     );

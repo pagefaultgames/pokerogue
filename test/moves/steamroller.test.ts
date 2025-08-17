@@ -1,11 +1,11 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { allMoves } from "#app/data/data-lists";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import type { DamageCalculationResult } from "#app/field/pokemon";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
+import type { DamageCalculationResult } from "#types/damage-result";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -32,12 +32,12 @@ describe("Moves - Steamroller", () => {
     game.override.enemySpecies(SpeciesId.DITTO).enemyMoveset(MoveId.MINIMIZE);
     await game.classicMode.startBattle([SpeciesId.IRON_BOULDER]);
 
-    const ditto = game.scene.getEnemyPokemon()!;
+    const ditto = game.field.getEnemyPokemon();
     vi.spyOn(ditto, "getAttackDamage");
     ditto.hp = 5000;
     const steamroller = allMoves[MoveId.STEAMROLLER];
     vi.spyOn(steamroller, "calculateBattleAccuracy");
-    const ironBoulder = game.scene.getPlayerPokemon()!;
+    const ironBoulder = game.field.getPlayerPokemon();
     vi.spyOn(ironBoulder, "getAccuracyMultiplier");
     // Turn 1
     game.move.select(MoveId.STEAMROLLER);

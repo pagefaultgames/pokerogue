@@ -1,7 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -35,7 +35,7 @@ describe("Moves - Struggle", () => {
     game.override.moveset([MoveId.STRUGGLE]).ability(AbilityId.ADAPTABILITY);
     await game.classicMode.startBattle([SpeciesId.RATTATA]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     game.move.select(MoveId.STRUGGLE);
 
     const stabSpy = vi.spyOn(enemy, "calculateStabMultiplier");
@@ -49,7 +49,7 @@ describe("Moves - Struggle", () => {
     game.override.moveset([MoveId.STRUGGLE]);
     await game.classicMode.startBattle([SpeciesId.GASTLY]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     game.move.select(MoveId.STRUGGLE);
 
     const moveEffectivenessSpy = vi.spyOn(enemy, "getMoveEffectiveness");

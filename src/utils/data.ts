@@ -1,7 +1,7 @@
 import { loggedInUser } from "#app/account";
-import type { StarterAttributes } from "#app/system/game-data";
-import { AES, enc } from "crypto-js";
 import { saveKey } from "#app/constants";
+import type { StarterAttributes } from "#system/game-data";
+import { AES, enc } from "crypto-js";
 
 /**
  * Perform a deep copy of an object.
@@ -45,17 +45,17 @@ export function deepMergeSpriteData(dest: object, source: object) {
 }
 
 export function encrypt(data: string, bypassLogin: boolean): string {
-  return (bypassLogin
-    ? (data: string) => btoa(encodeURIComponent(data))
-    : (data: string) => AES.encrypt(data, saveKey))(data) as unknown as string; // TODO: is this correct?
+  if (bypassLogin) {
+    return btoa(encodeURIComponent(data));
+  }
+  return AES.encrypt(data, saveKey).toString();
 }
 
 export function decrypt(data: string, bypassLogin: boolean): string {
-  return (
-    bypassLogin
-      ? (data: string) => decodeURIComponent(atob(data))
-      : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8)
-  )(data);
+  if (bypassLogin) {
+    return decodeURIComponent(atob(data));
+  }
+  return AES.decrypt(data, saveKey).toString(enc.Utf8);
 }
 
 // the latest data saved/loaded for the Starter Preferences. Required to reduce read/writes. Initialize as "{}", since this is the default value and no data needs to be stored if present.

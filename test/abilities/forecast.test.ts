@@ -1,15 +1,15 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { allAbilities } from "#app/data/data-lists";
+import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { WeatherType } from "#app/enums/weather-type";
-import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
-import { MovePhase } from "#app/phases/move-phase";
-import { PostSummonPhase } from "#app/phases/post-summon-phase";
-import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { WeatherType } from "#enums/weather-type";
+import { DamageAnimPhase } from "#phases/damage-anim-phase";
+import { MovePhase } from "#phases/move-phase";
+import { PostSummonPhase } from "#phases/post-summon-phase";
+import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -32,7 +32,7 @@ describe("Abilities - Forecast", () => {
 
     game.move.select(MoveId.SPLASH);
 
-    expect(game.scene.getPlayerPokemon()?.formIndex).toBe(NORMAL_FORM);
+    expect(game.field.getPlayerPokemon().formIndex).toBe(NORMAL_FORM);
   };
 
   beforeAll(() => {
@@ -186,14 +186,14 @@ describe("Abilities - Forecast", () => {
     game.move.select(MoveId.RAIN_DANCE);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(game.scene.getPlayerPokemon()?.formIndex).toBe(RAINY_FORM);
-    expect(game.scene.getEnemyPokemon()?.formIndex).not.toBe(RAINY_FORM);
+    expect(game.field.getPlayerPokemon().formIndex).toBe(RAINY_FORM);
+    expect(game.field.getEnemyPokemon().formIndex).not.toBe(RAINY_FORM);
   });
 
   it("reverts to Normal Form when Forecast is suppressed, changes form to match the weather when it regains it", async () => {
     game.override.enemyMoveset([MoveId.GASTRO_ACID]).weather(WeatherType.RAIN);
     await game.classicMode.startBattle([SpeciesId.CASTFORM, SpeciesId.PIKACHU]);
-    const castform = game.scene.getPlayerPokemon()!;
+    const castform = game.field.getPlayerPokemon();
 
     expect(castform.formIndex).toBe(RAINY_FORM);
 
@@ -233,7 +233,7 @@ describe("Abilities - Forecast", () => {
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to(PostSummonPhase);
 
-    const castform = game.scene.getPlayerPokemon()!;
+    const castform = game.field.getPlayerPokemon();
 
     // Damage phase should come first
     await game.phaseInterceptor.to(DamageAnimPhase);
@@ -248,7 +248,7 @@ describe("Abilities - Forecast", () => {
     game.override.weather(WeatherType.RAIN);
 
     await game.classicMode.startBattle([SpeciesId.CASTFORM, SpeciesId.MAGIKARP]);
-    const castform = game.scene.getPlayerPokemon()!;
+    const castform = game.field.getPlayerPokemon();
 
     expect(castform.formIndex).toBe(RAINY_FORM);
 
@@ -263,14 +263,14 @@ describe("Abilities - Forecast", () => {
   it("should trigger player's form change when summoned at the same time as an enemy with a weather changing ability", async () => {
     game.override.enemyAbility(AbilityId.DROUGHT);
     await game.classicMode.startBattle([SpeciesId.CASTFORM, SpeciesId.MAGIKARP]);
-    const castform = game.scene.getPlayerPokemon()!;
+    const castform = game.field.getPlayerPokemon();
     expect(castform.formIndex).toBe(SUNNY_FORM);
   });
 
   it("should trigger enemy's form change when summoned at the same time as a player with a weather changing ability", async () => {
     game.override.ability(AbilityId.DROUGHT).enemySpecies(SpeciesId.CASTFORM).enemyAbility(AbilityId.FORECAST);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    const castform = game.scene.getEnemyPokemon()!;
+    const castform = game.field.getEnemyPokemon();
     expect(castform.formIndex).toBe(SUNNY_FORM);
   });
 });

@@ -1,15 +1,16 @@
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addTextObject } from "#app/ui/text";
-import type { nil } from "#app/utils/common";
-import { isNullOrUndefined } from "#app/utils/common";
-import i18next from "i18next";
-import { SpeciesId } from "#enums/species-id";
-import type { WeatherPoolEntry } from "#app/data/weather";
-import { WeatherType } from "#enums/weather-type";
-import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "./data/balance/starters";
-import { MysteryEncounterType } from "./enums/mystery-encounter-type";
-import { MysteryEncounterTier } from "./enums/mystery-encounter-tier";
+import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "#balance/starters";
+import type { WeatherPoolEntry } from "#data/weather";
 import { Challenges } from "#enums/challenges";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
+import { TextStyle } from "#enums/text-style";
+import { WeatherType } from "#enums/weather-type";
+import { addTextObject } from "#ui/text";
+import type { nil } from "#utils/common";
+import { isNullOrUndefined } from "#utils/common";
+import i18next from "i18next";
 
 export enum EventType {
   SHINY,
@@ -396,6 +397,16 @@ export class TimedEventManager {
     return timedEvents.some((te: TimedEvent) => this.isActive(te));
   }
 
+  /**
+   * Check whether the current event is active and for April Fools.
+   * @returns Whether the April Fools event is currently active.
+   */
+  isAprilFoolsActive(): boolean {
+    return timedEvents.some(
+      te => this.isActive(te) && te.hasOwnProperty("bannerKey") && te.bannerKey!.startsWith("aprf"),
+    );
+  }
+
   activeEventHasBanner(): boolean {
     const activeEvents = timedEvents.filter(te => this.isActive(te) && te.hasOwnProperty("bannerKey"));
     return activeEvents.length > 0;
@@ -652,7 +663,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
       console.log(this.event.bannerKey);
       const padding = 5;
       const showTimer = this.event.eventType !== EventType.NO_TIMER_DISPLAY;
-      const yPosition = globalScene.game.canvas.height / 6 - padding - (showTimer ? 10 : 0) - (this.event.yOffset ?? 0);
+      const yPosition = globalScene.scaledCanvas.height - padding - (showTimer ? 10 : 0) - (this.event.yOffset ?? 0);
       this.banner = new Phaser.GameObjects.Image(globalScene, this.availableWidth / 2, yPosition - padding, key);
       this.banner.setName("img-event-banner");
       this.banner.setOrigin(0.5, 1);

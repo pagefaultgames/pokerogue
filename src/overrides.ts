@@ -1,18 +1,16 @@
 import { type PokeballCounts } from "#app/battle-scene";
-import { EvolutionItem } from "#app/data/balance/pokemon-evolutions";
-import { Gender } from "#app/data/gender";
-import { FormChangeItem } from "#enums/form-change-item";
-import { type ModifierOverride } from "#app/modifier/modifier-type";
-import { Variant } from "#app/sprites/variant";
-import { Unlockables } from "#enums/unlockables";
+import { EvolutionItem } from "#balance/pokemon-evolutions";
+import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
 import { BiomeId } from "#enums/biome-id";
 import { EggTier } from "#enums/egg-type";
+import { FormChangeItem } from "#enums/form-change-item";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -20,8 +18,11 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
+import { Unlockables } from "#enums/unlockables";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
+import { type ModifierOverride } from "#modifiers/modifier-type";
+import { Variant } from "#sprites/variant";
 
 /**
  * This comment block exists to prevent IDEs from automatically removing unused imports
@@ -118,7 +119,13 @@ class DefaultOverrides {
    * or `false` to force it to never trigger.
    */
   readonly CONFUSION_ACTIVATION_OVERRIDE: boolean | null = null;
-
+  /**
+   * If non-null, will override random flee attempts to always or never succeed by forcing {@linkcode calculateEscapeChance} to return 100% or 0%.
+   * Set to `null` to disable.
+   *
+   * Is overridden if either player Pokemon has {@linkcode AbilityId.RUN_AWAY | Run Away}.
+   */
+  readonly RUN_SUCCESS_OVERRIDE: boolean | null = null;
   // ----------------
   // PLAYER OVERRIDES
   // ----------------
@@ -159,30 +166,47 @@ class DefaultOverrides {
   readonly MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
   readonly SHINY_OVERRIDE: boolean | null = null;
   readonly VARIANT_OVERRIDE: Variant | null = null;
+  /**
+   * Overrides the IVs of player pokemon. Values must never be outside the range `0` to `31`!
+   * - If set to a number between `0` and `31`, set all IVs of all player pokemon to that number.
+   * - If set to an array, set the IVs of all player pokemon to that array. Array length must be exactly `6`!
+   * - If set to `null`, disable the override.
+   */
+  readonly IVS_OVERRIDE: number | number[] | null = null;
+  /** Override the nature of all player pokemon to the specified nature. Disabled if `null`. */
+  readonly NATURE_OVERRIDE: Nature | null = null;
 
   // --------------------------
   // OPPONENT / ENEMY OVERRIDES
   // --------------------------
-  readonly OPP_SPECIES_OVERRIDE: SpeciesId | number = 0;
+  readonly ENEMY_SPECIES_OVERRIDE: SpeciesId | number = 0;
   /**
    * This will make all opponents fused Pokemon
    */
-  readonly OPP_FUSION_OVERRIDE: boolean = false;
+  readonly ENEMY_FUSION_OVERRIDE: boolean = false;
   /**
    * This will override the species of the fusion only when the opponent is already a fusion
    */
-  readonly OPP_FUSION_SPECIES_OVERRIDE: SpeciesId | number = 0;
-  readonly OPP_LEVEL_OVERRIDE: number = 0;
-  readonly OPP_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
-  readonly OPP_PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
-  readonly OPP_HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
-  readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
-  readonly OPP_GENDER_OVERRIDE: Gender | null = null;
-  readonly OPP_MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
-  readonly OPP_SHINY_OVERRIDE: boolean | null = null;
-  readonly OPP_VARIANT_OVERRIDE: Variant | null = null;
-  readonly OPP_IVS_OVERRIDE: number | number[] = [];
-  readonly OPP_FORM_OVERRIDES: Partial<Record<SpeciesId, number>> = {};
+  readonly ENEMY_FUSION_SPECIES_OVERRIDE: SpeciesId | number = 0;
+  readonly ENEMY_LEVEL_OVERRIDE: number = 0;
+  readonly ENEMY_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
+  readonly ENEMY_PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
+  readonly ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
+  readonly ENEMY_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
+  readonly ENEMY_GENDER_OVERRIDE: Gender | null = null;
+  readonly ENEMY_MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
+  readonly ENEMY_SHINY_OVERRIDE: boolean | null = null;
+  readonly ENEMY_VARIANT_OVERRIDE: Variant | null = null;
+  /**
+   * Overrides the IVs of enemy pokemon. Values must never be outside the range `0` to `31`!
+   * - If set to a number between `0` and `31`, set all IVs of all enemy pokemon to that number.
+   * - If set to an array, set the IVs of all enemy pokemon to that array. Array length must be exactly `6`!
+   * - If set to `null`, disable the override.
+   */
+  readonly ENEMY_IVS_OVERRIDE: number | number[] | null = null;
+  /** Override the nature of all enemy pokemon to the specified nature. Disabled if `null`. */
+  readonly ENEMY_NATURE_OVERRIDE: Nature | null = null;
+  readonly ENEMY_FORM_OVERRIDES: Partial<Record<SpeciesId, number>> = {};
   /**
    * Override to give the enemy Pokemon a given amount of health segments
    *
@@ -190,7 +214,7 @@ class DefaultOverrides {
    * 1: the Pokemon will have a single health segment and therefore will not be a boss
    * 2+: the Pokemon will be a boss with the given number of health segments
    */
-  readonly OPP_HEALTH_SEGMENTS_OVERRIDE: number = 0;
+  readonly ENEMY_HEALTH_SEGMENTS_OVERRIDE: number = 0;
 
   // -------------
   // EGG OVERRIDES
@@ -252,12 +276,12 @@ class DefaultOverrides {
    *
    * Note that any previous modifiers are cleared.
    */
-  readonly OPP_MODIFIER_OVERRIDE: ModifierOverride[] = [];
+  readonly ENEMY_MODIFIER_OVERRIDE: ModifierOverride[] = [];
 
   /** Override array of {@linkcode ModifierOverride}s used to provide held items to first party member when starting a new game. */
   readonly STARTING_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
   /** Override array of {@linkcode ModifierOverride}s used to provide held items to enemies on spawn. */
-  readonly OPP_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
+  readonly ENEMY_HELD_ITEMS_OVERRIDE: ModifierOverride[] = [];
 
   /**
    * Override array of {@linkcode ModifierOverride}s used to replace the generated item rolls after a wave.

@@ -1,7 +1,10 @@
-import pkg from "crypto-js";
-const { AES, enc } = pkg;
-// biome-ignore lint: This is how you import fs from node
+// Usage: node decrypt-save.js <encrypted-file> [save-file]
+
+// biome-ignore lint/performance/noNamespaceImport: This is how you import fs from node
 import * as fs from "node:fs";
+import crypto_js from "crypto-js";
+
+const { AES, enc } = crypto_js;
 
 const SAVE_KEY = "x0i2O7WRiANTqPmZ";
 
@@ -143,7 +146,7 @@ function main() {
     process.exit(0);
   }
 
-  writeToFile(destPath, decrypt);
+  writeToFile(args[1], decrypt);
 }
 
 main();

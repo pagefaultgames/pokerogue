@@ -1,26 +1,34 @@
 import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addTextObject } from "./text";
-import { addWindow } from "./ui-theme";
-import { getLocalizedSpriteKey, fixedInt } from "#app/utils/common";
-import type Move from "../data/moves/move";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveCategory } from "#enums/move-category";
 import { PokemonType } from "#enums/pokemon-type";
+import { TextStyle } from "#enums/text-style";
+import type { Move } from "#moves/move";
+import { addTextObject } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import { fixedInt, getLocalizedSpriteKey } from "#utils/common";
 import i18next from "i18next";
 import ScrollingText from "./scrolling-text";
 
 export interface MoveInfoOverlaySettings {
-  delayVisibility?: boolean; // if true, showing the overlay will only set it to active and populate the fields and the handler using this field has to manually call setVisible later.
-  scale?: number; // scale the box? A scale of 0.5 is recommended
-  top?: boolean; // should the effect box be on top?
-  right?: boolean; // should the effect box be on the right?
-  onSide?: boolean; // should the effect be on the side? ignores top argument if true
-  //location and width of the component; unaffected by scaling
+  /**
+   * If true, showing the overlay will only set it to active and populate the fields
+   * and the handler using this field has to manually call `setVisible` later.
+   */
+  delayVisibility?: boolean;
+  /** Whether the effect box should be on top */
+  top?: boolean;
+  /** Whether the effect box should be on the right */
+  right?: boolean;
+  /** Whether the effect box should be on the side. Overrides the `top` param if `true`. */
+  onSide?: boolean;
+  /** `x` position of the component, unaffected by scaling */
   x?: number;
+  /** `y` position of the component, unaffected by scaling */
   y?: number;
-  /** Default is always half the screen, regardless of scale */
+  /** Width of the component, unaffected by scaling. Defaults to half the screen width. */
   width?: number;
-  /** Determines whether to display the small secondary box */
+  /** Whether to display the small secondary box */
   hideEffectBox?: boolean;
   hideBg?: boolean;
 }
@@ -31,7 +39,7 @@ const DESC_HEIGHT = 48;
 const BORDER = 8;
 const GLOBAL_SCALE = 6;
 
-export default class MoveInfoOverlay extends Phaser.GameObjects.Container implements InfoToggle {
+export class MoveInfoOverlay extends Phaser.GameObjects.Container implements InfoToggle {
   public active = false;
 
   private move: Move;
@@ -54,12 +62,11 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
       options.top = false;
     }
     super(globalScene, options?.x, options?.y);
-    const scale = options?.scale || 1; // set up the scale
-    this.setScale(scale);
+    this.setScale(1);
     this.options = options || {};
 
     // prepare the description box
-    const width = (options?.width || MoveInfoOverlay.getWidth(scale)) / scale; // divide by scale as we always want this to be half a window wide
+    const width = options?.width || MoveInfoOverlay.getWidth(); // we always want this to be half a window wide
     this.descBg = addWindow(
       options?.onSide && !options?.right ? EFF_WIDTH : 0,
       options?.top ? EFF_HEIGHT : 0,
@@ -213,12 +220,12 @@ export default class MoveInfoOverlay extends Phaser.GameObjects.Container implem
   }
 
   // width of this element
-  static getWidth(_scale: number): number {
-    return globalScene.game.canvas.width / GLOBAL_SCALE / 2;
+  static getWidth(): number {
+    return globalScene.scaledCanvas.width / 2;
   }
 
   // height of this element
-  static getHeight(scale: number, onSide?: boolean): number {
-    return (onSide ? Math.max(EFF_HEIGHT, DESC_HEIGHT) : EFF_HEIGHT + DESC_HEIGHT) * scale;
+  static getHeight(onSide?: boolean): number {
+    return onSide ? Math.max(EFF_HEIGHT, DESC_HEIGHT) : EFF_HEIGHT + DESC_HEIGHT;
   }
 }

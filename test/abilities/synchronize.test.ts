@@ -2,7 +2,7 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -38,7 +38,7 @@ describe("Abilities - Synchronize", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
+    expect(game.field.getPlayerPokemon().status).toBeUndefined();
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
 
@@ -48,8 +48,8 @@ describe("Abilities - Synchronize", () => {
     game.move.select(MoveId.THUNDER_WAVE);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()!.status?.effect).toBe(StatusEffect.PARALYSIS);
-    expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(game.field.getPlayerPokemon().status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(game.field.getEnemyPokemon().status?.effect).toBe(StatusEffect.PARALYSIS);
     expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
   });
 
@@ -60,8 +60,8 @@ describe("Abilities - Synchronize", () => {
 
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()!.status?.effect).toBeUndefined();
-    expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(game.field.getPlayerPokemon().status?.effect).toBeUndefined();
+    expect(game.field.getEnemyPokemon().status?.effect).toBe(StatusEffect.SLEEP);
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
 
@@ -76,8 +76,8 @@ describe("Abilities - Synchronize", () => {
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()!.status?.effect).toBe(StatusEffect.POISON);
-    expect(game.scene.getEnemyPokemon()!.status?.effect).toBeUndefined();
+    expect(game.field.getPlayerPokemon().status?.effect).toBe(StatusEffect.POISON);
+    expect(game.field.getEnemyPokemon().status?.effect).toBeUndefined();
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
 
@@ -87,8 +87,8 @@ describe("Abilities - Synchronize", () => {
     game.move.select(MoveId.THUNDER_WAVE);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()!.status?.effect).toBeUndefined();
-    expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.PARALYSIS);
+    expect(game.field.getPlayerPokemon().status?.effect).toBeUndefined();
+    expect(game.field.getEnemyPokemon().status?.effect).toBe(StatusEffect.PARALYSIS);
     expect(game.phaseInterceptor.log).toContain("ShowAbilityPhase");
   });
 });

@@ -1,7 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -37,7 +37,7 @@ describe("Abilities - Mummy", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.MUMMY);
+    expect(game.field.getEnemyPokemon().getAbility().id).toBe(AbilityId.MUMMY);
   });
 
   it("should not change the enemy's ability hit by a non-contact move", async () => {
@@ -47,6 +47,6 @@ describe("Abilities - Mummy", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.BALL_FETCH);
+    expect(game.field.getEnemyPokemon().getAbility().id).toBe(AbilityId.BALL_FETCH);
   });
 });

@@ -1,11 +1,11 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { PokemonType } from "#enums/pokemon-type";
 import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Electrify", () => {
   let phaserGame: Phaser.Game;
@@ -36,8 +36,8 @@ describe("Moves - Electrify", () => {
   it("should convert attacks to Electric type", async () => {
     await game.classicMode.startBattle([SpeciesId.EXCADRILL]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
     vi.spyOn(enemyPokemon, "getMoveType");
 
     game.move.select(MoveId.ELECTRIFY);
@@ -54,8 +54,8 @@ describe("Moves - Electrify", () => {
 
     await game.classicMode.startBattle([SpeciesId.EXCADRILL]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getPlayerPokemon();
     vi.spyOn(enemyPokemon, "getMoveType");
 
     game.move.select(MoveId.ELECTRIFY);

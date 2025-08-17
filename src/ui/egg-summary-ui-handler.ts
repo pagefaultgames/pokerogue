@@ -1,14 +1,14 @@
-import { UiMode } from "#enums/ui-mode";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
-import MessageUiHandler from "./message-ui-handler";
-import { getEggTierForSpecies } from "../data/egg";
-import { Button } from "#enums/buttons";
-import PokemonHatchInfoContainer from "./pokemon-hatch-info-container";
-import type { EggHatchData } from "#app/data/egg-hatch-data";
-import ScrollableGridUiHandler from "./scrollable-grid-handler";
-import { HatchedPokemonContainer } from "./hatched-pokemon-container";
-import { ScrollBar } from "#app/ui/scroll-bar";
 import { globalScene } from "#app/global-scene";
+import { getEggTierForSpecies } from "#data/egg";
+import type { EggHatchData } from "#data/egg-hatch-data";
+import { Button } from "#enums/buttons";
+import { UiMode } from "#enums/ui-mode";
+import { HatchedPokemonContainer } from "#ui/hatched-pokemon-container";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { PokemonHatchInfoContainer } from "#ui/pokemon-hatch-info-container";
+import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-handler";
+import { ScrollBar } from "#ui/scroll-bar";
+import { ScrollableGridUiHandler } from "#ui/scrollable-grid-handler";
 
 const iconContainerX = 112;
 const iconContainerY = 9;
@@ -21,7 +21,7 @@ const iconSize = 18;
  * Handles navigation and display of each pokemon as a list
  * Also handles display of the pokemon-hatch-info-container
  */
-export default class EggSummaryUiHandler extends MessageUiHandler {
+export class EggSummaryUiHandler extends MessageUiHandler {
   /** holds all elements in the scene */
   private eggHatchContainer: Phaser.GameObjects.Container;
   /** holds the icon containers and info container */
@@ -59,11 +59,11 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.summaryContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
+    this.summaryContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
     this.summaryContainer.setVisible(false);
     ui.add(this.summaryContainer);
 
-    this.eggHatchContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
+    this.eggHatchContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
     this.eggHatchContainer.setVisible(false);
     ui.add(this.eggHatchContainer);
 
@@ -92,7 +92,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
       iconContainerX + numCols * iconSize,
       iconContainerY + 3,
       4,
-      globalScene.game.canvas.height / 6 - 20,
+      globalScene.scaledCanvas.height - 20,
       numRows,
     );
     this.summaryContainer.add(scrollBar);

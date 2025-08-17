@@ -1,14 +1,14 @@
-import { variantColorCache } from "#app/sprites/variant";
-import MysteryEncounterIntroVisuals from "#app/field/mystery-encounter-intro";
-import Pokemon from "#app/field/pokemon";
-import Trainer from "#app/field/trainer";
 import { globalScene } from "#app/global-scene";
-import { rgbHexToRgba } from "#app/utils/common";
-import FieldSpritePipeline from "./field-sprite";
-import spriteFragShader from "./glsl/spriteFragShader.frag?raw";
-import spriteVertShader from "./glsl/spriteShader.vert?raw";
+import { FieldSpritePipeline } from "#app/pipelines/field-sprite";
+import { MysteryEncounterIntroVisuals } from "#field/mystery-encounter-intro";
+import { Pokemon } from "#field/pokemon";
+import { Trainer } from "#field/trainer";
+import { variantColorCache } from "#sprites/variant";
+import { rgbHexToRgba } from "#utils/common";
+import spriteFragShader from "./glsl/sprite-frag-shader.frag?raw";
+import spriteVertShader from "./glsl/sprite-shader.vert?raw";
 
-export default class SpritePipeline extends FieldSpritePipeline {
+export class SpritePipeline extends FieldSpritePipeline {
   private _tone: number[];
 
   constructor(game: Phaser.Game) {

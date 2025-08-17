@@ -1,10 +1,10 @@
-import { BattlerIndex } from "#enums/battler-index";
-import { MoveResult } from "#enums/move-result";
 import { AbilityId } from "#enums/ability-id";
-import { MoveUseMode } from "#enums/move-use-mode";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
-import GameManager from "#test/testUtils/gameManager";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -13,7 +13,7 @@ describe("Moves - Last Resort", () => {
   let game: GameManager;
 
   function expectLastResortFail() {
-    expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0]).toEqual(
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0]).toEqual(
       expect.objectContaining({
         move: MoveId.LAST_RESORT,
         result: MoveResult.FAIL,
@@ -45,7 +45,7 @@ describe("Moves - Last Resort", () => {
     game.override.moveset([MoveId.LAST_RESORT, MoveId.SPLASH, MoveId.GROWL, MoveId.GROWTH]);
     await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
-    const blissey = game.scene.getPlayerPokemon()!;
+    const blissey = game.field.getPlayerPokemon();
     expect(blissey).toBeDefined();
 
     // Last resort by itself
@@ -69,7 +69,7 @@ describe("Moves - Last Resort", () => {
     blissey.pushMoveHistory({ move: MoveId.GROWTH, targets: [BattlerIndex.PLAYER], useMode: MoveUseMode.NORMAL });
     game.move.select(MoveId.LAST_RESORT);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0]).toEqual(
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0]).toEqual(
       expect.objectContaining({
         move: MoveId.LAST_RESORT,
         result: MoveResult.SUCCESS,
@@ -114,7 +114,7 @@ describe("Moves - Last Resort", () => {
     game.move.select(MoveId.SLEEP_TALK);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.getPlayerPokemon()?.getLastXMoves(-1)).toEqual([
+    expect(game.field.getPlayerPokemon().getLastXMoves(-1)).toEqual([
       expect.objectContaining({
         move: MoveId.LAST_RESORT,
         result: MoveResult.SUCCESS,
@@ -136,15 +136,15 @@ describe("Moves - Last Resort", () => {
     await game.doKillOpponents();
     await game.toNextWave();
 
-    const oldMoveHistory = game.scene.getPlayerPokemon()?.summonData.moveHistory;
+    const oldMoveHistory = game.field.getPlayerPokemon().summonData.moveHistory;
     await game.reload.reloadSession();
 
-    const newMoveHistory = game.scene.getPlayerPokemon()?.summonData.moveHistory;
+    const newMoveHistory = game.field.getPlayerPokemon().summonData.moveHistory;
     expect(oldMoveHistory).toEqual(newMoveHistory);
 
     // use last resort and it should kill the karp just fine
     game.move.select(MoveId.LAST_RESORT);
-    game.scene.getEnemyPokemon()!.hp = 1;
+    game.field.getEnemyPokemon().hp = 1;
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.isVictory()).toBe(true);
