@@ -16,7 +16,6 @@ import {
   type HeldItemSpecs,
   type HeldItemTieredPool,
   type HeldItemWeights,
-  isFormChangeItemSpecs,
   isHeldItemCategoryEntry,
   isHeldItemPool,
   isHeldItemSpecs,
@@ -293,10 +292,6 @@ export function assignItemsFromConfiguration(config: HeldItemConfiguration, poke
 
     if (isHeldItemSpecs(entry)) {
       pokemon.heldItemManager.add(entry);
-    }
-
-    if (isFormChangeItemSpecs(entry)) {
-      pokemon.heldItemManager.addFormChangeItemWithSpecs(entry);
     }
 
     if (isHeldItemCategoryEntry(entry)) {

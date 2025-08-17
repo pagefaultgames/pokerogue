@@ -12,8 +12,7 @@ import { getPokeballCatchMultiplier, getPokeballName, MAX_PER_TYPE_POKEBALLS } f
 import { pokemonFormChanges, SpeciesFormChangeCondition } from "#data/pokemon-forms";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { BerryType } from "#enums/berry-type";
-import { FormChangeItem } from "#enums/form-change-item";
-import { HeldItemId } from "#enums/held-item-id";
+import { FormChangeItem, HeldItemId } from "#enums/held-item-id";
 import { LearnMoveType } from "#enums/learn-move-type";
 import type { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
@@ -31,7 +30,6 @@ import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem, statBoostItems } from "#items/base-stat-booster";
 import { berryTypeToHeldItem } from "#items/berry";
 import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeldItem } from "#items/held-item-pool";
-import { formChangeItemName } from "#items/item-utility";
 import type { SpeciesStatBoosterItemId, SpeciesStatBoostHeldItem } from "#items/stat-booster";
 import { TrainerItemEffect, tempStatToTrainerItem } from "#items/trainer-item";
 import type { PokemonMove } from "#moves/pokemon-move";
@@ -1137,10 +1135,10 @@ export class EvolutionItemReward extends PokemonReward {
  * Class that represents form changing items
  */
 export class FormChangeItemReward extends PokemonReward {
-  public formChangeItem: FormChangeItem;
+  public formChangeItem: HeldItemId;
 
   constructor(formChangeItem: FormChangeItem) {
-    super("", FormChangeItem[formChangeItem].toLowerCase(), (pokemon: PlayerPokemon) => {
+    super("", allHeldItems[formChangeItem].iconName, (pokemon: PlayerPokemon) => {
       // Make sure the Pokemon has alternate forms
       if (
         pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) &&
@@ -1165,21 +1163,22 @@ export class FormChangeItemReward extends PokemonReward {
   }
 
   get name(): string {
-    return formChangeItemName(this.formChangeItem);
+    return allHeldItems[this.formChangeItem].name;
   }
 
   getDescription(): string {
-    return i18next.t("modifierType:ModifierType.FormChangeItemModifierType.description");
+    return allHeldItems[this.formChangeItem].description;
   }
 
   apply({ pokemon }: PokemonRewardParams): boolean {
-    if (pokemon.heldItemManager.hasFormChangeItem(this.formChangeItem)) {
+    if (pokemon.heldItemManager.hasItem(this.formChangeItem)) {
       return false;
     }
 
-    pokemon.heldItemManager.addFormChangeItem(this.formChangeItem);
+    pokemon.heldItemManager.add(this.formChangeItem);
     pokemon.heldItemManager.toggleActive(this.formChangeItem);
 
+    // TODO: revise logic of this trigger based on active/inactive item
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger);
 
     globalScene.updateItems(true);
@@ -1453,7 +1452,7 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
                   fc.preFormKey === p.getFormKey(),
               )
               .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
-              .filter(t => t?.active && !p.heldItemManager.hasFormChangeItem(t.item));
+              .filter(t => t?.active && !p.heldItemManager.hasItem(t.item));
 
             if (p.species.speciesId === SpeciesId.NECROZMA) {
               // technically we could use a simplified version and check for formChanges.length > 3, but in case any code changes later, this might break...

@@ -45,10 +45,9 @@ import { BiomeId } from "#enums/biome-id";
 import { EaseType } from "#enums/ease-type";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
-import { FormChangeItem } from "#enums/form-change-item";
 import { GameModes } from "#enums/game-modes";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItemId } from "#enums/held-item-id";
+import { FormChangeItem, HeldItemId } from "#enums/held-item-id";
 import { MoneyFormat } from "#enums/money-format";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -2061,9 +2060,7 @@ export class BattleScene extends SceneBase {
     const enemyItemCount = this.enemyItemBar.totalVisibleLength;
     const biomeWaveTextHeight = this.biomeWaveText.getBottomLeft().y - this.biomeWaveText.getTopLeft().y;
     this.biomeWaveText.setY(
-      -this.scaledCanvas.height +
-        (enemyItemCount ? (enemyItemCount <= 12 ? 15 : 24) : 0) +
-        biomeWaveTextHeight / 2,
+      -this.scaledCanvas.height + (enemyItemCount ? (enemyItemCount <= 12 ? 15 : 24) : 0) + biomeWaveTextHeight / 2,
     );
     this.moneyText.setY(this.biomeWaveText.y + 10);
     this.scoreText.setY(this.moneyText.y + 10);
@@ -2930,7 +2927,8 @@ export class BattleScene extends SceneBase {
       let matchingFormChange: SpeciesFormChange | null;
       if (pokemon.species.speciesId === SpeciesId.NECROZMA && matchingFormChangeOpts.length > 1) {
         // Ultra Necrozma is changing its form back, so we need to figure out into which form it devolves.
-        const activeFormChangeItems = pokemon.heldItemManager.getActiveFormChangeItems();
+        const formChangeItems = pokemon.heldItemManager.getFormChangeItems();
+        const activeFormChangeItems = formChangeItems.filter(f => pokemon.heldItemManager.hasActiveFormChangeItem(f));
 
         matchingFormChange = activeFormChangeItems.includes(FormChangeItem.N_LUNARIZER)
           ? matchingFormChangeOpts[0]

@@ -7,8 +7,7 @@ import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { Button } from "#enums/buttons";
 import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
-import { FormChangeItem } from "#enums/form-change-item";
-import { HeldItemId } from "#enums/held-item-id";
+import { FormChangeItem, HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
@@ -16,7 +15,6 @@ import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
-import { formChangeItemName } from "#items/item-utility";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import { getVariantTint } from "#sprites/variant";
@@ -1542,7 +1540,7 @@ export class PartyUiHandler extends MessageUiHandler {
             const formChangeItems = this.getFormChangeItems(pokemon);
             if (formChangeItems && option >= PartyOption.FORM_CHANGE_ITEM) {
               const item = formChangeItems[option - PartyOption.FORM_CHANGE_ITEM];
-              optionName = `${pokemon.heldItemManager.hasActiveFormChangeItem(item) ? i18next.t("partyUiHandler:DEACTIVATE") : i18next.t("partyUiHandler:ACTIVATE")} ${formChangeItemName(item)}`;
+              optionName = `${pokemon.heldItemManager.hasActiveFormChangeItem(item) ? i18next.t("partyUiHandler:DEACTIVATE") : i18next.t("partyUiHandler:ACTIVATE")} ${allHeldItems[item].name}`;
             } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
               optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:UNPAUSE_EVOLUTION") : i18next.t("partyUiHandler:PAUSE_EVOLUTION")}`;
             } else {
@@ -1702,7 +1700,8 @@ export class PartyUiHandler extends MessageUiHandler {
 
   getFormChangeItems(pokemon: Pokemon) {
     let formChangeItems = pokemon.heldItemManager.getFormChangeItems();
-    const hasActiveFormChangeItems = pokemon.heldItemManager.getFormChangeItems().length;
+    const activeFormChangeItems = formChangeItems.filter(f => pokemon.heldItemManager.hasActiveFormChangeItem(f));
+    const hasActiveFormChangeItems = activeFormChangeItems.length;
     const ultraNecrozmaActive = pokemon.heldItemManager.hasActiveFormChangeItem(FormChangeItem.ULTRANECROZIUM_Z);
     if (ultraNecrozmaActive) {
       // ULTRANECROZIUM_Z is active and deactivating it should be the only option

@@ -17,7 +17,7 @@ import {
   SpeciesFormChangeWeatherTrigger,
 } from "#data/form-change-triggers";
 import { AbilityId } from "#enums/ability-id";
-import { FormChangeItem } from "#enums/form-change-item";
+import { FormChangeItem } from "#enums/held-item-id";
 import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
 import { SpeciesFormKey } from "#enums/species-form-key";

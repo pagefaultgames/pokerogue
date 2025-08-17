@@ -1,11 +1,12 @@
 // TODO: move all types to `src/@types/` and all functions to a utility place
-
-import type { FormChangeItem } from "#enums/form-change-item";
 import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
 
 export type HeldItemData = {
+  /**
+   * Number of items in the stack, can also be used to track cooldown
+   */
   stack: number;
   /**
    * Whether this item is currently disabled.
@@ -13,10 +14,11 @@ export type HeldItemData = {
    */
   disabled?: boolean;
   /**
-   * The item's current cooldown.
-   * @defaultValue `0`
+   * Whether a form change is active.
+   * TODO: This is only temporary to make things work, form change rework should get rid of it.
+   * @defaultValue `false`
    */
-  cooldown?: number;
+  active?: boolean;
 };
 
 export type HeldItemDataMap = {
@@ -29,23 +31,6 @@ export type HeldItemSpecs = HeldItemData & {
 
 export function isHeldItemSpecs(entry: any): entry is HeldItemSpecs {
   return typeof entry.id === "number" && "stack" in entry;
-}
-
-// Types used for form change items
-export interface FormChangeItemData {
-  active: boolean;
-}
-
-export type FormChangeItemPropertyMap = {
-  [key in FormChangeItem]?: FormChangeItemData;
-};
-
-export type FormChangeItemSpecs = FormChangeItemData & {
-  id: FormChangeItem;
-};
-
-export function isFormChangeItemSpecs(entry: any): entry is FormChangeItemSpecs {
-  return typeof entry.id === "number" && "active" in entry;
 }
 
 export type HeldItemWeights = {
@@ -79,15 +64,15 @@ export type HeldItemTieredPool = {
 };
 
 type HeldItemConfigurationEntry = {
-  entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool | FormChangeItemSpecs;
+  entry: HeldItemId | HeldItemCategoryId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
   count?: number | (() => number);
 };
 
 export type HeldItemConfiguration = HeldItemConfigurationEntry[];
 
 export type PokemonItemMap = {
-  item: HeldItemSpecs | FormChangeItemSpecs;
+  item: HeldItemSpecs;
   pokemonId: number;
 };
 
-export type HeldItemSaveData = (HeldItemSpecs | FormChangeItemSpecs)[];
+export type HeldItemSaveData = HeldItemSpecs[];

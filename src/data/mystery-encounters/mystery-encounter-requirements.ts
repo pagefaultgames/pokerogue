@@ -3,7 +3,7 @@ import { allAbilities, allHeldItems } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { AbilityId } from "#enums/ability-id";
-import { FormChangeItem } from "#enums/form-change-item";
+import type { FormChangeItem } from "#enums/held-item-id";
 import { getHeldItemCategory, type HeldItemCategoryId, type HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -792,7 +792,7 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
       this.filterByForm(pokemon, formChangeItem),
     );
     if (requiredItems.length > 0) {
-      return ["formChangeItem", FormChangeItem[requiredItems[0]]];
+      return ["formChangeItem", allHeldItems[requiredItems[0]].name];
     }
     return ["formChangeItem", ""];
   }

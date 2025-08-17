@@ -14,7 +14,7 @@ import type { TrainerItemConfiguration } from "#items/trainer-item-data-types";
 export function overrideTrainerItems(isPlayer = true): void {
   const trainerItemsOverride: TrainerItemConfiguration = isPlayer
     ? Overrides.STARTING_TRAINER_ITEMS_OVERRIDE
-    : Overrides.OPP_TRAINER_ITEMS_OVERRIDE;
+    : Overrides.ENEMY_TRAINER_ITEMS_OVERRIDE;
   if (!trainerItemsOverride || trainerItemsOverride.length === 0 || !globalScene) {
     return;
   }
@@ -37,7 +37,7 @@ export function overrideTrainerItems(isPlayer = true): void {
 export function overrideHeldItems(pokemon: Pokemon, isPlayer = true): void {
   const heldItemsOverride: HeldItemConfiguration = isPlayer
     ? Overrides.STARTING_HELD_ITEMS_OVERRIDE
-    : Overrides.OPP_HELD_ITEMS_OVERRIDE;
+    : Overrides.ENEMY_HELD_ITEMS_OVERRIDE;
   if (!heldItemsOverride || heldItemsOverride.length === 0 || !globalScene) {
     return;
   }

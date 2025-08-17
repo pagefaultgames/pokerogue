@@ -3,7 +3,6 @@ import { BattleScene } from "#app/battle-scene";
 import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import overrides from "#app/overrides";
-import { allRewards } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { Button } from "#enums/buttons";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
@@ -12,10 +11,12 @@ import { GameModes } from "#enums/game-modes";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
+import { RewardId } from "#enums/reward-id";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
+import { allRewards } from "#items/all-rewards";
 import { CheckSwitchPhase } from "#phases/check-switch-phase";
 import { CommandPhase } from "#phases/command-phase";
 import { EncounterPhase } from "#phases/encounter-phase";
@@ -489,7 +490,7 @@ export class GameManager {
    */
   doRevivePokemon(pokemonIndex: number) {
     const party = this.scene.getPlayerParty();
-    const reward = allRewards.MAX_REVIVE();
+    const reward = allRewards[RewardId.MAX_REVIVE];
     reward.apply({ pokemon: party[pokemonIndex] });
   }
 
