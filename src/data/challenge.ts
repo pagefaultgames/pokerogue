@@ -756,7 +756,7 @@ export class SingleTypeChallenge extends Challenge {
   }
 
   getDescription(overrideValue: number = this.value): string {
-    const type = i18next.t(`pokemonInfo:Type.${PokemonType[overrideValue - 1]}`);
+    const type = i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[overrideValue - 1])}`);
     const typeColor = `[color=${TypeColor[PokemonType[overrideValue - 1]]}][shadow=${TypeShadow[PokemonType[this.value - 1]]}]${type}[/shadow][/color]`;
     const defaultDesc = i18next.t("challenges:singleType.desc_default");
     const typeDesc = i18next.t("challenges:singleType.desc", {

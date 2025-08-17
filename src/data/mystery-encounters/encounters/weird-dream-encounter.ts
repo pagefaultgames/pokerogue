@@ -143,7 +143,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
     },
     {
       speaker: `${namespace}:speaker`,
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
     },
   ])
   .setLocalizationKey(`${namespace}`)
@@ -216,7 +216,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         await cutsceneDialoguePromise;
 
         doHideDreamBackground();
-        await showEncounterText(`${namespace}:option.1.dream_complete`);
+        await showEncounterText(`${namespace}:option.1.dreamComplete`);
 
         await doNewTeamPostProcess(transformations);
         setEncounterRewards({
@@ -329,7 +329,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         onBeforeRewards,
       );
 
-      await showEncounterText(`${namespace}:option.2.selected_2`, null, undefined, true);
+      await showEncounterText(`${namespace}:option.2.selected2`, null, undefined, true);
       await initBattleWithEnemyConfig(enemyPartyConfig);
     },
   )
