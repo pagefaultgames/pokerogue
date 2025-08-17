@@ -36,15 +36,11 @@ export interface MoveInfoOverlaySettings {
 const EFF_HEIGHT = 48;
 const EFF_WIDTH = 82;
 const DESC_HEIGHT = 48;
-const BORDER = 8;
 
 export class MoveInfoOverlay extends Phaser.GameObjects.Container implements InfoToggle {
   public active = false;
 
-  private move: Move;
-
   private desc: ScrollingText;
-  private descScroll: Phaser.Tweens.Tween | null = null;
 
   private val: Phaser.GameObjects.Container;
   private pp: Phaser.GameObjects.Text;
@@ -52,7 +48,6 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
   private acc: Phaser.GameObjects.Text;
   private typ: Phaser.GameObjects.Sprite;
   private cat: Phaser.GameObjects.Sprite;
-  private descBg: Phaser.GameObjects.NineSlice;
 
   private options: MoveInfoOverlaySettings;
 
@@ -66,50 +61,22 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
 
     const descBoxX = options?.onSide && !options?.right ? EFF_WIDTH : 0;
     const descBoxY = options?.top ? EFF_HEIGHT : 0;
-    // we always want this to be half a window wide
     const width = options?.width || MoveInfoOverlay.getWidth();
     const descBoxWidth = width - (options?.onSide ? EFF_WIDTH : 0);
     const descBoxHeight = DESC_HEIGHT;
 
     // prepare the description box
-    this.descBg = addWindow(descBoxX, descBoxY, descBoxWidth, descBoxHeight);
-    this.descBg.setOrigin(0, 0);
-    this.add(this.descBg);
-
-    const x = options?.x || 0;
-    const y = options?.y || 0;
-    const descX = (options?.onSide && !options?.right ? EFF_WIDTH : 0) + BORDER;
-    const descY = (options?.top ? EFF_HEIGHT : 0) + BORDER - 2;
-
-    const visibleX = x < 0 ? x + globalScene.scaledCanvas.width : x;
-    const visibleY = y < 0 ? y + globalScene.scaledCanvas.height : y;
-
-    const globalMaskX = visibleX + descX;
-    const globalMaskY = visibleY + descY;
-    const wrapWidth = (descBoxWidth - (BORDER - 2) * 2) * 6;
-    const visibleWidth = descBoxWidth - (BORDER - 2) * 2;
-    const visibleHeight = DESC_HEIGHT - (BORDER - 2) * 2;
-
-    // set up the description; wordWrap uses true pixels, unaffected by any scaling, while other values are affected
     this.desc = new ScrollingText(
       globalScene,
-      descX, // Container local x
-      descY, // Container local y
-      globalMaskX, // Global mask X
-      globalMaskY, // Global mask Y
-      visibleWidth, // Mask width (unscaled)
-      visibleHeight, // Mask height (already scaled)
+      descBoxX,
+      descBoxY,
+      descBoxWidth,
+      descBoxHeight,
       3, // maxLineCount
-      96 / 72 / 14.83, // scale_property
       "", // initial content
       TextStyle.BATTLE_INFO,
-      {
-        wordWrap: {
-          width: wrapWidth,
-        },
-      },
     );
-    this.desc.text.setLineSpacing(i18next.resolvedLanguage === "ja" ? 25 : 5);
+    this.desc.createMask(globalScene, this.x, this.y);
     this.add(this.desc);
 
     // prepare the effect box
@@ -163,7 +130,7 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
     }
 
     if (options?.hideBg) {
-      this.descBg.setVisible(false);
+      this.desc.hideBg();
     }
 
     // hide this component for now
@@ -175,7 +142,6 @@ export class MoveInfoOverlay extends Phaser.GameObjects.Container implements Inf
     if (!globalScene.enableMoveInfo) {
       return false; // move infos have been disabled // TODO:: is `false` correct? i used to be `undeefined`
     }
-    this.move = move;
     this.pow.setText(move.power >= 0 ? move.power.toString() : "---");
     this.acc.setText(move.accuracy >= 0 ? move.accuracy.toString() : "---");
     this.pp.setText(move.pp >= 0 ? move.pp.toString() : "---");
