@@ -461,7 +461,7 @@ export class CommandPhase extends FieldPhase {
         !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true)
       ) {
         if (restrictMasterBall) {
-          this.queueShowText("battle:noPokeballStrongFinalBossCatchable");
+          this.queueShowText("battle:noPokeballForceFinalBossCatchable");
           return false;
         }
         if (cursor < PokeballType.MASTER_BALL) {
