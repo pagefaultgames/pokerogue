@@ -139,7 +139,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
     },
     {
       speaker: trainerNameKey,
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
     },
   ])
   .withOnInit(() => {
@@ -189,13 +189,13 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
 
     // Dialogue and egg calcs for Pokemon 1
     const [pokemon1CommonEggs, pokemon1RareEggs] = calculateEggRewardsForPokemon(pokemon1);
-    let pokemon1Tooltip = getEncounterText(`${namespace}:option.1.tooltip_base`)!;
+    let pokemon1Tooltip = getEncounterText(`${namespace}:option.1.tooltipBase`)!;
     if (pokemon1RareEggs > 0) {
       const eggsText = i18next.t(`${namespace}:numEggs`, {
         count: pokemon1RareEggs,
         rarity: i18next.t("egg:greatTier"),
       });
-      pokemon1Tooltip += i18next.t(`${namespace}:eggs_tooltip`, {
+      pokemon1Tooltip += i18next.t(`${namespace}:eggsTooltip`, {
         eggs: eggsText,
       });
       encounter.setDialogueToken("pokemon1RareEggs", eggsText);
@@ -205,7 +205,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         count: pokemon1CommonEggs,
         rarity: i18next.t("egg:defaultTier"),
       });
-      pokemon1Tooltip += i18next.t(`${namespace}:eggs_tooltip`, {
+      pokemon1Tooltip += i18next.t(`${namespace}:eggsTooltip`, {
         eggs: eggsText,
       });
       encounter.setDialogueToken("pokemon1CommonEggs", eggsText);
@@ -214,13 +214,13 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
 
     // Dialogue and egg calcs for Pokemon 2
     const [pokemon2CommonEggs, pokemon2RareEggs] = calculateEggRewardsForPokemon(pokemon2);
-    let pokemon2Tooltip = getEncounterText(`${namespace}:option.2.tooltip_base`)!;
+    let pokemon2Tooltip = getEncounterText(`${namespace}:option.2.tooltipBase`)!;
     if (pokemon2RareEggs > 0) {
       const eggsText = i18next.t(`${namespace}:numEggs`, {
         count: pokemon2RareEggs,
         rarity: i18next.t("egg:greatTier"),
       });
-      pokemon2Tooltip += i18next.t(`${namespace}:eggs_tooltip`, {
+      pokemon2Tooltip += i18next.t(`${namespace}:eggsTooltip`, {
         eggs: eggsText,
       });
       encounter.setDialogueToken("pokemon2RareEggs", eggsText);
@@ -230,7 +230,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         count: pokemon2CommonEggs,
         rarity: i18next.t("egg:defaultTier"),
       });
-      pokemon2Tooltip += i18next.t(`${namespace}:eggs_tooltip`, {
+      pokemon2Tooltip += i18next.t(`${namespace}:eggsTooltip`, {
         eggs: eggsText,
       });
       encounter.setDialogueToken("pokemon2CommonEggs", eggsText);
@@ -239,13 +239,13 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
 
     // Dialogue and egg calcs for Pokemon 3
     const [pokemon3CommonEggs, pokemon3RareEggs] = calculateEggRewardsForPokemon(pokemon3);
-    let pokemon3Tooltip = getEncounterText(`${namespace}:option.3.tooltip_base`)!;
+    let pokemon3Tooltip = getEncounterText(`${namespace}:option.3.tooltipBase`)!;
     if (pokemon3RareEggs > 0) {
       const eggsText = i18next.t(`${namespace}:numEggs`, {
         count: pokemon3RareEggs,
         rarity: i18next.t("egg:greatTier"),
       });
-      pokemon3Tooltip += i18next.t(`${namespace}:eggs_tooltip`, {
+      pokemon3Tooltip += i18next.t(`${namespace}:eggsTooltip`, {
         eggs: eggsText,
       });
       encounter.setDialogueToken("pokemon3RareEggs", eggsText);
@@ -255,7 +255,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         count: pokemon3CommonEggs,
         rarity: i18next.t("egg:defaultTier"),
       });
-      pokemon3Tooltip += i18next.t(`${namespace}:eggs_tooltip`, {
+      pokemon3Tooltip += i18next.t(`${namespace}:eggsTooltip`, {
         eggs: eggsText,
       });
       encounter.setDialogueToken("pokemon3CommonEggs", eggsText);
@@ -321,14 +321,14 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         ];
         if (encounter.dialogueTokens.hasOwnProperty("pokemon1CommonEggs")) {
           encounter.dialogue.outro.push({
-            text: i18next.t(`${namespace}:gained_eggs`, {
+            text: i18next.t(`${namespace}:gainedEggs`, {
               numEggs: encounter.dialogueTokens["pokemon1CommonEggs"],
             }),
           });
         }
         if (encounter.dialogueTokens.hasOwnProperty("pokemon1RareEggs")) {
           encounter.dialogue.outro.push({
-            text: i18next.t(`${namespace}:gained_eggs`, {
+            text: i18next.t(`${namespace}:gainedEggs`, {
               numEggs: encounter.dialogueTokens["pokemon1RareEggs"],
             }),
           });
@@ -380,14 +380,14 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         ];
         if (encounter.dialogueTokens.hasOwnProperty("pokemon2CommonEggs")) {
           encounter.dialogue.outro.push({
-            text: i18next.t(`${namespace}:gained_eggs`, {
+            text: i18next.t(`${namespace}:gainedEggs`, {
               numEggs: encounter.dialogueTokens["pokemon2CommonEggs"],
             }),
           });
         }
         if (encounter.dialogueTokens.hasOwnProperty("pokemon2RareEggs")) {
           encounter.dialogue.outro.push({
-            text: i18next.t(`${namespace}:gained_eggs`, {
+            text: i18next.t(`${namespace}:gainedEggs`, {
               numEggs: encounter.dialogueTokens["pokemon2RareEggs"],
             }),
           });
@@ -439,14 +439,14 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
         ];
         if (encounter.dialogueTokens.hasOwnProperty("pokemon3CommonEggs")) {
           encounter.dialogue.outro.push({
-            text: i18next.t(`${namespace}:gained_eggs`, {
+            text: i18next.t(`${namespace}:gainedEggs`, {
               numEggs: encounter.dialogueTokens["pokemon3CommonEggs"],
             }),
           });
         }
         if (encounter.dialogueTokens.hasOwnProperty("pokemon3RareEggs")) {
           encounter.dialogue.outro.push({
-            text: i18next.t(`${namespace}:gained_eggs`, {
+            text: i18next.t(`${namespace}:gainedEggs`, {
               numEggs: encounter.dialogueTokens["pokemon3RareEggs"],
             }),
           });
@@ -482,7 +482,7 @@ function getPartyConfig(): EnemyPartyConfig {
     trainerType: TrainerType.EXPERT_POKEMON_BREEDER,
     pokemonConfigs: [
       {
-        nickname: i18next.t(`${namespace}:cleffa_1_nickname`, {
+        nickname: i18next.t(`${namespace}:cleffa1Nickname`, {
           speciesName: getPokemonSpecies(cleffaSpecies).getName(),
         }),
         species: getPokemonSpecies(cleffaSpecies),
@@ -501,7 +501,7 @@ function getPartyConfig(): EnemyPartyConfig {
     // All 3 members always Cleffa line, but different configs
     baseConfig.pokemonConfigs!.push(
       {
-        nickname: i18next.t(`${namespace}:cleffa_2_nickname`, {
+        nickname: i18next.t(`${namespace}:cleffa2Nickname`, {
           speciesName: getPokemonSpecies(cleffaSpecies).getName(),
         }),
         species: getPokemonSpecies(cleffaSpecies),
@@ -514,7 +514,7 @@ function getPartyConfig(): EnemyPartyConfig {
         ivs: [31, 31, 31, 31, 31, 31],
       },
       {
-        nickname: i18next.t(`${namespace}:cleffa_3_nickname`, {
+        nickname: i18next.t(`${namespace}:cleffa3Nickname`, {
           speciesName: getPokemonSpecies(cleffaSpecies).getName(),
         }),
         species: getPokemonSpecies(cleffaSpecies),
@@ -647,7 +647,7 @@ function onGameOver() {
   encounter.dialogue.outro = [
     {
       speaker: trainerNameKey,
-      text: `${namespace}:outro_failed`,
+      text: `${namespace}:outroFailed`,
     },
   ];
 
