@@ -22,10 +22,6 @@ const SPLIT_REPLACE_VALUE = "$1\0$2";
 
 /**
  * Split any cased string into an array of its constituent words.
- * @remarks
- * **DO NOT USE THIS FUNCTION!**
- * Exported only to allow for testing.
- * @todo Consider tests into [in-source testing](https://vitest.dev/guide/in-source.html) and converting this to unexported
  * @param {string} value
  * @returns {string[]} The new string, delimited at each instance of one or more spaces, underscores, hyphens
  * or lower-to-upper boundaries.
