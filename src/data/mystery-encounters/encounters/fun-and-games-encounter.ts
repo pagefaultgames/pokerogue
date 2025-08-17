@@ -132,7 +132,7 @@ export const FunAndGamesEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
         const moneyCost = (encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney;
         updatePlayerMoney(-moneyCost, true, false);
         await showEncounterText(
-          i18next.t("mysteryEncounterMessages:paid_money", {
+          i18next.t("mysteryEncounterMessages:paidMoney", {
             amount: moneyCost,
           }),
         );

@@ -73,7 +73,7 @@ import {
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences, saveStarterPreferences } from "#utils/data";
 import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
-import { toTitleCase } from "#utils/strings";
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
@@ -2264,7 +2264,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             });
           };
           options.push({
-            label: i18next.t("menuUiHandler:POKEDEX"),
+            label: i18next.t("menuUiHandler:pokedex"),
             handler: () => {
               ui.setMode(UiMode.STARTER_SELECT).then(() => {
                 const attributes = {
@@ -3470,7 +3470,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         //Growth translate
         let growthReadable = toTitleCase(GrowthRate[species.growthRate]);
-        const growthAux = growthReadable.replace(" ", "_");
+        const growthAux = toCamelCase(growthReadable);
         if (i18next.exists("growth:" + growthAux)) {
           growthReadable = i18next.t(("growth:" + growthAux) as any);
         }
