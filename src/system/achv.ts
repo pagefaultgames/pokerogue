@@ -449,6 +449,8 @@ export function getAchievementDescription(localizationKey: string): string {
       return i18next.t("achv:flipStats.description", { context: genderStr });
     case "flipInverse":
       return i18next.t("achv:flipInverse.description", { context: genderStr });
+    case "nuzlocke":
+      return i18next.t("achv:nuzlocke.description", { context: genderStr });
     case "breedersInSpace":
       return i18next.t("achv:breedersInSpace.description", {
         context: genderStr,
