@@ -5,7 +5,6 @@ import {
   FlipStatChallenge,
   FreshStartChallenge,
   InverseBattleChallenge,
-  LimitedCatchChallenge,
   SingleGenerationChallenge,
   SingleTypeChallenge,
 } from "#data/challenge";
@@ -14,6 +13,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { getShortenedStatKey, Stat } from "#enums/stat";
 import { TurnHeldItemTransferModifier } from "#modifiers/modifier";
 import type { ConditionFn } from "#types/common";
+import { isNuzlockeChallenge } from "#utils/challenge-utils";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 import type { Modifier } from "typescript";
@@ -448,6 +448,8 @@ export function getAchievementDescription(localizationKey: string): string {
       return i18next.t("achv:FLIP_STATS.description", { context: genderStr });
     case "FLIP_INVERSE":
       return i18next.t("achv:FLIP_INVERSE.description", { context: genderStr });
+    case "NUZLOCKE":
+      return i18next.t("achv:NUZLOCKE.description", { context: genderStr });
     case "BREEDERS_IN_SPACE":
       return i18next.t("achv:BREEDERS_IN_SPACE.description", {
         context: genderStr,
@@ -924,18 +926,7 @@ export const achvs = {
       globalScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0),
   ).setSecret(),
   // TODO: Decide on icon
-  NUZLOCKE: new ChallengeAchv(
-    "NUZLOCKE",
-    "",
-    "NUZLOCKE.description",
-    "leaf_stone",
-    100,
-    c =>
-      c instanceof LimitedCatchChallenge &&
-      c.value > 0 &&
-      globalScene.gameMode.challenges.some(c => c.id === Challenges.HARDCORE && c.value > 0) &&
-      globalScene.gameMode.challenges.some(c => c.id === Challenges.FRESH_START && c.value > 0),
-  ),
+  NUZLOCKE: new ChallengeAchv("NUZLOCKE", "", "NUZLOCKE.description", "leaf_stone", 100, isNuzlockeChallenge),
   BREEDERS_IN_SPACE: new Achv("BREEDERS_IN_SPACE", "", "BREEDERS_IN_SPACE.description", "moon_stone", 50).setSecret(),
 };
 
