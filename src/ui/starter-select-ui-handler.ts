@@ -4133,6 +4133,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.tryUpdateValue();
 
     this.updateInstructions();
+
+    saveStarterPreferences(this.originalStarterPreferences);
   }
 
   setTypeIcons(type1: PokemonType | null, type2: PokemonType | null): void {
@@ -4568,7 +4570,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   clear(): void {
     super.clear();
 
-    saveStarterPreferences(this.originalStarterPreferences);
     this.clearStarterPreferences();
     this.cursor = -1;
     this.hideInstructions();
