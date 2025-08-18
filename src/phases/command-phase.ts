@@ -258,6 +258,7 @@ export class CommandPhase extends FieldPhase {
       : cursor > -1 && !playerPokemon.getMoveset().some(m => m.isUsable(playerPokemon)[0]);
 
     if (!canUse && !useStruggle) {
+      console.error("Cannot use move:", reason);
       this.queueFightErrorMessage(reason);
       return false;
     }
