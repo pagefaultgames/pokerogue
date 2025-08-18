@@ -119,7 +119,7 @@ export class GameOverPhase extends BattlePhase {
    * game mode and challenges.
    */
   private awardRibbons(): void {
-    let ribbonFlags = 0;
+    let ribbonFlags = 0n;
     if (globalScene.gameMode.isClassic) {
       ribbonFlags |= RibbonData.CLASSIC;
     }
