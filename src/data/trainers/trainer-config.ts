@@ -193,7 +193,6 @@ export class TrainerConfig {
       initI18n();
     }
 
-    // Make the title lowercase and replace spaces with underscores
     title = toCamelCase(title);
 
     // Get the title from the i18n file
@@ -365,7 +364,6 @@ export class TrainerConfig {
       initI18n();
     }
 
-    // Make the title lowercase and replace spaces with underscores
     titleDouble = toCamelCase(titleDouble);
 
     // Get the title from the i18n file
@@ -665,14 +663,14 @@ export class TrainerConfig {
     this.setSpeciesFilter(p => p.isOfType(specialtyType));
     this.setSpecialtyType(specialtyType);
 
-    // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
+    // Localize the trainer's name by converting it to camel case.
     const nameForCall = toCamelCase(this.name);
     this.name = i18next.t(`trainerNames:${nameForCall}`);
 
-    // Set the title to "gym_leader". (this is the key in the i18n file)
-    this.setTitle("gym_leader");
+    // Set the title to "gymLeader". (this is the key in the i18n file)
+    this.setTitle("gymLeader");
     if (!isMale) {
-      this.setTitle("gym_leader_female");
+      this.setTitle("gymLeaderFemale");
     }
 
     // Configure various properties for the Gym Leader.
@@ -726,14 +724,14 @@ export class TrainerConfig {
       this.setSpeciesFilter(p => p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
     }
 
-    // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
+    // Localize the trainer's name by converting it to camel case.
     const nameForCall = toCamelCase(this.name);
     this.name = i18next.t(`trainerNames:${nameForCall}`);
 
     // Set the title to "elite_four". (this is the key in the i18n file)
-    this.setTitle("elite_four");
+    this.setTitle("eliteFour");
     if (!isMale) {
-      this.setTitle("elite_four_female");
+      this.setTitle("eliteFourFemale");
     }
 
     // Configure various properties for the Elite Four member.
@@ -763,14 +761,14 @@ export class TrainerConfig {
     // Set the party templates for the Champion.
     this.setPartyTemplates(trainerPartyTemplates.CHAMPION);
 
-    // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
+    // Localize the trainer's name by converting it to camel case.
     const nameForCall = toCamelCase(this.name);
     this.name = i18next.t(`trainerNames:${nameForCall}`);
 
     // Set the title to "champion". (this is the key in the i18n file)
     this.setTitle("champion");
     if (!isMale) {
-      this.setTitle("champion_female");
+      this.setTitle("championFemale");
     }
 
     // Configure various properties for the Champion.
