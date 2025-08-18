@@ -194,7 +194,7 @@ export class TrainerConfig {
     }
 
     // Make the title lowercase and replace spaces with underscores
-    title = title.toLowerCase().replace(/\s/g, "_");
+    title = toCamelCase(title);
 
     // Get the title from the i18n file
     this.title = i18next.t(`titles:${title}`);
@@ -366,7 +366,7 @@ export class TrainerConfig {
     }
 
     // Make the title lowercase and replace spaces with underscores
-    titleDouble = titleDouble.toLowerCase().replace(/\s/g, "_");
+    titleDouble = toCamelCase(titleDouble);
 
     // Get the title from the i18n file
     this.titleDouble = i18next.t(`titles:${titleDouble}`);
