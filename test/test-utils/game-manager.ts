@@ -224,7 +224,7 @@ export class GameManager {
     // This will consider all battle entry dialog as seens and skip them
     vi.spyOn(this.scene.ui, "shouldSkipDialogue").mockReturnValue(true);
 
-    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0) {
+    if (overrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0) {
       this.removeEnemyHeldItems();
     }
 

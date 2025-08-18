@@ -90,6 +90,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("shiny_icons", "ui");
     this.loadImage("ha_capsule", "ui", "ha_capsule.png");
     this.loadImage("champion_ribbon", "ui", "champion_ribbon.png");
+    this.loadImage("champion_ribbon_emerald", "ui", "champion_ribbon_emerald.png");
     this.loadImage("icon_spliced", "ui");
     this.loadImage("icon_lock", "ui", "icon_lock.png");
     this.loadImage("icon_stop", "ui", "icon_stop.png");
@@ -122,6 +123,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("party_bg_double", "ui");
     this.loadImage("party_bg_double_manage", "ui");
     this.loadAtlas("party_slot_main", "ui");
+    this.loadAtlas("party_slot_main_short", "ui");
     this.loadAtlas("party_slot", "ui");
     this.loadImage("party_slot_overlay_lv", "ui");
     this.loadImage("party_slot_hp_bar", "ui");
@@ -447,7 +449,9 @@ export class LoadingScene extends SceneBase {
     );
 
     if (!mobile) {
-      loadingGraphics.map(g => g.setVisible(false));
+      loadingGraphics.forEach(g => {
+        g.setVisible(false);
+      });
     }
 
     const intro = this.add.video(0, 0);
