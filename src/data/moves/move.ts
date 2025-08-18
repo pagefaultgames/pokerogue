@@ -123,6 +123,10 @@ export abstract class Move implements Localizable {
    * @remarks Different from {@linkcode restrictions}, which is checked when the move is selected
    */
   private conditions: MoveCondition[] = [];
+  /**
+   * Move failure conditions that occur during the second check (after move message and before )
+   */
+  private conditionsSeq2: MoveCondition[] = [];
   /** Conditions that must be false for a move to be able to be selected.
    *
    * @remarks Different from {@linkcode conditions}, which is checked when the move is invoked
@@ -381,13 +385,15 @@ export abstract class Move implements Localizable {
    * Adds a condition to this move (in addition to any provided by its prior {@linkcode MoveAttr}s).
    * The move will fail upon use if at least 1 of its conditions is not met.
    * @param condition - The {@linkcode MoveCondition} or {@linkcode MoveConditionFunc} to add to the conditions array.
+   * @param checkSequence - The sequence number where the failure check occurs
    * @returns `this` for method chaining
    */
-  condition(condition: MoveCondition | MoveConditionFunc): this {
+  condition(condition: MoveCondition | MoveConditionFunc, checkSequence: 2 | 3 = 3): this {
+    const conditionsArray = checkSequence === 2 ? this.conditionsSeq2 : this.conditions;
     if (typeof condition === "function") {
       condition = new MoveCondition(condition);
     }
-    this.conditions.push(condition);
+    conditionsArray.push(condition);
 
     return this;
   }
@@ -763,13 +769,15 @@ export abstract class Move implements Localizable {
 
   /**
    * Applies each {@linkcode MoveCondition} function of this move to the params, determines if the move can be used prior to calling each attribute's apply()
-   * @param user {@linkcode Pokemon} to apply conditions to
-   * @param target {@linkcode Pokemon} to apply conditions to
-   * @param move {@linkcode Move} to apply conditions to
+   * @param user - {@linkcode Pokemon} to apply conditions to
+   * @param target - {@linkcode Pokemon} to apply conditions to
+   * @param move - {@linkcode Move} to apply conditions to
+   * @param sequence - The sequence number where the condition check occurs, defaults to 3
    * @returns boolean: false if any of the apply()'s return false, else true
    */
-  applyConditions(user: Pokemon, target: Pokemon): boolean {
-    return this.conditions.every(cond => cond.apply(user, target, this));
+  applyConditions(user: Pokemon, target: Pokemon, sequence: number = 3): boolean {
+    const conditionsArray = sequence === 2 ? this.conditionsSeq2 : this.conditions;
+    return conditionsArray.every(cond => cond.apply(user, target, this));
   }
 
 
@@ -9010,6 +9018,7 @@ export function initMoves() {
     new SelfStatusMove(MoveId.DESTINY_BOND, PokemonType.GHOST, -1, 5, -1, 0, 2)
       .ignoresProtect()
       .attr(DestinyBondAttr)
+      .condition(failAgainstFinalBossCondition, 2)
       .condition((user, target, move) => {
         // Retrieves user's previous move, returns empty array if no moves have been used
         const lastTurnMove = user.getLastXMoves(1);
@@ -9298,6 +9307,8 @@ export function initMoves() {
       .unimplemented(),
     new StatusMove(MoveId.ROLE_PLAY, PokemonType.PSYCHIC, -1, 10, -1, 0, 3)
       .ignoresSubstitute()
+      // TODO: Enable / remove once balance reaches a consensus on ability overrides during boss fights
+      // .condition(failAgainstFinalBossCondition, 3)
       .attr(AbilityCopyAttr),
     new SelfStatusMove(MoveId.WISH, PokemonType.NORMAL, -1, 10, -1, 0, 3)
       .attr(WishAttr)
@@ -9345,6 +9356,8 @@ export function initMoves() {
     new StatusMove(MoveId.IMPRISON, PokemonType.PSYCHIC, 100, 10, -1, 0, 3)
       .ignoresSubstitute()
       .attr(AddArenaTagAttr, ArenaTagType.IMPRISON, 1, true, false)
+      // TODO: Enable / remove once balance reaches a consensus on imprison interaction during the final boss fight
+      // .condition(failAgainstFinalBossCondition, 2)
       .target(MoveTarget.ENEMY_SIDE),
     new SelfStatusMove(MoveId.REFRESH, PokemonType.NORMAL, -1, 20, -1, 0, 3)
       .attr(HealStatusEffectAttr, true, [ StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN ])
@@ -9670,6 +9683,8 @@ export function initMoves() {
       .edgeCase(), // May or may not need to ignore remotely called moves depending on how it works
     new StatusMove(MoveId.WORRY_SEED, PokemonType.GRASS, 100, 10, -1, 0, 4)
       .attr(AbilityChangeAttr, AbilityId.INSOMNIA)
+      // TODO: Enable / remove once balance reaches a consensus on ability overrides during boss fights
+      // .condition(failAgainstFinalBossCondition, 3)
       .reflectable(),
     new AttackMove(MoveId.SUCKER_PUNCH, PokemonType.DARK, MoveCategory.PHYSICAL, 70, 100, 5, -1, 1, 4)
       .condition((user, target, move) => {
@@ -9902,9 +9917,13 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.WIDE_GUARD, 1, true, true)
       .condition(failIfLastCondition),
     new StatusMove(MoveId.GUARD_SPLIT, PokemonType.PSYCHIC, -1, 10, -1, 0, 5)
+      // TODO: Enable / remove once balance reaches a consensus on imprison interaction during the final boss fight
+      // .condition(failAgainstFinalBossCondition, 2)
       .attr(AverageStatsAttr, [ Stat.DEF, Stat.SPDEF ], "moveTriggers:sharedGuard"),
     new StatusMove(MoveId.POWER_SPLIT, PokemonType.PSYCHIC, -1, 10, -1, 0, 5)
       .attr(AverageStatsAttr, [ Stat.ATK, Stat.SPATK ], "moveTriggers:sharedPower"),
+      // TODO: Enable / remove once balance reaches a consensus on imprison interaction during the final boss fight
+      // .condition(failAgainstFinalBossCondition, 2)
     new StatusMove(MoveId.WONDER_ROOM, PokemonType.PSYCHIC, -1, 10, -1, 0, 5)
       .ignoresProtect()
       .target(MoveTarget.BOTH_SIDES)
@@ -9974,9 +9993,13 @@ export function initMoves() {
       .attr(TargetAtkUserAtkAttr),
     new StatusMove(MoveId.SIMPLE_BEAM, PokemonType.NORMAL, 100, 15, -1, 0, 5)
       .attr(AbilityChangeAttr, AbilityId.SIMPLE)
+      // TODO: Enable / remove once balance reaches a consensus on ability overrides during boss fights
+      // .condition(failAgainstFinalBossCondition, 3)
       .reflectable(),
     new StatusMove(MoveId.ENTRAINMENT, PokemonType.NORMAL, 100, 15, -1, 0, 5)
       .attr(AbilityGiveAttr)
+      // TODO: Enable / remove once balance reaches a consensus on ability overrides during boss fights
+      // .condition(failAgainstFinalBossCondition, 3)
       .reflectable(),
     new StatusMove(MoveId.AFTER_YOU, PokemonType.NORMAL, -1, 15, -1, 0, 5)
       .ignoresProtect()
@@ -10562,7 +10585,12 @@ export function initMoves() {
     new AttackMove(MoveId.POLLEN_PUFF, PokemonType.BUG, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 7)
       .attr(StatusCategoryOnAllyAttr)
       .attr(HealOnAllyAttr, 0.5, true, false)
-      .ballBombMove(),
+      .ballBombMove()
+      // Fail if used against an ally that is affected by heal block, during the second failure check
+      .condition(
+        (user, target) => target.getAlly() === user && !!target.getTag(BattlerTagType.HEAL_BLOCK),
+        2
+      ),
     new AttackMove(MoveId.ANCHOR_SHOT, PokemonType.STEEL, MoveCategory.PHYSICAL, 80, 100, 20, 100, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1, 1, true),
     new StatusMove(MoveId.PSYCHIC_TERRAIN, PokemonType.PSYCHIC, -1, 10, -1, 0, 7)
@@ -10575,16 +10603,21 @@ export function initMoves() {
     new AttackMove(MoveId.POWER_TRIP, PokemonType.DARK, MoveCategory.PHYSICAL, 20, 100, 10, -1, 0, 7)
       .attr(PositiveStatStagePowerAttr),
     new AttackMove(MoveId.BURN_UP, PokemonType.FIRE, MoveCategory.SPECIAL, 130, 100, 5, -1, 0, 7)
-      .condition((user) => {
-        const userTypes = user.getTypes(true);
-        return userTypes.includes(PokemonType.FIRE);
-      })
+      .condition(
+        // Pass `true` to `ForDefend` as it should fail if the user is terastallized to a type that is not FIRE
+        user => user.isOfType(PokemonType.FIRE, true, true),
+        2
+      )
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(AddBattlerTagAttr, BattlerTagType.BURNED_UP, true, false)
       .attr(RemoveTypeAttr, PokemonType.FIRE, (user) => {
         globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:burnedItselfOut", { pokemonName: getPokemonNameWithAffix(user) }));
       }),
     new StatusMove(MoveId.SPEED_SWAP, PokemonType.PSYCHIC, -1, 10, -1, 0, 7)
+      // Note: the 3 is NOT a typo; unlike power split / guard split which happen in the second failure sequence, speed
+      // swap's check happens in the third
+      // TODO: Enable / remove once balance reaches a consensus on imprison interaction during the final boss fight
+      // .condition(failAgainstFinalBossCondition, 3)
       .attr(SwapStatAttr, Stat.SPD)
       .ignoresSubstitute(),
     new AttackMove(MoveId.SMART_STRIKE, PokemonType.STEEL, MoveCategory.PHYSICAL, 70, -1, 10, -1, 0, 7),
@@ -10811,8 +10844,12 @@ export function initMoves() {
         true),
     new SelfStatusMove(MoveId.NO_RETREAT, PokemonType.FIGHTING, -1, 5, -1, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 1, true)
-      .attr(AddBattlerTagAttr, BattlerTagType.NO_RETREAT, true, false)
-      .condition((user, target, move) => user.getTag(TrappedTag)?.tagType !== BattlerTagType.NO_RETREAT), // fails if the user is currently trapped by No Retreat
+      .attr(AddBattlerTagAttr, BattlerTagType.NO_RETREAT, true, true /* NOT ADDED if already trapped */)
+      .condition(
+          // fails if the user is currently trapped specifically from no retreat
+          user => user.getTag(TrappedTag)?.tagType !== BattlerTagType.NO_RETREAT,
+          2
+      ),
     new StatusMove(MoveId.TAR_SHOT, PokemonType.ROCK, 100, 15, -1, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1)
       .attr(AddBattlerTagAttr, BattlerTagType.TAR_SHOT, false)
@@ -11375,10 +11412,11 @@ export function initMoves() {
       .slicingMove()
       .triageMove(),
     new AttackMove(MoveId.DOUBLE_SHOCK, PokemonType.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 9)
-      .condition((user) => {
-        const userTypes = user.getTypes(true);
-        return userTypes.includes(PokemonType.ELECTRIC);
-      })
+      .condition(
+        // Pass `true` to `isOfType` to fail if the user is terastallized to a type other than ELECTRIC
+        user => user.isOfType(PokemonType.ELECTRIC, true, true),
+        2
+      )
       .attr(AddBattlerTagAttr, BattlerTagType.DOUBLE_SHOCKED, true, false)
       .attr(RemoveTypeAttr, PokemonType.ELECTRIC, (user) => {
         globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:usedUpAllElectricity", { pokemonName: getPokemonNameWithAffix(user) }));
@@ -11477,7 +11515,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.HEAL_BLOCK, false, false, 2),
     new AttackMove(MoveId.UPPER_HAND, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, 100, 3, 9)
       .attr(FlinchAttr)
-      .condition(new UpperHandCondition()),
+      .condition(UpperHandCondition),
     new AttackMove(MoveId.MALIGNANT_CHAIN, PokemonType.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
   );
