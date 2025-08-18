@@ -63,7 +63,7 @@ function decryptSave(path) {
       console.error(`Unrecognized error: ${e}`);
       process.exit(1);
     }
-    // @ts-expect-error: TODO fix
+    // @ts-expect-error - e is usually a SystemError (all of which have codes)
     switch (e.code) {
       case "ENOENT":
         console.error(`File not found: ${path}`);
