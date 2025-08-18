@@ -485,11 +485,7 @@ export const achvs = {
   MEGA_EVOLVE: new Achv("megaEvolve", "megaEvolve.description", "mega_bracelet", 50),
   GIGANTAMAX: new Achv("gigantamax", "gigantamax.description", "dynamax_band", 50),
   TERASTALLIZE: new Achv("terastallize", "terastallize.description", "tera_orb", 25),
-  STELLAR_TERASTALLIZE: new Achv(
-    "stellarTerastallize",
-    "stellarTerastallize.description",
-    25,
-  ).setSecret(true),
+  STELLAR_TERASTALLIZE: new Achv("stellarTerastallize", "stellarTerastallize.description", 25).setSecret(true),
   SPLICE: new Achv("splice", "splice.description", "dna_splicers", 10),
   MINI_BLACK_HOLE: new ModifierAchv(
     "miniBlackHole",
@@ -504,12 +500,7 @@ export const achvs = {
   SEE_SHINY: new Achv("seeShiny", "seeShiny.description", "pb_gold", 75),
   SHINY_PARTY: new Achv("shinyParty", "shinyParty.description", "shiny_charm", 100).setSecret(true),
   HATCH_MYTHICAL: new Achv("hatchMythical", "hatchMythical.description", "manaphy_egg", 75).setSecret(),
-  HATCH_SUB_LEGENDARY: new Achv(
-    "hatchSubLegendary",
-    "hatchSubLegendary.description",
-    "epic_egg",
-    100,
-  ).setSecret(),
+  HATCH_SUB_LEGENDARY: new Achv("hatchSubLegendary", "hatchSubLegendary.description", "epic_egg", 100).setSecret(),
   HATCH_LEGENDARY: new Achv("hatchLegendary", "hatchLegendary.description", "legendary_egg", 125).setSecret(),
   HATCH_SHINY: new Achv("hatchShiny", "hatchShiny.description", "rogue_egg", 100).setSecret(),
   HIDDEN_ABILITY: new Achv("hiddenAbility", "hiddenAbility.description", "ability_charm", 75),
