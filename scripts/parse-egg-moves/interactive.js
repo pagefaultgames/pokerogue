@@ -3,9 +3,13 @@ import chalk from "chalk";
 import inquirer from "inquirer";
 import { showHelpText } from "./help-message.js";
 
+/** 
+ * @import { Option } from "./main.js"
+ */
+
 /**
  * Prompt the user to interactively select an option (console/file) to retrieve the egg move CSV.
- * @returns {Promise<{type: "Console" | "File", value: string} | {type: "Exit"}>} The selected option with value
+ * @returns {Promise<Option>} The selected option with value
  */
 export async function runInteractive() {
   /** @type {"Console" | "File" | "Help" | "Exit"} */
