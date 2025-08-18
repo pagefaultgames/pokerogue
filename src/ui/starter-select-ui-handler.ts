@@ -3739,6 +3739,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       oldNatureIndex =
         this.natureCursor > -1 ? this.natureCursor : globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
     }
+    const oldTeraType = this.teraCursor > -1 ? this.teraCursor : species ? species.type1 : PokemonType.UNKNOWN;
     this.dexAttrCursor = 0n;
     this.abilityCursor = -1;
     this.natureCursor = -1;
@@ -3785,7 +3786,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       ); // TODO: is this bang correct?
       this.abilityCursor = abilityIndex !== undefined ? abilityIndex : (abilityIndex = oldAbilityIndex);
       this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
-      this.teraCursor = !isNullOrUndefined(teraType) ? teraType : (teraType = species.type1);
+      this.teraCursor = !isNullOrUndefined(teraType) ? teraType : (teraType = oldTeraType);
       const [isInParty, partyIndex]: [boolean, number] = this.isInParty(species); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
       if (isInParty) {
         this.updatePartyIcon(species, partyIndex);
