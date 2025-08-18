@@ -3,8 +3,6 @@ import { MOVE_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
-// biome-ignore lint/correctness/noUnusedImports: Used in a tsdoc comment
-import type { TauntTag, TruantTag } from "#data/battler-tags";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { CenterOfAttentionTag } from "#data/battler-tags";
 import { SpeciesFormChangePreMoveTrigger } from "#data/form-change-triggers";
@@ -110,7 +108,9 @@ export class MovePhase extends PokemonPhase {
   }
 
   /**
-   * Check the first round of failure checks.
+   * Check the first round of failure checks
+   *
+   * @returns Whether the move failed
    *
    * @remarks
    * Based on battle mechanics research conducted primarily by Smogon, checks happen in the following order (as of Gen 9):
@@ -144,6 +144,8 @@ export class MovePhase extends PokemonPhase {
       this.checkPreUseInterrupt() ||
       this.checkTagCancel(BattlerTagType.FLINCHED) ||
       this.checkTagCancel(BattlerTagType.DISABLED, true) ||
+      this.checkTagCancel(BattlerTagType.HEAL_BLOCK) ||
+      this.checkTagCancel(BattlerTagType.THROAT_CHOPPED) ||
       this.checkGravity() ||
       this.checkTagCancel(BattlerTagType.TAUNT, true) ||
       this.checkTagCancel(BattlerTagType.IMPRISON) ||
@@ -157,6 +159,115 @@ export class MovePhase extends PokemonPhase {
     return false;
   }
 
+  /**
+   * Handle the status interactions for sleep and freeze that happen after passing the first failure check
+   *
+   * @remarks
+   * - If the user is asleep but can use the move, the sleep animation and message is still shown
+   * - If the user is frozen but is thawed from its move, the user's status is cured and the thaw message is shown
+   */
+  private post1stFailSleepOrThaw(): void {
+    const user = this.pokemon;
+    // If the move was successful, then... play the "sleeping" animation if the user is asleep but uses something like rest / snore
+    // Cure the user's freeze and queue the thaw message from unfreezing due to move use
+    if (!isIgnoreStatus(this.useMode)) {
+      if (user.status?.effect === StatusEffect.SLEEP) {
+        // Commence the sleeping animation and message, which happens anyway
+        // TODO...
+      } else if (this.thaw) {
+        this.cureStatus(
+          StatusEffect.FREEZE,
+          i18next.t("statusEffect:freeze.healByMove", {
+            pokemonName: getPokemonNameWithAffix(user),
+            moveName: this.move.getMove().name,
+          }),
+        );
+      }
+    }
+  }
+
+  /**
+   * Second failure check that occurs after the "Pokemon used move" text is shown but BEFORE the move has been registered
+   * as being the last move used (for the purposes of something like Copycat)
+   *
+   * @remarks
+   * Other than powder, each failure condition is mutually exclusive (as they are tied to specific moves), so order does not matter.
+   * Notably, this failure check only includes failure conditions intrinsic to the move itself, ther than Powder (which marks the end of this failure check)
+   *
+   *
+   * - Pollen puff used on an ally that is under effect of heal block
+   * - Burn up / Double shock when the user does not have the required type
+   * - No Retreat while already under its effects
+   * - (on cart, not applicable to Pokerogue) Moves that fail if used ON a raid / special boss: selfdestruct/explosion/imprision/power split / guard split
+   * - (on cart, not applicable to Pokerogue) Moves that fail during a "co-op" battle (like when Arven helps during raid boss): ally switch / teatime
+   *
+   * After all checks, Powder causing the user to explode
+   */
+  protected secondFailureCheck(): boolean {
+    const move = this.move.getMove();
+    const user = this.pokemon;
+    if (!move.applyConditions(user, this.getActiveTargetPokemon()[0], 2)) {
+      this.failed = true;
+      // Note: If any of the moves have custom failure messages, this needs to be changed
+      // As of Gen 9, none do. (Except maybe pollen puff? Need to check)
+      return true;
+    }
+    // Powder *always* happens last
+    // Note: Powder's lapse method handles everything: messages, damage, animation, primal weather interaction,
+    // determining type of type changing moves, etc.
+    // It will set this phase's `failed` flag to true if it procs
+    user.lapseTag(BattlerTagType.POWDER, BattlerTagLapseType.PRE_MOVE);
+    return this.failed;
+  }
+
+  /**
+   * Third failure check is from moves and abilities themselves
+   *
+   * @returns Whether the move failed
+   *
+   * @remarks
+   * - Conditional attributes of the move
+   * - Weather blocking the move
+   * - Terrain blocking the move
+   * - Queenly Majesty / Dazzling
+   */
+  protected thirdFailureCheck(): boolean {
+    /**
+     * Move conditions assume the move has a single target
+     * TODO: is this sustainable?
+     */
+    const move = this.move.getMove();
+    const targets = this.getActiveTargetPokemon();
+    const arena = globalScene.arena;
+    const user = this.pokemon;
+    const failsConditions = !move.applyConditions(user, targets[0]);
+    const failedDueToWeather = arena.isMoveWeatherCancelled(user, move);
+    const failedDueToTerrain = arena.isMoveTerrainCancelled(user, this.targets, move);
+    let failed = failsConditions || failedDueToWeather || failedDueToTerrain;
+
+    // Apply queenly majesty / dazzling
+    if (!failed) {
+      const defendingSidePlayField = user.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
+      const cancelled = new BooleanHolder(false);
+      defendingSidePlayField.forEach((pokemon: Pokemon) => {
+        applyAbAttrs("FieldPriorityMoveImmunityAbAttr", {
+          pokemon,
+          opponent: user,
+          move,
+          cancelled,
+        });
+      });
+      failed = cancelled.value;
+    }
+
+    if (failed) {
+      this.failMove(true, failedDueToWeather, failedDueToTerrain);
+      return true;
+    }
+
+    return false;
+  }
+
   public start(): void {
     super.start();
 
@@ -165,25 +276,52 @@ export class MovePhase extends PokemonPhase {
       return;
     }
 
+    const user = this.pokemon;
+
     // Removing gigaton hammer always happens first
-    this.pokemon.removeTag(BattlerTagType.ALWAYS_GET_HIT);
+    user.removeTag(BattlerTagType.ALWAYS_GET_HIT);
     console.log(MoveId[this.move.moveId], enumValueToKey(MoveUseMode, this.useMode));
 
     // For the purposes of payback and kin, the pokemon is considered to have acted
     // if it attempted to move at all.
-    this.pokemon.turnData.acted = true;
-    // TODO: skip this check for moves like metronome.
-    if (this.firstFailureCheck()) {
+    user.turnData.acted = true;
+    const useMode = this.useMode;
+    const virtual = isVirtual(useMode);
+    if (!virtual && this.firstFailureCheck()) {
       // Lapse all other pre-move tags
-      this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
+      user.lapseTags(BattlerTagLapseType.PRE_MOVE);
       this.end();
+
+      /*
+      On cartridge, certain things *react* to move failures, depending on failure reason
+      The following would happen at this time on cartridge:
+      - Steadfast giving user speed boost if failed due to flinch
+      - Protect, detect, ally switch, etc, resetting consecutive use count
+      - Rollout / ice ball "unlocking"
+      - protect / ally switch / other moves resetting their consecutive use count
+      - and others
+      In Pokerogue, these are instead handled by their respective methods, which generally
+      */
       return;
     }
 
-    // Begin second failure checks..
+    // Now, issue the second failure checks
+
+    // If the user was asleep but is using a move anyway, it should STILL display the "user is sleeping" message!
+    // At this point, cure the user's freeze
+
+    // At this point, called moves should be decided.
+    // For now, this is a placeholder until we rework how called moves are handled
+    // For correct alignment with mainline, this SHOULD go here, and it SHOULD rewrite its own move
+    // Though, this is not the case in pokerogue.
+
+    // At this point...
+    // If the first failure check passes, then thaw the user if its move will thaw it.
+    // The sleep message and animation are also played if the user is asleep but using a move anyway (snore, sleep talk, etc)
+    this.post1stFailSleepOrThaw();
 
     // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
-    if (isVirtual(this.useMode)) {
+    if (virtual) {
       this.pokemon.turnData.hitsLeft = -1;
       this.pokemon.turnData.hitCount = 0;
     }
@@ -199,9 +337,29 @@ export class MovePhase extends PokemonPhase {
       globalScene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
     }
 
-    this.resolveRedirectTarget();
+    // At this point, move's type changing and multi-target effects *should* be applied
+    // Pokerogue's current implementation applies these effects during the move effect phase
+    // as there is not (yet) a notion of a move-in-flight for determinations to occur
 
+    this.resolveRedirectTarget();
     this.resolveCounterAttackTarget();
+
+    // Move is announced
+    this.showMoveText();
+
+    // Stance change happens
+    const charging = this.move.getMove().isChargingMove() && !this.pokemon.getTag(BattlerTagType.CHARGING);
+    // Stance change happens now if the move is about to be executed
+    if (!charging) {
+      globalScene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
+    }
+
+    if (this.secondFailureCheck()) {
+      this.showFailedText();
+      this.handlePreMoveFailures();
+      this.end();
+      return;
+    }
 
     if (!(this.failed || this.cancelled)) {
       this.resolveFinalPreMoveCancellationChecks();
@@ -210,7 +368,7 @@ export class MovePhase extends PokemonPhase {
     // Cancel, charge or use the move as applicable.
     if (this.cancelled || this.failed) {
       this.handlePreMoveFailures();
-    } else if (this.move.getMove().isChargingMove() && !this.pokemon.getTag(BattlerTagType.CHARGING)) {
+    } else if (charging) {
       this.chargeMove();
     } else {
       this.useMove();
@@ -219,7 +377,7 @@ export class MovePhase extends PokemonPhase {
     this.end();
   }
 
-  /** Check for cancellation edge cases - no targets remaining, or {@linkcode MoveId.NONE} is in the queue */
+  /** Check for cancellation edge cases - no targets remaining */
   protected resolveFinalPreMoveCancellationChecks(): void {
     const targets = this.getActiveTargetPokemon();
     const moveQueue = this.pokemon.getMoveQueue();
@@ -228,7 +386,6 @@ export class MovePhase extends PokemonPhase {
       (targets.length === 0 && !this.move.getMove().hasAttr("AddArenaTrapTagAttr"))
       || (moveQueue.length > 0 && moveQueue[0].move === MoveId.NONE)
     ) {
-      this.showMoveText();
       this.showFailedText();
       this.cancel();
     } else {
@@ -243,10 +400,12 @@ export class MovePhase extends PokemonPhase {
   /**
    * Queue the status cure message, reset the status, and update the Pokemon info display
    * @param effect - The effect being cured
+   * @param msg - A custom message to display when curing the status effect (used for curing freeze due to move use)
    */
-  private cureStatus(effect: StatusEffect): void {
+  private cureStatus(effect: StatusEffect, msg?: string): void {
     const pokemon = this.pokemon;
-    globalScene.phaseManager.queueMessage(getStatusEffectHealText(effect, getPokemonNameWithAffix(pokemon)));
+    // Freeze healed by move uses its own msg
+    globalScene.phaseManager.queueMessage(msg ?? getStatusEffectHealText(effect, getPokemonNameWithAffix(pokemon)));
     pokemon.resetStatus(undefined, undefined, undefined, false);
     pokemon.updateInfo();
   }
@@ -314,9 +473,23 @@ export class MovePhase extends PokemonPhase {
       return false;
     }
 
-    // Heal the user if it thaws from the move or random chance
-    // Check if the user will thaw due to a move
+    // Check if move use would heal the user
 
+    if (Overrides.STATUS_ACTIVATION_OVERRIDE) {
+      return false;
+    }
+
+    // Check if the move will heal
+    const move = this.move.getMove();
+    if (
+      move.findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE))
+    ) {
+      // On cartridge, burn up will not cure if it would fail
+      if (move.id === MoveId.BURN_UP && !this.pokemon.isOfType(PokemonType.FIRE)) {
+      }
+      this.thaw = true;
+      return false;
+    }
     if (
       Overrides.STATUS_ACTIVATION_OVERRIDE === false ||
       this.move
@@ -367,7 +540,17 @@ export class MovePhase extends PokemonPhase {
     if (moveName.endsWith(" (N)")) {
       failedText = i18next.t("battle:moveNotImplemented", { moveName: moveName.replace(" (N)", "") });
     } else if (moveId === MoveId.NONE || this.targets.length === 0) {
-      // TODO: Create a locale key with some failure text
+      this.cancel();
+
+      const pokemonName = this.pokemon.name;
+      const warningText =
+        moveId === MoveId.NONE
+          ? `${pokemonName} is attempting to use MoveId.NONE`
+          : `${pokemonName} is attempting to use a move with no targets`;
+
+      console.warn(warningText);
+
+      return true;
     } else if (
       this.pokemon.isPlayer() &&
       applyChallenges(ChallengeType.POKEMON_MOVE, moveId, usability) &&
@@ -457,85 +640,54 @@ export class MovePhase extends PokemonPhase {
     return true;
   }
 
+  protected usePP(): void {
+    if (!isIgnorePP(this.useMode)) {
+      const move = this.move;
+      // "commit" to using the move, deducting PP.
+      const ppUsed = 1 + this.getPpIncreaseFromPressure(this.getActiveTargetPokemon());
+      move.usePp(ppUsed);
+      globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, this.move.getMove(), this.move.ppUsed));
+    }
+  }
+
   protected useMove(): void {
-    const targets = this.getActiveTargetPokemon();
-    const moveQueue = this.pokemon.getMoveQueue();
-    const move = this.move.getMove();
-
-    // form changes happen even before we know that the move wll execute.
-    globalScene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
-
+    const user = this.pokemon;
     // Clear out any two turn moves once they've been used.
     // TODO: Refactor move queues and remove this assignment;
     // Move queues should be handled by the calling `CommandPhase` or a manager for it
     // @ts-expect-error - useMode is readonly and shouldn't normally be assigned to
-    this.useMode = moveQueue.shift()?.useMode ?? this.useMode;
+    this.useMode = user.getMoveQueue().shift()?.useMode ?? this.useMode;
 
-    if (this.pokemon.getTag(BattlerTagType.CHARGING)?.sourceMove === this.move.moveId) {
-      this.pokemon.lapseTag(BattlerTagType.CHARGING);
+    if (user.getTag(BattlerTagType.CHARGING)?.sourceMove === this.move.moveId) {
+      user.lapseTag(BattlerTagType.CHARGING);
     }
 
-    if (!isIgnorePP(this.useMode)) {
-      // "commit" to using the move, deducting PP.
-      const ppUsed = 1 + this.getPpIncreaseFromPressure(targets);
-      this.move.usePp(ppUsed);
-      globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, move, this.move.ppUsed));
+    if (!this.thirdFailureCheck()) {
+      this.executeMove();
     }
-
-    /**
-     * Determine if the move is successful (meaning that its damage/effects can be attempted)
-     * by checking that all of the following are true:
-     * - Conditional attributes of the move are all met
-     * - Weather does not block the move
-     * - Terrain does not block the move
-     */
-
-    /**
-     * Move conditions assume the move has a single target
-     * TODO: is this sustainable?
-     */
-    const failsConditions = !move.applyConditions(this.pokemon, targets[0]);
-    const failedDueToWeather = globalScene.arena.isMoveWeatherCancelled(this.pokemon, move);
-    const failedDueToTerrain = globalScene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
-    const failed = failsConditions || failedDueToWeather || failedDueToTerrain;
-
-    if (failed) {
-      this.failMove(true, failedDueToWeather, failedDueToTerrain);
-      return;
-    }
-
-    this.executeMove();
   }
 
   /** Execute the current move and apply its effects. */
   private executeMove() {
+    const pokemon = this.pokemon;
     const move = this.move.getMove();
-    const targets = this.getActiveTargetPokemon();
-
-    // Update the battle's "last move" pointer unless we're currently mimicking a move or triggering Dancer.
-    if (!move.hasAttr("CopyMoveAttr") && !isReflected(this.useMode)) {
-      globalScene.currentBattle.lastMove = move.id;
-    }
+    const opponent = this.getActiveTargetPokemon()[0];
+    const targets = this.targets;
 
     // Trigger ability-based user type changes, display move text and then execute move effects.
     // TODO: Investigate whether PokemonTypeChangeAbAttr can drop the "opponent" parameter
-    applyAbAttrs("PokemonTypeChangeAbAttr", { pokemon: this.pokemon, move, opponent: targets[0] });
+    applyAbAttrs("PokemonTypeChangeAbAttr", { pokemon, move, opponent });
     this.showMoveText();
-    globalScene.phaseManager.unshiftNew(
-      "MoveEffectPhase",
-      this.pokemon.getBattlerIndex(),
-      this.targets,
-      move,
-      this.useMode,
-    );
+    globalScene.phaseManager.unshiftNew("MoveEffectPhase", pokemon.getBattlerIndex(), targets, move, this.useMode);
 
     // Handle Dancer, which triggers immediately after a move is used (rather than waiting on `this.end()`).
     // Note the MoveUseMode check here prevents an infinite Dancer loop.
     // TODO: This needs to go at the end of `MoveEffectPhase` to check move results
     const dancerModes: MoveUseMode[] = [MoveUseMode.INDIRECT, MoveUseMode.REFLECTED] as const;
     if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !dancerModes.includes(this.useMode)) {
+      // biome-ignore lint/nursery/noShadow: We don't need to access `pokemon` from the outer scope
       globalScene.getField(true).forEach(pokemon => {
-        applyAbAttrs("PostMoveUsedAbAttr", { pokemon, move: this.move, source: this.pokemon, targets: this.targets });
+        applyAbAttrs("PostMoveUsedAbAttr", { pokemon, move: this.move, source: pokemon, targets: targets });
       });
     }
   }
@@ -664,6 +816,7 @@ export class MovePhase extends PokemonPhase {
     const redirectTarget = new NumberHolder(currentTarget);
 
     // check move redirection abilities of every pokemon *except* the user.
+    // TODO: Make storm drain, lightning rod, etc, redirect at this point for type changing moves
     globalScene
       .getField(true)
       .filter(p => p !== this.pokemon)
@@ -778,10 +931,7 @@ export class MovePhase extends PokemonPhase {
     }
 
     if (this.failed) {
-      // TODO: should this consider struggle?
-      const ppUsed = isIgnorePP(this.useMode) ? 0 : 1;
-      this.move.usePp(ppUsed);
-      globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
+      this.usePP();
     }
 
     if (this.cancelled && this.pokemon.summonData.tags.some(t => t.tagType === BattlerTagType.FRENZY)) {

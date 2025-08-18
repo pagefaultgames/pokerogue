@@ -2410,8 +2410,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * modifiers from move and ability attributes
    * @param source - The attacking Pokémon.
    * @param move - The move being used by the attacking Pokémon.
-   * @param ignoreAbility - Whether to ignore abilities that might affect type effectiveness or immunity (defaults to `false`).
-   * @param simulated - Whether to apply abilities via simulated calls (defaults to `true`)
+   * @param ignoreAbility - Whether to ignore abilities that might affect type effectiveness or immunity; default `false`
+   * @param simulated - Whether to apply abilities via simulated calls; default `true`; ⚠️ Should only ever be false during `moveEffect` phase
    * @param cancelled - Stores whether the move was cancelled by a non-type-based immunity.
    * @param useIllusion - Whether to consider an active illusion
    * @returns The type damage multiplier, indicating the effectiveness of the move
@@ -2465,7 +2465,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         applyAbAttrs("MoveImmunityAbAttr", commonAbAttrParams);
       }
 
-      if (!cancelledHolder.value) {
+      // Do not check queenly majesty unless this is being simulated
+      // This is because the move effect phase should not check queenly majesty, as that is handled by the move phase
+      if (simulated && !cancelledHolder.value) {
         const defendingSidePlayField = this.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
         defendingSidePlayField.forEach((p: (typeof defendingSidePlayField)[0]) => {
           applyAbAttrs("FieldPriorityMoveImmunityAbAttr", {
