@@ -19,7 +19,6 @@
     // and having to verify whether each individual file is ignored
     "includes": [
       "**",
-      "!**/*.d.ts",
       "!**/dist/**/*",
       "!**/build/**/*",
       "!**/coverage/**/*",
