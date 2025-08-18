@@ -1142,7 +1142,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       this.starterPreferences = loadStarterPreferences();
       this.originalStarterPreferences = loadStarterPreferences();
-      console.log("Loaded", this.originalStarterPreferences);
+      console.log("Loaded", this.originalStarterPreferences[1]);
 
       this.allSpecies.forEach((species, s) => {
         const icon = this.starterContainers[s].icon;
@@ -1164,7 +1164,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         this.setUpgradeAnimation(icon, species);
       });
-      console.log("Initiated", this.originalStarterPreferences);
+      console.log("Initiated", this.originalStarterPreferences[1]);
 
       this.resetFilters();
       this.updateStarters();
@@ -1278,7 +1278,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     if (starterAttributes.tera !== undefined) {
-      if (globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
+      // If somehow we have an illegal tera type, it is reset here
+      if (!(starterAttributes.tera === species.type1 || starterAttributes.tera === species?.type2)) {
+        starterAttributes.tera = species.type1;
+      }
+      // In fresh start challenge, the tera type is always reset to the first one
+      if (globalScene.gameMode.hasChallenge(Challenges.FRESH_START) && !ignoreChallenge) {
         starterAttributes.tera = species.type1;
       }
     }
