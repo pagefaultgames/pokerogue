@@ -3,7 +3,7 @@ import chalk from "chalk";
 import inquirer from "inquirer";
 import { showHelpText } from "./help-message.js";
 
-/** 
+/**
  * @import { Option } from "./main.js"
  */
 
