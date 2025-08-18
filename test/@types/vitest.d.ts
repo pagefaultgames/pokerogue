@@ -22,7 +22,7 @@ import type { expectedStatusType } from "#test/test-utils/matchers/to-have-statu
 import type { toHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
 import type { TurnMove } from "#types/turn-move";
 import type { AtLeastOne } from "#types/type-helpers";
-import type { toDmgValue } from "utils/common";
+import type { toDmgValue } from "#utils/common";
 import type { expect } from "vitest";
 
 declare module "vitest" {
