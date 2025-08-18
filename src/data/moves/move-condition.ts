@@ -1,3 +1,5 @@
+// biome-ignore lint/correctness/noUnusedImports: Used in a tsdoc comment
+import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { allMoves } from "#data/data-lists";
@@ -45,10 +47,27 @@ export class FirstMoveCondition extends MoveCondition {
     return user.tempSummonData.waveTurnCount === 1;
   };
 
+  // TODO: Update AI move selection logic to not require this method at all
+  // Currently, it is used to avoid having the AI select the move if its condition will fail
   getUserBenefitScore(user: Pokemon, _target: Pokemon, _move: Move): number {
     return this.apply(user, _target, _move) ? 10 : -20;
   }
 }
+
+/**
+ * Condition that forces moves to fail against the final boss in classic and the major boss in endless
+ * @remarks
+ * ⚠️ Only works reliably for single-target moves as only one target is provided; should not be used for multi-target moves
+ * @see {@linkcode GameMode.isBattleClassicFinalBoss}
+ * @see {@linkcode GameMode.isEndlessMinorBoss}
+ */
+export const failAgainstFinalBossCondition = new MoveCondition((_user, target) => {
+  const gameMode = globalScene.gameMode;
+  const currentWave = globalScene.currentBattle.waveIndex;
+  return (
+    target.isEnemy() && (gameMode.isBattleClassicFinalBoss(currentWave) || gameMode.isEndlessMinorBoss(currentWave))
+  );
+});
 
 /**
  * Condition used by the move {@link https://bulbapedia.bulbagarden.net/wiki/Upper_Hand_(move) | Upper Hand}.
@@ -56,18 +75,16 @@ export class FirstMoveCondition extends MoveCondition {
  * a high-priority attack (after factoring in priority-boosting effects) and
  * hasn't moved yet this turn.
  */
-export class UpperHandCondition extends MoveCondition {
-  public override readonly func: MoveConditionFunc = (_user, target) => {
-    const targetCommand = globalScene.currentBattle.turnCommands[target.getBattlerIndex()];
-    return (
-      targetCommand?.command === Command.FIGHT &&
-      !target.turnData.acted &&
-      !!targetCommand.move?.move &&
-      allMoves[targetCommand.move.move].category !== MoveCategory.STATUS &&
-      allMoves[targetCommand.move.move].getPriority(target) > 0
-    );
-  };
-}
+export const UpperHandCondition = new MoveCondition((_user, target) => {
+  const targetCommand = globalScene.currentBattle.turnCommands[target.getBattlerIndex()];
+  return (
+    targetCommand?.command === Command.FIGHT &&
+    !target.turnData.acted &&
+    !!targetCommand.move?.move &&
+    allMoves[targetCommand.move.move].category !== MoveCategory.STATUS &&
+    allMoves[targetCommand.move.move].getPriority(target) > 0
+  );
+});
 
 /**
  * A restriction that prevents a move from being selected
