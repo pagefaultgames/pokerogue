@@ -514,7 +514,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
 function getTrainerConfigForWave(waveIndex: number) {
   // Bug type superfan trainer config
   const config = trainerConfigs[TrainerType.BUG_TYPE_SUPERFAN].clone();
-  config.name = i18next.t("trainerNames:bug_type_superfan");
+  config.name = i18next.t("trainerNames:bugTypeSuperfan");
 
   let pool3Copy = POOL_3_POKEMON.slice(0);
   pool3Copy = randSeedShuffle(pool3Copy);

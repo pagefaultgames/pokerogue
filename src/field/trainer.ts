@@ -23,7 +23,7 @@ import {
 } from "#trainers/trainer-party-template";
 import { randSeedInt, randSeedItem, randSeedWeightedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { toCamelCase, toSnakeCase } from "#utils/strings";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export class Trainer extends Phaser.GameObjects.Container {
@@ -208,7 +208,7 @@ export class Trainer extends Phaser.GameObjects.Container {
 
     if (this.config.titleDouble && this.variant === TrainerVariant.DOUBLE && !this.config.doubleOnly) {
       title = this.config.titleDouble;
-      name = i18next.t(`trainerNames:${toSnakeCase(this.config.nameDouble)}`);
+      name = i18next.t(`trainerNames:${toCamelCase(this.config.nameDouble)}`);
     }
 
     console.log(title ? `${title} ${name}` : name);

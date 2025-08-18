@@ -43,7 +43,7 @@ import type {
 } from "#types/trainer-funcs";
 import { coerceArray, isNullOrUndefined, randSeedInt, randSeedIntRange, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { toCamelCase, toSnakeCase, toTitleCase } from "#utils/strings";
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
@@ -288,7 +288,7 @@ export class TrainerConfig {
         initI18n();
       }
       // Set the localized name for the female rival.
-      this.nameFemale = i18next.t("trainerNames:rival_female");
+      this.nameFemale = i18next.t("trainerNames:rivalFemale");
     } else {
       // Otherwise, assign the provided female name.
       this.nameFemale = nameFemale!; // TODO: is this bang correct?
@@ -552,7 +552,7 @@ export class TrainerConfig {
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(coerceArray(speciesPool)));
     });
 
-    const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
+    const nameForCall = toCamelCase(this.name);
     this.name = i18next.t(`trainerNames:${nameForCall}`);
     this.setHasVoucher(false);
     this.setTitle(title);
@@ -577,7 +577,7 @@ export class TrainerConfig {
 
     this.setPartyTemplates(trainerPartyTemplates.ELITE_FOUR);
 
-    const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
+    const nameForCall = toCamelCase(this.name);
     this.name = i18next.t(`trainerNames:${nameForCall}`);
     this.setMoneyMultiplier(2);
     this.setBoss();
@@ -618,7 +618,7 @@ export class TrainerConfig {
       this.setSpeciesFilter(p => p.isOfType(specialtyType));
       this.setSpecialtyType(specialtyType);
     }
-    const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
+    const nameForCall = toCamelCase(this.name);
     this.name = i18next.t(`trainerNames:${nameForCall}`);
     this.setTitle(title);
     this.setMoneyMultiplier(2.5);
@@ -666,7 +666,7 @@ export class TrainerConfig {
     this.setSpecialtyType(specialtyType);
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
-    const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
+    const nameForCall = toCamelCase(this.name);
     this.name = i18next.t(`trainerNames:${nameForCall}`);
 
     // Set the title to "gym_leader". (this is the key in the i18n file)
@@ -727,7 +727,7 @@ export class TrainerConfig {
     }
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
-    const nameForCall = toSnakeCase(this.name);
+    const nameForCall = toCamelCase(this.name);
     this.name = i18next.t(`trainerNames:${nameForCall}`);
 
     // Set the title to "elite_four". (this is the key in the i18n file)
@@ -764,7 +764,7 @@ export class TrainerConfig {
     this.setPartyTemplates(trainerPartyTemplates.CHAMPION);
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
-    const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
+    const nameForCall = toCamelCase(this.name);
     this.name = i18next.t(`trainerNames:${nameForCall}`);
 
     // Set the title to "champion". (this is the key in the i18n file)
@@ -794,7 +794,7 @@ export class TrainerConfig {
     if (!getIsInitialized()) {
       initI18n();
     }
-    this.name = i18next.t(`trainerNames:${name.toLowerCase().replace(/\s/g, "_")}`);
+    this.name = i18next.t(`trainerNames:${toCamelCase(name)}`);
     return this;
   }
 
