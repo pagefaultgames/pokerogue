@@ -1957,6 +1957,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                         handler: () => {
                           this.moveInfoOverlay.clear();
                           this.clearText();
+                          globalScene.gameData.saveSystem().then(success => {
+                            if (!success) {
+                              return globalScene.reset(true);
+                            }
+                          });
                           ui.setMode(UiMode.STARTER_SELECT);
                           return true;
                         },
