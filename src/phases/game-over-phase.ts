@@ -65,8 +65,8 @@ export class GameOverPhase extends BattlePhase {
       const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
       const genderStr = PlayerGender[genderIndex].toLowerCase();
       globalScene.ui.showDialogue(
-        i18next.t("miscDialogue:ending_endless", { context: genderStr }),
-        i18next.t("miscDialogue:ending_name"),
+        i18next.t("miscDialogue:endingEndless", { context: genderStr }),
+        i18next.t("miscDialogue:endingName"),
         0,
         () => this.handleGameOver(),
       );
@@ -119,7 +119,7 @@ export class GameOverPhase extends BattlePhase {
    * game mode and challenges.
    */
   private awardRibbons(): void {
-    let ribbonFlags = 0;
+    let ribbonFlags = 0n;
     if (globalScene.gameMode.isClassic) {
       ribbonFlags |= RibbonData.CLASSIC;
     }
