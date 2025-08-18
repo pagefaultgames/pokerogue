@@ -43,7 +43,7 @@ import type {
 } from "#types/trainer-funcs";
 import { coerceArray, isNullOrUndefined, randSeedInt, randSeedIntRange, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { toSnakeCase, toTitleCase } from "#utils/strings";
+import { toCamelCase, toSnakeCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
@@ -830,9 +830,9 @@ export class TrainerConfig {
           initI18n();
         }
         // Check if the female version exists in the i18n file
-        if (i18next.exists(`trainerClasses:${this.name.toLowerCase()}`)) {
+        if (i18next.exists(`trainerClasses:${toCamelCase(this.name)}Female`)) {
           // If it does, return
-          return ret + "_female";
+          return ret + "Female";
         }
       }
     }
