@@ -64,7 +64,6 @@ jobs:
       - name: Evaluate for Errors
         env:
           BIOME_LINT_OUTCOME: ${{ steps.biome_lint.outcome }}
-          ESLINT_OUTCOME: ${{ steps.eslint.outcome }}
           DEPCRUISE_OUTCOME: ${{ steps.depcruise.outcome }}
           TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
           TYPECHECK_SCRIPTS_OUTCOME: ${{ steps.typecheck-scripts.outcome }}
@@ -92,13 +91,11 @@ jobs:
             }
 
             print_result "Biome" "$BIOME_LINT_OUTCOME"
-            print_result "ESLint" "$ESLINT_OUTCOME"
             print_result "Depcruise" "$DEPCRUISE_OUTCOME"
             print_result "Typecheck" "$TYPECHECK_OUTCOME"
             print_result "Typecheck scripts" "$TYPECHECK_SCRIPTS_OUTCOME"
 
             if [[ "$BIOME_LINT_OUTCOME" != "success" || \
-              "$ESLINT_OUTCOME" != "success" || \
               "$DEPCRUISE_OUTCOME" != "success" || \
               "$TYPECHECK_OUTCOME" != "success" || \
               "$TYPECHECK_SCRIPTS_OUTCOME" != "success" ]]; then
