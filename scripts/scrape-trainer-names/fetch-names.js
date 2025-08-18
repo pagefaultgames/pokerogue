@@ -1,42 +1,28 @@
-import chalk from "chalk";
-import { JSDOM } from "jsdom";
-import { checkGenderAndType } from "./check-gender.js";
-
 /**
- * @import { nameRecord, parsedNames } from "./types.js";
+ * @import { parsedNames } from "./types.js";
  */
 
 /**
- * Fetch a given trainer's names from the given URL.
- * @param {string} url - The URL to parse
- * @param {boolean} [currGender] - The current class' known gender.
- * If provided, will override the natural gender detection with the given gender and avoid
- * checking any gender counterparts.
- * @returns {Promise<parsedNames>} A Promise that resolves with the parsed names once the parsing concludes.
- * Will resolve with an empty array if the name could not be parsed.
+ * An error code for a bad URL.
  */
-export async function fetchNames(url, currGender) {
-  const { document } = (await JSDOM.fromURL(`https://bulbapedia.bulbagarden.net/wiki/${url}_(Trainer_class)`)).window;
-  const trainerListHeader = document.querySelector("#Trainer_list")?.parentElement;
+export const INVALID_URL = "bad_url_code";
+
+/** @type {const} */
+
+/**
+ * Fetch a given trainer's names from the given HTML document.
+ * @param {HTMLElement | null | undefined} trainerListHeader - The header containing the trainer lists
+ * @param {boolean} [knownFemale=false] - Whether the class is known to be female; default `false`
+ * @returns {parsedNames | INVALID_URL}
+ * An object containing the parsed names. \
+ * Will instead return with {@linkcode INVALID_URL} if the data is invalid.
+ */
+export function fetchNames(trainerListHeader, knownFemale = false) {
+  const trainerNames = /** @type {Set<string>} */ (new Set());
+  const femaleTrainerNames = /** @type {Set<string>} */ (new Set());
   if (!trainerListHeader?.parentElement?.childNodes) {
-    console.warn(chalk.hex("#ffa500")(`URL ${url} did not correspond to a valid trainer class!`));
-    return { male: [], female: [] };
-  }
-
-  let trainerNames = /** @type {Set<string>} */ (new Set());
-  let femaleTrainerNames = /** @type {Set<string>} */ (new Set());
-
-  // If we don't know whether this class is female, check, optionally recursing into the counterpart's webpage as well.
-  if (currGender === undefined) {
-    /** @type {string | undefined} */
-    let counterpartURL;
-    [currGender, counterpartURL] = checkGenderAndType(document);
-    if (counterpartURL) {
-      console.log(chalk.green(`Accessing gender counterpart URL: ${counterpartURL}`));
-      const names = await fetchNames(counterpartURL, !currGender);
-      trainerNames = new Set(names.male);
-      femaleTrainerNames = new Set(names.female);
-    }
+    // Return early if no child nodes (ie tables) can be found
+    return INVALID_URL;
   }
 
   const elements = [...trainerListHeader.parentElement.childNodes];
@@ -55,7 +41,7 @@ export async function fetchNames(url, currGender) {
     ),
   );
 
-  parseTable(tables, currGender, trainerNames, femaleTrainerNames);
+  parseTable(tables, knownFemale, trainerNames, femaleTrainerNames);
   return {
     male: Array.from(trainerNames),
     female: Array.from(femaleTrainerNames),

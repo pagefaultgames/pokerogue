@@ -5,3 +5,5 @@
  * @property {string[]} male
  * @property {string[]} female
  */
+
+export {};
