@@ -473,7 +473,7 @@ export class MysteryEncounterUiHandler extends UiHandler {
     const viewPartyText = addBBCodeTextObject(
       globalScene.scaledCanvas.width,
       -24,
-      getBBCodeFrag(i18next.t("mysteryEncounterMessages:view_party_button"), TextStyle.PARTY),
+      getBBCodeFrag(i18next.t("mysteryEncounterMessages:viewPartyButton"), TextStyle.PARTY),
       TextStyle.PARTY,
     );
     this.optionsContainer.add(viewPartyText);
@@ -694,7 +694,7 @@ export class MysteryEncounterUiHandler extends UiHandler {
         duration: 750,
         onComplete: () => {
           this.dexProgressContainer.on("pointerover", () => {
-            globalScene.ui.showTooltip("", i18next.t("mysteryEncounterMessages:affects_pokedex"), true);
+            globalScene.ui.showTooltip("", i18next.t("mysteryEncounterMessages:affectsPokedex"), true);
           });
           this.dexProgressContainer.on("pointerout", () => {
             globalScene.ui.hideTooltip();
