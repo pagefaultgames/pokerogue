@@ -1,5 +1,5 @@
 import { existsSync, writeFileSync } from "node:fs";
-import { format } from "node:util";
+import { format, inspect } from "node:util";
 import chalk from "chalk";
 import inquirer from "inquirer";
 import { JSDOM } from "jsdom";
@@ -20,7 +20,7 @@ import { showHelpText } from "./help-message.js";
  */
 
 const version = "1.0.0";
-const SUPPORTED_ARGS = /** @type {const} */ (["-o", "--outfile", "--outFile"]);
+const OUTFILE_ALIASES = /** @type {const} */ (["-o", "--outfile", "--outFile"]);
 
 /**
  * A large object mapping each "base" trainer name to a list of replacements.
@@ -64,12 +64,12 @@ async function main() {
  */
 function getOutfile(args) {
   let /** @type {string} */ outFile;
-  // Extract the argument as either the form "x=y" or "x y".
-  const hasEquals = args[0]?.match(/^(.*)=(.*)$/g);
+  // Extract the outfile as either the form "-o=y" or "-o y".
+  const hasEquals = /^.*=(.+)$/g.exec(args[0]);
   if (hasEquals) {
-    outFile = hasEquals[2];
+    outFile = hasEquals[1];
     args.splice(0, 1);
-  } else if (/** @type {readonly string[]} */ (SUPPORTED_ARGS).includes(args[0])) {
+  } else if (/** @type {readonly string[]} */ (OUTFILE_ALIASES).includes(args[0])) {
     outFile = args[1];
     args.splice(0, 2);
   } else {
@@ -102,21 +102,48 @@ async function scrapeTrainerNames(classes) {
    */
   const namesTuples = await Promise.all(
     classes.map(async trainerClass => {
-      const [trainerName, names] = await doFetch(trainerClass, seenClasses);
-      const namesObj = names.female.length === 0 ? names.male : names;
-      return /** @type {const} */ ([trainerName, namesObj]);
+      try {
+        const [trainerName, names] = await doFetch(trainerClass, seenClasses);
+        const namesObj = names.female.length === 0 ? names.male : names;
+        return /** @type {const} */ ([trainerName, namesObj]);
+      } catch (e) {
+        if (!(e instanceof Error)) {
+          throw new Error(chalk.red.bold("Unrecognized error detected:", inspect(e)));
+        }
+        // If the error contains an HTTP status, attempt to parse the code to give a more friendly
+        // response than JSDOM's "Resource was not loaded"gi
+        const errCode = /Status: (\d*)/g.exec(e.message)?.[1];
+        if (!errCode) {
+          throw e;
+        }
+        /** @type {string} */
+        let reason;
+        switch (+errCode) {
+          case 404:
+            reason = "Page not found";
+            break;
+          case 403:
+            reason = "Access is forbidden";
+            break;
+          default:
+            reason = `Server produced error code of ${+errCode}`;
+        }
+        throw new Error(
+          chalk.red.bold(`Failed to parse URL for ${chalk.hex("#7fff00")(`\"${trainerClass}\"`)}!\nReason: ${reason}`),
+        );
+      }
     }),
   );
 
   // Grab all keys inside the name replacement map and change them accordingly.
   const mappedNames = namesTuples.filter(tuple => tuple[0] in trainerNamesMap);
-  for (const nameTuple of mappedNames) {
-    const namesMapping = trainerNamesMap[nameTuple[0]];
+  for (const mappedName of mappedNames) {
+    const namesMapping = trainerNamesMap[mappedName[0]];
     namesTuples.splice(
-      namesTuples.indexOf(nameTuple),
+      namesTuples.indexOf(mappedName),
       1,
       ...namesMapping.map(
-        name => /** @type {[keyName: string, names: parsedNames | string[]]} */ ([name, nameTuple[1]]),
+        name => /** @type {[keyName: string, names: parsedNames | string[]]} */ ([name, mappedName[1]]),
       ),
     );
   }
@@ -126,7 +153,7 @@ async function scrapeTrainerNames(classes) {
   /** @type {Record<string, string[] | parsedNames>} */
   const namesRecord = Object.fromEntries(namesTuples);
 
-  // Convert all arrays into objects indexed by the number
+  // Convert all arrays into objects indexed by numbers
   return JSON.stringify(
     namesRecord,
     (_, v) => {
@@ -153,16 +180,20 @@ async function scrapeTrainerNames(classes) {
  */
 async function doFetch(trainerClass, seenClasses) {
   let keyName = toCamelCase(trainerClass);
+  // Bulba URLs are in Pascal_Snake_Case (Pokemon_Breeder)
   const classURL = toPascalSnakeCase(trainerClass);
   seenClasses.add(classURL);
 
-  const { document } = (await JSDOM.fromURL(`https://bulbapedia.bulbagarden.net/wiki/${classURL}_(Trainer_class)`))
-    .window;
+  // Bulbapedia has redirects mapping basically all variant spellings of each trainer name to the corresponding main page.
+  // We thus rely on it
+  const { document } = (await JSDOM.fromURL(`https://bulbapedia.bulbagarden.net/wiki/${classURL}`)).window;
   const trainerListHeader = document.querySelector("#Trainer_list")?.parentElement;
   const [female, counterpartURLs] = checkGenderAndType(document);
   const names = fetchNames(trainerListHeader, female);
   if (names === INVALID_URL) {
-    return Promise.reject(chalk.red.bold(`URL ${classURL} did not correspond to a valid trainer class!`));
+    return Promise.reject(
+      new Error(chalk.red.bold(`URL \"${classURL}\" did not correspond to a valid trainer class!`)),
+    );
   }
 
   // Recurse into all unseen gender counterparts' URLs, using the first male name we find

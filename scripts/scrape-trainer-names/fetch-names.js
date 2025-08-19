@@ -5,9 +5,7 @@
 /**
  * An error code for a bad URL.
  */
-export const INVALID_URL = "bad_url_code";
-
-/** @type {const} */
+export const INVALID_URL = /** @type {const} */ ("bad_url_code");
 
 /**
  * Fetch a given trainer's names from the given HTML document.
