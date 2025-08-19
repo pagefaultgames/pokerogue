@@ -90,7 +90,7 @@ describe("Moves - Dig", () => {
     expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
   });
 
-  it("should not expend PP when the attack phase is cancelled", async () => {
+  it("should expend PP when the attack phase is cancelled", async () => {
     game.override.enemyAbility(AbilityId.NO_GUARD).enemyMoveset(MoveId.SPORE);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
