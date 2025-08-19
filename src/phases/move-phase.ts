@@ -118,7 +118,7 @@ export class MovePhase extends PokemonPhase {
    * 2. Disobedience due to overleveled (not implemented in Pokerogue)
    * 3. Insufficient PP after being selected
    * 4. (Pokerogue specific) Moves disabled because they are not implemented / prevented from a challenge / somehow have no targets
-   * 5. Sky battle (not implemented in Pokerogue)
+   * 5. Sky battle (see {@linkcode https://github.com/pagefaultgames/pokerogue/pull/5983 | PR#5983})
    * 6. Truant
    * 7. Focus Punch's loss of focus
    * 8. Flinch
@@ -165,7 +165,7 @@ export class MovePhase extends PokemonPhase {
    * 2. Move prevented by heal block
    * 3. Move prevented by throat chop
    * 4. Gravity
-   * 5. sky battle (unused in Pokerogue)
+   * 5. Sky Battle (See {@link https://github.com/pagefaultgames/pokerogue/pull/5983 | PR#5983})
    */
   protected followUpMoveFirstFailureCheck(): boolean {
     return (
@@ -304,7 +304,7 @@ export class MovePhase extends PokemonPhase {
 
     const user = this.pokemon;
 
-    // Removing gigaton hammer's two flags *always* happens first
+    // Removing Glaive Rush's two flags *always* happens first
     user.removeTag(BattlerTagType.ALWAYS_GET_HIT);
     user.removeTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE);
     console.log(MoveId[this.move.moveId], enumValueToKey(MoveUseMode, this.useMode));
