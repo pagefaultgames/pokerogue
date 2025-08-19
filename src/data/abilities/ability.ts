@@ -7824,8 +7824,8 @@ export function initAbilities() {
     new Ability(AbilityId.TOXIC_CHAIN, 9)
       .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC),
     new Ability(AbilityId.EMBODY_ASPECT_TEAL, 9)
-      .attr(PostSummonStatStageChangeAbAttr, [ Stat.SPD ], 1, true) //Activiates on switch in when tera'd
-      .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPD ], 1) //Activates mid round when tera'd
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.SPD ], 1, true) //Activiates on switch in when Terastallized
+      .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPD ], 1) //Activates mid round when Terastallized
       .uncopiable()
       .unreplaceable() // TODO is this true?
       .attr(NoTransformAbilityAbAttr)

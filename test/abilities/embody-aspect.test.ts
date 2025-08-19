@@ -1,8 +1,8 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -11,7 +11,7 @@ describe("Ability - Embody Aspect", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  // const teraForm = 4;
+  const teraForm = 4;
   const baseForm = 0;
 
   beforeAll(() => {
@@ -27,6 +27,7 @@ describe("Ability - Embody Aspect", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
+      .moveset([MoveId.SPLASH])
       .ability(AbilityId.EMBODY_ASPECT_TEAL)
       .battleStyle("single")
       .criticalHits(false)
@@ -40,15 +41,13 @@ describe("Ability - Embody Aspect", () => {
     const Ogerpon = game.scene.getPlayerParty()[0];
     expect(Ogerpon.formIndex).toBe(baseForm);
 
-    game.field.forceTera(Ogerpon, PokemonType.GRASS);
-    game.move.use(MoveId.SPLASH);
+    //Also terastallizes Ogerpon
+    game.move.selectWithTera(MoveId.SPLASH);
 
-    // todo: add helper function to activiate tera related abilities
-    // await game.phaseInterceptor.to(QuietFormChangePhase);
-    // expect(Ogerpon.formIndex).toBe(teraForm);
-    // expect(Ogerpon.getStatStage(Stat.SPD)).toBe(1);
-
+    await game.phaseInterceptor.to(QuietFormChangePhase);
+    expect(Ogerpon.formIndex).toBe(teraForm);
     await game.toNextTurn();
+    expect(Ogerpon.getStatStage(Stat.SPD)).toBe(1);
 
     //Switch Ogerpon out
     game.doSwitchPokemon(1);
