@@ -8715,6 +8715,7 @@ export function initMoves() {
       .attr(WeightPowerAttr),
     new AttackMove(MoveId.COUNTER, PokemonType.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, -5, 1)
       .attr(CounterDamageAttr, 2, MoveCategory.PHYSICAL)
+      .attr(CounterRedirectAttr, MoveCategory.PHYSICAL)
       .condition(counterAttackCondition_Physical, 3)
       .target(MoveTarget.ATTACKER),
     new AttackMove(MoveId.SEISMIC_TOSS, PokemonType.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, 0, 1)
