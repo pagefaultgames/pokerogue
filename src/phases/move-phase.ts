@@ -289,9 +289,6 @@ export class MovePhase extends PokemonPhase {
       failed = cancelled.value;
     }
 
-    // TODO: Move this to the Move effect phase where it belongs.
-    failed ||= !move.applyConditions(user, targets[0], 4);
-
     if (failed) {
       this.failMove(failedDueToTerrain);
       return true;
@@ -407,14 +404,8 @@ export class MovePhase extends PokemonPhase {
       return;
     }
 
-    if (this.resolveFinalPreMoveCancellationChecks()) {
-      this.end();
-    }
-
-    if (charging) {
-      this.chargeMove();
-    } else {
-      this.useMove();
+    if (!this.resolveFinalPreMoveCancellationChecks()) {
+      this.useMove(charging);
     }
 
     this.end();
@@ -705,7 +696,7 @@ export class MovePhase extends PokemonPhase {
   /**
    * Clear out two turn moves, then schedule the move to be used if it passes the third failure check
    */
-  protected useMove(): void {
+  protected useMove(charging = false): void {
     const user = this.pokemon;
     // Clear out any two turn moves once they've been used.
     // TODO: Refactor move queues and remove this assignment;
@@ -713,11 +704,39 @@ export class MovePhase extends PokemonPhase {
     // @ts-expect-error - useMode is readonly and shouldn't normally be assigned to
     this.useMode = user.getMoveQueue().shift()?.useMode ?? this.useMode;
 
-    if (user.getTag(BattlerTagType.CHARGING)?.sourceMove === this.move.moveId) {
+    if (!charging && user.getTag(BattlerTagType.CHARGING)?.sourceMove === this.move.moveId) {
       user.lapseTag(BattlerTagType.CHARGING);
     }
 
-    if (!this.thirdFailureCheck()) {
+    if (this.thirdFailureCheck()) {
+      return;
+    }
+
+    const move = this.move.getMove();
+    const opponent = this.getActiveTargetPokemon()[0];
+
+    // After the third failure check, the move is "locked in"
+    // The following things now occur on cartridge
+    // - Heal Bell / Aromatherapy's custom message is queued (but displayed after the move text)
+    // - The message for combined pledge moves is queued
+    // - The custom message for fickle beam is queued
+    // - Gulp missile's form change is triggered IF the user is using dive (surf happens later)
+    // - Protean / Libero trigger the type change and flyout
+
+    // Currently, we only do the libero/protean type change here
+
+    applyAbAttrs("PokemonTypeChangeAbAttr", { pokemon: user, move, opponent });
+
+    // TODO: Move this to the Move effect phase where it belongs.
+    // Fourth failure check happens _after_ protean
+    if (!move.applyConditions(user, opponent, 4)) {
+      this.failMove();
+      return;
+    }
+
+    if (charging) {
+      this.chargeMove();
+    } else {
       this.executeMove();
     }
   }
@@ -726,12 +745,11 @@ export class MovePhase extends PokemonPhase {
   private executeMove() {
     const user = this.pokemon;
     const move = this.move.getMove();
-    const opponent = this.getActiveTargetPokemon()[0];
     const targets = this.targets;
 
     // Trigger ability-based user type changes, display move text and then execute move effects.
     // TODO: Investigate whether PokemonTypeChangeAbAttr can drop the "opponent" parameter
-    applyAbAttrs("PokemonTypeChangeAbAttr", { pokemon: user, move, opponent });
+
     globalScene.phaseManager.unshiftNew("MoveEffectPhase", user.getBattlerIndex(), targets, move, this.useMode);
 
     // Handle Dancer, which triggers immediately after a move is used (rather than waiting on `this.end()`).
@@ -797,22 +815,6 @@ export class MovePhase extends PokemonPhase {
    * Queue a {@linkcode MoveChargePhase} for this phase's invoked move.
    */
   protected chargeMove() {
-    const move = this.move.getMove();
-    const targets = this.getActiveTargetPokemon();
-
-    if (!move.applyConditions(this.pokemon, targets[0])) {
-      this.failMove();
-      return;
-    }
-
-    // Protean and Libero apply on the charging turn of charge moves, even before showing usage text
-    applyAbAttrs("PokemonTypeChangeAbAttr", {
-      pokemon: this.pokemon,
-      move,
-      opponent: targets[0],
-    });
-
-    this.showMoveText();
     globalScene.phaseManager.unshiftNew(
       "MoveChargePhase",
       this.pokemon.getBattlerIndex(),
