@@ -47,9 +47,7 @@ export class MoveCondition {
 
 export class FirstMoveCondition extends MoveCondition {
   constructor() {
-    super(user => {
-      return user.tempSummonData.waveTurnCount === 1;
-    });
+    super(user => user.tempSummonData.waveTurnCount === 1);
   }
 
   // TODO: Update AI move selection logic to not require this method at all
@@ -212,11 +210,11 @@ class CounterAttackConditon extends MoveCondition {
 }
 
 /** Condition check for counterattacks that proc againt physical moves */
-export const counterAttackCondition_Physical = new CounterAttackConditon(MoveCategory.PHYSICAL);
+export const counterAttackConditionPhysical = new CounterAttackConditon(MoveCategory.PHYSICAL);
 /** Condition check for counterattacks that proc against special moves*/
-export const counterAttackCondition_Special = new CounterAttackConditon(MoveCategory.SPECIAL);
+export const counterAttackConditionSpecial = new CounterAttackConditon(MoveCategory.SPECIAL);
 /** Condition check for counterattacks that proc against moves regardless of damage type */
-export const counterAttackCondition_Both = new CounterAttackConditon();
+export const counterAttackConditionBoth = new CounterAttackConditon();
 
 /**
  * A restriction that prevents a move from being selected

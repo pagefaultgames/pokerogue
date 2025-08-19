@@ -8,7 +8,7 @@ export enum BattlerTagLapseType {
   // TODO: This is unused...
   FAINT,
   /**
-   * Tag activate before the holder uses a non-virtual move, after passing the first failure check sequence during the
+   * Tag activates before the holder uses a non-virtual move, after passing the first failure check sequence during the
    * move phase.
    * @see MoveUseMode for more information
    */
