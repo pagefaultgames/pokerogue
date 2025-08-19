@@ -3187,19 +3187,19 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
 }
 
 /**
- * Attribute to add the {@linkcode BattlerTagType.BYPASS_SLEEP | BYPASS_SLEEP Battler Tag} for 1 turn to the user before move use.
+ * Attribute checked during the `MovePhase`'s {@linkcode MovePhase.checkSleep | checkSleep} failure sequence to allow
+ * the move to bypass the sleep condition
  * Used by {@linkcode MoveId.SNORE} and {@linkcode MoveId.SLEEP_TALK}.
  */
-// TODO: Should this use a battler tag?
 // TODO: Give this `userSleptOrComatoseCondition` by default
 export class BypassSleepAttr extends MoveAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.status?.effect === StatusEffect.SLEEP) {
-      user.addTag(BattlerTagType.BYPASS_SLEEP, 1, move.id, user.id);
-      return true;
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [BooleanHolder, ...any[]]): boolean {
+    const bypassSleep = args[0];
+    if (bypassSleep.value) {
+      return false;
     }
-
-    return false;
+    bypassSleep.value = true;
+    return true
   }
 
   /**

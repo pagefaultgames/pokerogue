@@ -182,15 +182,13 @@ export class MovePhase extends PokemonPhase {
    * - If the user is asleep but can use the move, the sleep animation and message is still shown
    * - If the user is frozen but is thawed from its move, the user's status is cured and the thaw message is shown
    */
-  private post1stFailSleepOrThaw(): void {
+  private doThawCheck(): void {
     const user = this.pokemon;
 
     if (isIgnoreStatus(this.useMode)) {
       return;
     }
-    if (user.status?.effect === StatusEffect.SLEEP) {
-      this.triggerStatus(StatusEffect.SLEEP, false);
-    } else if (this.thaw) {
+    if (this.thaw) {
       this.cureStatus(
         StatusEffect.FREEZE,
         i18next.t("statusEffect:freeze.healByMove", {
@@ -336,9 +334,8 @@ export class MovePhase extends PokemonPhase {
     }
 
     // If the first failure check passes (and this is not a sub-move) then thaw the user if its move will thaw it.
-    // The sleep message and animation should also play if the user is asleep but using a move anyway (snore, sleep talk, etc)
     if (!isFollowUp) {
-      this.post1stFailSleepOrThaw();
+      this.doThawCheck();
     }
 
     // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
@@ -474,32 +471,36 @@ export class MovePhase extends PokemonPhase {
    * @returns Whether the move was cancelled due to sleep
    */
   protected checkSleep(): boolean {
-    if (this.pokemon.status?.effect !== StatusEffect.SLEEP) {
+    const user = this.pokemon;
+    if (user.status?.effect !== StatusEffect.SLEEP) {
       return false;
     }
 
     // For some reason, dancer will immediately wake its user from sleep when triggering
     if (this.useMode === MoveUseMode.INDIRECT) {
-      this.pokemon.resetStatus(false);
+      user.resetStatus(false);
       return false;
     }
 
-    this.pokemon.status.incrementTurn();
-    applyMoveAttrs("BypassSleepAttr", this.pokemon, null, this.move.getMove());
-    const turnsRemaining = new NumberHolder(this.pokemon.status.sleepTurnsRemaining ?? 0);
+    user.status.incrementTurn();
+    const turnsRemaining = new NumberHolder(user.status.sleepTurnsRemaining ?? 0);
     applyAbAttrs("ReduceStatusEffectDurationAbAttr", {
-      pokemon: this.pokemon,
-      statusEffect: this.pokemon.status.effect,
+      pokemon: user,
+      statusEffect: user.status.effect,
       duration: turnsRemaining,
     });
-    this.pokemon.status.sleepTurnsRemaining = turnsRemaining.value;
-    if (this.pokemon.status.sleepTurnsRemaining <= 0) {
+
+    user.status.sleepTurnsRemaining = turnsRemaining.value;
+    if (user.status.sleepTurnsRemaining <= 0) {
       this.cureStatus(StatusEffect.SLEEP);
       return false;
     }
 
-    this.triggerStatus(StatusEffect.SLEEP);
-    return true;
+    const bypassSleepHolder = new BooleanHolder(false);
+    applyMoveAttrs("BypassSleepAttr", this.pokemon, null, this.move.getMove(), bypassSleepHolder);
+    const cancel = !bypassSleepHolder.value;
+    this.triggerStatus(StatusEffect.SLEEP, cancel);
+    return cancel;
   }
 
   /**
