@@ -1168,7 +1168,6 @@ export class PowderTag extends BattlerTag {
     }
 
     // Disable the target's fire type move and damage it (subject to Magic Guard)
-    currentPhase.showMoveText();
     currentPhase.fail();
 
     const idx = pokemon.getBattlerIndex();
