@@ -149,7 +149,6 @@ describe("Inverse Battle", () => {
     expect(enemy.status?.effect).not.toBe(StatusEffect.PARALYSIS);
   });
 
-  // TODO: These should belong to their respective moves' test files, not the inverse battle mechanic itself
   it("Ground type is not immune to Thunder Wave - Thunder Wave against Sandshrew", async () => {
     game.override.moveset([MoveId.THUNDER_WAVE]).enemySpecies(SpeciesId.SANDSHREW);
 

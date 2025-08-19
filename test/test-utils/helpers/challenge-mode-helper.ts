@@ -70,10 +70,21 @@ export class ChallengeModeHelper extends GameManagerHelper {
   }
 
   /**
-   * Transitions to the start of a battle.
-   * @param species - Optional array of species to start the battle with.
+   * Transitions the challenge game to the start of a new battle.
+   * @param species - An array of {@linkcode Species} to summon.
    * @returns A promise that resolves when the battle is started.
+   * @todo This duplicates all its code with the classic mode variant...
    */
+  async startBattle(species: SpeciesId[]): Promise<void>;
+  /**
+   * Transitions the challenge game to the start of a new battle.
+   * Selects 3 daily run starters with a fixed seed of "test"
+   * (see `DailyRunConfig.getDailyRunStarters` in `daily-run.ts` for more info).
+   * @returns A promise that resolves when the battle is started.
+   * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
+   * @todo This duplicates all its code with the classic mode variant...
+   */
+  async startBattle(): Promise<void>;
   async startBattle(species?: SpeciesId[]) {
     await this.runToSummon(species);
 

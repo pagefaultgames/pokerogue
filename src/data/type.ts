@@ -1,15 +1,28 @@
+import { ChallengeType } from "#enums/challenge-type";
 import { PokemonType } from "#enums/pokemon-type";
+import { applyChallenges } from "#utils/challenge-utils";
+import { NumberHolder } from "#utils/common";
 
 export type TypeDamageMultiplier = 0 | 0.125 | 0.25 | 0.5 | 1 | 2 | 4 | 8;
 
+export type SingleTypeDamageMultiplier = 0 | 0.5 | 1 | 2;
+
 /**
- * Get the type effectiveness multiplier of one PokemonType against another.
+ * Get the base type effectiveness of one `PokemonType` against another. \
+ * Accounts for Inverse Battle's reversed type effectiveness, but does not apply any other effects.
  * @param attackType - The {@linkcode PokemonType} of the attacker
  * @param defType - The {@linkcode PokemonType} of the defender
  * @returns The type damage multiplier between the two types;
  * will be either `0`, `0.5`, `1` or `2`.
  */
-export function getTypeDamageMultiplier(attackType: PokemonType, defType: PokemonType): TypeDamageMultiplier {
+export function getTypeDamageMultiplier(attackType: PokemonType, defType: PokemonType): SingleTypeDamageMultiplier {
+  const multi = new NumberHolder(getTypeChartMultiplier(attackType, defType));
+  applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, multi);
+  return multi.value as SingleTypeDamageMultiplier;
+}
+
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This simulates the Pokemon type chart with nested `switch case`s
+function getTypeChartMultiplier(attackType: PokemonType, defType: PokemonType): SingleTypeDamageMultiplier {
   if (attackType === PokemonType.UNKNOWN || defType === PokemonType.UNKNOWN) {
     return 1;
   }
@@ -270,10 +283,7 @@ export function getTypeDamageMultiplier(attackType: PokemonType, defType: Pokemo
     case PokemonType.STELLAR:
       return 1;
   }
-
-  return 1;
 }
-
 /**
  * Retrieve the color corresponding to a specific damage multiplier
  * @returns A color or undefined if the default color should be used

@@ -5395,7 +5395,7 @@ export class FreezeDryAttr extends VariableMoveTypeChartAttr {
 
     // Replace whatever the prior "normal" water effectiveness was with a guaranteed 2x multi
     const normalEff = getTypeDamageMultiplier(moveType, PokemonType.WATER)
-    multiplier.value = 2 * multiplier.value / normalEff;
+    multiplier.value *= 2 / normalEff;
     return true;
   }
 }
@@ -5411,7 +5411,6 @@ export class NeutralDamageAgainstFlyingTypeAttr extends VariableMoveTypeChartAtt
       return false;
     }
     multiplier.value = 1;
-
     return true;
   }
 }
@@ -8147,12 +8146,13 @@ export class UpperHandCondition extends MoveCondition {
 
 /**
  * Attribute used for Conversion 2, to convert the user's type to a random type that resists the target's last used move.
- * Fails if the user already has ALL types that resist the target's last used move.
+ * ~~Fails~~ Does nothing if the user already has ALL types that resist the target's last used move.
  * Fails if the opponent has not used a move yet
- * Fails if the type is unknown or stellar
+ * ~~Fails~~ Does nothing if the type is unknown or stellar
  *
  * TODO:
  * If a move has its type changed (e.g. {@linkcode MoveId.HIDDEN_POWER}), it will check the new type.
+ * Does not fail when it should
  */
 export class ResistLastMoveTypeAttr extends MoveEffectAttr {
   constructor() {
@@ -8182,8 +8182,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
     if (moveData.type === PokemonType.STELLAR || moveData.type === PokemonType.UNKNOWN) {
       return false;
     }
-    const userTypes = user.getTypes();
-    const validTypes = this.getTypeResistances(globalScene.gameMode, moveData.type).filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
+    const validTypes = this.getTypeResistances(user, moveData.type)
     if (!validTypes.length) {
       return false;
     }
@@ -8197,21 +8196,26 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
 
   /**
    * Retrieve the types resisting a given type. Used by Conversion 2
-   * @returns An array populated with Types, or an empty array if no resistances exist (Unknown or Stellar type)
+   * @param moveType - The type of the move having been used
+   * @returns An array containing all types that resist the given move's type
+   * and are not currently shared by the user
    */
-  getTypeResistances(gameMode: GameMode, type: number): PokemonType[] {
-    const typeResistances: PokemonType[] = [];
+  private getTypeResistances(user: Pokemon, moveType: PokemonType): PokemonType[] {
+    const resistances: PokemonType[] = [];
+    const userTypes = user.getTypes(true, true)
 
-    for (let i = 0; i < Object.keys(PokemonType).length; i++) {
-      const multiplier = new NumberHolder(1);
-      multiplier.value = getTypeDamageMultiplier(type, i);
-      applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, multiplier);
-      if (multiplier.value < 1) {
-        typeResistances.push(i);
+
+    for (const type of getEnumValues(PokemonType)) {
+      if (userTypes.includes(type)) {
+        continue;
+      }
+      const multiplier = getTypeDamageMultiplier(moveType, type);
+      if (multiplier < 1) {
+        resistances.push(type);
       }
     }
 
-    return typeResistances;
+    return resistances;
   }
 
   getCondition(): MoveConditionFunc {

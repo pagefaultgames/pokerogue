@@ -94,7 +94,7 @@ describe.sequential("Move - Freeze-Dry", () => {
 
       // Water type terastallized into steel; 0.5x
       enemy.teraType = PokemonType.STEEL;
-      expectEffectiveness([PokemonType.WATER], 2);
+      expectEffectiveness([PokemonType.WATER], 0.5);
     });
 
     it.each<{ name: string; types: typesArray; eff: TypeDamageMultiplier }>([

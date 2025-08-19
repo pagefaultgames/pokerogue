@@ -2520,32 +2520,33 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return this.isTerastallized ? 2 : 1;
     }
 
-    const types = this.getTypes(true, true, undefined, useIllusion);
+    const types = this.getTypes(true, true, false, useIllusion);
     const arena = globalScene.arena;
 
     // Handle flying v ground type immunity without removing flying type so effective types are still effective
     // Related to https://github.com/pagefaultgames/pokerogue/issues/524
-    if (moveType === PokemonType.GROUND && (this.isGrounded() || arena.hasTag(ArenaTagType.GRAVITY))) {
-      const flyingIndex = types.indexOf(PokemonType.FLYING);
-      if (flyingIndex > -1) {
-        types.splice(flyingIndex, 1);
-      }
+    // TODO: Fix once gravity makes pokemon actually grounded
+    if (
+      moveType === PokemonType.GROUND &&
+      types.includes(PokemonType.FLYING) &&
+      (this.isGrounded() || arena.hasTag(ArenaTagType.GRAVITY))
+    ) {
+      types.splice(types.indexOf(PokemonType.FLYING), 1);
     }
 
     const multi = new NumberHolder(1);
     for (const defenderType of types) {
-      const typeMulti = new NumberHolder(getTypeDamageMultiplier(moveType, defenderType));
-      applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, typeMulti);
-      // If the target is immune to the type in question, check for any effects that would ignore said effect
+      const typeMulti = getTypeDamageMultiplier(moveType, defenderType);
+      // If the target is immune to the type in question, check for effects that would ignore said nullification
       // TODO: Review if the `isActive` check is needed anymore
       if (
         source?.isActive(true) &&
-        typeMulti.value === 0 &&
+        typeMulti === 0 &&
         this.checkIgnoreTypeImmunity({ source, simulated, moveType, defenderType })
       ) {
-        typeMulti.value = 1;
+        continue;
       }
-      multi.value *= typeMulti.value;
+      multi.value *= typeMulti;
     }
 
     // Apply any typing changes from Freeze-Dry, etc.
@@ -2554,14 +2555,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     // Handle strong winds lowering effectiveness of types super effective against pure flying
-    const typeMultiplierAgainstFlying = new NumberHolder(getTypeDamageMultiplier(moveType, PokemonType.FLYING));
-    applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, typeMultiplierAgainstFlying);
     if (
       !ignoreStrongWinds &&
       arena.getWeatherType() === WeatherType.STRONG_WINDS &&
       !arena.weather?.isEffectSuppressed() &&
       types.includes(PokemonType.FLYING) &&
-      typeMultiplierAgainstFlying.value === 2
+      getTypeDamageMultiplier(moveType, PokemonType.FLYING) === 2
     ) {
       multi.value /= 2;
       if (!simulated) {
@@ -4326,10 +4325,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       : this.summonData.tags.find(t => t.tagType === tagType);
   }
 
+  findTag<T extends BattlerTag>(tagFilter: (tag: BattlerTag) => tag is T): T | undefined;
+  findTag(tagFilter: (tag: BattlerTag) => boolean): BattlerTag | undefined;
   findTag(tagFilter: (tag: BattlerTag) => boolean) {
     return this.summonData.tags.find(t => tagFilter(t));
   }
 
+  findTags<T extends BattlerTag>(tagFilter: (tag: BattlerTag) => tag is T): T[];
+  findTags(tagFilter: (tag: BattlerTag) => boolean): BattlerTag[];
   findTags(tagFilter: (tag: BattlerTag) => boolean): BattlerTag[] {
     return this.summonData.tags.filter(t => tagFilter(t));
   }
