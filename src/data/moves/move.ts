@@ -82,7 +82,7 @@ import {
 } from "#modifiers/modifier";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSketchMoves, invalidSleepTalkMoves } from "#moves/invalid-moves";
-import { ConsecutiveUseRestriction, counterAttackCondition_Both, counterAttackCondition_Physical, counterAttackCondition_Special, failAgainstFinalBossCondition, FailIfInsufficientHpCondition, failIfTargetNotAttackingCondition, failTeleportCondition, FirstMoveCondition, GravityUseRestriction, lastResortCondition, MoveCondition, MoveRestriction, UpperHandCondition } from "#moves/move-condition";
+import { ConsecutiveUseRestriction, counterAttackConditionBoth, counterAttackConditionPhysical, counterAttackConditionSpecial, failAgainstFinalBossCondition, FailIfInsufficientHpCondition, failIfTargetNotAttackingCondition, failTeleportCondition, FirstMoveCondition, GravityUseRestriction, lastResortCondition, MoveCondition, MoveRestriction, UpperHandCondition } from "#moves/move-condition";
 import { frenzyMissFunc, getCounterAttackTarget, getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { MovePhase } from "#phases/move-phase";
@@ -8717,7 +8717,7 @@ export function initMoves() {
     new AttackMove(MoveId.COUNTER, PokemonType.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, -5, 1)
       .attr(CounterDamageAttr, 2, MoveCategory.PHYSICAL)
       .attr(CounterRedirectAttr, MoveCategory.PHYSICAL)
-      .condition(counterAttackCondition_Physical, 3)
+      .condition(counterAttackConditionPhysical, 3)
       .target(MoveTarget.ATTACKER),
     new AttackMove(MoveId.SEISMIC_TOSS, PokemonType.FIGHTING, MoveCategory.PHYSICAL, -1, 100, 20, -1, 0, 1)
       .attr(LevelDamageAttr),
@@ -9295,7 +9295,7 @@ export function initMoves() {
     new AttackMove(MoveId.MIRROR_COAT, PokemonType.PSYCHIC, MoveCategory.SPECIAL, -1, 100, 20, -1, -5, 2)
       .attr(CounterDamageAttr, 2, MoveCategory.SPECIAL)
       .attr(CounterRedirectAttr, MoveCategory.SPECIAL)
-      .condition(counterAttackCondition_Special, 3)
+      .condition(counterAttackConditionSpecial, 3)
       .target(MoveTarget.ATTACKER),
     new StatusMove(MoveId.PSYCH_UP, PokemonType.NORMAL, -1, 10, -1, 0, 2)
       .ignoresSubstitute()
@@ -9718,7 +9718,7 @@ export function initMoves() {
     new AttackMove(MoveId.METAL_BURST, PokemonType.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
       .attr(CounterDamageAttr, 1.5)
       .attr(CounterRedirectAttr)
-      .condition(counterAttackCondition_Both, 3)
+      .condition(counterAttackConditionBoth, 3)
       .makesContact(false)
       .target(MoveTarget.ATTACKER),
     new AttackMove(MoveId.U_TURN, PokemonType.BUG, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 4)
@@ -11530,7 +11530,7 @@ export function initMoves() {
     new AttackMove(MoveId.COMEUPPANCE, PokemonType.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 9)
       .attr(CounterDamageAttr, 1.5)
       .attr(CounterRedirectAttr)
-      .condition(counterAttackCondition_Both, 3)
+      .condition(counterAttackConditionBoth, 3)
       .target(MoveTarget.ATTACKER),
     new AttackMove(MoveId.AQUA_CUTTER, PokemonType.WATER, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 9)
       .attr(HighCritAttr)
