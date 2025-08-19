@@ -8477,7 +8477,6 @@ const MoveAttrs = Object.freeze({
   VariableTargetAttr,
   AfterYouAttr,
   ForceLastAttr,
-  ,
   ResistLastMoveTypeAttr,
   ExposedMoveAttr,
 });
