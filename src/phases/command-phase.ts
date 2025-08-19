@@ -255,7 +255,7 @@ export class CommandPhase extends FieldPhase {
     // Ternary here ensures we don't compute struggle conditions unless necessary
     const useStruggle = canUse
       ? false
-      : cursor > -1 && !playerPokemon.getMoveset().some(m => m.isUsable(playerPokemon)[0]);
+      : cursor > -1 && !playerPokemon.getMoveset().some(m => m.isUsable(playerPokemon, ignorePP, true)[0]);
 
     if (!canUse && !useStruggle) {
       console.error("Cannot use move:", reason);
