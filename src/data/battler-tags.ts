@@ -815,10 +815,11 @@ export class ConfusedTag extends SerializableBattlerTag {
    * Tick down the confusion duration and, if there are remaining turns, activate the confusion effect
    *
    * @remarks
-   * Rolls the
+   * Handles playing the confusion animation, displaying the message(s), rolling for self-damage, and cancelling the
+   * move phase if the user hurts itself.
    * @param pokemon - The pokemon with this tag
    * @param lapseType - The lapse type
-   * @returns
+   * @returns `true` if the tag should remain active (i.e. `turnCount` > 0)
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     // Duration is only ticked down for PRE_MOVE lapse type
