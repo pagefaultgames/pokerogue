@@ -2,7 +2,6 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
-import { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
 import { PokemonPhase } from "#phases/pokemon-phase";
 
@@ -13,21 +12,14 @@ export class MoveEndPhase extends PokemonPhase {
    * Used to prevent ticking down Encore and similar effects when copying moves.
    */
   private wasFollowUp: boolean;
-  /**
-   * Whether the current move successfully executed and showed usage text.
-   * Used to update the "last move used" tracker after successful move usage.
-   */
-  private passedPreUsageChecks: boolean;
 
   /** Targets from the preceding MovePhase */
   private targets: Pokemon[];
-
-  constructor(battlerIndex: BattlerIndex, targets: Pokemon[], wasFollowUp: boolean, passedPreUsageChecks: boolean) {
+  constructor(battlerIndex: BattlerIndex, targets: Pokemon[], wasFollowUp = false) {
     super(battlerIndex);
 
     this.targets = targets;
     this.wasFollowUp = wasFollowUp;
-    this.passedPreUsageChecks = passedPreUsageChecks;
   }
 
   start() {
@@ -36,12 +28,6 @@ export class MoveEndPhase extends PokemonPhase {
     const pokemon = this.getPokemon();
     if (!this.wasFollowUp && pokemon?.isActive(true)) {
       pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
-    }
-
-    // Update the "last move used" counter for Copycat and co.
-    if (this.passedPreUsageChecks) {
-      // TODO: Make this check a move in flight instead of a hackjob
-      globalScene.currentBattle.lastMove = pokemon.getLastXMoves()[0]?.move ?? MoveId.NONE;
     }
 
     // Remove effects which were set on a Pokemon which removes them on summon (i.e. via Mold Breaker)

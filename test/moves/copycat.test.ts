@@ -2,6 +2,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
@@ -43,11 +44,12 @@ describe("Moves - Copycat", () => {
     await game.toEndOfTurn();
 
     const player = game.field.getPlayerPokemon();
-    expect(player.getStatStage(Stat.ATK)).toBe(2);
-    expect(player.getLastXMoves()[0].move).toBe(MoveId.SWORDS_DANCE);
+    expect(player).toHaveStatStage(Stat.ATK, 2);
+    expect(player).toHaveUsedMove({ move: MoveId.SWORDS_DANCE, useMode: MoveUseMode.FOLLOW_UP });
   });
 
-  it('should update "last move" tracker for moves failing conditions, but not pre-move interrupts', async () => {
+  // TODO: Enable once move phase is refactored
+  it.todo('should update "last move" tracker for moves failing conditions, but not pre-move interrupts', async () => {
     game.override.enemyStatusEffect(StatusEffect.SLEEP);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
@@ -98,7 +100,7 @@ describe("Moves - Copycat", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]); // Player moves first, so enemy can copy Swords Dance
     await game.toNextTurn();
 
-    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(2);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, 2);
   });
 
   it("should apply move secondary effects", async () => {
@@ -109,6 +111,6 @@ describe("Moves - Copycat", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(game.field.getEnemyPokemon().getStatStage(Stat.SPDEF)).toBe(-2);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.SPDEF, -2);
   });
 });

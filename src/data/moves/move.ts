@@ -3131,6 +3131,7 @@ export class OverrideMoveEffectAttr extends MoveAttr {
 /**
  * Attack Move that doesn't hit the turn it is played and doesn't allow for multiple
  * uses on the same target. Examples are Future Sight or Doom Desire.
+ * @extends OverrideMoveEffectAttr
  * @param tagType The {@linkcode ArenaTagType} that will be placed on the field when the move is used
  * @param chargeAnim The {@linkcode ChargeAnim | Charging Animation} used for the move
  * @param chargeText The text to display when the move is used
@@ -3175,6 +3176,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 /**
  * Attribute that cancels the associated move's effects when set to be combined with the user's ally's
  * subsequent move this turn. Used for Grass Pledge, Water Pledge, and Fire Pledge.
+ * @extends OverrideMoveEffectAttr
  */
 export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
   constructor() {

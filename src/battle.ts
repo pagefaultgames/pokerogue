@@ -72,7 +72,6 @@ export class Battle {
   public escapeAttempts = 0;
   /**
    * A tracker of the last {@linkcode MoveId} successfully used this battle.
-   *
    */
   public lastMove: MoveId = MoveId.NONE;
   public battleSeed: string = randomString(16, true);
