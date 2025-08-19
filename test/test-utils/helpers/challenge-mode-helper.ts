@@ -32,12 +32,23 @@ export class ChallengeModeHelper extends GameManagerHelper {
   }
 
   /**
-   * Runs the Challenge game to the summon phase.
-   * @param gameMode - Optional game mode to set.
+   * Runs the challenge game to the summon phase.
+   * @param species - An array of {@linkcode Species} to summon.
    * @returns A promise that resolves when the summon phase is reached.
-   * @todo this duplicates nearly all its code with the classic mode variant...
+   * @todo This duplicates all but 1 line of code from the classic mode variant...
    */
-  private async runToSummon(species?: SpeciesId[]) {
+  async runToSummon(species: SpeciesId[]): Promise<void>;
+  /**
+   * Runs the challenge game to the summon phase.
+   * Selects 3 daily run starters with a fixed seed of "test"
+   * (see `DailyRunConfig.getDailyRunStarters` in `daily-run.ts` for more info).
+   * @returns A promise that resolves when the summon phase is reached.
+   * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
+   * @todo This duplicates all but 1 line of code from the classic mode variant...
+   */
+  async runToSummon(): Promise<void>;
+  async runToSummon(species?: SpeciesId[]): Promise<void>;
+  async runToSummon(species?: SpeciesId[]): Promise<void> {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -52,7 +63,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
       selectStarterPhase.initBattle(starters);
     });
 
-    await this.game.phaseInterceptor.run(EncounterPhase);
+    await this.game.phaseInterceptor.to(EncounterPhase);
     if (overrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }
