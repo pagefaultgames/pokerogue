@@ -104,7 +104,7 @@ describe("Moves - Dig", () => {
     expect(playerPokemon.status?.effect).toBe(StatusEffect.SLEEP);
 
     const playerDig = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.DIG);
-    expect(playerDig?.ppUsed).toBe(0);
+    expect(playerDig?.ppUsed).toBe(1);
   });
 
   it("should cause the user to take double damage from Earthquake", async () => {
