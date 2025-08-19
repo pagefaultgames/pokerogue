@@ -289,6 +289,9 @@ export class MovePhase extends PokemonPhase {
       failed = cancelled.value;
     }
 
+    // TODO: Move this to the Move effect phase where it belongs.
+    failed ||= !move.applyConditions(user, targets[0], 4);
+
     if (failed) {
       this.failMove(failedDueToTerrain);
       return true;
