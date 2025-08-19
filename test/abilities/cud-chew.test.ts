@@ -118,8 +118,10 @@ describe("Abilities - Cud Chew", () => {
       await game.classicMode.startBattle([SpeciesId.FARIGIRAF]);
 
       const farigiraf = game.field.getPlayerPokemon();
+      const enemy = game.field.getEnemyPokemon();
       farigiraf.hp = 1; // needed to allow berry procs
       vi.spyOn(farigiraf, "randBattleSeedInt").mockReturnValue(0);
+      vi.spyOn(enemy, "randBattleSeedInt").mockReturnValue(0);
 
       game.move.select(MoveId.STUFF_CHEEKS);
       await game.toNextTurn();
