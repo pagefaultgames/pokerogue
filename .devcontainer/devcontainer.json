@@ -1,0 +1,61 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+{
+  "name": "Node.js & TypeScript",
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "installDirectlyFromGitHubRelease": true,
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers-extra/features/pnpm:2": {
+      "version": "latest"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // # Formatter configs
+        "editor.defaultFormatter": "biomejs.biome",
+        "editor.tabSize": 2,
+        "editor.insertSpaces": true,
+        "editor.codeActionsOnSave": {
+          "source.addMissingImports.ts": "always",
+          "source.removeUnusedImports": "always",
+          "source.fixAll.biome": "always",
+          "source.organizeImports.biome": "always"
+        },
+        "biome.suggestInstallingGlobally": false,
+
+        // # JS/TS setting overrides
+        "javascript.preferences.importModuleSpecifier": "non-relative",
+        "javascript.preferences.importModuleSpecifierEnding": "index",
+        "javascript.preferGoToSourceDefinition": true,
+        "javascript.updateImportsOnFileMove.enabled": "always",
+
+        "typescript.preferences.importModuleSpecifier": "non-relative",
+        "typescript.preferences.importModuleSpecifierEnding": "index",
+        "typescript.preferGoToSourceDefinition": true,
+        "typescript.updateImportsOnFileMove.enabled": "always",
+
+        "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+
+        // # Miscellaneous
+        "npm.packageManager": "pnpm",
+        "npm.scriptRunner": "pnpm",
+        "vitest.cliArguments": "--no-isolate"
+      },
+      "extensions": [
+        "biomejs.biome",
+        "YoavBls.pretty-ts-errors",
+        "vitest.explorer",
+        "adpyke.codesnap", // Bind to a hotkey (ctrl+\, etc) for best results
+        "aaron-bond.better-comments",
+        "MuTsunTsai.jsdoc-link"
+      ]
+    }
+  },
+  "postCreateCommand": "pnpm install",
+  "forwardPorts": [8000]
+}

@@ -88,7 +88,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
 
         // Only Pokemon that are not KOed/legal can be trained
         const selectableFilter = (pokemon: Pokemon) => {
-          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalid_selection`);
+          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalidSelection`);
         };
 
         return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
@@ -166,7 +166,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        secondOptionPrompt: `${namespace}:option.2.select_prompt`,
+        secondOptionPrompt: `${namespace}:option.2.selectPrompt`,
         selected: [
           {
             text: `${namespace}:option.selected`,
@@ -197,7 +197,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
 
         // Only Pokemon that are not KOed/legal can be trained
         const selectableFilter = (pokemon: Pokemon) => {
-          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalid_selection`);
+          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalidSelection`);
         };
 
         return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
@@ -234,7 +234,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.selectPrompt`,
         selected: [
           {
             text: `${namespace}:option.selected`,
@@ -281,7 +281,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
 
         // Only Pokemon that are not KOed/legal can be trained
         const selectableFilter = (pokemon: Pokemon) => {
-          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalid_selection`);
+          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalidSelection`);
         };
 
         return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);

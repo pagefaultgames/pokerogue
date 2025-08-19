@@ -138,7 +138,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
           heldItemConfig: bossHeldItemConfig,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            queueEncounterMessage(`${namespace}:option.1.boss_enraged`);
+            queueEncounterMessage(`${namespace}:option.1.bossEnraged`);
             globalScene.phaseManager.unshiftNew(
               "StatStageChangePhase",
               pokemon.getBattlerIndex(),
@@ -196,7 +196,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
           party.forEach(p => {
             p.heldItemManager.add(HeldItemId.REVIVER_SEED);
           });
-          queueEncounterMessage(`${namespace}:option.1.food_stash`);
+          queueEncounterMessage(`${namespace}:option.1.foodStash`);
         };
 
         setEncounterRewards({ fillRemaining: true }, undefined, givePartyPokemonReviverSeeds);

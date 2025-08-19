@@ -1184,7 +1184,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
     return i18next.t("abilityTriggers:postDefendTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName,
-      typeName: i18next.t(`pokemonInfo:Type.${PokemonType[this.type]}`),
+      typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.type])}`),
     });
   }
 }
@@ -1749,7 +1749,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
   getTriggerMessage({ pokemon }: AugmentMoveInteractionAbAttrParams, _abilityName: string): string {
     return i18next.t("abilityTriggers:pokemonTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      moveType: i18next.t(`pokemonInfo:Type.${PokemonType[this.moveType]}`),
+      moveType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.moveType])}`),
     });
   }
 }
@@ -6196,7 +6196,9 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
     if (currentTerrain === TerrainType.NONE) {
       return i18next.t("abilityTriggers:pokemonTypeChangeRevert", { pokemonNameWithAffix });
     }
-    const moveType = i18next.t(`pokemonInfo:Type.${PokemonType[this.determineTypeChange(pokemon, currentTerrain)[0]]}`);
+    const moveType = i18next.t(
+      `pokemonInfo:type.${toCamelCase(PokemonType[this.determineTypeChange(pokemon, currentTerrain)[0]])}`,
+    );
     return i18next.t("abilityTriggers:pokemonTypeChange", { pokemonNameWithAffix, moveType });
   }
 }

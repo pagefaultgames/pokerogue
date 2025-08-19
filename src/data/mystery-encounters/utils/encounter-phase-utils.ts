@@ -454,7 +454,7 @@ export function updatePlayerMoney(changeValue: number, playSound = true, showMes
   if (showMessage) {
     if (changeValue < 0) {
       globalScene.phaseManager.queueMessage(
-        i18next.t("mysteryEncounterMessages:paid_money", {
+        i18next.t("mysteryEncounterMessages:paidMoney", {
           amount: -changeValue,
         }),
         null,
@@ -462,7 +462,7 @@ export function updatePlayerMoney(changeValue: number, playSound = true, showMes
       );
     } else {
       globalScene.phaseManager.queueMessage(
-        i18next.t("mysteryEncounterMessages:receive_money", {
+        i18next.t("mysteryEncounterMessages:receiveMoney", {
           amount: changeValue,
         }),
         null,
@@ -535,7 +535,7 @@ export function selectPokemonForOption(
                       return true;
                     },
                     onHover: () => {
-                      showEncounterText(i18next.t("mysteryEncounterMessages:cancel_option"), 0, 0, false);
+                      showEncounterText(i18next.t("mysteryEncounterMessages:cancelOption"), 0, 0, false);
                     },
                   });
 
@@ -668,7 +668,7 @@ export function selectOptionThenPokemon(
           if (onHoverOverCancelOption) {
             onHoverOverCancelOption();
           }
-          showEncounterText(i18next.t("mysteryEncounterMessages:cancel_option"), 0, 0, false);
+          showEncounterText(i18next.t("mysteryEncounterMessages:cancelOption"), 0, 0, false);
         },
       });
 

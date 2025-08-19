@@ -68,7 +68,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       },
       {
         speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue`,
+        text: `${namespace}:introDialogue`,
       },
     ]);
     expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);

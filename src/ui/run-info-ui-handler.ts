@@ -694,7 +694,11 @@ export class RunInfoUiHandler extends UiHandler {
             const typeTextColor = `[color=${TypeColor[typeRule]}]`;
             const typeShadowColor = `[shadow=${TypeShadow[typeRule]}]`;
             const typeText =
-              typeTextColor + typeShadowColor + i18next.t(`pokemonInfo:Type.${typeRule}`)! + "[/color]" + "[/shadow]";
+              typeTextColor +
+              typeShadowColor +
+              i18next.t(`pokemonInfo:type.${toCamelCase(typeRule)}`)! +
+              "[/color]" +
+              "[/shadow]";
             rules.push(typeText);
             break;
           }
@@ -788,15 +792,15 @@ export class RunInfoUiHandler extends UiHandler {
         pStats[i] = isMult < 1 ? pStats[i] + "[color=#40c8f8]↓[/color]" : pStats[i];
         pStats[i] = isMult > 1 ? pStats[i] + "[color=#f89890]↑[/color]" : pStats[i];
       }
-      const hp = i18next.t("pokemonInfo:Stat.HPshortened") + ": " + pStats[0];
-      const atk = i18next.t("pokemonInfo:Stat.ATKshortened") + ": " + pStats[1];
-      const def = i18next.t("pokemonInfo:Stat.DEFshortened") + ": " + pStats[2];
-      const spatk = i18next.t("pokemonInfo:Stat.SPATKshortened") + ": " + pStats[3];
-      const spdef = i18next.t("pokemonInfo:Stat.SPDEFshortened") + ": " + pStats[4];
+      const hp = i18next.t("pokemonInfo:stat.hpShortened") + ": " + pStats[0];
+      const atk = i18next.t("pokemonInfo:stat.atkShortened") + ": " + pStats[1];
+      const def = i18next.t("pokemonInfo:stat.defShortened") + ": " + pStats[2];
+      const spatk = i18next.t("pokemonInfo:stat.spatkShortened") + ": " + pStats[3];
+      const spdef = i18next.t("pokemonInfo:stat.spdefShortened") + ": " + pStats[4];
       const speedLabel =
         currentLanguage === "es-ES" || currentLanguage === "pt_BR"
           ? i18next.t("runHistory:SPDshortened")
-          : i18next.t("pokemonInfo:Stat.SPDshortened");
+          : i18next.t("pokemonInfo:stat.spdShortened");
       const speed = speedLabel + ": " + pStats[5];
       // Column 1: HP Atk Def
       const pokeStatText1 = addBBCodeTextObject(-5, 0, hp, TextStyle.SUMMARY, {

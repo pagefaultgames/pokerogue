@@ -38,7 +38,7 @@ import {
   rgbHexToRgba,
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { toTitleCase } from "#utils/strings";
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 
@@ -963,7 +963,7 @@ export class SummaryUiHandler extends UiHandler {
         this.passiveContainer?.descriptionText?.setVisible(false);
 
         const closeFragment = getBBCodeFrag("", TextStyle.WINDOW_ALT);
-        const rawNature = toTitleCase(Nature[this.pokemon?.getNature()!]); // TODO: is this bang correct?
+        const rawNature = toCamelCase(Nature[this.pokemon?.getNature()!]); // TODO: is this bang correct?
         const nature = `${getBBCodeFrag(toTitleCase(getNatureName(this.pokemon?.getNature()!)), TextStyle.SUMMARY_RED)}${closeFragment}`; // TODO: is this bang correct?
 
         const memoString = i18next.t("pokemonSummary:memoString", {

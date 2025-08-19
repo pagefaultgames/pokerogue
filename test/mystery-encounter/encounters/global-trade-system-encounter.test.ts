@@ -96,7 +96,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.1.label`,
         buttonTooltip: `${namespace}:option.1.tooltip`,
-        secondOptionPrompt: `${namespace}:option.1.trade_options_prompt`,
+        secondOptionPrompt: `${namespace}:option.1.tradeOptionsPrompt`,
       });
     });
 
@@ -208,7 +208,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        secondOptionPrompt: `${namespace}:option.3.trade_options_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.tradeOptionsPrompt`,
       });
     });
 

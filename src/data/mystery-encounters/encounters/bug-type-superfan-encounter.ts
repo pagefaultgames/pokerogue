@@ -192,7 +192,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
     },
     {
       speaker: `${namespace}:speaker`,
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
     },
   ])
   .withOnInit(() => {
@@ -300,7 +300,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabledTooltip`,
       })
       .withPreOptionPhase(async () => {
         // Player shows off their bug types
@@ -321,7 +321,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
-              text: `${namespace}:option.2.selected_0_to_1`,
+              text: `${namespace}:option.2.selected0To1`,
             },
           ];
         } else if (numBugTypes < 4) {
@@ -332,7 +332,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
-              text: `${namespace}:option.2.selected_2_to_3`,
+              text: `${namespace}:option.2.selected2To3`,
             },
           ];
         } else if (numBugTypes < 6) {
@@ -343,7 +343,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
-              text: `${namespace}:option.2.selected_4_to_5`,
+              text: `${namespace}:option.2.selected4To5`,
             },
           ];
         } else {
@@ -386,7 +386,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           encounter.selectedOption!.dialogue!.selected = [
             {
               speaker: `${namespace}:speaker`,
-              text: `${namespace}:option.2.selected_6`,
+              text: `${namespace}:option.2.selected6`,
             },
           ];
         }
@@ -408,17 +408,17 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,
           },
           {
             speaker: `${namespace}:speaker`,
-            text: `${namespace}:option.3.selected_dialogue`,
+            text: `${namespace}:option.3.selectedDialogue`,
           },
         ],
-        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.selectPrompt`,
       })
       .withPreOptionPhase(async (): Promise<boolean> => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -450,7 +450,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
           // If pokemon has valid item, it can be selected
           const hasValidItem = pokemon.getHeldItems().some(item => REQUIRED_ITEMS.some(i => i === item));
           if (!hasValidItem) {
-            return getEncounterText(`${namespace}:option.3.invalid_selection`) ?? null;
+            return getEncounterText(`${namespace}:option.3.invalidSelection`) ?? null;
           }
 
           return null;
@@ -687,7 +687,7 @@ function doBugTypeMoveTutor(): Promise<void> {
   // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO explain
   return new Promise<void>(async resolve => {
     const moveOptions = globalScene.currentBattle.mysteryEncounter!.misc.moveTutorOptions;
-    await showEncounterDialogue(`${namespace}:battle_won`, `${namespace}:speaker`);
+    await showEncounterDialogue(`${namespace}:battleWon`, `${namespace}:speaker`);
 
     const moveInfoOverlay = new MoveInfoOverlay({
       delayVisibility: false,
@@ -722,7 +722,7 @@ function doBugTypeMoveTutor(): Promise<void> {
 
     const result = await selectOptionThenPokemon(
       optionSelectItems,
-      `${namespace}:teach_move_prompt`,
+      `${namespace}:teachMovePrompt`,
       undefined,
       onHoverOverCancel,
     );

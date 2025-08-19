@@ -76,7 +76,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       { text: `${namespace}:intro` },
       {
         speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue`,
+        text: `${namespace}:introDialogue`,
       },
     ]);
     expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
@@ -245,11 +245,11 @@ describe("Clowning Around - Mystery Encounter", () => {
             text: `${namespace}:option.2.selected`,
           },
           {
-            text: `${namespace}:option.2.selected_2`,
+            text: `${namespace}:option.2.selected2`,
           },
           {
             speaker: `${namespace}:speaker`,
-            text: `${namespace}:option.2.selected_3`,
+            text: `${namespace}:option.2.selected3`,
           },
         ],
       });
@@ -314,11 +314,11 @@ describe("Clowning Around - Mystery Encounter", () => {
             text: `${namespace}:option.3.selected`,
           },
           {
-            text: `${namespace}:option.3.selected_2`,
+            text: `${namespace}:option.3.selected2`,
           },
           {
             speaker: `${namespace}:speaker`,
-            text: `${namespace}:option.3.selected_3`,
+            text: `${namespace}:option.3.selected3`,
           },
         ],
       });

@@ -6672,7 +6672,7 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
     user.summonData.types = [ typeChange ];
     user.updateInfo();
 
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), typeName: i18next.t(`pokemonInfo:Type.${PokemonType[typeChange]}`) }));
+    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[typeChange])}`) }));
 
     return true;
   }
@@ -6800,7 +6800,7 @@ export class AddTypeAttr extends MoveEffectAttr {
     target.summonData.addedType = this.type;
     target.updateInfo();
 
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:addType", { typeName: i18next.t(`pokemonInfo:Type.${PokemonType[this.type]}`), pokemonName: getPokemonNameWithAffix(target) }));
+    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:addType", { typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.type])}`), pokemonName: getPokemonNameWithAffix(target) }));
 
     return true;
   }
@@ -6822,7 +6822,7 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
 
     const firstMoveType = target.getMoveset()[0].getMove().type;
     user.summonData.types = [ firstMoveType ];
-    globalScene.phaseManager.queueMessage(i18next.t("battle:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), type: i18next.t(`pokemonInfo:Type.${PokemonType[firstMoveType]}`) }));
+    globalScene.phaseManager.queueMessage(i18next.t("battle:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[firstMoveType])}`) }));
 
     return true;
   }

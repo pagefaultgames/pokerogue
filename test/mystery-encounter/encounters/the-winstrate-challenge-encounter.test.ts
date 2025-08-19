@@ -73,7 +73,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       { text: `${namespace}:intro` },
       {
         speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue`,
+        text: `${namespace}:introDialogue`,
       },
     ]);
     expect(TheWinstrateChallengeEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);

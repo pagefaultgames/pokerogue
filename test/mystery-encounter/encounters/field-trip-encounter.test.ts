@@ -61,7 +61,7 @@ describe("Field Trip - Mystery Encounter", () => {
       },
       {
         speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue`,
+        text: `${namespace}:introDialogue`,
       },
     ]);
     expect(FieldTripEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
@@ -78,7 +78,7 @@ describe("Field Trip - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.1.label`,
         buttonTooltip: `${namespace}:option.1.tooltip`,
-        secondOptionPrompt: `${namespace}:second_option_prompt`,
+        secondOptionPrompt: `${namespace}:secondOptionPrompt`,
       });
     });
 
@@ -139,7 +139,7 @@ describe("Field Trip - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        secondOptionPrompt: `${namespace}:second_option_prompt`,
+        secondOptionPrompt: `${namespace}:secondOptionPrompt`,
       });
     });
 
@@ -200,7 +200,7 @@ describe("Field Trip - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        secondOptionPrompt: `${namespace}:second_option_prompt`,
+        secondOptionPrompt: `${namespace}:secondOptionPrompt`,
       });
     });
 

@@ -165,7 +165,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        secondOptionPrompt: `${namespace}:option.2.select_prompt`,
+        secondOptionPrompt: `${namespace}:option.2.selectPrompt`,
         selected: [
           {
             text: `${namespace}:option.2.selected`,
@@ -286,7 +286,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.selectPrompt`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,
