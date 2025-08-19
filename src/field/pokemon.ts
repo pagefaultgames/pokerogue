@@ -732,7 +732,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract getFieldIndex(): number;
 
-  abstract getBattlerIndex(): Exclude<BattlerIndex, BattlerIndex.ATTACKER>;
+  abstract getBattlerIndex(): BattlerIndex;
 
   /**
    * Load all assets needed for this Pokemon's use in battle
@@ -5805,7 +5805,7 @@ export class PlayerPokemon extends Pokemon {
     return globalScene.getPlayerField().indexOf(this);
   }
 
-  getBattlerIndex(): Exclude<BattlerIndex, BattlerIndex.ATTACKER> {
+  getBattlerIndex(): BattlerIndex {
     return this.getFieldIndex();
   }
 
@@ -6527,7 +6527,7 @@ export class EnemyPokemon extends Pokemon {
               move.category !== MoveCategory.STATUS
               && moveTargets.some(p => {
                 const doesNotFail =
-                  move.applyConditions(this, p) ||
+                  move.applyConditions(this, p, -1) ||
                   [MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id);
                 return (
                   doesNotFail
@@ -6588,7 +6588,7 @@ export class EnemyPokemon extends Pokemon {
                * target score to -20
                */
               if (
-                (move.name.endsWith(" (N)") || !move.applyConditions(this, target)) &&
+                (move.name.endsWith(" (N)") || !move.applyConditions(this, target, -1)) &&
                 ![MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id)
               ) {
                 targetScore = -20;
