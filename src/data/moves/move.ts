@@ -1818,25 +1818,15 @@ export class CounterDamageAttr extends FixedDamageAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.turnData.attacksReceived.find(ar => {
+    const damage = user.turnData.attacksReceived.find(ar => {
       const category = allMoves[ar.move].category;
-      return (category !== MoveCategory.STATUS || areAllies(user.getBattlerIndex(), ar.sourceBattlerIndex))
-    })
-    let damage = 0;
-    const userBattlerIndex = user.getBattlerIndex();
-    for (const ar of user.turnData.attacksReceived) {
-      // TODO: Adjust this for moves with variable damage categories
-      const category = allMoves[ar.move].category;
-      if (category === MoveCategory.STATUS
-        || areAllies(userBattlerIndex, ar.sourceBattlerIndex)
-        || (this.moveFilter && category !== this.moveFilter)) {
-        continue;
-      }
-      damage = ar.damage;
-      break;
-    }
+      return (
+        category !== MoveCategory.STATUS
+        && !areAllies(user.getBattlerIndex(), ar.sourceBattlerIndex)
+        && (this.moveFilter === undefined || category === this.moveFilter)
+    )
+    })?.damage ?? 0;
     (args[0] as NumberHolder).value = toDmgValue(damage * this.multiplier);
-
     return true;
   }
 }
