@@ -729,7 +729,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract getFieldIndex(): number;
 
-  abstract getBattlerIndex(): BattlerIndex;
+  abstract getBattlerIndex(): Exclude<BattlerIndex, BattlerIndex.ATTACKER>;
 
   /**
    * Load all assets needed for this Pokemon's use in battle
@@ -3356,7 +3356,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public trySelectMove(moveIndex: number, ignorePp?: boolean): [boolean, string] {
     const move = this.getMoveset().length > moveIndex ? this.getMoveset()[moveIndex] : null;
-    return move?.isUsable(this, ignorePp) ?? [false, ""];
+    return move?.isUsable(this, ignorePp, true) ?? [false, ""];
   }
 
   showInfo(): void {
@@ -5911,7 +5911,7 @@ export class PlayerPokemon extends Pokemon {
     return globalScene.getPlayerField().indexOf(this);
   }
 
-  getBattlerIndex(): BattlerIndex {
+  getBattlerIndex(): Exclude<BattlerIndex, BattlerIndex.ATTACKER> {
     return this.getFieldIndex();
   }
 
@@ -7036,7 +7036,7 @@ export class EnemyPokemon extends Pokemon {
     return globalScene.getEnemyField().indexOf(this);
   }
 
-  getBattlerIndex(): BattlerIndex {
+  getBattlerIndex(): Exclude<BattlerIndex, BattlerIndex.ATTACKER> {
     return BattlerIndex.ENEMY + this.getFieldIndex();
   }
 
