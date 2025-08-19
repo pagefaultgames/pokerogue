@@ -1,3 +1,5 @@
+import type { MoveUseMode } from "#enums/move-use-mode";
+
 /**
  * Enum representing the possible ways a given BattlerTag can activate and/or tick down.
  * Each tag can have multiple different behaviors attached to different lapse types.
@@ -12,12 +14,13 @@ export enum BattlerTagLapseType {
    */
   MOVE,
   /**
-   * Tag activates during (or just after) the first failure check sequence in the move phase.
+   * Tag activates during (or just after) the first failure check sequence in the move phase
    *
    * @remarks
    *
    * Note tags with this lapse type will lapse immediately after the first failure check sequence,
-   * regardless of whether the move was successful or not.
+   * regardless of whether the move was successful or not, but is skipped if the move is a
+   * {@linkcode MoveUseMode.FOLLOW_UP | follow-up} move.
    * 
    * To only lapse the tag between the first and second failure check sequences, use
    * {@linkcode BattlerTagLapseType.MOVE} instead.
