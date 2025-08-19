@@ -427,7 +427,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     let text = info.name;
 
     if (info.maxDuration > 0) {
-      text += `  ${info.duration}/${info.maxDuration}`;
+      text += `  (${info.duration}/${info.maxDuration})`;
     }
 
     text += "\n";
