@@ -39,6 +39,7 @@ import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { formatMoney, NumberHolder, padInt, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 /**
@@ -422,13 +423,13 @@ export class ChangeTeraTypeReward extends PokemonReward {
 
   get name(): string {
     return i18next.t("modifierType:ModifierType.ChangeTeraTypeModifierType.name", {
-      teraType: i18next.t(`pokemonInfo:Type.${PokemonType[this.teraType]}`),
+      teraType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.teraType])}`),
     });
   }
 
   getDescription(): string {
     return i18next.t("modifierType:ModifierType.ChangeTeraTypeModifierType.description", {
-      teraType: i18next.t(`pokemonInfo:Type.${PokemonType[this.teraType]}`),
+      teraType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.teraType])}`),
     });
   }
 
