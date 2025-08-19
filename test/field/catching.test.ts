@@ -6,6 +6,7 @@ import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
+import { mockI18next } from "#test/test-utils/test-utils";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -43,7 +44,7 @@ async function runPokeballTest(
 
   game.scene.pokeballCounts[ball] = 1;
 
-  const tSpy = vi.spyOn(i18next, "t").mockImplementation((key: string) => key);
+  const tSpy = mockI18next();
 
   game.doThrowPokeball(ball);
 
