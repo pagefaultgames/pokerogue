@@ -95,7 +95,7 @@ describe("Moves - Metronome", () => {
     const player = game.field.getPlayerPokemon();
     vi.spyOn(allMoves[MoveId.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
 
-    game.move.select(MoveId.METRONOME);
+    game.move.use(MoveId.METRONOME);
     await game.toNextTurn();
 
     expect(player.getTag(RechargingTag)).toBeDefined();
@@ -109,29 +109,24 @@ describe("Moves - Metronome", () => {
     const player = game.field.getPlayerPokemon();
     game.move.changeMoveset(player, [MoveId.METRONOME, MoveId.SOLAR_BEAM]);
 
-    const [metronomeMove, solarBeamMove] = player.getMoveset();
-    expect(metronomeMove).toBeDefined();
-    expect(solarBeamMove).toBeDefined();
-
-    game.move.use(MoveId.METRONOME);
+    game.move.select(MoveId.METRONOME);
     await game.move.forceEnemyMove(MoveId.SPITE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     // Solar beam charged up, but did not block Spite from reducing Metronome's PP
-    expect(player.getTag(BattlerTagType.CHARGING)).toBeDefined();
-    const turn1PpUsed = metronomeMove.ppUsed;
-    expect.soft(turn1PpUsed).toBeGreaterThan(1);
-    expect(solarBeamMove.ppUsed).toBe(0);
+    expect(player).toHaveBattlerTag(BattlerTagType.CHARGING);
+    expect(player).toHaveUsedPP(MoveId.METRONOME, 5);
+    expect(player).toHaveUsedPP(MoveId.SOLAR_BEAM, 0);
 
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toNextTurn();
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toEndOfTurn();
 
-    expect(player.getTag(BattlerTagType.CHARGING)).toBeUndefined();
-    const turn2PpUsed = metronomeMove.ppUsed - turn1PpUsed;
-    expect(turn2PpUsed).toBeGreaterThan(1);
-    expect(solarBeamMove.ppUsed).toBe(0);
-    expect(player.getLastXMoves()[0]).toMatchObject({
+    // Should have fired solar beam while still causing spite to consume PP from Metronome
+    expect(player).not.toHaveBattlerTag(BattlerTagType.CHARGING);
+    expect(player).toHaveUsedPP(MoveId.METRONOME, 9);
+    expect(player).toHaveUsedPP(MoveId.SOLAR_BEAM, 0);
+    expect(player).toHaveUsedMove({
       move: MoveId.SOLAR_BEAM,
       result: MoveResult.SUCCESS,
       useMode: MoveUseMode.FOLLOW_UP,
@@ -144,16 +139,16 @@ describe("Moves - Metronome", () => {
 
     const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
     const [leftOpp, rightOpp] = game.scene.getEnemyField();
-    game.move.forceMetronomeMove(MoveId.AROMATIC_MIST);
 
     game.move.use(MoveId.METRONOME, BattlerIndex.PLAYER);
+    game.move.forceMetronomeMove(MoveId.AROMATIC_MIST);
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.toNextTurn();
 
-    expect(rightPlayer.getStatStage(Stat.SPDEF)).toBe(1);
-    expect(leftPlayer.getStatStage(Stat.SPDEF)).toBe(0);
-    expect(leftOpp.getStatStage(Stat.SPDEF)).toBe(0);
-    expect(rightOpp.getStatStage(Stat.SPDEF)).toBe(0);
+    expect(rightPlayer).toHaveStatStage(Stat.SPDEF, 1);
+    expect(leftPlayer).toHaveStatStage(Stat.SPDEF, 0);
+    expect(leftOpp).toHaveStatStage(Stat.SPDEF, 0);
+    expect(rightOpp).toHaveStatStage(Stat.SPDEF, 0);
   });
 
   it("should cause opponent to flee when using Roar", async () => {
@@ -165,11 +160,9 @@ describe("Moves - Metronome", () => {
     game.move.use(MoveId.METRONOME);
     await game.toEndOfTurn();
 
-    const isVisible = enemyPokemon.visible;
-    const hasFled = enemyPokemon.switchOutStatus;
-    expect(isVisible).toBe(false);
-    expect(hasFled).toBe(true);
+    expect(enemyPokemon.visible).toBe(false);
+    expect(enemyPokemon.switchOutStatus).toBe(true);
 
-    await game.toNextTurn();
+    await game.toNextTurn(); // make sure doesn't crash
   });
 });
