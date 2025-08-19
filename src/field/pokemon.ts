@@ -4512,6 +4512,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         // Shouldn't happen
         this.abilityIndex = abilityCount - 1;
       }
+      globalScene.gameData.setPokemonSeen(this, false);
       this.setScale(this.getSpriteScale());
       this.loadAssets().then(() => {
         this.calculateStats();
