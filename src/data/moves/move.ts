@@ -828,7 +828,7 @@ export abstract class Move implements Localizable {
    * @param user - {@linkcode Pokemon} to apply conditions to
    * @param target - {@linkcode Pokemon} to apply conditions to
    * @param move - {@linkcode Move} to apply conditions to
-   * @param sequence - The sequence number where the condition check occurs, or `-1` to check all; defaults to 3. Pass -1 to check all
+   * @param sequence - The sequence number where the condition check occurs, or `-1` to check all; defaults to 4. Pass -1 to check all
    * @returns boolean: false if any of the apply()'s return false, else true
    */
   applyConditions(user: Pokemon, target: Pokemon, sequence: -1 | 2 | 3 | 4  = 4): boolean {
@@ -9007,6 +9007,7 @@ export function initMoves() {
     new AttackMove(MoveId.STRUGGLE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 50, -1, 1, -1, 0, 1)
       .attr(RecoilAttr, true, 0.25, true)
       .attr(TypelessAttr)
+      .attr(PreMoveMessageAttr, (user: Pokemon) => i18next.t("moveTriggers:struggleMessage", { pokemonName: getPokemonNameWithAffix(user) }))
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(MoveId.SKETCH, PokemonType.NORMAL, -1, 1, -1, 0, 2)
       .ignoresSubstitute()

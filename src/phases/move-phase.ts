@@ -258,7 +258,7 @@ export class MovePhase extends PokemonPhase {
    * - Queenly Majesty / Dazzling
    * - Damp (which is handled by move conditions in pokerogue rather than the ability, like queenly majesty / dazzling)
    *
-   * The rest of the failure conditions are marked as sequence 4 and happen in the move effect phase.
+   * The rest of the failure conditions are marked as sequence 4 and *should* happen in the move effect phase (though happen here for now)
    */
   protected thirdFailureCheck(): boolean {
     /**
@@ -319,13 +319,15 @@ export class MovePhase extends PokemonPhase {
     user.turnData.acted = true;
     const useMode = this.useMode;
     const ignoreStatus = isIgnoreStatus(useMode);
+    const isFollowUp = useMode === MoveUseMode.FOLLOW_UP;
     if (!ignoreStatus) {
       this.firstFailureCheck();
       user.lapseTags(BattlerTagLapseType.PRE_MOVE);
       // At this point, called moves should be decided.
       // For now, this comment works as a placeholder until called moves are reworked
       // For correct alignment with mainline, this SHOULD go here, and this phase SHOULD rewrite its own move
-    } else if (useMode === MoveUseMode.FOLLOW_UP) {
+    } else if (isFollowUp) {
+      // Follow up moves need to make sure the called move passes a few of the conditions to continue
       this.followUpMoveFirstFailureCheck();
     }
     // If the first failure check did not pass, then the move is cancelled
@@ -335,29 +337,31 @@ export class MovePhase extends PokemonPhase {
       this.end();
       return;
     }
-    // If this is a follow-up move , at this point, we need to re-check a few conditions
 
     // If the first failure check passes (and this is not a sub-move) then thaw the user if its move will thaw it.
     // The sleep message and animation should also play if the user is asleep but using a move anyway (snore, sleep talk, etc)
-    if (useMode !== MoveUseMode.FOLLOW_UP) {
+    if (!isFollowUp) {
       this.post1stFailSleepOrThaw();
     }
 
     // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
     if (isVirtual(useMode)) {
-      this.pokemon.turnData.hitsLeft = -1;
-      this.pokemon.turnData.hitCount = 0;
+      const turnData = user.turnData;
+      turnData.hitsLeft = -1;
+      turnData.hitCount = 0;
     }
+
+    const pokemonMove = this.move;
 
     // Check move to see if arena.ignoreAbilities should be true.
     if (
-      this.move.getMove().doesFlagEffectApply({
+      pokemonMove.getMove().doesFlagEffectApply({
         flag: MoveFlags.IGNORE_ABILITIES,
-        user: this.pokemon,
-        isFollowUp: isVirtual(this.useMode), // Sunsteel strike and co. don't work when called indirectly
+        user,
+        isFollowUp: isVirtual(useMode), // Sunsteel strike and co. don't work when called indirectly
       })
     ) {
-      globalScene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
+      globalScene.arena.setIgnoreAbilities(true, user.getBattlerIndex());
     }
 
     // At this point, move's type changing and multi-target effects *should* be applied
@@ -367,22 +371,35 @@ export class MovePhase extends PokemonPhase {
     this.resolveRedirectTarget();
     this.resolveCounterAttackTarget();
 
-    // Move is announced
-    this.showMoveText();
-    // Stance change happens
-    const charging = this.move.getMove().isChargingMove() && !this.pokemon.getTag(BattlerTagType.CHARGING);
+    // If this is the *release* turn of the charge move, PP is not deducted
     const move = this.move.getMove();
 
+    const isChargingMove = move.isChargingMove();
+    /** Indicates this is the charging turn of the move */
+    const charging = isChargingMove && !user.getTag(BattlerTagType.CHARGING);
+    /** Indicates this is the release turn of the move */
+    const releasing = isChargingMove && !charging;
+
     // Update the battle's "last move" pointer unless we're currently mimicking a move or triggering Dancer.
-    if (!move.hasAttr("CopyMoveAttr") && !isReflected(this.useMode)) {
+    if (!move.hasAttr("CopyMoveAttr") && !isReflected(useMode)) {
       globalScene.currentBattle.lastMove = move.id;
     }
 
-    // Stance change happens now if the move is about to be executed and is not a charging move
-    if (!charging) {
+    // Charging moves consume PP when they begin charging, *not* when they release
+    if (!releasing) {
       this.usePP();
-      globalScene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
     }
+
+    if (!isFollowUp) {
+      // Gorilla tactics lock in (and choice items if they are ever added)
+      // Stance Change form change
+      // Struggle's "There are no more moves it can use" message
+
+      globalScene.triggerPokemonFormChange(user, SpeciesFormChangePreMoveTrigger);
+      // TODO: apply gorilla tactics
+    }
+
+    this.showMoveText();
 
     if (this.secondFailureCheck()) {
       this.handlePreMoveFailures();
@@ -675,6 +692,7 @@ export class MovePhase extends PokemonPhase {
   }
 
   protected usePP(): void {
+    // If this is the release turn of a charging move, PP shall not be deducted
     if (!isIgnorePP(this.useMode)) {
       const move = this.move;
       // "commit" to using the move, deducting PP.
@@ -684,6 +702,9 @@ export class MovePhase extends PokemonPhase {
     }
   }
 
+  /**
+   * Clear out two turn moves, then schedule the move to be used if it passes the third failure check
+   */
   protected useMove(): void {
     const user = this.pokemon;
     // Clear out any two turn moves once they've been used.
@@ -774,7 +795,6 @@ export class MovePhase extends PokemonPhase {
 
   /**
    * Queue a {@linkcode MoveChargePhase} for this phase's invoked move.
-   * Does NOT consume PP (occurs on the 2nd strike of the move)
    */
   protected chargeMove() {
     const move = this.move.getMove();
