@@ -71,7 +71,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       },
       {
         speaker: "trainerNames:expert_pokemon_breeder",
-        text: `${namespace}:intro_dialogue`,
+        text: `${namespace}:introDialogue`,
       },
     ]);
     expect(TheExpertPokemonBreederEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);

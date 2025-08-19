@@ -46,7 +46,7 @@ describe("Abilities - Healer", () => {
     game.override.moveset([MoveId.SPLASH, MoveId.LUNAR_DANCE]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
 
-    const user = game.scene.getPlayerPokemon()!;
+    const user = game.field.getPlayerPokemon();
     // Only want one magikarp to have the ability
     vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[AbilityId.HEALER]);
     game.move.select(MoveId.SPLASH);

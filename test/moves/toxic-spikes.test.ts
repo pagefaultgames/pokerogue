@@ -86,7 +86,7 @@ describe("Moves - Toxic Spikes", () => {
   it("should be removed if a grounded poison pokemon switches in", async () => {
     await game.classicMode.runToSummon([SpeciesId.MUK, SpeciesId.PIDGEY]);
 
-    const muk = game.scene.getPlayerPokemon()!;
+    const muk = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.TOXIC_SPIKES);
     await game.toNextTurn();

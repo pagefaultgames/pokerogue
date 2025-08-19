@@ -88,23 +88,6 @@ describe("Moves - Metronome", () => {
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   });
 
-  it("should count as last move used for Copycat/Mirror Move", async () => {
-    game.move.forceMetronomeMove(MoveId.ABSORB, true);
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-
-    game.move.use(MoveId.METRONOME);
-    await game.move.forceEnemyMove(MoveId.MIRROR_MOVE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.toNextTurn();
-
-    const player = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
-
-    expect(player.hp).toBeLessThan(player.getMaxHp());
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
-    expect(enemy.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-  });
-
   it("should recharge after using recharge moves", async () => {
     game.move.forceMetronomeMove(MoveId.HYPER_BEAM);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);

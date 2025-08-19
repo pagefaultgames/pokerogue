@@ -41,8 +41,8 @@ describe("Moves - Focus Punch", () => {
   it("should deal damage at the end of turn if uninterrupted", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     const enemyStartingHp = enemyPokemon.hp;
 
@@ -65,8 +65,8 @@ describe("Moves - Focus Punch", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     const enemyStartingHp = enemyPokemon.hp;
 
@@ -89,8 +89,8 @@ describe("Moves - Focus Punch", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.FOCUS_PUNCH);
 

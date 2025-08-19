@@ -1,43 +1,48 @@
+import { getOnelineDiffStr } from "#test/test-utils/string-utils";
+import { receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Matcher to check if an array contains exactly the given items, disregarding order.
- * @param received - The object to check. Should be an array of elements.
- * @returns The result of the matching
+ * Matcher that checks if an array contains exactly the given items, disregarding order.
+ * @param received - The received value. Should be an array of elements
+ * @param expected - The array to check equality with
+ * @returns Whether the matcher passed
  */
-export function toEqualArrayUnsorted(this: MatcherState, received: unknown, expected: unknown): SyncExpectationResult {
+export function toEqualArrayUnsorted(
+  this: MatcherState,
+  received: unknown,
+  expected: unknown[],
+): SyncExpectationResult {
   if (!Array.isArray(received)) {
     return {
       pass: this.isNot,
-      message: () => `Expected an array, but got ${this.utils.stringify(received)}!`,
-    };
-  }
-
-  if (!Array.isArray(expected)) {
-    return {
-      pass: this.isNot,
-      message: () => `Expected to recieve an array, but got ${this.utils.stringify(expected)}!`,
+      message: () => `Expected to receive an array, but got ${receivedStr(received)}!`,
     };
   }
 
   if (received.length !== expected.length) {
     return {
-      pass: this.isNot,
-      message: () => `Expected to recieve array of length ${received.length}, but got ${expected.length}!`,
-      actual: received,
+      pass: false,
+      message: () => `Expected to receive an array of length ${received.length}, but got ${expected.length} instead!`,
       expected,
+      actual: received,
     };
   }
 
-  const gotSorted = received.slice().sort();
-  const wantSorted = expected.slice().sort();
-  const pass = this.equals(gotSorted, wantSorted, [...this.customTesters, this.utils.iterableEquality]);
+  const actualSorted = received.toSorted();
+  const expectedSorted = expected.toSorted();
+  const pass = this.equals(actualSorted, expectedSorted, [...this.customTesters, this.utils.iterableEquality]);
+
+  const actualStr = getOnelineDiffStr.call(this, actualSorted);
+  const expectedStr = getOnelineDiffStr.call(this, expectedSorted);
 
   return {
-    pass: this.isNot !== pass,
+    pass,
     message: () =>
-      `Expected ${this.utils.stringify(received)} to exactly equal ${this.utils.stringify(expected)} without order!`,
-    actual: gotSorted,
-    expected: wantSorted,
+      pass
+        ? `Expected ${actualStr} to NOT exactly equal ${expectedStr} without order, but it did!`
+        : `Expected ${actualStr} to exactly equal ${expectedStr} without order, but it didn't!`,
+    expected: expectedSorted,
+    actual: actualSorted,
   };
 }

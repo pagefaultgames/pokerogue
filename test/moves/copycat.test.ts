@@ -100,7 +100,13 @@ describe("Moves - Copycat", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]); // Player moves first, so enemy can copy Swords Dance
     await game.toNextTurn();
 
-    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, 2);
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy).toHaveUsedMove({
+      move: MoveId.SWORDS_DANCE,
+      result: MoveResult.SUCCESS,
+      useMode: MoveUseMode.FOLLOW_UP,
+    });
+    expect(enemy).toHaveStatStage(Stat.ATK, 2);
   });
 
   it("should apply move secondary effects", async () => {

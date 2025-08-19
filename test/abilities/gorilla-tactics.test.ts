@@ -39,7 +39,7 @@ describe("Abilities - Gorilla Tactics", () => {
   it("boosts the Pokémon's Attack by 50%, but limits the Pokémon to using only one move", async () => {
     await game.classicMode.startBattle([SpeciesId.GALAR_DARMANITAN]);
 
-    const darmanitan = game.scene.getPlayerPokemon()!;
+    const darmanitan = game.field.getPlayerPokemon();
     const initialAtkStat = darmanitan.getStat(Stat.ATK);
 
     game.move.select(MoveId.SPLASH);
@@ -85,7 +85,7 @@ describe("Abilities - Gorilla Tactics", () => {
     game.move.forceMetronomeMove(MoveId.TACKLE);
     await game.classicMode.startBattle([SpeciesId.GALAR_DARMANITAN]);
 
-    const darmanitan = game.scene.getPlayerPokemon()!;
+    const darmanitan = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.METRONOME);
     await game.phaseInterceptor.to("TurnEndPhase");

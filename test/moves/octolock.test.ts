@@ -37,7 +37,7 @@ describe("Moves - Octolock", () => {
   it("lowers DEF and SPDEF stat stages of the target Pokemon by 1 each turn", async () => {
     await game.classicMode.startBattle([SpeciesId.GRAPPLOCT]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     // use Octolock and advance to init phase of next turn to check for stat changes
     game.move.select(MoveId.OCTOLOCK);
@@ -58,7 +58,7 @@ describe("Moves - Octolock", () => {
     game.override.enemyAbility(AbilityId.BIG_PECKS);
     await game.classicMode.startBattle([SpeciesId.GRAPPLOCT]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     // use Octolock and advance to init phase of next turn to check for stat changes
     game.move.select(MoveId.OCTOLOCK);
@@ -72,7 +72,7 @@ describe("Moves - Octolock", () => {
     game.override.enemyAbility(AbilityId.WHITE_SMOKE);
     await game.classicMode.startBattle([SpeciesId.GRAPPLOCT]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     // use Octolock and advance to init phase of next turn to check for stat changes
     game.move.select(MoveId.OCTOLOCK);
@@ -86,7 +86,7 @@ describe("Moves - Octolock", () => {
     game.override.enemyAbility(AbilityId.CLEAR_BODY);
     await game.classicMode.startBattle([SpeciesId.GRAPPLOCT]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     // use Octolock and advance to init phase of next turn to check for stat changes
     game.move.select(MoveId.OCTOLOCK);
@@ -99,7 +99,7 @@ describe("Moves - Octolock", () => {
   it("traps the target pokemon", async () => {
     await game.classicMode.startBattle([SpeciesId.GRAPPLOCT]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     // before Octolock - enemy should not be trapped
     expect(enemyPokemon.findTag(t => t instanceof TrappedTag)).toBeUndefined();
@@ -115,7 +115,7 @@ describe("Moves - Octolock", () => {
     game.override.enemyMoveset(MoveId.OCTOLOCK);
     await game.classicMode.startBattle([SpeciesId.GASTLY]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     // before Octolock - player should not be trapped
     expect(playerPokemon.findTag(t => t instanceof TrappedTag)).toBeUndefined();
@@ -132,7 +132,7 @@ describe("Moves - Octolock", () => {
   it("does not work on pokemon with added ghost type via Trick-or-Treat", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     // before Octolock - pokemon should not be trapped
     expect(enemy.findTag(t => t instanceof TrappedTag)).toBeUndefined();

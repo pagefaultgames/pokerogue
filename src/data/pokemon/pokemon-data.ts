@@ -1,8 +1,9 @@
-import { type BattlerTag, loadBattlerTag } from "#data/battler-tags";
+import type { BattlerTag } from "#data/battler-tags";
+import { loadBattlerTag, SerializableBattlerTag } from "#data/battler-tags";
 import { allSpecies } from "#data/data-lists";
 import type { Gender } from "#data/gender";
 import { PokemonMove } from "#data/moves/pokemon-move";
-import { getPokemonSpeciesForm, type PokemonSpeciesForm } from "#data/pokemon-species";
+import type { PokemonSpeciesForm } from "#data/pokemon-species";
 import type { TypeDamageMultiplier } from "#data/type";
 import type { AbilityId } from "#enums/ability-id";
 import type { BerryType } from "#enums/berry-type";
@@ -15,6 +16,7 @@ import type { IllusionData } from "#types/illusion-data";
 import type { TurnMove } from "#types/turn-move";
 import type { CoerceNullPropertiesToUndefined } from "#types/type-helpers";
 import { isNullOrUndefined } from "#utils/common";
+import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
  * The type that {@linkcode PokemonSpeciesForm} is converted to when an object containing it serializes it.
@@ -160,6 +162,7 @@ export class PokemonSummonData {
 
       if (key === "speciesForm" || key === "fusionSpeciesForm") {
         this[key] = deserializePokemonSpeciesForm(value);
+        continue;
       }
 
       if (key === "illusion" && typeof value === "object") {
@@ -180,6 +183,7 @@ export class PokemonSummonData {
           }
         }
         this[key] = illusionData as IllusionData;
+        continue;
       }
 
       if (key === "moveset") {
@@ -187,9 +191,11 @@ export class PokemonSummonData {
         continue;
       }
 
-      if (key === "tags") {
-        // load battler tags
-        this.tags = value.map((t: BattlerTag) => loadBattlerTag(t));
+      if (key === "tags" && Array.isArray(value)) {
+        // load battler tags, discarding any that are not serializable
+        this.tags = value
+          .map((t: SerializableBattlerTag) => loadBattlerTag(t))
+          .filter((t): t is SerializableBattlerTag => t instanceof SerializableBattlerTag);
         continue;
       }
       this[key] = value;
@@ -247,7 +253,6 @@ export class PokemonTempSummonData {
    * Only currently used for positioning the battle cursor.
    */
   turnCount = 1;
-
   /**
    * The number of turns this pokemon has spent in the active position since the start of the wave
    * without switching out.

@@ -56,15 +56,15 @@ export class PokerogueSessionSavedataApi extends ApiBase {
 
   /**
    * Update a session savedata.
-   * @param params The {@linkcode UpdateSessionSavedataRequest} to send
-   * @param rawSavedata The raw savedata (as `string`)
+   * @param params - The request to send
+   * @param rawSavedata - The raw, unencrypted savedata
    * @returns An error message if something went wrong
    */
-  public async update(params: UpdateSessionSavedataRequest, rawSavedata: string) {
+  public async update(params: UpdateSessionSavedataRequest, rawSavedata: string): Promise<string> {
     try {
       const urlSearchParams = this.toUrlSearchParams(params);
-      const response = await this.doPost(`/savedata/session/update?${urlSearchParams}`, rawSavedata);
 
+      const response = await this.doPost(`/savedata/session/update?${urlSearchParams}`, rawSavedata);
       return await response.text();
     } catch (err) {
       console.warn("Could not update session savedata!", err);

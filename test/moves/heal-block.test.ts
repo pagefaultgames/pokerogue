@@ -1,9 +1,8 @@
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagSide } from "#enums/arena-tag-side";
-import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
+import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
@@ -39,8 +38,8 @@ describe("Moves - Heal Block", () => {
   it("shouldn't stop damage from HP-drain attacks, just HP restoration", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     player.damageAndUpdate(player.getMaxHp() - 1);
 
@@ -57,8 +56,8 @@ describe("Moves - Heal Block", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.ABSORB);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -68,22 +67,25 @@ describe("Moves - Heal Block", () => {
     expect(enemy.isFullHp()).toBe(false);
   });
 
-  it("should stop delayed heals, such as from Wish", async () => {
+  it("should prevent Wish from restoring HP", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
-    player.damageAndUpdate(player.getMaxHp() - 1);
+    player.hp = 1;
 
-    game.move.select(MoveId.WISH);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    game.move.use(MoveId.WISH);
+    await game.toNextTurn();
 
-    expect(game.scene.arena.getTagOnSide(ArenaTagType.WISH, ArenaTagSide.PLAYER)).toBeDefined();
-    while (game.scene.arena.getTagOnSide(ArenaTagType.WISH, ArenaTagSide.PLAYER)) {
-      game.move.select(MoveId.SPLASH);
-      await game.phaseInterceptor.to("TurnEndPhase");
-    }
+    expect(game.scene.arena.positionalTagManager.tags.filter(t => t.tagType === PositionalTagType.WISH)) //
+      .toHaveLength(1);
 
+    game.move.use(MoveId.SPLASH);
+    await game.toNextTurn();
+
+    // wish triggered, but did NOT heal the player
+    expect(game.scene.arena.positionalTagManager.tags.filter(t => t.tagType === PositionalTagType.WISH)) //
+      .toHaveLength(0);
     expect(player.hp).toBe(1);
   });
 
@@ -92,7 +94,7 @@ describe("Moves - Heal Block", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
     player.damageAndUpdate(player.getMaxHp() - 1);
 
@@ -105,7 +107,7 @@ describe("Moves - Heal Block", () => {
   it("should prevent healing from heal-over-time moves", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
     player.damageAndUpdate(player.getMaxHp() - 1);
 
@@ -121,7 +123,7 @@ describe("Moves - Heal Block", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
     player.damageAndUpdate(player.getMaxHp() - 1);
 
@@ -136,7 +138,7 @@ describe("Moves - Heal Block", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     player.damageAndUpdate(player.getMaxHp() - 1);
 
     game.move.select(MoveId.SPLASH);

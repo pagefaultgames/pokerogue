@@ -10,7 +10,7 @@ export class CharSprite extends Phaser.GameObjects.Container {
   public shown: boolean;
 
   constructor() {
-    super(globalScene, globalScene.game.canvas.width / 6 + 32, -42);
+    super(globalScene, globalScene.scaledCanvas.width + 32, -42);
   }
 
   setup(): void {
@@ -49,7 +49,7 @@ export class CharSprite extends Phaser.GameObjects.Container {
 
       globalScene.tweens.add({
         targets: this,
-        x: globalScene.game.canvas.width / 6 - 102,
+        x: globalScene.scaledCanvas.width - 102,
         duration: 750,
         ease: "Cubic.easeOut",
         onComplete: () => {
@@ -95,7 +95,7 @@ export class CharSprite extends Phaser.GameObjects.Container {
 
       globalScene.tweens.add({
         targets: this,
-        x: globalScene.game.canvas.width / 6 + 32,
+        x: globalScene.scaledCanvas.width + 32,
         duration: 750,
         ease: "Cubic.easeIn",
         onComplete: () => {

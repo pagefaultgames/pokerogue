@@ -34,14 +34,14 @@ describe("Moves - Shed Tail", () => {
   it("transfers a Substitute doll to the switched in Pokemon", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
-    const magikarp = game.scene.getPlayerPokemon()!;
+    const magikarp = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SHED_TAIL);
     game.doSelectPartyPokemon(1);
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    const feebas = game.scene.getPlayerPokemon()!;
+    const feebas = game.field.getPlayerPokemon();
     const substituteTag = feebas.getTag(SubstituteTag);
 
     expect(feebas).not.toBe(magikarp);
@@ -55,7 +55,7 @@ describe("Moves - Shed Tail", () => {
   it("should fail if no ally is available to switch in", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const magikarp = game.scene.getPlayerPokemon()!;
+    const magikarp = game.field.getPlayerPokemon();
     expect(game.scene.getPlayerParty().length).toBe(1);
 
     game.move.select(MoveId.SHED_TAIL);

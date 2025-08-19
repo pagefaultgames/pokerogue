@@ -36,8 +36,8 @@ describe("Moves - Guard Split", () => {
     game.override.enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([SpeciesId.INDEEDEE]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     const avgDef = Math.floor((player.getStat(Stat.DEF, false) + enemy.getStat(Stat.DEF, false)) / 2);
     const avgSpDef = Math.floor((player.getStat(Stat.SPDEF, false) + enemy.getStat(Stat.SPDEF, false)) / 2);
@@ -56,8 +56,8 @@ describe("Moves - Guard Split", () => {
     game.override.enemyMoveset([MoveId.GUARD_SPLIT]);
     await game.classicMode.startBattle([SpeciesId.INDEEDEE]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     const avgDef = Math.floor((player.getStat(Stat.DEF, false) + enemy.getStat(Stat.DEF, false)) / 2);
     const avgSpDef = Math.floor((player.getStat(Stat.SPDEF, false) + enemy.getStat(Stat.SPDEF, false)) / 2);

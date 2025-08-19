@@ -131,7 +131,7 @@ describe("Moves - Disable", () => {
     game.move.forceMetronomeMove(MoveId.ABSORB);
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    const playerMon = game.scene.getPlayerPokemon()!;
+    const playerMon = game.field.getPlayerPokemon();
     playerMon.pushMoveHistory({ move: MoveId.SPLASH, targets: [BattlerIndex.ENEMY], useMode: MoveUseMode.NORMAL });
     game.scene.currentBattle.lastMove = MoveId.SPLASH;
 
@@ -140,7 +140,7 @@ describe("Moves - Disable", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    const enemyMon = game.scene.getEnemyPokemon()!;
+    const enemyMon = game.field.getEnemyPokemon();
     expect(enemyMon.isMoveRestricted(moveId), `calling move ${MoveId[moveId]} was not disabled`).toBe(true);
     expect(enemyMon.getLastXMoves(-1)).toHaveLength(2);
     const calledMove = enemyMon.getLastXMoves()[0].move;

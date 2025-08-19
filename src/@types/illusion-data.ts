@@ -11,7 +11,7 @@ export interface IllusionData {
   /** The name of pokemon featured in the illusion */
   name: string;
   /** The nickname of the pokemon featured in the illusion */
-  nickname: string;
+  nickname?: string;
   /** Whether the pokemon featured in the illusion is shiny or not */
   shiny: boolean;
   /** The variant of the pokemon featured in the illusion */

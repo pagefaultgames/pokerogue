@@ -38,7 +38,7 @@ describe("Moves - Parting Shot", () => {
     game.override.enemySpecies(SpeciesId.POOCHYENA).ability(AbilityId.PRANKSTER);
     await game.classicMode.startBattle([SpeciesId.MURKROW, SpeciesId.MEOWTH]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon).toBeDefined();
 
     game.move.select(MoveId.PARTING_SHOT);
@@ -53,7 +53,7 @@ describe("Moves - Parting Shot", () => {
     game.override.enemySpecies(SpeciesId.GHOLDENGO).enemyAbility(AbilityId.GOOD_AS_GOLD);
     await game.classicMode.startBattle([SpeciesId.MURKROW, SpeciesId.MEOWTH]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon).toBeDefined();
 
     game.move.select(MoveId.PARTING_SHOT);
@@ -97,7 +97,7 @@ describe("Moves - Parting Shot", () => {
 
       // set up done
       await game.phaseInterceptor.to(TurnInitPhase, false);
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const enemyPokemon = game.field.getEnemyPokemon();
       expect(enemyPokemon).toBeDefined();
 
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-6);
@@ -120,7 +120,7 @@ describe("Moves - Parting Shot", () => {
       game.override.enemySpecies(SpeciesId.ALTARIA).enemyAbility(AbilityId.NONE).enemyMoveset([MoveId.MIST]);
       await game.classicMode.startBattle([SpeciesId.SNORLAX, SpeciesId.MEOWTH]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const enemyPokemon = game.field.getEnemyPokemon();
       expect(enemyPokemon).toBeDefined();
 
       game.move.select(MoveId.PARTING_SHOT);
@@ -139,7 +139,7 @@ describe("Moves - Parting Shot", () => {
       game.override.enemySpecies(SpeciesId.TENTACOOL).enemyAbility(AbilityId.CLEAR_BODY);
       await game.classicMode.startBattle([SpeciesId.SNORLAX, SpeciesId.MEOWTH]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const enemyPokemon = game.field.getEnemyPokemon();
       expect(enemyPokemon).toBeDefined();
 
       game.move.select(MoveId.PARTING_SHOT);
@@ -157,7 +157,7 @@ describe("Moves - Parting Shot", () => {
     async () => {
       await game.classicMode.startBattle([SpeciesId.MURKROW]);
 
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const enemyPokemon = game.field.getEnemyPokemon();
       expect(enemyPokemon).toBeDefined();
 
       game.move.select(MoveId.PARTING_SHOT);
@@ -186,7 +186,7 @@ describe("Moves - Parting Shot", () => {
       game.move.select(MoveId.PARTING_SHOT);
 
       await game.phaseInterceptor.to(BerryPhase, false);
-      const enemyPokemon = game.scene.getEnemyPokemon()!;
+      const enemyPokemon = game.field.getEnemyPokemon();
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
       expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MEOWTH);

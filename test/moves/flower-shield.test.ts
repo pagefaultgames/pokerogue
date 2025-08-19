@@ -38,8 +38,8 @@ describe("Moves - Flower Shield", () => {
     game.override.enemySpecies(SpeciesId.CHERRIM);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    const cherrim = game.scene.getEnemyPokemon()!;
-    const magikarp = game.scene.getPlayerPokemon()!;
+    const cherrim = game.field.getEnemyPokemon();
+    const magikarp = game.field.getPlayerPokemon();
 
     expect(magikarp.getStatStage(Stat.DEF)).toBe(0);
     expect(cherrim.getStatStage(Stat.DEF)).toBe(0);
@@ -78,8 +78,8 @@ describe("Moves - Flower Shield", () => {
     game.override.enemySpecies(SpeciesId.PARAS).enemyMoveset(MoveId.DIG).enemyLevel(50);
 
     await game.classicMode.startBattle([SpeciesId.CHERRIM]);
-    const paras = game.scene.getEnemyPokemon()!;
-    const cherrim = game.scene.getPlayerPokemon()!;
+    const paras = game.field.getEnemyPokemon();
+    const cherrim = game.field.getPlayerPokemon();
 
     expect(paras.getStatStage(Stat.DEF)).toBe(0);
     expect(cherrim.getStatStage(Stat.DEF)).toBe(0);
@@ -97,8 +97,8 @@ describe("Moves - Flower Shield", () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    const enemy = game.scene.getEnemyPokemon()!;
-    const ally = game.scene.getPlayerPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
+    const ally = game.field.getPlayerPokemon();
 
     expect(enemy.getStatStage(Stat.DEF)).toBe(0);
     expect(ally.getStatStage(Stat.DEF)).toBe(0);

@@ -16,7 +16,7 @@ import type { Modifier } from "#modifiers/modifier";
 import { getDailyRunStarterModifiers, regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
 import type { SessionSaveData } from "#system/game-data";
 import { vouchers } from "#system/voucher";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
 import { isLocal, isLocalServerConnected, isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
@@ -114,11 +114,11 @@ export class TitlePhase extends Phase {
               });
             }
           }
+          // Cancel button = back to title
           options.push({
             label: i18next.t("menu:cancel"),
             handler: () => {
-              globalScene.phaseManager.clearPhaseQueue();
-              globalScene.phaseManager.pushNew("TitlePhase");
+              globalScene.phaseManager.toTitleScreen();
               super.end();
               return true;
             },
@@ -191,11 +191,12 @@ export class TitlePhase extends Phase {
   initDailyRun(): void {
     globalScene.ui.clearText();
     globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
-      globalScene.phaseManager.clearPhaseQueue();
       if (slotId === -1) {
-        globalScene.phaseManager.pushNew("TitlePhase");
-        return super.end();
+        globalScene.phaseManager.toTitleScreen();
+        super.end();
+        return;
       }
+      globalScene.phaseManager.clearPhaseQueue();
       globalScene.sessionSlotId = slotId;
 
       const generateDaily = (seed: string) => {

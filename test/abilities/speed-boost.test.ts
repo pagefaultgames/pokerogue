@@ -40,7 +40,7 @@ describe("Abilities - Speed Boost", () => {
   it("should increase speed by 1 stage at end of turn", async () => {
     await game.classicMode.startBattle();
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
@@ -53,7 +53,7 @@ describe("Abilities - Speed Boost", () => {
     game.move.select(MoveId.U_TURN);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
 
     game.move.select(MoveId.SPLASH);
@@ -69,13 +69,13 @@ describe("Abilities - Speed Boost", () => {
     game.move.select(MoveId.U_TURN);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
-    expect(game.scene.getPlayerPokemon()!).toBe(ninjask);
+    expect(game.field.getPlayerPokemon()).toBe(ninjask);
     expect(ninjask.getStatStage(Stat.SPD)).toBe(0);
 
     game.move.select(MoveId.U_TURN);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
-    expect(game.scene.getPlayerPokemon()!).toBe(shuckle);
+    expect(game.field.getPlayerPokemon()).toBe(shuckle);
     expect(shuckle.getStatStage(Stat.SPD)).toBe(0);
 
     game.move.select(MoveId.SPLASH);
@@ -88,7 +88,7 @@ describe("Abilities - Speed Boost", () => {
 
     game.doSwitchPokemon(1);
     await game.toNextTurn();
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
 
     game.move.select(MoveId.SPLASH);
@@ -109,7 +109,7 @@ describe("Abilities - Speed Boost", () => {
     await game.phaseInterceptor.to(AttemptRunPhase);
     await game.toNextTurn();
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
 
     game.move.select(MoveId.SPLASH);

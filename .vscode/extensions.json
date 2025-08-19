@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "biomejs.biome",
+    "YoavBls.pretty-ts-errors",
+    "vitest.explorer",
+
+    // This stuff isn't mandatory - it's just nice to have :)
+
+    "adpyke.codesnap", // Bind to a hotkey (ctrl+\, etc) for best results
+    "aaron-bond.better-comments",
+    "MuTsunTsai.jsdoc-link"
+  ]
+}

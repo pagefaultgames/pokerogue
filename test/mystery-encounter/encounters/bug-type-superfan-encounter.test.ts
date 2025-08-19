@@ -181,7 +181,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       },
       {
         speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue`,
+        text: `${namespace}:introDialogue`,
       },
     ]);
     expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
@@ -253,7 +253,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 70 party template", async () => {
-      game.override.startingWave(61);
+      game.override.startingWave(63);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -268,7 +268,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 100 party template", async () => {
-      game.override.startingWave(81);
+      game.override.startingWave(83);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -284,7 +284,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 120 party template", async () => {
-      game.override.startingWave(111);
+      game.override.startingWave(113);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -302,7 +302,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 140 party template", async () => {
-      game.override.startingWave(131);
+      game.override.startingWave(133);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -320,7 +320,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 160 party template", async () => {
-      game.override.startingWave(151);
+      game.override.startingWave(153);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -338,7 +338,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     });
 
     it("should start battle against the Bug-Type Superfan with wave 180 party template", async () => {
-      game.override.startingWave(171);
+      game.override.startingWave(173);
       await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
@@ -389,7 +389,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabledTooltip`,
       });
     });
 
@@ -513,17 +513,17 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,
           },
           {
             speaker: `${namespace}:speaker`,
-            text: `${namespace}:option.3.selected_dialogue`,
+            text: `${namespace}:option.3.selectedDialogue`,
           },
         ],
-        secondOptionPrompt: `${namespace}:option.3.select_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.selectPrompt`,
       });
     });
 

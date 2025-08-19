@@ -79,13 +79,13 @@ const fonts: Array<LoadingFontFaceProperty> = [
     face: new FontFace("emerald", "url(./fonts/pokemon-bw.ttf)", {
       unicodeRange: rangesByLanguage.japanese,
     }),
-    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru"],
+    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "tl"],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/pokemon-bw.ttf)", {
       unicodeRange: rangesByLanguage.japanese,
     }),
-    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru"],
+    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "tl"],
   },
 ];
 
@@ -191,6 +191,7 @@ export async function initI18n(): Promise<void> {
       "tr",
       "ro",
       "ru",
+      "tl",
     ],
     backend: {
       loadPath(lng: string, [ns]: string[]) {

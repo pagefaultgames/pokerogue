@@ -56,8 +56,8 @@ describe("Moves - Assist", () => {
 
     expect(feebas.getLastXMoves()[0].move).toBe(MoveId.TORCH_SONG);
     expect(shuckle.getLastXMoves()[0].move).toBe(MoveId.WOOD_HAMMER);
-    expect(feebas.getStatStage(Stat.SPATK)).toBe(1); // Stat raised from Assist --> Torch Song
-    expect(shuckle.hp).toBeLessThan(shuckle.getMaxHp()); // recoil dmg taken from Assist --> Wood Hammer
+    expect(feebas).toHaveStatStage(Stat.SPATK, 1); // Stat raised from Assist --> Torch Song
+    expect(shuckle).not.toHaveFullHp(); // recoil dmg taken from Assist --> Wood Hammer
 
     expect(feebas.getLastXMoves(-1).map(tm => tm.result)).toEqual([MoveResult.SUCCESS, MoveResult.SUCCESS]);
     expect(shuckle.getLastXMoves(-1).map(tm => tm.result)).toEqual([MoveResult.SUCCESS, MoveResult.SUCCESS]);
@@ -72,8 +72,7 @@ describe("Moves - Assist", () => {
     game.move.use(MoveId.ASSIST);
     await game.toEndOfTurn();
 
-    expect(feebas.getLastXMoves(-1)).toHaveLength(2);
-    expect(feebas.getLastXMoves()[0]).toMatchObject({
+    expect(feebas).toHaveUsedMove({
       move: MoveId.HYPER_BEAM,
       useMode: MoveUseMode.INDIRECT,
       result: MoveResult.SUCCESS,
@@ -89,8 +88,7 @@ describe("Moves - Assist", () => {
     game.move.select(MoveId.ASSIST);
     await game.toEndOfTurn();
 
-    expect(feebas.getLastXMoves(-1)).toHaveLength(1);
-    expect(feebas.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(feebas).toHaveUsedMove({ move: MoveId.ASSIST, result: MoveResult.FAIL });
   });
 
   it("should fail if allies have no eligible moves", async () => {
@@ -103,7 +101,6 @@ describe("Moves - Assist", () => {
     game.move.use(MoveId.ASSIST);
     await game.toEndOfTurn();
 
-    expect(feebas.getLastXMoves(-1)).toHaveLength(1);
-    expect(feebas.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(feebas).toHaveUsedMove({ move: MoveId.ASSIST, result: MoveResult.FAIL });
   });
 });

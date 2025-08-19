@@ -157,7 +157,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
       // Fall asleep waiting for Snorlax
       // Full heal party
       globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
-      queueEncounterMessage(`${namespace}:option.2.rest_result`);
+      queueEncounterMessage(`${namespace}:option.2.restResult`);
       leaveEncounterWithoutBattle();
     },
   )
@@ -167,7 +167,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,

@@ -42,10 +42,10 @@ describe("Abilities - Protosynthesis", () => {
       .startingLevel(100)
       .enemyLevel(100);
     await game.classicMode.startBattle([SpeciesId.MEW]);
-    const mew = game.scene.getPlayerPokemon()!;
+    const mew = game.field.getPlayerPokemon();
     // Nature of starting mon is randomized. We need to fix it to a neutral nature for the automated test.
     mew.setNature(Nature.HARDY);
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     const def_before_boost = mew.getEffectiveStat(
       Stat.DEF,
       undefined,

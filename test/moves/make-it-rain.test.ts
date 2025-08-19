@@ -37,7 +37,7 @@ describe("Moves - Make It Rain", () => {
   it("should only lower SPATK stat stage by 1 once in a double battle", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.MAKE_IT_RAIN);
     game.move.select(MoveId.SPLASH, 1);
@@ -54,8 +54,8 @@ describe("Moves - Make It Rain", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.MAKE_IT_RAIN);
 
@@ -70,7 +70,7 @@ describe("Moves - Make It Rain", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.scene.getEnemyField();
 
     game.move.select(MoveId.MAKE_IT_RAIN);
@@ -85,7 +85,7 @@ describe("Moves - Make It Rain", () => {
   it("should lower SPATK stat stage by 1 if it only hits the second target", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.MAKE_IT_RAIN);
     game.move.select(MoveId.SPLASH, 1);

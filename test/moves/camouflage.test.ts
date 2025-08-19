@@ -37,7 +37,7 @@ describe("Moves - Camouflage", () => {
   it("Camouflage should look at terrain first when selecting a type to change into", async () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.CAMOUFLAGE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);

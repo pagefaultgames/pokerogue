@@ -982,6 +982,10 @@ export function setSetting(setting: string, value: number): boolean {
                 handler: () => changeLocaleHandler("ro"),
               },
               {
+                label: "Tagalog (Needs Help)",
+                handler: () => changeLocaleHandler("tl"),
+              },
+              {
                 label: i18next.t("settings:back"),
                 handler: () => cancelHandler(),
               },

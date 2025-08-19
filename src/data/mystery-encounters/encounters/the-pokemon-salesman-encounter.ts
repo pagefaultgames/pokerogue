@@ -66,7 +66,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
       text: `${namespace}:intro`,
     },
     {
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
       speaker: `${namespace}:speaker`,
     },
   ])
@@ -178,8 +178,8 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
       // Always max price for shiny (flip HA back to normal), and add special messaging
       priceMultiplier = MAX_POKEMON_PRICE_MULTIPLIER;
       pokemon.abilityIndex = 0;
-      encounter.dialogue.encounterOptionsDialogue!.description = `${namespace}:description_shiny`;
-      encounter.options[0].dialogue!.buttonTooltip = `${namespace}:option.1.tooltip_shiny`;
+      encounter.dialogue.encounterOptionsDialogue!.description = `${namespace}:descriptionShiny`;
+      encounter.options[0].dialogue!.buttonTooltip = `${namespace}:option.1.tooltipShiny`;
     }
     const price = globalScene.getWaveMoneyAmount(priceMultiplier);
     encounter.setDialogueToken("purchasePokemon", pokemon.getNameToRender());
@@ -202,7 +202,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
         buttonTooltip: `${namespace}:option.1.tooltip`,
         selected: [
           {
-            text: `${namespace}:option.1.selected_message`,
+            text: `${namespace}:option.1.selectedMessage`,
           },
         ],
       })
@@ -215,7 +215,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
         updatePlayerMoney(-price, true, false);
 
         // Show dialogue
-        await showEncounterDialogue(`${namespace}:option.1.selected_dialogue`, `${namespace}:speaker`);
+        await showEncounterDialogue(`${namespace}:option.1.selectedDialogue`, `${namespace}:speaker`);
         await transitionMysteryEncounterIntroVisuals();
 
         // "Catch" purchased pokemon

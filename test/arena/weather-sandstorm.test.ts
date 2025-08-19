@@ -51,8 +51,8 @@ describe("Weather - Sandstorm", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - Math.max(Math.floor(enemyPokemon.getMaxHp() / 16), 1));
@@ -80,11 +80,11 @@ describe("Weather - Sandstorm", () => {
   it("increases Rock type Pokemon Sp.Def by 50%", async () => {
     await game.classicMode.startBattle([SpeciesId.ROCKRUFF]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     const playerSpdef = playerPokemon.getStat(Stat.SPDEF);
     expect(playerPokemon.getEffectiveStat(Stat.SPDEF)).toBe(Math.floor(playerSpdef * 1.5));
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const enemySpdef = enemyPokemon.getStat(Stat.SPDEF);
     expect(enemyPokemon.getEffectiveStat(Stat.SPDEF)).toBe(enemySpdef);
   });

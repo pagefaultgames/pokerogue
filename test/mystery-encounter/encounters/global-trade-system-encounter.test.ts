@@ -93,12 +93,12 @@ describe("Global Trade System - Mystery Encounter", () => {
   describe("Option 1 - Check Trade Offers", () => {
     it("should have the correct properties", () => {
       const option = GlobalTradeSystemEncounter.options[0];
-      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
+      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.1.label`,
         buttonTooltip: `${namespace}:option.1.tooltip`,
-        secondOptionPrompt: `${namespace}:option.1.trade_options_prompt`,
+        secondOptionPrompt: `${namespace}:option.1.tradeOptionsPrompt`,
       });
     });
 
@@ -154,7 +154,7 @@ describe("Global Trade System - Mystery Encounter", () => {
   describe("Option 2 - Wonder Trade", () => {
     it("should have the correct properties", () => {
       const option = GlobalTradeSystemEncounter.options[1];
-      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);
+      expect(option.optionMode).toBe(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT);
       expect(option.dialogue).toBeDefined();
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.2.label`,
@@ -210,7 +210,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        secondOptionPrompt: `${namespace}:option.3.trade_options_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.tradeOptionsPrompt`,
       });
     });
 

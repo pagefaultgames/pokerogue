@@ -8,19 +8,6 @@ import type { ModalConfig } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
 import i18next from "i18next";
 
-interface LanguageSetting {
-  inputFieldFontSize?: string;
-  warningMessageFontSize?: string;
-  errorMessageFontSize?: string;
-}
-
-const languageSettings: { [key: string]: LanguageSetting } = {
-  "es-ES": {
-    inputFieldFontSize: "50px",
-    errorMessageFontSize: "40px",
-  },
-};
-
 export class RegistrationFormUiHandler extends FormModalUiHandler {
   getModalTitle(_config?: ModalConfig): string {
     return i18next.t("menu:register");
@@ -35,7 +22,7 @@ export class RegistrationFormUiHandler extends FormModalUiHandler {
   }
 
   getButtonTopMargin(): number {
-    return 8;
+    return 12;
   }
 
   getButtonLabels(_config?: ModalConfig): string[] {
@@ -76,18 +63,9 @@ export class RegistrationFormUiHandler extends FormModalUiHandler {
   setup(): void {
     super.setup();
 
-    this.modalContainer.list.forEach((child: Phaser.GameObjects.GameObject) => {
-      if (child instanceof Phaser.GameObjects.Text && child !== this.titleText) {
-        const inputFieldFontSize = languageSettings[i18next.resolvedLanguage!]?.inputFieldFontSize;
-        if (inputFieldFontSize) {
-          child.setFontSize(inputFieldFontSize);
-        }
-      }
-    });
-
-    const warningMessageFontSize = languageSettings[i18next.resolvedLanguage!]?.warningMessageFontSize ?? "42px";
     const label = addTextObject(10, 87, i18next.t("menu:registrationAgeWarning"), TextStyle.TOOLTIP_CONTENT, {
-      fontSize: warningMessageFontSize,
+      fontSize: "42px",
+      wordWrap: { width: 850 },
     });
 
     this.modalContainer.add(label);
@@ -107,10 +85,6 @@ export class RegistrationFormUiHandler extends FormModalUiHandler {
           const onFail = error => {
             globalScene.ui.setMode(UiMode.REGISTRATION_FORM, Object.assign(config, { errorMessage: error?.trim() }));
             globalScene.ui.playError();
-            const errorMessageFontSize = languageSettings[i18next.resolvedLanguage!]?.errorMessageFontSize;
-            if (errorMessageFontSize) {
-              this.errorMessage.setFontSize(errorMessageFontSize);
-            }
           };
           if (!this.inputs[0].text) {
             return onFail(i18next.t("menu:emptyUsername"));

@@ -1,5 +1,5 @@
-import type { EnumOrObject, EnumValues, NormalEnum, TSNumericEnum } from "#app/@types/enum-types";
-import type { InferKeys } from "#app/@types/type-helpers";
+import type { EnumOrObject, NormalEnum, TSNumericEnum } from "#types/enum-types";
+import type { InferKeys, ObjectValues } from "#types/type-helpers";
 
 /**
  * Return the string keys of an Enum object, excluding reverse-mapped numbers.
@@ -61,7 +61,7 @@ export function getEnumValues<E extends EnumOrObject>(enumType: TSNumericEnum<E>
  * If multiple keys map to the same value, the first one (in insertion order) will be retrieved,
  * but the return type will be the union of ALL their corresponding keys.
  */
-export function enumValueToKey<T extends EnumOrObject, V extends EnumValues<T>>(
+export function enumValueToKey<T extends EnumOrObject, V extends ObjectValues<T>>(
   object: NormalEnum<T>,
   val: V,
 ): InferKeys<T, V> {

@@ -36,7 +36,7 @@ describe("Moves - Tera Starstorm", () => {
     game.override.battleStyle("single");
     await game.classicMode.startBattle([SpeciesId.TERAPAGOS]);
 
-    const terapagos = game.scene.getPlayerPokemon()!;
+    const terapagos = game.field.getPlayerPokemon();
     terapagos.isTerastallized = true;
 
     vi.spyOn(terapagos, "getMoveType");

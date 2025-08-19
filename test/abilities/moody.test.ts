@@ -35,7 +35,7 @@ describe("Abilities - Moody", () => {
   it("should increase one stat stage by 2 and decrease a different stat stage by 1", async () => {
     await game.classicMode.startBattle();
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
@@ -52,7 +52,7 @@ describe("Abilities - Moody", () => {
   it("should only increase one stat stage by 2 if all stat stages are at -6", async () => {
     await game.classicMode.startBattle();
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     // Set all stat stages to -6
     vi.spyOn(playerPokemon.summonData, "statStages", "get").mockReturnValue(new Array(BATTLE_STATS.length).fill(-6));
@@ -70,7 +70,7 @@ describe("Abilities - Moody", () => {
   it("should only decrease one stat stage by 1 stage if all stat stages are at 6", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     // Set all stat stages to 6
     vi.spyOn(playerPokemon.summonData, "statStages", "get").mockReturnValue(new Array(BATTLE_STATS.length).fill(6));

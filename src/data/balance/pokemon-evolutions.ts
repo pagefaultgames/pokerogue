@@ -15,6 +15,7 @@ import type { Pokemon } from "#field/pokemon";
 import type { SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#modifiers/modifier-type";
 import { coerceArray, isNullOrUndefined, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export enum SpeciesWildEvolutionDelay {
@@ -133,11 +134,11 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.FRIENDSHIP:
           return i18next.t("pokemonEvolutions:friendship");
         case EvoCondKey.TIME:
-          return i18next.t(`pokemonEvolutions:timeOfDay.${TimeOfDay[cond.time[cond.time.length - 1]]}`); // For Day and Night evos, the key we want goes last
+          return i18next.t(`pokemonEvolutions:timeOfDay.${toCamelCase(TimeOfDay[cond.time[cond.time.length - 1]])}`); // For Day and Night evos, the key we want goes last
         case EvoCondKey.MOVE_TYPE:
-          return i18next.t("pokemonEvolutions:moveType", {type: i18next.t(`pokemonInfo:Type.${PokemonType[cond.pkmnType]}`)});
+          return i18next.t("pokemonEvolutions:moveType", {type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[cond.pkmnType])}`)});
         case EvoCondKey.PARTY_TYPE:
-          return i18next.t("pokemonEvolutions:partyType", {type: i18next.t(`pokemonInfo:Type.${PokemonType[cond.pkmnType]}`)});
+          return i18next.t("pokemonEvolutions:partyType", {type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[cond.pkmnType])}`)});
         case EvoCondKey.GENDER:
           return i18next.t("pokemonEvolutions:gender", {gender: getGenderSymbol(cond.gender)});
         case EvoCondKey.MOVE:
@@ -156,7 +157,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.SPECIES_CAUGHT:
           return i18next.t("pokemonEvolutions:caught", {species: getPokemonSpecies(cond.speciesCaught).name});
         case EvoCondKey.HELD_ITEM:
-          return i18next.t(`pokemonEvolutions:heldItem.${cond.itemKey}`);
+          return i18next.t(`pokemonEvolutions:heldItem.${toCamelCase(cond.itemKey)}`);
       }
     }).filter(s => !isNullOrUndefined(s)); // Filter out stringless conditions
     return this.desc;
@@ -245,7 +246,7 @@ export class SpeciesFormEvolution {
     }
     if (this.item) {
       const itemDescription = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[this.item].toUpperCase()}`);
-      const rarity = this.item > 50 ? i18next.t("pokemonEvolutions:ULTRA") : i18next.t("pokemonEvolutions:GREAT");
+      const rarity = this.item > 50 ? i18next.t("pokemonEvolutions:ultra") : i18next.t("pokemonEvolutions:great");
       strings.push(i18next.t("pokemonEvolutions:using", {item: itemDescription, tier: rarity}));
     }
     if (this.condition) {
@@ -1191,11 +1192,11 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.KOMMO_O, 45, null, null)
   ],
   [SpeciesId.COSMOG]: [
-    new SpeciesEvolution(SpeciesId.COSMOEM, 23, null, null)
+    new SpeciesEvolution(SpeciesId.COSMOEM, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 43}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.COSMOEM]: [
-    new SpeciesEvolution(SpeciesId.SOLGALEO, 1, EvolutionItem.SUN_FLUTE, null, SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesEvolution(SpeciesId.LUNALA, 1, EvolutionItem.MOON_FLUTE, null, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.SOLGALEO, 13, EvolutionItem.SUN_FLUTE, null, SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesEvolution(SpeciesId.LUNALA, 13, EvolutionItem.MOON_FLUTE, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.MELTAN]: [
     new SpeciesEvolution(SpeciesId.MELMETAL, 48, null, null)
@@ -1824,7 +1825,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.ROSELIA, 1, null, [{key: EvoCondKey.FRIENDSHIP, value: 70}, {key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY]}], SpeciesWildEvolutionDelay.SHORT)
   ],
   [SpeciesId.BUNEARY]: [
-    new SpeciesEvolution(SpeciesId.LOPUNNY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 70}, SpeciesWildEvolutionDelay.MEDIUM)
+    new SpeciesEvolution(SpeciesId.LOPUNNY, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 50}, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [SpeciesId.CHINGLING]: [
     new SpeciesEvolution(SpeciesId.CHIMECHO, 1, null, [{key: EvoCondKey.FRIENDSHIP, value: 90}, {key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}], SpeciesWildEvolutionDelay.MEDIUM)
@@ -1866,17 +1867,16 @@ interface PokemonPrevolutions {
 export const pokemonPrevolutions: PokemonPrevolutions = {};
 
 export function initPokemonPrevolutions(): void {
-  const megaFormKeys = [ SpeciesFormKey.MEGA, "", SpeciesFormKey.MEGA_X, "", SpeciesFormKey.MEGA_Y ].map(sfk => sfk as string);
-  const prevolutionKeys = Object.keys(pokemonEvolutions);
-  prevolutionKeys.forEach(pk => {
-    const evolutions = pokemonEvolutions[pk];
+  // TODO: Why do we have empty strings in our array?
+  const megaFormKeys = [ SpeciesFormKey.MEGA, "", SpeciesFormKey.MEGA_X, "", SpeciesFormKey.MEGA_Y ];
+  for (const [pk, evolutions] of Object.entries(pokemonEvolutions)) {
     for (const ev of evolutions) {
       if (ev.evoFormKey && megaFormKeys.indexOf(ev.evoFormKey) > -1) {
         continue;
       }
       pokemonPrevolutions[ev.speciesId] = Number.parseInt(pk) as SpeciesId;
     }
-  });
+  }
 }
 
 

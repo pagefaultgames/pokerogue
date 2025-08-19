@@ -34,7 +34,7 @@ describe("Moves - Miracle Eye", () => {
   it("should allow Psychic moves to hit Dark types", async () => {
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.CONFUSION);
     await game.toNextTurn();

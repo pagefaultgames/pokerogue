@@ -37,7 +37,7 @@ describe("Moves - Telekinesis", () => {
   it("Telekinesis makes the affected vulnerable to most attacking moves regardless of accuracy", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const enemyOpponent = game.scene.getEnemyPokemon()!;
+    const enemyOpponent = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.TELEKINESIS);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -54,7 +54,7 @@ describe("Moves - Telekinesis", () => {
   it("Telekinesis makes the affected airborne and immune to most Ground-moves", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const enemyOpponent = game.scene.getEnemyPokemon()!;
+    const enemyOpponent = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.TELEKINESIS);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -72,7 +72,7 @@ describe("Moves - Telekinesis", () => {
     game.override.enemyMoveset(MoveId.TRANSFORM);
     await game.classicMode.startBattle([SpeciesId.DIGLETT]);
 
-    const enemyOpponent = game.scene.getEnemyPokemon()!;
+    const enemyOpponent = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.TELEKINESIS);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -84,7 +84,7 @@ describe("Moves - Telekinesis", () => {
   it("Moves like Smack Down and 1000 Arrows remove all effects of Telekinesis from the target Pokemon", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const enemyOpponent = game.scene.getEnemyPokemon()!;
+    const enemyOpponent = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.TELEKINESIS);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -102,8 +102,8 @@ describe("Moves - Telekinesis", () => {
     game.override.enemyMoveset([MoveId.SPLASH, MoveId.INGRAIN]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyOpponent = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyOpponent = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.TELEKINESIS);
     await game.move.selectEnemyMove(MoveId.SPLASH);
@@ -134,6 +134,6 @@ describe("Moves - Telekinesis", () => {
     game.doSelectPartyPokemon(1);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.getPlayerPokemon()!.getTag(BattlerTagType.TELEKINESIS)).toBeUndefined();
+    expect(game.field.getPlayerPokemon().getTag(BattlerTagType.TELEKINESIS)).toBeUndefined();
   });
 });

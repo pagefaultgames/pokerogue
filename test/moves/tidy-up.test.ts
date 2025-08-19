@@ -92,7 +92,7 @@ describe("Moves - Tidy Up", () => {
     game.move.select(MoveId.TIDY_UP);
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    const pokemon = [game.scene.getPlayerPokemon()!, game.scene.getEnemyPokemon()!];
+    const pokemon = [game.field.getPlayerPokemon(), game.field.getEnemyPokemon()];
     pokemon.forEach(p => {
       expect(p).toBeDefined();
       expect(p!.getTag(SubstituteTag)).toBeUndefined();
@@ -102,7 +102,7 @@ describe("Moves - Tidy Up", () => {
   it("user's stats are raised with no traps set", async () => {
     await game.classicMode.startBattle();
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
     expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);

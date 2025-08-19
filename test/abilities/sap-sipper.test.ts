@@ -48,7 +48,7 @@ describe("Abilities - Sap Sipper", () => {
   it("should work on grass status moves", async () => {
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.SPORE);
     await game.toNextTurn();
@@ -75,9 +75,8 @@ describe("Abilities - Sap Sipper", () => {
     game.move.use(MoveId.GRASSY_TERRAIN);
     await game.toNextTurn();
 
-    expect(game.scene.arena.terrain).toBeDefined();
-    expect(game.scene.arena.terrain!.terrainType).toBe(TerrainType.GRASSY);
-    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(0);
+    expect(game).toHaveTerrain(TerrainType.GRASSY);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, 0);
   });
 
   it("should trigger and cancel multi-hit moves, including ones called indirectly", async () => {

@@ -254,7 +254,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
             undefined,
             doBerryRewards,
           );
-          await showEncounterText(`${namespace}:option.2.selected_bad`);
+          await showEncounterText(`${namespace}:option.2.selectedBad`);
           await initBattleWithEnemyConfig(config);
           return;
         }

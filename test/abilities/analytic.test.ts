@@ -38,7 +38,7 @@ describe("Abilities - Analytic", () => {
   it("should increase damage if the user moves last", async () => {
     await game.classicMode.startBattle([SpeciesId.ARCEUS]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
