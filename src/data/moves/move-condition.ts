@@ -45,7 +45,9 @@ export class MoveCondition {
 
 export class FirstMoveCondition extends MoveCondition {
   constructor() {
-    super(user => user.tempSummonData.waveTurnCount === 0 && user.tempSummonData.turnCount === 0);
+    super(user => {
+      return user.tempSummonData.waveTurnCount === 1;
+    });
   }
 
   // TODO: Update AI move selection logic to not require this method at all
