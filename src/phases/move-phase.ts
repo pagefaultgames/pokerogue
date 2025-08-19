@@ -135,28 +135,44 @@ export class MovePhase extends PokemonPhase {
    */
   protected firstFailureCheck(): boolean {
     // A big if statement will handle the checks (that each have side effects!) in the correct order
-    if (
+    return (
       this.checkSleep() ||
       this.checkFreeze() ||
       this.checkPP() ||
       this.checkValidity() ||
-      this.checkTagCancel(BattlerTagType.TRUANT, true) ||
+      this.checkTagCancel(BattlerTagType.TRUANT) ||
       this.checkPreUseInterrupt() ||
       this.checkTagCancel(BattlerTagType.FLINCHED) ||
-      this.checkTagCancel(BattlerTagType.DISABLED, true) ||
+      this.checkTagCancel(BattlerTagType.DISABLED) ||
       this.checkTagCancel(BattlerTagType.HEAL_BLOCK) ||
       this.checkTagCancel(BattlerTagType.THROAT_CHOPPED) ||
       this.checkGravity() ||
-      this.checkTagCancel(BattlerTagType.TAUNT, true) ||
+      this.checkTagCancel(BattlerTagType.TAUNT) ||
       this.checkTagCancel(BattlerTagType.IMPRISON) ||
       this.checkTagCancel(BattlerTagType.CONFUSED) ||
       this.checkPara() ||
       this.checkTagCancel(BattlerTagType.INFATUATED)
-    ) {
-      this.handlePreMoveFailures();
-      return true;
-    }
-    return false;
+    );
+  }
+
+  /**
+   * Follow up moves need to check a subset of the first failure checks
+   *
+   * @remarks
+   *
+   * Based on smogon battle mechanics research, checks happen in the following order:
+   * 1. Invalid move (skipped in pokerogue)
+   * 2. Move prevented by heal block
+   * 3. Move prevented by throat chop
+   * 4. Gravity
+   * 5. sky battle (unused in Pokerogue)
+   */
+  protected followUpMoveFirstFailureCheck(): boolean {
+    return (
+      this.checkTagCancel(BattlerTagType.HEAL_BLOCK) ||
+      this.checkTagCancel(BattlerTagType.THROAT_CHOPPED) ||
+      this.checkGravity()
+    );
   }
 
   /**
@@ -299,33 +315,29 @@ export class MovePhase extends PokemonPhase {
     user.turnData.acted = true;
     const useMode = this.useMode;
     const ignoreStatus = isIgnoreStatus(useMode);
-    if (!ignoreStatus && this.firstFailureCheck()) {
-      // Lapse all other pre-move tags
+    if (!ignoreStatus) {
+      this.firstFailureCheck();
       user.lapseTags(BattlerTagLapseType.PRE_MOVE);
+      // At this point, called moves should be decided.
+      // For now, this comment works as a placeholder until called moves are reworked
+      // For correct alignment with mainline, this SHOULD go here, and this phase SHOULD rewrite its own move
+    } else if (useMode === MoveUseMode.FOLLOW_UP) {
+      this.followUpMoveFirstFailureCheck();
+    }
+    // If the first failure check did not pass, then the move is cancelled
+    // Note: This only checks `cancelled`, as `failed` should NEVER be set by anything in the first failure check
+    if (this.cancelled) {
+      this.handlePreMoveFailures();
       this.end();
-
-      /*
-      On cartridge, certain things *react* to move failures, depending on failure reason
-      The following would happen at this time on cartridge:
-      - Steadfast giving user speed boost if failed due to flinch
-      - Protect, detect, ally switch, etc, resetting consecutive use count
-      - Rollout / ice ball "unlocking"
-      - protect / ally switch / other moves resetting their consecutive use count
-      - and many others
-      In Pokerogue, these are instead handled elsewhere, and generally work in a way that aligns with cartridge behavior
-      */
       return;
     }
-    // Tags still need to be lapsed if no failure occured
-    user.lapseTags(BattlerTagLapseType.PRE_MOVE);
+    // If this is a follow-up move , at this point, we need to re-check a few conditions
 
-    // At this point, called moves should be decided.
-    // For now, this comment works as a placeholder until we rework how called moves are handled
-    // For correct alignment with mainline, this SHOULD go here, and this phase SHOULD rewrite its own move
-
-    // If the first failure check passes, then thaw the user if its move will thaw it.
-    // The sleep message and animation are also played if the user is asleep but using a move anyway (snore, sleep talk, etc)
-    this.post1stFailSleepOrThaw();
+    // If the first failure check passes (and this is not a sub-move) then thaw the user if its move will thaw it.
+    // The sleep message and animation should also play if the user is asleep but using a move anyway (snore, sleep talk, etc)
+    if (useMode !== MoveUseMode.FOLLOW_UP) {
+      this.post1stFailSleepOrThaw();
+    }
 
     // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
     if (isVirtual(useMode)) {
@@ -615,10 +627,7 @@ export class MovePhase extends PokemonPhase {
    * @param tag - The tag type whose lapse method will be called with {@linkcode BattlerTagLapseType.PRE_MOVE}
    * @param checkIgnoreStatus - Whether to check {@link isIgnoreStatus} for the current {@linkcode MoveUseMode} to skip this check
    */
-  private checkTagCancel(tag: BattlerTagType, checkIgnoreStatus = false): boolean {
-    if (checkIgnoreStatus && isIgnoreStatus(this.useMode)) {
-      return false;
-    }
+  private checkTagCancel(tag: BattlerTagType): boolean {
     this.pokemon.lapseTag(tag, BattlerTagLapseType.PRE_MOVE);
     return this.cancelled;
   }

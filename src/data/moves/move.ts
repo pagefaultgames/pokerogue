@@ -456,8 +456,8 @@ export abstract class Move implements Localizable {
    * @param restriction - The function or `MoveRestriction` that evaluates to `true` if the move is restricted from
    *    being selected
    * @param i18nkey - The i18n key for the restriction text
-   * @param alsoCondition - If `true`, also adds a {@linkcode MoveCondition} that checks the same condition when the
-   *    move is used; default `false`
+   * @param alsoCondition - If `true`, also adds an equivalent {@linkcode MoveCondition} that checks the same condition when the
+   *    move is used (while taking care to invert the return value); default `false`
    * @param conditionSeq - The sequence number where the failure check occurs; default `4`
    * @returns `this` for method chaining
    */
@@ -10941,9 +10941,11 @@ export function initMoves() {
       .attr(EatBerryAttr, true)
       .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true)
       .restriction(
-        user => globalScene.findModifiers(m => m instanceof BerryModifier, user.isPlayer()).length > 0,
+        user => globalScene.findModifiers(m => m instanceof BerryModifier, user.isPlayer()).length === 0,
         "battle:moveDisabledNoBerry",
-        true),
+        true,
+        3
+      ),
     new SelfStatusMove(MoveId.NO_RETREAT, PokemonType.FIGHTING, -1, 5, -1, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.NO_RETREAT, true, true /* NOT ADDED if already trapped */)
