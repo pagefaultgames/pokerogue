@@ -1,3 +1,5 @@
+// biome-ignore lint/correctness/noUnusedImports: Used in a TSDoc comment
+import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { TrappedTag } from "#data/battler-tags";
@@ -144,8 +146,9 @@ export const failIfTargetNotAttackingCondition = new MoveCondition((_user, targe
 export const failAgainstFinalBossCondition = new MoveCondition((_user, target) => {
   const gameMode = globalScene.gameMode;
   const currentWave = globalScene.currentBattle.waveIndex;
-  return (
-    target.isEnemy() && (gameMode.isBattleClassicFinalBoss(currentWave) || gameMode.isEndlessMinorBoss(currentWave))
+  return !(
+    target.isEnemy() &&
+    (gameMode.isBattleClassicFinalBoss(currentWave) || gameMode.isEndlessMinorBoss(currentWave))
   );
 });
 
