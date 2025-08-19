@@ -48,7 +48,6 @@ describe("Moves - Throat Chop", () => {
     await game.toNextTurn();
 
     expect(player.trySelectMove(MoveId.GROWL)[0]).toBe(false);
-
     game.move.select(MoveId.GROWL);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
