@@ -3788,8 +3788,6 @@ export function getBattlerTag(
     case BattlerTagType.ALWAYS_GET_HIT:
     case BattlerTagType.RECEIVE_DOUBLE_DAMAGE:
       return new SerializableBattlerTag(tagType, BattlerTagLapseType.PRE_MOVE, 1, sourceMove);
-    case BattlerTagType.BYPASS_SLEEP:
-      return new BattlerTag(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
     case BattlerTagType.IGNORE_FLYING:
       return new GroundedTag(tagType, BattlerTagLapseType.CUSTOM, sourceMove);
     case BattlerTagType.ROOSTED:
@@ -3963,7 +3961,6 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.IGNORE_ACCURACY]: GenericSerializableBattlerTag<BattlerTagType.IGNORE_ACCURACY>;
   [BattlerTagType.ALWAYS_GET_HIT]: GenericSerializableBattlerTag<BattlerTagType.ALWAYS_GET_HIT>;
   [BattlerTagType.RECEIVE_DOUBLE_DAMAGE]: GenericSerializableBattlerTag<BattlerTagType.RECEIVE_DOUBLE_DAMAGE>;
-  [BattlerTagType.BYPASS_SLEEP]: BattlerTag;
   [BattlerTagType.IGNORE_FLYING]: GroundedTag;
   [BattlerTagType.ROOSTED]: RoostedTag;
   [BattlerTagType.BURNED_UP]: RemovedTypeTag;
