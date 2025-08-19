@@ -812,7 +812,6 @@ export class FreshStartChallenge extends Challenge {
   applyStarterSelectModify(speciesId: SpeciesId, dexEntry: DexEntry, starterDataEntry: StarterDataEntry): boolean {
     // Remove all egg moves
     starterDataEntry.eggMoves = 0;
-    console.log("I AM APPLYING, ", starterDataEntry.eggMoves);
 
     // Remove hidden and passive ability
     const defaultAbilities = AbilityAttr.ABILITY_1 | AbilityAttr.ABILITY_2;
