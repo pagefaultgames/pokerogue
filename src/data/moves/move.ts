@@ -10677,7 +10677,7 @@ export function initMoves() {
       .ballBombMove()
       // Fail if used against an ally that is affected by heal block, during the second failure check
       .condition(
-        (user, target) => target.getAlly() === user && !!target.getTag(BattlerTagType.HEAL_BLOCK),
+        (user, target) => target.isOpponent(user) || !!target.getTag(BattlerTagType.HEAL_BLOCK),
         2
       ),
     new AttackMove(MoveId.ANCHOR_SHOT, PokemonType.STEEL, MoveCategory.PHYSICAL, 80, 100, 20, 100, 0, 7)
