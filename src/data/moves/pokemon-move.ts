@@ -70,7 +70,7 @@ export class PokemonMove {
     }
 
     const usability = new BooleanHolder(true);
-    if (applyChallenges(ChallengeType.POKEMON_MOVE, this.moveId, usability) && !usability.value) {
+    if (pokemon.isPlayer() && applyChallenges(ChallengeType.POKEMON_MOVE, this.moveId, usability) && !usability.value) {
       return [false, i18next.t("battle:moveCannotUseChallenge", { moveName: move.name })];
     }
 
@@ -82,8 +82,9 @@ export class PokemonMove {
   }
 
   /**
-   * Determine whether the move can be selected by the pokemon
-   *
+   * Determine whether the move can be selected by the pokemon based on its own requirements
+   * @remarks
+   * Does not check for PP, moves blocked by challenges, or unimplemented moves, all of which are handled by {@linkcode isUsable}
    * @param pokemon - The Pokemon under consideration
    * @returns An array containing a boolean indicating whether the move can be selected, and a string with the reason if it cannot
    */
