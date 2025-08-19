@@ -7824,25 +7824,33 @@ export function initAbilities() {
     new Ability(AbilityId.TOXIC_CHAIN, 9)
       .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC),
     new Ability(AbilityId.EMBODY_ASPECT_TEAL, 9)
-      .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPD ], 1)
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.SPD ], 1, true) //Activiates on switch in when tera'd
+      .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPD ], 1) //Activates mid round when tera'd
       .uncopiable()
       .unreplaceable() // TODO is this true?
-      .attr(NoTransformAbilityAbAttr),
+      .attr(NoTransformAbilityAbAttr)
+      .condition(pokemon => pokemon.isTerastallized),
     new Ability(AbilityId.EMBODY_ASPECT_WELLSPRING, 9)
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.SPDEF ], 1, true)
       .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPDEF ], 1)
       .uncopiable()
       .unreplaceable()
-      .attr(NoTransformAbilityAbAttr),
+      .attr(NoTransformAbilityAbAttr)
+      .condition(pokemon => pokemon.isTerastallized),
     new Ability(AbilityId.EMBODY_ASPECT_HEARTHFLAME, 9)
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
       .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.ATK ], 1)
       .uncopiable()
       .unreplaceable()
-      .attr(NoTransformAbilityAbAttr),
+      .attr(NoTransformAbilityAbAttr)
+      .condition(pokemon => pokemon.isTerastallized),
     new Ability(AbilityId.EMBODY_ASPECT_CORNERSTONE, 9)
+      .attr(PostSummonStatStageChangeAbAttr, [ Stat.SPD ], 1, true)
       .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.DEF ], 1)
       .uncopiable()
       .unreplaceable()
-      .attr(NoTransformAbilityAbAttr),
+      .attr(NoTransformAbilityAbAttr)
+      .condition(pokemon => pokemon.isTerastallized),
     new Ability(AbilityId.TERA_SHIFT, 9, 2)
       .attr(PostSummonFormChangeAbAttr, p => p.getFormKey() ? 0 : 1)
       .uncopiable()
