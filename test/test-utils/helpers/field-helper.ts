@@ -1,5 +1,6 @@
 /* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
 import type { globalScene } from "#app/global-scene";
+import type { MoveHelper } from "#test/test-utils/helpers/move-helper";
 /* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
 import type { Ability } from "#abilities/ability";
@@ -75,12 +76,14 @@ export class FieldHelper extends GameManagerHelper {
   }
 
   /**
-   * Force a given Pokemon to be terastallized to the given type.
+   * Force a given Pokemon to be Terastallized to the given type.
    *
-   * @param pokemon - The pokemon to terastallize.
-   * @param teraType - The {@linkcode PokemonType} to terastallize into; defaults to the pokemon's primary type.
+   * @param pokemon - The pokemon to Terastallize
+   * @param teraType - The {@linkcode PokemonType} to Terastallize into; defaults to `pokemon`'s primary type if not provided
    * @remarks
    * This function only mocks the Pokemon's tera-related variables; it does NOT activate any tera-related abilities.
+   * If activating on-Terastallize effects is desired, use either {@linkcode MoveHelper.use} with `useTera=true`,
+   * or {@linkcode MoveHelper.selectWithTera} instead.
    */
   public forceTera(pokemon: Pokemon, teraType: PokemonType = pokemon.getSpeciesForm(true).type1): void {
     vi.spyOn(pokemon, "isTerastallized", "get").mockReturnValue(true);

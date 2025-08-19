@@ -5352,27 +5352,26 @@ export class CombinedPledgeTypeAttr extends VariableMoveTypeAttr {
 /**
  * Attribute for moves which have a custom type chart interaction.
  */
-export class VariableMoveTypeChartAttr extends MoveAttr {
+export abstract class VariableMoveTypeChartAttr extends MoveAttr {
   /**
+   * Apply the attribute to change the move's type effectiveness multiplier.
    * @param user - The {@linkcode Pokemon} using the move
    * @param target - The {@linkcode Pokemon} targeted by the move
    * @param move - The {@linkcode Move} with this attribute
    * @param args -
-   * `[0]`: A {@linkcode NumberHolder} holding the type effectiveness
+   * `[0]`: A {@linkcode NumberHolder} holding the current type effectiveness
    * `[1]`: The target's entire defensive type profile
    * `[2]`: The current {@linkcode PokemonType} of the move
    * @returns `true` if application of the attribute succeeds
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[], moveType: PokemonType]): boolean {
-    return false;
-  }
+  abstract public override apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[], moveType: PokemonType]): boolean;
 }
 
 /**
  * Attribute to implement {@linkcode MoveId.FREEZE_DRY}'s guaranteed water type super effectiveness.
  */
 export class FreezeDryAttr extends VariableMoveTypeChartAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[], moveType: PokemonType]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[], moveType: PokemonType]): boolean {
     const [multiplier, types, moveType] = args;
     if (!types.includes(PokemonType.WATER)) {
       return false;
@@ -5390,7 +5389,7 @@ export class FreezeDryAttr extends VariableMoveTypeChartAttr {
  * against all ungrounded flying types.
  */
 export class NeutralDamageAgainstFlyingTypeAttr extends VariableMoveTypeChartAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[], moveType: PokemonType]): boolean {
+  public override apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[], moveType: PokemonType]): boolean {
     const [multiplier, types] = args;
     if (target.isGrounded() || !types.includes(PokemonType.FLYING)) {
       return false;
@@ -5400,6 +5399,26 @@ export class NeutralDamageAgainstFlyingTypeAttr extends VariableMoveTypeChartAtt
     return true;
   }
 }
+
+/**
+ * Attribute used by {@linkcode MoveId.SYNCHRONOISE} to render the move ineffective
+ * against all targets who do not share a type with the user.
+ */
+export class HitsSameTypeAttr extends VariableMoveTypeChartAttr {
+  public override apply(user: Pokemon, _target: Pokemon, _move: Move, args: [multiplier: NumberHolder, types: PokemonType[], moveType: PokemonType]): boolean {
+    const [multiplier, types] = args;
+    if (user.getTypes(true).eev(type => types.includes(type))) {
+      return false;
+    }
+    multiplier.value = 0;
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return unknownTypeCondition;
+  }
+}
+
 
 /**
  * Attribute used by {@linkcode MoveId.FLYING_PRESS} to add the Flying Type to its type effectiveness.
@@ -8140,19 +8159,6 @@ export class UpperHandCondition extends MoveCondition {
   }
 }
 
-// TODO: Does this need to extend from this?
-// The only reason it might is to show ineffectiveness text but w/e
-export class HitsSameTypeAttr extends VariableMoveTypeChartAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const multiplier = args[0] as NumberHolder;
-    if (!user.getTypes(true).some(type => target.getTypes(true).includes(type))) {
-      multiplier.value = 0;
-      return true;
-    }
-    return false;
-  }
-}
-
 /**
  * Attribute used for Conversion 2, to convert the user's type to a random type that resists the target's last used move.
  * Fails if the user already has ALL types that resist the target's last used move.
@@ -8419,6 +8425,7 @@ const MoveAttrs = Object.freeze({
   VariableMoveTypeChartAttr,
   FreezeDryAttr,
   OneHitKOAccuracyAttr,
+  HitsSameTypeAttr,
   SheerColdAccuracyAttr,
   MissEffectAttr,
   NoEffectAttr,
@@ -8487,7 +8494,7 @@ const MoveAttrs = Object.freeze({
   VariableTargetAttr,
   AfterYouAttr,
   ForceLastAttr,
-  HitsSameTypeAttr,
+  ,
   ResistLastMoveTypeAttr,
   ExposedMoveAttr,
 });
@@ -10010,9 +10017,8 @@ export function initMoves() {
       .attr(CompareWeightPowerAttr)
       .attr(HitsTagForDoubleDamageAttr, BattlerTagType.MINIMIZED),
     new AttackMove(MoveId.SYNCHRONOISE, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 5)
-      .target(MoveTarget.ALL_NEAR_OTHERS)
-      .condition(unknownTypeCondition)
-      .attr(HitsSameTypeAttr),
+      .attr(HitsSameTypeAttr)
+      .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(MoveId.ELECTRO_BALL, PokemonType.ELECTRIC, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 5)
       .attr(ElectroBallPowerAttr)
       .ballBombMove(),
