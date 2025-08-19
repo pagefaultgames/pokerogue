@@ -4,6 +4,8 @@ import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { BattlerIndex } from "#enums/battler-index";
 import type { SpeciesId } from "#enums/species-id";
+// biome-ignore lint/correctness/noUnusedImports: Used in a TSDoc comment
+import type { Pokemon } from "#field/pokemon";
 import { randSeedItem } from "./common";
 
 /**
@@ -127,7 +129,8 @@ export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): Po
 }
 
 /**
- * Return whether two battler indices are allies
+ * Return whether two battler indices are considered allies.
+ * To instead check with {@linkcode Pokemon} objects, use {@linkcode Pokemon.isOpponent}.
  * @param a - First battler index
  * @param b - Second battler index
  * @returns Whether the two battler indices are allies. Always `false` if either index is `ATTACKER`.

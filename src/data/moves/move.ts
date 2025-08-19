@@ -94,6 +94,7 @@ import type { AbstractConstructor } from "#types/type-helpers";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, coerceArray, type Constructor, isNullOrUndefined, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
+import { areAllies } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
@@ -1817,15 +1818,22 @@ export class CounterDamageAttr extends FixedDamageAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    user.turnData.attacksReceived.find(ar => {
+      const category = allMoves[ar.move].category;
+      return (category !== MoveCategory.STATUS || areAllies(user.getBattlerIndex(), ar.sourceBattlerIndex))
+    })
     let damage = 0;
+    const userBattlerIndex = user.getBattlerIndex();
     for (const ar of user.turnData.attacksReceived) {
       // TODO: Adjust this for moves with variable damage categories
       const category = allMoves[ar.move].category;
-      if (category === MoveCategory.STATUS || (this.moveFilter && category !== this.moveFilter)) {
+      if (category === MoveCategory.STATUS
+        || areAllies(userBattlerIndex, ar.sourceBattlerIndex)
+        || (this.moveFilter && category !== this.moveFilter)) {
         continue;
       }
-      damage += ar.damage;
-
+      damage = ar.damage;
+      break;
     }
     (args[0] as NumberHolder).value = toDmgValue(damage * this.multiplier);
 
@@ -1865,7 +1873,6 @@ export class CounterRedirectAttr extends MoveAttr {
       } else {
         args[0].value = desiredTarget;
       }
-      console.log(`CounterRedirectAttr: Redirecting move to battler index ${BattlerIndex[args[0].value]}`);
       return true;
     }
     return false;
