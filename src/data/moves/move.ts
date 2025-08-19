@@ -126,11 +126,12 @@ export abstract class Move implements Localizable {
    * @remarks
    * These are the default conditions checked during the move effect phase (aka sequence 4).
    * When adding a new condition, if unsure of where it occurs in the failure checks, it should go here.
-   * @remarks Different from {@linkcode restrictions}, which is checked when the move is selected
+   *
+   * Different from {@linkcode restrictions}, which are checked when the move is selected
    */
   private conditions: MoveCondition[] = [];
   /**
-   * Move failure conditions that occur during the second sequence (after move message and before )
+   * Move failure conditions that occur during the second sequence (after move message but before the move is recorded as the last move used)
    */
   private conditionsSeq2: MoveCondition[] = [];
   /**
@@ -701,7 +702,7 @@ export abstract class Move implements Localizable {
    * Sets the {@linkcode MoveFlags.GRAVITY} flag for the calling Move and adds {@linkcode GravityUseRestriction} to the
    * move's restrictions.
    *
-   * @returns The {@linkcode Move} that called this function
+   * @returns `this`
    *
    * @remarks
    * No {@linkcode condition} is added, as gravity's condition is already checked
