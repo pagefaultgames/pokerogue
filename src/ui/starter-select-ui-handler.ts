@@ -1194,8 +1194,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     ignoreChallenge = false,
   ): StarterAttributes {
     const starterAttributes = preferences[species.speciesId];
-    const { dexEntry, starterDataEntry } = this.getSpeciesData(species.speciesId, !ignoreChallenge);
-    const starterData = starterDataEntry;
+    const { dexEntry, starterDataEntry: starterData } = this.getSpeciesData(species.speciesId, !ignoreChallenge);
 
     // no preferences or Pokemon wasn't caught, return empty attribute
     if (!starterAttributes || !dexEntry.caughtAttr) {
@@ -1738,8 +1737,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)),
               this.isPartyValid(),
             );
-            const { dexEntry } = this.getSpeciesData(species.speciesId);
-            const isCaught = dexEntry.caughtAttr;
+            const isCaught = this.getSpeciesData(species.speciesId).dexEntry.caughtAttr;
             return (
               !isDupe && isValidForChallenge && currentPartyValue + starterCost <= this.getValueLimit() && isCaught
             );
@@ -1806,8 +1804,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else {
       let starterContainer: StarterContainer;
-      const { starterDataEntry } = this.getSpeciesData(this.lastSpecies.speciesId);
-      const starterData = starterDataEntry;
+      const starterData = this.getSpeciesData(this.lastSpecies.speciesId).starterDataEntry;
       // prepare persistent starter data to store changes
       let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
       const originalStarterAttributes = this.originalStarterPreferences[this.lastSpecies.speciesId];
@@ -2445,7 +2442,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           case Button.CYCLE_ABILITY:
             if (this.canCycleAbility) {
               const abilityCount = this.lastSpecies.getAbilityCount();
-              const abilityAttr = starterDataEntry.abilityAttr;
+              const abilityAttr = starterData.abilityAttr;
               const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
               let newAbilityIndex = this.abilityCursor;
               do {
@@ -3035,9 +3032,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       container.cost = globalScene.gameData.getSpeciesStarterValue(container.species.speciesId);
 
       // First, ensure you have the caught attributes for the species else default to bigint 0
-      const { dexEntry, starterDataEntry } = this.getSpeciesData(container.species.speciesId);
-      const caughtAttr = dexEntry?.caughtAttr || BigInt(0);
-      const starterData = starterDataEntry;
+      const { dexEntry, starterDataEntry: starterData } = this.getSpeciesData(container.species.speciesId);
+      const caughtAttr = dexEntry?.caughtAttr ?? BigInt(0);
       const isStarterProgressable = speciesEggMoves.hasOwnProperty(container.species.speciesId);
 
       // Gen filter
