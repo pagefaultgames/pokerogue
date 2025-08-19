@@ -88,7 +88,7 @@ describe("UI - Type Hints", () => {
     game.override
       .enemySpecies(SpeciesId.ABRA)
       .moveset([MoveId.SPLASH, MoveId.SHADOW_BALL, MoveId.SOAK])
-      .enemyMoveset([MoveId.SPLASH, MoveId.TELEPORT])
+      .enemyMoveset([MoveId.SPLASH, MoveId.MEMENTO])
       .battleStyle("double");
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
@@ -97,7 +97,7 @@ describe("UI - Type Hints", () => {
     game.move.select(MoveId.SOAK, 1);
 
     await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.move.selectEnemyMove(MoveId.TELEPORT);
+    await game.move.selectEnemyMove(MoveId.MEMENTO);
     await game.toNextTurn();
 
     game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
