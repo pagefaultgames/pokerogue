@@ -7036,7 +7036,11 @@ export class EnemyPokemon extends Pokemon {
     return globalScene.getEnemyField().indexOf(this);
   }
 
-  getBattlerIndex(): Exclude<BattlerIndex, BattlerIndex.ATTACKER> {
+  getBattlerIndex(): BattlerIndex {
+    const fieldIndex = this.getFieldIndex();
+    if (fieldIndex === -1) {
+      return BattlerIndex.ATTACKER;
+    }
     return BattlerIndex.ENEMY + this.getFieldIndex();
   }
 
