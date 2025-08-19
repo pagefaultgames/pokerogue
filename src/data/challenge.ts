@@ -677,7 +677,7 @@ export class SingleGenerationChallenge extends Challenge {
       return i18next.t("challenges:singleGeneration.descDefault");
     }
     return i18next.t("challenges:singleGeneration.desc", {
-      gen: i18next.t(`challenges:singleGeneration.gen${overrideValue}`),
+      gen: i18next.t(`challenges:singleGeneration.gen.${overrideValue}`),
     });
   }
 
