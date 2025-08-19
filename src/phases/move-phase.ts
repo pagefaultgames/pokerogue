@@ -718,6 +718,7 @@ export class MovePhase extends BattlePhase {
     }
 
     if (this.thirdFailureCheck()) {
+      console.log("Move failed during third failure check");
       return;
     }
 
@@ -739,6 +740,7 @@ export class MovePhase extends BattlePhase {
     // TODO: Move this to the Move effect phase where it belongs.
     // Fourth failure check happens _after_ protean
     if (!move.applyConditions(user, opponent, 4)) {
+      console.log("Move failed during fourth failure check");
       this.failMove();
       return;
     }
@@ -952,7 +954,6 @@ export class MovePhase extends BattlePhase {
     applyMoveAttrs("CounterRedirectAttr", this.pokemon, null, this.move.getMove(), targetHolder);
     this.targets[0] = targetHolder.value;
     if (targetHolder.value === BattlerIndex.ATTACKER) {
-      console.log("%cSkipping counter attack target resolution", "color: red");
       this.fail();
     }
   }
