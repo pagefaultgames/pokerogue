@@ -1858,20 +1858,17 @@ export class CounterRedirectAttr extends MoveAttr {
       // check if the target is still alive
       if (
         globalScene.currentBattle.double &&
-        !globalScene.getField()[desiredTarget]?.isActive
+        !globalScene.getField()[desiredTarget]?.isActive(true)
       ) {
         const targetField = desiredTarget >= BattlerIndex.ENEMY ? globalScene.getEnemyField() : globalScene.getPlayerField();
         args[0].value = targetField.find(p => p.hp > 0)?.getBattlerIndex() ?? BattlerIndex.ATTACKER;
       } else {
         args[0].value = desiredTarget;
       }
+      console.log(`CounterRedirectAttr: Redirecting move to battler index ${BattlerIndex[args[0].value]}`);
       return true;
     }
     return false;
-  }
-
-  override canApply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder, ...any[]]): boolean {
-    return args[0].value === BattlerIndex.ATTACKER;
   }
 }
 
@@ -9297,6 +9294,7 @@ export function initMoves() {
       .bitingMove(),
     new AttackMove(MoveId.MIRROR_COAT, PokemonType.PSYCHIC, MoveCategory.SPECIAL, -1, 100, 20, -1, -5, 2)
       .attr(CounterDamageAttr, 2, MoveCategory.SPECIAL)
+      .attr(CounterRedirectAttr, MoveCategory.SPECIAL)
       .condition(counterAttackCondition_Special, 3)
       .target(MoveTarget.ATTACKER),
     new StatusMove(MoveId.PSYCH_UP, PokemonType.NORMAL, -1, 10, -1, 0, 2)
@@ -9719,6 +9717,7 @@ export function initMoves() {
       .target(MoveTarget.USER_OR_NEAR_ALLY),
     new AttackMove(MoveId.METAL_BURST, PokemonType.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 4)
       .attr(CounterDamageAttr, 1.5)
+      .attr(CounterRedirectAttr)
       .condition(counterAttackCondition_Both, 3)
       .makesContact(false)
       .target(MoveTarget.ATTACKER),
@@ -11530,6 +11529,7 @@ export function initMoves() {
       .restriction(ConsecutiveUseRestriction),
     new AttackMove(MoveId.COMEUPPANCE, PokemonType.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 9)
       .attr(CounterDamageAttr, 1.5)
+      .attr(CounterRedirectAttr)
       .condition(counterAttackCondition_Both, 3)
       .target(MoveTarget.ATTACKER),
     new AttackMove(MoveId.AQUA_CUTTER, PokemonType.WATER, MoveCategory.PHYSICAL, 70, 100, 20, -1, 0, 9)
