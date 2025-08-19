@@ -44,7 +44,7 @@ describe("Challenges - Hardcore", () => {
 
     const player = game.field.getPlayerPokemon();
     const revBlessing = player.getMoveset()[0];
-    expect(revBlessing.isUsable(player)).toBe(false);
+    expect(revBlessing.isUsable(player)[0]).toBe(false);
 
     game.move.select(MoveId.REVIVAL_BLESSING);
     await game.toEndOfTurn();
