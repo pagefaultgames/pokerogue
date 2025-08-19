@@ -70,7 +70,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
         text: `${namespace}:intro`,
       },
       {
-        speaker: "trainerNames:expert_pokemon_breeder",
+        speaker: "trainerNames:expertPokemonBreeder",
         text: `${namespace}:introDialogue`,
       },
     ]);
@@ -123,7 +123,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
         buttonTooltip: expect.any(String), // Varies based on pokemon
         selected: [
           {
-            speaker: "trainerNames:expert_pokemon_breeder",
+            speaker: "trainerNames:expertPokemonBreeder",
             text: `${namespace}:option.selected`,
           },
         ],
@@ -208,7 +208,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
         buttonTooltip: expect.any(String), // Varies based on pokemon
         selected: [
           {
-            speaker: "trainerNames:expert_pokemon_breeder",
+            speaker: "trainerNames:expertPokemonBreeder",
             text: `${namespace}:option.selected`,
           },
         ],
@@ -290,7 +290,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
         buttonTooltip: expect.any(String), // Varies based on pokemon
         selected: [
           {
-            speaker: "trainerNames:expert_pokemon_breeder",
+            speaker: "trainerNames:expertPokemonBreeder",
             text: `${namespace}:option.selected`,
           },
         ],
