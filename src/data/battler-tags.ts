@@ -3058,7 +3058,7 @@ export class SubstituteTag extends SerializableBattlerTag {
   constructor(sourceMove: MoveId, sourceId: number) {
     super(
       BattlerTagType.SUBSTITUTE,
-      [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE, BattlerTagLapseType.HIT],
+      [BattlerTagLapseType.MOVE, BattlerTagLapseType.AFTER_MOVE, BattlerTagLapseType.HIT],
       0,
       sourceMove,
       sourceId,
