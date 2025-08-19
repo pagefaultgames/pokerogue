@@ -61,6 +61,8 @@ export class FirstMoveCondition extends MoveCondition {
  * Condition that fails the move if the user has less than 1/x of their max HP.
  * @remarks
  * Used by Clangorous Soul and Fillet Away
+ *
+ * NOT used by Belly Drum, whose failure check occurs in phase 4 along with its stat increase condition
  */
 export class FailIfInsufficientHpCondition extends MoveCondition {
   /**
