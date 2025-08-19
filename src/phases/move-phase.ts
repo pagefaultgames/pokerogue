@@ -120,13 +120,13 @@ export class MovePhase extends PokemonPhase {
    * 4. (Pokerogue specific) Moves disabled because they are not implemented / prevented from a challenge / somehow have no targets
    * 5. Sky battle (not implemented in Pokerogue)
    * 6. Truant
-   * 7. Loss of focus
+   * 7. Focus Punch's loss of focus
    * 8. Flinch
    * 9. Move was disabled after being selected
    * 10. Healing move with heal block
    * 11. Sound move with throat chop
    * 12. Failure due to gravity
-   * 13. Move lock from choice items (not implemented in Pokerogue, can't occur here from gorilla tactics)
+   * 13. Move lock from choice items / gorilla tactics
    * 14. Failure from taunt
    * 15. Failure from imprison
    * 16. Failure from confusion
@@ -184,21 +184,20 @@ export class MovePhase extends PokemonPhase {
    */
   private post1stFailSleepOrThaw(): void {
     const user = this.pokemon;
-    // If the move was successful, then... play the "sleeping" animation if the user is asleep but uses something like rest / snore
-    // Cure the user's freeze and queue the thaw message from unfreezing due to move use
-    if (!isIgnoreStatus(this.useMode)) {
-      if (user.status?.effect === StatusEffect.SLEEP) {
-        // Commence the sleeping animation and message, which happens anyway
-        // TODO...
-      } else if (this.thaw) {
-        this.cureStatus(
-          StatusEffect.FREEZE,
-          i18next.t("statusEffect:freeze.healByMove", {
-            pokemonName: getPokemonNameWithAffix(user),
-            moveName: this.move.getMove().name,
-          }),
-        );
-      }
+
+    if (isIgnoreStatus(this.useMode)) {
+      return;
+    }
+    if (user.status?.effect === StatusEffect.SLEEP) {
+      this.triggerStatus(StatusEffect.SLEEP, false);
+    } else if (this.thaw) {
+      this.cureStatus(
+        StatusEffect.FREEZE,
+        i18next.t("statusEffect:freeze.healByMove", {
+          pokemonName: getPokemonNameWithAffix(user),
+          moveName: this.move.getMove().name,
+        }),
+      );
     }
   }
 
@@ -307,8 +306,9 @@ export class MovePhase extends PokemonPhase {
 
     const user = this.pokemon;
 
-    // Removing gigaton hammer always happens first
+    // Removing gigaton hammer's two flags *always* happens first
     user.removeTag(BattlerTagType.ALWAYS_GET_HIT);
+    user.removeTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE);
     console.log(MoveId[this.move.moveId], enumValueToKey(MoveUseMode, this.useMode));
 
     // For the purposes of payback and kin, the pokemon is considered to have acted
@@ -450,18 +450,23 @@ export class MovePhase extends PokemonPhase {
 
   /**
    * Queue the status activation message, play its animation, and cancel the move
+   *
    * @param effect - The effect being triggered
+   * @param cancel - Whether to cancel the move after triggering the status effect; default `true`;
+   *    pass `false` to only trigger the animation and message without cancelling the move (e.g. sleep talk/snore)
    */
-  private triggerStatus(effect: StatusEffect): void {
+  private triggerStatus(effect: StatusEffect, cancel = true): void {
     const pokemon = this.pokemon;
-    this.showFailedText(getStatusEffectActivationText(effect, getPokemonNameWithAffix(pokemon)));
+    globalScene.phaseManager.queueMessage(getStatusEffectActivationText(effect, getPokemonNameWithAffix(pokemon)));
     globalScene.phaseManager.unshiftNew(
       "CommonAnimPhase",
       pokemon.getBattlerIndex(),
       undefined,
       CommonAnim.POISON + (effect - 1), // offset anim # by effect #
     );
-    this.cancelled = true;
+    if (cancel) {
+      this.cancelled = true;
+    }
   }
 
   /**
@@ -698,9 +703,10 @@ export class MovePhase extends PokemonPhase {
    */
   protected useMove(charging = false): void {
     const user = this.pokemon;
-    // Clear out any two turn moves once they've been used.
-    // TODO: Refactor move queues and remove this assignment;
-    // Move queues should be handled by the calling `CommandPhase` or a manager for it
+
+    /* Clear out any two turn moves once they've been used.
+    TODO: Refactor move queues and remove this assignment;
+    Move queues should be handled by the calling `CommandPhase` or a manager for it */
     // @ts-expect-error - useMode is readonly and shouldn't normally be assigned to
     this.useMode = user.getMoveQueue().shift()?.useMode ?? this.useMode;
 
@@ -712,17 +718,24 @@ export class MovePhase extends PokemonPhase {
       console.log("Move failed during third failure check");
       return;
     }
+    /*
+    At this point, delayed moves (future sight, wish, doom desire) are issued, and if they occur, are
+    Then, combined pledge moves are checked for. Interestingly, the "wasMoveEffective" flag is set to false if the delay occurs
+    In either case, the phase should end here without proceeding 
+    */
 
     const move = this.move.getMove();
     const opponent = this.getActiveTargetPokemon()[0];
 
-    // After the third failure check, the move is "locked in"
-    // The following things now occur on cartridge
-    // - Heal Bell / Aromatherapy's custom message is queued (but displayed after the move text)
-    // - The message for combined pledge moves is queued
-    // - The custom message for fickle beam is queued
-    // - Gulp missile's form change is triggered IF the user is using dive (surf happens later)
-    // - Protean / Libero trigger the type change and flyout
+    /*
+    After the third failure check, the move is "locked in"
+    The following things now occur on cartridge
+    - Heal Bell / Aromatherapy's custom message is queued (but displayed after the move text)
+    - The message for combined pledge moves is queued
+    - The custom message for fickle beam is queued
+    - Gulp missile's form change is triggered IF the user is using dive (surf happens later)
+    - Protean / Libero trigger the type change and flyout
+    */
 
     // Currently, we only do the libero/protean type change here
 
