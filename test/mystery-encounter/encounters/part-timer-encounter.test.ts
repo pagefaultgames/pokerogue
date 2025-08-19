@@ -65,7 +65,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       { text: `${namespace}:intro` },
       {
         speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue`,
+        text: `${namespace}:introDialogue`,
       },
     ]);
     expect(PartTimerEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
@@ -219,7 +219,7 @@ describe("Part-Timer - Mystery Encounter", () => {
       expect(option.dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,

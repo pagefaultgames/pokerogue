@@ -86,11 +86,11 @@ import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import { SwitchSummonPhase } from "#phases/switch-summon-phase";
 import type { AttackMoveResult } from "#types/attack-move-result";
 import type { Localizable } from "#types/locales";
-import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveClassMap, MoveKindString } from "#types/move-types";
+import type { ChargingMove, MoveAttrMap, MoveAttrString, MoveClassMap, MoveKindString, MoveMessageFunc } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
 import { BooleanHolder, type Constructor, isNullOrUndefined, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { toTitleCase } from "#utils/strings";
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import { applyChallenges } from "#utils/challenge-utils";
 
@@ -162,10 +162,16 @@ export abstract class Move implements Localizable {
   }
 
   localize(): void {
-    const i18nKey = MoveId[this.id].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("") as unknown as string;
+    const i18nKey = toCamelCase(MoveId[this.id])
 
-    this.name = this.id ? `${i18next.t(`move:${i18nKey}.name`)}${this.nameAppend}` : "";
-    this.effect = this.id ? `${i18next.t(`move:${i18nKey}.effect`)}${this.nameAppend}` : "";
+    if (this.id === MoveId.NONE) {
+      this.name = "";
+      this.effect = ""
+      return;
+    }
+
+    this.name = `${i18next.t(`move:${i18nKey}.name`)}${this.nameAppend}`;
+    this.effect = `${i18next.t(`move:${i18nKey}.effect`)}${this.nameAppend}`;
   }
 
   /**
@@ -1357,20 +1363,20 @@ export class MoveHeaderAttr extends MoveAttr {
 
 /**
  * Header attribute to queue a message at the beginning of a turn.
- * @see {@link MoveHeaderAttr}
  */
 export class MessageHeaderAttr extends MoveHeaderAttr {
-  private message: string | ((user: Pokemon, move: Move) => string);
+  /** The message to display, or a function producing one. */
+  private message: string | MoveMessageFunc;
 
-  constructor(message: string | ((user: Pokemon, move: Move) => string)) {
+  constructor(message: string | MoveMessageFunc) {
     super();
     this.message = message;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move): boolean {
     const message = typeof this.message === "string"
       ? this.message
-      : this.message(user, move);
+      : this.message(user, target, move);
 
     if (message) {
       globalScene.phaseManager.queueMessage(message);
@@ -1418,21 +1424,21 @@ export class BeakBlastHeaderAttr extends AddBattlerTagHeaderAttr {
  */
 export class PreMoveMessageAttr extends MoveAttr {
   /** The message to display or a function returning one */
-  private message: string | ((user: Pokemon, target: Pokemon, move: Move) => string | undefined);
+  private message: string | MoveMessageFunc;
 
   /**
    * Create a new {@linkcode PreMoveMessageAttr} to display a message before move execution.
-   * @param message - The message to display before move use, either as a string or a function producing one.
+   * @param message - The message to display before move use, either` a literal string or a function producing one.
    * @remarks
-   * If {@linkcode message} evaluates to an empty string (`''`), no message will be displayed
+   * If {@linkcode message} evaluates to an empty string (`""`), no message will be displayed
    * (though the move will still succeed).
    */
-  constructor(message: string | ((user: Pokemon, target: Pokemon, move: Move) => string)) {
+  constructor(message: string | MoveMessageFunc) {
     super();
     this.message = message;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move): boolean {
     const message = typeof this.message === "function"
       ? this.message(user, target, move)
       : this.message;
@@ -1453,18 +1459,17 @@ export class PreMoveMessageAttr extends MoveAttr {
  * @extends MoveAttr
  */
 export class PreUseInterruptAttr extends MoveAttr {
-  protected message?: string | ((user: Pokemon, target: Pokemon, move: Move) => string);
-  protected overridesFailedMessage: boolean;
+  protected message: string | MoveMessageFunc;
   protected conditionFunc: MoveConditionFunc;
 
   /**
    * Create a new MoveInterruptedMessageAttr.
    * @param message The message to display when the move is interrupted, or a function that formats the message based on the user, target, and move.
    */
-  constructor(message?: string | ((user: Pokemon, target: Pokemon, move: Move) => string), conditionFunc?: MoveConditionFunc) {
+  constructor(message: string | MoveMessageFunc, conditionFunc: MoveConditionFunc) {
     super();
     this.message = message;
-    this.conditionFunc = conditionFunc ?? (() => true);
+    this.conditionFunc = conditionFunc;
   }
 
   /**
@@ -1485,11 +1490,9 @@ export class PreUseInterruptAttr extends MoveAttr {
    */
   override getFailedText(user: Pokemon, target: Pokemon, move: Move): string | undefined {
     if (this.message && this.conditionFunc(user, target, move)) {
-      const message =
-        typeof this.message === "string"
-          ? (this.message as string)
+      return typeof this.message === "string"
+          ? this.message
           : this.message(user, target, move);
-      return message;
     }
   }
 }
@@ -1694,17 +1697,30 @@ export class SurviveDamageAttr extends ModifiedDamageAttr {
   }
 }
 
-export class SplashAttr extends MoveEffectAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:splash"));
-    return true;
-  }
-}
+/**
+ * Move attribute to display arbitrary text during a move's execution.
+ */
+export class MessageAttr extends MoveEffectAttr {
+  /** The message to display, either as a string or a function returning one. */
+  private message: string | MoveMessageFunc;
 
-export class CelebrateAttr extends MoveEffectAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:celebrate", { playerName: loggedInUser?.username }));
-    return true;
+  constructor(message: string | MoveMessageFunc, options?: MoveEffectAttrOptions) {
+    // TODO: Do we need to respect `selfTarget` if we're just displaying text?
+    super(false, options)
+    this.message = message;
+  }
+
+  override apply(user: Pokemon, target: Pokemon, move: Move): boolean {
+    const message = typeof this.message === "function"
+      ? this.message(user, target, move)
+      : this.message;
+
+    // TODO: Consider changing if/when MoveAttr `apply` return values become significant
+    if (message) {
+      globalScene.phaseManager.queueMessage(message, 500);
+      return true;
+    }
+    return false;
   }
 }
 
@@ -5944,38 +5960,6 @@ export class ProtectAttr extends AddBattlerTagAttr {
   }
 }
 
-export class IgnoreAccuracyAttr extends AddBattlerTagAttr {
-  constructor() {
-    super(BattlerTagType.IGNORE_ACCURACY, true, false, 2);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:tookAimAtTarget", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
-
-    return true;
-  }
-}
-
-export class FaintCountdownAttr extends AddBattlerTagAttr {
-  constructor() {
-    super(BattlerTagType.PERISH_SONG, false, true, 4);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:faintCountdown", { pokemonName: getPokemonNameWithAffix(target), turnCount: this.turnCountMin - 1 }));
-
-    return true;
-  }
-}
-
 /**
  * Attribute to remove all Substitutes from the field.
  * @extends MoveEffectAttr
@@ -6616,8 +6600,10 @@ export class ChillyReceptionAttr extends ForceSwitchOutAttr {
     return (user, target, move) => globalScene.arena.weather?.weatherType !== WeatherType.SNOW || super.getSwitchOutCondition()(user, target, move);
   }
 }
+
 export class RemoveTypeAttr extends MoveEffectAttr {
 
+  // TODO: Remove the message callback
   private removedType: PokemonType;
   private messageCallback: ((user: Pokemon) => void) | undefined;
 
@@ -6702,7 +6688,7 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
     user.summonData.types = [ typeChange ];
     user.updateInfo();
 
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), typeName: i18next.t(`pokemonInfo:Type.${PokemonType[typeChange]}`) }));
+    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[typeChange])}`) }));
 
     return true;
   }
@@ -6830,7 +6816,7 @@ export class AddTypeAttr extends MoveEffectAttr {
     target.summonData.addedType = this.type;
     target.updateInfo();
 
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:addType", { typeName: i18next.t(`pokemonInfo:Type.${PokemonType[this.type]}`), pokemonName: getPokemonNameWithAffix(target) }));
+    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:addType", { typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.type])}`), pokemonName: getPokemonNameWithAffix(target) }));
 
     return true;
   }
@@ -6852,7 +6838,7 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
 
     const firstMoveType = target.getMoveset()[0].getMove().type;
     user.summonData.types = [ firstMoveType ];
-    globalScene.phaseManager.queueMessage(i18next.t("battle:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), type: i18next.t(`pokemonInfo:Type.${PokemonType[firstMoveType]}`) }));
+    globalScene.phaseManager.queueMessage(i18next.t("battle:transformedIntoType", { pokemonName: getPokemonNameWithAffix(user), type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[firstMoveType])}`) }));
 
     return true;
   }
@@ -8301,8 +8287,6 @@ const MoveAttrs = Object.freeze({
   RandomLevelDamageAttr,
   ModifiedDamageAttr,
   SurviveDamageAttr,
-  SplashAttr,
-  CelebrateAttr,
   RecoilAttr,
   SacrificialAttr,
   SacrificialAttrOnHit,
@@ -8445,8 +8429,7 @@ const MoveAttrs = Object.freeze({
   RechargeAttr,
   TrapAttr,
   ProtectAttr,
-  IgnoreAccuracyAttr,
-  FaintCountdownAttr,
+  MessageAttr,
   RemoveAllSubstitutesAttr,
   HitsTagAttr,
   HitsTagForDoubleDamageAttr,
@@ -8531,7 +8514,7 @@ export function initMoves() {
       .punchingMove(),
     new AttackMove(MoveId.SCRATCH, PokemonType.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
     new AttackMove(MoveId.VISE_GRIP, PokemonType.NORMAL, MoveCategory.PHYSICAL, 55, 100, 30, -1, 0, 1),
-    new AttackMove(MoveId.GUILLOTINE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 200, 30, 5, -1, 0, 1)
+    new AttackMove(MoveId.GUILLOTINE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 250, 30, 5, -1, 0, 1)
       .attr(OneHitKOAttr)
       .attr(OneHitKOAccuracyAttr),
     new ChargingAttackMove(MoveId.RAZOR_WIND, PokemonType.NORMAL, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 1)
@@ -8584,7 +8567,7 @@ export function initMoves() {
     new AttackMove(MoveId.HORN_ATTACK, PokemonType.NORMAL, MoveCategory.PHYSICAL, 65, 100, 25, -1, 0, 1),
     new AttackMove(MoveId.FURY_ATTACK, PokemonType.NORMAL, MoveCategory.PHYSICAL, 15, 85, 20, -1, 0, 1)
       .attr(MultiHitAttr),
-    new AttackMove(MoveId.HORN_DRILL, PokemonType.NORMAL, MoveCategory.PHYSICAL, 200, 30, 5, -1, 0, 1)
+    new AttackMove(MoveId.HORN_DRILL, PokemonType.NORMAL, MoveCategory.PHYSICAL, 250, 30, 5, -1, 0, 1)
       .attr(OneHitKOAttr)
       .attr(OneHitKOAccuracyAttr),
     new AttackMove(MoveId.TACKLE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
@@ -8765,7 +8748,7 @@ export function initMoves() {
       .attr(MovePowerMultiplierAttr, (user, target, move) => globalScene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
-    new AttackMove(MoveId.FISSURE, PokemonType.GROUND, MoveCategory.PHYSICAL, 200, 30, 5, -1, 0, 1)
+    new AttackMove(MoveId.FISSURE, PokemonType.GROUND, MoveCategory.PHYSICAL, 250, 30, 5, -1, 0, 1)
       .attr(OneHitKOAttr)
       .attr(OneHitKOAccuracyAttr)
       .attr(HitsTagAttr, BattlerTagType.UNDERGROUND)
@@ -8940,7 +8923,7 @@ export function initMoves() {
     new AttackMove(MoveId.PSYWAVE, PokemonType.PSYCHIC, MoveCategory.SPECIAL, -1, 100, 15, -1, 0, 1)
       .attr(RandomLevelDamageAttr),
     new SelfStatusMove(MoveId.SPLASH, PokemonType.NORMAL, -1, 40, -1, 0, 1)
-      .attr(SplashAttr)
+      .attr(MessageAttr, i18next.t("moveTriggers:splash"))
       .condition(failOnGravityCondition),
     new SelfStatusMove(MoveId.ACID_ARMOR, PokemonType.POISON, -1, 20, -1, 0, 1)
       .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true),
@@ -9002,7 +8985,10 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1)
       .reflectable(),
     new StatusMove(MoveId.MIND_READER, PokemonType.NORMAL, -1, 5, -1, 0, 2)
-      .attr(IgnoreAccuracyAttr),
+      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_ACCURACY, true, false, 2)
+      .attr(MessageAttr, (user, target) =>
+        i18next.t("moveTriggers:tookAimAtTarget", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) })
+      ),
     new StatusMove(MoveId.NIGHTMARE, PokemonType.GHOST, 100, 15, -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.NIGHTMARE)
       .condition(targetSleptOrComatoseCondition),
@@ -9090,7 +9076,9 @@ export function initMoves() {
         return lastTurnMove.length === 0 || lastTurnMove[0].move !== move.id || lastTurnMove[0].result !== MoveResult.SUCCESS;
       }),
     new StatusMove(MoveId.PERISH_SONG, PokemonType.NORMAL, -1, 5, -1, 0, 2)
-      .attr(FaintCountdownAttr)
+      .attr(AddBattlerTagAttr, BattlerTagType.PERISH_SONG, false, true, 4)
+      .attr(MessageAttr, (_user, target) =>
+         i18next.t("moveTriggers:faintCountdown", { pokemonName: getPokemonNameWithAffix(target), turnCount: 3 }))
       .ignoresProtect()
       .soundBased()
       .condition(failOnBossCondition)
@@ -9106,7 +9094,10 @@ export function initMoves() {
       .attr(MultiHitAttr)
       .makesContact(false),
     new StatusMove(MoveId.LOCK_ON, PokemonType.NORMAL, -1, 5, -1, 0, 2)
-      .attr(IgnoreAccuracyAttr),
+      .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_ACCURACY, true, false, 2)
+      .attr(MessageAttr, (user, target) =>
+        i18next.t("moveTriggers:tookAimAtTarget", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) })
+      ),
     new AttackMove(MoveId.OUTRAGE, PokemonType.DRAGON, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 2)
       .attr(FrenzyAttr)
       .attr(MissEffectAttr, frenzyMissFunc)
@@ -9333,8 +9324,8 @@ export function initMoves() {
         && (user.status.effect === StatusEffect.BURN || user.status.effect === StatusEffect.POISON || user.status.effect === StatusEffect.TOXIC || user.status.effect === StatusEffect.PARALYSIS) ? 2 : 1)
       .attr(BypassBurnDamageReductionAttr),
     new AttackMove(MoveId.FOCUS_PUNCH, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 150, 100, 20, -1, -3, 3)
-      .attr(MessageHeaderAttr, (user, move) => i18next.t("moveTriggers:isTighteningFocus", { pokemonName: getPokemonNameWithAffix(user) }))
-      .attr(PreUseInterruptAttr, (user, target, move) => i18next.t("moveTriggers:lostFocus", { pokemonName: getPokemonNameWithAffix(user) }), user => !!user.turnData.attacksReceived.find(r => r.damage))
+      .attr(MessageHeaderAttr, (user) => i18next.t("moveTriggers:isTighteningFocus", { pokemonName: getPokemonNameWithAffix(user) }))
+      .attr(PreUseInterruptAttr, (user) => i18next.t("moveTriggers:lostFocus", { pokemonName: getPokemonNameWithAffix(user) }), user => user.turnData.attacksReceived.some(r => r.damage > 0))
       .punchingMove(),
     new AttackMove(MoveId.SMELLING_SALTS, PokemonType.NORMAL, MoveCategory.PHYSICAL, 70, 100, 10, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.status?.effect === StatusEffect.PARALYSIS ? 2 : 1)
@@ -9539,7 +9530,7 @@ export function initMoves() {
     new AttackMove(MoveId.SAND_TOMB, PokemonType.GROUND, MoveCategory.PHYSICAL, 35, 85, 15, -1, 0, 3)
       .attr(TrapAttr, BattlerTagType.SAND_TOMB)
       .makesContact(false),
-    new AttackMove(MoveId.SHEER_COLD, PokemonType.ICE, MoveCategory.SPECIAL, 200, 30, 5, -1, 0, 3)
+    new AttackMove(MoveId.SHEER_COLD, PokemonType.ICE, MoveCategory.SPECIAL, 250, 30, 5, -1, 0, 3)
       .attr(IceNoEffectTypeAttr)
       .attr(OneHitKOAttr)
       .attr(SheerColdAccuracyAttr),
@@ -10434,7 +10425,8 @@ export function initMoves() {
     new AttackMove(MoveId.DAZZLING_GLEAM, PokemonType.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 6)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new SelfStatusMove(MoveId.CELEBRATE, PokemonType.NORMAL, -1, 40, -1, 0, 6)
-      .attr(CelebrateAttr),
+      // NB: This needs a lambda function as the user will not be logged in by the time the moves are initialized
+      .attr(MessageAttr, () => i18next.t("moveTriggers:celebrate", { playerName: loggedInUser?.username })),
     new StatusMove(MoveId.HOLD_HANDS, PokemonType.NORMAL, -1, 40, -1, 0, 6)
       .ignoresSubstitute()
       .target(MoveTarget.NEAR_ALLY),
@@ -10609,7 +10601,12 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1)
       .reflectable(),
     new SelfStatusMove(MoveId.LASER_FOCUS, PokemonType.NORMAL, -1, 30, -1, 0, 7)
-      .attr(AddBattlerTagAttr, BattlerTagType.ALWAYS_CRIT, true, false),
+      .attr(AddBattlerTagAttr, BattlerTagType.ALWAYS_CRIT, true, false)
+      .attr(MessageAttr, (user) =>
+        i18next.t("battlerTags:laserFocusOnAdd", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(user),
+        }),
+      ),
     new StatusMove(MoveId.GEAR_UP, PokemonType.STEEL, -1, 20, -1, 0, 7)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], 1, false, { condition: (user, target, move) => !![ AbilityId.PLUS, AbilityId.MINUS ].find(a => target.hasAbility(a, false)) })
       .ignoresSubstitute()

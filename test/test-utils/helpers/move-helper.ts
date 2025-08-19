@@ -232,8 +232,8 @@ export class MoveHelper extends GameManagerHelper {
         console.warn("Player moveset override disabled due to use of `game.move.changeMoveset`!");
       }
     } else {
-      if (coerceArray(Overrides.OPP_MOVESET_OVERRIDE).length > 0) {
-        vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([]);
+      if (coerceArray(Overrides.ENEMY_MOVESET_OVERRIDE).length > 0) {
+        vi.spyOn(Overrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue([]);
         console.warn("Enemy moveset override disabled due to use of `game.move.changeMoveset`!");
       }
     }
@@ -306,8 +306,8 @@ export class MoveHelper extends GameManagerHelper {
         (this.game.scene.phaseManager.getCurrentPhase() as EnemyCommandPhase).getFieldIndex()
       ];
 
-    if ([Overrides.OPP_MOVESET_OVERRIDE].flat().length > 0) {
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([]);
+    if ([Overrides.ENEMY_MOVESET_OVERRIDE].flat().length > 0) {
+      vi.spyOn(Overrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue([]);
       console.warn(
         "Warning: `forceEnemyMove` overwrites the Pokemon's moveset and disables the enemy moveset override!",
       );
