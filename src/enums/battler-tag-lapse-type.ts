@@ -11,7 +11,17 @@ export enum BattlerTagLapseType {
    * @see MoveUseMode for more information
    */
   MOVE,
-  /** Tag activates during (or just after) the first failure check sequence in the move phase. */
+  /**
+   * Tag activates during (or just after) the first failure check sequence in the move phase.
+   *
+   * @remarks
+   *
+   * Note tags with this lapse type will lapse immediately after the first failure check sequence,
+   * regardless of whether the move was successful or not.
+   * 
+   * To only lapse the tag between the first and second failure check sequences, use
+   * {@linkcode BattlerTagLapseType.MOVE} instead.
+   */
   PRE_MOVE,
   /** Tag activates immediately after the holder's move finishes triggering (successful or not). */
   AFTER_MOVE,

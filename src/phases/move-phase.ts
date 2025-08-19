@@ -307,8 +307,8 @@ export class MovePhase extends BattlePhase {
     // if it attempted to move at all.
     user.turnData.acted = true;
     const useMode = this.useMode;
-    const virtual = isVirtual(useMode);
-    if (!virtual && this.firstFailureCheck()) {
+    const ignoreStatus = isIgnoreStatus(useMode);
+    if (!ignoreStatus && this.firstFailureCheck()) {
       // Lapse all other pre-move tags
       user.lapseTags(BattlerTagLapseType.PRE_MOVE);
       this.end();
@@ -320,11 +320,13 @@ export class MovePhase extends BattlePhase {
       - Protect, detect, ally switch, etc, resetting consecutive use count
       - Rollout / ice ball "unlocking"
       - protect / ally switch / other moves resetting their consecutive use count
-      - and others
-      In Pokerogue, these are instead handled by their respective methods, which generally 
+      - and many others
+      In Pokerogue, these are instead handled elsewhere, and generally work in a way that aligns with cartridge behavior
       */
       return;
     }
+    // Tags still need to be lapsed if no failure occured
+    user.lapseTags(BattlerTagLapseType.PRE_MOVE);
 
     // At this point, called moves should be decided.
     // For now, this comment works as a placeholder until we rework how called moves are handled
@@ -335,7 +337,7 @@ export class MovePhase extends BattlePhase {
     this.post1stFailSleepOrThaw();
 
     // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
-    if (virtual) {
+    if (isVirtual(useMode)) {
       this.pokemon.turnData.hitsLeft = -1;
       this.pokemon.turnData.hitCount = 0;
     }
@@ -375,11 +377,7 @@ export class MovePhase extends BattlePhase {
       globalScene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
     }
 
-    // At this point, if the target index has not moved on from attacker, the move must fail
-    if (this.targets[0] === BattlerIndex.ATTACKER) {
-      this.fail();
-    }
-    if (this.targets[0] === BattlerIndex.ATTACKER || this.secondFailureCheck()) {
+    if (this.secondFailureCheck()) {
       this.handlePreMoveFailures();
       this.end();
       return;
@@ -399,7 +397,7 @@ export class MovePhase extends BattlePhase {
   }
 
   /**
-   * Check for cancellation edge cases - no targets remaining or the battler index being targeted is still the attacker
+   * Check for cancellation edge cases - no targets remaining
    * @returns Whether the move fails
    */
   protected resolveFinalPreMoveCancellationChecks(): boolean {
@@ -408,8 +406,7 @@ export class MovePhase extends BattlePhase {
 
     if (
       (targets.length === 0 && !this.move.getMove().hasAttr("AddArenaTrapTagAttr")) ||
-      (moveQueue.length > 0 && moveQueue[0].move === MoveId.NONE) ||
-      this.targets[0] === BattlerIndex.ATTACKER
+      (moveQueue.length > 0 && moveQueue[0].move === MoveId.NONE)
     ) {
       this.showFailedText();
       this.fail();
@@ -461,6 +458,7 @@ export class MovePhase extends BattlePhase {
       return false;
     }
 
+    // For some reason, dancer will immediately wake its user from sleep when triggering
     if (this.useMode === MoveUseMode.INDIRECT) {
       this.pokemon.resetStatus(false);
       return false;
@@ -496,6 +494,12 @@ export class MovePhase extends BattlePhase {
    */
   protected checkFreeze(): boolean {
     if (this.pokemon.status?.effect !== StatusEffect.FREEZE) {
+      return false;
+    }
+
+    // For some reason, dancer will immediately its user
+    if (this.useMode === MoveUseMode.INDIRECT) {
+      this.pokemon.resetStatus(false);
       return false;
     }
 
@@ -912,6 +916,9 @@ export class MovePhase extends BattlePhase {
 
     applyMoveAttrs("CounterRedirectAttr", this.pokemon, null, this.move.getMove(), targetHolder);
     this.targets[0] = targetHolder.value;
+    if (targetHolder.value === BattlerIndex.ATTACKER) {
+      this.fail();
+    }
   }
 
   /**
