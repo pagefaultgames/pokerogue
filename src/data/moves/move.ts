@@ -836,6 +836,7 @@ export abstract class Move implements Localizable {
     switch (sequence) {
       case -1:
         conditionsArray = [...this.conditionsSeq2, ...this.conditionsSeq3, ...this.conditions];
+        break;
       case 2:
         conditionsArray = this.conditionsSeq2;
         break;
