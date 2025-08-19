@@ -269,7 +269,8 @@ export class MovePhase extends PokemonPhase {
     const targets = this.getActiveTargetPokemon();
     const arena = globalScene.arena;
     const user = this.pokemon;
-    const failsConditions = !move.applyConditions(user, targets[0]);
+
+    const failsConditions = !move.applyConditions(user, targets[0], 3);
     const failedDueToTerrain = arena.isMoveTerrainCancelled(user, this.targets, move);
     let failed = failsConditions || failedDueToTerrain;
 
