@@ -909,7 +909,6 @@ export class MovePhase extends PokemonPhase {
    */
   protected resolveCounterAttackTarget(): void {
     if (this.targets.length !== 1 || this.targets[0] !== BattlerIndex.ATTACKER) {
-      console.log("%cSkipping counter attack target resolution", "color: blue");
       return;
     }
 
