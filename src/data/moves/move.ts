@@ -93,6 +93,7 @@ import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import { applyChallenges } from "#utils/challenge-utils";
 import { ConsecutiveUseRestriction, counterAttackCondition_Both, counterAttackCondition_Physical, counterAttackCondition_Special, failAgainstFinalBossCondition, FailIfInsufficientHpCondition, failIfTargetNotAttackingCondition, failTeleportCondition, FirstMoveCondition, GravityUseRestriction, lastResortCondition, MoveCondition, MoveRestriction, UpperHandCondition } from "#moves/move-condition";
+import { areAllies } from "#utils/pokemon-utils";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
@@ -1810,15 +1811,22 @@ export class CounterDamageAttr extends FixedDamageAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    user.turnData.attacksReceived.find(ar => {
+      const category = allMoves[ar.move].category;
+      return (category !== MoveCategory.STATUS || areAllies(user.getBattlerIndex(), ar.sourceBattlerIndex))
+    })
     let damage = 0;
+    const userBattlerIndex = user.getBattlerIndex();
     for (const ar of user.turnData.attacksReceived) {
       // TODO: Adjust this for moves with variable damage categories
       const category = allMoves[ar.move].category;
-      if (category === MoveCategory.STATUS || (this.moveFilter && category !== this.moveFilter)) {
+      if (category === MoveCategory.STATUS
+        || areAllies(userBattlerIndex, ar.sourceBattlerIndex)
+        || (this.moveFilter && category !== this.moveFilter)) {
         continue;
       }
-      damage += ar.damage;
-
+      damage = ar.damage;
+      break;
     }
     (args[0] as NumberHolder).value = toDmgValue(damage * this.multiplier);
 
@@ -1858,7 +1866,6 @@ export class CounterRedirectAttr extends MoveAttr {
       } else {
         args[0].value = desiredTarget;
       }
-      console.log(`CounterRedirectAttr: Redirecting move to battler index ${BattlerIndex[args[0].value]}`);
       return true;
     }
     return false;
