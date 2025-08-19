@@ -698,7 +698,6 @@ export class MovePhase extends BattlePhase {
   }
 
   protected usePP(): void {
-    // If this is the release turn of a charging move, PP shall not be deducted
     if (!isIgnorePP(this.useMode)) {
       const move = this.move;
       // "commit" to using the move, deducting PP.
