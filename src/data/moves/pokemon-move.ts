@@ -88,7 +88,7 @@ export class PokemonMove {
    * @param pokemon - The Pokemon under consideration
    * @returns An array containing a boolean indicating whether the move can be selected, and a string with the reason if it cannot
    */
-  public isSelectable(pokemon: Pokemon): [boolean, string] {
+  public isSelectable(pokemon: Pokemon): [selectable: boolean, preventionText: string] {
     return pokemon.isMoveSelectable(this.moveId);
   }
 
