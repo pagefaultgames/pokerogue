@@ -26,10 +26,8 @@ export class MoveCondition {
   /**
    * @param func - A condition function that determines if the move can be used successfully
    */
-  constructor(func?: MoveConditionFunc) {
-    if (func) {
-      this.func = func;
-    }
+  constructor(func: MoveConditionFunc) {
+    this.func = func;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move): boolean {
@@ -46,9 +44,9 @@ export class MoveCondition {
  */
 
 export class FirstMoveCondition extends MoveCondition {
-  public override readonly func: MoveConditionFunc = user => {
-    return user.tempSummonData.waveTurnCount === 1;
-  };
+  constructor() {
+    super(user => user.tempSummonData.waveTurnCount === 0 && user.tempSummonData.turnCount === 0);
+  }
 
   // TODO: Update AI move selection logic to not require this method at all
   // Currently, it is used to avoid having the AI select the move if its condition will fail
@@ -173,6 +171,7 @@ export const UpperHandCondition = new MoveCondition((_user, target) => {
  * - The user does not know at least one other move
  * - The user has not directly used each other move in its moveset since it was sent into battle
  *   - A move is considered *used* for this purpose if it passed the first failure check sequence in the move phase
+ *    (i.e. its usage message was displayed)
  */
 export const lastResortCondition = new MoveCondition((user, _target, move) => {
   const otherMovesInMoveset = new Set<MoveId>(user.getMoveset().map(m => m.moveId));
