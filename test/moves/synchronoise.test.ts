@@ -82,11 +82,25 @@ describe("Moves - Synchronoise", () => {
   });
 
   it("should count as ineffective if no enemies share types with the user", async () => {
+    await game.classicMode.startBattle([SpeciesId.MAGNETON]);
+
+    const magneton = game.field.getPlayerPokemon();
+    const karp = game.field.getEnemyPokemon();
+
+    game.move.use(MoveId.SYNCHRONOISE);
+    await game.toEndOfTurn();
+
+    expect(magneton).toHaveUsedMove({ move: MoveId.SYNCHRONOISE, result: MoveResult.MISS });
+    expect(karp).toHaveFullHp();
+  });
+
+  it("should never affect any Pokemon if the user is typeless", async () => {
     await game.classicMode.startBattle([SpeciesId.BIBAREL]);
 
     const bibarel = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();
     bibarel.summonData.types = [PokemonType.UNKNOWN];
+    karp.summonData.types = [PokemonType.UNKNOWN];
 
     game.move.use(MoveId.SYNCHRONOISE);
     await game.toEndOfTurn();

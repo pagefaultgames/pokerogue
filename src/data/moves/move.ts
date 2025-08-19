@@ -5375,9 +5375,9 @@ export abstract class VariableMoveTypeChartAttr extends MoveAttr {
    * @param target - The {@linkcode Pokemon} targeted by the move
    * @param move - The {@linkcode Move} with this attribute
    * @param args -
-   * `[0]`: A {@linkcode NumberHolder} holding the current type effectiveness
-   * `[1]`: The target's entire defensive type profile
-   * `[2]`: The current {@linkcode PokemonType} of the move
+   * - `[0]`: A {@linkcode NumberHolder} holding the current type effectiveness
+   * - `[1]`: The target's entire defensive type profile
+   * - `[2]`: The current {@linkcode PokemonType} of the move
    * @returns `true` if application of the attribute succeeds
    */
   public abstract override apply(user: Pokemon, target: Pokemon, move: Move, args: [multiplier: NumberHolder, types: PokemonType[], moveType: PokemonType]): boolean;
@@ -5422,15 +5422,13 @@ export class NeutralDamageAgainstFlyingTypeAttr extends VariableMoveTypeChartAtt
 export class HitsSameTypeAttr extends VariableMoveTypeChartAttr {
   public override apply(user: Pokemon, _target: Pokemon, _move: Move, args: [multiplier: NumberHolder, types: PokemonType[], moveType: PokemonType]): boolean {
     const [multiplier, types] = args;
-    if (user.getTypes(true).some(type => types.includes(type))) {
+    const userTypes = user.getTypes(true);
+    // Synchronoise is never effective if the user is typeless
+    if (!userTypes.includes(PokemonType.UNKNOWN) && userTypes.some(type => types.includes(type))) {
       return false;
     }
     multiplier.value = 0;
     return true;
-  }
-
-  getCondition(): MoveConditionFunc {
-    return unknownTypeCondition;
   }
 }
 
@@ -5441,6 +5439,8 @@ export class HitsSameTypeAttr extends VariableMoveTypeChartAttr {
 export class FlyingTypeMultiplierAttr extends VariableMoveTypeChartAttr {
   apply(user: Pokemon, target: Pokemon, _move: Move, args: [multiplier: NumberHolder, types: PokemonType[], moveType: PokemonType]): boolean {
     const multiplier = args[0];
+    // Intentionally exclude `move` to not re-trigger the effects of various moves
+    // TODO: Do we need to pass `useIllusion` here?
     multiplier.value *= target.getAttackTypeEffectiveness(PokemonType.FLYING, {source: user});
     return true;
   }
@@ -8258,8 +8258,6 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
   }
 }
 
-
-const unknownTypeCondition: MoveConditionFunc = (user, target, move) => !user.getTypes().includes(PokemonType.UNKNOWN);
 
 export type MoveTargetSet = {
   targets: BattlerIndex[];
