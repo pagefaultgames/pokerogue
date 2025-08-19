@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => ({
     slowTestThreshold: 10_000,
     // TODO: Consider enabling
     // expect: {requireAssertions: true},
-    setupFiles: ["./test/font-face.setup.ts", "./test/vitest.setup.ts", "./test/matchers.setup.ts"],
+    setupFiles: ["./test/setup/font-face.setup.ts", "./test/setup/vitest.setup.ts", "./test/setup/matchers.setup.ts"],
     sequence: {
       sequencer: MySequencer,
     },

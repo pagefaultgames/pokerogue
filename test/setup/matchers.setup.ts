@@ -21,7 +21,7 @@ import { expect } from "vitest";
 
 /*
  * Setup file for custom matchers.
- * Make sure to define the call signatures in `test/@types/vitest.d.ts` too!
+ * Make sure to define the call signatures in `#test/@types/vitest.d.ts` too!
  */
 
 expect.extend({
