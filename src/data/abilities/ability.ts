@@ -6,7 +6,7 @@ import type { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-chang
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import type { ArenaTrapTag, SuppressAbilitiesTag } from "#data/arena-tag";
+import type { EntryHazardTag, SuppressAbilitiesTag } from "#data/arena-tag";
 import type { BattlerTag } from "#data/battler-tags";
 import { GroundedTag } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
@@ -1113,7 +1113,7 @@ export class PostDefendApplyArenaTrapTagAbAttr extends PostDefendAbAttr {
   }
 
   override canApply({ pokemon, opponent: attacker, move }: PostMoveInteractionAbAttrParams): boolean {
-    const tag = globalScene.arena.getTag(this.arenaTagType) as ArenaTrapTag;
+    const tag = globalScene.arena.getTag(this.arenaTagType) as EntryHazardTag;
     return (
       this.condition(pokemon, attacker, move) &&
       (!globalScene.arena.getTag(this.arenaTagType) || tag.layers < tag.maxLayers)
