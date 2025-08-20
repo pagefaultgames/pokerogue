@@ -78,15 +78,19 @@ class DefaultOverrides {
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override. */
   readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
-  /** Sets the level cap to this number during experience gain calculations. Set to `0` to disable override & use normal wave-based level caps,
-  or any negative number to set it to 9 quadrillion (effectively disabling it). */
+  /**
+   * Sets the level cap to this number during experience gain calculations.
+   *
+   * Set to `0` to disable override & use normal wave-based level caps,
+   * or any negative number to disable level caps entirely.
+   */
   readonly LEVEL_CAP_OVERRIDE: number = 0;
   /**
    * If defined, overrides random critical hit rolls to always or never succeed.
    * Ignored if the move is guaranteed to always/never crit.
    */
   readonly CRITICAL_HIT_OVERRIDE: boolean | null = null;
-  /** default 1000 */
+  /** @defaultValue `1000` */
   readonly STARTING_MONEY_OVERRIDE: number = 0;
   /** Sets all shop item prices to 0 */
   readonly WAIVE_SHOP_FEES_OVERRIDE: boolean = false;
@@ -130,8 +134,8 @@ class DefaultOverrides {
   // PLAYER OVERRIDES
   // ----------------
   /**
-   * Set the form index of any starter in the party whose `speciesId` is inside this override
-   * @see {@link allSpecies} in `src/data/pokemon-species.ts` for form indexes
+   * Set the form index of any starter in the party whose {@linkcode SpeciesId} is inside this override
+   * @see `src/data/pokemon-species.ts` for form indexes
    * @example
    * ```
    * const STARTER_FORM_OVERRIDES = {
@@ -141,23 +145,14 @@ class DefaultOverrides {
    */
   readonly STARTER_FORM_OVERRIDES: Partial<Record<SpeciesId, number>> = {};
 
-  /** default 5 or 20 for Daily */
+  /** @defaultValue `20` for Daily and `5` for all other modes */
   readonly STARTING_LEVEL_OVERRIDE: number = 0;
-  /**
-   * SPECIES OVERRIDE
-   * will only apply to the first starter in your party or each enemy pokemon
-   * default is 0 to not override
-   * @example SPECIES_OVERRIDE = SpeciesId.Bulbasaur;
-   */
-  readonly STARTER_SPECIES_OVERRIDE: SpeciesId | number = 0;
-  /**
-   * This will force your starter to be a random fusion
-   */
+  /** Will override the species of your pokemon when starting a new run */
+  readonly STARTER_SPECIES_OVERRIDE: SpeciesId | 0 = 0;
+  /** This will force your starter to be a random fusion */
   readonly STARTER_FUSION_OVERRIDE: boolean = false;
-  /**
-   * This will override the species of the fusion
-   */
-  readonly STARTER_FUSION_SPECIES_OVERRIDE: SpeciesId | number = 0;
+  /** This will override the species of the fusion */
+  readonly STARTER_FUSION_SPECIES_OVERRIDE: SpeciesId | 0 = 0;
   readonly ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
@@ -180,13 +175,9 @@ class DefaultOverrides {
   // OPPONENT / ENEMY OVERRIDES
   // --------------------------
   readonly ENEMY_SPECIES_OVERRIDE: SpeciesId | number = 0;
-  /**
-   * This will make all opponents fused Pokemon
-   */
+  /** This will make all enemies fused Pokemon */
   readonly ENEMY_FUSION_OVERRIDE: boolean = false;
-  /**
-   * This will override the species of the fusion only when the opponent is already a fusion
-   */
+  /** This will override the species of the fusion only when the enemy is already a fusion */
   readonly ENEMY_FUSION_SPECIES_OVERRIDE: SpeciesId | number = 0;
   readonly ENEMY_LEVEL_OVERRIDE: number = 0;
   readonly ENEMY_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
@@ -197,6 +188,7 @@ class DefaultOverrides {
   readonly ENEMY_MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
   readonly ENEMY_SHINY_OVERRIDE: boolean | null = null;
   readonly ENEMY_VARIANT_OVERRIDE: Variant | null = null;
+
   /**
    * Overrides the IVs of enemy pokemon. Values must never be outside the range `0` to `31`!
    * - If set to a number between `0` and `31`, set all IVs of all enemy pokemon to that number.
@@ -210,9 +202,9 @@ class DefaultOverrides {
   /**
    * Override to give the enemy Pokemon a given amount of health segments
    *
-   * 0 (default): the health segments will be handled normally based on wave, level and species
-   * 1: the Pokemon will have a single health segment and therefore will not be a boss
-   * 2+: the Pokemon will be a boss with the given number of health segments
+   * - `0` (default): the health segments will be handled normally based on wave, level and species
+   * - `1`: the Pokemon will have a single health segment and therefore will not be a boss
+   * - `2+`: the Pokemon will be a boss with the given number of health segments
    */
   readonly ENEMY_HEALTH_SEGMENTS_OVERRIDE: number = 0;
 
@@ -293,9 +285,7 @@ class DefaultOverrides {
    */
   readonly ITEM_REWARD_OVERRIDE: ModifierOverride[] = [];
 
-  /**
-   * If `true`, disable all non-scripted opponent trainer encounters.
-   */
+  /** If `true`, disable all non-scripted opponent trainer encounters. */
   readonly DISABLE_STANDARD_TRAINERS_OVERRIDE: boolean = false;
 
   /**

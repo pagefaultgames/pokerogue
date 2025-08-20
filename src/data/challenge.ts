@@ -49,7 +49,7 @@ export abstract class Challenge {
    * @defaultValue 0
    */
   public get ribbonAwarded(): RibbonFlag {
-    return 0 as RibbonFlag;
+    return 0n as RibbonFlag;
   }
 
   /**
@@ -436,7 +436,7 @@ export class SingleGenerationChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
     // NOTE: This logic will not work for the eventual mono gen 10 ribbon, as
     // as its flag will not be in sequence with the other mono gen ribbons.
-    return this.value ? ((RibbonData.MONO_GEN_1 << (this.value - 1)) as RibbonFlag) : 0;
+    return this.value ? ((RibbonData.MONO_GEN_1 << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
   }
 
   constructor() {
@@ -674,10 +674,10 @@ export class SingleGenerationChallenge extends Challenge {
 
   getDescription(overrideValue: number = this.value): string {
     if (overrideValue === 0) {
-      return i18next.t("challenges:singleGeneration.desc_default");
+      return i18next.t("challenges:singleGeneration.descDefault");
     }
     return i18next.t("challenges:singleGeneration.desc", {
-      gen: i18next.t(`challenges:singleGeneration.gen_${overrideValue}`),
+      gen: i18next.t(`challenges:singleGeneration.gen.${overrideValue}`),
     });
   }
 
@@ -706,7 +706,7 @@ export class SingleTypeChallenge extends Challenge {
     // `this.value` represents the 1-based index of pokemon type
     // `RibbonData.MONO_NORMAL` starts the flag position for the types,
     // and we shift it by 1 for the specific type.
-    return this.value ? ((RibbonData.MONO_NORMAL << (this.value - 1)) as RibbonFlag) : 0;
+    return this.value ? ((RibbonData.MONO_NORMAL << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
   }
   private static TYPE_OVERRIDES: monotypeOverride[] = [
     { species: SpeciesId.CASTFORM, type: PokemonType.NORMAL, fusion: false },
@@ -758,7 +758,7 @@ export class SingleTypeChallenge extends Challenge {
   getDescription(overrideValue: number = this.value): string {
     const type = i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[overrideValue - 1])}`);
     const typeColor = `[color=${TypeColor[PokemonType[overrideValue - 1]]}][shadow=${TypeShadow[PokemonType[this.value - 1]]}]${type}[/shadow][/color]`;
-    const defaultDesc = i18next.t("challenges:singleType.desc_default");
+    const defaultDesc = i18next.t("challenges:singleType.descDefault");
     const typeDesc = i18next.t("challenges:singleType.desc", {
       type: typeColor,
     });
@@ -778,7 +778,7 @@ export class SingleTypeChallenge extends Challenge {
  */
 export class FreshStartChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? RibbonData.FRESH_START : 0;
+    return this.value ? RibbonData.FRESH_START : 0n;
   }
   constructor() {
     super(Challenges.FRESH_START, 2);
@@ -854,7 +854,7 @@ export class FreshStartChallenge extends Challenge {
  */
 export class InverseBattleChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? RibbonData.INVERSE : 0;
+    return this.value ? RibbonData.INVERSE : 0n;
   }
   constructor() {
     super(Challenges.INVERSE_BATTLE, 1);
@@ -890,7 +890,7 @@ export class InverseBattleChallenge extends Challenge {
  */
 export class FlipStatChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? RibbonData.FLIP_STATS : 0;
+    return this.value ? RibbonData.FLIP_STATS : 0n;
   }
   constructor() {
     super(Challenges.FLIP_STAT, 1);
@@ -973,7 +973,7 @@ export class LowerStarterPointsChallenge extends Challenge {
  */
 export class LimitedSupportChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? ((RibbonData.NO_HEAL << (this.value - 1)) as RibbonFlag) : 0;
+    return this.value ? ((RibbonData.NO_HEAL << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
   }
   constructor() {
     super(Challenges.LIMITED_SUPPORT, 3);
@@ -1008,7 +1008,7 @@ export class LimitedSupportChallenge extends Challenge {
  */
 export class LimitedCatchChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? RibbonData.LIMITED_CATCH : 0;
+    return this.value ? RibbonData.LIMITED_CATCH : 0n;
   }
   constructor() {
     super(Challenges.LIMITED_CATCH, 1);
@@ -1035,7 +1035,7 @@ export class LimitedCatchChallenge extends Challenge {
  */
 export class HardcoreChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? RibbonData.HARDCORE : 0;
+    return this.value ? RibbonData.HARDCORE : 0n;
   }
   constructor() {
     super(Challenges.HARDCORE, 1);

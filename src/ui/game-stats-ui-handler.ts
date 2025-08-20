@@ -308,8 +308,8 @@ export class GameStatsUiHandler extends UiHandler {
   private getUsername(): string {
     const usernameReplacement =
       globalScene.gameData.gender === PlayerGender.FEMALE
-        ? i18next.t("trainerNames:player_f")
-        : i18next.t("trainerNames:player_m");
+        ? i18next.t("trainerNames:playerF")
+        : i18next.t("trainerNames:playerM");
 
     const displayName = !globalScene.hideUsername
       ? (loggedInUser?.username ?? i18next.t("common:guest"))
