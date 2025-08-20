@@ -96,7 +96,7 @@ export class AchvsUiHandler extends MessageUiHandler {
     const genderIndex = globalScene.gameData.gender ?? PlayerGender.MALE;
     const genderStr = PlayerGender[genderIndex].toLowerCase();
 
-    this.achvsName = i18next.t("achv:Achievements.name", { context: genderStr });
+    this.achvsName = i18next.t("achv:achievements.name", { context: genderStr });
     this.vouchersName = i18next.t("voucher:vouchers");
 
     this.iconsBg = addWindow(0, this.headerBg.height, WIDTH - 2, HEIGHT - this.headerBg.height - 68).setOrigin(0);
@@ -214,7 +214,7 @@ export class AchvsUiHandler extends MessageUiHandler {
     this.showText(!hidden ? achv.description : "");
     this.scoreText.setText(`${achv.score}pt`);
     this.unlockText.setText(
-      unlocked ? new Date(achvUnlocks[achv.id]).toLocaleDateString() : i18next.t("achv:Locked.name"),
+      unlocked ? new Date(achvUnlocks[achv.id]).toLocaleDateString() : i18next.t("achv:locked.name"),
     );
   }
 

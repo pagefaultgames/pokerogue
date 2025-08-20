@@ -4,6 +4,7 @@ import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { ChallengeType } from "#enums/challenge-type";
+import { Challenges } from "#enums/challenges";
 import type { MoveId } from "#enums/move-id";
 import type { MoveSourceType } from "#enums/move-source-type";
 import type { SpeciesId } from "#enums/species-id";
@@ -378,7 +379,7 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
  * @param soft - If `true`, allow it if it could become valid through a form change.
  * @returns `true` if the species is considered valid.
  */
-function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
+export function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
   const isValidForChallenge = new BooleanHolder(true);
   applyChallenges(ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
   if (!soft || !pokemonFormChanges.hasOwnProperty(species.speciesId)) {
@@ -406,4 +407,29 @@ function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrPr
     });
   });
   return result;
+}
+
+/** @returns Whether the current game mode meets the criteria to be considered a Nuzlocke challenge */
+export function isNuzlockeChallenge(): boolean {
+  let isFreshStart = false;
+  let isLimitedCatch = false;
+  let isHardcore = false;
+  for (const challenge of globalScene.gameMode.challenges) {
+    // value is 0 if challenge is not active
+    if (!challenge.value) {
+      continue;
+    }
+    switch (challenge.id) {
+      case Challenges.FRESH_START:
+        isFreshStart = true;
+        break;
+      case Challenges.LIMITED_CATCH:
+        isLimitedCatch = true;
+        break;
+      case Challenges.HARDCORE:
+        isHardcore = true;
+        break;
+    }
+  }
+  return isFreshStart && isLimitedCatch && isHardcore;
 }

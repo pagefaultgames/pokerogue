@@ -3,7 +3,7 @@ import { EFFECTIVE_STATS, getShortenedStatKey, Stat } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import { getBBCodeFrag } from "#ui/text";
-import { toTitleCase } from "#utils/strings";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export function getNatureName(
@@ -13,7 +13,7 @@ export function getNatureName(
   ignoreBBCode = false,
   uiTheme: UiTheme = UiTheme.DEFAULT,
 ): string {
-  let ret = toTitleCase(Nature[nature]);
+  let ret = toCamelCase(Nature[nature]);
   //Translating nature
   if (i18next.exists(`nature:${ret}`)) {
     ret = i18next.t(`nature:${ret}` as any);

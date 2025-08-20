@@ -194,7 +194,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
       .withOptionPhase(async () => {
         // Investigate garbage, battle Gmax Garbodor
         globalScene.setFieldScale(0.75);
-        await showEncounterText(`${namespace}:option.2.selected_2`);
+        await showEncounterText(`${namespace}:option.2.selected2`);
         await transitionMysteryEncounterIntroVisuals();
 
         const encounter = globalScene.currentBattle.mysteryEncounter!;

@@ -45,6 +45,7 @@ import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import type { DexAttrProps, StarterAttributes, StarterMoveset } from "#system/game-data";
+import { RibbonData } from "#system/ribbons/ribbon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
@@ -72,7 +73,7 @@ import {
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences, saveStarterPreferences } from "#utils/data";
 import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
-import { toTitleCase } from "#utils/strings";
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
@@ -2263,7 +2264,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             });
           };
           options.push({
-            label: i18next.t("menuUiHandler:POKEDEX"),
+            label: i18next.t("menuUiHandler:pokedex"),
             handler: () => {
               ui.setMode(UiMode.STARTER_SELECT).then(() => {
                 const attributes = {
@@ -3226,6 +3227,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       onScreenFirstIndex + maxRows * maxColumns - 1,
     );
 
+    const gameData = globalScene.gameData;
+
     this.starterSelectScrollBar.setScrollCursor(this.scrollCursor);
 
     let pokerusCursorIndex = 0;
@@ -3265,9 +3268,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       container.label.setVisible(true);
       const speciesVariants =
-        speciesId && globalScene.gameData.dexData[speciesId].caughtAttr & DexAttr.SHINY
+        speciesId && gameData.dexData[speciesId].caughtAttr & DexAttr.SHINY
           ? [DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(
-              v => !!(globalScene.gameData.dexData[speciesId].caughtAttr & v),
+              v => !!(gameData.dexData[speciesId].caughtAttr & v),
             )
           : [];
       for (let v = 0; v < 3; v++) {
@@ -3282,12 +3285,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
       }
 
-      container.starterPassiveBgs.setVisible(!!globalScene.gameData.starterData[speciesId].passiveAttr);
+      container.starterPassiveBgs.setVisible(!!gameData.starterData[speciesId].passiveAttr);
       container.hiddenAbilityIcon.setVisible(
-        !!globalScene.gameData.dexData[speciesId].caughtAttr &&
-          !!(globalScene.gameData.starterData[speciesId].abilityAttr & 4),
+        !!gameData.dexData[speciesId].caughtAttr && !!(gameData.starterData[speciesId].abilityAttr & 4),
       );
-      container.classicWinIcon.setVisible(globalScene.gameData.starterData[speciesId].classicWinCount > 0);
+      container.classicWinIcon
+        .setVisible(gameData.starterData[speciesId].classicWinCount > 0)
+        .setTexture(
+          gameData.dexData[speciesId].ribbons.has(RibbonData.NUZLOCKE) ? "champion_ribbon_emerald" : "champion_ribbon",
+        );
       container.favoriteIcon.setVisible(this.starterPreferences[speciesId]?.favorite ?? false);
 
       // 'Candy Icon' mode
@@ -3464,7 +3470,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         //Growth translate
         let growthReadable = toTitleCase(GrowthRate[species.growthRate]);
-        const growthAux = growthReadable.replace(" ", "_");
+        const growthAux = toCamelCase(growthReadable);
         if (i18next.exists("growth:" + growthAux)) {
           growthReadable = i18next.t(("growth:" + growthAux) as any);
         }

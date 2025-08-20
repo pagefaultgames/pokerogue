@@ -33,7 +33,7 @@ describe("Items - Thick Club", () => {
     const consoleSpy = vi.spyOn(console, "log");
     await game.classicMode.startBattle([SpeciesId.CUBONE]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
+    const partyMember = game.field.getPlayerPokemon();
 
     // Checking console log to make sure Thick Club is applied when getEffectiveStat (with the appropriate stat) is called
     partyMember.getEffectiveStat(Stat.DEF);
@@ -84,7 +84,7 @@ describe("Items - Thick Club", () => {
   it("THICK_CLUB held by CUBONE", async () => {
     await game.classicMode.startBattle([SpeciesId.CUBONE]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
+    const partyMember = game.field.getPlayerPokemon();
 
     const atkStat = partyMember.getStat(Stat.ATK);
 
@@ -107,7 +107,7 @@ describe("Items - Thick Club", () => {
   it("THICK_CLUB held by MAROWAK", async () => {
     await game.classicMode.startBattle([SpeciesId.MAROWAK]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
+    const partyMember = game.field.getPlayerPokemon();
 
     const atkStat = partyMember.getStat(Stat.ATK);
 
@@ -130,7 +130,7 @@ describe("Items - Thick Club", () => {
   it("THICK_CLUB held by ALOLA_MAROWAK", async () => {
     await game.classicMode.startBattle([SpeciesId.ALOLA_MAROWAK]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
+    const partyMember = game.field.getPlayerPokemon();
 
     const atkStat = partyMember.getStat(Stat.ATK);
 
@@ -157,8 +157,7 @@ describe("Items - Thick Club", () => {
 
     await game.classicMode.startBattle([species[randSpecies], SpeciesId.PIKACHU]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
-    const ally = game.scene.getPlayerParty()[1];
+    const [partyMember, ally] = game.scene.getPlayerParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -194,8 +193,7 @@ describe("Items - Thick Club", () => {
 
     await game.classicMode.startBattle([SpeciesId.PIKACHU, species[randSpecies]]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
-    const ally = game.scene.getPlayerParty()[1];
+    const [partyMember, ally] = game.scene.getPlayerParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -227,7 +225,7 @@ describe("Items - Thick Club", () => {
   it("THICK_CLUB not held by CUBONE", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
+    const partyMember = game.field.getPlayerPokemon();
 
     const atkStat = partyMember.getStat(Stat.ATK);
 
