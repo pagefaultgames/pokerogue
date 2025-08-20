@@ -21,6 +21,7 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
+import { isSpreadMove } from "#moves/move-utils";
 import type {
   ArenaScreenTagType,
   ArenaTagTypeData,
@@ -249,6 +250,11 @@ export abstract class ArenaTag implements BaseArenaTag {
     }
   }
 
+  /**
+   * Return whether this Tag can affect the given Pokemon, based on this tag's {@linkcode side}.
+   * @param pokemon - The {@linkcode Pokemon} to check
+   * @returns Whether this tag can affect `pokemon`.
+   */
   protected canAffect(pokemon: Pokemon) {
     return this.getAffectedPokemon().includes(pokemon);
   }
@@ -412,24 +418,15 @@ type ProtectConditionFunc = (moveId: MoveId) => boolean;
  * applies protection based on the attributes of incoming moves
  */
 export abstract class ConditionalProtectTag extends ArenaTag {
-  /** The condition function to determine which moves are negated */
-  protected protectConditionFunc: ProtectConditionFunc;
   /**
    * Whether this protection effect should apply to _all_ moves, including ones that ignore other forms of protection.
    * @defaultValue `false`
    */
   protected ignoresBypass: boolean;
 
-  constructor(
-    sourceMove: MoveId,
-    sourceId: number | undefined,
-    side: ArenaTagSide,
-    condition: ProtectConditionFunc,
-    ignoresBypass = false,
-  ) {
+  constructor(sourceMove: MoveId, sourceId: number | undefined, side: ArenaTagSide, ignoresBypass = false) {
     super(1, sourceMove, sourceId, side);
 
-    this.protectConditionFunc = condition;
     this.ignoresBypass = ignoresBypass;
   }
 
@@ -442,8 +439,16 @@ export abstract class ConditionalProtectTag extends ArenaTag {
   }
 
   /**
+   * The condition function to determine which moves are negated.
+   */
+  protected abstract get condition(): ProtectConditionFunc;
+
+  /**
    * Return the message key that will be used when protecting an allied target.
-   *
+   * Within the text, the following variables will be populated:
+   *  - `{{pokemonNameWithAffix}}`: The name of the Pokemon protected by the attack
+   *  - `{{moveName}}`: The name of the move that created the tag
+   *  - `{{attackName}}`: The name of the move that _triggered_ the protection effect.
    * @defaultValue `arenaTag:conditionalProtectApply`
    */
   protected get onProtectMessageKey(): string {
@@ -475,7 +480,7 @@ export abstract class ConditionalProtectTag extends ArenaTag {
       return false;
     }
 
-    if (!this.protectConditionFunc(moveId)) {
+    if (!this.condition(moveId)) {
       return false;
     }
 
@@ -491,7 +496,7 @@ export abstract class ConditionalProtectTag extends ArenaTag {
         i18next.t(this.onProtectMessageKey, {
           pokemonNameWithAffix: getPokemonNameWithAffix(defender),
           moveName: this.getMoveName(),
-          attackingMove: allMoves[moveId].name,
+          attackName: allMoves[moveId].name,
         }),
       );
     }
@@ -528,28 +533,13 @@ const QuickGuardConditionFunc: ProtectConditionFunc = moveId => {
 class QuickGuardTag extends ConditionalProtectTag {
   public readonly tagType = ArenaTagType.QUICK_GUARD;
   constructor(sourceId: number | undefined, side: ArenaTagSide) {
-    super(MoveId.QUICK_GUARD, sourceId, side, QuickGuardConditionFunc);
+    super(MoveId.QUICK_GUARD, sourceId, side);
+  }
+
+  override get condition(): ProtectConditionFunc {
+    return QuickGuardConditionFunc;
   }
 }
-
-/**
- * Condition function for {@link https://bulbapedia.bulbagarden.net/wiki/Wide_Guard_(move) Wide Guard's}
- * protection effect.
- * @param moveId {@linkcode MoveId} The move to check against this condition
- * @returns `true` if the incoming move is multi-targeted (even if it's only used against one Pokemon).
- */
-const WideGuardConditionFunc: ProtectConditionFunc = (moveId): boolean => {
-  const move = allMoves[moveId];
-
-  switch (move.moveTarget) {
-    case MoveTarget.ALL_ENEMIES:
-    case MoveTarget.ALL_NEAR_ENEMIES:
-    case MoveTarget.ALL_OTHERS:
-    case MoveTarget.ALL_NEAR_OTHERS:
-      return true;
-  }
-  return false;
-};
 
 /**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Wide_Guard_(move) Wide Guard}
@@ -559,20 +549,13 @@ const WideGuardConditionFunc: ProtectConditionFunc = (moveId): boolean => {
 class WideGuardTag extends ConditionalProtectTag {
   public readonly tagType = ArenaTagType.WIDE_GUARD;
   constructor(sourceId: number | undefined, side: ArenaTagSide) {
-    super(MoveId.WIDE_GUARD, sourceId, side, WideGuardConditionFunc);
+    super(MoveId.WIDE_GUARD, sourceId, side);
+  }
+
+  override get condition(): ProtectConditionFunc {
+    return m => isSpreadMove(allMoves[m]);
   }
 }
-
-/**
- * Condition function for {@link https://bulbapedia.bulbagarden.net/wiki/Mat_Block_(move) Mat Block's}
- * protection effect.
- * @param moveId {@linkcode MoveId} The move to check against this condition.
- * @returns `true` if the incoming move is not a Status move.
- */
-const MatBlockConditionFunc: ProtectConditionFunc = (moveId): boolean => {
-  const move = allMoves[moveId];
-  return move.category !== MoveCategory.STATUS;
-};
 
 /**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Mat_Block_(move) Mat Block}
@@ -581,14 +564,20 @@ const MatBlockConditionFunc: ProtectConditionFunc = (moveId): boolean => {
 class MatBlockTag extends ConditionalProtectTag {
   public readonly tagType = ArenaTagType.MAT_BLOCK;
   constructor(sourceId: number | undefined, side: ArenaTagSide) {
-    super(MoveId.MAT_BLOCK, sourceId, side, MatBlockConditionFunc);
+    super(MoveId.MAT_BLOCK, sourceId, side);
   }
 
   protected override get onAddMessageKey(): string {
     return "arenaTag:matBlockOnAdd";
   }
 
-  // TODO: This is using incorrect locales for protection
+  protected override get onProtectMessageKey(): string {
+    return "arenaTag:matBlockApply";
+  }
+
+  protected override get condition(): ProtectConditionFunc {
+    return m => allMoves[m].category !== MoveCategory.STATUS;
+  }
 }
 
 /**
@@ -616,7 +605,11 @@ const CraftyShieldConditionFunc: ProtectConditionFunc = moveId => {
 class CraftyShieldTag extends ConditionalProtectTag {
   public readonly tagType = ArenaTagType.CRAFTY_SHIELD;
   constructor(sourceId: number | undefined, side: ArenaTagSide) {
-    super(MoveId.CRAFTY_SHIELD, sourceId, side, CraftyShieldConditionFunc, true);
+    super(MoveId.CRAFTY_SHIELD, sourceId, side, true);
+  }
+
+  protected override get condition(): ProtectConditionFunc {
+    return CraftyShieldConditionFunc;
   }
 }
 
@@ -626,6 +619,7 @@ class CraftyShieldTag extends ConditionalProtectTag {
  */
 export class NoCritTag extends SerializableArenaTag {
   public readonly tagType = ArenaTagType.NO_CRIT;
+
   protected override get onAddMessageKey(): string {
     return "arenaTag:noCritOnAdd" + this.i18nSideKey;
   }
@@ -761,8 +755,6 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
   constructor(sourceMove: MoveId, sourceId: number | undefined, side: ArenaTagSide) {
     super(0, sourceMove, sourceId, side);
   }
-
-  // TODO: Add a `canAdd` field to arena tags to remove need for callers to check layer counts
 
   /**
    * Check if this tag can have more layers added to it.
