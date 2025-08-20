@@ -2,6 +2,7 @@ import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import { languageOptions } from "#system/settings-language";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
@@ -228,6 +229,7 @@ export class LoginFormUiHandler extends FormModalUiHandler {
     };
 
     this.settingsImage.on("pointerdown", () => {
+      // Show the username selection ui
       const userNameHandler = () => {
         globalScene.ui.revertMode();
         if (globalScene.tweens.getTweensOf(this.infoContainer).length === 0) {
@@ -263,105 +265,16 @@ export class LoginFormUiHandler extends FormModalUiHandler {
         }
       };
 
-      const changeLocaleHandler = (locale: string): boolean => {
-        try {
-          i18next.changeLanguage(locale);
-          localStorage.setItem("prLang", locale);
-          globalScene.ui.revertMode();
-          // Reload the whole game to apply the new locale since also some constants are translated
-          window.location.reload();
-          return true;
-        } catch (error) {
-          console.error("Error changing locale:", error);
-          return false;
-        }
-      };
-
       // Show the language selection ui
       const changeLanguageHandler = () => {
         globalScene.ui.revertMode();
         globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-          options: [
-            {
-              label: "English",
-              handler: () => changeLocaleHandler("en"),
-            },
-            {
-              label: "Español (ES)",
-              handler: () => changeLocaleHandler("es-ES"),
-            },
-            {
-              label: "Español (LATAM)",
-              handler: () => changeLocaleHandler("es-MX"),
-            },
-            {
-              label: "Français",
-              handler: () => changeLocaleHandler("fr"),
-            },
-            {
-              label: "Deutsch",
-              handler: () => changeLocaleHandler("de"),
-            },
-            {
-              label: "Italiano",
-              handler: () => changeLocaleHandler("it"),
-            },
-            {
-              label: "Português (BR)",
-              handler: () => changeLocaleHandler("pt-BR"),
-            },
-            {
-              label: "한국어",
-              handler: () => changeLocaleHandler("ko"),
-            },
-            {
-              label: "日本語",
-              handler: () => changeLocaleHandler("ja"),
-            },
-            {
-              label: "简体中文",
-              handler: () => changeLocaleHandler("zh-CN"),
-            },
-            {
-              label: "繁體中文",
-              handler: () => changeLocaleHandler("zh-TW"),
-            },
-            {
-              label: "Català (Needs Help)",
-              handler: () => changeLocaleHandler("ca"),
-            },
-            {
-              label: "Türkçe (Needs Help)",
-              handler: () => changeLocaleHandler("tr"),
-            },
-            {
-              label: "Русский (Needs Help)",
-              handler: () => changeLocaleHandler("ru"),
-            },
-            {
-              label: "Dansk (Needs Help)",
-              handler: () => changeLocaleHandler("da"),
-            },
-            {
-              label: "Română (Needs Help)",
-              handler: () => changeLocaleHandler("ro"),
-            },
-            {
-              label: "Tagalog (Needs Help)",
-              handler: () => changeLocaleHandler("tl"),
-            },
-            {
-              label: i18next.t("settings:back"),
-              handler: () => {
-                globalScene.ui.revertMode();
-                return true;
-              },
-            },
-          ],
+          options: languageOptions,
           maxOptions: 7,
           delay: 1000,
         });
       };
+
       globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
         options: [
           {
