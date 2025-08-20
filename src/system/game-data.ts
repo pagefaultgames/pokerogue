@@ -10,7 +10,7 @@ import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
-import { ArenaTrapTag } from "#data/arena-tag";
+import { EntryHazardTag } from "#data/arena-tag";
 import { allMoves, allSpecies } from "#data/data-lists";
 import type { Egg } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
@@ -1135,8 +1135,8 @@ export class GameData {
           globalScene.arena.tags = sessionData.arena.tags;
           if (globalScene.arena.tags) {
             for (const tag of globalScene.arena.tags) {
-              if (tag instanceof ArenaTrapTag) {
-                const { tagType, side, turnCount, layers, maxLayers } = tag as ArenaTrapTag;
+              if (tag instanceof EntryHazardTag) {
+                const { tagType, side, turnCount, layers, maxLayers } = tag as EntryHazardTag;
                 globalScene.arena.eventTarget.dispatchEvent(
                   new TagAddedEvent(tagType, side, turnCount, layers, maxLayers),
                 );

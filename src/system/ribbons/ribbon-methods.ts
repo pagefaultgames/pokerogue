@@ -15,6 +15,6 @@ export function awardRibbonsToSpeciesLine(id: SpeciesId, ribbons: RibbonFlag): v
   dexData[id].ribbons.award(ribbons);
   // Mark all pre-evolutions of the Pokémon with the same ribbon flags.
   for (let prevoId = pokemonPrevolutions[id]; !isNullOrUndefined(prevoId); prevoId = pokemonPrevolutions[prevoId]) {
-    dexData[id].ribbons.award(ribbons);
+    dexData[prevoId].ribbons.award(ribbons);
   }
 }
