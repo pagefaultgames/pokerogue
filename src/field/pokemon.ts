@@ -5007,22 +5007,43 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     effect: StatusEffect,
     sleepTurnsRemaining = effect !== StatusEffect.SLEEP ? 0 : this.randBattleSeedIntRange(2, 4),
   ): void {
-    if (effect === StatusEffect.SLEEP) {
-      this.setFrameRate(4);
+    switch (effect) {
+      case StatusEffect.POISON:
+      case StatusEffect.TOXIC:
+        this.setFrameRate(8);
+        break;
+      case StatusEffect.PARALYSIS:
+        this.setFrameRate(5);
+        break;
+      case StatusEffect.SLEEP: {
+        this.setFrameRate(3);
 
-      // If the user is semi-invulnerable when put asleep (such as due to Yawm),
-      // remove their invulnerability and cancel the upcoming move from the queue
-      const invulnTagTypes = [
-        BattlerTagType.FLYING,
-        BattlerTagType.UNDERGROUND,
-        BattlerTagType.UNDERWATER,
-        BattlerTagType.HIDDEN,
-      ];
+        // If the user is semi-invulnerable when put asleep (such as due to Yawm),
+        // remove their invulnerability and cancel the upcoming move from the queue
+        const invulnTagTypes = [
+          BattlerTagType.FLYING,
+          BattlerTagType.UNDERGROUND,
+          BattlerTagType.UNDERWATER,
+          BattlerTagType.HIDDEN,
+        ];
 
-      if (this.findTag(t => invulnTagTypes.includes(t.tagType))) {
-        this.findAndRemoveTags(t => invulnTagTypes.includes(t.tagType));
-        this.getMoveQueue().shift();
+        if (this.findTag(t => invulnTagTypes.includes(t.tagType))) {
+          this.findAndRemoveTags(t => invulnTagTypes.includes(t.tagType));
+          this.getMoveQueue().shift();
+        }
+        break;
       }
+      case StatusEffect.FREEZE:
+        this.setFrameRate(0);
+        break;
+      case StatusEffect.BURN:
+        this.setFrameRate(14);
+        break;
+      case StatusEffect.FAINT:
+        break;
+      default:
+        effect satisfies StatusEffect.NONE;
+        break;
     }
 
     this.status = new Status(effect, 0, sleepTurnsRemaining);
@@ -5056,8 +5077,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public clearStatus(confusion: boolean, reloadAssets: boolean) {
     const lastStatus = this.status?.effect;
     this.status = null;
+    this.setFrameRate(10);
     if (lastStatus === StatusEffect.SLEEP) {
-      this.setFrameRate(10);
       if (this.getTag(BattlerTagType.NIGHTMARE)) {
         this.lapseTag(BattlerTagType.NIGHTMARE);
       }
