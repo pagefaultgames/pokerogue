@@ -65,7 +65,7 @@ describe("Moves - Sleep Talk", () => {
 
   it("should apply secondary effects of a move", async () => {
     game.override.moveset([MoveId.SLEEP_TALK, MoveId.DIG, MoveId.FLY, MoveId.WOOD_HAMMER]); // Dig and Fly are invalid moves, Wood Hammer should always be called
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.select(MoveId.SLEEP_TALK);
     await game.toNextTurn();
