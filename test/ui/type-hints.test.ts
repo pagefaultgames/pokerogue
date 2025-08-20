@@ -84,7 +84,7 @@ describe("UI - Type Hints", () => {
     await game.phaseInterceptor.to("CommandPhase");
   });
 
-  it("should show the proper hint for a move in doubles after one of the enemy pokemon flees", async () => {
+  it("should show the proper hint for a move in doubles after one of the enemy pokemon faints", async () => {
     game.override
       .enemySpecies(SpeciesId.ABRA)
       .moveset([MoveId.SPLASH, MoveId.SHADOW_BALL, MoveId.SOAK])

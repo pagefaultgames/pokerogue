@@ -1,11 +1,13 @@
+// biome-ignore-start lint/correctness/noUnusedImports: Used in a TSDoc comment
+import type { Pokemon } from "#field/pokemon";
+// biome-ignore-end lint/correctness/noUnusedImports: Used in a TSDoc comment
+
 import { globalScene } from "#app/global-scene";
 import { POKERUS_STARTER_COUNT, speciesStarterCosts } from "#balance/starters";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { BattlerIndex } from "#enums/battler-index";
 import type { SpeciesId } from "#enums/species-id";
-// biome-ignore lint/correctness/noUnusedImports: Used in a TSDoc comment
-import type { Pokemon } from "#field/pokemon";
 import { randSeedItem } from "./common";
 
 /**
