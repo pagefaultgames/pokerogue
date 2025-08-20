@@ -401,6 +401,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   private starterPreferences: StarterPreferences;
 
+  /**
+   * Used to check whether any moves were swapped using the reorder menu, to decide
+   * whether a save should be performed or not.
+   */
+  private hasSwappedMoves = false;
+
   protected blockInput = false;
 
   constructor() {
@@ -1957,6 +1963,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                         handler: () => {
                           this.moveInfoOverlay.clear();
                           this.clearText();
+                          // Only saved if moves were actually swapped
+                          if (this.hasSwappedMoves) {
+                            globalScene.gameData.saveSystem().then(success => {
+                              if (!success) {
+                                return globalScene.reset(true);
+                              }
+                            });
+                          }
                           ui.setMode(UiMode.STARTER_SELECT);
                           return true;
                         },
@@ -1975,6 +1989,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             options.push({
               label: i18next.t("starterSelectUiHandler:manageMoves"),
               handler: () => {
+                this.hasSwappedMoves = false;
                 showSwapOptions(this.starterMoveset!); // TODO: is this bang correct?
                 return true;
               },
@@ -2724,8 +2739,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     } else {
       starterData.moveset = updatedMoveset;
     }
+    this.hasSwappedMoves = true;
     this.setSpeciesDetails(this.lastSpecies, { forSeen: false });
-
     this.updateSelectedStarterMoveset(speciesId);
   }
 
