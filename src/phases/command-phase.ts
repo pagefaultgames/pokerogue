@@ -387,9 +387,9 @@ export class CommandPhase extends FieldPhase {
     const { isClassic, isEndless, isDaily } = gameMode;
     const { dexData } = gameData;
 
-    const isClassicFinalBoss = globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex);
-    const isEndlessMinorBoss = globalScene.gameMode.isEndlessMinorBoss(globalScene.currentBattle.waveIndex);
-    const isFullFreshStart = globalScene.gameMode.isFullFreshStartChallenge();
+    const isClassicFinalBoss = gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex);
+    const isEndlessMinorBoss = gameMode.isEndlessMinorBoss(globalScene.currentBattle.waveIndex);
+    const isFullFreshStart = gameMode.isFullFreshStartChallenge();
     const someUncaughtSpeciesOnField = globalScene
       .getEnemyField()
       .some(p => p.isActive() && !dexData[p.species.speciesId].caughtAttr);
