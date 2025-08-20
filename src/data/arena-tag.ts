@@ -1006,7 +1006,7 @@ class ToxicSpikesTag extends EntryHazardTag {
 
     // Attempt to poison the target, suppressing any status effect messages
     const effect = this.layers === 1 ? StatusEffect.POISON : StatusEffect.TOXIC;
-    return pokemon.trySetStatus(effect, true, null, 0, this.getMoveName(), false, true);
+    return pokemon.trySetStatus(effect, null, 0, this.getMoveName(), false, true);
   }
 
   getMatchupScoreMultiplier(pokemon: Pokemon): number {

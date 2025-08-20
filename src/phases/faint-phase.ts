@@ -205,7 +205,7 @@ export class FaintPhase extends PokemonPhase {
           pokemon.lapseTags(BattlerTagLapseType.FAINT);
 
           pokemon.y -= 150;
-          pokemon.trySetStatus(StatusEffect.FAINT);
+          pokemon.doSetStatus(StatusEffect.FAINT);
           if (pokemon.isPlayer()) {
             globalScene.currentBattle.removeFaintedParticipant(pokemon as PlayerPokemon);
           } else {
