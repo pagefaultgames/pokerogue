@@ -1,3 +1,5 @@
+import "vitest";
+
 import type { TerrainType } from "#app/data/terrain";
 import type Overrides from "#app/overrides";
 import type { ArenaTag } from "#data/arena-tag";

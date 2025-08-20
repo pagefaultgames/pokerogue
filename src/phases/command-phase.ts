@@ -506,20 +506,21 @@ export class CommandPhase extends FieldPhase {
     }
     if (trappedAbMessages.length > 0) {
       if (isSwitch) {
-        globalScene.ui.setMode(UiMode.MESSAGE);
+        globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
+          globalScene.ui.showText(
+            trappedAbMessages[0],
+            null,
+            () => {
+              globalScene.ui.showText("", 0);
+              if (isSwitch) {
+                globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
+              }
+            },
+            null,
+            true,
+          );
+        });
       }
-      globalScene.ui.showText(
-        trappedAbMessages[0],
-        null,
-        () => {
-          globalScene.ui.showText("", 0);
-          if (isSwitch) {
-            globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
-          }
-        },
-        null,
-        true,
-      );
     } else {
       const trapTag = playerPokemon.getTag(TrappedTag);
       const fairyLockTag = globalScene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER);
