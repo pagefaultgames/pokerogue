@@ -2005,9 +2005,13 @@ export class HealAttr extends MoveEffectAttr {
 
     const healedPokemon = this.selfTarget ? user : target;
     if (healedPokemon.isFullHp()) {
-      globalScene.phaseManager.queueMessage(i18next.t("battle:hpIsFull", {
-        pokemonName: getPokemonNameWithAffix(healedPokemon),
-      }))
+      // Ensure the fail message isn't displayed when checking the move conditions outside of the move execution
+      // TOOD: Fix this in PR#6276
+      if (globalScene.phaseManager.getCurrentPhase()?.is("MovePhase")) {
+        globalScene.phaseManager.queueMessage(i18next.t("battle:hpIsFull", {
+          pokemonName: getPokemonNameWithAffix(healedPokemon),
+        }))
+      }
       return false;
     }
     return true;
