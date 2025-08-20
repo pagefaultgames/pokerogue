@@ -201,7 +201,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       // Set 2 Sitrus berries on party lead
       scene.modifiers = [];
       const sitrus = generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS])!;
-      const sitrusMod = sitrus.newModifier(scene.getPlayerParty()[0]) as BerryModifier;
+      const sitrusMod = sitrus.newModifier(game.field.getPlayerPokemon()) as BerryModifier;
       sitrusMod.stackCount = 2;
       scene.addModifier(sitrusMod, true, false, false, true);
       await scene.updateModifiers(true);
@@ -222,7 +222,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       // Set 1 Reviver Seed on party lead
       scene.modifiers = [];
       const revSeed = generateModifierType(modifierTypes.REVIVER_SEED)!;
-      const modifier = revSeed.newModifier(scene.getPlayerParty()[0]) as PokemonInstantReviveModifier;
+      const modifier = revSeed.newModifier(game.field.getPlayerPokemon()) as PokemonInstantReviveModifier;
       modifier.stackCount = 1;
       scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
@@ -248,7 +248,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       const sitrus = generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS])!;
 
       // Sitrus berries on party
-      const sitrusMod = sitrus.newModifier(scene.getPlayerParty()[0]) as BerryModifier;
+      const sitrusMod = sitrus.newModifier(game.field.getPlayerPokemon()) as BerryModifier;
       sitrusMod.stackCount = 2;
       scene.addModifier(sitrusMod, true, false, false, true);
       await scene.updateModifiers(true);
@@ -277,7 +277,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       // Set 1 Reviver Seed on party lead
       const revSeed = generateModifierType(modifierTypes.REVIVER_SEED)!;
-      const modifier = revSeed.newModifier(scene.getPlayerParty()[0]) as PokemonInstantReviveModifier;
+      const modifier = revSeed.newModifier(game.field.getPlayerPokemon()) as PokemonInstantReviveModifier;
       modifier.stackCount = 1;
       scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
@@ -301,7 +301,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       // Set 1 Soul Dew on party lead
       scene.modifiers = [];
       const soulDew = generateModifierType(modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]);
+      const modifier = soulDew.newModifier(game.field.getPlayerPokemon());
       scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
@@ -329,7 +329,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       // Set 1 Reviver Seed on party lead
       const revSeed = generateModifierType(modifierTypes.REVIVER_SEED)!;
-      const modifier = revSeed.newModifier(scene.getPlayerParty()[0]) as PokemonInstantReviveModifier;
+      const modifier = revSeed.newModifier(game.field.getPlayerPokemon()) as PokemonInstantReviveModifier;
       modifier.stackCount = 1;
       scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
@@ -363,7 +363,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       // Set 2 Soul Dew on party lead
       scene.modifiers = [];
       const soulDew = generateModifierType(modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
+      const modifier = soulDew.newModifier(game.field.getPlayerPokemon()) as PokemonNatureWeightModifier;
       modifier.stackCount = 2;
       scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
@@ -384,7 +384,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       // Set 1 Soul Dew on party lead
       scene.modifiers = [];
       const soulDew = generateModifierType(modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
+      const modifier = soulDew.newModifier(game.field.getPlayerPokemon()) as PokemonNatureWeightModifier;
       modifier.stackCount = 1;
       scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
@@ -410,7 +410,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       // Set 1 Soul Dew on party lead
       const soulDew = generateModifierType(modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
+      const modifier = soulDew.newModifier(game.field.getPlayerPokemon()) as PokemonNatureWeightModifier;
       modifier.stackCount = 1;
       scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
@@ -434,7 +434,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       // Set 1 Reviver Seed on party lead
       scene.modifiers = [];
       const revSeed = generateModifierType(modifierTypes.REVIVER_SEED)!;
-      const modifier = revSeed.newModifier(scene.getPlayerParty()[0]);
+      const modifier = revSeed.newModifier(game.field.getPlayerPokemon());
       scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
@@ -463,7 +463,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       // Set 1 Soul Dew on party lead
       scene.modifiers = [];
       const soulDew = generateModifierType(modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
+      const modifier = soulDew.newModifier(game.field.getPlayerPokemon()) as PokemonNatureWeightModifier;
       modifier.stackCount = 1;
       scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);

@@ -133,6 +133,6 @@ describe("Moves - Revival Blessing", () => {
     await game.toNextTurn();
     // If there are incorrectly two switch phases into this slot, the fainted pokemon will end up in slot 3
     // Make sure it's still in slot 1
-    expect(game.scene.getEnemyParty()[0]).toBe(enemyFainting);
+    expect(game.field.getEnemyPokemon()).toBe(enemyFainting);
   });
 });
