@@ -844,8 +844,7 @@ export class FreshStartChallenge extends Challenge {
       // Sets ability from power construct to aura break
       const formMask = (DexAttr.DEFAULT_FORM << 2n) - 1n;
       dexEntry.caughtAttr &= formMask;
-    }
-    else if (
+    } else if (
       [
         SpeciesId.PIKACHU,
         SpeciesId.EEVEE,
