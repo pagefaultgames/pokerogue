@@ -95,21 +95,21 @@ describe("Throwing balls in classic", () => {
     await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballMulti");
   });
 
-  it("throwing ball at paradox mon", async () => {
+  it("throwing ball in end biome", async () => {
     await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballForce");
   });
 
-  it("throwing ball at two paradox mons", async () => {
+  it("throwing ball at two mons in end biome", async () => {
     game.override.battleStyle("double");
     await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballForce");
   });
 
-  it("throwing ball at two previously caught paradox mon", async () => {
+  it("throwing ball at two previously caught mon in end biome", async () => {
     await game.importData("./test/test-utils/saves/everything.prsv");
     await runPokeballTest(game, PokeballType.MASTER_BALL, "success");
   });
 
-  it("throwing ball at two paradox mons", async () => {
+  it("throwing ball at two mons in end biome", async () => {
     game.override.battleStyle("double");
     await game.importData("./test/test-utils/saves/everything.prsv");
     await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballMulti");
@@ -160,11 +160,11 @@ describe("Throwing balls in fresh start challenge", () => {
   });
 
   // Tests should give the same result as a normal classic run, except for the last one
-  it("throwing ball at paradox mon", async () => {
+  it("throwing ball in end biome", async () => {
     await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballForce", "challenge");
   });
 
-  it("throwing ball at previously caught paradox mon", async () => {
+  it("throwing ball at previously caught mon in end biome", async () => {
     await game.importData("./test/test-utils/saves/everything.prsv");
     await runPokeballTest(game, PokeballType.MASTER_BALL, "success", "challenge");
   });
@@ -214,8 +214,8 @@ describe("Throwing balls in full fresh start challenge", () => {
       .startingLevel(9999);
   });
 
-  // Paradox and final boss can NEVER be caught in the full fresh start challenge
-  it("throwing ball at previously caught paradox mon", async () => {
+  // Paradox mons and final boss can NEVER be caught in the full fresh start challenge
+  it("throwing ball at previously caught mon in end biome", async () => {
     await game.importData("./test/test-utils/saves/everything.prsv");
     await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballForce", "challenge");
   });
