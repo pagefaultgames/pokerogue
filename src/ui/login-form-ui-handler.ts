@@ -365,15 +365,15 @@ export class LoginFormUiHandler extends FormModalUiHandler {
       globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
         options: [
           {
-            label: i18next.t("menu:showUsernames"),
-            handler: () => {
-              userNameHandler();
-            },
-          },
-          {
             label: i18next.t("menu:changeLanguage"),
             handler: () => {
               changeLanguageHandler();
+            },
+          },
+          {
+            label: i18next.t("menu:showUsernames"),
+            handler: () => {
+              userNameHandler();
             },
           },
           {
