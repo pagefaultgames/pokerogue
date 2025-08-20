@@ -1,7 +1,7 @@
 import type { Ability, PreAttackModifyDamageAbAttrParams } from "#abilities/ability";
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import type { AnySound, BattleScene } from "#app/battle-scene";
-import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
+import { PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -139,6 +139,8 @@ import { populateVariantColors, variantColorCache, variantData } from "#sprites/
 import { achvs } from "#system/achv";
 import type { StarterDataEntry, StarterMoveset } from "#system/game-data";
 import type { PokemonData } from "#system/pokemon-data";
+import { RibbonData } from "#system/ribbons/ribbon-data";
+import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
 import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types/ability-types";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
 import type { IllusionData } from "#types/illusion-data";
@@ -235,6 +237,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public ivs: number[];
   public nature: Nature;
   public moveset: PokemonMove[];
+  /**
+   * This Pokemon's current {@link https://m.bulbapedia.bulbagarden.net/wiki/Status_condition#Non-volatile_status | non-volatile status condition},
+   * or `null` if none exist.
+   * @todo Make private
+   */
   public status: Status | null;
   public friendship: number;
   public metLevel: number;
@@ -1825,7 +1832,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // Overrides moveset based on arrays specified in overrides.ts
     let overrideArray: MoveId | Array<MoveId> = this.isPlayer()
       ? Overrides.MOVESET_OVERRIDE
-      : Overrides.OPP_MOVESET_OVERRIDE;
+      : Overrides.ENEMY_MOVESET_OVERRIDE;
     overrideArray = coerceArray(overrideArray);
     if (overrideArray.length > 0) {
       if (!this.isPlayer()) {
@@ -2030,8 +2037,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.ABILITY_OVERRIDE && this.isPlayer()) {
       return allAbilities[Overrides.ABILITY_OVERRIDE];
     }
-    if (Overrides.OPP_ABILITY_OVERRIDE && this.isEnemy()) {
-      return allAbilities[Overrides.OPP_ABILITY_OVERRIDE];
+    if (Overrides.ENEMY_ABILITY_OVERRIDE && this.isEnemy()) {
+      return allAbilities[Overrides.ENEMY_ABILITY_OVERRIDE];
     }
     if (this.isFusion()) {
       if (!isNullOrUndefined(this.fusionCustomPokemonData?.ability) && this.fusionCustomPokemonData.ability !== -1) {
@@ -2060,8 +2067,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.PASSIVE_ABILITY_OVERRIDE && this.isPlayer()) {
       return allAbilities[Overrides.PASSIVE_ABILITY_OVERRIDE];
     }
-    if (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE && this.isEnemy()) {
-      return allAbilities[Overrides.OPP_PASSIVE_ABILITY_OVERRIDE];
+    if (Overrides.ENEMY_PASSIVE_ABILITY_OVERRIDE && this.isEnemy()) {
+      return allAbilities[Overrides.ENEMY_PASSIVE_ABILITY_OVERRIDE];
     }
     if (!isNullOrUndefined(this.customPokemonData.passive) && this.customPokemonData.passive !== -1) {
       return allAbilities[this.customPokemonData.passive];
@@ -2128,14 +2135,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // returns override if valid for current case
     if (
       (Overrides.HAS_PASSIVE_ABILITY_OVERRIDE === false && this.isPlayer()) ||
-      (Overrides.OPP_HAS_PASSIVE_ABILITY_OVERRIDE === false && this.isEnemy())
+      (Overrides.ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE === false && this.isEnemy())
     ) {
       return false;
     }
     if (
       ((Overrides.PASSIVE_ABILITY_OVERRIDE !== AbilityId.NONE || Overrides.HAS_PASSIVE_ABILITY_OVERRIDE) &&
         this.isPlayer()) ||
-      ((Overrides.OPP_PASSIVE_ABILITY_OVERRIDE !== AbilityId.NONE || Overrides.OPP_HAS_PASSIVE_ABILITY_OVERRIDE) &&
+      ((Overrides.ENEMY_PASSIVE_ABILITY_OVERRIDE !== AbilityId.NONE || Overrides.ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE) &&
         this.isEnemy())
     ) {
       return true;
@@ -3001,8 +3008,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (forStarter && this.isPlayer() && Overrides.STARTER_FUSION_SPECIES_OVERRIDE) {
       fusionOverride = getPokemonSpecies(Overrides.STARTER_FUSION_SPECIES_OVERRIDE);
-    } else if (this.isEnemy() && Overrides.OPP_FUSION_SPECIES_OVERRIDE) {
-      fusionOverride = getPokemonSpecies(Overrides.OPP_FUSION_SPECIES_OVERRIDE);
+    } else if (this.isEnemy() && Overrides.ENEMY_FUSION_SPECIES_OVERRIDE) {
+      fusionOverride = getPokemonSpecies(Overrides.ENEMY_FUSION_SPECIES_OVERRIDE);
     }
 
     this.fusionSpecies =
@@ -4744,7 +4751,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param reason - The reason for the status application failure -
    * can be "overlap" (already has same status), "other" (generic fail message)
    * or a {@linkcode TerrainType} for terrain-based blockages.
-   * Defaults to "other".
+   * Default `"other"`
    */
   queueStatusImmuneMessage(
     quiet: boolean,
@@ -4773,15 +4780,20 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Checks if a status effect can be applied to the Pokemon.
+   * Check if a status effect can be applied to this {@linkcode Pokemon}.
    *
-   * @param effect The {@linkcode StatusEffect} whose applicability is being checked
-   * @param quiet Whether in-battle messages should trigger or not
-   * @param overrideStatus Whether the Pokemon's current status can be overriden
-   * @param sourcePokemon The Pokemon that is setting the status effect
-   * @param ignoreField Whether any field effects (weather, terrain, etc.) should be considered
+   * @param effect - The {@linkcode StatusEffect} whose applicability is being checked
+   * @param quiet - Whether to suppress in-battle messages for status checks; default `false`
+   * @param overrideStatus - Whether to allow overriding the Pokemon's current status with a different one; default `false`
+   * @param sourcePokemon - The {@linkcode Pokemon} applying the status effect to the target,
+   * or `null` if the status is applied from a non-Pokemon source (hazards, etc.); default `null`
+   * @param ignoreField - Whether to ignore field effects (weather, terrain, etc.) preventing status application;
+   * default `false`
+   * @returns Whether {@linkcode effect} can be applied to this Pokemon.
    */
-  canSetStatus(
+  // TODO: Review and verify the message order precedence in mainline if multiple status-blocking effects are present at once
+  // TODO: Make argument order consistent with `trySetStatus`
+  public canSetStatus(
     effect: StatusEffect,
     quiet = false,
     overrideStatus = false,
@@ -4789,6 +4801,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     ignoreField = false,
   ): boolean {
     if (effect !== StatusEffect.FAINT) {
+      // Status-overriding moves (i.e. Rest) fail if their respective status already exists;
+      // all other moves fail if the target already has _any_ status
       if (overrideStatus ? this.status?.effect === effect : this.status) {
         this.queueStatusImmuneMessage(quiet, overrideStatus ? "overlap" : "other"); // having different status displays generic fail message
         return false;
@@ -4801,73 +4815,62 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const types = this.getTypes(true, true);
 
+    /* Whether the target is immune to the specific status being applied. */
+    let isImmune = false;
+    /** The reason for a potential blockage; default "other" for type-based. */
+    let reason: "other" | Exclude<TerrainType, TerrainType.NONE> = "other";
+
     switch (effect) {
       case StatusEffect.POISON:
-      case StatusEffect.TOXIC: {
-        // Check if the Pokemon is immune to Poison/Toxic or if the source pokemon is canceling the immunity
-        const poisonImmunity = types.map(defType => {
-          // Check if the Pokemon is not immune to Poison/Toxic
+      case StatusEffect.TOXIC:
+        // Check for type based immunities and/or Corrosion from the applier.
+        isImmune = types.some(defType => {
+          // only 1 immunity needed to block
           if (defType !== PokemonType.POISON && defType !== PokemonType.STEEL) {
             return false;
           }
 
-          // Check if the source Pokemon has an ability that cancels the Poison/Toxic immunity
+          // No source (such as from Toxic Spikes) = blocked by default
+          if (!sourcePokemon) {
+            return true;
+          }
+
           const cancelImmunity = new BooleanHolder(false);
           // TODO: Determine if we need to pass `quiet` as the value for simulated in this call
-          if (sourcePokemon) {
-            applyAbAttrs("IgnoreTypeStatusEffectImmunityAbAttr", {
-              pokemon: sourcePokemon,
-              cancelled: cancelImmunity,
-              statusEffect: effect,
-              defenderType: defType,
-            });
-            if (cancelImmunity.value) {
-              return false;
-            }
-          }
-
-          return true;
+          applyAbAttrs("IgnoreTypeStatusEffectImmunityAbAttr", {
+            pokemon: sourcePokemon,
+            cancelled: cancelImmunity,
+            statusEffect: effect,
+            defenderType: defType,
+          });
+          return !cancelImmunity.value;
         });
-
-        if (this.isOfType(PokemonType.POISON) || this.isOfType(PokemonType.STEEL)) {
-          if (poisonImmunity.includes(true)) {
-            this.queueStatusImmuneMessage(quiet);
-            return false;
-          }
-        }
         break;
-      }
       case StatusEffect.PARALYSIS:
-        if (this.isOfType(PokemonType.ELECTRIC)) {
-          this.queueStatusImmuneMessage(quiet);
-          return false;
-        }
+        isImmune = this.isOfType(PokemonType.ELECTRIC);
         break;
       case StatusEffect.SLEEP:
-        if (this.isGrounded() && globalScene.arena.terrain?.terrainType === TerrainType.ELECTRIC) {
-          this.queueStatusImmuneMessage(quiet, TerrainType.ELECTRIC);
-          return false;
-        }
+        isImmune = this.isGrounded() && globalScene.arena.getTerrainType() === TerrainType.ELECTRIC;
+        reason = TerrainType.ELECTRIC;
         break;
-      case StatusEffect.FREEZE:
-        if (
+      case StatusEffect.FREEZE: {
+        const weatherType = globalScene.arena.getWeatherType();
+        isImmune =
           this.isOfType(PokemonType.ICE) ||
-          (!ignoreField &&
-            globalScene?.arena?.weather?.weatherType &&
-            [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(globalScene.arena.weather.weatherType))
-        ) {
-          this.queueStatusImmuneMessage(quiet);
-          return false;
-        }
+          (!ignoreField && (weatherType === WeatherType.SUNNY || weatherType === WeatherType.HARSH_SUN));
         break;
+      }
       case StatusEffect.BURN:
-        if (this.isOfType(PokemonType.FIRE)) {
-          this.queueStatusImmuneMessage(quiet);
-          return false;
-        }
+        isImmune = this.isOfType(PokemonType.FIRE);
         break;
     }
 
+    if (isImmune) {
+      this.queueStatusImmuneMessage(quiet, reason);
+      return false;
+    }
+
+    // Check for cancellations from self/ally abilities
     const cancelled = new BooleanHolder(false);
     applyAbAttrs("StatusEffectImmunityAbAttr", { pokemon: this, effect, cancelled, simulated: quiet });
     if (cancelled.value) {
@@ -4884,14 +4887,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         source: sourcePokemon,
       });
       if (cancelled.value) {
-        break;
+        return false;
       }
     }
 
-    if (cancelled.value) {
-      return false;
-    }
-
+    // Perform safeguard checks
     if (sourcePokemon && sourcePokemon !== this && this.isSafeguarded(sourcePokemon)) {
       if (!quiet) {
         globalScene.phaseManager.queueMessage(
@@ -4904,18 +4904,36 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return true;
   }
 
-  trySetStatus(
-    effect?: StatusEffect,
-    asPhase = false,
+  /**
+   * Attempt to set this Pokemon's status to the specified condition.
+   * Enqueues a new `ObtainStatusEffectPhase` to trigger animations, etc.
+   * @param effect - The {@linkcode StatusEffect} to set
+   * @param sourcePokemon - The {@linkcode Pokemon} applying the status effect to the target,
+   * or `null` if the status is applied from a non-Pokemon source (hazards, etc.); default `null`
+   * @param sleepTurnsRemaining - The number of turns to set {@linkcode StatusEffect.SLEEP} for;
+   * defaults to a random number between 2 and 4 and is unused for non-Sleep statuses
+   * @param sourceText - The text to show for the source of the status effect, if any; default `null`
+   * @param overrideStatus - Whether to allow overriding the Pokemon's current status with a different one; default `false`
+   * @param quiet - Whether to suppress in-battle messages for status checks; default `true`
+   * @param overrideMessage - String containing text to be displayed upon status setting; defaults to normal key for status
+   * and is used exclusively for Rest
+   * @returns Whether the status effect phase was successfully created.
+   * @see {@linkcode doSetStatus} - alternate function that sets status immediately (albeit without condition checks).
+   */
+  public trySetStatus(
+    effect: StatusEffect,
     sourcePokemon: Pokemon | null = null,
-    turnsRemaining = 0,
+    sleepTurnsRemaining?: number,
     sourceText: string | null = null,
     overrideStatus?: boolean,
     quiet = true,
+    overrideMessage?: string,
   ): boolean {
+    // TODO: This needs to propagate failure status for status moves
     if (!effect) {
       return false;
     }
+
     if (!this.canSetStatus(effect, quiet, overrideStatus, sourcePokemon)) {
       return false;
     }
@@ -4935,48 +4953,100 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    if (asPhase) {
-      if (overrideStatus) {
-        this.resetStatus(false);
-      }
-      globalScene.phaseManager.unshiftNew(
-        "ObtainStatusEffectPhase",
-        this.getBattlerIndex(),
-        effect,
-        turnsRemaining,
-        sourceText,
-        sourcePokemon,
-      );
-      return true;
+    if (overrideStatus) {
+      this.resetStatus(false);
     }
 
-    let sleepTurnsRemaining: NumberHolder;
-
-    if (effect === StatusEffect.SLEEP) {
-      sleepTurnsRemaining = new NumberHolder(this.randBattleSeedIntRange(2, 4));
-
-      this.setFrameRate(4);
-
-      // If the user is invulnerable, lets remove their invulnerability when they fall asleep
-      const invulnerableTags = [
-        BattlerTagType.UNDERGROUND,
-        BattlerTagType.UNDERWATER,
-        BattlerTagType.HIDDEN,
-        BattlerTagType.FLYING,
-      ];
-
-      const tag = invulnerableTags.find(t => this.getTag(t));
-
-      if (tag) {
-        this.removeTag(tag);
-        this.getMoveQueue().pop();
-      }
-    }
-
-    sleepTurnsRemaining = sleepTurnsRemaining!; // tell TS compiler it's defined
-    this.status = new Status(effect, 0, sleepTurnsRemaining?.value);
+    globalScene.phaseManager.unshiftNew(
+      "ObtainStatusEffectPhase",
+      this.getBattlerIndex(),
+      effect,
+      sourcePokemon,
+      sleepTurnsRemaining,
+      sourceText,
+      overrideMessage,
+    );
 
     return true;
+  }
+
+  /**
+   * Set this Pokemon's {@linkcode status | non-volatile status condition} to the specified effect.
+   * @param effect - The {@linkcode StatusEffect} to set
+   * @remarks
+   * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
+   */
+  doSetStatus(effect: Exclude<StatusEffect, StatusEffect.SLEEP>): void;
+  /**
+   * Set this Pokemon's {@linkcode status | non-volatile status condition} to the specified effect.
+   * @param effect - {@linkcode StatusEffect.SLEEP}
+   * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
+   * @remarks
+   * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
+   */
+  doSetStatus(effect: StatusEffect.SLEEP, sleepTurnsRemaining?: number): void;
+  /**
+   * Set this Pokemon's {@linkcode status | non-volatile status condition} to the specified effect.
+   * @param effect - The {@linkcode StatusEffect} to set
+   * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
+   * and is unused for all non-sleep Statuses
+   * @remarks
+   * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
+   */
+  doSetStatus(effect: StatusEffect, sleepTurnsRemaining?: number): void;
+  /**
+   * Set this Pokemon's {@linkcode status | non-volatile status condition} to the specified effect.
+   * @param effect - The {@linkcode StatusEffect} to set
+   * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
+   * and is unused for all non-sleep Statuses
+   * @remarks
+   * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
+   * @todo Make this and all related fields private and change tests to use a field-based helper or similar
+   */
+  doSetStatus(
+    effect: StatusEffect,
+    sleepTurnsRemaining = effect !== StatusEffect.SLEEP ? 0 : this.randBattleSeedIntRange(2, 4),
+  ): void {
+    switch (effect) {
+      case StatusEffect.POISON:
+      case StatusEffect.TOXIC:
+        this.setFrameRate(8);
+        break;
+      case StatusEffect.PARALYSIS:
+        this.setFrameRate(5);
+        break;
+      case StatusEffect.SLEEP: {
+        this.setFrameRate(3);
+
+        // If the user is semi-invulnerable when put asleep (such as due to Yawm),
+        // remove their invulnerability and cancel the upcoming move from the queue
+        const invulnTagTypes = [
+          BattlerTagType.FLYING,
+          BattlerTagType.UNDERGROUND,
+          BattlerTagType.UNDERWATER,
+          BattlerTagType.HIDDEN,
+        ];
+
+        if (this.findTag(t => invulnTagTypes.includes(t.tagType))) {
+          this.findAndRemoveTags(t => invulnTagTypes.includes(t.tagType));
+          this.getMoveQueue().shift();
+        }
+        break;
+      }
+      case StatusEffect.FREEZE:
+        this.setFrameRate(0);
+        break;
+      case StatusEffect.BURN:
+        this.setFrameRate(14);
+        break;
+      case StatusEffect.FAINT:
+        break;
+      default:
+        effect satisfies StatusEffect.NONE;
+        break;
+    }
+
+    this.status = new Status(effect, 0, sleepTurnsRemaining);
   }
 
   /**
@@ -5007,8 +5077,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public clearStatus(confusion: boolean, reloadAssets: boolean) {
     const lastStatus = this.status?.effect;
     this.status = null;
+    this.setFrameRate(10);
     if (lastStatus === StatusEffect.SLEEP) {
-      this.setFrameRate(10);
       if (this.getTag(BattlerTagType.NIGHTMARE)) {
         this.lapseTag(BattlerTagType.NIGHTMARE);
       }
@@ -5706,7 +5776,11 @@ export class PlayerPokemon extends Pokemon {
     }
 
     if (!dataSource) {
-      if (globalScene.gameMode.isDaily) {
+      if (
+        globalScene.gameMode.isDaily ||
+        // Keldeo is excluded due to crashes involving its signature move and the associated form change
+        (Overrides.STARTER_SPECIES_OVERRIDE && Overrides.STARTER_SPECIES_OVERRIDE !== SpeciesId.KELDEO)
+      ) {
         this.generateAndPopulateMoveset();
       } else {
         this.moveset = [];
@@ -5822,45 +5896,59 @@ export class PlayerPokemon extends Pokemon {
       );
     });
   }
-
-  addFriendship(friendship: number): void {
-    if (friendship > 0) {
-      const starterSpeciesId = this.species.getRootSpeciesId();
-      const fusionStarterSpeciesId = this.isFusion() && this.fusionSpecies ? this.fusionSpecies.getRootSpeciesId() : 0;
-      const starterData = [
-        globalScene.gameData.starterData[starterSpeciesId],
-        fusionStarterSpeciesId ? globalScene.gameData.starterData[fusionStarterSpeciesId] : null,
-      ].filter(d => !!d);
-      const amount = new NumberHolder(friendship);
-      globalScene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
-      const candyFriendshipMultiplier = globalScene.gameMode.isClassic
-        ? timedEventManager.getClassicFriendshipMultiplier()
-        : 1;
-      const fusionReduction = fusionStarterSpeciesId
-        ? timedEventManager.areFusionsBoosted()
-          ? 1.5 // Divide candy gain for fusions by 1.5 during events
-          : 2 // 2 for fusions outside events
-        : 1; // 1 for non-fused mons
-      const starterAmount = new NumberHolder(Math.floor((amount.value * candyFriendshipMultiplier) / fusionReduction));
-
-      // Add friendship to this PlayerPokemon
-      this.friendship = Math.min(this.friendship + amount.value, 255);
-      if (this.friendship === 255) {
-        globalScene.validateAchv(achvs.MAX_FRIENDSHIP);
-      }
-      // Add to candy progress for this mon's starter species and its fused species (if it has one)
-      starterData.forEach((sd: StarterDataEntry, i: number) => {
-        const speciesId = !i ? starterSpeciesId : (fusionStarterSpeciesId as SpeciesId);
-        sd.friendship = (sd.friendship || 0) + starterAmount.value;
-        if (sd.friendship >= getStarterValueFriendshipCap(speciesStarterCosts[speciesId])) {
-          globalScene.gameData.addStarterCandy(getPokemonSpecies(speciesId), 1);
-          sd.friendship = 0;
-        }
-      });
-    } else {
-      // Lose friendship upon fainting
+  /**
+   * Add friendship to this Pokemon
+   *
+   * @remarks
+   * This adds friendship to the pokemon's friendship stat (used for evolution, return, etc.) and candy progress.
+   * For fusions, candy progress for each species in the fusion is halved.
+   *
+   * @param friendship - The amount of friendship to add. Negative values will reduce friendship, though not below 0.
+   * @param capped - If true, don't allow the friendship gain to exceed 200. Used to cap friendship gains from rare candies.
+   */
+  addFriendship(friendship: number, capped = false): void {
+    // Short-circuit friendship loss, which doesn't impact candy friendship
+    if (friendship <= 0) {
       this.friendship = Math.max(this.friendship + friendship, 0);
+      return;
     }
+
+    const starterSpeciesId = this.species.getRootSpeciesId();
+    const fusionStarterSpeciesId = this.isFusion() && this.fusionSpecies ? this.fusionSpecies.getRootSpeciesId() : 0;
+    const starterGameData = globalScene.gameData.starterData;
+    const starterData: [StarterDataEntry, SpeciesId][] = [[starterGameData[starterSpeciesId], starterSpeciesId]];
+    if (fusionStarterSpeciesId) {
+      starterData.push([starterGameData[fusionStarterSpeciesId], fusionStarterSpeciesId]);
+    }
+    const amount = new NumberHolder(friendship);
+    globalScene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
+    friendship = amount.value;
+
+    const newFriendship = this.friendship + friendship;
+    // If capped is true, only adjust friendship if the new friendship is less than or equal to 200.
+    if (!capped || newFriendship <= RARE_CANDY_FRIENDSHIP_CAP) {
+      this.friendship = Math.min(newFriendship, 255);
+      if (newFriendship >= 255) {
+        globalScene.validateAchv(achvs.MAX_FRIENDSHIP);
+        awardRibbonsToSpeciesLine(this.species.speciesId, RibbonData.FRIENDSHIP);
+      }
+    }
+
+    let candyFriendshipMultiplier = globalScene.gameMode.isClassic
+      ? timedEventManager.getClassicFriendshipMultiplier()
+      : 1;
+    if (fusionStarterSpeciesId) {
+      candyFriendshipMultiplier /= timedEventManager.areFusionsBoosted() ? 1.5 : 2;
+    }
+    const candyFriendshipAmount = Math.floor(friendship * candyFriendshipMultiplier);
+    // Add to candy progress for this mon's starter species and its fused species (if it has one)
+    starterData.forEach(([sd, id]: [StarterDataEntry, SpeciesId]) => {
+      sd.friendship = (sd.friendship || 0) + candyFriendshipAmount;
+      if (sd.friendship >= getStarterValueFriendshipCap(speciesStarterCosts[id])) {
+        globalScene.gameData.addStarterCandy(getPokemonSpecies(id), 1);
+        sd.friendship = 0;
+      }
+    });
   }
 
   getPossibleEvolution(evolution: SpeciesFormEvolution | null): Promise<Pokemon> {
@@ -6241,22 +6329,22 @@ export class EnemyPokemon extends Pokemon {
       this.setBoss(boss, dataSource?.bossSegments);
     }
 
-    if (Overrides.OPP_STATUS_OVERRIDE) {
-      this.status = new Status(Overrides.OPP_STATUS_OVERRIDE, 0, 4);
+    if (Overrides.ENEMY_STATUS_OVERRIDE) {
+      this.status = new Status(Overrides.ENEMY_STATUS_OVERRIDE, 0, 4);
     }
 
-    if (Overrides.OPP_GENDER_OVERRIDE !== null) {
-      this.gender = Overrides.OPP_GENDER_OVERRIDE;
+    if (Overrides.ENEMY_GENDER_OVERRIDE !== null) {
+      this.gender = Overrides.ENEMY_GENDER_OVERRIDE;
     }
 
     const speciesId = this.species.speciesId;
 
     if (
-      speciesId in Overrides.OPP_FORM_OVERRIDES &&
-      !isNullOrUndefined(Overrides.OPP_FORM_OVERRIDES[speciesId]) &&
-      this.species.forms[Overrides.OPP_FORM_OVERRIDES[speciesId]]
+      speciesId in Overrides.ENEMY_FORM_OVERRIDES &&
+      !isNullOrUndefined(Overrides.ENEMY_FORM_OVERRIDES[speciesId]) &&
+      this.species.forms[Overrides.ENEMY_FORM_OVERRIDES[speciesId]]
     ) {
-      this.formIndex = Overrides.OPP_FORM_OVERRIDES[speciesId];
+      this.formIndex = Overrides.ENEMY_FORM_OVERRIDES[speciesId];
     } else if (globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
       const eventBoss = getDailyEventSeedBoss(globalScene.seed);
       if (!isNullOrUndefined(eventBoss)) {
@@ -6266,21 +6354,21 @@ export class EnemyPokemon extends Pokemon {
 
     if (!dataSource) {
       this.generateAndPopulateMoveset();
-      if (shinyLock || Overrides.OPP_SHINY_OVERRIDE === false) {
+      if (shinyLock || Overrides.ENEMY_SHINY_OVERRIDE === false) {
         this.shiny = false;
       } else {
         this.trySetShiny();
       }
 
-      if (!this.shiny && Overrides.OPP_SHINY_OVERRIDE) {
+      if (!this.shiny && Overrides.ENEMY_SHINY_OVERRIDE) {
         this.shiny = true;
         this.initShinySparkle();
       }
 
       if (this.shiny) {
         this.variant = this.generateShinyVariant();
-        if (Overrides.OPP_VARIANT_OVERRIDE !== null) {
-          this.variant = Overrides.OPP_VARIANT_OVERRIDE;
+        if (Overrides.ENEMY_VARIANT_OVERRIDE !== null) {
+          this.variant = Overrides.ENEMY_VARIANT_OVERRIDE;
         }
       }
 

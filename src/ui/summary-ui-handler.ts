@@ -37,7 +37,7 @@ import {
   rgbHexToRgba,
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { toTitleCase } from "#utils/strings";
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 
@@ -808,8 +808,8 @@ export class SummaryUiHandler extends UiHandler {
           globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE;
         const usernameReplacement =
           globalScene.gameData.gender === PlayerGender.FEMALE
-            ? i18next.t("trainerNames:player_f")
-            : i18next.t("trainerNames:player_m");
+            ? i18next.t("trainerNames:playerF")
+            : i18next.t("trainerNames:playerM");
 
         // TODO: should add field for original trainer name to Pokemon object, to support gift/traded Pokemon from MEs
         const trainerText = addBBCodeTextObject(
@@ -962,7 +962,7 @@ export class SummaryUiHandler extends UiHandler {
         this.passiveContainer?.descriptionText?.setVisible(false);
 
         const closeFragment = getBBCodeFrag("", TextStyle.WINDOW_ALT);
-        const rawNature = toTitleCase(Nature[this.pokemon?.getNature()!]); // TODO: is this bang correct?
+        const rawNature = toCamelCase(Nature[this.pokemon?.getNature()!]); // TODO: is this bang correct?
         const nature = `${getBBCodeFrag(toTitleCase(getNatureName(this.pokemon?.getNature()!)), TextStyle.SUMMARY_RED)}${closeFragment}`; // TODO: is this bang correct?
 
         const memoString = i18next.t("pokemonSummary:memoString", {

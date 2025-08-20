@@ -161,7 +161,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
       .withDialogue({
         buttonLabel: `${namespace}:option.1.label`,
         buttonTooltip: `${namespace}:option.1.tooltip`,
-        secondOptionPrompt: `${namespace}:option.1.trade_options_prompt`,
+        secondOptionPrompt: `${namespace}:option.1.tradeOptionsPrompt`,
       })
       .withPreOptionPhase(async (): Promise<boolean> => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -251,7 +251,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         // Show the trade animation
         await showTradeBackground();
         await doPokemonTradeSequence(tradedPokemon, newPlayerPokemon);
-        await showEncounterText(`${namespace}:trade_received`, null, 0, true, 4000);
+        await showEncounterText(`${namespace}:tradeReceived`, null, 0, true, 4000);
         globalScene.playBgm(encounter.misc.bgmKey);
         await addPokemonDataToDexAndValidateAchievements(newPlayerPokemon);
         await hideTradeBackground();
@@ -372,7 +372,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         // Show the trade animation
         await showTradeBackground();
         await doPokemonTradeSequence(tradedPokemon, newPlayerPokemon);
-        await showEncounterText(`${namespace}:trade_received`, null, 0, true, 4000);
+        await showEncounterText(`${namespace}:tradeReceived`, null, 0, true, 4000);
         globalScene.playBgm(encounter.misc.bgmKey);
         await addPokemonDataToDexAndValidateAchievements(newPlayerPokemon);
         await hideTradeBackground();
@@ -387,7 +387,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        secondOptionPrompt: `${namespace}:option.3.trade_options_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.tradeOptionsPrompt`,
       })
       .withPreOptionPhase(async (): Promise<boolean> => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -419,7 +419,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
               return it.isTransferable;
             }).length > 0;
           if (!meetsReqs) {
-            return getEncounterText(`${namespace}:option.3.invalid_selection`) ?? null;
+            return getEncounterText(`${namespace}:option.3.invalidSelection`) ?? null;
           }
 
           return null;
@@ -471,7 +471,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         // Generate a trainer name
         const traderName = generateRandomTraderName();
         encounter.setDialogueToken("tradeTrainerName", traderName.trim());
-        await showEncounterText(`${namespace}:item_trade_selected`);
+        await showEncounterText(`${namespace}:itemTradeSelected`);
         leaveEncounterWithoutBattle();
       })
       .build(),
@@ -743,10 +743,10 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
       duration: 500,
       onComplete: async () => {
         globalScene.fadeOutBgm(1000, false);
-        await showEncounterText(`${namespace}:pokemon_trade_selected`);
+        await showEncounterText(`${namespace}:pokemonTradeSelected`);
         tradedPokemon.cry();
         globalScene.playBgm("evolution");
-        await showEncounterText(`${namespace}:pokemon_trade_goodbye`);
+        await showEncounterText(`${namespace}:pokemonTradeGoodbye`);
 
         tradedPokeball.setAlpha(0);
         tradedPokeball.setVisible(true);

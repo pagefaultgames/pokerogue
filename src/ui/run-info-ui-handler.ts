@@ -26,6 +26,7 @@ import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getPlayTimeString } from "#utils/common";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 
@@ -207,6 +208,11 @@ export class RunInfoUiHandler extends UiHandler {
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
     this.runContainer.add(headerText);
+    const runName = addTextObject(0, 0, this.runInfo.name, TextStyle.WINDOW);
+    runName.setOrigin(0, 0);
+    const runNameX = headerText.width / 6 + headerText.x + 4;
+    runName.setPositionRelative(headerBg, runNameX, 4);
+    this.runContainer.add(runName);
   }
 
   /**
@@ -331,7 +337,7 @@ export class RunInfoUiHandler extends UiHandler {
       if (this.runInfo.trainer.trainerType >= RIVAL_TRAINER_ID_THRESHOLD) {
         trainerName =
           trainerObj.variant === TrainerVariant.FEMALE
-            ? i18next.t("trainerNames:rival_female")
+            ? i18next.t("trainerNames:rivalFemale")
             : i18next.t("trainerNames:rival");
       } else {
         trainerName = trainerObj.getName(0, true);
@@ -694,7 +700,11 @@ export class RunInfoUiHandler extends UiHandler {
             const typeTextColor = `[color=${TypeColor[typeRule]}]`;
             const typeShadowColor = `[shadow=${TypeShadow[typeRule]}]`;
             const typeText =
-              typeTextColor + typeShadowColor + i18next.t(`pokemonInfo:Type.${typeRule}`)! + "[/color]" + "[/shadow]";
+              typeTextColor +
+              typeShadowColor +
+              i18next.t(`pokemonInfo:type.${toCamelCase(typeRule)}`)! +
+              "[/color]" +
+              "[/shadow]";
             rules.push(typeText);
             break;
           }
@@ -702,10 +712,7 @@ export class RunInfoUiHandler extends UiHandler {
             rules.push(i18next.t("challenges:inverseBattle.shortName"));
             break;
           default: {
-            const localizationKey = Challenges[this.runInfo.challenges[i].id]
-              .split("_")
-              .map((f, i) => (i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
-              .join("");
+            const localizationKey = toCamelCase(Challenges[this.runInfo.challenges[i].id]);
             rules.push(i18next.t(`challenges:${localizationKey}.name`));
             break;
           }
@@ -791,15 +798,15 @@ export class RunInfoUiHandler extends UiHandler {
         pStats[i] = isMult < 1 ? pStats[i] + "[color=#40c8f8]↓[/color]" : pStats[i];
         pStats[i] = isMult > 1 ? pStats[i] + "[color=#f89890]↑[/color]" : pStats[i];
       }
-      const hp = i18next.t("pokemonInfo:Stat.HPshortened") + ": " + pStats[0];
-      const atk = i18next.t("pokemonInfo:Stat.ATKshortened") + ": " + pStats[1];
-      const def = i18next.t("pokemonInfo:Stat.DEFshortened") + ": " + pStats[2];
-      const spatk = i18next.t("pokemonInfo:Stat.SPATKshortened") + ": " + pStats[3];
-      const spdef = i18next.t("pokemonInfo:Stat.SPDEFshortened") + ": " + pStats[4];
+      const hp = i18next.t("pokemonInfo:stat.hpShortened") + ": " + pStats[0];
+      const atk = i18next.t("pokemonInfo:stat.atkShortened") + ": " + pStats[1];
+      const def = i18next.t("pokemonInfo:stat.defShortened") + ": " + pStats[2];
+      const spatk = i18next.t("pokemonInfo:stat.spatkShortened") + ": " + pStats[3];
+      const spdef = i18next.t("pokemonInfo:stat.spdefShortened") + ": " + pStats[4];
       const speedLabel =
         currentLanguage === "es-ES" || currentLanguage === "pt_BR"
-          ? i18next.t("runHistory:SPDshortened")
-          : i18next.t("pokemonInfo:Stat.SPDshortened");
+          ? i18next.t("runHistory:spdShortened")
+          : i18next.t("pokemonInfo:stat.spdShortened");
       const speed = speedLabel + ": " + pStats[5];
       // Column 1: HP Atk Def
       const pokeStatText1 = addBBCodeTextObject(-5, 0, hp, TextStyle.SUMMARY, {
