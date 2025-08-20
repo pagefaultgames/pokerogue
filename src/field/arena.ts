@@ -912,7 +912,7 @@ export class Arena {
       case BiomeId.RUINS:
         return 0.0;
       case BiomeId.WASTELAND:
-        return 6.336;
+        return 6.024;
       case BiomeId.ABYSS:
         return 20.113;
       case BiomeId.SPACE:

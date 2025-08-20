@@ -7,6 +7,7 @@ import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
 import { randSeedInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export function getBiomeName(biome: BiomeId | -1) {
@@ -15,13 +16,13 @@ export function getBiomeName(biome: BiomeId | -1) {
   }
   switch (biome) {
     case BiomeId.GRASS:
-      return i18next.t("biome:GRASS");
+      return i18next.t("biome:grass");
     case BiomeId.RUINS:
-      return i18next.t("biome:RUINS");
+      return i18next.t("biome:ruins");
     case BiomeId.END:
-      return i18next.t("biome:END");
+      return i18next.t("biome:end");
     default:
-      return i18next.t(`biome:${BiomeId[biome].toUpperCase()}`);
+      return i18next.t(`biome:${toCamelCase(BiomeId[biome])}`);
   }
 }
 
