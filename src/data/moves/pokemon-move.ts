@@ -47,9 +47,9 @@ export class PokemonMove {
    * @param pokemon - The {@linkcode Pokemon} attempting to use this move
    * @param ignorePp - Whether to ignore checking if the move is out of PP; default `false`
    * @param forSelection - Whether this is being checked for move selection; default `false`
-   * @returns Whether this {@linkcode PokemonMove} can be selected by this Pokemon.
+   * @returns A tuple containing a boolean indicating whether the move can be selected, and a string with the reason if it cannot
    */
-  public isUsable(pokemon: Pokemon, ignorePp = false, forSelection = false): [boolean, string] {
+  public isUsable(pokemon: Pokemon, ignorePp = false, forSelection = false): [usable: boolean, preventionText: string] {
     const move = this.getMove();
     const moveName = move.name;
 
@@ -86,7 +86,7 @@ export class PokemonMove {
    * @remarks
    * Does not check for PP, moves blocked by challenges, or unimplemented moves, all of which are handled by {@linkcode isUsable}
    * @param pokemon - The Pokemon under consideration
-   * @returns An array containing a boolean indicating whether the move can be selected, and a string with the reason if it cannot
+   * @returns An tuple containing a boolean indicating whether the move can be selected, and a string with the reason if it cannot
    */
   public isSelectable(pokemon: Pokemon): [selectable: boolean, preventionText: string] {
     return pokemon.isMoveSelectable(this.moveId);
