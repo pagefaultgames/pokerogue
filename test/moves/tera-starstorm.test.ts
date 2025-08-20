@@ -36,7 +36,7 @@ describe("Moves - Tera Starstorm", () => {
     game.override.battleStyle("single");
     await game.classicMode.startBattle([SpeciesId.TERAPAGOS]);
 
-    const terapagos = game.scene.getPlayerPokemon()!;
+    const terapagos = game.field.getPlayerPokemon();
     terapagos.isTerastallized = true;
 
     vi.spyOn(terapagos, "getMoveType");
@@ -72,7 +72,7 @@ describe("Moves - Tera Starstorm", () => {
   it("targets both opponents in a double battle when used by Terapagos immediately after terastallizing", async () => {
     await game.classicMode.startBattle([SpeciesId.TERAPAGOS]);
 
-    const terapagos = game.scene.getPlayerParty()[0];
+    const terapagos = game.field.getPlayerPokemon();
     terapagos.isTerastallized = false;
 
     game.move.selectWithTera(MoveId.TERA_STARSTORM, 0);
@@ -89,7 +89,7 @@ describe("Moves - Tera Starstorm", () => {
   it("targets only one opponent in a double battle when used by Terapagos without terastallizing", async () => {
     await game.classicMode.startBattle([SpeciesId.TERAPAGOS]);
 
-    const terapagos = game.scene.getPlayerParty()[0];
+    const terapagos = game.field.getPlayerPokemon();
     terapagos.isTerastallized = false;
 
     game.move.select(MoveId.TERA_STARSTORM, 0, BattlerIndex.ENEMY);
@@ -106,8 +106,7 @@ describe("Moves - Tera Starstorm", () => {
   it("applies the effects when Terapagos in Stellar Form is fused with another Pokemon", async () => {
     await game.classicMode.startBattle([SpeciesId.TERAPAGOS, SpeciesId.CHARMANDER, SpeciesId.MAGIKARP]);
 
-    const fusionedMon = game.scene.getPlayerParty()[0];
-    const magikarp = game.scene.getPlayerParty()[2];
+    const [fusionedMon, , magikarp] = game.scene.getPlayerParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     fusionedMon.fusionSpecies = magikarp.species;

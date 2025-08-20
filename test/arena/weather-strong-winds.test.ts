@@ -36,8 +36,8 @@ describe("Weather - Strong Winds", () => {
     game.override.enemySpecies(SpeciesId.RAYQUAZA);
 
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
-    const pikachu = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const pikachu = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THUNDERBOLT);
 
@@ -47,8 +47,8 @@ describe("Weather - Strong Winds", () => {
 
   it("electric type move is neutral for flying type pokemon", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
-    const pikachu = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const pikachu = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THUNDERBOLT);
 
@@ -58,8 +58,8 @@ describe("Weather - Strong Winds", () => {
 
   it("ice type move is neutral for flying type pokemon", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
-    const pikachu = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const pikachu = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.ICE_BEAM);
 
@@ -69,8 +69,8 @@ describe("Weather - Strong Winds", () => {
 
   it("rock type move is neutral for flying type pokemon", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
-    const pikachu = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const pikachu = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.ROCK_SLIDE);
 
@@ -83,7 +83,7 @@ describe("Weather - Strong Winds", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     enemy.hp = 1;
 
     game.move.use(MoveId.SPLASH);

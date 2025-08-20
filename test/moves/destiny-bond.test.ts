@@ -1,4 +1,4 @@
-import type { ArenaTrapTag } from "#data/arena-tag";
+import type { EntryHazardTag } from "#data/arena-tag";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -48,15 +48,15 @@ describe("Moves - Destiny Bond", () => {
     game.override.moveset(moveToUse);
     await game.classicMode.startBattle(defaultParty);
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
-    const playerPokemon = game.scene.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(moveToUse);
     await game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon?.isFainted()).toBe(true);
-    expect(playerPokemon?.isFainted()).toBe(true);
+    expect(enemyPokemon.isFainted()).toBe(true);
+    expect(playerPokemon.isFainted()).toBe(true);
   });
 
   it("should KO the opponent on the next turn", async () => {
@@ -65,24 +65,24 @@ describe("Moves - Destiny Bond", () => {
     game.override.moveset([MoveId.SPLASH, moveToUse]);
     await game.classicMode.startBattle(defaultParty);
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
-    const playerPokemon = game.scene.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
+    const playerPokemon = game.field.getPlayerPokemon();
 
     // Turn 1: Enemy uses Destiny Bond and doesn't faint
     game.move.select(MoveId.SPLASH);
     await game.setTurnOrder(playerFirst);
     await game.toNextTurn();
 
-    expect(enemyPokemon?.isFainted()).toBe(false);
-    expect(playerPokemon?.isFainted()).toBe(false);
+    expect(enemyPokemon.isFainted()).toBe(false);
+    expect(enemyPokemon.isFainted()).toBe(false);
 
     // Turn 2: Player KO's the enemy before the enemy's turn
     game.move.select(moveToUse);
     await game.setTurnOrder(playerFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon?.isFainted()).toBe(true);
-    expect(playerPokemon?.isFainted()).toBe(true);
+    expect(enemyPokemon.isFainted()).toBe(true);
+    expect(playerPokemon.isFainted()).toBe(true);
   });
 
   it("should fail if used twice in a row", async () => {
@@ -91,24 +91,24 @@ describe("Moves - Destiny Bond", () => {
     game.override.moveset([MoveId.SPLASH, moveToUse]);
     await game.classicMode.startBattle(defaultParty);
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
-    const playerPokemon = game.scene.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
+    const playerPokemon = game.field.getPlayerPokemon();
 
     // Turn 1: Enemy uses Destiny Bond and doesn't faint
     game.move.select(MoveId.SPLASH);
     await game.setTurnOrder(enemyFirst);
     await game.toNextTurn();
 
-    expect(enemyPokemon?.isFainted()).toBe(false);
-    expect(playerPokemon?.isFainted()).toBe(false);
+    expect(enemyPokemon.isFainted()).toBe(false);
+    expect(enemyPokemon.isFainted()).toBe(false);
 
     // Turn 2: Enemy should fail Destiny Bond then get KO'd
     game.move.select(moveToUse);
     await game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon?.isFainted()).toBe(true);
-    expect(playerPokemon?.isFainted()).toBe(false);
+    expect(enemyPokemon.isFainted()).toBe(true);
+    expect(playerPokemon.isFainted()).toBe(false);
   });
 
   it("should not KO the opponent if the user dies to weather", async () => {
@@ -118,15 +118,15 @@ describe("Moves - Destiny Bond", () => {
     game.override.moveset(moveToUse).ability(AbilityId.SAND_STREAM);
     await game.classicMode.startBattle(defaultParty);
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
-    const playerPokemon = game.scene.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(moveToUse);
     await game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon?.isFainted()).toBe(true);
-    expect(playerPokemon?.isFainted()).toBe(false);
+    expect(enemyPokemon.isFainted()).toBe(true);
+    expect(playerPokemon.isFainted()).toBe(false);
   });
 
   it("should not KO the opponent if the user had another turn", async () => {
@@ -135,25 +135,25 @@ describe("Moves - Destiny Bond", () => {
     game.override.moveset([MoveId.SPORE, moveToUse]);
     await game.classicMode.startBattle(defaultParty);
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
-    const playerPokemon = game.scene.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
+    const playerPokemon = game.field.getPlayerPokemon();
 
     // Turn 1: Enemy uses Destiny Bond and doesn't faint
     game.move.select(MoveId.SPORE);
     await game.setTurnOrder(enemyFirst);
     await game.toNextTurn();
 
-    expect(enemyPokemon?.isFainted()).toBe(false);
-    expect(playerPokemon?.isFainted()).toBe(false);
-    expect(enemyPokemon?.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(enemyPokemon.isFainted()).toBe(false);
+    expect(playerPokemon.isFainted()).toBe(false);
+    expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
 
     // Turn 2: Enemy should skip a turn due to sleep, then get KO'd
     game.move.select(moveToUse);
     await game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon?.isFainted()).toBe(true);
-    expect(playerPokemon?.isFainted()).toBe(false);
+    expect(enemyPokemon.isFainted()).toBe(true);
+    expect(playerPokemon.isFainted()).toBe(false);
   });
 
   it("should not KO an ally", async () => {
@@ -171,10 +171,10 @@ describe("Moves - Destiny Bond", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon0?.isFainted()).toBe(false);
-    expect(enemyPokemon1?.isFainted()).toBe(false);
-    expect(playerPokemon0?.isFainted()).toBe(true);
-    expect(playerPokemon1?.isFainted()).toBe(false);
+    expect(enemyPokemon0.isFainted()).toBe(false);
+    expect(enemyPokemon1.isFainted()).toBe(false);
+    expect(playerPokemon0.isFainted()).toBe(true);
+    expect(playerPokemon1.isFainted()).toBe(false);
   });
 
   it("should not cause a crash if the user is KO'd by Ceaseless Edge", async () => {
@@ -184,18 +184,18 @@ describe("Moves - Destiny Bond", () => {
     game.override.moveset(moveToUse);
     await game.classicMode.startBattle(defaultParty);
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
-    const playerPokemon = game.scene.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(moveToUse);
     await game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon?.isFainted()).toBe(true);
-    expect(playerPokemon?.isFainted()).toBe(true);
+    expect(enemyPokemon.isFainted()).toBe(true);
+    expect(playerPokemon.isFainted()).toBe(true);
 
     // Ceaseless Edge spikes effect should still activate
-    const tagAfter = game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY) as ArenaTrapTag;
+    const tagAfter = game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY) as EntryHazardTag;
     expect(tagAfter.tagType).toBe(ArenaTagType.SPIKES);
     expect(tagAfter.layers).toBe(1);
   });
@@ -220,7 +220,10 @@ describe("Moves - Destiny Bond", () => {
     expect(playerPokemon1?.isFainted()).toBe(true);
 
     // Pledge secondary effect should still activate
-    const tagAfter = game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY) as ArenaTrapTag;
+    const tagAfter = game.scene.arena.getTagOnSide(
+      ArenaTagType.GRASS_WATER_PLEDGE,
+      ArenaTagSide.ENEMY,
+    ) as EntryHazardTag;
     expect(tagAfter.tagType).toBe(ArenaTagType.GRASS_WATER_PLEDGE);
   });
 
@@ -235,20 +238,20 @@ describe("Moves - Destiny Bond", () => {
     game.override.moveset(moveToUse).startingHeldItems([{ name: "REVIVER_SEED" }]);
     await game.classicMode.startBattle(defaultParty);
 
-    const enemyPokemon = game.scene.getEnemyPokemon();
-    const playerPokemon = game.scene.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(moveToUse);
     await game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon?.isFainted()).toBe(true);
-    expect(playerPokemon?.isFainted()).toBe(true);
+    expect(enemyPokemon.isFainted()).toBe(true);
+    expect(playerPokemon.isFainted()).toBe(true);
 
     // Check that the Tackle user's Reviver Seed did not activate
     const revSeeds = game.scene
       .getModifiers(PokemonInstantReviveModifier)
-      .filter(m => m.pokemonId === playerPokemon?.id);
+      .filter(m => m.pokemonId === playerPokemon.id);
     expect(revSeeds.length).toBe(1);
   });
 });

@@ -55,7 +55,7 @@ describe("Abilities - Unseen Fist", () => {
 
     await game.classicMode.startBattle();
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     enemyPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, enemyPokemon.id);
 
     game.move.select(MoveId.TACKLE);
@@ -77,10 +77,10 @@ async function testUnseenFistHitResult(
 
   await game.classicMode.startBattle();
 
-  const leadPokemon = game.scene.getPlayerPokemon()!;
+  const leadPokemon = game.field.getPlayerPokemon();
   expect(leadPokemon).not.toBe(undefined);
 
-  const enemyPokemon = game.scene.getEnemyPokemon()!;
+  const enemyPokemon = game.field.getEnemyPokemon();
   expect(enemyPokemon).not.toBe(undefined);
 
   const enemyStartingHp = enemyPokemon.hp;

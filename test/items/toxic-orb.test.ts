@@ -42,7 +42,7 @@ describe("Items - Toxic orb", () => {
   it("should badly poison the holder", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     expect(player.getHeldItems()[0].type.id).toBe("TOXIC_ORB");
 
     game.move.select(MoveId.SPLASH);

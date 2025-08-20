@@ -27,7 +27,7 @@ describe("Abilities - Flower Gift", () => {
 
     game.move.select(MoveId.SPLASH);
 
-    expect(game.scene.getPlayerPokemon()?.formIndex).toBe(OVERCAST_FORM);
+    expect(game.field.getPlayerPokemon().formIndex).toBe(OVERCAST_FORM);
   };
 
   /**
@@ -169,7 +169,7 @@ describe("Abilities - Flower Gift", () => {
     game.override.weather(WeatherType.HARSH_SUN);
     await game.classicMode.startBattle([SpeciesId.CHERRIM]);
 
-    const cherrim = game.scene.getPlayerPokemon()!;
+    const cherrim = game.field.getPlayerPokemon();
     expect(cherrim.formIndex).toBe(SUNSHINE_FORM);
 
     game.move.select(MoveId.SPLASH);
@@ -188,7 +188,7 @@ describe("Abilities - Flower Gift", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHERRIM, SpeciesId.MAGIKARP]);
 
-    const cherrim = game.scene.getPlayerPokemon()!;
+    const cherrim = game.field.getPlayerPokemon();
 
     expect(cherrim.formIndex).toBe(SUNSHINE_FORM);
 
@@ -215,7 +215,7 @@ describe("Abilities - Flower Gift", () => {
     game.override.weather(WeatherType.SUNNY);
 
     await game.classicMode.startBattle([SpeciesId.CASTFORM, SpeciesId.MAGIKARP]);
-    const cherrim = game.scene.getPlayerPokemon()!;
+    const cherrim = game.field.getPlayerPokemon();
 
     expect(cherrim.formIndex).toBe(SUNSHINE_FORM);
 

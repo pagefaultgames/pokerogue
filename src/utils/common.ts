@@ -70,12 +70,16 @@ export function padInt(value: number, length: number, padWith?: string): string 
 }
 
 /**
- * Returns a random integer between min and min + range
- * @param range The amount of possible numbers
- * @param min The starting number
+ * Returns a **completely unseeded** random integer between `min` and `min + range`.
+ * @param range - The amount of possible numbers to pick
+ * @param min - The minimum number to pick; default `0`
+ * @returns A psuedo-random, unseeded integer within the interval [min, min+range].
+ * @remarks
+ * This should not be used for battles or other outwards-facing randomness;
+ * battles are intended to be seeded and deterministic.
  */
 export function randInt(range: number, min = 0): number {
-  if (range === 1) {
+  if (range <= 1) {
     return min;
   }
   return Math.floor(Math.random() * range) + min;

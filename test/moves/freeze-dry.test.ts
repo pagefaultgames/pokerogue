@@ -36,7 +36,7 @@ describe("Moves - Freeze-Dry", () => {
   it("should deal 2x damage to pure water types", async () => {
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FREEZE_DRY);
@@ -50,7 +50,7 @@ describe("Moves - Freeze-Dry", () => {
     game.override.enemySpecies(SpeciesId.WINGULL);
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FREEZE_DRY);
@@ -64,7 +64,7 @@ describe("Moves - Freeze-Dry", () => {
     game.override.enemySpecies(SpeciesId.VOLCANION);
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FREEZE_DRY);
@@ -85,7 +85,7 @@ describe("Moves - Freeze-Dry", () => {
       .moveset([MoveId.SOAK, MoveId.FREEZE_DRY]);
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.SOAK);
@@ -103,7 +103,7 @@ describe("Moves - Freeze-Dry", () => {
     game.override.enemySpecies(SpeciesId.QUAGSIRE);
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FORESTS_CURSE);
@@ -120,7 +120,7 @@ describe("Moves - Freeze-Dry", () => {
     game.override.enemySpecies(SpeciesId.SKARMORY);
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     enemy.teraType = PokemonType.WATER;
     enemy.isTerastallized = true;
     vi.spyOn(enemy, "getMoveEffectiveness");
@@ -136,7 +136,7 @@ describe("Moves - Freeze-Dry", () => {
     game.override.enemySpecies(SpeciesId.PELIPPER);
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     enemy.teraType = PokemonType.FIRE;
     enemy.isTerastallized = true;
     vi.spyOn(enemy, "getMoveEffectiveness");
@@ -152,7 +152,7 @@ describe("Moves - Freeze-Dry", () => {
     game.override.enemySpecies(SpeciesId.TERAPAGOS).enemyAbility(AbilityId.TERA_SHELL);
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.SOAK);
@@ -169,7 +169,7 @@ describe("Moves - Freeze-Dry", () => {
     game.override.ability(AbilityId.NORMALIZE);
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FREEZE_DRY);
@@ -183,7 +183,7 @@ describe("Moves - Freeze-Dry", () => {
     game.override.ability(AbilityId.NORMALIZE).enemySpecies(SpeciesId.SHIELDON);
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FREEZE_DRY);
@@ -197,7 +197,7 @@ describe("Moves - Freeze-Dry", () => {
     game.override.ability(AbilityId.NORMALIZE).enemySpecies(SpeciesId.JELLICENT);
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FREEZE_DRY);
@@ -211,7 +211,7 @@ describe("Moves - Freeze-Dry", () => {
     game.override.enemyMoveset([MoveId.ELECTRIFY]);
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FREEZE_DRY);
@@ -225,7 +225,7 @@ describe("Moves - Freeze-Dry", () => {
     game.override.enemyMoveset([MoveId.ELECTRIFY]).enemySpecies(SpeciesId.GYARADOS);
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FREEZE_DRY);
@@ -239,7 +239,7 @@ describe("Moves - Freeze-Dry", () => {
     game.override.enemyMoveset([MoveId.ELECTRIFY]).enemySpecies(SpeciesId.BARBOACH);
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FREEZE_DRY);
@@ -253,7 +253,7 @@ describe("Moves - Freeze-Dry", () => {
     game.override.enemyMoveset([MoveId.ELECTRIFY]).enemySpecies(SpeciesId.FLAPPLE);
     await game.classicMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FREEZE_DRY);
@@ -269,7 +269,7 @@ describe("Moves - Freeze-Dry", () => {
 
     await game.challengeMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FREEZE_DRY);
@@ -285,7 +285,7 @@ describe("Moves - Freeze-Dry", () => {
 
     await game.challengeMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FREEZE_DRY);
@@ -301,7 +301,7 @@ describe("Moves - Freeze-Dry", () => {
 
     await game.challengeMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FREEZE_DRY);
@@ -318,7 +318,7 @@ describe("Moves - Freeze-Dry", () => {
 
     await game.challengeMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FREEZE_DRY);

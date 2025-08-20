@@ -34,7 +34,7 @@ describe("Moves - Relic Song", () => {
   it("swaps Meloetta's form between Aria and Pirouette", async () => {
     await game.classicMode.startBattle([SpeciesId.MELOETTA]);
 
-    const meloetta = game.scene.getPlayerPokemon()!;
+    const meloetta = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.RELIC_SONG);
     await game.toNextTurn();
@@ -51,7 +51,7 @@ describe("Moves - Relic Song", () => {
     game.challengeMode.addChallenge(Challenges.SINGLE_TYPE, PokemonType.PSYCHIC + 1, 0);
     await game.challengeMode.startBattle([SpeciesId.MELOETTA]);
 
-    const meloetta = game.scene.getPlayerPokemon()!;
+    const meloetta = game.field.getPlayerPokemon();
 
     expect(meloetta.formIndex).toBe(0);
 
@@ -66,7 +66,7 @@ describe("Moves - Relic Song", () => {
     game.override.starterForms({ [SpeciesId.MELOETTA]: 1 }).startingWave(10);
     await game.classicMode.startBattle([SpeciesId.MELOETTA]);
 
-    const meloetta = game.scene.getPlayerPokemon()!;
+    const meloetta = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();

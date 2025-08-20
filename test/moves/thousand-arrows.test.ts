@@ -36,7 +36,7 @@ describe("Moves - Thousand Arrows", () => {
   it("move should hit and ground Flying-type targets", async () => {
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THOUSAND_ARROWS);
 
@@ -55,7 +55,7 @@ describe("Moves - Thousand Arrows", () => {
 
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THOUSAND_ARROWS);
 
@@ -74,7 +74,7 @@ describe("Moves - Thousand Arrows", () => {
 
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     enemyPokemon.addTag(BattlerTagType.FLOATING, undefined, MoveId.MAGNET_RISE);
 

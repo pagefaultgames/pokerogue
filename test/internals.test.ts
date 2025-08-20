@@ -24,7 +24,7 @@ describe("Internals", () => {
 
   it("should provide Eevee with 3 defined abilities", async () => {
     await game.classicMode.runToSummon([SpeciesId.EEVEE]);
-    const eevee = game.scene.getPlayerPokemon()!;
+    const eevee = game.field.getPlayerPokemon();
 
     expect(eevee.getSpeciesForm().getAbilityCount()).toBe(3);
 
@@ -35,7 +35,7 @@ describe("Internals", () => {
 
   it("should set Eeeve abilityIndex between 0-2", async () => {
     await game.classicMode.runToSummon([SpeciesId.EEVEE]);
-    const eevee = game.scene.getPlayerPokemon()!;
+    const eevee = game.field.getPlayerPokemon();
 
     expect(eevee.abilityIndex).toBeGreaterThanOrEqual(0);
     expect(eevee.abilityIndex).toBeLessThanOrEqual(2);

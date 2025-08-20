@@ -32,12 +32,12 @@ describe("Moves - Steamroller", () => {
     game.override.enemySpecies(SpeciesId.DITTO).enemyMoveset(MoveId.MINIMIZE);
     await game.classicMode.startBattle([SpeciesId.IRON_BOULDER]);
 
-    const ditto = game.scene.getEnemyPokemon()!;
+    const ditto = game.field.getEnemyPokemon();
     vi.spyOn(ditto, "getAttackDamage");
     ditto.hp = 5000;
     const steamroller = allMoves[MoveId.STEAMROLLER];
     vi.spyOn(steamroller, "calculateBattleAccuracy");
-    const ironBoulder = game.scene.getPlayerPokemon()!;
+    const ironBoulder = game.field.getPlayerPokemon();
     vi.spyOn(ironBoulder, "getAccuracyMultiplier");
     // Turn 1
     game.move.select(MoveId.STEAMROLLER);

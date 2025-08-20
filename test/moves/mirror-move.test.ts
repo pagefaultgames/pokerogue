@@ -56,7 +56,7 @@ describe("Moves - Mirror Move", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.SPDEF)).toBe(-2);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.SPDEF)).toBe(-2);
   });
 
   it("should be able to copy status moves", async () => {
@@ -67,7 +67,7 @@ describe("Moves - Mirror Move", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should fail if the target has not used any moves", async () => {
@@ -77,6 +77,6 @@ describe("Moves - Mirror Move", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 });

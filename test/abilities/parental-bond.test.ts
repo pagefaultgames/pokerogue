@@ -42,8 +42,8 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     let enemyStartingHp = enemyPokemon.hp;
 
@@ -66,7 +66,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.POWER_UP_PUNCH);
 
@@ -81,7 +81,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.BABY_DOLL_EYES);
 
@@ -95,7 +95,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.DOUBLE_HIT);
     await game.move.forceHit();
@@ -110,7 +110,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SELF_DESTRUCT);
 
@@ -124,7 +124,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.ROLLOUT);
     await game.move.forceHit();
@@ -139,7 +139,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.DRAGON_RAGE);
     await game.phaseInterceptor.to("BerryPhase", false);
@@ -152,8 +152,8 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.COUNTER);
     await game.phaseInterceptor.to("DamageAnimPhase");
@@ -185,7 +185,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.EARTHQUAKE);
     await game.phaseInterceptor.to("DamageAnimPhase", false);
@@ -199,7 +199,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.MIND_BLOWN);
 
@@ -218,8 +218,8 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.BURN_UP);
 
@@ -239,7 +239,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.HYPER_BEAM);
     await game.move.forceHit();
@@ -259,8 +259,8 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.ANCHOR_SHOT);
     await game.move.forceHit();
@@ -283,8 +283,8 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SMACK_DOWN);
     await game.move.forceHit();
@@ -304,7 +304,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.U_TURN);
     await game.move.forceHit();
@@ -321,8 +321,8 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.WAKE_UP_SLAP);
     await game.move.forceHit();
@@ -342,7 +342,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.TACKLE);
 
@@ -356,7 +356,7 @@ describe("Abilities - Parental Bond", () => {
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.WATER_GUN);
 
@@ -369,7 +369,7 @@ describe("Abilities - Parental Bond", () => {
     game.override.enemyLevel(1000).moveset(MoveId.FUTURE_SIGHT);
     await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     vi.spyOn(enemyPokemon, "damageAndUpdate");
 
     game.move.select(MoveId.FUTURE_SIGHT);

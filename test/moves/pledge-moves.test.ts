@@ -89,8 +89,8 @@ describe("Moves - Pledge Moves", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.FIRE_PLEDGE);
 

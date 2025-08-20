@@ -208,6 +208,26 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
     );
     this.checkIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant);
     this.add(this.icon);
+
+    [
+      this.hiddenAbilityIcon,
+      this.favoriteIcon,
+      this.classicWinIcon,
+      this.candyUpgradeIcon,
+      this.candyUpgradeOverlayIcon,
+      this.eggMove1Icon,
+      this.tmMove1Icon,
+      this.eggMove2Icon,
+      this.tmMove2Icon,
+      this.passive1Icon,
+      this.passive2Icon,
+      this.passive1OverlayIcon,
+      this.passive2OverlayIcon,
+    ].forEach(icon => {
+      if (icon) {
+        this.bringToTop(icon);
+      }
+    });
   }
 
   checkIconId(female, formIndex, shiny, variant) {

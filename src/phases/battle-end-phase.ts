@@ -58,12 +58,6 @@ export class BattleEndPhase extends BattlePhase {
       globalScene.phaseManager.unshiftNew("GameOverPhase", true);
     }
 
-    for (const pokemon of globalScene.getField()) {
-      if (pokemon) {
-        pokemon.tempSummonData.waveTurnCount = 1;
-      }
-    }
-
     for (const pokemon of globalScene.getPokemonAllowedInBattle()) {
       applyAbAttrs("PostBattleAbAttr", { pokemon, victory: this.isVictory });
     }

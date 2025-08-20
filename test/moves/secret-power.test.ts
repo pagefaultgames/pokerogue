@@ -43,7 +43,7 @@ describe("Moves - Secret Power", () => {
     vi.spyOn(allMoves[MoveId.SECRET_POWER], "chance", "get").mockReturnValue(100);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     // No Terrain + BiomeId.VOLCANO --> Burn
     game.move.select(MoveId.SECRET_POWER);

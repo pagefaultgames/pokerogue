@@ -42,7 +42,7 @@ describe("Items - Dire Hit", () => {
   it("should raise CRIT stage by 1", async () => {
     await game.classicMode.startBattle([SpeciesId.GASTLY]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     vi.spyOn(enemyPokemon, "getCritStage");
 

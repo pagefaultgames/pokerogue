@@ -43,7 +43,7 @@ describe("Abilities - Good As Gold", () => {
     game.override.enemyMoveset([MoveId.GROWL]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SPLASH);
 

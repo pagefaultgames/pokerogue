@@ -36,7 +36,7 @@ describe("Moves - Thunder Wave", () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP);
     await game.classicMode.startBattle();
 
-    const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon: EnemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THUNDER_WAVE);
     await game.move.forceHit();
@@ -49,7 +49,7 @@ describe("Moves - Thunder Wave", () => {
     game.override.enemySpecies(SpeciesId.DIGLETT);
     await game.classicMode.startBattle();
 
-    const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon: EnemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THUNDER_WAVE);
     await game.move.forceHit();
@@ -62,7 +62,7 @@ describe("Moves - Thunder Wave", () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP).enemyStatusEffect(StatusEffect.BURN);
     await game.classicMode.startBattle();
 
-    const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon: EnemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THUNDER_WAVE);
     await game.move.forceHit();
@@ -75,7 +75,7 @@ describe("Moves - Thunder Wave", () => {
     game.override.ability(AbilityId.NORMALIZE).enemySpecies(SpeciesId.DIGLETT);
     await game.classicMode.startBattle();
 
-    const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon: EnemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THUNDER_WAVE);
     await game.move.forceHit();
@@ -88,7 +88,7 @@ describe("Moves - Thunder Wave", () => {
     game.override.ability(AbilityId.NORMALIZE).enemySpecies(SpeciesId.HAUNTER);
     await game.classicMode.startBattle();
 
-    const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon: EnemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THUNDER_WAVE);
     await game.move.forceHit();

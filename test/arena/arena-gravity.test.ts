@@ -84,7 +84,7 @@ describe("Arena - Gravity", () => {
 
       await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-      const pidgeot = game.scene.getEnemyPokemon()!;
+      const pidgeot = game.field.getEnemyPokemon();
       vi.spyOn(pidgeot, "getAttackTypeEffectiveness");
 
       // Try earthquake on 1st turn (fails!);
@@ -113,7 +113,7 @@ describe("Arena - Gravity", () => {
 
       await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-      const pidgeot = game.scene.getEnemyPokemon()!;
+      const pidgeot = game.field.getEnemyPokemon();
       vi.spyOn(pidgeot, "getAttackTypeEffectiveness");
 
       // Setup Gravity on 1st turn
@@ -136,8 +136,8 @@ describe("Arena - Gravity", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
-    const snorlax = game.scene.getEnemyPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
+    const snorlax = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SPLASH);
 

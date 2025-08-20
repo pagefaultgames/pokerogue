@@ -45,7 +45,7 @@ describe("Moves - Copycat", () => {
     game.move.select(MoveId.COPYCAT); // Last successful move should be Swords Dance
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.ATK)).toBe(4);
+    expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(4);
   });
 
   it("should fail when the last move used is not a valid Copycat move", async () => {
@@ -58,7 +58,7 @@ describe("Moves - Copycat", () => {
     game.move.select(MoveId.COPYCAT);
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
   it("should copy the called move when the last move successfully calls another", async () => {
@@ -70,7 +70,7 @@ describe("Moves - Copycat", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]); // Player moves first so enemy can copy Swords Dance
     await game.toNextTurn();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     expect(enemy.getLastXMoves()[0]).toMatchObject({
       move: MoveId.SWORDS_DANCE,
       result: MoveResult.SUCCESS,
@@ -87,6 +87,6 @@ describe("Moves - Copycat", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.SPDEF)).toBe(-2);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.SPDEF)).toBe(-2);
   });
 });

@@ -45,7 +45,7 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const initialEnemyHp = enemyPokemon.hp;
 
     game.move.select(moveToUse);
@@ -63,7 +63,7 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(moveToUse);
 
@@ -86,7 +86,7 @@ describe("Abilities - Sap Sipper", () => {
 
     expect(game.scene.arena.terrain).toBeDefined();
     expect(game.scene.arena.terrain!.terrainType).toBe(TerrainType.GRASSY);
-    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.ATK)).toBe(0);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(0);
   });
 
   it("activate once against multi-hit grass attacks", async () => {
@@ -96,7 +96,7 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const initialEnemyHp = enemyPokemon.hp;
 
     game.move.select(moveToUse);
@@ -114,7 +114,7 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(moveToUse);
 
@@ -140,7 +140,7 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     const initialEnemyHp = enemyPokemon.hp;
 
     game.move.select(moveToUse);
@@ -156,7 +156,7 @@ describe("Abilities - Sap Sipper", () => {
 
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.LEAF_BLADE);
     await game.phaseInterceptor.to("MoveEffectPhase");

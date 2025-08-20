@@ -32,7 +32,7 @@ describe("Abilities - Super Luck", () => {
 
   it("should increase the user's crit stage by 1", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     const critSpy = vi.spyOn(enemy, "getCritStage"); // crit stage is called on enemy
 
     game.move.select(MoveId.TACKLE);

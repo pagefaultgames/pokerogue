@@ -37,14 +37,14 @@ describe("Moves - Fusion Flare", () => {
   it("should thaw freeze status condition", async () => {
     await game.classicMode.startBattle([SpeciesId.RESHIRAM]);
 
-    const partyMember = game.scene.getPlayerPokemon()!;
+    const partyMember = game.field.getPlayerPokemon();
 
     game.move.select(fusionFlare);
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
 
     // Inflict freeze quietly and check if it was properly inflicted
-    partyMember.trySetStatus(StatusEffect.FREEZE, false);
+    partyMember.doSetStatus(StatusEffect.FREEZE);
     expect(partyMember.status!.effect).toBe(StatusEffect.FREEZE);
 
     await game.toNextTurn();
