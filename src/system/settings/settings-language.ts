@@ -1,12 +1,12 @@
 import { globalScene } from "#app/global-scene";
-import { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
+import type { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
 import i18next from "i18next";
 
 const cancelHandler = () => {
   globalScene.ui.revertMode();
   const handler = globalScene.ui.getHandler();
   // Reset the cursor to the current language, if in the settings menu
-  if (handler instanceof SettingsDisplayUiHandler) {
+  if (handler && typeof (handler as SettingsDisplayUiHandler).setOptionCursor === "function") {
     (handler as SettingsDisplayUiHandler).setOptionCursor(-1, 0, true);
   }
 };
