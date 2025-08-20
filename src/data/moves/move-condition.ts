@@ -156,7 +156,7 @@ export const failAgainstFinalBossCondition = new MoveCondition((_user, target) =
  * a high-priority attack (after factoring in priority-boosting effects) and
  * hasn't moved yet this turn.
  */
-export const UpperHandCondition = new MoveCondition((_user, target) => {
+export const upperHandCondition = new MoveCondition((_user, target) => {
   const targetCommand = globalScene.currentBattle.turnCommands[target.getBattlerIndex()];
   return (
     targetCommand?.command === Command.FIGHT &&
@@ -252,13 +252,13 @@ export class MoveRestriction {
  * @remarks
  * Used by {@link https://bulbapedia.bulbagarden.net/wiki/Blood_Moon_(move) | Blood Moon} and {@link https://bulbapedia.bulbagarden.net/wiki/Gigaton_Hammer_(move) | Gigaton Hammer}
  */
-export const ConsecutiveUseRestriction = new MoveRestriction(
+export const consecutiveUseRestriction = new MoveRestriction(
   (user, move) => user.getLastXMoves(1)[0]?.move === move.id,
   "battle:moveDisabledConsecutive",
 );
 
 /** Prevents a move from being selected if Gravity is in effect */
-export const GravityUseRestriction = new MoveRestriction(
+export const gravityUseRestriction = new MoveRestriction(
   () => globalScene.arena.hasTag(ArenaTagType.GRAVITY),
   "battle:moveDisabledGravity",
 );
