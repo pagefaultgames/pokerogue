@@ -50,7 +50,7 @@ describe("Moves - Tackle", () => {
     const moveToUse = MoveId.TACKLE;
     await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
     game.scene.currentBattle.enemyParty[0].stats[Stat.DEF] = 50;
-    game.scene.getPlayerParty()[0].stats[Stat.ATK] = 50;
+    game.field.getPlayerPokemon().stats[Stat.ATK] = 50;
 
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;
 

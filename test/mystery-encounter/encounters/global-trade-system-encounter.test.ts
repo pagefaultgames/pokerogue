@@ -105,14 +105,14 @@ describe("Global Trade System - Mystery Encounter", () => {
     it("Should trade a Pokemon from the player's party for the first of 3 Pokemon options", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, defaultParty);
 
-      const speciesBefore = scene.getPlayerParty()[0].species.speciesId;
+      const speciesBefore = game.field.getPlayerPokemon().species.speciesId;
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1, optionNo: 1 });
 
       const speciesAfter = scene.getPlayerParty().at(-1)?.species.speciesId;
 
       expect(speciesAfter).toBeDefined();
       expect(speciesBefore).not.toBe(speciesAfter);
-      expect(defaultParty.includes(speciesAfter!)).toBeFalsy();
+      expect(defaultParty).not.toContain(speciesAfter);
     });
 
     it("Should trade a Pokemon from the player's party for the second of 3 Pokemon options", async () => {
@@ -220,7 +220,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       // Set 2 Soul Dew on party lead
       scene.modifiers = [];
       const soulDew = generateModifierType(modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
+      const modifier = soulDew.newModifier(game.field.getPlayerPokemon()) as PokemonNatureWeightModifier;
       modifier.stackCount = 2;
       scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
@@ -247,7 +247,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       // Set 1 Soul Dew on party lead
       scene.modifiers = [];
       const soulDew = generateModifierType(modifierTypes.SOUL_DEW)!;
-      const modifier = soulDew.newModifier(scene.getPlayerParty()[0]) as PokemonNatureWeightModifier;
+      const modifier = soulDew.newModifier(game.field.getPlayerPokemon()) as PokemonNatureWeightModifier;
       modifier.stackCount = 1;
       scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
