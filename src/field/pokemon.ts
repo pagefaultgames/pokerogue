@@ -4027,11 +4027,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // apply crit block effects from lucky chant & co., overriding previous effects
     const blockCrit = new BooleanHolder(false);
     applyAbAttrs("BlockCritAbAttr", { pokemon: this, blockCrit });
-    const blockCritTag = globalScene.arena.getTagOnSide(
+    globalScene.arena.applyTagsForSide(
       NoCritTag,
       this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
+      blockCrit,
     );
-    isCritical &&= !blockCritTag && !blockCrit.value; // need to roll a crit and not be blocked by either crit prevention effect
+    isCritical &&= !blockCrit.value; // need to roll a crit and not be blocked by either crit prevention effect
 
     return isCritical;
   }
