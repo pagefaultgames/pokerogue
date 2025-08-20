@@ -95,8 +95,8 @@ describe("check if every variant's sprite are correctly set", () => {
           for (const key of Object.keys(data)) {
             if (mlist[name][key] !== 1) {
               // if 2, check if png there
-              const urlSpriteJsonFile = `${dirpath}${name}_${Number.parseInt(key, 10) + 1}.png`;
-              const spriteFileExists = fs.existsSync(urlSpriteJsonFile);
+              const urlSpritePngFile = `${dirpath}${name}_${Number.parseInt(key, 10) + 1}.png`;
+              const spriteFileExists = fs.existsSync(urlSpritePngFile);
               if (!spriteFileExists) {
                 errors.push(
                   `[${name}] [${mlist[name]}] - the value should be 1 for the index ${key} - ${trimmedFilePath}`,
