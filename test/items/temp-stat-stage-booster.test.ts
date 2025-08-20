@@ -6,7 +6,6 @@ import { SpeciesId } from "#enums/species-id";
 import { BATTLE_STATS, Stat } from "#enums/stat";
 import { UiMode } from "#enums/ui-mode";
 import { TempStatStageBoosterModifier } from "#modifiers/modifier";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
@@ -47,7 +46,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     game.move.select(MoveId.TACKLE);
 
-    await game.phaseInterceptor.runFrom("EnemyCommandPhase").to(TurnEndPhase);
+    await game.toEndOfTurn();
 
     expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(1.3);
   });
@@ -64,11 +63,11 @@ describe("Items - Temporary Stat Stage Boosters", () => {
     // Raise ACC by +2 stat stages
     game.move.select(MoveId.HONE_CLAWS);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     game.move.select(MoveId.TACKLE);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     // ACC at +3 stat stages yields a x2 multiplier
     expect(partyMember.getAccuracyMultiplier).toHaveReturnedWith(2);
@@ -84,11 +83,11 @@ describe("Items - Temporary Stat Stage Boosters", () => {
     // Raise ATK by +1 stat stage
     game.move.select(MoveId.HONE_CLAWS);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     game.move.select(MoveId.TACKLE);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     // ATK at +1 stat stage yields a x1.5 multiplier, add 0.3 from X_ATTACK
     expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(1.8);
@@ -112,7 +111,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     game.move.select(MoveId.TACKLE);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(partyMember.getAccuracyMultiplier).toHaveReturnedWith(3);
     expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(4);
