@@ -82,7 +82,7 @@ import {
 } from "#modifiers/modifier";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSketchMoves, invalidSleepTalkMoves } from "#moves/invalid-moves";
-import { ConsecutiveUseRestriction, counterAttackConditionBoth, counterAttackConditionPhysical, counterAttackConditionSpecial, failAgainstFinalBossCondition, FailIfInsufficientHpCondition, failIfTargetNotAttackingCondition, failTeleportCondition, FirstMoveCondition, GravityUseRestriction, lastResortCondition, MoveCondition, MoveRestriction, UpperHandCondition } from "#moves/move-condition";
+import { consecutiveUseRestriction, counterAttackConditionBoth, counterAttackConditionPhysical, counterAttackConditionSpecial, failAgainstFinalBossCondition, FailIfInsufficientHpCondition, failIfTargetNotAttackingCondition, failTeleportCondition, FirstMoveCondition, gravityUseRestriction, lastResortCondition, MoveCondition, MoveRestriction, upperHandCondition } from "#moves/move-condition";
 import { frenzyMissFunc, getCounterAttackTarget, getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { MovePhase } from "#phases/move-phase";
@@ -172,8 +172,14 @@ export abstract class Move implements Localizable {
    * @see {@link https://www.smogon.com/forums/threads/sword-shield-battle-mechanics-research.3655528/page-54#post-8548957}
    */
   private conditionsSeq3: MoveCondition[] = [];
+<<<<<<< HEAD
   /** Conditions that must be false for a move to be able to be selected.
    *
+=======
+  /**
+   * Conditions that must be false for a move to be able to be selected.
+   * 
+>>>>>>> 02f941b3a05 (PR review changes)
    * @remarks Different from {@linkcode conditions}, which is checked when the move is invoked
    */
   private restrictions: MoveRestriction[] = [];
@@ -452,7 +458,7 @@ export abstract class Move implements Localizable {
    * @returns `this` for method chaining
    */
   public restriction(restriction: MoveRestriction): this;
-    /**
+  /**
    * Adds a restriction condition to this move.
    * The move will not be selectable if at least 1 of its restrictions is met.
    * @param restriction - The function or `MoveRestriction` that evaluates to `true` if the move is restricted from
@@ -476,7 +482,12 @@ export abstract class Move implements Localizable {
    *    is false
    * @returns `this` for method chaining
    */
-  public restriction<T extends UserMoveConditionFunc | MoveRestriction>(restriction: T, i18nkey?: string, alsoCondition: typeof restriction extends MoveRestriction ? false : boolean = false, conditionSeq = 4): this {
+  public restriction<T extends UserMoveConditionFunc | MoveRestriction>(
+    restriction: T,
+    i18nkey?: string,
+    alsoCondition: typeof restriction extends MoveRestriction ? false : boolean = false,
+    conditionSeq = 4,
+  ): this {
     if (typeof restriction === "function") {
       this.restrictions.push(new MoveRestriction(restriction));
       if (alsoCondition) {
@@ -700,7 +711,7 @@ export abstract class Move implements Localizable {
   }
 
   /**
-   * Sets the {@linkcode MoveFlags.GRAVITY} flag for the calling Move and adds {@linkcode GravityUseRestriction} to the
+   * Sets the {@linkcode MoveFlags.GRAVITY} flag for the calling Move and adds {@linkcode gravityUseRestriction} to the
    * move's restrictions.
    *
    * @returns `this`
@@ -713,7 +724,7 @@ export abstract class Move implements Localizable {
    */
   affectedByGravity(): this {
     this.setFlag(MoveFlags.GRAVITY, true);
-    this.restrictions.push(GravityUseRestriction);
+    this.restrictions.push(gravityUseRestriction);
     return this;
   }
 
@@ -859,9 +870,9 @@ export abstract class Move implements Localizable {
    *
    * @param user - The Pokemon using the move
    * @returns - An array whose first element is `false` if the move is restricted, and the second element is a string
-   *    with the reason for the restriction, otherwise, `false` and the empty string.
+   *    with the reason for the restriction, otherwise, `true` and the empty string.
    */
-  public checkRestrictions(user: Pokemon): [boolean, string] {
+  public checkRestrictions(user: Pokemon): [isUsable: boolean, restrictionMessage: string] {
     for (const restriction of this.restrictions) {
       if (restriction.apply(user, this)) {
         return [false, restriction.getSelectionDeniedText(user, this)];
@@ -10034,7 +10045,6 @@ export function initMoves() {
       .condition((_user, target, _move) => target.getTag(BattlerTagType.INGRAIN) == null && target.getTag(BattlerTagType.IGNORE_FLYING) == null)
       .attr(AddBattlerTagAttr, BattlerTagType.TELEKINESIS, false, true, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.FLOATING, false, true, 3)
-      .affectedByGravity()
       .reflectable(),
     new StatusMove(MoveId.MAGIC_ROOM, PokemonType.PSYCHIC, -1, 10, -1, 0, 5)
       .ignoresProtect()
@@ -10677,10 +10687,7 @@ export function initMoves() {
       .attr(HealOnAllyAttr, 0.5, true, false)
       .ballBombMove()
       // Fail if used against an ally that is affected by heal block, during the second failure check
-      .condition(
-        (user, target) => target.isOpponent(user) || !!target.getTag(BattlerTagType.HEAL_BLOCK),
-        2
-      ),
+      .condition((user, target) => target.isOpponent(user) || !!target.getTag(BattlerTagType.HEAL_BLOCK), 2),
     new AttackMove(MoveId.ANCHOR_SHOT, PokemonType.STEEL, MoveCategory.PHYSICAL, 80, 100, 20, 100, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1, 1, true),
     new StatusMove(MoveId.PSYCHIC_TERRAIN, PokemonType.PSYCHIC, -1, 10, -1, 0, 7)
@@ -10693,11 +10700,8 @@ export function initMoves() {
     new AttackMove(MoveId.POWER_TRIP, PokemonType.DARK, MoveCategory.PHYSICAL, 20, 100, 10, -1, 0, 7)
       .attr(PositiveStatStagePowerAttr),
     new AttackMove(MoveId.BURN_UP, PokemonType.FIRE, MoveCategory.SPECIAL, 130, 100, 5, -1, 0, 7)
-      .condition(
-        // Pass `true` to `ForDefend` as it should fail if the user is terastallized to a type that is not FIRE
-        user => user.isOfType(PokemonType.FIRE, true, true),
-        2
-      )
+      // Pass `true` to `ForDefend` as it should fail if the user is terastallized to a type that is not FIRE
+      .condition(user => user.isOfType(PokemonType.FIRE, true, true), 2)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(AddBattlerTagAttr, BattlerTagType.BURNED_UP, true, false)
       .attr(RemoveTypeAttr, PokemonType.FIRE, (user) => {
@@ -10798,10 +10802,7 @@ export function initMoves() {
       .attr(AddBattlerTagHeaderAttr, BattlerTagType.SHELL_TRAP)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       // Fails if the user was not hit by a physical attack during the turn
-      .condition(
-        user => user.getTag(ShellTrapTag)?.activated === true,
-        3
-      ),
+      .condition(user => user.getTag(ShellTrapTag)?.activated === true, 3),
     new AttackMove(MoveId.FLEUR_CANNON, PokemonType.FAIRY, MoveCategory.SPECIAL, 130, 90, 5, -1, 0, 7)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -2, true),
     new AttackMove(MoveId.PSYCHIC_FANGS, PokemonType.PSYCHIC, MoveCategory.PHYSICAL, 85, 100, 10, -1, 0, 7)
@@ -10949,11 +10950,8 @@ export function initMoves() {
     new SelfStatusMove(MoveId.NO_RETREAT, PokemonType.FIGHTING, -1, 5, -1, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD ], 1, true)
       .attr(AddBattlerTagAttr, BattlerTagType.NO_RETREAT, true, true /* NOT ADDED if already trapped */)
-      .condition(
-          // fails if the user is currently trapped specifically from no retreat
-          user => user.getTag(TrappedTag)?.tagType !== BattlerTagType.NO_RETREAT,
-          2
-      ),
+      // fails if the user is currently trapped specifically from no retreat
+      .condition(user => user.getTag(TrappedTag)?.tagType !== BattlerTagType.NO_RETREAT, 2),
     new StatusMove(MoveId.TAR_SHOT, PokemonType.ROCK, 100, 15, -1, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1)
       .attr(AddBattlerTagAttr, BattlerTagType.TAR_SHOT, false)
@@ -11515,18 +11513,15 @@ export function initMoves() {
       .slicingMove()
       .triageMove(),
     new AttackMove(MoveId.DOUBLE_SHOCK, PokemonType.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 9)
-      .condition(
-        // Pass `true` to `isOfType` to fail if the user is terastallized to a type other than ELECTRIC
-        user => user.isOfType(PokemonType.ELECTRIC, true, true),
-        2
-      )
+      // Pass `true` to `isOfType` to fail if the user is terastallized to a type other than ELECTRIC
+      .condition(user => user.isOfType(PokemonType.ELECTRIC, true, true), 2)
       .attr(AddBattlerTagAttr, BattlerTagType.DOUBLE_SHOCKED, true, false)
       .attr(RemoveTypeAttr, PokemonType.ELECTRIC, (user) => {
         globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:usedUpAllElectricity", { pokemonName: getPokemonNameWithAffix(user) }));
       }),
     new AttackMove(MoveId.GIGATON_HAMMER, PokemonType.STEEL, MoveCategory.PHYSICAL, 160, 100, 5, -1, 0, 9)
       .makesContact(false)
-      .restriction(ConsecutiveUseRestriction),
+      .restriction(consecutiveUseRestriction),
     new AttackMove(MoveId.COMEUPPANCE, PokemonType.DARK, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 9)
       .attr(CounterDamageAttr, 1.5)
       .attr(CounterRedirectAttr)
@@ -11552,7 +11547,7 @@ export function initMoves() {
       .attr(ConfuseAttr)
       .makesContact(false),
     new AttackMove(MoveId.BLOOD_MOON, PokemonType.NORMAL, MoveCategory.SPECIAL, 140, 100, 5, -1, 0, 9)
-      .restriction(ConsecutiveUseRestriction),
+      .restriction(consecutiveUseRestriction),
     new AttackMove(MoveId.MATCHA_GOTCHA, PokemonType.GRASS, MoveCategory.SPECIAL, 80, 90, 15, 20, 0, 9)
       .attr(HitHealAttr)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
@@ -11613,7 +11608,7 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.HEAL_BLOCK, false, false, 2),
     new AttackMove(MoveId.UPPER_HAND, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 65, 100, 15, 100, 3, 9)
       .attr(FlinchAttr)
-      .condition(UpperHandCondition, 3),
+      .condition(upperHandCondition, 3),
     new AttackMove(MoveId.MALIGNANT_CHAIN, PokemonType.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
   );
