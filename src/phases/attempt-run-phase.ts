@@ -45,7 +45,7 @@ export class AttemptRunPhase extends FieldPhase {
       enemyField.forEach(enemyPokemon => {
         enemyPokemon.hideInfo().then(() => enemyPokemon.destroy());
         enemyPokemon.hp = 0;
-        enemyPokemon.trySetStatus(StatusEffect.FAINT);
+        enemyPokemon.doSetStatus(StatusEffect.FAINT);
       });
 
       globalScene.phaseManager.pushNew("BattleEndPhase", false);
