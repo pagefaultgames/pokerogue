@@ -2,7 +2,7 @@ import type { ArenaTagTypeMap } from "#data/arena-tag";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 
 /** Subset of {@linkcode ArenaTagType}s that apply some negative effect to pokemon that switch in ({@link https://bulbapedia.bulbagarden.net/wiki/List_of_moves_that_cause_entry_hazards#List_of_traps | entry hazards} and Imprison. */
-export type ArenaTrapTagType =
+export type EntryHazardTagType =
   | ArenaTagType.STICKY_WEB
   | ArenaTagType.SPIKES
   | ArenaTagType.TOXIC_SPIKES
