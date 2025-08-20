@@ -1,10 +1,12 @@
 import { pokerogueApi } from "#api/pokerogue-api";
+import { BattleType } from "#enums/battle-type";
 import { BiomeId } from "#enums/biome-id";
 import { Challenges } from "#enums/challenges";
 import { GameModes } from "#enums/game-modes";
 import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
+import { TrainerType } from "#enums/trainer-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import { mockI18next } from "#test/test-utils/test-utils";
 import i18next from "i18next";
@@ -87,18 +89,30 @@ describe("Throwing balls in classic", () => {
       .startingLevel(9999);
   });
 
+  it("throwing ball at two mons", async () => {
+    game.override.startingWave(21).startingBiome(BiomeId.TOWN);
+    game.override.battleStyle("double");
+    await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballMulti");
+  });
+
   it("throwing ball at paradox mon", async () => {
     await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballForce");
   });
 
   it("throwing ball at two paradox mons", async () => {
     game.override.battleStyle("double");
-    await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballMulti");
+    await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballForce");
   });
 
-  it("throwing ball at previously caught paradox mon", async () => {
+  it("throwing ball at two previously caught paradox mon", async () => {
     await game.importData("./test/test-utils/saves/everything.prsv");
     await runPokeballTest(game, PokeballType.MASTER_BALL, "success");
+  });
+
+  it("throwing ball at two paradox mons", async () => {
+    game.override.battleStyle("double");
+    await game.importData("./test/test-utils/saves/everything.prsv");
+    await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballMulti");
   });
 
   it("throwing ball at final boss", async () => {
@@ -241,5 +255,45 @@ describe("Throwing balls in daily run", () => {
 
   it("throwing ball at daily run boss", async () => {
     await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballForceFinalBoss", "daily");
+  });
+});
+
+describe("Throwing balls at trainers", () => {
+  let phaserGame: Phaser.Game;
+  let game: GameManager;
+
+  beforeAll(() => {
+    phaserGame = new Phaser.Game({
+      type: Phaser.HEADLESS,
+    });
+  });
+
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
+  });
+
+  beforeEach(() => {
+    game = new GameManager(phaserGame);
+    game.override
+      .battleType(BattleType.TRAINER)
+      .randomTrainer({ trainerType: TrainerType.ACE_TRAINER })
+      .moveset([MoveId.SPLASH])
+      .enemyMoveset([MoveId.SPLASH])
+      .startingLevel(9999);
+  });
+
+  it("throwing ball at a trainer", async () => {
+    game.override.startingWave(21);
+    await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballTrainer");
+  });
+
+  it("throwing ball at a trainer in a double battle", async () => {
+    game.override.startingWave(21).randomTrainer({ trainerType: TrainerType.TWINS });
+    await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballTrainer");
+  });
+
+  it("throwing ball at a trainer in the end biome", async () => {
+    game.override.startingWave(195).startingBiome(BiomeId.END);
+    await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballTrainer");
   });
 });

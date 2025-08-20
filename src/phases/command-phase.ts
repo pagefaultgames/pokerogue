@@ -396,7 +396,7 @@ export class CommandPhase extends FieldPhase {
     const missingMultipleStarters =
       gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1;
 
-    if (biomeType === BiomeId.END) {
+    if (biomeType === BiomeId.END && battleType === BattleType.WILD) {
       if (
         (isClassic && !isClassicFinalBoss && someUncaughtSpeciesOnField) ||
         (isFullFreshStart && !isClassicFinalBoss) ||
