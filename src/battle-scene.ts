@@ -357,7 +357,7 @@ export class BattleScene extends SceneBase {
     this.load.atlas(
       key,
       `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.png`,
-      `images/pokemon/${experimental ? "exp/" : ""}${shiny ? atlasPath.replace("shiny/", "") : atlasPath}.json`,
+      `images/pokemon/${experimental ? "exp/" : ""}${shiny || variant ? atlasPath.replace("shiny/", "").replace(/_[0-3]$/, "") : atlasPath}.json`,
     );
   }
 
