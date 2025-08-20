@@ -6156,7 +6156,7 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
       if (!tag) {
         return true;
       }
-      return tag.layers < tag.maxLayers;
+      return tag.canAdd();
     };
   }
 }
@@ -6182,7 +6182,7 @@ export class AddArenaTrapTagHitAttr extends AddArenaTagAttr {
       if (!tag) {
         return true;
       }
-      return tag.layers < tag.maxLayers;
+      return tag.canAdd();
     }
     return false;
   }

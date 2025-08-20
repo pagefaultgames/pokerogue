@@ -737,7 +737,7 @@ export class Arena {
       existingTag.onOverlap(globalScene.getPokemonById(sourceId));
 
       if (existingTag instanceof EntryHazardTag) {
-        const { tagType, side, turnCount, layers, maxLayers } = existingTag as EntryHazardTag;
+        const { tagType, side, turnCount, layers, maxLayers } = existingTag;
         this.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
       }
 

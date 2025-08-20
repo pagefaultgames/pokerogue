@@ -747,8 +747,10 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
   /**
    * The current number of layers this tag has.
    * Starts at 1 and increases each time the trap is laid.
+   * Intended to be mutable within the class itself and readonly outside of it
+   * @protected
    */
-  public layers = 1;
+  public readonly layers: number = 1;
   /** The maximum number of layers this tag can have. */
   public abstract get maxLayers(): number;
   /** Whether this tag should only affect grounded targets; default `true` */
@@ -763,13 +765,21 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
   // TODO: Add a `canAdd` field to arena tags to remove need for callers to check layer counts
 
   /**
+   * Check if this tag can have more layers added to it.
+   * @returns Whether this tag can have another layer added to it.
+   */
+  public canAdd(): boolean {
+    return this.layers < this.maxLayers;
+  }
+
+  /**
    * Add a new layer to this tag upon overlap, triggering the tag's normal {@linkcode onAdd} effects upon doing so.
    */
   override onOverlap(): void {
     if (!this.canAdd()) {
       return;
     }
-    this.layers++;
+    (this as Mutable<this>).layers++;
 
     this.onAdd();
   }
@@ -809,7 +819,7 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
 
   public loadTag<T extends this>(source: BaseArenaTag & Pick<T, "tagType" | "layers">): void {
     super.loadTag(source);
-    this.layers = source.layers;
+    (this as Mutable<this>).layers = source.layers;
   }
 }
 
@@ -906,7 +916,7 @@ class SpikesTag extends DamagingTrapTag {
  */
 class StealthRockTag extends DamagingTrapTag {
   public readonly tagType = ArenaTagType.STEALTH_ROCK;
-  public override get maxLayers() {
+  override get maxLayers() {
     return 1 as const;
   }
   protected override get groundedOnly() {
@@ -997,7 +1007,7 @@ class ToxicSpikesTag extends EntryHazardTag {
  */
 class StickyWebTag extends EntryHazardTag {
   public readonly tagType = ArenaTagType.STICKY_WEB;
-  public override get maxLayers() {
+  override get maxLayers() {
     return 1 as const;
   }
 
@@ -1061,7 +1071,7 @@ class StickyWebTag extends EntryHazardTag {
  */
 class ImprisonTag extends EntryHazardTag {
   public readonly tagType = ArenaTagType.IMPRISON;
-  public override get maxLayers() {
+  override get maxLayers() {
     return 1 as const;
   }
 
