@@ -27,6 +27,7 @@ import type { expect } from "vitest";
 
 declare module "vitest" {
   interface Assertion<T> {
+    // # region Generic Matchers
     /**
      * Check whether an array contains EXACTLY the given items (in any order).
      *
@@ -37,6 +38,18 @@ declare module "vitest" {
      * @see {@linkcode expect.arrayContaining}
      */
     toEqualArrayUnsorted(expected: T[]): void;
+
+    // # endregion Generic Matchers
+
+    // # region GameManager Matchers
+
+    /**
+     * Check if the {@linkcode GameManager} has shown the given message at least once in the current battle.
+     * @param expectedMessage - The expected message
+     */
+    toHaveShownMessage(expectedMessage: string): void;
+
+    // # endregion GameManager Matchers
 
     // #region Arena Matchers
 
