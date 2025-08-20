@@ -624,7 +624,7 @@ export class NoCritTag extends SerializableArenaTag {
     return "arenaTag:noCritOnAdd" + this.i18nSideKey;
   }
   protected override get onRemoveMessageKey(): string {
-    return "arenaTag:noCritOnRemove";
+    return "arenaTag:noCritOnRemove" + this.i18nSideKey;
   }
 
   public override apply(blockCrit: BooleanHolder): void {
