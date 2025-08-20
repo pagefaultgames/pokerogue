@@ -307,7 +307,7 @@ describe("Abilities - Magic Bounce", () => {
     expect(
       game.scene.arena
         .getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)
-        ?.getSourcePokemon()
+        ?.["getSourcePokemon"]()
         ?.getBattlerIndex(),
     ).toBe(BattlerIndex.ENEMY);
     game.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER, true);
@@ -319,7 +319,7 @@ describe("Abilities - Magic Bounce", () => {
     expect(
       game.scene.arena
         .getTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER)
-        ?.getSourcePokemon()
+        ?.["getSourcePokemon"]()
         ?.getBattlerIndex(),
     ).toBe(BattlerIndex.ENEMY);
   });

@@ -5,9 +5,9 @@ import i18next from "i18next";
 
 /**
  * Retrieves the Pokemon's name, potentially with an affix indicating its role (wild or foe) in the current battle context, translated
- * @param pokemon {@linkcode Pokemon} name and battle context will be retrieved from this instance
- * @param {boolean} useIllusion - Whether we want the name of the illusion or not. Default value : true
- * @returns {string} ex: "Wild Gengar", "Ectoplasma sauvage"
+ * @param pokemon - The {@linkcode Pokemon} to retrieve the name of. Will return 'Missingno' as a fallback if null/undefined
+ * @param useIllusion - Whether we want the name of the illusion or not; default `true`
+ * @returns The localized name of `pokemon` complete with affix. Ex: "Wild Gengar", "Ectoplasma sauvage"
  */
 export function getPokemonNameWithAffix(pokemon: Pokemon | undefined, useIllusion = true): string {
   if (!pokemon) {
