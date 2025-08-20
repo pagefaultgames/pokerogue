@@ -437,12 +437,13 @@ export class CommandPhase extends FieldPhase {
       .getEnemyField()
       .filter(p => p.isActive(true))
       .map(p => p.getBattlerIndex());
-    if (targets.length > 1) {
-      this.queueShowText("battle:noPokeballMulti");
+
+    if (!this.checkCanUseBall()) {
       return false;
     }
 
-    if (!this.checkCanUseBall()) {
+    if (targets.length > 1) {
+      this.queueShowText("battle:noPokeballMulti");
       return false;
     }
 
