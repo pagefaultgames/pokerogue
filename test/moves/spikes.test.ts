@@ -48,7 +48,7 @@ describe("Moves - Spikes", () => {
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
-    const player = game.scene.getPlayerParty()[0];
+    const player = game.field.getPlayerPokemon();
     expect(player.hp).toBe(player.getMaxHp());
   });
 
@@ -62,7 +62,7 @@ describe("Moves - Spikes", () => {
     game.move.select(MoveId.ROAR);
     await game.toNextTurn();
 
-    const enemy = game.scene.getEnemyParty()[0];
+    const enemy = game.field.getEnemyPokemon();
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   });
 
@@ -77,7 +77,7 @@ describe("Moves - Spikes", () => {
     game.forceEnemyToSwitch();
     await game.toNextTurn();
 
-    const enemy = game.scene.getEnemyParty()[0];
+    const enemy = game.field.getEnemyPokemon();
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   });
 

@@ -87,10 +87,10 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.to("EncounterPhase", false);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
-    expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
-    expect(game.scene.getPlayerParty()[0].variant).toBe(2);
-    expect(game.scene.getPlayerParty()[0].gender).toBe(Gender.MALE);
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.BULBASAUR);
+    expect(game.field.getPlayerPokemon().shiny).toBe(true);
+    expect(game.field.getPlayerPokemon().variant).toBe(2);
+    expect(game.field.getPlayerPokemon().gender).toBe(Gender.MALE);
   });
 
   it("Bulbasaur - shiny - variant 2 female hardy overgrow", async () => {
@@ -147,11 +147,11 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.to("EncounterPhase", false);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
-    expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
-    expect(game.scene.getPlayerParty()[0].variant).toBe(2);
-    expect(game.scene.getPlayerParty()[0].nature).toBe(Nature.HARDY);
-    expect(game.scene.getPlayerParty()[0].getAbility().id).toBe(AbilityId.OVERGROW);
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.BULBASAUR);
+    expect(game.field.getPlayerPokemon().shiny).toBe(true);
+    expect(game.field.getPlayerPokemon().variant).toBe(2);
+    expect(game.field.getPlayerPokemon().nature).toBe(Nature.HARDY);
+    expect(game.field.getPlayerPokemon().getAbility().id).toBe(AbilityId.OVERGROW);
   });
 
   it("Bulbasaur - shiny - variant 2 female lonely chlorophyl", async () => {
@@ -210,12 +210,12 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.to("EncounterPhase", false);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
-    expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
-    expect(game.scene.getPlayerParty()[0].variant).toBe(2);
-    expect(game.scene.getPlayerParty()[0].gender).toBe(Gender.FEMALE);
-    expect(game.scene.getPlayerParty()[0].nature).toBe(Nature.LONELY);
-    expect(game.scene.getPlayerParty()[0].getAbility().id).toBe(AbilityId.CHLOROPHYLL);
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.BULBASAUR);
+    expect(game.field.getPlayerPokemon().shiny).toBe(true);
+    expect(game.field.getPlayerPokemon().variant).toBe(2);
+    expect(game.field.getPlayerPokemon().gender).toBe(Gender.FEMALE);
+    expect(game.field.getPlayerPokemon().nature).toBe(Nature.LONELY);
+    expect(game.field.getPlayerPokemon().getAbility().id).toBe(AbilityId.CHLOROPHYLL);
   });
 
   it("Bulbasaur - shiny - variant 2 female", async () => {
@@ -272,10 +272,10 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.to("EncounterPhase", false);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
-    expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
-    expect(game.scene.getPlayerParty()[0].variant).toBe(2);
-    expect(game.scene.getPlayerParty()[0].gender).toBe(Gender.FEMALE);
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.BULBASAUR);
+    expect(game.field.getPlayerPokemon().shiny).toBe(true);
+    expect(game.field.getPlayerPokemon().variant).toBe(2);
+    expect(game.field.getPlayerPokemon().gender).toBe(Gender.FEMALE);
   });
 
   it("Bulbasaur - not shiny", async () => {
@@ -332,9 +332,9 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.to("EncounterPhase", false);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
-    expect(game.scene.getPlayerParty()[0].shiny).toBe(false);
-    expect(game.scene.getPlayerParty()[0].variant).toBe(0);
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.BULBASAUR);
+    expect(game.field.getPlayerPokemon().shiny).toBe(false);
+    expect(game.field.getPlayerPokemon().variant).toBe(0);
   });
 
   it("Bulbasaur - shiny - variant 1", async () => {
@@ -393,9 +393,9 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.to("EncounterPhase", false);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
-    expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
-    expect(game.scene.getPlayerParty()[0].variant).toBe(1);
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.BULBASAUR);
+    expect(game.field.getPlayerPokemon().shiny).toBe(true);
+    expect(game.field.getPlayerPokemon().variant).toBe(1);
   });
 
   it("Bulbasaur - shiny - variant 0", async () => {
@@ -453,9 +453,9 @@ describe("UI - Starter select", () => {
     });
     await game.phaseInterceptor.to("EncounterPhase", false);
 
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.BULBASAUR);
-    expect(game.scene.getPlayerParty()[0].shiny).toBe(true);
-    expect(game.scene.getPlayerParty()[0].variant).toBe(0);
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.BULBASAUR);
+    expect(game.field.getPlayerPokemon().shiny).toBe(true);
+    expect(game.field.getPlayerPokemon().variant).toBe(0);
   });
 
   it("Check if first pokemon in party is caterpie from gen 1 and 1rd row, 3rd column", async () => {
@@ -518,7 +518,7 @@ describe("UI - Starter select", () => {
       saveSlotSelectUiHandler.processInput(Button.ACTION);
     });
     await game.phaseInterceptor.to("EncounterPhase", false);
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.CATERPIE);
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.CATERPIE);
   });
 
   it("Check if first pokemon in party is nidoran_m from gen 1 and 2nd row, 4th column (cursor (9+4)-1)", async () => {
@@ -583,6 +583,6 @@ describe("UI - Starter select", () => {
       saveSlotSelectUiHandler.processInput(Button.ACTION);
     });
     await game.phaseInterceptor.to("EncounterPhase", false);
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(SpeciesId.NIDORAN_M);
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.NIDORAN_M);
   });
 });

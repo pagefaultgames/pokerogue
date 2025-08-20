@@ -79,7 +79,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       { text: `${namespace}:intro` },
       {
         speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue`,
+        text: `${namespace}:introDialogue`,
       },
     ]);
     expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
@@ -229,7 +229,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       // Stop next battle before it runs
       await game.phaseInterceptor.to("NewBattlePhase", false);
 
-      const leadPokemon = scene.getPlayerParty()[0];
+      const leadPokemon = game.field.getPlayerPokemon();
       expect(leadPokemon.customPokemonData?.ability).toBe(abilityToTrain);
     });
   });
@@ -248,11 +248,11 @@ describe("Clowning Around - Mystery Encounter", () => {
             text: `${namespace}:option.2.selected`,
           },
           {
-            text: `${namespace}:option.2.selected_2`,
+            text: `${namespace}:option.2.selected2`,
           },
           {
             speaker: `${namespace}:speaker`,
-            text: `${namespace}:option.2.selected_3`,
+            text: `${namespace}:option.2.selected3`,
           },
         ],
       });
@@ -262,30 +262,30 @@ describe("Clowning Around - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
 
       // Set some moves on party for attack type booster generation
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(MoveId.TACKLE), new PokemonMove(MoveId.THIEF)];
+      game.move.changeMoveset(game.field.getPlayerPokemon(), [MoveId.TACKLE, MoveId.THIEF]);
 
       // 2 Sitrus Berries on lead
       scene.modifiers = [];
       let itemType = generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType;
-      await addItemToPokemon(scene, scene.getPlayerParty()[0], 2, itemType);
+      await addItemToPokemon(scene, game.field.getPlayerPokemon(), 2, itemType);
       // 2 Ganlon Berries on lead
       itemType = generateModifierType(modifierTypes.BERRY, [BerryType.GANLON]) as PokemonHeldItemModifierType;
-      await addItemToPokemon(scene, scene.getPlayerParty()[0], 2, itemType);
+      await addItemToPokemon(scene, game.field.getPlayerPokemon(), 2, itemType);
       // 5 Golden Punch on lead (ultra)
       itemType = generateModifierType(modifierTypes.GOLDEN_PUNCH) as PokemonHeldItemModifierType;
-      await addItemToPokemon(scene, scene.getPlayerParty()[0], 5, itemType);
+      await addItemToPokemon(scene, game.field.getPlayerPokemon(), 5, itemType);
       // 5 Lucky Egg on lead (ultra)
       itemType = generateModifierType(modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType;
-      await addItemToPokemon(scene, scene.getPlayerParty()[0], 5, itemType);
+      await addItemToPokemon(scene, game.field.getPlayerPokemon(), 5, itemType);
       // 3 Soothe Bell on lead (great tier, but counted as ultra by this ME)
       itemType = generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType;
-      await addItemToPokemon(scene, scene.getPlayerParty()[0], 3, itemType);
+      await addItemToPokemon(scene, game.field.getPlayerPokemon(), 3, itemType);
       // 5 Soul Dew on lead (rogue)
       itemType = generateModifierType(modifierTypes.SOUL_DEW) as PokemonHeldItemModifierType;
-      await addItemToPokemon(scene, scene.getPlayerParty()[0], 5, itemType);
+      await addItemToPokemon(scene, game.field.getPlayerPokemon(), 5, itemType);
       // 2 Golden Egg on lead (rogue)
       itemType = generateModifierType(modifierTypes.GOLDEN_EGG) as PokemonHeldItemModifierType;
-      await addItemToPokemon(scene, scene.getPlayerParty()[0], 2, itemType);
+      await addItemToPokemon(scene, game.field.getPlayerPokemon(), 2, itemType);
 
       // 5 Soul Dew on second party pokemon (these should not change)
       itemType = generateModifierType(modifierTypes.SOUL_DEW) as PokemonHeldItemModifierType;
@@ -293,7 +293,7 @@ describe("Clowning Around - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 2);
 
-      const leadItemsAfter = scene.getPlayerParty()[0].getHeldItems();
+      const leadItemsAfter = game.field.getPlayerPokemon().getHeldItems();
       const ultraCountAfter = leadItemsAfter
         .filter(m => m.type.tier === ModifierTier.ULTRA)
         .reduce((a, b) => a + b.stackCount, 0);
@@ -333,11 +333,11 @@ describe("Clowning Around - Mystery Encounter", () => {
             text: `${namespace}:option.3.selected`,
           },
           {
-            text: `${namespace}:option.3.selected_2`,
+            text: `${namespace}:option.3.selected2`,
           },
           {
             speaker: `${namespace}:speaker`,
-            text: `${namespace}:option.3.selected_3`,
+            text: `${namespace}:option.3.selected3`,
           },
         ],
       });
@@ -347,14 +347,14 @@ describe("Clowning Around - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
 
       // Same type moves on lead
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(MoveId.ICE_BEAM), new PokemonMove(MoveId.SURF)];
+      game.move.changeMoveset(game.field.getPlayerPokemon(), [MoveId.ICE_BEAM, MoveId.SURF]);
       // Different type moves on second
-      scene.getPlayerParty()[1].moveset = [new PokemonMove(MoveId.GRASS_KNOT), new PokemonMove(MoveId.ELECTRO_BALL)];
+      game.move.changeMoveset(scene.getPlayerParty()[1], [MoveId.GRASS_KNOT, MoveId.ELECTRO_BALL]);
       // No moves on third
       scene.getPlayerParty()[2].moveset = [];
       await runMysteryEncounterToEnd(game, 3);
 
-      const leadTypesAfter = scene.getPlayerParty()[0].getTypes();
+      const leadTypesAfter = game.field.getPlayerPokemon().getTypes();
       const secondaryTypesAfter = scene.getPlayerParty()[1].getTypes();
       const thirdTypesAfter = scene.getPlayerParty()[2].getTypes();
 

@@ -76,19 +76,19 @@ describe("Moves - Parting Shot", () => {
       // use Memento 3 times to debuff enemy
       game.move.select(MoveId.MEMENTO);
       await game.phaseInterceptor.to("FaintPhase");
-      expect(game.scene.getPlayerParty()[0].isFainted()).toBe(true);
+      expect(game.field.getPlayerPokemon().isFainted()).toBe(true);
       game.doSelectPartyPokemon(1);
 
       await game.phaseInterceptor.to("TurnInitPhase", false);
       game.move.select(MoveId.MEMENTO);
       await game.phaseInterceptor.to("FaintPhase");
-      expect(game.scene.getPlayerParty()[0].isFainted()).toBe(true);
+      expect(game.field.getPlayerPokemon().isFainted()).toBe(true);
       game.doSelectPartyPokemon(2);
 
       await game.phaseInterceptor.to("TurnInitPhase", false);
       game.move.select(MoveId.MEMENTO);
       await game.phaseInterceptor.to("FaintPhase");
-      expect(game.scene.getPlayerParty()[0].isFainted()).toBe(true);
+      expect(game.field.getPlayerPokemon().isFainted()).toBe(true);
       game.doSelectPartyPokemon(3);
 
       // set up done
