@@ -61,7 +61,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       { text: `${namespace}:intro` },
       {
         speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue`,
+        text: `${namespace}:introDialogue`,
       },
     ]);
     expect(DepartmentStoreSaleEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);

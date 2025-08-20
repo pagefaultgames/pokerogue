@@ -54,7 +54,7 @@ export class Arena {
   public bgm: string;
   public ignoreAbilities: boolean;
   public ignoringEffectSource: BattlerIndex | null;
-  public playerTerasUsed: number;
+  public playerTerasUsed = 0;
   /**
    * Saves the number of times a party pokemon faints during a arena encounter.
    * {@linkcode globalScene.currentBattle.enemyFaints} is the corresponding faint counter for the enemy (this resets every wave).
@@ -68,12 +68,11 @@ export class Arena {
 
   public readonly eventTarget: EventTarget = new EventTarget();
 
-  constructor(biome: BiomeId, bgm: string, playerFaints = 0) {
+  constructor(biome: BiomeId, playerFaints = 0) {
     this.biomeType = biome;
-    this.bgm = bgm;
+    this.bgm = BiomeId[biome].toLowerCase();
     this.trainerPool = biomeTrainerPools[biome];
     this.updatePoolsForTimeOfDay();
-    this.playerTerasUsed = 0;
     this.playerFaints = playerFaints;
   }
 
@@ -913,7 +912,7 @@ export class Arena {
       case BiomeId.RUINS:
         return 0.0;
       case BiomeId.WASTELAND:
-        return 6.336;
+        return 6.024;
       case BiomeId.ABYSS:
         return 20.113;
       case BiomeId.SPACE:
