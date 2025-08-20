@@ -10,7 +10,6 @@ import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
 import type { MoveSourceType } from "#enums/move-source-type";
-import { Nature } from "#enums/nature";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
@@ -800,7 +799,6 @@ export class FreshStartChallenge extends Challenge {
   applyStarterModify(pokemon: Pokemon): boolean {
     pokemon.abilityIndex = pokemon.abilityIndex % 2; // Always base ability, if you set it to hidden it wraps to first ability
     pokemon.passive = false; // Passive isn't unlocked
-    pokemon.nature = Nature.HARDY; // Neutral nature
     let validMoves = pokemon.species
       .getLevelMoves()
       .filter(m => isBetween(m[0], 1, 5))
