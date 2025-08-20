@@ -44,8 +44,8 @@ export const GACHA_EGG_HA_RATE = 192;
 
 // Odds are 1/x
 // [COMMON, RARE, EPIC/MANAPHY, LEGEND]
-export const RARE_EGGMOVE_RATES = [48, 24, 12, 6];
-export const BOOSTED_RARE_EGGMOVE_RATES = [16, 12, 6, 3];
+export const RARE_EGGMOVE_RATES: readonly number[] = [48, 24, 12, 6];
+export const BOOSTED_RARE_EGGMOVE_RATES: readonly number[] = [16, 12, 6, 3];
 
 // #region Variant properties
 // The chance x/10 of a shiny being a variant, then of being specifically an epic variant
