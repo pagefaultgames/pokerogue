@@ -485,7 +485,12 @@ export const achvs = {
   MEGA_EVOLVE: new Achv("megaEvolve", "megaEvolve.description", "mega_bracelet", 50),
   GIGANTAMAX: new Achv("gigantamax", "gigantamax.description", "dynamax_band", 50),
   TERASTALLIZE: new Achv("terastallize", "terastallize.description", "tera_orb", 25),
-  STELLAR_TERASTALLIZE: new Achv("stellarTerastallize", "stellarTerastallize.description", 25).setSecret(true),
+  STELLAR_TERASTALLIZE: new Achv(
+    "stellarTerastallize",
+    "stellarTerastallize.description",
+    "stellar_tera_shard",
+    25,
+  ).setSecret(true),
   SPLICE: new Achv("splice", "splice.description", "dna_splicers", 10),
   MINI_BLACK_HOLE: new ModifierAchv(
     "miniBlackHole",
