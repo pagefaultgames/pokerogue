@@ -39,9 +39,11 @@ export type Mutable<T> = {
  * @typeParam O - The type of the object
  * @typeParam V - The type of one of O's values
  */
-export type InferKeys<O extends object, V extends ObjectValues<O>> = {
-  [K in keyof O]: O[K] extends V ? K : never;
-}[keyof O];
+export type InferKeys<O extends object, V> = V extends ObjectValues<O>
+  ? {
+      [K in keyof O]: O[K] extends V ? K : never;
+    }[keyof O]
+  : never;
 
 /**
  * Utility type to obtain the values of a given object. \

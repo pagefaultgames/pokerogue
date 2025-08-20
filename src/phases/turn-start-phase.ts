@@ -37,7 +37,7 @@ export class TurnStartPhase extends FieldPhase {
 
     // Next, a check for Trick Room is applied to determine sort order.
     const speedReversed = new BooleanHolder(false);
-    globalScene.arena.applyTags(TrickRoomTag, false, speedReversed);
+    globalScene.arena.applyTags(TrickRoomTag, speedReversed);
 
     // Adjust the sort function based on whether Trick Room is active.
     orderedTargets.sort((a: Pokemon, b: Pokemon) => {

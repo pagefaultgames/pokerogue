@@ -92,6 +92,6 @@ export class PostSummonPhasePriorityQueue extends PhasePriorityQueue {
 
 function isTrickRoom(): boolean {
   const speedReversed = new BooleanHolder(false);
-  globalScene.arena.applyTags(TrickRoomTag, false, speedReversed);
+  globalScene.arena.applyTags(TrickRoomTag, speedReversed);
   return speedReversed.value;
 }

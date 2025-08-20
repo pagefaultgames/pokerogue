@@ -145,7 +145,7 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
 
   if (globalScene.arena.getTagOnSide(ArenaTagType.REFLECT, side)) {
     if (move.getAttrs("CritOnlyAttr").length === 0) {
-      globalScene.arena.applyTagsForSide(ArenaTagType.REFLECT, side, false, attacker, move.category, multiplierHolder);
+      globalScene.arena.applyTagsForSide(ArenaTagType.REFLECT, side, attacker, move.category, multiplierHolder);
     }
   }
 
