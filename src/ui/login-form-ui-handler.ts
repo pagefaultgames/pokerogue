@@ -29,7 +29,7 @@ export class LoginFormUiHandler extends FormModalUiHandler {
 
   private googleImage: Phaser.GameObjects.Image;
   private discordImage: Phaser.GameObjects.Image;
-  private usernameInfoImage: Phaser.GameObjects.Image;
+  private settingsImage: Phaser.GameObjects.Image;
   private saveDownloadImage: Phaser.GameObjects.Image;
   private externalPartyContainer: Phaser.GameObjects.Container;
   private infoContainer: Phaser.GameObjects.Container;
@@ -72,7 +72,7 @@ export class LoginFormUiHandler extends FormModalUiHandler {
   private buildInfoContainer() {
     this.infoContainer = globalScene.add.container(0, 0);
 
-    this.usernameInfoImage = this.buildInteractableImage("settings_icon", "username-info-icon", {
+    this.settingsImage = this.buildInteractableImage("settings_icon", "username-info-icon", {
       x: 20,
       scale: 0.5,
     });
@@ -82,7 +82,7 @@ export class LoginFormUiHandler extends FormModalUiHandler {
       scale: 0.75,
     });
 
-    this.infoContainer.add(this.usernameInfoImage);
+    this.infoContainer.add(this.settingsImage);
     this.infoContainer.add(this.saveDownloadImage);
     this.getUi().add(this.infoContainer);
     this.infoContainer.setVisible(false);
@@ -185,7 +185,7 @@ export class LoginFormUiHandler extends FormModalUiHandler {
     this.infoContainer.setVisible(false);
     this.setMouseCursorStyle("default"); //reset cursor
 
-    [this.discordImage, this.googleImage, this.usernameInfoImage, this.saveDownloadImage].forEach(img =>
+    [this.discordImage, this.googleImage, this.settingsImage, this.saveDownloadImage].forEach(img =>
       img.off("pointerdown"),
     );
   }
@@ -204,7 +204,7 @@ export class LoginFormUiHandler extends FormModalUiHandler {
     this.infoContainer.setPosition(5, -76);
     this.infoContainer.setVisible(true);
     this.getUi().moveTo(this.infoContainer, this.getUi().length - 1);
-    this.usernameInfoImage.setPositionRelative(this.infoContainer, 0, 0);
+    this.settingsImage.setPositionRelative(this.infoContainer, 0, 0);
     this.saveDownloadImage.setPositionRelative(this.infoContainer, 20, 0);
 
     this.discordImage.on("pointerdown", () => {
@@ -227,38 +227,164 @@ export class LoginFormUiHandler extends FormModalUiHandler {
       globalScene.ui.playError();
     };
 
-    this.usernameInfoImage.on("pointerdown", () => {
-      if (globalScene.tweens.getTweensOf(this.infoContainer).length === 0) {
-        const localStorageKeys = Object.keys(localStorage); // this gets the keys for localStorage
-        const keyToFind = "data_";
-        const dataKeys = localStorageKeys.filter(ls => ls.indexOf(keyToFind) >= 0);
-        if (dataKeys.length > 0 && dataKeys.length <= 2) {
-          const options: OptionSelectItem[] = [];
-          for (let i = 0; i < dataKeys.length; i++) {
-            options.push({
-              label: dataKeys[i].replace(keyToFind, ""),
+    this.settingsImage.on("pointerdown", () => {
+      const userNameHandler = () => {
+        globalScene.ui.revertMode();
+        if (globalScene.tweens.getTweensOf(this.infoContainer).length === 0) {
+          const localStorageKeys = Object.keys(localStorage); // this gets the keys for localStorage
+          const keyToFind = "data_";
+          const dataKeys = localStorageKeys.filter(ls => ls.indexOf(keyToFind) >= 0);
+          if (dataKeys.length > 0 && dataKeys.length <= 2) {
+            const options: OptionSelectItem[] = [];
+            for (const key of dataKeys) {
+              options.push({
+                label: key.replace(keyToFind, ""),
+                handler: () => {
+                  globalScene.ui.revertMode();
+                  this.infoContainer.disableInteractive();
+                  return true;
+                },
+              });
+            }
+            globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
+              options: options,
+              delay: 1000,
+            });
+            this.infoContainer.setInteractive(
+              new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width, globalScene.game.canvas.height),
+              Phaser.Geom.Rectangle.Contains,
+            );
+          } else {
+            if (dataKeys.length > 2) {
+              return onFail(this.ERR_TOO_MANY_SAVES);
+            }
+            return onFail(this.ERR_NO_SAVES);
+          }
+        }
+      };
+
+      const changeLocaleHandler = (locale: string): boolean => {
+        try {
+          i18next.changeLanguage(locale);
+          localStorage.setItem("prLang", locale);
+          globalScene.ui.revertMode();
+          // Reload the whole game to apply the new locale since also some constants are translated
+          window.location.reload();
+          return true;
+        } catch (error) {
+          console.error("Error changing locale:", error);
+          return false;
+        }
+      };
+
+      // Show the language selection ui
+      const changeLanguageHandler = () => {
+        globalScene.ui.revertMode();
+        globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
+          options: [
+            {
+              label: "English",
+              handler: () => changeLocaleHandler("en"),
+            },
+            {
+              label: "Español (ES)",
+              handler: () => changeLocaleHandler("es-ES"),
+            },
+            {
+              label: "Español (LATAM)",
+              handler: () => changeLocaleHandler("es-MX"),
+            },
+            {
+              label: "Français",
+              handler: () => changeLocaleHandler("fr"),
+            },
+            {
+              label: "Deutsch",
+              handler: () => changeLocaleHandler("de"),
+            },
+            {
+              label: "Italiano",
+              handler: () => changeLocaleHandler("it"),
+            },
+            {
+              label: "Português (BR)",
+              handler: () => changeLocaleHandler("pt-BR"),
+            },
+            {
+              label: "한국어",
+              handler: () => changeLocaleHandler("ko"),
+            },
+            {
+              label: "日本語",
+              handler: () => changeLocaleHandler("ja"),
+            },
+            {
+              label: "简体中文",
+              handler: () => changeLocaleHandler("zh-CN"),
+            },
+            {
+              label: "繁體中文",
+              handler: () => changeLocaleHandler("zh-TW"),
+            },
+            {
+              label: "Català (Needs Help)",
+              handler: () => changeLocaleHandler("ca"),
+            },
+            {
+              label: "Türkçe (Needs Help)",
+              handler: () => changeLocaleHandler("tr"),
+            },
+            {
+              label: "Русский (Needs Help)",
+              handler: () => changeLocaleHandler("ru"),
+            },
+            {
+              label: "Dansk (Needs Help)",
+              handler: () => changeLocaleHandler("da"),
+            },
+            {
+              label: "Română (Needs Help)",
+              handler: () => changeLocaleHandler("ro"),
+            },
+            {
+              label: "Tagalog (Needs Help)",
+              handler: () => changeLocaleHandler("tl"),
+            },
+            {
+              label: i18next.t("settings:back"),
               handler: () => {
                 globalScene.ui.revertMode();
-                this.infoContainer.disableInteractive();
                 return true;
               },
-            });
-          }
-          globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-            options: options,
-            delay: 1000,
-          });
-          this.infoContainer.setInteractive(
-            new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width, globalScene.game.canvas.height),
-            Phaser.Geom.Rectangle.Contains,
-          );
-        } else {
-          if (dataKeys.length > 2) {
-            return onFail(this.ERR_TOO_MANY_SAVES);
-          }
-          return onFail(this.ERR_NO_SAVES);
-        }
-      }
+            },
+          ],
+          maxOptions: 7,
+          delay: 1000,
+        });
+      };
+      globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
+        options: [
+          {
+            label: i18next.t("menu:showUsernames"),
+            handler: () => {
+              userNameHandler();
+            },
+          },
+          {
+            label: i18next.t("menu:changeLanguage"),
+            handler: () => {
+              changeLanguageHandler();
+            },
+          },
+          {
+            label: i18next.t("settings:back"),
+            handler: () => {
+              globalScene.ui.revertMode();
+              return true;
+            },
+          },
+        ],
+      });
     });
 
     this.saveDownloadImage.on("pointerdown", () => {

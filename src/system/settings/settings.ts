@@ -916,6 +916,7 @@ export function setSetting(setting: string, value: number): boolean {
             }
           };
           globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
+            // if a new language is added, it also needs to be added in "login-form-ui-handler.ts"
             options: [
               {
                 label: "English",
