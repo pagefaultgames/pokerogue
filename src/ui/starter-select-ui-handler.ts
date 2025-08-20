@@ -301,6 +301,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonMoveBgs: Phaser.GameObjects.NineSlice[];
   private pokemonMoveLabels: Phaser.GameObjects.Text[];
   private pokemonAdditionalMoveCountLabel: Phaser.GameObjects.Text;
+  private eggMovesLabel: Phaser.GameObjects.Text;
   private pokemonEggMovesContainer: Phaser.GameObjects.Container;
   private pokemonEggMoveContainers: Phaser.GameObjects.Container[];
   private pokemonEggMoveBgs: Phaser.GameObjects.NineSlice[];
@@ -883,14 +884,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.pokemonEggMovesContainer = globalScene.add.container(102, 85).setScale(0.375);
 
-    const eggMovesLabel = addTextObject(
+    this.eggMovesLabel = addTextObject(
       -46,
       0,
       i18next.t("starterSelectUiHandler:eggMoves"),
       TextStyle.WINDOW_ALT,
     ).setOrigin(0.5, 0);
 
-    this.pokemonEggMovesContainer.add(eggMovesLabel);
+    this.pokemonEggMovesContainer.add(this.eggMovesLabel);
 
     for (let m = 0; m < 4; m++) {
       const eggMoveContainer = globalScene.add.container(0, 16 + 14 * m);
@@ -1169,6 +1170,18 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         this.setUpgradeAnimation(icon, species);
       });
+
+      if (globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
+        for (const container of this.pokemonEggMoveContainers) {
+          container.setVisible(false);
+        }
+        this.eggMovesLabel.setVisible(false);
+        // This is not enough, we need individual checks in setStarterSpecies too! :)
+        this.pokemonPassiveDisabledIcon.setVisible(false);
+        this.pokemonPassiveLabelText.setVisible(false);
+        this.pokemonPassiveLockedIcon.setVisible(false);
+        this.pokemonPassiveText.setVisible(false);
+      }
 
       this.resetFilters();
       this.updateStarters();
@@ -2170,7 +2183,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             const options: any[] = []; // TODO: add proper type
 
             // Unlock passive option
-            if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
+            if (!(passiveAttr & PassiveAttr.UNLOCKED) && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
               const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.lastSpecies.speciesId]);
               options.push({
                 label: `×${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")}`,
@@ -2208,7 +2221,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
             // Reduce cost option
             const valueReduction = starterData.valueReduction;
-            if (valueReduction < valueReductionMax) {
+            if (valueReduction < valueReductionMax && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
               const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId])[
                 valueReduction
               ];
@@ -3761,6 +3774,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       !isNullOrUndefined(shiny) ||
       !isNullOrUndefined(variant);
 
+    const isFreshStartChallenge = globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+
     if (this.activeTooltip === "CANDY") {
       if (this.lastSpecies && this.pokemonCandyContainer.visible) {
         const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
@@ -3990,11 +4005,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           const textAlpha = isUnlocked && isEnabled ? 1 : 0.5;
 
           this.pokemonPassiveLabelText
-            .setVisible(true)
+            .setVisible(!isFreshStartChallenge)
             .setColor(this.getTextColor(TextStyle.SUMMARY_ALT))
             .setShadowColor(this.getTextColor(TextStyle.SUMMARY_ALT, true));
           this.pokemonPassiveText
-            .setVisible(true)
+            .setVisible(!isFreshStartChallenge)
             .setText(passiveAbility.name)
             .setColor(this.getTextColor(textStyle))
             .setAlpha(textAlpha)
@@ -4020,9 +4035,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             y: this.pokemonPassiveText.y + this.pokemonPassiveText.displayHeight / 2,
           };
           this.pokemonPassiveDisabledIcon
-            .setVisible(isUnlocked && !isEnabled)
+            .setVisible(isUnlocked && !isEnabled && !isFreshStartChallenge)
             .setPosition(iconPosition.x, iconPosition.y);
-          this.pokemonPassiveLockedIcon.setVisible(!isUnlocked).setPosition(iconPosition.x, iconPosition.y);
+          this.pokemonPassiveLockedIcon
+            .setVisible(!isUnlocked && !isFreshStartChallenge)
+            .setPosition(iconPosition.x, iconPosition.y);
         } else if (this.activeTooltip === "PASSIVE") {
           // No passive and passive tooltip is active > hide it
           globalScene.ui.hideTooltip();
