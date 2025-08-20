@@ -1,3 +1,7 @@
+// biome-ignore-start lint/correctness/noUnusedImports: Used in a tsdoc comment
+import type { Move, PreUseInterruptAttr } from "#types/move-types";
+// biome-ignore-end lint/correctness/noUnusedImports: Used in a tsdoc comment
+
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { MOVE_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
@@ -28,8 +32,6 @@ import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { frenzyMissFunc } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
-// biome-ignore lint/correctness/noUnusedImports: Used in a tsdoc comment
-import type { Move, PreUseInterruptAttr } from "#types/move-types";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, NumberHolder } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";
@@ -205,7 +207,7 @@ export class MovePhase extends PokemonPhase {
    *
    * @remarks
    * Other than powder, each failure condition is mutually exclusive (as they are tied to specific moves), so order does not matter.
-   * Notably, this failure check only includes failure conditions intrinsic to the move itself, ther than Powder (which marks the end of this failure check)
+   * Notably, this failure check only includes failure conditions intrinsic to the move itself, other than Powder (which marks the end of this failure check)
    *
    *
    * - Pollen puff used on an ally that is under effect of heal block
@@ -512,13 +514,14 @@ export class MovePhase extends PokemonPhase {
    * - Checking if the pokemon will thaw from random chance, OR from a thawing move.
    *    Thawing from a freeze move is not applied until AFTER all other failure checks.
    * - Activating the freeze status effect (cancelling the move, playing the message, and displaying the animation)
+   * @returns Whether the move was cancelled due to the pokemon being frozen
    */
   protected checkFreeze(): boolean {
     if (this.pokemon.status?.effect !== StatusEffect.FREEZE) {
       return false;
     }
 
-    // For some reason, dancer will immediately its user
+    // For some reason, dancer will immediately thaw its user
     if (this.useMode === MoveUseMode.INDIRECT) {
       this.pokemon.resetStatus(false);
       return false;
@@ -644,6 +647,7 @@ export class MovePhase extends PokemonPhase {
    * Lapse the tag type and check if the move is cancelled from it. Meant to be used during the first failure check
    * @param tag - The tag type whose lapse method will be called with {@linkcode BattlerTagLapseType.PRE_MOVE}
    * @param checkIgnoreStatus - Whether to check {@link isIgnoreStatus} for the current {@linkcode MoveUseMode} to skip this check
+   * @returns Whether the move was cancelled due to a `BattlerTag` effect
    */
   private checkTagCancel(tag: BattlerTagType): boolean {
     this.pokemon.lapseTag(tag, BattlerTagLapseType.PRE_MOVE);
@@ -652,7 +656,7 @@ export class MovePhase extends PokemonPhase {
 
   /**
    * Handle move failures due to Gravity, cancelling the move and showing the failure text
-   * @returns - Whether the move was cancelled due to Gravity
+   * @returns Whether the move was cancelled due to Gravity
    */
   private checkGravity(): boolean {
     const move = this.move.getMove();
@@ -721,7 +725,7 @@ export class MovePhase extends PokemonPhase {
     /*
     At this point, delayed moves (future sight, wish, doom desire) are issued, and if they occur, are
     Then, combined pledge moves are checked for. Interestingly, the "wasMoveEffective" flag is set to false if the delay occurs
-    In either case, the phase should end here without proceeding 
+    In either case, the phase should end here without proceeding
     */
 
     const move = this.move.getMove();

@@ -3139,7 +3139,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignorePp - Whether to ignore PP when checking if the move is usable (defaults to false)
    * @returns A tuple containing a boolean indicating if the move can be selected, and a string with the reason if it cannot be selected
    */
-  public trySelectMove(moveIndex: number, ignorePp?: boolean): [boolean, string] {
+  public trySelectMove(moveIndex: number, ignorePp?: boolean): [isUsable: boolean, failureMessage: string] {
     const move = this.getMoveset().length > moveIndex ? this.getMoveset()[moveIndex] : null;
     return move?.isUsable(this, ignorePp, true) ?? [false, ""];
   }
