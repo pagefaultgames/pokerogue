@@ -73,7 +73,7 @@ import {
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences, saveStarterPreferences } from "#utils/data";
 import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
-import { toTitleCase } from "#utils/strings";
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
@@ -400,6 +400,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectCallback: StarterSelectCallback | null;
 
   private starterPreferences: StarterPreferences;
+
+  /**
+   * Used to check whether any moves were swapped using the reorder menu, to decide
+   * whether a save should be performed or not.
+   */
+  private hasSwappedMoves = false;
 
   protected blockInput = false;
 
@@ -1957,6 +1963,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                         handler: () => {
                           this.moveInfoOverlay.clear();
                           this.clearText();
+                          // Only saved if moves were actually swapped
+                          if (this.hasSwappedMoves) {
+                            globalScene.gameData.saveSystem().then(success => {
+                              if (!success) {
+                                return globalScene.reset(true);
+                              }
+                            });
+                          }
                           ui.setMode(UiMode.STARTER_SELECT);
                           return true;
                         },
@@ -1975,6 +1989,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             options.push({
               label: i18next.t("starterSelectUiHandler:manageMoves"),
               handler: () => {
+                this.hasSwappedMoves = false;
                 showSwapOptions(this.starterMoveset!); // TODO: is this bang correct?
                 return true;
               },
@@ -2264,7 +2279,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             });
           };
           options.push({
-            label: i18next.t("menuUiHandler:POKEDEX"),
+            label: i18next.t("menuUiHandler:pokedex"),
             handler: () => {
               ui.setMode(UiMode.STARTER_SELECT).then(() => {
                 const attributes = {
@@ -2724,8 +2739,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     } else {
       starterData.moveset = updatedMoveset;
     }
+    this.hasSwappedMoves = true;
     this.setSpeciesDetails(this.lastSpecies, { forSeen: false });
-
     this.updateSelectedStarterMoveset(speciesId);
   }
 
@@ -3470,7 +3485,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         //Growth translate
         let growthReadable = toTitleCase(GrowthRate[species.growthRate]);
-        const growthAux = growthReadable.replace(" ", "_");
+        const growthAux = toCamelCase(growthReadable);
         if (i18next.exists("growth:" + growthAux)) {
           growthReadable = i18next.t(("growth:" + growthAux) as any);
         }
