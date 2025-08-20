@@ -841,10 +841,11 @@ export class FreshStartChallenge extends Challenge {
 
     // Remove unlocked forms for specific species
     if (speciesId === SpeciesId.ZYGARDE) {
-      const formMask = (DexAttr.DEFAULT_FORM << 2n) - 1n; // Sets 10%-PC to 10%-AB and 50%-PC to 50%-AB
+      // Sets ability from power construct to aura break
+      const formMask = (DexAttr.DEFAULT_FORM << 2n) - 1n;
       dexEntry.caughtAttr &= formMask;
     }
-    if (
+    else if (
       [
         SpeciesId.PIKACHU,
         SpeciesId.EEVEE,
