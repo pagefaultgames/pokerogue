@@ -15,7 +15,6 @@ import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters";
 import { TheWinstrateChallengeEncounter } from "#mystery-encounters/the-winstrate-challenge-encounter";
-import { MysteryEncounterRewardsPhase } from "#phases/mystery-encounter-phases";
 import { PartyHealPhase } from "#phases/party-heal-phase";
 import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import { VictoryPhase } from "#phases/victory-phase";
@@ -72,7 +71,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       { text: `${namespace}:intro` },
       {
         speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue`,
+        text: `${namespace}:introDialogue`,
       },
     ]);
     expect(TheWinstrateChallengeEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
@@ -294,9 +293,9 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
 
       // Should have Macho Brace in the rewards
       await skipBattleToNextBattle(game, true);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
       expect(game).toBeAtPhase("SelectModifierPhase");
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -338,7 +337,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_WINSTRATE_CHALLENGE, defaultParty);
       await runMysteryEncounterToEnd(game, 2);
       expect(game).toBeAtPhase("SelectModifierPhase");
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -365,11 +364,10 @@ async function skipBattleToNextBattle(game: GameManager, isFinalBattle = false) 
     p.status = new Status(StatusEffect.FAINT);
     game.scene.field.remove(p);
   });
-  game.phaseInterceptor["onHold"] = [];
   game.scene.phaseManager.pushPhase(new VictoryPhase(0));
-  game.phaseInterceptor.superEndPhase();
+  game.endPhase();
   if (isFinalBattle) {
-    await game.phaseInterceptor.to(MysteryEncounterRewardsPhase);
+    await game.phaseInterceptor.to("MysteryEncounterRewardsPhase");
   } else {
     await game.toNextTurn();
   }

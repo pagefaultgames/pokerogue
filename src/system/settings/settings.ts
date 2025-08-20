@@ -197,35 +197,35 @@ export const Setting: Array<Setting> = [
     options: [
       {
         value: "1",
-        label: i18next.t("settings:gameSpeed1x"),
+        label: i18next.t("settings:gameSpeed100x"),
       },
       {
         value: "1.25",
-        label: i18next.t("settings:gameSpeed1_25x"),
+        label: i18next.t("settings:gameSpeed125x"),
       },
       {
         value: "1.5",
-        label: i18next.t("settings:gameSpeed1_5x"),
+        label: i18next.t("settings:gameSpeed150x"),
       },
       {
         value: "2",
-        label: i18next.t("settings:gameSpeed2x"),
+        label: i18next.t("settings:gameSpeed200x"),
       },
       {
         value: "2.5",
-        label: i18next.t("settings:gameSpeed2_5x"),
+        label: i18next.t("settings:gameSpeed250x"),
       },
       {
         value: "3",
-        label: i18next.t("settings:gameSpeed3x"),
+        label: i18next.t("settings:gameSpeed300x"),
       },
       {
         value: "4",
-        label: i18next.t("settings:gameSpeed4x"),
+        label: i18next.t("settings:gameSpeed400x"),
       },
       {
         value: "5",
-        label: i18next.t("settings:gameSpeed5x"),
+        label: i18next.t("settings:gameSpeed500x"),
       },
     ],
     default: 3,
@@ -566,7 +566,7 @@ export const Setting: Array<Setting> = [
       },
       {
         value: "Back",
-        label: i18next.t("settings:timeOfDay_back"),
+        label: i18next.t("settings:timeOfDayBack"),
       },
     ],
     default: 0,
