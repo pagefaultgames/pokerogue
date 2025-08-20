@@ -1543,7 +1543,6 @@ export class DrowsyTag extends SerializableBattlerTag {
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (!super.lapse(pokemon, lapseType)) {
       // TODO: Safeguard should not prevent yawn from setting sleep after tag use
-      pokemon.trySetStatus(StatusEffect.SLEEP, true);
       pokemon.trySetStatus(StatusEffect.SLEEP);
       return false;
     }
