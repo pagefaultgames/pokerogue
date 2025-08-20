@@ -71,7 +71,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
     ]);
     const { title, description, query } = dialogue.encounterOptionsDialogue!;
     expect(title).toBe(`${namespace}:title`);
-    expect(description).toMatch(new RegExp(`^${namespace}\\:description(_shiny)?$`));
+    expect(description).toMatch(new RegExp(`^${namespace}\\:description(Shiny)?$`));
     expect(query).toBe(`${namespace}:query`);
     expect(options.length).toBe(2);
   });
@@ -117,7 +117,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       expect(dialogue).toBeDefined();
       expect(dialogue).toStrictEqual({
         buttonLabel: `${namespace}:option.1.label`,
-        buttonTooltip: expect.stringMatching(new RegExp(`^${namespace}\\:option\\.1\\.tooltip(_shiny)?$`)),
+        buttonTooltip: expect.stringMatching(new RegExp(`^${namespace}\\:option\\.1\\.tooltip(Shiny)?$`)),
         selected: [
           {
             text: `${namespace}:option.1.selectedMessage`,
