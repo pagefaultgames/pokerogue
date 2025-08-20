@@ -19,6 +19,7 @@ import { MoveTarget } from "#enums/move-target";
 import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { ArenaTagAddedEvent } from "#events/arena";
 import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import type {
@@ -729,7 +730,9 @@ export class IonDelugeTag extends ArenaTag {
  */
 export abstract class ArenaTrapTag extends SerializableArenaTag {
   abstract readonly tagType: ArenaTrapTagType;
+  /** The tag's current number of layers. */
   public layers: number;
+  /** The maximum number of layers this tag can have. */
   public maxLayers: number;
 
   /**
@@ -749,11 +752,13 @@ export abstract class ArenaTrapTag extends SerializableArenaTag {
   }
 
   onOverlap(arena: Arena, _source: Pokemon | null): void {
-    if (this.layers < this.maxLayers) {
-      this.layers++;
-
-      this.onAdd(arena);
+    if (this.layers === this.maxLayers) {
+      return;
     }
+    // Add an extra layer of the current hazard, then
+    this.layers++;
+    this.onAdd(arena);
+    arena.eventTarget.dispatchEvent(new ArenaTagAddedEvent(this.tagType, this.side, 0, [this.layers, this.maxLayers]));
   }
 
   /**
@@ -771,9 +776,13 @@ export abstract class ArenaTrapTag extends SerializableArenaTag {
     return this.activateTrap(pokemon, simulated);
   }
 
-  activateTrap(_pokemon: Pokemon, _simulated: boolean): boolean {
-    return false;
-  }
+  /**
+   * Trigger this trap's effects on any Pokemon switching into battle.
+   * @param _pokemon - The {@linkcode Pokemon} entering the field
+   * @param _simulated - Whether the switch is simulated
+   * @returns `true` if the effect succeeded
+   */
+  abstract activateTrap(_pokemon: Pokemon, _simulated: boolean): boolean;
 
   getMatchupScoreMultiplier(pokemon: Pokemon): number {
     return pokemon.isGrounded()

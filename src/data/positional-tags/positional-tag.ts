@@ -2,7 +2,9 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 // biome-ignore-start lint/correctness/noUnusedImports: TSDoc
 import type { ArenaTag } from "#data/arena-tag";
+import type { Stat } from "#enums/stat";
 // biome-ignore-end lint/correctness/noUnusedImports: TSDoc
+
 import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { MoveId } from "#enums/move-id";
@@ -30,7 +32,7 @@ export interface PositionalTagBaseArgs {
   /**
    * The {@linkcode BattlerIndex} targeted by this effect.
    */
-  targetIndex: BattlerIndex;
+  readonly targetIndex: BattlerIndex;
 }
 
 /**
@@ -39,7 +41,7 @@ export interface PositionalTagBaseArgs {
  * Multiple tags of the same kind can stack with one another, provided they are affecting different targets.
  */
 export abstract class PositionalTag implements PositionalTagBaseArgs {
-  /** This tag's {@linkcode PositionalTagType | type} */
+  /** This tag's {@linkcode PositionalTagType | type}. */
   public abstract readonly tagType: PositionalTagType;
   // These arguments have to be public to implement the interface, but are functionally private
   // outside this and the tag manager.
@@ -76,9 +78,9 @@ interface DelayedAttackArgs extends PositionalTagBaseArgs {
   /**
    * The {@linkcode Pokemon.id | PID} of the {@linkcode Pokemon} having created this effect.
    */
-  sourceId: number;
+  readonly sourceId: number;
   /** The {@linkcode MoveId} that created this attack. */
-  sourceMove: MoveId;
+  readonly sourceMove: MoveId;
 }
 
 /**
@@ -133,9 +135,9 @@ export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs
 /** Interface containing arguments used to construct a {@linkcode WishTag}. */
 interface WishArgs extends PositionalTagBaseArgs {
   /** The amount of {@linkcode Stat.HP | HP} to heal; set to 50% of the user's max HP during move usage. */
-  healHp: number;
+  readonly healHp: number;
   /** The name of the {@linkcode Pokemon} having created the tag. */
-  pokemonName: string;
+  readonly pokemonName: string;
 }
 
 /**
