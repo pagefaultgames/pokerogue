@@ -401,6 +401,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   private starterPreferences: StarterPreferences;
 
+  private hasSwappedMoves = false;
+
   protected blockInput = false;
 
   constructor() {
@@ -1957,11 +1959,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                         handler: () => {
                           this.moveInfoOverlay.clear();
                           this.clearText();
-                          globalScene.gameData.saveSystem().then(success => {
-                            if (!success) {
-                              return globalScene.reset(true);
-                            }
-                          });
+                          // Only saved if moves were actually swapped
+                          console.log("Saving", this.hasSwappedMoves);
+                          if (this.hasSwappedMoves) {
+                            globalScene.gameData.saveSystem().then(success => {
+                              if (!success) {
+                                return globalScene.reset(true);
+                              }
+                            });
+                          }
                           ui.setMode(UiMode.STARTER_SELECT);
                           return true;
                         },
@@ -1980,6 +1986,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             options.push({
               label: i18next.t("starterSelectUiHandler:manageMoves"),
               handler: () => {
+                this.hasSwappedMoves = false;
                 showSwapOptions(this.starterMoveset!); // TODO: is this bang correct?
                 return true;
               },
@@ -2729,8 +2736,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     } else {
       starterData.moveset = updatedMoveset;
     }
+    this.hasSwappedMoves = true;
+    console.log(this.hasSwappedMoves);
     this.setSpeciesDetails(this.lastSpecies, { forSeen: false });
-
     this.updateSelectedStarterMoveset(speciesId);
   }
 
