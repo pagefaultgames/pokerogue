@@ -1117,7 +1117,7 @@
         "resourceName": "",
         "bgX": 0,
         "bgY": 0,
-        "opacity": 96,
+        "opacity": 32,
         "duration": 4,
         "eventType": "AnimTimedUpdateBgEvent"
       }
@@ -1128,7 +1128,7 @@
         "resourceName": "",
         "bgX": 10,
         "bgY": 0,
-        "opacity": 128,
+        "opacity": 64,
         "duration": 4,
         "eventType": "AnimTimedUpdateBgEvent"
       }
@@ -1161,18 +1161,18 @@
         "resourceName": "",
         "bgX": 40,
         "bgY": 0,
-        "opacity": 64,
+        "opacity": 128,
         "duration": 4,
         "eventType": "AnimTimedUpdateBgEvent"
       }
     ],
-	"20": [
+    "20": [
       {
         "frameIndex": 20,
         "resourceName": "",
         "bgX": 50,
         "bgY": 0,
-        "opacity": 32,
+        "opacity": 128,
         "duration": 4,
         "eventType": "AnimTimedUpdateBgEvent"
       }
@@ -1181,7 +1181,29 @@
       {
         "frameIndex": 24,
         "resourceName": "",
-        "bgX": 50,
+        "bgX": 60,
+        "bgY": 0,
+        "opacity": 64,
+        "duration": 4,
+        "eventType": "AnimTimedUpdateBgEvent"
+      }
+    ],
+    "28": [
+      {
+        "frameIndex": 28,
+        "resourceName": "",
+        "bgX": 70,
+        "bgY": 0,
+        "opacity": 32,
+        "duration": 4,
+        "eventType": "AnimTimedUpdateBgEvent"
+      }
+    ],
+    "32": [
+      {
+        "frameIndex": 32,
+        "resourceName": "",
+        "bgX": 80,
         "bgY": 0,
         "opacity": 0,
         "duration": 3,
