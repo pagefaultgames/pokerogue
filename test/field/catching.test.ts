@@ -22,10 +22,10 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
  * - If expecting success, checks that party length has increased by 1
  * - Otherwise, checks that {@link i18next} has been called on the requested error key
  *
- * @param game {@link GameManager} The game manager from the test
- * @param ball {@link PokeballType} The type of pokéball to be used for the catch attempt
- * @param expectedResult {@link string} Either "success", if the enemy should be caught, or the expected locales error key
- * @param mode One between "classic", "daily", and "challenge", defaults to "classic".
+ * @param game - The {@link GameManager} instance
+ * @param ball - The {@link PokeballType} to be used for the catch attempt
+ * @param expectedResult - Either "success" if the enemy should be caught, or the expected locales error key
+ * @param mode - One of "classic", "daily", or "challenge"; defaults to "classic".
  */
 async function runPokeballTest(
   game: GameManager,
