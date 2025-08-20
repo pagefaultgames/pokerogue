@@ -133,7 +133,7 @@ describe("RibbonAchv", () => {
   });
 
   it("should validate the achievement based on the ribbon amount", () => {
-    const ribbonAchv = new RibbonAchv("", "Test Ribbon Achievement", 10, "ribbon_icon", 10);
+    const ribbonAchv = new RibbonAchv("", 10, "ribbon_icon", 10);
     scene.gameData.gameStats.ribbonsOwned = 5;
 
     expect(ribbonAchv.validate([])).toBe(false);
@@ -187,7 +187,7 @@ describe("LevelAchv", () => {
   });
 
   it("should validate the achievement based on the level", () => {
-    const levelAchv = new LevelAchv("", "Test Level Achievement", 100, "level_icon", 10);
+    const levelAchv = new LevelAchv("", 100, "level_icon", 10);
     const integerHolder = new NumberHolder(50);
 
     expect(levelAchv.validate([integerHolder])).toBe(false);
