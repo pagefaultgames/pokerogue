@@ -401,10 +401,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   private starterPreferences: StarterPreferences;
 
-  /*
-  Used to check whether any moves were swapped using the reorder menu, to decide
-  whether a save should be performed or not.
-  */
+  /**
+   * Used to check whether any moves were swapped using the reorder menu, to decide
+   * whether a save should be performed or not.
+   */
   private hasSwappedMoves = false;
 
   protected blockInput = false;
