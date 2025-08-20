@@ -33,7 +33,7 @@ describe("Items - Light Ball", () => {
     const consoleSpy = vi.spyOn(console, "log");
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
+    const partyMember = game.field.getPlayerPokemon();
 
     // Checking console log to make sure Light Ball is applied when getEffectiveStat (with the appropriate stat) is called
     partyMember.getEffectiveStat(Stat.DEF);
@@ -84,7 +84,7 @@ describe("Items - Light Ball", () => {
   it("LIGHT_BALL held by PIKACHU", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
+    const partyMember = game.field.getPlayerPokemon();
 
     const atkStat = partyMember.getStat(Stat.ATK);
     const spAtkStat = partyMember.getStat(Stat.SPATK);
@@ -113,8 +113,7 @@ describe("Items - Light Ball", () => {
   it("LIGHT_BALL held by fused PIKACHU (base)", async () => {
     await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.MAROWAK]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
-    const ally = game.scene.getPlayerParty()[1];
+    const [partyMember, ally] = game.scene.getPlayerParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -152,8 +151,7 @@ describe("Items - Light Ball", () => {
   it("LIGHT_BALL held by fused PIKACHU (part)", async () => {
     await game.classicMode.startBattle([SpeciesId.MAROWAK, SpeciesId.PIKACHU]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
-    const ally = game.scene.getPlayerParty()[1];
+    const [partyMember, ally] = game.scene.getPlayerParty();
 
     // Fuse party members (taken from PlayerPokemon.fuse(...) function)
     partyMember.fusionSpecies = ally.species;
@@ -191,7 +189,7 @@ describe("Items - Light Ball", () => {
   it("LIGHT_BALL not held by PIKACHU", async () => {
     await game.classicMode.startBattle([SpeciesId.MAROWAK]);
 
-    const partyMember = game.scene.getPlayerParty()[0];
+    const partyMember = game.field.getPlayerPokemon();
 
     const atkStat = partyMember.getStat(Stat.ATK);
     const spAtkStat = partyMember.getStat(Stat.SPATK);

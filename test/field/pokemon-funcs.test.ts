@@ -6,7 +6,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Abilities - Water Veil", () => {
+describe("Spec - Pokemon Functions", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -23,29 +23,29 @@ describe("Abilities - Water Veil", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([MoveId.SPLASH])
-      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
+      .startingLevel(100)
       .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("should remove burn when gained", async () => {
-    game.override
-      .ability(AbilityId.THERMAL_EXCHANGE)
-      .enemyAbility(AbilityId.BALL_FETCH)
-      .moveset(MoveId.SKILL_SWAP)
-      .enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-    const enemy = game.scene.getEnemyPokemon();
-    enemy?.trySetStatus(StatusEffect.BURN);
-    expect(enemy?.status?.effect).toBe(StatusEffect.BURN);
+  describe("doSetStatus", () => {
+    it("should change the Pokemon's status, ignoring feasibility checks", async () => {
+      await game.classicMode.startBattle([SpeciesId.ACCELGOR]);
 
-    game.move.select(MoveId.SKILL_SWAP);
-    await game.phaseInterceptor.to("BerryPhase");
+      const player = game.field.getPlayerPokemon();
 
-    expect(enemy?.status).toBeNull();
+      expect(player.status?.effect).toBeUndefined();
+      player.doSetStatus(StatusEffect.BURN);
+      expect(player.status?.effect).toBe(StatusEffect.BURN);
+
+      expect(player.canSetStatus(StatusEffect.SLEEP)).toBe(false);
+      player.doSetStatus(StatusEffect.SLEEP, 5);
+      expect(player.status?.effect).toBe(StatusEffect.SLEEP);
+      expect(player.status?.sleepTurnsRemaining).toBe(5);
+    });
   });
 });

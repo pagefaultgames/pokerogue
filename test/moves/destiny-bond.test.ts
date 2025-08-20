@@ -1,4 +1,4 @@
-import type { ArenaTrapTag } from "#data/arena-tag";
+import type { EntryHazardTag } from "#data/arena-tag";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -195,7 +195,7 @@ describe("Moves - Destiny Bond", () => {
     expect(playerPokemon.isFainted()).toBe(true);
 
     // Ceaseless Edge spikes effect should still activate
-    const tagAfter = game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY) as ArenaTrapTag;
+    const tagAfter = game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY) as EntryHazardTag;
     expect(tagAfter.tagType).toBe(ArenaTagType.SPIKES);
     expect(tagAfter.layers).toBe(1);
   });
@@ -220,7 +220,10 @@ describe("Moves - Destiny Bond", () => {
     expect(playerPokemon1?.isFainted()).toBe(true);
 
     // Pledge secondary effect should still activate
-    const tagAfter = game.scene.arena.getTagOnSide(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY) as ArenaTrapTag;
+    const tagAfter = game.scene.arena.getTagOnSide(
+      ArenaTagType.GRASS_WATER_PLEDGE,
+      ArenaTagSide.ENEMY,
+    ) as EntryHazardTag;
     expect(tagAfter.tagType).toBe(ArenaTagType.GRASS_WATER_PLEDGE);
   });
 

@@ -253,8 +253,11 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     globalScene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
 
+    const addStatus = new BooleanHolder(true);
+    applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
+
     globalScene.ui.showText(
-      i18next.t("battle:pokemonCaught", {
+      i18next.t(addStatus.value ? "battle:pokemonCaught" : "battle:pokemonCaughtButChallenge", {
         pokemonName: getPokemonNameWithAffix(pokemon),
       }),
       null,
@@ -268,7 +271,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         const removePokemon = () => {
           globalScene.addFaintedEnemyScore(pokemon);
           pokemon.hp = 0;
-          pokemon.trySetStatus(StatusEffect.FAINT);
+          pokemon.doSetStatus(StatusEffect.FAINT);
           globalScene.clearEnemyHeldItemModifiers();
           pokemon.leaveField(true, true, true);
         };
@@ -290,8 +293,6 @@ export class AttemptCapturePhase extends PokemonPhase {
           });
         };
         Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
-          const addStatus = new BooleanHolder(true);
-          applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
           if (!addStatus.value) {
             removePokemon();
             end();
