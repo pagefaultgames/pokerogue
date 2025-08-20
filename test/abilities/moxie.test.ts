@@ -3,9 +3,6 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { EnemyCommandPhase } from "#phases/enemy-command-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
-import { VictoryPhase } from "#phases/victory-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -46,7 +43,7 @@ describe("Abilities - Moxie", () => {
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
 
     game.move.select(moveToUse);
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(VictoryPhase);
+    await game.phaseInterceptor.to("VictoryPhase");
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
   });
@@ -67,7 +64,7 @@ describe("Abilities - Moxie", () => {
 
       game.move.select(moveToUse, BattlerIndex.PLAYER_2);
 
-      await game.phaseInterceptor.to(TurnEndPhase);
+      await game.phaseInterceptor.to("TurnEndPhase");
 
       expect(firstPokemon.getStatStage(Stat.ATK)).toBe(1);
     },

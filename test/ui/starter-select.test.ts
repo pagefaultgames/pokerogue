@@ -6,8 +6,6 @@ import { GameModes } from "#enums/game-modes";
 import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { EncounterPhase } from "#phases/encounter-phase";
-import { SelectStarterPhase } from "#phases/select-starter-phase";
 import type { TitlePhase } from "#phases/title-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
@@ -54,9 +52,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.LEFT);
       handler.processInput(Button.ACTION);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -88,7 +85,7 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
+    await game.phaseInterceptor.to("EncounterPhase", false);
 
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.field.getPlayerPokemon().shiny).toBe(true);
@@ -115,9 +112,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.LEFT);
       handler.processInput(Button.CYCLE_GENDER);
       handler.processInput(Button.ACTION);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -149,7 +145,7 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
+    await game.phaseInterceptor.to("EncounterPhase", false);
 
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.field.getPlayerPokemon().shiny).toBe(true);
@@ -179,9 +175,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.CYCLE_NATURE);
       handler.processInput(Button.CYCLE_ABILITY);
       handler.processInput(Button.ACTION);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -213,7 +208,7 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
+    await game.phaseInterceptor.to("EncounterPhase", false);
 
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.field.getPlayerPokemon().shiny).toBe(true);
@@ -242,9 +237,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.LEFT);
       handler.processInput(Button.CYCLE_GENDER);
       handler.processInput(Button.ACTION);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -276,7 +270,7 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
+    await game.phaseInterceptor.to("EncounterPhase", false);
 
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.field.getPlayerPokemon().shiny).toBe(true);
@@ -303,9 +297,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.LEFT);
       handler.processInput(Button.ACTION);
       handler.processInput(Button.CYCLE_SHINY);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -337,7 +330,7 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
+    await game.phaseInterceptor.to("EncounterPhase", false);
 
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.field.getPlayerPokemon().shiny).toBe(false);
@@ -365,9 +358,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.CYCLE_SHINY);
       handler.processInput(Button.CYCLE_SHINY);
       handler.processInput(Button.ACTION);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -399,7 +391,7 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
+    await game.phaseInterceptor.to("EncounterPhase", false);
 
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.field.getPlayerPokemon().shiny).toBe(true);
@@ -426,9 +418,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.CYCLE_SHINY);
       handler.processInput(Button.CYCLE_SHINY);
       handler.processInput(Button.ACTION);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -460,7 +451,7 @@ describe("UI - Starter select", () => {
         resolve();
       });
     });
-    await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
+    await game.phaseInterceptor.to("EncounterPhase", false);
 
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.BULBASAUR);
     expect(game.field.getPlayerPokemon().shiny).toBe(true);
@@ -486,9 +477,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.ACTION);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -527,7 +517,7 @@ describe("UI - Starter select", () => {
       const saveSlotSelectUiHandler = game.scene.ui.getHandler() as SaveSlotSelectUiHandler;
       saveSlotSelectUiHandler.processInput(Button.ACTION);
     });
-    await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
+    await game.phaseInterceptor.to("EncounterPhase", false);
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.CATERPIE);
   });
 
@@ -551,9 +541,8 @@ describe("UI - Starter select", () => {
       handler.processInput(Button.RIGHT);
       handler.processInput(Button.DOWN);
       handler.processInput(Button.ACTION);
-      game.phaseInterceptor.unlock();
     });
-    await game.phaseInterceptor.run(SelectStarterPhase);
+    await game.phaseInterceptor.to("SelectStarterPhase");
     let options: OptionSelectItem[] = [];
     let optionSelectUiHandler: OptionSelectUiHandler | undefined;
     await new Promise<void>(resolve => {
@@ -593,7 +582,7 @@ describe("UI - Starter select", () => {
       const saveSlotSelectUiHandler = game.scene.ui.getHandler() as SaveSlotSelectUiHandler;
       saveSlotSelectUiHandler.processInput(Button.ACTION);
     });
-    await game.phaseInterceptor.whenAboutToRun(EncounterPhase);
+    await game.phaseInterceptor.to("EncounterPhase", false);
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.NIDORAN_M);
   });
 });
