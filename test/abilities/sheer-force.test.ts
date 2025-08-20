@@ -121,8 +121,8 @@ describe("Abilities - Sheer Force", () => {
 
     await game.classicMode.startBattle([SpeciesId.PIDGEOT]);
 
-    const pidgeot = game.scene.getPlayerParty()[0];
-    const onix = game.scene.getEnemyParty()[0];
+    const pidgeot = game.field.getPlayerPokemon();
+    const onix = game.field.getEnemyPokemon();
 
     pidgeot.stats[Stat.DEF] = 10000;
     onix.stats[Stat.DEF] = 10000;

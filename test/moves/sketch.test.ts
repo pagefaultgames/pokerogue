@@ -6,7 +6,6 @@ import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { RandomMoveAttr } from "#moves/move";
-import { PokemonMove } from "#moves/pokemon-move";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -40,7 +39,7 @@ describe("Moves - Sketch", () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
     const playerPokemon = game.field.getPlayerPokemon();
     // can't use normal moveset override because we need to check moveset changes
-    playerPokemon.moveset = [new PokemonMove(MoveId.SKETCH), new PokemonMove(MoveId.SKETCH)];
+    game.move.changeMoveset(playerPokemon, [MoveId.SKETCH, MoveId.SKETCH]);
 
     game.move.select(MoveId.SKETCH);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -62,7 +61,7 @@ describe("Moves - Sketch", () => {
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
-    playerPokemon.moveset = [new PokemonMove(MoveId.SKETCH), new PokemonMove(MoveId.GROWL)];
+    game.move.changeMoveset(playerPokemon, [MoveId.SKETCH, MoveId.GROWL]);
 
     game.move.select(MoveId.GROWL);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -88,8 +87,9 @@ describe("Moves - Sketch", () => {
 
     game.override.enemyMoveset([MoveId.METRONOME]);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+
     const playerPokemon = game.field.getPlayerPokemon();
-    playerPokemon.moveset = [new PokemonMove(MoveId.SKETCH)];
+    game.move.changeMoveset(playerPokemon, MoveId.SKETCH);
 
     // Opponent uses Metronome -> False Swipe, then player uses Sketch, which should sketch Metronome
     game.move.select(MoveId.SKETCH);

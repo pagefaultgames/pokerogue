@@ -47,6 +47,7 @@ export class EggHatchData {
       caughtCount: currDexEntry.caughtCount,
       hatchedCount: currDexEntry.hatchedCount,
       ivs: [...currDexEntry.ivs],
+      ribbons: currDexEntry.ribbons,
     };
     this.starterDataEntryBeforeUpdate = {
       moveset: currStarterDataEntry.moveset,

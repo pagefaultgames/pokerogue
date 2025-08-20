@@ -103,3 +103,12 @@ export type CoerceNullPropertiesToUndefined<T extends object> = {
  * @typeParam T - The type to render partial
  */
 export type AtLeastOne<T extends object> = Partial<T> & ObjectValues<{ [K in keyof T]: Pick<Required<T>, K> }>;
+
+/** Type helper that adds a brand to a type, used for nominal typing.
+ *
+ * @remarks
+ * Brands should be either a string or unique symbol. This prevents overlap with other types.
+ */
+export declare class Brander<B> {
+  private __brand: B;
+}

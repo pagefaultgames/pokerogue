@@ -248,7 +248,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
           chosenPokemon.doSetStatus(StatusEffect.BURN);
           encounter.setDialogueToken("burnedPokemon", chosenPokemon.getNameToRender());
           encounter.setDialogueToken("abilityName", allAbilities[AbilityId.HEATPROOF].name);
-          queueEncounterMessage(`${namespace}:option.2.target_burned`);
+          queueEncounterMessage(`${namespace}:option.2.targetBurned`);
 
           // Also permanently change the burned Pokemon's ability to Heatproof
           applyAbilityOverrideToPokemon(chosenPokemon, AbilityId.HEATPROOF);
@@ -270,7 +270,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,
@@ -314,6 +314,6 @@ function giveLeadPokemonAttackTypeBoostItem() {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
     encounter.setDialogueToken("itemName", boosterModifierType.name);
     encounter.setDialogueToken("leadPokemon", leadPokemon.getNameToRender());
-    queueEncounterMessage(`${namespace}:found_item`);
+    queueEncounterMessage(`${namespace}:foundItem`);
   }
 }

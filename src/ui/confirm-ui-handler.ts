@@ -31,14 +31,14 @@ export class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
       const config: OptionSelectConfig = {
         options: [
           {
-            label: i18next.t("partyUiHandler:SUMMARY"),
+            label: i18next.t("partyUiHandler:summary"),
             handler: () => {
               args[0]();
               return true;
             },
           },
           {
-            label: i18next.t("partyUiHandler:POKEDEX"),
+            label: i18next.t("partyUiHandler:pokedex"),
             handler: () => {
               args[1]();
               return true;

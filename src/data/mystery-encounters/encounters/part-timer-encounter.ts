@@ -58,7 +58,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
     },
     {
       speaker: `${namespace}:speaker`,
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
     },
   ])
   .withOnInit(() => {
@@ -128,7 +128,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
         // Only Pokemon non-KOd pokemon can be selected
         const selectableFilter = (pokemon: Pokemon) => {
-          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalid_selection`);
+          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalidSelection`);
         };
 
         return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
@@ -142,18 +142,18 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
         // Give money and do dialogue
         if (moneyMultiplier > 2.5) {
-          await showEncounterDialogue(`${namespace}:job_complete_good`, `${namespace}:speaker`);
+          await showEncounterDialogue(`${namespace}:jobCompleteGood`, `${namespace}:speaker`);
         } else {
-          await showEncounterDialogue(`${namespace}:job_complete_bad`, `${namespace}:speaker`);
+          await showEncounterDialogue(`${namespace}:jobCompleteBad`, `${namespace}:speaker`);
         }
         const moneyChange = globalScene.getWaveMoneyAmount(moneyMultiplier);
         updatePlayerMoney(moneyChange, true, false);
         await showEncounterText(
-          i18next.t("mysteryEncounterMessages:receive_money", {
+          i18next.t("mysteryEncounterMessages:receiveMoney", {
             amount: moneyChange,
           }),
         );
-        await showEncounterText(`${namespace}:pokemon_tired`);
+        await showEncounterText(`${namespace}:pokemonTired`);
 
         setEncounterRewards({ fillRemaining: true });
         leaveEncounterWithoutBattle();
@@ -210,7 +210,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
         // Only Pokemon non-KOd pokemon can be selected
         const selectableFilter = (pokemon: Pokemon) => {
-          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalid_selection`);
+          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalidSelection`);
         };
 
         return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
@@ -224,18 +224,18 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
         // Give money and do dialogue
         if (moneyMultiplier > 2.5) {
-          await showEncounterDialogue(`${namespace}:job_complete_good`, `${namespace}:speaker`);
+          await showEncounterDialogue(`${namespace}:jobCompleteGood`, `${namespace}:speaker`);
         } else {
-          await showEncounterDialogue(`${namespace}:job_complete_bad`, `${namespace}:speaker`);
+          await showEncounterDialogue(`${namespace}:jobCompleteBad`, `${namespace}:speaker`);
         }
         const moneyChange = globalScene.getWaveMoneyAmount(moneyMultiplier);
         updatePlayerMoney(moneyChange, true, false);
         await showEncounterText(
-          i18next.t("mysteryEncounterMessages:receive_money", {
+          i18next.t("mysteryEncounterMessages:receiveMoney", {
             amount: moneyChange,
           }),
         );
-        await showEncounterText(`${namespace}:pokemon_tired`);
+        await showEncounterText(`${namespace}:pokemonTired`);
 
         setEncounterRewards({ fillRemaining: true });
         leaveEncounterWithoutBattle();
@@ -248,7 +248,7 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,
@@ -282,15 +282,15 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         await transitionMysteryEncounterIntroVisuals(false, false);
 
         // Give money and do dialogue
-        await showEncounterDialogue(`${namespace}:job_complete_good`, `${namespace}:speaker`);
+        await showEncounterDialogue(`${namespace}:jobCompleteGood`, `${namespace}:speaker`);
         const moneyChange = globalScene.getWaveMoneyAmount(2.5);
         updatePlayerMoney(moneyChange, true, false);
         await showEncounterText(
-          i18next.t("mysteryEncounterMessages:receive_money", {
+          i18next.t("mysteryEncounterMessages:receiveMoney", {
             amount: moneyChange,
           }),
         );
-        await showEncounterText(`${namespace}:pokemon_tired`);
+        await showEncounterText(`${namespace}:pokemonTired`);
 
         setEncounterRewards({ fillRemaining: true });
         leaveEncounterWithoutBattle();
