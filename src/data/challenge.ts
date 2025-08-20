@@ -830,8 +830,10 @@ export class FreshStartChallenge extends Challenge {
       (1 << (Nature.QUIRKY + 1));
     dexEntry.natureAttr &= neutralNaturesAttr;
 
-    // Set all ivs to 15
-    dexEntry.ivs = [15, 15, 15, 15, 15, 15];
+    // Cap all ivs at 15
+    for (let i = 0; i < 6; i++) {
+      dexEntry.ivs[i] = Math.min(dexEntry.ivs[i], 15);
+    }
 
     // Removes shiny and variants
     dexEntry.caughtAttr &= ~DexAttr.SHINY;
@@ -892,7 +894,10 @@ export class FreshStartChallenge extends Challenge {
     ) {
       pokemon.formIndex = 0; // These mons are set to form 0 because they're meant to be unlocks or mid-run form changes
     }
-    pokemon.ivs = [15, 15, 15, 15, 15, 15]; // Default IVs of 15 for all stats (Updated to 15 from 10 in 1.2.0)
+    // Cap all ivs at 15
+    for (let i = 0; i < 6; i++) {
+      pokemon.ivs[i] = Math.min(pokemon.ivs[i], 15);
+    }
     pokemon.teraType = pokemon.species.type1; // Always primary tera type
     return true;
   }
