@@ -50,8 +50,11 @@ describe("Arena Tags", () => {
     game.textInterceptor.logs = [];
   });
 
+  // These tags are either ineligible or just jaaaaaaaaaaank
+  const FORBIDDEN_TAGS = [ArenaTagType.NONE, ArenaTagType.NEUTRALIZING_GAS] as const;
+
   const arenaTags = Object.values(ArenaTagType)
-    .filter(t => t !== ArenaTagType.NONE)
+    .filter(t => (FORBIDDEN_TAGS as readonly ArenaTagType[]).includes(t))
     .map(t => ({
       tagType: t,
       name: toTitleCase(t),
