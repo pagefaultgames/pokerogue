@@ -1,4 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import Colors from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
@@ -119,8 +120,8 @@ export class MovePhase extends BattlePhase {
     super.start();
 
     console.log(
-      `%cMove: ${MoveId[this.move.moveId]}; Use Mode: ${enumValueToKey(MoveUseMode, this.useMode)}`,
-      "color:RebeccaPurple",
+      `%cMove: ${MoveId[this.move.moveId]}\nUse Mode: ${enumValueToKey(MoveUseMode, this.useMode)}`,
+      `color:${Colors.MOVE}`,
     );
 
     // Check if move is unusable (e.g. running out of PP due to a mid-turn Spite

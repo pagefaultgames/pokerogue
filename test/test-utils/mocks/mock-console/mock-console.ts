@@ -1,3 +1,4 @@
+import Colors from "#app/constants/colors";
 import { inferColorFormat } from "#test/test-utils/mocks/mock-console/infer-color";
 import { coerceArray } from "#utils/common";
 import { Console } from "node:console";
@@ -92,10 +93,10 @@ export class MockConsole extends Console {
       data.splice(1);
     } else if (data[0] === "[UI]") {
       // Cyan for UI debug messages
-      formatter = chalk.hex("#009dffff");
+      formatter = chalk.hex(Colors.UI_MSG);
     } else if (typeof data[0] === "string" && data[0].startsWith("=====")) {
       // Orange logging for "New Turn"/etc messages
-      formatter = chalk.hex("#ffad00ff");
+      formatter = chalk.hex(Colors.NEW_TURN);
     }
 
     super.log(...this.format(formatter, data));

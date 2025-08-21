@@ -1,3 +1,4 @@
+import Colors from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { type PhasePriorityQueue, PostSummonPhasePriorityQueue } from "#data/phase-priority-queue";
@@ -390,7 +391,7 @@ export class PhaseManager {
     this.conditionalQueue.push(...unactivatedConditionalPhases);
 
     if (this.currentPhase) {
-      console.log(`%cStart Phase ${this.currentPhase.constructor.name}`, "color:green;");
+      console.log(`%cStart Phase ${this.currentPhase.constructor.name}`, `color:${Colors.PHASE_START};`);
       this.currentPhase.start();
     }
   }
