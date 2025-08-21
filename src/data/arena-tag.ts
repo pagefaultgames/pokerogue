@@ -1205,7 +1205,7 @@ export class TrickRoomTag extends RoomArenaTag {
 
     globalScene.phaseManager.queueMessage(
       i18next.t("arenaTag:trickRoomOnAdd", {
-        moveName: this.getMoveName(),
+        pokemonNameWithAffix: getPokemonNameWithAffix(source),
       }),
     );
   }
