@@ -153,7 +153,7 @@ export class Trainer extends Phaser.GameObjects.Container {
 
   /**
    * Returns the name of the trainer based on the provided trainer slot and the option to include a title.
-   * @param rainerSlot - The slot to determine which name to use; default `TrainerSlot.NONE`
+   * @param trainerSlot - The slot to determine which name to use; default `TrainerSlot.NONE`
    * @param includeTitle - Whether to include the title in the returned name; default `false`
    * @returns - The formatted name of the trainer
    */
