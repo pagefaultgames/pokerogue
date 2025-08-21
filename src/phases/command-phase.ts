@@ -20,6 +20,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { MoveTargetSet } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
+import type { PokemonMove } from "#moves/pokemon-move";
 import { FieldPhase } from "#phases/field-phase";
 import type { TurnMove } from "#types/turn-move";
 import { applyChallenges } from "#utils/challenge-utils";
@@ -207,10 +208,9 @@ export class CommandPhase extends FieldPhase {
    * Submethod of {@linkcode handleFightCommand} responsible for queuing the appropriate
    * error message when a move cannot be used.
    * @param user - The pokemon using the move
-   * @param cursor - The index of the move in the moveset
+   * @param move - The move that cannot be used
    */
-  private queueFightErrorMessage(user: PlayerPokemon, cursor: number) {
-    const move = user.getMoveset()[cursor];
+  private queueFightErrorMessage(user: PlayerPokemon, move: PokemonMove) {
     globalScene.ui.setMode(UiMode.MESSAGE);
 
     // Set the translation key for why the move cannot be selected
@@ -277,15 +277,19 @@ export class CommandPhase extends FieldPhase {
 
     let canUse = cursor === -1 || playerPokemon.trySelectMove(cursor, ignorePP);
 
+    const moveset = playerPokemon.getMoveset();
+
     // Ternary here ensures we don't compute struggle conditions unless necessary
-    const useStruggle = canUse
-      ? false
-      : cursor > -1 && !playerPokemon.getMoveset().some(m => m.isUsable(playerPokemon));
+    const useStruggle = canUse ? false : cursor > -1 && !moveset.some(m => m.isUsable(playerPokemon));
 
     canUse ||= useStruggle;
 
     if (!canUse) {
-      this.queueFightErrorMessage(playerPokemon, cursor);
+      // Selected move *may* be undefined if the cursor is over a position that the mon does not have
+      const selectedMove: PokemonMove | undefined = moveset[cursor];
+      if (selectedMove) {
+        this.queueFightErrorMessage(playerPokemon, moveset[cursor]);
+      }
       return false;
     }
 
