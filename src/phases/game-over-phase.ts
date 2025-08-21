@@ -120,16 +120,22 @@ export class GameOverPhase extends BattlePhase {
    */
   private awardRibbons(): void {
     let ribbonFlags = 0n;
-    if (globalScene.gameMode.isClassic) {
-      ribbonFlags |= RibbonData.CLASSIC;
-    }
-    if (isNuzlockeChallenge()) {
-      ribbonFlags |= RibbonData.NUZLOCKE;
-    }
     for (const challenge of globalScene.gameMode.challenges) {
       const ribbon = challenge.ribbonAwarded;
       if (challenge.value && ribbon) {
         ribbonFlags |= ribbon;
+      }
+    }
+    // Block other ribbons if flip stats or inverse is active
+    const flip_or_inverse = ribbonFlags & (RibbonData.FLIP_STATS | RibbonData.INVERSE);
+    if (flip_or_inverse) {
+      ribbonFlags = flip_or_inverse;
+    } else {
+      if (globalScene.gameMode.isClassic) {
+        ribbonFlags |= RibbonData.CLASSIC;
+      }
+      if (isNuzlockeChallenge()) {
+        ribbonFlags |= RibbonData.NUZLOCKE;
       }
     }
     // Award ribbons to all Pokémon in the player's party that are considered valid

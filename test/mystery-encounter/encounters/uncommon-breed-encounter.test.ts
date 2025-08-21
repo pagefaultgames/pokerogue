@@ -11,7 +11,6 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import type { BerryModifier } from "#modifiers/modifier";
-import { PokemonMove } from "#moves/pokemon-move";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import { generateModifierType } from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
@@ -214,11 +213,11 @@ describe("Uncommon Breed - Mystery Encounter", () => {
 
       // Berries on party lead
       const sitrus = generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS])!;
-      const sitrusMod = sitrus.newModifier(scene.getPlayerParty()[0]) as BerryModifier;
+      const sitrusMod = sitrus.newModifier(game.field.getPlayerPokemon()) as BerryModifier;
       sitrusMod.stackCount = 2;
       scene.addModifier(sitrusMod, true, false, false, true);
       const ganlon = generateModifierType(modifierTypes.BERRY, [BerryType.GANLON])!;
-      const ganlonMod = ganlon.newModifier(scene.getPlayerParty()[0]) as BerryModifier;
+      const ganlonMod = ganlon.newModifier(game.field.getPlayerPokemon()) as BerryModifier;
       ganlonMod.stackCount = 3;
       scene.addModifier(ganlonMod, true, false, false, true);
       await scene.updateModifiers(true);
@@ -270,7 +269,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
       // Mock moveset
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(MoveId.CHARM)];
+      game.move.changeMoveset(game.field.getPlayerPokemon(), MoveId.CHARM);
       await runMysteryEncounterToEnd(game, 3);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
