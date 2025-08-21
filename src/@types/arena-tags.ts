@@ -1,5 +1,7 @@
 import type { ArenaTagTypeMap } from "#data/arena-tag";
 import type { ArenaTagType } from "#enums/arena-tag-type";
+// biome-ignore lint/correctness/noUnusedImports: TSDocs
+import type { SessionSaveData } from "#system/game-data";
 
 /** Subset of {@linkcode ArenaTagType}s that apply some negative effect to pokemon that switch in ({@link https://bulbapedia.bulbagarden.net/wiki/List_of_moves_that_cause_entry_hazards#List_of_traps | entry hazards} and Imprison. */
 export type EntryHazardTagType =
@@ -18,6 +20,9 @@ export type TurnProtectArenaTagType =
   | ArenaTagType.WIDE_GUARD
   | ArenaTagType.MAT_BLOCK
   | ArenaTagType.CRAFTY_SHIELD;
+
+/** Subset of {@linkcode ArenaTagType}s that create Trick Room-like effects which are removed upon overlap. */
+export type RoomArenaTagType = ArenaTagType.TRICK_ROOM;
 
 /** Subset of {@linkcode ArenaTagType}s that cannot persist across turns, and thus should not be serialized in {@linkcode SessionSaveData}. */
 export type NonSerializableArenaTagType = ArenaTagType.NONE | TurnProtectArenaTagType | ArenaTagType.ION_DELUGE;
