@@ -295,7 +295,8 @@ export abstract class WeakenMoveScreenTag extends SerializableArenaTag {
       if (bypassed.value) {
         return false;
       }
-      damageMultiplier.value = globalScene.currentBattle.double ? 2732 / 4096 : 0.5;
+      // Screens are less effective in Double Battles
+      damageMultiplier.value = globalScene.currentBattle.double ? 2 / 3 : 1 / 2;
       return true;
     }
     return false;
