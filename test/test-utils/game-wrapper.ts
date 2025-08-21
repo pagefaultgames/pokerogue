@@ -47,12 +47,14 @@ export class GameWrapper {
   public scene: BattleScene;
 
   constructor(phaserGame: Phaser.Game, bypassLogin: boolean) {
+    // TODO: Figure out how to actually set RNG states correctly
     Phaser.Math.RND.sow(["test"]);
     // vi.spyOn(Utils, "apiFetch", "get").mockReturnValue(fetch);
     if (bypassLogin) {
       vi.spyOn(bypassLoginModule, "bypassLogin", "get").mockReturnValue(true);
     }
     this.game = phaserGame;
+    // TODO: Move these mocks elsewhere
     MoveAnim.prototype.getAnim = () => ({
       frames: {},
     });
@@ -71,10 +73,16 @@ export class GameWrapper {
     PokedexMonContainer.prototype.remove = MockContainer.prototype.remove;
   }
 
-  setScene(scene: BattleScene) {
+  /**
+   * Initialize the given {@linkcode BattleScene} and override various properties to avoid crashes with headless games.
+   * @param scene - The {@linkcode BattleScene} to initialize
+   * @returns A Promise that resolves once the initialization process has completed.
+   */
+  // TODO: is asset loading & method overriding actually needed for a headless renderer?
+  async setScene(scene: BattleScene): Promise<void> {
     this.scene = scene;
     this.injectMandatory();
-    this.scene.preload?.();
+    this.scene.preload();
     this.scene.create();
   }
 
