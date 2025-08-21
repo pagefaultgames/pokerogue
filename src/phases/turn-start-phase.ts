@@ -20,6 +20,7 @@ export class TurnStartPhase extends FieldPhase {
    * Helper method to retrieve the current speed order of the combattants.
    * It also checks for Trick Room and reverses the array if it is present.
    * @returns The {@linkcode BattlerIndex}es of all on-field Pokemon, sorted in speed order.
+   * @todo Make this private
    */
   getSpeedOrder(): BattlerIndex[] {
     const playerField = globalScene.getPlayerField().filter(p => p.isActive());
