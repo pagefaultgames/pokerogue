@@ -1,21 +1,18 @@
 /**
- * A large `const object` holding preset colors for various logging strings.
- * @remarks
- * Please do not import this as anything but `Colors`!
+ * @module
+ * A big file storing colors used in logging.
+ * Is minified by Vite during production runs to avoid overhead.
  */
-const Colors = {
-  // Colors used in prod
-  PHASE_START: "green",
-  MOVE: "RebeccaPurple",
 
-  // Colors used for testing code
-  NEW_TURN: "#ffad00ff",
-  UI_MSG: "#009dffff",
-  OVERRIDES: "#b0b01eff",
+// Colors used in prod
+export const PHASE_START_COLOR = "green" as const;
+export const MOVE_COLOR = "RebeccaPurple" as const;
 
-  // Mock console log stuff
-  TRACE: "#b700ff",
-  DEBUG: "#874600ff",
-} as const satisfies Record<string, string>;
+// Colors used for testing code
+export const NEW_TURN_COLOR = "#ffad00ff" as const;
+export const UI_MSG_COLOR = "#009dffff" as const;
+export const OVERRIDES_COLOR = "#b0b01eff" as const;
 
-export default Colors;
+// Mock console log stuff
+export const TRACE_COLOR = "#b700ff" as const;
+export const DEBUG_COLOR = "#874600ff" as const;

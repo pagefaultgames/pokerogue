@@ -1,5 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
-import Colors from "#app/constants/colors";
+import { MOVE_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
@@ -121,7 +121,7 @@ export class MovePhase extends BattlePhase {
 
     console.log(
       `%cMove: ${MoveId[this.move.moveId]}\nUse Mode: ${enumValueToKey(MoveUseMode, this.useMode)}`,
-      `color:${Colors.MOVE}`,
+      `color:${MOVE_COLOR}`,
     );
 
     // Check if move is unusable (e.g. running out of PP due to a mid-turn Spite

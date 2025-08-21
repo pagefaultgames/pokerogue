@@ -1,4 +1,4 @@
-import Colors from "#app/constants/colors";
+import { DEBUG_COLOR, NEW_TURN_COLOR, TRACE_COLOR, UI_MSG_COLOR } from "#app/constants/colors";
 import { inferColorFormat } from "#test/test-utils/mocks/mock-console/infer-color";
 import { coerceArray } from "#utils/common";
 import { Console } from "node:console";
@@ -69,7 +69,7 @@ export class MockConsole extends Console {
     }
 
     // TODO: Figure out how to add color to the full trace text
-    super.trace(...this.format(chalk.hex("#b700ff"), data));
+    super.trace(...this.format(chalk.hex(TRACE_COLOR), data));
   }
 
   public debug(...data: unknown[]) {
@@ -77,7 +77,7 @@ export class MockConsole extends Console {
       return;
     }
 
-    super.debug(...this.format(chalk.hex("#874600ff"), data));
+    super.debug(...this.format(chalk.hex(DEBUG_COLOR), data));
   }
 
   public log(...data: unknown[]): void {
@@ -93,10 +93,10 @@ export class MockConsole extends Console {
       data.splice(1);
     } else if (data[0] === "[UI]") {
       // Cyan for UI debug messages
-      formatter = chalk.hex(Colors.UI_MSG);
+      formatter = chalk.hex(UI_MSG_COLOR);
     } else if (typeof data[0] === "string" && data[0].startsWith("=====")) {
       // Orange logging for "New Turn"/etc messages
-      formatter = chalk.hex(Colors.NEW_TURN);
+      formatter = chalk.hex(NEW_TURN_COLOR);
     }
 
     super.log(...this.format(formatter, data));

@@ -3,7 +3,7 @@ import type { NewArenaEvent } from "#events/battle-scene";
 
 /** biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
 
-import Colors from "#app/constants/colors";
+import { OVERRIDES_COLOR } from "#app/constants/colors";
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
@@ -668,6 +668,6 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   private log(...params: any[]) {
-    console.log(chalk.hex(Colors.OVERRIDES)("Overrides:", ...params));
+    console.log(chalk.hex(OVERRIDES_COLOR)("Overrides:", ...params));
   }
 }
