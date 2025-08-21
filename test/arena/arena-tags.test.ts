@@ -54,7 +54,7 @@ describe("Arena Tags", () => {
   const FORBIDDEN_TAGS = [ArenaTagType.NONE, ArenaTagType.NEUTRALIZING_GAS] as const;
 
   const arenaTags = Object.values(ArenaTagType)
-    .filter(t => (FORBIDDEN_TAGS as readonly ArenaTagType[]).includes(t))
+    .filter(t => !(FORBIDDEN_TAGS as readonly ArenaTagType[]).includes(t))
     .map(t => ({
       tagType: t,
       name: toTitleCase(t),
