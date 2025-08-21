@@ -173,6 +173,7 @@ export class GameOverPhase extends BattlePhase {
             this.awardRibbons();
           } else if (globalScene.gameMode.isDaily && newClear) {
             globalScene.gameData.gameStats.dailyRunSessionsWon++;
+            globalScene.validateAchv(achvs.DAILY_VICTORY);
           }
         }
 
