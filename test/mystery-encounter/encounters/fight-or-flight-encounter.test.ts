@@ -6,7 +6,6 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { PokemonMove } from "#moves/pokemon-move";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import { FightOrFlightEncounter } from "#mystery-encounters/fight-or-flight-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
@@ -122,9 +121,9 @@ describe("Fight or Flight - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectRewardPhase, false);
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
-      await game.phaseInterceptor.run(SelectRewardPhase);
+      await game.phaseInterceptor.to("SelectRewardPhase");
       expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
 
       const rewardSelectHandler = scene.ui.handlers.find(
@@ -155,7 +154,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
     it("should NOT be selectable if the player doesn't have a Stealing move", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIGHT_OR_FLIGHT, defaultParty);
       scene.getPlayerParty().forEach(p => (p.moveset = []));
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
@@ -178,13 +177,13 @@ describe("Fight or Flight - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIGHT_OR_FLIGHT, defaultParty);
 
       // Mock moveset
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(MoveId.KNOCK_OFF)];
+      game.move.changeMoveset(game.field.getPlayerPokemon(), MoveId.KNOCK_OFF);
       const item = game.scene.currentBattle.mysteryEncounter!.misc;
 
       await runMysteryEncounterToEnd(game, 2);
-      await game.phaseInterceptor.to(SelectRewardPhase, false);
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
-      await game.phaseInterceptor.run(SelectRewardPhase);
+      await game.phaseInterceptor.to("SelectRewardPhase");
       expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
 
       const rewardSelectHandler = scene.ui.handlers.find(

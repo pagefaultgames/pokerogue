@@ -132,7 +132,7 @@ describe("Berries Abound - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectRewardPhase, false);
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
 
       const berriesAfter = getPartyBerries();
@@ -145,9 +145,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.BERRIES_ABOUND, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectRewardPhase, false);
-      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
-      await game.phaseInterceptor.run(SelectRewardPhase);
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(
@@ -230,9 +228,9 @@ describe("Berries Abound - Mystery Encounter", () => {
       });
 
       await runMysteryEncounterToEnd(game, 2);
-      await game.phaseInterceptor.to(SelectRewardPhase, false);
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
-      await game.phaseInterceptor.run(SelectRewardPhase);
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(

@@ -222,9 +222,9 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_STRONG_STUFF, defaultParty);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectRewardPhase, false);
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
-      await game.phaseInterceptor.run(SelectRewardPhase);
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(

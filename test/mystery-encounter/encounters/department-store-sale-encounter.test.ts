@@ -3,6 +3,7 @@ import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { DepartmentStoreSaleEncounter } from "#mystery-encounters/department-store-sale-encounter";
@@ -94,7 +95,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DEPARTMENT_STORE_SALE, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
-      await game.phaseInterceptor.run(SelectRewardPhase);
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(
@@ -131,7 +132,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DEPARTMENT_STORE_SALE, defaultParty);
       await runMysteryEncounterToEnd(game, 2);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
-      await game.phaseInterceptor.run(SelectRewardPhase);
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(
@@ -140,7 +141,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(rewardSelectHandler.options.length).toEqual(3);
       for (const option of rewardSelectHandler.options) {
         expect(
-          option.rewardOption.type.id.includes("PP_UP") || option.rewardOption.type.id.includes("BASE_STAT_BOOSTER"),
+          option.rewardOption.type.id === RewardId.PP_UP || option.rewardOption.type.id === RewardId.BASE_STAT_BOOSTER,
         ).toBeTruthy();
       }
     });
@@ -170,7 +171,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DEPARTMENT_STORE_SALE, defaultParty);
       await runMysteryEncounterToEnd(game, 3);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
-      await game.phaseInterceptor.run(SelectRewardPhase);
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(
@@ -179,8 +180,8 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(rewardSelectHandler.options.length).toEqual(5);
       for (const option of rewardSelectHandler.options) {
         expect(
-          option.rewardOption.type.id.includes("DIRE_HIT") ||
-            option.rewardOption.type.id.includes("TEMP_STAT_STAGE_BOOSTER"),
+          option.rewardOption.type.id === RewardId.DIRE_HIT ||
+            option.rewardOption.type.id === RewardId.TEMP_STAT_STAGE_BOOSTER,
         ).toBeTruthy();
       }
     });
@@ -210,7 +211,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DEPARTMENT_STORE_SALE, defaultParty);
       await runMysteryEncounterToEnd(game, 4);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
-      await game.phaseInterceptor.run(SelectRewardPhase);
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(

@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { signatureSpecies } from "#balance/signature-species";
-import { ArenaTrapTag } from "#data/arena-tag";
+import { EntryHazardTag } from "#data/arena-tag";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -23,7 +23,7 @@ import {
 } from "#trainers/trainer-party-template";
 import { randSeedInt, randSeedItem, randSeedWeightedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { toSnakeCase } from "#utils/strings";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export class Trainer extends Phaser.GameObjects.Container {
@@ -170,7 +170,7 @@ export class Trainer extends Phaser.GameObjects.Container {
     const evilTeamTitles = ["grunt"];
     if (this.name === "" && evilTeamTitles.some(t => name.toLocaleLowerCase().includes(t))) {
       // This is a evil team grunt so we localize it by only using the "name" as the title
-      title = i18next.t(`trainerClasses:${toSnakeCase(name)}`);
+      title = i18next.t(`trainerClasses:${toCamelCase(name)}`);
       console.log("Localized grunt name: " + title);
       // Since grunts are not named we can just return the title
       return title;
@@ -187,7 +187,7 @@ export class Trainer extends Phaser.GameObjects.Container {
         }
         // Get the localized trainer class name from the i18n file and set it as the title.
         // This is used for trainer class names, not titles like "Elite Four, Champion, etc."
-        title = i18next.t(`trainerClasses:${toSnakeCase(name)}`);
+        title = i18next.t(`trainerClasses:${toCamelCase(name)}`);
       }
 
       // If no specific trainer slot is set.
@@ -208,7 +208,7 @@ export class Trainer extends Phaser.GameObjects.Container {
 
     if (this.config.titleDouble && this.variant === TrainerVariant.DOUBLE && !this.config.doubleOnly) {
       title = this.config.titleDouble;
-      name = i18next.t(`trainerNames:${toSnakeCase(this.config.nameDouble)}`);
+      name = i18next.t(`trainerNames:${toCamelCase(this.config.nameDouble)}`);
     }
 
     console.log(title ? `${title} ${name}` : name);
@@ -584,8 +584,8 @@ export class Trainer extends Phaser.GameObjects.Container {
         score /= playerField.length;
         if (forSwitch && !p.isOnField()) {
           globalScene.arena
-            .findTagsOnSide(t => t instanceof ArenaTrapTag, ArenaTagSide.ENEMY)
-            .map(t => (score *= (t as ArenaTrapTag).getMatchupScoreMultiplier(p)));
+            .findTagsOnSide(t => t instanceof EntryHazardTag, ArenaTagSide.ENEMY)
+            .map(t => (score *= (t as EntryHazardTag).getMatchupScoreMultiplier(p)));
         }
       }
 

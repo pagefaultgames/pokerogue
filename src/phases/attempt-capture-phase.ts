@@ -271,7 +271,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         const removePokemon = () => {
           globalScene.addFaintedEnemyScore(pokemon);
           pokemon.hp = 0;
-          pokemon.trySetStatus(StatusEffect.FAINT);
+          pokemon.doSetStatus(StatusEffect.FAINT);
           pokemon.leaveField(true, true, true);
         };
         const addToParty = (slotIndex?: number) => {

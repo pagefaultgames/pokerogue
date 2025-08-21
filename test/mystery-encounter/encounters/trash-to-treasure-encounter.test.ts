@@ -140,7 +140,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
     it("should give 2 Leftovers, 1 Shell Bell, and Black Sludge", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
-      await game.phaseInterceptor.to(SelectRewardPhase, false);
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
 
       expect(scene.getPlayerParty()[0].heldItemManager.getStack(HeldItemId.LEFTOVERS)).toBe(2);
@@ -204,9 +204,9 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectRewardPhase, false);
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
-      await game.phaseInterceptor.run(SelectRewardPhase);
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(

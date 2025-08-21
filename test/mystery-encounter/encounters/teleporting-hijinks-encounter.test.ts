@@ -146,7 +146,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
     it("should NOT be selectable if the player doesn't have enough money", async () => {
       game.scene.money = 0;
       await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, defaultParty);
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
@@ -218,7 +218,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
 
     it("should NOT be selectable if the player doesn't the right type pokemon", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, [SpeciesId.BLASTOISE]);
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
@@ -299,9 +299,9 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, defaultParty);
       await runMysteryEncounterToEnd(game, 3, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectRewardPhase, false);
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
-      await game.phaseInterceptor.run(SelectRewardPhase);
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(

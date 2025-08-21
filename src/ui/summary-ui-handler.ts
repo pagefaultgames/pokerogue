@@ -809,8 +809,8 @@ export class SummaryUiHandler extends UiHandler {
           globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE;
         const usernameReplacement =
           globalScene.gameData.gender === PlayerGender.FEMALE
-            ? i18next.t("trainerNames:player_f")
-            : i18next.t("trainerNames:player_m");
+            ? i18next.t("trainerNames:playerF")
+            : i18next.t("trainerNames:playerM");
 
         // TODO: should add field for original trainer name to Pokemon object, to support gift/traded Pokemon from MEs
         const trainerText = addBBCodeTextObject(

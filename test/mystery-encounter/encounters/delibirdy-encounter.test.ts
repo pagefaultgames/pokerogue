@@ -179,7 +179,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       // Set 2 Sitrus berries on party lead
       scene.clearAllItems();
-      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.SITRUS_BERRY, 2);
+      game.field.getPlayerPokemon().heldItemManager.add(HeldItemId.SITRUS_BERRY, 2);
       scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
@@ -193,7 +193,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       // Set 1 Reviver Seed on party lead
       scene.clearAllItems();
-      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.REVIVER_SEED);
+      game.field.getPlayerPokemon().heldItemManager.add(HeldItemId.REVIVER_SEED);
       scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
@@ -210,7 +210,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       scene.trainerItems.add(TrainerItemId.CANDY_JAR, 99);
 
       // Sitrus berries on party
-      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.SITRUS_BERRY, 2);
+      game.field.getPlayerPokemon().heldItemManager.add(HeldItemId.SITRUS_BERRY, 2);
       scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
@@ -228,7 +228,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       scene.trainerItems.add(TrainerItemId.BERRY_POUCH, 3);
 
       // Set 1 Reviver Seed on party lead
-      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.REVIVER_SEED);
+      game.field.getPlayerPokemon().heldItemManager.add(HeldItemId.REVIVER_SEED);
       scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
@@ -243,7 +243,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       // Set 1 Soul Dew on party lead
       scene.clearAllItems();
-      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.SOUL_DEW);
+      game.field.getPlayerPokemon().heldItemManager.add(HeldItemId.SOUL_DEW);
       scene.updateItems(true);
 
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
@@ -269,7 +269,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
 
       // Set 1 Reviver Seed on party lead
-      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.REVIVER_SEED);
+      game.field.getPlayerPokemon().heldItemManager.add(HeldItemId.REVIVER_SEED);
       scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
@@ -300,7 +300,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       // Set 2 Soul Dew on party lead
       scene.clearAllItems();
-      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.SOUL_DEW, 2);
+      game.field.getPlayerPokemon().heldItemManager.add(HeldItemId.SOUL_DEW, 2);
       scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
@@ -314,7 +314,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       // Set 1 Soul Dew on party lead
       scene.clearAllItems();
-      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.SOUL_DEW);
+      game.field.getPlayerPokemon().heldItemManager.add(HeldItemId.SOUL_DEW);
       scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
@@ -331,7 +331,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       scene.trainerItems.add(TrainerItemId.HEALING_CHARM, 5);
 
       // Set 1 Soul Dew on party lead
-      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.SOUL_DEW);
+      game.field.getPlayerPokemon().heldItemManager.add(HeldItemId.SOUL_DEW);
       scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
@@ -346,7 +346,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       // Set 1 Reviver Seed on party lead
       scene.clearAllItems();
-      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.REVIVER_SEED);
+      game.field.getPlayerPokemon().heldItemManager.add(HeldItemId.REVIVER_SEED);
       scene.updateItems(true);
 
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
@@ -373,7 +373,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       // Set 1 Soul Dew on party lead
       scene.clearAllItems();
-      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.SOUL_DEW);
+      game.field.getPlayerPokemon().heldItemManager.add(HeldItemId.SOUL_DEW);
       scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });

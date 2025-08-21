@@ -116,7 +116,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       const bstsPrior = pokemonPrior.map(species => species.getSpeciesForm().getBaseStatTotal());
 
       await runMysteryEncounterToEnd(game, 1);
-      await game.phaseInterceptor.to(SelectRewardPhase, false);
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
 
       const pokemonAfter = scene.getPlayerParty();
@@ -139,9 +139,9 @@ describe("Weird Dream - Mystery Encounter", () => {
     it("should have 1 Memory Mushroom, 5 Rogue Balls, and 3 Mints in allRewards", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
-      await game.phaseInterceptor.to(SelectRewardPhase, false);
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
-      await game.phaseInterceptor.run(SelectRewardPhase);
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(
@@ -153,7 +153,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       expect(rewardSelectHandler.options[2].rewardOption.type.id).toEqual("MINT");
       expect(rewardSelectHandler.options[3].rewardOption.type.id).toEqual("MINT");
       expect(rewardSelectHandler.options[4].rewardOption.type.id).toEqual("MINT");
-      expect(modifierSelectHandler.options[5].rewardOption.type.id).toEqual("MINT");
+      expect(rewardSelectHandler.options[5].rewardOption.type.id).toEqual("MINT");
     });
 
     it("should leave encounter without battle", async () => {
@@ -196,9 +196,9 @@ describe("Weird Dream - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.WEIRD_DREAM, defaultParty);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectRewardPhase, false);
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
-      await game.phaseInterceptor.run(SelectRewardPhase);
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(

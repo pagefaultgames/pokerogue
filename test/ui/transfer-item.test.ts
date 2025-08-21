@@ -72,8 +72,6 @@ describe("UI - Transfer Items", () => {
       expect(
         handler.optionsContainer.list.some(option => RegExp(/Lum Berry\[color.*(2)/).exec((option as BBCodeText).text)),
       ).toBe(true);
-
-      game.phaseInterceptor.unlock();
     });
 
     await game.phaseInterceptor.to("SelectRewardPhase");
@@ -93,8 +91,6 @@ describe("UI - Transfer Items", () => {
       expect(handler.optionsContainer.list.some(option => (option as BBCodeText).text?.includes("Transfer"))).toBe(
         true,
       );
-
-      game.phaseInterceptor.unlock();
     });
 
     await game.phaseInterceptor.to("SelectRewardPhase");

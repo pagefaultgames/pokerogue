@@ -239,8 +239,9 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
       if (burnable?.length > 0) {
         const roll = randSeedInt(burnable.length);
         const chosenPokemon = burnable[roll];
-        if (chosenPokemon.trySetStatus(StatusEffect.BURN)) {
+        if (chosenPokemon.canSetStatus(StatusEffect.BURN, true)) {
           // Burn applied
+          chosenPokemon.doSetStatus(StatusEffect.BURN);
           encounter.setDialogueToken("burnedPokemon", chosenPokemon.getNameToRender());
           encounter.setDialogueToken("abilityName", allAbilities[AbilityId.HEATPROOF].name);
           queueEncounterMessage(`${namespace}:option.2.targetBurned`);

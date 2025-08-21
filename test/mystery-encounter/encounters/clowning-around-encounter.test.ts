@@ -21,7 +21,6 @@ import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { CommandPhase } from "#phases/command-phase";
 import { MovePhase } from "#phases/move-phase";
 import { PostMysteryEncounterPhase } from "#phases/mystery-encounter-phases";
-import { NewBattlePhase } from "#phases/new-battle-phase";
 import { SelectRewardPhase } from "#phases/select-reward-phase";
 import {
   runMysteryEncounterToEnd,
@@ -196,9 +195,9 @@ describe("Clowning Around - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectRewardPhase, false);
+      await game.phaseInterceptor.to("SelectRewardPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
-      await game.phaseInterceptor.run(SelectRewardPhase);
+      await game.phaseInterceptor.to("SelectRewardPhase");
       const abilityToTrain = scene.currentBattle.mysteryEncounter?.misc.ability;
 
       game.onNextPrompt("PostMysteryEncounterPhase", UiMode.MESSAGE, () => {
@@ -211,7 +210,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       const partyUiHandler = game.scene.ui.handlers[UiMode.PARTY] as PartyUiHandler;
       vi.spyOn(partyUiHandler, "show");
       game.endPhase();
-      await game.phaseInterceptor.to(PostMysteryEncounterPhase);
+      await game.phaseInterceptor.to("PostMysteryEncounterPhase");
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(PostMysteryEncounterPhase.name);
 
       // Wait for Yes/No confirmation to appear
@@ -224,9 +223,9 @@ describe("Clowning Around - Mystery Encounter", () => {
       // Click "Select" on Pokemon
       partyUiHandler.processInput(Button.ACTION);
       // Stop next battle before it runs
-      await game.phaseInterceptor.to(NewBattlePhase, false);
+      await game.phaseInterceptor.to("NewBattlePhase", false);
 
-      const leadPokemon = scene.getPlayerParty()[0];
+      const leadPokemon = game.field.getPlayerPokemon();
       expect(leadPokemon.customPokemonData?.ability).toBe(abilityToTrain);
     });
   });
@@ -259,7 +258,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
 
       // Set some moves on party for attack type booster generation
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(MoveId.TACKLE), new PokemonMove(MoveId.THIEF)];
+      game.move.changeMoveset(game.field.getPlayerPokemon(), [MoveId.TACKLE, MoveId.THIEF]);
 
       // 2 Sitrus Berries on lead
       scene.clearAllItems();
@@ -275,7 +274,7 @@ describe("Clowning Around - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 2);
 
-      const leadItemsAfter = scene.getPlayerParty()[0].getHeldItems();
+      const leadItemsAfter = game.field.getPlayerPokemon().getHeldItems();
       const ultraCountAfter = leadItemsAfter
         .filter(m => getHeldItemTier(m) === RarityTier.ULTRA)
         .reduce((a, b) => a + scene.getPlayerParty()[0].heldItemManager.getStack(b), 0);
@@ -328,14 +327,14 @@ describe("Clowning Around - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
 
       // Same type moves on lead
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(MoveId.ICE_BEAM), new PokemonMove(MoveId.SURF)];
+      game.move.changeMoveset(game.field.getPlayerPokemon(), [MoveId.ICE_BEAM, MoveId.SURF]);
       // Different type moves on second
-      scene.getPlayerParty()[1].moveset = [new PokemonMove(MoveId.GRASS_KNOT), new PokemonMove(MoveId.ELECTRO_BALL)];
+      game.move.changeMoveset(scene.getPlayerParty()[1], [MoveId.GRASS_KNOT, MoveId.ELECTRO_BALL]);
       // No moves on third
       scene.getPlayerParty()[2].moveset = [];
       await runMysteryEncounterToEnd(game, 3);
 
-      const leadTypesAfter = scene.getPlayerParty()[0].getTypes();
+      const leadTypesAfter = game.field.getPlayerPokemon().getTypes();
       const secondaryTypesAfter = scene.getPlayerParty()[1].getTypes();
       const thirdTypesAfter = scene.getPlayerParty()[2].getTypes();
 

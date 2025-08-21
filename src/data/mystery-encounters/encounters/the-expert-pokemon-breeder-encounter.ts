@@ -33,7 +33,7 @@ import i18next from "i18next";
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theExpertPokemonBreeder";
 
-const trainerNameKey = "trainerNames:expert_pokemon_breeder";
+const trainerNameKey = "trainerNames:expertPokemonBreeder";
 
 const FIRST_STAGE_EVOLUTION_WAVE = 45;
 const SECOND_STAGE_EVOLUTION_WAVE = 60;

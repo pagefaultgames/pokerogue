@@ -334,7 +334,7 @@ export class RunInfoUiHandler extends UiHandler {
       if (this.runInfo.trainer.trainerType >= RIVAL_TRAINER_ID_THRESHOLD) {
         trainerName =
           trainerObj.variant === TrainerVariant.FEMALE
-            ? i18next.t("trainerNames:rival_female")
+            ? i18next.t("trainerNames:rivalFemale")
             : i18next.t("trainerNames:rival");
       } else {
         trainerName = trainerObj.getName(0, true);
@@ -799,7 +799,7 @@ export class RunInfoUiHandler extends UiHandler {
       const spdef = i18next.t("pokemonInfo:stat.spdefShortened") + ": " + pStats[4];
       const speedLabel =
         currentLanguage === "es-ES" || currentLanguage === "pt_BR"
-          ? i18next.t("runHistory:SPDshortened")
+          ? i18next.t("runHistory:spdShortened")
           : i18next.t("pokemonInfo:stat.spdShortened");
       const speed = speedLabel + ": " + pStats[5];
       // Column 1: HP Atk Def

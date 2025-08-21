@@ -1,59 +1,57 @@
-import type { RewardKeys } from "#items/reward";
-import { itemPoolChecks } from "#items/reward";
-import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import { expect } from "vitest";
+import { AbilityId } from "#enums/ability-id";
+import { HeldItemId } from "#enums/held-item-id";
+import { MoveId } from "#enums/move-id";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import { GameManager } from "#test/test-utils/game-manager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-export class ModifierHelper extends GameManagerHelper {
-  /**
-   * Adds a Modifier to the list of modifiers to check for.
-   *
-   * Note that all modifiers are updated during the start of `SelectRewardPhase`.
-   * @param modifier The Modifier to add.
-   * @returns `this`
-   */
-  addCheck(modifier: RewardKeys): this {
-    itemPoolChecks.set(modifier, undefined);
-    return this;
-  }
+describe("Form Change Phase", () => {
+  let phaserGame: Phaser.Game;
+  let game: GameManager;
 
-  /**
-   * `get`s a value from the `itemPoolChecks` map.
-   *
-   * If the item is in the Modifier Pool, and the player can get it, will return `true`.
-   *
-   * If the item is *not* in the Modifier Pool, will return `false`.
-   *
-   * If a `SelectRewardPhase` has not occurred, and we do not know if the item is in the Modifier Pool or not, will return `undefined`.
-   * @param modifier
-   * @returns
-   */
-  getCheck(modifier: RewardKeys): boolean | undefined {
-    return itemPoolChecks.get(modifier);
-  }
+  beforeAll(() => {
+    phaserGame = new Phaser.Game({
+      type: Phaser.HEADLESS,
+    });
+  });
 
-  /**
-   * `expect`s a Modifier `toBeTruthy` (in the Modifier Pool) or `Falsy` (unobtainable on this floor). Use during a test.
-   *
-   * Note that if a `SelectRewardPhase` has not been run yet, these values will be `undefined`, and the check will fail.
-   * @param modifier The modifier to check.
-   * @param expectToBePreset Whether the Modifier should be in the Modifier Pool. Set to `false` to expect it to be absent instead.
-   * @returns `this`
-   */
-  testCheck(modifier: RewardKeys, expectToBePreset: boolean): this {
-    if (expectToBePreset) {
-      expect(itemPoolChecks.get(modifier)).toBeTruthy();
-    }
-    expect(itemPoolChecks.get(modifier)).toBeFalsy();
-    return this;
-  }
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
+  });
 
-  /** Removes all modifier checks. @returns `this` */
-  clearChecks() {
-    itemPoolChecks.clear();
-    return this;
-  }
+  beforeEach(() => {
+    game = new GameManager(phaserGame);
+    game.override
+      .moveset([MoveId.SPLASH])
+      .ability(AbilityId.BALL_FETCH)
+      .battleStyle("single")
+      .criticalHits(false)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
+  });
 
-  private log(...params: any[]) {
-    console.log("Modifiers:", ...params);
-  }
-}
+  it("Zacian should successfully change into Crowned form", async () => {
+    await game.classicMode.startBattle([SpeciesId.ZACIAN]);
+
+    // Before the form change: Should be Hero form
+    const zacian = game.field.getPlayerPokemon();
+    expect(zacian.getFormKey()).toBe("hero-of-many-battles");
+    expect(zacian.getTypes()).toStrictEqual([PokemonType.FAIRY]);
+    expect(zacian.calculateBaseStats()).toStrictEqual([92, 120, 115, 80, 115, 138]);
+
+    // Give Zacian a Rusted Sword
+    zacian.heldItemManager.add(HeldItemId.RUSTED_SWORD);
+
+    game.move.select(MoveId.SPLASH);
+    await game.toNextTurn();
+
+    // After the form change: Should be Crowned form
+    expect(game.phaseInterceptor.log.includes("FormChangePhase")).toBe(true);
+    expect(zacian.getFormKey()).toBe("crowned");
+    expect(zacian.getTypes()).toStrictEqual([PokemonType.FAIRY, PokemonType.STEEL]);
+    expect(zacian.calculateBaseStats()).toStrictEqual([92, 150, 115, 80, 115, 148]);
+  });
+});

@@ -103,14 +103,14 @@ describe("Global Trade System - Mystery Encounter", () => {
     it("Should trade a Pokemon from the player's party for the first of 3 Pokemon options", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, defaultParty);
 
-      const speciesBefore = scene.getPlayerParty()[0].species.speciesId;
+      const speciesBefore = game.field.getPlayerPokemon().species.speciesId;
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1, optionNo: 1 });
 
       const speciesAfter = scene.getPlayerParty().at(-1)?.species.speciesId;
 
       expect(speciesAfter).toBeDefined();
       expect(speciesBefore).not.toBe(speciesAfter);
-      expect(defaultParty.includes(speciesAfter!)).toBeFalsy();
+      expect(defaultParty).not.toContain(speciesAfter);
     });
 
     it("Should trade a Pokemon from the player's party for the second of 3 Pokemon options", async () => {
@@ -216,12 +216,12 @@ describe("Global Trade System - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, defaultParty);
 
       // Set 2 Soul Dew on party lead
-      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.SOUL_DEW, 2);
+      game.field.getPlayerPokemon().heldItemManager.add(HeldItemId.SOUL_DEW, 2);
       await scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectRewardPhase.name);
-      await game.phaseInterceptor.run(SelectRewardPhase);
+      await game.phaseInterceptor.to("SelectRewardPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.REWARD_SELECT);
       const rewardSelectHandler = scene.ui.handlers.find(
@@ -239,7 +239,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.GLOBAL_TRADE_SYSTEM, defaultParty);
 
       // Set 1 Soul Dew on party lead
-      scene.getPlayerParty()[0].heldItemManager.add(HeldItemId.SOUL_DEW, 1);
+      game.field.getPlayerPokemon().heldItemManager.add(HeldItemId.SOUL_DEW, 1);
       await scene.updateItems(true);
 
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
