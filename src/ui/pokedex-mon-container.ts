@@ -108,8 +108,8 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
 
     // move icons
     const eggMove1Icon = globalScene.add.image(0, 12, "common_egg");
-    eggMove1Icon.setOrigin(0, 0);
-    eggMove1Icon.setScale(0.25);
+    eggMove1Icon.setOrigin(0, -0.03);
+    eggMove1Icon.setScale(0.24);
     eggMove1Icon.setVisible(false);
     this.add(eggMove1Icon);
     this.eggMove1Icon = eggMove1Icon;
