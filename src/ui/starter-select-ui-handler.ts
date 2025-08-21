@@ -1823,9 +1823,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else {
       let starterContainer: StarterContainer;
+      // The temporary, duplicated starter data to show info
       const starterData = this.getSpeciesData(this.lastSpecies.speciesId).starterDataEntry;
-      // prepare persistent starter data to store changes
+      // The persistent starter data to apply e.g. candy upgrades
+      const persistentStarterData = globalScene.gameData.starterData[this.lastSpecies.speciesId];
+      // The sanitized starter preferences
       let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
+      // The original starter preferences
       const originalStarterAttributes = this.originalStarterPreferences[this.lastSpecies.speciesId];
 
       // this gets the correct pokemon cursor depending on whether you're in the starter screen or the party icons
@@ -2189,9 +2193,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 label: `×${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")}`,
                 handler: () => {
                   if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
-                    starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
+                    persistentStarterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
+                    starterData.passiveAttr = persistentStarterData.passiveAttr;
                     if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                      starterData.candyCount -= passiveCost;
+                      persistentStarterData.candyCount -= passiveCost;
+                      starterData.candyCount = persistentStarterData.candyCount;
                     }
                     this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
                     globalScene.gameData.saveSystem().then(success => {
@@ -2206,9 +2212,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     // update the passive background and icon/animation for available upgrade
                     if (starterContainer) {
                       this.updateCandyUpgradeDisplay(starterContainer);
-                      starterContainer.starterPassiveBgs.setVisible(
-                        !!globalScene.gameData.starterData[this.lastSpecies.speciesId].passiveAttr,
-                      );
+                      starterContainer.starterPassiveBgs.setVisible(!!starterData.passiveAttr);
                     }
                     return true;
                   }
@@ -2229,9 +2233,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
                 handler: () => {
                   if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
-                    starterData.valueReduction++;
+                    persistentStarterData.valueReduction++;
+                    starterData.valueReduction = persistentStarterData.valueReduction;
                     if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                      starterData.candyCount -= reductionCost;
+                      persistentStarterData.candyCount -= reductionCost;
+                      starterData.candyCount = persistentStarterData.candyCount;
                     }
                     this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
                     globalScene.gameData.saveSystem().then(success => {
@@ -2277,7 +2283,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     return false;
                   }
                   if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                    starterData.candyCount -= sameSpeciesEggCost;
+                    persistentStarterData.candyCount -= sameSpeciesEggCost;
+                    starterData.candyCount = persistentStarterData.candyCount;
                   }
                   this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
 
