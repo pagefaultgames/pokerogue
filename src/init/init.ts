@@ -14,7 +14,9 @@ import { initAchievements } from "#system/achv";
 import { initVouchers } from "#system/voucher";
 import { initStatsKeys } from "#ui/game-stats-ui-handler";
 
-/** Initialize the game. */
+/**
+ * Initialize various values at the beginning of each testing instance.
+ */
 export function initializeGame() {
   initModifierTypes();
   initModifierPools();
