@@ -208,7 +208,7 @@ export class CommandPhase extends FieldPhase {
    * Submethod of {@linkcode handleFightCommand} responsible for queuing the appropriate
    * error message when a move cannot be used.
    * @param user - The pokemon using the move
-   * @param Move - The move that cannot be used
+   * @param move - The move that cannot be used
    */
   private queueFightErrorMessage(user: PlayerPokemon, move: PokemonMove) {
     globalScene.ui.setMode(UiMode.MESSAGE);
