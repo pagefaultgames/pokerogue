@@ -7833,22 +7833,26 @@ export function initAbilities() {
     new Ability(AbilityId.TOXIC_CHAIN, 9)
       .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC),
     new Ability(AbilityId.EMBODY_ASPECT_TEAL, 9)
-      .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPD ], 1)
+      .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPD ], 1) // Activates immediately upon Terastallizing, as well as upon switching in while Terastallized
+      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [ Stat.SPD ], 1, true)
       .uncopiable()
       .unreplaceable() // TODO is this true?
       .attr(NoTransformAbilityAbAttr),
     new Ability(AbilityId.EMBODY_ASPECT_WELLSPRING, 9)
       .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPDEF ], 1)
+      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [ Stat.SPDEF ], 1, true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr),
     new Ability(AbilityId.EMBODY_ASPECT_HEARTHFLAME, 9)
       .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.ATK ], 1)
+      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr),
     new Ability(AbilityId.EMBODY_ASPECT_CORNERSTONE, 9)
       .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.DEF ], 1)
+      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr),

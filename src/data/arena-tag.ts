@@ -25,6 +25,7 @@ import type {
   ArenaScreenTagType,
   ArenaTagTypeData,
   EntryHazardTagType,
+  RoomArenaTagType,
   SerializableArenaTagType,
 } from "#types/arena-tags";
 import type { Mutable } from "#types/type-helpers";
@@ -294,7 +295,8 @@ export abstract class WeakenMoveScreenTag extends SerializableArenaTag {
       if (bypassed.value) {
         return false;
       }
-      damageMultiplier.value = globalScene.currentBattle.double ? 2732 / 4096 : 0.5;
+      // Screens are less effective in Double Battles
+      damageMultiplier.value = globalScene.currentBattle.double ? 2 / 3 : 1 / 2;
       return true;
     }
     return false;
@@ -1153,11 +1155,27 @@ class ImprisonTag extends EntryHazardTag {
 }
 
 /**
+ * Abstract base class for all Room {@linkcode ArenaTag}s, characterized by their immediate removal
+ * upon overlap.
+ */
+abstract class RoomArenaTag extends SerializableArenaTag {
+  declare abstract tagType: RoomArenaTagType;
+
+  /**
+   * Immediately remove this Tag upon overlapping.
+   * @sealed
+   */
+  override onOverlap(): void {
+    globalScene.arena.removeTagOnSide(this.tagType, this.side);
+  }
+}
+
+/**
  * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Trick_Room_(move) Trick Room}.
  * Reverses the Speed stats for all Pokémon on the field as long as this arena tag is up,
  * also reversing the turn order for all Pokémon on the field as well.
  */
-export class TrickRoomTag extends SerializableArenaTag {
+export class TrickRoomTag extends RoomArenaTag {
   public readonly tagType = ArenaTagType.TRICK_ROOM;
   constructor(turnCount: number, sourceId?: number) {
     super(turnCount, MoveId.TRICK_ROOM, sourceId);
