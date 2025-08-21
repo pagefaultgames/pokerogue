@@ -2135,7 +2135,7 @@ export abstract class PostAttackAbAttr extends AbAttr {
 
 export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
   private stealCondition: PokemonAttackCondition | null;
-  private stolenItem?: HeldItemId;
+  private stolenItem: HeldItemId;
 
   constructor(stealCondition?: PokemonAttackCondition) {
     super();
@@ -2148,30 +2148,22 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
     // TODO: Revisit the hitResult check here.
     // The PostAttackAbAttr should should only be invoked in cases where the move successfully connected,
     // calling `super.canApply` already checks that the move was a damage move and not a status move.
+    const heldItems = opponent.heldItemManager.getTransferableHeldItems();
     if (
-      super.canApply(params) &&
-      !simulated &&
-      hitResult < HitResult.NO_EFFECT &&
-      (!this.stealCondition || this.stealCondition(pokemon, opponent, move))
+      !super.canApply(params) ||
+      simulated ||
+      heldItems.length === 0 ||
+      hitResult >= HitResult.NO_EFFECT ||
+      (this.stealCondition && !this.stealCondition(pokemon, opponent, move))
     ) {
-      const heldItems = opponent.heldItemManager.getTransferableHeldItems();
-      if (heldItems.length) {
-        // Ensure that the stolen item in testing is the same as when the effect is applied
-        this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
-        if (globalScene.canTransferHeldItem(this.stolenItem, opponent, pokemon)) {
-          return true;
-        }
-      }
+      return false;
     }
-    this.stolenItem = undefined;
-    return false;
+    // Ensure that the stolen item in testing is the same as when the effect is applied
+    this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
+    return globalScene.canTransferHeldItem(this.stolenItem, opponent, pokemon);
   }
 
   override apply({ opponent, pokemon }: PostMoveInteractionAbAttrParams): void {
-    const heldItems = opponent.heldItemManager.getTransferableHeldItems();
-    if (!this.stolenItem) {
-      this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
-    }
     if (globalScene.tryTransferHeldItem(this.stolenItem, opponent, pokemon, false)) {
       globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:postAttackStealHeldItem", {
@@ -2181,7 +2173,6 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
         }),
       );
     }
-    this.stolenItem = undefined;
   }
 }
 

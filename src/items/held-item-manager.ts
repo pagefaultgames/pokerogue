@@ -146,7 +146,7 @@ export class HeldItemManager {
     return false;
   }
 
-  addItemWithSpecs(itemSpecs: HeldItemSpecs): boolean {
+  private addItemWithSpecs(itemSpecs: HeldItemSpecs): boolean {
     const id = itemSpecs.id;
     const maxStack = allHeldItems[id].getMaxStackCount();
     const item = this.heldItems[id];
@@ -194,7 +194,10 @@ export class HeldItemManager {
   }
 
   getFormChangeItems(): FormChangeItem[] {
-    return this.filterRequestedItems([HeldItemCategoryId.FORM_CHANGE, HeldItemCategoryId.RARE_FORM_CHANGE], false);
+    return this.filterRequestedItems(
+      [HeldItemCategoryId.FORM_CHANGE, HeldItemCategoryId.RARE_FORM_CHANGE],
+      false,
+    ) as FormChangeItem[];
   }
 
   toggleActive(id: FormChangeItem) {

@@ -16,9 +16,7 @@ export interface AttackTypeBoostParams {
   movePower: NumberHolder;
 }
 
-interface AttackTypeToHeldItemMap {
-  [key: number]: HeldItemId;
-}
+type AttackTypeToHeldItemMap = Record<Exclude<PokemonType, PokemonType.UNKNOWN | PokemonType.STELLAR>, HeldItemId>;
 
 export const attackTypeToHeldItem: AttackTypeToHeldItemMap = {
   [PokemonType.NORMAL]: HeldItemId.SILK_SCARF,
