@@ -2336,7 +2336,18 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   form: starterAttributes.form,
                   female: starterAttributes.female,
                 };
-                ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, attributes);
+                ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, attributes, null, null, () => {
+                  if (this.lastSpecies) {
+                    starterContainer = this.filteredStarterContainers[this.cursor];
+                    const persistentStarterData = globalScene.gameData.starterData[this.lastSpecies.speciesId];
+                    this.updateCandyUpgradeDisplay(starterContainer);
+                    this.updateStarterValueLabel(starterContainer);
+                    starterContainer.starterPassiveBgs.setVisible(
+                      !!persistentStarterData.passiveAttr && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START),
+                    );
+                    this.setSpecies(this.lastSpecies);
+                  }
+                });
               });
               return true;
             },
