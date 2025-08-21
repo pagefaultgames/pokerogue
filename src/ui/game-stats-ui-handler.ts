@@ -58,7 +58,7 @@ const displayStats: DisplayStats = {
   dexSeen: {
     label_key: "speciesSeen",
     sourceFunc: gameData => {
-      const seenCount = gameData.getSpeciesCount(d => !!d.seenAttr);
+      const seenCount = gameData.getSpeciesCount(d => !!d.seenAttr || !!d.caughtAttr);
       return `${seenCount} (${Math.floor((seenCount / Object.keys(gameData.dexData).length) * 1000) / 10}%)`;
     },
   },

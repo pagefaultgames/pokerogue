@@ -1638,7 +1638,7 @@ export class PokedexUiHandler extends MessageUiHandler {
 
       // Seen Filter
       const dexEntry = globalScene.gameData.dexData[species.speciesId];
-      const isItSeen = this.isSeen(species, dexEntry, true);
+      const isItSeen = this.isSeen(species, dexEntry, true) || !!dexEntry.caughtAttr;
       const fitsSeen = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "SEEN_SPECIES" && misc.state === DropDownState.ON) {
           return isItSeen;
