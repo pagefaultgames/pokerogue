@@ -73,7 +73,7 @@ describe("Moves - Copycat", () => {
   it("should fail if no prior moves have been made", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(MoveId.COPYCAT);
+    game.move.use(MoveId.COPYCAT);
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
