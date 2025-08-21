@@ -276,6 +276,7 @@ export function getTypedKeys<T extends Record<number, any>, K extends number = E
   return Object.keys(obj).map(k => Number(k) as K);
 }
 
+// TODO: This mis-represent numeric keys as strings
 export function getTypedEntries<T extends object>(obj: T): [keyof T, T[keyof T]][] {
   return Object.entries(obj) as [keyof T, T[keyof T]][];
 }

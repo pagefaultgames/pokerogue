@@ -11,7 +11,6 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
-import type { HeldItemSpecs } from "#items/held-item-data-types";
 import { getPartyBerries } from "#items/item-utility";
 import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
@@ -207,11 +206,11 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
         const berryMap = getPartyBerries();
 
         for (let i = 0; i < 4; i++) {
-          const berryWeights = berryMap.map(b => (b.item as HeldItemSpecs).stack);
+          const berryWeights = berryMap.map(b => b.item.stack);
           const index = pickWeightedIndex(berryWeights) ?? 0;
           const randBerry = berryMap[index];
           globalScene.getPokemonById(randBerry.pokemonId)?.heldItemManager.remove(randBerry.item.id as HeldItemId);
-          (randBerry.item as HeldItemSpecs).stack -= 1;
+          randBerry.item.stack -= 1;
         }
         await globalScene.updateItems(true);
 

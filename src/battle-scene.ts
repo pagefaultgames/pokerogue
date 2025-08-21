@@ -2087,7 +2087,8 @@ export class BattleScene extends SceneBase {
       enemy.getSpeciesForm().getBaseExp() *
       (enemy.level / this.getMaxExpLevel()) *
       ((enemy.ivs.reduce((iv: number, total: number) => (total += iv), 0) / 93) * 0.2 + 0.8);
-    enemy.getHeldItems().map(m => (scoreIncrease *= allHeldItems[m].getScoreMultiplier()));
+    // Apply opposing score multiplier items
+    scoreIncrease *= enemy.getHeldItems().reduce((multi, item) => multi * allHeldItems[item].getScoreMultiplier(), 1);
     if (enemy.isBoss()) {
       scoreIncrease *= Math.sqrt(enemy.bossSegments);
     }

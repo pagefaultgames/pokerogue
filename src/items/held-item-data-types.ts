@@ -13,6 +13,9 @@ export type HeldItemData = {
    * @defaultValue `false`
    */
   disabled?: boolean;
+};
+
+type FormChangeItemData = HeldItemData & {
   /**
    * Whether a form change is active.
    * TODO: This is only temporary to make things work, form change rework should get rid of it.
@@ -22,7 +25,7 @@ export type HeldItemData = {
 };
 
 export type HeldItemDataMap = {
-  [key in HeldItemId]?: HeldItemData;
+  [key in HeldItemId]?: key extends FormChangeItemData ? FormChangeItemData : HeldItemData;
 };
 
 export type HeldItemSpecs = HeldItemData & {

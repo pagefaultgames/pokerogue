@@ -4,10 +4,10 @@ import { type HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
 import i18next from "i18next";
 
-export class HeldItem {
+export abstract class HeldItem {
   //  public pokemonId: number;
-  // TODO: Should this be readonly?
-  public type: HeldItemId;
+  // TODO: Make this abstract
+  public readonly type: HeldItemId;
   public readonly maxStackCount: number;
   public isTransferable = true;
   public isStealable = true;
@@ -122,6 +122,8 @@ export class HeldItem {
   getScoreMultiplier(): number {
     return 1;
   }
+
+  // TODO: Split off all held items with `apply` methods into their own class
 }
 
 export class ConsumableHeldItem extends HeldItem {
