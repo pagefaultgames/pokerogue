@@ -640,7 +640,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.optionSelectText = addBBCodeTextObject(
       0,
       0,
-      this.menuOptions.map(o => `${i18next.t(`pokedexUiHandler:${MenuOptions[o]}`)}`).join("\n"),
+      this.menuOptions.map(o => `${i18next.t(`pokedexUiHandler:${toCamelCase(`menu${MenuOptions[o]}`)}`)}`).join("\n"),
       TextStyle.WINDOW,
       { maxLines: this.menuOptions.length, lineSpacing: 12 },
     );
@@ -757,7 +757,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     return this.menuOptions
       .map(o => {
-        const label = `${i18next.t(`pokedexUiHandler:${MenuOptions[o]}`)}`;
+        const label = i18next.t(`pokedexUiHandler:${toCamelCase(`menu${MenuOptions[o]}`)}`);
         const isDark =
           !isSeen ||
           (!isStarterCaught && (o === MenuOptions.TOGGLE_IVS || o === MenuOptions.NATURES)) ||

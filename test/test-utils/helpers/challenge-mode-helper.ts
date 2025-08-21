@@ -49,7 +49,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
       selectStarterPhase.initBattle(starters);
     });
 
-    await this.game.phaseInterceptor.run(EncounterPhase);
+    await this.game.phaseInterceptor.to("EncounterPhase");
     if (overrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }

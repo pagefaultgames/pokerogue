@@ -48,10 +48,17 @@ const displayStats: DisplayStats = {
       return `${starterCount} (${Math.floor((starterCount / Object.keys(speciesStarterCosts).length) * 1000) / 10}%)`;
     },
   },
+  dexEncountered: {
+    label_key: "speciesEncountered",
+    sourceFunc: gameData => {
+      const seenCount = gameData.getSpeciesCount(d => !!d.seenCount);
+      return `${seenCount} (${Math.floor((seenCount / Object.keys(gameData.dexData).length) * 1000) / 10}%)`;
+    },
+  },
   dexSeen: {
     label_key: "speciesSeen",
     sourceFunc: gameData => {
-      const seenCount = gameData.getSpeciesCount(d => !!d.seenAttr);
+      const seenCount = gameData.getSpeciesCount(d => !!d.seenAttr || !!d.caughtAttr);
       return `${seenCount} (${Math.floor((seenCount / Object.keys(gameData.dexData).length) * 1000) / 10}%)`;
     },
   },
@@ -308,8 +315,8 @@ export class GameStatsUiHandler extends UiHandler {
   private getUsername(): string {
     const usernameReplacement =
       globalScene.gameData.gender === PlayerGender.FEMALE
-        ? i18next.t("trainerNames:player_f")
-        : i18next.t("trainerNames:player_m");
+        ? i18next.t("trainerNames:playerF")
+        : i18next.t("trainerNames:playerM");
 
     const displayName = !globalScene.hideUsername
       ? (loggedInUser?.username ?? i18next.t("common:guest"))
