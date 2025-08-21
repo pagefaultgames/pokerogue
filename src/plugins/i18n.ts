@@ -153,7 +153,7 @@ function i18nMoneyFormatter(amount: any): string {
  * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
  */
 
-i18next
+await i18next
   .use(HttpBackend)
   .use(LanguageDetector)
   .use(processor)
