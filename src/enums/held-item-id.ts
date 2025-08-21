@@ -1,5 +1,6 @@
 import type { ObjectValues } from "#types/type-helpers";
 
+// TODO: Rename to `FormChangeItemId`
 export const FormChangeItem = {
     // Mega Stones
   ABOMASITE: 0x0B01,

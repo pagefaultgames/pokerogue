@@ -1136,7 +1136,7 @@ export class EvolutionItemReward extends PokemonReward {
  * Class that represents form changing items
  */
 export class FormChangeItemReward extends PokemonReward {
-  public formChangeItem: HeldItemId;
+  public formChangeItem: FormChangeItem;
 
   constructor(formChangeItem: FormChangeItem) {
     super("", allHeldItems[formChangeItem].iconName, (pokemon: PlayerPokemon) => {

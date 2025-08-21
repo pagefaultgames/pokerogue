@@ -31,7 +31,7 @@ export class TurnEndStatusHeldItem extends HeldItem {
    * @returns `true` if the status effect was applied successfully
    */
   apply({ pokemon }: TurnEndStatusParams): boolean {
-    return pokemon.trySetStatus(this.effect, true, undefined, undefined, this.name);
+    return pokemon.trySetStatus(this.effect, true, pokemon, undefined, this.name);
   }
 
   getStatusEffect(): StatusEffect {

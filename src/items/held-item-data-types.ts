@@ -1,5 +1,5 @@
 // TODO: move all types to `src/@types/` and all functions to a utility place
-import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
+import type { FormChangeItem, HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
 
@@ -15,6 +15,7 @@ export type HeldItemData = {
   disabled?: boolean;
 };
 
+/** @interface */
 type FormChangeItemData = HeldItemData & {
   /**
    * Whether a form change is active.
@@ -25,10 +26,10 @@ type FormChangeItemData = HeldItemData & {
 };
 
 export type HeldItemDataMap = {
-  [key in HeldItemId]?: key extends FormChangeItemData ? FormChangeItemData : HeldItemData;
+  [key in HeldItemId]?: key extends FormChangeItem ? FormChangeItemData : HeldItemData;
 };
 
-export type HeldItemSpecs = HeldItemData & {
+export type HeldItemSpecs = (FormChangeItemData | HeldItemData) & {
   id: HeldItemId;
 };
 
