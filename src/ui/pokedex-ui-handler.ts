@@ -416,6 +416,11 @@ export class PokedexUiHandler extends MessageUiHandler {
       new DropDownLabel(i18next.t("filterBar:isSeen"), undefined, DropDownState.ON),
       new DropDownLabel(i18next.t("filterBar:isUnseen"), undefined, DropDownState.EXCLUDE),
     ];
+    const encounteredSpeciesLabels = [
+      new DropDownLabel(i18next.t("filterBar:encounteredSpecies"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:isEncountered"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:isNotEncountered"), undefined, DropDownState.EXCLUDE),
+    ];
     const eggLabels = [
       new DropDownLabel(i18next.t("filterBar:egg"), undefined, DropDownState.OFF),
       new DropDownLabel(i18next.t("filterBar:eggPurchasable"), undefined, DropDownState.ON),
@@ -430,6 +435,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       new DropDownOption("WIN", winLabels),
       new DropDownOption("HIDDEN_ABILITY", hiddenAbilityLabels),
       new DropDownOption("SEEN_SPECIES", seenSpeciesLabels),
+      new DropDownOption("ENCOUNTERED_SPECIES", encounteredSpeciesLabels),
       new DropDownOption("EGG", eggLabels),
       new DropDownOption("POKERUS", pokerusLabels),
     ];
@@ -808,6 +814,10 @@ export class PokedexUiHandler extends MessageUiHandler {
       return !!starterDexEntry?.caughtAttr;
     }
     return false;
+  }
+
+  isEncountered(_species: PokemonSpecies, dexEntry: DexEntry, _seenFilter?: boolean): boolean {
+    return !!dexEntry.seenCount;
   }
 
   /**
@@ -1641,6 +1651,20 @@ export class PokedexUiHandler extends MessageUiHandler {
         }
       });
 
+      // Encountered Filter
+      const isItEncountered = this.isEncountered(species, dexEntry, true);
+      const fitsEncountered = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
+        if (misc.val === "ENCOUNTERED_SPECIES" && misc.state === DropDownState.ON) {
+          return isItEncountered;
+        }
+        if (misc.val === "ENCOUNTERED_SPECIES" && misc.state === DropDownState.EXCLUDE) {
+          return !isItEncountered;
+        }
+        if (misc.val === "ENCOUNTERED_SPECIES" && misc.state === DropDownState.OFF) {
+          return true;
+        }
+      });
+
       // Egg Purchasable Filter
       const isEggPurchasable = this.isSameSpeciesEggAvailable(species.speciesId);
       const fitsEgg = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
@@ -1683,6 +1707,7 @@ export class PokedexUiHandler extends MessageUiHandler {
         fitsWin &&
         fitsHA &&
         fitsSeen &&
+        fitsEncountered &&
         fitsEgg &&
         fitsPokerus
       ) {
