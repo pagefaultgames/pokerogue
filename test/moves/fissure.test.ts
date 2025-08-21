@@ -42,7 +42,7 @@ describe("Moves - Fissure", () => {
 
     await game.classicMode.startBattle();
 
-    partyPokemon = game.scene.getPlayerParty()[0];
+    partyPokemon = game.field.getPlayerPokemon();
     enemyPokemon = game.field.getEnemyPokemon();
   });
 

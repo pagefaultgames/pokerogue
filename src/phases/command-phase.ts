@@ -376,7 +376,6 @@ export class CommandPhase extends FieldPhase {
    * - It is a trainer battle
    * - The player is in the {@linkcode BiomeId.END | End} biome and
    *   - it is not classic mode; or
-   *   - the fresh start challenge is active; or
    *   - the player has not caught the target before and the player is still missing more than one starter
    * - The player is in a mystery encounter that disallows catching the pokemon
    * @returns Whether a pokeball can be thrown
@@ -385,19 +384,37 @@ export class CommandPhase extends FieldPhase {
     const { arena, currentBattle, gameData, gameMode } = globalScene;
     const { battleType } = currentBattle;
     const { biomeType } = arena;
-    const { isClassic } = gameMode;
+    const { isClassic, isEndless, isDaily } = gameMode;
     const { dexData } = gameData;
 
+    const isClassicFinalBoss = gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex);
+    const isEndlessMinorBoss = gameMode.isEndlessMinorBoss(globalScene.currentBattle.waveIndex);
+    const isFullFreshStart = gameMode.isFullFreshStartChallenge();
     const someUncaughtSpeciesOnField = globalScene
       .getEnemyField()
       .some(p => p.isActive() && !dexData[p.species.speciesId].caughtAttr);
     const missingMultipleStarters =
       gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1;
-    if (
-      biomeType === BiomeId.END &&
-      (!isClassic || gameMode.isFreshStartChallenge() || (someUncaughtSpeciesOnField && missingMultipleStarters))
-    ) {
-      this.queueShowText("battle:noPokeballForce");
+
+    if (biomeType === BiomeId.END && battleType === BattleType.WILD) {
+      if (
+        (isClassic && !isClassicFinalBoss && someUncaughtSpeciesOnField) ||
+        (isFullFreshStart && !isClassicFinalBoss) ||
+        (isEndless && !isEndlessMinorBoss)
+      ) {
+        // Uncatchable paradox mons in classic and endless
+        this.queueShowText("battle:noPokeballForce");
+      } else if (
+        (isClassic && isClassicFinalBoss && missingMultipleStarters) ||
+        (isFullFreshStart && isClassicFinalBoss) ||
+        (isEndless && isEndlessMinorBoss) ||
+        isDaily
+      ) {
+        // Uncatchable final boss in classic, endless and daily
+        this.queueShowText("battle:noPokeballForceFinalBoss");
+      } else {
+        return true;
+      }
     } else if (battleType === BattleType.TRAINER) {
       this.queueShowText("battle:noPokeballTrainer");
     } else if (currentBattle.isBattleMysteryEncounter() && !currentBattle.mysteryEncounter!.catchAllowed) {
@@ -420,14 +437,18 @@ export class CommandPhase extends FieldPhase {
       .getEnemyField()
       .filter(p => p.isActive(true))
       .map(p => p.getBattlerIndex());
+
+    if (!this.checkCanUseBall()) {
+      return false;
+    }
+
     if (targets.length > 1) {
       this.queueShowText("battle:noPokeballMulti");
       return false;
     }
 
-    if (!this.checkCanUseBall()) {
-      return false;
-    }
+    const isChallengeActive = globalScene.gameMode.hasAnyChallenges();
+    const isFinalBoss = globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex);
 
     const numBallTypes = 5;
     if (cursor < numBallTypes) {
@@ -436,11 +457,22 @@ export class CommandPhase extends FieldPhase {
         targetPokemon?.isBoss() &&
         targetPokemon?.bossSegmentIndex >= 1 &&
         // TODO: Decouple this hardcoded exception for wonder guard and just check the target...
-        !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true) &&
-        cursor < PokeballType.MASTER_BALL
+        !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true)
       ) {
-        this.queueShowText("battle:noPokeballStrong");
-        return false;
+        // When facing the final boss, it must be weakened unless a Master Ball is used AND no challenges are active.
+        // The message is customized for the final boss.
+        if (
+          isFinalBoss &&
+          (cursor < PokeballType.MASTER_BALL || (cursor === PokeballType.MASTER_BALL && isChallengeActive))
+        ) {
+          this.queueShowText("battle:noPokeballForceFinalBossCatchable");
+          return false;
+        }
+        // When facing any other boss, Master Ball can always be used, and we use the standard message.
+        if (cursor < PokeballType.MASTER_BALL) {
+          this.queueShowText("battle:noPokeballStrong");
+          return false;
+        }
       }
 
       globalScene.currentBattle.turnCommands[this.fieldIndex] = {

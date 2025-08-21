@@ -1346,11 +1346,12 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.RARE]: [
         SpeciesId.YANMA,
         SpeciesId.NINJASK,
-        SpeciesId.WHIRLIPEDE,
+        SpeciesId.VENIPEDE,
         SpeciesId.EMOLGA,
         SpeciesId.SKIDDO,
+        SpeciesId.ROLYCOLY,
       ],
-      [TrainerPoolTier.SUPER_RARE]: [SpeciesId.ACCELGOR, SpeciesId.DREEPY],
+      [TrainerPoolTier.SUPER_RARE]: [SpeciesId.SHELMET, SpeciesId.DREEPY],
     }),
   [TrainerType.DANCER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.55)
@@ -1396,7 +1397,6 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.ONE_AVG,
       trainerPartyTemplates.THREE_WEAK_SAME,
       trainerPartyTemplates.ONE_STRONG,
-      trainerPartyTemplates.SIX_WEAKER,
     )
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
@@ -1510,7 +1510,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setMoneyMultiplier(1.1)
     .setEncounterBgm(TrainerType.POKEFAN)
     .setPartyTemplates(
-      trainerPartyTemplates.FOUR_WEAKER,
       trainerPartyTemplates.THREE_WEAK,
       trainerPartyTemplates.TWO_WEAK_ONE_AVG,
       trainerPartyTemplates.TWO_AVG,
@@ -1550,7 +1549,7 @@ export const trainerConfigs: TrainerConfigs = {
       ],
       [TrainerPoolTier.UNCOMMON]: [SpeciesId.HOUNDOUR, SpeciesId.ROCKRUFF, SpeciesId.MASCHIFF],
       [TrainerPoolTier.RARE]: [SpeciesId.JOLTEON, SpeciesId.RIOLU],
-      [TrainerPoolTier.SUPER_RARE]: [],
+      [TrainerPoolTier.SUPER_RARE]: [SpeciesId.SLAKOTH],
       [TrainerPoolTier.ULTRA_RARE]: [SpeciesId.ENTEI, SpeciesId.SUICUNE, SpeciesId.RAIKOU],
     }),
   [TrainerType.PARASOL_LADY]: new TrainerConfig(++t)
@@ -1595,13 +1594,10 @@ export const trainerConfigs: TrainerConfigs = {
     .setHasDouble("Pokéfan Family")
     .setEncounterBgm(TrainerType.POKEFAN)
     .setPartyTemplates(
-      trainerPartyTemplates.SIX_WEAKER,
       trainerPartyTemplates.FOUR_WEAK,
       trainerPartyTemplates.TWO_AVG,
       trainerPartyTemplates.ONE_STRONG,
-      trainerPartyTemplates.FOUR_WEAK_SAME,
       trainerPartyTemplates.FIVE_WEAK,
-      trainerPartyTemplates.SIX_WEAKER_SAME,
     )
     .setSpeciesFilter(s => tmSpecies[MoveId.HELPING_HAND].indexOf(s.speciesId) > -1),
   [TrainerType.PRESCHOOLER]: new TrainerConfig(++t)
@@ -1609,12 +1605,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.YOUNGSTER)
     .setHasGenders("Preschooler Female", "lass")
     .setHasDouble("Preschoolers")
-    .setPartyTemplates(
-      trainerPartyTemplates.THREE_WEAK,
-      trainerPartyTemplates.FOUR_WEAKER,
-      trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG,
-      trainerPartyTemplates.FIVE_WEAKER,
-    )
+    .setPartyTemplates(trainerPartyTemplates.THREE_WEAK, trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG)
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
         SpeciesId.CATERPIE,
@@ -1748,11 +1739,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setHasGenders("Lady")
     .setHasDouble("Rich Kids")
     .setEncounterBgm(TrainerType.RICH)
-    .setPartyTemplates(
-      trainerPartyTemplates.FOUR_WEAKER,
-      trainerPartyTemplates.THREE_WEAK_SAME,
-      trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG,
-    )
+    .setPartyTemplates(trainerPartyTemplates.THREE_WEAK_SAME, trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG)
     .setSpeciesFilter(s => s.baseTotal <= 460),
   [TrainerType.ROUGHNECK]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
@@ -1866,6 +1853,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.METAPOD,
         SpeciesId.LEDYBA,
         SpeciesId.CLEFFA,
+        SpeciesId.MAREEP,
         SpeciesId.WOOPER,
         SpeciesId.TEDDIURSA,
         SpeciesId.REMORAID,
@@ -1877,6 +1865,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.BONSLY,
         SpeciesId.PETILIL,
         SpeciesId.SPRITZEE,
+        SpeciesId.BOUNSWEET,
         SpeciesId.MILCERY,
         SpeciesId.PICHU,
       ]),
@@ -1888,6 +1877,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.KAKUNA,
           SpeciesId.SPINARAK,
           SpeciesId.IGGLYBUFF,
+          SpeciesId.MAREEP,
           SpeciesId.PALDEA_WOOPER,
           SpeciesId.PHANPY,
           SpeciesId.MANTYKE,
@@ -1899,6 +1889,7 @@ export const trainerConfigs: TrainerConfigs = {
           SpeciesId.MIME_JR,
           SpeciesId.COTTONEE,
           SpeciesId.SWIRLIX,
+          SpeciesId.FOMANTIS,
           SpeciesId.FIDOUGH,
           SpeciesId.EEVEE,
         ],

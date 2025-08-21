@@ -83,11 +83,32 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
+   * Helper function to see if a GameMode has any challenges, needed in tests
+   * @returns true if the game mode has at least one challenge
+   */
+  hasAnyChallenges(): boolean {
+    return this.challenges.length > 0;
+  }
+
+  /**
    * Helper function to see if the game mode is using fresh start
    * @returns true if a fresh start challenge is being applied
    */
   isFreshStartChallenge(): boolean {
     return this.hasChallenge(Challenges.FRESH_START);
+  }
+
+  /**
+   * Helper function to see if the game mode is using fresh start
+   * @returns true if a fresh start challenge is being applied
+   */
+  isFullFreshStartChallenge(): boolean {
+    for (const challenge of this.challenges) {
+      if (challenge.id === Challenges.FRESH_START && challenge.value === 1) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

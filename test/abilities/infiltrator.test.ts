@@ -79,9 +79,9 @@ describe("Abilities - Infiltrator", () => {
 
     game.scene.arena.addTag(ArenaTagType.SAFEGUARD, 1, MoveId.NONE, enemy.id, ArenaTagSide.ENEMY, true);
 
-    game.move.select(MoveId.SPORE);
+    game.move.use(MoveId.SPORE);
+    await game.toEndOfTurn();
 
-    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemy.status?.effect).toBe(StatusEffect.SLEEP);
     expect(player.waveData.abilitiesApplied).toContain(AbilityId.INFILTRATOR);
   });
