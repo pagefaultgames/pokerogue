@@ -57,7 +57,7 @@ export class ReloadHelper extends GameManagerHelper {
       this.game.scene.modifiers = [];
     }
     titlePhase.loadSaveSlot(-1); // Load the desired session data
-    this.game.phaseInterceptor.shift(); // Loading the save slot also ended TitlePhase, clean it up
+    this.game.phaseInterceptor.shiftPhase(); // Loading the save slot also ended TitlePhase, clean it up
 
     // Run through prompts for switching Pokemon, copied from classicModeHelper.ts
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {

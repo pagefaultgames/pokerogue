@@ -63,7 +63,7 @@ describe("Mystery Encounter Utils", () => {
       // Both pokemon fainted
       scene.getPlayerParty().forEach(p => {
         p.hp = 0;
-        p.trySetStatus(StatusEffect.FAINT);
+        p.doSetStatus(StatusEffect.FAINT);
         void p.updateInfo();
       });
 
@@ -83,7 +83,7 @@ describe("Mystery Encounter Utils", () => {
       // Only faint 1st pokemon
       const party = scene.getPlayerParty();
       party[0].hp = 0;
-      party[0].trySetStatus(StatusEffect.FAINT);
+      party[0].doSetStatus(StatusEffect.FAINT);
       await party[0].updateInfo();
 
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
@@ -102,7 +102,7 @@ describe("Mystery Encounter Utils", () => {
       // Only faint 1st pokemon
       const party = scene.getPlayerParty();
       party[0].hp = 0;
-      party[0].trySetStatus(StatusEffect.FAINT);
+      party[0].doSetStatus(StatusEffect.FAINT);
       await party[0].updateInfo();
 
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
@@ -121,7 +121,7 @@ describe("Mystery Encounter Utils", () => {
       // Only faint 1st pokemon
       const party = scene.getPlayerParty();
       party[0].hp = 0;
-      party[0].trySetStatus(StatusEffect.FAINT);
+      party[0].doSetStatus(StatusEffect.FAINT);
       await party[0].updateInfo();
 
       // Seeds are calculated to return index 0 first, 1 second (if both pokemon are legal)
@@ -167,7 +167,7 @@ describe("Mystery Encounter Utils", () => {
       const party = scene.getPlayerParty();
       party[0].level = 100;
       party[0].hp = 0;
-      party[0].trySetStatus(StatusEffect.FAINT);
+      party[0].doSetStatus(StatusEffect.FAINT);
       await party[0].updateInfo();
       party[1].level = 10;
 
@@ -206,7 +206,7 @@ describe("Mystery Encounter Utils", () => {
       const party = scene.getPlayerParty();
       party[0].level = 10;
       party[0].hp = 0;
-      party[0].trySetStatus(StatusEffect.FAINT);
+      party[0].doSetStatus(StatusEffect.FAINT);
       await party[0].updateInfo();
       party[1].level = 100;
 

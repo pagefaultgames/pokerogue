@@ -407,8 +407,7 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
   it("should not cancel a double battle on activation", async () => {
     game.override.battleStyle("double").enemyAbility(AbilityId.WIMP_OUT).enemyLevel(1);
     await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
-    const enemyLeadPokemon = game.scene.getEnemyParty()[0];
-    const enemySecPokemon = game.scene.getEnemyParty()[1];
+    const [enemyLeadPokemon, enemySecPokemon] = game.scene.getEnemyParty();
 
     game.move.use(MoveId.FALSE_SWIPE, 0, BattlerIndex.ENEMY);
     game.move.use(MoveId.SPLASH, 1);

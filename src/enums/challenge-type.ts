@@ -19,6 +19,11 @@ export enum ChallengeType {
    */
   STARTER_COST,
   /**
+   * Challenges which modify the starter data in starter select
+   * @see {@link Challenge.applyStarterSelectModify}
+   */
+  STARTER_SELECT_MODIFY,
+  /**
    * Challenges which modify your starters in some way
    * @see {@link Challenge.applyStarterModify}
    */
