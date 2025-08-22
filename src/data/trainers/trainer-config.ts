@@ -3827,7 +3827,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
       }),
     )
-    .setInstantTera(2), // Tera Fire Arcanine, Tera Grass Exeggutor, Tera Water Gyarados
+    .setInstantTera(1), // Tera Fire Arcanine, Tera Grass Exeggutor, Tera Water Gyarados
   [TrainerType.RED]: new TrainerConfig(++t)
     .initForChampion(true)
     .setBattleBgm("battle_johto_champion")
@@ -4016,19 +4016,14 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_sinnoh_champion")
     .setMixedBattleBgm("battle_sinnoh_champion")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.SPIRITOMB]))
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.MILOTIC, SpeciesId.ROSERADE, SpeciesId.HISUI_ARCANINE]))
     .setPartyMemberFunc(
-      1,
-      getRandomPartyMemberFunc(
-        [SpeciesId.MILOTIC, SpeciesId.ROSERADE, SpeciesId.HISUI_ARCANINE],
-        TrainerSlot.TRAINER,
-        true,
-        p => {
-          p.generateAndPopulateMoveset();
-          p.teraType = p.species.type1;
-        },
-      ),
+      2,
+      getRandomPartyMemberFunc([SpeciesId.TOGEKISS], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        p.teraType = p.species.type1;
+      }),
     )
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.TOGEKISS]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.LUCARIO]))
     .setPartyMemberFunc(
       4,
@@ -4047,7 +4042,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
       }),
     )
-    .setInstantTera(1), // Tera Water Milotic / Grass Roserade / Fire Hisuian Arcanine
+    .setInstantTera(2), // Tera Fairy Togekiss
   [TrainerType.ALDER]: new TrainerConfig(++t)
     .initForChampion(true)
     .setHasDouble("alder_iris_double")
@@ -5800,7 +5795,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateName();
       }),
     )
-    .setInstantTera(3), // Tera Fairy Sylveon
+    .setInstantTera(4), // Tera Fairy Sylveon
   [TrainerType.PENNY_2]: new TrainerConfig(++t)
     .setName("Cassiopeia")
     .initForEvilTeamLeader("Star Boss", [], true)
