@@ -3741,7 +3741,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const dexEntry = globalScene.gameData.dexData[speciesId];
     const starterDataEntry = globalScene.gameData.starterData[speciesId];
 
+    // Unpacking to make a copy by values, not references
     const copiedDexEntry = { ...dexEntry };
+    copiedDexEntry.ivs = [...dexEntry.ivs];
     const copiedStarterDataEntry = { ...starterDataEntry };
     if (applyChallenge) {
       applyChallenges(ChallengeType.STARTER_SELECT_MODIFY, speciesId, copiedDexEntry, copiedStarterDataEntry);
