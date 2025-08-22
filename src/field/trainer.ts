@@ -18,7 +18,7 @@ import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, type TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import { randSeedInt, randSeedItem, randSeedWeightedItem } from "#utils/common";
-import { getRandomLocaleKey } from "#utils/i18n";
+import { getRandomLocaleEntry } from "#utils/i18n";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -78,7 +78,7 @@ export class Trainer extends Phaser.GameObjects.Container {
             ? ".female"
             : ".male"
           : "";
-        [this.nameKey, this.name] = getRandomLocaleKey(`${classKey}${genderKey}`);
+        [this.nameKey, this.name] = getRandomLocaleEntry(`${classKey}${genderKey}`);
       }
 
       if (variant === TrainerVariant.DOUBLE) {
@@ -91,7 +91,7 @@ export class Trainer extends Phaser.GameObjects.Container {
           }
         } else {
           const partnerGenderKey = i18next.exists(`${classKey}.fenale`) ? ".fenale" : "";
-          [this.partnerNameKey, this.partnerName] = getRandomLocaleKey(`${classKey}${partnerGenderKey}`);
+          [this.partnerNameKey, this.partnerName] = getRandomLocaleEntry(`${classKey}${partnerGenderKey}`);
         }
       }
     }

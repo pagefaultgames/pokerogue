@@ -45,7 +45,7 @@ import { MusicPreference } from "#system/settings";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { isNullOrUndefined, NumberHolder, randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
 import { getEnumKeys } from "#utils/enums";
-import { getRandomLocaleKey } from "#utils/i18n";
+import { getRandomLocaleEntry } from "#utils/i18n";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -997,7 +997,7 @@ function generateRandomTraderName() {
   const classKey = `trainersCommon:${randomTrainer}`;
   // Pick a random gender for ones with gendered pools, or access the raw object for ones without.
   const genderKey = i18next.exists(`${classKey}.male`) ? randSeedItem([".male", ".female"]) : "";
-  const trainerNameString = getRandomLocaleKey(`${classKey}${genderKey}`)[1];
+  const trainerNameString = getRandomLocaleEntry(`${classKey}${genderKey}`)[1];
   // Split the string by &s (for duo trainers)
   return randSeedItem(trainerNameString.split(" & "));
 }
