@@ -5,7 +5,7 @@ import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Move - Focus Energy", () => {
   let phaserGame: Phaser.Game;
@@ -34,7 +34,7 @@ describe("Move - Focus Energy", () => {
       .enemyLevel(100);
   });
 
-  // TODO: Bugged to only give +1 atm
+  // TODO: Enable once release bugfix is merged into beta
   it.todo("should increase the user's crit ratio by 2 stages", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
