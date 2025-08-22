@@ -24,11 +24,11 @@ import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import {
   AutotomizedTag,
   BattlerTag,
-  type BattlerTagTypeMap,
   CritBoostTag,
   EncoreTag,
   ExposedTag,
   GroundedTag,
+  type GrudgeTag,
   getBattlerTag,
   HighestStatBoostTag,
   MoveRestrictionBattlerTag,
@@ -4255,20 +4255,28 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
-  getTag<T extends BattlerTagType>(tagType: T | Constructor<BattlerTagTypeMap[T]>): BattlerTagTypeMap[T] | undefined {
+  /**@overload */
+  getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | undefined;
+
+  /** @overload */
+  getTag(tagType: BattlerTagType.SUBSTITUTE): SubstituteTag | undefined;
+
+  /** @overload */
+  getTag(tagType: BattlerTagType): BattlerTag | undefined;
+
+  /** @overload */
+  getTag<T extends BattlerTag>(tagType: Constructor<T>): T | undefined;
+
+  getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | undefined {
     return typeof tagType === "function"
       ? this.summonData.tags.find(t => t instanceof tagType)
       : this.summonData.tags.find(t => t.tagType === tagType);
   }
 
-  findTag<T extends BattlerTag>(tagFilter: (tag: BattlerTag) => tag is T): T | undefined;
-  findTag(tagFilter: (tag: BattlerTag) => boolean): BattlerTag | undefined;
-  findTag(tagFilter: (tag: BattlerTag) => boolean): BattlerTag | undefined {
+  findTag(tagFilter: (tag: BattlerTag) => boolean) {
     return this.summonData.tags.find(t => tagFilter(t));
   }
 
-  findTags<T extends BattlerTag>(tagFilter: (tag: BattlerTag) => tag is T): T[];
-  findTags(tagFilter: (tag: BattlerTag) => boolean): BattlerTag[];
   findTags(tagFilter: (tag: BattlerTag) => boolean): BattlerTag[] {
     return this.summonData.tags.filter(t => tagFilter(t));
   }
@@ -4276,12 +4284,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Tick down the first {@linkcode BattlerTag} found matching the given {@linkcode BattlerTagType},
    * removing it if its duration goes below 0.
-   * @param tagType - The {@linkcode BattlerTagType} to check against
+   * @param tagType the {@linkcode BattlerTagType} to check against
    * @returns `true` if the tag was present
    */
   lapseTag(tagType: BattlerTagType): boolean {
     const tags = this.summonData.tags;
-    const tag = this.summonData.tags.find(t => t.tagType === tagType);
+    const tag = tags.find(t => t.tagType === tagType);
     if (!tag) {
       return false;
     }
@@ -5105,10 +5113,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.status = null;
     this.setFrameRate(10);
     if (lastStatus === StatusEffect.SLEEP) {
-      this.removeTag(BattlerTagType.NIGHTMARE);
+      if (this.getTag(BattlerTagType.NIGHTMARE)) {
+        this.lapseTag(BattlerTagType.NIGHTMARE);
+      }
     }
     if (confusion) {
-      this.removeTag(BattlerTagType.CONFUSED);
+      if (this.getTag(BattlerTagType.CONFUSED)) {
+        this.lapseTag(BattlerTagType.CONFUSED);
+      }
     }
     if (reloadAssets) {
       this.loadAssets(false).then(() => this.playAnim());
