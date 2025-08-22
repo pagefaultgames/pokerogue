@@ -3689,7 +3689,9 @@ export class BattleScene extends SceneBase {
             if (
               disallowedChallenges &&
               disallowedChallenges.length > 0 &&
-              this.gameMode.challenges.some(challenge => disallowedChallenges.includes(challenge.id))
+              this.gameMode.challenges.some(
+                challenge => challenge.value !== 0 && disallowedChallenges.includes(challenge.id),
+              )
             ) {
               return false;
             }
