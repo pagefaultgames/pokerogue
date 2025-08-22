@@ -36,16 +36,13 @@ describe("Move - Laser Focus", () => {
       .enemyLevel(100);
   });
 
-  it("should make the user's next move a guaranteed critical hit", async () => {
+  it("should make the user's next attack a guaranteed critical hit", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
-
-    const feebas = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
-    const critSpy = vi.spyOn(enemy, "getCriticalHitResult");
 
     game.move.use(MoveId.LASER_FOCUS);
     await game.toNextTurn();
 
+    const feebas = game.field.getPlayerPokemon();
     expect(feebas).toHaveBattlerTag(BattlerTagType.ALWAYS_CRIT);
     expect(game).toHaveShownMessage(
       i18next.t("battlerTags:laserFocusOnAdd", {
@@ -53,18 +50,19 @@ describe("Move - Laser Focus", () => {
       }),
     );
 
+    const enemy = game.field.getEnemyPokemon();
+    const critSpy = vi.spyOn(enemy, "getCriticalHitResult");
+
     game.move.use(MoveId.TACKLE);
     await game.toEndOfTurn();
 
-    expect(critSpy).toHaveLastReturnedWith(true);
+    expect(critSpy).toHaveReturnedExactlyOnceWith(true);
   });
 
   it("should disappear at the end of the next turn", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const feebas = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
-    const critSpy = vi.spyOn(enemy, "getCriticalHitResult");
 
     game.move.use(MoveId.LASER_FOCUS);
     await game.toNextTurn();
@@ -76,24 +74,27 @@ describe("Move - Laser Focus", () => {
 
     expect(feebas).not.toHaveBattlerTag(BattlerTagType.ALWAYS_CRIT);
 
+    const enemy = game.field.getEnemyPokemon();
+    const critSpy = vi.spyOn(enemy, "getCriticalHitResult");
+
     game.move.use(MoveId.TACKLE);
     await game.toEndOfTurn();
 
-    expect(critSpy).toHaveLastReturnedWith(false);
+    expect(critSpy).toHaveReturnedExactlyOnceWith(false);
   });
 
   it("should boost all attacks until the end of the next turn", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const enemy = game.field.getEnemyPokemon();
-    const critSpy = vi.spyOn(enemy, "getCriticalHitResult");
-
     game.move.use(MoveId.LASER_FOCUS);
     await game.toNextTurn();
 
+    const enemy = game.field.getEnemyPokemon();
+    const critSpy = vi.spyOn(enemy, "getCriticalHitResult");
+
     game.move.use(MoveId.TACKLE);
     await game.move.forceEnemyMove(MoveId.INSTRUCT);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     expect(critSpy).toHaveReturnedTimes(2);
