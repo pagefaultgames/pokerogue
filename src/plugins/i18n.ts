@@ -147,6 +147,7 @@ export async function initI18n(): Promise<void> {
     return;
   }
   isInitialized = true;
+  console.log("SKIBID RIZZZZZZ");
 
   /**
    * i18next is a localization library for maintaining and using translation resources.
