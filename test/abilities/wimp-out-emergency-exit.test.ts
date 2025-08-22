@@ -453,6 +453,31 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
     confirmNoSwitch();
   });
 
+  it("should not count damage from multi-hits that hit substitute", async () => {
+    await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
+
+    // Give wimpod a 2 HP substitute, and put it 2 health above fainting
+    const wimpod = game.field.getPlayerPokemon();
+    wimpod.hp = toDmgValue(wimpod.hp * 0.5) + 2;
+    wimpod.addTag(BattlerTagType.SUBSTITUTE);
+    expect(wimpod).toHaveBattlerTag(BattlerTagType.SUBSTITUTE);
+    wimpod.getTag(BattlerTagType.SUBSTITUTE)!.hp = 2;
+
+    // force each hit to do 1 dmg
+    vi.spyOn(wimpod, "getAttackDamage").mockReturnValue({
+      cancelled: false,
+      damage: 1,
+      result: HitResult.EFFECTIVE,
+    });
+
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.TRIPLE_AXEL);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.toEndOfTurn();
+
+    confirmNoSwitch();
+  });
+
   it("should not activate on wave X0 bosses", async () => {
     game.override.enemyAbility(AbilityId.WIMP_OUT).startingWave(10).enemyHealthSegments(3);
     await game.classicMode.startBattle([SpeciesId.GOLISOPOD]);

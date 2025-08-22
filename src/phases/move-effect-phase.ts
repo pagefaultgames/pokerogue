@@ -830,8 +830,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const substitute = target.getTag(SubstituteTag);
     const isBlockedBySubstitute = !!substitute && this.move.hitsSubstitute(user, target);
     if (isBlockedBySubstitute) {
-      // NB: This cannot possibly cause issues with wimp out as the latter breaks if nothing works
-      user.turnData.lastMoveDamageDealt[target.getBattlerIndex()] += Math.min(dmg, substitute.hp);
+      user.turnData.turnDamageDealt[target.getBattlerIndex()] += Math.min(dmg, substitute.hp);
       substitute.hp -= dmg;
     } else if (!target.isPlayer() && dmg >= target.hp) {
       globalScene.applyModifiers(EnemyEndureChanceModifier, false, target);
@@ -860,6 +859,7 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.gameData.gameStats.highestDamage = Math.max(damage, globalScene.gameData.gameStats.highestDamage);
     }
 
+    user.turnData.totalDamageDealt += damage;
     user.turnData.lastMoveDamageDealt[target.getBattlerIndex()] += damage;
     user.turnData.singleHitDamageDealt = damage;
     target.battleData.hitCount++;

@@ -165,7 +165,7 @@ export class BattlerTag implements BaseBattlerTag {
    * Unused by default but can be used by subclasses.
    * @param _lapseType - The {@linkcode BattlerTagLapseType} being lapsed.
    * Unused by default but can be used by subclasses.
-   * @returns `true` if the tag should be kept (`turnCount > 0`)
+   * @returns `true` if the tag should be kept (`turnCount` > 0`)
    */
   lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
     return --this.turnCount > 0;
@@ -836,17 +836,19 @@ export class ConfusedTag extends SerializableBattlerTag {
 
     // 1/3 chance of hitting self with a 40 base power move
     const shouldInterruptMove = Overrides.CONFUSION_ACTIVATION_OVERRIDE ?? pokemon.randBattleSeedInt(3) === 0;
-    if (shouldInterruptMove) {
-      const atk = pokemon.getEffectiveStat(Stat.ATK);
-      const def = pokemon.getEffectiveStat(Stat.DEF);
-      const damage = toDmgValue(
-        ((((2 * pokemon.level) / 5 + 2) * 40 * atk) / def / 50 + 2) * (pokemon.randBattleSeedIntRange(85, 100) / 100),
-      );
-      // Intentionally don't increment rage fist's hitCount
-      phaseManager.queueMessage(i18next.t("battlerTags:confusedLapseHurtItself"));
-      pokemon.damageAndUpdate(damage, { result: HitResult.CONFUSION });
-      (phaseManager.getCurrentPhase() as MovePhase).cancel();
+    if (!shouldInterruptMove) {
+      return true;
     }
+
+    (phaseManager.getCurrentPhase() as MovePhase).cancel();
+    const atk = pokemon.getEffectiveStat(Stat.ATK);
+    const def = pokemon.getEffectiveStat(Stat.DEF);
+    const damage = toDmgValue(
+      ((((2 * pokemon.level) / 5 + 2) * 40 * atk) / def / 50 + 2) * (pokemon.randBattleSeedIntRange(85, 100) / 100),
+    );
+    // Intentionally don't increment rage fist's hitCount
+    phaseManager.queueMessage(i18next.t("battlerTags:confusedLapseHurtItself"));
+    pokemon.damageAndUpdate(damage, { result: HitResult.CONFUSION });
 
     return true;
   }

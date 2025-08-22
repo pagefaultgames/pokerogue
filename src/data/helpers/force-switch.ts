@@ -116,14 +116,6 @@ export class ForceSwitchOutHelper implements ForceSwitchOutHelperArgs {
     } else {
       this.tryFleeWildPokemon(switchOutTarget as unknown as EnemyPokemon);
     }
-
-    // Hide the info container as soon as the switch out occurs.
-    // Effects are kept to ensure correct Shell Bell interactions.
-    // TODO: Should we hide the info container for wild fleeing?
-    // Currently keeping it same as prior logic for consistency
-    if (globalScene.currentBattle.battleType === BattleType.WILD) {
-      switchOutTarget.hideInfo();
-    }
   }
 
   /**

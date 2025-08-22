@@ -518,10 +518,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract initBattleInfo(): void;
 
-  /**
-   * Return whether this Pokemon is currently partaking in battle on field.
-   * @returns Whether this Pokemon is on field.
-   */
   isOnField(): boolean {
     if (!globalScene) {
       return false;
@@ -1657,6 +1653,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Return this Pokemon's current HP as a fraction of its maximum HP.
    * @param precise - Whether to return the exact HP ratio (`true`) or rounded to the nearest 1% (`false`); default `false`
    * @returns This pokemon's current HP ratio (current / max).
+   * @todo Make `precise` default to `true`
    */
   getHpRatio(precise = false): number {
     return precise ? this.hp / this.getMaxHp() : Math.round((this.hp / this.getMaxHp()) * 100) / 100;
@@ -5653,9 +5650,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param destroy - Whether to destroy this Pokemon once it leaves the field; default `false`
    * @remarks
    * This **SHOULD NOT** be called with `clearEffects=true` when a `SummonPhase` or `SwitchSummonPhase` is already being added,
-   * both of which do so already and can lead to premature resetting of {@linkcode turnData} and {@linkcode summonData}.
+   * both of which also clear effects and can lead to premature/duplicate resetting of {@linkcode turnData} and {@linkcode summonData}.
+   * @todo: Review where this is being called and where it is necessary to be called
    */
-  // TODO: Review where this is being called and where it is necessary to call it
   leaveField(clearEffects = true, hideInfo = true, destroy = false) {
     this.resetSprite();
     globalScene
