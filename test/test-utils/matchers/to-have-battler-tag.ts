@@ -17,7 +17,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @typeParam B - The {@linkcode BattlerTagType} being checked
  * @remarks
  * If B corresponds to a serializable `BattlerTag`, only properties allowed to be serialized
- * (ie can change across instances) will be present and able to be checked.
+ * (i.e. can change across instances) will be present and able to be checked.
  */
 export type toHaveBattlerTagOptions<B extends BattlerTagType> = (B extends SerializableBattlerTagType
   ? OneOther<BattlerTagDataMap[B], "tagType">
