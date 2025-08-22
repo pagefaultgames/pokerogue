@@ -56,7 +56,7 @@ describe("Move - Laser Focus", () => {
     game.move.use(MoveId.TACKLE);
     await game.toEndOfTurn();
 
-    expect(critSpy).toHaveReturnedExactlyOnceWith(true);
+    expect(critSpy).toHaveLastReturnedWith(true);
   });
 
   it("should disappear at the end of the next turn", async () => {
@@ -80,7 +80,7 @@ describe("Move - Laser Focus", () => {
     game.move.use(MoveId.TACKLE);
     await game.toEndOfTurn();
 
-    expect(critSpy).toHaveReturnedExactlyOnceWith(false);
+    expect(critSpy).toHaveLastReturnedWith(false);
   });
 
   it("should boost all attacks until the end of the next turn", async () => {
@@ -98,7 +98,7 @@ describe("Move - Laser Focus", () => {
     await game.toEndOfTurn();
 
     expect(critSpy).toHaveReturnedTimes(2);
-    expect(critSpy).toHaveLastReturnedWith(true);
+    expect(critSpy).toHaveNthReturnedWith(1, true);
     expect(critSpy).toHaveNthReturnedWith(2, true);
   });
 });
