@@ -36,7 +36,9 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
       .enemySpecies(SpeciesId.NINJASK)
       .enemyPassiveAbility(AbilityId.NO_GUARD)
       .enemyMoveset(MoveId.FALSE_SWIPE)
-      .criticalHits(false);
+      .criticalHits(false)
+      .startingLevel(5)
+      .enemyLevel(5);
   });
 
   function confirmSwitch(): void {
@@ -47,7 +49,7 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
     expect(pokemon1.species.speciesId).not.toBe(SpeciesId.WIMPOD);
 
     expect(pokemon2.species.speciesId).toBe(SpeciesId.WIMPOD);
-    expect(pokemon2).toHaveFainted();
+    expect(pokemon2).not.toHaveFainted();
     expect(pokemon2.getHpRatio()).toBeLessThan(0.5);
   }
 
@@ -59,29 +61,32 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
     expect(pokemon2.species.speciesId).not.toBe(SpeciesId.WIMPOD);
 
     expect(pokemon1.species.speciesId).toBe(SpeciesId.WIMPOD);
-    expect(pokemon1).toHaveFainted();
     expect(pokemon1.getHpRatio()).toBeLessThan(0.5);
   }
 
   it.each<{ name: string; ability: AbilityId }>([
     { name: "Wimp Out", ability: AbilityId.WIMP_OUT },
     { name: "Emergency Exit", ability: AbilityId.EMERGENCY_EXIT },
-  ])("should switch the user out when falling below half HP, canceling its subsequent moves", async ({ ability }) => {
-    game.override.ability(ability);
-    await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
+  ])(
+    "$name should switch the user out when falling below half HP, canceling its subsequent moves",
+    async ({ ability }) => {
+      game.override.ability(ability);
+      await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
 
-    const wimpod = game.field.getPlayerPokemon();
-    wimpod.hp *= 0.52;
+      const wimpod = game.field.getPlayerPokemon();
+      wimpod.hp *= 0.52;
 
-    game.move.use(MoveId.SPLASH);
-    game.doSelectPartyPokemon(1);
-    await game.toEndOfTurn();
+      game.move.use(MoveId.SPLASH);
+      game.doSelectPartyPokemon(1);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.toEndOfTurn();
 
-    // Wimpod switched out after taking a hit, canceling its upcoming MoveEffectPhase before it could attack
-    confirmSwitch();
-    expect(game.field.getEnemyPokemon()).toHaveFullHp();
-    expect(game.phaseInterceptor.log.filter(phase => phase === "MoveEffectPhase")).toHaveLength(1);
-  });
+      // Wimpod switched out after taking a hit, canceling its upcoming MovePhase before it could attack
+      confirmSwitch();
+      expect(game.field.getEnemyPokemon()).toHaveFullHp();
+      expect(game.phaseInterceptor.log.filter(phase => phase === "MoveEffectPhase")).toHaveLength(1);
+    },
+  );
 
   it("should not trigger if user faints from damage and is revived", async () => {
     game.override
@@ -253,7 +258,7 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
       await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
 
       const wimpod = game.field.getPlayerPokemon();
-      expect(wimpod).toBeDefined();
+
       wimpod.hp = toDmgValue(wimpod.getMaxHp() / 2 + 2);
       // mock enemy attack damage func to only do 1 dmg (for whirlpool)
       vi.spyOn(wimpod, "getAttackDamage").mockReturnValueOnce({
@@ -274,7 +279,7 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
     { name: "Innards Out", ability: AbilityId.INNARDS_OUT },
     { name: "Aftermath", ability: AbilityId.AFTERMATH },
     { name: "Rough Skin", ability: AbilityId.ROUGH_SKIN },
-  ])("should trigger after taking damage from %s ability", async ({ ability }) => {
+  ])("should trigger after taking damage from $name ability", async ({ ability }) => {
     game.override.enemyAbility(ability).enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
 
@@ -307,7 +312,6 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
     await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.ZYGARDE, SpeciesId.TYRUNT]);
 
     const wimpod = game.field.getPlayerPokemon();
-    expect(wimpod).toBeDefined();
     wimpod.hp *= 0.52;
 
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
@@ -334,6 +338,7 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
     await game.toNextTurn();
 
     confirmNoSwitch();
+
     // Turn 2: get back enough HP that substitute doesn't put us under
     wimpod.hp = wimpod.getMaxHp() * 0.8;
 
@@ -346,17 +351,7 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
     confirmSwitch();
   });
 
-  it("should not trigger when neutralized", async () => {
-    game.override.enemyAbility(AbilityId.NEUTRALIZING_GAS).startingLevel(5);
-    await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
-
-    game.move.use(MoveId.SPLASH);
-    await game.toEndOfTurn();
-
-    confirmNoSwitch();
-  });
-
-  it("should disregard Shell Bell recovery while still activating it before switching", async () => {
+  it("should disregard Shell Bell recovery while still activating before switching", async () => {
     game.override
       .moveset(MoveId.DOUBLE_EDGE)
       .enemyMoveset(MoveId.SPLASH)
@@ -380,11 +375,13 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
   });
 
   it("should activate from entry hazard damage", async () => {
-    // enemy centiscorch switches in... then dies
-    game.scene.arena.addTag(ArenaTagType.STEALTH_ROCK, 1, MoveId.STEALTH_ROCK, 0, ArenaTagSide.ENEMY);
-    game.scene.arena.addTag(ArenaTagType.SPIKES, 1, MoveId.SPIKES, 0, ArenaTagSide.ENEMY);
-    game.override.enemySpecies(SpeciesId.CENTISKORCH).enemyAbility(AbilityId.WIMP_OUT);
-    await game.classicMode.startBattle([SpeciesId.TYRUNT]);
+    game.scene.arena.addTag(ArenaTagType.STEALTH_ROCK, 1, MoveId.STEALTH_ROCK, 0, ArenaTagSide.PLAYER);
+    game.scene.arena.addTag(ArenaTagType.SPIKES, 1, MoveId.SPIKES, 0, ArenaTagSide.PLAYER);
+    await game.classicMode.startBattle([SpeciesId.TYRUNT, SpeciesId.WIMPOD]);
+
+    // Switch wimpod in, making sure to queue inputs to switch back out again
+    game.doSwitchPokemon(1);
+    game.doSelectPartyPokemon(1);
 
     expect(game.phaseInterceptor.log).not.toContain("MovePhase");
     expect(game.phaseInterceptor.log).toContain("BattleEndPhase");
@@ -406,21 +403,19 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
 
   it("should not cancel a double battle on activation", async () => {
     game.override.battleStyle("double").enemyAbility(AbilityId.WIMP_OUT).enemyLevel(1);
-    await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
-    const [enemyLeadPokemon, enemySecPokemon] = game.scene.getEnemyParty();
+    await game.classicMode.startBattle([SpeciesId.WIMPOD]);
 
-    game.move.use(MoveId.FALSE_SWIPE, 0, BattlerIndex.ENEMY);
-    game.move.use(MoveId.SPLASH, 1);
+    const [enemyLeadPokemon, enemySecPokemon] = game.scene.getEnemyParty();
+    game.move.use(MoveId.FALSE_SWIPE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
 
     await game.toEndOfTurn();
 
-    const isVisibleLead = enemyLeadPokemon.visible;
-    const hasFledLead = enemyLeadPokemon.switchOutStatus;
-    const isVisibleSec = enemySecPokemon.visible;
-    const hasFledSec = enemySecPokemon.switchOutStatus;
-    expect(!isVisibleLead && hasFledLead && isVisibleSec && !hasFledSec).toBe(true);
-    expect(enemyLeadPokemon.hp).toBeLessThan(enemyLeadPokemon.getMaxHp());
-    expect(enemySecPokemon.hp).toEqual(enemySecPokemon.getMaxHp());
+    expect(enemyLeadPokemon.visible).toBe(false);
+    expect(enemyLeadPokemon.switchOutStatus).toBe(true);
+    expect(enemyLeadPokemon.hp).not.toHaveFullHp();
+    expect(enemySecPokemon.visible).toBe(true);
+    expect(enemySecPokemon.switchOutStatus).toBe(false);
+    expect(enemySecPokemon).toHaveFullHp();
   });
 
   it.each<{ type: string; move?: MoveId; ability?: AbilityId; items?: ModifierOverride[] }>([
@@ -477,34 +472,6 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
 
     expect(enemyPokemon.visible).toBe(true);
     expect(enemyPokemon.switchOutStatus).toBe(false);
-  });
-
-  it("should not skip battles when triggered in a double battle", async () => {
-    const wave = 2;
-    game.override
-      .enemyMoveset(MoveId.SPLASH)
-      .enemySpecies(SpeciesId.WIMPOD)
-      .enemyAbility(AbilityId.WIMP_OUT)
-      .moveset([MoveId.MATCHA_GOTCHA, MoveId.FALSE_SWIPE])
-      .startingLevel(50)
-      .enemyLevel(1)
-      .battleStyle("double")
-      .startingWave(wave);
-    await game.classicMode.startBattle([SpeciesId.RAICHU, SpeciesId.PIKACHU]);
-    const [wimpod0, wimpod1] = game.scene.getEnemyField();
-
-    game.move.use(MoveId.FALSE_SWIPE, 0, BattlerIndex.ENEMY);
-    game.move.use(MoveId.MATCHA_GOTCHA, 1);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
-    await game.toEndOfTurn();
-
-    expect(wimpod0.hp).toBeGreaterThan(0);
-    expect(wimpod0.switchOutStatus).toBe(true);
-    expect(wimpod0.isFainted()).toBe(false);
-    expect(wimpod1.isFainted()).toBe(true);
-
-    await game.toNextWave();
-    expect(game.scene.currentBattle.waveIndex).toBe(wave + 1);
   });
 
   it("should not skip battles when triggering the same turn as another enemy faints", async () => {

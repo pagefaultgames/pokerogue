@@ -5129,15 +5129,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Performs miscellaneous setup for when the Pokemon is summoned, like generating the substitute sprite
    * @param resetSummonData - Whether to additionally reset the Pokemon's summon data (default: `false`)
    */
-  public fieldSetup(resetSummonData?: boolean): void {
+  public fieldSetup(resetSummonData = false): void {
     this.setSwitchOutStatus(false);
     if (globalScene) {
       globalScene.triggerPokemonFormChange(this, SpeciesFormChangePostMoveTrigger, true);
     }
     // If this Pokemon has a Substitute when loading in, play an animation to add its sprite
-    if (this.getTag(SubstituteTag)) {
+    const subTag = this.getTag(BattlerTagType.SUBSTITUTE) as SubstituteTag | undefined;
+    if (subTag) {
       globalScene.triggerPokemonBattleAnim(this, PokemonAnimType.SUBSTITUTE_ADD);
-      this.getTag(SubstituteTag)!.sourceInFocus = false;
+      subTag.sourceInFocus = false;
     }
 
     // If this Pokemon has Commander and Dondozo as an active ally, hide this Pokemon's sprite.
@@ -5162,7 +5163,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * which already calls this function.
    */
   resetSummonData(): void {
-    console.log(`resetSummonData called on Pokemon ${this.name}`);
     const illusion: IllusionData | null = this.summonData.illusion;
     if (this.summonData.speciesForm) {
       this.summonData.speciesForm = null;
@@ -5205,7 +5205,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   resetTurnData(): void {
-    console.log(`resetTurnData called on Pokemon ${this.name}`);
     this.turnData = new PokemonTurnData();
   }
 
@@ -5658,7 +5657,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   // TODO: Review where this is being called and where it is necessary to call it
   leaveField(clearEffects = true, hideInfo = true, destroy = false) {
-    console.log(`leaveField called on Pokemon ${this.name}`);
     this.resetSprite();
     globalScene
       .getField(true)

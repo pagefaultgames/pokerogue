@@ -102,6 +102,8 @@ export class ForceSwitchOutHelper implements ForceSwitchOutHelperArgs {
   /**
    * Wrapper function to handle the actual "switching out" of Pokemon.
    * @param switchOutTarget - The {@linkcode Pokemon} (player or enemy) to be switched out
+   * @remarks
+   * This does not perform any checks to ensure that `switchOutTarget` is able to be switched out.
    */
   public doSwitch(switchOutTarget: Pokemon): void {
     if (switchOutTarget.isPlayer()) {

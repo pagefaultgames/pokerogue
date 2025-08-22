@@ -6424,26 +6424,20 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   /**
    * Check whether the target can be switched out.
    */
-  override canApply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]) {
-    if (!super.canApply(user, target, _move, _args)) {
-      return false;
-    }
-
-    const switchOutTarget = this.helper.selfSwitch ? user : target;
-
+  protected canSwitchOut(user: Pokemon, target: Pokemon) {
     // Check for Wimp Out edge case - self-switching moves cannot proc if the attack also triggers Wimp Out/EE
-    // TODO: This can be improved with a move in flight global object
+    // TODO: This damage tracking can be improved with a move in flight global object
     const moveDmgDealt = user.turnData.lastMoveDamageDealt[target.getBattlerIndex()]
     if (
       this.helper.selfSwitch
-      && moveDmgDealt
+      && moveDmgDealt > 0
       && target.getAbilityAttrs("PostDamageForceSwitchAbAttr").some(
         p => p.canApply({pokemon: target, damage: moveDmgDealt, simulated: false, source: user}))
       ) {
         return false;
       }
 
-    return this.helper.canSwitchOut(switchOutTarget)
+    return this.helper.canSwitchOut(this.helper.selfSwitch ? user : target)
   }
 
   getCondition(): MoveConditionFunc {
@@ -6451,9 +6445,10 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     // upon an unsuccessful switch - they still succeed and perform secondary effects
     // (just without actually switching out).
     // TODO: Remove condition check once move attribute application is cleaned up
-    return (user, target, move) => (move.category !== MoveCategory.STATUS || this.canApply(user, target, move, []));
+    return (user, target, move) => (move.category !== MoveCategory.STATUS || this.canSwitchOut(user, target));
   }
 
+  // TODO: Clean up with move failure rework
   getFailedText(_user: Pokemon, target: Pokemon): string | undefined {
     const cancelled = new BooleanHolder(false);
     applyAbAttrs("ForceSwitchOutImmunityAbAttr", {pokemon: target, cancelled});
@@ -6486,7 +6481,8 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 export class ChillyReceptionAttr extends ForceSwitchOutAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     globalScene.arena.trySetWeather(WeatherType.SNOW, user);
-    return super.apply(user, target, move, args);
+    // don't try to switch if unable
+    return super.canSwitchOut(user, target) && super.apply(user, target, move, args);
   }
 
   getCondition(): MoveConditionFunc {

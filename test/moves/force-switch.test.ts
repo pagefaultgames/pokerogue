@@ -76,9 +76,7 @@ describe("Moves - Switching Moves", () => {
       const [bulbasaur, charmander, squirtle] = game.scene.getPlayerParty();
 
       // Turn 1: Mock an RNG call that calls for switching to 1st backup Pokemon (Charmander)
-      vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((_range, min = 0) => {
-        return min;
-      });
+      vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((_range, min = 0) => min);
       game.move.use(MoveId.SPLASH);
       await game.move.forceEnemyMove(MoveId.DRAGON_TAIL);
       await game.toNextTurn();
@@ -89,9 +87,7 @@ describe("Moves - Switching Moves", () => {
       expect(bulbasaur).not.toHaveFullHp();
 
       // Turn 2: Mock an RNG call that calls for switching to 2nd backup Pokemon (Squirtle)
-      vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((_range, min = 0) => {
-        return min + 1;
-      });
+      vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((_range, min = 0) => min + 1);
       game.move.use(MoveId.SPLASH);
       await game.toNextTurn();
 
@@ -117,7 +113,6 @@ describe("Moves - Switching Moves", () => {
         game.scene.getEnemyParty(),
         pkmn => pkmn.trainerSlot === TrainerSlot.TRAINER,
       ).map(a => a.map(p => p.species.name));
-
       expect(tateParty).not.toEqual(lizaParty);
 
       // Force enemy trainers to switch to the first mon available.
