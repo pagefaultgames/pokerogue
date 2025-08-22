@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "982-three-segment.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 80,
+				"h": 80
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 80,
+						"h": 41
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 80,
+						"h": 41
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 80,
+						"h": 41
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:66ed22fce033af4b9f4b0bd496a49972:c65c020cc3254ce884753d528c891f04:6f35b6e7262296cc063df5f4c36d68c9$"
+	}
+}
