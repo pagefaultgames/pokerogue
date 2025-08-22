@@ -1171,17 +1171,17 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.setUpgradeAnimation(icon, species);
       });
 
-      if (globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
-        for (const container of this.pokemonEggMoveContainers) {
-          container.setVisible(false);
-        }
-        this.eggMovesLabel.setVisible(false);
-        // This is not enough, we need individual checks in setStarterSpecies too! :)
-        this.pokemonPassiveDisabledIcon.setVisible(false);
-        this.pokemonPassiveLabelText.setVisible(false);
-        this.pokemonPassiveLockedIcon.setVisible(false);
-        this.pokemonPassiveText.setVisible(false);
+      const notFreshStart = !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+
+      for (const container of this.pokemonEggMoveContainers) {
+        container.setVisible(notFreshStart);
       }
+      this.eggMovesLabel.setVisible(notFreshStart);
+      // This is not enough, we need individual checks in setStarterSpecies too! :)
+      this.pokemonPassiveDisabledIcon.setVisible(notFreshStart);
+      this.pokemonPassiveLabelText.setVisible(notFreshStart);
+      this.pokemonPassiveLockedIcon.setVisible(notFreshStart);
+      this.pokemonPassiveText.setVisible(notFreshStart);
 
       this.resetFilters();
       this.updateStarters();
