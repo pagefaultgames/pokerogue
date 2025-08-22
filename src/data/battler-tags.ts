@@ -565,7 +565,7 @@ export class BeakBlastChargingTag extends BattlerTag {
           target: pokemon,
         })
       ) {
-        phaseData.attacker.trySetStatus(StatusEffect.BURN, true, pokemon);
+        phaseData.attacker.trySetStatus(StatusEffect.BURN, pokemon);
       }
       return true;
     }
@@ -1511,7 +1511,7 @@ export class DrowsyTag extends SerializableBattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (!super.lapse(pokemon, lapseType)) {
-      pokemon.trySetStatus(StatusEffect.SLEEP, true);
+      pokemon.trySetStatus(StatusEffect.SLEEP);
       return false;
     }
 
@@ -1861,7 +1861,7 @@ export class ContactSetStatusProtectedTag extends DamageProtectedTag {
    * @param user - The pokemon that is being attacked and has the tag
    */
   override onContact(attacker: Pokemon, user: Pokemon): void {
-    attacker.trySetStatus(this.#statusEffect, true, user);
+    attacker.trySetStatus(this.#statusEffect, user);
   }
 }
 
@@ -2805,7 +2805,7 @@ export class GulpMissileTag extends SerializableBattlerTag {
       if (this.tagType === BattlerTagType.GULP_MISSILE_ARROKUDA) {
         globalScene.phaseManager.unshiftNew("StatStageChangePhase", attacker.getBattlerIndex(), false, [Stat.DEF], -1);
       } else {
-        attacker.trySetStatus(StatusEffect.PARALYSIS, true, pokemon);
+        attacker.trySetStatus(StatusEffect.PARALYSIS, pokemon);
       }
     }
     return false;
