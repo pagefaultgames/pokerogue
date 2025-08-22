@@ -45,8 +45,8 @@ describe("Move - Dragon Cheer", () => {
     await game.toEndOfTurn();
 
     const [dragonair, magikarp] = game.scene.getPlayerField();
-    expect(dragonair).not.toHaveBattlerTag(BattlerTagType.CRIT_BOOST);
-    expect(magikarp).toHaveBattlerTag({ tagType: BattlerTagType.CRIT_BOOST, critStages: 1 });
+    expect(dragonair).not.toHaveBattlerTag(BattlerTagType.DRAGON_CHEER);
+    expect(magikarp).toHaveBattlerTag({ tagType: BattlerTagType.DRAGON_CHEER, critStages: 1 });
     expect(enemy.getCritStage).toHaveReturnedWith(1); // getCritStage is called on defender
   });
 
@@ -62,8 +62,8 @@ describe("Move - Dragon Cheer", () => {
     await game.toEndOfTurn();
 
     const [magikarp, dragonair] = game.scene.getPlayerField();
-    expect(magikarp).not.toHaveBattlerTag(BattlerTagType.CRIT_BOOST);
-    expect(dragonair).toHaveBattlerTag({ tagType: BattlerTagType.CRIT_BOOST, critStages: 2 });
+    expect(magikarp).not.toHaveBattlerTag(BattlerTagType.DRAGON_CHEER);
+    expect(dragonair).toHaveBattlerTag({ tagType: BattlerTagType.DRAGON_CHEER, critStages: 2 });
     expect(enemy.getCritStage).toHaveReturnedWith(2); // getCritStage is called on defender
   });
 
@@ -78,14 +78,14 @@ describe("Move - Dragon Cheer", () => {
 
     // Dragon cheer added +1 stages
     const magikarp = game.scene.getPlayerField()[1];
-    expect(magikarp).toHaveBattlerTag({ tagType: BattlerTagType.CRIT_BOOST, critStages: 1 });
+    expect(magikarp).toHaveBattlerTag({ tagType: BattlerTagType.DRAGON_CHEER, critStages: 1 });
     expect(magikarp).toHaveTypes([PokemonType.WATER]);
 
     await game.toEndOfTurn();
 
     // Should be dragon type, but still with a +1 stage boost
     expect(magikarp).toHaveTypes([PokemonType.DRAGON]);
-    expect(magikarp).toHaveBattlerTag({ tagType: BattlerTagType.CRIT_BOOST, critStages: 1 });
+    expect(magikarp).toHaveBattlerTag({ tagType: BattlerTagType.DRAGON_CHEER, critStages: 1 });
   });
 
   it.each([
