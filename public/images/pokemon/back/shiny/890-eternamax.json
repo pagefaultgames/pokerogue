@@ -1,0 +1,41 @@
+{
+	"textures": [
+		{
+			"image": "890-eternamax.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 90,
+				"h": 93
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 96,
+						"h": 96
+					},
+					"spriteSourceSize": {
+						"x": 3,
+						"y": 1,
+						"w": 90,
+						"h": 93
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 90,
+						"h": 93
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:10f5965fa457e5969925a13356a353e5:66f41100f21673db5180345da7afaaaf:4db8b375066b8984bad6ce8eed9a5f6f$"
+	}
+}
