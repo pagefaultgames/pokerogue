@@ -6765,7 +6765,7 @@ function getPokemonWithWeatherBasedForms() {
     );
 }
 
-// biome-ignore-start format: prevent biome from removing the newlines (e.g. prevent `new Ability(...).attr(...)`)
+// biome-ignore format: prevent biome from removing the newlines (e.g. prevent `new Ability(...).attr(...)`)
 export function initAbilities() {
   allAbilities.push(
     new Ability(AbilityId.NONE, 3),
@@ -7880,4 +7880,3 @@ export function initAbilities() {
       .attr(ConfusionOnStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
   );
 }
-// biome-ignore-end format: prevent biome from removing the newlines (e.g. prevent `new Ability(...).attr(...)`)
