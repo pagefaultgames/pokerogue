@@ -812,8 +812,8 @@ export class MoveEffectPhase extends PokemonPhase {
     });
 
     const typeBoost = user.findTag(
-      t => t instanceof TypeBoostTag && t.boostedType === user.getMoveType(this.move),
-    ) as TypeBoostTag;
+      (t): t is TypeBoostTag => t instanceof TypeBoostTag && t.boostedType === user.getMoveType(this.move),
+    );
     if (typeBoost?.oneUse) {
       user.removeTag(typeBoost.tagType);
     }
