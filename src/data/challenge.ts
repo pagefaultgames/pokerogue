@@ -1,6 +1,6 @@
 import type { FixedBattleConfig } from "#app/battle";
 import { getRandomTrainerFunc } from "#app/battle";
-import { defaultStarterSpecies } from "#app/constants";
+import { defaultStarterSpeciesAndEvolutions } from "#app/constants";
 import { speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
@@ -797,7 +797,7 @@ export class FreshStartChallenge extends Challenge {
   }
 
   applyStarterChoice(pokemon: PokemonSpecies, valid: BooleanHolder): boolean {
-    if (this.value === 1 && !defaultStarterSpecies.includes(pokemon.speciesId)) {
+    if (this.value === 1 && !defaultStarterSpeciesAndEvolutions.includes(pokemon.speciesId)) {
       valid.value = false;
       return true;
     }
