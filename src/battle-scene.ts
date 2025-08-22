@@ -3686,13 +3686,7 @@ export class BattleScene extends SceneBase {
           }
           if (this.gameMode.modeId === GameModes.CHALLENGE) {
             const disallowedChallenges = encounterCandidate.disallowedChallenges;
-            if (
-              disallowedChallenges &&
-              disallowedChallenges.length > 0 &&
-              this.gameMode.challenges.some(
-                challenge => challenge.value !== 0 && disallowedChallenges.includes(challenge.id),
-              )
-            ) {
+            if (disallowedChallenges?.some(challenge => this.gameMode.hasChallenge(challenge))) {
               return false;
             }
           }
