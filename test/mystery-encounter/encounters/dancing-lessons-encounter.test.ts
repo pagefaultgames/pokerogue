@@ -12,7 +12,6 @@ import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { LearnMovePhase } from "#phases/learn-move-phase";
 import { MovePhase } from "#phases/move-phase";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,

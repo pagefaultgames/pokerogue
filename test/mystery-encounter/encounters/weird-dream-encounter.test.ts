@@ -10,7 +10,6 @@ import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils"
 import * as EncounterTransformationSequence from "#mystery-encounters/encounter-transformation-sequence";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { WeirdDreamEncounter } from "#mystery-encounters/weird-dream-encounter";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,

@@ -12,8 +12,7 @@ import { PokemonMove } from "#moves/pokemon-move";
 import { BugTypeSuperfanEncounter } from "#mystery-encounters/bug-type-superfan-encounter";
 import * as encounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
-import { MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#phases/mystery-encounter-phases";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
+import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,

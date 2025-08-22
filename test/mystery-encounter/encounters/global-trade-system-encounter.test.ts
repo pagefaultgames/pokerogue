@@ -13,7 +13,6 @@ import { generateModifierType } from "#mystery-encounters/encounter-phase-utils"
 import { GlobalTradeSystemEncounter } from "#mystery-encounters/global-trade-system-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { CIVILIZATION_ENCOUNTER_BIOMES } from "#mystery-encounters/mystery-encounters";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";

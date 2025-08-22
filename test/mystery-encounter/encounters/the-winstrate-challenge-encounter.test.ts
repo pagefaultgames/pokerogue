@@ -16,7 +16,6 @@ import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters";
 import { TheWinstrateChallengeEncounter } from "#mystery-encounters/the-winstrate-challenge-encounter";
 import { PartyHealPhase } from "#phases/party-heal-phase";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import { VictoryPhase } from "#phases/victory-phase";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";

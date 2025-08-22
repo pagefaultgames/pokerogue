@@ -9,7 +9,6 @@ import { UiMode } from "#enums/ui-mode";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { TeleportingHijinksEncounter } from "#mystery-encounters/teleporting-hijinks-encounter";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,

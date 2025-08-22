@@ -10,7 +10,6 @@ import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils"
 import { FightOrFlightEncounter } from "#mystery-encounters/fight-or-flight-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,

@@ -1,6 +1,5 @@
 import "vitest";
 
-import type { TerrainType } from "#app/data/terrain";
 import type { Phase } from "#app/phase";
 import type Overrides from "#app/overrides";
 import type { ArenaTag } from "#data/arena-tag";
@@ -43,13 +42,13 @@ declare module "vitest" {
      */
     toEqualArrayUnsorted(expected: T[]): void;
 
-    // #region Arena Matchers
-
     /**
-     * Check if the currently running {@linkcode Phase} is of the given type.
+     * Check if the currently-running {@linkcode Phase} is of the given type.
      * @param expectedPhase - The expected {@linkcode PhaseString}
      */
     toBeAtPhase(expectedPhase: PhaseString): void;
+
+    // #region Arena Matchers
 
     /**
      * Check whether the current {@linkcode WeatherType} is as expected.
