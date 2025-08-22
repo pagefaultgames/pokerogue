@@ -1,22 +1,13 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-import type { NumberHolder } from "#utils/common";
-
-export interface AccuracyBoostParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** Holds the move's accuracy, which may be modified after item application */
-  moveAccuracy: NumberHolder;
-}
+import type { AccuracyBoostParams } from "#items/held-item-parameter";
 
 /**
  * @sealed
  */
-export class AccuracyBoosterHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.ACCURACY_BOOSTER];
-
+export class AccuracyBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.ACCURACY_BOOSTER]> {
+  public readonly effects = [HeldItemEffect.ACCURACY_BOOSTER] as const;
   private accuracyAmount: number;
 
   constructor(type: HeldItemId, maxStackCount: number, accuracy: number) {
@@ -25,22 +16,10 @@ export class AccuracyBoosterHeldItem extends HeldItem {
   }
 
   /**
-   * Checks if {@linkcode PokemonMoveAccuracyBoosterHeldItem} should be applied
-   * @param pokemon - The {@linkcode Pokemon} to apply the move accuracy boost to
-   * @param moveAccuracy - {@linkcode NumberHolder} holding the move accuracy boost
-   * @returns `true` if {@linkcode PokemonMoveAccuracyBoosterHeldItem} should be applied
+   * Applies this item
    */
-  //  override shouldApply(pokemon?: Pokemon, moveAccuracy?: NumberHolder): boolean {
-  //    return super.shouldApply(pokemon, moveAccuracy) && !!moveAccuracy;
-  //  }
-
-  /**
-   * Applies {@linkcode PokemonMoveAccuracyBoosterHeldItem}
-   */
-  apply({ pokemon, moveAccuracy }: AccuracyBoostParams): true {
+  apply(_effect: typeof HeldItemEffect.ACCURACY_BOOSTER, { pokemon, moveAccuracy }: AccuracyBoostParams): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     moveAccuracy.value += this.accuracyAmount * stackCount;
-
-    return true;
   }
 }

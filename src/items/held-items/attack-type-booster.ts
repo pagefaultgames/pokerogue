@@ -1,20 +1,9 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import { PokemonType } from "#enums/pokemon-type";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-import type { NumberHolder } from "#utils/common";
+import type { AttackTypeBoostParams } from "#items/held-item-parameter";
 import i18next from "i18next";
-
-export interface AttackTypeBoostParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** The resolved type of the move */
-  moveType: PokemonType;
-  /** Holder for the damage value */
-  // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2119660807
-  movePower: NumberHolder;
-}
 
 interface AttackTypeToHeldItemMap {
   [key: number]: HeldItemId;
@@ -41,8 +30,8 @@ export const attackTypeToHeldItem: AttackTypeToHeldItemMap = {
   [PokemonType.FAIRY]: HeldItemId.FAIRY_FEATHER,
 };
 
-export class AttackTypeBoosterHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.TURN_END_HEAL];
+export class AttackTypeBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.ATTACK_TYPE_BOOST]> {
+  public readonly effects = [HeldItemEffect.ATTACK_TYPE_BOOST] as const;
   public moveType: PokemonType;
   public powerBoost: number;
 
@@ -67,7 +56,10 @@ export class AttackTypeBoosterHeldItem extends HeldItem {
     return `${HeldItemNames[this.type]?.toLowerCase()}`;
   }
 
-  apply({ pokemon, moveType, movePower }: AttackTypeBoostParams): void {
+  apply(
+    _effect: typeof HeldItemEffect.ATTACK_TYPE_BOOST,
+    { pokemon, moveType, movePower }: AttackTypeBoostParams,
+  ): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (moveType === this.moveType && movePower.value >= 1) {
       movePower.value = Math.floor(movePower.value * (1 + stackCount * this.powerBoost));

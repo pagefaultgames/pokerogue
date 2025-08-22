@@ -1,19 +1,11 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-import type { NumberHolder } from "#utils/common";
+import type { ExpBoostParams } from "#items/held-item-parameter";
 import i18next from "i18next";
 
-export interface ExpBoostParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** Holds the amount of experience gained, which may be modified after item application */
-  expAmount: NumberHolder;
-}
-
-export class ExpBoosterHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.EXP_BOOSTER];
+export class ExpBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.EXP_BOOSTER]> {
+  public readonly effects = [HeldItemEffect.EXP_BOOSTER] as const;
   private boostPercent: number;
   private boostMultiplier: number;
 
@@ -44,7 +36,7 @@ export class ExpBoosterHeldItem extends HeldItem {
    * Applies {@linkcode PokemonExpBoosterModifier}
    * @returns always `true`
    */
-  apply({ pokemon, expAmount }: ExpBoostParams): true {
+  apply(_effect: typeof HeldItemEffect.EXP_BOOSTER, { pokemon, expAmount }: ExpBoostParams): true {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     expAmount.value = Math.floor(expAmount.value * (1 + stackCount * this.boostMultiplier));
 

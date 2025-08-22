@@ -7,13 +7,8 @@ import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
 import i18next from "i18next";
 
-export interface EvoTrackerParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-}
-
-export class EvoTrackerHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.EVO_TRACKER];
+export class EvoTrackerHeldItem extends HeldItem<[typeof HeldItemEffect.EVO_TRACKER]> {
+  public readonly effects = [HeldItemEffect.EVO_TRACKER] as const;
 
   protected species: SpeciesId;
   protected required: number;
@@ -29,6 +24,7 @@ export class EvoTrackerHeldItem extends HeldItem {
    * Applies the {@linkcode EvoTrackerModifier}
    * @returns always `true`
    */
+  // TODO: does this need fixing?
   apply(): boolean {
     return true;
   }

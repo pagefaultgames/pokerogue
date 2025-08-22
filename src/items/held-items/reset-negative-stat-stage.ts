@@ -2,16 +2,9 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { BATTLE_STATS } from "#enums/stat";
-import type { Pokemon } from "#field/pokemon";
 import { ConsumableHeldItem } from "#items/held-item";
+import type { ResetNegativeStatStageParams } from "#items/held-item-parameter";
 import i18next from "i18next";
-
-export interface ResetNegativeStatStageParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** Whether the move was used by a player pokemon */
-  isPlayer: boolean;
-}
 
 /**
  * Modifier used for held items, namely White Herb, that restore adverse stat
@@ -19,8 +12,10 @@ export interface ResetNegativeStatStageParams {
  * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
-export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.RESET_NEGATIVE_STAT_STAGE];
+export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem<
+  [typeof HeldItemEffect.RESET_NEGATIVE_STAT_STAGE]
+> {
+  public readonly effects = [HeldItemEffect.RESET_NEGATIVE_STAT_STAGE] as const;
 
   get name(): string {
     return i18next.t("modifierType:ModifierType.WHITE_HERB.name");
@@ -38,7 +33,10 @@ export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem {
    * stat stage back to 0.
    * @returns `true` if any stat stages were reset, false otherwise
    */
-  apply({ pokemon, isPlayer }: ResetNegativeStatStageParams): boolean {
+  apply(
+    _effect: typeof HeldItemEffect.RESET_NEGATIVE_STAT_STAGE,
+    { pokemon, isPlayer }: ResetNegativeStatStageParams,
+  ): boolean {
     let statRestored = false;
 
     for (const s of BATTLE_STATS) {
@@ -56,7 +54,7 @@ export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem {
         }),
       );
 
-      this.consume(pokemon, isPlayer, true, false);
+      this.consume(pokemon, true, false);
     }
 
     return statRestored;

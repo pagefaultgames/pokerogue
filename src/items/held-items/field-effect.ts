@@ -1,14 +1,6 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-import type { NumberHolder } from "#utils/common";
-
-export interface FieldEffectParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** Holder for the field effect duration*/
-  fieldDuration: NumberHolder;
-}
+import type { FieldEffectParams } from "#items/held-item-parameter";
 
 /**
  * Modifier used for held items, namely Mystical Rock, that extend the
@@ -16,15 +8,15 @@ export interface FieldEffectParams {
  * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
-export class FieldEffectHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.FIELD_EFFECT];
+export class FieldEffectHeldItem extends HeldItem<[typeof HeldItemEffect.FIELD_EFFECT]> {
+  public readonly effects = [HeldItemEffect.FIELD_EFFECT] as const;
 
   /**
    * Provides two more turns per stack to any weather or terrain effect caused
    * by the holder.
    * @returns always `true`
    */
-  apply({ pokemon, fieldDuration }: FieldEffectParams): true {
+  apply(_effect: typeof HeldItemEffect.FIELD_EFFECT, { pokemon, fieldDuration }: FieldEffectParams): true {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     fieldDuration.value += 2 * stackCount;
     return true;

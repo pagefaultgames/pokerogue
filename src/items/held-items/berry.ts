@@ -4,8 +4,8 @@ import { BerryType } from "#enums/berry-type";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { BerryUsedEvent } from "#events/battle-scene";
-import type { Pokemon } from "#field/pokemon";
 import { ConsumableHeldItem } from "#items/held-item";
+import type { BerryParams } from "#items/held-item-parameter";
 import { TrainerItemEffect } from "#items/trainer-item";
 import type { ObjectValues } from "#types/type-helpers";
 import { BooleanHolder } from "#utils/common";
@@ -29,14 +29,9 @@ export const berryTypeToHeldItem = {
   [BerryType.LEPPA]: HeldItemId.LEPPA_BERRY,
 } satisfies BerryTypeToHeldItemMap;
 
-export interface BerryParams {
-  /** The pokemon with the berry */
-  pokemon: Pokemon;
-}
-
 // TODO: Maybe split up into subclasses?
-export class BerryHeldItem extends ConsumableHeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.BERRY];
+export class BerryHeldItem extends ConsumableHeldItem<[typeof HeldItemEffect.BERRY]> {
+  public readonly effects = [HeldItemEffect.BERRY] as const;
   public berryType: BerryType;
 
   constructor(berryType: BerryType, maxStackCount = 1) {
@@ -63,7 +58,7 @@ export class BerryHeldItem extends ConsumableHeldItem {
    * @param pokemon The {@linkcode Pokemon} that holds the berry
    * @returns `true` if {@linkcode BerryModifier} should be applied
    */
-  shouldApply(pokemon: Pokemon): boolean {
+  shouldApply(_effect: typeof HeldItemEffect.BERRY, { pokemon }: BerryParams): boolean {
     return getBerryPredicate(this.berryType)(pokemon);
   }
 
@@ -71,10 +66,11 @@ export class BerryHeldItem extends ConsumableHeldItem {
    * Applies {@linkcode BerryHeldItem}
    * @returns always `true`
    */
-  apply({ pokemon }: BerryParams): boolean {
-    if (!this.shouldApply(pokemon)) {
-      return false;
-    }
+  apply(_effect: typeof HeldItemEffect.BERRY, { pokemon }: BerryParams): boolean {
+    // TODO: This call should not be here?
+    //    if (!this.shouldApply(pokemon)) {
+    //      return false;
+    //    }
 
     const preserve = new BooleanHolder(false);
     globalScene.applyPlayerItems(TrainerItemEffect.PRESERVE_BERRY, { pokemon: pokemon, doPreserve: preserve });
@@ -82,7 +78,7 @@ export class BerryHeldItem extends ConsumableHeldItem {
 
     // munch the berry and trigger unburden-like effects
     getBerryEffectFunc(this.berryType)(pokemon);
-    this.consume(pokemon, pokemon.isPlayer(), consumed);
+    this.consume(pokemon, consumed);
 
     // TODO: Update this method to work with held items
     // Update berry eaten trackers for Belch, Harvest, Cud Chew, etc.

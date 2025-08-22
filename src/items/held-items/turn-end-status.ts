@@ -1,13 +1,8 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { StatusEffect } from "#enums/status-effect";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-
-export interface TurnEndStatusParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-}
+import type { TurnEndStatusParams } from "#items/held-item-parameter";
 
 /**
  * Modifier used for held items, namely Toxic Orb and Flame Orb, that apply a
@@ -15,8 +10,8 @@ export interface TurnEndStatusParams {
  * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
-export class TurnEndStatusHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.TURN_END_STATUS];
+export class TurnEndStatusHeldItem extends HeldItem<[typeof HeldItemEffect.TURN_END_STATUS]> {
+  public readonly effects = [HeldItemEffect.TURN_END_STATUS] as const;
   /** The status effect to be applied by the held item */
   public effect: StatusEffect;
 
@@ -30,8 +25,8 @@ export class TurnEndStatusHeldItem extends HeldItem {
    * Tries to inflicts the holder with the associated {@linkcode StatusEffect}.
    * @returns `true` if the status effect was applied successfully
    */
-  apply({ pokemon }: TurnEndStatusParams): boolean {
-    return pokemon.trySetStatus(this.effect, true, undefined, undefined, this.name);
+  apply(_effect: typeof HeldItemEffect.TURN_END_STATUS, { pokemon }: TurnEndStatusParams): boolean {
+    return pokemon.trySetStatus(this.effect, pokemon, undefined, this.name);
   }
 
   getStatusEffect(): StatusEffect {

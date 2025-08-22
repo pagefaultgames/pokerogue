@@ -1,28 +1,22 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
+import type { HeldItemEffect } from "#enums/held-item-effect";
 import { type HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
+import type { UniqueArray } from "#utils/common";
 import i18next from "i18next";
+import type { HeldItemEffectParamMap } from "./held-item-parameter";
 
-export class HeldItem {
-  //  public pokemonId: number;
-  // TODO: Should this be readonly?
+export abstract class HeldItemBase {
   public type: HeldItemId;
   public readonly maxStackCount: number;
   public isTransferable = true;
   public isStealable = true;
   public isSuppressable = true;
 
-  //TODO: If this is actually never changed by any subclass, perhaps it should not be here
-  public soundName = "se/restore";
-
   constructor(type: HeldItemId, maxStackCount = 1) {
     this.type = type;
     this.maxStackCount = maxStackCount;
-
-    this.isTransferable = true;
-    this.isStealable = true;
-    this.isSuppressable = true;
   }
 
   get name(): string {
@@ -35,22 +29,6 @@ export class HeldItem {
 
   get iconName(): string {
     return `${HeldItemNames[this.type]?.toLowerCase()}`;
-  }
-
-  // TODO: Aren't these fine as just properties to set in the subclass definition?
-  untransferable(): HeldItem {
-    this.isTransferable = false;
-    return this;
-  }
-
-  unstealable(): HeldItem {
-    this.isStealable = false;
-    return this;
-  }
-
-  unsuppressable(): HeldItem {
-    this.isSuppressable = false;
-    return this;
   }
 
   // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2114950716
@@ -122,15 +100,61 @@ export class HeldItem {
   getScoreMultiplier(): number {
     return 1;
   }
+
+  untransferable(): this {
+    this.isTransferable = false;
+    return this;
+  }
+
+  unstealable(): this {
+    this.isStealable = false;
+    return this;
+  }
+
+  unsuppressable(): this {
+    this.isSuppressable = false;
+    return this;
+  }
 }
 
-export class ConsumableHeldItem extends HeldItem {
+/** Tuple type containing >1 `HeldItemEffect`s */
+export type EffectTuple = Readonly<[HeldItemEffect, ...HeldItemEffect[]]>;
+
+export abstract class HeldItem<T extends EffectTuple> extends HeldItemBase {
+  /**
+   * A readonly tuple containing {@linkcode HeldItemEffect | effects} that this class can apply.
+   * @privateRemarks
+   * Please sort entries in ascending numerical order (for my sanity and yours)
+   */
+  abstract readonly effects: UniqueArray<T>;
+
+  /**
+   * Check whether a given effect of this item should apply.
+   * @typeParam E - The type of one of this class' {@linkcode effects}
+   * @param effect - The {@linkcode HeldItemEffect | effect} being applied
+   * @param args - Arguments required for the effect application
+   * @returns Whether the effect should apply.
+   */
+  shouldApply<E extends this["effects"][number]>(_effect: E, _args: HeldItemEffectParamMap[E]): boolean {
+    return true;
+  }
+  /**
+   * Apply the given item's effects.
+   * Called if and only if {@linkcode shouldApply} returns `true`
+   * @typeParam E - The type of one of this class' {@linkcode effects}
+   * @param effect - The {@linkcode HeldItemEffect | effect} being applied
+   * @param args - Arguments required for the effect application
+   */
+  abstract apply<E extends this["effects"][number]>(effect: E, param: HeldItemEffectParamMap[E]): void;
+}
+
+export abstract class ConsumableHeldItem<T extends EffectTuple> extends HeldItem<T> {
   // Sometimes berries are not eaten, some stuff may not proc unburden...
-  consume(pokemon: Pokemon, isPlayer: boolean, remove = true, unburden = true): void {
+  consume(pokemon: Pokemon, remove = true, unburden = true): void {
     if (remove) {
       pokemon.heldItemManager.remove(this.type, 1);
       // TODO: Turn this into updateItemBar or something
-      globalScene.updateItems(isPlayer);
+      globalScene.updateItems(pokemon.isPlayer());
     }
     if (unburden) {
       applyAbAttrs("PostItemLostAbAttr", { pokemon: pokemon });

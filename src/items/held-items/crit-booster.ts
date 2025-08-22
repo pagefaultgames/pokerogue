@@ -1,16 +1,8 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-import type { NumberHolder } from "#utils/common";
-
-export interface CritBoostParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** The critical hit stage */
-  critStage: NumberHolder;
-}
+import type { CritBoostParams } from "#items/held-item-parameter";
 
 /**
  * Modifier used for held items that apply critical-hit stage boost(s).
@@ -18,8 +10,8 @@ export interface CritBoostParams {
  * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
-export class CritBoostHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.CRIT_BOOST];
+export class CritBoostHeldItem extends HeldItem<[typeof HeldItemEffect.CRIT_BOOST]> {
+  public readonly effects = [HeldItemEffect.CRIT_BOOST] as const;
 
   /** The amount of stages by which the held item increases the current critical-hit stage value */
   protected stageIncrement: number;
@@ -36,7 +28,7 @@ export class CritBoostHeldItem extends HeldItem {
    * @param critStage {@linkcode NumberHolder} that holds the resulting critical-hit level
    * @returns always `true`
    */
-  apply({ critStage }: CritBoostParams): boolean {
+  apply(_effect: typeof HeldItemEffect.CRIT_BOOST, { critStage }: CritBoostParams): boolean {
     critStage.value += this.stageIncrement;
     return true;
   }
@@ -73,14 +65,14 @@ export class SpeciesCritBoostHeldItem extends CritBoostHeldItem {
   //    );
   //  }
 
-  apply(params: CritBoostParams): boolean {
+  apply(effect: typeof HeldItemEffect.CRIT_BOOST, params: CritBoostParams): boolean {
     const pokemon = params.pokemon;
     const fitsSpecies =
       this.species.includes(pokemon.getSpeciesForm(true).speciesId) ||
       (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId));
 
     if (fitsSpecies) {
-      return super.apply(params);
+      return super.apply(effect, params);
     }
 
     return false;

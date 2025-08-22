@@ -1,23 +1,18 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-import type { NumberHolder } from "#utils/common";
+import type { NatureWeightBoostParams } from "#items/held-item-parameter";
 
-export interface NatureWeightBoostParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** Holder for the multiplier */
-  multiplier: NumberHolder;
-}
-
-export class NatureWeightBoosterHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.NATURE_WEIGHT_BOOSTER];
+export class NatureWeightBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.NATURE_WEIGHT_BOOSTER]> {
+  public readonly effects = [HeldItemEffect.NATURE_WEIGHT_BOOSTER] as const;
 
   /**
    * Applies {@linkcode PokemonNatureWeightModifier}
    * @returns `true` if multiplier was applied
    */
-  apply({ pokemon, multiplier }: NatureWeightBoostParams): boolean {
+  apply(
+    _effect: typeof HeldItemEffect.NATURE_WEIGHT_BOOSTER,
+    { pokemon, multiplier }: NatureWeightBoostParams,
+  ): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (multiplier.value !== 1) {
       multiplier.value += 0.1 * stackCount * (multiplier.value > 1 ? 1 : -1);

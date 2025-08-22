@@ -1,25 +1,14 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { Stat } from "#enums/stat";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-import type { NumberHolder } from "#utils/common";
+import type { IncrementingStatParams } from "#items/held-item-parameter";
 import i18next from "i18next";
-
-export interface IncrementingStatParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** The stat whose value is being impacted */
-  stat: Stat;
-  /** Holds the stat's value, which may be modified after item application */
-  // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2135612276
-  statHolder: NumberHolder;
-}
 
 /**
  * Currently used by Macho Brace item
  */
-export class IncrementingStatHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.INCREMENTING_STAT];
+export class IncrementingStatHeldItem extends HeldItem<[typeof HeldItemEffect.INCREMENTING_STAT]> {
+  public readonly effects = [HeldItemEffect.INCREMENTING_STAT] as const;
   public isTransferable = false;
 
   /**
@@ -45,7 +34,10 @@ export class IncrementingStatHeldItem extends HeldItem {
    * Applies the {@linkcode PokemonIncrementingStatModifier}
    * @returns always `true`
    */
-  apply({ pokemon, statHolder, stat }: IncrementingStatParams): boolean {
+  apply(
+    _effect: typeof HeldItemEffect.INCREMENTING_STAT,
+    { pokemon, statHolder, stat }: IncrementingStatParams,
+  ): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
 
     // Modifies the passed in stat number holder by +2 per stack for HP, +1 per stack for other stats

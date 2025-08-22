@@ -2,23 +2,15 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { Command } from "#enums/command";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-import type { BooleanHolder } from "#utils/common";
+import type { BypassSpeedChanceParams } from "#items/held-item-parameter";
 import i18next from "i18next";
-
-export interface BypassSpeedChanceParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** Holder for whether the speed should be bypassed */
-  doBypassSpeed: BooleanHolder;
-}
 
 /**
  * Modifier used for items that allow a Pokémon to bypass the speed chance (Quick Claw).
  */
-export class BypassSpeedChanceHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.BYPASS_SPEED_CHANCE];
+export class BypassSpeedChanceHeldItem extends HeldItem<[typeof HeldItemEffect.BYPASS_SPEED_CHANCE]> {
+  public readonly effects = [HeldItemEffect.BYPASS_SPEED_CHANCE] as const;
 
   /**
    * Checks if {@linkcode BypassSpeedChanceModifier} should be applied
@@ -34,7 +26,10 @@ export class BypassSpeedChanceHeldItem extends HeldItem {
    * Applies {@linkcode BypassSpeedChanceModifier}
    * @returns `true` if {@linkcode BypassSpeedChanceModifier} has been applied
    */
-  apply({ pokemon, doBypassSpeed }: BypassSpeedChanceParams): boolean {
+  apply(
+    _effect: typeof HeldItemEffect.BYPASS_SPEED_CHANCE,
+    { pokemon, doBypassSpeed }: BypassSpeedChanceParams,
+  ): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (!doBypassSpeed.value && pokemon.randBattleSeedInt(10) < stackCount) {
       doBypassSpeed.value = true;

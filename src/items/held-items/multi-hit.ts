@@ -1,21 +1,10 @@
 import { allMoves } from "#data/data-lists";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import type { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
+import type { MultiHitParams } from "#items/held-item-parameter";
 import { isNullOrUndefined, type NumberHolder } from "#utils/common";
 import i18next from "i18next";
-
-export interface MultiHitParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** The move being used */
-  moveId: MoveId;
-  /** Holder for the move's hit count for the turn */
-  count?: NumberHolder;
-  /** Holder for the damage multiplier applied to a strike of the move */
-  damageMultiplier?: NumberHolder;
-}
 
 /**
  * Modifier used for held items, namely Toxic Orb and Flame Orb, that apply a
@@ -23,8 +12,8 @@ export interface MultiHitParams {
  * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
-export class MultiHitHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.MULTI_HIT];
+export class MultiHitHeldItem extends HeldItem<[typeof HeldItemEffect.MULTI_HIT]> {
+  public readonly effects = [HeldItemEffect.MULTI_HIT] as const;
 
   get description(): string {
     return i18next.t("modifierType:ModifierType.PokemonMultiHitModifierType.description");
@@ -34,7 +23,10 @@ export class MultiHitHeldItem extends HeldItem {
    * For each stack, converts 25 percent of attack damage into an additional strike.
    * @returns Whether the item applies its effects to move
    */
-  apply({ pokemon, count, moveId, damageMultiplier }: MultiHitParams): boolean {
+  apply(
+    _effect: typeof HeldItemEffect.MULTI_HIT,
+    { pokemon, count, moveId, damageMultiplier }: MultiHitParams,
+  ): boolean {
     const move = allMoves[moveId];
     /*
      * The move must meet Parental Bond's restrictions for this item

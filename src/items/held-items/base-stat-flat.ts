@@ -2,20 +2,14 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
+import type { BaseStatFlatParams } from "#items/held-item-parameter";
 import i18next from "i18next";
-
-export interface BaseStatFlatParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** The amount of exp to gain */
-  baseStats: number[];
-}
 
 /**
  * Currently used by Old Gateau item
  */
-export class BaseStatFlatHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.BASE_STAT_FLAT];
+export class BaseStatFlatHeldItem extends HeldItem<[typeof HeldItemEffect.BASE_STAT_FLAT]> {
+  public readonly effects = [HeldItemEffect.BASE_STAT_FLAT] as const;
   public isTransferable = false;
 
   get description(): string {
@@ -35,7 +29,7 @@ export class BaseStatFlatHeldItem extends HeldItem {
   /**
    * Applies the {@linkcode PokemonBaseStatFlatModifier}
    */
-  apply({ pokemon, baseStats }: BaseStatFlatParams): true {
+  apply(_effect: typeof HeldItemEffect.BASE_STAT_FLAT, { pokemon, baseStats }: BaseStatFlatParams): true {
     const stats = this.getStats(pokemon);
     const statModifier = 20;
     // Modifies the passed in baseStats[] array by a flat value, only if the stat is specified in this.stats

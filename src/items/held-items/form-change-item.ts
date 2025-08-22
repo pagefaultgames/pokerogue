@@ -1,8 +1,8 @@
 import { HeldItemNames } from "#enums/held-item-id";
-import { HeldItem } from "#items/held-item";
+import { HeldItemBase } from "#items/held-item";
 import i18next from "i18next";
 
-export class FormChangeHeldItem extends HeldItem {
+export class FormChangeHeldItem extends HeldItemBase {
   get name(): string {
     return i18next.t(`modifierType:FormChangeItemId.${HeldItemNames[this.type]}`);
   }

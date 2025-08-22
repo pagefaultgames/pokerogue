@@ -4,17 +4,10 @@ import { allHeldItems } from "#data/data-lists";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 import { Pokemon } from "#field/pokemon";
-import { HeldItem } from "#items/held-item";
+import { type EffectTuple, HeldItem } from "#items/held-item";
+import type { ItemStealParams } from "#items/held-item-parameter";
 import { coerceArray, randSeedFloat } from "#utils/common";
 import i18next from "i18next";
-
-export interface ItemStealParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** The pokemon to steal from (optional) */
-  // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2135607083
-  target?: Pokemon;
-}
 
 //  constructor(type: HeldItemId, maxStackCount: number, boostPercent: number) {
 
@@ -23,7 +16,7 @@ export interface ItemStealParams {
  * @see {@linkcode TurnEndItemStealHeldItem}
  * @see {@linkcode ContactItemStealChanceHeldItem}
  */
-export abstract class ItemTransferHeldItem extends HeldItem {
+export abstract class ItemTransferHeldItem<T extends EffectTuple> extends HeldItem<T> {
   /**
    * Steals an item, chosen randomly, from a set of target Pokemon.
    * @param pokemon The {@linkcode Pokemon} holding this item
@@ -31,7 +24,7 @@ export abstract class ItemTransferHeldItem extends HeldItem {
    * @param _args N/A
    * @returns `true` if an item was stolen; false otherwise.
    */
-  apply(params: ItemStealParams): boolean {
+  apply(_effect: T, params: ItemStealParams): boolean {
     const opponents = this.getTargets(params);
 
     if (!opponents.length) {
@@ -82,8 +75,8 @@ export abstract class ItemTransferHeldItem extends HeldItem {
  * Held item that steal items from the enemy at the end of
  * each turn.
  */
-export class TurnEndItemStealHeldItem extends ItemTransferHeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.TURN_END_ITEM_STEAL];
+export class TurnEndItemStealHeldItem extends ItemTransferHeldItem<[typeof HeldItemEffect.TURN_END_ITEM_STEAL]> {
+  public readonly effects = [HeldItemEffect.TURN_END_ITEM_STEAL] as const;
   isTransferable = true;
 
   get description(): string {
@@ -122,8 +115,10 @@ export class TurnEndItemStealHeldItem extends ItemTransferHeldItem {
  * Held item that adds a chance to steal items from the target of a
  * successful attack.
  */
-export class ContactItemStealChanceHeldItem extends ItemTransferHeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.CONTACT_ITEM_STEAL_CHANCE];
+export class ContactItemStealChanceHeldItem extends ItemTransferHeldItem<
+  [typeof HeldItemEffect.CONTACT_ITEM_STEAL_CHANCE]
+> {
+  public readonly effects = [HeldItemEffect.CONTACT_ITEM_STEAL_CHANCE] as const;
   public readonly chancePercent: number;
   public readonly chance: number;
 

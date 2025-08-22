@@ -1,23 +1,15 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
-import type { NumberHolder } from "#utils/common";
+import type { BatonParams } from "#items/held-item-parameter";
 
-export interface BatonParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-  /** The amount of exp to gain */
-  expAmount: NumberHolder;
-}
-
-export class BatonHeldItem extends HeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.BATON];
+export class BatonHeldItem extends HeldItem<[typeof HeldItemEffect.BATON]> {
+  public readonly effects = [HeldItemEffect.BATON] as const;
 
   /**
    * Applies {@linkcode SwitchEffectTransferModifier}
    * @returns always `true`
    */
-  apply(): true {
+  apply(_effect: typeof HeldItemEffect.BATON, { pokemon }: BatonParams): true {
     return true;
   }
 }

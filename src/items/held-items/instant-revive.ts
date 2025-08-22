@@ -2,16 +2,11 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import type { Pokemon } from "#field/pokemon";
 import { ConsumableHeldItem } from "#items/held-item";
+import type { InstantReviveParams } from "#items/held-item-parameter";
 import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
-
-export interface InstantReviveParams {
-  /** The pokemon with the item */
-  pokemon: Pokemon;
-}
 
 /**
  * Modifier used for held items, namely White Herb, that restore adverse stat
@@ -19,8 +14,8 @@ export interface InstantReviveParams {
  * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
-export class InstantReviveHeldItem extends ConsumableHeldItem {
-  public effects: HeldItemEffect[] = [HeldItemEffect.INSTANT_REVIVE];
+export class InstantReviveHeldItem extends ConsumableHeldItem<[typeof HeldItemEffect.INSTANT_REVIVE]> {
+  public readonly effects = [HeldItemEffect.INSTANT_REVIVE] as const;
 
   get name(): string {
     return i18next.t("modifierType:ModifierType.REVIVER_SEED.name");
@@ -38,7 +33,7 @@ export class InstantReviveHeldItem extends ConsumableHeldItem {
    * stat stage back to 0.
    * @returns `true` if any stat stages were reset, false otherwise
    */
-  apply({ pokemon }: InstantReviveParams): boolean {
+  apply(_effect: typeof HeldItemEffect.INSTANT_REVIVE, { pokemon }: InstantReviveParams): boolean {
     // Restore the Pokemon to half HP
     globalScene.phaseManager.unshiftPhase(
       new PokemonHealPhase(
@@ -64,4 +59,6 @@ export class InstantReviveHeldItem extends ConsumableHeldItem {
     }
     return true;
   }
+
+  //TODO: is this missing the consume call?
 }
