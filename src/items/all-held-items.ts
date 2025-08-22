@@ -1,7 +1,8 @@
 import { allHeldItems } from "#data/data-lists";
 import { BerryType } from "#enums/berry-type";
+import { FormChangeItemId } from "#enums/form-change-item-id";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { FormChangeItem, HeldItemId } from "#enums/held-item-id";
+import { HeldItemId } from "#enums/held-item-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { type PermanentStat, Stat } from "#enums/stat";
@@ -152,7 +153,7 @@ export function initHeldItems() {
     10,
   );
 
-  for (const value of Object.values(FormChangeItem) as HeldItemId[]) {
+  for (const value of Object.values(FormChangeItemId) as HeldItemId[]) {
     allHeldItems[value] = new FormChangeHeldItem(value, 1).unstealable().untransferable().unsuppressable();
   }
 }

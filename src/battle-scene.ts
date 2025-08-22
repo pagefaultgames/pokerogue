@@ -45,9 +45,10 @@ import { BiomeId } from "#enums/biome-id";
 import { EaseType } from "#enums/ease-type";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
+import { FormChangeItemId } from "#enums/form-change-item-id";
 import { GameModes } from "#enums/game-modes";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { FormChangeItem, HeldItemId } from "#enums/held-item-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoneyFormat } from "#enums/money-format";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -2931,9 +2932,9 @@ export class BattleScene extends SceneBase {
         const formChangeItems = pokemon.heldItemManager.getFormChangeItems();
         const activeFormChangeItems = formChangeItems.filter(f => pokemon.heldItemManager.hasActiveFormChangeItem(f));
 
-        matchingFormChange = activeFormChangeItems.includes(FormChangeItem.N_LUNARIZER)
+        matchingFormChange = activeFormChangeItems.includes(FormChangeItemId.N_LUNARIZER)
           ? matchingFormChangeOpts[0]
-          : activeFormChangeItems.includes(FormChangeItem.N_SOLARIZER)
+          : activeFormChangeItems.includes(FormChangeItemId.N_SOLARIZER)
             ? matchingFormChangeOpts[1]
             : null;
       } else {

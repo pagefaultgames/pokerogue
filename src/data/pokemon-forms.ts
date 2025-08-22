@@ -17,7 +17,7 @@ import {
   SpeciesFormChangeWeatherTrigger,
 } from "#data/form-change-triggers";
 import { AbilityId } from "#enums/ability-id";
-import { FormChangeItem } from "#enums/held-item-id";
+import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
@@ -122,129 +122,129 @@ interface PokemonFormChanges {
 // biome-ignore format: manually formatted
 export const pokemonFormChanges: PokemonFormChanges = {
   [SpeciesId.VENUSAUR]: [
-    new SpeciesFormChange(SpeciesId.VENUSAUR, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.VENUSAURITE)),
-    new SpeciesFormChange(SpeciesId.VENUSAUR, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.VENUSAUR, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.VENUSAURITE)),
+    new SpeciesFormChange(SpeciesId.VENUSAUR, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.BLASTOISE]: [
-    new SpeciesFormChange(SpeciesId.BLASTOISE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.BLASTOISINITE)),
-    new SpeciesFormChange(SpeciesId.BLASTOISE, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.BLASTOISE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.BLASTOISINITE)),
+    new SpeciesFormChange(SpeciesId.BLASTOISE, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.CHARIZARD]: [
-    new SpeciesFormChange(SpeciesId.CHARIZARD, "", SpeciesFormKey.MEGA_X, new SpeciesFormChangeItemTrigger(FormChangeItem.CHARIZARDITE_X)),
-    new SpeciesFormChange(SpeciesId.CHARIZARD, "", SpeciesFormKey.MEGA_Y, new SpeciesFormChangeItemTrigger(FormChangeItem.CHARIZARDITE_Y)),
-    new SpeciesFormChange(SpeciesId.CHARIZARD, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.CHARIZARD, "", SpeciesFormKey.MEGA_X, new SpeciesFormChangeItemTrigger(FormChangeItemId.CHARIZARDITE_X)),
+    new SpeciesFormChange(SpeciesId.CHARIZARD, "", SpeciesFormKey.MEGA_Y, new SpeciesFormChangeItemTrigger(FormChangeItemId.CHARIZARDITE_Y)),
+    new SpeciesFormChange(SpeciesId.CHARIZARD, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.BUTTERFREE]: [
-    new SpeciesFormChange(SpeciesId.BUTTERFREE, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.BUTTERFREE, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.BEEDRILL]: [
-    new SpeciesFormChange(SpeciesId.BEEDRILL, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.BEEDRILLITE))
+    new SpeciesFormChange(SpeciesId.BEEDRILL, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.BEEDRILLITE))
   ],
   [SpeciesId.PIDGEOT]: [
-    new SpeciesFormChange(SpeciesId.PIDGEOT, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.PIDGEOTITE))
+    new SpeciesFormChange(SpeciesId.PIDGEOT, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.PIDGEOTITE))
   ],
   [SpeciesId.PIKACHU]: [
-    new SpeciesFormChange(SpeciesId.PIKACHU, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
-    new SpeciesFormChange(SpeciesId.PIKACHU, "partner", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.PIKACHU, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS)),
+    new SpeciesFormChange(SpeciesId.PIKACHU, "partner", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.MEOWTH]: [
-    new SpeciesFormChange(SpeciesId.MEOWTH, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.MEOWTH, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.ALAKAZAM]: [
-    new SpeciesFormChange(SpeciesId.ALAKAZAM, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.ALAKAZITE))
+    new SpeciesFormChange(SpeciesId.ALAKAZAM, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.ALAKAZITE))
   ],
   [SpeciesId.MACHAMP]: [
-    new SpeciesFormChange(SpeciesId.MACHAMP, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.MACHAMP, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.SLOWBRO]: [
-    new SpeciesFormChange(SpeciesId.SLOWBRO, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.SLOWBRONITE))
+    new SpeciesFormChange(SpeciesId.SLOWBRO, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.SLOWBRONITE))
   ],
   [SpeciesId.GENGAR]: [
-    new SpeciesFormChange(SpeciesId.GENGAR, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.GENGARITE)),
-    new SpeciesFormChange(SpeciesId.GENGAR, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.GENGAR, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.GENGARITE)),
+    new SpeciesFormChange(SpeciesId.GENGAR, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.KINGLER]: [
-    new SpeciesFormChange(SpeciesId.KINGLER, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.KINGLER, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.KANGASKHAN]: [
-    new SpeciesFormChange(SpeciesId.KANGASKHAN, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.KANGASKHANITE))
+    new SpeciesFormChange(SpeciesId.KANGASKHAN, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.KANGASKHANITE))
   ],
   [SpeciesId.PINSIR]: [
-    new SpeciesFormChange(SpeciesId.PINSIR, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.PINSIRITE))
+    new SpeciesFormChange(SpeciesId.PINSIR, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.PINSIRITE))
   ],
   [SpeciesId.GYARADOS]: [
-    new SpeciesFormChange(SpeciesId.GYARADOS, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.GYARADOSITE))
+    new SpeciesFormChange(SpeciesId.GYARADOS, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.GYARADOSITE))
   ],
   [SpeciesId.LAPRAS]: [
-    new SpeciesFormChange(SpeciesId.LAPRAS, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.LAPRAS, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.EEVEE]: [
-    new SpeciesFormChange(SpeciesId.EEVEE, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
-    new SpeciesFormChange(SpeciesId.EEVEE, "partner", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.EEVEE, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS)),
+    new SpeciesFormChange(SpeciesId.EEVEE, "partner", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.SNORLAX]: [
-    new SpeciesFormChange(SpeciesId.SNORLAX, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.SNORLAX, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.AERODACTYL]: [
-    new SpeciesFormChange(SpeciesId.AERODACTYL, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.AERODACTYLITE))
+    new SpeciesFormChange(SpeciesId.AERODACTYL, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.AERODACTYLITE))
   ],
   [SpeciesId.MEWTWO]: [
-    new SpeciesFormChange(SpeciesId.MEWTWO, "", SpeciesFormKey.MEGA_X, new SpeciesFormChangeItemTrigger(FormChangeItem.MEWTWONITE_X)),
-    new SpeciesFormChange(SpeciesId.MEWTWO, "", SpeciesFormKey.MEGA_Y, new SpeciesFormChangeItemTrigger(FormChangeItem.MEWTWONITE_Y))
+    new SpeciesFormChange(SpeciesId.MEWTWO, "", SpeciesFormKey.MEGA_X, new SpeciesFormChangeItemTrigger(FormChangeItemId.MEWTWONITE_X)),
+    new SpeciesFormChange(SpeciesId.MEWTWO, "", SpeciesFormKey.MEGA_Y, new SpeciesFormChangeItemTrigger(FormChangeItemId.MEWTWONITE_Y))
   ],
   [SpeciesId.AMPHAROS]: [
-    new SpeciesFormChange(SpeciesId.AMPHAROS, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.AMPHAROSITE))
+    new SpeciesFormChange(SpeciesId.AMPHAROS, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.AMPHAROSITE))
   ],
   [SpeciesId.STEELIX]: [
-    new SpeciesFormChange(SpeciesId.STEELIX, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.STEELIXITE))
+    new SpeciesFormChange(SpeciesId.STEELIX, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.STEELIXITE))
   ],
   [SpeciesId.SCIZOR]: [
-    new SpeciesFormChange(SpeciesId.SCIZOR, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.SCIZORITE))
+    new SpeciesFormChange(SpeciesId.SCIZOR, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.SCIZORITE))
   ],
   [SpeciesId.HERACROSS]: [
-    new SpeciesFormChange(SpeciesId.HERACROSS, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.HERACRONITE))
+    new SpeciesFormChange(SpeciesId.HERACROSS, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.HERACRONITE))
   ],
   [SpeciesId.HOUNDOOM]: [
-    new SpeciesFormChange(SpeciesId.HOUNDOOM, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.HOUNDOOMINITE))
+    new SpeciesFormChange(SpeciesId.HOUNDOOM, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.HOUNDOOMINITE))
   ],
   [SpeciesId.TYRANITAR]: [
-    new SpeciesFormChange(SpeciesId.TYRANITAR, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.TYRANITARITE))
+    new SpeciesFormChange(SpeciesId.TYRANITAR, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.TYRANITARITE))
   ],
   [SpeciesId.SCEPTILE]: [
-    new SpeciesFormChange(SpeciesId.SCEPTILE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.SCEPTILITE))
+    new SpeciesFormChange(SpeciesId.SCEPTILE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.SCEPTILITE))
   ],
   [SpeciesId.BLAZIKEN]: [
-    new SpeciesFormChange(SpeciesId.BLAZIKEN, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.BLAZIKENITE))
+    new SpeciesFormChange(SpeciesId.BLAZIKEN, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.BLAZIKENITE))
   ],
   [SpeciesId.SWAMPERT]: [
-    new SpeciesFormChange(SpeciesId.SWAMPERT, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.SWAMPERTITE))
+    new SpeciesFormChange(SpeciesId.SWAMPERT, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.SWAMPERTITE))
   ],
   [SpeciesId.GARDEVOIR]: [
-    new SpeciesFormChange(SpeciesId.GARDEVOIR, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.GARDEVOIRITE))
+    new SpeciesFormChange(SpeciesId.GARDEVOIR, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.GARDEVOIRITE))
   ],
   [SpeciesId.SABLEYE]: [
-    new SpeciesFormChange(SpeciesId.SABLEYE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.SABLENITE))
+    new SpeciesFormChange(SpeciesId.SABLEYE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.SABLENITE))
   ],
   [SpeciesId.MAWILE]: [
-    new SpeciesFormChange(SpeciesId.MAWILE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.MAWILITE))
+    new SpeciesFormChange(SpeciesId.MAWILE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAWILITE))
   ],
   [SpeciesId.AGGRON]: [
-    new SpeciesFormChange(SpeciesId.AGGRON, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.AGGRONITE))
+    new SpeciesFormChange(SpeciesId.AGGRON, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.AGGRONITE))
   ],
   [SpeciesId.MEDICHAM]: [
-    new SpeciesFormChange(SpeciesId.MEDICHAM, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.MEDICHAMITE))
+    new SpeciesFormChange(SpeciesId.MEDICHAM, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.MEDICHAMITE))
   ],
   [SpeciesId.MANECTRIC]: [
-    new SpeciesFormChange(SpeciesId.MANECTRIC, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.MANECTITE))
+    new SpeciesFormChange(SpeciesId.MANECTRIC, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.MANECTITE))
   ],
   [SpeciesId.SHARPEDO]: [
-    new SpeciesFormChange(SpeciesId.SHARPEDO, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.SHARPEDONITE))
+    new SpeciesFormChange(SpeciesId.SHARPEDO, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.SHARPEDONITE))
   ],
   [SpeciesId.CAMERUPT]: [
-    new SpeciesFormChange(SpeciesId.CAMERUPT, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.CAMERUPTITE))
+    new SpeciesFormChange(SpeciesId.CAMERUPT, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.CAMERUPTITE))
   ],
   [SpeciesId.ALTARIA]: [
-    new SpeciesFormChange(SpeciesId.ALTARIA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.ALTARIANITE))
+    new SpeciesFormChange(SpeciesId.ALTARIA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.ALTARIANITE))
   ],
   [SpeciesId.CASTFORM]: [
     new SpeciesFormChange(SpeciesId.CASTFORM, "", "sunny", new SpeciesFormChangeWeatherTrigger(AbilityId.FORECAST, [ WeatherType.SUNNY, WeatherType.HARSH_SUN ]), true),
@@ -264,39 +264,39 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(SpeciesId.CASTFORM, "snowy", "", new SpeciesFormChangeActiveTrigger(), true)
   ],
   [SpeciesId.BANETTE]: [
-    new SpeciesFormChange(SpeciesId.BANETTE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.BANETTITE))
+    new SpeciesFormChange(SpeciesId.BANETTE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.BANETTITE))
   ],
   [SpeciesId.ABSOL]: [
-    new SpeciesFormChange(SpeciesId.ABSOL, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.ABSOLITE))
+    new SpeciesFormChange(SpeciesId.ABSOL, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.ABSOLITE))
   ],
   [SpeciesId.GLALIE]: [
-    new SpeciesFormChange(SpeciesId.GLALIE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.GLALITITE))
+    new SpeciesFormChange(SpeciesId.GLALIE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.GLALITITE))
   ],
   [SpeciesId.SALAMENCE]: [
-    new SpeciesFormChange(SpeciesId.SALAMENCE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.SALAMENCITE))
+    new SpeciesFormChange(SpeciesId.SALAMENCE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.SALAMENCITE))
   ],
   [SpeciesId.METAGROSS]: [
-    new SpeciesFormChange(SpeciesId.METAGROSS, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.METAGROSSITE))
+    new SpeciesFormChange(SpeciesId.METAGROSS, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.METAGROSSITE))
   ],
   [SpeciesId.LATIAS]: [
-    new SpeciesFormChange(SpeciesId.LATIAS, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.LATIASITE))
+    new SpeciesFormChange(SpeciesId.LATIAS, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.LATIASITE))
   ],
   [SpeciesId.LATIOS]: [
-    new SpeciesFormChange(SpeciesId.LATIOS, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.LATIOSITE))
+    new SpeciesFormChange(SpeciesId.LATIOS, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.LATIOSITE))
   ],
   [SpeciesId.KYOGRE]: [
-    new SpeciesFormChange(SpeciesId.KYOGRE, "", SpeciesFormKey.PRIMAL, new SpeciesFormChangeItemTrigger(FormChangeItem.BLUE_ORB))
+    new SpeciesFormChange(SpeciesId.KYOGRE, "", SpeciesFormKey.PRIMAL, new SpeciesFormChangeItemTrigger(FormChangeItemId.BLUE_ORB))
   ],
   [SpeciesId.GROUDON]: [
-    new SpeciesFormChange(SpeciesId.GROUDON, "", SpeciesFormKey.PRIMAL, new SpeciesFormChangeItemTrigger(FormChangeItem.RED_ORB))
+    new SpeciesFormChange(SpeciesId.GROUDON, "", SpeciesFormKey.PRIMAL, new SpeciesFormChangeItemTrigger(FormChangeItemId.RED_ORB))
   ],
   [SpeciesId.RAYQUAZA]: [
-    new SpeciesFormChange(SpeciesId.RAYQUAZA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.RAYQUAZITE))
+    new SpeciesFormChange(SpeciesId.RAYQUAZA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.RAYQUAZITE))
   ],
   [SpeciesId.DEOXYS]: [
-    new SpeciesFormChange(SpeciesId.DEOXYS, "normal", "attack", new SpeciesFormChangeItemTrigger(FormChangeItem.SHARP_METEORITE)),
-    new SpeciesFormChange(SpeciesId.DEOXYS, "normal", "defense", new SpeciesFormChangeItemTrigger(FormChangeItem.HARD_METEORITE)),
-    new SpeciesFormChange(SpeciesId.DEOXYS, "normal", "speed", new SpeciesFormChangeItemTrigger(FormChangeItem.SMOOTH_METEORITE))
+    new SpeciesFormChange(SpeciesId.DEOXYS, "normal", "attack", new SpeciesFormChangeItemTrigger(FormChangeItemId.SHARP_METEORITE)),
+    new SpeciesFormChange(SpeciesId.DEOXYS, "normal", "defense", new SpeciesFormChangeItemTrigger(FormChangeItemId.HARD_METEORITE)),
+    new SpeciesFormChange(SpeciesId.DEOXYS, "normal", "speed", new SpeciesFormChangeItemTrigger(FormChangeItemId.SMOOTH_METEORITE))
   ],
   [SpeciesId.CHERRIM]: [
     new SpeciesFormChange(SpeciesId.CHERRIM, "overcast", "sunshine", new SpeciesFormChangeWeatherTrigger(AbilityId.FLOWER_GIFT, [ WeatherType.SUNNY, WeatherType.HARSH_SUN ]), true),
@@ -304,73 +304,73 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(SpeciesId.CHERRIM, "sunshine", "overcast", new SpeciesFormChangeActiveTrigger(), true)
   ],
   [SpeciesId.LOPUNNY]: [
-    new SpeciesFormChange(SpeciesId.LOPUNNY, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.LOPUNNITE))
+    new SpeciesFormChange(SpeciesId.LOPUNNY, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.LOPUNNITE))
   ],
   [SpeciesId.GARCHOMP]: [
-    new SpeciesFormChange(SpeciesId.GARCHOMP, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.GARCHOMPITE))
+    new SpeciesFormChange(SpeciesId.GARCHOMP, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.GARCHOMPITE))
   ],
   [SpeciesId.LUCARIO]: [
-    new SpeciesFormChange(SpeciesId.LUCARIO, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.LUCARIONITE))
+    new SpeciesFormChange(SpeciesId.LUCARIO, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.LUCARIONITE))
   ],
   [SpeciesId.ABOMASNOW]: [
-    new SpeciesFormChange(SpeciesId.ABOMASNOW, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.ABOMASITE))
+    new SpeciesFormChange(SpeciesId.ABOMASNOW, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.ABOMASITE))
   ],
   [SpeciesId.GALLADE]: [
-    new SpeciesFormChange(SpeciesId.GALLADE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.GALLADITE))
+    new SpeciesFormChange(SpeciesId.GALLADE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.GALLADITE))
   ],
   [SpeciesId.AUDINO]: [
-    new SpeciesFormChange(SpeciesId.AUDINO, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.AUDINITE))
+    new SpeciesFormChange(SpeciesId.AUDINO, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.AUDINITE))
   ],
   [SpeciesId.DIALGA]: [
-    new SpeciesFormChange(SpeciesId.DIALGA, "", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.ADAMANT_CRYSTAL))
+    new SpeciesFormChange(SpeciesId.DIALGA, "", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItemId.ADAMANT_CRYSTAL))
   ],
   [SpeciesId.PALKIA]: [
-    new SpeciesFormChange(SpeciesId.PALKIA, "", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.LUSTROUS_GLOBE))
+    new SpeciesFormChange(SpeciesId.PALKIA, "", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItemId.LUSTROUS_GLOBE))
   ],
   [SpeciesId.GIRATINA]: [
-    new SpeciesFormChange(SpeciesId.GIRATINA, "altered", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItem.GRISEOUS_CORE))
+    new SpeciesFormChange(SpeciesId.GIRATINA, "altered", SpeciesFormKey.ORIGIN, new SpeciesFormChangeItemTrigger(FormChangeItemId.GRISEOUS_CORE))
   ],
   [SpeciesId.SHAYMIN]: [
-    new SpeciesFormChange(SpeciesId.SHAYMIN, "land", "sky", new SpeciesFormChangeItemTrigger(FormChangeItem.GRACIDEA)),
+    new SpeciesFormChange(SpeciesId.SHAYMIN, "land", "sky", new SpeciesFormChangeItemTrigger(FormChangeItemId.GRACIDEA)),
   ],
   [SpeciesId.ARCEUS]: [
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "fighting", new SpeciesFormChangeItemTrigger(FormChangeItem.FIST_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "flying", new SpeciesFormChangeItemTrigger(FormChangeItem.SKY_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "poison", new SpeciesFormChangeItemTrigger(FormChangeItem.TOXIC_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "ground", new SpeciesFormChangeItemTrigger(FormChangeItem.EARTH_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "rock", new SpeciesFormChangeItemTrigger(FormChangeItem.STONE_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "bug", new SpeciesFormChangeItemTrigger(FormChangeItem.INSECT_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "ghost", new SpeciesFormChangeItemTrigger(FormChangeItem.SPOOKY_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "steel", new SpeciesFormChangeItemTrigger(FormChangeItem.IRON_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "fire", new SpeciesFormChangeItemTrigger(FormChangeItem.FLAME_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "water", new SpeciesFormChangeItemTrigger(FormChangeItem.SPLASH_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "grass", new SpeciesFormChangeItemTrigger(FormChangeItem.MEADOW_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "electric", new SpeciesFormChangeItemTrigger(FormChangeItem.ZAP_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "psychic", new SpeciesFormChangeItemTrigger(FormChangeItem.MIND_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "ice", new SpeciesFormChangeItemTrigger(FormChangeItem.ICICLE_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "dragon", new SpeciesFormChangeItemTrigger(FormChangeItem.DRACO_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "dark", new SpeciesFormChangeItemTrigger(FormChangeItem.DREAD_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
-    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "fairy", new SpeciesFormChangeItemTrigger(FormChangeItem.PIXIE_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "fighting", new SpeciesFormChangeItemTrigger(FormChangeItemId.FIST_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "flying", new SpeciesFormChangeItemTrigger(FormChangeItemId.SKY_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "poison", new SpeciesFormChangeItemTrigger(FormChangeItemId.TOXIC_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "ground", new SpeciesFormChangeItemTrigger(FormChangeItemId.EARTH_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "rock", new SpeciesFormChangeItemTrigger(FormChangeItemId.STONE_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "bug", new SpeciesFormChangeItemTrigger(FormChangeItemId.INSECT_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "ghost", new SpeciesFormChangeItemTrigger(FormChangeItemId.SPOOKY_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "steel", new SpeciesFormChangeItemTrigger(FormChangeItemId.IRON_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "fire", new SpeciesFormChangeItemTrigger(FormChangeItemId.FLAME_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "water", new SpeciesFormChangeItemTrigger(FormChangeItemId.SPLASH_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "grass", new SpeciesFormChangeItemTrigger(FormChangeItemId.MEADOW_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "electric", new SpeciesFormChangeItemTrigger(FormChangeItemId.ZAP_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "psychic", new SpeciesFormChangeItemTrigger(FormChangeItemId.MIND_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "ice", new SpeciesFormChangeItemTrigger(FormChangeItemId.ICICLE_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "dragon", new SpeciesFormChangeItemTrigger(FormChangeItemId.DRACO_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "dark", new SpeciesFormChangeItemTrigger(FormChangeItemId.DREAD_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
+    new SpeciesFormChange(SpeciesId.ARCEUS, "normal", "fairy", new SpeciesFormChangeItemTrigger(FormChangeItemId.PIXIE_PLATE), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.MULTITYPE))),
   ],
   [SpeciesId.DARMANITAN]: [
     new SpeciesFormChange(SpeciesId.DARMANITAN, "", "zen", new SpeciesFormChangeAbilityTrigger(), true),
     new SpeciesFormChange(SpeciesId.DARMANITAN, "zen", "", new SpeciesFormChangeAbilityTrigger(), true)
   ],
   [SpeciesId.GARBODOR]: [
-    new SpeciesFormChange(SpeciesId.GARBODOR, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.GARBODOR, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.TORNADUS]: [
-    new SpeciesFormChange(SpeciesId.TORNADUS, SpeciesFormKey.INCARNATE, SpeciesFormKey.THERIAN, new SpeciesFormChangeItemTrigger(FormChangeItem.REVEAL_GLASS))
+    new SpeciesFormChange(SpeciesId.TORNADUS, SpeciesFormKey.INCARNATE, SpeciesFormKey.THERIAN, new SpeciesFormChangeItemTrigger(FormChangeItemId.REVEAL_GLASS))
   ],
   [SpeciesId.THUNDURUS]: [
-    new SpeciesFormChange(SpeciesId.THUNDURUS, SpeciesFormKey.INCARNATE, SpeciesFormKey.THERIAN, new SpeciesFormChangeItemTrigger(FormChangeItem.REVEAL_GLASS))
+    new SpeciesFormChange(SpeciesId.THUNDURUS, SpeciesFormKey.INCARNATE, SpeciesFormKey.THERIAN, new SpeciesFormChangeItemTrigger(FormChangeItemId.REVEAL_GLASS))
   ],
   [SpeciesId.LANDORUS]: [
-    new SpeciesFormChange(SpeciesId.LANDORUS, SpeciesFormKey.INCARNATE, SpeciesFormKey.THERIAN, new SpeciesFormChangeItemTrigger(FormChangeItem.REVEAL_GLASS))
+    new SpeciesFormChange(SpeciesId.LANDORUS, SpeciesFormKey.INCARNATE, SpeciesFormKey.THERIAN, new SpeciesFormChangeItemTrigger(FormChangeItemId.REVEAL_GLASS))
   ],
   [SpeciesId.KYUREM]: [
-    new SpeciesFormChange(SpeciesId.KYUREM, "", "black", new SpeciesFormChangeItemTrigger(FormChangeItem.DARK_STONE), false, getSpeciesDependentFormChangeCondition(SpeciesId.ZEKROM)),
-    new SpeciesFormChange(SpeciesId.KYUREM, "", "white", new SpeciesFormChangeItemTrigger(FormChangeItem.LIGHT_STONE), false, getSpeciesDependentFormChangeCondition(SpeciesId.RESHIRAM))
+    new SpeciesFormChange(SpeciesId.KYUREM, "", "black", new SpeciesFormChangeItemTrigger(FormChangeItemId.DARK_STONE), false, getSpeciesDependentFormChangeCondition(SpeciesId.ZEKROM)),
+    new SpeciesFormChange(SpeciesId.KYUREM, "", "white", new SpeciesFormChangeItemTrigger(FormChangeItemId.LIGHT_STONE), false, getSpeciesDependentFormChangeCondition(SpeciesId.RESHIRAM))
   ],
   [SpeciesId.KELDEO]: [
     new SpeciesFormChange(SpeciesId.KELDEO, "ordinary", "resolute", new SpeciesFormChangeMoveLearnedTrigger(MoveId.SECRET_SWORD), false, new SpeciesFormChangeCondition(() => globalScene.gameMode.isDaily !== true)),
@@ -381,10 +381,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(SpeciesId.MELOETTA, "pirouette", "aria", new MeloettaFormChangePostMoveTrigger(MoveId.RELIC_SONG), true)
   ],
   [SpeciesId.GENESECT]: [
-    new SpeciesFormChange(SpeciesId.GENESECT, "", "shock", new SpeciesFormChangeItemTrigger(FormChangeItem.SHOCK_DRIVE)),
-    new SpeciesFormChange(SpeciesId.GENESECT, "", "burn", new SpeciesFormChangeItemTrigger(FormChangeItem.BURN_DRIVE)),
-    new SpeciesFormChange(SpeciesId.GENESECT, "", "chill", new SpeciesFormChangeItemTrigger(FormChangeItem.CHILL_DRIVE)),
-    new SpeciesFormChange(SpeciesId.GENESECT, "", "douse", new SpeciesFormChangeItemTrigger(FormChangeItem.DOUSE_DRIVE))
+    new SpeciesFormChange(SpeciesId.GENESECT, "", "shock", new SpeciesFormChangeItemTrigger(FormChangeItemId.SHOCK_DRIVE)),
+    new SpeciesFormChange(SpeciesId.GENESECT, "", "burn", new SpeciesFormChangeItemTrigger(FormChangeItemId.BURN_DRIVE)),
+    new SpeciesFormChange(SpeciesId.GENESECT, "", "chill", new SpeciesFormChangeItemTrigger(FormChangeItemId.CHILL_DRIVE)),
+    new SpeciesFormChange(SpeciesId.GENESECT, "", "douse", new SpeciesFormChangeItemTrigger(FormChangeItemId.DOUSE_DRIVE))
   ],
   [SpeciesId.GRENINJA]: [
     new SpeciesFormChange(SpeciesId.GRENINJA, "battle-bond", "ash", new SpeciesFormChangeAbilityTrigger(), true),
@@ -410,33 +410,33 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(SpeciesId.ZYGARDE, "10-complete", "10-pc", new SpeciesFormChangeAbilityTrigger(), true)
   ],
   [SpeciesId.DIANCIE]: [
-    new SpeciesFormChange(SpeciesId.DIANCIE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.DIANCITE))
+    new SpeciesFormChange(SpeciesId.DIANCIE, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItemId.DIANCITE))
   ],
   [SpeciesId.HOOPA]: [
-    new SpeciesFormChange(SpeciesId.HOOPA, "", "unbound", new SpeciesFormChangeItemTrigger(FormChangeItem.PRISON_BOTTLE))
+    new SpeciesFormChange(SpeciesId.HOOPA, "", "unbound", new SpeciesFormChangeItemTrigger(FormChangeItemId.PRISON_BOTTLE))
   ],
   [SpeciesId.WISHIWASHI]: [
     new SpeciesFormChange(SpeciesId.WISHIWASHI, "", "school", new SpeciesFormChangeAbilityTrigger(), true),
     new SpeciesFormChange(SpeciesId.WISHIWASHI, "school", "", new SpeciesFormChangeAbilityTrigger(), true)
   ],
   [SpeciesId.SILVALLY]: [
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "fighting", new SpeciesFormChangeItemTrigger(FormChangeItem.FIGHTING_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "flying", new SpeciesFormChangeItemTrigger(FormChangeItem.FLYING_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "poison", new SpeciesFormChangeItemTrigger(FormChangeItem.POISON_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "ground", new SpeciesFormChangeItemTrigger(FormChangeItem.GROUND_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "rock", new SpeciesFormChangeItemTrigger(FormChangeItem.ROCK_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "bug", new SpeciesFormChangeItemTrigger(FormChangeItem.BUG_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "ghost", new SpeciesFormChangeItemTrigger(FormChangeItem.GHOST_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "steel", new SpeciesFormChangeItemTrigger(FormChangeItem.STEEL_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "fire", new SpeciesFormChangeItemTrigger(FormChangeItem.FIRE_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "water", new SpeciesFormChangeItemTrigger(FormChangeItem.WATER_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "grass", new SpeciesFormChangeItemTrigger(FormChangeItem.GRASS_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "electric", new SpeciesFormChangeItemTrigger(FormChangeItem.ELECTRIC_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "psychic", new SpeciesFormChangeItemTrigger(FormChangeItem.PSYCHIC_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "ice", new SpeciesFormChangeItemTrigger(FormChangeItem.ICE_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "dragon", new SpeciesFormChangeItemTrigger(FormChangeItem.DRAGON_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "dark", new SpeciesFormChangeItemTrigger(FormChangeItem.DARK_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
-    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "fairy", new SpeciesFormChangeItemTrigger(FormChangeItem.FAIRY_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM)))
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "fighting", new SpeciesFormChangeItemTrigger(FormChangeItemId.FIGHTING_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "flying", new SpeciesFormChangeItemTrigger(FormChangeItemId.FLYING_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "poison", new SpeciesFormChangeItemTrigger(FormChangeItemId.POISON_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "ground", new SpeciesFormChangeItemTrigger(FormChangeItemId.GROUND_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "rock", new SpeciesFormChangeItemTrigger(FormChangeItemId.ROCK_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "bug", new SpeciesFormChangeItemTrigger(FormChangeItemId.BUG_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "ghost", new SpeciesFormChangeItemTrigger(FormChangeItemId.GHOST_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "steel", new SpeciesFormChangeItemTrigger(FormChangeItemId.STEEL_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "fire", new SpeciesFormChangeItemTrigger(FormChangeItemId.FIRE_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "water", new SpeciesFormChangeItemTrigger(FormChangeItemId.WATER_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "grass", new SpeciesFormChangeItemTrigger(FormChangeItemId.GRASS_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "electric", new SpeciesFormChangeItemTrigger(FormChangeItemId.ELECTRIC_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "psychic", new SpeciesFormChangeItemTrigger(FormChangeItemId.PSYCHIC_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "ice", new SpeciesFormChangeItemTrigger(FormChangeItemId.ICE_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "dragon", new SpeciesFormChangeItemTrigger(FormChangeItemId.DRAGON_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "dark", new SpeciesFormChangeItemTrigger(FormChangeItemId.DARK_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM))),
+    new SpeciesFormChange(SpeciesId.SILVALLY, "normal", "fairy", new SpeciesFormChangeItemTrigger(FormChangeItemId.FAIRY_MEMORY), true, new SpeciesFormChangeCondition((p) => p.hasAbility(AbilityId.RKS_SYSTEM)))
   ],
   [SpeciesId.MINIOR]: [
     new SpeciesFormChange(SpeciesId.MINIOR, "red-meteor", "red", new SpeciesFormChangeAbilityTrigger(), true),
@@ -459,43 +459,43 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(SpeciesId.MIMIKYU, "busted", "disguised", new SpeciesFormChangeAbilityTrigger(), true)
   ],
   [SpeciesId.NECROZMA]: [
-    new SpeciesFormChange(SpeciesId.NECROZMA, "", "dawn-wings", new SpeciesFormChangeItemTrigger(FormChangeItem.N_LUNARIZER), false, getSpeciesDependentFormChangeCondition(SpeciesId.LUNALA)),
-    new SpeciesFormChange(SpeciesId.NECROZMA, "", "dusk-mane", new SpeciesFormChangeItemTrigger(FormChangeItem.N_SOLARIZER), false, getSpeciesDependentFormChangeCondition(SpeciesId.SOLGALEO)),
-    new SpeciesFormChange(SpeciesId.NECROZMA, "dawn-wings", "ultra", new SpeciesFormChangeItemTrigger(FormChangeItem.ULTRANECROZIUM_Z)),
-    new SpeciesFormChange(SpeciesId.NECROZMA, "dusk-mane", "ultra", new SpeciesFormChangeItemTrigger(FormChangeItem.ULTRANECROZIUM_Z))
+    new SpeciesFormChange(SpeciesId.NECROZMA, "", "dawn-wings", new SpeciesFormChangeItemTrigger(FormChangeItemId.N_LUNARIZER), false, getSpeciesDependentFormChangeCondition(SpeciesId.LUNALA)),
+    new SpeciesFormChange(SpeciesId.NECROZMA, "", "dusk-mane", new SpeciesFormChangeItemTrigger(FormChangeItemId.N_SOLARIZER), false, getSpeciesDependentFormChangeCondition(SpeciesId.SOLGALEO)),
+    new SpeciesFormChange(SpeciesId.NECROZMA, "dawn-wings", "ultra", new SpeciesFormChangeItemTrigger(FormChangeItemId.ULTRANECROZIUM_Z)),
+    new SpeciesFormChange(SpeciesId.NECROZMA, "dusk-mane", "ultra", new SpeciesFormChangeItemTrigger(FormChangeItemId.ULTRANECROZIUM_Z))
   ],
   [SpeciesId.MELMETAL]: [
-    new SpeciesFormChange(SpeciesId.MELMETAL, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.MELMETAL, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.RILLABOOM]: [
-    new SpeciesFormChange(SpeciesId.RILLABOOM, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.RILLABOOM, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.CINDERACE]: [
-    new SpeciesFormChange(SpeciesId.CINDERACE, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.CINDERACE, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.INTELEON]: [
-    new SpeciesFormChange(SpeciesId.INTELEON, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.INTELEON, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.CORVIKNIGHT]: [
-    new SpeciesFormChange(SpeciesId.CORVIKNIGHT, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.CORVIKNIGHT, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.ORBEETLE]: [
-    new SpeciesFormChange(SpeciesId.ORBEETLE, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.ORBEETLE, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.DREDNAW]: [
-    new SpeciesFormChange(SpeciesId.DREDNAW, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.DREDNAW, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.COALOSSAL]: [
-    new SpeciesFormChange(SpeciesId.COALOSSAL, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.COALOSSAL, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.FLAPPLE]: [
-    new SpeciesFormChange(SpeciesId.FLAPPLE, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.FLAPPLE, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.APPLETUN]: [
-    new SpeciesFormChange(SpeciesId.APPLETUN, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.APPLETUN, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.SANDACONDA]: [
-    new SpeciesFormChange(SpeciesId.SANDACONDA, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.SANDACONDA, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.CRAMORANT]: [
     new SpeciesFormChange(SpeciesId.CRAMORANT, "", "gulping", new SpeciesFormChangeAbilityTrigger, true, new SpeciesFormChangeCondition(p => p.getHpRatio() >= .5)),
@@ -506,30 +506,30 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(SpeciesId.CRAMORANT, "gorging", "", new SpeciesFormChangeActiveTrigger(false), true)
   ],
   [SpeciesId.TOXTRICITY]: [
-    new SpeciesFormChange(SpeciesId.TOXTRICITY, "amped", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
-    new SpeciesFormChange(SpeciesId.TOXTRICITY, "lowkey", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
-    new SpeciesFormChange(SpeciesId.TOXTRICITY, SpeciesFormKey.GIGANTAMAX, "amped", new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS, false), new SpeciesDefaultFormMatchTrigger("amped"))),
-    new SpeciesFormChange(SpeciesId.TOXTRICITY, SpeciesFormKey.GIGANTAMAX, "lowkey", new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS, false), new SpeciesDefaultFormMatchTrigger("lowkey")))
+    new SpeciesFormChange(SpeciesId.TOXTRICITY, "amped", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS)),
+    new SpeciesFormChange(SpeciesId.TOXTRICITY, "lowkey", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS)),
+    new SpeciesFormChange(SpeciesId.TOXTRICITY, SpeciesFormKey.GIGANTAMAX, "amped", new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS, false), new SpeciesDefaultFormMatchTrigger("amped"))),
+    new SpeciesFormChange(SpeciesId.TOXTRICITY, SpeciesFormKey.GIGANTAMAX, "lowkey", new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS, false), new SpeciesDefaultFormMatchTrigger("lowkey")))
   ],
   [SpeciesId.CENTISKORCH]: [
-    new SpeciesFormChange(SpeciesId.CENTISKORCH, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.CENTISKORCH, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.HATTERENE]: [
-    new SpeciesFormChange(SpeciesId.HATTERENE, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.HATTERENE, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.GRIMMSNARL]: [
-    new SpeciesFormChange(SpeciesId.GRIMMSNARL, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.GRIMMSNARL, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.ALCREMIE]: [
-    new SpeciesFormChange(SpeciesId.ALCREMIE, "vanilla-cream", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
-    new SpeciesFormChange(SpeciesId.ALCREMIE, "ruby-cream", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
-    new SpeciesFormChange(SpeciesId.ALCREMIE, "matcha-cream", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
-    new SpeciesFormChange(SpeciesId.ALCREMIE, "mint-cream", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
-    new SpeciesFormChange(SpeciesId.ALCREMIE, "lemon-cream", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
-    new SpeciesFormChange(SpeciesId.ALCREMIE, "salted-cream", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
-    new SpeciesFormChange(SpeciesId.ALCREMIE, "ruby-swirl", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
-    new SpeciesFormChange(SpeciesId.ALCREMIE, "caramel-swirl", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
-    new SpeciesFormChange(SpeciesId.ALCREMIE, "rainbow-swirl", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.ALCREMIE, "vanilla-cream", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS)),
+    new SpeciesFormChange(SpeciesId.ALCREMIE, "ruby-cream", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS)),
+    new SpeciesFormChange(SpeciesId.ALCREMIE, "matcha-cream", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS)),
+    new SpeciesFormChange(SpeciesId.ALCREMIE, "mint-cream", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS)),
+    new SpeciesFormChange(SpeciesId.ALCREMIE, "lemon-cream", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS)),
+    new SpeciesFormChange(SpeciesId.ALCREMIE, "salted-cream", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS)),
+    new SpeciesFormChange(SpeciesId.ALCREMIE, "ruby-swirl", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS)),
+    new SpeciesFormChange(SpeciesId.ALCREMIE, "caramel-swirl", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS)),
+    new SpeciesFormChange(SpeciesId.ALCREMIE, "rainbow-swirl", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.EISCUE]: [
     new SpeciesFormChange(SpeciesId.EISCUE, "", "no-ice", new SpeciesFormChangeAbilityTrigger(), true),
@@ -540,36 +540,36 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(SpeciesId.MORPEKO, "hangry", "full-belly", new SpeciesFormChangeAbilityTrigger(), true)
   ],
   [SpeciesId.COPPERAJAH]: [
-    new SpeciesFormChange(SpeciesId.COPPERAJAH, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.COPPERAJAH, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.DURALUDON]: [
-    new SpeciesFormChange(SpeciesId.DURALUDON, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.DURALUDON, "", SpeciesFormKey.GIGANTAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.ZACIAN]: [
-    new SpeciesFormChange(SpeciesId.ZACIAN, "hero-of-many-battles", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SWORD))
+    new SpeciesFormChange(SpeciesId.ZACIAN, "hero-of-many-battles", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItemId.RUSTED_SWORD))
   ],
   [SpeciesId.ZAMAZENTA]: [
-    new SpeciesFormChange(SpeciesId.ZAMAZENTA, "hero-of-many-battles", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SHIELD))
+    new SpeciesFormChange(SpeciesId.ZAMAZENTA, "hero-of-many-battles", "crowned", new SpeciesFormChangeItemTrigger(FormChangeItemId.RUSTED_SHIELD))
   ],
   [SpeciesId.ETERNATUS]: [
     new SpeciesFormChange(SpeciesId.ETERNATUS, "", SpeciesFormKey.ETERNAMAX, new SpeciesFormChangeManualTrigger()),
-    new SpeciesFormChange(SpeciesId.ETERNATUS, "", SpeciesFormKey.ETERNAMAX, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.ETERNATUS, "", SpeciesFormKey.ETERNAMAX, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.URSHIFU]: [
-    new SpeciesFormChange(SpeciesId.URSHIFU, "single-strike", SpeciesFormKey.GIGANTAMAX_SINGLE, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS)),
-    new SpeciesFormChange(SpeciesId.URSHIFU, "rapid-strike", SpeciesFormKey.GIGANTAMAX_RAPID, new SpeciesFormChangeItemTrigger(FormChangeItem.MAX_MUSHROOMS))
+    new SpeciesFormChange(SpeciesId.URSHIFU, "single-strike", SpeciesFormKey.GIGANTAMAX_SINGLE, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS)),
+    new SpeciesFormChange(SpeciesId.URSHIFU, "rapid-strike", SpeciesFormKey.GIGANTAMAX_RAPID, new SpeciesFormChangeItemTrigger(FormChangeItemId.MAX_MUSHROOMS))
   ],
   [SpeciesId.CALYREX]: [
-    new SpeciesFormChange(SpeciesId.CALYREX, "", "ice", new SpeciesFormChangeItemTrigger(FormChangeItem.ICY_REINS_OF_UNITY), false, getSpeciesDependentFormChangeCondition(SpeciesId.GLASTRIER)),
-    new SpeciesFormChange(SpeciesId.CALYREX, "", "shadow", new SpeciesFormChangeItemTrigger(FormChangeItem.SHADOW_REINS_OF_UNITY), false, getSpeciesDependentFormChangeCondition(SpeciesId.SPECTRIER))
+    new SpeciesFormChange(SpeciesId.CALYREX, "", "ice", new SpeciesFormChangeItemTrigger(FormChangeItemId.ICY_REINS_OF_UNITY), false, getSpeciesDependentFormChangeCondition(SpeciesId.GLASTRIER)),
+    new SpeciesFormChange(SpeciesId.CALYREX, "", "shadow", new SpeciesFormChangeItemTrigger(FormChangeItemId.SHADOW_REINS_OF_UNITY), false, getSpeciesDependentFormChangeCondition(SpeciesId.SPECTRIER))
   ],
   [SpeciesId.ENAMORUS]: [
-    new SpeciesFormChange(SpeciesId.ENAMORUS, SpeciesFormKey.INCARNATE, SpeciesFormKey.THERIAN, new SpeciesFormChangeItemTrigger(FormChangeItem.REVEAL_GLASS))
+    new SpeciesFormChange(SpeciesId.ENAMORUS, SpeciesFormKey.INCARNATE, SpeciesFormKey.THERIAN, new SpeciesFormChangeItemTrigger(FormChangeItemId.REVEAL_GLASS))
   ],
   [SpeciesId.OGERPON]: [
-    new SpeciesFormChange(SpeciesId.OGERPON, "teal-mask", "wellspring-mask", new SpeciesFormChangeItemTrigger(FormChangeItem.WELLSPRING_MASK)),
-    new SpeciesFormChange(SpeciesId.OGERPON, "teal-mask", "hearthflame-mask", new SpeciesFormChangeItemTrigger(FormChangeItem.HEARTHFLAME_MASK)),
-    new SpeciesFormChange(SpeciesId.OGERPON, "teal-mask", "cornerstone-mask", new SpeciesFormChangeItemTrigger(FormChangeItem.CORNERSTONE_MASK)),
+    new SpeciesFormChange(SpeciesId.OGERPON, "teal-mask", "wellspring-mask", new SpeciesFormChangeItemTrigger(FormChangeItemId.WELLSPRING_MASK)),
+    new SpeciesFormChange(SpeciesId.OGERPON, "teal-mask", "hearthflame-mask", new SpeciesFormChangeItemTrigger(FormChangeItemId.HEARTHFLAME_MASK)),
+    new SpeciesFormChange(SpeciesId.OGERPON, "teal-mask", "cornerstone-mask", new SpeciesFormChangeItemTrigger(FormChangeItemId.CORNERSTONE_MASK)),
     new SpeciesFormChange(SpeciesId.OGERPON, "teal-mask", "teal-mask-tera", new SpeciesFormChangeTeraTrigger(), true),
     new SpeciesFormChange(SpeciesId.OGERPON, "teal-mask-tera", "teal-mask", new SpeciesFormChangeLapseTeraTrigger(), true),
     new SpeciesFormChange(SpeciesId.OGERPON, "wellspring-mask", "wellspring-mask-tera", new SpeciesFormChangeTeraTrigger(), true),

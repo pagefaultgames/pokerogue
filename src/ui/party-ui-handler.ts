@@ -7,7 +7,8 @@ import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { Button } from "#enums/buttons";
 import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
-import { FormChangeItem, HeldItemId } from "#enums/held-item-id";
+import { FormChangeItemId } from "#enums/form-change-item-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
@@ -1702,19 +1703,19 @@ export class PartyUiHandler extends MessageUiHandler {
     let formChangeItems = pokemon.heldItemManager.getFormChangeItems();
     const activeFormChangeItems = formChangeItems.filter(f => pokemon.heldItemManager.hasActiveFormChangeItem(f));
     const hasActiveFormChangeItems = activeFormChangeItems.length;
-    const ultraNecrozmaActive = pokemon.heldItemManager.hasActiveFormChangeItem(FormChangeItem.ULTRANECROZIUM_Z);
+    const ultraNecrozmaActive = pokemon.heldItemManager.hasActiveFormChangeItem(FormChangeItemId.ULTRANECROZIUM_Z);
     if (ultraNecrozmaActive) {
       // ULTRANECROZIUM_Z is active and deactivating it should be the only option
-      return [FormChangeItem.ULTRANECROZIUM_Z];
+      return [FormChangeItemId.ULTRANECROZIUM_Z];
     }
     if (hasActiveFormChangeItems) {
       // a form is currently active. the user has to disable the form or activate ULTRANECROZIUM_Z
       formChangeItems = formChangeItems.filter(
-        m => pokemon.heldItemManager.hasActiveFormChangeItem(m) || m === FormChangeItem.ULTRANECROZIUM_Z,
+        m => pokemon.heldItemManager.hasActiveFormChangeItem(m) || m === FormChangeItemId.ULTRANECROZIUM_Z,
       );
     } else if (pokemon.species.speciesId === SpeciesId.NECROZMA) {
       // no form is currently active. the user has to activate some form, except ULTRANECROZIUM_Z
-      formChangeItems = formChangeItems.filter(m => m !== FormChangeItem.ULTRANECROZIUM_Z);
+      formChangeItems = formChangeItems.filter(m => m !== FormChangeItemId.ULTRANECROZIUM_Z);
     }
     return formChangeItems;
   }

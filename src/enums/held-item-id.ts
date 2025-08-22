@@ -1,4 +1,5 @@
 import type { ObjectValues } from "#types/type-helpers";
+import { FormChangeItemId } from "./form-change-item-id";
 
 // TODO: make category the lower 2 bytes
 export const HeldItemId = {
@@ -93,124 +94,8 @@ export const HeldItemId = {
   // Evo trackers
   GIMMIGHOUL_EVO_TRACKER: 0x0A01,
 
-  // Mega Stones
-  ABOMASITE: 0x0B01,
-  ABSOLITE: 0x0B02,
-  AERODACTYLITE: 0x0B03,
-  AGGRONITE: 0x0B04,
-  ALAKAZITE: 0x0B05,
-  ALTARIANITE: 0x0B06,
-  AMPHAROSITE: 0x0B07,
-  AUDINITE: 0x0B08,
-  BANETTITE: 0x0B09,
-  BEEDRILLITE: 0x0B0A,
-  BLASTOISINITE: 0x0B0B,
-  BLAZIKENITE: 0x0B0C,
-  CAMERUPTITE: 0x0B0D,
-  CHARIZARDITE_X: 0x0B0E,
-  CHARIZARDITE_Y: 0x0B0F,
-  DIANCITE: 0x0B10,
-  GALLADITE: 0x0B11,
-  GARCHOMPITE: 0x0B12,
-  GARDEVOIRITE: 0x0B13,
-  GENGARITE: 0x0B14,
-  GLALITITE: 0x0B15,
-  GYARADOSITE: 0x0B16,
-  HERACRONITE: 0x0B17,
-  HOUNDOOMINITE: 0x0B18,
-  KANGASKHANITE: 0x0B19,
-  LATIASITE: 0x0B1A,
-  LATIOSITE: 0x0B1B,
-  LOPUNNITE: 0x0B1C,
-  LUCARIONITE: 0x0B1D,
-  MANECTITE: 0x0B1E,
-  MAWILITE: 0x0B1F,
-  MEDICHAMITE: 0x0B20,
-  METAGROSSITE: 0x0B21,
-  MEWTWONITE_X: 0x0B22,
-  MEWTWONITE_Y: 0x0B23,
-  PIDGEOTITE: 0x0B24,
-  PINSIRITE: 0x0B25,
-  RAYQUAZITE: 0x0B26,
-  SABLENITE: 0x0B27,
-  SALAMENCITE: 0x0B28,
-  SCEPTILITE: 0x0B29,
-  SCIZORITE: 0x0B2A,
-  SHARPEDONITE: 0x0B2B,
-  SLOWBRONITE: 0x0B2C,
-  STEELIXITE: 0x0B2D,
-  SWAMPERTITE: 0x0B2E,
-  TYRANITARITE: 0x0B2F,
-  VENUSAURITE: 0x0B30,
-
-  // Other rare form change items
-  BLUE_ORB: 0x0B51,
-  RED_ORB: 0x0B52,
-  ADAMANT_CRYSTAL: 0x0B53,
-  LUSTROUS_GLOBE: 0x0B54,
-  GRISEOUS_CORE: 0x0B55,
-  REVEAL_GLASS: 0x0B56,
-  MAX_MUSHROOMS: 0x0B57,
-  DARK_STONE: 0x0B58,
-  LIGHT_STONE: 0x0B59,
-  PRISON_BOTTLE: 0x0B5A,
-  RUSTED_SWORD: 0x0B5B,
-  RUSTED_SHIELD: 0x0B5C,
-  ICY_REINS_OF_UNITY: 0x0B5D,
-  SHADOW_REINS_OF_UNITY: 0x0B5E,
-  ULTRANECROZIUM_Z: 0x0B5F,
-
-  // less rare form change items
-  SHARP_METEORITE: 0x0C01,
-  HARD_METEORITE: 0x0C02,
-  SMOOTH_METEORITE: 0x0C03,
-  GRACIDEA: 0x0C04,
-  SHOCK_DRIVE: 0x0C05,
-  BURN_DRIVE: 0x0C06,
-  CHILL_DRIVE: 0x0C07,
-  DOUSE_DRIVE: 0x0C08,
-  N_SOLARIZER: 0x0C09,
-  N_LUNARIZER: 0x0C0A,
-  WELLSPRING_MASK: 0x0C0B,
-  HEARTHFLAME_MASK: 0x0C0C,
-  CORNERSTONE_MASK: 0x0C0D,
-  FIST_PLATE: 0x0C0E,
-  SKY_PLATE: 0x0C0F,
-  TOXIC_PLATE: 0x0C10,
-  EARTH_PLATE: 0x0C11,
-  STONE_PLATE: 0x0C12,
-  INSECT_PLATE: 0x0C13,
-  SPOOKY_PLATE: 0x0C14,
-  IRON_PLATE: 0x0C15,
-  FLAME_PLATE: 0x0C16,
-  SPLASH_PLATE: 0x0C17,
-  MEADOW_PLATE: 0x0C18,
-  ZAP_PLATE: 0x0C19,
-  MIND_PLATE: 0x0C1A,
-  ICICLE_PLATE: 0x0C1B,
-  DRACO_PLATE: 0x0C1C,
-  DREAD_PLATE: 0x0C1D,
-  PIXIE_PLATE: 0x0C1E,
-  BLANK_PLATE: 0x0C1F, // TODO: Find a potential use for this
-  LEGEND_PLATE: 0x0C20, // TODO: Find a potential use for this
-  FIGHTING_MEMORY: 0x0C21,
-  FLYING_MEMORY: 0x0C22,
-  POISON_MEMORY: 0x0C23,
-  GROUND_MEMORY: 0x0C24,
-  ROCK_MEMORY: 0x0C25,
-  BUG_MEMORY: 0x0C26,
-  GHOST_MEMORY: 0x0C27,
-  STEEL_MEMORY: 0x0C28,
-  FIRE_MEMORY: 0x0C29,
-  WATER_MEMORY: 0x0C2A,
-  GRASS_MEMORY: 0x0C2B,
-  ELECTRIC_MEMORY: 0x0C2C,
-  PSYCHIC_MEMORY: 0x0C2D,
-  ICE_MEMORY: 0x0C2E,
-  DRAGON_MEMORY: 0x0C2F,
-  DARK_MEMORY: 0x0C30,
-  FAIRY_MEMORY: 0x0C31,
-  NORMAL_MEMORY: 0x0C32,
+  // All form change items
+  ...FormChangeItemId
 } as const;
 
 export type HeldItemId = ObjectValues<typeof HeldItemId>;
@@ -270,15 +155,3 @@ export function isItemInRequested(
 ): boolean {
   return requestedItems.some(entry => itemId === entry || (itemId & ITEM_CATEGORY_MASK) === entry);
 }
-
-
-
-// Get all HeldItemIds within the 0x0B01 to 0x0CFF range
-export const FormChangeItem = Object.fromEntries(
-  Object.entries(HeldItemId).filter(
-    ([_, value]) => typeof value === "number" && value >= 0x0B01 && value <= 0x0CFF
-  )
-) as Record<string, HeldItemId>;
-
-export type FormChangeItem = typeof FormChangeItem[keyof typeof FormChangeItem];
-

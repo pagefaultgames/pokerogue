@@ -12,7 +12,8 @@ import { getPokeballCatchMultiplier, getPokeballName, MAX_PER_TYPE_POKEBALLS } f
 import { pokemonFormChanges, SpeciesFormChangeCondition } from "#data/pokemon-forms";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { BerryType } from "#enums/berry-type";
-import { FormChangeItem, HeldItemId } from "#enums/held-item-id";
+import { FormChangeItemId } from "#enums/form-change-item-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { LearnMoveType } from "#enums/learn-move-type";
 import type { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
@@ -1136,9 +1137,9 @@ export class EvolutionItemReward extends PokemonReward {
  * Class that represents form changing items
  */
 export class FormChangeItemReward extends PokemonReward {
-  public formChangeItem: HeldItemId;
+  public formChangeItem: FormChangeItemId;
 
-  constructor(formChangeItem: FormChangeItem) {
+  constructor(formChangeItem: FormChangeItemId) {
     super("", allHeldItems[formChangeItem].iconName, (pokemon: PlayerPokemon) => {
       // Make sure the Pokemon has alternate forms
       if (
@@ -1425,7 +1426,7 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
     this.isRareFormChangeItem = isRareFormChangeItem;
   }
 
-  override generateReward(pregenArgs?: FormChangeItem) {
+  override generateReward(pregenArgs?: FormChangeItemId) {
     if (pregenArgs !== undefined) {
       return new FormChangeItemReward(pregenArgs);
     }
@@ -1463,13 +1464,13 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
               formChangeItemTriggers.forEach((fc, _i) => {
                 console.log("Checking ", fc.item);
                 switch (fc.item) {
-                  case FormChangeItem.ULTRANECROZIUM_Z:
+                  case FormChangeItemId.ULTRANECROZIUM_Z:
                     foundULTRA_Z = true;
                     break;
-                  case FormChangeItem.N_LUNARIZER:
+                  case FormChangeItemId.N_LUNARIZER:
                     foundN_LUNA = true;
                     break;
-                  case FormChangeItem.N_SOLARIZER:
+                  case FormChangeItemId.N_SOLARIZER:
                     foundN_SOLAR = true;
                     break;
                 }
@@ -1477,7 +1478,7 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
               if (foundULTRA_Z && foundN_LUNA && foundN_SOLAR) {
                 // all three items are present -> user hasn't acquired any of the N_*ARIZERs -> block ULTRANECROZIUM_Z acquisition.
                 formChangeItemTriggers = formChangeItemTriggers.filter(
-                  fc => fc.item !== FormChangeItem.ULTRANECROZIUM_Z,
+                  fc => fc.item !== FormChangeItemId.ULTRANECROZIUM_Z,
                 );
               } else {
                 console.log("DID NOT FIND ");

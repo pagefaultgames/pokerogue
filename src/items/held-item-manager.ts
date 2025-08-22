@@ -1,6 +1,6 @@
 import { allHeldItems } from "#data/data-lists";
 import {
-  type FormChangeItem,
+  type FormChangeItemId,
   HeldItemCategoryId,
   type HeldItemId,
   isCategoryId,
@@ -185,7 +185,7 @@ export class HeldItemManager {
     return total;
   }
 
-  hasActiveFormChangeItem(id: FormChangeItem): boolean {
+  hasActiveFormChangeItem(id: FormChangeItemId): boolean {
     const item = this.heldItems[id];
     if (item) {
       return !!item.active;
@@ -193,11 +193,11 @@ export class HeldItemManager {
     return false;
   }
 
-  getFormChangeItems(): FormChangeItem[] {
+  getFormChangeItems(): FormChangeItemId[] {
     return this.filterRequestedItems([HeldItemCategoryId.FORM_CHANGE, HeldItemCategoryId.RARE_FORM_CHANGE], false);
   }
 
-  toggleActive(id: FormChangeItem) {
+  toggleActive(id: FormChangeItemId) {
     const item = this.heldItems[id];
     if (item) {
       item.active = !item?.active;

@@ -37,7 +37,7 @@ export interface RewardTranslationEntries {
   TempStatStageBoosterItem: SimpleTranslationEntries;
   BaseStatBoosterItem: SimpleTranslationEntries;
   EvolutionItem: SimpleTranslationEntries;
-  FormChangeItem: SimpleTranslationEntries;
+  FormChangeItemId: SimpleTranslationEntries;
 }
 
 export interface PokemonInfoTranslationEntries {

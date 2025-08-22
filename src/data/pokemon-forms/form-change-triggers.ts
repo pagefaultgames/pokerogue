@@ -4,7 +4,7 @@ import { allHeldItems } from "#data/data-lists";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { AbilityId } from "#enums/ability-id";
 import { Challenges } from "#enums/challenges";
-import type { FormChangeItem } from "#enums/held-item-id";
+import type { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { StatusEffect } from "#enums/status-effect";
@@ -61,10 +61,10 @@ export class SpeciesFormChangeCompoundTrigger {
 }
 
 export class SpeciesFormChangeItemTrigger extends SpeciesFormChangeTrigger {
-  public item: FormChangeItem;
+  public item: FormChangeItemId;
   public active: boolean;
 
-  constructor(item: FormChangeItem, active = true) {
+  constructor(item: FormChangeItemId, active = true) {
     super();
     this.item = item;
     this.active = active;

@@ -4,7 +4,7 @@ import i18next from "i18next";
 
 export class FormChangeHeldItem extends HeldItem {
   get name(): string {
-    return i18next.t(`modifierType:FormChangeItem.${HeldItemNames[this.type]}`);
+    return i18next.t(`modifierType:FormChangeItemId.${HeldItemNames[this.type]}`);
   }
 
   get description(): string {

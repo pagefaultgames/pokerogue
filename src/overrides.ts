@@ -6,7 +6,7 @@ import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
 import { BiomeId } from "#enums/biome-id";
 import { EggTier } from "#enums/egg-type";
-import { FormChangeItem } from "#enums/held-item-id";
+import { FormChangeItemId } from "#enums/form-change-item-id";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -28,7 +28,7 @@ import { RewardSpecs } from "#types/rewards";
 
 /**
  * This comment block exists to prevent IDEs from automatically removing unused imports
- * {@linkcode BerryType}, {@linkcode EvolutionItem}, {@linkcode FormChangeItem}
+ * {@linkcode BerryType}, {@linkcode EvolutionItem}, {@linkcode FormChangeItemId}
  * {@linkcode Stat}, {@linkcode PokemonType}
  */
 /**

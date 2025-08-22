@@ -3,7 +3,7 @@ import { allAbilities, allHeldItems } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { AbilityId } from "#enums/ability-id";
-import type { FormChangeItem } from "#enums/held-item-id";
+import type { FormChangeItemId } from "#enums/form-change-item-id";
 import { getHeldItemCategory, type HeldItemCategoryId, type HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -741,11 +741,11 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
  * If you want to trigger the event based on the form change enabler, use PersistentModifierRequirement.
  */
 export class CanFormChangeWithItemRequirement extends EncounterPokemonRequirement {
-  requiredFormChangeItem: FormChangeItem[];
+  requiredFormChangeItem: FormChangeItemId[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
 
-  constructor(formChangeItem: FormChangeItem | FormChangeItem[], minNumberOfPokemon = 1, invertQuery = false) {
+  constructor(formChangeItem: FormChangeItemId | FormChangeItemId[], minNumberOfPokemon = 1, invertQuery = false) {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
