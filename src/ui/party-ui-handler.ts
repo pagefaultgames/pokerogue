@@ -6,6 +6,7 @@ import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { Button } from "#enums/buttons";
 import { ChallengeType } from "#enums/challenge-type";
+import { Challenges } from "#enums/challenges";
 import { Command } from "#enums/command";
 import { FormChangeItem } from "#enums/form-change-item";
 import { MoveId } from "#enums/move-id";
@@ -1427,6 +1428,11 @@ export class PartyUiHandler extends MessageUiHandler {
       this.eraseOptionsCursor();
     }
 
+    if (pokemon.isFainted() && globalScene.gameMode.hasChallenge(Challenges.HARDCORE)) {
+      this.updateOptionsHardcore();
+      return;
+    }
+
     switch (this.partyUiMode) {
       case PartyUiMode.MOVE_MODIFIER:
         this.updateOptionsWithMoveModifierMode(pokemon);
@@ -1523,6 +1529,34 @@ export class PartyUiHandler extends MessageUiHandler {
     // Generic, these are applied to all Modes
     this.addCancelAndScrollOptions();
 
+    this.updateOptionsWindow();
+  }
+
+  updateOptionsHardcore(): void {
+    const pokemon = globalScene.getPlayerParty()[this.cursor];
+
+    switch (this.partyUiMode) {
+      case PartyUiMode.MODIFIER_TRANSFER:
+        if (!this.transferMode) {
+          this.updateOptionsWithModifierTransferMode(pokemon);
+        } else {
+          this.options.push(PartyOption.TRANSFER);
+          this.addCommonOptions(pokemon);
+        }
+        break;
+      case PartyUiMode.DISCARD:
+        this.updateOptionsWithModifierTransferMode(pokemon);
+        break;
+      case PartyUiMode.SWITCH:
+        this.options.push(PartyOption.RELEASE);
+        break;
+      case PartyUiMode.RELEASE:
+        this.options.push(PartyOption.RELEASE);
+        break;
+    }
+
+    // Generic, these are applied to all Modes
+    this.addCancelAndScrollOptions();
     this.updateOptionsWindow();
   }
 
