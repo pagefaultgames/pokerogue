@@ -1,7 +1,7 @@
 {
   "entryPoints": ["./src"],
   "entryPointStrategy": "expand",
-  "exclude": ["**/*+.test.ts", "**/src/data/trainer-names.ts"],
+  "exclude": ["**/*+.test.ts"],
   "out": "typedoc",
   "highlightLanguages": ["javascript", "json", "jsonc", "json5", "tsx", "typescript", "markdown"]
 }
