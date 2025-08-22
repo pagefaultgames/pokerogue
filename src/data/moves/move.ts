@@ -9413,7 +9413,7 @@ export function initMoves() {
       .ignoresSubstitute()
       .target(MoveTarget.NEAR_ALLY)
       .condition(failIfSingleBattle)
-      // should stack multiplicatively if used multiple times in 1 turn`
+      // should stack multiplicatively if used multiple times in 1 turn
       .edgeCase(),
     new StatusMove(MoveId.TRICK, PokemonType.PSYCHIC, 100, 10, -1, 0, 3)
       .unimplemented(),
