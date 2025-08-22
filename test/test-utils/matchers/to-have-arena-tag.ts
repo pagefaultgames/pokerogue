@@ -14,7 +14,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @typeParam A - The {@linkcode ArenaTagType} being checked
  * @remarks
  * If A corresponds to a serializable `ArenaTag`, only properties allowed to be serialized
- * (ie can change across instances) will be present and able to be checked.
+ * (i.e. can change across instances) will be present and able to be checked.
  */
 export type toHaveArenaTagOptions<A extends ArenaTagType> = OneOther<
   A extends SerializableArenaTagType ? ArenaTagDataMap[A] : ArenaTagTypeMap[A],

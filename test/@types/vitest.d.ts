@@ -135,12 +135,12 @@ declare module "vitest" {
     toHaveStatStage(stat: BattleStat, expectedStage: number): void;
 
     /**
-     * Check whether a {@linkcode Pokemon} has a specific {@linkcode BattlerTag}.
+     * Check whether a {@linkcode Pokemon} has the given {@linkcode BattlerTag}.
      * @param expectedTag - A partially-filled {@linkcode BattlerTag} containing the desired properties
      */
     toHaveBattlerTag<B extends BattlerTagType>(expectedTag: toHaveBattlerTagOptions<B>): void;
     /**
-     * Check whether a {@linkcode Pokemon} has a specific {@linkcode BattlerTag}.
+     * Check whether a {@linkcode Pokemon} has the given {@linkcode BattlerTag}.
      * @param expectedType - The expected {@linkcode BattlerTagType}
      */
     toHaveBattlerTag(expectedType: BattlerTagType): void;
