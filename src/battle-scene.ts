@@ -3684,15 +3684,8 @@ export class BattleScene extends SceneBase {
           ) {
             return false;
           }
-          if (this.gameMode.modeId === GameModes.CHALLENGE) {
-            const disallowedChallenges = encounterCandidate.disallowedChallenges;
-            if (
-              disallowedChallenges &&
-              disallowedChallenges.length > 0 &&
-              this.gameMode.challenges.some(challenge => disallowedChallenges.includes(challenge.id))
-            ) {
-              return false;
-            }
+          if (encounterCandidate.disallowedChallenges?.some(challenge => this.gameMode.hasChallenge(challenge))) {
+            return false;
           }
           if (!encounterCandidate.meetsRequirements()) {
             return false;
