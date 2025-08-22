@@ -12,7 +12,6 @@ export abstract class PokemonPhase extends FieldPhase {
   public player: boolean;
   public fieldIndex: number;
 
-  // TODO: When will this ever be undefined?
   constructor(battlerIndex?: BattlerIndex | number) {
     super();
 

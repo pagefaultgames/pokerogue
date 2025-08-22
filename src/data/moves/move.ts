@@ -8512,7 +8512,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .reflectable(),
     new StatusMove(MoveId.ROAR, PokemonType.NORMAL, -1, 20, -1, -6, 1)
-    .attr(ForceSwitchOutAttr, {selfSwitch: true, switchType: SwitchType.FORCE_SWITCH, allowFlee: true})
+      .attr(ForceSwitchOutAttr, {switchType: SwitchType.FORCE_SWITCH, allowFlee: true})
       .soundBased()
       .hidesTarget()
       .reflectable(),

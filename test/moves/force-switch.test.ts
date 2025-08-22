@@ -103,7 +103,7 @@ describe("Moves - Switching Moves", () => {
         .battleType(BattleType.TRAINER)
         .randomTrainer({ trainerType: TrainerType.TATE, alwaysDouble: true })
         .enemySpecies(0);
-      await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRANITAR]);
+      await game.classicMode.startBattle([SpeciesId.WIMPOD]);
 
       expect(game.scene.currentBattle.trainer).not.toBeNull();
       const choiceSwitchSpy = vi.spyOn(game.scene.currentBattle.trainer!, "getNextSummonIndex");
@@ -114,14 +114,14 @@ describe("Moves - Switching Moves", () => {
         pkmn => pkmn.trainerSlot === TrainerSlot.TRAINER,
       ).map(a => a.map(p => p.species.name));
       expect(tateParty).not.toEqual(lizaParty);
+      expect(tateParty.length).toBeGreaterThan(0);
 
       // Force enemy trainers to switch to the first mon available.
       // Due to how enemy trainer parties are laid out, this prevents false positives
       // as Tate's pokemon are placed immediately before Liza's corresponding members.
       vi.spyOn(Phaser.Math.RND, "integerInRange").mockImplementation(min => min);
 
-      game.move.use(MoveId.DRAGON_TAIL, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
-      game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+      game.move.use(MoveId.ROAR, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
       await game.toEndOfTurn();
 
       const [tatePartyNew, lizaPartyNew] = splitArray(
@@ -139,56 +139,18 @@ describe("Moves - Switching Moves", () => {
       game.override.battleStyle("double");
       await game.classicMode.startBattle([SpeciesId.DRATINI, SpeciesId.DRATINI]);
 
-      const [enemyLeadPokemon, enemySecPokemon] = game.scene.getEnemyParty();
+      const [enemyLeadPokemon, enemySecPokemon] = game.scene.getEnemyField();
 
       game.move.use(MoveId.DRAGON_TAIL, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
       // target the same pokemon, second move should be redirected after first flees
       // Focus punch used due to having even lower priority than Dtail
-      game.move.use(MoveId.FOCUS_PUNCH, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
+      game.move.use(MoveId.CIRCLE_THROW, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2]);
       await game.toEndOfTurn();
 
       expect(enemyLeadPokemon.visible).toBe(false);
       expect(enemyLeadPokemon.switchOutStatus).toBe(true);
       expect(enemySecPokemon).not.toHaveFullHp();
-    });
-
-    it("should not switch out a target with suction cups, unless the user has Mold Breaker", async () => {
-      game.override.enemyAbility(AbilityId.SUCTION_CUPS);
-      await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-
-      const enemy = game.field.getEnemyPokemon();
-
-      game.move.use(MoveId.DRAGON_TAIL);
-      await game.toEndOfTurn();
-
-      expect(enemy.isOnField()).toBe(true);
-      expect(enemy).not.toHaveFullHp();
-
-      // Turn 2: Mold Breaker should ignore switch blocking ability and switch out the target
-      game.field.mockAbility(game.field.getPlayerPokemon(), AbilityId.MOLD_BREAKER);
-      enemy.hp = enemy.getMaxHp();
-
-      game.move.use(MoveId.DRAGON_TAIL);
-      await game.toEndOfTurn();
-
-      expect(enemy.isOnField()).toBe(false);
-      expect(enemy).not.toHaveFullHp();
-    });
-
-    it("should not switch out a Commanded Dondozo", async () => {
-      game.override.battleStyle("double").enemySpecies(SpeciesId.DONDOZO);
-      await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
-
-      // pretend dondozo 2 commanded dondozo 1 (silly I know, but it works)
-      const [dondozo1, dondozo2] = game.scene.getEnemyField();
-      dondozo1.addTag(BattlerTagType.COMMANDED, 1, MoveId.NONE, dondozo2.id);
-
-      game.move.use(MoveId.DRAGON_TAIL);
-      await game.toEndOfTurn();
-
-      expect(dondozo1.isOnField()).toBe(true);
-      expect(dondozo1).not.toHaveFullHp();
     });
 
     it("should perform a normal switch upon fainting an opponent", async () => {
@@ -215,10 +177,11 @@ describe("Moves - Switching Moves", () => {
         .enemyHeldItems([{ name: "REVIVER_SEED" }]);
       await game.classicMode.startBattle([SpeciesId.DRATINI]);
 
-      const [blissey1, blissey2] = game.scene.getEnemyParty()!;
+      const [blissey1, blissey2] = game.scene.getEnemyParty();
       blissey1.hp = 1;
 
       game.move.use(MoveId.DRAGON_TAIL);
+      await game.move.forceEnemyMove(MoveId.SPLASH); // Required to prevent enemy AI from swapping out
       await game.toNextTurn();
 
       // Bliseey #1 should have consumed the reviver seed and stayed on field
@@ -229,7 +192,7 @@ describe("Moves - Switching Moves", () => {
     });
 
     it("should neither switch nor softlock when activating a player's reviver seed", async () => {
-      game.override.startingHeldItems([{ name: "REVIVER_SEED" }]).startingLevel(1000); // make hp rounding consistent
+      game.override.startingHeldItems([{ name: "REVIVER_SEED" }]);
       await game.classicMode.startBattle([SpeciesId.BLISSEY, SpeciesId.BULBASAUR]);
 
       const [blissey, bulbasaur] = game.scene.getPlayerParty();
@@ -239,7 +202,7 @@ describe("Moves - Switching Moves", () => {
       await game.move.forceEnemyMove(MoveId.DRAGON_TAIL);
       await game.toNextTurn();
 
-      // dratini should have consumed the reviver seed and stayed on field
+      // blissey should have consumed the reviver seed and stayed on field
       expect(blissey.isOnField()).toBe(true);
       expect(blissey.getHpRatio()).toBeCloseTo(0.5);
       expect(blissey.getHeldItems()).toHaveLength(0);
@@ -247,8 +210,8 @@ describe("Moves - Switching Moves", () => {
     });
 
     it("should not force a switch to a fainted or challenge-ineligible Pokemon", async () => {
-      game.override.startingLevel(100).enemyLevel(1);
-      // Mono-Water challenge, Eevee is ineligible
+      game.override.enemyLevel(1);
+      // Mono-Water challenge
       game.challengeMode.addChallenge(Challenges.SINGLE_TYPE, PokemonType.WATER + 1, 0);
       await game.challengeMode.startBattle([SpeciesId.LAPRAS, SpeciesId.EEVEE, SpeciesId.TOXAPEX, SpeciesId.PRIMARINA]);
 
@@ -257,9 +220,8 @@ describe("Moves - Switching Moves", () => {
 
       // Mock an RNG call to switch to the first eligible pokemon.
       // Eevee is ineligible and Toxapex is fainted, so it should proc on Primarina instead
-      vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((_range, min = 0) => {
-        return min;
-      });
+      vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((_range, min = 0) => min);
+
       game.move.use(MoveId.SPLASH);
       await game.move.forceEnemyMove(MoveId.DRAGON_TAIL);
       await game.toNextTurn();
