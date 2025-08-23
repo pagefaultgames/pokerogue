@@ -581,5 +581,5 @@ export const speciesEggTiers = {
   [SpeciesId.PECHARUNT]: EggTier.EPIC,
   [SpeciesId.PALDEA_TAUROS]: EggTier.RARE,
   [SpeciesId.PALDEA_WOOPER]: EggTier.RARE,
-  [SpeciesId.BLOODMOON_URSALUNA]: EggTier.EPIC,
+  [SpeciesId.BLOODMOON_URSALUNA]: EggTier.EPIC
 };

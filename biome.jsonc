@@ -10,7 +10,7 @@
     "enabled": true,
     "useEditorconfig": true,
     "indentStyle": "space",
-    "includes": ["**", "!**/src/enums", "!**/src/data/balance"],
+    "includes": ["**", "!**/src/data/balance/**"],
     "lineWidth": 120
   },
   "files": {
