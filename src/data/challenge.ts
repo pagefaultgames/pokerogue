@@ -1,6 +1,6 @@
 import type { FixedBattleConfig } from "#app/battle";
 import { getRandomTrainerFunc } from "#app/battle";
-import { defaultStarterSpeciesAndEvolutions } from "#app/constants";
+import { defaultStarterSpeciesAndEvolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
