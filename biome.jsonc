@@ -157,6 +157,8 @@
         "useNumericSeparators": "off" // TODO: Consider enabling?
       },
       "suspicious": {
+        // TODO: Remove line once Biome's folder ignores are fixed to actually work without trailing globstars
+        "useBiomeIgnoreFolder": "off",
         "useErrorMessage": "error",
         "noEvolvingTypes": "warn", // TODO: Review and enable ASAP - this is VERY VERY BAD
         "useNumberToFixedDigitsArgument": "error",
