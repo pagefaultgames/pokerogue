@@ -12,6 +12,6 @@ import i18next from "i18next";
  * not supporting arrays in any capacity.
  */
 export function getRandomLocaleEntry(key: string): [key: string, value: string] {
-  const keyName = `${key}.${randSeedItem(Object.keys(i18next.t("key", { returnObjects: true })))}`;
+  const keyName = `${key}.${randSeedItem(Object.keys(i18next.t(key, { returnObjects: true })))}`;
   return [keyName, i18next.t(keyName)];
 }
