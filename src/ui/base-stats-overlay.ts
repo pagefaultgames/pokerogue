@@ -70,7 +70,7 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
   show(values: number[], total: number): boolean {
     for (let i = 0; i < 6; i++) {
       this.statsLabels[i].setText(
-        i18next.t(`pokemonInfo:stat.${toCamelCase(shortStats[i])}Shortened`) + ": " + `${values[i]}`,
+        i18next.t(`pokemonInfo:stat.${toCamelCase(shortStats[i])}Shortened`) + `: ${values[i]}`,
       );
       // This accounts for base stats up to 200, might not be enough.
       // TODO: change color based on value.

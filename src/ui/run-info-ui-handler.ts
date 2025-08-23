@@ -689,22 +689,21 @@ export class RunInfoUiHandler extends UiHandler {
    */
   private challengeParser(): string[] {
     const rules: string[] = [];
-    for (let i = 0; i < this.runInfo.challenges.length; i++) {
-      if (this.runInfo.challenges[i].value !== 0) {
-        switch (this.runInfo.challenges[i].id) {
+    for (const chal of this.runInfo.challenges) {
+      if (chal.value !== 0) {
+        switch (chal.id) {
           case Challenges.SINGLE_GENERATION:
-            rules.push(i18next.t(`runHistory:challengeMonoGen${this.runInfo.challenges[i].value}`));
+            rules.push(i18next.t(`runHistory:challengeMonoGen${chal.value}`));
             break;
           case Challenges.SINGLE_TYPE: {
-            const typeRule = PokemonType[this.runInfo.challenges[i].value - 1];
+            const typeRule = PokemonType[chal.value - 1];
             const typeTextColor = `[color=${TypeColor[typeRule]}]`;
             const typeShadowColor = `[shadow=${TypeShadow[typeRule]}]`;
             const typeText =
-              typeTextColor +
-              typeShadowColor +
-              i18next.t(`pokemonInfo:type.${toCamelCase(typeRule)}`)! +
-              "[/color]" +
-              "[/shadow]";
+              typeTextColor
+              + typeShadowColor
+              + i18next.t(`pokemonInfo:type.${toCamelCase(typeRule)}`)!
+              + "[/color][/shadow]";
             rules.push(typeText);
             break;
           }
@@ -712,7 +711,7 @@ export class RunInfoUiHandler extends UiHandler {
             rules.push(i18next.t("challenges:inverseBattle.shortName"));
             break;
           default: {
-            const localizationKey = toCamelCase(Challenges[this.runInfo.challenges[i].id]);
+            const localizationKey = toCamelCase(Challenges[chal.id]);
             rules.push(i18next.t(`challenges:${localizationKey}.name`));
             break;
           }

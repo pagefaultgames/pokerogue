@@ -315,7 +315,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     super(globalScene, x, y);
 
     if (!species.isObtainable() && this.isPlayer()) {
-      throw `Cannot create a player Pokemon for species "${species.getName(formIndex)}"`;
+      throw new Error(`Cannot create a player Pokemon for species "${species.getName(formIndex)}"`);
     }
 
     this.species = species;
@@ -2130,16 +2130,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public hasPassive(): boolean {
     // returns override if valid for current case
     if (
-      (Overrides.HAS_PASSIVE_ABILITY_OVERRIDE === false && this.isPlayer()) ||
-      (Overrides.ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE === false && this.isEnemy())
+      (Overrides.HAS_PASSIVE_ABILITY_OVERRIDE === false && this.isPlayer())
+      || (Overrides.ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE === false && this.isEnemy())
     ) {
       return false;
     }
     if (
-      ((Overrides.PASSIVE_ABILITY_OVERRIDE !== AbilityId.NONE || Overrides.HAS_PASSIVE_ABILITY_OVERRIDE) &&
-        this.isPlayer()) ||
-      ((Overrides.ENEMY_PASSIVE_ABILITY_OVERRIDE !== AbilityId.NONE || Overrides.ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE) &&
-        this.isEnemy())
+      ((Overrides.PASSIVE_ABILITY_OVERRIDE !== AbilityId.NONE || Overrides.HAS_PASSIVE_ABILITY_OVERRIDE)
+        && this.isPlayer())
+      || ((Overrides.ENEMY_PASSIVE_ABILITY_OVERRIDE !== AbilityId.NONE || Overrides.ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE)
+        && this.isEnemy())
     ) {
       return true;
     }
@@ -4104,7 +4104,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       isCritical = false,
       ignoreSegments = false,
       ignoreFaintPhase = false,
-      source = undefined,
+      source,
     }: {
       result?: DamageResult;
       isCritical?: boolean;
@@ -4844,8 +4844,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       case StatusEffect.FREEZE: {
         const weatherType = globalScene.arena.getWeatherType();
         isImmune =
-          this.isOfType(PokemonType.ICE) ||
-          (!ignoreField && (weatherType === WeatherType.SUNNY || weatherType === WeatherType.HARSH_SUN));
+          this.isOfType(PokemonType.ICE)
+          || (!ignoreField && (weatherType === WeatherType.SUNNY || weatherType === WeatherType.HARSH_SUN));
         break;
       }
       case StatusEffect.BURN:
@@ -5066,10 +5066,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const lastStatus = this.status?.effect;
     this.status = null;
     this.setFrameRate(10);
-    if (lastStatus === StatusEffect.SLEEP) {
-      if (this.getTag(BattlerTagType.NIGHTMARE)) {
-        this.lapseTag(BattlerTagType.NIGHTMARE);
-      }
+    if (lastStatus === StatusEffect.SLEEP && this.getTag(BattlerTagType.NIGHTMARE)) {
+      this.lapseTag(BattlerTagType.NIGHTMARE);
     }
     if (confusion && this.getTag(BattlerTagType.CONFUSED)) {
       this.lapseTag(BattlerTagType.CONFUSED);
@@ -5763,9 +5761,8 @@ export class PlayerPokemon extends Pokemon {
 
     if (!dataSource) {
       if (
-        globalScene.gameMode.isDaily ||
-        // Keldeo is excluded due to crashes involving its signature move and the associated form change
-        (Overrides.STARTER_SPECIES_OVERRIDE && Overrides.STARTER_SPECIES_OVERRIDE !== SpeciesId.KELDEO)
+        globalScene.gameMode.isDaily // Keldeo is excluded due to crashes involving its signature move and the associated form change
+        || (Overrides.STARTER_SPECIES_OVERRIDE && Overrides.STARTER_SPECIES_OVERRIDE !== SpeciesId.KELDEO)
       ) {
         this.generateAndPopulateMoveset();
       } else {
@@ -6326,9 +6323,9 @@ export class EnemyPokemon extends Pokemon {
     const speciesId = this.species.speciesId;
 
     if (
-      speciesId in Overrides.ENEMY_FORM_OVERRIDES &&
-      !isNullOrUndefined(Overrides.ENEMY_FORM_OVERRIDES[speciesId]) &&
-      this.species.forms[Overrides.ENEMY_FORM_OVERRIDES[speciesId]]
+      speciesId in Overrides.ENEMY_FORM_OVERRIDES
+      && !isNullOrUndefined(Overrides.ENEMY_FORM_OVERRIDES[speciesId])
+      && this.species.forms[Overrides.ENEMY_FORM_OVERRIDES[speciesId]]
     ) {
       this.formIndex = Overrides.ENEMY_FORM_OVERRIDES[speciesId];
     } else if (globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {

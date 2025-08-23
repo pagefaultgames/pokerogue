@@ -3150,7 +3150,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     // If none are eligible to copy, it will not activate.
     const targets = user.getOpponents().filter(opp => user.canTransformInto(opp));
     if (targets.length === 0) {
-      return undefined;
+      return;
     }
 
     const mon = targets[user.randBattleSeedInt(targets.length)];
@@ -3726,8 +3726,8 @@ export class UserFieldStatusEffectImmunityAbAttr extends AbAttr {
 
   override canApply({ effect, cancelled }: UserFieldStatusEffectImmunityAbAttrParams): boolean {
     return (
-      (!cancelled.value && this.immuneEffects.length === 0 && effect !== StatusEffect.FAINT) ||
-      this.immuneEffects.includes(effect)
+      (!cancelled.value && this.immuneEffects.length === 0 && effect !== StatusEffect.FAINT)
+      || this.immuneEffects.includes(effect)
     );
   }
 

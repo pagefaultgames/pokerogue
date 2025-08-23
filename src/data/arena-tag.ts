@@ -765,9 +765,10 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
     const source = this.getSourcePokemon();
     if (!source) {
       console.warn(
-        "Failed to get source Pokemon for AernaTrapTag on add message!" +
-          `\nTag type: ${this.tagType}` +
-          `\nPID: ${this.sourceId}`,
+        // biome-ignore lint/complexity/noUselessStringConcat: Rule bugs out with operator linebreaks set to `before`
+        "Failed to get source Pokemon for AernaTrapTag on add message!"
+          + `\nTag type: ${this.tagType}`
+          + `\nPID: ${this.sourceId}`,
       );
       return;
     }

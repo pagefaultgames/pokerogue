@@ -1606,12 +1606,10 @@ export class PartyUiHandler extends MessageUiHandler {
               optionName = `${modifier.active ? i18next.t("partyUiHandler:deactivate") : i18next.t("partyUiHandler:activate")} ${modifier.type.name}`;
             } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
               optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:unpausedEvolution") : i18next.t("partyUiHandler:pauseEvolution")}`;
+            } else if (this.localizedOptions.includes(option)) {
+              optionName = i18next.t(`partyUiHandler:${toCamelCase(PartyOption[option])}`);
             } else {
-              if (this.localizedOptions.includes(option)) {
-                optionName = i18next.t(`partyUiHandler:${toCamelCase(PartyOption[option])}`);
-              } else {
-                optionName = toTitleCase(PartyOption[option]);
-              }
+              optionName = toTitleCase(PartyOption[option]);
             }
             break;
           }

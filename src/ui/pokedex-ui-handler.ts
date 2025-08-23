@@ -1690,23 +1690,23 @@ export class PokedexUiHandler extends MessageUiHandler {
       });
 
       if (
-        fitsName &&
-        fitsAbilities &&
-        fitsMoves &&
-        fitsGen &&
-        fitsBiome &&
-        fitsType &&
-        fitsCaught &&
-        fitsPassive &&
-        fitsCostReduction &&
-        fitsStarter &&
-        fitsFavorite &&
-        fitsWin &&
-        fitsHA &&
-        fitsSeen &&
-        fitsEncountered &&
-        fitsEgg &&
-        fitsPokerus
+        fitsName
+        && fitsAbilities
+        && fitsMoves
+        && fitsGen
+        && fitsBiome
+        && fitsType
+        && fitsCaught
+        && fitsPassive
+        && fitsCostReduction
+        && fitsStarter
+        && fitsFavorite
+        && fitsWin
+        && fitsHA
+        && fitsSeen
+        && fitsEncountered
+        && fitsEgg
+        && fitsPokerus
       ) {
         this.filteredPokemonData.push(data);
       }

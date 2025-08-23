@@ -402,17 +402,17 @@ export class CommandPhase extends FieldPhase {
 
     if (biomeType === BiomeId.END && battleType === BattleType.WILD) {
       if (
-        (isClassic && !isClassicFinalBoss && someUncaughtSpeciesOnField) ||
-        (isFullFreshStart && !isClassicFinalBoss) ||
-        (isEndless && !isEndlessMinorBoss)
+        (isClassic && !isClassicFinalBoss && someUncaughtSpeciesOnField)
+        || (isFullFreshStart && !isClassicFinalBoss)
+        || (isEndless && !isEndlessMinorBoss)
       ) {
         // Uncatchable paradox mons in classic and endless
         this.queueShowText("battle:noPokeballForce");
       } else if (
-        (isClassic && isClassicFinalBoss && missingMultipleStarters) ||
-        (isFullFreshStart && isClassicFinalBoss) ||
-        (isEndless && isEndlessMinorBoss) ||
-        isDaily
+        (isClassic && isClassicFinalBoss && missingMultipleStarters)
+        || (isFullFreshStart && isClassicFinalBoss)
+        || (isEndless && isEndlessMinorBoss)
+        || isDaily
       ) {
         // Uncatchable final boss in classic, endless and daily
         this.queueShowText("battle:noPokeballForceFinalBoss");
@@ -458,16 +458,15 @@ export class CommandPhase extends FieldPhase {
     if (cursor < numBallTypes) {
       const targetPokemon = globalScene.getEnemyPokemon();
       if (
-        targetPokemon?.isBoss() &&
-        targetPokemon?.bossSegmentIndex >= 1 &&
-        // TODO: Decouple this hardcoded exception for wonder guard and just check the target...
-        !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true)
+        targetPokemon?.isBoss()
+        && targetPokemon?.bossSegmentIndex >= 1 // TODO: Decouple this hardcoded exception for wonder guard and just check the target...
+        && !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true)
       ) {
         // When facing the final boss, it must be weakened unless a Master Ball is used AND no challenges are active.
         // The message is customized for the final boss.
         if (
-          isFinalBoss &&
-          (cursor < PokeballType.MASTER_BALL || (cursor === PokeballType.MASTER_BALL && isChallengeActive))
+          isFinalBoss
+          && (cursor < PokeballType.MASTER_BALL || (cursor === PokeballType.MASTER_BALL && isChallengeActive))
         ) {
           this.queueShowText("battle:noPokeballForceFinalBossCatchable");
           return false;

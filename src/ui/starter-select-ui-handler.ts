@@ -3961,10 +3961,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             .filter(f => f).length > 1;
         this.canCycleNature = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
         this.canCycleTera =
-          !this.statsMode &&
-          this.allowTera &&
-          !isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2) &&
-          !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+          !this.statsMode
+          && this.allowTera
+          && !isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2)
+          && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
       }
 
       if (dexEntry.caughtAttr && species.malePercent !== null) {
@@ -4562,10 +4562,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       );
       const formIndex = props.formIndex;
       this.canCycleTera =
-        !this.statsMode &&
-        this.allowTera &&
-        !isNullOrUndefined(getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2) &&
-        !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+        !this.statsMode
+        && this.allowTera
+        && !isNullOrUndefined(getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2)
+        && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
       this.updateInstructions();
     }
   }

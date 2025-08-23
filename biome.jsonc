@@ -67,7 +67,11 @@
         "useJsonImportAttributes": "off" // "Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'. ts(2823)"
       },
       "style": {
-        "noNegationElse": "warn", // TODO: Promote to error eventually
+        "noNegationElse": {
+          "level": "warn", // TODO: Promote to error eventually
+          "fix": "none", // duplicates else blocks
+          "options": {}
+        },
         // TODO: Fix all instances of this and promote to `error` - this and enums are the 2 things
         // barring us from `esModuleInterop`
         "noParameterProperties": "warn",
@@ -140,7 +144,14 @@
             }
           }
         },
-        "useUnifiedTypeSignatures": "error",
+
+        // TODO: Wait until the rule gets options for ignoring doc comments and/or different parameter names,
+        // and THEN enable it codebase-wide
+        "useUnifiedTypeSignatures": {
+          "level": "info",
+          "fix": "none",
+          "options": {}
+        },
         "useGroupedAccessorPairs": "error",
         "useObjectSpread": "error",
         "useNumericSeparators": "off" // TODO: Consider enabling?
