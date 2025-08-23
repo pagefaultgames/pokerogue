@@ -119,7 +119,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
     },
     {
       speaker: `${namespace}:speaker`,
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
     },
   ])
   .withSceneWaveRangeRequirement(30, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
@@ -137,10 +137,10 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         selected: [
           {
             speaker: `${namespace}:speaker`,
-            text: `${namespace}:option.1.selected_dialogue`,
+            text: `${namespace}:option.1.selectedDialogue`,
           },
           {
-            text: `${namespace}:option.1.selected_message`,
+            text: `${namespace}:option.1.selectedMessage`,
           },
         ],
       })

@@ -8,7 +8,7 @@ import Overrides from "#app/overrides";
 import type { BiomeTierTrainerPools, PokemonPools } from "#balance/biomes";
 import { BiomePoolTier, biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
 import type { ArenaTag } from "#data/arena-tag";
-import { ArenaTrapTag, getArenaTag } from "#data/arena-tag";
+import { EntryHazardTag, getArenaTag } from "#data/arena-tag";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { PositionalTagManager } from "#data/positional-tags/positional-tag-manager";
@@ -709,8 +709,8 @@ export class Arena {
     if (existingTag) {
       existingTag.onOverlap(this, globalScene.getPokemonById(sourceId));
 
-      if (existingTag instanceof ArenaTrapTag) {
-        const { tagType, side, turnCount, layers, maxLayers } = existingTag as ArenaTrapTag;
+      if (existingTag instanceof EntryHazardTag) {
+        const { tagType, side, turnCount, layers, maxLayers } = existingTag as EntryHazardTag;
         this.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, layers, maxLayers));
       }
 
@@ -723,7 +723,7 @@ export class Arena {
       newTag.onAdd(this, quiet);
       this.tags.push(newTag);
 
-      const { layers = 0, maxLayers = 0 } = newTag instanceof ArenaTrapTag ? newTag : {};
+      const { layers = 0, maxLayers = 0 } = newTag instanceof EntryHazardTag ? newTag : {};
 
       this.eventTarget.dispatchEvent(
         new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount, layers, maxLayers),
@@ -942,7 +942,7 @@ export class Arena {
       case BiomeId.RUINS:
         return 0.0;
       case BiomeId.WASTELAND:
-        return 6.336;
+        return 6.024;
       case BiomeId.ABYSS:
         return 20.113;
       case BiomeId.SPACE:

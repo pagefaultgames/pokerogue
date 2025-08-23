@@ -44,7 +44,10 @@ import { PokemonData } from "#system/pokemon-data";
 import { MusicPreference } from "#system/settings";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { isNullOrUndefined, NumberHolder, randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
+import { getEnumKeys } from "#utils/enums";
+import { getRandomLocaleEntry } from "#utils/i18n";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -158,7 +161,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
       .withDialogue({
         buttonLabel: `${namespace}:option.1.label`,
         buttonTooltip: `${namespace}:option.1.tooltip`,
-        secondOptionPrompt: `${namespace}:option.1.trade_options_prompt`,
+        secondOptionPrompt: `${namespace}:option.1.tradeOptionsPrompt`,
       })
       .withPreOptionPhase(async (): Promise<boolean> => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -248,7 +251,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         // Show the trade animation
         await showTradeBackground();
         await doPokemonTradeSequence(tradedPokemon, newPlayerPokemon);
-        await showEncounterText(`${namespace}:trade_received`, null, 0, true, 4000);
+        await showEncounterText(`${namespace}:tradeReceived`, null, 0, true, 4000);
         globalScene.playBgm(encounter.misc.bgmKey);
         await addPokemonDataToDexAndValidateAchievements(newPlayerPokemon);
         await hideTradeBackground();
@@ -369,7 +372,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         // Show the trade animation
         await showTradeBackground();
         await doPokemonTradeSequence(tradedPokemon, newPlayerPokemon);
-        await showEncounterText(`${namespace}:trade_received`, null, 0, true, 4000);
+        await showEncounterText(`${namespace}:tradeReceived`, null, 0, true, 4000);
         globalScene.playBgm(encounter.misc.bgmKey);
         await addPokemonDataToDexAndValidateAchievements(newPlayerPokemon);
         await hideTradeBackground();
@@ -384,7 +387,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        secondOptionPrompt: `${namespace}:option.3.trade_options_prompt`,
+        secondOptionPrompt: `${namespace}:option.3.tradeOptionsPrompt`,
       })
       .withPreOptionPhase(async (): Promise<boolean> => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
@@ -416,7 +419,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
               return it.isTransferable;
             }).length > 0;
           if (!meetsReqs) {
-            return getEncounterText(`${namespace}:option.3.invalid_selection`) ?? null;
+            return getEncounterText(`${namespace}:option.3.invalidSelection`) ?? null;
           }
 
           return null;
@@ -468,7 +471,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         // Generate a trainer name
         const traderName = generateRandomTraderName();
         encounter.setDialogueToken("tradeTrainerName", traderName.trim());
-        await showEncounterText(`${namespace}:item_trade_selected`);
+        await showEncounterText(`${namespace}:itemTradeSelected`);
         leaveEncounterWithoutBattle();
       })
       .build(),
@@ -740,10 +743,10 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
       duration: 500,
       onComplete: async () => {
         globalScene.fadeOutBgm(1000, false);
-        await showEncounterText(`${namespace}:pokemon_trade_selected`);
+        await showEncounterText(`${namespace}:pokemonTradeSelected`);
         tradedPokemon.cry();
         globalScene.playBgm("evolution");
-        await showEncounterText(`${namespace}:pokemon_trade_goodbye`);
+        await showEncounterText(`${namespace}:pokemonTradeGoodbye`);
 
         tradedPokeball.setAlpha(0);
         tradedPokeball.setVisible(true);
@@ -984,14 +987,17 @@ function doTradeReceivedSequence(
 }
 
 function generateRandomTraderName() {
-  const length = TrainerType.YOUNGSTER - TrainerType.ACE_TRAINER + 1;
-  // +1 avoids TrainerType.UNKNOWN
-  const classKey = `trainersCommon:${TrainerType[randInt(length) + 1]}`;
-  // Some trainers have 2 gendered pools, some do not
-  const genderKey = i18next.exists(`${classKey}.MALE`) ? (randInt(2) === 0 ? ".MALE" : ".FEMALE") : "";
-  const trainerNameKey = randSeedItem(Object.keys(i18next.t(`${classKey}${genderKey}`, { returnObjects: true })));
-  const trainerNameString = i18next.t(`${classKey}${genderKey}.${trainerNameKey}`);
-  // Some names have an '&' symbol and need to be trimmed to a single name instead of a double name
-  const trainerNames = trainerNameString.split(" & ");
-  return trainerNames[randInt(trainerNames.length)];
+  const allTrainerNames = getEnumKeys(TrainerType);
+  // Exclude TrainerType.UNKNOWN and everything after Ace Trainers (grunts and unique trainers)
+  const eligibleNames = allTrainerNames.slice(
+    1,
+    allTrainerNames.indexOf(TrainerType[TrainerType.YOUNGSTER] as keyof typeof TrainerType),
+  );
+  const randomTrainer = toCamelCase(randSeedItem(eligibleNames));
+  const classKey = `trainersCommon:${randomTrainer}`;
+  // Pick a random gender for ones with gendered pools, or access the raw object for ones without.
+  const genderKey = i18next.exists(`${classKey}.male`) ? randSeedItem([".male", ".female"]) : "";
+  const trainerNameString = getRandomLocaleEntry(`${classKey}${genderKey}`)[1];
+  // Split the string by &s (for duo trainers)
+  return randSeedItem(trainerNameString.split(" & "));
 }
