@@ -19,6 +19,11 @@ export enum ChallengeType {
    */
   STARTER_COST,
   /**
+   * Challenges which modify the starter data in starter select
+   * @see {@link Challenge.applyStarterSelectModify}
+   */
+  STARTER_SELECT_MODIFY,
+  /**
    * Challenges which modify your starters in some way
    * @see {@link Challenge.applyStarterModify}
    */
@@ -65,5 +70,45 @@ export enum ChallengeType {
   /**
    * Modifies what the pokemon stats for Flip Stat Mode.
    */
-  FLIP_STAT
+  FLIP_STAT,
+  /**
+   * Challenges which conditionally enable or disable automatic party healing during biome transitions
+   * @see {@linkcode Challenge.applyPartyHealAvailability}
+   */
+  PARTY_HEAL,
+  /**
+   * Challenges which conditionally enable or disable the shop
+   * @see {@linkcode Challenge.applyShopAvailability}
+   */
+  SHOP,
+  /**
+   * Challenges which validate whether a pokemon can be added to the player's party or not
+   * @see {@linkcode Challenge.applyCatchAvailability}
+   */
+  POKEMON_ADD_TO_PARTY,
+  /**
+   * Challenges which validate whether a pokemon is allowed to fuse or not
+   * @see {@linkcode Challenge.applyFusionAvailability}
+   */
+  POKEMON_FUSION,
+  /**
+   * Challenges which validate whether particular moves can or cannot be used
+   * @see {@linkcode Challenge.applyMoveAvailability}
+   */
+  POKEMON_MOVE,
+  /**
+   * Challenges which validate whether particular items are or are not sold in the shop
+   * @see {@linkcode Challenge.applyShopItems}
+   */
+  SHOP_ITEM,
+  /**
+   * Challenges which validate whether particular items will be given as a reward after a wave
+   * @see {@linkcode Challenge.applyWaveRewards}
+   */
+  WAVE_REWARD,
+  /**
+   * Challenges which prevent recovery from fainting
+   * @see {@linkcode Challenge.applyPermanentFaint}
+   */
+  PREVENT_REVIVE,
 }

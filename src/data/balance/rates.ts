@@ -42,10 +42,10 @@ export const SAME_SPECIES_EGG_HA_RATE = 8;
 export const MANAPHY_EGG_MANAPHY_RATE = 8;
 export const GACHA_EGG_HA_RATE = 192;
 
-// 1/x for legendary eggs, 1/x*2 for epic eggs, 1/x*4 for rare eggs, and 1/x*8 for common eggs
-export const GACHA_DEFAULT_RARE_EGGMOVE_RATE = 6;
-export const SAME_SPECIES_EGG_RARE_EGGMOVE_RATE = 3;
-export const GACHA_MOVE_UP_RARE_EGGMOVE_RATE = 3;
+// Odds are 1/x
+// [COMMON, RARE, EPIC/MANAPHY, LEGEND]
+export const RARE_EGGMOVE_RATES: readonly number[] = [48, 24, 12, 6];
+export const BOOSTED_RARE_EGGMOVE_RATES: readonly number[] = [16, 12, 6, 3];
 
 // #region Variant properties
 // The chance x/10 of a shiny being a variant, then of being specifically an epic variant

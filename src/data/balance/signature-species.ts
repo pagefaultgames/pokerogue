@@ -30,7 +30,7 @@ export const signatureSpecies: SignatureSpecies = new Proxy({
   FALKNER: [SpeciesId.PIDGEY, SpeciesId.HOOTHOOT, SpeciesId.NATU, SpeciesId.MURKROW],
   BUGSY: [SpeciesId.SCYTHER, SpeciesId.SHUCKLE, SpeciesId.YANMA, [SpeciesId.PINSIR, SpeciesId.HERACROSS]],
   WHITNEY: [SpeciesId.MILTANK, SpeciesId.AIPOM, SpeciesId.IGGLYBUFF, [SpeciesId.GIRAFARIG, SpeciesId.STANTLER]],
-  MORTY: [SpeciesId.GASTLY, SpeciesId.MISDREAVUS, SpeciesId.DUSKULL, SpeciesId.SABLEYE],
+  MORTY: [SpeciesId.GASTLY, SpeciesId.MISDREAVUS, SpeciesId.DUSKULL, SpeciesId.HISUI_TYPHLOSION],
   CHUCK: [SpeciesId.POLIWRATH, SpeciesId.MANKEY, SpeciesId.TYROGUE, SpeciesId.MACHOP],
   JASMINE: [SpeciesId.STEELIX, SpeciesId.MAGNEMITE, SpeciesId.PINECO, SpeciesId.SKARMORY],
   PRYCE: [SpeciesId.SWINUB, SpeciesId.SEEL, SpeciesId.SHELLDER, SpeciesId.SNEASEL],

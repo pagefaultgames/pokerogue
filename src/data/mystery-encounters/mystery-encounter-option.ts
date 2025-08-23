@@ -156,7 +156,7 @@ export class MysteryEncounterOption implements IMysteryEncounterOption {
         return true;
       }
       console.log(
-        "Mystery Encounter Edge Case: Requirement not met due to primay pokemon overlapping with support pokemon. There's no valid primary pokemon left.",
+        "Mystery Encounter Edge Case: Requirement not met due to primary pokemon overlapping with support pokemon. There's no valid primary pokemon left.",
       );
       return false;
     }

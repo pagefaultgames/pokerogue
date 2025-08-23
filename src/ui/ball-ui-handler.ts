@@ -37,7 +37,7 @@ export class BallUiHandler extends UiHandler {
     const optionsText = addTextObject(0, 0, optionsTextContent, TextStyle.WINDOW, { align: "right", maxLines: 6 });
     const optionsTextWidth = optionsText.displayWidth;
     this.pokeballSelectContainer = globalScene.add.container(
-      globalScene.game.canvas.width / 6 - 51 - Math.max(64, optionsTextWidth),
+      globalScene.scaledCanvas.width - 51 - Math.max(64, optionsTextWidth),
       -49,
     );
     this.pokeballSelectContainer.setVisible(false);

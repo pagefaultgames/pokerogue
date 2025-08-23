@@ -46,7 +46,7 @@ import type { PokemonData } from "#system/pokemon-data";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { coerceArray, isNullOrUndefined, randomString, randSeedInt, randSeedItem } from "#utils/common";
@@ -467,7 +467,7 @@ export function updatePlayerMoney(changeValue: number, playSound = true, showMes
   if (showMessage) {
     if (changeValue < 0) {
       globalScene.phaseManager.queueMessage(
-        i18next.t("mysteryEncounterMessages:paid_money", {
+        i18next.t("mysteryEncounterMessages:paidMoney", {
           amount: -changeValue,
         }),
         null,
@@ -475,7 +475,7 @@ export function updatePlayerMoney(changeValue: number, playSound = true, showMes
       );
     } else {
       globalScene.phaseManager.queueMessage(
-        i18next.t("mysteryEncounterMessages:receive_money", {
+        i18next.t("mysteryEncounterMessages:receiveMoney", {
           amount: changeValue,
         }),
         null,
@@ -587,7 +587,7 @@ export function selectPokemonForOption(
                       return true;
                     },
                     onHover: () => {
-                      showEncounterText(i18next.t("mysteryEncounterMessages:cancel_option"), 0, 0, false);
+                      showEncounterText(i18next.t("mysteryEncounterMessages:cancelOption"), 0, 0, false);
                     },
                   });
 
@@ -720,7 +720,7 @@ export function selectOptionThenPokemon(
           if (onHoverOverCancelOption) {
             onHoverOverCancelOption();
           }
-          showEncounterText(i18next.t("mysteryEncounterMessages:cancel_option"), 0, 0, false);
+          showEncounterText(i18next.t("mysteryEncounterMessages:cancelOption"), 0, 0, false);
         },
       });
 

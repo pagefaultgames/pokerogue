@@ -37,7 +37,7 @@ export class DailyModeHelper extends GameManagerHelper {
 
     await this.game.phaseInterceptor.to(EncounterPhase);
 
-    if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
+    if (overrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }
   }

@@ -23,14 +23,14 @@ export function toHaveStatStage(
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
-      pass: false,
+      pass: this.isNot,
       message: () => `Expected to receive a Pokémon, but got ${receivedStr(received)}!`,
     };
   }
 
   if (expectedStage < -6 || expectedStage > 6) {
     return {
-      pass: false,
+      pass: this.isNot,
       message: () => `Expected ${expectedStage} to be within the range [-6, 6]!`,
     };
   }

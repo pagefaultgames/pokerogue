@@ -90,9 +90,13 @@ If this feature requires new text, the text should be integrated into the code w
   - For any feature pulled from the mainline Pokémon games (e.g. a Move or Ability implementation), it's best practice to include a source link for any added text.  
   [Poké Corpus](https://abcboy101.github.io/poke-corpus/) is a great resource for finding text from the mainline games; otherwise, a video/picture showing the text being displayed should suffice.
   - You should also [notify the current Head of Translation](#notifying-translation) to ensure a fast response.
-3. At this point, you may begin [testing locales integration in your main PR](#documenting-locales-changes).
-4. The Translation Team will approve the locale PR (after corrections, if necessary), then merge it into `pokerogue-locales`.
-5. The Dev Team will approve your main PR for your feature, then merge it into PokéRogue's beta environment.
+3. Your locales should use the following format:
+  - File names should be in `kebab-case`. Example: `trainer-names.json`
+  - Key names should be in `camelCase`. Example: `aceTrainer`
+    - If you make use of i18next's inbuilt [context support](https://www.i18next.com/translation-function/context), you need to use `snake_case` for the context key. Example: `aceTrainer_male`
+4. At this point, you may begin [testing locales integration in your main PR](#documenting-locales-changes).
+5. The Translation Team will approve the locale PR (after corrections, if necessary), then merge it into `pokerogue-locales`.
+6. The Dev Team will approve your main PR for your feature, then merge it into PokéRogue's beta environment.
 
 [^2]: For those wondering, the reason for choosing English specifically is due to it being the master language set in Pontoon (the program used by the Translation Team to perform locale updates).
 If a key is present in any language _except_ the master language, it won't appear anywhere else in the translation tool, rendering missing English keys quite a hassle.

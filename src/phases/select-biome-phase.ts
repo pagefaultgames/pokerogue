@@ -1,11 +1,13 @@
 import { globalScene } from "#app/global-scene";
 import { biomeLinks, getBiomeName } from "#balance/biomes";
 import { BiomeId } from "#enums/biome-id";
+import { ChallengeType } from "#enums/challenge-type";
 import { UiMode } from "#enums/ui-mode";
 import { MapModifier, MoneyInterestModifier } from "#modifiers/modifier";
 import { BattlePhase } from "#phases/battle-phase";
-import type { OptionSelectItem } from "#ui/abstact-option-select-ui-handler";
-import { randSeedInt } from "#utils/common";
+import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { applyChallenges } from "#utils/challenge-utils";
+import { BooleanHolder, randSeedInt } from "#utils/common";
 
 export class SelectBiomePhase extends BattlePhase {
   public readonly phaseName = "SelectBiomePhase";
@@ -14,25 +16,40 @@ export class SelectBiomePhase extends BattlePhase {
 
     globalScene.resetSeed();
 
+    const gameMode = globalScene.gameMode;
     const currentBiome = globalScene.arena.biomeType;
-    const nextWaveIndex = globalScene.currentBattle.waveIndex + 1;
+    const currentWaveIndex = globalScene.currentBattle.waveIndex;
+    const nextWaveIndex = currentWaveIndex + 1;
 
     const setNextBiome = (nextBiome: BiomeId) => {
       if (nextWaveIndex % 10 === 1) {
         globalScene.applyModifiers(MoneyInterestModifier, true);
-        globalScene.phaseManager.unshiftNew("PartyHealPhase", false);
+        const healStatus = new BooleanHolder(true);
+        applyChallenges(ChallengeType.PARTY_HEAL, healStatus);
+        if (healStatus.value) {
+          globalScene.phaseManager.unshiftNew("PartyHealPhase", false);
+        } else {
+          globalScene.phaseManager.unshiftNew(
+            "SelectModifierPhase",
+            undefined,
+            undefined,
+            gameMode.isFixedBattle(currentWaveIndex)
+              ? gameMode.getFixedBattle(currentWaveIndex).customModifierRewardSettings
+              : undefined,
+          );
+        }
       }
       globalScene.phaseManager.unshiftNew("SwitchBiomePhase", nextBiome);
       this.end();
     };
 
     if (
-      (globalScene.gameMode.isClassic && globalScene.gameMode.isWaveFinal(nextWaveIndex + 9)) ||
-      (globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(nextWaveIndex)) ||
-      (globalScene.gameMode.hasShortBiomes && !(nextWaveIndex % 50))
+      (gameMode.isClassic && gameMode.isWaveFinal(nextWaveIndex + 9)) ||
+      (gameMode.isDaily && gameMode.isWaveFinal(nextWaveIndex)) ||
+      (gameMode.hasShortBiomes && !(nextWaveIndex % 50))
     ) {
       setNextBiome(BiomeId.END);
-    } else if (globalScene.gameMode.hasRandomBiomes) {
+    } else if (gameMode.hasRandomBiomes) {
       setNextBiome(this.generateNextBiome(nextWaveIndex));
     } else if (Array.isArray(biomeLinks[currentBiome])) {
       const biomes: BiomeId[] = (biomeLinks[currentBiome] as (BiomeId | [BiomeId, number])[])
@@ -67,9 +84,6 @@ export class SelectBiomePhase extends BattlePhase {
   }
 
   generateNextBiome(waveIndex: number): BiomeId {
-    if (!(waveIndex % 50)) {
-      return BiomeId.END;
-    }
-    return globalScene.generateRandomBiome(waveIndex);
+    return waveIndex % 50 === 0 ? BiomeId.END : globalScene.generateRandomBiome(waveIndex);
   }
 }

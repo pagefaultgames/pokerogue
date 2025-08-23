@@ -6,7 +6,7 @@ import type { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-chang
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import type { ArenaTrapTag, SuppressAbilitiesTag } from "#data/arena-tag";
+import type { EntryHazardTag, SuppressAbilitiesTag } from "#data/arena-tag";
 import type { BattlerTag } from "#data/battler-tags";
 import { GroundedTag } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
@@ -74,6 +74,7 @@ import {
   randSeedItem,
   toDmgValue,
 } from "#utils/common";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export class Ability implements Localizable {
@@ -109,13 +110,9 @@ export class Ability implements Localizable {
   }
 
   localize(): void {
-    const i18nKey = AbilityId[this.id]
-      .split("_")
-      .filter(f => f)
-      .map((f, i) => (i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
-      .join("") as string;
+    const i18nKey = toCamelCase(AbilityId[this.id]);
 
-    this.name = this.id ? `${i18next.t(`ability:${i18nKey}.name`) as string}${this.nameAppend}` : "";
+    this.name = this.id ? `${i18next.t(`ability:${i18nKey}.name`)}${this.nameAppend}` : "";
     this.description = this.id ? (i18next.t(`ability:${i18nKey}.description`) as string) : "";
   }
 
@@ -1116,7 +1113,7 @@ export class PostDefendApplyArenaTrapTagAbAttr extends PostDefendAbAttr {
   }
 
   override canApply({ pokemon, opponent: attacker, move }: PostMoveInteractionAbAttrParams): boolean {
-    const tag = globalScene.arena.getTag(this.arenaTagType) as ArenaTrapTag;
+    const tag = globalScene.arena.getTag(this.arenaTagType) as EntryHazardTag;
     return (
       this.condition(pokemon, attacker, move) &&
       (!globalScene.arena.getTag(this.arenaTagType) || tag.layers < tag.maxLayers)
@@ -1187,7 +1184,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
     return i18next.t("abilityTriggers:postDefendTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName,
-      typeName: i18next.t(`pokemonInfo:Type.${PokemonType[this.type]}`),
+      typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.type])}`),
     });
   }
 }
@@ -1238,7 +1235,7 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
     // TODO: Probably want to check against simulated here
     const effect =
       this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randBattleSeedInt(this.effects.length)];
-    attacker.trySetStatus(effect, true, pokemon);
+    attacker.trySetStatus(effect, pokemon);
   }
 }
 
@@ -1284,7 +1281,7 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
 /**
  * Set stat stages when the user gets hit by a critical hit
  *
- * @privateremarks
+ * @privateRemarks
  * It is the responsibility of the caller to ensure that this ability attribute is only applied
  * when the user has been hit by a critical hit; such an event is not checked here.
  *
@@ -1670,6 +1667,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
   constructor(
     private newType: PokemonType,
     private powerMultiplier: number,
+    // TODO: all moves with this attr solely check the move being used...
     private condition?: PokemonAttackCondition,
   ) {
     super(false);
@@ -1751,7 +1749,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
   getTriggerMessage({ pokemon }: AugmentMoveInteractionAbAttrParams, _abilityName: string): string {
     return i18next.t("abilityTriggers:pokemonTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      moveType: i18next.t(`pokemonInfo:Type.${PokemonType[this.moveType]}`),
+      moveType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.moveType])}`),
     });
   }
 }
@@ -1760,7 +1758,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
  * Parameters for abilities that modify the hit count and damage of a move
  */
 export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteractionAbAttrParams, "opponent"> {
-  /** Holder for the number of hits. May be modified by ability application  */
+  /** Holder for the number of hits. May be modified by ability application */
   hitCount?: NumberHolder;
   /** Holder for the damage multiplier _of the current hit_ */
   multiplier?: NumberHolder;
@@ -2043,7 +2041,7 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
 
   /**
    * @param stat - The stat being modified
-   * @param multipler - The multiplier to apply to the stat
+   * @param multiplier - The multiplier to apply to the stat
    * @param ignorable - Whether the multiplier can be ignored by mold breaker-like moves and abilities
    */
   constructor(stat: BattleStat, multiplier: number, ignorable = true) {
@@ -2230,7 +2228,7 @@ export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
   apply({ pokemon, opponent }: PostMoveInteractionAbAttrParams): void {
     const effect =
       this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randBattleSeedInt(this.effects.length)];
-    opponent.trySetStatus(effect, true, pokemon);
+    opponent.trySetStatus(effect, pokemon);
   }
 }
 
@@ -2385,7 +2383,7 @@ export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
    */
   override apply({ simulated, effect, sourcePokemon, pokemon }: PostSetStatusAbAttrParams): void {
     if (!simulated && sourcePokemon) {
-      sourcePokemon.trySetStatus(effect, true, pokemon);
+      sourcePokemon.trySetStatus(effect, pokemon);
     }
   }
 }
@@ -3661,7 +3659,8 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   protected immuneEffects: StatusEffect[];
 
   /**
-   * @param immuneEffects - The status effects to which the Pokémon is immune.
+   * @param immuneEffects - An array of {@linkcode StatusEffect}s to prevent application.
+   * If none are provided, will block **all** status effects regardless of type.
    */
   constructor(...immuneEffects: StatusEffect[]) {
     super();
@@ -3670,7 +3669,7 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   }
 
   override canApply({ effect }: PreSetStatusAbAttrParams): boolean {
-    return (effect !== StatusEffect.FAINT && this.immuneEffects.length < 1) || this.immuneEffects.includes(effect);
+    return (this.immuneEffects.length === 0 && effect !== StatusEffect.FAINT) || this.immuneEffects.includes(effect);
   }
 
   /**
@@ -3722,6 +3721,11 @@ export interface UserFieldStatusEffectImmunityAbAttrParams extends AbAttrBasePar
  */
 export class UserFieldStatusEffectImmunityAbAttr extends AbAttr {
   protected immuneEffects: StatusEffect[];
+
+  /**
+   * @param immuneEffects - An array of {@linkcode StatusEffect}s to prevent application.
+   * If none are provided, will block **all** status effects regardless of type.
+   */
   constructor(...immuneEffects: StatusEffect[]) {
     super();
 
@@ -3730,7 +3734,7 @@ export class UserFieldStatusEffectImmunityAbAttr extends AbAttr {
 
   override canApply({ effect, cancelled }: UserFieldStatusEffectImmunityAbAttrParams): boolean {
     return (
-      (!cancelled.value && effect !== StatusEffect.FAINT && this.immuneEffects.length < 1) ||
+      (!cancelled.value && this.immuneEffects.length === 0 && effect !== StatusEffect.FAINT) ||
       this.immuneEffects.includes(effect)
     );
   }
@@ -3756,6 +3760,10 @@ export class ConditionalUserFieldStatusEffectImmunityAbAttr extends UserFieldSta
    */
   private condition: (target: Pokemon, source: Pokemon | null) => boolean;
 
+  /**
+   * @param immuneEffects - An array of {@linkcode StatusEffect}s to prevent application.
+   * If none are provided, will block **all** status effects regardless of type.
+   */
   constructor(condition: (target: Pokemon, source: Pokemon | null) => boolean, ...immuneEffects: StatusEffect[]) {
     super(...immuneEffects);
 
@@ -5491,7 +5499,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
  * Attribute used for abilities that damage opponents causing the user to faint
  * equal to the amount of damage the last attack inflicted.
  *
- * Used for {@linkcode Abilities.INNARDS_OUT}.
+ * Used for {@linkcode AbilityId.INNARDS_OUT | Innards Out}.
  * @sealed
  */
 export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
@@ -5816,7 +5824,7 @@ export class NoFusionAbilityAbAttr extends AbAttr {
 export interface IgnoreTypeImmunityAbAttrParams extends AbAttrBaseParams {
   /** The type of the move being used */
   readonly moveType: PokemonType;
-  /** The type being checked for  */
+  /** The type being checked for */
   readonly defenderType: PokemonType;
   /** Holds whether the type immunity should be bypassed */
   cancelled: BooleanHolder;
@@ -6224,7 +6232,9 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
     if (currentTerrain === TerrainType.NONE) {
       return i18next.t("abilityTriggers:pokemonTypeChangeRevert", { pokemonNameWithAffix });
     }
-    const moveType = i18next.t(`pokemonInfo:Type.${PokemonType[this.determineTypeChange(pokemon, currentTerrain)[0]]}`);
+    const moveType = i18next.t(
+      `pokemonInfo:type.${toCamelCase(PokemonType[this.determineTypeChange(pokemon, currentTerrain)[0]])}`,
+    );
     return i18next.t("abilityTriggers:pokemonTypeChange", { pokemonNameWithAffix, moveType });
   }
 }
@@ -6444,23 +6454,23 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
   public override canApply({ pokemon, source, damage }: PostDamageAbAttrParams): boolean {
     const moveHistory = pokemon.getMoveHistory();
     // Will not activate when the Pokémon's HP is lowered by cutting its own HP
-    const fordbiddenAttackingMoves = [MoveId.BELLY_DRUM, MoveId.SUBSTITUTE, MoveId.CURSE, MoveId.PAIN_SPLIT];
+    const forbiddenAttackingMoves = [MoveId.BELLY_DRUM, MoveId.SUBSTITUTE, MoveId.CURSE, MoveId.PAIN_SPLIT];
     if (moveHistory.length > 0) {
       const lastMoveUsed = moveHistory[moveHistory.length - 1];
-      if (fordbiddenAttackingMoves.includes(lastMoveUsed.move)) {
+      if (forbiddenAttackingMoves.includes(lastMoveUsed.move)) {
         return false;
       }
     }
 
     // Dragon Tail and Circle Throw switch out Pokémon before the Ability activates.
-    const fordbiddenDefendingMoves = [MoveId.DRAGON_TAIL, MoveId.CIRCLE_THROW];
+    const forbiddenDefendingMoves = [MoveId.DRAGON_TAIL, MoveId.CIRCLE_THROW];
     if (source) {
       const enemyMoveHistory = source.getMoveHistory();
       if (enemyMoveHistory.length > 0) {
         const enemyLastMoveUsed = enemyMoveHistory[enemyMoveHistory.length - 1];
         // Will not activate if the Pokémon's HP falls below half while it is in the air during Sky Drop.
         if (
-          fordbiddenDefendingMoves.includes(enemyLastMoveUsed.move) ||
+          forbiddenDefendingMoves.includes(enemyLastMoveUsed.move) ||
           (enemyLastMoveUsed.move === MoveId.SKY_DROP && enemyLastMoveUsed.result === MoveResult.OTHER)
         ) {
           return false;
@@ -7307,7 +7317,7 @@ export function initAbilities() {
       .attr(HealFromBerryUseAbAttr, 1 / 3),
     new Ability(AbilityId.PROTEAN, 6)
       .attr(PokemonTypeChangeAbAttr)
-      // .condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.PROTEAN)) //Gen 9 Implementation
+      // .condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.PROTEAN)) //Gen 9 Implementation
       // TODO: needs testing on interaction with weather blockage
       .edgeCase(),
     new Ability(AbilityId.FUR_COAT, 6)
@@ -7481,8 +7491,7 @@ export function initAbilities() {
       .unsuppressable()
       .bypassFaint(),
     new Ability(AbilityId.CORROSION, 7)
-      .attr(IgnoreTypeStatusEffectImmunityAbAttr, [ StatusEffect.POISON, StatusEffect.TOXIC ], [ PokemonType.STEEL, PokemonType.POISON ])
-      .edgeCase(), // Should poison itself with toxic orb.
+      .attr(IgnoreTypeStatusEffectImmunityAbAttr, [ StatusEffect.POISON, StatusEffect.TOXIC ], [ PokemonType.STEEL, PokemonType.POISON ]),
     new Ability(AbilityId.COMATOSE, 7)
       .attr(StatusEffectImmunityAbAttr, ...getNonVolatileStatusEffects())
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
@@ -7566,7 +7575,7 @@ export function initAbilities() {
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true),
     new Ability(AbilityId.LIBERO, 8)
       .attr(PokemonTypeChangeAbAttr)
-    //.condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.LIBERO)), //Gen 9 Implementation
+    //.condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.LIBERO)), //Gen 9 Implementation
       // TODO: needs testing on interaction with weather blockage
       .edgeCase(),
     new Ability(AbilityId.BALL_FETCH, 8)
@@ -7824,22 +7833,26 @@ export function initAbilities() {
     new Ability(AbilityId.TOXIC_CHAIN, 9)
       .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC),
     new Ability(AbilityId.EMBODY_ASPECT_TEAL, 9)
-      .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPD ], 1)
+      .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPD ], 1) // Activates immediately upon Terastallizing, as well as upon switching in while Terastallized
+      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [ Stat.SPD ], 1, true)
       .uncopiable()
       .unreplaceable() // TODO is this true?
       .attr(NoTransformAbilityAbAttr),
     new Ability(AbilityId.EMBODY_ASPECT_WELLSPRING, 9)
       .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.SPDEF ], 1)
+      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [ Stat.SPDEF ], 1, true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr),
     new Ability(AbilityId.EMBODY_ASPECT_HEARTHFLAME, 9)
       .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.ATK ], 1)
+      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr),
     new Ability(AbilityId.EMBODY_ASPECT_CORNERSTONE, 9)
       .attr(PostTeraFormChangeStatChangeAbAttr, [ Stat.DEF ], 1)
+      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr),

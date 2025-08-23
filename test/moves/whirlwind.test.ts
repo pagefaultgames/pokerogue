@@ -1,4 +1,3 @@
-import { globalScene } from "#app/global-scene";
 import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
@@ -179,18 +178,13 @@ describe("Moves - Whirlwind", () => {
     const eligibleEnemy = enemyParty.filter(p => p.hp > 0 && p.isAllowedInBattle());
     expect(eligibleEnemy.length).toBe(1);
 
-    // Spy on the queueMessage function
-    const queueSpy = vi.spyOn(globalScene.phaseManager, "queueMessage");
-
     // Player uses Whirlwind; opponent uses Splash
     game.move.select(MoveId.WHIRLWIND);
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
-    // Verify that the failure message is displayed for Whirlwind
-    expect(queueSpy).toHaveBeenCalledWith(expect.stringContaining("But it failed"));
-    // Verify the opponent's Splash message
-    expect(queueSpy).toHaveBeenCalledWith(expect.stringContaining("But nothing happened!"));
+    const player = game.field.getPlayerPokemon();
+    expect(player).toHaveUsedMove({ move: MoveId.WHIRLWIND, result: MoveResult.FAIL });
   });
 
   it("should not pull in the other trainer's pokemon in a partner trainer battle", async () => {

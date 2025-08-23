@@ -58,11 +58,11 @@ export class GameChallengesUiHandler extends UiHandler {
 
     this.widestTextBox = 0;
 
-    this.challengesContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
+    this.challengesContainer = globalScene.add.container(1, -globalScene.scaledCanvas.height + 1);
     this.challengesContainer.setName("challenges");
 
     this.challengesContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6),
+      new Phaser.Geom.Rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height),
       Phaser.Geom.Rectangle.Contains,
     );
 
@@ -79,7 +79,7 @@ export class GameChallengesUiHandler extends UiHandler {
     this.challengesContainer.add(bgOverlay);
 
     // TODO: Change this back to /9 when adding in difficulty
-    const headerBg = addWindow(0, 0, globalScene.game.canvas.width / 6, 24);
+    const headerBg = addWindow(0, 0, globalScene.scaledCanvas.width, 24);
     headerBg.setName("window-header-bg");
     headerBg.setOrigin(0, 0);
 
