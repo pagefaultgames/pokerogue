@@ -4612,6 +4612,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   clear(): void {
     super.clear();
 
+    saveStarterPreferences(this.originalStarterPreferences);
+
     this.clearStarterPreferences();
     this.cursor = -1;
     this.hideInstructions();
