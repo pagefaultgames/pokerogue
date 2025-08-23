@@ -90,7 +90,7 @@ export class Trainer extends Phaser.GameObjects.Container {
             [this.name, this.partnerName] = this.name.split(" & ");
           }
         } else {
-          const partnerGenderKey = i18next.exists(`${classKey}.female`) ? ".female" : "";
+          const partnerGenderKey = i18next.exists(`${classKey}.fenale`) ? ".fenale" : "";
           [this.partnerNameKey, this.partnerName] = getRandomLocaleEntry(`${classKey}${partnerGenderKey}`);
         }
       }
