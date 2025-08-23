@@ -1,6 +1,7 @@
 import type { ModifierOverride } from "#app/modifier/modifier-type";
 import type { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { toDmgValue } from "#app/utils/common";
+import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -11,12 +12,14 @@ import { HitResult } from "#enums/hit-result";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
+import type { PostDamageForceSwitchAbAttr } from "#types/ability-types";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
 
 describe("Abilities - Wimp Out/Emergency Exit", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+  let canApplySpy: MockInstance<PostDamageForceSwitchAbAttr["canApply"]>;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -39,6 +42,8 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
       .criticalHits(false)
       .startingLevel(100)
       .enemyLevel(1000);
+
+    canApplySpy = vi.spyOn(allAbilities[AbilityId.WIMP_OUT].getAttrs("PostDamageForceSwitchAbAttr")[0], "canApply");
   });
 
   /**
@@ -57,7 +62,7 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
   }
 
   /**
-   * Confirm that Wimp Out did *not* trigger despite HP having been lowered below half.
+   * Confirm that Wimp Out did *not* trigger despite the ability check having fired..
    */
   function confirmNoSwitch(): void {
     const [pokemon1, pokemon2] = game.scene.getPlayerParty();
@@ -67,7 +72,8 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
     expect(pokemon2.species.speciesId).not.toBe(SpeciesId.WIMPOD);
 
     expect(pokemon1.species.speciesId).toBe(SpeciesId.WIMPOD);
-    expect(pokemon1.getHpRatio()).toBeLessThan(0.5);
+    expect(pokemon1).not.toHaveAbilityApplied(AbilityId.WIMP_OUT);
+    expect(canApplySpy).toHaveLastReturnedWith(false);
   }
 
   it.each<{ name: string; ability: AbilityId }>([
@@ -78,6 +84,9 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
     async ({ ability }) => {
       game.override.ability(ability);
       await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
+
+      // Make sure we spy on EE for its test
+      canApplySpy = vi.spyOn(allAbilities[ability].getAttrs("PostDamageForceSwitchAbAttr")[0], "canApply");
 
       const wimpod = game.field.getPlayerPokemon();
       wimpod.hp *= 0.52;
@@ -397,12 +406,11 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
 
     const [enemyLeadPokemon, enemySecPokemon] = game.scene.getEnemyParty();
     game.move.use(MoveId.FALSE_SWIPE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-
     await game.toEndOfTurn();
 
     expect(enemyLeadPokemon.visible).toBe(false);
     expect(enemyLeadPokemon.switchOutStatus).toBe(true);
-    expect(enemyLeadPokemon.hp).not.toHaveFullHp();
+    expect(enemyLeadPokemon).not.toHaveFullHp();
     expect(enemySecPokemon.visible).toBe(true);
     expect(enemySecPokemon.switchOutStatus).toBe(false);
     expect(enemySecPokemon).toHaveFullHp();
@@ -456,7 +464,7 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
   it("should not count damage from multi-hits that hit substitute", async () => {
     await game.classicMode.startBattle([SpeciesId.WIMPOD, SpeciesId.TYRUNT]);
 
-    // Give wimpod a 2 HP substitute, and put it 2 health above fainting
+    // Give wimpod a 2 HP substitute, and put it 2 health above the 50% threshold
     const wimpod = game.field.getPlayerPokemon();
     wimpod.hp = toDmgValue(wimpod.hp * 0.5) + 2;
     wimpod.addTag(BattlerTagType.SUBSTITUTE);
@@ -472,23 +480,24 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.TRIPLE_AXEL);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
     confirmNoSwitch();
   });
 
   it("should not activate on wave X0 bosses", async () => {
-    game.override.enemyAbility(AbilityId.WIMP_OUT).startingWave(10).enemyHealthSegments(3);
+    game.override.enemyAbility(AbilityId.WIMP_OUT).enemyLevel(1).startingWave(10).enemyHealthSegments(3);
     await game.classicMode.startBattle([SpeciesId.GOLISOPOD]);
 
-    const enemyPokemon = game.field.getEnemyPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.FALSE_SWIPE);
     await game.toNextTurn();
 
-    expect(enemyPokemon.visible).toBe(true);
-    expect(enemyPokemon.switchOutStatus).toBe(false);
+    expect(canApplySpy).toHaveBeenLastCalledWith(expect.objectContaining({ pokemon: enemy }));
+    expect(canApplySpy).toHaveLastReturnedWith(false);
+    expect(enemy.visible).toBe(true);
+    expect(enemy.switchOutStatus).toBe(false);
   });
 
   it("should not skip battles when triggering the same turn as another enemy faints", async () => {
@@ -508,7 +517,7 @@ describe("Abilities - Wimp Out/Emergency Exit", () => {
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.ENDURE);
 
-    await game.toNextWave();
+    await game.phaseInterceptor.to("SelectModifierPhase", false);
     expect(game.scene.currentBattle.waveIndex).toBe(3);
   });
 });
