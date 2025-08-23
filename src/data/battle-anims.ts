@@ -139,8 +139,8 @@ class AnimFrame {
     focus: AnimFocus,
     init?: boolean,
   ) {
-    this.x = !init ? ((x || 0) - 128) * 0.5 : x;
-    this.y = !init ? ((y || 0) - 224) * 0.5 : y;
+    this.x = init ? x : ((x || 0) - 128) * 0.5;
+    this.y = init ? y : ((y || 0) - 224) * 0.5;
     if (zoomX) {
       this.zoomX = zoomX;
     } else if (init) {
@@ -835,8 +835,8 @@ export abstract class BattleAnim {
   // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
   play(onSubstitute?: boolean, callback?: Function) {
     const isOppAnim = this.isOppAnim();
-    const user = !isOppAnim ? this.user! : this.target!; // TODO: These bangs are LITERALLY not correct at all
-    const target = !isOppAnim ? this.target! : this.user!;
+    const user = isOppAnim ? this.target! : this.user!;
+    const target = isOppAnim ? this.user! : this.target!; // TODO: These bangs are LITERALLY not correct at all
 
     if (!target?.isOnField() && !this.playRegardlessOfIssues) {
       if (callback) {
@@ -888,8 +888,8 @@ export abstract class BattleAnim {
        * and `this.target` prevent the target's Substitute doll from disappearing
        * after being the target of an animation.
        */
-      const userSpriteToShow = !isOppAnim ? userSprite : targetSprite;
-      const targetSpriteToShow = !isOppAnim ? targetSprite : userSprite;
+      const userSpriteToShow = isOppAnim ? targetSprite : userSprite;
+      const targetSpriteToShow = isOppAnim ? userSprite : targetSprite;
       if (!this.isHideUser() && userSpriteToShow) {
         userSpriteToShow.setVisible(true);
       }
@@ -1142,7 +1142,7 @@ export abstract class BattleAnim {
 
     for (const frame of frames) {
       let { x, y } = frame;
-      const scaleX = (frame.zoomX / 100) * (!frame.mirror ? 1 : -1);
+      const scaleX = (frame.zoomX / 100) * (frame.mirror ? -1 : 1);
       const scaleY = frame.zoomY / 100;
       x += targetInitialX;
       y += targetInitialY;

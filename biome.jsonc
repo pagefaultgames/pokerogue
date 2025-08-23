@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -68,8 +68,8 @@
       },
       "style": {
         "noNegationElse": {
-          "level": "warn", // TODO: Promote to error eventually
-          "fix": "none", // duplicates else blocks
+          "level": "info", // TODO: Promote to error eventually
+          "fix": "unsafe", // duplicates else blocks
           "options": {}
         },
         // TODO: Fix all instances of this and promote to `error` - this and enums are the 2 things
