@@ -1171,17 +1171,17 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.setUpgradeAnimation(icon, species);
       });
 
-      if (globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
-        for (const container of this.pokemonEggMoveContainers) {
-          container.setVisible(false);
-        }
-        this.eggMovesLabel.setVisible(false);
-        // This is not enough, we need individual checks in setStarterSpecies too! :)
-        this.pokemonPassiveDisabledIcon.setVisible(false);
-        this.pokemonPassiveLabelText.setVisible(false);
-        this.pokemonPassiveLockedIcon.setVisible(false);
-        this.pokemonPassiveText.setVisible(false);
+      const notFreshStart = !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+
+      for (const container of this.pokemonEggMoveContainers) {
+        container.setVisible(notFreshStart);
       }
+      this.eggMovesLabel.setVisible(notFreshStart);
+      // This is not enough, we need individual checks in setStarterSpecies too! :)
+      this.pokemonPassiveDisabledIcon.setVisible(notFreshStart);
+      this.pokemonPassiveLabelText.setVisible(notFreshStart);
+      this.pokemonPassiveLockedIcon.setVisible(notFreshStart);
+      this.pokemonPassiveText.setVisible(notFreshStart);
 
       this.resetFilters();
       this.updateStarters();
@@ -2391,6 +2391,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 const newVariant = starterAttributes.variant
                   ? (starterAttributes.variant as Variant)
                   : newProps.variant;
+                starterAttributes.shiny = true;
+                originalStarterAttributes.shiny = true;
+                starterAttributes.variant = newVariant;
+                originalStarterAttributes.variant = newVariant;
                 this.setSpeciesDetails(this.lastSpecies, {
                   shiny: true,
                   variant: newVariant,
@@ -2400,9 +2404,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 // Cycle tint based on current sprite tint
                 const tint = getVariantTint(newVariant);
                 this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant)).setTint(tint).setVisible(true);
-
-                starterAttributes.shiny = true;
-                originalStarterAttributes.shiny = true;
               } else {
                 // If shiny, we update the variant
                 let newVariant = props.variant;
@@ -2429,14 +2430,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 originalStarterAttributes.variant = newVariant;
                 if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.NON_SHINY && newVariant <= props.variant) {
                   // If we have run out of variants, go back to non shiny
+                  starterAttributes.shiny = false;
+                  originalStarterAttributes.shiny = false;
                   this.setSpeciesDetails(this.lastSpecies, {
                     shiny: false,
                     variant: 0,
                   });
                   this.pokemonShinyIcon.setVisible(false);
                   success = true;
-                  starterAttributes.shiny = false;
-                  originalStarterAttributes.shiny = false;
                 } else {
                   // If going to a higher variant, or only shiny forms are caught, go to next variant
                   this.setSpeciesDetails(this.lastSpecies, {
