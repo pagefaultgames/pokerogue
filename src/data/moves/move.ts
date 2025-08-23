@@ -8903,9 +8903,9 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.REFLECT, 5, true)
       .target(MoveTarget.USER_SIDE),
     new SelfStatusMove(MoveId.FOCUS_ENERGY, PokemonType.NORMAL, -1, 30, -1, 0, 1)
-      .attr(AddBattlerTagAttr, BattlerTagType.CRIT_BOOST, true, true),
+      .attr(AddBattlerTagAttr, BattlerTagType.CRIT_BOOST, true, true)
       // TODO: Remove once dragon cheer & focus energy are merged into 1 tag
-      .condition((_user, target) => !target.getTag(BattlerTagType.DRAGON_CHEER))
+      .condition((_user, target) => !target.getTag(BattlerTagType.DRAGON_CHEER)),
     new AttackMove(MoveId.BIDE, PokemonType.NORMAL, MoveCategory.PHYSICAL, -1, -1, 10, -1, 1, 1)
       .target(MoveTarget.USER)
       .unimplemented(),
