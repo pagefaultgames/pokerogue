@@ -93,7 +93,6 @@ import { getEnumValues } from "#utils/enums";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import { applyChallenges } from "#utils/challenge-utils";
-import { SpeciesFormKey } from "#enums/species-form-key";
 import { AbstractConstructor } from "#types/type-helpers";
 
 /**

@@ -121,7 +121,11 @@ describe("Abilities - Sweet Veil", () => {
     game.field.mockAbility(shuckle, AbilityId.SWEET_VEIL);
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
-    await game.toEndOfTurn();
+    await game.toNextTurn();
+
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.toNextTurn();
 
     expect(shuckle).not.toHaveBattlerTag(BattlerTagType.DROWSY);
     expect(swirlix).not.toHaveBattlerTag(BattlerTagType.DROWSY);
