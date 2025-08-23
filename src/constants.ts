@@ -1,3 +1,4 @@
+import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { SpeciesId } from "#enums/species-id";
 
 /** The maximum size of the player's party */
@@ -53,11 +54,14 @@ export const defaultStarterSpecies: SpeciesId[] = [
   SpeciesId.QUAXLY,
 ];
 
-export const defaultStarterSpeciesAndEvolutions: SpeciesId[] = defaultStarterSpecies.flatMap(id => [
-  id,
-  (id + 1) as SpeciesId,
-  (id + 2) as SpeciesId,
-]);
+/**
+ * The default species and all their evolutions
+ */
+export const defaultStarterSpeciesAndEvolutions: SpeciesId[] = defaultStarterSpecies.flatMap(id => {
+  const stage2ids = pokemonEvolutions[id]?.map(e => e.speciesId) ?? [];
+  const stage3ids = stage2ids.flatMap(s2id => pokemonEvolutions[s2id]?.map(e => e.speciesId) ?? []);
+  return [id, ...stage2ids, ...stage3ids];
+});
 
 export const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
