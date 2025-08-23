@@ -93,7 +93,7 @@ import { getEnumValues } from "#utils/enums";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import { applyChallenges } from "#utils/challenge-utils";
-import { AbstractConstructor } from "#types/type-helpers";
+import type { AbstractConstructor } from "#types/type-helpers";
 
 /**
  * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
