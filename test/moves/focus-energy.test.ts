@@ -34,8 +34,7 @@ describe("Move - Focus Energy", () => {
       .enemyLevel(100);
   });
 
-  // TODO: Enable once release bugfix is merged into beta
-  it.todo("should increase the user's crit ratio by 2 stages", async () => {
+  it("should increase the user's crit ratio by 2 stages", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.use(MoveId.FOCUS_ENERGY);
