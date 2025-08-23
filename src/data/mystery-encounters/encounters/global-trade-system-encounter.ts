@@ -44,7 +44,10 @@ import { PokemonData } from "#system/pokemon-data";
 import { MusicPreference } from "#system/settings";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { isNullOrUndefined, NumberHolder, randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
+import { getEnumKeys } from "#utils/enums";
+import { getRandomLocaleEntry } from "#utils/i18n";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -984,14 +987,17 @@ function doTradeReceivedSequence(
 }
 
 function generateRandomTraderName() {
-  const length = TrainerType.YOUNGSTER - TrainerType.ACE_TRAINER + 1;
-  // +1 avoids TrainerType.UNKNOWN
-  const classKey = `trainersCommon:${TrainerType[randInt(length) + 1]}`;
-  // Some trainers have 2 gendered pools, some do not
-  const genderKey = i18next.exists(`${classKey}.MALE`) ? (randInt(2) === 0 ? ".MALE" : ".FEMALE") : "";
-  const trainerNameKey = randSeedItem(Object.keys(i18next.t(`${classKey}${genderKey}`, { returnObjects: true })));
-  const trainerNameString = i18next.t(`${classKey}${genderKey}.${trainerNameKey}`);
-  // Some names have an '&' symbol and need to be trimmed to a single name instead of a double name
-  const trainerNames = trainerNameString.split(" & ");
-  return trainerNames[randInt(trainerNames.length)];
+  const allTrainerNames = getEnumKeys(TrainerType);
+  // Exclude TrainerType.UNKNOWN and everything after Ace Trainers (grunts and unique trainers)
+  const eligibleNames = allTrainerNames.slice(
+    1,
+    allTrainerNames.indexOf(TrainerType[TrainerType.YOUNGSTER] as keyof typeof TrainerType),
+  );
+  const randomTrainer = toCamelCase(randSeedItem(eligibleNames));
+  const classKey = `trainersCommon:${randomTrainer}`;
+  // Pick a random gender for ones with gendered pools, or access the raw object for ones without.
+  const genderKey = i18next.exists(`${classKey}.male`) ? randSeedItem([".male", ".female"]) : "";
+  const trainerNameString = getRandomLocaleEntry(`${classKey}${genderKey}`)[1];
+  // Split the string by &s (for duo trainers)
+  return randSeedItem(trainerNameString.split(" & "));
 }

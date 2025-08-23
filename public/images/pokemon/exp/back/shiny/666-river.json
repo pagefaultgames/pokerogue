@@ -1,0 +1,104 @@
+{
+	"textures": [
+		{
+			"image": "666-river.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 136,
+				"h": 136
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0002.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 67,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 15,
+						"y": 1,
+						"w": 43,
+						"h": 69
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 43,
+						"h": 69
+					}
+				},
+				{
+					"filename": "0004.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 67,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 15,
+						"y": 1,
+						"w": 43,
+						"h": 69
+					},
+					"frame": {
+						"x": 0,
+						"y": 0,
+						"w": 43,
+						"h": 69
+					}
+				},
+				{
+					"filename": "0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 67,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 67,
+						"h": 68
+					},
+					"frame": {
+						"x": 43,
+						"y": 0,
+						"w": 67,
+						"h": 68
+					}
+				},
+				{
+					"filename": "0003.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 67,
+						"h": 71
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 3,
+						"w": 67,
+						"h": 68
+					},
+					"frame": {
+						"x": 43,
+						"y": 68,
+						"w": 67,
+						"h": 68
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:d4a6c6d175c7ad15bd073321ce0be26a:3186230ac54db5c9894efb9bdc11fe19:fa23dc87fc53ba2cfa532cf440553cf5$"
+	}
+}
