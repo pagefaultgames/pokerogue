@@ -652,7 +652,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [SpeciesId.KIRLIA]: [
     new SpeciesEvolution(SpeciesId.GARDEVOIR, 30, null, null),
-    new SpeciesEvolution(SpeciesId.GALLADE, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.MALE})
+    new SpeciesEvolution(SpeciesId.GALLADE, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.MALE}, SpeciesWildEvolutionDelay.LONG),
   ],
   [SpeciesId.SURSKIT]: [
     new SpeciesEvolution(SpeciesId.MASQUERAIN, 22, null, null)
@@ -741,7 +741,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [SpeciesId.SNORUNT]: [
     new SpeciesEvolution(SpeciesId.GLALIE, 42, null, null),
-    new SpeciesEvolution(SpeciesId.FROSLASS, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.FEMALE})
+    new SpeciesEvolution(SpeciesId.FROSLASS, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.FEMALE}, SpeciesWildEvolutionDelay.LONG),
   ],
   [SpeciesId.SPHEAL]: [
     new SpeciesEvolution(SpeciesId.SEALEO, 32, null, null)
@@ -1591,7 +1591,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.WHIMSICOTT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.PETILIL]: [
-    new SpeciesEvolution(SpeciesId.HISUI_LILLIGANT, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesEvolution(SpeciesId.HISUI_LILLIGANT, 1, EvolutionItem.DAWN_STONE, null, SpeciesWildEvolutionDelay.LONG),
     new SpeciesEvolution(SpeciesId.LILLIGANT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.BASCULIN]: [

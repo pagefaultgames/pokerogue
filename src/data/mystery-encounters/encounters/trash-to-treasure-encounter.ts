@@ -153,7 +153,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
         doGarbageDig();
       })
       .withOptionPhase(async () => {
-        // Gain 2 Leftovers and 1 Shell Bell
+        // Gain 1 Leftovers and 1 Shell Bell
         await transitionMysteryEncounterIntroVisuals();
         await tryApplyDigRewardItems();
 
@@ -231,21 +231,7 @@ async function tryApplyDigRewardItems() {
   const party = globalScene.getPlayerParty();
 
   // Iterate over the party until an item was successfully given
-  // First leftovers
-  for (const pokemon of party) {
-    const heldItems = globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id,
-      true,
-    ) as PokemonHeldItemModifier[];
-    const existingLeftovers = heldItems.find(m => m instanceof TurnHealModifier) as TurnHealModifier;
-
-    if (!existingLeftovers || existingLeftovers.getStackCount() < existingLeftovers.getMaxStackCount()) {
-      await applyModifierTypeToPlayerPokemon(pokemon, leftovers);
-      break;
-    }
-  }
-
-  // Second leftovers
+  // Only Leftovers
   for (const pokemon of party) {
     const heldItems = globalScene.findModifiers(
       m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id,

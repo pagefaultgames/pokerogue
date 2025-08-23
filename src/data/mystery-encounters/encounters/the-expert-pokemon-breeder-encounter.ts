@@ -4,6 +4,7 @@ import { modifierTypes } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
 import { getPokeballTintColor } from "#data/pokeball";
 import { BiomeId } from "#enums/biome-id";
+import { Challenges } from "#enums/challenges";
 import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
 import { MoveId } from "#enums/move-id";
@@ -33,7 +34,7 @@ import i18next from "i18next";
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theExpertPokemonBreeder";
 
-const trainerNameKey = "trainerNames:expert_pokemon_breeder";
+const trainerNameKey = "trainerNames:expertPokemonBreeder";
 
 const FIRST_STAGE_EVOLUTION_WAVE = 45;
 const SECOND_STAGE_EVOLUTION_WAVE = 60;
@@ -130,6 +131,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
   MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER,
 )
   .withEncounterTier(MysteryEncounterTier.ULTRA)
+  .withDisallowedChallenges(Challenges.HARDCORE)
   .withSceneWaveRangeRequirement(25, 180)
   .withScenePartySizeRequirement(4, 6, true) // Must have at least 4 legal pokemon in party
   .withIntroSpriteConfigs([]) // These are set in onInit()

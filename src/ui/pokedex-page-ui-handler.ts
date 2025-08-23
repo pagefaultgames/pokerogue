@@ -640,7 +640,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.optionSelectText = addBBCodeTextObject(
       0,
       0,
-      this.menuOptions.map(o => `${i18next.t(`pokedexUiHandler:${MenuOptions[o]}`)}`).join("\n"),
+      this.menuOptions.map(o => `${i18next.t(`pokedexUiHandler:${toCamelCase(`menu${MenuOptions[o]}`)}`)}`).join("\n"),
       TextStyle.WINDOW,
       { maxLines: this.menuOptions.length, lineSpacing: 12 },
     );
@@ -757,7 +757,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     return this.menuOptions
       .map(o => {
-        const label = `${i18next.t(`pokedexUiHandler:${MenuOptions[o]}`)}`;
+        const label = i18next.t(`pokedexUiHandler:${toCamelCase(`menu${MenuOptions[o]}`)}`);
         const isDark =
           !isSeen ||
           (!isStarterCaught && (o === MenuOptions.TOGGLE_IVS || o === MenuOptions.NATURES)) ||
@@ -1777,7 +1777,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               this.blockInput = true;
               ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
                 ui.showText(i18next.t("pokedexUiHandler:showNature"), null, () => {
-                  const natures = globalScene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
+                  const starterDexEntry =
+                    globalScene.gameData.dexData[this.getStarterSpeciesId(this.species.speciesId)];
+                  const natures = globalScene.gameData.getNaturesForAttr(starterDexEntry.natureAttr);
                   ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
                     options: natures
                       .map((n: Nature, _i: number) => {
@@ -2829,7 +2831,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     this.statsContainer.setVisible(true);
 
-    this.statsContainer.updateIvs(this.speciesStarterDexEntry.ivs);
+    const ivs = globalScene.gameData.dexData[this.getStarterSpeciesId(this.species.speciesId)].ivs;
+    this.statsContainer.updateIvs(ivs);
   }
 
   clearText() {

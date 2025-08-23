@@ -1,7 +1,7 @@
 {
   "name": "pokemon-rogue-battle",
   "private": true,
-  "version": "1.9.6",
+  "version": "1.11.0",
   "type": "module",
   "scripts": {
     "start": "vite",
@@ -14,6 +14,7 @@
     "test:watch": "vitest watch --coverage --no-isolate",
     "test:silent": "vitest run --silent='passed-only' --no-isolate",
     "test:create": "node scripts/create-test/create-test.js",
+    "scrape-trainers": "node scripts/scrape-trainer-names/main.js",
     "typecheck": "tsc --noEmit",
     "biome": "biome check --write --changed --no-errors-on-unmatched --diagnostic-level=error",
     "biome-ci": "biome ci --diagnostic-level=error --reporter=github --no-errors-on-unmatched",
