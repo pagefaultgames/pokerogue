@@ -67,6 +67,20 @@
         "useJsonImportAttributes": "off" // "Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'. ts(2823)"
       },
       "style": {
+        "noNegationElse": "warn", // TODO: Promote to error eventually
+        // TODO: Fix all instances of this and promote to `error` - this and enums are the 2 things
+        // barring us from `esModuleInterop`
+        "noParameterProperties": "warn",
+        "useConsistentBuiltinInstantiation": "error",
+        "noDefaultExport": "warn", // TODO: Fix `overrides.ts` and enable
+        "noShoutyConstants": "error",
+        "useThrowNewError": {
+          "level": "error",
+          "fix": "safe",
+          "options": {}
+        },
+        "useThrowOnlyError": "error",
+        "useTrimStartEnd": "error",
         "useReadonlyClassProperties": {
           "level": "info", // TODO: Graduate to error eventually
           "options": { "checkAllProperties": true }
@@ -128,6 +142,10 @@
         "useNumericSeparators": "off" // TODO: Consider enabling?
       },
       "suspicious": {
+        "useErrorMessage": "error",
+        "noEvolvingTypes": "error", // TODO: Review and enable ASAP - this is VERY VERY BAD
+        "useNumberToFixedDigitsArgument": "error",
+        "useGuardForIn": "error",
         "noDoubleEquals": "error",
         // While this would be a nice rule to enable, the current structure of the codebase makes this infeasible
         // due to being used for move/ability `args` params and save data-related code.
@@ -147,6 +165,8 @@
         "useIterableCallbackReturn": "warn" // TODO: Refactor and change to error
       },
       "complexity": {
+        "useWhile": "error",
+        "noVoid": "error",
         "noUselessStringConcat": "error",
         "noExcessiveCognitiveComplexity": "info", // TODO: Refactor and make this an error
         "useLiteralKeys": "off", // TODO: enable?
@@ -165,9 +185,10 @@
         "noBarrelFile": "error"
       },
       "nursery": {
+        "noUselessUndefined": "error",
         "useMaxParams": {
-          "level": "warn", // TODO: Change to "error" eventually
-          "options": { "max": 4 } // TODO: is this ok?
+          "level": "warn", // TODO: Change to "error"... eventually...
+          "options": { "max": 4 } // A lot of stuff has a few params, but
         },
         "noShadow": "warn" // TODO: refactor and make "error"
       }
