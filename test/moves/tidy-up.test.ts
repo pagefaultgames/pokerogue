@@ -7,7 +7,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
-import type { ArenaTrapTagType } from "#types/arena-tags";
+import type { EntryHazardTagType } from "#types/arena-tags";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -35,7 +35,7 @@ describe("Moves - Tidy Up", () => {
       .ability(AbilityId.BALL_FETCH);
   });
 
-  it.each<{ name: string; tagType: ArenaTrapTagType }>([
+  it.each<{ name: string; tagType: EntryHazardTagType }>([
     { name: "Spikes", tagType: ArenaTagType.SPIKES },
     { name: "Toxic Spikes", tagType: ArenaTagType.TOXIC_SPIKES },
     { name: "Stealth Rock", tagType: ArenaTagType.STEALTH_ROCK },
