@@ -173,30 +173,31 @@ describe("UI - Transfer Items", () => {
   it("should not allow changing to discard mode when transfering items", async () => {
     let handler: PartyUiHandler | undefined;
 
-    await new Promise<void>(resolve => {
-      game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, async () => {
-        await new Promise(r => setTimeout(r, 100));
-        const modifierHandler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+    const { resolve, promise } = Promise.withResolvers<void>();
 
-        modifierHandler.processInput(Button.DOWN);
-        modifierHandler.setCursor(1);
-        modifierHandler.processInput(Button.ACTION);
-      });
+    game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, async () => {
+      await new Promise(r => setTimeout(r, 100));
+      const modifierHandler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
 
-      game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
-        await new Promise(r => setTimeout(r, 100));
-        handler = game.scene.ui.getHandler() as PartyUiHandler;
-
-        handler.setCursor(0);
-        handler.processInput(Button.ACTION);
-
-        await new Promise(r => setTimeout(r, 100));
-        handler.processInput(Button.ACTION);
-
-        resolve();
-      });
+      modifierHandler.processInput(Button.DOWN);
+      modifierHandler.setCursor(1);
+      modifierHandler.processInput(Button.ACTION);
     });
 
+    game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, async () => {
+      await new Promise(r => setTimeout(r, 100));
+      handler = game.scene.ui.getHandler() as PartyUiHandler;
+
+      handler.setCursor(0);
+      handler.processInput(Button.ACTION);
+
+      await new Promise(r => setTimeout(r, 100));
+      handler.processInput(Button.ACTION);
+
+      resolve();
+    });
+
+    await promise;
     expect(handler).toBeDefined();
     if (handler) {
       const partyMode = handler["partyUiMode"];
