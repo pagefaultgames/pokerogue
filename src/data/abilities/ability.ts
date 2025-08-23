@@ -1758,7 +1758,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
  * Parameters for abilities that modify the hit count and damage of a move
  */
 export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteractionAbAttrParams, "opponent"> {
-  /** Holder for the number of hits. May be modified by ability application  */
+  /** Holder for the number of hits. May be modified by ability application */
   hitCount?: NumberHolder;
   /** Holder for the damage multiplier _of the current hit_ */
   multiplier?: NumberHolder;
@@ -5824,7 +5824,7 @@ export class NoFusionAbilityAbAttr extends AbAttr {
 export interface IgnoreTypeImmunityAbAttrParams extends AbAttrBaseParams {
   /** The type of the move being used */
   readonly moveType: PokemonType;
-  /** The type being checked for  */
+  /** The type being checked for */
   readonly defenderType: PokemonType;
   /** Holds whether the type immunity should be bypassed */
   cancelled: BooleanHolder;
