@@ -30,8 +30,9 @@ export class LoginFormUiHandler extends FormModalUiHandler {
 
   private googleImage: Phaser.GameObjects.Image;
   private discordImage: Phaser.GameObjects.Image;
-  private settingsImage: Phaser.GameObjects.Image;
+  private usernameInfoImage: Phaser.GameObjects.Image;
   private saveDownloadImage: Phaser.GameObjects.Image;
+  private changeLanguageImage: Phaser.GameObjects.Image;
   private externalPartyContainer: Phaser.GameObjects.Container;
   private infoContainer: Phaser.GameObjects.Container;
   private externalPartyBg: Phaser.GameObjects.NineSlice;
@@ -73,7 +74,7 @@ export class LoginFormUiHandler extends FormModalUiHandler {
   private buildInfoContainer() {
     this.infoContainer = globalScene.add.container(0, 0);
 
-    this.settingsImage = this.buildInteractableImage("settings_icon", "username-info-icon", {
+    this.usernameInfoImage = this.buildInteractableImage("settings_icon", "username-info-icon", {
       x: 20,
       scale: 0.5,
     });
@@ -83,8 +84,15 @@ export class LoginFormUiHandler extends FormModalUiHandler {
       scale: 0.75,
     });
 
-    this.infoContainer.add(this.settingsImage);
+    this.changeLanguageImage = this.buildInteractableImage("settings_icon", "change-language-icon", {
+      // todo: replace with custom icon
+      x: 40,
+      scale: 0.5,
+    });
+
+    this.infoContainer.add(this.usernameInfoImage);
     this.infoContainer.add(this.saveDownloadImage);
+    this.infoContainer.add(this.changeLanguageImage);
     this.getUi().add(this.infoContainer);
     this.infoContainer.setVisible(false);
     this.infoContainer.disableInteractive();
@@ -186,9 +194,13 @@ export class LoginFormUiHandler extends FormModalUiHandler {
     this.infoContainer.setVisible(false);
     this.setMouseCursorStyle("default"); //reset cursor
 
-    [this.discordImage, this.googleImage, this.settingsImage, this.saveDownloadImage].forEach(img =>
-      img.off("pointerdown"),
-    );
+    [
+      this.discordImage,
+      this.googleImage,
+      this.usernameInfoImage,
+      this.saveDownloadImage,
+      this.changeLanguageImage,
+    ].forEach(img => img.off("pointerdown"));
   }
 
   private processExternalProvider(config: ModalConfig): void {
@@ -205,8 +217,9 @@ export class LoginFormUiHandler extends FormModalUiHandler {
     this.infoContainer.setPosition(5, -76);
     this.infoContainer.setVisible(true);
     this.getUi().moveTo(this.infoContainer, this.getUi().length - 1);
-    this.settingsImage.setPositionRelative(this.infoContainer, 0, 0);
+    this.usernameInfoImage.setPositionRelative(this.infoContainer, 0, 0);
     this.saveDownloadImage.setPositionRelative(this.infoContainer, 20, 0);
+    this.changeLanguageImage.setPositionRelative(this.infoContainer, 40, 0);
 
     this.discordImage.on("pointerdown", () => {
       const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
@@ -228,76 +241,38 @@ export class LoginFormUiHandler extends FormModalUiHandler {
       globalScene.ui.playError();
     };
 
-    this.settingsImage.on("pointerdown", () => {
-      // Show the username selection ui
-      const userNameHandler = () => {
-        globalScene.ui.revertMode();
-        if (globalScene.tweens.getTweensOf(this.infoContainer).length === 0) {
-          const localStorageKeys = Object.keys(localStorage); // this gets the keys for localStorage
-          const keyToFind = "data_";
-          const dataKeys = localStorageKeys.filter(ls => ls.indexOf(keyToFind) >= 0);
-          if (dataKeys.length > 0 && dataKeys.length <= 2) {
-            const options: OptionSelectItem[] = [];
-            for (const key of dataKeys) {
-              options.push({
-                label: key.replace(keyToFind, ""),
-                handler: () => {
-                  globalScene.ui.revertMode();
-                  this.infoContainer.disableInteractive();
-                  return true;
-                },
-              });
-            }
-            globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-              options: options,
-              delay: 1000,
+    this.usernameInfoImage.on("pointerdown", () => {
+      if (globalScene.tweens.getTweensOf(this.infoContainer).length === 0) {
+        const localStorageKeys = Object.keys(localStorage); // this gets the keys for localStorage
+        const keyToFind = "data_";
+        const dataKeys = localStorageKeys.filter(ls => ls.indexOf(keyToFind) >= 0);
+        if (dataKeys.length > 0 && dataKeys.length <= 2) {
+          const options: OptionSelectItem[] = [];
+          for (let i = 0; i < dataKeys.length; i++) {
+            options.push({
+              label: dataKeys[i].replace(keyToFind, ""),
+              handler: () => {
+                globalScene.ui.revertMode();
+                this.infoContainer.disableInteractive();
+                return true;
+              },
             });
-            this.infoContainer.setInteractive(
-              new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width, globalScene.game.canvas.height),
-              Phaser.Geom.Rectangle.Contains,
-            );
-          } else {
-            if (dataKeys.length > 2) {
-              return onFail(this.ERR_TOO_MANY_SAVES);
-            }
-            return onFail(this.ERR_NO_SAVES);
           }
+          globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
+            options: options,
+            delay: 1000,
+          });
+          this.infoContainer.setInteractive(
+            new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width, globalScene.game.canvas.height),
+            Phaser.Geom.Rectangle.Contains,
+          );
+        } else {
+          if (dataKeys.length > 2) {
+            return onFail(this.ERR_TOO_MANY_SAVES);
+          }
+          return onFail(this.ERR_NO_SAVES);
         }
-      };
-
-      // Show the language selection ui
-      const changeLanguageHandler = () => {
-        globalScene.ui.revertMode();
-        globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-          options: languageOptions,
-          maxOptions: 7,
-          delay: 1000,
-        });
-      };
-
-      globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-        options: [
-          {
-            label: i18next.t("menu:changeLanguage"),
-            handler: () => {
-              changeLanguageHandler();
-            },
-          },
-          {
-            label: i18next.t("menu:showUsernames"),
-            handler: () => {
-              userNameHandler();
-            },
-          },
-          {
-            label: i18next.t("settings:back"),
-            handler: () => {
-              globalScene.ui.revertMode();
-              return true;
-            },
-          },
-        ],
-      });
+      }
     });
 
     this.saveDownloadImage.on("pointerdown", () => {
@@ -326,6 +301,14 @@ export class LoginFormUiHandler extends FormModalUiHandler {
       } else {
         return onFail(this.ERR_NO_SAVES);
       }
+    });
+
+    this.changeLanguageImage.on("pointerdown", () => {
+      globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
+        options: languageOptions,
+        maxOptions: 7,
+        delay: 1000,
+      });
     });
 
     this.externalPartyContainer.setAlpha(0);
