@@ -53,6 +53,12 @@ export const defaultStarterSpecies: SpeciesId[] = [
   SpeciesId.QUAXLY,
 ];
 
+export const defaultStarterSpeciesAndEvolutions: SpeciesId[] = defaultStarterSpecies.flatMap(id => [
+  id,
+  (id + 1) as SpeciesId,
+  (id + 2) as SpeciesId,
+]);
+
 export const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
 
 /**
@@ -101,3 +107,9 @@ export const ANTI_VARIANCE_WEIGHT_MODIFIER = 15;
  * Default: `10000` (0.01%)
  */
 export const FAKE_TITLE_LOGO_CHANCE = 10000;
+
+/**
+ * The ceiling on friendship amount that can be reached through the use of rare candies.
+ * Using rare candies will never increase friendship beyond this value.
+ */
+export const RARE_CANDY_FRIENDSHIP_CAP = 200;

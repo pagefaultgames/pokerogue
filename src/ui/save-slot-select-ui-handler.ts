@@ -377,7 +377,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
         "select_cursor_highlight_thick",
         undefined,
         294,
-        this.sessionSlots[prevSlotIndex ?? 0]?.saveData?.runNameText ? 50 : 60,
+        this.sessionSlots[prevSlotIndex ?? 0]?.saveData?.name ? 50 : 60,
         6,
         6,
         6,
@@ -553,10 +553,10 @@ class SessionSlot extends Phaser.GameObjects.Container {
   }
 
   async setupWithData(data: SessionSaveData) {
-    const hasName = data?.runNameText;
+    const hasName = data?.name;
     this.remove(this.loadingLabel, true);
     if (hasName) {
-      const nameLabel = addTextObject(8, 5, data.runNameText, TextStyle.WINDOW);
+      const nameLabel = addTextObject(8, 5, data.name, TextStyle.WINDOW);
       this.add(nameLabel);
     } else {
       const fallbackName = this.decideFallback(data);

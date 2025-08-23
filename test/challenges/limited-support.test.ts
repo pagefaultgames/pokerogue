@@ -3,6 +3,7 @@ import { Challenges } from "#enums/challenges";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
+import { ExpBoosterModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/test-utils/game-manager";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
@@ -75,6 +76,7 @@ describe("Challenges - Limited Support", () => {
     await game.doKillOpponents();
     await game.toNextWave();
 
+    expect(game.scene.getModifiers(ExpBoosterModifier)).toHaveLength(1);
     expect(playerPokemon).not.toHaveFullHp();
 
     game.move.use(MoveId.SPLASH);

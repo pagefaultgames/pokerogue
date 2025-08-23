@@ -1733,12 +1733,12 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
   }
 
   /**
-   * Tries to inflicts the holder with the associated {@linkcode StatusEffect}.
-   * @param pokemon {@linkcode Pokemon} that holds the held item
+   * Attempt to inflict the holder with the associated {@linkcode StatusEffect}.
+   * @param pokemon - The {@linkcode Pokemon} holding the item
    * @returns `true` if the status effect was applied successfully
    */
   override apply(pokemon: Pokemon): boolean {
-    return pokemon.trySetStatus(this.effect, true, undefined, undefined, this.type.name);
+    return pokemon.trySetStatus(this.effect, pokemon, undefined, this.type.name);
   }
 
   getMaxHeldItemCount(_pokemon: Pokemon): number {
@@ -2307,7 +2307,7 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
       playerPokemon.levelExp = 0;
     }
 
-    playerPokemon.addFriendship(FRIENDSHIP_GAIN_FROM_RARE_CANDY);
+    playerPokemon.addFriendship(FRIENDSHIP_GAIN_FROM_RARE_CANDY, true);
 
     globalScene.phaseManager.unshiftNew(
       "LevelUpPhase",
@@ -3608,7 +3608,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
    */
   override apply(enemyPokemon: Pokemon): boolean {
     if (randSeedFloat() <= this.chance * this.getStackCount()) {
-      return enemyPokemon.trySetStatus(this.effect, true);
+      return enemyPokemon.trySetStatus(this.effect);
     }
 
     return false;
@@ -3758,7 +3758,7 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
 export function overrideModifiers(isPlayer = true): void {
   const modifiersOverride: ModifierOverride[] = isPlayer
     ? Overrides.STARTING_MODIFIER_OVERRIDE
-    : Overrides.OPP_MODIFIER_OVERRIDE;
+    : Overrides.ENEMY_MODIFIER_OVERRIDE;
   if (!modifiersOverride || modifiersOverride.length === 0 || !globalScene) {
     return;
   }
@@ -3800,7 +3800,7 @@ export function overrideModifiers(isPlayer = true): void {
 export function overrideHeldItems(pokemon: Pokemon, isPlayer = true): void {
   const heldItemsOverride: ModifierOverride[] = isPlayer
     ? Overrides.STARTING_HELD_ITEMS_OVERRIDE
-    : Overrides.OPP_HELD_ITEMS_OVERRIDE;
+    : Overrides.ENEMY_HELD_ITEMS_OVERRIDE;
   if (!heldItemsOverride || heldItemsOverride.length === 0 || !globalScene) {
     return;
   }

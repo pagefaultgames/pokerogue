@@ -64,7 +64,7 @@ export function getStatStageChangeDescriptionKey(stages: number, isIncrease: boo
  * @returns the translation key corresponding to the given {@linkcode Stat}
  */
 export function getStatKey(stat: Stat) {
-  return `pokemonInfo:Stat.${Stat[stat]}`;
+  return `pokemonInfo:stat.${Stat[stat].toLowerCase()}`;
 }
 
 /**
@@ -73,5 +73,5 @@ export function getStatKey(stat: Stat) {
  * @returns the translation key corresponding to the given {@linkcode Stat}
  */
 export function getShortenedStatKey(stat: PermanentStat) {
-  return `pokemonInfo:Stat.${Stat[stat]}shortened`;
+  return `pokemonInfo:stat.${Stat[stat].toLowerCase()}Shortened`;
 }

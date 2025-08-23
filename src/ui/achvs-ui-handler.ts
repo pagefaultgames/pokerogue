@@ -30,7 +30,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
 
 export class AchvsUiHandler extends MessageUiHandler {
   private readonly ROWS = 4;
-  private readonly COLS = 17;
+  private readonly COLS = 18;
 
   private mainContainer: Phaser.GameObjects.Container;
   private iconsContainer: Phaser.GameObjects.Container;
@@ -96,7 +96,7 @@ export class AchvsUiHandler extends MessageUiHandler {
     const genderIndex = globalScene.gameData.gender ?? PlayerGender.MALE;
     const genderStr = PlayerGender[genderIndex].toLowerCase();
 
-    this.achvsName = i18next.t("achv:Achievements.name", { context: genderStr });
+    this.achvsName = i18next.t("achv:achievements.name", { context: genderStr });
     this.vouchersName = i18next.t("voucher:vouchers");
 
     this.iconsBg = addWindow(0, this.headerBg.height, WIDTH - 2, HEIGHT - this.headerBg.height - 68).setOrigin(0);
@@ -115,8 +115,8 @@ export class AchvsUiHandler extends MessageUiHandler {
     this.icons = [];
 
     for (let a = 0; a < this.ROWS * this.COLS; a++) {
-      const x = (a % this.COLS) * 18;
-      const y = Math.floor(a / this.COLS) * 18;
+      const x = (a % this.COLS) * 17;
+      const y = Math.floor(a / this.COLS) * 19;
 
       const icon = globalScene.add.sprite(x, y, "items", "unknown").setOrigin(0).setScale(0.5);
 
@@ -214,7 +214,7 @@ export class AchvsUiHandler extends MessageUiHandler {
     this.showText(!hidden ? achv.description : "");
     this.scoreText.setText(`${achv.score}pt`);
     this.unlockText.setText(
-      unlocked ? new Date(achvUnlocks[achv.id]).toLocaleDateString() : i18next.t("achv:Locked.name"),
+      unlocked ? new Date(achvUnlocks[achv.id]).toLocaleDateString() : i18next.t("achv:locked.name"),
     );
   }
 

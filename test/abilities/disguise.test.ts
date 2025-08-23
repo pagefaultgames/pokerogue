@@ -134,7 +134,7 @@ describe("Abilities - Disguise", () => {
     });
     await game.classicMode.startBattle([SpeciesId.FURRET, SpeciesId.MIMIKYU]);
 
-    const mimikyu = game.scene.getPlayerParty()[1]!;
+    const mimikyu = game.scene.getPlayerParty()[1];
     expect(mimikyu.formIndex).toBe(bustedForm);
 
     game.move.select(MoveId.SPLASH);

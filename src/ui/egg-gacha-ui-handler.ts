@@ -743,7 +743,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
     if (!freePulls && globalScene.gameData.eggs.length + pulls > 99) {
       errorKey = "egg:tooManyEggs";
-    } else if (!freePulls && !globalScene.gameData.voucherCounts[voucherType]) {
+    } else if (!freePulls && globalScene.gameData.voucherCounts[voucherType] < vouchersConsumed) {
       errorKey = "egg:notEnoughVouchers";
     }
 

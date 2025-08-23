@@ -5,10 +5,12 @@ on:
     branches:
       - main
       - beta
+      - release
   pull_request:
     branches:
       - main
       - beta
+      - release
   merge_group:
     types: [checks_requested]
 

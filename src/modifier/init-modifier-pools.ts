@@ -279,7 +279,7 @@ function initGreatModifierPool() {
     new WeightedModifierType(modifierTypes.DIRE_HIT, 4),
     new WeightedModifierType(modifierTypes.SUPER_LURE, lureWeightFunc(15, 4)),
     new WeightedModifierType(modifierTypes.NUGGET, skipInLastClassicWaveOrDefault(5)),
-    new WeightedModifierType(modifierTypes.SPECIES_STAT_BOOSTER, 4),
+    new WeightedModifierType(modifierTypes.SPECIES_STAT_BOOSTER, 2),
     new WeightedModifierType(
       modifierTypes.EVOLUTION_ITEM,
       () => {

@@ -5,7 +5,7 @@ import type { ModalConfig } from "./modal-ui-handler";
 
 export class RenameRunFormUiHandler extends FormModalUiHandler {
   getModalTitle(_config?: ModalConfig): string {
-    return i18next.t("menu:renamerun");
+    return i18next.t("menu:renameRun");
   }
 
   getWidth(_config?: ModalConfig): number {

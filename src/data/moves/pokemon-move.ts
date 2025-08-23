@@ -11,7 +11,7 @@ import { BooleanHolder, toDmgValue } from "#utils/common";
  * These are the moves assigned to a {@linkcode Pokemon} object.
  * It links to {@linkcode Move} class via the move ID.
  * Compared to {@linkcode Move}, this class also tracks things like
- * PP Ups recieved, PP used, etc.
+ * PP Ups received, PP used, etc.
  * @see {@linkcode isUsable} - checks if move is restricted, out of PP, or not implemented.
  * @see {@linkcode getMove} - returns {@linkcode Move} object by looking it up via ID.
  * @see {@linkcode usePp} - removes a point of PP from the move.

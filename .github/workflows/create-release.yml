@@ -36,12 +36,18 @@ jobs:
             exit 1
           fi
         shell: bash
+      - uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ secrets.PAGEFAULT_APP_ID }}
+          private-key: ${{ secrets.PAGEFAULT_APP_PRIVATE_KEY }}
       - name: Check out code
         uses: actions/checkout@v4
         with:
           submodules: "recursive"
           # Always base off of beta branch, regardless of the branch the workflow was triggered from.
           ref: beta
+          token: ${{ steps.app-token.outputs.token }}
       - name: Create release branch
         run: git checkout -b release
       # In order to be able to open a PR into beta, we need the branch to have at least one change.
@@ -56,7 +62,7 @@ jobs:
         run: git push origin release
       # The repository variable is used by the deploy-beta workflow to determine whether to deploy from beta or release.
       - name: Set repository variable
-        run: GITHUB_TOKEN="${{ secrets.RW_VARS_PAT }}" gh variable set BETA_DEPLOY_BRANCH --body "release"
+        run: GITHUB_TOKEN="${{ steps.app-token.outputs.token }}" gh variable set BETA_DEPLOY_BRANCH --body "release"
       - name: Create pull request to main
         run: |
           gh pr create --base main \

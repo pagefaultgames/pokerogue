@@ -6,12 +6,14 @@ import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { ChallengeType } from "#enums/challenge-type";
+import { Challenges } from "#enums/challenges";
 import type { MoveId } from "#enums/move-id";
 import type { MoveSourceType } from "#enums/move-source-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
-import type { DexAttrProps } from "#system/game-data";
+import type { DexAttrProps, StarterDataEntry } from "#system/game-data";
+import type { DexEntry } from "#types/dex-data";
 import { BooleanHolder, type NumberHolder } from "./common";
 import { getPokemonSpecies } from "./pokemon-utils";
 
@@ -47,6 +49,20 @@ export function applyChallenges(
   challengeType: ChallengeType.STARTER_COST,
   species: SpeciesId,
   cost: NumberHolder,
+): boolean;
+/**
+ * Apply all challenges that modify selectable starter data.
+ * @param challengeType {@link ChallengeType} ChallengeType.STARTER_SELECT_MODIFY
+ * @param speciesId {@link SpeciesId} The speciesId of the pokemon
+ * @param dexEntry {@link DexEntry} The pokedex data associated to the pokemon.
+ * @param starterDataEntry {@link StarterDataEntry} The starter data associated to the pokemon.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.STARTER_SELECT_MODIFY,
+  speciesId: SpeciesId,
+  dexEntry: DexEntry,
+  starterDataEntry: StarterDataEntry,
 ): boolean;
 /**
  * Apply all challenges that modify a starter after selection.
@@ -270,6 +286,9 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
         case ChallengeType.STARTER_COST:
           ret ||= c.applyStarterCost(args[0], args[1]);
           break;
+        case ChallengeType.STARTER_SELECT_MODIFY:
+          ret ||= c.applyStarterSelectModify(args[0], args[1], args[2]);
+          break;
         case ChallengeType.STARTER_MODIFY:
           ret ||= c.applyStarterModify(args[0]);
           break;
@@ -380,7 +399,7 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
  * @param soft - If `true`, allow it if it could become valid through a form change.
  * @returns `true` if the species is considered valid.
  */
-function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
+export function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
   const isValidForChallenge = new BooleanHolder(true);
   applyChallenges(ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
   if (!soft || !pokemonFormChanges.hasOwnProperty(species.speciesId)) {
@@ -408,4 +427,29 @@ function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrPr
     });
   });
   return result;
+}
+
+/** @returns Whether the current game mode meets the criteria to be considered a Nuzlocke challenge */
+export function isNuzlockeChallenge(): boolean {
+  let isFreshStart = false;
+  let isLimitedCatch = false;
+  let isHardcore = false;
+  for (const challenge of globalScene.gameMode.challenges) {
+    // value is 0 if challenge is not active
+    if (!challenge.value) {
+      continue;
+    }
+    switch (challenge.id) {
+      case Challenges.FRESH_START:
+        isFreshStart = true;
+        break;
+      case Challenges.LIMITED_CATCH:
+        isLimitedCatch = true;
+        break;
+      case Challenges.HARDCORE:
+        isHardcore = true;
+        break;
+    }
+  }
+  return isFreshStart && isLimitedCatch && isHardcore;
 }

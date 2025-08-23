@@ -13,7 +13,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 /**
  * Matcher to check the amount of PP consumed by a {@linkcode Pokemon}.
  * @param received - The actual value received. Should be a {@linkcode Pokemon}
- * @param expectedValue - The {@linkcode MoveId} that should have consumed PP
+ * @param moveId - The {@linkcode MoveId} that should have consumed PP
  * @param ppUsed - The numerical amount of PP that should have been consumed,
  * or `all` to indicate the move should be _out_ of PP
  * @returns Whether the matcher passed
@@ -23,35 +23,35 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 export function toHaveUsedPP(
   this: MatcherState,
   received: unknown,
-  expectedMove: MoveId,
+  moveId: MoveId,
   ppUsed: number | "all",
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
-      pass: false,
+      pass: this.isNot,
       message: () => `Expected to receive a Pokémon, but got ${receivedStr(received)}!`,
     };
   }
 
-  const override = received.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.OPP_MOVESET_OVERRIDE;
+  const override = received.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.ENEMY_MOVESET_OVERRIDE;
   if (coerceArray(override).length > 0) {
     return {
-      pass: false,
+      pass: this.isNot,
       message: () =>
         `Cannot test for PP consumption with ${received.isPlayer() ? "player" : "enemy"} moveset overrides active!`,
     };
   }
 
   const pkmName = getPokemonNameWithAffix(received);
-  const moveStr = getEnumStr(MoveId, expectedMove);
+  const moveStr = getEnumStr(MoveId, moveId);
 
-  const movesetMoves = received.getMoveset().filter(pm => pm.moveId === expectedMove);
+  const movesetMoves = received.getMoveset().filter(pm => pm.moveId === moveId);
   if (movesetMoves.length !== 1) {
     return {
-      pass: false,
+      pass: this.isNot,
       message: () =>
         `Expected MoveId.${moveStr} to appear in ${pkmName}'s moveset exactly once, but got ${movesetMoves.length} times!`,
-      expected: expectedMove,
+      expected: moveId,
       actual: received.getMoveset(),
     };
   }

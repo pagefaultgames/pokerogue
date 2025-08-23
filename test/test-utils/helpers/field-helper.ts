@@ -5,6 +5,7 @@ import type { globalScene } from "#app/global-scene";
 import type { Ability } from "#abilities/ability";
 import { allAbilities } from "#data/data-lists";
 import type { AbilityId } from "#enums/ability-id";
+import type { BattlerIndex } from "#enums/battler-index";
 import type { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
@@ -45,20 +46,38 @@ export class FieldHelper extends GameManagerHelper {
 
   /**
    * Helper function to return all on-field {@linkcode Pokemon} in speed order (fastest first).
-   * @returns An array containing all {@linkcode Pokemon} on the field in order of descending Speed.
+   * @param indices - Whether to only return {@linkcode BattlerIndex}es instead of full Pokemon objects
+   * (such as for comparison with other speed order-related mechanisms); default `false`
+   * @returns An array containing all on-field {@linkcode Pokemon} in order of descending Speed. \
    * Speed ties are returned in increasing order of index.
    *
    * @remarks
    * This does not account for Trick Room as it does not modify the _speed_ of Pokemon on the field,
    * only their turn order.
    */
-  public getSpeedOrder(): Pokemon[] {
-    return this.game.scene
+  public getSpeedOrder(indices?: false): Pokemon[];
+
+  /**
+   * Helper function to return all on-field {@linkcode Pokemon} in speed order (fastest first).
+   * @param indices - Whether to only return {@linkcode BattlerIndex}es instead of full Pokemon objects
+   * (such as for comparison with other speed order-related mechanisms); default `false`
+   * @returns An array containing the {@linkcode BattlerIndex}es of all on-field {@linkcode Pokemon} on the field in order of descending Speed. \
+   * Speed ties are returned in increasing order of index.
+   *
+   * @remarks
+   * This does not account for Trick Room as it does not modify the _speed_ of Pokemon on the field,
+   * only their turn order.
+   */
+  public getSpeedOrder(indices: true): BattlerIndex[];
+  public getSpeedOrder(indices = false): BattlerIndex[] | Pokemon[] {
+    const ret = this.game.scene
       .getField(true)
       .sort(
         (pA, pB) =>
           pB.getEffectiveStat(Stat.SPD) - pA.getEffectiveStat(Stat.SPD) || pA.getBattlerIndex() - pB.getBattlerIndex(),
       );
+
+    return indices ? ret.map(p => p.getBattlerIndex()) : ret;
   }
 
   /**

@@ -122,8 +122,8 @@ export class TitleUiHandler extends OptionSelectUiHandler {
   genderSplash(): void {
     if (this.splashMessage === "splashMessages:aprilFools.helloKyleAmber") {
       globalScene.gameData.gender === PlayerGender.MALE
-        ? this.splashMessageText.setText(i18next.t(this.splashMessage, { name: i18next.t("trainerNames:player_m") }))
-        : this.splashMessageText.setText(i18next.t(this.splashMessage, { name: i18next.t("trainerNames:player_f") }));
+        ? this.splashMessageText.setText(i18next.t(this.splashMessage, { name: i18next.t("trainerNames:playerM") }))
+        : this.splashMessageText.setText(i18next.t(this.splashMessage, { name: i18next.t("trainerNames:playerF") }));
     }
   }
 
