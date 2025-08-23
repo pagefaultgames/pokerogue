@@ -4,6 +4,7 @@ import { TextStyle } from "#enums/text-style";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 interface BaseStatsOverlaySettings {
@@ -68,7 +69,9 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
   // show this component with infos for the specific move
   show(values: number[], total: number): boolean {
     for (let i = 0; i < 6; i++) {
-      this.statsLabels[i].setText(i18next.t(`pokemonInfo:Stat.${shortStats[i]}shortened`) + ": " + `${values[i]}`);
+      this.statsLabels[i].setText(
+        i18next.t(`pokemonInfo:stat.${toCamelCase(shortStats[i])}Shortened`) + ": " + `${values[i]}`,
+      );
       // This accounts for base stats up to 200, might not be enough.
       // TODO: change color based on value.
       this.statsShadows[i].setSize(values[i] / 2, 5);

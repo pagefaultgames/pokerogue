@@ -73,7 +73,7 @@ describe("Moves - Beat Up", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
 
-    game.scene.getPlayerParty()[1].trySetStatus(StatusEffect.BURN);
+    game.scene.getPlayerParty()[1].doSetStatus(StatusEffect.BURN);
 
     game.move.select(MoveId.BEAT_UP);
 

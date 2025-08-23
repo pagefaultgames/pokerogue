@@ -47,6 +47,7 @@ import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, r
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences } from "#utils/data";
 import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
+import { toCamelCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 
@@ -324,7 +325,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       .filter(value => typeof value === "number") // Filter numeric values from the enum
       .map(
         (biomeValue, index) =>
-          new DropDownOption(index, new DropDownLabel(i18next.t(`biome:${BiomeId[biomeValue].toUpperCase()}`))),
+          new DropDownOption(index, new DropDownLabel(i18next.t(`biome:${toCamelCase(BiomeId[biomeValue])}`))),
       );
     biomeOptions.push(new DropDownOption(biomeOptions.length, new DropDownLabel(i18next.t("filterBar:uncatchable"))));
     const biomeDropDown: DropDown = new DropDown(0, 0, biomeOptions, this.updateStarters, DropDownType.HYBRID);
@@ -415,6 +416,11 @@ export class PokedexUiHandler extends MessageUiHandler {
       new DropDownLabel(i18next.t("filterBar:isSeen"), undefined, DropDownState.ON),
       new DropDownLabel(i18next.t("filterBar:isUnseen"), undefined, DropDownState.EXCLUDE),
     ];
+    const encounteredSpeciesLabels = [
+      new DropDownLabel(i18next.t("filterBar:encounteredSpecies"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:isEncountered"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:isNotEncountered"), undefined, DropDownState.EXCLUDE),
+    ];
     const eggLabels = [
       new DropDownLabel(i18next.t("filterBar:egg"), undefined, DropDownState.OFF),
       new DropDownLabel(i18next.t("filterBar:eggPurchasable"), undefined, DropDownState.ON),
@@ -429,6 +435,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       new DropDownOption("WIN", winLabels),
       new DropDownOption("HIDDEN_ABILITY", hiddenAbilityLabels),
       new DropDownOption("SEEN_SPECIES", seenSpeciesLabels),
+      new DropDownOption("ENCOUNTERED_SPECIES", encounteredSpeciesLabels),
       new DropDownOption("EGG", eggLabels),
       new DropDownOption("POKERUS", pokerusLabels),
     ];
@@ -807,6 +814,10 @@ export class PokedexUiHandler extends MessageUiHandler {
       return !!starterDexEntry?.caughtAttr;
     }
     return false;
+  }
+
+  isEncountered(_species: PokemonSpecies, dexEntry: DexEntry, _seenFilter?: boolean): boolean {
+    return !!dexEntry.seenCount;
   }
 
   /**
@@ -1627,7 +1638,7 @@ export class PokedexUiHandler extends MessageUiHandler {
 
       // Seen Filter
       const dexEntry = globalScene.gameData.dexData[species.speciesId];
-      const isItSeen = this.isSeen(species, dexEntry, true);
+      const isItSeen = this.isSeen(species, dexEntry, true) || !!dexEntry.caughtAttr;
       const fitsSeen = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "SEEN_SPECIES" && misc.state === DropDownState.ON) {
           return isItSeen;
@@ -1636,6 +1647,20 @@ export class PokedexUiHandler extends MessageUiHandler {
           return !isItSeen;
         }
         if (misc.val === "SEEN_SPECIES" && misc.state === DropDownState.OFF) {
+          return true;
+        }
+      });
+
+      // Encountered Filter
+      const isItEncountered = this.isEncountered(species, dexEntry, true);
+      const fitsEncountered = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
+        if (misc.val === "ENCOUNTERED_SPECIES" && misc.state === DropDownState.ON) {
+          return isItEncountered;
+        }
+        if (misc.val === "ENCOUNTERED_SPECIES" && misc.state === DropDownState.EXCLUDE) {
+          return !isItEncountered;
+        }
+        if (misc.val === "ENCOUNTERED_SPECIES" && misc.state === DropDownState.OFF) {
           return true;
         }
       });
@@ -1682,6 +1707,7 @@ export class PokedexUiHandler extends MessageUiHandler {
         fitsWin &&
         fitsHA &&
         fitsSeen &&
+        fitsEncountered &&
         fitsEgg &&
         fitsPokerus
       ) {

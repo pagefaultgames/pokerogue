@@ -65,8 +65,8 @@ export class GameOverPhase extends BattlePhase {
       const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
       const genderStr = PlayerGender[genderIndex].toLowerCase();
       globalScene.ui.showDialogue(
-        i18next.t("miscDialogue:ending_endless", { context: genderStr }),
-        i18next.t("miscDialogue:ending_name"),
+        i18next.t("miscDialogue:endingEndless", { context: genderStr }),
+        i18next.t("miscDialogue:endingName"),
         0,
         () => this.handleGameOver(),
       );
@@ -119,17 +119,23 @@ export class GameOverPhase extends BattlePhase {
    * game mode and challenges.
    */
   private awardRibbons(): void {
-    let ribbonFlags = 0;
-    if (globalScene.gameMode.isClassic) {
-      ribbonFlags |= RibbonData.CLASSIC;
-    }
-    if (isNuzlockeChallenge()) {
-      ribbonFlags |= RibbonData.NUZLOCKE;
-    }
+    let ribbonFlags = 0n;
     for (const challenge of globalScene.gameMode.challenges) {
       const ribbon = challenge.ribbonAwarded;
       if (challenge.value && ribbon) {
         ribbonFlags |= ribbon;
+      }
+    }
+    // Block other ribbons if flip stats or inverse is active
+    const flip_or_inverse = ribbonFlags & (RibbonData.FLIP_STATS | RibbonData.INVERSE);
+    if (flip_or_inverse) {
+      ribbonFlags = flip_or_inverse;
+    } else {
+      if (globalScene.gameMode.isClassic) {
+        ribbonFlags |= RibbonData.CLASSIC;
+      }
+      if (isNuzlockeChallenge()) {
+        ribbonFlags |= RibbonData.NUZLOCKE;
       }
     }
     // Award ribbons to all Pokémon in the player's party that are considered valid
@@ -167,6 +173,7 @@ export class GameOverPhase extends BattlePhase {
             this.awardRibbons();
           } else if (globalScene.gameMode.isDaily && newClear) {
             globalScene.gameData.gameStats.dailyRunSessionsWon++;
+            globalScene.validateAchv(achvs.DAILY_VICTORY);
           }
         }
 

@@ -11,11 +11,11 @@ import { NumberHolder, randSeedInt, toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
 export function getBerryName(berryType: BerryType): string {
-  return i18next.t(`berry:${BerryType[berryType]}.name`);
+  return i18next.t(`berry:${BerryType[berryType].toLowerCase()}.name`);
 }
 
 export function getBerryEffectDescription(berryType: BerryType): string {
-  return i18next.t(`berry:${BerryType[berryType]}.effect`);
+  return i18next.t(`berry:${BerryType[berryType].toLowerCase()}.effect`);
 }
 
 export type BerryPredicate = (pokemon: Pokemon) => boolean;

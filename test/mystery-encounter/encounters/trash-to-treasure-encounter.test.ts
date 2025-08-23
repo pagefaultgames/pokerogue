@@ -169,15 +169,15 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       });
     });
 
-    it("should give 2 Leftovers, 1 Shell Bell, and Black Sludge", async () => {
+    it("should give 1 Leftovers, 1 Shell Bell, and Black Sludge", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
       await runMysteryEncounterToEnd(game, 1);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
       const leftovers = scene.findModifier(m => m instanceof TurnHealModifier) as TurnHealModifier;
       expect(leftovers).toBeDefined();
-      expect(leftovers?.stackCount).toBe(2);
+      expect(leftovers?.stackCount).toBe(1);
 
       const shellBell = scene.findModifier(m => m instanceof HitHealModifier) as HitHealModifier;
       expect(shellBell).toBeDefined();
@@ -242,9 +242,9 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.TRASH_TO_TREASURE, defaultParty);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(

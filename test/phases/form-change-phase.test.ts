@@ -38,7 +38,7 @@ describe("Form Change Phase", () => {
     await game.classicMode.startBattle([SpeciesId.ZACIAN]);
 
     // Before the form change: Should be Hero form
-    const zacian = game.scene.getPlayerParty()[0];
+    const zacian = game.field.getPlayerPokemon();
     expect(zacian.getFormKey()).toBe("hero-of-many-battles");
     expect(zacian.getTypes()).toStrictEqual([PokemonType.FAIRY]);
     expect(zacian.calculateBaseStats()).toStrictEqual([92, 120, 115, 80, 115, 138]);
