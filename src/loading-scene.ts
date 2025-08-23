@@ -138,13 +138,18 @@ export class LoadingScene extends SceneBase {
     this.loadImage("summary_profile", "ui");
     this.loadImage("summary_profile_prompt_z", "ui"); // The pixel Z button prompt
     this.loadImage("summary_profile_prompt_a", "ui"); // The pixel A button prompt
-    this.loadImage("summary_profile_ability", "ui"); // Pixel text 'ABILITY'
-    this.loadImage("summary_profile_passive", "ui"); // Pixel text 'PASSIVE'
+    //this.loadImage("summary_profile_ability", "ui"); // Pixel text 'ABILITY'
+    //this.loadImage("summary_profile_passive", "ui"); // Pixel text 'PASSIVE'
     this.loadImage("summary_status", "ui");
     this.loadImage("summary_stats", "ui");
+    //this.loadImage("summary_stats_item_title", "ui", "ui_text_images/en/summary/summary_stats_item_title.png");  // Pixel text 'ITEM'
+    //this.loadImage("summary_stats_stats_title", "ui", "ui_text_images/en/summary/summary_stats_stats_title.png");  // Pixel text 'STATS'
+    //this.loadImage("summary_stats_exp_title", "ui", "ui_text_images/en/summary/summary_stats_exp_title.png");  // Pixel text 'EXP.'
+    //this.loadImage("summary_stats_expbar_title", "ui", "ui_text_images/en/summary/summary_stats_expbar_title.png");  // Pixel mini text 'EXP'
     this.loadImage("summary_stats_overlay_exp", "ui");
     this.loadImage("summary_moves", "ui");
     this.loadImage("summary_moves_effect", "ui");
+    //this.loadImage("summary_moves_effect_title", "ui", "ui_text_images/en/summary/summary_moves_effect_title.png");  // Pixel text 'EFFECT'
     this.loadImage("summary_moves_overlay_row", "ui");
     this.loadImage("summary_moves_overlay_pp", "ui");
     this.loadAtlas("summary_moves_cursor", "ui");
@@ -234,18 +239,70 @@ export class LoadingScene extends SceneBase {
 
     // Get current lang and load the types atlas for it. English will only load types while all other languages will load types and types_<lang>
     const lang = i18next.resolvedLanguage;
-    if (lang !== "en") {
-      if (hasAllLocalizedSprites(lang)) {
-        this.loadAtlas(`statuses_${lang}`, "");
-        this.loadAtlas(`types_${lang}`, "");
-      } else {
-        // Fallback to English
-        this.loadAtlas("statuses", "");
-        this.loadAtlas("types", "");
-      }
+    if (lang !== "en" && hasAllLocalizedSprites(lang)) {
+      this.loadAtlas(`statuses_${lang}`, "");
+      this.loadAtlas(`types_${lang}`, "");
+      this.loadImage(
+        `summary_profile_profile_title_${lang}`,
+        "ui",
+        `ui_text_images/${lang}/summary/summary_profile_profile_title_${lang}.png`,
+      ); // Pixel text 'PROFIL'
+      this.loadImage(
+        `summary_profile_ability_${lang}`,
+        "ui",
+        `ui_text_images/${lang}/summary/summary_profile_ability_${lang}.png`,
+      ); // Pixel text 'ABILITY'
+      this.loadImage(
+        `summary_profile_passive_${lang}`,
+        "ui",
+        `ui_text_images/${lang}/summary/summary_profile_passive_${lang}.png`,
+      ); // Pixel text 'PASSIVE'
+      this.loadImage(
+        `summary_profile_memo_title_${lang}`,
+        "ui",
+        `ui_text_images/${lang}/summary/summary_profile_memo_title_${lang}.png`,
+      ); // Pixel text 'TRAINER MEMO'
+      this.loadImage(
+        `summary_stats_item_title_${lang}`,
+        "ui",
+        `ui_text_images/${lang}/summary/summary_stats_item_title_${lang}.png`,
+      ); // Pixel text 'ITEM'
+      this.loadImage(
+        `summary_stats_stats_title_${lang}`,
+        "ui",
+        `ui_text_images/${lang}/summary/summary_stats_stats_title_${lang}.png`,
+      ); // Pixel text 'STATS'
+      this.loadImage(
+        `summary_stats_exp_title_${lang}`,
+        "ui",
+        `ui_text_images/${lang}/summary/summary_stats_exp_title_${lang}.png`,
+      ); // Pixel text 'EXP.'
+      this.loadImage(
+        `summary_stats_expbar_title_${lang}`,
+        "ui",
+        `ui_text_images/${lang}/summary/summary_stats_expbar_title_${lang}.png`,
+      ); // Pixel mini text 'EXP'
+      this.loadImage(
+        `summary_moves_effect_title_${lang}`,
+        "ui",
+        `ui_text_images/${lang}/summary/summary_moves_effect_title_${lang}.png`,
+      ); // Pixel text 'EFFECT'
     } else {
       this.loadAtlas("statuses", "");
       this.loadAtlas("types", "");
+      this.loadImage(
+        "summary_profile_profile_title",
+        "ui",
+        "ui_text_images/en/summary/summary_profile_profile_title.png",
+      );
+      this.loadImage("summary_profile_ability", "ui", "ui_text_images/en/summary/summary_profile_ability.png");
+      this.loadImage("summary_profile_passive", "ui", "ui_text_images/en/summary/summary_profile_passive.png");
+      this.loadImage("summary_profile_memo_title", "ui", "ui_text_images/en/summary/summary_profile_memo_title.png");
+      this.loadImage("summary_stats_item_title", "ui", "ui_text_images/en/summary/summary_stats_item_title.png");
+      this.loadImage("summary_stats_stats_title", "ui", "ui_text_images/en/summary/summary_stats_stats_title.png");
+      this.loadImage("summary_stats_exp_title", "ui", "ui_text_images/en/summary/summary_stats_exp_title.png");
+      this.loadImage("summary_stats_expbar_title", "ui", "ui_text_images/en/summary/summary_stats_expbar_title.png");
+      this.loadImage("summary_moves_effect_title", "ui", "ui_text_images/en/summary/summary_moves_effect_title.png");
     }
     if (timedEventManager.activeEventHasBanner()) {
       const availableLangs = timedEventManager.getEventBannerLangs();

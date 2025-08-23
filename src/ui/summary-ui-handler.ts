@@ -100,6 +100,7 @@ export class SummaryUiHandler extends UiHandler {
   private moveRowsContainer: Phaser.GameObjects.Container;
   private extraMoveRowContainer: Phaser.GameObjects.Container;
   private moveEffectContainer: Phaser.GameObjects.Container;
+  private moveEffectContainerTitle: Phaser.GameObjects.Image;
   private movePowerText: Phaser.GameObjects.Text;
   private moveAccuracyText: Phaser.GameObjects.Text;
   private moveCategoryIcon: Phaser.GameObjects.Sprite;
@@ -111,6 +112,10 @@ export class SummaryUiHandler extends UiHandler {
   private permStatsContainer: Phaser.GameObjects.Container;
   private ivContainer: Phaser.GameObjects.Container;
   private statsContainer: Phaser.GameObjects.Container;
+  private statsContainerItemTitle: Phaser.GameObjects.Image;
+  private statsContainerStatsTitle: Phaser.GameObjects.Image;
+  private statsContainerExpTitle: Phaser.GameObjects.Image;
+  private statsContainerExpBarTitle: Phaser.GameObjects.Image;
 
   private descriptionScrollTween: Phaser.Tweens.Tween | null;
   private moveCursorBlinkTimer: Phaser.Time.TimerEvent | null;
@@ -280,6 +285,10 @@ export class SummaryUiHandler extends UiHandler {
     const moveEffectBg = globalScene.add.image(0, 0, "summary_moves_effect");
     moveEffectBg.setOrigin(0, 0);
     this.moveEffectContainer.add(moveEffectBg);
+
+    this.moveEffectContainerTitle = globalScene.add.image(7, 7, getLocalizedSpriteKey("summary_moves_effect_title"));
+    this.moveEffectContainerTitle.setOrigin(0, 0.5);
+    this.moveEffectContainer.add(this.moveEffectContainerTitle);
 
     const moveEffectLabels = addTextObject(8, 12, i18next.t("pokemonSummary:powerAccuracyCategory"), TextStyle.SUMMARY);
     moveEffectLabels.setLineSpacing(9);
@@ -811,6 +820,14 @@ export class SummaryUiHandler extends UiHandler {
             ? i18next.t("trainerNames:playerF")
             : i18next.t("trainerNames:playerM");
 
+        const profileContainerProfilTitle = globalScene.add.image(
+          7,
+          4,
+          getLocalizedSpriteKey("summary_profile_profile_title"),
+        );
+        profileContainerProfilTitle.setOrigin(0, 0.5);
+        profileContainer.add(profileContainerProfilTitle);
+
         // TODO: should add field for original trainer name to Pokemon object, to support gift/traded Pokemon from MEs
         const trainerText = addBBCodeTextObject(
           7,
@@ -885,7 +902,7 @@ export class SummaryUiHandler extends UiHandler {
         }
 
         this.abilityContainer = {
-          labelImage: globalScene.add.image(0, 0, "summary_profile_ability"),
+          labelImage: globalScene.add.image(0, 0, getLocalizedSpriteKey("summary_profile_ability")),
           ability: this.pokemon?.getAbility(true)!, // TODO: is this bang correct?
           nameText: null,
           descriptionText: null,
@@ -895,7 +912,7 @@ export class SummaryUiHandler extends UiHandler {
         // Only add to the array and set up displaying a passive if it's unlocked
         if (this.pokemon?.hasPassive()) {
           this.passiveContainer = {
-            labelImage: globalScene.add.image(0, 0, "summary_profile_passive"),
+            labelImage: globalScene.add.image(0, 0, getLocalizedSpriteKey("summary_profile_passive")),
             ability: this.pokemon.getPassiveAbility(),
             nameText: null,
             descriptionText: null,
@@ -915,9 +932,9 @@ export class SummaryUiHandler extends UiHandler {
         }
 
         allAbilityInfo.forEach(abilityInfo => {
-          abilityInfo.labelImage.setPosition(17, 43);
+          abilityInfo.labelImage.setPosition(17, 47);
           abilityInfo.labelImage.setVisible(true);
-          abilityInfo.labelImage.setOrigin(0, 0);
+          abilityInfo.labelImage.setOrigin(0, 0.5);
           profileContainer.add(abilityInfo.labelImage);
 
           abilityInfo.nameText = addTextObject(7, 68, abilityInfo.ability?.name!, TextStyle.SUMMARY_ALT); // TODO: is this bang correct?
@@ -965,6 +982,14 @@ export class SummaryUiHandler extends UiHandler {
         const rawNature = toCamelCase(Nature[this.pokemon?.getNature()!]); // TODO: is this bang correct?
         const nature = `${getBBCodeFrag(toTitleCase(getNatureName(this.pokemon?.getNature()!)), TextStyle.SUMMARY_RED)}${closeFragment}`; // TODO: is this bang correct?
 
+        const profileContainerMemoTitle = globalScene.add.image(
+          7,
+          107,
+          getLocalizedSpriteKey("summary_profile_memo_title"),
+        );
+        profileContainerMemoTitle.setOrigin(0, 0.5);
+        profileContainer.add(profileContainerMemoTitle);
+
         const memoString = i18next.t("pokemonSummary:memoString", {
           metFragment: i18next.t(
             `pokemonSummary:metFragment.${this.pokemon?.metBiome === -1 ? "apparently" : "normal"}`,
@@ -990,6 +1015,30 @@ export class SummaryUiHandler extends UiHandler {
         this.ivContainer = globalScene.add.container(27, 56);
         this.statsContainer.add(this.ivContainer);
         this.statsContainer.setVisible(true);
+
+        this.statsContainerItemTitle = globalScene.add.image(7, 4, getLocalizedSpriteKey("summary_stats_item_title"));
+        this.statsContainerItemTitle.setOrigin(0, 0.5);
+        this.statsContainer.add(this.statsContainerItemTitle);
+
+        this.statsContainerStatsTitle = globalScene.add.image(
+          16,
+          51,
+          getLocalizedSpriteKey("summary_stats_stats_title"),
+        );
+        this.statsContainerStatsTitle.setOrigin(0, 0.5);
+        this.statsContainer.add(this.statsContainerStatsTitle);
+
+        this.statsContainerExpTitle = globalScene.add.image(7, 107, getLocalizedSpriteKey("summary_stats_exp_title"));
+        this.statsContainerExpTitle.setOrigin(0, 0.5);
+        this.statsContainer.add(this.statsContainerExpTitle);
+
+        this.statsContainerExpBarTitle = globalScene.add.image(
+          127,
+          144,
+          getLocalizedSpriteKey("summary_stats_expbar_title"),
+        );
+        this.statsContainerExpBarTitle.setOrigin(0, 0);
+        this.statsContainer.add(this.statsContainerExpBarTitle);
 
         PERMANENT_STATS.forEach((stat, s) => {
           const statName = i18next.t(getStatKey(stat));
