@@ -19,12 +19,12 @@
     // and having to verify whether each individual file is ignored
     "includes": [
       "**",
-      "!**/dist",
-      "!**/coverage",
-      "!**/public",
-      "!**/.github",
-      "!**/node_modules",
-      "!**/typedoc",
+      "!**/dist/**",
+      "!**/coverage/**",
+      "!**/public/**",
+      "!**/.github/**",
+      "!**/node_modules/**",
+      "!**/typedoc/**",
       // TODO: lint css and html?
       "!**/*.css",
       "!**/*.html",
