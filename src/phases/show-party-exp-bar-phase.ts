@@ -1,13 +1,12 @@
 import { globalScene } from "#app/global-scene";
-import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
-import { ExpNotification } from "#app/enums/exp-notification";
-import { ExpBoosterModifier } from "#app/modifier/modifier";
-import { NumberHolder } from "#app/utils/common";
-import { HidePartyExpBarPhase } from "./hide-party-exp-bar-phase";
-import { LevelUpPhase } from "./level-up-phase";
-import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
+import { ExpGainsSpeed } from "#enums/exp-gains-speed";
+import { ExpNotification } from "#enums/exp-notification";
+import { ExpBoosterModifier } from "#modifiers/modifier";
+import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
+import { NumberHolder } from "#utils/common";
 
 export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
+  public readonly phaseName = "ShowPartyExpBarPhase";
   private expValue: number;
 
   constructor(partyMemberIndex: number, expValue: number) {
@@ -28,9 +27,9 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
     pokemon.addExp(exp.value);
     const newLevel = pokemon.level;
     if (newLevel > lastLevel) {
-      globalScene.unshiftPhase(new LevelUpPhase(this.partyMemberIndex, lastLevel, newLevel));
+      globalScene.phaseManager.unshiftNew("LevelUpPhase", this.partyMemberIndex, lastLevel, newLevel);
     }
-    globalScene.unshiftPhase(new HidePartyExpBarPhase());
+    globalScene.phaseManager.unshiftNew("HidePartyExpBarPhase");
     pokemon.updateInfo();
 
     if (globalScene.expParty === ExpNotification.SKIP) {

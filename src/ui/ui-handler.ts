@@ -1,13 +1,13 @@
 import { globalScene } from "#app/global-scene";
-import type { TextStyle } from "./text";
-import { getTextColor } from "./text";
-import type { UiMode } from "#enums/ui-mode";
 import type { Button } from "#enums/buttons";
+import type { TextStyle } from "#enums/text-style";
+import type { UiMode } from "#enums/ui-mode";
+import { getTextColor } from "#ui/text";
 
 /**
  * A basic abstract class to act as a holder and processor for UI elements.
  */
-export default abstract class UiHandler {
+export abstract class UiHandler {
   protected mode: number | null;
   protected cursor = 0;
   public active = false;

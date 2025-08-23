@@ -1,11 +1,12 @@
 import { globalScene } from "#app/global-scene";
-import { EncounterPhase } from "./encounter-phase";
+import { EncounterPhase } from "#phases/encounter-phase";
 
 /**
  * The phase between defeating an encounter and starting another wild wave.
  * Handles generating, loading and preparing for it.
  */
 export class NextEncounterPhase extends EncounterPhase {
+  public readonly phaseName: "NextEncounterPhase" | "NewBiomeEncounterPhase" = "NextEncounterPhase";
   start() {
     super.start();
   }

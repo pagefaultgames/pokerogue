@@ -1,32 +1,34 @@
-import { GameModes } from "../game-mode";
-import UiHandler from "./ui-handler";
-import type { SessionSaveData } from "../system/game-data";
-import { TextStyle, addTextObject, addBBCodeTextObject, getTextColor } from "./text";
-import { UiMode } from "#enums/ui-mode";
-import { addWindow } from "./ui-theme";
-import { getPokeballAtlasKey } from "#app/data/pokeball";
-import { formatLargeNumber, getPlayTimeString, formatMoney, formatFancyLargeNumber } from "#app/utils/common";
-import type PokemonData from "../system/pokemon-data";
-import i18next from "i18next";
-import { Button } from "../enums/buttons";
-import { BattleType } from "#enums/battle-type";
-import { TrainerVariant } from "../field/trainer";
-import { Challenges } from "#enums/challenges";
-import { getLuckString, getLuckTextTint } from "../modifier/modifier-type";
-import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
-import { getTypeRgb } from "#app/data/type";
-import { PokemonType } from "#enums/pokemon-type";
-import { TypeColor, TypeShadow } from "#app/enums/color";
-import { getNatureStatMultiplier, getNatureName } from "../data/nature";
-import { getVariantTint } from "#app/sprites/variant";
-// biome-ignore lint/style/noNamespaceImport: See `src/system/game-data.ts`
-import * as Modifier from "#app/modifier/modifier";
-import type { Species } from "#enums/species";
-import { PlayerGender } from "#enums/player-gender";
-import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
-import { getBiomeName } from "#app/data/balance/biomes";
-import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
+import { getBiomeName } from "#balance/biomes";
+import { getNatureName, getNatureStatMultiplier } from "#data/nature";
+import { getPokeballAtlasKey } from "#data/pokeball";
+import { getTypeRgb } from "#data/type";
+import { BattleType } from "#enums/battle-type";
+import { Button } from "#enums/buttons";
+import { Challenges } from "#enums/challenges";
+import { TypeColor, TypeShadow } from "#enums/color";
+import { GameModes } from "#enums/game-modes";
+import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PlayerGender } from "#enums/player-gender";
+import { PokemonType } from "#enums/pokemon-type";
+import type { SpeciesId } from "#enums/species-id";
+import { TextStyle } from "#enums/text-style";
+import { TrainerVariant } from "#enums/trainer-variant";
+import { UiMode } from "#enums/ui-mode";
+// biome-ignore lint/performance/noNamespaceImport: See `src/system/game-data.ts`
+import * as Modifier from "#modifiers/modifier";
+import { getLuckString, getLuckTextTint } from "#modifiers/modifier-type";
+import { getVariantTint } from "#sprites/variant";
+import type { SessionSaveData } from "#system/game-data";
+import type { PokemonData } from "#system/pokemon-data";
+import { SettingKeyboard } from "#system/settings-keyboard";
+import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { addWindow } from "#ui/ui-theme";
+import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getPlayTimeString } from "#utils/common";
+import { toCamelCase } from "#utils/strings";
+import i18next from "i18next";
+import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -50,7 +52,7 @@ export enum RunDisplayMode {
  * I believe that it is possible that the contents/methods of the first page will be placed in their own class that is an extension of RunInfoUiHandler as more pages are added.
  * For now, I leave as is.
  */
-export default class RunInfoUiHandler extends UiHandler {
+export class RunInfoUiHandler extends UiHandler {
   protected runDisplayMode: RunDisplayMode;
   protected runInfo: SessionSaveData;
   protected isVictory: boolean;
@@ -73,7 +75,7 @@ export default class RunInfoUiHandler extends UiHandler {
   }
 
   override async setup() {
-    this.runContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
+    this.runContainer = globalScene.add.container(1, -globalScene.scaledCanvas.height + 1);
     // The import of the modifiersModule is loaded here to sidestep async/await issues.
     this.modifiersModule = Modifier;
     this.runContainer.setVisible(false);
@@ -119,7 +121,7 @@ export default class RunInfoUiHandler extends UiHandler {
     // Creates Header and adds to this.runContainer
     this.addHeader();
 
-    this.statsBgWidth = (globalScene.game.canvas.width / 6 - 2) / 3;
+    this.statsBgWidth = (globalScene.scaledCanvas.width - 2) / 3;
 
     // Creates Run Result Container
     this.runResultContainer = globalScene.add.container(0, 24);
@@ -146,7 +148,7 @@ export default class RunInfoUiHandler extends UiHandler {
     this.showParty(true);
 
     this.runContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6),
+      new Phaser.Geom.Rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height),
       Phaser.Geom.Rectangle.Contains,
     );
     this.getUi().bringToTop(this.runContainer);
@@ -173,7 +175,7 @@ export default class RunInfoUiHandler extends UiHandler {
    * It does not check if the run has any PokemonHeldItemModifiers though.
    */
   private addHeader() {
-    const headerBg = addWindow(0, 0, globalScene.game.canvas.width / 6 - 2, 24);
+    const headerBg = addWindow(0, 0, globalScene.scaledCanvas.width - 2, 24);
     headerBg.setOrigin(0, 0);
     this.runContainer.add(headerBg);
     if (this.runInfo.modifiers.length !== 0) {
@@ -202,10 +204,15 @@ export default class RunInfoUiHandler extends UiHandler {
       );
       this.runContainer.add(abilityButtonContainer);
     }
-    const headerText = addTextObject(0, 0, i18next.t("runHistory:runInfo"), TextStyle.SETTINGS_LABEL);
+    const headerText = addTextObject(0, 0, i18next.t("runHistory:runInfo"), TextStyle.HEADER_LABEL);
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
     this.runContainer.add(headerText);
+    const runName = addTextObject(0, 0, this.runInfo.name, TextStyle.WINDOW);
+    runName.setOrigin(0, 0);
+    const runNameX = headerText.width / 6 + headerText.x + 4;
+    runName.setPositionRelative(headerBg, runNameX, 4);
+    this.runContainer.add(runName);
   }
 
   /**
@@ -330,7 +337,7 @@ export default class RunInfoUiHandler extends UiHandler {
       if (this.runInfo.trainer.trainerType >= RIVAL_TRAINER_ID_THRESHOLD) {
         trainerName =
           trainerObj.variant === TrainerVariant.FEMALE
-            ? i18next.t("trainerNames:rival_female")
+            ? i18next.t("trainerNames:rivalFemale")
             : i18next.t("trainerNames:rival");
       } else {
         trainerName = trainerObj.getName(0, true);
@@ -567,7 +574,7 @@ export default class RunInfoUiHandler extends UiHandler {
       case GameModes.SPLICED_ENDLESS:
         modeText.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
         break;
-      case GameModes.CHALLENGE:
+      case GameModes.CHALLENGE: {
         modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
         modeText.appendText(`${i18next.t("runHistory:challengeRules")}: `);
         modeText.setWrapMode(1); // wrap by word
@@ -582,6 +589,7 @@ export default class RunInfoUiHandler extends UiHandler {
           }
         }
         break;
+      }
       case GameModes.ENDLESS:
         modeText.appendText(`${i18next.t("gameMode:endless")}`, false);
         break;
@@ -602,7 +610,7 @@ export default class RunInfoUiHandler extends UiHandler {
     // Duration + Money
     const runInfoTextContainer = globalScene.add.container(0, 0);
     // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
-    const lineSpacing = i18next.resolvedLanguage === "ja" ? 12 : 3;
+    const lineSpacing = i18next.resolvedLanguage === "ja" ? 3 : 3;
     const runInfoText = addBBCodeTextObject(7, 0, "", TextStyle.WINDOW, {
       fontSize: "50px",
       lineSpacing: lineSpacing,
@@ -687,24 +695,27 @@ export default class RunInfoUiHandler extends UiHandler {
           case Challenges.SINGLE_GENERATION:
             rules.push(i18next.t(`runHistory:challengeMonoGen${this.runInfo.challenges[i].value}`));
             break;
-          case Challenges.SINGLE_TYPE:
+          case Challenges.SINGLE_TYPE: {
             const typeRule = PokemonType[this.runInfo.challenges[i].value - 1];
             const typeTextColor = `[color=${TypeColor[typeRule]}]`;
             const typeShadowColor = `[shadow=${TypeShadow[typeRule]}]`;
             const typeText =
-              typeTextColor + typeShadowColor + i18next.t(`pokemonInfo:Type.${typeRule}`)! + "[/color]" + "[/shadow]";
+              typeTextColor +
+              typeShadowColor +
+              i18next.t(`pokemonInfo:type.${toCamelCase(typeRule)}`)! +
+              "[/color]" +
+              "[/shadow]";
             rules.push(typeText);
             break;
+          }
           case Challenges.INVERSE_BATTLE:
             rules.push(i18next.t("challenges:inverseBattle.shortName"));
             break;
-          default:
-            const localisationKey = Challenges[this.runInfo.challenges[i].id]
-              .split("_")
-              .map((f, i) => (i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
-              .join("");
-            rules.push(i18next.t(`challenges:${localisationKey}.name`));
+          default: {
+            const localizationKey = toCamelCase(Challenges[this.runInfo.challenges[i].id]);
+            rules.push(i18next.t(`challenges:${localizationKey}.name`));
             break;
+          }
         }
       }
     }
@@ -719,7 +730,7 @@ export default class RunInfoUiHandler extends UiHandler {
   private parsePartyInfo(): void {
     const party = this.runInfo.party;
     const currentLanguage = i18next.resolvedLanguage ?? "en";
-    const windowHeight = (globalScene.game.canvas.height / 6 - 23) / 6;
+    const windowHeight = (globalScene.scaledCanvas.height - 23) / 6;
 
     party.forEach((p: PokemonData, i: number) => {
       const pokemonInfoWindow = new RoundRectangle(globalScene, 0, 14, this.statsBgWidth * 2 + 10, windowHeight - 2, 3);
@@ -765,7 +776,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const pPassiveInfo = pokemon.passive ? passiveLabel + ": " + pokemon.getPassiveAbility().name : "";
       const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
       // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
-      const lineSpacing = i18next.resolvedLanguage === "ja" ? 12 : 3;
+      const lineSpacing = i18next.resolvedLanguage === "ja" ? 3 : 3;
       const pokeInfoText = addBBCodeTextObject(0, 0, pName, TextStyle.SUMMARY, {
         fontSize: textContainerFontSize,
         lineSpacing: lineSpacing,
@@ -787,15 +798,15 @@ export default class RunInfoUiHandler extends UiHandler {
         pStats[i] = isMult < 1 ? pStats[i] + "[color=#40c8f8]↓[/color]" : pStats[i];
         pStats[i] = isMult > 1 ? pStats[i] + "[color=#f89890]↑[/color]" : pStats[i];
       }
-      const hp = i18next.t("pokemonInfo:Stat.HPshortened") + ": " + pStats[0];
-      const atk = i18next.t("pokemonInfo:Stat.ATKshortened") + ": " + pStats[1];
-      const def = i18next.t("pokemonInfo:Stat.DEFshortened") + ": " + pStats[2];
-      const spatk = i18next.t("pokemonInfo:Stat.SPATKshortened") + ": " + pStats[3];
-      const spdef = i18next.t("pokemonInfo:Stat.SPDEFshortened") + ": " + pStats[4];
+      const hp = i18next.t("pokemonInfo:stat.hpShortened") + ": " + pStats[0];
+      const atk = i18next.t("pokemonInfo:stat.atkShortened") + ": " + pStats[1];
+      const def = i18next.t("pokemonInfo:stat.defShortened") + ": " + pStats[2];
+      const spatk = i18next.t("pokemonInfo:stat.spatkShortened") + ": " + pStats[3];
+      const spdef = i18next.t("pokemonInfo:stat.spdefShortened") + ": " + pStats[4];
       const speedLabel =
         currentLanguage === "es-ES" || currentLanguage === "pt_BR"
-          ? i18next.t("runHistory:SPDshortened")
-          : i18next.t("pokemonInfo:Stat.SPDshortened");
+          ? i18next.t("runHistory:spdShortened")
+          : i18next.t("pokemonInfo:stat.spdShortened");
       const speed = speedLabel + ": " + pStats[5];
       // Column 1: HP Atk Def
       const pokeStatText1 = addBBCodeTextObject(-5, 0, hp, TextStyle.SUMMARY, {
@@ -863,7 +874,7 @@ export default class RunInfoUiHandler extends UiHandler {
         moveContainer.setScale(0.5);
         const moveBg = globalScene.add.nineslice(0, 0, "type_bgs", "unknown", 85, 15, 2, 2, 2, 2);
         moveBg.setOrigin(1, 0);
-        const moveLabel = addTextObject(-moveBg.width / 2, 2, "-", TextStyle.PARTY);
+        const moveLabel = addTextObject(-moveBg.width / 2, 1, "-", TextStyle.MOVE_LABEL);
         moveLabel.setOrigin(0.5, 0);
         moveLabel.setName("text-move-label");
         pokemonMoveBgs.push(moveBg);
@@ -967,8 +978,8 @@ export default class RunInfoUiHandler extends UiHandler {
     endCard.setOrigin(0);
     endCard.setScale(0.5);
     const text = addTextObject(
-      globalScene.game.canvas.width / 12,
-      globalScene.game.canvas.height / 6 - 16,
+      globalScene.scaledCanvas.width / 2,
+      globalScene.scaledCanvas.height - 16,
       i18next.t("battle:congratulations"),
       TextStyle.SUMMARY,
       { fontSize: "128px" },
@@ -1025,7 +1036,7 @@ export default class RunInfoUiHandler extends UiHandler {
         ignoreTimeTint: true,
       });
       this.hallofFameContainer.add(pokemonSprite);
-      const speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
+      const speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
       speciesLoaded.set(id, false);
 
       const female = pkmn.gender === 1;

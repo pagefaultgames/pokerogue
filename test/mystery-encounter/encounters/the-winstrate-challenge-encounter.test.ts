@@ -1,35 +1,34 @@
-import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { HUMAN_TRANSITABLE_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
-import { Biome } from "#enums/biome";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
-import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
-import type BattleScene from "#app/battle-scene";
-import { UiMode } from "#enums/ui-mode";
+import type { BattleScene } from "#app/battle-scene";
+import { Status } from "#data/status-effect";
+import { BiomeId } from "#enums/biome-id";
+import { MoveId } from "#enums/move-id";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { TrainerType } from "#enums/trainer-type";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
-import { Moves } from "#enums/moves";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { TheWinstrateChallengeEncounter } from "#app/data/mystery-encounters/encounters/the-winstrate-challenge-encounter";
-import { Status } from "#app/data/status-effect";
-import { MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
-import { CommandPhase } from "#app/phases/command-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import { PartyHealPhase } from "#app/phases/party-heal-phase";
-import { VictoryPhase } from "#app/phases/victory-phase";
+import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
+import { TrainerType } from "#enums/trainer-type";
+import { UiMode } from "#enums/ui-mode";
+import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters";
+import { TheWinstrateChallengeEncounter } from "#mystery-encounters/the-winstrate-challenge-encounter";
+import { CommandPhase } from "#phases/command-phase";
+import { PartyHealPhase } from "#phases/party-heal-phase";
+import { SelectModifierPhase } from "#phases/select-modifier-phase";
+import { VictoryPhase } from "#phases/victory-phase";
+import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
+import { GameManager } from "#test/test-utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
+import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/theWinstrateChallenge";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
-const defaultBiome = Biome.CAVE;
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
+const defaultBiome = BiomeId.CAVE;
 const defaultWave = 45;
 
 describe("The Winstrate Challenge - Mystery Encounter", () => {
@@ -44,12 +43,15 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
-    const biomeMap = new Map<Biome, MysteryEncounterType[]>([[Biome.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]]]);
+    const biomeMap = new Map<BiomeId, MysteryEncounterType[]>([
+      [BiomeId.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
+    ]);
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
       biomeMap.set(biome, [MysteryEncounterType.THE_WINSTRATE_CHALLENGE]);
     });
@@ -58,8 +60,6 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -72,7 +72,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       { text: `${namespace}:intro` },
       {
         speaker: `${namespace}:speaker`,
-        text: `${namespace}:intro_dialogue`,
+        text: `${namespace}:introDialogue`,
       },
     ]);
     expect(TheWinstrateChallengeEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
@@ -84,8 +84,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingBiome(Biome.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT).startingBiome(BiomeId.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_WINSTRATE_CHALLENGE);
@@ -111,43 +110,43 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
         trainerType: TrainerType.VITO,
         pokemonConfigs: [
           {
-            species: getPokemonSpecies(Species.HISUI_ELECTRODE),
+            species: getPokemonSpecies(SpeciesId.HISUI_ELECTRODE),
             isBoss: false,
             abilityIndex: 0, // Soundproof
             nature: Nature.MODEST,
-            moveSet: [Moves.THUNDERBOLT, Moves.GIGA_DRAIN, Moves.FOUL_PLAY, Moves.THUNDER_WAVE],
+            moveSet: [MoveId.THUNDERBOLT, MoveId.GIGA_DRAIN, MoveId.FOUL_PLAY, MoveId.THUNDER_WAVE],
             modifierConfigs: expect.any(Array),
           },
           {
-            species: getPokemonSpecies(Species.SWALOT),
+            species: getPokemonSpecies(SpeciesId.SWALOT),
             isBoss: false,
             abilityIndex: 2, // Gluttony
             nature: Nature.QUIET,
-            moveSet: [Moves.SLUDGE_BOMB, Moves.GIGA_DRAIN, Moves.ICE_BEAM, Moves.EARTHQUAKE],
+            moveSet: [MoveId.SLUDGE_BOMB, MoveId.GIGA_DRAIN, MoveId.ICE_BEAM, MoveId.EARTHQUAKE],
             modifierConfigs: expect.any(Array),
           },
           {
-            species: getPokemonSpecies(Species.DODRIO),
+            species: getPokemonSpecies(SpeciesId.DODRIO),
             isBoss: false,
             abilityIndex: 2, // Tangled Feet
             nature: Nature.JOLLY,
-            moveSet: [Moves.DRILL_PECK, Moves.QUICK_ATTACK, Moves.THRASH, Moves.KNOCK_OFF],
+            moveSet: [MoveId.DRILL_PECK, MoveId.QUICK_ATTACK, MoveId.THRASH, MoveId.KNOCK_OFF],
             modifierConfigs: expect.any(Array),
           },
           {
-            species: getPokemonSpecies(Species.ALAKAZAM),
+            species: getPokemonSpecies(SpeciesId.ALAKAZAM),
             isBoss: false,
             formIndex: 1,
             nature: Nature.BOLD,
-            moveSet: [Moves.PSYCHIC, Moves.SHADOW_BALL, Moves.FOCUS_BLAST, Moves.THUNDERBOLT],
+            moveSet: [MoveId.PSYCHIC, MoveId.SHADOW_BALL, MoveId.FOCUS_BLAST, MoveId.THUNDERBOLT],
             modifierConfigs: expect.any(Array),
           },
           {
-            species: getPokemonSpecies(Species.DARMANITAN),
+            species: getPokemonSpecies(SpeciesId.DARMANITAN),
             isBoss: false,
             abilityIndex: 0, // Sheer Force
             nature: Nature.IMPISH,
-            moveSet: [Moves.EARTHQUAKE, Moves.U_TURN, Moves.FLARE_BLITZ, Moves.ROCK_SLIDE],
+            moveSet: [MoveId.EARTHQUAKE, MoveId.U_TURN, MoveId.FLARE_BLITZ, MoveId.ROCK_SLIDE],
             modifierConfigs: expect.any(Array),
           },
         ],
@@ -156,11 +155,11 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
         trainerType: TrainerType.VICKY,
         pokemonConfigs: [
           {
-            species: getPokemonSpecies(Species.MEDICHAM),
+            species: getPokemonSpecies(SpeciesId.MEDICHAM),
             isBoss: false,
             formIndex: 1,
             nature: Nature.IMPISH,
-            moveSet: [Moves.AXE_KICK, Moves.ICE_PUNCH, Moves.ZEN_HEADBUTT, Moves.BULLET_PUNCH],
+            moveSet: [MoveId.AXE_KICK, MoveId.ICE_PUNCH, MoveId.ZEN_HEADBUTT, MoveId.BULLET_PUNCH],
             modifierConfigs: expect.any(Array),
           },
         ],
@@ -169,27 +168,27 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
         trainerType: TrainerType.VIVI,
         pokemonConfigs: [
           {
-            species: getPokemonSpecies(Species.SEAKING),
+            species: getPokemonSpecies(SpeciesId.SEAKING),
             isBoss: false,
             abilityIndex: 3, // Lightning Rod
             nature: Nature.ADAMANT,
-            moveSet: [Moves.WATERFALL, Moves.MEGAHORN, Moves.KNOCK_OFF, Moves.REST],
+            moveSet: [MoveId.WATERFALL, MoveId.MEGAHORN, MoveId.KNOCK_OFF, MoveId.REST],
             modifierConfigs: expect.any(Array),
           },
           {
-            species: getPokemonSpecies(Species.BRELOOM),
+            species: getPokemonSpecies(SpeciesId.BRELOOM),
             isBoss: false,
             abilityIndex: 1, // Poison Heal
             nature: Nature.JOLLY,
-            moveSet: [Moves.SPORE, Moves.SWORDS_DANCE, Moves.SEED_BOMB, Moves.DRAIN_PUNCH],
+            moveSet: [MoveId.SPORE, MoveId.SWORDS_DANCE, MoveId.SEED_BOMB, MoveId.DRAIN_PUNCH],
             modifierConfigs: expect.any(Array),
           },
           {
-            species: getPokemonSpecies(Species.CAMERUPT),
+            species: getPokemonSpecies(SpeciesId.CAMERUPT),
             isBoss: false,
             formIndex: 1,
             nature: Nature.CALM,
-            moveSet: [Moves.EARTH_POWER, Moves.FIRE_BLAST, Moves.YAWN, Moves.PROTECT],
+            moveSet: [MoveId.EARTH_POWER, MoveId.FIRE_BLAST, MoveId.YAWN, MoveId.PROTECT],
             modifierConfigs: expect.any(Array),
           },
         ],
@@ -198,19 +197,19 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
         trainerType: TrainerType.VICTORIA,
         pokemonConfigs: [
           {
-            species: getPokemonSpecies(Species.ROSERADE),
+            species: getPokemonSpecies(SpeciesId.ROSERADE),
             isBoss: false,
             abilityIndex: 0, // Natural Cure
             nature: Nature.CALM,
-            moveSet: [Moves.SYNTHESIS, Moves.SLUDGE_BOMB, Moves.GIGA_DRAIN, Moves.SLEEP_POWDER],
+            moveSet: [MoveId.SYNTHESIS, MoveId.SLUDGE_BOMB, MoveId.GIGA_DRAIN, MoveId.SLEEP_POWDER],
             modifierConfigs: expect.any(Array),
           },
           {
-            species: getPokemonSpecies(Species.GARDEVOIR),
+            species: getPokemonSpecies(SpeciesId.GARDEVOIR),
             isBoss: false,
             formIndex: 1,
             nature: Nature.TIMID,
-            moveSet: [Moves.PSYSHOCK, Moves.MOONBLAST, Moves.SHADOW_BALL, Moves.WILL_O_WISP],
+            moveSet: [MoveId.PSYSHOCK, MoveId.MOONBLAST, MoveId.SHADOW_BALL, MoveId.WILL_O_WISP],
             modifierConfigs: expect.any(Array),
           },
         ],
@@ -219,19 +218,19 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
         trainerType: TrainerType.VICTOR,
         pokemonConfigs: [
           {
-            species: getPokemonSpecies(Species.SWELLOW),
+            species: getPokemonSpecies(SpeciesId.SWELLOW),
             isBoss: false,
             abilityIndex: 0, // Guts
             nature: Nature.ADAMANT,
-            moveSet: [Moves.FACADE, Moves.BRAVE_BIRD, Moves.PROTECT, Moves.QUICK_ATTACK],
+            moveSet: [MoveId.FACADE, MoveId.BRAVE_BIRD, MoveId.PROTECT, MoveId.QUICK_ATTACK],
             modifierConfigs: expect.any(Array),
           },
           {
-            species: getPokemonSpecies(Species.OBSTAGOON),
+            species: getPokemonSpecies(SpeciesId.OBSTAGOON),
             isBoss: false,
             abilityIndex: 1, // Guts
             nature: Nature.ADAMANT,
-            moveSet: [Moves.FACADE, Moves.OBSTRUCT, Moves.NIGHT_SLASH, Moves.FIRE_PUNCH],
+            moveSet: [MoveId.FACADE, MoveId.OBSTRUCT, MoveId.NIGHT_SLASH, MoveId.FIRE_PUNCH],
             modifierConfigs: expect.any(Array),
           },
         ],
@@ -263,7 +262,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_WINSTRATE_CHALLENGE, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.trainer!.config.trainerType).toBe(TrainerType.VICTOR);
       expect(scene.currentBattle.mysteryEncounter?.enemyPartyConfigs.length).toBe(4);
@@ -295,9 +294,9 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
 
       // Should have Macho Brace in the rewards
       await skipBattleToNextBattle(game, true);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -305,7 +304,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toBe("MYSTERY_ENCOUNTER_MACHO_BRACE");
-    }, 15000);
+    });
   });
 
   describe("Option 2 - Refuse the Challenge", () => {
@@ -326,7 +325,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
     });
 
     it("Should fully heal the party", async () => {
-      const phaseSpy = vi.spyOn(scene, "unshiftPhase");
+      const phaseSpy = vi.spyOn(scene.phaseManager, "unshiftPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.THE_WINSTRATE_CHALLENGE, defaultParty);
       await runMysteryEncounterToEnd(game, 2);
@@ -338,8 +337,8 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
     it("should have a Rarer Candy in the rewards", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.THE_WINSTRATE_CHALLENGE, defaultParty);
       await runMysteryEncounterToEnd(game, 2);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -357,8 +356,8 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
  * @param isFinalBattle
  */
 async function skipBattleToNextBattle(game: GameManager, isFinalBattle = false) {
-  game.scene.clearPhaseQueue();
-  game.scene.clearPhaseQueueSplice();
+  game.scene.phaseManager.clearPhaseQueue();
+  game.scene.phaseManager.clearPhaseQueueSplice();
   const commandUiHandler = game.scene.ui.handlers[UiMode.COMMAND];
   commandUiHandler.clear();
   game.scene.getEnemyParty().forEach(p => {
@@ -366,12 +365,11 @@ async function skipBattleToNextBattle(game: GameManager, isFinalBattle = false) 
     p.status = new Status(StatusEffect.FAINT);
     game.scene.field.remove(p);
   });
-  game.phaseInterceptor["onHold"] = [];
-  game.scene.pushPhase(new VictoryPhase(0));
-  game.phaseInterceptor.superEndPhase();
+  game.scene.phaseManager.pushPhase(new VictoryPhase(0));
+  game.endPhase();
   if (isFinalBattle) {
-    await game.phaseInterceptor.to(MysteryEncounterRewardsPhase);
+    await game.phaseInterceptor.to("MysteryEncounterRewardsPhase");
   } else {
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.toNextTurn();
   }
 }

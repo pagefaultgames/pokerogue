@@ -1,24 +1,18 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { SemiInvulnerableTag } from "#app/data/battler-tags";
-import type { SpeciesFormChange } from "#app/data/pokemon-forms";
-import { getSpeciesFormChangeMessage, SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms";
-import { getTypeRgb } from "#app/data/type";
-import { BattleSpec } from "#app/enums/battle-spec";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BattlePhase } from "./battle-phase";
-import { MovePhase } from "./move-phase";
-import { PokemonHealPhase } from "./pokemon-heal-phase";
-import {
-  applyAbAttrs,
-  ClearTerrainAbAttr,
-  ClearWeatherAbAttr,
-  PostTeraFormChangeStatChangeAbAttr,
-} from "#app/data/abilities/ability";
+import { SemiInvulnerableTag } from "#data/battler-tags";
+import { getSpeciesFormChangeMessage, SpeciesFormChangeTeraTrigger } from "#data/form-change-triggers";
+import type { SpeciesFormChange } from "#data/pokemon-forms";
+import { getTypeRgb } from "#data/type";
+import { BattleSpec } from "#enums/battle-spec";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import type { Pokemon } from "#field/pokemon";
+import { BattlePhase } from "#phases/battle-phase";
+import type { MovePhase } from "#phases/move-phase";
 
 export class QuietFormChangePhase extends BattlePhase {
+  public readonly phaseName = "QuietFormChangePhase";
   protected pokemon: Pokemon;
   protected formChange: SpeciesFormChange;
 
@@ -32,7 +26,8 @@ export class QuietFormChangePhase extends BattlePhase {
     super.start();
 
     if (this.pokemon.formIndex === this.pokemon.species.forms.findIndex(f => f.formKey === this.formChange.formKey)) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const preName = getPokemonNameWithAffix(this.pokemon);
@@ -157,10 +152,17 @@ export class QuietFormChangePhase extends BattlePhase {
 
   end(): void {
     this.pokemon.findAndRemoveTags(t => t.tagType === BattlerTagType.AUTOTOMIZED);
-    if (globalScene?.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && this.pokemon instanceof EnemyPokemon) {
+    if (globalScene?.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && this.pokemon.isEnemy()) {
       globalScene.playBgm();
-      globalScene.unshiftPhase(
-        new PokemonHealPhase(this.pokemon.getBattlerIndex(), this.pokemon.getMaxHp(), null, false, false, false, true),
+      globalScene.phaseManager.unshiftNew(
+        "PokemonHealPhase",
+        this.pokemon.getBattlerIndex(),
+        this.pokemon.getMaxHp(),
+        null,
+        false,
+        false,
+        false,
+        true,
       );
       this.pokemon.findAndRemoveTags(() => true);
       this.pokemon.bossSegments = 5;
@@ -168,15 +170,18 @@ export class QuietFormChangePhase extends BattlePhase {
       this.pokemon.initBattleInfo();
       this.pokemon.cry();
 
-      const movePhase = globalScene.findPhase(p => p instanceof MovePhase && p.pokemon === this.pokemon) as MovePhase;
+      const movePhase = globalScene.phaseManager.findPhase(
+        p => p.is("MovePhase") && p.pokemon === this.pokemon,
+      ) as MovePhase;
       if (movePhase) {
         movePhase.cancel();
       }
     }
     if (this.formChange.trigger instanceof SpeciesFormChangeTeraTrigger) {
-      applyAbAttrs(PostTeraFormChangeStatChangeAbAttr, this.pokemon, null);
-      applyAbAttrs(ClearWeatherAbAttr, this.pokemon, null);
-      applyAbAttrs(ClearTerrainAbAttr, this.pokemon, null);
+      const params = { pokemon: this.pokemon };
+      applyAbAttrs("PostTeraFormChangeStatChangeAbAttr", params);
+      applyAbAttrs("ClearWeatherAbAttr", params);
+      applyAbAttrs("ClearTerrainAbAttr", params);
     }
 
     super.end();

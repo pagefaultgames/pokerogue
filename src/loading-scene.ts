@@ -1,26 +1,16 @@
-import { GachaType } from "#enums/gacha-types";
-import { getBiomeHasProps } from "#app/field/arena";
-import CacheBustedLoaderPlugin from "#app/plugins/cache-busted-loader-plugin";
+import { timedEventManager } from "#app/global-event-manager";
+import { initializeGame } from "#app/init/init";
 import { SceneBase } from "#app/scene-base";
-import { WindowVariant, getWindowVariantSuffix } from "#app/ui/ui-theme";
 import { isMobile } from "#app/touch-controls";
-import { localPing, getEnumValues, hasAllLocalizedSprites, getEnumKeys } from "#app/utils/common";
-import { initPokemonPrevolutions, initPokemonStarters } from "#app/data/balance/pokemon-evolutions";
-import { initBiomes } from "#app/data/balance/biomes";
-import { initEggMoves } from "#app/data/balance/egg-moves";
-import { initPokemonForms } from "#app/data/pokemon-forms";
-import { initSpecies } from "#app/data/pokemon-species";
-import { initMoves } from "#app/data/moves/move";
-import { initAbilities } from "#app/data/abilities/ability";
-import { initAchievements } from "#app/system/achv";
-import { initTrainerTypeDialogue } from "#app/data/dialogue";
-import { initChallenges } from "#app/data/challenge";
+import { BiomeId } from "#enums/biome-id";
+import { GachaType } from "#enums/gacha-types";
+import { getBiomeHasProps } from "#field/arena";
+import { CacheBustedLoaderPlugin } from "#plugins/cache-busted-loader-plugin";
+import { getWindowVariantSuffix, WindowVariant } from "#ui/ui-theme";
+import { hasAllLocalizedSprites, localPing } from "#utils/common";
+import { getEnumValues } from "#utils/enums";
 import i18next from "i18next";
-import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
-import { initVouchers } from "#app/system/voucher";
-import { Biome } from "#enums/biome";
-import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
-import { timedEventManager } from "./global-event-manager";
+import type { GameObjects } from "phaser";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -39,6 +29,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("loading_bg", "arenas");
     this.loadImage("logo", "");
+    this.loadImage("logo_fake", "");
 
     // Load menu images
     this.loadAtlas("bg", "ui");
@@ -99,6 +90,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("shiny_icons", "ui");
     this.loadImage("ha_capsule", "ui", "ha_capsule.png");
     this.loadImage("champion_ribbon", "ui", "champion_ribbon.png");
+    this.loadImage("champion_ribbon_emerald", "ui", "champion_ribbon_emerald.png");
     this.loadImage("icon_spliced", "ui");
     this.loadImage("icon_lock", "ui", "icon_lock.png");
     this.loadImage("icon_stop", "ui", "icon_stop.png");
@@ -107,7 +99,7 @@ export class LoadingScene extends SceneBase {
     this.loadImage("type_tera", "ui");
     this.loadAtlas("type_bgs", "ui");
     this.loadAtlas("button_tera", "ui");
-    this.loadImage("mystery_egg", "ui");
+    this.loadImage("common_egg", "ui");
     this.loadImage("normal_memory", "ui");
 
     this.loadImage("dawn_icon_fg", "ui");
@@ -129,13 +121,17 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("party_bg", "ui");
     this.loadImage("party_bg_double", "ui");
+    this.loadImage("party_bg_double_manage", "ui");
     this.loadAtlas("party_slot_main", "ui");
+    this.loadAtlas("party_slot_main_short", "ui");
     this.loadAtlas("party_slot", "ui");
     this.loadImage("party_slot_overlay_lv", "ui");
     this.loadImage("party_slot_hp_bar", "ui");
     this.loadAtlas("party_slot_hp_overlay", "ui");
     this.loadAtlas("party_pb", "ui");
     this.loadAtlas("party_cancel", "ui");
+    this.loadAtlas("party_discard", "ui");
+    this.loadAtlas("party_transfer", "ui");
 
     this.loadImage("summary_bg", "ui");
     this.loadImage("summary_overlay_shiny", "ui");
@@ -177,8 +173,8 @@ export class LoadingScene extends SceneBase {
 
     this.loadImage("default_bg", "arenas");
     // Load arena images
-    getEnumValues(Biome).map(bt => {
-      const btKey = Biome[bt].toLowerCase();
+    getEnumValues(BiomeId).map(bt => {
+      const btKey = BiomeId[bt].toLowerCase();
       const isBaseAnimated = btKey === "end";
       const baseAKey = `${btKey}_a`;
       const baseBKey = `${btKey}_b`;
@@ -268,7 +264,7 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("egg_icons", "egg");
     this.loadAtlas("egg_shard", "egg");
     this.loadAtlas("egg_lightrays", "egg");
-    for (const gt of getEnumKeys(GachaType)) {
+    for (const gt of Object.keys(GachaType)) {
       const key = gt.toLowerCase();
       this.loadImage(`gacha_${key}`, "egg");
       this.loadAtlas(`gacha_underlay_${key}`, "egg");
@@ -363,26 +359,11 @@ export class LoadingScene extends SceneBase {
 
     this.loadLoadingScreen();
 
-    initAchievements();
-    initVouchers();
-    initStatsKeys();
-    initPokemonPrevolutions();
-    initPokemonStarters();
-    initBiomes();
-    initEggMoves();
-    initPokemonForms();
-    initTrainerTypeDialogue();
-    initSpecies();
-    initMoves();
-    initAbilities();
-    initChallenges();
-    initMysteryEncounters();
+    initializeGame();
   }
 
   loadLoadingScreen() {
     const mobile = isMobile();
-
-    const loadingGraphics: any[] = [];
 
     const bg = this.add.image(0, 0, "");
     bg.setOrigin(0, 0);
@@ -454,6 +435,7 @@ export class LoadingScene extends SceneBase {
     });
     disclaimerDescriptionText.setOrigin(0.5, 0.5);
 
+    const loadingGraphics: (GameObjects.Image | GameObjects.Graphics | GameObjects.Text)[] = [];
     loadingGraphics.push(
       bg,
       graphics,
@@ -467,7 +449,9 @@ export class LoadingScene extends SceneBase {
     );
 
     if (!mobile) {
-      loadingGraphics.map(g => g.setVisible(false));
+      loadingGraphics.forEach(g => {
+        g.setVisible(false);
+      });
     }
 
     const intro = this.add.video(0, 0);

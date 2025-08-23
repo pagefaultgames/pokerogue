@@ -1,16 +1,15 @@
 import { globalScene } from "#app/global-scene";
-import PartyUiHandler, { PartyOption, PartyUiMode } from "#app/ui/party-ui-handler";
-import { UiMode } from "#enums/ui-mode";
 import { SwitchType } from "#enums/switch-type";
-import { BattlePhase } from "./battle-phase";
-import { PostSummonPhase } from "./post-summon-phase";
-import { SwitchSummonPhase } from "./switch-summon-phase";
+import { UiMode } from "#enums/ui-mode";
+import { BattlePhase } from "#phases/battle-phase";
+import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 
 /**
  * Opens the party selector UI and transitions into a {@linkcode SwitchSummonPhase}
  * for the player (if a switch would be valid for the current battle state).
  */
 export class SwitchPhase extends BattlePhase {
+  public readonly phaseName = "SwitchPhase";
   protected readonly fieldIndex: number;
   private readonly switchType: SwitchType;
   private readonly isModal: boolean;
@@ -76,9 +75,11 @@ export class SwitchPhase extends BattlePhase {
         if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
           // Remove any pre-existing PostSummonPhase under the same field index.
           // Pre-existing PostSummonPhases may occur when this phase is invoked during a prompt to switch at the start of a wave.
-          globalScene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
+          globalScene.phaseManager.tryRemovePhase(
+            p => p.is("PostSummonPhase") && p.player && p.fieldIndex === this.fieldIndex,
+          );
           const switchType = option === PartyOption.PASS_BATON ? SwitchType.BATON_PASS : this.switchType;
-          globalScene.unshiftPhase(new SwitchSummonPhase(switchType, fieldIndex, slotIndex, this.doReturn));
+          globalScene.phaseManager.unshiftNew("SwitchSummonPhase", switchType, fieldIndex, slotIndex, this.doReturn);
         }
         globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
       },

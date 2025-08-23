@@ -1,20 +1,21 @@
-import { BattlerIndex } from "#app/battle";
-import { ArenaTagSide } from "#app/data/arena-tag";
-import { SubstituteTag, TrappedTag } from "#app/data/battler-tags";
-import { allMoves, StealHeldItemChanceAttr } from "#app/data/moves/move";
-import { MoveResult } from "#app/field/pokemon";
-import type { CommandPhase } from "#app/phases/command-phase";
-import GameManager from "#test/testUtils/gameManager";
-import { Command } from "#app/ui/command-ui-handler";
-import { UiMode } from "#enums/ui-mode";
-import { Abilities } from "#enums/abilities";
+import { SubstituteTag, TrappedTag } from "#data/battler-tags";
+import { allMoves } from "#data/data-lists";
+import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { Command } from "#enums/command";
+import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { UiMode } from "#enums/ui-mode";
+import { StealHeldItemChanceAttr } from "#moves/move";
+import type { CommandPhase } from "#phases/command-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -37,20 +38,20 @@ describe("Moves - Substitute", () => {
 
     game.override
       .battleStyle("single")
-      .moveset([Moves.SUBSTITUTE, Moves.SWORDS_DANCE, Moves.TACKLE, Moves.SPLASH])
-      .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset(Moves.SPLASH)
+      .moveset([MoveId.SUBSTITUTE, MoveId.SWORDS_DANCE, MoveId.TACKLE, MoveId.SPLASH])
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .enemyMoveset(MoveId.SPLASH)
       .startingLevel(100)
       .enemyLevel(100);
   });
 
   it("should cause the user to take damage", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
-    game.move.select(Moves.SUBSTITUTE);
+    game.move.select(MoveId.SUBSTITUTE);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
@@ -58,13 +59,13 @@ describe("Moves - Substitute", () => {
   });
 
   it("should redirect enemy attack damage to the Substitute doll", async () => {
-    game.override.enemyMoveset(Moves.TACKLE);
+    game.override.enemyMoveset(MoveId.TACKLE);
 
-    await game.classicMode.startBattle([Species.SKARMORY]);
+    await game.classicMode.startBattle([SpeciesId.SKARMORY]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
-    game.move.select(Moves.SUBSTITUTE);
+    game.move.select(MoveId.SUBSTITUTE);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
@@ -80,14 +81,14 @@ describe("Moves - Substitute", () => {
 
   it("should fade after redirecting more damage than its remaining HP", async () => {
     // Giga Impact OHKOs Magikarp if substitute isn't up
-    game.override.enemyMoveset(Moves.GIGA_IMPACT);
-    vi.spyOn(allMoves[Moves.GIGA_IMPACT], "accuracy", "get").mockReturnValue(100);
+    game.override.enemyMoveset(MoveId.GIGA_IMPACT);
+    vi.spyOn(allMoves[MoveId.GIGA_IMPACT], "accuracy", "get").mockReturnValue(100);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
-    game.move.select(Moves.SUBSTITUTE);
+    game.move.select(MoveId.SUBSTITUTE);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
@@ -102,13 +103,13 @@ describe("Moves - Substitute", () => {
   });
 
   it("should block stat changes from status moves", async () => {
-    game.override.enemyMoveset(Moves.CHARM);
+    game.override.enemyMoveset(MoveId.CHARM);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
-    game.move.select(Moves.SUBSTITUTE);
+    game.move.select(MoveId.SUBSTITUTE);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -117,13 +118,13 @@ describe("Moves - Substitute", () => {
   });
 
   it("should be bypassed by sound-based moves", async () => {
-    game.override.enemyMoveset(Moves.ECHOED_VOICE);
+    game.override.enemyMoveset(MoveId.ECHOED_VOICE);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
-    game.move.select(Moves.SUBSTITUTE);
+    game.move.select(MoveId.SUBSTITUTE);
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -137,14 +138,13 @@ describe("Moves - Substitute", () => {
   });
 
   it("should be bypassed by attackers with Infiltrator", async () => {
-    game.override.enemyMoveset(Moves.TACKLE);
-    game.override.enemyAbility(Abilities.INFILTRATOR);
+    game.override.enemyMoveset(MoveId.TACKLE).enemyAbility(AbilityId.INFILTRATOR);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
-    game.move.select(Moves.SUBSTITUTE);
+    game.move.select(MoveId.SUBSTITUTE);
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -158,16 +158,16 @@ describe("Moves - Substitute", () => {
   });
 
   it("shouldn't block the user's own status moves", async () => {
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
-    game.move.select(Moves.SUBSTITUTE);
+    game.move.select(MoveId.SUBSTITUTE);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.toNextTurn();
 
-    game.move.select(Moves.SWORDS_DANCE);
+    game.move.select(MoveId.SWORDS_DANCE);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
@@ -175,16 +175,16 @@ describe("Moves - Substitute", () => {
   });
 
   it("shouldn't block moves that target the user's side of the field", async () => {
-    game.override.moveset(Moves.LIGHT_SCREEN);
+    game.override.moveset(MoveId.LIGHT_SCREEN);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
     vi.spyOn(leadPokemon, "getMoveEffectiveness");
 
-    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
+    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
-    game.move.select(Moves.LIGHT_SCREEN);
+    game.move.select(MoveId.LIGHT_SCREEN);
 
     await game.toNextTurn();
 
@@ -193,14 +193,14 @@ describe("Moves - Substitute", () => {
   });
 
   it("shouldn't block the opponent from setting hazards", async () => {
-    game.override.enemyMoveset(Moves.STEALTH_ROCK);
+    game.override.enemyMoveset(MoveId.STEALTH_ROCK);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
     vi.spyOn(leadPokemon, "getMoveEffectiveness");
 
-    game.move.select(Moves.SUBSTITUTE);
+    game.move.select(MoveId.SUBSTITUTE);
 
     await game.toNextTurn();
 
@@ -209,17 +209,17 @@ describe("Moves - Substitute", () => {
   });
 
   it("shouldn't block moves that target both sides of the field", async () => {
-    game.override.moveset(Moves.TRICK_ROOM).enemyMoveset(Moves.GRAVITY);
+    game.override.moveset(MoveId.TRICK_ROOM).enemyMoveset(MoveId.GRAVITY);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
     const pokemon = game.scene.getField(true);
     pokemon.forEach(p => {
       vi.spyOn(p, "getMoveEffectiveness");
-      p.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, p.id);
+      p.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, p.id);
     });
 
-    game.move.select(Moves.TRICK_ROOM);
+    game.move.select(MoveId.TRICK_ROOM);
 
     await game.toNextTurn();
 
@@ -229,17 +229,16 @@ describe("Moves - Substitute", () => {
   });
 
   it("should protect the user from flinching", async () => {
-    game.override.enemyMoveset(Moves.FAKE_OUT);
-    game.override.startingLevel(1); // Ensures the Substitute will break
+    game.override.enemyMoveset(MoveId.FAKE_OUT).startingLevel(1); // Ensures the Substitute will break
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
-    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
+    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -247,16 +246,16 @@ describe("Moves - Substitute", () => {
   });
 
   it("should protect the user from being trapped", async () => {
-    vi.spyOn(allMoves[Moves.SAND_TOMB], "accuracy", "get").mockReturnValue(100);
-    game.override.enemyMoveset(Moves.SAND_TOMB);
+    vi.spyOn(allMoves[MoveId.SAND_TOMB], "accuracy", "get").mockReturnValue(100);
+    game.override.enemyMoveset(MoveId.SAND_TOMB);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
-    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
+    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -264,16 +263,16 @@ describe("Moves - Substitute", () => {
   });
 
   it("should prevent the user's stats from being lowered", async () => {
-    vi.spyOn(allMoves[Moves.LIQUIDATION], "chance", "get").mockReturnValue(100);
-    game.override.enemyMoveset(Moves.LIQUIDATION);
+    vi.spyOn(allMoves[MoveId.LIQUIDATION], "chance", "get").mockReturnValue(100);
+    game.override.enemyMoveset(MoveId.LIQUIDATION);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
-    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
+    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -281,15 +280,15 @@ describe("Moves - Substitute", () => {
   });
 
   it("should protect the user from being afflicted with status effects", async () => {
-    game.override.enemyMoveset(Moves.NUZZLE);
+    game.override.enemyMoveset(MoveId.NUZZLE);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
-    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
+    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -297,17 +296,16 @@ describe("Moves - Substitute", () => {
   });
 
   it("should prevent the user's items from being stolen", async () => {
-    game.override.enemyMoveset(Moves.THIEF);
-    vi.spyOn(allMoves[Moves.THIEF], "attrs", "get").mockReturnValue([new StealHeldItemChanceAttr(1.0)]); // give Thief 100% steal rate
-    game.override.startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
+    game.override.enemyMoveset(MoveId.THIEF).startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
+    vi.spyOn(allMoves[MoveId.THIEF], "attrs", "get").mockReturnValue([new StealHeldItemChanceAttr(1.0)]); // give Thief 100% steal rate
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
-    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
+    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -315,17 +313,16 @@ describe("Moves - Substitute", () => {
   });
 
   it("should prevent the user's items from being removed", async () => {
-    game.override.moveset([Moves.KNOCK_OFF]);
-    game.override.enemyHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
+    game.override.moveset([MoveId.KNOCK_OFF]).enemyHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
-    enemyPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, enemyPokemon.id);
+    enemyPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, enemyPokemon.id);
     const enemyNumItems = enemyPokemon.getHeldItems().length;
 
-    game.move.select(Moves.KNOCK_OFF);
+    game.move.select(MoveId.KNOCK_OFF);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
@@ -333,17 +330,16 @@ describe("Moves - Substitute", () => {
   });
 
   it("move effect should prevent the user's berries from being stolen and eaten", async () => {
-    game.override.enemyMoveset(Moves.BUG_BITE);
-    game.override.startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
+    game.override.enemyMoveset(MoveId.BUG_BITE).startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
-    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
+    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
     const enemyPostAttackHp = enemyPokemon.hp;
@@ -355,15 +351,15 @@ describe("Moves - Substitute", () => {
   });
 
   it("should prevent the user's stats from being reset by Clear Smog", async () => {
-    game.override.enemyMoveset(Moves.CLEAR_SMOG);
+    game.override.enemyMoveset(MoveId.CLEAR_SMOG);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
-    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
+    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
-    game.move.select(Moves.SWORDS_DANCE);
+    game.move.select(MoveId.SWORDS_DANCE);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -371,16 +367,16 @@ describe("Moves - Substitute", () => {
   });
 
   it("should prevent the user from becoming confused", async () => {
-    game.override.enemyMoveset(Moves.MAGICAL_TORQUE);
-    vi.spyOn(allMoves[Moves.MAGICAL_TORQUE], "chance", "get").mockReturnValue(100);
+    game.override.enemyMoveset(MoveId.MAGICAL_TORQUE);
+    vi.spyOn(allMoves[MoveId.MAGICAL_TORQUE], "chance", "get").mockReturnValue(100);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
-    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
+    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
-    game.move.select(Moves.SWORDS_DANCE);
+    game.move.select(MoveId.SWORDS_DANCE);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -389,36 +385,35 @@ describe("Moves - Substitute", () => {
   });
 
   it("should transfer to the switched in Pokemon when the source uses Baton Pass", async () => {
-    game.override.moveset([Moves.SUBSTITUTE, Moves.BATON_PASS]);
+    game.override.moveset([MoveId.SUBSTITUTE, MoveId.BATON_PASS]);
 
-    await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
-    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, leadPokemon.id);
+    leadPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, leadPokemon.id);
 
     // Simulate a Baton switch for the player this turn
     game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
-      (game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, 1, true);
+      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.POKEMON, 1, true);
     });
 
     await game.phaseInterceptor.to("MovePhase", false);
 
-    const switchedPokemon = game.scene.getPlayerPokemon()!;
+    const switchedPokemon = game.field.getPlayerPokemon();
     const subTag = switchedPokemon.getTag(SubstituteTag)!;
     expect(subTag).toBeDefined();
     expect(subTag.hp).toBe(Math.floor((leadPokemon.getMaxHp() * 1) / 4));
   });
 
   it("should prevent the source's Rough Skin from activating when hit", async () => {
-    game.override.enemyMoveset(Moves.TACKLE);
-    game.override.ability(Abilities.ROUGH_SKIN);
+    game.override.enemyMoveset(MoveId.TACKLE).ability(AbilityId.ROUGH_SKIN);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
 
-    game.move.select(Moves.SUBSTITUTE);
+    game.move.select(MoveId.SUBSTITUTE);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -426,20 +421,19 @@ describe("Moves - Substitute", () => {
   });
 
   it("should prevent the source's Focus Punch from failing when hit", async () => {
-    game.override.enemyMoveset(Moves.TACKLE);
-    game.override.moveset([Moves.FOCUS_PUNCH]);
+    game.override.enemyMoveset(MoveId.TACKLE).moveset([MoveId.FOCUS_PUNCH]);
 
     // Make Focus Punch 40 power to avoid a KO
-    vi.spyOn(allMoves[Moves.FOCUS_PUNCH], "calculateBattlePower").mockReturnValue(40);
+    vi.spyOn(allMoves[MoveId.FOCUS_PUNCH], "calculateBattlePower").mockReturnValue(40);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
-    playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, playerPokemon.id);
+    playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, playerPokemon.id);
 
-    game.move.select(Moves.FOCUS_PUNCH);
+    game.move.select(MoveId.FOCUS_PUNCH);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -448,16 +442,15 @@ describe("Moves - Substitute", () => {
   });
 
   it("should not allow Shell Trap to activate when attacked", async () => {
-    game.override.enemyMoveset(Moves.TACKLE);
-    game.override.moveset([Moves.SHELL_TRAP]);
+    game.override.enemyMoveset(MoveId.TACKLE).moveset([MoveId.SHELL_TRAP]);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
-    playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, playerPokemon.id);
+    playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, playerPokemon.id);
 
-    game.move.select(Moves.SHELL_TRAP);
+    game.move.select(MoveId.SHELL_TRAP);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -465,17 +458,16 @@ describe("Moves - Substitute", () => {
   });
 
   it("should not allow Beak Blast to burn opponents when hit", async () => {
-    game.override.enemyMoveset(Moves.TACKLE);
-    game.override.moveset([Moves.BEAK_BLAST]);
+    game.override.enemyMoveset(MoveId.TACKLE).moveset([MoveId.BEAK_BLAST]);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
-    playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, playerPokemon.id);
+    playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, playerPokemon.id);
 
-    game.move.select(Moves.BEAK_BLAST);
+    game.move.select(MoveId.BEAK_BLAST);
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -483,17 +475,16 @@ describe("Moves - Substitute", () => {
   });
 
   it("should cause incoming attacks to not activate Counter", async () => {
-    game.override.enemyMoveset(Moves.TACKLE);
-    game.override.moveset([Moves.COUNTER]);
+    game.override.enemyMoveset(MoveId.TACKLE).moveset([MoveId.COUNTER]);
 
-    await game.classicMode.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
-    playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, playerPokemon.id);
+    playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, playerPokemon.id);
 
-    game.move.select(Moves.COUNTER);
+    game.move.select(MoveId.COUNTER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -502,15 +493,15 @@ describe("Moves - Substitute", () => {
   });
 
   it("should prevent Sappy Seed from applying its Leech Seed effect to the user", async () => {
-    game.override.enemyMoveset(Moves.SAPPY_SEED);
+    game.override.enemyMoveset(MoveId.SAPPY_SEED);
 
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const playerPokemon = game.scene.getPlayerPokemon()!;
+    const playerPokemon = game.field.getPlayerPokemon();
 
-    playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, Moves.NONE, playerPokemon.id);
+    playerPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, playerPokemon.id);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]); // enemy uses Sappy Seed first
     await game.move.forceHit(); // forces Sappy Seed to hit

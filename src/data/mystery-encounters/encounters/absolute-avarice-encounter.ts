@@ -1,42 +1,43 @@
-import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { globalScene } from "#app/global-scene";
+import { modifierTypes } from "#data/data-lists";
+import { BattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import type { BerryType } from "#enums/berry-type";
+import { MoveId } from "#enums/move-id";
+import { MoveUseMode } from "#enums/move-use-mode";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PokeballType } from "#enums/pokeball";
+import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { TrainerSlot } from "#enums/trainer-slot";
+import type { Pokemon } from "#field/pokemon";
+import { EnemyPokemon } from "#field/pokemon";
+import { BerryModifier, PokemonInstantReviveModifier } from "#modifiers/modifier";
+import type { BerryModifierType, PokemonHeldItemModifierType } from "#modifiers/modifier-type";
+import { PokemonMove } from "#moves/pokemon-move";
+import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
+import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   generateModifierType,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
-import type { BerryModifierType, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { PersistentModifierRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { BerryModifier, PokemonInstantReviveModifier } from "#app/modifier/modifier";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Moves } from "#enums/moves";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { randInt } from "#app/utils/common";
-import { BattlerIndex } from "#app/battle";
+} from "#mystery-encounters/encounter-phase-utils";
 import {
   applyModifierTypeToPlayerPokemon,
   catchPokemon,
   getHighestLevelPlayerPokemon,
-} from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { TrainerSlot } from "#enums/trainer-slot";
-import { PokeballType } from "#enums/pokeball";
-import type HeldModifierConfig from "#app/interfaces/held-modifier-config";
-import type { BerryType } from "#enums/berry-type";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { Stat } from "#enums/stat";
+} from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { PersistentModifierRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import type { HeldModifierConfig } from "#types/held-modifier-config";
+import { randInt } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
@@ -59,7 +60,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
       // This sprite has the shadow
       spriteKey: "",
       fileRoot: "",
-      species: Species.GREEDENT,
+      species: SpeciesId.GREEDENT,
       hasShadow: true,
       alpha: 0.001,
       repeat: true,
@@ -68,7 +69,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
     {
       spriteKey: "",
       fileRoot: "",
-      species: Species.GREEDENT,
+      species: SpeciesId.GREEDENT,
       hasShadow: false,
       repeat: true,
       x: -5,
@@ -228,17 +229,21 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
       levelAdditiveModifier: 1,
       pokemonConfigs: [
         {
-          species: getPokemonSpecies(Species.GREEDENT),
+          species: getPokemonSpecies(SpeciesId.GREEDENT),
           isBoss: true,
           bossSegments: 3,
           shiny: false, // Shiny lock because of consistency issues between the different options
-          moveSet: [Moves.THRASH, Moves.CRUNCH, Moves.BODY_PRESS, Moves.SLACK_OFF],
+          moveSet: [MoveId.THRASH, MoveId.CRUNCH, MoveId.BODY_PRESS, MoveId.SLACK_OFF],
           modifierConfigs: bossModifierConfigs,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            queueEncounterMessage(`${namespace}:option.1.boss_enraged`);
-            globalScene.unshiftPhase(
-              new StatStageChangePhase(pokemon.getBattlerIndex(), true, statChangesForBattle, 1),
+            queueEncounterMessage(`${namespace}:option.1.bossEnraged`);
+            globalScene.phaseManager.unshiftNew(
+              "StatStageChangePhase",
+              pokemon.getBattlerIndex(),
+              true,
+              statChangesForBattle,
+              1,
             );
           },
         },
@@ -246,7 +251,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
     };
 
     encounter.enemyPartyConfigs = [config];
-    encounter.setDialogueToken("greedentName", getPokemonSpecies(Species.GREEDENT).getName());
+    encounter.setDialogueToken("greedentName", getPokemonSpecies(SpeciesId.GREEDENT).getName());
 
     return true;
   })
@@ -295,15 +300,15 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
               globalScene.addModifier(seedModifier, false, false, false, true);
             }
           });
-          queueEncounterMessage(`${namespace}:option.1.food_stash`);
+          queueEncounterMessage(`${namespace}:option.1.foodStash`);
         };
 
         setEncounterRewards({ fillRemaining: true }, undefined, givePartyPokemonReviverSeeds);
         encounter.startOfBattleEffects.push({
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.ENEMY],
-          move: new PokemonMove(Moves.STUFF_CHEEKS),
-          ignorePp: true,
+          move: new PokemonMove(MoveId.STUFF_CHEEKS),
+          useMode: MoveUseMode.IGNORE_PP,
         });
 
         await transitionMysteryEncounterIntroVisuals(true, true, 500);
@@ -373,12 +378,12 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
         // Let it have the food
         // Greedent joins the team, level equal to 2 below highest party member (shiny locked)
         const level = getHighestLevelPlayerPokemon(false, true).level - 2;
-        const greedent = new EnemyPokemon(getPokemonSpecies(Species.GREEDENT), level, TrainerSlot.NONE, false, true);
+        const greedent = new EnemyPokemon(getPokemonSpecies(SpeciesId.GREEDENT), level, TrainerSlot.NONE, false, true);
         greedent.moveset = [
-          new PokemonMove(Moves.THRASH),
-          new PokemonMove(Moves.BODY_PRESS),
-          new PokemonMove(Moves.STUFF_CHEEKS),
-          new PokemonMove(Moves.SLACK_OFF),
+          new PokemonMove(MoveId.THRASH),
+          new PokemonMove(MoveId.BODY_PRESS),
+          new PokemonMove(MoveId.STUFF_CHEEKS),
+          new PokemonMove(MoveId.SLACK_OFF),
         ];
         greedent.passive = true;
 

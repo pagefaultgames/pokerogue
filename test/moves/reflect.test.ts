@@ -1,15 +1,15 @@
-import type BattleScene from "#app/battle-scene";
-import { ArenaTagSide } from "#app/data/arena-tag";
-import type Move from "#app/data/moves/move";
-import { allMoves, CritOnlyAttr } from "#app/data/moves/move";
-import { Abilities } from "#app/enums/abilities";
-import { ArenaTagType } from "#app/enums/arena-tag-type";
-import type Pokemon from "#app/field/pokemon";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { NumberHolder } from "#app/utils/common";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import GameManager from "#test/testUtils/gameManager";
+import type { BattleScene } from "#app/battle-scene";
+import { allMoves } from "#data/data-lists";
+import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
+import type { Pokemon } from "#field/pokemon";
+import type { Move } from "#moves/move";
+import { TurnEndPhase } from "#phases/turn-end-phase";
+import { GameManager } from "#test/test-utils/game-manager";
+import { NumberHolder } from "#utils/common";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -19,7 +19,7 @@ describe("Moves - Reflect", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   const singleBattleMultiplier = 0.5;
-  const doubleBattleMultiplier = 2732 / 4096;
+  const doubleBattleMultiplier = 2 / 3;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -34,25 +34,26 @@ describe("Moves - Reflect", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     globalScene = game.scene;
-    game.override.battleStyle("single");
-    game.override.ability(Abilities.NONE);
-    game.override.moveset([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE]);
-    game.override.enemyLevel(100);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([Moves.REFLECT, Moves.REFLECT, Moves.REFLECT, Moves.REFLECT]);
-    game.override.disableCrits();
+    game.override
+      .battleStyle("single")
+      .ability(AbilityId.NONE)
+      .moveset([MoveId.ABSORB, MoveId.ROCK_SLIDE, MoveId.TACKLE])
+      .enemyLevel(100)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyMoveset(MoveId.REFLECT)
+      .criticalHits(false);
   });
 
   it("reduces damage of physical attacks by half in a single battle", async () => {
-    const moveToUse = Moves.TACKLE;
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    const moveToUse = MoveId.TACKLE;
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(TurnEndPhase);
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
 
@@ -62,16 +63,16 @@ describe("Moves - Reflect", () => {
   it("reduces damage of physical attacks by a third in a double battle", async () => {
     game.override.battleStyle("double");
 
-    const moveToUse = Moves.ROCK_SLIDE;
-    await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
+    const moveToUse = MoveId.ROCK_SLIDE;
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
     game.move.select(moveToUse, 1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
 
@@ -79,16 +80,16 @@ describe("Moves - Reflect", () => {
   });
 
   it("does not affect special attacks", async () => {
-    const moveToUse = Moves.ABSORB;
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    const moveToUse = MoveId.ABSORB;
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
 
@@ -96,16 +97,16 @@ describe("Moves - Reflect", () => {
   });
 
   it("does not affect critical hits", async () => {
-    game.override.moveset([Moves.WICKED_BLOW]);
-    const moveToUse = Moves.WICKED_BLOW;
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    game.override.moveset([MoveId.WICKED_BLOW]);
+    const moveToUse = MoveId.WICKED_BLOW;
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
 
@@ -113,16 +114,16 @@ describe("Moves - Reflect", () => {
   });
 
   it("does not affect critical hits", async () => {
-    game.override.moveset([Moves.WICKED_BLOW]);
-    const moveToUse = Moves.WICKED_BLOW;
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    game.override.moveset([MoveId.WICKED_BLOW]);
+    const moveToUse = MoveId.WICKED_BLOW;
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     const mockedDmg = getMockedMoveDamage(
-      game.scene.getEnemyPokemon()!,
-      game.scene.getPlayerPokemon()!,
+      game.field.getEnemyPokemon(),
+      game.field.getPlayerPokemon(),
       allMoves[moveToUse],
     );
     expect(mockedDmg).toBe(allMoves[moveToUse].power);
@@ -130,7 +131,7 @@ describe("Moves - Reflect", () => {
 });
 
 /**
- * Calculates the damage of a move multiplied by screen's multiplier, Reflect in this case {@linkcode Moves.REFLECT}.
+ * Calculates the damage of a move multiplied by screen's multiplier, Reflect in this case {@linkcode MoveId.REFLECT}.
  * Please note this does not consider other damage calculations except the screen multiplier.
  *
  * @param defender - The defending Pokémon.
@@ -143,7 +144,7 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const side = defender.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
   if (globalScene.arena.getTagOnSide(ArenaTagType.REFLECT, side)) {
-    if (move.getAttrs(CritOnlyAttr).length === 0) {
+    if (move.getAttrs("CritOnlyAttr").length === 0) {
       globalScene.arena.applyTagsForSide(ArenaTagType.REFLECT, side, false, attacker, move.category, multiplierHolder);
     }
   }

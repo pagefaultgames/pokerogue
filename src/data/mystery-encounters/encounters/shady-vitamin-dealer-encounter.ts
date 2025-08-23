@@ -1,32 +1,31 @@
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { modifierTypes } from "#data/data-lists";
+import { getNatureName } from "#data/nature";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import type { Nature } from "#enums/nature";
+import { SpeciesId } from "#enums/species-id";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import { getEncounterText, queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import {
   generateModifierType,
   leaveEncounterWithoutBattle,
   selectPokemonForOption,
   setEncounterExp,
   updatePlayerMoney,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { randSeedInt } from "#app/utils/common";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { getEncounterText, queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+} from "#mystery-encounters/encounter-phase-utils";
 import {
   applyDamageToPokemon,
   applyModifierTypeToPlayerPokemon,
   isPokemonValidForEncounterOptionSelection,
-} from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import type { Nature } from "#enums/nature";
-import { getNatureName } from "#app/data/nature";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+} from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import { randSeedInt } from "#utils/common";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
@@ -49,7 +48,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
   .withPrimaryPokemonHealthRatioRequirement([0.51, 1]) // At least 1 Pokemon must have above half HP
   .withIntroSpriteConfigs([
     {
-      spriteKey: Species.KROOKODILE.toString(),
+      spriteKey: SpeciesId.KROOKODILE.toString(),
       fileRoot: "pokemon",
       hasShadow: true,
       repeat: true,
@@ -71,7 +70,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
       text: `${namespace}:intro`,
     },
     {
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
       speaker: `${namespace}:speaker`,
     },
   ])
@@ -120,7 +119,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
             );
           }
           if (!encounter.pokemonMeetsPrimaryRequirements(pokemon)) {
-            return getEncounterText(`${namespace}:invalid_selection`) ?? null;
+            return getEncounterText(`${namespace}:invalidSelection`) ?? null;
           }
 
           return null;
@@ -156,7 +155,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
 
         chosenPokemon.setCustomNature(newNature);
         encounter.setDialogueToken("newNature", getNatureName(newNature));
-        queueEncounterMessage(`${namespace}:cheap_side_effects`);
+        queueEncounterMessage(`${namespace}:cheapSideEffects`);
         setEncounterExp([chosenPokemon.id], 100);
         await chosenPokemon.updateInfo();
       })
@@ -194,7 +193,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
 
         // Only Pokemon that can gain benefits are unfainted
         const selectableFilter = (pokemon: Pokemon) => {
-          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalid_selection`);
+          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalidSelection`);
         };
 
         return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
@@ -216,7 +215,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const chosenPokemon = encounter.misc.chosenPokemon;
 
-        queueEncounterMessage(`${namespace}:no_bad_effects`);
+        queueEncounterMessage(`${namespace}:noBadEffects`);
         setEncounterExp([chosenPokemon.id], 100);
 
         await chosenPokemon.updateInfo();

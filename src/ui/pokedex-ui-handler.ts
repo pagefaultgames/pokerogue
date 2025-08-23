@@ -1,47 +1,55 @@
-import type { Variant } from "#app/sprites/variant";
-import { getVariantTint, getVariantIcon } from "#app/sprites/variant";
-import { argbFromRgba } from "@material/material-color-utilities";
-import i18next from "i18next";
+import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
-import { speciesEggMoves } from "#app/data/balance/egg-moves";
-import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
-import type { PokemonForm } from "#app/data/pokemon-species";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import { allSpecies, getPokemonSpeciesForm, getPokerusStarters, normalForm } from "#app/data/pokemon-species";
-import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
-import { catchableSpecies } from "#app/data/balance/biomes";
-import { PokemonType } from "#enums/pokemon-type";
-import type { DexAttrProps, DexEntry, StarterAttributes, StarterPreferences } from "#app/system/game-data";
-import { AbilityAttr, DexAttr, loadStarterPreferences } from "#app/system/game-data";
-import MessageUiHandler from "#app/ui/message-ui-handler";
-import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
-import { TextStyle, addTextObject } from "#app/ui/text";
-import { UiMode } from "#enums/ui-mode";
-import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
-import { Passive as PassiveAttr } from "#enums/passive";
-import type { Species } from "#enums/species";
-import { Button } from "#enums/buttons";
-import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#app/ui/dropdown";
-import { PokedexMonContainer } from "#app/ui/pokedex-mon-container";
-import { DropDownColumn, FilterBar } from "#app/ui/filter-bar";
-import { ScrollBar } from "#app/ui/scroll-bar";
-import { Abilities } from "#enums/abilities";
+import { catchableSpecies } from "#balance/biomes";
+import { speciesEggMoves } from "#balance/egg-moves";
+import { pokemonStarters } from "#balance/pokemon-evolutions";
+import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
 import {
   getPassiveCandyCount,
-  getValueReductionCandyCounts,
   getSameSpeciesEggCandyCounts,
-} from "#app/data/balance/starters";
-import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#app/utils/common";
+  getStarterValueFriendshipCap,
+  getValueReductionCandyCounts,
+  POKERUS_STARTER_COUNT,
+  speciesStarterCosts,
+} from "#balance/starters";
+import { speciesTmMoves } from "#balance/tms";
+import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
+import type { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
+import { normalForm } from "#data/pokemon-species";
+import { AbilityAttr } from "#enums/ability-attr";
+import { AbilityId } from "#enums/ability-id";
+import { BiomeId } from "#enums/biome-id";
+import { Button } from "#enums/buttons";
+import { DexAttr } from "#enums/dex-attr";
+import { DropDownColumn } from "#enums/drop-down-column";
 import type { Nature } from "#enums/nature";
-import { addWindow } from "./ui-theme";
-import type { OptionSelectConfig } from "./abstact-option-select-ui-handler";
-import { FilterText, FilterTextRow } from "./filter-text";
-import { allAbilities } from "#app/data/data-lists";
-import { allMoves } from "#app/data/moves/move";
-import { speciesTmMoves } from "#app/data/balance/tms";
-import { pokemonStarters } from "#app/data/balance/pokemon-evolutions";
-import { Biome } from "#enums/biome";
-import { globalScene } from "#app/global-scene";
+import { Passive as PassiveAttr } from "#enums/passive";
+import { PokemonType } from "#enums/pokemon-type";
+import type { SpeciesId } from "#enums/species-id";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import type { Variant } from "#sprites/variant";
+import { getVariantIcon, getVariantTint } from "#sprites/variant";
+import type { DexAttrProps, StarterAttributes } from "#system/game-data";
+import { SettingKeyboard } from "#system/settings-keyboard";
+import type { DexEntry } from "#types/dex-data";
+import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
+import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
+import { FilterBar } from "#ui/filter-bar";
+import { FilterText, FilterTextRow } from "#ui/filter-text";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { PokedexMonContainer } from "#ui/pokedex-mon-container";
+import { PokemonIconAnimHandler, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-handler";
+import { ScrollBar } from "#ui/scroll-bar";
+import { addTextObject } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#utils/common";
+import type { StarterPreferences } from "#utils/data";
+import { loadStarterPreferences } from "#utils/data";
+import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
+import { toCamelCase } from "#utils/strings";
+import { argbFromRgba } from "@material/material-color-utilities";
+import i18next from "i18next";
 
 interface LanguageSetting {
   starterInfoTextSize: string;
@@ -151,7 +159,7 @@ interface SpeciesDetails {
   natureIndex?: number;
 }
 
-export default class PokedexUiHandler extends MessageUiHandler {
+export class PokedexUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private starterSelectScrollBar: ScrollBar;
   private filterBarContainer: Phaser.GameObjects.Container;
@@ -174,7 +182,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private oldCursor = -1;
 
   private lastSpecies: PokemonSpecies;
-  private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
+  private speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
   private pokerusSpecies: PokemonSpecies[] = [];
   private speciesStarterDexEntry: DexEntry | null;
 
@@ -226,7 +234,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private showFormTrayIconElement: Phaser.GameObjects.Sprite;
   private showFormTrayLabel: Phaser.GameObjects.Text;
   private canShowFormTray: boolean;
-  private filteredIndices: Species[];
+  private filteredIndices: SpeciesId[];
 
   constructor() {
     super(UiMode.POKEDEX);
@@ -238,15 +246,15 @@ export default class PokedexUiHandler extends MessageUiHandler {
     const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang)) ?? "en";
     const textSettings = languageSettings[langSettingKey];
 
-    this.starterSelectContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
+    this.starterSelectContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
     this.starterSelectContainer.setVisible(false);
     ui.add(this.starterSelectContainer);
 
     const bgColor = globalScene.add.rectangle(
       0,
       0,
-      globalScene.game.canvas.width / 6,
-      globalScene.game.canvas.height / 6,
+      globalScene.scaledCanvas.width,
+      globalScene.scaledCanvas.height,
       0x006860,
     );
     bgColor.setOrigin(0, 0);
@@ -313,11 +321,11 @@ export default class PokedexUiHandler extends MessageUiHandler {
     );
 
     // biome filter, making an entry in the dropdown for each biome
-    const biomeOptions = Object.values(Biome)
+    const biomeOptions = Object.values(BiomeId)
       .filter(value => typeof value === "number") // Filter numeric values from the enum
       .map(
         (biomeValue, index) =>
-          new DropDownOption(index, new DropDownLabel(i18next.t(`biome:${Biome[biomeValue].toUpperCase()}`))),
+          new DropDownOption(index, new DropDownLabel(i18next.t(`biome:${toCamelCase(BiomeId[biomeValue])}`))),
       );
     biomeOptions.push(new DropDownOption(biomeOptions.length, new DropDownLabel(i18next.t("filterBar:uncatchable"))));
     const biomeDropDown: DropDown = new DropDown(0, 0, biomeOptions, this.updateStarters, DropDownType.HYBRID);
@@ -403,6 +411,16 @@ export default class PokedexUiHandler extends MessageUiHandler {
       new DropDownLabel(i18next.t("filterBar:hasHiddenAbility"), undefined, DropDownState.ON),
       new DropDownLabel(i18next.t("filterBar:noHiddenAbility"), undefined, DropDownState.EXCLUDE),
     ];
+    const seenSpeciesLabels = [
+      new DropDownLabel(i18next.t("filterBar:seenSpecies"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:isSeen"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:isUnseen"), undefined, DropDownState.EXCLUDE),
+    ];
+    const encounteredSpeciesLabels = [
+      new DropDownLabel(i18next.t("filterBar:encounteredSpecies"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:isEncountered"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:isNotEncountered"), undefined, DropDownState.EXCLUDE),
+    ];
     const eggLabels = [
       new DropDownLabel(i18next.t("filterBar:egg"), undefined, DropDownState.OFF),
       new DropDownLabel(i18next.t("filterBar:eggPurchasable"), undefined, DropDownState.ON),
@@ -416,6 +434,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
       new DropDownOption("FAVORITE", favoriteLabels),
       new DropDownOption("WIN", winLabels),
       new DropDownOption("HIDDEN_ABILITY", hiddenAbilityLabels),
+      new DropDownOption("SEEN_SPECIES", seenSpeciesLabels),
+      new DropDownOption("ENCOUNTERED_SPECIES", encounteredSpeciesLabels),
       new DropDownOption("EGG", eggLabels),
       new DropDownOption("POKERUS", pokerusLabels),
     ];
@@ -465,7 +485,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.pokemonNameText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNameText);
 
-    this.pokemonFormText = addTextObject(6, 121, "", TextStyle.PARTY, {
+    this.pokemonFormText = addTextObject(6, 121, "", TextStyle.INSTRUCTIONS_TEXT, {
       fontSize: textSettings.instructionTextSize,
     });
     this.pokemonFormText.setOrigin(0, 0);
@@ -477,13 +497,14 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     starterBoxContainer.add(this.starterSelectScrollBar);
 
-    this.pokerusCursorObjs = new Array(POKERUS_STARTER_COUNT).fill(null).map(() => {
+    this.pokerusCursorObjs = [];
+    for (let i = 0; i < POKERUS_STARTER_COUNT; i++) {
       const cursorObj = globalScene.add.image(0, 0, "select_cursor_pokerus");
       cursorObj.setVisible(false);
       cursorObj.setOrigin(0, 0);
       starterBoxContainer.add(cursorObj);
-      return cursorObj;
-    });
+      this.pokerusCursorObjs.push(cursorObj);
+    }
 
     this.cursorObj = globalScene.add.image(0, 0, "select_cursor");
     this.cursorObj.setOrigin(0, 0);
@@ -536,7 +557,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.type2Icon.setOrigin(0, 0);
     this.starterSelectContainer.add(this.type2Icon);
 
-    this.starterSelectMessageBoxContainer = globalScene.add.container(0, globalScene.game.canvas.height / 6);
+    this.starterSelectMessageBoxContainer = globalScene.add.container(0, globalScene.scaledCanvas.height);
     this.starterSelectMessageBoxContainer.setVisible(false);
     this.starterSelectContainer.add(this.starterSelectMessageBoxContainer);
 
@@ -555,7 +576,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.goFilterIconElement2.setName("sprite-goFilter2-icon-element");
     this.goFilterIconElement2.setScale(0.675);
     this.goFilterIconElement2.setOrigin(0.0, 0.0);
-    this.goFilterLabel = addTextObject(30, 2, i18next.t("pokedexUiHandler:goFilters"), TextStyle.PARTY, {
+    this.goFilterLabel = addTextObject(30, 2, i18next.t("pokedexUiHandler:goFilters"), TextStyle.INSTRUCTIONS_TEXT, {
       fontSize: instructionTextSize,
     });
     this.goFilterLabel.setName("text-goFilter-label");
@@ -571,7 +592,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       20,
       10,
       i18next.t("pokedexUiHandler:toggleDecorations"),
-      TextStyle.PARTY,
+      TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
     );
     this.toggleDecorationsLabel.setName("text-toggleDecorations-label");
@@ -582,9 +603,15 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.showFormTrayIconElement.setName("sprite-showFormTray-icon-element");
     this.showFormTrayIconElement.setScale(0.675);
     this.showFormTrayIconElement.setOrigin(0.0, 0.0);
-    this.showFormTrayLabel = addTextObject(16, 168, i18next.t("pokedexUiHandler:showForms"), TextStyle.PARTY, {
-      fontSize: instructionTextSize,
-    });
+    this.showFormTrayLabel = addTextObject(
+      16,
+      168,
+      i18next.t("pokedexUiHandler:showForms"),
+      TextStyle.INSTRUCTIONS_TEXT,
+      {
+        fontSize: instructionTextSize,
+      },
+    );
     this.showFormTrayLabel.setName("text-showFormTray-label");
     this.showFormTrayIconElement.setVisible(false);
     this.showFormTrayLabel.setVisible(false);
@@ -770,7 +797,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       this.starterSelectMessageBoxContainer.setY(0);
       this.message.setY(4);
     } else {
-      this.starterSelectMessageBoxContainer.setY(globalScene.game.canvas.height / 6);
+      this.starterSelectMessageBoxContainer.setY(globalScene.scaledCanvas.height);
       this.starterSelectMessageBox.setOrigin(0, 1);
       this.message.setY(singleLine ? -22 : -37);
     }
@@ -778,13 +805,19 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.starterSelectMessageBoxContainer.setVisible(!!text?.length);
   }
 
-  isSeen(species: PokemonSpecies, dexEntry: DexEntry): boolean {
+  isSeen(species: PokemonSpecies, dexEntry: DexEntry, seenFilter?: boolean): boolean {
     if (dexEntry?.seenAttr) {
       return true;
     }
+    if (!seenFilter) {
+      const starterDexEntry = globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)];
+      return !!starterDexEntry?.caughtAttr;
+    }
+    return false;
+  }
 
-    const starterDexEntry = globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)];
-    return !!starterDexEntry?.caughtAttr;
+  isEncountered(_species: PokemonSpecies, dexEntry: DexEntry, _seenFilter?: boolean): boolean {
+    return !!dexEntry.seenCount;
   }
 
   /**
@@ -1383,7 +1416,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       const fitsMoves = fitsMove1 && fitsMove2;
 
       if (fitsEggMove1 && !fitsLevelMove1) {
-        const em1 = eggMoves.findIndex(name => name === selectedMove1);
+        const em1 = eggMoves.indexOf(selectedMove1);
         if ((starterData.eggMoves & (1 << em1)) === 0) {
           data.eggMove1 = false;
         } else {
@@ -1393,7 +1426,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         data.tmMove1 = true;
       }
       if (fitsEggMove2 && !fitsLevelMove2) {
-        const em2 = eggMoves.findIndex(name => name === selectedMove2);
+        const em2 = eggMoves.indexOf(selectedMove2);
         if ((starterData.eggMoves & (1 << em2)) === 0) {
           data.eggMove2 = false;
         } else {
@@ -1458,7 +1491,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // Biome filter
       const indexToBiome = new Map(
-        Object.values(Biome)
+        Object.values(BiomeId)
           .map((value, index) => (typeof value === "string" ? [index, value] : undefined))
           .filter((entry): entry is [number, string] => entry !== undefined),
       );
@@ -1466,7 +1499,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // We get biomes for both the mon and its starters to ensure that evolutions get the correct filters.
       // TODO: We might also need to do it the other way around.
-      const biomes = catchableSpecies[species.speciesId].concat(catchableSpecies[starterId]).map(b => Biome[b.biome]);
+      const biomes = catchableSpecies[species.speciesId].concat(catchableSpecies[starterId]).map(b => BiomeId[b.biome]);
       if (biomes.length === 0) {
         biomes.push("Uncatchable");
       }
@@ -1589,7 +1622,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // HA Filter
       const speciesHasHiddenAbility =
-        species.abilityHidden !== species.ability1 && species.abilityHidden !== Abilities.NONE;
+        species.abilityHidden !== species.ability1 && species.abilityHidden !== AbilityId.NONE;
       const hasHA = starterData.abilityAttr & AbilityAttr.ABILITY_HIDDEN;
       const fitsHA = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.ON) {
@@ -1599,6 +1632,35 @@ export default class PokedexUiHandler extends MessageUiHandler {
           return speciesHasHiddenAbility && !hasHA;
         }
         if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.OFF) {
+          return true;
+        }
+      });
+
+      // Seen Filter
+      const dexEntry = globalScene.gameData.dexData[species.speciesId];
+      const isItSeen = this.isSeen(species, dexEntry, true) || !!dexEntry.caughtAttr;
+      const fitsSeen = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
+        if (misc.val === "SEEN_SPECIES" && misc.state === DropDownState.ON) {
+          return isItSeen;
+        }
+        if (misc.val === "SEEN_SPECIES" && misc.state === DropDownState.EXCLUDE) {
+          return !isItSeen;
+        }
+        if (misc.val === "SEEN_SPECIES" && misc.state === DropDownState.OFF) {
+          return true;
+        }
+      });
+
+      // Encountered Filter
+      const isItEncountered = this.isEncountered(species, dexEntry, true);
+      const fitsEncountered = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
+        if (misc.val === "ENCOUNTERED_SPECIES" && misc.state === DropDownState.ON) {
+          return isItEncountered;
+        }
+        if (misc.val === "ENCOUNTERED_SPECIES" && misc.state === DropDownState.EXCLUDE) {
+          return !isItEncountered;
+        }
+        if (misc.val === "ENCOUNTERED_SPECIES" && misc.state === DropDownState.OFF) {
           return true;
         }
       });
@@ -1644,6 +1706,8 @@ export default class PokedexUiHandler extends MessageUiHandler {
         fitsFavorite &&
         fitsWin &&
         fitsHA &&
+        fitsSeen &&
+        fitsEncountered &&
         fitsEgg &&
         fitsPokerus
       ) {

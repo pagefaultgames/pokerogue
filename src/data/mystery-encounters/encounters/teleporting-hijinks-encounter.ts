@@ -1,4 +1,21 @@
-import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { modifierTypes } from "#data/data-lists";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BiomeId } from "#enums/biome-id";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { PokemonType } from "#enums/pokemon-type";
+import { Stat } from "#enums/stat";
+import { TrainerSlot } from "#enums/trainer-slot";
+import { getBiomeKey } from "#field/arena";
+import type { Pokemon } from "#field/pokemon";
+import { EnemyPokemon } from "#field/pokemon";
+import { getPartyLuckValue } from "#modifiers/modifier-type";
+import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
+import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   generateModifierTypeOption,
   initBattleWithEnemyConfig,
@@ -6,40 +23,30 @@ import {
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
   updatePlayerMoney,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { randSeedInt } from "#app/utils/common";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MoneyRequirement, WaveModulusRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon } from "#app/field/pokemon";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import PokemonData from "#app/system/pokemon-data";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { Biome } from "#enums/biome";
-import { getBiomeKey } from "#app/field/arena";
-import { PokemonType } from "#enums/pokemon-type";
-import { getPartyLuckValue, modifierTypes } from "#app/modifier/modifier-type";
-import { TrainerSlot } from "#enums/trainer-slot";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { Stat } from "#enums/stat";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+} from "#mystery-encounters/encounter-phase-utils";
 import {
   getEncounterPokemonLevelForWave,
   STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER,
-} from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
+} from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { MoneyRequirement, WaveModulusRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import { PokemonData } from "#system/pokemon-data";
+import { randSeedInt } from "#utils/common";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/teleportingHijinks";
 
 const MONEY_COST_MULTIPLIER = 1.75;
-const BIOME_CANDIDATES = [Biome.SPACE, Biome.FAIRY_CAVE, Biome.LABORATORY, Biome.ISLAND, Biome.WASTELAND, Biome.DOJO];
+const BIOME_CANDIDATES = [
+  BiomeId.SPACE,
+  BiomeId.FAIRY_CAVE,
+  BiomeId.LABORATORY,
+  BiomeId.ISLAND,
+  BiomeId.WASTELAND,
+  BiomeId.DOJO,
+];
 const MACHINE_INTERFACING_TYPES = [PokemonType.ELECTRIC, PokemonType.STEEL];
 
 /**
@@ -52,7 +59,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter = MysteryEncounterBui
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
-  .withSceneRequirement(new WaveModulusRequirement([1, 2, 3], 10)) // Must be in first 3 waves after boss wave
+  .withSceneRequirement(new WaveModulusRequirement([2, 3, 4], 10)) // Must be in first 3 waves after boss wave
   .withSceneRequirement(new MoneyRequirement(0, MONEY_COST_MULTIPLIER)) // Must be able to pay teleport cost
   .withAutoHideIntroVisuals(false)
   .withCatchAllowed(true)
@@ -115,7 +122,7 @@ export const TeleportingHijinksEncounter: MysteryEncounter = MysteryEncounterBui
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.2.selected`,
@@ -183,6 +190,7 @@ async function doBiomeTransitionDialogueAndBattleInit() {
 
   // Calculate new biome (cannot be current biome)
   const filteredBiomes = BIOME_CANDIDATES.filter(b => globalScene.arena.biomeType !== b);
+  // TODO: should this use `randSeedItem`?
   const newBiome = filteredBiomes[randSeedInt(filteredBiomes.length)];
 
   // Show dialogue and transition biome
@@ -219,8 +227,14 @@ async function doBiomeTransitionDialogueAndBattleInit() {
         isBoss: true,
         tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
         mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-          queueEncounterMessage(`${namespace}:boss_enraged`);
-          globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
+          queueEncounterMessage(`${namespace}:bossEnraged`);
+          globalScene.phaseManager.unshiftNew(
+            "StatStageChangePhase",
+            pokemon.getBattlerIndex(),
+            true,
+            statChangesForBattle,
+            1,
+          );
         },
       },
     ],
@@ -229,7 +243,7 @@ async function doBiomeTransitionDialogueAndBattleInit() {
   return config;
 }
 
-async function animateBiomeChange(nextBiome: Biome) {
+async function animateBiomeChange(nextBiome: BiomeId) {
   return new Promise<void>(resolve => {
     globalScene.tweens.add({
       targets: [globalScene.arenaEnemy, globalScene.lastEnemyTrainer],

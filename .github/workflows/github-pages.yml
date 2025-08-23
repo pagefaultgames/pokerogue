@@ -4,10 +4,13 @@ on:
   push:
     branches:
       - main
+      - beta
+      - release
   pull_request:
     branches:
       - main
       - beta
+      - release
   merge_group:
     types: [checks_requested]
 
@@ -34,6 +37,11 @@ jobs:
           sudo apt update
           sudo apt install -y git openssh-client
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Setup Node 22.14.1
         uses: actions/setup-node@v4
         with:
@@ -50,13 +58,13 @@ jobs:
         working-directory: ${{env.api-dir}}
         run: |
           cd pokerogue_docs
-          npm ci
+          pnpm i
 
       - name: Generate Typedoc docs
         working-directory: ${{env.api-dir}}
         run: |
           cd pokerogue_docs
-          npm run docs -- --out /tmp/docs --githubPages false --entryPoints ./src/
+          pnpm exec typedoc --out /tmp/docs --githubPages false --entryPoints ./src/
 
       - name: Commit & Push docs
         if: github.event_name == 'push'

@@ -1,5 +1,5 @@
-import type Pokemon from "#app/field/pokemon";
-import { BattlePhase } from "#app/phases/battle-phase";
+import type { Pokemon } from "#field/pokemon";
+import { BattlePhase } from "#phases/battle-phase";
 
 /**
  * Phase which handles resetting a Pokemon's status to none
@@ -7,6 +7,7 @@ import { BattlePhase } from "#app/phases/battle-phase";
  * This is necessary to perform in a phase primarly to ensure that the status icon disappears at the correct time in the battle
  */
 export class ResetStatusPhase extends BattlePhase {
+  public readonly phaseName = "ResetStatusPhase";
   private readonly pokemon: Pokemon;
   private readonly affectConfusion: boolean;
   private readonly reloadAssets: boolean;

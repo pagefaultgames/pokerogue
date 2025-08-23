@@ -1,15 +1,14 @@
 import { globalScene } from "#app/global-scene";
-import { ExpNotification } from "#app/enums/exp-notification";
-import type { PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { EvolutionPhase } from "#app/phases/evolution-phase";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
-import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-pokemon-phase";
-import { LevelAchv } from "#app/system/achv";
-import { NumberHolder } from "#app/utils/common";
+import { ExpNotification } from "#enums/exp-notification";
+import type { PlayerPokemon } from "#field/pokemon";
+import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
+import { LevelAchv } from "#system/achv";
+import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
+  public readonly phaseName = "LevelUpPhase";
   protected lastLevel: number;
   protected level: number;
   protected pokemon: PlayerPokemon = this.getPlayerPokemon();
@@ -65,14 +64,14 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
       // this feels like an unnecessary optimization
       const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
       for (const lm of levelMoves) {
-        globalScene.unshiftPhase(new LearnMovePhase(this.partyMemberIndex, lm[1]));
+        globalScene.phaseManager.unshiftNew("LearnMovePhase", this.partyMemberIndex, lm[1]);
       }
     }
     if (!this.pokemon.pauseEvolutions) {
       const evolution = this.pokemon.getEvolution();
       if (evolution) {
         this.pokemon.breakIllusion();
-        globalScene.unshiftPhase(new EvolutionPhase(this.pokemon, evolution, this.lastLevel));
+        globalScene.phaseManager.unshiftNew("EvolutionPhase", this.pokemon, evolution, this.lastLevel);
       }
     }
     return super.end();

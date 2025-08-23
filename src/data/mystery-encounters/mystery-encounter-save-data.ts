@@ -1,7 +1,7 @@
-import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT } from "#app/data/mystery-encounters/mystery-encounters";
-import { isNullOrUndefined } from "#app/utils/common";
+import { BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT } from "#app/constants";
 import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { isNullOrUndefined } from "#utils/common";
 
 export class SeenEncounterData {
   type: MysteryEncounterType;

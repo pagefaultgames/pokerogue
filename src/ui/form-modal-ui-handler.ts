@@ -1,12 +1,13 @@
-import type { ModalConfig } from "./modal-ui-handler";
-import { ModalUiHandler } from "./modal-ui-handler";
-import type { UiMode } from "#enums/ui-mode";
-import { TextStyle, addTextInputObject, addTextObject } from "./text";
-import { WindowVariant, addWindow } from "./ui-theme";
-import type InputText from "phaser3-rex-plugins/plugins/inputtext";
-import { fixedInt } from "#app/utils/common";
-import { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
+import { Button } from "#enums/buttons";
+import { TextStyle } from "#enums/text-style";
+import type { UiMode } from "#enums/ui-mode";
+import type { ModalConfig } from "#ui/modal-ui-handler";
+import { ModalUiHandler } from "#ui/modal-ui-handler";
+import { addTextInputObject, addTextObject } from "#ui/text";
+import { addWindow, WindowVariant } from "#ui/ui-theme";
+import { fixedInt } from "#utils/common";
+import type InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 export interface FormModalConfig extends ModalConfig {
   errorMessage?: string;
@@ -18,6 +19,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   protected inputs: InputText[];
   protected errorMessage: Phaser.GameObjects.Text;
   protected submitAction: Function | null;
+  protected cancelAction: (() => void) | null;
   protected tween: Phaser.Tweens.Tween;
   protected formLabels: Phaser.GameObjects.Text[];
 
@@ -71,6 +73,10 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       (hasTitle ? 31 : 5) + 20 * (config.length - 1) + 16 + this.getButtonTopMargin(),
       "",
       TextStyle.TOOLTIP_CONTENT,
+      {
+        fontSize: "42px",
+        wordWrap: { width: 850 },
+      },
     );
     this.errorMessage.setColor(this.getTextColor(TextStyle.SUMMARY_PINK));
     this.errorMessage.setShadowColor(this.getTextColor(TextStyle.SUMMARY_PINK, true));
@@ -83,20 +89,28 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     this.inputs = [];
     this.formLabels = [];
     fieldsConfig.forEach((config, f) => {
-      const label = addTextObject(10, (hasTitle ? 31 : 5) + 20 * f, config.label, TextStyle.TOOLTIP_CONTENT);
+      // The Pokédex Scan Window uses width `300` instead of `160` like the other forms
+      // Therefore, the label does not need to be shortened
+      const label = addTextObject(
+        10,
+        (hasTitle ? 31 : 5) + 20 * f,
+        config.label.length > 25 && this.getWidth() < 200 ? config.label.slice(0, 20) + "..." : config.label,
+        TextStyle.TOOLTIP_CONTENT,
+      );
       label.name = "formLabel" + f;
 
       this.formLabels.push(label);
       this.modalContainer.add(this.formLabels[this.formLabels.length - 1]);
 
-      const inputContainer = globalScene.add.container(70, (hasTitle ? 28 : 2) + 20 * f);
+      const inputWidth = label.width < 320 ? 80 : 80 - (label.width - 320) / 5.5;
+      const inputContainer = globalScene.add.container(70 + (80 - inputWidth), (hasTitle ? 28 : 2) + 20 * f);
       inputContainer.setVisible(false);
 
-      const inputBg = addWindow(0, 0, 80, 16, false, false, 0, 0, WindowVariant.XTHIN);
+      const inputBg = addWindow(0, 0, inputWidth, 16, false, false, 0, 0, WindowVariant.XTHIN);
 
       const isPassword = config?.isPassword;
       const isReadOnly = config?.isReadOnly;
-      const input = addTextInputObject(4, -2, 440, 116, TextStyle.TOOLTIP_CONTENT, {
+      const input = addTextInputObject(4, -2, inputWidth * 5.5, 116, TextStyle.TOOLTIP_CONTENT, {
         type: isPassword ? "password" : "text",
         maxLength: isPassword ? 64 : 20,
         readOnly: isReadOnly,
@@ -113,22 +127,37 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     });
   }
 
-  show(args: any[]): boolean {
+  override show(args: any[]): boolean {
     if (super.show(args)) {
       this.inputContainers.map(ic => ic.setVisible(true));
 
       const config = args[0] as FormModalConfig;
 
       this.submitAction = config.buttonActions.length ? config.buttonActions[0] : null;
+      this.cancelAction = config.buttonActions[1] ?? null;
 
-      if (this.buttonBgs.length) {
-        this.buttonBgs[0].off("pointerdown");
-        this.buttonBgs[0].on("pointerdown", () => {
-          if (this.submitAction && globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
-            this.submitAction();
+      // #region: Override button pointerDown
+      // Override the pointerDown event for the buttonBgs to call the `submitAction` and `cancelAction`
+      // properties that we set above, allowing their behavior to change after this method terminates
+      // Some subclasses use this to add behavior to the submit and cancel action
+
+      this.buttonBgs[0].off("pointerdown");
+      this.buttonBgs[0].on("pointerdown", () => {
+        if (this.submitAction && globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
+          this.submitAction();
+        }
+      });
+      const cancelBg = this.buttonBgs[1];
+      if (cancelBg) {
+        cancelBg.off("pointerdown");
+        cancelBg.on("pointerdown", () => {
+          // The seemingly redundant cancelAction check is intentionally left in as a defensive programming measure
+          if (this.cancelAction && globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
+            this.cancelAction();
           }
         });
       }
+      //#endregion: Override pointerDown events
 
       this.modalContainer.y += 24;
       this.modalContainer.setAlpha(0);

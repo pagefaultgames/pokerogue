@@ -1,15 +1,14 @@
 import { globalScene } from "#app/global-scene";
-import { BattleStyle } from "#app/enums/battle-style";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { UiMode } from "#enums/ui-mode";
-import i18next from "i18next";
-import { BattlePhase } from "./battle-phase";
-import { SummonMissingPhase } from "./summon-missing-phase";
-import { SwitchPhase } from "./switch-phase";
+import { BattleStyle } from "#enums/battle-style";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { SwitchType } from "#enums/switch-type";
+import { UiMode } from "#enums/ui-mode";
+import { BattlePhase } from "#phases/battle-phase";
+import i18next from "i18next";
 
 export class CheckSwitchPhase extends BattlePhase {
+  public readonly phaseName = "CheckSwitchPhase";
   protected fieldIndex: number;
   protected useName: boolean;
 
@@ -34,7 +33,7 @@ export class CheckSwitchPhase extends BattlePhase {
 
     // ...if the checked Pokemon is somehow not on the field
     if (globalScene.field.getAll().indexOf(pokemon) === -1) {
-      globalScene.unshiftPhase(new SummonMissingPhase(this.fieldIndex));
+      globalScene.phaseManager.unshiftNew("SummonMissingPhase", this.fieldIndex);
       return super.end();
     }
 
@@ -67,7 +66,7 @@ export class CheckSwitchPhase extends BattlePhase {
           UiMode.CONFIRM,
           () => {
             globalScene.ui.setMode(UiMode.MESSAGE);
-            globalScene.unshiftPhase(new SwitchPhase(SwitchType.INITIAL_SWITCH, this.fieldIndex, false, true));
+            globalScene.phaseManager.unshiftNew("SwitchPhase", SwitchType.INITIAL_SWITCH, this.fieldIndex, false, true);
             this.end();
           },
           () => {

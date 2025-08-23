@@ -1,12 +1,13 @@
 import { globalScene } from "#app/global-scene";
-import { SubstituteTag } from "#app/data/battler-tags";
-import type Pokemon from "#app/field/pokemon";
-import { BattlePhase } from "#app/phases/battle-phase";
-import { isNullOrUndefined } from "#app/utils/common";
+import { SubstituteTag } from "#data/battler-tags";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
+import type { Pokemon } from "#field/pokemon";
+import { BattlePhase } from "#phases/battle-phase";
+import { isNullOrUndefined } from "#utils/common";
 
 export class PokemonAnimPhase extends BattlePhase {
+  public readonly phaseName = "PokemonAnimPhase";
   /** The type of animation to play in this phase */
   protected key: PokemonAnimType;
   /** The Pokemon to which this animation applies */
@@ -52,7 +53,8 @@ export class PokemonAnimPhase extends BattlePhase {
   private doSubstituteAddAnim(): void {
     const substitute = this.pokemon.getTag(SubstituteTag);
     if (isNullOrUndefined(substitute)) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const getSprite = () => {
@@ -115,12 +117,14 @@ export class PokemonAnimPhase extends BattlePhase {
 
   private doSubstitutePreMoveAnim(): void {
     if (this.fieldAssets.length !== 1) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const subSprite = this.fieldAssets[0];
     if (subSprite === undefined) {
-      return this.end();
+      this.end();
+      return;
     }
 
     globalScene.tweens.add({
@@ -144,12 +148,14 @@ export class PokemonAnimPhase extends BattlePhase {
 
   private doSubstitutePostMoveAnim(): void {
     if (this.fieldAssets.length !== 1) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const subSprite = this.fieldAssets[0];
     if (subSprite === undefined) {
-      return this.end();
+      this.end();
+      return;
     }
 
     globalScene.tweens.add({
@@ -173,12 +179,14 @@ export class PokemonAnimPhase extends BattlePhase {
 
   private doSubstituteRemoveAnim(): void {
     if (this.fieldAssets.length !== 1) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const subSprite = this.fieldAssets[0];
     if (subSprite === undefined) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const getSprite = () => {
@@ -243,12 +251,14 @@ export class PokemonAnimPhase extends BattlePhase {
 
   private doCommanderApplyAnim(): void {
     if (!globalScene.currentBattle?.double) {
-      return this.end();
+      this.end();
+      return;
     }
     const dondozo = this.pokemon.getAlly();
 
-    if (dondozo?.species?.speciesId !== Species.DONDOZO) {
-      return this.end();
+    if (dondozo?.species?.speciesId !== SpeciesId.DONDOZO) {
+      this.end();
+      return;
     }
 
     const tatsugiriX = this.pokemon.x + this.pokemon.getSprite().x;
@@ -328,7 +338,8 @@ export class PokemonAnimPhase extends BattlePhase {
     const tatsugiri = this.pokemon.getAlly();
     if (isNullOrUndefined(tatsugiri)) {
       console.warn("Aborting COMMANDER_REMOVE anim: Tatsugiri is undefined");
-      return this.end();
+      this.end();
+      return;
     }
 
     const tatsuSprite = globalScene.addPokemonSprite(

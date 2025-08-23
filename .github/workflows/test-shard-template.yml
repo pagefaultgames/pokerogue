@@ -12,22 +12,36 @@ on:
       totalShards:
         required: true
         type: number
+      skip:
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   test:
-    name: Shard ${{ inputs.shard }} of ${{ inputs.totalShards }}
+    # We can't use dynmically named jobs until https://github.com/orgs/community/discussions/13261 is implemented
+    name: Shard
     runs-on: ubuntu-latest
+    if: ${{ !inputs.skip }}
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4.2.2
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
       - name: Install Node.js dependencies
-        run: npm ci
+        run: pnpm i
+
       - name: Run tests
-        run: npx vitest --project ${{ inputs.project }} --no-isolate --shard=${{ inputs.shard }}/${{ inputs.totalShards }} ${{ !runner.debug && '--silent' || '' }}
+        run: pnpm test:silent --shard=${{ inputs.shard }}/${{ inputs.totalShards }}

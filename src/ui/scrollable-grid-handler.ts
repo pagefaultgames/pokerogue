@@ -1,6 +1,6 @@
 import { Button } from "#enums/buttons";
-import type UiHandler from "#app/ui/ui-handler";
-import type { ScrollBar } from "#app/ui/scroll-bar";
+import type { ScrollBar } from "#ui/scroll-bar";
+import type { UiHandler } from "#ui/ui-handler";
 
 type UpdateGridCallbackFunction = () => void;
 type UpdateDetailsCallbackFunction = (index: number) => void;
@@ -16,7 +16,7 @@ type UpdateDetailsCallbackFunction = (index: number) => void;
  * - in `UiHandler.processInput`: call `processNavigationInput` to have it handle the cursor updates while calling the defined callbacks
  * - in `UiHandler.clear`: call `reset`
  */
-export default class ScrollableGridUiHandler {
+export class ScrollableGridUiHandler {
   private readonly ROWS: number;
   private readonly COLUMNS: number;
   private handler: UiHandler;

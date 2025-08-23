@@ -1,69 +1,45 @@
 name: Tests
 
 on:
-  # Trigger the workflow on push or pull request,
-  # but only for the main branch
   push:
     branches:
-      - main # Trigger on push events to the main branch
-      - beta # Trigger on push events to the beta branch
-      - release # Trigger on push events to the release branch
-    # go upvote https://github.com/actions/runner/issues/1182 and yell at microsoft until they fix this or ditch yml for workflows
-    paths:
-      # src and test files
-      - "src/**"
-      - "test/**"
-      - "public/**"
-      # Workflows that can impact tests
-      - ".github/workflows/test*.yml"
-      # top-level files
-      - "package*.json"
-      - ".nvrmc" # Updates to node version can break tests
-      - "vite.*.ts" # vite.config.ts, vite.vitest.config.ts, vitest.workspace.ts
-      - "tsconfig*.json" # tsconfig.json tweaking can impact compilation
-      - "global.d.ts"
-      - ".env.*"
-      # Blanket negations for files that cannot impact tests
-      - "!**/*.py" # No .py files
-      - "!**/*.sh" # No .sh files
-      - "!**/*.md" # No .md files
-      - "!**/.git*" # .gitkeep and family
-
+      - main
+      - beta
+      - release
   pull_request:
     branches:
-      - main # Trigger on pull request events targeting the main branch
-      - beta # Trigger on pull request events targeting the beta branch
-      - release # Trigger on pull request events targeting the release branch
-    paths: # go upvote https://github.com/actions/runner/issues/1182 and yell at microsoft because until then we have to duplicate this
-      # src and test files
-      - "src/**"
-      - "test/**"
-      - "public/**"
-      # Workflows that can impact tests
-      - ".github/workflows/test*.yml"
-      # top-level files
-      - "package*.json"
-      - ".nvrmc" # Updates to node version can break tests
-      - "vite*" # vite.config.ts, vite.vitest.config.ts, vitest.workspace.ts
-      - "tsconfig*.json" # tsconfig.json tweaking can impact compilation
-      - "global.d.ts"
-      - ".env.*"
-      # Blanket negations for files that cannot impact tests
-      - "!**/*.py" # No .py files
-      - "!**/*.sh" # No .sh files
-      - "!**/*.md" # No .md files
-      - "!**/.git*" # .gitkeep and family
+      - main
+      - beta
+      - release
   merge_group:
     types: [checks_requested]
+  workflow_dispatch:
 
 jobs:
+  check-path-change-filter:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      all: ${{ steps.filter.outputs.all }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
+        id: filter
+        with:
+          filters: .github/test-filters.yml
+
   run-tests:
     name: Run Tests
+    needs: check-path-change-filter
     strategy:
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        shard: [1, 2, 3, 4, 5]
     uses: ./.github/workflows/test-shard-template.yml
     with:
       project: main
       shard: ${{ matrix.shard }}
-      totalShards: 10
+      totalShards: 5
+      skip: ${{ needs.check-path-change-filter.outputs.all != 'true'}}

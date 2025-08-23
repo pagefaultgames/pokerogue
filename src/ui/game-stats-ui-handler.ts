@@ -1,16 +1,19 @@
-import Phaser from "phaser";
-import { TextStyle, addTextObject } from "#app/ui/text";
-import type { UiMode } from "#enums/ui-mode";
-import UiHandler from "#app/ui/ui-handler";
-import { addWindow } from "#app/ui/ui-theme";
-import { getPlayTimeString, formatFancyLargeNumber, toReadableString } from "#app/utils/common";
-import type { GameData } from "#app/system/game-data";
-import { DexAttr } from "#app/system/game-data";
-import { speciesStarterCosts } from "#app/data/balance/starters";
-import { Button } from "#enums/buttons";
-import i18next from "i18next";
-import { UiTheme } from "#enums/ui-theme";
+import { loggedInUser } from "#app/account";
 import { globalScene } from "#app/global-scene";
+import { speciesStarterCosts } from "#balance/starters";
+import { Button } from "#enums/buttons";
+import { DexAttr } from "#enums/dex-attr";
+import { PlayerGender } from "#enums/player-gender";
+import { TextStyle } from "#enums/text-style";
+import { UiTheme } from "#enums/ui-theme";
+import type { GameData } from "#system/game-data";
+import { addTextObject } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { addWindow } from "#ui/ui-theme";
+import { formatFancyLargeNumber, getPlayTimeString } from "#utils/common";
+import { toTitleCase } from "#utils/strings";
+import i18next from "i18next";
+import Phaser from "phaser";
 
 interface DisplayStat {
   label_key?: string;
@@ -45,10 +48,17 @@ const displayStats: DisplayStats = {
       return `${starterCount} (${Math.floor((starterCount / Object.keys(speciesStarterCosts).length) * 1000) / 10}%)`;
     },
   },
+  dexEncountered: {
+    label_key: "speciesEncountered",
+    sourceFunc: gameData => {
+      const seenCount = gameData.getSpeciesCount(d => !!d.seenCount);
+      return `${seenCount} (${Math.floor((seenCount / Object.keys(gameData.dexData).length) * 1000) / 10}%)`;
+    },
+  },
   dexSeen: {
     label_key: "speciesSeen",
     sourceFunc: gameData => {
-      const seenCount = gameData.getSpeciesCount(d => !!d.seenAttr);
+      const seenCount = gameData.getSpeciesCount(d => !!d.seenAttr || !!d.caughtAttr);
       return `${seenCount} (${Math.floor((seenCount / Object.keys(gameData.dexData).length) * 1000) / 10}%)`;
     },
   },
@@ -213,156 +223,235 @@ const displayStats: DisplayStats = {
   },
 };
 
-export default class GameStatsUiHandler extends UiHandler {
+export class GameStatsUiHandler extends UiHandler {
   private gameStatsContainer: Phaser.GameObjects.Container;
   private statsContainer: Phaser.GameObjects.Container;
 
-  private statLabels: Phaser.GameObjects.Text[];
-  private statValues: Phaser.GameObjects.Text[];
+  /** The number of rows enabled per page. */
+  private static readonly ROWS_PER_PAGE = 9;
+
+  private statLabels: Phaser.GameObjects.Text[] = [];
+  private statValues: Phaser.GameObjects.Text[] = [];
 
   private arrowUp: Phaser.GameObjects.Sprite;
   private arrowDown: Phaser.GameObjects.Sprite;
 
-  constructor(mode: UiMode | null = null) {
-    super(mode);
+  /** Logged in username */
+  private headerText: Phaser.GameObjects.Text;
 
-    this.statLabels = [];
-    this.statValues = [];
+  /** Whether the UI is single column mode */
+  private get singleCol(): boolean {
+    const resolvedLang = i18next.resolvedLanguage ?? "en";
+    // NOTE TO TRANSLATION TEAM: Add more languages that want to display
+    // in a single-column inside of the `[]` (e.g. `["ru", "fr"]`)
+    return ["fr", "es-ES", "es-MX", "it", "ja", "pt-BR", "ru"].includes(resolvedLang);
   }
+  /** The number of columns used by this menu in the resolved language */
+  private get columnCount(): 1 | 2 {
+    return this.singleCol ? 1 : 2;
+  }
+
+  // #region Columnar-specific properties
+
+  /** The with of each column in the stats view */
+  private get colWidth(): number {
+    return (globalScene.scaledCanvas.width - 2) / this.columnCount;
+  }
+
+  /** THe width of a column's background window */
+  private get colBgWidth(): number {
+    return this.colWidth - 2;
+  }
+
+  /**
+   * Calculate the `x` position of the stat label based on its index.
+   *
+   * @remarks
+   * Should be used for stat labels (e.g. stat name, not its value). For stat value, use {@linkcode calcTextX}.
+   * @param index - The index of the stat label
+   * @returns The `x` position for the stat label
+   */
+  private calcLabelX(index: number): number {
+    if (this.singleCol || !(index & 1)) {
+      return 8;
+    }
+    return 8 + (index & 1 ? this.colBgWidth : 0);
+  }
+
+  /**
+   * Calculate the `y` position of the stat label/text based on its index.
+   * @param index - The index of the stat label
+   * @returns The `y` position for the stat label
+   */
+  private calcEntryY(index: number): number {
+    if (!this.singleCol) {
+      // Floor division by 2 as we want 1 to go to 0
+      index >>= 1;
+    }
+    return 28 + index * 16;
+  }
+
+  /**
+   * Calculate the `x` position of the stat value based on its index.
+   * @param index - The index of the stat value
+   * @returns The calculated `x` position
+   */
+  private calcTextX(index: number): number {
+    if (this.singleCol || !(index & 1)) {
+      return this.colBgWidth - 8;
+    }
+    return this.colBgWidth * 2 - 8;
+  }
+
+  /** The number of stats on screen at one time (varies with column count) */
+  private get statsPerPage(): number {
+    return GameStatsUiHandler.ROWS_PER_PAGE * this.columnCount;
+  }
+
+  /**
+   * Returns the username of logged in user. If the username is hidden, the trainer name based on gender will be displayed.
+   * @returns The username of logged in user
+   */
+  private getUsername(): string {
+    const usernameReplacement =
+      globalScene.gameData.gender === PlayerGender.FEMALE
+        ? i18next.t("trainerNames:playerF")
+        : i18next.t("trainerNames:playerM");
+
+    const displayName = !globalScene.hideUsername
+      ? (loggedInUser?.username ?? i18next.t("common:guest"))
+      : usernameReplacement;
+
+    return i18next.t("gameStatsUiHandler:stats", { username: displayName });
+  }
+
+  // #endregion Columnar-specific properties
 
   setup() {
     const ui = this.getUi();
 
-    this.gameStatsContainer = globalScene.add.container(1, -(globalScene.game.canvas.height / 6) + 1);
+    /** The scaled width of the global canvas */
+    const sWidth = globalScene.scaledCanvas.width;
+    /** The scaled height of the global canvas */
+    const sHeight = globalScene.scaledCanvas.height;
+
+    const gameStatsContainer = globalScene.add.container(1, -sHeight + 1);
+    this.gameStatsContainer = gameStatsContainer;
 
     this.gameStatsContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6),
+      new Phaser.Geom.Rectangle(0, 0, sWidth, sHeight),
       Phaser.Geom.Rectangle.Contains,
     );
 
-    const headerBg = addWindow(0, 0, globalScene.game.canvas.width / 6 - 2, 24);
-    headerBg.setOrigin(0, 0);
+    const headerBg = addWindow(0, 0, sWidth - 2, 24).setOrigin(0);
 
-    const headerText = addTextObject(0, 0, i18next.t("gameStatsUiHandler:stats"), TextStyle.SETTINGS_LABEL);
-    headerText.setOrigin(0, 0);
-    headerText.setPositionRelative(headerBg, 8, 4);
+    this.headerText = addTextObject(0, 0, this.getUsername(), TextStyle.HEADER_LABEL)
+      .setOrigin(0)
+      .setPositionRelative(headerBg, 8, 4);
 
-    const statsBgWidth = (globalScene.game.canvas.width / 6 - 2) / 2;
-    const [statsBgLeft, statsBgRight] = new Array(2).fill(null).map((_, i) => {
-      const width = statsBgWidth + 2;
-      const height = Math.floor(globalScene.game.canvas.height / 6 - headerBg.height - 2);
-      const statsBg = addWindow(
-        (statsBgWidth - 2) * i,
-        headerBg.height,
-        width,
-        height,
-        false,
-        false,
-        i > 0 ? -3 : 0,
-        1,
-      );
-      statsBg.setOrigin(0, 0);
-      return statsBg;
-    });
+    this.gameStatsContainer.add([headerBg, this.headerText]);
 
-    this.statsContainer = globalScene.add.container(0, 0);
+    const colWidth = this.colWidth;
 
-    new Array(18).fill(null).map((_, s) => {
-      const statLabel = addTextObject(
-        8 + (s % 2 === 1 ? statsBgWidth : 0),
-        28 + Math.floor(s / 2) * 16,
-        "",
-        TextStyle.STATS_LABEL,
-      );
-      statLabel.setOrigin(0, 0);
-      this.statsContainer.add(statLabel);
-      this.statLabels.push(statLabel);
+    {
+      const columnCount = this.columnCount;
+      const headerHeight = headerBg.height;
+      const statsBgHeight = Math.floor(globalScene.scaledCanvas.height - headerBg.height - 2);
+      const maskOffsetX = columnCount === 1 ? 0 : -3;
+      for (let i = 0; i < columnCount; i++) {
+        gameStatsContainer.add(
+          addWindow(i * this.colBgWidth, headerHeight, colWidth, statsBgHeight, false, false, maskOffsetX, 1, undefined) // formatting
+            .setOrigin(0),
+        );
+      }
+    }
 
-      const statValue = addTextObject(statsBgWidth * ((s % 2) + 1) - 8, statLabel.y, "", TextStyle.STATS_VALUE);
-      statValue.setOrigin(1, 0);
-      this.statsContainer.add(statValue);
-      this.statValues.push(statValue);
-    });
+    const length = this.statsPerPage;
+    this.statLabels = Array.from({ length }, (_, i) =>
+      addTextObject(this.calcLabelX(i), this.calcEntryY(i), "", TextStyle.STATS_LABEL).setOrigin(0),
+    );
 
-    this.gameStatsContainer.add(headerBg);
-    this.gameStatsContainer.add(headerText);
-    this.gameStatsContainer.add(statsBgLeft);
-    this.gameStatsContainer.add(statsBgRight);
+    this.statValues = Array.from({ length }, (_, i) =>
+      addTextObject(this.calcTextX(i), this.calcEntryY(i), "", TextStyle.STATS_VALUE).setOrigin(1, 0),
+    );
+    this.statsContainer = globalScene.add.container(0, 0, [...this.statLabels, ...this.statValues]);
+
     this.gameStatsContainer.add(this.statsContainer);
 
     // arrows to show that we can scroll through the stats
     const isLegacyTheme = globalScene.uiTheme === UiTheme.LEGACY;
-    this.arrowDown = globalScene.add.sprite(
-      statsBgWidth,
-      globalScene.game.canvas.height / 6 - (isLegacyTheme ? 9 : 5),
-      "prompt",
-    );
-    this.gameStatsContainer.add(this.arrowDown);
-    this.arrowUp = globalScene.add.sprite(statsBgWidth, headerBg.height + (isLegacyTheme ? 7 : 3), "prompt");
-    this.arrowUp.flipY = true;
-    this.gameStatsContainer.add(this.arrowUp);
+    const arrowX = this.singleCol ? colWidth / 2 : colWidth;
+    this.arrowDown = globalScene.add.sprite(arrowX, sHeight - (isLegacyTheme ? 9 : 5), "prompt");
+
+    this.arrowUp = globalScene.add
+      .sprite(arrowX, headerBg.height + (isLegacyTheme ? 7 : 3), "prompt") //
+      .setFlipY(true);
+
+    this.gameStatsContainer.add([this.arrowDown, this.arrowUp]);
 
     ui.add(this.gameStatsContainer);
 
     this.setCursor(0);
-
     this.gameStatsContainer.setVisible(false);
   }
 
   show(args: any[]): boolean {
     super.show(args);
 
-    this.setCursor(0);
+    // show updated username on every render
+    this.headerText.setText(this.getUsername());
 
-    this.updateStats();
+    this.gameStatsContainer.setActive(true).setVisible(true);
 
-    this.arrowUp.play("prompt");
-    this.arrowDown.play("prompt");
+    this.arrowUp.setActive(true).play("prompt").setVisible(false);
+    this.arrowDown.setActive(true).play("prompt");
+    /* `setCursor` handles updating stats if the position is different from before.
+       When opening this UI, we want to update stats regardless of the prior position. */
+    if (!this.setCursor(0)) {
+      this.updateStats();
+    }
     if (globalScene.uiTheme === UiTheme.LEGACY) {
       this.arrowUp.setTint(0x484848);
       this.arrowDown.setTint(0x484848);
     }
 
-    this.updateArrows();
-
-    this.gameStatsContainer.setVisible(true);
-
-    this.getUi().moveTo(this.gameStatsContainer, this.getUi().length - 1);
-
-    this.getUi().hideTooltip();
+    this.getUi()
+      .moveTo(this.gameStatsContainer, this.getUi().length - 1)
+      .hideTooltip();
 
     return true;
   }
 
-  updateStats(): void {
-    const statKeys = Object.keys(displayStats).slice(this.cursor * 2, this.cursor * 2 + 18);
+  /**
+   * Update the stat labels and values to reflect the current cursor position.
+   *
+   * @remarks
+   *
+   * Invokes each stat's {@linkcode DisplayStat.sourceFunc | sourceFunc} to obtain its value.
+   * Stat labels are shown as `???` if the stat is marked as hidden and its value is zero.
+   */
+  private updateStats(): void {
+    const perPage = this.statsPerPage;
+    const columns = this.columnCount;
+    const statKeys = Object.keys(displayStats).slice(this.cursor * columns, this.cursor * columns + perPage);
     statKeys.forEach((key, s) => {
       const stat = displayStats[key] as DisplayStat;
-      const value = stat.sourceFunc!(globalScene.gameData); // TODO: is this bang correct?
+      const value = stat.sourceFunc?.(globalScene.gameData) ?? "-";
+      const valAsInt = Number.parseInt(value);
       this.statLabels[s].setText(
-        !stat.hidden || Number.isNaN(Number.parseInt(value)) || Number.parseInt(value)
-          ? i18next.t(`gameStatsUiHandler:${stat.label_key}`)
-          : "???",
+        !stat.hidden || Number.isNaN(value) || valAsInt ? i18next.t(`gameStatsUiHandler:${stat.label_key}`) : "???",
       );
       this.statValues[s].setText(value);
     });
-    if (statKeys.length < 18) {
-      for (let s = statKeys.length; s < 18; s++) {
-        this.statLabels[s].setText("");
-        this.statValues[s].setText("");
-      }
+    for (let s = statKeys.length; s < perPage; s++) {
+      this.statLabels[s].setText("");
+      this.statValues[s].setText("");
     }
   }
 
-  /**
-   * Show arrows at the top / bottom of the page if it's possible to scroll in that direction
-   */
-  updateArrows(): void {
-    const showUpArrow = this.cursor > 0;
-    this.arrowUp.setVisible(showUpArrow);
-
-    const showDownArrow = this.cursor < Math.ceil((Object.keys(displayStats).length - 18) / 2);
-    this.arrowDown.setVisible(showDownArrow);
+  /** The maximum cursor position */
+  private get maxCursorPos(): number {
+    return Math.ceil((Object.keys(displayStats).length - this.statsPerPage) / this.columnCount);
   }
 
   processInput(button: Button): boolean {
@@ -370,45 +459,59 @@ export default class GameStatsUiHandler extends UiHandler {
 
     let success = false;
 
-    if (button === Button.CANCEL) {
-      success = true;
-      globalScene.ui.revertMode();
-    } else {
-      switch (button) {
-        case Button.UP:
-          if (this.cursor) {
-            success = this.setCursor(this.cursor - 1);
-          }
-          break;
-        case Button.DOWN:
-          if (this.cursor < Math.ceil((Object.keys(displayStats).length - 18) / 2)) {
-            success = this.setCursor(this.cursor + 1);
-          }
-          break;
-      }
+    /** The direction to move the cursor (up/down) */
+    let dir: 1 | -1 = 1;
+    switch (button) {
+      case Button.CANCEL:
+        success = true;
+        globalScene.ui.revertMode();
+        break;
+      // biome-ignore lint/suspicious/noFallthroughSwitchClause: intentional
+      case Button.UP:
+        dir = -1;
+      case Button.DOWN:
+        success = this.setCursor(this.cursor + dir);
     }
 
     if (success) {
       ui.playSelect();
+      return true;
     }
 
-    return success;
+    return false;
   }
 
-  setCursor(cursor: number): boolean {
-    const ret = super.setCursor(cursor);
-
-    if (ret) {
-      this.updateStats();
-      this.updateArrows();
+  /**
+   * Set the cursor to the specified position, if able and update the stats display.
+   *
+   * @remarks
+   *
+   * If `newCursor` is not between `0` and {@linkcode maxCursorPos}, or if it is the same as {@linkcode newCursor}
+   * then no updates happen and `false` is returned.
+   *
+   * Otherwise, updates the up/down arrow visibility and calls {@linkcode updateStats}
+   *
+   * @param newCursor - The position to set the cursor to.
+   * @returns Whether the cursor successfully moved to a new position
+   */
+  override setCursor(newCursor: number): boolean {
+    if (newCursor < 0 || newCursor > this.maxCursorPos || this.cursor === newCursor) {
+      return false;
     }
 
-    return ret;
+    this.cursor = newCursor;
+
+    this.updateStats();
+    // NOTE: Do not toggle the arrows' "active" property here, as this would cause their animations to desync
+    this.arrowUp.setVisible(this.cursor > 0);
+    this.arrowDown.setVisible(this.cursor < this.maxCursorPos);
+
+    return true;
   }
 
   clear() {
     super.clear();
-    this.gameStatsContainer.setVisible(false);
+    this.gameStatsContainer.setVisible(false).setActive(false);
   }
 }
 
@@ -433,11 +536,9 @@ export function initStatsKeys() {
         sourceFunc: gameData => gameData.gameStats[key].toString(),
       };
     }
-    if (!(displayStats[key] as DisplayStat).label_key) {
+    if (!displayStats[key].label_key) {
       const splittableKey = key.replace(/([a-z]{2,})([A-Z]{1}(?:[^A-Z]|$))/g, "$1_$2");
-      (displayStats[key] as DisplayStat).label_key = toReadableString(
-        `${splittableKey[0].toUpperCase()}${splittableKey.slice(1)}`,
-      );
+      displayStats[key].label_key = toTitleCase(splittableKey);
     }
   }
 }

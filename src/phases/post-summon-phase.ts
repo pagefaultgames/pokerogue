@@ -1,12 +1,13 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { applyAbAttrs, applyPostSummonAbAttrs, CommanderAbAttr, PostSummonAbAttr } from "#app/data/abilities/ability";
-import { ArenaTrapTag } from "#app/data/arena-tag";
-import { StatusEffect } from "#app/enums/status-effect";
-import { PokemonPhase } from "./pokemon-phase";
-import { MysteryEncounterPostSummonTag } from "#app/data/battler-tags";
+import { EntryHazardTag } from "#data/arena-tag";
+import { MysteryEncounterPostSummonTag } from "#data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { StatusEffect } from "#enums/status-effect";
+import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class PostSummonPhase extends PokemonPhase {
+  public readonly phaseName = "PostSummonPhase";
   start() {
     super.start();
 
@@ -15,7 +16,7 @@ export class PostSummonPhase extends PokemonPhase {
     if (pokemon.status?.effect === StatusEffect.TOXIC) {
       pokemon.status.toxicTurnCount = 0;
     }
-    globalScene.arena.applyTags(ArenaTrapTag, false, pokemon);
+    globalScene.arena.applyTags(EntryHazardTag, false, pokemon);
 
     // If this is mystery encounter and has post summon phase tag, apply post summon effects
     if (
@@ -25,12 +26,15 @@ export class PostSummonPhase extends PokemonPhase {
       pokemon.lapseTag(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON);
     }
 
-    applyPostSummonAbAttrs(PostSummonAbAttr, pokemon);
     const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
     for (const p of field) {
-      applyAbAttrs(CommanderAbAttr, p, null, false);
+      applyAbAttrs("CommanderAbAttr", { pokemon: p });
     }
 
     this.end();
+  }
+
+  public getPriority() {
+    return 0;
   }
 }

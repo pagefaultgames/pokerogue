@@ -1,14 +1,13 @@
+import { StockpilingTag } from "#data/battler-tags";
+import { AbilityId } from "#enums/ability-id";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { StockpilingTag } from "#app/data/battler-tags";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
-import type { TurnMove } from "#app/field/pokemon";
-import { MoveResult } from "#app/field/pokemon";
-import { MovePhase } from "#app/phases/move-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import GameManager from "#test/testUtils/gameManager";
+import { MovePhase } from "#phases/move-phase";
+import { TurnInitPhase } from "#phases/turn-init-phase";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -27,15 +26,14 @@ describe("Moves - Swallow", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("single");
-
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemyAbility(Abilities.NONE);
-    game.override.enemyLevel(2000);
-
-    game.override.moveset([Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW]);
-    game.override.ability(Abilities.NONE);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.RATTATA)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyAbility(AbilityId.NONE)
+      .enemyLevel(2000)
+      .moveset(MoveId.SWALLOW)
+      .ability(AbilityId.NONE);
   });
 
   describe("consumes all stockpile stacks to heal (scaling with stacks)", () => {
@@ -43,9 +41,9 @@ describe("Moves - Swallow", () => {
       const stacksToSetup = 1;
       const expectedHeal = 25;
 
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon()!;
+      const pokemon = game.field.getPlayerPokemon();
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
       pokemon["hp"] = 1;
 
@@ -57,7 +55,7 @@ describe("Moves - Swallow", () => {
 
       vi.spyOn(pokemon, "heal");
 
-      game.move.select(Moves.SWALLOW);
+      game.move.select(MoveId.SWALLOW);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(pokemon.heal).toHaveBeenCalledOnce();
@@ -70,9 +68,9 @@ describe("Moves - Swallow", () => {
       const stacksToSetup = 2;
       const expectedHeal = 50;
 
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon()!;
+      const pokemon = game.field.getPlayerPokemon();
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
       pokemon["hp"] = 1;
 
@@ -85,7 +83,7 @@ describe("Moves - Swallow", () => {
 
       vi.spyOn(pokemon, "heal");
 
-      game.move.select(Moves.SWALLOW);
+      game.move.select(MoveId.SWALLOW);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(pokemon.heal).toHaveBeenCalledOnce();
@@ -98,9 +96,9 @@ describe("Moves - Swallow", () => {
       const stacksToSetup = 3;
       const expectedHeal = 100;
 
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon()!;
+      const pokemon = game.field.getPlayerPokemon();
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
       pokemon["hp"] = 0.0001;
 
@@ -114,7 +112,7 @@ describe("Moves - Swallow", () => {
 
       vi.spyOn(pokemon, "heal");
 
-      game.move.select(Moves.SWALLOW);
+      game.move.select(MoveId.SWALLOW);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(pokemon.heal).toHaveBeenCalledOnce();
@@ -125,18 +123,18 @@ describe("Moves - Swallow", () => {
   });
 
   it("fails without stacks", async () => {
-    await game.startBattle([Species.ABOMASNOW]);
+    await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
-    const pokemon = game.scene.getPlayerPokemon()!;
+    const pokemon = game.field.getPlayerPokemon();
 
     const stockpilingTag = pokemon.getTag(StockpilingTag)!;
     expect(stockpilingTag).toBeUndefined();
 
-    game.move.select(Moves.SWALLOW);
+    game.move.select(MoveId.SWALLOW);
     await game.phaseInterceptor.to(TurnInitPhase);
 
-    expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
-      move: Moves.SWALLOW,
+    expect(pokemon.getMoveHistory().at(-1)).toMatchObject({
+      move: MoveId.SWALLOW,
       result: MoveResult.FAIL,
       targets: [pokemon.getBattlerIndex()],
     });
@@ -144,15 +142,15 @@ describe("Moves - Swallow", () => {
 
   describe("restores stat stage boosts granted by stacks", () => {
     it("decreases stats based on stored values (both boosts equal)", async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon()!;
+      const pokemon = game.field.getPlayerPokemon();
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
       const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
 
-      game.move.select(Moves.SWALLOW);
+      game.move.select(MoveId.SWALLOW);
       await game.phaseInterceptor.to(MovePhase);
 
       expect(pokemon.getStatStage(Stat.DEF)).toBe(1);
@@ -160,8 +158,8 @@ describe("Moves - Swallow", () => {
 
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
-        move: Moves.SWALLOW,
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject({
+        move: MoveId.SWALLOW,
         result: MoveResult.SUCCESS,
         targets: [pokemon.getBattlerIndex()],
       });
@@ -173,9 +171,9 @@ describe("Moves - Swallow", () => {
     });
 
     it("lower stat stages based on stored values (different boosts)", async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
-      const pokemon = game.scene.getPlayerPokemon()!;
+      const pokemon = game.field.getPlayerPokemon();
       pokemon.addTag(BattlerTagType.STOCKPILING);
 
       const stockpilingTag = pokemon.getTag(StockpilingTag)!;
@@ -187,12 +185,12 @@ describe("Moves - Swallow", () => {
         [Stat.SPDEF]: 2,
       };
 
-      game.move.select(Moves.SWALLOW);
+      game.move.select(MoveId.SWALLOW);
 
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
-        move: Moves.SWALLOW,
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject({
+        move: MoveId.SWALLOW,
         result: MoveResult.SUCCESS,
         targets: [pokemon.getBattlerIndex()],
       });

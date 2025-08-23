@@ -1,9 +1,9 @@
-import type { UiMode } from "#enums/ui-mode";
-import UiHandler from "./ui-handler";
-import { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
+import { Button } from "#enums/buttons";
+import type { UiMode } from "#enums/ui-mode";
+import { UiHandler } from "#ui/ui-handler";
 
-export default abstract class AwaitableUiHandler extends UiHandler {
+export abstract class AwaitableUiHandler extends UiHandler {
   protected awaitingActionInput: boolean;
   protected onActionInput: Function | null;
   public tutorialActive = false;

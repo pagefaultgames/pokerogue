@@ -1,0 +1,49 @@
+name: Linting
+
+on:
+  push:
+    branches:
+      - main
+      - beta
+      - release
+  pull_request:
+    branches:
+      - main
+      - beta
+      - release
+  merge_group:
+    types: [checks_requested]
+
+jobs:
+  run-linters:
+    name: Run linters
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+
+      - name: Install Node.js dependencies
+        run: pnpm i
+
+      - name: Lint with Biome
+        run: pnpm biome-ci
+
+      - name: Check dependencies with depcruise
+        run: pnpm depcruise
+      
+      - name: Lint with ls-lint
+        run: pnpm ls-lint

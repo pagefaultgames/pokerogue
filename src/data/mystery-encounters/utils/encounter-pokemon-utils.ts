@@ -1,43 +1,43 @@
 import { globalScene } from "#app/global-scene";
-import i18next from "i18next";
-import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
-import { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { speciesStarterCosts } from "#balance/starters";
+import { modifierTypes } from "#data/data-lists";
+import { Gender } from "#data/gender";
 import {
   doPokeballBounceAnim,
   getPokeballAtlasKey,
   getPokeballCatchMultiplier,
   getPokeballTintColor,
-} from "#app/data/pokeball";
+} from "#data/pokeball";
+import { CustomPokemonData } from "#data/pokemon-data";
+import type { PokemonSpecies } from "#data/pokemon-species";
+import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
+import type { AbilityId } from "#enums/ability-id";
+import { ChallengeType } from "#enums/challenge-type";
 import { PlayerGender } from "#enums/player-gender";
-import { addPokeballCaptureStars, addPokeballOpenParticles } from "#app/field/anims";
-import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
-import { achvs } from "#app/system/achv";
-import { UiMode } from "#enums/ui-mode";
-import type { PartyOption } from "#app/ui/party-ui-handler";
-import { PartyUiMode } from "#app/ui/party-ui-handler";
-import { Species } from "#enums/species";
+import type { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
-import type PokemonSpecies from "#app/data/pokemon-species";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { speciesStarterCosts } from "#app/data/balance/starters";
+import { SpeciesId } from "#enums/species-id";
+import type { PermanentStat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { UiMode } from "#enums/ui-mode";
+import { addPokeballCaptureStars, addPokeballOpenParticles } from "#field/anims";
+import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
+import { PokemonHeldItemModifier } from "#modifiers/modifier";
+import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
 import {
   getEncounterText,
   queueEncounterMessage,
   showEncounterText,
-} from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { getPokemonNameWithAffix } from "#app/messages";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { Gender } from "#app/data/gender";
-import type { PermanentStat } from "#enums/stat";
-import { VictoryPhase } from "#app/phases/victory-phase";
-import { SummaryUiMode } from "#app/ui/summary-ui-handler";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import type { Abilities } from "#enums/abilities";
-import type { PokeballType } from "#enums/pokeball";
-import { StatusEffect } from "#enums/status-effect";
+} from "#mystery-encounters/encounter-dialogue-utils";
+import { achvs } from "#system/achv";
+import type { PartyOption } from "#ui/party-ui-handler";
+import { PartyUiMode } from "#ui/party-ui-handler";
+import { SummaryUiMode } from "#ui/summary-ui-handler";
+import { applyChallenges } from "#utils/challenge-utils";
+import { BooleanHolder, isNullOrUndefined, randSeedInt } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
+import i18next from "i18next";
 
 /** Will give +1 level every 10 waves */
 export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
@@ -51,7 +51,7 @@ export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
  * @param variant
  */
 export function getSpriteKeysFromSpecies(
-  species: Species,
+  species: SpeciesId,
   female?: boolean,
   formIndex?: number,
   shiny?: boolean,
@@ -112,20 +112,24 @@ export function getRandomPlayerPokemon(
     // If there is only 1 legal/unfainted mon left, select from fainted legal mons
     const faintedLegalMons = party.filter(p => (!isAllowed || p.isAllowedInChallenge()) && p.isFainted());
     if (faintedLegalMons.length > 0) {
+      // TODO: should this use `randSeedItem`?
       chosenIndex = randSeedInt(faintedLegalMons.length);
       chosenPokemon = faintedLegalMons[chosenIndex];
     }
   }
   if (!chosenPokemon && fullyLegalMons.length > 0) {
+    // TODO: should this use `randSeedItem`?
     chosenIndex = randSeedInt(fullyLegalMons.length);
     chosenPokemon = fullyLegalMons[chosenIndex];
   }
   if (!chosenPokemon && isAllowed && allowedOnlyMons.length > 0) {
+    // TODO: should this use `randSeedItem`?
     chosenIndex = randSeedInt(allowedOnlyMons.length);
     chosenPokemon = allowedOnlyMons[chosenIndex];
   }
   if (!chosenPokemon) {
     // If no other options worked, returns fully random
+    // TODO: should this use `randSeedItem`?
     chosenIndex = randSeedInt(party.length);
     chosenPokemon = party[chosenIndex];
   }
@@ -247,17 +251,17 @@ export function getHighestStatTotalPlayerPokemon(isAllowed = false, isFainted = 
  */
 export function getRandomSpeciesByStarterCost(
   starterTiers: number | [number, number],
-  excludedSpecies?: Species[],
+  excludedSpecies?: SpeciesId[],
   types?: PokemonType[],
   allowSubLegendary = true,
   allowLegendary = true,
   allowMythical = true,
-): Species {
+): SpeciesId {
   let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
   let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
 
   let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarterCosts)
-    .map(s => [Number.parseInt(s) as Species, speciesStarterCosts[s] as number])
+    .map(s => [Number.parseInt(s) as SpeciesId, speciesStarterCosts[s] as number])
     .filter(s => {
       const pokemonSpecies = getPokemonSpecies(s[0]);
       return (
@@ -294,7 +298,7 @@ export function getRandomSpeciesByStarterCost(
     return Phaser.Math.RND.shuffle(tryFilterStarterTiers)[index][0].speciesId;
   }
 
-  return Species.BULBASAUR;
+  return SpeciesId.BULBASAUR;
 }
 
 /**
@@ -305,7 +309,7 @@ export function getRandomSpeciesByStarterCost(
  */
 export function koPlayerPokemon(pokemon: PlayerPokemon) {
   pokemon.hp = 0;
-  pokemon.trySetStatus(StatusEffect.FAINT);
+  pokemon.doSetStatus(StatusEffect.FAINT);
   pokemon.updateInfo();
   queueEncounterMessage(
     i18next.t("battle:fainted", {
@@ -376,10 +380,10 @@ export function applyHealToPokemon(pokemon: PlayerPokemon, heal: number) {
  * @param pokemon
  * @param value
  */
-export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: number) {
+export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, good: boolean) {
   const modType = modifierTypes
     .MYSTERY_ENCOUNTER_SHUCKLE_JUICE()
-    .generateType(globalScene.getPlayerParty(), [value])
+    .generateType(globalScene.getPlayerParty(), [good ? 10 : -15])
     ?.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_SHUCKLE_JUICE);
   const modifier = modType?.newModifier(pokemon);
   if (modifier) {
@@ -404,12 +408,12 @@ export async function applyModifierTypeToPlayerPokemon(
   // Check if the Pokemon has max stacks of that item already
   const modifier = modType.newModifier(pokemon);
   const existing = globalScene.findModifier(
-    m =>
+    (m): m is PokemonHeldItemModifier =>
       m instanceof PokemonHeldItemModifier &&
       m.type.id === modType.id &&
       m.pokemonId === pokemon.id &&
       m.matchType(modifier),
-  ) as PokemonHeldItemModifier;
+  ) as PokemonHeldItemModifier | undefined;
 
   // At max stacks
   if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
@@ -519,7 +523,7 @@ export function trainerThrowPokeball(
                   repeatDelay: 500,
                   onUpdate: t => {
                     if (shakeCount && shakeCount < 4) {
-                      const value = t.getValue();
+                      const value = t.getValue() ?? 0;
                       const directionMultiplier = shakeCount % 2 === 1 ? 1 : -1;
                       pokeball.setX(pbX + value * 4 * directionMultiplier);
                       pokeball.setAngle(value * 27.5 * directionMultiplier);
@@ -669,13 +673,15 @@ export async function catchPokemon(
   globalScene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
 
   return new Promise(resolve => {
+    const addStatus = new BooleanHolder(true);
+    applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
     const doPokemonCatchMenu = () => {
       const end = () => {
         // Ensure the pokemon is in the enemy party in all situations
         if (!globalScene.getEnemyParty().some(p => p.id === pokemon.id)) {
           globalScene.getEnemyParty().push(pokemon);
         }
-        globalScene.unshiftPhase(new VictoryPhase(pokemon.id, true));
+        globalScene.phaseManager.unshiftNew("VictoryPhase", pokemon.id, true);
         globalScene.pokemonInfoContainer.hide();
         if (pokeball) {
           removePb(pokeball);
@@ -704,6 +710,11 @@ export async function catchPokemon(
         });
       };
       Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
+        if (!(isObtain || addStatus.value)) {
+          removePokemon();
+          end();
+          return;
+        }
         if (globalScene.getPlayerParty().length === 6) {
           const promptRelease = () => {
             globalScene.ui.showText(
@@ -752,7 +763,7 @@ export async function catchPokemon(
                       UiMode.POKEDEX_PAGE,
                       pokemon.species,
                       pokemon.formIndex,
-                      attributes,
+                      [attributes],
                       null,
                       () => {
                         globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
@@ -796,10 +807,16 @@ export async function catchPokemon(
     };
 
     if (showCatchObtainMessage) {
+      let catchMessage: string;
+      if (isObtain) {
+        catchMessage = "battle:pokemonObtained";
+      } else if (addStatus.value) {
+        catchMessage = "battle:pokemonCaught";
+      } else {
+        catchMessage = "battle:pokemonCaughtButChallenge";
+      }
       globalScene.ui.showText(
-        i18next.t(isObtain ? "battle:pokemonObtained" : "battle:pokemonCaught", {
-          pokemonName: pokemon.getNameToRender(),
-        }),
+        i18next.t(catchMessage, { pokemonName: pokemon.getNameToRender() }),
         null,
         doPokemonCatchMenu,
         0,
@@ -903,34 +920,34 @@ export function doPlayerFlee(pokemon: EnemyPokemon): Promise<void> {
 /**
  * Bug Species and their corresponding weights
  */
-const GOLDEN_BUG_NET_SPECIES_POOL: [Species, number][] = [
-  [Species.SCYTHER, 40],
-  [Species.SCIZOR, 40],
-  [Species.KLEAVOR, 40],
-  [Species.PINSIR, 40],
-  [Species.HERACROSS, 40],
-  [Species.YANMA, 40],
-  [Species.YANMEGA, 40],
-  [Species.SHUCKLE, 40],
-  [Species.ANORITH, 40],
-  [Species.ARMALDO, 40],
-  [Species.ESCAVALIER, 40],
-  [Species.ACCELGOR, 40],
-  [Species.JOLTIK, 40],
-  [Species.GALVANTULA, 40],
-  [Species.DURANT, 40],
-  [Species.LARVESTA, 40],
-  [Species.VOLCARONA, 40],
-  [Species.DEWPIDER, 40],
-  [Species.ARAQUANID, 40],
-  [Species.WIMPOD, 40],
-  [Species.GOLISOPOD, 40],
-  [Species.SIZZLIPEDE, 40],
-  [Species.CENTISKORCH, 40],
-  [Species.NYMBLE, 40],
-  [Species.LOKIX, 40],
-  [Species.BUZZWOLE, 1],
-  [Species.PHEROMOSA, 1],
+const GOLDEN_BUG_NET_SPECIES_POOL: [SpeciesId, number][] = [
+  [SpeciesId.SCYTHER, 40],
+  [SpeciesId.SCIZOR, 40],
+  [SpeciesId.KLEAVOR, 40],
+  [SpeciesId.PINSIR, 40],
+  [SpeciesId.HERACROSS, 40],
+  [SpeciesId.YANMA, 40],
+  [SpeciesId.YANMEGA, 40],
+  [SpeciesId.SHUCKLE, 40],
+  [SpeciesId.ANORITH, 40],
+  [SpeciesId.ARMALDO, 40],
+  [SpeciesId.ESCAVALIER, 40],
+  [SpeciesId.ACCELGOR, 40],
+  [SpeciesId.JOLTIK, 40],
+  [SpeciesId.GALVANTULA, 40],
+  [SpeciesId.DURANT, 40],
+  [SpeciesId.LARVESTA, 40],
+  [SpeciesId.VOLCARONA, 40],
+  [SpeciesId.DEWPIDER, 40],
+  [SpeciesId.ARAQUANID, 40],
+  [SpeciesId.WIMPOD, 40],
+  [SpeciesId.GOLISOPOD, 40],
+  [SpeciesId.SIZZLIPEDE, 40],
+  [SpeciesId.CENTISKORCH, 40],
+  [SpeciesId.NYMBLE, 40],
+  [SpeciesId.LOKIX, 40],
+  [SpeciesId.BUZZWOLE, 1],
+  [SpeciesId.PHEROMOSA, 1],
 ];
 
 /**
@@ -951,7 +968,7 @@ export function getGoldenBugNetSpecies(level: number): PokemonSpecies {
   }
 
   // Defaults to Scyther
-  return getPokemonSpecies(Species.SCYTHER);
+  return getPokemonSpecies(SpeciesId.SCYTHER);
 }
 
 /**
@@ -1024,7 +1041,7 @@ export function isPokemonValidForEncounterOptionSelection(
  * Permanently overrides the ability (not passive) of a pokemon.
  * If the pokemon is a fusion, instead overrides the fused pokemon's ability.
  */
-export function applyAbilityOverrideToPokemon(pokemon: Pokemon, ability: Abilities) {
+export function applyAbilityOverrideToPokemon(pokemon: Pokemon, ability: AbilityId) {
   if (pokemon.isFusion()) {
     if (!pokemon.fusionCustomPokemonData) {
       pokemon.fusionCustomPokemonData = new CustomPokemonData();

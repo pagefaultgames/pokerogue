@@ -16,15 +16,24 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: 'recursive'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
+
       - name: Install dependencies
-        run: npm ci
+        run: pnpm i
+
       - name: Build
-        run: npm run build
+        run: pnpm build
         env:
           NODE_ENV: production
+
       - name: Set up SSH
         if: github.event_name == 'push' && github.ref_name == 'main'
         run: |
@@ -33,11 +42,13 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/*
           ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
       - name: Deploy build on server
         if: github.event_name == 'push' && github.ref_name == 'main'
-        run: | 
+        run: |
           rsync --del --no-times --checksum -vrm dist/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.DESTINATION_DIR }}
           ssh -t ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "~/prmanifest --inpath ${{ secrets.DESTINATION_DIR }} --outpath ${{ secrets.DESTINATION_DIR }}/manifest.json"
+
       - name: Purge Cloudflare Cache
         if: github.event_name == 'push' && github.ref_name == 'main'
         id: purge-cache

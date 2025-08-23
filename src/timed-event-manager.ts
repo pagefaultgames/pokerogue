@@ -1,15 +1,16 @@
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addTextObject } from "#app/ui/text";
-import type { nil } from "#app/utils/common";
-import { isNullOrUndefined } from "#app/utils/common";
-import i18next from "i18next";
-import { Species } from "#enums/species";
-import type { WeatherPoolEntry } from "#app/data/weather";
-import { WeatherType } from "#enums/weather-type";
-import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "./data/balance/starters";
-import { MysteryEncounterType } from "./enums/mystery-encounter-type";
-import { MysteryEncounterTier } from "./enums/mystery-encounter-tier";
+import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "#balance/starters";
+import type { WeatherPoolEntry } from "#data/weather";
 import { Challenges } from "#enums/challenges";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { SpeciesId } from "#enums/species-id";
+import { TextStyle } from "#enums/text-style";
+import { WeatherType } from "#enums/weather-type";
+import { addTextObject } from "#ui/text";
+import type { nil } from "#utils/common";
+import { isNullOrUndefined } from "#utils/common";
+import i18next from "i18next";
 
 export enum EventType {
   SHINY,
@@ -26,7 +27,7 @@ interface EventBanner {
 }
 
 interface EventEncounter {
-  species: Species;
+  species: SpeciesId;
   blockEvolution?: boolean;
   formIndex?: number;
 }
@@ -62,7 +63,7 @@ interface TimedEvent extends EventBanner {
   delibirdyBuff?: string[];
   weather?: WeatherPoolEntry[];
   mysteryEncounterTierChanges?: EventMysteryEncounterTier[];
-  luckBoostedSpecies?: Species[];
+  luckBoostedSpecies?: SpeciesId[];
   boostFusions?: boolean; //MODIFIER REWORK PLEASE
   classicWaveRewards?: EventWaveReward[]; // Rival battle rewards
   trainerShinyChance?: number; // Odds over 65536 of trainer mon generating as shiny
@@ -82,26 +83,26 @@ const timedEvents: TimedEvent[] = [
     scale: 0.21,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
     eventEncounters: [
-      { species: Species.GIMMIGHOUL, blockEvolution: true },
-      { species: Species.DELIBIRD },
-      { species: Species.STANTLER },
-      { species: Species.CYNDAQUIL },
-      { species: Species.PIPLUP },
-      { species: Species.CHESPIN },
-      { species: Species.BALTOY },
-      { species: Species.SNOVER },
-      { species: Species.CHINGLING },
-      { species: Species.LITWICK },
-      { species: Species.CUBCHOO },
-      { species: Species.SWIRLIX },
-      { species: Species.AMAURA },
-      { species: Species.MUDBRAY },
-      { species: Species.ROLYCOLY },
-      { species: Species.MILCERY },
-      { species: Species.SMOLIV },
-      { species: Species.ALOLA_VULPIX },
-      { species: Species.GALAR_DARUMAKA },
-      { species: Species.IRON_BUNDLE },
+      { species: SpeciesId.GIMMIGHOUL, blockEvolution: true },
+      { species: SpeciesId.DELIBIRD },
+      { species: SpeciesId.STANTLER },
+      { species: SpeciesId.CYNDAQUIL },
+      { species: SpeciesId.PIPLUP },
+      { species: SpeciesId.CHESPIN },
+      { species: SpeciesId.BALTOY },
+      { species: SpeciesId.SNOVER },
+      { species: SpeciesId.CHINGLING },
+      { species: SpeciesId.LITWICK },
+      { species: SpeciesId.CUBCHOO },
+      { species: SpeciesId.SWIRLIX },
+      { species: SpeciesId.AMAURA },
+      { species: SpeciesId.MUDBRAY },
+      { species: SpeciesId.ROLYCOLY },
+      { species: SpeciesId.MILCERY },
+      { species: SpeciesId.SMOLIV },
+      { species: SpeciesId.ALOLA_VULPIX },
+      { species: SpeciesId.GALAR_DARUMAKA },
+      { species: SpeciesId.IRON_BUNDLE },
     ],
     delibirdyBuff: ["CATCHING_CHARM", "SHINY_CHARM", "ABILITY_CHARM", "EXP_CHARM", "SUPER_EXP_CHARM", "HEALING_CHARM"],
     weather: [{ weatherType: WeatherType.SNOW, weight: 1 }],
@@ -138,59 +139,59 @@ const timedEvents: TimedEvent[] = [
     scale: 0.21,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
     eventEncounters: [
-      { species: Species.EKANS },
-      { species: Species.ONIX },
-      { species: Species.DRATINI },
-      { species: Species.CLEFFA },
-      { species: Species.UMBREON },
-      { species: Species.DUNSPARCE },
-      { species: Species.TEDDIURSA },
-      { species: Species.SEVIPER },
-      { species: Species.LUNATONE },
-      { species: Species.CHINGLING },
-      { species: Species.SNIVY },
-      { species: Species.DARUMAKA },
-      { species: Species.DRAMPA },
-      { species: Species.SILICOBRA },
-      { species: Species.BLOODMOON_URSALUNA },
+      { species: SpeciesId.EKANS },
+      { species: SpeciesId.ONIX },
+      { species: SpeciesId.DRATINI },
+      { species: SpeciesId.CLEFFA },
+      { species: SpeciesId.UMBREON },
+      { species: SpeciesId.DUNSPARCE },
+      { species: SpeciesId.TEDDIURSA },
+      { species: SpeciesId.SEVIPER },
+      { species: SpeciesId.LUNATONE },
+      { species: SpeciesId.CHINGLING },
+      { species: SpeciesId.SNIVY },
+      { species: SpeciesId.DARUMAKA },
+      { species: SpeciesId.DRAMPA },
+      { species: SpeciesId.SILICOBRA },
+      { species: SpeciesId.BLOODMOON_URSALUNA },
     ],
     luckBoostedSpecies: [
-      Species.EKANS,
-      Species.ARBOK,
-      Species.ONIX,
-      Species.STEELIX,
-      Species.DRATINI,
-      Species.DRAGONAIR,
-      Species.DRAGONITE,
-      Species.CLEFFA,
-      Species.CLEFAIRY,
-      Species.CLEFABLE,
-      Species.UMBREON,
-      Species.DUNSPARCE,
-      Species.DUDUNSPARCE,
-      Species.TEDDIURSA,
-      Species.URSARING,
-      Species.URSALUNA,
-      Species.SEVIPER,
-      Species.LUNATONE,
-      Species.RAYQUAZA,
-      Species.CHINGLING,
-      Species.CHIMECHO,
-      Species.CRESSELIA,
-      Species.DARKRAI,
-      Species.SNIVY,
-      Species.SERVINE,
-      Species.SERPERIOR,
-      Species.DARUMAKA,
-      Species.DARMANITAN,
-      Species.ZYGARDE,
-      Species.DRAMPA,
-      Species.LUNALA,
-      Species.BLACEPHALON,
-      Species.SILICOBRA,
-      Species.SANDACONDA,
-      Species.ROARING_MOON,
-      Species.BLOODMOON_URSALUNA,
+      SpeciesId.EKANS,
+      SpeciesId.ARBOK,
+      SpeciesId.ONIX,
+      SpeciesId.STEELIX,
+      SpeciesId.DRATINI,
+      SpeciesId.DRAGONAIR,
+      SpeciesId.DRAGONITE,
+      SpeciesId.CLEFFA,
+      SpeciesId.CLEFAIRY,
+      SpeciesId.CLEFABLE,
+      SpeciesId.UMBREON,
+      SpeciesId.DUNSPARCE,
+      SpeciesId.DUDUNSPARCE,
+      SpeciesId.TEDDIURSA,
+      SpeciesId.URSARING,
+      SpeciesId.URSALUNA,
+      SpeciesId.SEVIPER,
+      SpeciesId.LUNATONE,
+      SpeciesId.RAYQUAZA,
+      SpeciesId.CHINGLING,
+      SpeciesId.CHIMECHO,
+      SpeciesId.CRESSELIA,
+      SpeciesId.DARKRAI,
+      SpeciesId.SNIVY,
+      SpeciesId.SERVINE,
+      SpeciesId.SERPERIOR,
+      SpeciesId.DARUMAKA,
+      SpeciesId.DARMANITAN,
+      SpeciesId.ZYGARDE,
+      SpeciesId.DRAMPA,
+      SpeciesId.LUNALA,
+      SpeciesId.BLACEPHALON,
+      SpeciesId.SILICOBRA,
+      SpeciesId.SANDACONDA,
+      SpeciesId.ROARING_MOON,
+      SpeciesId.BLOODMOON_URSALUNA,
     ],
     classicWaveRewards: [
       { wave: 8, type: "SHINY_CHARM" },
@@ -210,28 +211,28 @@ const timedEvents: TimedEvent[] = [
     scale: 0.21,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
     eventEncounters: [
-      { species: Species.NIDORAN_F },
-      { species: Species.NIDORAN_M },
-      { species: Species.IGGLYBUFF },
-      { species: Species.SMOOCHUM },
-      { species: Species.VOLBEAT },
-      { species: Species.ILLUMISE },
-      { species: Species.ROSELIA },
-      { species: Species.LUVDISC },
-      { species: Species.WOOBAT },
-      { species: Species.FRILLISH },
-      { species: Species.ALOMOMOLA },
-      { species: Species.FURFROU, formIndex: 1 }, // Heart Trim
-      { species: Species.ESPURR },
-      { species: Species.SPRITZEE },
-      { species: Species.SWIRLIX },
-      { species: Species.APPLIN },
-      { species: Species.MILCERY },
-      { species: Species.INDEEDEE },
-      { species: Species.TANDEMAUS },
-      { species: Species.ENAMORUS },
+      { species: SpeciesId.NIDORAN_F },
+      { species: SpeciesId.NIDORAN_M },
+      { species: SpeciesId.IGGLYBUFF },
+      { species: SpeciesId.SMOOCHUM },
+      { species: SpeciesId.VOLBEAT },
+      { species: SpeciesId.ILLUMISE },
+      { species: SpeciesId.ROSELIA },
+      { species: SpeciesId.LUVDISC },
+      { species: SpeciesId.WOOBAT },
+      { species: SpeciesId.FRILLISH },
+      { species: SpeciesId.ALOMOMOLA },
+      { species: SpeciesId.FURFROU, formIndex: 1 }, // Heart Trim
+      { species: SpeciesId.ESPURR },
+      { species: SpeciesId.SPRITZEE },
+      { species: SpeciesId.SWIRLIX },
+      { species: SpeciesId.APPLIN },
+      { species: SpeciesId.MILCERY },
+      { species: SpeciesId.INDEEDEE },
+      { species: SpeciesId.TANDEMAUS },
+      { species: SpeciesId.ENAMORUS },
     ],
-    luckBoostedSpecies: [Species.LUVDISC],
+    luckBoostedSpecies: [SpeciesId.LUVDISC],
     classicWaveRewards: [
       { wave: 8, type: "SHINY_CHARM" },
       { wave: 8, type: "ABILITY_CHARM" },
@@ -249,39 +250,39 @@ const timedEvents: TimedEvent[] = [
     scale: 0.21,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "pt-BR", "zh-CN"],
     eventEncounters: [
-      { species: Species.PIKACHU, formIndex: 1, blockEvolution: true }, // Partner Form
-      { species: Species.EEVEE, formIndex: 1, blockEvolution: true }, // Partner Form
-      { species: Species.CHIKORITA },
-      { species: Species.TOTODILE },
-      { species: Species.TEPIG },
+      { species: SpeciesId.PIKACHU, formIndex: 1, blockEvolution: true }, // Partner Form
+      { species: SpeciesId.EEVEE, formIndex: 1, blockEvolution: true }, // Partner Form
+      { species: SpeciesId.CHIKORITA },
+      { species: SpeciesId.TOTODILE },
+      { species: SpeciesId.TEPIG },
     ],
     luckBoostedSpecies: [
-      Species.PICHU,
-      Species.PIKACHU,
-      Species.RAICHU,
-      Species.ALOLA_RAICHU,
-      Species.PSYDUCK,
-      Species.GOLDUCK,
-      Species.EEVEE,
-      Species.FLAREON,
-      Species.JOLTEON,
-      Species.VAPOREON,
-      Species.ESPEON,
-      Species.UMBREON,
-      Species.LEAFEON,
-      Species.GLACEON,
-      Species.SYLVEON,
-      Species.CHIKORITA,
-      Species.BAYLEEF,
-      Species.MEGANIUM,
-      Species.TOTODILE,
-      Species.CROCONAW,
-      Species.FERALIGATR,
-      Species.TEPIG,
-      Species.PIGNITE,
-      Species.EMBOAR,
-      Species.ZYGARDE,
-      Species.ETERNAL_FLOETTE,
+      SpeciesId.PICHU,
+      SpeciesId.PIKACHU,
+      SpeciesId.RAICHU,
+      SpeciesId.ALOLA_RAICHU,
+      SpeciesId.PSYDUCK,
+      SpeciesId.GOLDUCK,
+      SpeciesId.EEVEE,
+      SpeciesId.FLAREON,
+      SpeciesId.JOLTEON,
+      SpeciesId.VAPOREON,
+      SpeciesId.ESPEON,
+      SpeciesId.UMBREON,
+      SpeciesId.LEAFEON,
+      SpeciesId.GLACEON,
+      SpeciesId.SYLVEON,
+      SpeciesId.CHIKORITA,
+      SpeciesId.BAYLEEF,
+      SpeciesId.MEGANIUM,
+      SpeciesId.TOTODILE,
+      SpeciesId.CROCONAW,
+      SpeciesId.FERALIGATR,
+      SpeciesId.TEPIG,
+      SpeciesId.PIGNITE,
+      SpeciesId.EMBOAR,
+      SpeciesId.ZYGARDE,
+      SpeciesId.ETERNAL_FLOETTE,
     ],
     classicWaveRewards: [
       { wave: 8, type: "SHINY_CHARM" },
@@ -321,28 +322,28 @@ const timedEvents: TimedEvent[] = [
     shinyMultiplier: 2,
     upgradeUnlockedVouchers: true,
     eventEncounters: [
-      { species: Species.HOPPIP },
-      { species: Species.CELEBI },
-      { species: Species.VOLBEAT },
-      { species: Species.ILLUMISE },
-      { species: Species.SPOINK },
-      { species: Species.LILEEP },
-      { species: Species.SHINX },
-      { species: Species.PACHIRISU },
-      { species: Species.CHERUBI },
-      { species: Species.MUNCHLAX },
-      { species: Species.TEPIG },
-      { species: Species.PANSAGE },
-      { species: Species.PANSEAR },
-      { species: Species.PANPOUR },
-      { species: Species.DARUMAKA },
-      { species: Species.ARCHEN },
-      { species: Species.DEERLING, formIndex: 0 }, // Spring Deerling
-      { species: Species.CLAUNCHER },
-      { species: Species.WISHIWASHI },
-      { species: Species.DRAMPA },
-      { species: Species.JANGMO_O },
-      { species: Species.APPLIN },
+      { species: SpeciesId.HOPPIP },
+      { species: SpeciesId.CELEBI },
+      { species: SpeciesId.VOLBEAT },
+      { species: SpeciesId.ILLUMISE },
+      { species: SpeciesId.SPOINK },
+      { species: SpeciesId.LILEEP },
+      { species: SpeciesId.SHINX },
+      { species: SpeciesId.PACHIRISU },
+      { species: SpeciesId.CHERUBI },
+      { species: SpeciesId.MUNCHLAX },
+      { species: SpeciesId.TEPIG },
+      { species: SpeciesId.PANSAGE },
+      { species: SpeciesId.PANSEAR },
+      { species: SpeciesId.PANPOUR },
+      { species: SpeciesId.DARUMAKA },
+      { species: SpeciesId.ARCHEN },
+      { species: SpeciesId.DEERLING, formIndex: 0 }, // Spring Deerling
+      { species: SpeciesId.CLAUNCHER },
+      { species: SpeciesId.WISHIWASHI },
+      { species: SpeciesId.DRAMPA },
+      { species: SpeciesId.JANGMO_O },
+      { species: SpeciesId.APPLIN },
     ],
     classicWaveRewards: [
       { wave: 8, type: "SHINY_CHARM" },
@@ -361,18 +362,18 @@ const timedEvents: TimedEvent[] = [
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-MX", "pt-BR", "zh-CN", "zh-TW"],
     shinyMultiplier: 2,
     eventEncounters: [
-      { species: Species.CHARMANDER },
-      { species: Species.SANDILE },
-      { species: Species.FERROSEED },
-      { species: Species.FOONGUS },
-      { species: Species.CUTIEFLY },
-      { species: Species.DEWPIDER },
-      { species: Species.TYPE_NULL },
-      { species: Species.MINIOR },
-      { species: Species.SOBBLE },
-      { species: Species.INDEEDEE },
-      { species: Species.CAPSAKID },
-      { species: Species.ALOLA_MEOWTH },
+      { species: SpeciesId.CHARMANDER },
+      { species: SpeciesId.SANDILE },
+      { species: SpeciesId.FERROSEED },
+      { species: SpeciesId.FOONGUS },
+      { species: SpeciesId.CUTIEFLY },
+      { species: SpeciesId.DEWPIDER },
+      { species: SpeciesId.TYPE_NULL },
+      { species: SpeciesId.MINIOR },
+      { species: SpeciesId.SOBBLE },
+      { species: SpeciesId.INDEEDEE },
+      { species: SpeciesId.CAPSAKID },
+      { species: SpeciesId.ALOLA_MEOWTH },
     ],
     classicWaveRewards: [
       { wave: 8, type: "SHINY_CHARM" },
@@ -394,6 +395,16 @@ export class TimedEventManager {
 
   isEventActive(): boolean {
     return timedEvents.some((te: TimedEvent) => this.isActive(te));
+  }
+
+  /**
+   * Check whether the current event is active and for April Fools.
+   * @returns Whether the April Fools event is currently active.
+   */
+  isAprilFoolsActive(): boolean {
+    return timedEvents.some(
+      te => this.isActive(te) && te.hasOwnProperty("bannerKey") && te.bannerKey!.startsWith("aprf"),
+    );
   }
 
   activeEventHasBanner(): boolean {
@@ -540,8 +551,8 @@ export class TimedEventManager {
     return ret;
   }
 
-  getEventLuckBoostedSpecies(): Species[] {
-    const ret: Species[] = [];
+  getEventLuckBoostedSpecies(): SpeciesId[] {
+    const ret: SpeciesId[] = [];
     timedEvents
       .filter(te => this.isActive(te))
       .map(te => {
@@ -652,7 +663,7 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
       console.log(this.event.bannerKey);
       const padding = 5;
       const showTimer = this.event.eventType !== EventType.NO_TIMER_DISPLAY;
-      const yPosition = globalScene.game.canvas.height / 6 - padding - (showTimer ? 10 : 0) - (this.event.yOffset ?? 0);
+      const yPosition = globalScene.scaledCanvas.height - padding - (showTimer ? 10 : 0) - (this.event.yOffset ?? 0);
       this.banner = new Phaser.GameObjects.Image(globalScene, this.availableWidth / 2, yPosition - padding, key);
       this.banner.setName("img-event-banner");
       this.banner.setOrigin(0.5, 1);

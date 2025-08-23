@@ -1,37 +1,34 @@
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { modifierTypes } from "#data/data-lists";
+import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
+import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
+import { FieldPosition } from "#enums/field-position";
+import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Nature } from "#enums/nature";
+import { PlayerGender } from "#enums/player-gender";
+import { SpeciesId } from "#enums/species-id";
+import { TrainerSlot } from "#enums/trainer-slot";
+import { addPokeballOpenParticles } from "#field/anims";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
+import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
   leaveEncounterWithoutBattle,
   selectPokemonForOption,
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
   updatePlayerMoney,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { TrainerSlot } from "#enums/trainer-slot";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
-import { FieldPosition } from "#app/field/pokemon";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
-import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { Species } from "#enums/species";
+} from "#mystery-encounters/encounter-phase-utils";
+import { isPokemonValidForEncounterOptionSelection } from "#mystery-encounters/encounter-pokemon-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
+import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { PlayerGender } from "#enums/player-gender";
-import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
-import { addPokeballOpenParticles } from "#app/field/anims";
-import { ShinySparklePhase } from "#app/phases/shiny-sparkle-phase";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
-import { PostSummonPhase } from "#app/phases/post-summon-phase";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { Nature } from "#enums/nature";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/funAndGames";
@@ -81,7 +78,7 @@ export const FunAndGamesEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
   .withIntroDialogue([
     {
       speaker: `${namespace}:speaker`,
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
     },
   ])
   .setLocalizationKey(`${namespace}`)
@@ -91,7 +88,7 @@ export const FunAndGamesEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
   .withOnInit(() => {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
     globalScene.loadBgm("mystery_encounter_fun_and_games", "mystery_encounter_fun_and_games.mp3");
-    encounter.setDialogueToken("wobbuffetName", getPokemonSpecies(Species.WOBBUFFET).getName());
+    encounter.setDialogueToken("wobbuffetName", getPokemonSpecies(SpeciesId.WOBBUFFET).getName());
     return true;
   })
   .withOnVisualsStart(() => {
@@ -121,7 +118,7 @@ export const FunAndGamesEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
 
         // Only Pokemon that are not KOed/legal can be selected
         const selectableFilter = (pokemon: Pokemon) => {
-          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalid_selection`);
+          return isPokemonValidForEncounterOptionSelection(pokemon, `${namespace}:invalidSelection`);
         };
 
         return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
@@ -135,7 +132,7 @@ export const FunAndGamesEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
         const moneyCost = (encounter.options[0].requirements[0] as MoneyRequirement).requiredMoney;
         updatePlayerMoney(-moneyCost, true, false);
         await showEncounterText(
-          i18next.t("mysteryEncounterMessages:paid_money", {
+          i18next.t("mysteryEncounterMessages:paidMoney", {
             amount: moneyCost,
           }),
         );
@@ -214,7 +211,7 @@ async function summonPlayerPokemon() {
     });
 
     // Also loads Wobbuffet data (cannot be shiny)
-    const enemySpecies = getPokemonSpecies(Species.WOBBUFFET);
+    const enemySpecies = getPokemonSpecies(SpeciesId.WOBBUFFET);
     globalScene.currentBattle.enemyParty = [];
     const wobbuffet = globalScene.addEnemyPokemon(
       enemySpecies,
@@ -287,25 +284,25 @@ function handleNextTurn() {
         guaranteedModifierTypeFuncs: [modifierTypes.MULTI_LENS],
         fillRemaining: false,
       });
-      resultMessageKey = `${namespace}:best_result`;
+      resultMessageKey = `${namespace}:bestResult`;
     } else if (healthRatio < 0.15) {
       // 2nd prize
       setEncounterRewards({
         guaranteedModifierTypeFuncs: [modifierTypes.SCOPE_LENS],
         fillRemaining: false,
       });
-      resultMessageKey = `${namespace}:great_result`;
+      resultMessageKey = `${namespace}:greatResult`;
     } else if (healthRatio < 0.33) {
       // 3rd prize
       setEncounterRewards({
         guaranteedModifierTypeFuncs: [modifierTypes.WIDE_LENS],
         fillRemaining: false,
       });
-      resultMessageKey = `${namespace}:good_result`;
+      resultMessageKey = `${namespace}:goodResult`;
     } else {
       // No prize
       isHealPhase = true;
-      resultMessageKey = `${namespace}:bad_result`;
+      resultMessageKey = `${namespace}:badResult`;
     }
 
     // End the battle
@@ -315,7 +312,7 @@ function handleNextTurn() {
     globalScene.currentBattle.mysteryEncounter!.doContinueEncounter = undefined;
     leaveEncounterWithoutBattle(isHealPhase);
     // Must end the TurnInit phase prematurely so battle phases aren't added to queue
-    queueEncounterMessage(`${namespace}:end_game`);
+    queueEncounterMessage(`${namespace}:endGame`);
     queueEncounterMessage(resultMessageKey);
 
     // Skip remainder of TurnInitPhase
@@ -323,9 +320,9 @@ function handleNextTurn() {
   }
   if (encounter.misc.turnsRemaining < 3) {
     // Display charging messages on turns that aren't the initial turn
-    queueEncounterMessage(`${namespace}:charging_continue`);
+    queueEncounterMessage(`${namespace}:chargingContinue`);
   }
-  queueEncounterMessage(`${namespace}:turn_remaining_${encounter.misc.turnsRemaining}`);
+  queueEncounterMessage(`${namespace}:turnRemaining${encounter.misc.turnsRemaining}`);
   encounter.misc.turnsRemaining--;
 
   // Don't skip remainder of TurnInitPhase
@@ -411,13 +408,13 @@ function summonPlayerPokemonAnimation(pokemon: PlayerPokemon): Promise<void> {
                 pokemon.fieldSetup(true);
                 globalScene.time.delayedCall(1000, () => {
                   if (pokemon.isShiny()) {
-                    globalScene.unshiftPhase(new ShinySparklePhase(pokemon.getBattlerIndex()));
+                    globalScene.phaseManager.unshiftNew("ShinySparklePhase", pokemon.getBattlerIndex());
                   }
 
                   pokemon.resetTurnData();
 
                   globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
-                  globalScene.pushPhase(new PostSummonPhase(pokemon.getBattlerIndex()));
+                  globalScene.phaseManager.pushNew("PostSummonPhase", pokemon.getBattlerIndex());
                   resolve();
                 });
               },

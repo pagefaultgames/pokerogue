@@ -1,9 +1,10 @@
-import { toReadableString } from "#app/utils/common";
-import { TextStyle, getBBCodeFrag } from "../ui/text";
 import { Nature } from "#enums/nature";
+import { EFFECTIVE_STATS, getShortenedStatKey, Stat } from "#enums/stat";
+import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
+import { getBBCodeFrag } from "#ui/text";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
-import { Stat, EFFECTIVE_STATS, getShortenedStatKey } from "#enums/stat";
 
 export function getNatureName(
   nature: Nature,
@@ -12,7 +13,7 @@ export function getNatureName(
   ignoreBBCode = false,
   uiTheme: UiTheme = UiTheme.DEFAULT,
 ): string {
-  let ret = toReadableString(Nature[nature]);
+  let ret = toCamelCase(Nature[nature]);
   //Translating nature
   if (i18next.exists(`nature:${ret}`)) {
     ret = i18next.t(`nature:${ret}` as any);

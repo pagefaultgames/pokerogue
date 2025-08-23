@@ -1,13 +1,15 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
-import { PERMANENT_STATS, Stat } from "#app/enums/stat";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { getTextColor, TextStyle } from "#app/ui/text";
+import type { BattlerIndex } from "#enums/battler-index";
+import { PERMANENT_STATS, Stat } from "#enums/stat";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import { getTextColor } from "#ui/text";
 import i18next from "i18next";
-import { PokemonPhase } from "./pokemon-phase";
 
 export class ScanIvsPhase extends PokemonPhase {
+  public readonly phaseName = "ScanIvsPhase";
   // biome-ignore lint/complexity/noUselessConstructor: This changes `battlerIndex` to be required
   constructor(battlerIndex: BattlerIndex) {
     super(battlerIndex);

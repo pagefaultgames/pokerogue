@@ -1,8 +1,9 @@
-import type { Variant } from "#app/sprites/variant";
 import { globalScene } from "#app/global-scene";
-import { isNullOrUndefined } from "#app/utils/common";
-import type PokemonSpecies from "../data/pokemon-species";
-import { addTextObject, TextStyle } from "./text";
+import type { PokemonSpecies } from "#data/pokemon-species";
+import { TextStyle } from "#enums/text-style";
+import type { Variant } from "#sprites/variant";
+import { addTextObject } from "#ui/text";
+import { isNullOrUndefined } from "#utils/common";
 
 interface SpeciesDetails {
   shiny?: boolean;
@@ -106,9 +107,9 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
     this.candyUpgradeOverlayIcon = candyUpgradeOverlayIcon;
 
     // move icons
-    const eggMove1Icon = globalScene.add.image(0, 12, "mystery_egg");
-    eggMove1Icon.setOrigin(0, 0);
-    eggMove1Icon.setScale(0.25);
+    const eggMove1Icon = globalScene.add.image(0, 12, "common_egg");
+    eggMove1Icon.setOrigin(0, -0.03);
+    eggMove1Icon.setScale(0.24);
     eggMove1Icon.setVisible(false);
     this.add(eggMove1Icon);
     this.eggMove1Icon = eggMove1Icon;
@@ -122,7 +123,7 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
     this.tmMove1Icon = tmMove1Icon;
 
     // move icons
-    const eggMove2Icon = globalScene.add.image(7, 12, "mystery_egg");
+    const eggMove2Icon = globalScene.add.image(7, 12, "common_egg");
     eggMove2Icon.setOrigin(0, 0);
     eggMove2Icon.setScale(0.25);
     eggMove2Icon.setVisible(false);
@@ -207,6 +208,26 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
     );
     this.checkIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant);
     this.add(this.icon);
+
+    [
+      this.hiddenAbilityIcon,
+      this.favoriteIcon,
+      this.classicWinIcon,
+      this.candyUpgradeIcon,
+      this.candyUpgradeOverlayIcon,
+      this.eggMove1Icon,
+      this.tmMove1Icon,
+      this.eggMove2Icon,
+      this.tmMove2Icon,
+      this.passive1Icon,
+      this.passive2Icon,
+      this.passive1OverlayIcon,
+      this.passive2OverlayIcon,
+    ].forEach(icon => {
+      if (icon) {
+        this.bringToTop(icon);
+      }
+    });
   }
 
   checkIconId(female, formIndex, shiny, variant) {

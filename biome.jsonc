@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git",
@@ -10,72 +10,103 @@
     "enabled": true,
     "useEditorconfig": true,
     "indentStyle": "space",
-    "ignore": ["src/enums/*", "src/data/balance/*"],
+    "includes": ["**", "!**/src/enums/**/*", "!**/src/data/balance/**/*"],
     "lineWidth": 120
   },
   "files": {
     "ignoreUnknown": true,
     // Adding folders to the ignore list is GREAT for performance because it prevents biome from descending into them
     // and having to verify whether each individual file is ignored
-    "ignore": [
-      "**/*.d.ts",
-      "dist/*",
-      "build/*",
-      "coverage/*",
-      "public/*",
-      ".github/*",
-      "node_modules/*",
-      ".vscode/*",
-      "*.css", // TODO?
-      "*.html", // TODO?
-      "src/overrides.ts",
-      // TODO: these files are too big and complex, ignore them until their respective refactors
-      "src/data/moves/move.ts",
-      "src/data/abilities/ability.ts",
-      "src/field/pokemon.ts",
-
-      // this file is just too big:
-      "src/data/balance/tms.ts"
+    "includes": [
+      "**",
+      "!**/dist/**/*",
+      "!**/build/**/*",
+      "!**/coverage/**/*",
+      "!**/public/**/*",
+      "!**/.github/**/*",
+      "!**/node_modules/**/*",
+      "!**/.vscode/**/*",
+      "!**/typedoc/**/*",
+      // TODO: lint css and html?
+      "!**/*.css",
+      "!**/*.html",
+      // TODO: enable linting this file
+      "!**/src/data/moves/move.ts",
+      // this file is too big
+      "!**/src/data/balance/tms.ts"
     ]
   },
-
-  // While it'd be nice to enable consistent sorting, enabling this causes issues due to circular import resolution order
-  // TODO: Remove if we ever get down to 0 circular imports
-  "organizeImports": { "enabled": false },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [":ALIAS:", ":NODE:", ":PACKAGE_WITH_PROTOCOL:", ":PACKAGE:", ":PATH:"]
+          }
+        }
+      }
+    }
+  },
   "linter": {
-    "ignore": [
-      "src/phases/move-effect-phase.ts" // TODO: unignore after move-effect-phase refactor
-    ],
     "enabled": true,
     "rules": {
       "recommended": true,
       "correctness": {
         "noUndeclaredVariables": "off",
         "noUnusedVariables": "error",
-        "noSwitchDeclarations": "warn", // TODO: refactor and make this an error
-        "noVoidTypeReturn": "warn", // TODO: Refactor and make this an error
-        "noUnusedImports": "error"
+        "noSwitchDeclarations": "error",
+        "noVoidTypeReturn": "error",
+        "noUnusedImports": {
+          "level": "error",
+          "fix": "safe"
+        },
+        "noUnusedFunctionParameters": "error",
+        "noUnusedLabels": "error",
+        "noPrivateImports": "error"
       },
       "style": {
-        "noVar": "error",
-        "useEnumInitializers": "off", // large enums like Moves/Species would make this cumbersome 
-        "useBlockStatements": "error",
+        "useEnumInitializers": "off", // large enums like Moves/Species would make this cumbersome
+        "useBlockStatements": {
+          "level": "error",
+          "fix": "safe"
+        },
         "useConst": "error",
         "useImportType": "error",
         "noNonNullAssertion": "off", // TODO: Turn this on ASAP and fix all non-null assertions in non-test files
         "noParameterAssign": "off",
         "useExponentiationOperator": "off", // Too typo-prone and easy to mixup with standard multiplication (* vs **)
-        "useDefaultParameterLast": "off", // TODO: Fix spots in the codebase where this flag would be triggered, and then enable
+        "useDefaultParameterLast": {
+          // TODO: Fix spots in the codebase where this flag would be triggered
+          // and then set to "error" and re-enable the fixer
+          "level": "warn",
+          "fix": "none"
+        },
         "useSingleVarDeclarator": "off",
         "useNodejsImportProtocol": "off",
         "useTemplate": "off", // string concatenation is faster: https://stackoverflow.com/questions/29055518/are-es6-template-literals-faster-than-string-concatenation
-        "noNamespaceImport": "error"
+        "useAsConstAssertion": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "noUselessElse": "error",
+        "noRestrictedTypes": {
+          "level": "error",
+          "options": {
+            "types": {
+              "integer": {
+                "message": "This is an alias for 'number' that can provide false impressions of what values can actually be contained in this variable. Use 'number' instead.",
+                "use": "number"
+              }
+            }
+          }
+        }
       },
       "suspicious": {
         "noDoubleEquals": "error",
-        // While this would be a nice rule to enable, the current structure of the codebase makes this infeasible 
+        // While this would be a nice rule to enable, the current structure of the codebase makes this infeasible
         // due to being used for move/ability `args` params and save data-related code.
-        // This can likely be enabled for all non-utils files once these are eventually reworked, but until then we leave it off.  
+        // This can likely be enabled for all non-utils files once these are eventually reworked, but until then we leave it off.
         "noExplicitAny": "off",
         "noAssignInExpressions": "off",
         "noPrototypeBuiltins": "off",
@@ -83,32 +114,85 @@
         "noImplicitAnyLet": "warn", // TODO: Refactor and make this an error
         "noRedeclare": "info", // TODO: Refactor and make this an error
         "noGlobalIsNan": "off",
-        "noAsyncPromiseExecutor": "warn" // TODO: Refactor and make this an error
+        "noAsyncPromiseExecutor": "warn", // TODO: Refactor and make this an error
+        "noVar": "error",
+        "noDocumentCookie": "off" // Firefox has minimal support for the "Cookie Store API"
       },
       "complexity": {
-        "noExcessiveCognitiveComplexity": "warn", // TODO: Refactor and make this an error
+        "noExcessiveCognitiveComplexity": "info", // TODO: Refactor and make this an error
         "useLiteralKeys": "off",
         "noForEach": "off", // Foreach vs for of is not that simple.
         "noUselessSwitchCase": "off", // Explicit > Implicit
-        "noUselessConstructor": "warn", // TODO: Refactor and make this an error
-        "noBannedTypes": "warn" // TODO: Refactor and make this an error
+        "noUselessConstructor": "error",
+        "noBannedTypes": "warn", // TODO: Refactor and make this an error
+        "noThisInStatic": "error",
+        "noUselessThisAlias": "error",
+        "noUselessTernary": "error"
+      },
+      "performance": {
+        "noNamespaceImport": "error",
+        "noDelete": "error"
+      },
+      "nursery": {
+        "useAdjacentGetterSetter": "error",
+        "noConstantBinaryExpression": "error",
+        "noTsIgnore": "error",
+        "noAwaitInLoop": "off",
+        "useJsonImportAttribute": "off", // "Import attributes are only supported when the '--module' option is set to 'esnext', 'node18', 'nodenext', or 'preserve'. ts(2823)"
+        "useIndexOf": "error",
+        "useObjectSpread": "error",
+        "useNumericSeparators": "off", // TODO: enable?
+        "useIterableCallbackReturn": "warn", // TODO: refactor and make "error"
+        "noShadow": "warn" // TODO: refactor and make "error"
       }
     }
   },
   "javascript": {
-    "formatter": { "quoteStyle": "double", "arrowParentheses": "asNeeded" }
+    "formatter": {
+      "quoteStyle": "double",
+      "arrowParentheses": "asNeeded"
+    },
+    "parser": {
+      "jsxEverywhere": false
+    }
   },
   "overrides": [
     {
-      "include": ["test/**/*.test.ts"],
-      "javascript": { "globals": [] },
+      "includes": ["**/test/**/*.test.ts"],
       "linter": {
         "rules": {
           "performance": {
-            "noDelete": "off" // TODO: evaluate if this is necessary for the test(s) to function
+            "noDelete": "off", // TODO: evaluate if this is necessary for the test(s) to function
+            "noNamespaceImport": "off" // this is required for `vi.spyOn` to work in some tests
           },
           "style": {
-            "noNamespaceImport": "off" // this is required for `vi.spyOn` to work in some tests
+            "noNonNullAssertion": "off"
+          },
+          "nursery": {
+            "noFloatingPromises": "error"
+          }
+        }
+      }
+    },
+
+    // Overrides to prevent unused import removal inside `overrides.ts` and enums files (for TSDoc linkcodes),
+    // as well as in all TS files in `scripts/` (which are assumed to be boilerplate templates).
+    {
+      "includes": ["**/src/overrides.ts", "**/src/enums/**/*", "**/scripts/**/*.ts", "**/*.d.ts"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedImports": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/src/overrides.ts", "**/scripts/**/*.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useImportType": "off"
           }
         }
       }

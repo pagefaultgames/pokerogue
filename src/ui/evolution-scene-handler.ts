@@ -1,10 +1,11 @@
-import MessageUiHandler from "./message-ui-handler";
-import { TextStyle, addTextObject } from "./text";
-import { UiMode } from "#enums/ui-mode";
-import { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
+import { Button } from "#enums/buttons";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import { MessageUiHandler } from "#ui/message-ui-handler";
+import { addTextObject } from "#ui/text";
 
-export default class EvolutionSceneHandler extends MessageUiHandler {
+export class EvolutionSceneHandler extends MessageUiHandler {
   public evolutionContainer: Phaser.GameObjects.Container;
   public messageBg: Phaser.GameObjects.Image;
   public messageContainer: Phaser.GameObjects.Container;
@@ -21,19 +22,13 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
 
     const ui = this.getUi();
 
-    this.evolutionContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
-    ui.add(this.evolutionContainer);
+    this.evolutionContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height);
 
-    const messageBg = globalScene.add.sprite(0, 0, "bg", globalScene.windowType);
-    messageBg.setOrigin(0, 1);
-    messageBg.setVisible(false);
-    ui.add(messageBg);
+    const messageBg = globalScene.add.sprite(0, 0, "bg", globalScene.windowType).setOrigin(0, 1).setVisible(false);
 
     this.messageBg = messageBg;
 
-    this.messageContainer = globalScene.add.container(12, -39);
-    this.messageContainer.setVisible(false);
-    ui.add(this.messageContainer);
+    this.messageContainer = globalScene.add.container(12, -39).setVisible(false);
 
     const message = addTextObject(0, 0, "", TextStyle.MESSAGE, {
       maxLines: 2,
@@ -42,6 +37,8 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
       },
     });
     this.messageContainer.add(message);
+
+    ui.add([this.evolutionContainer, this.messageBg, this.messageContainer]);
 
     this.message = message;
 
@@ -52,10 +49,8 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
     super.show(_args);
 
     globalScene.ui.bringToTop(this.evolutionContainer);
-    globalScene.ui.bringToTop(this.messageBg);
-    globalScene.ui.bringToTop(this.messageContainer);
-    this.messageBg.setVisible(true);
-    this.messageContainer.setVisible(true);
+    globalScene.ui.bringToTop(this.messageBg.setVisible(true));
+    globalScene.ui.bringToTop(this.messageContainer.setVisible(true));
 
     return true;
   }

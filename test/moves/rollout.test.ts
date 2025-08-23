@@ -1,9 +1,8 @@
-import { allMoves } from "#app/data/moves/move";
-import { CommandPhase } from "#app/phases/command-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import GameManager from "#test/testUtils/gameManager";
+import { allMoves } from "#data/data-lists";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
+import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -23,31 +22,32 @@ describe("Moves - Rollout", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.disableCrits();
-    game.override.battleStyle("single");
-    game.override.starterSpecies(Species.RATTATA);
-    game.override.ability(Abilities.BALL_FETCH);
-    game.override.enemySpecies(Species.BIDOOF);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override
+      .criticalHits(false)
+      .battleStyle("single")
+      .starterSpecies(SpeciesId.RATTATA)
+      .ability(AbilityId.BALL_FETCH)
+      .enemySpecies(SpeciesId.BIDOOF)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .startingLevel(100)
+      .enemyLevel(100)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("should double it's dmg on sequential uses but reset after 5", async () => {
-    game.override.moveset([Moves.ROLLOUT]);
-    vi.spyOn(allMoves[Moves.ROLLOUT], "accuracy", "get").mockReturnValue(100); //always hit
+  it("should double its dmg on sequential uses but reset after 5", async () => {
+    game.override.moveset([MoveId.ROLLOUT]);
+    vi.spyOn(allMoves[MoveId.ROLLOUT], "accuracy", "get").mockReturnValue(100); //always hit
 
     const variance = 5;
     const turns = 6;
     const dmgHistory: number[] = [];
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
-    const playerPkm = game.scene.getPlayerParty()[0];
+    const playerPkm = game.field.getPlayerPokemon();
     vi.spyOn(playerPkm, "stats", "get").mockReturnValue([500000, 1, 1, 1, 1, 1]); // HP, ATK, DEF, SPATK, SPDEF, SPD
 
-    const enemyPkm = game.scene.getEnemyParty()[0];
+    const enemyPkm = game.field.getEnemyPokemon();
     vi.spyOn(enemyPkm, "stats", "get").mockReturnValue([500000, 1, 1, 1, 1, 1]); // HP, ATK, DEF, SPATK, SPDEF, SPD
     vi.spyOn(enemyPkm, "getHeldItems").mockReturnValue([]); //no berries
 
@@ -55,9 +55,8 @@ describe("Moves - Rollout", () => {
     let previousHp = enemyPkm.hp;
 
     for (let i = 0; i < turns; i++) {
-      game.move.select(Moves.ROLLOUT);
-      await game.phaseInterceptor.to(CommandPhase);
-
+      game.move.select(MoveId.ROLLOUT);
+      await game.toNextTurn();
       dmgHistory.push(previousHp - enemyPkm.hp);
       previousHp = enemyPkm.hp;
     }

@@ -1,12 +1,13 @@
-import { TextStyle, addTextObject } from "./text";
-import type { UiMode } from "#enums/ui-mode";
-import UiHandler from "./ui-handler";
-import { WindowVariant, addWindow } from "./ui-theme";
-import type { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
+import type { Button } from "#enums/buttons";
+import { TextStyle } from "#enums/text-style";
+import type { UiMode } from "#enums/ui-mode";
+import { addTextObject } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import { addWindow, WindowVariant } from "#ui/ui-theme";
 
 export interface ModalConfig {
-  buttonActions: Function[];
+  buttonActions: ((...args: any[]) => any)[];
 }
 
 export abstract class ModalUiHandler extends UiHandler {
@@ -45,7 +46,7 @@ export abstract class ModalUiHandler extends UiHandler {
     this.modalContainer = globalScene.add.container(0, 0);
 
     this.modalContainer.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6),
+      new Phaser.Geom.Rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height),
       Phaser.Geom.Rectangle.Contains,
     );
 
@@ -104,8 +105,8 @@ export abstract class ModalUiHandler extends UiHandler {
         const overlay = globalScene.add.rectangle(
           (this.getWidth() + marginLeft + marginRight) / 2,
           (this.getHeight() + marginTop + marginBottom) / 2,
-          globalScene.game.canvas.width / 6,
-          globalScene.game.canvas.height / 6,
+          globalScene.scaledCanvas.width,
+          globalScene.scaledCanvas.height,
           0,
         );
         overlay.setOrigin(0.5, 0.5);
@@ -151,10 +152,15 @@ export abstract class ModalUiHandler extends UiHandler {
   updateContainer(config?: ModalConfig): void {
     const [marginTop, marginRight, marginBottom, marginLeft] = this.getMargin(config);
 
-    const [width, height] = [this.getWidth(config), this.getHeight(config)];
+    /**
+     * If the total amount of characters for the 2 buttons exceeds ~30 characters,
+     * the width in `registration-form-ui-handler.ts` and `login-form-ui-handler.ts` needs to be increased.
+     */
+    const width = this.getWidth(config);
+    const height = this.getHeight(config);
     this.modalContainer.setPosition(
-      (globalScene.game.canvas.width / 6 - (width + (marginRight - marginLeft))) / 2,
-      (-globalScene.game.canvas.height / 6 - (height + (marginBottom - marginTop))) / 2,
+      (globalScene.scaledCanvas.width - (width + (marginRight - marginLeft))) / 2,
+      (-globalScene.scaledCanvas.height - (height + (marginBottom - marginTop))) / 2,
     );
 
     this.modalBg.setSize(width, height);
@@ -165,10 +171,14 @@ export abstract class ModalUiHandler extends UiHandler {
     this.titleText.setX(width / 2);
     this.titleText.setVisible(!!title);
 
-    for (let b = 0; b < this.buttonContainers.length; b++) {
-      const sliceWidth = width / (this.buttonContainers.length + 1);
-
-      this.buttonContainers[b].setPosition(sliceWidth * (b + 1), this.modalBg.height - (this.buttonBgs[b].height + 8));
+    if (this.buttonContainers.length > 0) {
+      const spacing = 12;
+      const totalWidth = this.buttonBgs.reduce((sum, bg) => sum + bg.width, 0) + spacing * (this.buttonBgs.length - 1);
+      let x = (this.modalBg.width - totalWidth) / 2;
+      this.buttonContainers.forEach((container, i) => {
+        container.setPosition(x + this.buttonBgs[i].width / 2, this.modalBg.height - (this.buttonBgs[i].height + 8));
+        x += this.buttonBgs[i].width + spacing;
+      });
     }
   }
 

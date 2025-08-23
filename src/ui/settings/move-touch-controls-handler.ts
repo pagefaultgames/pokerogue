@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import type TouchControl from "#app/touch-controls";
-import type UI from "#app/ui/ui";
+import type { TouchControl } from "#app/touch-controls";
+import type { UI } from "#ui/ui";
 import i18next from "i18next";
 
 export const TOUCH_CONTROL_POSITIONS_LANDSCAPE = "touchControlPositionsLandscape";
@@ -24,7 +24,7 @@ type ToolbarRefs = {
 /**
  * Handles the dragging of touch controls around the screen.
  */
-export default class MoveTouchControlsHandler {
+export class MoveTouchControlsHandler {
   /** The element that is currently being dragged */
   private draggingElement: HTMLElement | null = null;
 
@@ -98,7 +98,7 @@ export default class MoveTouchControlsHandler {
         <div id="cancelButton" class="button">${i18next.t("settings:touchCancel")}</div>
       </div>
       <div class="info-row">
-        <div class="orientation-label"> 
+        <div class="orientation-label">
           ${i18next.t("settings:orientation")}
           <span id="orientation">
             ${this.isLandscapeMode ? i18next.t("settings:landscape") : i18next.t("settings:portrait")}

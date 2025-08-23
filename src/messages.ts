@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { BattleSpec } from "#enums/battle-spec";
-import type Pokemon from "./field/pokemon";
+import type { Pokemon } from "#field/pokemon";
 import i18next from "i18next";
 
 /**
@@ -16,7 +16,7 @@ export function getPokemonNameWithAffix(pokemon: Pokemon | undefined, useIllusio
 
   switch (globalScene.currentBattle.battleSpec) {
     case BattleSpec.DEFAULT:
-      return !pokemon.isPlayer()
+      return pokemon.isEnemy()
         ? pokemon.hasTrainer()
           ? i18next.t("battle:foePokemonWithAffix", {
               pokemonName: pokemon.getNameToRender(useIllusion),
@@ -26,7 +26,7 @@ export function getPokemonNameWithAffix(pokemon: Pokemon | undefined, useIllusio
             })
         : pokemon.getNameToRender(useIllusion);
     case BattleSpec.FINAL_BOSS:
-      return !pokemon.isPlayer()
+      return pokemon.isEnemy()
         ? i18next.t("battle:foePokemonWithAffix", { pokemonName: pokemon.getNameToRender(useIllusion) })
         : pokemon.getNameToRender(useIllusion);
     default:

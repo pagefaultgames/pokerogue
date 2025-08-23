@@ -1,43 +1,45 @@
-import { starterColors } from "#app/global-vars/starter-colors";
-import { globalScene } from "#app/global-scene";
-import { UiMode } from "#enums/ui-mode";
-import UiHandler from "#app/ui/ui-handler";
-import {
-  getLocalizedSpriteKey,
-  rgbHexToRgba,
-  padInt,
-  getEnumValues,
-  fixedInt,
-  isNullOrUndefined,
-  toReadableString,
-  formatStat,
-} from "#app/utils/common";
-import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
-import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
-import { argbFromRgba } from "@material/material-color-utilities";
-import { getTypeRgb } from "#app/data/type";
-import { PokemonType } from "#enums/pokemon-type";
-import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "#app/ui/text";
-import type Move from "#app/data/moves/move";
-import { MoveCategory } from "#enums/MoveCategory";
-import { getPokeballAtlasKey } from "#app/data/pokeball";
-import { getGenderColor, getGenderSymbol } from "#app/data/gender";
-import { getLevelRelExp, getLevelTotalExp } from "#app/data/exp";
-import { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { StatusEffect } from "#enums/status-effect";
-import { getBiomeName } from "#app/data/balance/biomes";
-import { getNatureName, getNatureStatMultiplier } from "#app/data/nature";
+import type { Ability } from "#abilities/ability";
 import { loggedInUser } from "#app/account";
-import type { Variant } from "#app/sprites/variant";
-import { getVariantTint } from "#app/sprites/variant";
+import { globalScene } from "#app/global-scene";
+import { starterColors } from "#app/global-vars/starter-colors";
+import { getBiomeName } from "#balance/biomes";
+import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
+import { getLevelRelExp, getLevelTotalExp } from "#data/exp";
+import { getGenderColor, getGenderSymbol } from "#data/gender";
+import { getNatureName, getNatureStatMultiplier } from "#data/nature";
+import { getPokeballAtlasKey } from "#data/pokeball";
+import { getTypeRgb } from "#data/type";
 import { Button } from "#enums/buttons";
-import type { Ability } from "#app/data/abilities/ability-class";
-import i18next from "i18next";
-import { modifierSortFunc } from "#app/modifier/modifier";
-import { PlayerGender } from "#enums/player-gender";
-import { Stat, PERMANENT_STATS, getStatKey } from "#enums/stat";
+import { MoveCategory } from "#enums/move-category";
 import { Nature } from "#enums/nature";
-import { achvs } from "#app/system/achv";
+import { PlayerGender } from "#enums/player-gender";
+import { PokemonType } from "#enums/pokemon-type";
+import { getStatKey, PERMANENT_STATS, Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
+import { TextStyle } from "#enums/text-style";
+import { UiMode } from "#enums/ui-mode";
+import type { PlayerPokemon } from "#field/pokemon";
+import { modifierSortFunc, PokemonHeldItemModifier } from "#modifiers/modifier";
+import type { Move } from "#moves/move";
+import type { PokemonMove } from "#moves/pokemon-move";
+import type { Variant } from "#sprites/variant";
+import { getVariantTint } from "#sprites/variant";
+import { achvs } from "#system/achv";
+import { addBBCodeTextObject, addTextObject, getBBCodeFrag } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
+import {
+  fixedInt,
+  formatStat,
+  getLocalizedSpriteKey,
+  getShinyDescriptor,
+  isNullOrUndefined,
+  padInt,
+  rgbHexToRgba,
+} from "#utils/common";
+import { getEnumValues } from "#utils/enums";
+import { toCamelCase, toTitleCase } from "#utils/strings";
+import { argbFromRgba } from "@material/material-color-utilities";
+import i18next from "i18next";
 
 enum Page {
   PROFILE,
@@ -62,7 +64,7 @@ interface abilityContainer {
   descriptionText: Phaser.GameObjects.Text | null;
 }
 
-export default class SummaryUiHandler extends UiHandler {
+export class SummaryUiHandler extends UiHandler {
   private summaryUiMode: SummaryUiMode;
 
   private summaryContainer: Phaser.GameObjects.Container;
@@ -115,7 +117,7 @@ export default class SummaryUiHandler extends UiHandler {
 
   private pokemon: PlayerPokemon | null;
   private playerParty: boolean;
-  /**This is set to false when checking the summary of a freshly caught Pokemon as it is not part of a player's party yet but still needs to display its items**/
+  /**This is set to false when checking the summary of a freshly caught Pokemon as it is not part of a player's party yet but still needs to display its items*/
   private newMove: Move | null;
   private moveSelectFunction: Function | null;
   private transitioning: boolean;
@@ -146,7 +148,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.tabSprite.setOrigin(1, 1);
     this.summaryContainer.add(this.tabSprite);
 
-    const summaryLabel = addTextObject(4, -165, i18next.t("pokemonSummary:pokemonInfo"), TextStyle.SUMMARY);
+    const summaryLabel = addTextObject(4, -165, i18next.t("pokemonSummary:pokemonInfo"), TextStyle.SUMMARY_HEADER);
     summaryLabel.setOrigin(0, 1);
     this.summaryContainer.add(summaryLabel);
 
@@ -353,18 +355,13 @@ export default class SummaryUiHandler extends UiHandler {
     } catch (err: unknown) {
       console.error(`Failed to play animation for ${spriteKey}`, err);
     }
-    this.pokemonSprite.setPipelineData("teraColor", getTypeRgb(this.pokemon.getTeraType()));
-    this.pokemonSprite.setPipelineData("isTerastallized", this.pokemon.isTerastallized);
-    this.pokemonSprite.setPipelineData("ignoreTimeTint", true);
-    this.pokemonSprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
-    this.pokemonSprite.setPipelineData(
-      "shiny",
-      this.pokemon.summonData.illusion?.basePokemon.shiny ?? this.pokemon.shiny,
-    );
-    this.pokemonSprite.setPipelineData(
-      "variant",
-      this.pokemon.summonData.illusion?.basePokemon.variant ?? this.pokemon.variant,
-    );
+    this.pokemonSprite
+      .setPipelineData("teraColor", getTypeRgb(this.pokemon.getTeraType()))
+      .setPipelineData("isTerastallized", this.pokemon.isTerastallized)
+      .setPipelineData("ignoreTimeTint", true)
+      .setPipelineData("spriteKey", this.pokemon.getSpriteKey())
+      .setPipelineData("shiny", this.pokemon.shiny)
+      .setPipelineData("variant", this.pokemon.variant);
     ["spriteColors", "fusionSpriteColors"].map(k => {
       delete this.pokemonSprite.pipelineData[`${k}Base`];
       if (this.pokemon?.summonData.speciesForm) {
@@ -416,7 +413,7 @@ export default class SummaryUiHandler extends UiHandler {
     }
 
     this.candyCountText.setText(
-      `x${globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].candyCount}`,
+      `×${globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].candyCount}`,
     );
 
     this.candyShadow.setCrop(0, 0, 16, candyCropY);
@@ -428,7 +425,7 @@ export default class SummaryUiHandler extends UiHandler {
       this.friendshipShadow.on("pointerout", () => globalScene.ui.hideTooltip());
     }
 
-    this.friendshipText.setText(`${this.pokemon?.friendship || "0"} / 255`);
+    this.friendshipText.setText(` ${this.pokemon?.friendship || "0"}/255`);
 
     this.friendshipShadow.setCrop(0, 0, 16, 16 - 16 * ((this.pokemon?.friendship || 0) / 255));
 
@@ -444,26 +441,25 @@ export default class SummaryUiHandler extends UiHandler {
     this.shinyIcon.setVisible(this.pokemon.isShiny(false));
     this.shinyIcon.setTint(getVariantTint(baseVariant));
     if (this.shinyIcon.visible) {
-      const shinyDescriptor =
-        doubleShiny || baseVariant
-          ? `${baseVariant === 2 ? i18next.t("common:epicShiny") : baseVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}${doubleShiny ? `/${this.pokemon.fusionVariant === 2 ? i18next.t("common:epicShiny") : this.pokemon.fusionVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}` : ""}`
-          : "";
-      this.shinyIcon.on("pointerover", () =>
-        globalScene.ui.showTooltip(
-          "",
-          `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`,
-          true,
-        ),
-      );
-      this.shinyIcon.on("pointerout", () => globalScene.ui.hideTooltip());
+      let shinyDescriptor = "";
+      if (doubleShiny || baseVariant) {
+        shinyDescriptor = " (" + getShinyDescriptor(baseVariant);
+        if (doubleShiny) {
+          shinyDescriptor += "/" + getShinyDescriptor(this.pokemon.fusionVariant);
+        }
+        shinyDescriptor += ")";
+      }
+      this.shinyIcon
+        .on("pointerover", () =>
+          globalScene.ui.showTooltip("", i18next.t("common:shinyOnHover") + shinyDescriptor, true),
+        )
+        .on("pointerout", () => globalScene.ui.hideTooltip());
     }
 
     this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
     this.fusionShinyIcon.setVisible(doubleShiny);
     if (isFusion) {
-      this.fusionShinyIcon.setTint(
-        getVariantTint(this.pokemon.summonData.illusion?.basePokemon.fusionVariant ?? this.pokemon.fusionVariant),
-      );
+      this.fusionShinyIcon.setTint(getVariantTint(this.pokemon.fusionVariant));
     }
 
     this.pokeball.setFrame(getPokeballAtlasKey(this.pokemon.pokeball));
@@ -808,24 +804,34 @@ export default class SummaryUiHandler extends UiHandler {
       case Page.PROFILE: {
         const profileContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(profileContainer);
+        const otColor =
+          globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE;
+        const usernameReplacement =
+          globalScene.gameData.gender === PlayerGender.FEMALE
+            ? i18next.t("trainerNames:playerF")
+            : i18next.t("trainerNames:playerM");
 
         // TODO: should add field for original trainer name to Pokemon object, to support gift/traded Pokemon from MEs
         const trainerText = addBBCodeTextObject(
           7,
           12,
-          `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(loggedInUser?.username || i18next.t("pokemonSummary:unknown"), globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE)}`,
+          `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(
+            !globalScene.hideUsername
+              ? loggedInUser?.username || i18next.t("pokemonSummary:unknown")
+              : usernameReplacement,
+            otColor,
+          )}`,
           TextStyle.SUMMARY_ALT,
-        );
-        trainerText.setOrigin(0, 0);
+        ).setOrigin(0);
         profileContainer.add(trainerText);
 
+        const idToDisplay = globalScene.hideUsername ? "*****" : globalScene.gameData.trainerId.toString();
         const trainerIdText = addTextObject(
           141,
           12,
-          `${i18next.t("pokemonSummary:idNo")}${globalScene.gameData.trainerId.toString()}`,
+          `${i18next.t("pokemonSummary:idNo")}${idToDisplay}`,
           TextStyle.SUMMARY_ALT,
-        );
-        trainerIdText.setOrigin(0, 0);
+        ).setOrigin(0);
         profileContainer.add(trainerIdText);
 
         const typeLabel = addTextObject(7, 28, `${i18next.t("pokemonSummary:type")}/`, TextStyle.WINDOW_ALT);
@@ -861,7 +867,7 @@ export default class SummaryUiHandler extends UiHandler {
             141 + luckLabelText.displayWidth + 2,
             28,
             this.pokemon.getLuck().toString(),
-            TextStyle.SUMMARY,
+            TextStyle.LUCK_VALUE,
           );
           luckText.setOrigin(0, 0);
           luckText.setTint(getVariantTint(Math.min(this.pokemon.getLuck() - 1, 2) as Variant));
@@ -873,7 +879,7 @@ export default class SummaryUiHandler extends UiHandler {
           !isNullOrUndefined(this.pokemon)
         ) {
           const teraIcon = globalScene.add.sprite(123, 26, "button_tera");
-          teraIcon.setName("terrastallize-icon");
+          teraIcon.setName("terastallize-icon");
           teraIcon.setFrame(PokemonType[this.pokemon.getTeraType()].toLowerCase());
           profileContainer.add(teraIcon);
         }
@@ -914,11 +920,11 @@ export default class SummaryUiHandler extends UiHandler {
           abilityInfo.labelImage.setOrigin(0, 0);
           profileContainer.add(abilityInfo.labelImage);
 
-          abilityInfo.nameText = addTextObject(7, 66, abilityInfo.ability?.name!, TextStyle.SUMMARY_ALT); // TODO: is this bang correct?
+          abilityInfo.nameText = addTextObject(7, 68, abilityInfo.ability?.name!, TextStyle.SUMMARY_ALT); // TODO: is this bang correct?
           abilityInfo.nameText.setOrigin(0, 1);
           profileContainer.add(abilityInfo.nameText);
 
-          abilityInfo.descriptionText = addTextObject(7, 69, abilityInfo.ability?.description!, TextStyle.WINDOW_ALT, {
+          abilityInfo.descriptionText = addTextObject(7, 71, abilityInfo.ability?.description!, TextStyle.WINDOW_ALT, {
             wordWrap: { width: 1224 },
           }); // TODO: is this bang correct?
           abilityInfo.descriptionText.setOrigin(0, 0);
@@ -956,8 +962,8 @@ export default class SummaryUiHandler extends UiHandler {
         this.passiveContainer?.descriptionText?.setVisible(false);
 
         const closeFragment = getBBCodeFrag("", TextStyle.WINDOW_ALT);
-        const rawNature = toReadableString(Nature[this.pokemon?.getNature()!]); // TODO: is this bang correct?
-        const nature = `${getBBCodeFrag(toReadableString(getNatureName(this.pokemon?.getNature()!)), TextStyle.SUMMARY_RED)}${closeFragment}`; // TODO: is this bang correct?
+        const rawNature = toCamelCase(Nature[this.pokemon?.getNature()!]); // TODO: is this bang correct?
+        const nature = `${getBBCodeFrag(toTitleCase(getNatureName(this.pokemon?.getNature()!)), TextStyle.SUMMARY_RED)}${closeFragment}`; // TODO: is this bang correct?
 
         const memoString = i18next.t("pokemonSummary:memoString", {
           metFragment: i18next.t(
@@ -997,16 +1003,16 @@ export default class SummaryUiHandler extends UiHandler {
             16 * rowIndex,
             statName,
             natureStatMultiplier === 1
-              ? TextStyle.SUMMARY
+              ? TextStyle.SUMMARY_STATS
               : natureStatMultiplier > 1
-                ? TextStyle.SUMMARY_PINK
-                : TextStyle.SUMMARY_BLUE,
+                ? TextStyle.SUMMARY_STATS_PINK
+                : TextStyle.SUMMARY_STATS_BLUE,
           );
           const ivLabel = addTextObject(
             115 * colIndex + (colIndex === 1 ? 5 : 0),
             16 * rowIndex,
             statName,
-            this.pokemon?.ivs[stat] === 31 ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY,
+            this.pokemon?.ivs[stat] === 31 ? TextStyle.SUMMARY_STATS_GOLD : TextStyle.SUMMARY_STATS,
           );
 
           statLabel.setOrigin(0.5, 0);
@@ -1237,7 +1243,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.moveSelect = true;
     this.extraMoveRowContainer.setVisible(true);
     this.selectedMoveIndex = -1;
-    this.setCursor(0);
+    this.setCursor(this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? 4 : 0);
     this.showMoveEffect();
   }
 

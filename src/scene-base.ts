@@ -1,3 +1,5 @@
+import { coerceArray } from "#utils/common";
+
 export const legacyCompatibleImages: string[] = [];
 
 export class SceneBase extends Phaser.Scene {
@@ -88,9 +90,7 @@ export class SceneBase extends Phaser.Scene {
     } else {
       folder += "/";
     }
-    if (!Array.isArray(filenames)) {
-      filenames = [filenames];
-    }
+    filenames = coerceArray(filenames);
     for (const f of filenames as string[]) {
       this.load.audio(folder + key, this.getCachedUrl(`audio/${folder}${f}`));
     }

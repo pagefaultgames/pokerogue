@@ -1,16 +1,17 @@
-import { starterColors } from "#app/global-vars/starter-colors";
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addTextObject } from "./text";
+import { starterColors } from "#app/global-vars/starter-colors";
+import type { SpeciesId } from "#enums/species-id";
+import { TextStyle } from "#enums/text-style";
+import { addTextObject } from "#ui/text";
+import { rgbHexToRgba } from "#utils/common";
 import { argbFromRgba } from "@material/material-color-utilities";
-import { rgbHexToRgba } from "#app/utils/common";
-import type { Species } from "#enums/species";
 
-export default class CandyBar extends Phaser.GameObjects.Container {
+export class CandyBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.NineSlice;
   private candyIcon: Phaser.GameObjects.Sprite;
   private candyOverlayIcon: Phaser.GameObjects.Sprite;
   private countText: Phaser.GameObjects.Text;
-  private speciesId: Species;
+  private speciesId: SpeciesId;
 
   private tween: Phaser.Tweens.Tween | null;
   private autoHideTimer: NodeJS.Timeout | null;
@@ -18,7 +19,7 @@ export default class CandyBar extends Phaser.GameObjects.Container {
   public shown: boolean;
 
   constructor() {
-    super(globalScene, globalScene.game.canvas.width / 6, -(globalScene.game.canvas.height / 6) + 15);
+    super(globalScene, globalScene.scaledCanvas.width, -globalScene.scaledCanvas.height + 15);
   }
 
   setup(): void {
@@ -47,7 +48,7 @@ export default class CandyBar extends Phaser.GameObjects.Container {
     this.shown = false;
   }
 
-  showStarterSpeciesCandy(starterSpeciesId: Species, count: number): Promise<void> {
+  showStarterSpeciesCandy(starterSpeciesId: SpeciesId, count: number): Promise<void> {
     return new Promise<void>(resolve => {
       if (this.shown) {
         if (this.speciesId === starterSpeciesId) {
@@ -79,7 +80,7 @@ export default class CandyBar extends Phaser.GameObjects.Container {
 
       this.tween = globalScene.tweens.add({
         targets: this,
-        x: globalScene.game.canvas.width / 6 - (this.bg.width - 5),
+        x: globalScene.scaledCanvas.width - (this.bg.width - 5),
         duration: 500,
         ease: "Sine.easeOut",
         onComplete: () => {
@@ -110,7 +111,7 @@ export default class CandyBar extends Phaser.GameObjects.Container {
 
       this.tween = globalScene.tweens.add({
         targets: this,
-        x: globalScene.game.canvas.width / 6,
+        x: globalScene.scaledCanvas.width,
         duration: 500,
         ease: "Sine.easeIn",
         onComplete: () => {

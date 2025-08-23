@@ -1,10 +1,11 @@
 import { globalScene } from "#app/global-scene";
-import { Achv, getAchievementDescription } from "../system/achv";
-import { Voucher } from "../system/voucher";
-import { TextStyle, addTextObject } from "./text";
 import type { PlayerGender } from "#enums/player-gender";
+import { TextStyle } from "#enums/text-style";
+import { Achv, getAchievementDescription } from "#system/achv";
+import { Voucher } from "#system/voucher";
+import { addTextObject } from "#ui/text";
 
-export default class AchvBar extends Phaser.GameObjects.Container {
+export class AchvBar extends Phaser.GameObjects.Container {
   private defaultWidth: number;
   private defaultHeight: number;
 
@@ -20,7 +21,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
   public shown: boolean;
 
   constructor() {
-    super(globalScene, globalScene.game.canvas.width / 6, 0);
+    super(globalScene, globalScene.scaledCanvas.width, 0);
     this.playerGender = globalScene.gameData.gender;
   }
 
@@ -117,7 +118,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
 
     globalScene.tweens.add({
       targets: this,
-      x: globalScene.game.canvas.width / 6 - this.bg.width / 2,
+      x: globalScene.scaledCanvas.width - this.bg.width / 2,
       duration: 500,
       ease: "Sine.easeOut",
     });
@@ -135,7 +136,7 @@ export default class AchvBar extends Phaser.GameObjects.Container {
 
     globalScene.tweens.add({
       targets: this,
-      x: globalScene.game.canvas.width / 6,
+      x: globalScene.scaledCanvas.width,
       duration: 500,
       ease: "Sine.easeIn",
       onComplete: () => {

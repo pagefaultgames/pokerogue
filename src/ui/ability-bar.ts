@@ -1,12 +1,13 @@
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addTextObject } from "./text";
+import { TextStyle } from "#enums/text-style";
+import { addTextObject } from "#ui/text";
 import i18next from "i18next";
 
 const barWidth = 118;
 const screenLeft = 0;
 const baseY = -116;
 
-export default class AbilityBar extends Phaser.GameObjects.Container {
+export class AbilityBar extends Phaser.GameObjects.Container {
   private abilityBars: Phaser.GameObjects.Image[];
   private abilityBarText: Phaser.GameObjects.Text;
   private player: boolean;

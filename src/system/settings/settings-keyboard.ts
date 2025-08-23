@@ -1,8 +1,8 @@
+import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
-import type SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
+import type { SettingsKeyboardUiHandler } from "#ui/settings-keyboard-ui-handler";
 import i18next from "i18next";
-import { globalScene } from "#app/global-scene";
 
 export enum SettingKeyboard {
   // Default_Layout = "DEFAULT_LAYOUT",

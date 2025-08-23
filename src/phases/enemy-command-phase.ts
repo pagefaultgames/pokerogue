@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
-import { BattlerIndex } from "#app/battle";
-import { Command } from "#app/ui/command-ui-handler";
-import { FieldPhase } from "./field-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { Command } from "#enums/command";
+import { FieldPhase } from "#phases/field-phase";
 
 /**
  * Phase for determining an enemy AI's action for the next turn.
@@ -15,6 +15,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
  * @see {@linkcode EnemyPokemon.getNextMove}
  */
 export class EnemyCommandPhase extends FieldPhase {
+  public readonly phaseName = "EnemyCommandPhase";
   protected fieldIndex: number;
   protected skipTurn = false;
 
@@ -38,7 +39,7 @@ export class EnemyCommandPhase extends FieldPhase {
 
     if (
       battle.double &&
-      enemyPokemon.hasAbility(Abilities.COMMANDER) &&
+      enemyPokemon.hasAbility(AbilityId.COMMANDER) &&
       enemyPokemon.getAlly()?.getTag(BattlerTagType.COMMANDED)
     ) {
       this.skipTurn = true;

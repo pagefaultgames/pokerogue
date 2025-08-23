@@ -1,9 +1,10 @@
-import type { ModalConfig } from "./modal-ui-handler";
-import { ModalUiHandler } from "./modal-ui-handler";
-import { addTextObject, TextStyle } from "./text";
+import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
+import type { ModalConfig } from "#ui/modal-ui-handler";
+import { ModalUiHandler } from "#ui/modal-ui-handler";
+import { addTextObject } from "#ui/text";
 
-export default class SessionReloadModalUiHandler extends ModalUiHandler {
+export class SessionReloadModalUiHandler extends ModalUiHandler {
   constructor(mode: UiMode | null = null) {
     super(mode);
   }

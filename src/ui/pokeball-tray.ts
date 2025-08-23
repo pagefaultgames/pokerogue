@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import type Pokemon from "../field/pokemon";
+import type { Pokemon } from "#field/pokemon";
 
-export default class PokeballTray extends Phaser.GameObjects.Container {
+export class PokeballTray extends Phaser.GameObjects.Container {
   private player: boolean;
 
   private bg: Phaser.GameObjects.NineSlice;
@@ -10,7 +10,7 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
   public shown: boolean;
 
   constructor(player: boolean) {
-    super(globalScene, player ? globalScene.game.canvas.width / 6 : 0, player ? -72 : -144);
+    super(globalScene, player ? globalScene.scaledCanvas.width : 0, player ? -72 : -144);
     this.player = player;
   }
 
@@ -36,7 +36,7 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
       .map((_, i) =>
         globalScene.add.sprite(
           (this.player ? -83 : 76) +
-            (globalScene.game.canvas.width / 6) * (this.player ? -1 : 1) +
+            globalScene.scaledCanvas.width * (this.player ? -1 : 1) +
             10 * i * (this.player ? 1 : -1),
           -8,
           "pb_tray_ball",
@@ -67,7 +67,7 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
       this.bg.alpha = 1;
 
       this.balls.forEach((ball, b) => {
-        ball.x += (globalScene.game.canvas.width / 6 + 104) * (this.player ? 1 : -1);
+        ball.x += (globalScene.scaledCanvas.width + 104) * (this.player ? 1 : -1);
         let ballFrame = "ball";
         if (b >= party.length) {
           ballFrame = "empty";
@@ -115,7 +115,7 @@ export default class PokeballTray extends Phaser.GameObjects.Container {
       this.balls.forEach((ball, b) => {
         globalScene.tweens.add({
           targets: ball,
-          x: `${this.player ? "-" : "+"}=${globalScene.game.canvas.width / 6}`,
+          x: `${this.player ? "-" : "+"}=${globalScene.scaledCanvas.width}`,
           duration: 250,
           delay: b * 100,
           ease: "Sine.easeIn",

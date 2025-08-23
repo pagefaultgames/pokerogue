@@ -1,3 +1,8 @@
+import { loggedInUser } from "#app/account";
+import { saveKey } from "#app/constants";
+import type { StarterAttributes } from "#system/game-data";
+import { AES, enc } from "crypto-js";
+
 /**
  * Perform a deep copy of an object.
  * @param values - The object to be deep copied.
@@ -36,5 +41,47 @@ export function deepMergeSpriteData(dest: object, source: object) {
     } else {
       deepMergeSpriteData(dest[key], source[key]);
     }
+  }
+}
+
+export function encrypt(data: string, bypassLogin: boolean): string {
+  if (bypassLogin) {
+    return btoa(encodeURIComponent(data));
+  }
+  return AES.encrypt(data, saveKey).toString();
+}
+
+export function decrypt(data: string, bypassLogin: boolean): string {
+  if (bypassLogin) {
+    return decodeURIComponent(atob(data));
+  }
+  return AES.decrypt(data, saveKey).toString(enc.Utf8);
+}
+
+// the latest data saved/loaded for the Starter Preferences. Required to reduce read/writes. Initialize as "{}", since this is the default value and no data needs to be stored if present.
+// if they ever add private static variables, move this into StarterPrefs
+const StarterPrefers_DEFAULT: string = "{}";
+let StarterPrefers_private_latest: string = StarterPrefers_DEFAULT;
+
+export interface StarterPreferences {
+  [key: number]: StarterAttributes;
+}
+// called on starter selection show once
+
+export function loadStarterPreferences(): StarterPreferences {
+  return JSON.parse(
+    (StarterPrefers_private_latest =
+      localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) || StarterPrefers_DEFAULT),
+  );
+}
+// called on starter selection clear, always
+
+export function saveStarterPreferences(prefs: StarterPreferences): void {
+  const pStr: string = JSON.stringify(prefs);
+  if (pStr !== StarterPrefers_private_latest) {
+    // something changed, store the update
+    localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
+    // update the latest prefs
+    StarterPrefers_private_latest = pStr;
   }
 }

@@ -1,9 +1,9 @@
-import { PostTurnStatusEffectPhase } from "#app/phases/post-turn-status-effect-phase";
-import { Phase } from "#app/phase";
-import type { BattlerIndex } from "#app/battle";
 import { globalScene } from "#app/global-scene";
+import { Phase } from "#app/phase";
+import type { BattlerIndex } from "#enums/battler-index";
 
 export class CheckStatusEffectPhase extends Phase {
+  public readonly phaseName = "CheckStatusEffectPhase";
   private order: BattlerIndex[];
   constructor(order: BattlerIndex[]) {
     super();
@@ -14,7 +14,7 @@ export class CheckStatusEffectPhase extends Phase {
     const field = globalScene.getField();
     for (const o of this.order) {
       if (field[o].status?.isPostTurn()) {
-        globalScene.unshiftPhase(new PostTurnStatusEffectPhase(o));
+        globalScene.phaseManager.unshiftNew("PostTurnStatusEffectPhase", o);
       }
     }
     this.end();

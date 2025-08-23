@@ -1,10 +1,10 @@
-import type { InputFieldConfig } from "./form-modal-ui-handler";
-import { FormModalUiHandler } from "./form-modal-ui-handler";
-import type { ModalConfig } from "./modal-ui-handler";
+import type { PlayerPokemon } from "#field/pokemon";
+import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
+import type { ModalConfig } from "#ui/modal-ui-handler";
 import i18next from "i18next";
-import type { PlayerPokemon } from "#app/field/pokemon";
 
-export default class RenameFormUiHandler extends FormModalUiHandler {
+export class RenameFormUiHandler extends FormModalUiHandler {
   getModalTitle(_config?: ModalConfig): string {
     return i18next.t("menu:renamePokemon");
   }

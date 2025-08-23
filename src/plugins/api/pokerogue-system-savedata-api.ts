@@ -1,10 +1,10 @@
+import { ApiBase } from "#api/api-base";
 import type {
   GetSystemSavedataRequest,
   UpdateSystemSavedataRequest,
   VerifySystemSavedataRequest,
   VerifySystemSavedataResponse,
-} from "#app/@types/PokerogueSystemSavedataApi";
-import { ApiBase } from "#app/plugins/api/api-base";
+} from "#types/api/pokerogue-system-save-data-api";
 
 /**
  * A wrapper for PokéRogue system savedata API requests.

@@ -1,5 +1,5 @@
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
-import { getCookie } from "#app/utils/cookies";
+import { getCookie } from "#utils/cookies";
 
 type DataType = "json" | "form-urlencoded";
 
@@ -33,7 +33,7 @@ export abstract class ApiBase {
    * @param dataType The data-type of the {@linkcode bodyData}.
    */
   protected async doPost<D = undefined>(path: string, bodyData?: D, dataType: DataType = "json") {
-    let body: string | undefined = undefined;
+    let body: string | undefined;
     const headers: HeadersInit = {};
 
     if (bodyData) {

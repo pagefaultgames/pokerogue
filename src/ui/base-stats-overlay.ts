@@ -1,9 +1,11 @@
-import type { InfoToggle } from "../battle-scene";
-import { TextStyle, addTextObject } from "./text";
-import { addWindow } from "./ui-theme";
-import { fixedInt } from "#app/utils/common";
-import i18next from "i18next";
+import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
+import { TextStyle } from "#enums/text-style";
+import { addTextObject } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
+import { fixedInt } from "#utils/common";
+import { toCamelCase } from "#utils/strings";
+import i18next from "i18next";
 
 interface BaseStatsOverlaySettings {
   scale?: number; // scale the box? A scale of 0.5 is recommended
@@ -15,7 +17,6 @@ interface BaseStatsOverlaySettings {
 
 const HEIGHT = 120;
 const BORDER = 8;
-const GLOBAL_SCALE = 6;
 const shortStats = ["HP", "ATK", "DEF", "SPATK", "SPDEF", "SPD"];
 
 export class BaseStatsOverlay extends Phaser.GameObjects.Container implements InfoToggle {
@@ -68,7 +69,9 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
   // show this component with infos for the specific move
   show(values: number[], total: number): boolean {
     for (let i = 0; i < 6; i++) {
-      this.statsLabels[i].setText(i18next.t(`pokemonInfo:Stat.${shortStats[i]}shortened`) + ": " + `${values[i]}`);
+      this.statsLabels[i].setText(
+        i18next.t(`pokemonInfo:stat.${toCamelCase(shortStats[i])}Shortened`) + ": " + `${values[i]}`,
+      );
       // This accounts for base stats up to 200, might not be enough.
       // TODO: change color based on value.
       this.statsShadows[i].setSize(values[i] / 2, 5);
@@ -108,7 +111,7 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
 
   // width of this element
   static getWidth(_scale: number): number {
-    return globalScene.game.canvas.width / GLOBAL_SCALE / 2;
+    return globalScene.scaledCanvas.width / 2;
   }
 
   // height of this element

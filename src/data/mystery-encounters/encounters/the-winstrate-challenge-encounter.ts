@@ -1,4 +1,24 @@
-import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { globalScene } from "#app/global-scene";
+import { modifierTypes } from "#data/data-lists";
+import { SpeciesFormChangeAbilityTrigger } from "#data/form-change-triggers";
+import { AbilityId } from "#enums/ability-id";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { BerryType } from "#enums/berry-type";
+import { ModifierTier } from "#enums/modifier-tier";
+import { MoveId } from "#enums/move-id";
+import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
+import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { Nature } from "#enums/nature";
+import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
+import { TrainerType } from "#enums/trainer-type";
+import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
+import { showEncounterDialogue, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
+import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
   generateModifierType,
   generateModifierTypeOption,
@@ -6,34 +26,11 @@ import {
   leaveEncounterWithoutBattle,
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
-} from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { globalScene } from "#app/global-scene";
-import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { TrainerType } from "#enums/trainer-type";
-import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Moves } from "#enums/moves";
-import { Nature } from "#enums/nature";
-import { PokemonType } from "#enums/pokemon-type";
-import { BerryType } from "#enums/berry-type";
-import { Stat } from "#enums/stat";
-import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms";
-import { applyPostBattleInitAbAttrs, PostBattleInitAbAttr } from "#app/data/abilities/ability";
-import { showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { PartyHealPhase } from "#app/phases/party-heal-phase";
-import { ShowTrainerPhase } from "#app/phases/show-trainer-phase";
-import { ReturnPhase } from "#app/phases/return-phase";
+} from "#mystery-encounters/encounter-phase-utils";
+import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
-import { ModifierTier } from "#app/modifier/modifier-tier";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { BattlerTagType } from "#enums/battler-tag-type";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theWinstrateChallenge";
@@ -90,7 +87,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
     },
     {
       speaker: `${namespace}:speaker`,
-      text: `${namespace}:intro_dialogue`,
+      text: `${namespace}:introDialogue`,
     },
   ])
   .withAutoHideIntroVisuals(false)
@@ -143,7 +140,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
     },
     async () => {
       // Refuse the challenge, they full heal the party and give the player a Rarer Candy
-      globalScene.unshiftPhase(new PartyHealPhase(true));
+      globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
       setEncounterRewards({
         guaranteedModifierTypeFuncs: [modifierTypes.RARER_CANDY],
         fillRemaining: false,
@@ -166,7 +163,7 @@ async function spawnNextTrainerOrEndEncounter() {
     globalScene.playSound("item_fanfare");
     await showEncounterText(i18next.t("battle:rewardGain", { modifierName: newModifier?.type.name }));
 
-    await showEncounterDialogue(`${namespace}:victory_2`, `${namespace}:speaker`);
+    await showEncounterDialogue(`${namespace}:victory2`, `${namespace}:speaker`);
     globalScene.ui.clearText(); // Clears "Winstrate" title from screen as rewards get animated in
     const machoBrace = generateModifierTypeOption(modifierTypes.MYSTERY_ENCOUNTER_MACHO_BRACE)!;
     machoBrace.type.tier = ModifierTier.MASTER;
@@ -209,14 +206,14 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
       for (const pokemon of playerField) {
         pokemon.lapseTag(BattlerTagType.COMMANDED);
       }
-      playerField.forEach((_, p) => globalScene.unshiftPhase(new ReturnPhase(p)));
+      playerField.forEach((_, p) => globalScene.phaseManager.unshiftNew("ReturnPhase", p));
 
       for (const pokemon of globalScene.getPlayerParty()) {
         // Only trigger form change when Eiscue is in Noice form
         // Hardcoded Eiscue for now in case it is fused with another pokemon
         if (
-          pokemon.species.speciesId === Species.EISCUE &&
-          pokemon.hasAbility(Abilities.ICE_FACE) &&
+          pokemon.species.speciesId === SpeciesId.EISCUE &&
+          pokemon.hasAbility(AbilityId.ICE_FACE) &&
           pokemon.formIndex === 1
         ) {
           globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
@@ -224,10 +221,10 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
 
         // Each trainer battle is supposed to be a new fight, so reset all per-battle activation effects
         pokemon.resetBattleAndWaveData();
-        applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
+        applyAbAttrs("PostBattleInitAbAttr", { pokemon });
       }
 
-      globalScene.unshiftPhase(new ShowTrainerPhase());
+      globalScene.phaseManager.unshiftNew("ShowTrainerPhase");
       // Hide the trainer and init next battle
       const trainer = globalScene.currentBattle.trainer;
       // Unassign previous trainer from battle so it isn't destroyed before animation completes
@@ -256,11 +253,11 @@ function getVictorTrainerConfig(): EnemyPartyConfig {
     trainerType: TrainerType.VICTOR,
     pokemonConfigs: [
       {
-        species: getPokemonSpecies(Species.SWELLOW),
+        species: getPokemonSpecies(SpeciesId.SWELLOW),
         isBoss: false,
         abilityIndex: 0, // Guts
         nature: Nature.ADAMANT,
-        moveSet: [Moves.FACADE, Moves.BRAVE_BIRD, Moves.PROTECT, Moves.QUICK_ATTACK],
+        moveSet: [MoveId.FACADE, MoveId.BRAVE_BIRD, MoveId.PROTECT, MoveId.QUICK_ATTACK],
         modifierConfigs: [
           {
             modifier: generateModifierType(modifierTypes.FLAME_ORB) as PokemonHeldItemModifierType,
@@ -274,11 +271,11 @@ function getVictorTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(Species.OBSTAGOON),
+        species: getPokemonSpecies(SpeciesId.OBSTAGOON),
         isBoss: false,
         abilityIndex: 1, // Guts
         nature: Nature.ADAMANT,
-        moveSet: [Moves.FACADE, Moves.OBSTRUCT, Moves.NIGHT_SLASH, Moves.FIRE_PUNCH],
+        moveSet: [MoveId.FACADE, MoveId.OBSTRUCT, MoveId.NIGHT_SLASH, MoveId.FIRE_PUNCH],
         modifierConfigs: [
           {
             modifier: generateModifierType(modifierTypes.FLAME_ORB) as PokemonHeldItemModifierType,
@@ -300,11 +297,11 @@ function getVictoriaTrainerConfig(): EnemyPartyConfig {
     trainerType: TrainerType.VICTORIA,
     pokemonConfigs: [
       {
-        species: getPokemonSpecies(Species.ROSERADE),
+        species: getPokemonSpecies(SpeciesId.ROSERADE),
         isBoss: false,
         abilityIndex: 0, // Natural Cure
         nature: Nature.CALM,
-        moveSet: [Moves.SYNTHESIS, Moves.SLUDGE_BOMB, Moves.GIGA_DRAIN, Moves.SLEEP_POWDER],
+        moveSet: [MoveId.SYNTHESIS, MoveId.SLUDGE_BOMB, MoveId.GIGA_DRAIN, MoveId.SLEEP_POWDER],
         modifierConfigs: [
           {
             modifier: generateModifierType(modifierTypes.SOUL_DEW) as PokemonHeldItemModifierType,
@@ -318,11 +315,11 @@ function getVictoriaTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(Species.GARDEVOIR),
+        species: getPokemonSpecies(SpeciesId.GARDEVOIR),
         isBoss: false,
         formIndex: 1,
         nature: Nature.TIMID,
-        moveSet: [Moves.PSYSHOCK, Moves.MOONBLAST, Moves.SHADOW_BALL, Moves.WILL_O_WISP],
+        moveSet: [MoveId.PSYSHOCK, MoveId.MOONBLAST, MoveId.SHADOW_BALL, MoveId.WILL_O_WISP],
         modifierConfigs: [
           {
             modifier: generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [
@@ -349,11 +346,11 @@ function getViviTrainerConfig(): EnemyPartyConfig {
     trainerType: TrainerType.VIVI,
     pokemonConfigs: [
       {
-        species: getPokemonSpecies(Species.SEAKING),
+        species: getPokemonSpecies(SpeciesId.SEAKING),
         isBoss: false,
         abilityIndex: 3, // Lightning Rod
         nature: Nature.ADAMANT,
-        moveSet: [Moves.WATERFALL, Moves.MEGAHORN, Moves.KNOCK_OFF, Moves.REST],
+        moveSet: [MoveId.WATERFALL, MoveId.MEGAHORN, MoveId.KNOCK_OFF, MoveId.REST],
         modifierConfigs: [
           {
             modifier: generateModifierType(modifierTypes.BERRY, [BerryType.LUM]) as PokemonHeldItemModifierType,
@@ -368,11 +365,11 @@ function getViviTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(Species.BRELOOM),
+        species: getPokemonSpecies(SpeciesId.BRELOOM),
         isBoss: false,
         abilityIndex: 1, // Poison Heal
         nature: Nature.JOLLY,
-        moveSet: [Moves.SPORE, Moves.SWORDS_DANCE, Moves.SEED_BOMB, Moves.DRAIN_PUNCH],
+        moveSet: [MoveId.SPORE, MoveId.SWORDS_DANCE, MoveId.SEED_BOMB, MoveId.DRAIN_PUNCH],
         modifierConfigs: [
           {
             modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER, [Stat.HP]) as PokemonHeldItemModifierType,
@@ -386,11 +383,11 @@ function getViviTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(Species.CAMERUPT),
+        species: getPokemonSpecies(SpeciesId.CAMERUPT),
         isBoss: false,
         formIndex: 1,
         nature: Nature.CALM,
-        moveSet: [Moves.EARTH_POWER, Moves.FIRE_BLAST, Moves.YAWN, Moves.PROTECT],
+        moveSet: [MoveId.EARTH_POWER, MoveId.FIRE_BLAST, MoveId.YAWN, MoveId.PROTECT],
         modifierConfigs: [
           {
             modifier: generateModifierType(modifierTypes.QUICK_CLAW) as PokemonHeldItemModifierType,
@@ -408,11 +405,11 @@ function getVickyTrainerConfig(): EnemyPartyConfig {
     trainerType: TrainerType.VICKY,
     pokemonConfigs: [
       {
-        species: getPokemonSpecies(Species.MEDICHAM),
+        species: getPokemonSpecies(SpeciesId.MEDICHAM),
         isBoss: false,
         formIndex: 1,
         nature: Nature.IMPISH,
-        moveSet: [Moves.AXE_KICK, Moves.ICE_PUNCH, Moves.ZEN_HEADBUTT, Moves.BULLET_PUNCH],
+        moveSet: [MoveId.AXE_KICK, MoveId.ICE_PUNCH, MoveId.ZEN_HEADBUTT, MoveId.BULLET_PUNCH],
         modifierConfigs: [
           {
             modifier: generateModifierType(modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType,
@@ -429,11 +426,11 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
     trainerType: TrainerType.VITO,
     pokemonConfigs: [
       {
-        species: getPokemonSpecies(Species.HISUI_ELECTRODE),
+        species: getPokemonSpecies(SpeciesId.HISUI_ELECTRODE),
         isBoss: false,
         abilityIndex: 0, // Soundproof
         nature: Nature.MODEST,
-        moveSet: [Moves.THUNDERBOLT, Moves.GIGA_DRAIN, Moves.FOUL_PLAY, Moves.THUNDER_WAVE],
+        moveSet: [MoveId.THUNDERBOLT, MoveId.GIGA_DRAIN, MoveId.FOUL_PLAY, MoveId.THUNDER_WAVE],
         modifierConfigs: [
           {
             modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER, [Stat.SPD]) as PokemonHeldItemModifierType,
@@ -443,11 +440,11 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(Species.SWALOT),
+        species: getPokemonSpecies(SpeciesId.SWALOT),
         isBoss: false,
         abilityIndex: 2, // Gluttony
         nature: Nature.QUIET,
-        moveSet: [Moves.SLUDGE_BOMB, Moves.GIGA_DRAIN, Moves.ICE_BEAM, Moves.EARTHQUAKE],
+        moveSet: [MoveId.SLUDGE_BOMB, MoveId.GIGA_DRAIN, MoveId.ICE_BEAM, MoveId.EARTHQUAKE],
         modifierConfigs: [
           {
             modifier: generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType,
@@ -496,11 +493,11 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(Species.DODRIO),
+        species: getPokemonSpecies(SpeciesId.DODRIO),
         isBoss: false,
         abilityIndex: 2, // Tangled Feet
         nature: Nature.JOLLY,
-        moveSet: [Moves.DRILL_PECK, Moves.QUICK_ATTACK, Moves.THRASH, Moves.KNOCK_OFF],
+        moveSet: [MoveId.DRILL_PECK, MoveId.QUICK_ATTACK, MoveId.THRASH, MoveId.KNOCK_OFF],
         modifierConfigs: [
           {
             modifier: generateModifierType(modifierTypes.KINGS_ROCK) as PokemonHeldItemModifierType,
@@ -510,11 +507,11 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(Species.ALAKAZAM),
+        species: getPokemonSpecies(SpeciesId.ALAKAZAM),
         isBoss: false,
         formIndex: 1,
         nature: Nature.BOLD,
-        moveSet: [Moves.PSYCHIC, Moves.SHADOW_BALL, Moves.FOCUS_BLAST, Moves.THUNDERBOLT],
+        moveSet: [MoveId.PSYCHIC, MoveId.SHADOW_BALL, MoveId.FOCUS_BLAST, MoveId.THUNDERBOLT],
         modifierConfigs: [
           {
             modifier: generateModifierType(modifierTypes.WIDE_LENS) as PokemonHeldItemModifierType,
@@ -524,11 +521,11 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(Species.DARMANITAN),
+        species: getPokemonSpecies(SpeciesId.DARMANITAN),
         isBoss: false,
         abilityIndex: 0, // Sheer Force
         nature: Nature.IMPISH,
-        moveSet: [Moves.EARTHQUAKE, Moves.U_TURN, Moves.FLARE_BLITZ, Moves.ROCK_SLIDE],
+        moveSet: [MoveId.EARTHQUAKE, MoveId.U_TURN, MoveId.FLARE_BLITZ, MoveId.ROCK_SLIDE],
         modifierConfigs: [
           {
             modifier: generateModifierType(modifierTypes.QUICK_CLAW) as PokemonHeldItemModifierType,

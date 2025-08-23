@@ -1,32 +1,36 @@
-import { BattlerIndex } from "#app/battle";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import { SubstituteTag } from "#app/data/battler-tags";
+import { globalScene } from "#app/global-scene";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { SubstituteTag } from "#data/battler-tags";
+import { Gender } from "#data/gender";
 import {
   doPokeballBounceAnim,
+  getCriticalCaptureChance,
   getPokeballAtlasKey,
   getPokeballCatchMultiplier,
   getPokeballTintColor,
-  getCriticalCaptureChance,
-} from "#app/data/pokeball";
-import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
-import { addPokeballCaptureStars, addPokeballOpenParticles } from "#app/field/anims";
-import type { EnemyPokemon } from "#app/field/pokemon";
-import { getPokemonNameWithAffix } from "#app/messages";
-import { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { PokemonPhase } from "#app/phases/pokemon-phase";
-import { VictoryPhase } from "#app/phases/victory-phase";
-import { achvs } from "#app/system/achv";
-import type { PartyOption } from "#app/ui/party-ui-handler";
-import { PartyUiMode } from "#app/ui/party-ui-handler";
-import { SummaryUiMode } from "#app/ui/summary-ui-handler";
-import { UiMode } from "#enums/ui-mode";
+} from "#data/pokeball";
+import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
+import { BattlerIndex } from "#enums/battler-index";
+import { ChallengeType } from "#enums/challenge-type";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
+import { UiMode } from "#enums/ui-mode";
+import { addPokeballCaptureStars, addPokeballOpenParticles } from "#field/anims";
+import type { EnemyPokemon } from "#field/pokemon";
+import { PokemonHeldItemModifier } from "#modifiers/modifier";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import { achvs } from "#system/achv";
+import type { PartyOption } from "#ui/party-ui-handler";
+import { PartyUiMode } from "#ui/party-ui-handler";
+import { SummaryUiMode } from "#ui/summary-ui-handler";
+import { applyChallenges } from "#utils/challenge-utils";
+import { BooleanHolder } from "#utils/common";
 import i18next from "i18next";
-import { globalScene } from "#app/global-scene";
-import { Gender } from "#app/data/gender";
 
+// TODO: Refactor and split up to allow for overriding capture chance
 export class AttemptCapturePhase extends PokemonPhase {
+  public readonly phaseName = "AttemptCapturePhase";
   private pokeballType: PokeballType;
   private pokeball: Phaser.GameObjects.Sprite;
   private originalY: number;
@@ -119,7 +123,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                 repeatDelay: 500,
                 onUpdate: t => {
                   if (shakeCount && shakeCount < (isCritical ? 2 : 4)) {
-                    const value = t.getValue();
+                    const value = t.getValue() ?? 0;
                     const directionMultiplier = shakeCount % 2 === 1 ? 1 : -1;
                     this.pokeball.setX(pbX + value * 4 * directionMultiplier);
                     this.pokeball.setAngle(value * 27.5 * directionMultiplier);
@@ -249,14 +253,17 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     globalScene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
 
+    const addStatus = new BooleanHolder(true);
+    applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
+
     globalScene.ui.showText(
-      i18next.t("battle:pokemonCaught", {
+      i18next.t(addStatus.value ? "battle:pokemonCaught" : "battle:pokemonCaughtButChallenge", {
         pokemonName: getPokemonNameWithAffix(pokemon),
       }),
       null,
       () => {
         const end = () => {
-          globalScene.unshiftPhase(new VictoryPhase(this.battlerIndex));
+          globalScene.phaseManager.unshiftNew("VictoryPhase", this.battlerIndex);
           globalScene.pokemonInfoContainer.hide();
           this.removePb();
           this.end();
@@ -264,7 +271,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         const removePokemon = () => {
           globalScene.addFaintedEnemyScore(pokemon);
           pokemon.hp = 0;
-          pokemon.trySetStatus(StatusEffect.FAINT);
+          pokemon.doSetStatus(StatusEffect.FAINT);
           globalScene.clearEnemyHeldItemModifiers();
           pokemon.leaveField(true, true, true);
         };
@@ -278,6 +285,7 @@ export class AttemptCapturePhase extends PokemonPhase {
             globalScene.updateModifiers(true);
             removePokemon();
             if (newPokemon) {
+              newPokemon.leaveField(true, true, false);
               newPokemon.loadAssets().then(end);
             } else {
               end();
@@ -285,6 +293,11 @@ export class AttemptCapturePhase extends PokemonPhase {
           });
         };
         Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
+          if (!addStatus.value) {
+            removePokemon();
+            end();
+            return;
+          }
           if (globalScene.getPlayerParty().length === PLAYER_PARTY_MAX_SIZE) {
             const promptRelease = () => {
               globalScene.ui.showText(

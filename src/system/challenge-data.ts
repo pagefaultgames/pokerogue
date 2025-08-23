@@ -1,7 +1,7 @@
-import type { Challenge } from "#app/data/challenge";
-import { copyChallenge } from "#app/data/challenge";
+import type { Challenge } from "#data/challenge";
+import { copyChallenge } from "#data/challenge";
 
-export default class ChallengeData {
+export class ChallengeData {
   public id: number;
   public value: number;
   public severity: number;
