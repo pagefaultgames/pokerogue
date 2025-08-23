@@ -1021,7 +1021,8 @@ export class PartyUiHandler extends MessageUiHandler {
     }
 
     // Toggle item transfer mode to discard items or vice versa
-    if (this.cursor === 7) {
+    // Prevent changing mode, when currently transfering an item
+    if (this.cursor === 7 && !this.transferMode) {
       switch (this.partyUiMode) {
         case PartyUiMode.DISCARD:
           this.partyUiMode = PartyUiMode.MODIFIER_TRANSFER;
