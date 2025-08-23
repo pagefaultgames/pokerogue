@@ -54,6 +54,9 @@ export const defaultStarterSpecies: SpeciesId[] = [
   SpeciesId.QUAXLY,
 ];
 
+/**
+ * The default species and all their evolutions
+ */
 export const defaultStarterSpeciesAndEvolutions: SpeciesId[] = defaultStarterSpecies.flatMap(id => {
   const stage2ids = pokemonEvolutions[id]?.map(e => e.speciesId) ?? [];
   const stage3ids = stage2ids.flatMap(s2id => pokemonEvolutions[s2id]?.map(e => e.speciesId) ?? []);
