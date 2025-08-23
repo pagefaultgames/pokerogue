@@ -27,7 +27,6 @@ import {
   CritBoostTag,
   EncoreTag,
   ExposedTag,
-  GroundedTag,
   type GrudgeTag,
   getBattlerTag,
   HighestStatBoostTag,
@@ -2291,7 +2290,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public isGrounded(ignoreSemiInvulnerable = false): boolean {
     return (
-      !!this.getTag(GroundedTag) ||
+      !!this.getTag(BattlerTagType.IGNORE_FLYING) ||
       globalScene.arena.hasTag(ArenaTagType.GRAVITY) ||
       (!this.isOfType(PokemonType.FLYING, true, true) &&
         !this.hasAbility(AbilityId.LEVITATE) &&

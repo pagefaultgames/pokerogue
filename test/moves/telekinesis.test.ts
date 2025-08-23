@@ -1,18 +1,16 @@
-import { TerrainType } from "#app/data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { HitCheckResult } from "#enums/hit-check-result";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import { StatusEffect } from "#enums/status-effect";
-import type { MoveEffectPhase } from "#phases/move-effect-phase";
+import { invalidTelekinesisSpecies } from "#moves/invalid-moves";
 import { GameManager } from "#test/test-utils/game-manager";
+import { getEnumStr } from "#test/test-utils/string-utils";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Moves - Telekinesis", () => {
+describe("Move - Telekinesis", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -53,59 +51,82 @@ describe("Moves - Telekinesis", () => {
     await game.move.forceMiss();
     await game.toEndOfTurn();
 
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
-    expect(player.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(enemy).not.toHaveFullHp();
+    expect(player).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.SUCCESS });
   });
 
   it("should forcibly unground the target", async () => {
-    game.override.terrain(TerrainType.ELECTRIC);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const enemy = game.field.getEnemyPokemon();
+    expect(enemy.isGrounded()).toBe(true);
 
     game.move.use(MoveId.TELEKINESIS);
     await game.toNextTurn();
 
-    // Use Earthquake - should be ineffective
-    game.move.use(MoveId.EARTHQUAKE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("MoveEffectPhase", false);
-    const hitSpy = vi.spyOn(game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase, "hitCheck");
-
-    await game.toNextTurn();
-
-    expect(enemy.hp).toBe(enemy.getMaxHp());
-    expect(hitSpy).toHaveLastReturnedWith([HitCheckResult.NO_EFFECT, 0]);
-
-    // Use Spore - should succeed due to being ungrounded
-    game.move.use(MoveId.SPORE);
-    await game.toEndOfTurn();
-
-    expect(enemy.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(enemy.isGrounded()).toBe(false);
   });
 
-  // TODO: Make an it.each testing the invalid species for Telekinesis
-  it.todo.each([])("should fail if used on $name", () => {});
+  const invalidSpecies = [...invalidTelekinesisSpecies].map(s => ({
+    species: s,
+    name: getEnumStr(SpeciesId, s, { casing: "Title" }),
+  }));
+  it.each(invalidSpecies)("should fail if used on a $name, but can be baton passable onto one", async ({ species }) => {
+    await game.classicMode.startBattle([species, SpeciesId.FEEBAS]);
+
+    const invalidMon = game.field.getPlayerPokemon();
+    expect(invalidMon.species.speciesId).toBe(species);
+
+    game.move.use(MoveId.TELEPORT);
+    game.doSelectPartyPokemon(1);
+    await game.move.forceEnemyMove(MoveId.TELEKINESIS);
+    await game.toNextTurn();
+
+    // Adding tags directly did not work
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.FAIL });
+
+    expect(invalidMon.isOnField()).toBe(false);
+
+    game.move.use(MoveId.BATON_PASS);
+    game.doSelectPartyPokemon(1);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("MoveEndPhase");
+
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    expect(feebas).toHaveBattlerTag(BattlerTagType.FLOATING);
+
+    await game.toEndOfTurn();
+
+    // Should have recieved tags successfully
+    expect(invalidMon.isOnField()).toBe(true);
+    expect(invalidMon).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    expect(invalidMon).toHaveBattlerTag(BattlerTagType.FLOATING);
+  });
 
   it("should still affect enemies transformed into invalid Pokemon", async () => {
     game.override.enemyAbility(AbilityId.IMPOSTER);
     await game.classicMode.startBattle([SpeciesId.DIGLETT]);
 
-    const enemyOpponent = game.field.getEnemyPokemon();
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy.summonData.speciesForm?.speciesId).toBe(SpeciesId.DIGLETT);
 
     game.move.use(MoveId.TELEKINESIS);
-    await game.move.forceEnemyMove(MoveId.SPLASH);
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
-    expect(enemyOpponent).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
-    expect(enemyOpponent).toHaveBattlerTag(BattlerTagType.FLOATING);
-    expect(enemyOpponent.summonData.speciesForm?.speciesId).toBe(SpeciesId.DIGLETT);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.FLOATING);
+
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.FAIL });
   });
 
+  // TODO: Move to ingrain's test file
   it("should become grounded when Ingrain is used, but not remove the guaranteed hit effect", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const playerPokemon = game.field.getPlayerPokemon();
+    const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.TELEKINESIS);
@@ -123,23 +144,40 @@ describe("Moves - Telekinesis", () => {
     expect(enemy).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
     expect(enemy).not.toHaveBattlerTag(BattlerTagType.FLOATING);
     expect(enemy.isGrounded()).toBe(true);
-    expect(playerPokemon).toHaveUsedMove({ move: MoveId.MUD_SHOT, result: MoveResult.SUCCESS });
+    expect(player).toHaveUsedMove({ move: MoveId.MUD_SHOT, result: MoveResult.SUCCESS });
   });
 
-  it("should not be baton passable onto a mega gengar", async () => {
+  it("should fail if used against a Mega Gengar, and cannot be Baton Passed onto one", async () => {
     game.override.starterForms({ [SpeciesId.GENGAR]: 1 });
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.GENGAR]);
+    await game.classicMode.startBattle([SpeciesId.GENGAR, SpeciesId.FEEBAS]);
+
+    const gengar = game.field.getPlayerPokemon();
+
+    game.move.use(MoveId.TELEPORT);
+    game.doSelectPartyPokemon(1);
+    await game.move.forceEnemyMove(MoveId.TELEKINESIS);
+    await game.toNextTurn();
+
+    // Adding tags directly did not work
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.FAIL });
+
+    expect(gengar.isOnField()).toBe(false);
 
     game.move.use(MoveId.BATON_PASS);
     game.doSelectPartyPokemon(1);
-    await game.move.forceEnemyMove(MoveId.TELEKINESIS);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(game.field.getPlayerPokemon()).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    expect(feebas).toHaveBattlerTag(BattlerTagType.FLOATING);
 
     await game.toEndOfTurn();
 
-    expect(game.field.getPlayerPokemon()).not.toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    // Should have recieved tags successfully
+    expect(gengar.isOnField()).toBe(true);
+    expect(gengar).not.toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    expect(gengar).not.toHaveBattlerTag(BattlerTagType.FLOATING);
   });
 });

@@ -77,7 +77,7 @@ import {
   PreserveBerryModifier,
 } from "#modifiers/modifier";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSketchMoves, invalidSleepTalkMoves } from "#moves/invalid-moves";
+import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSketchMoves, invalidSleepTalkMoves, invalidTelekinesisSpecies } from "#moves/invalid-moves";
 import { frenzyMissFunc, getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { MoveEndPhase } from "#phases/move-end-phase";
@@ -847,11 +847,10 @@ export abstract class Move implements Localizable {
 
     const fieldAuras = new Set(
       globalScene.getField(true)
-        .map((p) => p.getAbilityAttrs("FieldMoveTypePowerBoostAbAttr").filter(attr => {
+        .flatMap((p) => p.getAbilityAttrs("FieldMoveTypePowerBoostAbAttr").filter(attr => {
           const condition = attr.getCondition();
           return (!condition || condition(p));
         }))
-        .flat(),
     );
     for (const aura of fieldAuras) {
       // TODO: Refactor the fieldAura attribute so that its apply method is not directly called
@@ -953,7 +952,7 @@ export abstract class Move implements Localizable {
       "SacrificialAttrOnHit"
     ];
 
-    // ...and cannot enhance these specific moves
+    // ... cannot enhance these specific moves,
     const exceptMoves: MoveId[] = [
       MoveId.FLING,
       MoveId.UPROAR,
@@ -5807,7 +5806,7 @@ export class LeechSeedAttr extends AddBattlerTagAttr {
  */
 export class FallDownAttr extends AddBattlerTagAttr {
   constructor() {
-    super(BattlerTagType.IGNORE_FLYING, false, false, 1, 1, true);
+    super(BattlerTagType.IGNORE_FLYING, false, false, 0, 0, true);
   }
 
   /**
@@ -10078,8 +10077,10 @@ export function initMoves() {
     new StatusMove(MoveId.TELEKINESIS, PokemonType.PSYCHIC, -1, 15, -1, 0, 5)
       .attr(AddBattlerTagAttr, BattlerTagType.TELEKINESIS, false, true, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.FLOATING, false, true, 3)
-      .condition((_user, target, _move) => ![ SpeciesId.DIGLETT, SpeciesId.DUGTRIO, SpeciesId.ALOLA_DIGLETT, SpeciesId.ALOLA_DUGTRIO, SpeciesId.SANDYGAST, SpeciesId.PALOSSAND, SpeciesId.WIGLETT, SpeciesId.WUGTRIO ].includes(target.species.speciesId))
-      .condition((_user, target, _move) => !(target.species.speciesId === SpeciesId.GENGAR && target.getFormKey() === "mega"))
+      .condition((_user, target, _move) => !(
+        invalidTelekinesisSpecies.has(target.species.speciesId)
+        || (target.species.speciesId === SpeciesId.GENGAR && target.getFormKey() === SpeciesFormKey.MEGA)
+      ))
       .condition(failOnGravityCondition)
       .condition(failOnGroundedCondition)
       .reflectable(),
@@ -11083,7 +11084,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], -1),
     new AttackMove(MoveId.GRAV_APPLE, PokemonType.GRASS, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => globalScene.arena.getTag(ArenaTagType.GRAVITY) ? 1.5 : 1)
+      .attr(MovePowerMultiplierAttr, () => globalScene.arena.getTag(ArenaTagType.GRAVITY) ? 1.5 : 1)
       .makesContact(false),
     new AttackMove(MoveId.SPIRIT_BREAK, PokemonType.FAIRY, MoveCategory.PHYSICAL, 75, 100, 15, 100, 0, 8)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -1),

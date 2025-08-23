@@ -20,6 +20,7 @@ import { WeatherType } from "#enums/weather-type";
 import type { ModifierOverride } from "#modifiers/modifier-type";
 import type { Variant } from "#sprites/variant";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import { getEnumStr } from "#test/test-utils/string-utils";
 import { coerceArray, shiftCharCodes } from "#utils/common";
 import { vi } from "vitest";
 
@@ -370,7 +371,7 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public terrain(type: TerrainType): this {
     vi.spyOn(Overrides, "STARTING_TERRAIN_OVERRIDE", "get").mockReturnValue(type);
-    this.log(`Starting terrain for next biome set to ${TerrainType[type]} (=${type})!`);
+    this.log(`Starting terrain for next biome set to ${getEnumStr(TerrainType, type)}!`);
     return this;
   }
 

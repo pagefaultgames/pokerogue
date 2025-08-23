@@ -770,7 +770,7 @@ export class InterruptedTag extends BattlerTag {
 }
 
 /**
- * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition) | Confusion} status condition
+ * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition) Confusion} status condition
  */
 export class ConfusedTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.CONFUSED;

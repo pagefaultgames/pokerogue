@@ -1,12 +1,13 @@
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import type { MoveEffectPhase } from "#phases/move-effect-phase";
+import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
 
 describe("Moves - Smack Down and Thousand Arrows", () => {
   let phaserGame: Phaser.Game;
@@ -63,7 +64,7 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     await game.toEndOfTurn();
 
     expect(eelektross).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
-    expect(eelektross.hp).toBeLessThan(eelektross.getMaxHp());
+    expect(eelektross).not.toHaveFullHp();
     expect(eelektross.isGrounded()).toBe(true);
   });
 
@@ -85,7 +86,7 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
 
   // NB: This test might sound useless, but semi-invulnerable pokemon are technically considered "ungrounded"
   // by most things
-  it("should not ground semi-invulnerable targets hit via No Guard unless already ungrounded", async () => {
+  it("should not ground semi-invulnerable targets hit via No Guard unless otherwise ungrounded", async () => {
     game.override.ability(AbilityId.NO_GUARD);
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
@@ -98,27 +99,51 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     const eelektross = game.field.getEnemyPokemon();
     expect(eelektross.isGrounded()).toBe(true);
     expect(eelektross).not.toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
-    expect(eelektross.hp).toBeLessThan(eelektross.getMaxHp());
+    expect(eelektross).not.toHaveFullHp();
   });
 
   // TODO: Sky drop is currently partially implemented
   it.todo("should hit midair targets from Sky Drop without interrupting");
 
   describe("Thousand Arrows", () => {
-    it("should deal a fixed 1x damage to ungrounded flying-types", async () => {
+    let hitSpy: MockInstance<MoveEffectPhase["hitCheck"]>;
+    beforeEach(() => {
       game.override.enemySpecies(SpeciesId.ARCHEOPS);
-      await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
+      hitSpy = vi.spyOn(MoveEffectPhase.prototype, "hitCheck");
+    });
+
+    it("should deal a fixed 1x damage when hitting ungrounded Flying-types", async () => {
+      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
       const archeops = game.field.getEnemyPokemon();
+
       game.move.use(MoveId.THOUSAND_ARROWS);
-      await game.phaseInterceptor.to("MoveEffectPhase", false);
-      const hitSpy = vi.spyOn(game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase, "hitCheck");
       await game.toEndOfTurn();
 
-      expect(hitSpy).toHaveReturnedWith([expect.anything(), 1]);
-      expect(archeops).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
+      // first turn: 1x
+      expect(archeops).not.toHaveFullHp();
       expect(archeops.isGrounded()).toBe(true);
-      expect(archeops.hp).toBeLessThan(archeops.getMaxHp());
+      expect(hitSpy).toHaveLastReturnedWith([expect.anything(), 1]);
+
+      game.move.use(MoveId.THOUSAND_ARROWS);
+      await game.toEndOfTurn();
+
+      // 2nd turn: 2x
+      expect(hitSpy).toHaveLastReturnedWith([expect.anything(), 2]);
+    });
+
+    it("should consider other sources of groundedness", async () => {
+      await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
+
+      game.scene.arena.addTag(ArenaTagType.GRAVITY, 0, 0, 0);
+
+      const archeops = game.field.getEnemyPokemon();
+      expect(archeops.isGrounded()).toBe(true);
+
+      game.move.use(MoveId.THOUSAND_ARROWS);
+      await game.toEndOfTurn();
+
+      expect(hitSpy).toHaveLastReturnedWith([expect.anything(), 2]);
     });
   });
 });
