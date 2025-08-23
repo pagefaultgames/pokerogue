@@ -563,7 +563,7 @@ export class PartyUiHandler extends MessageUiHandler {
     const ui = this.getUi();
     const option = this.options[this.optionsCursor];
 
-    if (option === PartyOption.TRANSFER) {
+    if (this.transferMode && option === PartyOption.TRANSFER) {
       return this.processTransferOption();
     }
 
