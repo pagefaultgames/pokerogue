@@ -567,12 +567,9 @@ export class PartyUiHandler extends MessageUiHandler {
       return this.processTransferOption();
     }
 
-    console.log("HERE");
-
     // TODO: Revise this condition
     if (!this.transferMode) {
       this.startTransfer();
-      console.log("AND HERE");
 
       let ableToTransferText: string;
       for (let p = 0; p < globalScene.getPlayerParty().length; p++) {
@@ -788,12 +785,9 @@ export class PartyUiHandler extends MessageUiHandler {
     // If the input has been already processed we are done, otherwise move on until the correct option is found
     const pokemon = globalScene.getPlayerParty()[this.cursor];
 
-    console.log("Processing action", pokemon);
-
     // TODO: Careful about using success for the return values here. Find a better way
     // PartyOption.ALL, and options specific to the mode (held items)
     if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-      console.log("Transfer time");
       return this.processModifierTransferModeInput(pokemon);
     }
 
