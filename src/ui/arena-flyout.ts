@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { ArenaTrapTag } from "#data/arena-tag";
+import { EntryHazardTag } from "#data/arena-tag";
 import { TerrainType } from "#data/terrain";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -287,7 +287,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     switch (arenaEffectChangedEvent.constructor) {
       case TagAddedEvent: {
         const tagAddedEvent = arenaEffectChangedEvent as TagAddedEvent;
-        const isArenaTrapTag = globalScene.arena.getTag(tagAddedEvent.arenaTagType) instanceof ArenaTrapTag;
+        const isArenaTrapTag = globalScene.arena.getTag(tagAddedEvent.arenaTagType) instanceof EntryHazardTag;
         let arenaEffectType: ArenaEffectType;
 
         if (tagAddedEvent.arenaTagSide === ArenaTagSide.BOTH) {

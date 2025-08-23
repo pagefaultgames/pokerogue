@@ -1,3 +1,5 @@
+import "vitest";
+
 import type { TerrainType } from "#app/data/terrain";
 import type { AbilityId } from "#enums/ability-id";
 import type { ArenaTagSide } from "#enums/arena-tag-side";

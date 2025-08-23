@@ -120,7 +120,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
     it("should NOT be selectable if the player doesn't have enough money", async () => {
       game.scene.money = 0;
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
@@ -162,7 +162,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
       // Turn 3
       (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
 
       // Rewards
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
@@ -181,11 +181,11 @@ describe("Fun And Games! - Mystery Encounter", () => {
       // Skip minigame
       scene.currentBattle.mysteryEncounter!.misc.turnsRemaining = 0;
       (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
 
       // Rewards
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -210,11 +210,11 @@ describe("Fun And Games! - Mystery Encounter", () => {
       wobbuffet.hp = Math.floor(0.2 * wobbuffet.getMaxHp());
       scene.currentBattle.mysteryEncounter!.misc.turnsRemaining = 0;
       (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
 
       // Rewards
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -240,11 +240,11 @@ describe("Fun And Games! - Mystery Encounter", () => {
       wobbuffet.hp = Math.floor(0.1 * wobbuffet.getMaxHp());
       scene.currentBattle.mysteryEncounter!.misc.turnsRemaining = 0;
       (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
 
       // Rewards
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -270,11 +270,11 @@ describe("Fun And Games! - Mystery Encounter", () => {
       wobbuffet.hp = 1;
       scene.currentBattle.mysteryEncounter!.misc.turnsRemaining = 0;
       (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, 0, MoveUseMode.NORMAL);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
 
       // Rewards
       expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
-      await game.phaseInterceptor.run(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
