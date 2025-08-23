@@ -196,7 +196,7 @@ describe("Moves - Entry Hazards", () => {
       await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.EKANS]);
 
       const enemy = game.field.getEnemyPokemon();
-      expect(enemy.getAttackTypeEffectiveness(PokemonType.ROCK, undefined, true)).toBe(multi);
+      expect(enemy.getAttackTypeEffectiveness(PokemonType.ROCK, { ignoreStrongWinds: true })).toBe(multi);
       expect(enemy).toHaveTakenDamage(enemy.getMaxHp() * 0.125 * multi);
       expect(game.textInterceptor.logs).toContain(
         i18next.t("arenaTag:stealthRockActivateTrap", {
