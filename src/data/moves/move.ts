@@ -1059,6 +1059,7 @@ export class SelfStatusMove extends Move {
 type SubMove = AbstractConstructor<Move>
 
 function ChargeMove<TBase extends SubMove>(Base: TBase, nameAppend: string) {
+  // NB: This cannot be made into a oneline return
   abstract class Charging extends Base {
     /** The animation to play during the move's charging phase */
     public readonly chargeAnim: ChargeAnim = ChargeAnim[`${MoveId[this.id]}_CHARGING`];
