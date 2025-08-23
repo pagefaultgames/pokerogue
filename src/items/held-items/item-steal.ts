@@ -24,7 +24,8 @@ export abstract class ItemTransferHeldItem<T extends EffectTuple> extends HeldIt
    * @param _args N/A
    * @returns `true` if an item was stolen; false otherwise.
    */
-  apply(_effect: T, params: ItemStealParams): boolean {
+  // TODO: This works but can perhaps be done more elegantly
+  applySteal(params: ItemStealParams): boolean {
     const opponents = this.getTargets(params);
 
     if (!opponents.length) {
@@ -83,6 +84,10 @@ export class TurnEndItemStealHeldItem extends ItemTransferHeldItem<[typeof HeldI
     return i18next.t("modifierType:ModifierType.TurnHeldItemTransferModifierType.description");
   }
 
+  apply(_effect: typeof HeldItemEffect.TURN_END_ITEM_STEAL, params: ItemStealParams) {
+    super.applySteal(params);
+  }
+
   /**
    * Determines the targets to transfer items from when this applies.
    * @param pokemon the {@linkcode Pokemon} holding this item
@@ -133,6 +138,10 @@ export class ContactItemStealChanceHeldItem extends ItemTransferHeldItem<
     return i18next.t("modifierType:ModifierType.ContactHeldItemTransferChanceModifierType.description", {
       chancePercent: this.chancePercent,
     });
+  }
+
+  apply(_effect: typeof HeldItemEffect.CONTACT_ITEM_STEAL_CHANCE, params: ItemStealParams) {
+    super.applySteal(params);
   }
 
   /**
