@@ -2325,6 +2325,13 @@ export class HealOnAllyAttr extends HealAttr {
     // Don't trigger if not targeting an ally
     return target === user.getAlly() && super.canApply(user, target, _move, _args);
   }
+
+  override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+    if (user.isOpponent(target)) {
+      return false;
+    }
+    return super.apply(user, target, _move, _args);
+  }
 }
 
 /**
