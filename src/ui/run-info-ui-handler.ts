@@ -282,8 +282,8 @@ export class RunInfoUiHandler extends UiHandler {
       const enemyContainer = globalScene.add.container(0, 0);
       // Wild - Single and Doubles
       if (
-        this.runInfo.battleType === BattleType.WILD ||
-        (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && !this.runInfo.trainer)
+        this.runInfo.battleType === BattleType.WILD
+        || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && !this.runInfo.trainer)
       ) {
         switch (this.runInfo.enemyParty.length) {
           case 1:
@@ -296,8 +296,8 @@ export class RunInfoUiHandler extends UiHandler {
             break;
         }
       } else if (
-        this.runInfo.battleType === BattleType.TRAINER ||
-        (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && this.runInfo.trainer)
+        this.runInfo.battleType === BattleType.TRAINER
+        || (this.runInfo.battleType === BattleType.MYSTERY_ENCOUNTER && this.runInfo.trainer)
       ) {
         this.parseTrainerDefeat(enemyContainer);
       }
@@ -344,7 +344,7 @@ export class RunInfoUiHandler extends UiHandler {
       }
       const boxString = i18next
         .t(trainerObj.variant !== TrainerVariant.DOUBLE ? "battle:trainerAppeared" : "battle:trainerAppearedDouble", {
-          trainerName: trainerName,
+          trainerName,
         })
         .replace(/\n/g, " ");
       const descContainer = globalScene.add.container(0, 0);
@@ -363,8 +363,8 @@ export class RunInfoUiHandler extends UiHandler {
       subSprite.setScale(0.65);
       subSprite.setPosition(34, 46);
       const mysteryEncounterTitle = i18next.t(
-        globalScene.getMysteryEncounter(this.runInfo.mysteryEncounterType as MysteryEncounterType, true)
-          .localizationKey + ":title",
+        globalScene.getMysteryEncounter(this.runInfo.mysteryEncounterType as MysteryEncounterType, true).localizationKey
+          + ":title",
       );
       const descContainer = globalScene.add.container(0, 0);
       const textBox = addTextObject(0, 0, mysteryEncounterTitle, TextStyle.WINDOW, {
@@ -600,8 +600,8 @@ export class RunInfoUiHandler extends UiHandler {
 
     // If the player achieves a personal best in Endless, the mode text will be tinted similarly to SSS luck to celebrate their achievement.
     if (
-      (this.runInfo.gameMode === GameModes.ENDLESS || this.runInfo.gameMode === GameModes.SPLICED_ENDLESS) &&
-      this.runInfo.waveIndex === globalScene.gameData.gameStats.highestEndlessWave
+      (this.runInfo.gameMode === GameModes.ENDLESS || this.runInfo.gameMode === GameModes.SPLICED_ENDLESS)
+      && this.runInfo.waveIndex === globalScene.gameData.gameStats.highestEndlessWave
     ) {
       modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`);
       modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
@@ -613,7 +613,7 @@ export class RunInfoUiHandler extends UiHandler {
     const lineSpacing = i18next.resolvedLanguage === "ja" ? 3 : 3;
     const runInfoText = addBBCodeTextObject(7, 0, "", TextStyle.WINDOW, {
       fontSize: "50px",
-      lineSpacing: lineSpacing,
+      lineSpacing,
     });
     const runTime = getPlayTimeString(this.runInfo.playTime);
     runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
@@ -689,22 +689,21 @@ export class RunInfoUiHandler extends UiHandler {
    */
   private challengeParser(): string[] {
     const rules: string[] = [];
-    for (let i = 0; i < this.runInfo.challenges.length; i++) {
-      if (this.runInfo.challenges[i].value !== 0) {
-        switch (this.runInfo.challenges[i].id) {
+    for (const chal of this.runInfo.challenges) {
+      if (chal.value !== 0) {
+        switch (chal.id) {
           case Challenges.SINGLE_GENERATION:
-            rules.push(i18next.t(`runHistory:challengeMonoGen${this.runInfo.challenges[i].value}`));
+            rules.push(i18next.t(`runHistory:challengeMonoGen${chal.value}`));
             break;
           case Challenges.SINGLE_TYPE: {
-            const typeRule = PokemonType[this.runInfo.challenges[i].value - 1];
+            const typeRule = PokemonType[chal.value - 1];
             const typeTextColor = `[color=${TypeColor[typeRule]}]`;
             const typeShadowColor = `[shadow=${TypeShadow[typeRule]}]`;
             const typeText =
-              typeTextColor +
-              typeShadowColor +
-              i18next.t(`pokemonInfo:type.${toCamelCase(typeRule)}`)! +
-              "[/color]" +
-              "[/shadow]";
+              typeTextColor
+              + typeShadowColor
+              + i18next.t(`pokemonInfo:type.${toCamelCase(typeRule)}`)!
+              + "[/color][/shadow]";
             rules.push(typeText);
             break;
           }
@@ -712,7 +711,7 @@ export class RunInfoUiHandler extends UiHandler {
             rules.push(i18next.t("challenges:inverseBattle.shortName"));
             break;
           default: {
-            const localizationKey = toCamelCase(Challenges[this.runInfo.challenges[i].id]);
+            const localizationKey = toCamelCase(Challenges[chal.id]);
             rules.push(i18next.t(`challenges:${localizationKey}.name`));
             break;
           }
@@ -779,7 +778,7 @@ export class RunInfoUiHandler extends UiHandler {
       const lineSpacing = i18next.resolvedLanguage === "ja" ? 3 : 3;
       const pokeInfoText = addBBCodeTextObject(0, 0, pName, TextStyle.SUMMARY, {
         fontSize: textContainerFontSize,
-        lineSpacing: lineSpacing,
+        lineSpacing,
       });
       pokeInfoText.appendText(
         `${i18next.t("saveSlotSelectUiHandler:lv")}${formatFancyLargeNumber(pokemon.level, 1)} - ${pNatureName}`,
@@ -811,7 +810,7 @@ export class RunInfoUiHandler extends UiHandler {
       // Column 1: HP Atk Def
       const pokeStatText1 = addBBCodeTextObject(-5, 0, hp, TextStyle.SUMMARY, {
         fontSize: textContainerFontSize,
-        lineSpacing: lineSpacing,
+        lineSpacing,
       });
       pokeStatText1.appendText(atk);
       pokeStatText1.appendText(def);
@@ -819,7 +818,7 @@ export class RunInfoUiHandler extends UiHandler {
       // Column 2: SpAtk SpDef Speed
       const pokeStatText2 = addBBCodeTextObject(25, 0, spatk, TextStyle.SUMMARY, {
         fontSize: textContainerFontSize,
-        lineSpacing: lineSpacing,
+        lineSpacing,
       });
       pokeStatText2.appendText(spdef);
       pokeStatText2.appendText(speed);
@@ -912,8 +911,8 @@ export class RunInfoUiHandler extends UiHandler {
             }
             const itemIcon = item?.getIcon(true);
             if (
-              item?.stackCount < item?.getMaxHeldItemCount(pokemon) &&
-              itemIcon.list[1] instanceof Phaser.GameObjects.BitmapText
+              item?.stackCount < item?.getMaxHeldItemCount(pokemon)
+              && itemIcon.list[1] instanceof Phaser.GameObjects.BitmapText
             ) {
               itemIcon.list[1].clearTint();
             }

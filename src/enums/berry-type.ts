@@ -9,5 +9,5 @@ export enum BerryType {
   SALAC,
   LANSAT,
   STARF,
-  LEPPA
+  LEPPA,
 }

@@ -18,5 +18,5 @@ export enum PokemonType {
   DRAGON,
   DARK,
   FAIRY,
-  STELLAR
+  STELLAR,
 }

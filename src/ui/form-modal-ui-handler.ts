@@ -41,11 +41,11 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
 
   getHeight(config?: ModalConfig): number {
     return (
-      20 * this.getInputFieldConfigs().length +
-      (this.getModalTitle() ? 26 : 0) +
-      ((config as FormModalConfig)?.errorMessage ? 12 : 0) +
-      this.getButtonTopMargin() +
-      28
+      20 * this.getInputFieldConfigs().length
+      + (this.getModalTitle() ? 26 : 0)
+      + ((config as FormModalConfig)?.errorMessage ? 12 : 0)
+      + this.getButtonTopMargin()
+      + 28
     );
   }
 

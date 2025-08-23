@@ -139,8 +139,8 @@ class AnimFrame {
     focus: AnimFocus,
     init?: boolean,
   ) {
-    this.x = !init ? ((x || 0) - 128) * 0.5 : x;
-    this.y = !init ? ((y || 0) - 224) * 0.5 : y;
+    this.x = init ? x : ((x || 0) - 128) * 0.5;
+    this.y = init ? y : ((y || 0) - 224) * 0.5;
     if (zoomX) {
       this.zoomX = zoomX;
     } else if (init) {
@@ -808,8 +808,8 @@ export abstract class BattleAnim {
             x = point[0];
             y = point[1];
             if (
-              frame.target === AnimFrameTarget.GRAPHIC &&
-              isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2])
+              frame.target === AnimFrameTarget.GRAPHIC
+              && isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2])
             ) {
               scaleX = scaleX * -1;
             }
@@ -818,7 +818,7 @@ export abstract class BattleAnim {
       }
       const angle = -frame.angle;
       const key = frame.target === AnimFrameTarget.GRAPHIC ? g++ : frame.target === AnimFrameTarget.USER ? u++ : t++;
-      ret.get(frame.target)!.set(key, { x: x, y: y, scaleX: scaleX, scaleY: scaleY, angle: angle }); // TODO: is the bang correct?
+      ret.get(frame.target)!.set(key, { x, y, scaleX, scaleY, angle }); // TODO: is the bang correct?
     }
 
     return ret;
@@ -827,8 +827,8 @@ export abstract class BattleAnim {
   // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
   play(onSubstitute?: boolean, callback?: Function) {
     const isOppAnim = this.isOppAnim();
-    const user = !isOppAnim ? this.user! : this.target!; // TODO: are those bangs correct?
-    const target = !isOppAnim ? this.target! : this.user!;
+    const user = isOppAnim ? this.target! : this.user!;
+    const target = isOppAnim ? this.user! : this.target!; // TODO: are those bangs correct?
 
     if (!target?.isOnField() && !this.playRegardlessOfIssues) {
       if (callback) {
@@ -880,8 +880,8 @@ export abstract class BattleAnim {
        * and `this.target` prevent the target's Substitute doll from disappearing
        * after being the target of an animation.
        */
-      const userSpriteToShow = !isOppAnim ? userSprite : targetSprite;
-      const targetSpriteToShow = !isOppAnim ? targetSprite : userSprite;
+      const userSpriteToShow = isOppAnim ? targetSprite : userSprite;
+      const targetSpriteToShow = isOppAnim ? userSprite : targetSprite;
       if (!this.isHideUser() && userSpriteToShow) {
         userSpriteToShow.setVisible(true);
       }
@@ -1134,18 +1134,18 @@ export abstract class BattleAnim {
 
     for (const frame of frames) {
       let { x, y } = frame;
-      const scaleX = (frame.zoomX / 100) * (!frame.mirror ? 1 : -1);
+      const scaleX = (frame.zoomX / 100) * (frame.mirror ? -1 : 1);
       const scaleY = frame.zoomY / 100;
       x += targetInitialX;
       y += targetInitialY;
       const angle = -frame.angle;
       const key = frame.target === AnimFrameTarget.GRAPHIC ? g++ : frame.target === AnimFrameTarget.USER ? u++ : t++;
       ret.get(frame.target)?.set(key, {
-        x: x,
-        y: y,
-        scaleX: scaleX,
-        scaleY: scaleY,
-        angle: angle,
+        x,
+        y,
+        scaleX,
+        scaleY,
+        angle,
       });
     }
 

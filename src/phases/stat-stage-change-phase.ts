@@ -22,6 +22,7 @@ export type StatStageChangeCallback = (
   relativeChanges: number[],
 ) => void;
 
+// TODO: Refactor this mess of a phase
 export class StatStageChangePhase extends PokemonPhase {
   public readonly phaseName = "StatStageChangePhase";
   private stats: BattleStat[];
@@ -62,13 +63,12 @@ export class StatStageChangePhase extends PokemonPhase {
   start() {
     // Check if multiple stats are being changed at the same time, then run SSCPhase for each of them
     if (this.stats.length > 1) {
-      for (let i = 0; i < this.stats.length; i++) {
-        const stat = [this.stats[i]];
+      for (const stat of this.stats) {
         globalScene.phaseManager.unshiftNew(
           "StatStageChangePhase",
           this.battlerIndex,
           this.selfTarget,
-          stat,
+          [stat],
           this.stages,
           this.showMessage,
           this.ignoreAbilities,
@@ -100,20 +100,18 @@ export class StatStageChangePhase extends PokemonPhase {
           }
         });
       }
+    } else if (!this.comingFromStickyWeb) {
+      opponentPokemon = globalScene.getPlayerField()[globalScene.currentBattle.lastPlayerInvolved];
     } else {
-      if (!this.comingFromStickyWeb) {
-        opponentPokemon = globalScene.getPlayerField()[globalScene.currentBattle.lastPlayerInvolved];
-      } else {
-        const stickyTagID = globalScene.arena.findTagsOnSide(
-          (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
-          ArenaTagSide.ENEMY,
-        )[0].sourceId;
-        globalScene.getPlayerField().forEach(e => {
-          if (e.id === stickyTagID) {
-            opponentPokemon = e;
-          }
-        });
-      }
+      const stickyTagID = globalScene.arena.findTagsOnSide(
+        (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
+        ArenaTagSide.ENEMY,
+      )[0].sourceId;
+      globalScene.getPlayerField().forEach(e => {
+        if (e.id === stickyTagID) {
+          opponentPokemon = e;
+        }
+      });
     }
 
     if (!pokemon.isActive(true)) {
@@ -161,11 +159,9 @@ export class StatStageChangePhase extends PokemonPhase {
 
         /** Potential stat reflection due to Mirror Armor, does not apply to Octolock end of turn effect */
         if (
-          opponentPokemon !== undefined &&
-          // TODO: investigate whether this is stoping mirror armor from applying to non-octolock
-          // reasons for stat drops if the user has the Octolock tag
-          !pokemon.findTag(t => t instanceof OctolockTag) &&
-          !this.comingFromMirrorArmorUser
+          opponentPokemon !== undefined // TODO: investigate whether this is stoping mirror armor from applying to non-octolock // reasons for stat drops if the user has the Octolock tag
+          && !pokemon.findTag(t => t instanceof OctolockTag)
+          && !this.comingFromMirrorArmorUser
         ) {
           applyAbAttrs("ReflectStatStageChangeAbAttr", {
             pokemon,
@@ -309,13 +305,13 @@ export class StatStageChangePhase extends PokemonPhase {
       while (
         (existingPhase = globalScene.phaseManager.findPhase(
           p =>
-            p.is("StatStageChangePhase") &&
-            p.battlerIndex === this.battlerIndex &&
-            p.stats.length === 1 &&
-            p.stats[0] === this.stats[0] &&
-            p.selfTarget === this.selfTarget &&
-            p.showMessage === this.showMessage &&
-            p.ignoreAbilities === this.ignoreAbilities,
+            p.is("StatStageChangePhase")
+            && p.battlerIndex === this.battlerIndex
+            && p.stats.length === 1
+            && p.stats[0] === this.stats[0]
+            && p.selfTarget === this.selfTarget
+            && p.showMessage === this.showMessage
+            && p.ignoreAbilities === this.ignoreAbilities,
         ) as StatStageChangePhase)
       ) {
         this.stages += existingPhase.stages;
@@ -328,13 +324,13 @@ export class StatStageChangePhase extends PokemonPhase {
     while (
       (existingPhase = globalScene.phaseManager.findPhase(
         p =>
-          p.is("StatStageChangePhase") &&
-          p.battlerIndex === this.battlerIndex &&
-          p.selfTarget === this.selfTarget &&
-          accEva.some(s => p.stats.includes(s)) === isAccEva &&
-          p.stages === this.stages &&
-          p.showMessage === this.showMessage &&
-          p.ignoreAbilities === this.ignoreAbilities,
+          p.is("StatStageChangePhase")
+          && p.battlerIndex === this.battlerIndex
+          && p.selfTarget === this.selfTarget
+          && accEva.some(s => p.stats.includes(s)) === isAccEva
+          && p.stages === this.stages
+          && p.showMessage === this.showMessage
+          && p.ignoreAbilities === this.ignoreAbilities,
       ) as StatStageChangePhase)
     ) {
       this.stats.push(...existingPhase.stats);

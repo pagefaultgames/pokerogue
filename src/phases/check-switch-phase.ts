@@ -49,9 +49,9 @@ export class CheckSwitchPhase extends BattlePhase {
 
     // ...or if any player Pokemon has an effect that prevents the checked Pokemon from switching
     if (
-      pokemon.getTag(BattlerTagType.FRENZY) ||
-      pokemon.isTrapped() ||
-      globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))
+      pokemon.getTag(BattlerTagType.FRENZY)
+      || pokemon.isTrapped()
+      || globalScene.getPlayerField().some(p => p.getTag(BattlerTagType.COMMANDED))
     ) {
       return super.end();
     }

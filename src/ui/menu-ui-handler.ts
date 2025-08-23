@@ -495,7 +495,7 @@ export class MenuUiHandler extends MessageUiHandler {
             },
           });
           globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-            options: options,
+            options,
             delay: 0,
           });
           return true;
@@ -599,11 +599,11 @@ export class MenuUiHandler extends MessageUiHandler {
           break;
         case MenuOptions.MANAGE_DATA:
           if (
-            !bypassLogin &&
-            !this.manageDataConfig.options.some(
+            !bypassLogin
+            && !this.manageDataConfig.options.some(
               o =>
-                o.label === i18next.t("menuUiHandler:linkDiscord") ||
-                o.label === i18next.t("menuUiHandler:unlinkDiscord"),
+                o.label === i18next.t("menuUiHandler:linkDiscord")
+                || o.label === i18next.t("menuUiHandler:unlinkDiscord"),
             )
           ) {
             this.manageDataConfig.options.splice(

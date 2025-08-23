@@ -1,5 +1,5 @@
 export enum TrainerSlot {
   NONE,
   TRAINER,
-  TRAINER_PARTNER
+  TRAINER_PARTNER,
 }

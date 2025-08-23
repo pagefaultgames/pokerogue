@@ -101,7 +101,7 @@ const startGame = async () => {
     antialias: false,
     pipeline: [InvertPostFX] as unknown as Phaser.Types.Core.PipelineConfig,
     scene: [LoadingScene, BattleScene],
-    version: version,
+    version,
   });
   game.sound.pauseOnBlur = false;
   if (manifest) {
