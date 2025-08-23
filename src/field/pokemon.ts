@@ -315,7 +315,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     super(globalScene, x, y);
 
     if (!species.isObtainable() && this.isPlayer()) {
-      throw `Cannot create a player Pokemon for species "${species.getName(formIndex)}"`;
+      throw new Error(`Cannot create a player Pokemon for species "${species.getName(formIndex)}"`);
     }
 
     this.species = species;
@@ -4114,7 +4114,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       isCritical = false,
       ignoreSegments = false,
       ignoreFaintPhase = false,
-      source = undefined,
+      source,
     }: {
       result?: DamageResult;
       isCritical?: boolean;
@@ -5100,10 +5100,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const lastStatus = this.status?.effect;
     this.status = null;
     this.setFrameRate(10);
-    if (lastStatus === StatusEffect.SLEEP) {
-      if (this.getTag(BattlerTagType.NIGHTMARE)) {
-        this.lapseTag(BattlerTagType.NIGHTMARE);
-      }
+    if (lastStatus === StatusEffect.SLEEP && this.getTag(BattlerTagType.NIGHTMARE)) {
+      this.lapseTag(BattlerTagType.NIGHTMARE);
     }
     if (confusion && this.getTag(BattlerTagType.CONFUSED)) {
       this.lapseTag(BattlerTagType.CONFUSED);
@@ -5797,9 +5795,8 @@ export class PlayerPokemon extends Pokemon {
 
     if (!dataSource) {
       if (
-        globalScene.gameMode.isDaily ||
-        // Keldeo is excluded due to crashes involving its signature move and the associated form change
-        (Overrides.STARTER_SPECIES_OVERRIDE && Overrides.STARTER_SPECIES_OVERRIDE !== SpeciesId.KELDEO)
+        globalScene.gameMode.isDaily // Keldeo is excluded due to crashes involving its signature move and the associated form change
+        || (Overrides.STARTER_SPECIES_OVERRIDE && Overrides.STARTER_SPECIES_OVERRIDE !== SpeciesId.KELDEO)
       ) {
         this.generateAndPopulateMoveset();
       } else {

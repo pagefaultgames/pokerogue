@@ -821,7 +821,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
     requirement: EncounterSceneRequirement,
   ): this & Required<Pick<IMysteryEncounter, "requirements">> {
     if (requirement instanceof EncounterPokemonRequirement) {
-      Error("Incorrectly added pokemon requirement as scene requirement.");
+      new Error("Incorrectly added pokemon requirement as scene requirement.");
     }
     this.requirements.push(requirement);
     return this;
@@ -864,7 +864,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
     requirement: EncounterPokemonRequirement,
   ): this & Required<Pick<IMysteryEncounter, "primaryPokemonRequirements">> {
     if (requirement instanceof EncounterSceneRequirement) {
-      Error("Incorrectly added scene requirement as pokemon requirement.");
+      new Error("Incorrectly added scene requirement as pokemon requirement.");
     }
 
     this.primaryPokemonRequirements.push(requirement);
@@ -917,7 +917,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
     excludePrimaryFromSecondaryRequirements = false,
   ): this & Required<Pick<IMysteryEncounter, "secondaryPokemonRequirements">> {
     if (requirement instanceof EncounterSceneRequirement) {
-      Error("Incorrectly added scene requirement as pokemon requirement.");
+      new Error("Incorrectly added scene requirement as pokemon requirement.");
     }
 
     this.secondaryPokemonRequirements.push(requirement);

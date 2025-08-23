@@ -395,7 +395,8 @@ export class PhaseInterceptor {
           && currentPhase === actionForNextPrompt.phaseTarget
           && currentHandler.active
           && (!actionForNextPrompt.awaitingActionInput
-            || (actionForNextPrompt.awaitingActionInput && (currentHandler as AwaitableUiHandler)["awaitingActionInput"]))
+            || (actionForNextPrompt.awaitingActionInput
+              && (currentHandler as AwaitableUiHandler)["awaitingActionInput"]))
         ) {
           const prompt = this.prompts.shift();
           if (prompt?.callback) {

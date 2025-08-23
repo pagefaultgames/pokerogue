@@ -3154,7 +3154,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     // If none are eligible to copy, it will not activate.
     const targets = user.getOpponents().filter(opp => user.canTransformInto(opp));
     if (targets.length === 0) {
-      return undefined;
+      return;
     }
 
     const mon = targets[user.randBattleSeedInt(targets.length)];

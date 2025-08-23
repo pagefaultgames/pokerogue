@@ -78,7 +78,7 @@ export enum EvolutionItem {
 }
 
 const tyrogueMoves = [MoveId.LOW_SWEEP, MoveId.MACH_PUNCH, MoveId.RAPID_SPIN] as const;
-type TyrogueMove = typeof tyrogueMoves[number];
+type TyrogueMove = (typeof tyrogueMoves)[number];
 
 /**
  * Pokemon Evolution tuple type consisting of:
@@ -203,7 +203,10 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.WEATHER:
           return cond.weather.includes(globalScene.arena.getWeatherType());
         case EvoCondKey.TYROGUE:
-          return pokemon.getMoveset(true).find(m => (tyrogueMoves as readonly MoveId[]) .includes(m.moveId))?.moveId === cond.move;
+          return (
+            pokemon.getMoveset(true).find(m => (tyrogueMoves as readonly MoveId[]).includes(m.moveId))?.moveId
+            === cond.move
+          );
         case EvoCondKey.NATURE:
           return cond.nature.includes(pokemon.getNature());
         case EvoCondKey.RANDOM_FORM: {
@@ -513,7 +516,13 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [SpeciesId.RALTS]: [new SpeciesEvolution(SpeciesId.KIRLIA, 20, null, null)],
   [SpeciesId.KIRLIA]: [
     new SpeciesEvolution(SpeciesId.GARDEVOIR, 30, null, null),
-    new SpeciesEvolution(SpeciesId.GALLADE, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.MALE}, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesEvolution(
+      SpeciesId.GALLADE,
+      1,
+      EvolutionItem.DAWN_STONE,
+      { key: EvoCondKey.GENDER, gender: Gender.MALE },
+      SpeciesWildEvolutionDelay.LONG,
+    ),
   ],
   [SpeciesId.SURSKIT]: [new SpeciesEvolution(SpeciesId.MASQUERAIN, 22, null, null)],
   [SpeciesId.SHROOMISH]: [new SpeciesEvolution(SpeciesId.BRELOOM, 23, null, null)],
@@ -548,7 +557,13 @@ export const pokemonEvolutions: PokemonEvolutions = {
   [SpeciesId.DUSKULL]: [new SpeciesEvolution(SpeciesId.DUSCLOPS, 37, null, null)],
   [SpeciesId.SNORUNT]: [
     new SpeciesEvolution(SpeciesId.GLALIE, 42, null, null),
-    new SpeciesEvolution(SpeciesId.FROSLASS, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.FEMALE}, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesEvolution(
+      SpeciesId.FROSLASS,
+      1,
+      EvolutionItem.DAWN_STONE,
+      { key: EvoCondKey.GENDER, gender: Gender.FEMALE },
+      SpeciesWildEvolutionDelay.LONG,
+    ),
   ],
   [SpeciesId.SPHEAL]: [new SpeciesEvolution(SpeciesId.SEALEO, 32, null, null)],
   [SpeciesId.SEALEO]: [new SpeciesEvolution(SpeciesId.WALREIN, 44, null, null)],
@@ -2039,7 +2054,7 @@ export const pokemonPrevolutions: PokemonPrevolutions = {};
 
 export function initPokemonPrevolutions(): void {
   // TODO: Why do we have empty strings in our array?
-  const megaFormKeys = [ SpeciesFormKey.MEGA, "", SpeciesFormKey.MEGA_X, "", SpeciesFormKey.MEGA_Y ];
+  const megaFormKeys = [SpeciesFormKey.MEGA, "", SpeciesFormKey.MEGA_X, "", SpeciesFormKey.MEGA_Y];
   for (const [pk, evolutions] of Object.entries(pokemonEvolutions)) {
     for (const ev of evolutions) {
       if (ev.evoFormKey && megaFormKeys.indexOf(ev.evoFormKey) > -1) {

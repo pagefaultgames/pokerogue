@@ -244,11 +244,11 @@ export class TitlePhase extends Phase {
 
         regenerateModifierPoolThresholds(party, ModifierPoolType.DAILY_STARTER);
 
-        const modifiers: Modifier[] = Array(3)
+        const modifiers: Modifier[] = new Array(3)
           .fill(null)
           .map(() => modifierTypes.EXP_SHARE().withIdFromFunc(modifierTypes.EXP_SHARE).newModifier())
           .concat(
-            Array(3)
+            new Array(3)
               .fill(null)
               .map(() => modifierTypes.GOLDEN_EXP_CHARM().withIdFromFunc(modifierTypes.GOLDEN_EXP_CHARM).newModifier()),
           )

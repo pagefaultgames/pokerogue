@@ -1506,14 +1506,14 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   this.biomes.map(b => {
                     options.push({
                       label:
-                        i18next.t(`biome:${toCamelCase(BiomeId[b.biome])}`) +
-                        " - " +
-                        i18next.t(`biome:${toCamelCase(BiomePoolTier[b.tier])}`) +
-                        (b.tod.length === 1 && b.tod[0] === -1
+                        i18next.t(`biome:${toCamelCase(BiomeId[b.biome])}`)
+                        + " - "
+                        + i18next.t(`biome:${toCamelCase(BiomePoolTier[b.tier])}`)
+                        + (b.tod.length === 1 && b.tod[0] === -1
                           ? ""
-                          : " (" +
-                            b.tod.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ") +
-                            ")"),
+                          : " ("
+                            + b.tod.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ")
+                            + ")"),
                       handler: () => false,
                     });
                   });
@@ -1527,14 +1527,14 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     this.preBiomes.map(b => {
                       options.push({
                         label:
-                          i18next.t(`biome:${toCamelCase(BiomeId[b.biome])}`) +
-                          " - " +
-                          i18next.t(`biome:${toCamelCase(BiomePoolTier[b.tier])}`) +
-                          (b.tod.length === 1 && b.tod[0] === -1
+                          i18next.t(`biome:${toCamelCase(BiomeId[b.biome])}`)
+                          + " - "
+                          + i18next.t(`biome:${toCamelCase(BiomePoolTier[b.tier])}`)
+                          + (b.tod.length === 1 && b.tod[0] === -1
                             ? ""
-                            : " (" +
-                              b.tod.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ") +
-                              ")"),
+                            : " ("
+                              + b.tod.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ")
+                              + ")"),
                         handler: () => false,
                       });
                     });

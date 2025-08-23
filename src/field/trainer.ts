@@ -54,8 +54,8 @@ export class Trainer extends Phaser.GameObjects.Container {
   ) {
     super(globalScene, -72, 80);
     this.config =
-      trainerConfigOverride ??
-      (trainerConfigs.hasOwnProperty(trainerType)
+      trainerConfigOverride
+      ?? (trainerConfigs.hasOwnProperty(trainerType)
         ? trainerConfigs[trainerType]
         : trainerConfigs[TrainerType.ACE_TRAINER]);
 

@@ -458,10 +458,9 @@ export class CommandPhase extends FieldPhase {
     if (cursor < numBallTypes) {
       const targetPokemon = globalScene.getEnemyPokemon(false);
       if (
-        targetPokemon?.isBoss() &&
-        targetPokemon?.bossSegmentIndex >= 1 &&
-        // TODO: Decouple this hardcoded exception for wonder guard and just check the target...
-        !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true)
+        targetPokemon?.isBoss()
+        && targetPokemon?.bossSegmentIndex >= 1 // TODO: Decouple this hardcoded exception for wonder guard and just check the target...
+        && !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true)
       ) {
         // When facing the final boss, it must be weakened unless a Master Ball is used AND no challenges are active.
         // The message is customized for the final boss.

@@ -92,7 +92,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
     this.targets = targets;
 
-    this.hitChecks = Array(this.targets.length).fill([HitCheckResult.PENDING, 0]);
+    this.hitChecks = new Array(this.targets.length).fill([HitCheckResult.PENDING, 0]);
   }
 
   /**

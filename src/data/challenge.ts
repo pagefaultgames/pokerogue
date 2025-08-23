@@ -823,11 +823,11 @@ export class FreshStartChallenge extends Challenge {
 
     // Remove natures except for the default ones
     const neutralNaturesAttr =
-      (1 << (Nature.HARDY + 1)) |
-      (1 << (Nature.DOCILE + 1)) |
-      (1 << (Nature.SERIOUS + 1)) |
-      (1 << (Nature.BASHFUL + 1)) |
-      (1 << (Nature.QUIRKY + 1));
+      (1 << (Nature.HARDY + 1))
+      | (1 << (Nature.DOCILE + 1))
+      | (1 << (Nature.SERIOUS + 1))
+      | (1 << (Nature.BASHFUL + 1))
+      | (1 << (Nature.QUIRKY + 1));
     dexEntry.natureAttr &= neutralNaturesAttr;
 
     // Cap all ivs at 15
