@@ -1,7 +1,7 @@
 import { globSync } from "node:fs";
 
 /**
- * @type {Partial<import("typedoc").TypeDocOptions}
+ * @type {Partial<import("typedoc").TypeDocOptions>}
  */
 const config = {
   entryPoints: ["./src", "./test/test-utils"],
