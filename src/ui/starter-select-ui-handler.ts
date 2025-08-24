@@ -3703,38 +3703,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         handleTutorial(Tutorial.Pokerus);
       }
     } else if (this.speciesStarterDexEntry?.seenAttr) {
-      this.setNameAndNumber(species);
-
-      this.pokemonGrowthRateText.setText("");
-      this.pokemonGrowthRateLabelText.setVisible(false);
-      this.type1Icon.setVisible(false);
-      this.type2Icon.setVisible(false);
-      this.pokemonLuckLabelText.setVisible(false);
-      this.pokemonLuckText.setVisible(false);
-      this.pokemonShinyIcon.setVisible(false);
-      this.pokemonUncaughtText.setVisible(true);
-      this.pokemonAbilityLabelText.setVisible(false);
-      this.pokemonPassiveLabelText.setVisible(false);
-      this.pokemonNatureLabelText.setVisible(false);
-      this.pokemonCaughtHatchedContainer.setVisible(false);
-      this.pokemonCandyContainer.setVisible(false);
-      this.pokemonFormText.setVisible(false);
-      this.teraIcon.setVisible(false);
-
-      const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, true, true);
-      const defaultAbilityIndex = globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-      const defaultNature = globalScene.gameData.getSpeciesDefaultNature(species);
-      const props = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-
-      this.setSpeciesDetails(species, {
-        shiny: props.shiny,
-        formIndex: props.formIndex,
-        female: props.female,
-        variant: props.variant,
-        abilityIndex: defaultAbilityIndex,
-        natureIndex: defaultNature,
-        forSeen: true,
-      });
+      this.cleanStarterSprite(species, true);
+      this.pokemonSprite.setVisible(true);
       this.pokemonSprite.setTint(0x808080);
     } else {
       this.cleanStarterSprite(species);
@@ -3756,9 +3726,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  cleanStarterSprite(species?: PokemonSpecies) {
-    this.pokemonNumberText.setText(padInt(0, 4));
-    this.pokemonNameText.setText(species ? "???" : "");
+  cleanStarterSprite(species?: PokemonSpecies, isSeen = false) {
+    if (isSeen && species) {
+      this.setNameAndNumber(species);
+    } else {
+      this.pokemonNumberText.setText(padInt(0, 4));
+      this.pokemonNameText.setText(species ? "???" : "");
+    }
+
     this.pokemonGrowthRateText.setText("");
     this.pokemonGrowthRateLabelText.setVisible(false);
     this.type1Icon.setVisible(false);
@@ -3775,16 +3750,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonFormText.setVisible(false);
     this.teraIcon.setVisible(false);
 
-    this.setSpeciesDetails(species!, {
-      // TODO: is this bang correct? No it ain't
-      shiny: false,
-      formIndex: 0,
-      female: false,
-      variant: 0,
-      abilityIndex: 0,
-      natureIndex: 0,
-    });
-    this.pokemonSprite.clearTint();
+    // TODO: This mostly makes sense but is causing the sprite to not update
+    this.setNoSpeciesDetails();
   }
 
   getSpeciesData(
@@ -3804,9 +3771,58 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return { dexEntry: { ...copiedDexEntry }, starterDataEntry: { ...copiedStarterDataEntry } };
   }
 
+  setNoSpeciesDetails() {
+    this.dexAttrCursor = 0n;
+    this.abilityCursor = -1;
+    this.natureCursor = -1;
+    this.teraCursor = PokemonType.UNKNOWN;
+
+    globalScene.ui.hideTooltip();
+
+    this.pokemonSprite.setVisible(false);
+    this.pokemonPassiveLabelText.setVisible(false);
+    this.pokemonPassiveText.setVisible(false);
+    this.pokemonPassiveDisabledIcon.setVisible(false);
+    this.pokemonPassiveLockedIcon.setVisible(false);
+    this.teraIcon.setVisible(false);
+
+    if (this.assetLoadCancelled) {
+      this.assetLoadCancelled.value = true;
+      this.assetLoadCancelled = null;
+    }
+
+    this.starterMoveset = null;
+    this.speciesStarterMoves = [];
+
+    this.shinyOverlay.setVisible(false);
+    this.pokemonNumberText
+      .setColor(this.getTextColor(TextStyle.SUMMARY))
+      .setShadowColor(this.getTextColor(TextStyle.SUMMARY, true));
+    this.pokemonGenderText.setText("");
+    this.pokemonAbilityText.setText("");
+    this.pokemonPassiveText.setText("");
+    this.pokemonNatureText.setText("");
+    this.teraIcon.setVisible(false);
+    this.setTypeIcons(null, null);
+
+    for (let m = 0; m < 4; m++) {
+      this.pokemonMoveContainers[m].setVisible(false);
+    }
+    this.pokemonEggMovesContainer.setVisible(false);
+    this.pokemonAdditionalMoveCountLabel.setVisible(false);
+
+    this.tryUpdateValue();
+    this.updateInstructions();
+  }
+
   setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
+    // Here we pass some options to override everything else
     let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
+
+    // Check whether we are setting details for a seen but not caught species
     const forSeen: boolean = options.forSeen ?? false;
+
+    // Storing old cursor values...
     const oldProps = species ? globalScene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor) : null;
     const oldAbilityIndex =
       this.abilityCursor > -1 ? this.abilityCursor : globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
@@ -3817,10 +3833,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.natureCursor > -1 ? this.natureCursor : globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
     }
     const oldTeraType = this.teraCursor > -1 ? this.teraCursor : species ? species.type1 : PokemonType.UNKNOWN;
+
+    // Before we reset them to null values
     this.dexAttrCursor = 0n;
     this.abilityCursor = -1;
     this.natureCursor = -1;
     this.teraCursor = PokemonType.UNKNOWN;
+
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite =
@@ -3893,6 +3912,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       const abilityAttr = starterDataEntry.abilityAttr;
 
       if (!caughtAttr) {
+        // TODO: What is the point of all this, considering everything will be hidden anyway?
         const props = globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
         const defaultAbilityIndex = globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
         const defaultNature = globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
@@ -4166,17 +4186,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.teraIcon.setVisible(false);
         this.setTypeIcons(null, null);
       }
-    } else {
-      this.shinyOverlay.setVisible(false);
-      this.pokemonNumberText
-        .setColor(this.getTextColor(TextStyle.SUMMARY))
-        .setShadowColor(this.getTextColor(TextStyle.SUMMARY, true));
-      this.pokemonGenderText.setText("");
-      this.pokemonAbilityText.setText("");
-      this.pokemonPassiveText.setText("");
-      this.pokemonNatureText.setText("");
-      this.teraIcon.setVisible(false);
-      this.setTypeIcons(null, null);
     }
 
     if (!this.starterMoveset) {
