@@ -30,6 +30,7 @@ const config = {
   // Avoid emitting docs for branches other than main/beta
   emit: process.env.DRY_RUN ? "none" : "docs",
   out: process.env.CI ? "/tmp/docs" : "./typedoc",
+  title: "PokéRogue",
   readme: "./README.md",
   coverageLabel: "Documented",
   coverageSvgWidth: 120, // Increased from 104 baseline due to adding 2 extra letters
@@ -37,12 +38,17 @@ const config = {
   theme: "typedoc-github-theme",
   customFooterHtml: "<p>Copyright <strong>Pagefault Games</strong> 2025</p>",
   customFooterHtmlDisableWrapper: true,
+  navigationLinks: {
+    GitHub: "https://github.com/pagefaultgames/pokerogue",
+  },
 };
 
-// If generating docs, check the ref name and add an appropriate navigation header
+// If generating docs for main/beta, check the ref name and add an appropriate navigation header
 if (!process.env.DRY_RUN && process.env.REF_NAME) {
   const otherRefName = process.env.REF_NAME === "main" ? "beta" : "main";
   config.navigationLinks = {
+    ...config.navigationLinks,
+    // This will be "Switch to Beta" when on main, and vice versa
     [`Switch to ${otherRefName.charAt(0).toUpperCase() + otherRefName.slice(1).toLowerCase()}`]: `https://pagefaultgames.github.io/pokerogue/${otherRefName}`,
   };
 }
