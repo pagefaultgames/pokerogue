@@ -3014,41 +3014,44 @@ export class PostSummonFormChangeAbAttr extends PostSummonAbAttr {
   }
 }
 
-/** Attempts to copy a pokemon's ability */
+/**
+ * Attempts to copy a pokemon's ability
+ *
+ * @remarks
+ * Hardcodes idiosyncrasies specific to trace, so should not be used for other abilities
+ * that might copy abilities in the future
+ * @sealed
+ */
 export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
   private target: Pokemon;
   private targetAbilityName: string;
 
-  override canApply({ pokemon }: AbAttrBaseParams): boolean {
-    const targets = pokemon.getOpponents();
+  override canApply({ pokemon, simulated }: AbAttrBaseParams): boolean {
+    const targets = pokemon
+      .getOpponents()
+      .filter(t => t.getAbility().isCopiable || t.getAbility().id === AbilityId.WONDER_GUARD);
     if (!targets.length) {
       return false;
     }
 
     let target: Pokemon;
-    if (targets.length > 1) {
-      globalScene.executeWithSeedOffset(() => (target = randSeedItem(targets)), globalScene.currentBattle.waveIndex);
+    // simulated call always chooses first target so as to not advance RNG
+    if (targets.length > 1 && !simulated) {
+      target = targets[randSeedInt(targets.length)];
     } else {
       target = targets[0];
     }
 
-    if (
-      !target!.getAbility().isCopiable &&
-      // Wonder Guard is normally uncopiable so has the attribute, but Trace specifically can copy it
-      !(pokemon.hasAbility(AbilityId.TRACE) && target!.getAbility().id === AbilityId.WONDER_GUARD)
-    ) {
-      return false;
-    }
-
-    this.target = target!;
-    this.targetAbilityName = allAbilities[target!.getAbility().id].name;
+    this.target = target;
+    this.targetAbilityName = allAbilities[target.getAbility().id].name;
     return true;
   }
 
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    if (!simulated) {
-      pokemon.setTempAbility(this.target!.getAbility());
-      setAbilityRevealed(this.target!);
+    // Protect against this somehow being called before canApply by ensuring target is defined
+    if (!simulated && this.target) {
+      pokemon.setTempAbility(this.target.getAbility());
+      setAbilityRevealed(this.target);
       pokemon.updateInfo();
     }
   }
