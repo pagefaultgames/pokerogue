@@ -55,20 +55,21 @@ export abstract class PhasePriorityQueue {
    */
   public tryRemovePhase(phaseFilter: (phase: Phase) => boolean, removeCount: number | "all" = 1): number {
     if (removeCount === "all") {
-      removeCount = Number.MAX_SAFE_INTEGER;
+      removeCount = this.queue.length;
     } else if (removeCount < 1) {
       return 0;
     }
     let numRemoved = 0;
-    let phaseIndex = this.queue.findIndex(phaseFilter);
-    if (phaseIndex === -1) {
-      return 0;
-    }
-    while (numRemoved < removeCount && phaseIndex !== -1) {
+
+    do {
+      const phaseIndex = this.queue.findIndex(phaseFilter);
+      if (phaseIndex === -1) {
+        break;
+      }
       this.queue.splice(phaseIndex, 1);
       numRemoved++;
-      phaseIndex = this.queue.findIndex(phaseFilter);
-    }
+    } while (numRemoved < removeCount && this.queue.length > 0);
+
     return numRemoved;
   }
 }
