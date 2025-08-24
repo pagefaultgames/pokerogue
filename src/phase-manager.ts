@@ -44,6 +44,7 @@ import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { MoveEndPhase } from "#phases/move-end-phase";
 import { MoveHeaderPhase } from "#phases/move-header-phase";
 import { MovePhase } from "#phases/move-phase";
+import { MoveReflectPhase } from "#phases/move-reflect-phase";
 import {
   MysteryEncounterBattlePhase,
   MysteryEncounterBattleStartCleanupPhase,
@@ -157,6 +158,7 @@ const PHASES = Object.freeze({
   MoveEffectPhase,
   MoveEndPhase,
   MoveHeaderPhase,
+  MoveReflectPhase,
   MovePhase,
   MysteryEncounterPhase,
   MysteryEncounterOptionSelectedPhase,
@@ -414,6 +416,8 @@ export class PhaseManager {
    * @param phaseFilter filter function to use to find the wanted phase
    * @returns the found phase or undefined if none found
    */
+  findPhase<P extends Phase = Phase>(phaseFilter: (phase: Phase) => phase is P): P | undefined;
+  findPhase<P extends Phase = Phase>(phaseFilter: (phase: P) => boolean): P | undefined;
   findPhase<P extends Phase = Phase>(phaseFilter: (phase: P) => boolean): P | undefined {
     return this.phaseQueue.find(phaseFilter) as P | undefined;
   }
