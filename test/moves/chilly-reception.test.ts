@@ -77,9 +77,8 @@ describe("Moves - Chilly Reception", () => {
 
     game.move.select(MoveId.CHILLY_RECEPTION);
     game.doSelectPartyPokemon(1);
-    // TODO: Uncomment lines once wimp out PR fixes force switches to not reset summon data immediately
-    //  await game.phaseInterceptor.to("SwitchSummonPhase", false);
-    //  expect(slowking.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    await game.phaseInterceptor.to("SwitchSummonPhase", false);
+    expect(slowking.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
 
     await game.toEndOfTurn();
 

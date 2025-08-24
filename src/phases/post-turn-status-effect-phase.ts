@@ -44,6 +44,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
         }
         if (damage.value) {
           // Set preventEndure flag to avoid pokemon surviving thanks to focus band, sturdy, endure ...
+          // TODO: why don't we call `damageAndUpdate` here?
           globalScene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage.value, false, true));
           pokemon.updateInfo();
           applyAbAttrs("PostDamageAbAttr", { pokemon, damage: damage.value });

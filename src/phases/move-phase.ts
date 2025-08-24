@@ -133,6 +133,8 @@ export class MovePhase extends BattlePhase {
     }
 
     this.pokemon.turnData.acted = true;
+    // TODO: Increase this if triple battles are added
+    this.pokemon.turnData.lastMoveDamageDealt = Array(4).fill(0);
 
     // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
     if (isVirtual(this.useMode)) {
@@ -269,8 +271,8 @@ export class MovePhase extends BattlePhase {
       globalScene.phaseManager.queueMessage(
         getStatusEffectHealText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
       );
-      // cannot use `asPhase=true` as it will cause status to be reset _after_ move condition checks fire
-      this.pokemon.resetStatus(false, false, false, false);
+      this.pokemon.resetStatus();
+      this.pokemon.updateInfo();
     }
   }
 

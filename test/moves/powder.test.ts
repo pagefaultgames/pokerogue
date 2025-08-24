@@ -175,7 +175,7 @@ describe("Moves - Powder", () => {
     expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
     // enemy should have taken damage from player's Fiery Dance + 2 Powder procs
     expect(enemyPokemon.hp).toBe(
-      enemyStartingHp - playerPokemon.turnData.totalDamageDealt - 2 * Math.floor(enemyPokemon.getMaxHp() / 4),
+      enemyStartingHp - playerPokemon.turnData.singleHitDamageDealt - 2 * Math.floor(enemyPokemon.getMaxHp() / 4),
     );
   });
 
