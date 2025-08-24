@@ -86,6 +86,9 @@ import {
   isValueReductionAvailable,
 } from "./starter-select-ui-utils";
 
+const COLUMNS = 9;
+const ROWS = 9;
+
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
 export interface Starter {
@@ -1506,24 +1509,288 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     });
   }
 
+  processFilterModeInput(button: Button) {
+    let success = false;
+
+    const numberOfStarters = this.filteredStarterContainers.length;
+    const numOfRows = Math.ceil(numberOfStarters / COLUMNS);
+
+    switch (button) {
+      case Button.CANCEL:
+        if (this.filterBar.openDropDown) {
+          // CANCEL with a filter menu open > close it
+          this.filterBar.toggleDropDown(this.filterBarCursor);
+          success = true;
+        } else if (!this.filterBar.getFilter(this.filterBar.getColumn(this.filterBarCursor)).hasDefaultValues()) {
+          if (this.filterBar.getColumn(this.filterBarCursor) === DropDownColumn.CAUGHT) {
+            this.resetCaughtDropdown();
+          } else {
+            this.filterBar.resetSelection(this.filterBarCursor);
+          }
+          this.updateStarters();
+          success = true;
+        } else if (this.statsMode) {
+          this.toggleStatsMode(false);
+          success = true;
+        } else if (this.starterSpecies.length) {
+          this.popStarter(this.starterSpecies.length - 1);
+          success = true;
+          this.updateInstructions();
+        } else {
+          this.tryExit();
+          success = true;
+        }
+        break;
+      case Button.LEFT:
+        if (this.filterBarCursor > 0) {
+          success = this.setCursor(this.filterBarCursor - 1);
+        } else {
+          success = this.setCursor(this.filterBar.numFilters - 1);
+        }
+        break;
+      case Button.RIGHT:
+        if (this.filterBarCursor < this.filterBar.numFilters - 1) {
+          success = this.setCursor(this.filterBarCursor + 1);
+        } else {
+          success = this.setCursor(0);
+        }
+        break;
+      case Button.UP:
+        if (this.filterBar.openDropDown) {
+          success = this.filterBar.decDropDownCursor();
+        } else if (this.filterBarCursor === this.filterBar.numFilters - 1) {
+          // UP from the last filter, move to start button
+          this.setFilterMode(false);
+          this.cursorObj.setVisible(false);
+          if (this.starterSpecies.length > 0) {
+            this.startCursorObj.setVisible(true);
+          } else {
+            this.randomCursorObj.setVisible(true);
+          }
+          success = true;
+        } else if (numberOfStarters > 0) {
+          // UP from filter bar to bottom of Pokemon list
+          this.setFilterMode(false);
+          this.scrollCursor = Math.max(0, numOfRows - 9);
+          this.updateScroll();
+          const proportion = (this.filterBarCursor + 0.5) / this.filterBar.numFilters;
+          const targetCol = Math.min(8, Math.floor(proportion * 11));
+          if (numberOfStarters % 9 > targetCol) {
+            this.setCursor(numberOfStarters - (numberOfStarters % 9) + targetCol);
+          } else {
+            this.setCursor(Math.max(numberOfStarters - (numberOfStarters % 9) + targetCol - 9, 0));
+          }
+          success = true;
+        }
+        break;
+      case Button.DOWN:
+        if (this.filterBar.openDropDown) {
+          success = this.filterBar.incDropDownCursor();
+        } else if (this.filterBarCursor === this.filterBar.numFilters - 1) {
+          // DOWN from the last filter, move to random selection label
+          this.setFilterMode(false);
+          this.cursorObj.setVisible(false);
+          this.randomCursorObj.setVisible(true);
+          success = true;
+        } else if (numberOfStarters > 0) {
+          // DOWN from filter bar to top of Pokemon list
+          this.setFilterMode(false);
+          this.scrollCursor = 0;
+          this.updateScroll();
+          const proportion = this.filterBarCursor / Math.max(1, this.filterBar.numFilters - 1);
+          const targetCol = Math.min(8, Math.floor(proportion * 11));
+          this.setCursor(Math.min(targetCol, numberOfStarters));
+          success = true;
+        }
+        break;
+      case Button.ACTION:
+        if (!this.filterBar.openDropDown) {
+          this.filterBar.toggleDropDown(this.filterBarCursor);
+        } else {
+          this.filterBar.toggleOptionState();
+        }
+        success = true;
+        break;
+    }
+
+    return success;
+  }
+
+  processStartCursorInput(button: Button) {
+    let success = false;
+    let error = false;
+
+    const numberOfStarters = this.filteredStarterContainers.length;
+    const onScreenFirstIndex = this.scrollCursor * COLUMNS; // this is first starter index on the screen
+    const onScreenLastIndex = Math.min(
+      this.filteredStarterContainers.length - 1,
+      onScreenFirstIndex + ROWS * COLUMNS - 1,
+    ); // this is the last starter index on the screen
+    const onScreenNumberOfStarters = onScreenLastIndex - onScreenFirstIndex + 1;
+    const onScreenNumberOfRows = Math.ceil(onScreenNumberOfStarters / COLUMNS);
+
+    switch (button) {
+      case Button.ACTION:
+        if (this.tryStart(true)) {
+          success = true;
+        } else {
+          error = true;
+        }
+        break;
+      case Button.UP:
+        // UP from start button: go to pokemon in team if any, otherwise filter
+        this.startCursorObj.setVisible(false);
+        if (this.starterSpecies.length > 0) {
+          this.starterIconsCursorIndex = this.starterSpecies.length - 1;
+          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+        } else {
+          // TODO: how can we get here if start button can't be selected? this appears to be redundant
+          this.startCursorObj.setVisible(false);
+          this.randomCursorObj.setVisible(true);
+        }
+        success = true;
+        break;
+      case Button.DOWN:
+        // DOWN from start button: Go to filters
+        this.startCursorObj.setVisible(false);
+        this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
+        this.setFilterMode(true);
+        success = true;
+        break;
+      case Button.LEFT:
+        if (numberOfStarters > 0) {
+          this.startCursorObj.setVisible(false);
+          this.cursorObj.setVisible(true);
+          this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows - 1) * 9 + 8); // set last column
+          success = true;
+        }
+        break;
+      case Button.RIGHT:
+        if (numberOfStarters > 0) {
+          this.startCursorObj.setVisible(false);
+          this.cursorObj.setVisible(true);
+          this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows - 1) * 9); // set first column
+          success = true;
+        }
+        break;
+    }
+
+    return [success, error];
+  }
+
+  processRandomCursorInput(button: Button) {
+    let success = false;
+    let error = false;
+
+    const numberOfStarters = this.filteredStarterContainers.length;
+    const onScreenFirstIndex = this.scrollCursor * COLUMNS; // this is first starter index on the screen
+
+    switch (button) {
+      case Button.ACTION: {
+        if (this.starterSpecies.length >= 6) {
+          error = true;
+          break;
+        }
+        const currentPartyValue = this.starterSpecies
+          .map(s => s.generation)
+          .reduce(
+            (total: number, _gen: number, i: number) =>
+              total + globalScene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId),
+            0,
+          );
+        // Filter valid starters
+        const validStarters = this.filteredStarterContainers.filter(starter => {
+          const species = starter.species;
+          const [isDupe] = this.isInParty(species);
+          const starterCost = globalScene.gameData.getSpeciesStarterValue(species.speciesId);
+          const isValidForChallenge = checkStarterValidForChallenge(
+            species,
+            globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)),
+            this.isPartyValid(),
+          );
+          const isCaught = this.getSpeciesData(species.speciesId).dexEntry.caughtAttr;
+          return !isDupe && isValidForChallenge && currentPartyValue + starterCost <= this.getValueLimit() && isCaught;
+        });
+        if (validStarters.length === 0) {
+          error = true; // No valid starters available
+          break;
+        }
+        // Select random starter
+        const randomStarter = validStarters[Math.floor(Math.random() * validStarters.length)];
+        const randomSpecies = randomStarter.species;
+        // Set species and prepare attributes
+        this.setSpecies(randomSpecies);
+        const dexAttr = this.getCurrentDexProps(randomSpecies.speciesId);
+        const props = globalScene.gameData.getSpeciesDexAttrProps(randomSpecies, dexAttr);
+        const abilityIndex = this.abilityCursor;
+        const nature = this.natureCursor as unknown as Nature;
+        const teraType = this.teraCursor;
+        const moveset = this.starterMoveset?.slice(0) as StarterMoveset;
+        const starterCost = globalScene.gameData.getSpeciesStarterValue(randomSpecies.speciesId);
+        const speciesForm = getPokemonSpeciesForm(randomSpecies.speciesId, props.formIndex);
+        // Load assets and add to party
+        speciesForm.loadAssets(props.female, props.formIndex, props.shiny, props.variant, true).then(() => {
+          if (this.tryUpdateValue(starterCost, true)) {
+            this.addToParty(randomSpecies, dexAttr, abilityIndex, nature, moveset, teraType, true);
+            this.getUi().playSelect();
+          }
+        });
+        break;
+      }
+      case Button.UP:
+        this.randomCursorObj.setVisible(false);
+        this.filterBarCursor = this.filterBar.numFilters - 1;
+        this.setFilterMode(true);
+        success = true;
+        break;
+      case Button.DOWN:
+        this.randomCursorObj.setVisible(false);
+        if (this.starterSpecies.length > 0) {
+          this.starterIconsCursorIndex = 0;
+          this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+        } else {
+          this.filterBarCursor = this.filterBar.numFilters - 1;
+          this.setFilterMode(true);
+        }
+        success = true;
+        break;
+      case Button.LEFT:
+        if (numberOfStarters > 0) {
+          this.randomCursorObj.setVisible(false);
+          this.cursorObj.setVisible(true);
+          this.setCursor(onScreenFirstIndex + 8); // set last column
+          success = true;
+        }
+        break;
+      case Button.RIGHT:
+        if (numberOfStarters > 0) {
+          this.randomCursorObj.setVisible(false);
+          this.cursorObj.setVisible(true);
+          this.setCursor(onScreenFirstIndex); // set first column
+          success = true;
+        }
+        break;
+    }
+
+    return [success, error];
+  }
+
   processInput(button: Button): boolean {
     if (this.blockInput) {
       return false;
     }
 
-    const maxColumns = 9;
-    const maxRows = 9;
     const numberOfStarters = this.filteredStarterContainers.length;
-    const numOfRows = Math.ceil(numberOfStarters / maxColumns);
-    const currentRow = Math.floor(this.cursor / maxColumns);
-    const onScreenFirstIndex = this.scrollCursor * maxColumns; // this is first starter index on the screen
+    const numOfRows = Math.ceil(numberOfStarters / COLUMNS);
+    const currentRow = Math.floor(this.cursor / COLUMNS);
+    const onScreenFirstIndex = this.scrollCursor * COLUMNS; // this is first starter index on the screen
     const onScreenLastIndex = Math.min(
       this.filteredStarterContainers.length - 1,
-      onScreenFirstIndex + maxRows * maxColumns - 1,
+      onScreenFirstIndex + ROWS * COLUMNS - 1,
     ); // this is the last starter index on the screen
     const onScreenNumberOfStarters = onScreenLastIndex - onScreenFirstIndex + 1;
-    const onScreenNumberOfRows = Math.ceil(onScreenNumberOfStarters / maxColumns);
-    const onScreenCurrentRow = Math.floor((this.cursor - onScreenFirstIndex) / maxColumns);
+    const onScreenNumberOfRows = Math.ceil(onScreenNumberOfStarters / COLUMNS);
+    const onScreenCurrentRow = Math.floor((this.cursor - onScreenFirstIndex) / COLUMNS);
 
     const ui = this.getUi();
 
@@ -1536,23 +1803,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       } else {
         error = true;
       }
+    } else if (this.filterMode) {
+      success = this.processFilterModeInput(button);
     } else if (button === Button.CANCEL) {
-      if (this.filterMode && this.filterBar.openDropDown) {
-        // CANCEL with a filter menu open > close it
-        this.filterBar.toggleDropDown(this.filterBarCursor);
-        success = true;
-      } else if (
-        this.filterMode &&
-        !this.filterBar.getFilter(this.filterBar.getColumn(this.filterBarCursor)).hasDefaultValues()
-      ) {
-        if (this.filterBar.getColumn(this.filterBarCursor) === DropDownColumn.CAUGHT) {
-          this.resetCaughtDropdown();
-        } else {
-          this.filterBar.resetSelection(this.filterBarCursor);
-        }
-        this.updateStarters();
-        success = true;
-      } else if (this.statsMode) {
+      if (this.statsMode) {
         this.toggleStatsMode(false);
         success = true;
       } else if (this.starterSpecies.length) {
@@ -1575,213 +1829,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else if (this.startCursorObj.visible) {
       // this checks to see if the start button is selected
-      switch (button) {
-        case Button.ACTION:
-          if (this.tryStart(true)) {
-            success = true;
-          } else {
-            error = true;
-          }
-          break;
-        case Button.UP:
-          // UP from start button: go to pokemon in team if any, otherwise filter
-          this.startCursorObj.setVisible(false);
-          if (this.starterSpecies.length > 0) {
-            this.starterIconsCursorIndex = this.starterSpecies.length - 1;
-            this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-          } else {
-            // TODO: how can we get here if start button can't be selected? this appears to be redundant
-            this.startCursorObj.setVisible(false);
-            this.randomCursorObj.setVisible(true);
-          }
-          success = true;
-          break;
-        case Button.DOWN:
-          // DOWN from start button: Go to filters
-          this.startCursorObj.setVisible(false);
-          this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
-          this.setFilterMode(true);
-          success = true;
-          break;
-        case Button.LEFT:
-          if (numberOfStarters > 0) {
-            this.startCursorObj.setVisible(false);
-            this.cursorObj.setVisible(true);
-            this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows - 1) * 9 + 8); // set last column
-            success = true;
-          }
-          break;
-        case Button.RIGHT:
-          if (numberOfStarters > 0) {
-            this.startCursorObj.setVisible(false);
-            this.cursorObj.setVisible(true);
-            this.setCursor(onScreenFirstIndex + (onScreenNumberOfRows - 1) * 9); // set first column
-            success = true;
-          }
-          break;
-      }
-    } else if (this.filterMode) {
-      switch (button) {
-        case Button.LEFT:
-          if (this.filterBarCursor > 0) {
-            success = this.setCursor(this.filterBarCursor - 1);
-          } else {
-            success = this.setCursor(this.filterBar.numFilters - 1);
-          }
-          break;
-        case Button.RIGHT:
-          if (this.filterBarCursor < this.filterBar.numFilters - 1) {
-            success = this.setCursor(this.filterBarCursor + 1);
-          } else {
-            success = this.setCursor(0);
-          }
-          break;
-        case Button.UP:
-          if (this.filterBar.openDropDown) {
-            success = this.filterBar.decDropDownCursor();
-          } else if (this.filterBarCursor === this.filterBar.numFilters - 1) {
-            // UP from the last filter, move to start button
-            this.setFilterMode(false);
-            this.cursorObj.setVisible(false);
-            if (this.starterSpecies.length > 0) {
-              this.startCursorObj.setVisible(true);
-            } else {
-              this.randomCursorObj.setVisible(true);
-            }
-            success = true;
-          } else if (numberOfStarters > 0) {
-            // UP from filter bar to bottom of Pokemon list
-            this.setFilterMode(false);
-            this.scrollCursor = Math.max(0, numOfRows - 9);
-            this.updateScroll();
-            const proportion = (this.filterBarCursor + 0.5) / this.filterBar.numFilters;
-            const targetCol = Math.min(8, Math.floor(proportion * 11));
-            if (numberOfStarters % 9 > targetCol) {
-              this.setCursor(numberOfStarters - (numberOfStarters % 9) + targetCol);
-            } else {
-              this.setCursor(Math.max(numberOfStarters - (numberOfStarters % 9) + targetCol - 9, 0));
-            }
-            success = true;
-          }
-          break;
-        case Button.DOWN:
-          if (this.filterBar.openDropDown) {
-            success = this.filterBar.incDropDownCursor();
-          } else if (this.filterBarCursor === this.filterBar.numFilters - 1) {
-            // DOWN from the last filter, move to random selection label
-            this.setFilterMode(false);
-            this.cursorObj.setVisible(false);
-            this.randomCursorObj.setVisible(true);
-            success = true;
-          } else if (numberOfStarters > 0) {
-            // DOWN from filter bar to top of Pokemon list
-            this.setFilterMode(false);
-            this.scrollCursor = 0;
-            this.updateScroll();
-            const proportion = this.filterBarCursor / Math.max(1, this.filterBar.numFilters - 1);
-            const targetCol = Math.min(8, Math.floor(proportion * 11));
-            this.setCursor(Math.min(targetCol, numberOfStarters));
-            success = true;
-          }
-          break;
-        case Button.ACTION:
-          if (!this.filterBar.openDropDown) {
-            this.filterBar.toggleDropDown(this.filterBarCursor);
-          } else {
-            this.filterBar.toggleOptionState();
-          }
-          success = true;
-          break;
-      }
+      [success, error] = this.processStartCursorInput(button);
     } else if (this.randomCursorObj.visible) {
-      switch (button) {
-        case Button.ACTION: {
-          if (this.starterSpecies.length >= 6) {
-            error = true;
-            break;
-          }
-          const currentPartyValue = this.starterSpecies
-            .map(s => s.generation)
-            .reduce(
-              (total: number, _gen: number, i: number) =>
-                total + globalScene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId),
-              0,
-            );
-          // Filter valid starters
-          const validStarters = this.filteredStarterContainers.filter(starter => {
-            const species = starter.species;
-            const [isDupe] = this.isInParty(species);
-            const starterCost = globalScene.gameData.getSpeciesStarterValue(species.speciesId);
-            const isValidForChallenge = checkStarterValidForChallenge(
-              species,
-              globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)),
-              this.isPartyValid(),
-            );
-            const isCaught = this.getSpeciesData(species.speciesId).dexEntry.caughtAttr;
-            return (
-              !isDupe && isValidForChallenge && currentPartyValue + starterCost <= this.getValueLimit() && isCaught
-            );
-          });
-          if (validStarters.length === 0) {
-            error = true; // No valid starters available
-            break;
-          }
-          // Select random starter
-          const randomStarter = validStarters[Math.floor(Math.random() * validStarters.length)];
-          const randomSpecies = randomStarter.species;
-          // Set species and prepare attributes
-          this.setSpecies(randomSpecies);
-          const dexAttr = this.getCurrentDexProps(randomSpecies.speciesId);
-          const props = globalScene.gameData.getSpeciesDexAttrProps(randomSpecies, dexAttr);
-          const abilityIndex = this.abilityCursor;
-          const nature = this.natureCursor as unknown as Nature;
-          const teraType = this.teraCursor;
-          const moveset = this.starterMoveset?.slice(0) as StarterMoveset;
-          const starterCost = globalScene.gameData.getSpeciesStarterValue(randomSpecies.speciesId);
-          const speciesForm = getPokemonSpeciesForm(randomSpecies.speciesId, props.formIndex);
-          // Load assets and add to party
-          speciesForm.loadAssets(props.female, props.formIndex, props.shiny, props.variant, true).then(() => {
-            if (this.tryUpdateValue(starterCost, true)) {
-              this.addToParty(randomSpecies, dexAttr, abilityIndex, nature, moveset, teraType, true);
-              ui.playSelect();
-            }
-          });
-          break;
-        }
-        case Button.UP:
-          this.randomCursorObj.setVisible(false);
-          this.filterBarCursor = this.filterBar.numFilters - 1;
-          this.setFilterMode(true);
-          success = true;
-          break;
-        case Button.DOWN:
-          this.randomCursorObj.setVisible(false);
-          if (this.starterSpecies.length > 0) {
-            this.starterIconsCursorIndex = 0;
-            this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-          } else {
-            this.filterBarCursor = this.filterBar.numFilters - 1;
-            this.setFilterMode(true);
-          }
-          success = true;
-          break;
-        case Button.LEFT:
-          if (numberOfStarters > 0) {
-            this.randomCursorObj.setVisible(false);
-            this.cursorObj.setVisible(true);
-            this.setCursor(onScreenFirstIndex + 8); // set last column
-            success = true;
-          }
-          break;
-        case Button.RIGHT:
-          if (numberOfStarters > 0) {
-            this.randomCursorObj.setVisible(false);
-            this.cursorObj.setVisible(true);
-            this.setCursor(onScreenFirstIndex); // set first column
-            success = true;
-          }
-          break;
-      }
+      [success, error] = this.processRandomCursorInput(button);
     } else {
       let starterContainer: StarterContainer;
       // The temporary, duplicated starter data to show info
@@ -3230,12 +3280,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   updateScroll = () => {
-    const maxColumns = 9;
-    const maxRows = 9;
-    const onScreenFirstIndex = this.scrollCursor * maxColumns;
+    const COLUMNS = 9;
+    const ROWS = 9;
+    const onScreenFirstIndex = this.scrollCursor * COLUMNS;
     const onScreenLastIndex = Math.min(
       this.filteredStarterContainers.length - 1,
-      onScreenFirstIndex + maxRows * maxColumns - 1,
+      onScreenFirstIndex + ROWS * COLUMNS - 1,
     );
 
     this.starterSelectScrollBar.setScrollCursor(this.scrollCursor);
