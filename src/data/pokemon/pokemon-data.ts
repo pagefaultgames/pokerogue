@@ -11,6 +11,7 @@ import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
+import { StatusEffect } from "#enums/status-effect";
 import type { AttackMoveResult } from "#types/attack-move-result";
 import type { IllusionData } from "#types/illusion-data";
 import type { TurnMove } from "#types/turn-move";
@@ -326,6 +327,14 @@ export class PokemonTurnData {
   public switchedInThisTurn = false;
   public failedRunAway = false;
   public joinedRound = false;
+  /** Tracker for a pending status effect
+   *
+   * @remarks
+   * Set whenever {@linkcode Pokemon#trySetStatus} succeeds in order to prevent subsequent status effects
+   * from being applied. Necessary because the status is not actually set until the {@linkcode ObtainStatusEffectPhase} runs,
+   * which may not happen before another status effect is attempted to be applied.
+   */
+  public pendingStatus: StatusEffect = StatusEffect.NONE;
   /**
    * The amount of times this Pokemon has acted again and used a move in the current turn.
    * Used to make sure multi-hits occur properly when the user is
