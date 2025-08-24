@@ -3750,8 +3750,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonFormText.setVisible(false);
     this.teraIcon.setVisible(false);
 
-    // TODO: This mostly makes sense but is causing the sprite to not update
-    this.setNoSpeciesDetails();
+    if (species) {
+      this.setSpeciesDetails(species, { forSeen: true });
+    } else {
+      this.setNoSpeciesDetails();
+    }
   }
 
   getSpeciesData(
@@ -3843,6 +3846,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
     const shouldUpdateSprite =
+      forSeen ||
       (species?.genderDiffs && !isNullOrUndefined(female)) ||
       !isNullOrUndefined(formIndex) ||
       !isNullOrUndefined(shiny) ||
