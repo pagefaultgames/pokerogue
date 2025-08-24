@@ -3501,22 +3501,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     if (this.statsMode) {
       this.statsContainer.setVisible(false);
-      //@ts-expect-error
-      this.statsContainer.updateIvs(null); // TODO: resolve ts-ignore. what. how? huh?
     }
 
-    if (this.lastSpecies) {
-      const dexAttr = this.getCurrentDexProps(this.lastSpecies.speciesId);
-      const props = globalScene.gameData.getSpeciesDexAttrProps(this.lastSpecies, dexAttr);
-      const speciesIndex = this.allSpecies.indexOf(this.lastSpecies);
-      const lastSpeciesIcon = this.starterContainers[speciesIndex].icon;
-      this.checkIconId(lastSpeciesIcon, this.lastSpecies, props.female, props.formIndex, props.shiny, props.variant);
-      this.iconAnimHandler.addOrUpdate(lastSpeciesIcon, PokemonIconAnimMode.NONE);
-
-      // Resume the animation for the previously selected species
-      const icon = this.starterContainers[speciesIndex].icon;
-      globalScene.tweens.getTweensOf(icon).forEach(tween => tween.play());
-    }
+    this.restorePreviousSpeciesAnimation();
 
     // TODO: check if we need to set lastSpecies to null or some other value here
 
@@ -3524,12 +3511,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   setSpecies(species: PokemonSpecies) {
-    this.speciesStarterDexEntry = null;
-    this.dexAttrCursor = 0n;
-    this.abilityCursor = 0;
-    this.natureCursor = 0;
-    this.teraCursor = PokemonType.UNKNOWN;
-
     const { dexEntry } = this.getSpeciesData(species.speciesId);
     this.speciesStarterDexEntry = dexEntry;
     this.dexAttrCursor = this.getCurrentDexProps(species.speciesId);
@@ -3559,24 +3540,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.showStats();
       } else {
         this.statsContainer.setVisible(false);
-        //@ts-expect-error
-        this.statsContainer.updateIvs(null); // TODO: resolve ts-ignore. what. how? huh?
       }
     }
 
-    if (this.lastSpecies) {
-      const dexAttr = this.getCurrentDexProps(this.lastSpecies.speciesId);
-      const props = globalScene.gameData.getSpeciesDexAttrProps(this.lastSpecies, dexAttr);
-      const speciesIndex = this.allSpecies.indexOf(this.lastSpecies);
-      const lastSpeciesIcon = this.starterContainers[speciesIndex].icon;
-      this.checkIconId(lastSpeciesIcon, this.lastSpecies, props.female, props.formIndex, props.shiny, props.variant);
-      this.iconAnimHandler.addOrUpdate(lastSpeciesIcon, PokemonIconAnimMode.NONE);
-
-      // Resume the animation for the previously selected species
-      const icon = this.starterContainers[speciesIndex].icon;
-      globalScene.tweens.getTweensOf(icon).forEach(tween => tween.play());
-    }
-
+    this.restorePreviousSpeciesAnimation();
     this.lastSpecies = species;
 
     if (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr) {
@@ -3765,6 +3732,21 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else {
       this.cleanStarterSprite(species);
+    }
+  }
+
+  restorePreviousSpeciesAnimation() {
+    if (this.lastSpecies) {
+      const dexAttr = this.getCurrentDexProps(this.lastSpecies.speciesId);
+      const props = globalScene.gameData.getSpeciesDexAttrProps(this.lastSpecies, dexAttr);
+      const speciesIndex = this.allSpecies.indexOf(this.lastSpecies);
+      const lastSpeciesIcon = this.starterContainers[speciesIndex].icon;
+      this.checkIconId(lastSpeciesIcon, this.lastSpecies, props.female, props.formIndex, props.shiny, props.variant);
+      this.iconAnimHandler.addOrUpdate(lastSpeciesIcon, PokemonIconAnimMode.NONE);
+
+      // Resume the animation for the previously selected species
+      const icon = this.starterContainers[speciesIndex].icon;
+      globalScene.tweens.getTweensOf(icon).forEach(tween => tween.play());
     }
   }
 
@@ -4610,8 +4592,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.statsMode = false;
       this.statsContainer.setVisible(false);
       this.pokemonSprite.setVisible(!!this.speciesStarterDexEntry?.caughtAttr);
-      //@ts-expect-error
-      this.statsContainer.updateIvs(null); // TODO: resolve ts-ignore. !?!?
       this.teraIcon.setVisible(this.allowTera);
       const props = globalScene.gameData.getSpeciesDexAttrProps(
         this.lastSpecies,
