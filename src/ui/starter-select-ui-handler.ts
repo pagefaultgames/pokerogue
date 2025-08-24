@@ -1509,6 +1509,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     });
   }
 
+  showRandomCursor() {
+    this.randomCursorObj.setVisible(true);
+    this.setNoSpecies();
+  }
+
   processFilterModeInput(button: Button) {
     let success = false;
 
@@ -1565,7 +1570,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           if (this.starterSpecies.length > 0) {
             this.startCursorObj.setVisible(true);
           } else {
-            this.randomCursorObj.setVisible(true);
+            this.showRandomCursor();
           }
           success = true;
         } else if (numberOfStarters > 0) {
@@ -1590,7 +1595,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           // DOWN from the last filter, move to random selection label
           this.setFilterMode(false);
           this.cursorObj.setVisible(false);
-          this.randomCursorObj.setVisible(true);
+          this.showRandomCursor();
           success = true;
         } else if (numberOfStarters > 0) {
           // DOWN from filter bar to top of Pokemon list
@@ -1646,7 +1651,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         } else {
           // TODO: how can we get here if start button can't be selected? this appears to be redundant
           this.startCursorObj.setVisible(false);
-          this.randomCursorObj.setVisible(true);
+          this.showRandomCursor();
+          this.setNoSpecies();
         }
         success = true;
         break;
@@ -2612,8 +2618,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               if (this.starterIconsCursorIndex === 0) {
                 // Up from first Pokemon in the team > go to Random selection
                 this.starterIconsCursorObj.setVisible(false);
-                this.setNoSpecies();
-                this.randomCursorObj.setVisible(true);
+                this.showRandomCursor();
               } else {
                 this.starterIconsCursorIndex--;
                 this.moveStarterIconsCursor(this.starterIconsCursorIndex);
@@ -2663,7 +2668,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 if (onScreenCurrentRow === 0) {
                   // from the first row of starters we go to the random selection
                   this.cursorObj.setVisible(false);
-                  this.randomCursorObj.setVisible(true);
+                  this.showRandomCursor();
                 } else if (this.starterSpecies.length === 0) {
                   // no starter in team and not on first row > wrap around to the last column
                   success = this.setCursor(this.cursor + Math.min(8, numberOfStarters - this.cursor));
@@ -2705,7 +2710,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 if (onScreenCurrentRow === 0) {
                   // from the first row of starters we go to the random selection
                   this.cursorObj.setVisible(false);
-                  this.randomCursorObj.setVisible(true);
+                  this.showRandomCursor();
                 } else if (this.starterSpecies.length === 0) {
                   // no selected starter in team > wrap around to the first column
                   success = this.setCursor(this.cursor - Math.min(8, this.cursor % 9));
@@ -3416,7 +3421,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       const pos = calcStarterPosition(cursor, this.scrollCursor);
       this.cursorObj.setPosition(pos.x - 1, pos.y + 1);
 
-      const species = this.filteredStarterContainers[cursor]?.species;
+      const species = this.filteredStarterContainers[cursor]?.species; // TODO: why is there a "?"
 
       if (species) {
         const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
@@ -3428,6 +3433,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonShinyIcon.setFrame(getVariantIcon(variant)).setTint(tint);
         this.setSpecies(species);
         this.updateInstructions();
+      } else {
+        this.setNoSpecies();
       }
     }
 
@@ -3442,7 +3449,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.filterMode = filterMode;
       this.setCursor(filterMode ? this.filterBarCursor : this.cursor);
       if (filterMode) {
-        this.setNoSpecies();
+        this.setNoSpecies(); //TODO: this probably needs to go somewhere else
         this.updateInstructions();
       }
 
