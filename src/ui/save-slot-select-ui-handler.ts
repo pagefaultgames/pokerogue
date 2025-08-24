@@ -181,7 +181,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
                     ui.setOverlayMode(
                       UiMode.CONFIRM,
                       () => {
-                        globalScene.gameData.tryClearSession(cursor).then(response => {
+                        globalScene.gameData.deleteSession(cursor).then(response => {
                           if (response[0] === false) {
                             globalScene.reset(true);
                           } else {

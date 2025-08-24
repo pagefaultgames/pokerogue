@@ -1,3 +1,4 @@
+import { defaultStarterSpecies } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
 import { allMoves } from "#data/data-lists";
@@ -1882,6 +1883,15 @@ export function initPokemonPrevolutions(): void {
 
 // TODO: This may cause funny business for double starters such as Pichu/Pikachu
 export const pokemonStarters: PokemonPrevolutions = {};
+
+/**
+ * The default species and all their evolutions
+ */
+export const defaultStarterSpeciesAndEvolutions: SpeciesId[] = defaultStarterSpecies.flatMap(id => {
+  const stage2ids = pokemonEvolutions[id]?.map(e => e.speciesId) ?? [];
+  const stage3ids = stage2ids.flatMap(s2id => pokemonEvolutions[s2id]?.map(e => e.speciesId) ?? []);
+  return [id, ...stage2ids, ...stage3ids];
+});
 
 export function initPokemonStarters(): void {
   const starterKeys = Object.keys(pokemonPrevolutions);
