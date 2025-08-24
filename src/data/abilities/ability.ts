@@ -1263,17 +1263,17 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
     this.turnCount = turnCount;
   }
 
-  override canApply({ move, pokemon, opponent: attacker }: PostMoveInteractionAbAttrParams): boolean {
+  override canApply({ move, pokemon, opponent }: PostMoveInteractionAbAttrParams): boolean {
     return (
-      move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon }) &&
+      move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: opponent, target: pokemon }) &&
       pokemon.randBattleSeedInt(100) < this.chance &&
-      attacker.canAddTag(this.tagType)
+      opponent.canAddTag(this.tagType)
     );
   }
 
-  override apply({ simulated, opponent: attacker, move }: PostMoveInteractionAbAttrParams): void {
+  override apply({ pokemon, simulated, opponent, move }: PostMoveInteractionAbAttrParams): void {
     if (!simulated) {
-      attacker.addTag(this.tagType, this.turnCount, move.id, attacker.id);
+      opponent.addTag(this.tagType, this.turnCount, move.id, pokemon.id);
     }
   }
 }
