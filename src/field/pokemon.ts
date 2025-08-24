@@ -1652,19 +1652,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return precise ? this.hp / this.getMaxHp() : Math.round((this.hp / this.getMaxHp()) * 100) / 100;
   }
 
-  generateGender(): void {
-    if (this.species.malePercent === null) {
-      this.gender = Gender.GENDERLESS;
-    } else {
-      const genderChance = (this.id % 256) * 0.390625;
-      if (genderChance < this.species.malePercent) {
-        this.gender = Gender.MALE;
-      } else {
-        this.gender = Gender.FEMALE;
-      }
-    }
-  }
-
   /**
    * Return this Pokemon's {@linkcode Gender}.
    * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
