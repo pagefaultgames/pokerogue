@@ -44,7 +44,7 @@ describe("Moves - Chilly Reception", () => {
     await game.toEndOfTurn();
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
-    expect(game.scene.getPlayerPokemon()).toBe(meowth);
+    expect(game.field.getPlayerPokemon()).toBe(meowth);
     expect(slowking.isOnField()).toBe(false);
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.textInterceptor.logs).toContain(
@@ -60,7 +60,7 @@ describe("Moves - Chilly Reception", () => {
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
-    expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
   });
 
   it("should still switch out even if weather cannot be changed", async () => {
@@ -85,7 +85,7 @@ describe("Moves - Chilly Reception", () => {
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
-    expect(game.scene.getPlayerPokemon()).toBe(meowth);
+    expect(game.field.getPlayerPokemon()).toBe(meowth);
     expect(slowking.isOnField()).toBe(false);
   });
 
@@ -95,7 +95,7 @@ describe("Moves - Chilly Reception", () => {
 
     expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.SNOW);
 
-    const slowking = game.scene.getPlayerPokemon()!;
+    const slowking = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SNOWSCAPE);
     await game.toNextTurn();
@@ -108,7 +108,7 @@ describe("Moves - Chilly Reception", () => {
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
-    expect(game.scene.getPlayerPokemon()).toBe(slowking);
+    expect(game.field.getPlayerPokemon()).toBe(slowking);
     expect(slowking.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(game.textInterceptor.logs).toContain(
       i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(slowking) }),
@@ -126,7 +126,7 @@ describe("Moves - Chilly Reception", () => {
     await game.toEndOfTurn();
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
-    expect(game.scene.getPlayerPokemon()).toBe(meowth);
+    expect(game.field.getPlayerPokemon()).toBe(meowth);
     expect(slowking.isOnField()).toBe(false);
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.textInterceptor.logs).not.toContain(

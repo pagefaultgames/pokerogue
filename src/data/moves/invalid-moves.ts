@@ -256,7 +256,7 @@ export const noAbilityTypeOverrideMoves: ReadonlySet<MoveId> = new Set([
   MoveId.HIDDEN_POWER,
 ]);
 
-/** Set of all moves that cannot be copied by {@linkcode Moves.SKETCH}. */
+/** Set of all moves that cannot be copied by {@linkcode MoveId.SKETCH}. */
 export const invalidSketchMoves: ReadonlySet<MoveId> = new Set([
   MoveId.NONE,
   MoveId.CHATTER,
@@ -270,7 +270,7 @@ export const invalidSketchMoves: ReadonlySet<MoveId> = new Set([
   MoveId.BREAKNECK_BLITZ__SPECIAL,
 ]);
 
-/** Set of all moves that cannot be locked into by {@linkcode Moves.ENCORE}. */
+/** Set of all moves that cannot be locked into by {@linkcode MoveId.ENCORE}. */
 export const invalidEncoreMoves: ReadonlySet<MoveId> = new Set([
   MoveId.MIMIC,
   MoveId.MIRROR_MOVE,

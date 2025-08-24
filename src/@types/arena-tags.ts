@@ -1,17 +1,15 @@
 import type { ArenaTagTypeMap } from "#data/arena-tag";
 import type { ArenaTagType } from "#enums/arena-tag-type";
-import type { NonFunctionProperties } from "./type-helpers";
+// biome-ignore lint/correctness/noUnusedImports: TSDocs
+import type { SessionSaveData } from "#system/game-data";
 
 /** Subset of {@linkcode ArenaTagType}s that apply some negative effect to pokemon that switch in ({@link https://bulbapedia.bulbagarden.net/wiki/List_of_moves_that_cause_entry_hazards#List_of_traps | entry hazards} and Imprison. */
-export type ArenaTrapTagType =
+export type EntryHazardTagType =
   | ArenaTagType.STICKY_WEB
   | ArenaTagType.SPIKES
   | ArenaTagType.TOXIC_SPIKES
   | ArenaTagType.STEALTH_ROCK
   | ArenaTagType.IMPRISON;
-
-/** Subset of {@linkcode ArenaTagType}s that are considered delayed attacks */
-export type ArenaDelayedAttackTagType = ArenaTagType.FUTURE_SIGHT | ArenaTagType.DOOM_DESIRE;
 
 /** Subset of {@linkcode ArenaTagType}s that create {@link https://bulbapedia.bulbagarden.net/wiki/Category:Screen-creating_moves | screens}. */
 export type ArenaScreenTagType = ArenaTagType.REFLECT | ArenaTagType.LIGHT_SCREEN | ArenaTagType.AURORA_VEIL;
@@ -23,6 +21,9 @@ export type TurnProtectArenaTagType =
   | ArenaTagType.MAT_BLOCK
   | ArenaTagType.CRAFTY_SHIELD;
 
+/** Subset of {@linkcode ArenaTagType}s that create Trick Room-like effects which are removed upon overlap. */
+export type RoomArenaTagType = ArenaTagType.TRICK_ROOM;
+
 /** Subset of {@linkcode ArenaTagType}s that cannot persist across turns, and thus should not be serialized in {@linkcode SessionSaveData}. */
 export type NonSerializableArenaTagType = ArenaTagType.NONE | TurnProtectArenaTagType | ArenaTagType.ION_DELUGE;
 
@@ -30,13 +31,13 @@ export type NonSerializableArenaTagType = ArenaTagType.NONE | TurnProtectArenaTa
 export type SerializableArenaTagType = Exclude<ArenaTagType, NonSerializableArenaTagType>;
 
 /**
- * Type-safe representation of the serializable data of an ArenaTag
+ * Type-safe representation of an arbitrary, serialized Arena Tag
  */
-export type ArenaTagTypeData = NonFunctionProperties<
+export type ArenaTagTypeData = Parameters<
   ArenaTagTypeMap[keyof {
     [K in keyof ArenaTagTypeMap as K extends SerializableArenaTagType ? K : never]: ArenaTagTypeMap[K];
-  }]
->;
+  }]["loadTag"]
+>[0];
 
 /** Dummy, typescript-only declaration to ensure that
  * {@linkcode ArenaTagTypeMap} has a map for all ArenaTagTypes.

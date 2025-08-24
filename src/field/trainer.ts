@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { signatureSpecies } from "#balance/signature-species";
-import { ArenaTrapTag } from "#data/arena-tag";
+import { EntryHazardTag } from "#data/arena-tag";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -16,25 +16,34 @@ import type { PersistentModifier } from "#modifiers/modifier";
 import { getIsInitialized, initI18n } from "#plugins/i18n";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
-import {
-  TrainerPartyCompoundTemplate,
-  type TrainerPartyTemplate,
-  trainerPartyTemplates,
-} from "#trainers/trainer-party-template";
+import { TrainerPartyCompoundTemplate, type TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import { randSeedInt, randSeedItem, randSeedWeightedItem } from "#utils/common";
+import { getRandomLocaleEntry } from "#utils/i18n";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export class Trainer extends Phaser.GameObjects.Container {
   public config: TrainerConfig;
   public variant: TrainerVariant;
   public partyTemplateIndex: number;
-  public name: string;
   public partnerName: string;
   public nameKey: string;
   public partnerNameKey: string | undefined;
   public originalIndexes: { [key: number]: number } = {};
 
+  /**
+   * Create a new Trainer.
+   * @param trainerType - The {@linkcode TrainerType} for this trainer, used to determine
+   * name, sprite, party contents and other details.
+   * @param variant - The {@linkcode TrainerVariant} for this trainer (if any are available)
+   * @param partyTemplateIndex - If provided, will override the trainer's party template with the given
+   * version.
+   * @param nameKey - If provided, will override the name key of the trainer
+   * @param partnerNameKey - If provided, will override the
+   * @param trainerConfigOverride - If provided, will override the trainer config for the given trainer type
+   * @todo Review how many of these parameters we actually need
+   */
   constructor(
     trainerType: TrainerType,
     variant: TrainerVariant,
@@ -44,13 +53,11 @@ export class Trainer extends Phaser.GameObjects.Container {
     trainerConfigOverride?: TrainerConfig,
   ) {
     super(globalScene, -72, 80);
-    this.config = trainerConfigs.hasOwnProperty(trainerType)
-      ? trainerConfigs[trainerType]
-      : trainerConfigs[TrainerType.ACE_TRAINER];
-
-    if (trainerConfigOverride) {
-      this.config = trainerConfigOverride;
-    }
+    this.config =
+      trainerConfigOverride ??
+      (trainerConfigs.hasOwnProperty(trainerType)
+        ? trainerConfigs[trainerType]
+        : trainerConfigs[TrainerType.ACE_TRAINER]);
 
     this.variant = variant;
     this.partyTemplateIndex = Math.min(
@@ -59,20 +66,21 @@ export class Trainer extends Phaser.GameObjects.Container {
         : randSeedWeightedItem(this.config.partyTemplates.map((_, i) => i)),
       this.config.partyTemplates.length - 1,
     );
-    const classKey = `trainersCommon:${TrainerType[trainerType]}`;
+    // TODO: Rework this and add actual error handling for missing names
+    const classKey = `trainersCommon:${toCamelCase(TrainerType[trainerType])}`;
     if (i18next.exists(classKey, { returnObjects: true })) {
       if (nameKey) {
         this.nameKey = nameKey;
+        this.name = i18next.t(nameKey);
       } else {
-        const genderKey = i18next.exists(`${classKey}.MALE`)
+        const genderKey = i18next.exists(`${classKey}.male`)
           ? variant === TrainerVariant.FEMALE
-            ? ".FEMALE"
-            : ".MALE"
+            ? ".female"
+            : ".male"
           : "";
-        const trainerKey = randSeedItem(Object.keys(i18next.t(`${classKey}${genderKey}`, { returnObjects: true })));
-        this.nameKey = `${classKey}${genderKey}.${trainerKey}`;
+        [this.nameKey, this.name] = getRandomLocaleEntry(`${classKey}${genderKey}`);
       }
-      this.name = i18next.t(this.nameKey);
+
       if (variant === TrainerVariant.DOUBLE) {
         if (this.config.doubleOnly) {
           if (partnerNameKey) {
@@ -82,16 +90,8 @@ export class Trainer extends Phaser.GameObjects.Container {
             [this.name, this.partnerName] = this.name.split(" & ");
           }
         } else {
-          const partnerGenderKey = i18next.exists(`${classKey}.FEMALE`) ? ".FEMALE" : "";
-          const partnerTrainerKey = randSeedItem(
-            Object.keys(
-              i18next.t(`${classKey}${partnerGenderKey}`, {
-                returnObjects: true,
-              }),
-            ),
-          );
-          this.partnerNameKey = `${classKey}${partnerGenderKey}.${partnerTrainerKey}`;
-          this.partnerName = i18next.t(this.partnerNameKey);
+          const partnerGenderKey = i18next.exists(`${classKey}.female`) ? ".female" : "";
+          [this.partnerNameKey, this.partnerName] = getRandomLocaleEntry(`${classKey}${partnerGenderKey}`);
         }
       }
     }
@@ -108,10 +108,6 @@ export class Trainer extends Phaser.GameObjects.Container {
         }
         break;
     }
-
-    console.log(
-      Object.keys(trainerPartyTemplates)[Object.values(trainerPartyTemplates).indexOf(this.getPartyTemplate())],
-    );
 
     const getSprite = (hasShadow?: boolean, forceFemale?: boolean) => {
       const ret = globalScene.addFieldSprite(
@@ -157,9 +153,9 @@ export class Trainer extends Phaser.GameObjects.Container {
 
   /**
    * Returns the name of the trainer based on the provided trainer slot and the option to include a title.
-   * @param {TrainerSlot} trainerSlot - The slot to determine which name to use. Defaults to TrainerSlot.NONE.
-   * @param {boolean} includeTitle - Whether to include the title in the returned name. Defaults to false.
-   * @returns {string} - The formatted name of the trainer.
+   * @param trainerSlot - The slot to determine which name to use; default `TrainerSlot.NONE`
+   * @param includeTitle - Whether to include the title in the returned name; default `false`
+   * @returns - The formatted name of the trainer
    */
   getName(trainerSlot: TrainerSlot = TrainerSlot.NONE, includeTitle = false): string {
     // Get the base title based on the trainer slot and variant.
@@ -170,7 +166,7 @@ export class Trainer extends Phaser.GameObjects.Container {
     const evilTeamTitles = ["grunt"];
     if (this.name === "" && evilTeamTitles.some(t => name.toLocaleLowerCase().includes(t))) {
       // This is a evil team grunt so we localize it by only using the "name" as the title
-      title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, "_")}`);
+      title = i18next.t(`trainerClasses:${toCamelCase(name)}`);
       console.log("Localized grunt name: " + title);
       // Since grunts are not named we can just return the title
       return title;
@@ -187,7 +183,7 @@ export class Trainer extends Phaser.GameObjects.Container {
         }
         // Get the localized trainer class name from the i18n file and set it as the title.
         // This is used for trainer class names, not titles like "Elite Four, Champion, etc."
-        title = i18next.t(`trainerClasses:${name.toLowerCase().replace(/\s/g, "_")}`);
+        title = i18next.t(`trainerClasses:${toCamelCase(name)}`);
       }
 
       // If no specific trainer slot is set.
@@ -208,7 +204,7 @@ export class Trainer extends Phaser.GameObjects.Container {
 
     if (this.config.titleDouble && this.variant === TrainerVariant.DOUBLE && !this.config.doubleOnly) {
       title = this.config.titleDouble;
-      name = i18next.t(`trainerNames:${this.config.nameDouble.toLowerCase().replace(/\s/g, "_")}`);
+      name = i18next.t(`trainerNames:${toCamelCase(this.config.nameDouble)}`);
     }
 
     console.log(title ? `${title} ${name}` : name);
@@ -584,8 +580,8 @@ export class Trainer extends Phaser.GameObjects.Container {
         score /= playerField.length;
         if (forSwitch && !p.isOnField()) {
           globalScene.arena
-            .findTagsOnSide(t => t instanceof ArenaTrapTag, ArenaTagSide.ENEMY)
-            .map(t => (score *= (t as ArenaTrapTag).getMatchupScoreMultiplier(p)));
+            .findTagsOnSide(t => t instanceof EntryHazardTag, ArenaTagSide.ENEMY)
+            .map(t => (score *= (t as EntryHazardTag).getMatchupScoreMultiplier(p)));
         }
       }
 

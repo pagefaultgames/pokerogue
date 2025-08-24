@@ -1,6 +1,7 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
-import { addTextObject, TextStyle } from "#ui/text";
+import { TextStyle } from "#enums/text-style";
+import { addTextObject } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { executeIf } from "#utils/common";
 import { getEnumKeys } from "#utils/enums";

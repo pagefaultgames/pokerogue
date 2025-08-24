@@ -38,8 +38,8 @@ describe("Abilities - Wandering Spirit", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()?.getAbility().id).toBe(AbilityId.BALL_FETCH);
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.WANDERING_SPIRIT);
+    expect(game.field.getPlayerPokemon().getAbility().id).toBe(AbilityId.BALL_FETCH);
+    expect(game.field.getEnemyPokemon().getAbility().id).toBe(AbilityId.WANDERING_SPIRIT);
   });
 
   it("should not exchange abilities when hit with a non-contact move", async () => {
@@ -49,8 +49,8 @@ describe("Abilities - Wandering Spirit", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()?.getAbility().id).toBe(AbilityId.WANDERING_SPIRIT);
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.BALL_FETCH);
+    expect(game.field.getPlayerPokemon().getAbility().id).toBe(AbilityId.WANDERING_SPIRIT);
+    expect(game.field.getEnemyPokemon().getAbility().id).toBe(AbilityId.BALL_FETCH);
   });
 
   it("should activate post-summon abilities", async () => {
@@ -60,6 +60,6 @@ describe("Abilities - Wandering Spirit", () => {
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(-1);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(-1);
   });
 });

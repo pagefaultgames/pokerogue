@@ -42,7 +42,7 @@ describe("Moves - FILLET AWAY", () => {
   test("raises the user's ATK, SPATK, and SPD stat stages by 2 each, at the cost of 1/2 of its maximum HP", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
     const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
 
     game.move.select(MoveId.FILLET_AWAY);
@@ -57,7 +57,7 @@ describe("Moves - FILLET AWAY", () => {
   test("still takes effect if one or more of the involved stat stages are not at max", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
     const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
 
     //Here - Stat.SPD -> 0 and Stat.SPATK -> 3
@@ -76,7 +76,7 @@ describe("Moves - FILLET AWAY", () => {
   test("fails if all stat stages involved are at max", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
 
     leadPokemon.setStatStage(Stat.ATK, 6);
     leadPokemon.setStatStage(Stat.SPATK, 6);
@@ -94,7 +94,7 @@ describe("Moves - FILLET AWAY", () => {
   test("fails if the user's health is less than 1/2", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
+    const leadPokemon = game.field.getPlayerPokemon();
     const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
     leadPokemon.hp = hpLost - PREDAMAGE;
 

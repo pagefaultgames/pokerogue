@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { PlayerGender } from "#enums/player-gender";
+import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import type { Achv } from "#system/achv";
 import { achvs, getAchievementDescription } from "#system/achv";
@@ -9,7 +10,7 @@ import type { Voucher } from "#system/voucher";
 import { getVoucherTypeIcon, getVoucherTypeName, vouchers } from "#system/voucher";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { ScrollBar } from "#ui/scroll-bar";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 
@@ -29,7 +30,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
 
 export class AchvsUiHandler extends MessageUiHandler {
   private readonly ROWS = 4;
-  private readonly COLS = 17;
+  private readonly COLS = 18;
 
   private mainContainer: Phaser.GameObjects.Container;
   private iconsContainer: Phaser.GameObjects.Container;
@@ -71,9 +72,9 @@ export class AchvsUiHandler extends MessageUiHandler {
     const ui = this.getUi();
 
     /** Width of the global canvas / 6 */
-    const WIDTH = globalScene.game.canvas.width / 6;
+    const WIDTH = globalScene.scaledCanvas.width;
     /** Height of the global canvas / 6 */
-    const HEIGHT = globalScene.game.canvas.height / 6;
+    const HEIGHT = globalScene.scaledCanvas.height;
 
     this.mainContainer = globalScene.add.container(1, -HEIGHT + 1);
 
@@ -95,7 +96,7 @@ export class AchvsUiHandler extends MessageUiHandler {
     const genderIndex = globalScene.gameData.gender ?? PlayerGender.MALE;
     const genderStr = PlayerGender[genderIndex].toLowerCase();
 
-    this.achvsName = i18next.t("achv:Achievements.name", { context: genderStr });
+    this.achvsName = i18next.t("achv:achievements.name", { context: genderStr });
     this.vouchersName = i18next.t("voucher:vouchers");
 
     this.iconsBg = addWindow(0, this.headerBg.height, WIDTH - 2, HEIGHT - this.headerBg.height - 68).setOrigin(0);
@@ -114,8 +115,8 @@ export class AchvsUiHandler extends MessageUiHandler {
     this.icons = [];
 
     for (let a = 0; a < this.ROWS * this.COLS; a++) {
-      const x = (a % this.COLS) * 18;
-      const y = Math.floor(a / this.COLS) * 18;
+      const x = (a % this.COLS) * 17;
+      const y = Math.floor(a / this.COLS) * 19;
 
       const icon = globalScene.add.sprite(x, y, "items", "unknown").setOrigin(0).setScale(0.5);
 
@@ -213,7 +214,7 @@ export class AchvsUiHandler extends MessageUiHandler {
     this.showText(!hidden ? achv.description : "");
     this.scoreText.setText(`${achv.score}pt`);
     this.unlockText.setText(
-      unlocked ? new Date(achvUnlocks[achv.id]).toLocaleDateString() : i18next.t("achv:Locked.name"),
+      unlocked ? new Date(achvUnlocks[achv.id]).toLocaleDateString() : i18next.t("achv:locked.name"),
     );
   }
 

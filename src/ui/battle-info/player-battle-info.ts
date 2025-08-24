@@ -39,7 +39,7 @@ export class PlayerBattleInfo extends BattleInfo {
         statOverflow: 1,
       },
     };
-    super(Math.floor(globalScene.game.canvas.width / 6) - 10, -72, true, posParams);
+    super(Math.floor(globalScene.scaledCanvas.width) - 10, -72, true, posParams);
 
     this.hpNumbersContainer = globalScene.add.container(-15, 10).setName("container_hp");
 
@@ -198,11 +198,11 @@ export class PlayerBattleInfo extends BattleInfo {
     this.lastLevelCapped = isLevelCapped;
 
     if (this.lastExp !== pokemon.exp || this.lastLevel !== pokemon.level) {
-      const durationMultipler = Math.max(
+      const durationMultiplier = Math.max(
         Phaser.Tweens.Builders.GetEaseFunction("Cubic.easeIn")(1 - Math.min(pokemon.level - this.lastLevel, 10) / 10),
         0.1,
       );
-      await this.updatePokemonExp(pokemon, false, durationMultipler);
+      await this.updatePokemonExp(pokemon, false, durationMultiplier);
     } else if (isLevelCapped !== oldLevelCapped) {
       this.setLevel(pokemon.level);
     }

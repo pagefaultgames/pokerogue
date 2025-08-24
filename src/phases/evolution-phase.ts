@@ -90,16 +90,16 @@ export class EvolutionPhase extends Phase {
       .setVisible(false);
 
     this.evolutionBgOverlay = globalScene.add
-      .rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6, 0x262626)
+      .rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height, 0x262626)
       .setOrigin(0)
       .setAlpha(0);
     this.evolutionContainer.add([this.evolutionBaseBg, this.evolutionBgOverlay, this.evolutionBg]);
 
     this.evolutionOverlay = globalScene.add.rectangle(
       0,
-      -globalScene.game.canvas.height / 6,
-      globalScene.game.canvas.width / 6,
-      globalScene.game.canvas.height / 6 - 48,
+      -globalScene.scaledCanvas.height,
+      globalScene.scaledCanvas.width,
+      globalScene.scaledCanvas.height - 48,
       0xffffff,
     );
     this.evolutionOverlay.setOrigin(0).setAlpha(0);
@@ -135,7 +135,7 @@ export class EvolutionPhase extends Phase {
 
     sprite
       .setPipelineData("ignoreTimeTint", true)
-      .setPipelineData("spriteKey", pokemon.getSpriteKey())
+      .setPipelineData("spriteKey", spriteKey)
       .setPipelineData("shiny", pokemon.shiny)
       .setPipelineData("variant", pokemon.variant);
 

@@ -36,8 +36,8 @@ describe("Moves - False Swipe", () => {
   it("should reduce the target to 1 HP", async () => {
     await game.classicMode.startBattle([SpeciesId.MILOTIC]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.FALSE_SWIPE);
     await game.toNextTurn();

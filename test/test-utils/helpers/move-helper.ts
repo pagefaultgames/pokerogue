@@ -12,7 +12,8 @@ import type { CommandPhase } from "#phases/command-phase";
 import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
 import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import { coerceArray, toReadableString } from "#utils/common";
+import { coerceArray } from "#utils/common";
+import { toTitleCase } from "#utils/strings";
 import type { MockInstance } from "vitest";
 import { expect, vi } from "vitest";
 
@@ -66,12 +67,12 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        `MoveHelper.select called with move '${toReadableString(MoveId[move])}' not in moveset!` +
-          `\nBattler Index: ${toReadableString(BattlerIndex[pkmIndex])}` +
+        `MoveHelper.select called with move '${toTitleCase(MoveId[move])}' not in moveset!` +
+          `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}` +
           `\nMoveset: [${this.game.scene
             .getPlayerParty()
             [pkmIndex].getMoveset()
-            .map(pm => toReadableString(MoveId[pm.moveId]))
+            .map(pm => toTitleCase(MoveId[pm.moveId]))
             .join(", ")}]`,
       );
     }
@@ -110,12 +111,12 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        `MoveHelper.selectWithTera called with move '${toReadableString(MoveId[move])}' not in moveset!` +
-          `\nBattler Index: ${toReadableString(BattlerIndex[pkmIndex])}` +
+        `MoveHelper.selectWithTera called with move '${toTitleCase(MoveId[move])}' not in moveset!` +
+          `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}` +
           `\nMoveset: [${this.game.scene
             .getPlayerParty()
             [pkmIndex].getMoveset()
-            .map(pm => toReadableString(MoveId[pm.moveId]))
+            .map(pm => toTitleCase(MoveId[pm.moveId]))
             .join(", ")}]`,
       );
     }
@@ -142,7 +143,7 @@ export class MoveHelper extends GameManagerHelper {
     }
   }
 
-  /** Helper function to get the index of the selected move in the selected part member's moveset. */
+  /** Helper function to get the index of the selected move in the selected party member's moveset. */
   private getMovePosition(pokemonIndex: BattlerIndex.PLAYER | BattlerIndex.PLAYER_2, move: MoveId): number {
     const playerPokemon = this.game.scene.getPlayerField()[pokemonIndex];
     const moveset = playerPokemon.getMoveset();
@@ -152,17 +153,18 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Modifies a player pokemon's moveset to contain only the selected move and then
+   * Modifies a player pokemon's moveset to contain only the selected move, and then
    * selects it to be used during the next {@linkcode CommandPhase}.
    *
-   * Warning: Will disable the player moveset override if it is enabled!
+   * **Warning**: Will disable the player moveset override if it is enabled, as well as any mid-battle moveset changes!
    *
-   * Note: If you need to check for changes in the player's moveset as part of the test, it may be
-   * best to use {@linkcode changeMoveset} and {@linkcode select} instead.
-   * @param moveId - the move to use
-   * @param pkmIndex - The {@linkcode BattlerIndex} of the player Pokemon using the move. Relevant for double battles only and defaults to {@linkcode BattlerIndex.PLAYER} if not specified.
-   * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves; should be omitted for multi-target moves.
-   * @param useTera - If `true`, the Pokemon will attempt to Terastallize even without a Tera Orb; default `false`.
+   * @param moveId - The {@linkcode MoveId} to use
+   * @param pkmIndex - The {@linkcode BattlerIndex} of the player Pokemon using the move. Relevant for double battles only and defaults to {@linkcode BattlerIndex.PLAYER} if not specified
+   * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves; should be omitted for multi-target moves
+   * @param useTera - If `true`, the Pokemon will attempt to Terastallize even without a Tera Orb; default `false`
+   * @remarks
+   * If you need to check for changes in the player's moveset as part of the test, it may be
+   * better to use {@linkcode changeMoveset} and {@linkcode select} instead.
    */
   public use(
     moveId: MoveId,
@@ -175,8 +177,11 @@ export class MoveHelper extends GameManagerHelper {
       console.warn("Warning: `MoveHelper.use` overwriting player pokemon moveset and disabling moveset override!");
     }
 
+    // Clear out both the normal and temporary movesets before setting the move.
     const pokemon = this.game.scene.getPlayerField()[pkmIndex];
-    pokemon.moveset = [new PokemonMove(moveId)];
+    pokemon.moveset.splice(0);
+    pokemon.summonData.moveset?.splice(0);
+    pokemon.setMove(0, moveId);
 
     if (useTera) {
       this.selectWithTera(moveId, pkmIndex, targetIndex);
@@ -210,7 +215,7 @@ export class MoveHelper extends GameManagerHelper {
   /**
    * Changes a pokemon's moveset to the given move(s).
    *
-   * Used when the normal moveset override can't be used (such as when it's necessary to check or update properties of the moveset).
+   * Useful when normal moveset overrides can't be used (such as when it's necessary to check or update properties of the moveset).
    *
    * **Note**: Will disable the moveset override matching the pokemon's party.
    * @param pokemon - The {@linkcode Pokemon} being modified
@@ -223,16 +228,16 @@ export class MoveHelper extends GameManagerHelper {
         console.warn("Player moveset override disabled due to use of `game.move.changeMoveset`!");
       }
     } else {
-      if (coerceArray(Overrides.OPP_MOVESET_OVERRIDE).length > 0) {
-        vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([]);
+      if (coerceArray(Overrides.ENEMY_MOVESET_OVERRIDE).length > 0) {
+        vi.spyOn(Overrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue([]);
         console.warn("Enemy moveset override disabled due to use of `game.move.changeMoveset`!");
       }
     }
     moveset = coerceArray(moveset);
     expect(moveset.length, "Cannot assign more than 4 moves to a moveset!").toBeLessThanOrEqual(4);
     pokemon.moveset = [];
-    moveset.forEach(move => {
-      pokemon.moveset.push(new PokemonMove(move));
+    moveset.forEach((move, i) => {
+      pokemon.setMove(i, move);
     });
     const movesetStr = moveset.map(moveId => MoveId[moveId]).join(", ");
     console.log(`Pokemon ${pokemon.species.name}'s moveset manually set to ${movesetStr} (=[${moveset.join(", ")}])!`);
@@ -297,8 +302,8 @@ export class MoveHelper extends GameManagerHelper {
         (this.game.scene.phaseManager.getCurrentPhase() as EnemyCommandPhase).getFieldIndex()
       ];
 
-    if ([Overrides.OPP_MOVESET_OVERRIDE].flat().length > 0) {
-      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([]);
+    if ([Overrides.ENEMY_MOVESET_OVERRIDE].flat().length > 0) {
+      vi.spyOn(Overrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue([]);
       console.warn(
         "Warning: `forceEnemyMove` overwrites the Pokemon's moveset and disables the enemy moveset override!",
       );
@@ -324,10 +329,16 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Force the move used by Metronome to be a specific move.
-   * @param move - The move to force metronome to use
-   * @param once - If `true`, uses {@linkcode MockInstance#mockReturnValueOnce} when mocking, else uses {@linkcode MockInstance#mockReturnValue}.
+   * Force the next move(s) used by Metronome to be a specific move. \
+   * Triggers during the next upcoming {@linkcode MoveEffectPhase} that Metronome is used.
+   * @param move - The move to force Metronome to call
+   * @param once - If `true`, mocks the return value exactly once; default `false`
    * @returns The spy that for Metronome that was mocked (Usually unneeded).
+   * @example
+   * ```ts
+   * game.move.use(MoveId.METRONOME);
+   * game.move.forceMetronomeMove(MoveId.FUTURE_SIGHT); // Can be in any order
+   * ```
    */
   public forceMetronomeMove(move: MoveId, once = false): MockInstance {
     const spy = vi.spyOn(allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0], "getMoveOverride");

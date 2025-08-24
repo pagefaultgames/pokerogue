@@ -2,9 +2,10 @@ import { globalScene } from "#app/global-scene";
 import { getPokeballName } from "#data/pokeball";
 import { Button } from "#enums/buttons";
 import { Command } from "#enums/command";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { CommandPhase } from "#phases/command-phase";
-import { addTextObject, getTextStyleOptions, TextStyle } from "#ui/text";
+import { addTextObject, getTextStyleOptions } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
@@ -36,7 +37,7 @@ export class BallUiHandler extends UiHandler {
     const optionsText = addTextObject(0, 0, optionsTextContent, TextStyle.WINDOW, { align: "right", maxLines: 6 });
     const optionsTextWidth = optionsText.displayWidth;
     this.pokeballSelectContainer = globalScene.add.container(
-      globalScene.game.canvas.width / 6 - 51 - Math.max(64, optionsTextWidth),
+      globalScene.scaledCanvas.width - 51 - Math.max(64, optionsTextWidth),
       -49,
     );
     this.pokeballSelectContainer.setVisible(false);

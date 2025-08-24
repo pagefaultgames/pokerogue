@@ -65,7 +65,7 @@ describe("Moves - Rage Fist", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // hit 8 times, but nothing else
-    expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(8);
+    expect(game.field.getPlayerPokemon().battleData.hitCount).toBe(8);
     expect(move.calculateBattlePower).toHaveLastReturnedWith(350);
   });
 
@@ -80,7 +80,7 @@ describe("Moves - Rage Fist", () => {
     await game.toNextTurn();
 
     // no increase due to substitute
-    expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(0);
+    expect(game.field.getPlayerPokemon().battleData.hitCount).toBe(0);
 
     // remove substitute and get confused
     game.move.select(MoveId.TIDY_UP);
@@ -95,7 +95,7 @@ describe("Moves - Rage Fist", () => {
     await game.toNextTurn();
 
     // didn't go up from hitting ourself
-    expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(0);
+    expect(game.field.getPlayerPokemon().battleData.hitCount).toBe(0);
   });
 
   it("should maintain hits recieved between wild waves", async () => {
@@ -105,20 +105,20 @@ describe("Moves - Rage Fist", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
-    expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(2);
+    expect(game.field.getPlayerPokemon().battleData.hitCount).toBe(2);
 
     game.move.select(MoveId.RAGE_FIST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(4);
+    expect(game.field.getPlayerPokemon().battleData.hitCount).toBe(4);
     expect(move.calculateBattlePower).toHaveLastReturnedWith(250);
   });
 
   it("should reset hits recieved before trainer battles", async () => {
     await game.classicMode.startBattle([SpeciesId.IRON_HANDS]);
 
-    const ironHands = game.scene.getPlayerPokemon()!;
+    const ironHands = game.field.getPlayerPokemon();
     expect(ironHands).toBeDefined();
 
     // beat up a magikarp
@@ -184,7 +184,7 @@ describe("Moves - Rage Fist", () => {
     game.move.select(MoveId.RAGE_FIST);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
     expect(charizard).toBeDefined();
     expect(charizard.species.speciesId).toBe(SpeciesId.CHARIZARD);
     expect(move.calculateBattlePower).toHaveLastReturnedWith(150);

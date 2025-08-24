@@ -1,8 +1,9 @@
 import { globalScene } from "#app/global-scene";
-import { ArenaTrapTag } from "#data/arena-tag";
+import { EntryHazardTag } from "#data/arena-tag";
 import { TerrainType } from "#data/terrain";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
+import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
 import type { ArenaEvent } from "#events/arena";
 import {
@@ -14,10 +15,11 @@ import {
 } from "#events/arena";
 import type { TurnEndEvent } from "#events/battle-scene";
 import { BattleSceneEventType } from "#events/battle-scene";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { TimeOfDayWidget } from "#ui/time-of-day-widget";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-import { fixedInt, formatText, toCamelCaseString } from "#utils/common";
+import { fixedInt } from "#utils/common";
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import type { ParseKeys } from "i18next";
 import i18next from "i18next";
 
@@ -34,7 +36,7 @@ interface ArenaEffectInfo {
   /** The enum string representation of the effect */
   name: string;
   /** {@linkcode ArenaEffectType} type of effect */
-  effecType: ArenaEffectType;
+  effectType: ArenaEffectType;
 
   /** The maximum duration set by the effect */
   maxDuration: number;
@@ -48,10 +50,10 @@ export function getFieldEffectText(arenaTagType: string): string {
   if (!arenaTagType || arenaTagType === ArenaTagType.NONE) {
     return arenaTagType;
   }
-  const effectName = toCamelCaseString(arenaTagType);
+  const effectName = toCamelCase(arenaTagType);
   const i18nKey = `arenaFlyout:${effectName}` as ParseKeys;
   const resultName = i18next.t(i18nKey);
-  return !resultName || resultName === i18nKey ? formatText(arenaTagType) : resultName;
+  return !resultName || resultName === i18nKey ? toTitleCase(arenaTagType) : resultName;
 }
 
 export class ArenaFlyout extends Phaser.GameObjects.Container {
@@ -244,7 +246,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
       // Creates a proxy object to decide which text object needs to be updated
       let textObject: Phaser.GameObjects.Text;
-      switch (fieldEffectInfo.effecType) {
+      switch (fieldEffectInfo.effectType) {
         case ArenaEffectType.PLAYER:
           textObject = this.flyoutTextPlayer;
           break;
@@ -285,7 +287,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     switch (arenaEffectChangedEvent.constructor) {
       case TagAddedEvent: {
         const tagAddedEvent = arenaEffectChangedEvent as TagAddedEvent;
-        const isArenaTrapTag = globalScene.arena.getTag(tagAddedEvent.arenaTagType) instanceof ArenaTrapTag;
+        const isArenaTrapTag = globalScene.arena.getTag(tagAddedEvent.arenaTagType) instanceof EntryHazardTag;
         let arenaEffectType: ArenaEffectType;
 
         if (tagAddedEvent.arenaTagSide === ArenaTagSide.BOTH) {
@@ -298,7 +300,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
         const existingTrapTagIndex = isArenaTrapTag
           ? this.fieldEffectInfo.findIndex(
-              e => tagAddedEvent.arenaTagType === e.tagType && arenaEffectType === e.effecType,
+              e => tagAddedEvent.arenaTagType === e.tagType && arenaEffectType === e.effectType,
             )
           : -1;
         let name: string = getFieldEffectText(ArenaTagType[tagAddedEvent.arenaTagType]);
@@ -316,7 +318,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
         this.fieldEffectInfo.push({
           name,
-          effecType: arenaEffectType,
+          effectType: arenaEffectType,
           maxDuration: tagAddedEvent.duration,
           duration: tagAddedEvent.duration,
           tagType: tagAddedEvent.arenaTagType,
@@ -351,7 +353,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
               ? WeatherType[fieldEffectChangedEvent.newWeatherType]
               : TerrainType[fieldEffectChangedEvent.newTerrainType],
           ),
-          effecType:
+          effectType:
             fieldEffectChangedEvent instanceof WeatherChangedEvent ? ArenaEffectType.WEATHER : ArenaEffectType.TERRAIN,
           maxDuration: fieldEffectChangedEvent.duration,
           duration: fieldEffectChangedEvent.duration,

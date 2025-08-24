@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Baneful Bunker", () => {
   let phaserGame: Phaser.Game;
@@ -26,55 +26,51 @@ describe("Moves - Baneful Bunker", () => {
 
     game.override
       .battleStyle("single")
-      .moveset(MoveId.SLASH)
-      .enemySpecies(SpeciesId.SNORLAX)
+      .moveset([MoveId.SLASH, MoveId.FLASH_CANNON])
+      .enemySpecies(SpeciesId.TOXAPEX)
       .enemyAbility(AbilityId.INSOMNIA)
       .enemyMoveset(MoveId.BANEFUL_BUNKER)
       .startingLevel(100)
       .enemyLevel(100);
   });
-  test("should protect the user and poison attackers that make contact", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+  function expectProtected() {
+    expect(game.scene.getEnemyPokemon()?.hp).toBe(game.scene.getEnemyPokemon()?.getMaxHp());
+    expect(game.scene.getPlayerPokemon()?.status?.effect).toBe(StatusEffect.POISON);
+  }
+
+  it("should protect the user and poison attackers that make contact", async () => {
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     game.move.select(MoveId.SLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    expect(leadPokemon.status?.effect === StatusEffect.POISON).toBeTruthy();
+
+    expectProtected();
   });
-  test("should protect the user and poison attackers that make contact, regardless of accuracy checks", async () => {
+
+  it("should ignore accuracy checks", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
-
     game.move.select(MoveId.SLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("MoveEffectPhase");
-
+    await game.phaseInterceptor.to("MoveEndPhase"); // baneful bunker
     await game.move.forceMiss();
+
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    expect(leadPokemon.status?.effect === StatusEffect.POISON).toBeTruthy();
+
+    expectProtected();
   });
 
-  test("should not poison attackers that don't make contact", async () => {
-    game.override.moveset(MoveId.FLASH_CANNON);
+  it("should block non-contact moves without poisoning attackers", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
+    const toxapex = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.FLASH_CANNON);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("MoveEffectPhase");
-
-    await game.move.forceMiss();
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    expect(leadPokemon.status?.effect === StatusEffect.POISON).toBeFalsy();
+
+    expect(toxapex.hp).toBe(toxapex.getMaxHp());
+    expect(charizard.status?.effect).toBeUndefined();
   });
 });

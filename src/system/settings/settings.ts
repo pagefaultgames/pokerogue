@@ -171,6 +171,7 @@ export const SettingKeys = {
   UI_Volume: "UI_SOUND_EFFECTS",
   Battle_Music: "BATTLE_MUSIC",
   Show_BGM_Bar: "SHOW_BGM_BAR",
+  Hide_Username: "HIDE_USERNAME",
   Move_Touch_Controls: "MOVE_TOUCH_CONTROLS",
   Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY",
 };
@@ -196,35 +197,35 @@ export const Setting: Array<Setting> = [
     options: [
       {
         value: "1",
-        label: i18next.t("settings:gameSpeed1x"),
+        label: i18next.t("settings:gameSpeed100x"),
       },
       {
         value: "1.25",
-        label: i18next.t("settings:gameSpeed1_25x"),
+        label: i18next.t("settings:gameSpeed125x"),
       },
       {
         value: "1.5",
-        label: i18next.t("settings:gameSpeed1_5x"),
+        label: i18next.t("settings:gameSpeed150x"),
       },
       {
         value: "2",
-        label: i18next.t("settings:gameSpeed2x"),
+        label: i18next.t("settings:gameSpeed200x"),
       },
       {
         value: "2.5",
-        label: i18next.t("settings:gameSpeed2_5x"),
+        label: i18next.t("settings:gameSpeed250x"),
       },
       {
         value: "3",
-        label: i18next.t("settings:gameSpeed3x"),
+        label: i18next.t("settings:gameSpeed300x"),
       },
       {
         value: "4",
-        label: i18next.t("settings:gameSpeed4x"),
+        label: i18next.t("settings:gameSpeed400x"),
       },
       {
         value: "5",
-        label: i18next.t("settings:gameSpeed5x"),
+        label: i18next.t("settings:gameSpeed500x"),
       },
     ],
     default: 3,
@@ -565,7 +566,7 @@ export const Setting: Array<Setting> = [
       },
       {
         value: "Back",
-        label: i18next.t("settings:timeOfDay_back"),
+        label: i18next.t("settings:timeOfDayBack"),
       },
     ],
     default: 0,
@@ -623,6 +624,13 @@ export const Setting: Array<Setting> = [
     label: i18next.t("settings:showBgmBar"),
     options: OFF_ON,
     default: 1,
+    type: SettingType.DISPLAY,
+  },
+  {
+    key: SettingKeys.Hide_Username,
+    label: i18next.t("settings:hideUsername"),
+    options: OFF_ON,
+    default: 0,
     type: SettingType.DISPLAY,
   },
   {
@@ -791,6 +799,9 @@ export function setSetting(setting: string, value: number): boolean {
       break;
     case SettingKeys.Show_BGM_Bar:
       globalScene.showBgmBar = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Hide_Username:
+      globalScene.hideUsername = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Candy_Upgrade_Notification:
       if (globalScene.candyUpgradeNotification === value) {
@@ -969,6 +980,10 @@ export function setSetting(setting: string, value: number): boolean {
               {
                 label: "Română (Needs Help)",
                 handler: () => changeLocaleHandler("ro"),
+              },
+              {
+                label: "Tagalog (Needs Help)",
+                handler: () => changeLocaleHandler("tl"),
               },
               {
                 label: i18next.t("settings:back"),

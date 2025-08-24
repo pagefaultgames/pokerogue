@@ -3,13 +3,14 @@ import { BattleType } from "#enums/battle-type";
 import { Button } from "#enums/buttons";
 import { GameModes } from "#enums/game-modes";
 import { PlayerGender } from "#enums/player-gender";
+import { TextStyle } from "#enums/text-style";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 import type { RunEntry } from "#system/game-data";
 import type { PokemonData } from "#system/pokemon-data";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { RunDisplayMode } from "#ui/run-info-ui-handler";
-import { addTextObject, TextStyle } from "#ui/text";
+import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, formatLargeNumber } from "#utils/common";
 import i18next from "i18next";
@@ -53,14 +54,14 @@ export class RunHistoryUiHandler extends MessageUiHandler {
     const loadSessionBg = globalScene.add.rectangle(
       0,
       0,
-      globalScene.game.canvas.width / 6,
-      -globalScene.game.canvas.height / 6,
+      globalScene.scaledCanvas.width,
+      -globalScene.scaledCanvas.height,
       0x006860,
     );
     loadSessionBg.setOrigin(0, 0);
     this.runSelectContainer.add(loadSessionBg);
 
-    this.runContainerInitialY = -globalScene.game.canvas.height / 6 + 8;
+    this.runContainerInitialY = -globalScene.scaledCanvas.height + 8;
 
     this.runsContainer = globalScene.add.container(8, this.runContainerInitialY);
     this.runSelectContainer.add(this.runsContainer);
@@ -336,7 +337,7 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
         // Because of the interesting mechanics behind rival names, the rival name and title have to be retrieved differently
         const RIVAL_TRAINER_ID_THRESHOLD = 375;
         if (data.trainer.trainerType >= RIVAL_TRAINER_ID_THRESHOLD) {
-          const rivalName = tObj.variant === TrainerVariant.FEMALE ? "trainerNames:rival_female" : "trainerNames:rival";
+          const rivalName = tObj.variant === TrainerVariant.FEMALE ? "trainerNames:rivalFemale" : "trainerNames:rival";
           const gameOutcomeLabel = addTextObject(
             8,
             5,

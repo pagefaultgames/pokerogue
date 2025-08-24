@@ -1,12 +1,12 @@
 import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import { addTextObject, TextStyle } from "#ui/text";
+import { TextStyle } from "#enums/text-style";
+import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
 
 export interface PokedexInfoOverlaySettings {
   delayVisibility?: boolean; // if true, showing the overlay will only set it to active and populate the fields and the handler using this field has to manually call setVisible later.
-  scale?: number; // scale the box? A scale of 0.5 is recommended
   //location and width of the component; unaffected by scaling
   x?: number;
   y?: number;
@@ -35,17 +35,15 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
 
   private maskPointOriginX: number;
   private maskPointOriginY: number;
-  public scale: number;
   public width: number;
 
   constructor(options?: PokedexInfoOverlaySettings) {
     super(globalScene, options?.x, options?.y);
-    this.scale = options?.scale || 1; // set up the scale
-    this.setScale(this.scale);
+    this.setScale(1);
     this.options = options || {};
 
     // prepare the description box
-    this.width = (options?.width || PokedexInfoOverlay.getWidth(this.scale)) / this.scale; // divide by scale as we always want this to be half a window wide
+    this.width = options?.width || PokedexInfoOverlay.getWidth(); // we always want this to be half a window wide
     this.descBg = addWindow(0, 0, this.width, DESC_HEIGHT);
     this.descBg.setOrigin(0, 0);
     this.add(this.descBg);
@@ -60,19 +58,19 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
     this.maskPointOriginY = options?.y || 0;
 
     if (this.maskPointOriginX < 0) {
-      this.maskPointOriginX += globalScene.game.canvas.width / GLOBAL_SCALE;
+      this.maskPointOriginX += globalScene.scaledCanvas.width;
     }
     if (this.maskPointOriginY < 0) {
-      this.maskPointOriginY += globalScene.game.canvas.height / GLOBAL_SCALE;
+      this.maskPointOriginY += globalScene.scaledCanvas.height;
     }
 
     this.textMaskRect = globalScene.make.graphics();
     this.textMaskRect.fillStyle(0xff0000);
     this.textMaskRect.fillRect(
-      this.maskPointOriginX + BORDER * this.scale,
-      this.maskPointOriginY + (BORDER - 2) * this.scale,
-      this.width - BORDER * 2 * this.scale,
-      (DESC_HEIGHT - (BORDER - 2) * 2) * this.scale,
+      this.maskPointOriginX + BORDER,
+      this.maskPointOriginY + (BORDER - 2),
+      this.width - BORDER * 2,
+      DESC_HEIGHT - (BORDER - 2) * 2,
     );
     this.textMaskRect.setScale(6);
     const textMask = this.createGeometryMask(this.textMaskRect);
@@ -110,10 +108,10 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
     this.textMaskRect.clear();
     this.textMaskRect.fillStyle(0xff0000);
     this.textMaskRect.fillRect(
-      this.maskPointOriginX + BORDER * this.scale,
-      this.maskPointOriginY + (BORDER - 2) * this.scale + (48 - newHeight),
-      this.width - BORDER * 2 * this.scale,
-      (newHeight - (BORDER - 2) * 2) * this.scale,
+      this.maskPointOriginX + BORDER,
+      this.maskPointOriginY + (BORDER - 2) + (48 - newHeight),
+      this.width - BORDER * 2,
+      newHeight - (BORDER - 2) * 2,
     );
     const updatedMask = this.createGeometryMask(this.textMaskRect);
     this.desc.setMask(updatedMask);
@@ -166,12 +164,12 @@ export class PokedexInfoOverlay extends Phaser.GameObjects.Container implements 
   }
 
   // width of this element
-  static getWidth(_scale: number): number {
-    return globalScene.game.canvas.width / GLOBAL_SCALE / 2;
+  static getWidth(): number {
+    return globalScene.scaledCanvas.width / 2;
   }
 
   // height of this element
-  static getHeight(scale: number, _onSide?: boolean): number {
-    return DESC_HEIGHT * scale;
+  static getHeight(): number {
+    return DESC_HEIGHT;
   }
 }

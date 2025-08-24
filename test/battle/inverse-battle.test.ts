@@ -43,7 +43,7 @@ describe("Inverse Battle", () => {
 
     await game.challengeMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.THUNDERBOLT);
@@ -58,7 +58,7 @@ describe("Inverse Battle", () => {
 
     await game.challengeMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.THUNDERBOLT);
@@ -73,7 +73,7 @@ describe("Inverse Battle", () => {
 
     await game.challengeMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.THUNDERBOLT);
@@ -89,7 +89,7 @@ describe("Inverse Battle", () => {
 
     await game.challengeMode.startBattle();
 
-    const charizard = game.scene.getEnemyPokemon()!;
+    const charizard = game.field.getEnemyPokemon();
 
     const maxHp = charizard.getMaxHp();
     const damage_prediction = Math.max(Math.round(charizard.getMaxHp() / 32), 1);
@@ -111,7 +111,7 @@ describe("Inverse Battle", () => {
 
     await game.challengeMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FREEZE_DRY);
@@ -126,7 +126,7 @@ describe("Inverse Battle", () => {
 
     await game.challengeMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     enemy.hp = enemy.getMaxHp() - 1;
     game.move.select(MoveId.WATER_GUN);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -140,7 +140,7 @@ describe("Inverse Battle", () => {
 
     await game.challengeMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.WILL_O_WISP);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -155,7 +155,7 @@ describe("Inverse Battle", () => {
 
     await game.challengeMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.NUZZLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -169,7 +169,7 @@ describe("Inverse Battle", () => {
 
     await game.challengeMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THUNDER_WAVE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -184,7 +184,7 @@ describe("Inverse Battle", () => {
 
     await game.challengeMode.startBattle();
 
-    expect(game.scene.getEnemyPokemon()?.waveData.abilitiesApplied).toContain(AbilityId.ANTICIPATION);
+    expect(game.field.getEnemyPokemon().waveData.abilitiesApplied).toContain(AbilityId.ANTICIPATION);
   });
 
   it("Conversion 2 should change the type to the resistive type - Conversion 2 against Dragonite", async () => {
@@ -192,7 +192,7 @@ describe("Inverse Battle", () => {
 
     await game.challengeMode.startBattle();
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.CONVERSION_2);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -207,7 +207,7 @@ describe("Inverse Battle", () => {
 
     await game.challengeMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FLYING_PRESS);
@@ -222,7 +222,7 @@ describe("Inverse Battle", () => {
 
     await game.challengeMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.TACKLE);
@@ -237,7 +237,7 @@ describe("Inverse Battle", () => {
 
     await game.challengeMode.startBattle();
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
 
     game.move.select(MoveId.FORESIGHT);

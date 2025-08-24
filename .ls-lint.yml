@@ -11,17 +11,19 @@ _cfg: &cfg
 
 ls:
    <<: *cfg
-   src:
+   src: &src
       <<: *cfg
       .dir: kebab-case | regex:@types
       .js: exists:0
    src/system/version-migration/versions:
       .ts: snake_case
       <<: *cfg
-
+   test: *src
 ignore:
    - node_modules
    - .vscode
    - .github
    - .git
    - public
+   - dist
+   - .devcontainer

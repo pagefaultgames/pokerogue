@@ -37,6 +37,6 @@ describe("Moves - Simple Beam", () => {
     game.move.select(MoveId.SIMPLE_BEAM);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.SIMPLE);
+    expect(game.field.getEnemyPokemon().getAbility().id).toBe(AbilityId.SIMPLE);
   });
 });

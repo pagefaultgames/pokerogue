@@ -10,12 +10,12 @@ import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
-import { ArenaTrapTag } from "#data/arena-tag";
-import { applyChallenges } from "#data/challenge";
+import { EntryHazardTag } from "#data/arena-tag";
 import { allMoves, allSpecies } from "#data/data-lists";
 import type { Egg } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import { loadPositionalTag } from "#data/positional-tags/load-positional-tag";
 import { TerrainType } from "#data/terrain";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
@@ -48,6 +48,7 @@ import { EggData } from "#system/egg-data";
 import { GameStats } from "#system/game-stats";
 import { ModifierData as PersistentModifierData } from "#system/modifier-data";
 import { PokemonData } from "#system/pokemon-data";
+import { RibbonData } from "#system/ribbons/ribbon-data";
 import { resetSettings, SettingKeys, setSetting } from "#system/settings";
 import { SettingGamepad, setSettingGamepad, settingGamepadDefaults } from "#system/settings-gamepad";
 import type { SettingKeyboard } from "#system/settings-keyboard";
@@ -62,6 +63,7 @@ import { VoucherType, vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { DexData, DexEntry } from "#types/dex-data";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
+import { applyChallenges } from "#utils/challenge-utils";
 import { executeIf, fixedInt, isLocal, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
@@ -126,6 +128,8 @@ export interface SessionSaveData {
   battleType: BattleType;
   trainer: TrainerData;
   gameVersion: string;
+  /** The player-chosen name of the run */
+  name: string;
   timestamp: number;
   challenges: ChallengeData[];
   mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
@@ -205,10 +209,12 @@ export interface StarterData {
   [key: number]: StarterDataEntry;
 }
 
-export interface TutorialFlags {
-  [key: string]: boolean;
-}
+// TODO: Rework into a bitmask
+export type TutorialFlags = {
+  [key in Tutorial]: boolean;
+};
 
+// TODO: Rework into a bitmask
 export interface SeenDialogues {
   [key: string]: boolean;
 }
@@ -398,121 +404,121 @@ export class GameData {
   }
 
   public initSystem(systemDataStr: string, cachedSystemDataStr?: string): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
-      try {
-        let systemData = this.parseSystemData(systemDataStr);
+    const { promise, resolve } = Promise.withResolvers<boolean>();
+    try {
+      let systemData = this.parseSystemData(systemDataStr);
 
-        if (cachedSystemDataStr) {
-          const cachedSystemData = this.parseSystemData(cachedSystemDataStr);
-          if (cachedSystemData.timestamp > systemData.timestamp) {
-            console.debug("Use cached system");
-            systemData = cachedSystemData;
-            systemDataStr = cachedSystemDataStr;
-          } else {
-            this.clearLocalData();
-          }
-        }
-
-        console.debug(systemData);
-
-        localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemDataStr, bypassLogin));
-
-        const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
-        const lsItem = localStorage.getItem(lsItemKey);
-        if (!lsItem) {
-          localStorage.setItem(lsItemKey, "");
-        }
-
-        applySystemVersionMigration(systemData);
-
-        this.trainerId = systemData.trainerId;
-        this.secretId = systemData.secretId;
-
-        this.gender = systemData.gender;
-
-        this.saveSetting(SettingKeys.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
-
-        if (!systemData.starterData) {
-          this.initStarterData();
-
-          if (systemData["starterMoveData"]) {
-            const starterMoveData = systemData["starterMoveData"];
-            for (const s of Object.keys(starterMoveData)) {
-              this.starterData[s].moveset = starterMoveData[s];
-            }
-          }
-
-          if (systemData["starterEggMoveData"]) {
-            const starterEggMoveData = systemData["starterEggMoveData"];
-            for (const s of Object.keys(starterEggMoveData)) {
-              this.starterData[s].eggMoves = starterEggMoveData[s];
-            }
-          }
-
-          this.migrateStarterAbilities(systemData, this.starterData);
-
-          const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
-          for (const s of starterIds) {
-            this.starterData[s].candyCount += systemData.dexData[s].caughtCount;
-            this.starterData[s].candyCount += systemData.dexData[s].hatchedCount * 2;
-            if (systemData.dexData[s].caughtAttr & DexAttr.SHINY) {
-              this.starterData[s].candyCount += 4;
-            }
-          }
+      if (cachedSystemDataStr) {
+        const cachedSystemData = this.parseSystemData(cachedSystemDataStr);
+        if (cachedSystemData.timestamp > systemData.timestamp) {
+          console.debug("Use cached system");
+          systemData = cachedSystemData;
+          systemDataStr = cachedSystemDataStr;
         } else {
-          this.starterData = systemData.starterData;
+          this.clearLocalData();
         }
-
-        if (systemData.gameStats) {
-          this.gameStats = systemData.gameStats;
-        }
-
-        if (systemData.unlocks) {
-          for (const key of Object.keys(systemData.unlocks)) {
-            if (this.unlocks.hasOwnProperty(key)) {
-              this.unlocks[key] = systemData.unlocks[key];
-            }
-          }
-        }
-
-        if (systemData.achvUnlocks) {
-          for (const a of Object.keys(systemData.achvUnlocks)) {
-            if (achvs.hasOwnProperty(a)) {
-              this.achvUnlocks[a] = systemData.achvUnlocks[a];
-            }
-          }
-        }
-
-        if (systemData.voucherUnlocks) {
-          for (const v of Object.keys(systemData.voucherUnlocks)) {
-            if (vouchers.hasOwnProperty(v)) {
-              this.voucherUnlocks[v] = systemData.voucherUnlocks[v];
-            }
-          }
-        }
-
-        if (systemData.voucherCounts) {
-          getEnumKeys(VoucherType).forEach(key => {
-            const index = VoucherType[key];
-            this.voucherCounts[index] = systemData.voucherCounts[index] || 0;
-          });
-        }
-
-        this.eggs = systemData.eggs ? systemData.eggs.map(e => e.toEgg()) : [];
-
-        this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
-        this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
-
-        this.dexData = Object.assign(this.dexData, systemData.dexData);
-        this.consolidateDexData(this.dexData);
-        this.defaultDexData = null;
-
-        resolve(true);
-      } catch (err) {
-        console.error(err);
-        resolve(false);
       }
-    });
+
+      console.debug(systemData);
+
+      localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemDataStr, bypassLogin));
+
+      const lsItemKey = `runHistoryData_${loggedInUser?.username}`;
+      const lsItem = localStorage.getItem(lsItemKey);
+      if (!lsItem) {
+        localStorage.setItem(lsItemKey, "");
+      }
+
+      applySystemVersionMigration(systemData);
+
+      this.trainerId = systemData.trainerId;
+      this.secretId = systemData.secretId;
+
+      this.gender = systemData.gender;
+
+      this.saveSetting(SettingKeys.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
+
+      if (!systemData.starterData) {
+        this.initStarterData();
+
+        if (systemData["starterMoveData"]) {
+          const starterMoveData = systemData["starterMoveData"];
+          for (const s of Object.keys(starterMoveData)) {
+            this.starterData[s].moveset = starterMoveData[s];
+          }
+        }
+
+        if (systemData["starterEggMoveData"]) {
+          const starterEggMoveData = systemData["starterEggMoveData"];
+          for (const s of Object.keys(starterEggMoveData)) {
+            this.starterData[s].eggMoves = starterEggMoveData[s];
+          }
+        }
+
+        this.migrateStarterAbilities(systemData, this.starterData);
+
+        const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
+        for (const s of starterIds) {
+          this.starterData[s].candyCount += systemData.dexData[s].caughtCount;
+          this.starterData[s].candyCount += systemData.dexData[s].hatchedCount * 2;
+          if (systemData.dexData[s].caughtAttr & DexAttr.SHINY) {
+            this.starterData[s].candyCount += 4;
+          }
+        }
+      } else {
+        this.starterData = systemData.starterData;
+      }
+
+      if (systemData.gameStats) {
+        this.gameStats = systemData.gameStats;
+      }
+
+      if (systemData.unlocks) {
+        for (const key of Object.keys(systemData.unlocks)) {
+          if (this.unlocks.hasOwnProperty(key)) {
+            this.unlocks[key] = systemData.unlocks[key];
+          }
+        }
+      }
+
+      if (systemData.achvUnlocks) {
+        for (const a of Object.keys(systemData.achvUnlocks)) {
+          if (achvs.hasOwnProperty(a)) {
+            this.achvUnlocks[a] = systemData.achvUnlocks[a];
+          }
+        }
+      }
+
+      if (systemData.voucherUnlocks) {
+        for (const v of Object.keys(systemData.voucherUnlocks)) {
+          if (vouchers.hasOwnProperty(v)) {
+            this.voucherUnlocks[v] = systemData.voucherUnlocks[v];
+          }
+        }
+      }
+
+      if (systemData.voucherCounts) {
+        getEnumKeys(VoucherType).forEach(key => {
+          const index = VoucherType[key];
+          this.voucherCounts[index] = systemData.voucherCounts[index] || 0;
+        });
+      }
+
+      this.eggs = systemData.eggs ? systemData.eggs.map(e => e.toEgg()) : [];
+
+      this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
+      this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
+
+      this.dexData = Object.assign(this.dexData, systemData.dexData);
+      this.consolidateDexData(this.dexData);
+      this.defaultDexData = null;
+
+      resolve(true);
+    } catch (err) {
+      console.error(err);
+      resolve(false);
+    }
+    return promise;
   }
 
   /**
@@ -622,6 +628,9 @@ export class GameData {
           ret.push(new EggData(e));
         }
         return ret;
+      }
+      if (k === "ribbons") {
+        return RibbonData.fromJSON(v);
       }
 
       return k.endsWith("Attr") && !["natureAttr", "abilityAttr", "passiveAttr"].includes(k) ? BigInt(v ?? 0) : v;
@@ -821,52 +830,51 @@ export class GameData {
     return true; // TODO: is `true` the correct return value?
   }
 
-  private loadGamepadSettings(): boolean {
-    Object.values(SettingGamepad)
-      .map(setting => setting as SettingGamepad)
-      .forEach(setting => setSettingGamepad(setting, settingGamepadDefaults[setting]));
+  private loadGamepadSettings(): void {
+    Object.values(SettingGamepad).forEach(setting => {
+      setSettingGamepad(setting, settingGamepadDefaults[setting]);
+    });
 
     if (!localStorage.hasOwnProperty("settingsGamepad")) {
-      return false;
+      return;
     }
     const settingsGamepad = JSON.parse(localStorage.getItem("settingsGamepad")!); // TODO: is this bang correct?
 
     for (const setting of Object.keys(settingsGamepad)) {
       setSettingGamepad(setting as SettingGamepad, settingsGamepad[setting]);
     }
-
-    return true; // TODO: is `true` the correct return value?
   }
 
-  public saveTutorialFlag(tutorial: Tutorial, flag: boolean): boolean {
-    const key = getDataTypeKey(GameDataType.TUTORIALS);
-    let tutorials: object = {};
-    if (localStorage.hasOwnProperty(key)) {
-      tutorials = JSON.parse(localStorage.getItem(key)!); // TODO: is this bang correct?
+  /**
+   * Save the specified tutorial as having the specified completion status.
+   * @param tutorial - The {@linkcode Tutorial} whose completion status is being saved
+   * @param status - The completion status to set
+   */
+  public saveTutorialFlag(tutorial: Tutorial, status: boolean): void {
+    // Grab the prior save data tutorial
+    const saveDataKey = getDataTypeKey(GameDataType.TUTORIALS);
+    const tutorials: TutorialFlags = localStorage.hasOwnProperty(saveDataKey)
+      ? JSON.parse(localStorage.getItem(saveDataKey)!)
+      : {};
+
+    // TODO: We shouldn't be storing this like that
+    for (const key of Object.values(Tutorial)) {
+      if (key === tutorial) {
+        tutorials[key] = status;
+      } else {
+        tutorials[key] ??= false;
+      }
     }
 
-    Object.keys(Tutorial)
-      .map(t => t as Tutorial)
-      .forEach(t => {
-        const key = Tutorial[t];
-        if (key === tutorial) {
-          tutorials[key] = flag;
-        } else {
-          tutorials[key] ??= false;
-        }
-      });
-
-    localStorage.setItem(key, JSON.stringify(tutorials));
-
-    return true;
+    localStorage.setItem(saveDataKey, JSON.stringify(tutorials));
   }
 
   public getTutorialFlags(): TutorialFlags {
     const key = getDataTypeKey(GameDataType.TUTORIALS);
-    const ret: TutorialFlags = {};
-    Object.values(Tutorial)
-      .map(tutorial => tutorial as Tutorial)
-      .forEach(tutorial => (ret[Tutorial[tutorial]] = false));
+    const ret: TutorialFlags = Object.values(Tutorial).reduce((acc, tutorial) => {
+      acc[Tutorial[tutorial]] = false;
+      return acc;
+    }, {} as TutorialFlags);
 
     if (!localStorage.hasOwnProperty(key)) {
       return ret;
@@ -978,6 +986,48 @@ export class GameData {
     });
   }
 
+  async renameSession(slotId: number, newName: string): Promise<boolean> {
+    if (slotId < 0) {
+      return false;
+    }
+    if (newName === "") {
+      return true;
+    }
+    const sessionData: SessionSaveData | null = await this.getSession(slotId);
+
+    if (!sessionData) {
+      return false;
+    }
+
+    sessionData.name = newName;
+    // update timestamp by 1 to ensure the session is saved
+    sessionData.timestamp += 1;
+    const updatedDataStr = JSON.stringify(sessionData);
+    const encrypted = encrypt(updatedDataStr, bypassLogin);
+    const secretId = this.secretId;
+    const trainerId = this.trainerId;
+
+    if (bypassLogin) {
+      localStorage.setItem(
+        `sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`,
+        encrypt(updatedDataStr, bypassLogin),
+      );
+      return true;
+    }
+
+    const response = await pokerogueApi.savedata.session.update(
+      { slot: slotId, trainerId, secretId, clientSessionId },
+      updatedDataStr,
+    );
+
+    if (response) {
+      return false;
+    }
+    localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`, encrypted);
+    const success = await updateUserInfo();
+    return !(success !== null && !success);
+  }
+
   loadSession(slotId: number, sessionData?: SessionSaveData): Promise<boolean> {
     // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO: fix this
     return new Promise(async (resolve, reject) => {
@@ -1085,8 +1135,8 @@ export class GameData {
           globalScene.arena.tags = sessionData.arena.tags;
           if (globalScene.arena.tags) {
             for (const tag of globalScene.arena.tags) {
-              if (tag instanceof ArenaTrapTag) {
-                const { tagType, side, turnCount, layers, maxLayers } = tag as ArenaTrapTag;
+              if (tag instanceof EntryHazardTag) {
+                const { tagType, side, turnCount, layers, maxLayers } = tag as EntryHazardTag;
                 globalScene.arena.eventTarget.dispatchEvent(
                   new TagAddedEvent(tagType, side, turnCount, layers, maxLayers),
                 );
@@ -1095,6 +1145,10 @@ export class GameData {
               }
             }
           }
+
+          globalScene.arena.positionalTagManager.tags = sessionData.arena.positionalTags.map(tag =>
+            loadPositionalTag(tag),
+          );
 
           if (globalScene.modifiers.length) {
             console.warn("Existing modifiers not cleared on session load, deleting...");
@@ -1454,11 +1508,10 @@ export class GameData {
 
       reader.onload = (_ => {
         return e => {
-          let dataName: string;
+          let dataName = GameDataType[dataType].toLowerCase();
           let dataStr = AES.decrypt(e.target?.result?.toString()!, saveKey).toString(enc.Utf8); // TODO: is this bang correct?
           let valid = false;
           try {
-            dataName = GameDataType[dataType].toLowerCase();
             switch (dataType) {
               case GameDataType.SYSTEM: {
                 dataStr = this.convertSystemDataStr(dataStr);
@@ -1493,7 +1546,6 @@ export class GameData {
 
           const displayError = (error: string) =>
             globalScene.ui.showText(error, null, () => globalScene.ui.showText("", 0), fixedInt(1500));
-          dataName = dataName!; // tell TS compiler that dataName is defined!
 
           if (!valid) {
             return globalScene.ui.showText(
@@ -1581,6 +1633,7 @@ export class GameData {
         caughtCount: 0,
         hatchedCount: 0,
         ivs: [0, 0, 0, 0, 0, 0],
+        ribbons: new RibbonData(0),
       };
     }
 
@@ -1825,6 +1878,12 @@ export class GameData {
     });
   }
 
+  /**
+   * Increase the number of classic ribbons won with this species.
+   * @param species - The species to increment the ribbon count for
+   * @param forStarter - If true, will increment the ribbon count for the root species of the given species
+   * @returns The number of classic wins after incrementing.
+   */
   incrementRibbonCount(species: PokemonSpecies, forStarter = false): number {
     const speciesIdToIncrement: SpeciesId = species.getRootSpeciesId(forStarter);
 
@@ -2044,13 +2103,13 @@ export class GameData {
     };
   }
 
-  getStarterSpeciesDefaultAbilityIndex(species: PokemonSpecies): number {
-    const abilityAttr = this.starterData[species.speciesId].abilityAttr;
+  getStarterSpeciesDefaultAbilityIndex(species: PokemonSpecies, abilityAttr?: number): number {
+    abilityAttr ??= this.starterData[species.speciesId].abilityAttr;
     return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
   }
 
-  getSpeciesDefaultNature(species: PokemonSpecies): Nature {
-    const dexEntry = this.dexData[species.speciesId];
+  getSpeciesDefaultNature(species: PokemonSpecies, dexEntry?: DexEntry): Nature {
+    dexEntry ??= this.dexData[species.speciesId];
     for (let n = 0; n < 25; n++) {
       if (dexEntry.natureAttr & (1 << (n + 1))) {
         return n as Nature;
@@ -2123,6 +2182,9 @@ export class GameData {
       }
       if (!entry.hasOwnProperty("natureAttr") || (entry.caughtAttr && !entry.natureAttr)) {
         entry.natureAttr = this.defaultDexData?.[k].natureAttr || 1 << randInt(25, 1);
+      }
+      if (!entry.hasOwnProperty("ribbons")) {
+        entry.ribbons = new RibbonData(0);
       }
     }
   }

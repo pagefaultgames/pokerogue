@@ -19,8 +19,11 @@ import { ChallengeData } from "#system/challenge-data";
 import type { SessionSaveData } from "#system/game-data";
 import { ModifierData as PersistentModifierData } from "#system/modifier-data";
 import { PokemonData } from "#system/pokemon-data";
+import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
+import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
 import { TrainerData } from "#system/trainer-data";
 import { trainerConfigs } from "#trainers/trainer-config";
+import { checkSpeciesValidForChallenge, isNuzlockeChallenge } from "#utils/challenge-utils";
 import { isLocal, isLocalServerConnected } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
@@ -62,8 +65,8 @@ export class GameOverPhase extends BattlePhase {
       const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
       const genderStr = PlayerGender[genderIndex].toLowerCase();
       globalScene.ui.showDialogue(
-        i18next.t("miscDialogue:ending_endless", { context: genderStr }),
-        i18next.t("miscDialogue:ending_name"),
+        i18next.t("miscDialogue:endingEndless", { context: genderStr }),
+        i18next.t("miscDialogue:endingName"),
         0,
         () => this.handleGameOver(),
       );
@@ -111,6 +114,46 @@ export class GameOverPhase extends BattlePhase {
     }
   }
 
+  /**
+   * Submethod of {@linkcode handleGameOver} that awards ribbons to Pokémon in the player's party based on the current
+   * game mode and challenges.
+   */
+  private awardRibbons(): void {
+    let ribbonFlags = 0n;
+    for (const challenge of globalScene.gameMode.challenges) {
+      const ribbon = challenge.ribbonAwarded;
+      if (challenge.value && ribbon) {
+        ribbonFlags |= ribbon;
+      }
+    }
+    // Block other ribbons if flip stats or inverse is active
+    const flip_or_inverse = ribbonFlags & (RibbonData.FLIP_STATS | RibbonData.INVERSE);
+    if (flip_or_inverse) {
+      ribbonFlags = flip_or_inverse;
+    } else {
+      if (globalScene.gameMode.isClassic) {
+        ribbonFlags |= RibbonData.CLASSIC;
+      }
+      if (isNuzlockeChallenge()) {
+        ribbonFlags |= RibbonData.NUZLOCKE;
+      }
+    }
+    // Award ribbons to all Pokémon in the player's party that are considered valid
+    // for the current game mode and challenges.
+    for (const pokemon of globalScene.getPlayerParty()) {
+      const species = pokemon.species;
+      if (
+        checkSpeciesValidForChallenge(
+          species,
+          globalScene.gameData.getSpeciesDexAttrProps(species, pokemon.getDexAttr()),
+          false,
+        )
+      ) {
+        awardRibbonsToSpeciesLine(species.speciesId, ribbonFlags as RibbonFlag);
+      }
+    }
+  }
+
   handleGameOver(): void {
     const doGameOver = (newClear: boolean) => {
       globalScene.disableMenu = true;
@@ -122,14 +165,15 @@ export class GameOverPhase extends BattlePhase {
             globalScene.validateAchv(achvs.UNEVOLVED_CLASSIC_VICTORY);
             globalScene.gameData.gameStats.sessionsWon++;
             for (const pokemon of globalScene.getPlayerParty()) {
-              this.awardRibbon(pokemon);
-
+              this.awardFirstClassicCompletion(pokemon);
               if (pokemon.species.getRootSpeciesId() !== pokemon.species.getRootSpeciesId(true)) {
-                this.awardRibbon(pokemon, true);
+                this.awardFirstClassicCompletion(pokemon, true);
               }
             }
+            this.awardRibbons();
           } else if (globalScene.gameMode.isDaily && newClear) {
             globalScene.gameData.gameStats.dailyRunSessionsWon++;
+            globalScene.validateAchv(achvs.DAILY_VICTORY);
           }
         }
 
@@ -263,7 +307,7 @@ export class GameOverPhase extends BattlePhase {
     }
   }
 
-  awardRibbon(pokemon: Pokemon, forStarter = false): void {
+  awardFirstClassicCompletion(pokemon: Pokemon, forStarter = false): void {
     const speciesId = getPokemonSpecies(pokemon.species.speciesId);
     const speciesRibbonCount = globalScene.gameData.incrementRibbonCount(speciesId, forStarter);
     // first time classic win, award voucher

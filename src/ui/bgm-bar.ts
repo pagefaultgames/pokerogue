@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import { addTextObject, TextStyle } from "#ui/text";
-import { formatText } from "#utils/common";
+import { TextStyle } from "#enums/text-style";
+import { addTextObject } from "#ui/text";
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
 const hiddenX = -150;
@@ -99,8 +100,8 @@ export class BgmBar extends Phaser.GameObjects.Container {
   }
 
   getRealBgmName(bgmName: string): string {
-    return i18next.t([`bgmName:${bgmName}`, "bgmName:missing_entries"], {
-      name: formatText(bgmName),
+    return i18next.t([`bgmName:${toCamelCase(bgmName)}`, "bgmName:missingEntries"], {
+      name: toTitleCase(bgmName),
     });
   }
 }

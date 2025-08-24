@@ -13,6 +13,7 @@ import { CustomPokemonData } from "#data/pokemon-data";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import type { AbilityId } from "#enums/ability-id";
+import { ChallengeType } from "#enums/challenge-type";
 import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -33,7 +34,8 @@ import { achvs } from "#system/achv";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
-import { isNullOrUndefined, randSeedInt } from "#utils/common";
+import { applyChallenges } from "#utils/challenge-utils";
+import { BooleanHolder, isNullOrUndefined, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -307,7 +309,7 @@ export function getRandomSpeciesByStarterCost(
  */
 export function koPlayerPokemon(pokemon: PlayerPokemon) {
   pokemon.hp = 0;
-  pokemon.trySetStatus(StatusEffect.FAINT);
+  pokemon.doSetStatus(StatusEffect.FAINT);
   pokemon.updateInfo();
   queueEncounterMessage(
     i18next.t("battle:fainted", {
@@ -671,6 +673,8 @@ export async function catchPokemon(
   globalScene.gameData.updateSpeciesDexIvs(pokemon.species.getRootSpeciesId(true), pokemon.ivs);
 
   return new Promise(resolve => {
+    const addStatus = new BooleanHolder(true);
+    applyChallenges(ChallengeType.POKEMON_ADD_TO_PARTY, pokemon, addStatus);
     const doPokemonCatchMenu = () => {
       const end = () => {
         // Ensure the pokemon is in the enemy party in all situations
@@ -706,6 +710,11 @@ export async function catchPokemon(
         });
       };
       Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
+        if (!(isObtain || addStatus.value)) {
+          removePokemon();
+          end();
+          return;
+        }
         if (globalScene.getPlayerParty().length === 6) {
           const promptRelease = () => {
             globalScene.ui.showText(
@@ -798,10 +807,16 @@ export async function catchPokemon(
     };
 
     if (showCatchObtainMessage) {
+      let catchMessage: string;
+      if (isObtain) {
+        catchMessage = "battle:pokemonObtained";
+      } else if (addStatus.value) {
+        catchMessage = "battle:pokemonCaught";
+      } else {
+        catchMessage = "battle:pokemonCaughtButChallenge";
+      }
       globalScene.ui.showText(
-        i18next.t(isObtain ? "battle:pokemonObtained" : "battle:pokemonCaught", {
-          pokemonName: pokemon.getNameToRender(),
-        }),
+        i18next.t(catchMessage, { pokemonName: pokemon.getNameToRender() }),
         null,
         doPokemonCatchMenu,
         0,

@@ -45,18 +45,39 @@ export class FieldHelper extends GameManagerHelper {
   }
 
   /**
-   * @returns The {@linkcode BattlerIndex | indexes} of Pokemon on the field in order of decreasing Speed.
+   * Helper function to return all on-field {@linkcode Pokemon} in speed order (fastest first).
+   * @param indices - Whether to only return {@linkcode BattlerIndex}es instead of full Pokemon objects
+   * (such as for comparison with other speed order-related mechanisms); default `false`
+   * @returns An array containing all on-field {@linkcode Pokemon} in order of descending Speed. \
    * Speed ties are returned in increasing order of index.
    *
    * @remarks
    * This does not account for Trick Room as it does not modify the _speed_ of Pokemon on the field,
    * only their turn order.
    */
-  public getSpeedOrder(): BattlerIndex[] {
-    return this.game.scene
+  public getSpeedOrder(indices?: false): Pokemon[];
+
+  /**
+   * Helper function to return all on-field {@linkcode Pokemon} in speed order (fastest first).
+   * @param indices - Whether to only return {@linkcode BattlerIndex}es instead of full Pokemon objects
+   * (such as for comparison with other speed order-related mechanisms); default `false`
+   * @returns An array containing the {@linkcode BattlerIndex}es of all on-field {@linkcode Pokemon} on the field in order of descending Speed. \
+   * Speed ties are returned in increasing order of index.
+   *
+   * @remarks
+   * This does not account for Trick Room as it does not modify the _speed_ of Pokemon on the field,
+   * only their turn order.
+   */
+  public getSpeedOrder(indices: true): BattlerIndex[];
+  public getSpeedOrder(indices = false): BattlerIndex[] | Pokemon[] {
+    const ret = this.game.scene
       .getField(true)
-      .sort((pA, pB) => pB.getEffectiveStat(Stat.SPD) - pA.getEffectiveStat(Stat.SPD))
-      .map(p => p.getBattlerIndex());
+      .sort(
+        (pA, pB) =>
+          pB.getEffectiveStat(Stat.SPD) - pA.getEffectiveStat(Stat.SPD) || pA.getBattlerIndex() - pB.getBattlerIndex(),
+      );
+
+    return indices ? ret.map(p => p.getBattlerIndex()) : ret;
   }
 
   /**

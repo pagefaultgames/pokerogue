@@ -2,14 +2,12 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
-import type { DelayedAttackTag } from "#data/arena-tag";
 import { CenterOfAttentionTag } from "#data/battler-tags";
 import { SpeciesFormChangePreMoveTrigger } from "#data/form-change-triggers";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#data/status-effect";
 import { getTerrainBlockMessage } from "#data/terrain";
 import { getWeatherBlockMessage } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
-import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -271,8 +269,8 @@ export class MovePhase extends BattlePhase {
       globalScene.phaseManager.queueMessage(
         getStatusEffectHealText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
       );
-      this.pokemon.resetStatus();
-      this.pokemon.updateInfo();
+      // cannot use `asPhase=true` as it will cause status to be reset _after_ move condition checks fire
+      this.pokemon.resetStatus(false, false, false, false);
     }
   }
 
@@ -296,21 +294,6 @@ export class MovePhase extends BattlePhase {
 
     // form changes happen even before we know that the move wll execute.
     globalScene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
-
-    // Check the player side arena if another delayed attack is active and hitting the same slot.
-    if (move.hasAttr("DelayedAttackAttr")) {
-      const currentTargetIndex = targets[0].getBattlerIndex();
-      const delayedAttackHittingSameSlot = globalScene.arena.tags.some(
-        tag =>
-          (tag.tagType === ArenaTagType.FUTURE_SIGHT || tag.tagType === ArenaTagType.DOOM_DESIRE) &&
-          (tag as DelayedAttackTag).targetIndex === currentTargetIndex,
-      );
-
-      if (delayedAttackHittingSameSlot) {
-        this.failMove(true);
-        return;
-      }
-    }
 
     // Check if the move has any attributes that can interrupt its own use **before** displaying text.
     // TODO: This should not rely on direct return values
@@ -666,7 +649,6 @@ export class MovePhase extends BattlePhase {
    * Displays the move's usage text to the player as applicable for the move being used.
    */
   public showMoveText(): void {
-    // No text for Moves.NONE, recharging/2-turn moves or interrupted moves
     if (
       this.move.moveId === MoveId.NONE ||
       this.pokemon.getTag(BattlerTagType.RECHARGING) ||
@@ -675,7 +657,6 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    // Play message for magic coat reflection
     // TODO: This should be done by the move...
     globalScene.phaseManager.queueMessage(
       i18next.t(isReflected(this.useMode) ? "battle:magicCoatActivated" : "battle:useMove", {

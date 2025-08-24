@@ -6,10 +6,11 @@ import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#data/egg";
 import { Button } from "#enums/buttons";
 import { EggTier } from "#enums/egg-type";
 import { GachaType } from "#enums/gacha-types";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { getVoucherTypeIcon, VoucherType } from "#system/voucher";
 import { MessageUiHandler } from "#ui/message-ui-handler";
-import { addTextObject, getEggTierTextTint, getTextStyleOptions, TextStyle } from "#ui/text";
+import { addTextObject, getEggTierTextTint, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { fixedInt, randSeedShuffle } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
@@ -74,7 +75,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     const gachaInfoContainer = globalScene.add.container(160, 46);
 
     const currentLanguage = i18next.resolvedLanguage ?? "en";
-    let gachaTextStyle = TextStyle.WINDOW_ALT;
+    let gachaTextStyle: TextStyle = TextStyle.WINDOW_ALT;
     let gachaX = 4;
     let gachaY = 0;
     let pokemonIconX = -20;
@@ -173,7 +174,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
     const ui = this.getUi();
 
-    this.eggGachaContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6).setVisible(false);
+    this.eggGachaContainer = globalScene.add.container(0, -globalScene.scaledCanvas.height).setVisible(false);
     ui.add(this.eggGachaContainer);
 
     const bg = globalScene.add.nineslice(0, 0, "default_bg", undefined, 320, 180, 0, 0, 16, 0).setOrigin(0);
@@ -211,7 +212,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
     this.eggGachaOptionSelectBg = addWindow(0, 0, eggGachaOptionSelectWidth, 16 + 576 * this.scale).setOrigin(1);
     this.eggGachaOptionsContainer = globalScene.add
-      .container(globalScene.game.canvas.width / 6, 148)
+      .container(globalScene.scaledCanvas.width, 148)
       .add(this.eggGachaOptionSelectBg);
     this.eggGachaContainer.add(this.eggGachaOptionsContainer);
 
@@ -277,7 +278,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaContainer.add(this.eggGachaOptionsContainer);
 
     for (const voucher of getEnumValues(VoucherType)) {
-      const container = globalScene.add.container(globalScene.game.canvas.width / 6 - 56 * voucher, 0);
+      const container = globalScene.add.container(globalScene.scaledCanvas.width - 56 * voucher, 0);
 
       const bg = addWindow(0, 0, 56, 22).setOrigin(1, 0);
       container.add(bg);
@@ -742,7 +743,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
     if (!freePulls && globalScene.gameData.eggs.length + pulls > 99) {
       errorKey = "egg:tooManyEggs";
-    } else if (!freePulls && !globalScene.gameData.voucherCounts[voucherType]) {
+    } else if (!freePulls && globalScene.gameData.voucherCounts[voucherType] < vouchersConsumed) {
       errorKey = "egg:notEnoughVouchers";
     }
 

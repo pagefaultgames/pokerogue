@@ -3,13 +3,14 @@ import { getPokeballAtlasKey } from "#data/pokeball";
 import { Button } from "#enums/buttons";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
 import type { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import { PartyUiMode } from "#ui/party-ui-handler";
-import { addBBCodeTextObject, getBBCodeFrag, TextStyle } from "#ui/text";
+import { addBBCodeTextObject, getBBCodeFrag } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt, isNullOrUndefined } from "#utils/common";
@@ -470,9 +471,9 @@ export class MysteryEncounterUiHandler extends UiHandler {
 
     // View Party Button
     const viewPartyText = addBBCodeTextObject(
-      globalScene.game.canvas.width / 6,
+      globalScene.scaledCanvas.width,
       -24,
-      getBBCodeFrag(i18next.t("mysteryEncounterMessages:view_party_button"), TextStyle.PARTY),
+      getBBCodeFrag(i18next.t("mysteryEncounterMessages:viewPartyButton"), TextStyle.PARTY),
       TextStyle.PARTY,
     );
     this.optionsContainer.add(viewPartyText);
@@ -693,7 +694,7 @@ export class MysteryEncounterUiHandler extends UiHandler {
         duration: 750,
         onComplete: () => {
           this.dexProgressContainer.on("pointerover", () => {
-            globalScene.ui.showTooltip("", i18next.t("mysteryEncounterMessages:affects_pokedex"), true);
+            globalScene.ui.showTooltip("", i18next.t("mysteryEncounterMessages:affectsPokedex"), true);
           });
           this.dexProgressContainer.on("pointerout", () => {
             globalScene.ui.hideTooltip();

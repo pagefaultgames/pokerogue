@@ -37,7 +37,7 @@ describe("Moves - Power Trick", () => {
   it("swaps the user's ATK and DEF stats", async () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     const baseATK = player.getStat(Stat.ATK, false);
     const baseDEF = player.getStat(Stat.DEF, false);
 
@@ -53,7 +53,7 @@ describe("Moves - Power Trick", () => {
   it("resets initial ATK and DEF stat swap when used consecutively", async () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     const baseATK = player.getStat(Stat.ATK, false);
     const baseDEF = player.getStat(Stat.DEF, false);
 
@@ -74,7 +74,7 @@ describe("Moves - Power Trick", () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.SHUCKLE]);
     await game.override.moveset([MoveId.POWER_TRICK, MoveId.BATON_PASS]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     player.addTag(BattlerTagType.POWER_TRICK);
 
     game.move.select(MoveId.BATON_PASS);
@@ -82,7 +82,7 @@ describe("Moves - Power Trick", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const switchedPlayer = game.scene.getPlayerPokemon()!;
+    const switchedPlayer = game.field.getPlayerPokemon();
     const baseATK = switchedPlayer.getStat(Stat.ATK);
     const baseDEF = switchedPlayer.getStat(Stat.DEF);
 
@@ -95,14 +95,14 @@ describe("Moves - Power Trick", () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.SHUCKLE]);
     await game.override.moveset([MoveId.POWER_TRICK, MoveId.TRANSFORM]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     player.addTag(BattlerTagType.POWER_TRICK);
 
     game.move.select(MoveId.TRANSFORM);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     const baseATK = enemy.getStat(Stat.ATK);
     const baseDEF = enemy.getStat(Stat.DEF);
 

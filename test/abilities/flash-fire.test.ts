@@ -39,7 +39,7 @@ describe("Abilities - Flash Fire", () => {
     game.override.enemyMoveset([MoveId.EMBER]).moveset(MoveId.SPLASH);
     await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
-    const blissey = game.scene.getPlayerPokemon()!;
+    const blissey = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -50,7 +50,7 @@ describe("Abilities - Flash Fire", () => {
     game.override.enemyMoveset([MoveId.EMBER]).moveset([MoveId.PROTECT]);
     await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
-    const blissey = game.scene.getPlayerPokemon()!;
+    const blissey = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.PROTECT);
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -61,7 +61,7 @@ describe("Abilities - Flash Fire", () => {
     game.override.enemyMoveset([MoveId.WILL_O_WISP]).moveset(MoveId.SPLASH);
     await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
-    const blissey = game.scene.getPlayerPokemon()!;
+    const blissey = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SPLASH);
     await game.move.forceHit();
@@ -76,7 +76,7 @@ describe("Abilities - Flash Fire", () => {
     game.override.enemyMoveset([MoveId.EMBER]).moveset(MoveId.SPLASH).statusEffect(StatusEffect.FREEZE);
     await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
-    const blissey = game.scene.getPlayerPokemon()!;
+    const blissey = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SPLASH);
 
@@ -95,8 +95,8 @@ describe("Abilities - Flash Fire", () => {
     game.doSelectPartyPokemon(1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
-    const chansey = game.scene.getPlayerPokemon()!;
-    expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(SpeciesId.CHANSEY);
+    const chansey = game.field.getPlayerPokemon();
+    expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.CHANSEY);
     expect(chansey!.getTag(BattlerTagType.FIRE_BOOST)).toBeUndefined();
   });
 
@@ -107,7 +107,7 @@ describe("Abilities - Flash Fire", () => {
       .enemyAbility(AbilityId.FLASH_FIRE)
       .ability(AbilityId.NONE);
     await game.classicMode.startBattle([SpeciesId.BLISSEY]);
-    const blissey = game.scene.getPlayerPokemon()!;
+    const blissey = game.field.getPlayerPokemon();
     const initialHP = 1000;
     blissey.hp = initialHP;
 
@@ -137,7 +137,7 @@ describe("Abilities - Flash Fire", () => {
       .enemySpecies(SpeciesId.BLISSEY);
     await game.classicMode.startBattle([SpeciesId.RATTATA]);
 
-    const blissey = game.scene.getEnemyPokemon()!;
+    const blissey = game.field.getEnemyPokemon();
     const initialHP = 1000;
     blissey.hp = initialHP;
 
