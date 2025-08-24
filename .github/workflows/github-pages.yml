@@ -65,7 +65,7 @@ jobs:
       - name: Generate Typedoc docs
         working-directory: ${{env.docs-dir}}
         env:
-          REF_NAME: ${{github.ref_name}},
+          REF_NAME: ${{github.ref_name}}
           DRY_RUN: ${{env.DRY_RUN}}
         run: pnpm docs
 
