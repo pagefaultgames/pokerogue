@@ -402,7 +402,7 @@ export const starterPassiveAbilities: StarterPassiveAbilities = {
   [SpeciesId.SPHEAL]: { 0: AbilityId.UNAWARE },
   [SpeciesId.SEALEO]: { 0: AbilityId.UNAWARE },
   [SpeciesId.WALREIN]: { 0: AbilityId.UNAWARE },
-  [SpeciesId.CLAMPERL]: { 0: AbilityId.DAUNTLESS_SHIELD },
+  [SpeciesId.CLAMPERL]: { 0: AbilityId.OVERCOAT },
   [SpeciesId.GOREBYSS]: { 0: AbilityId.ARENA_TRAP },
   [SpeciesId.HUNTAIL]: { 0: AbilityId.ARENA_TRAP },
   [SpeciesId.RELICANTH]: { 0: AbilityId.PRIMORDIAL_SEA },
