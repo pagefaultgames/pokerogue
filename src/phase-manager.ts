@@ -400,6 +400,7 @@ export class PhaseManager {
    * As such, **do not remove or split this method** as it will break integration tests.
    */
   private startCurrentPhase(): void {
+    // TODO: Remove once signature is updated to no longer contain `null`
     if (!this.currentPhase) {
       console.warn("Trying to start null phase!");
       return;

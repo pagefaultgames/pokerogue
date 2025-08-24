@@ -41,13 +41,17 @@ const endBySetMode: ReadonlyArray<PhaseString> = [
   "PostMysteryEncounterPhase",
 ];
 
-/** Helper class to handle executing prompts upon UI mode changes. */
+/**
+ * Helper class to handle executing prompts upon UI mode changes.
+ * @todo Remove once a UI overhaul
+ */
 export class PromptHandler extends GameManagerHelper {
   /** An array of {@linkcode UIPrompt | prompts} with associated callbacks. */
   private prompts: UIPrompt[] = [];
   /** The original `setModeInternal` function, stored for use in {@linkcode setMode}. */
   private originalSetModeInternal: (typeof this.game.scene.ui)["setModeInternal"];
 
+  /** A {@linkcode NodeJS.Timeout | Timeout} containing an interval used to check prompts. */
   public static runInterval?: NodeJS.Timeout;
 
   constructor(game: GameManager) {

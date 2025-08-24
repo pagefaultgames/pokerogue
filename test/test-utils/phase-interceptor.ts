@@ -1,4 +1,4 @@
-import type { PhaseString } from "#app/@types/phase-types";
+import type { PhaseManager, PhaseString } from "#app/@types/phase-types";
 import type { BattleScene } from "#app/battle-scene";
 import type { Phase } from "#app/phase";
 import type { Constructor } from "#app/utils/common";
@@ -7,9 +7,10 @@ import { UiMode } from "#enums/ui-mode";
 import type { GameManager } from "#test/test-utils/game-manager";
 import type { PromptHandler } from "#test/test-utils/helpers/prompt-handler";
 // biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
-import { format } from "util";
+import { inspect } from "util";
 import chalk from "chalk";
 import { vi } from "vitest";
+import { getEnumStr } from "./string-utils";
 
 /**
  * A Set containing phase names that will not be shown in the console when started.
@@ -57,7 +58,12 @@ export class PhaseInterceptor {
   constructor(scene: BattleScene) {
     this.scene = scene;
     // Mock the private startCurrentPhase method to toggle `isRunning` rather than actually starting anything
-    vi.spyOn(this.scene.phaseManager as any, "startCurrentPhase").mockImplementation(() => {
+    vi.spyOn(
+      this.scene.phaseManager as unknown as typeof PhaseManager & {
+        startCurrentPhase: PhaseManager["startCurrentPhase"];
+      },
+      "startCurrentPhase",
+    ).mockImplementation(() => {
       this.state = "idling";
     });
   }
@@ -66,12 +72,14 @@ export class PhaseInterceptor {
    * Method to transition to a target phase.
    * @param target - The name of the {@linkcode Phase} to transition to
    * @param runTarget - Whether or not to run the target phase before resolving; default `true`
-   * @returns A Promise that resolves once {@linkcode target} has been reached.
+   * @returns A Promise that resolves once `target` has been reached.
    * @todo remove `Constructor` from type signature in favor of phase strings
    * @remarks
-   * This will not resolve for *any* reason until the target phase has been reached.
+   * This will not resolve for _any_ reason until the target phase has been reached.
    * @example
+   * ```ts
    * await game.phaseInterceptor.to("MoveEffectPhase", false);
+   * ```
    */
   public async to(target: PhaseString | Constructor<Phase>, runTarget = true): Promise<void> {
     this.target = typeof target === "string" ? target : (target.name as PhaseString);
@@ -79,12 +87,13 @@ export class PhaseInterceptor {
     const pm = this.scene.phaseManager;
 
     // TODO: remove bangs once signature is updated
-    let currentPhase: Phase = pm.getCurrentPhase()!;
+    let currentPhase = pm.getCurrentPhase()!;
 
     let didLog = false;
 
-    // NB: This has to use an interval to wait for UI prompts to activate.
-    // TODO: Rework after UI rework
+    // NB: This has to use an interval to wait for UI prompts to activate
+    // since our UI code effectively stalls when waiting for input.
+    // This entire function can likely be made synchronous once UI code is moved to a separate scene.
     await vi.waitUntil(
       async () => {
         // If we were interrupted by a UI prompt, we assume that the calling code will queue inputs to
@@ -98,11 +107,6 @@ export class PhaseInterceptor {
         }
 
         currentPhase = pm.getCurrentPhase()!;
-        // TODO: Remove proof-of-concept error throw after signature update
-        if (!currentPhase) {
-          throw new Error("currentPhase is null after being started!");
-        }
-
         if (currentPhase.is(this.target)) {
           return true;
         }
@@ -122,7 +126,7 @@ export class PhaseInterceptor {
 
     await this.run(currentPhase);
     this.doLog(
-      `PhaseInterceptor.to: Stopping ${this.state === "interrupted" ? `after reaching UiMode.${UiMode[this.scene.ui.getMode()]} during` : "on completion of"} ${this.target}`,
+      `PhaseInterceptor.to: Stopping ${this.state === "interrupted" ? `after reaching ${getEnumStr(UiMode, this.scene.ui.getMode())} during` : "on completion of"} ${this.target}`,
     );
   }
 
@@ -143,9 +147,7 @@ export class PhaseInterceptor {
     } catch (error) {
       throw error instanceof Error
         ? error
-        : new Error(
-            `Unknown error occurred while running phase ${currentPhase.phaseName}!\nError: ${format("%O", error)}`,
-          );
+        : new Error(`Unknown error occurred while running phase ${currentPhase.phaseName}!\nError: ${inspect(error)}`);
     }
   }
 
@@ -188,8 +190,8 @@ export class PhaseInterceptor {
   /**
    * Deprecated no-op function.
    *
-   * This was previously used to reset timers created using `setInterval` to wait for phase end
-   * and undo various method stubs upon a test ending. \
+   * This was previously used to reset timers created using `setInterval` to wait for phases to end
+   * and undo various method stubs after each test run. \
    * However, since we now use {@linkcode vi.waitUntil} and {@linkcode vi.spyOn} to perform these tasks
    * respectively, this function has become no longer needed.
    * @deprecated This is no longer needed and will be removed in a future PR
@@ -198,6 +200,7 @@ export class PhaseInterceptor {
 
   /**
    * Method to log the start of a phase.
+   * Called in place of {@linkcode PhaseManager.startCurrentPhase} to allow for manual intervention.
    * @param phaseName - The name of the phase to log.
    */
   private logPhase(phaseName: PhaseString) {
@@ -216,7 +219,7 @@ export class PhaseInterceptor {
 
   /**
    * Wrapper function to add coral coloration to phase logs.
-   * @param args - Arguments to original logging function.
+   * @param args - Arguments to original logging function
    */
   private doLog(...args: unknown[]): void {
     console.log(chalk.hex("#ff7f50")(...args));
