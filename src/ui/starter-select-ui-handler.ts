@@ -1775,6 +1775,203 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return [success, error];
   }
 
+  processCycleButtonsInput(button: Button) {
+    let success = false;
+
+    const props = globalScene.gameData.getSpeciesDexAttrProps(
+      this.lastSpecies,
+      this.getCurrentDexProps(this.lastSpecies.speciesId),
+    );
+
+    // The temporary, duplicated starter data to show info
+    // The sanitized starter preferences
+    const starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
+    // The original starter preferences
+    const originalStarterAttributes = this.originalStarterPreferences[this.lastSpecies.speciesId];
+
+    switch (button) {
+      case Button.CYCLE_SHINY:
+        if (this.canCycleShiny) {
+          if (starterAttributes.shiny === false) {
+            // If not shiny, we change to shiny and get the proper default variant
+            const newProps = globalScene.gameData.getSpeciesDexAttrProps(
+              this.lastSpecies,
+              this.getCurrentDexProps(this.lastSpecies.speciesId),
+            );
+            const newVariant = starterAttributes.variant ? (starterAttributes.variant as Variant) : newProps.variant;
+            starterAttributes.shiny = true;
+            originalStarterAttributes.shiny = true;
+            starterAttributes.variant = newVariant;
+            originalStarterAttributes.variant = newVariant;
+            this.setSpeciesDetails(this.lastSpecies, {
+              shiny: true,
+              variant: newVariant,
+            });
+
+            globalScene.playSound("se/sparkle");
+            // Cycle tint based on current sprite tint
+            const tint = getVariantTint(newVariant);
+            this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant)).setTint(tint).setVisible(true);
+          } else {
+            // If shiny, we update the variant
+            let newVariant = props.variant;
+            do {
+              newVariant = (newVariant + 1) % 3;
+              if (newVariant === 0) {
+                if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.DEFAULT_VARIANT) {
+                  // TODO: is this bang correct?
+                  break;
+                }
+              } else if (newVariant === 1) {
+                if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_2) {
+                  // TODO: is this bang correct?
+                  break;
+                }
+              } else {
+                if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_3) {
+                  // TODO: is this bang correct?
+                  break;
+                }
+              }
+            } while (newVariant !== props.variant);
+            starterAttributes.variant = newVariant; // store the selected variant
+            originalStarterAttributes.variant = newVariant;
+            if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.NON_SHINY && newVariant <= props.variant) {
+              // If we have run out of variants, go back to non shiny
+              starterAttributes.shiny = false;
+              originalStarterAttributes.shiny = false;
+              this.setSpeciesDetails(this.lastSpecies, {
+                shiny: false,
+                variant: 0,
+              });
+              this.pokemonShinyIcon.setVisible(false);
+              success = true;
+            } else {
+              // If going to a higher variant, or only shiny forms are caught, go to next variant
+              this.setSpeciesDetails(this.lastSpecies, {
+                variant: newVariant as Variant,
+              });
+              // Cycle tint based on current sprite tint
+              const tint = getVariantTint(newVariant as Variant);
+              this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant as Variant)).setTint(tint);
+              success = true;
+            }
+          }
+        }
+        break;
+      case Button.CYCLE_FORM:
+        if (this.canCycleForm) {
+          const formCount = this.lastSpecies.forms.length;
+          let newFormIndex = props.formIndex;
+          do {
+            newFormIndex = (newFormIndex + 1) % formCount;
+            if (
+              this.lastSpecies.forms[newFormIndex].isStarterSelectable &&
+              this.speciesStarterDexEntry!.caughtAttr! & globalScene.gameData.getFormAttr(newFormIndex)
+            ) {
+              // TODO: are those bangs correct?
+              break;
+            }
+          } while (newFormIndex !== props.formIndex);
+          starterAttributes.form = newFormIndex; // store the selected form
+          originalStarterAttributes.form = newFormIndex;
+          starterAttributes.tera = this.lastSpecies.forms[newFormIndex].type1;
+          originalStarterAttributes.tera = starterAttributes.tera;
+          this.setSpeciesDetails(this.lastSpecies, {
+            formIndex: newFormIndex,
+            teraType: starterAttributes.tera,
+          });
+          success = true;
+        }
+        break;
+      case Button.CYCLE_GENDER:
+        if (this.canCycleGender) {
+          starterAttributes.female = !props.female;
+          originalStarterAttributes.female = starterAttributes.female;
+          this.setSpeciesDetails(this.lastSpecies, {
+            female: !props.female,
+          });
+          success = true;
+        }
+        break;
+      case Button.CYCLE_ABILITY:
+        if (this.canCycleAbility) {
+          const abilityCount = this.lastSpecies.getAbilityCount();
+          const abilityAttr = this.getSpeciesData(this.lastSpecies.speciesId).starterDataEntry.abilityAttr;
+          const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
+          let newAbilityIndex = this.abilityCursor;
+          do {
+            newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
+            if (newAbilityIndex === 0) {
+              if (hasAbility1) {
+                break;
+              }
+            } else if (newAbilityIndex === 1) {
+              // If ability 1 and 2 are the same and ability 1 is unlocked, skip over ability 2
+              if (this.lastSpecies.ability1 === this.lastSpecies.ability2 && hasAbility1) {
+                newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
+              }
+              break;
+            } else {
+              if (abilityAttr & AbilityAttr.ABILITY_HIDDEN) {
+                break;
+              }
+            }
+          } while (newAbilityIndex !== this.abilityCursor);
+          starterAttributes.ability = newAbilityIndex; // store the selected ability
+          originalStarterAttributes.ability = newAbilityIndex;
+
+          const { visible: tooltipVisible } = globalScene.ui.getTooltip();
+
+          if (tooltipVisible && this.activeTooltip === "ABILITY") {
+            const newAbility = allAbilities[this.lastSpecies.getAbility(newAbilityIndex)];
+            globalScene.ui.editTooltip(`${newAbility.name}`, `${newAbility.description}`);
+          }
+
+          this.setSpeciesDetails(this.lastSpecies, {
+            abilityIndex: newAbilityIndex,
+          });
+          success = true;
+        }
+        break;
+      case Button.CYCLE_NATURE:
+        if (this.canCycleNature) {
+          const natures = globalScene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
+          const natureIndex = natures.indexOf(this.natureCursor);
+          const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
+          // store cycled nature as default
+          starterAttributes.nature = newNature as unknown as number;
+          originalStarterAttributes.nature = starterAttributes.nature;
+          this.setSpeciesDetails(this.lastSpecies, {
+            natureIndex: newNature,
+          });
+          success = true;
+        }
+        break;
+      case Button.CYCLE_TERA:
+        if (this.canCycleTera) {
+          const speciesForm = getPokemonSpeciesForm(this.lastSpecies.speciesId, starterAttributes.form ?? 0);
+          if (speciesForm.type1 === this.teraCursor && !isNullOrUndefined(speciesForm.type2)) {
+            starterAttributes.tera = speciesForm.type2;
+            originalStarterAttributes.tera = starterAttributes.tera;
+            this.setSpeciesDetails(this.lastSpecies, {
+              teraType: speciesForm.type2,
+            });
+          } else {
+            starterAttributes.tera = speciesForm.type1;
+            originalStarterAttributes.tera = starterAttributes.tera;
+            this.setSpeciesDetails(this.lastSpecies, {
+              teraType: speciesForm.type1,
+            });
+          }
+          success = true;
+        }
+        break;
+    }
+
+    return success;
+  }
+
   processInput(button: Button): boolean {
     if (this.blockInput) {
       return false;
@@ -2380,190 +2577,20 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           success = true;
         }
       } else {
-        const props = globalScene.gameData.getSpeciesDexAttrProps(
-          this.lastSpecies,
-          this.getCurrentDexProps(this.lastSpecies.speciesId),
-        );
+        if (
+          [
+            Button.CYCLE_SHINY,
+            Button.CYCLE_FORM,
+            Button.CYCLE_GENDER,
+            Button.CYCLE_ABILITY,
+            Button.CYCLE_NATURE,
+            Button.CYCLE_TERA,
+          ].includes(button)
+        ) {
+          success = this.processCycleButtonsInput(button);
+        }
+
         switch (button) {
-          case Button.CYCLE_SHINY:
-            if (this.canCycleShiny) {
-              if (starterAttributes.shiny === false) {
-                // If not shiny, we change to shiny and get the proper default variant
-                const newProps = globalScene.gameData.getSpeciesDexAttrProps(
-                  this.lastSpecies,
-                  this.getCurrentDexProps(this.lastSpecies.speciesId),
-                );
-                const newVariant = starterAttributes.variant
-                  ? (starterAttributes.variant as Variant)
-                  : newProps.variant;
-                starterAttributes.shiny = true;
-                originalStarterAttributes.shiny = true;
-                starterAttributes.variant = newVariant;
-                originalStarterAttributes.variant = newVariant;
-                this.setSpeciesDetails(this.lastSpecies, {
-                  shiny: true,
-                  variant: newVariant,
-                });
-
-                globalScene.playSound("se/sparkle");
-                // Cycle tint based on current sprite tint
-                const tint = getVariantTint(newVariant);
-                this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant)).setTint(tint).setVisible(true);
-              } else {
-                // If shiny, we update the variant
-                let newVariant = props.variant;
-                do {
-                  newVariant = (newVariant + 1) % 3;
-                  if (newVariant === 0) {
-                    if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.DEFAULT_VARIANT) {
-                      // TODO: is this bang correct?
-                      break;
-                    }
-                  } else if (newVariant === 1) {
-                    if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_2) {
-                      // TODO: is this bang correct?
-                      break;
-                    }
-                  } else {
-                    if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.VARIANT_3) {
-                      // TODO: is this bang correct?
-                      break;
-                    }
-                  }
-                } while (newVariant !== props.variant);
-                starterAttributes.variant = newVariant; // store the selected variant
-                originalStarterAttributes.variant = newVariant;
-                if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.NON_SHINY && newVariant <= props.variant) {
-                  // If we have run out of variants, go back to non shiny
-                  starterAttributes.shiny = false;
-                  originalStarterAttributes.shiny = false;
-                  this.setSpeciesDetails(this.lastSpecies, {
-                    shiny: false,
-                    variant: 0,
-                  });
-                  this.pokemonShinyIcon.setVisible(false);
-                  success = true;
-                } else {
-                  // If going to a higher variant, or only shiny forms are caught, go to next variant
-                  this.setSpeciesDetails(this.lastSpecies, {
-                    variant: newVariant as Variant,
-                  });
-                  // Cycle tint based on current sprite tint
-                  const tint = getVariantTint(newVariant as Variant);
-                  this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant as Variant)).setTint(tint);
-                  success = true;
-                }
-              }
-            }
-            break;
-          case Button.CYCLE_FORM:
-            if (this.canCycleForm) {
-              const formCount = this.lastSpecies.forms.length;
-              let newFormIndex = props.formIndex;
-              do {
-                newFormIndex = (newFormIndex + 1) % formCount;
-                if (
-                  this.lastSpecies.forms[newFormIndex].isStarterSelectable &&
-                  this.speciesStarterDexEntry!.caughtAttr! & globalScene.gameData.getFormAttr(newFormIndex)
-                ) {
-                  // TODO: are those bangs correct?
-                  break;
-                }
-              } while (newFormIndex !== props.formIndex);
-              starterAttributes.form = newFormIndex; // store the selected form
-              originalStarterAttributes.form = newFormIndex;
-              starterAttributes.tera = this.lastSpecies.forms[newFormIndex].type1;
-              originalStarterAttributes.tera = starterAttributes.tera;
-              this.setSpeciesDetails(this.lastSpecies, {
-                formIndex: newFormIndex,
-                teraType: starterAttributes.tera,
-              });
-              success = true;
-            }
-            break;
-          case Button.CYCLE_GENDER:
-            if (this.canCycleGender) {
-              starterAttributes.female = !props.female;
-              originalStarterAttributes.female = starterAttributes.female;
-              this.setSpeciesDetails(this.lastSpecies, {
-                female: !props.female,
-              });
-              success = true;
-            }
-            break;
-          case Button.CYCLE_ABILITY:
-            if (this.canCycleAbility) {
-              const abilityCount = this.lastSpecies.getAbilityCount();
-              const abilityAttr = starterData.abilityAttr;
-              const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
-              let newAbilityIndex = this.abilityCursor;
-              do {
-                newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
-                if (newAbilityIndex === 0) {
-                  if (hasAbility1) {
-                    break;
-                  }
-                } else if (newAbilityIndex === 1) {
-                  // If ability 1 and 2 are the same and ability 1 is unlocked, skip over ability 2
-                  if (this.lastSpecies.ability1 === this.lastSpecies.ability2 && hasAbility1) {
-                    newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
-                  }
-                  break;
-                } else {
-                  if (abilityAttr & AbilityAttr.ABILITY_HIDDEN) {
-                    break;
-                  }
-                }
-              } while (newAbilityIndex !== this.abilityCursor);
-              starterAttributes.ability = newAbilityIndex; // store the selected ability
-              originalStarterAttributes.ability = newAbilityIndex;
-
-              const { visible: tooltipVisible } = globalScene.ui.getTooltip();
-
-              if (tooltipVisible && this.activeTooltip === "ABILITY") {
-                const newAbility = allAbilities[this.lastSpecies.getAbility(newAbilityIndex)];
-                globalScene.ui.editTooltip(`${newAbility.name}`, `${newAbility.description}`);
-              }
-
-              this.setSpeciesDetails(this.lastSpecies, {
-                abilityIndex: newAbilityIndex,
-              });
-              success = true;
-            }
-            break;
-          case Button.CYCLE_NATURE:
-            if (this.canCycleNature) {
-              const natures = globalScene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
-              const natureIndex = natures.indexOf(this.natureCursor);
-              const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
-              // store cycled nature as default
-              starterAttributes.nature = newNature as unknown as number;
-              originalStarterAttributes.nature = starterAttributes.nature;
-              this.setSpeciesDetails(this.lastSpecies, {
-                natureIndex: newNature,
-              });
-              success = true;
-            }
-            break;
-          case Button.CYCLE_TERA:
-            if (this.canCycleTera) {
-              const speciesForm = getPokemonSpeciesForm(this.lastSpecies.speciesId, starterAttributes.form ?? 0);
-              if (speciesForm.type1 === this.teraCursor && !isNullOrUndefined(speciesForm.type2)) {
-                starterAttributes.tera = speciesForm.type2;
-                originalStarterAttributes.tera = starterAttributes.tera;
-                this.setSpeciesDetails(this.lastSpecies, {
-                  teraType: speciesForm.type2,
-                });
-              } else {
-                starterAttributes.tera = speciesForm.type1;
-                originalStarterAttributes.tera = starterAttributes.tera;
-                this.setSpeciesDetails(this.lastSpecies, {
-                  teraType: speciesForm.type1,
-                });
-              }
-              success = true;
-            }
-            break;
           case Button.UP:
             if (!this.starterIconsCursorObj.visible) {
               if (currentRow > 0) {
