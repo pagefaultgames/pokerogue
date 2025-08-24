@@ -3510,7 +3510,20 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.cleanStarterSprite();
   }
 
+  setNameAndNumber(species: PokemonSpecies) {
+    this.pokemonNumberText.setText(padInt(species.speciesId, 4));
+
+    const starterPreferences = this.starterPreferences[species.speciesId];
+    if (starterPreferences?.nickname) {
+      const name = decodeURIComponent(escape(atob(starterPreferences.nickname)));
+      this.pokemonNameText.setText(name);
+    } else {
+      this.pokemonNameText.setText(species.name);
+    }
+  }
+
   setSpecies(species: PokemonSpecies) {
+    // First, we load from the dex entry to get defaults
     const { dexEntry } = this.getSpeciesData(species.speciesId);
     this.speciesStarterDexEntry = dexEntry;
     this.dexAttrCursor = this.getCurrentDexProps(species.speciesId);
@@ -3521,9 +3534,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonAbilityText.off("pointerover");
     this.pokemonPassiveText.off("pointerover");
 
-    const starterPreferences: StarterPreferences = { ...this.starterPreferences[species.speciesId] };
-
-    // Load preferences if set
+    // Then, we override with preferences, if they exist
+    const starterPreferences = this.starterPreferences[species.speciesId];
     if (starterPreferences?.nature) {
       this.natureCursor = starterPreferences.nature;
     }
@@ -3534,6 +3546,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.teraCursor = starterPreferences.tera;
     }
 
+    // Hiding ivs container if the species is not caught
     if (this.statsMode) {
       if (this.speciesStarterDexEntry?.caughtAttr) {
         this.statsContainer.setVisible(true);
@@ -3546,178 +3559,125 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.restorePreviousSpeciesAnimation();
     this.lastSpecies = species;
 
-    if (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr) {
-      this.pokemonNumberText.setText(padInt(species.speciesId, 4));
-      if (starterPreferences?.nickname) {
-        const name = decodeURIComponent(escape(atob(starterPreferences.nickname)));
-        this.pokemonNameText.setText(name);
+    if (this.speciesStarterDexEntry?.caughtAttr) {
+      this.setNameAndNumber(species);
+      const colorScheme = starterColors[species.speciesId];
+
+      const luck = globalScene.gameData.getDexAttrLuck(this.speciesStarterDexEntry.caughtAttr);
+      this.pokemonLuckText
+        .setVisible(!!luck)
+        .setText(luck.toString())
+        .setTint(getVariantTint(Math.min(luck - 1, 2) as Variant));
+      this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
+
+      //Growth translate
+      let growthReadable = toTitleCase(GrowthRate[species.growthRate]);
+      const growthAux = toCamelCase(growthReadable);
+      if (i18next.exists("growth:" + growthAux)) {
+        growthReadable = i18next.t(("growth:" + growthAux) as any);
+      }
+      this.pokemonGrowthRateText
+        .setText(growthReadable)
+        .setColor(getGrowthRateColor(species.growthRate))
+        .setShadowColor(getGrowthRateColor(species.growthRate, true));
+      this.pokemonGrowthRateLabelText.setVisible(true);
+      this.pokemonUncaughtText.setVisible(false);
+      this.pokemonAbilityLabelText.setVisible(true);
+      this.pokemonPassiveLabelText.setVisible(true);
+      this.pokemonNatureLabelText.setVisible(true);
+      this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry.caughtCount}`);
+      if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
+        this.pokemonHatchedIcon.setFrame("manaphy");
       } else {
-        this.pokemonNameText.setText(species.name);
+        this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
+      }
+      this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry.hatchedCount}`);
+
+      const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
+      const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+      const variant = defaultProps.variant;
+      const tint = getVariantTint(variant);
+      this.pokemonShinyIcon.setFrame(getVariantIcon(variant)).setTint(tint).setVisible(defaultProps.shiny);
+      this.pokemonCaughtHatchedContainer.setVisible(true);
+      this.pokemonFormText.setVisible(true);
+
+      if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
+        this.pokemonCaughtHatchedContainer.setY(16);
+        this.pokemonShinyIcon.setY(135).setFrame(getVariantIcon(variant));
+        [this.pokemonCandyContainer, this.pokemonHatchedIcon, this.pokemonHatchedCountText].map(c =>
+          c.setVisible(false),
+        );
+        this.pokemonFormText.setY(25);
+      } else {
+        this.pokemonCaughtHatchedContainer.setY(25);
+        this.pokemonShinyIcon.setY(117);
+        this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
+        this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
+        this.pokemonCandyCountText.setText(`×${globalScene.gameData.starterData[species.speciesId].candyCount}`);
+        this.pokemonFormText.setY(42);
+        this.pokemonHatchedIcon.setVisible(true);
+        this.pokemonHatchedCountText.setVisible(true);
+
+        const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
+        const candyCropY = 16 - 16 * (currentFriendship / friendshipCap);
+        this.pokemonCandyDarknessOverlay.setCrop(0, 0, 16, candyCropY);
+
+        this.pokemonCandyContainer
+          .setVisible(true)
+          .on("pointerover", () => {
+            globalScene.ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true);
+            this.activeTooltip = "CANDY";
+          })
+          .on("pointerout", () => {
+            globalScene.ui.hideTooltip();
+            this.activeTooltip = undefined;
+          });
       }
 
-      if (this.speciesStarterDexEntry?.caughtAttr) {
-        const colorScheme = starterColors[species.speciesId];
+      // Pause the animation when the species is selected
+      const speciesIndex = this.allSpecies.indexOf(species);
+      const icon = this.starterContainers[speciesIndex].icon;
 
-        const luck = globalScene.gameData.getDexAttrLuck(this.speciesStarterDexEntry.caughtAttr);
-        this.pokemonLuckText
-          .setVisible(!!luck)
-          .setText(luck.toString())
-          .setTint(getVariantTint(Math.min(luck - 1, 2) as Variant));
-        this.pokemonLuckLabelText.setVisible(this.pokemonLuckText.visible);
+      if (this.isUpgradeAnimationEnabled()) {
+        globalScene.tweens.getTweensOf(icon).forEach(tween => tween.pause());
+        // Reset the position of the icon
+        icon.x = -2;
+        icon.y = 2;
+      }
 
-        //Growth translate
-        let growthReadable = toTitleCase(GrowthRate[species.growthRate]);
-        const growthAux = toCamelCase(growthReadable);
-        if (i18next.exists("growth:" + growthAux)) {
-          growthReadable = i18next.t(("growth:" + growthAux) as any);
-        }
-        this.pokemonGrowthRateText
-          .setText(growthReadable)
-          .setColor(getGrowthRateColor(species.growthRate))
-          .setShadowColor(getGrowthRateColor(species.growthRate, true));
-        this.pokemonGrowthRateLabelText.setVisible(true);
-        this.pokemonUncaughtText.setVisible(false);
-        this.pokemonAbilityLabelText.setVisible(true);
-        this.pokemonPassiveLabelText.setVisible(true);
-        this.pokemonNatureLabelText.setVisible(true);
-        this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry.caughtCount}`);
-        if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
-          this.pokemonHatchedIcon.setFrame("manaphy");
-        } else {
-          this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
-        }
-        this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry.hatchedCount}`);
+      // Initiates the small up and down idle animation
+      this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.PASSIVE);
 
-        const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
-        const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-        const variant = defaultProps.variant;
-        const tint = getVariantTint(variant);
-        this.pokemonShinyIcon.setFrame(getVariantIcon(variant)).setTint(tint).setVisible(defaultProps.shiny);
-        this.pokemonCaughtHatchedContainer.setVisible(true);
-        this.pokemonFormText.setVisible(true);
+      const starterIndex = this.starterSpecies.indexOf(species);
 
-        if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
-          this.pokemonCaughtHatchedContainer.setY(16);
-          this.pokemonShinyIcon.setY(135).setFrame(getVariantIcon(variant));
-          [this.pokemonCandyContainer, this.pokemonHatchedIcon, this.pokemonHatchedCountText].map(c =>
-            c.setVisible(false),
-          );
-          this.pokemonFormText.setY(25);
-        } else {
-          this.pokemonCaughtHatchedContainer.setY(25);
-          this.pokemonShinyIcon.setY(117);
-          this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
-          this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
-          this.pokemonCandyCountText.setText(`×${globalScene.gameData.starterData[species.speciesId].candyCount}`);
-          this.pokemonFormText.setY(42);
-          this.pokemonHatchedIcon.setVisible(true);
-          this.pokemonHatchedCountText.setVisible(true);
+      let props: DexAttrProps;
 
-          const { currentFriendship, friendshipCap } = this.getFriendship(this.lastSpecies.speciesId);
-          const candyCropY = 16 - 16 * (currentFriendship / friendshipCap);
-          this.pokemonCandyDarknessOverlay.setCrop(0, 0, 16, candyCropY);
-
-          this.pokemonCandyContainer
-            .setVisible(true)
-            .on("pointerover", () => {
-              globalScene.ui.showTooltip("", `${currentFriendship}/${friendshipCap}`, true);
-              this.activeTooltip = "CANDY";
-            })
-            .on("pointerout", () => {
-              globalScene.ui.hideTooltip();
-              this.activeTooltip = undefined;
-            });
-        }
-
-        // Pause the animation when the species is selected
-        const speciesIndex = this.allSpecies.indexOf(species);
-        const icon = this.starterContainers[speciesIndex].icon;
-
-        if (this.isUpgradeAnimationEnabled()) {
-          globalScene.tweens.getTweensOf(icon).forEach(tween => tween.pause());
-          // Reset the position of the icon
-          icon.x = -2;
-          icon.y = 2;
-        }
-
-        // Initiates the small up and down idle animation
-        this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.PASSIVE);
-
-        const starterIndex = this.starterSpecies.indexOf(species);
-
-        let props: DexAttrProps;
-
-        if (starterIndex > -1) {
-          props = globalScene.gameData.getSpeciesDexAttrProps(species, this.starterAttr[starterIndex]);
-          this.setSpeciesDetails(species, {
-            shiny: props.shiny,
-            formIndex: props.formIndex,
-            female: props.female,
-            variant: props.variant,
-            abilityIndex: this.starterAbilityIndexes[starterIndex],
-            natureIndex: this.starterNatures[starterIndex],
-            teraType: this.starterTeras[starterIndex],
-          });
-        } else {
-          const defaultAbilityIndex =
-            starterPreferences?.ability ?? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-          // load default nature from stater save data, if set
-          const { dexEntry } = this.getSpeciesData(species.speciesId);
-          const defaultNature =
-            starterPreferences?.nature || globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
-          props = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-          if (starterPreferences?.variant && !Number.isNaN(starterPreferences.variant)) {
-            if (props.shiny) {
-              props.variant = starterPreferences.variant as Variant;
-            }
-          }
-          props.formIndex = starterPreferences?.form ?? props.formIndex;
-          props.female = starterPreferences?.female ?? props.female;
-
-          this.setSpeciesDetails(species, {
-            shiny: props.shiny,
-            formIndex: props.formIndex,
-            female: props.female,
-            variant: props.variant,
-            abilityIndex: defaultAbilityIndex,
-            natureIndex: defaultNature,
-            teraType: starterPreferences?.tera,
-          });
-        }
-
-        if (!isNullOrUndefined(props.formIndex)) {
-          // If switching forms while the pokemon is in the team, update its moveset
-          this.updateSelectedStarterMoveset(species.speciesId);
-        }
-
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, props.formIndex);
-        this.setTypeIcons(speciesForm.type1, speciesForm.type2);
-
-        this.pokemonSprite.clearTint();
-        if (this.pokerusSpecies.includes(species)) {
-          handleTutorial(Tutorial.Pokerus);
-        }
+      if (starterIndex > -1) {
+        props = globalScene.gameData.getSpeciesDexAttrProps(species, this.starterAttr[starterIndex]);
+        this.setSpeciesDetails(species, {
+          shiny: props.shiny,
+          formIndex: props.formIndex,
+          female: props.female,
+          variant: props.variant,
+          abilityIndex: this.starterAbilityIndexes[starterIndex],
+          natureIndex: this.starterNatures[starterIndex],
+          teraType: this.starterTeras[starterIndex],
+        });
       } else {
-        this.pokemonGrowthRateText.setText("");
-        this.pokemonGrowthRateLabelText.setVisible(false);
-        this.type1Icon.setVisible(false);
-        this.type2Icon.setVisible(false);
-        this.pokemonLuckLabelText.setVisible(false);
-        this.pokemonLuckText.setVisible(false);
-        this.pokemonShinyIcon.setVisible(false);
-        this.pokemonUncaughtText.setVisible(true);
-        this.pokemonAbilityLabelText.setVisible(false);
-        this.pokemonPassiveLabelText.setVisible(false);
-        this.pokemonNatureLabelText.setVisible(false);
-        this.pokemonCaughtHatchedContainer.setVisible(false);
-        this.pokemonCandyContainer.setVisible(false);
-        this.pokemonFormText.setVisible(false);
-        this.teraIcon.setVisible(false);
-
-        const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, true, true);
-        const defaultAbilityIndex = globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-        const defaultNature = globalScene.gameData.getSpeciesDefaultNature(species);
-        const props = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+        const defaultAbilityIndex =
+          starterPreferences?.ability ?? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
+        // load default nature from stater save data, if set
+        const { dexEntry } = this.getSpeciesData(species.speciesId);
+        const defaultNature =
+          starterPreferences?.nature || globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
+        props = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+        if (starterPreferences?.variant && !Number.isNaN(starterPreferences.variant)) {
+          if (props.shiny) {
+            props.variant = starterPreferences.variant as Variant;
+          }
+        }
+        props.formIndex = starterPreferences?.form ?? props.formIndex;
+        props.female = starterPreferences?.female ?? props.female;
 
         this.setSpeciesDetails(species, {
           shiny: props.shiny,
@@ -3726,10 +3686,56 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           variant: props.variant,
           abilityIndex: defaultAbilityIndex,
           natureIndex: defaultNature,
-          forSeen: true,
+          teraType: starterPreferences?.tera,
         });
-        this.pokemonSprite.setTint(0x808080);
       }
+
+      if (!isNullOrUndefined(props.formIndex)) {
+        // If switching forms while the pokemon is in the team, update its moveset
+        this.updateSelectedStarterMoveset(species.speciesId);
+      }
+
+      const speciesForm = getPokemonSpeciesForm(species.speciesId, props.formIndex);
+      this.setTypeIcons(speciesForm.type1, speciesForm.type2);
+
+      this.pokemonSprite.clearTint();
+      if (this.pokerusSpecies.includes(species)) {
+        handleTutorial(Tutorial.Pokerus);
+      }
+    } else if (this.speciesStarterDexEntry?.seenAttr) {
+      this.setNameAndNumber(species);
+
+      this.pokemonGrowthRateText.setText("");
+      this.pokemonGrowthRateLabelText.setVisible(false);
+      this.type1Icon.setVisible(false);
+      this.type2Icon.setVisible(false);
+      this.pokemonLuckLabelText.setVisible(false);
+      this.pokemonLuckText.setVisible(false);
+      this.pokemonShinyIcon.setVisible(false);
+      this.pokemonUncaughtText.setVisible(true);
+      this.pokemonAbilityLabelText.setVisible(false);
+      this.pokemonPassiveLabelText.setVisible(false);
+      this.pokemonNatureLabelText.setVisible(false);
+      this.pokemonCaughtHatchedContainer.setVisible(false);
+      this.pokemonCandyContainer.setVisible(false);
+      this.pokemonFormText.setVisible(false);
+      this.teraIcon.setVisible(false);
+
+      const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, true, true);
+      const defaultAbilityIndex = globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
+      const defaultNature = globalScene.gameData.getSpeciesDefaultNature(species);
+      const props = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+
+      this.setSpeciesDetails(species, {
+        shiny: props.shiny,
+        formIndex: props.formIndex,
+        female: props.female,
+        variant: props.variant,
+        abilityIndex: defaultAbilityIndex,
+        natureIndex: defaultNature,
+        forSeen: true,
+      });
+      this.pokemonSprite.setTint(0x808080);
     } else {
       this.cleanStarterSprite(species);
     }
