@@ -47,14 +47,14 @@ describe("Status Effects - General", () => {
       "chance",
       "get",
     ).mockReturnValue(100);
+    const statusEffectPhaseSpy = vi.spyOn(ObtainStatusEffectPhase.prototype, "start");
 
     game.move.select(MoveId.NUZZLE);
-
-    const statusEffectPhaseSpy = vi.spyOn(ObtainStatusEffectPhase.prototype, "start");
     await game.toEndOfTurn();
-    const enemy = game.field.getEnemyPokemon();
-    // This test should not care which status effect is applied, as long as one is.
+
     expect(statusEffectPhaseSpy).toHaveBeenCalledOnce();
+    const enemy = game.field.getEnemyPokemon();
+    // This test does not care which status effect is applied, as long as one is.
     expect(enemy.status?.effect).toBeOneOf([StatusEffect.POISON, StatusEffect.PARALYSIS]);
   });
 });
