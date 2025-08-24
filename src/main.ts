@@ -50,7 +50,6 @@ let game;
 let manifest;
 
 const startGame = async () => {
-  await import("#plugins/i18n");
   const LoadingScene = (await import("./loading-scene")).LoadingScene;
   const BattleScene = (await import("./battle-scene")).BattleScene;
   game = new Phaser.Game({
