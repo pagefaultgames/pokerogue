@@ -6,7 +6,7 @@ import { DropDownColumn } from "#enums/drop-down-column";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import type { StarterAttributes } from "#system/game-data";
+import type { StarterPreferences } from "#system/game-data";
 import { GameManager } from "#test/test-utils/game-manager";
 import { FilterTextRow } from "#ui/filter-text";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
@@ -84,12 +84,12 @@ describe("UI - Pokedex", () => {
    */
   async function runToPokedexPage(
     species: PokemonSpecies,
-    starterAttributes: StarterAttributes = {},
+    starterPreferences: StarterPreferences = {},
   ): Promise<PokedexPageUiHandler> {
     // Open the pokedex UI.
     await game.runToTitle();
 
-    await game.scene.ui.setOverlayMode(UiMode.POKEDEX_PAGE, species, starterAttributes);
+    await game.scene.ui.setOverlayMode(UiMode.POKEDEX_PAGE, species, starterPreferences);
 
     // Get the handler for the current UI.
     const handler = game.scene.ui.getHandler();

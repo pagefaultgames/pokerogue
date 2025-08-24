@@ -22,7 +22,7 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
-import type { DexAttrProps, StarterAttributes } from "#system/game-data";
+import type { DexAttrProps, StarterPreferences } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
@@ -36,7 +36,7 @@ import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#utils/common";
-import type { StarterPreferences } from "#utils/data";
+import type { AllStarterPreferences } from "#utils/data";
 import { loadStarterPreferences } from "#utils/data";
 import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
@@ -183,7 +183,7 @@ export class PokedexUiHandler extends MessageUiHandler {
 
   private iconAnimHandler: PokemonIconAnimHandler;
 
-  private starterPreferences: StarterPreferences;
+  private starterPreferences: AllStarterPreferences;
 
   protected blockInput = false;
 
@@ -671,15 +671,15 @@ export class PokedexUiHandler extends MessageUiHandler {
    * that wasn't actually unlocked or is invalid it will be cleared here
    *
    * @param species The species to get Starter Preferences for
-   * @returns StarterAttributes for the species
+   * @returns StarterPreferences for the species
    */
-  initStarterPrefs(species: PokemonSpecies): StarterAttributes {
-    const starterAttributes = this.starterPreferences[species.speciesId];
+  initStarterPrefs(species: PokemonSpecies): StarterPreferences {
+    const starterPreferences = this.starterPreferences[species.speciesId];
     const dexEntry = globalScene.gameData.dexData[species.speciesId];
     const starterData = globalScene.gameData.starterData[species.speciesId];
 
     // no preferences or Pokemon wasn't caught, return empty attribute
-    if (!starterAttributes || !dexEntry.caughtAttr) {
+    if (!starterPreferences || !dexEntry.caughtAttr) {
       return {};
     }
 
@@ -687,40 +687,40 @@ export class PokedexUiHandler extends MessageUiHandler {
 
     const hasShiny = caughtAttr & DexAttr.SHINY;
     const hasNonShiny = caughtAttr & DexAttr.NON_SHINY;
-    if (starterAttributes.shiny && !hasShiny) {
+    if (starterPreferences.shiny && !hasShiny) {
       // shiny form wasn't unlocked, purging shiny and variant setting
 
-      starterAttributes.shiny = undefined;
-      starterAttributes.variant = undefined;
-    } else if (starterAttributes.shiny === false && !hasNonShiny) {
+      starterPreferences.shiny = undefined;
+      starterPreferences.variant = undefined;
+    } else if (starterPreferences.shiny === false && !hasNonShiny) {
       // non shiny form wasn't unlocked, purging shiny setting
-      starterAttributes.shiny = undefined;
+      starterPreferences.shiny = undefined;
     }
 
-    if (starterAttributes.variant !== undefined) {
+    if (starterPreferences.variant !== undefined) {
       const unlockedVariants = [
         hasShiny && caughtAttr & DexAttr.DEFAULT_VARIANT,
         hasShiny && caughtAttr & DexAttr.VARIANT_2,
         hasShiny && caughtAttr & DexAttr.VARIANT_3,
       ];
       if (
-        Number.isNaN(starterAttributes.variant) ||
-        starterAttributes.variant < 0 ||
-        !unlockedVariants[starterAttributes.variant]
+        Number.isNaN(starterPreferences.variant) ||
+        starterPreferences.variant < 0 ||
+        !unlockedVariants[starterPreferences.variant]
       ) {
         // variant value is invalid or requested variant wasn't unlocked, purging setting
-        starterAttributes.variant = undefined;
+        starterPreferences.variant = undefined;
       }
     }
 
-    if (starterAttributes.female !== undefined) {
-      if (!(starterAttributes.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)) {
+    if (starterPreferences.female !== undefined) {
+      if (!(starterPreferences.female ? caughtAttr & DexAttr.FEMALE : caughtAttr & DexAttr.MALE)) {
         // requested gender wasn't unlocked, purging setting
-        starterAttributes.female = undefined;
+        starterPreferences.female = undefined;
       }
     }
 
-    if (starterAttributes.ability !== undefined) {
+    if (starterPreferences.ability !== undefined) {
       const speciesHasSingleAbility = species.ability2 === species.ability1;
       const abilityAttr = starterData.abilityAttr;
       const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
@@ -733,31 +733,31 @@ export class PokedexUiHandler extends MessageUiHandler {
         speciesHasSingleAbility ? hasAbility2 && !hasAbility1 : hasAbility2,
         hasHiddenAbility,
       ];
-      if (!unlockedAbilities[starterAttributes.ability]) {
+      if (!unlockedAbilities[starterPreferences.ability]) {
         // requested ability wasn't unlocked, purging setting
-        starterAttributes.ability = undefined;
+        starterPreferences.ability = undefined;
       }
     }
 
-    const selectedForm = starterAttributes.form;
+    const selectedForm = starterPreferences.form;
     if (
       selectedForm !== undefined &&
       (!species.forms[selectedForm]?.isStarterSelectable ||
         !(caughtAttr & globalScene.gameData.getFormAttr(selectedForm)))
     ) {
       // requested form wasn't unlocked/isn't a starter form, purging setting
-      starterAttributes.form = undefined;
+      starterPreferences.form = undefined;
     }
 
-    if (starterAttributes.nature !== undefined) {
+    if (starterPreferences.nature !== undefined) {
       const unlockedNatures = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr);
-      if (unlockedNatures.indexOf(starterAttributes.nature as unknown as Nature) < 0) {
+      if (unlockedNatures.indexOf(starterPreferences.nature as unknown as Nature) < 0) {
         // requested nature wasn't unlocked, purging setting
-        starterAttributes.nature = undefined;
+        starterPreferences.nature = undefined;
       }
     }
 
-    return starterAttributes;
+    return starterPreferences;
   }
 
   /**
@@ -2294,7 +2294,7 @@ export class PokedexUiHandler extends MessageUiHandler {
 
   /**
    * Creates a temporary dex attr props that will be used to
-   * display the correct shiny, variant, and form based on the StarterPreferences
+   * display the correct shiny, variant, and form based on the AllStarterPreferences
    *
    * @param speciesId the id of the species to get props for
    * @returns the dex props
