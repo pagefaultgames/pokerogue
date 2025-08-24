@@ -1972,6 +1972,548 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return success;
   }
 
+  openPokemonMenu() {
+    const ui = this.getUi();
+    let options: any[] = []; // TODO: add proper type
+
+    let starterContainer: StarterContainer;
+    // The temporary, duplicated starter data to show info
+    const starterData = this.getSpeciesData(this.lastSpecies.speciesId).starterDataEntry;
+    // The persistent starter data to apply e.g. candy upgrades
+    const persistentStarterData = globalScene.gameData.starterData[this.lastSpecies.speciesId];
+    // The sanitized starter preferences
+    let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
+    // The original starter preferences
+    const originalStarterAttributes = this.originalStarterPreferences[this.lastSpecies.speciesId];
+
+    // this gets the correct pokemon cursor depending on whether you're in the starter screen or the party icons
+    if (!this.starterIconsCursorObj.visible) {
+      starterContainer = this.filteredStarterContainers[this.cursor];
+    } else {
+      // if species is in filtered starters, get the starter container from the filtered starters, it can be undefined if the species is not in the filtered starters
+      starterContainer =
+        this.filteredStarterContainers[
+          this.filteredStarterContainers.findIndex(container => container.species === this.lastSpecies)
+        ];
+    }
+
+    const [isDupe, removeIndex]: [boolean, number] = this.isInParty(this.lastSpecies);
+
+    const isPartyValid = this.isPartyValid();
+    const isValidForChallenge = checkStarterValidForChallenge(
+      this.lastSpecies,
+      globalScene.gameData.getSpeciesDexAttrProps(
+        this.lastSpecies,
+        this.getCurrentDexProps(this.lastSpecies.speciesId),
+      ),
+      isPartyValid,
+    );
+
+    const currentPartyValue = this.starterSpecies
+      .map(s => s.generation)
+      .reduce(
+        (total: number, _gen: number, i: number) =>
+          (total += globalScene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId)),
+        0,
+      );
+    const newCost = globalScene.gameData.getSpeciesStarterValue(this.lastSpecies.speciesId);
+    if (
+      !isDupe &&
+      isValidForChallenge &&
+      currentPartyValue + newCost <= this.getValueLimit() &&
+      this.starterSpecies.length < PLAYER_PARTY_MAX_SIZE
+    ) {
+      options = [
+        {
+          label: i18next.t("starterSelectUiHandler:addToParty"),
+          handler: () => {
+            ui.setMode(UiMode.STARTER_SELECT);
+            const isOverValueLimit = this.tryUpdateValue(
+              globalScene.gameData.getSpeciesStarterValue(this.lastSpecies.speciesId),
+              true,
+            );
+            if (!isDupe && isValidForChallenge && isOverValueLimit) {
+              this.starterCursorObjs[this.starterSpecies.length]
+                .setVisible(true)
+                .setPosition(this.cursorObj.x, this.cursorObj.y);
+              this.addToParty(
+                this.lastSpecies,
+                this.dexAttrCursor,
+                this.abilityCursor,
+                this.natureCursor as unknown as Nature,
+                this.starterMoveset?.slice(0) as StarterMoveset,
+                this.teraCursor,
+              );
+              ui.playSelect();
+            } else {
+              ui.playError(); // this should be redundant as there is now a trigger for when a pokemon can't be added to party
+            }
+            return true;
+          },
+          overrideSound: true,
+        },
+      ];
+    } else if (isDupe) {
+      // if it already exists in your party, it will give you the option to remove from your party
+      options = [
+        {
+          label: i18next.t("starterSelectUiHandler:removeFromParty"),
+          handler: () => {
+            this.popStarter(removeIndex);
+            ui.setMode(UiMode.STARTER_SELECT);
+            return true;
+          },
+        },
+      ];
+    }
+
+    options.push(
+      // this shows the IVs for the pokemon
+      {
+        label: i18next.t("starterSelectUiHandler:toggleIVs"),
+        handler: () => {
+          this.toggleStatsMode();
+          ui.setMode(UiMode.STARTER_SELECT);
+          return true;
+        },
+      },
+    );
+    if (this.speciesStarterMoves.length > 1) {
+      // this lets you change the pokemon moves
+      const showSwapOptions = (moveset: StarterMoveset) => {
+        this.blockInput = true;
+
+        ui.setMode(UiMode.STARTER_SELECT).then(() => {
+          ui.showText(i18next.t("starterSelectUiHandler:selectMoveSwapOut"), null, () => {
+            this.moveInfoOverlay.show(allMoves[moveset[0]]);
+
+            ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
+              options: moveset
+                .map((m: MoveId, i: number) => {
+                  const option: OptionSelectItem = {
+                    label: allMoves[m].name,
+                    handler: () => {
+                      this.blockInput = true;
+                      ui.setMode(UiMode.STARTER_SELECT).then(() => {
+                        ui.showText(
+                          `${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`,
+                          null,
+                          () => {
+                            const possibleMoves = this.speciesStarterMoves.filter((sm: MoveId) => sm !== m);
+                            this.moveInfoOverlay.show(allMoves[possibleMoves[0]]);
+
+                            ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
+                              options: possibleMoves
+                                .map(sm => {
+                                  // make an option for each available starter move
+                                  const option = {
+                                    label: allMoves[sm].name,
+                                    handler: () => {
+                                      this.switchMoveHandler(i, sm, m);
+                                      showSwapOptions(this.starterMoveset!); // TODO: is this bang correct?
+                                      return true;
+                                    },
+                                    onHover: () => {
+                                      this.moveInfoOverlay.show(allMoves[sm]);
+                                    },
+                                  };
+                                  return option;
+                                })
+                                .concat({
+                                  label: i18next.t("menu:cancel"),
+                                  handler: () => {
+                                    showSwapOptions(this.starterMoveset!); // TODO: is this bang correct?
+                                    return true;
+                                  },
+                                  onHover: () => {
+                                    this.moveInfoOverlay.clear();
+                                  },
+                                }),
+                              supportHover: true,
+                              maxOptions: 8,
+                              yOffset: 19,
+                            });
+                            this.blockInput = false;
+                          },
+                        );
+                      });
+                      return true;
+                    },
+                    onHover: () => {
+                      this.moveInfoOverlay.show(allMoves[m]);
+                    },
+                  };
+                  return option;
+                })
+                .concat({
+                  label: i18next.t("menu:cancel"),
+                  handler: () => {
+                    this.moveInfoOverlay.clear();
+                    this.clearText();
+                    // Only saved if moves were actually swapped
+                    if (this.hasSwappedMoves) {
+                      globalScene.gameData.saveSystem().then(success => {
+                        if (!success) {
+                          return globalScene.reset(true);
+                        }
+                      });
+                    }
+                    ui.setMode(UiMode.STARTER_SELECT);
+                    return true;
+                  },
+                  onHover: () => {
+                    this.moveInfoOverlay.clear();
+                  },
+                }),
+              supportHover: true,
+              maxOptions: 8,
+              yOffset: 19,
+            });
+            this.blockInput = false;
+          });
+        });
+      };
+      options.push({
+        label: i18next.t("starterSelectUiHandler:manageMoves"),
+        handler: () => {
+          this.hasSwappedMoves = false;
+          showSwapOptions(this.starterMoveset!); // TODO: is this bang correct?
+          return true;
+        },
+      });
+    }
+    if (this.canCycleNature) {
+      // if we could cycle natures, enable the improved nature menu
+      const showNatureOptions = () => {
+        this.blockInput = true;
+
+        ui.setMode(UiMode.STARTER_SELECT).then(() => {
+          ui.showText(i18next.t("starterSelectUiHandler:selectNature"), null, () => {
+            const natures = globalScene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
+            ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
+              options: natures
+                .map((n: Nature, _i: number) => {
+                  const option: OptionSelectItem = {
+                    label: getNatureName(n, true, true, true, globalScene.uiTheme),
+                    handler: () => {
+                      // update default nature in starter save data
+                      if (!starterAttributes) {
+                        starterAttributes = this.starterPreferences[this.lastSpecies.speciesId] = {};
+                      }
+                      starterAttributes.nature = n;
+                      originalStarterAttributes.nature = starterAttributes.nature;
+                      this.clearText();
+                      ui.setMode(UiMode.STARTER_SELECT);
+                      // set nature for starter
+                      this.setSpeciesDetails(this.lastSpecies, {
+                        natureIndex: n,
+                      });
+                      this.blockInput = false;
+                      return true;
+                    },
+                  };
+                  return option;
+                })
+                .concat({
+                  label: i18next.t("menu:cancel"),
+                  handler: () => {
+                    this.clearText();
+                    ui.setMode(UiMode.STARTER_SELECT);
+                    this.blockInput = false;
+                    return true;
+                  },
+                }),
+              maxOptions: 8,
+              yOffset: 19,
+            });
+          });
+        });
+      };
+      options.push({
+        label: i18next.t("starterSelectUiHandler:manageNature"),
+        handler: () => {
+          showNatureOptions();
+          return true;
+        },
+      });
+    }
+
+    const passiveAttr = starterData.passiveAttr;
+    if (passiveAttr & PassiveAttr.UNLOCKED) {
+      // this is for enabling and disabling the passive
+      const label = i18next.t(
+        passiveAttr & PassiveAttr.ENABLED
+          ? "starterSelectUiHandler:disablePassive"
+          : "starterSelectUiHandler:enablePassive",
+      );
+      options.push({
+        label,
+        handler: () => {
+          starterData.passiveAttr ^= PassiveAttr.ENABLED;
+          persistentStarterData.passiveAttr ^= PassiveAttr.ENABLED;
+          ui.setMode(UiMode.STARTER_SELECT);
+          this.setSpeciesDetails(this.lastSpecies);
+          return true;
+        },
+      });
+    }
+    // if container.favorite is false, show the favorite option
+    const isFavorite = starterAttributes?.favorite ?? false;
+    if (!isFavorite) {
+      options.push({
+        label: i18next.t("starterSelectUiHandler:addToFavorites"),
+        handler: () => {
+          starterAttributes.favorite = true;
+          originalStarterAttributes.favorite = true;
+          // if the starter container not exists, it means the species is not in the filtered starters
+          if (starterContainer) {
+            starterContainer.favoriteIcon.setVisible(starterAttributes.favorite);
+          }
+          ui.setMode(UiMode.STARTER_SELECT);
+          return true;
+        },
+      });
+    } else {
+      options.push({
+        label: i18next.t("starterSelectUiHandler:removeFromFavorites"),
+        handler: () => {
+          starterAttributes.favorite = false;
+          originalStarterAttributes.favorite = false;
+          // if the starter container not exists, it means the species is not in the filtered starters
+          if (starterContainer) {
+            starterContainer.favoriteIcon.setVisible(starterAttributes.favorite);
+          }
+          ui.setMode(UiMode.STARTER_SELECT);
+          return true;
+        },
+      });
+    }
+    options.push({
+      label: i18next.t("menu:rename"),
+      handler: () => {
+        ui.playSelect();
+        let nickname = starterAttributes.nickname ? String(starterAttributes.nickname) : "";
+        nickname = decodeURIComponent(escape(atob(nickname)));
+        ui.setModeWithoutClear(
+          UiMode.RENAME_POKEMON,
+          {
+            buttonActions: [
+              (sanitizedName: string) => {
+                ui.playSelect();
+                starterAttributes.nickname = sanitizedName;
+                originalStarterAttributes.nickname = sanitizedName;
+                const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
+                if (name.length > 0) {
+                  this.pokemonNameText.setText(name);
+                } else {
+                  this.pokemonNameText.setText(this.lastSpecies.name);
+                }
+                ui.setMode(UiMode.STARTER_SELECT);
+              },
+              () => {
+                ui.setMode(UiMode.STARTER_SELECT);
+              },
+            ],
+          },
+          nickname,
+        );
+        return true;
+      },
+    });
+
+    // Purchases with Candy
+    const candyCount = starterData.candyCount;
+    const showUseCandies = () => {
+      const options: any[] = []; // TODO: add proper type
+
+      // Unlock passive option
+      if (!(passiveAttr & PassiveAttr.UNLOCKED) && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
+        const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.lastSpecies.speciesId]);
+        options.push({
+          label: `×${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")}`,
+          handler: () => {
+            if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
+              persistentStarterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
+              starterData.passiveAttr = persistentStarterData.passiveAttr;
+              if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                persistentStarterData.candyCount -= passiveCost;
+                starterData.candyCount = persistentStarterData.candyCount;
+              }
+              this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
+              globalScene.gameData.saveSystem().then(success => {
+                if (!success) {
+                  return globalScene.reset(true);
+                }
+              });
+              ui.setMode(UiMode.STARTER_SELECT);
+              this.setSpeciesDetails(this.lastSpecies);
+              globalScene.playSound("se/buy");
+
+              // update the passive background and icon/animation for available upgrade
+              if (starterContainer) {
+                this.updateCandyUpgradeDisplay(starterContainer);
+                starterContainer.starterPassiveBgs.setVisible(!!starterData.passiveAttr);
+              }
+              return true;
+            }
+            return false;
+          },
+          item: "candy",
+          itemArgs: starterColors[this.lastSpecies.speciesId],
+        });
+      }
+
+      // Reduce cost option
+      const valueReduction = starterData.valueReduction;
+      if (valueReduction < VALUE_REDUCTION_MAX && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
+        const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId])[
+          valueReduction
+        ];
+        options.push({
+          label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
+          handler: () => {
+            if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
+              persistentStarterData.valueReduction++;
+              starterData.valueReduction = persistentStarterData.valueReduction;
+              if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                persistentStarterData.candyCount -= reductionCost;
+                starterData.candyCount = persistentStarterData.candyCount;
+              }
+              this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
+              globalScene.gameData.saveSystem().then(success => {
+                if (!success) {
+                  return globalScene.reset(true);
+                }
+              });
+              this.tryUpdateValue(0);
+              ui.setMode(UiMode.STARTER_SELECT);
+              globalScene.playSound("se/buy");
+
+              // update the value label and icon/animation for available upgrade
+              if (starterContainer) {
+                this.updateStarterValueLabel(starterContainer);
+                this.updateCandyUpgradeDisplay(starterContainer);
+              }
+              return true;
+            }
+            return false;
+          },
+          item: "candy",
+          itemArgs: starterColors[this.lastSpecies.speciesId],
+        });
+      }
+
+      // Same species egg menu option.
+      const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId]);
+      options.push({
+        label: `×${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
+        handler: () => {
+          if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost) {
+            if (globalScene.gameData.eggs.length >= 99 && !Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
+              // Egg list full, show error message at the top of the screen and abort
+              this.showText(
+                i18next.t("egg:tooManyEggs"),
+                undefined,
+                () => this.showText("", 0, () => (this.tutorialActive = false)),
+                2000,
+                false,
+                undefined,
+                true,
+              );
+              return false;
+            }
+            if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+              persistentStarterData.candyCount -= sameSpeciesEggCost;
+              starterData.candyCount = persistentStarterData.candyCount;
+            }
+            this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
+
+            const egg = new Egg({
+              species: this.lastSpecies.speciesId,
+              sourceType: EggSourceType.SAME_SPECIES_EGG,
+            });
+            egg.addEggToGameData();
+
+            globalScene.gameData.saveSystem().then(success => {
+              if (!success) {
+                return globalScene.reset(true);
+              }
+            });
+            ui.setMode(UiMode.STARTER_SELECT);
+            globalScene.playSound("se/buy");
+
+            // update the icon/animation for available upgrade
+            if (starterContainer) {
+              this.updateCandyUpgradeDisplay(starterContainer);
+            }
+
+            return true;
+          }
+          return false;
+        },
+        item: "candy",
+        itemArgs: starterColors[this.lastSpecies.speciesId],
+      });
+      options.push({
+        label: i18next.t("menu:cancel"),
+        handler: () => {
+          ui.setMode(UiMode.STARTER_SELECT);
+          return true;
+        },
+      });
+      ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
+        options: options,
+        yOffset: 47,
+      });
+    };
+    options.push({
+      label: i18next.t("menuUiHandler:pokedex"),
+      handler: () => {
+        ui.setMode(UiMode.STARTER_SELECT).then(() => {
+          const attributes = {
+            shiny: starterAttributes.shiny,
+            variant: starterAttributes.variant,
+            form: starterAttributes.form,
+            female: starterAttributes.female,
+          };
+          ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, attributes, null, null, () => {
+            if (this.lastSpecies) {
+              starterContainer = this.filteredStarterContainers[this.cursor];
+              const persistentStarterData = globalScene.gameData.starterData[this.lastSpecies.speciesId];
+              this.updateCandyUpgradeDisplay(starterContainer);
+              this.updateStarterValueLabel(starterContainer);
+              starterContainer.starterPassiveBgs.setVisible(
+                !!persistentStarterData.passiveAttr && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START),
+              );
+              this.setSpecies(this.lastSpecies);
+            }
+          });
+        });
+        return true;
+      },
+    });
+    if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
+      options.push({
+        label: i18next.t("starterSelectUiHandler:useCandies"),
+        handler: () => {
+          ui.setMode(UiMode.STARTER_SELECT).then(() => showUseCandies());
+          return true;
+        },
+      });
+    }
+    options.push({
+      label: i18next.t("menu:cancel"),
+      handler: () => {
+        ui.setMode(UiMode.STARTER_SELECT);
+        return true;
+      },
+    });
+    ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
+      options: options,
+      yOffset: 47,
+    });
+  }
+
   processInput(button: Button): boolean {
     if (this.blockInput) {
       return false;
@@ -2030,550 +2572,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     } else if (this.randomCursorObj.visible) {
       [success, error] = this.processRandomCursorInput(button);
     } else {
-      let starterContainer: StarterContainer;
-      // The temporary, duplicated starter data to show info
-      const starterData = this.getSpeciesData(this.lastSpecies.speciesId).starterDataEntry;
-      // The persistent starter data to apply e.g. candy upgrades
-      const persistentStarterData = globalScene.gameData.starterData[this.lastSpecies.speciesId];
-      // The sanitized starter preferences
-      let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
-      // The original starter preferences
-      const originalStarterAttributes = this.originalStarterPreferences[this.lastSpecies.speciesId];
-
-      // this gets the correct pokemon cursor depending on whether you're in the starter screen or the party icons
-      if (!this.starterIconsCursorObj.visible) {
-        starterContainer = this.filteredStarterContainers[this.cursor];
-      } else {
-        // if species is in filtered starters, get the starter container from the filtered starters, it can be undefined if the species is not in the filtered starters
-        starterContainer =
-          this.filteredStarterContainers[
-            this.filteredStarterContainers.findIndex(container => container.species === this.lastSpecies)
-          ];
-      }
-
       if (button === Button.ACTION) {
         if (!this.speciesStarterDexEntry?.caughtAttr) {
           error = true;
         } else if (this.starterSpecies.length <= 6) {
           // checks to see if the party has 6 or fewer pokemon
-          const ui = this.getUi();
-          let options: any[] = []; // TODO: add proper type
-
-          const [isDupe, removeIndex]: [boolean, number] = this.isInParty(this.lastSpecies);
-
-          const isPartyValid = this.isPartyValid();
-          const isValidForChallenge = checkStarterValidForChallenge(
-            this.lastSpecies,
-            globalScene.gameData.getSpeciesDexAttrProps(
-              this.lastSpecies,
-              this.getCurrentDexProps(this.lastSpecies.speciesId),
-            ),
-            isPartyValid,
-          );
-
-          const currentPartyValue = this.starterSpecies
-            .map(s => s.generation)
-            .reduce(
-              (total: number, _gen: number, i: number) =>
-                (total += globalScene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId)),
-              0,
-            );
-          const newCost = globalScene.gameData.getSpeciesStarterValue(this.lastSpecies.speciesId);
-          if (
-            !isDupe &&
-            isValidForChallenge &&
-            currentPartyValue + newCost <= this.getValueLimit() &&
-            this.starterSpecies.length < PLAYER_PARTY_MAX_SIZE
-          ) {
-            options = [
-              {
-                label: i18next.t("starterSelectUiHandler:addToParty"),
-                handler: () => {
-                  ui.setMode(UiMode.STARTER_SELECT);
-                  const isOverValueLimit = this.tryUpdateValue(
-                    globalScene.gameData.getSpeciesStarterValue(this.lastSpecies.speciesId),
-                    true,
-                  );
-                  if (!isDupe && isValidForChallenge && isOverValueLimit) {
-                    this.starterCursorObjs[this.starterSpecies.length]
-                      .setVisible(true)
-                      .setPosition(this.cursorObj.x, this.cursorObj.y);
-                    this.addToParty(
-                      this.lastSpecies,
-                      this.dexAttrCursor,
-                      this.abilityCursor,
-                      this.natureCursor as unknown as Nature,
-                      this.starterMoveset?.slice(0) as StarterMoveset,
-                      this.teraCursor,
-                    );
-                    ui.playSelect();
-                  } else {
-                    ui.playError(); // this should be redundant as there is now a trigger for when a pokemon can't be added to party
-                  }
-                  return true;
-                },
-                overrideSound: true,
-              },
-            ];
-          } else if (isDupe) {
-            // if it already exists in your party, it will give you the option to remove from your party
-            options = [
-              {
-                label: i18next.t("starterSelectUiHandler:removeFromParty"),
-                handler: () => {
-                  this.popStarter(removeIndex);
-                  ui.setMode(UiMode.STARTER_SELECT);
-                  return true;
-                },
-              },
-            ];
-          }
-
-          options.push(
-            // this shows the IVs for the pokemon
-            {
-              label: i18next.t("starterSelectUiHandler:toggleIVs"),
-              handler: () => {
-                this.toggleStatsMode();
-                ui.setMode(UiMode.STARTER_SELECT);
-                return true;
-              },
-            },
-          );
-          if (this.speciesStarterMoves.length > 1) {
-            // this lets you change the pokemon moves
-            const showSwapOptions = (moveset: StarterMoveset) => {
-              this.blockInput = true;
-
-              ui.setMode(UiMode.STARTER_SELECT).then(() => {
-                ui.showText(i18next.t("starterSelectUiHandler:selectMoveSwapOut"), null, () => {
-                  this.moveInfoOverlay.show(allMoves[moveset[0]]);
-
-                  ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-                    options: moveset
-                      .map((m: MoveId, i: number) => {
-                        const option: OptionSelectItem = {
-                          label: allMoves[m].name,
-                          handler: () => {
-                            this.blockInput = true;
-                            ui.setMode(UiMode.STARTER_SELECT).then(() => {
-                              ui.showText(
-                                `${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`,
-                                null,
-                                () => {
-                                  const possibleMoves = this.speciesStarterMoves.filter((sm: MoveId) => sm !== m);
-                                  this.moveInfoOverlay.show(allMoves[possibleMoves[0]]);
-
-                                  ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-                                    options: possibleMoves
-                                      .map(sm => {
-                                        // make an option for each available starter move
-                                        const option = {
-                                          label: allMoves[sm].name,
-                                          handler: () => {
-                                            this.switchMoveHandler(i, sm, m);
-                                            showSwapOptions(this.starterMoveset!); // TODO: is this bang correct?
-                                            return true;
-                                          },
-                                          onHover: () => {
-                                            this.moveInfoOverlay.show(allMoves[sm]);
-                                          },
-                                        };
-                                        return option;
-                                      })
-                                      .concat({
-                                        label: i18next.t("menu:cancel"),
-                                        handler: () => {
-                                          showSwapOptions(this.starterMoveset!); // TODO: is this bang correct?
-                                          return true;
-                                        },
-                                        onHover: () => {
-                                          this.moveInfoOverlay.clear();
-                                        },
-                                      }),
-                                    supportHover: true,
-                                    maxOptions: 8,
-                                    yOffset: 19,
-                                  });
-                                  this.blockInput = false;
-                                },
-                              );
-                            });
-                            return true;
-                          },
-                          onHover: () => {
-                            this.moveInfoOverlay.show(allMoves[m]);
-                          },
-                        };
-                        return option;
-                      })
-                      .concat({
-                        label: i18next.t("menu:cancel"),
-                        handler: () => {
-                          this.moveInfoOverlay.clear();
-                          this.clearText();
-                          // Only saved if moves were actually swapped
-                          if (this.hasSwappedMoves) {
-                            globalScene.gameData.saveSystem().then(success => {
-                              if (!success) {
-                                return globalScene.reset(true);
-                              }
-                            });
-                          }
-                          ui.setMode(UiMode.STARTER_SELECT);
-                          return true;
-                        },
-                        onHover: () => {
-                          this.moveInfoOverlay.clear();
-                        },
-                      }),
-                    supportHover: true,
-                    maxOptions: 8,
-                    yOffset: 19,
-                  });
-                  this.blockInput = false;
-                });
-              });
-            };
-            options.push({
-              label: i18next.t("starterSelectUiHandler:manageMoves"),
-              handler: () => {
-                this.hasSwappedMoves = false;
-                showSwapOptions(this.starterMoveset!); // TODO: is this bang correct?
-                return true;
-              },
-            });
-          }
-          if (this.canCycleNature) {
-            // if we could cycle natures, enable the improved nature menu
-            const showNatureOptions = () => {
-              this.blockInput = true;
-
-              ui.setMode(UiMode.STARTER_SELECT).then(() => {
-                ui.showText(i18next.t("starterSelectUiHandler:selectNature"), null, () => {
-                  const natures = globalScene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
-                  ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-                    options: natures
-                      .map((n: Nature, _i: number) => {
-                        const option: OptionSelectItem = {
-                          label: getNatureName(n, true, true, true, globalScene.uiTheme),
-                          handler: () => {
-                            // update default nature in starter save data
-                            if (!starterAttributes) {
-                              starterAttributes = this.starterPreferences[this.lastSpecies.speciesId] = {};
-                            }
-                            starterAttributes.nature = n;
-                            originalStarterAttributes.nature = starterAttributes.nature;
-                            this.clearText();
-                            ui.setMode(UiMode.STARTER_SELECT);
-                            // set nature for starter
-                            this.setSpeciesDetails(this.lastSpecies, {
-                              natureIndex: n,
-                            });
-                            this.blockInput = false;
-                            return true;
-                          },
-                        };
-                        return option;
-                      })
-                      .concat({
-                        label: i18next.t("menu:cancel"),
-                        handler: () => {
-                          this.clearText();
-                          ui.setMode(UiMode.STARTER_SELECT);
-                          this.blockInput = false;
-                          return true;
-                        },
-                      }),
-                    maxOptions: 8,
-                    yOffset: 19,
-                  });
-                });
-              });
-            };
-            options.push({
-              label: i18next.t("starterSelectUiHandler:manageNature"),
-              handler: () => {
-                showNatureOptions();
-                return true;
-              },
-            });
-          }
-
-          const passiveAttr = starterData.passiveAttr;
-          if (passiveAttr & PassiveAttr.UNLOCKED) {
-            // this is for enabling and disabling the passive
-            const label = i18next.t(
-              passiveAttr & PassiveAttr.ENABLED
-                ? "starterSelectUiHandler:disablePassive"
-                : "starterSelectUiHandler:enablePassive",
-            );
-            options.push({
-              label,
-              handler: () => {
-                starterData.passiveAttr ^= PassiveAttr.ENABLED;
-                persistentStarterData.passiveAttr ^= PassiveAttr.ENABLED;
-                ui.setMode(UiMode.STARTER_SELECT);
-                this.setSpeciesDetails(this.lastSpecies);
-                return true;
-              },
-            });
-          }
-          // if container.favorite is false, show the favorite option
-          const isFavorite = starterAttributes?.favorite ?? false;
-          if (!isFavorite) {
-            options.push({
-              label: i18next.t("starterSelectUiHandler:addToFavorites"),
-              handler: () => {
-                starterAttributes.favorite = true;
-                originalStarterAttributes.favorite = true;
-                // if the starter container not exists, it means the species is not in the filtered starters
-                if (starterContainer) {
-                  starterContainer.favoriteIcon.setVisible(starterAttributes.favorite);
-                }
-                ui.setMode(UiMode.STARTER_SELECT);
-                return true;
-              },
-            });
-          } else {
-            options.push({
-              label: i18next.t("starterSelectUiHandler:removeFromFavorites"),
-              handler: () => {
-                starterAttributes.favorite = false;
-                originalStarterAttributes.favorite = false;
-                // if the starter container not exists, it means the species is not in the filtered starters
-                if (starterContainer) {
-                  starterContainer.favoriteIcon.setVisible(starterAttributes.favorite);
-                }
-                ui.setMode(UiMode.STARTER_SELECT);
-                return true;
-              },
-            });
-          }
-          options.push({
-            label: i18next.t("menu:rename"),
-            handler: () => {
-              ui.playSelect();
-              let nickname = starterAttributes.nickname ? String(starterAttributes.nickname) : "";
-              nickname = decodeURIComponent(escape(atob(nickname)));
-              ui.setModeWithoutClear(
-                UiMode.RENAME_POKEMON,
-                {
-                  buttonActions: [
-                    (sanitizedName: string) => {
-                      ui.playSelect();
-                      starterAttributes.nickname = sanitizedName;
-                      originalStarterAttributes.nickname = sanitizedName;
-                      const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
-                      if (name.length > 0) {
-                        this.pokemonNameText.setText(name);
-                      } else {
-                        this.pokemonNameText.setText(this.lastSpecies.name);
-                      }
-                      ui.setMode(UiMode.STARTER_SELECT);
-                    },
-                    () => {
-                      ui.setMode(UiMode.STARTER_SELECT);
-                    },
-                  ],
-                },
-                nickname,
-              );
-              return true;
-            },
-          });
-
-          // Purchases with Candy
-          const candyCount = starterData.candyCount;
-          const showUseCandies = () => {
-            const options: any[] = []; // TODO: add proper type
-
-            // Unlock passive option
-            if (!(passiveAttr & PassiveAttr.UNLOCKED) && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
-              const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.lastSpecies.speciesId]);
-              options.push({
-                label: `×${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")}`,
-                handler: () => {
-                  if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
-                    persistentStarterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
-                    starterData.passiveAttr = persistentStarterData.passiveAttr;
-                    if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                      persistentStarterData.candyCount -= passiveCost;
-                      starterData.candyCount = persistentStarterData.candyCount;
-                    }
-                    this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
-                    globalScene.gameData.saveSystem().then(success => {
-                      if (!success) {
-                        return globalScene.reset(true);
-                      }
-                    });
-                    ui.setMode(UiMode.STARTER_SELECT);
-                    this.setSpeciesDetails(this.lastSpecies);
-                    globalScene.playSound("se/buy");
-
-                    // update the passive background and icon/animation for available upgrade
-                    if (starterContainer) {
-                      this.updateCandyUpgradeDisplay(starterContainer);
-                      starterContainer.starterPassiveBgs.setVisible(!!starterData.passiveAttr);
-                    }
-                    return true;
-                  }
-                  return false;
-                },
-                item: "candy",
-                itemArgs: starterColors[this.lastSpecies.speciesId],
-              });
-            }
-
-            // Reduce cost option
-            const valueReduction = starterData.valueReduction;
-            if (valueReduction < VALUE_REDUCTION_MAX && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
-              const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId])[
-                valueReduction
-              ];
-              options.push({
-                label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
-                handler: () => {
-                  if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
-                    persistentStarterData.valueReduction++;
-                    starterData.valueReduction = persistentStarterData.valueReduction;
-                    if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                      persistentStarterData.candyCount -= reductionCost;
-                      starterData.candyCount = persistentStarterData.candyCount;
-                    }
-                    this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
-                    globalScene.gameData.saveSystem().then(success => {
-                      if (!success) {
-                        return globalScene.reset(true);
-                      }
-                    });
-                    this.tryUpdateValue(0);
-                    ui.setMode(UiMode.STARTER_SELECT);
-                    globalScene.playSound("se/buy");
-
-                    // update the value label and icon/animation for available upgrade
-                    if (starterContainer) {
-                      this.updateStarterValueLabel(starterContainer);
-                      this.updateCandyUpgradeDisplay(starterContainer);
-                    }
-                    return true;
-                  }
-                  return false;
-                },
-                item: "candy",
-                itemArgs: starterColors[this.lastSpecies.speciesId],
-              });
-            }
-
-            // Same species egg menu option.
-            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId]);
-            options.push({
-              label: `×${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
-              handler: () => {
-                if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost) {
-                  if (globalScene.gameData.eggs.length >= 99 && !Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
-                    // Egg list full, show error message at the top of the screen and abort
-                    this.showText(
-                      i18next.t("egg:tooManyEggs"),
-                      undefined,
-                      () => this.showText("", 0, () => (this.tutorialActive = false)),
-                      2000,
-                      false,
-                      undefined,
-                      true,
-                    );
-                    return false;
-                  }
-                  if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                    persistentStarterData.candyCount -= sameSpeciesEggCost;
-                    starterData.candyCount = persistentStarterData.candyCount;
-                  }
-                  this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
-
-                  const egg = new Egg({
-                    species: this.lastSpecies.speciesId,
-                    sourceType: EggSourceType.SAME_SPECIES_EGG,
-                  });
-                  egg.addEggToGameData();
-
-                  globalScene.gameData.saveSystem().then(success => {
-                    if (!success) {
-                      return globalScene.reset(true);
-                    }
-                  });
-                  ui.setMode(UiMode.STARTER_SELECT);
-                  globalScene.playSound("se/buy");
-
-                  // update the icon/animation for available upgrade
-                  if (starterContainer) {
-                    this.updateCandyUpgradeDisplay(starterContainer);
-                  }
-
-                  return true;
-                }
-                return false;
-              },
-              item: "candy",
-              itemArgs: starterColors[this.lastSpecies.speciesId],
-            });
-            options.push({
-              label: i18next.t("menu:cancel"),
-              handler: () => {
-                ui.setMode(UiMode.STARTER_SELECT);
-                return true;
-              },
-            });
-            ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-              options: options,
-              yOffset: 47,
-            });
-          };
-          options.push({
-            label: i18next.t("menuUiHandler:pokedex"),
-            handler: () => {
-              ui.setMode(UiMode.STARTER_SELECT).then(() => {
-                const attributes = {
-                  shiny: starterAttributes.shiny,
-                  variant: starterAttributes.variant,
-                  form: starterAttributes.form,
-                  female: starterAttributes.female,
-                };
-                ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, attributes, null, null, () => {
-                  if (this.lastSpecies) {
-                    starterContainer = this.filteredStarterContainers[this.cursor];
-                    const persistentStarterData = globalScene.gameData.starterData[this.lastSpecies.speciesId];
-                    this.updateCandyUpgradeDisplay(starterContainer);
-                    this.updateStarterValueLabel(starterContainer);
-                    starterContainer.starterPassiveBgs.setVisible(
-                      !!persistentStarterData.passiveAttr && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START),
-                    );
-                    this.setSpecies(this.lastSpecies);
-                  }
-                });
-              });
-              return true;
-            },
-          });
-          if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
-            options.push({
-              label: i18next.t("starterSelectUiHandler:useCandies"),
-              handler: () => {
-                ui.setMode(UiMode.STARTER_SELECT).then(() => showUseCandies());
-                return true;
-              },
-            });
-          }
-          options.push({
-            label: i18next.t("menu:cancel"),
-            handler: () => {
-              ui.setMode(UiMode.STARTER_SELECT);
-              return true;
-            },
-          });
-          ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
-            options: options,
-            yOffset: 47,
-          });
+          this.openPokemonMenu();
           success = true;
         }
       } else {
