@@ -970,6 +970,8 @@ export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
 export interface PostMoveInteractionAbAttrParams extends AugmentMoveInteractionAbAttrParams {
   /** Stores the hit result of the move used in the interaction */
   readonly hitResult: HitResult;
+  /** The amount of damage dealt in the interaction */
+  readonly damage: number;
 }
 
 export class PostDefendAbAttr extends AbAttr {
@@ -1079,20 +1081,16 @@ export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
     this.selfTarget = selfTarget;
   }
 
-  override canApply({ pokemon, opponent: attacker, move }: PostMoveInteractionAbAttrParams): boolean {
+  override canApply({ pokemon, opponent: attacker, move, damage }: PostMoveInteractionAbAttrParams): boolean {
     const hpGateFlat: number = Math.ceil(pokemon.getMaxHp() * this.hpGate);
-    const lastAttackReceived = pokemon.turnData.attacksReceived[pokemon.turnData.attacksReceived.length - 1];
-    const damageReceived = lastAttackReceived?.damage || 0;
-    return (
-      this.condition(pokemon, attacker, move) && pokemon.hp <= hpGateFlat && pokemon.hp + damageReceived > hpGateFlat
-    );
+    return this.condition(pokemon, attacker, move) && pokemon.hp <= hpGateFlat && pokemon.hp + damage > hpGateFlat;
   }
 
-  override apply({ simulated, pokemon, opponent: attacker }: PostMoveInteractionAbAttrParams): void {
+  override apply({ simulated, pokemon, opponent }: PostMoveInteractionAbAttrParams): void {
     if (!simulated) {
       globalScene.phaseManager.unshiftNew(
         "StatStageChangePhase",
-        (this.selfTarget ? pokemon : attacker).getBattlerIndex(),
+        (this.selfTarget ? pokemon : opponent).getBattlerIndex(),
         true,
         this.stats,
         this.stages,
