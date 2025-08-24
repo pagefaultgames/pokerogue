@@ -76,6 +76,7 @@ export class SwitchPhase extends BattlePhase {
         if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
           // Remove any pre-existing PostSummonPhase under the same field index.
           // Pre-existing PostSummonPhases may occur when this phase is invoked during a prompt to switch at the start of a wave.
+          // TODO: Separate the animations from `SwitchSummonPhase` and co. into another phase and use that on initial switch - this is a band-aid fix
           globalScene.phaseManager.tryRemoveDynamicPhase(
             DynamicPhaseType.POST_SUMMON,
             p => p.is("PostSummonPhase") && p.player && p.fieldIndex === this.fieldIndex,
