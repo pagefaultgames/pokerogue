@@ -2234,8 +2234,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.hasPassive() && (!canApply || this.canApplyAbility(true)) && this.getPassiveAbility().hasAttr(attrType);
   }
 
-  public getAbilityPriorities(): [number, number] {
-    return [this.getAbility().postSummonPriority, this.getPassiveAbility().postSummonPriority];
+  /**
+   * Return the ability priorities of the pokemon's ability and, if enabled, its passive ability
+   * @returns A tuple containing the ability priorities of the pokemon
+   */
+  public getAbilityPriorities(): [number] | [activePriority: number, passivePriority: number] {
+    const abilityPriority = this.getAbility().postSummonPriority;
+    if (this.hasPassive()) {
+      return [abilityPriority, this.getPassiveAbility().postSummonPriority];
+    }
+    return [abilityPriority];
   }
 
   /**
