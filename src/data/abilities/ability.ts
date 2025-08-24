@@ -3029,7 +3029,7 @@ export class PostSummonCopyAbilityAbAttr extends PostSummonAbAttr {
   override canApply({ pokemon, simulated }: AbAttrBaseParams): boolean {
     const targets = pokemon
       .getOpponents()
-      .filter(t => target.getAbility().isCopiable || t.getAbility().id === AbilityId.WONDER_GUARD);
+      .filter(t => t.getAbility().isCopiable || t.getAbility().id === AbilityId.WONDER_GUARD);
     if (!targets.length) {
       return false;
     }
