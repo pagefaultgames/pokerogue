@@ -1,3 +1,4 @@
+import { VALUE_REDUCTION_MAX } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import Overrides from "#app/overrides";
@@ -61,6 +62,7 @@ import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
+import { isPassiveAvailable, isSameSpeciesEggAvailable, isValueReductionAvailable } from "./starter-select-ui-utils";
 
 interface LanguageSetting {
   starterInfoTextSize: string;
@@ -147,8 +149,6 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoXPos: 26,
   },
 };
-
-const valueReductionMax = 2;
 
 // Position of UI elements
 const speciesContainerX = 109;
@@ -1951,15 +1951,17 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     }
                     return false;
                   },
-                  style: this.isPassiveAvailable() ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
+                  style: isPassiveAvailable(this.species.speciesId) ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                   item: "candy",
-                  itemArgs: this.isPassiveAvailable() ? starterColors[this.starterId] : ["808080", "808080"],
+                  itemArgs: isPassiveAvailable(this.species.speciesId)
+                    ? starterColors[this.starterId]
+                    : ["808080", "808080"],
                 });
               }
 
               // Reduce cost option
               const valueReduction = starterData.valueReduction;
-              if (valueReduction < valueReductionMax) {
+              if (valueReduction < VALUE_REDUCTION_MAX) {
                 const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.starterId])[valueReduction];
                 options.push({
                   label: `×${reductionCost} ${i18next.t("pokedexUiHandler:reduceCost")}`,
@@ -1982,9 +1984,11 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     }
                     return false;
                   },
-                  style: this.isValueReductionAvailable() ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
+                  style: isValueReductionAvailable(this.species.speciesId) ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                   item: "candy",
-                  itemArgs: this.isValueReductionAvailable() ? starterColors[this.starterId] : ["808080", "808080"],
+                  itemArgs: isValueReductionAvailable(this.species.speciesId)
+                    ? starterColors[this.starterId]
+                    : ["808080", "808080"],
                 });
               }
 
@@ -2031,9 +2035,11 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   }
                   return false;
                 },
-                style: this.isSameSpeciesEggAvailable() ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
+                style: isSameSpeciesEggAvailable(this.species.speciesId) ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                 item: "candy",
-                itemArgs: this.isSameSpeciesEggAvailable() ? starterColors[this.starterId] : ["808080", "808080"],
+                itemArgs: isSameSpeciesEggAvailable(this.species.speciesId)
+                  ? starterColors[this.starterId]
+                  : ["808080", "808080"],
               });
               options.push({
                 label: i18next.t("menu:cancel"),
@@ -2296,46 +2302,6 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[this.starterId]);
 
     return { currentFriendship, friendshipCap };
-  }
-
-  /**
-   * Determines if a passive upgrade is available for the current species
-   * @returns true if the user has enough candies and a passive has not been unlocked already
-   */
-  isPassiveAvailable(): boolean {
-    // Get this species ID's starter data
-    const starterData = globalScene.gameData.starterData[this.starterId];
-
-    return (
-      starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[this.starterId]) &&
-      !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
-    );
-  }
-
-  /**
-   * Determines if a value reduction upgrade is available for the current species
-   * @returns true if the user has enough candies and all value reductions have not been unlocked already
-   */
-  isValueReductionAvailable(): boolean {
-    // Get this species ID's starter data
-    const starterData = globalScene.gameData.starterData[this.starterId];
-
-    return (
-      starterData.candyCount >=
-        getValueReductionCandyCounts(speciesStarterCosts[this.starterId])[starterData.valueReduction] &&
-      starterData.valueReduction < valueReductionMax
-    );
-  }
-
-  /**
-   * Determines if an same species egg can be bought for the current species
-   * @returns true if the user has enough candies
-   */
-  isSameSpeciesEggAvailable(): boolean {
-    // Get this species ID's starter data
-    const starterData = globalScene.gameData.starterData[this.starterId];
-
-    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[this.starterId]);
   }
 
   setSpecies() {

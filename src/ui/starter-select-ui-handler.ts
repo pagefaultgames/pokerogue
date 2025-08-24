@@ -1,5 +1,5 @@
 import type { Ability } from "#abilities/ability";
-import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
+import { PLAYER_PARTY_MAX_SIZE, VALUE_REDUCTION_MAX } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import Overrides from "#app/overrides";
@@ -79,6 +79,12 @@ import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import {
+  isPassiveAvailable,
+  isSameSpeciesEggAvailable,
+  isStarterValidForChallenge,
+  isValueReductionAvailable,
+} from "./starter-select-ui-utils";
 
 export type StarterSelectCallback = (starters: Starter[]) => void;
 
@@ -183,8 +189,6 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "38px",
   },
 };
-
-const valueReductionMax = 2;
 
 // Position of UI elements
 const filterBarHeight = 17;
@@ -1376,49 +1380,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /**
-   * Determines if a passive upgrade is available for the given species ID
-   * @param speciesId The ID of the species to check the passive of
-   * @returns true if the user has enough candies and a passive has not been unlocked already
-   */
-  isPassiveAvailable(speciesId: number): boolean {
-    // Get this species ID's starter data
-    const starterData = globalScene.gameData.starterData[speciesId];
-
-    return (
-      starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[speciesId]) &&
-      !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
-    );
-  }
-
-  /**
-   * Determines if a value reduction upgrade is available for the given species ID
-   * @param speciesId The ID of the species to check the value reduction of
-   * @returns true if the user has enough candies and all value reductions have not been unlocked already
-   */
-  isValueReductionAvailable(speciesId: number): boolean {
-    // Get this species ID's starter data
-    const starterData = globalScene.gameData.starterData[speciesId];
-
-    return (
-      starterData.candyCount >=
-        getValueReductionCandyCounts(speciesStarterCosts[speciesId])[starterData.valueReduction] &&
-      starterData.valueReduction < valueReductionMax
-    );
-  }
-
-  /**
-   * Determines if an same species egg can be bought for the given species ID
-   * @param speciesId The ID of the species to check the value reduction of
-   * @returns true if the user has enough candies
-   */
-  isSameSpeciesEggAvailable(speciesId: number): boolean {
-    // Get this species ID's starter data
-    const starterData = globalScene.gameData.starterData[speciesId];
-
-    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[speciesId]);
-  }
-
-  /**
    * Sets a bounce animation if enabled and the Pokemon has an upgrade
    * @param icon {@linkcode Phaser.GameObjects.GameObject} to animate
    * @param species {@linkcode PokemonSpecies} of the icon used to check for upgrades
@@ -1459,9 +1420,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     };
 
     if (
-      this.isPassiveAvailable(species.speciesId) ||
+      isPassiveAvailable(species.speciesId) ||
       (globalScene.candyUpgradeNotification === 2 &&
-        (this.isValueReductionAvailable(species.speciesId) || this.isSameSpeciesEggAvailable(species.speciesId)))
+        (isValueReductionAvailable(species.speciesId) || isSameSpeciesEggAvailable(species.speciesId)))
     ) {
       const chain = globalScene.tweens.chain(tweenChain);
       if (!startPaused) {
@@ -1487,19 +1448,19 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       return;
     }
 
-    const isPassiveAvailable = this.isPassiveAvailable(species.speciesId);
-    const isValueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
-    const isSameSpeciesEggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
+    const passiveAvailable = isPassiveAvailable(species.speciesId);
+    const valueReductionAvailable = isValueReductionAvailable(species.speciesId);
+    const sameSpeciesEggAvailable = isSameSpeciesEggAvailable(species.speciesId);
 
     // 'Passive Only' mode
     if (globalScene.candyUpgradeNotification === 1) {
-      starter.candyUpgradeIcon.setVisible(slotVisible && isPassiveAvailable);
+      starter.candyUpgradeIcon.setVisible(slotVisible && passiveAvailable);
       starter.candyUpgradeOverlayIcon.setVisible(slotVisible && starter.candyUpgradeIcon.visible);
 
       // 'On' mode
     } else if (globalScene.candyUpgradeNotification === 2) {
       starter.candyUpgradeIcon.setVisible(
-        slotVisible && (isPassiveAvailable || isValueReductionAvailable || isSameSpeciesEggAvailable),
+        slotVisible && (passiveAvailable || valueReductionAvailable || sameSpeciesEggAvailable),
       );
       starter.candyUpgradeOverlayIcon.setVisible(slotVisible && starter.candyUpgradeIcon.visible);
     }
@@ -2219,7 +2180,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
             // Reduce cost option
             const valueReduction = starterData.valueReduction;
-            if (valueReduction < valueReductionMax && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
+            if (valueReduction < VALUE_REDUCTION_MAX && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
               const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId])[
                 valueReduction
               ];
@@ -3012,36 +2973,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     // pre filter for challenges
     if (globalScene.gameMode.modeId === GameModes.CHALLENGE) {
       this.starterContainers.forEach(container => {
-        const species = container.species;
-        let allFormsValid = false;
-        if (species.forms?.length > 0) {
-          for (let i = 0; i < species.forms.length; i++) {
-            /* Here we are making a fake form index dex props for challenges
-             * Since some pokemon rely on forms to be valid (i.e. blaze tauros for fire challenges), we make a fake form and dex props to use in the challenge
-             */
-            if (!species.forms[i].isStarterSelectable) {
-              continue;
-            }
-            const tempFormProps = BigInt(Math.pow(2, i)) * DexAttr.DEFAULT_FORM;
-            const isValidForChallenge = checkStarterValidForChallenge(
-              container.species,
-              globalScene.gameData.getSpeciesDexAttrProps(species, tempFormProps),
-              true,
-            );
-            allFormsValid ||= isValidForChallenge;
-          }
-        } else {
-          const isValidForChallenge = checkStarterValidForChallenge(
-            container.species,
-            globalScene.gameData.getSpeciesDexAttrProps(
-              species,
-              globalScene.gameData.getSpeciesDefaultDexAttr(container.species, false, true),
-            ),
-            true,
-          );
-          allFormsValid = isValidForChallenge;
-        }
-        if (allFormsValid) {
+        if (isStarterValidForChallenge(container.species)) {
           this.validStarterContainers.push(container);
         } else {
           container.setVisible(false);
@@ -3112,7 +3044,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       // Passive Filter
       const isPassiveUnlocked = starterData.passiveAttr > 0;
-      const isPassiveUnlockable = this.isPassiveAvailable(container.species.speciesId) && !isPassiveUnlocked;
+      const isPassiveUnlockable = isPassiveAvailable(container.species.speciesId) && !isPassiveUnlocked;
       const fitsPassive = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(unlocks => {
         if (unlocks.val === "PASSIVE" && unlocks.state === DropDownState.ON) {
           return isPassiveUnlocked;
@@ -3131,7 +3063,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       // Cost Reduction Filter
       const isCostReducedByOne = starterData.valueReduction === 1;
       const isCostReducedByTwo = starterData.valueReduction === 2;
-      const isCostReductionUnlockable = this.isValueReductionAvailable(container.species.speciesId);
+      const isCostReductionUnlockable = isValueReductionAvailable(container.species.speciesId);
       const fitsCostReduction = this.filterBar.getVals(DropDownColumn.UNLOCKS).some(unlocks => {
         if (unlocks.val === "COST_REDUCTION" && unlocks.state === DropDownState.ON) {
           return isCostReducedByOne || isCostReducedByTwo;
@@ -3201,7 +3133,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       });
 
       // Egg Purchasable Filter
-      const isEggPurchasable = this.isSameSpeciesEggAvailable(container.species.speciesId);
+      const isEggPurchasable = isSameSpeciesEggAvailable(container.species.speciesId);
       const fitsEgg = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "EGG" && misc.state === DropDownState.ON) {
           return isEggPurchasable;
