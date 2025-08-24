@@ -454,7 +454,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   getNameToRender(useIllusion = true) {
     const illusion = this.summonData.illusion;
     const name = useIllusion ? (illusion?.name ?? this.name) : this.name;
-    const nickname: string | undefined = useIllusion ? illusion?.nickname : this.nickname;
+    const nickname: string | undefined = useIllusion ? (illusion?.nickname ?? this.nickname) : this.nickname;
     try {
       if (nickname) {
         return decodeURIComponent(escape(atob(nickname))); // TODO: Remove `atob` and `escape`... eventually...
@@ -1768,7 +1768,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns Whether this Pokemon is currently fused with another species.
    */
   isFusion(useIllusion = false): boolean {
-    return useIllusion ? !!this.summonData.illusion?.fusionSpecies : !!this.fusionSpecies;
+    return !!(useIllusion ? (this.summonData.illusion?.fusionSpecies ?? this.fusionSpecies) : this.fusionSpecies);
   }
 
   /**

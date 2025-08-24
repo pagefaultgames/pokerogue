@@ -2325,6 +2325,13 @@ export class HealOnAllyAttr extends HealAttr {
     // Don't trigger if not targeting an ally
     return target === user.getAlly() && super.canApply(user, target, _move, _args);
   }
+
+  override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+    if (user.isOpponent(target)) {
+      return false;
+    }
+    return super.apply(user, target, _move, _args);
+  }
 }
 
 /**
@@ -3270,7 +3277,6 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
       )
     )
 
-    user.pushMoveHistory({move: move.id, targets: [target.getBattlerIndex()], result: MoveResult.OTHER, useMode, turn: globalScene.currentBattle.turn})
     user.pushMoveHistory({move: move.id, targets: [target.getBattlerIndex()], result: MoveResult.OTHER, useMode, turn: globalScene.currentBattle.turn})
     // Queue up an attack on the given slot.
     globalScene.arena.positionalTagManager.addTag<PositionalTagType.DELAYED_ATTACK>({
