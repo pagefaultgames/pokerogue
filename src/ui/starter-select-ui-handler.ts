@@ -1171,17 +1171,17 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.setUpgradeAnimation(icon, species);
       });
 
-      if (globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
-        for (const container of this.pokemonEggMoveContainers) {
-          container.setVisible(false);
-        }
-        this.eggMovesLabel.setVisible(false);
-        // This is not enough, we need individual checks in setStarterSpecies too! :)
-        this.pokemonPassiveDisabledIcon.setVisible(false);
-        this.pokemonPassiveLabelText.setVisible(false);
-        this.pokemonPassiveLockedIcon.setVisible(false);
-        this.pokemonPassiveText.setVisible(false);
+      const notFreshStart = !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+
+      for (const container of this.pokemonEggMoveContainers) {
+        container.setVisible(notFreshStart);
       }
+      this.eggMovesLabel.setVisible(notFreshStart);
+      // This is not enough, we need individual checks in setStarterSpecies too! :)
+      this.pokemonPassiveDisabledIcon.setVisible(notFreshStart);
+      this.pokemonPassiveLabelText.setVisible(notFreshStart);
+      this.pokemonPassiveLockedIcon.setVisible(notFreshStart);
+      this.pokemonPassiveText.setVisible(notFreshStart);
 
       this.resetFilters();
       this.updateStarters();
@@ -1823,9 +1823,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else {
       let starterContainer: StarterContainer;
+      // The temporary, duplicated starter data to show info
       const starterData = this.getSpeciesData(this.lastSpecies.speciesId).starterDataEntry;
-      // prepare persistent starter data to store changes
+      // The persistent starter data to apply e.g. candy upgrades
+      const persistentStarterData = globalScene.gameData.starterData[this.lastSpecies.speciesId];
+      // The sanitized starter preferences
       let starterAttributes = this.starterPreferences[this.lastSpecies.speciesId];
+      // The original starter preferences
       const originalStarterAttributes = this.originalStarterPreferences[this.lastSpecies.speciesId];
 
       // this gets the correct pokemon cursor depending on whether you're in the starter screen or the party icons
@@ -2091,27 +2095,21 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           const passiveAttr = starterData.passiveAttr;
           if (passiveAttr & PassiveAttr.UNLOCKED) {
             // this is for enabling and disabling the passive
-            if (!(passiveAttr & PassiveAttr.ENABLED)) {
-              options.push({
-                label: i18next.t("starterSelectUiHandler:enablePassive"),
-                handler: () => {
-                  starterData.passiveAttr |= PassiveAttr.ENABLED;
-                  ui.setMode(UiMode.STARTER_SELECT);
-                  this.setSpeciesDetails(this.lastSpecies);
-                  return true;
-                },
-              });
-            } else {
-              options.push({
-                label: i18next.t("starterSelectUiHandler:disablePassive"),
-                handler: () => {
-                  starterData.passiveAttr ^= PassiveAttr.ENABLED;
-                  ui.setMode(UiMode.STARTER_SELECT);
-                  this.setSpeciesDetails(this.lastSpecies);
-                  return true;
-                },
-              });
-            }
+            const label = i18next.t(
+              passiveAttr & PassiveAttr.ENABLED
+                ? "starterSelectUiHandler:disablePassive"
+                : "starterSelectUiHandler:enablePassive",
+            );
+            options.push({
+              label,
+              handler: () => {
+                starterData.passiveAttr ^= PassiveAttr.ENABLED;
+                persistentStarterData.passiveAttr ^= PassiveAttr.ENABLED;
+                ui.setMode(UiMode.STARTER_SELECT);
+                this.setSpeciesDetails(this.lastSpecies);
+                return true;
+              },
+            });
           }
           // if container.favorite is false, show the favorite option
           const isFavorite = starterAttributes?.favorite ?? false;
@@ -2189,9 +2187,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 label: `×${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")}`,
                 handler: () => {
                   if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
-                    starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
+                    persistentStarterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
+                    starterData.passiveAttr = persistentStarterData.passiveAttr;
                     if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                      starterData.candyCount -= passiveCost;
+                      persistentStarterData.candyCount -= passiveCost;
+                      starterData.candyCount = persistentStarterData.candyCount;
                     }
                     this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
                     globalScene.gameData.saveSystem().then(success => {
@@ -2206,9 +2206,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     // update the passive background and icon/animation for available upgrade
                     if (starterContainer) {
                       this.updateCandyUpgradeDisplay(starterContainer);
-                      starterContainer.starterPassiveBgs.setVisible(
-                        !!globalScene.gameData.starterData[this.lastSpecies.speciesId].passiveAttr,
-                      );
+                      starterContainer.starterPassiveBgs.setVisible(!!starterData.passiveAttr);
                     }
                     return true;
                   }
@@ -2229,9 +2227,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
                 handler: () => {
                   if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
-                    starterData.valueReduction++;
+                    persistentStarterData.valueReduction++;
+                    starterData.valueReduction = persistentStarterData.valueReduction;
                     if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                      starterData.candyCount -= reductionCost;
+                      persistentStarterData.candyCount -= reductionCost;
+                      starterData.candyCount = persistentStarterData.candyCount;
                     }
                     this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
                     globalScene.gameData.saveSystem().then(success => {
@@ -2277,7 +2277,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     return false;
                   }
                   if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                    starterData.candyCount -= sameSpeciesEggCost;
+                    persistentStarterData.candyCount -= sameSpeciesEggCost;
+                    starterData.candyCount = persistentStarterData.candyCount;
                   }
                   this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
 
@@ -2329,7 +2330,18 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   form: starterAttributes.form,
                   female: starterAttributes.female,
                 };
-                ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, attributes);
+                ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, attributes, null, null, () => {
+                  if (this.lastSpecies) {
+                    starterContainer = this.filteredStarterContainers[this.cursor];
+                    const persistentStarterData = globalScene.gameData.starterData[this.lastSpecies.speciesId];
+                    this.updateCandyUpgradeDisplay(starterContainer);
+                    this.updateStarterValueLabel(starterContainer);
+                    starterContainer.starterPassiveBgs.setVisible(
+                      !!persistentStarterData.passiveAttr && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START),
+                    );
+                    this.setSpecies(this.lastSpecies);
+                  }
+                });
               });
               return true;
             },
@@ -2373,6 +2385,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 const newVariant = starterAttributes.variant
                   ? (starterAttributes.variant as Variant)
                   : newProps.variant;
+                starterAttributes.shiny = true;
+                originalStarterAttributes.shiny = true;
+                starterAttributes.variant = newVariant;
+                originalStarterAttributes.variant = newVariant;
                 this.setSpeciesDetails(this.lastSpecies, {
                   shiny: true,
                   variant: newVariant,
@@ -2382,9 +2398,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 // Cycle tint based on current sprite tint
                 const tint = getVariantTint(newVariant);
                 this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant)).setTint(tint).setVisible(true);
-
-                starterAttributes.shiny = true;
-                originalStarterAttributes.shiny = true;
               } else {
                 // If shiny, we update the variant
                 let newVariant = props.variant;
@@ -2411,14 +2424,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 originalStarterAttributes.variant = newVariant;
                 if (this.speciesStarterDexEntry!.caughtAttr & DexAttr.NON_SHINY && newVariant <= props.variant) {
                   // If we have run out of variants, go back to non shiny
+                  starterAttributes.shiny = false;
+                  originalStarterAttributes.shiny = false;
                   this.setSpeciesDetails(this.lastSpecies, {
                     shiny: false,
                     variant: 0,
                   });
                   this.pokemonShinyIcon.setVisible(false);
                   success = true;
-                  starterAttributes.shiny = false;
-                  originalStarterAttributes.shiny = false;
                 } else {
                   // If going to a higher variant, or only shiny forms are caught, go to next variant
                   this.setSpeciesDetails(this.lastSpecies, {
@@ -3741,7 +3754,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const dexEntry = globalScene.gameData.dexData[speciesId];
     const starterDataEntry = globalScene.gameData.starterData[speciesId];
 
+    // Unpacking to make a copy by values, not references
     const copiedDexEntry = { ...dexEntry };
+    copiedDexEntry.ivs = [...dexEntry.ivs];
     const copiedStarterDataEntry = { ...starterDataEntry };
     if (applyChallenge) {
       applyChallenges(ChallengeType.STARTER_SELECT_MODIFY, speciesId, copiedDexEntry, copiedStarterDataEntry);
@@ -4596,6 +4611,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   clear(): void {
     super.clear();
+
+    saveStarterPreferences(this.originalStarterPreferences);
 
     this.clearStarterPreferences();
     this.cursor = -1;

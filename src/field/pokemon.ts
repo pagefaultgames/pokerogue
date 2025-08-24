@@ -454,7 +454,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   getNameToRender(useIllusion = true) {
     const illusion = this.summonData.illusion;
     const name = useIllusion ? (illusion?.name ?? this.name) : this.name;
-    const nickname: string | undefined = useIllusion ? illusion?.nickname : this.nickname;
+    const nickname: string | undefined = useIllusion ? (illusion?.nickname ?? this.nickname) : this.nickname;
     try {
       if (nickname) {
         return decodeURIComponent(escape(atob(nickname))); // TODO: Remove `atob` and `escape`... eventually...
@@ -1652,19 +1652,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return precise ? this.hp / this.getMaxHp() : Math.round((this.hp / this.getMaxHp()) * 100) / 100;
   }
 
-  generateGender(): void {
-    if (this.species.malePercent === null) {
-      this.gender = Gender.GENDERLESS;
-    } else {
-      const genderChance = (this.id % 256) * 0.390625;
-      if (genderChance < this.species.malePercent) {
-        this.gender = Gender.MALE;
-      } else {
-        this.gender = Gender.FEMALE;
-      }
-    }
-  }
-
   /**
    * Return this Pokemon's {@linkcode Gender}.
    * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
@@ -1781,7 +1768,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns Whether this Pokemon is currently fused with another species.
    */
   isFusion(useIllusion = false): boolean {
-    return useIllusion ? !!this.summonData.illusion?.fusionSpecies : !!this.fusionSpecies;
+    return !!(useIllusion ? (this.summonData.illusion?.fusionSpecies ?? this.fusionSpecies) : this.fusionSpecies);
   }
 
   /**

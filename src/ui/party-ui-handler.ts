@@ -6,6 +6,7 @@ import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { Button } from "#enums/buttons";
 import { ChallengeType } from "#enums/challenge-type";
+import { Challenges } from "#enums/challenges";
 import { Command } from "#enums/command";
 import { FormChangeItem } from "#enums/form-change-item";
 import { MoveId } from "#enums/move-id";
@@ -562,7 +563,7 @@ export class PartyUiHandler extends MessageUiHandler {
     const ui = this.getUi();
     const option = this.options[this.optionsCursor];
 
-    if (option === PartyOption.TRANSFER) {
+    if (this.transferMode && option === PartyOption.TRANSFER) {
       return this.processTransferOption();
     }
 
@@ -1020,7 +1021,8 @@ export class PartyUiHandler extends MessageUiHandler {
     }
 
     // Toggle item transfer mode to discard items or vice versa
-    if (this.cursor === 7) {
+    // Prevent changing mode, when currently transfering an item
+    if (this.cursor === 7 && !this.transferMode) {
       switch (this.partyUiMode) {
         case PartyUiMode.DISCARD:
           this.partyUiMode = PartyUiMode.MODIFIER_TRANSFER;
@@ -1427,6 +1429,11 @@ export class PartyUiHandler extends MessageUiHandler {
       this.eraseOptionsCursor();
     }
 
+    if (pokemon.isFainted() && globalScene.gameMode.hasChallenge(Challenges.HARDCORE)) {
+      this.updateOptionsHardcore();
+      return;
+    }
+
     switch (this.partyUiMode) {
       case PartyUiMode.MOVE_MODIFIER:
         this.updateOptionsWithMoveModifierMode(pokemon);
@@ -1526,6 +1533,34 @@ export class PartyUiHandler extends MessageUiHandler {
     this.updateOptionsWindow();
   }
 
+  updateOptionsHardcore(): void {
+    const pokemon = globalScene.getPlayerParty()[this.cursor];
+
+    switch (this.partyUiMode) {
+      case PartyUiMode.MODIFIER_TRANSFER:
+        if (!this.transferMode) {
+          this.updateOptionsWithModifierTransferMode(pokemon);
+        } else {
+          this.options.push(PartyOption.TRANSFER);
+          this.addCommonOptions(pokemon);
+        }
+        break;
+      case PartyUiMode.DISCARD:
+        this.updateOptionsWithModifierTransferMode(pokemon);
+        break;
+      case PartyUiMode.SWITCH:
+        this.options.push(PartyOption.RELEASE);
+        break;
+      case PartyUiMode.RELEASE:
+        this.options.push(PartyOption.RELEASE);
+        break;
+    }
+
+    // Generic, these are applied to all Modes
+    this.addCancelAndScrollOptions();
+    this.updateOptionsWindow();
+  }
+
   private updateOptionsWindow(): void {
     const pokemon = globalScene.getPlayerParty()[this.cursor];
 
@@ -1575,7 +1610,7 @@ export class PartyUiHandler extends MessageUiHandler {
               const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
               optionName = `${modifier.active ? i18next.t("partyUiHandler:deactivate") : i18next.t("partyUiHandler:activate")} ${modifier.type.name}`;
             } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
-              optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:unpausedEvolution") : i18next.t("partyUiHandler:pauseEvolution")}`;
+              optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:unpauseEvolution") : i18next.t("partyUiHandler:pauseEvolution")}`;
             } else {
               if (this.localizedOptions.includes(option)) {
                 optionName = i18next.t(`partyUiHandler:${toCamelCase(PartyOption[option])}`);
