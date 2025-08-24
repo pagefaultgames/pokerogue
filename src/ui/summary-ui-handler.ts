@@ -68,6 +68,7 @@ export class SummaryUiHandler extends UiHandler {
   private summaryUiMode: SummaryUiMode;
 
   private summaryContainer: Phaser.GameObjects.Container;
+  private summaryContainerDexNoLabel: Phaser.GameObjects.Image;
   private tabSprite: Phaser.GameObjects.Sprite;
   private shinyOverlay: Phaser.GameObjects.Image;
   private numberText: Phaser.GameObjects.Text;
@@ -94,6 +95,8 @@ export class SummaryUiHandler extends UiHandler {
   private passiveContainer: abilityContainer;
   private summaryPageContainer: Phaser.GameObjects.Container;
   private movesContainer: Phaser.GameObjects.Container;
+  private movesContainerMovesTitle: Phaser.GameObjects.Image;
+  private movesContainerDescriptionsTitle: Phaser.GameObjects.Image;
   private moveDescriptionText: Phaser.GameObjects.Text;
   private moveCursorObj: Phaser.GameObjects.Sprite | null;
   private selectedMoveCursorObj: Phaser.GameObjects.Sprite | null;
@@ -149,15 +152,19 @@ export class SummaryUiHandler extends UiHandler {
     summaryBg.setOrigin(0, 1);
     this.summaryContainer.add(summaryBg);
 
-    this.tabSprite = globalScene.add.sprite(134, -summaryBg.displayHeight + 16, "summary_tabs_1");
-    this.tabSprite.setOrigin(1, 1);
+    this.tabSprite = globalScene.add.sprite(81, -summaryBg.displayHeight + 16, getLocalizedSpriteKey("summary_tabs_1")); // Pixel text 'STATUS' tab
+    this.tabSprite.setOrigin(0, 1);
     this.summaryContainer.add(this.tabSprite);
 
     const summaryLabel = addTextObject(4, -165, i18next.t("pokemonSummary:pokemonInfo"), TextStyle.SUMMARY_HEADER);
     summaryLabel.setOrigin(0, 1);
     this.summaryContainer.add(summaryLabel);
 
-    this.shinyOverlay = globalScene.add.image(6, -54, "summary_overlay_shiny");
+    this.summaryContainerDexNoLabel = globalScene.add.image(6, -151, getLocalizedSpriteKey("summary_dexnb_label")); // Pixel text 'No'
+    this.summaryContainerDexNoLabel.setOrigin(0, 1);
+    this.summaryContainer.add(this.summaryContainerDexNoLabel);
+
+    this.shinyOverlay = globalScene.add.image(6, -54, getLocalizedSpriteKey("summary_dexnb_label_overlay_shiny")); // Pixel text 'No' shiny
     this.shinyOverlay.setOrigin(0, 1);
     this.shinyOverlay.setVisible(false);
     this.summaryContainer.add(this.shinyOverlay);
@@ -286,7 +293,7 @@ export class SummaryUiHandler extends UiHandler {
     moveEffectBg.setOrigin(0, 0);
     this.moveEffectContainer.add(moveEffectBg);
 
-    this.moveEffectContainerTitle = globalScene.add.image(7, 7, getLocalizedSpriteKey("summary_moves_effect_title"));
+    this.moveEffectContainerTitle = globalScene.add.image(7, 7, getLocalizedSpriteKey("summary_moves_effect_title")); // Pixel text 'EFFECT'
     this.moveEffectContainerTitle.setOrigin(0, 0.5);
     this.moveEffectContainer.add(this.moveEffectContainerTitle);
 
@@ -746,7 +753,7 @@ export class SummaryUiHandler extends UiHandler {
         const forward = this.cursor < cursor;
         this.cursor = cursor;
 
-        this.tabSprite.setTexture(`summary_tabs_${this.cursor + 1}`);
+        this.tabSprite.setTexture(getLocalizedSpriteKey(`summary_tabs_${this.cursor + 1}`)); // Pixel text 'STATUS' and "MOVES" tabs
 
         this.getUi().hideTooltip();
 
@@ -823,7 +830,7 @@ export class SummaryUiHandler extends UiHandler {
         const profileContainerProfilTitle = globalScene.add.image(
           7,
           4,
-          getLocalizedSpriteKey("summary_profile_profile_title"),
+          getLocalizedSpriteKey("summary_profile_profile_title"), // Pixel text 'PROFIL'
         );
         profileContainerProfilTitle.setOrigin(0, 0.5);
         profileContainer.add(profileContainerProfilTitle);
@@ -902,7 +909,7 @@ export class SummaryUiHandler extends UiHandler {
         }
 
         this.abilityContainer = {
-          labelImage: globalScene.add.image(0, 0, getLocalizedSpriteKey("summary_profile_ability")),
+          labelImage: globalScene.add.image(0, 0, getLocalizedSpriteKey("summary_profile_ability")), // Pixel text 'ABILITY'
           ability: this.pokemon?.getAbility(true)!, // TODO: is this bang correct?
           nameText: null,
           descriptionText: null,
@@ -912,7 +919,7 @@ export class SummaryUiHandler extends UiHandler {
         // Only add to the array and set up displaying a passive if it's unlocked
         if (this.pokemon?.hasPassive()) {
           this.passiveContainer = {
-            labelImage: globalScene.add.image(0, 0, getLocalizedSpriteKey("summary_profile_passive")),
+            labelImage: globalScene.add.image(0, 0, getLocalizedSpriteKey("summary_profile_passive")), // Pixel text 'PASSIVE'
             ability: this.pokemon.getPassiveAbility(),
             nameText: null,
             descriptionText: null,
@@ -985,7 +992,7 @@ export class SummaryUiHandler extends UiHandler {
         const profileContainerMemoTitle = globalScene.add.image(
           7,
           107,
-          getLocalizedSpriteKey("summary_profile_memo_title"),
+          getLocalizedSpriteKey("summary_profile_memo_title"), // Pixel text 'TRAINER MEMO'
         );
         profileContainerMemoTitle.setOrigin(0, 0.5);
         profileContainer.add(profileContainerMemoTitle);
@@ -1016,26 +1023,26 @@ export class SummaryUiHandler extends UiHandler {
         this.statsContainer.add(this.ivContainer);
         this.statsContainer.setVisible(true);
 
-        this.statsContainerItemTitle = globalScene.add.image(7, 4, getLocalizedSpriteKey("summary_stats_item_title"));
+        this.statsContainerItemTitle = globalScene.add.image(7, 4, getLocalizedSpriteKey("summary_stats_item_title")); // Pixel text 'ITEM'
         this.statsContainerItemTitle.setOrigin(0, 0.5);
         this.statsContainer.add(this.statsContainerItemTitle);
 
         this.statsContainerStatsTitle = globalScene.add.image(
           16,
           51,
-          getLocalizedSpriteKey("summary_stats_stats_title"),
+          getLocalizedSpriteKey("summary_stats_stats_title"), // Pixel text 'STATS'
         );
         this.statsContainerStatsTitle.setOrigin(0, 0.5);
         this.statsContainer.add(this.statsContainerStatsTitle);
 
-        this.statsContainerExpTitle = globalScene.add.image(7, 107, getLocalizedSpriteKey("summary_stats_exp_title"));
+        this.statsContainerExpTitle = globalScene.add.image(7, 107, getLocalizedSpriteKey("summary_stats_exp_title")); // Pixel text 'EXP.'
         this.statsContainerExpTitle.setOrigin(0, 0.5);
         this.statsContainer.add(this.statsContainerExpTitle);
 
         this.statsContainerExpBarTitle = globalScene.add.image(
-          127,
+          126,
           144,
-          getLocalizedSpriteKey("summary_stats_expbar_title"),
+          getLocalizedSpriteKey("summary_stats_expbar_title"), // Pixel mini text 'EXP'
         );
         this.statsContainerExpBarTitle.setOrigin(0, 0);
         this.statsContainer.add(this.statsContainerExpBarTitle);
@@ -1155,6 +1162,22 @@ export class SummaryUiHandler extends UiHandler {
         this.movesContainer = globalScene.add.container(5, -pageBg.height + 26);
         pageContainer.add(this.movesContainer);
 
+        this.movesContainerMovesTitle = globalScene.add.image(
+          2,
+          -22,
+          getLocalizedSpriteKey("summary_moves_moves_title"),
+        ); // Pixel text 'MOVES'
+        this.movesContainerMovesTitle.setOrigin(0, 0.5);
+        this.movesContainer.add(this.movesContainerMovesTitle);
+
+        this.movesContainerDescriptionsTitle = globalScene.add.image(
+          2,
+          78,
+          getLocalizedSpriteKey("summary_moves_descriptions_title"),
+        ); // Pixel text 'DESCRIPTIONS'
+        this.movesContainerDescriptionsTitle.setOrigin(0, 0.5);
+        this.movesContainer.add(this.movesContainerDescriptionsTitle);
+
         this.extraMoveRowContainer = globalScene.add.container(0, 64);
         this.extraMoveRowContainer.setVisible(false);
         this.movesContainer.add(this.extraMoveRowContainer);
@@ -1184,7 +1207,7 @@ export class SummaryUiHandler extends UiHandler {
             newMoveTypeIcon.setOrigin(0, 1);
             this.extraMoveRowContainer.add(newMoveTypeIcon);
           }
-          const ppOverlay = globalScene.add.image(163, -1, "summary_moves_overlay_pp");
+          const ppOverlay = globalScene.add.image(163, -1, getLocalizedSpriteKey("summary_moves_overlay_pp")); // Pixel text 'PP'
           ppOverlay.setOrigin(0, 1);
           this.extraMoveRowContainer.add(ppOverlay);
 
@@ -1215,7 +1238,7 @@ export class SummaryUiHandler extends UiHandler {
           moveText.setOrigin(0, 1);
           moveRowContainer.add(moveText);
 
-          const ppOverlay = globalScene.add.image(163, -1, "summary_moves_overlay_pp");
+          const ppOverlay = globalScene.add.image(163, -1, getLocalizedSpriteKey("summary_moves_overlay_pp")); // Pixel text 'PP'
           ppOverlay.setOrigin(0, 1);
           moveRowContainer.add(ppOverlay);
 

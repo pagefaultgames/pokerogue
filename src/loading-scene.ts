@@ -138,24 +138,16 @@ export class LoadingScene extends SceneBase {
     this.loadImage("summary_profile", "ui");
     this.loadImage("summary_profile_prompt_z", "ui"); // The pixel Z button prompt
     this.loadImage("summary_profile_prompt_a", "ui"); // The pixel A button prompt
-    //this.loadImage("summary_profile_ability", "ui"); // Pixel text 'ABILITY'
-    //this.loadImage("summary_profile_passive", "ui"); // Pixel text 'PASSIVE'
     this.loadImage("summary_status", "ui");
     this.loadImage("summary_stats", "ui");
-    //this.loadImage("summary_stats_item_title", "ui", "ui_text_images/en/summary/summary_stats_item_title.png");  // Pixel text 'ITEM'
-    //this.loadImage("summary_stats_stats_title", "ui", "ui_text_images/en/summary/summary_stats_stats_title.png");  // Pixel text 'STATS'
-    //this.loadImage("summary_stats_exp_title", "ui", "ui_text_images/en/summary/summary_stats_exp_title.png");  // Pixel text 'EXP.'
-    //this.loadImage("summary_stats_expbar_title", "ui", "ui_text_images/en/summary/summary_stats_expbar_title.png");  // Pixel mini text 'EXP'
     this.loadImage("summary_stats_overlay_exp", "ui");
     this.loadImage("summary_moves", "ui");
     this.loadImage("summary_moves_effect", "ui");
-    //this.loadImage("summary_moves_effect_title", "ui", "ui_text_images/en/summary/summary_moves_effect_title.png");  // Pixel text 'EFFECT'
     this.loadImage("summary_moves_overlay_row", "ui");
-    this.loadImage("summary_moves_overlay_pp", "ui");
     this.loadAtlas("summary_moves_cursor", "ui");
-    for (let t = 1; t <= 3; t++) {
-      this.loadImage(`summary_tabs_${t}`, "ui");
-    }
+    //for (let t = 1; t <= 3; t++) {
+    //  this.loadImage(`summary_tabs_${t}`, "ui");
+    //}
 
     this.loadImage("scroll_bar", "ui");
     this.loadImage("scroll_bar_handle", "ui");
@@ -242,6 +234,23 @@ export class LoadingScene extends SceneBase {
     if (lang !== "en" && hasAllLocalizedSprites(lang)) {
       this.loadAtlas(`statuses_${lang}`, "");
       this.loadAtlas(`types_${lang}`, "");
+      for (let t = 1; t <= 3; t++) {
+        this.loadImage(
+          `summary_tabs_${t}_${lang}`,
+          "ui",
+          `ui_text_images/${lang}/summary/summary_tabs_${t}_${lang}.png`,
+        );
+      }
+      this.loadImage(
+        `summary_dexnb_label_${lang}`,
+        "ui",
+        `ui_text_images/${lang}/summary/summary_dexnb_label_${lang}.png`,
+      ); // Pixel text 'No'
+      this.loadImage(
+        `summary_dexnb_label_overlay_shiny_${lang}`,
+        "ui",
+        `ui_text_images/${lang}/summary/summary_dexnb_label_overlay_shiny_${lang}.png`,
+      ); // Pixel text 'No' shiny
       this.loadImage(
         `summary_profile_profile_title_${lang}`,
         "ui",
@@ -283,6 +292,21 @@ export class LoadingScene extends SceneBase {
         `ui_text_images/${lang}/summary/summary_stats_expbar_title_${lang}.png`,
       ); // Pixel mini text 'EXP'
       this.loadImage(
+        `summary_moves_moves_title_${lang}`,
+        "ui",
+        `ui_text_images/${lang}/summary/summary_moves_moves_title_${lang}.png`,
+      ); // Pixel text 'MOVES'
+      this.loadImage(
+        `summary_moves_descriptions_title_${lang}`,
+        "ui",
+        `ui_text_images/${lang}/summary/summary_moves_descriptions_title_${lang}.png`,
+      ); // Pixel text 'DESCRIPTIONS'
+      this.loadImage(
+        `summary_moves_overlay_pp_${lang}`,
+        "ui",
+        `ui_text_images/${lang}/summary/summary_moves_overlay_pp_${lang}.png`,
+      ); // Pixel text 'PP'
+      this.loadImage(
         `summary_moves_effect_title_${lang}`,
         "ui",
         `ui_text_images/${lang}/summary/summary_moves_effect_title_${lang}.png`,
@@ -290,6 +314,15 @@ export class LoadingScene extends SceneBase {
     } else {
       this.loadAtlas("statuses", "");
       this.loadAtlas("types", "");
+      for (let t = 1; t <= 3; t++) {
+        this.loadImage(`summary_tabs_${t}`, "ui", `ui_text_images/en/summary/summary_tabs_${t}.png`);
+      }
+      this.loadImage("summary_dexnb_label", "ui", "ui_text_images/en/summary/summary_dexnb_label.png");
+      this.loadImage(
+        "summary_dexnb_label_overlay_shiny",
+        "ui",
+        "ui_text_images/en/summary/summary_dexnb_label_overlay_shiny.png",
+      );
       this.loadImage(
         "summary_profile_profile_title",
         "ui",
@@ -302,6 +335,13 @@ export class LoadingScene extends SceneBase {
       this.loadImage("summary_stats_stats_title", "ui", "ui_text_images/en/summary/summary_stats_stats_title.png");
       this.loadImage("summary_stats_exp_title", "ui", "ui_text_images/en/summary/summary_stats_exp_title.png");
       this.loadImage("summary_stats_expbar_title", "ui", "ui_text_images/en/summary/summary_stats_expbar_title.png");
+      this.loadImage("summary_moves_moves_title", "ui", "ui_text_images/en/summary/summary_moves_moves_title.png");
+      this.loadImage(
+        "summary_moves_descriptions_title",
+        "ui",
+        "ui_text_images/en/summary/summary_moves_descriptions_title.png",
+      );
+      this.loadImage("summary_moves_overlay_pp", "ui", "ui_text_images/en/summary/summary_moves_overlay_pp.png");
       this.loadImage("summary_moves_effect_title", "ui", "ui_text_images/en/summary/summary_moves_effect_title.png");
     }
     if (timedEventManager.activeEventHasBanner()) {
