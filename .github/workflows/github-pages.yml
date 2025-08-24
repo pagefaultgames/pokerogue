@@ -67,7 +67,7 @@ jobs:
         env:
           REF_NAME: ${{github.ref_name}}
           DRY_RUN: ${{env.DRY_RUN}}
-        run: pnpm docs
+        run: pnpm typedoc
 
       - name: Commit & Push docs
         if: ${{!env.DRY_RUN}}

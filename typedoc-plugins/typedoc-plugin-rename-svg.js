@@ -3,13 +3,15 @@
 import { PageKind, Renderer } from "typedoc";
 
 /**
- * Typedoc plugin to run post-processing on the README.md
+ * Typedoc plugin to run post-processing on the `index.html` file and replace the coverage SVG
+ * for Beta with the newly generated file for the current branch.
  */
 
 /**
  * @param {import('typedoc').Application} app
  */
 export function load(app) {
+  // Don't do anything if no REF_NAME was specified (likely indicating a local docs run)
   if (!process.env.REF_NAME) {
     return;
   }

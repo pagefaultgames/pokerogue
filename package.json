@@ -18,7 +18,7 @@
     "typecheck": "tsc --noEmit",
     "biome": "biome check --write --changed --no-errors-on-unmatched --diagnostic-level=error",
     "biome-ci": "biome ci --diagnostic-level=error --reporter=github --no-errors-on-unmatched",
-    "docs": "typedoc",
+    "typedoc": "typedoc",
     "depcruise": "depcruise src test",
     "postinstall": "lefthook install; git submodule update --init --recursive",
     "update-version:patch": "pnpm version patch --force --no-git-tag-version",

@@ -1,7 +1,5 @@
 import { globSync } from "node:fs";
 
-const out = process.env.CI ? "/tmp/docs" : "./typedoc";
-
 /**
  * @type {Partial<import("typedoc").TypeDocOptions}
  */
@@ -31,9 +29,10 @@ const config = {
   ],
   // Avoid emitting docs for branches other than main/beta
   emit: process.env.DRY_RUN ? "none" : "docs",
-  coverageLabel: "Documented",
-  out,
+  out: process.env.CI ? "/tmp/docs" : "./typedoc",
   readme: "./README.md",
+  coverageLabel: "Documented",
+  coverageSvgWidth: 120, // Increased from 104 baseline due to adding 2 extra letters
   favicon: "./public/images/logo.png",
   theme: "typedoc-github-theme",
   customFooterHtml: "<p>Copyright <strong>Pagefault Games</strong> 2025</p>",
