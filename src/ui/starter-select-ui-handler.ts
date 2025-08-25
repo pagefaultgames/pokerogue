@@ -3704,10 +3704,30 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else if (this.speciesStarterDexEntry?.seenAttr) {
       this.cleanStarterSprite(species, true);
+
+      const props = globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
+
+      const formIndex = props.formIndex;
+      const female = props.female;
+      const shiny = props.shiny;
+      const variant = props.variant;
+
+      this.updateSprite(species, female, formIndex, shiny, variant);
       this.pokemonSprite.setVisible(true);
       this.pokemonSprite.setTint(0x808080);
     } else {
       this.cleanStarterSprite(species);
+
+      const props = globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
+
+      const formIndex = props.formIndex;
+      const female = props.female;
+      const shiny = props.shiny;
+      const variant = props.variant;
+
+      this.updateSprite(species, female, formIndex, shiny, variant);
+      this.pokemonSprite.setVisible(true);
+      this.pokemonSprite.setTint(0x000000);
     }
   }
 
@@ -3750,11 +3770,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonFormText.setVisible(false);
     this.teraIcon.setVisible(false);
 
-    if (species) {
-      this.setSpeciesDetails(species, { forSeen: true });
-    } else {
-      this.setNoSpeciesDetails();
-    }
+    this.setNoSpeciesDetails();
   }
 
   getSpeciesData(
@@ -3915,32 +3931,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       const caughtAttr = dexEntry.caughtAttr || BigInt(0);
       const abilityAttr = starterDataEntry.abilityAttr;
 
-      if (!caughtAttr) {
-        // TODO: What is the point of all this, considering everything will be hidden anyway?
-        const props = globalScene.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId));
-        const defaultAbilityIndex = globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-        const defaultNature = globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
-
-        if (shiny === undefined || shiny !== props.shiny) {
-          shiny = props.shiny;
-        }
-        if (formIndex === undefined || formIndex !== props.formIndex) {
-          formIndex = props.formIndex;
-        }
-        if (female === undefined || female !== props.female) {
-          female = props.female;
-        }
-        if (variant === undefined || variant !== props.variant) {
-          variant = props.variant;
-        }
-        if (abilityIndex === undefined || abilityIndex !== defaultAbilityIndex) {
-          abilityIndex = defaultAbilityIndex;
-        }
-        if (natureIndex === undefined || natureIndex !== defaultNature) {
-          natureIndex = defaultNature;
-        }
-      }
-
       this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
       this.pokemonNumberText.setColor(
         this.getTextColor(shiny ? TextStyle.SUMMARY_DEX_NUM_GOLD : TextStyle.SUMMARY_DEX_NUM, false),
@@ -3964,20 +3954,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         female ??= false;
         if (shouldUpdateSprite) {
-          species.loadAssets(female, formIndex, shiny, variant, true).then(() => {
-            if (assetLoadCancelled.value) {
-              return;
-            }
-            this.assetLoadCancelled = null;
-            this.speciesLoaded.set(species.speciesId, true);
-            // Note: Bangs are correct due to `female ??= false` above
-            this.pokemonSprite
-              .play(species.getSpriteKey(female!, formIndex, shiny, variant))
-              .setPipelineData("shiny", shiny)
-              .setPipelineData("variant", variant)
-              .setPipelineData("spriteKey", species.getSpriteKey(female!, formIndex, shiny, variant))
-              .setVisible(!this.statsMode);
-          });
+          this.updateSprite(species, female, formIndex, shiny, variant);
         } else {
           this.pokemonSprite.setVisible(!this.statsMode);
         }
@@ -4183,12 +4160,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         this.teraIcon.setFrame(PokemonType[this.teraCursor].toLowerCase());
         this.teraIcon.setVisible(!this.statsMode && this.allowTera);
-      } else {
-        this.pokemonAbilityText.setText("");
-        this.pokemonPassiveText.setText("");
-        this.pokemonNatureText.setText("");
-        this.teraIcon.setVisible(false);
-        this.setTypeIcons(null, null);
       }
     }
 
@@ -4230,6 +4201,29 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.updateInstructions();
 
     saveStarterPreferences(this.originalStarterPreferences);
+  }
+
+  updateSprite(
+    species: PokemonSpecies,
+    female: boolean,
+    formIndex?: number | undefined,
+    shiny?: boolean,
+    variant?: Variant | undefined,
+  ) {
+    species.loadAssets(female, formIndex, shiny, variant, true).then(() => {
+      if (this.assetLoadCancelled?.value) {
+        return;
+      }
+      this.assetLoadCancelled = null;
+      this.speciesLoaded.set(species.speciesId, true);
+      // Note: Bangs are correct due to `female ??= false` above
+      this.pokemonSprite
+        .play(species.getSpriteKey(female!, formIndex, shiny, variant))
+        .setPipelineData("shiny", shiny)
+        .setPipelineData("variant", variant)
+        .setPipelineData("spriteKey", species.getSpriteKey(female!, formIndex, shiny, variant))
+        .setVisible(!this.statsMode);
+    });
   }
 
   setTypeIcons(type1: PokemonType | null, type2: PokemonType | null): void {
