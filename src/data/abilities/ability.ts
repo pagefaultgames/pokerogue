@@ -34,7 +34,6 @@ import { MoveTarget } from "#enums/MoveTarget";
 import { CommonAnim } from "#enums/move-anims-common";
 import { MoveId } from "#enums/move-id";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
-import { MovePriorityModifier } from "#enums/move-priority-modifier";
 import { MoveResult } from "#enums/move-result";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
@@ -4090,30 +4089,6 @@ export class ChangeMovePriorityAbAttr extends AbAttr {
   }
 }
 
-/**
- * TODO haven't gotten around to fixing this, but it doesn't work because abilities have different levels of "priority", so fractionals have to be used
- *
- * fucking game freak dude
- */
-export class ChangeMovePriorityModifierAbAttr extends AbAttr {
-  private newModifier: MovePriorityModifier;
-  private moveFunc: (pokemon: Pokemon, move: Move) => boolean;
-
-  constructor(moveFunc: (pokemon: Pokemon, move: Move) => boolean, newModifier: MovePriorityModifier) {
-    super(false);
-    this.newModifier = newModifier;
-    this.moveFunc = moveFunc;
-  }
-
-  override canApply({ pokemon, move }: ChangeMovePriorityAbAttrParams): boolean {
-    return this.moveFunc(pokemon, move);
-  }
-
-  override apply({ priority }: ChangeMovePriorityAbAttrParams): void {
-    priority.value = this.newModifier;
-  }
-}
-
 export class IgnoreContactAbAttr extends AbAttr {
   private declare readonly _: never;
 }
@@ -6669,7 +6644,6 @@ const AbilityAttrs = Object.freeze({
   BlockStatusDamageAbAttr,
   BlockOneHitKOAbAttr,
   ChangeMovePriorityAbAttr,
-  ChangeMovePriorityModifierAbAttr,
   IgnoreContactAbAttr,
   PreWeatherEffectAbAttr,
   PreWeatherDamageAbAttr,
@@ -7087,7 +7061,7 @@ export function initAbilities() {
       .attr(AlwaysHitAbAttr)
       .attr(DoubleBattleChanceAbAttr),
     new Ability(AbilityId.STALL, 4)
-      .attr(ChangeMovePriorityModifierAbAttr, (_pokemon, _move: Move) => true, MovePriorityModifier.LAST_IN_BRACKET),
+      .attr(ChangeMovePriorityAbAttr, (_pokemon, _move: Move) => true, -0.2),
     new Ability(AbilityId.TECHNICIAN, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => {
         const power = new NumberHolder(move.power);
@@ -7833,7 +7807,7 @@ export function initAbilities() {
       .attr(TypeImmunityHealAbAttr, PokemonType.GROUND)
       .ignorable(),
     new Ability(AbilityId.MYCELIUM_MIGHT, 9)
-      .attr(ChangeMovePriorityModifierAbAttr, (_pokemon, move) => move.category === MoveCategory.STATUS, MovePriorityModifier.LAST_IN_BRACKET)
+      .attr(ChangeMovePriorityAbAttr, (_pokemon, move) => move.category === MoveCategory.STATUS, -0.2)
       .attr(PreventBypassSpeedChanceAbAttr, (_pokemon, move) => move.category === MoveCategory.STATUS)
       .attr(MoveAbilityBypassAbAttr, (_pokemon, move: Move) => move.category === MoveCategory.STATUS),
     new Ability(AbilityId.MINDS_EYE, 9)

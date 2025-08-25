@@ -89,7 +89,6 @@ import type { TurnMove } from "#types/turn-move";
 import { BooleanHolder, type Constructor, isNullOrUndefined, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue, toReadableString } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import i18next from "i18next";
-import { MovePriorityModifier } from "#enums/move-priority-modifier";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
 /**
@@ -876,15 +875,11 @@ export abstract class Move implements Localizable {
     applyMoveAttrs("IncrementMovePriorityAttr", user, null, this, priority);
     applyAbAttrs("ChangeMovePriorityAbAttr", {pokemon: user, simulated, move: this, priority});
 
-    return priority.value;
-  }
+    if (!isNullOrUndefined(user.getTag(BattlerTagType.BYPASS_SPEED))) {
+      priority.value += 0.2;
+    }
 
-  // TODO doesn't work because fractional priorities differ
-  getPriorityModifier(user: Pokemon, simulated = true): MovePriorityModifier {
-    const modifierHolder = new NumberHolder(MovePriorityModifier.NORMAL);
-    applyAbAttrs("ChangeMovePriorityModifierAbAttr", {pokemon: user, simulated: simulated, move: this, priority: modifierHolder});
-    modifierHolder.value = user.getTag(BattlerTagType.BYPASS_SPEED) ? MovePriorityModifier.FIRST_IN_BRACKET : modifierHolder.value;
-    return modifierHolder.value;
+    return priority.value;
   }
 
   /**
