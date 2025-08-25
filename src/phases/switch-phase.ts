@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import { DynamicPhaseType } from "#enums/dynamic-phase-type";
 import { SwitchType } from "#enums/switch-type";
 import { UiMode } from "#enums/ui-mode";
 import { BattlePhase } from "#phases/battle-phase";

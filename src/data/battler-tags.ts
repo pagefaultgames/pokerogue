@@ -3569,6 +3569,8 @@ export class GrudgeTag extends SerializableBattlerTag {
  * and {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Claw Quick Claw}.
  */
 export class BypassSpeedTag extends BattlerTag {
+  public override readonly tagType = BattlerTagType.BYPASS_SPEED;
+
   constructor() {
     super(BattlerTagType.BYPASS_SPEED, BattlerTagLapseType.TURN_END, 1);
   }
@@ -3964,4 +3966,5 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.GRUDGE]: GrudgeTag;
   [BattlerTagType.PSYCHO_SHIFT]: PsychoShiftTag;
   [BattlerTagType.MAGIC_COAT]: MagicCoatTag;
+  [BattlerTagType.BYPASS_SPEED]: BypassSpeedTag;
 };

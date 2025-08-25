@@ -1,4 +1,4 @@
-import type { EnumValues } from "#types/enum-types";
+import type { ObjectValues } from "#types/type-helpers";
 
 /**
  * Enum representing modifiers for the timing of MovePhases.
@@ -15,4 +15,4 @@ export const MovePhaseTimingModifier = Object.freeze({
   NORMAL: 1,
   FIRST: 2,
 });
-export type MovePhaseTimingModifier = EnumValues<typeof MovePhaseTimingModifier>;
+export type MovePhaseTimingModifier = ObjectValues<typeof MovePhaseTimingModifier>;
