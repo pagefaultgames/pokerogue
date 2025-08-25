@@ -2041,12 +2041,13 @@ class PartySlot extends Phaser.GameObjects.Container {
 
     if (this.pokemon.isShiny()) {
       const doubleShiny = this.pokemon.isDoubleShiny(false);
+      const largeIconTint = doubleShiny ? this.pokemon.getBaseVariant() : this.pokemon.getVariant();
 
       const shinyStar = globalScene.add
         .image(0, 0, `shiny_star_small${doubleShiny ? "_1" : ""}`)
         .setOrigin(0)
         .setPositionRelative(this.slotName, shinyIconToNameOffset.x, shinyIconToNameOffset.y)
-        .setTint(getVariantTint(this.pokemon.getBaseVariant()));
+        .setTint(getVariantTint(largeIconTint));
       slotInfoContainer.add(shinyStar);
 
       if (doubleShiny) {
