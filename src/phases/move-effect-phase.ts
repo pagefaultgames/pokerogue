@@ -400,10 +400,17 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - {@linkcode Pokemon} the current target of this phase's invoked move
    * @param hitResult - The {@linkcode HitResult} of the attempted move
+   * @param damage - The amount of damage dealt to the target in the interaction
    * @param wasCritical - `true` if the move was a critical hit
    */
-  protected applyOnGetHitAbEffects(user: Pokemon, target: Pokemon, hitResult: HitResult, wasCritical = false): void {
-    const params = { pokemon: target, opponent: user, move: this.move, hitResult };
+  protected applyOnGetHitAbEffects(
+    user: Pokemon,
+    target: Pokemon,
+    hitResult: HitResult,
+    damage: number,
+    wasCritical = false,
+  ): void {
+    const params = { pokemon: target, opponent: user, move: this.move, hitResult, damage };
     applyAbAttrs("PostDefendAbAttr", params);
 
     if (wasCritical) {
@@ -763,12 +770,12 @@ export class MoveEffectPhase extends PokemonPhase {
 
     this.triggerMoveEffects(MoveEffectTrigger.PRE_APPLY, user, target);
 
-    const [hitResult, wasCritical] = this.applyMove(user, target, effectiveness);
+    const [hitResult, wasCritical, dmg] = this.applyMove(user, target, effectiveness);
 
     // Apply effects to the user (always) and the target (if not blocked by substitute).
     this.triggerMoveEffects(MoveEffectTrigger.POST_APPLY, user, target, firstTarget, true);
     if (!this.move.hitsSubstitute(user, target)) {
-      this.applyOnTargetEffects(user, target, hitResult, firstTarget, wasCritical);
+      this.applyOnTargetEffects(user, target, hitResult, firstTarget, dmg, wasCritical);
     }
     if (this.lastHit) {
       globalScene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
@@ -788,9 +795,13 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} targeted by the move
    * @param effectiveness - The effectiveness of the move against the target
-   * @returns The {@linkcode HitResult} of the move against the target and a boolean indicating whether the target was crit
+   * @returns The {@linkcode HitResult} of the move against the target, a boolean indicating whether the target was crit, and the amount of damage dealt
    */
-  protected applyMoveDamage(user: Pokemon, target: Pokemon, effectiveness: TypeDamageMultiplier): [HitResult, boolean] {
+  protected applyMoveDamage(
+    user: Pokemon,
+    target: Pokemon,
+    effectiveness: TypeDamageMultiplier,
+  ): [result: HitResult, critical: boolean, damage: number] {
     const isCritical = target.getCriticalHitResult(user, this.move);
 
     /*
@@ -821,7 +832,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const isOneHitKo = result === HitResult.ONE_HIT_KO;
 
     if (!dmg) {
-      return [result, false];
+      return [result, false, 0];
     }
 
     target.lapseTags(BattlerTagLapseType.HIT);
@@ -850,7 +861,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     if (damage <= 0) {
-      return [result, isCritical];
+      return [result, isCritical, damage];
     }
 
     if (user.isPlayer()) {
@@ -879,7 +890,7 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.applyModifiers(DamageMoneyRewardModifier, true, user, new NumberHolder(damage));
     }
 
-    return [result, isCritical];
+    return [result, isCritical, damage];
   }
 
   /**
@@ -932,12 +943,17 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} struck by the move
    * @param effectiveness - The effectiveness of the move against the target
+   * @returns The {@linkcode HitResult} of the move against the target, a boolean indicating whether the target was crit, and the amount of damage dealt
    */
-  protected applyMove(user: Pokemon, target: Pokemon, effectiveness: TypeDamageMultiplier): [HitResult, boolean] {
+  protected applyMove(
+    user: Pokemon,
+    target: Pokemon,
+    effectiveness: TypeDamageMultiplier,
+  ): [HitResult, critical: boolean, damage: number] {
     const moveCategory = user.getMoveCategory(target, this.move);
 
     if (moveCategory === MoveCategory.STATUS) {
-      return [HitResult.STATUS, false];
+      return [HitResult.STATUS, false, 0];
     }
 
     const result = this.applyMoveDamage(user, target, effectiveness);
@@ -960,6 +976,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param target - The {@linkcode Pokemon} targeted by the move
    * @param hitResult - The {@linkcode HitResult} obtained from applying the move
    * @param firstTarget - `true` if the target is the first Pokemon hit by the attack
+   * @param damage - The amount of damage dealt to the target in the interaction
    * @param wasCritical - `true` if the move was a critical hit
    */
   protected applyOnTargetEffects(
@@ -967,6 +984,7 @@ export class MoveEffectPhase extends PokemonPhase {
     target: Pokemon,
     hitResult: HitResult,
     firstTarget: boolean,
+    damage: number,
     wasCritical = false,
   ): void {
     /** Does {@linkcode hitResult} indicate that damage was dealt to the target? */
@@ -979,8 +997,8 @@ export class MoveEffectPhase extends PokemonPhase {
 
     this.triggerMoveEffects(MoveEffectTrigger.POST_APPLY, user, target, firstTarget, false);
     this.applyHeldItemFlinchCheck(user, target, dealsDamage);
-    this.applyOnGetHitAbEffects(user, target, hitResult, wasCritical);
-    applyAbAttrs("PostAttackAbAttr", { pokemon: user, opponent: target, move: this.move, hitResult });
+    this.applyOnGetHitAbEffects(user, target, hitResult, damage, wasCritical);
+    applyAbAttrs("PostAttackAbAttr", { pokemon: user, opponent: target, move: this.move, hitResult, damage: damage });
 
     // We assume only enemy Pokemon are able to have the EnemyAttackStatusEffectChanceModifier from tokens
     if (!user.isPlayer() && this.move.is("AttackMove")) {
