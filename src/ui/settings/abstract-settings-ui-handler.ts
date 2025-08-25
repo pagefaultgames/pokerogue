@@ -321,7 +321,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
           // Cycle to the rightmost position when at the leftmost, otherwise move left
           success = this.setOptionCursor(
             cursor,
-            this.optionCursors[cursor] ? this.optionCursors[cursor] - 1 : this.optionValueLabels[cursor].length - 1,
+            Phaser.Math.Wrap(this.optionCursors[cursor] - 1, 0, this.optionValueLabels[cursor].length),
             true,
           );
           break;
@@ -329,7 +329,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
           // Cycle to the leftmost position when at the rightmost, otherwise move right
           success = this.setOptionCursor(
             cursor,
-            this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1 ? this.optionCursors[cursor] + 1 : 0,
+            Phaser.Math.Wrap(this.optionCursors[cursor] + 1, 0, this.optionValueLabels[cursor].length),
             true,
           );
           break;
