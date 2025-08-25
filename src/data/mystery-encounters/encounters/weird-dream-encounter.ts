@@ -11,7 +11,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { PlayerGender } from "#enums/player-gender";
-import { PokemonType } from "#enums/pokemon-type";
+import { MAX_POKEMON_TYPE, PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerType } from "#enums/trainer-type";
@@ -233,7 +233,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
           ],
           fillRemaining: false,
         });
-        leaveEncounterWithoutBattle(true);
+        leaveEncounterWithoutBattle(false);
       })
       .build(),
   )
@@ -434,6 +434,8 @@ function getTeamTransformations(): PokemonTransformation[] {
       newAbilityIndex,
       undefined,
     );
+
+    transformation.newPokemon.teraType = randSeedInt(MAX_POKEMON_TYPE);
   }
 
   return pokemonTransformations;
