@@ -4,6 +4,8 @@ import { ExpNotification } from "#enums/exp-notification";
 import { PlayerGender } from "#enums/player-gender";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import chalk from "chalk";
+import { getEnumStr } from "../string-utils";
 
 /**
  * Helper to handle settings for tests
@@ -31,40 +33,45 @@ export class SettingsHelper extends GameManagerHelper {
 
   /**
    * Change the battle style to Switch or Set mode (tests default to {@linkcode BattleStyle.SET})
-   * @param mode - The {@linkcode BattleStyle} to set
+   * @param style - The {@linkcode BattleStyle} to set
    */
-  battleStyle(mode: BattleStyle) {
-    this.game.scene.battleStyle = mode;
+  battleStyle(style: BattleStyle): this {
+    this.game.scene.battleStyle = style;
+    this.log(`Battle Style set to BattleStyle.${getEnumStr(BattleStyle, style)}!`);
+    return this;
   }
 
   /**
    * Disable/Enable type hints settings
-   * @param enable true to enabled, false to disabled
+   * @param enable - Whether to enable or disable type hints.
+   * @returns `this`
    */
-  typeHints(enable: boolean): void {
+  typeHints(enable: boolean): this {
     this.game.scene.typeHints = enable;
-    this.log(`Type Hints ${enable ? "enabled" : "disabled"}`);
+    this.log(`Type Hints ${enable ? "enabled" : "disabled"}!`);
+    return this;
   }
 
   /**
    * Change the player gender
-   * @param gender the {@linkcode PlayerGender} to set
+   * @param gender - The {@linkcode PlayerGender} to set
    */
   playerGender(gender: PlayerGender) {
     this.game.scene.gameData.gender = gender;
-    this.log(`Gender set to: ${PlayerGender[gender]} (=${gender})`);
+    this.log(`Gender set to PlayerGender.${getEnumStr(PlayerGender, gender)}!`);
   }
 
   /**
    * Change the exp gains speed
-   * @param speed the {@linkcode ExpGainsSpeed} to set
+   * @param speed - the {@linkcode ExpGainsSpeed} to set
    */
   expGainsSpeed(speed: ExpGainsSpeed) {
     this.game.scene.expGainsSpeed = speed;
-    this.log(`Exp Gains Speed set to: ${ExpGainsSpeed[speed]} (=${speed})`);
+    this.log(`Exp Gains Speed set to ExpGainsSpeed.${getEnumStr(ExpGainsSpeed, speed)}!`);
+    return this;
   }
 
   private log(...params: any[]) {
-    console.log("Settings:", ...params);
+    console.log(chalk.hex("#FFAFFA")(params));
   }
 }

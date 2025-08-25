@@ -34,8 +34,9 @@ describe("Ability Timing", () => {
     vi.spyOn(i18next, "t");
   });
 
+  // TODO: change this to use the `startBattleWithSwitch` util from hotfix branch
   it("should trigger after switch check", async () => {
-    game.settings.battleStyle = BattleStyle.SWITCH;
+    game.settings.battleStyle(BattleStyle.SWITCH);
     await game.classicMode.runToSummon([SpeciesId.EEVEE, SpeciesId.FEEBAS]);
 
     game.onNextPrompt(

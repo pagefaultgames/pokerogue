@@ -76,6 +76,8 @@ describe("Test Utils - PromptHandler", () => {
     });
 
     it("should call PhaseInterceptor.checkMode if current phase in `endBySetMode`", async () => {
+      promptHandler["game"]["scene"]["phaseManager"]["getCurrentPhase"] = () =>
+        ({ phaseName: "CommandPhase" }) as Phase;
       promptHandler["game"].scene.ui["setModeInternal"](UiMode.PARTY, false, false, false, []);
 
       expect(checkModeCallback).toHaveBeenCalledOnce();
