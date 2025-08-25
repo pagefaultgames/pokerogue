@@ -400,6 +400,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - {@linkcode Pokemon} the current target of this phase's invoked move
    * @param hitResult - The {@linkcode HitResult} of the attempted move
+   * @param damage - The amount of damage dealt to the target in the interaction
    * @param wasCritical - `true` if the move was a critical hit
    */
   protected applyOnGetHitAbEffects(
@@ -794,7 +795,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} targeted by the move
    * @param effectiveness - The effectiveness of the move against the target
-   * @returns The {@linkcode HitResult} of the move against the target and a boolean indicating whether the target was crit
+   * @returns The {@linkcode HitResult} of the move against the target, a boolean indicating whether the target was crit, and the amount of damage dealt
    */
   protected applyMoveDamage(
     user: Pokemon,
@@ -942,6 +943,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} struck by the move
    * @param effectiveness - The effectiveness of the move against the target
+   * @returns The {@linkcode HitResult} of the move against the target, a boolean indicating whether the target was crit, and the amount of damage dealt
    */
   protected applyMove(
     user: Pokemon,
@@ -974,6 +976,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param target - The {@linkcode Pokemon} targeted by the move
    * @param hitResult - The {@linkcode HitResult} obtained from applying the move
    * @param firstTarget - `true` if the target is the first Pokemon hit by the attack
+   * @param damage - The amount of damage dealt to the target in the interaction
    * @param wasCritical - `true` if the move was a critical hit
    */
   protected applyOnTargetEffects(
