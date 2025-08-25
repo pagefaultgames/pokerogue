@@ -44,7 +44,7 @@ describe("Test Utils - PromptHandler", () => {
         phaseManager: {
           getCurrentPhase: () =>
             ({
-              phaseName: "CommandPhase",
+              phaseName: "testDialoguePhase",
             }) as unknown as Phase,
         },
       },
@@ -83,7 +83,7 @@ describe("Test Utils - PromptHandler", () => {
   });
 
   describe("doPromptCheck", () => {
-    it("should check and remove the first prompt", async () => {
+    it("should check and remove the first prompt matching criteria", async () => {
       onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, () => callback1());
       onNextPrompt("testDialoguePhase", UiMode.TEST_DIALOGUE, () => callback2());
       promptHandler["doPromptCheck"]();

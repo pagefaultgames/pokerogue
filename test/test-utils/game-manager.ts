@@ -6,11 +6,8 @@ import overrides from "#app/overrides";
 import { modifierTypes } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { Button } from "#enums/buttons";
-import { ExpGainsSpeed } from "#enums/exp-gains-speed";
-import { ExpNotification } from "#enums/exp-notification";
 import { GameModes } from "#enums/game-modes";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
@@ -196,18 +193,6 @@ export class GameManager {
     await this.phaseInterceptor.to("LoginPhase", false);
     this.phaseInterceptor.shiftPhase();
     await this.phaseInterceptor.to("TitlePhase");
-
-    // TODO: This should be moved to a separate initialization method
-    this.scene.gameSpeed = 5;
-    this.scene.moveAnimations = false;
-    this.scene.showLevelUpStats = false;
-    this.scene.expGainsSpeed = ExpGainsSpeed.SKIP;
-    this.scene.expParty = ExpNotification.SKIP;
-    this.scene.hpBarSpeed = 3;
-    this.scene.enableTutorials = false;
-    this.scene.gameData.gender = PlayerGender.MALE; // set initial player gender
-    this.scene.battleStyle = this.settings.battleStyle;
-    this.scene.fieldVolume = 0;
   }
 
   /**
@@ -424,7 +409,7 @@ export class GameManager {
    * Checks if the current phase matches the target phase.
    * @param phaseTarget - The target phase.
    * @returns Whether the current phase matches the target phase
-   * @deprecated - Use phaseClass
+   * @deprecated - Use phaseString
    */
   isCurrentPhase(phaseTarget: PhaseClass): boolean;
   isCurrentPhase(phaseTarget: PhaseString | PhaseClass): boolean {

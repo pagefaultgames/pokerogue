@@ -1,24 +1,40 @@
 import { BattleStyle } from "#enums/battle-style";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
+import { ExpNotification } from "#enums/exp-notification";
 import { PlayerGender } from "#enums/player-gender";
+import type { GameManager } from "#test/test-utils/game-manager";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 
 /**
  * Helper to handle settings for tests
+ * @todo Why does this exist
  */
 export class SettingsHelper extends GameManagerHelper {
-  private _battleStyle: BattleStyle = BattleStyle.SET;
+  constructor(game: GameManager) {
+    super(game);
 
-  get battleStyle(): BattleStyle {
-    return this._battleStyle;
+    this.initDefaultSettings();
+  }
+
+  private initDefaultSettings(): void {
+    this.game.scene.gameSpeed = 5;
+    this.game.scene.moveAnimations = false;
+    this.game.scene.showLevelUpStats = false;
+    this.game.scene.expGainsSpeed = ExpGainsSpeed.SKIP;
+    this.game.scene.expParty = ExpNotification.SKIP;
+    this.game.scene.hpBarSpeed = 3;
+    this.game.scene.enableTutorials = false;
+    this.game.scene.battleStyle = BattleStyle.SET;
+    this.game.scene.gameData.gender = PlayerGender.MALE; // set initial player gender;
+    this.game.scene.fieldVolume = 0;
   }
 
   /**
    * Change the battle style to Switch or Set mode (tests default to {@linkcode BattleStyle.SET})
-   * @param mode {@linkcode BattleStyle.SWITCH} or {@linkcode BattleStyle.SET}
+   * @param mode - The {@linkcode BattleStyle} to set
    */
-  set battleStyle(mode: BattleStyle.SWITCH | BattleStyle.SET) {
-    this._battleStyle = mode;
+  battleStyle(mode: BattleStyle) {
+    this.game.scene.battleStyle = mode;
   }
 
   /**
