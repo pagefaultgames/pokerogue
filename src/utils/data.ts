@@ -1,6 +1,6 @@
 import { loggedInUser } from "#app/account";
 import { saveKey } from "#app/constants";
-import type { StarterAttributes } from "#system/game-data";
+import type { StarterPreferences } from "#system/game-data";
 import { AES, enc } from "crypto-js";
 
 /**
@@ -63,20 +63,20 @@ export function decrypt(data: string, bypassLogin: boolean): string {
 const StarterPrefers_DEFAULT: string = "{}";
 let StarterPrefers_private_latest: string = StarterPrefers_DEFAULT;
 
-export interface StarterPreferences {
-  [key: number]: StarterAttributes;
+export interface AllStarterPreferences {
+  [key: number]: StarterPreferences;
 }
-// called on starter selection show once
 
-export function loadStarterPreferences(): StarterPreferences {
+// called on starter selection show once
+export function loadStarterPreferences(): AllStarterPreferences {
   return JSON.parse(
     (StarterPrefers_private_latest =
       localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) || StarterPrefers_DEFAULT),
   );
 }
-// called on starter selection clear, always
 
-export function saveStarterPreferences(prefs: StarterPreferences): void {
+// called on starter selection clear, always
+export function saveStarterPreferences(prefs: AllStarterPreferences): void {
   const pStr: string = JSON.stringify(prefs);
   if (pStr !== StarterPrefers_private_latest) {
     // something changed, store the update

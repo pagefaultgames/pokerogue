@@ -166,7 +166,7 @@ export interface StarterMoveData {
   [key: number]: StarterMoveset | StarterFormMoveData;
 }
 
-export interface StarterAttributes {
+export interface StarterPreferences {
   nature?: number;
   ability?: number;
   variant?: number;
