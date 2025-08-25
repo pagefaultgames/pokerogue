@@ -37,8 +37,8 @@ jobs:
     name: Run Tests
     needs: check-path-change-filter
     strategy:
-      # don't stop on failed shards when debugging
-      fail-fast: ${{ !env.RUNNER_DEBUG }}
+      # don't stop upon 1 shard failing
+      fail-fast: false
       matrix:
         shard: [1, 2, 3, 4, 5]
     uses: ./.github/workflows/test-shard-template.yml
@@ -47,3 +47,4 @@ jobs:
       shard: ${{ matrix.shard }}
       totalShards: 5
       skip: ${{ needs.check-path-change-filter.outputs.all != 'true'}}
+      timeout-minutes: 10
