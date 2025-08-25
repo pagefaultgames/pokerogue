@@ -2221,8 +2221,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.hasPassive() && (!canApply || this.canApplyAbility(true)) && this.getPassiveAbility().hasAttr(attrType);
   }
 
-  public getAbilityPriorities(): [number, number] {
-    return [this.getAbility().postSummonPriority, this.getPassiveAbility().postSummonPriority];
+  /**
+   * Return the ability priorities of the pokemon's ability and, if enabled, its passive ability
+   * @returns A tuple containing the ability priorities of the pokemon
+   */
+  public getAbilityPriorities(): [number] | [activePriority: number, passivePriority: number] {
+    const abilityPriority = this.getAbility().postSummonPriority;
+    if (this.hasPassive()) {
+      return [abilityPriority, this.getPassiveAbility().postSummonPriority];
+    }
+    return [abilityPriority];
   }
 
   /**
@@ -4790,7 +4798,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (effect !== StatusEffect.FAINT) {
       // Status-overriding moves (i.e. Rest) fail if their respective status already exists;
       // all other moves fail if the target already has _any_ status
-      if (overrideStatus ? this.status?.effect === effect : this.status) {
+      if (overrideStatus ? this.status?.effect === effect : this.status || this.turnData.pendingStatus) {
         this.queueStatusImmuneMessage(quiet, overrideStatus ? "overlap" : "other"); // having different status displays generic fail message
         return false;
       }
@@ -4942,6 +4950,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (overrideStatus) {
       this.resetStatus(false);
+    } else {
+      this.turnData.pendingStatus = effect;
     }
 
     globalScene.phaseManager.unshiftNew(
@@ -4961,6 +4971,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Set this Pokemon's {@linkcode status | non-volatile status condition} to the specified effect.
    * @param effect - The {@linkcode StatusEffect} to set
    * @remarks
+   * Clears this pokemon's `pendingStatus` in its {@linkcode Pokemon.turnData | turnData}.
+   *
    * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
    */
   doSetStatus(effect: Exclude<StatusEffect, StatusEffect.SLEEP>): void;
@@ -4969,6 +4981,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param effect - {@linkcode StatusEffect.SLEEP}
    * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
    * @remarks
+   * Clears this pokemon's `pendingStatus` in its {@linkcode Pokemon#turnData}.
+   *
    * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
    */
   doSetStatus(effect: StatusEffect.SLEEP, sleepTurnsRemaining?: number): void;
@@ -4978,6 +4992,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
    * and is unused for all non-sleep Statuses
    * @remarks
+   * Clears this pokemon's `pendingStatus` in its {@linkcode Pokemon#turnData}.
+   *
    * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
    */
   doSetStatus(effect: StatusEffect, sleepTurnsRemaining?: number): void;
@@ -4987,6 +5003,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
    * and is unused for all non-sleep Statuses
    * @remarks
+   * Clears this pokemon's `pendingStatus` in its {@linkcode Pokemon#turnData}.
+   *
    * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
    * @todo Make this and all related fields private and change tests to use a field-based helper or similar
    */
@@ -4994,6 +5012,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     effect: StatusEffect,
     sleepTurnsRemaining = effect !== StatusEffect.SLEEP ? 0 : this.randBattleSeedIntRange(2, 4),
   ): void {
+    // Reset any pending status
+    this.turnData.pendingStatus = StatusEffect.NONE;
     switch (effect) {
       case StatusEffect.POISON:
       case StatusEffect.TOXIC:
