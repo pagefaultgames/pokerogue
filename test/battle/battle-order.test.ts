@@ -1,9 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { EnemyCommandPhase } from "#phases/enemy-command-phase";
-import { SelectTargetPhase } from "#phases/select-target-phase";
-import { TurnStartPhase } from "#phases/turn-start-phase";
+import type { TurnStartPhase } from "#phases/turn-start-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -41,7 +39,7 @@ describe("Battle order", () => {
     vi.spyOn(enemyPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 150]); // set enemyPokemon's speed to 150
 
     game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.run(EnemyCommandPhase);
+    await game.phaseInterceptor.to("TurnStartPhase", false);
 
     const playerPokemonIndex = playerPokemon.getBattlerIndex();
     const enemyPokemonIndex = enemyPokemon.getBattlerIndex();
@@ -60,7 +58,7 @@ describe("Battle order", () => {
     vi.spyOn(enemyPokemon, "stats", "get").mockReturnValue([20, 20, 20, 20, 20, 50]); // set enemyPokemon's speed to 50
 
     game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.run(EnemyCommandPhase);
+    await game.phaseInterceptor.to("TurnStartPhase", false);
 
     const playerPokemonIndex = playerPokemon.getBattlerIndex();
     const enemyPokemonIndex = enemyPokemon.getBattlerIndex();
@@ -84,7 +82,7 @@ describe("Battle order", () => {
 
     game.move.select(MoveId.TACKLE);
     game.move.select(MoveId.TACKLE, 1);
-    await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
+    await game.phaseInterceptor.to("TurnStartPhase", false);
 
     const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
@@ -108,7 +106,7 @@ describe("Battle order", () => {
 
     game.move.select(MoveId.TACKLE);
     game.move.select(MoveId.TACKLE, 1);
-    await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
+    await game.phaseInterceptor.to("TurnStartPhase", false);
 
     const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
@@ -132,7 +130,7 @@ describe("Battle order", () => {
 
     game.move.select(MoveId.TACKLE);
     game.move.select(MoveId.TACKLE, 1);
-    await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
+    await game.phaseInterceptor.to("TurnStartPhase", false);
 
     const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();

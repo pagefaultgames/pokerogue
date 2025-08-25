@@ -63,9 +63,9 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .withPokemonCanLearnMoveRequirement(OPTION_1_REQUIRED_MOVE)
       .withDialogue({
         buttonLabel: `${namespace}:option.1.label`,
-        disabledButtonLabel: `${namespace}:option.1.label_disabled`,
+        disabledButtonLabel: `${namespace}:option.1.labelDisabled`,
         buttonTooltip: `${namespace}:option.1.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.1.tooltip_disabled`,
+        disabledButtonTooltip: `${namespace}:option.1.tooltipDisabled`,
         selected: [
           {
             text: `${namespace}:option.1.selected`,
@@ -81,9 +81,9 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .withPokemonCanLearnMoveRequirement(OPTION_2_REQUIRED_MOVE)
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
-        disabledButtonLabel: `${namespace}:option.2.label_disabled`,
+        disabledButtonLabel: `${namespace}:option.2.labelDisabled`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.tooltip_disabled`,
+        disabledButtonTooltip: `${namespace}:option.2.tooltipDisabled`,
         selected: [
           {
             text: `${namespace}:option.2.selected`,

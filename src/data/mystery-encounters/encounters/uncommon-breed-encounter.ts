@@ -97,7 +97,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
           isBoss: false,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            queueEncounterMessage(`${namespace}:option.1.stat_boost`);
+            queueEncounterMessage(`${namespace}:option.1.statBoost`);
             globalScene.phaseManager.unshiftNew(
               "StatStageChangePhase",
               pokemon.getBattlerIndex(),
@@ -191,7 +191,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
         buttonTooltip: `${namespace}:option.2.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.2.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.2.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.2.selected`,
@@ -236,7 +236,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
       .withDialogue({
         buttonLabel: `${namespace}:option.3.label`,
         buttonTooltip: `${namespace}:option.3.tooltip`,
-        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabledTooltip`,
         selected: [
           {
             text: `${namespace}:option.3.selected`,

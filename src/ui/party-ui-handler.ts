@@ -6,6 +6,7 @@ import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { Button } from "#enums/buttons";
 import { ChallengeType } from "#enums/challenge-type";
+import { Challenges } from "#enums/challenges";
 import { Command } from "#enums/command";
 import { FormChangeItem } from "#enums/form-change-item";
 import { MoveId } from "#enums/move-id";
@@ -27,7 +28,7 @@ import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, getLocalizedSpriteKey, randInt } from "#utils/common";
-import { toTitleCase } from "#utils/strings";
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
@@ -1427,6 +1428,11 @@ export class PartyUiHandler extends MessageUiHandler {
       this.eraseOptionsCursor();
     }
 
+    if (pokemon.isFainted() && globalScene.gameMode.hasChallenge(Challenges.HARDCORE)) {
+      this.updateOptionsHardcore();
+      return;
+    }
+
     switch (this.partyUiMode) {
       case PartyUiMode.MOVE_MODIFIER:
         this.updateOptionsWithMoveModifierMode(pokemon);
@@ -1526,6 +1532,34 @@ export class PartyUiHandler extends MessageUiHandler {
     this.updateOptionsWindow();
   }
 
+  updateOptionsHardcore(): void {
+    const pokemon = globalScene.getPlayerParty()[this.cursor];
+
+    switch (this.partyUiMode) {
+      case PartyUiMode.MODIFIER_TRANSFER:
+        if (!this.transferMode) {
+          this.updateOptionsWithModifierTransferMode(pokemon);
+        } else {
+          this.options.push(PartyOption.TRANSFER);
+          this.addCommonOptions(pokemon);
+        }
+        break;
+      case PartyUiMode.DISCARD:
+        this.updateOptionsWithModifierTransferMode(pokemon);
+        break;
+      case PartyUiMode.SWITCH:
+        this.options.push(PartyOption.RELEASE);
+        break;
+      case PartyUiMode.RELEASE:
+        this.options.push(PartyOption.RELEASE);
+        break;
+    }
+
+    // Generic, these are applied to all Modes
+    this.addCancelAndScrollOptions();
+    this.updateOptionsWindow();
+  }
+
   private updateOptionsWindow(): void {
     const pokemon = globalScene.getPlayerParty()[this.cursor];
 
@@ -1573,12 +1607,12 @@ export class PartyUiHandler extends MessageUiHandler {
             const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
             if (formChangeItemModifiers && option >= PartyOption.FORM_CHANGE_ITEM) {
               const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
-              optionName = `${modifier.active ? i18next.t("partyUiHandler:DEACTIVATE") : i18next.t("partyUiHandler:ACTIVATE")} ${modifier.type.name}`;
+              optionName = `${modifier.active ? i18next.t("partyUiHandler:deactivate") : i18next.t("partyUiHandler:activate")} ${modifier.type.name}`;
             } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
-              optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:UNPAUSE_EVOLUTION") : i18next.t("partyUiHandler:PAUSE_EVOLUTION")}`;
+              optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:unpausedEvolution") : i18next.t("partyUiHandler:pauseEvolution")}`;
             } else {
               if (this.localizedOptions.includes(option)) {
-                optionName = i18next.t(`partyUiHandler:${PartyOption[option]}`);
+                optionName = i18next.t(`partyUiHandler:${toCamelCase(PartyOption[option])}`);
               } else {
                 optionName = toTitleCase(PartyOption[option]);
               }
@@ -1595,7 +1629,7 @@ export class PartyUiHandler extends MessageUiHandler {
           .getLevelMoves()
           .find(plm => plm[1] === move);
       } else if (option === PartyOption.ALL) {
-        optionName = i18next.t("partyUiHandler:ALL");
+        optionName = i18next.t("partyUiHandler:all");
       } else {
         const itemModifiers = this.getItemModifiers(pokemon);
         const itemModifier = itemModifiers[option];
@@ -2190,7 +2224,7 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
   setup(party: PartyUiHandler) {
     this.transferIcon = globalScene.add.sprite(0, 0, "party_transfer");
     this.discardIcon = globalScene.add.sprite(0, 0, "party_discard");
-    this.textBox = addTextObject(-8, -7, i18next.t("partyUiHandler:TRANSFER"), TextStyle.PARTY);
+    this.textBox = addTextObject(-8, -7, i18next.t("partyUiHandler:transfer"), TextStyle.PARTY);
     this.party = party;
 
     this.add(this.transferIcon);
@@ -2238,14 +2272,14 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
         this.transferIcon.setVisible(true);
         this.discardIcon.setVisible(false);
         this.textBox.setVisible(true);
-        this.textBox.setText(i18next.t("partyUiHandler:TRANSFER"));
+        this.textBox.setText(i18next.t("partyUiHandler:transfer"));
         this.transferIcon.displayWidth = this.textBox.text.length * 9 + 3;
         break;
       case PartyUiMode.DISCARD:
         this.transferIcon.setVisible(false);
         this.discardIcon.setVisible(true);
         this.textBox.setVisible(true);
-        this.textBox.setText(i18next.t("partyUiHandler:DISCARD"));
+        this.textBox.setText(i18next.t("partyUiHandler:discard"));
         this.discardIcon.displayWidth = this.textBox.text.length * 9 + 3;
         break;
     }

@@ -15,6 +15,7 @@ import type { Pokemon } from "#field/pokemon";
 import type { SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#modifiers/modifier-type";
 import { coerceArray, isNullOrUndefined, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 export enum SpeciesWildEvolutionDelay {
@@ -133,11 +134,11 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.FRIENDSHIP:
           return i18next.t("pokemonEvolutions:friendship");
         case EvoCondKey.TIME:
-          return i18next.t(`pokemonEvolutions:timeOfDay.${TimeOfDay[cond.time[cond.time.length - 1]]}`); // For Day and Night evos, the key we want goes last
+          return i18next.t(`pokemonEvolutions:timeOfDay.${toCamelCase(TimeOfDay[cond.time[cond.time.length - 1]])}`); // For Day and Night evos, the key we want goes last
         case EvoCondKey.MOVE_TYPE:
-          return i18next.t("pokemonEvolutions:moveType", {type: i18next.t(`pokemonInfo:Type.${PokemonType[cond.pkmnType]}`)});
+          return i18next.t("pokemonEvolutions:moveType", {type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[cond.pkmnType])}`)});
         case EvoCondKey.PARTY_TYPE:
-          return i18next.t("pokemonEvolutions:partyType", {type: i18next.t(`pokemonInfo:Type.${PokemonType[cond.pkmnType]}`)});
+          return i18next.t("pokemonEvolutions:partyType", {type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[cond.pkmnType])}`)});
         case EvoCondKey.GENDER:
           return i18next.t("pokemonEvolutions:gender", {gender: getGenderSymbol(cond.gender)});
         case EvoCondKey.MOVE:
@@ -156,7 +157,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.SPECIES_CAUGHT:
           return i18next.t("pokemonEvolutions:caught", {species: getPokemonSpecies(cond.speciesCaught).name});
         case EvoCondKey.HELD_ITEM:
-          return i18next.t(`pokemonEvolutions:heldItem.${cond.itemKey}`);
+          return i18next.t(`pokemonEvolutions:heldItem.${toCamelCase(cond.itemKey)}`);
       }
     }).filter(s => !isNullOrUndefined(s)); // Filter out stringless conditions
     return this.desc;
@@ -245,7 +246,7 @@ export class SpeciesFormEvolution {
     }
     if (this.item) {
       const itemDescription = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[this.item].toUpperCase()}`);
-      const rarity = this.item > 50 ? i18next.t("pokemonEvolutions:ULTRA") : i18next.t("pokemonEvolutions:GREAT");
+      const rarity = this.item > 50 ? i18next.t("pokemonEvolutions:ultra") : i18next.t("pokemonEvolutions:great");
       strings.push(i18next.t("pokemonEvolutions:using", {item: itemDescription, tier: rarity}));
     }
     if (this.condition) {
@@ -651,7 +652,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [SpeciesId.KIRLIA]: [
     new SpeciesEvolution(SpeciesId.GARDEVOIR, 30, null, null),
-    new SpeciesEvolution(SpeciesId.GALLADE, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.MALE})
+    new SpeciesEvolution(SpeciesId.GALLADE, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.MALE}, SpeciesWildEvolutionDelay.LONG),
   ],
   [SpeciesId.SURSKIT]: [
     new SpeciesEvolution(SpeciesId.MASQUERAIN, 22, null, null)
@@ -740,7 +741,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [SpeciesId.SNORUNT]: [
     new SpeciesEvolution(SpeciesId.GLALIE, 42, null, null),
-    new SpeciesEvolution(SpeciesId.FROSLASS, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.FEMALE})
+    new SpeciesEvolution(SpeciesId.FROSLASS, 1, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.FEMALE}, SpeciesWildEvolutionDelay.LONG),
   ],
   [SpeciesId.SPHEAL]: [
     new SpeciesEvolution(SpeciesId.SEALEO, 32, null, null)
@@ -1590,7 +1591,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.WHIMSICOTT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.PETILIL]: [
-    new SpeciesEvolution(SpeciesId.HISUI_LILLIGANT, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.LONG),
+    new SpeciesEvolution(SpeciesId.HISUI_LILLIGANT, 1, EvolutionItem.DAWN_STONE, null, SpeciesWildEvolutionDelay.LONG),
     new SpeciesEvolution(SpeciesId.LILLIGANT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.BASCULIN]: [

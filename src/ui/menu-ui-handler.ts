@@ -17,6 +17,7 @@ import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt, isLocal, sessionIdKey } from "#utils/common";
 import { getCookie } from "#utils/cookies";
 import { getEnumValues } from "#utils/enums";
+import { toCamelCase } from "#utils/strings";
 import { isBeta } from "#utils/utility-vars";
 import i18next from "i18next";
 
@@ -138,7 +139,7 @@ export class MenuUiHandler extends MessageUiHandler {
     this.optionSelectText = addTextObject(
       0,
       0,
-      this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${MenuOptions[o]}`)}`).join("\n"),
+      this.menuOptions.map(o => `${i18next.t(`menuUiHandler:${toCamelCase(MenuOptions[o])}`)}`).join("\n"),
       TextStyle.WINDOW,
       { maxLines: this.menuOptions.length },
     );
