@@ -860,7 +860,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     if (damage <= 0) {
-      return [result, isCritical, dmg];
+      return [result, isCritical, damage];
     }
 
     if (user.isPlayer()) {
@@ -889,7 +889,7 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.applyModifiers(DamageMoneyRewardModifier, true, user, new NumberHolder(damage));
     }
 
-    return [result, isCritical, dmg];
+    return [result, isCritical, damage];
   }
 
   /**
