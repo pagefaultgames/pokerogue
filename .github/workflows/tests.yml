@@ -47,4 +47,3 @@ jobs:
       shard: ${{ matrix.shard }}
       totalShards: 5
       skip: ${{ needs.check-path-change-filter.outputs.all != 'true'}}
-      timeout-minutes: 10
